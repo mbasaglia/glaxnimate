@@ -47,6 +47,7 @@ bool model::Object::set(const QString& property, const QVariant& value, bool all
         {
             d->unknowns.emplace_back(this, property, value);
             d->props[property] = &d->unknowns.back();
+            emit property_added(property, value);
             return true;
         }
         return false;

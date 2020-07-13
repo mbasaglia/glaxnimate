@@ -89,8 +89,8 @@ private:
 class UnknownProperty : public BaseProperty
 {
 public:
-    UnknownProperty(Object* obj, QString name, QVariant value)
-        : BaseProperty(obj, std::move(name), std::move(name)),
+    UnknownProperty(Object* obj, const QString& name, QVariant value)
+        : BaseProperty(obj, name, name),
           variant(std::move(value))
     {}
 

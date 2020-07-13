@@ -8,10 +8,14 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
 
+add_definitions(-DBOOST_TEST_DYN_LINK)
+
 function(test_case test_name)
     add_executable(${test_name} EXCLUDE_FROM_ALL ${test_name}.cpp ${ARGN})
-    target_link_libraries(${test_name} PRIVATE Qt5::Test Qt5::Widgets QtColorWidgets)
-    add_test (NAME ${test_name} COMMAND ${test_name} -silent )
+    target_link_libraries(${test_name} PRIVATE ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} Qt5::Widgets QtColorWidgets)
+    add_test (NAME ${test_name} COMMAND ${test_name} )
     add_dependencies(tests_compile ${test_name})
 endfunction(test_case)
 
+
+test_case(test_property ../src/model/object.cpp)

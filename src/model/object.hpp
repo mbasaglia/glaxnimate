@@ -31,6 +31,7 @@ public:
     bool set(const QString& property, const QVariant& value, bool allow_unknown = false);
 
 signals:
+    void property_added(const QString& name, const QVariant& value);
     void property_changed(const QString& name, const QVariant& value);
 
 private:
