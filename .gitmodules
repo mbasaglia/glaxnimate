@@ -1,0 +1,9 @@
+[submodule "cmake"]
+	path = cmake
+	url = https://gitlab.com/mattia.basaglia/CMake-Lib.git
+[submodule "data/icons"]
+	path = data/icons
+	url = https://gitlab.com/mattia.basaglia/icon-theme-extractor.git
+[submodule "external/Qt-Color-Widgets"]
+	path = external/Qt-Color-Widgets
+	url = https://gitlab.com/mattia.basaglia/Qt-Color-Widgets.git
