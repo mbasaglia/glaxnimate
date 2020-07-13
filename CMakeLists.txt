@@ -1,8 +1,8 @@
 
 cmake_minimum_required (VERSION 3.7 FATAL_ERROR)
 
-project(ProjectName VERSION 0.0.1 DESCRIPTION "Project Description" LANGUAGES CXX)
-set(PROJECT_SLUG "project_name")
+project(Glaxnimate VERSION 0.0.1 DESCRIPTION "Simple vector animation program" LANGUAGES CXX)
+set(PROJECT_SLUG "glaxnimate")
 
 
 # CMake modules

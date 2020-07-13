@@ -1,7 +1,10 @@
 
 
 set(SOURCES
+
 main.cpp
+
+model/object.cpp
 )
 
 configure_file(
