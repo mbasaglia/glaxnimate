@@ -8,6 +8,7 @@ class model::Object::Private
 {
 public:
     std::unordered_map<QString, BaseProperty*> props;
+    std::vector<BaseProperty*> prop_order;
     std::list<UnknownProperty> unknowns;
 };
 
@@ -19,6 +20,20 @@ model::Object::Object()
 
 model::Object::~Object() = default;
 
+std::unique_ptr<model::Object> model::Object::clone() const
+{
+    auto object = std::make_unique<model::Object>();
+    clone_into(object.get());
+    return object;
+}
+
+void model::Object::clone_into(model::Object* dest) const
+{
+    for ( BaseProperty* prop : d->prop_order )
+        dest->set(prop->name(), prop->value());
+}
+
+
 
 void model::Object::property_value_changed(const QString& name, const QVariant& value)
 {
@@ -28,6 +43,7 @@ void model::Object::property_value_changed(const QString& name, const QVariant& 
 void model::Object::add_property(model::BaseProperty* prop)
 {
     d->props[prop->name()] = prop;
+    d->prop_order.push_back(prop);
 }
 
 QVariant model::Object::get(const QString& property) const
@@ -46,7 +62,7 @@ bool model::Object::set(const QString& property, const QVariant& value, bool all
         if ( allow_unknown )
         {
             d->unknowns.emplace_back(this, property, value);
-            d->props[property] = &d->unknowns.back();
+            add_property(&d->unknowns.back());
             emit property_added(property, value);
             return true;
         }
@@ -54,4 +70,14 @@ bool model::Object::set(const QString& property, const QVariant& value, bool all
     }
 
     return it->second->set_value(value);
+}
+
+model::Object::iterator model::Object::begin() const
+{
+    return iterator(d->prop_order.begin());
+}
+
+model::Object::iterator model::Object::end() const
+{
+    return iterator(d->prop_order.end());
 }

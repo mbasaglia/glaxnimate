@@ -2,6 +2,8 @@
 #include <QMainWindow>
 #include "application_info_generated.h"
 
+#include "model/document.hpp"
+
 
 int main(int argc, char *argv[])
 {
