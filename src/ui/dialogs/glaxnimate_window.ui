@@ -43,27 +43,29 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <widget class="QMenu" name="menuOpen_Recent">
+    <widget class="QMenu" name="menu_open_recent">
      <property name="title">
       <string>Open &amp;Recent</string>
      </property>
      <property name="icon">
-      <iconset theme="document-open-recent"/>
+      <iconset theme="document-open-recent">
+       <normaloff>.</normaloff>.</iconset>
      </property>
      <addaction name="separator"/>
     </widget>
-    <addaction name="action_New"/>
-    <addaction name="action_Open"/>
-    <addaction name="menuOpen_Recent"/>
+    <addaction name="action_new"/>
+    <addaction name="action_open"/>
+    <addaction name="menu_open_recent"/>
+    <addaction name="action_reload"/>
     <addaction name="separator"/>
-    <addaction name="action_Save"/>
-    <addaction name="actionSave_As"/>
+    <addaction name="action_save"/>
+    <addaction name="action_save_as"/>
     <addaction name="separator"/>
-    <addaction name="action_Close"/>
+    <addaction name="action_close"/>
     <addaction name="separator"/>
-    <addaction name="action_Quit"/>
+    <addaction name="action_quit"/>
    </widget>
-   <widget class="QMenu" name="menu_Tools">
+   <widget class="QMenu" name="menu_tools">
     <property name="title">
      <string>&amp;Tools</string>
     </property>
@@ -77,7 +79,7 @@
     <addaction name="action_Ellipse"/>
     <addaction name="actionS_tar"/>
    </widget>
-   <widget class="QMenu" name="menu_Views">
+   <widget class="QMenu" name="menu_views">
     <property name="title">
      <string>&amp;Views</string>
     </property>
@@ -91,7 +93,8 @@
       <string>&amp;New</string>
      </property>
      <property name="icon">
-      <iconset theme="list-add"/>
+      <iconset theme="list-add">
+       <normaloff>.</normaloff>.</iconset>
      </property>
      <addaction name="action_Null_Layer"/>
      <addaction name="action_Shape_Layer"/>
@@ -100,6 +103,7 @@
     <addaction name="menu_New"/>
     <addaction name="action_Move_To_Composition"/>
     <addaction name="actionNew_Pre_Composition"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menu_Path">
     <property name="title">
@@ -130,14 +134,30 @@
     <addaction name="separator"/>
     <addaction name="menuNode_Type"/>
    </widget>
+   <widget class="QMenu" name="menu_edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="action_copy"/>
+    <addaction name="action_cut"/>
+    <addaction name="action_paste"/>
+    <addaction name="action_select_all"/>
+    <addaction name="separator"/>
+    <addaction name="action_raise_to_Top"/>
+    <addaction name="action_raise"/>
+    <addaction name="action_lower"/>
+    <addaction name="action_lower_to_bottom"/>
+   </widget>
    <addaction name="menu_File"/>
-   <addaction name="menu_Tools"/>
-   <addaction name="menu_Views"/>
+   <addaction name="menu_edit"/>
+   <addaction name="menu_tools"/>
+   <addaction name="menu_views"/>
    <addaction name="menu_Layers"/>
    <addaction name="menu_Path"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="QToolBar" name="toolbar_main">
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -147,6 +167,21 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_new"/>
+   <addaction name="action_open"/>
+   <addaction name="action_save"/>
+   <addaction name="action_save_as"/>
+   <addaction name="separator"/>
+   <addaction name="action_copy"/>
+   <addaction name="action_cut"/>
+   <addaction name="action_paste"/>
+   <addaction name="separator"/>
+   <addaction name="action_select_all"/>
+   <addaction name="separator"/>
+   <addaction name="action_raise_to_Top"/>
+   <addaction name="action_raise"/>
+   <addaction name="action_lower"/>
+   <addaction name="action_lower_to_bottom"/>
   </widget>
   <widget class="QDockWidget" name="dock_colors">
    <property name="windowTitle">
@@ -652,8 +687,8 @@
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QGridLayout" name="gridLayout_6"/>
+   <widget class="QWidget" name="dock_tools_contents">
+    <layout class="QGridLayout" name="dock_tools_layout"/>
    </widget>
   </widget>
   <widget class="QDockWidget" name="dock_tool_options">
@@ -700,7 +735,8 @@
           <string>New Composition</string>
          </property>
          <property name="icon">
-          <iconset theme="list-add"/>
+          <iconset theme="list-add">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -717,7 +753,8 @@
           <string>Add</string>
          </property>
          <property name="icon">
-          <iconset theme="list-add"/>
+          <iconset theme="list-add">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -727,7 +764,8 @@
           <string>Duplicate</string>
          </property>
          <property name="icon">
-          <iconset theme="edit-duplicate"/>
+          <iconset theme="edit-duplicate">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -737,7 +775,8 @@
           <string>Remove</string>
          </property>
          <property name="icon">
-          <iconset theme="list-remove"/>
+          <iconset theme="list-remove">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -786,7 +825,7 @@
     </layout>
    </widget>
   </widget>
-  <action name="action_New">
+  <action name="action_new">
    <property name="icon">
     <iconset theme="document-new">
      <normaloff>.</normaloff>.</iconset>
@@ -795,7 +834,7 @@
     <string>&amp;New</string>
    </property>
   </action>
-  <action name="action_Open">
+  <action name="action_open">
    <property name="icon">
     <iconset theme="document-open">
      <normaloff>.</normaloff>.</iconset>
@@ -804,7 +843,7 @@
     <string>&amp;Open...</string>
    </property>
   </action>
-  <action name="action_Save">
+  <action name="action_save">
    <property name="icon">
     <iconset theme="document-save">
      <normaloff>.</normaloff>.</iconset>
@@ -813,7 +852,7 @@
     <string>&amp;Save</string>
    </property>
   </action>
-  <action name="actionSave_As">
+  <action name="action_save_as">
    <property name="icon">
     <iconset theme="document-save-as">
      <normaloff>.</normaloff>.</iconset>
@@ -822,7 +861,7 @@
     <string>Save &amp;As...</string>
    </property>
   </action>
-  <action name="action_Close">
+  <action name="action_close">
    <property name="icon">
     <iconset theme="document-close">
      <normaloff>.</normaloff>.</iconset>
@@ -831,7 +870,7 @@
     <string>&amp;Close</string>
    </property>
   </action>
-  <action name="action_Quit">
+  <action name="action_quit">
    <property name="icon">
     <iconset theme="application-exit">
      <normaloff>.</normaloff>.</iconset>
@@ -841,6 +880,12 @@
    </property>
   </action>
   <action name="action_Select">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset theme="edit-select">
      <normaloff>.</normaloff>.</iconset>
@@ -853,9 +898,11 @@
    </property>
   </action>
   <action name="action_Edit">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
-    <iconset theme="tool-node-editor">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="edit-node"/>
    </property>
    <property name="text">
     <string>&amp;Edit</string>
@@ -865,6 +912,9 @@
    </property>
   </action>
   <action name="action_Draw">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset theme="draw-path">
      <normaloff>.</normaloff>.</iconset>
@@ -877,6 +927,9 @@
    </property>
   </action>
   <action name="actionDraw_Freehand">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset theme="draw-freehand">
      <normaloff>.</normaloff>.</iconset>
@@ -889,6 +942,9 @@
    </property>
   </action>
   <action name="action_Rectangle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset theme="draw-rectangle">
      <normaloff>.</normaloff>.</iconset>
@@ -901,6 +957,9 @@
    </property>
   </action>
   <action name="action_Ellipse">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset theme="draw-ellipse">
      <normaloff>.</normaloff>.</iconset>
@@ -913,8 +972,12 @@
    </property>
   </action>
   <action name="actionS_tar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
-    <iconset theme="draw-star"/>
+    <iconset theme="draw-star">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>S&amp;tar</string>
@@ -925,7 +988,8 @@
   </action>
   <action name="action_Null_Layer">
    <property name="icon">
-    <iconset theme="transform-move"/>
+    <iconset theme="transform-move">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Null Layer</string>
@@ -933,7 +997,8 @@
   </action>
   <action name="action_Shape_Layer">
    <property name="icon">
-    <iconset theme="shapes"/>
+    <iconset theme="shapes">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Shape Layer</string>
@@ -941,7 +1006,8 @@
   </action>
   <action name="action_Precomposition_Layer">
    <property name="icon">
-    <iconset theme="tool-animator"/>
+    <iconset theme="tool-animator">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Precomposition Layer</string>
@@ -949,7 +1015,8 @@
   </action>
   <action name="action_Move_To_Composition">
    <property name="icon">
-    <iconset theme="archive-extract"/>
+    <iconset theme="archive-extract">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Move To Composition</string>
@@ -957,7 +1024,8 @@
   </action>
   <action name="actionNew_Pre_Composition">
    <property name="icon">
-    <iconset theme="tool-animator"/>
+    <iconset theme="tool-animator">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>New &amp;Pre Composition</string>
@@ -995,7 +1063,8 @@
   </action>
   <action name="actionAdd_Node">
    <property name="icon">
-    <iconset theme="format-add-node"/>
+    <iconset theme="format-add-node">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Add &amp;Node</string>
@@ -1003,7 +1072,8 @@
   </action>
   <action name="action_Remove_Node">
    <property name="icon">
-    <iconset theme="format-remove-node"/>
+    <iconset theme="format-remove-node">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Remove Node</string>
@@ -1011,7 +1081,8 @@
   </action>
   <action name="action_Join_Nodes">
    <property name="icon">
-    <iconset theme="format-join-node"/>
+    <iconset theme="format-join-node">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Join Nodes</string>
@@ -1019,7 +1090,8 @@
   </action>
   <action name="actionS_plit_Nodes">
    <property name="icon">
-    <iconset theme="format-break-node"/>
+    <iconset theme="format-break-node">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>S&amp;plit Nodes</string>
@@ -1038,6 +1110,90 @@
   <action name="actionSy_mmetric">
    <property name="text">
     <string>Sy&amp;mmetric</string>
+   </property>
+  </action>
+  <action name="action_copy">
+   <property name="icon">
+    <iconset theme="edit-copy"/>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+  </action>
+  <action name="action_cut">
+   <property name="icon">
+    <iconset theme="edit-cut"/>
+   </property>
+   <property name="text">
+    <string>&amp;Cut</string>
+   </property>
+  </action>
+  <action name="action_paste">
+   <property name="icon">
+    <iconset theme="edit-paste"/>
+   </property>
+   <property name="text">
+    <string>&amp;Paste</string>
+   </property>
+  </action>
+  <action name="action_select_all">
+   <property name="icon">
+    <iconset theme="edit-select-all"/>
+   </property>
+   <property name="text">
+    <string>&amp;Select All</string>
+   </property>
+  </action>
+  <action name="action_raise_to_Top">
+   <property name="icon">
+    <iconset theme="selection-top"/>
+   </property>
+   <property name="text">
+    <string>Raise to &amp;Top</string>
+   </property>
+   <property name="shortcut">
+    <string>Home</string>
+   </property>
+  </action>
+  <action name="action_raise">
+   <property name="icon">
+    <iconset theme="selection-raise"/>
+   </property>
+   <property name="text">
+    <string>&amp;Raise</string>
+   </property>
+   <property name="shortcut">
+    <string>PgUp</string>
+   </property>
+  </action>
+  <action name="action_lower">
+   <property name="icon">
+    <iconset theme="selection-lower"/>
+   </property>
+   <property name="text">
+    <string>&amp;Lower</string>
+   </property>
+   <property name="shortcut">
+    <string>PgDown</string>
+   </property>
+  </action>
+  <action name="action_lower_to_bottom">
+   <property name="icon">
+    <iconset theme="selection-bottom"/>
+   </property>
+   <property name="text">
+    <string>Lower to &amp;Bottom</string>
+   </property>
+   <property name="shortcut">
+    <string>End</string>
+   </property>
+  </action>
+  <action name="action_reload">
+   <property name="icon">
+    <iconset theme="document-revert"/>
+   </property>
+   <property name="text">
+    <string>Re&amp;load</string>
    </property>
   </action>
  </widget>

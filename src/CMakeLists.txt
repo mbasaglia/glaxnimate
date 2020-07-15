@@ -5,6 +5,9 @@ set(SOURCES
 main.cpp
 
 model/object.cpp
+
+ui/dialogs/glaxnimate_window.cpp
+ui/dialogs/glaxnimate_window.ui
 )
 
 configure_file(

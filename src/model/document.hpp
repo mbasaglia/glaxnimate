@@ -7,8 +7,12 @@
 
 namespace model {
 
-class Document
+class Document : public QObject
 {
+    Q_OBJECT
+
+public:
+
     QString source_filename() const;
     void set_source_filename(const QString& n);
 

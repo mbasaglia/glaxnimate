@@ -2,6 +2,7 @@
 #define GLAXNIMATEWINDOW_H
 
 #include <QMainWindow>
+#include <memory>
 
 class GlaxnimateWindowPrivate;
 
@@ -10,19 +11,18 @@ class GlaxnimateWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    /**
-     * Default constructor
-     */
-    GlaxnimateWindow();
+    explicit GlaxnimateWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
-    /**
-     * Destructor
-     */
     ~GlaxnimateWindow();
 
+protected:
+    void changeEvent(QEvent *e) override;
+
+    bool eventFilter(QObject *object, QEvent *event) override;
+
 private:
-    GlaxnimateWindowPrivate* const d_ptr;
-    Q_DECLARE_PRIVATE(GlaxnimateWindow)
+    class Private;
+    std::unique_ptr<Private> d;
 };
 
 #endif // GLAXNIMATEWINDOW_H
