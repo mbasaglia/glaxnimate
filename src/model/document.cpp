@@ -6,15 +6,16 @@ class model::Document::Private
 public:
     Animation animation;
     QUndoStack undo_stack;
-    QString source_filename;
+    QString filename;
     QDir save_path;
     QVariantMap metadata;
 };
 
 
-model::Document::Document()
+model::Document::Document(const QString& filename)
     : d ( std::make_unique<model::Document::Private>() )
 {
+    d->filename = filename;
 }
 
 model::Document::~Document() = default;
@@ -29,14 +30,15 @@ void model::Document::set_save_path(const QDir& p)
     d->save_path = p;
 }
 
-QString model::Document::source_filename() const
+QString model::Document::filename() const
 {
-    return d->source_filename;
+    return d->filename;
 }
 
-void model::Document::set_source_filename(const QString& n)
+void model::Document::set_filename(const QString& n)
 {
-    d->source_filename = n;
+    d->filename = n;
+    emit filename_changed(n);
 }
 
 model::Animation & model::Document::animation()

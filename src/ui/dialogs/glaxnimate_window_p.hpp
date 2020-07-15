@@ -1,6 +1,8 @@
 #ifndef GLAXNIMATEWINDOW_P_H
 #define GLAXNIMATEWINDOW_P_H
 
+#include <QGraphicsView>
+
 #include "ui_glaxnimate_window.h"
 
 #include "model/document.hpp"
@@ -12,11 +14,32 @@ public:
     Ui::GlaxnimateWindow ui;
 
     int tool_rows = 3;
-    QList<model::Document> documents;
+    std::vector<std::unique_ptr<model::Document>> documents;
     QString undo_text;
     QString redo_text;
 
-    void connect_document(model::Document* document)
+
+    model::Document* current_document()
+    {
+        int index = ui.tab_widget->currentIndex();
+        if ( index == -1 )
+            return nullptr;
+
+        return documents[index].get();
+    }
+
+    model::Document* create_document(const QString& filename)
+    {
+        documents.push_back(std::make_unique<model::Document>(filename));
+        auto widget = new QGraphicsView();
+        ui.tab_widget->addTab(widget, filename);
+        model::Document* doc = documents.back().get();
+        QObject::connect(doc, &model::Document::filename_changed, widget, &QWidget::setWindowTitle);
+        switch_to_document(doc);
+        return doc;
+    }
+
+    void switch_to_document(model::Document* document)
     {
         // Undo Redo
         QObject::connect(&document->undo_stack(), &QUndoStack::canRedoChanged, ui.action_redo, &QAction::setEnabled);
