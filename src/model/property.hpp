@@ -238,6 +238,8 @@ public:
                 }
             }
         }
+
+        return true;
     }
 
 private:

@@ -25,19 +25,5 @@ void GlaxnimateWindow::changeEvent(QEvent *e)
 
 bool GlaxnimateWindow::eventFilter(QObject* object, QEvent* event)
 {
-    QToolButton *btn = qobject_cast<QToolButton*>(object);
-    if ( btn && event->type() == QEvent::Resize )
-    {
-        int target = btn->size().width() - 10;
-        QSize best(0, 0);
-        for ( const auto& sz : btn->icon().availableSizes() )
-        {
-            if ( sz.width() > best.width() && sz.width() <= target )
-                best = sz;
-        }
-        if ( best.width() > 0 )
-            btn->setIconSize(best);
-    }
-
-    return false;
+    return d->eventFilter(object, event);
 }

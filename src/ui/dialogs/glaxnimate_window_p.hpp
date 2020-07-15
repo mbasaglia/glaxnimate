@@ -2,7 +2,6 @@
 #define GLAXNIMATEWINDOW_P_H
 
 #include "ui_glaxnimate_window.h"
-#include <QUndoStack>
 
 #include "model/document.hpp"
 
@@ -13,8 +12,27 @@ public:
     Ui::GlaxnimateWindow ui;
 
     int tool_rows = 3;
-    QUndoStack undo_stack;
     QList<model::Document> documents;
+    QString undo_text;
+    QString redo_text;
+
+    void connect_document(model::Document* document)
+    {
+        // Undo Redo
+        QObject::connect(&document->undo_stack(), &QUndoStack::canRedoChanged, ui.action_redo, &QAction::setEnabled);
+        QObject::connect(&document->undo_stack(), &QUndoStack::redoTextChanged, ui.action_redo, [this](const QString& s){
+            ui.action_redo->setText(redo_text.arg(s));
+        });
+        ui.action_redo->setEnabled(document->undo_stack().canRedo());
+        ui.action_redo->setText(redo_text.arg(document->undo_stack().redoText()));
+
+        QObject::connect(&document->undo_stack(), &QUndoStack::canUndoChanged, ui.action_undo, &QAction::setEnabled);
+        QObject::connect(&document->undo_stack(), &QUndoStack::undoTextChanged, ui.action_undo, [this](const QString& s){
+            ui.action_undo->setText(undo_text.arg(s));
+        });
+        ui.action_undo->setEnabled(document->undo_stack().canUndo());
+        ui.action_undo->setText(redo_text.arg(document->undo_stack().undoText()));
+    }
 
 
     void setupUi(QMainWindow* parent)
@@ -33,21 +51,8 @@ public:
         ui.action_cut->setShortcut(QKeySequence::Cut);
         ui.action_paste->setShortcut(QKeySequence::Paste);
         ui.action_select_all->setShortcut(QKeySequence::SelectAll);
-
-        // undo - redo
-        // TODO move undo_stack into the document, create actions in the UI
-        //      and connect signals to update text/enabled
-        QAction *redo = undo_stack.createRedoAction(parent);
-        redo->setIcon(QIcon::fromTheme("edit-redo"));
-        redo->setShortcut(QKeySequence::Undo);
-        QAction *undo = undo_stack.createUndoAction(parent);
-        undo->setIcon(QIcon::fromTheme("edit-undo"));
-        undo->setShortcut(QKeySequence::Redo);
-        ui.menu_edit->insertAction(ui.menu_edit->actions()[0], redo);
-        ui.menu_edit->insertAction(redo, undo);
-        QAction *separator_undo = ui.toolbar_main->insertSeparator(ui.action_copy);
-        ui.toolbar_main->insertAction(separator_undo, redo);
-        ui.toolbar_main->insertAction(redo, undo);
+        ui.action_undo->setShortcut(QKeySequence::Undo);
+        ui.action_redo->setShortcut(QKeySequence::Redo);
 
         // Menu Views
         for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
@@ -98,13 +103,35 @@ public:
     void retranslateUi(QMainWindow* parent)
     {
         ui.retranslateUi(parent);
+        redo_text = ui.action_redo->text();
+        undo_text = ui.action_undo->text();
     }
 
     void update_tool_button(QAction* action, QToolButton* button)
     {
         button->setText(action->text());
-        button->setToolTip(action->text()+"|"+action->iconText());
+        button->setToolTip(action->text());
     }
+
+    bool eventFilter(QObject* object, QEvent* event)
+    {
+        QToolButton *btn = qobject_cast<QToolButton*>(object);
+        if ( btn && event->type() == QEvent::Resize )
+        {
+            int target = btn->size().width() - 10;
+            QSize best(0, 0);
+            for ( const auto& sz : btn->icon().availableSizes() )
+            {
+                if ( sz.width() > best.width() && sz.width() <= target )
+                    best = sz;
+            }
+            if ( best.width() > 0 )
+                btn->setIconSize(best);
+        }
+
+        return false;
+    }
+
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

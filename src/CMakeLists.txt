@@ -5,6 +5,7 @@ set(SOURCES
 main.cpp
 
 model/object.cpp
+model/document.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui

@@ -139,6 +139,9 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="separator"/>
+    <addaction name="action_undo"/>
+    <addaction name="action_redo"/>
+    <addaction name="separator"/>
     <addaction name="action_copy"/>
     <addaction name="action_cut"/>
     <addaction name="action_paste"/>
@@ -172,6 +175,9 @@
    <addaction name="action_save"/>
    <addaction name="action_save_as"/>
    <addaction name="separator"/>
+   <addaction name="action_undo"/>
+   <addaction name="action_redo"/>
+   <addaction name="separator"/>
    <addaction name="action_copy"/>
    <addaction name="action_cut"/>
    <addaction name="action_paste"/>
@@ -182,6 +188,7 @@
    <addaction name="action_raise"/>
    <addaction name="action_lower"/>
    <addaction name="action_lower_to_bottom"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QDockWidget" name="dock_colors">
    <property name="windowTitle">
@@ -902,7 +909,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="edit-node"/>
+    <iconset theme="edit-node">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Edit</string>
@@ -1114,7 +1122,8 @@
   </action>
   <action name="action_copy">
    <property name="icon">
-    <iconset theme="edit-copy"/>
+    <iconset theme="edit-copy">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Copy</string>
@@ -1122,7 +1131,8 @@
   </action>
   <action name="action_cut">
    <property name="icon">
-    <iconset theme="edit-cut"/>
+    <iconset theme="edit-cut">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Cut</string>
@@ -1130,7 +1140,8 @@
   </action>
   <action name="action_paste">
    <property name="icon">
-    <iconset theme="edit-paste"/>
+    <iconset theme="edit-paste">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Paste</string>
@@ -1138,7 +1149,8 @@
   </action>
   <action name="action_select_all">
    <property name="icon">
-    <iconset theme="edit-select-all"/>
+    <iconset theme="edit-select-all">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Select All</string>
@@ -1146,7 +1158,8 @@
   </action>
   <action name="action_raise_to_Top">
    <property name="icon">
-    <iconset theme="selection-top"/>
+    <iconset theme="selection-top">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Raise to &amp;Top</string>
@@ -1157,7 +1170,8 @@
   </action>
   <action name="action_raise">
    <property name="icon">
-    <iconset theme="selection-raise"/>
+    <iconset theme="selection-raise">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Raise</string>
@@ -1168,7 +1182,8 @@
   </action>
   <action name="action_lower">
    <property name="icon">
-    <iconset theme="selection-lower"/>
+    <iconset theme="selection-lower">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Lower</string>
@@ -1179,7 +1194,8 @@
   </action>
   <action name="action_lower_to_bottom">
    <property name="icon">
-    <iconset theme="selection-bottom"/>
+    <iconset theme="selection-bottom">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Lower to &amp;Bottom</string>
@@ -1190,10 +1206,33 @@
   </action>
   <action name="action_reload">
    <property name="icon">
-    <iconset theme="document-revert"/>
+    <iconset theme="document-revert">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Re&amp;load</string>
+   </property>
+  </action>
+  <action name="action_undo">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="edit-undo"/>
+   </property>
+   <property name="text">
+    <string>&amp;Undo %1</string>
+   </property>
+  </action>
+  <action name="action_redo">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="edit-redo"/>
+   </property>
+   <property name="text">
+    <string>&amp;Redo %1</string>
    </property>
   </action>
  </widget>
