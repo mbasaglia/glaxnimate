@@ -1,0 +1,1298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GlaxnimateWindow</class>
+ <widget class="QMainWindow" name="GlaxnimateWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1314</width>
+    <height>1053</height>
+   </rect>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTabWidget" name="tab_widget">
+      <property name="elideMode">
+       <enum>Qt::ElideMiddle</enum>
+      </property>
+      <property name="documentMode">
+       <bool>true</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1314</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuOpen_Recent">
+     <property name="title">
+      <string>Open &amp;Recent</string>
+     </property>
+     <property name="icon">
+      <iconset theme="document-open-recent"/>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <addaction name="action_New"/>
+    <addaction name="action_Open"/>
+    <addaction name="menuOpen_Recent"/>
+    <addaction name="separator"/>
+    <addaction name="action_Save"/>
+    <addaction name="actionSave_As"/>
+    <addaction name="separator"/>
+    <addaction name="action_Close"/>
+    <addaction name="separator"/>
+    <addaction name="action_Quit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Tools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="action_Select"/>
+    <addaction name="action_Edit"/>
+    <addaction name="separator"/>
+    <addaction name="action_Draw"/>
+    <addaction name="actionDraw_Freehand"/>
+    <addaction name="separator"/>
+    <addaction name="action_Rectangle"/>
+    <addaction name="action_Ellipse"/>
+    <addaction name="actionS_tar"/>
+   </widget>
+   <widget class="QMenu" name="menu_Views">
+    <property name="title">
+     <string>&amp;Views</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_Layers">
+    <property name="title">
+     <string>&amp;Layers</string>
+    </property>
+    <widget class="QMenu" name="menu_New">
+     <property name="title">
+      <string>&amp;New</string>
+     </property>
+     <property name="icon">
+      <iconset theme="list-add"/>
+     </property>
+     <addaction name="action_Null_Layer"/>
+     <addaction name="action_Shape_Layer"/>
+     <addaction name="action_Precomposition_Layer"/>
+    </widget>
+    <addaction name="menu_New"/>
+    <addaction name="action_Move_To_Composition"/>
+    <addaction name="actionNew_Pre_Composition"/>
+   </widget>
+   <widget class="QMenu" name="menu_Path">
+    <property name="title">
+     <string>&amp;Path</string>
+    </property>
+    <widget class="QMenu" name="menuNode_Type">
+     <property name="title">
+      <string>Node &amp;Type</string>
+     </property>
+     <addaction name="action_Corner"/>
+     <addaction name="action_Smooth"/>
+     <addaction name="actionSy_mmetric"/>
+    </widget>
+    <addaction name="separator"/>
+    <addaction name="actionObject_to_Path"/>
+    <addaction name="action_Add"/>
+    <addaction name="action_Subtract"/>
+    <addaction name="action_Intersect"/>
+    <addaction name="action_XOR"/>
+    <addaction name="separator"/>
+    <addaction name="action_Reverse"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_Node"/>
+    <addaction name="action_Remove_Node"/>
+    <addaction name="separator"/>
+    <addaction name="action_Join_Nodes"/>
+    <addaction name="actionS_plit_Nodes"/>
+    <addaction name="separator"/>
+    <addaction name="menuNode_Type"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Tools"/>
+   <addaction name="menu_Views"/>
+   <addaction name="menu_Layers"/>
+   <addaction name="menu_Path"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QDockWidget" name="dock_colors">
+   <property name="windowTitle">
+    <string>Colors</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>200</height>
+        </size>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab_2">
+        <attribute name="title">
+         <string>HSV</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="toolTip">
+            <string>Saturation</string>
+           </property>
+           <property name="text">
+            <string>S</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QSpinBox" name="spinBox_3">
+           <property name="toolTip">
+            <string>Value</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="color_widgets::HueSlider" name="HueSlider">
+           <property name="toolTip">
+            <string>Hue</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider_2">
+           <property name="toolTip">
+            <string>Value</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QSpinBox" name="spinBox_2">
+           <property name="toolTip">
+            <string>Saturation</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label">
+           <property name="toolTip">
+            <string>Hue</string>
+           </property>
+           <property name="text">
+            <string>H</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QSpinBox" name="spinBox">
+           <property name="toolTip">
+            <string>Hue</string>
+           </property>
+           <property name="maximum">
+            <number>359</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="toolTip">
+            <string>Value</string>
+           </property>
+           <property name="text">
+            <string>V</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider">
+           <property name="toolTip">
+            <string>Saturation</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="3">
+          <widget class="color_widgets::ColorWheel" name="colorWheel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>200</height>
+            </size>
+           </property>
+           <property name="selectorShape">
+            <enum>color_widgets::ColorWheel::ShapeSquare</enum>
+           </property>
+           <property name="rotatingSelector">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_3">
+        <attribute name="title">
+         <string>HSL</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="1" column="1">
+          <widget class="color_widgets::HueSlider" name="HueSlider_2">
+           <property name="toolTip">
+            <string>Hue</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="toolTip">
+            <string>Hue</string>
+           </property>
+           <property name="text">
+            <string>H</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QSpinBox" name="spinBox_6"/>
+         </item>
+         <item row="1" column="2">
+          <widget class="QSpinBox" name="spinBox_5">
+           <property name="toolTip">
+            <string>Hue</string>
+           </property>
+           <property name="maximum">
+            <number>259</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="3">
+          <widget class="color_widgets::ColorWheel" name="colorWheel_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>200</height>
+            </size>
+           </property>
+           <property name="selectorShape">
+            <enum>color_widgets::ColorWheel::ShapeSquare</enum>
+           </property>
+           <property name="rotatingSelector">
+            <bool>false</bool>
+           </property>
+           <property name="colorSpace">
+            <enum>color_widgets::ColorWheel::ColorHSL</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QSpinBox" name="spinBox_7"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider_4">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider_5">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>S</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>L</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>RGB</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="2" column="1">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider_8">
+           <property name="toolTip">
+            <string>Blue</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="toolTip">
+            <string>Blue</string>
+           </property>
+           <property name="text">
+            <string>B</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider_7">
+           <property name="toolTip">
+            <string>Green</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="toolTip">
+            <string>Red</string>
+           </property>
+           <property name="text">
+            <string>R</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="toolTip">
+            <string>Green</string>
+           </property>
+           <property name="text">
+            <string>G</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider_6">
+           <property name="toolTip">
+            <string>Red</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QSpinBox" name="spinBox_8">
+           <property name="toolTip">
+            <string>Red</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QSpinBox" name="spinBox_9">
+           <property name="toolTip">
+            <string>Green</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QSpinBox" name="spinBox_10">
+           <property name="toolTip">
+            <string>Blue</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_4">
+        <attribute name="title">
+         <string>CYMK</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="8" column="3">
+          <widget class="QSpinBox" name="spinBox_14">
+           <property name="toolTip">
+            <string>Black</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider_9">
+           <property name="toolTip">
+            <string>Cyan</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_14">
+           <property name="toolTip">
+            <string>Black</string>
+           </property>
+           <property name="text">
+            <string>K</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QSpinBox" name="spinBox_11">
+           <property name="toolTip">
+            <string>Cyan</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider_10">
+           <property name="toolTip">
+            <string>Yellow</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="QLabel" name="label_12">
+           <property name="toolTip">
+            <string>Yellow</string>
+           </property>
+           <property name="text">
+            <string>Y</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="3">
+          <widget class="QSpinBox" name="spinBox_12">
+           <property name="toolTip">
+            <string>Yellow</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1" colspan="2">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider_12">
+           <property name="toolTip">
+            <string>Black</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_11">
+           <property name="toolTip">
+            <string>Cyan</string>
+           </property>
+           <property name="text">
+            <string>C</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="color_widgets::GradientSlider" name="GradientSlider_11">
+           <property name="toolTip">
+            <string>Magenta</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="toolTip">
+            <string>Magenta</string>
+           </property>
+           <property name="text">
+            <string>M</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QSpinBox" name="spinBox_13">
+           <property name="toolTip">
+            <string>Magenta</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_5">
+        <attribute name="title">
+         <string>Palette</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="color_widgets::ColorPaletteWidget" name="palette_widget"/>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="1">
+        <widget class="color_widgets::GradientSlider" name="GradientSlider_3">
+         <property name="toolTip">
+          <string>Alpha (Transparency)</string>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="toolTip">
+          <string>Alpha (Transparency)</string>
+         </property>
+         <property name="text">
+          <string>A</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QSpinBox" name="spinBox_4">
+         <property name="toolTip">
+          <string>Alpha (Transparency)</string>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="color_widgets::ColorLineEdit" name="color_line_edit"/>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_tools">
+   <property name="windowTitle">
+    <string>Tools</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QGridLayout" name="gridLayout_6"/>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_tool_options">
+   <property name="windowTitle">
+    <string>Tool Options</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="windowTitle">
+    <string>Layers</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_4">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QComboBox" name="comboBox">
+         <item>
+          <property name="text">
+           <string>Main Animation</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="toolButton_4">
+         <property name="toolTip">
+          <string>Add new composition</string>
+         </property>
+         <property name="text">
+          <string>New Composition</string>
+         </property>
+         <property name="icon">
+          <iconset theme="list-add"/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QTreeView" name="treeView"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>Add</string>
+         </property>
+         <property name="icon">
+          <iconset theme="list-add"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="text">
+          <string>Duplicate</string>
+         </property>
+         <property name="icon">
+          <iconset theme="edit-duplicate"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>Remove</string>
+         </property>
+         <property name="icon">
+          <iconset theme="list-remove"/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_2">
+   <property name="windowTitle">
+    <string>Properties</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_5">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <item>
+      <widget class="QTableView" name="tableView"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_3">
+   <property name="windowTitle">
+    <string>Timeline</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_6">
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QSpinBox" name="spinBox_15"/>
+     </item>
+     <item>
+      <widget class="QWidget" name="widget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="action_New">
+   <property name="icon">
+    <iconset theme="document-new">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New</string>
+   </property>
+  </action>
+  <action name="action_Open">
+   <property name="icon">
+    <iconset theme="document-open">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open...</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="icon">
+    <iconset theme="document-save">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="icon">
+    <iconset theme="document-save-as">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Save &amp;As...</string>
+   </property>
+  </action>
+  <action name="action_Close">
+   <property name="icon">
+    <iconset theme="document-close">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Close</string>
+   </property>
+  </action>
+  <action name="action_Quit">
+   <property name="icon">
+    <iconset theme="application-exit">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="action_Select">
+   <property name="icon">
+    <iconset theme="edit-select">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Select</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="action_Edit">
+   <property name="icon">
+    <iconset theme="tool-node-editor">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Edit</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="action_Draw">
+   <property name="icon">
+    <iconset theme="draw-path">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Draw Bezier</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="actionDraw_Freehand">
+   <property name="icon">
+    <iconset theme="draw-freehand">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Draw &amp;Freehand</string>
+   </property>
+   <property name="shortcut">
+    <string>F6</string>
+   </property>
+  </action>
+  <action name="action_Rectangle">
+   <property name="icon">
+    <iconset theme="draw-rectangle">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Rectangle</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="action_Ellipse">
+   <property name="icon">
+    <iconset theme="draw-ellipse">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Ellipse</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionS_tar">
+   <property name="icon">
+    <iconset theme="draw-star"/>
+   </property>
+   <property name="text">
+    <string>S&amp;tar</string>
+   </property>
+   <property name="shortcut">
+    <string>*</string>
+   </property>
+  </action>
+  <action name="action_Null_Layer">
+   <property name="icon">
+    <iconset theme="transform-move"/>
+   </property>
+   <property name="text">
+    <string>&amp;Null Layer</string>
+   </property>
+  </action>
+  <action name="action_Shape_Layer">
+   <property name="icon">
+    <iconset theme="shapes"/>
+   </property>
+   <property name="text">
+    <string>&amp;Shape Layer</string>
+   </property>
+  </action>
+  <action name="action_Precomposition_Layer">
+   <property name="icon">
+    <iconset theme="tool-animator"/>
+   </property>
+   <property name="text">
+    <string>&amp;Precomposition Layer</string>
+   </property>
+  </action>
+  <action name="action_Move_To_Composition">
+   <property name="icon">
+    <iconset theme="archive-extract"/>
+   </property>
+   <property name="text">
+    <string>&amp;Move To Composition</string>
+   </property>
+  </action>
+  <action name="actionNew_Pre_Composition">
+   <property name="icon">
+    <iconset theme="tool-animator"/>
+   </property>
+   <property name="text">
+    <string>New &amp;Pre Composition</string>
+   </property>
+  </action>
+  <action name="action_Add">
+   <property name="text">
+    <string>&amp;Add</string>
+   </property>
+  </action>
+  <action name="action_Subtract">
+   <property name="text">
+    <string>&amp;Subtract</string>
+   </property>
+  </action>
+  <action name="action_Intersect">
+   <property name="text">
+    <string>&amp;Intersect</string>
+   </property>
+  </action>
+  <action name="action_XOR">
+   <property name="text">
+    <string>&amp;XOR</string>
+   </property>
+  </action>
+  <action name="action_Reverse">
+   <property name="text">
+    <string>Re&amp;verse</string>
+   </property>
+  </action>
+  <action name="actionObject_to_Path">
+   <property name="text">
+    <string>Object to &amp;Path</string>
+   </property>
+  </action>
+  <action name="actionAdd_Node">
+   <property name="icon">
+    <iconset theme="format-add-node"/>
+   </property>
+   <property name="text">
+    <string>Add &amp;Node</string>
+   </property>
+  </action>
+  <action name="action_Remove_Node">
+   <property name="icon">
+    <iconset theme="format-remove-node"/>
+   </property>
+   <property name="text">
+    <string>&amp;Remove Node</string>
+   </property>
+  </action>
+  <action name="action_Join_Nodes">
+   <property name="icon">
+    <iconset theme="format-join-node"/>
+   </property>
+   <property name="text">
+    <string>&amp;Join Nodes</string>
+   </property>
+  </action>
+  <action name="actionS_plit_Nodes">
+   <property name="icon">
+    <iconset theme="format-break-node"/>
+   </property>
+   <property name="text">
+    <string>S&amp;plit Nodes</string>
+   </property>
+  </action>
+  <action name="action_Corner">
+   <property name="text">
+    <string>&amp;Corner</string>
+   </property>
+  </action>
+  <action name="action_Smooth">
+   <property name="text">
+    <string>&amp;Smooth</string>
+   </property>
+  </action>
+  <action name="actionSy_mmetric">
+   <property name="text">
+    <string>Sy&amp;mmetric</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>color_widgets::ColorWheel</class>
+   <extends>QWidget</extends>
+   <header>QtColorWidgets/color_wheel.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>color_widgets::GradientSlider</class>
+   <extends>QSlider</extends>
+   <header>QtColorWidgets/gradient_slider.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>color_widgets::HueSlider</class>
+   <extends>color_widgets::GradientSlider</extends>
+   <header>QtColorWidgets/hue_slider.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>color_widgets::ColorPaletteWidget</class>
+   <extends>QWidget</extends>
+   <header>QtColorWidgets/color_palette_widget.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>color_widgets::ColorLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>QtColorWidgets/color_line_edit.hpp</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>GradientSlider_3</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_4</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1182</x>
+     <y>441</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1274</x>
+     <y>438</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_4</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GradientSlider_3</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1262</x>
+     <y>444</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1158</x>
+     <y>437</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>HueSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1192</x>
+     <y>331</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1256</x>
+     <y>333</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>HueSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1268</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1176</x>
+     <y>323</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>GradientSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1207</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1269</x>
+     <y>364</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GradientSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1256</x>
+     <y>365</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1195</x>
+     <y>357</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>GradientSlider_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_3</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1204</x>
+     <y>392</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1262</x>
+     <y>396</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_3</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GradientSlider_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1256</x>
+     <y>386</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1188</x>
+     <y>388</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>HueSlider_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_5</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1206</x>
+     <y>328</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1255</x>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_5</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>HueSlider_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1254</x>
+     <y>340</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1204</x>
+     <y>330</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>GradientSlider_4</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_6</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1226</x>
+     <y>369</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1241</x>
+     <y>366</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_6</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GradientSlider_4</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1262</x>
+     <y>353</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1228</x>
+     <y>362</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>GradientSlider_5</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_7</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1207</x>
+     <y>389</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1260</x>
+     <y>398</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_7</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GradientSlider_5</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1248</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1199</x>
+     <y>401</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

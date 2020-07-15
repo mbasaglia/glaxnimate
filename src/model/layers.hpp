@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMetaType>
+#include <QColor>
 
 #include "property.hpp"
 
@@ -28,7 +29,7 @@ public:
     // hd
     FixedValueProperty<LayerType> type;
     Property<QString> name{this, "name", "nm", ""};
-    // parent
+    Property<Layer*> parent{this, "parent", "parent", nullptr};
     // stretch
     // transform
     // auto_orient
@@ -43,6 +44,7 @@ public:
     // has_masks
     // masks
     // effects
+    Property<QColor> group_color{this, "color", "", QColor(1, 1, 1)};
 };
 
 namespace detail {
