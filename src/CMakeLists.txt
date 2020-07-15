@@ -6,6 +6,7 @@ main.cpp
 
 model/object.cpp
 model/document.cpp
+model/layers.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui

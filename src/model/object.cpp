@@ -20,12 +20,6 @@ model::Object::Object()
 
 model::Object::~Object() = default;
 
-std::unique_ptr<model::Object> model::Object::clone() const
-{
-    auto object = std::make_unique<model::Object>();
-    clone_into(object.get());
-    return object;
-}
 
 void model::Object::clone_into(model::Object* dest) const
 {

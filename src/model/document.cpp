@@ -1,5 +1,4 @@
 #include "document.hpp"
-#include "moc_layers.cpp" // HACK to avoid having layers.cpp
 
 class model::Document::Private
 {

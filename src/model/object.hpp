@@ -50,7 +50,18 @@ public:
     Object();
     ~Object();
 
-    virtual std::unique_ptr<Object> clone() const;
+    std::unique_ptr<Object> clone() const
+    {
+        return clone_impl();
+    }
+
+    std::unique_ptr<Object> clone_covariant() const
+    {
+        auto object = std::make_unique<Object>();
+        clone_into(object.get());
+        return object;
+    }
+
 
     QVariant get(const QString& property) const;
     bool set(const QString& property, const QVariant& value, bool allow_unknown = false);
@@ -65,13 +76,38 @@ signals:
 protected:
     void clone_into(Object* dest) const;
 
+
 private:
+    virtual std::unique_ptr<Object> clone_impl() const
+    {
+        return clone_covariant();
+    }
+
     void add_property(BaseProperty* prop);
     void property_value_changed(const QString& name, const QVariant& value);
 
     friend BaseProperty;
     class Private;
     std::unique_ptr<Private> d;
+};
+
+template <class Derived, class Base>
+class ObjectBase : public Base
+{
+public:
+    std::unique_ptr<Derived> clone_covariant() const
+    {
+        auto object = std::make_unique<Derived>();
+        this->clone_into(object.get());
+        return object;
+    }
+
+private:
+    std::unique_ptr<Object> clone_impl() const override
+    {
+        return clone_covariant();
+    }
+
 };
 
 } // namespace model

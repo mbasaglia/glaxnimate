@@ -150,7 +150,7 @@ public:
     using held_type = Type;
     using pointer = std::unique_ptr<Type>;
     using reference = Type&;
-    using const_reference = const Type&;
+//     using const_reference = const Type&;
     using iterator = typename std::vector<pointer>::iterator;
     using const_iterator = typename std::vector<pointer>::const_iterator;
 
@@ -158,14 +158,11 @@ public:
         : BaseProperty(obj, std::move(name), std::move(lottie))
     {}
 
-    reference operator[](int i) { return *objects[i]; }
-    const_reference operator[](int i) const { return *objects[i]; }
+    reference operator[](int i) const { return *objects[i]; }
     int size() const { return objects.size(); }
     bool empty() const { return objects.empty(); }
-    iterator begin() { return objects.begin(); }
-    iterator end() { return objects.end(); }
-    const_iterator begin() const { return objects.begin(); }
-    const_iterator end() const { return objects.end(); }
+    iterator begin() const { return objects.begin(); }
+    iterator end() const { return objects.end(); }
 
     void push_back(pointer p)
     {

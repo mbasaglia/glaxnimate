@@ -4,7 +4,7 @@
 
 namespace model {
 
-class Animation : public Composition
+class Animation : public ObjectBase<Animation, Composition>
 {
 public:
     Property<QString> version{this, "version", "v", ""};

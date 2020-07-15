@@ -13,6 +13,61 @@ enum class LayerType
     ShapeLayer = 4,
 };
 
+class Composition;
+class Layer;
+
+class ChildLayerView
+{
+public:
+    class iterator
+    {
+    public:
+        iterator& operator++()
+        {
+            ++index;
+            find_first();
+            return *this;
+        }
+
+        Layer& operator*() const;
+        Layer* operator->() const;
+
+        bool operator==(const iterator& other) const
+        {
+            return comp == other.comp && parent == other.parent && index == other.index;
+        }
+
+        bool operator!=(const iterator& other) const
+        {
+            return !(*this == other);
+        }
+
+    private:
+        iterator(const Composition* comp, const Layer* parent, int index)
+        : comp(comp),
+          parent(parent),
+          index(index)
+        {
+            find_first();
+        }
+
+        void find_first();
+        friend ChildLayerView;
+        const Composition* comp;
+        const Layer* parent;
+        int index;
+    };
+
+    ChildLayerView(const Composition* comp, const Layer* parent);
+
+    iterator begin() const;
+    iterator end() const;
+
+private:
+    const Composition* comp;
+    const Layer* parent;
+};
+
 
 
 class Layer : public Object
@@ -21,9 +76,11 @@ class Layer : public Object
     Q_ENUM(LayerType);
 
 public:
-    explicit Layer(LayerType type)
-        : type{this, "type", "ty", type}
+    explicit Layer(Composition* composition, LayerType type)
+        : composition(composition), type{this, "type", "ty", type}
     {}
+
+    Composition* composition;
 
     // ddd
     // hd
@@ -45,23 +102,56 @@ public:
     // masks
     // effects
     Property<QColor> group_color{this, "color", "", QColor(1, 1, 1)};
+
+    ChildLayerView children() const
+    {
+        return ChildLayerView(composition, this);
+    }
+
+
+    std::unique_ptr<Layer> clone_covariant() const
+    {
+        auto object = std::make_unique<Layer>(composition, type.get());
+        clone_into(object.get());
+        return object;
+    }
+
+private:
+    std::unique_ptr<Object> clone_impl() const override
+    {
+        return clone_covariant();
+    }
 };
 
 namespace detail {
-    template<LayerType lt>
+    template<class Derived, LayerType lt>
     class BaseLayerProps : public Layer
     {
     public:
-        BaseLayerProps() : Layer(lt) {}
+        BaseLayerProps(Composition* composition) : Layer(composition, lt) {}
+
+
+        std::unique_ptr<Derived> clone_covariant() const
+        {
+            auto object = std::make_unique<Derived>(composition);
+            clone_into(object.get());
+            return object;
+        }
+
+    private:
+        std::unique_ptr<Object> clone_impl() const override
+        {
+            return clone_covariant();
+        }
     };
 } // namespace detail
 
 
-class NullLayer : public detail::BaseLayerProps<LayerType::NullLayer>
+class NullLayer : public detail::BaseLayerProps<NullLayer, LayerType::NullLayer>
 {};
 
 
-class ShapeLayer : public detail::BaseLayerProps<LayerType::ShapeLayer>
+class ShapeLayer : public detail::BaseLayerProps<ShapeLayer, LayerType::ShapeLayer>
 {
     // shapes
 };
