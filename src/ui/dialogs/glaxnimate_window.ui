@@ -1894,7 +1894,7 @@
    <sender>palette_widget</sender>
    <signal>currentColorChanged(QColor)</signal>
    <receiver>GlaxnimateWindow</receiver>
-   <slot>color_update_noalpha(QColor)</slot>
+   <slot>color_update_alpha(QColor)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>1258</x>

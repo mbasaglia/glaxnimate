@@ -4,8 +4,10 @@
 #include <QGraphicsView>
 #include <QToolButton>
 
-#include "ui_glaxnimate_window.h"
+#include "QtColorWidgets/color_palette_model.hpp"
 
+#include "ui_glaxnimate_window.h"
+#include "app/app_info.hpp"
 #include "model/document.hpp"
 #include "ui/dialogs/import_export_dialog.hpp"
 
@@ -42,6 +44,7 @@ public:
     QString undo_text;
     QString redo_text;
     bool updating_color = false;
+    color_widgets::ColorPaletteModel palette_model;
 
 
     model::Document* current_document()
@@ -188,6 +191,8 @@ public:
 
         // Colors
         update_color(Qt::black, true, nullptr);
+        ui.palette_widget->setModel(&palette_model);
+        palette_model.setSearchPaths(AppInfo::instance().data_paths_unchecked("palettes"));
     }
 
     void retranslateUi(QMainWindow* parent)
@@ -295,8 +300,10 @@ public:
         update_color_slider(ui.slider_cmyk_y, col, color_y, col.yellow());
         update_color_slider(ui.slider_cmyk_k, col, color_k, col.black());
 
-        qDebug() << col.hsvHue() << col.hslHue();
-
+        // Palette
+        if ( source != ui.palette_widget )
+            ui.palette_widget->setCurrentColor(col);
+        ui.palette_widget->setDefaultColor(col);
 
         updating_color = false;
     }
