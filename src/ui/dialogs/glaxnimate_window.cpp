@@ -36,6 +36,27 @@ void GlaxnimateWindow::document_new()
     model::Document* new_doc = d->create_document(tr("New Animation"));
 
     if ( curr )
-        new_doc->set_save_path(curr->save_path());
+    {
+        auto opts = new_doc->export_options();
+        opts.path = curr->export_options().path;
+        new_doc->set_export_options(opts);
+    }
 }
+
+void GlaxnimateWindow::document_save()
+{
+    if ( d->save_document(d->current_document(), false, true) )
+        d->ui.status_bar->showMessage(tr("File saved"), 5000);
+    else
+        d->ui.status_bar->showMessage(tr("Could not save file"));
+}
+
+void GlaxnimateWindow::document_save_as()
+{
+    if ( d->save_document(d->current_document(), true, true) )
+        d->ui.status_bar->showMessage(tr("File saved"), 5000);
+    else
+        d->ui.status_bar->showMessage(tr("Could not save file"));
+}
+
 

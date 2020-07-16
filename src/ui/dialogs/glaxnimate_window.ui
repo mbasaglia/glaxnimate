@@ -159,7 +159,7 @@
    <addaction name="menu_Layers"/>
    <addaction name="menu_Path"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="status_bar"/>
   <widget class="QToolBar" name="toolbar_main">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -200,7 +200,7 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QTabWidget" name="tabWidget">
+      <widget class="QTabWidget" name="tab_6">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
          <horstretch>0</horstretch>
@@ -214,7 +214,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -242,14 +242,14 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="color_widgets::HueSlider" name="HueSlider">
+          <widget class="color_widgets::HueSlider" name="slider_hsv_hue">
            <property name="toolTip">
             <string>Hue</string>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider_2">
+          <widget class="color_widgets::GradientSlider" name="slider_hsv_value">
            <property name="toolTip">
             <string>Value</string>
            </property>
@@ -296,7 +296,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider">
+          <widget class="color_widgets::GradientSlider" name="slider_hsv_sat">
            <property name="toolTip">
             <string>Saturation</string>
            </property>
@@ -332,7 +332,7 @@
         </attribute>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="1" column="1">
-          <widget class="color_widgets::HueSlider" name="HueSlider_2">
+          <widget class="color_widgets::HueSlider" name="slider_hsl_hue">
            <property name="toolTip">
             <string>Hue</string>
            </property>
@@ -390,14 +390,14 @@
           <widget class="QSpinBox" name="spinBox_7"/>
          </item>
          <item row="2" column="1">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider_4">
+          <widget class="color_widgets::GradientSlider" name="slider_hsl_sat">
            <property name="maximum">
             <number>255</number>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider_5">
+          <widget class="color_widgets::GradientSlider" name="slider_hsl_light">
            <property name="maximum">
             <number>255</number>
            </property>
@@ -425,7 +425,7 @@
         </attribute>
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="2" column="1">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider_8">
+          <widget class="color_widgets::GradientSlider" name="slider_rgb_b">
            <property name="toolTip">
             <string>Blue</string>
            </property>
@@ -445,7 +445,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider_7">
+          <widget class="color_widgets::GradientSlider" name="slider_rgb_g">
            <property name="toolTip">
             <string>Green</string>
            </property>
@@ -475,7 +475,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider_6">
+          <widget class="color_widgets::GradientSlider" name="slider_rgb_r">
            <property name="toolTip">
             <string>Red</string>
            </property>
@@ -523,7 +523,7 @@
           </widget>
          </item>
          <item row="0" column="1" colspan="2">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider_9">
+          <widget class="color_widgets::GradientSlider" name="slider_cmyk_c">
            <property name="toolTip">
             <string>Cyan</string>
            </property>
@@ -550,7 +550,7 @@
           </widget>
          </item>
          <item row="4" column="2">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider_10">
+          <widget class="color_widgets::GradientSlider" name="slider_cmyk_y">
            <property name="toolTip">
             <string>Yellow</string>
            </property>
@@ -577,7 +577,7 @@
           </widget>
          </item>
          <item row="8" column="1" colspan="2">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider_12">
+          <widget class="color_widgets::GradientSlider" name="slider_cmyk_k">
            <property name="toolTip">
             <string>Black</string>
            </property>
@@ -594,7 +594,7 @@
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="color_widgets::GradientSlider" name="GradientSlider_11">
+          <widget class="color_widgets::GradientSlider" name="slider_cmyk_m">
            <property name="toolTip">
             <string>Magenta</string>
            </property>
@@ -637,7 +637,7 @@
      <item>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="1">
-        <widget class="color_widgets::GradientSlider" name="GradientSlider_3">
+        <widget class="color_widgets::GradientSlider" name="slider_alpha">
          <property name="toolTip">
           <string>Alpha (Transparency)</string>
          </property>
@@ -1218,7 +1218,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="edit-undo"/>
+    <iconset theme="edit-undo">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Undo %1</string>
@@ -1229,7 +1230,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="edit-redo"/>
+    <iconset theme="edit-redo">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Redo %1</string>
@@ -1266,153 +1268,153 @@
  <resources/>
  <connections>
   <connection>
-   <sender>GradientSlider_3</sender>
+   <sender>slider_alpha</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinBox_4</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1182</x>
-     <y>441</y>
+     <x>1243</x>
+     <y>467</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1274</x>
-     <y>438</y>
+     <x>1303</x>
+     <y>473</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>spinBox_4</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>GradientSlider_3</receiver>
+   <receiver>slider_alpha</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1262</x>
-     <y>444</y>
+     <x>1303</x>
+     <y>473</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1158</x>
-     <y>437</y>
+     <x>1243</x>
+     <y>467</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>HueSlider</sender>
+   <sender>slider_hsv_hue</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1192</x>
-     <y>331</y>
+     <x>1233</x>
+     <y>356</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1256</x>
-     <y>333</y>
+     <x>1293</x>
+     <y>362</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>spinBox</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>HueSlider</receiver>
+   <receiver>slider_hsv_hue</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1268</x>
-     <y>317</y>
+     <x>1293</x>
+     <y>362</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1176</x>
-     <y>323</y>
+     <x>1233</x>
+     <y>356</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>GradientSlider</sender>
+   <sender>slider_hsv_sat</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinBox_2</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1207</x>
-     <y>361</y>
+     <x>1233</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1269</x>
-     <y>364</y>
+     <x>1293</x>
+     <y>395</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>spinBox_2</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>GradientSlider</receiver>
+   <receiver>slider_hsv_sat</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1256</x>
-     <y>365</y>
+     <x>1293</x>
+     <y>395</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1195</x>
-     <y>357</y>
+     <x>1233</x>
+     <y>389</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>GradientSlider_2</sender>
+   <sender>slider_hsv_value</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinBox_3</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1204</x>
-     <y>392</y>
+     <x>1233</x>
+     <y>422</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1262</x>
-     <y>396</y>
+     <x>1293</x>
+     <y>428</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>spinBox_3</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>GradientSlider_2</receiver>
+   <receiver>slider_hsv_value</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1256</x>
-     <y>386</y>
+     <x>1293</x>
+     <y>428</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1188</x>
-     <y>388</y>
+     <x>1233</x>
+     <y>422</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>HueSlider_2</sender>
+   <sender>slider_hsl_hue</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinBox_5</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1206</x>
-     <y>328</y>
+     <x>1233</x>
+     <y>356</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1255</x>
-     <y>325</y>
+     <x>1293</x>
+     <y>362</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>spinBox_5</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>HueSlider_2</receiver>
+   <receiver>slider_hsl_hue</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1420,74 +1422,127 @@
      <y>340</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1204</x>
-     <y>330</y>
+     <x>1233</x>
+     <y>356</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>GradientSlider_4</sender>
+   <sender>slider_hsl_sat</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinBox_6</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1226</x>
-     <y>369</y>
+     <x>1233</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1241</x>
-     <y>366</y>
+     <x>1293</x>
+     <y>395</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>spinBox_6</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>GradientSlider_4</receiver>
+   <receiver>slider_hsl_sat</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1262</x>
-     <y>353</y>
+     <x>1293</x>
+     <y>395</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1228</x>
-     <y>362</y>
+     <x>1233</x>
+     <y>389</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>GradientSlider_5</sender>
+   <sender>slider_hsl_light</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spinBox_7</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1207</x>
-     <y>389</y>
+     <x>1233</x>
+     <y>422</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1260</x>
-     <y>398</y>
+     <x>1293</x>
+     <y>428</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>spinBox_7</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>GradientSlider_5</receiver>
+   <receiver>slider_hsl_light</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1248</x>
-     <y>395</y>
+     <x>1293</x>
+     <y>428</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1199</x>
-     <y>401</y>
+     <x>1233</x>
+     <y>422</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_save</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>document_save()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_new</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>document_new()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_save_as</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>document_save_as()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>document_save()</slot>
+  <slot>document_new()</slot>
+  <slot>document_save_as()</slot>
+ </slots>
 </ui>

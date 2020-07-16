@@ -6,6 +6,7 @@
 #include "ui_glaxnimate_window.h"
 
 #include "model/document.hpp"
+#include "ui/dialogs/import_export_dialog.hpp"
 
 
 class GlaxnimateWindow::Private
@@ -37,6 +38,43 @@ public:
         QObject::connect(doc, &model::Document::filename_changed, widget, &QWidget::setWindowTitle);
         switch_to_document(doc);
         return doc;
+    }
+
+    bool save_document(model::Document* doc, bool force_dialog, bool overwrite_doc)
+    {
+        if ( !doc )
+            return false;
+
+        io::SavedIoOptions opts = doc->export_options();
+
+        if ( !opts.method )
+            force_dialog = true;
+
+        if ( force_dialog )
+        {
+            ImportExportDialog dialog(ui.centralwidget->parentWidget());
+
+            if ( !dialog.export_dialog(doc) )
+                return false;
+
+            if ( !dialog.options_dialog() )
+                return false;
+
+            opts = dialog.io_options();
+        }
+
+        // TODO progess/error dialogs
+        QFile file(opts.filename);
+        file.open(QFile::WriteOnly);
+        if ( !opts.method->process(file, opts.filename, doc, opts.options) )
+            return false;
+
+        doc->undo_stack().setClean();
+
+        if ( overwrite_doc )
+            doc->set_export_options(opts);
+
+        return true;
     }
 
     void switch_to_document(model::Document* document)

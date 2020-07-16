@@ -5,39 +5,22 @@ class model::Document::Private
 public:
     Animation animation;
     QUndoStack undo_stack;
-    QString filename;
-    QDir save_path;
     QVariantMap metadata;
+    io::SavedIoOptions exporter;
 };
 
 
 model::Document::Document(const QString& filename)
     : d ( std::make_unique<model::Document::Private>() )
 {
-    d->filename = filename;
+    d->exporter.filename = filename;
 }
 
 model::Document::~Document() = default;
 
-QDir model::Document::save_path() const
-{
-    return d->save_path;
-}
-
-void model::Document::set_save_path(const QDir& p)
-{
-    d->save_path = p;
-}
-
 QString model::Document::filename() const
 {
-    return d->filename;
-}
-
-void model::Document::set_filename(const QString& n)
-{
-    d->filename = n;
-    emit filename_changed(n);
+    return d->exporter.filename;
 }
 
 model::Animation & model::Document::animation()
@@ -54,3 +37,18 @@ QUndoStack & model::Document::undo_stack()
 {
     return d->undo_stack;
 }
+
+
+const io::SavedIoOptions & model::Document::export_options() const
+{
+    return d->exporter;
+}
+
+void model::Document::set_export_options(const io::SavedIoOptions& opt)
+{
+    bool em = opt.filename != d->exporter.filename;
+    d->exporter = opt;
+    if ( em )
+        emit filename_changed(d->exporter.filename);
+}
+

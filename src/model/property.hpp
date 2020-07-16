@@ -6,12 +6,39 @@
 
 namespace model {
 
+struct PropertyTraits
+{
+    enum Type
+    {
+        Basic,
+        Object,
+        ObjectReference
+    };
+
+    bool list = false;
+    Type type = Basic;
+
+    bool is_simple_value() const
+    {
+        return !list && type == Basic;
+    }
+
+    template<class T>
+    static PropertyTraits from_scalar(bool list=false)
+    {
+        return {
+            list,
+            std::is_pointer<T>::value ? ObjectReference : Basic
+        };
+    }
+};
+
 
 class BaseProperty
 {
 public:
-    BaseProperty(Object* obj, QString name, QString lottie)
-        : obj(std::move(obj)), name_(std::move(name)), lottie_(lottie)
+    BaseProperty(Object* obj, QString name, QString lottie, PropertyTraits traits)
+        : obj(std::move(obj)), name_(std::move(name)), lottie_(lottie), traits_(traits)
     {
         obj->add_property(this);
     }
@@ -32,6 +59,11 @@ public:
         return lottie_;
     }
 
+    PropertyTraits traits() const
+    {
+        return traits_;
+    }
+
 protected:
     void value_changed()
     {
@@ -42,6 +74,7 @@ private:
     Object* obj;
     QString name_;
     QString lottie_;
+    PropertyTraits traits_;
 };
 
 
@@ -53,7 +86,7 @@ public:
     using reference = Reference;
 
     FixedValueProperty(Object* obj, QString name, QString lottie, Type value)
-        : BaseProperty(obj, std::move(name), std::move(lottie)),
+        : BaseProperty(obj, std::move(name), std::move(lottie), PropertyTraits::from_scalar<Type>()),
           value_(std::move(value))
     {}
 
@@ -85,7 +118,7 @@ public:
     using reference = Reference;
 
     Property(Object* obj, QString name, QString lottie, Type default_value = Type())
-        : BaseProperty(obj, std::move(name), std::move(lottie)),
+        : BaseProperty(obj, std::move(name), std::move(lottie), PropertyTraits::from_scalar<Type>()),
           value_(std::move(default_value))
     {}
 
@@ -122,7 +155,7 @@ class UnknownProperty : public BaseProperty
 {
 public:
     UnknownProperty(Object* obj, const QString& name, QVariant value)
-        : BaseProperty(obj, name, name),
+        : BaseProperty(obj, name, name, {false, PropertyTraits::Basic}),
           variant(std::move(value))
     {}
 
@@ -151,11 +184,11 @@ public:
     using pointer = std::unique_ptr<Type>;
     using reference = Type&;
 //     using const_reference = const Type&;
-    using iterator = typename std::vector<pointer>::iterator;
-    using const_iterator = typename std::vector<pointer>::const_iterator;
+    using iterator = typename std::vector<pointer>::const_iterator;
+//     using const_iterator = typename std::vector<pointer>::const_iterator;
 
     ObjectListProperty(Object* obj, QString name, QString lottie)
-        : BaseProperty(obj, std::move(name), std::move(lottie))
+        : BaseProperty(obj, std::move(name), std::move(lottie), {true, PropertyTraits::Object})
     {}
 
     reference operator[](int i) const { return *objects[i]; }

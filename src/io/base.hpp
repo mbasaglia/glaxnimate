@@ -26,10 +26,13 @@ public:
         return can_handle_extension(QFileInfo(filename).completeSuffix());
     }
 
-    virtual bool process(const QString& filename, model::Document* document) const = 0;
+    /**
+     * @pre @p file is open appropriately && @p option_values contains all the options correctly
+     */
+    virtual bool process(QIODevice& file, const QString& filename,
+                         model::Document* document, const QVariantMap& option_values) const = 0;
 
     virtual QString name() const = 0;
-    virtual QString description() const = 0;
     virtual QStringList extensions() const = 0;
     virtual OptionList options() const = 0;
 
@@ -49,12 +52,12 @@ public:
         object_list.push_back(std::move(ie));
     }
 
-    const std::vector<std::unique_ptr<Derived>>& registered()
+    const std::vector<std::unique_ptr<Derived>>& registered() const
     {
         return object_list;
     }
 
-    Derived* from_extension(const QString& extension)
+    Derived* from_extension(const QString& extension) const
     {
         for ( const auto& p : object_list )
             if ( p->can_handle_extension(extension) )
@@ -63,7 +66,7 @@ public:
         return nullptr;
     }
 
-    Derived* from_filename(const QString& filename)
+    Derived* from_filename(const QString& filename) const
     {
         for ( const auto& p : object_list )
             if ( p->can_handle_filename(filename) )
@@ -72,7 +75,7 @@ public:
         return nullptr;
     }
 
-    bool process(const QString& filename, model::Document* document)
+    bool process(const QString& filename, model::Document* document) const
     {
         for ( const auto& p : object_list )
             if ( p->can_handle_filename(filename) )

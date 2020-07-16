@@ -1,10 +1,11 @@
 #pragma once
 
-#include "animation.hpp"
 
 #include <QDir>
 #include <QUndoStack>
 
+#include "animation.hpp"
+#include "io/saved_io_options.hpp"
 
 namespace model {
 
@@ -18,17 +19,15 @@ public:
 
     QString filename() const;
 
-    QDir save_path() const;
-    void set_save_path(const QDir& p);
-
     QVariantMap& metadata() const;
 
     Animation& animation();
 
     QUndoStack& undo_stack();
 
-public slots:
-    void set_filename(const QString& n);
+    const io::SavedIoOptions& export_options() const;
+
+    void set_export_options(const io::SavedIoOptions& opt);
 
 signals:
     void filename_changed(const QString& n);

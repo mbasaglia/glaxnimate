@@ -17,6 +17,8 @@ public:
 
 public slots:
     void document_new();
+    void document_save();
+    void document_save_as();
 
 protected:
     void changeEvent(QEvent *e) override;
