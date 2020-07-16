@@ -750,7 +750,20 @@
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="QTreeView" name="view_document_node"/>
+      <widget class="QTreeView" name="view_document_node">
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="headerMinimumSectionSize">
+        <number>32</number>
+       </attribute>
+       <attribute name="headerDefaultSectionSize">
+        <number>32</number>
+       </attribute>
+       <attribute name="headerStretchLastSection">
+        <bool>false</bool>
+       </attribute>
+      </widget>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -818,7 +831,8 @@
           <string>Move To Top</string>
          </property>
          <property name="icon">
-          <iconset theme="go-top"/>
+          <iconset theme="go-top">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -831,7 +845,8 @@
           <string>Move Up</string>
          </property>
          <property name="icon">
-          <iconset theme="go-up"/>
+          <iconset theme="go-up">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -844,7 +859,8 @@
           <string>Move Down</string>
          </property>
          <property name="icon">
-          <iconset theme="go-down"/>
+          <iconset theme="go-down">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -857,7 +873,8 @@
           <string>Move To Bottom</string>
          </property>
          <property name="icon">
-          <iconset theme="go-bottom"/>
+          <iconset theme="go-bottom">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -2130,6 +2147,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>view_document_node</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>document_treeview_clicked(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1179</x>
+     <y>794</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1435</x>
+     <y>801</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
@@ -2138,5 +2171,6 @@
   <slot>color_update_noalpha(QColor)</slot>
   <slot>color_update_alpha(QColor)</slot>
   <slot>color_update_component(int)</slot>
+  <slot>document_treeview_clicked(QModelIndex)</slot>
  </slots>
 </ui>

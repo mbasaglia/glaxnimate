@@ -1,5 +1,60 @@
 #include "document_node_model.hpp"
 
+void model::DocumentNodeModel::connect_node ( model::DocumentNode* node )
+{
+    connect(node, &model::DocumentNode::docnode_child_add_begin, this, [this, node](int row) {
+        beginInsertRows(node_index(node), row, row);
+    });
+    connect(node, &model::DocumentNode::docnode_child_add_end, this, [this, node](model::DocumentNode* child) {
+        endInsertRows();
+        connect_node(child);
+    });
+    connect(node, &model::DocumentNode::docnode_child_remove_begin, this, [this, node](int row) {
+        beginRemoveRows(node_index(node), row, row);
+    });
+    connect(node, &model::DocumentNode::docnode_child_remove_end, this, [this, node](model::DocumentNode* child) {
+        endRemoveRows();
+        disconnect_node(child);
+    });
+    connect(node, &model::DocumentNode::docnode_visible_changed, this, [this, node]() {
+        QModelIndex ind = node_index(node);
+        QModelIndex par = node_index(node->docnode_parent());
+        QModelIndex changed = index(ind.row(), ColumnVisible, par);
+        dataChanged(changed, changed, {Qt::DecorationRole});
+    });
+    connect(node, &model::DocumentNode::docnode_locked_changed, this, [this, node]() {
+        QModelIndex ind = node_index(node);
+        QModelIndex par = node_index(node->docnode_parent());
+        QModelIndex changed = index(ind.row(), ColumnLocked, par);
+        dataChanged(changed, changed, {Qt::DecorationRole});
+    });
+    connect(node, &model::DocumentNode::docnode_group_color_changed, this, [this, node]() {
+        QModelIndex ind = node_index(node);
+        QModelIndex par = node_index(node->docnode_parent());
+        QModelIndex changed = index(ind.row(), ColumnColor, par);
+        dataChanged(changed, changed, {Qt::BackgroundColorRole, Qt::EditRole, Qt::DisplayRole});
+    });
+    connect(node, &model::DocumentNode::docnode_name_changed, this, [this, node]() {
+        QModelIndex ind = node_index(node);
+        QModelIndex par = node_index(node->docnode_parent());
+        QModelIndex changed = index(ind.row(), ColumnName, par);
+        dataChanged(changed, changed, {Qt::EditRole, Qt::DisplayRole});
+    });
+
+    for ( int i = 0; i < node->docnode_child_count(); i++ )
+        connect_node(node->docnode_child(i));
+}
+
+void model::DocumentNodeModel::disconnect_node ( model::DocumentNode* node )
+{
+    disconnect(node, nullptr, this, nullptr);
+
+    for ( int i = 0; i < node->docnode_child_count(); i++ )
+        disconnect_node(node->docnode_child(i));
+}
+
+
+
 
 int model::DocumentNodeModel::rowCount ( const QModelIndex& parent ) const
 {
@@ -43,10 +98,17 @@ Qt::ItemFlags model::DocumentNodeModel::flags ( const QModelIndex& index ) const
 
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
 
-    if ( index.column() == ColumnName )
-        flags |= Qt::ItemIsEditable;
-    else
-        flags |= Qt::ItemIsUserCheckable;
+    switch ( index.column() )
+    {
+        case ColumnName:
+        case ColumnColor:
+            flags |= Qt::ItemIsEditable;
+            break;
+//         case ColumnLocked:
+//         case ColumnVisible:
+//             flags |= Qt::ItemIsUserCheckable;
+//             break;
+    }
 
     return flags;
 }
@@ -60,10 +122,12 @@ QVariant model::DocumentNodeModel::data(const QModelIndex& index, int role) cons
     switch ( index.column() )
     {
         case ColumnColor:
-            return {}; /// TODO layer colors
+            if ( role == Qt::DisplayRole || role == Qt::EditRole || role == Qt::BackgroundColorRole )
+                return n->docnode_group_color();
+            break;
         case ColumnName:
-            if ( role == Qt::DisplayRole )
-                return n->name.get();
+            if ( role == Qt::DisplayRole || role == Qt::EditRole )
+                return n->docnode_name();
             else if ( role == Qt::DecorationRole )
                 return n->docnode_icon();
             break;
@@ -89,6 +153,7 @@ QVariant model::DocumentNodeModel::data(const QModelIndex& index, int role) cons
 
 bool model::DocumentNodeModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
+    Q_UNUSED(role);
     auto n = node(index);
     if ( !document || !index.isValid() || !n )
         return false;
@@ -96,26 +161,22 @@ bool model::DocumentNodeModel::setData(const QModelIndex& index, const QVariant&
     switch ( index.column() )
     {
         case ColumnColor:
-            return false; /// TODO layer colors
-        case ColumnName:
-            return n->name.set_value(value);
-        case ColumnVisible:
-            n->docnode_set_visible(value.toBool());
+            n->docnode_set_group_color(value.value<QColor>());
             return true;
-        case ColumnLocked:
-            n->docnode_set_locked(value.toBool());
+        case ColumnName:
+            n->docnode_set_name(value.toString());
             return true;
     }
-    return {};
+    return false;
 
 }
-
 
 
 void model::DocumentNodeModel::set_document ( model::Document* doc )
 {
     beginResetModel();
     document = doc;
+    connect_node(&doc->animation());
     endResetModel();
 }
 
@@ -137,22 +198,26 @@ QModelIndex model::DocumentNodeModel::parent ( const QModelIndex& index ) const
     if ( !document || !index.isValid() || !n )
         return {};
 
-    auto parent = n->docnode_parent();
-    if ( !parent )
+    return node_index(n->docnode_parent());
+}
+
+QModelIndex model::DocumentNodeModel::node_index ( model::DocumentNode* node ) const
+{
+    if ( !node )
         return {};
 
-    auto granny = parent->docnode_parent();
+    auto parent = node->docnode_parent();
 
-    if ( !granny )
+    if ( !parent )
     {
         // TODO precomps
-        return createIndex(1, 0, parent);
+        return createIndex(0, 0, node);
     }
 
-    for ( int i = 0; i < granny->docnode_child_count(); i++ )
+    for ( int i = 0; i < parent->docnode_child_count(); i++ )
     {
-        if ( granny->docnode_child(i) == parent )
-            return createIndex(i, 0, parent);
+        if ( parent->docnode_child(i) == node )
+            return createIndex(i, 0, node);
     }
 
     return {};

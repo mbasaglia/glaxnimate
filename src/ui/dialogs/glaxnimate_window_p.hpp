@@ -5,11 +5,13 @@
 #include <QToolButton>
 
 #include "QtColorWidgets/color_palette_model.hpp"
+#include "QtColorWidgets/color_delegate.hpp"
 
 #include "ui_glaxnimate_window.h"
 #include "app/app_info.hpp"
 #include "model/document.hpp"
 #include "ui/dialogs/import_export_dialog.hpp"
+#include "model/item_models/document_node_model.hpp"
 
 namespace {
 
@@ -45,6 +47,8 @@ public:
     QString redo_text;
     bool updating_color = false;
     color_widgets::ColorPaletteModel palette_model;
+    model::DocumentNodeModel document_node_model;
+    color_widgets::ColorDelegate color_delegate;
 
 
     model::Document* current_document()
@@ -120,6 +124,10 @@ public:
         });
         ui.action_undo->setEnabled(document->undo_stack().canUndo());
         ui.action_undo->setText(redo_text.arg(document->undo_stack().undoText()));
+
+        // Tree view
+        // TODO Store collapsed state
+        document_node_model.set_document(document);
     }
 
 
@@ -193,6 +201,11 @@ public:
         update_color(Qt::black, true, nullptr);
         ui.palette_widget->setModel(&palette_model);
         palette_model.setSearchPaths(AppInfo::instance().data_paths_unchecked("palettes"));
+
+        // Item views
+        ui.view_document_node->setModel(&document_node_model);
+        ui.view_document_node->header()->setSectionResizeMode(1, QHeaderView::Stretch);
+        ui.view_document_node->setItemDelegateForColumn(model::DocumentNodeModel::ColumnColor, &color_delegate);
     }
 
     void retranslateUi(QMainWindow* parent)

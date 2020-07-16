@@ -35,8 +35,12 @@ public:
     void clear();
     void set_document(model::Document* doc);
     model::DocumentNode* node(const QModelIndex& index) const;
+    QModelIndex node_index(model::DocumentNode* node) const;
 
 private:
+    void connect_node(model::DocumentNode* node);
+    void disconnect_node(model::DocumentNode* node);
+
     model::Document* document = nullptr;
 };
 

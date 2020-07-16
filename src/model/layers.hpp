@@ -102,7 +102,6 @@ public:
     // has_masks
     // masks
     // effects
-    Property<QColor> group_color{this, "color", "__groupcolor", QColor(1, 1, 1)};
 
     ChildLayerView children() const
     {

@@ -75,5 +75,17 @@ void GlaxnimateWindow::color_update_component ( int value )
     d->update_color_component(value, QObject::sender());
 }
 
+void GlaxnimateWindow::document_treeview_clicked ( const QModelIndex& index )
+{
+    auto node = d->document_node_model.node(index);
+    if ( !node )
+        return;
+
+    if ( index.column() == model::DocumentNodeModel::ColumnVisible )
+        node->docnode_set_visible(!node->docnode_visible());
+     else if ( index.column() == model::DocumentNodeModel::ColumnLocked )
+        node->docnode_set_locked(!node->docnode_locked());
+}
+
 
 

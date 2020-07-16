@@ -7,13 +7,12 @@
 
 namespace model {
 
-
-
 class DocumentNode : public Object
 {
     Q_OBJECT
 
 public:
+    Property<QColor> group_color{this, "color", "__groupcolor", QColor{}};
     Property<QString> name{this, "name", "nm", ""};
 
     bool docnode_visible() const { return visible_; }
@@ -27,10 +26,42 @@ public:
 
     QString docnode_name() const
     {
-        return name.get().isEmpty() ? tr("Animation") : name.get();
+        if ( !name.get().isEmpty() )
+            return name.get();
+
+        QString class_name = metaObject()->className();
+        int ns = class_name.lastIndexOf(":");
+        if ( ns != -1 )
+            class_name = class_name.mid(ns+1);
+        return class_name;
+    }
+
+    QColor docnode_group_color() const
+    {
+        QColor col = group_color.get();
+        if ( !col.isValid() )
+        {
+            if ( auto parent = docnode_parent() )
+                return parent->docnode_group_color();
+            else
+                return Qt::white;
+        }
+        return col;
     }
 
 public slots:
+    void docnode_set_name(const QString& name)
+    {
+        this->name.set(name);
+        emit docnode_name_changed(name);
+    }
+
+    void docnode_set_group_color(const QColor& col)
+    {
+        group_color.set(col);
+        emit docnode_group_color_changed(col);
+    }
+
     void docnode_set_visible(bool visible)
     {
         emit docnode_visible_changed(visible_ = visible);
@@ -43,13 +74,15 @@ public slots:
 
 signals:
     void docnode_child_add_begin(int row);
-    void docnode_child_add_end();
+    void docnode_child_add_end(DocumentNode* node);
 
     void docnode_child_remove_begin(int row);
-    void docnode_child_remove_end();
+    void docnode_child_remove_end(DocumentNode* node);
 
-    void docnode_visible_changed(bool) const;
-    void docnode_locked_changed(bool) const;
+    void docnode_visible_changed(bool);
+    void docnode_locked_changed(bool);
+    void docnode_name_changed(const QString&);
+    void docnode_group_color_changed(const QColor&);
 
 private:
     bool visible_ = true;
