@@ -61,6 +61,8 @@ public:
     void setupUi(QMainWindow* parent)
     {
         ui.setupUi(parent);
+        redo_text = ui.action_redo->text();
+        undo_text = ui.action_undo->text();
 
         // Standard Shorcuts
         ui.action_new->setShortcut(QKeySequence::New);

@@ -4,6 +4,9 @@ set(SOURCES
 
 main.cpp
 
+io/lottie/lottie_exporter.cpp
+io/base.cpp
+
 model/object.cpp
 model/document.cpp
 model/layers.cpp
