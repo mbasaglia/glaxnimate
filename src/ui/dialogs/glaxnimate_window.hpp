@@ -20,6 +20,11 @@ public slots:
     void document_save();
     void document_save_as();
 
+private slots:
+    void color_update_noalpha(const QColor& col);
+    void color_update_alpha(const QColor& col);
+    void color_update_component(int value);
+
 protected:
     void changeEvent(QEvent *e) override;
     bool eventFilter(QObject *object, QEvent *event) override;

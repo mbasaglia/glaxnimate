@@ -2,12 +2,35 @@
 #define GLAXNIMATEWINDOW_P_H
 
 #include <QGraphicsView>
+#include <QToolButton>
 
 #include "ui_glaxnimate_window.h"
 
 #include "model/document.hpp"
 #include "ui/dialogs/import_export_dialog.hpp"
 
+namespace {
+
+
+void color_hsv_h(QColor& c, int v) { c.setHsv(v, c.hsvSaturation(), c.value(), c.alpha()); }
+void color_hsv_s(QColor& c, int v) { c.setHsv(c.hsvHue(), v, c.value(), c.alpha()); }
+void color_hsv_v(QColor& c, int v) { c.setHsv(c.hsvHue(), c.hsvSaturation(), v, c.alpha()); }
+
+void color_hsl_h(QColor& c, int v) { c.setHsv(v, c.hslSaturation(), c.value(), c.alpha()); }
+void color_hsl_s(QColor& c, int v) { c.setHsl(c.hslHue(), v, c.lightness(), c.alpha()); }
+void color_hsl_l(QColor& c, int v) { c.setHsl(c.hslHue(), c.hslSaturation(), v, c.alpha()); }
+
+void color_r(QColor& c, int v) { c.setRed(v); }
+void color_g(QColor& c, int v) { c.setGreen(v); }
+void color_b(QColor& c, int v) { c.setBlue(v); }
+void color_a(QColor& c, int v) { c.setAlpha(v); }
+
+void color_c(QColor& c, int v) { c.setCmyk(v, c.magenta(), c.yellow(), c.black(), c.alpha()); }
+void color_m(QColor& c, int v) { c.setCmyk(c.cyan(), v, c.yellow(), c.black(), c.alpha()); }
+void color_y(QColor& c, int v) { c.setCmyk(c.cyan(), c.magenta(), v, c.black(), c.alpha()); }
+void color_k(QColor& c, int v) { c.setCmyk(c.cyan(), c.magenta(), c.yellow(), v, c.alpha()); }
+
+} // namespace
 
 class GlaxnimateWindow::Private
 {
@@ -18,6 +41,7 @@ public:
     std::vector<std::unique_ptr<model::Document>> documents;
     QString undo_text;
     QString redo_text;
+    bool updating_color = false;
 
 
     model::Document* current_document()
@@ -161,6 +185,9 @@ public:
                 row++;
             }
         }
+
+        // Colors
+        update_color(Qt::black, true, nullptr);
     }
 
     void retranslateUi(QMainWindow* parent)
@@ -193,6 +220,129 @@ public:
         }
 
         return false;
+    }
+
+    void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,
+                             void (*func)(QColor&, int), int val, int min = 0, int max = 255)
+    {
+        QColor c1 = c;
+        (*func)(c1, min);
+        QColor c2 = c;
+        (*func)(c2, (min+max)/2);
+        QColor c3 = c;
+        (*func)(c3, max);
+        slider->setColors({c1, c2, c3});
+        slider->setValue(val);
+    }
+
+    void update_color_hue_slider(color_widgets::HueSlider* slider, const QColor& c, int hue)
+    {
+        slider->setColorSaturation(c.saturationF());
+        slider->setColorValue(c.valueF());
+        slider->setValue(hue);
+    }
+
+    QColor current_color()
+    {
+        return ui.color_preview->color();
+    }
+
+    void update_color(const QColor& c, bool alpha, QObject* source)
+    {
+        if ( updating_color )
+            return;
+        updating_color = true;
+
+        QColor col = c;
+        if ( !alpha )
+            col.setAlpha(current_color().alpha());
+
+        int hue = col.hsvHue();
+        if ( hue == -1 )
+            hue = col.hslHue();
+        if ( hue == -1 )
+            hue = current_color().hue();
+        if ( hue == -1 )
+            hue = 0;
+
+        // main
+        ui.color_preview->setColor(col);
+        ui.color_line_edit->setColor(col);
+        update_color_slider(ui.slider_alpha, col, color_a, col.alpha());
+
+        // HSV
+        if ( source != ui.color_hsv )
+            ui.color_hsv->setColor(col);
+        update_color_hue_slider(ui.slider_hsv_hue, col, hue);
+        update_color_slider(ui.slider_hsv_sat, col, color_hsv_s, col.hsvSaturation());
+        update_color_slider(ui.slider_hsv_value, col, color_hsv_v, col.value());
+
+        // HSL
+        if ( source != ui.color_hsl )
+            ui.color_hsl->setColor(col);
+        update_color_hue_slider(ui.slider_hsl_hue, col, hue);
+        update_color_slider(ui.slider_hsl_sat, col, color_hsl_s, col.hslSaturation());
+        update_color_slider(ui.slider_hsl_light, col, color_hsl_l, col.lightness());
+
+        // RGB
+        update_color_slider(ui.slider_rgb_r, col, color_r, col.red());
+        update_color_slider(ui.slider_rgb_g, col, color_g, col.green());
+        update_color_slider(ui.slider_rgb_b, col, color_b, col.blue());
+
+        // CMYK
+        update_color_slider(ui.slider_cmyk_c, col, color_c, col.cyan());
+        update_color_slider(ui.slider_cmyk_m, col, color_m, col.magenta());
+        update_color_slider(ui.slider_cmyk_y, col, color_y, col.yellow());
+        update_color_slider(ui.slider_cmyk_k, col, color_k, col.black());
+
+        qDebug() << col.hsvHue() << col.hslHue();
+
+
+        updating_color = false;
+    }
+
+    void update_color_component(int val, QObject* sender)
+    {
+        if ( updating_color )
+            return;
+
+        void (*func)(QColor&, int) = nullptr;
+
+        if ( sender->objectName() == "slider_alpha" )
+            func = color_a;
+        else if ( sender->objectName() == "slider_hsv_hue" )
+            func = color_hsv_h;
+        else if ( sender->objectName() == "slider_hsv_sat" )
+            func = color_hsv_s;
+        else if ( sender->objectName() == "slider_hsv_value" )
+            func = color_hsv_v;
+        else if ( sender->objectName() == "slider_hsl_hue" )
+            func = color_hsl_h;
+        else if ( sender->objectName() == "slider_hsl_sat" )
+            func = color_hsl_s;
+        else if ( sender->objectName() == "slider_hsl_light" )
+            func = color_hsl_l;
+        else if ( sender->objectName() == "slider_rgb_r" )
+            func = color_r;
+        else if ( sender->objectName() == "slider_rgb_g" )
+            func = color_g;
+        else if ( sender->objectName() == "slider_rgb_b" )
+            func = color_b;
+        else if ( sender->objectName() == "slider_cmyk_c" )
+            func = color_c;
+        else if ( sender->objectName() == "slider_cmyk_m" )
+            func = color_m;
+        else if ( sender->objectName() == "slider_cmyk_y" )
+            func = color_y;
+        else if ( sender->objectName() == "slider_cmyk_k" )
+            func = color_k;
+
+        if ( !func )
+            return;
+
+        QColor c = current_color();
+        (*func)(c, val);
+        update_color(c, true, sender);
     }
 
 };

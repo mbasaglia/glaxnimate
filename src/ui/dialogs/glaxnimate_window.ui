@@ -214,7 +214,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -303,7 +303,7 @@
           </widget>
          </item>
          <item row="0" column="0" colspan="3">
-          <widget class="color_widgets::ColorWheel" name="colorWheel">
+          <widget class="color_widgets::ColorWheel" name="color_hsv">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
              <horstretch>0</horstretch>
@@ -362,7 +362,7 @@
           </widget>
          </item>
          <item row="0" column="0" colspan="3">
-          <widget class="color_widgets::ColorWheel" name="colorWheel_2">
+          <widget class="color_widgets::ColorWheel" name="color_hsl">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
              <horstretch>0</horstretch>
@@ -509,7 +509,7 @@
        </widget>
        <widget class="QWidget" name="tab_4">
         <attribute name="title">
-         <string>CYMK</string>
+         <string>CMYK</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_5">
          <item row="8" column="3">
@@ -669,7 +669,34 @@
       </layout>
      </item>
      <item>
-      <widget class="color_widgets::ColorLineEdit" name="color_line_edit"/>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="color_widgets::ColorPreview" name="color_preview">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="display_mode" stdset="0">
+          <enum>color_widgets::ColorPreview::SplitAlpha</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="color_widgets::ColorLineEdit" name="color_line_edit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="showAlpha">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <spacer name="verticalSpacer">
@@ -723,39 +750,15 @@
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item>
-        <widget class="QComboBox" name="comboBox">
-         <item>
-          <property name="text">
-           <string>Main Animation</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="toolButton_4">
-         <property name="toolTip">
-          <string>Add new composition</string>
-         </property>
-         <property name="text">
-          <string>New Composition</string>
-         </property>
-         <property name="icon">
-          <iconset theme="list-add">
-           <normaloff>.</normaloff>.</iconset>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QTreeView" name="treeView"/>
+      <widget class="QTreeView" name="view_document_node"/>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QToolButton" name="btn_layer_add">
+         <property name="toolTip">
+          <string>Add</string>
+         </property>
          <property name="text">
           <string>Add</string>
          </property>
@@ -766,7 +769,10 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QToolButton" name="btn_layer_duplicate">
+         <property name="toolTip">
+          <string>Duplicate</string>
+         </property>
          <property name="text">
           <string>Duplicate</string>
          </property>
@@ -777,13 +783,81 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QToolButton" name="btn_layer_remove">
+         <property name="toolTip">
+          <string>Remove</string>
+         </property>
          <property name="text">
           <string>Remove</string>
          </property>
          <property name="icon">
           <iconset theme="list-remove">
            <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QToolButton" name="btn_layer_top">
+         <property name="toolTip">
+          <string>Move To Top</string>
+         </property>
+         <property name="text">
+          <string>Move To Top</string>
+         </property>
+         <property name="icon">
+          <iconset theme="go-top"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="btn_layer_up">
+         <property name="toolTip">
+          <string>Move Up</string>
+         </property>
+         <property name="text">
+          <string>Move Up</string>
+         </property>
+         <property name="icon">
+          <iconset theme="go-up"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="btn_layer_down">
+         <property name="toolTip">
+          <string>Move Down</string>
+         </property>
+         <property name="text">
+          <string>Move Down</string>
+         </property>
+         <property name="icon">
+          <iconset theme="go-down"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="btn_layer_bottom">
+         <property name="toolTip">
+          <string>Move To Bottom</string>
+         </property>
+         <property name="text">
+          <string>Move To Bottom</string>
+         </property>
+         <property name="icon">
+          <iconset theme="go-bottom"/>
          </property>
         </widget>
        </item>
@@ -802,7 +876,7 @@
    <widget class="QWidget" name="dockWidgetContents_5">
     <layout class="QVBoxLayout" name="verticalLayout_5">
      <item>
-      <widget class="QTableView" name="tableView"/>
+      <widget class="QTableView" name="view_properties"/>
      </item>
     </layout>
    </widget>
@@ -1032,7 +1106,7 @@
   </action>
   <action name="actionNew_Pre_Composition">
    <property name="icon">
-    <iconset theme="tool-animator">
+    <iconset theme="folder-video">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
@@ -1239,6 +1313,11 @@
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>color_widgets::ColorPreview</class>
+   <extends>QWidget</extends>
+   <header>QtColorWidgets/color_preview.hpp</header>
+  </customwidget>
   <customwidget>
    <class>color_widgets::ColorWheel</class>
    <extends>QWidget</extends>
@@ -1539,10 +1618,525 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>color_line_edit</sender>
+   <signal>colorEdited(QColor)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_alpha(QColor)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1243</x>
+     <y>501</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1394</x>
+     <y>522</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>color_hsv</sender>
+   <signal>colorSelected(QColor)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_noalpha(QColor)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1259</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1372</x>
+     <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_hsv_hue</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1183</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1392</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_hsv_sat</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1183</x>
+     <y>386</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1366</x>
+     <y>375</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_hsv_value</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1217</x>
+     <y>414</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1365</x>
+     <y>412</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_alpha</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1173</x>
+     <y>462</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1434</x>
+     <y>457</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>color_hsl</sender>
+   <signal>colorSelected(QColor)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_noalpha(QColor)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1196</x>
+     <y>241</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1339</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_hsl_hue</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1204</x>
+     <y>349</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1315</x>
+     <y>49</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_hsl_sat</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1165</x>
+     <y>377</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1314</x>
+     <y>575</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_hsl_light</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1134</x>
+     <y>416</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1315</x>
+     <y>537</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_rgb_b</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1193</x>
+     <y>359</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1362</x>
+     <y>352</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_rgb_g</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1189</x>
+     <y>278</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1345</x>
+     <y>283</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_rgb_r</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1197</x>
+     <y>193</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1397</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_cmyk_k</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1177</x>
+     <y>383</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1394</x>
+     <y>385</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_cmyk_y</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1184</x>
+     <y>318</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1398</x>
+     <y>319</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_cmyk_m</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1187</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1315</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_cmyk_c</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_component(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1141</x>
+     <y>175</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1036</x>
+     <y>392</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>palette_widget</sender>
+   <signal>currentColorChanged(QColor)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_noalpha(QColor)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1258</x>
+     <y>274</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1031</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_rgb_r</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_8</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1103</x>
+     <y>190</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1259</x>
+     <y>194</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_8</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider_rgb_r</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1264</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1099</x>
+     <y>192</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_rgb_g</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_9</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1104</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1256</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_9</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider_rgb_g</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1255</x>
+     <y>289</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1099</x>
+     <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_rgb_b</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_10</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1138</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1262</x>
+     <y>369</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_10</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider_rgb_b</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1265</x>
+     <y>363</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1109</x>
+     <y>365</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_cmyk_c</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_11</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1119</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1259</x>
+     <y>179</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_11</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider_cmyk_c</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1247</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1105</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_cmyk_m</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_13</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1154</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1265</x>
+     <y>248</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_13</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider_cmyk_m</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1253</x>
+     <y>249</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1156</x>
+     <y>247</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_cmyk_y</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_12</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1112</x>
+     <y>311</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1266</x>
+     <y>311</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_12</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider_cmyk_y</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1256</x>
+     <y>302</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1103</x>
+     <y>312</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>slider_cmyk_k</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_14</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1087</x>
+     <y>376</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1264</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_14</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>slider_cmyk_k</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1270</x>
+     <y>386</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1089</x>
+     <y>381</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
   <slot>document_new()</slot>
   <slot>document_save_as()</slot>
+  <slot>color_update_noalpha(QColor)</slot>
+  <slot>color_update_alpha(QColor)</slot>
+  <slot>color_update_component(int)</slot>
  </slots>
 </ui>

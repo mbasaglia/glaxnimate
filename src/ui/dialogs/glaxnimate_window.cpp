@@ -59,4 +59,21 @@ void GlaxnimateWindow::document_save_as()
         d->ui.status_bar->showMessage(tr("Could not save file"));
 }
 
+void GlaxnimateWindow::color_update_alpha ( const QColor& col )
+{
+    d->update_color(col, true, QObject::sender());
+}
+
+void GlaxnimateWindow::color_update_noalpha ( const QColor& col )
+{
+
+    d->update_color(col, false, QObject::sender());
+}
+
+void GlaxnimateWindow::color_update_component ( int value )
+{
+    d->update_color_component(value, QObject::sender());
+}
+
+
 
