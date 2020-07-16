@@ -10,6 +10,9 @@ io/base.cpp
 model/object.cpp
 model/document.cpp
 model/layers.cpp
+model/animation.cpp
+model/document_node.cpp
+model/item_models/document_node_model.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui

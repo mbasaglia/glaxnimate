@@ -4,6 +4,7 @@
 #include <QColor>
 
 #include "property.hpp"
+#include "document_node.hpp"
 
 namespace model {
 
@@ -70,7 +71,7 @@ private:
 
 
 
-class Layer : public Object
+class Layer : public DocumentNode
 {
     Q_OBJECT
     Q_ENUM(LayerType);
@@ -101,7 +102,7 @@ public:
     // has_masks
     // masks
     // effects
-    Property<QColor> group_color{this, "color", "", QColor(1, 1, 1)};
+    Property<QColor> group_color{this, "color", "__groupcolor", QColor(1, 1, 1)};
 
     ChildLayerView children() const
     {
@@ -115,6 +116,13 @@ public:
         clone_into(object.get());
         return object;
     }
+
+    DocumentNode* docnode_child(int) const override { return nullptr; }
+    int docnode_child_count() const override { return 0; }
+
+    DocumentNode* docnode_parent() const override;
+
+    QIcon docnode_icon() const override { return QIcon::fromTheme("folder"); }
 
 private:
     std::unique_ptr<Object> clone_impl() const override
@@ -138,6 +146,9 @@ namespace detail {
             return object;
         }
 
+    protected:
+        using Ctor = BaseLayerProps;
+
     private:
         std::unique_ptr<Object> clone_impl() const override
         {
@@ -148,12 +159,32 @@ namespace detail {
 
 
 class NullLayer : public detail::BaseLayerProps<NullLayer, LayerType::NullLayer>
-{};
+{
+    Q_OBJECT
+
+public:
+    using Ctor::Ctor;
+
+    QIcon docnode_icon() const override
+    {
+        return QIcon::fromTheme("transform-move");
+    }
+};
 
 
 class ShapeLayer : public detail::BaseLayerProps<ShapeLayer, LayerType::ShapeLayer>
 {
+    Q_OBJECT
+
+public:
     // shapes
+
+    using Ctor::Ctor;
+
+    QIcon docnode_icon() const override
+    {
+        return QIcon::fromTheme("shapes");
+    }
 };
 
 

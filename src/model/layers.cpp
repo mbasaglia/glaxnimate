@@ -19,3 +19,7 @@ model::Layer * model::ChildLayerView::iterator::operator->() const
     return &comp->layers[index];
 }
 
+model::DocumentNode * model::Layer::docnode_parent() const
+{
+    return composition;
+}

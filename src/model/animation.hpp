@@ -6,6 +6,8 @@ namespace model {
 
 class Animation : public ObjectBase<Animation, Composition>
 {
+    Q_OBJECT
+
 public:
     Property<QString> version{this, "version", "v", ""};
     Property<float> frame_rate{this, "frame_rate", "fr", 60};
@@ -13,7 +15,6 @@ public:
     Property<float> out_point{this, "out_point", "op", 180};
     Property<int> width{this, "width", "w", 512};
     Property<int> height{this, "height", "h", 512};
-    Property<QString> name{this, "name", "nm", ""};
     // ddd
     // assets
     // comps
@@ -21,6 +22,11 @@ public:
     // chars
     // markers
     // motion_blur
+
+    QIcon docnode_icon() const override
+    {
+        return QIcon::fromTheme("tool-animator");
+    }
 };
 
 } // namespace model

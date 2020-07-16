@@ -107,7 +107,7 @@ private:
     {
         return clone_covariant();
     }
-
 };
+
 
 } // namespace model
