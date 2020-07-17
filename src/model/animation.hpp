@@ -25,7 +25,7 @@ public:
 
     QIcon docnode_icon() const override
     {
-        return QIcon::fromTheme("tool-animator");
+        return QIcon::fromTheme("video-x-generic");
     }
 };
 

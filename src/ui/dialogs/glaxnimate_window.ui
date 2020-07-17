@@ -109,16 +109,9 @@
     <property name="title">
      <string>&amp;Path</string>
     </property>
-    <widget class="QMenu" name="menuNode_Type">
-     <property name="title">
-      <string>Node &amp;Type</string>
-     </property>
-     <addaction name="action_Corner"/>
-     <addaction name="action_Smooth"/>
-     <addaction name="actionSy_mmetric"/>
-    </widget>
     <addaction name="separator"/>
     <addaction name="actionObject_to_Path"/>
+    <addaction name="separator"/>
     <addaction name="action_Add"/>
     <addaction name="action_Subtract"/>
     <addaction name="action_Intersect"/>
@@ -132,7 +125,9 @@
     <addaction name="action_Join_Nodes"/>
     <addaction name="actionS_plit_Nodes"/>
     <addaction name="separator"/>
-    <addaction name="menuNode_Type"/>
+    <addaction name="action_Corner"/>
+    <addaction name="action_Smooth"/>
+    <addaction name="actionSy_mmetric"/>
    </widget>
    <widget class="QMenu" name="menu_edit">
     <property name="title">
@@ -191,6 +186,9 @@
    <addaction name="separator"/>
   </widget>
   <widget class="QDockWidget" name="dock_colors">
+   <property name="windowIcon">
+    <iconset theme="color-management"/>
+   </property>
    <property name="windowTitle">
     <string>Colors</string>
    </property>
@@ -686,13 +684,37 @@
        <item>
         <widget class="color_widgets::ColorLineEdit" name="color_line_edit">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Monospace</family>
+          </font>
+         </property>
          <property name="showAlpha">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="toolButton">
+         <property name="toolTip">
+          <string>Pick Color</string>
+         </property>
+         <property name="text">
+          <string>Pick</string>
+         </property>
+         <property name="icon">
+          <iconset theme="color-picker"/>
          </property>
         </widget>
        </item>
@@ -715,6 +737,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dock_tools">
+   <property name="windowIcon">
+    <iconset theme="tools"/>
+   </property>
    <property name="windowTitle">
     <string>Tools</string>
    </property>
@@ -726,6 +751,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dock_tool_options">
+   <property name="windowIcon">
+    <iconset theme="settings-configure"/>
+   </property>
    <property name="windowTitle">
     <string>Tool Options</string>
    </property>
@@ -740,6 +768,9 @@
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="windowIcon">
+    <iconset theme="dialog-layers"/>
    </property>
    <property name="windowTitle">
     <string>Layers</string>
@@ -776,7 +807,7 @@
           <string>Add</string>
          </property>
          <property name="icon">
-          <iconset theme="list-add">
+          <iconset theme="layer-new">
            <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
@@ -790,7 +821,7 @@
           <string>Duplicate</string>
          </property>
          <property name="icon">
-          <iconset theme="edit-duplicate">
+          <iconset theme="layer-duplicate">
            <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
@@ -804,7 +835,7 @@
           <string>Remove</string>
          </property>
          <property name="icon">
-          <iconset theme="list-remove">
+          <iconset theme="layer-delete">
            <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
@@ -831,7 +862,7 @@
           <string>Move To Top</string>
          </property>
          <property name="icon">
-          <iconset theme="go-top">
+          <iconset theme="layer-top">
            <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
@@ -845,7 +876,7 @@
           <string>Move Up</string>
          </property>
          <property name="icon">
-          <iconset theme="go-up">
+          <iconset theme="layer-raise">
            <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
@@ -859,7 +890,7 @@
           <string>Move Down</string>
          </property>
          <property name="icon">
-          <iconset theme="go-down">
+          <iconset theme="layer-lower">
            <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
@@ -873,7 +904,7 @@
           <string>Move To Bottom</string>
          </property>
          <property name="icon">
-          <iconset theme="go-bottom">
+          <iconset theme="layer-bottom">
            <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
@@ -884,6 +915,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_2">
+   <property name="windowIcon">
+    <iconset theme="document-properties"/>
+   </property>
    <property name="windowTitle">
     <string>Properties</string>
    </property>
@@ -899,6 +933,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_3">
+   <property name="windowIcon">
+    <iconset theme="player-time"/>
+   </property>
    <property name="windowTitle">
     <string>Timeline</string>
    </property>
@@ -1105,7 +1142,7 @@
   </action>
   <action name="action_Precomposition_Layer">
    <property name="icon">
-    <iconset theme="tool-animator">
+    <iconset theme="video-x-generic">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
@@ -1131,31 +1168,49 @@
    </property>
   </action>
   <action name="action_Add">
+   <property name="icon">
+    <iconset theme="path-union"/>
+   </property>
    <property name="text">
-    <string>&amp;Add</string>
+    <string>&amp;Union</string>
    </property>
   </action>
   <action name="action_Subtract">
+   <property name="icon">
+    <iconset theme="path-difference"/>
+   </property>
    <property name="text">
-    <string>&amp;Subtract</string>
+    <string>&amp;Difference</string>
    </property>
   </action>
   <action name="action_Intersect">
+   <property name="icon">
+    <iconset theme="path-intersection"/>
+   </property>
    <property name="text">
     <string>&amp;Intersect</string>
    </property>
   </action>
   <action name="action_XOR">
+   <property name="icon">
+    <iconset theme="path-exclusion"/>
+   </property>
    <property name="text">
-    <string>&amp;XOR</string>
+    <string>E&amp;xclusion</string>
    </property>
   </action>
   <action name="action_Reverse">
+   <property name="icon">
+    <iconset theme="path-reverse"/>
+   </property>
    <property name="text">
     <string>Re&amp;verse</string>
    </property>
   </action>
   <action name="actionObject_to_Path">
+   <property name="icon">
+    <iconset theme="object-to-path"/>
+   </property>
    <property name="text">
     <string>Object to &amp;Path</string>
    </property>
@@ -1197,16 +1252,25 @@
    </property>
   </action>
   <action name="action_Corner">
+   <property name="icon">
+    <iconset theme="node-type-cusp"/>
+   </property>
    <property name="text">
-    <string>&amp;Corner</string>
+    <string>&amp;Cusp</string>
    </property>
   </action>
   <action name="action_Smooth">
+   <property name="icon">
+    <iconset theme="node-type-smooth"/>
+   </property>
    <property name="text">
     <string>&amp;Smooth</string>
    </property>
   </action>
   <action name="actionSy_mmetric">
+   <property name="icon">
+    <iconset theme="node-type-auto-smooth"/>
+   </property>
    <property name="text">
     <string>Sy&amp;mmetric</string>
    </property>
@@ -1249,7 +1313,7 @@
   </action>
   <action name="action_raise_to_Top">
    <property name="icon">
-    <iconset theme="selection-top">
+    <iconset theme="object-order-front">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
@@ -1261,7 +1325,7 @@
   </action>
   <action name="action_raise">
    <property name="icon">
-    <iconset theme="selection-raise">
+    <iconset theme="object-order-raise">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
@@ -1273,7 +1337,7 @@
   </action>
   <action name="action_lower">
    <property name="icon">
-    <iconset theme="selection-lower">
+    <iconset theme="object-order-lower">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
@@ -1285,7 +1349,7 @@
   </action>
   <action name="action_lower_to_bottom">
    <property name="icon">
-    <iconset theme="selection-bottom">
+    <iconset theme="object-order-back">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">

@@ -12,6 +12,7 @@
 #include "model/document.hpp"
 #include "ui/dialogs/import_export_dialog.hpp"
 #include "model/item_models/document_node_model.hpp"
+#include "ui/style/dock_widget_style.hpp"
 
 namespace {
 
@@ -36,6 +37,7 @@ void color_k(QColor& c, int v) { c.setCmyk(c.cyan(), c.magenta(), c.yellow(), v,
 
 } // namespace
 
+
 class GlaxnimateWindow::Private
 {
 public:
@@ -49,6 +51,7 @@ public:
     color_widgets::ColorPaletteModel palette_model;
     model::DocumentNodeModel document_node_model;
     color_widgets::ColorDelegate color_delegate;
+    DockWidgetStyle dock_style;
 
 
     model::Document* current_document()
@@ -64,7 +67,7 @@ public:
     {
         documents.push_back(std::make_unique<model::Document>(filename));
         auto widget = new QGraphicsView();
-        ui.tab_widget->addTab(widget, filename);
+        ui.tab_widget->addTab(widget, QIcon::fromTheme("video-x-generic"), filename);
         model::Document* doc = documents.back().get();
         QObject::connect(doc, &model::Document::filename_changed, widget, &QWidget::setWindowTitle);
         switch_to_document(doc);
@@ -155,7 +158,10 @@ public:
         // Menu Views
         for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
         {
-            ui.menu_views->addAction(wid->toggleViewAction());
+            QAction* act = wid->toggleViewAction();
+            act->setIcon(wid->windowIcon());
+            ui.menu_views->addAction(act);
+            wid->setStyle(&dock_style);
         }
 
         // Tool Actions
@@ -226,15 +232,16 @@ public:
         QToolButton *btn = qobject_cast<QToolButton*>(object);
         if ( btn && event->type() == QEvent::Resize )
         {
-            int target = btn->size().width() - 10;
-            QSize best(0, 0);
-            for ( const auto& sz : btn->icon().availableSizes() )
-            {
-                if ( sz.width() > best.width() && sz.width() <= target )
-                    best = sz;
-            }
-            if ( best.width() > 0 )
-                btn->setIconSize(best);
+            int target = std::max(16, std::min(128, btn->size().width() - 10));
+            btn->setIconSize(QSize(target, target));
+//             QSize best(0, 0);
+//             for ( const auto& sz : btn->icon().availableSizes() )
+//             {
+//                 if ( sz.width() > best.width() && sz.width() <= target )
+//                     best = sz;
+//             }
+//             if ( best.width() > 0 )
+//                 btn->setIconSize(best);
         }
 
         return false;

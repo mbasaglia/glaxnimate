@@ -1,5 +1,5 @@
 #include "app_info.hpp"
-#include "application_info_generated.in.hpp"
+#include "app/application_info_generated.hpp"
 
 #include <QObject>
 #include <QStandardPaths>

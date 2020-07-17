@@ -135,8 +135,8 @@ QVariant model::DocumentNodeModel::data(const QModelIndex& index, int role) cons
             if ( role == Qt::DecorationRole )
             {
                 if ( n->docnode_visible() )
-                    return QIcon::fromTheme("user-online");
-                return QIcon::fromTheme("user-invisible");
+                    return QIcon::fromTheme("layer-visible-on");
+                return QIcon::fromTheme("layer-visible-off");
             }
             break;
         case ColumnLocked:
