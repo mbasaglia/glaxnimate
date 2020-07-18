@@ -2,6 +2,8 @@
 
 #include <QString>
 
+#include <type_traits>
+
 #include "object.hpp"
 
 namespace model {
@@ -10,28 +12,80 @@ struct PropertyTraits
 {
     enum Type
     {
-        Basic,
+        Unknown,
         Object,
-        ObjectReference
+        ObjectReference,
+        Bool,
+        Int,
+        Float,
+        Point,
+        Color,
+        Size,
+        String,
     };
-
     bool list = false;
-    Type type = Basic;
+    Type type = Unknown;
 
-    bool is_simple_value() const
+    bool is_object() const
     {
-        return !list && type == Basic;
+        return type == Object || type == ObjectReference;
     }
+
+    template<class T>
+    static constexpr Type get_type() noexcept;
 
     template<class T>
     static PropertyTraits from_scalar(bool list=false)
     {
         return {
             list,
-            std::is_pointer<T>::value ? ObjectReference : Basic
+            get_type<T>()
         };
     }
 };
+
+
+namespace detail {
+
+
+template<class T, class = void>
+struct GetType;
+
+template<class ObjT>
+static constexpr bool is_object_v = std::is_base_of_v<Object, ObjT> || std::is_same_v<Object, ObjT>;
+
+template<class ObjT>
+struct GetType<ObjT*, std::enable_if_t<is_object_v<ObjT>>>
+{
+    static constexpr const PropertyTraits::Type value = PropertyTraits::ObjectReference;
+};
+
+template<class ObjT>
+struct GetType<std::unique_ptr<ObjT>, std::enable_if_t<is_object_v<ObjT>>>
+{
+    static constexpr const PropertyTraits::Type value = PropertyTraits::Object;
+};
+
+template<> struct GetType<bool, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Bool; };
+template<> struct GetType<float, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Float; };
+template<> struct GetType<QVector2D, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Point; };
+template<> struct GetType<QColor, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Color; };
+template<> struct GetType<QSizeF, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Size; };
+template<> struct GetType<QString, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::String; };
+
+template<class ObjT>
+struct GetType<ObjT, std::enable_if_t<std::is_integral_v<ObjT> || std::is_enum_v<ObjT>>>
+{
+    static constexpr const PropertyTraits::Type value = PropertyTraits::Int;
+};
+} // namespace detail
+
+
+template<class T>
+inline constexpr PropertyTraits::Type PropertyTraits::get_type() noexcept
+{
+    return detail::GetType<T>::value;
+}
 
 
 class BaseProperty
@@ -105,6 +159,8 @@ public:
         return false;
     }
 
+
+
 private:
     Type value_;
 };
@@ -155,7 +211,7 @@ class UnknownProperty : public BaseProperty
 {
 public:
     UnknownProperty(Object* obj, const QString& name, QVariant value)
-        : BaseProperty(obj, name, name, {false, PropertyTraits::Basic}),
+        : BaseProperty(obj, name, name, {false, PropertyTraits::Unknown}),
           variant(std::move(value))
     {}
 

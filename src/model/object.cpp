@@ -66,12 +66,7 @@ bool model::Object::set(const QString& property, const QVariant& value, bool all
     return it->second->set_value(value);
 }
 
-model::Object::iterator model::Object::begin() const
+const std::vector<model::BaseProperty*>& model::Object::properties() const
 {
-    return iterator(d->prop_order.begin());
-}
-
-model::Object::iterator model::Object::end() const
-{
-    return iterator(d->prop_order.end());
+    return d->prop_order;
 }

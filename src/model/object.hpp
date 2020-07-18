@@ -24,29 +24,7 @@ class Object : public QObject
 {
     Q_OBJECT
 
-private:
-    using container = std::vector<BaseProperty*>;
-
 public:
-    class iterator
-    {
-    public:
-        const BaseProperty& operator*() const { return **iter; }
-        const BaseProperty* operator->() const { return *iter; }
-        bool operator==(const iterator& oth) const { return iter == oth.iter; }
-        bool operator!=(const iterator& oth) const { return iter != oth.iter; }
-        iterator& operator++()
-        {
-            ++iter;
-            return *this;
-        }
-    private:
-        iterator(const container::const_iterator& iter) : iter(iter) {}
-
-        container::const_iterator iter;
-        friend Object;
-    };
-
     Object();
     ~Object();
 
@@ -66,8 +44,9 @@ public:
     QVariant get(const QString& property) const;
     bool set(const QString& property, const QVariant& value, bool allow_unknown = false);
 
-    iterator begin() const;
-    iterator end() const;
+    const std::vector<BaseProperty*>& properties() const;
+
+    virtual QString object_name() const { return ""; }
 
 signals:
     void property_added(const QString& name, const QVariant& value);

@@ -8,11 +8,14 @@
 #include "QtColorWidgets/color_delegate.hpp"
 
 #include "ui_glaxnimate_window.h"
+#include "glaxnimate_window.hpp"
 #include "app/app_info.hpp"
 #include "model/document.hpp"
-#include "ui/dialogs/import_export_dialog.hpp"
 #include "model/item_models/document_node_model.hpp"
+#include "model/item_models/property_model.hpp"
+#include "ui/dialogs/import_export_dialog.hpp"
 #include "ui/style/dock_widget_style.hpp"
+#include "ui/style/property_delegate.hpp"
 
 namespace {
 
@@ -51,6 +54,8 @@ public:
     color_widgets::ColorPaletteModel palette_model;
     model::DocumentNodeModel document_node_model;
     color_widgets::ColorDelegate color_delegate;
+    model::PropertyModel property_model;
+    PropertyDelegate property_delegate;
     DockWidgetStyle dock_style;
 
 
@@ -131,6 +136,9 @@ public:
         // Tree view
         // TODO Store collapsed state
         document_node_model.set_document(document);
+        // TODO keep selection
+//         property_model.clear_object();
+        property_model.set_object(&document->animation());
     }
 
 
@@ -212,6 +220,9 @@ public:
         ui.view_document_node->setModel(&document_node_model);
         ui.view_document_node->header()->setSectionResizeMode(1, QHeaderView::Stretch);
         ui.view_document_node->setItemDelegateForColumn(model::DocumentNodeModel::ColumnColor, &color_delegate);
+
+        ui.view_properties->setModel(&property_model);
+        ui.view_properties->setItemDelegateForColumn(1, &property_delegate);
     }
 
     void retranslateUi(QMainWindow* parent)

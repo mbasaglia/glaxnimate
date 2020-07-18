@@ -38,10 +38,10 @@ public:
     QJsonObject convert_object_basic(model::Object* obj)
     {
         QJsonObject json_obj;
-        for ( const BaseProperty& prop : *obj )
+        for ( BaseProperty* prop : obj->properties() )
         {
-            if ( prop.traits().is_simple_value() )
-                json_obj[prop.name()] = QJsonValue::fromVariant(prop.value());
+            if ( !prop->traits().is_object() )
+                json_obj[prop->name()] = QJsonValue::fromVariant(prop->value());
         }
 
         return json_obj;
@@ -62,6 +62,3 @@ QJsonDocument io::lottie::LottieExporter::to_json(model::Document* document)
     LottieExporterState exp(document);
     return QJsonDocument(exp.to_json());
 }
-
-
-

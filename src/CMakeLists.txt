@@ -15,6 +15,7 @@ model/layers.cpp
 model/animation.cpp
 model/document_node.cpp
 model/item_models/document_node_model.cpp
+model/item_models/property_model.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui
