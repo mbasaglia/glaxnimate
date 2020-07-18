@@ -2,6 +2,8 @@
 
 #include <QFont>
 
+#include "command/property_commands.hpp"
+
 class model::PropertyModel::Private
 {
 public:
@@ -140,6 +142,17 @@ public:
         return &nodes.find(id)->second;
     }
 
+    bool set_property(model::BaseProperty* prop, const QVariant& after)
+    {
+        QVariant before = prop->value();
+        if ( !prop->set_value(after) )
+            return false;
+        document->undo_stack().push(new command::SetPropertyValue(prop, before, after));
+        return true;
+    }
+
+
+    model::Document* document = nullptr;
     Object* root = nullptr;
     id_type root_id = 0;
     id_type next_id = 1;
@@ -339,14 +352,16 @@ bool model::PropertyModel::setData(const QModelIndex& index, const QVariant& val
     {
         if ( role == Qt::CheckStateRole )
         {
-            return prop->set_value(value.value<Qt::CheckState>() == Qt::Checked);
+            return d->set_property(prop, value.value<Qt::CheckState>() == Qt::Checked);
         }
         return false;
     }
     else
     {
         if ( role == Qt::EditRole )
-            return prop->set_value(value);
+        {
+            return d->set_property(prop, value);
+        }
         return false;
     }
 }
@@ -418,3 +433,8 @@ QVariant model::PropertyModel::headerData(int section, Qt::Orientation orientati
     return {};
 }
 
+void model::PropertyModel::set_document(model::Document* document)
+{
+    d->document = document;
+    clear_object();
+}

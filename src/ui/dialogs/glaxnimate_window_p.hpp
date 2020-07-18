@@ -57,6 +57,7 @@ public:
     model::PropertyModel property_model;
     PropertyDelegate property_delegate;
     DockWidgetStyle dock_style;
+    GlaxnimateWindow* parent = nullptr;
 
 
     model::Document* current_document()
@@ -74,10 +75,32 @@ public:
         auto widget = new QGraphicsView();
         ui.tab_widget->addTab(widget, QIcon::fromTheme("video-x-generic"), filename);
         model::Document* doc = documents.back().get();
-        QObject::connect(doc, &model::Document::filename_changed, widget, &QWidget::setWindowTitle);
+        auto refresh_slot = [this, doc](){parent->refresh_title(doc);};
+        QObject::connect(doc, &model::Document::filename_changed, parent, refresh_slot);
+        QObject::connect(&doc->undo_stack(), &QUndoStack::cleanChanged, parent, refresh_slot);
         switch_to_document(doc);
         return doc;
     }
+
+    int document_index(model::Document* doc)
+    {
+        for ( int i = 0; i < int(documents.size()); i++ )
+            if ( documents[i].get() == doc )
+                return i;
+        return -1;
+
+    }
+
+    void refresh_title(model::Document* doc)
+    {
+        QString title = doc->filename();
+        if ( !doc->undo_stack().isClean() )
+            title += " *";
+        ui.tab_widget->setTabText(document_index(doc), title);
+        if ( doc == current_document() )
+            parent->setWindowTitle(title);
+    }
+
 
     bool save_document(model::Document* doc, bool force_dialog, bool overwrite_doc)
     {
@@ -118,7 +141,9 @@ public:
 
     void switch_to_document(model::Document* document)
     {
+        // TODO disconnect old document
         // Undo Redo
+        QObject::connect(ui.action_redo, &QAction::triggered, &document->undo_stack(), &QUndoStack::redo);
         QObject::connect(&document->undo_stack(), &QUndoStack::canRedoChanged, ui.action_redo, &QAction::setEnabled);
         QObject::connect(&document->undo_stack(), &QUndoStack::redoTextChanged, ui.action_redo, [this](const QString& s){
             ui.action_redo->setText(redo_text.arg(s));
@@ -126,6 +151,7 @@ public:
         ui.action_redo->setEnabled(document->undo_stack().canRedo());
         ui.action_redo->setText(redo_text.arg(document->undo_stack().redoText()));
 
+        QObject::connect(ui.action_undo, &QAction::triggered, &document->undo_stack(), &QUndoStack::undo);
         QObject::connect(&document->undo_stack(), &QUndoStack::canUndoChanged, ui.action_undo, &QAction::setEnabled);
         QObject::connect(&document->undo_stack(), &QUndoStack::undoTextChanged, ui.action_undo, [this](const QString& s){
             ui.action_undo->setText(undo_text.arg(s));
@@ -136,14 +162,19 @@ public:
         // Tree view
         // TODO Store collapsed state
         document_node_model.set_document(document);
+
+        property_model.set_document(document);
         // TODO keep selection
-//         property_model.clear_object();
         property_model.set_object(&document->animation());
+
+        // Title
+        refresh_title(document);
     }
 
 
-    void setupUi(QMainWindow* parent)
+    void setupUi(GlaxnimateWindow* parent)
     {
+        this->parent = parent;
         ui.setupUi(parent);
         redo_text = ui.action_redo->text();
         undo_text = ui.action_undo->text();

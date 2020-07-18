@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <memory>
 
+namespace model { class Document; }
+
 class GlaxnimateWindowPrivate;
 
 class GlaxnimateWindow : public QMainWindow
@@ -29,6 +31,7 @@ private slots:
     void layer_new_null();
     void layer_new_shape();
     void layer_new_precomp();
+    void refresh_title(model::Document* doc);
 
 protected:
     void changeEvent(QEvent *e) override;

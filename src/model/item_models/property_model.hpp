@@ -3,6 +3,7 @@
 #include <QAbstractItemModel>
 
 #include "model/property.hpp"
+#include "model/document.hpp"
 
 namespace model {
 
@@ -23,6 +24,8 @@ public:
     int columnCount(const QModelIndex & parent) const override;
     int rowCount(const QModelIndex & parent) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+
+    void set_document(model::Document* document);
 
     void set_object(model::Object* object);
 

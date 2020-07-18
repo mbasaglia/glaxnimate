@@ -104,6 +104,10 @@ void GlaxnimateWindow::layer_new_shape()
 {
 }
 
+void GlaxnimateWindow::refresh_title(model::Document* doc)
+{
+    d->refresh_title(doc);
+}
 
 
 
