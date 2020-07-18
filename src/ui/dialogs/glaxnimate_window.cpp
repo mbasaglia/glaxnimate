@@ -87,5 +87,23 @@ void GlaxnimateWindow::document_treeview_clicked ( const QModelIndex& index )
         node->docnode_set_locked(!node->docnode_locked());
 }
 
+void GlaxnimateWindow::layer_new_menu()
+{
+    d->ui.menu_new_layer->popup(QCursor::pos(), d->ui.action_new_layer_shape);
+}
+
+void GlaxnimateWindow::layer_new_null()
+{
+}
+
+void GlaxnimateWindow::layer_new_precomp()
+{
+}
+
+void GlaxnimateWindow::layer_new_shape()
+{
+}
+
+
 
 

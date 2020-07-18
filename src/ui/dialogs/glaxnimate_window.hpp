@@ -25,6 +25,10 @@ private slots:
     void color_update_alpha(const QColor& col);
     void color_update_component(int value);
     void document_treeview_clicked(const QModelIndex& index);
+    void layer_new_menu();
+    void layer_new_null();
+    void layer_new_shape();
+    void layer_new_precomp();
 
 protected:
     void changeEvent(QEvent *e) override;

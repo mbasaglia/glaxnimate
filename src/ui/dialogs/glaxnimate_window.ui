@@ -88,7 +88,7 @@
     <property name="title">
      <string>&amp;Layers</string>
     </property>
-    <widget class="QMenu" name="menu_New">
+    <widget class="QMenu" name="menu_new_layer">
      <property name="title">
       <string>&amp;New</string>
      </property>
@@ -96,11 +96,11 @@
       <iconset theme="list-add">
        <normaloff>.</normaloff>.</iconset>
      </property>
-     <addaction name="action_Null_Layer"/>
-     <addaction name="action_Shape_Layer"/>
-     <addaction name="action_Precomposition_Layer"/>
+     <addaction name="action_new_layer_null"/>
+     <addaction name="action_new_layer_shape"/>
+     <addaction name="action_new_layer_precomp"/>
     </widget>
-    <addaction name="menu_New"/>
+    <addaction name="menu_new_layer"/>
     <addaction name="action_Move_To_Composition"/>
     <addaction name="actionNew_Pre_Composition"/>
     <addaction name="separator"/>
@@ -1136,7 +1136,7 @@
     <string>*</string>
    </property>
   </action>
-  <action name="action_Null_Layer">
+  <action name="action_new_layer_null">
    <property name="icon">
     <iconset theme="transform-move">
      <normaloff>.</normaloff>.</iconset>
@@ -1145,7 +1145,7 @@
     <string>&amp;Null Layer</string>
    </property>
   </action>
-  <action name="action_Shape_Layer">
+  <action name="action_new_layer_shape">
    <property name="icon">
     <iconset theme="shapes">
      <normaloff>.</normaloff>.</iconset>
@@ -1154,7 +1154,7 @@
     <string>&amp;Shape Layer</string>
    </property>
   </action>
-  <action name="action_Precomposition_Layer">
+  <action name="action_new_layer_precomp">
    <property name="icon">
     <iconset theme="video-x-generic">
      <normaloff>.</normaloff>.</iconset>
@@ -2250,6 +2250,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_layer_add</sender>
+   <signal>clicked()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>layer_new_menu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1061</x>
+     <y>938</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1119</x>
+     <y>1096</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_new_layer_null</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>layer_new_null()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_new_layer_precomp</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>layer_new_precomp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_new_layer_shape</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>layer_new_shape()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
@@ -2259,5 +2323,9 @@
   <slot>color_update_alpha(QColor)</slot>
   <slot>color_update_component(int)</slot>
   <slot>document_treeview_clicked(QModelIndex)</slot>
+  <slot>layer_new_menu()</slot>
+  <slot>layer_new_null()</slot>
+  <slot>layer_new_precomp()</slot>
+  <slot>layer_new_shape()</slot>
  </slots>
 </ui>
