@@ -9,11 +9,12 @@ app/app_info.cpp
 io/lottie/lottie_exporter.cpp
 io/base.cpp
 
-model/object.cpp
-model/document.cpp
-model/layers.cpp
 model/animation.cpp
+model/composition.cpp
+model/document.cpp
 model/document_node.cpp
+model/layers.cpp
+model/object.cpp
 model/item_models/document_node_model.cpp
 model/item_models/property_model.cpp
 

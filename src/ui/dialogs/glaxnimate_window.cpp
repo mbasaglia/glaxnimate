@@ -94,20 +94,20 @@ void GlaxnimateWindow::layer_new_menu()
 
 void GlaxnimateWindow::layer_new_null()
 {
+    d->layer_new<model::NullLayer>();
 }
 
 void GlaxnimateWindow::layer_new_precomp()
 {
+//     d->layer_new<model::PrecompLayer>();
 }
 
 void GlaxnimateWindow::layer_new_shape()
 {
+    d->layer_new<model::ShapeLayer>();
 }
 
 void GlaxnimateWindow::refresh_title(model::Document* doc)
 {
     d->refresh_title(doc);
 }
-
-
-

@@ -6,6 +6,8 @@ namespace model {
 
 class Composition : public DocumentNode
 {
+    Q_OBJECT
+
 public:
     ObjectListProperty<Layer> layers{this, "layers", "layers"};
 
@@ -28,6 +30,13 @@ public:
     {
         return layers.size();
     }
+
+    int add_layer(std::unique_ptr<Layer> lay, int position);
+
+    std::unique_ptr<Layer> remove_layer(int index);
+
+private:
+    int layer_index = 0;
 };
 
 } // namespace model

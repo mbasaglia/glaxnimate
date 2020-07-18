@@ -86,7 +86,6 @@ public:
     // ddd
     // hd
     FixedValueProperty<LayerType> type;
-    Property<QString> name{this, "name", "nm", ""};
     Property<Layer*> parent{this, "parent", "parent", nullptr};
     // stretch
     // transform
@@ -96,7 +95,7 @@ public:
     Property<float> start_time{this, "start_time", "st", -1};
     // blend_mode
     // matte_mode
-    Property<int> index{this, "index", "ind", -1};
+    NullableProperty<int> index{this, "index", "ind"};
     // css_class
     // layer_html_id
     // has_masks

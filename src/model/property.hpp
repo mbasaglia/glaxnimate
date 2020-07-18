@@ -253,14 +253,21 @@ public:
     iterator begin() const { return objects.begin(); }
     iterator end() const { return objects.end(); }
 
-    void push_back(pointer p)
+    reference back() const
     {
-        objects.push_back(std::move(p));
+        return *objects.back();
+    }
+
+    void insert(pointer p, int position)
+    {
+        if ( !valid_index(position) )
+            position = size();
+        objects.insert(objects.begin()+position, std::move(p));
     }
 
     bool valid_index(int index)
     {
-        return index < 0 || index >= objects.size();
+        return index >= 0 && index < int(objects.size());
     }
 
     pointer remove(int index)
@@ -333,5 +340,71 @@ private:
 
 };
 
+
+template<class Type, class Reference = const Type&>
+class NullableProperty : public BaseProperty
+{
+public:
+    using held_type = Type;
+    using reference = Reference;
+
+    NullableProperty(Object* obj, QString name, QString lottie, Type default_value)
+        : BaseProperty(obj, std::move(name), std::move(lottie), PropertyTraits::from_scalar<Type>()),
+          value_(std::move(default_value)), null_(false)
+    {}
+
+    NullableProperty(Object* obj, QString name, QString lottie)
+        : BaseProperty(obj, std::move(name), std::move(lottie), PropertyTraits::from_scalar<Type>()),
+          null_(true)
+    {}
+
+    void set(Type default_value)
+    {
+        std::swap(value_, default_value);
+        null_ = false;
+        value_changed();
+    }
+
+    reference get() const
+    {
+        return value_;
+    }
+
+    void set_null()
+    {
+        null_ = true;
+    }
+
+    bool is_null() const
+    {
+        return null_;
+    }
+
+    QVariant value() const override
+    {
+        if ( null_ )
+            return {};
+        return QVariant::fromValue(value_);
+    }
+
+    bool set_value(const QVariant& val) override
+    {
+        if ( val.isNull() )
+        {
+            null_ = true;
+            return true;
+        }
+
+        if ( !val.canConvert<Type>() )
+            return false;
+        set(val.value<Type>());
+        null_ = false;
+        return true;
+    }
+
+private:
+    Type value_;
+    bool null_ = false;
+};
 
 } // namespace model

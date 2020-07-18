@@ -16,6 +16,7 @@
 #include "ui/dialogs/import_export_dialog.hpp"
 #include "ui/style/dock_widget_style.hpp"
 #include "ui/style/property_delegate.hpp"
+#include "command/layer_commands.hpp"
 
 namespace {
 
@@ -412,6 +413,56 @@ public:
         QColor c = current_color();
         (*func)(c, val);
         update_color(c, true, sender);
+    }
+
+    model::Composition* current_composition()
+    {
+        model::DocumentNode* curr = document_node_model.node(ui.view_document_node->currentIndex());
+        if ( curr )
+        {
+            if ( auto curr_comp = qobject_cast<model::Composition*>(curr) )
+                return curr_comp;
+
+            if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
+                return curr_lay->composition;
+        }
+        return &current_document()->animation();
+    }
+
+    template<class LayerT>
+    void layer_new()
+    {
+        if ( !current_document() )
+            return;
+
+        layer_new_impl(std::make_unique<LayerT>(current_composition()));
+    }
+
+    void layer_new_impl(std::unique_ptr<model::Layer> layer)
+    {
+        model::Composition* composition = current_composition();
+
+        QString base_name = layer->docnode_name();
+        QString name;
+
+        int n = 0;
+        for ( int i = 0; i < composition->layers.size(); i++ )
+        {
+            if ( composition->layers[i].name.get() == name )
+            {
+                n += 1;
+                name = tr("%1 %2").arg(base_name).arg(n);
+                i = 0;
+            }
+        }
+
+        layer->name.set(name);
+
+        model::Layer* ptr = layer.get();
+
+        current_document()->undo_stack().push(new command::AddLayer(composition, std::move(layer), 0));
+
+        ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
     }
 
 };
