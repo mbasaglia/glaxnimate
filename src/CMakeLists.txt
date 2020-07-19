@@ -17,9 +17,11 @@ model/layers.cpp
 model/object.cpp
 model/item_models/document_node_model.cpp
 model/item_models/property_model.cpp
+model/graphics/handle.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui
+ui/widgets/glaxnimate_graphics_view.cpp
 )
 
 configure_file(

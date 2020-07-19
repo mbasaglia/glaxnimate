@@ -17,6 +17,7 @@
 #include "ui/dialogs/import_export_dialog.hpp"
 #include "ui/style/dock_widget_style.hpp"
 #include "ui/style/property_delegate.hpp"
+#include "ui/widgets/glaxnimate_graphics_view.hpp"
 #include "command/layer_commands.hpp"
 
 namespace {
@@ -74,7 +75,7 @@ public:
     model::Document* create_document(const QString& filename)
     {
         documents.push_back(std::make_unique<model::Document>(filename));
-        auto widget = new QGraphicsView();
+        auto widget = new GlaxnimateGraphicsView();
         ui.tab_widget->addTab(widget, QIcon::fromTheme("video-x-generic"), filename);
         model::Document* doc = documents.back().get();
         auto refresh_slot = [this, doc](){parent->refresh_title(doc);};
