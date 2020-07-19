@@ -13,6 +13,7 @@
 #include "model/document.hpp"
 #include "model/item_models/document_node_model.hpp"
 #include "model/item_models/property_model.hpp"
+#include "model/graphics/document_scene.hpp"
 #include "ui/dialogs/import_export_dialog.hpp"
 #include "ui/style/dock_widget_style.hpp"
 #include "ui/style/property_delegate.hpp"
@@ -79,6 +80,7 @@ public:
         auto refresh_slot = [this, doc](){parent->refresh_title(doc);};
         QObject::connect(doc, &model::Document::filename_changed, parent, refresh_slot);
         QObject::connect(&doc->undo_stack(), &QUndoStack::cleanChanged, parent, refresh_slot);
+        widget->setScene(&doc->graphics_scene());
 
         switch_to_document(doc);
 
