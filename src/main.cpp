@@ -13,8 +13,9 @@ int main(int argc, char *argv[])
     app.setApplicationDisplayName(info.name());
     app.setApplicationVersion(info.version());
     app.setOrganizationName(info.organization());
+    app.setWindowIcon(QIcon(info.data_file("icon.svg")));
 
-    QStringList search_paths = info.data_paths("img/icons");
+    QStringList search_paths = info.data_paths("icons");
     search_paths += QIcon::themeSearchPaths();
     QIcon::setThemeSearchPaths(search_paths);
     QIcon::setThemeName("breeze");

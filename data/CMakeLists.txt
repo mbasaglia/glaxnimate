@@ -10,8 +10,10 @@ add_custom_target(
     icons
     #ALL
     DEPENDS ${SOURCES}
-    COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/icons/make_icons mktheme ${CMAKE_SOURCE_DIR}/src -o ${CMAKE_CURRENT_BINARY_DIR}/img/icons/breeze
+    COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/icons/make_icons mktheme ${CMAKE_SOURCE_DIR}/src -o ${CMAKE_CURRENT_BINARY_DIR}/icons/breeze
 )
+
+configure_file(icon.svg icon.svg COPYONLY)
 
 
 # Translation

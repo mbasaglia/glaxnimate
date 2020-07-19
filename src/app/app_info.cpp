@@ -39,7 +39,7 @@ QStringList AppInfo::data_paths(const QString& name) const
     for ( const QDir& d: data_roots() )
     {
         if ( d.exists() )
-            found << QDir::cleanPath(d.absoluteFilePath(name));;
+            found << QDir::cleanPath(d.absoluteFilePath(name));
     }
     found.removeDuplicates();
 
@@ -75,4 +75,17 @@ QList<QDir> AppInfo::data_roots() const
 QString AppInfo::organization() const
 {
     return PROJECT_SLUG;
+}
+
+QString AppInfo::data_file(const QString& name) const
+{
+    QStringList found;
+
+    for ( const QDir& d: data_roots() )
+    {
+        if ( d.exists(name) )
+            return QDir::cleanPath(d.absoluteFilePath(name));
+    }
+
+    return {};
 }
