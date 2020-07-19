@@ -250,8 +250,11 @@ public:
 
         // Item views
         ui.view_document_node->setModel(&document_node_model);
-        ui.view_document_node->header()->setSectionResizeMode(1, QHeaderView::Stretch);
+        ui.view_document_node->header()->setSectionResizeMode(model::DocumentNodeModel::ColumnName, QHeaderView::Stretch);
+        ui.view_document_node->header()->setSectionResizeMode(model::DocumentNodeModel::ColumnColor, QHeaderView::ResizeToContents);
         ui.view_document_node->setItemDelegateForColumn(model::DocumentNodeModel::ColumnColor, &color_delegate);
+        QObject::connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::currentChanged,
+                         parent, &GlaxnimateWindow::document_treeview_current_changed);
 
         ui.view_properties->setModel(&property_model);
         ui.view_properties->setItemDelegateForColumn(1, &property_delegate);
@@ -417,7 +420,7 @@ public:
 
     model::Composition* current_composition()
     {
-        model::DocumentNode* curr = document_node_model.node(ui.view_document_node->currentIndex());
+        model::DocumentNode* curr = current_document_node();
         if ( curr )
         {
             if ( auto curr_comp = qobject_cast<model::Composition*>(curr) )
@@ -427,6 +430,22 @@ public:
                 return curr_lay->composition;
         }
         return &current_document()->animation();
+    }
+
+    model::Layer* current_layer()
+    {
+        model::DocumentNode* curr = current_document_node();
+        if ( curr )
+        {
+            if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
+                return curr_lay;
+        }
+        return nullptr;
+    }
+
+    model::DocumentNode* current_document_node()
+    {
+        return document_node_model.node(ui.view_document_node->currentIndex());
     }
 
     template<class LayerT>
@@ -443,7 +462,7 @@ public:
         model::Composition* composition = current_composition();
 
         QString base_name = layer->docnode_name();
-        QString name;
+        QString name = base_name;
 
         int n = 0;
         for ( int i = 0; i < composition->layers.size(); i++ )
@@ -452,7 +471,7 @@ public:
             {
                 n += 1;
                 name = tr("%1 %2").arg(base_name).arg(n);
-                i = 0;
+                i = -1;
             }
         }
 
@@ -460,11 +479,30 @@ public:
 
         model::Layer* ptr = layer.get();
 
-        current_document()->undo_stack().push(new command::AddLayer(composition, std::move(layer), 0));
+        int position = composition->layer_position(current_layer());
+        current_document()->undo_stack().push(new command::AddLayer(composition, std::move(layer), position));
 
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
     }
 
+    void layer_delete()
+    {
+        /// @todo Remove shapes / precompositions
+        model::DocumentNode* curr = current_document_node();
+        if ( !curr )
+            return;
+
+        if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
+        {
+            current_document()->undo_stack().push(new command::RemoveLayer(curr_lay->composition, curr_lay));
+        }
+    }
+
+    void document_treeview_current_changed(const QModelIndex& index)
+    {
+        if ( auto node = document_node_model.node(index) )
+            property_model.set_object(node);
+    }
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

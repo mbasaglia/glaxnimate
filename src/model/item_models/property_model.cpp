@@ -251,13 +251,16 @@ Qt::ItemFlags model::PropertyModel::flags(const QModelIndex& index) const
         {
             PropertyTraits traits = tree->prop->traits();
 
-            if ( traits.list || traits.is_object() || traits.type == PropertyTraits::Unknown )
+            if ( traits.list || traits.is_object() || traits.type == PropertyTraits::Unknown || !traits.user_editable )
                 return Qt::ItemIsSelectable;
 
-            if ( traits.type == PropertyTraits::Bool )
-                return flags | Qt::ItemIsUserCheckable;
+            if ( traits.user_editable )
+            {
+                if ( traits.type == PropertyTraits::Bool )
+                    return flags | Qt::ItemIsUserCheckable;
 
-            return flags | Qt::ItemIsEditable;
+                return flags | Qt::ItemIsEditable;
+            }
         }
         else
         {
@@ -267,7 +270,6 @@ Qt::ItemFlags model::PropertyModel::flags(const QModelIndex& index) const
 
     return {};
 }
-
 
 QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
 {
@@ -318,6 +320,12 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
                 return QVariant::fromValue(prop->value().toBool() ? Qt::Checked : Qt::Unchecked);
             return {};
         }
+        else if ( traits.type == PropertyTraits::Enum )
+        {
+            if ( role == Qt::DisplayRole )
+                return prop->value().toString();
+            return {};
+        }
         else
         {
             if ( role == Qt::DisplayRole || role == Qt::EditRole )
@@ -344,7 +352,7 @@ bool model::PropertyModel::setData(const QModelIndex& index, const QVariant& val
     PropertyTraits traits = prop->traits();
 
 
-    if ( traits.list || traits.type == PropertyTraits::Unknown )
+    if ( traits.list || traits.type == PropertyTraits::Unknown || !traits.user_editable )
     {
         return false;
     }

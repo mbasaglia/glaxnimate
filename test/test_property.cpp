@@ -105,3 +105,12 @@ BOOST_AUTO_TEST_CASE( test_unknown_property_variant )
     BOOST_TEST(pci.called_with("foo", 456));
     BOOST_CHECK(prop.value() == QVariant(456));
 }
+
+BOOST_AUTO_TEST_CASE( test_traits_get_type )
+{
+    BOOST_CHECK(model::PropertyTraits::get_type<int>() == model::PropertyTraits::Int);
+    BOOST_CHECK(model::PropertyTraits::get_type<float>() == model::PropertyTraits::Float);
+    BOOST_CHECK(model::PropertyTraits::get_type<bool>() == model::PropertyTraits::Bool);
+    BOOST_CHECK(model::PropertyTraits::get_type<QString>() == model::PropertyTraits::String);
+    BOOST_CHECK(model::PropertyTraits::get_type<model::PropertyTraits::Type>() == model::PropertyTraits::Enum);
+}

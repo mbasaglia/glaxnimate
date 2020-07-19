@@ -57,18 +57,6 @@ public:
     }
 
 public slots:
-    void docnode_set_name(const QString& name)
-    {
-        this->name.set(name);
-        emit docnode_name_changed(name);
-    }
-
-    void docnode_set_group_color(const QColor& col)
-    {
-        group_color.set(col);
-        emit docnode_group_color_changed(col);
-    }
-
     void docnode_set_visible(bool visible)
     {
         emit docnode_visible_changed(visible_ = visible);
@@ -96,6 +84,8 @@ private slots:
     {
         if ( name == "name" )
             emit docnode_name_changed(this->name.get());
+        else if ( name == "color" )
+            emit docnode_group_color_changed(this->group_color.get());
     }
 
 private:

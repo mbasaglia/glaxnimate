@@ -8,11 +8,6 @@
 
 namespace model {
 
-enum class LayerType
-{
-    NullLayer = 3,
-    ShapeLayer = 4,
-};
 
 class Composition;
 class Layer;
@@ -74,9 +69,16 @@ private:
 class Layer : public DocumentNode
 {
     Q_OBJECT
-    Q_ENUM(LayerType);
 
 public:
+    enum LayerType
+    {
+        NullLayer = 3,
+        ShapeLayer = 4,
+    };
+    Q_ENUM(LayerType);
+
+
     explicit Layer(Composition* composition, LayerType type)
         : composition(composition), type{this, "type", "ty", type}
     {}
@@ -95,7 +97,7 @@ public:
     Property<float> start_time{this, "start_time", "st", -1};
     // blend_mode
     // matte_mode
-    NullableProperty<int> index{this, "index", "ind"};
+    NullableProperty<int> index{this, "index", "ind", false};
     // css_class
     // layer_html_id
     // has_masks
@@ -130,7 +132,7 @@ private:
 };
 
 namespace detail {
-    template<class Derived, LayerType lt>
+    template<class Derived, Layer::LayerType lt>
     class BaseLayerProps : public Layer
     {
     public:
@@ -156,7 +158,7 @@ namespace detail {
 } // namespace detail
 
 
-class NullLayer : public detail::BaseLayerProps<NullLayer, LayerType::NullLayer>
+class NullLayer : public detail::BaseLayerProps<NullLayer, Layer::NullLayer>
 {
     Q_OBJECT
 
@@ -170,7 +172,7 @@ public:
 };
 
 
-class ShapeLayer : public detail::BaseLayerProps<ShapeLayer, LayerType::ShapeLayer>
+class ShapeLayer : public detail::BaseLayerProps<ShapeLayer, Layer::ShapeLayer>
 {
     Q_OBJECT
 
@@ -188,5 +190,3 @@ public:
 
 
 } // namespace model
-
-Q_DECLARE_METATYPE(model::LayerType)

@@ -87,6 +87,12 @@ void GlaxnimateWindow::document_treeview_clicked ( const QModelIndex& index )
         node->docnode_set_locked(!node->docnode_locked());
 }
 
+void GlaxnimateWindow::document_treeview_current_changed(const QModelIndex& index)
+{
+    d->document_treeview_current_changed(index);
+}
+
+
 void GlaxnimateWindow::layer_new_menu()
 {
     d->ui.menu_new_layer->popup(QCursor::pos(), d->ui.action_new_layer_shape);
@@ -110,4 +116,9 @@ void GlaxnimateWindow::layer_new_shape()
 void GlaxnimateWindow::refresh_title(model::Document* doc)
 {
     d->refresh_title(doc);
+}
+
+void GlaxnimateWindow::layer_delete()
+{
+    d->layer_delete();
 }

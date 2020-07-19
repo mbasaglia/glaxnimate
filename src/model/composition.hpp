@@ -35,6 +35,8 @@ public:
 
     std::unique_ptr<Layer> remove_layer(int index);
 
+    int layer_position(Layer* layer, int not_found=0) const;
+
 private:
     int layer_index = 0;
 };

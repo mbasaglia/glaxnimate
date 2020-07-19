@@ -1,4 +1,5 @@
 #include "document_node_model.hpp"
+#include "command/property_commands.hpp"
 
 void model::DocumentNodeModel::connect_node ( model::DocumentNode* node )
 {
@@ -161,10 +162,10 @@ bool model::DocumentNodeModel::setData(const QModelIndex& index, const QVariant&
     switch ( index.column() )
     {
         case ColumnColor:
-            n->docnode_set_group_color(value.value<QColor>());
+            document->undo_stack().push(new command::SetPropertyValue(&n->group_color, n->group_color.get(), value));
             return true;
         case ColumnName:
-            n->docnode_set_name(value.toString());
+            document->undo_stack().push(new command::SetPropertyValue(&n->name, n->name.get(), value));
             return true;
     }
     return false;

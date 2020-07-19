@@ -27,3 +27,14 @@ std::unique_ptr<model::Layer> model::Composition::remove_layer(int index)
 
     return {};
 }
+
+int model::Composition::layer_position(model::Layer* layer, int not_found) const
+{
+    for ( int i = 0; i < layers.size(); i++ )
+    {
+        if ( &layers[i] == layer )
+            return i;
+    }
+
+    return not_found;
+}
