@@ -1,6 +1,4 @@
-#define BOOST_TEST_MODULE Test
-#include <boost/test/unit_test.hpp>
-
+#include <QtTest/QtTest>
 #include <QPoint>
 
 #include "model/property.hpp"
@@ -53,64 +51,74 @@ struct PropertyChangedInspector
     bool called = false;
 };
 
-BOOST_AUTO_TEST_CASE( test_property_default )
+class TestProperty: public QObject
 {
-    PropertyChangedInspector pci;
-    Object obj;
-    pci.connect(obj);
+    Q_OBJECT
 
-    Property<int> prop(&obj, "foo", "bar", 456);
-    BOOST_TEST(pci.not_called());
-    BOOST_TEST(prop.get() == 456);
-}
+private slots:
 
-BOOST_AUTO_TEST_CASE( test_property_get_set )
-{
-    PropertyChangedInspector pci;
-    Object obj;
-    pci.connect(obj);
+    void test_property_default()
+    {
+        PropertyChangedInspector pci;
+        Object obj;
+        pci.connect(obj);
 
-    Property<int> prop(&obj, "foo", "bar");
-    prop.set(123);
-    BOOST_TEST(pci.called_with("foo", 123));
-    BOOST_TEST(prop.get() == 123);
-}
+        Property<int> prop(&obj, "foo", "bar", 456);
+        QVERIFY(pci.not_called());
+        QCOMPARE(prop.get(), 456);
+    }
 
-BOOST_AUTO_TEST_CASE( test_property_variant )
-{
-    PropertyChangedInspector pci;
-    Object obj;
-    pci.connect(obj);
+    void test_property_get_set()
+    {
+        PropertyChangedInspector pci;
+        Object obj;
+        pci.connect(obj);
 
-    Property<int> prop(&obj, "foo", "bar", 123);
-    BOOST_CHECK(prop.value() == QVariant(123));
-    BOOST_CHECK(prop.set_value(QVariant(456)));
-    BOOST_TEST(pci.called_with("foo", 456));
-    BOOST_CHECK(prop.value() == QVariant(456));
-    pci.reset();
-    BOOST_CHECK(!prop.set_value(QVariant(QPoint(1, 2))));
-    BOOST_TEST(prop.get() == 456);
-    BOOST_CHECK(pci.not_called());
-}
+        Property<int> prop(&obj, "foo", "bar");
+        prop.set(123);
+        QVERIFY(pci.called_with("foo", 123));
+        QCOMPARE(prop.get(), 123);
+    }
 
-BOOST_AUTO_TEST_CASE( test_unknown_property_variant )
-{
-    PropertyChangedInspector pci;
-    Object obj;
-    pci.connect(obj);
+    void test_property_variant()
+    {
+        PropertyChangedInspector pci;
+        Object obj;
+        pci.connect(obj);
 
-    UnknownProperty prop(&obj, "foo", 123);
-    BOOST_CHECK(prop.value() == QVariant(123));
-    BOOST_CHECK(prop.set_value(QVariant(456)));
-    BOOST_TEST(pci.called_with("foo", 456));
-    BOOST_CHECK(prop.value() == QVariant(456));
-}
+        Property<int> prop(&obj, "foo", "bar", 123);
+        QCOMPARE(prop.value(), QVariant(123));
+        QVERIFY(prop.set_value(QVariant(456)));
+        QVERIFY(pci.called_with("foo", 456));
+        QCOMPARE(prop.value(), QVariant(456));
+        pci.reset();
+        QVERIFY(!prop.set_value(QVariant(QPoint(1, 2))));
+        QCOMPARE(prop.get(), 456);
+        QVERIFY(pci.not_called());
+    }
 
-BOOST_AUTO_TEST_CASE( test_traits_get_type )
-{
-    BOOST_CHECK(model::PropertyTraits::get_type<int>() == model::PropertyTraits::Int);
-    BOOST_CHECK(model::PropertyTraits::get_type<float>() == model::PropertyTraits::Float);
-    BOOST_CHECK(model::PropertyTraits::get_type<bool>() == model::PropertyTraits::Bool);
-    BOOST_CHECK(model::PropertyTraits::get_type<QString>() == model::PropertyTraits::String);
-    BOOST_CHECK(model::PropertyTraits::get_type<model::PropertyTraits::Type>() == model::PropertyTraits::Enum);
-}
+    void test_unknown_property_variant()
+    {
+        PropertyChangedInspector pci;
+        Object obj;
+        pci.connect(obj);
+
+        UnknownProperty prop(&obj, "foo", 123);
+        QCOMPARE(prop.value(), QVariant(123));
+        QVERIFY(prop.set_value(QVariant(456)));
+        QVERIFY(pci.called_with("foo", 456));
+        QCOMPARE(prop.value(), QVariant(456));
+    }
+
+    void test_traits_get_type()
+    {
+        QCOMPARE(model::PropertyTraits::get_type<int>(), model::PropertyTraits::Int);
+        QCOMPARE(model::PropertyTraits::get_type<float>(), model::PropertyTraits::Float);
+        QCOMPARE(model::PropertyTraits::get_type<bool>(), model::PropertyTraits::Bool);
+        QCOMPARE(model::PropertyTraits::get_type<QString>(), model::PropertyTraits::String);
+        QCOMPARE(model::PropertyTraits::get_type<model::PropertyTraits::Type>(), model::PropertyTraits::Enum);
+    }
+};
+
+QTEST_GUILESS_MAIN(TestProperty)
+#include "test_property.moc"

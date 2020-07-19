@@ -39,13 +39,8 @@ add_subdirectory(external/Qt-Color-Widgets)
 
 add_subdirectory(data share/${PROJECT_SLUG}/${PROJECT_SLUG})
 
-# find_package(Qt5Test QUIET)
-# if(Qt5Test_FOUND)
-#     add_subdirectory(test)
-# endif()
-find_package (Boost COMPONENTS unit_test_framework)
-if(Boost_FOUND)
-    include_directories (${Boost_INCLUDE_DIRS})
+find_package(Qt5Test QUIET)
+if(Qt5Test_FOUND)
     add_subdirectory(test)
 endif()
 
