@@ -79,7 +79,14 @@ public:
         auto refresh_slot = [this, doc](){parent->refresh_title(doc);};
         QObject::connect(doc, &model::Document::filename_changed, parent, refresh_slot);
         QObject::connect(&doc->undo_stack(), &QUndoStack::cleanChanged, parent, refresh_slot);
+
         switch_to_document(doc);
+
+        auto layer = std::make_unique<model::ShapeLayer>(&doc->animation());
+        model::Layer* ptr = layer.get();
+        doc->animation().add_layer(std::move(layer), 0);
+        ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
+
         return doc;
     }
 

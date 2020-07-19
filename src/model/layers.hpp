@@ -94,7 +94,7 @@ public:
     // auto_orient
     Property<float> in_point{this, "in_point", "ip", -1};
     Property<float> out_point{this, "out_point", "ip", -1};
-    Property<float> start_time{this, "start_time", "st", -1};
+    Property<float> start_time{this, "start_time", "st", 0};
     // blend_mode
     // matte_mode
     NullableProperty<int> index{this, "index", "ind", false};
