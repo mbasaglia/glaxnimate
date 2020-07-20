@@ -6,14 +6,15 @@ foreach(src ${SOURCES_tmp})
 endforeach()
 
 
-add_custom_target(
-    icons
-    #ALL
-    DEPENDS ${SOURCES}
-    COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/icons/make_icons mktheme ${CMAKE_SOURCE_DIR}/src -o ${CMAKE_CURRENT_BINARY_DIR}/icons/breeze
-)
+# add_custom_target(
+#     icons
+#     #ALL
+#     DEPENDS ${SOURCES}
+#     COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/icons/make_icons mktheme ${CMAKE_SOURCE_DIR}/src -o ${CMAKE_CURRENT_BINARY_DIR}/icons/breeze
+# )
 
-configure_file(icon.svg icon.svg COPYONLY)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/sets/breeze-icons/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/sets/breeze-icons/icons-dark DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
 
 
 # Translation

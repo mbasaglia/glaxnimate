@@ -18,7 +18,12 @@ int main(int argc, char *argv[])
     QStringList search_paths = info.data_paths("icons");
     search_paths += QIcon::themeSearchPaths();
     QIcon::setThemeSearchPaths(search_paths);
-    QIcon::setThemeName("breeze");
+
+    QPalette palette = QGuiApplication::palette();
+    if ( palette.color(QPalette::Button).value() < 100 )
+        QIcon::setThemeName("icons-dark");
+    else
+        QIcon::setThemeName("icons");
 
     GlaxnimateWindow window;
     window.show();
