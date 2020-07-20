@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>353</width>
+    <width>377</width>
     <height>27</height>
    </rect>
   </property>
@@ -32,7 +32,8 @@
       <string>Fit View</string>
      </property>
      <property name="icon">
-      <iconset theme="zoom-fit-page"/>
+      <iconset theme="zoom-fit-page">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
@@ -59,9 +60,6 @@
      </property>
      <property name="maximum">
       <double>10000.000000000000000</double>
-     </property>
-     <property name="stepType">
-      <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
      </property>
      <property name="value">
       <double>100.000000000000000</double>

@@ -19,6 +19,11 @@ ViewTransformWidget::ViewTransformWidget(QWidget* parent)
     connect(d->spin_angle, (func)&QDoubleSpinBox::valueChanged, this, &ViewTransformWidget::fuckyoumoc_on_angle_changed);
     connect(d->spin_zoom, (func)&QDoubleSpinBox::valueChanged, this, &ViewTransformWidget::fuckyoumoc_on_zoom_changed);
     connect(d->btn_view_fit, &QAbstractButton::clicked, this, &ViewTransformWidget::view_fit);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+    d->spin_zoom->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
+#endif
+
 }
 
 ViewTransformWidget::~ViewTransformWidget() = default;
