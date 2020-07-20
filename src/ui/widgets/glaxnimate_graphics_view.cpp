@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include <QtMath>
 
+#include <QDebug>
 class GlaxnimateGraphicsView::Private
 {
 public:
@@ -39,8 +40,11 @@ public:
 
     void expand_scene_rect(float margin)
     {
-        QRectF vp ( view->mapToScene(-margin,-margin),
-                    view->mapToScene(view->width()+2*margin,view->height()+2*margin));
+        QRectF vp = QRectF(
+            view->mapToScene(-margin,-margin),
+            view->mapToScene(view->width()+margin, view->height()+margin)
+        ).normalized();
+
         QRectF sr = view->sceneRect();
         if ( ! sr.contains(vp) )
         {
@@ -54,6 +58,15 @@ public:
     {
         view->setCursor(Qt::ArrowCursor);
     }
+
+    QPointF anchor_scene()
+    {
+        QPoint anchor = view->mapFromGlobal(QCursor::pos());
+        QRect vp = view->rect();
+        if ( !vp.contains(anchor) )
+            anchor = vp.center();
+        return view->mapToScene(anchor);
+    }
 };
 
 
@@ -64,6 +77,8 @@ GlaxnimateGraphicsView::GlaxnimateGraphicsView(QWidget* parent)
     setRenderHint(QPainter::Antialiasing);
     setTransformationAnchor(NoAnchor);
     setResizeAnchor(NoAnchor);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 GlaxnimateGraphicsView::~GlaxnimateGraphicsView() = default;
@@ -88,6 +103,7 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
             setCursor(Qt::SizeAllCursor);
             d->transform_center = mpos;
             d->transform_center_scene = scene_pos;
+            d->expand_scene_rect(std::max(width(), height())*3);
         }
         else
         {
@@ -119,7 +135,7 @@ void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
             QPointF delta = mpos - d->transform_center;
             qreal delta_x = delta.y();
             qreal factor = std::pow(5, delta_x/256);
-            set_zoom(factor * d->scale_start_zoom, d->transform_center);
+            set_zoom_anchor(factor * d->scale_start_zoom, d->transform_center_scene);
         }
         else if ( d->mouse_view_mode == Private::Rotate )
         {
@@ -155,17 +171,26 @@ void GlaxnimateGraphicsView::mouseReleaseEvent(QMouseEvent * event)
     }
 
     d->update_mouse_cursor();
-
+    update();
 }
 
 void GlaxnimateGraphicsView::wheelEvent(QWheelEvent* event)
 {
     if ( event->delta() < 0 )
-        zoom_view(0.8);
+        zoom_out();
     else
-        zoom_view(1.25);
+        zoom_in();
 }
 
+void GlaxnimateGraphicsView::zoom_in()
+{
+    zoom_view(1.25);
+}
+
+void GlaxnimateGraphicsView::zoom_out()
+{
+    zoom_view(0.8);
+}
 
 void GlaxnimateGraphicsView::translate_view(const QPointF& delta)
 {
@@ -175,41 +200,35 @@ void GlaxnimateGraphicsView::translate_view(const QPointF& delta)
 
 void GlaxnimateGraphicsView::zoom_view(qreal factor)
 {
-    zoom_view(factor, mapFromGlobal(QCursor::pos()));
+    zoom_view_anchor(factor, d->anchor_scene());
 }
 
-void GlaxnimateGraphicsView::zoom_view(qreal factor, const QPoint& anchor)
+void GlaxnimateGraphicsView::zoom_view_anchor(qreal factor, const QPointF& scene_anchor)
 {
     if ( d->zoom_factor*factor < 0.01 )
         return;
 
-    QPointF sp1 = mapToScene(anchor);
-
-    QRectF r ( mapToScene(0,0), mapToScene(width()/factor,height()/factor));
-    r.translate(-r.bottomRight()/2);
-    setSceneRect(sceneRect().united(r));
-
+    d->expand_scene_rect(10);
+    translate(scene_anchor);
     scale(factor, factor);
-
-    // Anchor
-    if ( rect().contains(anchor) )
-    {
-        QPointF sp2 = mapToScene(anchor);
-        translate(sp2-sp1);
-
-    }
+    translate(-scene_anchor);
     d->expand_scene_rect(0);
 
     d->zoom_factor *= factor;
-    emit zoomed(100*d->zoom_factor);
-
+    emit zoomed(d->zoom_factor);
 }
 
-void GlaxnimateGraphicsView::set_zoom(qreal factor, const QPoint& anchor)
+void GlaxnimateGraphicsView::set_zoom(qreal factor)
+{
+    set_zoom_anchor(factor, d->anchor_scene());
+}
+
+
+void GlaxnimateGraphicsView::set_zoom_anchor(qreal factor, const QPointF& anchor)
 {
     if ( factor < 0.01 )
         return;
-    zoom_view(factor / d->zoom_factor, anchor);
+    zoom_view_anchor(factor / d->zoom_factor, anchor);
 }
 
 qreal GlaxnimateGraphicsView::get_zoom_factor() const
@@ -243,5 +262,33 @@ void GlaxnimateGraphicsView::do_rotate(qreal radians, const QPointF& scene_ancho
     translate(-scene_anchor);
     d->expand_scene_rect(10);
     d->rotation += radians;
-    emit rotated(qRadiansToDegrees(d->rotation));
+    d->rotation = std::fmod(d->rotation, 2*M_PI);
+    if ( d->rotation < 0 )
+        d->rotation += 2*M_PI;
+    emit rotated(d->rotation);
+}
+
+void GlaxnimateGraphicsView::set_rotation(qreal radians)
+{
+    do_rotate(radians-d->rotation, d->anchor_scene());
+}
+
+void GlaxnimateGraphicsView::view_fit(const QRect& fit_target)
+{
+    setTransform(QTransform());
+    d->rotation = 0;
+    d->zoom_factor = 1;
+    emit rotated(0);
+
+    if ( fit_target.isValid() && width() > 0 && height() > 0 )
+    {
+        qreal factor = std::min(width() / qreal(fit_target.width()), height() / qreal(fit_target.height()));
+        QPointF center(fit_target.center());
+        zoom_view_anchor(factor, QPointF(0, 0));
+        fitInView(QRectF(fit_target));
+    }
+    else
+    {
+        emit zoomed(1);
+    }
 }

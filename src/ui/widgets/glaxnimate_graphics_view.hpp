@@ -51,9 +51,9 @@ public slots:
      *  The zooming is performed relative to the current transformation
      *
      *  \param factor scaling factor ( 1 = don't zoom )
-     *  \param anchor Point to keep stable (local coords)
+     *  \param anchor Point to keep stable (scene coords)
      */
-    void zoom_view(qreal factor, const QPoint& anchor);
+    void zoom_view_anchor(qreal factor, const QPointF& anchor);
 
     /**
      * \brief Set zoom factor
@@ -61,9 +61,27 @@ public slots:
      *  The zooming is performed absolutely
      *
      *  \param factor scaling factor ( 1 = no zoom )
-     *  \param anchor Point to keep stable (local coords)
      */
-    void set_zoom(qreal factor, const QPoint& anchor);
+    void set_zoom(qreal factor);
+
+    /**
+     * \brief Set zoom factor
+     *
+     *  The zooming is performed absolutely
+     *
+     *  \param factor scaling factor ( 1 = no zoom )
+     *  \param anchor Point to keep stable (scene coords)
+     */
+    void set_zoom_anchor(qreal factor, const QPointF& anchor);
+
+    void zoom_in();
+    void zoom_out();
+    void reset_zoom() { set_zoom(1); }
+
+    void set_rotation(qreal radians);
+    void reset_rotation() { set_rotation(0); }
+
+    void view_fit(const QRect& fit_target);
 
 signals:
     /**
@@ -74,7 +92,7 @@ signals:
 
     /**
      *  \brief Emitted when rotation is changed
-     *  \param angle in degrees
+     *  \param angle in radians
      */
     void rotated(qreal angle);
 

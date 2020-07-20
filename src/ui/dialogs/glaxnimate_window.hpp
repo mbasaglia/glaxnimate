@@ -34,6 +34,7 @@ private slots:
     void layer_new_precomp();
     void refresh_title();
     void layer_delete();
+    void view_fit();
 
 protected:
     void changeEvent(QEvent *e) override;

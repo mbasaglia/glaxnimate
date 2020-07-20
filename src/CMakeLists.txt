@@ -22,6 +22,8 @@ model/graphics/handle.cpp
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui
 ui/widgets/glaxnimate_graphics_view.cpp
+ui/widgets/view_transform_widget.cpp
+ui/widgets/view_transform_widget.ui
 )
 
 configure_file(

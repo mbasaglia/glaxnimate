@@ -15,7 +15,8 @@ GlaxnimateWindow::~GlaxnimateWindow() = default;
 void GlaxnimateWindow::changeEvent(QEvent *e)
 {
     QMainWindow::changeEvent(e);
-    switch (e->type()) {
+    switch ( e->type() )
+    {
         case QEvent::LanguageChange:
             d->retranslateUi(this);
             break;
@@ -98,7 +99,7 @@ void GlaxnimateWindow::document_treeview_current_changed(const QModelIndex& inde
 
 void GlaxnimateWindow::layer_new_menu()
 {
-    d->ui.menu_new_layer->popup(QCursor::pos(), d->ui.action_new_layer_shape);
+    layer_new_shape();
 }
 
 void GlaxnimateWindow::layer_new_null()
@@ -124,4 +125,9 @@ void GlaxnimateWindow::refresh_title()
 void GlaxnimateWindow::layer_delete()
 {
     d->layer_delete();
+}
+
+void GlaxnimateWindow::view_fit()
+{
+    d->view_fit();
 }

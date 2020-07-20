@@ -66,11 +66,6 @@
     <addaction name="action_Ellipse"/>
     <addaction name="actionS_tar"/>
    </widget>
-   <widget class="QMenu" name="menu_views">
-    <property name="title">
-     <string>&amp;Views</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menu_Layers">
     <property name="title">
      <string>&amp;Layers</string>
@@ -134,10 +129,28 @@
     <addaction name="action_lower"/>
     <addaction name="action_lower_to_bottom"/>
    </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menu_views">
+     <property name="title">
+      <string>&amp;Views</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <addaction name="menu_views"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoom_In"/>
+    <addaction name="actionZoom_Out"/>
+    <addaction name="actionReset_Zoom"/>
+    <addaction name="action_view_fit"/>
+    <addaction name="action_Reset_Rotation"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_edit"/>
    <addaction name="menu_tools"/>
-   <addaction name="menu_views"/>
+   <addaction name="menu_View"/>
    <addaction name="menu_Layers"/>
    <addaction name="menu_Path"/>
   </widget>
@@ -1402,6 +1415,54 @@
     <string>&amp;Redo %1</string>
    </property>
   </action>
+  <action name="action_view_fit">
+   <property name="icon">
+    <iconset theme="zoom-fit-page"/>
+   </property>
+   <property name="text">
+    <string>&amp;Fit Animation</string>
+   </property>
+  </action>
+  <action name="action_view_reset">
+   <property name="icon">
+    <iconset theme="zoom-original"/>
+   </property>
+   <property name="text">
+    <string>Re&amp;set View</string>
+   </property>
+  </action>
+  <action name="action_Reset_Rotation">
+   <property name="icon">
+    <iconset theme="rotation-allowed"/>
+   </property>
+   <property name="text">
+    <string>&amp;Reset Rotation</string>
+   </property>
+  </action>
+  <action name="actionZoom_In">
+   <property name="icon">
+    <iconset theme="zoom-in"/>
+   </property>
+   <property name="text">
+    <string>Zoom &amp;In</string>
+   </property>
+  </action>
+  <action name="actionZoom_Out">
+   <property name="icon">
+    <iconset theme="zoom-out"/>
+   </property>
+   <property name="text">
+    <string>Zoom &amp;Out</string>
+   </property>
+  </action>
+  <action name="actionReset_Zoom">
+   <property name="icon">
+    <iconset theme="zoom-original"/>
+   </property>
+   <property name="text">
+    <string>Reset &amp;Zoom</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1438,6 +1499,12 @@
    <class>GlaxnimateGraphicsView</class>
    <extends>QGraphicsView</extends>
    <header>ui/widgets/glaxnimate_graphics_view.hpp</header>
+   <slots>
+    <slot>reset_rotation()</slot>
+    <slot>reset_zoom()</slot>
+    <slot>zoom_in()</slot>
+    <slot>zoom_out()</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -2322,6 +2389,86 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionZoom_In</sender>
+   <signal>triggered()</signal>
+   <receiver>graphics_view</receiver>
+   <slot>zoom_in()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>509</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionReset_Zoom</sender>
+   <signal>triggered()</signal>
+   <receiver>graphics_view</receiver>
+   <slot>reset_zoom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>509</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionZoom_Out</sender>
+   <signal>triggered()</signal>
+   <receiver>graphics_view</receiver>
+   <slot>zoom_out()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>509</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_view_fit</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>view_fit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_Reset_Rotation</sender>
+   <signal>triggered()</signal>
+   <receiver>graphics_view</receiver>
+   <slot>reset_rotation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>509</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
@@ -2337,5 +2484,6 @@
   <slot>layer_new_shape()</slot>
   <slot>layer_delete()</slot>
   <slot>document_treeview_current_changed(QModelIndex)</slot>
+  <slot>view_fit()</slot>
  </slots>
 </ui>

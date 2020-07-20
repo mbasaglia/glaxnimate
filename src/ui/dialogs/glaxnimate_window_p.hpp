@@ -10,16 +10,22 @@
 
 #include "ui_glaxnimate_window.h"
 #include "glaxnimate_window.hpp"
+
 #include "app/app_info.hpp"
+
+#include "command/layer_commands.hpp"
+
 #include "model/document.hpp"
 #include "model/item_models/document_node_model.hpp"
 #include "model/item_models/property_model.hpp"
 #include "model/graphics/document_scene.hpp"
+
 #include "ui/dialogs/import_export_dialog.hpp"
 #include "ui/style/dock_widget_style.hpp"
 #include "ui/style/property_delegate.hpp"
 #include "ui/widgets/glaxnimate_graphics_view.hpp"
-#include "command/layer_commands.hpp"
+#include "ui/widgets/view_transform_widget.hpp"
+
 
 namespace {
 
@@ -62,6 +68,7 @@ public:
     PropertyDelegate property_delegate;
     DockWidgetStyle dock_style;
     GlaxnimateWindow* parent = nullptr;
+    ViewTransformWidget* view_trans_widget;
 
     void create_document(const QString& filename)
     {
@@ -265,6 +272,20 @@ public:
 
         ui.view_properties->setModel(&property_model);
         ui.view_properties->setItemDelegateForColumn(1, &property_delegate);
+
+        // Tool buttons
+        ui.btn_layer_add->setMenu(ui.menu_new_layer);
+
+        // Transform Widget
+        view_trans_widget = new ViewTransformWidget(ui.status_bar);
+        ui.status_bar->addPermanentWidget(view_trans_widget);
+        connect(view_trans_widget, &ViewTransformWidget::zoom_changed, ui.graphics_view, &GlaxnimateGraphicsView::set_zoom);
+        connect(ui.graphics_view, &GlaxnimateGraphicsView::zoomed, view_trans_widget, &ViewTransformWidget::set_zoom);
+        connect(view_trans_widget, &ViewTransformWidget::zoom_in, ui.graphics_view, &GlaxnimateGraphicsView::zoom_in);
+        connect(view_trans_widget, &ViewTransformWidget::zoom_out, ui.graphics_view, &GlaxnimateGraphicsView::zoom_out);
+        connect(view_trans_widget, &ViewTransformWidget::angle_changed, ui.graphics_view, &GlaxnimateGraphicsView::set_rotation);
+        connect(ui.graphics_view, &GlaxnimateGraphicsView::rotated, view_trans_widget, &ViewTransformWidget::set_angle);
+        connect(view_trans_widget, &ViewTransformWidget::view_fit, parent, &GlaxnimateWindow::view_fit);
     }
 
     void retranslateUi(QMainWindow* parent)
@@ -509,6 +530,20 @@ public:
     {
         if ( auto node = document_node_model.node(index) )
             property_model.set_object(node);
+    }
+
+    void view_fit()
+    {
+        ui.graphics_view->view_fit(
+            current_document ?
+            QRect(
+                -32,
+                -32,
+                current_document->animation().width.get() + 64,
+                current_document->animation().height.get() + 64
+            ) :
+            QRect()
+        );
     }
 };
 
