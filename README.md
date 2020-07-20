@@ -1,9 +1,53 @@
 Glaxnimate
-==========
+=======================================
+
+About
+---------------------------------------
+
+A simple vector graphics animation program.
+
+
+Dependencies
+---------------------------------------
+
+* C++17 compliant compiler
+* Qt5
+* CMake
+* Python3
+
+
+Building
+---------------------------------------
+
+If you are building from git, ensure your submodules are up to date
+
+    git submodule update --init --recursive
+
+Standard CMake build commands work
+
+    mkdir build
+    cd build
+    cmake ..
+    make -j 4 # This uses 4 cores to compile
+
+It will produce the executable `bin/glaxnimate` relative to the build directory
+
+If you are missing some icons, you can build the icon theme too
+
+    make icons
+
+
+Contacts
+---------------------------------------
+
+* Telegram (Chat) https://t.me/Glaxnimate
+* GitLab (Code, Issues) https://gitlab.com/mattia.basaglia/glaxnimate
 
 
 License
--------
+---------------------------------------
+
+GPLv3 or later, see COPYING.
 
 Copyright (C) 2020 Mattia Basaglia
 
