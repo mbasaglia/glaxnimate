@@ -3,7 +3,6 @@
 #include <QMouseEvent>
 #include <QtMath>
 
-#include <QDebug>
 class GlaxnimateGraphicsView::Private
 {
 public:
@@ -200,6 +199,7 @@ void GlaxnimateGraphicsView::translate_view(const QPointF& delta)
 
 void GlaxnimateGraphicsView::zoom_view(qreal factor)
 {
+    d->expand_scene_rect(std::max(width(), height()));
     zoom_view_anchor(factor, d->anchor_scene());
 }
 
