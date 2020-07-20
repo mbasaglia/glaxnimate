@@ -32,7 +32,7 @@ private slots:
     void layer_new_null();
     void layer_new_shape();
     void layer_new_precomp();
-    void refresh_title(model::Document* doc);
+    void refresh_title();
     void layer_delete();
 
 protected:

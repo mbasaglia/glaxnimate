@@ -13,20 +13,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTabWidget" name="tab_widget">
-      <property name="elideMode">
-       <enum>Qt::ElideMiddle</enum>
-      </property>
-      <property name="documentMode">
-       <bool>true</bool>
-      </property>
-      <property name="tabsClosable">
-       <bool>true</bool>
-      </property>
-      <property name="movable">
-       <bool>true</bool>
-      </property>
-     </widget>
+     <widget class="GlaxnimateGraphicsView" name="graphics_view"/>
     </item>
    </layout>
   </widget>
@@ -1446,6 +1433,11 @@
    <class>color_widgets::ColorLineEdit</class>
    <extends>QLineEdit</extends>
    <header>QtColorWidgets/color_line_edit.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>GlaxnimateGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>ui/widgets/glaxnimate_graphics_view.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

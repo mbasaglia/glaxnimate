@@ -3,6 +3,7 @@
 
 #include <QGraphicsView>
 #include <QToolButton>
+#include <QMessageBox>
 
 #include "QtColorWidgets/color_palette_model.hpp"
 #include "QtColorWidgets/color_delegate.hpp"
@@ -50,7 +51,7 @@ public:
     Ui::GlaxnimateWindow ui;
 
     int tool_rows = 3;
-    std::vector<std::unique_ptr<model::Document>> documents;
+    std::unique_ptr<model::Document> current_document;
     QString undo_text;
     QString redo_text;
     bool updating_color = false;
@@ -62,63 +63,91 @@ public:
     DockWidgetStyle dock_style;
     GlaxnimateWindow* parent = nullptr;
 
-
-    model::Document* current_document()
+    void create_document(const QString& filename)
     {
-        int index = ui.tab_widget->currentIndex();
-        if ( index == -1 )
-            return nullptr;
+        if ( !close_document() )
+            return;
 
-        return documents[index].get();
-    }
+        current_document = std::make_unique<model::Document>(filename);
 
-    model::Document* create_document(const QString& filename)
-    {
-        documents.push_back(std::make_unique<model::Document>(filename));
-        auto widget = new GlaxnimateGraphicsView();
-        ui.tab_widget->addTab(widget, QIcon::fromTheme("video-x-generic"), filename);
-        model::Document* doc = documents.back().get();
-        auto refresh_slot = [this, doc](){parent->refresh_title(doc);};
-        QObject::connect(doc, &model::Document::filename_changed, parent, refresh_slot);
-        QObject::connect(&doc->undo_stack(), &QUndoStack::cleanChanged, parent, refresh_slot);
-        widget->setScene(&doc->graphics_scene());
+        // Graphics scene
+        ui.graphics_view->setScene(&current_document->graphics_scene());
 
-        switch_to_document(doc);
 
-        auto layer = std::make_unique<model::ShapeLayer>(&doc->animation());
+        // Undo Redo
+        QObject::connect(ui.action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
+        QObject::connect(&current_document->undo_stack(), &QUndoStack::canRedoChanged, ui.action_redo, &QAction::setEnabled);
+        QObject::connect(&current_document->undo_stack(), &QUndoStack::redoTextChanged, ui.action_redo, [this](const QString& s){
+            ui.action_redo->setText(redo_text.arg(s));
+        });
+        ui.action_redo->setEnabled(current_document->undo_stack().canRedo());
+        ui.action_redo->setText(redo_text.arg(current_document->undo_stack().redoText()));
+
+        QObject::connect(ui.action_undo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::undo);
+        QObject::connect(&current_document->undo_stack(), &QUndoStack::canUndoChanged, ui.action_undo, &QAction::setEnabled);
+        QObject::connect(&current_document->undo_stack(), &QUndoStack::undoTextChanged, ui.action_undo, [this](const QString& s){
+            ui.action_undo->setText(undo_text.arg(s));
+        });
+        ui.action_undo->setEnabled(current_document->undo_stack().canUndo());
+        ui.action_undo->setText(redo_text.arg(current_document->undo_stack().undoText()));
+
+        // Tree view
+        document_node_model.set_document(current_document.get());
+
+        property_model.set_document(current_document.get());
+        property_model.set_object(&current_document->animation());
+
+        // Title
+        QObject::connect(current_document.get(), &model::Document::filename_changed, parent, &GlaxnimateWindow::refresh_title);
+        QObject::connect(&current_document->undo_stack(), &QUndoStack::cleanChanged, parent, &GlaxnimateWindow::refresh_title);
+        refresh_title();
+
+
+        /// @todo don't do this for opened files
+        auto layer = std::make_unique<model::ShapeLayer>(&current_document->animation());
         model::Layer* ptr = layer.get();
-        doc->animation().add_layer(std::move(layer), 0);
+        current_document->animation().add_layer(std::move(layer), 0);
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
-
-        return doc;
     }
 
-    int document_index(model::Document* doc)
+    void refresh_title()
     {
-        for ( int i = 0; i < int(documents.size()); i++ )
-            if ( documents[i].get() == doc )
-                return i;
-        return -1;
-
-    }
-
-    void refresh_title(model::Document* doc)
-    {
-        QString title = doc->filename();
-        if ( !doc->undo_stack().isClean() )
+        QString title = current_document->filename();
+        if ( !current_document->undo_stack().isClean() )
             title += " *";
-        ui.tab_widget->setTabText(document_index(doc), title);
-        if ( doc == current_document() )
-            parent->setWindowTitle(title);
+        parent->setWindowTitle(title);
+    }
+
+    bool close_document()
+    {
+        if ( current_document && !current_document->undo_stack().isClean() )
+        {
+            QMessageBox warning(parent);
+            warning.setWindowTitle(QObject::tr("Closing Animation"));
+            warning.setText(QObject::tr("The animation has unsaved changes.\nDo you want to save your changes?"));
+            warning.setInformativeText(current_document->filename());
+            warning.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+            warning.setDefaultButton(QMessageBox::Save);
+            int result = warning.exec();
+
+            if ( result == QMessageBox::Save )
+                save_document(false, false);
+            else if ( result == QMessageBox::Cancel )
+                return false;
+        }
+        ui.graphics_view->setScene(nullptr);
+        current_document.reset();
+
+        return true;
     }
 
 
-    bool save_document(model::Document* doc, bool force_dialog, bool overwrite_doc)
+    bool save_document(bool force_dialog, bool overwrite_doc)
     {
-        if ( !doc )
+        if ( !current_document )
             return false;
 
-        io::SavedIoOptions opts = doc->export_options();
+        io::SavedIoOptions opts = current_document->export_options();
 
         if ( !opts.method )
             force_dialog = true;
@@ -127,7 +156,7 @@ public:
         {
             ImportExportDialog dialog(ui.centralwidget->parentWidget());
 
-            if ( !dialog.export_dialog(doc) )
+            if ( !dialog.export_dialog(current_document.get()) )
                 return false;
 
             if ( !dialog.options_dialog() )
@@ -139,47 +168,15 @@ public:
         // TODO progess/error dialogs
         QFile file(opts.filename);
         file.open(QFile::WriteOnly);
-        if ( !opts.method->process(file, opts.filename, doc, opts.options) )
+        if ( !opts.method->process(file, opts.filename, current_document.get(), opts.options) )
             return false;
 
-        doc->undo_stack().setClean();
+        current_document->undo_stack().setClean();
 
         if ( overwrite_doc )
-            doc->set_export_options(opts);
+            current_document->set_export_options(opts);
 
         return true;
-    }
-
-    void switch_to_document(model::Document* document)
-    {
-        // TODO disconnect old document
-        // Undo Redo
-        QObject::connect(ui.action_redo, &QAction::triggered, &document->undo_stack(), &QUndoStack::redo);
-        QObject::connect(&document->undo_stack(), &QUndoStack::canRedoChanged, ui.action_redo, &QAction::setEnabled);
-        QObject::connect(&document->undo_stack(), &QUndoStack::redoTextChanged, ui.action_redo, [this](const QString& s){
-            ui.action_redo->setText(redo_text.arg(s));
-        });
-        ui.action_redo->setEnabled(document->undo_stack().canRedo());
-        ui.action_redo->setText(redo_text.arg(document->undo_stack().redoText()));
-
-        QObject::connect(ui.action_undo, &QAction::triggered, &document->undo_stack(), &QUndoStack::undo);
-        QObject::connect(&document->undo_stack(), &QUndoStack::canUndoChanged, ui.action_undo, &QAction::setEnabled);
-        QObject::connect(&document->undo_stack(), &QUndoStack::undoTextChanged, ui.action_undo, [this](const QString& s){
-            ui.action_undo->setText(undo_text.arg(s));
-        });
-        ui.action_undo->setEnabled(document->undo_stack().canUndo());
-        ui.action_undo->setText(redo_text.arg(document->undo_stack().undoText()));
-
-        // Tree view
-        // TODO Store collapsed state
-        document_node_model.set_document(document);
-
-        property_model.set_document(document);
-        // TODO keep selection
-        property_model.set_object(&document->animation());
-
-        // Title
-        refresh_title(document);
     }
 
 
@@ -439,7 +436,7 @@ public:
             if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
                 return curr_lay->composition;
         }
-        return &current_document()->animation();
+        return &current_document->animation();
     }
 
     model::Layer* current_layer()
@@ -461,7 +458,7 @@ public:
     template<class LayerT>
     void layer_new()
     {
-        if ( !current_document() )
+        if ( !current_document )
             return;
 
         layer_new_impl(std::make_unique<LayerT>(current_composition()));
@@ -490,7 +487,7 @@ public:
         model::Layer* ptr = layer.get();
 
         int position = composition->layer_position(current_layer());
-        current_document()->undo_stack().push(new command::AddLayer(composition, std::move(layer), position));
+        current_document->undo_stack().push(new command::AddLayer(composition, std::move(layer), position));
 
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
     }
@@ -504,7 +501,7 @@ public:
 
         if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
         {
-            current_document()->undo_stack().push(new command::RemoveLayer(curr_lay->composition, curr_lay));
+            current_document->undo_stack().push(new command::RemoveLayer(curr_lay->composition, curr_lay));
         }
     }
 

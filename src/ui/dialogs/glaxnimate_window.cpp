@@ -31,21 +31,24 @@ bool GlaxnimateWindow::eventFilter(QObject* object, QEvent* event)
 
 void GlaxnimateWindow::document_new()
 {
-    model::Document* curr = d->current_document();
+    QDir path;
 
-    model::Document* new_doc = d->create_document(tr("New Animation"));
-
-    if ( curr )
+    if ( d->current_document )
     {
-        auto opts = new_doc->export_options();
-        opts.path = curr->export_options().path;
-        new_doc->set_export_options(opts);
+        path = d->current_document->export_options().path;
     }
+
+
+    d->create_document(tr("New Animation"));
+
+    auto opts = d->current_document->export_options();
+    opts.path = path;
+    d->current_document->set_export_options(opts);
 }
 
 void GlaxnimateWindow::document_save()
 {
-    if ( d->save_document(d->current_document(), false, true) )
+    if ( d->save_document(false, true) )
         d->ui.status_bar->showMessage(tr("File saved"), 5000);
     else
         d->ui.status_bar->showMessage(tr("Could not save file"));
@@ -53,7 +56,7 @@ void GlaxnimateWindow::document_save()
 
 void GlaxnimateWindow::document_save_as()
 {
-    if ( d->save_document(d->current_document(), true, true) )
+    if ( d->save_document(true, true) )
         d->ui.status_bar->showMessage(tr("File saved"), 5000);
     else
         d->ui.status_bar->showMessage(tr("Could not save file"));
@@ -113,9 +116,9 @@ void GlaxnimateWindow::layer_new_shape()
     d->layer_new<model::ShapeLayer>();
 }
 
-void GlaxnimateWindow::refresh_title(model::Document* doc)
+void GlaxnimateWindow::refresh_title()
 {
-    d->refresh_title(doc);
+    d->refresh_title();
 }
 
 void GlaxnimateWindow::layer_delete()
