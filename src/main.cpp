@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     else
         QIcon::setThemeName("icons");
 
+
     GlaxnimateWindow window;
     window.show();
     return app.exec();

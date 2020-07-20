@@ -252,6 +252,9 @@
            <property name="toolTip">
             <string>Value</string>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
          </item>
          <item row="2" column="2">
@@ -298,6 +301,9 @@
           <widget class="color_widgets::GradientSlider" name="slider_hsv_sat">
            <property name="toolTip">
             <string>Saturation</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
            </property>
           </widget>
          </item>
@@ -348,7 +354,11 @@
           </widget>
          </item>
          <item row="2" column="2">
-          <widget class="QSpinBox" name="spinBox_6"/>
+          <widget class="QSpinBox" name="spinBox_6">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
          </item>
          <item row="1" column="2">
           <widget class="QSpinBox" name="spinBox_5">
@@ -356,7 +366,7 @@
             <string>Hue</string>
            </property>
            <property name="maximum">
-            <number>259</number>
+            <number>359</number>
            </property>
           </widget>
          </item>
@@ -386,7 +396,11 @@
           </widget>
          </item>
          <item row="3" column="2">
-          <widget class="QSpinBox" name="spinBox_7"/>
+          <widget class="QSpinBox" name="spinBox_7">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
          </item>
          <item row="2" column="1">
           <widget class="color_widgets::GradientSlider" name="slider_hsl_sat">
@@ -488,6 +502,9 @@
            <property name="toolTip">
             <string>Red</string>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
          </item>
          <item row="1" column="2">
@@ -495,12 +512,18 @@
            <property name="toolTip">
             <string>Green</string>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
          </item>
          <item row="2" column="2">
           <widget class="QSpinBox" name="spinBox_10">
            <property name="toolTip">
             <string>Blue</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
            </property>
           </widget>
          </item>
@@ -525,6 +548,9 @@
           <widget class="color_widgets::GradientSlider" name="slider_cmyk_c">
            <property name="toolTip">
             <string>Cyan</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
            </property>
           </widget>
          </item>
@@ -553,6 +579,9 @@
            <property name="toolTip">
             <string>Yellow</string>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
          </item>
          <item row="4" column="0" colspan="2">
@@ -580,6 +609,9 @@
            <property name="toolTip">
             <string>Black</string>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
          </item>
          <item row="0" column="0">
@@ -596,6 +628,9 @@
           <widget class="color_widgets::GradientSlider" name="slider_cmyk_m">
            <property name="toolTip">
             <string>Magenta</string>
+           </property>
+           <property name="maximum">
+            <number>255</number>
            </property>
           </widget>
          </item>
@@ -1417,7 +1452,8 @@
   </action>
   <action name="action_view_fit">
    <property name="icon">
-    <iconset theme="zoom-fit-page"/>
+    <iconset theme="zoom-fit-page">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Fit Animation</string>
@@ -1425,7 +1461,8 @@
   </action>
   <action name="action_view_reset">
    <property name="icon">
-    <iconset theme="zoom-original"/>
+    <iconset theme="zoom-original">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Re&amp;set View</string>
@@ -1433,7 +1470,8 @@
   </action>
   <action name="action_Reset_Rotation">
    <property name="icon">
-    <iconset theme="rotation-allowed"/>
+    <iconset theme="rotation-allowed">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Reset Rotation</string>
@@ -1441,7 +1479,8 @@
   </action>
   <action name="actionZoom_In">
    <property name="icon">
-    <iconset theme="zoom-in"/>
+    <iconset theme="zoom-in">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Zoom &amp;In</string>
@@ -1449,7 +1488,8 @@
   </action>
   <action name="actionZoom_Out">
    <property name="icon">
-    <iconset theme="zoom-out"/>
+    <iconset theme="zoom-out">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Zoom &amp;Out</string>
@@ -1457,7 +1497,8 @@
   </action>
   <action name="actionReset_Zoom">
    <property name="icon">
-    <iconset theme="zoom-original"/>
+    <iconset theme="zoom-original">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Reset &amp;Zoom</string>
