@@ -6,7 +6,6 @@ GlaxnimateWindow::GlaxnimateWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags), d(std::make_unique<Private>())
 {
     d->setupUi(this);
-    document_new();
 }
 
 GlaxnimateWindow::~GlaxnimateWindow() = default;
@@ -130,4 +129,14 @@ void GlaxnimateWindow::layer_delete()
 void GlaxnimateWindow::view_fit()
 {
     d->view_fit();
+}
+
+void GlaxnimateWindow::showEvent(QShowEvent * event)
+{
+    QMainWindow::showEvent(event);
+    if ( !d->started )
+    {
+        d->started = true;
+        document_new();
+    }
 }

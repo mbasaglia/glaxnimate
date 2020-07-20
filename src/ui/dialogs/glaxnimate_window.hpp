@@ -39,6 +39,7 @@ private slots:
 protected:
     void changeEvent(QEvent *e) override;
     bool eventFilter(QObject *object, QEvent *event) override;
+    void showEvent(QShowEvent * event) override;
 
 private:
     class Private;

@@ -69,6 +69,7 @@ public:
     DockWidgetStyle dock_style;
     GlaxnimateWindow* parent = nullptr;
     ViewTransformWidget* view_trans_widget;
+    bool started = false;
 
     void create_document(const QString& filename)
     {
@@ -79,7 +80,6 @@ public:
 
         // Graphics scene
         ui.graphics_view->setScene(&current_document->graphics_scene());
-
 
         // Undo Redo
         QObject::connect(ui.action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
@@ -115,6 +115,10 @@ public:
         model::Layer* ptr = layer.get();
         current_document->animation().add_layer(std::move(layer), 0);
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
+        /// (Load from the file instead)
+
+        // Fit doc into the view
+        view_fit();
     }
 
     void refresh_title()
