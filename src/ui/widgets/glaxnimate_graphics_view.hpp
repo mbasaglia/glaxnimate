@@ -24,6 +24,8 @@ public:
     /// Overload QGraphicsView::translate
     void translate(const QPointF& d) { QGraphicsView::translate(d.x(),d.y()); }
 
+
+public slots:
     /**
      *  \brief Translate and resize sceneRect
      *
@@ -34,7 +36,6 @@ public:
      */
     void translate_view(const QPointF& delta);
 
-public slots:
     /**
      * \brief Zoom view by factor
      *
@@ -43,6 +44,7 @@ public slots:
      *  \param factor scaling factor ( 1 = don't zoom )
      */
     void zoom_view(qreal factor);
+
     /**
      * \brief Zoom view by factor
      *
@@ -70,13 +72,22 @@ signals:
      */
     void zoomed(qreal percent);
 
+    /**
+     *  \brief Emitted when rotation is changed
+     *  \param angle in degrees
+     */
+    void rotated(qreal angle);
+
 protected:
     void mousePressEvent(QMouseEvent * event) override;
     void mouseMoveEvent(QMouseEvent * event) override;
     void mouseReleaseEvent(QMouseEvent * event) override;
     void wheelEvent(QWheelEvent * event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
+    void do_rotate(qreal radians, const QPointF& scene_anchor);
+
     class Private;
     std::unique_ptr<Private> d;
 };

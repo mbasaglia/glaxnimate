@@ -1,6 +1,7 @@
 #include "glaxnimate_graphics_view.hpp"
 #include <cmath>
 #include <QMouseEvent>
+#include <QtMath>
 
 class GlaxnimateGraphicsView::Private
 {
@@ -23,12 +24,16 @@ public:
     GlaxnimateGraphicsView* view;
 
     qreal zoom_factor = 1;
+    qreal rotation = 0;
 
 //     MouseMode mouse_mode = None;
 
     MouseViewMode mouse_view_mode = NoDrag;
     QPoint move_center;
+    QPointF move_center_scene;
+
     QPoint transform_center;
+    QPointF transform_center_scene;
     qreal scale_start_zoom = 1;
 
 
@@ -58,7 +63,7 @@ GlaxnimateGraphicsView::GlaxnimateGraphicsView(QWidget* parent)
     setMouseTracking(true);
     setRenderHint(QPainter::Antialiasing);
     setTransformationAnchor(NoAnchor);
-    setResizeAnchor(AnchorViewCenter);
+    setResizeAnchor(NoAnchor);
 }
 
 GlaxnimateGraphicsView::~GlaxnimateGraphicsView() = default;
@@ -66,7 +71,7 @@ GlaxnimateGraphicsView::~GlaxnimateGraphicsView() = default;
 void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
 {
     QPoint mpos = event->pos();
-//     QPointF scene_pos = mapToScene(mpos);
+    QPointF scene_pos = mapToScene(mpos);
 
     if ( event->button() == Qt::MiddleButton )
     {
@@ -82,45 +87,57 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
             d->mouse_view_mode = Private::Rotate;
             setCursor(Qt::SizeAllCursor);
             d->transform_center = mpos;
+            d->transform_center_scene = scene_pos;
         }
         else
         {
             d->mouse_view_mode = Private::Pan;
             setCursor(Qt::ClosedHandCursor);
+            d->transform_center_scene = scene_pos;
         }
     }
 
     d->move_center = mpos;
+    d->move_center_scene = scene_pos;
 }
 
 void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
 {
     QPoint mpos = event->pos();
-//     QPointF scene_pos = mapToScene(mpos);
+    QPointF scene_pos = mapToScene(mpos);
 
     if ( event->buttons() & Qt::MiddleButton  )
     {
 
         if ( d->mouse_view_mode == Private::Pan )
         {
-            QPointF delta = mpos - d->move_center;
-            delta /= d->zoom_factor; // take scaling into account
+            QPointF delta = scene_pos - d->transform_center_scene;
             translate_view(delta);
         }
         else if ( d->mouse_view_mode == Private::Scale )
         {
-            QPoint delta = mpos - d->transform_center;
-            qreal delta_x = delta.x();
+            QPointF delta = mpos - d->transform_center;
+            qreal delta_x = delta.y();
             qreal factor = std::pow(5, delta_x/256);
             set_zoom(factor * d->scale_start_zoom, d->transform_center);
         }
         else if ( d->mouse_view_mode == Private::Rotate )
         {
+            QPointF delta = mpos - d->transform_center;
+            qreal len = std::hypot(delta.x(), delta.y());
+            if ( len > 4 )
+            {
+                qreal ang = std::atan2(delta.y(), delta.x());
+                QPointF deltap = d->move_center - d->transform_center;
+                qreal angp = std::atan2(deltap.y(), deltap.x());
+                do_rotate(ang-angp, d->transform_center_scene);
+            }
         }
     }
 
 
     d->move_center = mpos;
+    d->move_center_scene = scene_pos;
     scene()->invalidate();
 }
 
@@ -143,13 +160,10 @@ void GlaxnimateGraphicsView::mouseReleaseEvent(QMouseEvent * event)
 
 void GlaxnimateGraphicsView::wheelEvent(QWheelEvent* event)
 {
-    if ( event->modifiers() & Qt::ControlModifier )
-    {
-        if ( event->delta() < 0 )
-            zoom_view(0.8);
-        else
-            zoom_view(1.25);
-    }
+    if ( event->delta() < 0 )
+        zoom_view(0.8);
+    else
+        zoom_view(1.25);
 }
 
 
@@ -201,4 +215,33 @@ void GlaxnimateGraphicsView::set_zoom(qreal factor, const QPoint& anchor)
 qreal GlaxnimateGraphicsView::get_zoom_factor() const
 {
     return d->zoom_factor;
+}
+
+void GlaxnimateGraphicsView::paintEvent(QPaintEvent *event)
+{
+    QGraphicsView::paintEvent(event);
+
+    if ( d->mouse_view_mode == Private::Rotate || d->mouse_view_mode == Private::Scale )
+    {
+        QPainter painter;
+        QPoint p1 = d->move_center;
+        QPoint p2 = d->transform_center;
+        painter.begin(viewport());
+        painter.setRenderHints(renderHints());
+        painter.setPen(QPen(QColor(150, 150, 150), 3));
+        painter.drawLine(p1, p2);
+        painter.setPen(QPen(QColor(50, 50, 50), 1));
+        painter.drawLine(p1, p2);
+        painter.end();
+    }
+}
+
+void GlaxnimateGraphicsView::do_rotate(qreal radians, const QPointF& scene_anchor)
+{
+    translate(scene_anchor);
+    rotate(qRadiansToDegrees(radians));
+    translate(-scene_anchor);
+    d->expand_scene_rect(10);
+    d->rotation += radians;
+    emit rotated(qRadiansToDegrees(d->rotation));
 }
