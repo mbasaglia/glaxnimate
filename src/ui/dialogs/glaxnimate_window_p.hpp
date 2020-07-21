@@ -57,18 +57,24 @@ class GlaxnimateWindow::Private
 public:
     Ui::GlaxnimateWindow ui;
 
-    int tool_rows = 3;
     std::unique_ptr<model::Document> current_document;
+
+    model::DocumentNodeModel document_node_model;
+    model::PropertyModel property_model;
+    model::graphics::DocumentScene scene;
+
+    GlaxnimateWindow* parent = nullptr;
+
+    bool updating_color = false;
+
+    // "set and forget" kida variable
+    int tool_rows = 3;
     QString undo_text;
     QString redo_text;
-    bool updating_color = false;
     color_widgets::ColorPaletteModel palette_model;
-    model::DocumentNodeModel document_node_model;
     color_widgets::ColorDelegate color_delegate;
-    model::PropertyModel property_model;
     PropertyDelegate property_delegate;
     DockWidgetStyle dock_style;
-    GlaxnimateWindow* parent = nullptr;
     ViewTransformWidget* view_trans_widget;
     bool started = false;
 
@@ -84,9 +90,6 @@ public:
             return;
 
         current_document = std::make_unique<model::Document>(filename);
-
-        // Graphics scene
-        ui.graphics_view->setScene(&current_document->graphics_scene());
 
         // Undo Redo
         QObject::connect(ui.action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
@@ -105,11 +108,13 @@ public:
         ui.action_undo->setEnabled(current_document->undo_stack().canUndo());
         ui.action_undo->setText(redo_text.arg(current_document->undo_stack().undoText()));
 
-        // Tree view
+        // Views
         document_node_model.set_document(current_document.get());
 
         property_model.set_document(current_document.get());
         property_model.set_object(&current_document->animation());
+
+        scene.set_document(current_document.get());
 
         // Title
         QObject::connect(current_document.get(), &model::Document::filename_changed, parent, &GlaxnimateWindow::refresh_title);
@@ -162,7 +167,11 @@ public:
             else if ( result == QMessageBox::Cancel )
                 return false;
         }
-        ui.graphics_view->setScene(nullptr);
+
+        document_node_model.clear_document();
+        property_model.clear_document();
+        scene.clear_document();
+
         current_document.reset();
 
         return true;
@@ -308,6 +317,9 @@ public:
         connect(view_trans_widget, &ViewTransformWidget::angle_changed, ui.graphics_view, &GlaxnimateGraphicsView::set_rotation);
         connect(ui.graphics_view, &GlaxnimateGraphicsView::rotated, view_trans_widget, &ViewTransformWidget::set_angle);
         connect(view_trans_widget, &ViewTransformWidget::view_fit, parent, &GlaxnimateWindow::view_fit);
+
+        // Graphics scene
+        ui.graphics_view->setScene(&scene);
     }
 
     void retranslateUi(QMainWindow* parent)

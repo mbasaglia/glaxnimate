@@ -177,11 +177,12 @@ void model::DocumentNodeModel::set_document ( model::Document* doc )
 {
     beginResetModel();
     document = doc;
-    connect_node(&doc->animation());
+    if ( doc )
+        connect_node(&doc->animation());
     endResetModel();
 }
 
-void model::DocumentNodeModel::clear()
+void model::DocumentNodeModel::clear_document()
 {
     set_document(nullptr);
 }
@@ -226,11 +227,13 @@ QModelIndex model::DocumentNodeModel::node_index ( model::DocumentNode* node ) c
 
 bool model::DocumentNodeModel::moveRows ( const QModelIndex& sourceParent, int sourceRow, int count, const QModelIndex& destinationParent, int destinationChild )
 {
+    Q_UNUSED(sourceParent); Q_UNUSED(sourceRow); Q_UNUSED(count); Q_UNUSED(destinationParent); Q_UNUSED(destinationChild);
     return false;
 }
 
 bool model::DocumentNodeModel::removeRows ( int row, int count, const QModelIndex& parent )
 {
+    Q_UNUSED(row); Q_UNUSED(count); Q_UNUSED(parent);
     return false;
 }
 

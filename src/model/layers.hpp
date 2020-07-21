@@ -124,6 +124,11 @@ public:
 
     QIcon docnode_icon() const override { return QIcon::fromTheme("folder"); }
 
+    graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override
+    {
+        return nullptr;
+    }
+
 private:
     std::unique_ptr<Object> clone_impl() const override
     {

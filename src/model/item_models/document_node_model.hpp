@@ -32,7 +32,7 @@ public:
     bool setData ( const QModelIndex & index, const QVariant & value, int role ) override;
 
 
-    void clear();
+    void clear_document();
     void set_document(model::Document* doc);
     model::DocumentNode* node(const QModelIndex& index) const;
     QModelIndex node_index(model::DocumentNode* node) const;

@@ -27,6 +27,8 @@ public:
     {
         return QIcon::fromTheme("video-x-generic");
     }
+
+    graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override;
 };
 
 } // namespace model

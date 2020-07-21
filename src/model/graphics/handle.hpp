@@ -14,6 +14,8 @@ public:
     {
         Horizontal,
         Vertical,
+        DiagonalUp,
+        DiagonalDown,
         Any,
     };
 

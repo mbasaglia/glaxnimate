@@ -1,6 +1,4 @@
 #include "document.hpp"
-#include "model/graphics/document_scene.hpp"
-#include "model/graphics/animation_item.hpp"
 
 class model::Document::Private
 {
@@ -9,7 +7,6 @@ public:
     QUndoStack undo_stack;
     QVariantMap metadata;
     io::Options exporter;
-    graphics::DocumentScene graphics_scene;
 };
 
 
@@ -17,7 +14,6 @@ model::Document::Document(const QString& filename)
     : d ( std::make_unique<model::Document::Private>() )
 {
     d->exporter.filename = filename;
-    d->graphics_scene.addItem(new graphics::AnimationItem(&d->animation));
 }
 
 model::Document::~Document() = default;
@@ -53,9 +49,4 @@ void model::Document::set_export_options(const io::Options& opt)
     d->exporter = opt;
     if ( em )
         emit filename_changed(d->exporter.filename);
-}
-
-model::graphics::DocumentScene & model::Document::graphics_scene() const
-{
-    return d->graphics_scene;
 }

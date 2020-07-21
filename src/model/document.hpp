@@ -9,10 +9,6 @@
 
 namespace model {
 
-namespace graphics {
-    class DocumentScene;
-} // namespace graphics
-
 class Document : public QObject
 {
     Q_OBJECT
@@ -33,7 +29,6 @@ public:
 
     void set_export_options(const io::Options& opt);
 
-    graphics::DocumentScene& graphics_scene() const;
 
 signals:
     void filename_changed(const QString& n);

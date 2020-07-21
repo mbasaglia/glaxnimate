@@ -282,6 +282,7 @@ void GlaxnimateGraphicsView::view_fit(const QRect& fit_target)
 
     if ( fit_target.isValid() && width() > 0 && height() > 0 )
     {
+        d->expand_scene_rect(std::max(width(), height())*3);
         qreal factor = std::min(width() / qreal(fit_target.width()), height() / qreal(fit_target.height()));
         QPointF center(fit_target.center());
         zoom_view_anchor(factor, QPointF(0, 0));

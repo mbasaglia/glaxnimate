@@ -27,6 +27,11 @@ public:
 
     void set_document(model::Document* document);
 
+    void clear_document()
+    {
+        set_document(nullptr);
+    }
+
     void set_object(model::Object* object);
 
     void clear_object()

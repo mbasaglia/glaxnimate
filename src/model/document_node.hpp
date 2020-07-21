@@ -7,6 +7,8 @@
 
 namespace model {
 
+namespace graphics { class DocumentNodeGraphicsItem; }
+
 class DocumentNode : public Object
 {
     Q_OBJECT
@@ -28,6 +30,8 @@ public:
 
     virtual int docnode_child_count() const = 0;
     virtual DocumentNode* docnode_child(int index) const = 0;
+
+    virtual graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() = 0;
 
     QString object_name() const override { return docnode_name(); }
 

@@ -1,6 +1,7 @@
 #include "handle.hpp"
 #include <QPainter>
 #include <QtMath>
+#include <QCursor>
 
 class model::graphics::MoveHandle::Private
 {
@@ -34,7 +35,20 @@ model::graphics::MoveHandle::MoveHandle(
         color_rest, color_highlighted, color_selected, color_border}))
 {
     setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    setAcceptHoverEvents(true);
+
+    if ( d->direction == Horizontal )
+        setCursor(Qt::SizeHorCursor);
+    else if ( d->direction == Vertical )
+        setCursor(Qt::SizeVerCursor);
+    else if ( d->direction == DiagonalUp )
+        setCursor(Qt::SizeBDiagCursor);
+    else if ( d->direction == DiagonalDown )
+        setCursor(Qt::SizeFDiagCursor);
+    else
+        setCursor(Qt::SizeAllCursor);
 }
 
 model::graphics::MoveHandle::~MoveHandle() = default;
@@ -53,6 +67,8 @@ void model::graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGra
     painter->setPen(QPen(d->color_border, 1));
     if ( isSelected() )
         painter->setBrush(d->color_selected);
+    else if ( isUnderMouse() )
+        painter->setBrush(d->color_highlighted);
     else
         painter->setBrush(d->color_rest);
 

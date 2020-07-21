@@ -7,10 +7,11 @@
 
 #include "model/animation.hpp"
 #include "handle.hpp"
+#include "model/graphics/document_node_graphics_item.hpp"
 
 namespace model::graphics {
 
-class AnimationItem : public QGraphicsObject
+class AnimationItem : public DocumentNodeGraphicsItem
 {
 public:
     explicit AnimationItem(Animation* animation)
@@ -20,7 +21,7 @@ public:
 
         handle_h = new MoveHandle(this, MoveHandle::Horizontal, MoveHandle::Diamond, 8);
         handle_v = new MoveHandle(this, MoveHandle::Vertical, MoveHandle::Diamond, 8);
-        handle_hv = new MoveHandle(this, MoveHandle::Any, MoveHandle::Square);
+        handle_hv = new MoveHandle(this, MoveHandle::DiagonalDown, MoveHandle::Square);
         update_handles();
     }
 
@@ -44,6 +45,7 @@ private slots:
         }
     }
 
+private:
     void update_handles()
     {
         handle_h->setPos(QPointF(animation->width.get(), animation->height.get() / 2.0));
