@@ -51,15 +51,11 @@ QString app::TranslationService::language_name(QString lang_code)
 
 void app::TranslationService::register_translation(QString name, QString code, QString file)
 {
-    lang_names[name]=code;
+    lang_names[name] = code;
     if ( !file.isEmpty() )
     {
-        QTranslator* ntrans = new QTranslator;
-        if ( ntrans->load(file) )
-        {
-            translators[code] = ntrans;
-        }
-        else
+        translators[code] = new QTranslator;
+        if ( !translators[code]->load(file) )
         {
 //             qWarning() << tr("Warning:") <<
 //             /*: %1 is the file name,
@@ -70,25 +66,23 @@ void app::TranslationService::register_translation(QString name, QString code, Q
 //             .arg(file).arg(name).arg(code);
         }
     }
-    else
-        translators[code] = nullptr;
 }
 
 
 
-QString app::TranslationService::current_lang_name()
+QString app::TranslationService::current_language_name()
 {
-    return lang_names.key(current_lang_code());
+    return lang_names.key(current_language);
 }
 
-QString app::TranslationService::current_lang_code()
+QString app::TranslationService::current_language_code()
 {
-    return translators.key(current_translator);
+    return current_language;
 }
 
 QTranslator *app::TranslationService::translator()
 {
-    return current_translator;
+    return translators[current_language];
 }
 
 const QMap<QString, QString>& app::TranslationService::available_languages()
@@ -123,7 +117,7 @@ void app::TranslationService::change_lang_code(QString code)
     }
 
     QCoreApplication* app = QCoreApplication::instance();
-    app->removeTranslator(current_translator);
-    current_translator = translators[code];
-    app->installTranslator(current_translator);
+    app->removeTranslator(translator());
+    current_language = code;
+    app->installTranslator(translator());
 }

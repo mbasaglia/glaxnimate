@@ -64,7 +64,7 @@ void set_language(const QVariant& v)
 /// @todo move data loading (and QSettings creation) somewhere in AppInfo, so the settings system is more reusable
 void app::settings::Settings::load_metadata()
 {
-    QString curr_lang = app::TranslationService::instance().current_lang_code();
+    QString curr_lang = app::TranslationService::instance().current_language_code();
 
     Settings::instance().add_group(SettingGroup{"ui", tr("User Interface"), "preferences-desktop-theme", {
         //      slug            Label              Tooltip                    Type                default     choices             side effects

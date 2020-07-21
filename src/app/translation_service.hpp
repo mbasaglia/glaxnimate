@@ -44,8 +44,8 @@ public:
     void register_translation ( QString name, QString code, QString file );
 
 
-    QString current_lang_name();
-    QString current_lang_code();
+    QString current_language_name();
+    QString current_language_code();
     QTranslator* translator();
 
     /**
@@ -61,7 +61,7 @@ private:
 
     QMap<QString, QString> lang_names; ///< map lang_name -> lang_code
     QMap<QString, QTranslator*> translators; ///< map lang_code -> translator
-    QTranslator* current_translator = nullptr;
+    QString current_language;
 
 
 };
