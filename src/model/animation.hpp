@@ -4,7 +4,7 @@
 
 namespace model {
 
-class Animation : public ObjectBase<Animation, Composition>
+class Animation : public DocumentNodeBase<Animation, Composition>
 {
     Q_OBJECT
 
@@ -22,6 +22,8 @@ public:
     // chars
     // markers
     // motion_blur
+
+    using Ctor::Ctor;
 
     QIcon docnode_icon() const override
     {

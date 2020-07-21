@@ -79,8 +79,8 @@ public:
     Q_ENUM(LayerType);
 
 
-    explicit Layer(Composition* composition, LayerType type)
-        : composition(composition), type{this, "type", "ty", type}
+    explicit Layer(Document* doc, Composition* composition, LayerType type)
+        : DocumentNode(doc), composition(composition), type{this, "type", "ty", type}
     {}
 
     Composition* composition;
@@ -112,7 +112,7 @@ public:
 
     std::unique_ptr<Layer> clone_covariant() const
     {
-        auto object = std::make_unique<Layer>(composition, type.get());
+        auto object = std::make_unique<Layer>(document(), composition, type.get());
         clone_into(object.get());
         return object;
     }
@@ -141,12 +141,12 @@ namespace detail {
     class BaseLayerProps : public Layer
     {
     public:
-        BaseLayerProps(Composition* composition) : Layer(composition, lt) {}
+        BaseLayerProps(Document* doc, Composition* composition) : Layer(doc, composition, lt) {}
 
 
         std::unique_ptr<Derived> clone_covariant() const
         {
-            auto object = std::make_unique<Derived>(composition);
+            auto object = std::make_unique<Derived>(document(), composition);
             clone_into(object.get());
             return object;
         }

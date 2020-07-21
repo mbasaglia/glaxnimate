@@ -3,6 +3,8 @@
 class model::Document::Private
 {
 public:
+    Private(Document* document) : animation(document) {}
+
     Animation animation;
     QUndoStack undo_stack;
     QVariantMap metadata;
@@ -11,7 +13,7 @@ public:
 
 
 model::Document::Document(const QString& filename)
-    : d ( std::make_unique<model::Document::Private>() )
+    : d ( std::make_unique<model::Document::Private>(this) )
 {
     d->exporter.filename = filename;
 }

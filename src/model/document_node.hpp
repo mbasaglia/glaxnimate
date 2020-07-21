@@ -8,6 +8,7 @@
 namespace model {
 
 namespace graphics { class DocumentNodeGraphicsItem; }
+class Document;
 
 class DocumentNode : public Object
 {
@@ -17,10 +18,7 @@ public:
     Property<QString> name{this, "name", "nm", ""};
     Property<QColor> group_color{this, "color", "__groupcolor", QColor{0, 0, 0, 0}};
 
-    DocumentNode()
-    {
-        connect(this, &Object::property_changed, this, &DocumentNode::on_value_changed);
-    }
+    explicit DocumentNode(Document* document);
 
     bool docnode_visible() const { return visible_; }
     bool docnode_locked() const { return locked_; }
@@ -35,30 +33,11 @@ public:
 
     QString object_name() const override { return docnode_name(); }
 
-    QString docnode_name() const
-    {
-        if ( !name.get().isEmpty() )
-            return name.get();
+    QString docnode_name() const;
 
-        QString class_name = metaObject()->className();
-        int ns = class_name.lastIndexOf(":");
-        if ( ns != -1 )
-            class_name = class_name.mid(ns+1);
-        return class_name;
-    }
+    QColor docnode_group_color() const;
 
-    QColor docnode_group_color() const
-    {
-        QColor col = group_color.get();
-        if ( !col.isValid() || col.alpha() == 0 )
-        {
-            if ( auto parent = docnode_parent() )
-                return parent->docnode_group_color();
-            else
-                return Qt::white;
-        }
-        return col;
-    }
+    Document* document() const { return document_; }
 
 public slots:
     void docnode_set_visible(bool visible)
@@ -84,17 +63,39 @@ signals:
     void docnode_group_color_changed(const QColor&);
 
 private slots:
-    void on_value_changed(const QString& name, const QVariant&)
-    {
-        if ( name == "name" )
-            emit docnode_name_changed(this->name.get());
-        else if ( name == "color" )
-            emit docnode_group_color_changed(this->group_color.get());
-    }
+    void on_value_changed(const QString& name, const QVariant&);
 
 private:
     bool visible_ = true;
     bool locked_ = false;
+    Document* document_;
+};
+
+
+/**
+ * \brief Simple CRTP to help with the clone boilerplate
+ */
+template <class Derived, class Base>
+class DocumentNodeBase : public Base
+{
+public:
+    using Base::Base;
+
+    std::unique_ptr<Derived> clone_covariant() const
+    {
+        auto object = std::make_unique<Derived>(this->document());
+        this->clone_into(object.get());
+        return object;
+    }
+
+protected:
+    using Ctor = DocumentNodeBase;
+
+private:
+    std::unique_ptr<Object> clone_impl() const override
+    {
+        return clone_covariant();
+    }
 };
 
 

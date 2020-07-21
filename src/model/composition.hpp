@@ -9,6 +9,8 @@ class Composition : public DocumentNode
     Q_OBJECT
 
 public:
+    using DocumentNode::DocumentNode;
+
     ObjectListProperty<Layer> layers{this, "layers", "layers"};
 
     ChildLayerView top_level() const
@@ -36,6 +38,12 @@ public:
     std::unique_ptr<Layer> remove_layer(int index);
 
     int layer_position(Layer* layer, int not_found=0) const;
+
+    template<class LayerT>
+    std::unique_ptr<LayerT> make_layer()
+    {
+        return std::make_unique<LayerT>(document(), this);
+    }
 
 private:
     int layer_index = 0;

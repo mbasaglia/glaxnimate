@@ -70,6 +70,9 @@ private:
     std::unique_ptr<Private> d;
 };
 
+/**
+ * \brief Simple CRTP to help with the clone boilerplate
+ */
 template <class Derived, class Base>
 class ObjectBase : public Base
 {

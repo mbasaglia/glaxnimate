@@ -124,7 +124,7 @@ public:
 
         /// @todo don't do this for opened files
         current_document->animation().name.set(current_document->animation().docnode_name());
-        auto layer = std::make_unique<model::ShapeLayer>(&current_document->animation());
+        auto layer = current_document->animation().make_layer<model::ShapeLayer>();
         current_document->animation().width.set(app::settings::get<int>("defaults", "width"));
         current_document->animation().height.set(app::settings::get<int>("defaults", "height"));
         current_document->animation().frame_rate.set(app::settings::get<int>("defaults", "frame_rate"));
@@ -522,7 +522,7 @@ public:
         if ( !current_document )
             return;
 
-        layer_new_impl(std::make_unique<LayerT>(current_composition()));
+        layer_new_impl(current_composition()->make_layer<LayerT>());
     }
 
     void layer_new_impl(std::unique_ptr<model::Layer> layer)

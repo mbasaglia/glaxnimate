@@ -29,7 +29,7 @@ void model::Object::clone_into(model::Object* dest) const
 
 
 
-void model::Object::property_value_changed(const QString& name, const QVariant& value)
+void model::Object::property_value_changed ( const QString& name, const QVariant& value )
 {
     emit property_changed(name, value);
 }

@@ -186,9 +186,9 @@ public:
           value_(std::move(default_value))
     {}
 
-    void set(Type default_value)
+    void set(Type value)
     {
-        std::swap(value_, default_value);
+        std::swap(value_, value);
         value_changed();
     }
 
