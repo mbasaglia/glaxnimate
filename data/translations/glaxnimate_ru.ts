@@ -594,6 +594,142 @@
         <source>Pr&amp;eferences...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../src/ui/dialogs/glaxnimate_window_p.hpp" line="541"/>
+        <source>%1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/ui/dialogs/glaxnimate_window.cpp" line="43"/>
+        <source>New Animation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/ui/dialogs/glaxnimate_window.cpp" line="53"/>
+        <location filename="../../src/ui/dialogs/glaxnimate_window.cpp" line="61"/>
+        <source>File saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/ui/dialogs/glaxnimate_window.cpp" line="55"/>
+        <location filename="../../src/ui/dialogs/glaxnimate_window.cpp" line="63"/>
+        <source>Could not save file</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../../src/ui/dialogs/import_export_dialog.hpp" line="30"/>
+        <source>Save file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/ui/dialogs/import_export_dialog.hpp" line="45"/>
+        <source>%s Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/ui/dialogs/import_export_dialog.hpp" line="116"/>
+        <source>%1 (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/ui/dialogs/import_export_dialog.hpp" line="122"/>
+        <source>All files (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/ui/dialogs/glaxnimate_window_p.hpp" line="158"/>
+        <source>Closing Animation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/ui/dialogs/glaxnimate_window_p.hpp" line="159"/>
+        <source>The animation has unsaved changes.
+Do you want to save your changes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/command/property_commands.hpp" line="15"/>
+        <source>Update %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/command/layer_commands.hpp" line="11"/>
+        <source>Create %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/command/layer_commands.hpp" line="40"/>
+        <source>Remove %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="15"/>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="69"/>
+        <source>User Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="71"/>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="71"/>
+        <source>Interface Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="72"/>
+        <source>Icon Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="76"/>
+        <source>New Animation Defaults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="78"/>
+        <source>Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="79"/>
+        <source>Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="80"/>
+        <source>FPS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="80"/>
+        <source>Frames per second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="81"/>
+        <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/settings/settings_list.cpp" line="81"/>
+        <source>Duration in seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/app/app_info.cpp" line="10"/>
+        <source>Glaxnimate</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SettingsDialog</name>
@@ -653,6 +789,37 @@
         <location filename="../../src/ui/widgets/view_transform_widget.ui" line="143"/>
         <location filename="../../src/ui/widgets/view_transform_widget.ui" line="146"/>
         <source>Reset Rotation</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>io::lottie::LottieExporter</name>
+    <message>
+        <location filename="../../src/io/lottie/lottie_exporter.hpp" line="16"/>
+        <source>Lottie Animation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/io/lottie/lottie_exporter.hpp" line="21"/>
+        <source>Pretty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/io/lottie/lottie_exporter.hpp" line="21"/>
+        <source>Pretty print the JSON</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>model::PropertyModel</name>
+    <message>
+        <location filename="../../src/model/item_models/property_model.cpp" line="437"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/model/item_models/property_model.cpp" line="439"/>
+        <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

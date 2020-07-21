@@ -62,10 +62,10 @@ void app::TranslationService::register_translation(QString name, QString code, Q
         else
         {
 //             qWarning() << tr("Warning:") <<
-            /*: %1 is the file name,
-             *  %2 is the human-readable language code
-             *  %3 is the ISO language code
-             */
+//             /*: %1 is the file name,
+//              *  %2 is the human-readable language code
+//              *  %3 is the ISO language code
+//              */
 //             tr("Error on loading translation file %1 for language %2 (%3)")
 //             .arg(file).arg(name).arg(code);
         }

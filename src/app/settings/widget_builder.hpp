@@ -16,7 +16,9 @@ namespace app::settings {
 class WidgetBuilder
 {
 public:
-    void add_widgets(const SettingList& settings_list, QWidget* parent, QFormLayout* layout, QVariantMap& target) const
+    void add_widgets(const SettingList& settings_list, QWidget* parent,
+                     QFormLayout* layout, QVariantMap& target,
+                     const QString& name_infix = {}) const
     {
         for ( const Setting& opt : settings_list )
         {
@@ -33,11 +35,39 @@ public:
             wid->setParent(parent);
             wid->setToolTip(opt.description);
             wid->setWhatsThis(opt.description);
+            wid->setObjectName(object_name("widget", name_infix, opt.slug));
+            label->setObjectName(object_name("label", name_infix, opt.slug));
             layout->addRow(label, wid);
         }
     }
 
+    void translate_widgets(const SettingList& settings_list, QWidget* parent, const QString& name_infix = {})
+    {
+        for ( const Setting& opt : settings_list )
+        {
+            if ( opt.type == Setting::Internal )
+                continue;
+
+            if ( QWidget* wid = parent->findChild<QWidget*>(object_name("widget", name_infix, opt.slug)) )
+            {
+                wid->setToolTip(opt.description);
+                wid->setWhatsThis(opt.description);
+            }
+
+            if ( QLabel* label = parent->findChild<QLabel*>(object_name("label", name_infix, opt.slug)) )
+            {
+                label->setToolTip(opt.description);
+                label->setText(opt.label);
+            }
+        }
+    }
+
 private:
+    QString object_name(const QString& labwid, const QString& name_infix, const QString& slug) const
+    {
+        return QString("__settings_%1__%2%3").arg(labwid).arg(name_infix).arg(slug);
+    }
+
     QWidget* make_setting_widget(const Setting& opt, QVariantMap& target) const
     {
         if ( !opt.choices.isEmpty() )

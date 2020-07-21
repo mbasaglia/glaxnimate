@@ -77,6 +77,3 @@ bool app::settings::Settings::set_value ( const QString& group, const QString& s
 
     return groups[order[group]].set_variant(setting, data[group], value);
 }
-
-
-

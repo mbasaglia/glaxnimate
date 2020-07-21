@@ -37,6 +37,9 @@ SET(BUILD_SHARED_LIBS OFF CACHE BOOL "")
 add_subdirectory(external/Qt-Color-Widgets)
 
 
+set(ALL_SOURCE_DIRECTORIES src)
+find_sources(ALL_SOURCES *.cpp *.hpp)
+
 add_subdirectory(data share/${PROJECT_SLUG}/${PROJECT_SLUG})
 
 find_package(Qt5Test QUIET)
@@ -45,12 +48,9 @@ if(Qt5Test_FOUND)
 endif()
 
 # Doxygen
-set(ALL_SOURCE_DIRECTORIES src)
 
-find_sources(ALL_SOURCES *.cpp *.h)
 set(DOXYGEN_FOUND ON)
 find_package(Doxygen QUIET)
 if(DOXYGEN_FOUND)
     create_doxygen_target(docs)
 endif(DOXYGEN_FOUND)
-

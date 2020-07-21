@@ -8,6 +8,8 @@ namespace io::lottie {
 
 class LottieExporter : public ImportExportConcrete<LottieExporter, Exporter>
 {
+    Q_OBJECT
+
 public:
     bool process(QIODevice& file, const QString& filename,
                  model::Document* document, const QVariantMap& setting_values) const override;

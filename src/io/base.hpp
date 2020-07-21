@@ -12,7 +12,7 @@ namespace io {
 using Setting = app::settings::Setting;
 using SettingList = app::settings::SettingList;
 
-class ImportExport : QObject
+class ImportExport : public QObject
 {
     Q_OBJECT
 
