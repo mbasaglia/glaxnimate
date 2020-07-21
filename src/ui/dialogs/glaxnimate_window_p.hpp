@@ -120,10 +120,10 @@ public:
         /// @todo don't do this for opened files
         current_document->animation().name.set(current_document->animation().docnode_name());
         auto layer = std::make_unique<model::ShapeLayer>(&current_document->animation());
-        current_document->animation().width.set(app::settings::get<int>("defaluts", "width"));
-        current_document->animation().height.set(app::settings::get<int>("defaluts", "height"));
-        current_document->animation().frame_rate.set(app::settings::get<int>("defaluts", "frame_rate"));
-        float duration = app::settings::get<float>("defaluts", "duration");
+        current_document->animation().width.set(app::settings::get<int>("defaults", "width"));
+        current_document->animation().height.set(app::settings::get<int>("defaults", "height"));
+        current_document->animation().frame_rate.set(app::settings::get<int>("defaults", "frame_rate"));
+        float duration = app::settings::get<float>("defaults", "duration");
         int out_point = current_document->animation().frame_rate.get() * duration;
         current_document->animation().out_point.set(out_point);
         layer->out_point.set(out_point);
