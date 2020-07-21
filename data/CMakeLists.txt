@@ -24,4 +24,6 @@ create_qt_linguist_translations(
     translations
     translations/glaxnimate_en.ts
     translations/glaxnimate_it.ts
+    translations/glaxnimate_de.ts
+    translations/glaxnimate_id.ts
 )
