@@ -20,3 +20,8 @@ English
 -------
 
 * Mattia "Glax" Basaglia
+
+German
+------
+
+* Sythelux
