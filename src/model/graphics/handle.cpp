@@ -99,7 +99,7 @@ void model::graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGra
     painter->restore();
 }
 
-void model::graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void model::graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent*)
 {
     setFocus(Qt::MouseFocusReason);
 }
@@ -115,7 +115,7 @@ void model::graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event
 
 }
 
-void model::graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void model::graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
 {
     clearFocus();
 }
