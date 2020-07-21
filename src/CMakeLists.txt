@@ -5,6 +5,7 @@ set(SOURCES
 main.cpp
 
 app/app_info.cpp
+app/translation_service.cpp
 app/settings/settings.cpp
 app/settings/settings_list.cpp
 

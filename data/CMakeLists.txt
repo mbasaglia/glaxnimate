@@ -22,4 +22,6 @@ include(../cmake/qt.cmake)
 set(ALL_SOURCE_DIRECTORIES ${CMAKE_SOURCE_DIR}/src)
 create_qt_linguist_translations(
     translations
+    translations/glaxnimate_en.ts
+    translations/glaxnimate_it.ts
 )

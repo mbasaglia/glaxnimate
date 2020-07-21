@@ -3,6 +3,7 @@
 #include "ui/dialogs/glaxnimate_window.hpp"
 #include "app/app_info.hpp"
 #include "app/settings/settings.hpp"
+#include "app/translation_service.hpp"
 
 
 int main(int argc, char *argv[])
@@ -21,6 +22,7 @@ int main(int argc, char *argv[])
     QIcon::setThemeSearchPaths(search_paths);
 
 
+    app::TranslationService::instance().initialize();
     app::settings::Settings::instance().load();
 
     GlaxnimateWindow window;
