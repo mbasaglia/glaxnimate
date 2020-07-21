@@ -327,6 +327,12 @@ public:
         ui.retranslateUi(parent);
         redo_text = ui.action_redo->text();
         undo_text = ui.action_undo->text();
+
+        if ( current_document )
+        {
+            ui.action_undo->setText(redo_text.arg(current_document->undo_stack().undoText()));
+            ui.action_redo->setText(redo_text.arg(current_document->undo_stack().redoText()));
+        }
     }
 
     void update_tool_button(QAction* action, QToolButton* button)

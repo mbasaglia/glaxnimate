@@ -590,7 +590,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/ui/dialogs/glaxnimate_window.ui" line="1514"/>
+        <location filename="../../src/ui/dialogs/glaxnimate_window.ui" line="1515"/>
         <source>Pr&amp;eferences...</source>
         <translation type="unfinished"></translation>
     </message>
