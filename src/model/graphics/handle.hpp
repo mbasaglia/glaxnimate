@@ -44,9 +44,17 @@ public:
 
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
 
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent * event) override;
+
+    void mouseMoveEvent(QGraphicsSceneMouseEvent * event) override;
+
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
 
 signals:
     void dragged(const QPointF& p);
+    void dragged_x(qreal x);
+    void dragged_y(qreal y);
 
 private:
     class Private;

@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QtMath>
 #include <QCursor>
+#include <QGraphicsSceneMouseEvent>
 
 class model::graphics::MoveHandle::Private
 {
@@ -17,6 +18,14 @@ public:
     qreal external_radius()
     {
         return radius + 1;
+    }
+
+    void apply_constraints(const QPointF& reference, QPointF& constrained)
+    {
+        if ( direction == Horizontal )
+            constrained.setY(reference.y());
+        else if ( direction == Vertical )
+            constrained.setX(reference.x());
     }
 };
 
@@ -34,10 +43,9 @@ model::graphics::MoveHandle::MoveHandle(
     d(std::make_unique<Private>(Private{direction, shape, qreal(radius),
         color_rest, color_highlighted, color_selected, color_border}))
 {
-    setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
-    setAcceptHoverEvents(true);
+    setAcceptedMouseButtons(Qt::LeftButton);
 
     if ( d->direction == Horizontal )
         setCursor(Qt::SizeHorCursor);
@@ -62,10 +70,10 @@ void model::graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGra
 {
     painter->save();
 
-    qreal radius = isSelected() ? d->external_radius() : d->radius;
+    qreal radius = hasFocus() ? d->external_radius() : d->radius;
 
     painter->setPen(QPen(d->color_border, 1));
-    if ( isSelected() )
+    if ( hasFocus() )
         painter->setBrush(d->color_selected);
     else if ( isUnderMouse() )
         painter->setBrush(d->color_highlighted);
@@ -78,7 +86,6 @@ void model::graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGra
         radius /= M_SQRT2;
     }
 
-
     QRectF rect{-radius, -radius, radius*2, radius*2};
 
     switch ( d->shape )
@@ -89,6 +96,27 @@ void model::graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGra
             break;
     }
 
-
     painter->restore();
 }
+
+void model::graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    setFocus(Qt::MouseFocusReason);
+}
+
+void model::graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
+    QPointF p = event->scenePos();
+    d->apply_constraints(pos(), p);
+    setPos(p);
+    emit dragged(p);
+    emit dragged_x(p.x());
+    emit dragged_y(p.y());
+
+}
+
+void model::graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+    clearFocus();
+}
+

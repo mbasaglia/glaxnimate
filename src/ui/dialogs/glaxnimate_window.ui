@@ -1508,7 +1508,8 @@
   </action>
   <action name="actionPr_eferences">
    <property name="icon">
-    <iconset theme="settings-configure"/>
+    <iconset theme="settings-configure">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Pr&amp;eferences...</string>

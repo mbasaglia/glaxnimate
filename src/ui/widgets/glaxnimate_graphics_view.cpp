@@ -55,7 +55,7 @@ public:
 
     void update_mouse_cursor()
     {
-        view->setCursor(Qt::ArrowCursor);
+        view->unsetCursor();
     }
 
     QPointF anchor_scene()
@@ -84,6 +84,8 @@ GlaxnimateGraphicsView::~GlaxnimateGraphicsView() = default;
 
 void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
 {
+    QGraphicsView::mousePressEvent(event);
+
     QPoint mpos = event->pos();
     QPointF scene_pos = mapToScene(mpos);
 
@@ -118,6 +120,8 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
 
 void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
 {
+    QGraphicsView::mouseMoveEvent(event);
+
     QPoint mpos = event->pos();
     QPointF scene_pos = mapToScene(mpos);
 
@@ -160,6 +164,7 @@ void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
 
 void GlaxnimateGraphicsView::mouseReleaseEvent(QMouseEvent * event)
 {
+    QGraphicsView::mouseReleaseEvent(event);
 //     QPoint mpos = event->pos();
 //     QPointF scene_pos = mapToScene(mpos);
 
