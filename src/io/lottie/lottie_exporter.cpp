@@ -51,9 +51,9 @@ public:
 };
 
 bool io::lottie::LottieExporter::process(QIODevice& file, const QString&,
-                                         model::Document* document, const QVariantMap& option_values) const
+                                         model::Document* document, const QVariantMap& setting_values) const
 {
-    file.write(to_json(document).toJson(option_values["pretty"].toBool() ? QJsonDocument::Indented : QJsonDocument::Compact));
+    file.write(to_json(document).toJson(setting_values["pretty"].toBool() ? QJsonDocument::Indented : QJsonDocument::Compact));
     return true;
 }
 

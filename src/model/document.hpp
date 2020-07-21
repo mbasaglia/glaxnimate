@@ -5,7 +5,7 @@
 #include <QUndoStack>
 
 #include "animation.hpp"
-#include "io/saved_io_options.hpp"
+#include "io/options.hpp"
 
 namespace model {
 
@@ -29,9 +29,9 @@ public:
 
     QUndoStack& undo_stack();
 
-    const io::SavedIoOptions& export_options() const;
+    const io::Options& export_options() const;
 
-    void set_export_options(const io::SavedIoOptions& opt);
+    void set_export_options(const io::Options& opt);
 
     graphics::DocumentScene& graphics_scene() const;
 

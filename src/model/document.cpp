@@ -8,7 +8,7 @@ public:
     Animation animation;
     QUndoStack undo_stack;
     QVariantMap metadata;
-    io::SavedIoOptions exporter;
+    io::Options exporter;
     graphics::DocumentScene graphics_scene;
 };
 
@@ -42,12 +42,12 @@ QUndoStack & model::Document::undo_stack()
     return d->undo_stack;
 }
 
-const io::SavedIoOptions & model::Document::export_options() const
+const io::Options & model::Document::export_options() const
 {
     return d->exporter;
 }
 
-void model::Document::set_export_options(const io::SavedIoOptions& opt)
+void model::Document::set_export_options(const io::Options& opt)
 {
     bool em = opt.filename != d->exporter.filename;
     d->exporter = opt;

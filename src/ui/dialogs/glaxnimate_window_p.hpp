@@ -12,6 +12,7 @@
 #include "glaxnimate_window.hpp"
 
 #include "app/app_info.hpp"
+#include "app/settings/settings.hpp"
 
 #include "command/layer_commands.hpp"
 
@@ -71,6 +72,12 @@ public:
     ViewTransformWidget* view_trans_widget;
     bool started = false;
 
+    ~Private()
+    {
+        app::settings::set("ui", "window_geometry", parent->saveGeometry());
+        app::settings::set("ui", "window_state", parent->saveState());
+    }
+
     void create_document(const QString& filename)
     {
         if ( !close_document() )
@@ -111,7 +118,16 @@ public:
 
 
         /// @todo don't do this for opened files
+        current_document->animation().name.set(current_document->animation().docnode_name());
         auto layer = std::make_unique<model::ShapeLayer>(&current_document->animation());
+        current_document->animation().width.set(app::settings::get<int>("defaluts", "width"));
+        current_document->animation().height.set(app::settings::get<int>("defaluts", "height"));
+        current_document->animation().frame_rate.set(app::settings::get<int>("defaluts", "frame_rate"));
+        float duration = app::settings::get<float>("defaluts", "duration");
+        int out_point = current_document->animation().frame_rate.get() * duration;
+        current_document->animation().out_point.set(out_point);
+        layer->out_point.set(out_point);
+        layer->name.set(layer->docnode_name());
         model::Layer* ptr = layer.get();
         current_document->animation().add_layer(std::move(layer), 0);
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
@@ -158,7 +174,7 @@ public:
         if ( !current_document )
             return false;
 
-        io::SavedIoOptions opts = current_document->export_options();
+        io::Options opts = current_document->export_options();
 
         if ( !opts.method )
             force_dialog = true;
@@ -179,7 +195,7 @@ public:
         // TODO progess/error dialogs
         QFile file(opts.filename);
         file.open(QFile::WriteOnly);
-        if ( !opts.method->process(file, opts.filename, current_document.get(), opts.options) )
+        if ( !opts.method->process(file, opts.filename, current_document.get(), opts.settings) )
             return false;
 
         current_document->undo_stack().setClean();
@@ -195,6 +211,8 @@ public:
     {
         this->parent = parent;
         ui.setupUi(parent);
+        parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
+        parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
         redo_text = ui.action_redo->text();
         undo_text = ui.action_undo->text();
 
@@ -508,6 +526,8 @@ public:
         }
 
         layer->name.set(name);
+
+        layer->out_point.set(current_document->animation().out_point.get());
 
         model::Layer* ptr = layer.get();
 

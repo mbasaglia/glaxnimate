@@ -2,6 +2,7 @@
 
 #include "ui/dialogs/glaxnimate_window.hpp"
 #include "app/app_info.hpp"
+#include "app/settings/settings.hpp"
 
 
 int main(int argc, char *argv[])
@@ -19,14 +20,14 @@ int main(int argc, char *argv[])
     search_paths += QIcon::themeSearchPaths();
     QIcon::setThemeSearchPaths(search_paths);
 
-    QPalette palette = QGuiApplication::palette();
-    if ( palette.color(QPalette::Button).value() < 100 )
-        QIcon::setThemeName("icons-dark");
-    else
-        QIcon::setThemeName("icons");
 
+    app::settings::Settings::instance().load();
 
     GlaxnimateWindow window;
     window.show();
-    return app.exec();
+    int ret = app.exec();
+
+    app::settings::Settings::instance().save();
+
+    return ret;
 }

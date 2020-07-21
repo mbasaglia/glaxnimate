@@ -1,5 +1,6 @@
 #include "glaxnimate_window.hpp"
 #include "glaxnimate_window_p.hpp"
+#include "ui/dialogs/settings_dialog.hpp"
 
 
 GlaxnimateWindow::GlaxnimateWindow(QWidget *parent, Qt::WindowFlags flags)
@@ -139,4 +140,9 @@ void GlaxnimateWindow::showEvent(QShowEvent * event)
         d->started = true;
         document_new();
     }
+}
+
+void GlaxnimateWindow::preferences()
+{
+    SettingsDialog(this).exec();
 }

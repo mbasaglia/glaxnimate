@@ -1,15 +1,11 @@
 #pragma once
 
 #include <QFileDialog>
-#include <QFormLayout>
-#include <QLabel>
-#include <QCheckBox>
-#include <QSpinBox>
-#include <QLineEdit>
 #include <QDialogButtonBox>
 
 #include "io/exporter.hpp"
 #include "model/document.hpp"
+#include "app/settings/widget_builder.hpp"
 
 
 class ImportExportDialog
@@ -22,7 +18,7 @@ public:
 
     }
 
-    const io::SavedIoOptions& io_options() const
+    const io::Options& io_options() const
     {
         return io_options_;
     }
@@ -51,21 +47,8 @@ public:
         QFormLayout layout;
         dialog.setLayout(&layout);
 
-        for ( const io::Option& opt : io_options_.method->options() )
-        {
-            io_options_.options[opt.slug] = opt.get_variant(io_options_.options);
-            QWidget* wid = make_option_widget(opt);
-            if ( !wid )
-                continue;
-
-            QLabel* label = new QLabel(opt.name, &dialog);
-            label->setToolTip(opt.description);
-            wid->setParent(&dialog);
-            wid->setToolTip(opt.description);
-            wid->setWhatsThis(opt.description);
-            layout.addRow(label, wid);
-        }
-
+        app::settings::WidgetBuilder widget_builder;
+        widget_builder.add_widgets(io_options_.method->settings(), &dialog, &layout, io_options_.settings);
         QDialogButtonBox box(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
         layout.setWidget(1, QFormLayout::SpanningRole, &box);
         QObject::connect(&box, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
@@ -78,50 +61,6 @@ public:
     }
 
 private:
-    QWidget* make_option_widget(const io::Option& opt)
-    {
-        if ( opt.type == io::Option::Info )
-        {
-            return new QLabel(opt.description);
-        }
-        else if ( opt.type == io::Option::Bool )
-        {
-            auto wid = new QCheckBox();
-            wid->setChecked(opt.get<bool>(io_options_.options));
-            QObject::connect(wid, &QCheckBox::toggled, OptionSetter<bool>{opt.slug, &io_options_.options});
-            return wid;
-        }
-        else if ( opt.type == io::Option::Int )
-        {
-            auto wid = new QSpinBox();
-            wid->setValue(opt.get<int>(io_options_.options));
-            wid->setMinimum(opt.min);
-            wid->setMaximum(opt.max);
-            QObject::connect(wid, (void(QSpinBox::*)(int))&QSpinBox::valueChanged,
-                             OptionSetter<int>{opt.slug, &io_options_.options});
-            return wid;
-        }
-        else if ( opt.type == io::Option::Float )
-        {
-            auto wid = new QDoubleSpinBox();
-            wid->setValue(opt.get<float>(io_options_.options));
-            wid->setMinimum(opt.min);
-            wid->setMaximum(opt.max);
-            QObject::connect(wid, (void(QDoubleSpinBox::*)(double))&QDoubleSpinBox::valueChanged,
-                             OptionSetter<float>{opt.slug, &io_options_.options});
-            return wid;
-        }
-        else if ( opt.type == io::Option::String )
-        {
-            auto wid = new QLineEdit();
-            wid->setText(opt.get<QString>(io_options_.options));
-            QObject::connect(wid, &QLineEdit::textChanged, OptionSetter<QString>{opt.slug, &io_options_.options});
-            return wid;
-        }
-
-        return nullptr;
-    }
-
     bool show_file_dialog(QFileDialog& dialog)
     {
         io_options_.method = nullptr;
@@ -186,20 +125,8 @@ private:
         dialog.setNameFilters(filters);
     }
 
-    template<class T>
-    struct OptionSetter
-    {
-        QString name;
-        QVariantMap* options;
-
-        void operator()(T v)
-        {
-            (*options)[name] = QVariant(v);
-        }
-    };
-
     QWidget* parent;
     QStringList filters;
-    io::SavedIoOptions io_options_;
+    io::Options io_options_;
 };
 

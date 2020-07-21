@@ -10,13 +10,13 @@ class LottieExporter : public ImportExportConcrete<LottieExporter, Exporter>
 {
 public:
     bool process(QIODevice& file, const QString& filename,
-                 model::Document* document, const QVariantMap& option_values) const override;
+                 model::Document* document, const QVariantMap& setting_values) const override;
     QString name() const override { return tr("Lottie Animation"); }
     QStringList extensions() const override { return {"json"}; }
-    OptionList options() const override
+    SettingList settings() const override
     {
         return {
-            Option("pretty", tr("Pretty"), tr("Pretty print the JSON"), false)
+            Setting("pretty", tr("Pretty"), tr("Pretty print the JSON"), false)
         };
     }
 

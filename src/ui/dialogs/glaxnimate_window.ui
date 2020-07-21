@@ -128,6 +128,8 @@
     <addaction name="action_raise"/>
     <addaction name="action_lower"/>
     <addaction name="action_lower_to_bottom"/>
+    <addaction name="separator"/>
+    <addaction name="actionPr_eferences"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -1504,6 +1506,14 @@
     <string>Reset &amp;Zoom</string>
    </property>
   </action>
+  <action name="actionPr_eferences">
+   <property name="icon">
+    <iconset theme="settings-configure"/>
+   </property>
+   <property name="text">
+    <string>Pr&amp;eferences...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -2510,6 +2520,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionPr_eferences</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>preferences()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
@@ -2526,5 +2552,6 @@
   <slot>layer_delete()</slot>
   <slot>document_treeview_current_changed(QModelIndex)</slot>
   <slot>view_fit()</slot>
+  <slot>preferences()</slot>
  </slots>
 </ui>

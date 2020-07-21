@@ -1,6 +1,6 @@
 #pragma once
 
-#include "io/options.hpp"
+#include "app/settings/setting.hpp"
 #include "model/document.hpp"
 
 #include <QFileInfo>
@@ -8,6 +8,9 @@
 #include <QObject>
 
 namespace io {
+
+using Setting = app::settings::Setting;
+using SettingList = app::settings::SettingList;
 
 class ImportExport : QObject
 {
@@ -27,14 +30,14 @@ public:
     }
 
     /**
-     * @pre @p file is open appropriately && @p option_values contains all the options correctly
+     * @pre @p file is open appropriately && @p setting_values contains all the settings correctly
      */
     virtual bool process(QIODevice& file, const QString& filename,
-                         model::Document* document, const QVariantMap& option_values) const = 0;
+                         model::Document* document, const QVariantMap& setting_values) const = 0;
 
     virtual QString name() const = 0;
     virtual QStringList extensions() const = 0;
-    virtual OptionList options() const = 0;
+    virtual SettingList settings() const = 0;
 
 signals:
     void error(const QString& message);

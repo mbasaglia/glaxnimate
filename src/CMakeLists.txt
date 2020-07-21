@@ -5,6 +5,8 @@ set(SOURCES
 main.cpp
 
 app/app_info.cpp
+app/settings/settings.cpp
+app/settings/settings_list.cpp
 
 io/lottie/lottie_exporter.cpp
 io/base.cpp
@@ -21,6 +23,8 @@ model/graphics/handle.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui
+ui/dialogs/settings_dialog.cpp
+ui/dialogs/settings_dialog.ui
 ui/widgets/glaxnimate_graphics_view.cpp
 ui/widgets/view_transform_widget.cpp
 ui/widgets/view_transform_widget.ui
