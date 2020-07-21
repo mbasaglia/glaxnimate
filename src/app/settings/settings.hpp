@@ -2,6 +2,7 @@
 
 #include <QHash>
 #include <QList>
+#include <QCoreApplication>
 
 #include "app/settings/setting_group.hpp"
 
@@ -10,6 +11,8 @@ namespace app::settings {
 
 class Settings
 {
+    Q_DECLARE_TR_FUNCTIONS(Settings)
+
 public:
     using iterator = QList<SettingGroup>::const_iterator;
 

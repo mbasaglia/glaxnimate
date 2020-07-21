@@ -12,7 +12,7 @@ namespace {
 QVariantMap avail_icon_themes()
 {
     QVariantMap avail_icon_themes;
-    avail_icon_themes[QObject::tr("Default")] = "";
+    avail_icon_themes[app::settings::Settings::tr("Default")] = "";
     for ( QDir search : QIcon::themeSearchPaths() )
     {
         for ( const auto& avail : search.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot) )
@@ -66,18 +66,18 @@ void app::settings::Settings::load_metadata()
 {
     QString curr_lang = app::TranslationService::instance().current_lang_code();
 
-    Settings::instance().add_group(SettingGroup{"ui", QObject::tr("User Interface"), "preferences-desktop-theme", {
-        //      slug            Label                       Tooltip                             Type                default     choices             side effects
-        Setting("language",     QObject::tr("Language"),    QObject::tr("Interface Language"),  Setting::String,    curr_lang,  avail_languages(),  set_language),
-        Setting("icon_theme",   QObject::tr("Icon Theme"),  "",                                 Setting::String,    "",         avail_icon_themes(), set_icon_theme),
-        Setting("window_state", {},                         {},                                 Setting::Internal,  QByteArray{}),
-        Setting("window_geometry", {},                      {},                                 Setting::Internal,  QByteArray{}),
+    Settings::instance().add_group(SettingGroup{"ui", tr("User Interface"), "preferences-desktop-theme", {
+        //      slug            Label              Tooltip                    Type                default     choices             side effects
+        Setting("language",     tr("Language"),    tr("Interface Language"),  Setting::String,    curr_lang,  avail_languages(),  set_language),
+        Setting("icon_theme",   tr("Icon Theme"),  "",                        Setting::String,    "",         avail_icon_themes(), set_icon_theme),
+        Setting("window_state", {},                {},                        Setting::Internal,  QByteArray{}),
+        Setting("window_geometry", {},             {},                        Setting::Internal,  QByteArray{}),
     }});
-    Settings::instance().add_group(SettingGroup{"defaults", QObject::tr("New Animation Defaults"), "document-new", {
-        //      slug            Label                   Tooltip                         default min max
-        Setting("width",        QObject::tr("Width"),   "",                                 512, 0, 1000000),
-        Setting("height",       QObject::tr("Height"),  "",                                 512, 0, 1000000),
-        Setting("frame_rate",   QObject::tr("FPS"),     QObject::tr("Frames per second"),    60, 0, 1000),
-        Setting("duration",     QObject::tr("Duration"),QObject::tr("Duration in seconds"),   3, 0, 90000),
+    Settings::instance().add_group(SettingGroup{"defaults", tr("New Animation Defaults"), "document-new", {
+        //      slug            Label           Tooltip                  default min max
+        Setting("width",        tr("Width"),    "",                         512, 0, 1000000),
+        Setting("height",       tr("Height"),   "",                         512, 0, 1000000),
+        Setting("frame_rate",   tr("FPS"),      tr("Frames per second"),     60, 0, 1000),
+        Setting("duration",     tr("Duration"), tr("Duration in seconds"),    3, 0, 90000),
     }});
 }

@@ -666,6 +666,14 @@ Do you want to save your changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../src/app/app_info.cpp" line="10"/>
+        <source>Glaxnimate</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Settings</name>
+    <message>
         <location filename="../../src/app/settings/settings_list.cpp" line="15"/>
         <source>Default</source>
         <translation type="unfinished"></translation>
@@ -723,11 +731,6 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../../src/app/settings/settings_list.cpp" line="81"/>
         <source>Duration in seconds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/app/app_info.cpp" line="10"/>
-        <source>Glaxnimate</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
