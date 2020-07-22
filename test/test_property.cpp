@@ -63,7 +63,7 @@ private slots:
         Object obj;
         pci.connect(obj);
 
-        Property<int> prop(&obj, "foo", "bar", 456);
+        Property<int> prop(&obj, "foo", 456);
         QVERIFY(pci.not_called());
         QCOMPARE(prop.get(), 456);
     }
@@ -74,7 +74,7 @@ private slots:
         Object obj;
         pci.connect(obj);
 
-        Property<int> prop(&obj, "foo", "bar");
+        Property<int> prop(&obj, "foo");
         prop.set(123);
         QVERIFY(pci.called_with("foo", 123));
         QCOMPARE(prop.get(), 123);
@@ -86,7 +86,7 @@ private slots:
         Object obj;
         pci.connect(obj);
 
-        Property<int> prop(&obj, "foo", "bar", 123);
+        Property<int> prop(&obj, "foo", 123);
         QCOMPARE(prop.value(), QVariant(123));
         QVERIFY(prop.set_value(QVariant(456)));
         QVERIFY(pci.called_with("foo", 456));
