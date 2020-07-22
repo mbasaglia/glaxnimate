@@ -146,7 +146,13 @@ void GlaxnimateWindow::preferences()
 void GlaxnimateWindow::closeEvent ( QCloseEvent* event )
 {
     if ( !d->close_document() )
+    {
         event->ignore();
+    }
     else
+    {
+        app::settings::set("ui", "window_geometry", saveGeometry());
+        app::settings::set("ui", "window_state", saveState());
         QMainWindow::closeEvent(event);
+    }
 }

@@ -69,8 +69,8 @@ public:
 
     bool updating_color = false;
 
-    // "set and forget" kida variable
-    int tool_rows = 3;
+    // "set and forget" kida variables
+    int tool_rows = 3; ///< @todo setting
     QString undo_text;
     QString redo_text;
     color_widgets::ColorPaletteModel palette_model;
@@ -79,12 +79,6 @@ public:
     DockWidgetStyle dock_style;
     ViewTransformWidget* view_trans_widget;
     bool started = false;
-
-    ~Private()
-    {
-        app::settings::set("ui", "window_geometry", parent->saveGeometry());
-        app::settings::set("ui", "window_state", parent->saveState());
-    }
 
     void create_document(const QString& filename)
     {
