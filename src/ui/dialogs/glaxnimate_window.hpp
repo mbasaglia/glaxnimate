@@ -41,6 +41,7 @@ protected:
     void changeEvent(QEvent *e) override;
     bool eventFilter(QObject *object, QEvent *event) override;
     void showEvent(QShowEvent * event) override;
+    void closeEvent ( QCloseEvent * event ) override;
 
 private:
     class Private;

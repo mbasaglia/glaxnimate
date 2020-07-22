@@ -146,3 +146,12 @@ void GlaxnimateWindow::preferences()
 {
     SettingsDialog(this).exec();
 }
+
+
+void GlaxnimateWindow::closeEvent ( QCloseEvent* event )
+{
+    if ( !d->close_document() )
+        event->ignore();
+    else
+        QMainWindow::closeEvent(event);
+}

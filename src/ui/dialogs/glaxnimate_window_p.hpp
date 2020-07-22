@@ -144,6 +144,8 @@ public:
 
     void refresh_title()
     {
+        if ( !current_document )
+            return;
         QString title = current_document->filename();
         if ( !current_document->undo_stack().isClean() )
             title += " *";
