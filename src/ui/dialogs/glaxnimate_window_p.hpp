@@ -158,6 +158,7 @@ public:
             warning.setInformativeText(current_document->filename());
             warning.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
             warning.setDefaultButton(QMessageBox::Save);
+            warning.setIcon(QMessageBox::Warning);
             int result = warning.exec();
 
             if ( result == QMessageBox::Save )
