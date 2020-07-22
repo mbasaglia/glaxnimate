@@ -25,11 +25,6 @@ void GlaxnimateWindow::changeEvent(QEvent *e)
     }
 }
 
-bool GlaxnimateWindow::eventFilter(QObject* object, QEvent* event)
-{
-    return d->eventFilter(object, event);
-}
-
 void GlaxnimateWindow::document_new()
 {
     QDir path;

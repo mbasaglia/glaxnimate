@@ -26,7 +26,9 @@
 #include "ui/style/property_delegate.hpp"
 #include "ui/widgets/glaxnimate_graphics_view.hpp"
 #include "ui/widgets/view_transform_widget.hpp"
+#include "ui/widgets/scalable_button.hpp"
 
+#include <QDebug>
 
 namespace {
 
@@ -264,7 +266,7 @@ public:
 
             action->setActionGroup(tool_actions);
 
-            QToolButton *button = new QToolButton(ui.dock_tools_contents);
+            ScalableButton *button = new ScalableButton(ui.dock_tools_contents);
 
             button->setIcon(action->icon());
             button->setCheckable(true);
@@ -277,8 +279,7 @@ public:
             QObject::connect(button, &QToolButton::toggled, action, &QAction::setChecked);
             QObject::connect(action, &QAction::toggled, button, &QToolButton::setChecked);
 
-            button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            button->installEventFilter(parent);
+            button->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
             ui.dock_tools_layout->addWidget(button, row, column);
 
@@ -341,26 +342,6 @@ public:
     {
         button->setText(action->text());
         button->setToolTip(action->text());
-    }
-
-    bool eventFilter(QObject* object, QEvent* event)
-    {
-        QToolButton *btn = qobject_cast<QToolButton*>(object);
-        if ( btn && event->type() == QEvent::Resize )
-        {
-            int target = std::max(16, std::min(128, btn->size().width() - 10));
-            btn->setIconSize(QSize(target, target));
-//             QSize best(0, 0);
-//             for ( const auto& sz : btn->icon().availableSizes() )
-//             {
-//                 if ( sz.width() > best.width() && sz.width() <= target )
-//                     best = sz;
-//             }
-//             if ( best.width() > 0 )
-//                 btn->setIconSize(best);
-        }
-
-        return false;
     }
 
     void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,
