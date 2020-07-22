@@ -33,6 +33,7 @@ public:
 
     QVariant get(const QString& property) const;
     bool set(const QString& property, const QVariant& value, bool allow_unknown = false);
+    bool has(const QString& property) const;
 
     const std::vector<BaseProperty*>& properties() const;
 

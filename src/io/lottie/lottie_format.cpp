@@ -1,11 +1,11 @@
-#include "lottie_exporter.hpp"
+#include "lottie_format.hpp"
 
 #include <QJsonObject>
 #include <QJsonArray>
 
 using namespace model;
 
-io::lottie::LottieExporter::Autoreg io::lottie::LottieExporter::autoreg;
+io::Autoreg<io::lottie::LottieFormat> io::lottie::LottieFormat::autoreg;
 
 
 class LottieExporterState
@@ -34,6 +34,7 @@ public:
     QJsonObject convert_layer(Layer* layer)
     {
         QJsonObject json = convert_object_basic(layer, fields["Layer"]);
+        json["ty"] = layer_types[layer->type_name()];
         if ( layer->parent.get() )
             json["parent"] = QJsonValue(layer->parent.get()->index.get());
         return json;
@@ -91,16 +92,20 @@ public:
 
         }},
     };
+    QMap<QString, int> layer_types = {
+        {"EmptyLayer", 3},
+        {"ShapeLayer", 4}
+    };
 };
 
-bool io::lottie::LottieExporter::process(QIODevice& file, const QString&,
-                                         model::Document* document, const QVariantMap& setting_values) const
+bool io::lottie::LottieFormat::save(QIODevice& file, const QString&,
+                                         model::Document* document, const QVariantMap& setting_values)
 {
     file.write(to_json(document).toJson(setting_values["pretty"].toBool() ? QJsonDocument::Indented : QJsonDocument::Compact));
     return true;
 }
 
-QJsonDocument io::lottie::LottieExporter::to_json(model::Document* document)
+QJsonDocument io::lottie::LottieFormat::to_json(model::Document* document)
 {
     LottieExporterState exp(document);
     return QJsonDocument(exp.to_json());

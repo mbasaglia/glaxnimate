@@ -2,6 +2,8 @@
 
 #include <QList>
 #include <QIcon>
+#include <QUuid>
+
 
 #include "model/property.hpp"
 
@@ -17,7 +19,7 @@ class DocumentNode : public Object
 public:
     Property<QString> name{this, "name", ""};
     Property<QColor> group_color{this, "color", QColor{0, 0, 0, 0}};
-    FixedValueProperty<QString> id;
+    Property<QUuid> uuid{this, "uuid", {}, false};
 
     explicit DocumentNode(Document* document);
 

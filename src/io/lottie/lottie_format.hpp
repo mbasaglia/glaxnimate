@@ -1,21 +1,23 @@
 #pragma once
 
 #include <QJsonDocument>
-#include "io/exporter.hpp"
+#include "io/base.hpp"
 
 namespace io::lottie {
 
 
-class LottieExporter : public ImportExportConcrete<LottieExporter, Exporter>
+class LottieFormat : public ImportExport
 {
     Q_OBJECT
 
 public:
-    bool process(QIODevice& file, const QString& filename,
-                 model::Document* document, const QVariantMap& setting_values) const override;
+    bool save(QIODevice& file, const QString& filename,
+                 model::Document* document, const QVariantMap& setting_values) override;
     QString name() const override { return tr("Lottie Animation"); }
     QStringList extensions() const override { return {"json"}; }
-    SettingList settings() const override
+    bool can_save() const override { return true; }
+    bool can_open() const override { return false; }
+    SettingList save_settings() const override
     {
         return {
             Setting("pretty", tr("Pretty"), tr("Pretty print the JSON"), false)
@@ -25,7 +27,7 @@ public:
     static QJsonDocument to_json(model::Document* document);
 
 private:
-    static Autoreg autoreg;
+    static Autoreg<LottieFormat> autoreg;
 };
 
 

@@ -1,13 +1,20 @@
-#include "glaxnimate_exporter.hpp"
+#include "glaxnimate_format.hpp"
 
 #include <QUuid>
 #include <QJsonArray>
 
 #include "app/app_info.hpp"
 
-io::glaxnimate::GlaxnimateExporter::Autoreg io::glaxnimate::GlaxnimateExporter::autoreg;
+io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 
-QJsonObject io::glaxnimate::GlaxnimateExporter::format_metadata()
+
+bool io::glaxnimate::GlaxnimateFormat::save(QIODevice& file, const QString&,
+                model::Document* document, const QVariantMap&)
+{
+    return file.write(to_json(document).toJson(QJsonDocument::Indented));
+}
+
+QJsonObject io::glaxnimate::GlaxnimateFormat::format_metadata()
 {
     QJsonObject object;
     object["generator"] = AppInfo::instance().name();
@@ -16,17 +23,16 @@ QJsonObject io::glaxnimate::GlaxnimateExporter::format_metadata()
     return object;
 }
 
-QJsonDocument io::glaxnimate::GlaxnimateExporter::to_json ( model::Document* document )
+QJsonDocument io::glaxnimate::GlaxnimateFormat::to_json ( model::Document* document )
 {
     QJsonObject doc_obj;
     doc_obj["format"] = format_metadata();
     doc_obj["metadata"] = QJsonObject::fromVariantMap(document->metadata());
-    doc_obj["uuid"] = document->uuid().toString();
     doc_obj["animation"] = to_json(&document->animation());
     return QJsonDocument(doc_obj);
 }
 
-QJsonObject io::glaxnimate::GlaxnimateExporter::to_json ( model::Object* object )
+QJsonObject io::glaxnimate::GlaxnimateFormat::to_json ( model::Object* object )
 {
     QJsonObject obj;
     obj["__type__"] = object->type_name();
@@ -37,7 +43,7 @@ QJsonObject io::glaxnimate::GlaxnimateExporter::to_json ( model::Object* object 
     return obj;
 }
 
-QJsonValue io::glaxnimate::GlaxnimateExporter::to_json ( model::BaseProperty* property )
+QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* property )
 {
     if ( property->traits().list )
     {
@@ -52,7 +58,7 @@ QJsonValue io::glaxnimate::GlaxnimateExporter::to_json ( model::BaseProperty* pr
     return to_json(property->value(), property->traits());
 }
 
-QJsonValue io::glaxnimate::GlaxnimateExporter::to_json ( const QVariant& value, model::PropertyTraits traits )
+QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, model::PropertyTraits traits )
 {
     if ( traits.type == model::PropertyTraits::Object )
     {
@@ -63,7 +69,7 @@ QJsonValue io::glaxnimate::GlaxnimateExporter::to_json ( const QVariant& value, 
     else if ( traits.type == model::PropertyTraits::ObjectReference )
     {
         if ( auto dn = value.value<model::DocumentNode*>() )
-            return dn->id.get();
+            return dn->uuid.get().toString();
         return {};
     }
     else if ( traits.type == model::PropertyTraits::Enum )
@@ -75,7 +81,7 @@ QJsonValue io::glaxnimate::GlaxnimateExporter::to_json ( const QVariant& value, 
 }
 
 
-QJsonValue io::glaxnimate::GlaxnimateExporter::to_json ( const QVariant& value )
+QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
 {
     if ( value.isNull() )
         return {};
@@ -100,6 +106,7 @@ QJsonValue io::glaxnimate::GlaxnimateExporter::to_json ( const QVariant& value )
         case QMetaType::QJsonArray:
         case QMetaType::QJsonObject:
         case QMetaType::QJsonValue:
+        case QMetaType::QUuid:
             return QJsonValue::fromVariant(value);
 
         case QVariant::Invalid:

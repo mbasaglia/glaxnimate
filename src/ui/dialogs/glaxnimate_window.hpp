@@ -21,6 +21,7 @@ public slots:
     void document_new();
     void document_save();
     void document_save_as();
+    void document_open();
 
 private slots:
     void color_update_noalpha(const QColor& col);

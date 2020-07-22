@@ -9,8 +9,9 @@ app/translation_service.cpp
 app/settings/settings.cpp
 app/settings/settings_list.cpp
 
-io/lottie/lottie_exporter.cpp
-io/glaxnimate/glaxnimate_exporter.cpp
+io/lottie/lottie_format.cpp
+io/glaxnimate/glaxnimate_format.cpp
+io/glaxnimate/glaxnimate_importer.cpp
 io/base.cpp
 
 model/animation.cpp

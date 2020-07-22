@@ -22,7 +22,8 @@ struct PropertyTraits
         Color,
         Size,
         String,
-        Enum
+        Enum,
+        Uuid,
     };
     bool list = false;
     Type type = Unknown;
@@ -75,6 +76,7 @@ template<> struct GetType<QVector2D, void> { static constexpr const PropertyTrai
 template<> struct GetType<QColor, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Color; };
 template<> struct GetType<QSizeF, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Size; };
 template<> struct GetType<QString, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::String; };
+template<> struct GetType<QUuid, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Uuid; };
 
 template<class ObjT>
 struct GetType<ObjT, std::enable_if_t<std::is_integral_v<ObjT>>>
@@ -198,9 +200,12 @@ public:
 
     bool set_value(const QVariant& val) override
     {
-        if ( !val.canConvert<Type>() )
+        if ( !val.canConvert(qMetaTypeId<Type>()) )
             return false;
-        set(val.value<Type>());
+        QVariant converted = val;
+        if ( !converted.convert(qMetaTypeId<Type>()) )
+            return false;
+        set(converted.value<Type>());
         return true;
     }
 
@@ -397,10 +402,12 @@ public:
             return true;
         }
 
-        if ( !val.canConvert<Type>() )
+        if ( !val.canConvert(qMetaTypeId<Type>()) )
             return false;
-        set(val.value<Type>());
-        null_ = false;
+        QVariant converted = val;
+        if ( !converted.convert(qMetaTypeId<Type>()) )
+            return false;
+        set(converted.value<Type>());
         return true;
     }
 

@@ -28,6 +28,8 @@
 #include "ui/widgets/view_transform_widget.hpp"
 #include "ui/widgets/scalable_button.hpp"
 
+#include "io/glaxnimate/glaxnimate_format.hpp"
+
 #include <QDebug>
 
 namespace {
@@ -80,7 +82,7 @@ public:
     ViewTransformWidget* view_trans_widget;
     bool started = false;
 
-    void create_document(const QString& filename)
+    void setup_document(const QString& filename)
     {
         if ( !close_document() )
             return;
@@ -116,9 +118,13 @@ public:
         QObject::connect(current_document.get(), &model::Document::filename_changed, parent, &GlaxnimateWindow::refresh_title);
         QObject::connect(&current_document->undo_stack(), &QUndoStack::cleanChanged, parent, &GlaxnimateWindow::refresh_title);
         refresh_title();
+    }
 
 
-        /// @todo don't do this for opened files
+    void setup_document_new(const QString& filename)
+    {
+        setup_document(filename);
+
         current_document->animation().name.set(current_document->animation().type_name());
         auto layer = current_document->animation().make_layer<model::ShapeLayer>();
         current_document->animation().width.set(app::settings::get<int>("defaults", "width"));
@@ -132,10 +138,19 @@ public:
         model::Layer* ptr = layer.get();
         current_document->animation().add_layer(std::move(layer), 0);
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
-        /// (Load from the file instead)
 
         // Fit doc into the view
         view_fit();
+    }
+
+    bool setup_document_open(const io::Options& options)
+    {
+        setup_document(options.filename);
+        QFile file(options.filename);
+        if ( !file.open(QFile::ReadOnly) )
+            return false;
+        /// @todo Show io errors and such
+        return options.format->open(file, options.filename, current_document.get(), options.settings);
     }
 
     void refresh_title()
@@ -182,19 +197,16 @@ public:
         if ( !current_document )
             return false;
 
-        io::Options opts = current_document->export_options();
+        io::Options opts = current_document->io_options();
 
-        if ( !opts.method )
+        if ( !opts.format || !opts.format->can_save() )
             force_dialog = true;
 
         if ( force_dialog )
         {
             ImportExportDialog dialog(ui.centralwidget->parentWidget());
 
-            if ( !dialog.export_dialog(current_document.get()) )
-                return false;
-
-            if ( !dialog.options_dialog() )
+            if ( !dialog.export_dialog(current_document->io_options()) )
                 return false;
 
             opts = dialog.io_options();
@@ -203,13 +215,13 @@ public:
         // TODO progess/error dialogs
         QFile file(opts.filename);
         file.open(QFile::WriteOnly);
-        if ( !opts.method->process(file, opts.filename, current_document.get(), opts.settings) )
+        if ( !opts.format->save(file, opts.filename, current_document.get(), opts.settings) )
             return false;
 
         current_document->undo_stack().setClean();
 
         if ( overwrite_doc )
-            current_document->set_export_options(opts);
+            current_document->set_io_options(opts);
 
         return true;
     }
@@ -564,6 +576,20 @@ public:
             ) :
             QRect()
         );
+    }
+
+    void document_open()
+    {
+        io::Options options;
+        if ( current_document )
+            options = current_document->io_options();
+        else
+            options.format = io::glaxnimate::GlaxnimateFormat::registered();
+
+        ImportExportDialog dialog(ui.centralwidget->parentWidget());
+        if ( dialog.import_dialog(options) )
+            setup_document_open(dialog.io_options());
+
     }
 };
 

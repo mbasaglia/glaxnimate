@@ -10,7 +10,7 @@ class ImportExport;
 
 struct Options
 {
-    ImportExport* method = nullptr;
+    ImportExport* format = nullptr;
     QDir path;
     QString filename;
     QVariantMap settings;

@@ -77,6 +77,12 @@ bool model::Object::set(const QString& property, const QVariant& value, bool all
     return it->second->set_value(value);
 }
 
+bool model::Object::has ( const QString& property ) const
+{
+    return d->props.find(property) != d->props.end();
+}
+
+
 const std::vector<model::BaseProperty*>& model::Object::properties() const
 {
     return d->prop_order;

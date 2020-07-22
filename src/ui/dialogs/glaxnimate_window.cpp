@@ -33,15 +33,15 @@ void GlaxnimateWindow::document_new()
 
     if ( d->current_document )
     {
-        path = d->current_document->export_options().path;
+        path = d->current_document->io_options().path;
     }
 
 
-    d->create_document(tr("New Animation"));
+    d->setup_document_new(tr("New Animation"));
 
-    auto opts = d->current_document->export_options();
+    auto opts = d->current_document->io_options();
     opts.path = path;
-    d->current_document->set_export_options(opts);
+    d->current_document->set_io_options(opts);
 }
 
 void GlaxnimateWindow::document_save()
@@ -59,6 +59,12 @@ void GlaxnimateWindow::document_save_as()
     else
         d->ui.status_bar->showMessage(tr("Could not save file"));
 }
+
+void GlaxnimateWindow::document_open()
+{
+    d->document_open();
+}
+
 
 void GlaxnimateWindow::color_update_alpha ( const QColor& col )
 {

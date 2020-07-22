@@ -2,9 +2,10 @@
 #include "document.hpp"
 
 model::DocumentNode::DocumentNode(Document* document)
-    : id(this, "id", document->generate_id()), document_(document)
+    : document_(document)
 {
     connect(this, &Object::property_changed, this, &DocumentNode::on_value_changed);
+    uuid.set_value(QUuid::createUuid());
 }
 
 

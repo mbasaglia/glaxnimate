@@ -71,21 +71,12 @@ class Layer : public DocumentNode
     Q_OBJECT
 
 public:
-    enum LayerType
-    {
-        EmptyLayer = 3,
-        ShapeLayer = 4,
-    };
-    Q_ENUM(LayerType);
-
-
-    explicit Layer(Document* doc, Composition* composition, LayerType type)
-        : DocumentNode(doc), composition(composition), type{this, "type", type}
+    explicit Layer(Document* doc, Composition* composition)
+        : DocumentNode(doc), composition(composition)
     {}
 
     Composition* composition;
 
-    FixedValueProperty<LayerType> type;
     Property<Layer*> parent{this, "parent", nullptr};
     Property<float> in_point{this, "in_point", 0};
     Property<float> out_point{this, "out_point", 0};
@@ -100,7 +91,7 @@ public:
 
     std::unique_ptr<Layer> clone_covariant() const
     {
-        auto object = std::make_unique<Layer>(document(), composition, type.get());
+        auto object = std::make_unique<Layer>(document(), composition);
         clone_into(object.get());
         return object;
     }
@@ -125,11 +116,11 @@ private:
 };
 
 namespace detail {
-    template<class Derived, Layer::LayerType lt>
+    template<class Derived>
     class BaseLayerProps : public Layer
     {
     public:
-        BaseLayerProps(Document* doc, Composition* composition) : Layer(doc, composition, lt) {}
+        BaseLayerProps(Document* doc, Composition* composition) : Layer(doc, composition) {}
 
 
         std::unique_ptr<Derived> clone_covariant() const
@@ -151,7 +142,7 @@ namespace detail {
 } // namespace detail
 
 
-class EmptyLayer : public detail::BaseLayerProps<EmptyLayer, Layer::EmptyLayer>
+class EmptyLayer : public detail::BaseLayerProps<EmptyLayer>
 {
     Q_OBJECT
 
@@ -165,7 +156,7 @@ public:
 };
 
 
-class ShapeLayer : public detail::BaseLayerProps<ShapeLayer, Layer::ShapeLayer>
+class ShapeLayer : public detail::BaseLayerProps<ShapeLayer>
 {
     Q_OBJECT
 

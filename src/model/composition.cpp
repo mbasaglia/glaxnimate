@@ -6,6 +6,8 @@ int model::Composition::add_layer(std::unique_ptr<Layer> lay, int position)
     emit docnode_child_add_begin(position);
     if ( lay->index.is_null() )
         lay->index.set(layer_index++);
+    else if ( lay->index.get() >= layer_index )
+        layer_index = lay->index.get() + 1;
     Layer* ptr = lay.get();
     layers.insert(std::move(lay), position);
     emit docnode_child_add_end(ptr);

@@ -25,15 +25,9 @@ public:
 
     QUndoStack& undo_stack();
 
-    const io::Options& export_options() const;
+    const io::Options& io_options() const;
 
-    void set_export_options(const io::Options& opt);
-
-    QString generate_id();
-
-    const QUuid& uuid() const;
-    void set_uuid(const QUuid& uuid);
-
+    void set_io_options(const io::Options& opt);
 
 signals:
     void filename_changed(const QString& n);
