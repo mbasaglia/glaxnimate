@@ -9,12 +9,11 @@ class Animation : public DocumentNodeBase<Animation, Composition>
     Q_OBJECT
 
 public:
-    Property<QString> version{this, "version", "v", ""};
-    Property<float> frame_rate{this, "frame_rate", "fr", 60};
-    Property<float> in_point{this, "in_point", "ip", 0};
-    Property<float> out_point{this, "out_point", "op", 180};
-    Property<int> width{this, "width", "w", 512};
-    Property<int> height{this, "height", "h", 512};
+    Property<float> frame_rate{this, "frame_rate", 60};
+    Property<float> in_point{this, "in_point", 0};
+    Property<float> out_point{this, "out_point", 180};
+    Property<int> width{this, "width", 512};
+    Property<int> height{this, "height", 512};
     // ddd
     // assets
     // comps

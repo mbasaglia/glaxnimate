@@ -15,8 +15,8 @@ class DocumentNode : public Object
     Q_OBJECT
 
 public:
-    Property<QString> name{this, "name", "nm", ""};
-    Property<QColor> group_color{this, "color", "__groupcolor", QColor{0, 0, 0, 0}};
+    Property<QString> name{this, "name", ""};
+    Property<QColor> group_color{this, "color", QColor{0, 0, 0, 0}};
 
     explicit DocumentNode(Document* document);
 

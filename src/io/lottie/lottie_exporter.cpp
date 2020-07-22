@@ -16,38 +16,81 @@ public:
 
     QJsonObject to_json()
     {
-        return convert(&document->animation());
+        return convert_animation(&document->animation());
     }
 
-    QJsonObject convert(Composition* composition)
+    QJsonObject convert_animation(Animation* animation)
     {
-        QJsonObject json = convert_object_basic(composition);
+        QJsonObject json = convert_object_basic(animation, fields["Animation"]);
+
         QJsonArray layers;
-        for ( const auto& layer : composition->layers )
-            layers.append(convert(layer.get()));
+        for ( const auto& layer : animation->layers )
+            layers.append(convert_layer(layer.get()));
 
         json["layers"] = layers;
         return json;
     }
 
-    QJsonObject convert(Object* obj)
+    QJsonObject convert_layer(Layer* layer)
     {
-        return convert_object_basic(obj);
+        QJsonObject json = convert_object_basic(layer, fields["Layer"]);
+        if ( layer->parent.get() )
+            json["parent"] = QJsonValue(layer->parent.get()->index.get());
+        return json;
     }
 
-    QJsonObject convert_object_basic(model::Object* obj)
+    QJsonObject convert_object_basic(model::Object* obj, const QVector<QPair<QString, QString>>& fields)
     {
         QJsonObject json_obj;
-        for ( BaseProperty* prop : obj->properties() )
+        for ( const auto& name : fields )
         {
-            if ( !prop->traits().is_object() )
-                json_obj[prop->name()] = QJsonValue::fromVariant(prop->value());
+            json_obj[name.second] = QJsonValue::fromVariant(obj->get(name.first));
         }
 
         return json_obj;
     }
 
     model::Document* document;
+    QMap<QString, QVector<QPair<QString, QString>>> fields = {
+        {"Animation", {
+            // version
+            {"name",        "nm"},
+            {"frame_rate",  "fr"},
+            {"in_point",    "ip"},
+            {"out_point",   "op"},
+            {"width",       "w"},
+            {"height",      "h"},
+            // ddd
+            // assets
+            // comps
+            // fonts
+            // chars
+            // markers
+            // motion_blur
+        }},
+        {"Layer", {
+            {"name",        "nm"},
+            // ddd
+            // hd
+            {"type",        "ty"},
+            // parent
+            // stretch
+            // transform
+            // auto_orient
+            {"in_point",    "ip"},
+            {"out_point",   "op"},
+            {"start_time",  "st"},
+            // blend_mode
+            // matte_mode
+            {"index",       "ind"},
+            // css_class
+            // layer_html_id
+            // has_masks
+            // masks
+            // effects
+
+        }},
+    };
 };
 
 bool io::lottie::LottieExporter::process(QIODevice& file, const QString&,

@@ -99,8 +99,8 @@ inline constexpr PropertyTraits::Type PropertyTraits::get_type() noexcept
 class BaseProperty
 {
 public:
-    BaseProperty(Object* obj, QString name, QString lottie, PropertyTraits traits)
-        : obj(std::move(obj)), name_(std::move(name)), lottie_(lottie), traits_(traits)
+    BaseProperty(Object* obj, QString name, PropertyTraits traits)
+        : obj(std::move(obj)), name_(std::move(name)), traits_(traits)
     {
         obj->add_property(this);
     }
@@ -114,11 +114,6 @@ public:
     const QString& name() const
     {
         return name_;
-    }
-
-    const QString& lottie() const
-    {
-        return lottie_;
     }
 
     PropertyTraits traits() const
@@ -135,7 +130,6 @@ protected:
 private:
     Object* obj;
     QString name_;
-    QString lottie_;
     PropertyTraits traits_;
 };
 
@@ -147,8 +141,8 @@ public:
     using held_type = Type;
     using reference = Reference;
 
-    FixedValueProperty(Object* obj, QString name, QString lottie, Type value)
-        : BaseProperty(obj, std::move(name), std::move(lottie), PropertyTraits::from_scalar<Type>(false, false)),
+    FixedValueProperty(Object* obj, QString name, Type value)
+        : BaseProperty(obj, std::move(name), PropertyTraits::from_scalar<Type>(false, false)),
           value_(std::move(value))
     {}
 
@@ -181,8 +175,8 @@ public:
     using held_type = Type;
     using reference = Reference;
 
-    Property(Object* obj, QString name, QString lottie, Type default_value = Type(), bool user_editable=true)
-        : BaseProperty(obj, std::move(name), std::move(lottie), PropertyTraits::from_scalar<Type>(false, user_editable)),
+    Property(Object* obj, QString name, Type default_value = Type(), bool user_editable=true)
+        : BaseProperty(obj, std::move(name), PropertyTraits::from_scalar<Type>(false, user_editable)),
           value_(std::move(default_value))
     {}
 
@@ -219,7 +213,7 @@ class UnknownProperty : public BaseProperty
 {
 public:
     UnknownProperty(Object* obj, const QString& name, QVariant value)
-        : BaseProperty(obj, name, name, {false, PropertyTraits::Unknown, false}),
+        : BaseProperty(obj, name, {false, PropertyTraits::Unknown, false}),
           variant(std::move(value))
     {}
 
@@ -251,8 +245,8 @@ public:
     using iterator = typename std::vector<pointer>::const_iterator;
 //     using const_iterator = typename std::vector<pointer>::const_iterator;
 
-    ObjectListProperty(Object* obj, QString name, QString lottie)
-        : BaseProperty(obj, std::move(name), std::move(lottie), {true, PropertyTraits::Object})
+    ObjectListProperty(Object* obj, QString name)
+        : BaseProperty(obj, std::move(name), {true, PropertyTraits::Object})
     {}
 
     reference operator[](int i) const { return *objects[i]; }
@@ -356,13 +350,13 @@ public:
     using held_type = Type;
     using reference = Reference;
 
-    NullableProperty(Object* obj, QString name, QString lottie, Type default_value, bool user_editable=true)
-        : BaseProperty(obj, std::move(name), std::move(lottie), PropertyTraits::from_scalar<Type>(false, user_editable)),
+    NullableProperty(Object* obj, QString name, Type default_value, bool user_editable=true)
+        : BaseProperty(obj, std::move(name), PropertyTraits::from_scalar<Type>(false, user_editable)),
           value_(std::move(default_value)), null_(false)
     {}
 
-    NullableProperty(Object* obj, QString name, QString lottie, bool user_editable=true)
-        : BaseProperty(obj, std::move(name), std::move(lottie), PropertyTraits::from_scalar<Type>(false, user_editable)),
+    NullableProperty(Object* obj, QString name, bool user_editable=true)
+        : BaseProperty(obj, std::move(name), PropertyTraits::from_scalar<Type>(false, user_editable)),
           null_(true)
     {}
 

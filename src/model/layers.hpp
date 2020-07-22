@@ -80,29 +80,17 @@ public:
 
 
     explicit Layer(Document* doc, Composition* composition, LayerType type)
-        : DocumentNode(doc), composition(composition), type{this, "type", "ty", type}
+        : DocumentNode(doc), composition(composition), type{this, "type", type}
     {}
 
     Composition* composition;
 
-    // ddd
-    // hd
     FixedValueProperty<LayerType> type;
-    Property<Layer*> parent{this, "parent", "parent", nullptr};
-    // stretch
-    // transform
-    // auto_orient
-    Property<float> in_point{this, "in_point", "ip", 0};
-    Property<float> out_point{this, "out_point", "op", 0};
-    Property<float> start_time{this, "start_time", "st", 0};
-    // blend_mode
-    // matte_mode
-    NullableProperty<int> index{this, "index", "ind", false};
-    // css_class
-    // layer_html_id
-    // has_masks
-    // masks
-    // effects
+    Property<Layer*> parent{this, "parent", nullptr};
+    Property<float> in_point{this, "in_point", 0};
+    Property<float> out_point{this, "out_point", 0};
+    Property<float> start_time{this, "start_time", 0};
+    NullableProperty<int> index{this, "index", false};
 
     ChildLayerView children() const
     {

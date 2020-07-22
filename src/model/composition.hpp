@@ -11,7 +11,7 @@ class Composition : public DocumentNode
 public:
     using DocumentNode::DocumentNode;
 
-    ObjectListProperty<Layer> layers{this, "layers", "layers"};
+    ObjectListProperty<Layer> layers{this, "layers"};
 
     ChildLayerView top_level() const
     {
