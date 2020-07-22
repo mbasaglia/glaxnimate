@@ -78,7 +78,7 @@
       <iconset theme="list-add">
        <normaloff>.</normaloff>.</iconset>
      </property>
-     <addaction name="action_new_layer_null"/>
+     <addaction name="action_new_layer_empty"/>
      <addaction name="action_new_layer_shape"/>
      <addaction name="action_new_layer_precomp"/>
     </widget>
@@ -1190,13 +1190,13 @@
     <string>*</string>
    </property>
   </action>
-  <action name="action_new_layer_null">
+  <action name="action_new_layer_empty">
    <property name="icon">
     <iconset theme="transform-move">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>&amp;Null Layer</string>
+    <string>&amp;Empty Layer</string>
    </property>
   </action>
   <action name="action_new_layer_shape">
@@ -2395,10 +2395,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>action_new_layer_null</sender>
+   <sender>action_new_layer_empty</sender>
    <signal>triggered()</signal>
    <receiver>GlaxnimateWindow</receiver>
-   <slot>layer_new_null()</slot>
+   <slot>layer_new_empty()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -2564,7 +2564,7 @@
   <slot>color_update_component(int)</slot>
   <slot>document_treeview_clicked(QModelIndex)</slot>
   <slot>layer_new_menu()</slot>
-  <slot>layer_new_null()</slot>
+  <slot>layer_new_empty()</slot>
   <slot>layer_new_precomp()</slot>
   <slot>layer_new_shape()</slot>
   <slot>layer_delete()</slot>

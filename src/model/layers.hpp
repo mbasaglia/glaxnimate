@@ -73,7 +73,7 @@ class Layer : public DocumentNode
 public:
     enum LayerType
     {
-        NullLayer = 3,
+        EmptyLayer = 3,
         ShapeLayer = 4,
     };
     Q_ENUM(LayerType);
@@ -163,7 +163,7 @@ namespace detail {
 } // namespace detail
 
 
-class NullLayer : public detail::BaseLayerProps<NullLayer, Layer::NullLayer>
+class EmptyLayer : public detail::BaseLayerProps<EmptyLayer, Layer::EmptyLayer>
 {
     Q_OBJECT
 

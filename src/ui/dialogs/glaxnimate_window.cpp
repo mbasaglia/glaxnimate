@@ -99,9 +99,9 @@ void GlaxnimateWindow::layer_new_menu()
     layer_new_shape();
 }
 
-void GlaxnimateWindow::layer_new_null()
+void GlaxnimateWindow::layer_new_empty()
 {
-    d->layer_new<model::NullLayer>();
+    d->layer_new<model::EmptyLayer>();
 }
 
 void GlaxnimateWindow::layer_new_precomp()
