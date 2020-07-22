@@ -38,6 +38,8 @@ public:
 
     virtual QString object_name() const { return ""; }
 
+    QString type_name() const;
+
 signals:
     void property_added(const QString& name, const QVariant& value);
     void property_changed(const QString& name, const QVariant& value);

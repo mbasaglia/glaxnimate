@@ -10,6 +10,7 @@ app/settings/settings.cpp
 app/settings/settings_list.cpp
 
 io/lottie/lottie_exporter.cpp
+io/glaxnimate/glaxnimate_exporter.cpp
 io/base.cpp
 
 model/animation.cpp

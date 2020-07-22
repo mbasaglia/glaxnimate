@@ -1,7 +1,8 @@
 #include "document_node.hpp"
+#include "document.hpp"
 
 model::DocumentNode::DocumentNode(Document* document)
-    : document_(document)
+    : id(this, "id", document->generate_id()), document_(document)
 {
     connect(this, &Object::property_changed, this, &DocumentNode::on_value_changed);
 }
@@ -9,14 +10,7 @@ model::DocumentNode::DocumentNode(Document* document)
 
 QString model::DocumentNode::docnode_name() const
 {
-    if ( !name.get().isEmpty() )
-        return name.get();
-
-    QString class_name = metaObject()->className();
-    int ns = class_name.lastIndexOf(":");
-    if ( ns != -1 )
-        class_name = class_name.mid(ns+1);
-    return class_name;
+    return name.get();
 }
 
 QColor model::DocumentNode::docnode_group_color() const
@@ -38,4 +32,11 @@ void model::DocumentNode::on_value_changed(const QString& name, const QVariant&)
         emit docnode_name_changed(this->name.get());
     else if ( name == "color" )
         emit docnode_group_color_changed(this->group_color.get());
+}
+
+QString model::DocumentNode::object_name() const
+{
+    if ( name.get().isEmpty() )
+        return type_name();
+    return name.get();
 }

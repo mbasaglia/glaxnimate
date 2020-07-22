@@ -81,3 +81,12 @@ const std::vector<model::BaseProperty*>& model::Object::properties() const
 {
     return d->prop_order;
 }
+
+QString model::Object::type_name() const
+{
+    QString class_name = metaObject()->className();
+    int ns = class_name.lastIndexOf(":");
+    if ( ns != -1 )
+        class_name = class_name.mid(ns+1);
+    return class_name;
+}

@@ -39,6 +39,11 @@ public:
     virtual QStringList extensions() const = 0;
     virtual SettingList settings() const = 0;
 
+    /**
+     * \brief File dialog name filter
+     */
+    QString name_filter() const;
+
 signals:
     void error(const QString& message);
     void progress_max_changed(int max);
@@ -50,9 +55,10 @@ template<class Derived>
 class ImportExportFactory
 {
 public:
-    void register_object(std::unique_ptr<Derived> ie)
+    Derived* register_object(std::unique_ptr<Derived> ie)
     {
         object_list.push_back(std::move(ie));
+        return object_list.back().get();
     }
 
     const std::vector<std::unique_ptr<Derived>>& registered() const
@@ -97,9 +103,11 @@ class ImportExportAutoreg
 public:
     template<class... Args>
     ImportExportAutoreg(Args&&... args)
-    {
-        Base::factory().register_object(std::make_unique<Derived>(std::forward<Args>(args)...));
-    }
+    : registered { static_cast<Derived*>(
+        Base::factory().register_object(std::make_unique<Derived>(std::forward<Args>(args)...))
+    ) } {}
+
+    Derived* const registered;
 };
 
 template<class Derived, class Base>

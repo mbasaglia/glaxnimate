@@ -119,7 +119,7 @@ public:
 
 
         /// @todo don't do this for opened files
-        current_document->animation().name.set(current_document->animation().docnode_name());
+        current_document->animation().name.set(current_document->animation().type_name());
         auto layer = current_document->animation().make_layer<model::ShapeLayer>();
         current_document->animation().width.set(app::settings::get<int>("defaults", "width"));
         current_document->animation().height.set(app::settings::get<int>("defaults", "height"));
@@ -128,7 +128,7 @@ public:
         int out_point = current_document->animation().frame_rate.get() * duration;
         current_document->animation().out_point.set(out_point);
         layer->out_point.set(out_point);
-        layer->name.set(layer->docnode_name());
+        layer->name.set(layer->type_name());
         model::Layer* ptr = layer.get();
         current_document->animation().add_layer(std::move(layer), 0);
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));

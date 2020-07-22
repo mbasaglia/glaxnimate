@@ -17,6 +17,7 @@ class DocumentNode : public Object
 public:
     Property<QString> name{this, "name", ""};
     Property<QColor> group_color{this, "color", QColor{0, 0, 0, 0}};
+    FixedValueProperty<QString> id;
 
     explicit DocumentNode(Document* document);
 
@@ -31,7 +32,7 @@ public:
 
     virtual graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() = 0;
 
-    QString object_name() const override { return docnode_name(); }
+    QString object_name() const override;
 
     QString docnode_name() const;
 

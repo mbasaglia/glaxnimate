@@ -29,6 +29,11 @@ public:
 
     void set_export_options(const io::Options& opt);
 
+    QString generate_id();
+
+    const QUuid& uuid() const;
+    void set_uuid(const QUuid& uuid);
+
 
 signals:
     void filename_changed(const QString& n);

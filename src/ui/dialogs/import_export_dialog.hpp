@@ -2,6 +2,7 @@
 
 #include <QFileDialog>
 #include <QDialogButtonBox>
+#include <QMessageBox>
 
 #include "io/exporter.hpp"
 #include "model/document.hpp"
@@ -30,9 +31,36 @@ public:
         dialog.setWindowTitle(QObject::tr("Save file"));
         dialog.setAcceptMode(QFileDialog::AcceptSave);
         dialog.setFileMode(QFileDialog::AnyFile);
-        setup_file_dialog(dialog);
-        setup_filters(dialog, io::Exporter::factory(), false);
-        return show_file_dialog(dialog);
+        setup_file_dialog(dialog, io::Exporter::factory(), io_options_.method, false);
+        while ( true )
+        {
+            if ( !show_file_dialog(dialog) )
+                return false;
+
+            // The file dialog already asks whether to overwrite, but not if we appended the extension ourselves
+            if ( !name_changed )
+                return true;
+
+            QFileInfo finfo(io_options_.filename);
+            if ( finfo.exists() )
+            {
+                QMessageBox overwrite(
+                    QMessageBox::Question,
+                    QObject::tr("Overwrite File?"),
+                    QObject::tr("The file \"%1\" already exists. Do you wish to overwrite it?")
+                        .arg(finfo.baseName()),
+                    QMessageBox::Yes|QMessageBox::No,
+                    parent
+                );
+                overwrite.setDefaultButton(QMessageBox::Yes);
+                if ( overwrite.exec() == QMessageBox::Yes )
+                    return true;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 
     bool options_dialog()
@@ -40,9 +68,12 @@ public:
         if ( !io_options_.method )
             return false;
 
+        if ( io_options_.method->settings().empty() )
+            return true;
+
         QDialog dialog(parent);
 
-        dialog.setWindowTitle(QObject::tr("%s Options").arg(io_options_.method->name()));
+        dialog.setWindowTitle(QObject::tr("%1 Options").arg(io_options_.method->name()));
 
         QFormLayout layout;
         dialog.setLayout(&layout);
@@ -71,11 +102,22 @@ private:
         io_options_.filename = dialog.selectedFiles()[0];
         io_options_.path = dialog.directory();
 
+        name_changed = false;
         int filter = filters.indexOf(dialog.selectedNameFilter());
         if ( filter < int(io::Exporter::factory().registered().size()) )
+        {
             io_options_.method = io::Exporter::factory().registered()[filter].get();
+            // For some reason the file dialog shows the option to do this automatically but it's disabled
+            if ( QFileInfo(io_options_.filename).completeSuffix().isEmpty() )
+            {
+                io_options_.filename += "." + io_options_.method->extensions()[0];
+                name_changed = true;
+            }
+        }
         else
+        {
             io_options_.method = io::Exporter::factory().from_filename(io_options_.filename);
+        }
 
         if ( !io_options_.method )
             return false;
@@ -83,37 +125,23 @@ private:
         return true;
     }
 
-    void setup_file_dialog(QFileDialog &dialog)
+    template<class T>
+    void setup_file_dialog(QFileDialog& dialog, const io::ImportExportFactory<T>& fac, io::ImportExport* selected, bool include_all)
     {
-        QString suf = QFileInfo(io_options_.filename).completeSuffix();
-        if ( suf.isEmpty() )
-            suf = "json";
-        dialog.setDefaultSuffix(suf);
-
         dialog.setDirectory(io_options_.path);
         dialog.selectFile(io_options_.filename);
-    }
 
-    template<class T>
-    void setup_filters(QFileDialog& dialog, const io::ImportExportFactory<T>& fac, bool include_all)
-    {
         filters.clear();
 
         QString all;
         for ( const auto& reg : fac.registered() )
         {
-            QString ext_str;
             for ( const QString& ext : reg->extensions() )
             {
-                ext_str += ext + " ";
+                all += ext + " ";
             }
 
-            if ( ext_str.isEmpty() )
-                continue;
-
-            all += ext_str;
-            ext_str.resize(ext_str.size() - 1);
-            filters << QObject::tr("%1 (%2)").arg(reg->name()).arg(ext_str);
+            filters << reg->name_filter();
         }
 
         if ( include_all )
@@ -123,10 +151,14 @@ private:
         }
 
         dialog.setNameFilters(filters);
+
+        if ( selected )
+            dialog.selectNameFilter(selected->name_filter());
     }
 
     QWidget* parent;
     QStringList filters;
     io::Options io_options_;
+    bool name_changed = false;
 };
 
