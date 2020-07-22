@@ -2,6 +2,8 @@
 #include "glaxnimate_window_p.hpp"
 #include "ui/dialogs/settings_dialog.hpp"
 
+#include <QCloseEvent>
+
 
 GlaxnimateWindow::GlaxnimateWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags), d(std::make_unique<Private>())

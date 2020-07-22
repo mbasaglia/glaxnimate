@@ -1,5 +1,6 @@
 #include "property_model.hpp"
 
+#include <unordered_map>
 #include <QFont>
 
 #include "command/property_commands.hpp"
