@@ -118,5 +118,5 @@ void model::graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event
 void model::graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
 {
     clearFocus();
+    emit drag_finished();
 }
-

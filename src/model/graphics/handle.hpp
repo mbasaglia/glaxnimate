@@ -55,6 +55,7 @@ signals:
     void dragged(const QPointF& p);
     void dragged_x(qreal x);
     void dragged_y(qreal y);
+    void drag_finished();
 
 private:
     class Private;

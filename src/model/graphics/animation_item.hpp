@@ -8,6 +8,8 @@
 #include "model/animation.hpp"
 #include "handle.hpp"
 #include "model/graphics/document_node_graphics_item.hpp"
+#include "command/property_commands.hpp"
+#include "model/document.hpp"
 
 namespace model::graphics {
 
@@ -25,6 +27,9 @@ public:
         connect(handle_h, &MoveHandle::dragged_x, this, &AnimationItem::dragged_x);
         connect(handle_v, &MoveHandle::dragged_y, this, &AnimationItem::dragged_y);
         connect(handle_hv, &MoveHandle::dragged, this, &AnimationItem::dragged_xy);
+        connect(handle_h,  &MoveHandle::drag_finished, this, &AnimationItem::drag_finished);
+        connect(handle_v,  &MoveHandle::drag_finished, this, &AnimationItem::drag_finished);
+        connect(handle_hv, &MoveHandle::drag_finished, this, &AnimationItem::drag_finished);
 
         update_handles();
     }
@@ -51,25 +56,39 @@ private slots:
 
     void dragged_xy(const QPointF& pos)
     {
-        update_size(pos.x(), pos.y());
+        update_size(pos.x(), pos.y(), false);
     }
 
     void dragged_x(qreal x)
     {
-        update_size(x, animation->height.get());
+        update_size(x, animation->height.get(), false);
     }
 
     void dragged_y(qreal y)
     {
-        update_size(animation->width.get(), y);
+        update_size(animation->width.get(), y, false);
     }
 
-private:
-    void update_size(qreal x, qreal y)
+    void drag_finished()
     {
-        /// @todo hook to undo/redo (mergeable command, "commit" on handle focus lost)
-        animation->width.set(std::max(1, qRound(x)));
-        animation->height.set(std::max(1, qRound(y)));
+        update_size(animation->width.get(), animation->height.get(), true);
+    }
+
+
+private:
+    void update_size(qreal x, qreal y, bool commit)
+    {
+        int w = std::max(1, qRound(x));
+        int h = std::max(1, qRound(y));
+        if ( w != animation->width.get() || h != animation->height.get() )
+        {
+            animation->document()->undo_stack().push(new command::SetMultipleProperties(
+                QObject::tr("Resize Animation Canvas"),
+                commit,
+                {&animation->width, &animation->height},
+                w, h
+            ));
+        };
         update_handles();
     }
 

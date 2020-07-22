@@ -27,11 +27,6 @@ void GlaxnimateWindow::changeEvent(QEvent *e)
     }
 }
 
-bool GlaxnimateWindow::eventFilter(QObject* object, QEvent* event)
-{
-    return d->eventFilter(object, event);
-}
-
 void GlaxnimateWindow::document_new()
 {
     QDir path;
@@ -153,7 +148,13 @@ void GlaxnimateWindow::preferences()
 void GlaxnimateWindow::closeEvent ( QCloseEvent* event )
 {
     if ( !d->close_document() )
+    {
         event->ignore();
+    }
     else
+    {
+        app::settings::set("ui", "window_geometry", saveGeometry());
+        app::settings::set("ui", "window_state", saveState());
         QMainWindow::closeEvent(event);
+    }
 }
