@@ -1,38 +1,42 @@
 #pragma once
 
+#include <QApplication>
+#include <QSettings>
 #include <QDir>
-#include <QString>
-#include <QList>
 
+#include "app/settings/settings.hpp"
+#include "app/translation_service.hpp"
 
-class AppInfo
+namespace app {
+
+class Application : public QApplication
 {
+    Q_OBJECT
+
 public:
-    static AppInfo& instance()
+    using QApplication::QApplication;
+
+    virtual QSettings qsettings() const;
+
+    virtual void load_settings_metadata() const {}
+
+    void initialize()
     {
-        static AppInfo singleton;
-        return singleton;
+        on_initialize();
+        app::TranslationService::instance().initialize();
+        app::settings::Settings::instance().load();
     }
 
-    /**
-     * \brief Project machine-readable name
-     */
-    QString slug() const;
+    void finalize()
+    {
+        app::settings::Settings::instance().save();
+    }
 
-    /**
-     * \brief Project machine-readable org name
-     */
-    QString organization() const;
+    static Application* instance()
+    {
+        return static_cast<Application *>(QCoreApplication::instance());
+    }
 
-    /**
-     * \brief Project version
-     */
-    QString version() const;
-
-    /**
-     * \brief Project human-readable name
-     */
-    QString name() const;
 
     /**
      * \brief A path to write user preferences into
@@ -67,8 +71,12 @@ public:
      */
     QList<QDir> data_roots() const;
 
-private:
-    AppInfo() = default;
-    ~AppInfo() = default;
-
+protected:
+    /**
+     * \brief Called after construction, before anything else
+     * \note set application name and stuff in here
+     */
+    virtual void on_initialize() {}
 };
+
+} // namespace app

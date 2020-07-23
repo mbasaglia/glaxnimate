@@ -1,11 +1,9 @@
-#include "settings.hpp"
-#include "app/settings/settings.hpp"
-#include "app/app_info.hpp"
-#include "app/translation_service.hpp"
+#include "glaxnimate_app.hpp"
 
 #include <QDir>
-#include <QGuiApplication>
 #include <QPalette>
+
+#include "app/settings/settings.hpp"
 
 namespace {
 
@@ -61,9 +59,10 @@ void set_language(const QVariant& v)
 
 } // namespace
 
-/// @todo move data loading (and QSettings creation) somewhere in AppInfo, so the settings system is more reusable
-void app::settings::Settings::load_metadata()
+
+void GlaxnimateApp::load_settings_metadata() const
 {
+    using namespace app::settings;
     QString curr_lang = app::TranslationService::instance().current_language_code();
 
     Settings::instance().add_group(SettingGroup{"ui", tr("User Interface"), "preferences-desktop-theme", {

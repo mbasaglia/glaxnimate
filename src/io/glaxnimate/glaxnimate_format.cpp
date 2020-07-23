@@ -3,7 +3,7 @@
 #include <QUuid>
 #include <QJsonArray>
 
-#include "app/app_info.hpp"
+#include "app_info.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 

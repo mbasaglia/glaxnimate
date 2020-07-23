@@ -1,26 +1,9 @@
-#include "app_info.hpp"
-#include "app/application_info_generated.hpp"
+#include "application.hpp"
 
-#include <QObject>
 #include <QStandardPaths>
-#include <QCoreApplication>
 
-QString AppInfo::name() const
-{
-    return QObject::tr("Glaxnimate");
-}
 
-QString AppInfo::slug() const
-{
-    return PROJECT_SLUG;
-}
-
-QString AppInfo::version() const
-{
-    return PROJECT_VERSION;
-}
-
-QString AppInfo::writable_data_path(const QString& name) const
+QString app::Application::writable_data_path(const QString& name) const
 {
     QString search = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 
@@ -32,7 +15,7 @@ QString AppInfo::writable_data_path(const QString& name) const
     return QString();
 }
 
-QStringList AppInfo::data_paths(const QString& name) const
+QStringList app::Application::data_paths(const QString& name) const
 {
     QStringList found;
 
@@ -46,7 +29,7 @@ QStringList AppInfo::data_paths(const QString& name) const
     return found;
 }
 
-QStringList AppInfo::data_paths_unchecked(const QString& name) const
+QStringList app::Application::data_paths_unchecked(const QString& name) const
 {
     QStringList filter;
     for ( const QDir& d: data_roots() )
@@ -58,7 +41,7 @@ QStringList AppInfo::data_paths_unchecked(const QString& name) const
     return filter;
 }
 
-QList<QDir> AppInfo::data_roots() const
+QList<QDir> app::Application::data_roots() const
 {
     QList<QDir> search;
     // std paths
@@ -67,17 +50,12 @@ QList<QDir> AppInfo::data_roots() const
     // executable dir
     QDir binpath(QCoreApplication::applicationDirPath());
     binpath.cdUp();
-    search.push_back(binpath.filePath(QString("share/%1/%2").arg(organization()).arg(slug())));
+    search.push_back(binpath.filePath(QString("share/%1/%2").arg(organizationName()).arg(applicationName())));
 
     return search;
 }
 
-QString AppInfo::organization() const
-{
-    return PROJECT_SLUG;
-}
-
-QString AppInfo::data_file(const QString& name) const
+QString app::Application::data_file(const QString& name) const
 {
     QStringList found;
 
@@ -88,4 +66,9 @@ QString AppInfo::data_file(const QString& name) const
     }
 
     return {};
+}
+
+QSettings app::Application::qsettings() const
+{
+    return QSettings(writable_data_path("settings.ini"), QSettings::IniFormat);
 }

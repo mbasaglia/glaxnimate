@@ -11,8 +11,9 @@
 #include "ui_glaxnimate_window.h"
 #include "glaxnimate_window.hpp"
 
-#include "app/app_info.hpp"
+#include "app_info.hpp"
 #include "app/settings/settings.hpp"
+#include "app/application.hpp"
 
 #include "command/layer_commands.hpp"
 
@@ -301,7 +302,7 @@ public:
         // Colors
         update_color(Qt::black, true, nullptr);
         ui.palette_widget->setModel(&palette_model);
-        palette_model.setSearchPaths(AppInfo::instance().data_paths_unchecked("palettes"));
+        palette_model.setSearchPaths(app::Application::instance()->data_paths_unchecked("palettes"));
 
         // Item views
         ui.view_document_node->setModel(&document_node_model);

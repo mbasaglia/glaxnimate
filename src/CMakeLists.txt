@@ -3,11 +3,12 @@
 set(SOURCES
 
 main.cpp
+app_info.cpp
+glaxnimate_app.cpp
 
-app/app_info.cpp
-app/translation_service.cpp
+app/application.cpp
 app/settings/settings.cpp
-app/settings/settings_list.cpp
+app/translation_service.cpp
 
 io/lottie/lottie_format.cpp
 io/glaxnimate/glaxnimate_format.cpp
@@ -36,8 +37,8 @@ ui/widgets/view_transform_widget.ui
 )
 
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/app/application_info_generated.in.hpp
-    ${CMAKE_CURRENT_BINARY_DIR}/app/application_info_generated.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/application_info_generated.in.hpp
+    ${CMAKE_CURRENT_BINARY_DIR}/application_info_generated.hpp
 )
 
 #add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)

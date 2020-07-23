@@ -1,15 +1,12 @@
 #include "settings.hpp"
-#include "app/app_info.hpp"
+#include "app/application.hpp"
 
 #include <QSettings>
 
 
 void app::settings::Settings::load()
 {
-    QSettings settings(
-        AppInfo::instance().writable_data_path("settings.ini"),
-        QSettings::IniFormat
-    );
+    QSettings settings = app::Application::instance()->qsettings();
 
     if ( groups.empty() )
         load_metadata();
@@ -31,10 +28,7 @@ void app::settings::Settings::load()
 
 void app::settings::Settings::save()
 {
-    QSettings settings(
-        AppInfo::instance().writable_data_path("settings.ini"),
-        QSettings::IniFormat
-    );
+    QSettings settings = app::Application::instance()->qsettings();
 
     for ( const SettingGroup& group : groups )
     {
@@ -76,4 +70,9 @@ bool app::settings::Settings::set_value ( const QString& group, const QString& s
         return false;
 
     return groups[order[group]].set_variant(setting, data[group], value);
+}
+
+void app::settings::Settings::load_metadata()
+{
+    app::Application::instance()->load_settings_metadata();
 }

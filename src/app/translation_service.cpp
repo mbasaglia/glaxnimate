@@ -4,7 +4,7 @@
 #include <QTranslator>
 #include <QCoreApplication>
 
-#include "app/app_info.hpp"
+#include "app/application.hpp"
 
 void app::TranslationService::initialize ( QString default_lang_code )
 {
@@ -15,7 +15,7 @@ void app::TranslationService::initialize ( QString default_lang_code )
             register_translation(name,default_lang_code, QString());
     }
 
-    QDir translations = AppInfo::instance().data_file("translations");
+    QDir translations = Application::instance()->data_file("translations");
     QStringList translation_files = translations.entryList({"*.qm"});
 
     QRegExp re("[^_]+_([^.]+)\\.qm");

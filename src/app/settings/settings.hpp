@@ -40,12 +40,12 @@ public:
         return data[group];
     }
 
+    void add_group(SettingGroup group);
+
 private:
     Settings() = default;
     Settings(const Settings&) = delete;
     ~Settings() = default;
-
-    void add_group(SettingGroup group);
 
     QList<SettingGroup> groups;
     QHash<QString, int> order;
