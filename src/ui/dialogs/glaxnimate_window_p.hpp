@@ -156,8 +156,6 @@ public:
 
     void refresh_title()
     {
-        if ( !current_document )
-            return;
         QString title = current_document->filename();
         if ( !current_document->undo_stack().isClean() )
             title += " *";
@@ -195,9 +193,6 @@ public:
 
     bool save_document(bool force_dialog, bool overwrite_doc)
     {
-        if ( !current_document )
-            return false;
-
         io::Options opts = current_document->io_options();
 
         if ( !opts.format || !opts.format->can_save() )
@@ -339,11 +334,8 @@ public:
         redo_text = ui.action_redo->text();
         undo_text = ui.action_undo->text();
 
-        if ( current_document )
-        {
-            ui.action_undo->setText(redo_text.arg(current_document->undo_stack().undoText()));
-            ui.action_redo->setText(redo_text.arg(current_document->undo_stack().redoText()));
-        }
+        ui.action_undo->setText(redo_text.arg(current_document->undo_stack().undoText()));
+        ui.action_redo->setText(redo_text.arg(current_document->undo_stack().redoText()));
     }
 
     void update_tool_button(QAction* action, QToolButton* button)
@@ -510,9 +502,6 @@ public:
     template<class LayerT>
     void layer_new()
     {
-        if ( !current_document )
-            return;
-
         layer_new_impl(current_composition()->make_layer<LayerT>());
     }
 
@@ -568,24 +557,18 @@ public:
     void view_fit()
     {
         ui.graphics_view->view_fit(
-            current_document ?
             QRect(
                 -32,
                 -32,
                 current_document->animation().width.get() + 64,
                 current_document->animation().height.get() + 64
-            ) :
-            QRect()
+            )
         );
     }
 
     void document_open()
     {
-        io::Options options;
-        if ( current_document )
-            options = current_document->io_options();
-        else
-            options.format = io::glaxnimate::GlaxnimateFormat::registered();
+        io::Options options = current_document->io_options();
 
         ImportExportDialog dialog(ui.centralwidget->parentWidget());
         if ( dialog.import_dialog(options) )

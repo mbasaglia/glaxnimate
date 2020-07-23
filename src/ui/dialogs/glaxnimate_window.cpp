@@ -9,6 +9,7 @@ GlaxnimateWindow::GlaxnimateWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags), d(std::make_unique<Private>())
 {
     d->setupUi(this);
+    d->setup_document_new(tr("New Animation"));
 }
 
 GlaxnimateWindow::~GlaxnimateWindow() = default;
@@ -29,12 +30,7 @@ void GlaxnimateWindow::changeEvent(QEvent *e)
 
 void GlaxnimateWindow::document_new()
 {
-    QDir path;
-
-    if ( d->current_document )
-    {
-        path = d->current_document->io_options().path;
-    }
+    QDir path = d->current_document->io_options().path;
 
 
     d->setup_document_new(tr("New Animation"));
@@ -141,7 +137,7 @@ void GlaxnimateWindow::showEvent(QShowEvent * event)
     if ( !d->started )
     {
         d->started = true;
-        document_new();
+        d->view_fit();
     }
 }
 

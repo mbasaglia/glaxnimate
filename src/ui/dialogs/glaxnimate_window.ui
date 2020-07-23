@@ -2561,8 +2561,24 @@
    <slot>document_open()</slot>
    <hints>
     <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
      <x>656</x>
      <y>526</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_close</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>document_new()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1151</x>
+     <y>284</y>
     </hint>
     <hint type="destinationlabel">
      <x>656</x>
