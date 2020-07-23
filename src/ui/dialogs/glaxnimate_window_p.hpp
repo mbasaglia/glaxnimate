@@ -486,7 +486,7 @@ public:
                 return curr_comp;
 
             if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
-                return curr_lay->composition;
+                return curr_lay->composition();
         }
         return &current_document->animation();
     }
@@ -555,7 +555,7 @@ public:
 
         if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
         {
-            current_document->undo_stack().push(new command::RemoveLayer(curr_lay->composition, curr_lay));
+            current_document->undo_stack().push(new command::RemoveLayer(curr_lay->composition(), curr_lay));
         }
     }
 

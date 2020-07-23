@@ -48,6 +48,11 @@ signals:
     void property_changed(const QString& name, const QVariant& value);
 
 protected:
+    virtual void on_property_changed(const QString& name, const QVariant& value)
+    {
+        Q_UNUSED(name);
+        Q_UNUSED(value);
+    }
     void clone_into(Object* dest) const;
 
     static QString naked_type_name(QString type_name);

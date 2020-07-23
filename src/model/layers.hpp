@@ -71,45 +71,48 @@ class Layer : public DocumentNode
     Q_OBJECT
 
 public:
-    explicit Layer(Document* doc, Composition* composition)
-        : DocumentNode(doc), composition(composition)
-    {}
+    explicit Layer(Document* doc, Composition* composition);
 
-    Composition* composition;
 
-    Property<Layer*> parent{this, "parent", nullptr};
+    ReferenceProperty<Layer> parent{this, "parent"};
     Property<float> in_point{this, "in_point", 0};
     Property<float> out_point{this, "out_point", 0};
     Property<float> start_time{this, "start_time", 0};
 
     ChildLayerView children() const
     {
-        return ChildLayerView(composition, this);
+        return ChildLayerView(composition_, this);
     }
 
 
     std::unique_ptr<Layer> clone_covariant() const
     {
-        auto object = std::make_unique<Layer>(document(), composition);
+        auto object = std::make_unique<Layer>(document(), composition_);
         clone_into(object.get());
         return object;
     }
 
     DocumentNode* docnode_child(int) const override { return nullptr; }
     int docnode_child_count() const override { return 0; }
-
-    DocumentNode* docnode_parent() const override;
-
     QIcon docnode_icon() const override { return QIcon::fromTheme("folder"); }
-
-    graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override
-    {
-        return nullptr;
-    }
-
+    graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override { return nullptr; }
     QString type_name_human() const override { return tr("Uknown Layer"); }
+    DocumentNode* docnode_parent() const override;
+    DocumentNode* docnode_group_parent() const override;
+    std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const override;
+    bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const override;
+
+    bool is_ancestor_of(const Layer* other) const;
+
+    Composition* composition() const { return composition_; }
+    void set_composition(Composition* composition);
+
+protected:
+    void on_property_changed(const QString& name, const QVariant&) override;
 
 private:
+    Composition* composition_;
+
     std::unique_ptr<Object> clone_impl() const override
     {
         return clone_covariant();
@@ -126,7 +129,7 @@ namespace detail {
 
         std::unique_ptr<Derived> clone_covariant() const
         {
-            auto object = std::make_unique<Derived>(document(), composition);
+            auto object = std::make_unique<Derived>(document(), composition());
             clone_into(object.get());
             return object;
         }

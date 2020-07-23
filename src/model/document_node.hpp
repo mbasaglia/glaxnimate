@@ -11,6 +11,7 @@ namespace model {
 
 namespace graphics { class DocumentNodeGraphicsItem; }
 class Document;
+class ReferencePropertyBase;
 
 class DocumentNode : public Object
 {
@@ -18,12 +19,16 @@ class DocumentNode : public Object
 
     class ChildRange;
 
+    using get_func_t = DocumentNode* (DocumentNode::*) (int) const;
+    using count_func_t = int (DocumentNode::*) () const;
+
     class ChildIterator
     {
     public:
+
         ChildIterator& operator++() noexcept { ++index; return *this; }
-        DocumentNode* operator->() const { return parent->docnode_child(index); }
-        DocumentNode* operator*() const { return parent->docnode_child(index); }
+        DocumentNode* operator->() const { return (parent->*get_func)(index); }
+        DocumentNode* operator*() const { return (parent->*get_func)(index); }
         bool operator==(const ChildIterator& oth) const noexcept
         {
             return parent == oth.parent && index == oth.index;
@@ -34,10 +39,12 @@ class DocumentNode : public Object
         }
 
     private:
-        ChildIterator(const DocumentNode* parent, int index) noexcept : parent(parent), index(index) {}
+        ChildIterator(const DocumentNode* parent, int index, get_func_t get_func) noexcept
+        : parent(parent), index(index), get_func(get_func) {}
 
         const DocumentNode* parent;
         int index;
+        get_func_t get_func;
         friend ChildRange;
     };
 
@@ -45,13 +52,16 @@ class DocumentNode : public Object
     class ChildRange
     {
     public:
-        ChildIterator begin() const noexcept { return ChildIterator{parent, 0}; }
-        ChildIterator end() const noexcept { return ChildIterator{parent, size()}; }
-        int size() const { return parent->docnode_child_count(); }
+        ChildIterator begin() const noexcept { return ChildIterator{parent, 0, get_func}; }
+        ChildIterator end() const noexcept { return ChildIterator{parent, size(), get_func}; }
+        int size() const { return (parent->*count_func)(); }
 
     private:
-        ChildRange(const DocumentNode* parent) noexcept : parent(parent) {}
+        ChildRange(const DocumentNode* parent, get_func_t get_func, count_func_t count_func) noexcept
+        : parent(parent), get_func(get_func), count_func(count_func) {}
         const DocumentNode* parent;
+        get_func_t get_func;
+        count_func_t count_func;
         friend DocumentNode;
     };
 
@@ -66,23 +76,44 @@ public:
     bool docnode_visible() const { return visible_; }
     bool docnode_locked() const { return locked_; }
 
-    virtual DocumentNode* docnode_parent() const = 0;
     virtual QIcon docnode_icon() const = 0;
 
+    virtual DocumentNode* docnode_parent() const = 0;
     virtual int docnode_child_count() const = 0;
     virtual DocumentNode* docnode_child(int index) const = 0;
 
+    virtual DocumentNode* docnode_group_parent() const { return docnode_parent(); }
+    virtual int docnode_group_child_count() const { return docnode_child_count(); }
+    virtual DocumentNode* docnode_group_child(int index) const { return docnode_child(index); }
+
     virtual graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() = 0;
+
+    virtual std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const { return {}; }
+    virtual bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const
+    {
+        for ( auto p : docnode_valid_references(property) )
+            if ( p == node )
+                return true;
+        return false;
+    }
 
     QString object_name() const override;
 
     QString docnode_name() const;
 
     QColor docnode_group_color() const;
+    const QPixmap& docnode_group_icon() const;
 
     Document* document() const { return document_; }
 
-    ChildRange docnode_children() const noexcept { return ChildRange{this}; }
+    ChildRange docnode_children() const noexcept
+    {
+        return ChildRange{this, &DocumentNode::docnode_child, &DocumentNode::docnode_child_count};
+    }
+    ChildRange docnode_group_children() const noexcept
+    {
+        return ChildRange{this, &DocumentNode::docnode_group_child, &DocumentNode::docnode_group_child_count};
+    }
 
     template<class T=DocumentNode>
     T* docnode_find_by_uuid(const QUuid& uuid) const
@@ -127,7 +158,6 @@ public:
     bool docnode_is_instance(const QString& type_name) const;
 
 private:
-
     template<class T=DocumentNode>
     std::vector<T*> docnode_find_impl(const QString& type_name, std::vector<T*>& matches, const char* t_name)
     {
@@ -143,6 +173,11 @@ private:
         if ( inherits(t_name) && docnode_is_instance(type_name) )
             matches.push_back(static_cast<T*>(this));
     }
+
+protected:
+    void docnode_on_update_group(bool force = false);
+    void on_property_changed(const QString& name, const QVariant&) override;
+    bool docnode_valid_color() const;
 
 
 public slots:
@@ -168,13 +203,11 @@ signals:
     void docnode_name_changed(const QString&);
     void docnode_group_color_changed(const QColor&);
 
-private slots:
-    void on_value_changed(const QString& name, const QVariant&);
-
 private:
     bool visible_ = true;
     bool locked_ = false;
     Document* document_;
+    QPixmap group_icon{32, 32};
 };
 
 
@@ -203,6 +236,85 @@ private:
         return clone_covariant();
     }
 };
+
+
+
+class ReferencePropertyBase : public BaseProperty
+{
+    Q_GADGET
+public:
+    ReferencePropertyBase(DocumentNode* obj, QString name, bool user_editable)
+        : BaseProperty(obj, std::move(name), PropertyTraits{false, PropertyTraits::ObjectReference, user_editable}),
+          parent(obj)
+    {
+    }
+
+    std::vector<DocumentNode*> valid_options() const
+    {
+        return parent->docnode_valid_references(this);
+    }
+
+    bool is_valid_option(DocumentNode* ptr) const
+    {
+        return parent->docnode_is_valid_reference(this, ptr);
+    }
+
+    DocumentNode* validator() const
+    {
+        return parent;
+    }
+
+private:
+    DocumentNode* parent;
+};
+
+
+template<class Type>
+class ReferenceProperty : public ReferencePropertyBase
+{
+public:
+    using held_type = Type*;
+
+    ReferenceProperty(DocumentNode* obj, QString name, bool user_editable = true)
+        : ReferencePropertyBase(obj, std::move(name), user_editable)
+    {}
+
+    void set(Type* value)
+    {
+        value_ = value;
+        value_changed();
+    }
+
+    Type* get() const
+    {
+        return value_;
+    }
+
+    QVariant value() const override
+    {
+        if ( !value_ )
+            return {};
+        return QVariant::fromValue(value_);
+    }
+
+    bool set_value(const QVariant& val) override
+    {
+        if ( !val.canConvert(qMetaTypeId<held_type>()) )
+            return false;
+        QVariant converted = val;
+        if ( !converted.convert(qMetaTypeId<held_type>()) )
+            return false;
+        Type* ptr = converted.value<held_type>();
+        if ( !is_valid_option(ptr) )
+            return false;
+        set(ptr);
+        return true;
+    }
+
+private:
+    Type* value_ = nullptr;
+};
+
 
 
 } // namespace model

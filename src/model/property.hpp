@@ -58,11 +58,11 @@ struct GetType;
 template<class ObjT>
 static constexpr bool is_object_v = std::is_base_of_v<Object, ObjT> || std::is_same_v<Object, ObjT>;
 
-template<class ObjT>
-struct GetType<ObjT*, std::enable_if_t<is_object_v<ObjT>>>
-{
-    static constexpr const PropertyTraits::Type value = PropertyTraits::ObjectReference;
-};
+// template<class ObjT>
+// struct GetType<ObjT*, std::enable_if_t<is_object_v<ObjT>>>
+// {
+//     static constexpr const PropertyTraits::Type value = PropertyTraits::ObjectReference;
+// };
 
 template<class ObjT>
 struct GetType<std::unique_ptr<ObjT>, std::enable_if_t<is_object_v<ObjT>>>
@@ -102,7 +102,7 @@ class BaseProperty
 {
 public:
     BaseProperty(Object* obj, QString name, PropertyTraits traits)
-        : obj(std::move(obj)), name_(std::move(name)), traits_(traits)
+        : obj(obj), name_(std::move(name)), traits_(traits)
     {
         obj->add_property(this);
     }

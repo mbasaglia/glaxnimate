@@ -12,6 +12,11 @@ class PropertyModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
+    enum CustomData
+    {
+        ReferenceProperty = Qt::UserRole,
+    };
+
     PropertyModel();
     ~PropertyModel();
 

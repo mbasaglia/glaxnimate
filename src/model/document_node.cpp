@@ -4,7 +4,7 @@
 model::DocumentNode::DocumentNode(Document* document)
     : document_(document)
 {
-    connect(this, &Object::property_changed, this, &DocumentNode::on_value_changed);
+    group_icon.fill(Qt::white);
     uuid.set_value(QUuid::createUuid());
 }
 
@@ -16,23 +16,30 @@ QString model::DocumentNode::docnode_name() const
 
 QColor model::DocumentNode::docnode_group_color() const
 {
-    QColor col = group_color.get();
-    if ( !col.isValid() || col.alpha() == 0 )
+    if ( !docnode_valid_color() )
     {
-        if ( auto parent = docnode_parent() )
+        if ( auto parent = docnode_group_parent() )
             return parent->docnode_group_color();
         else
             return Qt::white;
     }
-    return col;
+    return group_color.get();
 }
 
-void model::DocumentNode::on_value_changed(const QString& name, const QVariant&)
+void model::DocumentNode::on_property_changed(const QString& name, const QVariant&)
 {
     if ( name == "name" )
+    {
         emit docnode_name_changed(this->name.get());
+    }
     else if ( name == "color" )
-        emit docnode_group_color_changed(this->group_color.get());
+    {
+        if ( docnode_valid_color() )
+            group_icon.fill(group_color.get());
+        else
+            group_icon.fill(Qt::white);
+        docnode_on_update_group(true);
+    }
 }
 
 QString model::DocumentNode::object_name() const
@@ -56,3 +63,31 @@ bool model::DocumentNode::docnode_is_instance(const QString& type_name) const
 
     return false;
 }
+
+void model::DocumentNode::docnode_on_update_group(bool force)
+{
+    if ( force || docnode_valid_color() )
+    {
+        emit docnode_group_color_changed(this->group_color.get());
+        for ( const auto& gc : docnode_group_children() )
+            gc->docnode_on_update_group();
+    }
+}
+
+bool model::DocumentNode::docnode_valid_color() const
+{
+    QColor col = group_color.get();
+    return col.isValid() && col.alpha() > 0;
+}
+
+const QPixmap & model::DocumentNode::docnode_group_icon() const
+{
+    if ( !docnode_valid_color() )
+    {
+        if ( auto parent = docnode_group_parent() )
+            return parent->docnode_group_icon();
+    }
+
+    return group_icon;
+}
+

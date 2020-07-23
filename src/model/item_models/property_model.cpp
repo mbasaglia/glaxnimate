@@ -252,7 +252,7 @@ Qt::ItemFlags model::PropertyModel::flags(const QModelIndex& index) const
         {
             PropertyTraits traits = tree->prop->traits();
 
-            if ( traits.list || traits.is_object() || traits.type == PropertyTraits::Unknown || !traits.user_editable )
+            if ( traits.list || traits.type == PropertyTraits::Object || traits.type == PropertyTraits::Unknown || !traits.user_editable )
                 return Qt::ItemIsSelectable;
 
             if ( traits.user_editable )
@@ -301,18 +301,18 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
     }
     else if ( index.column() == 1 )
     {
-        if ( tree->object )
-        {
-            if ( role == Qt::DisplayRole )
-                return tree->object->object_name();
-            return {};
-        }
 
         BaseProperty* prop = tree->prop;
         PropertyTraits traits = prop->traits();
 
         if ( traits.list || traits.type == PropertyTraits::Unknown )
         {
+            return {};
+        }
+        else if ( traits.type == PropertyTraits::Object )
+        {
+            if ( tree->object && role == Qt::DisplayRole )
+                return tree->object->object_name();
             return {};
         }
         else if ( traits.type == PropertyTraits::Bool )
@@ -325,6 +325,29 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
         {
             if ( role == Qt::DisplayRole )
                 return prop->value().toString();
+            return {};
+        }
+        else if ( traits.type == PropertyTraits::ObjectReference )
+        {
+            if ( role == Qt::DisplayRole )
+            {
+                QVariant value = prop->value();
+                if ( value.isNull() )
+                    return "";
+                return value.value<DocumentNode*>()->docnode_name();
+            }
+
+            if ( role == Qt::DecorationRole )
+            {
+                QVariant value = prop->value();
+                if ( value.isNull() )
+                    return {};
+                return QIcon(value.value<DocumentNode*>()->docnode_group_icon());
+            }
+
+            if ( role == ReferenceProperty )
+                return QVariant::fromValue(static_cast<ReferencePropertyBase*>(tree->prop));
+
             return {};
         }
         else
@@ -346,14 +369,15 @@ bool model::PropertyModel::setData(const QModelIndex& index, const QVariant& val
     if ( !tree )
         return false;
 
-    if ( tree->object || !tree->prop )
+    if ( !tree->prop )
         return false;
 
     BaseProperty* prop = tree->prop;
     PropertyTraits traits = prop->traits();
 
 
-    if ( traits.list || traits.type == PropertyTraits::Unknown || !traits.user_editable )
+    if ( traits.list || traits.type == PropertyTraits::Object ||
+         traits.type == PropertyTraits::Unknown || !traits.user_editable )
     {
         return false;
     }
