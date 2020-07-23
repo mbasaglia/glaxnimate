@@ -11,24 +11,25 @@ public:
         : QUndoCommand(QObject::tr("Create %1").arg(layer->docnode_name())),
           parent(parent),
           layer(std::move(layer)),
+          uuid(this->layer->uuid.get()),
           position(position)
     {}
 
 
     void undo() override
     {
-        layer = parent->remove_layer(index);
+        layer = parent->remove_layer(uuid);
     }
 
     void redo() override
     {
-        index = parent->add_layer(std::move(layer), position);
+        parent->add_layer(std::move(layer), position);
     }
 
 private:
     model::Composition* parent;
     std::unique_ptr<model::Layer> layer;
-    int index = -1;
+    QUuid uuid;
     int position;
 };
 
@@ -39,7 +40,7 @@ public:
     RemoveLayer(model::Composition* parent, model::Layer* layer)
         : QUndoCommand(QObject::tr("Remove %1").arg(layer->docnode_name())),
           parent(parent),
-          index(layer->index.get()),
+          uuid(layer->uuid.get()),
           position(parent->layer_position(layer, -1))
 
     {}
@@ -52,13 +53,13 @@ public:
 
     void redo() override
     {
-        layer = parent->remove_layer(index);
+        layer = parent->remove_layer(uuid);
     }
 
 private:
     model::Composition* parent;
     std::unique_ptr<model::Layer> layer;
-    int index;
+    QUuid uuid;
     int position;
 };
 

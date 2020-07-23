@@ -33,9 +33,9 @@ public:
         return layers.size();
     }
 
-    int add_layer(std::unique_ptr<Layer> lay, int position);
+    void add_layer(std::unique_ptr<Layer> lay, int position);
 
-    std::unique_ptr<Layer> remove_layer(int index);
+    std::unique_ptr<Layer> remove_layer(const QUuid& uuid);
 
     int layer_position(Layer* layer, int not_found=0) const;
 

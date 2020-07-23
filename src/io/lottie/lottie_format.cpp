@@ -16,11 +16,13 @@ public:
 
     QJsonObject to_json()
     {
+        /// @todo make a system that preserves key order as that is needed for lottie android
         return convert_animation(&document->animation());
     }
 
     QJsonObject convert_animation(Animation* animation)
     {
+        layer_indices.clear();
         QJsonObject json = convert_object_basic(animation, fields["Animation"]);
 
         QJsonArray layers;
@@ -31,27 +33,51 @@ public:
         return json;
     }
 
+    int layer_index(Layer* layer)
+    {
+        if ( !layer )
+            return -1;
+        if ( !layer_indices.contains(layer->uuid.get()) )
+            layer_indices[layer->uuid.get()] = layer_indices.size();
+        return layer_indices[layer->uuid.get()];
+    }
+
     QJsonObject convert_layer(Layer* layer)
     {
+        QVariantMap special;
+        int parent_index = layer_index(layer->parent.get());
+        if ( parent_index != -1 )
+            special["parent"] = parent_index;
         QJsonObject json = convert_object_basic(layer, fields["Layer"]);
         json["ty"] = layer_types[layer->type_name()];
-        if ( layer->parent.get() )
-            json["parent"] = QJsonValue(layer->parent.get()->index.get());
+        json["ind"] = layer_index(layer);
+
         return json;
     }
 
-    QJsonObject convert_object_basic(model::Object* obj, const QVector<QPair<QString, QString>>& fields)
+    QJsonObject convert_object_basic(model::Object* obj, const QVector<QPair<QString, QString>>& fields, const QVariantMap& special = {})
     {
         QJsonObject json_obj;
         for ( const auto& name : fields )
         {
-            json_obj[name.second] = QJsonValue::fromVariant(obj->get(name.first));
+            if ( name.first.isEmpty() )
+            {
+                if ( special.contains(name.second) )
+                    json_obj[name.second] = QJsonValue::fromVariant(special[name.second]);
+            }
+            else
+            {
+                json_obj[name.second] = QJsonValue::fromVariant(obj->get(name.first));
+            }
         }
 
         return json_obj;
     }
 
     model::Document* document;
+    QMap<QUuid, int> layer_indices;
+
+    // static mapping data
     QMap<QString, QVector<QPair<QString, QString>>> fields = {
         {"Animation", {
             // version
@@ -70,25 +96,25 @@ public:
             // motion_blur
         }},
         {"Layer", {
-            {"name",        "nm"},
             // ddd
             // hd
             {"type",        "ty"},
-            // parent
-            // stretch
-            // transform
-            // auto_orient
+            {"name",        "nm"},
+            {"",            "parent"},
+            // stretch sr
+            // transform ks
+            // auto_orient ao
             {"in_point",    "ip"},
             {"out_point",   "op"},
             {"start_time",  "st"},
             // blend_mode
             // matte_mode
-            {"index",       "ind"},
-            // css_class
-            // layer_html_id
-            // has_masks
-            // masks
-            // effects
+            {"",            "ind"},
+            // css_class cl
+            // layer_html_id ln
+            // hasMasks
+            // masksProperties
+            // effects ef
 
         }},
     };

@@ -137,40 +137,6 @@ private:
 
 
 template<class Type, class Reference = const Type&>
-class FixedValueProperty : public BaseProperty
-{
-public:
-    using held_type = Type;
-    using reference = Reference;
-
-    FixedValueProperty(Object* obj, QString name, Type value)
-        : BaseProperty(obj, std::move(name), PropertyTraits::from_scalar<Type>(false, false)),
-          value_(std::move(value))
-    {}
-
-    reference get() const
-    {
-        return value_;
-    }
-
-    QVariant value() const override
-    {
-        return QVariant::fromValue(value_);
-    }
-
-    bool set_value(const QVariant&) override
-    {
-        return false;
-    }
-
-
-
-private:
-    Type value_;
-};
-
-
-template<class Type, class Reference = const Type&>
 class Property : public BaseProperty
 {
 public:
@@ -345,75 +311,6 @@ public:
 private:
     std::vector<pointer> objects;
 
-};
-
-
-template<class Type, class Reference = const Type&>
-class NullableProperty : public BaseProperty
-{
-public:
-    using held_type = Type;
-    using reference = Reference;
-
-    NullableProperty(Object* obj, QString name, Type default_value, bool user_editable=true)
-        : BaseProperty(obj, std::move(name), PropertyTraits::from_scalar<Type>(false, user_editable)),
-          value_(std::move(default_value)), null_(false)
-    {}
-
-    NullableProperty(Object* obj, QString name, bool user_editable=true)
-        : BaseProperty(obj, std::move(name), PropertyTraits::from_scalar<Type>(false, user_editable)),
-          null_(true)
-    {}
-
-    void set(Type default_value)
-    {
-        std::swap(value_, default_value);
-        null_ = false;
-        value_changed();
-    }
-
-    reference get() const
-    {
-        return value_;
-    }
-
-    void set_null()
-    {
-        null_ = true;
-    }
-
-    bool is_null() const
-    {
-        return null_;
-    }
-
-    QVariant value() const override
-    {
-        if ( null_ )
-            return {};
-        return QVariant::fromValue(value_);
-    }
-
-    bool set_value(const QVariant& val) override
-    {
-        if ( val.isNull() )
-        {
-            null_ = true;
-            return true;
-        }
-
-        if ( !val.canConvert(qMetaTypeId<Type>()) )
-            return false;
-        QVariant converted = val;
-        if ( !converted.convert(qMetaTypeId<Type>()) )
-            return false;
-        set(converted.value<Type>());
-        return true;
-    }
-
-private:
-    Type value_;
-    bool null_ = false;
 };
 
 } // namespace model

@@ -81,7 +81,6 @@ public:
     Property<float> in_point{this, "in_point", 0};
     Property<float> out_point{this, "out_point", 0};
     Property<float> start_time{this, "start_time", 0};
-    NullableProperty<int> index{this, "index", false};
 
     ChildLayerView children() const
     {
