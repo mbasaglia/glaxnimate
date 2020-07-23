@@ -104,8 +104,6 @@ public:
     QColor docnode_group_color() const;
     const QPixmap& docnode_group_icon() const;
 
-    Document* document() const { return document_; }
-
     ChildRange docnode_children() const noexcept
     {
         return ChildRange{this, &DocumentNode::docnode_child, &DocumentNode::docnode_child_count};
@@ -206,37 +204,8 @@ signals:
 private:
     bool visible_ = true;
     bool locked_ = false;
-    Document* document_;
     QPixmap group_icon{32, 32};
 };
-
-
-/**
- * \brief Simple CRTP to help with the clone boilerplate
- */
-template <class Derived, class Base>
-class DocumentNodeBase : public Base
-{
-public:
-    using Base::Base;
-
-    std::unique_ptr<Derived> clone_covariant() const
-    {
-        auto object = std::make_unique<Derived>(this->document());
-        this->clone_into(object.get());
-        return object;
-    }
-
-protected:
-    using Ctor = DocumentNodeBase;
-
-private:
-    std::unique_ptr<Object> clone_impl() const override
-    {
-        return clone_covariant();
-    }
-};
-
 
 
 class ReferencePropertyBase : public BaseProperty

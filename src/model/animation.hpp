@@ -4,7 +4,7 @@
 
 namespace model {
 
-class Animation : public DocumentNodeBase<Animation, Composition>
+class Animation : public ObjectBase<Animation, Composition>
 {
     Q_OBJECT
 

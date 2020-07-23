@@ -2,7 +2,7 @@
 #include "document.hpp"
 
 model::DocumentNode::DocumentNode(Document* document)
-    : document_(document)
+    : Object(document)
 {
     group_icon.fill(Qt::white);
     uuid.set_value(QUuid::createUuid());

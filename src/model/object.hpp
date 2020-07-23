@@ -9,13 +9,14 @@
 namespace model {
 
 class BaseProperty;
+class Document;
 
 class Object : public QObject
 {
     Q_OBJECT
 
 public:
-    Object();
+    Object(Document* document);
     ~Object();
 
     std::unique_ptr<Object> clone() const
@@ -25,7 +26,7 @@ public:
 
     std::unique_ptr<Object> clone_covariant() const
     {
-        auto object = std::make_unique<Object>();
+        auto object = std::make_unique<Object>(document());
         clone_into(object.get());
         return object;
     }
@@ -33,15 +34,17 @@ public:
 
     QVariant get(const QString& property) const;
     bool set(const QString& property, const QVariant& value, bool allow_unknown = false);
+    void undoable_set(const QString& property, const QVariant& value);
     bool has(const QString& property) const;
 
     const std::vector<BaseProperty*>& properties() const;
 
     virtual QString object_name() const { return ""; }
+    virtual QString type_name_human() const { return tr("Uknown Object"); }
 
     QString type_name() const;
 
-    virtual QString type_name_human() const { return tr("Uknown Object"); }
+    Document* document() const;
 
 signals:
     void property_added(const QString& name, const QVariant& value);
@@ -80,10 +83,14 @@ class ObjectBase : public Base
 public:
     std::unique_ptr<Derived> clone_covariant() const
     {
-        auto object = std::make_unique<Derived>();
+        auto object = std::make_unique<Derived>(this->document());
         this->clone_into(object.get());
         return object;
     }
+
+protected:
+    using Base::Base;
+    using Ctor = ObjectBase;
 
 private:
     std::unique_ptr<Object> clone_impl() const override

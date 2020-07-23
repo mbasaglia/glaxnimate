@@ -217,5 +217,5 @@ model::Object* io::glaxnimate::GlaxnimateFormat::create_object(const QString& ty
         return new model::ShapeLayer(state.document, state.compostion);
 
     emit error(tr("Unknow object of type '%1'").arg(type));
-    return new model::Object();
+    return new model::Object(state.document);
 }

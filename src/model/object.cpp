@@ -3,6 +3,8 @@
 #include <unordered_map>
 
 #include "property.hpp"
+#include "model/document.hpp"
+#include "command/property_commands.hpp"
 
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
@@ -21,12 +23,14 @@ public:
     std::unordered_map<QString, BaseProperty*> props;
     std::vector<BaseProperty*> prop_order;
     std::list<UnknownProperty> unknowns;
+    Document* document;
 };
 
 
-model::Object::Object()
+model::Object::Object(Document* document)
     : d(std::make_unique<model::Object::Private>())
 {
+    d->document = document;
 }
 
 model::Object::~Object() = default;
@@ -100,4 +104,17 @@ QString model::Object::naked_type_name(QString class_name)
     if ( ns != -1 )
         class_name = class_name.mid(ns+1);
     return class_name;
+}
+
+model::Document * model::Object::document() const
+{
+    return d->document;
+}
+
+void model::Object::undoable_set ( const QString& property, const QVariant& value )
+{
+
+    auto it = d->props.find(property);
+    if ( it != d->props.end() )
+        d->document->undo_stack().push(new command::SetPropertyValue(it->second, it->second->value(), value));
 }
