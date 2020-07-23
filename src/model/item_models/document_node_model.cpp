@@ -42,16 +42,16 @@ void model::DocumentNodeModel::connect_node ( model::DocumentNode* node )
         dataChanged(changed, changed, {Qt::EditRole, Qt::DisplayRole});
     });
 
-    for ( int i = 0; i < node->docnode_child_count(); i++ )
-        connect_node(node->docnode_child(i));
+    for ( DocumentNode* child : node->docnode_children() )
+        connect_node(child);
 }
 
 void model::DocumentNodeModel::disconnect_node ( model::DocumentNode* node )
 {
     disconnect(node, nullptr, this, nullptr);
 
-    for ( int i = 0; i < node->docnode_child_count(); i++ )
-        disconnect_node(node->docnode_child(i));
+    for ( DocumentNode* child : node->docnode_children() )
+        disconnect_node(child);
 }
 
 

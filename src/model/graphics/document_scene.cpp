@@ -43,8 +43,8 @@ void model::graphics::DocumentScene::connect_node ( model::DocumentNode* node )
     connect(node, &model::DocumentNode::docnode_child_remove_end, this, &DocumentScene::disconnect_node);
     connect(node, &model::DocumentNode::docnode_visible_changed, child, &DocumentNodeGraphicsItem::set_visible);
 
-    for ( int i = 0; i < node->docnode_child_count(); i++ )
-        connect_node(node->docnode_child(i));
+    for ( DocumentNode* child : node->docnode_children() )
+        connect_node(child);
 
     DocumentNodeGraphicsItem* parent = d->node_to_item[node->docnode_parent()];
     if ( parent )
@@ -58,8 +58,8 @@ void model::graphics::DocumentScene::disconnect_node ( model::DocumentNode* node
     disconnect(node, &model::DocumentNode::docnode_child_add_end, this, &DocumentScene::connect_node);
     disconnect(node, &model::DocumentNode::docnode_child_remove_end, this, &DocumentScene::disconnect_node);
 
-    for ( int i = 0; i < node->docnode_child_count(); i++ )
-        disconnect_node(node->docnode_child(i));
+    for ( DocumentNode* child : node->docnode_children() )
+        disconnect_node(child);
 
     auto item = d->node_to_item.find(node);
     if ( item != d->node_to_item.end() )

@@ -90,7 +90,11 @@ const std::vector<model::BaseProperty*>& model::Object::properties() const
 
 QString model::Object::type_name() const
 {
-    QString class_name = metaObject()->className();
+    return naked_type_name(metaObject()->className());
+}
+
+QString model::Object::naked_type_name(QString class_name)
+{
     int ns = class_name.lastIndexOf(":");
     if ( ns != -1 )
         class_name = class_name.mid(ns+1);

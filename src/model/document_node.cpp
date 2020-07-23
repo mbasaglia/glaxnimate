@@ -41,3 +41,18 @@ QString model::DocumentNode::object_name() const
         return type_name();
     return name.get();
 }
+
+
+bool model::DocumentNode::docnode_is_instance(const QString& type_name) const
+{
+    if ( type_name.isEmpty() )
+        return true;
+
+    for ( const QMetaObject* meta = metaObject(); meta; meta = meta->superClass() )
+    {
+        if ( naked_type_name(meta->className()) == type_name )
+            return true;
+    }
+
+    return false;
+}

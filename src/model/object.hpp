@@ -50,6 +50,7 @@ signals:
 protected:
     void clone_into(Object* dest) const;
 
+    static QString naked_type_name(QString type_name);
 
 private:
     virtual std::unique_ptr<Object> clone_impl() const
