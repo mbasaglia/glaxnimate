@@ -22,6 +22,8 @@ void model::graphics::DocumentScene::set_document ( model::Document* document )
         disconnect_node(&d->document->animation());
     }
 
+    clear();
+
     d->document = document;
 
     if ( d->document )

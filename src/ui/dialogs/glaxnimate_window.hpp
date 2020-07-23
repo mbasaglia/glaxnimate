@@ -17,24 +17,26 @@ public:
 
     ~GlaxnimateWindow();
 
-public slots:
+private slots:
     void document_new();
     void document_save();
     void document_save_as();
     void document_open();
 
-private slots:
     void color_update_noalpha(const QColor& col);
     void color_update_alpha(const QColor& col);
     void color_update_component(int value);
+
     void document_treeview_clicked(const QModelIndex& index);
     void document_treeview_current_changed(const QModelIndex& index);
+
     void layer_new_menu();
     void layer_new_empty();
     void layer_new_shape();
     void layer_new_precomp();
-    void refresh_title();
     void layer_delete();
+
+    void refresh_title();
     void view_fit();
     void preferences();
 

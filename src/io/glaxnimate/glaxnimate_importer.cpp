@@ -10,6 +10,14 @@ public:
     model::Composition* compostion = nullptr;
     QMap<QString, model::DocumentNode*> references;
     QMap<model::BaseProperty*, QString> unresolved_references;
+    std::vector<model::Object*> unwanted;
+
+    ~ImportState()
+    {
+        for ( model::Object* obj : unwanted )
+            if ( obj )
+                delete obj;
+    }
 
     bool resolve()
     {
@@ -88,17 +96,35 @@ bool io::glaxnimate::GlaxnimateFormat::load_prop ( model::BaseProperty* target, 
 
         QVariantList list;
         for ( const QJsonValue& item : val.toArray() )
-            list.push_back(load_prop_value(target, val, state));
+            list.push_back(load_prop_value(target, item, state));
 
         bool ok = target->set_value(list);
         if ( target->traits().type == model::PropertyTraits::Object )
         {
-            for ( const QVariant& item : list )
-                if ( auto ptr = item.value<model::Object*>() )
-                    delete ptr;
+            if ( !ok )
+            {
+                for ( const QVariant& item : list )
+                    state.unwanted.push_back(item.value<model::Object*>());
+            }
+            else
+            {
+                QVariantList actual_value = target->value().toList();
+                QSet<model::Object*> made_it;
+                for ( const QVariant& item : actual_value )
+                    if ( auto ptr = item.value<model::Object*>() )
+                        made_it.insert(ptr);
+
+                for ( const QVariant& item : list )
+                {
+                    auto ptr = item.value<model::Object*>();
+                    if ( !made_it.contains(ptr) )
+                        state.unwanted.push_back(ptr);
+                }
+            }
         }
         return ok;
     }
+
 
     if ( target->traits().type == model::PropertyTraits::ObjectReference )
     {
@@ -114,16 +140,18 @@ bool io::glaxnimate::GlaxnimateFormat::load_prop ( model::BaseProperty* target, 
     }
 
     QVariant loaded_val = load_prop_value(target, val, state);
-    bool ok = target->set_value(loaded_val);
-    if ( auto ptr = loaded_val.value<model::Object*>() )
-        delete ptr;
-    return ok;
+    if ( !target->set_value(loaded_val) )
+    {
+        if ( target->traits().type == model::PropertyTraits::Object )
+            state.unwanted.push_back(loaded_val.value<model::Object*>());
+        return false;
+    }
+    return true;
 }
 
 
 QVariant io::glaxnimate::GlaxnimateFormat::load_prop_value ( model::BaseProperty* target, const QJsonValue& val, ImportState& state )
 {
-    /// @todo list
     switch ( target->traits().type )
     {
         case model::PropertyTraits::Object:
@@ -134,6 +162,7 @@ QVariant io::glaxnimate::GlaxnimateFormat::load_prop_value ( model::BaseProperty
             model::Object* object = create_object(jobj["__type__"].toString(), state);
             if ( !object )
                 return {};
+            load_object(object, jobj, state);
             return  QVariant::fromValue(object);
         }
         case model::PropertyTraits::ObjectReference:
