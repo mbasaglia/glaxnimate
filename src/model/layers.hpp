@@ -107,6 +107,8 @@ public:
         return nullptr;
     }
 
+    QString type_name_human() const override { return tr("Uknown Layer"); }
+
 private:
     std::unique_ptr<Object> clone_impl() const override
     {
@@ -152,6 +154,8 @@ public:
     {
         return QIcon::fromTheme("transform-move");
     }
+
+    QString type_name_human() const override { return tr("Empty Layer"); }
 };
 
 
@@ -168,6 +172,8 @@ public:
     {
         return QIcon::fromTheme("shapes");
     }
+
+    QString type_name_human() const override { return tr("Shape Layer"); }
 };
 
 

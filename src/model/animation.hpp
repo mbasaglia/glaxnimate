@@ -30,6 +30,8 @@ public:
     }
 
     graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override;
+
+    QString type_name_human() const override { return tr("Animation"); }
 };
 
 } // namespace model

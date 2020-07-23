@@ -41,6 +41,8 @@ public:
 
     QString type_name() const;
 
+    virtual QString type_name_human() const { return tr("Uknown Object"); }
+
 signals:
     void property_added(const QString& name, const QVariant& value);
     void property_changed(const QString& name, const QVariant& value);
