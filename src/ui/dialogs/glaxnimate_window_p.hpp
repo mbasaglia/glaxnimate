@@ -179,6 +179,9 @@ public:
                 save_document(false, false);
             else if ( result == QMessageBox::Cancel )
                 return false;
+
+            // Prevent signals on the destructor
+            current_document->undo_stack().clear();
         }
 
         document_node_model.clear_document();
