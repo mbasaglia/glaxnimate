@@ -318,6 +318,16 @@ p, li { white-space: pre-wrap; }
          </row>
          <row>
           <property name="text">
+           <string>Kernel</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>CPU</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
            <string>Application Qt</string>
           </property>
          </row>
@@ -332,6 +342,43 @@ p, li { white-space: pre-wrap; }
           </property>
          </column>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QPushButton" name="pushButton_2">
+           <property name="text">
+            <string>About Qt</string>
+           </property>
+           <property name="icon">
+            <iconset theme="qtcreator"/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>Copy</string>
+           </property>
+           <property name="icon">
+            <iconset theme="edit-copy"/>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -359,7 +406,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>26</x>
-     <y>416</y>
+     <y>458</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
@@ -374,11 +421,11 @@ p, li { white-space: pre-wrap; }
    <slot>open_user_data()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>486</x>
-     <y>180</y>
+     <x>457</x>
+     <y>188</y>
     </hint>
     <hint type="destinationlabel">
-     <x>526</x>
+     <x>504</x>
      <y>220</y>
     </hint>
    </hints>
@@ -390,12 +437,44 @@ p, li { white-space: pre-wrap; }
    <slot>open_settings_file()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>468</x>
-     <y>246</y>
+     <x>439</x>
+     <y>254</y>
     </hint>
     <hint type="destinationlabel">
-     <x>531</x>
+     <x>504</x>
      <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AboutDialog</receiver>
+   <slot>copy_system()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>443</x>
+     <y>418</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>579</x>
+     <y>520</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>AboutDialog</receiver>
+   <slot>about_qt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>68</x>
+     <y>413</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>254</x>
+     <y>547</y>
     </hint>
    </hints>
   </connection>
@@ -403,5 +482,7 @@ p, li { white-space: pre-wrap; }
  <slots>
   <slot>open_user_data()</slot>
   <slot>open_settings_file()</slot>
+  <slot>copy_system()</slot>
+  <slot>about_qt()</slot>
  </slots>
 </ui>

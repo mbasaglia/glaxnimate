@@ -3,6 +3,8 @@
 
 #include <QSysInfo>
 #include <QDesktopServices>
+#include <QMessageBox>
+#include <QClipboard>
 
 #include "app/application.hpp"
 
@@ -22,9 +24,12 @@ AboutDialog::AboutDialog(QWidget* parent)
     populate_view(d->view_icons, QIcon::themeSearchPaths());
 
 
-    d->view_system->setItem(0, 0, new QTableWidgetItem(QSysInfo::prettyProductName()));
-    d->view_system->setItem(1, 0, new QTableWidgetItem(QT_VERSION_STR));
-    d->view_system->setItem(2, 0, new QTableWidgetItem(qVersion()));
+    int row = 0;
+    d->view_system->setItem(row++, 0, new QTableWidgetItem(QSysInfo::prettyProductName()));
+    d->view_system->setItem(row++, 0, new QTableWidgetItem(QSysInfo::kernelType() + " " + QSysInfo::kernelVersion()));
+    d->view_system->setItem(row++, 0, new QTableWidgetItem(QSysInfo::currentCpuArchitecture()));
+    d->view_system->setItem(row++, 0, new QTableWidgetItem(QT_VERSION_STR));
+    d->view_system->setItem(row++, 0, new QTableWidgetItem(qVersion()));
 
 }
 
@@ -64,3 +69,22 @@ void AboutDialog::populate_view(QListWidget* wid, const QStringList& paths)
     h += h/c/2;
     wid->setMinimumHeight(h);
 }
+
+void AboutDialog::about_qt()
+{
+    QMessageBox::aboutQt(this);
+}
+
+void AboutDialog::copy_system()
+{
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    QString text_template("%1: %2\n");
+
+    QString text;
+    text += text_template.arg(qApp->applicationDisplayName()).arg(qApp->applicationVersion());
+    for ( int i = 0; i < d->view_system->rowCount(); i++ )
+        text += text_template.arg(d->view_system->verticalHeaderItem(i)->text()).arg(d->view_system->item(i, 0)->text());
+
+    clipboard->setText(text);
+}
+

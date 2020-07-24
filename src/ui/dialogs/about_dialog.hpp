@@ -27,6 +27,8 @@ protected:
 private slots:
     void open_user_data();
     void open_settings_file();
+    void copy_system();
+    void about_qt();
 
 private:
     std::unique_ptr<Ui::AboutDialog> d;
