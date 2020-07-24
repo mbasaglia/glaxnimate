@@ -205,7 +205,7 @@ signals:
 private:
     bool visible_ = true;
     bool locked_ = false;
-    QPixmap group_icon{32, 32};
+    mutable QPixmap group_icon;
 };
 
 

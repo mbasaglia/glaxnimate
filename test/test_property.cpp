@@ -195,5 +195,5 @@ private slots:
     }
 };
 
-QTEST_MAIN(TestProperty)
+QTEST_GUILESS_MAIN(TestProperty)
 #include "test_property.moc"

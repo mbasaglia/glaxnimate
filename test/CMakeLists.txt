@@ -18,7 +18,20 @@ function(test_case test_name)
 endfunction(test_case)
 
 
-set(TEST_SOURCES ${ALL_SOURCES})
-list(REMOVE_ITEM TEST_SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)
+# set(TEST_SOURCES ${ALL_SOURCES})
+# list(REMOVE_ITEM TEST_SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
-test_case(test_property ${TEST_SOURCES})
+test_case(test_property
+../src/model/object.cpp
+../src/model/layers.cpp
+../src/model/document.cpp
+../src/model/document_node.cpp
+../src/model/composition.cpp
+../src/model/animation.cpp
+../src/model/graphics/handle.cpp
+../src/model/graphics/document_node_graphics_item.cpp
+../src/io/glaxnimate/glaxnimate_format.cpp
+../src/io/glaxnimate/glaxnimate_importer.cpp
+../src/io/base.cpp
+../src/app_info.cpp
+)

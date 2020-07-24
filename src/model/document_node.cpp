@@ -4,7 +4,6 @@
 model::DocumentNode::DocumentNode(Document* document)
     : Object(document)
 {
-    group_icon.fill(Qt::white);
     uuid.set_value(QUuid::createUuid());
 }
 
@@ -34,10 +33,13 @@ void model::DocumentNode::on_property_changed(const QString& name, const QVarian
     }
     else if ( name == "color" )
     {
-        if ( docnode_valid_color() )
-            group_icon.fill(group_color.get());
-        else
-            group_icon.fill(Qt::white);
+        if ( !group_icon.isNull() )
+        {
+            if ( docnode_valid_color() )
+                group_icon.fill(group_color.get());
+            else
+                group_icon.fill(Qt::white);
+        }
         docnode_on_update_group(true);
     }
 }
@@ -86,6 +88,12 @@ const QPixmap & model::DocumentNode::docnode_group_icon() const
     {
         if ( auto parent = docnode_group_parent() )
             return parent->docnode_group_icon();
+    }
+
+    if ( group_icon.isNull() )
+    {
+        group_icon = QPixmap{32, 32};
+        group_icon.fill(docnode_group_color());
     }
 
     return group_icon;
