@@ -2,7 +2,7 @@ pages:
     stage: deploy
     before_script:
         - apt-get update -y
-        - apt-get install -y cmake qtbase5-dev doxygen graphviz
+        - apt-get install -y cmake qtbase5-dev doxygen graphviz qtdeclarative5-dev
         - git submodule update --init --recursive
     script:
         - echo TODO
