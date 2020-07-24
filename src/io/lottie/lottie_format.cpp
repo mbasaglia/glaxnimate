@@ -17,7 +17,7 @@ public:
     QJsonObject to_json()
     {
         /// @todo make a system that preserves key order as that is needed for lottie android
-        return convert_animation(&document->animation());
+        return convert_animation(document->animation());
     }
 
     QJsonObject convert_animation(Animation* animation)

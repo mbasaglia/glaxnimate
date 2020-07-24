@@ -49,7 +49,7 @@ void GlaxnimateWindow::document_save_as()
         d->ui.status_bar->showMessage(tr("Could not save file"));
 }
 
-void GlaxnimateWindow::document_open()
+void GlaxnimateWindow::document_open_dialog()
 {
     d->document_open();
 }
@@ -147,7 +147,7 @@ void GlaxnimateWindow::closeEvent ( QCloseEvent* event )
     }
     else
     {
-        d->save_hidden_settings();
+        d->shutdown();
         QMainWindow::closeEvent(event);
     }
 }
@@ -161,3 +161,19 @@ void GlaxnimateWindow::help_about()
 {
     d->help_about();
 }
+
+void GlaxnimateWindow::console_commit()
+{
+    d->console_commit();
+}
+
+void GlaxnimateWindow::document_open(const QString& filename)
+{
+    d->document_open_from_filename(filename);
+}
+
+model::Document * GlaxnimateWindow::document() const
+{
+    return d->current_document.get();
+}
+

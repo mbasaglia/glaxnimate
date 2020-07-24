@@ -267,8 +267,8 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
 
     ImportState state(this);
     state.document = document;
-    state.compostion = &document->animation();
-    state.load_object(&document->animation(), top_level["animation"].toObject());
+    state.compostion = document->animation();
+    state.load_object(document->animation(), top_level["animation"].toObject());
     state.resolve();
 
     return true;

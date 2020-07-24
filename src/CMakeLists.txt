@@ -38,6 +38,8 @@ ui/dialogs/about_dialog.ui
 ui/widgets/glaxnimate_graphics_view.cpp
 ui/widgets/view_transform_widget.cpp
 ui/widgets/view_transform_widget.ui
+
+scripting/js/js_engine.cpp
 )
 
 configure_file(
@@ -47,4 +49,4 @@ configure_file(
 
 #add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)
 add_executable(${PROJECT_SLUG} ${SOURCES})
-target_link_libraries(${PROJECT_SLUG} Qt5::Widgets QtColorWidgets)
+target_link_libraries(${PROJECT_SLUG} Qt5::Widgets Qt5::Qml QtColorWidgets)

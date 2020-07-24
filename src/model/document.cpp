@@ -35,9 +35,9 @@ QString model::Document::filename() const
     return d->io_options.filename;
 }
 
-model::Animation & model::Document::animation()
+model::Animation * model::Document::animation()
 {
-    return d->animation;
+    return &d->animation;
 }
 
 QVariantMap & model::Document::metadata() const

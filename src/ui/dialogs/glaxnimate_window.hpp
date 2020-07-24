@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <memory>
 
+#include "model/document.hpp"
+
 namespace model { class Document; }
 
 class GlaxnimateWindowPrivate;
@@ -12,17 +14,24 @@ class GlaxnimateWindow : public QMainWindow
 {
     Q_OBJECT
 
+    Q_PROPERTY(model::Document* document READ document)
+
 public:
     explicit GlaxnimateWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
     ~GlaxnimateWindow();
 
-private slots:
+    model::Document* document() const;
+
+public slots:
     void document_new();
     void document_save();
     void document_save_as();
-    void document_open();
+    void document_open_dialog();
+    void document_open(const QString& filename);
+    void view_fit();
 
+private slots:
     void color_update_noalpha(const QColor& col);
     void color_update_alpha(const QColor& col);
     void color_update_component(int value);
@@ -37,10 +46,10 @@ private slots:
     void layer_delete();
 
     void refresh_title();
-    void view_fit();
     void preferences();
     void document_open_recent(QAction* action);
     void help_about();
+    void console_commit();
 
 protected:
     void changeEvent(QEvent *e) override;

@@ -33,6 +33,8 @@
 
 #include "io/glaxnimate/glaxnimate_format.hpp"
 
+#include "scripting/script_engine.hpp"
+
 namespace {
 
 
@@ -73,6 +75,8 @@ public:
     bool updating_color = false;
 
     QStringList recent_files;
+
+    std::vector<scripting::ScriptContext> script_contexts;
 
     // "set and forget" kida variables
     int tool_rows = 3; ///< @todo setting
@@ -116,9 +120,13 @@ public:
         document_node_model.set_document(current_document.get());
 
         property_model.set_document(current_document.get());
-        property_model.set_object(&current_document->animation());
+        property_model.set_object(current_document->animation());
 
         scene.set_document(current_document.get());
+
+        // Scripting
+        for ( const auto& ctx : script_contexts )
+            ctx->expose("document", current_document.get());
 
         // Title
         QObject::connect(current_document.get(), &model::Document::filename_changed, parent, &GlaxnimateWindow::refresh_title);
@@ -131,18 +139,18 @@ public:
     {
         setup_document(filename);
 
-        current_document->animation().name.set(current_document->animation().type_name_human());
-        auto layer = current_document->animation().make_layer<model::ShapeLayer>();
-        current_document->animation().width.set(app::settings::get<int>("defaults", "width"));
-        current_document->animation().height.set(app::settings::get<int>("defaults", "height"));
-        current_document->animation().fps.set(app::settings::get<int>("defaults", "fps"));
+        current_document->animation()->name.set(current_document->animation()->type_name_human());
+        auto layer = current_document->animation()->make_layer<model::ShapeLayer>();
+        current_document->animation()->width.set(app::settings::get<int>("defaults", "width"));
+        current_document->animation()->height.set(app::settings::get<int>("defaults", "height"));
+        current_document->animation()->fps.set(app::settings::get<int>("defaults", "fps"));
         float duration = app::settings::get<float>("defaults", "duration");
-        int out_point = current_document->animation().fps.get() * duration;
-        current_document->animation().out_point.set(out_point);
+        int out_point = current_document->animation()->fps.get() * duration;
+        current_document->animation()->out_point.set(out_point);
         layer->out_point.set(out_point);
         layer->name.set(layer->type_name_human());
         model::Layer* ptr = layer.get();
-        current_document->animation().add_layer(std::move(layer), 0);
+        current_document->animation()->add_layer(std::move(layer), 0);
 
         QDir path = app::settings::get<QString>("open_save", "path");
 
@@ -170,8 +178,8 @@ public:
             most_recent_file(options.filename);
 
         view_fit();
-        if ( !current_document->animation().layers.empty() )
-            ui.view_document_node->setCurrentIndex(document_node_model.node_index(&current_document->animation().layers[0]));
+        if ( !current_document->animation()->layers.empty() )
+            ui.view_document_node->setCurrentIndex(document_node_model.node_index(&current_document->animation()->layers[0]));
 
         return ok;
     }
@@ -255,8 +263,6 @@ public:
     {
         this->parent = parent;
         ui.setupUi(parent);
-        parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
-        parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
         redo_text = ui.action_redo->text();
         undo_text = ui.action_undo->text();
 
@@ -364,6 +370,24 @@ public:
         recent_files = app::settings::get<QStringList>("open_save", "recent_files");
         reload_recent_menu();
         connect(ui.menu_open_recent, &QMenu::triggered, parent, &GlaxnimateWindow::document_open_recent);
+
+        // Scripting
+        parent->tabifyDockWidget(ui.dock_script_console, ui.dock_timeline);
+        ui.dock_script_console->setVisible(false);
+
+        for ( const auto& engine : scripting::ScriptEngineFactory::instance().engines() )
+        {
+            auto ctx = engine->create_context();
+            ctx->expose("window", parent);
+            script_contexts.push_back(std::move(ctx));
+            ui.console_language->addItem(engine->label());
+        }
+
+        // Restore state
+        // NOTE: keep at the end so we do this once all the widgets are in their default spots
+        parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
+        parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
+
     }
 
     void retranslateUi(QMainWindow* parent)
@@ -518,7 +542,7 @@ public:
             if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
                 return curr_lay->composition();
         }
-        return &current_document->animation();
+        return current_document->animation();
     }
 
     model::Layer* current_layer()
@@ -563,7 +587,7 @@ public:
 
         layer->name.set(name);
 
-        layer->out_point.set(current_document->animation().out_point.get());
+        layer->out_point.set(current_document->animation()->out_point.get());
 
         model::Layer* ptr = layer.get();
 
@@ -598,8 +622,8 @@ public:
             QRect(
                 -32,
                 -32,
-                current_document->animation().width.get() + 64,
-                current_document->animation().height.get() + 64
+                current_document->animation()->width.get() + 64,
+                current_document->animation()->height.get() + 64
             )
         );
     }
@@ -614,11 +638,12 @@ public:
 
     }
 
-    void save_hidden_settings()
+    void shutdown()
     {
         app::settings::set("ui", "window_geometry", parent->saveGeometry());
         app::settings::set("ui", "window_state", parent->saveState());
         app::settings::set("open_save", "recent_files", recent_files);
+        script_contexts.clear();
     }
 
     void reload_recent_menu()
@@ -692,6 +717,26 @@ public:
     void help_about()
     {
         about_dialog->show();
+    }
+
+    void console_commit()
+    {
+        QString text = ui.console_input->text();
+        if ( text.isEmpty() )
+            return;
+
+        ui.console_output->append(text);
+        auto ctx = script_contexts[ui.console_language->currentIndex()].get();
+        try {
+            QString out = ctx->eval_to_string(text);
+            ui.console_output->append(out);
+        } catch ( const scripting::ScriptError& err ) {
+            QColor col = ui.console_output->textColor();
+            ui.console_output->setTextColor(Qt::red);
+            ui.console_output->append(err.message());
+            ui.console_output->setTextColor(col);
+        }
+        ui.console_input->setText("");
     }
 };
 

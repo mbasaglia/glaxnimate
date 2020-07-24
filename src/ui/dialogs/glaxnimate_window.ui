@@ -1006,7 +1006,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_3">
+  <widget class="QDockWidget" name="dock_timeline">
    <property name="windowIcon">
     <iconset theme="player-time">
      <normaloff>.</normaloff>.</iconset>
@@ -1031,6 +1031,52 @@
         </sizepolicy>
        </property>
       </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_script_console">
+   <property name="windowIcon">
+    <iconset theme="utilities-terminal"/>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Script Console</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout" name="verticalLayout_7">
+     <item>
+      <widget class="QTextEdit" name="console_output">
+       <property name="font">
+        <font>
+         <family>Monospace</family>
+        </font>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLineEdit" name="console_input">
+         <property name="font">
+          <font>
+           <family>Monospace</family>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="console_language"/>
+       </item>
+      </layout>
      </item>
     </layout>
    </widget>
@@ -2385,7 +2431,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>1179</x>
-     <y>794</y>
+     <y>708</y>
     </hint>
     <hint type="destinationlabel">
      <x>1435</x>
@@ -2401,7 +2447,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>1030</x>
-     <y>941</y>
+     <y>794</y>
     </hint>
     <hint type="destinationlabel">
      <x>1119</x>
@@ -2465,7 +2511,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>1106</x>
-     <y>941</y>
+     <y>794</y>
     </hint>
     <hint type="destinationlabel">
      <x>1150</x>
@@ -2573,7 +2619,7 @@
    <sender>action_open</sender>
    <signal>triggered()</signal>
    <receiver>GlaxnimateWindow</receiver>
-   <slot>document_open()</slot>
+   <slot>document_open_dialog()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -2617,6 +2663,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>console_input</sender>
+   <signal>returnPressed()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>console_commit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>830</x>
+     <y>1014</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>845</x>
+     <y>1113</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
@@ -2634,7 +2696,8 @@
   <slot>document_treeview_current_changed(QModelIndex)</slot>
   <slot>view_fit()</slot>
   <slot>preferences()</slot>
-  <slot>document_open()</slot>
+  <slot>document_open_dialog()</slot>
   <slot>help_about()</slot>
+  <slot>console_commit()</slot>
  </slots>
 </ui>

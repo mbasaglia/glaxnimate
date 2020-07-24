@@ -13,6 +13,9 @@ class Document : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString filename READ filename)
+    Q_PROPERTY(Animation* animation READ animation)
+
 public:
     explicit Document(const QString& filename);
     ~Document();
@@ -21,7 +24,7 @@ public:
 
     QVariantMap& metadata() const;
 
-    Animation& animation();
+    Animation* animation();
 
     QUndoStack& undo_stack();
 
