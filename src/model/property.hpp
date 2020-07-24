@@ -97,6 +97,43 @@ inline constexpr PropertyTraits::Type PropertyTraits::get_type() noexcept
     return detail::GetType<T>::value;
 }
 
+#define GLAXNIMATE_PROPERTY(type, name, ...)                \
+public:                                                     \
+    Property<type> name{this, #name, __VA_ARGS__};          \
+    type get_##name() const { return name.get(); }          \
+    bool set_##name(const type& v) {                        \
+        return name.set_undoable(QVariant::fromValue(v));   \
+    }                                                       \
+private:                                                    \
+    Q_PROPERTY(type name READ get_##name WRITE set_##name)  \
+    // macro end
+
+#define GLAXNIMATE_PROPERTY_REFERENCE(type, name)           \
+public:                                                     \
+    ReferenceProperty<type> name{this, #name};              \
+    type* get_##name() const { return name.get(); }         \
+    bool set_##name(type* v)                                \
+    {                                                       \
+        return name.set_undoable(QVariant::fromValue(v));   \
+    }                                                       \
+private:                                                    \
+    Q_PROPERTY(type* name READ get_##name WRITE set_##name) \
+    // macro end
+
+#define GLAXNIMATE_PROPERTY_LIST(type, name)                \
+public:                                                     \
+    ObjectListProperty<type> name{this, #name};             \
+    QVariantList get_##name() const                         \
+    {                                                       \
+        QVariantList ret;                                   \
+        for ( const auto & ptr : name )                     \
+            ret.push_back(QVariant::fromValue(ptr.get()));  \
+        return ret;                                         \
+    }                                                       \
+private:                                                    \
+    Q_PROPERTY(QVariantList name READ get_##name)           \
+    // macro end
+
 
 class BaseProperty
 {
@@ -111,6 +148,7 @@ public:
 
     virtual QVariant value() const = 0;
     virtual bool set_value(const QVariant& val) = 0;
+    virtual bool set_undoable(const QVariant& val);
 
 
     const QString& name() const
@@ -255,7 +293,7 @@ public:
 
     void insert(int index, pointer p)
     {
-        if ( index + 1 >= objects.size() )
+        if ( index + 1 >= int(objects.size()) )
         {
             objects.push_back(std::move(p));
             return;

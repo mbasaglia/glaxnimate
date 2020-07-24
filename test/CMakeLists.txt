@@ -4,6 +4,7 @@ set(COVERAGE_TOOL "gcovr")
 include(testing)
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_BINARY_DIR}/bin)
 
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
@@ -17,4 +18,7 @@ function(test_case test_name)
 endfunction(test_case)
 
 
-test_case(test_property ../src/model/object.cpp)
+set(TEST_SOURCES ${ALL_SOURCES})
+list(REMOVE_ITEM TEST_SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)
+
+test_case(test_property ${TEST_SOURCES})

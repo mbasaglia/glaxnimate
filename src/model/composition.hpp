@@ -8,10 +8,10 @@ class Composition : public DocumentNode
 {
     Q_OBJECT
 
+    GLAXNIMATE_PROPERTY_LIST(Layer, layers)
+
 public:
     using DocumentNode::DocumentNode;
-
-    ObjectListProperty<Layer> layers{this, "layers"};
 
     ChildLayerView top_level() const
     {

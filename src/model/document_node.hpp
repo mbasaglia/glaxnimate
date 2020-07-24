@@ -17,6 +17,10 @@ class DocumentNode : public Object
 {
     Q_OBJECT
 
+    GLAXNIMATE_PROPERTY(QString, name, "")
+    GLAXNIMATE_PROPERTY(QColor, group_color, QColor{0, 0, 0, 0})
+    GLAXNIMATE_PROPERTY(QUuid, uuid, {}, false)
+
     class ChildRange;
 
     using get_func_t = DocumentNode* (DocumentNode::*) (int) const;
@@ -67,16 +71,11 @@ class DocumentNode : public Object
 
 
 public:
-    Property<QString> name{this, "name", ""};
-    Property<QColor> group_color{this, "color", QColor{0, 0, 0, 0}};
-    Property<QUuid> uuid{this, "uuid", {}, false};
 
     explicit DocumentNode(Document* document);
 
-    bool docnode_visible() const { return visible_; }
-    bool docnode_locked() const { return locked_; }
-
     virtual QIcon docnode_icon() const = 0;
+    virtual graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() = 0;
 
     virtual DocumentNode* docnode_parent() const = 0;
     virtual int docnode_child_count() const = 0;
@@ -86,7 +85,6 @@ public:
     virtual int docnode_group_child_count() const { return docnode_child_count(); }
     virtual DocumentNode* docnode_group_child(int index) const { return docnode_child(index); }
 
-    virtual graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() = 0;
 
     virtual std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const { return {}; }
     virtual bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const
@@ -96,6 +94,9 @@ public:
                 return true;
         return false;
     }
+
+    bool docnode_visible() const { return visible_; }
+    bool docnode_locked() const { return locked_; }
 
     QString object_name() const override;
 

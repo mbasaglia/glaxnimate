@@ -8,20 +8,13 @@ class Animation : public ObjectBase<Animation, Composition>
 {
     Q_OBJECT
 
-public:
-    Property<float> frame_rate{this, "frame_rate", 60};
-    Property<float> in_point{this, "in_point", 0};
-    Property<float> out_point{this, "out_point", 180};
-    Property<int> width{this, "width", 512};
-    Property<int> height{this, "height", 512};
-    // ddd
-    // assets
-    // comps
-    // fonts
-    // chars
-    // markers
-    // motion_blur
+    GLAXNIMATE_PROPERTY(float, fps, 60)
+    GLAXNIMATE_PROPERTY(float, in_point, 0)
+    GLAXNIMATE_PROPERTY(float, out_point, 180)
+    GLAXNIMATE_PROPERTY(int, width, 512)
+    GLAXNIMATE_PROPERTY(int, height, 512)
 
+public:
     using Ctor::Ctor;
 
     QIcon docnode_icon() const override

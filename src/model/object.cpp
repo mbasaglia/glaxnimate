@@ -111,10 +111,21 @@ model::Document * model::Object::document() const
     return d->document;
 }
 
-void model::Object::undoable_set ( const QString& property, const QVariant& value )
+bool model::Object::set_undoable ( const QString& property, const QVariant& value )
 {
 
     auto it = d->props.find(property);
     if ( it != d->props.end() )
-        d->document->undo_stack().push(new command::SetPropertyValue(it->second, it->second->value(), value));
+        return it->second->set_undoable(value);
+    return false;
+}
+
+bool model::BaseProperty::set_undoable ( const QVariant& val )
+{
+    QVariant before = value();
+    if ( !set_value(val) )
+        return false;
+
+    obj->document()->undo_stack().push(new command::SetPropertyValue(this, before, val));
+    return true;
 }

@@ -16,7 +16,7 @@ class Object : public QObject
     Q_OBJECT
 
 public:
-    Object(Document* document);
+    explicit Object(Document* document);
     ~Object();
 
     std::unique_ptr<Object> clone() const
@@ -34,7 +34,7 @@ public:
 
     QVariant get(const QString& property) const;
     bool set(const QString& property, const QVariant& value, bool allow_unknown = false);
-    void undoable_set(const QString& property, const QVariant& value);
+    bool set_undoable(const QString& property, const QVariant& value);
     bool has(const QString& property) const;
 
     const std::vector<BaseProperty*>& properties() const;

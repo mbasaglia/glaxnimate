@@ -76,7 +76,7 @@ void GlaxnimateApp::load_settings_metadata() const
         //      slug            Label           Tooltip                  default min max
         Setting("width",        tr("Width"),    "",                         512, 0, 1000000),
         Setting("height",       tr("Height"),   "",                         512, 0, 1000000),
-        Setting("frame_rate",   tr("FPS"),      tr("Frames per second"),     60, 0, 1000),
+        Setting("fps",          tr("FPS"),      tr("Frames per second"),     60, 0, 1000),
         Setting("duration",     tr("Duration"), tr("Duration in seconds"),    3, 0, 90000),
     }});
 }

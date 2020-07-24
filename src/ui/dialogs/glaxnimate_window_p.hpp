@@ -130,9 +130,9 @@ public:
         auto layer = current_document->animation().make_layer<model::ShapeLayer>();
         current_document->animation().width.set(app::settings::get<int>("defaults", "width"));
         current_document->animation().height.set(app::settings::get<int>("defaults", "height"));
-        current_document->animation().frame_rate.set(app::settings::get<int>("defaults", "frame_rate"));
+        current_document->animation().fps.set(app::settings::get<int>("defaults", "fps"));
         float duration = app::settings::get<float>("defaults", "duration");
-        int out_point = current_document->animation().frame_rate.get() * duration;
+        int out_point = current_document->animation().fps.get() * duration;
         current_document->animation().out_point.set(out_point);
         layer->out_point.set(out_point);
         layer->name.set(layer->type_name_human());
@@ -184,8 +184,6 @@ public:
         document_node_model.clear_document();
         property_model.clear_document();
         scene.clear_document();
-
-        current_document.reset();
 
         return true;
     }

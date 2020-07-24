@@ -70,14 +70,12 @@ class Layer : public DocumentNode
 {
     Q_OBJECT
 
+    GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent)
+    GLAXNIMATE_PROPERTY(float, in_point, 0)
+    GLAXNIMATE_PROPERTY(float, out_point, 0)
+    GLAXNIMATE_PROPERTY(float, start_time, 0)
 public:
     explicit Layer(Document* doc, Composition* composition);
-
-
-    ReferenceProperty<Layer> parent{this, "parent"};
-    Property<float> in_point{this, "in_point", 0};
-    Property<float> out_point{this, "out_point", 0};
-    Property<float> start_time{this, "start_time", 0};
 
     ChildLayerView children() const
     {

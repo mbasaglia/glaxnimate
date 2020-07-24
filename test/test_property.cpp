@@ -1,7 +1,9 @@
 #include <QtTest/QtTest>
 #include <QPoint>
+#include <QMetaProperty>
 
 #include "model/property.hpp"
+#include "model/document.hpp"
 
 using namespace model;
 
@@ -51,6 +53,31 @@ struct PropertyChangedInspector
     bool called = false;
 };
 
+class MetaTestSubject : public DocumentNode
+{
+    Q_OBJECT
+
+    GLAXNIMATE_PROPERTY(int, prop_scalar, 123)
+    GLAXNIMATE_PROPERTY_REFERENCE(MetaTestSubject, prop_ref)
+    GLAXNIMATE_PROPERTY_LIST(MetaTestSubject, prop_list)
+
+public:
+    QIcon docnode_icon() const override { return {}; }
+    graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override { return {}; }
+    DocumentNode* docnode_parent() const override { return {}; }
+    int docnode_child_count() const override { return {}; }
+    DocumentNode* docnode_child(int) const override { return {}; }
+
+    std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const override
+    {
+        return {
+            const_cast<MetaTestSubject*>(this)
+        };
+    }
+
+    using DocumentNode::DocumentNode;
+};
+
 class TestProperty: public QObject
 {
     Q_OBJECT
@@ -60,7 +87,7 @@ private slots:
     void test_property_default()
     {
         PropertyChangedInspector pci;
-        Object obj;
+        Object obj(nullptr);
         pci.connect(obj);
 
         Property<int> prop(&obj, "foo", 456);
@@ -71,7 +98,7 @@ private slots:
     void test_property_get_set()
     {
         PropertyChangedInspector pci;
-        Object obj;
+        Object obj(nullptr);
         pci.connect(obj);
 
         Property<int> prop(&obj, "foo");
@@ -83,7 +110,7 @@ private slots:
     void test_property_variant()
     {
         PropertyChangedInspector pci;
-        Object obj;
+        Object obj(nullptr);
         pci.connect(obj);
 
         Property<int> prop(&obj, "foo", 123);
@@ -100,7 +127,7 @@ private slots:
     void test_unknown_property_variant()
     {
         PropertyChangedInspector pci;
-        Object obj;
+        Object obj(nullptr);
         pci.connect(obj);
 
         UnknownProperty prop(&obj, "foo", 123);
@@ -118,7 +145,55 @@ private slots:
         QCOMPARE(model::PropertyTraits::get_type<QString>(), model::PropertyTraits::String);
         QCOMPARE(model::PropertyTraits::get_type<model::PropertyTraits::Type>(), model::PropertyTraits::Enum);
     }
+
+    void test_metaobject()
+    {
+        Document doc("foo");
+        MetaTestSubject test_subject(&doc);
+        MetaTestSubject other(&doc);
+
+        QMetaObject mop = DocumentNode::staticMetaObject;
+        QMetaObject mo = MetaTestSubject::staticMetaObject;
+
+        QCOMPARE(mo.propertyCount(), mop.propertyCount() + 3);
+
+        QMetaProperty prop_0 = mo.property(mop.propertyCount() + 0);
+        QCOMPARE(prop_0.name(), "prop_scalar");
+        QVERIFY(prop_0.isWritable());
+        QVERIFY(prop_0.isReadable());
+        QVERIFY(prop_0.isScriptable());
+        QCOMPARE(prop_0.read(&test_subject).toInt(), 123);
+        QVERIFY(prop_0.write(&test_subject, QVariant(621)));
+        QCOMPARE(prop_0.read(&test_subject).toInt(), 621);
+        QCOMPARE(test_subject.prop_scalar.get(), 621);
+        QVERIFY(!prop_0.write(&test_subject, QVariant("xyz")));
+        QCOMPARE(test_subject.prop_scalar.get(), 621);
+
+        QMetaProperty prop_1 = mo.property(mop.propertyCount() + 1);
+        QCOMPARE(prop_1.name(), "prop_ref");
+        QVERIFY(prop_1.isWritable());
+        QVERIFY(prop_1.isReadable());
+        QVERIFY(prop_1.isScriptable());
+        QCOMPARE((quintptr)prop_1.read(&test_subject).value<MetaTestSubject*>(), 0);
+        QVERIFY(prop_1.write(&test_subject, QVariant::fromValue(&test_subject)));
+        QCOMPARE((quintptr)prop_1.read(&test_subject).value<MetaTestSubject*>(), (quintptr)&test_subject);
+        QCOMPARE((quintptr)test_subject.prop_ref.get(), (quintptr)&test_subject);
+        // invalid references shouldn't be set
+        prop_1.write(&test_subject, QVariant::fromValue(&other));
+        QCOMPARE((quintptr)test_subject.prop_ref.get(), (quintptr)&test_subject);
+
+        QMetaProperty prop_2 = mo.property(mop.propertyCount() + 2);
+        QCOMPARE(prop_2.name(), "prop_list");
+        QVERIFY(!prop_2.isWritable());
+        QVERIFY(prop_2.isReadable());
+        QVERIFY(prop_2.isScriptable());
+        QCOMPARE(prop_2.read(&test_subject).toList().size(), 0);
+        test_subject.prop_list.insert(0, std::make_unique<MetaTestSubject>(&doc));
+        QCOMPARE(test_subject.prop_list.size(), 1);
+        QCOMPARE(prop_2.read(&test_subject).toList().size(), 1);
+        QCOMPARE(prop_2.read(&test_subject).toList()[0].value<MetaTestSubject*>(), &test_subject.prop_list[0]);
+    }
 };
 
-QTEST_GUILESS_MAIN(TestProperty)
+QTEST_MAIN(TestProperty)
 #include "test_property.moc"
