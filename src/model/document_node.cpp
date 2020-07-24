@@ -47,7 +47,7 @@ void model::DocumentNode::on_property_changed(const QString& name, const QVarian
 QString model::DocumentNode::object_name() const
 {
     if ( name.get().isEmpty() )
-        return type_name();
+        return type_name_human();
     return name.get();
 }
 

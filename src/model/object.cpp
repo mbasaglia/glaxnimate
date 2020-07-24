@@ -126,6 +126,6 @@ bool model::BaseProperty::set_undoable ( const QVariant& val )
     if ( !set_value(val) )
         return false;
 
-    obj->document()->undo_stack().push(new command::SetPropertyValue(this, before, val));
+    object_->document()->undo_stack().push(new command::SetPropertyValue(this, before, val));
     return true;
 }

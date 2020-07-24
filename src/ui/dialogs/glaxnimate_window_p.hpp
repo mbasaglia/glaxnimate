@@ -23,6 +23,7 @@
 #include "model/graphics/document_scene.hpp"
 
 #include "ui/dialogs/import_export_dialog.hpp"
+#include "ui/dialogs/io_status_dialog.hpp"
 #include "ui/style/dock_widget_style.hpp"
 #include "ui/style/property_delegate.hpp"
 #include "ui/widgets/glaxnimate_graphics_view.hpp"
@@ -30,8 +31,6 @@
 #include "ui/widgets/scalable_button.hpp"
 
 #include "io/glaxnimate/glaxnimate_format.hpp"
-
-#include <QDebug>
 
 namespace {
 
@@ -82,6 +81,8 @@ public:
     DockWidgetStyle dock_style;
     ViewTransformWidget* view_trans_widget;
     bool started = false;
+    IoStatusDialog* dialog_import_status;
+    IoStatusDialog* dialog_export_status;
 
     void setup_document(const QString& filename)
     {
@@ -150,7 +151,8 @@ public:
         QFile file(options.filename);
         if ( !file.open(QFile::ReadOnly) )
             return false;
-        /// @todo Show io errors and such
+
+        dialog_import_status->reset(options.format, options.filename);
         return options.format->open(file, options.filename, current_document.get(), options.settings);
     }
 
@@ -327,6 +329,10 @@ public:
 
         // Graphics scene
         ui.graphics_view->setScene(&scene);
+
+        // io dialogs
+        dialog_import_status = new IoStatusDialog(QIcon::fromTheme("document-open"), tr("Open File"), false, parent);
+        dialog_export_status = new IoStatusDialog(QIcon::fromTheme("document-save"), tr("Save File"), false, parent);
     }
 
     void retranslateUi(QMainWindow* parent)

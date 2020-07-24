@@ -8,7 +8,7 @@
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 
 
-bool io::glaxnimate::GlaxnimateFormat::save(QIODevice& file, const QString&,
+bool io::glaxnimate::GlaxnimateFormat::on_save(QIODevice& file, const QString&,
                 model::Document* document, const QVariantMap&)
 {
     return file.write(to_json(document).toJson(QJsonDocument::Indented));

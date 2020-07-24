@@ -29,6 +29,8 @@ public:
 
     void set_io_options(const io::Options& opt);
 
+    DocumentNode* node_by_uuid(const QUuid& n) const;
+
 signals:
     void filename_changed(const QString& n);
 

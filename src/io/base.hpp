@@ -32,27 +32,23 @@ public:
     /**
      * @pre @p file is open appropriately && @p setting_values contains all the settings correctly && can_open()
      */
-    virtual bool open(QIODevice& file, const QString& filename,
+    bool open(QIODevice& file, const QString& filename,
                       model::Document* document, const QVariantMap& setting_values)
     {
-        Q_UNUSED(file);
-        Q_UNUSED(filename);
-        Q_UNUSED(document);
-        Q_UNUSED(setting_values);
-        return false;
+        bool ok = on_open(file, filename, document, setting_values);
+        emit completed(ok);
+        return ok;
     }
 
     /**
      * @pre @p file is open appropriately && @p setting_values contains all the settings correctly && can_open()
      */
-    virtual bool save(QIODevice& file, const QString& filename,
+    bool save(QIODevice& file, const QString& filename,
                       model::Document* document, const QVariantMap& setting_values)
     {
-        Q_UNUSED(file);
-        Q_UNUSED(filename);
-        Q_UNUSED(document);
-        Q_UNUSED(setting_values);
-        return false;
+        bool ok = on_save(file, filename, document, setting_values);
+        emit completed(ok);
+        return ok;
     }
 
     virtual QString name() const = 0;
@@ -124,10 +120,32 @@ public:
         return factory;
     }
 
+protected:
+    virtual bool on_open(QIODevice& file, const QString& filename,
+                      model::Document* document, const QVariantMap& setting_values)
+    {
+        Q_UNUSED(file);
+        Q_UNUSED(filename);
+        Q_UNUSED(document);
+        Q_UNUSED(setting_values);
+        return false;
+    }
+
+    virtual bool on_save(QIODevice& file, const QString& filename,
+                      model::Document* document, const QVariantMap& setting_values)
+    {
+        Q_UNUSED(file);
+        Q_UNUSED(filename);
+        Q_UNUSED(document);
+        Q_UNUSED(setting_values);
+        return false;
+    }
+
 signals:
     void error(const QString& message);
     void progress_max_changed(int max);
     void progress(int value);
+    void completed(bool success);
 };
 
 

@@ -3,29 +3,239 @@
 #include <QUuid>
 #include <QJsonArray>
 
+
 class io::glaxnimate::GlaxnimateFormat::ImportState
 {
 public:
+    GlaxnimateFormat* fmt;
     model::Document* document = nullptr;
     model::Composition* compostion = nullptr;
     QMap<QString, model::DocumentNode*> references;
-    QMap<model::BaseProperty*, QString> unresolved_references;
+    QMap<model::BaseProperty*, QUuid> unresolved_references;
+    QMap<model::Object*, QJsonObject> deferred_loads;
     std::vector<model::Object*> unwanted;
 
-    ~ImportState()
+    ImportState(GlaxnimateFormat* fmt) : fmt(fmt) {}
+
+    ~ImportState() {}
+
+    void resolve()
     {
+        for ( auto it = unresolved_references.begin(); it != unresolved_references.end(); ++it )
+        {
+            model::BaseProperty* prop = it.key();
+            model::DocumentNode* node = document->node_by_uuid(*it);
+            if ( !node )
+            {
+                emit fmt->error(tr("Property %1 of %2 refers to unexisting object %3")
+                    .arg(prop->name())
+                    .arg(prop->object()->object_name())
+                    .arg(it->toString())
+                );
+            }
+            else
+            {
+                if ( !prop->set_value(QVariant::fromValue(node)) )
+                    emit fmt->error(tr("Could not load %1 for %2: uuid refers to an unacceptable object")
+                        .arg(prop->name())
+                        .arg(prop->object()->object_name())
+                    );
+            }
+        }
+
         for ( model::Object* obj : unwanted )
+        {
             if ( obj )
+            {
+                emit fmt->error(tr("Object %1 is invalid").arg(obj->object_name()));
                 delete obj;
+            }
+        }
     }
 
-    bool resolve()
+    void load_object ( model::Object* target, const QJsonObject& object )
     {
-        return unresolved_references.empty();
+        QString type = object["__type__"].toString();
+        if ( type != target->type_name() )
+            emit fmt->error(tr("Wrong object type: expected '%1' but got '%2'").arg(target->type_name()).arg(type));
+
+        for ( model::BaseProperty* prop : target->properties() )
+        {
+            if ( !load_prop(prop, object[prop->name()]) )
+                emit fmt->error(tr("Could not load %1 for %2")
+                    .arg(prop->name())
+                    .arg(prop->object()->object_name())
+                );
+        }
+
+        for ( auto it = object.begin(); it != object.end(); ++it )
+        {
+            if ( !target->has(it.key()) && it.key() != "__type__" )
+            {
+                target->set(it.key(), it->toVariant(), true);
+            }
+        }
     }
+
+    bool load_prop ( model::BaseProperty* target, const QJsonValue& val )
+    {
+        if ( target->traits().list )
+        {
+            if ( !val.isArray() )
+                return false;
+
+            QVariantList list;
+            for ( const QJsonValue& item : val.toArray() )
+                list.push_back(load_prop_value(target, item, false));
+
+            if ( target->traits().type == model::PropertyTraits::Object )
+            {
+                int index = 0;
+                for ( const QVariant& item : list )
+                {
+                    auto ptr = item.value<model::Object*>();
+                    model::ObjectListPropertyBase* prop = static_cast<model::ObjectListPropertyBase*>(target);
+                    if ( !ptr )
+                    {
+                        emit fmt->error(
+                            tr("Item %1 for %2 in %3 isn't an object")
+                            .arg(index)
+                            .arg(target->name())
+                            .arg(target->object()->object_name())
+                        );
+                    }
+                    else
+                    {
+                        auto inserted = prop->insert_clone(ptr);
+                        if ( !inserted )
+                        {
+                            emit fmt->error(
+                                tr("Item %1 for %2 in %3 is not acceptable")
+                                .arg(index)
+                                .arg(target->name())
+                                .arg(target->object()->object_name())
+                            );
+                        }
+                        else
+                        {
+                            load_object(inserted, deferred_loads[ptr]);
+                        }
+                        deferred_loads.remove(ptr);
+                    }
+                    index++;
+                }
+
+                return true;
+            }
+            else
+            {
+                return target->set_value(list);
+            }
+        }
+
+
+        if ( target->traits().type == model::PropertyTraits::ObjectReference )
+        {
+            QUuid uuid = QUuid::fromString(val.toString());
+            if ( !uuid.isNull() )
+                unresolved_references[target] = uuid;
+            return true;
+        }
+        else if ( target->traits().type == model::PropertyTraits::Uuid )
+        {
+            QUuid uuid = QUuid::fromString(val.toString());
+            if ( uuid.isNull() )
+                return false;
+            return target->set_value(uuid);
+        }
+
+        QVariant loaded_val = load_prop_value(target, val, true);
+        if ( !target->set_value(loaded_val) )
+        {
+            if ( target->traits().type == model::PropertyTraits::Object )
+                unwanted.push_back(loaded_val.value<model::Object*>());
+            return false;
+        }
+        return true;
+    }
+
+
+    QVariant load_prop_value ( model::BaseProperty* target, const QJsonValue& val, bool load_objects )
+    {
+        switch ( target->traits().type )
+        {
+            case model::PropertyTraits::Object:
+            {
+                if ( !val.isObject() )
+                    return {};
+                QJsonObject jobj = val.toObject();
+                model::Object* object = create_object(jobj["__type__"].toString());
+                if ( !object )
+                    return {};
+                if ( load_objects )
+                    load_object(object, jobj);
+                else
+                    deferred_loads.insert(object, jobj);
+                return  QVariant::fromValue(object);
+            }
+            case model::PropertyTraits::ObjectReference:
+            case model::PropertyTraits::Uuid:
+                // handled above
+                return {};
+            case model::PropertyTraits::Color:
+            {
+                QString name = val.toString();
+                // We want #rrggbbaa, qt does #aarrggbb
+                if ( name.startsWith("#") && name.size() == 9 )
+                {
+                    int alpha = name.right(2).toInt(nullptr, 16);
+                    QColor col(name);
+                    col.setAlpha(alpha);
+                    return col;
+                }
+                return QColor(name);
+
+            }
+            case model::PropertyTraits::Point:
+            {
+                QJsonObject obj = val.toObject();
+                if ( !obj.empty() )
+                    return {};
+                return QPointF(obj["x"].toDouble(), obj["y"].toDouble());
+            }
+            case model::PropertyTraits::Size:
+            {
+                QJsonObject obj = val.toObject();
+                if ( !obj.empty() )
+                    return QVariant{};
+                return QSizeF(obj["width"].toDouble(), obj["height"].toDouble());
+            }
+            default:
+                return val.toVariant();
+        }
+    }
+
+    model::Object* create_object(const QString& type)
+    {
+        if ( type == "Animation" )
+        {
+            emit fmt->error(tr("Objects of type 'Animation' can only be at the top level of the document"));
+            return nullptr;
+        }
+
+        if ( type == "EmptyLayer" )
+            return new model::EmptyLayer(document, compostion);
+
+        if ( type == "ShapeLayer" )
+            return new model::ShapeLayer(document, compostion);
+
+        emit fmt->error(tr("Unknow object of type '%1'").arg(type));
+        return new model::Object(document);
+    }
+
 };
 
-bool io::glaxnimate::GlaxnimateFormat::open ( QIODevice& file, const QString&, model::Document* document, const QVariantMap& )
+bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&, model::Document* document, const QVariantMap& )
 {
     QJsonDocument jdoc;
 
@@ -55,167 +265,11 @@ bool io::glaxnimate::GlaxnimateFormat::open ( QIODevice& file, const QString&, m
         return false;
     }
 
-    ImportState state;
+    ImportState state(this);
     state.document = document;
     state.compostion = &document->animation();
-    load_object(&document->animation(), top_level["animation"].toObject(), state);
-
-    if ( !state.resolve() )
-        emit error(tr("Could not resolve some references"));
+    state.load_object(&document->animation(), top_level["animation"].toObject());
+    state.resolve();
 
     return true;
-}
-
-void io::glaxnimate::GlaxnimateFormat::load_object ( model::Object* target, const QJsonObject& object, ImportState& state )
-{
-    QString type = object["__type__"].toString();
-    if ( type != target->type_name() )
-        emit error(tr("Wrong object type: expected '%1' but got '%2'").arg(target->type_name()).arg(type));
-
-    for ( model::BaseProperty* prop : target->properties() )
-    {
-        if ( !load_prop(prop, object[prop->name()], state) )
-            emit error(tr("Could not load %1").arg(prop->name()));
-    }
-
-    for ( auto it = object.begin(); it != object.end(); ++it )
-    {
-        if ( !target->has(it.key()) && it.key() != "__type__" )
-        {
-            target->set(it.key(), it->toVariant(), true);
-        }
-    }
-}
-
-bool io::glaxnimate::GlaxnimateFormat::load_prop ( model::BaseProperty* target, const QJsonValue& val, ImportState& state )
-{
-    if ( target->traits().list )
-    {
-        if ( !val.isArray() )
-            return false;
-
-        QVariantList list;
-        for ( const QJsonValue& item : val.toArray() )
-            list.push_back(load_prop_value(target, item, state));
-
-        bool ok = target->set_value(list);
-        if ( target->traits().type == model::PropertyTraits::Object )
-        {
-            if ( !ok )
-            {
-                for ( const QVariant& item : list )
-                    state.unwanted.push_back(item.value<model::Object*>());
-            }
-            else
-            {
-                QVariantList actual_value = target->value().toList();
-                QSet<model::Object*> made_it;
-                for ( const QVariant& item : actual_value )
-                    if ( auto ptr = item.value<model::Object*>() )
-                        made_it.insert(ptr);
-
-                for ( const QVariant& item : list )
-                {
-                    auto ptr = item.value<model::Object*>();
-                    if ( !made_it.contains(ptr) )
-                        state.unwanted.push_back(ptr);
-                }
-            }
-        }
-        return ok;
-    }
-
-
-    if ( target->traits().type == model::PropertyTraits::ObjectReference )
-    {
-        state.unresolved_references[target] = val.toString();
-        return true;
-    }
-    else if ( target->traits().type == model::PropertyTraits::Uuid )
-    {
-        QUuid uuid = QUuid::fromString(val.toString());
-        if ( uuid.isNull() )
-            return false;
-        return target->set_value(uuid);
-    }
-
-    QVariant loaded_val = load_prop_value(target, val, state);
-    if ( !target->set_value(loaded_val) )
-    {
-        if ( target->traits().type == model::PropertyTraits::Object )
-            state.unwanted.push_back(loaded_val.value<model::Object*>());
-        return false;
-    }
-    return true;
-}
-
-
-QVariant io::glaxnimate::GlaxnimateFormat::load_prop_value ( model::BaseProperty* target, const QJsonValue& val, ImportState& state )
-{
-    switch ( target->traits().type )
-    {
-        case model::PropertyTraits::Object:
-        {
-            if ( !val.isObject() )
-                return {};
-            QJsonObject jobj = val.toObject();
-            model::Object* object = create_object(jobj["__type__"].toString(), state);
-            if ( !object )
-                return {};
-            load_object(object, jobj, state);
-            return  QVariant::fromValue(object);
-        }
-        case model::PropertyTraits::ObjectReference:
-        case model::PropertyTraits::Uuid:
-            // handled above
-            return {};
-        case model::PropertyTraits::Color:
-        {
-            QString name = val.toString();
-            // We want #rrggbbaa, qt does #aarrggbb
-            if ( name.startsWith("#") && name.size() == 9 )
-            {
-                int alpha = name.right(2).toInt(nullptr, 16);
-                QColor col(name);
-                col.setAlpha(alpha);
-                return col;
-            }
-            return QColor(name);
-
-        }
-        case model::PropertyTraits::Point:
-        {
-            QJsonObject obj = val.toObject();
-            if ( !obj.empty() )
-                return {};
-            return QPointF(obj["x"].toDouble(), obj["y"].toDouble());
-        }
-        case model::PropertyTraits::Size:
-        {
-            QJsonObject obj = val.toObject();
-            if ( !obj.empty() )
-                return QVariant{};
-            return QSizeF(obj["width"].toDouble(), obj["height"].toDouble());
-        }
-        default:
-            return val.toVariant();
-    }
-}
-
-model::Object* io::glaxnimate::GlaxnimateFormat::create_object(const QString& type, ImportState& state)
-{
-    if ( type == "Animation" )
-    {
-        emit error(tr("Objects of type 'Animation' can only be at the top level of the document"));
-        return nullptr;
-    }
-
-    if ( type == "EmptyLayer" )
-        return new model::EmptyLayer(state.document, state.compostion);
-
-    if ( type == "ShapeLayer" )
-        return new model::ShapeLayer(state.document, state.compostion);
-
-    emit error(tr("Unknow object of type '%1'").arg(type));
-    return new model::Object(state.document);
 }

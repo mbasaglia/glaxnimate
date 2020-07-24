@@ -138,10 +138,10 @@ private:                                                    \
 class BaseProperty
 {
 public:
-    BaseProperty(Object* obj, QString name, PropertyTraits traits)
-        : obj(obj), name_(std::move(name)), traits_(traits)
+    BaseProperty(Object* object, QString name, PropertyTraits traits)
+        : object_(object), name_(std::move(name)), traits_(traits)
     {
-        obj->add_property(this);
+        object_->add_property(this);
     }
 
     virtual ~BaseProperty() = default;
@@ -161,14 +161,19 @@ public:
         return traits_;
     }
 
+    Object* object() const
+    {
+        return object_;
+    }
+
 protected:
     void value_changed()
     {
-        obj->property_value_changed(name_, value());
+        object_->property_value_changed(name_, value());
     }
 
 private:
-    Object* obj;
+    Object* object_;
     QString name_;
     PropertyTraits traits_;
 };
@@ -243,8 +248,40 @@ private:
 };
 
 
+class ObjectListPropertyBase : public BaseProperty
+{
+public:
+    ObjectListPropertyBase(Object* obj, const QString& name)
+        : BaseProperty(obj, name, {true, PropertyTraits::Object})
+    {}
+
+    /**
+     * \brief Inserts a clone of the passed object
+     * \return The internal object or \b nullptr in case of failure
+     */
+    virtual Object* insert_clone(Object* object, int index = -1) = 0;
+
+
+    bool set_value(const QVariant& val) override
+    {
+        if ( !val.canConvert<QVariantList>() )
+            return false;
+
+        for ( const auto& v : val.toList() )
+        {
+            if ( !v.canConvert<Object*>() )
+                continue;
+
+            insert_clone(v.value<Object*>());
+        }
+
+        return true;
+    }
+};
+
+
 template<class Type>
-class ObjectListProperty : public BaseProperty
+class ObjectListProperty : public ObjectListPropertyBase
 {
 public:
     using held_type = Type;
@@ -254,9 +291,7 @@ public:
     using iterator = typename std::vector<pointer>::const_iterator;
 //     using const_iterator = typename std::vector<pointer>::const_iterator;
 
-    ObjectListProperty(Object* obj, QString name)
-        : BaseProperty(obj, std::move(name), {true, PropertyTraits::Object})
-    {}
+    using ObjectListPropertyBase::ObjectListPropertyBase;
 
     reference operator[](int i) const { return *objects[i]; }
     int size() const { return objects.size(); }
@@ -291,20 +326,6 @@ public:
         return v;
     }
 
-    void insert(int index, pointer p)
-    {
-        if ( index + 1 >= int(objects.size()) )
-        {
-            objects.push_back(std::move(p));
-            return;
-        }
-
-        if ( index <= 0 )
-            index = 0;
-
-        objects.insert(objects.begin() + index, std::move(p));
-    }
-
     void swap(int index_a, int index_b)
     {
         if ( !valid_index(index_a) || !valid_index(index_b) || index_a == index_b )
@@ -321,29 +342,21 @@ public:
         return list;
     }
 
-    bool set_value(const QVariant& val) override
+    Object* insert_clone(Object* object, int index = -1) override
     {
-        if ( !val.canConvert<QVariantList>() )
-            return false;
+        if ( !object )
+            return nullptr;
 
-        for ( const auto& v : val.toList() )
+        auto basep = object->clone();
+
+        Type* casted = qobject_cast<Type*>(basep.get());
+        if ( casted )
         {
-            if ( !v.canConvert<Object*>() )
-                continue;
-
-            if ( Object* obj = v.value<Object*>() )
-            {
-                auto basep = obj->clone();
-                Type* casted = qobject_cast<Type*>(basep.get());
-                if ( casted )
-                {
-                    basep.release();
-                    objects.push_back(pointer(casted));
-                }
-            }
+            basep.release();
+            insert(pointer(casted), index);
+            return casted;
         }
-
-        return true;
+        return nullptr;
     }
 
 private:

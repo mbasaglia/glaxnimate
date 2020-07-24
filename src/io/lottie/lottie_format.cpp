@@ -124,7 +124,7 @@ public:
     };
 };
 
-bool io::lottie::LottieFormat::save(QIODevice& file, const QString&,
+bool io::lottie::LottieFormat::on_save(QIODevice& file, const QString&,
                                          model::Document* document, const QVariantMap& setting_values)
 {
     file.write(to_json(document).toJson(setting_values["pretty"].toBool() ? QJsonDocument::Indented : QJsonDocument::Compact));

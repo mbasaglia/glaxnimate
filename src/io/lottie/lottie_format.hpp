@@ -11,7 +11,7 @@ class LottieFormat : public ImportExport
     Q_OBJECT
 
 public:
-    bool save(QIODevice& file, const QString& filename,
+    bool on_save(QIODevice& file, const QString& filename,
                  model::Document* document, const QVariantMap& setting_values) override;
     QString name() const override { return tr("Lottie Animation"); }
     QStringList extensions() const override { return {"json"}; }

@@ -14,8 +14,6 @@ class GlaxnimateFormat : public ImportExport
 public:
     static constexpr const int format_version = 1;
 
-    bool save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
-    bool open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
     QString name() const override { return tr("Glaxnimate Animation"); }
     QStringList extensions() const override { return {"glaxnim"}; }
     bool can_save() const override { return true; }
@@ -30,15 +28,13 @@ public:
 
     static GlaxnimateFormat* registered() { return autoreg.registered; }
 
+protected:
+    bool on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
+    bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
+
 private:
     static Autoreg<GlaxnimateFormat> autoreg;
-
     class ImportState;
-
-    void load_object(model::Object* target, const QJsonObject& object, ImportState& state);
-    bool load_prop(model::BaseProperty* target, const QJsonValue& val, ImportState& state);
-    QVariant load_prop_value(model::BaseProperty* target, const QJsonValue& val, ImportState& state);
-    model::Object* create_object(const QString& type, ImportState& state);
 };
 
 

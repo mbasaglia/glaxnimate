@@ -39,7 +39,7 @@ public:
 
     const std::vector<BaseProperty*>& properties() const;
 
-    virtual QString object_name() const { return ""; }
+    virtual QString object_name() const { return type_name_human(); }
     virtual QString type_name_human() const { return tr("Uknown Object"); }
 
     QString type_name() const;

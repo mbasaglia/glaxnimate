@@ -34,6 +34,8 @@ ui/dialogs/settings_dialog.ui
 ui/widgets/glaxnimate_graphics_view.cpp
 ui/widgets/view_transform_widget.cpp
 ui/widgets/view_transform_widget.ui
+ui/dialogs/io_status_dialog.cpp
+ui/dialogs/io_status_dialog.ui
 )
 
 configure_file(

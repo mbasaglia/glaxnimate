@@ -62,3 +62,8 @@ void model::Document::set_io_options(const io::Options& opt)
     if ( em )
         emit filename_changed(d->io_options.filename);
 }
+
+model::DocumentNode * model::Document::node_by_uuid(const QUuid& n) const
+{
+    return d->animation.docnode_find_by_uuid(n);
+}
