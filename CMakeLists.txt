@@ -6,8 +6,9 @@ set(PROJECT_SLUG "glaxnimate")
 
 
 # CMake modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_SOURCE_DIR}/external/cmake-modules")
 include(misc)
+include(GetGitRevisionDescription)
 
 # C++
 set(CMAKE_CXX_STANDARD 17)
@@ -21,7 +22,13 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Other libs
+# Git
+git_describe(GIT_DESC --tags)
+if ( NOT ${GIT_DESC} MATCHES ".*NOTFOUND" )
+    set(PROJECT_VERSION ${GIT_DESC})
+endif()
+
+message(STATUS ${PROJECT_VERSION})
 
 # Debug flags
 if(CMAKE_BUILD_TYPE EQUAL "")

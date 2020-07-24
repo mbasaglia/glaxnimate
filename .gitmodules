@@ -7,3 +7,6 @@
 [submodule "external/Qt-Color-Widgets"]
 	path = external/Qt-Color-Widgets
 	url = https://gitlab.com/mattia.basaglia/Qt-Color-Widgets.git
+[submodule "external/cmake-modules"]
+	path = external/cmake-modules
+	url = https://github.com/rpavlik/cmake-modules.git
