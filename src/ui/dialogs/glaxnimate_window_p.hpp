@@ -71,6 +71,8 @@ public:
 
     bool updating_color = false;
 
+    QStringList recent_files;
+
     // "set and forget" kida variables
     int tool_rows = 3; ///< @todo setting
     QString undo_text;
@@ -139,9 +141,14 @@ public:
         layer->name.set(layer->type_name_human());
         model::Layer* ptr = layer.get();
         current_document->animation().add_layer(std::move(layer), 0);
-        ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
 
-        // Fit doc into the view
+        QDir path = app::settings::get<QString>("open_save", "path");
+
+        auto opts = current_document->io_options();
+        opts.path = path;
+        current_document->set_io_options(opts);
+
+        ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
         view_fit();
     }
 
@@ -153,7 +160,18 @@ public:
             return false;
 
         dialog_import_status->reset(options.format, options.filename);
-        return options.format->open(file, options.filename, current_document.get(), options.settings);
+        bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
+
+        app::settings::set<QString>("open_save", "path", options.path.absolutePath());
+
+        if ( ok )
+            most_recent_file(options.filename);
+
+        view_fit();
+        if ( !current_document->animation().layers.empty() )
+            ui.view_document_node->setCurrentIndex(document_node_model.node_index(&current_document->animation().layers[0]));
+
+        return ok;
     }
 
     void refresh_title()
@@ -203,24 +221,29 @@ public:
 
         if ( force_dialog )
         {
-            ImportExportDialog dialog(ui.centralwidget->parentWidget());
+            ImportExportDialog dialog(current_document->io_options(), ui.centralwidget->parentWidget());
 
-            if ( !dialog.export_dialog(current_document->io_options()) )
+            if ( !dialog.export_dialog() )
                 return false;
 
             opts = dialog.io_options();
         }
 
-        // TODO progess/error dialogs
         QFile file(opts.filename);
         file.open(QFile::WriteOnly);
+        dialog_export_status->reset(opts.format, opts.filename);
         if ( !opts.format->save(file, opts.filename, current_document.get(), opts.settings) )
             return false;
+
+        most_recent_file(opts.filename);
 
         current_document->undo_stack().setClean();
 
         if ( overwrite_doc )
+        {
+            app::settings::set<QString>("open_save", "path", opts.path.absolutePath());
             current_document->set_io_options(opts);
+        }
 
         return true;
     }
@@ -333,6 +356,11 @@ public:
         // io dialogs
         dialog_import_status = new IoStatusDialog(QIcon::fromTheme("document-open"), tr("Open File"), false, parent);
         dialog_export_status = new IoStatusDialog(QIcon::fromTheme("document-save"), tr("Save File"), false, parent);
+
+        // Recent files
+        recent_files = app::settings::get<QStringList>("open_save", "recent_files");
+        reload_recent_menu();
+        connect(ui.menu_open_recent, &QMenu::triggered, parent, &GlaxnimateWindow::document_open_recent);
     }
 
     void retranslateUi(QMainWindow* parent)
@@ -577,10 +605,84 @@ public:
     {
         io::Options options = current_document->io_options();
 
-        ImportExportDialog dialog(ui.centralwidget->parentWidget());
-        if ( dialog.import_dialog(options) )
+        ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
+        if ( dialog.import_dialog() )
             setup_document_open(dialog.io_options());
 
+    }
+
+    void save_hidden_settings()
+    {
+        app::settings::set("ui", "window_geometry", parent->saveGeometry());
+        app::settings::set("ui", "window_state", parent->saveState());
+        app::settings::set("open_save", "recent_files", recent_files);
+    }
+
+    void reload_recent_menu()
+    {
+        ui.menu_open_recent->clear();
+        for ( const auto& recent : recent_files )
+        {
+            QAction* act = new QAction(QIcon::fromTheme("video-x-generic"), QFileInfo(recent).baseName(), ui.menu_open_recent);
+            act->setData(recent);
+            ui.menu_open_recent->addAction(act);
+        }
+    }
+
+    void most_recent_file(const QString& s)
+    {
+        recent_files.removeAll(s);
+        recent_files.push_front(s);
+
+        int max = app::settings::get<int>("open_save", "max_recent_files");
+        if ( recent_files.size() > max )
+            recent_files.erase(recent_files.begin() + max, recent_files.end());
+
+        reload_recent_menu();
+    }
+
+    void document_open_from_filename(const QString& filename)
+    {
+        QFileInfo finfo(filename);
+        if ( finfo.isFile() )
+        {
+            io::Options opts;
+            opts.format = io::ImportExport::factory().from_filename(filename);
+            opts.path = finfo.dir();
+            opts.filename = filename;
+
+            if ( opts.format && opts.format->can_open() )
+            {
+                ImportExportDialog dialog(opts, ui.centralwidget->parentWidget());
+                if ( dialog.options_dialog(opts.format->open_settings()) )
+                    setup_document_open(dialog.io_options());
+
+                return;
+            }
+            else
+            {
+                show_warning(tr("Open File"), tr("No importer found for %1").arg(filename));
+            }
+        }
+        else
+        {
+            show_warning(tr("Open File"), tr("The file might have been moved or deleted\n%1").arg(filename));
+        }
+
+
+        recent_files.removeAll(filename);
+        reload_recent_menu();
+    }
+
+    void show_warning(const QString& title, const QString& message, QMessageBox::Icon icon = QMessageBox::Warning)
+    {
+        QMessageBox warning(parent);
+        warning.setWindowTitle(title);
+        warning.setText(message);
+        warning.setStandardButtons(QMessageBox::Ok);
+        warning.setDefaultButton(QMessageBox::Ok);
+        warning.setIcon(icon);
+        warning.exec();
     }
 };
 

@@ -21,7 +21,7 @@ public:
 
     bool can_handle_extension(const QString& extension) const
     {
-        return extension.contains(extension);
+        return extensions().contains(extension);
     }
 
     bool can_handle_filename(const QString& filename) const

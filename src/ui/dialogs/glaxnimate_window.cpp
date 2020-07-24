@@ -30,14 +30,7 @@ void GlaxnimateWindow::changeEvent(QEvent *e)
 
 void GlaxnimateWindow::document_new()
 {
-    QDir path = d->current_document->io_options().path;
-
-
     d->setup_document_new(tr("New Animation"));
-
-    auto opts = d->current_document->io_options();
-    opts.path = path;
-    d->current_document->set_io_options(opts);
 }
 
 void GlaxnimateWindow::document_save()
@@ -146,7 +139,6 @@ void GlaxnimateWindow::preferences()
     SettingsDialog(this).exec();
 }
 
-
 void GlaxnimateWindow::closeEvent ( QCloseEvent* event )
 {
     if ( !d->close_document() )
@@ -155,8 +147,12 @@ void GlaxnimateWindow::closeEvent ( QCloseEvent* event )
     }
     else
     {
-        app::settings::set("ui", "window_geometry", saveGeometry());
-        app::settings::set("ui", "window_state", saveState());
+        d->save_hidden_settings();
         QMainWindow::closeEvent(event);
     }
+}
+
+void GlaxnimateWindow::document_open_recent(QAction* action)
+{
+    d->document_open_from_filename(action->data().toString());
 }

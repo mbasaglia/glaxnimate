@@ -39,6 +39,7 @@ private slots:
     void refresh_title();
     void view_fit();
     void preferences();
+    void document_open_recent(QAction* action);
 
 protected:
     void changeEvent(QEvent *e) override;

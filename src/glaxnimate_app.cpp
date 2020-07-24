@@ -79,4 +79,9 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("fps",          tr("FPS"),      tr("Frames per second"),     60, 0, 1000),
         Setting("duration",     tr("Duration"), tr("Duration in seconds"),    3, 0, 90000),
     }});
+    Settings::instance().add_group(SettingGroup{"open_save", tr("Open / Save"), "document-save", {
+        Setting("max_recent_files", tr("Max Recent Files"), {},               5, 0, 16),
+        Setting("path",         {},             {},                        Setting::Internal,  QString{}),
+        Setting("recent_files", {},             {},                        Setting::Internal,  QStringList{}),
+    }});
 }

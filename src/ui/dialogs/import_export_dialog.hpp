@@ -13,9 +13,10 @@ class ImportExportDialog
 {
 
 public:
-    ImportExportDialog(QWidget* parent)
+    ImportExportDialog(const io::Options& options, QWidget* parent)
         : parent(parent)
     {
+        io_options_ = options;
 
     }
 
@@ -24,9 +25,8 @@ public:
         return io_options_;
     }
 
-    bool export_dialog(const io::Options& options)
+    bool export_dialog()
     {
-        io_options_ = options;
         QFileDialog dialog(parent);
         dialog.setWindowTitle(QObject::tr("Save file"));
         dialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -65,9 +65,8 @@ public:
         return options_dialog(io_options_.format->save_settings());
     }
 
-    bool import_dialog(const io::Options& options)
+    bool import_dialog()
     {
-        io_options_ = options;
         QFileDialog dialog(parent);
         dialog.setWindowTitle(QObject::tr("Open file"));
         dialog.setAcceptMode(QFileDialog::AcceptOpen);
@@ -78,8 +77,6 @@ public:
         return false;
     }
 
-
-private:
     bool options_dialog(const io::SettingList& settings)
     {
         if ( !io_options_.format )
@@ -107,7 +104,7 @@ private:
 
         return true;
     }
-
+private:
     bool show_file_dialog(QFileDialog& dialog, const std::vector<io::ImportExport*>& formats)
     {
         io_options_.format = nullptr;
