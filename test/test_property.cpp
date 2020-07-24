@@ -188,7 +188,7 @@ private slots:
         QVERIFY(prop_2.isReadable());
         QVERIFY(prop_2.isScriptable());
         QCOMPARE(prop_2.read(&test_subject).toList().size(), 0);
-        test_subject.prop_list.insert(0, std::make_unique<MetaTestSubject>(&doc));
+        test_subject.prop_list.insert(std::make_unique<MetaTestSubject>(&doc));
         QCOMPARE(test_subject.prop_list.size(), 1);
         QCOMPARE(prop_2.read(&test_subject).toList().size(), 1);
         QCOMPARE(prop_2.read(&test_subject).toList()[0].value<MetaTestSubject*>(), &test_subject.prop_list[0]);

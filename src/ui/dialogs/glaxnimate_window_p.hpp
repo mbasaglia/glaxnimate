@@ -623,7 +623,8 @@ public:
         ui.menu_open_recent->clear();
         for ( const auto& recent : recent_files )
         {
-            QAction* act = new QAction(QIcon::fromTheme("video-x-generic"), QFileInfo(recent).baseName(), ui.menu_open_recent);
+            QAction* act = new QAction(QIcon::fromTheme("video-x-generic"), QFileInfo(recent).fileName(), ui.menu_open_recent);
+            act->setToolTip(recent);
             act->setData(recent);
             ui.menu_open_recent->addAction(act);
         }

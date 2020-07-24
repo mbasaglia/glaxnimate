@@ -69,7 +69,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, mo
     else if ( traits.type == model::PropertyTraits::ObjectReference )
     {
         if ( auto dn = value.value<model::DocumentNode*>() )
-            return dn->uuid.get().toString();
+            return QJsonValue::fromVariant(dn->uuid.get());
         return {};
     }
     else if ( traits.type == model::PropertyTraits::Enum )

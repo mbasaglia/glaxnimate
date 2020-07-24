@@ -304,7 +304,7 @@ public:
         return *objects.back();
     }
 
-    void insert(pointer p, int position)
+    void insert(pointer p, int position = -1)
     {
         if ( !valid_index(position) )
             position = size();
