@@ -18,22 +18,8 @@ AboutDialog::AboutDialog(QWidget* parent)
     d->line_settings->setText(app::Application::instance()->data_file("settings.ini"));
     d->line_user_data->setText(app::Application::instance()->writable_data_path(""));
 
-    int h = 0;
-    int c = 0;
-    for ( const QString& str : app::Application::instance()->data_paths_unchecked("") )
-    {
-        d->view_data->addItem(str);
-        h += d->view_data->sizeHintForRow(c++);
-    }
-    d->view_data->setMinimumHeight(h);
-
-    c = h = 0;
-    for ( const QString& str : QIcon::themeSearchPaths() )
-    {
-        d->view_icons->addItem(str);
-        h += d->view_icons->sizeHintForRow(c++);
-    }
-    d->view_icons->setMinimumHeight(h);
+    populate_view(d->view_data, app::Application::instance()->data_paths_unchecked(""));
+    populate_view(d->view_icons, QIcon::themeSearchPaths());
 
 
     d->view_system->setItem(0, 0, new QTableWidgetItem(QSysInfo::prettyProductName()));
@@ -64,3 +50,17 @@ void AboutDialog::open_settings_file()
     QDesktopServices::openUrl(QUrl::fromLocalFile(d->line_settings->text()));
 }
 
+void AboutDialog::populate_view(QListWidget* wid, const QStringList& paths)
+{
+    int h = 0;
+    int c = 0;
+    for ( const QString& str : paths )
+    {
+        if ( str.startsWith(":/") )
+            continue;
+        wid->addItem(str);
+        h += wid->sizeHintForRow(c++);
+    }
+    h += h/c/2;
+    wid->setMinimumHeight(h);
+}

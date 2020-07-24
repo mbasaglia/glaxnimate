@@ -9,6 +9,8 @@ namespace Ui
 class AboutDialog;
 }
 
+class QListWidget;
+
 class AboutDialog : public QDialog
 {
     Q_OBJECT
@@ -20,6 +22,7 @@ public:
 
 protected:
     void changeEvent(QEvent *e) override;
+    void populate_view(QListWidget* wid, const QStringList& paths);
 
 private slots:
     void open_user_data();
