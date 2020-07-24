@@ -4,6 +4,7 @@
 #include <QPalette>
 
 #include "app/settings/settings.hpp"
+#include "app_info.hpp"
 
 namespace {
 
@@ -84,4 +85,18 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("path",         {},             {},                        Setting::Internal,  QString{}),
         Setting("recent_files", {},             {},                        Setting::Internal,  QStringList{}),
     }});
+}
+
+void GlaxnimateApp::on_initialize()
+{
+    AppInfo& info = AppInfo::instance();
+    setApplicationName(info.slug());
+    setApplicationDisplayName(info.name());
+    setApplicationVersion(info.version());
+    setOrganizationName(info.organization());
+    setWindowIcon(QIcon(data_file("icon.svg")));
+
+    QStringList search_paths = data_paths("icons");
+    search_paths += QIcon::themeSearchPaths();
+    QIcon::setThemeSearchPaths(search_paths);
 }

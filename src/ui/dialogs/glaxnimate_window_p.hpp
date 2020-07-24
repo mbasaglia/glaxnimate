@@ -24,6 +24,7 @@
 
 #include "ui/dialogs/import_export_dialog.hpp"
 #include "ui/dialogs/io_status_dialog.hpp"
+#include "ui/dialogs/about_dialog.hpp"
 #include "ui/style/dock_widget_style.hpp"
 #include "ui/style/property_delegate.hpp"
 #include "ui/widgets/glaxnimate_graphics_view.hpp"
@@ -85,6 +86,7 @@ public:
     bool started = false;
     IoStatusDialog* dialog_import_status;
     IoStatusDialog* dialog_export_status;
+    AboutDialog* about_dialog;
 
     void setup_document(const QString& filename)
     {
@@ -353,9 +355,10 @@ public:
         // Graphics scene
         ui.graphics_view->setScene(&scene);
 
-        // io dialogs
+        // dialogs
         dialog_import_status = new IoStatusDialog(QIcon::fromTheme("document-open"), tr("Open File"), false, parent);
         dialog_export_status = new IoStatusDialog(QIcon::fromTheme("document-save"), tr("Save File"), false, parent);
+        about_dialog = new AboutDialog(parent);
 
         // Recent files
         recent_files = app::settings::get<QStringList>("open_save", "recent_files");
@@ -684,6 +687,11 @@ public:
         warning.setDefaultButton(QMessageBox::Ok);
         warning.setIcon(icon);
         warning.exec();
+    }
+
+    void help_about()
+    {
+        about_dialog->show();
     }
 };
 

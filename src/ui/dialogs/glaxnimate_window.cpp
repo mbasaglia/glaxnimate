@@ -156,3 +156,8 @@ void GlaxnimateWindow::document_open_recent(QAction* action)
 {
     d->document_open_from_filename(action->data().toString());
 }
+
+void GlaxnimateWindow::help_about()
+{
+    d->help_about();
+}
