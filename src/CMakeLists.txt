@@ -55,4 +55,4 @@ endif()
 
 #add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)
 add_executable(${PROJECT_SLUG} ${SOURCES})
-target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets Qt5::Qml QtColorWidgets)
+target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets Qt5::Qml QtColorWidgets QtHistoryLineEdit)

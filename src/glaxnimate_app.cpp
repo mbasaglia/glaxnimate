@@ -85,6 +85,11 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("path",         {},             {},                        Setting::Internal,  QString{}),
         Setting("recent_files", {},             {},                        Setting::Internal,  QStringList{}),
     }});
+    Settings::instance().add_group(SettingGroup{"scripting", tr("Scripting"), "utilities-terminal", {
+        //      slug            Label           Tooltip                    Type                default
+        Setting("history",      {},             {},                        Setting::Internal,  QStringList{}),
+        Setting("max_history",  {},             {},                        Setting::Internal,  100),
+    }});
 }
 
 void GlaxnimateApp::on_initialize()

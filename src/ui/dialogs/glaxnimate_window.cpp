@@ -162,9 +162,9 @@ void GlaxnimateWindow::help_about()
     d->help_about();
 }
 
-void GlaxnimateWindow::console_commit()
+void GlaxnimateWindow::console_commit(const QString& text)
 {
-    d->console_commit();
+    d->console_commit(text);
 }
 
 void GlaxnimateWindow::document_open(const QString& filename)

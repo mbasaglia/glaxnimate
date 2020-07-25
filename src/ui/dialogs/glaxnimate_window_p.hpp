@@ -374,6 +374,8 @@ public:
         parent->tabifyDockWidget(ui.dock_script_console, ui.dock_timeline);
         ui.dock_script_console->setVisible(false);
 
+        ui.console_input->setHistory(app::settings::get<QStringList>("scripting", "history"));
+
         for ( const auto& engine : scripting::ScriptEngineFactory::instance().engines() )
         {
             ui.console_language->addItem(engine->label());
@@ -641,6 +643,12 @@ public:
         app::settings::set("ui", "window_geometry", parent->saveGeometry());
         app::settings::set("ui", "window_state", parent->saveState());
         app::settings::set("open_save", "recent_files", recent_files);
+
+        QStringList history = ui.console_input->history();
+        int max_history = app::settings::get<int>("scripting", "max_history");
+        if ( history.size() > max_history )
+            history.erase(history.begin() + max_history, history.end());
+        app::settings::set("scripting", "history", history);
         script_contexts.clear();
     }
 
@@ -717,11 +725,12 @@ public:
         about_dialog->show();
     }
 
-    void console_commit()
+    void console_commit(QString text)
     {
-        QString text = ui.console_input->text().replace("\n", " ");
         if ( text.isEmpty() )
             return;
+
+        text = text.replace("\n", " ");
 
         if ( script_contexts.empty() )
         {

@@ -49,7 +49,7 @@ private slots:
     void preferences();
     void document_open_recent(QAction* action);
     void help_about();
-    void console_commit();
+    void console_commit(const QString& text);
 
 protected:
     void changeEvent(QEvent *e) override;

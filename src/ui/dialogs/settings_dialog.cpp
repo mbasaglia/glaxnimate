@@ -16,6 +16,9 @@ SettingsDialog::SettingsDialog ( QWidget* parent ) :
     app::settings::Settings::instance().load_metadata();
     for ( const auto& group : app::settings::Settings::instance() )
     {
+        if ( !group.has_visible_settings() )
+            continue;
+
         new QListWidgetItem(QIcon::fromTheme(group.icon), group.label, d->list_widget);
         QWidget* page = new QWidget();
         d->stacked_widget->addWidget(page);
@@ -44,6 +47,8 @@ void SettingsDialog::changeEvent(QEvent *e)
         int i = 0;
         for ( const auto& group : app::settings::Settings::instance() )
         {
+            if ( !group.has_visible_settings() )
+                continue;
             bob.translate_widgets(group.settings, this, group.slug + "__");
             d->list_widget->item(i)->setText(group.label);
             i++;

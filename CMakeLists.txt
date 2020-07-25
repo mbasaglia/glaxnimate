@@ -43,6 +43,7 @@ add_subdirectory(src bin)
 SET(BUILD_STATIC_LIBS ON CACHE BOOL "")
 SET(BUILD_SHARED_LIBS OFF CACHE BOOL "")
 add_subdirectory(external/Qt-Color-Widgets)
+add_subdirectory(external/Qt-History-LineEdit)
 
 
 set(ALL_SOURCE_DIRECTORIES src)

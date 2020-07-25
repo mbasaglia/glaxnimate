@@ -18,6 +18,14 @@ public:
     QString icon;
     SettingList settings;
 
+    bool has_visible_settings() const
+    {
+        for ( const auto& set : settings )
+            if ( set.type != Setting::Internal )
+                return true;
+        return false;
+    }
+
     QVariant get_variant(const QString& setting_slug, const QVariantMap& values) const
     {
         for ( const Setting& setting : settings )
