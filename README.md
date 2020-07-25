@@ -16,6 +16,11 @@ Dependencies
 * Python3
 
 
+### Installing Dependencies on Deb systems
+
+    apt-get install -y g++ cmake qtbase5-dev qtdeclarative5-dev
+
+
 Building
 ---------------------------------------
 

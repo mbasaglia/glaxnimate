@@ -6,13 +6,13 @@ default:
 
 pages:
     stage: deploy
-    before_script:
-        - apt-get install -y doxygen graphviz
     script:
-        - echo TODO
+        - apt-get install -y doxygen graphviz
+        - make docs
     after_script:
         - mkdir public
         - mv build/coverage public/coverage
+        - mv build/docs/html public/docs
     artifacts:
         paths:
             - public
@@ -24,10 +24,9 @@ pages:
 
 linux:test:
     stage: build
-    before_script:
+    script:
         - apt-get install -y python-pip
         - pip install gcovr
-    script:
         - mkdir build
         - cd build
         - cmake ..
