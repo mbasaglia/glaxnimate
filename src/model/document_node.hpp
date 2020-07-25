@@ -17,9 +17,23 @@ class DocumentNode : public Object
 {
     Q_OBJECT
 
+public:
+    /**
+     * @brief Name of the node, used to display it in the UI
+     */
     GLAXNIMATE_PROPERTY(QString, name, "")
+    /**
+     * @brief Color of the node the tree UI to highlight grouped items
+     *
+     * Generally parent/child relationshitps define groups but layers can
+     * be grouped with each other even if they are children of a composition
+     */
     GLAXNIMATE_PROPERTY(QColor, group_color, QColor(0, 0, 0, 0))
+    /**
+     * @brief Unique identifier for the node
+     */
     GLAXNIMATE_PROPERTY_RO(QUuid, uuid, {})
+private:
 
     class ChildRange;
 
