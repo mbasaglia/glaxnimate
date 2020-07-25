@@ -176,3 +176,15 @@ model::Document * GlaxnimateWindow::document() const
 {
     return d->current_document.get();
 }
+
+void GlaxnimateWindow::warning ( const QString& message, const QString& title ) const
+{
+    d->show_warning(title.isEmpty() ? tr("Warning") : title, message);
+}
+
+void GlaxnimateWindow::status ( const QString& message ) const
+{
+    d->ui.status_bar->showMessage(message, 5000);
+}
+
+

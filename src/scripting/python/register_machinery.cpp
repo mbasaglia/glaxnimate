@@ -141,6 +141,7 @@ public:
         buffer_used += sizeof(CppType);
         generic_args[arguments] = { type_name<CppType>(), addr };
         ensure_destruction(addr);
+        arguments += 1;
         return addr;
     }
 
@@ -223,10 +224,12 @@ struct RegisterMethod
             [meth](QObject* o, py::args args)
             {
                 int len = py::len(args);
-                if ( len > 9 || len != meth.parameterCount() )
+                if ( len > 9 )
                     throw pybind11::value_error("Invalid argument count");
 
                 ArgumentBuffer argbuf;
+
+                argbuf.allocate_return_type<ReturnType>();
 
                 for ( int i = 0; i < len; i++ )
                 {
@@ -234,10 +237,10 @@ struct RegisterMethod
                         throw pybind11::value_error("Invalid argument");
                 }
 
-                argbuf.allocate_return_type<ReturnType>();
-
-                meth.invoke(
+                // Calling by name from QMetaObject ensures that default arguments work correctly
+                bool ok = QMetaObject::invokeMethod(
                     o,
+                    meth.name(),
                     Qt::DirectConnection,
                     argbuf.return_arg(),
                     argbuf.arg(0),
@@ -251,6 +254,8 @@ struct RegisterMethod
                     argbuf.arg(8),
                     argbuf.arg(9)
                 );
+                if ( !ok )
+                    throw pybind11::value_error("Invalid method invocation");
                 return argbuf.return_value<ReturnType>();
             },
             py::name(py.name),

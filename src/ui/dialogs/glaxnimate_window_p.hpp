@@ -751,6 +751,7 @@ public:
                 ui.console_output->append(out);
         } catch ( const scripting::ScriptError& err ) {
             QColor col = ui.console_output->textColor();
+            qDebug() << col << col.isValid();
             ui.console_output->setTextColor(Qt::red);
             ui.console_output->append(err.message());
             ui.console_output->setTextColor(col);

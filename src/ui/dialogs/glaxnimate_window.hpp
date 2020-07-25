@@ -23,6 +23,16 @@ public:
 
     model::Document* document() const;
 
+    /**
+     * @brief Shows a warning popup
+     */
+    Q_INVOKABLE void warning(const QString& message, const QString& title = "123") const;
+
+    /**
+     * @brief Shows a message in the status bar
+     */
+    Q_INVOKABLE void status(const QString& message) const;
+
 public slots:
     void document_new();
     void document_save();
