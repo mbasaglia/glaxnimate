@@ -1,5 +1,6 @@
 target_sources(glaxnimate PRIVATE
     python_engine.cpp
+    register_machinery.cpp
 )
 
 message(STATUS ${PYTHON_INCLUDE_DIRS})
