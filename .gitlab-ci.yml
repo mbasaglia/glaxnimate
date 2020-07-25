@@ -8,6 +8,9 @@ pages:
     stage: deploy
     script:
         - apt-get install -y doxygen graphviz
+        - mkdir build
+        - cd build
+        - cmake ..
         - make docs
     after_script:
         - mkdir public
