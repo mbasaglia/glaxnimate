@@ -125,8 +125,7 @@ public:
         scene.set_document(current_document.get());
 
         // Scripting
-        for ( const auto& ctx : script_contexts )
-            ctx->expose("document", current_document.get());
+        script_contexts.clear();
 
         // Title
         QObject::connect(current_document.get(), &model::Document::filename_changed, parent, &GlaxnimateWindow::refresh_title);
@@ -377,10 +376,9 @@ public:
 
         for ( const auto& engine : scripting::ScriptEngineFactory::instance().engines() )
         {
-            auto ctx = engine->create_context();
-            ctx->expose("window", parent);
-            script_contexts.push_back(std::move(ctx));
             ui.console_language->addItem(engine->label());
+            if ( engine->slug() == "python" )
+                ui.console_language->setCurrentIndex(ui.console_language->count()-1);
         }
 
         // Restore state
@@ -725,6 +723,17 @@ public:
         if ( text.isEmpty() )
             return;
 
+        if ( script_contexts.empty() )
+        {
+            create_script_context();
+            if ( script_contexts.empty() )
+                return;
+        }
+
+        auto c = ui.console_output->textCursor();
+        c.clearSelection();
+        ui.console_output->setTextCursor(c);
+
         ui.console_output->append(text);
         auto ctx = script_contexts[ui.console_language->currentIndex()].get();
         try {
@@ -739,6 +748,19 @@ public:
         }
         ui.console_input->setText("");
     }
+
+
+    void create_script_context()
+    {
+        for ( const auto& engine : scripting::ScriptEngineFactory::instance().engines() )
+        {
+            auto ctx = engine->create_context();
+            ctx->expose("window", parent);
+            ctx->expose("document", current_document.get());
+            script_contexts.push_back(std::move(ctx));
+        }
+    }
+
 };
 
 #endif // GLAXNIMATEWINDOW_P_H
