@@ -33,8 +33,8 @@ public:
      * @brief Unique identifier for the node
      */
     GLAXNIMATE_PROPERTY_RO(QUuid, uuid, {})
-private:
 
+private:
     class ChildRange;
 
     using get_func_t = DocumentNode* (DocumentNode::*) (int) const;
@@ -111,6 +111,8 @@ public:
 
     bool docnode_visible() const { return visible_; }
     bool docnode_locked() const { return locked_; }
+
+    bool docnode_locked_by_ancestor() const;
 
     QString object_name() const override;
 

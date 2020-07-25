@@ -99,3 +99,13 @@ const QPixmap & model::DocumentNode::docnode_group_icon() const
     return group_icon;
 }
 
+bool model::DocumentNode::docnode_locked_by_ancestor() const
+{
+    for ( const DocumentNode* n = this; n; n = n->docnode_parent() )
+    {
+        if ( n->locked_ )
+            return true;
+    }
+
+    return false;
+}

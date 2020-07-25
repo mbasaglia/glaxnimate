@@ -54,9 +54,6 @@ void model::DocumentNodeModel::disconnect_node ( model::DocumentNode* node )
         disconnect_node(child);
 }
 
-
-
-
 int model::DocumentNodeModel::rowCount ( const QModelIndex& parent ) const
 {
     if ( !document )
@@ -109,6 +106,14 @@ Qt::ItemFlags model::DocumentNodeModel::flags ( const QModelIndex& index ) const
 //         case ColumnVisible:
 //             flags |= Qt::ItemIsUserCheckable;
 //             break;
+    }
+
+    auto n = node(index);
+    if ( n && !n->docnode_locked_by_ancestor() )
+    {
+        flags |= Qt::ItemIsDropEnabled;
+        if ( !qobject_cast<model::Animation*>(n) )
+            flags |= Qt::ItemIsDragEnabled;
     }
 
     return flags;
@@ -237,4 +242,9 @@ bool model::DocumentNodeModel::removeRows ( int row, int count, const QModelInde
     return false;
 }
 
+
+Qt::DropActions model::DocumentNodeModel::supportedDropActions() const
+{
+    return Qt::MoveAction;
+}
 

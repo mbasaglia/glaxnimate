@@ -30,6 +30,7 @@ public:
     Qt::ItemFlags flags ( const QModelIndex & index ) const override;
     QModelIndex parent ( const QModelIndex & child ) const override;
     bool setData ( const QModelIndex & index, const QVariant & value, int role ) override;
+    Qt::DropActions supportedDropActions() const override;
 
 
     void clear_document();
