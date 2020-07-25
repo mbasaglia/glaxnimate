@@ -1,9 +1,13 @@
+default:
+    before_script:
+        - apt-get update -y
+        - apt-get install -y cmake qtbase5-dev qtdeclarative5-dev
+        - git submodule update --init --recursive
+
 pages:
     stage: deploy
     before_script:
-        - apt-get update -y
-        - apt-get install -y cmake qtbase5-dev doxygen graphviz qtdeclarative5-dev
-        - git submodule update --init --recursive
+        - apt-get install -y doxygen graphviz
     script:
         - echo TODO
     after_script:
@@ -21,10 +25,8 @@ pages:
 linux:test:
     stage: build
     before_script:
-        - apt-get update -y
-        - apt-get install -y cmake qtbase5-dev python-pip
+        - apt-get install -y python-pip
         - pip install gcovr
-        - git submodule update --init --recursive
     script:
         - mkdir build
         - cd build
@@ -38,10 +40,6 @@ linux:test:
 
 linux:build:
     stage: build
-    before_script:
-        - apt-get update -y
-        - apt-get install -y cmake qtbase5-dev
-        - git submodule update --init --recursive
     script:
         - mkdir build
         - cd build
