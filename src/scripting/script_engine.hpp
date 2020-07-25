@@ -28,6 +28,7 @@ class ScriptExecutionContext : public QObject
 {
 public:
 
+    ScriptExecutionContext() = default;
     virtual ~ScriptExecutionContext() = default;
 
     /**
@@ -40,6 +41,10 @@ public:
      * \throws ScriptError on errors with the script
      */
     virtual QString eval_to_string(const QString& code) = 0;
+
+private:
+    ScriptExecutionContext(const ScriptExecutionContext&) = delete;
+    ScriptExecutionContext& operator=(const ScriptExecutionContext&) = delete;
 };
 
 

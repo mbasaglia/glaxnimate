@@ -97,9 +97,9 @@ inline constexpr PropertyTraits::Type PropertyTraits::get_type() noexcept
     return detail::GetType<T>::value;
 }
 
-#define GLAXNIMATE_PROPERTY(type, name, ...)                \
+#define GLAXNIMATE_PROPERTY(type, name, default_value)      \
 public:                                                     \
-    Property<type> name{this, #name, __VA_ARGS__};          \
+    Property<type> name{this, #name, default_value};        \
     type get_##name() const { return name.get(); }          \
     bool set_##name(const type& v) {                        \
         return name.set_undoable(QVariant::fromValue(v));   \
@@ -132,6 +132,14 @@ public:                                                     \
     }                                                       \
 private:                                                    \
     Q_PROPERTY(QVariantList name READ get_##name)           \
+    // macro end
+
+#define GLAXNIMATE_PROPERTY_RO(type, name, default_value)   \
+public:                                                     \
+    Property<type> name{this, #name, default_value, false}; \
+    type get_##name() const { return name.get(); }          \
+private:                                                    \
+    Q_PROPERTY(type name READ get_##name)                   \
     // macro end
 
 

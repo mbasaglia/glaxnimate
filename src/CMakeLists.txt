@@ -47,6 +47,12 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/application_info_generated.hpp
 )
 
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG(-Wno-attributes WTF_IS_THIS_WARNING)
+if ( ${WTF_IS_THIS_WARNING} )
+    SET(CMAKE_CXX_FLAGS  ${CMAKE_CXX_FLAGS} -Wno-attributes)
+endif()
+
 #add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)
 add_executable(${PROJECT_SLUG} ${SOURCES})
-target_link_libraries(${PROJECT_SLUG} Qt5::Widgets Qt5::Qml QtColorWidgets)
+target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets Qt5::Qml QtColorWidgets)

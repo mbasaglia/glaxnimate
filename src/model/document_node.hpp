@@ -18,8 +18,8 @@ class DocumentNode : public Object
     Q_OBJECT
 
     GLAXNIMATE_PROPERTY(QString, name, "")
-    GLAXNIMATE_PROPERTY(QColor, group_color, QColor{0, 0, 0, 0})
-    GLAXNIMATE_PROPERTY(QUuid, uuid, {}, false)
+    GLAXNIMATE_PROPERTY(QColor, group_color, QColor(0, 0, 0, 0))
+    GLAXNIMATE_PROPERTY_RO(QUuid, uuid, {})
 
     class ChildRange;
 

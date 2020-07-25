@@ -1,5 +1,6 @@
+cmake_minimum_required (VERSION 3.13 FATAL_ERROR)
+cmake_policy(SET CMP0076 NEW)
 
-cmake_minimum_required (VERSION 3.7 FATAL_ERROR)
 
 project(Glaxnimate VERSION 0.0.1 DESCRIPTION "Simple vector animation program" LANGUAGES CXX)
 set(PROJECT_SLUG "glaxnimate")
@@ -52,6 +53,13 @@ add_subdirectory(data share/${PROJECT_SLUG}/${PROJECT_SLUG})
 find_package(Qt5Test QUIET)
 if(Qt5Test_FOUND)
     add_subdirectory(test)
+endif()
+
+find_package(PythonLibs 3 COMPONENTS Interpreter Development QUIET)
+if(PythonLibs_FOUND)
+    message(STATUS "Python3 enabled")
+    add_subdirectory(external/pybind11)
+    add_subdirectory(src/scripting/python)
 endif()
 
 # Doxygen
