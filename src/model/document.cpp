@@ -67,3 +67,20 @@ model::DocumentNode * model::Document::node_by_uuid(const QUuid& n) const
 {
     return d->animation.docnode_find_by_uuid(n);
 }
+
+bool model::Document::redo()
+{
+    if ( ! d->undo_stack.canRedo() )
+        return false;
+    d->undo_stack.redo();
+    return true;
+}
+
+bool model::Document::undo()
+{
+    if ( ! d->undo_stack.canUndo() )
+        return false;
+    d->undo_stack.undo();
+    return true;
+}
+

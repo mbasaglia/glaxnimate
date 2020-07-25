@@ -167,8 +167,10 @@ void GlaxnimateWindow::console_commit()
     d->console_commit();
 }
 
+#include <QDebug>
 void GlaxnimateWindow::document_open(const QString& filename)
 {
+    qDebug() << "open" << filename;
     d->document_open_from_filename(filename);
 }
 
@@ -176,4 +178,3 @@ model::Document * GlaxnimateWindow::document() const
 {
     return d->current_document.get();
 }
-

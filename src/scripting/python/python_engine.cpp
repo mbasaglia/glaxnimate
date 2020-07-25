@@ -6,6 +6,7 @@
 #include <QDebug>
 
 #include "model/document.hpp"
+#include "ui/dialogs/glaxnimate_window.hpp"
 
 #undef slots
 #include <pybind11/embed.h>
@@ -75,6 +76,8 @@ template<class T> T qvariant_to_cpp(const QVariant& v) { return v.value<T>(); }
 template<> QVariant qvariant_from_cpp<std::string>(const std::string& t) { return QString::fromStdString(t); }
 template<> std::string qvariant_to_cpp<std::string>(const QVariant& v) { return v.toString().toStdString(); }
 
+template<> void qvariant_to_cpp<void>(const QVariant&) {}
+
 
 template<>
 QVariant qvariant_from_cpp<std::vector<QObject*>>(const std::vector<QObject*>& t)
@@ -112,39 +115,77 @@ public:
 
         PyClass reg(scope, clean_name);
 
-        for ( int i = 0; i < meta.propertyCount(); i++ )
-        {
+        for ( int i = meta.superClass()->propertyCount(); i < meta.propertyCount(); i++ )
             register_property(reg, meta.property(i));
-        }
+
+        for ( int  i = meta.superClass()->methodCount(); i < meta.methodCount(); i++ )
+            register_method(reg, meta.method(i));
+
 
         return reg;
     }
 
 private:
     template<class CppType>
-    static void register_property_impl(PyClass& cls, const QMetaProperty& prop)
-    {
-        auto read = [prop](const Cls* o) { return qvariant_to_cpp<CppType>(prop.read(o)); };
+        struct RegisterProperty
+        {
+            static void do_the_thing(PyClass& cls, const QMetaProperty& prop)
+            {
+                auto read = [prop](const Cls* o) { return qvariant_to_cpp<CppType>(prop.read(o)); };
 
-        if ( prop.isWritable() )
-            cls.def_property(prop.name(), read, [prop](Cls* o, const CppType& v) {
-                prop.write(o, qvariant_from_cpp<CppType>(v));
-            });
-        else
-            cls.def_property_readonly(prop.name(), read);
+                if ( prop.isWritable() )
+                    cls.def_property(prop.name(), read, [prop](Cls* o, const CppType& v) {
+                        prop.write(o, qvariant_from_cpp<CppType>(v));
+                    });
+                else
+                    cls.def_property_readonly(prop.name(), read);
+            }
+        };
+
+
+    template<template<class FuncT> class Func, class... FuncArgs>
+    static bool type_dispatch(int meta_type, FuncArgs&&... args)
+    {
+        if ( meta_type >= QMetaType::User )
+        {
+            Func<QObject*>::do_the_thing(std::forward<FuncArgs>(args)...);
+            return true;
+        }
+
+        switch ( QMetaType::Type(meta_type) )
+        {
+            case QMetaType::Bool:           Func<bool                    >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::Int:            Func<int                     >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::UInt:           Func<unsigned int            >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::Double:         Func<double                  >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::Long:           Func<long                    >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::LongLong:       Func<long long               >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::Short:          Func<short                   >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::ULong:          Func<unsigned long           >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::ULongLong:      Func<unsigned long long      >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::UShort:         Func<unsigned short          >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::Float:          Func<float                   >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::QString:        Func<std::string             >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::QColor:         Func<QColor                  >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::QUuid:          Func<std::string             >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::QObjectStar:    Func<QObject*                >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            case QMetaType::QVariantList:   Func<std::vector<QObject*>   >::do_the_thing(std::forward<FuncArgs>(args)...); break;
+            default:
+                return false;
+        }
+        return true;
     }
 
-    template<class CppType, class ThroughType>
-    static void register_property_impl(PyClass& cls, const QMetaProperty& prop)
-    {
-        auto read = [prop](const Cls* o) { return qvariant_to_cpp<CppType>(prop.read(o)); };
 
-        if ( prop.isWritable() )
-            cls.def_property(prop.name(), read, [prop](Cls* o, const ThroughType& v) {
-                prop.write(o, qvariant_from_cpp<CppType>(v));
-            });
-        else
-            cls.def_property_readonly(prop.name(), read);
+    template<template<class FuncT> class Func, class... FuncArgs>
+    static bool type_dispatch_maybe_void(int meta_type, FuncArgs&&... args)
+    {
+        if ( meta_type == QMetaType::Void )
+        {
+            Func<void>::do_the_thing(std::forward<FuncArgs>(args)...);
+            return true;
+        }
+        return type_dispatch<Func>(meta_type, std::forward<FuncArgs>(args)...);
     }
 
     static void register_property(PyClass& cls, const QMetaProperty& prop)
@@ -152,31 +193,81 @@ private:
         if ( !prop.isScriptable() )
             return;
 
-        if ( std::strcmp(prop.name(), "objectName") == 0 )
+        if ( !type_dispatch<RegisterProperty>(prop.type(), cls, prop) )
+            qWarning() << "Invalid property" << prop.name() << "of type" << prop.type() << prop.typeName();
+    }
+
+
+    template<class CppType>
+        struct RegisterMethod0
+        {
+            static void do_the_thing(PyClass& cls, const QMetaMethod& meth)
+            {
+                cls.def(
+                    meth.name(),
+                    [meth](Cls* o) { return qvariant_to_cpp<CppType>(meth.invoke(o)); }
+                );
+            }
+        };
+
+    static void register_method_0(PyClass& cls, const QMetaMethod& meth)
+    {
+        if ( !type_dispatch_maybe_void<RegisterMethod0>(meth.returnType(), cls, meth) )
+            qWarning() << "Invalid return type for " << meth.name() << ": " << meth.typeName();
+    }
+
+
+    template<class ReturnType>
+        struct RegisterMethod1
+        {
+            template<class ArgType>
+            struct RegisterMethod1Arg
+            {
+                static void do_the_thing(PyClass& cls, const QMetaMethod& meth)
+                {
+                    cls.def(
+                        meth.name(),
+                        [meth](Cls* o, const ArgType& arg) {
+                            QVariant ret;
+                            meth.invoke(
+                                o,
+                                Qt::DirectConnection,
+                                Q_RETURN_ARG(QVariant, ret),
+                                Q_ARG(QVariant, qvariant_from_cpp(arg))
+                            );
+                            return qvariant_to_cpp<ReturnType>(ret);
+                        }
+                    );
+                }
+            };
+
+            static void do_the_thing(PyClass& cls, const QMetaMethod& meth)
+            {
+                if ( !type_dispatch<RegisterMethod1Arg>(meth.parameterType(0), cls, meth) )
+                    qWarning() << "Invalid argument type for " << meth.name() << ": " << meth.parameterType(0);
+            }
+        };
+
+    static void register_method_1(PyClass& cls, const QMetaMethod& meth)
+    {
+        if ( !type_dispatch_maybe_void<RegisterMethod1>(meth.returnType(), cls, meth) )
+            qWarning() << "Invalid return type for " << meth.name() << ": " << meth.typeName();
+    }
+
+    static void register_method(PyClass& cls, const QMetaMethod& meth)
+    {
+        if ( meth.access() != QMetaMethod::Public )
+            return;
+        if ( meth.methodType() != QMetaMethod::Method && meth.methodType() != QMetaMethod::Slot )
             return;
 
-        switch ( QMetaType::Type(prop.type()) )
+        switch ( meth.parameterCount() )
         {
-            case QMetaType::Bool:       return register_property_impl<bool>(cls, prop);
-            case QMetaType::Int:        return register_property_impl<int>(cls, prop);
-            case QMetaType::UInt:       return register_property_impl<unsigned int>(cls, prop);
-            case QMetaType::Double:     return register_property_impl<double>(cls, prop);
-            case QMetaType::Long:       return register_property_impl<long>(cls, prop);
-            case QMetaType::LongLong:   return register_property_impl<long long>(cls, prop);
-            case QMetaType::Short:      return register_property_impl<short>(cls, prop);
-            case QMetaType::ULong:      return register_property_impl<unsigned long>(cls, prop);
-            case QMetaType::ULongLong:  return register_property_impl<unsigned long long>(cls, prop);
-            case QMetaType::UShort:     return register_property_impl<unsigned short>(cls, prop);
-            case QMetaType::Float:      return register_property_impl<float>(cls, prop);
-            case QMetaType::QString:    return register_property_impl<std::string>(cls, prop);
-            case QMetaType::QColor:     return register_property_impl<QColor>(cls, prop);
-            case QMetaType::QUuid:      return register_property_impl<std::string>(cls, prop);
-            case QMetaType::QObjectStar: return register_property_impl<QObject*>(cls, prop);
-            case QMetaType::User:       return register_property_impl<QObject*>(cls, prop);
-            case QMetaType::QVariantList: return register_property_impl<std::vector<QObject*>>(cls, prop);
-            default:
-                qWarning() << "Invalid property" << prop.name() << "of type" << prop.type() << prop.typeName();
+            case 0: return register_method_0(cls, meth);
+            case 1: return register_method_1(cls, meth);
         }
+
+        qDebug() << "Too many arguments for method " << meth.name() << ": " << meth.parameterCount();
     }
 };
 
@@ -192,6 +283,7 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, m)
     ;
     py::class_<QObject>(m, "__QObject");
     py::class_<model::Object, QObject>(m, "Object");
+    QObjectBinder<GlaxnimateWindow, QObject>::register_from_meta(m);
     QObjectBinder<model::Document, QObject>::register_from_meta(m);
     QObjectBinder<model::DocumentNode, model::Object>::register_from_meta(m);
     QObjectBinder<model::Composition, model::DocumentNode>::register_from_meta(m);

@@ -34,6 +34,9 @@ public:
 
     DocumentNode* node_by_uuid(const QUuid& n) const;
 
+    Q_INVOKABLE bool undo();
+    Q_INVOKABLE bool redo();
+
 signals:
     void filename_changed(const QString& n);
 
