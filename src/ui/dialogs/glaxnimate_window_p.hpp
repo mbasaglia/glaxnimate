@@ -719,7 +719,7 @@ public:
 
     void console_commit()
     {
-        QString text = ui.console_input->text();
+        QString text = ui.console_input->text().replace("\n", " ");
         if ( text.isEmpty() )
             return;
 
