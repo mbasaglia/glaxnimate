@@ -23,6 +23,7 @@ class scripting::python::PythonContext::Private
 public:
     pybind11::module my_module;
     py::dict globals;
+    py::function compile;
 };
 
 scripting::python::PythonContext::PythonContext()
@@ -31,6 +32,7 @@ scripting::python::PythonContext::PythonContext()
     d = std::make_unique<Private>();
     d->my_module = py::module::import("glaxnimate");
     d->globals = py::globals();
+    d->compile = py::function(py::module(d->globals["__builtins__"]).attr("compile"));
 }
 
 scripting::python::PythonContext::~PythonContext()
@@ -47,13 +49,24 @@ void scripting::python::PythonContext::expose(const QString& name, QObject* obj)
 QString scripting::python::PythonContext::eval_to_string(const QString& code)
 {
 
+    std::string std_code = code.toStdString();
+    bool eval = false;
+
     try {
-        py::exec(code.toStdString());
-    } catch ( const std::exception& pyexc ) {
+        d->compile(std_code, "", "eval");
+        eval = true;
+    } catch ( const py::error_already_set& ) {}
+
+    try {
+        if ( eval )
+            return QString::fromStdString(py::repr(py::eval(std_code)).cast<std::string>());
+        py::exec(std_code);
+        return {};
+    } catch ( const py::error_already_set& pyexc ) {
+
         throw ScriptError(pyexc.what());
     }
 
-    return "";
 }
 
 template<class T> QVariant qvariant_from_cpp(const T& t) { return QVariant::fromValue(t); }

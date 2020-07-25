@@ -729,7 +729,8 @@ public:
         auto ctx = script_contexts[ui.console_language->currentIndex()].get();
         try {
             QString out = ctx->eval_to_string(text);
-            ui.console_output->append(out);
+            if ( !out.isEmpty() )
+                ui.console_output->append(out);
         } catch ( const scripting::ScriptError& err ) {
             QColor col = ui.console_output->textColor();
             ui.console_output->setTextColor(Qt::red);
