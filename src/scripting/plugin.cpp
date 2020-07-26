@@ -69,8 +69,7 @@ void scripting::Plugin::run_script ( const scripting::PluginScript& script, cons
      if ( !data_.engine )
          return;
 
-     /// @todo run from the engine
-     Q_UNUSED(script) Q_UNUSED(settings);
+     emit PluginRegistry::instance().script_needs_running(*this, script, settings);
 }
 
 void scripting::PluginRegistry::load()
@@ -90,6 +89,7 @@ void scripting::PluginRegistry::load()
             }
         }
     }
+    emit loaded();
 }
 
 bool scripting::PluginRegistry::load_plugin ( const QString& path, bool user_installed )
@@ -228,18 +228,18 @@ scripting::PluginScript scripting::PluginRegistry::load_script ( const QJsonObje
     PluginScript s;
     s.module = jobj["module"].toString();
     s.function = jobj["function"].toString();
-    for ( const QJsonValue& set : jobj["settings"].toArray() )
+    QJsonObject settings = jobj["settings"].toObject();
+    for ( auto it = settings.begin(); it != settings.end(); ++it )
     {
-        load_setting(set.toObject(), s);
+        load_setting(it.key(), it->toObject(), s);
     }
 
     return s;
 }
 
-void scripting::PluginRegistry::load_setting ( const QJsonObject& jobj, scripting::PluginScript& script ) const
+void scripting::PluginRegistry::load_setting ( const QString& slug, const QJsonObject& jobj, scripting::PluginScript& script ) const
 {
     QString type = jobj["type"].toString();
-    QString slug = jobj["slug"].toString();
     if ( slug.isEmpty() )
     {
         qWarning() << "Skipping setting with no slug";

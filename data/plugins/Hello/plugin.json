@@ -1,0 +1,23 @@
+{
+    "name": "Hello World Plugin",
+    "author": "Glax",
+    "engine": "python",
+    "services": [
+        {
+            "type": "action",
+            "label": "Hello world",
+            "tooltip": "Does nothing useful",
+            "script": {
+                "module": "hello_world",
+                "function": "main",
+                "settings": {
+                    "greeting": {
+                        "label": "Type a greeting:",
+                        "type": "string",
+                        "default": "Hello World"
+                    }
+                }
+            }
+        }
+    ]
+}

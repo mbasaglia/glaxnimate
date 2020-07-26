@@ -47,6 +47,7 @@ private:
 
 class PluginScript
 {
+    Q_GADGET
 public:
     QString module;
     QString function;
@@ -225,8 +226,10 @@ private:
 };
 
 
-class PluginRegistry
+class PluginRegistry : public QObject
 {
+    Q_OBJECT
+
 public:
     static PluginRegistry& instance()
     {
@@ -242,6 +245,10 @@ public:
 
     Plugin* plugin(const QString& id) const;
 
+signals:
+    void script_needs_running(const Plugin& plugin, const PluginScript& script, const QVariantMap& settings);
+    void loaded();
+
 private:
     PluginRegistry() = default;
     PluginRegistry(const PluginRegistry&) = delete;
@@ -249,7 +256,7 @@ private:
 
     void load_service(const QJsonObject& jobj, PluginData& data) const;
     PluginScript load_script(const QJsonObject& jobj) const;
-    void load_setting(const QJsonObject& jobj, PluginScript& script) const;
+    void load_setting(const QString& slug, const QJsonObject& jobj, PluginScript& script) const;
     QVariantMap load_choices(const QJsonValue& val) const;
 
     std::vector<std::unique_ptr<Plugin>> plugins_;

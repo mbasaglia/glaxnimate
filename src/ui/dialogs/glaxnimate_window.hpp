@@ -8,6 +8,13 @@
 
 namespace model { class Document; }
 
+namespace scripting {
+
+class Plugin;
+class PluginScript;
+
+} // namespace scripting
+
 class GlaxnimateWindowPrivate;
 
 #include <QDebug>
@@ -36,14 +43,14 @@ public:
     Q_INVOKABLE void status(const QString& message) const;
 
 public slots:
-    void document_new();
     void document_save();
     void document_save_as();
-    void document_open_dialog();
-    void document_open(const QString& filename);
     void view_fit();
 
 private slots:
+    void document_new();
+    void document_open_dialog();
+    void document_open(const QString& filename);
     void color_update_noalpha(const QColor& col);
     void color_update_alpha(const QColor& col);
     void color_update_component(int value);
@@ -62,6 +69,9 @@ private slots:
     void document_open_recent(QAction* action);
     void help_about();
     void console_commit(const QString& text);
+
+    void script_needs_running(const scripting::Plugin& plugin, const scripting::PluginScript& script, const QVariantMap& settings);
+    void script_reloaded();
 
 protected:
     void changeEvent(QEvent *e) override;

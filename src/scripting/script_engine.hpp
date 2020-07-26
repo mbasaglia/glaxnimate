@@ -6,6 +6,8 @@
 #include <QString>
 #include <QObject>
 #include <QHash>
+#include <QDir>
+#include <QVariant>
 
 
 namespace scripting {
@@ -21,6 +23,8 @@ public:
     }
 };
 
+class ScriptEngine;
+
 /**
  * \brief Context for running scripts (implementation)
  */
@@ -34,13 +38,30 @@ public:
     /**
      * \brief Exposes \p obj as a global variable called \p name
      */
-    virtual void expose(const QString& name, QObject* obj) = 0;
+    virtual void expose(const QString& name, const QVariant& obj) = 0;
 
     /**
      * \brief Evaluates \p code and serializes the result (if any) into a string
      * \throws ScriptError on errors with the script
      */
     virtual QString eval_to_string(const QString& code) = 0;
+
+
+    /**
+     * \brief Runs a function from a file
+     * \return Whether the call was successful
+     */
+    virtual bool run_from_module (
+        const QDir& path,       ///< Path containing the module file
+        const QString& module,  ///< Module name to load, meaning of this depends on the engine
+        const QString& function,///< Function to call
+        const QVariantList& args///< Arguments to pass the function
+    ) = 0;
+
+    /**
+     * \brief Engine that created the context
+     */
+    virtual const ScriptEngine* engine() const = 0;
 
 private:
     ScriptExecutionContext(const ScriptExecutionContext&) = delete;

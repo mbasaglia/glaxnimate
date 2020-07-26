@@ -15,6 +15,7 @@ endforeach()
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/sets/breeze-icons/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/sets/breeze-icons/icons-dark DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/plugins DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 
 # Translation

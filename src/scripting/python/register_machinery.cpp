@@ -412,10 +412,10 @@ pybind11::handle pybind11::detail::type_caster<QVariant>::cast(QVariant src, ret
     if ( src.isNull() )
         return pybind11::none();
 
+    policy = py::return_value_policy::automatic_reference;
+
     if ( src.type() == QVariant::UserType )
-    {
         return pybind11::detail::make_caster<QObject*>::cast(src.value<QObject*>(), policy, parent);
-    }
 
     pybind11::handle ret;
     qvariant_type_caster_cast(ret, src, policy, parent, supported_types());

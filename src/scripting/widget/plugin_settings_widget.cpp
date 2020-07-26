@@ -39,6 +39,7 @@ void scripting::PluginSettingsWidget::current_changed ( QListWidgetItem* item )
     if ( !current )
         return;
 
+    d->widget_plugin->setTitle(current->data().name);
     d->line_plugin_path->setText(current->data().dir.absolutePath());
     d->line_version->setText(QString::number(current->data().version));
     d->line_author->setText(current->data().author);

@@ -393,6 +393,18 @@ public:
         connect(&par, &scripting::PluginActionRegistry::action_added, parent, [this](scripting::ActionService* action) {
             ui.menu_plugins->addAction(scripting::PluginActionRegistry::instance().make_qaction(action));
         });
+        connect(
+            &scripting::PluginRegistry::instance(),
+            &scripting::PluginRegistry::script_needs_running,
+            parent,
+            &GlaxnimateWindow::script_needs_running
+        );
+        connect(
+            &scripting::PluginRegistry::instance(),
+            &scripting::PluginRegistry::loaded,
+            parent,
+            &GlaxnimateWindow::script_reloaded
+        );
 
         // Restore state
         // NOTE: keep at the end so we do this once all the widgets are in their default spots
@@ -736,6 +748,14 @@ public:
         about_dialog->show();
     }
 
+    void console_error(const scripting::ScriptError& err)
+    {
+        QColor col = ui.console_output->textColor();
+        ui.console_output->setTextColor(Qt::red);
+        ui.console_output->append(err.message());
+        ui.console_output->setTextColor(col);
+    }
+
     void console_commit(QString text)
     {
         if ( text.isEmpty() )
@@ -743,12 +763,8 @@ public:
 
         text = text.replace("\n", " ");
 
-        if ( script_contexts.empty() )
-        {
-            create_script_context();
-            if ( script_contexts.empty() )
-                return;
-        }
+        if ( !ensure_script_contexts() )
+            return;
 
         auto c = ui.console_output->textCursor();
         c.clearSelection();
@@ -761,27 +777,57 @@ public:
             if ( !out.isEmpty() )
                 ui.console_output->append(out);
         } catch ( const scripting::ScriptError& err ) {
-            QColor col = ui.console_output->textColor();
-            qDebug() << col << col.isValid();
-            ui.console_output->setTextColor(Qt::red);
-            ui.console_output->append(err.message());
-            ui.console_output->setTextColor(col);
+            console_error(err);
         }
         ui.console_input->setText("");
     }
 
+    bool ensure_script_contexts()
+    {
+        if ( script_contexts.empty() )
+        {
+            create_script_context();
+            if ( script_contexts.empty() )
+                return false;
+        }
+
+        return true;
+    }
 
     void create_script_context()
     {
         for ( const auto& engine : scripting::ScriptEngineFactory::instance().engines() )
         {
             auto ctx = engine->create_context();
-            ctx->expose("window", parent);
-            ctx->expose("document", current_document.get());
+            ctx->expose("window", QVariant::fromValue(parent));
+            ctx->expose("document", QVariant::fromValue(current_document.get()));
             script_contexts.push_back(std::move(ctx));
         }
     }
 
+    void script_needs_running ( const scripting::Plugin& plugin, const scripting::PluginScript& script, const QVariantMap& settings )
+    {
+        if ( !ensure_script_contexts() )
+            return;
+
+        for ( const auto& ctx : script_contexts )
+        {
+            if ( ctx->engine() == plugin.data().engine )
+            {
+                try {
+                    QVariantList args{QVariant::fromValue(parent), QVariant::fromValue(current_document.get()), settings};
+                    if ( !ctx->run_from_module(plugin.data().dir, script.module, script.function, args) )
+                        show_warning(plugin.data().name, tr("Could not run the plugin"), QMessageBox::Critical);
+                } catch ( const scripting::ScriptError& err ) {
+                    console_error(err);
+                    show_warning(plugin.data().name, tr("Plugin raised an exception"), QMessageBox::Critical);
+                }
+                return;
+            }
+        }
+
+        show_warning(plugin.data().name, tr("Could not find an interpreter"), QMessageBox::Critical);
+    }
 };
 
 #endif // GLAXNIMATEWINDOW_P_H
