@@ -39,6 +39,11 @@ SETUP_TYPE(QMetaType::QUuid,        QUuid)
 SETUP_TYPE(QMetaType::QObjectStar,  QObject*)
 SETUP_TYPE(QMetaType::QVariantList, QVariantList)
 SETUP_TYPE(QMetaType::QVariant,     QVariant)
+SETUP_TYPE(QMetaType::QStringList,  QStringList)
+SETUP_TYPE(QMetaType::QVariantMap,  QVariantMap)
+SETUP_TYPE(QMetaType::QVariantHash, QVariantHash)
+// If you add stuff here, remember to add it to supported_types too
+
 TYPE_NAME(std::vector<QObject*>)
 
 using supported_types = std::integer_sequence<int,
@@ -58,7 +63,11 @@ using supported_types = std::integer_sequence<int,
     QMetaType::QUuid,
     QMetaType::QObjectStar,
     QMetaType::QVariantList,
-    QMetaType::QVariant
+    QMetaType::QVariant,
+    QMetaType::QStringList,
+    QMetaType::QVariantMap,
+    QMetaType::QVariantHash
+    // Ensure new types have SETUP_TYPE
 >;
 
 template<class T> QVariant qvariant_from_cpp(const T& t) { return QVariant::fromValue(t); }

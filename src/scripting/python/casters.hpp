@@ -2,6 +2,10 @@
 #include <QString>
 #include <QUuid>
 #include <QVariant>
+#include <QList>
+#include <QVector>
+#include <QMap>
+#include <QHash>
 
 
 #undef slots
@@ -82,6 +86,62 @@ public:
 
     static handle cast(QVariant, return_value_policy policy, handle parent);
 };
+
+
+template <typename Type> struct type_caster<QList<Type>> : list_caster<QList<Type>, Type> {};
+template <typename Type> struct type_caster<QVector<Type>> : list_caster<QVector<Type>, Type> {};
+template <> struct type_caster<QStringList> : list_caster<QStringList, QString> {};
+
+
+template <typename Type, typename Key, typename Value> struct qt_map_caster {
+    using key_conv   = make_caster<Key>;
+    using value_conv = make_caster<Value>;
+
+    bool load(handle src, bool convert) {
+        if (!isinstance<dict>(src))
+            return false;
+        auto d = reinterpret_borrow<dict>(src);
+        value.clear();
+        for (auto it : d) {
+            key_conv kconv;
+            value_conv vconv;
+            if (!kconv.load(it.first.ptr(), convert) ||
+                !vconv.load(it.second.ptr(), convert))
+                return false;
+            value.insert(cast_op<Key &&>(std::move(kconv)), cast_op<Value &&>(std::move(vconv)));
+        }
+        return true;
+    }
+
+    template <typename T>
+    static handle cast(T &&src, return_value_policy policy, handle parent) {
+        dict d;
+        return_value_policy policy_key = policy;
+        return_value_policy policy_value = policy;
+        if (!std::is_lvalue_reference<T>::value) {
+            policy_key = return_value_policy_override<Key>::policy(policy_key);
+            policy_value = return_value_policy_override<Value>::policy(policy_value);
+        }
+        for (auto it = src.begin(); it != src.end(); ++it )
+        {
+            auto key = reinterpret_steal<object>(key_conv::cast(forward_like<T>(it.key()), policy_key, parent));
+            auto value = reinterpret_steal<object>(value_conv::cast(forward_like<T>(*it), policy_value, parent));
+            if (!key || !value)
+                return handle();
+            d[key] = value;
+        }
+        return d.release();
+    }
+
+    PYBIND11_TYPE_CASTER(Type, _("Dict[") + key_conv::name + _(", ") + value_conv::name + _("]"));
+};
+
+
+
+template <typename Key, typename Value> struct type_caster<QMap<Key, Value>>
+  : qt_map_caster<QMap<Key, Value>, Key, Value> { };
+template <typename Key, typename Value> struct type_caster<QHash<Key, Value>>
+  : qt_map_caster<QHash<Key, Value>, Key, Value> { };
 
 } // namespace pybind11::detail
 
