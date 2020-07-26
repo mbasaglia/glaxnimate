@@ -10,13 +10,20 @@ namespace model { class Document; }
 
 class GlaxnimateWindowPrivate;
 
+#include <QDebug>
 class GlaxnimateWindow : public QMainWindow
 {
     Q_OBJECT
 
     Q_PROPERTY(model::Document* document READ document)
 
+    using TestType = QVariant;
+    Q_PROPERTY(QVariant foo READ foo WRITE set_foo)
 public:
+    TestType foo() const { return foo_; } void set_foo(const TestType& v) { foo_ = v; qDebug() << v; } TestType foo_;
+
+public:
+
     explicit GlaxnimateWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
     ~GlaxnimateWindow();

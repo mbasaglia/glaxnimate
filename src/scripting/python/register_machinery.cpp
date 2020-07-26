@@ -1,5 +1,7 @@
 #include "register_machinery.hpp"
 
+#include <utility>
+
 #include <QColor>
 #include <QUuid>
 #include <QVariant>
@@ -7,11 +9,67 @@
 
 namespace scripting::python {
 
+template<class T> const char* type_name();
+template<int> struct meta_2_cpp_s;
+template<class> struct cpp_2_meta_s;
+
+#define TYPE_NAME(Type) template<> const char* type_name<Type>() { return #Type; }
+#define SETUP_TYPE(MetaInt, Type)                                   \
+    template<> const char* type_name<Type>() { return #Type; }      \
+    template<> struct meta_2_cpp_s<MetaInt> { using type = Type; }; \
+    template<> struct cpp_2_meta_s<Type> { static constexpr const int value = MetaInt; };
+
+template<int meta_type> using meta_2_cpp = typename meta_2_cpp_s<meta_type>::type;
+template<class T> constexpr const int cpp_2_meta = cpp_2_meta_s<T>::value;
+
+SETUP_TYPE(QMetaType::Int,          int)
+SETUP_TYPE(QMetaType::Bool,         bool)
+SETUP_TYPE(QMetaType::Double,       double)
+SETUP_TYPE(QMetaType::Float,        float)
+SETUP_TYPE(QMetaType::UInt,         unsigned int)
+SETUP_TYPE(QMetaType::Long,         long)
+SETUP_TYPE(QMetaType::LongLong,     long long)
+SETUP_TYPE(QMetaType::Short,        short)
+SETUP_TYPE(QMetaType::ULong,        unsigned long)
+SETUP_TYPE(QMetaType::ULongLong,    unsigned long long)
+SETUP_TYPE(QMetaType::UShort,       unsigned short)
+SETUP_TYPE(QMetaType::QString,      QString)
+SETUP_TYPE(QMetaType::QColor,       QColor)
+SETUP_TYPE(QMetaType::QUuid,        QUuid)
+SETUP_TYPE(QMetaType::QObjectStar,  QObject*)
+SETUP_TYPE(QMetaType::QVariantList, QVariantList)
+SETUP_TYPE(QMetaType::QVariant,     QVariant)
+TYPE_NAME(std::vector<QObject*>)
+
+using supported_types = std::integer_sequence<int,
+    QMetaType::Bool,
+    QMetaType::Int,
+    QMetaType::Double,
+    QMetaType::Float,
+    QMetaType::UInt,
+    QMetaType::Long,
+    QMetaType::LongLong,
+    QMetaType::Short,
+    QMetaType::ULong,
+    QMetaType::ULongLong,
+    QMetaType::UShort,
+    QMetaType::QString,
+    QMetaType::QColor,
+    QMetaType::QUuid,
+    QMetaType::QObjectStar,
+    QMetaType::QVariantList,
+    QMetaType::QVariant
+>;
+
 template<class T> QVariant qvariant_from_cpp(const T& t) { return QVariant::fromValue(t); }
 template<class T> T qvariant_to_cpp(const QVariant& v) { return v.value<T>(); }
 
 template<> QVariant qvariant_from_cpp<std::string>(const std::string& t) { return QString::fromStdString(t); }
 template<> std::string qvariant_to_cpp<std::string>(const QVariant& v) { return v.toString().toStdString(); }
+
+template<> QVariant qvariant_from_cpp<QVariant>(const QVariant& t) { return t; }
+template<> QVariant qvariant_to_cpp<QVariant>(const QVariant& v) { return v; }
+
 
 template<> void qvariant_to_cpp<void>(const QVariant&) {}
 
@@ -33,6 +91,21 @@ template<> std::vector<QObject*> qvariant_to_cpp<std::vector<QObject*>>(const QV
     return objects;
 }
 
+template<int i, template<class FuncT> class Func, class RetT, class... FuncArgs>
+bool type_dispatch_impl_step(int meta_type, RetT& ret, FuncArgs&&... args)
+{
+    if ( meta_type != i )
+        return false;
+
+    ret = Func<meta_2_cpp<i>>::do_the_thing(std::forward<FuncArgs>(args)...);
+    return true;
+}
+
+template<template<class FuncT> class Func, class RetT, class... FuncArgs, int... i>
+bool type_dispatch_impl(int meta_type, RetT& ret, std::integer_sequence<int, i...>, FuncArgs&&... args)
+{
+    return (type_dispatch_impl_step<i, Func>(meta_type, ret, std::forward<FuncArgs>(args)...)||...);
+}
 
 template<template<class FuncT> class Func, class RetT, class... FuncArgs>
 RetT type_dispatch(int meta_type, FuncArgs&&... args)
@@ -41,28 +114,9 @@ RetT type_dispatch(int meta_type, FuncArgs&&... args)
     {
         return Func<QObject*>::do_the_thing(std::forward<FuncArgs>(args)...);
     }
-
-    switch ( QMetaType::Type(meta_type) )
-    {
-        case QMetaType::Bool:           return Func<bool                    >::do_the_thing(std::forward<FuncArgs>(args)...);
-        case QMetaType::Int:            return Func<int                     >::do_the_thing(std::forward<FuncArgs>(args)...);
-//         case QMetaType::UInt:           return Func<unsigned int            >::do_the_thing(std::forward<FuncArgs>(args)...);
-        case QMetaType::Double:         return Func<double                  >::do_the_thing(std::forward<FuncArgs>(args)...);
-//         case QMetaType::Long:           return Func<long                    >::do_the_thing(std::forward<FuncArgs>(args)...);
-//         case QMetaType::LongLong:       return Func<long long               >::do_the_thing(std::forward<FuncArgs>(args)...);
-//         case QMetaType::Short:          return Func<short                   >::do_the_thing(std::forward<FuncArgs>(args)...);
-//         case QMetaType::ULong:          return Func<unsigned long           >::do_the_thing(std::forward<FuncArgs>(args)...);
-//         case QMetaType::ULongLong:      return Func<unsigned long long      >::do_the_thing(std::forward<FuncArgs>(args)...);
-//         case QMetaType::UShort:         return Func<unsigned short          >::do_the_thing(std::forward<FuncArgs>(args)...);
-        case QMetaType::Float:          return Func<float                   >::do_the_thing(std::forward<FuncArgs>(args)...);
-        case QMetaType::QString:        return Func<QString                 >::do_the_thing(std::forward<FuncArgs>(args)...);
-        case QMetaType::QColor:         return Func<QColor                  >::do_the_thing(std::forward<FuncArgs>(args)...);
-        case QMetaType::QUuid:          return Func<QUuid                   >::do_the_thing(std::forward<FuncArgs>(args)...);
-        case QMetaType::QObjectStar:    return Func<QObject*                >::do_the_thing(std::forward<FuncArgs>(args)...);
-        case QMetaType::QVariantList:   return Func<std::vector<QObject*>   >::do_the_thing(std::forward<FuncArgs>(args)...);
-        default:
-            return RetT{};
-    }
+    RetT ret;
+    type_dispatch_impl<Func>(meta_type, ret, supported_types(), std::forward<FuncArgs>(args)...);
+    return ret;
 }
 
 template<template<class FuncT> class Func, class RetT, class... FuncArgs>
@@ -105,18 +159,6 @@ PyPropertyInfo register_property(const QMetaProperty& prop)
     return pyprop;
 }
 
-template<class T> const char* type_name();
-#define TYPE_NAME(T) template<> const char* type_name<T>() { return #T; }
-TYPE_NAME(int)
-TYPE_NAME(bool)
-TYPE_NAME(double)
-TYPE_NAME(float)
-TYPE_NAME(QString)
-TYPE_NAME(QColor)
-TYPE_NAME(QUuid)
-TYPE_NAME(QObject*)
-TYPE_NAME(QVariantList)
-TYPE_NAME(std::vector<QObject*>)
 
 
 class ArgumentBuffer
@@ -287,4 +329,86 @@ PyMethodInfo register_method(const QMetaMethod& meth, py::handle& handle)
 
 }
 
+template<int i>
+bool qvariant_type_caster_load_impl(QVariant& into, const pybind11::handle& src)
+{
+    auto caster = pybind11::detail::make_caster<meta_2_cpp<i>>();
+    if ( caster.load(src, false) )
+    {
+        into = QVariant::fromValue(pybind11::detail::cast_op<meta_2_cpp<i>>(caster));
+        return true;
+    }
+    return false;
+}
+
+template<>
+bool qvariant_type_caster_load_impl<QMetaType::QVariant>(QVariant&, const pybind11::handle&) { return false; }
+
+template<int... i>
+bool qvariant_type_caster_load(QVariant& into, const pybind11::handle& src, std::integer_sequence<int, i...>)
+{
+    return (qvariant_type_caster_load_impl<i>(into, src)||...);
+}
+
+template<int i>
+bool qvariant_type_caster_cast_impl(
+    pybind11::handle& into, const QVariant& src,
+    pybind11::return_value_policy policy, const pybind11::handle& parent)
+{
+    if ( src.type() == i )
+    {
+        into = pybind11::detail::make_caster<meta_2_cpp<i>>::cast(src.value<meta_2_cpp<i>>(), policy, parent);
+        return true;
+    }
+    return false;
+}
+
+template<>
+bool qvariant_type_caster_cast_impl<QMetaType::QVariant>(
+    pybind11::handle&, const QVariant&, pybind11::return_value_policy, const pybind11::handle&)
+{
+    return false;
+}
+
+
+template<int... i>
+bool qvariant_type_caster_cast(
+    pybind11::handle& into,
+    const QVariant& src,
+    pybind11::return_value_policy policy,
+    const pybind11::handle& parent,
+    std::integer_sequence<int, i...>
+)
+{
+    return (qvariant_type_caster_cast_impl<i>(into, src, policy, parent)||...);
+}
+
+
 } // namespace scripting::python
+
+using namespace scripting::python;
+
+bool pybind11::detail::type_caster<QVariant>::load(handle src, bool)
+{
+    if ( src.ptr() == Py_None )
+    {
+        value = QVariant();
+        return true;
+    }
+    return qvariant_type_caster_load(value, src, supported_types());
+}
+
+pybind11::handle pybind11::detail::type_caster<QVariant>::cast(QVariant src, return_value_policy policy, handle parent)
+{
+    if ( src.isNull() )
+        return pybind11::none();
+
+    if ( src.type() == QVariant::UserType )
+    {
+        return pybind11::detail::make_caster<QObject*>::cast(src.value<QObject*>(), policy, parent);
+    }
+
+    pybind11::handle ret;
+    qvariant_type_caster_cast(ret, src, policy, parent, supported_types());
+    return ret;
+}
