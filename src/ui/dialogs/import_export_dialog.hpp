@@ -85,24 +85,9 @@ public:
         if ( settings.empty() )
             return true;
 
-        QDialog dialog(parent);
-
-        dialog.setWindowTitle(QObject::tr("%1 Options").arg(io_options_.format->name()));
-
-        QFormLayout layout;
-        dialog.setLayout(&layout);
-
         app::settings::WidgetBuilder widget_builder;
-        widget_builder.add_widgets(settings, &dialog, &layout, io_options_.settings);
-        QDialogButtonBox box(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
-        layout.setWidget(1, QFormLayout::SpanningRole, &box);
-        QObject::connect(&box, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-        QObject::connect(&box, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-        if ( dialog.exec() == QDialog::Rejected )
-            return false;
-
-        return true;
+        QString title = QObject::tr("%1 Options").arg(io_options_.format->name());
+        return widget_builder.show_dialog(settings, io_options_.settings, title, parent);
     }
 private:
     bool show_file_dialog(QFileDialog& dialog, const std::vector<io::ImportExport*>& formats)

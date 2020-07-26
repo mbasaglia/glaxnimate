@@ -34,6 +34,7 @@
 #include "io/glaxnimate/glaxnimate_format.hpp"
 
 #include "scripting/script_engine.hpp"
+#include "scripting/plugin.hpp"
 
 namespace {
 
@@ -382,6 +383,16 @@ public:
             if ( engine->slug() == "python" )
                 ui.console_language->setCurrentIndex(ui.console_language->count()-1);
         }
+
+        // Plugins
+        auto& par = scripting::PluginActionRegistry::instance();
+        for ( auto act : par.enabled() )
+        {
+            ui.menu_plugins->addAction(par.make_qaction(act));
+        }
+        connect(&par, &scripting::PluginActionRegistry::action_added, parent, [this](scripting::ActionService* action) {
+            ui.menu_plugins->addAction(scripting::PluginActionRegistry::instance().make_qaction(action));
+        });
 
         // Restore state
         // NOTE: keep at the end so we do this once all the widgets are in their default spots

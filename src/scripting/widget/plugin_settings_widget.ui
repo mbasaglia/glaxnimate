@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>scripting::PluginSettingsWidget</class>
+ <widget class="QWidget" name="scripting::PluginSettingsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>870</width>
+    <height>735</height>
+   </rect>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QListWidget" name="list_plugins"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QToolButton" name="toolButton">
+         <property name="toolTip">
+          <string>Reload Plugins</string>
+         </property>
+         <property name="text">
+          <string>Refresh</string>
+         </property>
+         <property name="icon">
+          <iconset theme="view-refresh">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QToolButton" name="toolButton_2">
+         <property name="toolTip">
+          <string>Install from file</string>
+         </property>
+         <property name="text">
+          <string>Install...</string>
+         </property>
+         <property name="icon">
+          <iconset theme="install">
+           <normaloff>.</normaloff>.</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="stacked_widget">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="page_noplugin"/>
+     <widget class="QWidget" name="page_plugin">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QGroupBox" name="widget_plugin">
+         <property name="title">
+          <string notr="true"> Plugin Name</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Version</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Author</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="line_version">
+            <property name="text">
+             <string>123</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Path</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="line_author">
+            <property name="text">
+             <string notr="true">John Doe</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Services</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="line_plugin_path">
+            <property name="text">
+             <string notr="true">/path/to/the/plugin</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QPushButton" name="btn_enable">
+              <property name="text">
+               <string>Enable</string>
+              </property>
+              <property name="icon">
+               <iconset theme="package-install">
+                <normaloff>.</normaloff>.</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_disable">
+              <property name="text">
+               <string>Disable</string>
+              </property>
+              <property name="icon">
+               <iconset theme="package-remove">
+                <normaloff>.</normaloff>.</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_uninstall">
+              <property name="text">
+               <string>Uninstall</string>
+              </property>
+              <property name="icon">
+               <iconset theme="uninstall">
+                <normaloff>.</normaloff>.</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QTableWidget" name="list_services">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <property name="showGrid">
+             <bool>false</bool>
+            </property>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Type</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>scripting::PluginSettingsWidget</receiver>
+   <slot>refresh_plugins()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>26</x>
+     <y>704</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>135</x>
+     <y>809</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>scripting::PluginSettingsWidget</receiver>
+   <slot>install_dialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>287</x>
+     <y>726</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>279</x>
+     <y>835</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_enable</sender>
+   <signal>clicked()</signal>
+   <receiver>scripting::PluginSettingsWidget</receiver>
+   <slot>enable_current()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>410</x>
+     <y>709</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>447</x>
+     <y>838</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_disable</sender>
+   <signal>clicked()</signal>
+   <receiver>scripting::PluginSettingsWidget</receiver>
+   <slot>disable_current()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>591</x>
+     <y>709</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>575</x>
+     <y>806</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_uninstall</sender>
+   <signal>clicked()</signal>
+   <receiver>scripting::PluginSettingsWidget</receiver>
+   <slot>uninstall_current()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>773</x>
+     <y>709</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>784</x>
+     <y>796</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>list_plugins</sender>
+   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
+   <receiver>scripting::PluginSettingsWidget</receiver>
+   <slot>current_changed(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>148</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>902</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>list_plugins</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>scripting::PluginSettingsWidget</receiver>
+   <slot>current_changed(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>83</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>94</x>
+     <y>858</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>refresh_plugins()</slot>
+  <slot>install_dialog()</slot>
+  <slot>enable_current()</slot>
+  <slot>disable_current()</slot>
+  <slot>uninstall_current()</slot>
+  <slot>current_changed(QListWidgetItem*)</slot>
+ </slots>
+</ui>

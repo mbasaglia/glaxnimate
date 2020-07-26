@@ -5,6 +5,7 @@
 
 #include "app/settings/settings.hpp"
 #include "app_info.hpp"
+#include "scripting/plugin_settings_group.hpp"
 
 namespace {
 
@@ -104,4 +105,8 @@ void GlaxnimateApp::on_initialize()
     QStringList search_paths = data_paths("icons");
     search_paths += QIcon::themeSearchPaths();
     QIcon::setThemeSearchPaths(search_paths);
+
+
+    app::settings::Settings::instance().add_custom_group(std::make_unique<scripting::PluginSettingsGroup>(QStringList{
+    }));
 }

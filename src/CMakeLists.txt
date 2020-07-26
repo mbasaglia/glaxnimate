@@ -40,6 +40,9 @@ ui/widgets/view_transform_widget.cpp
 ui/widgets/view_transform_widget.ui
 
 scripting/js/js_engine.cpp
+scripting/plugin.cpp
+scripting/widget/plugin_settings_widget.cpp
+scripting/widget/plugin_settings_widget.ui
 )
 
 configure_file(

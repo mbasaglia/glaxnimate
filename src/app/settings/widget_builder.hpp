@@ -7,6 +7,8 @@
 #include <QSpinBox>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QDialog>
+#include <QDialogButtonBox>
 
 #include "app/settings/setting.hpp"
 
@@ -60,6 +62,28 @@ public:
                 label->setText(opt.label);
             }
         }
+    }
+
+    bool show_dialog(const SettingList& settings_list, QVariantMap& target,
+                     const QString& title, QWidget* parent = nullptr)
+    {
+        QDialog dialog(parent);
+
+        dialog.setWindowTitle(title);
+
+        QFormLayout layout;
+        dialog.setLayout(&layout);
+
+        add_widgets(settings_list, &dialog, &layout, target);
+        QDialogButtonBox box(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+        layout.setWidget(1, QFormLayout::SpanningRole, &box);
+        QObject::connect(&box, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+        QObject::connect(&box, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+        if ( dialog.exec() == QDialog::Rejected )
+            return false;
+
+        return true;
     }
 
 private:

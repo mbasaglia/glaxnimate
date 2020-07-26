@@ -29,6 +29,12 @@ SettingsDialog::SettingsDialog ( QWidget* parent ) :
         bob.add_widgets(group.settings, page, lay, target, group.slug + "__");
     }
 
+    for ( const auto& group : app::settings::Settings::instance().custom_groups() )
+    {
+        new QListWidgetItem(group->icon(), group->label(), d->list_widget);
+        d->stacked_widget->addWidget(group->make_widget(d->stacked_widget));
+    }
+
     d->list_widget->setCurrentRow(0);
 }
 

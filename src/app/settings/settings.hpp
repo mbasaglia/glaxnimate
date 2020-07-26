@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 
 #include "app/settings/setting_group.hpp"
+#include "app/settings/custom_settings_group.hpp"
 
 
 namespace app::settings {
@@ -42,6 +43,9 @@ public:
 
     void add_group(SettingGroup group);
 
+    const std::vector<CustomSettingsGroup>& custom_groups() const { return custom_groups_; }
+    void add_custom_group(CustomSettingsGroup group) { custom_groups_.push_back(std::move(group)); }
+
 private:
     Settings() = default;
     Settings(const Settings&) = delete;
@@ -50,6 +54,7 @@ private:
     QList<SettingGroup> groups;
     QHash<QString, int> order;
     QHash<QString, QVariantMap> data;
+    std::vector<CustomSettingsGroup> custom_groups_;
 };
 
 

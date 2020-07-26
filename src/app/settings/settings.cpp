@@ -24,6 +24,13 @@ void app::settings::Settings::load()
         settings.endGroup();
         data[group.slug] = values;
     }
+
+    for ( const auto& group : custom_groups_ )
+    {
+        settings.beginGroup(group->slug());
+        group->load(settings);
+        settings.endGroup();
+    }
 }
 
 void app::settings::Settings::save()
@@ -37,6 +44,13 @@ void app::settings::Settings::save()
         settings.beginGroup(group.slug);
         for ( const Setting& setting : group.settings )
             settings.setValue(setting.slug, setting.get_variant(values));
+        settings.endGroup();
+    }
+
+    for ( const auto& group : custom_groups_ )
+    {
+        settings.beginGroup(group->slug());
+        group->save(settings);
         settings.endGroup();
     }
 }
