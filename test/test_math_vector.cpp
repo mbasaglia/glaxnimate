@@ -4,11 +4,7 @@
 #include "math/vector.hpp"
 
 
-
-template<class... T>
-void foo(int i, T... t){}
-
-class TestProperty: public QObject
+class TestCase: public QObject
 {
     Q_OBJECT
 
@@ -301,7 +297,6 @@ private slots:
 
     void test_lerp()
     {
-
         math::VecN<float, 2> a{20, 100};
         math::VecN<float, 2> b{40, 0};
         QCOMPARE(a.lerp(b, 0), a);
@@ -314,5 +309,5 @@ private slots:
 };
 
 
-QTEST_GUILESS_MAIN(TestProperty)
+QTEST_GUILESS_MAIN(TestCase)
 #include "test_math_vector.moc"

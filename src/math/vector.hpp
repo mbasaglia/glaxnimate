@@ -3,6 +3,7 @@
 #include <tuple>
 #include <utility>
 #include <cmath>
+#include <QMetaType>
 
 namespace math {
 
@@ -288,5 +289,111 @@ public:
     constexpr VecN() noexcept {}
     template<class... T> constexpr VecN(const std::tuple<T...>&) noexcept {}
 };
+
+namespace detail {
+
+/**
+ * Just ensures all types are correct
+ */
+template<class Derived, class ScalarT, int Size>
+class VecCRTP : public VecN<ScalarT, Size>
+{
+private:
+    using Base = VecN<ScalarT, Size>;
+
+public:
+    using scalar = typename Base::scalar;
+    using Base::Base;
+
+    constexpr Derived operator-() const noexcept { return -b(); }
+    constexpr Derived& operator+=(const Base& o) noexcept { return d(b() += o); }
+    constexpr Derived& operator-=(const Base& o) noexcept { return d(b() -= o); }
+    constexpr Derived& operator*=(scalar o) noexcept { return d(b() *= o); }
+    constexpr Derived& operator/=(scalar o) noexcept { return d(b() /= o); }
+    constexpr Derived operator+(const Base& o) const noexcept { return Derived(d()) += o; }
+    constexpr Derived operator-(const Base& o) const noexcept { return Derived(d()) -= o; }
+    constexpr Derived operator*(scalar o) const noexcept { return Derived(d()) *= o; }
+    constexpr Derived operator/(scalar o) const noexcept { return Derived(d()) /= o; }
+    constexpr Derived lerp(const Base& other, scalar factor) const noexcept { return d() * (1-factor) + other * factor; }
+    Derived& normalize() noexcept { return d(b().normalize()); }
+    Derived normalized() const noexcept { return d() / this->length(); }
+
+protected:
+    using Ctor = VecCRTP;
+
+private:
+    constexpr Base& b() noexcept { return *static_cast<Base*>(this); }
+    constexpr const Base& b() const noexcept { return *static_cast<const Base*>(this); }
+    constexpr Derived& d() noexcept { return *static_cast<Derived*>(this); }
+    constexpr const Derived& d() const noexcept { return *static_cast<const Derived*>(this); }
+    static constexpr Derived& d(Base& b) noexcept { return static_cast<Derived&>(b); }
+    static constexpr const Derived& d(const Base& b) noexcept { return static_cast<const Derived&>(b); }
+};
+
+} // namespace detail
+
+
+class Vec2 : public detail::VecCRTP<Vec2, double, 2>
+{
+    Q_GADGET
+public:
+    using Ctor::Ctor;
+
+    static Vec2 from_polar(scalar length, scalar angle)
+    {
+        return Vec2{std::cos(angle) * length, std::sin(angle) * length};
+    }
+
+    constexpr scalar x() const noexcept { return get<0>(); }
+    constexpr scalar& x() noexcept { return get<0>(); }
+    constexpr void set_x(scalar v) noexcept { get<0>() = v; }
+
+    constexpr scalar y() const noexcept { return get<1>(); }
+    constexpr scalar& y() noexcept { return get<1>(); }
+    constexpr void set_y(scalar v) noexcept { get<1>() = v; }
+};
+
+class Vec3 : public detail::VecCRTP<Vec3, double, 3>
+{
+    Q_GADGET
+public:
+    using Ctor::Ctor;
+
+    constexpr scalar x() const noexcept { return get<0>(); }
+    constexpr scalar& x() noexcept { return get<0>(); }
+    constexpr void set_x(scalar v) noexcept { get<0>() = v; }
+
+    constexpr scalar y() const noexcept { return get<1>(); }
+    constexpr scalar& y() noexcept { return get<1>(); }
+    constexpr void set_y(scalar v) noexcept { get<1>() = v; }
+
+    constexpr scalar z() const noexcept { return get<2>(); }
+    constexpr scalar& z() noexcept { return get<2>(); }
+    constexpr void set_z(scalar v) noexcept { get<2>() = v; }
+};
+
+class Vec4 : public detail::VecCRTP<Vec4, double, 4>
+{
+    Q_GADGET
+public:
+    using Ctor::Ctor;
+
+    constexpr scalar x() const noexcept { return get<0>(); }
+    constexpr scalar& x() noexcept { return get<0>(); }
+    constexpr void set_x(scalar v) noexcept { get<0>() = v; }
+
+    constexpr scalar y() const noexcept { return get<1>(); }
+    constexpr scalar& y() noexcept { return get<1>(); }
+    constexpr void set_y(scalar v) noexcept { get<1>() = v; }
+
+    constexpr scalar z() const noexcept { return get<2>(); }
+    constexpr scalar& z() noexcept { return get<2>(); }
+    constexpr void set_z(scalar v) noexcept { get<2>() = v; }
+
+    constexpr scalar w() const noexcept { return get<3>(); }
+    constexpr scalar& w() noexcept { return get<3>(); }
+    constexpr void set_w(scalar v) noexcept { get<3>() = v; }
+};
+
 
 } // namespace math

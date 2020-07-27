@@ -37,3 +37,4 @@ test_case(test_property
 )
 
 test_case(test_math_vector)
+test_case(test_bezier_solver)
