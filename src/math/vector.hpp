@@ -7,18 +7,19 @@
 
 namespace math {
 
-template<class ScalarT, int Size> class VecN;
 
 namespace detail {
 
-template<class ScalarT, int Size, int I>
+template<class Derived, class ScalarT, int Size> class VecN;
+
+template<class Derived, class ScalarT, int Size, int I>
 struct VecGetter
 {
     static_assert(Size >= I && Size > 0);
 
-    using VecCur = VecN<ScalarT, Size>;
-    using VecSmol = VecN<ScalarT, Size-1>;
-    using Smol = VecGetter<ScalarT, Size-1, I>;
+    using VecCur = VecN<Derived, ScalarT, Size>;
+    using VecSmol = VecN<Derived, ScalarT, Size-1>;
+    using Smol = VecGetter<Derived, ScalarT, Size-1, I>;
 
 
     static constexpr ScalarT get(const VecCur& v) noexcept {
@@ -55,10 +56,10 @@ struct VecGetter
 
 };
 
-template<class ScalarT, int Size>
-struct VecGetter<ScalarT, Size, Size>
+template<class Derived, class ScalarT, int Size>
+struct VecGetter<Derived, ScalarT, Size, Size>
 {
-    using VecCur = VecN<ScalarT, Size>;
+    using VecCur = VecN<Derived, ScalarT, Size>;
 
     static constexpr ScalarT get(const VecCur& v) noexcept {
         return v.v_;
@@ -83,10 +84,8 @@ struct VecGetter<ScalarT, Size, Size>
 
 
 
-} // namespace detail
-
-template<class ScalarT, int Size>
-class VecN : public VecN<ScalarT, Size-1>
+template<class Derived, class ScalarT, int Size>
+class VecN : public VecN<Derived, ScalarT, Size-1>
 {
     static_assert(Size > 0);
 public:
@@ -96,15 +95,15 @@ public:
     using const_iterator = const scalar*;
     static constexpr const size_type size_static = Size;
 
-    constexpr VecN() noexcept : VecN<scalar, Size-1>(), v_(0) {}
+    constexpr VecN() noexcept : VecN<Derived, scalar, Size-1>(), v_(0) {}
 
-    template<class... T>
+    template<class... T, class = std::enable_if_t<sizeof...(T) >= Size>>
     constexpr VecN(T... vals) noexcept : VecN(std::forward_as_tuple(vals...)) {}
 
 
     template<class... T>
     constexpr VecN(const std::tuple<T...>& tup) noexcept :
-        VecN<scalar, Size-1>(tup),
+        VecN<Derived, scalar, Size-1>(tup),
         v_(std::get<Size-1>(tup))
     {
         static_assert(sizeof...(T) >= Size, "Too few arguments to VecN()");
@@ -116,14 +115,14 @@ public:
     constexpr scalar get() const noexcept
     {
         static_assert(i >= 0 && i < Size, "Invalid index");
-        return detail::VecGetter<scalar, Size, i+1>::get(*this);
+        return detail::VecGetter<Derived, scalar, Size, i+1>::get(*this);
     }
 
     template<size_type i>
     constexpr scalar& get() noexcept
     {
         static_assert(i >= 0 && i < Size, "Invalid index");
-        return detail::VecGetter<scalar, Size, i+1>::get_ref(*this);
+        return detail::VecGetter<Derived, scalar, Size, i+1>::get_ref(*this);
     }
 
     constexpr const scalar* data() const noexcept
@@ -176,74 +175,74 @@ public:
         return data() + Size;
     }
 
-    constexpr VecN operator-() const noexcept
+    constexpr Derived operator-() const noexcept
     {
-        VecN copy = *this;
-        detail::VecGetter<scalar, Size, 0>::unary(copy, [](scalar& i) constexpr noexcept { i = -i; });
+        Derived copy = d();
+        detail::VecGetter<Derived, scalar, Size, 0>::unary(copy, [](scalar& i) constexpr noexcept { i = -i; });
         return copy;
     }
 
-    constexpr VecN& operator+=(const VecN& o) noexcept
+    constexpr Derived& operator+=(const VecN& o) noexcept
     {
-        detail::VecGetter<scalar, Size, 0>::binary(*this, o,
+        detail::VecGetter<Derived, scalar, Size, 0>::binary(*this, o,
             [](scalar& a, scalar b) constexpr noexcept { a += b; }
         );
 
-        return *this;
+        return d();
     }
 
-    constexpr VecN operator+(const VecN& o) const noexcept
+    constexpr Derived operator+(const VecN& o) const noexcept
     {
-        VecN c = *this;
+        Derived c = d();
         return c += o;
     }
 
-    constexpr VecN& operator-=(const VecN& o) noexcept
+    constexpr Derived& operator-=(const VecN& o) noexcept
     {
-        detail::VecGetter<scalar, Size, 0>::binary(*this, o,
+        detail::VecGetter<Derived, scalar, Size, 0>::binary(*this, o,
             [](scalar& a, scalar b) constexpr noexcept { a -= b; }
         );
 
-        return *this;
+        return d();
     }
 
-    constexpr VecN operator-(const VecN& o) const noexcept
+    constexpr Derived operator-(const VecN& o) const noexcept
     {
-        VecN c = *this;
+        Derived c = d();
         return c -= o;
     }
 
-    constexpr VecN& operator*=(scalar o) noexcept
+    constexpr Derived& operator*=(scalar o) noexcept
     {
-        detail::VecGetter<scalar, Size, 0>::unary(*this,
+        detail::VecGetter<Derived, scalar, Size, 0>::unary(*this,
             [o](scalar& a) constexpr noexcept { a *= o; }
         );
-        return *this;
+        return d();
     }
 
-    constexpr VecN operator*(scalar o) const noexcept
+    constexpr Derived operator*(scalar o) const noexcept
     {
-        VecN c = *this;
+        Derived c = d();
         return c *= o;
     }
 
-    constexpr VecN& operator/=(scalar o) noexcept
+    constexpr Derived& operator/=(scalar o) noexcept
     {
-        detail::VecGetter<scalar, Size, 0>::unary(*this,
+        detail::VecGetter<Derived, scalar, Size, 0>::unary(*this,
             [o](scalar& a) constexpr noexcept { a /= o; }
         );
-        return *this;
+        return d();
     }
 
-    constexpr VecN operator/(scalar o) const noexcept
+    constexpr Derived operator/(scalar o) const noexcept
     {
-        VecN c = *this;
+        Derived c = d();
         return c /= o;
     }
 
     constexpr bool operator==(const VecN& o) const noexcept
     {
-        return detail::VecGetter<scalar, Size, 0>::equal(*this, o);
+        return detail::VecGetter<Derived, scalar, Size, 0>::equal(*this, o);
     }
 
 
@@ -252,14 +251,14 @@ public:
         return !(*this == o);
     }
 
-    constexpr VecN lerp(const VecN& other, scalar factor) const noexcept
+    constexpr Derived lerp(const VecN& other, scalar factor) const noexcept
     {
         return *this * (1-factor) + other * factor;
     }
 
     constexpr ScalarT length_squared() const noexcept
     {
-        return detail::VecGetter<scalar, Size, 0>::length(*this);
+        return detail::VecGetter<Derived, scalar, Size, 0>::length(*this);
     }
 
     ScalarT length() const noexcept
@@ -267,73 +266,85 @@ public:
         return std::sqrt(length_squared());
     }
 
-    VecN& normalize() noexcept
+    Derived& normalize() noexcept
     {
         return *this /= length();
     }
 
-    VecN normalized() const noexcept
+    Derived normalized() const noexcept
     {
         return *this / length();
     }
 
+protected:
+    using Ctor = VecN;
+
 private:
     scalar v_;
 
-    template<class, int, int> friend struct detail::VecGetter;
+    template<class, class, int, int> friend struct detail::VecGetter;
+
+    constexpr Derived& d() noexcept { return *static_cast<Derived*>(this); }
+    constexpr const Derived& d() const noexcept { return *static_cast<const Derived*>(this); }
+    static constexpr Derived& d(VecN& b) noexcept { return static_cast<Derived&>(b); }
+    static constexpr const Derived& d(const VecN& b) noexcept { return static_cast<const Derived&>(b); }
 };
 
-template<class ScalarT> class VecN<ScalarT, 0>
+template<class Derived, class ScalarT> class VecN<Derived, ScalarT, 0>
 {
 public:
     constexpr VecN() noexcept {}
     template<class... T> constexpr VecN(const std::tuple<T...>&) noexcept {}
 };
 
-namespace detail {
-
 /**
  * Just ensures all types are correct
  */
-template<class Derived, class ScalarT, int Size>
-class VecCRTP : public VecN<ScalarT, Size>
-{
-private:
-    using Base = VecN<ScalarT, Size>;
-
-public:
-    using scalar = typename Base::scalar;
-    using Base::Base;
-
-    constexpr Derived operator-() const noexcept { return -b(); }
-    constexpr Derived& operator+=(const Base& o) noexcept { return d(b() += o); }
-    constexpr Derived& operator-=(const Base& o) noexcept { return d(b() -= o); }
-    constexpr Derived& operator*=(scalar o) noexcept { return d(b() *= o); }
-    constexpr Derived& operator/=(scalar o) noexcept { return d(b() /= o); }
-    constexpr Derived operator+(const Base& o) const noexcept { return Derived(d()) += o; }
-    constexpr Derived operator-(const Base& o) const noexcept { return Derived(d()) -= o; }
-    constexpr Derived operator*(scalar o) const noexcept { return Derived(d()) *= o; }
-    constexpr Derived operator/(scalar o) const noexcept { return Derived(d()) /= o; }
-    constexpr Derived lerp(const Base& other, scalar factor) const noexcept { return d() * (1-factor) + other * factor; }
-    Derived& normalize() noexcept { return d(b().normalize()); }
-    Derived normalized() const noexcept { return d() / this->length(); }
-
-protected:
-    using Ctor = VecCRTP;
-
-private:
-    constexpr Base& b() noexcept { return *static_cast<Base*>(this); }
-    constexpr const Base& b() const noexcept { return *static_cast<const Base*>(this); }
-    constexpr Derived& d() noexcept { return *static_cast<Derived*>(this); }
-    constexpr const Derived& d() const noexcept { return *static_cast<const Derived*>(this); }
-    static constexpr Derived& d(Base& b) noexcept { return static_cast<Derived&>(b); }
-    static constexpr const Derived& d(const Base& b) noexcept { return static_cast<const Derived&>(b); }
-};
+// template<class Derived, class ScalarT, int Size>
+// class VecCRTP : public VecN<ScalarT, Size>
+// {
+// private:
+//     using Base = VecN<ScalarT, Size>;
+//
+// public:
+//     using scalar = typename Base::scalar;
+//     using Base::Base;
+//
+//     constexpr Derived operator-() const noexcept { return {-d().x(), -d().y()}; }
+//     constexpr Derived& operator+=(const Base& o) noexcept { return d(b() += o); }
+//     constexpr Derived& operator-=(const Base& o) noexcept { return d(b() -= o); }
+//     constexpr Derived& operator*=(scalar o) noexcept { return d(b() *= o); }
+//     constexpr Derived& operator/=(scalar o) noexcept { return d(b() /= o); }
+//     constexpr Derived operator+(const Base& o) const noexcept { return Derived(d()) += o; }
+//     constexpr Derived operator-(const Base& o) const noexcept { return Derived(d()) -= o; }
+//     constexpr Derived operator*(scalar o) const noexcept { return Derived(d()) *= o; }
+//     constexpr Derived operator/(scalar o) const noexcept { return Derived(d()) /= o; }
+//     constexpr Derived lerp(const Base& other, scalar factor) const noexcept { return d() * (1-factor) + other * factor; }
+//     Derived& normalize() noexcept { return d(b().normalize()); }
+//     Derived normalized() const noexcept { return d() / this->length(); }
+//
+// protected:
+//     using Ctor = VecCRTP;
+//
+// private:
+//     constexpr Base& b() noexcept { return *static_cast<Base*>(this); }
+//     constexpr const Base& b() const noexcept { return *static_cast<const Base*>(this); }
+//     constexpr Derived& d() noexcept { return *static_cast<Derived*>(this); }
+//     constexpr const Derived& d() const noexcept { return *static_cast<const Derived*>(this); }
+//     static constexpr Derived& d(Base& b) noexcept { return static_cast<Derived&>(b); }
+//     static constexpr const Derived& d(const Base& b) noexcept { return static_cast<const Derived&>(b); }
+// };
 
 } // namespace detail
 
+template<class ScalarT, int Size>
+class VecN : public detail::VecN<VecN<ScalarT, Size>, ScalarT, Size>
+{
+public:
+    using detail::VecN<VecN<ScalarT, Size>, ScalarT, Size>::VecN;
+};
 
-class Vec2 : public detail::VecCRTP<Vec2, double, 2>
+class Vec2 : public detail::VecN<Vec2, double, 2>
 {
     Q_GADGET
 public:
@@ -353,7 +364,7 @@ public:
     constexpr void set_y(scalar v) noexcept { get<1>() = v; }
 };
 
-class Vec3 : public detail::VecCRTP<Vec3, double, 3>
+class Vec3 : public detail::VecN<Vec3, double, 3>
 {
     Q_GADGET
 public:
@@ -372,7 +383,7 @@ public:
     constexpr void set_z(scalar v) noexcept { get<2>() = v; }
 };
 
-class Vec4 : public detail::VecCRTP<Vec4, double, 4>
+class Vec4 : public detail::VecN<Vec4, double, 4>
 {
     Q_GADGET
 public:

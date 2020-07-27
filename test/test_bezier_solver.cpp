@@ -2,18 +2,7 @@
 
 #include <vector>
 #include "math/bezier_solver.hpp"
-
-namespace QTest {
-    template<>
-    char* toString(const math::Vec2& v)
-    {
-        return QTest::toString(
-            "Vec2(" +
-            QByteArray::number(v.x()) + ", " +
-            QByteArray::number(v.y()) + ')'
-        );
-    }
-}
+#include "print_vec.hpp"
 
 class TestCase: public QObject
 {
@@ -57,7 +46,6 @@ private slots:
         QCOMPARE(bs.solve(.75), math::Vec2(35, 25));
         QCOMPARE(bs.solve(1.0), math::Vec2(40, 0));
     }
-
 
     void test_solve_quadratic()
     {
@@ -293,6 +281,19 @@ private slots:
         // Ends with the original end point
         QCOMPARE(split.second[3], ep);
         QCOMPARE(split.second[2], ep);
+    }
+
+    void benchmark_solve()
+    {
+        math::Vec2 a{20, 30};
+        math::Vec2 b{15, 40};
+        math::Vec2 c{30, 10};
+        math::Vec2 d{40, 15};
+        math::BezierSolver<math::Vec2> bs{a, b, c, d};
+        QBENCHMARK{
+            for ( double t = 0; t <= 1; t += 0.01 )
+                bs.solve(t);
+        }
     }
 
 };

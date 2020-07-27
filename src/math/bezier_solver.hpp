@@ -1,20 +1,19 @@
 #pragma once
 
 #include "math/vector.hpp"
+#include "math/functions.hpp"
 
 namespace math {
 
-template<class T>
-auto binom(T n, T k)
-{
-    return 1 / ( (n+1) * std::beta(n-k+1, k+1) );
-}
-
+/**
+ * \brief Bezier solver up to degree 3
+ */
 template<class Vec>
 class BezierSolver
 {
 public:
-    using scalar = typename Vec::scalar;
+    using vector_type = Vec;
+    using scalar = std::decay_t<decltype(std::declval<Vec>()[0])>;
 
     /**
      * \param points Bezier points (absolute values)
@@ -58,12 +57,23 @@ public:
      */
     Vec solve(scalar factor) const
     {
-        if ( order() <=  0 )
-            return points_[0];
+        Vec v;
+        for ( int i = 0; i < Vec::size_static; i++ )
+            v[i] = solve_component(factor, i);
+        return v;
+    }
 
-        Vec p;
+    scalar solve_component(scalar factor, int component) const
+    {
+        if ( order() == 3 )
+            return fast_cubic(factor, points_[0][component], points_[1][component], points_[2][component], points_[3][component]);
+
+        if ( order() <=  0 )
+            return points_[0][component];
+
+        scalar p = 0;
         for ( int i = 0; i < int(points_.size()); i++ )
-            p += points_[i] * coefficient(i, order(), factor);
+            p += points_[i][component] * coefficient(i, order(), factor);
         return p;
     }
 
@@ -130,10 +140,37 @@ public:
 
     const std::vector<Vec>& points() const
     {
-        return points;
+        return points_;
+    }
+
+    std::vector<Vec>& points()
+    {
+        return points_;
     }
 
 private:
+    static constexpr scalar a(const scalar& k0, const scalar& k1, const scalar& k2, const scalar& k3) noexcept
+    {
+        return -k0 + k1*3 + k2 * -3 + k3;
+    }
+    static constexpr scalar b(const scalar& k0, const scalar& k1, const scalar& k2) noexcept
+    {
+        return k0 * 3 + k1 * -6 + k2 * 3;
+    }
+    static constexpr scalar c(const scalar& k0, const scalar& k1) noexcept
+    {
+        return k0 * -3 + k1 * 3;
+    }
+    static constexpr scalar d(const scalar& k0) noexcept
+    {
+        return k0;
+    }
+    static constexpr scalar fast_cubic(scalar t, const scalar& k0, const scalar& k1, const scalar& k2, const scalar& k3) noexcept
+    {
+        return ((a(k0, k1, k2, k3) * t + b(k0, k1, k2) ) * t +  c(k0, k1) ) * t + d(k0);
+    }
+
+
     scalar coefficient(int point_index, int order, scalar factor) const
     {
         return binom(order, point_index)
