@@ -35,3 +35,5 @@ test_case(test_property
 ../src/io/base.cpp
 ../src/app_info.cpp
 )
+
+test_case(test_math_vector)
