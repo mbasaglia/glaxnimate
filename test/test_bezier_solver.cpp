@@ -56,9 +56,9 @@ private slots:
         math::BezierSolver<math::Vec2> bs{a, b, c};
 
         auto explicit_solve = [a,b,c](double t) {
-            auto p1 = a.lerp(b, t);
-            auto p2 = b.lerp(c, t);
-            return p1.lerp(p2, t);
+            auto p1 = math::lerp(a, b, t);
+            auto p2 = math::lerp(b, c, t);
+            return math::lerp(p1, p2, t);
         };
 
         QCOMPARE(bs.solve(0.0), a);
@@ -80,12 +80,12 @@ private slots:
         math::BezierSolver<math::Vec2> bs{a, b, c, d};
 
         auto explicit_solve = [a,b,c,d](double t) {
-            auto p1 = a.lerp(b, t);
-            auto p2 = b.lerp(c, t);
-            auto p3 = c.lerp(d, t);
-            auto q1 = p1.lerp(p2, t);
-            auto q2 = p2.lerp(p3, t);
-            return q1.lerp(q2, t);
+            auto p1 = math::lerp(a, b, t);
+            auto p2 = math::lerp(b, c, t);
+            auto p3 = math::lerp(c, d, t);
+            auto q1 = math::lerp(p1, p2, t);
+            auto q2 = math::lerp(p2, p3, t);
+            return math::lerp(q1, q2, t);
         };
 
         FUZZY_COMPARE(bs.solve(0.0), a);
@@ -97,9 +97,9 @@ private slots:
 
     void test_angle_linear()
     {
-        math::Vec2::scalar angle = 1;
+        math::scalar_type<math::Vec2> angle = 1;
         math::Vec2 a{20, 30};
-        math::Vec2 b = a + math::Vec2::from_polar(10, angle);
+        math::Vec2 b = a + math::from_polar(10, angle);
 
         math::BezierSolver<math::Vec2> bs{a, b};
         QCOMPARE(bs.tangent_angle(0.00), angle);
@@ -108,7 +108,7 @@ private slots:
         QCOMPARE(bs.tangent_angle(0.75), angle);
         QCOMPARE(bs.tangent_angle(1.00), angle);
 
-        b = a + math::Vec2::from_polar(10, 2 * M_PI -1);
+        b = a + math::from_polar(10, 2 * M_PI -1);
         angle = - 1;
 
         bs = math::BezierSolver<math::Vec2>{a, b};
@@ -159,25 +159,25 @@ private slots:
         double fac = 0.33;
         auto quad = bs.solve_step(fac);
         QCOMPARE(quad.size(), 3);
-        auto q0 = a.lerp(b, fac);
+        auto q0 = math::lerp(a, b, fac);
         FUZZY_COMPARE(quad[0], q0);
-        auto q1 = b.lerp(c, fac);
+        auto q1 = math::lerp(b, c, fac);
         FUZZY_COMPARE(quad[1], q1);
-        auto q2 = c.lerp(d, fac);
+        auto q2 = math::lerp(c, d, fac);
         FUZZY_COMPARE(quad[2], q2);
 
         bs = math::BezierSolver<math::Vec2>{q0, q1, q2};
         auto lin = bs.solve_step(fac);
         QCOMPARE(lin.size(), 2);
-        auto l0 = q0.lerp(q1, fac);
-        auto l1 = q1.lerp(q2, fac);
+        auto l0 = math::lerp(q0, q1, fac);
+        auto l1 = math::lerp(q1, q2, fac);
         FUZZY_COMPARE(lin[0], l0);
         FUZZY_COMPARE(lin[1], l1);
 
         bs = math::BezierSolver<math::Vec2>{l0, l1};
         auto res = bs.solve_step(fac);
         QCOMPARE(res.size(), 1);
-        FUZZY_COMPARE(res[0], l0.lerp(l1, fac));
+        FUZZY_COMPARE(res[0], math::lerp(l0, l1, fac));
         FUZZY_COMPARE(res[0], (math::BezierSolver<math::Vec2>{a, b, c, d}.solve(fac)));
     }
 
@@ -285,15 +285,37 @@ private slots:
 
     void benchmark_solve()
     {
-        math::Vec2 a{20, 30};
-        math::Vec2 b{15, 40};
-        math::Vec2 c{30, 10};
-        math::Vec2 d{40, 15};
-        math::BezierSolver<math::Vec2> bs{a, b, c, d};
+        using VecT = math::Vec2;
+        VecT a{20, 30};
+        VecT b{15, 40};
+        VecT c{30, 10};
+        VecT d{40, 15};
+        math::BezierSolver<VecT> bs{a, b, c, d};
         QBENCHMARK{
             for ( double t = 0; t <= 1; t += 0.01 )
                 bs.solve(t);
         }
+        // Without cubic optimization
+        //      0.17 msecs per iteration (total: 91, iterations: 512)
+        // With the optimization
+        //      0.017 msecs per iteration (total: 71, iterations: 4096)
+        // 1 order of magnitude difference
+    }
+
+    void benchmark_solve_qvec()
+    {
+        using VecT = QVector2D;
+        VecT a{20, 30};
+        VecT b{15, 40};
+        VecT c{30, 10};
+        VecT d{40, 15};
+        math::BezierSolver<VecT> bs{a, b, c, d};
+        QBENCHMARK{
+            for ( double t = 0; t <= 1; t += 0.01 )
+                bs.solve(t);
+        }
+        // Slightly faster but calculating tangents loses significant precision
+        //      0.013 msecs per iteration (total: 57, iterations: 4096)
     }
 
 };

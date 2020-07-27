@@ -297,44 +297,6 @@ public:
     template<class... T> constexpr VecN(const std::tuple<T...>&) noexcept {}
 };
 
-/**
- * Just ensures all types are correct
- */
-// template<class Derived, class ScalarT, int Size>
-// class VecCRTP : public VecN<ScalarT, Size>
-// {
-// private:
-//     using Base = VecN<ScalarT, Size>;
-//
-// public:
-//     using scalar = typename Base::scalar;
-//     using Base::Base;
-//
-//     constexpr Derived operator-() const noexcept { return {-d().x(), -d().y()}; }
-//     constexpr Derived& operator+=(const Base& o) noexcept { return d(b() += o); }
-//     constexpr Derived& operator-=(const Base& o) noexcept { return d(b() -= o); }
-//     constexpr Derived& operator*=(scalar o) noexcept { return d(b() *= o); }
-//     constexpr Derived& operator/=(scalar o) noexcept { return d(b() /= o); }
-//     constexpr Derived operator+(const Base& o) const noexcept { return Derived(d()) += o; }
-//     constexpr Derived operator-(const Base& o) const noexcept { return Derived(d()) -= o; }
-//     constexpr Derived operator*(scalar o) const noexcept { return Derived(d()) *= o; }
-//     constexpr Derived operator/(scalar o) const noexcept { return Derived(d()) /= o; }
-//     constexpr Derived lerp(const Base& other, scalar factor) const noexcept { return d() * (1-factor) + other * factor; }
-//     Derived& normalize() noexcept { return d(b().normalize()); }
-//     Derived normalized() const noexcept { return d() / this->length(); }
-//
-// protected:
-//     using Ctor = VecCRTP;
-//
-// private:
-//     constexpr Base& b() noexcept { return *static_cast<Base*>(this); }
-//     constexpr const Base& b() const noexcept { return *static_cast<const Base*>(this); }
-//     constexpr Derived& d() noexcept { return *static_cast<Derived*>(this); }
-//     constexpr const Derived& d() const noexcept { return *static_cast<const Derived*>(this); }
-//     static constexpr Derived& d(Base& b) noexcept { return static_cast<Derived&>(b); }
-//     static constexpr const Derived& d(const Base& b) noexcept { return static_cast<const Derived&>(b); }
-// };
-
 } // namespace detail
 
 template<class ScalarT, int Size>
@@ -349,11 +311,6 @@ class Vec2 : public detail::VecN<Vec2, double, 2>
     Q_GADGET
 public:
     using Ctor::Ctor;
-
-    static Vec2 from_polar(scalar length, scalar angle)
-    {
-        return Vec2{std::cos(angle) * length, std::sin(angle) * length};
-    }
 
     constexpr scalar x() const noexcept { return get<0>(); }
     constexpr scalar& x() noexcept { return get<0>(); }
@@ -406,5 +363,26 @@ public:
     constexpr void set_w(scalar v) noexcept { get<3>() = v; }
 };
 
+
+template<class ScalarT, int Size>
+constexpr VecN<ScalarT, Size> lerp(const VecN<ScalarT, Size>& a, const VecN<ScalarT, Size>& b, double factor) noexcept
+{
+    return a.lerp(b, factor);
+}
+
+template<class VecT>
+using scalar_type = std::decay_t<decltype(std::declval<VecT>()[0])>;
+
+
+template<class T>
+constexpr T lerp(const T& a, const T& b, double factor)
+{
+    return a * (1-factor) + b * factor;
+}
+
+inline Vec2 from_polar(scalar_type<Vec2> length, scalar_type<Vec2> angle)
+{
+    return Vec2{std::cos(angle) * length, std::sin(angle) * length};
+}
 
 } // namespace math

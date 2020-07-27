@@ -3,7 +3,19 @@
 #include "math/vector.hpp"
 #include "math/functions.hpp"
 
+class QVector2D; class QVector3D; class QVector4D;
+
 namespace math {
+
+namespace detail {
+
+template<class V> struct VecSize { static constexpr int value = V::size_static; };
+template<> struct VecSize<QVector2D> { static constexpr int value = 2; };
+template<> struct VecSize<QVector3D> { static constexpr int value = 3; };
+template<> struct VecSize<QVector4D> { static constexpr int value = 4; };
+
+
+} // namespace detail
 
 /**
  * \brief Bezier solver up to degree 3
@@ -13,7 +25,7 @@ class BezierSolver
 {
 public:
     using vector_type = Vec;
-    using scalar = std::decay_t<decltype(std::declval<Vec>()[0])>;
+    using scalar = scalar_type<Vec>;
 
     /**
      * \param points Bezier points (absolute values)
@@ -58,7 +70,7 @@ public:
     Vec solve(scalar factor) const
     {
         Vec v;
-        for ( int i = 0; i < Vec::size_static; i++ )
+        for ( int i = 0; i < detail::VecSize<Vec>::value; i++ )
             v[i] = solve_component(factor, i);
         return v;
     }
@@ -106,7 +118,7 @@ public:
         Vec p1 = points_[0];
         for ( auto it = points_.begin() + 1; it != points_.end(); ++it )
         {
-            next.push_back(p1.lerp(*it, factor));
+            next.push_back(lerp(p1, *it, factor));
             p1 = *it;
         }
         return next;
@@ -121,7 +133,7 @@ public:
     {
         if ( order() == 1 )
         {
-            auto k = points_[0].lerp(points_[1], factor);
+            auto k = lerp(points_[0], points_[1], factor);
             return {
                 {points_[0], points_[0], k, k},
                 {k, k, points_[1], points_[1]},
@@ -130,7 +142,7 @@ public:
 
         BezierSolver quad_solv(order() == 2 ? points_ : solve_step(factor));
         auto lin = quad_solv.solve_step(factor);
-        auto k = lin[0].lerp(lin[1], factor);
+        auto k = lerp(lin[0], lin[1], factor);
         return {
             {points_.front(), quad_solv.points_.front(), lin.front(), k},
             {k, lin.back(), quad_solv.points_.back(), points_.back()}
