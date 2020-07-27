@@ -17,7 +17,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Qt
 set (QT_SUPPORTED_VERSIONS 5)
-find_package(Qt5 COMPONENTS Widgets Qml REQUIRED)
+find_package(Qt5Qml QUIET)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -55,6 +56,12 @@ find_package(Qt5Test QUIET)
 if(Qt5Test_FOUND)
     add_subdirectory(test)
 endif()
+
+if(Qt5Qml_FOUND)
+    message(STATUS "JS enabled")
+    add_subdirectory(src/scripting/js/)
+endif()
+
 
 find_package(PythonLibs 3 COMPONENTS Interpreter Development QUIET)
 if(PythonLibs_FOUND)

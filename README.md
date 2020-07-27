@@ -11,9 +11,12 @@ Dependencies
 ---------------------------------------
 
 * C++17 compliant compiler
-* Qt5 (qtbase, qtdeclarative)
+* Qt5 (qtbase)
 * CMake
 * Python3
+
+(Optional)
+* Qt Declarative
 
 
 ### Installing Dependencies on Deb systems

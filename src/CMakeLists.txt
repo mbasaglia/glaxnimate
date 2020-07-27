@@ -39,7 +39,6 @@ ui/widgets/glaxnimate_graphics_view.cpp
 ui/widgets/view_transform_widget.cpp
 ui/widgets/view_transform_widget.ui
 
-scripting/js/js_engine.cpp
 scripting/plugin.cpp
 scripting/widget/plugin_settings_widget.cpp
 scripting/widget/plugin_settings_widget.ui
@@ -58,4 +57,4 @@ endif()
 
 #add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)
 add_executable(${PROJECT_SLUG} ${SOURCES})
-target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets Qt5::Qml QtColorWidgets QtHistoryLineEdit)
+target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets QtColorWidgets QtHistoryLineEdit)
