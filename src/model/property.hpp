@@ -186,12 +186,11 @@ private:
     PropertyTraits traits_;
 };
 
-
 template<class Type, class Reference = const Type&>
 class Property : public BaseProperty
 {
 public:
-    using held_type = Type;
+    using value_type = Type;
     using reference = Reference;
 
     Property(Object* obj, QString name, Type default_value = Type(), bool user_editable=true)
@@ -292,7 +291,7 @@ template<class Type>
 class ObjectListProperty : public ObjectListPropertyBase
 {
 public:
-    using held_type = Type;
+    using value_type = Type;
     using pointer = std::unique_ptr<Type>;
     using reference = Type&;
 //     using const_reference = const Type&;

@@ -99,6 +99,14 @@ public:
     DocumentNode* docnode_group_parent() const override;
     std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const override;
     bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const override;
+    /**
+     * \brief Returns the (frame) time relative to this layer
+     *
+     * Useful for stretching / remapping etc.
+     * Always use this to get animated property values,
+     * even if currently it doesn't do anything
+     */
+    double relative_time(double time) const { return time; }
 
     bool is_ancestor_of(const Layer* other) const;
 
