@@ -39,6 +39,7 @@ ui/dialogs/about_dialog.ui
 ui/widgets/glaxnimate_graphics_view.cpp
 ui/widgets/view_transform_widget.cpp
 ui/widgets/view_transform_widget.ui
+ui/widgets/keyframe_transition_widget.cpp
 
 scripting/plugin.cpp
 scripting/widget/plugin_settings_widget.cpp
