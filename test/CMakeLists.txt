@@ -38,3 +38,6 @@ test_case(test_property
 
 test_case(test_math_vector)
 test_case(test_bezier_solver)
+test_case(test_keyframe_transition
+../src/model/animation/keyframe_transition.cpp
+)
