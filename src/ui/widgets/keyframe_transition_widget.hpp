@@ -13,6 +13,7 @@ public:
     ~KeyframeTransitionWidget();
 
     void set_target(model::KeyframeTransition* kft);
+    model::KeyframeTransition* target() const;
 
 protected:
     void paintEvent(QPaintEvent * event) override;

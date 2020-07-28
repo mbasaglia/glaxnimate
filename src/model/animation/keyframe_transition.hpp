@@ -50,8 +50,19 @@ public:
      * \brief Get interpolation factor
      * \param ratio in [0, 1]. Determines the time ratio (0 = before, 1 = after)
      * \return A value in [0, 1]: the corresponding interpolation factor
+     *
+     * If the bezier is defined as B(t) = (x,y). This gives y given x.
      */
     Q_INVOKABLE double lerp_factor(double ratio) const;
+
+    /**
+     * \brief Get the bezier parameter at the given time
+     * \param ratio in [0, 1]. Determines the time ratio (0 = before, 1 = after)
+     * \return A value in [0, 1]: the corresponding bezier parameter
+     *
+     * If the bezier is defined as B(t) = (x,y). This gives t given x.
+     */
+    Q_INVOKABLE double bezier_parameter(double ratio) const;
 
 public slots:
     void set_hold(bool hold);

@@ -1,11 +1,10 @@
-set(SOURCES)
-get_property(SOURCES_tmp TARGET ${PROJECT_SLUG} PROPERTY SOURCES)
-foreach(src ${SOURCES_tmp})
-    get_filename_component(src ${src} ABSOLUTE BASE_DIR ${CMAKE_SOURCE_DIR}/src/)
-    list(APPEND SOURCES ${src})
-endforeach()
-
-
+# set(SOURCES)
+# get_property(SOURCES_tmp TARGET ${PROJECT_SLUG} PROPERTY SOURCES)
+# foreach(src ${SOURCES_tmp})
+#     get_filename_component(src ${src} ABSOLUTE BASE_DIR ${CMAKE_SOURCE_DIR}/src/)
+#     list(APPEND SOURCES ${src})
+# endforeach()
+#
 # add_custom_target(
 #     icons
 #     #ALL
@@ -16,6 +15,7 @@ endforeach()
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/sets/breeze-icons/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/sets/breeze-icons/icons-dark DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/plugins DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 
 # Translation

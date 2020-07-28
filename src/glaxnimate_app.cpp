@@ -100,7 +100,7 @@ void GlaxnimateApp::on_initialize()
     setApplicationDisplayName(info.name());
     setApplicationVersion(info.version());
     setOrganizationName(info.organization());
-    setWindowIcon(QIcon(data_file("icon.svg")));
+    setWindowIcon(QIcon(data_file("images/logo.svg")));
 
     QStringList search_paths = data_paths("icons");
     search_paths += QIcon::themeSearchPaths();

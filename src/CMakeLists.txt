@@ -40,6 +40,8 @@ ui/widgets/glaxnimate_graphics_view.cpp
 ui/widgets/view_transform_widget.cpp
 ui/widgets/view_transform_widget.ui
 ui/widgets/keyframe_transition_widget.cpp
+ui/widgets/keyframe_editor_widget.cpp
+ui/widgets/keyframe_editor_widget.ui
 
 scripting/plugin.cpp
 scripting/widget/plugin_settings_widget.cpp

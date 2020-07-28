@@ -14,6 +14,11 @@ public:
     QPoint drag_start_mouse;
     QPoint drag_start_handle;
 
+    bool hold() const
+    {
+        return target->hold();
+    }
+
     const math::Vec2& point(int i) { return target->bezier().points()[i]; }
 
     double map_coord(double coord, double size)
@@ -61,6 +66,7 @@ KeyframeTransitionWidget::KeyframeTransitionWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Private>())
 {
     setMouseTracking(true);
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 KeyframeTransitionWidget::~KeyframeTransitionWidget() = default;
@@ -82,12 +88,13 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
         -d->handle_radius
     );
 
-    QPalette::ColorGroup group = isEnabled() && d->target ? QPalette::Active : QPalette::Disabled;
+    QPalette::ColorGroup group = isEnabled() && d->target && !d->hold() ? QPalette::Active : QPalette::Disabled;
     painter.fillRect(rect(), palette().brush(group, QPalette::Window));
     painter.fillRect(center_rect, palette().brush(group, QPalette::Base));
 
     if ( d->target )
     {
+        bool enabled = isEnabled() && !d->hold();
         painter.setRenderHint(QPainter::Antialiasing);
 
         QBrush fg = palette().brush(group, QPalette::Text);
@@ -113,9 +120,9 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
         QPen high_pen(palette().brush(group, QPalette::Highlight), 2);
         QPen low_pen(QPen(palette().brush(group, QPalette::Text), 2));
         painter.setBrush(Qt::transparent);
-        painter.setPen(1 == d->selected_handle && isEnabled() ? high_pen : low_pen);
+        painter.setPen(1 == d->selected_handle && enabled ? high_pen : low_pen);
         painter.drawLine(p[0], p[1]);
-        painter.setPen(2 == d->selected_handle && isEnabled() ? high_pen : low_pen);
+        painter.setPen(2 == d->selected_handle && enabled ? high_pen : low_pen);
         painter.drawLine(p[2], p[3]);
 
         // Fixed handles
@@ -127,12 +134,12 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
         // Draggable handles
         for ( int i = 1; i <= 2; i++ )
         {
-            if ( i == d->selected_handle && isEnabled() )
+            if ( i == d->selected_handle && enabled )
             {
                 painter.setBrush(palette().brush(group, QPalette::Highlight));
                 painter.setPen(Qt::transparent);
             }
-            else if ( i == d->highlighted_handle && isEnabled() )
+            else if ( i == d->highlighted_handle && enabled )
             {
                 painter.setBrush(palette().brush(group, QPalette::HighlightedText));
                 painter.setPen(QPen(palette().brush(group, QPalette::Highlight), 1));
@@ -145,14 +152,13 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
             painter.drawEllipse(p[i], d->handle_radius, d->handle_radius);
         }
     }
-
 }
 
 
 void KeyframeTransitionWidget::mousePressEvent(QMouseEvent* event)
 {
     QWidget::mousePressEvent(event);
-    if ( !d->target )
+    if ( !d->target || d->hold() )
         return;
 
     if ( event->button() == Qt::LeftButton )
@@ -170,7 +176,7 @@ void KeyframeTransitionWidget::mousePressEvent(QMouseEvent* event)
 void KeyframeTransitionWidget::mouseMoveEvent(QMouseEvent* event)
 {
     QWidget::mouseMoveEvent(event);
-    if ( !d->target )
+    if ( !d->target || d->hold() )
         return;
 
     if ( d->selected_handle )
@@ -225,9 +231,7 @@ void KeyframeTransitionWidget::leaveEvent(QEvent* event)
     }
 }
 
-
-
-
-
-
-
+model::KeyframeTransition * KeyframeTransitionWidget::target() const
+{
+    return d->target;
+}

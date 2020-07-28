@@ -42,6 +42,7 @@ model::KeyframeTransition::Descriptive model::KeyframeTransition::after() const
 
 void model::KeyframeTransition::set_before(model::KeyframeTransition::Descriptive d)
 {
+    bool old_hold = hold_;
     switch ( d )
     {
         case Constant:
@@ -49,18 +50,24 @@ void model::KeyframeTransition::set_before(model::KeyframeTransition::Descriptiv
             return;
         case Linear:
             bezier_.points()[1] = bezier_.points()[0];
+            hold_ = false;
             break;
         case Ease:
             bezier_.points()[1] = math::Vec2{1./3., 0};
+            hold_ = false;
             break;
         case Custom:
-            return;
+            hold_ = false;
+            break;
     }
     emit after_changed(after());
+    if ( old_hold != hold_ )
+        emit before_changed(before());
 }
 
 void model::KeyframeTransition::set_after(model::KeyframeTransition::Descriptive d)
 {
+    bool old_hold = hold_;
     switch ( d )
     {
         case Constant:
@@ -68,14 +75,19 @@ void model::KeyframeTransition::set_after(model::KeyframeTransition::Descriptive
             return;
         case Linear:
             bezier_.points()[2] = bezier_.points()[3];
+            hold_ = false;
             break;
         case Ease:
             bezier_.points()[2] = math::Vec2{2./3., 1};
+            hold_ = false;
             break;
         case Custom:
-            return;
+            hold_ = false;
+            break;
     }
     emit before_changed(before());
+    if ( old_hold != hold_ )
+        emit after_changed(after());
 }
 
 void model::KeyframeTransition::set_after_handle(const math::Vec2& after)
@@ -125,7 +137,7 @@ double _binary_subdivide(double x, double interval_start, double interval_end, c
     {
         if ( i != 0 && std::abs(current_x) < SUBDIVISION_PRECISION )
             break;
-        t = interval_start + (interval_end - interval_start) / 2.0;
+        t = (interval_start + interval_end) / 2.0;
         current_x = bez.solve_component(t, 0) - x;
         if ( current_x > 0.0 )
             interval_end = t;
@@ -154,7 +166,7 @@ void _get_sample_values(const Bez& bez, model::detail::SampleCache& sample_cache
     {
         sample_cache.clean = true;
         for ( int i = 0; i < SPLINE_TABLE_SIZE; i++ )
-            sample_cache.sample_values[i] = bez.solve_component(i *  SAMPLE_STEP_SIZE,0);
+            sample_cache.sample_values[i] = bez.solve_component(i *  SAMPLE_STEP_SIZE, 0);
     }
 }
 
@@ -192,4 +204,13 @@ double model::KeyframeTransition::lerp_factor(double ratio) const
         return 1;
     double t = t_for_x(ratio, bezier_, sample_cache_);
     return bezier_.solve_component(t, 1);
+}
+
+double model::KeyframeTransition::bezier_parameter(double ratio) const
+{
+    if ( ratio <= 0 || hold_ )
+        return 0;
+    if ( ratio >= 1 )
+        return 1;
+    return t_for_x(ratio, bezier_, sample_cache_);
 }
