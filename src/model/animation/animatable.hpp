@@ -43,20 +43,22 @@ public:
     {
         NotAnimated,    ///< Value is not animated
         Animated,       ///< Value is animated but the given time isn't a keyframe
-        IsKeyframe      ///< Value is animated and the given time is a keyframe
+        IsKeyframe,     ///< Value is animated and the given time is a keyframe
+        Mismatch        ///< Value is animated and the current value doesn't match the animated value
+
     };
 
     virtual ~AnimatableBase() = default;
 
     /**
-     * \brief Number of keyframes must always be >= 1
+     * \brief Number of keyframes
      */
     virtual int keyframe_count() const = 0;
 
     /**
      * \param i Keyframe index
-     * \pre \p i in [0, keyframe_count()]
-     * \return the Corresponding keyframe
+     * \pre \p i in [0, keyframe_count())
+     * \return the Corresponding keyframe or nullptr if not found
      *
      * keyframe(i).time() < keyframe(j).time() <=> i < j
      */
@@ -77,17 +79,27 @@ public:
     virtual QVariant value(FrameTime time) const = 0;
 
     /**
-     * \brief Set value
-     * \pre !animated()
-     * \post value(t) == \p value for all t
-     * \return false if the value couldn't be set
+     * \brief Get the current value
      */
-    bool set_value(const QVariant& value)
-    {
-        if ( animated() )
-            return false;
-        return keyframe(0)->set_value(value);
-    }
+    virtual QVariant value() const = 0;
+
+    /**
+     * \brief Set the current value
+     *
+     * If animated(), the value might get overwritten when changing the current time
+     */
+    virtual bool set_value(const QVariant& value) = 0;
+
+    /**
+     * \brief Set the current time
+     * \post value() == value(time)
+     */
+    virtual void set_time(FrameTime time) = 0;
+
+    /**
+     * If animated(), whether the current value has been changed over the animated value
+     */
+    virtual bool value_mismatch() const = 0;
 
     /**
      * \brief Set the value for the given keyframe
@@ -104,14 +116,15 @@ public:
      */
     bool animated() const
     {
-        return keyframe_count() > 0;
+        return keyframe_count() != 0;
     }
 
     /**
      * \brief Index of the keyframe whose time lays in the transition
+     * \pre animated()
      *
      * If all keyframes are after \p time, returns 0
-     * This means keyframe(keyframe_index(t)) is always valid
+     * This means keyframe(keyframe_index(t)) is always valid when animated
      */
     int keyframe_index(FrameTime time) const
     {
@@ -127,6 +140,8 @@ public:
     {
         if ( !animated() )
             return NotAnimated;
+        if ( value_mismatch() )
+            return Mismatch;
         if ( keyframe(keyframe_index(time))->time() == time )
             return IsKeyframe;
         return Animated;
@@ -189,7 +204,7 @@ public:
     using value_type = typename Keyframe<Type>::value_type;
     using reference = typename Keyframe<Type>::reference;
 
-    Animatable(reference val) : keyframes_{keyframe_type{0, val}} {}
+    Animatable(reference val) : value_{val} {}
 
     int keyframe_count() const override
     {
@@ -210,6 +225,11 @@ public:
         return &keyframes_->at(i);
     }
 
+    QVariant value() const override
+    {
+        return QVariant::fromValue(value_);
+    }
+
     QVariant value(FrameTime time) const override
     {
         return QVariant::fromValue(get_at(time));
@@ -225,8 +245,47 @@ public:
         return add_keyframe(time, val.value<value_type>());
     }
 
+    bool set_value(const QVariant& val) override
+    {
+        if ( !val.canConvert(qMetaTypeId<value_type>()) )
+            return false;
+        QVariant converted = val;
+        if ( !converted.convert(qMetaTypeId<value_type>()) )
+            return false;
+        value_ = val.value<value_type>();
+        return true;
+    }
+
+    bool set(reference val)
+    {
+        value_ = val;
+        mismatched_ = !keyframes_.empty();
+        return true;
+    }
+
+    void set_time(FrameTime time) override
+    {
+        if ( !keyframes_.empty() )
+            value_ = get_at(time);
+        mismatched_ = false;
+    }
+
     keyframe_type* add_keyframe(FrameTime time, reference value)
     {
+        if ( !keyframes_.empty() )
+        {
+            value_ = value;
+            keyframes_.append({0, value});
+            if ( time != 0 )
+            {
+                keyframes_.append({time, value});
+                if ( time > 0 )
+                    return &keyframes_.at(1);
+                keyframes_.swap(0, 1);
+            }
+            return &keyframes_.at(0);
+        }
+
         int index = keyframe_index(time);
         auto kf = keyframe(index);
         if ( kf->time() == time )
@@ -247,6 +306,9 @@ public:
 
     value_type get_at(FrameTime time) const
     {
+        if ( keyframes_.empty() )
+            return value_;
+
         const keyframe_type* first = keyframe(0);
         int count = keyframe_count();
         if ( count < 2 || first->time() >= time )
@@ -264,8 +326,16 @@ public:
         return first->lerp(second, lerp_factor);
     }
 
+    bool value_mismatch() const override
+    {
+        return mismatched_;
+    }
+
+
 private:
+    value_type value_;
     QList<keyframe_type> keyframes_;
+    bool mismatched_ = false;
 };
 
 } // namespace model
