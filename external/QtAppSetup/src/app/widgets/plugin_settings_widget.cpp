@@ -1,11 +1,11 @@
 #include "plugin_settings_widget.hpp"
 #include "ui_plugin_settings_widget.h"
 
-#include "scripting/plugin.hpp"
+#include "app/scripting/plugin.hpp"
 
 #include <QEvent>
 
-using namespace scripting;
+using namespace app::scripting;
 
 PluginSettingsWidget::PluginSettingsWidget(QWidget* parent)
     : QWidget(parent), d ( std::make_unique<Ui::PluginSettingsWidget>() )
@@ -28,7 +28,7 @@ void PluginSettingsWidget::changeEvent ( QEvent* e )
     }
 }
 
-void scripting::PluginSettingsWidget::current_changed ( QListWidgetItem* item )
+void app::scripting::PluginSettingsWidget::current_changed ( QListWidgetItem* item )
 {
     d->stacked_widget->setCurrentWidget(d->page_noplugin);
 
@@ -73,7 +73,7 @@ void scripting::PluginSettingsWidget::current_changed ( QListWidgetItem* item )
 
 }
 
-void scripting::PluginSettingsWidget::disable_current()
+void app::scripting::PluginSettingsWidget::disable_current()
 {
     if ( current )
     {
@@ -82,7 +82,7 @@ void scripting::PluginSettingsWidget::disable_current()
     }
 }
 
-void scripting::PluginSettingsWidget::enable_current()
+void app::scripting::PluginSettingsWidget::enable_current()
 {
     if ( current )
     {
@@ -91,24 +91,24 @@ void scripting::PluginSettingsWidget::enable_current()
     }
 }
 
-void scripting::PluginSettingsWidget::install_dialog()
+void app::scripting::PluginSettingsWidget::install_dialog()
 {
     /// @todo
 }
 
-void scripting::PluginSettingsWidget::refresh_plugins()
+void app::scripting::PluginSettingsWidget::refresh_plugins()
 {
     clear_selection();
     PluginRegistry::instance().load();
     update_entries();
 }
 
-void scripting::PluginSettingsWidget::uninstall_current()
+void app::scripting::PluginSettingsWidget::uninstall_current()
 {
     /// @todo
 }
 
-void scripting::PluginSettingsWidget::update_entries()
+void app::scripting::PluginSettingsWidget::update_entries()
 {
     clear_selection();
 
@@ -153,7 +153,7 @@ void scripting::PluginSettingsWidget::update_entries()
 
 }
 
-void scripting::PluginSettingsWidget::clear_selection()
+void app::scripting::PluginSettingsWidget::clear_selection()
 {
     current = nullptr;
     d->stacked_widget->setCurrentWidget(d->page_noplugin);

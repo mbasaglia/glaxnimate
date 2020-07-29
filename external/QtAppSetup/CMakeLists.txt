@@ -1,0 +1,39 @@
+cmake_minimum_required (VERSION 3.13 FATAL_ERROR)
+cmake_policy(SET CMP0076 NEW)
+
+project(QtAppSetup VERSION 0.1.0 LANGUAGES CXX)
+set(PROJECT_SLUG QtAppSetup)
+
+# C++
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Qt
+set (QT_SUPPORTED_VERSIONS 5)
+find_package(Qt5Qml QUIET)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+# Submodules
+add_subdirectory(src)
+
+if(Qt5Qml_FOUND)
+    message(STATUS "JS enabled")
+    add_subdirectory(src/app/scripting/js/)
+endif()
+
+
+find_package(PythonLibs 3 COMPONENTS Interpreter Development QUIET)
+if(PythonLibs_FOUND)
+    set(PYTHON_ENABLED ON PARENT_SCOPE)
+    message(STATUS "Python3 enabled")
+    add_subdirectory(external/pybind11)
+    add_subdirectory(src/app/scripting/python)
+else()
+    set(PYTHON_ENABLED OFF PARENT_SCOPE)
+endif()
+
+add_subdirectory(external/Qt-History-LineEdit)

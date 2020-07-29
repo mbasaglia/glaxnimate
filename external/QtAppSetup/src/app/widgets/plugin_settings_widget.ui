@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>scripting::PluginSettingsWidget</class>
- <widget class="QWidget" name="scripting::PluginSettingsWidget">
+ <class>app::scripting::PluginSettingsWidget</class>
+ <widget class="QWidget" name="app::scripting::PluginSettingsWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -215,7 +215,7 @@
   <connection>
    <sender>toolButton</sender>
    <signal>clicked()</signal>
-   <receiver>scripting::PluginSettingsWidget</receiver>
+   <receiver>app::scripting::PluginSettingsWidget</receiver>
    <slot>refresh_plugins()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -231,7 +231,7 @@
   <connection>
    <sender>toolButton_2</sender>
    <signal>clicked()</signal>
-   <receiver>scripting::PluginSettingsWidget</receiver>
+   <receiver>app::scripting::PluginSettingsWidget</receiver>
    <slot>install_dialog()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -247,7 +247,7 @@
   <connection>
    <sender>btn_enable</sender>
    <signal>clicked()</signal>
-   <receiver>scripting::PluginSettingsWidget</receiver>
+   <receiver>app::scripting::PluginSettingsWidget</receiver>
    <slot>enable_current()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -263,7 +263,7 @@
   <connection>
    <sender>btn_disable</sender>
    <signal>clicked()</signal>
-   <receiver>scripting::PluginSettingsWidget</receiver>
+   <receiver>app::scripting::PluginSettingsWidget</receiver>
    <slot>disable_current()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -279,7 +279,7 @@
   <connection>
    <sender>btn_uninstall</sender>
    <signal>clicked()</signal>
-   <receiver>scripting::PluginSettingsWidget</receiver>
+   <receiver>app::scripting::PluginSettingsWidget</receiver>
    <slot>uninstall_current()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -295,7 +295,7 @@
   <connection>
    <sender>list_plugins</sender>
    <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
-   <receiver>scripting::PluginSettingsWidget</receiver>
+   <receiver>app::scripting::PluginSettingsWidget</receiver>
    <slot>current_changed(QListWidgetItem*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -311,7 +311,7 @@
   <connection>
    <sender>list_plugins</sender>
    <signal>itemClicked(QListWidgetItem*)</signal>
-   <receiver>scripting::PluginSettingsWidget</receiver>
+   <receiver>app::scripting::PluginSettingsWidget</receiver>
    <slot>current_changed(QListWidgetItem*)</slot>
    <hints>
     <hint type="sourcelabel">

@@ -8,12 +8,12 @@
 
 namespace model { class Document; }
 
-namespace scripting {
+namespace app::scripting {
 
 class Plugin;
 class PluginScript;
 
-} // namespace scripting
+} // namespace app::scripting
 
 class GlaxnimateWindowPrivate;
 
@@ -70,7 +70,7 @@ private slots:
     void help_about();
     void console_commit(const QString& text);
 
-    void script_needs_running(const scripting::Plugin& plugin, const scripting::PluginScript& script, const QVariantMap& settings);
+    void script_needs_running(const app::scripting::Plugin& plugin, const app::scripting::PluginScript& script, const QVariantMap& settings);
     void script_reloaded();
 
 protected:

@@ -6,10 +6,6 @@ main.cpp
 app_info.cpp
 glaxnimate_app.cpp
 
-app/application.cpp
-app/settings/settings.cpp
-app/translation_service.cpp
-
 io/lottie/lottie_format.cpp
 io/glaxnimate/glaxnimate_format.cpp
 io/glaxnimate/glaxnimate_importer.cpp
@@ -30,8 +26,6 @@ model/animation/keyframe_transition.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui
-ui/dialogs/settings_dialog.cpp
-ui/dialogs/settings_dialog.ui
 ui/dialogs/io_status_dialog.cpp
 ui/dialogs/io_status_dialog.ui
 ui/dialogs/about_dialog.cpp
@@ -43,22 +37,24 @@ ui/widgets/keyframe_transition_widget.cpp
 ui/widgets/keyframe_editor_widget.cpp
 ui/widgets/keyframe_editor_widget.ui
 
-scripting/plugin.cpp
-scripting/widget/plugin_settings_widget.cpp
-scripting/widget/plugin_settings_widget.ui
 )
+
+if(${PYTHON_ENABLED})
+    include(CheckCXXCompilerFlag)
+    CHECK_CXX_COMPILER_FLAG(-Wno-attributes WTF_IS_THIS_WARNING)
+    if ( ${WTF_IS_THIS_WARNING} )
+        SET(CMAKE_CXX_FLAGS  ${CMAKE_CXX_FLAGS} -Wno-attributes)
+    endif()
+
+    list(APPEND SOURCES python.cpp)
+endif()
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/application_info_generated.in.hpp
     ${CMAKE_CURRENT_BINARY_DIR}/application_info_generated.hpp
 )
 
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG(-Wno-attributes WTF_IS_THIS_WARNING)
-if ( ${WTF_IS_THIS_WARNING} )
-    SET(CMAKE_CXX_FLAGS  ${CMAKE_CXX_FLAGS} -Wno-attributes)
-endif()
-
 #add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)
+include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 add_executable(${PROJECT_SLUG} ${SOURCES})
-target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets QtColorWidgets QtHistoryLineEdit)
+target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets QtColorWidgets QtHistoryLineEdit QtAppSetup)

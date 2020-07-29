@@ -6,7 +6,7 @@
 
 class QListWidgetItem;
 
-namespace scripting
+namespace app::scripting
 {
 
 class Plugin;

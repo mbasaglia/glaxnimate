@@ -33,8 +33,8 @@
 
 #include "io/glaxnimate/glaxnimate_format.hpp"
 
-#include "scripting/script_engine.hpp"
-#include "scripting/plugin.hpp"
+#include "app/scripting/script_engine.hpp"
+#include "app/scripting/plugin.hpp"
 
 namespace {
 
@@ -77,7 +77,7 @@ public:
 
     QStringList recent_files;
 
-    std::vector<scripting::ScriptContext> script_contexts;
+    std::vector<app::scripting::ScriptContext> script_contexts;
 
     // "set and forget" kida variables
     int tool_rows = 3; ///< @todo setting
@@ -377,7 +377,7 @@ public:
 
         ui.console_input->setHistory(app::settings::get<QStringList>("scripting", "history"));
 
-        for ( const auto& engine : scripting::ScriptEngineFactory::instance().engines() )
+        for ( const auto& engine : app::scripting::ScriptEngineFactory::instance().engines() )
         {
             ui.console_language->addItem(engine->label());
             if ( engine->slug() == "python" )
@@ -385,23 +385,23 @@ public:
         }
 
         // Plugins
-        auto& par = scripting::PluginActionRegistry::instance();
+        auto& par = app::scripting::PluginActionRegistry::instance();
         for ( auto act : par.enabled() )
         {
             ui.menu_plugins->addAction(par.make_qaction(act));
         }
-        connect(&par, &scripting::PluginActionRegistry::action_added, parent, [this](scripting::ActionService* action) {
-            ui.menu_plugins->addAction(scripting::PluginActionRegistry::instance().make_qaction(action));
+        connect(&par, &app::scripting::PluginActionRegistry::action_added, parent, [this](app::scripting::ActionService* action) {
+            ui.menu_plugins->addAction(app::scripting::PluginActionRegistry::instance().make_qaction(action));
         });
         connect(
-            &scripting::PluginRegistry::instance(),
-            &scripting::PluginRegistry::script_needs_running,
+            &app::scripting::PluginRegistry::instance(),
+            &app::scripting::PluginRegistry::script_needs_running,
             parent,
             &GlaxnimateWindow::script_needs_running
         );
         connect(
-            &scripting::PluginRegistry::instance(),
-            &scripting::PluginRegistry::loaded,
+            &app::scripting::PluginRegistry::instance(),
+            &app::scripting::PluginRegistry::loaded,
             parent,
             &GlaxnimateWindow::script_reloaded
         );
@@ -748,7 +748,7 @@ public:
         about_dialog->show();
     }
 
-    void console_error(const scripting::ScriptError& err)
+    void console_error(const app::scripting::ScriptError& err)
     {
         QColor col = ui.console_output->textColor();
         ui.console_output->setTextColor(Qt::red);
@@ -776,7 +776,7 @@ public:
             QString out = ctx->eval_to_string(text);
             if ( !out.isEmpty() )
                 ui.console_output->append(out);
-        } catch ( const scripting::ScriptError& err ) {
+        } catch ( const app::scripting::ScriptError& err ) {
             console_error(err);
         }
         ui.console_input->setText("");
@@ -796,16 +796,17 @@ public:
 
     void create_script_context()
     {
-        for ( const auto& engine : scripting::ScriptEngineFactory::instance().engines() )
+        for ( const auto& engine : app::scripting::ScriptEngineFactory::instance().engines() )
         {
             auto ctx = engine->create_context();
+            ctx->app_module("glaxnimate");
             ctx->expose("window", QVariant::fromValue(parent));
             ctx->expose("document", QVariant::fromValue(current_document.get()));
             script_contexts.push_back(std::move(ctx));
         }
     }
 
-    void script_needs_running ( const scripting::Plugin& plugin, const scripting::PluginScript& script, const QVariantMap& settings )
+    void script_needs_running ( const app::scripting::Plugin& plugin, const app::scripting::PluginScript& script, const QVariantMap& settings )
     {
         if ( !ensure_script_contexts() )
             return;
@@ -818,7 +819,7 @@ public:
                     QVariantList args{QVariant::fromValue(parent), QVariant::fromValue(current_document.get()), settings};
                     if ( !ctx->run_from_module(plugin.data().dir, script.module, script.function, args) )
                         show_warning(plugin.data().name, tr("Could not run the plugin"), QMessageBox::Critical);
-                } catch ( const scripting::ScriptError& err ) {
+                } catch ( const app::scripting::ScriptError& err ) {
                     console_error(err);
                     show_warning(plugin.data().name, tr("Plugin raised an exception"), QMessageBox::Critical);
                 }

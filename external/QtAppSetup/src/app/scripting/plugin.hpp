@@ -11,7 +11,7 @@
 #include "app/settings/setting.hpp"
 
 
-namespace scripting {
+namespace app::scripting {
 
 
 class ActionService;
@@ -263,4 +263,4 @@ private:
     QMap<QString, int> names;
 };
 
-} // namespace scripting
+} // namespace app::scripting

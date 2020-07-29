@@ -7,8 +7,8 @@
 #include "app/settings/widget_builder.hpp"
 
 
-SettingsDialog::SettingsDialog ( QWidget* parent ) :
-    QDialog(parent), d(std::make_unique<Ui::SettingsDialog>())
+app::SettingsDialog::SettingsDialog ( QWidget* parent ) :
+    QDialog(parent), d(std::make_unique<app::Ui::SettingsDialog>())
 {
     d->setupUi(this);
 
@@ -38,10 +38,10 @@ SettingsDialog::SettingsDialog ( QWidget* parent ) :
     d->list_widget->setCurrentRow(0);
 }
 
-SettingsDialog::~SettingsDialog() = default;
+app::SettingsDialog::~SettingsDialog() = default;
 
 
-void SettingsDialog::changeEvent(QEvent *e)
+void app::SettingsDialog::changeEvent(QEvent *e)
 {
     QDialog::changeEvent(e);
 

@@ -10,7 +10,7 @@
 #include <QVariant>
 
 
-namespace scripting {
+namespace app::scripting {
 
 class ScriptError : public std::runtime_error
 {
@@ -46,6 +46,10 @@ public:
      */
     virtual QString eval_to_string(const QString& code) = 0;
 
+    /**
+     * \brief Marks an app module that must be loaded
+     */
+    virtual void app_module(const QString& name) = 0;
 
     /**
      * \brief Runs a function from a file
@@ -148,4 +152,4 @@ struct ScriptEngine::Autoregister
     }
 };
 
-} // namespace scripting
+} // namespace app::scripting

@@ -5,13 +5,11 @@
 #include <QMetaProperty>
 #include <QDebug>
 
-#include "scripting/python/casters.hpp"
+#include "app/scripting/python/casters.hpp"
 
 namespace py = pybind11;
 
-namespace scripting::python {
-
-
+namespace app::scripting::python {
 
 struct PyPropertyInfo
 {
@@ -61,4 +59,4 @@ py::class_<CppClass, Args...> register_from_meta(py::handle scope)
 }
 
 
-} // namespace scripting::python
+} // namespace app::scripting::python

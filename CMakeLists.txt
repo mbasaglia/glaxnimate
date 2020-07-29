@@ -39,12 +39,12 @@ endif()
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic -Wextra")
 
 # sub projects and stuff
+add_subdirectory(external/QtAppSetup)
 add_subdirectory(src bin)
 
 SET(BUILD_STATIC_LIBS ON CACHE BOOL "")
 SET(BUILD_SHARED_LIBS OFF CACHE BOOL "")
 add_subdirectory(external/Qt-Color-Widgets)
-add_subdirectory(external/Qt-History-LineEdit)
 
 
 set(ALL_SOURCE_DIRECTORIES src)
@@ -55,19 +55,6 @@ add_subdirectory(data share/${PROJECT_SLUG}/${PROJECT_SLUG})
 find_package(Qt5Test QUIET)
 if(Qt5Test_FOUND)
     add_subdirectory(test)
-endif()
-
-if(Qt5Qml_FOUND)
-    message(STATUS "JS enabled")
-    add_subdirectory(src/scripting/js/)
-endif()
-
-
-find_package(PythonLibs 3 COMPONENTS Interpreter Development QUIET)
-if(PythonLibs_FOUND)
-    message(STATUS "Python3 enabled")
-    add_subdirectory(external/pybind11)
-    add_subdirectory(src/scripting/python)
 endif()
 
 # Doxygen

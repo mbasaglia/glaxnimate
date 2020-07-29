@@ -4,12 +4,11 @@
 #include <memory>
 #include <QDialog>
 
-namespace Ui
-{
-class SettingsDialog;
-}
 
 class QAbstractButton;
+
+namespace app {
+namespace Ui { class SettingsDialog; }
 
 class SettingsDialog : public QDialog
 {
@@ -26,4 +25,5 @@ private:
     std::unique_ptr<Ui::SettingsDialog> d;
 };
 
+} // namespace app
 #endif // SETTINGSDIALOG_H

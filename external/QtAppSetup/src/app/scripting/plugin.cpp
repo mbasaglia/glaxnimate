@@ -6,10 +6,10 @@
 #include <QDebug>
 
 #include "app/settings/widget_builder.hpp"
-#include "scripting/script_engine.hpp"
+#include "app/scripting/script_engine.hpp"
 #include "app/application.hpp"
 
-QAction * scripting::PluginActionRegistry::make_qaction ( scripting::ActionService* action )
+QAction * app::scripting::PluginActionRegistry::make_qaction ( app::scripting::ActionService* action )
 {
     QAction* act = new QAction;
     act->setIcon(action->plugin()->make_icon(action->icon));
@@ -24,7 +24,7 @@ QAction * scripting::PluginActionRegistry::make_qaction ( scripting::ActionServi
     return act;
 }
 
-void scripting::PluginActionRegistry::add_action ( scripting::ActionService* action )
+void app::scripting::PluginActionRegistry::add_action ( app::scripting::ActionService* action )
 {
     if ( enabled_actions.contains(action) )
         return;
@@ -33,7 +33,7 @@ void scripting::PluginActionRegistry::add_action ( scripting::ActionService* act
     emit action_added(action);
 }
 
-void scripting::PluginActionRegistry::remove_action ( scripting::ActionService* action )
+void app::scripting::PluginActionRegistry::remove_action ( app::scripting::ActionService* action )
 {
     if ( !enabled_actions.contains(action) )
         return;
@@ -43,13 +43,13 @@ void scripting::PluginActionRegistry::remove_action ( scripting::ActionService* 
 
 }
 
-QIcon scripting::ActionService::service_icon() const
+QIcon app::scripting::ActionService::service_icon() const
 {
     return plugin()->make_icon(icon);
 }
 
 
-void scripting::ActionService::trigger() const
+void app::scripting::ActionService::trigger() const
 {
     QVariantMap settings_value;
     if ( !script.settings.empty() )
@@ -64,7 +64,7 @@ void scripting::ActionService::trigger() const
 }
 
 
-void scripting::Plugin::run_script ( const scripting::PluginScript& script, const QVariantMap& settings ) const
+void app::scripting::Plugin::run_script ( const app::scripting::PluginScript& script, const QVariantMap& settings ) const
 {
      if ( !data_.engine )
          return;
@@ -72,7 +72,7 @@ void scripting::Plugin::run_script ( const scripting::PluginScript& script, cons
      emit PluginRegistry::instance().script_needs_running(*this, script, settings);
 }
 
-void scripting::PluginRegistry::load()
+void app::scripting::PluginRegistry::load()
 {
     QString writable_path = app::Application::instance()->writable_data_path("plugins");
 
@@ -92,7 +92,7 @@ void scripting::PluginRegistry::load()
     emit loaded();
 }
 
-bool scripting::PluginRegistry::load_plugin ( const QString& path, bool user_installed )
+bool app::scripting::PluginRegistry::load_plugin ( const QString& path, bool user_installed )
 {
     QFileInfo file_info(path);
     if ( !file_info.exists() || !file_info.isFile() || !file_info.isReadable() )
@@ -197,7 +197,7 @@ bool scripting::PluginRegistry::load_plugin ( const QString& path, bool user_ins
     return true;
 }
 
-void scripting::PluginRegistry::load_service ( const QJsonObject& jobj, scripting::PluginData& data ) const
+void app::scripting::PluginRegistry::load_service ( const QJsonObject& jobj, app::scripting::PluginData& data ) const
 {
     QString type = jobj["type"].toString();
 
@@ -223,7 +223,7 @@ void scripting::PluginRegistry::load_service ( const QJsonObject& jobj, scriptin
 
 }
 
-scripting::PluginScript scripting::PluginRegistry::load_script ( const QJsonObject& jobj ) const
+app::scripting::PluginScript app::scripting::PluginRegistry::load_script ( const QJsonObject& jobj ) const
 {
     PluginScript s;
     s.module = jobj["module"].toString();
@@ -237,7 +237,7 @@ scripting::PluginScript scripting::PluginRegistry::load_script ( const QJsonObje
     return s;
 }
 
-void scripting::PluginRegistry::load_setting ( const QString& slug, const QJsonObject& jobj, scripting::PluginScript& script ) const
+void app::scripting::PluginRegistry::load_setting ( const QString& slug, const QJsonObject& jobj, app::scripting::PluginScript& script ) const
 {
     QString type = jobj["type"].toString();
     if ( slug.isEmpty() )
@@ -265,7 +265,7 @@ void scripting::PluginRegistry::load_setting ( const QString& slug, const QJsonO
         qWarning() << "Unknown type" << type << "for plugin setting" << slug;
 }
 
-QVariantMap scripting::PluginRegistry::load_choices ( const QJsonValue& val ) const
+QVariantMap app::scripting::PluginRegistry::load_choices ( const QJsonValue& val ) const
 {
     QVariantMap ret;
 
@@ -288,7 +288,7 @@ QVariantMap scripting::PluginRegistry::load_choices ( const QJsonValue& val ) co
 }
 
 
-scripting::Plugin * scripting::PluginRegistry::plugin ( const QString& id ) const
+app::scripting::Plugin * app::scripting::PluginRegistry::plugin ( const QString& id ) const
 {
     auto it = names.find(id);
     if ( it == names.end() )

@@ -1,8 +1,10 @@
+#pragma once
+
 #include <memory>
-#include "scripting/script_engine.hpp"
+#include "app/scripting/script_engine.hpp"
 
 
-namespace scripting::python {
+namespace app::scripting::python {
 
 class PythonContext : public ScriptExecutionContext
 {
@@ -24,6 +26,7 @@ public:
 
     const ScriptEngine* engine() const override;
 
+    void app_module(const QString& name) override;
 
 private:
     class Private;
@@ -46,5 +49,5 @@ private:
     static Autoregister<PythonEngine> autoreg;
 };
 
-} // namespace scripting::python
+} // namespace app::scripting::python
 

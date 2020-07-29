@@ -1,16 +1,14 @@
 #include "python_engine.hpp"
 
-#include "model/document.hpp"
-#include "ui/dialogs/glaxnimate_window.hpp"
 
-#include "scripting/python/register_machinery.hpp"
+#include "app/scripting/python/register_machinery.hpp"
 
 
-scripting::ScriptEngine::Autoregister<scripting::python::PythonEngine> scripting::python::PythonEngine::autoreg;
+app::scripting::ScriptEngine::Autoregister<app::scripting::python::PythonEngine> app::scripting::python::PythonEngine::autoreg;
 
 static int counter = 0;
 
-class scripting::python::PythonContext::Private
+class app::scripting::python::PythonContext::Private
 {
 public:
     pybind11::module my_module;
@@ -19,7 +17,7 @@ public:
     const ScriptEngine* engine;
 };
 
-scripting::python::PythonContext::PythonContext(const ScriptEngine* engine)
+app::scripting::python::PythonContext::PythonContext(const ScriptEngine* engine)
 {
     /// @note Not thread safe, pybind11 doesn't support multiple interpreters at once
     if ( counter == 0 )
@@ -27,13 +25,12 @@ scripting::python::PythonContext::PythonContext(const ScriptEngine* engine)
     counter++;
 
     d = std::make_unique<Private>();
-    d->my_module = py::module::import("glaxnimate");
     d->globals = py::globals();
     d->compile = py::function(py::module(d->globals["__builtins__"]).attr("compile"));
     d->engine = engine;
 }
 
-scripting::python::PythonContext::~PythonContext()
+app::scripting::python::PythonContext::~PythonContext()
 {
     d.reset();
 
@@ -42,12 +39,12 @@ scripting::python::PythonContext::~PythonContext()
         py::finalize_interpreter();
 }
 
-void scripting::python::PythonContext::expose(const QString& name, const QVariant& obj)
+void app::scripting::python::PythonContext::expose(const QString& name, const QVariant& obj)
 {
     d->globals[name.toStdString().c_str()] = obj;
 }
 
-QString scripting::python::PythonContext::eval_to_string(const QString& code)
+QString app::scripting::python::PythonContext::eval_to_string(const QString& code)
 {
 
     std::string std_code = code.toStdString();
@@ -68,6 +65,12 @@ QString scripting::python::PythonContext::eval_to_string(const QString& code)
         throw ScriptError(pyexc.what());
     }
 }
+
+void app::scripting::python::PythonContext::app_module ( const QString& name )
+{
+    d->my_module = py::module::import(name.toStdString().c_str());
+}
+
 
 class ModuleSetter
 {
@@ -90,7 +93,7 @@ public:
     py::list python_path;
 };
 
-bool scripting::python::PythonContext::run_from_module (
+bool app::scripting::python::PythonContext::run_from_module (
     const QDir& path,
     const QString& module,
     const QString& function,
@@ -117,30 +120,7 @@ bool scripting::python::PythonContext::run_from_module (
     return true;
 }
 
-const scripting::ScriptEngine * scripting::python::PythonContext::engine() const
+const app::scripting::ScriptEngine * app::scripting::python::PythonContext::engine() const
 {
     return d->engine;
-}
-
-PYBIND11_EMBEDDED_MODULE(glaxnimate, m)
-{
-    py::class_<QColor>(m, "QColor")
-        .def(py::init<int, int, int, int>())
-        .def(py::init<>())
-        .def(py::init<int, int, int>())
-        .def_property("red", &QColor::red, &QColor::setRed)
-        .def_property("green", &QColor::red, &QColor::setRed)
-        .def_property("blue", &QColor::blue, &QColor::setBlue)
-    ;
-    py::class_<QObject>(m, "__QObject");
-    py::class_<model::Object, QObject>(m, "Object");
-    using namespace scripting::python;
-    register_from_meta<GlaxnimateWindow, QObject>(m);
-    register_from_meta<model::Document, QObject>(m);
-    register_from_meta<model::DocumentNode, model::Object>(m);
-    register_from_meta<model::Composition, model::DocumentNode>(m);
-    register_from_meta<model::Animation, model::Composition>(m);
-    register_from_meta<model::Layer, model::DocumentNode>(m);
-    register_from_meta<model::ShapeLayer, model::Layer>(m);
-    register_from_meta<model::EmptyLayer, model::Layer>(m);
 }

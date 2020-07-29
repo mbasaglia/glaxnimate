@@ -1,6 +1,6 @@
 #include "glaxnimate_window.hpp"
 #include "glaxnimate_window_p.hpp"
-#include "ui/dialogs/settings_dialog.hpp"
+#include "app/widgets/settings_dialog.hpp"
 
 #include <QCloseEvent>
 
@@ -136,7 +136,7 @@ void GlaxnimateWindow::showEvent(QShowEvent * event)
 
 void GlaxnimateWindow::preferences()
 {
-    SettingsDialog(this).exec();
+    app::SettingsDialog(this).exec();
 }
 
 void GlaxnimateWindow::closeEvent ( QCloseEvent* event )
@@ -188,7 +188,7 @@ void GlaxnimateWindow::status ( const QString& message ) const
 }
 
 
-void GlaxnimateWindow::script_needs_running ( const scripting::Plugin& plugin, const scripting::PluginScript& script, const QVariantMap& settings )
+void GlaxnimateWindow::script_needs_running ( const app::scripting::Plugin& plugin, const app::scripting::PluginScript& script, const QVariantMap& settings )
 {
     d->script_needs_running(plugin, script, settings);
 }

@@ -7,7 +7,7 @@
 #include <QVariant>
 
 
-namespace scripting::python {
+namespace app::scripting::python {
 
 template<class T> const char* type_name();
 template<int> struct meta_2_cpp_s;
@@ -393,9 +393,9 @@ bool qvariant_type_caster_cast(
 }
 
 
-} // namespace scripting::python
+} // namespace app::scripting::python
 
-using namespace scripting::python;
+using namespace app::scripting::python;
 
 bool pybind11::detail::type_caster<QVariant>::load(handle src, bool)
 {

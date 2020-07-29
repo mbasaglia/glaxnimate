@@ -2,9 +2,9 @@
 
 #include <QQmlEngine>
 
-#include "scripting/script_engine.hpp"
+#include "app/scripting/script_engine.hpp"
 
-namespace scripting::js {
+namespace app::scripting::js {
 
 class JsContext : public ScriptExecutionContext
 {
@@ -98,6 +98,8 @@ public:
         return js_engine;
     }
 
+    void app_module(const QString&) override {}
+
 private:
     QQmlEngine qml_engine;
     const ScriptEngine* js_engine;
@@ -118,4 +120,4 @@ private:
     static Autoregister<JsEngine> autoreg;
 };
 
-} // namespace scripting::js
+} // namespace app::scripting::js

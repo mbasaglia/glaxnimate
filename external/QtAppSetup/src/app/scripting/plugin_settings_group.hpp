@@ -1,10 +1,10 @@
 #pragma once
 
 #include "app/settings/custom_settings_group.hpp"
-#include "scripting/widget/plugin_settings_widget.hpp"
-#include "scripting/plugin.hpp"
+#include "app/widgets/plugin_settings_widget.hpp"
+#include "app/scripting/plugin.hpp"
 
-namespace scripting {
+namespace app::scripting {
 
 class PluginSettingsGroup : public app::settings::CustomSettingsGroupBase
 {
@@ -43,4 +43,4 @@ private:
     QStringList enabled;
 };
 
-} // namespace scripting
+} // namespace app::scripting
