@@ -52,38 +52,82 @@ public:
         QJsonObject json = convert_object_basic(layer);
         json["ty"] = layer_types[layer->type_name()];
         json["ind"] = layer_index(layer);
+        json["ks"] = convert_transform(layer->transform.get());
+        /// \todo add opacity to layer and set it to ks.o
+        return json;
+    }
 
-
+    QJsonObject convert_transform(Transform* tf)
+    {
+        QJsonObject json = convert_object_basic(tf);
+        QJsonObject o;
+        o["a"] = 0;
+        o["k"] = 100;
+        json["o"] = o;
         return json;
     }
 
     QJsonValue value_from_variant(const QVariant& v)
     {
+        if ( v.userType() == QMetaType::QPointF )
+        {
+            auto vv = v.toPointF();
+            return QJsonArray{vv.x(), vv.y()};
+        }
+        else if ( v.userType() == QMetaType::QVector2D )
+        {
+            auto vv = v.value<QVector2D>() * 100;
+            return QJsonArray{vv.x(), vv.y()};
+        }
         return QJsonValue::fromVariant(v);
     }
 
-    QJsonObject convert_object_basic(model::Object* obj, const QVariantMap& special = {})
+    QJsonObject convert_object_basic(model::Object* obj)
     {
         QJsonObject json_obj;
         for ( const QMetaObject* mo = obj->metaObject(); mo; mo = mo->superClass() )
-            convert_object_properties(obj, fields[model::Object::naked_type_name(mo->className())], json_obj, special);
+            convert_object_properties(obj, fields[model::Object::naked_type_name(mo->className())], json_obj);
         return json_obj;
     }
 
-    void convert_object_properties(model::Object* obj, const QVector<QPair<QString, QString>>& fields, QJsonObject& json_obj, const QVariantMap& special = {})
+    void convert_object_properties(model::Object* obj, const QVector<QPair<QString, QString>>& fields, QJsonObject& json_obj)
     {
         for ( const auto& name : fields )
         {
-            if ( name.first.isEmpty() )
+            model::BaseProperty * prop = obj->get_property(name.first);
+            if ( !prop )
             {
-                if ( special.contains(name.second) )
-                    json_obj[name.second] = value_from_variant(special[name.second]);
+                qWarning() << name << "is not a property";
+                continue;
+            }
+
+            if ( prop->traits().flags & PropertyTraits::Animated )
+            {
+                json_obj[name.second] = convert_animated(static_cast<AnimatedPropertyBase*>(prop));
             }
             else
             {
-                json_obj[name.second] = value_from_variant(obj->get(name.first));
+                json_obj[name.second] = value_from_variant(prop->value());
             }
         }
+    }
+
+    QJsonObject convert_animated(AnimatedPropertyBase* prop)
+    {
+        /// @todo for position fields also add spatial bezier handles
+        const AnimatableBase& animatable = prop->animatable();
+        QJsonObject jobj;
+        if ( animatable.animated() )
+        {
+            /// @todo
+            jobj["a"] = 1;
+        }
+        else
+        {
+            jobj["a"] = 0;
+            jobj["k"] = value_from_variant(animatable.value());
+        }
+        return jobj;
     }
 
     model::Document* document;
@@ -110,9 +154,9 @@ public:
         {"Layer", {
             // ddd
             // hd
-            {"type",        "ty"},
+            // * ty
             {"name",        "nm"},
-            {"",            "parent"},
+            // * parent
             // stretch sr
             // transform ks
             // auto_orient ao
@@ -121,7 +165,7 @@ public:
             {"start_time",  "st"},
             // blend_mode bm
             // matte_mode tt
-            {"",            "ind"},
+            // * ind
             // css_class cl
             // layer_html_id ln
             // hasMasks
@@ -132,6 +176,16 @@ public:
             {"color", "sc"},
             {"height", "sh"},
             {"width", "sw"},
+        }},
+        {"Transform", {
+            {"anchor_point", "a"},
+            // px py pz
+            {"position", "p"},
+            {"scale", "s"},
+            {"rotation", "r"},
+            // opacity o
+            // skew sk
+            // skew_axis sa
         }}
     };
     const QMap<QString, int> layer_types = {

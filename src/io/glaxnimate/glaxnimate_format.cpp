@@ -136,6 +136,14 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             o["y"] = v.y();
             return o;
         }
+        case QMetaType::QVector2D:
+        {
+            auto v = value.value<QVector2D>();
+            QJsonObject o;
+            o["x"] = v.x();
+            o["y"] = v.y();
+            return o;
+        }
         case QVariant::PointF:
         {
             auto v = value.toPointF();

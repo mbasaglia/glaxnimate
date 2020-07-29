@@ -199,22 +199,30 @@ public:
             case model::PropertyTraits::Point:
             {
                 QJsonObject obj = val.toObject();
-                if ( !obj.empty() )
+                if ( obj.empty() )
                     return {};
                 return QPointF(obj["x"].toDouble(), obj["y"].toDouble());
             }
             case model::PropertyTraits::Size:
             {
                 QJsonObject obj = val.toObject();
-                if ( !obj.empty() )
+                if ( obj.empty() )
                     return QVariant{};
                 return QSizeF(obj["width"].toDouble(), obj["height"].toDouble());
+            }
+            case model::PropertyTraits::Scale:
+            {
+                QJsonObject obj = val.toObject();
+                if ( obj.empty() )
+                    return QVariant{};
+                return QVector2D(obj["x"].toDouble(), obj["y"].toDouble());
             }
             default:
                 return val.toVariant();
         }
     }
 
+    /// @todo Find a way of automating this
     model::Object* create_object(const QString& type)
     {
         if ( type == "Animation" )
@@ -228,6 +236,12 @@ public:
 
         if ( type == "ShapeLayer" )
             return new model::ShapeLayer(document, compostion);
+
+        if ( type == "SolidColorLayer" )
+            return new model::SolidColorLayer(document, compostion);
+
+        if ( type == "Transform" )
+            return new model::Transform(document);
 
         emit fmt->error(tr("Unknow object of type '%1'").arg(type));
         return new model::Object(document);

@@ -63,6 +63,15 @@ QVariant model::Object::get(const QString& property) const
     return it->second->value();
 }
 
+model::BaseProperty * model::Object::get_property ( const QString& property )
+{
+    auto it = d->props.find(property);
+    if ( it == d->props.end() )
+        return nullptr;
+    return it->second;
+}
+
+
 bool model::Object::set(const QString& property, const QVariant& value, bool allow_unknown)
 {
     auto it = d->props.find(property);
