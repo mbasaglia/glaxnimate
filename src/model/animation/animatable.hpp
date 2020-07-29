@@ -15,6 +15,11 @@ using FrameTime = double;
 
 class KeyframeBase
 {
+    Q_GADGET
+
+    Q_PROPERTY(QVariant value READ value)
+    Q_PROPERTY(double time READ time)
+    Q_PROPERTY(KeyframeTransition& transition READ transition)
 public:
     explicit KeyframeBase(FrameTime time) : time_ { time } {}
     virtual ~KeyframeBase() = default;
@@ -38,6 +43,12 @@ private:
 
 class AnimatableBase
 {
+    Q_GADGET
+
+    Q_PROPERTY(int keyframe_count READ keyframe_count)
+    Q_PROPERTY(QVariant value READ value)
+    Q_PROPERTY(bool animated READ animated)
+
 public:
     enum KeyframeStatus
     {
@@ -62,7 +73,7 @@ public:
      *
      * keyframe(i).time() < keyframe(j).time() <=> i < j
      */
-    virtual const KeyframeBase* keyframe(int i) const = 0;
+    Q_INVOKABLE virtual const KeyframeBase* keyframe(int i) const = 0;
     virtual KeyframeBase* keyframe(int i) = 0;
 
     /**
@@ -76,7 +87,7 @@ public:
     /**
      * \brief Get the value at the given time
      */
-    virtual QVariant value(FrameTime time) const = 0;
+    Q_INVOKABLE virtual QVariant value(FrameTime time) const = 0;
 
     /**
      * \brief Get the current value
@@ -94,7 +105,7 @@ public:
      * \brief Set the current time
      * \post value() == value(time)
      */
-    virtual void set_time(FrameTime time) = 0;
+    Q_INVOKABLE virtual void set_time(FrameTime time) = 0;
 
     /**
      * If animated(), whether the current value has been changed over the animated value
@@ -126,7 +137,7 @@ public:
      * If all keyframes are after \p time, returns 0
      * This means keyframe(keyframe_index(t)) is always valid when animated
      */
-    int keyframe_index(FrameTime time) const
+    Q_INVOKABLE int keyframe_index(FrameTime time) const
     {
         for ( int i = 0; i < keyframe_count(); i++ )
         {
