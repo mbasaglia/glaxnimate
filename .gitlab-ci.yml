@@ -4,7 +4,11 @@ default:
         - apt-get install -y cmake qtbase5-dev libpython3-dev
         - git submodule update --init --recursive
 
+variables:
+    DEBIAN_FRONTEND: noninteractive
+
 pages:
+    image: ubuntu:latest
     stage: deploy
     script:
         - apt-get install -y doxygen graphviz
