@@ -79,7 +79,7 @@ public:
             id_type prop_node_id = add_node(Subtree{prop, this_node});
             Subtree* prop_node = node(prop_node_id);
 
-            if ( prop->traits().list )
+            if ( prop->traits().flags & PropertyTraits::List )
             {
                 prop_node->prop_value = prop->value().toList();
                 connect_list(prop_node);
@@ -252,16 +252,14 @@ Qt::ItemFlags model::PropertyModel::flags(const QModelIndex& index) const
         {
             PropertyTraits traits = tree->prop->traits();
 
-            if ( traits.list || traits.type == PropertyTraits::Object || traits.type == PropertyTraits::Unknown || !traits.user_editable )
+            if ( (traits.flags & (PropertyTraits::List|PropertyTraits::ReadOnly))
+                || traits.type == PropertyTraits::Object || traits.type == PropertyTraits::Unknown )
                 return Qt::ItemIsSelectable;
 
-            if ( traits.user_editable )
-            {
-                if ( traits.type == PropertyTraits::Bool )
-                    return flags | Qt::ItemIsUserCheckable;
+            if ( traits.type == PropertyTraits::Bool )
+                return flags | Qt::ItemIsUserCheckable;
 
-                return flags | Qt::ItemIsEditable;
-            }
+            return flags | Qt::ItemIsEditable;
         }
         else
         {
@@ -305,7 +303,7 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
         BaseProperty* prop = tree->prop;
         PropertyTraits traits = prop->traits();
 
-        if ( traits.list || traits.type == PropertyTraits::Unknown )
+        if ( (traits.flags & PropertyTraits::List) || traits.type == PropertyTraits::Unknown )
         {
             return {};
         }
@@ -376,8 +374,9 @@ bool model::PropertyModel::setData(const QModelIndex& index, const QVariant& val
     PropertyTraits traits = prop->traits();
 
 
-    if ( traits.list || traits.type == PropertyTraits::Object ||
-         traits.type == PropertyTraits::Unknown || !traits.user_editable )
+    if ( (traits.flags & (PropertyTraits::List|PropertyTraits::ReadOnly)) ||
+        traits.type == PropertyTraits::Object ||
+        traits.type == PropertyTraits::Unknown )
     {
         return false;
     }
@@ -416,7 +415,7 @@ void model::PropertyModel::property_changed(const QString& name, const QVariant&
             Private::Subtree* prop_node = parent->children[i];
             QModelIndex index = createIndex(i, 1, prop_node->id);
 
-            if ( prop_node->prop->traits().list )
+            if ( prop_node->prop->traits().flags & PropertyTraits::List )
             {
                 beginRemoveRows(index, 0, prop_node->children.size());
                 d->disconnect_recursive(prop_node, this);

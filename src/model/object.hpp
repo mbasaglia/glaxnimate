@@ -6,6 +6,8 @@
 #include <QObject>
 #include <QVariant>
 
+#include "app/settings/setting.hpp"
+
 namespace model {
 
 class BaseProperty;
@@ -31,7 +33,6 @@ public:
         return object;
     }
 
-
     QVariant get(const QString& property) const;
     bool set(const QString& property, const QVariant& value, bool allow_unknown = false);
     bool set_undoable(const QString& property, const QVariant& value);
@@ -41,10 +42,13 @@ public:
 
     virtual QString object_name() const { return type_name_human(); }
     virtual QString type_name_human() const { return tr("Uknown Object"); }
+    virtual app::settings::SettingList settings() const { return {}; }
 
     QString type_name() const;
 
     Document* document() const;
+
+    static QString naked_type_name(QString type_name);
 
 signals:
     void property_added(const QString& name, const QVariant& value);
@@ -57,8 +61,6 @@ protected:
         Q_UNUSED(value);
     }
     void clone_into(Object* dest) const;
-
-    static QString naked_type_name(QString type_name);
 
 private:
     virtual std::unique_ptr<Object> clone_impl() const

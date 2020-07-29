@@ -197,3 +197,8 @@ void GlaxnimateWindow::script_reloaded()
 {
     d->script_contexts.clear();
 }
+
+void GlaxnimateWindow::layer_new_color()
+{
+    d->layer_new<model::SolidColorLayer>();
+}

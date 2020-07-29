@@ -23,7 +23,8 @@ public:
     QJsonObject convert_animation(Animation* animation)
     {
         layer_indices.clear();
-        QJsonObject json = convert_object_basic(animation, fields["Animation"]);
+        QJsonObject json = convert_object_basic(animation);
+        json["v"] = "5.5.2";
 
         QJsonArray layers;
         for ( const auto& layer : animation->layers )
@@ -48,41 +49,52 @@ public:
         int parent_index = layer_index(layer->parent.get());
         if ( parent_index != -1 )
             special["parent"] = parent_index;
-        QJsonObject json = convert_object_basic(layer, fields["Layer"]);
+        QJsonObject json = convert_object_basic(layer);
         json["ty"] = layer_types[layer->type_name()];
         json["ind"] = layer_index(layer);
+
 
         return json;
     }
 
-    QJsonObject convert_object_basic(model::Object* obj, const QVector<QPair<QString, QString>>& fields, const QVariantMap& special = {})
+    QJsonValue value_from_variant(const QVariant& v)
+    {
+        return QJsonValue::fromVariant(v);
+    }
+
+    QJsonObject convert_object_basic(model::Object* obj, const QVariantMap& special = {})
     {
         QJsonObject json_obj;
+        for ( const QMetaObject* mo = obj->metaObject(); mo; mo = mo->superClass() )
+            convert_object_properties(obj, fields[model::Object::naked_type_name(mo->className())], json_obj, special);
+        return json_obj;
+    }
+
+    void convert_object_properties(model::Object* obj, const QVector<QPair<QString, QString>>& fields, QJsonObject& json_obj, const QVariantMap& special = {})
+    {
         for ( const auto& name : fields )
         {
             if ( name.first.isEmpty() )
             {
                 if ( special.contains(name.second) )
-                    json_obj[name.second] = QJsonValue::fromVariant(special[name.second]);
+                    json_obj[name.second] = value_from_variant(special[name.second]);
             }
             else
             {
-                json_obj[name.second] = QJsonValue::fromVariant(obj->get(name.first));
+                json_obj[name.second] = value_from_variant(obj->get(name.first));
             }
         }
-
-        return json_obj;
     }
 
     model::Document* document;
     QMap<QUuid, int> layer_indices;
 
     // static mapping data
-    QMap<QString, QVector<QPair<QString, QString>>> fields = {
+    const QMap<QString, QVector<QPair<QString, QString>>> fields = {
         {"Animation", {
-            // version
+            // version v
             {"name",        "nm"},
-            {"frame_rate",  "fr"},
+            {"fps",  "fr"},
             {"in_point",    "ip"},
             {"out_point",   "op"},
             {"width",       "w"},
@@ -107,18 +119,23 @@ public:
             {"in_point",    "ip"},
             {"out_point",   "op"},
             {"start_time",  "st"},
-            // blend_mode
-            // matte_mode
+            // blend_mode bm
+            // matte_mode tt
             {"",            "ind"},
             // css_class cl
             // layer_html_id ln
             // hasMasks
             // masksProperties
             // effects ef
-
         }},
+        {"SolidColorLayer", {
+            {"color", "sc"},
+            {"height", "sh"},
+            {"width", "sw"},
+        }}
     };
-    QMap<QString, int> layer_types = {
+    const QMap<QString, int> layer_types = {
+        {"SolidColorLayer", 1},
         {"EmptyLayer", 3},
         {"ShapeLayer", 4}
     };

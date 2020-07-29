@@ -17,7 +17,8 @@ struct Setting
         Bool,
         Int,
         Float,
-        String
+        String,
+        Color,
     };
 
     Setting(QString slug, QString label, QString description)
@@ -102,6 +103,8 @@ struct Setting
                 return v.canConvert<float>();
             case String:
                 return v.canConvert<QString>();
+            case Color:
+                return v.canConvert<QColor>();
             default:
                 return false;
         }
@@ -112,8 +115,8 @@ struct Setting
     QString label;
     QString description;
     QVariant default_value;
-    float min = 0;
-    float max = 0;
+    float min = -1;
+    float max = -1;
     QVariantMap choices;
     std::function<void(const QVariant&)> side_effects;
 

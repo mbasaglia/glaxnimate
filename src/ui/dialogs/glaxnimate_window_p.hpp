@@ -35,6 +35,7 @@
 
 #include "app/scripting/script_engine.hpp"
 #include "app/scripting/plugin.hpp"
+#include "app/settings/widget_builder.hpp"
 
 namespace {
 
@@ -611,6 +612,22 @@ public:
         layer->name.set(name);
 
         layer->out_point.set(current_document->animation()->out_point.get());
+
+        auto settings = layer->settings();
+        if ( !settings.empty() )
+        {
+            QVariantMap settings_values;
+            app::settings::WidgetBuilder bob;
+            if ( !bob.show_dialog(settings, settings_values, tr("Create Layer"), parent) )
+                return;
+
+            for ( const auto& prop : layer->properties() )
+            {
+                auto it = settings_values.find(prop->name());
+                if ( it != settings_values.end() )
+                    prop->set_value(*it);
+            }
+        }
 
         model::Layer* ptr = layer.get();
 

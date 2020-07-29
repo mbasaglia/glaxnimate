@@ -62,6 +62,7 @@ private slots:
     void layer_new_empty();
     void layer_new_shape();
     void layer_new_precomp();
+    void layer_new_color();
     void layer_delete();
 
     void refresh_title();

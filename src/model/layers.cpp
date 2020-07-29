@@ -1,6 +1,7 @@
 #include "layers.hpp"
 
 #include "composition.hpp"
+#include "model/document.hpp"
 
 model::Layer::Layer(Document* doc, Composition* composition)
     : DocumentNode(doc), composition_(composition)
@@ -88,4 +89,11 @@ void model::Layer::on_property_changed ( const QString& name, const QVariant& va
         docnode_on_update_group();
     else
         DocumentNode::on_property_changed(name, value);
+}
+
+model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Composition* composition )
+    : Ctor(doc, composition)
+{
+    width.set(doc->animation()->width.get());
+    height.set(doc->animation()->height.get());
 }

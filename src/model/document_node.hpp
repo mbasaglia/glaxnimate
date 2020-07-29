@@ -229,8 +229,8 @@ class ReferencePropertyBase : public BaseProperty
 {
     Q_GADGET
 public:
-    ReferencePropertyBase(DocumentNode* obj, QString name, bool user_editable)
-        : BaseProperty(obj, std::move(name), PropertyTraits{false, PropertyTraits::ObjectReference, user_editable}),
+    ReferencePropertyBase(DocumentNode* obj, const QString& name, bool user_editable)
+        : BaseProperty(obj, name, PropertyTraits{PropertyTraits::ObjectReference, user_editable ? PropertyTraits::NoFlags : PropertyTraits::ReadOnly}),
           parent(obj)
     {
     }

@@ -45,7 +45,7 @@ QJsonObject io::glaxnimate::GlaxnimateFormat::to_json ( model::Object* object )
 
 QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* property )
 {
-    if ( property->traits().list )
+    if ( property->traits().flags & model::PropertyTraits::List )
     {
         QJsonArray arr;
         for ( const QVariant& val : property->value().toList() )

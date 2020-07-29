@@ -25,9 +25,18 @@ struct PropertyTraits
         Enum,
         Uuid,
     };
-    bool list = false;
+
+    enum Flags
+    {
+        NoFlags = 0,
+        List = 1,
+        ReadOnly = 2,
+        Animated = 3,
+    };
+
+
     Type type = Unknown;
-    bool user_editable = true;
+    int flags = NoFlags;
 
     bool is_object() const
     {
@@ -38,13 +47,31 @@ struct PropertyTraits
     static constexpr Type get_type() noexcept;
 
     template<class T>
-    static PropertyTraits from_scalar(bool list=false, bool user_editable=true)
+    static PropertyTraits from_scalar(int flags=NoFlags)
     {
         return {
-            list,
             get_type<T>(),
-            user_editable
+            flags
         };
+    }
+
+    app::settings::Setting::Type setting_type() const
+    {
+        switch ( type )
+        {
+            case Bool:
+                return app::settings::Setting::Bool;
+            case Int:
+                return app::settings::Setting::Int;
+            case Float:
+                return app::settings::Setting::Float;
+            case String:
+                return app::settings::Setting::String;
+            case Color:
+                return app::settings::Setting::Color;
+            default:
+                return app::settings::Setting::Internal;
+        }
     }
 };
 
@@ -155,12 +182,20 @@ private:                                                                        
     Q_PROPERTY(type name READ get_##name WRITE set_##name NOTIFY name##_changed)    \
     // macro end
 
+#define GLAXNIMATE_ANIMATABLE(type, name, default_value)        \
+public:                                                         \
+    AnimatedProperty<type> name{this, #name, default_value};    \
+    AnimatableBase& get_##name() { return name.animatable(); }  \
+private:                                                        \
+    Q_PROPERTY(AnimatableBase& name READ get_##name)            \
+    // macro end
+
 
 class BaseProperty
 {
 public:
-    BaseProperty(Object* object, QString name, PropertyTraits traits)
-        : object_(object), name_(std::move(name)), traits_(traits)
+    BaseProperty(Object* object, const QString& name, PropertyTraits traits)
+        : object_(object), name_(name), traits_(traits)
     {
         object_->add_property(this);
     }
@@ -170,6 +205,11 @@ public:
     virtual QVariant value() const = 0;
     virtual bool set_value(const QVariant& val) = 0;
     virtual bool set_undoable(const QVariant& val);
+    virtual void add_setting(app::settings::SettingList& list) const {
+        auto setting_type = traits_.setting_type();
+        if ( setting_type != app::settings::Setting::Internal )
+            list.emplace_back(name_, name_, "", setting_type, value());
+    }
 
 
     const QString& name() const
@@ -248,9 +288,9 @@ public:
     using value_type = Type;
     using reference = Reference;
 
-    Property(Object* obj, QString name, Type default_value = Type(),
+    Property(Object* obj, const QString& name, Type default_value = Type(),
              bool user_editable=true, SignalEmitter<Type> emitter = {})
-        : BaseProperty(obj, std::move(name), PropertyTraits::from_scalar<Type>(false, user_editable)),
+        : BaseProperty(obj, name, PropertyTraits::from_scalar<Type>(user_editable ? PropertyTraits::NoFlags : PropertyTraits::ReadOnly)),
           value_(std::move(default_value)), emitter(std::move(emitter))
     {}
 
@@ -292,7 +332,7 @@ class UnknownProperty : public BaseProperty
 {
 public:
     UnknownProperty(Object* obj, const QString& name, QVariant value)
-        : BaseProperty(obj, name, {false, PropertyTraits::Unknown, false}),
+        : BaseProperty(obj, name, {PropertyTraits::Unknown, PropertyTraits::ReadOnly}),
           variant(std::move(value))
     {}
 
@@ -317,7 +357,7 @@ class ObjectListPropertyBase : public BaseProperty
 {
 public:
     ObjectListPropertyBase(Object* obj, const QString& name)
-        : BaseProperty(obj, name, {true, PropertyTraits::Object})
+        : BaseProperty(obj, name, {PropertyTraits::Object, PropertyTraits::List})
     {}
 
     /**

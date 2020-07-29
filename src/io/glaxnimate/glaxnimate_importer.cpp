@@ -79,7 +79,7 @@ public:
 
     bool load_prop ( model::BaseProperty* target, const QJsonValue& val )
     {
-        if ( target->traits().list )
+        if ( target->traits().flags & model::PropertyTraits::List )
         {
             if ( !val.isArray() )
                 return false;

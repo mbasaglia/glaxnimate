@@ -4,6 +4,7 @@
 #include <QList>
 
 #include "model/animation/keyframe_transition.hpp"
+#include "model/property.hpp"
 
 
 namespace model {
@@ -348,5 +349,36 @@ private:
     QList<keyframe_type> keyframes_;
     bool mismatched_ = false;
 };
+
+
+class AnimatedPropertyBase : public BaseProperty
+{
+public:
+    using BaseProperty::BaseProperty;
+
+    virtual AnimatableBase& animatable() = 0;
+    virtual const AnimatableBase& animatable() const = 0;
+
+    QVariant value() const override { return animatable().value(); }
+    bool set_value(const QVariant& val) override { return animatable().set_value(val); }
+    bool set_undoable(const QVariant& val) override;
+};
+
+template<class Type>
+class AnimatedProperty : public AnimatedPropertyBase
+{
+public:
+    AnimatedProperty(Object* object, const QString& name, const Type& default_value)
+        : AnimatedPropertyBase(object, name, PropertyTraits::from_scalar<Type>(false, false, true)),
+        anim(default_value)
+    {}
+
+    Animatable<Type>& animatable() override { return &anim; }
+    const Animatable<Type>& animatable() const override { return &anim; }
+
+private:
+    Animatable<Type> anim;
+};
+
 
 } // namespace model

@@ -81,6 +81,7 @@
      <addaction name="action_new_layer_empty"/>
      <addaction name="action_new_layer_shape"/>
      <addaction name="action_new_layer_precomp"/>
+     <addaction name="action_new_layer_color"/>
     </widget>
     <addaction name="menu_new_layer"/>
     <addaction name="action_Move_To_Composition"/>
@@ -1610,6 +1611,14 @@
     <string>About...</string>
    </property>
   </action>
+  <action name="action_new_layer_color">
+   <property name="icon">
+    <iconset theme="object-fill"/>
+   </property>
+   <property name="text">
+    <string>Solid &amp;Color Layer</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -2481,6 +2490,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>action_new_layer_color</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>layer_new_color()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>action_new_layer_empty</sender>
    <signal>triggered()</signal>
    <receiver>GlaxnimateWindow</receiver>
@@ -2715,6 +2740,7 @@
   <slot>document_treeview_clicked(QModelIndex)</slot>
   <slot>layer_new_menu()</slot>
   <slot>layer_new_empty()</slot>
+  <slot>layer_new_color()</slot>
   <slot>layer_new_precomp()</slot>
   <slot>layer_new_shape()</slot>
   <slot>layer_delete()</slot>

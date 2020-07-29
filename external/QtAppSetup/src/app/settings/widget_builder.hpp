@@ -10,6 +10,8 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 
+#include "QtColorWidgets/ColorSelector"
+
 #include "app/settings/setting.hpp"
 
 namespace app::settings {
@@ -76,7 +78,7 @@ public:
 
         add_widgets(settings_list, &dialog, &layout, target);
         QDialogButtonBox box(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
-        layout.setWidget(1, QFormLayout::SpanningRole, &box);
+        layout.setWidget(layout.rowCount(), QFormLayout::SpanningRole, &box);
         QObject::connect(&box, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
         QObject::connect(&box, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
 
@@ -128,8 +130,16 @@ private:
         else if ( opt.type == Setting::Int )
         {
             auto wid = new QSpinBox();
-            wid->setMinimum(opt.min);
-            wid->setMaximum(opt.max);
+            if ( opt.min == opt.max && opt.max == -1 )
+            {
+                wid->setMinimum(std::numeric_limits<int>::min());
+                wid->setMaximum(std::numeric_limits<int>::max());
+            }
+            else
+            {
+                wid->setMinimum(opt.min);
+                wid->setMaximum(opt.max);
+            }
             wid->setValue(opt.get<int>(target));
             QObject::connect(wid, (void(QSpinBox::*)(int))&QSpinBox::valueChanged,
                              SettingSetter<int>{opt.slug, &target, opt.side_effects});
@@ -138,8 +148,16 @@ private:
         else if ( opt.type == Setting::Float )
         {
             auto wid = new QDoubleSpinBox();
-            wid->setMinimum(opt.min);
-            wid->setMaximum(opt.max);
+            if ( opt.min == opt.max && opt.max == -1 )
+            {
+                wid->setMinimum(std::numeric_limits<double>::min());
+                wid->setMaximum(std::numeric_limits<double>::max());
+            }
+            else
+            {
+                wid->setMinimum(opt.min);
+                wid->setMaximum(opt.max);
+            }
             wid->setValue(opt.get<float>(target));
             QObject::connect(wid, (void(QDoubleSpinBox::*)(double))&QDoubleSpinBox::valueChanged,
                              SettingSetter<float>{opt.slug, &target, opt.side_effects});
@@ -150,6 +168,14 @@ private:
             auto wid = new QLineEdit();
             wid->setText(opt.get<QString>(target));
             QObject::connect(wid, &QLineEdit::textChanged, SettingSetter<QString>{opt.slug, &target, opt.side_effects});
+            return wid;
+        }
+        else if ( opt.type == Setting::Color )
+        {
+            auto wid = new color_widgets::ColorSelector();
+            wid->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+            wid->setColor(opt.get<QColor>(target));
+            QObject::connect(wid, &color_widgets::ColorSelector::colorChanged, SettingSetter<QColor>{opt.slug, &target, opt.side_effects});
             return wid;
         }
 

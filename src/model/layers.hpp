@@ -186,5 +186,33 @@ public:
 };
 
 
+class SolidColorLayer : public detail::BaseLayerProps<SolidColorLayer>
+{
+    Q_OBJECT
+
+    GLAXNIMATE_PROPERTY(float, width, 0)
+    GLAXNIMATE_PROPERTY(float, height, 0)
+    GLAXNIMATE_PROPERTY(QColor, color, Qt::white)
+public:
+    SolidColorLayer(Document* doc, Composition* composition);
+
+    app::settings::SettingList settings() const override
+    {
+        app::settings::SettingList sl = Layer::settings();
+        color.add_setting(sl);
+        width.add_setting(sl);
+        height.add_setting(sl);
+        return sl;
+    }
+
+
+    QIcon docnode_icon() const override
+    {
+        return QIcon::fromTheme("object-fill");
+    }
+
+    QString type_name_human() const override { return tr("Solid Color Layer"); }
+};
+
 
 } // namespace model
