@@ -32,6 +32,10 @@ if(PythonLibs_FOUND)
     message(STATUS "Python3 enabled")
     add_subdirectory(external/pybind11)
     add_subdirectory(src/app/scripting/python)
+    target_include_directories (${PROJECT_SLUG} PUBLIC
+        ${PYTHON_INCLUDE_DIRS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/pybind11/include
+    )
 else()
     set(PYTHON_ENABLED OFF PARENT_SCOPE)
 endif()
