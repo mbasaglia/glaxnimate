@@ -11,7 +11,7 @@ pages:
     image: ubuntu:latest
     stage: deploy
     script:
-        - apt-get install -y doxygen graphviz
+        - apt-get install -y doxygen graphviz g++
         - mkdir -p build
         - cd build
         - cmake ..
