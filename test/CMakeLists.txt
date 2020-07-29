@@ -5,7 +5,7 @@ include(testing)
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_BINARY_DIR}/bin)
-
+include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
 
