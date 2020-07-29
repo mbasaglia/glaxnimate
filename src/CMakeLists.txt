@@ -17,12 +17,14 @@ model/document.cpp
 model/document_node.cpp
 model/layers.cpp
 model/object.cpp
+model/transform.cpp
 model/item_models/document_node_model.cpp
 model/item_models/property_model.cpp
 model/graphics/handle.cpp
 model/graphics/document_node_graphics_item.cpp
 model/graphics/document_scene.cpp
 model/animation/keyframe_transition.cpp
+model/animation/animatable.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui

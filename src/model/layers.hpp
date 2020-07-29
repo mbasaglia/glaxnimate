@@ -5,6 +5,7 @@
 
 #include "property.hpp"
 #include "document_node.hpp"
+#include "transform.hpp"
 
 namespace model {
 
@@ -74,6 +75,8 @@ class Layer : public DocumentNode
     GLAXNIMATE_PROPERTY(float, in_point, 0)
     GLAXNIMATE_PROPERTY(float, out_point, 0)
     GLAXNIMATE_PROPERTY(float, start_time, 0)
+    GLAXNIMATE_SUBOBJECT(Transform, transform)
+
 public:
     explicit Layer(Document* doc, Composition* composition);
 

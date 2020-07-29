@@ -318,6 +318,22 @@ private slots:
         //      0.013 msecs per iteration (total: 57, iterations: 4096)
     }
 
+    void benchmark_solve_qpointf()
+    {
+        using VecT = QPointF;
+        VecT a{20, 30};
+        VecT b{15, 40};
+        VecT c{30, 10};
+        VecT d{40, 15};
+        math::BezierSolver<VecT> bs{a, b, c, d};
+        QBENCHMARK{
+            for ( double t = 0; t <= 1; t += 0.01 )
+                bs.solve(t);
+        }
+        // Slightly faster but calculating tangents loses significant precision
+        //      0.013 msecs per iteration (total: 57, iterations: 4096)
+    }
+
     void benchmark_solve_quadratic()
     {
         using VecT = math::Vec2;

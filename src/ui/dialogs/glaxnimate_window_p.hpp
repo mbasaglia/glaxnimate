@@ -344,6 +344,8 @@ public:
 
         ui.view_properties->setModel(&property_model);
         ui.view_properties->setItemDelegateForColumn(1, &property_delegate);
+        ui.view_properties->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+        ui.view_properties->header()->setSectionResizeMode(1, QHeaderView::Stretch);
 
         // Tool buttons
         ui.btn_layer_add->setMenu(ui.menu_new_layer);

@@ -1,8 +1,10 @@
 #pragma once
 
-#include <QString>
-
 #include <type_traits>
+
+#include <QString>
+#include <QPointF>
+#include <QVector2D>
 
 #include "object.hpp"
 
@@ -31,7 +33,7 @@ struct PropertyTraits
         NoFlags = 0,
         List = 1,
         ReadOnly = 2,
-        Animated = 3,
+        Animated = 4,
     };
 
 
@@ -99,11 +101,12 @@ struct GetType<std::unique_ptr<ObjT>, std::enable_if_t<is_object_v<ObjT>>>
 
 template<> struct GetType<bool, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Bool; };
 template<> struct GetType<float, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Float; };
-template<> struct GetType<QVector2D, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Point; };
+template<> struct GetType<QVector2D, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Size; };
 template<> struct GetType<QColor, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Color; };
 template<> struct GetType<QSizeF, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Size; };
 template<> struct GetType<QString, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::String; };
 template<> struct GetType<QUuid, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Uuid; };
+template<> struct GetType<QPointF, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Point; };
 
 template<class ObjT>
 struct GetType<ObjT, std::enable_if_t<std::is_integral_v<ObjT>>>
@@ -185,9 +188,17 @@ private:                                                                        
 #define GLAXNIMATE_ANIMATABLE(type, name, default_value)        \
 public:                                                         \
     AnimatedProperty<type> name{this, #name, default_value};    \
-    AnimatableBase& get_##name() { return name.animatable(); }  \
+    AnimatableBase* get_##name() { return &name.animatable(); } \
 private:                                                        \
-    Q_PROPERTY(AnimatableBase& name READ get_##name)            \
+    Q_PROPERTY(AnimatableBase* name READ get_##name)            \
+    // macro end
+
+#define GLAXNIMATE_SUBOBJECT(type, name)                    \
+public:                                                     \
+    SubObjectProperty<type> name{this, #name};              \
+    type* get_##name() { return name.get(); }               \
+private:                                                    \
+    Q_PROPERTY(type name READ get_##name)                   \
     // macro end
 
 
@@ -466,7 +477,48 @@ public:
 
 private:
     std::vector<pointer> objects;
+};
 
+
+template<class Type>
+class SubObjectProperty : public BaseProperty
+{
+public:
+    SubObjectProperty(Object* obj, const QString& name)
+        : BaseProperty(obj, name, {PropertyTraits::Object}),
+        sub_obj(std::make_unique<Type>(obj->document()))
+    {}
+
+    QVariant value() const override
+    {
+        return QVariant::fromValue(const_cast<Type*>(get()));
+    }
+
+    bool set_value(const QVariant& val) override
+    {
+        if ( !val.canConvert<Type*>() )
+            return false;
+
+        if ( Type* t = val.value<Type*>() )
+            return set_clone(t);
+
+        return false;
+    }
+
+    Type* set_clone(Type* object)
+    {
+        if ( !object )
+            return nullptr;
+
+        sub_obj = object->clone_covariant();
+        return sub_obj.get();
+    }
+
+    Type* get() { return sub_obj.get(); }
+    const Type* get() const { return sub_obj.get(); }
+
+private:
+    std::unique_ptr<Type> sub_obj;
 };
 
 } // namespace model

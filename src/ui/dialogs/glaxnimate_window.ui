@@ -1011,6 +1011,12 @@
     <layout class="QVBoxLayout" name="verticalLayout_5">
      <item>
       <widget class="QTreeView" name="view_properties">
+       <property name="minimumSize">
+        <size>
+         <width>333</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="showDropIndicator" stdset="0">
         <bool>false</bool>
        </property>
@@ -1613,7 +1619,8 @@
   </action>
   <action name="action_new_layer_color">
    <property name="icon">
-    <iconset theme="object-fill"/>
+    <iconset theme="object-fill">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Solid &amp;Color Layer</string>

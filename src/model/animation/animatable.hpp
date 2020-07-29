@@ -20,7 +20,6 @@ class KeyframeBase
 
     Q_PROPERTY(QVariant value READ value)
     Q_PROPERTY(double time READ time)
-    Q_PROPERTY(KeyframeTransition& transition READ transition)
 public:
     explicit KeyframeBase(FrameTime time) : time_ { time } {}
     virtual ~KeyframeBase() = default;
@@ -199,7 +198,7 @@ public:
         return true;
     }
 
-    value_type lerp(reference other, double t)
+    value_type lerp(reference other, double t) const
     {
         return math::lerp(value_, other, transition().lerp_factor(t));
     }
@@ -225,16 +224,16 @@ public:
 
     const keyframe_type* keyframe(int i) const override
     {
-        if ( i < 0 || i > keyframes_.size() )
+        if ( i < 0 || i > int(keyframes_.size()) )
             return nullptr;
-        return &keyframes_->at(i);
+        return keyframes_[i].get();
     }
 
     keyframe_type* keyframe(int i) override
     {
-        if ( i < 0 || i > keyframes_.size() )
+        if ( i < 0 || i > int(keyframes_.size()) )
             return nullptr;
-        return &keyframes_->at(i);
+        return keyframes_[i].get();
     }
 
     QVariant value() const override
@@ -287,15 +286,15 @@ public:
         if ( !keyframes_.empty() )
         {
             value_ = value;
-            keyframes_.append({0, value});
+            keyframes_.push_back(std::make_unique<keyframe_type>(0, value));
             if ( time != 0 )
             {
-                keyframes_.append({time, value});
+                keyframes_.push_back(std::make_unique<keyframe_type>(time, value));
                 if ( time > 0 )
-                    return &keyframes_.at(1);
-                keyframes_.swap(0, 1);
+                    return keyframes_.back().get();
+                std::swap(keyframes_[0], keyframes_[1]);
             }
-            return &keyframes_.at(0);
+            return keyframes_.front().get();
         }
 
         int index = keyframe_index(time);
@@ -308,12 +307,14 @@ public:
 
         if ( index == 0 && kf->time() > time )
         {
-            keyframes_.prepend({time, value});
-            return &keyframes_.front();
+            keyframes_.insert(keyframes_.begin(), std::make_unique<keyframe_type>(time, value));
+            return keyframes_.front().get();
         }
 
-        keyframes_.insert(index+1, {time, value});
-        return index+1;
+        return keyframes_.insert(
+            keyframes_.begin() + index + 1,
+            std::make_unique<keyframe_type>(time, value)
+        )->get();
     }
 
     value_type get_at(FrameTime time) const
@@ -335,7 +336,7 @@ public:
         const keyframe_type* second = keyframe(index+1);
         double scaled_time = (time - first->time()) / (second->time() - first->time());
         double lerp_factor = first->transition().lerp_factor(scaled_time);
-        return first->lerp(second, lerp_factor);
+        return first->lerp(second->get(), lerp_factor);
     }
 
     bool value_mismatch() const override
@@ -346,7 +347,7 @@ public:
 
 private:
     value_type value_;
-    QList<keyframe_type> keyframes_;
+    std::vector<std::unique_ptr<keyframe_type>> keyframes_;
     bool mismatched_ = false;
 };
 
@@ -361,7 +362,6 @@ public:
 
     QVariant value() const override { return animatable().value(); }
     bool set_value(const QVariant& val) override { return animatable().set_value(val); }
-    bool set_undoable(const QVariant& val) override;
 };
 
 template<class Type>
@@ -369,12 +369,12 @@ class AnimatedProperty : public AnimatedPropertyBase
 {
 public:
     AnimatedProperty(Object* object, const QString& name, const Type& default_value)
-        : AnimatedPropertyBase(object, name, PropertyTraits::from_scalar<Type>(false, false, true)),
+        : AnimatedPropertyBase(object, name, PropertyTraits::from_scalar<Type>(PropertyTraits::Animated)),
         anim(default_value)
     {}
 
-    Animatable<Type>& animatable() override { return &anim; }
-    const Animatable<Type>& animatable() const override { return &anim; }
+    Animatable<Type>& animatable() override { return anim; }
+    const Animatable<Type>& animatable() const override { return anim; }
 
 private:
     Animatable<Type> anim;

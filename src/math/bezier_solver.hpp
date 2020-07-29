@@ -3,19 +3,7 @@
 #include "math/vector.hpp"
 #include "math/functions.hpp"
 
-class QVector2D; class QVector3D; class QVector4D;
-
 namespace math {
-
-namespace detail {
-
-template<class V> struct VecSize { static constexpr int value = V::size_static; };
-template<> struct VecSize<QVector2D> { static constexpr int value = 2; };
-template<> struct VecSize<QVector3D> { static constexpr int value = 3; };
-template<> struct VecSize<QVector4D> { static constexpr int value = 4; };
-
-
-} // namespace detail
 
 /**
  * \brief Bezier solver up to degree 3
@@ -71,7 +59,7 @@ public:
     {
         Vec v;
         for ( int i = 0; i < detail::VecSize<Vec>::value; i++ )
-            v[i] = solve_component(factor, i);
+            detail::get(v, i) = solve_component(factor, i);
         return v;
     }
 
@@ -80,19 +68,34 @@ public:
         switch ( order() )
         {
             case 3:
-                return fast_cubic(factor, points_[0][component], points_[1][component], points_[2][component], points_[3][component]);
+                return fast_cubic(
+                    factor,
+                    detail::get(points_[0], component),
+                    detail::get(points_[1], component),
+                    detail::get(points_[2], component),
+                    detail::get(points_[3], component)
+                );
             case 2:
-                return fast_quadratic(factor, points_[0][component], points_[1][component], points_[2][component]);
+                return fast_quadratic(
+                    factor,
+                    detail::get(points_[0], component),
+                    detail::get(points_[1], component),
+                    detail::get(points_[2], component)
+                );
             case 1:
-                return math::lerp(points_[0][component], points_[1][component], factor);
+                return math::lerp(
+                    detail::get(points_[0], component),
+                    detail::get(points_[1], component),
+                    factor
+                );
             case 0:
-                return points_[0][component];
+                return detail::get(points_[0], component);
             // Slow but more general algorithm
             default:
             {
                 scalar p = 0;
                 for ( int i = 0; i < int(points_.size()); i++ )
-                    p += points_[i][component] * coefficient(i, order(), factor);
+                    p += detail::get(points_[i], component) * coefficient(i, order(), factor);
                 return p;
             }
         }

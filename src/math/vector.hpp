@@ -5,6 +5,9 @@
 #include <cmath>
 #include <QMetaType>
 
+
+class QVector2D; class QVector3D; class QVector4D; class QPointF;
+
 namespace math {
 
 
@@ -364,15 +367,49 @@ public:
 };
 
 
+
+namespace detail {
+
+template<class V> struct VecSize { static constexpr int value = V::size_static; };
+template<> struct VecSize<QVector2D> { static constexpr int value = 2; };
+template<> struct VecSize<QVector3D> { static constexpr int value = 3; };
+template<> struct VecSize<QVector4D> { static constexpr int value = 4; };
+template<> struct VecSize<QPointF> { static constexpr int value = 2; };
+
+template<class VecT> struct VecScalar
+{
+    using type = std::decay_t<decltype(std::declval<VecT>()[0])>;
+};
+
+
+template<> struct VecScalar<QPointF> { using type = qreal; };
+
+template<class VecT>
+using scalar_type = typename detail::VecScalar<std::decay_t<VecT>>::type;
+
+template<class VecT>
+constexpr const scalar_type<VecT>& get(const VecT& vt, int off) noexcept
+{
+    return reinterpret_cast<const typename VecScalar<VecT>::type*>(&vt)[off];
+}
+
+template<class VecT>
+constexpr scalar_type<VecT>& get(VecT& vt, int off) noexcept
+{
+    return reinterpret_cast<typename VecScalar<VecT>::type*>(&vt)[off];
+}
+
+
+} // namespace detail
+
+using detail::scalar_type;
+
+
 template<class ScalarT, int Size>
 constexpr VecN<ScalarT, Size> lerp(const VecN<ScalarT, Size>& a, const VecN<ScalarT, Size>& b, double factor) noexcept
 {
     return a.lerp(b, factor);
 }
-
-template<class VecT>
-using scalar_type = std::decay_t<decltype(std::declval<VecT>()[0])>;
-
 
 template<class T>
 constexpr T lerp(const T& a, const T& b, double factor)
@@ -384,5 +421,6 @@ inline Vec2 from_polar(scalar_type<Vec2> length, scalar_type<Vec2> angle)
 {
     return Vec2{std::cos(angle) * length, std::sin(angle) * length};
 }
+
 
 } // namespace math
