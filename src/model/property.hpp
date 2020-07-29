@@ -142,6 +142,19 @@ private:                                                    \
     Q_PROPERTY(type name READ get_##name)                   \
     // macro end
 
+#define GLAXNIMATE_PROPERTY_SIGNAL(type, name, default_value, Owner)                \
+public:                                                                             \
+    Property<type> name{this, #name, default_value, true, &Owner::name##_changed};  \
+    type get_##name() const { return name.get(); }                                  \
+    bool set_##name(const type& v) {                                                \
+        return name.set_undoable(QVariant::fromValue(v));                           \
+    }                                                                               \
+signals:                                                                            \
+    void name##_changed(const type&);                                               \
+private:                                                                            \
+    Q_PROPERTY(type name READ get_##name WRITE set_##name NOTIFY name##_changed)    \
+    // macro end
+
 
 class BaseProperty
 {
@@ -186,6 +199,48 @@ private:
     PropertyTraits traits_;
 };
 
+
+template<class Type>
+class SignalEmitter
+{
+private:
+    class HolderBase
+    {
+    public:
+        virtual ~HolderBase() = default;
+        virtual void invoke(Object* obj, const Type& v) const = 0;
+    };
+
+    template<class ObjT>
+    class Holder : public HolderBase
+    {
+    public:
+        using FuncP = void (ObjT::*)(const Type&);
+
+        Holder(FuncP func) : func(func) {}
+
+        void invoke(Object* obj, const Type& v) const override
+        {
+            (static_cast<ObjT*>(obj)->*func)(v);
+        }
+
+        FuncP func;
+    };
+
+    std::unique_ptr<HolderBase> holder;
+
+public:
+    SignalEmitter() = default;
+    template<class T>
+    SignalEmitter(typename Holder<T>::FuncP func) : holder(std::make_unique<Holder<T>>(func)) {}
+
+    void operator() (Object* obj, const Type& v)
+    {
+        if ( holder )
+            holder->invoke(obj, v);
+    }
+};
+
 template<class Type, class Reference = const Type&>
 class Property : public BaseProperty
 {
@@ -193,15 +248,17 @@ public:
     using value_type = Type;
     using reference = Reference;
 
-    Property(Object* obj, QString name, Type default_value = Type(), bool user_editable=true)
+    Property(Object* obj, QString name, Type default_value = Type(),
+             bool user_editable=true, SignalEmitter<Type> emitter = {})
         : BaseProperty(obj, std::move(name), PropertyTraits::from_scalar<Type>(false, user_editable)),
-          value_(std::move(default_value))
+          value_(std::move(default_value)), emitter(std::move(emitter))
     {}
 
     void set(Type value)
     {
         std::swap(value_, value);
         value_changed();
+        emitter(object(), value_);
     }
 
     reference get() const
@@ -227,6 +284,7 @@ public:
 
 private:
     Type value_;
+    SignalEmitter<Type> emitter;
 };
 
 

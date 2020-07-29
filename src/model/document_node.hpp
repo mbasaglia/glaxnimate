@@ -259,7 +259,7 @@ template<class Type>
 class ReferenceProperty : public ReferencePropertyBase
 {
 public:
-    using held_type = Type*;
+    using value_type = Type*;
 
     ReferenceProperty(DocumentNode* obj, QString name, bool user_editable = true)
         : ReferencePropertyBase(obj, std::move(name), user_editable)
@@ -285,12 +285,12 @@ public:
 
     bool set_value(const QVariant& val) override
     {
-        if ( !val.canConvert(qMetaTypeId<held_type>()) )
+        if ( !val.canConvert(qMetaTypeId<value_type>()) )
             return false;
         QVariant converted = val;
-        if ( !converted.convert(qMetaTypeId<held_type>()) )
+        if ( !converted.convert(qMetaTypeId<value_type>()) )
             return false;
-        Type* ptr = converted.value<held_type>();
+        Type* ptr = converted.value<value_type>();
         if ( !is_valid_option(ptr) )
             return false;
         set(ptr);
