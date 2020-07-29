@@ -11,7 +11,7 @@ pages:
     image: ubuntu:latest
     stage: deploy
     script:
-        - apt-get install -y doxygen graphviz g++
+        - apt-get install -y doxygen graphviz g++ python3-distutils
         - mkdir -p build
         - cd build
         - cmake ..
