@@ -199,7 +199,7 @@ public:                                                     \
     SubObjectProperty<type> name{this, #name};              \
     type* get_##name() { return name.get(); }               \
 private:                                                    \
-    Q_PROPERTY(type name READ get_##name)                   \
+    Q_PROPERTY(type* name READ get_##name)                  \
     // macro end
 
 

@@ -28,8 +28,11 @@ test_case(test_property
 ../src/model/document_node.cpp
 ../src/model/composition.cpp
 ../src/model/animation.cpp
+../src/model/transform.cpp
 ../src/model/graphics/handle.cpp
 ../src/model/graphics/document_node_graphics_item.cpp
+../src/model/animation/animatable.cpp
+../src/model/animation/keyframe_transition.cpp
 ../src/io/glaxnimate/glaxnimate_format.cpp
 ../src/io/glaxnimate/glaxnimate_importer.cpp
 ../src/io/base.cpp
