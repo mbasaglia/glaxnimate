@@ -345,6 +345,22 @@ public:
     }
 };
 
+
+namespace detail {
+
+template<class Type>
+std::optional<Type> variant_cast(const QVariant& val)
+{
+    if ( !val.canConvert(qMetaTypeId<Type>()) )
+        return {};
+    QVariant converted = val;
+    if ( !converted.convert(qMetaTypeId<Type>()) )
+        return {};
+    return converted.value<Type>();
+}
+
+} // namespace detail
+
 template<class Type, class Reference = const Type&>
 class Property : public BaseProperty
 {
@@ -388,12 +404,9 @@ public:
 
     bool set_value(const QVariant& val) override
     {
-        if ( !val.canConvert(qMetaTypeId<Type>()) )
-            return false;
-        QVariant converted = val;
-        if ( !converted.convert(qMetaTypeId<Type>()) )
-            return false;
-        return set(converted.value<Type>());
+        if ( auto v = detail::variant_cast<Type>(val) )
+            return set(*v);
+        return false;
     }
 
 private:

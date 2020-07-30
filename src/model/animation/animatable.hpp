@@ -26,6 +26,8 @@ public:
 
     virtual QVariant value() const = 0;
     virtual bool set_value(const QVariant& value) = 0;
+    virtual QVariant extra_variant() const = 0;
+    virtual bool set_extra_variant(const QVariant&) = 0;
 
     FrameTime time() const { return time_; }
 
@@ -40,6 +42,70 @@ private:
     FrameTime time_;
     KeyframeTransition transition_;
 };
+
+namespace detail {
+    template<class ExtraDataType>
+    class KeyframeExtra : public KeyframeBase
+    {
+    public:
+        using extra_type = ExtraDataType;
+        using KeyframeBase::KeyframeBase;
+
+        QVariant extra_variant() const override { return QVariant::fromValue(extra()); }
+        bool set_extra_variant(const QVariant& val) override
+        {
+            if ( auto v = detail::variant_cast<ExtraDataType>(val) )
+            {
+                set_extra(*v);
+                return true;
+            }
+            return false;
+        }
+
+        const ExtraDataType& extra() const { return extra_; }
+        void set_extra(const ExtraDataType& v) { extra_ = v; }
+
+    protected:
+        ExtraDataType extra_;
+    };
+
+    template<class Type>
+    class KeyframeWithExtra : public KeyframeBase
+    {
+    public:
+        using KeyframeBase::KeyframeBase;
+
+        QVariant extra_variant() const override { return {}; }
+        bool set_extra_variant(const QVariant&) override { return false; }
+
+    protected:
+        void extra_data_reset() {}
+    };
+
+    template<>
+    class KeyframeWithExtra<QColor> : public KeyframeExtra<QString>
+    {
+    public:
+        using KeyframeExtra<QString>::KeyframeExtra;
+
+    protected:
+        void extra_data_reset()
+        {
+            set_extra("");
+        }
+    };
+
+    template<>
+    class KeyframeWithExtra<QPointF> : public KeyframeExtra<QPair<QPointF, QPointF>>
+    {
+    public:
+        using KeyframeExtra<QPair<QPointF, QPointF>>::KeyframeExtra;
+
+    protected:
+        void extra_data_reset()  {}
+    };
+
+} // namespace detail
 
 class AnimatableBase
 {
@@ -157,19 +223,18 @@ public:
             return IsKeyframe;
         return Animated;
     }
-
 };
 
 
 template<class Type>
-class Keyframe : public KeyframeBase
+class Keyframe : public detail::KeyframeWithExtra<Type>
 {
 public:
     using value_type = Type;
     using reference = const Type&;
 
     Keyframe(FrameTime time, Type value)
-        : KeyframeBase(time), value_(std::move(value)) {}
+        : detail::KeyframeWithExtra<Type>(time), value_(std::move(value)) {}
 
 
     void set(reference value)
@@ -189,18 +254,17 @@ public:
 
     bool set_value(const QVariant& val) override
     {
-        if ( !val.canConvert(qMetaTypeId<Type>()) )
-            return false;
-        QVariant converted = val;
-        if ( !converted.convert(qMetaTypeId<Type>()) )
-            return false;
-        set(converted.value<Type>());
-        return true;
+        if ( auto v = detail::variant_cast<Type>(val) )
+        {
+            set(*v);
+            return true;
+        }
+        return false;
     }
 
     value_type lerp(reference other, double t) const
     {
-        return math::lerp(value_, other, transition().lerp_factor(t));
+        return math::lerp(value_, other, this->transition().lerp_factor(t));
     }
 
 private:
@@ -248,23 +312,16 @@ public:
 
     keyframe_type* add_keyframe(FrameTime time, const QVariant& val) override
     {
-        if ( !val.canConvert(qMetaTypeId<value_type>()) )
-            return nullptr;
-        QVariant converted = val;
-        if ( !converted.convert(qMetaTypeId<value_type>()) )
-            return nullptr;
-        return add_keyframe(time, val.value<value_type>());
+        if ( auto v = detail::variant_cast<Type>(val) )
+            return add_keyframe(time, *v);
+        return nullptr;
     }
 
     bool set_value(const QVariant& val) override
     {
-        if ( !val.canConvert(qMetaTypeId<value_type>()) )
-            return false;
-        QVariant converted = val;
-        if ( !converted.convert(qMetaTypeId<value_type>()) )
-            return false;
-        value_ = val.value<value_type>();
-        return true;
+        if ( auto v = detail::variant_cast<Type>(val) )
+            return set(*v);
+        return false;
     }
 
     bool set(reference val)

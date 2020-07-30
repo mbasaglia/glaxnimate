@@ -265,10 +265,13 @@ public:
         : ReferencePropertyBase(obj, std::move(name), user_editable)
     {}
 
-    void set(Type* value)
+    bool set(Type* value)
     {
+        if ( !is_valid_option(value) )
+            return false;
         value_ = value;
         value_changed();
+        return true;
     }
 
     Type* get() const
@@ -285,15 +288,8 @@ public:
 
     bool set_value(const QVariant& val) override
     {
-        if ( !val.canConvert(qMetaTypeId<value_type>()) )
-            return false;
-        QVariant converted = val;
-        if ( !converted.convert(qMetaTypeId<value_type>()) )
-            return false;
-        Type* ptr = converted.value<value_type>();
-        if ( !is_valid_option(ptr) )
-            return false;
-        set(ptr);
+        if ( auto v = detail::variant_cast<Type*>(val) )
+            return set(*v);
         return true;
     }
 
