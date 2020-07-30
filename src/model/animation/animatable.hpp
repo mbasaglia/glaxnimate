@@ -55,7 +55,7 @@ public:
     enum KeyframeStatus
     {
         NotAnimated,    ///< Value is not animated
-        Animated,       ///< Value is animated but the given time isn't a keyframe
+        Tween,          ///< Value is animated but the given time isn't a keyframe
         IsKeyframe,     ///< Value is animated and the given time is a keyframe
         Mismatch        ///< Value is animated and the current value doesn't match the animated value
 
@@ -110,7 +110,7 @@ public:
      * \brief Set the current time
      * \post value() == value(time)
      */
-    Q_INVOKABLE virtual void set_time(FrameTime time) = 0;
+    virtual void set_time(FrameTime time) = 0;
 
     /**
      * If animated(), whether the current value has been changed over the animated value
@@ -160,7 +160,7 @@ public:
             return Mismatch;
         if ( keyframe(keyframe_index(time))->time() == time )
             return IsKeyframe;
-        return Animated;
+        return Tween;
     }
 };
 

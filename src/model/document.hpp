@@ -15,6 +15,7 @@ class Document : public QObject
 
     Q_PROPERTY(QString filename READ filename)
     Q_PROPERTY(Animation* animation READ animation)
+    Q_PROPERTY(double current_time READ current_time WRITE set_current_time)
 
 public:
     explicit Document(const QString& filename);
@@ -36,6 +37,9 @@ public:
 
     Q_INVOKABLE bool undo();
     Q_INVOKABLE bool redo();
+
+    FrameTime current_time() const;
+    void set_current_time(FrameTime t);
 
 signals:
     void filename_changed(const QString& n);

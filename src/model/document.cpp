@@ -19,6 +19,7 @@ public:
     QUuid uuid = QUuid::createUuid();
     QString uuid_string = uuid.toString();
     int id = 0;
+    FrameTime current_time = 0;
 };
 
 
@@ -84,3 +85,13 @@ bool model::Document::undo()
     return true;
 }
 
+model::FrameTime model::Document::current_time() const
+{
+    return d->current_time;
+}
+
+void model::Document::set_current_time(model::FrameTime t)
+{
+    if ( t >= 0 && t <= d->animation.last_frame.get() )
+        d->current_time = t;
+}

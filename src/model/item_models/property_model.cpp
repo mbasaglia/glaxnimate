@@ -4,6 +4,7 @@
 #include <QFont>
 
 #include "command/property_commands.hpp"
+#include "app/application.hpp"
 
 class model::PropertyModel::Private
 {
@@ -302,6 +303,46 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
 
         BaseProperty* prop = tree->prop;
         PropertyTraits traits = prop->traits();
+
+        if ( (traits.flags & PropertyTraits::Animated) )
+        {
+            AnimatedPropertyBase* anprop = static_cast<AnimatedPropertyBase*>(prop);
+            auto frame_status = anprop->animatable().keyframe_status(d->document->current_time());
+
+            if ( role == Qt::DecorationRole )
+            {
+                switch ( frame_status )
+                {
+                    case AnimatableBase::Tween:
+                        return QIcon(app::Application::instance()->data_file("images/keyframe/status/tween.svg"));
+                    case AnimatableBase::IsKeyframe:
+                        return QIcon(app::Application::instance()->data_file("images/keyframe/status/key.svg"));
+                    case AnimatableBase::Mismatch:
+                        return QIcon(app::Application::instance()->data_file("images/keyframe/status/mismatch.svg"));
+                    case AnimatableBase::NotAnimated:
+                        return QIcon(app::Application::instance()->data_file("images/keyframe/status/not-animated.svg"));
+                }
+
+            }
+            else if ( role == Qt::BackgroundColorRole )
+            {
+                switch ( frame_status )
+                {
+                    case AnimatableBase::Tween:
+                        return QColor::fromHsv(100, 167, 127);
+                    case AnimatableBase::IsKeyframe:
+                        return QColor::fromHsv(51, 171, 133);
+                    case AnimatableBase::Mismatch:
+                        return QColor::fromHsv(29, 180, 149);
+                    case AnimatableBase::NotAnimated:
+                        return QColor::fromHsv(0, 0, 120);
+                }
+            }
+            else if ( role == Qt::TextColorRole )
+            {
+                return QColor(Qt::white);
+            }
+        }
 
         if ( (traits.flags & PropertyTraits::List) || traits.type == PropertyTraits::Unknown )
         {
