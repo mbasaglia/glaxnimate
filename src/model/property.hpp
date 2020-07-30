@@ -128,9 +128,9 @@ inline constexpr PropertyTraits::Type PropertyTraits::get_type() noexcept
     return detail::GetType<T>::value;
 }
 
-#define GLAXNIMATE_PROPERTY(type, name, default_value)      \
+#define GLAXNIMATE_PROPERTY(type, name, ...)                \
 public:                                                     \
-    Property<type> name{this, #name, default_value};        \
+    Property<type> name{this, #name, __VA_ARGS__};          \
     type get_##name() const { return name.get(); }          \
     bool set_##name(const type& v) {                        \
         return name.set_undoable(QVariant::fromValue(v));   \
@@ -173,18 +173,6 @@ private:                                                    \
     Q_PROPERTY(type name READ get_##name)                   \
     // macro end
 
-#define GLAXNIMATE_PROPERTY_SIGNAL(type, name, default_value, Owner)                \
-public:                                                                             \
-    Property<type> name{this, #name, default_value, true, &Owner::name##_changed};  \
-    type get_##name() const { return name.get(); }                                  \
-    bool set_##name(const type& v) {                                                \
-        return name.set_undoable(QVariant::fromValue(v));                           \
-    }                                                                               \
-signals:                                                                            \
-    void name##_changed(const type&);                                               \
-private:                                                                            \
-    Q_PROPERTY(type name READ get_##name WRITE set_##name NOTIFY name##_changed)    \
-    // macro end
 
 #define GLAXNIMATE_ANIMATABLE(type, name, default_value)        \
 public:                                                         \
@@ -252,28 +240,76 @@ private:
 };
 
 
-template<class Type>
-class SignalEmitter
+template<class Return, class Type>
+class PropertyCallback
 {
 private:
     class HolderBase
     {
     public:
         virtual ~HolderBase() = default;
-        virtual void invoke(Object* obj, const Type& v) const = 0;
+        virtual Return invoke(Object* obj, const Type& v) const = 0;
     };
 
     template<class ObjT>
-    class Holder : public HolderBase
+    class HolderRef : public HolderBase
     {
     public:
-        using FuncP = void (ObjT::*)(const Type&);
+        using FuncP = Return (ObjT::*)(const Type&);
 
-        Holder(FuncP func) : func(func) {}
+        HolderRef(FuncP func) : func(func) {}
 
-        void invoke(Object* obj, const Type& v) const override
+        Return invoke(Object* obj, const Type& v) const override
         {
-            (static_cast<ObjT*>(obj)->*func)(v);
+            return (static_cast<ObjT*>(obj)->*func)(v);
+        }
+
+        FuncP func;
+    };
+
+    template<class ObjT>
+    class HolderConstRef : public HolderBase
+    {
+    public:
+        using FuncP = Return (ObjT::*)(const Type&) const;
+
+        HolderConstRef(FuncP func) : func(func) {}
+
+        Return invoke(Object* obj, const Type& v) const override
+        {
+            return (static_cast<const ObjT*>(obj)->*func)(v);
+        }
+
+        FuncP func;
+    };
+
+    template<class ObjT>
+    class HolderVal : public HolderBase
+    {
+    public:
+        using FuncP = Return (ObjT::*)(Type);
+
+        HolderVal(FuncP func) : func(func) {}
+
+        Return invoke(Object* obj, const Type& v) const override
+        {
+            return (static_cast<ObjT*>(obj)->*func)(v);
+        }
+
+        FuncP func;
+    };
+
+    template<class ObjT>
+    class HolderConstVal : public HolderBase
+    {
+    public:
+        using FuncP = Return (ObjT::*)(Type) const;
+
+        HolderConstVal(FuncP func) : func(func) {}
+
+        Return invoke(Object* obj, const Type& v) const override
+        {
+            return (static_cast<const ObjT*>(obj)->*func)(v);
         }
 
         FuncP func;
@@ -282,14 +318,30 @@ private:
     std::unique_ptr<HolderBase> holder;
 
 public:
-    SignalEmitter() = default;
-    template<class T>
-    SignalEmitter(typename Holder<T>::FuncP func) : holder(std::make_unique<Holder<T>>(func)) {}
+    PropertyCallback() = default;
 
-    void operator() (Object* obj, const Type& v)
+    PropertyCallback(std::nullptr_t) {}
+
+    template<class T>
+    PropertyCallback(Return (T::*func)(const Type&)) : holder(std::make_unique<HolderRef<T>>(func)) {}
+
+    template<class T>
+    PropertyCallback(Return (T::*func)(const Type&) const) : holder(std::make_unique<HolderConstRef<T>>(func)) {}
+
+    template<class T>
+    PropertyCallback(Return (T::*func)(Type)) : holder(std::make_unique<HolderVal<T>>(func)) {}
+
+    template<class T>
+    PropertyCallback(Return (T::*func)(Type) const) : holder(std::make_unique<HolderConstVal<T>>(func)) {}
+
+    explicit operator bool() const
     {
-        if ( holder )
-            holder->invoke(obj, v);
+        return bool(holder);
+    }
+
+    Return operator() (Object* obj, const Type& v)
+    {
+        return holder->invoke(obj, v);
     }
 };
 
@@ -300,17 +352,28 @@ public:
     using value_type = Type;
     using reference = Reference;
 
-    Property(Object* obj, const QString& name, Type default_value = Type(),
-             bool user_editable=true, SignalEmitter<Type> emitter = {})
+    Property(Object* obj,
+             const QString& name,
+             Type default_value = Type(),
+             bool user_editable=true,
+             PropertyCallback<void, Type> emitter = {},
+             PropertyCallback<bool, Type> validator = {}
+    )
         : BaseProperty(obj, name, PropertyTraits::from_scalar<Type>(user_editable ? PropertyTraits::NoFlags : PropertyTraits::ReadOnly)),
-          value_(std::move(default_value)), emitter(std::move(emitter))
+          value_(std::move(default_value)),
+          emitter(std::move(emitter)),
+          validator(std::move(validator))
     {}
 
-    void set(Type value)
+    bool set(Type value)
     {
+        if ( validator && !validator(object(), value) )
+            return false;
         std::swap(value_, value);
         value_changed();
-        emitter(object(), value_);
+        if ( emitter )
+            emitter(object(), value_);
+        return true;
     }
 
     reference get() const
@@ -330,13 +393,13 @@ public:
         QVariant converted = val;
         if ( !converted.convert(qMetaTypeId<Type>()) )
             return false;
-        set(converted.value<Type>());
-        return true;
+        return set(converted.value<Type>());
     }
 
 private:
     Type value_;
-    SignalEmitter<Type> emitter;
+    PropertyCallback<void, Type> emitter;
+    PropertyCallback<bool, Type> validator;
 };
 
 

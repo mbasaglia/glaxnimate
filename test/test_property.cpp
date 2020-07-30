@@ -76,7 +76,13 @@ public:
     }
 
     using DocumentNode::DocumentNode;
+
+    double foo_val(int bar) { return bar / 2.0; }
+    double foo_val_const(int bar) const { return bar / 2.0; }
+    double foo_ref(const int& bar) { return bar / 2.0; }
+    double foo_ref_const(const int& bar) const { return bar / 2.0; }
 };
+
 
 class TestProperty: public QObject
 {
@@ -192,6 +198,58 @@ private slots:
         QCOMPARE(test_subject.prop_list.size(), 1);
         QCOMPARE(prop_2.read(&test_subject).toList().size(), 1);
         QCOMPARE(prop_2.read(&test_subject).toList()[0].value<MetaTestSubject*>(), &test_subject.prop_list[0]);
+    }
+
+    void test_callback_val()
+    {
+        Document doc("foo");
+        MetaTestSubject test_subject(&doc);
+        PropertyCallback<double, int> pc;
+        QVERIFY(!pc);
+        pc = &MetaTestSubject::foo_val;
+        QVERIFY(pc);
+        QCOMPARE(pc(&test_subject, 3), 1.5);
+        pc = nullptr;
+        QVERIFY(!pc);
+    }
+
+    void test_callback_val_const()
+    {
+        Document doc("foo");
+        MetaTestSubject test_subject(&doc);
+        PropertyCallback<double, int> pc;
+        QVERIFY(!pc);
+        pc = &MetaTestSubject::foo_val_const;
+        QVERIFY(pc);
+        QCOMPARE(pc(&test_subject, 3), 1.5);
+        pc = nullptr;
+        QVERIFY(!pc);
+    }
+
+    void test_callback_ref()
+    {
+        Document doc("foo");
+        MetaTestSubject test_subject(&doc);
+        PropertyCallback<double, int> pc;
+        QVERIFY(!pc);
+        pc = &MetaTestSubject::foo_ref;
+        QVERIFY(pc);
+        QCOMPARE(pc(&test_subject, 3), 1.5);
+        pc = nullptr;
+        QVERIFY(!pc);
+    }
+
+    void test_callback_ref_const()
+    {
+        Document doc("foo");
+        MetaTestSubject test_subject(&doc);
+        PropertyCallback<double, int> pc;
+        QVERIFY(!pc);
+        pc = &MetaTestSubject::foo_ref_const;
+        QVERIFY(pc);
+        QCOMPARE(pc(&test_subject, 3), 1.5);
+        pc = nullptr;
+        QVERIFY(!pc);
     }
 };
 
