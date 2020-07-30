@@ -136,9 +136,13 @@ public:
 
     // static mapping data
     const QMap<QString, QVector<QPair<QString, QString>>> fields = {
+        {"AnimationContainer", {
+            {"name",        "nm"},
+            {"last_frame",  "op"},
+            {"first_frame", "ip"},
+        }},
         {"Animation", {
             // version v
-            {"name",        "nm"},
             {"fps",  "fr"},
             // * ip
             {"last_frame",  "op"},
@@ -156,13 +160,10 @@ public:
             // ddd
             // hd
             // * ty
-            {"name",        "nm"},
             // * parent
             // stretch sr
             // transform ks
             // auto_orient ao
-            {"in_point",    "ip"},
-            {"out_point",   "op"},
             {"start_time",  "st"},
             // blend_mode bm
             // matte_mode tt

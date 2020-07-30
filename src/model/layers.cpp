@@ -4,7 +4,7 @@
 #include "model/document.hpp"
 
 model::Layer::Layer(Document* doc, Composition* composition)
-    : DocumentNode(doc), composition_(composition)
+    : AnimationContainer(doc), composition_(composition)
 {
 }
 

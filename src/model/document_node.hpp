@@ -225,6 +225,32 @@ private:
 };
 
 
+class AnimationContainer: public DocumentNode
+{
+    Q_OBJECT
+    GLAXNIMATE_PROPERTY(int,    first_frame,  0, true, &AnimationContainer::last_frame_changed,  &AnimationContainer::validate_first_frame)
+    GLAXNIMATE_PROPERTY(int,    last_frame, 180, true, &AnimationContainer::first_frame_changed, &AnimationContainer::validate_last_frame)
+
+public:
+    using DocumentNode::DocumentNode;
+
+signals:
+    void first_frame_changed(int);
+    void last_frame_changed(int);
+
+private:
+    bool validate_first_frame(int f) const
+    {
+        return f > 0 && f < last_frame.get();
+    }
+
+    bool validate_last_frame(int f) const
+    {
+        return f > first_frame.get();
+    }
+};
+
+
 class ReferencePropertyBase : public BaseProperty
 {
     Q_GADGET

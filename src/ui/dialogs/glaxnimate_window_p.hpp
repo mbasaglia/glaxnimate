@@ -148,7 +148,7 @@ public:
         float duration = app::settings::get<float>("defaults", "duration");
         int out_point = current_document->animation()->fps.get() * duration;
         current_document->animation()->last_frame.set(out_point);
-        layer->out_point.set(out_point);
+        layer->last_frame.set(out_point);
         layer->name.set(layer->type_name_human());
         model::Layer* ptr = layer.get();
         current_document->animation()->add_layer(std::move(layer), 0);
@@ -613,7 +613,7 @@ public:
 
         layer->name.set(name);
 
-        layer->out_point.set(current_document->animation()->last_frame.get());
+        layer->last_frame.set(current_document->animation()->last_frame.get());
 
         auto settings = layer->settings();
         if ( !settings.empty() )

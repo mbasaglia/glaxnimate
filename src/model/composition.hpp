@@ -4,14 +4,14 @@
 
 namespace model {
 
-class Composition : public DocumentNode
+class Composition : public AnimationContainer
 {
     Q_OBJECT
 
     GLAXNIMATE_PROPERTY_LIST(Layer, layers)
 
 public:
-    using DocumentNode::DocumentNode;
+    using AnimationContainer::AnimationContainer;
 
     ChildLayerView top_level() const
     {

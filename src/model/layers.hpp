@@ -67,13 +67,11 @@ private:
 
 
 
-class Layer : public DocumentNode
+class Layer : public AnimationContainer
 {
     Q_OBJECT
 
     GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent)
-    GLAXNIMATE_PROPERTY(float, in_point, 0)
-    GLAXNIMATE_PROPERTY(float, out_point, 0)
     GLAXNIMATE_PROPERTY(float, start_time, 0)
     GLAXNIMATE_SUBOBJECT(Transform, transform)
 
