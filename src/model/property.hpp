@@ -5,6 +5,7 @@
 #include <QString>
 #include <QPointF>
 #include <QVector2D>
+#include <QColor>
 
 #include "object.hpp"
 

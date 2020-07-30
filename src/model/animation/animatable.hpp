@@ -43,70 +43,6 @@ private:
     KeyframeTransition transition_;
 };
 
-namespace detail {
-    template<class ExtraDataType>
-    class KeyframeExtra : public KeyframeBase
-    {
-    public:
-        using extra_type = ExtraDataType;
-        using KeyframeBase::KeyframeBase;
-
-        QVariant extra_variant() const override { return QVariant::fromValue(extra()); }
-        bool set_extra_variant(const QVariant& val) override
-        {
-            if ( auto v = detail::variant_cast<ExtraDataType>(val) )
-            {
-                set_extra(*v);
-                return true;
-            }
-            return false;
-        }
-
-        const ExtraDataType& extra() const { return extra_; }
-        void set_extra(const ExtraDataType& v) { extra_ = v; }
-
-    protected:
-        ExtraDataType extra_;
-    };
-
-    template<class Type>
-    class KeyframeWithExtra : public KeyframeBase
-    {
-    public:
-        using KeyframeBase::KeyframeBase;
-
-        QVariant extra_variant() const override { return {}; }
-        bool set_extra_variant(const QVariant&) override { return false; }
-
-    protected:
-        void extra_data_reset() {}
-    };
-
-    template<>
-    class KeyframeWithExtra<QColor> : public KeyframeExtra<QString>
-    {
-    public:
-        using KeyframeExtra<QString>::KeyframeExtra;
-
-    protected:
-        void extra_data_reset()
-        {
-            set_extra("");
-        }
-    };
-
-    template<>
-    class KeyframeWithExtra<QPointF> : public KeyframeExtra<QPair<QPointF, QPointF>>
-    {
-    public:
-        using KeyframeExtra<QPair<QPointF, QPointF>>::KeyframeExtra;
-
-    protected:
-        void extra_data_reset()  {}
-    };
-
-} // namespace detail
-
 class AnimatableBase
 {
     Q_GADGET
@@ -159,6 +95,9 @@ public:
      * \brief Get the current value
      */
     virtual QVariant value() const = 0;
+
+    virtual QVariant extra_variant() const = 0;
+    virtual bool set_extra_variant(const QVariant&) = 0;
 
     /**
      * \brief Set the current value
@@ -225,6 +164,69 @@ public:
     }
 };
 
+namespace detail {
+    template<class ExtraDataType>
+    class KeyframeExtra : public KeyframeBase
+    {
+    public:
+        using extra_type = ExtraDataType;
+        using KeyframeBase::KeyframeBase;
+
+        QVariant extra_variant() const override { return QVariant::fromValue(extra()); }
+        bool set_extra_variant(const QVariant& val) override
+        {
+            if ( auto v = detail::variant_cast<ExtraDataType>(val) )
+            {
+                set_extra(*v);
+                return true;
+            }
+            return false;
+        }
+
+        const ExtraDataType& extra() const { return extra_; }
+        void set_extra(const ExtraDataType& v) { extra_ = v; }
+
+    protected:
+        ExtraDataType extra_;
+    };
+
+    template<class Type>
+    class KeyframeWithExtra : public KeyframeBase
+    {
+    public:
+        using KeyframeBase::KeyframeBase;
+
+        QVariant extra_variant() const override { return {}; }
+        bool set_extra_variant(const QVariant&) override { return false; }
+
+    protected:
+        void extra_data_reset() {}
+    };
+
+    template<>
+    class KeyframeWithExtra<QColor> : public KeyframeExtra<QString>
+    {
+    public:
+        using KeyframeExtra<QString>::KeyframeExtra;
+
+    protected:
+        void extra_data_reset()
+        {
+            set_extra("");
+        }
+    };
+
+    template<>
+    class KeyframeWithExtra<QPointF> : public KeyframeExtra<QPair<QPointF, QPointF>>
+    {
+    public:
+        using KeyframeExtra<QPair<QPointF, QPointF>>::KeyframeExtra;
+
+    protected:
+        void extra_data_reset()  {}
+    };
+} // namespace detail
+
 
 template<class Type>
 class Keyframe : public detail::KeyframeWithExtra<Type>
@@ -240,6 +242,7 @@ public:
     void set(reference value)
     {
         value_ =  value;
+        this->extra_data_reset();
     }
 
     reference get() const
@@ -271,8 +274,73 @@ private:
     Type value_;
 };
 
+namespace detail {
+
+
+    template<class ExtraDataType>
+    class AnimatableExtra : public AnimatableBase
+    {
+    public:
+        using extra_type = ExtraDataType;
+        using AnimatableBase::AnimatableBase;
+
+        QVariant extra_variant() const override { return QVariant::fromValue(extra()); }
+        bool set_extra_variant(const QVariant& val) override
+        {
+            if ( auto v = detail::variant_cast<ExtraDataType>(val) )
+            {
+                set_extra(*v);
+                return true;
+            }
+            return false;
+        }
+
+        const ExtraDataType& extra() const { return extra_; }
+        void set_extra(const ExtraDataType& v) { extra_ = v; }
+
+    protected:
+        ExtraDataType extra_;
+    };
+
+
+    template<class Type>
+    class AnimatableWithExtra : public AnimatableBase
+    {
+    public:
+        using AnimatableBase::AnimatableBase;
+
+        QVariant extra_variant() const override { return {}; }
+        bool set_extra_variant(const QVariant&) override { return false; }
+
+    protected:
+        void extra_data_reset() {}
+        void extra_data_reset(const Keyframe<Type>*) {}
+    };
+
+    template<>
+    class AnimatableWithExtra<QColor> : public AnimatableExtra<QString>
+    {
+    public:
+        using AnimatableExtra<QString>::AnimatableExtra;
+
+    protected:
+        void extra_data_reset()
+        {
+            set_extra("");
+        }
+        void extra_data_reset(const Keyframe<QColor>* kf)
+        {
+            if ( kf )
+                set_extra(kf->extra());
+        }
+    };
+
+
+
+} // namespace detail
+
 template<class Type>
-class  Animatable : public AnimatableBase
+class  Animatable : public detail::AnimatableWithExtra<Type>
 {
 public:
     using keyframe_type = Keyframe<Type>;
@@ -328,13 +396,18 @@ public:
     {
         value_ = val;
         mismatched_ = !keyframes_.empty();
+        this->extra_data_reset();
         return true;
     }
 
     void set_time(FrameTime time) override
     {
         if ( !keyframes_.empty() )
-            value_ = get_at(time);
+        {
+            const keyframe_type* kf;
+            std::tie(kf, value_) = get_at_impl(time);
+            this->extra_data_reset(kf);
+        }
         mismatched_ = false;
     }
 
@@ -354,7 +427,7 @@ public:
             return keyframes_.front().get();
         }
 
-        int index = keyframe_index(time);
+        int index = this->keyframe_index(time);
         auto kf = keyframe(index);
         if ( kf->time() == time )
         {
@@ -376,24 +449,7 @@ public:
 
     value_type get_at(FrameTime time) const
     {
-        if ( keyframes_.empty() )
-            return value_;
-
-        const keyframe_type* first = keyframe(0);
-        int count = keyframe_count();
-        if ( count < 2 || first->time() >= time )
-            return first->get();
-
-        // We have at least 2 keyframes and time is after the first keyframe
-        int index = keyframe_index(time);
-        first = keyframe(index);
-        if ( index == count - 1 )
-            return first->get();
-
-        const keyframe_type* second = keyframe(index+1);
-        double scaled_time = (time - first->time()) / (second->time() - first->time());
-        double lerp_factor = first->transition().lerp_factor(scaled_time);
-        return first->lerp(second->get(), lerp_factor);
+        return get_at_impl(time).second;
     }
 
     bool value_mismatch() const override
@@ -401,8 +457,29 @@ public:
         return mismatched_;
     }
 
-
 private:
+    std::pair<const keyframe_type*, value_type> get_at_impl(FrameTime time) const
+    {
+        if ( keyframes_.empty() )
+            return {nullptr, value_};
+
+        const keyframe_type* first = keyframe(0);
+        int count = keyframe_count();
+        if ( count < 2 || first->time() >= time )
+            return {first, first->get()};
+
+        // We have at least 2 keyframes and time is after the first keyframe
+        int index = this->keyframe_index(time);
+        first = keyframe(index);
+        if ( index == count - 1 || first->time() == time )
+            return {first, first->get()};
+
+        const keyframe_type* second = keyframe(index+1);
+        double scaled_time = (time - first->time()) / (second->time() - first->time());
+        double lerp_factor = first->transition().lerp_factor(scaled_time);
+        return {nullptr, first->lerp(second->get(), lerp_factor)};
+    }
+
     value_type value_;
     std::vector<std::unique_ptr<keyframe_type>> keyframes_;
     bool mismatched_ = false;
