@@ -38,6 +38,8 @@ ui/widgets/view_transform_widget.ui
 ui/widgets/keyframe_transition_widget.cpp
 ui/widgets/keyframe_editor_widget.cpp
 ui/widgets/keyframe_editor_widget.ui
+ui/widgets/frame_controls_widget.cpp
+ui/widgets/frame_controls_widget.ui
 
 )
 

@@ -8,9 +8,9 @@ class Animation : public ObjectBase<Animation, Composition>
 {
     Q_OBJECT
 
-    GLAXNIMATE_PROPERTY(float,  fps,         60, true, nullptr, &Animation::validate_fps)
-    GLAXNIMATE_PROPERTY(int,    width,      512, true, nullptr, &Animation::validate_nonzero)
-    GLAXNIMATE_PROPERTY(int,    height,     512, true, nullptr, &Animation::validate_nonzero)
+    GLAXNIMATE_PROPERTY(float,  fps,         60, true, &Animation::fps_changed, &Animation::validate_fps)
+    GLAXNIMATE_PROPERTY(int,    width,      512, true, nullptr,                 &Animation::validate_nonzero)
+    GLAXNIMATE_PROPERTY(int,    height,     512, true, nullptr,                 &Animation::validate_nonzero)
 
 public:
     using Ctor::Ctor;
@@ -23,6 +23,9 @@ public:
     graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override;
 
     QString type_name_human() const override { return tr("Animation"); }
+
+signals:
+    void fps_changed(float fps);
 
 private:
     bool validate_nonzero(int size) const

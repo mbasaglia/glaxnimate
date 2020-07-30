@@ -1040,14 +1040,21 @@
     <number>8</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_6">
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <layout class="QVBoxLayout" name="verticalLayout_8">
      <item>
-      <widget class="QSpinBox" name="time_spin"/>
-     </item>
-     <item>
-      <widget class="QWidget" name="widget" native="true">
+      <widget class="FrameControlsWidget" name="play_controls" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="widget_2" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -1676,6 +1683,12 @@
    <slots>
     <signal>lineExecuted(QString)</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>FrameControlsWidget</class>
+   <extends>QWidget</extends>
+   <header>ui/widgets/frame_controls_widget.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -133,6 +133,12 @@ public:
         QObject::connect(current_document.get(), &model::Document::filename_changed, parent, &GlaxnimateWindow::refresh_title);
         QObject::connect(&current_document->undo_stack(), &QUndoStack::cleanChanged, parent, &GlaxnimateWindow::refresh_title);
         refresh_title();
+
+        // Playback
+        QObject::connect(current_document->animation(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
+        QObject::connect(current_document->animation(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
+        QObject::connect(current_document->animation(), &model::Animation::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
+        QObject::connect(ui.play_controls, &FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
     }
 
 
@@ -160,6 +166,7 @@ public:
         current_document->set_io_options(opts);
 
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
+        ui.play_controls->set_range(0, out_point);
         view_fit();
     }
 
@@ -182,6 +189,7 @@ public:
         if ( !current_document->animation()->layers.empty() )
             ui.view_document_node->setCurrentIndex(document_node_model.node_index(&current_document->animation()->layers[0]));
 
+        ui.play_controls->set_range(current_document->animation()->first_frame.get(), current_document->animation()->last_frame.get());
         return ok;
     }
 
@@ -349,6 +357,8 @@ public:
 
         // Tool buttons
         ui.btn_layer_add->setMenu(ui.menu_new_layer);
+
+        // Time spinner
 
         // Transform Widget
         view_trans_widget = new ViewTransformWidget(ui.status_bar);
@@ -655,7 +665,10 @@ public:
     void document_treeview_current_changed(const QModelIndex& index)
     {
         if ( auto node = document_node_model.node(index) )
+        {
             property_model.set_object(node);
+            ui.view_properties->expandAll();
+        }
     }
 
     void view_fit()
