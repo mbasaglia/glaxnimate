@@ -147,7 +147,7 @@ public:
         current_document->animation()->fps.set(app::settings::get<int>("defaults", "fps"));
         float duration = app::settings::get<float>("defaults", "duration");
         int out_point = current_document->animation()->fps.get() * duration;
-        current_document->animation()->out_point.set(out_point);
+        current_document->animation()->last_frame.set(out_point);
         layer->out_point.set(out_point);
         layer->name.set(layer->type_name_human());
         model::Layer* ptr = layer.get();
@@ -613,7 +613,7 @@ public:
 
         layer->name.set(name);
 
-        layer->out_point.set(current_document->animation()->out_point.get());
+        layer->out_point.set(current_document->animation()->last_frame.get());
 
         auto settings = layer->settings();
         if ( !settings.empty() )

@@ -25,6 +25,7 @@ public:
         layer_indices.clear();
         QJsonObject json = convert_object_basic(animation);
         json["v"] = "5.5.2";
+        json["ip"] = 0;
 
         QJsonArray layers;
         for ( const auto& layer : animation->layers )
@@ -139,8 +140,8 @@ public:
             // version v
             {"name",        "nm"},
             {"fps",  "fr"},
-            {"in_point",    "ip"},
-            {"out_point",   "op"},
+            // * ip
+            {"last_frame",  "op"},
             {"width",       "w"},
             {"height",      "h"},
             // ddd
