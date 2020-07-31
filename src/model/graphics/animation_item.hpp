@@ -10,6 +10,7 @@
 #include "model/graphics/document_node_graphics_item.hpp"
 #include "command/property_commands.hpp"
 #include "model/document.hpp"
+#include "app/application.hpp"
 
 namespace model::graphics {
 
@@ -30,6 +31,8 @@ public:
         connect(handle_h,  &MoveHandle::drag_finished, this, &AnimationItem::drag_finished);
         connect(handle_v,  &MoveHandle::drag_finished, this, &AnimationItem::drag_finished);
         connect(handle_hv, &MoveHandle::drag_finished, this, &AnimationItem::drag_finished);
+
+        back.setTexture(QPixmap(app::Application::instance()->data_file("images/widgets/background.png")));
 
         update_handles();
     }
@@ -102,7 +105,7 @@ private:
 
 private:
     Animation* animation;
-    QBrush back{QPixmap(QStringLiteral(":/color_widgets/alphaback.png"))};
+    QBrush back;
     MoveHandle* handle_h;
     MoveHandle* handle_v;
     MoveHandle* handle_hv;
