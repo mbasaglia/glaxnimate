@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
 
 function(test_case test_name)
     add_executable(${test_name} EXCLUDE_FROM_ALL ${test_name}.cpp ${ARGN})
-    target_link_libraries(${test_name} PRIVATE Qt5::Test Qt5::Widgets QtColorWidgets)
+    target_link_libraries(${test_name} PRIVATE Qt5::Test Qt5::Widgets QtColorWidgets QtAppSetup)
     add_test (NAME ${test_name} COMMAND ${test_name} -silent)
     add_dependencies(tests_compile ${test_name})
 endfunction(test_case)
