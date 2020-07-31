@@ -102,7 +102,6 @@ public:
     void layer_new_impl(std::unique_ptr<model::Layer> layer);
     void layer_delete();
 
-
     // script
     void console_error(const app::scripting::ScriptError& err);
     void console_commit(QString text);

@@ -11,6 +11,13 @@ io::Autoreg<io::lottie::LottieFormat> io::lottie::LottieFormat::autoreg;
 class LottieExporterState
 {
 public:
+    struct FieldInfo
+    {
+        QString name;
+        QString lottie;
+        bool essential = false;
+    };
+
     explicit LottieExporterState(model::Document* document)
         : document(document) {}
 
@@ -91,24 +98,24 @@ public:
         return json_obj;
     }
 
-    void convert_object_properties(model::Object* obj, const QVector<QPair<QString, QString>>& fields, QJsonObject& json_obj)
+    void convert_object_properties(model::Object* obj, const QVector<FieldInfo>& fields, QJsonObject& json_obj)
     {
-        for ( const auto& name : fields )
+        for ( const auto& field : fields )
         {
-            model::BaseProperty * prop = obj->get_property(name.first);
+            model::BaseProperty * prop = obj->get_property(field.name);
             if ( !prop )
             {
-                qWarning() << name << "is not a property";
+                qWarning() << field.name << "is not a property";
                 continue;
             }
 
             if ( prop->traits().flags & PropertyTraits::Animated )
             {
-                json_obj[name.second] = convert_animated(static_cast<AnimatedPropertyBase*>(prop));
+                json_obj[field.lottie] = convert_animated(static_cast<AnimatedPropertyBase*>(prop));
             }
             else
             {
-                json_obj[name.second] = value_from_variant(prop->value());
+                json_obj[field.lottie] = value_from_variant(prop->value());
             }
         }
     }
@@ -135,19 +142,22 @@ public:
     QMap<QUuid, int> layer_indices;
 
     // static mapping data
-    const QMap<QString, QVector<QPair<QString, QString>>> fields = {
+    const QMap<QString, QVector<FieldInfo>> fields = {
+        {"DocumentNode", {
+            FieldInfo{"name",           "nm", false},
+            FieldInfo{"uuid",           "mn", false},
+        }},
         {"AnimationContainer", {
-            {"name",        "nm"},
-            {"last_frame",  "op"},
-            {"first_frame", "ip"},
+            FieldInfo{"last_frame",     "op"},
+            FieldInfo{"first_frame",    "ip"},
         }},
         {"Animation", {
             // version v
-            {"fps",  "fr"},
+            FieldInfo{"fps",            "fr"},
             // * ip
-            {"last_frame",  "op"},
-            {"width",       "w"},
-            {"height",      "h"},
+            FieldInfo{"last_frame",     "op"},
+            FieldInfo{"width",          "w"},
+            FieldInfo{"height",         "h"},
             // ddd
             // assets
             // comps
@@ -164,7 +174,7 @@ public:
             // stretch sr
             // transform ks
             // auto_orient ao
-            {"start_time",  "st"},
+            FieldInfo{"start_time",     "st"},
             // blend_mode bm
             // matte_mode tt
             // * ind
@@ -175,16 +185,16 @@ public:
             // effects ef
         }},
         {"SolidColorLayer", {
-            {"color", "sc"},
-            {"height", "sh"},
-            {"width", "sw"},
+            FieldInfo{"color",          "sc"},
+            FieldInfo{"height",         "sh"},
+            FieldInfo{"width",          "sw"},
         }},
         {"Transform", {
-            {"anchor_point", "a"},
+            FieldInfo{"anchor_point",   "a"},
             // px py pz
-            {"position", "p"},
-            {"scale", "s"},
-            {"rotation", "r"},
+            FieldInfo{"position",       "p"},
+            FieldInfo{"scale",          "s"},
+            FieldInfo{"rotation",       "r"},
             // opacity o
             // skew sk
             // skew_axis sa
