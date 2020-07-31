@@ -40,7 +40,11 @@ ui/widgets/keyframe_editor_widget.cpp
 ui/widgets/keyframe_editor_widget.ui
 ui/widgets/frame_controls_widget.cpp
 ui/widgets/frame_controls_widget.ui
-
+ui/dialogs/gw_impl_color.cpp
+ui/dialogs/gw_impl_document.cpp
+ui/dialogs/gw_impl_model.cpp
+ui/dialogs/gw_impl_script.cpp
+ui/dialogs/gw_impl_ui.cpp
 )
 
 if(${PYTHON_ENABLED})
