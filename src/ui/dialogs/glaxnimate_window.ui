@@ -36,7 +36,7 @@
      </property>
      <property name="icon">
       <iconset theme="document-open-recent">
-       <normaloff>.</normaloff>.</iconset>
+       <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
      </property>
      <addaction name="separator"/>
     </widget>
@@ -76,7 +76,7 @@
      </property>
      <property name="icon">
       <iconset theme="list-add">
-       <normaloff>.</normaloff>.</iconset>
+       <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
      </property>
      <addaction name="action_new_layer_empty"/>
      <addaction name="action_new_layer_shape"/>
@@ -170,7 +170,8 @@
       <string>Single &amp;Frame</string>
      </property>
      <property name="icon">
-      <iconset theme="image-x-generic"/>
+      <iconset theme="image-x-generic">
+       <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
      </property>
      <addaction name="actionRaster"/>
      <addaction name="actionS_VG"/>
@@ -222,7 +223,7 @@
   <widget class="QDockWidget" name="dock_colors">
    <property name="windowIcon">
     <iconset theme="color-management">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="windowTitle">
     <string>Colors</string>
@@ -727,15 +728,88 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="color_widgets::ColorPreview" name="color_preview">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QFrame" name="frame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
-         <property name="display_mode" stdset="0">
-          <enum>color_widgets::ColorPreview::SplitAlpha</enum>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="color_widgets::ColorSelector" name="color_preview">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Primary Color</string>
+            </property>
+            <property name="display_mode" stdset="0">
+             <enum>color_widgets::ColorPreview::AllAlpha</enum>
+            </property>
+            <property name="drawFrame">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="color_widgets::ColorSelector" name="color_preview_secondary">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Secondary Color</string>
+            </property>
+            <property name="color">
+             <color>
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="display_mode" stdset="0">
+             <enum>color_widgets::ColorPreview::AllAlpha</enum>
+            </property>
+            <property name="drawFrame">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="color_swap">
+         <property name="toolTip">
+          <string>Swap</string>
+         </property>
+         <property name="text">
+          <string>Swap</string>
+         </property>
+         <property name="icon">
+          <iconset theme="swap-panels">
+           <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
          </property>
         </widget>
        </item>
@@ -763,20 +837,6 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QToolButton" name="toolButton">
-         <property name="toolTip">
-          <string>Pick Color</string>
-         </property>
-         <property name="text">
-          <string>Pick</string>
-         </property>
-         <property name="icon">
-          <iconset theme="color-picker">
-           <normaloff>.</normaloff>.</iconset>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
      <item>
@@ -798,7 +858,7 @@
   <widget class="QDockWidget" name="dock_tools">
    <property name="windowIcon">
     <iconset theme="tools">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="windowTitle">
     <string>Tools</string>
@@ -830,7 +890,7 @@
   <widget class="QDockWidget" name="dock_tool_options">
    <property name="windowIcon">
     <iconset theme="settings-configure">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="windowTitle">
     <string>Tool Options</string>
@@ -849,7 +909,7 @@
    </property>
    <property name="windowIcon">
     <iconset theme="dialog-layers">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="windowTitle">
     <string>Layers</string>
@@ -896,7 +956,7 @@
          </property>
          <property name="icon">
           <iconset theme="layer-new">
-           <normaloff>.</normaloff>.</iconset>
+           <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
          </property>
         </widget>
        </item>
@@ -910,7 +970,7 @@
          </property>
          <property name="icon">
           <iconset theme="layer-duplicate">
-           <normaloff>.</normaloff>.</iconset>
+           <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
          </property>
         </widget>
        </item>
@@ -924,7 +984,7 @@
          </property>
          <property name="icon">
           <iconset theme="layer-delete">
-           <normaloff>.</normaloff>.</iconset>
+           <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
          </property>
         </widget>
        </item>
@@ -951,7 +1011,7 @@
          </property>
          <property name="icon">
           <iconset theme="layer-top">
-           <normaloff>.</normaloff>.</iconset>
+           <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
          </property>
         </widget>
        </item>
@@ -965,7 +1025,7 @@
          </property>
          <property name="icon">
           <iconset theme="layer-raise">
-           <normaloff>.</normaloff>.</iconset>
+           <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
          </property>
         </widget>
        </item>
@@ -979,7 +1039,7 @@
          </property>
          <property name="icon">
           <iconset theme="layer-lower">
-           <normaloff>.</normaloff>.</iconset>
+           <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
          </property>
         </widget>
        </item>
@@ -993,7 +1053,7 @@
          </property>
          <property name="icon">
           <iconset theme="layer-bottom">
-           <normaloff>.</normaloff>.</iconset>
+           <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
          </property>
         </widget>
        </item>
@@ -1011,7 +1071,7 @@
    </property>
    <property name="windowIcon">
     <iconset theme="document-properties">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="windowTitle">
     <string>Properties</string>
@@ -1049,7 +1109,7 @@
   <widget class="QDockWidget" name="dock_timeline">
    <property name="windowIcon">
     <iconset theme="player-time">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="windowTitle">
     <string>Timeline</string>
@@ -1085,7 +1145,7 @@
   <widget class="QDockWidget" name="dock_script_console">
    <property name="windowIcon">
     <iconset theme="utilities-terminal">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="floating">
     <bool>false</bool>
@@ -1132,7 +1192,7 @@
   <action name="action_new">
    <property name="icon">
     <iconset theme="document-new">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;New</string>
@@ -1141,7 +1201,7 @@
   <action name="action_open">
    <property name="icon">
     <iconset theme="document-open">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Open...</string>
@@ -1150,7 +1210,7 @@
   <action name="action_save">
    <property name="icon">
     <iconset theme="document-save">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Save</string>
@@ -1159,7 +1219,7 @@
   <action name="action_save_as">
    <property name="icon">
     <iconset theme="document-save-as">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Save &amp;As...</string>
@@ -1168,7 +1228,7 @@
   <action name="action_close">
    <property name="icon">
     <iconset theme="document-close">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Close</string>
@@ -1177,7 +1237,7 @@
   <action name="action_quit">
    <property name="icon">
     <iconset theme="application-exit">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Quit</string>
@@ -1192,7 +1252,7 @@
    </property>
    <property name="icon">
     <iconset theme="edit-select">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Select</string>
@@ -1207,7 +1267,7 @@
    </property>
    <property name="icon">
     <iconset theme="edit-node">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Edit</string>
@@ -1222,7 +1282,7 @@
    </property>
    <property name="icon">
     <iconset theme="draw-path">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Draw Bezier</string>
@@ -1237,7 +1297,7 @@
    </property>
    <property name="icon">
     <iconset theme="draw-freehand">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Draw &amp;Freehand</string>
@@ -1252,7 +1312,7 @@
    </property>
    <property name="icon">
     <iconset theme="draw-rectangle">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Rectangle</string>
@@ -1267,7 +1327,7 @@
    </property>
    <property name="icon">
     <iconset theme="draw-ellipse">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Ellipse</string>
@@ -1282,7 +1342,7 @@
    </property>
    <property name="icon">
     <iconset theme="draw-star">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>S&amp;tar</string>
@@ -1294,7 +1354,7 @@
   <action name="action_new_layer_empty">
    <property name="icon">
     <iconset theme="transform-move">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Empty Layer</string>
@@ -1303,7 +1363,7 @@
   <action name="action_new_layer_shape">
    <property name="icon">
     <iconset theme="shapes">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Shape Layer</string>
@@ -1312,7 +1372,7 @@
   <action name="action_new_layer_precomp">
    <property name="icon">
     <iconset theme="video-x-generic">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Precomposition Layer</string>
@@ -1321,7 +1381,7 @@
   <action name="action_Move_To_Composition">
    <property name="icon">
     <iconset theme="archive-extract">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Move To Composition</string>
@@ -1330,7 +1390,7 @@
   <action name="actionNew_Pre_Composition">
    <property name="icon">
     <iconset theme="folder-video">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>New &amp;Pre Composition</string>
@@ -1339,7 +1399,7 @@
   <action name="action_Add">
    <property name="icon">
     <iconset theme="path-union">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Union</string>
@@ -1348,7 +1408,7 @@
   <action name="action_Subtract">
    <property name="icon">
     <iconset theme="path-difference">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Difference</string>
@@ -1357,7 +1417,7 @@
   <action name="action_Intersect">
    <property name="icon">
     <iconset theme="path-intersection">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Intersect</string>
@@ -1366,7 +1426,7 @@
   <action name="action_XOR">
    <property name="icon">
     <iconset theme="path-exclusion">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>E&amp;xclusion</string>
@@ -1375,7 +1435,7 @@
   <action name="action_Reverse">
    <property name="icon">
     <iconset theme="path-reverse">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Re&amp;verse</string>
@@ -1384,7 +1444,7 @@
   <action name="actionObject_to_Path">
    <property name="icon">
     <iconset theme="object-to-path">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Object to &amp;Path</string>
@@ -1393,7 +1453,7 @@
   <action name="actionAdd_Node">
    <property name="icon">
     <iconset theme="format-add-node">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Add &amp;Node</string>
@@ -1402,7 +1462,7 @@
   <action name="action_Remove_Node">
    <property name="icon">
     <iconset theme="format-remove-node">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Remove Node</string>
@@ -1411,7 +1471,7 @@
   <action name="action_Join_Nodes">
    <property name="icon">
     <iconset theme="format-join-node">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Join Nodes</string>
@@ -1420,7 +1480,7 @@
   <action name="actionS_plit_Nodes">
    <property name="icon">
     <iconset theme="format-break-node">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>S&amp;plit Nodes</string>
@@ -1429,7 +1489,7 @@
   <action name="action_Corner">
    <property name="icon">
     <iconset theme="node-type-cusp">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Cusp</string>
@@ -1438,7 +1498,7 @@
   <action name="action_Smooth">
    <property name="icon">
     <iconset theme="node-type-smooth">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Smooth</string>
@@ -1447,7 +1507,7 @@
   <action name="actionSy_mmetric">
    <property name="icon">
     <iconset theme="node-type-auto-smooth">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Sy&amp;mmetric</string>
@@ -1456,7 +1516,7 @@
   <action name="action_copy">
    <property name="icon">
     <iconset theme="edit-copy">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Copy</string>
@@ -1465,7 +1525,7 @@
   <action name="action_cut">
    <property name="icon">
     <iconset theme="edit-cut">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Cut</string>
@@ -1474,7 +1534,7 @@
   <action name="action_paste">
    <property name="icon">
     <iconset theme="edit-paste">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Paste</string>
@@ -1483,7 +1543,7 @@
   <action name="action_select_all">
    <property name="icon">
     <iconset theme="edit-select-all">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Select All</string>
@@ -1492,7 +1552,7 @@
   <action name="action_raise_to_Top">
    <property name="icon">
     <iconset theme="object-order-front">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Raise to &amp;Top</string>
@@ -1504,7 +1564,7 @@
   <action name="action_raise">
    <property name="icon">
     <iconset theme="object-order-raise">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Raise</string>
@@ -1516,7 +1576,7 @@
   <action name="action_lower">
    <property name="icon">
     <iconset theme="object-order-lower">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Lower</string>
@@ -1528,7 +1588,7 @@
   <action name="action_lower_to_bottom">
    <property name="icon">
     <iconset theme="object-order-back">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Lower to &amp;Bottom</string>
@@ -1540,7 +1600,7 @@
   <action name="action_reload">
    <property name="icon">
     <iconset theme="document-revert">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Re&amp;load</string>
@@ -1552,7 +1612,7 @@
    </property>
    <property name="icon">
     <iconset theme="edit-undo">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Undo %1</string>
@@ -1564,7 +1624,7 @@
    </property>
    <property name="icon">
     <iconset theme="edit-redo">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Redo %1</string>
@@ -1573,7 +1633,7 @@
   <action name="action_view_fit">
    <property name="icon">
     <iconset theme="zoom-fit-page">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Fit Animation</string>
@@ -1582,7 +1642,7 @@
   <action name="action_view_reset">
    <property name="icon">
     <iconset theme="zoom-original">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Re&amp;set View</string>
@@ -1591,7 +1651,7 @@
   <action name="action_Reset_Rotation">
    <property name="icon">
     <iconset theme="rotation-allowed">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Reset Rotation</string>
@@ -1600,7 +1660,7 @@
   <action name="actionZoom_In">
    <property name="icon">
     <iconset theme="zoom-in">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Zoom &amp;In</string>
@@ -1609,7 +1669,7 @@
   <action name="actionZoom_Out">
    <property name="icon">
     <iconset theme="zoom-out">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Zoom &amp;Out</string>
@@ -1618,7 +1678,7 @@
   <action name="actionReset_Zoom">
    <property name="icon">
     <iconset theme="zoom-original">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Reset &amp;Zoom</string>
@@ -1627,7 +1687,7 @@
   <action name="actionPr_eferences">
    <property name="icon">
     <iconset theme="settings-configure">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Pr&amp;eferences...</string>
@@ -1636,7 +1696,7 @@
   <action name="actionAbout">
    <property name="icon">
     <iconset theme="help-about">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>About...</string>
@@ -1645,7 +1705,7 @@
   <action name="action_new_layer_color">
    <property name="icon">
     <iconset theme="object-fill">
-     <normaloff>.</normaloff>.</iconset>
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>Solid &amp;Color Layer</string>
@@ -1653,7 +1713,8 @@
   </action>
   <action name="actionRaster">
    <property name="icon">
-    <iconset theme="image-png"/>
+    <iconset theme="image-png">
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Raster...</string>
@@ -1661,7 +1722,8 @@
   </action>
   <action name="actionS_VG">
    <property name="icon">
-    <iconset theme="image-svg+xml"/>
+    <iconset theme="image-svg+xml">
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>S&amp;VG...</string>
@@ -1669,7 +1731,8 @@
   </action>
   <action name="action_Web_Preview">
    <property name="icon">
-    <iconset theme="internet-web-browser"/>
+    <iconset theme="internet-web-browser">
+     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
     <string>&amp;Web Preview</string>
@@ -1696,6 +1759,11 @@
    <class>color_widgets::HueSlider</class>
    <extends>color_widgets::GradientSlider</extends>
    <header>QtColorWidgets/hue_slider.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>color_widgets::ColorSelector</class>
+   <extends>color_widgets::ColorPreview</extends>
+   <header>QtColorWidgets/color_selector.hpp</header>
   </customwidget>
   <customwidget>
    <class>color_widgets::ColorPaletteWidget</class>
@@ -1870,12 +1938,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>373</y>
+     <x>1056</x>
+     <y>146</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1295</x>
-     <y>379</y>
+     <x>1095</x>
+     <y>146</y>
     </hint>
    </hints>
   </connection>
@@ -1886,12 +1954,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1295</x>
-     <y>379</y>
+     <x>1095</x>
+     <y>146</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1229</x>
-     <y>373</y>
+     <x>1056</x>
+     <y>146</y>
     </hint>
    </hints>
   </connection>
@@ -1902,12 +1970,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>411</y>
+     <x>1056</x>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1295</x>
-     <y>417</y>
+     <x>1095</x>
+     <y>152</y>
     </hint>
    </hints>
   </connection>
@@ -1918,12 +1986,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1295</x>
-     <y>417</y>
+     <x>1095</x>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1229</x>
-     <y>411</y>
+     <x>1056</x>
+     <y>152</y>
     </hint>
    </hints>
   </connection>
@@ -1934,12 +2002,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>449</y>
+     <x>1056</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1295</x>
-     <y>455</y>
+     <x>1095</x>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -1950,12 +2018,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1295</x>
-     <y>455</y>
+     <x>1095</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1229</x>
-     <y>449</y>
+     <x>1056</x>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -2126,8 +2194,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>373</y>
+     <x>1056</x>
+     <y>146</y>
     </hint>
     <hint type="destinationlabel">
      <x>1315</x>
@@ -2142,8 +2210,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>411</y>
+     <x>1056</x>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
      <x>1314</x>
@@ -2158,8 +2226,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>449</y>
+     <x>1056</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
      <x>1315</x>
@@ -2174,8 +2242,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>395</y>
+     <x>1043</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
      <x>1362</x>
@@ -2190,8 +2258,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>306</y>
+     <x>1043</x>
+     <y>150</y>
     </hint>
     <hint type="destinationlabel">
      <x>1345</x>
@@ -2206,8 +2274,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>217</y>
+     <x>1043</x>
+     <y>142</y>
     </hint>
     <hint type="destinationlabel">
      <x>1397</x>
@@ -2222,8 +2290,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>412</y>
+     <x>1051</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
      <x>1394</x>
@@ -2238,8 +2306,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>341</y>
+     <x>1051</x>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
      <x>1398</x>
@@ -2254,8 +2322,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>270</y>
+     <x>1051</x>
+     <y>146</y>
     </hint>
     <hint type="destinationlabel">
      <x>1315</x>
@@ -2270,8 +2338,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>199</y>
+     <x>1051</x>
+     <y>140</y>
     </hint>
     <hint type="destinationlabel">
      <x>1036</x>
@@ -2302,12 +2370,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>217</y>
+     <x>1043</x>
+     <y>142</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1295</x>
-     <y>223</y>
+     <x>1095</x>
+     <y>142</y>
     </hint>
    </hints>
   </connection>
@@ -2318,12 +2386,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1295</x>
-     <y>223</y>
+     <x>1095</x>
+     <y>142</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1229</x>
-     <y>217</y>
+     <x>1043</x>
+     <y>142</y>
     </hint>
    </hints>
   </connection>
@@ -2334,12 +2402,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>306</y>
+     <x>1043</x>
+     <y>150</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1295</x>
-     <y>312</y>
+     <x>1095</x>
+     <y>150</y>
     </hint>
    </hints>
   </connection>
@@ -2350,12 +2418,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1295</x>
-     <y>312</y>
+     <x>1095</x>
+     <y>150</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1229</x>
-     <y>306</y>
+     <x>1043</x>
+     <y>150</y>
     </hint>
    </hints>
   </connection>
@@ -2366,12 +2434,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>395</y>
+     <x>1043</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1295</x>
-     <y>401</y>
+     <x>1095</x>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -2382,12 +2450,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1295</x>
-     <y>401</y>
+     <x>1095</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1229</x>
-     <y>395</y>
+     <x>1043</x>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -2398,12 +2466,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>199</y>
+     <x>1051</x>
+     <y>140</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1295</x>
-     <y>205</y>
+     <x>1095</x>
+     <y>140</y>
     </hint>
    </hints>
   </connection>
@@ -2414,12 +2482,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1295</x>
-     <y>205</y>
+     <x>1095</x>
+     <y>140</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1229</x>
-     <y>199</y>
+     <x>1051</x>
+     <y>140</y>
     </hint>
    </hints>
   </connection>
@@ -2430,12 +2498,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>270</y>
+     <x>1051</x>
+     <y>146</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1295</x>
-     <y>276</y>
+     <x>1095</x>
+     <y>146</y>
     </hint>
    </hints>
   </connection>
@@ -2446,12 +2514,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1295</x>
-     <y>276</y>
+     <x>1095</x>
+     <y>146</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1229</x>
-     <y>270</y>
+     <x>1051</x>
+     <y>146</y>
     </hint>
    </hints>
   </connection>
@@ -2462,12 +2530,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>341</y>
+     <x>1051</x>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1295</x>
-     <y>347</y>
+     <x>1095</x>
+     <y>152</y>
     </hint>
    </hints>
   </connection>
@@ -2478,12 +2546,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1295</x>
-     <y>347</y>
+     <x>1095</x>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1229</x>
-     <y>341</y>
+     <x>1051</x>
+     <y>152</y>
     </hint>
    </hints>
   </connection>
@@ -2494,12 +2562,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1229</x>
-     <y>412</y>
+     <x>1051</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1295</x>
-     <y>418</y>
+     <x>1095</x>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -2510,12 +2578,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1295</x>
-     <y>418</y>
+     <x>1095</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1229</x>
-     <y>412</y>
+     <x>1051</x>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -2839,6 +2907,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>color_swap</sender>
+   <signal>clicked()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_swap()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1218</x>
+     <y>544</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1462</x>
+     <y>558</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>color_preview</sender>
+   <signal>colorSelected(QColor)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>color_update_alpha(QColor)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1106</x>
+     <y>522</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1377</x>
+     <y>438</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
@@ -2863,5 +2963,6 @@
   <slot>web_preview()</slot>
   <slot>save_frame_bmp()</slot>
   <slot>save_frame_svg()</slot>
+  <slot>color_swap()</slot>
  </slots>
 </ui>

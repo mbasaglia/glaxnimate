@@ -218,3 +218,9 @@ void GlaxnimateWindow::save_frame_svg()
     d->save_frame_svg();
 }
 
+void GlaxnimateWindow::color_swap()
+{
+    d->color_swap();
+}
+
+

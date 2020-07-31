@@ -54,6 +54,7 @@ private slots:
     void color_update_noalpha(const QColor& col);
     void color_update_alpha(const QColor& col);
     void color_update_component(int value);
+    void color_swap();
 
     void document_treeview_clicked(const QModelIndex& index);
     void document_treeview_current_changed(const QModelIndex& index);

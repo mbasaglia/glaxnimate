@@ -76,7 +76,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     }
 
     // Colors
-    update_color(Qt::black, true, nullptr);
+    update_color(Qt::white, true, nullptr);
     ui.palette_widget->setModel(&palette_model);
     palette_model.setSearchPaths(app::Application::instance()->data_paths_unchecked("palettes"));
 

@@ -149,3 +149,12 @@ void GlaxnimateWindow::Private::update_color_component(int val, QObject* sender)
     (*func)(c, val);
     update_color(c, true, sender);
 }
+
+
+void GlaxnimateWindow::Private::color_swap()
+{
+    QColor c = ui.color_preview_secondary->color();
+    ui.color_preview_secondary->setColor(current_color());
+    ui.color_preview->setColor(c);
+    update_color(c, true, nullptr);
+}

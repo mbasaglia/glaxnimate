@@ -92,6 +92,7 @@ public:
     QColor current_color();
     void update_color(const QColor& c, bool alpha, QObject* source);
     void update_color_component(int val, QObject* sender);
+    void color_swap();
 
     // Model
     model::Composition* current_composition();
