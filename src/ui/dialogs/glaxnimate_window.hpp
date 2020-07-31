@@ -66,11 +66,12 @@ private slots:
     void layer_delete();
 
     void refresh_title();
-    void preferences();
     void document_open_recent(QAction* action);
+    void preferences();
     void help_about();
-    void console_commit(const QString& text);
+    void web_preview();
 
+    void console_commit(const QString& text);
     void script_needs_running(const app::scripting::Plugin& plugin, const app::scripting::PluginScript& script, const QVariantMap& settings);
     void script_reloaded();
 

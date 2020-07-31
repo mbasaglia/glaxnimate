@@ -69,6 +69,7 @@ public:
     bool save_document(bool force_dialog, bool overwrite_doc);
     void document_open();
     void document_open_from_filename(const QString& filename);
+    void web_preview();
 
     // ui
     void setupUi(GlaxnimateWindow* parent);

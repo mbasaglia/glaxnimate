@@ -7,6 +7,7 @@ app_info.cpp
 glaxnimate_app.cpp
 
 io/lottie/lottie_format.cpp
+io/lottie/lottie_html_format.cpp
 io/glaxnimate/glaxnimate_format.cpp
 io/glaxnimate/glaxnimate_importer.cpp
 io/base.cpp

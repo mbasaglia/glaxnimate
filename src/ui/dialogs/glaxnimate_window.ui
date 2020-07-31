@@ -161,12 +161,30 @@
      <string>Plu&amp;gins</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menu_Render">
+    <property name="title">
+     <string>&amp;Render</string>
+    </property>
+    <widget class="QMenu" name="menuSingle_Frame">
+     <property name="title">
+      <string>Single &amp;Frame</string>
+     </property>
+     <property name="icon">
+      <iconset theme="image-x-generic"/>
+     </property>
+     <addaction name="actionRaster"/>
+     <addaction name="actionS_VG"/>
+    </widget>
+    <addaction name="menuSingle_Frame"/>
+    <addaction name="action_Web_Preview"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_edit"/>
    <addaction name="menu_tools"/>
    <addaction name="menu_View"/>
    <addaction name="menu_Layers"/>
    <addaction name="menu_Path"/>
+   <addaction name="menu_Render"/>
    <addaction name="menu_plugins"/>
    <addaction name="menu_Help"/>
   </widget>
@@ -1633,6 +1651,30 @@
     <string>Solid &amp;Color Layer</string>
    </property>
   </action>
+  <action name="actionRaster">
+   <property name="icon">
+    <iconset theme="image-png"/>
+   </property>
+   <property name="text">
+    <string>&amp;Raster...</string>
+   </property>
+  </action>
+  <action name="actionS_VG">
+   <property name="icon">
+    <iconset theme="image-svg+xml"/>
+   </property>
+   <property name="text">
+    <string>S&amp;VG...</string>
+   </property>
+  </action>
+  <action name="action_Web_Preview">
+   <property name="icon">
+    <iconset theme="internet-web-browser"/>
+   </property>
+   <property name="text">
+    <string>&amp;Web Preview</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -2749,6 +2791,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_Web_Preview</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>web_preview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
@@ -2770,5 +2828,6 @@
   <slot>document_open_dialog()</slot>
   <slot>help_about()</slot>
   <slot>console_commit(QString)</slot>
+  <slot>web_preview()</slot>
  </slots>
 </ui>

@@ -1,7 +1,12 @@
 #include "glaxnimate_window_p.hpp"
 
+#include <QTemporaryFile>
+#include <QDesktopServices>
+
 #include "ui/dialogs/import_export_dialog.hpp"
 #include "ui/dialogs/io_status_dialog.hpp"
+#include "io/lottie/lottie_html_format.hpp"
+#include "app_info.hpp"
 
 
 void GlaxnimateWindow::Private::setup_document(const QString& filename)
@@ -219,4 +224,34 @@ void GlaxnimateWindow::Private::document_open_from_filename(const QString& filen
 
     recent_files.removeAll(filename);
     reload_recent_menu();
+}
+
+void GlaxnimateWindow::Private::web_preview()
+{
+    QDir tempdir = QDir::tempPath();
+    QString subdir = AppInfo::instance().slug();
+    QString path = tempdir.filePath(subdir);
+
+    if ( !tempdir.exists(subdir) )
+        if ( !tempdir.mkdir(subdir) )
+            path = "";
+
+    QTemporaryFile tempf(path + "/XXXXXX.html");
+    tempf.setAutoRemove(false);
+    bool ok = tempf.open() && io::lottie::LottieHtmlFormat::registered()->save(
+        tempf, tempf.fileName(), current_document.get(), {}
+    );
+
+    if ( !ok )
+    {
+        show_warning(tr("Web Preview"), tr("Could not create file"));
+        return;
+    }
+
+    tempf.close();
+    if ( !QDesktopServices::openUrl(QUrl::fromLocalFile(tempf.fileName())) )
+    {
+        show_warning(tr("Web Preview"), tr("Could not open browser"));
+    }
+
 }
