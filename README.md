@@ -11,7 +11,7 @@ Dependencies
 ---------------------------------------
 
 * C++17 compliant compiler
-* Qt5 (qtbase)
+* Qt5 (qtbase, qtsvg)
 * CMake
 * Python3
 

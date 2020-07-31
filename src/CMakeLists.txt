@@ -66,4 +66,4 @@ configure_file(
 #add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 add_executable(${PROJECT_SLUG} ${SOURCES})
-target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets QtColorWidgets QtHistoryLineEdit QtAppSetup)
+target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets Qt5::Svg QtColorWidgets QtHistoryLineEdit QtAppSetup)

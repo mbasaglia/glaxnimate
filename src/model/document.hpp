@@ -41,6 +41,8 @@ public:
     FrameTime current_time() const;
     void set_current_time(FrameTime t);
 
+    QSize size() const;
+
 signals:
     void filename_changed(const QString& n);
 

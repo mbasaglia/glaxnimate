@@ -4,6 +4,7 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QImageWriter>
+#include <QtSvg/QSvgGenerator>
 
 #include "ui/dialogs/import_export_dialog.hpp"
 #include "ui/dialogs/io_status_dialog.hpp"
@@ -277,11 +278,7 @@ void GlaxnimateWindow::Private::save_frame_bmp()
     if ( fd.exec() == QDialog::Rejected )
         return;
 
-    QImage image(
-        current_document->animation()->width.get(),
-        current_document->animation()->height.get(),
-        QImage::Format_ARGB32
-    );
+    QImage image(current_document->size(), QImage::Format_ARGB32);
     image.fill(Qt::transparent);
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -290,7 +287,33 @@ void GlaxnimateWindow::Private::save_frame_bmp()
         show_warning(tr("Render Frame"), tr("Could not save image"));
 }
 
+
 void GlaxnimateWindow::Private::save_frame_svg()
 {
+    int frame = current_document->current_time();
+    QFileDialog fd(parent, tr("Save Frame Image"));
+    fd.setDirectory(current_document->io_options().path);
+    fd.setDefaultSuffix("svg");
+    fd.selectFile(tr("Frame%1.svg").arg(frame));
+    fd.setAcceptMode(QFileDialog::AcceptSave);
+    fd.setFileMode(QFileDialog::AnyFile);
+    fd.setNameFilter(tr("Scalable Vector Graphics (*.svg)"));
 
+    if ( fd.exec() == QDialog::Rejected )
+        return;
+
+    QFile file(fd.selectedFiles()[0]);
+    if ( !file.open(QFile::WriteOnly) )
+    {
+        show_warning(tr("Render Frame"), tr("Could not save image"));
+        return;
+    }
+
+    QSvgGenerator image;
+    image.setSize(current_document->size());
+    image.setOutputDevice(&file);
+    image.setResolution(96);
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+    current_document->animation()->paint(&painter, frame, true);
 }
