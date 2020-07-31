@@ -2,6 +2,8 @@
 
 #include <QTemporaryFile>
 #include <QDesktopServices>
+#include <QFileDialog>
+#include <QImageWriter>
 
 #include "ui/dialogs/import_export_dialog.hpp"
 #include "ui/dialogs/io_status_dialog.hpp"
@@ -103,6 +105,7 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     if ( !current_document->animation()->layers.empty() )
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(&current_document->animation()->layers[0]));
 
+    current_document->set_io_options(options);
     ui.play_controls->set_range(current_document->animation()->first_frame.get(), current_document->animation()->last_frame.get());
     return ok;
 }
@@ -253,5 +256,41 @@ void GlaxnimateWindow::Private::web_preview()
     {
         show_warning(tr("Web Preview"), tr("Could not open browser"));
     }
+}
+
+
+void GlaxnimateWindow::Private::save_frame_bmp()
+{
+    int frame = current_document->current_time();
+    QFileDialog fd(parent, tr("Save Frame Image"));
+    fd.setDirectory(current_document->io_options().path);
+    fd.setDefaultSuffix("png");
+    fd.selectFile(tr("Frame%1.png").arg(frame));
+    fd.setAcceptMode(QFileDialog::AcceptSave);
+    fd.setFileMode(QFileDialog::AnyFile);
+
+    QString formats;
+    for ( const auto& fmt : QImageWriter::supportedImageFormats() )
+        formats += QString("*.%1 ").arg(QString::fromUtf8(fmt));
+    fd.setNameFilter(tr("Image files (%1)").arg(formats));
+
+    if ( fd.exec() == QDialog::Rejected )
+        return;
+
+    QImage image(
+        current_document->animation()->width.get(),
+        current_document->animation()->height.get(),
+        QImage::Format_ARGB32
+    );
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+    current_document->animation()->paint(&painter, frame, true);
+    if ( !image.save(fd.selectedFiles()[0]) )
+        show_warning(tr("Render Frame"), tr("Could not save image"));
+}
+
+void GlaxnimateWindow::Private::save_frame_svg()
+{
 
 }

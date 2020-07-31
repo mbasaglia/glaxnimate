@@ -2807,6 +2807,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionRaster</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>save_frame_bmp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionS_VG</sender>
+   <signal>triggered()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>save_frame_svg()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>526</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
@@ -2829,5 +2861,7 @@
   <slot>help_about()</slot>
   <slot>console_commit(QString)</slot>
   <slot>web_preview()</slot>
+  <slot>save_frame_bmp()</slot>
+  <slot>save_frame_svg()</slot>
  </slots>
 </ui>

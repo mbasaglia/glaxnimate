@@ -207,3 +207,14 @@ void GlaxnimateWindow::web_preview()
 {
     d->web_preview();
 }
+
+void GlaxnimateWindow::save_frame_bmp()
+{
+    d->save_frame_bmp();
+}
+
+void GlaxnimateWindow::save_frame_svg()
+{
+    d->save_frame_svg();
+}
+

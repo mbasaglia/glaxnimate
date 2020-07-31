@@ -70,6 +70,8 @@ public:
     void document_open();
     void document_open_from_filename(const QString& filename);
     void web_preview();
+    void save_frame_bmp();
+    void save_frame_svg();
 
     // ui
     void setupUi(GlaxnimateWindow* parent);
