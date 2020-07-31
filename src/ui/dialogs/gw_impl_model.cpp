@@ -55,6 +55,12 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> lay
     layer->name.set(name);
 
     layer->last_frame.set(current_document->animation()->last_frame.get());
+    QPointF pos(
+        current_document->animation()->width.get() / 2.0,
+        current_document->animation()->height.get() / 2.0
+    );
+    layer->transform.get()->anchor_point.animatable().set(pos);
+    layer->transform.get()->position.animatable().set(pos);
 
     auto settings = layer->settings();
     if ( !settings.empty() )

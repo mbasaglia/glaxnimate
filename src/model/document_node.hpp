@@ -5,7 +5,7 @@
 #include <QUuid>
 
 
-#include "model/property.hpp"
+#include "model/animation/animatable.hpp"
 
 namespace model {
 
@@ -172,6 +172,8 @@ public:
 
     bool docnode_is_instance(const QString& type_name) const;
 
+    void paint(QPainter* painter, FrameTime time, bool recursive) const;
+
 private:
     template<class T=DocumentNode>
     std::vector<T*> docnode_find_impl(const QString& type_name, std::vector<T*>& matches, const char* t_name)
@@ -193,6 +195,7 @@ protected:
     void docnode_on_update_group(bool force = false);
     void on_property_changed(const QString& name, const QVariant&) override;
     bool docnode_valid_color() const;
+    virtual void on_paint(QPainter*, FrameTime) const {}
 
 
 public slots:

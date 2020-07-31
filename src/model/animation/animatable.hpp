@@ -447,6 +447,11 @@ public:
         )->get();
     }
 
+    value_type get() const
+    {
+        return value_;
+    }
+
     value_type get_at(FrameTime time) const
     {
         return get_at_impl(time).second;

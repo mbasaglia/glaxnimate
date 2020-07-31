@@ -1,6 +1,8 @@
 #include "document_node.hpp"
 #include "document.hpp"
 
+#include <QPainter>
+
 model::DocumentNode::DocumentNode(Document* document)
     : Object(document)
 {
@@ -108,4 +110,14 @@ bool model::DocumentNode::docnode_locked_by_ancestor() const
     }
 
     return false;
+}
+
+void model::DocumentNode::paint(QPainter* painter, FrameTime time, bool recursive) const
+{
+    painter->save();
+    on_paint(painter, time);
+    if ( recursive )
+        for ( const auto& c : docnode_children() )
+            c->paint(painter, time, true);
+    painter->restore();
 }

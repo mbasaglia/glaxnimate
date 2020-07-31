@@ -42,6 +42,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override
     {
         painter->fillRect(boundingRect(), back);
+        animation->paint(painter, animation->document()->current_time(), true);
     }
 
 private slots:

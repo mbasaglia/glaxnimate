@@ -114,6 +114,9 @@ public:
     Composition* composition() const { return composition_; }
     void set_composition(Composition* composition);
 
+    QTransform transform_matrix() const;
+    QTransform transform_matrix(FrameTime t) const;
+
 protected:
     void on_property_changed(const QString& name, const QVariant&) override;
 
@@ -213,6 +216,9 @@ public:
     }
 
     QString type_name_human() const override { return tr("Solid Color Layer"); }
+
+protected:
+    void on_paint(QPainter*, FrameTime) const override;
 };
 
 

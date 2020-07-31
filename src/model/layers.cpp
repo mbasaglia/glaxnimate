@@ -1,5 +1,7 @@
 #include "layers.hpp"
 
+#include <QPainter>
+
 #include "composition.hpp"
 #include "model/document.hpp"
 
@@ -91,9 +93,32 @@ void model::Layer::on_property_changed ( const QString& name, const QVariant& va
         DocumentNode::on_property_changed(name, value);
 }
 
+QTransform model::Layer::transform_matrix() const
+{
+    if ( parent.get() )
+        return parent.get()->transform_matrix() * transform.get()->transform_matrix();
+    return transform.get()->transform_matrix();
+}
+
+QTransform model::Layer::transform_matrix(model::FrameTime t) const
+{
+    if ( parent.get() )
+        return parent.get()->transform_matrix(t) * transform.get()->transform_matrix(t);
+    return transform.get()->transform_matrix(t);
+}
+
+
+
 model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Composition* composition )
     : Ctor(doc, composition)
 {
     width.set(doc->animation()->width.get());
     height.set(doc->animation()->height.get());
+}
+
+
+void model::SolidColorLayer::on_paint(QPainter* painter, FrameTime time) const
+{
+    painter->setTransform(transform_matrix(time), true);
+    painter->fillRect(0, 0, width.get(), height.get(), color.get());
 }
