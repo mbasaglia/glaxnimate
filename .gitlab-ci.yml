@@ -1,7 +1,7 @@
 default:
     before_script:
         - apt-get update -y
-        - apt-get install -y cmake qtbase5-dev libpython3-dev git
+        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev
         - git submodule update --init --recursive
 
 variables:
