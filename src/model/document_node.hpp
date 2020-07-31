@@ -244,7 +244,7 @@ signals:
 private:
     bool validate_first_frame(int f) const
     {
-        return f > 0 && f < last_frame.get();
+        return f >= 0 && f < last_frame.get();
     }
 
     bool validate_last_frame(int f) const
