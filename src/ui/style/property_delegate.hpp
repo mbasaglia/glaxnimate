@@ -10,13 +10,12 @@ class PropertyDelegate : public color_widgets::ColorDelegate
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
-        if ( index.data().userType() == QMetaType::QPointF )
+        switch ( index.data().userType() )
         {
-            return paint_xy<QPointF>(painter, option, index);
-        }
-        else if ( index.data().userType() == QMetaType::QVector2D )
-        {
-            return paint_xy<QVector2D>(painter, option, index);
+            case QMetaType::QPointF:
+                return paint_xy<QPointF>(painter, option, index);
+            case QMetaType::QVector2D:
+                return paint_xy<QVector2D>(painter, option, index);
         }
 
         return color_widgets::ColorDelegate::paint(painter, option, index);
@@ -28,13 +27,18 @@ protected:
         {
             return new QComboBox(parent);
         }
-        else if ( index.data().userType() == QMetaType::QPointF )
+
+        switch ( index.data().userType() )
         {
-            return make_editor_xy<QPointF>(index.data(), parent);
-        }
-        else if ( index.data().userType() == QMetaType::QVector2D )
-        {
-            return make_editor_xy<QVector2D>(index.data(), parent);
+            case QMetaType::QPointF:
+                return make_editor_xy<QPointF>(index.data(), parent);
+            case QMetaType::QVector2D:
+                return make_editor_xy<QVector2D>(index.data(), parent);
+            case QMetaType::Float:
+            case QMetaType::Double:
+                return make_spin(parent, index.data().toDouble(), "", false);
+            case QMetaType::Int:
+                return make_spin_int(parent, index.data().toInt(), "");
         }
 
         return color_widgets::ColorDelegate::createEditor(parent, option, index);
@@ -72,13 +76,20 @@ protected:
             }
             return;
         }
-        else if ( index.data().userType() == QMetaType::QPointF )
+
+        switch ( index.data().userType() )
         {
-            return set_editor_data_xy<QPointF>(index.data(), editor);
-        }
-        else if ( index.data().userType() == QMetaType::QVector2D )
-        {
-            return set_editor_data_xy<QVector2D>(index.data(), editor);
+            case QMetaType::QPointF:
+                return set_editor_data_xy<QPointF>(index.data(), editor);
+            case QMetaType::QVector2D:
+                return set_editor_data_xy<QVector2D>(index.data(), editor);
+            case QMetaType::Float:
+            case QMetaType::Double:
+                static_cast<QDoubleSpinBox*>(editor)->setValue(index.data().toDouble());
+                return;
+            case QMetaType::Int:
+                static_cast<QSpinBox*>(editor)->setValue(index.data().toInt());
+                return;
         }
 
         return color_widgets::ColorDelegate::setEditorData(editor, index);
@@ -94,13 +105,20 @@ protected:
             }
             return;
         }
-        else if ( index.data().userType() == QMetaType::QPointF )
+
+        switch ( index.data().userType() )
         {
-            return set_model_data_xy<QPointF>(model, index, editor);
-        }
-        else if ( index.data().userType() == QMetaType::QVector2D )
-        {
-            return set_model_data_xy<QVector2D>(model, index, editor);
+            case QMetaType::QPointF:
+                return set_model_data_xy<QPointF>(model, index, editor);
+            case QMetaType::QVector2D:
+                return set_model_data_xy<QVector2D>(model, index, editor);
+            case QMetaType::Float:
+            case QMetaType::Double:
+                model->setData(index, static_cast<QDoubleSpinBox*>(editor)->value());
+                return;
+            case QMetaType::Int:
+                model->setData(index, static_cast<QSpinBox*>(editor)->value());
+                return;
         }
 
         return color_widgets::ColorDelegate::setModelData(editor, model, index);
@@ -178,13 +196,13 @@ private:
         QWidget* wid = new QWidget(parent);
         QHBoxLayout* lay = new QHBoxLayout(wid);
         wid->setLayout(lay);
-        lay->addWidget(make_spin(wid, value.x(), "x"));
-        lay->addWidget(make_spin(wid, value.y(), "y"));
+        lay->addWidget(make_spin(wid, value.x(), "x", true));
+        lay->addWidget(make_spin(wid, value.y(), "y", true));
         lay->setContentsMargins(0, 0, 0, 0);
         return wid;
     }
 
-    QDoubleSpinBox* make_spin(QWidget* parent, double value, const QString& name) const
+    QDoubleSpinBox* make_spin(QWidget* parent, double value, const QString& name, bool adaptive) const
     {
         QDoubleSpinBox* box = new QDoubleSpinBox(parent);
         box->setMinimum(-999'999.99);
@@ -194,13 +212,24 @@ private:
         box->setObjectName(name);
         box->setMaximumWidth(get_spin_size(box));
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-        box->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
+        if ( adaptive )
+            box->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
 #endif
-
         return box;
     }
 
-    int get_spin_size(QDoubleSpinBox* box) const
+    QSpinBox* make_spin_int(QWidget* parent, int value, const QString& name) const
+    {
+        QSpinBox* box = new QSpinBox(parent);
+        box->setMinimum(-999'999);
+        box->setMaximum(+999'999);
+        box->setValue(value);
+        box->setObjectName(name);
+        box->setMaximumWidth(get_spin_size(box));
+        return box;
+    }
+
+    int get_spin_size(QAbstractSpinBox* box) const
     {
         if ( spin_size == 0 )
         {
