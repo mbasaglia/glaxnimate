@@ -238,8 +238,8 @@ private:
 class AnimationContainer: public DocumentNode
 {
     Q_OBJECT
-    GLAXNIMATE_PROPERTY(int,    first_frame,  0, true, &AnimationContainer::last_frame_changed,  &AnimationContainer::validate_first_frame)
-    GLAXNIMATE_PROPERTY(int,    last_frame, 180, true, &AnimationContainer::first_frame_changed, &AnimationContainer::validate_last_frame)
+    GLAXNIMATE_PROPERTY(int,    first_frame,  0, true, &AnimationContainer::first_frame_changed,  &AnimationContainer::validate_first_frame)
+    GLAXNIMATE_PROPERTY(int,    last_frame, 180, true, &AnimationContainer::last_frame_changed, &AnimationContainer::validate_last_frame)
 
 public:
     using DocumentNode::DocumentNode;
