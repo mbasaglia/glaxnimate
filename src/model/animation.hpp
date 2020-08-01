@@ -24,6 +24,11 @@ public:
 
     QString type_name_human() const override { return tr("Animation"); }
 
+    QRectF bounding_rect(FrameTime) const override
+    {
+        return QRectF(0, 0, width.get(), height.get());
+    }
+
 signals:
     void fps_changed(float fps);
 

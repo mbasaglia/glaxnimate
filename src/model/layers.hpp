@@ -100,6 +100,12 @@ public:
     DocumentNode* docnode_group_parent() const override;
     std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const override;
     bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const override;
+
+
+    virtual QRectF untransformed_bounding_rect(FrameTime t) const;
+    QRectF bounding_rect(FrameTime t) const override;
+    QPolygonF unaligned_bounding_rect(FrameTime t) const override;
+
     /**
      * \brief Returns the (frame) time relative to this layer
      *
@@ -209,6 +215,7 @@ public:
         return sl;
     }
 
+    QRectF untransformed_bounding_rect(FrameTime t) const override;
 
     QIcon docnode_icon() const override
     {

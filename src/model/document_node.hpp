@@ -109,6 +109,13 @@ public:
         return false;
     }
 
+    virtual QRectF bounding_rect(FrameTime t) const = 0;
+    virtual QPolygonF unaligned_bounding_rect(FrameTime t) const
+    {
+        QRectF br = bounding_rect(t);
+        return QPolygonF({br.topLeft(), br.topRight(), br.bottomRight(), br.bottomLeft()});
+    }
+
     bool docnode_visible() const { return visible_; }
     bool docnode_locked() const { return locked_; }
 

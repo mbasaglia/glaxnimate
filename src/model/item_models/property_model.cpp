@@ -300,6 +300,12 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
     }
     else if ( index.column() == 1 )
     {
+        if ( !tree->prop )
+        {
+            if ( tree->object && role == Qt::DisplayRole )
+                return tree->object->object_name();
+            return {};
+        }
 
         BaseProperty* prop = tree->prop;
         PropertyTraits traits = prop->traits();

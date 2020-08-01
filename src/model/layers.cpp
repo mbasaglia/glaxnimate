@@ -107,6 +107,29 @@ QTransform model::Layer::transform_matrix(model::FrameTime t) const
     return transform.get()->transform_matrix(t);
 }
 
+QRectF model::Layer::untransformed_bounding_rect(FrameTime) const
+{
+    return QRectF(QPointF(0, 0), QSizeF(document()->size()));
+}
+
+QPolygonF model::Layer::unaligned_bounding_rect(FrameTime t) const
+{
+    QTransform tf = transform.get()->transform_matrix(t);
+    QRectF rect = untransformed_bounding_rect(t);
+    return QPolygonF({
+        tf.map(rect.topLeft()),
+        tf.map(rect.topRight()),
+        tf.map(rect.bottomRight()),
+        tf.map(rect.bottomLeft())
+    });
+}
+
+QRectF model::Layer::bounding_rect(FrameTime t) const
+{
+    QTransform tf = transform.get()->transform_matrix(t);
+    QRectF rect = untransformed_bounding_rect(t);
+    return tf.mapRect(rect);
+}
 
 
 model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Composition* composition )
@@ -120,5 +143,13 @@ model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Compositi
 void model::SolidColorLayer::on_paint(QPainter* painter, FrameTime time) const
 {
     painter->setTransform(transform_matrix(time), true);
-    painter->fillRect(0, 0, width.get(), height.get(), color.get());
+    painter->fillRect(untransformed_bounding_rect(time), color.get());
 }
+
+QRectF model::SolidColorLayer::untransformed_bounding_rect(FrameTime) const
+{
+    return QRectF(0, 0, width.get(), height.get());
+}
+
+
+

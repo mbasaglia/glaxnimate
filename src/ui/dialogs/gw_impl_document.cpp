@@ -64,20 +64,27 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     setup_document(filename);
 
     current_document->animation()->name.set(current_document->animation()->type_name_human());
-    auto layer = current_document->animation()->make_layer<model::ShapeLayer>();
     current_document->animation()->width.set(app::settings::get<int>("defaults", "width"));
     current_document->animation()->height.set(app::settings::get<int>("defaults", "height"));
     current_document->animation()->fps.set(app::settings::get<int>("defaults", "fps"));
     float duration = app::settings::get<float>("defaults", "duration");
     int out_point = current_document->animation()->fps.get() * duration;
     current_document->animation()->last_frame.set(out_point);
+
+
+    auto layer = current_document->animation()->make_layer<model::ShapeLayer>();
     layer->last_frame.set(out_point);
     layer->name.set(layer->type_name_human());
+    QPointF pos(
+        current_document->animation()->width.get() / 2.0,
+        current_document->animation()->height.get() / 2.0
+    );
+    layer->transform.get()->anchor_point.animatable().set(pos);
+    layer->transform.get()->position.animatable().set(pos);
     model::Layer* ptr = layer.get();
     current_document->animation()->add_layer(std::move(layer), 0);
 
     QDir path = app::settings::get<QString>("open_save", "path");
-
     auto opts = current_document->io_options();
     opts.path = path;
     current_document->set_io_options(opts);
