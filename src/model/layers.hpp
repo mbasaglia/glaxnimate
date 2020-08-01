@@ -207,15 +207,6 @@ class SolidColorLayer : public detail::BaseLayerProps<SolidColorLayer>
 public:
     SolidColorLayer(Document* doc, Composition* composition);
 
-    app::settings::SettingList settings() const override
-    {
-        app::settings::SettingList sl = Layer::settings();
-        color.add_setting(sl);
-        width.add_setting(sl);
-        height.add_setting(sl);
-        return sl;
-    }
-
     QRectF untransformed_bounding_rect(FrameTime t) const override;
 
     QIcon docnode_icon() const override

@@ -62,20 +62,9 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> lay
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
 
-    auto settings = layer->settings();
-    if ( !settings.empty() )
+    if ( auto scl = qobject_cast<model::SolidColorLayer*>(layer.get()) )
     {
-        QVariantMap settings_values;
-        app::settings::WidgetBuilder bob;
-        if ( !bob.show_dialog(settings, settings_values, tr("Create Layer"), parent) )
-            return;
-
-        for ( const auto& prop : layer->properties() )
-        {
-            auto it = settings_values.find(prop->name());
-            if ( it != settings_values.end() )
-                prop->set_value(*it);
-        }
+        scl->color.set(current_color());
     }
 
     model::Layer* ptr = layer.get();

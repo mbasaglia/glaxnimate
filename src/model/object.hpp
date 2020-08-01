@@ -6,8 +6,6 @@
 #include <QObject>
 #include <QVariant>
 
-#include "app/settings/setting.hpp"
-
 namespace model {
 
 class BaseProperty;
@@ -43,7 +41,6 @@ public:
 
     virtual QString object_name() const { return type_name_human(); }
     virtual QString type_name_human() const { return tr("Uknown Object"); }
-    virtual app::settings::SettingList settings() const { return {}; }
 
     QString type_name() const;
 

@@ -58,25 +58,6 @@ struct PropertyTraits
             flags
         };
     }
-
-    app::settings::Setting::Type setting_type() const
-    {
-        switch ( type )
-        {
-            case Bool:
-                return app::settings::Setting::Bool;
-            case Int:
-                return app::settings::Setting::Int;
-            case Float:
-                return app::settings::Setting::Float;
-            case String:
-                return app::settings::Setting::String;
-            case Color:
-                return app::settings::Setting::Color;
-            default:
-                return app::settings::Setting::Internal;
-        }
-    }
 };
 
 
@@ -206,12 +187,6 @@ public:
     virtual QVariant value() const = 0;
     virtual bool set_value(const QVariant& val) = 0;
     virtual bool set_undoable(const QVariant& val);
-    virtual void add_setting(app::settings::SettingList& list) const {
-        auto setting_type = traits_.setting_type();
-        if ( setting_type != app::settings::Setting::Internal )
-            list.emplace_back(name_, name_, "", setting_type, value());
-    }
-
 
     const QString& name() const
     {
