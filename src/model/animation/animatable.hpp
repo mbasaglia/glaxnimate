@@ -43,7 +43,7 @@ private:
     KeyframeTransition transition_;
 };
 
-class AnimatableBase
+class AnimatableBase : public BaseProperty
 {
     Q_GADGET
 
@@ -60,6 +60,8 @@ public:
         Mismatch        ///< Value is animated and the current value doesn't match the animated value
 
     };
+
+    using BaseProperty::BaseProperty;
 
     virtual ~AnimatableBase() = default;
 
@@ -275,8 +277,6 @@ private:
 };
 
 namespace detail {
-
-
     template<class ExtraDataType>
     class AnimatableExtra : public AnimatableBase
     {
@@ -340,14 +340,16 @@ namespace detail {
 } // namespace detail
 
 template<class Type>
-class  Animatable : public detail::AnimatableWithExtra<Type>
+class  AnimatedProperty : public detail::AnimatableWithExtra<Type>
 {
 public:
     using keyframe_type = Keyframe<Type>;
     using value_type = typename Keyframe<Type>::value_type;
     using reference = typename Keyframe<Type>::reference;
 
-    Animatable(reference val) : value_{val} {}
+    AnimatedProperty(Object* object, const QString& name, reference default_value)
+    : detail::AnimatableWithExtra<Type>(object, name, PropertyTraits::from_scalar<Type>(PropertyTraits::Animated)),
+      value_{default_value} {}
 
     int keyframe_count() const override
     {
@@ -397,6 +399,7 @@ public:
         value_ = val;
         mismatched_ = !keyframes_.empty();
         this->extra_data_reset();
+        this->value_changed();
         return true;
     }
 
@@ -407,6 +410,7 @@ public:
             const keyframe_type* kf;
             std::tie(kf, value_) = get_at_impl(time);
             this->extra_data_reset(kf);
+            this->value_changed();
         }
         mismatched_ = false;
     }
@@ -488,35 +492,6 @@ private:
     value_type value_;
     std::vector<std::unique_ptr<keyframe_type>> keyframes_;
     bool mismatched_ = false;
-};
-
-
-class AnimatedPropertyBase : public BaseProperty
-{
-public:
-    using BaseProperty::BaseProperty;
-
-    virtual AnimatableBase& animatable() = 0;
-    virtual const AnimatableBase& animatable() const = 0;
-
-    QVariant value() const override { return animatable().value(); }
-    bool set_value(const QVariant& val) override { return animatable().set_value(val); }
-};
-
-template<class Type>
-class AnimatedProperty : public AnimatedPropertyBase
-{
-public:
-    AnimatedProperty(Object* object, const QString& name, const Type& default_value)
-        : AnimatedPropertyBase(object, name, PropertyTraits::from_scalar<Type>(PropertyTraits::Animated)),
-        anim(default_value)
-    {}
-
-    Animatable<Type>& animatable() override { return anim; }
-    const Animatable<Type>& animatable() const override { return anim; }
-
-private:
-    Animatable<Type> anim;
 };
 
 

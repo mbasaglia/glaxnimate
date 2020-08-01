@@ -110,6 +110,7 @@ public:
     }
 
     virtual QRectF bounding_rect(FrameTime t) const = 0;
+    virtual QRectF untransformed_bounding_rect(FrameTime t) const { return bounding_rect(t); }
     virtual QPolygonF unaligned_bounding_rect(FrameTime t) const
     {
         QRectF br = bounding_rect(t);

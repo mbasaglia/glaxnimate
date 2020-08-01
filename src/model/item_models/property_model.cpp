@@ -312,8 +312,8 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
 
         if ( (traits.flags & PropertyTraits::Animated) )
         {
-            AnimatedPropertyBase* anprop = static_cast<AnimatedPropertyBase*>(prop);
-            auto frame_status = anprop->animatable().keyframe_status(d->document->current_time());
+            AnimatableBase* anprop = static_cast<AnimatableBase*>(prop);
+            auto frame_status = anprop->keyframe_status(d->document->current_time());
 
             if ( role == Qt::DecorationRole )
             {

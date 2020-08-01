@@ -111,7 +111,7 @@ public:
 
             if ( prop->traits().flags & PropertyTraits::Animated )
             {
-                json_obj[field.lottie] = convert_animated(static_cast<AnimatedPropertyBase*>(prop));
+                json_obj[field.lottie] = convert_animated(static_cast<AnimatableBase*>(prop));
             }
             else
             {
@@ -120,12 +120,11 @@ public:
         }
     }
 
-    QJsonObject convert_animated(AnimatedPropertyBase* prop)
+    QJsonObject convert_animated(AnimatableBase* prop)
     {
         /// @todo for position fields also add spatial bezier handles
-        const AnimatableBase& animatable = prop->animatable();
         QJsonObject jobj;
-        if ( animatable.animated() )
+        if ( prop->animated() )
         {
             /// @todo
             jobj["a"] = 1;
@@ -133,7 +132,7 @@ public:
         else
         {
             jobj["a"] = 0;
-            jobj["k"] = value_from_variant(animatable.value());
+            jobj["k"] = value_from_variant(prop->value());
         }
         return jobj;
     }

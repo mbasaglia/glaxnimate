@@ -131,6 +131,13 @@ QRectF model::Layer::bounding_rect(FrameTime t) const
     return tf.mapRect(rect);
 }
 
+void model::Layer::on_paint(QPainter* painter, FrameTime time) const
+{
+    painter->setTransform(transform_matrix(time), true);
+    on_paint_untransformed(painter, time);
+}
+
+
 
 model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Composition* composition )
     : Ctor(doc, composition)
@@ -140,9 +147,8 @@ model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Compositi
 }
 
 
-void model::SolidColorLayer::on_paint(QPainter* painter, FrameTime time) const
+void model::SolidColorLayer::on_paint_untransformed(QPainter* painter, FrameTime time) const
 {
-    painter->setTransform(transform_matrix(time), true);
     painter->fillRect(untransformed_bounding_rect(time), color.get());
 }
 

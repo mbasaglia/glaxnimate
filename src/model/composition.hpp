@@ -45,6 +45,10 @@ public:
         return std::make_unique<LayerT>(document(), this);
     }
 
+signals:
+    void layer_added(Layer* layer);
+    void layer_removed(Layer* layer);
+
 private:
     int layer_index = 0;
 };

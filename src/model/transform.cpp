@@ -22,20 +22,20 @@ QTransform make_transform(
 QTransform model::Transform::transform_matrix() const
 {
     return make_transform(
-        anchor_point.animatable().get(),
-        position.animatable().get(),
-        rotation.animatable().get(),
-        scale.animatable().get()
+        anchor_point.get(),
+        position.get(),
+        rotation.get(),
+        scale.get()
     );
 }
 
 QTransform model::Transform::transform_matrix(FrameTime f) const
 {
     return make_transform(
-        anchor_point.animatable().get_at(f),
-        position.animatable().get_at(f),
-        rotation.animatable().get_at(f),
-        scale.animatable().get_at(f)
+        anchor_point.get_at(f),
+        position.get_at(f),
+        rotation.get_at(f),
+        scale.get_at(f)
     );
 }
 

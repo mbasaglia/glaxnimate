@@ -101,8 +101,7 @@ public:
     std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const override;
     bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const override;
 
-
-    virtual QRectF untransformed_bounding_rect(FrameTime t) const;
+    QRectF untransformed_bounding_rect(FrameTime t) const override;
     QRectF bounding_rect(FrameTime t) const override;
     QPolygonF unaligned_bounding_rect(FrameTime t) const override;
 
@@ -125,6 +124,8 @@ public:
 
 protected:
     void on_property_changed(const QString& name, const QVariant&) override;
+    void on_paint(QPainter*, FrameTime) const override;
+    virtual void on_paint_untransformed(QPainter*, FrameTime) const {}
 
 private:
     Composition* composition_;
@@ -225,7 +226,7 @@ public:
     QString type_name_human() const override { return tr("Solid Color Layer"); }
 
 protected:
-    void on_paint(QPainter*, FrameTime) const override;
+    void on_paint_untransformed(QPainter*, FrameTime) const override;
 };
 
 

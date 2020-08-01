@@ -79,8 +79,8 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
         current_document->animation()->width.get() / 2.0,
         current_document->animation()->height.get() / 2.0
     );
-    layer->transform.get()->anchor_point.animatable().set(pos);
-    layer->transform.get()->position.animatable().set(pos);
+    layer->transform.get()->anchor_point.set(pos);
+    layer->transform.get()->position.set(pos);
     model::Layer* ptr = layer.get();
     current_document->animation()->add_layer(std::move(layer), 0);
 

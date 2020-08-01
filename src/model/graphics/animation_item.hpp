@@ -11,6 +11,7 @@
 #include "command/property_commands.hpp"
 #include "model/document.hpp"
 #include "app/application.hpp"
+#include "model/graphics/transform_graphics_item.hpp"
 
 namespace model::graphics {
 
@@ -21,6 +22,7 @@ public:
         : animation(animation)
     {
         connect(animation, &Object::property_changed, this, &AnimationItem::on_property_changed);
+        connect(animation, &Composition::layer_added, this, &AnimationItem::add_layer);
 
         handle_h = new MoveHandle(this, MoveHandle::Horizontal, MoveHandle::Diamond, 8);
         handle_v = new MoveHandle(this, MoveHandle::Vertical, MoveHandle::Diamond, 8);
@@ -103,12 +105,19 @@ private:
         handle_hv->setPos(QPointF(animation->width.get(), animation->height.get()));
     }
 
+    void add_layer(Layer* layer)
+    {
+        auto item = new TransformGraphicsItem(layer->transform.get(), layer, this);
+        children[layer] = item;
+    }
+
 private:
     Animation* animation;
     QBrush back;
     MoveHandle* handle_h;
     MoveHandle* handle_v;
     MoveHandle* handle_hv;
+    QMap<Layer*, TransformGraphicsItem*> children;
 };
 
 } // namespace model::graphics

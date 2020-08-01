@@ -17,12 +17,14 @@ public:
         DiagonalUp,
         DiagonalDown,
         Any,
+        Rotate
     };
 
     enum Shape
     {
         Square,
         Diamond,
+        Circle
     };
 
 
@@ -31,6 +33,7 @@ public:
         Direction direction,
         Shape shape,
         int radius = 6,
+        bool dont_move = false,
         const QColor& color_rest = QColor(255, 255, 255),
         const QColor& color_highlighted = QColor(255, 255, 128),
         const QColor& color_selected = QColor(255, 255, 64),

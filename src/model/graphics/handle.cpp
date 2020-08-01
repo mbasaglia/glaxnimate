@@ -10,6 +10,7 @@ public:
     Direction direction;
     Shape shape;
     qreal radius;
+    bool dont_move;
     QColor color_rest;
     QColor color_highlighted;
     QColor color_selected;
@@ -35,13 +36,14 @@ model::graphics::MoveHandle::MoveHandle(
     Direction direction,
     Shape shape,
     int radius,
+    bool dont_move,
     const QColor& color_rest,
     const QColor& color_highlighted,
     const QColor& color_selected,
     const QColor& color_border)
 : QGraphicsObject(parent),
     d(std::make_unique<Private>(Private{direction, shape, qreal(radius),
-        color_rest, color_highlighted, color_selected, color_border}))
+        dont_move, color_rest, color_highlighted, color_selected, color_border}))
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
@@ -94,6 +96,9 @@ void model::graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGra
         case Diamond:
             painter->drawRect(rect);
             break;
+        case Circle:
+            painter->drawEllipse(rect);
+            break;
     }
 
     painter->restore();
@@ -106,9 +111,12 @@ void model::graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent*)
 
 void model::graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-    QPointF p = event->scenePos();
-    d->apply_constraints(pos(), p);
-    setPos(p);
+    QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
+    QPointF oldp = scene_to_parent.map(scenePos());
+    QPointF p = scene_to_parent.map(event->scenePos());
+    d->apply_constraints(oldp, p);
+    if ( !d->dont_move )
+        setPos(p);
     emit dragged(p);
     emit dragged_x(p.x());
     emit dragged_y(p.y());

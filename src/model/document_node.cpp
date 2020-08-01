@@ -114,14 +114,6 @@ bool model::DocumentNode::docnode_locked_by_ancestor() const
 
 void model::DocumentNode::paint(QPainter* painter, FrameTime time, bool recursive) const
 {
-    painter->setBrush(Qt::transparent);
-    painter->setPen(QPen(Qt::yellow, 3));
-    painter->drawRect(bounding_rect(time));
-    painter->setPen(QPen(Qt::red, 1));
-    painter->drawPolygon(unaligned_bounding_rect(time));
-    painter->setPen(QPen(Qt::transparent));
-
-
     painter->save();
     on_paint(painter, time);
     if ( recursive )

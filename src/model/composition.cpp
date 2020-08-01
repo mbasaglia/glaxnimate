@@ -7,6 +7,7 @@ void model::Composition::add_layer(std::unique_ptr<Layer> lay, int position)
     Layer* ptr = lay.get();
     layers.insert(std::move(lay), position);
     emit docnode_child_add_end(ptr);
+    emit layer_added(ptr);
 }
 
 std::unique_ptr<model::Layer> model::Composition::remove_layer(const QUuid& uuid)
@@ -18,6 +19,7 @@ std::unique_ptr<model::Layer> model::Composition::remove_layer(const QUuid& uuid
             emit docnode_child_remove_begin(i);
             auto ptr = layers.remove(i);
             emit docnode_child_remove_end(ptr.get());
+            emit layer_removed(ptr.get());
             return ptr;
         }
     }
