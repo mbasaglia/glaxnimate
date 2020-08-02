@@ -201,9 +201,10 @@ class SolidColorLayer : public detail::BaseLayerProps<SolidColorLayer>
 {
     Q_OBJECT
 
-    GLAXNIMATE_PROPERTY(float, width, 0)
-    GLAXNIMATE_PROPERTY(float, height, 0)
-    GLAXNIMATE_PROPERTY(QColor, color, Qt::white)
+    //                  type    name    default     edit    notify                                          validate
+    GLAXNIMATE_PROPERTY(float,  width,  0,          true,   &SolidColorLayer::bounding_rect_changed, &SolidColorLayer::positive)
+    GLAXNIMATE_PROPERTY(float,  height, 0,          true,   &SolidColorLayer::bounding_rect_changed, &SolidColorLayer::positive)
+    GLAXNIMATE_PROPERTY(QColor, color,  Qt::white)
 public:
     SolidColorLayer(Document* doc, Composition* composition);
 
@@ -218,6 +219,12 @@ public:
 
 protected:
     void on_paint_untransformed(QPainter*, FrameTime) const override;
+
+private:
+    bool positive(float x) const
+    {
+        return x > 0;
+    }
 };
 
 

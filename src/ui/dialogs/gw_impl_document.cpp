@@ -239,12 +239,12 @@ void GlaxnimateWindow::Private::document_open_from_filename(const QString& filen
 
 void GlaxnimateWindow::Private::web_preview()
 {
-    QDir tempdir = QDir::tempPath();
+    QDir tempdir = QDir::temp();
     QString subdir = AppInfo::instance().slug();
     QString path = tempdir.filePath(subdir);
 
     if ( !tempdir.exists(subdir) )
-        if ( !tempdir.mkdir(subdir) )
+        if ( !tempdir.mkpath(subdir) )
             path = "";
 
     QTemporaryFile tempf(path + "/XXXXXX.html");

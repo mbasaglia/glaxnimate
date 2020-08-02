@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <functional>
 
 #include <QString>
 #include <QPointF>
@@ -227,65 +228,49 @@ private:
         virtual Return invoke(Object* obj, const Type& v) const = 0;
     };
 
-    template<class ObjT>
-    class HolderRef : public HolderBase
+    template<class ObjT, class Arg>
+    class Holder : public HolderBase
     {
     public:
-        using FuncP = Return (ObjT::*)(const Type&);
+        using FuncP = std::function<Return (ObjT*, Arg)>;
 
-        HolderRef(FuncP func) : func(func) {}
+        Holder(FuncP func) : func(std::move(func)) {}
 
         Return invoke(Object* obj, const Type& v) const override
         {
-            return (static_cast<ObjT*>(obj)->*func)(v);
+            return func(static_cast<ObjT*>(obj), v);
+        }
+
+        FuncP func;
+    };
+
+    template<class ObjT, class Arg>
+    class HolderConst : public HolderBase
+    {
+    public:
+        using FuncP = std::function<Return (const ObjT*, Arg)>;
+
+        HolderConst(FuncP func) : func(std::move(func)) {}
+
+        Return invoke(Object* obj, const Type& v) const override
+        {
+            return func(static_cast<ObjT*>(obj), v);
         }
 
         FuncP func;
     };
 
     template<class ObjT>
-    class HolderConstRef : public HolderBase
+    class HolderNoarg : public HolderBase
     {
     public:
-        using FuncP = Return (ObjT::*)(const Type&) const;
+        using FuncP = std::function<Return (ObjT*)>;
 
-        HolderConstRef(FuncP func) : func(func) {}
+        HolderNoarg(FuncP func) : func(std::move(func)) {}
 
-        Return invoke(Object* obj, const Type& v) const override
+        Return invoke(Object* obj, const Type&) const override
         {
-            return (static_cast<const ObjT*>(obj)->*func)(v);
-        }
-
-        FuncP func;
-    };
-
-    template<class ObjT>
-    class HolderVal : public HolderBase
-    {
-    public:
-        using FuncP = Return (ObjT::*)(Type);
-
-        HolderVal(FuncP func) : func(func) {}
-
-        Return invoke(Object* obj, const Type& v) const override
-        {
-            return (static_cast<ObjT*>(obj)->*func)(v);
-        }
-
-        FuncP func;
-    };
-
-    template<class ObjT>
-    class HolderConstVal : public HolderBase
-    {
-    public:
-        using FuncP = Return (ObjT::*)(Type) const;
-
-        HolderConstVal(FuncP func) : func(func) {}
-
-        Return invoke(Object* obj, const Type& v) const override
-        {
-            return (static_cast<const ObjT*>(obj)->*func)(v);
+            return func(static_cast<ObjT*>(obj));
         }
 
         FuncP func;
@@ -298,17 +283,19 @@ public:
 
     PropertyCallback(std::nullptr_t) {}
 
-    template<class T>
-    PropertyCallback(Return (T::*func)(const Type&)) : holder(std::make_unique<HolderRef<T>>(func)) {}
+    template<class ObjT, class Arg>
+    PropertyCallback(Return (ObjT::*func)(const Arg&)) : holder(std::make_unique<Holder<ObjT, const Arg&>>(func)) {}
+    template<class ObjT, class Arg>
+    PropertyCallback(Return (ObjT::*func)(const Arg&) const) : holder(std::make_unique<HolderConst<ObjT, const Arg&>>(func)) {}
+    template<class ObjT, class Arg>
+    PropertyCallback(Return (ObjT::*func)(Arg)) : holder(std::make_unique<Holder<ObjT, Arg>>(func)) {}
+    template<class ObjT, class Arg>
+    PropertyCallback(Return (ObjT::*func)(Arg) const) : holder(std::make_unique<HolderConst<ObjT, Arg>>(func)) {}
+    template<class ObjT>
+    PropertyCallback(Return (ObjT::*func)()) : holder(std::make_unique<HolderNoarg<ObjT>>(func)) {}
+    template<class ObjT>
+    PropertyCallback(Return (ObjT::*func)() const) : holder(std::make_unique<HolderNoarg<ObjT>>(func)) {}
 
-    template<class T>
-    PropertyCallback(Return (T::*func)(const Type&) const) : holder(std::make_unique<HolderConstRef<T>>(func)) {}
-
-    template<class T>
-    PropertyCallback(Return (T::*func)(Type)) : holder(std::make_unique<HolderVal<T>>(func)) {}
-
-    template<class T>
-    PropertyCallback(Return (T::*func)(Type) const) : holder(std::make_unique<HolderConstVal<T>>(func)) {}
 
     explicit operator bool() const
     {

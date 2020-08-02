@@ -8,6 +8,7 @@ class Animation : public ObjectBase<Animation, Composition>
 {
     Q_OBJECT
 
+    //                  type    name    default  edit  notify                   validate
     GLAXNIMATE_PROPERTY(float,  fps,         60, true, &Animation::fps_changed, &Animation::validate_fps)
     GLAXNIMATE_PROPERTY(int,    width,      512, true, nullptr,                 &Animation::validate_nonzero)
     GLAXNIMATE_PROPERTY(int,    height,     512, true, nullptr,                 &Animation::validate_nonzero)

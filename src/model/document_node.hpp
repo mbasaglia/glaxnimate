@@ -229,6 +229,8 @@ signals:
     void docnode_name_changed(const QString&);
     void docnode_group_color_changed(const QColor&);
 
+    void bounding_rect_changed();
+
 private:
     bool visible_ = true;
     bool locked_ = false;

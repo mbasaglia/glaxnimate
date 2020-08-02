@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include "model/document.hpp"
+#include "command/property_commands.hpp"
 
 
 class model::graphics::TransformGraphicsItem::Private
@@ -26,7 +27,7 @@ public:
     struct Handle
     {
         MoveHandle* handle;
-        QPointF (Private::* get_p)(const QRectF&)const;
+        QPointF (Private::* get_p)()const;
         void (TransformGraphicsItem::* signal)(const QPointF&);
 
     };
@@ -35,28 +36,33 @@ public:
     DocumentNode* target;
     std::array<Handle, Count> handles;
     QRectF cache;
+    QTransform tranform_matrix;
+    QTransform tranform_matrix_inv;
 
-    QPointF get_tl(const QRectF& p) const { return p.topLeft(); }
-    QPointF get_tr(const QRectF& p) const { return p.topRight(); }
-    QPointF get_br(const QRectF& p) const { return p.bottomRight(); }
-    QPointF get_bl(const QRectF& p) const { return p.bottomLeft(); }
-    QPointF get_t(const QRectF& p) const { return {p.center().x(), p.top()}; }
-    QPointF get_b(const QRectF& p) const { return {p.center().x(), p.bottom()}; }
-    QPointF get_l(const QRectF& p) const { return {p.left(), p.center().y()}; }
-    QPointF get_r(const QRectF& p) const { return {p.right(), p.center().y()}; }
-    QPointF get_a(const QRectF& p) const { return p.center(); }
-    QPointF get_rot(const QRectF& p) const
+    QPointF get_tl() const { return cache.topLeft(); }
+    QPointF get_tr() const { return cache.topRight(); }
+    QPointF get_br() const { return cache.bottomRight(); }
+    QPointF get_bl() const { return cache.bottomLeft(); }
+    QPointF get_t() const { return {cache.center().x(), cache.top()}; }
+    QPointF get_b() const { return {cache.center().x(), cache.bottom()}; }
+    QPointF get_l() const { return {cache.left(), cache.center().y()}; }
+    QPointF get_r() const { return {cache.right(), cache.center().y()}; }
+    QPointF get_a() const
+    {
+        return tranform_matrix_inv.map(transform->anchor_point.get());
+    }
+    QPointF get_rot() const
     {
         return {
-            p.center().x(),
-            p.top() - 32 / transform->scale.get().y()
+            cache.center().x(),
+            cache.top() - 32 / transform->scale.get().y()
         };
 
     }
 
     void set_pos(const Handle& h) const
     {
-        h.handle->setPos((this->*h.get_p)(cache));
+        h.handle->setPos((this->*h.get_p)());
     }
 
     Private(TransformGraphicsItem* parent, model::Transform* transform, model::DocumentNode* target)
@@ -131,7 +137,7 @@ model::graphics::TransformGraphicsItem::TransformGraphicsItem(
 )
     : QGraphicsObject(parent), d(std::make_unique<Private>(this, transform, target))
 {
-    /// @todo connec bounding rect changed to update_handles
+    connect(target, &DocumentNode::bounding_rect_changed, this, &TransformGraphicsItem::update_handles);
     connect(transform, &Object::property_changed, this, &TransformGraphicsItem::update_transform);
     update_handles();
     update_transform();
@@ -153,8 +159,11 @@ void model::graphics::TransformGraphicsItem::update_handles()
 
 void model::graphics::TransformGraphicsItem::update_transform()
 {
-    setTransform(d->transform->transform_matrix());
+    d->tranform_matrix = d->transform->transform_matrix();
+    d->tranform_matrix_inv = d->tranform_matrix.inverted();
+    setTransform(d->tranform_matrix);
     d->set_pos(d->handles[Private::Rot]);
+    d->set_pos(d->handles[Private::Anchor]);
 }
 
 
@@ -268,6 +277,23 @@ void model::graphics::TransformGraphicsItem::drag_r(const QPointF& p)
 
 void model::graphics::TransformGraphicsItem::drag_a(const QPointF& p)
 {
+    QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
+    QPointF scene_anchor = sceneTransform().map(p);
+    QPointF anchor = scene_to_parent.map(scene_anchor);
+    QPointF anchor_old = d->transform->anchor_point.get();
+
+    QPointF p1 = sceneTransform().map(QPointF(0, 0));
+    d->transform->anchor_point.set(anchor);
+    QPointF p2 = sceneTransform().map(QPointF(0, 0));
+    QPointF pos = d->transform->position.get() - p2 + p1;
+    d->transform->anchor_point.set(anchor_old);
+    d->target->document()->undo_stack().push(new command::SetMultipleProperties(
+        tr("Drag anchor point"),
+        false,
+        {&d->transform->anchor_point, &d->transform->position},
+        anchor,
+        pos
+    ));
 }
 
 void model::graphics::TransformGraphicsItem::drag_rot(const QPointF& p)
