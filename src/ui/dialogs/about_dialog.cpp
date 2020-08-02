@@ -5,6 +5,7 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QClipboard>
+#include <QUrl>
 
 #include "app/application.hpp"
 
