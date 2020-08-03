@@ -49,7 +49,7 @@ public:
     QPointF get_r() const { return {cache.right(), cache.center().y()}; }
     QPointF get_a() const
     {
-        return tranform_matrix_inv.map(transform->anchor_point.get());
+        return transform->anchor_point.get();
     }
     QPointF get_rot() const
     {
@@ -277,9 +277,7 @@ void model::graphics::TransformGraphicsItem::drag_r(const QPointF& p)
 
 void model::graphics::TransformGraphicsItem::drag_a(const QPointF& p)
 {
-    QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
-    QPointF scene_anchor = sceneTransform().map(p);
-    QPointF anchor = scene_to_parent.map(scene_anchor);
+    QPointF anchor = p;
     QPointF anchor_old = d->transform->anchor_point.get();
 
     QPointF p1 = sceneTransform().map(QPointF(0, 0));
@@ -296,13 +294,14 @@ void model::graphics::TransformGraphicsItem::drag_a(const QPointF& p)
     ));
 }
 
+#include <QDebug>
+
 void model::graphics::TransformGraphicsItem::drag_rot(const QPointF& p)
 {
-    QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
-    QPointF sp = scene_to_parent.map(sceneTransform().map(p));
-    QPointF diff = sp - d->transform->anchor_point.get();
+    QPointF diff = p - d->transform->anchor_point.get();
     qreal angle = std::atan2(diff.y(), diff.x()) + M_PI_2;
-    d->transform->rotation.set_undoable(qRadiansToDegrees(angle));
+    qDebug() << p << d->transform->anchor_point.get() << qRadiansToDegrees(angle);
+//     d->transform->rotation.set_undoable(qRadiansToDegrees(angle));
 }
 
 void model::graphics::TransformGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt, QWidget*)
