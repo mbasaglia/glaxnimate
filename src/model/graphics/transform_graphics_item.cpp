@@ -4,7 +4,6 @@
 #include "model/document.hpp"
 #include "command/property_commands.hpp"
 
-
 class model::graphics::TransformGraphicsItem::Private
 {
 public:
@@ -57,7 +56,6 @@ public:
             cache.center().x(),
             cache.top() - 32 / transform->scale.get().y()
         };
-
     }
 
     void set_pos(const Handle& h) const
@@ -294,14 +292,18 @@ void model::graphics::TransformGraphicsItem::drag_a(const QPointF& p)
     ));
 }
 
-#include <QDebug>
-
 void model::graphics::TransformGraphicsItem::drag_rot(const QPointF& p)
 {
-    QPointF diff = p - d->transform->anchor_point.get();
-    qreal angle = std::atan2(diff.y(), diff.x()) + M_PI_2;
-    qDebug() << p << d->transform->anchor_point.get() << qRadiansToDegrees(angle);
-//     d->transform->rotation.set_undoable(qRadiansToDegrees(angle));
+    QPointF diff_old = d->get_rot() - d->transform->anchor_point.get();
+    QVector2D scale = d->transform->scale.get();
+    qreal angle_to_rot_handle = std::atan2(diff_old.y() * scale.y(), diff_old.x() * scale.x());
+
+    QPointF p_new = d->tranform_matrix.map(p);
+    QPointF ap = d->tranform_matrix.map(d->transform->anchor_point.get());
+    QPointF diff_new = p_new - ap;
+    qreal angle_new = std::atan2(diff_new.y(), diff_new.x());
+    qreal angle = angle_new - angle_to_rot_handle;
+    d->transform->rotation.set_undoable(qRadiansToDegrees(angle));
 }
 
 void model::graphics::TransformGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt, QWidget*)
