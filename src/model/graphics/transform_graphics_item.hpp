@@ -31,6 +31,10 @@ private slots:
     void drag_a(const QPointF& p);
     void drag_rot(const QPointF& p);
 
+    void commit_scale();
+    void commit_anchor();
+    void commit_rot();
+
     void update_handles();
     void update_transform();
 

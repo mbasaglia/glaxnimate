@@ -23,7 +23,13 @@ public:
     {
         if ( commit )
             return false;
-        return static_cast<Derived*>(this)->merge_with(*static_cast<const Derived*>(other));
+        auto oth = static_cast<const Derived*>(other);
+        if ( static_cast<Derived*>(this)->merge_with(*oth) )
+        {
+            commit = oth->commit;
+            return true;
+        }
+        return false;
     }
 
 protected:
