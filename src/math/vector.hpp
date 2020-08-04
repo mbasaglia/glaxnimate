@@ -399,6 +399,24 @@ constexpr scalar_type<VecT>& get(VecT& vt, int off) noexcept
     return reinterpret_cast<typename VecScalar<VecT>::type*>(&vt)[off];
 }
 
+template<class VecT, int d>
+struct LengthHelper
+{
+    static constexpr scalar_type<VecT> sumsq(const VecT& v) noexcept
+    {
+        return get(v, d-1) * get(v, d-1) + LengthHelper<VecT, d-1>::sumsq(v);
+    }
+};
+
+template<class VecT>
+struct LengthHelper<VecT, 1>
+{
+    static constexpr scalar_type<VecT> sumsq(const VecT& v) noexcept
+    {
+        return get(v, 0) * get(v, 0);
+    }
+};
+
 
 } // namespace detail
 
@@ -420,6 +438,15 @@ constexpr T lerp(const T& a, const T& b, double factor)
 inline Vec2 from_polar(scalar_type<Vec2> length, scalar_type<Vec2> angle)
 {
     return Vec2{std::cos(angle) * length, std::sin(angle) * length};
+}
+
+/**
+ * \brief 2-norm length of a vector
+ */
+template<class VecT>
+constexpr scalar_type<VecT> length(const VecT& v)
+{
+    return std::sqrt(detail::LengthHelper<VecT, detail::VecSize<VecT>::value>::sumsq(v));
 }
 
 

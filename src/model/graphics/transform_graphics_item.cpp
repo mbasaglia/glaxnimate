@@ -3,6 +3,7 @@
 #include <QStyleOptionGraphicsItem>
 #include "model/document.hpp"
 #include "command/property_commands.hpp"
+#include "math/math.hpp"
 
 class model::graphics::TransformGraphicsItem::Private
 {
@@ -35,8 +36,8 @@ public:
     DocumentNode* target;
     std::array<Handle, Count> handles;
     QRectF cache;
-    QTransform tranform_matrix;
-    QTransform tranform_matrix_inv;
+    QTransform transform_matrix;
+    QTransform transform_matrix_inv;
 
     QPointF get_tl() const { return cache.topLeft(); }
     QPointF get_tr() const { return cache.topRight(); }
@@ -121,11 +122,20 @@ public:
     {
     }
 
-    qreal find_scale(qreal target, qreal original, qreal size)
+    qreal find_scale(QPointF target_local, qreal size_to_anchor, qreal anchor_lin, qreal target_local_lin, qreal old_scale)
     {
-        qreal delta = target - original;
-        qreal w1 = size + 2*delta;
-        return w1 / size;
+
+        QPointF ap = transform_matrix.map(transform->anchor_point.get());
+        QPointF target = transform_matrix.map(target_local);
+        qreal target_length = math::length(target - ap);
+        qreal new_scale = target_length / size_to_anchor;
+        auto sign = math::sign(target_local_lin - anchor_lin);
+        if ( sign != math::sign(old_scale) )
+            new_scale *= -1;
+        if ( qFuzzyCompare(new_scale, 0) )
+            new_scale = 0.01 * sign;
+
+        return new_scale;
     }
 
 };
@@ -157,9 +167,9 @@ void model::graphics::TransformGraphicsItem::update_handles()
 
 void model::graphics::TransformGraphicsItem::update_transform()
 {
-    d->tranform_matrix = d->transform->transform_matrix();
-    d->tranform_matrix_inv = d->tranform_matrix.inverted();
-    setTransform(d->tranform_matrix);
+    d->transform_matrix = d->transform->transform_matrix();
+    d->transform_matrix_inv = d->transform_matrix.inverted();
+    setTransform(d->transform_matrix);
     d->set_pos(d->handles[Private::Rot]);
     d->set_pos(d->handles[Private::Anchor]);
 }
@@ -167,108 +177,200 @@ void model::graphics::TransformGraphicsItem::update_transform()
 
 void model::graphics::TransformGraphicsItem::drag_tl(const QPointF& p)
 {
-    if ( d->cache.width() != 0 && d->cache.height() != 0 )
-    {
-        QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
-        QPointF sp = scene_to_parent.map(sceneTransform().map(p));
+    auto scale = d->transform->scale.get();
+    qreal size_to_anchor_y = d->cache.top() - d->transform->anchor_point.get().y();
+    qreal size_to_anchor_x = d->cache.left() - d->transform->anchor_point.get().x();
 
-        d->transform->scale.set_undoable(QVector2D(
-            d->find_scale(d->cache.left(), sp.x(), d->cache.width()),
-            d->find_scale(d->cache.top(), sp.y(), d->cache.height())
+    if ( size_to_anchor_y != 0 )
+    {
+        scale.setY(d->find_scale(
+            QPointF(d->transform->anchor_point.get().x(), p.y()),
+            size_to_anchor_y,
+            d->transform->anchor_point.get().y(),
+            p.y(),
+            scale.y()
         ));
     }
+
+    if ( size_to_anchor_x != 0 )
+    {
+        scale.setX(d->find_scale(
+            QPointF(p.x(), d->transform->anchor_point.get().y()),
+            size_to_anchor_x,
+            d->transform->anchor_point.get().x(),
+            p.x(),
+            scale.x()
+        ));
+    }
+
+    if ( size_to_anchor_x || size_to_anchor_y )
+        d->transform->scale.set_undoable(scale);
 }
 
 void model::graphics::TransformGraphicsItem::drag_tr(const QPointF& p)
 {
-    if ( d->cache.width() != 0 && d->cache.height() != 0 )
-    {
-        QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
-        QPointF sp = scene_to_parent.map(sceneTransform().map(p));
+    auto scale = d->transform->scale.get();
+    qreal size_to_anchor_y = d->cache.top() - d->transform->anchor_point.get().y();
+    qreal size_to_anchor_x = d->cache.right() - d->transform->anchor_point.get().x();
 
-        d->transform->scale.set_undoable(QVector2D(
-            d->find_scale(sp.x(), d->cache.right(), d->cache.width()),
-            d->find_scale(d->cache.top(), sp.y(), d->cache.height())
+    if ( size_to_anchor_y != 0 )
+    {
+        scale.setY(d->find_scale(
+            QPointF(d->transform->anchor_point.get().x(), p.y()),
+            size_to_anchor_y,
+            d->transform->anchor_point.get().y(),
+            p.y(),
+            scale.y()
         ));
     }
+
+    if ( size_to_anchor_x != 0 )
+    {
+        scale.setX(d->find_scale(
+            QPointF(p.x(), d->transform->anchor_point.get().y()),
+            size_to_anchor_x,
+            d->transform->anchor_point.get().x(),
+            p.x(),
+            scale.x()
+        ));
+    }
+
+    if ( size_to_anchor_x || size_to_anchor_y )
+        d->transform->scale.set_undoable(scale);
 }
 
 void model::graphics::TransformGraphicsItem::drag_br(const QPointF& p)
 {
-    if ( d->cache.width() != 0 && d->cache.height() != 0 )
-    {
-        QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
-        QPointF sp = scene_to_parent.map(sceneTransform().map(p));
+    auto scale = d->transform->scale.get();
+    qreal size_to_anchor_y = d->cache.bottom() - d->transform->anchor_point.get().y();
+    qreal size_to_anchor_x = d->cache.right() - d->transform->anchor_point.get().x();
 
-        d->transform->scale.set_undoable(QVector2D(
-            d->find_scale(sp.x(), d->cache.right(), d->cache.width()),
-            d->find_scale(sp.y(), d->cache.bottom(), d->cache.height())
+    if ( size_to_anchor_y != 0 )
+    {
+        scale.setY(d->find_scale(
+            QPointF(d->transform->anchor_point.get().x(), p.y()),
+            size_to_anchor_y,
+            d->transform->anchor_point.get().y(),
+            p.y(),
+            scale.y()
         ));
     }
+
+    if ( size_to_anchor_x != 0 )
+    {
+        scale.setX(d->find_scale(
+            QPointF(p.x(), d->transform->anchor_point.get().y()),
+            size_to_anchor_x,
+            d->transform->anchor_point.get().x(),
+            p.x(),
+            scale.x()
+        ));
+    }
+
+    if ( size_to_anchor_x || size_to_anchor_y )
+        d->transform->scale.set_undoable(scale);
 }
 
 void model::graphics::TransformGraphicsItem::drag_bl(const QPointF& p)
 {
-    if ( d->cache.width() != 0 && d->cache.height() != 0 )
-    {
-        QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
-        QPointF sp = scene_to_parent.map(sceneTransform().map(p));
+    auto scale = d->transform->scale.get();
+    qreal size_to_anchor_y = d->cache.bottom() - d->transform->anchor_point.get().y();
+    qreal size_to_anchor_x = d->cache.left() - d->transform->anchor_point.get().x();
 
-        d->transform->scale.set_undoable(QVector2D(
-            d->find_scale(d->cache.left(), sp.x(), d->cache.width()),
-            d->find_scale(sp.y(), d->cache.bottom(), d->cache.height())
+    if ( size_to_anchor_y != 0 )
+    {
+        scale.setY(d->find_scale(
+            QPointF(d->transform->anchor_point.get().x(), p.y()),
+            size_to_anchor_y,
+            d->transform->anchor_point.get().y(),
+            p.y(),
+            scale.y()
         ));
     }
+
+    if ( size_to_anchor_x != 0 )
+    {
+        scale.setX(d->find_scale(
+            QPointF(p.x(), d->transform->anchor_point.get().y()),
+            size_to_anchor_x,
+            d->transform->anchor_point.get().x(),
+            p.x(),
+            scale.x()
+        ));
+    }
+
+    if ( size_to_anchor_x || size_to_anchor_y )
+        d->transform->scale.set_undoable(scale);
 }
 
 void model::graphics::TransformGraphicsItem::drag_t(const QPointF& p)
 {
-    if ( d->cache.height() != 0 )
+    qreal size_to_anchor = d->cache.top() - d->transform->anchor_point.get().y();
+    if ( size_to_anchor != 0 )
     {
-        QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
-        QPointF sp = scene_to_parent.map(sceneTransform().map(p));
-
         auto old = d->transform->scale.get();
-        qreal new_scale = d->find_scale(d->cache.top(), sp.y(), d->cache.height());
+        qreal new_scale = d->find_scale(
+            QPointF(d->transform->anchor_point.get().x(), p.y()),
+            size_to_anchor,
+            d->transform->anchor_point.get().y(),
+            p.y(),
+            old.y()
+        );
+
         d->transform->scale.set_undoable(QVector2D(old.x(), new_scale));
     }
 }
 
 void model::graphics::TransformGraphicsItem::drag_b(const QPointF& p)
 {
-    if ( d->cache.height() != 0 )
+    qreal size_to_anchor = d->cache.bottom() - d->transform->anchor_point.get().y();
+    if ( size_to_anchor != 0 )
     {
-        QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
-        QPointF sp = scene_to_parent.map(sceneTransform().map(p));
-
         auto old = d->transform->scale.get();
-        qreal new_scale = d->find_scale(sp.y(), d->cache.bottom(), d->cache.height());
+        qreal new_scale = d->find_scale(
+            QPointF(d->transform->anchor_point.get().x(), p.y()),
+            size_to_anchor,
+            d->transform->anchor_point.get().y(),
+            p.y(),
+            old.y()
+        );
+
         d->transform->scale.set_undoable(QVector2D(old.x(), new_scale));
     }
 }
 
 void model::graphics::TransformGraphicsItem::drag_l(const QPointF& p)
 {
-    if ( d->cache.width() != 0 )
+    qreal size_to_anchor = d->cache.left() - d->transform->anchor_point.get().x();
+    if ( size_to_anchor != 0 )
     {
-        QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
-        QPointF sp = scene_to_parent.map(sceneTransform().map(p));
-
         auto old = d->transform->scale.get();
-        qreal new_scale = d->find_scale(d->cache.left(), sp.x(), d->cache.width());
+        qreal new_scale = d->find_scale(
+            QPointF(p.x(), d->transform->anchor_point.get().y()),
+            size_to_anchor,
+            d->transform->anchor_point.get().x(),
+            p.x(),
+            old.x()
+        );
+
         d->transform->scale.set_undoable(QVector2D(new_scale, old.y()));
     }
 }
 
 void model::graphics::TransformGraphicsItem::drag_r(const QPointF& p)
 {
-    if ( d->cache.width() != 0 )
+    qreal size_to_anchor = d->cache.right() - d->transform->anchor_point.get().x();
+    if ( size_to_anchor != 0 )
     {
-        QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
-        QPointF sp = scene_to_parent.map(sceneTransform().map(p));
-
         auto old = d->transform->scale.get();
-        qreal new_scale = d->find_scale(sp.x(), d->cache.right(), d->cache.width());
+        qreal new_scale = d->find_scale(
+            QPointF(p.x(), d->transform->anchor_point.get().y()),
+            size_to_anchor,
+            d->transform->anchor_point.get().x(),
+            p.x(),
+            old.x()
+        );
+
         d->transform->scale.set_undoable(QVector2D(new_scale, old.y()));
     }
 }
@@ -298,8 +400,8 @@ void model::graphics::TransformGraphicsItem::drag_rot(const QPointF& p)
     QVector2D scale = d->transform->scale.get();
     qreal angle_to_rot_handle = std::atan2(diff_old.y() * scale.y(), diff_old.x() * scale.x());
 
-    QPointF p_new = d->tranform_matrix.map(p);
-    QPointF ap = d->tranform_matrix.map(d->transform->anchor_point.get());
+    QPointF p_new = d->transform_matrix.map(p);
+    QPointF ap = d->transform_matrix.map(d->transform->anchor_point.get());
     QPointF diff_new = p_new - ap;
     qreal angle_new = std::atan2(diff_new.y(), diff_new.x());
     qreal angle = angle_new - angle_to_rot_handle;
