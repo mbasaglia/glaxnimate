@@ -4,8 +4,12 @@
 class model::graphics::DocumentScene::Private
 {
 public:
+    static constexpr int editor_z = 1000;
+
     Document* document = nullptr;
     QHash<DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
+    std::unordered_map<DocumentNode*, std::vector<std::unique_ptr<QGraphicsItem>>> node_to_editors;
+
 };
 
 model::graphics::DocumentScene::DocumentScene()
@@ -13,7 +17,10 @@ model::graphics::DocumentScene::DocumentScene()
 {
 }
 
-model::graphics::DocumentScene::~DocumentScene() = default;
+model::graphics::DocumentScene::~DocumentScene()
+{
+    clear_selection();
+}
 
 void model::graphics::DocumentScene::set_document ( model::Document* document )
 {
@@ -22,6 +29,7 @@ void model::graphics::DocumentScene::set_document ( model::Document* document )
         disconnect_node(d->document->animation());
     }
 
+    clear_selection();
     clear();
 
     d->document = document;
@@ -84,6 +92,40 @@ void model::graphics::DocumentScene::on_focused ( model::graphics::DocumentNodeG
     if ( auto node = item->data(0).value<DocumentNode*>() )
         emit node_focused(node);
 }
+
+
+void model::graphics::DocumentScene::add_selection(model::DocumentNode* node)
+{
+    if ( d->node_to_editors.find(node) != d->node_to_editors.end() )
+        return;
+
+    auto items = node->docnode_make_graphics_editor();
+    for ( const auto& item : items )
+    {
+        item->setZValue(Private::editor_z);
+        addItem(item.get());
+    }
+
+    d->node_to_editors.emplace(node, std::move(items));
+}
+
+
+void model::graphics::DocumentScene::remove_selection(model::DocumentNode* node)
+{
+    auto it = d->node_to_editors.find(node);
+    if ( it != d->node_to_editors.end() )
+    {
+        d->node_to_editors.erase(it);
+    }
+}
+
+void model::graphics::DocumentScene::clear_selection()
+{
+    d->node_to_editors.clear();
+}
+
+
+
 
 
 

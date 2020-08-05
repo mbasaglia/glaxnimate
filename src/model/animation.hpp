@@ -8,10 +8,10 @@ class Animation : public ObjectBase<Animation, Composition>
 {
     Q_OBJECT
 
-    //                  type    name    default  edit  notify                   validate
-    GLAXNIMATE_PROPERTY(float,  fps,         60, true, &Animation::fps_changed, &Animation::validate_fps)
-    GLAXNIMATE_PROPERTY(int,    width,      512, true, nullptr,                 &Animation::validate_nonzero)
-    GLAXNIMATE_PROPERTY(int,    height,     512, true, nullptr,                 &Animation::validate_nonzero)
+    //                  type    name    default  edit  notify                       validate
+    GLAXNIMATE_PROPERTY(float,  fps,         60, true, &Animation::fps_changed,     &Animation::validate_fps)
+    GLAXNIMATE_PROPERTY(int,    width,      512, true, &Animation::width_changed,   &Animation::validate_nonzero)
+    GLAXNIMATE_PROPERTY(int,    height,     512, true, &Animation::height_changed,  &Animation::validate_nonzero)
 
 public:
     using Ctor::Ctor;
@@ -25,13 +25,15 @@ public:
 
     QString type_name_human() const override { return tr("Animation"); }
 
-    QRectF bounding_rect(FrameTime) const override
+    QRectF local_bounding_rect(FrameTime) const override
     {
         return QRectF(0, 0, width.get(), height.get());
     }
 
 signals:
     void fps_changed(float fps);
+    void width_changed(int);
+    void height_changed(int);
 
 private:
     bool validate_nonzero(int size) const

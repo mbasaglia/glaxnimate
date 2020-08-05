@@ -84,6 +84,7 @@ public:
     void show_warning(const QString& title, const QString& message, QMessageBox::Icon icon = QMessageBox::Warning);
     void help_about();
     void shutdown();
+    void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
 
     // color
     void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,

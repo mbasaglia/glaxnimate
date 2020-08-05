@@ -93,6 +93,8 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.view_properties->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui.view_properties->header()->setSectionResizeMode(1, QHeaderView::Stretch);
 
+    connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::selectionChanged, parent, &GlaxnimateWindow::document_treeview_selection_changed);
+
     // Tool buttons
     ui.btn_layer_add->setMenu(ui.menu_new_layer);
 
@@ -254,4 +256,15 @@ void GlaxnimateWindow::Private::shutdown()
         history.erase(history.begin() + max_history, history.end());
     app::settings::set("scripting", "history", history);
     script_contexts.clear();
+}
+
+void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    for ( const auto& index : selected.indexes() )
+        if ( auto node = document_node_model.node(index) )
+            scene.add_selection(node);
+
+    for ( const auto& index : deselected.indexes() )
+        if ( auto node = document_node_model.node(index) )
+            scene.remove_selection(node);
 }

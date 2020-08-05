@@ -16,6 +16,9 @@ public:
     void set_document(Document* document);
     void clear_document() { set_document(nullptr); }
 
+    void add_selection(DocumentNode* node);
+    void remove_selection(DocumentNode* node);
+    void clear_selection();
 
 public slots:
     void focus_node(model::DocumentNode* node);

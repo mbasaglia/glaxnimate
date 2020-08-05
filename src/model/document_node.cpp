@@ -2,6 +2,7 @@
 #include "document.hpp"
 
 #include <QPainter>
+#include <QGraphicsItem>
 
 model::DocumentNode::DocumentNode(Document* document)
     : Object(document)
@@ -120,4 +121,9 @@ void model::DocumentNode::paint(QPainter* painter, FrameTime time, bool recursiv
         for ( const auto& c : docnode_children() )
             c->paint(painter, time, true);
     painter->restore();
+}
+
+std::vector<std::unique_ptr<QGraphicsItem> > model::DocumentNode::docnode_make_graphics_editor()
+{
+    return {};
 }

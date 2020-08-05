@@ -7,6 +7,9 @@
 
 #include "model/animation/animatable.hpp"
 
+
+class QGraphicsItem;
+
 namespace model {
 
 namespace graphics { class DocumentNodeGraphicsItem; }
@@ -90,6 +93,7 @@ public:
 
     virtual QIcon docnode_icon() const = 0;
     virtual graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() = 0;
+    virtual std::vector<std::unique_ptr<QGraphicsItem>> docnode_make_graphics_editor();
 
     virtual DocumentNode* docnode_parent() const = 0;
     virtual int docnode_child_count() const = 0;
@@ -109,13 +113,27 @@ public:
         return false;
     }
 
-    virtual QRectF bounding_rect(FrameTime t) const = 0;
-    virtual QRectF untransformed_bounding_rect(FrameTime t) const { return bounding_rect(t); }
-    virtual QPolygonF unaligned_bounding_rect(FrameTime t) const
-    {
-        QRectF br = bounding_rect(t);
-        return QPolygonF({br.topLeft(), br.topRight(), br.bottomRight(), br.bottomLeft()});
-    }
+
+    /**
+     * \brief Bounding rect in local coordinates (current frame)
+     */
+    virtual QRectF local_bounding_rect(FrameTime t) const = 0;
+//     /**
+//      * \brief Bounding rect in local coordinates for the given time
+//      */
+//     virtual QRectF local_bounding_rect(FrameTime) const { return bounding_rect(t); }
+//     /**
+//      * \brief Polygon created by applying the object transform to local_bounding_rect()
+//      */
+//     virtual QPolygonF unaligned_bounding_rect(FrameTime t) const
+//     {
+//         QRectF br = bounding_rect(t);
+//         return QPolygonF({br.topLeft(), br.topRight(), br.bottomRight(), br.bottomLeft()});
+//     }
+//     /**
+//      * \brief Bounding rect in global coordinates (ie: bounding rect of unaligned_bounding_rect)
+//      */
+//     virtual QRectF bounding_rect(FrameTime t) const = 0;
 
     bool docnode_visible() const { return visible_; }
     bool docnode_locked() const { return locked_; }

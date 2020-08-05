@@ -928,7 +928,7 @@
         <enum>QAbstractItemView::InternalMove</enum>
        </property>
        <property name="selectionMode">
-        <enum>QAbstractItemView::ContiguousSelection</enum>
+        <enum>QAbstractItemView::ExtendedSelection</enum>
        </property>
        <attribute name="headerVisible">
         <bool>false</bool>
@@ -2930,8 +2930,8 @@
    <slot>color_update_alpha(QColor)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1106</x>
-     <y>522</y>
+     <x>1089</x>
+     <y>542</y>
     </hint>
     <hint type="destinationlabel">
      <x>1377</x>

@@ -100,10 +100,11 @@ public:
     DocumentNode* docnode_group_parent() const override;
     std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const override;
     bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const override;
+    std::vector<std::unique_ptr<QGraphicsItem>> docnode_make_graphics_editor() override;
 
-    QRectF untransformed_bounding_rect(FrameTime t) const override;
-    QRectF bounding_rect(FrameTime t) const override;
-    QPolygonF unaligned_bounding_rect(FrameTime t) const override;
+    QRectF local_bounding_rect(FrameTime t) const override;
+//     QRectF bounding_rect(FrameTime t) const override;
+//     QPolygonF unaligned_bounding_rect(FrameTime t) const override;
 
     /**
      * \brief Returns the (frame) time relative to this layer
@@ -208,7 +209,7 @@ class SolidColorLayer : public detail::BaseLayerProps<SolidColorLayer>
 public:
     SolidColorLayer(Document* doc, Composition* composition);
 
-    QRectF untransformed_bounding_rect(FrameTime t) const override;
+    QRectF local_bounding_rect(FrameTime t) const override;
 
     QIcon docnode_icon() const override
     {

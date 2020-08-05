@@ -175,7 +175,7 @@ model::graphics::TransformGraphicsItem::~TransformGraphicsItem() = default;
 void model::graphics::TransformGraphicsItem::update_handles()
 {
     prepareGeometryChange();
-    d->cache = d->target->untransformed_bounding_rect(d->target->document()->current_time());
+    d->cache = d->target->local_bounding_rect(d->target->document()->current_time());
     for ( const auto& h : d->handles )
     {
         d->set_pos(h);

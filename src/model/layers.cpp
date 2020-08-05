@@ -4,6 +4,7 @@
 
 #include "composition.hpp"
 #include "model/document.hpp"
+#include "model/graphics/transform_graphics_item.hpp"
 
 model::Layer::Layer(Document* doc, Composition* composition)
     : AnimationContainer(doc), composition_(composition)
@@ -107,29 +108,29 @@ QTransform model::Layer::transform_matrix(model::FrameTime t) const
     return transform.get()->transform_matrix(t);
 }
 
-QRectF model::Layer::untransformed_bounding_rect(FrameTime) const
+QRectF model::Layer::local_bounding_rect(FrameTime) const
 {
     return QRectF(QPointF(0, 0), QSizeF(document()->size()));
 }
 
-QPolygonF model::Layer::unaligned_bounding_rect(FrameTime t) const
-{
-    QTransform tf = transform.get()->transform_matrix(t);
-    QRectF rect = untransformed_bounding_rect(t);
-    return QPolygonF({
-        tf.map(rect.topLeft()),
-        tf.map(rect.topRight()),
-        tf.map(rect.bottomRight()),
-        tf.map(rect.bottomLeft())
-    });
-}
-
-QRectF model::Layer::bounding_rect(FrameTime t) const
-{
-    QTransform tf = transform.get()->transform_matrix(t);
-    QRectF rect = untransformed_bounding_rect(t);
-    return tf.mapRect(rect);
-}
+// QPolygonF model::Layer::unaligned_bounding_rect(FrameTime t) const
+// {
+//     QTransform tf = transform.get()->transform_matrix(t);
+//     QRectF rect = local_bounding_rect(t);
+//     return QPolygonF({
+//         tf.map(rect.topLeft()),
+//         tf.map(rect.topRight()),
+//         tf.map(rect.bottomRight()),
+//         tf.map(rect.bottomLeft())
+//     });
+// }
+//
+// QRectF model::Layer::bounding_rect(FrameTime t) const
+// {
+//     QTransform tf = transform.get()->transform_matrix(t);
+//     QRectF rect = local_bounding_rect(t);
+//     return tf.mapRect(rect);
+// }
 
 void model::Layer::on_paint(QPainter* painter, FrameTime time) const
 {
@@ -137,6 +138,12 @@ void model::Layer::on_paint(QPainter* painter, FrameTime time) const
     on_paint_untransformed(painter, time);
 }
 
+std::vector<std::unique_ptr<QGraphicsItem>> model::Layer::docnode_make_graphics_editor()
+{
+    std::vector<std::unique_ptr<QGraphicsItem>> v;
+    v.push_back(std::make_unique<model::graphics::TransformGraphicsItem>(transform.get(), this, nullptr));
+    return v;
+}
 
 
 model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Composition* composition )
@@ -149,10 +156,10 @@ model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Compositi
 
 void model::SolidColorLayer::on_paint_untransformed(QPainter* painter, FrameTime time) const
 {
-    painter->fillRect(untransformed_bounding_rect(time), color.get());
+    painter->fillRect(local_bounding_rect(time), color.get());
 }
 
-QRectF model::SolidColorLayer::untransformed_bounding_rect(FrameTime) const
+QRectF model::SolidColorLayer::local_bounding_rect(FrameTime) const
 {
     return QRectF(0, 0, width.get(), height.get());
 }

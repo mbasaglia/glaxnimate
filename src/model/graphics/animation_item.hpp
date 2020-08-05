@@ -19,10 +19,10 @@ class AnimationItem : public DocumentNodeGraphicsItem
 {
 public:
     explicit AnimationItem(Animation* animation)
-        : animation(animation)
+        : DocumentNodeGraphicsItem(animation), animation(animation)
     {
-        connect(animation, &Object::property_changed, this, &AnimationItem::on_property_changed);
-        connect(animation, &Composition::layer_added, this, &AnimationItem::add_layer);
+        connect(animation, &Animation::width_changed, this, &AnimationItem::size_changed);
+        connect(animation, &Animation::height_changed, this, &AnimationItem::size_changed);
 
         handle_h = new MoveHandle(this, MoveHandle::Horizontal, MoveHandle::Diamond, 8);
         handle_v = new MoveHandle(this, MoveHandle::Vertical, MoveHandle::Diamond, 8);
@@ -39,11 +39,6 @@ public:
         update_handles();
     }
 
-    QRectF boundingRect() const override
-    {
-        return QRectF(0, 0, animation->width.get(), animation->height.get());
-    }
-
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override
     {
         painter->fillRect(boundingRect(), back);
@@ -51,13 +46,10 @@ public:
     }
 
 private slots:
-    void on_property_changed(const QString& name)
+    void size_changed()
     {
-        if ( name == "width" || name == "height" )
-        {
-            prepareGeometryChange();
-            update_handles();
-        }
+        prepareGeometryChange();
+        update_handles();
     }
 
     void dragged_xy(const QPointF& pos)
@@ -103,12 +95,6 @@ private:
         handle_h->setPos(QPointF(animation->width.get(), animation->height.get() / 2.0));
         handle_v->setPos(QPointF(animation->width.get() / 2.0, animation->height.get()));
         handle_hv->setPos(QPointF(animation->width.get(), animation->height.get()));
-    }
-
-    void add_layer(Layer* layer)
-    {
-        auto item = new TransformGraphicsItem(layer->transform.get(), layer, this);
-        children[layer] = item;
     }
 
 private:

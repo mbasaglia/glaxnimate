@@ -15,9 +15,8 @@ class PluginScript;
 
 } // namespace app::scripting
 
-class GlaxnimateWindowPrivate;
+class QItemSelection;
 
-#include <QDebug>
 class GlaxnimateWindow : public QMainWindow
 {
     Q_OBJECT
@@ -58,6 +57,7 @@ private slots:
 
     void document_treeview_clicked(const QModelIndex& index);
     void document_treeview_current_changed(const QModelIndex& index);
+    void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
 
     void layer_new_menu();
     void layer_new_empty();
