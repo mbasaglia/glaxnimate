@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <QFont>
+#include <QPalette>
 
 #include "command/property_commands.hpp"
 #include "app/application.hpp"
@@ -255,7 +256,7 @@ Qt::ItemFlags model::PropertyModel::flags(const QModelIndex& index) const
 
             if ( (traits.flags & (PropertyTraits::List|PropertyTraits::ReadOnly))
                 || traits.type == PropertyTraits::Object || traits.type == PropertyTraits::Unknown )
-                return Qt::ItemIsSelectable;
+                return flags;
 
             if ( traits.type == PropertyTraits::Bool )
                 return flags | Qt::ItemIsUserCheckable;
@@ -309,6 +310,16 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
 
         BaseProperty* prop = tree->prop;
         PropertyTraits traits = prop->traits();
+
+
+
+        if ( role == Qt::TextColorRole )
+        {
+            if ( (traits.flags & (PropertyTraits::List|PropertyTraits::ReadOnly))
+                || traits.type == PropertyTraits::Object || traits.type == PropertyTraits::Unknown
+            )
+                return QApplication::palette().color(QPalette::Disabled, QPalette::Text);
+        }
 
         if ( (traits.flags & PropertyTraits::Animated) )
         {
