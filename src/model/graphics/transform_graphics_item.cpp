@@ -57,8 +57,12 @@ public:
     {
         return {
             cache.center().x(),
-            cache.top() - 32 / transform->scale.get().y()
+            cache.top() + rot_top()
         };
+    }
+    qreal rot_top() const
+    {
+        return -32 / transform->scale.get().y();
     }
 
     void set_pos(const Handle& h) const
@@ -443,7 +447,7 @@ void model::graphics::TransformGraphicsItem::paint(QPainter* painter, const QSty
 
 QRectF model::graphics::TransformGraphicsItem::boundingRect() const
 {
-    return d->cache;
+    return d->cache.adjusted(0, d->rot_top(), 0, 0);
 }
 
 void model::graphics::TransformGraphicsItem::commit_anchor()
