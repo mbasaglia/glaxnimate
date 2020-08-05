@@ -7,7 +7,7 @@ public:
     static constexpr int editor_z = 1000;
 
     Document* document = nullptr;
-    QHash<DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
+    std::unordered_map<DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
     std::unordered_map<DocumentNode*, std::vector<std::unique_ptr<QGraphicsItem>>> node_to_editors;
 
 };
@@ -54,7 +54,15 @@ void model::graphics::DocumentScene::connect_node ( model::DocumentNode* node )
     for ( DocumentNode* child : node->docnode_children() )
         connect_node(child);
 
-    DocumentNodeGraphicsItem* parent = d->node_to_item[node->docnode_parent()];
+    DocumentNodeGraphicsItem* parent = nullptr;
+    if ( auto parent_node = node->docnode_parent() )
+    {
+        auto it = d->node_to_item.find(parent_node);
+        if ( it != d->node_to_item.end() )
+            parent = it->second;
+        child->setZValue(parent_node->docnode_child_index(node));
+    }
+
     if ( parent )
         child->setParentItem(parent);
     else
@@ -72,8 +80,8 @@ void model::graphics::DocumentScene::disconnect_node ( model::DocumentNode* node
     auto item = d->node_to_item.find(node);
     if ( item != d->node_to_item.end() )
     {
-        removeItem(*item);
-        delete *item;
+        removeItem(item->second);
+        delete item->second;
         d->node_to_item.erase(item);
     }
 }

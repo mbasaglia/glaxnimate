@@ -93,8 +93,8 @@ public:
 
     DocumentNode* docnode_child(int) const override { return nullptr; }
     int docnode_child_count() const override { return 0; }
+    int docnode_child_index(DocumentNode*) const override { return -1; }
     QIcon docnode_icon() const override { return QIcon::fromTheme("folder"); }
-    graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override { return nullptr; }
     QString type_name_human() const override { return tr("Uknown Layer"); }
     DocumentNode* docnode_parent() const override;
     DocumentNode* docnode_group_parent() const override;
@@ -123,10 +123,16 @@ public:
     QTransform transform_matrix() const;
     QTransform transform_matrix(FrameTime t) const;
 
+signals:
+    void transform_matrix_changed(const QTransform& t);
+
 protected:
     void on_property_changed(const QString& name, const QVariant&) override;
     void on_paint(QPainter*, FrameTime) const override;
     virtual void on_paint_untransformed(QPainter*, FrameTime) const {}
+
+private slots:
+    void on_transform_matrix_changed();
 
 private:
     Composition* composition_;

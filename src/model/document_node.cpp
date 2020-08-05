@@ -4,6 +4,8 @@
 #include <QPainter>
 #include <QGraphicsItem>
 
+#include "model/graphics/document_node_graphics_item.hpp"
+
 model::DocumentNode::DocumentNode(Document* document)
     : Object(document)
 {
@@ -122,6 +124,12 @@ void model::DocumentNode::paint(QPainter* painter, FrameTime time, bool recursiv
             c->paint(painter, time, true);
     painter->restore();
 }
+
+model::graphics::DocumentNodeGraphicsItem * model::DocumentNode::docnode_make_graphics_item()
+{
+    return new model::graphics::DocumentNodeGraphicsItem(this);
+}
+
 
 std::vector<std::unique_ptr<QGraphicsItem> > model::DocumentNode::docnode_make_graphics_editor()
 {

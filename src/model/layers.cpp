@@ -9,6 +9,7 @@
 model::Layer::Layer(Document* doc, Composition* composition)
     : AnimationContainer(doc), composition_(composition)
 {
+    connect(transform.get(), &Object::property_changed, this, &Layer::on_transform_matrix_changed);
 }
 
 void model::ChildLayerView::iterator::find_first()
@@ -97,7 +98,7 @@ void model::Layer::on_property_changed ( const QString& name, const QVariant& va
 QTransform model::Layer::transform_matrix() const
 {
     if ( parent.get() )
-        return parent.get()->transform_matrix() * transform.get()->transform_matrix();
+        return transform.get()->transform_matrix() * parent.get()->transform_matrix();
     return transform.get()->transform_matrix();
 }
 
@@ -141,10 +142,17 @@ void model::Layer::on_paint(QPainter* painter, FrameTime time) const
 std::vector<std::unique_ptr<QGraphicsItem>> model::Layer::docnode_make_graphics_editor()
 {
     std::vector<std::unique_ptr<QGraphicsItem>> v;
-    v.push_back(std::make_unique<model::graphics::TransformGraphicsItem>(transform.get(), this, nullptr));
+    auto p = std::make_unique<model::graphics::TransformGraphicsItem>(transform.get(), this, nullptr);
+    connect(this, &Layer::transform_matrix_changed, p.get(), &graphics::TransformGraphicsItem::set_transform_matrix);
+    p->set_transform_matrix(transform_matrix());
+    v.push_back(std::move(p));
     return v;
 }
 
+void model::Layer::on_transform_matrix_changed()
+{
+    emit transform_matrix_changed(transform_matrix());
+}
 
 model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Composition* composition )
     : Ctor(doc, composition)

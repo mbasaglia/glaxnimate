@@ -33,6 +33,8 @@ public:
         return layers.size();
     }
 
+    int docnode_child_index(DocumentNode* dn) const override;
+
     void add_layer(std::unique_ptr<Layer> lay, int position);
 
     std::unique_ptr<Layer> remove_layer(const QUuid& uuid);
@@ -48,9 +50,6 @@ public:
 signals:
     void layer_added(Layer* layer);
     void layer_removed(Layer* layer);
-
-private:
-    int layer_index = 0;
 };
 
 } // namespace model

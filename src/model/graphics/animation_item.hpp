@@ -23,32 +23,53 @@ public:
     {
         connect(animation, &Animation::width_changed, this, &AnimationItem::size_changed);
         connect(animation, &Animation::height_changed, this, &AnimationItem::size_changed);
-
-        handle_h = new MoveHandle(this, MoveHandle::Horizontal, MoveHandle::Diamond, 8);
-        handle_v = new MoveHandle(this, MoveHandle::Vertical, MoveHandle::Diamond, 8);
-        handle_hv = new MoveHandle(this, MoveHandle::DiagonalDown, MoveHandle::Square);
-        connect(handle_h, &MoveHandle::dragged_x, this, &AnimationItem::dragged_x);
-        connect(handle_v, &MoveHandle::dragged_y, this, &AnimationItem::dragged_y);
-        connect(handle_hv, &MoveHandle::dragged, this, &AnimationItem::dragged_xy);
-        connect(handle_h,  &MoveHandle::drag_finished, this, &AnimationItem::drag_finished);
-        connect(handle_v,  &MoveHandle::drag_finished, this, &AnimationItem::drag_finished);
-        connect(handle_hv, &MoveHandle::drag_finished, this, &AnimationItem::drag_finished);
-
         back.setTexture(QPixmap(app::Application::instance()->data_file("images/widgets/background.png")));
-
-        update_handles();
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override
     {
         painter->fillRect(boundingRect(), back);
-        animation->paint(painter, animation->document()->current_time(), true);
     }
 
 private slots:
     void size_changed()
     {
         prepareGeometryChange();
+    }
+
+private:
+    Animation* animation;
+    QBrush back;
+};
+
+class AnimationTransformItem : public QGraphicsObject
+{
+public:
+    explicit AnimationTransformItem(Animation* animation)
+        : animation(animation)
+    {
+        connect(animation, &Animation::width_changed, this, &AnimationTransformItem::size_changed);
+        connect(animation, &Animation::height_changed, this, &AnimationTransformItem::size_changed);
+
+        handle_h = new MoveHandle(this, MoveHandle::Horizontal, MoveHandle::Diamond, 8);
+        handle_v = new MoveHandle(this, MoveHandle::Vertical, MoveHandle::Diamond, 8);
+        handle_hv = new MoveHandle(this, MoveHandle::DiagonalDown, MoveHandle::Square);
+        connect(handle_h, &MoveHandle::dragged_x, this, &AnimationTransformItem::dragged_x);
+        connect(handle_v, &MoveHandle::dragged_y, this, &AnimationTransformItem::dragged_y);
+        connect(handle_hv, &MoveHandle::dragged, this, &AnimationTransformItem::dragged_xy);
+        connect(handle_h,  &MoveHandle::drag_finished, this, &AnimationTransformItem::drag_finished);
+        connect(handle_v,  &MoveHandle::drag_finished, this, &AnimationTransformItem::drag_finished);
+        connect(handle_hv, &MoveHandle::drag_finished, this, &AnimationTransformItem::drag_finished);
+
+        update_handles();
+    }
+
+    void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget * = nullptr) override {}
+    QRectF boundingRect() const override { return {}; }
+
+private slots:
+    void size_changed()
+    {
         update_handles();
     }
 
@@ -71,7 +92,6 @@ private slots:
     {
         update_size(animation->width.get(), animation->height.get(), true);
     }
-
 
 private:
     void update_size(qreal x, qreal y, bool commit)
@@ -99,11 +119,10 @@ private:
 
 private:
     Animation* animation;
-    QBrush back;
     MoveHandle* handle_h;
     MoveHandle* handle_v;
     MoveHandle* handle_hv;
-    QMap<Layer*, TransformGraphicsItem*> children;
 };
+
 
 } // namespace model::graphics

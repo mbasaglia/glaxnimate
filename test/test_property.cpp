@@ -67,6 +67,7 @@ public:
     DocumentNode* docnode_parent() const override { return {}; }
     int docnode_child_count() const override { return {}; }
     DocumentNode* docnode_child(int) const override { return {}; }
+    int docnode_child_index(DocumentNode*) const override { return -1; }
 
     std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const override
     {

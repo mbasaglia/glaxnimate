@@ -19,6 +19,9 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
+public slots:
+    void set_transform_matrix(const QTransform& t);
+
 private slots:
     void drag_tl(const QPointF& p);
     void drag_tr(const QPointF& p);

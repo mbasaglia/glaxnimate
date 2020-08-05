@@ -22,6 +22,7 @@ public:
     }
 
     graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override;
+    std::vector<std::unique_ptr<QGraphicsItem>> docnode_make_graphics_editor() override;
 
     QString type_name_human() const override { return tr("Animation"); }
 

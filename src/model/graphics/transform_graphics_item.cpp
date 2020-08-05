@@ -160,8 +160,8 @@ model::graphics::TransformGraphicsItem::TransformGraphicsItem(
 {
     connect(target, &DocumentNode::bounding_rect_changed, this, &TransformGraphicsItem::update_handles);
     connect(transform, &Object::property_changed, this, &TransformGraphicsItem::update_transform);
-    update_handles();
     update_transform();
+    update_handles();
     for ( const auto& h : d->handles )
     {
         connect(h.handle, &MoveHandle::dragged, this, h.signal);
@@ -190,7 +190,6 @@ void model::graphics::TransformGraphicsItem::update_transform()
 {
     d->transform_matrix = d->transform->transform_matrix();
     d->transform_matrix_inv = d->transform_matrix.inverted();
-    setTransform(d->transform_matrix);
     d->set_pos(d->handles[Private::Rot]);
     d->set_pos(d->handles[Private::Anchor]);
 }
@@ -472,3 +471,7 @@ void model::graphics::TransformGraphicsItem::commit_scale()
 }
 
 
+void model::graphics::TransformGraphicsItem::set_transform_matrix(const QTransform& t)
+{
+    setTransform(t);
+}

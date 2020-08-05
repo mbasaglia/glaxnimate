@@ -16,6 +16,9 @@ namespace graphics { class DocumentNodeGraphicsItem; }
 class Document;
 class ReferencePropertyBase;
 
+/**
+ * \brief Base class for elements of the document tree, that need to show in the tree view etc.
+ */
 class DocumentNode : public Object
 {
     Q_OBJECT
@@ -92,12 +95,13 @@ public:
     explicit DocumentNode(Document* document);
 
     virtual QIcon docnode_icon() const = 0;
-    virtual graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() = 0;
+    virtual graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item();
     virtual std::vector<std::unique_ptr<QGraphicsItem>> docnode_make_graphics_editor();
 
     virtual DocumentNode* docnode_parent() const = 0;
     virtual int docnode_child_count() const = 0;
     virtual DocumentNode* docnode_child(int index) const = 0;
+    virtual int docnode_child_index(DocumentNode* dn) const = 0;
 
     virtual DocumentNode* docnode_group_parent() const { return docnode_parent(); }
     virtual int docnode_group_child_count() const { return docnode_child_count(); }
@@ -112,7 +116,6 @@ public:
                 return true;
         return false;
     }
-
 
     /**
      * \brief Bounding rect in local coordinates (current frame)
@@ -256,6 +259,9 @@ private:
 };
 
 
+/**
+ * \brief Base class for document nodes that enclose an animation
+ */
 class AnimationContainer: public DocumentNode
 {
     Q_OBJECT
