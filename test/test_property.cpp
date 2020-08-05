@@ -82,7 +82,7 @@ public:
     double foo_ref(const int& bar) { return bar / 2.0; }
     double foo_ref_const(const int& bar) const { return bar / 2.0; }
 
-    QRectF bounding_rect(FrameTime) const override { return {}; }
+    QRectF local_bounding_rect(FrameTime) const override { return {}; }
 };
 
 
