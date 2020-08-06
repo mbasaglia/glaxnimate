@@ -8,10 +8,10 @@ class Composition : public AnimationContainer
 {
     Q_OBJECT
 
-    GLAXNIMATE_PROPERTY_LIST(Layer, layers)
+    GLAXNIMATE_PROPERTY_LIST(Layer, layers, &Composition::layer_added, &Composition::layer_removed, &DocumentNode::docnode_child_add_begin, &DocumentNode::docnode_child_remove_begin)
 
 public:
-    using AnimationContainer::AnimationContainer;
+    explicit Composition(Document* document);
 
     ChildLayerView top_level() const
     {
@@ -50,6 +50,8 @@ public:
 signals:
     void layer_added(Layer* layer);
     void layer_removed(Layer* layer);
+
+
 };
 
 } // namespace model

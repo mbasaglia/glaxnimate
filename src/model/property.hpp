@@ -134,9 +134,9 @@ private:                                                    \
     Q_PROPERTY(type* name READ get_##name WRITE set_##name) \
     // macro end
 
-#define GLAXNIMATE_PROPERTY_LIST(type, name)                \
+#define GLAXNIMATE_PROPERTY_LIST(type, name, ...)           \
 public:                                                     \
-    ObjectListProperty<type> name{this, #name};             \
+    ObjectListProperty<type> name{this, #name, __VA_ARGS__};\
     QVariantList get_##name() const                         \
     {                                                       \
         QVariantList ret;                                   \
@@ -302,7 +302,7 @@ public:
         return bool(holder);
     }
 
-    Return operator() (Object* obj, const Type& v)
+    Return operator() (Object* obj, const Type& v) const
     {
         return holder->invoke(obj, v);
     }
@@ -447,7 +447,20 @@ public:
     using iterator = typename std::vector<pointer>::const_iterator;
 //     using const_iterator = typename std::vector<pointer>::const_iterator;
 
-    using ObjectListPropertyBase::ObjectListPropertyBase;
+    ObjectListProperty(
+        Object* obj,
+        const QString& name,
+        PropertyCallback<void, Type*> callback_insert = {},
+        PropertyCallback<void, Type*> callback_remove = {},
+        PropertyCallback<void, int> callback_insert_begin = {},
+        PropertyCallback<void, int> callback_remove_begin = {}
+    )
+        : ObjectListPropertyBase(obj, name),
+        callback_insert(std::move(callback_insert)),
+        callback_remove(std::move(callback_remove)),
+        callback_insert_begin(std::move(callback_insert_begin)),
+        callback_remove_begin(std::move(callback_remove_begin))
+    {}
 
     reference operator[](int i) const { return *objects[i]; }
     int size() const { return objects.size(); }
@@ -464,7 +477,11 @@ public:
     {
         if ( !valid_index(position) )
             position = size();
+
+        callback_insert_begin(this->object(), position);
+        auto ptr = p.get();
         objects.insert(objects.begin()+position, std::move(p));
+        callback_insert(this->object(), ptr);
     }
 
     bool valid_index(int index)
@@ -476,9 +493,11 @@ public:
     {
         if ( !valid_index(index) )
             return {};
+        callback_remove_begin(object(), index);
         auto it = objects.begin() + index;
         auto v = std::move(*it);
         objects.erase(it);
+        callback_remove(object(), v.get());
         return v;
     }
 
@@ -517,6 +536,10 @@ public:
 
 private:
     std::vector<pointer> objects;
+    PropertyCallback<void, Type*> callback_insert;
+    PropertyCallback<void, Type*> callback_remove;
+    PropertyCallback<void, int> callback_insert_begin;
+    PropertyCallback<void, int> callback_remove_begin;
 };
 
 

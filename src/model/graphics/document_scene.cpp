@@ -53,9 +53,6 @@ void model::graphics::DocumentScene::connect_node ( model::DocumentNode* node )
     connect(node, &model::DocumentNode::docnode_child_remove_end, this, &DocumentScene::disconnect_node);
     connect(node, &model::DocumentNode::docnode_visible_changed, child, &DocumentNodeGraphicsItem::set_visible);
 
-    for ( DocumentNode* child : node->docnode_children() )
-        connect_node(child);
-
     DocumentNodeGraphicsItem* parent = nullptr;
     if ( auto parent_node = node->docnode_parent() )
     {
@@ -69,6 +66,9 @@ void model::graphics::DocumentScene::connect_node ( model::DocumentNode* node )
         child->setParentItem(parent);
     else
         addItem(child);
+
+    for ( DocumentNode* child : node->docnode_children() )
+        connect_node(child);
 }
 
 void model::graphics::DocumentScene::disconnect_node ( model::DocumentNode* node )

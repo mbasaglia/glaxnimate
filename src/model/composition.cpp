@@ -1,13 +1,17 @@
 #include "composition.hpp"
 
 
+model::Composition::Composition(model::Document* document)
+    : AnimationContainer(document)
+{
+    connect(this, &Composition::layer_added, this, &DocumentNode::docnode_child_add_end);
+    connect(this, &Composition::layer_removed, this, &DocumentNode::docnode_child_add_end);
+}
+
+
 void model::Composition::add_layer(std::unique_ptr<Layer> lay, int position)
 {
-    emit docnode_child_add_begin(position);
-    Layer* ptr = lay.get();
     layers.insert(std::move(lay), position);
-    emit docnode_child_add_end(ptr);
-    emit layer_added(ptr);
 }
 
 std::unique_ptr<model::Layer> model::Composition::remove_layer(const QUuid& uuid)
@@ -16,11 +20,7 @@ std::unique_ptr<model::Layer> model::Composition::remove_layer(const QUuid& uuid
     {
         if ( layers[i].uuid.get() == uuid )
         {
-            emit docnode_child_remove_begin(i);
-            auto ptr = layers.remove(i);
-            emit docnode_child_remove_end(ptr.get());
-            emit layer_removed(ptr.get());
-            return ptr;
+            return layers.remove(i);
         }
     }
 
