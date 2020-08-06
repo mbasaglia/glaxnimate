@@ -20,6 +20,8 @@ public:
     void remove_selection(DocumentNode* node);
     void clear_selection();
 
+    model::DocumentNode* item_to_node(const QGraphicsItem* item) const;
+
 public slots:
     void focus_node(model::DocumentNode* node);
 

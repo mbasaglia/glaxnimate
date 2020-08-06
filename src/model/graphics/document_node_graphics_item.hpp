@@ -15,9 +15,7 @@ class DocumentNodeGraphicsItem : public QGraphicsObject
     Q_OBJECT
 
 public:
-    explicit DocumentNodeGraphicsItem(DocumentNode* node, QGraphicsItem* parent = nullptr)
-        : QGraphicsObject(parent), node(node)
-    {}
+    explicit DocumentNodeGraphicsItem(DocumentNode* node, QGraphicsItem* parent = nullptr);
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
@@ -27,7 +25,7 @@ public slots:
     {
         setVisible(v);
     }
-
+/*
 signals:
     void focused(DocumentNode* document_node);
 
@@ -35,7 +33,7 @@ protected:
     void focusInEvent(QFocusEvent *) override
     {
         emit focused(node);
-    }
+    }*/
 
 private:
     DocumentNode* node;

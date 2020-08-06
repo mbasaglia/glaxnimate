@@ -223,8 +223,12 @@ void GlaxnimateWindow::color_swap()
     d->color_swap();
 }
 
-
 void GlaxnimateWindow::document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
 {
     d->document_treeview_selection_changed(selected, deselected);
+}
+
+void GlaxnimateWindow::scene_selection_changed()
+{
+    d->scene_selection_changed();
 }

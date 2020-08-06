@@ -2,6 +2,13 @@
 
 #include "model/document.hpp"
 
+model::graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(DocumentNode* node, QGraphicsItem* parent)
+    : QGraphicsObject(parent), node(node)
+{
+    setFlag(QGraphicsItem::ItemIsFocusable);
+    setFlag(QGraphicsItem::ItemIsSelectable);
+}
+
 QRectF model::graphics::DocumentNodeGraphicsItem::boundingRect() const
 {
     return node->local_bounding_rect(node->document()->current_time());

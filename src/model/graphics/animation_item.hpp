@@ -24,6 +24,7 @@ public:
         connect(animation, &Animation::width_changed, this, &AnimationItem::size_changed);
         connect(animation, &Animation::height_changed, this, &AnimationItem::size_changed);
         back.setTexture(QPixmap(app::Application::instance()->data_file("images/widgets/background.png")));
+        setFlag(QGraphicsItem::ItemIsSelectable, false);
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override

@@ -113,6 +113,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
 
     // Graphics scene
     ui.graphics_view->setScene(&scene);
+    connect(&scene, &QGraphicsScene::selectionChanged, parent, &GlaxnimateWindow::scene_selection_changed);
 
     // dialogs
     dialog_import_status = new IoStatusDialog(QIcon::fromTheme("document-open"), tr("Open File"), false, parent);
@@ -267,4 +268,16 @@ void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemS
     for ( const auto& index : deselected.indexes() )
         if ( auto node = document_node_model.node(index) )
             scene.remove_selection(node);
+}
+
+void GlaxnimateWindow::Private::scene_selection_changed()
+{
+    for ( const auto& item : scene.selectedItems() )
+    {
+        if ( auto node = scene.item_to_node(item) )
+            ui.view_document_node->selectionModel()->select(
+                document_node_model.node_index(node),
+                QItemSelectionModel::SelectCurrent
+            );
+    }
 }

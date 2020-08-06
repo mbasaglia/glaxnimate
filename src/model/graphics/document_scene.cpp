@@ -5,6 +5,7 @@ class model::graphics::DocumentScene::Private
 {
 public:
     static constexpr int editor_z = 1000;
+    static constexpr int data_key_ptr = 0;
 
     Document* document = nullptr;
     std::unordered_map<DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
@@ -46,7 +47,8 @@ void model::graphics::DocumentScene::connect_node ( model::DocumentNode* node )
     if ( !child )
         return;
 
-    child->setData(0, QVariant::fromValue(node));
+    d->node_to_item[node] = child;
+    child->setData(Private::data_key_ptr, QVariant::fromValue(node));
     connect(node, &model::DocumentNode::docnode_child_add_end, this, &DocumentScene::connect_node);
     connect(node, &model::DocumentNode::docnode_child_remove_end, this, &DocumentScene::disconnect_node);
     connect(node, &model::DocumentNode::docnode_visible_changed, child, &DocumentNodeGraphicsItem::set_visible);
@@ -104,6 +106,10 @@ void model::graphics::DocumentScene::on_focused ( model::graphics::DocumentNodeG
 
 void model::graphics::DocumentScene::add_selection(model::DocumentNode* node)
 {
+    auto it = d->node_to_item.find(node);
+    if ( it != d->node_to_item.end() )
+        it->second->setSelected(true);
+
     if ( d->node_to_editors.find(node) != d->node_to_editors.end() )
         return;
 
@@ -132,9 +138,7 @@ void model::graphics::DocumentScene::clear_selection()
     d->node_to_editors.clear();
 }
 
-
-
-
-
-
-
+model::DocumentNode* model::graphics::DocumentScene::item_to_node(const QGraphicsItem* item) const
+{
+    return item->data(Private::data_key_ptr).value<model::DocumentNode*>();
+}

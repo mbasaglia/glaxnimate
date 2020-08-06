@@ -85,6 +85,7 @@ public:
     void help_about();
     void shutdown();
     void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
+    void scene_selection_changed();
 
     // color
     void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,
