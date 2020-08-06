@@ -2,10 +2,6 @@
 #include "lottie_format.hpp"
 
 
-
-io::Autoreg<io::lottie::LottieHtmlFormat> io::lottie::LottieHtmlFormat::autoreg;
-
-
 bool io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QString&,
                                            model::Document* document, const QVariantMap&)
 {

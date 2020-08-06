@@ -43,6 +43,13 @@ public:
 
     QSize size() const;
 
+    /**
+     * \brief Whether filename() refers to an actual file
+     */
+    bool has_file() const;
+
+    void set_has_file(bool hf);
+
 signals:
     void filename_changed(const QString& n);
 

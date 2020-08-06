@@ -161,7 +161,7 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool overwrite_
 {
     io::Options opts = current_document->io_options();
 
-    if ( !opts.format || !opts.format->can_save() )
+    if ( !opts.format || !opts.format->can_save() || !current_document->has_file() )
         force_dialog = true;
 
     if ( force_dialog )
@@ -249,7 +249,7 @@ void GlaxnimateWindow::Private::web_preview()
 
     QTemporaryFile tempf(path + "/XXXXXX.html");
     tempf.setAutoRemove(false);
-    bool ok = tempf.open() && io::lottie::LottieHtmlFormat::registered()->save(
+    bool ok = tempf.open() && io::lottie::LottieHtmlFormat().save(
         tempf, tempf.fileName(), current_document.get(), {}
     );
 

@@ -53,14 +53,13 @@ public:
 
     QJsonObject convert_layer(Layer* layer)
     {
-        QVariantMap special;
         int parent_index = layer_index(layer->parent.get());
-        if ( parent_index != -1 )
-            special["parent"] = parent_index;
         QJsonObject json = convert_object_basic(layer);
         json["ty"] = layer_types[layer->type_name()];
         json["ind"] = layer_index(layer);
         json["ks"] = convert_transform(layer->transform.get());
+        if ( parent_index != -1 )
+            json["parent"] = parent_index;
         /// \todo add opacity to layer and set it to ks.o
         return json;
     }

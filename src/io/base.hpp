@@ -36,6 +36,7 @@ public:
                       model::Document* document, const QVariantMap& setting_values)
     {
         bool ok = on_open(file, filename, document, setting_values);
+        document->set_has_file(true);
         emit completed(ok);
         return ok;
     }
@@ -47,6 +48,7 @@ public:
                       model::Document* document, const QVariantMap& setting_values)
     {
         bool ok = on_save(file, filename, document, setting_values);
+        document->set_has_file(true);
         emit completed(ok);
         return ok;
     }

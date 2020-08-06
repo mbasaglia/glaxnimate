@@ -16,13 +16,9 @@ public:
     bool can_save() const override { return true; }
     bool can_open() const override { return false; }
 
-    static LottieHtmlFormat* registered() { return autoreg.registered; }
-
 private:
     bool on_save(QIODevice& file, const QString& filename,
                  model::Document* document, const QVariantMap& setting_values) override;
-
-    static Autoreg<LottieHtmlFormat> autoreg;
 };
 
 

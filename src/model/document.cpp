@@ -20,6 +20,7 @@ public:
     QString uuid_string = uuid.toString();
     int id = 0;
     FrameTime current_time = 0;
+    bool has_file = false;
 };
 
 
@@ -103,3 +104,14 @@ QSize model::Document::size() const
         d->animation.height.get()
     };
 }
+
+bool model::Document::has_file() const
+{
+    return d->has_file;
+}
+
+void model::Document::set_has_file(bool hf)
+{
+    d->has_file = hf;
+}
+
