@@ -105,7 +105,7 @@ QTransform model::Layer::transform_matrix() const
 QTransform model::Layer::transform_matrix(model::FrameTime t) const
 {
     if ( parent.get() )
-        return parent.get()->transform_matrix(t) * transform.get()->transform_matrix(t);
+        return transform.get()->transform_matrix(t) * parent.get()->transform_matrix(t);
     return transform.get()->transform_matrix(t);
 }
 
