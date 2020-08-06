@@ -31,6 +31,8 @@ public:
         return object;
     }
 
+    virtual void assign_from(const Object* other);
+
     QVariant get(const QString& property) const;
     bool set(const QString& property, const QVariant& value, bool allow_unknown = false);
     bool set_undoable(const QString& property, const QVariant& value);

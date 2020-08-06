@@ -35,6 +35,10 @@ model::Object::Object(Document* document)
 
 model::Object::~Object() = default;
 
+void model::Object::assign_from(const model::Object* other)
+{
+    other->clone_into(this);
+}
 
 void model::Object::clone_into(model::Object* dest) const
 {

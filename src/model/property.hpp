@@ -526,12 +526,12 @@ class SubObjectProperty : public BaseProperty
 public:
     SubObjectProperty(Object* obj, const QString& name)
         : BaseProperty(obj, name, {PropertyTraits::Object}),
-        sub_obj(std::make_unique<Type>(obj->document()))
+        sub_obj(obj->document())
     {}
 
     QVariant value() const override
     {
-        return QVariant::fromValue(const_cast<Type*>(get()));
+        return QVariant::fromValue(const_cast<Type*>(&sub_obj));
     }
 
     bool set_value(const QVariant& val) override
@@ -550,15 +550,15 @@ public:
         if ( !object )
             return nullptr;
 
-        sub_obj = object->clone_covariant();
-        return sub_obj.get();
+        sub_obj.assign_from(object);
+        return &sub_obj;
     }
 
-    Type* get() { return sub_obj.get(); }
-    const Type* get() const { return sub_obj.get(); }
+    Type* get() { return &sub_obj; }
+    const Type* get() const { return &sub_obj; }
 
 private:
-    std::unique_ptr<Type> sub_obj;
+    Type sub_obj;
 };
 
 } // namespace model
