@@ -217,6 +217,13 @@ private:
 };
 
 
+namespace detail {
+
+template<class T> inline T defval() { return T(); }
+template<> inline void defval<void>() {}
+
+} // namespace detail
+
 template<class Return, class Type>
 class PropertyCallback
 {
@@ -304,7 +311,9 @@ public:
 
     Return operator() (Object* obj, const Type& v) const
     {
-        return holder->invoke(obj, v);
+        if ( holder )
+            return holder->invoke(obj, v);
+        return detail::defval<Return>();
     }
 };
 
