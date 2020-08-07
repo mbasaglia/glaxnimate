@@ -26,6 +26,11 @@ class IoStatusDialog;
 class AboutDialog;
 class ViewTransformWidget;
 
+namespace tools {
+
+class Tool;
+
+} // namespace tools
 
 class GlaxnimateWindow::Private
 {
@@ -45,6 +50,8 @@ public:
     QStringList recent_files;
 
     std::vector<app::scripting::ScriptContext> script_contexts;
+
+    tools::Tool* active_tool = nullptr;
 
     // "set and forget" kida variables
     int tool_rows = 3; ///< @todo setting
@@ -76,7 +83,6 @@ public:
     // ui
     void setupUi(GlaxnimateWindow* parent);
     void retranslateUi(QMainWindow* parent);
-    void update_tool_button(QAction* action, QToolButton* button);
     void view_fit();
     void document_treeview_current_changed(const QModelIndex& index);
     void reload_recent_menu();
@@ -85,7 +91,9 @@ public:
     void help_about();
     void shutdown();
     void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
-    void scene_selection_changed();
+    void scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
+    void switch_tool(tools::Tool* tool);
+    void switch_tool_action(QAction* action);
 
     // color
     void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,

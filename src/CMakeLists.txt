@@ -28,6 +28,9 @@ model/graphics/transform_graphics_item.cpp
 model/animation/keyframe_transition.cpp
 model/animation/animatable.cpp
 
+tools/base.cpp
+tools/dummy.cpp
+
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui
 ui/dialogs/io_status_dialog.cpp

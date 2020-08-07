@@ -1,7 +1,9 @@
 #include "glaxnimate_window_p.hpp"
 
 #include "app/application.hpp"
-#include "ui/widgets/scalable_button.hpp"
+
+#include "tools/base.hpp"
+
 #include "ui/dialogs/io_status_dialog.hpp"
 #include "ui/dialogs/about_dialog.hpp"
 #include "ui/widgets/view_transform_widget.hpp"
@@ -17,7 +19,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.action_new->setShortcut(QKeySequence::New);
     ui.action_open->setShortcut(QKeySequence::Open);
     ui.action_close->setShortcut(QKeySequence::Close);
-    ui.action_reload->setShortcut(QKeySequence::Refresh);
+    ui.action_reload->setShortcut(QKeySequence("Ctrl+F5"));
     ui.action_save->setShortcut(QKeySequence::Save);
     ui.action_save_as->setShortcut(QKeySequence::SaveAs);
     ui.action_quit->setShortcut(QKeySequence::Quit);
@@ -43,36 +45,39 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
 
     int row = 0;
     int column = 0;
-    for ( QAction* action : ui.menu_tools->actions() )
+    for ( const auto& grp : tools::Registry::instance() )
     {
-        if ( action->isSeparator() )
-            continue;
-
-        action->setActionGroup(tool_actions);
-
-        ScalableButton *button = new ScalableButton(ui.dock_tools_contents);
-
-        button->setIcon(action->icon());
-        button->setCheckable(true);
-        button->setChecked(action->isChecked());
-
-        update_tool_button(action, button);
-        QObject::connect(action, &QAction::changed, button, [action, button, this](){
-            update_tool_button(action, button);
-        });
-        QObject::connect(button, &QToolButton::toggled, action, &QAction::setChecked);
-        QObject::connect(action, &QAction::toggled, button, &QToolButton::setChecked);
-
-        button->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-
-        ui.dock_tools_layout->addWidget(button, row, column);
-
-        column++;
-        if ( column >= tool_rows )
+        for ( const auto& tool : grp.second )
         {
-            column = 0;
-            row++;
+            QAction* action = tool.second->get_action();
+            action->setParent(parent);
+            ui.menu_tools->addAction(action);
+            action->setActionGroup(tool_actions);
+            ScalableButton *button = tool.second->get_button();
+
+            button->resize(16, 16);
+            ui.dock_tools_layout->addWidget(button, row, column);
+
+            ui.tool_settings_widget->addWidget(tool.second->get_settings_widget());
+
+            tool.second->retranslate();
+
+            if ( !active_tool )
+            {
+                switch_tool(tool.second.get());
+                action->setChecked(true);
+            }
+
+            column++;
+            if ( column >= tool_rows )
+            {
+                column = 0;
+                row++;
+            }
+
         }
+
+        ui.menu_tools->addSeparator();
     }
 
     // Colors
@@ -113,7 +118,8 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
 
     // Graphics scene
     ui.graphics_view->setScene(&scene);
-    connect(&scene, &QGraphicsScene::selectionChanged, parent, &GlaxnimateWindow::scene_selection_changed);
+    ui.graphics_view->set_tool_target(parent);
+    connect(&scene, &model::graphics::DocumentScene::node_user_selected, parent, &GlaxnimateWindow::scene_selection_changed);
 
     // dialogs
     dialog_import_status = new IoStatusDialog(QIcon::fromTheme("document-open"), tr("Open File"), false, parent);
@@ -175,14 +181,11 @@ void GlaxnimateWindow::Private::retranslateUi(QMainWindow* parent)
 
     ui.action_undo->setText(redo_text.arg(current_document->undo_stack().undoText()));
     ui.action_redo->setText(redo_text.arg(current_document->undo_stack().redoText()));
-}
 
-void GlaxnimateWindow::Private::update_tool_button(QAction* action, QToolButton* button)
-{
-    button->setText(action->text());
-    button->setToolTip(action->text());
+    for ( const auto& grp : tools::Registry::instance() )
+        for ( const auto& tool : grp.second )
+            tool.second->retranslate();
 }
-
 
 void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIndex& index)
 {
@@ -270,14 +273,36 @@ void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemS
             scene.remove_selection(node);
 }
 
-void GlaxnimateWindow::Private::scene_selection_changed()
+void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected)
 {
-    for ( const auto& item : scene.selectedItems() )
+    for ( model::DocumentNode* node : deselected )
     {
-        if ( auto node = scene.item_to_node(item) )
-            ui.view_document_node->selectionModel()->select(
-                document_node_model.node_index(node),
-                QItemSelectionModel::SelectCurrent
-            );
+        ui.view_document_node->selectionModel()->select(
+            document_node_model.node_index(node),
+            QItemSelectionModel::Deselect
+        );
     }
+
+    for ( model::DocumentNode* node : selected )
+    {
+        ui.view_document_node->selectionModel()->select(
+            document_node_model.node_index(node),
+            QItemSelectionModel::SelectCurrent
+        );
+    }
+}
+
+void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
+{
+    if ( !tool )
+        return;
+
+    active_tool = tool;
+    ui.graphics_view->set_active_tool(tool);
+    ui.tool_settings_widget->setCurrentWidget(tool->get_settings_widget());
+}
+
+void GlaxnimateWindow::Private::switch_tool_action(QAction* action)
+{
+    switch_tool(action->data().value<tools::Tool*>());
 }

@@ -1,4 +1,7 @@
 #include "document_scene.hpp"
+
+#include <unordered_set>
+
 #include "model/graphics/document_node_graphics_item.hpp"
 
 class model::graphics::DocumentScene::Private
@@ -7,9 +10,16 @@ public:
     static constexpr int editor_z = 1000;
     static constexpr int data_key_ptr = 0;
 
+    using EditorMap = std::unordered_map<DocumentNode*, std::vector<std::unique_ptr<QGraphicsItem>>>;
+
+    EditorMap::iterator remove_selection(const EditorMap::iterator& it)
+    {
+        return node_to_editors.erase(it);
+    }
+
     Document* document = nullptr;
     std::unordered_map<DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
-    std::unordered_map<DocumentNode*, std::vector<std::unique_ptr<QGraphicsItem>>> node_to_editors;
+    EditorMap node_to_editors;
 
 };
 
@@ -129,7 +139,7 @@ void model::graphics::DocumentScene::remove_selection(model::DocumentNode* node)
     auto it = d->node_to_editors.find(node);
     if ( it != d->node_to_editors.end() )
     {
-        d->node_to_editors.erase(it);
+        d->remove_selection(it);
     }
 }
 
@@ -141,4 +151,27 @@ void model::graphics::DocumentScene::clear_selection()
 model::DocumentNode* model::graphics::DocumentScene::item_to_node(const QGraphicsItem* item) const
 {
     return item->data(Private::data_key_ptr).value<model::DocumentNode*>();
+}
+
+void model::graphics::DocumentScene::user_select(const std::vector<model::DocumentNode *>& to_select, bool clear_old_selection)
+{
+    std::vector<model::DocumentNode *> deselected;
+    std::unordered_set<model::DocumentNode*> sel(to_select.begin(), to_select.end());
+    if ( clear_old_selection )
+    {
+        for ( auto it = d->node_to_editors.begin(); it != d->node_to_editors.end(); )
+        {
+            if ( sel.count(it->first) )
+                ++it;
+            else
+                it = d->remove_selection(it);
+        }
+    }
+
+    for ( model::DocumentNode* n : to_select )
+    {
+        add_selection(n);
+    }
+
+    emit node_user_selected(to_select, deselected);
 }

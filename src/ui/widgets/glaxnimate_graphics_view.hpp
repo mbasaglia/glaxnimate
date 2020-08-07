@@ -4,6 +4,12 @@
 
 #include <memory>
 
+namespace tools {
+class Tool;
+} // namespace tools
+
+class GlaxnimateWindow;
+
 class GlaxnimateGraphicsView : public QGraphicsView
 {
     Q_OBJECT
@@ -23,6 +29,10 @@ public:
 
     /// Overload QGraphicsView::translate
     void translate(const QPointF& d) { QGraphicsView::translate(d.x(),d.y()); }
+
+    void set_active_tool(tools::Tool* tool);
+    void set_tool_target(GlaxnimateWindow* window);
+
 
 
 public slots:

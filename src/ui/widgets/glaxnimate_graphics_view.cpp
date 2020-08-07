@@ -1,7 +1,14 @@
 #include "glaxnimate_graphics_view.hpp"
+
 #include <cmath>
+
 #include <QMouseEvent>
 #include <QtMath>
+
+
+#include "tools/base.hpp"
+#include "model/graphics/document_scene.hpp"
+
 
 class GlaxnimateGraphicsView::Private
 {
@@ -25,6 +32,9 @@ public:
 
     qreal zoom_factor = 1;
     qreal rotation = 0;
+
+    tools::Tool* tool = nullptr;
+    GlaxnimateWindow* tool_target = nullptr;
 
 //     MouseMode mouse_mode = None;
 
@@ -66,6 +76,17 @@ public:
             anchor = vp.center();
         return view->mapToScene(anchor);
     }
+
+    tools::MouseEvent mouse_event(QMouseEvent* ev)
+    {
+        return {
+            ev,
+            view->mapToScene(ev->pos()),
+            view,
+            static_cast<model::graphics::DocumentScene*>(view->scene()),
+            tool_target
+        };
+    }
 };
 
 
@@ -84,7 +105,7 @@ GlaxnimateGraphicsView::~GlaxnimateGraphicsView() = default;
 
 void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
 {
-    QGraphicsView::mousePressEvent(event);
+//     QGraphicsView::mousePressEvent(event);
 
     QPoint mpos = event->pos();
     QPointF scene_pos = mapToScene(mpos);
@@ -120,7 +141,7 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
 
 void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
 {
-    QGraphicsView::mouseMoveEvent(event);
+//     QGraphicsView::mouseMoveEvent(event);
 
     QPoint mpos = event->pos();
     QPointF scene_pos = mapToScene(mpos);
@@ -164,7 +185,7 @@ void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
 
 void GlaxnimateGraphicsView::mouseReleaseEvent(QMouseEvent * event)
 {
-    QGraphicsView::mouseReleaseEvent(event);
+//     QGraphicsView::mouseReleaseEvent(event);
 //     QPoint mpos = event->pos();
 //     QPointF scene_pos = mapToScene(mpos);
 
@@ -297,4 +318,14 @@ void GlaxnimateGraphicsView::view_fit(const QRect& fit_target)
     {
         emit zoomed(1);
     }
+}
+
+void GlaxnimateGraphicsView::set_active_tool(tools::Tool* tool)
+{
+    d->tool = tool;
+}
+
+void GlaxnimateGraphicsView::set_tool_target(GlaxnimateWindow* window)
+{
+    d->tool_target = window;
 }

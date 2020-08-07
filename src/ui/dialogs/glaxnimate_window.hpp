@@ -58,7 +58,7 @@ private slots:
     void document_treeview_clicked(const QModelIndex& index);
     void document_treeview_current_changed(const QModelIndex& index);
     void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
-    void scene_selection_changed();
+    void scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
 
     void layer_new_menu();
     void layer_new_empty();
@@ -74,6 +74,7 @@ private slots:
     void web_preview();
     void save_frame_bmp();
     void save_frame_svg();
+    void tool_triggered(bool checked);
 
     void console_commit(const QString& text);
     void script_needs_running(const app::scripting::Plugin& plugin, const app::scripting::PluginScript& script, const QVariantMap& settings);

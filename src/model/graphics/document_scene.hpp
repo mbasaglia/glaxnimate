@@ -20,6 +20,8 @@ public:
     void remove_selection(DocumentNode* node);
     void clear_selection();
 
+    void user_select(const std::vector<model::DocumentNode*>& selected, bool clear_old_selection);
+
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const;
 
 public slots:
@@ -27,6 +29,7 @@ public slots:
 
 signals:
     void node_focused(model::DocumentNode* node);
+    void node_user_selected(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
 
 private slots:
     void connect_node(model::DocumentNode* node);
@@ -39,3 +42,5 @@ private:
 };
 
 } // namespace model::graphics
+
+Q_DECLARE_METATYPE(std::vector<model::DocumentNode*>)

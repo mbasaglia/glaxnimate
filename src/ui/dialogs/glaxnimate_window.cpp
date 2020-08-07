@@ -228,7 +228,13 @@ void GlaxnimateWindow::document_treeview_selection_changed(const QItemSelection 
     d->document_treeview_selection_changed(selected, deselected);
 }
 
-void GlaxnimateWindow::scene_selection_changed()
+void GlaxnimateWindow::scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected)
 {
-    d->scene_selection_changed();
+    d->scene_selection_changed(selected, deselected);
+}
+
+void GlaxnimateWindow::tool_triggered(bool checked)
+{
+    if ( checked )
+        d->switch_tool_action(static_cast<QAction*>(sender()));
 }

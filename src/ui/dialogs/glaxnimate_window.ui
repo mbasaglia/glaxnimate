@@ -56,15 +56,6 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
-    <addaction name="action_Select"/>
-    <addaction name="action_Edit"/>
-    <addaction name="separator"/>
-    <addaction name="action_Draw"/>
-    <addaction name="actionDraw_Freehand"/>
-    <addaction name="separator"/>
-    <addaction name="action_Rectangle"/>
-    <addaction name="action_Ellipse"/>
-    <addaction name="actionS_tar"/>
    </widget>
    <widget class="QMenu" name="menu_Layers">
     <property name="title">
@@ -898,7 +889,18 @@
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3"/>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QVBoxLayout" name="verticalLayout_9">
+     <item>
+      <widget class="QStackedWidget" name="tool_settings_widget">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="page"/>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="sizePolicy">

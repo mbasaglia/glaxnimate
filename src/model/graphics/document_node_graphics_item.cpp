@@ -5,7 +5,7 @@
 model::graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(DocumentNode* node, QGraphicsItem* parent)
     : QGraphicsObject(parent), node(node)
 {
-    setFlag(QGraphicsItem::ItemIsFocusable);
+//     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
 }
 
