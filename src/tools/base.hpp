@@ -13,6 +13,7 @@
 #include "app/settings/setting.hpp"
 #include "app/settings/widget_builder.hpp"
 
+
 namespace tools {
 
 struct MouseEvent
@@ -117,10 +118,13 @@ protected:
 
 
     QVariantMap settings_values;
+
 private:
     QAction* action = nullptr;
     ScalableButton* button = nullptr;
     QWidget* settings_widget = nullptr;
+
+    friend GlaxnimateGraphicsView;
 };
 
 

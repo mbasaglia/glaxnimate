@@ -134,6 +134,10 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
             d->transform_center_scene = scene_pos;
         }
     }
+    else if ( d->tool )
+    {
+        d->tool->mouse_press(d->mouse_event(event));
+    }
 
     d->move_center = mpos;
     d->move_center_scene = scene_pos;
@@ -174,6 +178,10 @@ void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
             }
         }
     }
+    else if ( d->tool )
+    {
+        d->tool->mouse_move(d->mouse_event(event));
+    }
 
 
     d->move_center = mpos;
@@ -194,10 +202,23 @@ void GlaxnimateGraphicsView::mouseReleaseEvent(QMouseEvent * event)
     {
         d->mouse_view_mode = Private::NoDrag;
     }
+    else if ( d->tool )
+    {
+        d->tool->mouse_release(d->mouse_event(event));
+    }
 
     d->update_mouse_cursor();
     update();
 }
+
+void GlaxnimateGraphicsView::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    if ( d->tool )
+    {
+        d->tool->mouse_double_click(d->mouse_event(event));
+    }
+}
+
 
 void GlaxnimateGraphicsView::wheelEvent(QWheelEvent* event)
 {
