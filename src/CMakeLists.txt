@@ -45,6 +45,7 @@ ui/widgets/keyframe_editor_widget.cpp
 ui/widgets/keyframe_editor_widget.ui
 ui/widgets/frame_controls_widget.cpp
 ui/widgets/frame_controls_widget.ui
+ui/widgets/flow_layout.cpp
 ui/dialogs/gw_impl_color.cpp
 ui/dialogs/gw_impl_document.cpp
 ui/dialogs/gw_impl_model.cpp

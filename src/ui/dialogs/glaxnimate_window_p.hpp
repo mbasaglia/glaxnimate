@@ -25,6 +25,7 @@
 class IoStatusDialog;
 class AboutDialog;
 class ViewTransformWidget;
+class FlowLayout;
 
 namespace tools {
 
@@ -66,6 +67,7 @@ public:
     IoStatusDialog* dialog_import_status;
     IoStatusDialog* dialog_export_status;
     AboutDialog* about_dialog;
+    FlowLayout* dock_tools_layout;
 
     // document
     void setup_document(const QString& filename);

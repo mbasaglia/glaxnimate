@@ -7,6 +7,7 @@
 #include "ui/dialogs/io_status_dialog.hpp"
 #include "ui/dialogs/about_dialog.hpp"
 #include "ui/widgets/view_transform_widget.hpp"
+#include "ui/widgets/flow_layout.hpp"
 
 void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
 {
@@ -43,8 +44,8 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     QActionGroup *tool_actions = new QActionGroup(parent);
     tool_actions->setExclusive(true);
 
-    int row = 0;
-    int column = 0;
+    dock_tools_layout = new FlowLayout();
+    ui.dock_tools_layout_parent->insertLayout(0, dock_tools_layout);
     for ( const auto& grp : tools::Registry::instance() )
     {
         for ( const auto& tool : grp.second )
@@ -56,7 +57,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
             ScalableButton *button = tool.second->get_button();
 
             button->resize(16, 16);
-            ui.dock_tools_layout->addWidget(button, row, column);
+            dock_tools_layout->addWidget(button);
 
             ui.tool_settings_widget->addWidget(tool.second->get_settings_widget());
 
@@ -67,16 +68,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
                 switch_tool(tool.second.get());
                 action->setChecked(true);
             }
-
-            column++;
-            if ( column >= tool_rows )
-            {
-                column = 0;
-                row++;
-            }
-
         }
-
         ui.menu_tools->addSeparator();
     }
 

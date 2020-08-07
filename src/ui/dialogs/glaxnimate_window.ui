@@ -858,24 +858,7 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dock_tools_contents">
-    <layout class="QVBoxLayout" name="verticalLayout_6">
-     <item>
-      <layout class="QGridLayout" name="dock_tools_layout"/>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    <layout class="QVBoxLayout" name="dock_tools_layout_parent"/>
    </widget>
   </widget>
   <widget class="QDockWidget" name="dock_tool_options">
