@@ -80,20 +80,24 @@ public:
     tools::MouseEvent mouse_event(QMouseEvent* ev)
     {
         return {
+            {
+                view,
+                static_cast<model::graphics::DocumentScene*>(view->scene()),
+                tool_target
+            },
             ev,
-            view->mapToScene(ev->pos()),
-            view,
-            static_cast<model::graphics::DocumentScene*>(view->scene()),
-            tool_target
+            view->mapToScene(ev->pos())
         };
     }
 
     tools::PaintEvent paint_event(QPainter* painter)
     {
         return {
-            view,
-            static_cast<model::graphics::DocumentScene*>(view->scene()),
-            tool_target,
+            {
+                view,
+                static_cast<model::graphics::DocumentScene*>(view->scene()),
+                tool_target
+            },
             painter
         };
     }

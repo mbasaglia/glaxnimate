@@ -16,25 +16,26 @@
 
 namespace tools {
 
-struct MouseEvent
+struct Event
 {
-    QMouseEvent* event;
-    QPointF scene_pos;
     GlaxnimateGraphicsView* view;
     model::graphics::DocumentScene* scene;
     GlaxnimateWindow* window;
+};
+
+struct MouseEvent : Event
+{
+    QMouseEvent* event;
+    QPointF scene_pos;
 
     Qt::KeyboardModifiers modifiers() const { return event->modifiers(); }
     Qt::MouseButton button() const { return event->button(); }
     Qt::MouseButtons buttons() const { return event->buttons(); }
+    const QPointF& pos() { return event->localPos(); }
 };
 
-struct PaintEvent
+struct PaintEvent : Event
 {
-    GlaxnimateGraphicsView* view;
-    model::graphics::DocumentScene* scene;
-    GlaxnimateWindow* window;
-
     QPainter* painter;
 };
 
