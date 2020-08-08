@@ -87,6 +87,16 @@ public:
             tool_target
         };
     }
+
+    tools::PaintEvent paint_event(QPainter* painter)
+    {
+        return {
+            view,
+            static_cast<model::graphics::DocumentScene*>(view->scene()),
+            tool_target,
+            painter
+        };
+    }
 };
 
 
@@ -287,19 +297,23 @@ void GlaxnimateGraphicsView::paintEvent(QPaintEvent *event)
 {
     QGraphicsView::paintEvent(event);
 
+    QPainter painter;
+    painter.begin(viewport());
     if ( d->mouse_view_mode == Private::Rotate || d->mouse_view_mode == Private::Scale )
     {
-        QPainter painter;
         QPoint p1 = d->move_center;
         QPoint p2 = d->transform_center;
-        painter.begin(viewport());
         painter.setRenderHints(renderHints());
         painter.setPen(QPen(QColor(150, 150, 150), 3));
         painter.drawLine(p1, p2);
         painter.setPen(QPen(QColor(50, 50, 50), 1));
         painter.drawLine(p1, p2);
-        painter.end();
     }
+    else if ( d->tool )
+    {
+        d->tool->paint(d->paint_event(&painter));
+    }
+    painter.end();
 }
 
 void GlaxnimateGraphicsView::do_rotate(qreal radians, const QPointF& scene_anchor)

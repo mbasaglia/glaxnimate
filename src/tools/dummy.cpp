@@ -15,6 +15,7 @@ private:
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
+    void paint(const PaintEvent& event) override { Q_UNUSED(event); }
 
     static Autoreg<SelectTool> autoreg;
 };
@@ -33,6 +34,7 @@ private:
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
+    void paint(const PaintEvent& event) override { Q_UNUSED(event); }
 
     static Autoreg<EditTool> autoreg;
 };
@@ -51,6 +53,7 @@ private:
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
+    void paint(const PaintEvent& event) override { Q_UNUSED(event); }
 
     static Autoreg<DrawTool> autoreg;
 };
@@ -69,6 +72,7 @@ private:
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
+    void paint(const PaintEvent& event) override { Q_UNUSED(event); }
 
     static Autoreg<FreehandTool> autoreg;
 };
@@ -87,6 +91,7 @@ private:
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
+    void paint(const PaintEvent& event) override { Q_UNUSED(event); }
 
     static Autoreg<RectangleTool> autoreg;
 };
@@ -105,6 +110,7 @@ private:
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
+    void paint(const PaintEvent& event) override { Q_UNUSED(event); }
 
     static Autoreg<EllipseTool> autoreg;
 };
@@ -123,6 +129,7 @@ private:
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
+    void paint(const PaintEvent& event) override { Q_UNUSED(event); }
 
     static Autoreg<StarTool> autoreg;
 };

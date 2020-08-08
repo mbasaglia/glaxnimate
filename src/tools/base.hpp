@@ -29,6 +29,15 @@ struct MouseEvent
     Qt::MouseButtons buttons() const { return event->buttons(); }
 };
 
+struct PaintEvent
+{
+    GlaxnimateGraphicsView* view;
+    model::graphics::DocumentScene* scene;
+    GlaxnimateWindow* window;
+
+    QPainter* painter;
+};
+
 class Tool
 {
     Q_GADGET
@@ -105,6 +114,7 @@ protected:
     virtual void mouse_move(const MouseEvent& event) = 0;
     virtual void mouse_release(const MouseEvent& event) = 0;
     virtual void mouse_double_click(const MouseEvent& event) = 0;
+    virtual void paint(const PaintEvent& event) = 0;
 
     virtual QWidget* on_create_widget()
     {
