@@ -20,6 +20,11 @@ public:
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
+    DocumentNode* node() const
+    {
+        return node_;
+    }
+
 public slots:
     void set_visible(bool v)
     {
@@ -36,7 +41,7 @@ protected:
     }*/
 
 private:
-    DocumentNode* node;
+    DocumentNode* node_;
 };
 
 } // namespace model::graphics

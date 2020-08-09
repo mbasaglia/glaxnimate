@@ -175,3 +175,14 @@ void model::graphics::DocumentScene::user_select(const std::vector<model::Docume
 
     emit node_user_selected(to_select, deselected);
 }
+
+std::vector<model::graphics::DocumentNodeGraphicsItem*> model::graphics::DocumentScene::nodes(const QPointF& point, const QTransform& device_transform) const
+{
+    std::vector<DocumentNodeGraphicsItem*> nodes;
+    for ( auto item : items(point, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform) )
+    {
+        if ( item_to_node(item) )
+            nodes.push_back(static_cast<DocumentNodeGraphicsItem*>(item));
+    }
+    return nodes;
+}

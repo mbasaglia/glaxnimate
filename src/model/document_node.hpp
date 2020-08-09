@@ -140,6 +140,8 @@ public:
 
     bool docnode_visible() const { return visible_; }
     bool docnode_locked() const { return locked_; }
+    bool docnode_selectable() const;
+    bool docnode_visible_recursive() const;
 
     bool docnode_locked_by_ancestor() const;
 

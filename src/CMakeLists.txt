@@ -30,6 +30,7 @@ model/animation/animatable.cpp
 
 tools/base.cpp
 tools/dummy.cpp
+tools/select.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui

@@ -135,3 +135,23 @@ std::vector<std::unique_ptr<QGraphicsItem> > model::DocumentNode::docnode_make_g
 {
     return {};
 }
+
+bool model::DocumentNode::docnode_selectable() const
+{
+    if ( !visible_ || locked_ )
+        return false;
+    auto p = docnode_parent();
+    if ( p )
+        return p->docnode_selectable();
+    return true;
+}
+
+bool model::DocumentNode::docnode_visible_recursive() const
+{
+    if ( !visible_ )
+        return false;
+    auto p = docnode_parent();
+    if ( p )
+        return p->docnode_selectable();
+    return true;
+}

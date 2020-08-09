@@ -24,6 +24,8 @@ public:
 
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const;
 
+    std::vector<DocumentNodeGraphicsItem*> nodes(const QPointF& point, const QTransform& device_transform) const;
+
 public slots:
     void focus_node(model::DocumentNode* node);
 

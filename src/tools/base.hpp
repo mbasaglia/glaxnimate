@@ -7,6 +7,7 @@
 #include <QAction>
 
 #include "model/graphics/document_scene.hpp"
+#include "model/graphics/document_node_graphics_item.hpp"
 #include "ui/widgets/glaxnimate_graphics_view.hpp"
 #include "ui/widgets/scalable_button.hpp"
 #include "ui/dialogs/glaxnimate_window.hpp"
@@ -38,6 +39,10 @@ struct PaintEvent : Event
 {
     QPainter* painter;
 };
+
+
+
+using Priority = int;
 
 class Tool
 {
@@ -130,6 +135,8 @@ protected:
 
     QVariantMap settings_values;
 
+    static constexpr Priority max_priority = std::numeric_limits<Priority>::min();
+
 private:
     QAction* action = nullptr;
     ScalableButton* button = nullptr;
@@ -149,8 +156,6 @@ public:
         Shape,
         User
     };
-
-    using Priority = int;
 
     using container = std::map<int, std::multimap<Priority, std::unique_ptr<Tool>>>;
     using iterator = container::const_iterator;
@@ -184,7 +189,7 @@ template<class T>
 class Autoreg
 {
 public:
-    Autoreg(int group, Registry::Priority priority)
+    Autoreg(int group, Priority priority)
     {
         Registry::instance().register_tool(group, priority, std::make_unique<T>());
     }

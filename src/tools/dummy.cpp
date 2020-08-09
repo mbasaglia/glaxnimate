@@ -2,24 +2,6 @@
 
 namespace tools {
 
-class SelectTool : public Tool
-{
-public:
-    QIcon icon() const override { return QIcon::fromTheme("edit-select"); }
-    QString name() const override { return QObject::tr("Select"); }
-    QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F1"), QKeySequence::PortableText); }
-    app::settings::SettingList settings() const override { return {}; }
-
-private:
-    void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
-    void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
-    void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
-    void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
-    void paint(const PaintEvent& event) override { Q_UNUSED(event); }
-
-    static Autoreg<SelectTool> autoreg;
-};
-
 
 class EditTool : public Tool
 {
@@ -137,10 +119,6 @@ private:
 
 } // namespace tools
 
-
-static auto max_priority = std::numeric_limits<tools::Registry::Priority>::min();
-
-tools::Autoreg<tools::SelectTool> tools::SelectTool::autoreg{tools::Registry::Core, max_priority};
 tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
 
 tools::Autoreg<tools::DrawTool> tools::DrawTool::autoreg{tools::Registry::Draw, max_priority};

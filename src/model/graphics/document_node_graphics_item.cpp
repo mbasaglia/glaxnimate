@@ -3,7 +3,7 @@
 #include "model/document.hpp"
 
 model::graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(DocumentNode* node, QGraphicsItem* parent)
-    : QGraphicsObject(parent), node(node)
+    : QGraphicsObject(parent), node_(node)
 {
 //     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -11,10 +11,10 @@ model::graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(DocumentNode
 
 QRectF model::graphics::DocumentNodeGraphicsItem::boundingRect() const
 {
-    return node->local_bounding_rect(node->document()->current_time());
+    return node_->local_bounding_rect(node_->document()->current_time());
 }
 
 void model::graphics::DocumentNodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    node->paint(painter, node->document()->current_time(), false);
+    node_->paint(painter, node_->document()->current_time(), false);
 }
