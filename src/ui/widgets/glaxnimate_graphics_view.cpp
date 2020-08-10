@@ -39,8 +39,12 @@ public:
 //     MouseMode mouse_mode = None;
 
     MouseViewMode mouse_view_mode = NoDrag;
-    QPoint move_center;
-    QPointF move_center_scene;
+    QPoint move_last;
+    QPoint move_last_screen;
+    QPointF move_last_scene;
+    Qt::MouseButton press_button;
+    QPoint move_press_screen;
+    QPointF move_press_scene;
 
     QPoint transform_center;
     QPointF transform_center_scene;
@@ -86,7 +90,12 @@ public:
                 tool_target
             },
             ev,
-            view->mapToScene(ev->pos())
+            view->mapToScene(ev->pos()),
+            press_button,
+            move_press_scene,
+            move_press_screen,
+            move_last_scene,
+            move_last_screen,
         };
     }
 
@@ -124,6 +133,13 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
     QPoint mpos = event->pos();
     QPointF scene_pos = mapToScene(mpos);
 
+    d->press_button = event->button();
+    d->move_press_scene = scene_pos;
+    d->move_press_screen = event->screenPos().toPoint();
+    d->move_last = mpos;
+    d->move_last_scene = scene_pos;
+    d->move_last_screen = event->screenPos().toPoint();
+    
     if ( event->button() == Qt::MiddleButton )
     {
         if ( event->modifiers() & Qt::ControlModifier )
@@ -153,8 +169,6 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
         d->tool->mouse_press(d->mouse_event(event));
     }
 
-    d->move_center = mpos;
-    d->move_center_scene = scene_pos;
 }
 
 void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
@@ -186,7 +200,7 @@ void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
             if ( len > 4 )
             {
                 qreal ang = std::atan2(delta.y(), delta.x());
-                QPointF deltap = d->move_center - d->transform_center;
+                QPointF deltap = d->move_last - d->transform_center;
                 qreal angp = std::atan2(deltap.y(), deltap.x());
                 do_rotate(ang-angp, d->transform_center_scene);
             }
@@ -198,8 +212,9 @@ void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
     }
 
 
-    d->move_center = mpos;
-    d->move_center_scene = scene_pos;
+    d->move_last = mpos;
+    d->move_last_scene = scene_pos;
+    d->move_last_screen = event->screenPos().toPoint();
     scene()->invalidate();
 }
 
@@ -305,7 +320,7 @@ void GlaxnimateGraphicsView::paintEvent(QPaintEvent *event)
     painter.begin(viewport());
     if ( d->mouse_view_mode == Private::Rotate || d->mouse_view_mode == Private::Scale )
     {
-        QPoint p1 = d->move_center;
+        QPoint p1 = d->move_last;
         QPoint p2 = d->transform_center;
         painter.setRenderHints(renderHints());
         painter.setPen(QPen(QColor(150, 150, 150), 3));

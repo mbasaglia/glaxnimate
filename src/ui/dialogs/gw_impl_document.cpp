@@ -289,7 +289,7 @@ void GlaxnimateWindow::Private::save_frame_bmp()
     image.fill(Qt::transparent);
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);
-    current_document->animation()->paint(&painter, frame, true);
+    current_document->animation()->paint(&painter, frame, model::DocumentNode::Recursive);
     if ( !image.save(fd.selectedFiles()[0]) )
         show_warning(tr("Render Frame"), tr("Could not save image"));
 }
@@ -322,5 +322,5 @@ void GlaxnimateWindow::Private::save_frame_svg()
     image.setResolution(96);
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);
-    current_document->animation()->paint(&painter, frame, true);
+    current_document->animation()->paint(&painter, frame, model::DocumentNode::Recursive);
 }

@@ -115,13 +115,13 @@ bool model::DocumentNode::docnode_locked_by_ancestor() const
     return false;
 }
 
-void model::DocumentNode::paint(QPainter* painter, FrameTime time, bool recursive) const
+void model::DocumentNode::paint(QPainter* painter, FrameTime time, PaintMode mode) const
 {
     painter->save();
-    on_paint(painter, time);
-    if ( recursive )
+    on_paint(painter, time, mode);
+    if ( mode == Recursive )
         for ( const auto& c : docnode_children() )
-            c->paint(painter, time, true);
+            c->paint(painter, time, mode);
     painter->restore();
 }
 

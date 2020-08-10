@@ -18,6 +18,7 @@ public:
     explicit DocumentNodeGraphicsItem(DocumentNode* node, QGraphicsItem* parent = nullptr);
 
     QRectF boundingRect() const override;
+//     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
     DocumentNode* node() const
@@ -29,6 +30,17 @@ public slots:
     void set_visible(bool v)
     {
         setVisible(v);
+    }
+    
+    void shape_changed()
+    {
+        prepareGeometryChange();
+    }
+    
+    
+    void set_transform_matrix(const QTransform& t)
+    {
+        setTransform(t);
     }
 /*
 signals:

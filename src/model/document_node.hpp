@@ -91,6 +91,12 @@ private:
 
 
 public:
+    enum PaintMode
+    {
+        Transformed,    ///< Paint only this, apply transform
+        NoTransform,    ///< Paint only this, don't apply transform
+        Recursive       ///< Paint this and children, apply transform
+    };
 
     explicit DocumentNode(Document* document);
 
@@ -203,7 +209,7 @@ public:
 
     bool docnode_is_instance(const QString& type_name) const;
 
-    void paint(QPainter* painter, FrameTime time, bool recursive) const;
+    void paint(QPainter* painter, FrameTime time, PaintMode mode) const;
 
 private:
     template<class T=DocumentNode>
@@ -226,7 +232,7 @@ protected:
     void docnode_on_update_group(bool force = false);
     void on_property_changed(const QString& name, const QVariant&) override;
     bool docnode_valid_color() const;
-    virtual void on_paint(QPainter*, FrameTime) const {}
+    virtual void on_paint(QPainter*, FrameTime, PaintMode) const {}
 
 
 public slots:

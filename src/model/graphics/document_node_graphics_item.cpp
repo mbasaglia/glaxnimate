@@ -6,7 +6,9 @@ model::graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(DocumentNode
     : QGraphicsObject(parent), node_(node)
 {
 //     setFlag(QGraphicsItem::ItemIsFocusable);
-    setFlag(QGraphicsItem::ItemIsSelectable);
+//     setFlag(QGraphicsItem::ItemIsSelectable);
+    /// \todo Setting
+    setBoundingRegionGranularity(0.25);
 }
 
 QRectF model::graphics::DocumentNodeGraphicsItem::boundingRect() const
@@ -16,5 +18,5 @@ QRectF model::graphics::DocumentNodeGraphicsItem::boundingRect() const
 
 void model::graphics::DocumentNodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    node_->paint(painter, node_->document()->current_time(), false);
+    node_->paint(painter, node_->document()->current_time(), DocumentNode::NoTransform);
 }

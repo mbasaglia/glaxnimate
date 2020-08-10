@@ -100,7 +100,9 @@ public:
     DocumentNode* docnode_group_parent() const override;
     std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const override;
     bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const override;
+    graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override;
     std::vector<std::unique_ptr<QGraphicsItem>> docnode_make_graphics_editor() override;
+    
 
     QRectF local_bounding_rect(FrameTime t) const override;
 //     QRectF bounding_rect(FrameTime t) const override;
@@ -128,7 +130,7 @@ signals:
 
 protected:
     void on_property_changed(const QString& name, const QVariant&) override;
-    void on_paint(QPainter*, FrameTime) const override;
+    void on_paint(QPainter*, FrameTime, PaintMode) const override;
     virtual void on_paint_untransformed(QPainter*, FrameTime) const {}
 
 private slots:

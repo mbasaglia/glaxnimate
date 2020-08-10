@@ -104,9 +104,10 @@ void model::graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGra
     painter->restore();
 }
 
-void model::graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent*)
+void model::graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setFocus(Qt::MouseFocusReason);
+    event->accept();
 }
 
 void model::graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -117,14 +118,16 @@ void model::graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event
     d->apply_constraints(oldp, p);
     if ( !d->dont_move )
         setPos(p);
+    event->accept();
     emit dragged(p);
     emit dragged_x(p.x());
     emit dragged_y(p.y());
 
 }
 
-void model::graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent*)
+void model::graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     clearFocus();
+    event->accept();
     emit drag_finished();
 }

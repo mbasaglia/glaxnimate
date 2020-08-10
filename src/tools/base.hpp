@@ -28,11 +28,19 @@ struct MouseEvent : Event
 {
     QMouseEvent* event;
     QPointF scene_pos;
+    
+    Qt::MouseButton press_button;
+    QPointF press_scene_pos;
+    QPoint press_screen_pos;
+    QPointF last_scene_pos;
+    QPoint last_screen_pos;
 
     Qt::KeyboardModifiers modifiers() const { return event->modifiers(); }
     Qt::MouseButton button() const { return event->button(); }
     Qt::MouseButtons buttons() const { return event->buttons(); }
     const QPointF& pos() { return event->localPos(); }
+    
+    void forward_to_scene() const;
 };
 
 struct PaintEvent : Event
