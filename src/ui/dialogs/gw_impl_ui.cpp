@@ -284,6 +284,14 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
             QItemSelectionModel::Select|QItemSelectionModel::Rows
         );
     }
+    
+    if ( !selected.empty() )
+    {
+        ui.view_document_node->selectionModel()->setCurrentIndex(
+            document_node_model.node_index(selected.back()),
+            QItemSelectionModel::NoUpdate
+        );
+    }
 }
 
 void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
