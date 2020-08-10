@@ -257,12 +257,14 @@ void GlaxnimateWindow::Private::shutdown()
 void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
 {
     for ( const auto& index : selected.indexes() )
-        if ( auto node = document_node_model.node(index) )
-            scene.add_selection(node);
+        if ( index.column() == 0 )
+            if ( auto node = document_node_model.node(index) ) 
+                scene.add_selection(node);
 
     for ( const auto& index : deselected.indexes() )
-        if ( auto node = document_node_model.node(index) )
-            scene.remove_selection(node);
+        if ( index.column() == 0 )
+            if ( auto node = document_node_model.node(index) ) 
+                scene.remove_selection(node);
 }
 
 void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected)
@@ -271,7 +273,7 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
     {
         ui.view_document_node->selectionModel()->select(
             document_node_model.node_index(node),
-            QItemSelectionModel::Deselect
+            QItemSelectionModel::Deselect|QItemSelectionModel::Rows
         );
     }
 
@@ -279,7 +281,7 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
     {
         ui.view_document_node->selectionModel()->select(
             document_node_model.node_index(node),
-            QItemSelectionModel::SelectCurrent
+            QItemSelectionModel::Select|QItemSelectionModel::Rows
         );
     }
 }

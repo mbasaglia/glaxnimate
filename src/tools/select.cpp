@@ -53,7 +53,11 @@ private:
                 }   
             }
             
-            event.scene->user_select(selection, !(event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier)) );
+            auto mode = model::graphics::DocumentScene::Replace;
+            if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
+                mode = model::graphics::DocumentScene::Toggle;
+            
+            event.scene->user_select(selection, mode );
         }
     }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }

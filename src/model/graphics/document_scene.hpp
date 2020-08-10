@@ -10,6 +10,13 @@ class DocumentScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
+    enum SelectFlags
+    {
+        Replace = 0x00, ///< Replace current selection
+        Append  = 0x01, ///< Append to current selection
+        Toggle  = 0x02, ///< Toggles from selection
+    };
+    
     DocumentScene();
     ~DocumentScene();
 
@@ -18,25 +25,21 @@ public:
 
     void add_selection(DocumentNode* node);
     void remove_selection(DocumentNode* node);
+    void toggle_selection(DocumentNode* node);
     void clear_selection();
 
-    void user_select(const std::vector<model::DocumentNode*>& selected, bool clear_old_selection);
+    void user_select(const std::vector<model::DocumentNode*>& selected, SelectFlags flags);
 
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const;
 
     std::vector<DocumentNodeGraphicsItem*> nodes(const QPointF& point, const QTransform& device_transform) const;
 
-public slots:
-    void focus_node(model::DocumentNode* node);
-
 signals:
-    void node_focused(model::DocumentNode* node);
     void node_user_selected(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
 
 private slots:
     void connect_node(model::DocumentNode* node);
     void disconnect_node(model::DocumentNode* node);
-    void on_focused(DocumentNodeGraphicsItem* item);
 
 private:
     class Private;

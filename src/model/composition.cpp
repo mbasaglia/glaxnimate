@@ -5,7 +5,7 @@ model::Composition::Composition(model::Document* document)
     : AnimationContainer(document)
 {
     connect(this, &Composition::layer_added, this, &DocumentNode::docnode_child_add_end);
-    connect(this, &Composition::layer_removed, this, &DocumentNode::docnode_child_add_end);
+    connect(this, &Composition::layer_removed, this, &DocumentNode::docnode_child_remove_end);
 }
 
 

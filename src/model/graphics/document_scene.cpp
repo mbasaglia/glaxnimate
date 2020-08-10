@@ -98,22 +98,6 @@ void model::graphics::DocumentScene::disconnect_node ( model::DocumentNode* node
     }
 }
 
-void model::graphics::DocumentScene::focus_node ( model::DocumentNode* node )
-{
-    DocumentNodeGraphicsItem* item = d->node_to_item[node];
-    if ( !item || item == item->focusItem() )
-        return;
-
-    item->setFocus();
-}
-
-void model::graphics::DocumentScene::on_focused ( model::graphics::DocumentNodeGraphicsItem* item )
-{
-    if ( auto node = item->data(0).value<DocumentNode*>() )
-        emit node_focused(node);
-}
-
-
 void model::graphics::DocumentScene::add_selection(model::DocumentNode* node)
 {
     auto it = d->node_to_item.find(node);
@@ -143,6 +127,15 @@ void model::graphics::DocumentScene::remove_selection(model::DocumentNode* node)
     }
 }
 
+void model::graphics::DocumentScene::toggle_selection(model::DocumentNode* node)
+{
+    if ( d->node_to_editors.count(node) )
+        remove_selection(node);
+    else
+        add_selection(node);
+}
+
+
 void model::graphics::DocumentScene::clear_selection()
 {
     d->node_to_editors.clear();
@@ -153,27 +146,54 @@ model::DocumentNode* model::graphics::DocumentScene::item_to_node(const QGraphic
     return item->data(Private::data_key_ptr).value<model::DocumentNode*>();
 }
 
-void model::graphics::DocumentScene::user_select(const std::vector<model::DocumentNode *>& to_select, bool clear_old_selection)
+void model::graphics::DocumentScene::user_select(const std::vector<model::DocumentNode *>& nodes, SelectFlags flags)
 {
     std::vector<model::DocumentNode *> deselected;
-    std::unordered_set<model::DocumentNode*> sel(to_select.begin(), to_select.end());
-    if ( clear_old_selection )
+    std::unordered_set<model::DocumentNode*> sel(nodes.begin(), nodes.end());
+    if ( flags == Replace )
     {
         for ( auto it = d->node_to_editors.begin(); it != d->node_to_editors.end(); )
         {
             if ( sel.count(it->first) )
+            {
                 ++it;
+            }
             else
+            {
+                deselected.push_back(it->first);
                 it = d->remove_selection(it);
+            }
         }
     }
 
-    for ( model::DocumentNode* n : to_select )
+    if ( flags == Replace || flags == Append )
     {
-        add_selection(n);
+        for ( model::DocumentNode* n : nodes )
+            add_selection(n);
+        emit node_user_selected(nodes, deselected);
+    }
+    else if ( flags )
+    {
+        std::vector<model::DocumentNode *> selected;
+        
+        for ( model::DocumentNode* node : nodes )
+        {
+            auto it = d->node_to_editors.find(node);
+            if ( it == d->node_to_editors.end() )
+            {
+                selected.push_back(node);
+                add_selection(node);
+            }
+            else
+            {
+                deselected.push_back(node);
+                d->remove_selection(it);
+            }
+        }
+        
+        emit node_user_selected(selected, deselected);
     }
 
-    emit node_user_selected(to_select, deselected);
 }
 
 std::vector<model::graphics::DocumentNodeGraphicsItem*> model::graphics::DocumentScene::nodes(const QPointF& point, const QTransform& device_transform) const
