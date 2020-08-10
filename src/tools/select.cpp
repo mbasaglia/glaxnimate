@@ -91,7 +91,7 @@ private:
             
             complex_select(event, event.scene->nodes(draw_path, event.view->viewportTransform()));
             draw_path = {};
-            event.view->update();
+            event.view->viewport()->update();
         }
         else if ( drag_mode == RubberBand )
         {
@@ -100,7 +100,7 @@ private:
             complex_select(event, event.scene->nodes(poly, event.view->viewportTransform()));
             
             drag_mode = None;
-            event.view->update();
+            event.view->viewport()->update();
         }
         else if ( drag_mode == Click )
         {
@@ -154,7 +154,6 @@ private:
     QPainterPath draw_path;
     QPointF rubber_p1;
     QPointF rubber_p2;
-    
     static Autoreg<SelectTool> autoreg;
 };
 
