@@ -72,7 +72,7 @@ private:
         
         for ( auto item : items )
         {
-            if ( item->node()->docnode_selectable() )
+            if ( item->node()->docnode_selectable() && !item->node()->docnode_selection_container() )
                 selection.push_back(item->node());
         }
         
@@ -108,7 +108,7 @@ private:
             
             for ( auto item : event.scene->nodes(event.scene_pos, event.view->viewportTransform()) )
             {
-                if ( item->node()->docnode_selectable() )
+                if ( item->node()->docnode_selectable() && !item->node()->docnode_selection_container() )
                 {
                     selection.push_back(item->node());
                     break;

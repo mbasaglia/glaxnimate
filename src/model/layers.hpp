@@ -225,6 +225,8 @@ public:
     }
 
     QString type_name_human() const override { return tr("Solid Color Layer"); }
+    
+    bool docnode_selection_container() const override { return false; }
 
 protected:
     void on_paint_untransformed(QPainter*, FrameTime) const override;

@@ -113,7 +113,14 @@ public:
     virtual int docnode_group_child_count() const { return docnode_child_count(); }
     virtual DocumentNode* docnode_group_child(int index) const { return docnode_child(index); }
 
-
+    /**
+     * \brief If \b true, the node is mainly used to contain other nodes so it can be ignored on selections
+     * 
+     * This does not affect docnode_selectable() for this or its ancestors
+     */
+    virtual bool docnode_selection_container() const { return true; }
+    
+    /// \todo use callbacks instead of these virtual methods
     virtual std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const { return {}; }
     virtual bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const
     {
