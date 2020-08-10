@@ -13,6 +13,7 @@ public:
 private:
     enum DragMode
     {
+        None,
         Click,
         RubberBand,
         ForwardEvents,
@@ -36,9 +37,11 @@ private:
             {
                 drag_mode = ForwardEvents;
                 event.forward_to_scene();
-                break;
+                return;
             }
         }
+        
+        rubber_p1 = event.event->localPos();
     }
     void mouse_move(const MouseEvent& event) override
     {
@@ -50,6 +53,30 @@ private:
         {
             draw_path.lineTo(event.scene_pos);
         }
+        else if ( drag_mode == Click || drag_mode == RubberBand )
+        {
+            rubber_p2 = event.event->localPos();
+            if ( drag_mode == Click && (rubber_p1 - rubber_p2).manhattanLength() > 4 )
+                drag_mode = RubberBand;
+        }
+    }
+    
+    void complex_select(const MouseEvent& event, const std::vector<model::graphics::DocumentNodeGraphicsItem*>& items)
+    {
+        
+        auto mode = model::graphics::DocumentScene::Replace;
+        if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
+            mode = model::graphics::DocumentScene::Append;
+        
+        std::vector<model::DocumentNode*> selection;
+        
+        for ( auto item : items )
+        {
+            if ( item->node()->docnode_selectable() )
+                selection.push_back(item->node());
+        }
+        
+        event.scene->user_select(selection, mode);
     }
     
     void mouse_release(const MouseEvent& event) override
@@ -62,23 +89,20 @@ private:
         {
             draw_path.lineTo(event.scene_pos);
             
-            auto mode = model::graphics::DocumentScene::Replace;
-            if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
-                mode = model::graphics::DocumentScene::Append;
-         
-            std::vector<model::DocumentNode*> selection;
-            
-            for ( auto item : event.scene->nodes(draw_path, event.view->viewportTransform()) )
-            {
-                if ( item->node()->docnode_selectable() )
-                    selection.push_back(item->node());
-            }
-            
-            event.scene->user_select(selection, mode);
+            complex_select(event, event.scene->nodes(draw_path, event.view->viewportTransform()));
             draw_path = {};
             event.view->update();
         }
-        else
+        else if ( drag_mode == RubberBand )
+        {
+            rubber_p2 = event.event->localPos();
+            auto poly = event.view->mapToScene(QRect(rubber_p1.toPoint(), rubber_p2.toPoint()).normalized());
+            complex_select(event, event.scene->nodes(poly, event.view->viewportTransform()));
+            
+            drag_mode = None;
+            event.view->update();
+        }
+        else if ( drag_mode == Click )
         {
             std::vector<model::DocumentNode*> selection;
             
@@ -98,7 +122,7 @@ private:
             event.scene->user_select(selection, mode);
         }
         
-        drag_mode = Click;
+        drag_mode = None;
     }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     
@@ -108,15 +132,28 @@ private:
         {
             event.painter->setTransform(event.view->viewportTransform());
             event.painter->setBrush(Qt::transparent);
-            QPen p(QColor(0xa0, 0x30, 0x30), 1);
-            p.setCosmetic(true);
-            event.painter->setPen(p);
+            QPen pen(event.view->palette().color(QPalette::Highlight), 2);
+            pen.setCosmetic(true);
+            event.painter->setPen(pen);
             event.painter->drawPath(draw_path);
+        }
+        else if ( drag_mode == RubberBand )
+        {
+            event.painter->setBrush(Qt::transparent);
+            QColor select_color = event.view->palette().color(QPalette::Highlight);
+            QPen pen(select_color, 1);
+            pen.setCosmetic(true);
+            event.painter->setPen(pen);
+            select_color.setAlpha(128);
+            event.painter->setBrush(select_color);
+            event.painter->drawRect(QRectF(rubber_p1, rubber_p2));
         }
     }
 
     DragMode drag_mode;
     QPainterPath draw_path;
+    QPointF rubber_p1;
+    QPointF rubber_p2;
     
     static Autoreg<SelectTool> autoreg;
 };

@@ -224,3 +224,8 @@ std::vector<model::graphics::DocumentNodeGraphicsItem*> model::graphics::Documen
 {
     return d->items_to_nodes(items(path, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
 }
+
+std::vector<model::graphics::DocumentNodeGraphicsItem*> model::graphics::DocumentScene::nodes(const QPolygonF& path, const QTransform& device_transform) const
+{
+    return d->items_to_nodes(items(path, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
+}
