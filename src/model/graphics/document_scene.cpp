@@ -16,6 +16,25 @@ public:
     {
         return node_to_editors.erase(it);
     }
+    
+    
+    model::DocumentNode* item_to_node(const QGraphicsItem* item) const
+    {
+        return item->data(data_key_ptr).value<model::DocumentNode*>();
+    }
+
+    
+    std::vector<model::graphics::DocumentNodeGraphicsItem*> items_to_nodes(const QList<QGraphicsItem*>& items) const
+    {
+        std::vector<DocumentNodeGraphicsItem*> nodes;
+        for ( auto item : items )
+        {
+            if ( item_to_node(item) )
+                nodes.push_back(static_cast<DocumentNodeGraphicsItem*>(item));
+        }
+        return nodes;
+    }
+
 
     Document* document = nullptr;
     std::unordered_map<DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
@@ -143,7 +162,7 @@ void model::graphics::DocumentScene::clear_selection()
 
 model::DocumentNode* model::graphics::DocumentScene::item_to_node(const QGraphicsItem* item) const
 {
-    return item->data(Private::data_key_ptr).value<model::DocumentNode*>();
+    return d->item_to_node(item);
 }
 
 void model::graphics::DocumentScene::user_select(const std::vector<model::DocumentNode *>& nodes, SelectFlags flags)
@@ -198,11 +217,10 @@ void model::graphics::DocumentScene::user_select(const std::vector<model::Docume
 
 std::vector<model::graphics::DocumentNodeGraphicsItem*> model::graphics::DocumentScene::nodes(const QPointF& point, const QTransform& device_transform) const
 {
-    std::vector<DocumentNodeGraphicsItem*> nodes;
-    for ( auto item : items(point, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform) )
-    {
-        if ( item_to_node(item) )
-            nodes.push_back(static_cast<DocumentNodeGraphicsItem*>(item));
-    }
-    return nodes;
+    return d->items_to_nodes(items(point, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
+}
+
+std::vector<model::graphics::DocumentNodeGraphicsItem*> model::graphics::DocumentScene::nodes(const QPainterPath& path, const QTransform& device_transform) const
+{
+    return d->items_to_nodes(items(path, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
 }

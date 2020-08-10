@@ -318,11 +318,12 @@ void GlaxnimateGraphicsView::paintEvent(QPaintEvent *event)
 
     QPainter painter;
     painter.begin(viewport());
+    painter.setRenderHints(renderHints());
+    
     if ( d->mouse_view_mode == Private::Rotate || d->mouse_view_mode == Private::Scale )
     {
         QPoint p1 = d->move_last;
         QPoint p2 = d->transform_center;
-        painter.setRenderHints(renderHints());
         painter.setPen(QPen(QColor(150, 150, 150), 3));
         painter.drawLine(p1, p2);
         painter.setPen(QPen(QColor(50, 50, 50), 1));
