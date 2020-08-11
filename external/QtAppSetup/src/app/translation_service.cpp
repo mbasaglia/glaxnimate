@@ -106,7 +106,7 @@ void app::TranslationService::change_lang_code(QString code)
                 break;
             }
         }
-        if ( not found )
+        if ( !found )
         {
             /*qWarning() << tr("Warning:") <<
                           tr("There is no translation for language %1 (%2)")

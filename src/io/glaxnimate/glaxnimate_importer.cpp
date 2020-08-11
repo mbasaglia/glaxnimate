@@ -136,14 +136,14 @@ public:
 
         if ( target->traits().type == model::PropertyTraits::ObjectReference )
         {
-            QUuid uuid = QUuid::fromString(val.toString());
+            QUuid uuid(val.toString());
             if ( !uuid.isNull() )
                 unresolved_references[target] = uuid;
             return true;
         }
         else if ( target->traits().type == model::PropertyTraits::Uuid )
         {
-            QUuid uuid = QUuid::fromString(val.toString());
+            QUuid uuid(val.toString());
             if ( uuid.isNull() )
                 return false;
             return target->set_value(uuid);
