@@ -19,6 +19,7 @@ model/document_node.cpp
 model/layers.cpp
 model/object.cpp
 model/transform.cpp
+model/shape.cpp
 model/item_models/document_node_model.cpp
 model/item_models/property_model.cpp
 model/graphics/handle.cpp

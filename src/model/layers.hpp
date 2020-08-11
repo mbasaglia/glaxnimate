@@ -6,6 +6,7 @@
 #include "property.hpp"
 #include "document_node.hpp"
 #include "transform.hpp"
+#include "shape.hpp"
 
 namespace model {
 
@@ -192,6 +193,11 @@ class ShapeLayer : public detail::BaseLayerProps<ShapeLayer>
 {
     Q_OBJECT
 
+    GLAXNIMATE_PROPERTY_LIST(ShapeElement, layers, 
+        &ShapeLayer::shape_added,
+        &ShapeLayer::shape_removed, 
+        &DocumentNode::docnode_child_add_begin,
+        &DocumentNode::docnode_child_remove_begin)
 public:
     // shapes
 
@@ -203,6 +209,10 @@ public:
     }
 
     QString type_name_human() const override { return tr("Shape Layer"); }
+
+signals:
+    void shape_added(ShapeElement* layer);
+    void shape_removed(ShapeElement* layer);
 };
 
 
