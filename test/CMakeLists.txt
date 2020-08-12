@@ -34,6 +34,7 @@ test_case(test_property
 ../src/model/graphics/transform_graphics_item.cpp
 ../src/model/animation/animatable.cpp
 ../src/model/animation/keyframe_transition.cpp
+../src/model/shape.cpp
 ../src/io/glaxnimate/glaxnimate_format.cpp
 ../src/io/glaxnimate/glaxnimate_importer.cpp
 ../src/io/base.cpp
