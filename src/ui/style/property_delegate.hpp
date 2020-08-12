@@ -4,6 +4,7 @@
 #include <QApplication>
 #include "QtColorWidgets/ColorDelegate"
 #include "model/item_models/property_model.hpp"
+#include "ui/widgets/spin2d.hpp"
 
 class PropertyDelegate : public color_widgets::ColorDelegate
 {
@@ -31,14 +32,14 @@ protected:
         switch ( index.data().userType() )
         {
             case QMetaType::QPointF:
-                return make_editor_xy<QPointF>(index.data(), parent);
+                return new Spin2D(false, parent);
             case QMetaType::QVector2D:
-                return make_editor_xy<QVector2D>(index.data(), parent);
+                return new Spin2D(true, parent);
             case QMetaType::Float:
             case QMetaType::Double:
-                return make_spin(parent, index.data().toDouble(), "", false);
+                return new SmallerSpinBox(false, parent);
             case QMetaType::Int:
-                return make_spin_int(parent, index.data().toInt(), "");
+                return new SmallerSpinBoxInt(parent);
         }
 
         return color_widgets::ColorDelegate::createEditor(parent, option, index);
@@ -80,9 +81,9 @@ protected:
         switch ( index.data().userType() )
         {
             case QMetaType::QPointF:
-                return set_editor_data_xy<QPointF>(index.data(), editor);
+                return static_cast<Spin2D*>(editor)->set_value(index.data().value<QPointF>());
             case QMetaType::QVector2D:
-                return set_editor_data_xy<QVector2D>(index.data(), editor);
+                return static_cast<Spin2D*>(editor)->set_value(index.data().value<QVector2D>());
             case QMetaType::Float:
             case QMetaType::Double:
                 static_cast<QDoubleSpinBox*>(editor)->setValue(index.data().toDouble());
@@ -109,9 +110,11 @@ protected:
         switch ( index.data().userType() )
         {
             case QMetaType::QPointF:
-                return set_model_data_xy<QPointF>(model, index, editor);
+                model->setData(index, static_cast<Spin2D*>(editor)->value_point());
+                return;
             case QMetaType::QVector2D:
-                return set_model_data_xy<QVector2D>(model, index, editor);
+                model->setData(index, static_cast<Spin2D*>(editor)->value_vector());
+                return;
             case QMetaType::Float:
             case QMetaType::Double:
                 model->setData(index, static_cast<QDoubleSpinBox*>(editor)->value());
@@ -126,32 +129,34 @@ protected:
 
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
-
+        
+        QStyleOptionViewItem opt = option;
+        initStyleOption(&opt, index);
+        const QWidget* widget = option.widget;
+     
+        // Disable decoration
         if ( index.data(model::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
         {
-            // Disable decoration
-            QStyleOptionViewItem opt = option;
-            initStyleOption(&opt, index);
             opt.icon = QIcon();
             opt.features &= ~QStyleOptionViewItem::HasDecoration;
-            opt.showDecorationSelected = true;
-            const QWidget* widget = option.widget;
-            QStyle *style = widget ? widget->style() : QApplication::style();
-            QRect geom = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, widget);
-            const int delta = editor->minimumWidth() - geom.width();
-            if (delta > 0)
-            {
-                //we need to widen the geometry
-                if (editor->layoutDirection() == Qt::RightToLeft)
-                    geom.adjust(-delta, 0, 0, 0);
-                else
-                    geom.adjust(0, 0, delta, 0);
-            }
-            editor->setGeometry(geom);
-            return;
-        }
+        }   
+        opt.showDecorationSelected = true;
 
-        color_widgets::ColorDelegate::updateEditorGeometry(editor, option, index);
+        QStyle *style = widget ? widget->style() : QApplication::style();
+        QRect geom = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, widget);
+        const int delta = editor->minimumWidth() - geom.width();
+        if (delta > 0)
+        {
+            // we need to widen the geometry
+            if (editor->layoutDirection() == Qt::RightToLeft)
+                geom.adjust(-delta, 0, 0, 0);
+            else
+                geom.adjust(0, 0, delta, 0);
+        }
+        editor->setGeometry(geom);
+
+        return;
+        // color_widgets::ColorDelegate::updateEditorGeometry(editor, option, index);
     }
 
 private:
@@ -171,83 +176,4 @@ private:
         QStyle *style = widget ? widget->style() : QApplication::style();
         style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, widget);
     }
-
-    template<class T>
-    void set_model_data_xy(QAbstractItemModel * model, const QModelIndex & index, QWidget* wid) const
-    {
-        model->setData(index, QVariant::fromValue(T(
-            wid->findChild<QDoubleSpinBox*>("x")->value(),
-            wid->findChild<QDoubleSpinBox*>("y")->value()
-        )));
-    }
-
-    template<class T>
-    void set_editor_data_xy(const QVariant& data, QWidget* wid) const
-    {
-        T value = data.value<T>();
-        wid->findChild<QDoubleSpinBox*>("x")->setValue(value.x());
-        wid->findChild<QDoubleSpinBox*>("y")->setValue(value.y());
-    }
-
-    template<class T>
-    QWidget* make_editor_xy(const QVariant& data, QWidget* parent) const
-    {
-        T value = data.value<T>();
-        QWidget* wid = new QWidget(parent);
-        QHBoxLayout* lay = new QHBoxLayout(wid);
-        wid->setLayout(lay);
-        lay->addWidget(make_spin(wid, value.x(), "x", true));
-        lay->addWidget(make_spin(wid, value.y(), "y", true));
-        lay->setContentsMargins(0, 0, 0, 0);
-        return wid;
-    }
-
-    QDoubleSpinBox* make_spin(QWidget* parent, double value, const QString& name, bool adaptive) const
-    {
-        QDoubleSpinBox* box = new QDoubleSpinBox(parent);
-        box->setMinimum(-999'999.99);
-        box->setMaximum(+999'999.99);
-        box->setValue(value);
-        box->setDecimals(2);
-        box->setObjectName(name);
-        box->setMaximumWidth(get_spin_size(box));
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-        if ( adaptive )
-            box->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
-#endif
-        return box;
-    }
-
-    QSpinBox* make_spin_int(QWidget* parent, int value, const QString& name) const
-    {
-        QSpinBox* box = new QSpinBox(parent);
-        box->setMinimum(-999'999);
-        box->setMaximum(+999'999);
-        box->setValue(value);
-        box->setObjectName(name);
-        box->setMaximumWidth(get_spin_size(box));
-        return box;
-    }
-
-    int get_spin_size(QAbstractSpinBox* box) const
-    {
-        if ( spin_size == 0 )
-        {
-            const QFontMetrics fm(box->fontMetrics());
-            QString s = "999.99";
-            int w = qMax(0, fm.horizontalAdvance(s));
-            w += 2; // cursor blinking space
-
-            QStyleOptionSpinBox option;
-            option.initFrom(box);
-            QSize hint(w, box->height());
-            option.subControls = QStyle::SC_SpinBoxEditField | QStyle::SC_SpinBoxFrame | QStyle::SC_SpinBoxUp | QStyle::SC_SpinBoxDown;
-            option.frame = box->hasFrame();
-            spin_size = box->style()->sizeFromContents(QStyle::CT_SpinBox, &option, hint, box).expandedTo(QApplication::globalStrut()).width();
-        }
-
-        return spin_size;
-    }
-
-    mutable int spin_size = 0;
 };

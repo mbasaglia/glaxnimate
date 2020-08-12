@@ -39,6 +39,11 @@ ui/dialogs/io_status_dialog.cpp
 ui/dialogs/io_status_dialog.ui
 ui/dialogs/about_dialog.cpp
 ui/dialogs/about_dialog.ui
+ui/dialogs/gw_impl_color.cpp
+ui/dialogs/gw_impl_document.cpp
+ui/dialogs/gw_impl_model.cpp
+ui/dialogs/gw_impl_script.cpp
+ui/dialogs/gw_impl_ui.cpp
 ui/widgets/glaxnimate_graphics_view.cpp
 ui/widgets/view_transform_widget.cpp
 ui/widgets/view_transform_widget.ui
@@ -48,11 +53,7 @@ ui/widgets/keyframe_editor_widget.ui
 ui/widgets/frame_controls_widget.cpp
 ui/widgets/frame_controls_widget.ui
 ui/widgets/flow_layout.cpp
-ui/dialogs/gw_impl_color.cpp
-ui/dialogs/gw_impl_document.cpp
-ui/dialogs/gw_impl_model.cpp
-ui/dialogs/gw_impl_script.cpp
-ui/dialogs/gw_impl_ui.cpp
+ui/widgets/spin2d.cpp
 )
 
 if(${PYTHON_ENABLED})
