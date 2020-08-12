@@ -30,13 +30,13 @@ QColor model::DocumentNode::docnode_group_color() const
     return group_color.get();
 }
 
-void model::DocumentNode::on_property_changed(const QString& name, const QVariant&)
+void model::DocumentNode::on_property_changed(const BaseProperty* prop, const QVariant&)
 {
-    if ( name == "name" )
+    if ( prop == &name )
     {
         emit docnode_name_changed(this->name.get());
     }
-    else if ( name == "color" )
+    else if ( prop == &group_color )
     {
         if ( !group_icon.isNull() )
         {

@@ -47,10 +47,10 @@ void model::Object::clone_into(model::Object* dest) const
 }
 
 
-void model::Object::property_value_changed ( const QString& name, const QVariant& value )
+void model::Object::property_value_changed(const BaseProperty* prop, const QVariant& value)
 {
-    on_property_changed(name, value);
-    emit property_changed(name, value);
+    on_property_changed(prop, value);
+    emit property_changed(prop->name(), value);
 }
 
 void model::Object::add_property(model::BaseProperty* prop)

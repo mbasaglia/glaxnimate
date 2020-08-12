@@ -8,10 +8,10 @@ class Animation : public ObjectBase<Animation, Composition>
 {
     Q_OBJECT
 
-    //                  type    name    default  edit  notify                       validate
-    GLAXNIMATE_PROPERTY(float,  fps,         60, true, &Animation::fps_changed,     &Animation::validate_fps)
-    GLAXNIMATE_PROPERTY(int,    width,      512, true, &Animation::width_changed,   &Animation::validate_nonzero)
-    GLAXNIMATE_PROPERTY(int,    height,     512, true, &Animation::height_changed,  &Animation::validate_nonzero)
+    //                  type    name    default  notify                       validate
+    GLAXNIMATE_PROPERTY(float,  fps,         60, &Animation::fps_changed,     &Animation::validate_fps)
+    GLAXNIMATE_PROPERTY(int,    width,      512, &Animation::width_changed,   &Animation::validate_nonzero, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(int,    height,     512, &Animation::height_changed,  &Animation::validate_nonzero, PropertyTraits::Visual)
 
 public:
     using Ctor::Ctor;

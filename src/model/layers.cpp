@@ -89,12 +89,12 @@ void model::Layer::set_composition ( model::Composition* composition )
     docnode_on_update_group();
 }
 
-void model::Layer::on_property_changed ( const QString& name, const QVariant& value )
+void model::Layer::on_property_changed ( const BaseProperty* prop, const QVariant& value )
 {
-    if ( name == "parent" )
+    if ( prop == &parent )
         docnode_on_update_group();
     else
-        DocumentNode::on_property_changed(name, value);
+        DocumentNode::on_property_changed(prop, value);
 }
 
 QTransform model::Layer::transform_matrix() const

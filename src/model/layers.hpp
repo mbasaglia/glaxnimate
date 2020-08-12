@@ -73,7 +73,7 @@ class Layer : public AnimationContainer
     Q_OBJECT
 
     GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent)
-    GLAXNIMATE_PROPERTY(float, start_time, 0)
+    GLAXNIMATE_PROPERTY(float, start_time, 0, {}, {}, PropertyTraits::Visual)
     GLAXNIMATE_SUBOBJECT(Transform, transform)
 
 public:
@@ -130,7 +130,7 @@ signals:
     void transform_matrix_changed(const QTransform& t);
 
 protected:
-    void on_property_changed(const QString& name, const QVariant&) override;
+    void on_property_changed(const BaseProperty* prop, const QVariant&) override;
     void on_paint(QPainter*, FrameTime, PaintMode) const override;
     virtual void on_paint_untransformed(QPainter*, FrameTime) const {}
 
@@ -220,10 +220,10 @@ class SolidColorLayer : public detail::BaseLayerProps<SolidColorLayer>
 {
     Q_OBJECT
 
-    //                  type    name    default     edit    notify                                          validate
-    GLAXNIMATE_PROPERTY(float,  width,  0,          true,   &SolidColorLayer::bounding_rect_changed, &SolidColorLayer::positive)
-    GLAXNIMATE_PROPERTY(float,  height, 0,          true,   &SolidColorLayer::bounding_rect_changed, &SolidColorLayer::positive)
-    GLAXNIMATE_PROPERTY(QColor, color,  Qt::white)
+    //                  type    name    default     notify                                   validate
+    GLAXNIMATE_PROPERTY(float,  width,  0,          &SolidColorLayer::bounding_rect_changed, &SolidColorLayer::positive, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(float,  height, 0,          &SolidColorLayer::bounding_rect_changed, &SolidColorLayer::positive, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(QColor, color,  Qt::white, {}, {}, PropertyTraits::Visual)
 public:
     SolidColorLayer(Document* doc, Composition* composition);
 

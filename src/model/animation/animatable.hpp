@@ -348,7 +348,7 @@ public:
     using reference = typename Keyframe<Type>::reference;
 
     AnimatedProperty(Object* object, const QString& name, reference default_value)
-    : detail::AnimatableWithExtra<Type>(object, name, PropertyTraits::from_scalar<Type>(PropertyTraits::Animated)),
+    : detail::AnimatableWithExtra<Type>(object, name, PropertyTraits::from_scalar<Type>(PropertyTraits::Animated|PropertyTraits::Visual)),
       value_{default_value} {}
 
     int keyframe_count() const override

@@ -237,7 +237,7 @@ private:
 
 protected:
     void docnode_on_update_group(bool force = false);
-    void on_property_changed(const QString& name, const QVariant&) override;
+    void on_property_changed(const BaseProperty* prop, const QVariant&) override;
     bool docnode_valid_color() const;
     virtual void on_paint(QPainter*, FrameTime, PaintMode) const {}
 
@@ -280,8 +280,8 @@ private:
 class AnimationContainer: public DocumentNode
 {
     Q_OBJECT
-    GLAXNIMATE_PROPERTY(int,    first_frame,  0, true, &AnimationContainer::first_frame_changed,  &AnimationContainer::validate_first_frame)
-    GLAXNIMATE_PROPERTY(int,    last_frame, 180, true, &AnimationContainer::last_frame_changed, &AnimationContainer::validate_last_frame)
+    GLAXNIMATE_PROPERTY(int,    first_frame,  0, &AnimationContainer::first_frame_changed, &AnimationContainer::validate_first_frame, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(int,    last_frame, 180, &AnimationContainer::last_frame_changed,  &AnimationContainer::validate_last_frame,  PropertyTraits::Visual)
 
 public:
     using DocumentNode::DocumentNode;
@@ -307,8 +307,8 @@ class ReferencePropertyBase : public BaseProperty
 {
     Q_GADGET
 public:
-    ReferencePropertyBase(DocumentNode* obj, const QString& name, bool user_editable)
-        : BaseProperty(obj, name, PropertyTraits{PropertyTraits::ObjectReference, user_editable ? PropertyTraits::NoFlags : PropertyTraits::ReadOnly}),
+    ReferencePropertyBase(DocumentNode* obj, const QString& name, PropertyTraits::Flags flags = PropertyTraits::Visual)
+        : BaseProperty(obj, name, PropertyTraits{PropertyTraits::ObjectReference, flags}),
           parent(obj)
     {
     }
@@ -339,8 +339,8 @@ class ReferenceProperty : public ReferencePropertyBase
 public:
     using value_type = Type*;
 
-    ReferenceProperty(DocumentNode* obj, QString name, bool user_editable = true)
-        : ReferencePropertyBase(obj, std::move(name), user_editable)
+    ReferenceProperty(DocumentNode* obj, const QString& name, PropertyTraits::Flags flags = PropertyTraits::Visual)
+        : ReferencePropertyBase(obj, name, flags)
     {}
 
     bool set(Type* value)

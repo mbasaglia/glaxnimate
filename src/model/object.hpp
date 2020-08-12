@@ -55,9 +55,9 @@ signals:
     void property_changed(const QString& name, const QVariant& value);
 
 protected:
-    virtual void on_property_changed(const QString& name, const QVariant& value)
+    virtual void on_property_changed(const BaseProperty* prop, const QVariant& value)
     {
-        Q_UNUSED(name);
+        Q_UNUSED(prop);
         Q_UNUSED(value);
     }
     void clone_into(Object* dest) const;
@@ -69,7 +69,7 @@ private:
     }
 
     void add_property(BaseProperty* prop);
-    void property_value_changed(const QString& name, const QVariant& value);
+    void property_value_changed(const BaseProperty* prop, const QVariant& value);
 
     friend BaseProperty;
     class Private;

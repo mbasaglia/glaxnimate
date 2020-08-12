@@ -37,6 +37,7 @@ struct PropertyTraits
         List = 1,
         ReadOnly = 2,
         Animated = 4,
+        Visual = 8,
     };
 
 
@@ -150,7 +151,7 @@ private:                                                    \
 
 #define GLAXNIMATE_PROPERTY_RO(type, name, default_value)   \
 public:                                                     \
-    Property<type> name{this, #name, default_value, false}; \
+    Property<type> name{this, #name, default_value, {}, {}, PropertyTraits::ReadOnly}; \
     type get_##name() const { return name.get(); }          \
 private:                                                    \
     Q_PROPERTY(type name READ get_##name)                   \
@@ -207,7 +208,7 @@ public:
 protected:
     void value_changed()
     {
-        object_->property_value_changed(name_, value());
+        object_->property_value_changed(this, value());
     }
 
 private:
@@ -343,11 +344,11 @@ public:
     Property(Object* obj,
              const QString& name,
              Type default_value = Type(),
-             bool user_editable=true,
              PropertyCallback<void, Type> emitter = {},
-             PropertyCallback<bool, Type> validator = {}
+             PropertyCallback<bool, Type> validator = {},
+             PropertyTraits::Flags flags = PropertyTraits::NoFlags
     )
-        : BaseProperty(obj, name, PropertyTraits::from_scalar<Type>(user_editable ? PropertyTraits::NoFlags : PropertyTraits::ReadOnly)),
+        : BaseProperty(obj, name, PropertyTraits::from_scalar<Type>(flags)),
           value_(std::move(default_value)),
           emitter(std::move(emitter)),
           validator(std::move(validator))
@@ -417,7 +418,7 @@ class ObjectListPropertyBase : public BaseProperty
 {
 public:
     ObjectListPropertyBase(Object* obj, const QString& name)
-        : BaseProperty(obj, name, {PropertyTraits::Object, PropertyTraits::List})
+        : BaseProperty(obj, name, {PropertyTraits::Object, PropertyTraits::List|PropertyTraits::Visual})
     {}
 
     /**
