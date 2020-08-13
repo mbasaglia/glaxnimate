@@ -1118,14 +1118,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="widget_2" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
+      <widget class="TimelineWidget" name="timeline_widget"/>
      </item>
     </layout>
    </widget>
@@ -1787,6 +1780,11 @@
    <extends>QWidget</extends>
    <header>ui/widgets/frame_controls_widget.hpp</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TimelineWidget</class>
+   <extends>QGraphicsView</extends>
+   <header>ui/widgets/timeline_widget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

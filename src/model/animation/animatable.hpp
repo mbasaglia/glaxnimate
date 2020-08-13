@@ -58,7 +58,6 @@ public:
         Tween,          ///< Value is animated but the given time isn't a keyframe
         IsKeyframe,     ///< Value is animated and the given time is a keyframe
         Mismatch        ///< Value is animated and the current value doesn't match the animated value
-
     };
 
     using BaseProperty::BaseProperty;

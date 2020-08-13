@@ -54,6 +54,7 @@ ui/widgets/frame_controls_widget.cpp
 ui/widgets/frame_controls_widget.ui
 ui/widgets/flow_layout.cpp
 ui/widgets/spin2d.cpp
+ui/widgets/timeline_widget.cpp
 )
 
 if(${PYTHON_ENABLED})
