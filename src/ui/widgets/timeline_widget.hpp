@@ -33,7 +33,8 @@ protected:
     void paintEvent(QPaintEvent * event) override;
     void resizeEvent(QResizeEvent * event) override;
     void scrollContentsBy(int dx, int dy) override;
-    
+    void mouseMoveEvent(QMouseEvent * event) override;
+    void leaveEvent(QEvent * event) override;
     
 private:
     class Private;
