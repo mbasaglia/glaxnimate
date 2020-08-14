@@ -184,6 +184,7 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
     if ( auto node = document_node_model.node(index) )
     {
         property_model.set_object(node);
+        ui.timeline_widget->set_active(node);
         ui.view_properties->expandAll();
     }
 }

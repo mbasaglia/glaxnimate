@@ -1,6 +1,7 @@
 #include "timeline_widget.hpp"
 
 #include <QGraphicsObject>
+#include <QStyleOptionGraphicsItem>
 
 #include "app/application.hpp"
 #include "model/document.hpp"
@@ -12,7 +13,7 @@ public:
     static const int icon_size = 16;
     static const int pen = 2;
     
-    KeyframeItem()
+    KeyframeItem(QGraphicsItem* parent) : QGraphicsObject(parent)
     {
         setFlags(
             QGraphicsItem::ItemIsSelectable|
@@ -31,6 +32,8 @@ public:
         if ( isSelected() )
         {
             QColor sel_border = widget->palette().color(QPalette::Highlight);
+            if ( parentItem()->isSelected() )
+                sel_border = widget->palette().color(QPalette::HighlightedText);
             QColor sel_fill = sel_border;
             sel_fill.setAlpha(128);
             painter->setPen(QPen(sel_border, pen));
@@ -76,6 +79,75 @@ private:
     QIcon icon_exit;
 };
 
+class AnimatableItem : public QGraphicsObject
+{
+public:
+    AnimatableItem(model::AnimatableBase* animatable, int time_start, int time_end, int height)
+        : animatable(animatable), time_start(time_start), time_end(time_end), height(height)
+    {
+        setFlags(QGraphicsItem::ItemIsSelectable);
+        
+        for ( int i = 0; i < animatable->keyframe_count(); i++ )
+            add_keyframe(animatable, i);
+    }
+    
+    void set_time_start(int time)
+    {
+        time_start = time;
+        prepareGeometryChange();
+    }
+    
+    void set_time_end(int time)
+    {
+        time_end = time;
+        prepareGeometryChange();
+    }
+    
+    void set_height(int h)
+    {
+        height = h;
+        prepareGeometryChange();
+    }
+    
+    QRectF boundingRect() const override
+    {
+        return QRectF(time_start, 0, time_end, height);
+    }
+    
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override
+    {
+        if ( isSelected() )
+        {
+            QColor selcol = widget->palette().color(QPalette::Highlight);
+            painter->fillRect(option->rect, selcol);
+        }
+        
+        QPen p(widget->palette().color(QPalette::Text), 1);
+        p.setCosmetic(true);
+        painter->setPen(p);
+        painter->drawLine(option->rect.left(), height, option->rect.right(), height);
+    }
+    
+    void add_keyframe(model::AnimatableBase* anim, int index)
+    {
+        model::KeyframeBase* kf = anim->keyframe(index);
+        model::KeyframeBase* prev = index > 0 ? anim->keyframe(index-1) : nullptr;
+        auto item = new KeyframeItem(this);
+        item->setPos(kf->time(), 0);
+        item->set_exit(kf->transition().before());
+        item->set_enter(prev ? prev->transition().before() : model::KeyframeTransition::Constant);
+        kf_items.push_back(item);
+    }
+    
+    
+private:
+    model::AnimatableBase* animatable;
+    std::vector<KeyframeItem*> kf_items;
+    int time_start;
+    int time_end;
+    int height;
+};
+
 class TimelineWidget::Private
 {
 public:
@@ -85,21 +157,49 @@ public:
     int row_height = 24;
     int header_height = 24;
     int rows = 0;
-    std::unordered_map<model::AnimatableBase*, KeyframeItem*> kf_items;
+    std::unordered_map<model::AnimatableBase*, AnimatableItem*> anim_items;
+    qreal min_scale = 1;
+    int frame_skip = 1;
+    int min_gap = 32;
     
     QRectF scene_rect()
     {
         return QRectF(start_time, -header_height, end_time, header_height+row_height*rows);
     }
     
-    void add_keyframe(model::AnimatableBase* anim, int index)
+    
+    void add_animatable(model::AnimatableBase* anim)
     {
-        model::KeyframeBase* kf = anim->keyframe(index);
-        model::KeyframeBase* prev = index > 0 ? anim->keyframe(index-1) : nullptr;
-        auto item = new KeyframeItem();
-        item->setPos(kf->time(), rows * row_height);
-        item->set_exit(kf->transition().before());
-        item->set_enter(prev ? prev->transition().before() : model::KeyframeTransition::Constant);
+        AnimatableItem* item = new AnimatableItem(anim, start_time, end_time, row_height);
+        item->setPos(0, rows * row_height);
+        anim_items[anim] = item;
+        scene.addItem(item);
+        rows += 1;
+    }
+    
+    void add_object(model::Object* obj)
+    {
+        for ( auto prop : obj->properties() )
+        {
+            auto flags = prop->traits().flags;
+            if ( flags & model::PropertyTraits::Animated )
+                add_animatable(static_cast<model::AnimatableBase*>(prop));
+            else if ( prop->traits().type == model::PropertyTraits::Object && !(flags & model::PropertyTraits::List) )
+                add_object(static_cast<model::SubObjectPropertyBase*>(prop)->sub_object());
+        }
+    }
+    
+    void adjust_min_scale(int wpw)
+    {
+        if ( min_scale == 0 || scene_rect().width() == 0 )
+            min_scale = 1;
+        else
+            min_scale = wpw / scene_rect().width();
+    }
+    
+    void update_frame_skip(const QTransform& tr)
+    {
+        frame_skip = qCeil(min_gap / tr.m11());
     }
 };
 
@@ -109,6 +209,8 @@ TimelineWidget::TimelineWidget(QWidget* parent)
     setInteractive(true);
     setRenderHint(QPainter::Antialiasing);
     setScene(&d->scene);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 }
 
 TimelineWidget::~TimelineWidget()
@@ -122,15 +224,23 @@ void TimelineWidget::add_container(model::AnimationContainer* cont)
 
 void TimelineWidget::add_animatable(model::AnimatableBase* anim)
 {
-    for ( int i = 0; i < anim->keyframe_count(); i++ )
-        d->add_keyframe(anim, i);
+    d->add_animatable(anim);
 }
+
+void TimelineWidget::set_active(model::DocumentNode* node)
+{
+    clear();
+    d->add_object(node);
+    setSceneRect(d->scene_rect());
+    reset_view();
+}
+
 
 void TimelineWidget::clear()
 {
     d->scene.clear();
     d->rows = 0;
-    d->kf_items.clear();
+    d->anim_items.clear();
 }
 
 int TimelineWidget::row_height() const
@@ -156,12 +266,18 @@ void TimelineWidget::update_timeline_end(model::FrameTime end)
 {
     d->end_time = end;
     setSceneRect(d->scene_rect());
+    d->adjust_min_scale(viewport()->width());
+    for ( const auto& p : d->anim_items )
+        p.second->set_time_end(end);
 }
 
 void TimelineWidget::update_timeline_start(model::FrameTime start)
 {
     d->start_time = start;
     setSceneRect(d->scene_rect());
+    d->adjust_min_scale(viewport()->width());
+    for ( const auto& p : d->anim_items )
+        p.second->set_time_start(start);
 }
 
 void TimelineWidget::wheelEvent(QWheelEvent* event)
@@ -169,9 +285,19 @@ void TimelineWidget::wheelEvent(QWheelEvent* event)
     if ( event->modifiers() & Qt::ControlModifier )
     {
         if ( event->delta() < 0 )
-            scale(0.8, 1);
+        {
+            qreal scale_by = 0.8;
+            qreal cs = transform().m11();
+            if ( cs * scale_by < d->min_scale )
+                scale_by = d->min_scale / cs;
+            scale(scale_by, 1);
+        }
         else
+        {
             scale(1.25, 1);
+        }
+        
+        d->update_frame_skip(transform());
     }
     else
     {
@@ -184,11 +310,62 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
 {
     QGraphicsView::paintEvent(event);
     
-    QColor text = palette().color(QPalette::Text);
-    QPen pen(text, 1);
     QPainter painter(viewport());
-    painter.setPen(pen);
-    painter.setBrush(Qt::transparent);
-    painter.drawLine(0, d->header_height, viewport()->width(), d->header_height);
+    
+    painter.fillRect(event->rect().left(), 0, event->rect().right(), d->header_height,
+                     palette().color(QPalette::Base));
+    
+    QPen dark(palette().color(QPalette::Text), 1);
+    painter.setPen(dark);
+    painter.drawLine(event->rect().left(), d->header_height, event->rect().right(), d->header_height);
+    
+    
+    if ( event->rect().top() < d->header_height )
+    {
+        QColor frame_line = palette().color(QPalette::Text);
+        frame_line.setAlphaF(0.5);
+        QPen light(frame_line, 1);
+        painter.setPen(light);
+        QPointF scene_tl = mapToScene(event->rect().topLeft());
+        QPointF scene_br = mapToScene(event->rect().bottomRight());
+        int first_frame = qCeil(scene_tl.x());
+        int last_frame = qFloor(scene_br.x());
+        int small_height = d->header_height / 4;
+        for ( int f = first_frame; f <= last_frame; f++ )
+        {
+            QPoint p1 = mapFromScene(f, scene_tl.y());
+            int height = d->header_height;
+            if ( f % d->frame_skip )
+            {
+                height = small_height;
+            }
+            else
+            {
+                painter.setPen(dark);
+                painter.drawText(
+                    p1.x()+1, small_height, d->min_gap, d->header_height-small_height,
+                    Qt::AlignLeft|Qt::AlignBottom, 
+                    QString::number(f)
+                );
+                painter.setPen(light);
+            }
+            painter.drawLine(QPoint(p1.x(), 0), QPoint(p1.x(), height));
+        }
+    }
+    
+}
+
+void TimelineWidget::reset_view()
+{
+    setTransform(QTransform::fromScale(d->min_scale, 1));
+    d->update_frame_skip(transform());
+}
+
+void TimelineWidget::resizeEvent(QResizeEvent* event)
+{
+    QGraphicsView::resizeEvent(event);
+    d->adjust_min_scale(viewport()->width());
+    if ( transform().m11() < d->min_scale )
+        reset_view();
 }
 

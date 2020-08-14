@@ -17,6 +17,7 @@ public:
     
     void set_document(model::Document* document);
     void clear();
+    void set_active(model::DocumentNode* node);
     void add_container(model::AnimationContainer* cont);
     void add_animatable(model::AnimatableBase* anim);
     int row_height() const;
@@ -25,10 +26,13 @@ public:
 public slots:
     void update_timeline_start(model::FrameTime start);
     void update_timeline_end(model::FrameTime end);
+    void reset_view();
 
 protected:    
     void wheelEvent(QWheelEvent * event) override;
     void paintEvent(QPaintEvent * event) override;
+    void resizeEvent(QResizeEvent * event) override;
+    
     
 private:
     class Private;

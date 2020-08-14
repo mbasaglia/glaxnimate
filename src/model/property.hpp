@@ -553,12 +553,23 @@ private:
 };
 
 
+class SubObjectPropertyBase : public BaseProperty
+{
+public:
+    SubObjectPropertyBase(Object* obj, const QString& name)
+        : BaseProperty(obj, name, {PropertyTraits::Object})
+    {}
+    
+    virtual const model::Object* sub_object() const = 0;
+    virtual model::Object* sub_object() = 0;
+};
+
 template<class Type>
-class SubObjectProperty : public BaseProperty
+class SubObjectProperty : public SubObjectPropertyBase
 {
 public:
     SubObjectProperty(Object* obj, const QString& name)
-        : BaseProperty(obj, name, {PropertyTraits::Object}),
+        : SubObjectPropertyBase(obj, name),
         sub_obj(obj->document())
     {}
 
@@ -589,6 +600,9 @@ public:
 
     Type* get() { return &sub_obj; }
     const Type* get() const { return &sub_obj; }
+    
+    model::Object * sub_object() override { return &sub_obj; }
+    const model::Object * sub_object() const override { return &sub_obj; }
 
 private:
     Type sub_obj;
