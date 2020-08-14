@@ -32,6 +32,7 @@ protected:
     void wheelEvent(QWheelEvent * event) override;
     void paintEvent(QPaintEvent * event) override;
     void resizeEvent(QResizeEvent * event) override;
+    void scrollContentsBy(int dx, int dy) override;
     
     
 private:

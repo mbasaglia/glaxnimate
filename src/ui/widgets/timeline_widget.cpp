@@ -2,6 +2,7 @@
 
 #include <QGraphicsObject>
 #include <QStyleOptionGraphicsItem>
+#include <QScrollBar>
 
 #include "app/application.hpp"
 #include "model/document.hpp"
@@ -211,6 +212,7 @@ TimelineWidget::TimelineWidget(QWidget* parent)
     setScene(&d->scene);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    setTransformationAnchor(AnchorUnderMouse);
 }
 
 TimelineWidget::~TimelineWidget()
@@ -234,7 +236,6 @@ void TimelineWidget::set_active(model::DocumentNode* node)
     setSceneRect(d->scene_rect());
     reset_view();
 }
-
 
 void TimelineWidget::clear()
 {
@@ -301,8 +302,10 @@ void TimelineWidget::wheelEvent(QWheelEvent* event)
     }
     else
     {
-        QGraphicsView::wheelEvent(event);
-        viewport()->update();
+        if ( event->modifiers() & Qt::ShiftModifier )
+            QApplication::sendEvent(verticalScrollBar(), event);
+        else
+            QApplication::sendEvent(horizontalScrollBar(), event);
     }
 }
 
@@ -343,7 +346,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
             {
                 painter.setPen(dark);
                 painter.drawText(
-                    p1.x()+1, small_height, d->min_gap, d->header_height-small_height,
+                    p1.x()+2, small_height, d->min_gap, d->header_height-small_height,
                     Qt::AlignLeft|Qt::AlignBottom, 
                     QString::number(f)
                 );
@@ -352,7 +355,6 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
             painter.drawLine(QPoint(p1.x(), 0), QPoint(p1.x(), height));
         }
     }
-    
 }
 
 void TimelineWidget::reset_view()
@@ -367,5 +369,11 @@ void TimelineWidget::resizeEvent(QResizeEvent* event)
     d->adjust_min_scale(viewport()->width());
     if ( transform().m11() < d->min_scale )
         reset_view();
+}
+
+void TimelineWidget::scrollContentsBy(int dx, int dy)
+{
+    QGraphicsView::scrollContentsBy(dx, dy);
+    viewport()->update();
 }
 
