@@ -63,7 +63,6 @@ void FrameControlsWidget::timerEvent(QTimerEvent*)
     }
 }
 
-
 void FrameControlsWidget::play()
 {
     if ( !timer )
@@ -121,4 +120,9 @@ void FrameControlsWidget::go_prev()
     else
         d->spin_frame->setValue(i-1);
     commit_time();
+}
+
+void FrameControlsWidget::set_frame(int frame)
+{
+    d->spin_frame->setValue(frame);
 }

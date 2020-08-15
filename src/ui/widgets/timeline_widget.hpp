@@ -29,12 +29,17 @@ public slots:
     void reset_view();
 
 protected:    
+    void mousePressEvent(QMouseEvent * event) override;
+    void mouseReleaseEvent(QMouseEvent * event) override;
     void wheelEvent(QWheelEvent * event) override;
     void paintEvent(QPaintEvent * event) override;
     void resizeEvent(QResizeEvent * event) override;
     void scrollContentsBy(int dx, int dy) override;
     void mouseMoveEvent(QMouseEvent * event) override;
     void leaveEvent(QEvent * event) override;
+    
+signals:
+    void frame_clicked(int frame);
     
 private:
     class Private;

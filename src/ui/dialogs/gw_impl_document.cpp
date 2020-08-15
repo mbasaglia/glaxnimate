@@ -59,6 +59,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     QObject::connect(current_document->animation(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
     QObject::connect(current_document->animation(), &model::Animation::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
     QObject::connect(ui.play_controls, &FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
+    QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &FrameControlsWidget::set_frame);
 }
 
 void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
@@ -154,7 +155,7 @@ bool GlaxnimateWindow::Private::close_document()
     document_node_model.clear_document();
     property_model.clear_document();
     scene.clear_document();
-    ui.timeline_widget->clear();
+    ui.timeline_widget->set_document(nullptr);
 
     return true;
 }

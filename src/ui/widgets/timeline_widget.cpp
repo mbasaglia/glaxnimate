@@ -162,7 +162,8 @@ public:
     qreal min_scale = 1;
     int frame_skip = 1;
     int min_gap = 32;
-    int current_frame = -1;
+    int mouse_frame = -1;
+    model::Document* document = nullptr;
     
     QRectF scene_rect()
     {
@@ -202,6 +203,20 @@ public:
     void update_frame_skip(const QTransform& tr)
     {
         frame_skip = qCeil(min_gap / tr.m11());
+    }
+    
+    void paint_highligted_frame(TimelineWidget* parent, int frame, 
+                                QPainter& painter, const QColor& color)
+    {
+        QPointF framep = parent->mapFromScene(QPoint(frame, 0));
+        QPointF framep1 = parent->mapFromScene(QPoint(frame+1, 0));
+        painter.fillRect(
+            framep.x(),
+            0,
+            framep1.x() - framep.x() + 1,
+            header_height,
+            color
+        );
     }
 };
 
@@ -258,11 +273,24 @@ void TimelineWidget::set_row_height(int w)
 
 void TimelineWidget::set_document(model::Document* document)
 {
+    if ( d->document )
+    {
+        disconnect(this, nullptr, d->document, nullptr);
+    }
+    
     clear();
-    connect(document->animation(), &model::AnimationContainer::first_frame_changed, this, &TimelineWidget::update_timeline_start);
-    connect(document->animation(), &model::AnimationContainer::last_frame_changed, this, &TimelineWidget::update_timeline_end);
-    update_timeline_end(document->animation()->last_frame.get());
-    update_timeline_start(document->animation()->first_frame.get());
+    
+    if ( document )
+    {
+        connect(document->animation(), &model::AnimationContainer::first_frame_changed, this, &TimelineWidget::update_timeline_start);
+        connect(document->animation(), &model::AnimationContainer::last_frame_changed, this, &TimelineWidget::update_timeline_end);
+        update_timeline_end(document->animation()->last_frame.get());
+        update_timeline_start(document->animation()->first_frame.get());
+        connect(this, &TimelineWidget::frame_clicked, document, &model::Document::set_current_time);
+        connect(document, &model::Document::current_time_changed, viewport(), (void (QWidget::*)())&QWidget::update);
+    }
+    
+    d->document = document;
 }
 
 void TimelineWidget::update_timeline_end(model::FrameTime end)
@@ -321,18 +349,12 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
                      palette().color(QPalette::Base));
     
     
-    if ( d->current_frame > -1 )
-    {
-        QPointF framep = mapFromScene(QPoint(d->current_frame, 0));
-        QPointF framep1 = mapFromScene(QPoint(d->current_frame+1, 0));
-        painter.fillRect(
-            framep.x(),
-            0,
-            framep1.x() - framep.x() + 1,
-            d->header_height,
-            palette().color(QPalette::Highlight)
-        );
-    }
+    if ( d->document )
+        d->paint_highligted_frame(this, d->document->current_time(), painter, 
+                                  palette().color(QPalette::Text));
+        
+    if ( d->mouse_frame > -1 )
+        d->paint_highligted_frame(this, d->mouse_frame, painter, palette().color(QPalette::Highlight));
     
     QPen dark(palette().color(QPalette::Text), 1);
     painter.setPen(dark);
@@ -354,28 +376,55 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
         {
             QPoint p1 = mapFromScene(f, scene_tl.y());
             int height = d->header_height;
+            bool under_mouse = f == d->mouse_frame;
+            bool current_frame = d->document && f == d->document->current_time();
+            
+            if ( f % d->frame_skip == 0 || under_mouse || current_frame )
+            {
+                bool draw = true;
+                int fs = f / d->frame_skip * d->frame_skip;
+                int box_x1 = mapFromScene(fs, 0).x();
+                int box_x2 = mapFromScene(fs+d->frame_skip, 0).x();
+                QRect text_rect(
+                    QPoint(box_x1+1, small_height),
+                    QPoint(box_x2, d->header_height-1)
+                );
+                
+                if ( current_frame && !under_mouse && d->mouse_frame != -1 )
+                {
+                    int mfs = d->mouse_frame / d->frame_skip * d->frame_skip;
+                    
+                    if ( fs == mfs )
+                        draw = false;
+                }
+                
+                if ( draw )
+                {
+                    if ( under_mouse )
+                    {
+                        painter.fillRect(text_rect, palette().color(QPalette::Highlight));
+                        painter.setPen(QPen(palette().color(QPalette::HighlightedText), 1));
+                    }
+                    else if ( current_frame )
+                    {
+                        painter.fillRect(text_rect, palette().color(QPalette::Text));
+                        painter.setPen(QPen(palette().color(QPalette::Base), 1));
+                    }
+                    else 
+                    {
+                        painter.setPen(dark);
+                    }
+                
+                    painter.drawText(text_rect, Qt::AlignLeft|Qt::AlignBottom,  QString::number(f));
+                    painter.setPen(light);
+                }
+            }
+            
             if ( f % d->frame_skip )
             {
                 height = small_height;
             }
-            else
-            {
-                QRect text_rect(
-                    QPoint(p1.x()+2, small_height),
-                    QPoint(mapFromScene(f+d->frame_skip, 0).x(), d->header_height-1)
-                );
-                if ( f == d->current_frame )
-                {
-                    painter.fillRect(text_rect, palette().color(QPalette::Highlight));
-                    painter.setPen(QPen(palette().color(QPalette::HighlightedText), 1));
-                }
-                else 
-                {
-                    painter.setPen(dark);
-                }
-                painter.drawText(text_rect, Qt::AlignLeft|Qt::AlignBottom,  QString::number(f));
-                painter.setPen(light);
-            }
+            
             painter.drawLine(QPoint(p1.x(), 0), QPoint(p1.x(), height));
         }
     }
@@ -401,16 +450,30 @@ void TimelineWidget::scrollContentsBy(int dx, int dy)
     viewport()->update();
 }
 
+void TimelineWidget::mousePressEvent(QMouseEvent* event)
+{
+    if ( event->y() > d->header_height )
+        QGraphicsView::mousePressEvent(event);
+}
+
 void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
 {
-    QGraphicsView::mouseMoveEvent(event);
-    d->current_frame = mapToScene(event->pos()).x();
+    if ( event->y() > d->header_height )
+        QGraphicsView::mouseMoveEvent(event);
+    d->mouse_frame = mapToScene(event->pos()).x();
     viewport()->update();
+}
+
+void TimelineWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+    if ( event->y() > d->header_height )
+        QGraphicsView::mouseReleaseEvent(event);
+    else 
+        emit frame_clicked(d->mouse_frame);
 }
 
 void TimelineWidget::leaveEvent(QEvent* event)
 {
     QGraphicsView::leaveEvent(event);
-    d->current_frame = -1;
+    d->mouse_frame = -1;
 }
-

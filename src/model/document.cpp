@@ -94,7 +94,7 @@ model::FrameTime model::Document::current_time() const
 void model::Document::set_current_time(model::FrameTime t)
 {
     if ( t >= 0 && t <= d->animation.last_frame.get() )
-        d->current_time = t;
+        emit current_time_changed(d->current_time = t);
 }
 
 QSize model::Document::size() const

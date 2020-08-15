@@ -19,6 +19,7 @@ public:
     void set_min(int min);
     void set_max(int max);
     void set_fps(qreal fps);
+    void set_frame(int frame);
 
 public slots:
     void play();

@@ -15,7 +15,7 @@ class Document : public QObject
 
     Q_PROPERTY(QString filename READ filename)
     Q_PROPERTY(Animation* animation READ animation)
-    Q_PROPERTY(double current_time READ current_time WRITE set_current_time)
+    Q_PROPERTY(double current_time READ current_time WRITE set_current_time NOTIFY current_time_changed)
 
 public:
     explicit Document(const QString& filename);
@@ -52,6 +52,7 @@ public:
 
 signals:
     void filename_changed(const QString& n);
+    void current_time_changed(FrameTime t);
 
 private:
     class Private;

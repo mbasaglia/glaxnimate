@@ -39,7 +39,8 @@
       <string>Play</string>
      </property>
      <property name="icon">
-      <iconset theme="media-playback-start"/>
+      <iconset theme="media-playback-start">
+       <normaloff>.</normaloff>.</iconset>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -55,7 +56,8 @@
       <string>Loop</string>
      </property>
      <property name="icon">
-      <iconset theme="media-playlist-repeat"/>
+      <iconset theme="media-playlist-repeat">
+       <normaloff>.</normaloff>.</iconset>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -74,7 +76,8 @@
       <string>Go To First Frame</string>
      </property>
      <property name="icon">
-      <iconset theme="go-first"/>
+      <iconset theme="go-first">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
@@ -90,7 +93,8 @@
       <string>Go To Previous Keyframe</string>
      </property>
      <property name="icon">
-      <iconset theme="go-previous-skip"/>
+      <iconset theme="go-previous-skip">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
@@ -103,7 +107,8 @@
       <string>Go To Previous Frame</string>
      </property>
      <property name="icon">
-      <iconset theme="go-previous"/>
+      <iconset theme="go-previous">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
@@ -116,7 +121,8 @@
       <string>Go To Next Frame</string>
      </property>
      <property name="icon">
-      <iconset theme="go-next"/>
+      <iconset theme="go-next">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
@@ -132,7 +138,8 @@
       <string>Go To Next Keyframe</string>
      </property>
      <property name="icon">
-      <iconset theme="go-next-skip"/>
+      <iconset theme="go-next-skip">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
@@ -145,7 +152,8 @@
       <string>Go To Last Frame</string>
      </property>
      <property name="icon">
-      <iconset theme="go-last"/>
+      <iconset theme="go-last">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
@@ -166,22 +174,6 @@
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>spin_frame</sender>
-   <signal>editingFinished()</signal>
-   <receiver>FrameControlsWidget</receiver>
-   <slot>commit_time()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>32</x>
-     <y>24</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>112</x>
-     <y>182</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>button_play</sender>
    <signal>clicked(bool)</signal>
@@ -259,6 +251,22 @@
     <hint type="destinationlabel">
      <x>352</x>
      <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_frame</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>FrameControlsWidget</receiver>
+   <slot>commit_time()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>42</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>66</x>
+     <y>94</y>
     </hint>
    </hints>
   </connection>
