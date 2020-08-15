@@ -7,7 +7,8 @@ namespace command {
 
 enum class Id {
     SetPropertyValue,
-    SetMultipleProperties
+    SetMultipleProperties,
+    SetKeyframe,
 };
 
 template<Id id_enum, class Derived>

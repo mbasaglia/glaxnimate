@@ -86,6 +86,17 @@ public:
      * If there is already a keyframe at \p time the returned value might be an existing keyframe
      */
     virtual KeyframeBase* add_keyframe(FrameTime time, const QVariant& value) = 0;
+    
+    /**
+     * \brief Removes the keyframe at index \p i
+     */
+    virtual void remove_keyframe(int i) = 0;
+    
+    /**
+     * \brief Removes the keyframe with the given time
+     * \returns whether a keyframe was found and removed
+     */
+    virtual bool remove_keyframe_at_time(FrameTime time) = 0;
 
     /**
      * \brief Get the value at the given time
@@ -384,6 +395,25 @@ public:
         if ( auto v = detail::variant_cast<Type>(val) )
             return add_keyframe(time, *v);
         return nullptr;
+    }
+    
+    void remove_keyframe(int i) override
+    {
+        if ( i > 0 && i <= int(keyframes_.size()) )
+            keyframes_.erase(keyframes_.begin() + i);
+    }
+    
+    bool remove_keyframe_at_time(FrameTime time) override
+    {
+        for ( auto it = keyframes_.begin(); it != keyframes_.end(); ++it )
+        {
+            if ( (*it)->time() == time )
+            {
+                keyframes_.erase(it);
+                return true;
+            }
+        }
+        return false;
     }
 
     bool set_value(const QVariant& val) override
