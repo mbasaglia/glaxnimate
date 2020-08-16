@@ -16,6 +16,7 @@ class Document : public QObject
     Q_PROPERTY(QString filename READ filename)
     Q_PROPERTY(Animation* animation READ animation)
     Q_PROPERTY(double current_time READ current_time WRITE set_current_time NOTIFY current_time_changed)
+    Q_PROPERTY(bool record_to_keyframe READ record_to_keyframe WRITE set_record_to_keyframe NOTIFY record_to_keyframe_changed)
 
 public:
     explicit Document(const QString& filename);
@@ -49,10 +50,17 @@ public:
     bool has_file() const;
 
     void set_has_file(bool hf);
+    
+    /**
+     * \brief Whether animated values should add keyframes when their value changes
+     */
+    bool record_to_keyframe() const;
+    void set_record_to_keyframe(bool r);
 
 signals:
     void filename_changed(const QString& n);
     void current_time_changed(FrameTime t);
+    void record_to_keyframe_changed(bool r);
 
 private:
     class Private;

@@ -9,6 +9,7 @@ enum class Id {
     SetPropertyValue,
     SetMultipleProperties,
     SetKeyframe,
+    SetMultipleAnimated,
 };
 
 template<Id id_enum, class Derived>

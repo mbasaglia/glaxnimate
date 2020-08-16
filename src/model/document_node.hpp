@@ -327,6 +327,8 @@ public:
     {
         return parent;
     }
+    
+    void set_time(FrameTime) override {}
 
 private:
     DocumentNode* parent;

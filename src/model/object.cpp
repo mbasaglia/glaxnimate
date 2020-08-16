@@ -75,7 +75,6 @@ model::BaseProperty * model::Object::get_property ( const QString& property )
     return it->second;
 }
 
-
 bool model::Object::set(const QString& property, const QVariant& value, bool allow_unknown)
 {
     auto it = d->props.find(property);
@@ -131,6 +130,13 @@ bool model::Object::set_undoable ( const QString& property, const QVariant& valu
         return it->second->set_undoable(value);
     return false;
 }
+
+void model::Object::set_time(model::FrameTime t)
+{
+    for ( auto prop: d->prop_order )
+        prop->set_time(t);
+}
+
 
 bool model::BaseProperty::set_undoable ( const QVariant& val )
 {

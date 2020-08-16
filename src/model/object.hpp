@@ -6,6 +6,8 @@
 #include <QObject>
 #include <QVariant>
 
+#include "model/animation/frame_time.hpp"
+
 namespace model {
 
 class BaseProperty;
@@ -43,6 +45,7 @@ public:
 
     virtual QString object_name() const { return type_name_human(); }
     virtual QString type_name_human() const { return tr("Uknown Object"); }
+    virtual void set_time(FrameTime t);
 
     QString type_name() const;
 

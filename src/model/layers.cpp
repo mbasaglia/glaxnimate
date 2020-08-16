@@ -167,6 +167,12 @@ void model::Layer::on_transform_matrix_changed()
     emit transform_matrix_changed(transform_matrix());
 }
 
+void model::Layer::set_time(model::FrameTime t)
+{
+    Object::set_time(relative_time(t));
+}
+
+
 model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Composition* composition )
     : Ctor(doc, composition)
 {
@@ -184,6 +190,3 @@ QRectF model::SolidColorLayer::local_bounding_rect(FrameTime) const
 {
     return QRectF(0, 0, width.get(), height.get());
 }
-
-
-

@@ -103,6 +103,7 @@ public:
     bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const override;
     graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override;
     std::vector<std::unique_ptr<QGraphicsItem>> docnode_make_graphics_editor() override;
+    void set_time(FrameTime t) override;
     
 
     QRectF local_bounding_rect(FrameTime t) const override;

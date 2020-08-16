@@ -189,6 +189,7 @@ public:
     virtual QVariant value() const = 0;
     virtual bool set_value(const QVariant& val) = 0;
     virtual bool set_undoable(const QVariant& val);
+    virtual void set_time(FrameTime t) = 0;
 
     const QString& name() const
     {
@@ -381,6 +382,8 @@ public:
             return set(*v);
         return false;
     }
+    
+    void set_time(FrameTime) override {}
 
 private:
     Type value_;
@@ -409,6 +412,8 @@ public:
         return true;
     }
 
+    void set_time(FrameTime) override {}
+    
 private:
     QVariant variant;
 };
@@ -543,6 +548,12 @@ public:
         }
         return nullptr;
     }
+    
+    void set_time(FrameTime t) override
+    {
+        for ( const auto& o : objects )
+            o->set_time(t);
+    }
 
 private:
     std::vector<pointer> objects;
@@ -603,6 +614,12 @@ public:
     
     model::Object * sub_object() override { return &sub_obj; }
     const model::Object * sub_object() const override { return &sub_obj; }
+    
+    
+    void set_time(FrameTime t) override 
+    {
+        sub_obj.set_time(t);
+    }
 
 private:
     Type sub_obj;

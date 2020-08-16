@@ -21,6 +21,7 @@ public:
     int id = 0;
     FrameTime current_time = 0;
     bool has_file = false;
+    bool record_to_keyframe = false;
 };
 
 
@@ -94,7 +95,10 @@ model::FrameTime model::Document::current_time() const
 void model::Document::set_current_time(model::FrameTime t)
 {
     if ( t >= 0 && t <= d->animation.last_frame.get() )
+    {
+        d->animation.set_time(t);
         emit current_time_changed(d->current_time = t);
+    }
 }
 
 QSize model::Document::size() const
@@ -114,4 +118,15 @@ void model::Document::set_has_file(bool hf)
 {
     d->has_file = hf;
 }
+
+bool model::Document::record_to_keyframe() const
+{
+    return d->record_to_keyframe;
+}
+
+void model::Document::set_record_to_keyframe(bool r)
+{
+    emit(record_to_keyframe_changed(d->record_to_keyframe = r));
+}
+
 

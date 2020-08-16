@@ -9,11 +9,6 @@
 
 namespace model {
 
-
-
-using FrameTime = double;
-
-
 class KeyframeBase
 {
     Q_GADGET
@@ -85,7 +80,7 @@ public:
      * \return The keyframe or nullptr if it couldn't be added.
      * If there is already a keyframe at \p time the returned value might be an existing keyframe
      */
-    virtual KeyframeBase* add_keyframe(FrameTime time, const QVariant& value) = 0;
+    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value) = 0;
     
     /**
      * \brief Removes the keyframe at index \p i
@@ -102,33 +97,31 @@ public:
      * \brief Get the value at the given time
      */
     Q_INVOKABLE virtual QVariant value(FrameTime time) const = 0;
-
-    /**
-     * \brief Get the current value
-     */
-    virtual QVariant value() const = 0;
+    
+    using BaseProperty::value;
 
     virtual QVariant extra_variant() const = 0;
     virtual bool set_extra_variant(const QVariant&) = 0;
-
-    /**
-     * \brief Set the current value
-     *
-     * If animated(), the value might get overwritten when changing the current time
-     */
-    virtual bool set_value(const QVariant& value) = 0;
-
     /**
      * \brief Set the current time
      * \post value() == value(time)
      */
-    virtual void set_time(FrameTime time) = 0;
+    void set_time(FrameTime time)
+    {
+        current_time = time;
+        on_set_time(time);
+    }
+    
+    FrameTime time() const
+    {
+        return current_time;
+    }
 
     /**
      * If animated(), whether the current value has been changed over the animated value
      */
     virtual bool value_mismatch() const = 0;
-
+    
     /**
      * \brief Set the value for the given keyframe
      */
@@ -174,6 +167,12 @@ public:
             return IsKeyframe;
         return Tween;
     }
+    
+protected:
+    virtual void on_set_time(FrameTime time) = 0;
+    
+private:
+    FrameTime current_time = 0;
 };
 
 namespace detail {
@@ -390,10 +389,10 @@ public:
         return QVariant::fromValue(get_at(time));
     }
 
-    keyframe_type* add_keyframe(FrameTime time, const QVariant& val) override
+    keyframe_type* set_keyframe(FrameTime time, const QVariant& val) override
     {
         if ( auto v = detail::variant_cast<Type>(val) )
-            return add_keyframe(time, *v);
+            return set_keyframe(time, *v);
         return nullptr;
     }
     
@@ -432,19 +431,7 @@ public:
         return true;
     }
 
-    void set_time(FrameTime time) override
-    {
-        if ( !keyframes_.empty() )
-        {
-            const keyframe_type* kf;
-            std::tie(kf, value_) = get_at_impl(time);
-            this->extra_data_reset(kf);
-            this->value_changed();
-        }
-        mismatched_ = false;
-    }
-
-    keyframe_type* add_keyframe(FrameTime time, reference value)
+    keyframe_type* set_keyframe(FrameTime time, reference value)
     {
         if ( !keyframes_.empty() )
         {
@@ -494,7 +481,20 @@ public:
     {
         return mismatched_;
     }
-
+    
+protected:
+    void on_set_time(FrameTime time) override
+    {
+        if ( !keyframes_.empty() )
+        {
+            const keyframe_type* kf;
+            std::tie(kf, value_) = get_at_impl(time);
+            this->extra_data_reset(kf);
+            this->value_changed();
+        }
+        mismatched_ = false;
+    }
+    
 private:
     std::pair<const keyframe_type*, value_type> get_at_impl(FrameTime time) const
     {
@@ -522,6 +522,5 @@ private:
     std::vector<std::unique_ptr<keyframe_type>> keyframes_;
     bool mismatched_ = false;
 };
-
 
 } // namespace model

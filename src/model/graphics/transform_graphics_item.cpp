@@ -3,7 +3,7 @@
 #include <QStyleOptionGraphicsItem>
 
 #include "model/document.hpp"
-#include "command/property_commands.hpp"
+#include "command/animation_commands.hpp"
 #include "math/math.hpp"
 
 class model::graphics::TransformGraphicsItem::Private
@@ -144,10 +144,10 @@ public:
         return new_scale;
     }
 
-    void push_command(BaseProperty& prop, const QVariant& value, bool commit)
+    void push_command(AnimatableBase& prop, const QVariant& value, bool commit)
     {
-        target->document()->undo_stack().push(new command::SetPropertyValue(
-            &prop, prop.value(), value, commit
+        target->document()->undo_stack().push(new command::SetMultipleAnimated(
+            prop.name(), {&prop}, {prop.value()}, {value}, commit
         ));
     }
 
@@ -409,7 +409,7 @@ void model::graphics::TransformGraphicsItem::drag_a(const QPointF& p)
     QPointF p2 = sceneTransform().map(QPointF(0, 0));
     QPointF pos = d->transform->position.get() - p2 + p1;
     d->transform->anchor_point.set(anchor_old);
-    d->target->document()->undo_stack().push(new command::SetMultipleProperties(
+    d->target->document()->undo_stack().push(new command::SetMultipleAnimated(
         tr("Drag anchor point"),
         false,
         {&d->transform->anchor_point, &d->transform->position},
@@ -451,7 +451,7 @@ QRectF model::graphics::TransformGraphicsItem::boundingRect() const
 
 void model::graphics::TransformGraphicsItem::commit_anchor()
 {
-    d->target->document()->undo_stack().push(new command::SetMultipleProperties(
+    d->target->document()->undo_stack().push(new command::SetMultipleAnimated(
         tr("Drag anchor point"),
         true,
         {&d->transform->anchor_point, &d->transform->position},

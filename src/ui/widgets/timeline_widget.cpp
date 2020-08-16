@@ -89,7 +89,7 @@ public:
         setFlags(QGraphicsItem::ItemIsSelectable);
         
         for ( int i = 0; i < animatable->keyframe_count(); i++ )
-            add_keyframe(animatable, i);
+            set_keyframe(animatable, i);
     }
     
     void set_time_start(int time)
@@ -129,7 +129,7 @@ public:
         painter->drawLine(option->rect.left(), height, option->rect.right(), height);
     }
     
-    void add_keyframe(model::AnimatableBase* anim, int index)
+    void set_keyframe(model::AnimatableBase* anim, int index)
     {
         model::KeyframeBase* kf = anim->keyframe(index);
         model::KeyframeBase* prev = index > 0 ? anim->keyframe(index-1) : nullptr;
