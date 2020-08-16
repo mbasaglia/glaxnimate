@@ -24,9 +24,11 @@ public:
 public slots:
     void play();
     void pause();
+    void set_record_enabled(bool enabled);
 
 signals:
     void frame_selected(int frame);
+    void record_toggled(bool enabled);
 
 private slots:
     void play_toggled(bool play);

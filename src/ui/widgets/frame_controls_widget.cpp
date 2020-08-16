@@ -5,6 +5,9 @@ FrameControlsWidget::FrameControlsWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Ui::FrameControlsWidget>())
 {
     d->setupUi(this);
+    d->button_next_kf->setVisible(false);
+    d->button_prev_kf->setVisible(false);
+    connect(d->button_record, &QAbstractButton::clicked, this, &FrameControlsWidget::record_toggled);
 }
 
 FrameControlsWidget::~FrameControlsWidget() = default;
@@ -125,4 +128,9 @@ void FrameControlsWidget::go_prev()
 void FrameControlsWidget::set_frame(int frame)
 {
     d->spin_frame->setValue(frame);
+}
+
+void FrameControlsWidget::set_record_enabled(bool enabled)
+{
+    d->button_record->setChecked(enabled);
 }

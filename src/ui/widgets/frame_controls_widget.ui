@@ -158,6 +158,22 @@
     </widget>
    </item>
    <item>
+    <widget class="QToolButton" name="button_record">
+     <property name="toolTip">
+      <string>Record</string>
+     </property>
+     <property name="text">
+      <string>Record</string>
+     </property>
+     <property name="icon">
+      <iconset theme="media-record"/>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
