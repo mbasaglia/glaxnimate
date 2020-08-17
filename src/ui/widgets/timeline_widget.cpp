@@ -50,12 +50,14 @@ public:
     {
         icon_enter = icon_from_kdf(enter, "finish");
         pix_enter = icon_enter.pixmap(icon_size);
+        update();
     }
     
     void set_exit(model::KeyframeTransition::Descriptive exit)
     {
         icon_exit = icon_from_kdf(exit, "start");
         pix_exit = icon_exit.pixmap(icon_size);
+        update();
     }
     
 private:
@@ -119,6 +121,7 @@ public:
         if ( isSelected() )
         {
             QColor selcol = widget->palette().color(QPalette::Highlight);
+            selcol.setAlphaF(.8);
             painter->fillRect(option->rect, selcol);
         }
         
@@ -131,12 +134,15 @@ public:
     void add_keyframe(int index)
     {
         model::KeyframeBase* kf = animatable->keyframe(index);
+        if ( index == 0 && !kf_items.empty() )
+            kf_items[0]->set_enter(kf->transition().after());
+        
         model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
         auto item = new KeyframeItem(this);
         item->setPos(kf->time(), height / 2.0);
         item->set_exit(kf->transition().before());
-        item->set_enter(prev ? prev->transition().before() : model::KeyframeTransition::Constant);
-        kf_items.push_back(item);
+        item->set_enter(prev ? prev->transition().after() : model::KeyframeTransition::Constant);
+        kf_items.insert(kf_items.begin() + index, item);
     }
     
     

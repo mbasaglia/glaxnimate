@@ -448,27 +448,8 @@ public:
         {
             value_ = value;
             this->value_changed();
-            // Add at 0
-            keyframes_.push_back(std::make_unique<keyframe_type>(0, value));
+            keyframes_.push_back(std::make_unique<keyframe_type>(time, value));
             emit this->keyframe_added(0, keyframes_.back().get());
-            // If time is not 0, we must add another
-            if ( time != 0 )
-            {
-                // Add it
-                keyframes_.push_back(std::make_unique<keyframe_type>(time, value));
-                
-                // Time is after 0, added 1 so it's fine
-                if ( time > 0 )
-                {
-                    emit this->keyframe_added(1, keyframes_.back().get());
-                    return keyframes_.back().get();
-                }
-                
-                // Time is before 0, so swap them
-                std::swap(keyframes_[0], keyframes_[1]);
-                emit this->keyframe_added(0, keyframes_.front().get());
-            }
-            return keyframes_.front().get();
         }
         
         // Current time, update value_
