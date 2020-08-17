@@ -41,6 +41,10 @@ protected:
 signals:
     void frame_clicked(int frame);
     
+private slots:
+    void kf_added(int pos, model::KeyframeBase* kf);
+    void kf_removed(int pos, model::KeyframeBase* kf);
+    
 private:
     class Private;
     

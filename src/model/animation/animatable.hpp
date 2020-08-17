@@ -38,9 +38,9 @@ private:
     KeyframeTransition transition_;
 };
 
-class AnimatableBase : public BaseProperty
+class AnimatableBase : public QObject, public BaseProperty
 {
-    Q_GADGET
+    Q_OBJECT
 
     Q_PROPERTY(int keyframe_count READ keyframe_count)
     Q_PROPERTY(QVariant value READ value)
@@ -80,18 +80,18 @@ public:
      * \return The keyframe or nullptr if it couldn't be added.
      * If there is already a keyframe at \p time the returned value might be an existing keyframe
      */
-    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value) = 0;
+    Q_INVOKABLE virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value) = 0;
     
     /**
      * \brief Removes the keyframe at index \p i
      */
-    virtual void remove_keyframe(int i) = 0;
+    Q_INVOKABLE virtual void remove_keyframe(int i) = 0;
     
     /**
      * \brief Removes the keyframe with the given time
      * \returns whether a keyframe was found and removed
      */
-    virtual bool remove_keyframe_at_time(FrameTime time) = 0;
+    Q_INVOKABLE virtual bool remove_keyframe_at_time(FrameTime time) = 0;
 
     /**
      * \brief Get the value at the given time
@@ -149,14 +149,17 @@ public:
      */
     Q_INVOKABLE int keyframe_index(FrameTime time) const
     {
-        for ( int i = 0; i < keyframe_count(); i++ )
+        auto kfcount = keyframe_count();
+        
+        for ( int i = 0; i < kfcount; i++ )
         {
-            if ( keyframe(i)->time() == time )
+            auto kftime = keyframe(i)->time();
+            if ( kftime == time )
                 return i;
-            else if ( keyframe(i)->time() > time )
+            else if ( kftime > time )
                 return std::max(0, i-1);
         }
-        return 0;
+        return kfcount - 1;
     }
 
     KeyframeStatus keyframe_status(FrameTime time) const
@@ -169,6 +172,11 @@ public:
             return IsKeyframe;
         return Tween;
     }
+    
+signals:
+    void keyframe_added(int index, KeyframeBase* keyframe);
+    void keyframe_removed(int index, KeyframeBase* keyframe);
+    void keyframe_updated(int index, KeyframeBase* keyframe);
     
 protected:
     virtual void on_set_time(FrameTime time) = 0;
@@ -435,46 +443,68 @@ public:
 
     keyframe_type* set_keyframe(FrameTime time, reference value)
     {
+        // First keyframe
         if ( keyframes_.empty() )
         {
             value_ = value;
             this->value_changed();
+            // Add at 0
             keyframes_.push_back(std::make_unique<keyframe_type>(0, value));
+            emit this->keyframe_added(0, keyframes_.back().get());
+            // If time is not 0, we must add another
             if ( time != 0 )
             {
+                // Add it
                 keyframes_.push_back(std::make_unique<keyframe_type>(time, value));
+                
+                // Time is after 0, added 1 so it's fine
                 if ( time > 0 )
+                {
+                    emit this->keyframe_added(1, keyframes_.back().get());
                     return keyframes_.back().get();
+                }
+                
+                // Time is before 0, so swap them
                 std::swap(keyframes_[0], keyframes_[1]);
+                emit this->keyframe_added(0, keyframes_.front().get());
             }
             return keyframes_.front().get();
         }
         
+        // Current time, update value_
         if ( time == this->time() )
         {
             value_ = value;
             this->value_changed();
         }
 
+        // Find the right keyframe
         int index = this->keyframe_index(time);
         auto kf = keyframe(index);
                 
+        // Time matches, update
         if ( kf->time() == time )
         {
             kf->set(value);
+            emit this->keyframe_updated(index, kf);
             return kf;
         }
 
+        // First keyframe not at 0, might have to add the new keyframe at 0
         if ( index == 0 && kf->time() > time )
         {
             keyframes_.insert(keyframes_.begin(), std::make_unique<keyframe_type>(time, value));
+            emit this->keyframe_added(0, keyframes_.front().get());
             return keyframes_.front().get();
         }
 
-        return keyframes_.insert(
+        // Insert somewhere in the middle
+        auto it = keyframes_.insert(
             keyframes_.begin() + index + 1,
             std::make_unique<keyframe_type>(time, value)
-        )->get();
+        );
+        emit this->keyframe_added(index + 1, it->get());
+        return it->get();
     }
 
     value_type get() const

@@ -7,7 +7,6 @@
 #include "app/application.hpp"
 #include "model/document.hpp"
 
-
 class KeyframeItem : public QGraphicsObject
 {
 public:
@@ -42,21 +41,21 @@ public:
             painter->drawRect(boundingRect());
         }
         
-        painter->drawPixmap(-icon_size, -icon_size/2, pix_enter);
+        painter->drawPixmap(-icon_size/2, -icon_size/2, pix_enter);
         painter->drawPixmap(0, -icon_size/2, pix_exit);
     }
     
     
     void set_enter(model::KeyframeTransition::Descriptive enter)
     {
-        icon_enter = icon_from_kdf(enter, "after");
+        icon_enter = icon_from_kdf(enter, "finish");
         pix_enter = icon_enter.pixmap(icon_size);
     }
     
     void set_exit(model::KeyframeTransition::Descriptive exit)
     {
-        icon_exit = icon_from_kdf(exit, "after");
-        pix_exit = icon_enter.pixmap(icon_size);
+        icon_exit = icon_from_kdf(exit, "start");
+        pix_exit = icon_exit.pixmap(icon_size);
     }
     
 private:
@@ -89,7 +88,7 @@ public:
         setFlags(QGraphicsItem::ItemIsSelectable);
         
         for ( int i = 0; i < animatable->keyframe_count(); i++ )
-            set_keyframe(animatable, i);
+            add_keyframe(i);
     }
     
     void set_time_start(int time)
@@ -129,19 +128,19 @@ public:
         painter->drawLine(option->rect.left(), height, option->rect.right(), height);
     }
     
-    void set_keyframe(model::AnimatableBase* anim, int index)
+    void add_keyframe(int index)
     {
-        model::KeyframeBase* kf = anim->keyframe(index);
-        model::KeyframeBase* prev = index > 0 ? anim->keyframe(index-1) : nullptr;
+        model::KeyframeBase* kf = animatable->keyframe(index);
+        model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
         auto item = new KeyframeItem(this);
-        item->setPos(kf->time(), 0);
+        item->setPos(kf->time(), height / 2.0);
         item->set_exit(kf->transition().before());
         item->set_enter(prev ? prev->transition().before() : model::KeyframeTransition::Constant);
         kf_items.push_back(item);
     }
     
     
-private:
+// private:
     model::AnimatableBase* animatable;
     std::vector<KeyframeItem*> kf_items;
     int time_start;
@@ -171,24 +170,26 @@ public:
     }
     
     
-    void add_animatable(model::AnimatableBase* anim)
+    void add_animatable(TimelineWidget* parent, model::AnimatableBase* anim)
     {
         AnimatableItem* item = new AnimatableItem(anim, start_time, end_time, row_height);
+        connect(anim, &model::AnimatableBase::keyframe_added, parent, &TimelineWidget::kf_added);
+        connect(anim, &model::AnimatableBase::keyframe_removed, parent, &TimelineWidget::kf_removed);
         item->setPos(0, rows * row_height);
         anim_items[anim] = item;
         scene.addItem(item);
         rows += 1;
     }
     
-    void add_object(model::Object* obj)
+    void add_object(TimelineWidget* parent, model::Object* obj)
     {
         for ( auto prop : obj->properties() )
         {
             auto flags = prop->traits().flags;
             if ( flags & model::PropertyTraits::Animated )
-                add_animatable(static_cast<model::AnimatableBase*>(prop));
+                add_animatable(parent, static_cast<model::AnimatableBase*>(prop));
             else if ( prop->traits().type == model::PropertyTraits::Object && !(flags & model::PropertyTraits::List) )
-                add_object(static_cast<model::SubObjectPropertyBase*>(prop)->sub_object());
+                add_object(parent, static_cast<model::SubObjectPropertyBase*>(prop)->sub_object());
         }
     }
     
@@ -218,6 +219,18 @@ public:
             color
         );
     }
+    
+    void clear(TimelineWidget* parent)
+    {
+        for ( const auto& p : anim_items )
+        {
+            disconnect(p.second->animatable, &model::AnimatableBase::keyframe_added, parent, &TimelineWidget::kf_added);
+            disconnect(p.second->animatable, &model::AnimatableBase::keyframe_removed, parent, &TimelineWidget::kf_removed);
+        }
+        scene.clear();
+        rows = 0;
+        anim_items.clear();
+    }
 };
 
 TimelineWidget::TimelineWidget(QWidget* parent)
@@ -243,22 +256,20 @@ void TimelineWidget::add_container(model::AnimationContainer* cont)
 
 void TimelineWidget::add_animatable(model::AnimatableBase* anim)
 {
-    d->add_animatable(anim);
+    d->add_animatable(this, anim);
 }
 
 void TimelineWidget::set_active(model::DocumentNode* node)
 {
     clear();
-    d->add_object(node);
+    d->add_object(this, node);
     setSceneRect(d->scene_rect());
     reset_view();
 }
 
 void TimelineWidget::clear()
 {
-    d->scene.clear();
-    d->rows = 0;
-    d->anim_items.clear();
+    d->clear(this);
 }
 
 int TimelineWidget::row_height() const
@@ -341,9 +352,24 @@ void TimelineWidget::wheelEvent(QWheelEvent* event)
 
 void TimelineWidget::paintEvent(QPaintEvent* event)
 {
+    // bg
+    QPen dark(palette().color(QPalette::Text), 1);
+    QPainter painter;
+    
+    if ( d->document )
+    {
+        painter.begin(viewport());
+        painter.setPen(dark);
+        int cur_x = mapFromScene(d->document->current_time(), 0).x();
+        painter.drawLine(cur_x, event->rect().top(), cur_x, event->rect().bottom());
+        painter.end();
+    }
+    
+    // scene
     QGraphicsView::paintEvent(event);
     
-    QPainter painter(viewport());
+    // fg
+    painter.begin(viewport());
     
     painter.fillRect(event->rect().left(), 0, event->rect().right(), d->header_height,
                      palette().color(QPalette::Base));
@@ -356,7 +382,6 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     if ( d->mouse_frame > -1 )
         d->paint_highligted_frame(this, d->mouse_frame, painter, palette().color(QPalette::Highlight));
     
-    QPen dark(palette().color(QPalette::Text), 1);
     painter.setPen(dark);
     painter.drawLine(event->rect().left(), d->header_height, event->rect().right(), d->header_height);
     
@@ -477,3 +502,18 @@ void TimelineWidget::leaveEvent(QEvent* event)
     QGraphicsView::leaveEvent(event);
     d->mouse_frame = -1;
 }
+
+void TimelineWidget::kf_added(int pos, model::KeyframeBase*)
+{
+    model::AnimatableBase* prop = static_cast<model::AnimatableBase*>(sender());
+    if ( auto item = d->anim_items[prop] )
+    {
+        item->add_keyframe(pos);
+    }
+}
+
+void TimelineWidget::kf_removed(int pos, model::KeyframeBase*)
+{
+    Q_UNUSED(pos);
+}
+
