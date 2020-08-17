@@ -479,13 +479,21 @@ void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
     if ( event->y() > d->header_height )
         QGraphicsView::mousePressEvent(event);
+    
+    d->mouse_frame = mapToScene(event->pos()).x();
+    if ( event->button() == Qt::LeftButton )
+        emit frame_clicked(d->mouse_frame);
 }
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
 {
     if ( event->y() > d->header_height )
         QGraphicsView::mouseMoveEvent(event);
+    
     d->mouse_frame = mapToScene(event->pos()).x();
+    if ( event->buttons() & Qt::LeftButton )
+        emit frame_clicked(d->mouse_frame);
+    
     viewport()->update();
 }
 
