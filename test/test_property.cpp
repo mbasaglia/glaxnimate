@@ -58,8 +58,8 @@ class MetaTestSubject : public DocumentNode
     Q_OBJECT
 
     GLAXNIMATE_PROPERTY(int, prop_scalar, 123)
-    GLAXNIMATE_PROPERTY_REFERENCE(MetaTestSubject, prop_ref)
-    GLAXNIMATE_PROPERTY_LIST(MetaTestSubject, prop_list)
+    GLAXNIMATE_PROPERTY_REFERENCE(MetaTestSubject, prop_ref, &MetaTestSubject::valid_references, &MetaTestSubject::is_valid_reference)
+    GLAXNIMATE_PROPERTY_LIST(MetaTestSubject, prop_list, nullptr, nullptr, nullptr, nullptr)
 
 public:
     QIcon docnode_icon() const override { return {}; }
@@ -69,11 +69,15 @@ public:
     DocumentNode* docnode_child(int) const override { return {}; }
     int docnode_child_index(DocumentNode*) const override { return -1; }
 
-    std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const override
+    std::vector<DocumentNode*> valid_references() const 
     {
         return {
             const_cast<MetaTestSubject*>(this)
         };
+    }
+    bool is_valid_reference(DocumentNode* p) 
+    {
+        return p == this;
     }
 
     using DocumentNode::DocumentNode;

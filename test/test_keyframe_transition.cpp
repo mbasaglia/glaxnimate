@@ -13,12 +13,12 @@ private slots:
     void test_set_handle()
     {
         model::KeyframeTransition kft;
-        kft.set_before_handle(math::Vec2(.46, .94));
-        kft.set_after_handle(math::Vec2(.89, .34));
-        QCOMPARE(kft.bezier().points()[0], math::Vec2(0, 0));
-        QCOMPARE(kft.bezier().points()[1], math::Vec2(.46, .94));
-        QCOMPARE(kft.bezier().points()[2], math::Vec2(.89, .34));
-        QCOMPARE(kft.bezier().points()[3], math::Vec2(1, 1));
+        kft.set_before_handle(QPointF(.46, .94));
+        kft.set_after_handle(QPointF(.89, .34));
+        QCOMPARE(kft.bezier().points()[0], QPointF(0, 0));
+        QCOMPARE(kft.bezier().points()[1], QPointF(.46, .94));
+        QCOMPARE(kft.bezier().points()[2], QPointF(.89, .34));
+        QCOMPARE(kft.bezier().points()[3], QPointF(1, 1));
 
 //         double step = 0.1;
 //         int count = 10;
@@ -61,12 +61,12 @@ private slots:
     void benchmark_lerp_factor()
     {
         model::KeyframeTransition kft;
-        kft.set_before_handle(math::Vec2(.46, .94));
-        kft.set_after_handle(math::Vec2(.89, .34));
-        QCOMPARE(kft.bezier().points()[0], math::Vec2(0, 0));
-        QCOMPARE(kft.bezier().points()[1], math::Vec2(.46, .94));
-        QCOMPARE(kft.bezier().points()[2], math::Vec2(.89, .34));
-        QCOMPARE(kft.bezier().points()[3], math::Vec2(1, 1));
+        kft.set_before_handle(QPointF(.46, .94));
+        kft.set_after_handle(QPointF(.89, .34));
+        QCOMPARE(kft.bezier().points()[0], QPointF(0, 0));
+        QCOMPARE(kft.bezier().points()[1], QPointF(.46, .94));
+        QCOMPARE(kft.bezier().points()[2], QPointF(.89, .34));
+        QCOMPARE(kft.bezier().points()[3], QPointF(1, 1));
 
         double step = 0.1;
         int count = 10;
@@ -82,8 +82,8 @@ private slots:
         model::KeyframeTransition kft;
         QCOMPARE(kft.lerp_factor(0.1), 0.1);
 
-        kft.set_before_handle(math::Vec2(.46, .94));
-        kft.set_after_handle(math::Vec2(.89, .34));
+        kft.set_before_handle(QPointF(.46, .94));
+        kft.set_after_handle(QPointF(.89, .34));
         QCOMPARE(qRound(kft.lerp_factor(0.1)*100), 18);
     }
 
