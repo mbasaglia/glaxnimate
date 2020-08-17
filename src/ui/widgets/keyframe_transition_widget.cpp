@@ -19,14 +19,14 @@ public:
         return target->hold();
     }
 
-    const math::Vec2& point(int i) { return target->bezier().points()[i]; }
+    const QPointF& point(int i) { return target->bezier().points()[i]; }
 
     double map_coord(double coord, double size)
     {
         return handle_radius + (size - 2 * handle_radius) * coord;
     }
 
-    QPointF map_pt(const math::Vec2& p, int width, int height)
+    QPointF map_pt(const QPointF& p, int width, int height)
     {
         return QPointF(
             map_coord(p.x(), width),
@@ -44,9 +44,9 @@ public:
         return qBound(0., (coord - handle_radius) / (size - 2.0 * handle_radius), 1.);
     }
 
-    math::Vec2 unmap_pt(const QPoint& p, int width, int height)
+    QPointF unmap_pt(const QPoint& p, int width, int height)
     {
-        return math::Vec2{
+        return QPointF{
             unmap_coord(p.x(), width),
             (1-unmap_coord(p.y(), height)),
         };
@@ -187,9 +187,9 @@ void KeyframeTransitionWidget::mouseMoveEvent(QMouseEvent* event)
     }
     else if ( isEnabled() )
     {
-        math::Vec2 p = d->unmap_pt(event->pos(), width(), height());
-        double d1 = (d->point(1) - p).length_squared();
-        double d2 = (d->point(2) - p).length_squared();
+        QPointF p = d->unmap_pt(event->pos(), width(), height());
+        double d1 = math::length_squared(d->point(1) - p);
+        double d2 = math::length_squared(d->point(2) - p);
         d->highlighted_handle = d1 < d2 ? 1 : 2;
         update();
     }

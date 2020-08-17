@@ -440,14 +440,19 @@ inline Vec2 from_polar(scalar_type<Vec2> length, scalar_type<Vec2> angle)
     return Vec2{std::cos(angle) * length, std::sin(angle) * length};
 }
 
+template<class VecT>
+constexpr scalar_type<VecT> length_squared(const VecT& v)
+{
+    return detail::LengthHelper<VecT, detail::VecSize<VecT>::value>::sumsq(v);
+}
+
 /**
  * \brief 2-norm length of a vector
  */
 template<class VecT>
 constexpr scalar_type<VecT> length(const VecT& v)
 {
-    return std::sqrt(detail::LengthHelper<VecT, detail::VecSize<VecT>::value>::sumsq(v));
+    return std::sqrt(length_squared(v));
 }
-
 
 } // namespace math

@@ -31,7 +31,6 @@ public:
         MoveHandle* handle;
         QPointF (Private::* get_p)()const;
         void (TransformGraphicsItem::* signal)(const QPointF&);
-
     };
 
     Transform* transform;

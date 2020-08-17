@@ -88,7 +88,17 @@ private:
  */
 class SetMultipleAnimated : public MergeableCommand<Id::SetMultipleAnimated, SetMultipleAnimated>
 {
-public:
+public:    
+    SetMultipleAnimated(model::AnimatableBase* prop, QVariant after, bool commit)
+        : SetMultipleAnimated(
+            auto_name(prop),
+            {prop},
+            {},
+            {after},
+            commit
+        )
+    {}
+    
     template<class... Args>
     SetMultipleAnimated(
         const QString& name,
@@ -111,7 +121,8 @@ public:
         bool commit
     )
         : Parent(name, commit), props(props), before(before), after(after), 
-        keyframe_after(props[0]->object()->document()->record_to_keyframe())
+        keyframe_after(props[0]->object()->document()->record_to_keyframe()),
+        time(props[0]->time())
     {
         bool add_before = before.empty();
         
@@ -172,6 +183,20 @@ public:
     }
 
 private:
+    static QString auto_name(model::AnimatableBase* prop) 
+    {
+        bool key_before = prop->keyframe_status(prop->time()) != model::AnimatableBase::Tween;
+        bool key_after = prop->object()->document()->record_to_keyframe();
+        
+        if ( key_after && !key_before )
+            return QObject::tr("Add keyframe for %1 at %2").arg(prop->name()).arg(prop->time());
+            
+        if ( key_before )
+            return QObject::tr("Update %1 at %2").arg(prop->name()).arg(prop->time());
+        
+        return QObject::tr("Update %1").arg(prop->name());        
+    }
+    
     std::vector<model::AnimatableBase*> props;
     QVariantList before;
     QVariantList after;

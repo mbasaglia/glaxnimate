@@ -54,6 +54,34 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
         }
         return arr;
     }
+    else if ( property->traits().flags & model::PropertyTraits::Animated )
+    {
+        model::AnimatableBase* anim = static_cast<model::AnimatableBase*>(property);
+        QJsonObject jso;
+        if ( !anim->animated() )
+        {
+            jso["value"] = to_json(anim->value());
+        }
+        else
+        {
+            QJsonArray keyframes;
+            for ( int i = 0, e = anim->keyframe_count(); i < e; i++ )
+            {
+                auto kf = anim->keyframe(i);
+                QJsonObject jkf;
+                jkf["time"] = kf->time();
+                jkf["value"] = to_json(kf->value());
+                if ( !kf->transition().hold() )
+                {
+                    jkf["before_handle"] = to_json(kf->transition().before_handle());
+                    jkf["after_handle"] = to_json(kf->transition().after_handle());
+                }
+                keyframes.push_back(jkf);
+            }
+            jso["keyframes"] = keyframes;
+        }
+        return jso;
+    }
 
     return to_json(property->value(), property->traits());
 }

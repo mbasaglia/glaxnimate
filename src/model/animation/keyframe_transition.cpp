@@ -2,11 +2,11 @@
 
 namespace {
 
-constexpr math::Vec2 bound_vec(const math::Vec2& v)
+constexpr QPointF bound_vec(const QPointF& v)
 {
     return {
-        qBound(math::scalar_type<math::Vec2>(0), v.x(), math::scalar_type<math::Vec2>(1)),
-        qBound(math::scalar_type<math::Vec2>(0), v.y(), math::scalar_type<math::Vec2>(1))
+        qBound(math::scalar_type<QPointF>(0), v.x(), math::scalar_type<QPointF>(1)),
+        qBound(math::scalar_type<QPointF>(0), v.y(), math::scalar_type<QPointF>(1))
     };
 }
 
@@ -53,7 +53,7 @@ void model::KeyframeTransition::set_before(model::KeyframeTransition::Descriptiv
             hold_ = false;
             break;
         case Ease:
-            bezier_.points()[1] = math::Vec2{1./3., 0};
+            bezier_.points()[1] = QPointF{1./3., 0};
             hold_ = false;
             break;
         case Custom:
@@ -78,7 +78,7 @@ void model::KeyframeTransition::set_after(model::KeyframeTransition::Descriptive
             hold_ = false;
             break;
         case Ease:
-            bezier_.points()[2] = math::Vec2{2./3., 1};
+            bezier_.points()[2] = QPointF{2./3., 1};
             hold_ = false;
             break;
         case Custom:
@@ -90,21 +90,21 @@ void model::KeyframeTransition::set_after(model::KeyframeTransition::Descriptive
         emit after_changed(after());
 }
 
-void model::KeyframeTransition::set_after_handle(const math::Vec2& after)
+void model::KeyframeTransition::set_after_handle(const QPointF& after)
 {
     sample_cache_.clean = false;
     bezier_.points()[2] = bound_vec(after);
     emit after_changed(this->after());
 }
 
-void model::KeyframeTransition::set_before_handle(const math::Vec2& before)
+void model::KeyframeTransition::set_before_handle(const QPointF& before)
 {
     sample_cache_.clean = false;
     bezier_.points()[1] = bound_vec(before);
     emit before_changed(this->before());
 }
 
-void model::KeyframeTransition::set_handles(const math::Vec2& before, const math::Vec2& after)
+void model::KeyframeTransition::set_handles(const QPointF& before, const QPointF& after)
 {
     set_before_handle(before);
     set_after_handle(after);
@@ -126,7 +126,7 @@ static constexpr const int SUBDIVISION_MAX_ITERATIONS = 10;
 static constexpr const int SPLINE_TABLE_SIZE = 11;
 static constexpr const double SAMPLE_STEP_SIZE = 1.0 / (SPLINE_TABLE_SIZE - 1.0);
 
-using Bez = math::BezierSolver<math::Vec2>;
+using Bez = math::BezierSolver<QPointF>;
 
 double _binary_subdivide(double x, double interval_start, double interval_end, const Bez& bez)
 {

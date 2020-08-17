@@ -3,6 +3,7 @@
 #include "math/bezier_solver.hpp"
 
 #include <QObject>
+#include <QPointF>
 
 
 namespace model {
@@ -25,8 +26,8 @@ class KeyframeTransition: public QObject
     Q_PROPERTY(bool hold READ hold WRITE set_hold)
     Q_PROPERTY(Descriptive before READ before WRITE set_before NOTIFY before_changed STORED false)
     Q_PROPERTY(Descriptive after READ after WRITE set_after NOTIFY after_changed STORED false)
-    Q_PROPERTY(math::Vec2 before_handle READ before_handle WRITE set_before_handle)
-    Q_PROPERTY(math::Vec2 after_handle READ after_handle WRITE set_after_handle)
+    Q_PROPERTY(QPointF before_handle READ before_handle WRITE set_before_handle)
+    Q_PROPERTY(QPointF after_handle READ after_handle WRITE set_after_handle)
 
 public:
     enum Descriptive
@@ -38,13 +39,13 @@ public:
     };
     Q_ENUM(Descriptive)
 
-    const math::BezierSolver<math::Vec2>& bezier() const { return bezier_; }
+    const math::BezierSolver<QPointF>& bezier() const { return bezier_; }
     bool hold() const { return hold_; }
 
     Descriptive before() const;
     Descriptive after() const;
-    math::Vec2 before_handle() const { return bezier_.points()[1]; }
-    math::Vec2 after_handle() const  { return bezier_.points()[2]; }
+    QPointF before_handle() const { return bezier_.points()[1]; }
+    QPointF after_handle() const  { return bezier_.points()[2]; }
 
     /**
      * \brief Get interpolation factor
@@ -68,16 +69,16 @@ public slots:
     void set_hold(bool hold);
     void set_before(Descriptive d);
     void set_after(Descriptive d);
-    void set_handles(const math::Vec2& before, const math::Vec2& after);
-    void set_before_handle(const math::Vec2& before);
-    void set_after_handle(const math::Vec2& after);
+    void set_handles(const QPointF& before, const QPointF& after);
+    void set_before_handle(const QPointF& before);
+    void set_after_handle(const QPointF& after);
 
 signals:
     void before_changed(Descriptive d);
     void after_changed(Descriptive d);
 
 private:
-    math::BezierSolver<math::Vec2> bezier_ { math::Vec2(0, 0), math::Vec2(0, 0), math::Vec2(1, 1), math::Vec2(1, 1) };
+    math::BezierSolver<QPointF> bezier_ { QPointF(0, 0), QPointF(0, 0), QPointF(1, 1), QPointF(1, 1) };
     bool hold_ = false;
     mutable detail::SampleCache sample_cache_;
 };

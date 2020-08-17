@@ -167,14 +167,14 @@ public:
         {
             case 3:
                 return (
-                    3 * a(points_[0][component], points_[1][component], points_[2][component], points_[3][component]) * factor +
-                    2 * b(points_[0][component], points_[1][component], points_[2][component])
-                ) * factor + c(points_[0][component], points_[1][component]);
+                    3 * a(detail::get(points_[0], component), detail::get(points_[1], component), detail::get(points_[2], component), detail::get(points_[3], component)) * factor +
+                    2 * b(detail::get(points_[0], component), detail::get(points_[1], component), detail::get(points_[2], component))
+                ) * factor + c(detail::get(points_[0], component), detail::get(points_[1], component));
             case 2:
-                return 2 * q2(points_[0][component], points_[1][component], points_[2][component]) * factor +
-                    q1(points_[0][component], points_[1][component]);
+                return 2 * q2(detail::get(points_[0], component), detail::get(points_[1], component), detail::get(points_[2], component)) * factor +
+                           q1(detail::get(points_[0], component), detail::get(points_[1], component));
             case 1:
-                return points_[1][component] - points_[0][component];
+                return detail::get(points_[1], component) - detail::get(points_[0], component);
             default:
                 return 0;
         }

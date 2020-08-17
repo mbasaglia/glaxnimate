@@ -151,7 +151,9 @@ public:
     {
         for ( int i = 0; i < keyframe_count(); i++ )
         {
-            if ( keyframe(i)->time() >= time )
+            if ( keyframe(i)->time() == time )
+                return i;
+            else if ( keyframe(i)->time() > time )
                 return std::max(0, i-1);
         }
         return 0;
@@ -374,7 +376,7 @@ public:
 
     keyframe_type* keyframe(int i) override
     {
-        if ( i < 0 || i > int(keyframes_.size()) )
+        if ( i < 0 || i >= int(keyframes_.size()) )
             return nullptr;
         return keyframes_[i].get();
     }
@@ -433,9 +435,10 @@ public:
 
     keyframe_type* set_keyframe(FrameTime time, reference value)
     {
-        if ( !keyframes_.empty() )
+        if ( keyframes_.empty() )
         {
             value_ = value;
+            this->value_changed();
             keyframes_.push_back(std::make_unique<keyframe_type>(0, value));
             if ( time != 0 )
             {
@@ -446,9 +449,16 @@ public:
             }
             return keyframes_.front().get();
         }
+        
+        if ( time == this->time() )
+        {
+            value_ = value;
+            this->value_changed();
+        }
 
         int index = this->keyframe_index(time);
         auto kf = keyframe(index);
+                
         if ( kf->time() == time )
         {
             kf->set(value);

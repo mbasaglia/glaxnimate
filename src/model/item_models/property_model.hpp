@@ -43,6 +43,8 @@ public:
     {
         set_object(nullptr);
     }
+    
+    model::AnimatableBase* animatable(const QModelIndex& index) const;
 
 private slots:
     void property_changed(const QString& name, const QVariant& value);

@@ -150,6 +150,10 @@ public:
         QVariant before = prop->value();
         if ( !prop->set_value(after) )
             return false;
+        if ( prop->traits().flags & PropertyTraits::Animated )
+        {
+            
+        }
         document->undo_stack().push(new command::SetPropertyValue(prop, before, after));
         return true;
     }
@@ -527,4 +531,15 @@ void model::PropertyModel::set_document(model::Document* document)
 {
     d->document = document;
     clear_object();
+}
+
+model::AnimatableBase * model::PropertyModel::animatable(const QModelIndex& index) const
+{
+    if ( Private::Subtree* st = d->node_from_index(index) )
+    {
+        if ( st->prop && st->prop->traits().flags & PropertyTraits::Animated )
+            return static_cast<model::AnimatableBase*>(st->prop);
+    }
+    
+    return nullptr;
 }
