@@ -123,9 +123,9 @@ private:                                                    \
     Q_PROPERTY(type name READ get_##name WRITE set_##name)  \
     // macro end
 
-#define GLAXNIMATE_PROPERTY_REFERENCE(type, name)           \
+#define GLAXNIMATE_PROPERTY_REFERENCE(type, name, ...)      \
 public:                                                     \
-    ReferenceProperty<type> name{this, #name};              \
+    ReferenceProperty<type> name{this, #name, __VA_ARGS__}; \
     type* get_##name() const { return name.get(); }         \
     bool set_##name(type* v)                                \
     {                                                       \
@@ -226,7 +226,7 @@ template<> inline void defval<void>() {}
 
 } // namespace detail
 
-template<class Return, class Type>
+template<class Return, class ArgType>
 class PropertyCallback
 {
 private:
@@ -234,7 +234,7 @@ private:
     {
     public:
         virtual ~HolderBase() = default;
-        virtual Return invoke(Object* obj, const Type& v) const = 0;
+        virtual Return invoke(Object* obj, const ArgType& v) const = 0;
     };
 
     template<class ObjT, class Arg>
@@ -245,7 +245,7 @@ private:
 
         Holder(FuncP func) : func(std::move(func)) {}
 
-        Return invoke(Object* obj, const Type& v) const override
+        Return invoke(Object* obj, const ArgType& v) const override
         {
             return func(static_cast<ObjT*>(obj), v);
         }
@@ -261,7 +261,7 @@ private:
 
         HolderConst(FuncP func) : func(std::move(func)) {}
 
-        Return invoke(Object* obj, const Type& v) const override
+        Return invoke(Object* obj, const ArgType& v) const override
         {
             return func(static_cast<ObjT*>(obj), v);
         }
@@ -277,16 +277,15 @@ private:
 
         HolderNoarg(FuncP func) : func(std::move(func)) {}
 
-        Return invoke(Object* obj, const Type&) const override
+        Return invoke(Object* obj, const ArgType&) const override
         {
             return func(static_cast<ObjT*>(obj));
         }
 
         FuncP func;
     };
-
+    
     std::unique_ptr<HolderBase> holder;
-
 public:
     PropertyCallback() = default;
 
@@ -311,10 +310,79 @@ public:
         return bool(holder);
     }
 
-    Return operator() (Object* obj, const Type& v) const
+    Return operator() (Object* obj, const ArgType& v) const
     {
         if ( holder )
             return holder->invoke(obj, v);
+        return detail::defval<Return>();
+    }
+};
+
+
+template<class Return>
+class PropertyCallback<Return, void>
+{
+private:
+
+    class HolderBase
+    {
+    public:
+        virtual ~HolderBase() = default;
+        virtual Return invoke(Object* obj) const = 0;
+    };
+
+    template<class ObjT>
+    class Holder : public HolderBase
+    {
+    public:
+        using FuncP = std::function<Return (ObjT*)>;
+
+        Holder(FuncP func) : func(std::move(func)) {}
+
+        Return invoke(Object* obj) const override
+        {
+            return func(static_cast<ObjT*>(obj));
+        }
+
+        FuncP func;
+    };
+
+    template<class ObjT>
+    class HolderConst : public HolderBase
+    {
+    public:
+        using FuncP = std::function<Return (const ObjT*)>;
+
+        HolderConst(FuncP func) : func(std::move(func)) {}
+
+        Return invoke(Object* obj) const override
+        {
+            return func(static_cast<ObjT*>(obj));
+        }
+
+        FuncP func;
+    };
+    
+    std::unique_ptr<HolderBase> holder;
+public:
+    PropertyCallback() = default;
+
+    PropertyCallback(std::nullptr_t) {}
+
+    template<class ObjT>
+    PropertyCallback(Return (ObjT::*func)()) : holder(std::make_unique<Holder<ObjT>>(func)) {}
+    template<class ObjT>
+    PropertyCallback(Return (ObjT::*func)() const) : holder(std::make_unique<HolderConst<ObjT>>(func)) {}
+
+    explicit operator bool() const
+    {
+        return bool(holder);
+    }
+
+    Return operator() (Object* obj) const
+    {
+        if ( holder )
+            return holder->invoke(obj);
         return detail::defval<Return>();
     }
 };

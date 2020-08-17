@@ -307,31 +307,33 @@ class ReferencePropertyBase : public BaseProperty
 {
     Q_GADGET
 public:
-    ReferencePropertyBase(DocumentNode* obj, const QString& name, PropertyTraits::Flags flags = PropertyTraits::Visual)
+    ReferencePropertyBase(
+        DocumentNode* obj, 
+        const QString& name, 
+        PropertyCallback<std::vector<DocumentNode*>, void> valid_options,
+        PropertyCallback<bool, DocumentNode*> is_valid_option,
+        PropertyTraits::Flags flags = PropertyTraits::Visual)
         : BaseProperty(obj, name, PropertyTraits{PropertyTraits::ObjectReference, flags}),
-          parent(obj)
+        valid_options_(std::move(valid_options)),
+        is_valid_option_(std::move(is_valid_option))
     {
     }
 
     std::vector<DocumentNode*> valid_options() const
     {
-        return parent->docnode_valid_references(this);
+        return valid_options_(object());
     }
 
     bool is_valid_option(DocumentNode* ptr) const
     {
-        return parent->docnode_is_valid_reference(this, ptr);
-    }
-
-    DocumentNode* validator() const
-    {
-        return parent;
+        return is_valid_option_(object(), ptr);
     }
     
     void set_time(FrameTime) override {}
 
 private:
-    DocumentNode* parent;
+    PropertyCallback<std::vector<DocumentNode*>, void> valid_options_;
+    PropertyCallback<bool, DocumentNode*> is_valid_option_;
 };
 
 
@@ -341,9 +343,7 @@ class ReferenceProperty : public ReferencePropertyBase
 public:
     using value_type = Type*;
 
-    ReferenceProperty(DocumentNode* obj, const QString& name, PropertyTraits::Flags flags = PropertyTraits::Visual)
-        : ReferencePropertyBase(obj, name, flags)
-    {}
+    using ReferencePropertyBase::ReferencePropertyBase;
 
     bool set(Type* value)
     {

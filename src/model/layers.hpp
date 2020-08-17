@@ -72,7 +72,8 @@ class Layer : public AnimationContainer
 {
     Q_OBJECT
 
-    GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent)
+public:
+    GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent, &Layer::valid_parents, &Layer::is_valid_parent)
     GLAXNIMATE_PROPERTY(float, start_time, 0, {}, {}, PropertyTraits::Visual)
     GLAXNIMATE_SUBOBJECT(Transform, transform)
 
@@ -99,8 +100,6 @@ public:
     QString type_name_human() const override { return tr("Uknown Layer"); }
     DocumentNode* docnode_parent() const override;
     DocumentNode* docnode_group_parent() const override;
-    std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const override;
-    bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const override;
     graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override;
     std::vector<std::unique_ptr<QGraphicsItem>> docnode_make_graphics_editor() override;
     void set_time(FrameTime t) override;
@@ -145,6 +144,9 @@ private:
     {
         return clone_covariant();
     }
+    
+    std::vector<DocumentNode*> valid_parents() const;
+    bool is_valid_parent(DocumentNode* node) const;
 };
 
 namespace detail {

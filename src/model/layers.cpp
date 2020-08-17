@@ -35,7 +35,7 @@ model::DocumentNode * model::Layer::docnode_parent() const
     return composition_;
 }
 
-std::vector<model::DocumentNode *> model::Layer::docnode_valid_references ( const model::ReferencePropertyBase* ) const
+std::vector<model::DocumentNode *> model::Layer::valid_parents() const
 {
     std::vector<model::DocumentNode *> refs;
     refs.push_back(nullptr);
@@ -48,7 +48,7 @@ std::vector<model::DocumentNode *> model::Layer::docnode_valid_references ( cons
     return refs;
 }
 
-bool model::Layer::docnode_is_valid_reference ( const model::ReferencePropertyBase*, model::DocumentNode* node ) const
+bool model::Layer::is_valid_parent(model::DocumentNode* node) const
 {
     if ( node == nullptr )
         return true;
