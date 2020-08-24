@@ -43,7 +43,7 @@ signals:
     
 private slots:
     void kf_added(int pos, model::KeyframeBase* kf);
-    void kf_removed(int pos, model::KeyframeBase* kf);
+    void kf_removed(int pos);
     
 private:
     class Private;

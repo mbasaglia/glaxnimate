@@ -88,6 +88,12 @@ public:
     Q_INVOKABLE virtual void remove_keyframe(int i) = 0;
     
     /**
+     * \brief Removes all keyframes
+     * \post !animated()
+     */
+    Q_INVOKABLE virtual void clear_keyframes() = 0;
+    
+    /**
      * \brief Removes the keyframe with the given time
      * \returns whether a keyframe was found and removed
      */
@@ -102,6 +108,14 @@ public:
 
     virtual QVariant extra_variant() const = 0;
     virtual bool set_extra_variant(const QVariant&) = 0;
+
+    /**
+     * If animated(), whether the current value has been changed over the animated value
+     */
+    virtual bool value_mismatch() const = 0;
+    
+    bool assign_from(const BaseProperty* prop) override;
+    
     /**
      * \brief Set the current time
      * \post value() == value(time)
@@ -116,11 +130,6 @@ public:
     {
         return current_time;
     }
-
-    /**
-     * If animated(), whether the current value has been changed over the animated value
-     */
-    virtual bool value_mismatch() const = 0;
     
     /**
      * \brief Set the value for the given keyframe
@@ -175,7 +184,7 @@ public:
     
 signals:
     void keyframe_added(int index, KeyframeBase* keyframe);
-    void keyframe_removed(int index, KeyframeBase* keyframe);
+    void keyframe_removed(int index);
     void keyframe_updated(int index, KeyframeBase* keyframe);
     
 protected:
@@ -409,7 +418,18 @@ public:
     void remove_keyframe(int i) override
     {
         if ( i > 0 && i <= int(keyframes_.size()) )
+        {
             keyframes_.erase(keyframes_.begin() + i);
+            emit this->keyframe_removed(i);
+        }
+    }
+    
+    void clear_keyframes() override
+    {
+        int n = keyframes_.size();
+        keyframes_.clear();
+        for ( int i = 0; i < n; i++ )
+            emit this->keyframe_removed(i);
     }
     
     bool remove_keyframe_at_time(FrameTime time) override
@@ -419,6 +439,7 @@ public:
             if ( (*it)->time() == time )
             {
                 keyframes_.erase(it);
+                emit this->keyframe_removed(it - keyframes_.begin());
                 return true;
             }
         }
@@ -450,6 +471,7 @@ public:
             this->value_changed();
             keyframes_.push_back(std::make_unique<keyframe_type>(time, value));
             emit this->keyframe_added(0, keyframes_.back().get());
+            return keyframes_.back().get();
         }
         
         // Current time, update value_

@@ -48,6 +48,7 @@ public:
 
 private slots:
     void property_changed(const QString& name, const QVariant& value);
+    void on_delete_object();
 
 private:
     class Private;

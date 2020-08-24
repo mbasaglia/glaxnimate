@@ -85,6 +85,7 @@ void IoStatusDialog::reset(io::ImportExport* ie, const QString& label)
     d->label->setText(label);
     d->finished = false;
     d->icon_label->setPixmap(d->icon.pixmap(64));
+    d->has_errors = false;
 
 
     d->ie = ie;

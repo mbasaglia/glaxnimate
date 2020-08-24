@@ -526,7 +526,7 @@ void TimelineWidget::kf_added(int pos, model::KeyframeBase*)
     }
 }
 
-void TimelineWidget::kf_removed(int pos, model::KeyframeBase*)
+void TimelineWidget::kf_removed(int pos)
 {
     Q_UNUSED(pos);
 }

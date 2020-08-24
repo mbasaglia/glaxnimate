@@ -132,6 +132,53 @@ public:
                 return target->set_value(list);
             }
         }
+        else if ( target->traits().flags & model::PropertyTraits::Animated )
+        {
+            QJsonObject jso = val.toObject();
+            if ( jso.contains("value") )
+            {
+                return target->set_value(load_prop_value(target, jso["value"], true));
+            }
+            else
+            {
+                model::AnimatableBase* anim = static_cast<model::AnimatableBase*>(target);
+                for ( const auto& v : jso["keyframes"].toArray() )
+                {
+                    QJsonObject kfobj = v.toObject();
+                    if ( !kfobj.contains("time") )
+                    {
+                        fmt->error(tr("Keyframe must specify a time"));
+                        continue;
+                    }
+                    if ( !kfobj.contains("value") )
+                    {
+                        fmt->error(tr("Keyframe must specify a value"));
+                        continue;
+                    }
+                    
+                    model::KeyframeBase* kf = anim->set_keyframe(
+                        kfobj["time"].toDouble(),
+                        load_prop_value(target, kfobj["value"], false)
+                    );
+                    if ( !kf )   
+                    {
+                        fmt->error(tr("Could not add keyframe"));
+                        continue;
+                    }
+                    
+                    QPointF before, after;
+                    if ( load_2d(kfobj["before"], "x", "y", before) && load_2d(kfobj["after"], "x", "y", after) )
+                    {
+                        kf->transition().set_before_handle(before);
+                        kf->transition().set_after_handle(after);
+                    }
+                    else
+                    {
+                        kf->transition().set_hold(true);
+                    }
+                }
+            }
+        }
 
 
         if ( target->traits().type == model::PropertyTraits::ObjectReference )
@@ -176,7 +223,7 @@ public:
                     load_object(object, jobj);
                 else
                     deferred_loads.insert(object, jobj);
-                return  QVariant::fromValue(object);
+                return QVariant::fromValue(object);
             }
             case model::PropertyTraits::ObjectReference:
             case model::PropertyTraits::Uuid:
@@ -198,28 +245,38 @@ public:
             }
             case model::PropertyTraits::Point:
             {
-                QJsonObject obj = val.toObject();
-                if ( obj.empty() )
-                    return {};
-                return QPointF(obj["x"].toDouble(), obj["y"].toDouble());
+                QPointF p;
+                if ( load_2d(val, "x", "y", p) )
+                    return p;
+                return {};
             }
             case model::PropertyTraits::Size:
             {
-                QJsonObject obj = val.toObject();
-                if ( obj.empty() )
-                    return QVariant{};
-                return QSizeF(obj["width"].toDouble(), obj["height"].toDouble());
+                QSizeF p;
+                if ( load_2d(val, "width", "height", p) )
+                    return p;
+                return {};
             }
             case model::PropertyTraits::Scale:
             {
-                QJsonObject obj = val.toObject();
-                if ( obj.empty() )
-                    return QVariant{};
-                return QVector2D(obj["x"].toDouble(), obj["y"].toDouble());
+                QVector2D p;
+                if ( load_2d(val, "x", "y", p) )
+                    return p;
+                return {};
             }
             default:
                 return val.toVariant();
         }
+    }
+    
+    template<class Type>
+    bool load_2d(const QJsonValue& val, const QString& x, const QString& y, Type& ret)
+    {
+        QJsonObject obj = val.toObject();
+        if ( obj.empty() )
+            return false;
+        ret = Type(obj[x].toDouble(), obj[y].toDouble());
+        return true;
     }
 
     /// @todo Find a way of automating this

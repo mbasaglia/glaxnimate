@@ -43,7 +43,7 @@ void model::Object::assign_from(const model::Object* other)
 void model::Object::clone_into(model::Object* dest) const
 {
     for ( BaseProperty* prop : d->prop_order )
-        dest->set(prop->name(), prop->value());
+        dest->get_property(prop->name())->assign_from(prop);
 }
 
 

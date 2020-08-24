@@ -75,6 +75,7 @@ public:
 
         objects[object] = this_node;
         QObject::connect(object, &model::Object::property_changed, model, &PropertyModel::property_changed);
+        QObject::connect(object, &model::Object::destroyed, model, &PropertyModel::on_delete_object);
 
         for ( BaseProperty* prop : object->properties() )
         {
@@ -95,6 +96,40 @@ public:
             }
         }
     }
+    
+    void on_delete_object(model::Object* obj, PropertyModel* model)
+    {
+        auto it = objects.find(obj);
+        if ( it == objects.end() )
+            return;
+        
+        auto it2 = nodes.find(it->second);
+        if ( it2 == nodes.end() )
+            return;
+        
+        Subtree* node = &it2->second;
+        for ( Subtree* child : node->children )
+        {
+            disconnect_recursive(child, model);
+            nodes.erase(child->id);
+        }
+        
+        if ( node->parent )
+        {
+            auto& siblings = this->node(node->parent)->children;
+            for ( auto itc = siblings.begin(); itc != siblings.end(); ++itc )
+            {
+                if ( *itc == node )
+                {
+                    siblings.erase(itc);
+                    break;
+                }
+            }
+        }
+            
+        objects.erase(it);
+        nodes.erase(it2);
+    }
 
     void disconnect_recursive(Subtree* node, PropertyModel* model)
     {
@@ -113,7 +148,9 @@ public:
 
     void disconnect(PropertyModel* model)
     {
-        disconnect_recursive(node(root_id), model);
+        auto it = nodes.find(root_id);
+        if ( it != nodes.end() )
+            disconnect_recursive(&it->second, model);
         root = nullptr;
         nodes.clear();
         objects.clear();
@@ -542,4 +579,9 @@ model::AnimatableBase * model::PropertyModel::animatable(const QModelIndex& inde
     }
     
     return nullptr;
+}
+
+void model::PropertyModel::on_delete_object()
+{
+    d->on_delete_object(static_cast<model::Object*>(sender()), this);
 }

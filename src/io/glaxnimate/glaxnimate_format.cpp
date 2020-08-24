@@ -73,8 +73,8 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
                 jkf["value"] = to_json(kf->value());
                 if ( !kf->transition().hold() )
                 {
-                    jkf["before_handle"] = to_json(kf->transition().before_handle());
-                    jkf["after_handle"] = to_json(kf->transition().after_handle());
+                    jkf["before"] = to_json(kf->transition().before_handle());
+                    jkf["after"] = to_json(kf->transition().after_handle());
                 }
                 keyframes.push_back(jkf);
             }
@@ -111,7 +111,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, mo
 
 QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
 {
-    if ( value.isNull() )
+    if ( !value.isValid() )
         return {};
 
 

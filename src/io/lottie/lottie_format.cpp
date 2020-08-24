@@ -125,14 +125,34 @@ public:
         QJsonObject jobj;
         if ( prop->animated() )
         {
-            /// @todo
             jobj["a"] = 1;
+            QJsonArray keyframes;
+            for ( int i = 0, e = prop->keyframe_count(); i < e; i++ )
+            {
+                auto kf = prop->keyframe(i);
+                QJsonObject jkf;
+                jkf["t"] = kf->time();
+                jkf["s"] = value_from_variant(kf->value());
+                jkf["i"] = keyframe_bezier_handle(kf->transition().before_handle());
+                jkf["o"] = keyframe_bezier_handle(kf->transition().after_handle());
+                jkf["h"] = kf->transition().hold() ? 1 : 0;
+                keyframes.push_back(jkf);
+            }
+            jobj["k"] = keyframes;
         }
         else
         {
             jobj["a"] = 0;
             jobj["k"] = value_from_variant(prop->value());
         }
+        return jobj;
+    }
+    
+    QJsonObject keyframe_bezier_handle(const QPointF& p)
+    {
+        QJsonObject jobj;
+        jobj["x"] = p.x();
+        jobj["y"] = p.y();
         return jobj;
     }
 

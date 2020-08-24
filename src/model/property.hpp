@@ -190,6 +190,11 @@ public:
     virtual bool set_value(const QVariant& val) = 0;
     virtual bool set_undoable(const QVariant& val);
     virtual void set_time(FrameTime t) = 0;
+    
+    virtual bool assign_from(const BaseProperty* prop)
+    {
+        return set_value(prop->value());
+    }
 
     const QString& name() const
     {
