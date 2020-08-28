@@ -10,8 +10,7 @@ namespace model {
 
 class Transform : public ObjectBase<Transform, Object>
 {
-    Q_OBJECT
-
+    GLAXNIMATE_OBJECT
     GLAXNIMATE_ANIMATABLE(QPointF, anchor_point, QPointF(0, 0))
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF(0, 0))
     GLAXNIMATE_ANIMATABLE(QVector2D, scale, QVector2D(1, 1))

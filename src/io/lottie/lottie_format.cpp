@@ -7,17 +7,82 @@ using namespace model;
 
 io::Autoreg<io::lottie::LottieFormat> io::lottie::LottieFormat::autoreg;
 
-
-class LottieExporterState
-{
-public:
+namespace  {
     struct FieldInfo
     {
         QString name;
         QString lottie;
         bool essential = false;
     };
-
+    
+    // static mapping data
+    const QMap<QString, QVector<FieldInfo>> fields = {
+        {"DocumentNode", {
+            FieldInfo{"name",           "nm", false},
+            FieldInfo{"uuid",           "mn", false},
+        }},
+        {"AnimationContainer", {
+            FieldInfo{"last_frame",     "op"},
+            FieldInfo{"first_frame",    "ip"},
+        }},
+        {"Animation", {
+            // version v
+            FieldInfo{"fps",            "fr"},
+            // * ip
+            FieldInfo{"last_frame",     "op"},
+            FieldInfo{"width",          "w"},
+            FieldInfo{"height",         "h"},
+            // ddd
+            // assets
+            // comps
+            // fonts
+            // chars
+            // markers
+            // motion_blur
+        }},
+        {"Layer", {
+            // ddd
+            // hd
+            // * ty
+            // * parent
+            // stretch sr
+            // transform ks
+            // auto_orient ao
+            FieldInfo{"start_time",     "st"},
+            // blend_mode bm
+            // matte_mode tt
+            // * ind
+            // css_class cl
+            // layer_html_id ln
+            // hasMasks
+            // masksProperties
+            // effects ef
+        }},
+        {"SolidColorLayer", {
+            FieldInfo{"color",          "sc"},
+            FieldInfo{"height",         "sh"},
+            FieldInfo{"width",          "sw"},
+        }},
+        {"Transform", {
+            FieldInfo{"anchor_point",   "a"},
+            // px py pz
+            FieldInfo{"position",       "p"},
+            FieldInfo{"scale",          "s"},
+            FieldInfo{"rotation",       "r"},
+            // opacity o
+            // skew sk
+            // skew_axis sa
+        }}
+    };
+    const QMap<QString, int> layer_types = {
+        {"SolidColorLayer", 1},
+        {"EmptyLayer", 3},
+        {"ShapeLayer", 4}
+    };
+    
+class LottieExporterState
+{
+public:
     explicit LottieExporterState(model::Document* document)
         : document(document) {}
 
@@ -93,7 +158,7 @@ public:
     {
         QJsonObject json_obj;
         for ( const QMetaObject* mo = obj->metaObject(); mo; mo = mo->superClass() )
-            convert_object_properties(obj, fields[model::Object::naked_type_name(mo->className())], json_obj);
+            convert_object_properties(obj, fields[model::detail::naked_type_name(mo)], json_obj);
         return json_obj;
     }
 
@@ -159,71 +224,22 @@ public:
     model::Document* document;
     QMap<QUuid, int> layer_indices;
 
-    // static mapping data
-    const QMap<QString, QVector<FieldInfo>> fields = {
-        {"DocumentNode", {
-            FieldInfo{"name",           "nm", false},
-            FieldInfo{"uuid",           "mn", false},
-        }},
-        {"AnimationContainer", {
-            FieldInfo{"last_frame",     "op"},
-            FieldInfo{"first_frame",    "ip"},
-        }},
-        {"Animation", {
-            // version v
-            FieldInfo{"fps",            "fr"},
-            // * ip
-            FieldInfo{"last_frame",     "op"},
-            FieldInfo{"width",          "w"},
-            FieldInfo{"height",         "h"},
-            // ddd
-            // assets
-            // comps
-            // fonts
-            // chars
-            // markers
-            // motion_blur
-        }},
-        {"Layer", {
-            // ddd
-            // hd
-            // * ty
-            // * parent
-            // stretch sr
-            // transform ks
-            // auto_orient ao
-            FieldInfo{"start_time",     "st"},
-            // blend_mode bm
-            // matte_mode tt
-            // * ind
-            // css_class cl
-            // layer_html_id ln
-            // hasMasks
-            // masksProperties
-            // effects ef
-        }},
-        {"SolidColorLayer", {
-            FieldInfo{"color",          "sc"},
-            FieldInfo{"height",         "sh"},
-            FieldInfo{"width",          "sw"},
-        }},
-        {"Transform", {
-            FieldInfo{"anchor_point",   "a"},
-            // px py pz
-            FieldInfo{"position",       "p"},
-            FieldInfo{"scale",          "s"},
-            FieldInfo{"rotation",       "r"},
-            // opacity o
-            // skew sk
-            // skew_axis sa
-        }}
-    };
-    const QMap<QString, int> layer_types = {
-        {"SolidColorLayer", 1},
-        {"EmptyLayer", 3},
-        {"ShapeLayer", 4}
-    };
 };
+
+class LottieImporterState
+{
+public:
+    bool load()
+    {
+        return false;
+    }
+    
+    model::Document* document;
+    io::lottie::LottieFormat* format;
+    QMap<int, QUuid> layer_indices = {};
+};
+
+} // namespace
 
 bool io::lottie::LottieFormat::on_save(QIODevice& file, const QString&,
                                          model::Document* document, const QVariantMap& setting_values)
@@ -236,4 +252,28 @@ QJsonDocument io::lottie::LottieFormat::to_json(model::Document* document)
 {
     LottieExporterState exp(document);
     return QJsonDocument(exp.to_json());
+}
+
+bool io::lottie::LottieFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
+{
+    QJsonDocument jdoc;
+
+    try {
+        jdoc = QJsonDocument::fromJson(file.readAll());
+    } catch ( const QJsonParseError& err ) {
+        emit error(tr("Could not parse JSON: %1").arg(err.errorString()));
+        return false;
+    }
+
+    if ( !jdoc.isObject() )
+    {
+        emit error(tr("No JSON object found"));
+        return false;
+    }
+
+    QJsonObject top_level = jdoc.object();
+    
+    LottieImporterState imp{document, this};
+    return imp.load();
+    
 }

@@ -1,6 +1,8 @@
 #include "animation.hpp"
 #include "model/graphics/animation_item.hpp"
 
+GLAXNIMATE_OBJECT_IMPL(model::Animation)
+
 model::graphics::DocumentNodeGraphicsItem * model::Animation::docnode_make_graphics_item()
 {
     return new graphics::AnimationItem(this);

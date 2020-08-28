@@ -6,7 +6,7 @@ namespace model {
 
 class Animation : public ObjectBase<Animation, Composition>
 {
-    Q_OBJECT
+    GLAXNIMATE_OBJECT
 
     //                  type    name    default  notify                       validate
     GLAXNIMATE_PROPERTY(float,  fps,         60, &Animation::fps_changed,     &Animation::validate_fps)

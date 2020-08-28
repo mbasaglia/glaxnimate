@@ -8,6 +8,11 @@
 #include "model/graphics/document_node_graphics_item.hpp"
 
 
+GLAXNIMATE_OBJECT_IMPL(model::ShapeLayer)
+GLAXNIMATE_OBJECT_IMPL(model::EmptyLayer)
+GLAXNIMATE_OBJECT_IMPL(model::SolidColorLayer)
+
+
 model::Layer::Layer(Document* doc, Composition* composition)
     : AnimationContainer(doc), composition_(composition)
 {

@@ -7,6 +7,7 @@
 #include <QVariant>
 
 #include "model/animation/frame_time.hpp"
+#include "model/factory.hpp"
 
 namespace model {
 
@@ -51,8 +52,6 @@ public:
 
     Document* document() const;
 
-    static QString naked_type_name(QString type_name);
-
 signals:
     void property_added(const QString& name, const QVariant& value);
     void property_changed(const QString& name, const QVariant& value);
@@ -64,6 +63,14 @@ protected:
         Q_UNUSED(value);
     }
     void clone_into(Object* dest) const;
+    
+    class Autoreg
+    {
+    public:
+        Autoreg(const QMetaObject&);
+        Autoreg(const Autoreg&) = delete;
+        Autoreg& operator=(const Autoreg&) = delete;
+    };
 
 private:
     virtual std::unique_ptr<Object> clone_impl() const

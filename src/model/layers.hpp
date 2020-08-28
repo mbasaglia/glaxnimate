@@ -71,8 +71,6 @@ private:
 class Layer : public AnimationContainer
 {
     Q_OBJECT
-
-public:
     GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent, &Layer::valid_parents, &Layer::is_valid_parent)
     GLAXNIMATE_PROPERTY(float, start_time, 0, {}, {}, PropertyTraits::Visual)
     GLAXNIMATE_SUBOBJECT(Transform, transform)
@@ -178,7 +176,7 @@ namespace detail {
 
 class EmptyLayer : public detail::BaseLayerProps<EmptyLayer>
 {
-    Q_OBJECT
+    GLAXNIMATE_OBJECT
 
 public:
     using Ctor::Ctor;
@@ -194,7 +192,7 @@ public:
 
 class ShapeLayer : public detail::BaseLayerProps<ShapeLayer>
 {
-    Q_OBJECT
+    GLAXNIMATE_OBJECT
 
     GLAXNIMATE_PROPERTY_LIST(ShapeElement, layers, 
         &ShapeLayer::shape_added,
@@ -221,7 +219,7 @@ signals:
 
 class SolidColorLayer : public detail::BaseLayerProps<SolidColorLayer>
 {
-    Q_OBJECT
+    GLAXNIMATE_OBJECT
 
     //                  type    name    default     notify                                   validate
     GLAXNIMATE_PROPERTY(float,  width,  0,          &SolidColorLayer::bounding_rect_changed, &SolidColorLayer::positive, PropertyTraits::Visual)

@@ -112,6 +112,21 @@ inline constexpr PropertyTraits::Type PropertyTraits::get_type() noexcept
     return detail::GetType<T>::value;
 }
 
+/** 
+ * \brief Sets up declarations of concrete Object sub-classes
+ * \note Call GLAXNIMATE_OBJECT_IMPL for every class declared with GLAXNIMATE_OBJECT
+ */
+#define GLAXNIMATE_OBJECT   \
+    Q_OBJECT                \
+    static bool _reg;
+   
+/**
+ * \brief Registers a class declared with GLAXNIMATE_OBJECT to be constructed 
+ * with model::Factory
+ */
+#define GLAXNIMATE_OBJECT_IMPL(cls) \
+    bool cls::_reg{model::Factory::instance().register_type<cls>()};
+
 #define GLAXNIMATE_PROPERTY(type, name, ...)                \
 public:                                                     \
     Property<type> name{this, #name, __VA_ARGS__};          \

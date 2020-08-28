@@ -39,3 +39,4 @@ QTransform model::Transform::transform_matrix(FrameTime f) const
     );
 }
 
+GLAXNIMATE_OBJECT_IMPL(model::Transform)

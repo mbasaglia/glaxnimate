@@ -20,6 +20,7 @@ model/layers.cpp
 model/object.cpp
 model/transform.cpp
 model/shape.cpp
+model/factory.cpp
 model/item_models/document_node_model.cpp
 model/item_models/property_model.cpp
 model/graphics/handle.cpp
@@ -76,3 +77,4 @@ configure_file(
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 add_executable(${PROJECT_SLUG} ${SOURCES})
 target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets Qt5::Svg QtColorWidgets QtHistoryLineEdit QtAppSetup)
+set_property(TARGET ${PROJECT_SLUG} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")

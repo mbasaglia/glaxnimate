@@ -64,7 +64,7 @@ bool model::DocumentNode::docnode_is_instance(const QString& type_name) const
 
     for ( const QMetaObject* meta = metaObject(); meta; meta = meta->superClass() )
     {
-        if ( naked_type_name(meta->className()) == type_name )
+        if ( detail::naked_type_name(meta->className()) == type_name )
             return true;
     }
 

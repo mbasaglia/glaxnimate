@@ -9,7 +9,7 @@ class io::glaxnimate::GlaxnimateFormat::ImportState
 public:
     GlaxnimateFormat* fmt;
     model::Document* document = nullptr;
-    model::Composition* compostion = nullptr;
+    model::Composition* composition = nullptr;
     QMap<QString, model::DocumentNode*> references;
     QMap<model::BaseProperty*, QUuid> unresolved_references;
     QMap<model::Object*, QJsonObject> deferred_loads;
@@ -279,7 +279,6 @@ public:
         return true;
     }
 
-    /// @todo Find a way of automating this
     model::Object* create_object(const QString& type)
     {
         if ( type == "Animation" )
@@ -288,18 +287,9 @@ public:
             return nullptr;
         }
 
-        if ( type == "EmptyLayer" )
-            return new model::EmptyLayer(document, compostion);
-
-        if ( type == "ShapeLayer" )
-            return new model::ShapeLayer(document, compostion);
-
-        if ( type == "SolidColorLayer" )
-            return new model::SolidColorLayer(document, compostion);
-
-        if ( type == "Transform" )
-            return new model::Transform(document);
-
+        if ( auto obj = model::Factory::instance().make_any(type, document, composition) )
+            return obj;
+        
         emit fmt->error(tr("Unknow object of type '%1'").arg(type));
         return new model::Object(document);
     }
@@ -338,7 +328,7 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
 
     ImportState state(this);
     state.document = document;
-    state.compostion = document->animation();
+    state.composition = document->animation();
     state.load_object(document->animation(), top_level["animation"].toObject());
     state.resolve();
 
