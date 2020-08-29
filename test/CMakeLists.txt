@@ -15,6 +15,7 @@ function(test_case test_name)
     target_link_libraries(${test_name} PRIVATE Qt5::Test Qt5::Widgets QtColorWidgets QtAppSetup)
     add_test (NAME ${test_name} COMMAND ${test_name} -silent)
     add_dependencies(tests_compile ${test_name})
+    set_property(TARGET ${test_name} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 endfunction(test_case)
 
 
@@ -35,6 +36,7 @@ test_case(test_property
 ../src/model/animation/animatable.cpp
 ../src/model/animation/keyframe_transition.cpp
 ../src/model/shape.cpp
+../src/model/factory.cpp
 ../src/io/glaxnimate/glaxnimate_format.cpp
 ../src/io/glaxnimate/glaxnimate_importer.cpp
 ../src/io/base.cpp
