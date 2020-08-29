@@ -121,7 +121,6 @@ public:
         if ( isSelected() )
         {
             QColor selcol = widget->palette().color(QPalette::Highlight);
-            selcol.setAlphaF(.8);
             painter->fillRect(option->rect, selcol);
         }
         
@@ -157,6 +156,7 @@ public:
 class TimelineWidget::Private
 {
 public:
+    TimelineWidget* parent;
     QGraphicsScene scene;
     int start_time = 0;
     int end_time = 0;
@@ -172,11 +172,14 @@ public:
     
     QRectF scene_rect()
     {
-        return QRectF(start_time, -header_height, end_time, header_height+row_height*rows);
+        return QRectF(
+            QPointF(start_time, -header_height), 
+            QPointF(end_time, std::max(row_height*rows, parent->height()))
+        );
     }
     
     
-    void add_animatable(TimelineWidget* parent, model::AnimatableBase* anim)
+    void add_animatable(model::AnimatableBase* anim)
     {
         AnimatableItem* item = new AnimatableItem(anim, start_time, end_time, row_height);
         connect(anim, &model::AnimatableBase::keyframe_added, parent, &TimelineWidget::kf_added);
@@ -187,15 +190,15 @@ public:
         rows += 1;
     }
     
-    void add_object(TimelineWidget* parent, model::Object* obj)
+    void add_object(model::Object* obj)
     {
         for ( auto prop : obj->properties() )
         {
             auto flags = prop->traits().flags;
             if ( flags & model::PropertyTraits::Animated )
-                add_animatable(parent, static_cast<model::AnimatableBase*>(prop));
+                add_animatable(static_cast<model::AnimatableBase*>(prop));
             else if ( prop->traits().type == model::PropertyTraits::Object && !(flags & model::PropertyTraits::List) )
-                add_object(parent, static_cast<model::SubObjectPropertyBase*>(prop)->sub_object());
+                add_object(static_cast<model::SubObjectPropertyBase*>(prop)->sub_object());
         }
     }
     
@@ -212,8 +215,7 @@ public:
         frame_skip = qCeil(min_gap / tr.m11());
     }
     
-    void paint_highligted_frame(TimelineWidget* parent, int frame, 
-                                QPainter& painter, const QColor& color)
+    void paint_highligted_frame(int frame, QPainter& painter, const QColor& color)
     {
         QPointF framep = parent->mapFromScene(QPoint(frame, 0));
         QPointF framep1 = parent->mapFromScene(QPoint(frame+1, 0));
@@ -226,7 +228,7 @@ public:
         );
     }
     
-    void clear(TimelineWidget* parent)
+    void clear()
     {
         for ( const auto& p : anim_items )
         {
@@ -242,6 +244,7 @@ public:
 TimelineWidget::TimelineWidget(QWidget* parent)
     : QGraphicsView(parent), d(std::make_unique<Private>())
 {
+    d->parent = this;
     setMouseTracking(true);
     setInteractive(true);
     setRenderHint(QPainter::Antialiasing);
@@ -262,20 +265,20 @@ void TimelineWidget::add_container(model::AnimationContainer* cont)
 
 void TimelineWidget::add_animatable(model::AnimatableBase* anim)
 {
-    d->add_animatable(this, anim);
+    d->add_animatable(anim);
 }
 
 void TimelineWidget::set_active(model::DocumentNode* node)
 {
     clear();
-    d->add_object(this, node);
+    d->add_object(node);
     setSceneRect(d->scene_rect());
     reset_view();
 }
 
 void TimelineWidget::clear()
 {
-    d->clear(this);
+    d->clear();
 }
 
 int TimelineWidget::row_height() const
@@ -361,32 +364,33 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     // bg
     QPen dark(palette().color(QPalette::Text), 1);
     QPainter painter;
-    
-    if ( d->document )
-    {
-        painter.begin(viewport());
-        painter.setPen(dark);
-        int cur_x = mapFromScene(d->document->current_time(), 0).x();
-        painter.drawLine(cur_x, event->rect().top(), cur_x, event->rect().bottom());
-        painter.end();
-    }
-    
+        
     // scene
     QGraphicsView::paintEvent(event);
     
     // fg
     painter.begin(viewport());
     
+    
+    if ( d->document )
+    {
+//         painter.begin(viewport());
+        painter.setPen(dark);
+        int cur_x = mapFromScene(d->document->current_time(), 0).x();
+        painter.drawLine(cur_x, event->rect().top(), cur_x, event->rect().bottom());
+//         painter.end();
+    }
+    
     painter.fillRect(event->rect().left(), 0, event->rect().right(), d->header_height,
                      palette().color(QPalette::Base));
     
     
     if ( d->document )
-        d->paint_highligted_frame(this, d->document->current_time(), painter, 
+        d->paint_highligted_frame(d->document->current_time(), painter, 
                                   palette().color(QPalette::Text));
         
     if ( d->mouse_frame > -1 )
-        d->paint_highligted_frame(this, d->mouse_frame, painter, palette().color(QPalette::Highlight));
+        d->paint_highligted_frame(d->mouse_frame, painter, palette().color(QPalette::Highlight));
     
     painter.setPen(dark);
     painter.drawLine(event->rect().left(), d->header_height, event->rect().right(), d->header_height);
@@ -531,3 +535,7 @@ void TimelineWidget::kf_removed(int pos)
     Q_UNUSED(pos);
 }
 
+int TimelineWidget::header_height() const
+{
+    return d->header_height;
+}

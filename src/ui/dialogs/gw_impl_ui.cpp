@@ -89,6 +89,17 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.view_properties->setItemDelegateForColumn(1, &property_delegate);
     ui.view_properties->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui.view_properties->header()->setSectionResizeMode(1, QHeaderView::Stretch);
+    
+    ui.timeline_properties->setModel(&property_model_anim);
+    ui.timeline_properties->setItemDelegateForColumn(1, &property_delegate);
+    ui.timeline_properties->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui.timeline_properties->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    
+    ui.timeline_properties->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    ui.timeline_properties->verticalHeader()->setMinimumSectionSize(ui.timeline_widget->row_height());
+    ui.timeline_properties->verticalHeader()->setMaximumSectionSize(ui.timeline_widget->row_height());
+    ui.timeline_properties->verticalHeader()->setDefaultSectionSize(ui.timeline_widget->row_height());
+    ui.timeline_spacer->changeSize(0, ui.timeline_widget->header_height(), QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::selectionChanged, parent, &GlaxnimateWindow::document_treeview_selection_changed);
 
@@ -184,6 +195,7 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
     if ( auto node = document_node_model.node(index) )
     {
         property_model.set_object(node);
+        property_model_anim.set_object(node);
         ui.timeline_widget->set_active(node);
         ui.view_properties->expandAll();
     }

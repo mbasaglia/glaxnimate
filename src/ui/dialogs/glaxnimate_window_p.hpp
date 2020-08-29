@@ -42,6 +42,7 @@ public:
 
     model::DocumentNodeModel document_node_model;
     model::PropertyModel property_model;
+    model::PropertyModel property_model_anim{true};
     model::graphics::DocumentScene scene;
 
     GlaxnimateWindow* parent = nullptr;

@@ -17,7 +17,7 @@ public:
         ReferenceProperty = Qt::UserRole,
     };
 
-    PropertyModel();
+    PropertyModel(bool animation_only=false);
     ~PropertyModel();
 
     QModelIndex index(int row, int column, const QModelIndex & parent) const override;

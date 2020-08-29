@@ -22,6 +22,7 @@ public:
     void add_animatable(model::AnimatableBase* anim);
     int row_height() const;
     void set_row_height(int w);
+    int header_height() const;
     
 public slots:
     void update_timeline_start(model::FrameTime start);

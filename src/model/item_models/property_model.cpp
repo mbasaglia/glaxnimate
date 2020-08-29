@@ -79,20 +79,36 @@ public:
 
         for ( BaseProperty* prop : object->properties() )
         {
-            id_type prop_node_id = add_node(Subtree{prop, this_node});
-            Subtree* prop_node = node(prop_node_id);
-
-            if ( prop->traits().flags & PropertyTraits::List )
+            if ( animation_only )
             {
-                prop_node->prop_value = prop->value().toList();
-                connect_list(prop_node);
-            }
-            else if ( prop->traits().is_object() )
-            {
-                Object* subobj = prop->value().value<Object*>();
-                prop_node->object = subobj;
                 if ( prop->traits().type == PropertyTraits::Object )
-                    connect_recursive(subobj, model, prop_node_id);
+                {
+                    Object* subobj = prop->value().value<Object*>();
+                    connect_recursive(subobj, model, this_node);
+                }
+                else if ( prop->traits().flags & PropertyTraits::Animated )
+                {
+                    properties[prop] = add_node(Subtree{prop, this_node});
+                }
+            }
+            else
+            {
+                id_type prop_node_id = add_node(Subtree{prop, this_node});
+                Subtree* prop_node = node(prop_node_id);
+                properties[prop] = prop_node_id;
+
+                if ( prop->traits().flags & PropertyTraits::List )
+                {
+                    prop_node->prop_value = prop->value().toList();
+                    connect_list(prop_node);
+                }
+                else if ( prop->traits().is_object() )
+                {
+                    Object* subobj = prop->value().value<Object*>();
+                    prop_node->object = subobj;
+                    if ( prop->traits().type == PropertyTraits::Object )
+                        connect_recursive(subobj, model, prop_node_id);
+                }
             }
         }
     }
@@ -202,11 +218,14 @@ public:
     id_type next_id = 1;
     std::unordered_map<id_type, Subtree> nodes;
     std::unordered_map<Object*, id_type> objects;
+    std::unordered_map<BaseProperty*, id_type> properties;
+    bool animation_only;
 };
 
-model::PropertyModel::PropertyModel()
+model::PropertyModel::PropertyModel(bool animation_only)
     : d(std::make_unique<Private>())
 {
+    d->animation_only = animation_only;
 }
 
 model::PropertyModel::~PropertyModel() = default;
@@ -499,55 +518,55 @@ bool model::PropertyModel::setData(const QModelIndex& index, const QVariant& val
 
 void model::PropertyModel::property_changed(const QString& name, const QVariant& value)
 {
-    auto it = d->objects.find((Object*)QObject::sender());
-    if ( it == d->objects.end() )
+    Object* object = static_cast<Object*>(QObject::sender());
+    BaseProperty* prop = object->get_property(name);
+    if ( !prop )
+        return;
+    
+    auto it = d->properties.find(prop);
+    if ( it == d->properties.end() )
         return;
 
-    Private::Subtree* parent = d->node(it->second);
-    if ( !parent )
+    Private::Subtree* prop_node = d->node(it->second);
+    if ( !prop_node )
         return;
+    
+    Private::Subtree* parent = d->node(prop_node->parent);
+    
+    int i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
+    QModelIndex index = createIndex(i, 1, prop_node->id);
 
-    for ( int i = 0; i < int(parent->object->properties().size()); i++ )
+    if ( prop_node->prop->traits().flags & PropertyTraits::List )
     {
-        if ( parent->object->properties()[i]->name() == name )
+        beginRemoveRows(index, 0, prop_node->children.size());
+        d->disconnect_recursive(prop_node, this);
+        endRemoveRows();
+
+
+        beginInsertRows(index, 0, prop_node->prop_value.size());
+        prop_node->prop_value = value.toList();
+        d->connect_list(prop_node);
+        endInsertRows();
+    }
+    else
+    {
+        if ( prop_node->prop->traits().type == PropertyTraits::ObjectReference )
         {
-            Private::Subtree* prop_node = parent->children[i];
-            QModelIndex index = createIndex(i, 1, prop_node->id);
-
-            if ( prop_node->prop->traits().flags & PropertyTraits::List )
-            {
-                beginRemoveRows(index, 0, prop_node->children.size());
-                d->disconnect_recursive(prop_node, this);
-                endRemoveRows();
-
-
-                beginInsertRows(index, 0, prop_node->prop_value.size());
-                prop_node->prop_value = value.toList();
-                d->connect_list(prop_node);
-                endInsertRows();
-            }
-            else
-            {
-                if ( prop_node->prop->traits().type == PropertyTraits::ObjectReference )
-                {
-                    prop_node->object = value.value<Object*>();
-                }
-                else if ( prop_node->prop->traits().type == PropertyTraits::ObjectReference )
-                {
-                    beginRemoveRows(index, 0, prop_node->children.size());
-                    d->disconnect_recursive(prop_node, this);
-                    endRemoveRows();
-                    Object* object = value.value<Object*>();
-                    beginInsertRows(index, 0, prop_node->object->properties().size());
-                    prop_node->object = object;
-                    d->connect_recursive(object, this, prop_node->id);
-                    endInsertRows();
-                }
-
-                dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
-            }
-            return;
+            prop_node->object = value.value<Object*>();
         }
+        else if ( prop_node->prop->traits().type == PropertyTraits::ObjectReference )
+        {
+            beginRemoveRows(index, 0, prop_node->children.size());
+            d->disconnect_recursive(prop_node, this);
+            endRemoveRows();
+            Object* object = value.value<Object*>();
+            beginInsertRows(index, 0, prop_node->object->properties().size());
+            prop_node->object = object;
+            d->connect_recursive(object, this, prop_node->id);
+            endInsertRows();
+        }
+
+        dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
     }
 
 }
