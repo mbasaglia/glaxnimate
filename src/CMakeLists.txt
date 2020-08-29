@@ -1,10 +1,6 @@
+set(LIB_SOURCES
 
-
-set(SOURCES
-
-main.cpp
 app_info.cpp
-glaxnimate_app.cpp
 
 io/lottie/lottie_format.cpp
 io/lottie/lottie_html_format.cpp
@@ -29,6 +25,13 @@ model/graphics/document_scene.cpp
 model/graphics/transform_graphics_item.cpp
 model/animation/keyframe_transition.cpp
 model/animation/animatable.cpp
+
+)
+
+set(APP_SOURCES
+
+main.cpp
+glaxnimate_app.cpp
 
 tools/base.cpp
 tools/dummy.cpp
@@ -65,7 +68,7 @@ if(${PYTHON_ENABLED})
         SET(CMAKE_CXX_FLAGS  ${CMAKE_CXX_FLAGS} -Wno-attributes)
     endif()
 
-    list(APPEND SOURCES python.cpp)
+    list(APPEND LIB_SOURCES python.cpp)
 endif()
 
 configure_file(
@@ -73,8 +76,14 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/application_info_generated.hpp
 )
 
-#add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
-add_executable(${PROJECT_SLUG} ${SOURCES})
-target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets Qt5::Svg QtColorWidgets QtHistoryLineEdit QtAppSetup)
-set_property(TARGET ${PROJECT_SLUG} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
+
+set(LIB_NAME "${PROJECT_SLUG}lib")
+add_library(${LIB_NAME} STATIC ${LIB_SOURCES})
+target_link_libraries(${LIB_NAME} PUBLIC Qt5::Svg QtAppSetup)
+set_property(TARGET ${LIB_NAME} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
+
+#add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)
+add_executable(${PROJECT_SLUG} ${APP_SOURCES})
+target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets QtColorWidgets QtHistoryLineEdit ${LIB_NAME})
+
