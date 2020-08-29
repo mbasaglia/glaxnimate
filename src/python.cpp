@@ -25,7 +25,7 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, m)
     register_from_meta<model::Document, QObject>(m);
     register_from_meta<model::DocumentNode, model::Object>(m);
     register_from_meta<model::Composition, model::DocumentNode>(m);
-    register_from_meta<model::Animation, model::Composition>(m);
+    register_from_meta<model::MainComposition, model::Composition>(m);
     register_from_meta<model::Layer, model::DocumentNode>(m);
     register_from_meta<model::ShapeLayer, model::Layer>(m);
     register_from_meta<model::EmptyLayer, model::Layer>(m);

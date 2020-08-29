@@ -56,7 +56,7 @@ void model::graphics::DocumentScene::set_document ( model::Document* document )
 {
     if ( d->document )
     {
-        disconnect_node(d->document->animation());
+        disconnect_node(d->document->main_composition());
     }
 
     clear_selection();
@@ -66,7 +66,7 @@ void model::graphics::DocumentScene::set_document ( model::Document* document )
 
     if ( d->document )
     {
-        connect_node(d->document->animation());
+        connect_node(d->document->main_composition());
     }
 }
 

@@ -46,7 +46,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     {"Composition", {
         FieldInfo("layers"),
     }},
-    {"Animation", {
+    {"MainComposition", {
         FieldInfo("v", Custom),
         FieldInfo{"fps",            "fr"},
         FieldInfo{"width",          "w"},
@@ -110,10 +110,10 @@ public:
     QJsonObject to_json()
     {
         /// @todo make a system that preserves key order as that is needed for lottie android
-        return convert_animation(document->animation());
+        return convert_animation(document->main_composition());
     }
 
-    QJsonObject convert_animation(Animation* animation)
+    QJsonObject convert_animation(MainComposition* animation)
     {
         layer_indices.clear();
         QJsonObject json = convert_object_basic(animation);
@@ -263,7 +263,7 @@ public:
     
     void load(const QJsonObject& json)
     {
-        load_composition(json, document->animation());
+        load_composition(json, document->main_composition());
     }
     
 private:    

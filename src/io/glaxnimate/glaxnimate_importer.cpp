@@ -281,9 +281,9 @@ public:
 
     model::Object* create_object(const QString& type)
     {
-        if ( type == "Animation" )
+        if ( type == "MainComposition" )
         {
-            emit fmt->error(tr("Objects of type 'Animation' can only be at the top level of the document"));
+            emit fmt->error(tr("Objects of type 'MainComposition' can only be at the top level of the document"));
             return nullptr;
         }
 
@@ -328,8 +328,8 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
 
     ImportState state(this);
     state.document = document;
-    state.composition = document->animation();
-    state.load_object(document->animation(), top_level["animation"].toObject());
+    state.composition = document->main_composition();
+    state.load_object(document->main_composition(), top_level["animation"].toObject());
     state.resolve();
 
     return true;

@@ -7,12 +7,12 @@ class model::Document::Private
 {
 public:
     Private(Document* doc)
-        : animation(doc)
+        : main_composition(doc)
     {
         io_options.format = io::glaxnimate::GlaxnimateFormat::registered();
     }
 
-    Animation animation;
+    MainComposition main_composition;
     QUndoStack undo_stack;
     QVariantMap metadata;
     io::Options io_options;
@@ -38,9 +38,9 @@ QString model::Document::filename() const
     return d->io_options.filename;
 }
 
-model::Animation * model::Document::animation()
+model::MainComposition * model::Document::main_composition()
 {
-    return &d->animation;
+    return &d->main_composition;
 }
 
 QVariantMap & model::Document::metadata() const
@@ -68,7 +68,7 @@ void model::Document::set_io_options(const io::Options& opt)
 
 model::DocumentNode * model::Document::node_by_uuid(const QUuid& n) const
 {
-    return d->animation.docnode_find_by_uuid(n);
+    return d->main_composition.docnode_find_by_uuid(n);
 }
 
 bool model::Document::redo()
@@ -94,9 +94,9 @@ model::FrameTime model::Document::current_time() const
 
 void model::Document::set_current_time(model::FrameTime t)
 {
-    if ( t >= 0 && t <= d->animation.last_frame.get() )
+    if ( t >= 0 && t <= d->main_composition.last_frame.get() )
     {
-        d->animation.set_time(t);
+        d->main_composition.set_time(t);
         emit current_time_changed(d->current_time = t);
     }
 }
@@ -104,8 +104,8 @@ void model::Document::set_current_time(model::FrameTime t)
 QSize model::Document::size() const
 {
     return {
-        d->animation.width.get(),
-        d->animation.height.get()
+        d->main_composition.width.get(),
+        d->main_composition.height.get()
     };
 }
 

@@ -78,7 +78,7 @@ QModelIndex model::DocumentNodeModel::index ( int row, int column, const QModelI
     if ( !parent.isValid() )
     {
         // TODO add precomps
-        return createIndex(row, column, document->animation());
+        return createIndex(row, column, document->main_composition());
     }
 
     auto n = node(parent);
@@ -112,7 +112,7 @@ Qt::ItemFlags model::DocumentNodeModel::flags ( const QModelIndex& index ) const
     if ( n && !n->docnode_locked_by_ancestor() )
     {
         flags |= Qt::ItemIsDropEnabled;
-        if ( !qobject_cast<model::Animation*>(n) )
+        if ( !qobject_cast<model::MainComposition*>(n) )
             flags |= Qt::ItemIsDragEnabled;
     }
 
@@ -183,7 +183,7 @@ void model::DocumentNodeModel::set_document ( model::Document* doc )
     beginResetModel();
     document = doc;
     if ( doc )
-        connect_node(doc->animation());
+        connect_node(doc->main_composition());
     endResetModel();
 }
 

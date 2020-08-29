@@ -40,7 +40,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     document_node_model.set_document(current_document.get());
 
     property_model.set_document(current_document.get());
-    property_model.set_object(current_document->animation());
+    property_model.set_object(current_document->main_composition());
 
     scene.set_document(current_document.get());
     
@@ -55,9 +55,9 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     refresh_title();
 
     // Playback
-    QObject::connect(current_document->animation(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
-    QObject::connect(current_document->animation(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
-    QObject::connect(current_document->animation(), &model::Animation::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
+    QObject::connect(current_document->main_composition(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
+    QObject::connect(current_document->main_composition(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
+    QObject::connect(current_document->main_composition(), &model::MainComposition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
     QObject::connect(ui.play_controls, &FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
     QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &FrameControlsWidget::set_frame);
     QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &FrameControlsWidget::set_record_enabled);
@@ -68,26 +68,26 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
 {
     setup_document(filename);
 
-    current_document->animation()->name.set(current_document->animation()->type_name_human());
-    current_document->animation()->width.set(app::settings::get<int>("defaults", "width"));
-    current_document->animation()->height.set(app::settings::get<int>("defaults", "height"));
-    current_document->animation()->fps.set(app::settings::get<int>("defaults", "fps"));
+    current_document->main_composition()->name.set(current_document->main_composition()->type_name_human());
+    current_document->main_composition()->width.set(app::settings::get<int>("defaults", "width"));
+    current_document->main_composition()->height.set(app::settings::get<int>("defaults", "height"));
+    current_document->main_composition()->fps.set(app::settings::get<int>("defaults", "fps"));
     float duration = app::settings::get<float>("defaults", "duration");
-    int out_point = current_document->animation()->fps.get() * duration;
-    current_document->animation()->last_frame.set(out_point);
+    int out_point = current_document->main_composition()->fps.get() * duration;
+    current_document->main_composition()->last_frame.set(out_point);
 
 
-    auto layer = current_document->animation()->make_layer<model::ShapeLayer>();
+    auto layer = current_document->main_composition()->make_layer<model::ShapeLayer>();
     layer->last_frame.set(out_point);
     layer->name.set(layer->type_name_human());
     QPointF pos(
-        current_document->animation()->width.get() / 2.0,
-        current_document->animation()->height.get() / 2.0
+        current_document->main_composition()->width.get() / 2.0,
+        current_document->main_composition()->height.get() / 2.0
     );
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
     model::Layer* ptr = layer.get();
-    current_document->animation()->add_layer(std::move(layer), 0);
+    current_document->main_composition()->add_layer(std::move(layer), 0);
 
     QDir path = app::settings::get<QString>("open_save", "path");
     auto opts = current_document->io_options();
@@ -115,11 +115,11 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
         most_recent_file(options.filename);
 
     view_fit();
-    if ( !current_document->animation()->layers.empty() )
-        ui.view_document_node->setCurrentIndex(document_node_model.node_index(&current_document->animation()->layers[0]));
+    if ( !current_document->main_composition()->layers.empty() )
+        ui.view_document_node->setCurrentIndex(document_node_model.node_index(&current_document->main_composition()->layers[0]));
 
     current_document->set_io_options(options);
-    ui.play_controls->set_range(current_document->animation()->first_frame.get(), current_document->animation()->last_frame.get());
+    ui.play_controls->set_range(current_document->main_composition()->first_frame.get(), current_document->main_composition()->last_frame.get());
     return ok;
 }
 
@@ -295,7 +295,7 @@ void GlaxnimateWindow::Private::save_frame_bmp()
     image.fill(Qt::transparent);
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);
-    current_document->animation()->paint(&painter, frame, model::DocumentNode::Recursive);
+    current_document->main_composition()->paint(&painter, frame, model::DocumentNode::Recursive);
     if ( !image.save(fd.selectedFiles()[0]) )
         show_warning(tr("Render Frame"), tr("Could not save image"));
 }
@@ -328,5 +328,5 @@ void GlaxnimateWindow::Private::save_frame_svg()
     image.setResolution(96);
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);
-    current_document->animation()->paint(&painter, frame, model::DocumentNode::Recursive);
+    current_document->main_composition()->paint(&painter, frame, model::DocumentNode::Recursive);
 }

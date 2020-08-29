@@ -5,7 +5,7 @@
 #include <QPixmap>
 #include <QPainter>
 
-#include "model/animation.hpp"
+#include "model/main_composition.hpp"
 #include "handle.hpp"
 #include "model/graphics/document_node_graphics_item.hpp"
 #include "command/property_commands.hpp"
@@ -15,14 +15,14 @@
 
 namespace model::graphics {
 
-class AnimationItem : public DocumentNodeGraphicsItem
+class MainCompositionItem : public DocumentNodeGraphicsItem
 {
 public:
-    explicit AnimationItem(Animation* animation)
+    explicit MainCompositionItem(MainComposition* animation)
         : DocumentNodeGraphicsItem(animation), animation(animation)
     {
-        connect(animation, &Animation::width_changed, this, &AnimationItem::size_changed);
-        connect(animation, &Animation::height_changed, this, &AnimationItem::size_changed);
+        connect(animation, &MainComposition::width_changed, this, &MainCompositionItem::size_changed);
+        connect(animation, &MainComposition::height_changed, this, &MainCompositionItem::size_changed);
         back.setTexture(QPixmap(app::Application::instance()->data_file("images/widgets/background.png")));
         setFlag(QGraphicsItem::ItemIsSelectable, false);
     }
@@ -39,28 +39,28 @@ private slots:
     }
 
 private:
-    Animation* animation;
+    MainComposition* animation;
     QBrush back;
 };
 
-class AnimationTransformItem : public QGraphicsObject
+class MainCompositionTransformItem : public QGraphicsObject
 {
 public:
-    explicit AnimationTransformItem(Animation* animation)
+    explicit MainCompositionTransformItem(MainComposition* animation)
         : animation(animation)
     {
-        connect(animation, &Animation::width_changed, this, &AnimationTransformItem::size_changed);
-        connect(animation, &Animation::height_changed, this, &AnimationTransformItem::size_changed);
+        connect(animation, &MainComposition::width_changed, this, &MainCompositionTransformItem::size_changed);
+        connect(animation, &MainComposition::height_changed, this, &MainCompositionTransformItem::size_changed);
 
         handle_h = new MoveHandle(this, MoveHandle::Horizontal, MoveHandle::Diamond, 8);
         handle_v = new MoveHandle(this, MoveHandle::Vertical, MoveHandle::Diamond, 8);
         handle_hv = new MoveHandle(this, MoveHandle::DiagonalDown, MoveHandle::Square);
-        connect(handle_h, &MoveHandle::dragged_x, this, &AnimationTransformItem::dragged_x);
-        connect(handle_v, &MoveHandle::dragged_y, this, &AnimationTransformItem::dragged_y);
-        connect(handle_hv, &MoveHandle::dragged, this, &AnimationTransformItem::dragged_xy);
-        connect(handle_h,  &MoveHandle::drag_finished, this, &AnimationTransformItem::drag_finished);
-        connect(handle_v,  &MoveHandle::drag_finished, this, &AnimationTransformItem::drag_finished);
-        connect(handle_hv, &MoveHandle::drag_finished, this, &AnimationTransformItem::drag_finished);
+        connect(handle_h, &MoveHandle::dragged_x, this, &MainCompositionTransformItem::dragged_x);
+        connect(handle_v, &MoveHandle::dragged_y, this, &MainCompositionTransformItem::dragged_y);
+        connect(handle_hv, &MoveHandle::dragged, this, &MainCompositionTransformItem::dragged_xy);
+        connect(handle_h,  &MoveHandle::drag_finished, this, &MainCompositionTransformItem::drag_finished);
+        connect(handle_v,  &MoveHandle::drag_finished, this, &MainCompositionTransformItem::drag_finished);
+        connect(handle_hv, &MoveHandle::drag_finished, this, &MainCompositionTransformItem::drag_finished);
 
         update_handles();
     }
@@ -102,7 +102,7 @@ private:
         if ( w != animation->width.get() || h != animation->height.get() )
         {
             animation->document()->undo_stack().push(new command::SetMultipleProperties(
-                QObject::tr("Resize Animation Canvas"),
+                QObject::tr("Resize Canvas"),
                 commit,
                 {&animation->width, &animation->height},
                 w, h
@@ -119,7 +119,7 @@ private:
     }
 
 private:
-    Animation* animation;
+    MainComposition* animation;
     MoveHandle* handle_h;
     MoveHandle* handle_v;
     MoveHandle* handle_hv;

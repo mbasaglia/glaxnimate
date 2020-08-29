@@ -181,8 +181,8 @@ void model::Layer::set_time(model::FrameTime t)
 model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Composition* composition )
     : Ctor(doc, composition)
 {
-    width.set(doc->animation()->width.get());
-    height.set(doc->animation()->height.get());
+    width.set(doc->main_composition()->width.get());
+    height.set(doc->main_composition()->height.get());
 }
 
 

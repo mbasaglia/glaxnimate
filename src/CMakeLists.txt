@@ -8,7 +8,7 @@ io/glaxnimate/glaxnimate_format.cpp
 io/glaxnimate/glaxnimate_importer.cpp
 io/base.cpp
 
-model/animation.cpp
+model/main_composition.cpp
 model/composition.cpp
 model/document.cpp
 model/document_node.cpp

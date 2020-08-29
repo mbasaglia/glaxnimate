@@ -15,7 +15,7 @@ model::Composition* GlaxnimateWindow::Private::current_composition()
         if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
             return curr_lay->composition();
     }
-    return current_document->animation();
+    return current_document->main_composition();
 }
 
 model::Layer* GlaxnimateWindow::Private::current_layer()
@@ -54,10 +54,10 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> lay
 
     layer->name.set(name);
 
-    layer->last_frame.set(current_document->animation()->last_frame.get());
+    layer->last_frame.set(current_document->main_composition()->last_frame.get());
     QPointF pos(
-        current_document->animation()->width.get() / 2.0,
-        current_document->animation()->height.get() / 2.0
+        current_document->main_composition()->width.get() / 2.0,
+        current_document->main_composition()->height.get() / 2.0
     );
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);

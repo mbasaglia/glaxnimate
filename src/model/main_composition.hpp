@@ -4,14 +4,14 @@
 
 namespace model {
 
-class Animation : public ObjectBase<Animation, Composition>
+class MainComposition : public ObjectBase<MainComposition, Composition>
 {
     GLAXNIMATE_OBJECT
 
     //                  type    name    default  notify                       validate
-    GLAXNIMATE_PROPERTY(float,  fps,         60, &Animation::fps_changed,     &Animation::validate_fps)
-    GLAXNIMATE_PROPERTY(int,    width,      512, &Animation::width_changed,   &Animation::validate_nonzero, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(int,    height,     512, &Animation::height_changed,  &Animation::validate_nonzero, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(float,  fps,         60, &MainComposition::fps_changed,     &MainComposition::validate_fps)
+    GLAXNIMATE_PROPERTY(int,    width,      512, &MainComposition::width_changed,   &MainComposition::validate_nonzero, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(int,    height,     512, &MainComposition::height_changed,  &MainComposition::validate_nonzero, PropertyTraits::Visual)
 
 public:
     using Ctor::Ctor;

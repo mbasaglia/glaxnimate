@@ -195,8 +195,8 @@ void GlaxnimateWindow::Private::view_fit()
         QRect(
             -32,
             -32,
-            current_document->animation()->width.get() + 64,
-            current_document->animation()->height.get() + 64
+            current_document->main_composition()->width.get() + 64,
+            current_document->main_composition()->height.get() + 64
         )
     );
 }
