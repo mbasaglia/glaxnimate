@@ -45,6 +45,7 @@ public:
     }
     
     model::AnimatableBase* animatable(const QModelIndex& index) const;
+    QModelIndex property_index(model::BaseProperty* anim) const;
 
 private slots:
     void property_changed(const QString& name, const QVariant& value);

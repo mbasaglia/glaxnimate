@@ -83,6 +83,8 @@ private:
 
 class AnimatableItem : public QGraphicsObject
 {
+    Q_OBJECT
+    
 public:
     AnimatableItem(model::AnimatableBase* animatable, int time_start, int time_end, int height)
         : animatable(animatable), time_start(time_start), time_end(time_end), height(height)
@@ -144,14 +146,26 @@ public:
         kf_items.insert(kf_items.begin() + index, item);
     }
     
+    void mousePressEvent(QGraphicsSceneMouseEvent * event) override
+    {
+        bool sel = isSelected();
+        QGraphicsObject::mousePressEvent(event);
+        if ( !sel && isSelected() )
+            emit animatable_clicked(animatable);
+    }
     
-// private:
+signals:
+    void animatable_clicked(model::AnimatableBase* animatable);
+    
+public:
     model::AnimatableBase* animatable;
     std::vector<KeyframeItem*> kf_items;
     int time_start;
     int time_end;
     int height;
 };
+
+#include "timeline_widget.moc"
 
 class TimelineWidget::Private
 {
@@ -184,6 +198,7 @@ public:
         AnimatableItem* item = new AnimatableItem(anim, start_time, end_time, row_height);
         connect(anim, &model::AnimatableBase::keyframe_added, parent, &TimelineWidget::kf_added);
         connect(anim, &model::AnimatableBase::keyframe_removed, parent, &TimelineWidget::kf_removed);
+        connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::animatable_clicked);
         item->setPos(0, rows * row_height);
         anim_items[anim] = item;
         scene.addItem(item);
@@ -538,4 +553,23 @@ void TimelineWidget::kf_removed(int pos)
 int TimelineWidget::header_height() const
 {
     return d->header_height;
+}
+
+void TimelineWidget::select(model::AnimatableBase* anim)
+{
+    d->scene.clearSelection();
+    if ( anim )
+    {
+        auto it = d->anim_items.find(anim);
+        if ( it != d->anim_items.end() )
+            it->second->setSelected(true);
+    }
+}
+
+model::AnimatableBase * TimelineWidget::animatable_at(const QPoint& viewport_pos)
+{
+    for ( QGraphicsItem* it : items(viewport_pos) )
+        if ( auto anit = dynamic_cast<AnimatableItem*>(it) )
+            return anit->animatable;
+    return nullptr;
 }

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1314</width>
-    <height>1053</height>
+    <height>933</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -1118,56 +1118,14 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_8">
-         <item>
-          <spacer name="timeline_spacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>32</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QTableView" name="timeline_properties">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="horizontalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOff</enum>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::SingleSelection</enum>
-           </property>
-           <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
-           </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="TimelineWidget" name="timeline_widget"/>
-       </item>
-      </layout>
+      <widget class="CompoundTimelineWidget" name="timeline_widget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -1831,9 +1789,10 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>TimelineWidget</class>
-   <extends>QGraphicsView</extends>
-   <header>ui/widgets/timeline_widget.hpp</header>
+   <class>CompoundTimelineWidget</class>
+   <extends>QWidget</extends>
+   <header>ui/widgets/compound_timeline_widget.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

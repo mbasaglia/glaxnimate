@@ -604,3 +604,19 @@ void model::PropertyModel::on_delete_object()
 {
     d->on_delete_object(static_cast<model::Object*>(sender()), this);
 }
+
+QModelIndex model::PropertyModel::property_index(model::BaseProperty* prop) const
+{
+    auto it = d->properties.find(prop);
+    if ( it == d->properties.end() )
+        return {};
+
+    Private::Subtree* prop_node = d->node(it->second);
+    if ( !prop_node )
+        return {};
+    
+    Private::Subtree* parent = d->node(prop_node->parent);
+    
+    int i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
+    return createIndex(i, 1, prop_node->id);
+}

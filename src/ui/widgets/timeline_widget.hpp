@@ -24,6 +24,10 @@ public:
     void set_row_height(int w);
     int header_height() const;
     
+    void select(model::AnimatableBase* anim);
+    
+    model::AnimatableBase* animatable_at(const QPoint& viewport_pos);
+    
 public slots:
     void update_timeline_start(model::FrameTime start);
     void update_timeline_end(model::FrameTime end);
@@ -41,6 +45,7 @@ protected:
     
 signals:
     void frame_clicked(int frame);
+    void animatable_clicked(model::AnimatableBase* anim);
     
 private slots:
     void kf_added(int pos, model::KeyframeBase* kf);

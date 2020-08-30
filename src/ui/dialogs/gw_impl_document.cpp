@@ -41,8 +41,6 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
 
     property_model.set_document(current_document.get());
     property_model.set_object(current_document->main_composition());
-    property_model_anim.set_document(current_document.get());
-    property_model_anim.set_object(current_document->main_composition());
 
     scene.set_document(current_document.get());
     
@@ -158,9 +156,8 @@ bool GlaxnimateWindow::Private::close_document()
 
     document_node_model.clear_document();
     property_model.clear_document();
-    property_model_anim.clear_document();
     scene.clear_document();
-    ui.timeline_widget->set_document(nullptr);
+    ui.timeline_widget->clear_document();
 
     return true;
 }
