@@ -489,6 +489,7 @@ void TimelineWidget::reset_view()
 void TimelineWidget::resizeEvent(QResizeEvent* event)
 {
     QGraphicsView::resizeEvent(event);
+    setSceneRect(d->scene_rect());
     d->adjust_min_scale(viewport()->width());
     if ( transform().m11() < d->min_scale )
         reset_view();
