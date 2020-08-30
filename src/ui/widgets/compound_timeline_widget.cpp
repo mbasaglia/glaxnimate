@@ -170,6 +170,7 @@ public:
         else
         {
             KeyframeEditorDialog keyframe_editor(&keyframe->transition(), parent);
+            keyframe_editor.setWindowModality(Qt::ApplicationModal);
             if ( keyframe_editor.exec() )
             {
                 menu_anim->object()->document()->undo_stack().push(

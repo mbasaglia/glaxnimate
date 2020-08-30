@@ -163,6 +163,7 @@ void KeyframeTransitionWidget::mousePressEvent(QMouseEvent* event)
 
     if ( event->button() == Qt::LeftButton )
     {
+        event->accept();
         d->selected_handle = d->highlighted_handle;
         if ( d->selected_handle )
         {
@@ -187,6 +188,7 @@ void KeyframeTransitionWidget::mouseMoveEvent(QMouseEvent* event)
     }
     else if ( isEnabled() )
     {
+        event->accept();
         QPointF p = d->unmap_pt(event->pos(), width(), height());
         double d1 = math::length_squared(d->point(1) - p);
         double d2 = math::length_squared(d->point(2) - p);
@@ -203,6 +205,7 @@ void KeyframeTransitionWidget::mouseReleaseEvent(QMouseEvent* event)
 
     if ( event->button() == Qt::LeftButton )
     {
+        event->accept();
         d->selected_handle = 0;
         update();
     }
@@ -234,4 +237,9 @@ void KeyframeTransitionWidget::leaveEvent(QEvent* event)
 model::KeyframeTransition * KeyframeTransitionWidget::target() const
 {
     return d->target;
+}
+
+QSize KeyframeTransitionWidget::sizeHint() const
+{
+    return QSize(300, 200);
 }

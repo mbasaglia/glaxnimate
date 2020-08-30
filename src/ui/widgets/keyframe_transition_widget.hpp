@@ -14,6 +14,8 @@ public:
 
     void set_target(model::KeyframeTransition* kft);
     model::KeyframeTransition* target() const;
+    
+    QSize sizeHint() const override;
 
 protected:
     void paintEvent(QPaintEvent * event) override;
