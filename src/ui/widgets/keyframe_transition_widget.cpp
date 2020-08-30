@@ -154,7 +154,6 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
     }
 }
 
-
 void KeyframeTransitionWidget::mousePressEvent(QMouseEvent* event)
 {
     QWidget::mousePressEvent(event);
@@ -222,7 +221,6 @@ void KeyframeTransitionWidget::focusOutEvent(QFocusEvent* event)
     d->selected_handle = 0;
     update();
 }
-
 
 void KeyframeTransitionWidget::leaveEvent(QEvent* event)
 {

@@ -156,10 +156,12 @@ public:
         if ( index == -1 )
             return;
         
+        QUndoStack& stack = menu_anim->object()->document()->undo_stack();
+        
         QVariant data = action->data();
         if ( data.isValid() )
         {
-            menu_anim->object()->document()->undo_stack().push(
+            stack.push(
                 new command::SetKeyframeTransition(
                     menu_anim, index, data.value<model::KeyframeTransition::Descriptive>(), 
                     before_transition ? keyframe->transition().before_handle() : keyframe->transition().after_handle(),
@@ -173,14 +175,24 @@ public:
             keyframe_editor.setWindowModality(Qt::ApplicationModal);
             if ( keyframe_editor.exec() )
             {
-                menu_anim->object()->document()->undo_stack().push(
+                stack.beginMacro(tr("Update keyframe transition"));
+                stack.push(
                     new command::SetKeyframeTransition(
                         menu_anim, index, 
-                        before_transition ? keyframe_editor.before() : keyframe_editor.after(),
-                        before_transition ? keyframe_editor.before_handle() : keyframe_editor.after_handle(),
-                        before_transition
+                        keyframe_editor.before(),
+                        keyframe_editor.before_handle(),
+                        true
                     )
                 );
+                stack.push(
+                    new command::SetKeyframeTransition(
+                        menu_anim, index, 
+                        keyframe_editor.after(),
+                        keyframe_editor.after_handle(),
+                        false
+                    )
+                );
+                stack.endMacro();
             }
         }
     }
