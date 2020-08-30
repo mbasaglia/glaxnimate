@@ -60,9 +60,9 @@ void model::KeyframeTransition::set_before(model::KeyframeTransition::Descriptiv
             hold_ = false;
             break;
     }
-    emit after_changed(after());
+    emit before_changed(before());
     if ( old_hold != hold_ )
-        emit before_changed(before());
+        emit after_changed(after());
 }
 
 void model::KeyframeTransition::set_after(model::KeyframeTransition::Descriptive d)
@@ -85,9 +85,9 @@ void model::KeyframeTransition::set_after(model::KeyframeTransition::Descriptive
             hold_ = false;
             break;
     }
-    emit before_changed(before());
+    emit after_changed(after());
     if ( old_hold != hold_ )
-        emit after_changed(after());
+        emit before_changed(before());
 }
 
 void model::KeyframeTransition::set_after_handle(const QPointF& after)

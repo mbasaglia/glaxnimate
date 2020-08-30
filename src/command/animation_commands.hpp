@@ -23,8 +23,6 @@ public:
         had_before(prop->keyframe_status(time) != model::AnimatableBase::Tween)
     {}
     
-    
-    
     void undo() override
     {
         if ( had_before )
@@ -203,6 +201,77 @@ private:
     std::vector<int> keyframe_before;
     bool keyframe_after;
     model::FrameTime time;
+};
+
+
+class SetKeyframeTransition : public QUndoCommand
+{
+public:
+    SetKeyframeTransition(
+        model::AnimatableBase* prop, 
+        int keyframe_index,
+        model::KeyframeTransition::Descriptive desc,
+        const QPointF& point,
+        bool before_transition
+    ) : QUndoCommand(QObject::tr("Update keyframe transition")),
+        prop(prop),
+        keyframe_index(keyframe_index),
+        undo_value(
+            before_transition ? keyframe()->transition().before_handle() : keyframe()->transition().after_handle()
+        ),
+        undo_desc(
+            before_transition ? keyframe()->transition().before() : keyframe()->transition().after()
+        ),
+        redo_value(point),
+        redo_desc(desc),
+        before_transition(before_transition)
+    {}
+    
+    void undo() override
+    {
+        set_handle(undo_value, undo_desc);
+    }
+    
+    void redo() override
+    {
+        set_handle(redo_value, redo_desc);
+    }
+    
+private:
+    model::KeyframeBase* keyframe() const
+    {
+        return prop->keyframe(keyframe_index);
+    }
+    
+    void set_handle(const QPointF& v, model::KeyframeTransition::Descriptive desc) const
+    {
+        if ( desc == model::KeyframeTransition::Custom )
+        {
+            if ( before_transition )
+                keyframe()->transition().set_before_handle(v);
+            else
+                keyframe()->transition().set_after_handle(v);
+        }
+        else
+        {
+            if ( before_transition )
+                keyframe()->transition().set_before(desc);
+            else
+                keyframe()->transition().set_after(desc);
+        }
+    }
+    
+    model::AnimatableBase* prop;
+    int keyframe_index;
+    
+    QPointF undo_value;
+    model::KeyframeTransition::Descriptive undo_desc;
+    
+    QPointF redo_value;
+    model::KeyframeTransition::Descriptive redo_desc;
+    
+    bool before_transition;
+    
 };
 
 } // namespace command

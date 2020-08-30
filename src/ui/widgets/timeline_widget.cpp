@@ -144,6 +144,24 @@ public:
         item->set_exit(kf->transition().before());
         item->set_enter(prev ? prev->transition().after() : model::KeyframeTransition::Constant);
         kf_items.insert(kf_items.begin() + index, item);
+        
+        connect(&kf->transition(), &model::KeyframeTransition::after_changed, this, &AnimatableItem::transition_changed_after);
+        connect(&kf->transition(), &model::KeyframeTransition::before_changed, this, &AnimatableItem::transition_changed_before);
+    }
+    
+    std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframes(KeyframeItem* item)
+    {        
+        for ( int i = 0; i < int(kf_items.size()); i++ )
+        {
+            if ( kf_items[i] == item )
+            {
+                if ( i == 0 )
+                    return {nullptr, animatable->keyframe(i)};
+                return {animatable->keyframe(i-1), animatable->keyframe(i)};
+            }
+        }
+        
+        return {nullptr, nullptr};
     }
     
     void mousePressEvent(QGraphicsSceneMouseEvent * event) override
@@ -156,6 +174,43 @@ public:
     
 signals:
     void animatable_clicked(model::AnimatableBase* animatable);
+    
+private slots:
+    void transition_changed_before(model::KeyframeTransition::Descriptive d)
+    {
+        int index = transition_changed_index();
+        if ( index == -1 )
+            return;
+        
+        kf_items[index]->set_exit(d);
+    }
+    
+    void transition_changed_after(model::KeyframeTransition::Descriptive d)
+    {
+        int index = transition_changed_index();
+        if ( index == -1 )
+            return;
+        
+        index += 1;
+        if ( index >= int(kf_items.size()) )
+            return;
+        
+        kf_items[index]->set_enter(d);
+    }
+    
+private:
+    int transition_changed_index()
+    {
+        model::KeyframeTransition* s = static_cast<model::KeyframeTransition*>(sender());
+        
+        for ( int i = 0, e = animatable->keyframe_count(); i < e; i++ )
+        {
+            if ( &animatable->keyframe(i)->transition() == s )
+                return i;
+        }
+        
+        return -1;
+    }
     
 public:
     model::AnimatableBase* animatable;
@@ -573,4 +628,17 @@ model::AnimatableBase * TimelineWidget::animatable_at(const QPoint& viewport_pos
         if ( auto anit = dynamic_cast<AnimatableItem*>(it) )
             return anit->animatable;
     return nullptr;
+}
+
+std::pair<model::KeyframeBase*, model::KeyframeBase*> TimelineWidget::keyframe_at(const QPoint& viewport_pos)
+{
+    for ( QGraphicsItem* it : items(viewport_pos) )
+    {
+        if ( auto kfit = dynamic_cast<KeyframeItem*>(it) )
+        {
+            auto anit = static_cast<AnimatableItem*>(it->parentItem());
+            return anit->keyframes(kfit);
+        }
+    }
+    return {nullptr, nullptr};
 }

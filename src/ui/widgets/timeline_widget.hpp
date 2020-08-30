@@ -27,6 +27,7 @@ public:
     void select(model::AnimatableBase* anim);
     
     model::AnimatableBase* animatable_at(const QPoint& viewport_pos);
+    std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframe_at(const QPoint& viewport_pos);
     
 public slots:
     void update_timeline_start(model::FrameTime start);

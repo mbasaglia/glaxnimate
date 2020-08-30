@@ -170,6 +170,18 @@ public:
         }
         return kfcount - 1;
     }
+    
+    int keyframe_index(KeyframeBase* kf) const
+    {
+        auto kfcount = keyframe_count();
+        
+        for ( int i = 0; i < kfcount; i++ )
+        {
+            if ( keyframe(i) == kf )
+                return i;
+        }
+        return -1;
+    }
 
     KeyframeStatus keyframe_status(FrameTime time) const
     {
