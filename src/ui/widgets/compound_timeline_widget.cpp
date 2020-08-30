@@ -2,6 +2,7 @@
 #include "ui_compound_timeline_widget.h"
 
 #include <QMenu>
+#include <QScrollBar>
 
 #include "model/item_models/property_model.hpp"
 #include "ui/style/property_delegate.hpp"
@@ -40,6 +41,12 @@ public:
         ui.properties->verticalHeader()->setMinimumSectionSize(ui.timeline->row_height());
         ui.properties->verticalHeader()->setMaximumSectionSize(ui.timeline->row_height());
         ui.properties->verticalHeader()->setDefaultSectionSize(ui.timeline->row_height());
+        
+        ui.properties->verticalScrollBar()->setPageStep(ui.scrollbar->pageStep());
+        connect(ui.properties->verticalScrollBar(), &QScrollBar::valueChanged, ui.scrollbar, &QScrollBar::setValue);
+        connect(ui.scrollbar, &QScrollBar::valueChanged, ui.properties->verticalScrollBar(), &QScrollBar::setValue);
+        connect(ui.properties->verticalScrollBar(), &QScrollBar::rangeChanged, ui.scrollbar, &QScrollBar::setRange);
+        connect(ui.scrollbar, &QScrollBar::valueChanged, parent, &CompoundTimelineWidget::on_scroll);      
         
         connect(ui.timeline, &TimelineWidget::animatable_clicked, parent, &CompoundTimelineWidget::select_animatable);
         
@@ -148,4 +155,10 @@ void CompoundTimelineWidget::add_keyframe()
     d->menu_anim->object()->document()->undo_stack().push(
         new command::SetKeyframe(d->menu_anim, d->menu_anim->time(), d->menu_anim->value(), true)
     );
+}
+
+void CompoundTimelineWidget::on_scroll(int amount)
+{
+    int scroll = -d->ui.timeline->header_height() + amount * d->ui.timeline->row_height();
+    d->ui.timeline->verticalScrollBar()->setValue(scroll);
 }

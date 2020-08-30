@@ -25,6 +25,7 @@ private slots:
     void select_animatable(model::AnimatableBase* anim);
     void custom_context_menu(const QPoint& p);
     void add_keyframe();
+    void on_scroll(int amount);
     
 private:
     class Private;
