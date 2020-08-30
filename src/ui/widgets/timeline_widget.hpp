@@ -48,10 +48,6 @@ signals:
     void frame_clicked(int frame);
     void animatable_clicked(model::AnimatableBase* anim);
     
-private slots:
-    void kf_added(int pos, model::KeyframeBase* kf);
-    void kf_removed(int pos);
-    
 private:
     class Private;
     

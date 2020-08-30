@@ -93,6 +93,10 @@ public:
         
         for ( int i = 0; i < animatable->keyframe_count(); i++ )
             add_keyframe(i);
+        
+        
+        connect(animatable, &model::AnimatableBase::keyframe_added, this, &AnimatableItem::add_keyframe);
+        connect(animatable, &model::AnimatableBase::keyframe_removed, this, &AnimatableItem::remove_keyframe);
     }
     
     void set_time_start(int time)
@@ -132,23 +136,6 @@ public:
         painter->drawLine(option->rect.left(), height, option->rect.right(), height);
     }
     
-    void add_keyframe(int index)
-    {
-        model::KeyframeBase* kf = animatable->keyframe(index);
-        if ( index == 0 && !kf_items.empty() )
-            kf_items[0]->set_enter(kf->transition().after());
-        
-        model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
-        auto item = new KeyframeItem(this);
-        item->setPos(kf->time(), height / 2.0);
-        item->set_exit(kf->transition().before());
-        item->set_enter(prev ? prev->transition().after() : model::KeyframeTransition::Constant);
-        kf_items.insert(kf_items.begin() + index, item);
-        
-        connect(&kf->transition(), &model::KeyframeTransition::after_changed, this, &AnimatableItem::transition_changed_after);
-        connect(&kf->transition(), &model::KeyframeTransition::before_changed, this, &AnimatableItem::transition_changed_before);
-    }
-    
     std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframes(KeyframeItem* item)
     {        
         for ( int i = 0; i < int(kf_items.size()); i++ )
@@ -170,6 +157,34 @@ public:
         QGraphicsObject::mousePressEvent(event);
         if ( !sel && isSelected() )
             emit animatable_clicked(animatable);
+    }
+    
+public slots:
+    void add_keyframe(int index)
+    {
+        model::KeyframeBase* kf = animatable->keyframe(index);
+        if ( index == 0 && !kf_items.empty() )
+            kf_items[0]->set_enter(kf->transition().after());
+        
+        model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
+        auto item = new KeyframeItem(this);
+        item->setPos(kf->time(), height / 2.0);
+        item->set_exit(kf->transition().before());
+        item->set_enter(prev ? prev->transition().after() : model::KeyframeTransition::Constant);
+        kf_items.insert(kf_items.begin() + index, item);
+        
+        connect(&kf->transition(), &model::KeyframeTransition::after_changed, this, &AnimatableItem::transition_changed_after);
+        connect(&kf->transition(), &model::KeyframeTransition::before_changed, this, &AnimatableItem::transition_changed_before);
+    }
+    
+    void remove_keyframe(int index)
+    {
+        delete kf_items[index];
+        kf_items.erase(kf_items.begin() + index);
+        if ( index < int(kf_items.size()) && index > 0 )
+        {
+            kf_items[index]->set_enter(animatable->keyframe(index-1)->transition().after());
+        }
     }
     
 signals:
@@ -251,8 +266,6 @@ public:
     void add_animatable(model::AnimatableBase* anim)
     {
         AnimatableItem* item = new AnimatableItem(anim, start_time, end_time, row_height);
-        connect(anim, &model::AnimatableBase::keyframe_added, parent, &TimelineWidget::kf_added);
-        connect(anim, &model::AnimatableBase::keyframe_removed, parent, &TimelineWidget::kf_removed);
         connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::animatable_clicked);
         item->setPos(0, rows * row_height);
         anim_items[anim] = item;
@@ -300,11 +313,6 @@ public:
     
     void clear()
     {
-        for ( const auto& p : anim_items )
-        {
-            disconnect(p.second->animatable, &model::AnimatableBase::keyframe_added, parent, &TimelineWidget::kf_added);
-            disconnect(p.second->animatable, &model::AnimatableBase::keyframe_removed, parent, &TimelineWidget::kf_removed);
-        }
         scene.clear();
         rows = 0;
         anim_items.clear();
@@ -590,20 +598,6 @@ void TimelineWidget::leaveEvent(QEvent* event)
 {
     QGraphicsView::leaveEvent(event);
     d->mouse_frame = -1;
-}
-
-void TimelineWidget::kf_added(int pos, model::KeyframeBase*)
-{
-    model::AnimatableBase* prop = static_cast<model::AnimatableBase*>(sender());
-    if ( auto item = d->anim_items[prop] )
-    {
-        item->add_keyframe(pos);
-    }
-}
-
-void TimelineWidget::kf_removed(int pos)
-{
-    Q_UNUSED(pos);
 }
 
 int TimelineWidget::header_height() const
