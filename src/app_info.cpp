@@ -22,3 +22,14 @@ QString AppInfo::organization() const
 {
     return PROJECT_SLUG;
 }
+
+QUrl AppInfo::url_docs() const
+{
+    return QUrl(URL_DOCS);
+}
+
+QUrl AppInfo::url_issues() const
+{
+    return QUrl(URL_ISSUES);
+}
+

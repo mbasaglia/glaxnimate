@@ -34,6 +34,15 @@ public:
      */
     QString name() const;
 
+    /**
+     * \brief Documentation URL
+     */
+    QUrl url_docs() const;
+
+    /**
+     * \brief Bug reporting URL
+     */
+    QUrl url_issues() const;
 
 private:
     AppInfo() = default;

@@ -1,8 +1,11 @@
 #include "glaxnimate_window.hpp"
 #include "glaxnimate_window_p.hpp"
-#include "app/widgets/settings_dialog.hpp"
 
+#include <QDesktopServices>
 #include <QCloseEvent>
+
+#include "app/widgets/settings_dialog.hpp"
+#include "app_info.hpp"
 
 
 GlaxnimateWindow::GlaxnimateWindow(QWidget *parent, Qt::WindowFlags flags)
@@ -238,3 +241,14 @@ void GlaxnimateWindow::tool_triggered(bool checked)
     if ( checked )
         d->switch_tool_action(static_cast<QAction*>(sender()));
 }
+
+void GlaxnimateWindow::help_manual()
+{
+    QDesktopServices::openUrl(AppInfo::instance().url_docs());
+}
+
+void GlaxnimateWindow::help_issue()
+{
+    QDesktopServices::openUrl(AppInfo::instance().url_issues());
+}
+

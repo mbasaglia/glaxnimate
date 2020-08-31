@@ -67,10 +67,13 @@ private slots:
     void layer_new_color();
     void layer_delete();
 
+    void help_about();
+    void help_manual();
+    void help_issue();
+    
     void refresh_title();
     void document_open_recent(QAction* action);
     void preferences();
-    void help_about();
     void web_preview();
     void save_frame_bmp();
     void save_frame_svg();
