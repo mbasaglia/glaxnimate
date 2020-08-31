@@ -11,15 +11,18 @@ pages:
     image: ubuntu:latest
     stage: deploy
     script:
-        - apt-get install -y doxygen graphviz g++ python3-distutils
+        - apt-get install -y doxygen graphviz g++ python3-distutils python3-pip
+        - pip install mkdocs
         - mkdir -p build
         - cd build
         - cmake ..
         - make docs
+        - cd ../docs 
+        - mkdocs build
     after_script:
-        - mkdir public
+        - mv docs/site public
         - mv build/coverage public/coverage
-        - mv build/docs/html public/docs
+        - mv build/docs/html public/doxygen
     artifacts:
         paths:
             - public

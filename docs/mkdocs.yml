@@ -1,0 +1,15 @@
+site_name: Glaxnimate Documentation
+copyright: Copyright (C) 2020 Glaxnimate Contributors
+theme:
+    name: readthedocs
+    highlightjs: true
+repo_url: https://gitlab.com/mattia.basaglia/glaxnimate
+edit_uri: /-/blob/master/docs
+nav:
+    - index.md
+    - 'User Interface':
+        - ui/index.md
+    - 'Contributing':
+        - contributing/index.md
+        - contributing/documentation.md
+        - contributing/links.md
