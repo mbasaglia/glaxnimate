@@ -7,6 +7,8 @@ theme:
     highlightjs: false
 repo_url: https://gitlab.com/mattia.basaglia/glaxnimate
 edit_uri: -/edit/master/docs/docs
+markdown_extensions:
+    - fontawesome_markdown
 nav:
     - index.md
     - 'User Interface':
