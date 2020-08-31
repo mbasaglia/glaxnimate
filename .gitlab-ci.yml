@@ -12,7 +12,7 @@ pages:
     stage: deploy
     script:
         - apt-get install -y doxygen graphviz g++ python3-distutils python3-pip
-        - pip install mkdocs
+        - pip3 install mkdocs
         - mkdir -p build
         - cd build
         - cmake ..
