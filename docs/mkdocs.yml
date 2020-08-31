@@ -1,4 +1,5 @@
 site_name: Glaxnimate Documentation
+site_description: Glaxnimate is a simple and fast vector graphics animation program.
 copyright: Copyright (C) 2020 Glaxnimate Contributors.
 theme:
     name: cinder
