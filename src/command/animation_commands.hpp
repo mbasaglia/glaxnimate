@@ -271,7 +271,40 @@ private:
     model::KeyframeTransition::Descriptive redo_desc;
     
     bool before_transition;
-    
 };
+
+
+class MoveKeyframe : public QUndoCommand
+{
+public:
+    MoveKeyframe(
+        model::AnimatableBase* prop, 
+        int keyframe_index,
+        model::FrameTime time_after
+    ) : QUndoCommand(QObject::tr("Move keyframe")),
+        prop(prop),
+        keyframe_index_before(keyframe_index),
+        time_before(prop->keyframe(keyframe_index)->time()),
+        time_after(time_after)
+    {}
+    
+    void undo() override
+    {
+        prop->move_keyframe(keyframe_index_after, time_before);
+    }
+    
+    void redo() override
+    {
+        keyframe_index_after = prop->move_keyframe(keyframe_index_before, time_after);
+    }
+    
+private:
+    model::AnimatableBase* prop;
+    int keyframe_index_before;
+    int keyframe_index_after = -1;
+    model::FrameTime time_before;
+    model::FrameTime time_after;
+};
+
 
 } // namespace command

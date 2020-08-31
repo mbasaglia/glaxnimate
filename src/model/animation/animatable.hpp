@@ -25,6 +25,7 @@ public:
     virtual bool set_extra_variant(const QVariant&) = 0;
 
     FrameTime time() const { return time_; }
+    void set_time(FrameTime t) { time_ = t; }
 
     /**
      * \brief Transition into the next value
@@ -108,6 +109,14 @@ public:
 
     virtual QVariant extra_variant() const = 0;
     virtual bool set_extra_variant(const QVariant&) = 0;
+    
+    /**
+     * \brief Moves a keyframe
+     * \param keyframe_index Index of the keyframe to move
+     * \param time New time for the keyframe
+     * \return The new index for that keyframe
+     */
+    virtual int move_keyframe(int keyframe_index, FrameTime time) = 0;
 
     /**
      * If animated(), whether the current value has been changed over the animated value
@@ -535,6 +544,44 @@ public:
     bool value_mismatch() const override
     {
         return mismatched_;
+    }
+    
+    int move_keyframe(int keyframe_index, FrameTime time) override
+    {
+        if ( keyframe_index < 0 || keyframe_index >= int(keyframes_.size()) )
+            return keyframe_index;
+        
+        int new_index = 0;
+        for ( ; new_index < int(keyframes_.size()); new_index++ )
+        {
+            if ( keyframes_[new_index]->time() > time )
+                break;
+        }
+        
+        keyframes_[keyframe_index]->set_time(time);
+        
+        if ( new_index > keyframe_index )
+            new_index--;
+            
+        if ( keyframe_index != new_index )
+        {
+            auto move = std::move(keyframes_[keyframe_index]);
+            keyframes_.erase(keyframes_.begin() + keyframe_index);
+            keyframes_.insert(keyframes_.begin() + new_index, std::move(move));
+            
+            int ia = keyframe_index;
+            int ib = new_index;
+            if ( ia > ib )
+                std::swap(ia, ib);
+            for ( ; ia <= ib; ia++ )
+                emit this->keyframe_updated(ia, keyframes_[ia].get());
+        }
+        else
+        {
+            emit this->keyframe_updated(keyframe_index, keyframes_[keyframe_index].get());
+        }
+            
+        return new_index;
     }
     
 protected:

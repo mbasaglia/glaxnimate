@@ -3,12 +3,16 @@
 #include <QGraphicsObject>
 #include <QStyleOptionGraphicsItem>
 #include <QScrollBar>
+#include <QGraphicsSceneMouseEvent>
 
 #include "app/application.hpp"
 #include "model/document.hpp"
+#include "command/animation_commands.hpp"
 
 class KeyframeItem : public QGraphicsObject
 {
+    Q_OBJECT
+    
 public:
     static const int icon_size = 16;
     static const int pen = 2;
@@ -17,7 +21,6 @@ public:
     {
         setFlags(
             QGraphicsItem::ItemIsSelectable|
-            QGraphicsItem::ItemIsMovable|
             QGraphicsItem::ItemIgnoresTransformations
         );
     }
@@ -59,6 +62,49 @@ public:
         pix_exit = icon_exit.pixmap(icon_size);
         update();
     }
+    
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent * event) override
+    {
+        if ( event->button() == Qt::LeftButton )
+        {
+            event->accept();
+            setSelected(true);
+        }
+        else
+        {
+            QGraphicsObject::mousePressEvent(event);
+        }
+    }
+    
+    void mouseMoveEvent(QGraphicsSceneMouseEvent * event) override
+    {
+        if ( (event->buttons() & Qt::LeftButton) && isSelected() )
+        {
+            event->accept();
+            setX(qRound(event->scenePos().x()));
+        }
+        else
+        {
+            QGraphicsObject::mouseMoveEvent(event);
+        }
+    }
+    
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override
+    {
+        if ( event->button() == Qt::LeftButton && isSelected() )
+        {
+            event->accept();
+            emit dragged(x());
+        }
+        else
+        {
+            QGraphicsObject::mouseReleaseEvent(event);
+        }
+    }
+    
+signals:
+    void dragged(model::FrameTime t);
     
 private:
     QIcon icon_from_kdf(model::KeyframeTransition::Descriptive desc, const char* ba)
@@ -175,6 +221,7 @@ public slots:
         
         connect(&kf->transition(), &model::KeyframeTransition::after_changed, this, &AnimatableItem::transition_changed_after);
         connect(&kf->transition(), &model::KeyframeTransition::before_changed, this, &AnimatableItem::transition_changed_before);
+        connect(item, &KeyframeItem::dragged, this, &AnimatableItem::keyframe_dragged);
     }
     
     void remove_keyframe(int index)
@@ -211,6 +258,21 @@ private slots:
             return;
         
         kf_items[index]->set_enter(d);
+    }
+    
+    void keyframe_dragged(model::FrameTime t)
+    {
+        auto it = std::find(kf_items.begin(), kf_items.end(), static_cast<KeyframeItem*>(sender()));
+        if ( it != kf_items.end() )
+        {
+            int index = it - kf_items.begin();
+            if ( animatable->keyframe(index)->time() != t )
+            {
+                animatable->object()->document()->undo_stack().push(
+                    new command::MoveKeyframe(animatable, index, t)
+                );
+            }
+        }
     }
     
 private:
@@ -253,6 +315,7 @@ public:
     int min_gap = 32;
     int mouse_frame = -1;
     model::Document* document = nullptr;
+    bool dragging_frame = false;
     
     QRectF scene_rect()
     {
@@ -566,32 +629,46 @@ void TimelineWidget::scrollContentsBy(int dx, int dy)
 
 void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
-    if ( event->y() > d->header_height )
-        QGraphicsView::mousePressEvent(event);
+    d->mouse_frame = qRound(mapToScene(event->pos()).x());
     
-    d->mouse_frame = mapToScene(event->pos()).x();
-    if ( event->button() == Qt::LeftButton )
+    if ( event->y() > d->header_height )
+    {
+        QGraphicsView::mousePressEvent(event);
+    }
+    else if ( event->button() == Qt::LeftButton )
+    {
+        d->dragging_frame = true;
         emit frame_clicked(d->mouse_frame);
+    }
 }
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
 {
-    if ( event->y() > d->header_height )
-        QGraphicsView::mouseMoveEvent(event);
+    d->mouse_frame = qRound(mapToScene(event->pos()).x());
     
-    d->mouse_frame = mapToScene(event->pos()).x();
-    if ( event->buttons() & Qt::LeftButton )
+    if ( d->dragging_frame && (event->buttons() & Qt::LeftButton) )
+    {
         emit frame_clicked(d->mouse_frame);
+    }
+    else if ( event->y() > d->header_height )
+    {
+        QGraphicsView::mouseMoveEvent(event);
+    }
     
     viewport()->update();
 }
 
 void TimelineWidget::mouseReleaseEvent(QMouseEvent* event)
 {
-    if ( event->y() > d->header_height )
-        QGraphicsView::mouseReleaseEvent(event);
-    else 
+    if ( event->y() <= d->header_height || d->dragging_frame )
+    {
+        d->dragging_frame = false;
         emit frame_clicked(d->mouse_frame);
+    }
+    else 
+    {
+        QGraphicsView::mouseReleaseEvent(event);
+    }
 }
 
 void TimelineWidget::leaveEvent(QEvent* event)
