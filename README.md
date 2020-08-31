@@ -15,9 +15,6 @@ Dependencies
 * CMake
 * Python3
 
-(Optional)
-* Qt Declarative
-
 
 ### Installing Dependencies on Deb systems
 
@@ -48,8 +45,9 @@ If you are missing some icons, you can build the icon theme too
 Contacts
 ---------------------------------------
 
-* Telegram (Chat) https://t.me/Glaxnimate
-* GitLab (Code, Issues) https://gitlab.com/mattia.basaglia/glaxnimate
+* [Telegram (Chat)](https://t.me/Glaxnimate)
+* [GitLab (Code, Issues)](https://gitlab.com/mattia.basaglia/glaxnimate)
+* [Documentation](https://glaxnimate.mattbas.org)
 
 
 License

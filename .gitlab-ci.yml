@@ -1,7 +1,7 @@
 default:
     before_script:
         - apt-get update -y
-        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev
+        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev python3-pip
         - git submodule update --init --recursive
 
 variables:
@@ -11,8 +11,8 @@ pages:
     image: ubuntu:latest
     stage: deploy
     script:
-        - apt-get install -y doxygen graphviz g++ python3-distutils python3-pip
-        - pip3 install mkdocs
+        - apt-get install -y doxygen graphviz g++ python3-distutils
+        - pip3 install mkdocs mkdocs-cinder
         - mkdir -p build
         - cd build
         - cmake ..
@@ -35,8 +35,7 @@ pages:
 linux:test:
     stage: build
     script:
-        - apt-get install -y python-pip
-        - pip install gcovr
+        - pip3 install gcovr
         - mkdir build
         - cd build
         - cmake ..

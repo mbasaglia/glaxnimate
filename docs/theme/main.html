@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+
+{% block extrahead %}
+    {{ super() }}
+    
+    {% if config.theme.colorscheme %}
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/{{ config.theme.colorscheme }}.min.css">
+    {% else %}
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+    {% endif %}
+{% endblock %}
+
+{% block footer %}
+<hr>
+<p>
+    <small>Copyright (C) 2020 {{ page.meta.authors }}.</small>
+</p>
+{% endblock %}
+
+{% block scripts %}
+
+    {{ super() }}
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        {% if config.theme.hljs_languages %}
+            {%- for lang in config.theme.hljs_languages %}
+                <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/languages/{{lang}}.min.js"></script>
+            {%- endfor %}
+        {% endif %}
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((block) => {
+                if ( block.classList.length != 0 )
+                    hljs.highlightBlock(block);
+            });
+        });
+    </script>
+
+{% endblock %}

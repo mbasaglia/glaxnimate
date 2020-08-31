@@ -10,7 +10,7 @@ You can report issues on the [Issue Tracker](https://gitlab.com/mattia.basaglia/
 
 The code can be found on [GitLab](https://gitlab.com/mattia.basaglia/glaxnimate).
 
-See the README for build instructions.
+See the [README](read_me.md) for build instructions.
 
 ## Documentation
 
