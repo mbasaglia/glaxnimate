@@ -30,6 +30,8 @@ The frame spin box shows the current frame, and allows jumping to a specific fra
 
 ### Property List
 
+![Property List](/img/screenshots/timeline/property_list.png)
+
 On its left handside, the the Timeline view has the list of properties: showing their name, current value, and animation status.
 
 The animation statuses are as follow:
