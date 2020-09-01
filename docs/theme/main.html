@@ -3,7 +3,7 @@
 
 {% block extrahead %}
     {{ super() }}
-    
+
     {% if config.theme.colorscheme %}
     <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/{{ config.theme.colorscheme }}.min.css">
     {% else %}
@@ -13,9 +13,8 @@
 
 {% block footer %}
 <hr>
-<p>
-    <small>Copyright (C) 2020 {{ page.meta.authors }}.</small>
-</p>
+<p><small>{{ config.extra.name }} {{ config.extra.version }}</small></p>
+<p><small>{{ config.copyright }} {{ page.meta.authors }}.</small></p>
 {% endblock %}
 
 {% block scripts %}

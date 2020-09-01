@@ -58,10 +58,12 @@ if(Qt5Test_FOUND)
     add_subdirectory(test)
 endif()
 
+add_subdirectory(docs)
+
 # Doxygen
 
 set(DOXYGEN_FOUND ON)
 find_package(Doxygen QUIET)
 if(DOXYGEN_FOUND)
-    create_doxygen_target(docs)
+    create_doxygen_target(doxygen)
 endif(DOXYGEN_FOUND)

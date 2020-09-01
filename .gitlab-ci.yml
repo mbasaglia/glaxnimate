@@ -12,15 +12,14 @@ pages:
     stage: deploy
     script:
         - apt-get install -y doxygen graphviz g++ python3-distutils
-        - pip3 install mkdocs mkdocs-cinder git+https://github.com/bmcorser/fontawesome-markdown.git@master
         - mkdir -p build
         - cd build
         - cmake ..
+        - make doxygen
+        - make docs_depends_install
         - make docs
-        - cd ../docs 
-        - mkdocs build
     after_script:
-        - mv docs/site public
+        - mv build/docs/site public
         - mv build/coverage public/coverage
         - mv build/docs/html public/doxygen
     artifacts:
