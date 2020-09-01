@@ -16,6 +16,9 @@ nav:
     - index.md
     - 'User Interface':
         - ui/index.md
+        - ui/canvas.md
+        - ui/docks.md
+        - ui/menus.md
     - 'Contributing':
         - contributing/index.md
         - "Readme": contributing/read_me.md
