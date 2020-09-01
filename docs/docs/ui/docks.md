@@ -6,6 +6,68 @@ Authors: Mattia Basaglia
 
 ## Colors
 
+![Colors View](/img/screenshots/colors/main.png)
+
+This view allows to select / modify the current color.
+
+The top part has different tabs to change which color space to use (or to use palettes).
+
+The bottom part stays the same:
+
+![Colors View Bottom](/img/screenshots/colors/bottom.png)
+
+The "A" slider changes the color opacity (Alpha).
+
+The two color indicators show the main (fill) color and secondary (stroke) color.<br/>
+Clicking on either of them shows a dialog which gives similar controls as the ones in
+the view, but more compact. And also allows picking colors from the screen.
+
+The *Swap* button <img src="/img/ui/icons/swap-panels.svg" width="32" /> swaps the two colors.
+
+Finally, there's a textbox with a hexadecimal representation of the main color.
+
+### HSV
+
+![HSV View](/img/screenshots/colors/hsv.png)
+
+Colors selectors in the HSV space (Hue Saturation Value).
+
+The color can be adjusted with the color wheel or individual channel sliders.
+
+### HSL
+
+![HSL View](/img/screenshots/colors/hsl.png)
+
+Colors selectors in the HSL space (Hue Saturation Lightness).
+
+The color can be adjusted with the color wheel or individual channel sliders.
+
+### RGB
+
+![RGB View](/img/screenshots/colors/rgb.png)
+
+Colors selectors in the RGB space (Red Green Blue).
+
+The color can be adjusted with the individual channel sliders.
+
+### CMYK
+
+![CMYK View](/img/screenshots/colors/cmyk.png)
+
+Colors selectors in the CMYK space (Cyan Magenta Yellow Black).
+
+The color can be adjusted with the individual channel sliders.
+
+### Palette
+
+![Palette View](/img/screenshots/colors/palette.png)
+
+Here you can select, create, modify color palettes.
+
+Opening and saving supports Gimp Palette files (.gpl).
+
+Clicking on one of the colors, selects it as the current color.
+
 ## Layers
 
 ## Timeline
