@@ -32,7 +32,7 @@ class KeyframeTransition: public QObject
 public:
     enum Descriptive
     {
-        Constant,
+        Hold,
         Linear,
         Ease,
         Custom,

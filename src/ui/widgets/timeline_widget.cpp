@@ -131,7 +131,7 @@ private:
         QString which;
         switch ( desc )
         {
-            case model::KeyframeTransition::Constant: which = "hold"; break;
+            case model::KeyframeTransition::Hold: which = "hold"; break;
             case model::KeyframeTransition::Linear: which = "linear"; break;
             case model::KeyframeTransition::Ease: which = "ease"; break;
             case model::KeyframeTransition::Custom: which = "custom"; break;
@@ -251,7 +251,7 @@ public slots:
         auto item = new KeyframeSplitItem(this);
         item->setPos(kf->time(), height / 2.0);
         item->set_exit(kf->transition().before());
-        item->set_enter(prev ? prev->transition().after() : model::KeyframeTransition::Constant);
+        item->set_enter(prev ? prev->transition().after() : model::KeyframeTransition::Hold);
         kf_split_items.insert(kf_split_items.begin() + index, item);
 
         connect(&kf->transition(), &model::KeyframeTransition::after_changed, this, &AnimatableItem::transition_changed_after);

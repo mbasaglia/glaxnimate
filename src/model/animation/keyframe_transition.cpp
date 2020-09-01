@@ -15,7 +15,7 @@ constexpr QPointF bound_vec(const QPointF& v)
 model::KeyframeTransition::Descriptive model::KeyframeTransition::before() const
 {
     if ( hold_ )
-        return Constant;
+        return Hold;
 
     if ( bezier_.points()[1] == bezier_.points()[0] )
         return Linear;
@@ -29,7 +29,7 @@ model::KeyframeTransition::Descriptive model::KeyframeTransition::before() const
 model::KeyframeTransition::Descriptive model::KeyframeTransition::after() const
 {
     if ( hold_ )
-        return Constant;
+        return Hold;
 
     if ( bezier_.points()[2] == bezier_.points()[3] )
         return Linear;
@@ -45,7 +45,7 @@ void model::KeyframeTransition::set_before(model::KeyframeTransition::Descriptiv
     bool old_hold = hold_;
     switch ( d )
     {
-        case Constant:
+        case Hold:
             set_hold(true);
             return;
         case Linear:
@@ -70,7 +70,7 @@ void model::KeyframeTransition::set_after(model::KeyframeTransition::Descriptive
     bool old_hold = hold_;
     switch ( d )
     {
-        case Constant:
+        case Hold:
             set_hold(true);
             return;
         case Linear:

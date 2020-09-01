@@ -11,7 +11,7 @@ void set_icon(QComboBox* box, int i, const char* ba)
     QString which;
     switch ( model::KeyframeTransition::Descriptive(i) )
     {
-        case model::KeyframeTransition::Constant: which = "hold"; break;
+        case model::KeyframeTransition::Hold: which = "hold"; break;
         case model::KeyframeTransition::Linear: which = "linear"; break;
         case model::KeyframeTransition::Ease: which = "ease"; break;
         case model::KeyframeTransition::Custom: which = "custom"; break;
