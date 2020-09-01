@@ -8,6 +8,8 @@
 #include "ui/dialogs/about_dialog.hpp"
 #include "ui/widgets/view_transform_widget.hpp"
 #include "ui/widgets/flow_layout.hpp"
+#include "ui/style/better_elide_delegate.hpp"
+#include "glaxnimate_app.hpp"
 
 void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
 {
@@ -158,6 +160,19 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
         &GlaxnimateWindow::script_reloaded
     );
 
+    // Logs
+    parent->tabifyDockWidget(ui.dock_logs, ui.dock_script_console);
+    ui.dock_logs->setVisible(false);
+
+    log_model.populate(GlaxnimateApp::instance()->log_lines());
+    ui.view_logs->setModel(&log_model);
+    ui.view_logs->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui.view_logs->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+//     ui.view_logs->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    ui.view_logs->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+    auto del = new BetterElideDelegate(Qt::ElideLeft, ui.view_logs);
+    ui.view_logs->setItemDelegateForColumn(2, del);
+
     // Restore state
     // NOTE: keep at the end so we do this once all the widgets are in their default spots
     parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
@@ -259,12 +274,12 @@ void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemS
 {
     for ( const auto& index : selected.indexes() )
         if ( index.column() == 0 )
-            if ( auto node = document_node_model.node(index) ) 
+            if ( auto node = document_node_model.node(index) )
                 scene.add_selection(node);
 
     for ( const auto& index : deselected.indexes() )
         if ( index.column() == 0 )
-            if ( auto node = document_node_model.node(index) ) 
+            if ( auto node = document_node_model.node(index) )
                 scene.remove_selection(node);
 }
 
@@ -285,7 +300,7 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
             QItemSelectionModel::Select|QItemSelectionModel::Rows
         );
     }
-    
+
     if ( !selected.empty() )
     {
         ui.view_document_node->selectionModel()->setCurrentIndex(

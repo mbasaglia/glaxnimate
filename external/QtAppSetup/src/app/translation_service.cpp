@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 
 #include "app/application.hpp"
+#include "app/log/log.hpp"
 
 void app::TranslationService::initialize ( QString default_lang_code )
 {
@@ -28,10 +29,10 @@ void app::TranslationService::initialize ( QString default_lang_code )
             if ( !name.isEmpty() )
                 register_translation(name,code,translations.absoluteFilePath(file));
         }
-//         else
-//             qWarning() << tr("Warning:")
-//                        << tr("Unrecognised translation file name pattern: %1")
-//                           .arg(file);
+        else
+        {
+            log::LogStream("Translations") << "Unrecognised translation file name pattern:" << file;
+        }
     }
 
     change_lang_code(QLocale::system().name());
@@ -57,13 +58,10 @@ void app::TranslationService::register_translation(QString name, QString code, Q
         translators[code] = new QTranslator;
         if ( !translators[code]->load(file) )
         {
-//             qWarning() << tr("Warning:") <<
-//             /*: %1 is the file name,
-//              *  %2 is the human-readable language code
-//              *  %3 is the ISO language code
-//              */
-//             tr("Error on loading translation file %1 for language %2 (%3)")
-//             .arg(file).arg(name).arg(code);
+            log::Log("Translations").log(
+                QString("Error on loading translation file %1 for language %2 (%3)")
+                .arg(file).arg(name).arg(code)
+            );
         }
     }
 }
@@ -108,10 +106,11 @@ void app::TranslationService::change_lang_code(QString code)
         }
         if ( !found )
         {
-            /*qWarning() << tr("Warning:") <<
-                          tr("There is no translation for language %1 (%2)")
-                          .arg(language_name(code))
-                          .arg(code);*/
+            log::Log("Translations").log(
+                QString("There is no translation for language %1 (%2)")
+                .arg(language_name(code))
+                .arg(code)
+            );
             return;
         }
     }

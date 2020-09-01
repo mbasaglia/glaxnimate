@@ -3,7 +3,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QDebug>
 
 #include "app/settings/widget_builder.hpp"
 #include "app/scripting/script_engine.hpp"
@@ -94,17 +93,18 @@ void app::scripting::PluginRegistry::load()
 
 bool app::scripting::PluginRegistry::load_plugin ( const QString& path, bool user_installed )
 {
+    logger.set_detail(path);
     QFileInfo file_info(path);
     if ( !file_info.exists() || !file_info.isFile() || !file_info.isReadable() )
     {
-        qWarning() << "Cannot read plugin file " << path;
+        logger.stream() << "Cannot read plugin file";
         return false;
     }
 
     QFile file(file_info.absoluteFilePath());
     if ( !file.open(QFile::ReadOnly) )
     {
-        qWarning() << "Cannot read plugin file " << path;
+        logger.stream() << "Cannot read plugin file";
         return false;
     }
 
@@ -113,13 +113,13 @@ bool app::scripting::PluginRegistry::load_plugin ( const QString& path, bool use
     try {
         jdoc = QJsonDocument::fromJson(file.readAll());
     } catch ( const QJsonParseError& err ) {
-        qWarning() << "Invalid plugin file " << path << err.errorString();
+        logger.stream() << "Invalid plugin file:" << err.errorString();
         return false;
     }
 
     if ( !jdoc.isObject() )
     {
-        qWarning() << "Invalid plugin file " << path << "not an object";
+        logger.stream() << "Invalid plugin file: not an object";
         return false;
     }
 
@@ -137,13 +137,13 @@ bool app::scripting::PluginRegistry::load_plugin ( const QString& path, bool use
         Plugin* plug = plugins_[*it].get();
         if ( plug->data().version >= data.version )
         {
-            qWarning() << "Skipping " << path << " (newer version exists)";
+            logger.stream(log::Info) << "Skipping Plugin (newer version exists)";
             return false;
         }
 
         if ( plug->enabled() )
         {
-            qWarning() << "Skipping " << path << " (older version is currently enabled)";
+            logger.stream(log::Info) << "Skipping Plugin (older version is currently enabled)";
             return false;
         }
 
@@ -154,7 +154,7 @@ bool app::scripting::PluginRegistry::load_plugin ( const QString& path, bool use
     data.engine = ScriptEngineFactory::instance().engine(data.engine_name);
     if ( !data.engine)
     {
-        qWarning() << "Plugin" << path << "refers to an unknown engine" << data.engine_name;
+        logger.stream() << "Plugin refers to an unknown engine" << data.engine_name;
     }
 
 
@@ -165,21 +165,21 @@ bool app::scripting::PluginRegistry::load_plugin ( const QString& path, bool use
     QJsonArray arr = jobj["services"].toArray();
     if ( arr.empty() )
     {
-        qWarning() << "Plugin" << path << "does not provide any services";
+        logger.stream() << "Plugin does not provide any services";
         return false;
     }
 
     for ( const QJsonValue& val : arr )
     {
         if ( !val.isObject() )
-            qWarning() << "Skipping invalid service in " << path;
+            logger.stream() << "Skipping invalid service";
         else
             load_service(val.toObject(), data);
     }
 
     if ( data.services.empty() )
     {
-        qWarning() << "Plugin" << path << "does not provide any valid services";
+        logger.stream() << "Plugin does not provide any valid services";
         return false;
     }
 
@@ -207,7 +207,7 @@ void app::scripting::PluginRegistry::load_service ( const QJsonObject& jobj, app
         act->script = load_script(jobj["script"].toObject());
         if ( !act->script.valid() )
         {
-            qWarning() << "Skipping action with invalid script";
+            logger.stream() << "Skipping action with invalid script";
             return;
         }
         act->label = jobj["label"].toString();
@@ -217,7 +217,7 @@ void app::scripting::PluginRegistry::load_service ( const QJsonObject& jobj, app
     }
     else
     {
-        qWarning() << "Skipping invalid service type" << type;
+        logger.stream() << "Skipping invalid service type" << type;
     }
 
 
@@ -242,7 +242,7 @@ void app::scripting::PluginRegistry::load_setting ( const QString& slug, const Q
     QString type = jobj["type"].toString();
     if ( slug.isEmpty() )
     {
-        qWarning() << "Skipping setting with no slug";
+        logger.stream() << "Skipping setting with no slug";
         return;
     }
     QString label = jobj["label"].toString(slug);
@@ -262,7 +262,7 @@ void app::scripting::PluginRegistry::load_setting ( const QString& slug, const Q
     else if ( type == "choice" )
         script.settings.emplace_back(slug, label, description, app::settings::Setting::String, load_choices(jobj["choices"]));
     else
-        qWarning() << "Unknown type" << type << "for plugin setting" << slug;
+        logger.stream() << "Unknown type" << type << "for plugin setting" << slug;
 }
 
 QVariantMap app::scripting::PluginRegistry::load_choices ( const QJsonValue& val ) const

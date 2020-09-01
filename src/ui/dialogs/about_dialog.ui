@@ -119,7 +119,7 @@
             <x>0</x>
             <y>0</y>
             <width>464</width>
-            <height>376</height>
+            <height>436</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -214,7 +214,8 @@ p, li { white-space: pre-wrap; }
                 <string>Open</string>
                </property>
                <property name="icon">
-                <iconset theme="folder-open"/>
+                <iconset theme="folder-open">
+                 <normaloff>.</normaloff>.</iconset>
                </property>
               </widget>
              </item>
@@ -351,7 +352,8 @@ p, li { white-space: pre-wrap; }
             <string>About Qt</string>
            </property>
            <property name="icon">
-            <iconset theme="qtcreator"/>
+            <iconset theme="qtcreator">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -374,7 +376,8 @@ p, li { white-space: pre-wrap; }
             <string>Copy</string>
            </property>
            <property name="icon">
-            <iconset theme="edit-copy"/>
+            <iconset theme="edit-copy">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>

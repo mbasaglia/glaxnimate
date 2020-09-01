@@ -4,7 +4,6 @@
 #include "model/document.hpp"
 
 #include <QFileInfo>
-#include <QDebug>
 #include <QObject>
 
 namespace io {

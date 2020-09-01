@@ -109,4 +109,7 @@ void GlaxnimateApp::on_initialize()
 
     app::settings::Settings::instance().add_custom_group(std::make_unique<app::scripting::PluginSettingsGroup>(QStringList{
     }));
+
+    app::log::Logger::instance().add_listener<app::log::ListenerStderr>();
+    store_logger = app::log::Logger::instance().add_listener<app::log::ListenerStore>();
 }

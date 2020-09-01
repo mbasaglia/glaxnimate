@@ -21,6 +21,7 @@
 #include "app/settings/settings.hpp"
 #include "app/scripting/script_engine.hpp"
 #include "app/scripting/plugin.hpp"
+#include "app/log/log_model.hpp"
 
 class IoStatusDialog;
 class AboutDialog;
@@ -68,6 +69,7 @@ public:
     IoStatusDialog* dialog_export_status;
     AboutDialog* about_dialog;
     FlowLayout* dock_tools_layout;
+    app::log::LogModel log_model;
 
     // document
     void setup_document(const QString& filename);

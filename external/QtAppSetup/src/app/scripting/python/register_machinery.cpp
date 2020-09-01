@@ -6,6 +6,8 @@
 #include <QUuid>
 #include <QVariant>
 
+#include "app/log/log.hpp"
+
 
 namespace app::scripting::python {
 
@@ -164,7 +166,7 @@ PyPropertyInfo register_property(const QMetaProperty& prop)
 
     PyPropertyInfo pyprop = type_dispatch<RegisterProperty, PyPropertyInfo>(prop.type(), prop);
     if ( !pyprop.name )
-        qWarning() << "Invalid property" << prop.name() << "of type" << prop.type() << prop.typeName();
+        log::LogStream("Python", "", log::Error) << "Invalid property" << prop.name() << "of type" << prop.type() << prop.typeName();
     return pyprop;
 }
 
@@ -327,13 +329,13 @@ PyMethodInfo register_method(const QMetaMethod& meth, py::handle& handle)
 
     if ( meth.parameterCount() > 9 )
     {
-        qDebug() << "Too many arguments for method " << meth.name() << ": " << meth.parameterCount();
+        log::LogStream("Python", "", log::Error) << "Too many arguments for method " << meth.name() << ": " << meth.parameterCount();
         return {};
     }
 
     PyMethodInfo pymeth = type_dispatch_maybe_void<RegisterMethod, PyMethodInfo>(meth.returnType(), meth, handle);
     if ( !pymeth.name )
-        qWarning() << "Invalid method" << meth.name() << "return type" << meth.returnType() << meth.typeName();
+        log::LogStream("Python", "", log::Error) << "Invalid method" << meth.name() << "return type" << meth.returnType() << meth.typeName();
     return pymeth;
 
 }

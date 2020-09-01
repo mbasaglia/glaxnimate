@@ -5,12 +5,14 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include "app/log/log.hpp"
+
 using namespace model;
 
 io::Autoreg<io::lottie::LottieFormat> io::lottie::LottieFormat::autoreg;
 
 namespace  {
-    
+
 enum FieldMode
 {
     Ignored,
@@ -24,7 +26,7 @@ struct FieldInfo
     QString lottie;
     bool essential;
     FieldMode mode;
-    
+
     FieldInfo(const char* name, const char* lottie, bool essential = true)
         : name(name), lottie(lottie), essential(essential), mode(Auto)
     {}
@@ -146,7 +148,7 @@ public:
         if ( parent_index != -1 )
             json["parent"] = parent_index;
         /// \todo add opacity to layer and set it to ks.o
-        
+
         if ( layer->type_name() == "SolidColorLayer" )
             json["sc"] = static_cast<SolidColorLayer*>(layer)->color.get().name();
         return json;
@@ -191,11 +193,11 @@ public:
         {
             if ( field.mode != Auto )
                 continue;
-            
+
             model::BaseProperty * prop = obj->get_property(field.name);
             if ( !prop )
             {
-                qWarning() << field.name << "is not a property";
+                logger.stream() << field.name << "is not a property";
                 continue;
             }
 
@@ -238,7 +240,7 @@ public:
         }
         return jobj;
     }
-    
+
     QJsonObject keyframe_bezier_handle(const QPointF& p)
     {
         QJsonObject jobj;
@@ -249,6 +251,7 @@ public:
 
     model::Document* document;
     QMap<QUuid, int> layer_indices;
+    app::log::Log logger{"Lottie Export"};
 
 };
 
@@ -260,30 +263,30 @@ public:
         io::lottie::LottieFormat* format
     ) : document(document), format(format)
     {}
-    
+
     void load(const QJsonObject& json)
     {
         load_composition(json, document->main_composition());
     }
-    
-private:    
+
+private:
     void load_composition(const QJsonObject& json, model::Composition* composition)
     {
         this->composition = composition;
         invalid_indices.clear();
         layer_indices.clear();
         deferred.clear();
-        
+
         load_basic(json, composition);
         for ( const auto& layer : json["layers"].toArray() )
             create_layer(layer.toObject());
-        
+
         auto deferred_layers = std::move(deferred);
         deferred.clear();
         for ( const auto& pair: deferred_layers )
             load_layer(pair.second, static_cast<Layer*>(pair.first));
     }
-    
+
     void create_layer(const QJsonObject& json)
     {
         int index = json["ind"].toInt();
@@ -293,7 +296,7 @@ private:
             invalid_indices.insert(index);
             return;
         }
-        
+
         QString type = layer_types.key(json["ty"].toInt());
         if ( type.isEmpty() )
         {
@@ -301,7 +304,7 @@ private:
             invalid_indices.insert(index);
             return;
         }
-        
+
         model::Layer* layer = model::Factory::instance().make_layer(type, document, composition);
         if ( !layer )
         {
@@ -309,16 +312,16 @@ private:
             invalid_indices.insert(index);
             return;
         }
-        
+
         layer_indices[layer_indices.size()] = layer;
         deferred.emplace_back(layer, json);
         composition->add_layer(std::unique_ptr<Layer>(layer), composition->docnode_child_count());
     }
-    
+
     void load_layer(const QJsonObject& json, model::Layer* layer)
     {
         load_basic(json, layer);
-        
+
         if ( json.contains("parent") )
         {
             int parent_index = json["parent"].toInt();
@@ -345,53 +348,53 @@ private:
                 }
             }
         }
-        
+
         load_basic(json["ks"].toObject(), layer->transform.get());
-        
-        
+
+
         if ( layer->type_name() == "SolidColorLayer" )
             static_cast<SolidColorLayer*>(layer)->color.set(QColor(json["sc"].toString()));
     }
-    
+
     void load_basic(const QJsonObject& json_obj, model::Object* obj)
     {
         std::set<QString> props;
-        
+
         for ( auto it = json_obj.begin(); it != json_obj.end(); ++it )
             props.insert(it.key());
-        
+
         for ( const QMetaObject* mo = obj->metaObject(); mo; mo = mo->superClass() )
             load_properties(
-                obj, 
-                fields[model::detail::naked_type_name(mo)], 
-                json_obj, 
+                obj,
+                fields[model::detail::naked_type_name(mo)],
+                json_obj,
                 props
             );
-        
+
         for ( const auto& not_found : props )
             emit format->error(QObject::tr("Unknown field %1").arg(not_found));
     }
-    
+
     void load_properties(
-        model::Object* obj, 
-        const QVector<FieldInfo>& fields, 
+        model::Object* obj,
+        const QVector<FieldInfo>& fields,
         const QJsonObject& json_obj,
         std::set<QString>& avail_obj_keys
     )
     {
         for ( const FieldInfo& field : fields )
-        {            
+        {
             avail_obj_keys.erase(field.lottie);
             if ( field.mode != Auto || !json_obj.contains(field.lottie) )
                 continue;
-            
+
             model::BaseProperty * prop = obj->get_property(field.name);
             if ( !prop )
             {
-                qWarning() << field.name << "is not a property";
+                logger.stream() << field.name << "is not a property";
                 continue;
             }
-            
+
             if ( prop->traits().flags & PropertyTraits::Animated )
             {
                 load_animated(static_cast<AnimatableBase*>(prop), json_obj[field.lottie]);
@@ -402,17 +405,17 @@ private:
             }
         }
     }
-    
+
     template<class T>
     std::optional<QVariant> compound_value_2d(const QJsonValue& val, double mul = 1)
     {
         QJsonArray arr = val.toArray();
         if ( arr.size() < 2 || !arr[0].isDouble() || !arr[1].isDouble() )
             return {};
-        
+
         return QVariant::fromValue(T(arr[0].toDouble() * mul, arr[1].toDouble() * mul));
     }
-    
+
     std::optional<QVariant> value_to_variant(model::BaseProperty * prop, const QJsonValue& val)
     {
         switch ( prop->traits().type )
@@ -430,18 +433,18 @@ private:
             case model::PropertyTraits::Scale:
                 return compound_value_2d<QVector2D>(val, 0.01);
             default:
-                qWarning() << "Unsupported type" << prop->traits().type << "for" << prop->name();
+                logger.stream(app::log::Error) << "Unsupported type" << prop->traits().type << "for" << prop->name();
                 return {};
         }
     }
-    
+
     void load_value(model::BaseProperty * prop, const QJsonValue& val)
     {
         auto v = value_to_variant(prop, val);
         if ( !v || !prop->set_value(*v) )
             emit format->error(QObject::tr("Invalid value for %1").arg(prop->name()));
     }
-    
+
     void load_animated(model::AnimatableBase* prop, const QJsonValue& val)
     {
         if ( !val.isObject() )
@@ -449,14 +452,14 @@ private:
             emit format->error(QObject::tr("Invalid value for %1").arg(prop->name()));
             return;
         }
-        
+
         QJsonObject obj = val.toObject();
         if ( !obj.contains("a") || !obj.contains("k") )
         {
             emit format->error(QObject::tr("Invalid value for %1").arg(prop->name()));
             return;
         }
-        
+
         if ( obj["a"].toInt() )
         {
             if ( !obj["k"].isArray() )
@@ -464,7 +467,7 @@ private:
                 emit format->error(QObject::tr("Invalid keyframes for %1").arg(prop->name()));
                 return;
             }
-            
+
             /// @todo for position fields also add spatial bezier handles
             for ( const QJsonValue& jkf : obj["k"].toArray() )
             {
@@ -473,12 +476,12 @@ private:
                 model::KeyframeBase* kf = nullptr;
                 if ( v )
                     kf = prop->set_keyframe(time, *v);
-                
+
                 if ( kf )
                 {
                     kf->transition().set_before_handle(keyframe_bezier_handle(jkf["i"]));
                     kf->transition().set_after_handle(keyframe_bezier_handle(jkf["o"]));
-                    
+
                     if ( jkf["h"].toInt() )
                         kf->transition().set_hold(true);
                 }
@@ -495,19 +498,20 @@ private:
             load_value(prop, obj["k"]);
         }
     }
-    
+
     QPointF keyframe_bezier_handle(const QJsonValue& val)
     {
         QJsonObject jobj = val.toObject();
         return {jobj["x"].toDouble(), jobj["y"].toDouble()};
     }
-    
+
     model::Document* document;
     io::lottie::LottieFormat* format;
     QMap<int, model::Layer*> layer_indices;
     std::set<int> invalid_indices;
     std::vector<std::pair<Object*, QJsonObject>> deferred;
     model::Composition* composition = nullptr;
+    app::log::Log logger{"Lottie Import"};
 };
 
 } // namespace
@@ -543,7 +547,7 @@ bool io::lottie::LottieFormat::on_open(QIODevice& file, const QString&, model::D
     }
 
     QJsonObject top_level = jdoc.object();
-    
+
     LottieImporterState imp{document, this};
     imp.load(top_level);
     return true;

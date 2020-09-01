@@ -9,6 +9,7 @@
 #include <QSet>
 
 #include "app/settings/setting.hpp"
+#include "app/log/log.hpp"
 
 
 namespace app::scripting {
@@ -261,6 +262,7 @@ private:
 
     std::vector<std::unique_ptr<Plugin>> plugins_;
     QMap<QString, int> names;
+    log::Log logger{"Plugins"};
 };
 
 } // namespace app::scripting

@@ -8,6 +8,8 @@ app/widgets/plugin_settings_widget.cpp
 app/widgets/plugin_settings_widget.ui
 app/widgets/settings_dialog.cpp
 app/widgets/settings_dialog.ui
+app/log/logger.cpp
+app/log/log_model.cpp
 )
 
 include(CheckCXXCompilerFlag)

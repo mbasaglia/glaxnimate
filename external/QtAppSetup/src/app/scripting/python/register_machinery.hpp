@@ -3,7 +3,6 @@
 #include <cstring>
 
 #include <QMetaProperty>
-#include <QDebug>
 
 #include "app/scripting/python/casters.hpp"
 
