@@ -5,5 +5,3 @@ Authors: Mattia Basaglia
 ## Menus
 
 ## Docks
-
-* [Timeline](dock/timeline.md)

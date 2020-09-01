@@ -12,9 +12,11 @@ repo_url: https://gitlab.com/mattia.basaglia/glaxnimate
 edit_uri: -/edit/master/docs/docs
 markdown_extensions:
     - fontawesome_markdown
+extra_css:
+    - style/style.css
 nav:
     - index.md
-    - 'User Interface':
+    - 'Documentation':
         - ui/index.md
         - ui/canvas.md
         - ui/docks.md
