@@ -9,7 +9,7 @@
 #include "model/document.hpp"
 #include "command/animation_commands.hpp"
 
-class KeyframeItem : public QGraphicsObject
+class KeyframeSplitItem : public QGraphicsObject
 {
     Q_OBJECT
 
@@ -17,7 +17,7 @@ public:
     static const int icon_size = 16;
     static const int pen = 2;
 
-    KeyframeItem(QGraphicsItem* parent) : QGraphicsObject(parent)
+    KeyframeSplitItem(QGraphicsItem* parent) : QGraphicsObject(parent)
     {
         setFlags(
             QGraphicsItem::ItemIsSelectable|
@@ -69,7 +69,16 @@ protected:
         if ( event->button() == Qt::LeftButton )
         {
             event->accept();
+            bool multi_select = (event->modifiers() & (Qt::ControlModifier|Qt::ShiftModifier)) != 0;
+            if ( !multi_select && !isSelected() )
+                scene()->clearSelection();
+
             setSelected(true);
+            for ( auto item : scene()->selectedItems() )
+            {
+                if ( auto kf = dynamic_cast<KeyframeSplitItem*>(item) )
+                    kf->drag_init();
+            }
         }
         else
         {
@@ -82,7 +91,12 @@ protected:
         if ( (event->buttons() & Qt::LeftButton) && isSelected() )
         {
             event->accept();
-            setX(qRound(event->scenePos().x()));
+            qreal delta = qRound(event->scenePos().x()) - drag_start;
+            for ( auto item : scene()->selectedItems() )
+            {
+                if ( auto kf = dynamic_cast<KeyframeSplitItem*>(item) )
+                    kf->drag_move(delta);
+            }
         }
         else
         {
@@ -95,7 +109,11 @@ protected:
         if ( event->button() == Qt::LeftButton && isSelected() )
         {
             event->accept();
-            emit dragged(x());
+            for ( auto item : scene()->selectedItems() )
+            {
+                if ( auto kf = dynamic_cast<KeyframeSplitItem*>(item) )
+                    kf->drag_end();
+            }
         }
         else
         {
@@ -121,10 +139,26 @@ private:
         return QIcon(app::Application::instance()->data_file(icon_name.arg(ba).arg(which)));
     }
 
+    void drag_init()
+    {
+        drag_start = x();
+    }
+
+    void drag_move(qreal delta)
+    {
+        setX(drag_start+delta);
+    }
+
+    void drag_end()
+    {
+        emit dragged(x());
+    }
+
     QPixmap pix_enter;
     QPixmap pix_exit;
     QIcon icon_enter;
     QIcon icon_exit;
+    model::FrameTime drag_start;
 };
 
 class AnimatableItem : public QGraphicsObject
@@ -183,11 +217,11 @@ public:
         painter->drawLine(option->rect.left(), height, option->rect.right(), height);
     }
 
-    std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframes(KeyframeItem* item)
+    std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframes(KeyframeSplitItem* item)
     {
-        for ( int i = 0; i < int(kf_items.size()); i++ )
+        for ( int i = 0; i < int(kf_split_items.size()); i++ )
         {
-            if ( kf_items[i] == item )
+            if ( kf_split_items[i] == item )
             {
                 if ( i == 0 )
                     return {nullptr, animatable->keyframe(i)};
@@ -210,28 +244,28 @@ public slots:
     void add_keyframe(int index)
     {
         model::KeyframeBase* kf = animatable->keyframe(index);
-        if ( index == 0 && !kf_items.empty() )
-            kf_items[0]->set_enter(kf->transition().after());
+        if ( index == 0 && !kf_split_items.empty() )
+            kf_split_items[0]->set_enter(kf->transition().after());
 
         model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
-        auto item = new KeyframeItem(this);
+        auto item = new KeyframeSplitItem(this);
         item->setPos(kf->time(), height / 2.0);
         item->set_exit(kf->transition().before());
         item->set_enter(prev ? prev->transition().after() : model::KeyframeTransition::Constant);
-        kf_items.insert(kf_items.begin() + index, item);
+        kf_split_items.insert(kf_split_items.begin() + index, item);
 
         connect(&kf->transition(), &model::KeyframeTransition::after_changed, this, &AnimatableItem::transition_changed_after);
         connect(&kf->transition(), &model::KeyframeTransition::before_changed, this, &AnimatableItem::transition_changed_before);
-        connect(item, &KeyframeItem::dragged, this, &AnimatableItem::keyframe_dragged);
+        connect(item, &KeyframeSplitItem::dragged, this, &AnimatableItem::keyframe_dragged);
     }
 
     void remove_keyframe(int index)
     {
-        delete kf_items[index];
-        kf_items.erase(kf_items.begin() + index);
-        if ( index < int(kf_items.size()) && index > 0 )
+        delete kf_split_items[index];
+        kf_split_items.erase(kf_split_items.begin() + index);
+        if ( index < int(kf_split_items.size()) && index > 0 )
         {
-            kf_items[index]->set_enter(animatable->keyframe(index-1)->transition().after());
+            kf_split_items[index]->set_enter(animatable->keyframe(index-1)->transition().after());
         }
     }
 
@@ -245,7 +279,7 @@ private slots:
         if ( index == -1 )
             return;
 
-        kf_items[index]->set_exit(d);
+        kf_split_items[index]->set_exit(d);
     }
 
     void transition_changed_after(model::KeyframeTransition::Descriptive d)
@@ -255,18 +289,18 @@ private slots:
             return;
 
         index += 1;
-        if ( index >= int(kf_items.size()) )
+        if ( index >= int(kf_split_items.size()) )
             return;
 
-        kf_items[index]->set_enter(d);
+        kf_split_items[index]->set_enter(d);
     }
 
     void keyframe_dragged(model::FrameTime t)
     {
-        auto it = std::find(kf_items.begin(), kf_items.end(), static_cast<KeyframeItem*>(sender()));
-        if ( it != kf_items.end() )
+        auto it = std::find(kf_split_items.begin(), kf_split_items.end(), static_cast<KeyframeSplitItem*>(sender()));
+        if ( it != kf_split_items.end() )
         {
-            int index = it - kf_items.begin();
+            int index = it - kf_split_items.begin();
             if ( animatable->keyframe(index)->time() != t )
             {
                 animatable->object()->document()->undo_stack().push(
@@ -278,13 +312,13 @@ private slots:
 
     void update_keyframe(int index, model::KeyframeBase* kf)
     {
-        auto item_start = kf_items[index];
+        auto item_start = kf_split_items[index];
         item_start->setPos(kf->time(), height / 2.0);
         item_start->set_exit(kf->transition().before());
 
-        if ( index < int(kf_items.size()) - 1 )
+        if ( index < int(kf_split_items.size()) - 1 )
         {
-            auto item_end = kf_items[index];
+            auto item_end = kf_split_items[index];
             item_end->set_enter(kf->transition().after());
         }
     }
@@ -305,7 +339,7 @@ private:
 
 public:
     model::AnimatableBase* animatable;
-    std::vector<KeyframeItem*> kf_items;
+    std::vector<KeyframeSplitItem*> kf_split_items;
     int time_start;
     int time_end;
     int height;
@@ -719,7 +753,7 @@ std::pair<model::KeyframeBase*, model::KeyframeBase*> TimelineWidget::keyframe_a
 {
     for ( QGraphicsItem* it : items(viewport_pos) )
     {
-        if ( auto kfit = dynamic_cast<KeyframeItem*>(it) )
+        if ( auto kfit = dynamic_cast<KeyframeSplitItem*>(it) )
         {
             auto anit = static_cast<AnimatableItem*>(it->parentItem());
             return anit->keyframes(kfit);
