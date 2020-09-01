@@ -12,11 +12,11 @@
 class KeyframeItem : public QGraphicsObject
 {
     Q_OBJECT
-    
+
 public:
     static const int icon_size = 16;
     static const int pen = 2;
-    
+
     KeyframeItem(QGraphicsItem* parent) : QGraphicsObject(parent)
     {
         setFlags(
@@ -24,12 +24,12 @@ public:
             QGraphicsItem::ItemIgnoresTransformations
         );
     }
-    
+
     QRectF boundingRect() const override
     {
         return QRectF(-icon_size/2-pen, -icon_size/2-pen, icon_size+2*pen, icon_size+2*pen);
     }
-    
+
     void paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget * widget) override
     {
         if ( isSelected() )
@@ -43,26 +43,26 @@ public:
             painter->setBrush(sel_fill);
             painter->drawRect(boundingRect());
         }
-        
+
         painter->drawPixmap(-icon_size/2, -icon_size/2, pix_enter);
         painter->drawPixmap(0, -icon_size/2, pix_exit);
     }
-    
-    
+
+
     void set_enter(model::KeyframeTransition::Descriptive enter)
     {
         icon_enter = icon_from_kdf(enter, "finish");
         pix_enter = icon_enter.pixmap(icon_size);
         update();
     }
-    
+
     void set_exit(model::KeyframeTransition::Descriptive exit)
     {
         icon_exit = icon_from_kdf(exit, "start");
         pix_exit = icon_exit.pixmap(icon_size);
         update();
     }
-    
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * event) override
     {
@@ -76,7 +76,7 @@ protected:
             QGraphicsObject::mousePressEvent(event);
         }
     }
-    
+
     void mouseMoveEvent(QGraphicsSceneMouseEvent * event) override
     {
         if ( (event->buttons() & Qt::LeftButton) && isSelected() )
@@ -89,7 +89,7 @@ protected:
             QGraphicsObject::mouseMoveEvent(event);
         }
     }
-    
+
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override
     {
         if ( event->button() == Qt::LeftButton && isSelected() )
@@ -102,10 +102,10 @@ protected:
             QGraphicsObject::mouseReleaseEvent(event);
         }
     }
-    
+
 signals:
     void dragged(model::FrameTime t);
-    
+
 private:
     QIcon icon_from_kdf(model::KeyframeTransition::Descriptive desc, const char* ba)
     {
@@ -120,7 +120,7 @@ private:
         }
         return QIcon(app::Application::instance()->data_file(icon_name.arg(ba).arg(which)));
     }
-    
+
     QPixmap pix_enter;
     QPixmap pix_exit;
     QIcon icon_enter;
@@ -130,44 +130,45 @@ private:
 class AnimatableItem : public QGraphicsObject
 {
     Q_OBJECT
-    
+
 public:
     AnimatableItem(model::AnimatableBase* animatable, int time_start, int time_end, int height)
         : animatable(animatable), time_start(time_start), time_end(time_end), height(height)
     {
         setFlags(QGraphicsItem::ItemIsSelectable);
-        
+
         for ( int i = 0; i < animatable->keyframe_count(); i++ )
             add_keyframe(i);
-        
-        
+
+
         connect(animatable, &model::AnimatableBase::keyframe_added, this, &AnimatableItem::add_keyframe);
         connect(animatable, &model::AnimatableBase::keyframe_removed, this, &AnimatableItem::remove_keyframe);
+        connect(animatable, &model::AnimatableBase::keyframe_updated, this, &AnimatableItem::update_keyframe);
     }
-    
+
     void set_time_start(int time)
     {
         time_start = time;
         prepareGeometryChange();
     }
-    
+
     void set_time_end(int time)
     {
         time_end = time;
         prepareGeometryChange();
     }
-    
+
     void set_height(int h)
     {
         height = h;
         prepareGeometryChange();
     }
-    
+
     QRectF boundingRect() const override
     {
         return QRectF(time_start, 0, time_end, height);
     }
-    
+
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override
     {
         if ( isSelected() )
@@ -175,15 +176,15 @@ public:
             QColor selcol = widget->palette().color(QPalette::Highlight);
             painter->fillRect(option->rect, selcol);
         }
-        
+
         QPen p(widget->palette().color(QPalette::Text), 1);
         p.setCosmetic(true);
         painter->setPen(p);
         painter->drawLine(option->rect.left(), height, option->rect.right(), height);
     }
-    
+
     std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframes(KeyframeItem* item)
-    {        
+    {
         for ( int i = 0; i < int(kf_items.size()); i++ )
         {
             if ( kf_items[i] == item )
@@ -193,10 +194,10 @@ public:
                 return {animatable->keyframe(i-1), animatable->keyframe(i)};
             }
         }
-        
+
         return {nullptr, nullptr};
     }
-    
+
     void mousePressEvent(QGraphicsSceneMouseEvent * event) override
     {
         bool sel = isSelected();
@@ -204,26 +205,26 @@ public:
         if ( !sel && isSelected() )
             emit animatable_clicked(animatable);
     }
-    
+
 public slots:
     void add_keyframe(int index)
     {
         model::KeyframeBase* kf = animatable->keyframe(index);
         if ( index == 0 && !kf_items.empty() )
             kf_items[0]->set_enter(kf->transition().after());
-        
+
         model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
         auto item = new KeyframeItem(this);
         item->setPos(kf->time(), height / 2.0);
         item->set_exit(kf->transition().before());
         item->set_enter(prev ? prev->transition().after() : model::KeyframeTransition::Constant);
         kf_items.insert(kf_items.begin() + index, item);
-        
+
         connect(&kf->transition(), &model::KeyframeTransition::after_changed, this, &AnimatableItem::transition_changed_after);
         connect(&kf->transition(), &model::KeyframeTransition::before_changed, this, &AnimatableItem::transition_changed_before);
         connect(item, &KeyframeItem::dragged, this, &AnimatableItem::keyframe_dragged);
     }
-    
+
     void remove_keyframe(int index)
     {
         delete kf_items[index];
@@ -233,33 +234,33 @@ public slots:
             kf_items[index]->set_enter(animatable->keyframe(index-1)->transition().after());
         }
     }
-    
+
 signals:
     void animatable_clicked(model::AnimatableBase* animatable);
-    
+
 private slots:
     void transition_changed_before(model::KeyframeTransition::Descriptive d)
     {
         int index = transition_changed_index();
         if ( index == -1 )
             return;
-        
+
         kf_items[index]->set_exit(d);
     }
-    
+
     void transition_changed_after(model::KeyframeTransition::Descriptive d)
     {
         int index = transition_changed_index();
         if ( index == -1 )
             return;
-        
+
         index += 1;
         if ( index >= int(kf_items.size()) )
             return;
-        
+
         kf_items[index]->set_enter(d);
     }
-    
+
     void keyframe_dragged(model::FrameTime t)
     {
         auto it = std::find(kf_items.begin(), kf_items.end(), static_cast<KeyframeItem*>(sender()));
@@ -274,21 +275,34 @@ private slots:
             }
         }
     }
-    
+
+    void update_keyframe(int index, model::KeyframeBase* kf)
+    {
+        auto item_start = kf_items[index];
+        item_start->setPos(kf->time(), height / 2.0);
+        item_start->set_exit(kf->transition().before());
+
+        if ( index < int(kf_items.size()) - 1 )
+        {
+            auto item_end = kf_items[index];
+            item_end->set_enter(kf->transition().after());
+        }
+    }
+
 private:
     int transition_changed_index()
     {
         model::KeyframeTransition* s = static_cast<model::KeyframeTransition*>(sender());
-        
+
         for ( int i = 0, e = animatable->keyframe_count(); i < e; i++ )
         {
             if ( &animatable->keyframe(i)->transition() == s )
                 return i;
         }
-        
+
         return -1;
     }
-    
+
 public:
     model::AnimatableBase* animatable;
     std::vector<KeyframeItem*> kf_items;
@@ -316,16 +330,16 @@ public:
     int mouse_frame = -1;
     model::Document* document = nullptr;
     bool dragging_frame = false;
-    
+
     QRectF scene_rect()
     {
         return QRectF(
-            QPointF(start_time, -header_height), 
+            QPointF(start_time, -header_height),
             QPointF(end_time, std::max(row_height*rows, parent->height()))
         );
     }
-    
-    
+
+
     void add_animatable(model::AnimatableBase* anim)
     {
         AnimatableItem* item = new AnimatableItem(anim, start_time, end_time, row_height);
@@ -335,7 +349,7 @@ public:
         scene.addItem(item);
         rows += 1;
     }
-    
+
     void add_object(model::Object* obj)
     {
         for ( auto prop : obj->properties() )
@@ -347,7 +361,7 @@ public:
                 add_object(static_cast<model::SubObjectPropertyBase*>(prop)->sub_object());
         }
     }
-    
+
     void adjust_min_scale(int wpw)
     {
         if ( min_scale == 0 || scene_rect().width() == 0 )
@@ -355,12 +369,12 @@ public:
         else
             min_scale = wpw / scene_rect().width();
     }
-    
+
     void update_frame_skip(const QTransform& tr)
     {
         frame_skip = qCeil(min_gap / tr.m11());
     }
-    
+
     void paint_highligted_frame(int frame, QPainter& painter, const QColor& color)
     {
         QPointF framep = parent->mapFromScene(QPoint(frame, 0));
@@ -373,7 +387,7 @@ public:
             color
         );
     }
-    
+
     void clear()
     {
         scene.clear();
@@ -438,9 +452,9 @@ void TimelineWidget::set_document(model::Document* document)
     {
         disconnect(this, nullptr, d->document, nullptr);
     }
-    
+
     clear();
-    
+
     if ( document )
     {
         connect(document->main_composition(), &model::AnimationContainer::first_frame_changed, this, &TimelineWidget::update_timeline_start);
@@ -450,7 +464,7 @@ void TimelineWidget::set_document(model::Document* document)
         connect(this, &TimelineWidget::frame_clicked, document, &model::Document::set_current_time);
         connect(document, &model::Document::current_time_changed, viewport(), (void (QWidget::*)())&QWidget::update);
     }
-    
+
     d->document = document;
 }
 
@@ -488,7 +502,7 @@ void TimelineWidget::wheelEvent(QWheelEvent* event)
         {
             scale(1.25, 1);
         }
-        
+
         d->update_frame_skip(transform());
     }
     else
@@ -505,14 +519,14 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     // bg
     QPen dark(palette().color(QPalette::Text), 1);
     QPainter painter;
-        
+
     // scene
     QGraphicsView::paintEvent(event);
-    
+
     // fg
     painter.begin(viewport());
-    
-    
+
+
     if ( d->document )
     {
 //         painter.begin(viewport());
@@ -521,22 +535,22 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
         painter.drawLine(cur_x, event->rect().top(), cur_x, event->rect().bottom());
 //         painter.end();
     }
-    
+
     painter.fillRect(event->rect().left(), 0, event->rect().right(), d->header_height,
                      palette().color(QPalette::Base));
-    
-    
+
+
     if ( d->document )
-        d->paint_highligted_frame(d->document->current_time(), painter, 
+        d->paint_highligted_frame(d->document->current_time(), painter,
                                   palette().color(QPalette::Text));
-        
+
     if ( d->mouse_frame > -1 )
         d->paint_highligted_frame(d->mouse_frame, painter, palette().color(QPalette::Highlight));
-    
+
     painter.setPen(dark);
     painter.drawLine(event->rect().left(), d->header_height, event->rect().right(), d->header_height);
-    
-    
+
+
     if ( event->rect().top() < d->header_height )
     {
         QColor frame_line = palette().color(QPalette::Text);
@@ -554,7 +568,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
             int height = d->header_height;
             bool under_mouse = f == d->mouse_frame;
             bool current_frame = d->document && f == d->document->current_time();
-            
+
             if ( f % d->frame_skip == 0 || under_mouse || current_frame )
             {
                 bool draw = true;
@@ -565,15 +579,15 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
                     QPoint(box_x1+1, small_height),
                     QPoint(box_x2, d->header_height-1)
                 );
-                
+
                 if ( current_frame && !under_mouse && d->mouse_frame != -1 )
                 {
                     int mfs = d->mouse_frame / d->frame_skip * d->frame_skip;
-                    
+
                     if ( fs == mfs )
                         draw = false;
                 }
-                
+
                 if ( draw )
                 {
                     if ( under_mouse )
@@ -586,21 +600,21 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
                         painter.fillRect(text_rect, palette().color(QPalette::Text));
                         painter.setPen(QPen(palette().color(QPalette::Base), 1));
                     }
-                    else 
+                    else
                     {
                         painter.setPen(dark);
                     }
-                
+
                     painter.drawText(text_rect, Qt::AlignLeft|Qt::AlignBottom,  QString::number(f));
                     painter.setPen(light);
                 }
             }
-            
+
             if ( f % d->frame_skip )
             {
                 height = small_height;
             }
-            
+
             painter.drawLine(QPoint(p1.x(), 0), QPoint(p1.x(), height));
         }
     }
@@ -630,7 +644,7 @@ void TimelineWidget::scrollContentsBy(int dx, int dy)
 void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
     d->mouse_frame = qRound(mapToScene(event->pos()).x());
-    
+
     if ( event->y() > d->header_height )
     {
         QGraphicsView::mousePressEvent(event);
@@ -645,7 +659,7 @@ void TimelineWidget::mousePressEvent(QMouseEvent* event)
 void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
 {
     d->mouse_frame = qRound(mapToScene(event->pos()).x());
-    
+
     if ( d->dragging_frame && (event->buttons() & Qt::LeftButton) )
     {
         emit frame_clicked(d->mouse_frame);
@@ -654,7 +668,7 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
     {
         QGraphicsView::mouseMoveEvent(event);
     }
-    
+
     viewport()->update();
 }
 
@@ -665,7 +679,7 @@ void TimelineWidget::mouseReleaseEvent(QMouseEvent* event)
         d->dragging_frame = false;
         emit frame_clicked(d->mouse_frame);
     }
-    else 
+    else
     {
         QGraphicsView::mouseReleaseEvent(event);
     }
