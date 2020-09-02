@@ -115,20 +115,10 @@ public:
 
     /**
      * \brief If \b true, the node is mainly used to contain other nodes so it can be ignored on selections
-     * 
+     *
      * This does not affect docnode_selectable() for this or its ancestors
      */
     virtual bool docnode_selection_container() const { return true; }
-    
-    /// \todo use callbacks instead of these virtual methods
-    virtual std::vector<DocumentNode*> docnode_valid_references(const ReferencePropertyBase*) const { return {}; }
-    virtual bool docnode_is_valid_reference(const ReferencePropertyBase* property, DocumentNode* node) const
-    {
-        for ( auto p : docnode_valid_references(property) )
-            if ( p == node )
-                return true;
-        return false;
-    }
 
     /**
      * \brief Bounding rect in local coordinates (current frame)
@@ -308,8 +298,8 @@ class ReferencePropertyBase : public BaseProperty
     Q_GADGET
 public:
     ReferencePropertyBase(
-        DocumentNode* obj, 
-        const QString& name, 
+        DocumentNode* obj,
+        const QString& name,
         PropertyCallback<std::vector<DocumentNode*>, void> valid_options,
         PropertyCallback<bool, DocumentNode*> is_valid_option,
         PropertyTraits::Flags flags = PropertyTraits::Visual)
@@ -328,7 +318,7 @@ public:
     {
         return is_valid_option_(object(), ptr);
     }
-    
+
     void set_time(FrameTime) override {}
 
 private:

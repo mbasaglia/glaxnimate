@@ -2,20 +2,23 @@
 
 #include "layer.hpp"
 
-#include "model/shape.hpp"
+#include "model/shapes/shape.hpp"
 
 namespace model {
-
 
 class ShapeLayer : public detail::BaseLayerProps<ShapeLayer>
 {
     GLAXNIMATE_OBJECT
 
-    GLAXNIMATE_PROPERTY_LIST(ShapeElement, shapes,
+    ShapeListProperty shapes{this, "shapes",
         &ShapeLayer::shape_added,
         &ShapeLayer::shape_removed,
         &DocumentNode::docnode_child_add_begin,
-        &DocumentNode::docnode_child_remove_begin)
+        &DocumentNode::docnode_child_remove_begin
+    };
+
+    GLAXNIMATE_PROPERTY_LIST_IMPL(shapes)
+
 public:
     // shapes
 

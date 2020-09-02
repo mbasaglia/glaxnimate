@@ -4,6 +4,7 @@
 #include <utility>
 #include <cmath>
 #include <QMetaType>
+#include <QColor>
 
 
 class QVector2D; class QVector3D; class QVector4D; class QPointF;
@@ -433,6 +434,16 @@ template<class T>
 constexpr T lerp(const T& a, const T& b, double factor)
 {
     return a * (1-factor) + b * factor;
+}
+
+inline QColor lerp(const QColor& a, const QColor& b, double factor)
+{
+    return QColor::fromRgbF(
+        lerp(a.redF(), b.redF(), factor),
+        lerp(a.greenF(), b.greenF(), factor),
+        lerp(a.blueF(), b.blueF(), factor),
+        lerp(a.alphaF(), b.alphaF(), factor)
+    );
 }
 
 inline Vec2 from_polar(scalar_type<Vec2> length, scalar_type<Vec2> angle)

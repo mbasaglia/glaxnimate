@@ -112,16 +112,16 @@ inline constexpr PropertyTraits::Type PropertyTraits::get_type() noexcept
     return detail::GetType<T>::value;
 }
 
-/** 
+/**
  * \brief Sets up declarations of concrete Object sub-classes
  * \note Call GLAXNIMATE_OBJECT_IMPL for every class declared with GLAXNIMATE_OBJECT
  */
 #define GLAXNIMATE_OBJECT   \
     Q_OBJECT                \
     static bool _reg;
-   
+
 /**
- * \brief Registers a class declared with GLAXNIMATE_OBJECT to be constructed 
+ * \brief Registers a class declared with GLAXNIMATE_OBJECT to be constructed
  * with model::Factory
  */
 #define GLAXNIMATE_OBJECT_IMPL(cls) \
@@ -150,9 +150,8 @@ private:                                                    \
     Q_PROPERTY(type* name READ get_##name WRITE set_##name) \
     // macro end
 
-#define GLAXNIMATE_PROPERTY_LIST(type, name, ...)           \
+#define GLAXNIMATE_PROPERTY_LIST_IMPL(name)                 \
 public:                                                     \
-    ObjectListProperty<type> name{this, #name, __VA_ARGS__};\
     QVariantList get_##name() const                         \
     {                                                       \
         QVariantList ret;                                   \
@@ -163,6 +162,13 @@ public:                                                     \
 private:                                                    \
     Q_PROPERTY(QVariantList name READ get_##name)           \
     // macro end
+
+#define GLAXNIMATE_PROPERTY_LIST(type, name, ...)           \
+public:                                                     \
+    ObjectListProperty<type> name{this, #name, __VA_ARGS__};\
+    GLAXNIMATE_PROPERTY_LIST_IMPL(name)                     \
+    // macro end
+
 
 #define GLAXNIMATE_PROPERTY_RO(type, name, default_value)   \
 public:                                                     \
@@ -205,7 +211,7 @@ public:
     virtual bool set_value(const QVariant& val) = 0;
     virtual bool set_undoable(const QVariant& val);
     virtual void set_time(FrameTime t) = 0;
-    
+
     virtual bool assign_from(const BaseProperty* prop)
     {
         return set_value(prop->value());
@@ -304,7 +310,7 @@ private:
 
         FuncP func;
     };
-    
+
     std::unique_ptr<HolderBase> holder;
 public:
     PropertyCallback() = default;
@@ -382,7 +388,7 @@ private:
 
         FuncP func;
     };
-    
+
     std::unique_ptr<HolderBase> holder;
 public:
     PropertyCallback() = default;
@@ -470,7 +476,7 @@ public:
             return set(*v);
         return false;
     }
-    
+
     void set_time(FrameTime) override {}
 
 private:
@@ -501,7 +507,7 @@ public:
     }
 
     void set_time(FrameTime) override {}
-    
+
 private:
     QVariant variant;
 };
@@ -584,6 +590,7 @@ public:
         callback_insert_begin(this->object(), position);
         auto ptr = p.get();
         objects.insert(objects.begin()+position, std::move(p));
+        on_insert(position);
         callback_insert(this->object(), ptr);
     }
 
@@ -600,6 +607,7 @@ public:
         auto it = objects.begin() + index;
         auto v = std::move(*it);
         objects.erase(it);
+        on_remove(index);
         callback_remove(object(), v.get());
         return v;
     }
@@ -610,6 +618,7 @@ public:
             return;
 
         std::swap(objects[index_a], objects[index_b]);
+        on_swap(index_a, index_b);
     }
 
     QVariant value() const override
@@ -636,14 +645,18 @@ public:
         }
         return nullptr;
     }
-    
+
     void set_time(FrameTime t) override
     {
         for ( const auto& o : objects )
             o->set_time(t);
     }
 
-private:
+protected:
+    virtual void on_insert(int index) { Q_UNUSED(index); }
+    virtual void on_remove(int index) { Q_UNUSED(index); }
+    virtual void on_swap(int index_a, int index_b) { Q_UNUSED(index_a); Q_UNUSED(index_b); }
+
     std::vector<pointer> objects;
     PropertyCallback<void, Type*> callback_insert;
     PropertyCallback<void, Type*> callback_remove;
@@ -658,7 +671,7 @@ public:
     SubObjectPropertyBase(Object* obj, const QString& name)
         : BaseProperty(obj, name, {PropertyTraits::Object})
     {}
-    
+
     virtual const model::Object* sub_object() const = 0;
     virtual model::Object* sub_object() = 0;
 };
@@ -699,12 +712,12 @@ public:
 
     Type* get() { return &sub_obj; }
     const Type* get() const { return &sub_obj; }
-    
+
     model::Object * sub_object() override { return &sub_obj; }
     const model::Object * sub_object() const override { return &sub_obj; }
-    
-    
-    void set_time(FrameTime t) override 
+
+
+    void set_time(FrameTime t) override
     {
         sub_obj.set_time(t);
     }
