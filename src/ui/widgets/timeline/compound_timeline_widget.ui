@@ -115,7 +115,7 @@
   <customwidget>
    <class>TimelineWidget</class>
    <extends>QGraphicsView</extends>
-   <header>ui/widgets/timeline_widget.hpp</header>
+   <header>ui/widgets/timeline/timeline_widget.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -114,7 +114,7 @@
   <customwidget>
    <class>KeyframeTransitionWidget</class>
    <extends>QWidget</extends>
-   <header>ui/widgets/keyframe_transition_widget.hpp</header>
+   <header>ui/widgets/timeline/keyframe_transition_widget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

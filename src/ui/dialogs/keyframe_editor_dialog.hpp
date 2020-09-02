@@ -4,7 +4,7 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 
-#include "ui/widgets/keyframe_editor_widget.hpp"
+#include "ui/widgets/timeline/keyframe_editor_widget.hpp"
 
 class KeyframeEditorDialog : public QDialog
 {
@@ -23,20 +23,20 @@ public:
         connect(box, &QDialogButtonBox::accepted, this, &QDialog::accept);
         connect(box, &QDialogButtonBox::rejected, this, &QDialog::reject);
     }
-    
+
     void set_transition(const model::KeyframeTransition* trans)
     {
         this->trans.set_hold(trans->hold());
         this->trans.set_before_handle(trans->before_handle());
         this->trans.set_after_handle(trans->after_handle());
     }
-    
+
     bool hold() const { return trans.hold(); }
     model::KeyframeTransition::Descriptive before() const { return trans.before(); }
     model::KeyframeTransition::Descriptive after() const { return trans.after(); }
     QPointF before_handle() const { return trans.before_handle(); }
     QPointF after_handle() const { return trans.after_handle(); }
-    
+
 private:
     QVBoxLayout* lay;
     KeyframeEditorWidget* editor;

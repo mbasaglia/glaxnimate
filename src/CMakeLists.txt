@@ -52,19 +52,19 @@ ui/dialogs/gw_impl_document.cpp
 ui/dialogs/gw_impl_model.cpp
 ui/dialogs/gw_impl_script.cpp
 ui/dialogs/gw_impl_ui.cpp
+ui/widgets/timeline/keyframe_transition_widget.cpp
+ui/widgets/timeline/keyframe_editor_widget.cpp
+ui/widgets/timeline/keyframe_editor_widget.ui
+ui/widgets/timeline/frame_controls_widget.cpp
+ui/widgets/timeline/frame_controls_widget.ui
+ui/widgets/timeline/timeline_widget.cpp
+ui/widgets/timeline/compound_timeline_widget.cpp
+ui/widgets/timeline/compound_timeline_widget.ui
 ui/widgets/glaxnimate_graphics_view.cpp
 ui/widgets/view_transform_widget.cpp
 ui/widgets/view_transform_widget.ui
-ui/widgets/keyframe_transition_widget.cpp
-ui/widgets/keyframe_editor_widget.cpp
-ui/widgets/keyframe_editor_widget.ui
-ui/widgets/frame_controls_widget.cpp
-ui/widgets/frame_controls_widget.ui
 ui/widgets/flow_layout.cpp
 ui/widgets/spin2d.cpp
-ui/widgets/timeline_widget.cpp
-ui/widgets/compound_timeline_widget.cpp
-ui/widgets/compound_timeline_widget.ui
 )
 
 if(${PYTHON_ENABLED})

@@ -1837,13 +1837,13 @@
   <customwidget>
    <class>FrameControlsWidget</class>
    <extends>QWidget</extends>
-   <header>ui/widgets/frame_controls_widget.hpp</header>
+   <header>ui/widgets/timeline/frame_controls_widget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CompoundTimelineWidget</class>
    <extends>QWidget</extends>
-   <header>ui/widgets/compound_timeline_widget.hpp</header>
+   <header>ui/widgets/timeline/compound_timeline_widget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
