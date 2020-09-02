@@ -1,6 +1,6 @@
 #pragma once
 
-#include "layers.hpp"
+#include "model/layers/layer.hpp"
 
 namespace model {
 

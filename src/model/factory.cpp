@@ -1,6 +1,6 @@
 #include "factory.hpp"
 
-#include "layers.hpp"
+#include "layers/layer.hpp"
 
 model::Object * model::Factory::make_any(const QString& class_name, model::Document* document, model::Composition* comp) const
 {

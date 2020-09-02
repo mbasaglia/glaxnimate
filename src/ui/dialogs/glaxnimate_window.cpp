@@ -6,6 +6,7 @@
 
 #include "app/widgets/settings_dialog.hpp"
 #include "app_info.hpp"
+#include "model/layers/layers.hpp"
 
 
 GlaxnimateWindow::GlaxnimateWindow(QWidget *parent, Qt::WindowFlags flags)

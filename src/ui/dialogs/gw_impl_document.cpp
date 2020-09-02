@@ -10,6 +10,7 @@
 #include "ui/dialogs/io_status_dialog.hpp"
 #include "io/lottie/lottie_html_format.hpp"
 #include "app_info.hpp"
+#include "model/layers/shape_layer.hpp"
 
 
 void GlaxnimateWindow::Private::setup_document(const QString& filename)
@@ -43,7 +44,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     property_model.set_object(current_document->main_composition());
 
     scene.set_document(current_document.get());
-    
+
     ui.timeline_widget->set_document(current_document.get());
 
     // Scripting

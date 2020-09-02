@@ -12,7 +12,10 @@ model/main_composition.cpp
 model/composition.cpp
 model/document.cpp
 model/document_node.cpp
-model/layers.cpp
+model/layers/layer.cpp
+model/layers/empty_layer.cpp
+model/layers/shape_layer.cpp
+model/layers/solid_color_layer.cpp
 model/object.cpp
 model/transform.cpp
 model/shape.cpp
@@ -36,6 +39,7 @@ glaxnimate_app.cpp
 tools/base.cpp
 tools/dummy.cpp
 tools/select.cpp
+tools/ellipse.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui

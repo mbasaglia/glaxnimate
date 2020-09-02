@@ -2,6 +2,7 @@
 
 #include "command/layer_commands.hpp"
 #include "app/settings/widget_builder.hpp"
+#include "model/layers/solid_color_layer.hpp"
 
 
 model::Composition* GlaxnimateWindow::Private::current_composition()

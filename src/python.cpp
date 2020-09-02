@@ -1,7 +1,6 @@
 
-
-/// @todo Move module declaration elsewhere
 #include "model/document.hpp"
+#include "model/layers/layers.hpp"
 #include "ui/dialogs/glaxnimate_window.hpp"
 
 

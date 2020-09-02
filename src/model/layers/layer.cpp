@@ -1,16 +1,11 @@
-#include "layers.hpp"
+#include "layer.hpp"
 
 #include <QPainter>
 
-#include "composition.hpp"
+#include "model/composition.hpp"
 #include "model/document.hpp"
 #include "model/graphics/transform_graphics_item.hpp"
 #include "model/graphics/document_node_graphics_item.hpp"
-
-
-GLAXNIMATE_OBJECT_IMPL(model::ShapeLayer)
-GLAXNIMATE_OBJECT_IMPL(model::EmptyLayer)
-GLAXNIMATE_OBJECT_IMPL(model::SolidColorLayer)
 
 
 model::Layer::Layer(Document* doc, Composition* composition)
@@ -150,9 +145,9 @@ void model::Layer::on_paint(QPainter* painter, FrameTime time, PaintMode mode) c
 model::graphics::DocumentNodeGraphicsItem * model::Layer::docnode_make_graphics_item()
 {
     auto item = DocumentNode::docnode_make_graphics_item();
-    
+
     connect(this, &Layer::transform_matrix_changed, item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
-    
+
     return item;
 }
 
@@ -175,23 +170,4 @@ void model::Layer::on_transform_matrix_changed()
 void model::Layer::set_time(model::FrameTime t)
 {
     Object::set_time(relative_time(t));
-}
-
-
-model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Composition* composition )
-    : Ctor(doc, composition)
-{
-    width.set(doc->main_composition()->width.get());
-    height.set(doc->main_composition()->height.get());
-}
-
-
-void model::SolidColorLayer::on_paint_untransformed(QPainter* painter, FrameTime time) const
-{
-    painter->fillRect(local_bounding_rect(time), color.get());
-}
-
-QRectF model::SolidColorLayer::local_bounding_rect(FrameTime) const
-{
-    return QRectF(0, 0, width.get(), height.get());
 }

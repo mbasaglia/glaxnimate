@@ -1,12 +1,10 @@
 #pragma once
 
 #include <QMetaType>
-#include <QColor>
 
-#include "property.hpp"
-#include "document_node.hpp"
-#include "transform.hpp"
-#include "shape.hpp"
+#include "model/property.hpp"
+#include "model/document_node.hpp"
+#include "model/transform.hpp"
 
 namespace model {
 
@@ -66,8 +64,6 @@ private:
     const Layer* parent;
 };
 
-
-
 class Layer : public AnimationContainer
 {
     Q_OBJECT
@@ -101,7 +97,7 @@ public:
     graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override;
     std::vector<std::unique_ptr<QGraphicsItem>> docnode_make_graphics_editor() override;
     void set_time(FrameTime t) override;
-    
+
 
     QRectF local_bounding_rect(FrameTime t) const override;
 //     QRectF bounding_rect(FrameTime t) const override;
@@ -142,7 +138,7 @@ private:
     {
         return clone_covariant();
     }
-    
+
     std::vector<DocumentNode*> valid_parents() const;
     bool is_valid_parent(DocumentNode* node) const;
 };
@@ -172,82 +168,5 @@ namespace detail {
         }
     };
 } // namespace detail
-
-
-class EmptyLayer : public detail::BaseLayerProps<EmptyLayer>
-{
-    GLAXNIMATE_OBJECT
-
-public:
-    using Ctor::Ctor;
-
-    QIcon docnode_icon() const override
-    {
-        return QIcon::fromTheme("transform-move");
-    }
-
-    QString type_name_human() const override { return tr("Empty Layer"); }
-};
-
-
-class ShapeLayer : public detail::BaseLayerProps<ShapeLayer>
-{
-    GLAXNIMATE_OBJECT
-
-    GLAXNIMATE_PROPERTY_LIST(ShapeElement, layers, 
-        &ShapeLayer::shape_added,
-        &ShapeLayer::shape_removed, 
-        &DocumentNode::docnode_child_add_begin,
-        &DocumentNode::docnode_child_remove_begin)
-public:
-    // shapes
-
-    using Ctor::Ctor;
-
-    QIcon docnode_icon() const override
-    {
-        return QIcon::fromTheme("shapes");
-    }
-
-    QString type_name_human() const override { return tr("Shape Layer"); }
-
-signals:
-    void shape_added(ShapeElement* layer);
-    void shape_removed(ShapeElement* layer);
-};
-
-
-class SolidColorLayer : public detail::BaseLayerProps<SolidColorLayer>
-{
-    GLAXNIMATE_OBJECT
-
-    //                  type    name    default     notify                                   validate
-    GLAXNIMATE_PROPERTY(float,  width,  0,          &SolidColorLayer::bounding_rect_changed, &SolidColorLayer::positive, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(float,  height, 0,          &SolidColorLayer::bounding_rect_changed, &SolidColorLayer::positive, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(QColor, color,  Qt::white, {}, {}, PropertyTraits::Visual)
-public:
-    SolidColorLayer(Document* doc, Composition* composition);
-
-    QRectF local_bounding_rect(FrameTime t) const override;
-
-    QIcon docnode_icon() const override
-    {
-        return QIcon::fromTheme("object-fill");
-    }
-
-    QString type_name_human() const override { return tr("Solid Color Layer"); }
-    
-    bool docnode_selection_container() const override { return false; }
-
-protected:
-    void on_paint_untransformed(QPainter*, FrameTime) const override;
-
-private:
-    bool positive(float x) const
-    {
-        return x > 0;
-    }
-};
-
 
 } // namespace model

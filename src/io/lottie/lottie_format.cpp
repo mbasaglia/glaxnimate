@@ -6,6 +6,7 @@
 #include <QJsonArray>
 
 #include "app/log/log.hpp"
+#include "model/layers/layers.hpp"
 
 using namespace model;
 
