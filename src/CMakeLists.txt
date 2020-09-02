@@ -29,6 +29,7 @@ model/graphics/transform_graphics_item.cpp
 model/animation/keyframe_transition.cpp
 model/animation/animatable.cpp
 model/shapes/fill.cpp
+model/shapes/rect.cpp
 
 )
 
@@ -41,6 +42,7 @@ tools/base.cpp
 tools/dummy.cpp
 tools/select.cpp
 tools/ellipse.cpp
+tools/rectangle.cpp
 
 ui/dialogs/glaxnimate_window.cpp
 ui/dialogs/glaxnimate_window.ui
@@ -66,6 +68,8 @@ ui/widgets/view_transform_widget.cpp
 ui/widgets/view_transform_widget.ui
 ui/widgets/flow_layout.cpp
 ui/widgets/spin2d.cpp
+ui/widgets/tools/shape_tool_widget.cpp
+ui/widgets/tools/shape_tool_widget.ui
 )
 
 if(${PYTHON_ENABLED})

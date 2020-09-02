@@ -50,6 +50,21 @@ QColor GlaxnimateWindow::Private::current_color()
     return ui.color_preview->color();
 }
 
+QColor GlaxnimateWindow::Private::current_color_secondary()
+{
+    return ui.color_preview_secondary->color();
+}
+
+void GlaxnimateWindow::Private::set_current_color(const QColor c)
+{
+    update_color(c, true, nullptr);
+}
+
+void GlaxnimateWindow::Private::set_current_color_secondary(const QColor c)
+{
+    ui.color_preview_secondary->setColor(c);
+}
+
 void GlaxnimateWindow::Private::update_color(const QColor& c, bool alpha, QObject* source)
 {
     if ( updating_color )

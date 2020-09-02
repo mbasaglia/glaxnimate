@@ -91,6 +91,13 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("history",      {},             {},                        Setting::Internal,  QStringList{}),
         Setting("max_history",  {},             {},                        Setting::Internal,  100),
     }});
+    Settings::instance().add_group(SettingGroup{"tools", tr("Tools"), "tools", {
+        //      slug            Label           Tooltip                    Type                default
+        Setting("shape_group",  {},             {},                        Setting::Internal,  true),
+        Setting("shape_fill",   {},             {},                        Setting::Internal,  true),
+        Setting("shape_stroke", {},             {},                        Setting::Internal,  true),
+        Setting("stroke_width", {},             {},                        Setting::Internal,  1.),
+    }});
 }
 
 void GlaxnimateApp::on_initialize()

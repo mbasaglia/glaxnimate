@@ -57,6 +57,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
             ui.menu_tools->addAction(action);
             action->setActionGroup(tool_actions);
             ScalableButton *button = tool.second->get_button();
+            connect(action, &QAction::triggered, parent, &GlaxnimateWindow::tool_triggered);
 
             button->resize(16, 16);
             dock_tools_layout->addWidget(button);

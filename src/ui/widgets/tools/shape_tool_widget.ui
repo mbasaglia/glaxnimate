@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShapeToolWidget</class>
+ <widget class="QWidget" name="ShapeToolWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>184</width>
+    <height>100</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="check_fill">
+     <property name="text">
+      <string>Fill</string>
+     </property>
+     <property name="icon">
+      <iconset theme="format-fill-color"/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QCheckBox" name="check_group">
+     <property name="text">
+      <string>Group</string>
+     </property>
+     <property name="icon">
+      <iconset theme="object-group"/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="check_stroke">
+     <property name="text">
+      <string>Stroke</string>
+     </property>
+     <property name="icon">
+      <iconset theme="format-stroke-color"/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDoubleSpinBox" name="spin_stroke_width">
+     <property name="toolTip">
+      <string>Stroke Width</string>
+     </property>
+     <property name="maximum">
+      <double>999.990000000000009</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>check_group</sender>
+   <signal>clicked()</signal>
+   <receiver>ShapeToolWidget</receiver>
+   <slot>check_checks()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>19</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>282</x>
+     <y>19</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>check_fill</sender>
+   <signal>clicked()</signal>
+   <receiver>ShapeToolWidget</receiver>
+   <slot>check_checks()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>39</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>check_stroke</sender>
+   <signal>clicked()</signal>
+   <receiver>ShapeToolWidget</receiver>
+   <slot>check_checks()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>39</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>123</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>check_checks()</slot>
+ </slots>
+</ui>

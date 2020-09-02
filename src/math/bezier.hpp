@@ -149,6 +149,30 @@ public:
         return box;
     }
 
+    Bezier rounded(qreal radius)
+    {
+        Bezier cloned;
+        cloned.closed_ = closed_;
+
+        for ( int i = 0; i < size(); i++ )
+        {
+            if ( !closed_ && (i == 0 || i == size() - 1) )
+            {
+                cloned.push_back(points_[i]);
+            }
+            else
+            {
+                QPointF vert1, out_t, vert2, in_t;
+                std::tie(vert1, out_t) = round_vert_tan(i - 1, radius, points_[i].pos);
+                cloned.push_back(BezierPoint(vert1, vert1, vert1 + out_t));
+                std::tie(vert2, in_t) = round_vert_tan((i+1) % size(), radius, points_[i].pos);
+                cloned.push_back(BezierPoint(vert2, vert2+in_t, vert2));
+            }
+        }
+
+        return cloned;
+    }
+
 private:
     /**
      * \brief Solver for the point \p p to the point \p p + 1
@@ -161,6 +185,19 @@ private:
             points_[p+1].tan_in,
             points_[p+1].pos
         };
+    }
+
+    std::pair<QPointF, QPointF> round_vert_tan(
+        int closest_index, qreal radius, const QPointF& current
+    )
+    {
+        const qreal round_corner = 0.5519;
+        QPointF closer_v = points_[closest_index].pos;
+        qreal distance = length(current - closer_v);
+        qreal new_pos_perc = distance != 0 ? qMin(distance/2, radius) / distance : 0;
+        QPointF vert = current + (closer_v - current) * new_pos_perc;
+        QPointF tan = - (vert - current) * round_corner;
+        return {vert, tan};
     }
 
     std::vector<BezierPoint> points_;

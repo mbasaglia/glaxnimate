@@ -11,13 +11,15 @@ public:
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F2"), QKeySequence::PortableText); }
     app::settings::SettingList settings() const override { return {}; }
 
-private:
+protected:
     void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     void paint(const PaintEvent& event) override { Q_UNUSED(event); }
+    QCursor cursor() override { return {}; }
 
+private:
     static Autoreg<EditTool> autoreg;
 };
 
@@ -30,13 +32,15 @@ public:
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F3"), QKeySequence::PortableText); }
     app::settings::SettingList settings() const override { return {}; }
 
-private:
+protected:
     void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     void paint(const PaintEvent& event) override { Q_UNUSED(event); }
+    QCursor cursor() override { return {}; }
 
+private:
     static Autoreg<DrawTool> autoreg;
 };
 
@@ -49,33 +53,16 @@ public:
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F6"), QKeySequence::PortableText); }
     app::settings::SettingList settings() const override { return {}; }
 
-private:
+protected:
     void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     void paint(const PaintEvent& event) override { Q_UNUSED(event); }
+    QCursor cursor() override { return {}; }
 
+private:
     static Autoreg<FreehandTool> autoreg;
-};
-
-
-class RectangleTool : public Tool
-{
-public:
-    QIcon icon() const override { return QIcon::fromTheme("draw-rectangle"); }
-    QString name() const override { return QObject::tr("Rectangle"); }
-    QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F4"), QKeySequence::PortableText); }
-    app::settings::SettingList settings() const override { return {}; }
-
-private:
-    void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
-    void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
-    void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
-    void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
-    void paint(const PaintEvent& event) override { Q_UNUSED(event); }
-
-    static Autoreg<RectangleTool> autoreg;
 };
 
 class StarTool : public Tool
@@ -86,13 +73,15 @@ public:
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("*"), QKeySequence::PortableText); }
     app::settings::SettingList settings() const override { return {}; }
 
-private:
+protected:
     void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     void paint(const PaintEvent& event) override { Q_UNUSED(event); }
+    QCursor cursor() override { return {}; }
 
+private:
     static Autoreg<StarTool> autoreg;
 };
 
@@ -104,5 +93,5 @@ tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, 
 tools::Autoreg<tools::DrawTool> tools::DrawTool::autoreg{tools::Registry::Draw, max_priority};
 tools::Autoreg<tools::FreehandTool> tools::FreehandTool::autoreg{tools::Registry::Draw, max_priority + 1};
 
-tools::Autoreg<tools::RectangleTool> tools::RectangleTool::autoreg{tools::Registry::Shape, max_priority};
+
 tools::Autoreg<tools::StarTool> tools::StarTool::autoreg{tools::Registry::Shape, max_priority + 2};

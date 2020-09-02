@@ -22,6 +22,10 @@ class GlaxnimateWindow : public QMainWindow
     Q_OBJECT
 
     Q_PROPERTY(model::Document* document READ document)
+    Q_PROPERTY(model::Layer* current_layer READ current_layer)
+    Q_PROPERTY(model::DocumentNode* current_document_node READ current_document_node)
+    Q_PROPERTY(QColor current_color READ current_color WRITE set_current_color)
+    Q_PROPERTY(QColor secondary_color READ secondary_color WRITE set_secondary_color)
 
 public:
 
@@ -30,6 +34,15 @@ public:
     ~GlaxnimateWindow();
 
     model::Document* document() const;
+
+    model::Composition* current_composition() const;
+    model::Layer* current_layer() const;
+    model::DocumentNode* current_document_node() const;
+
+    QColor current_color() const;
+    void set_current_color(const QColor& c);
+    QColor secondary_color() const;
+    void set_secondary_color(const QColor& c);
 
     /**
      * @brief Shows a warning popup
@@ -70,7 +83,7 @@ private slots:
     void help_about();
     void help_manual();
     void help_issue();
-    
+
     void refresh_title();
     void document_open_recent(QAction* action);
     void preferences();

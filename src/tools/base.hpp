@@ -28,7 +28,7 @@ struct MouseEvent : Event
 {
     QMouseEvent* event;
     QPointF scene_pos;
-    
+
     Qt::MouseButton press_button;
     QPointF press_scene_pos;
     QPoint press_screen_pos;
@@ -39,7 +39,7 @@ struct MouseEvent : Event
     Qt::MouseButton button() const { return event->button(); }
     Qt::MouseButtons buttons() const { return event->buttons(); }
     const QPointF& pos() { return event->localPos(); }
-    
+
     void forward_to_scene() const;
 };
 
@@ -91,7 +91,7 @@ public:
             button->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
             QObject::connect(action, &QAction::toggled, button, &QAbstractButton::setChecked);
-            QObject::connect(button, &QAbstractButton::clicked, action, &QAction::setChecked);
+            QObject::connect(button, &QAbstractButton::clicked, action, &QAction::trigger);
         }
 
         return button;
@@ -129,6 +129,7 @@ protected:
     virtual void mouse_release(const MouseEvent& event) = 0;
     virtual void mouse_double_click(const MouseEvent& event) = 0;
     virtual void paint(const PaintEvent& event) = 0;
+    virtual QCursor cursor() = 0;
 
     virtual QWidget* on_create_widget()
     {

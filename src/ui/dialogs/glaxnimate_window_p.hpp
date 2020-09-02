@@ -104,6 +104,9 @@ public:
                              void (*func)(QColor&, int), int val, int min = 0, int max = 255);
     void update_color_hue_slider(color_widgets::HueSlider* slider, const QColor& c, int hue);
     QColor current_color();
+    QColor current_color_secondary();
+    void set_current_color(const QColor c);
+    void set_current_color_secondary(const QColor c);
     void update_color(const QColor& c, bool alpha, QObject* source);
     void update_color_component(int val, QObject* sender);
     void color_swap();

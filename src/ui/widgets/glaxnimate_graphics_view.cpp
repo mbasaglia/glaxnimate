@@ -69,7 +69,10 @@ public:
 
     void update_mouse_cursor()
     {
-        view->unsetCursor();
+        if ( tool )
+            view->setCursor(tool->cursor());
+        else
+            view->unsetCursor();
     }
 
     QPointF anchor_scene()
@@ -139,7 +142,7 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
     d->move_last = mpos;
     d->move_last_scene = scene_pos;
     d->move_last_screen = event->screenPos().toPoint();
-    
+
     if ( event->button() == Qt::MiddleButton )
     {
         if ( event->modifiers() & Qt::ControlModifier )
@@ -168,7 +171,7 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
     {
         d->tool->mouse_press(d->mouse_event(event));
     }
-
+    viewport()->update();
 }
 
 void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
@@ -237,7 +240,7 @@ void GlaxnimateGraphicsView::mouseReleaseEvent(QMouseEvent * event)
     }
 
     d->update_mouse_cursor();
-    update();
+    viewport()->update();
 }
 
 void GlaxnimateGraphicsView::mouseDoubleClickEvent(QMouseEvent* event)
@@ -246,6 +249,8 @@ void GlaxnimateGraphicsView::mouseDoubleClickEvent(QMouseEvent* event)
     {
         d->tool->mouse_double_click(d->mouse_event(event));
     }
+
+    viewport()->update();
 }
 
 
@@ -319,7 +324,7 @@ void GlaxnimateGraphicsView::paintEvent(QPaintEvent *event)
     QPainter painter;
     painter.begin(viewport());
     painter.setRenderHints(renderHints());
-    
+
     if ( d->mouse_view_mode == Private::Rotate || d->mouse_view_mode == Private::Scale )
     {
         QPoint p1 = d->move_last;
@@ -378,6 +383,8 @@ void GlaxnimateGraphicsView::view_fit(const QRect& fit_target)
 void GlaxnimateGraphicsView::set_active_tool(tools::Tool* tool)
 {
     d->tool = tool;
+    if ( d->mouse_view_mode == Private::NoDrag )
+        setCursor(tool->cursor());
 }
 
 void GlaxnimateGraphicsView::set_tool_target(GlaxnimateWindow* window)

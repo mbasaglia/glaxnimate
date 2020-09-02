@@ -253,3 +253,38 @@ void GlaxnimateWindow::help_issue()
     QDesktopServices::openUrl(AppInfo::instance().url_issues());
 }
 
+model::Composition * GlaxnimateWindow::current_composition() const
+{
+    return d->current_composition();
+}
+
+model::DocumentNode * GlaxnimateWindow::current_document_node() const
+{
+    return d->current_document_node();
+}
+
+model::Layer * GlaxnimateWindow::current_layer() const
+{
+    return d->current_layer();
+}
+
+QColor GlaxnimateWindow::current_color() const
+{
+    return d->current_color();
+}
+
+QColor GlaxnimateWindow::secondary_color() const
+{
+    return d->current_color_secondary();
+}
+
+void GlaxnimateWindow::set_current_color(const QColor& c)
+{
+    d->set_current_color(c);
+}
+
+void GlaxnimateWindow::set_secondary_color(const QColor& c)
+{
+    d->set_current_color_secondary(c);
+}
+
