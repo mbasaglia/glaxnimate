@@ -21,6 +21,16 @@ Dependencies
     apt-get install -y g++ cmake qtbase5-dev libqt5svg5-dev libpython3-dev
 
 
+Getting the Latest Code
+---------------------------------------
+
+You can find the code on [GitLab](https://gitlab.com/mattia.basaglia/glaxnimate).
+
+To clone with git:
+
+    git clone --recursive https://gitlab.com/mattia.basaglia/glaxnimate.git
+
+
 Building
 ---------------------------------------
 
@@ -36,10 +46,6 @@ Standard CMake build commands work
     make -j 4 # This uses 4 cores to compile
 
 It will produce the executable `bin/glaxnimate` relative to the build directory
-
-If you are missing some icons, you can build the icon theme too
-
-    make icons
 
 
 Contacts
