@@ -113,6 +113,18 @@ public:
             painter
         };
     }
+
+    tools::KeyEvent key_event(QKeyEvent* ev)
+    {
+        return {
+            {
+                view,
+                static_cast<model::graphics::DocumentScene*>(view->scene()),
+                tool_target
+            },
+            ev
+        };
+    }
 };
 
 
@@ -171,7 +183,6 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
     {
         d->tool->mouse_press(d->mouse_event(event));
     }
-    viewport()->update();
 }
 
 void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
@@ -218,7 +229,8 @@ void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
     d->move_last = mpos;
     d->move_last_scene = scene_pos;
     d->move_last_screen = event->screenPos().toPoint();
-    scene()->invalidate();
+//     scene()->invalidate();
+    viewport()->update();
 }
 
 
@@ -240,7 +252,6 @@ void GlaxnimateGraphicsView::mouseReleaseEvent(QMouseEvent * event)
     }
 
     d->update_mouse_cursor();
-    viewport()->update();
 }
 
 void GlaxnimateGraphicsView::mouseDoubleClickEvent(QMouseEvent* event)
@@ -249,10 +260,23 @@ void GlaxnimateGraphicsView::mouseDoubleClickEvent(QMouseEvent* event)
     {
         d->tool->mouse_double_click(d->mouse_event(event));
     }
-
-    viewport()->update();
 }
 
+void GlaxnimateGraphicsView::keyPressEvent(QKeyEvent* event)
+{
+    if ( d->tool )
+    {
+        d->tool->key_press(d->key_event(event));
+    }
+}
+
+void GlaxnimateGraphicsView::keyReleaseEvent(QKeyEvent* event)
+{
+    if ( d->tool )
+    {
+        d->tool->key_release(d->key_event(event));
+    }
+}
 
 void GlaxnimateGraphicsView::wheelEvent(QWheelEvent* event)
 {

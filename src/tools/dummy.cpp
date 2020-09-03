@@ -17,6 +17,8 @@ protected:
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     void paint(const PaintEvent& event) override { Q_UNUSED(event); }
+    void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
+    void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
 
 private:
@@ -38,6 +40,8 @@ protected:
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     void paint(const PaintEvent& event) override { Q_UNUSED(event); }
+    void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
+    void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
 
 private:
@@ -59,6 +63,8 @@ protected:
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     void paint(const PaintEvent& event) override { Q_UNUSED(event); }
+    void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
+    void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
 
 private:
@@ -79,6 +85,8 @@ protected:
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     void paint(const PaintEvent& event) override { Q_UNUSED(event); }
+    void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
+    void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
 
 private:

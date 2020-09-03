@@ -113,6 +113,8 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent * event) override;
     void wheelEvent(QWheelEvent * event) override;
     void paintEvent(QPaintEvent *event) override;
+    void keyPressEvent(QKeyEvent * event) override;
+    void keyReleaseEvent(QKeyEvent * event) override;
 
 private:
     void do_rotate(qreal radians, const QPointF& scene_anchor);

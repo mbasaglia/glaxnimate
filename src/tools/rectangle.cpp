@@ -19,6 +19,7 @@ protected:
         {
             dragging = true;
             p1 = p2 = event.scene_pos;
+            rect = QRectF(p1, p2);
         }
     }
 
@@ -27,6 +28,8 @@ protected:
         if ( dragging )
         {
             p2 = event.scene_pos;
+            update_rect(event.modifiers());
+            event.repaint();
         }
     }
 
@@ -36,14 +39,31 @@ protected:
         {
             dragging = false;
             auto shape = std::make_unique<model::Rect>(event.window->document());
-            shape->position.set((p1 + p2) / 2);
-            QPointF sz = p2 - p1;
-            shape->size.set(QSizeF(sz.x(), sz.y()));
+            shape->position.set(rect.center());
+            shape->size.set(rect.size());
             create_shape(QObject::tr("Draw Rectangle"), event, std::move(shape));
         }
     }
 
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
+
+    void key_press(const KeyEvent& event) override
+    {
+        if ( dragging )
+        {
+            update_rect(event.modifiers());
+            event.repaint();
+        }
+    }
+
+    void key_release(const KeyEvent& event) override
+    {
+        if ( dragging )
+        {
+            update_rect(event.modifiers());
+            event.repaint();
+        }
+    }
 
     void paint(const PaintEvent& event) override
     {
@@ -51,13 +71,33 @@ protected:
         if ( dragging )
         {
             QPainterPath path;
-            path.addPolygon(event.view->mapFromScene(QRectF(p1, p2)));
+            path.addPolygon(event.view->mapFromScene(rect));
             path.closeSubpath();
             draw_shape(event, path);
         }
     }
 
+protected:
+    QRectF rect;
+
 private:
+    void update_rect(Qt::KeyboardModifiers modifiers)
+    {
+        QPointF recp2 = p2;
+
+        if ( modifiers & Qt::ControlModifier )
+        {
+            QPointF dp = recp2 - p1;
+            qreal comp = qMax(dp.x(), dp.y());
+            recp2 = p1 + QPointF(comp, comp);
+        }
+
+        if ( modifiers & Qt::ShiftModifier )
+            rect = QRectF(2*p1-recp2, recp2);
+        else
+            rect = QRectF(p1, recp2);
+    }
+
     bool dragging = false;
     QPointF p1;
     QPointF p2;

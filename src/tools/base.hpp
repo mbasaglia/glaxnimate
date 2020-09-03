@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QAction>
 
 #include "model/graphics/document_scene.hpp"
@@ -22,6 +23,11 @@ struct Event
     GlaxnimateGraphicsView* view;
     model::graphics::DocumentScene* scene;
     GlaxnimateWindow* window;
+
+    void repaint() const
+    {
+        view->viewport()->update();
+    }
 };
 
 struct MouseEvent : Event
@@ -48,6 +54,15 @@ struct PaintEvent : Event
     QPainter* painter;
 };
 
+struct KeyEvent : public Event
+{
+    QKeyEvent* event;
+
+    Qt::KeyboardModifiers modifiers() const { return event->modifiers(); }
+    int key() const { return event->key(); }
+    QString text() const { return event->text(); }
+
+};
 
 
 using Priority = int;
@@ -129,6 +144,8 @@ protected:
     virtual void mouse_release(const MouseEvent& event) = 0;
     virtual void mouse_double_click(const MouseEvent& event) = 0;
     virtual void paint(const PaintEvent& event) = 0;
+    virtual void key_press(const KeyEvent& event) = 0;
+    virtual void key_release(const KeyEvent& event) = 0;
     virtual QCursor cursor() = 0;
 
     virtual QWidget* on_create_widget()
