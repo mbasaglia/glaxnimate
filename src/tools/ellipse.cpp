@@ -1,24 +1,39 @@
-#include "base.hpp"
+#include "rectangle.hpp"
+#include "model/shapes/ellipse.hpp"
 
 namespace tools {
 
-class EllipseTool : public Tool
+class EllipseTool : public RectangleTool
 {
 public:
     QIcon icon() const override { return QIcon::fromTheme("draw-ellipse"); }
     QString name() const override { return QObject::tr("Ellipse"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F5"), QKeySequence::PortableText); }
-    app::settings::SettingList settings() const override { return {}; }
 
-private:
-    void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
-    void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
-    void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
-    void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
-    void paint(const PaintEvent& event) override { Q_UNUSED(event); }
-    void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
-    void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
-    QCursor cursor() override { return {}; }
+protected:
+    void mouse_release(const MouseEvent& event) override
+    {
+        if ( event.button() == Qt::LeftButton && dragging )
+        {
+            dragging = false;
+            auto shape = std::make_unique<model::Ellipse>(event.window->document());
+            shape->position.set(rect.center());
+            shape->size.set(rect.size());
+            create_shape(QObject::tr("Draw Ellipse"), event, std::move(shape));
+        }
+    }
+
+    void paint(const PaintEvent& event) override
+    {
+        /// \todo Parent node transforms
+        if ( dragging )
+        {
+            QPainterPath path;
+            path.addEllipse(rect);
+            path = event.view->mapFromScene(path);
+            draw_shape(event, path);
+        }
+    }
 
 private:
     static Autoreg<EllipseTool> autoreg;
