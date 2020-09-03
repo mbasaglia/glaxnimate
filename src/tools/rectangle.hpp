@@ -43,6 +43,7 @@ protected:
             shape->position.set(rect.center());
             shape->size.set(rect.size());
             create_shape(QObject::tr("Draw Rectangle"), event, std::move(shape));
+            event.repaint();
         }
     }
 
