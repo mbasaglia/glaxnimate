@@ -652,6 +652,14 @@ public:
             o->set_time(t);
     }
 
+    int index_of(value_type* obj, int not_found = -1) const
+    {
+        for ( int i = 0; i < size(); i++ )
+            if ( objects[i].get() == obj )
+                return i;
+        return not_found;
+    }
+
 protected:
     virtual void on_insert(int index) { Q_UNUSED(index); }
     virtual void on_remove(int index) { Q_UNUSED(index); }

@@ -30,6 +30,7 @@ model/animation/keyframe_transition.cpp
 model/animation/animatable.cpp
 model/shapes/fill.cpp
 model/shapes/rect.cpp
+model/shapes/group.cpp
 
 )
 

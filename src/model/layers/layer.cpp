@@ -7,6 +7,21 @@
 #include "model/graphics/transform_graphics_item.hpp"
 #include "model/graphics/document_node_graphics_item.hpp"
 
+void model::Layer::ChildLayerIterator::find_first()
+{
+    while ( index < comp->layers.size() && comp->layers[index].parent.get() != parent )
+        ++index;
+}
+
+model::Layer & model::Layer::ChildLayerIterator::operator*() const
+{
+    return comp->layers[index];
+}
+
+model::Layer * model::Layer::ChildLayerIterator::operator->() const
+{
+    return &comp->layers[index];
+}
 
 model::Layer::Layer(Document* doc, Composition* composition)
     : AnimationContainer(doc), composition_(composition)
@@ -14,21 +29,14 @@ model::Layer::Layer(Document* doc, Composition* composition)
     connect(transform.get(), &Object::property_changed, this, &Layer::on_transform_matrix_changed);
 }
 
-void model::ChildLayerView::iterator::find_first()
+utils::Range<model::Layer::ChildLayerIterator> model::Layer::children() const
 {
-    while ( index < comp->layers.size() && comp->layers[index].parent.get() != parent )
-        ++index;
+    return {
+        ChildLayerIterator(composition_, this, 0),
+        ChildLayerIterator(composition_, this, composition_->docnode_child_count()),
+    };
 }
 
-model::Layer & model::ChildLayerView::iterator::operator*() const
-{
-    return comp->layers[index];
-}
-
-model::Layer * model::ChildLayerView::iterator::operator->() const
-{
-    return &comp->layers[index];
-}
 
 model::DocumentNode * model::Layer::docnode_parent() const
 {

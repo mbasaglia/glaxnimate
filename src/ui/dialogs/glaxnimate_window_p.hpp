@@ -115,6 +115,10 @@ public:
     model::Composition* current_composition();
     model::Layer* current_layer();
     model::DocumentNode* current_document_node();
+    void set_current_document_node(model::DocumentNode* node);
+    model::ShapeElement* current_shape();
+    model::DocumentNode* current_shape_container();
+
     template<class LayerT>
     void layer_new()
     {
@@ -122,6 +126,8 @@ public:
     }
     void layer_new_impl(std::unique_ptr<model::Layer> layer);
     void layer_delete();
+    QString get_best_name(const model::DocumentNode* node, const QString& suggestion);
+    void set_best_name(model::DocumentNode* node, const QString& suggestion);
 
     // script
     void console_error(const app::scripting::ScriptError& err);

@@ -13,9 +13,12 @@ class Composition : public AnimationContainer
 public:
     explicit Composition(Document* document);
 
-    ChildLayerView top_level() const
+    utils::Range<Layer::ChildLayerIterator> top_level() const
     {
-        return ChildLayerView(this, nullptr);
+        return {
+            Layer::ChildLayerIterator(this, nullptr, 0),
+            Layer::ChildLayerIterator(this, nullptr, layers.size())
+        };
     }
 
     DocumentNode* docnode_child(int index) const override

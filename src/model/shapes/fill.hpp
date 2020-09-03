@@ -39,6 +39,7 @@ protected:
     void on_paint(QPainter* p, FrameTime t, PaintMode) const override
     {
         p->setBrush(brush(t));
+        p->setPen(Qt::NoPen);
         p->drawPath(collect_shapes(t).painter_path());
     }
 };
@@ -54,6 +55,11 @@ public:
     QIcon docnode_icon() const override
     {
         return QIcon::fromTheme("format-fill-color");
+    }
+
+    QString type_name_human() const override
+    {
+        return tr("Fill");
     }
 
 protected:

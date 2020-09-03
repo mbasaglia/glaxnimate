@@ -127,7 +127,7 @@ void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
 
         // Fixed handles
         painter.setBrush(fg);
-        painter.setPen(QPen(Qt::transparent));
+        painter.setPen(Qt::NoPen);
         painter.drawEllipse(p[0], d->handle_radius, d->handle_radius);
         painter.drawEllipse(p[3], d->handle_radius, d->handle_radius);
 

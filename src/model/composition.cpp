@@ -40,9 +40,5 @@ int model::Composition::layer_position(model::Layer* layer, int not_found) const
 
 int model::Composition::docnode_child_index(model::DocumentNode* dn) const
 {
-    for ( int i = 0; i < layers.size(); i++ )
-        if ( &layers[i] == dn )
-            return i;
-
-    return -1;
+    return layers.index_of(static_cast<Layer*>(dn));
 }

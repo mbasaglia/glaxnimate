@@ -5,64 +5,13 @@
 #include "model/property.hpp"
 #include "model/document_node.hpp"
 #include "model/transform.hpp"
+#include "utils/range.hpp"
 
 namespace model {
 
 
 class Composition;
 class Layer;
-
-class ChildLayerView
-{
-public:
-    class iterator
-    {
-    public:
-        iterator& operator++()
-        {
-            ++index;
-            find_first();
-            return *this;
-        }
-
-        Layer& operator*() const;
-        Layer* operator->() const;
-
-        bool operator==(const iterator& other) const
-        {
-            return comp == other.comp && parent == other.parent && index == other.index;
-        }
-
-        bool operator!=(const iterator& other) const
-        {
-            return !(*this == other);
-        }
-
-    private:
-        iterator(const Composition* comp, const Layer* parent, int index)
-        : comp(comp),
-          parent(parent),
-          index(index)
-        {
-            find_first();
-        }
-
-        void find_first();
-        friend ChildLayerView;
-        const Composition* comp;
-        const Layer* parent;
-        int index;
-    };
-
-    ChildLayerView(const Composition* comp, const Layer* parent);
-
-    iterator begin() const;
-    iterator end() const;
-
-private:
-    const Composition* comp;
-    const Layer* parent;
-};
 
 class Layer : public AnimationContainer
 {
@@ -72,12 +21,53 @@ class Layer : public AnimationContainer
     GLAXNIMATE_SUBOBJECT(Transform, transform)
 
 public:
+    class ChildLayerIterator
+    {
+    public:
+        using value_type = Layer;
+        using reference = value_type&;
+        using pointer = value_type*;
+
+        ChildLayerIterator& operator++()
+        {
+            ++index;
+            find_first();
+            return *this;
+        }
+
+        Layer& operator*() const;
+        Layer* operator->() const;
+
+        bool operator==(const ChildLayerIterator& other) const
+        {
+            return comp == other.comp && parent == other.parent && index == other.index;
+        }
+
+        bool operator!=(const ChildLayerIterator& other) const
+        {
+            return !(*this == other);
+        }
+
+    private:
+        ChildLayerIterator(const Composition* comp, const Layer* parent, int index)
+        : comp(comp),
+          parent(parent),
+          index(index)
+        {
+            find_first();
+        }
+
+        void find_first();
+        friend Layer;
+        friend Composition;
+        const Composition* comp;
+        const Layer* parent;
+        int index;
+    };
+
     explicit Layer(Document* doc, Composition* composition);
 
-    ChildLayerView children() const
-    {
-        return ChildLayerView(composition_, this);
-    }
+    utils::Range<ChildLayerIterator> children() const;
 
 
     std::unique_ptr<Layer> clone_covariant() const

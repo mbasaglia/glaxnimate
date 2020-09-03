@@ -18,7 +18,7 @@ public:
     int docnode_child_count() const override { return 0; }
     DocumentNode* docnode_child(int) const override { return nullptr; }
     int docnode_child_index(DocumentNode*) const override { return -1; }
-    bool docnode_selection_container() const { return false; }
+    bool docnode_selection_container() const override { return false; }
 
     /**
      * \brief Index within its parent
@@ -41,11 +41,13 @@ protected:
     const ShapeListProperty& siblings() const;
 
 private:
-    void set_position(int pos)
+    void set_position(ShapeListProperty* property, int pos)
     {
+        property_ = property;
         position_ = pos;
     }
 
+    ShapeListProperty* property_ = nullptr;
     int position_ = -1;
 
     friend class ShapeListProperty;
@@ -56,22 +58,27 @@ class ShapeListProperty : public ObjectListProperty<ShapeElement>
 public:
     using ObjectListProperty<ShapeElement>::ObjectListProperty;
 
+    /**
+     * \brief End iterator for a range that includes a modifier then stops
+     */
+    iterator past_first_modifier() const;
+
 protected:
     void on_insert(int index) override
     {
-        objects[index]->set_position(index);
+        objects[index]->set_position(this, index);
     }
 
     void on_remove(int index) override
     {
         for ( int i = index; i < size(); i++ )
-            objects[i]->set_position(i);
+            objects[i]->set_position(this, i);
     }
 
     void on_swap(int index_a, int index_b) override
     {
-        objects[index_a]->set_position(index_a);
-        objects[index_b]->set_position(index_b);
+        objects[index_a]->set_position(this, index_a);
+        objects[index_b]->set_position(this, index_b);
     }
 };
 

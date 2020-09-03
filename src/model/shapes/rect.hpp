@@ -20,6 +20,11 @@ public:
         return QIcon::fromTheme("draw-rectangle");
     }
 
+    QString type_name_human() const override
+    {
+        return tr("Rectangle");
+    }
+
     math::Bezier to_bezier(FrameTime t) const override
     {
         math::Bezier bezier;

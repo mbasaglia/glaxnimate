@@ -1,16 +1,16 @@
 #include "base.hpp"
 
-#include "ui/widgets/tools/shape_tool_widget.hpp"
+#include "draw_tool_base.hpp"
+#include "model/shapes/rect.hpp"
 
 namespace tools {
 
-class RectangleTool : public Tool
+class RectangleTool : public DrawToolBase
 {
 public:
     QIcon icon() const override { return QIcon::fromTheme("draw-rectangle"); }
     QString name() const override { return QObject::tr("Rectangle"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F4"), QKeySequence::PortableText); }
-    app::settings::SettingList settings() const override { return {}; }
 
 protected:
     void mouse_press(const MouseEvent& event) override
@@ -35,7 +35,11 @@ protected:
         if ( event.button() == Qt::LeftButton && dragging )
         {
             dragging = false;
-            /// \todo Create rect
+            auto shape = std::make_unique<model::Rect>(event.window->document());
+            shape->position.set((p1 + p2) / 2);
+            QPointF sz = p2 - p1;
+            shape->size.set(QSizeF(sz.x(), sz.y()));
+            create_shape(QObject::tr("Draw Rectangle"), event, std::move(shape));
         }
     }
 
@@ -46,57 +50,14 @@ protected:
         /// \todo Parent node transforms
         if ( dragging )
         {
-            ShapeToolWidget* options = widget();
-
-            QPolygon rect = event.view->mapFromScene(QRectF(p1, p2));
-
-            if ( !options->create_stroke() && !options->create_fill() )
-            {
-                event.painter->setBrush(Qt::transparent);
-
-//                 event.painter->setCompositionMode(QPainter::CompositionMode_Difference);
-                QPen p(Qt::white, 1);
-                p.setCosmetic(true);
-                p.setDashPattern({4., 4.});
-                event.painter->setPen(p);
-                event.painter->drawPolygon(rect);
-
-//                 event.painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
-                p.setDashOffset(4);
-                p.setColor(Qt::black);
-                event.painter->setPen(p);
-                event.painter->drawPolygon(rect);
-            }
-            else
-            {
-                if ( options->create_fill() )
-                    event.painter->setBrush(event.window->current_color());
-                else
-                    event.painter->setBrush(Qt::transparent);
-
-                if ( options->create_stroke() )
-                    event.painter->setPen(QPen(event.window->secondary_color(), options->stroke_width()));
-                else
-                    event.painter->setPen(QPen(Qt::transparent, 0));
-
-                event.painter->drawPolygon(rect);
-            }
+            QPainterPath path;
+            path.addPolygon(event.view->mapFromScene(QRectF(p1, p2)));
+            path.closeSubpath();
+            draw_shape(event, path);
         }
     }
 
-    QWidget* on_create_widget() override
-    {
-        return new ShapeToolWidget();
-    }
-
-    QCursor cursor() override { return Qt::CrossCursor; }
-
 private:
-    ShapeToolWidget* widget()
-    {
-        return static_cast<ShapeToolWidget*>(get_settings_widget());
-    }
-
     bool dragging = false;
     QPointF p1;
     QPointF p2;

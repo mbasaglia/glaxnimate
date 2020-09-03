@@ -3,12 +3,20 @@
 
 const model::ShapeListProperty& model::ShapeElement::siblings() const
 {
-    return static_cast<const ShapeListProperty&>(
-        *docnode_parent()->get_property("shapes")
-    );
+    return *property_;
 }
 
 model::DocumentNode * model::ShapeElement::docnode_parent() const
 {
-    return static_cast<DocumentNode*>(siblings().object());
+    return static_cast<DocumentNode*>(property_->object());
+}
+
+model::ObjectListProperty<model::ShapeElement>::iterator model::ShapeListProperty::past_first_modifier() const
+{
+    auto it = std::find_if(begin(), end(), [](const pointer& p){
+        return qobject_cast<Modifier*>(p.get());
+    });
+    if ( it != end() )
+        ++it;
+    return it;
 }
