@@ -11,7 +11,7 @@ static int counter = 0;
 class app::scripting::python::PythonContext::Private
 {
 public:
-    pybind11::module my_module;
+    std::vector<pybind11::module> my_modules;
     py::dict globals;
     py::function compile;
     const ScriptEngine* engine;
@@ -68,7 +68,7 @@ QString app::scripting::python::PythonContext::eval_to_string(const QString& cod
 
 void app::scripting::python::PythonContext::app_module ( const QString& name )
 {
-    d->my_module = py::module::import(name.toStdString().c_str());
+    d->my_modules.push_back(py::module::import(name.toStdString().c_str()));
 }
 
 

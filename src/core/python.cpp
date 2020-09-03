@@ -1,8 +1,5 @@
-
 #include "model/document.hpp"
 #include "model/layers/layers.hpp"
-#include "ui/dialogs/glaxnimate_window.hpp"
-
 
 #include "app/scripting/python/register_machinery.hpp"
 
@@ -20,7 +17,6 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, m)
     py::class_<QObject>(m, "__QObject");
     py::class_<model::Object, QObject>(m, "Object");
     using namespace app::scripting::python;
-    register_from_meta<GlaxnimateWindow, QObject>(m);
     register_from_meta<model::Document, QObject>(m);
     register_from_meta<model::DocumentNode, model::Object>(m);
     register_from_meta<model::Composition, model::DocumentNode>(m);

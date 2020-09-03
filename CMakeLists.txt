@@ -4,6 +4,7 @@ cmake_policy(SET CMP0076 NEW)
 
 project(Glaxnimate VERSION 0.0.1 DESCRIPTION "Simple vector animation program" LANGUAGES CXX)
 set(PROJECT_SLUG "glaxnimate")
+set(LIB_NAME "${PROJECT_SLUG}lib")
 set(URL_DOCS "https://glaxnimate.mattbas.org/")
 set(URL_ISSUES "https://gitlab.com/mattia.basaglia/glaxnimate/-/issues")
 

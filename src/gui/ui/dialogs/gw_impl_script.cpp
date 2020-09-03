@@ -52,6 +52,7 @@ void GlaxnimateWindow::Private::create_script_context()
     {
         auto ctx = engine->create_context();
         ctx->app_module("glaxnimate");
+        ctx->app_module("glaxnimate_gui");
         ctx->expose("window", QVariant::fromValue(parent));
         ctx->expose("document", QVariant::fromValue(current_document.get()));
         script_contexts.push_back(std::move(ctx));

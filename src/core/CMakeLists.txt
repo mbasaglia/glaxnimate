@@ -1,0 +1,58 @@
+set(SOURCES
+
+app_info.cpp
+
+io/lottie/lottie_format.cpp
+io/lottie/lottie_html_format.cpp
+io/glaxnimate/glaxnimate_format.cpp
+io/glaxnimate/glaxnimate_importer.cpp
+io/base.cpp
+
+model/main_composition.cpp
+model/composition.cpp
+model/document.cpp
+model/document_node.cpp
+model/layers/layer.cpp
+model/layers/empty_layer.cpp
+model/layers/shape_layer.cpp
+model/layers/solid_color_layer.cpp
+model/object.cpp
+model/transform.cpp
+model/shapes/shape.cpp
+model/factory.cpp
+model/item_models/document_node_model.cpp
+model/item_models/property_model.cpp
+model/graphics/handle.cpp
+model/graphics/document_node_graphics_item.cpp
+model/graphics/document_scene.cpp
+model/graphics/transform_graphics_item.cpp
+model/animation/keyframe_transition.cpp
+model/animation/animatable.cpp
+model/shapes/fill.cpp
+model/shapes/rect.cpp
+model/shapes/group.cpp
+model/shapes/ellipse.cpp
+)
+
+if(${PYTHON_ENABLED})
+    include(CheckCXXCompilerFlag)
+    CHECK_CXX_COMPILER_FLAG(-Wno-attributes WTF_IS_THIS_WARNING)
+    if ( ${WTF_IS_THIS_WARNING} )
+        SET(CMAKE_CXX_FLAGS  ${CMAKE_CXX_FLAGS} -Wno-attributes)
+    endif()
+
+    list(APPEND SOURCES python.cpp)
+endif()
+
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/application_info_generated.in.hpp
+    ${CMAKE_CURRENT_BINARY_DIR}/application_info_generated.hpp
+)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
+
+add_library(${LIB_NAME} STATIC ${SOURCES})
+target_link_libraries(${LIB_NAME} PUBLIC Qt5::Svg QtAppSetup)
+set_property(TARGET ${LIB_NAME} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
+target_include_directories(${LIB_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
