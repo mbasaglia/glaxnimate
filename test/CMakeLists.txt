@@ -18,15 +18,13 @@ function(test_case test_name)
     set_property(TARGET ${test_name} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 endfunction(test_case)
 
-
-set(TEST_SOURCES ${ALL_SOURCES})
-list(REMOVE_ITEM TEST_SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)
+include_directories(${CMAKE_SOURCE_DIR}/src/core)
 
 test_case(test_property)
-target_link_libraries(test_property PRIVATE "${PROJECT_SLUG}lib")
+target_link_libraries(test_property PRIVATE ${LIB_NAME})
 
 test_case(test_math_vector)
 test_case(test_bezier_solver)
 test_case(test_keyframe_transition
-../src/model/animation/keyframe_transition.cpp
+../src/core/model/animation/keyframe_transition.cpp
 )

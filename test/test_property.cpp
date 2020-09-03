@@ -69,13 +69,13 @@ public:
     DocumentNode* docnode_child(int) const override { return {}; }
     int docnode_child_index(DocumentNode*) const override { return -1; }
 
-    std::vector<DocumentNode*> valid_references() const 
+    std::vector<DocumentNode*> valid_references() const
     {
         return {
             const_cast<MetaTestSubject*>(this)
         };
     }
-    bool is_valid_reference(DocumentNode* p) 
+    bool is_valid_reference(DocumentNode* p)
     {
         return p == this;
     }
