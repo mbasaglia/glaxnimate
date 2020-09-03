@@ -3,6 +3,9 @@ set(SOURCES
 main.cpp
 glaxnimate_app.cpp
 
+item_models/document_node_model.cpp
+item_models/property_model.cpp
+
 tools/base.cpp
 tools/dummy.cpp
 tools/select.cpp

@@ -7,18 +7,18 @@
 #include "command/property_commands.hpp"
 #include "app/application.hpp"
 
-class model::PropertyModel::Private
+class item_models::PropertyModel::Private
 {
 public:
     using id_type = quintptr;
 
     struct Subtree
     {
-        Subtree(Object* object, id_type parent)
+        Subtree(model::Object* object, id_type parent)
             : object{object}, parent{parent}
         {}
 
-        Subtree(BaseProperty* prop, id_type parent)
+        Subtree(model::BaseProperty* prop, id_type parent)
             : prop{prop}, parent{parent}
         {}
 
@@ -26,12 +26,12 @@ public:
             : prop_index(prop_index), parent(parent)
         {}
 
-        Subtree(Object* object, int prop_index, id_type parent)
+        Subtree(model::Object* object, int prop_index, id_type parent)
             : object{object}, prop_index{prop_index}, parent{parent}
         {}
 
-        Object* object = nullptr;
-        BaseProperty* prop = nullptr;
+        model::Object* object = nullptr;
+        model::BaseProperty* prop = nullptr;
         QVariantList prop_value;
         int prop_index = -1;
         id_type parent = 0;
@@ -54,7 +54,7 @@ public:
         {
             for ( int i = 0; i < prop_node->prop_value.size(); i++ )
             {
-                Object* subobj = prop_node->prop_value[i].value<Object*>();
+                model::Object* subobj = prop_node->prop_value[i].value<model::Object*>();
                 add_node(Subtree{subobj, i, prop_node->id});
                 // connect_recursive(subobj, model, subobj_id);
             }
@@ -77,16 +77,16 @@ public:
         QObject::connect(object, &model::Object::property_changed, model, &PropertyModel::property_changed);
         QObject::connect(object, &model::Object::destroyed, model, &PropertyModel::on_delete_object);
 
-        for ( BaseProperty* prop : object->properties() )
+        for ( model::BaseProperty* prop : object->properties() )
         {
             if ( animation_only )
             {
-                if ( prop->traits().type == PropertyTraits::Object )
+                if ( prop->traits().type == model::PropertyTraits::Object )
                 {
-                    Object* subobj = prop->value().value<Object*>();
+                    model::Object* subobj = prop->value().value<model::Object*>();
                     connect_recursive(subobj, model, this_node);
                 }
-                else if ( prop->traits().flags & PropertyTraits::Animated )
+                else if ( prop->traits().flags & model::PropertyTraits::Animated )
                 {
                     properties[prop] = add_node(Subtree{prop, this_node});
                 }
@@ -97,16 +97,16 @@ public:
                 Subtree* prop_node = node(prop_node_id);
                 properties[prop] = prop_node_id;
 
-                if ( prop->traits().flags & PropertyTraits::List )
+                if ( prop->traits().flags & model::PropertyTraits::List )
                 {
                     prop_node->prop_value = prop->value().toList();
                     connect_list(prop_node);
                 }
                 else if ( prop->traits().is_object() )
                 {
-                    Object* subobj = prop->value().value<Object*>();
+                    model::Object* subobj = prop->value().value<model::Object*>();
                     prop_node->object = subobj;
-                    if ( prop->traits().type == PropertyTraits::Object )
+                    if ( prop->traits().type == model::PropertyTraits::Object )
                         connect_recursive(subobj, model, prop_node_id);
                 }
             }
@@ -203,7 +203,7 @@ public:
         QVariant before = prop->value();
         if ( !prop->set_value(after) )
             return false;
-        if ( prop->traits().flags & PropertyTraits::Animated )
+        if ( prop->traits().flags & model::PropertyTraits::Animated )
         {
 
         }
@@ -213,25 +213,25 @@ public:
 
 
     model::Document* document = nullptr;
-    Object* root = nullptr;
+    model::Object* root = nullptr;
     id_type root_id = 0;
     id_type next_id = 1;
     std::unordered_map<id_type, Subtree> nodes;
-    std::unordered_map<Object*, id_type> objects;
-    std::unordered_map<BaseProperty*, id_type> properties;
+    std::unordered_map<model::Object*, id_type> objects;
+    std::unordered_map<model::BaseProperty*, id_type> properties;
     bool animation_only;
 };
 
-model::PropertyModel::PropertyModel(bool animation_only)
+item_models::PropertyModel::PropertyModel(bool animation_only)
     : d(std::make_unique<Private>())
 {
     d->animation_only = animation_only;
 }
 
-model::PropertyModel::~PropertyModel() = default;
+item_models::PropertyModel::~PropertyModel() = default;
 
 
-QModelIndex model::PropertyModel::index(int row, int column, const QModelIndex& parent) const
+QModelIndex item_models::PropertyModel::index(int row, int column, const QModelIndex& parent) const
 {
     Private::Subtree* tree = d->node_from_index(parent);
     if ( !tree )
@@ -244,7 +244,7 @@ QModelIndex model::PropertyModel::index(int row, int column, const QModelIndex& 
     return {};
 }
 
-QModelIndex model::PropertyModel::parent(const QModelIndex& child) const
+QModelIndex item_models::PropertyModel::parent(const QModelIndex& child) const
 {
     Private::Subtree* tree = d->node_from_index(child);
 
@@ -264,7 +264,7 @@ QModelIndex model::PropertyModel::parent(const QModelIndex& child) const
     return {};
 }
 
-void model::PropertyModel::set_object(model::Object* object)
+void item_models::PropertyModel::set_object(model::Object* object)
 {
     if ( d->root )
     {
@@ -276,12 +276,12 @@ void model::PropertyModel::set_object(model::Object* object)
     endResetModel();
 }
 
-int model::PropertyModel::columnCount(const QModelIndex&) const
+int item_models::PropertyModel::columnCount(const QModelIndex&) const
 {
     return 2;
 }
 
-int model::PropertyModel::rowCount(const QModelIndex& parent) const
+int item_models::PropertyModel::rowCount(const QModelIndex& parent) const
 {
     if ( !d->root )
         return 0;
@@ -293,7 +293,7 @@ int model::PropertyModel::rowCount(const QModelIndex& parent) const
     return tree->children.size();
 }
 
-Qt::ItemFlags model::PropertyModel::flags(const QModelIndex& index) const
+Qt::ItemFlags item_models::PropertyModel::flags(const QModelIndex& index) const
 {
     if ( !d->root || !index.isValid() )
         return {};
@@ -312,13 +312,13 @@ Qt::ItemFlags model::PropertyModel::flags(const QModelIndex& index) const
     {
         if ( tree->prop )
         {
-            PropertyTraits traits = tree->prop->traits();
+            model::PropertyTraits traits = tree->prop->traits();
 
-            if ( (traits.flags & (PropertyTraits::List|PropertyTraits::ReadOnly))
-                || traits.type == PropertyTraits::Object || traits.type == PropertyTraits::Unknown )
+            if ( (traits.flags & (model::PropertyTraits::List|model::PropertyTraits::ReadOnly))
+                || traits.type == model::PropertyTraits::Object || traits.type == model::PropertyTraits::Unknown )
                 return flags;
 
-            if ( traits.type == PropertyTraits::Bool )
+            if ( traits.type == model::PropertyTraits::Bool )
                 return flags | Qt::ItemIsUserCheckable;
 
             return flags | Qt::ItemIsEditable;
@@ -332,7 +332,7 @@ Qt::ItemFlags model::PropertyModel::flags(const QModelIndex& index) const
     return {};
 }
 
-QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
+QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) const
 {
     if ( !d->root || !index.isValid() )
         return {};
@@ -368,35 +368,35 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
             return {};
         }
 
-        BaseProperty* prop = tree->prop;
-        PropertyTraits traits = prop->traits();
+        model::BaseProperty* prop = tree->prop;
+        model::PropertyTraits traits = prop->traits();
 
 
 
         if ( role == Qt::TextColorRole )
         {
-            if ( (traits.flags & (PropertyTraits::List|PropertyTraits::ReadOnly))
-                || traits.type == PropertyTraits::Object || traits.type == PropertyTraits::Unknown
+            if ( (traits.flags & (model::PropertyTraits::List|model::PropertyTraits::ReadOnly))
+                || traits.type == model::PropertyTraits::Object || traits.type == model::PropertyTraits::Unknown
             )
                 return QApplication::palette().color(QPalette::Disabled, QPalette::Text);
         }
 
-        if ( (traits.flags & PropertyTraits::Animated) )
+        if ( (traits.flags & model::PropertyTraits::Animated) )
         {
-            AnimatableBase* anprop = static_cast<AnimatableBase*>(prop);
+            model::AnimatableBase* anprop = static_cast<model::AnimatableBase*>(prop);
             auto frame_status = anprop->keyframe_status(d->document->current_time());
 
             if ( role == Qt::DecorationRole )
             {
                 switch ( frame_status )
                 {
-                    case AnimatableBase::Tween:
+                    case model::AnimatableBase::Tween:
                         return QIcon(app::Application::instance()->data_file("images/keyframe/status/tween.svg"));
-                    case AnimatableBase::IsKeyframe:
+                    case model::AnimatableBase::IsKeyframe:
                         return QIcon(app::Application::instance()->data_file("images/keyframe/status/key.svg"));
-                    case AnimatableBase::Mismatch:
+                    case model::AnimatableBase::Mismatch:
                         return QIcon(app::Application::instance()->data_file("images/keyframe/status/mismatch.svg"));
-                    case AnimatableBase::NotAnimated:
+                    case model::AnimatableBase::NotAnimated:
                         return QIcon(app::Application::instance()->data_file("images/keyframe/status/not-animated.svg"));
                 }
 
@@ -405,13 +405,13 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
             {
                 switch ( frame_status )
                 {
-                    case AnimatableBase::Tween:
+                    case model::AnimatableBase::Tween:
                         return QColor::fromHsv(100, 167, 127);
-                    case AnimatableBase::IsKeyframe:
+                    case model::AnimatableBase::IsKeyframe:
                         return QColor::fromHsv(51, 171, 133);
-                    case AnimatableBase::Mismatch:
+                    case model::AnimatableBase::Mismatch:
                         return QColor::fromHsv(29, 180, 149);
-                    case AnimatableBase::NotAnimated:
+                    case model::AnimatableBase::NotAnimated:
                         return QColor::fromHsv(0, 0, 120);
                 }
             }
@@ -421,36 +421,36 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
             }
         }
 
-        if ( (traits.flags & PropertyTraits::List) || traits.type == PropertyTraits::Unknown )
+        if ( (traits.flags & model::PropertyTraits::List) || traits.type == model::PropertyTraits::Unknown )
         {
             return {};
         }
-        else if ( traits.type == PropertyTraits::Object )
+        else if ( traits.type == model::PropertyTraits::Object )
         {
             if ( tree->object && role == Qt::DisplayRole )
                 return tree->object->object_name();
             return {};
         }
-        else if ( traits.type == PropertyTraits::Bool )
+        else if ( traits.type == model::PropertyTraits::Bool )
         {
             if ( role == Qt::CheckStateRole )
                 return QVariant::fromValue(prop->value().toBool() ? Qt::Checked : Qt::Unchecked);
             return {};
         }
-        else if ( traits.type == PropertyTraits::Enum )
+        else if ( traits.type == model::PropertyTraits::Enum )
         {
             if ( role == Qt::DisplayRole )
                 return prop->value().toString();
             return {};
         }
-        else if ( traits.type == PropertyTraits::ObjectReference )
+        else if ( traits.type == model::PropertyTraits::ObjectReference )
         {
             if ( role == Qt::DisplayRole )
             {
                 QVariant value = prop->value();
                 if ( value.isNull() )
                     return "";
-                return value.value<DocumentNode*>()->docnode_name();
+                return value.value<model::DocumentNode*>()->docnode_name();
             }
 
             if ( role == Qt::DecorationRole )
@@ -458,11 +458,11 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
                 QVariant value = prop->value();
                 if ( value.isNull() )
                     return {};
-                return QIcon(value.value<DocumentNode*>()->docnode_group_icon());
+                return QIcon(value.value<model::DocumentNode*>()->docnode_group_icon());
             }
 
             if ( role == ReferenceProperty )
-                return QVariant::fromValue(static_cast<ReferencePropertyBase*>(tree->prop));
+                return QVariant::fromValue(static_cast<model::ReferencePropertyBase*>(tree->prop));
 
             return {};
         }
@@ -476,7 +476,7 @@ QVariant model::PropertyModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
-bool model::PropertyModel::setData(const QModelIndex& index, const QVariant& value, int role)
+bool item_models::PropertyModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     if ( !d->root || !index.isValid() || index.column() != 1 )
         return false;
@@ -488,17 +488,17 @@ bool model::PropertyModel::setData(const QModelIndex& index, const QVariant& val
     if ( !tree->prop )
         return false;
 
-    BaseProperty* prop = tree->prop;
-    PropertyTraits traits = prop->traits();
+    model::BaseProperty* prop = tree->prop;
+    model::PropertyTraits traits = prop->traits();
 
 
-    if ( (traits.flags & (PropertyTraits::List|PropertyTraits::ReadOnly)) ||
-        traits.type == PropertyTraits::Object ||
-        traits.type == PropertyTraits::Unknown )
+    if ( (traits.flags & (model::PropertyTraits::List|model::PropertyTraits::ReadOnly)) ||
+        traits.type == model::PropertyTraits::Object ||
+        traits.type == model::PropertyTraits::Unknown )
     {
         return false;
     }
-    else if ( traits.type == PropertyTraits::Bool )
+    else if ( traits.type == model::PropertyTraits::Bool )
     {
         if ( role == Qt::CheckStateRole )
         {
@@ -516,7 +516,7 @@ bool model::PropertyModel::setData(const QModelIndex& index, const QVariant& val
     }
 }
 
-void model::PropertyModel::property_changed(const model::BaseProperty* prop, const QVariant& value)
+void item_models::PropertyModel::property_changed(const model::BaseProperty* prop, const QVariant& value)
 {
     auto it = d->properties.find(const_cast<model::BaseProperty*>(prop));
     if ( it == d->properties.end() )
@@ -531,7 +531,7 @@ void model::PropertyModel::property_changed(const model::BaseProperty* prop, con
     int i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
     QModelIndex index = createIndex(i, 1, prop_node->id);
 
-    if ( prop_node->prop->traits().flags & PropertyTraits::List )
+    if ( prop_node->prop->traits().flags & model::PropertyTraits::List )
     {
         beginRemoveRows(index, 0, prop_node->children.size());
         d->disconnect_recursive(prop_node, this);
@@ -545,16 +545,16 @@ void model::PropertyModel::property_changed(const model::BaseProperty* prop, con
     }
     else
     {
-        if ( prop_node->prop->traits().type == PropertyTraits::ObjectReference )
+        if ( prop_node->prop->traits().type == model::PropertyTraits::ObjectReference )
         {
-            prop_node->object = value.value<Object*>();
+            prop_node->object = value.value<model::Object*>();
         }
-        else if ( prop_node->prop->traits().type == PropertyTraits::ObjectReference )
+        else if ( prop_node->prop->traits().type == model::PropertyTraits::ObjectReference )
         {
             beginRemoveRows(index, 0, prop_node->children.size());
             d->disconnect_recursive(prop_node, this);
             endRemoveRows();
-            Object* object = value.value<Object*>();
+            model::Object* object = value.value<model::Object*>();
             beginInsertRows(index, 0, prop_node->object->properties().size());
             prop_node->object = object;
             d->connect_recursive(object, this, prop_node->id);
@@ -566,7 +566,7 @@ void model::PropertyModel::property_changed(const model::BaseProperty* prop, con
 
 }
 
-QVariant model::PropertyModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant item_models::PropertyModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if ( orientation == Qt::Horizontal && role == Qt::DisplayRole )
     {
@@ -578,29 +578,29 @@ QVariant model::PropertyModel::headerData(int section, Qt::Orientation orientati
     return {};
 }
 
-void model::PropertyModel::set_document(model::Document* document)
+void item_models::PropertyModel::set_document(model::Document* document)
 {
     d->document = document;
     clear_object();
 }
 
-model::AnimatableBase * model::PropertyModel::animatable(const QModelIndex& index) const
+model::AnimatableBase * item_models::PropertyModel::animatable(const QModelIndex& index) const
 {
     if ( Private::Subtree* st = d->node_from_index(index) )
     {
-        if ( st->prop && st->prop->traits().flags & PropertyTraits::Animated )
+        if ( st->prop && st->prop->traits().flags & model::PropertyTraits::Animated )
             return static_cast<model::AnimatableBase*>(st->prop);
     }
 
     return nullptr;
 }
 
-void model::PropertyModel::on_delete_object()
+void item_models::PropertyModel::on_delete_object()
 {
     d->on_delete_object(static_cast<model::Object*>(sender()), this);
 }
 
-QModelIndex model::PropertyModel::property_index(model::BaseProperty* prop) const
+QModelIndex item_models::PropertyModel::property_index(model::BaseProperty* prop) const
 {
     auto it = d->properties.find(prop);
     if ( it == d->properties.end() )

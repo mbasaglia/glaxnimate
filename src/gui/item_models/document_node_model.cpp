@@ -1,7 +1,7 @@
 #include "document_node_model.hpp"
 #include "command/property_commands.hpp"
 
-void model::DocumentNodeModel::connect_node ( model::DocumentNode* node )
+void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
 {
     connect(node, &model::DocumentNode::docnode_child_add_begin, this, [this, node](int row) {
         beginInsertRows(node_index(node), row, row);
@@ -42,19 +42,19 @@ void model::DocumentNodeModel::connect_node ( model::DocumentNode* node )
         dataChanged(changed, changed, {Qt::EditRole, Qt::DisplayRole});
     });
 
-    for ( DocumentNode* child : node->docnode_children() )
+    for ( model::DocumentNode* child : node->docnode_children() )
         connect_node(child);
 }
 
-void model::DocumentNodeModel::disconnect_node ( model::DocumentNode* node )
+void item_models::DocumentNodeModel::disconnect_node ( model::DocumentNode* node )
 {
     disconnect(node, nullptr, this, nullptr);
 
-    for ( DocumentNode* child : node->docnode_children() )
+    for ( model::DocumentNode* child : node->docnode_children() )
         disconnect_node(child);
 }
 
-int model::DocumentNodeModel::rowCount ( const QModelIndex& parent ) const
+int item_models::DocumentNodeModel::rowCount ( const QModelIndex& parent ) const
 {
     if ( !document )
         return 0;
@@ -65,12 +65,12 @@ int model::DocumentNodeModel::rowCount ( const QModelIndex& parent ) const
     return node(parent)->docnode_child_count();
 }
 
-int model::DocumentNodeModel::columnCount ( const QModelIndex& ) const
+int item_models::DocumentNodeModel::columnCount ( const QModelIndex& ) const
 {
     return ColumnCount;
 }
 
-QModelIndex model::DocumentNodeModel::index ( int row, int column, const QModelIndex& parent ) const
+QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const QModelIndex& parent ) const
 {
     if ( !document )
         return {};
@@ -88,7 +88,7 @@ QModelIndex model::DocumentNodeModel::index ( int row, int column, const QModelI
     return createIndex(row, column, n->docnode_child(row));
 }
 
-Qt::ItemFlags model::DocumentNodeModel::flags ( const QModelIndex& index ) const
+Qt::ItemFlags item_models::DocumentNodeModel::flags ( const QModelIndex& index ) const
 {
     if ( !document )
         return Qt::NoItemFlags;
@@ -119,7 +119,7 @@ Qt::ItemFlags model::DocumentNodeModel::flags ( const QModelIndex& index ) const
     return flags;
 }
 
-QVariant model::DocumentNodeModel::data(const QModelIndex& index, int role) const
+QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role) const
 {
     auto n = node(index);
     if ( !document || !index.isValid() || !n )
@@ -157,7 +157,7 @@ QVariant model::DocumentNodeModel::data(const QModelIndex& index, int role) cons
     return {};
 }
 
-bool model::DocumentNodeModel::setData(const QModelIndex& index, const QVariant& value, int role)
+bool item_models::DocumentNodeModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     Q_UNUSED(role);
     auto n = node(index);
@@ -178,7 +178,7 @@ bool model::DocumentNodeModel::setData(const QModelIndex& index, const QVariant&
 }
 
 
-void model::DocumentNodeModel::set_document ( model::Document* doc )
+void item_models::DocumentNodeModel::set_document ( model::Document* doc )
 {
     beginResetModel();
     document = doc;
@@ -187,19 +187,19 @@ void model::DocumentNodeModel::set_document ( model::Document* doc )
     endResetModel();
 }
 
-void model::DocumentNodeModel::clear_document()
+void item_models::DocumentNodeModel::clear_document()
 {
     set_document(nullptr);
 }
 
-model::DocumentNode * model::DocumentNodeModel::node ( const QModelIndex& index ) const
+model::DocumentNode * item_models::DocumentNodeModel::node ( const QModelIndex& index ) const
 {
     return (model::DocumentNode*)index.internalPointer();
 }
 
 
 
-QModelIndex model::DocumentNodeModel::parent ( const QModelIndex& index ) const
+QModelIndex item_models::DocumentNodeModel::parent ( const QModelIndex& index ) const
 {
     auto n = node(index);
     if ( !document || !index.isValid() || !n )
@@ -208,7 +208,7 @@ QModelIndex model::DocumentNodeModel::parent ( const QModelIndex& index ) const
     return node_index(n->docnode_parent());
 }
 
-QModelIndex model::DocumentNodeModel::node_index ( model::DocumentNode* node ) const
+QModelIndex item_models::DocumentNodeModel::node_index ( model::DocumentNode* node ) const
 {
     if ( !node )
         return {};
@@ -230,20 +230,20 @@ QModelIndex model::DocumentNodeModel::node_index ( model::DocumentNode* node ) c
     return {};
 }
 
-bool model::DocumentNodeModel::moveRows ( const QModelIndex& sourceParent, int sourceRow, int count, const QModelIndex& destinationParent, int destinationChild )
+bool item_models::DocumentNodeModel::moveRows ( const QModelIndex& sourceParent, int sourceRow, int count, const QModelIndex& destinationParent, int destinationChild )
 {
     Q_UNUSED(sourceParent); Q_UNUSED(sourceRow); Q_UNUSED(count); Q_UNUSED(destinationParent); Q_UNUSED(destinationChild);
     return false;
 }
 
-bool model::DocumentNodeModel::removeRows ( int row, int count, const QModelIndex& parent )
+bool item_models::DocumentNodeModel::removeRows ( int row, int count, const QModelIndex& parent )
 {
     Q_UNUSED(row); Q_UNUSED(count); Q_UNUSED(parent);
     return false;
 }
 
 
-Qt::DropActions model::DocumentNodeModel::supportedDropActions() const
+Qt::DropActions item_models::DocumentNodeModel::supportedDropActions() const
 {
     return Qt::MoveAction;
 }

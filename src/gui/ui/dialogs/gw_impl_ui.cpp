@@ -82,9 +82,9 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
 
     // Item views
     ui.view_document_node->setModel(&document_node_model);
-    ui.view_document_node->header()->setSectionResizeMode(model::DocumentNodeModel::ColumnName, QHeaderView::Stretch);
-    ui.view_document_node->header()->setSectionResizeMode(model::DocumentNodeModel::ColumnColor, QHeaderView::ResizeToContents);
-    ui.view_document_node->setItemDelegateForColumn(model::DocumentNodeModel::ColumnColor, &color_delegate);
+    ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnName, QHeaderView::Stretch);
+    ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnColor, QHeaderView::ResizeToContents);
+    ui.view_document_node->setItemDelegateForColumn(item_models::DocumentNodeModel::ColumnColor, &color_delegate);
     QObject::connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::currentChanged,
                         parent, &GlaxnimateWindow::document_treeview_current_changed);
 

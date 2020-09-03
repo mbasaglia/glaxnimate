@@ -3,7 +3,7 @@
 #include <QTimer>
 #include <QApplication>
 #include "QtColorWidgets/ColorDelegate"
-#include "model/item_models/property_model.hpp"
+#include "item_models/property_model.hpp"
 #include "ui/widgets/spin2d.hpp"
 
 class PropertyDelegate : public color_widgets::ColorDelegate
@@ -24,7 +24,7 @@ protected:
 
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
-        if ( index.data(model::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
+        if ( index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
         {
             return new QComboBox(parent);
         }
@@ -47,9 +47,9 @@ protected:
 
     void setEditorData ( QWidget * editor, const QModelIndex & index ) const override
     {
-        if ( index.data(model::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
+        if ( index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
         {
-            if ( auto rpb = index.data(model::PropertyModel::ReferenceProperty).value<model::ReferencePropertyBase*>() )
+            if ( auto rpb = index.data(item_models::PropertyModel::ReferenceProperty).value<model::ReferencePropertyBase*>() )
             {
                 if ( QComboBox* combo = qobject_cast<QComboBox*>(editor) )
                 {
@@ -98,7 +98,7 @@ protected:
 
     void setModelData ( QWidget * editor, QAbstractItemModel * model, const QModelIndex & index ) const override
     {
-        if ( index.data(model::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
+        if ( index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
         {
             if ( QComboBox* combo = qobject_cast<QComboBox*>(editor) )
             {
@@ -129,17 +129,17 @@ protected:
 
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
-        
+
         QStyleOptionViewItem opt = option;
         initStyleOption(&opt, index);
         const QWidget* widget = option.widget;
-     
+
         // Disable decoration
-        if ( index.data(model::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
+        if ( index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
         {
             opt.icon = QIcon();
             opt.features &= ~QStyleOptionViewItem::HasDecoration;
-        }   
+        }
         opt.showDecorationSelected = true;
 
         QStyle *style = widget ? widget->style() : QApplication::style();

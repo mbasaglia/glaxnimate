@@ -11,9 +11,10 @@
 #include "glaxnimate_window.hpp"
 
 #include "model/document.hpp"
-#include "model/item_models/document_node_model.hpp"
-#include "model/item_models/property_model.hpp"
 #include "model/graphics/document_scene.hpp"
+
+#include "item_models/document_node_model.hpp"
+#include "item_models/property_model.hpp"
 
 #include "ui/style/dock_widget_style.hpp"
 #include "ui/style/property_delegate.hpp"
@@ -41,8 +42,8 @@ public:
 
     std::unique_ptr<model::Document> current_document;
 
-    model::DocumentNodeModel document_node_model;
-    model::PropertyModel property_model;
+    item_models::DocumentNodeModel document_node_model;
+    item_models::PropertyModel property_model;
     model::graphics::DocumentScene scene;
 
     GlaxnimateWindow* parent = nullptr;

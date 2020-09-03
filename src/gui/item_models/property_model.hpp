@@ -5,7 +5,7 @@
 #include "model/property.hpp"
 #include "model/document.hpp"
 
-namespace model {
+namespace item_models {
 
 class PropertyModel : public QAbstractItemModel
 {
@@ -56,4 +56,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace model
+} // namespace item_models

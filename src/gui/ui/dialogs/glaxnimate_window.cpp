@@ -81,9 +81,9 @@ void GlaxnimateWindow::document_treeview_clicked ( const QModelIndex& index )
     if ( !node )
         return;
 
-    if ( index.column() == model::DocumentNodeModel::ColumnVisible )
+    if ( index.column() == item_models::DocumentNodeModel::ColumnVisible )
         node->docnode_set_visible(!node->docnode_visible());
-     else if ( index.column() == model::DocumentNodeModel::ColumnLocked )
+     else if ( index.column() == item_models::DocumentNodeModel::ColumnLocked )
         node->docnode_set_locked(!node->docnode_locked());
 }
 

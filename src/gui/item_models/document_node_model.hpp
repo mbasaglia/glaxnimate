@@ -5,8 +5,7 @@
 
 #include "model/document.hpp"
 
-namespace model {
-
+namespace item_models {
 
 class DocumentNodeModel : public QAbstractItemModel
 {
@@ -46,4 +45,4 @@ private:
 };
 
 
-} // namespace model
+} // namespace item_models

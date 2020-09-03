@@ -4,7 +4,7 @@
 #include <QMenu>
 #include <QScrollBar>
 
-#include "model/item_models/property_model.hpp"
+#include "item_models/property_model.hpp"
 #include "ui/style/property_delegate.hpp"
 #include "glaxnimate_app.hpp"
 #include "command/animation_commands.hpp"
@@ -197,7 +197,7 @@ public:
     }
 
     Ui::CompoundTimelineWidget ui;
-    model::PropertyModel property_model{true};
+    item_models::PropertyModel property_model{true};
     PropertyDelegate property_delegate;
 
     QAction* action_title;
