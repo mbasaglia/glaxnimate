@@ -40,6 +40,7 @@ public:
     model::Document* document = nullptr;
     std::unordered_map<model::DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
     EditorMap node_to_editors;
+    GraphicsItemFactory item_factory;
 
 };
 
@@ -73,7 +74,7 @@ void graphics::DocumentScene::set_document ( model::Document* document )
 
 void graphics::DocumentScene::connect_node ( model::DocumentNode* node )
 {
-    DocumentNodeGraphicsItem* child = docnode_make_graphics_item(node);
+    DocumentNodeGraphicsItem* child = d->item_factory.make_graphics_item(node);
     if ( !child )
         return;
 
@@ -127,7 +128,7 @@ void graphics::DocumentScene::add_selection(model::DocumentNode* node)
     if ( d->node_to_editors.find(node) != d->node_to_editors.end() )
         return;
 
-    auto items = docnode_make_graphics_editor(node);
+    auto items = d->item_factory.make_graphics_editor(node);
     for ( const auto& item : items )
     {
         item->setZValue(Private::editor_z);

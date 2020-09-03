@@ -3,40 +3,71 @@
 #include "document_node_graphics_item.hpp"
 #include "main_composition_item.hpp"
 
-graphics::DocumentNodeGraphicsItem * graphics::docnode_make_graphics_item(model::DocumentNode* node)
+graphics::GraphicsItemFactory::GraphicsItemFactory()
 {
-    if ( auto mcom = qobject_cast<model::MainComposition*>(node) )
-        return new MainCompositionItem(mcom);
-
-    auto item = new DocumentNodeGraphicsItem(node);
-
-    if ( auto layer = qobject_cast<model::Layer*>(node) )
-    {
-        QObject::connect(layer, &model::Layer::transform_matrix_changed, item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
-    }
-
-    return item;
+    register_builder<model::MainComposition>(
+        [](model::MainComposition* mcomp){
+            return new MainCompositionItem(mcomp);
+        },
+        [](model::MainComposition* mcomp){
+            editors_list v;
+            v.push_back(std::make_unique<graphics::MainCompositionTransformItem>(mcomp));
+            return v;
+        }
+    );
+    register_builder<model::Layer>(
+        [](model::Layer* layer){
+            auto item = new DocumentNodeGraphicsItem(layer);
+            QObject::connect(layer, &model::Layer::transform_matrix_changed, item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
+            return item;
+        },
+        [](model::Layer* layer){
+            editors_list v;
+            auto p = std::make_unique<graphics::TransformGraphicsItem>(layer->transform.get(), layer, nullptr);
+            QObject::connect(layer, &model::Layer::transform_matrix_changed, p.get(), &graphics::TransformGraphicsItem::set_transform_matrix);
+            p->set_transform_matrix(layer->transform_matrix());
+            v.push_back(std::move(p));
+            return v;
+        }
+    );
 }
 
-std::vector<std::unique_ptr<QGraphicsItem> > graphics::docnode_make_graphics_editor(model::DocumentNode* node)
+graphics::DocumentNodeGraphicsItem * graphics::GraphicsItemFactory::make_graphics_item(model::DocumentNode* node) const
 {
-    std::vector<std::unique_ptr<QGraphicsItem>> v;
-
-
-    if ( auto layer = qobject_cast<model::Layer*>(node) )
-    {
-        auto p = std::make_unique<graphics::TransformGraphicsItem>(layer->transform.get(), layer, nullptr);
-        QObject::connect(layer, &model::Layer::transform_matrix_changed, p.get(), &graphics::TransformGraphicsItem::set_transform_matrix);
-        p->set_transform_matrix(layer->transform_matrix());
-        v.push_back(std::move(p));
-    }
-    else if ( auto mcomp = qobject_cast<model::MainComposition*>(node) )
-    {
-        v.push_back(std::make_unique<graphics::MainCompositionTransformItem>(mcomp));
-    }
-
-
-    return v;;
+    if ( auto builder = builder_for(node) )
+        return builder->make_graphics_item(node);
+    return make_graphics_item_default(node);
 }
 
+std::vector<std::unique_ptr<QGraphicsItem> > graphics::GraphicsItemFactory::make_graphics_editor(model::DocumentNode* node) const
+{
+    if ( auto builder = builder_for(node) )
+        return builder->make_graphics_editor(node);
+    return make_graphics_editor_default(node);
+}
 
+graphics::DocumentNodeGraphicsItem * graphics::GraphicsItemFactory::make_graphics_item_default(model::DocumentNode* node)
+{
+    return new DocumentNodeGraphicsItem(node);
+}
+
+graphics::GraphicsItemFactory::editors_list graphics::GraphicsItemFactory::make_graphics_editor_default(model::DocumentNode*)
+{
+    return {};
+}
+
+graphics::GraphicsItemFactory::AbstractBuilder * graphics::GraphicsItemFactory::builder_for(model::DocumentNode* node) const
+{
+    const QMetaObject* mo = node->metaObject();
+     auto it = builders.find(mo);
+     while ( mo && it == builders.end() )
+     {
+         mo = mo->superClass();
+         it = builders.find(mo);
+     }
+
+     if ( mo )
+         return it->second;
+
+     return nullptr;
+}
