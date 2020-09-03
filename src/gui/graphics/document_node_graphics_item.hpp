@@ -9,20 +9,20 @@ class BaseProperty;
 
 } // namespace model
 
-namespace model::graphics {
+namespace graphics {
 
 class DocumentNodeGraphicsItem : public QGraphicsObject
 {
     Q_OBJECT
 
 public:
-    explicit DocumentNodeGraphicsItem(DocumentNode* node, QGraphicsItem* parent = nullptr);
+    explicit DocumentNodeGraphicsItem(model::DocumentNode* node, QGraphicsItem* parent = nullptr);
 
     QRectF boundingRect() const override;
 //     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
-    DocumentNode* node() const
+    model::DocumentNode* node() const
     {
         return node_;
     }
@@ -57,7 +57,7 @@ protected:
     }*/
 
 private:
-    DocumentNode* node_;
+    model::DocumentNode* node_;
 };
 
-} // namespace model::graphics
+} // namespace graphics

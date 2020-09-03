@@ -20,10 +20,6 @@ model/object.cpp
 model/transform.cpp
 model/shapes/shape.cpp
 model/factory.cpp
-model/graphics/handle.cpp
-model/graphics/document_node_graphics_item.cpp
-model/graphics/document_scene.cpp
-model/graphics/transform_graphics_item.cpp
 model/animation/keyframe_transition.cpp
 model/animation/animatable.cpp
 model/shapes/fill.cpp

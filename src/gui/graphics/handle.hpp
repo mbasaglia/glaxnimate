@@ -3,7 +3,7 @@
 #include <memory>
 #include <QGraphicsObject>
 
-namespace model::graphics {
+namespace graphics {
 
 class MoveHandle : public QGraphicsObject
 {
@@ -65,4 +65,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace model::graphics
+} // namespace graphics

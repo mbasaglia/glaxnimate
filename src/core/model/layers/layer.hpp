@@ -84,8 +84,6 @@ public:
     QString type_name_human() const override { return tr("Uknown Layer"); }
     DocumentNode* docnode_parent() const override;
     DocumentNode* docnode_group_parent() const override;
-    graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override;
-    std::vector<std::unique_ptr<QGraphicsItem>> docnode_make_graphics_editor() override;
     void set_time(FrameTime t) override;
 
 

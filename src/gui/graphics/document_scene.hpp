@@ -4,7 +4,9 @@
 
 #include "model/document.hpp"
 
-namespace model::graphics {
+namespace graphics {
+
+class DocumentNodeGraphicsItem;
 
 class DocumentScene : public QGraphicsScene
 {
@@ -16,16 +18,16 @@ public:
         Append  = 0x01, ///< Append to current selection
         Toggle  = 0x02, ///< Toggles from selection
     };
-    
+
     DocumentScene();
     ~DocumentScene();
 
-    void set_document(Document* document);
+    void set_document(model::Document* document);
     void clear_document() { set_document(nullptr); }
 
-    void add_selection(DocumentNode* node);
-    void remove_selection(DocumentNode* node);
-    void toggle_selection(DocumentNode* node);
+    void add_selection(model::DocumentNode* node);
+    void remove_selection(model::DocumentNode* node);
+    void toggle_selection(model::DocumentNode* node);
     void clear_selection();
 
     void user_select(const std::vector<model::DocumentNode*>& selected, SelectFlags flags);
@@ -48,6 +50,6 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace model::graphics
+} // namespace graphics
 
 Q_DECLARE_METATYPE(std::vector<model::DocumentNode*>)

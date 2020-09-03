@@ -7,8 +7,8 @@
 #include <QKeyEvent>
 #include <QAction>
 
-#include "model/graphics/document_scene.hpp"
-#include "model/graphics/document_node_graphics_item.hpp"
+#include "graphics/document_scene.hpp"
+#include "graphics/document_node_graphics_item.hpp"
 #include "ui/widgets/glaxnimate_graphics_view.hpp"
 #include "ui/widgets/scalable_button.hpp"
 #include "ui/dialogs/glaxnimate_window.hpp"
@@ -21,7 +21,7 @@ namespace tools {
 struct Event
 {
     GlaxnimateGraphicsView* view;
-    model::graphics::DocumentScene* scene;
+    graphics::DocumentScene* scene;
     GlaxnimateWindow* window;
 
     void repaint() const

@@ -63,7 +63,6 @@ class MetaTestSubject : public DocumentNode
 
 public:
     QIcon docnode_icon() const override { return {}; }
-    graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item() override { return {}; }
     DocumentNode* docnode_parent() const override { return {}; }
     int docnode_child_count() const override { return {}; }
     DocumentNode* docnode_child(int) const override { return {}; }

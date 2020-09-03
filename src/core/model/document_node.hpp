@@ -4,15 +4,10 @@
 #include <QIcon>
 #include <QUuid>
 
-
 #include "model/animation/animatable.hpp"
-
-
-class QGraphicsItem;
 
 namespace model {
 
-namespace graphics { class DocumentNodeGraphicsItem; }
 class Document;
 class ReferencePropertyBase;
 
@@ -101,8 +96,6 @@ public:
     explicit DocumentNode(Document* document);
 
     virtual QIcon docnode_icon() const = 0;
-    virtual graphics::DocumentNodeGraphicsItem* docnode_make_graphics_item();
-    virtual std::vector<std::unique_ptr<QGraphicsItem>> docnode_make_graphics_editor();
 
     virtual DocumentNode* docnode_parent() const = 0;
     virtual int docnode_child_count() const = 0;

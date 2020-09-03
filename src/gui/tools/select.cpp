@@ -61,12 +61,12 @@ private:
         }
     }
 
-    void complex_select(const MouseEvent& event, const std::vector<model::graphics::DocumentNodeGraphicsItem*>& items)
+    void complex_select(const MouseEvent& event, const std::vector<graphics::DocumentNodeGraphicsItem*>& items)
     {
 
-        auto mode = model::graphics::DocumentScene::Replace;
+        auto mode = graphics::DocumentScene::Replace;
         if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
-            mode = model::graphics::DocumentScene::Append;
+            mode = graphics::DocumentScene::Append;
 
         std::vector<model::DocumentNode*> selection;
 
@@ -115,9 +115,9 @@ private:
                 }
             }
 
-            auto mode = model::graphics::DocumentScene::Replace;
+            auto mode = graphics::DocumentScene::Replace;
             if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
-                mode = model::graphics::DocumentScene::Toggle;
+                mode = graphics::DocumentScene::Toggle;
 
             event.scene->user_select(selection, mode);
         }

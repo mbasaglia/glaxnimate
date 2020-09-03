@@ -114,7 +114,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     // Graphics scene
     ui.graphics_view->setScene(&scene);
     ui.graphics_view->set_tool_target(parent);
-    connect(&scene, &model::graphics::DocumentScene::node_user_selected, parent, &GlaxnimateWindow::scene_selection_changed);
+    connect(&scene, &graphics::DocumentScene::node_user_selected, parent, &GlaxnimateWindow::scene_selection_changed);
 
     // dialogs
     dialog_import_status = new IoStatusDialog(QIcon::fromTheme("document-open"), tr("Open File"), false, parent);

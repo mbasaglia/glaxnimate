@@ -7,7 +7,7 @@
 
 
 #include "tools/base.hpp"
-#include "model/graphics/document_scene.hpp"
+#include "graphics/document_scene.hpp"
 
 
 class GlaxnimateGraphicsView::Private
@@ -89,7 +89,7 @@ public:
         return {
             {
                 view,
-                static_cast<model::graphics::DocumentScene*>(view->scene()),
+                static_cast<graphics::DocumentScene*>(view->scene()),
                 tool_target
             },
             ev,
@@ -107,7 +107,7 @@ public:
         return {
             {
                 view,
-                static_cast<model::graphics::DocumentScene*>(view->scene()),
+                static_cast<graphics::DocumentScene*>(view->scene()),
                 tool_target
             },
             painter
@@ -119,7 +119,7 @@ public:
         return {
             {
                 view,
-                static_cast<model::graphics::DocumentScene*>(view->scene()),
+                static_cast<graphics::DocumentScene*>(view->scene()),
                 tool_target
             },
             ev

@@ -4,7 +4,7 @@
 #include <QCursor>
 #include <QGraphicsSceneMouseEvent>
 
-class model::graphics::MoveHandle::Private
+class graphics::MoveHandle::Private
 {
 public:
     Direction direction;
@@ -31,7 +31,7 @@ public:
 };
 
 
-model::graphics::MoveHandle::MoveHandle(
+graphics::MoveHandle::MoveHandle(
     QGraphicsItem* parent,
     Direction direction,
     Shape shape,
@@ -61,14 +61,14 @@ model::graphics::MoveHandle::MoveHandle(
         setCursor(Qt::SizeAllCursor);
 }
 
-model::graphics::MoveHandle::~MoveHandle() = default;
+graphics::MoveHandle::~MoveHandle() = default;
 
-QRectF model::graphics::MoveHandle::boundingRect() const
+QRectF graphics::MoveHandle::boundingRect() const
 {
     return {-d->external_radius(), -d->external_radius(), d->external_radius()*2, d->external_radius()*2};
 }
 
-void model::graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
+void graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
     painter->save();
 
@@ -104,13 +104,13 @@ void model::graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGra
     painter->restore();
 }
 
-void model::graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setFocus(Qt::MouseFocusReason);
     event->accept();
 }
 
-void model::graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
     QPointF oldp = scene_to_parent.map(scenePos());
@@ -125,7 +125,7 @@ void model::graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event
 
 }
 
-void model::graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     clearFocus();
     event->accept();

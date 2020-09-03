@@ -7,22 +7,22 @@
 
 #include "model/main_composition.hpp"
 #include "handle.hpp"
-#include "model/graphics/document_node_graphics_item.hpp"
+#include "graphics/document_node_graphics_item.hpp"
 #include "command/property_commands.hpp"
 #include "model/document.hpp"
 #include "app/application.hpp"
-#include "model/graphics/transform_graphics_item.hpp"
+#include "graphics/transform_graphics_item.hpp"
 
-namespace model::graphics {
+namespace graphics {
 
 class MainCompositionItem : public DocumentNodeGraphicsItem
 {
 public:
-    explicit MainCompositionItem(MainComposition* animation)
+    explicit MainCompositionItem(model::MainComposition* animation)
         : DocumentNodeGraphicsItem(animation), animation(animation)
     {
-        connect(animation, &MainComposition::width_changed, this, &MainCompositionItem::size_changed);
-        connect(animation, &MainComposition::height_changed, this, &MainCompositionItem::size_changed);
+        connect(animation, &model::MainComposition::width_changed, this, &MainCompositionItem::size_changed);
+        connect(animation, &model::MainComposition::height_changed, this, &MainCompositionItem::size_changed);
         back.setTexture(QPixmap(app::Application::instance()->data_file("images/widgets/background.png")));
         setFlag(QGraphicsItem::ItemIsSelectable, false);
     }
@@ -39,18 +39,18 @@ private slots:
     }
 
 private:
-    MainComposition* animation;
+    model::MainComposition* animation;
     QBrush back;
 };
 
 class MainCompositionTransformItem : public QGraphicsObject
 {
 public:
-    explicit MainCompositionTransformItem(MainComposition* animation)
+    explicit MainCompositionTransformItem(model::MainComposition* animation)
         : animation(animation)
     {
-        connect(animation, &MainComposition::width_changed, this, &MainCompositionTransformItem::size_changed);
-        connect(animation, &MainComposition::height_changed, this, &MainCompositionTransformItem::size_changed);
+        connect(animation, &model::MainComposition::width_changed, this, &MainCompositionTransformItem::size_changed);
+        connect(animation, &model::MainComposition::height_changed, this, &MainCompositionTransformItem::size_changed);
 
         handle_h = new MoveHandle(this, MoveHandle::Horizontal, MoveHandle::Diamond, 8);
         handle_v = new MoveHandle(this, MoveHandle::Vertical, MoveHandle::Diamond, 8);
@@ -119,11 +119,11 @@ private:
     }
 
 private:
-    MainComposition* animation;
+    model::MainComposition* animation;
     MoveHandle* handle_h;
     MoveHandle* handle_v;
     MoveHandle* handle_hv;
 };
 
 
-} // namespace model::graphics
+} // namespace graphics

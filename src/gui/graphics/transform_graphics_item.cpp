@@ -6,7 +6,7 @@
 #include "command/animation_commands.hpp"
 #include "math/math.hpp"
 
-class model::graphics::TransformGraphicsItem::Private
+class graphics::TransformGraphicsItem::Private
 {
 public:
     enum Index
@@ -33,8 +33,8 @@ public:
         void (TransformGraphicsItem::* signal)(const QPointF&);
     };
 
-    Transform* transform;
-    DocumentNode* target;
+    model::Transform* transform;
+    model::DocumentNode* target;
     std::array<Handle, Count> handles;
     QRectF cache;
     QTransform transform_matrix;
@@ -143,7 +143,7 @@ public:
         return new_scale;
     }
 
-    void push_command(AnimatableBase& prop, const QVariant& value, bool commit)
+    void push_command(model::AnimatableBase& prop, const QVariant& value, bool commit)
     {
         target->document()->undo_stack().push(new command::SetMultipleAnimated(
             prop.name(), {&prop}, {prop.value()}, {value}, commit
@@ -152,13 +152,13 @@ public:
 
 };
 
-model::graphics::TransformGraphicsItem::TransformGraphicsItem(
+graphics::TransformGraphicsItem::TransformGraphicsItem(
     model::Transform* transform, model::DocumentNode* target, QGraphicsItem* parent
 )
     : QGraphicsObject(parent), d(std::make_unique<Private>(this, transform, target))
 {
-    connect(target, &DocumentNode::bounding_rect_changed, this, &TransformGraphicsItem::update_handles);
-    connect(transform, &Object::property_changed, this, &TransformGraphicsItem::update_transform);
+    connect(target, &model::DocumentNode::bounding_rect_changed, this, &TransformGraphicsItem::update_handles);
+    connect(transform, &model::Object::property_changed, this, &TransformGraphicsItem::update_transform);
     update_transform();
     update_handles();
     for ( const auto& h : d->handles )
@@ -173,9 +173,9 @@ model::graphics::TransformGraphicsItem::TransformGraphicsItem(
     }
 }
 
-model::graphics::TransformGraphicsItem::~TransformGraphicsItem() = default;
+graphics::TransformGraphicsItem::~TransformGraphicsItem() = default;
 
-void model::graphics::TransformGraphicsItem::update_handles()
+void graphics::TransformGraphicsItem::update_handles()
 {
     prepareGeometryChange();
     d->cache = d->target->local_bounding_rect(d->target->document()->current_time());
@@ -185,7 +185,7 @@ void model::graphics::TransformGraphicsItem::update_handles()
     }
 }
 
-void model::graphics::TransformGraphicsItem::update_transform()
+void graphics::TransformGraphicsItem::update_transform()
 {
     d->transform_matrix = d->transform->transform_matrix();
     d->transform_matrix_inv = d->transform_matrix.inverted();
@@ -194,7 +194,7 @@ void model::graphics::TransformGraphicsItem::update_transform()
 }
 
 
-void model::graphics::TransformGraphicsItem::drag_tl(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_tl(const QPointF& p)
 {
     auto scale = d->transform->scale.get();
     qreal size_to_anchor_y = d->cache.top() - d->transform->anchor_point.get().y();
@@ -226,7 +226,7 @@ void model::graphics::TransformGraphicsItem::drag_tl(const QPointF& p)
         d->push_command(d->transform->scale, scale, false);
 }
 
-void model::graphics::TransformGraphicsItem::drag_tr(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_tr(const QPointF& p)
 {
     auto scale = d->transform->scale.get();
     qreal size_to_anchor_y = d->cache.top() - d->transform->anchor_point.get().y();
@@ -258,7 +258,7 @@ void model::graphics::TransformGraphicsItem::drag_tr(const QPointF& p)
         d->push_command(d->transform->scale, scale, false);
 }
 
-void model::graphics::TransformGraphicsItem::drag_br(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_br(const QPointF& p)
 {
     auto scale = d->transform->scale.get();
     qreal size_to_anchor_y = d->cache.bottom() - d->transform->anchor_point.get().y();
@@ -290,7 +290,7 @@ void model::graphics::TransformGraphicsItem::drag_br(const QPointF& p)
         d->push_command(d->transform->scale, scale, false);
 }
 
-void model::graphics::TransformGraphicsItem::drag_bl(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_bl(const QPointF& p)
 {
     auto scale = d->transform->scale.get();
     qreal size_to_anchor_y = d->cache.bottom() - d->transform->anchor_point.get().y();
@@ -322,7 +322,7 @@ void model::graphics::TransformGraphicsItem::drag_bl(const QPointF& p)
         d->push_command(d->transform->scale, scale, false);
 }
 
-void model::graphics::TransformGraphicsItem::drag_t(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_t(const QPointF& p)
 {
     qreal size_to_anchor = d->cache.top() - d->transform->anchor_point.get().y();
     if ( size_to_anchor != 0 )
@@ -341,7 +341,7 @@ void model::graphics::TransformGraphicsItem::drag_t(const QPointF& p)
     }
 }
 
-void model::graphics::TransformGraphicsItem::drag_b(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_b(const QPointF& p)
 {
     qreal size_to_anchor = d->cache.bottom() - d->transform->anchor_point.get().y();
     if ( size_to_anchor != 0 )
@@ -360,7 +360,7 @@ void model::graphics::TransformGraphicsItem::drag_b(const QPointF& p)
     }
 }
 
-void model::graphics::TransformGraphicsItem::drag_l(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_l(const QPointF& p)
 {
     qreal size_to_anchor = d->cache.left() - d->transform->anchor_point.get().x();
     if ( size_to_anchor != 0 )
@@ -379,7 +379,7 @@ void model::graphics::TransformGraphicsItem::drag_l(const QPointF& p)
     }
 }
 
-void model::graphics::TransformGraphicsItem::drag_r(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_r(const QPointF& p)
 {
     qreal size_to_anchor = d->cache.right() - d->transform->anchor_point.get().x();
     if ( size_to_anchor != 0 )
@@ -398,7 +398,7 @@ void model::graphics::TransformGraphicsItem::drag_r(const QPointF& p)
     }
 }
 
-void model::graphics::TransformGraphicsItem::drag_a(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_a(const QPointF& p)
 {
     QPointF anchor = p;
     QPointF anchor_old = d->transform->anchor_point.get();
@@ -417,7 +417,7 @@ void model::graphics::TransformGraphicsItem::drag_a(const QPointF& p)
     ));
 }
 
-void model::graphics::TransformGraphicsItem::drag_rot(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_rot(const QPointF& p)
 {
     QPointF diff_old = d->get_rot() - d->transform->anchor_point.get();
     QVector2D scale = d->transform->scale.get();
@@ -432,7 +432,7 @@ void model::graphics::TransformGraphicsItem::drag_rot(const QPointF& p)
     d->push_command(d->transform->rotation, qRadiansToDegrees(angle), false);
 }
 
-void model::graphics::TransformGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt, QWidget*)
+void graphics::TransformGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt, QWidget*)
 {
     painter->save();
     QPen pen(opt->palette.color(QPalette::Highlight), 1);
@@ -443,12 +443,12 @@ void model::graphics::TransformGraphicsItem::paint(QPainter* painter, const QSty
     painter->restore();
 }
 
-QRectF model::graphics::TransformGraphicsItem::boundingRect() const
+QRectF graphics::TransformGraphicsItem::boundingRect() const
 {
     return d->cache.adjusted(0, d->rot_top(), 0, 0);
 }
 
-void model::graphics::TransformGraphicsItem::commit_anchor()
+void graphics::TransformGraphicsItem::commit_anchor()
 {
     d->target->document()->undo_stack().push(new command::SetMultipleAnimated(
         tr("Drag anchor point"),
@@ -459,18 +459,18 @@ void model::graphics::TransformGraphicsItem::commit_anchor()
     ));
 }
 
-void model::graphics::TransformGraphicsItem::commit_rot()
+void graphics::TransformGraphicsItem::commit_rot()
 {
     d->push_command(d->transform->rotation, d->transform->rotation.value(), true);
 }
 
-void model::graphics::TransformGraphicsItem::commit_scale()
+void graphics::TransformGraphicsItem::commit_scale()
 {
     d->push_command(d->transform->scale, d->transform->scale.value(), true);
 }
 
 
-void model::graphics::TransformGraphicsItem::set_transform_matrix(const QTransform& t)
+void graphics::TransformGraphicsItem::set_transform_matrix(const QTransform& t)
 {
     setTransform(t);
 }

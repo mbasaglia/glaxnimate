@@ -2,7 +2,7 @@
 
 #include "model/document.hpp"
 
-model::graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(DocumentNode* node, QGraphicsItem* parent)
+graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::DocumentNode* node, QGraphicsItem* parent)
     : QGraphicsObject(parent), node_(node)
 {
 //     setFlag(QGraphicsItem::ItemIsFocusable);
@@ -14,17 +14,17 @@ model::graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(DocumentNode
     connect(node, &model::Object::property_changed, this, &DocumentNodeGraphicsItem::on_property_changed);
 }
 
-QRectF model::graphics::DocumentNodeGraphicsItem::boundingRect() const
+QRectF graphics::DocumentNodeGraphicsItem::boundingRect() const
 {
     return node_->local_bounding_rect(node_->document()->current_time());
 }
 
-void model::graphics::DocumentNodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
+void graphics::DocumentNodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    node_->paint(painter, node_->document()->current_time(), DocumentNode::NoTransform);
+    node_->paint(painter, node_->document()->current_time(), model::DocumentNode::NoTransform);
 }
 
-void model::graphics::DocumentNodeGraphicsItem::on_property_changed(const model::BaseProperty* prop)
+void graphics::DocumentNodeGraphicsItem::on_property_changed(const model::BaseProperty* prop)
 {
     if ( prop->traits().flags & model::PropertyTraits::Animated )
     {

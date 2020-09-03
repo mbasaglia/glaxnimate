@@ -2,29 +2,30 @@
 
 #include <unordered_set>
 
-#include "model/graphics/document_node_graphics_item.hpp"
+#include "graphics/document_node_graphics_item.hpp"
+#include "graphics/create_items.hpp"
 
-class model::graphics::DocumentScene::Private
+class graphics::DocumentScene::Private
 {
 public:
     static constexpr int editor_z = 1000;
     static constexpr int data_key_ptr = 0;
 
-    using EditorMap = std::unordered_map<DocumentNode*, std::vector<std::unique_ptr<QGraphicsItem>>>;
+    using EditorMap = std::unordered_map<model::DocumentNode*, std::vector<std::unique_ptr<QGraphicsItem>>>;
 
     EditorMap::iterator remove_selection(const EditorMap::iterator& it)
     {
         return node_to_editors.erase(it);
     }
-    
-    
+
+
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const
     {
         return item->data(data_key_ptr).value<model::DocumentNode*>();
     }
 
-    
-    std::vector<model::graphics::DocumentNodeGraphicsItem*> items_to_nodes(const QList<QGraphicsItem*>& items) const
+
+    std::vector<graphics::DocumentNodeGraphicsItem*> items_to_nodes(const QList<QGraphicsItem*>& items) const
     {
         std::vector<DocumentNodeGraphicsItem*> nodes;
         for ( auto item : items )
@@ -36,23 +37,23 @@ public:
     }
 
 
-    Document* document = nullptr;
-    std::unordered_map<DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
+    model::Document* document = nullptr;
+    std::unordered_map<model::DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
     EditorMap node_to_editors;
 
 };
 
-model::graphics::DocumentScene::DocumentScene()
+graphics::DocumentScene::DocumentScene()
     : d(std::make_unique<Private>())
 {
 }
 
-model::graphics::DocumentScene::~DocumentScene()
+graphics::DocumentScene::~DocumentScene()
 {
     clear_selection();
 }
 
-void model::graphics::DocumentScene::set_document ( model::Document* document )
+void graphics::DocumentScene::set_document ( model::Document* document )
 {
     if ( d->document )
     {
@@ -70,9 +71,9 @@ void model::graphics::DocumentScene::set_document ( model::Document* document )
     }
 }
 
-void model::graphics::DocumentScene::connect_node ( model::DocumentNode* node )
+void graphics::DocumentScene::connect_node ( model::DocumentNode* node )
 {
-    DocumentNodeGraphicsItem* child = node->docnode_make_graphics_item();
+    DocumentNodeGraphicsItem* child = docnode_make_graphics_item(node);
     if ( !child )
         return;
 
@@ -96,16 +97,16 @@ void model::graphics::DocumentScene::connect_node ( model::DocumentNode* node )
     else
         addItem(child);
 
-    for ( DocumentNode* child : node->docnode_children() )
+    for ( model::DocumentNode* child : node->docnode_children() )
         connect_node(child);
 }
 
-void model::graphics::DocumentScene::disconnect_node ( model::DocumentNode* node )
+void graphics::DocumentScene::disconnect_node ( model::DocumentNode* node )
 {
     disconnect(node, &model::DocumentNode::docnode_child_add_end, this, &DocumentScene::connect_node);
     disconnect(node, &model::DocumentNode::docnode_child_remove_end, this, &DocumentScene::disconnect_node);
 
-    for ( DocumentNode* child : node->docnode_children() )
+    for ( model::DocumentNode* child : node->docnode_children() )
         disconnect_node(child);
 
     auto item = d->node_to_item.find(node);
@@ -117,7 +118,7 @@ void model::graphics::DocumentScene::disconnect_node ( model::DocumentNode* node
     }
 }
 
-void model::graphics::DocumentScene::add_selection(model::DocumentNode* node)
+void graphics::DocumentScene::add_selection(model::DocumentNode* node)
 {
     auto it = d->node_to_item.find(node);
     if ( it != d->node_to_item.end() )
@@ -126,7 +127,7 @@ void model::graphics::DocumentScene::add_selection(model::DocumentNode* node)
     if ( d->node_to_editors.find(node) != d->node_to_editors.end() )
         return;
 
-    auto items = node->docnode_make_graphics_editor();
+    auto items = docnode_make_graphics_editor(node);
     for ( const auto& item : items )
     {
         item->setZValue(Private::editor_z);
@@ -137,7 +138,7 @@ void model::graphics::DocumentScene::add_selection(model::DocumentNode* node)
 }
 
 
-void model::graphics::DocumentScene::remove_selection(model::DocumentNode* node)
+void graphics::DocumentScene::remove_selection(model::DocumentNode* node)
 {
     auto it = d->node_to_editors.find(node);
     if ( it != d->node_to_editors.end() )
@@ -146,7 +147,7 @@ void model::graphics::DocumentScene::remove_selection(model::DocumentNode* node)
     }
 }
 
-void model::graphics::DocumentScene::toggle_selection(model::DocumentNode* node)
+void graphics::DocumentScene::toggle_selection(model::DocumentNode* node)
 {
     if ( d->node_to_editors.count(node) )
         remove_selection(node);
@@ -155,17 +156,17 @@ void model::graphics::DocumentScene::toggle_selection(model::DocumentNode* node)
 }
 
 
-void model::graphics::DocumentScene::clear_selection()
+void graphics::DocumentScene::clear_selection()
 {
     d->node_to_editors.clear();
 }
 
-model::DocumentNode* model::graphics::DocumentScene::item_to_node(const QGraphicsItem* item) const
+model::DocumentNode* graphics::DocumentScene::item_to_node(const QGraphicsItem* item) const
 {
     return d->item_to_node(item);
 }
 
-void model::graphics::DocumentScene::user_select(const std::vector<model::DocumentNode *>& nodes, SelectFlags flags)
+void graphics::DocumentScene::user_select(const std::vector<model::DocumentNode *>& nodes, SelectFlags flags)
 {
     std::vector<model::DocumentNode *> deselected;
     std::unordered_set<model::DocumentNode*> sel(nodes.begin(), nodes.end());
@@ -194,7 +195,7 @@ void model::graphics::DocumentScene::user_select(const std::vector<model::Docume
     else if ( flags )
     {
         std::vector<model::DocumentNode *> selected;
-        
+
         for ( model::DocumentNode* node : nodes )
         {
             auto it = d->node_to_editors.find(node);
@@ -209,23 +210,23 @@ void model::graphics::DocumentScene::user_select(const std::vector<model::Docume
                 d->remove_selection(it);
             }
         }
-        
+
         emit node_user_selected(selected, deselected);
     }
 
 }
 
-std::vector<model::graphics::DocumentNodeGraphicsItem*> model::graphics::DocumentScene::nodes(const QPointF& point, const QTransform& device_transform) const
+std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(const QPointF& point, const QTransform& device_transform) const
 {
     return d->items_to_nodes(items(point, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
 }
 
-std::vector<model::graphics::DocumentNodeGraphicsItem*> model::graphics::DocumentScene::nodes(const QPainterPath& path, const QTransform& device_transform) const
+std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(const QPainterPath& path, const QTransform& device_transform) const
 {
     return d->items_to_nodes(items(path, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
 }
 
-std::vector<model::graphics::DocumentNodeGraphicsItem*> model::graphics::DocumentScene::nodes(const QPolygonF& path, const QTransform& device_transform) const
+std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(const QPolygonF& path, const QTransform& device_transform) const
 {
     return d->items_to_nodes(items(path, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
 }

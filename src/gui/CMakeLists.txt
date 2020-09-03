@@ -3,6 +3,12 @@ set(SOURCES
 main.cpp
 glaxnimate_app.cpp
 
+graphics/handle.cpp
+graphics/document_node_graphics_item.cpp
+graphics/document_scene.cpp
+graphics/transform_graphics_item.cpp
+graphics/create_items.cpp
+
 item_models/document_node_model.cpp
 item_models/property_model.cpp
 

@@ -11,7 +11,7 @@
 #include "glaxnimate_window.hpp"
 
 #include "model/document.hpp"
-#include "model/graphics/document_scene.hpp"
+#include "graphics/document_scene.hpp"
 
 #include "item_models/document_node_model.hpp"
 #include "item_models/property_model.hpp"
@@ -44,7 +44,7 @@ public:
 
     item_models::DocumentNodeModel document_node_model;
     item_models::PropertyModel property_model;
-    model::graphics::DocumentScene scene;
+    graphics::DocumentScene scene;
 
     GlaxnimateWindow* parent = nullptr;
 

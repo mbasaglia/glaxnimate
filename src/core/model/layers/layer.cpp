@@ -4,8 +4,6 @@
 
 #include "model/composition.hpp"
 #include "model/document.hpp"
-#include "model/graphics/transform_graphics_item.hpp"
-#include "model/graphics/document_node_graphics_item.hpp"
 
 void model::Layer::ChildLayerIterator::find_first()
 {
@@ -148,26 +146,6 @@ void model::Layer::on_paint(QPainter* painter, FrameTime time, PaintMode mode) c
     if ( mode != NoTransform )
         painter->setTransform(transform_matrix(time), true);
     on_paint_untransformed(painter, time);
-}
-
-model::graphics::DocumentNodeGraphicsItem * model::Layer::docnode_make_graphics_item()
-{
-    auto item = DocumentNode::docnode_make_graphics_item();
-
-    connect(this, &Layer::transform_matrix_changed, item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
-
-    return item;
-}
-
-
-std::vector<std::unique_ptr<QGraphicsItem>> model::Layer::docnode_make_graphics_editor()
-{
-    std::vector<std::unique_ptr<QGraphicsItem>> v;
-    auto p = std::make_unique<model::graphics::TransformGraphicsItem>(transform.get(), this, nullptr);
-    connect(this, &Layer::transform_matrix_changed, p.get(), &graphics::TransformGraphicsItem::set_transform_matrix);
-    p->set_transform_matrix(transform_matrix());
-    v.push_back(std::move(p));
-    return v;
 }
 
 void model::Layer::on_transform_matrix_changed()

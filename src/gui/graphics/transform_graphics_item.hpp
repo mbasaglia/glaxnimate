@@ -1,18 +1,18 @@
 #pragma once
 
-#include "model/graphics/handle.hpp"
+#include "graphics/handle.hpp"
 #include "model/transform.hpp"
 #include "model/document_node.hpp"
 
 
-namespace model::graphics {
+namespace graphics {
 
 class TransformGraphicsItem : public QGraphicsObject
 {
     Q_OBJECT
 
 public:
-    TransformGraphicsItem(Transform* transform, DocumentNode* target, QGraphicsItem* parent);
+    TransformGraphicsItem(model::Transform* transform, model::DocumentNode* target, QGraphicsItem* parent);
     ~TransformGraphicsItem();
 
     QRectF boundingRect() const override;
@@ -47,4 +47,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace model::graphics
+} // namespace graphics
