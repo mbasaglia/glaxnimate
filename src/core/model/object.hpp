@@ -54,7 +54,7 @@ public:
 
 signals:
     void property_added(const QString& name, const QVariant& value);
-    void property_changed(const QString& name, const QVariant& value);
+    void property_changed(const model::BaseProperty* prop, const QVariant& value);
 
 protected:
     virtual void on_property_changed(const BaseProperty* prop, const QVariant& value)
@@ -63,7 +63,7 @@ protected:
         Q_UNUSED(value);
     }
     void clone_into(Object* dest) const;
-    
+
     class Autoreg
     {
     public:

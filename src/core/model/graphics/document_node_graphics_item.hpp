@@ -5,6 +5,7 @@
 namespace model {
 
 class DocumentNode;
+class BaseProperty;
 
 } // namespace model
 
@@ -31,17 +32,20 @@ public slots:
     {
         setVisible(v);
     }
-    
+
     void shape_changed()
     {
         prepareGeometryChange();
     }
-    
-    
+
+
     void set_transform_matrix(const QTransform& t)
     {
         setTransform(t);
     }
+
+private slots:
+    void on_property_changed(const model::BaseProperty* prop);
 /*
 signals:
     void focused(DocumentNode* document_node);

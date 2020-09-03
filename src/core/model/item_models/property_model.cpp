@@ -112,24 +112,24 @@ public:
             }
         }
     }
-    
+
     void on_delete_object(model::Object* obj, PropertyModel* model)
     {
         auto it = objects.find(obj);
         if ( it == objects.end() )
             return;
-        
+
         auto it2 = nodes.find(it->second);
         if ( it2 == nodes.end() )
             return;
-        
+
         Subtree* node = &it2->second;
         for ( Subtree* child : node->children )
         {
             disconnect_recursive(child, model);
             nodes.erase(child->id);
         }
-        
+
         if ( node->parent )
         {
             auto& siblings = this->node(node->parent)->children;
@@ -142,7 +142,7 @@ public:
                 }
             }
         }
-            
+
         objects.erase(it);
         nodes.erase(it2);
     }
@@ -205,7 +205,7 @@ public:
             return false;
         if ( prop->traits().flags & PropertyTraits::Animated )
         {
-            
+
         }
         document->undo_stack().push(new command::SetPropertyValue(prop, before, after));
         return true;
@@ -516,23 +516,18 @@ bool model::PropertyModel::setData(const QModelIndex& index, const QVariant& val
     }
 }
 
-void model::PropertyModel::property_changed(const QString& name, const QVariant& value)
+void model::PropertyModel::property_changed(const model::BaseProperty* prop, const QVariant& value)
 {
-    Object* object = static_cast<Object*>(QObject::sender());
-    BaseProperty* prop = object->get_property(name);
-    if ( !prop )
-        return;
-    
-    auto it = d->properties.find(prop);
+    auto it = d->properties.find(const_cast<model::BaseProperty*>(prop));
     if ( it == d->properties.end() )
         return;
 
     Private::Subtree* prop_node = d->node(it->second);
     if ( !prop_node )
         return;
-    
+
     Private::Subtree* parent = d->node(prop_node->parent);
-    
+
     int i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
     QModelIndex index = createIndex(i, 1, prop_node->id);
 
@@ -596,7 +591,7 @@ model::AnimatableBase * model::PropertyModel::animatable(const QModelIndex& inde
         if ( st->prop && st->prop->traits().flags & PropertyTraits::Animated )
             return static_cast<model::AnimatableBase*>(st->prop);
     }
-    
+
     return nullptr;
 }
 
@@ -614,9 +609,9 @@ QModelIndex model::PropertyModel::property_index(model::BaseProperty* prop) cons
     Private::Subtree* prop_node = d->node(it->second);
     if ( !prop_node )
         return {};
-    
+
     Private::Subtree* parent = d->node(prop_node->parent);
-    
+
     int i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
     return createIndex(i, 1, prop_node->id);
 }

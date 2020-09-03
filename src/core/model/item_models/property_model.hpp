@@ -43,12 +43,12 @@ public:
     {
         set_object(nullptr);
     }
-    
+
     model::AnimatableBase* animatable(const QModelIndex& index) const;
     QModelIndex property_index(model::BaseProperty* anim) const;
 
 private slots:
-    void property_changed(const QString& name, const QVariant& value);
+    void property_changed(const model::BaseProperty* prop, const QVariant& value);
     void on_delete_object();
 
 private:
