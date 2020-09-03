@@ -15,7 +15,7 @@ struct PropertyChangedInspector
 
     void connect(Object& obj)
     {
-        QObject::connect(&obj, &Object::property_changed, [this](const QString& name, const QVariant& value){(*this)(name, value);});
+        QObject::connect(&obj, &Object::property_changed, [this](const BaseProperty* prop, const QVariant& value){(*this)(prop->name(), value);});
     }
 
     void connect_added(Object& obj)
