@@ -25,4 +25,5 @@ nav:
         - contributing/index.md
         - "Readme": contributing/read_me.md
         - contributing/documentation.md
+        - contributing/code_structure.md
     - links.md
