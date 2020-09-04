@@ -1818,7 +1818,7 @@
   <customwidget>
    <class>GlaxnimateGraphicsView</class>
    <extends>QGraphicsView</extends>
-   <header>ui/widgets/glaxnimate_graphics_view.hpp</header>
+   <header>widgets/glaxnimate_graphics_view.hpp</header>
    <slots>
     <slot>reset_rotation()</slot>
     <slot>reset_zoom()</slot>
@@ -1837,13 +1837,13 @@
   <customwidget>
    <class>FrameControlsWidget</class>
    <extends>QWidget</extends>
-   <header>ui/widgets/timeline/frame_controls_widget.hpp</header>
+   <header>widgets/timeline/frame_controls_widget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CompoundTimelineWidget</class>
    <extends>QWidget</extends>
-   <header>ui/widgets/timeline/compound_timeline_widget.hpp</header>
+   <header>widgets/timeline/compound_timeline_widget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -8,7 +8,7 @@
 #include "command/layer_commands.hpp"
 #include "command/shape_commands.hpp"
 
-#include "ui/widgets/tools/shape_tool_widget.hpp"
+#include "widgets/tools/shape_tool_widget.hpp"
 
 
 namespace tools {

@@ -4,11 +4,11 @@
 
 #include "tools/base.hpp"
 
-#include "ui/dialogs/io_status_dialog.hpp"
-#include "ui/dialogs/about_dialog.hpp"
-#include "ui/widgets/view_transform_widget.hpp"
-#include "ui/widgets/flow_layout.hpp"
-#include "ui/style/better_elide_delegate.hpp"
+#include "dialogs/io_status_dialog.hpp"
+#include "dialogs/about_dialog.hpp"
+#include "widgets/view_transform_widget.hpp"
+#include "widgets/flow_layout.hpp"
+#include "style/better_elide_delegate.hpp"
 #include "glaxnimate_app.hpp"
 
 void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)

@@ -4,7 +4,7 @@
 #include <QApplication>
 #include "QtColorWidgets/ColorDelegate"
 #include "item_models/property_model.hpp"
-#include "ui/widgets/spin2d.hpp"
+#include "widgets/spin2d.hpp"
 
 class PropertyDelegate : public color_widgets::ColorDelegate
 {

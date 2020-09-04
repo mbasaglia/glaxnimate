@@ -1,5 +1,5 @@
 #include "glaxnimate_app.hpp"
-#include "ui/dialogs/glaxnimate_window.hpp"
+#include "dialogs/glaxnimate_window.hpp"
 
 int main(int argc, char *argv[])
 {

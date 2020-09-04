@@ -4,7 +4,7 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 
-#include "ui/widgets/timeline/keyframe_editor_widget.hpp"
+#include "widgets/timeline/keyframe_editor_widget.hpp"
 
 class KeyframeEditorDialog : public QDialog
 {

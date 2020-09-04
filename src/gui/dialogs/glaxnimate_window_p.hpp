@@ -16,8 +16,8 @@
 #include "item_models/document_node_model.hpp"
 #include "item_models/property_model.hpp"
 
-#include "ui/style/dock_widget_style.hpp"
-#include "ui/style/property_delegate.hpp"
+#include "style/dock_widget_style.hpp"
+#include "style/property_delegate.hpp"
 
 #include "app/settings/settings.hpp"
 #include "app/scripting/script_engine.hpp"

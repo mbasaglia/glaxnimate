@@ -5,10 +5,10 @@
 #include <QScrollBar>
 
 #include "item_models/property_model.hpp"
-#include "ui/style/property_delegate.hpp"
+#include "style/property_delegate.hpp"
 #include "glaxnimate_app.hpp"
 #include "command/animation_commands.hpp"
-#include "ui/dialogs/keyframe_editor_dialog.hpp"
+#include "dialogs/keyframe_editor_dialog.hpp"
 
 class CompoundTimelineWidget::Private
 {
