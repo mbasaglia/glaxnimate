@@ -1,0 +1,6 @@
+[Desktop Entry]
+Categories=Graphics;
+Type=Application
+Icon=${PROJECT_SLUG}
+Name=${PROJECT_SLUG}
+Exec=${PROJECT_SLUG}

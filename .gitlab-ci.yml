@@ -1,7 +1,7 @@
 default:
     before_script:
         - apt-get update -y
-        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev python3-pip
+        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev python3-pip curl
         - git submodule update --init --recursive
 
 variables:
@@ -51,6 +51,9 @@ linux:build:
         - mkdir build
         - cd build
         - cmake ..
-        - make
+        - make AppImage
+    artifacts:
+        paths:
+            - build/glaxnimate-x86_64.AppImage
     when: always
 
