@@ -138,7 +138,6 @@ public:
         on_translate();
     }
 
-protected:
     virtual void mouse_press(const MouseEvent& event) = 0;
     virtual void mouse_move(const MouseEvent& event) = 0;
     virtual void mouse_release(const MouseEvent& event) = 0;
@@ -147,6 +146,18 @@ protected:
     virtual void key_press(const KeyEvent& event) = 0;
     virtual void key_release(const KeyEvent& event) = 0;
     virtual QCursor cursor() = 0;
+    virtual bool show_editors(model::DocumentNode* node) const = 0;
+    virtual void enable_event(const Event& event) = 0;
+    virtual void disable_event(const Event& event) = 0;
+
+protected:
+    bool mouse_on_handle(const MouseEvent& event) const
+    {
+        for ( auto item : event.scene->items(event.scene_pos, Qt::IntersectsItemShape, Qt::DescendingOrder, event.view->viewportTransform()) )
+            if ( item->flags() & QGraphicsItem::ItemIsFocusable && !event.scene->item_to_node(item) )
+                return true;
+        return false;
+    }
 
     virtual QWidget* on_create_widget()
     {
@@ -168,7 +179,7 @@ private:
     ScalableButton* button = nullptr;
     QWidget* settings_widget = nullptr;
 
-    friend GlaxnimateGraphicsView;
+//     friend GlaxnimateGraphicsView;
 };
 
 

@@ -84,14 +84,19 @@ public:
         return view->mapToScene(anchor);
     }
 
+    tools::Event event()
+    {
+        return {
+            view,
+            static_cast<graphics::DocumentScene*>(view->scene()),
+            tool_target
+        };
+    }
+
     tools::MouseEvent mouse_event(QMouseEvent* ev)
     {
         return {
-            {
-                view,
-                static_cast<graphics::DocumentScene*>(view->scene()),
-                tool_target
-            },
+            event(),
             ev,
             view->mapToScene(ev->pos()),
             press_button,
@@ -105,11 +110,7 @@ public:
     tools::PaintEvent paint_event(QPainter* painter)
     {
         return {
-            {
-                view,
-                static_cast<graphics::DocumentScene*>(view->scene()),
-                tool_target
-            },
+            event(),
             painter
         };
     }
@@ -117,11 +118,7 @@ public:
     tools::KeyEvent key_event(QKeyEvent* ev)
     {
         return {
-            {
-                view,
-                static_cast<graphics::DocumentScene*>(view->scene()),
-                tool_target
-            },
+            event(),
             ev
         };
     }
@@ -406,7 +403,13 @@ void GlaxnimateGraphicsView::view_fit(const QRect& fit_target)
 
 void GlaxnimateGraphicsView::set_active_tool(tools::Tool* tool)
 {
+    if ( d->tool )
+        d->tool->disable_event(d->event());
+
     d->tool = tool;
+
+    d->tool->enable_event(d->event());
+
     if ( d->mouse_view_mode == Private::NoDrag )
         setCursor(tool->cursor());
 }

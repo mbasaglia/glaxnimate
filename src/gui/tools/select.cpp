@@ -31,14 +31,11 @@ private:
 
         drag_mode = Click;
 
-        for ( auto item : event.scene->items(event.scene_pos, Qt::IntersectsItemShape, Qt::DescendingOrder, event.view->viewportTransform()) )
+        if ( mouse_on_handle(event) )
         {
-            if ( item->flags() & QGraphicsItem::ItemIsFocusable && !event.scene->item_to_node(item) )
-            {
-                drag_mode = ForwardEvents;
-                event.forward_to_scene();
-                return;
-            }
+            drag_mode = ForwardEvents;
+            event.forward_to_scene();
+            return;
         }
 
         rubber_p1 = event.event->localPos();
@@ -152,6 +149,13 @@ private:
             event.painter->drawRect(QRectF(rubber_p1, rubber_p2));
         }
     }
+
+    bool show_editors(model::DocumentNode*) const override
+    {
+        return true;
+    }
+    void enable_event(const Event& event) override { Q_UNUSED(event); }
+    void disable_event(const Event& event) override { Q_UNUSED(event); }
 
     QCursor cursor() override { return Qt::ArrowCursor; }
 

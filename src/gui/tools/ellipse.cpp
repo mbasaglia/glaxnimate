@@ -10,7 +10,6 @@ public:
     QString name() const override { return QObject::tr("Ellipse"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F5"), QKeySequence::PortableText); }
 
-protected:
     void mouse_release(const MouseEvent& event) override
     {
         if ( event.button() == Qt::LeftButton && dragging )
@@ -34,6 +33,11 @@ protected:
             path = event.view->mapFromScene(path);
             draw_shape(event, path);
         }
+    }
+
+    bool show_editors(model::DocumentNode* node) const override
+    {
+        return qobject_cast<model::Ellipse*>(node);
     }
 
 private:

@@ -11,7 +11,6 @@ public:
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F2"), QKeySequence::PortableText); }
     app::settings::SettingList settings() const override { return {}; }
 
-protected:
     void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
@@ -20,6 +19,9 @@ protected:
     void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
     void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
+    bool show_editors(model::DocumentNode* node) const override { Q_UNUSED(node); return true; }
+    void enable_event(const Event& event) override { Q_UNUSED(event); }
+    void disable_event(const Event& event) override { Q_UNUSED(event); }
 
 private:
     static Autoreg<EditTool> autoreg;
@@ -34,7 +36,6 @@ public:
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F3"), QKeySequence::PortableText); }
     app::settings::SettingList settings() const override { return {}; }
 
-protected:
     void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
@@ -43,6 +44,9 @@ protected:
     void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
     void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
+    bool show_editors(model::DocumentNode* node) const override { Q_UNUSED(node); return true; }
+    void enable_event(const Event& event) override { Q_UNUSED(event); }
+    void disable_event(const Event& event) override { Q_UNUSED(event); }
 
 private:
     static Autoreg<DrawTool> autoreg;
@@ -57,7 +61,6 @@ public:
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F6"), QKeySequence::PortableText); }
     app::settings::SettingList settings() const override { return {}; }
 
-protected:
     void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
@@ -66,6 +69,9 @@ protected:
     void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
     void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
+    bool show_editors(model::DocumentNode* node) const override { Q_UNUSED(node); return true; }
+    void enable_event(const Event& event) override { Q_UNUSED(event); }
+    void disable_event(const Event& event) override { Q_UNUSED(event); }
 
 private:
     static Autoreg<FreehandTool> autoreg;
@@ -79,7 +85,6 @@ public:
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("*"), QKeySequence::PortableText); }
     app::settings::SettingList settings() const override { return {}; }
 
-protected:
     void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_release(const MouseEvent& event) override { Q_UNUSED(event); }
@@ -88,6 +93,9 @@ protected:
     void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
     void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
+    bool show_editors(model::DocumentNode* node) const override { Q_UNUSED(node); return true; }
+    void enable_event(const Event& event) override { Q_UNUSED(event); }
+    void disable_event(const Event& event) override { Q_UNUSED(event); }
 
 private:
     static Autoreg<StarTool> autoreg;

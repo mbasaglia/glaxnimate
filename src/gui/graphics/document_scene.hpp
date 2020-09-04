@@ -4,6 +4,8 @@
 
 #include "model/document.hpp"
 
+namespace tools { class Tool; }
+
 namespace graphics {
 
 class DocumentNodeGraphicsItem;
@@ -12,11 +14,12 @@ class DocumentScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    enum SelectFlags
+    enum SelectMode
     {
-        Replace = 0x00, ///< Replace current selection
-        Append  = 0x01, ///< Append to current selection
-        Toggle  = 0x02, ///< Toggles from selection
+        Replace, ///< Replace current selection
+        Append , ///< Append to current selection
+        Toggle , ///< Toggles from selection
+        Remove , ///< Removes from selection
     };
 
     DocumentScene();
@@ -24,13 +27,16 @@ public:
 
     void set_document(model::Document* document);
     void clear_document() { set_document(nullptr); }
+    void set_active_tool(tools::Tool* tool);
 
     void add_selection(model::DocumentNode* node);
     void remove_selection(model::DocumentNode* node);
     void toggle_selection(model::DocumentNode* node);
     void clear_selection();
-
-    void user_select(const std::vector<model::DocumentNode*>& selected, SelectFlags flags);
+    void user_select(const std::vector<model::DocumentNode*>& selected, SelectMode flags);
+    const std::vector<model::DocumentNode*>& selection() const;
+    bool is_selected(model::DocumentNode* node) const;
+    void show_editors(model::DocumentNode* node);
 
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const;
 

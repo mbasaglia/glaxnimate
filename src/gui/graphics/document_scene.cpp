@@ -4,6 +4,7 @@
 
 #include "graphics/document_node_graphics_item.hpp"
 #include "graphics/create_items.hpp"
+#include "tools/base.hpp"
 
 class graphics::DocumentScene::Private
 {
@@ -13,11 +14,16 @@ public:
 
     using EditorMap = std::unordered_map<model::DocumentNode*, std::vector<std::unique_ptr<QGraphicsItem>>>;
 
-    EditorMap::iterator remove_selection(const EditorMap::iterator& it)
+    void remove_selection(model::DocumentNode* node)
     {
-        return node_to_editors.erase(it);
-    }
+        auto it = node_to_editors.find(node);
+        if ( it != node_to_editors.end() )
+            node_to_editors.erase(it);
 
+        auto it2 = selection_find(node);
+        if ( it2 != selection.end() )
+            selection.erase(it2);
+    }
 
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const
     {
@@ -36,12 +42,18 @@ public:
         return nodes;
     }
 
+    std::vector<model::DocumentNode*>::iterator selection_find(model::DocumentNode* node)
+    {
+        return std::find(selection.begin(), selection.end(), node);
+    }
+
 
     model::Document* document = nullptr;
     std::unordered_map<model::DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
     EditorMap node_to_editors;
     GraphicsItemFactory item_factory;
-
+    std::vector<model::DocumentNode*> selection;
+    tools::Tool* tool = nullptr;
 };
 
 graphics::DocumentScene::DocumentScene()
@@ -110,6 +122,8 @@ void graphics::DocumentScene::disconnect_node ( model::DocumentNode* node )
     for ( model::DocumentNode* child : node->docnode_children() )
         disconnect_node(child);
 
+    d->remove_selection(node);
+
     auto item = d->node_to_item.find(node);
     if ( item != d->node_to_item.end() )
     {
@@ -125,32 +139,23 @@ void graphics::DocumentScene::add_selection(model::DocumentNode* node)
     if ( it != d->node_to_item.end() )
         it->second->setSelected(true);
 
-    if ( d->node_to_editors.find(node) != d->node_to_editors.end() )
+    if ( d->selection_find(node) != d->selection.end() )
         return;
 
-    auto items = d->item_factory.make_graphics_editor(node);
-    for ( const auto& item : items )
-    {
-        item->setZValue(Private::editor_z);
-        addItem(item.get());
-    }
-
-    d->node_to_editors.emplace(node, std::move(items));
+    d->selection.push_back(node);
+    if ( d->tool && d->tool->show_editors(node) )
+        show_editors(node);
 }
 
 
 void graphics::DocumentScene::remove_selection(model::DocumentNode* node)
 {
-    auto it = d->node_to_editors.find(node);
-    if ( it != d->node_to_editors.end() )
-    {
-        d->remove_selection(it);
-    }
+    d->remove_selection(node);
 }
 
 void graphics::DocumentScene::toggle_selection(model::DocumentNode* node)
 {
-    if ( d->node_to_editors.count(node) )
+    if ( is_selected(node) )
         remove_selection(node);
     else
         add_selection(node);
@@ -160,6 +165,7 @@ void graphics::DocumentScene::toggle_selection(model::DocumentNode* node)
 void graphics::DocumentScene::clear_selection()
 {
     d->node_to_editors.clear();
+    d->selection.clear();
 }
 
 model::DocumentNode* graphics::DocumentScene::item_to_node(const QGraphicsItem* item) const
@@ -167,53 +173,99 @@ model::DocumentNode* graphics::DocumentScene::item_to_node(const QGraphicsItem* 
     return d->item_to_node(item);
 }
 
-void graphics::DocumentScene::user_select(const std::vector<model::DocumentNode *>& nodes, SelectFlags flags)
+void graphics::DocumentScene::user_select(const std::vector<model::DocumentNode *>& nodes, SelectMode flags)
 {
-    std::vector<model::DocumentNode *> deselected;
-    std::unordered_set<model::DocumentNode*> sel(nodes.begin(), nodes.end());
-    if ( flags == Replace )
+    // Sorted ranges so we can use set operations
+    std::vector<model::DocumentNode*> old_selection = d->selection;
+    std::sort(old_selection.begin(), old_selection.end());
+    std::vector<model::DocumentNode*> subject = nodes;
+    std::sort(subject.begin(), subject.end());
+    auto guess_size = std::max(old_selection.size(), subject.size());
+
+    // In selection but not in nodes
+    std::vector<model::DocumentNode*> selected_not_subject;
+    selected_not_subject.reserve(guess_size);
+    std::set_difference(
+        old_selection.begin(), old_selection.end(),
+        subject.begin(), subject.end(),
+        std::inserter(selected_not_subject, selected_not_subject.end())
+    );
+
+    // In nodes but not in selection
+    std::vector<model::DocumentNode*> subject_not_selected;
+    subject_not_selected.reserve(guess_size);
+    std::set_difference(
+        subject.begin(), subject.end(),
+        old_selection.begin(), old_selection.end(),
+        std::inserter(subject_not_selected, subject_not_selected.end())
+    );
+
+    // In both
+    std::vector<model::DocumentNode*> intersection;
+    intersection.reserve(guess_size);
+    std::set_intersection(
+        old_selection.begin(), old_selection.end(),
+        subject.begin(), subject.end(),
+        std::inserter(intersection, intersection.end())
+    );
+
+    // Determine which chunks need to be added or removed to the selection
+    std::vector<model::DocumentNode*> empty;
+    std::vector<model::DocumentNode*>* selected = &empty;
+    std::vector<model::DocumentNode*>* deselected = &empty;
+
+    switch ( flags )
     {
-        for ( auto it = d->node_to_editors.begin(); it != d->node_to_editors.end(); )
-        {
-            if ( sel.count(it->first) )
-            {
-                ++it;
-            }
-            else
-            {
-                deselected.push_back(it->first);
-                it = d->remove_selection(it);
-            }
-        }
+        case Replace:
+            // selected not subject -> deselect
+            deselected = &selected_not_subject;
+            // intersection -> unchanged
+            // new nodes -> select
+            selected = &subject_not_selected;
+            break;
+        case Append:
+            // selected not subject -> unchanged
+            // intersection -> unchanged
+            // new nodes -> select
+            selected = &subject_not_selected;
+            deselected = &empty;
+            break;
+        case Toggle:
+            // selected not subject -> unchanged
+            // intersection -> deselect
+            deselected = &intersection;
+            // new nodes -> select
+            selected = &subject_not_selected;
+            break;
+        case Remove:
+            // selected not subject -> unchanged
+            // intersection -> deselect
+            deselected = &intersection;
+            selected = &empty;
+            // new nodes -> unchanged
+            break;
     }
 
-    if ( flags == Replace || flags == Append )
+    for ( auto it = d->node_to_editors.begin(); it != d->node_to_editors.end(); )
     {
-        for ( model::DocumentNode* n : nodes )
-            add_selection(n);
-        emit node_user_selected(nodes, deselected);
+        if ( std::binary_search(deselected->begin(), deselected->end(), it->first) )
+            it = d->node_to_editors.erase(it);
+        else
+            ++it;
     }
-    else if ( flags )
-    {
-        std::vector<model::DocumentNode *> selected;
 
-        for ( model::DocumentNode* node : nodes )
-        {
-            auto it = d->node_to_editors.find(node);
-            if ( it == d->node_to_editors.end() )
-            {
-                selected.push_back(node);
-                add_selection(node);
-            }
-            else
-            {
-                deselected.push_back(node);
-                d->remove_selection(it);
-            }
-        }
+    d->selection.erase(
+        std::remove_if(d->selection.begin(), d->selection.end(),
+            [&deselected](model::DocumentNode* node){
+                return std::binary_search(deselected->begin(), deselected->end(), node);
+        }),
+        d->selection.end()
+    );
 
-        emit node_user_selected(selected, deselected);
-    }
+    for ( auto new_sel : *selected )
+        add_selection(new_sel);
+
+    emit node_user_selected(*selected, *deselected);
 
 }
 
@@ -230,4 +282,46 @@ std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(
 std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(const QPolygonF& path, const QTransform& device_transform) const
 {
     return d->items_to_nodes(items(path, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
+}
+
+bool graphics::DocumentScene::is_selected(model::DocumentNode* node) const
+{
+    return d->selection_find(node) != d->selection.end();
+}
+
+const std::vector<model::DocumentNode *> & graphics::DocumentScene::selection() const
+{
+    return d->selection;
+}
+
+void graphics::DocumentScene::show_editors(model::DocumentNode* node)
+{
+    auto items = d->item_factory.make_graphics_editor(node);
+    for ( const auto& item : items )
+    {
+        item->setZValue(Private::editor_z);
+        addItem(item.get());
+    }
+
+    d->node_to_editors.emplace(node, std::move(items));
+}
+
+void graphics::DocumentScene::set_active_tool(tools::Tool* tool)
+{
+    d->tool = tool;
+
+    for ( auto node : d->selection )
+    {
+        if ( tool->show_editors(node) && !d->node_to_editors.count(node) )
+            show_editors(node);
+    }
+
+    for ( auto it = d->node_to_editors.begin(); it != d->node_to_editors.end(); )
+    {
+        if ( !tool->show_editors(it->first) )
+            it = d->node_to_editors.erase(it);
+        else
+            ++it;
+    }
+
 }

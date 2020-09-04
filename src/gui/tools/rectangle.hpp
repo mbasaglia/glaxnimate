@@ -79,6 +79,13 @@ protected:
         }
     }
 
+    bool show_editors(model::DocumentNode* node) const override
+    {
+        return qobject_cast<model::Rect*>(node);
+    }
+    void enable_event(const Event& event) override { Q_UNUSED(event); }
+    void disable_event(const Event& event) override { Q_UNUSED(event); }
+
 protected:
 
     void update_rect(Qt::KeyboardModifiers modifiers)
