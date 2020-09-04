@@ -1,7 +1,7 @@
 default:
     before_script:
         - apt-get update -y
-        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev python3-pip curl qttools5-dev-tools
+        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev python3-pip curl qttools5-dev-tools qttools5-dev
         - git submodule update --init --recursive
 
 variables:
@@ -32,6 +32,7 @@ pages:
 
 
 linux:test:
+    image: ubuntu:latest
     stage: build
     script:
         - pip3 install gcovr
@@ -50,7 +51,7 @@ linux:build:
     script:
         - mkdir build
         - cd build
-        - cmake ..
+        - cmake .. -DCMAKE_INSTALL_PREFIX=/usr
         - make AppImage
     artifacts:
         paths:
