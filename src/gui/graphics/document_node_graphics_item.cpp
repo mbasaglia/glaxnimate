@@ -29,5 +29,6 @@ void graphics::DocumentNodeGraphicsItem::on_property_changed(const model::BasePr
     if ( prop->traits().flags & model::PropertyTraits::Animated )
     {
         prepareGeometryChange();
+        update();
     }
 }

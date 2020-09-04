@@ -108,6 +108,7 @@ void graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setFocus(Qt::MouseFocusReason);
     event->accept();
+    emit drag_starting(pos(), event->modifiers());
 }
 
 void graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -119,9 +120,9 @@ void graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if ( !d->dont_move )
         setPos(p);
     event->accept();
-    emit dragged(p);
-    emit dragged_x(p.x());
-    emit dragged_y(p.y());
+    emit dragged(p, event->modifiers());
+    emit dragged_x(p.x(), event->modifiers());
+    emit dragged_y(p.y(), event->modifiers());
 
 }
 

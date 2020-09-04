@@ -384,6 +384,7 @@ template<class VecT> struct VecScalar
 
 
 template<> struct VecScalar<QPointF> { using type = qreal; };
+template<> struct VecScalar<QSizeF> { using type = qreal; };
 
 template<class VecT>
 using scalar_type = typename detail::VecScalar<std::decay_t<VecT>>::type;
@@ -422,7 +423,7 @@ struct LengthHelper<VecT, 1>
 } // namespace detail
 
 using detail::scalar_type;
-
+using detail::get;
 
 template<class ScalarT, int Size>
 constexpr VecN<ScalarT, Size> lerp(const VecN<ScalarT, Size>& a, const VecN<ScalarT, Size>& b, double factor) noexcept

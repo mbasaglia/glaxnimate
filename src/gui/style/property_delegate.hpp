@@ -5,6 +5,7 @@
 #include "QtColorWidgets/ColorDelegate"
 #include "item_models/property_model.hpp"
 #include "widgets/spin2d.hpp"
+#include "math/vector.hpp"
 
 class PropertyDelegate : public color_widgets::ColorDelegate
 {
@@ -17,6 +18,8 @@ protected:
                 return paint_xy<QPointF>(painter, option, index);
             case QMetaType::QVector2D:
                 return paint_xy<QVector2D>(painter, option, index);
+            case QMetaType::QSizeF:
+                return paint_xy<QSizeF>(painter, option, index);
         }
 
         return color_widgets::ColorDelegate::paint(painter, option, index);
@@ -34,6 +37,8 @@ protected:
             case QMetaType::QPointF:
                 return new Spin2D(false, parent);
             case QMetaType::QVector2D:
+                return new Spin2D(true, parent);
+            case QMetaType::QSizeF:
                 return new Spin2D(true, parent);
             case QMetaType::Float:
             case QMetaType::Double:
@@ -84,6 +89,8 @@ protected:
                 return static_cast<Spin2D*>(editor)->set_value(index.data().value<QPointF>());
             case QMetaType::QVector2D:
                 return static_cast<Spin2D*>(editor)->set_value(index.data().value<QVector2D>());
+            case QMetaType::QSizeF:
+                return static_cast<Spin2D*>(editor)->set_value(index.data().value<QSizeF>());
             case QMetaType::Float:
             case QMetaType::Double:
                 static_cast<QDoubleSpinBox*>(editor)->setValue(index.data().toDouble());
@@ -114,6 +121,9 @@ protected:
                 return;
             case QMetaType::QVector2D:
                 model->setData(index, static_cast<Spin2D*>(editor)->value_vector());
+                return;
+            case QMetaType::QSizeF:
+                model->setData(index, static_cast<Spin2D*>(editor)->value_size());
                 return;
             case QMetaType::Float:
             case QMetaType::Double:
@@ -164,7 +174,14 @@ private:
     void paint_xy(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
     {
         T value = index.data().value<T>();
-        paint_plaintext(QString("%1 x %2").arg(value.x()).arg(value.y()), painter, option, index);
+        paint_plaintext(
+            QString("%1 x %2")
+            .arg(math::get(value, 0))
+            .arg(math::get(value, 1)),
+            painter,
+            option,
+            index
+        );
     }
 
     void paint_plaintext(const QString& text, QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const

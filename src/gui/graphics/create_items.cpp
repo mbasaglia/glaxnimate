@@ -2,6 +2,9 @@
 
 #include "document_node_graphics_item.hpp"
 #include "main_composition_item.hpp"
+#include "model/shapes/shapes.hpp"
+#include "position_item.hpp"
+#include "sizepos_item.hpp"
 
 graphics::GraphicsItemFactory::GraphicsItemFactory()
 {
@@ -27,6 +30,25 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             QObject::connect(layer, &model::Layer::transform_matrix_changed, p.get(), &graphics::TransformGraphicsItem::set_transform_matrix);
             p->set_transform_matrix(layer->transform_matrix());
             v.push_back(std::move(p));
+            return v;
+        }
+    );
+
+    register_builder<model::Rect>(
+        &GraphicsItemFactory::make_graphics_item_default,
+        [](model::Rect* rect){
+            editors_list v;
+            v.push_back(std::make_unique<graphics::PositionItem>(&rect->position));
+            v.push_back(std::make_unique<graphics::SizePosItem>(&rect->size, &rect->position));
+            return v;
+        }
+    );
+    register_builder<model::Ellipse>(
+        &GraphicsItemFactory::make_graphics_item_default,
+        [](model::Ellipse* rect){
+            editors_list v;
+            v.push_back(std::make_unique<graphics::PositionItem>(&rect->position));
+            v.push_back(std::make_unique<graphics::SizePosItem>(&rect->size, &rect->position));
             return v;
         }
     );
