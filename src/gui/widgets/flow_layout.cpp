@@ -89,7 +89,10 @@ int FlowLayout::do_layout(const QRect& rect, bool test_only) const
     int nrows = (items.size() + ipr - 1) / ipr;
     int ih = (effective_rect.height() - vertical_spacing * (nrows - 1)) / nrows;
     if ( !test_only && ih < iw )
+    {
         iw = qMax(ih, min_w);
+        ipr = (effective_rect.width() + horizontal_spacing) / (iw + horizontal_spacing);
+    }
 
     QSize item_size(iw, iw);
 
