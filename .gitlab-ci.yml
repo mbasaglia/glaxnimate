@@ -1,7 +1,7 @@
 default:
     before_script:
         - apt-get update -qq
-        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev python3-pip wget qttools5-dev-tools
+        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev python3-pip qttools5-dev-tools
         - git submodule update --init --recursive
 
 variables:
@@ -45,7 +45,6 @@ linux:test:
             - build/coverage
     when: always
 
-
 linux:build:
     image: ubuntu:latest
     stage: build
@@ -75,7 +74,7 @@ linux:appimage:
     stage: build
     before_script:
         - apt-get update -qq
-        - apt-get install -y libpython3-dev git python3-pip software-properties-common desktop-file-utils
+        - apt-get install -y libpython3-dev git python3-pip software-properties-common desktop-file-utils wget
         - add-apt-repository ppa:beineri/opt-qt-5.10.1-xenial -y
         - add-apt-repository ppa:ubuntu-toolchain-r/test -y
         - apt update -qq
