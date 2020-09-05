@@ -1,7 +1,7 @@
 default:
     before_script:
         - apt-get update -qq
-        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev python3-pip qttools5-dev-tools wget
+        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev python3-pip qttools5-dev-tools
         - git submodule update --init --recursive
 
 variables:
@@ -45,7 +45,7 @@ linux:test:
             - build/coverage
     when: always
 
-linux:appimage:
+linux:build:
     image: ubuntu:latest
     stage: build
     script:
@@ -53,23 +53,9 @@ linux:appimage:
         - cd build
         - cmake ..
         - make
-        - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
-        - make AppDir_base
-        - wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
-        - chmod a+x linuxdeploy-x86_64.AppImage
-        - ./linuxdeploy-x86_64.AppImage --appimage-extract
-        - ./squashfs-root/usr/bin/linuxdeploy --appdir AppDir --desktop-file=AppDir/glaxnimate.desktop
-        - rm -rf squashfs-root
-        - wget -c -nv "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
-        - chmod a+x appimagetool-x86_64.AppImage
-        - ./appimagetool-x86_64.AppImage --appimage-extract
-        - ./squashfs-root/usr/bin/appimagetool AppDir
-    artifacts:
-        paths:
-            - build/glaxnimate-x86_64.AppImage
     when: always
 
-linux:appimage16:
+linux:appimage:
     image: ubuntu:16.04
     stage: build
     before_script:
@@ -92,16 +78,8 @@ linux:appimage16:
         - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
         - ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
         - PATH="/opt/qt510/bin/:$PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes/libqgtk3.so -appimage
-        #- wget "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
-        #- chmod a+x linuxdeploy-x86_64.AppImage
-        #- ./linuxdeploy-x86_64.AppImage --appimage-extract
-        #- LD_LIBRARY_PATH="/opt/qt510/lib/:$LD_LIBRARY_PATH" ./squashfs-root/usr/bin/linuxdeploy --appdir AppDir --desktop-file=AppDir/glaxnimate.desktop
-        #- rm -rf squashfs-root
-        #- wget "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
-        #- chmod a+x appimagetool-x86_64.AppImage
-        #- ./appimagetool-x86_64.AppImage --appimage-extract
-        #- ./squashfs-root/usr/bin/appimagetool AppDir
+        - mv glaxnimate-dev-x86_64.AppImage glaxnimate-x86_64.AppImage
     artifacts:
         paths:
-            - build/glaxnimate-dev-x86_64.AppImage
+            - build/glaxnimate-x86_64.AppImage
     when: always
