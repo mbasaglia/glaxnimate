@@ -1,14 +1,15 @@
-cmake_minimum_required (VERSION 3.13 FATAL_ERROR)
-cmake_policy(SET CMP0076 NEW)
+cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
+# cmake_policy(SET CMP0076 NEW)
 
 
-project(Glaxnimate VERSION 0.0.1 DESCRIPTION "Simple vector animation program" LANGUAGES CXX)
+project(Glaxnimate VERSION 0.0.1 LANGUAGES CXX)
 set(PROJECT_SLUG "glaxnimate")
 set(LIB_NAME "${PROJECT_SLUG}_core")
 set(LIB_NAME_GUI "${PROJECT_SLUG}_gui")
 set(URL_DOCS "https://glaxnimate.mattbas.org/")
 set(URL_ISSUES "https://gitlab.com/mattia.basaglia/glaxnimate/-/issues")
 set(DATA_INSTALL "share/${PROJECT_SLUG}/${PROJECT_SLUG}")
+set(PROJECT_DESCRIPTION "Simple vector animation program")
 
 # CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_SOURCE_DIR}/external/cmake-modules")
