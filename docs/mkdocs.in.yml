@@ -16,6 +16,7 @@ extra_css:
     - style/style.css
 nav:
     - index.md
+    - download.md
     - 'Documentation':
         - ui/index.md
         - ui/canvas.md
@@ -26,4 +27,4 @@ nav:
         - "Readme": contributing/read_me.md
         - contributing/documentation.md
         - contributing/code_structure.md
-    - links.md
+    - "Links": links.md
