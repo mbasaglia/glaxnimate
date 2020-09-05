@@ -12,6 +12,8 @@ graphics/create_items.cpp
 item_models/document_node_model.cpp
 item_models/property_model.cpp
 
+style/property_delegate.cpp
+
 tools/base.cpp
 tools/dummy.cpp
 tools/select.cpp

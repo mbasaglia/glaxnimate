@@ -443,12 +443,6 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
                 return QVariant::fromValue(prop->value().toBool() ? Qt::Checked : Qt::Unchecked);
             return {};
         }
-        else if ( traits.type == model::PropertyTraits::Enum )
-        {
-            if ( role == Qt::DisplayRole )
-                return prop->value().toString();
-            return {};
-        }
         else if ( traits.type == model::PropertyTraits::ObjectReference )
         {
             if ( role == Qt::DisplayRole )
