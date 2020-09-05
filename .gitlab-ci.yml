@@ -81,6 +81,7 @@ linux:appimage:
         - apt update -qq
         - apt-get install -y qt510base qt510svg qt510tools qt510translations libgl1-mesa-dev g++-9
         - pip3 install cmake
+        - git submodule update --init --recursive
     script:
         - mkdir build
         - cd build
