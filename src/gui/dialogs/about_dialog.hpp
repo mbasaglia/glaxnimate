@@ -29,6 +29,7 @@ private slots:
     void open_settings_file();
     void copy_system();
     void about_qt();
+    void dir_open(const QModelIndex& index);
 
 private:
     std::unique_ptr<Ui::AboutDialog> d;

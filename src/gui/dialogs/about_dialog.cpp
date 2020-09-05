@@ -89,3 +89,8 @@ void AboutDialog::copy_system()
     clipboard->setText(text);
 }
 
+
+void AboutDialog::dir_open(const QModelIndex& index)
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(index.data().toString()));
+}

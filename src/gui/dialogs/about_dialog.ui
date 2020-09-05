@@ -183,7 +183,7 @@ p, li { white-space: pre-wrap; }
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
+            <y>-86</y>
             <width>448</width>
             <height>368</height>
            </rect>
@@ -425,7 +425,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>457</x>
-     <y>188</y>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
      <x>504</x>
@@ -441,7 +441,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel">
      <x>439</x>
-     <y>254</y>
+     <y>168</y>
     </hint>
     <hint type="destinationlabel">
      <x>504</x>
@@ -481,11 +481,44 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>view_data</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>AboutDialog</receiver>
+   <slot>dir_open(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>289</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>617</x>
+     <y>401</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>view_icons</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>AboutDialog</receiver>
+   <slot>dir_open(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>378</x>
+     <y>371</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>556</x>
+     <y>366</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open_user_data()</slot>
   <slot>open_settings_file()</slot>
   <slot>copy_system()</slot>
   <slot>about_qt()</slot>
+  <slot>dir_open(QModelIndex)</slot>
  </slots>
 </ui>
