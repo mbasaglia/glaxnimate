@@ -10,6 +10,8 @@
 
 #include "object.hpp"
 
+namespace math { class Bezier; }
+
 namespace model {
 
 struct PropertyTraits
@@ -29,6 +31,7 @@ struct PropertyTraits
         String,
         Enum,
         Uuid,
+        Bezier,
     };
 
     enum Flags
@@ -92,6 +95,7 @@ template<> struct GetType<QSizeF, void> { static constexpr const PropertyTraits:
 template<> struct GetType<QString, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::String; };
 template<> struct GetType<QUuid, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Uuid; };
 template<> struct GetType<QPointF, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Point; };
+template<> struct GetType<math::Bezier, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Bezier; };
 
 template<class ObjT>
 struct GetType<ObjT, std::enable_if_t<std::is_integral_v<ObjT>>>

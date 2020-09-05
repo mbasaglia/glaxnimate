@@ -72,7 +72,7 @@ public:
      * \param factor value between 0 and 1 determining the split position
      * \return Two vectors for the two resulting cubic beziers
      */
-    std::pair<std::vector<Vec>, std::vector<Vec>> split(scalar factor) const
+    std::pair<std::array<Vec, 4>, std::array<Vec, 4>> split(scalar factor) const
     {
         Vec p01 = lerp(points_[0], points_[1], factor);
         Vec p12 = lerp(points_[1], points_[2], factor);

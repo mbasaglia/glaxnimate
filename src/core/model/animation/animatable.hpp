@@ -82,18 +82,18 @@ public:
      * If there is already a keyframe at \p time the returned value might be an existing keyframe
      */
     Q_INVOKABLE virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value) = 0;
-    
+
     /**
      * \brief Removes the keyframe at index \p i
      */
     Q_INVOKABLE virtual void remove_keyframe(int i) = 0;
-    
+
     /**
      * \brief Removes all keyframes
      * \post !animated()
      */
     Q_INVOKABLE virtual void clear_keyframes() = 0;
-    
+
     /**
      * \brief Removes the keyframe with the given time
      * \returns whether a keyframe was found and removed
@@ -104,12 +104,12 @@ public:
      * \brief Get the value at the given time
      */
     Q_INVOKABLE virtual QVariant value(FrameTime time) const = 0;
-    
+
     using BaseProperty::value;
 
     virtual QVariant extra_variant() const = 0;
     virtual bool set_extra_variant(const QVariant&) = 0;
-    
+
     /**
      * \brief Moves a keyframe
      * \param keyframe_index Index of the keyframe to move
@@ -122,9 +122,9 @@ public:
      * If animated(), whether the current value has been changed over the animated value
      */
     virtual bool value_mismatch() const = 0;
-    
+
     bool assign_from(const BaseProperty* prop) override;
-    
+
     /**
      * \brief Set the current time
      * \post value() == value(time)
@@ -134,12 +134,12 @@ public:
         current_time = time;
         on_set_time(time);
     }
-    
+
     FrameTime time() const
     {
         return current_time;
     }
-    
+
     /**
      * \brief Set the value for the given keyframe
      */
@@ -168,7 +168,7 @@ public:
     Q_INVOKABLE int keyframe_index(FrameTime time) const
     {
         auto kfcount = keyframe_count();
-        
+
         for ( int i = 0; i < kfcount; i++ )
         {
             auto kftime = keyframe(i)->time();
@@ -179,11 +179,11 @@ public:
         }
         return kfcount - 1;
     }
-    
+
     int keyframe_index(KeyframeBase* kf) const
     {
         auto kfcount = keyframe_count();
-        
+
         for ( int i = 0; i < kfcount; i++ )
         {
             if ( keyframe(i) == kf )
@@ -202,15 +202,15 @@ public:
             return IsKeyframe;
         return Tween;
     }
-    
+
 signals:
     void keyframe_added(int index, KeyframeBase* keyframe);
     void keyframe_removed(int index);
     void keyframe_updated(int index, KeyframeBase* keyframe);
-    
+
 protected:
     virtual void on_set_time(FrameTime time) = 0;
-    
+
 private:
     FrameTime current_time = 0;
 };
@@ -289,7 +289,6 @@ public:
     Keyframe(FrameTime time, Type value)
         : detail::KeyframeWithExtra<Type>(time), value_(std::move(value)) {}
 
-
     void set(reference value)
     {
         value_ =  value;
@@ -297,6 +296,11 @@ public:
     }
 
     reference get() const
+    {
+        return value_;
+    }
+
+    Type& get_reference()
     {
         return value_;
     }
@@ -384,8 +388,6 @@ namespace detail {
         }
     };
 
-
-
 } // namespace detail
 
 template<class Type>
@@ -435,7 +437,7 @@ public:
             return set_keyframe(time, *v);
         return nullptr;
     }
-    
+
     void remove_keyframe(int i) override
     {
         if ( i > 0 && i <= int(keyframes_.size()) )
@@ -444,7 +446,7 @@ public:
             emit this->keyframe_removed(i);
         }
     }
-    
+
     void clear_keyframes() override
     {
         int n = keyframes_.size();
@@ -452,7 +454,7 @@ public:
         for ( int i = 0; i < n; i++ )
             emit this->keyframe_removed(i);
     }
-    
+
     bool remove_keyframe_at_time(FrameTime time) override
     {
         for ( auto it = keyframes_.begin(); it != keyframes_.end(); ++it )
@@ -494,7 +496,7 @@ public:
             emit this->keyframe_added(0, keyframes_.back().get());
             return keyframes_.back().get();
         }
-        
+
         // Current time, update value_
         if ( time == this->time() )
         {
@@ -505,7 +507,7 @@ public:
         // Find the right keyframe
         int index = this->keyframe_index(time);
         auto kf = keyframe(index);
-                
+
         // Time matches, update
         if ( kf->time() == time )
         {
@@ -545,30 +547,30 @@ public:
     {
         return mismatched_;
     }
-    
+
     int move_keyframe(int keyframe_index, FrameTime time) override
     {
         if ( keyframe_index < 0 || keyframe_index >= int(keyframes_.size()) )
             return keyframe_index;
-        
+
         int new_index = 0;
         for ( ; new_index < int(keyframes_.size()); new_index++ )
         {
             if ( keyframes_[new_index]->time() > time )
                 break;
         }
-        
+
         keyframes_[keyframe_index]->set_time(time);
-        
+
         if ( new_index > keyframe_index )
             new_index--;
-            
+
         if ( keyframe_index != new_index )
         {
             auto move = std::move(keyframes_[keyframe_index]);
             keyframes_.erase(keyframes_.begin() + keyframe_index);
             keyframes_.insert(keyframes_.begin() + new_index, std::move(move));
-            
+
             int ia = keyframe_index;
             int ib = new_index;
             if ( ia > ib )
@@ -580,10 +582,10 @@ public:
         {
             emit this->keyframe_updated(keyframe_index, keyframes_[keyframe_index].get());
         }
-            
+
         return new_index;
     }
-    
+
 protected:
     void on_set_time(FrameTime time) override
     {
@@ -596,8 +598,7 @@ protected:
         }
         mismatched_ = false;
     }
-    
-private:
+
     std::pair<const keyframe_type*, value_type> get_at_impl(FrameTime time) const
     {
         if ( keyframes_.empty() )

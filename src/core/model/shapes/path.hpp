@@ -3,6 +3,7 @@
 #pragma once
 
 #include "shape.hpp"
+#include "model/animation/animatable_path.hpp"
 
 namespace model {
 
@@ -10,56 +11,39 @@ namespace model {
 class Path : public Shape
 {
     GLAXNIMATE_OBJECT
+
+public:
+    AnimatablePath path{this, "path"};
+
+    GLAXNIMATE_PROPERTY(bool, closed, false, &Path::closed_changed)
+
 public:
     using Shape::Shape;
 
     QIcon docnode_icon() const override
     {
-        return QIcon::fromTheme("draw-rectangle");
+        return QIcon::fromTheme("draw-bezier-curves");
     }
 
     QString type_name_human() const override
     {
-        return tr("Rectangle");
+        return tr("Path");
     }
 
     math::Bezier to_bezier(FrameTime t) const override
     {
-        math::Bezier bezier;
-        QRectF bb = local_bounding_rect(t);
-        float rounded = this->rounded.get_at(t);
-
-        if ( rounded == 0 )
-        {
-            bezier.add_point(bb.topLeft());
-            bezier.add_point(bb.topRight());
-            bezier.add_point(bb.bottomRight());
-            bezier.add_point(bb.bottomLeft());
-        }
-        else
-        {
-            QPointF hh(rounded/2, 0);
-            QPointF vh(0, rounded/2);
-            QPointF hd(rounded, 0);
-            QPointF vd(0, rounded);
-            bezier.add_point(bb.topLeft()+vd, {0,0}, -vh);
-            bezier.add_point(bb.topLeft()+hd, -hh);
-            bezier.add_point(bb.topRight()-hd, {0,0}, hh);
-            bezier.add_point(bb.topRight()+vd, -vh);
-            bezier.add_point(bb.bottomRight()-vd, {0,0}, vh);
-            bezier.add_point(bb.bottomRight()-hd, hh);
-            bezier.add_point(bb.bottomLeft()+hd, {0,0}, -hh);
-            bezier.add_point(bb.bottomLeft()-vd, vh);
-        }
-
-        bezier.close();
-        return bezier;
+        return path.get_at(t);
     }
 
     QRectF local_bounding_rect(FrameTime t) const override
     {
-        QSizeF sz = size.get_at(t);
-        return QRectF(position.get_at(t) - QPointF(sz.width()/2, sz.height()/2), sz);
+        return path.get_at(t).bounding_box();
+    }
+
+private:
+    void closed_changed(bool closed)
+    {
+        path.set_closed(closed);
     }
 };
 

@@ -26,6 +26,7 @@ model/shapes/fill.cpp
 model/shapes/rect.cpp
 model/shapes/group.cpp
 model/shapes/ellipse.cpp
+model/shapes/path.cpp
 )
 
 if(${PYTHON_ENABLED})
