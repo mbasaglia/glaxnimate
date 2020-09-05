@@ -127,9 +127,6 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     connect(ui.menu_open_recent, &QMenu::triggered, parent, &GlaxnimateWindow::document_open_recent);
 
     // Scripting
-    parent->tabifyDockWidget(ui.dock_script_console, ui.dock_timeline);
-    ui.dock_script_console->setVisible(false);
-
     ui.console_input->setHistory(app::settings::get<QStringList>("scripting", "history"));
 
     for ( const auto& engine : app::scripting::ScriptEngineFactory::instance().engines() )
@@ -162,9 +159,6 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     );
 
     // Logs
-    parent->tabifyDockWidget(ui.dock_logs, ui.dock_script_console);
-    ui.dock_logs->setVisible(false);
-
     log_model.populate(GlaxnimateApp::instance()->log_lines());
     ui.view_logs->setModel(&log_model);
     ui.view_logs->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
@@ -173,6 +167,23 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.view_logs->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
     auto del = new BetterElideDelegate(Qt::ElideLeft, ui.view_logs);
     ui.view_logs->setItemDelegateForColumn(2, del);
+
+    // Arrange docks
+    parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
+    parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_properties);
+    parent->tabifyDockWidget(ui.dock_properties, ui.dock_layers);
+
+    parent->tabifyDockWidget(ui.dock_logs, ui.dock_script_console);
+    parent->tabifyDockWidget(ui.dock_script_console, ui.dock_timeline);
+
+    parent->resizeDocks(
+        {ui.dock_layers, ui.dock_properties},
+        {1, 1},
+        Qt::Horizontal
+    );
+    parent->resizeDocks({ui.dock_timeline}, {parent->height()/3}, Qt::Vertical);
+    ui.dock_script_console->setVisible(false);
+    ui.dock_logs->setVisible(false);
 
     // Restore state
     // NOTE: keep at the end so we do this once all the widgets are in their default spots

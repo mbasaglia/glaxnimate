@@ -48,7 +48,7 @@ public:
         connect_recursive(object, model, root_id);
     }
 
-    void connect_list(Subtree* prop_node)
+    /*void connect_list(Subtree* prop_node)
     {
         if ( prop_node->prop->traits().is_object() )
         {
@@ -66,7 +66,7 @@ public:
                 add_node(Subtree{i, prop_node->id});
             }
         }
-    }
+    }*/
 
     void connect_recursive(model::Object* object, PropertyModel* model, id_type this_node)
     {
@@ -93,16 +93,22 @@ public:
             }
             else
             {
+                if (
+                    (prop->traits().flags & model::PropertyTraits::List) &&
+                    prop->traits().type == model::PropertyTraits::Object
+                )
+                    continue;
+
                 id_type prop_node_id = add_node(Subtree{prop, this_node});
                 Subtree* prop_node = node(prop_node_id);
                 properties[prop] = prop_node_id;
 
-                if ( prop->traits().flags & model::PropertyTraits::List )
+                /*if ( prop->traits().flags & model::PropertyTraits::List )
                 {
                     prop_node->prop_value = prop->value().toList();
                     connect_list(prop_node);
                 }
-                else if ( prop->traits().is_object() )
+                else*/ if ( prop->traits().is_object() )
                 {
                     model::Object* subobj = prop->value().value<model::Object*>();
                     prop_node->object = subobj;
@@ -533,7 +539,7 @@ void item_models::PropertyModel::property_changed(const model::BaseProperty* pro
 
     if ( prop_node->prop->traits().flags & model::PropertyTraits::List )
     {
-        beginRemoveRows(index, 0, prop_node->children.size());
+        /*beginRemoveRows(index, 0, prop_node->children.size());
         d->disconnect_recursive(prop_node, this);
         endRemoveRows();
 
@@ -541,7 +547,7 @@ void item_models::PropertyModel::property_changed(const model::BaseProperty* pro
         beginInsertRows(index, 0, prop_node->prop_value.size());
         prop_node->prop_value = value.toList();
         d->connect_list(prop_node);
-        endInsertRows();
+        endInsertRows();*/
     }
     else
     {

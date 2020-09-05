@@ -333,8 +333,14 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>200</width>
-             <height>200</height>
+             <width>128</width>
+             <height>128</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>230</height>
             </size>
            </property>
            <property name="selectorShape">
@@ -396,8 +402,8 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>200</width>
-             <height>200</height>
+             <width>128</width>
+             <height>128</height>
             </size>
            </property>
            <property name="selectorShape">
@@ -832,19 +838,6 @@
        </item>
       </layout>
      </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
    </widget>
   </widget>
@@ -887,7 +880,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget">
+  <widget class="QDockWidget" name="dock_layers">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
      <horstretch>0</horstretch>
@@ -902,7 +895,7 @@
     <string>Layers</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>8</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1049,7 +1042,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_2">
+  <widget class="QDockWidget" name="dock_properties">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
      <horstretch>0</horstretch>
@@ -1064,7 +1057,7 @@
     <string>Properties</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>8</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_5">
     <property name="sizePolicy">
