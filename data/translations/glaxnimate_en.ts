@@ -1433,7 +1433,7 @@ Do you want to save your changes?</source>
 <context>
     <name>Spin2D</name>
     <message>
-        <location filename="../../src/gui/widgets/spin2d.cpp" line="67"/>
+        <location filename="../../src/gui/widgets/spin2d.cpp" line="71"/>
         <source>Lock Ratio</source>
         <translation type="unfinished"></translation>
     </message>

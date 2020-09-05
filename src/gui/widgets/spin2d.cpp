@@ -18,7 +18,7 @@ Spin2D::Spin2D(bool ratio_lock, QWidget* parent)
     connect(spin_y, sig, this, &Spin2D::y_changed);
     lay->addWidget(spin_y);
     lay->setContentsMargins(0, 0, 0, 0);
-    
+
     if ( ratio_lock )
     {
         lock = new QToolButton(this);
@@ -27,7 +27,7 @@ Spin2D::Spin2D(bool ratio_lock, QWidget* parent)
         connect(lock, &QToolButton::clicked, this, &Spin2D::lock_toggled);
         lay->addWidget(lock);
     }
-    
+
     retranslate();
 }
 
@@ -38,7 +38,11 @@ int SmallerSpinBox::get_spin_size(const QAbstractSpinBox* box)
     {
         const QFontMetrics fm(box->fontMetrics());
         QString s = "999.99";
+#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
+        int w = qMax(0, fm.boundingRect(s).width());
+#else
         int w = qMax(0, fm.horizontalAdvance(s));
+#endif
         w += 2; // cursor blinking space
 
         QStyleOptionSpinBox option;
@@ -53,7 +57,7 @@ int SmallerSpinBox::get_spin_size(const QAbstractSpinBox* box)
 }
 
 void Spin2D::changeEvent(QEvent* e)
-{   
+{
     QWidget::changeEvent(e);
     if ( e->type() == QEvent::LanguageChange)
     {
