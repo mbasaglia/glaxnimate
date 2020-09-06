@@ -111,7 +111,8 @@ public:
     {
         return {
             event(),
-            painter
+            painter,
+            view->palette()
         };
     }
 

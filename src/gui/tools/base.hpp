@@ -53,6 +53,7 @@ struct MouseEvent : Event
 struct PaintEvent : Event
 {
     QPainter* painter;
+    QPalette palette;
 };
 
 struct KeyEvent : public Event

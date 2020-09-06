@@ -115,53 +115,19 @@ public:
         update();
     }
 
-    void drag_tan_out(const QPointF& p)
-    {
-        tan_out.setPos(p-pos.pos());
-        tan_out_dragged(tan_out.pos());
-    }
-
-    void drag_pos(const QPointF& p)
-    {
-        pos.setPos(p);
-        on_dragged();
-    }
-
 signals:
     void dragged(int index, const math::BezierPoint& point);
 
 private slots:
     void tan_in_dragged(const QPointF& p)
     {
-        if ( type == math::BezierPointType::Symmetrical )
-        {
-            tan_out.setPos(-p);
-        }
-        else if ( type == math::BezierPointType::Smooth )
-        {
-            tan_out.setPos(math::PolarVector<QPointF>{
-                math::length(tan_out.pos()),
-                M_PI + math::angle(p)
-            }.to_cartesian());
-        }
-
+        tan_out.setPos(math::BezierPoint::drag_tangent(p, tan_out.pos(), pos.pos(), type));
         on_dragged();
     }
 
     void tan_out_dragged(const QPointF& p)
     {
-        if ( type == math::BezierPointType::Symmetrical )
-        {
-            tan_in.setPos(-p);
-        }
-        else if ( type == math::BezierPointType::Smooth )
-        {
-            tan_in.setPos(math::PolarVector<QPointF>{
-                math::length(tan_in.pos()),
-                M_PI + math::angle(p)
-            }.to_cartesian());
-        }
-
+        tan_in.setPos(math::BezierPoint::drag_tangent(p, tan_in.pos(), pos.pos(), type));
         on_dragged();
     }
 
@@ -206,32 +172,6 @@ public:
     void set_type(int index, math::BezierPointType type)
     {
         items[index]->set_point_type(type);
-    }
-
-    void add_point(const QPointF& p, math::BezierPointType type)
-    {
-        bezier_.push_back(math::BezierPoint(p, p, p, type));
-        do_add_point(items.size());
-        if ( !bezier_.closed() )
-        {
-            items.back()->show_tan_out(false);
-            if ( items.size() > 1 )
-                items[items.size()-2]->show_tan_out(true);
-            else
-                items.back()->show_tan_in(false);
-        }
-    }
-
-    void drag_tan_out(const QPointF& p)
-    {
-        if ( !items.empty() )
-            items.back()->drag_tan_out(p);
-    }
-
-    void drag_pos(const QPointF& p)
-    {
-        if ( !items.empty() )
-            items.back()->drag_pos(p);
     }
 
 public slots:

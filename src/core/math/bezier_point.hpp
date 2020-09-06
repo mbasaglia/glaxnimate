@@ -60,6 +60,48 @@ struct BezierPoint
     {
         return relative_tan_out();
     }
+
+    void drag_tan_in(const QPointF& p)
+    {
+        tan_in = p;
+        tan_out = drag_tangent(tan_in, tan_out, pos, type);
+    }
+
+    void drag_tan_out(const QPointF& p)
+    {
+        tan_out = p;
+        tan_in = drag_tangent(tan_out, tan_in, pos, type);
+    }
+
+    static QPointF drag_tangent(const QPointF& dragged, const QPointF& other, const QPointF& pos, BezierPointType type)
+    {
+        if ( type == math::BezierPointType::Symmetrical )
+        {
+            return 2*pos - dragged;
+        }
+        else if ( type == math::BezierPointType::Smooth )
+        {
+            return math::PolarVector<QPointF>{
+                math::length(other - pos),
+                M_PI + math::angle(dragged - pos)
+            }.to_cartesian() + pos;
+        }
+
+        return other;
+    }
+
+    void translate(const QPointF& delta)
+    {
+        pos += delta;
+        tan_in += delta;
+        tan_out += delta;
+    }
+
+    void translate_to(const QPointF& new_pos)
+    {
+        translate(new_pos - pos);
+    }
+
 };
 
 } // namespace math

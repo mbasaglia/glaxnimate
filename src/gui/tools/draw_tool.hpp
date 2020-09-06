@@ -1,7 +1,7 @@
 #pragma once
 
 #include "draw_tool_base.hpp"
-#include "graphics/bezier_item.hpp"
+#include "math/bezier.hpp"
 
 namespace tools {
 
@@ -27,8 +27,9 @@ public:
 private:
     void create(const Event& event);
     void adjust_point_type(Qt::KeyboardModifiers mod);
+    void clear();
 
-    std::unique_ptr<graphics::BezierItem> item;
+    math::Bezier bezier;
     bool dragging = false;
     math::BezierPointType point_type = math::Symmetrical;
     static Autoreg<DrawTool> autoreg;
