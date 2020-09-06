@@ -11,9 +11,11 @@ namespace model {
 class Path : public Shape
 {
     GLAXNIMATE_OBJECT
+    using BezierPointType = math::BezierPointType;
+    Q_ENUM(BezierPointType)
 
 public:
-    AnimatablePath path{this, "path"};
+    AnimatablePath shape{this, "shape", &Path::shape_changed};
 
     GLAXNIMATE_PROPERTY(bool, closed, false, &Path::closed_changed)
 
@@ -32,19 +34,22 @@ public:
 
     math::Bezier to_bezier(FrameTime t) const override
     {
-        return path.get_at(t);
+        return shape.get_at(t);
     }
 
     QRectF local_bounding_rect(FrameTime t) const override
     {
-        return path.get_at(t).bounding_box();
+        return shape.get_at(t).bounding_box();
     }
 
 private:
     void closed_changed(bool closed)
     {
-        path.set_closed(closed);
+        shape.set_closed(closed);
     }
+
+signals:
+    void shape_changed(const math::Bezier& bez);
 };
 
 } // namespace model

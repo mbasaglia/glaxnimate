@@ -8,6 +8,7 @@ graphics/document_node_graphics_item.cpp
 graphics/document_scene.cpp
 graphics/transform_graphics_item.cpp
 graphics/create_items.cpp
+graphics/bezier_item.cpp
 
 item_models/document_node_model.cpp
 item_models/property_model.cpp
@@ -19,6 +20,7 @@ tools/dummy.cpp
 tools/select.cpp
 tools/ellipse.cpp
 tools/rectangle.cpp
+tools/draw_tool.cpp
 
 dialogs/glaxnimate_window.cpp
 dialogs/glaxnimate_window.ui

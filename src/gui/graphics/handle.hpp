@@ -42,6 +42,7 @@ public:
 
     ~MoveHandle();
 
+    void change_shape(Shape shape, int radius=-1);
 
     QRectF boundingRect() const override;
 

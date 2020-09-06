@@ -447,11 +447,6 @@ inline QColor lerp(const QColor& a, const QColor& b, double factor)
     );
 }
 
-inline Vec2 from_polar(scalar_type<Vec2> length, scalar_type<Vec2> angle)
-{
-    return Vec2{std::cos(angle) * length, std::sin(angle) * length};
-}
-
 template<class VecT>
 constexpr scalar_type<VecT> length_squared(const VecT& v)
 {
@@ -466,5 +461,37 @@ constexpr scalar_type<VecT> length(const VecT& v)
 {
     return std::sqrt(length_squared(v));
 }
+
+/**
+ * \brief Angle to the x axis of a 2D cartesian vector
+ */
+template<class VecT>
+scalar_type<VecT> angle(const VecT& cartesian)
+{
+    return std::atan2(detail::get(cartesian, 1), detail::get(cartesian, 0));
+}
+
+template<class VecT>
+struct PolarVector
+{
+    using scalar = scalar_type<VecT>;
+
+    scalar length;
+    scalar angle;
+
+    constexpr PolarVector(scalar length, scalar angle) noexcept
+    : length(length), angle(angle)
+    {}
+
+    PolarVector(const VecT& cartesian)
+    : length(math::length(cartesian)),
+      angle(math::angle(cartesian))
+    {}
+
+    VecT to_cartesian() const
+    {
+        return {std::cos(angle) * length, std::sin(angle) * length};
+    }
+};
 
 } // namespace math

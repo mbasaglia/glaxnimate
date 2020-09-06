@@ -48,8 +48,9 @@ private:
 class AnimatablePath : public AnimatedProperty<math::Bezier>
 {
 public:
-    AnimatablePath(Object* object, const QString& name)
-    : AnimatedProperty(object, name, {})
+    AnimatablePath(Object* object, const QString& name,
+                   PropertyCallback<void, math::Bezier> emitter = {})
+    : AnimatedProperty(object, name, {}, std::move(emitter))
     {}
 
     int size() const
@@ -68,6 +69,7 @@ public:
         for ( auto& keyframe : keyframes_ )
             keyframe->value_.set_closed(closed);
         value_changed();
+        emitter(object(), value_);
     }
 
     void add_point(int index, qreal factor)
@@ -76,6 +78,7 @@ public:
         for ( auto& keyframe : keyframes_ )
             keyframe->value_.split_segment(index, factor);
         value_changed();
+        emitter(object(), value_);
     }
 
     void remove_point(int index)
@@ -84,6 +87,7 @@ public:
         for ( auto& keyframe : keyframes_ )
             keyframe->value_.remove_point(index);
         value_changed();
+        emitter(object(), value_);
     }
 
     void move_point(int index, const QPointF& pos)

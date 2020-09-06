@@ -44,7 +44,8 @@ struct MouseEvent : Event
     Qt::KeyboardModifiers modifiers() const { return event->modifiers(); }
     Qt::MouseButton button() const { return event->button(); }
     Qt::MouseButtons buttons() const { return event->buttons(); }
-    const QPointF& pos() { return event->localPos(); }
+    const QPointF& pos() const { return event->localPos(); }
+    void accept() const { event->accept(); }
 
     void forward_to_scene() const;
 };
@@ -61,7 +62,7 @@ struct KeyEvent : public Event
     Qt::KeyboardModifiers modifiers() const { return event->modifiers(); }
     int key() const { return event->key(); }
     QString text() const { return event->text(); }
-
+    void accept() const { event->accept(); }
 };
 
 

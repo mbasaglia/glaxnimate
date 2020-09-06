@@ -132,3 +132,14 @@ void graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     event->accept();
     emit drag_finished();
 }
+
+void graphics::MoveHandle::change_shape(graphics::MoveHandle::Shape shape, int radius)
+{
+    d->shape = shape;
+    if ( radius > 0 && radius != d->radius )
+    {
+        d->radius = radius;
+        prepareGeometryChange();
+    }
+    update();
+}

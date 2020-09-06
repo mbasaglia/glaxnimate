@@ -291,7 +291,7 @@ public:
 
     void set(reference value)
     {
-        value_ =  value;
+        value_ = value;
         this->extra_data_reset();
     }
 
@@ -391,16 +391,26 @@ namespace detail {
 } // namespace detail
 
 template<class Type>
-class  AnimatedProperty : public detail::AnimatableWithExtra<Type>
+class AnimatedProperty : public detail::AnimatableWithExtra<Type>
 {
 public:
     using keyframe_type = Keyframe<Type>;
     using value_type = typename Keyframe<Type>::value_type;
     using reference = typename Keyframe<Type>::reference;
 
-    AnimatedProperty(Object* object, const QString& name, reference default_value)
-    : detail::AnimatableWithExtra<Type>(object, name, PropertyTraits::from_scalar<Type>(PropertyTraits::Animated|PropertyTraits::Visual)),
-      value_{default_value} {}
+    AnimatedProperty(
+        Object* object,
+        const QString& name,
+        reference default_value,
+        PropertyCallback<void, Type> emitter = {}
+    )
+    : detail::AnimatableWithExtra<Type>(
+        object, name, PropertyTraits::from_scalar<Type>(
+            PropertyTraits::Animated|PropertyTraits::Visual
+        )),
+      value_{default_value},
+      emitter(std::move(emitter))
+    {}
 
     int keyframe_count() const override
     {
@@ -482,6 +492,7 @@ public:
         mismatched_ = !keyframes_.empty();
         this->extra_data_reset();
         this->value_changed();
+        emitter(this->object(), value_);
         return true;
     }
 
@@ -492,6 +503,7 @@ public:
         {
             value_ = value;
             this->value_changed();
+            emitter(this->object(), value_);
             keyframes_.push_back(std::make_unique<keyframe_type>(time, value));
             emit this->keyframe_added(0, keyframes_.back().get());
             return keyframes_.back().get();
@@ -502,6 +514,7 @@ public:
         {
             value_ = value;
             this->value_changed();
+            emitter(this->object(), value_);
         }
 
         // Find the right keyframe
@@ -624,6 +637,7 @@ protected:
     value_type value_;
     std::vector<std::unique_ptr<keyframe_type>> keyframes_;
     bool mismatched_ = false;
+    PropertyCallback<void, Type> emitter;
 };
 
 } // namespace model

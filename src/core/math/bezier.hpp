@@ -31,6 +31,7 @@ public:
     auto end() const { return points_.end(); }
     auto cend() const { return points_.end(); }
     void push_back(const BezierPoint& p) { points_.push_back(p); }
+    void clear() { points_.clear(); }
 
     const BezierPoint& operator[](int index) const { return points_[index]; }
     BezierPoint& operator[](int index) { return points_[index]; }
@@ -251,6 +252,12 @@ public:
                 )
             ));
         return lerped;
+    }
+
+    void set_point(int index, const math::BezierPoint& p)
+    {
+        if ( index >= 0 && index < size() )
+            points_[index] = p;
     }
 
 private:
