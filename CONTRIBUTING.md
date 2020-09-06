@@ -69,3 +69,7 @@ to get your changes merged into Glaxnimate.
 Glaxnimate is licensed under the [GNU GPLv3+](http://www.gnu.org/licenses/gpl-3.0.html),
 so your contributions must be under the same license.
 
+### Cross Compiling
+
+See [Cross Compiling](https://glaxnimate.mattbas.org/contributing/cross_compiling/)
+for intructions of how to build Glaxnimate using MXE.
