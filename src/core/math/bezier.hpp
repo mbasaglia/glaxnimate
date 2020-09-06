@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QPointF>
+#include <QPainterPath>
 #include "math/bezier_solver.hpp"
 #include "math/bezier_point.hpp"
 

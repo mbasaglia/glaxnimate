@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QString>
 #include <QList>
+#include <QUrl>
 
 
 class AppInfo

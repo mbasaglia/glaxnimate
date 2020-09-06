@@ -4,6 +4,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QScrollBar>
 #include <QGraphicsSceneMouseEvent>
+#include <QWheelEvent>
 
 #include "app/application.hpp"
 #include "model/document.hpp"

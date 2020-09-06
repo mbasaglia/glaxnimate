@@ -2,7 +2,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QMouseEvent>
-
+#include <QPainterPath>
 
 class KeyframeTransitionWidget::Private
 {
