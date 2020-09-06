@@ -66,6 +66,7 @@ void tools::DrawTool::clear()
     dragging = false;
     bezier.clear();
     point_type = math::Symmetrical;
+    joining = false;
 }
 
 void tools::DrawTool::key_release(const tools::KeyEvent& event)
@@ -98,9 +99,19 @@ void tools::DrawTool::mouse_move(const tools::MouseEvent& event)
         return;
 
     if ( dragging )
+    {
         bezier.points().back().drag_tan_out(event.scene_pos);
+    }
+    else if ( bezier.size() > 2 && math::length(event.pos() - event.view->mapFromScene(bezier.points().front().pos)) <= join_radius )
+    {
+        joining = true;
+        bezier.points().back().translate_to(bezier.points().front().pos);
+    }
     else
+    {
+        joining = false;
         bezier.points().back().translate_to(event.scene_pos);
+    }
 }
 
 void tools::DrawTool::mouse_release(const tools::MouseEvent& event)
@@ -111,8 +122,18 @@ void tools::DrawTool::mouse_release(const tools::MouseEvent& event)
     if ( event.button() == Qt::LeftButton )
     {
         dragging = false;
-        bezier.push_back(math::BezierPoint(event.scene_pos, event.scene_pos, event.scene_pos, point_type));
-        event.repaint();
+
+        if ( joining )
+        {
+            bezier.points().front().tan_in = bezier.points().back().tan_in;
+            bezier.set_closed(true);
+            create(event);
+        }
+        else
+        {
+            bezier.push_back(math::BezierPoint(event.scene_pos, event.scene_pos, event.scene_pos, point_type));
+            event.repaint();
+        }
     }
 }
 
@@ -130,14 +151,30 @@ void tools::DrawTool::paint(const tools::PaintEvent& event)
         bezier.add_to_painter_path(path);
         draw_shape(event, event.view->mapFromScene(path));
 
+        QPen pen(event.palette.highlight(), 1);
+        pen.setCosmetic(true);
+        event.painter->setPen(pen);
+        event.painter->setBrush(Qt::NoBrush);
+
+        qreal view_radius = join_radius / event.view->get_zoom_factor();
+        if ( bezier.size() > 1 )
+        {
+            QPointF center = event.view->mapFromScene(bezier.points().front().pos);
+
+            if ( joining )
+            {
+                event.painter->setBrush(event.palette.highlightedText());
+                event.painter->drawEllipse(center, view_radius*1.5, view_radius*1.5);
+                event.painter->setBrush(Qt::NoBrush);
+            }
+            else
+            {
+                event.painter->drawEllipse(center, view_radius, view_radius);
+            }
+        }
+
         if ( dragging )
         {
-            QPen pen(event.palette.highlight(), 1);
-            pen.setCosmetic(true);
-
-            event.painter->setPen(pen);
-            event.painter->setBrush(Qt::NoBrush);
-
             QPolygonF poly;
             if ( bezier.size() > 1 )
                 poly.push_back(event.view->mapFromScene(bezier.points().back().tan_in));
@@ -145,8 +182,7 @@ void tools::DrawTool::paint(const tools::PaintEvent& event)
             poly.push_back(center);
             poly.push_back(event.view->mapFromScene(bezier.points().back().tan_out));
             event.painter->drawPolyline(poly);
-            qreal radius = 2 / event.view->get_zoom_factor();
-            event.painter->drawEllipse(center, radius, radius);
+            event.painter->drawEllipse(center, view_radius, view_radius);
         }
     }
 }
