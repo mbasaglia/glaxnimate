@@ -7,6 +7,7 @@
 
 #include "item_models/property_model.hpp"
 #include "widgets/spin2d.hpp"
+#include "widgets/enum_combo.hpp"
 
 using namespace style;
 
@@ -31,13 +32,11 @@ QWidget* PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 {
     QVariant data = index.data();
 
-    if (
-        index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() ||
-        ( data.userType() >= QMetaType::User && data.canConvert<int>() )
-    )
-    {
+    if ( index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
         return new QComboBox(parent);
-    }
+
+    if ( data.userType() >= QMetaType::User && data.canConvert<int>() )
+        return new EnumCombo(parent);
 
 
     switch ( data.userType() )
@@ -94,26 +93,8 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
     }
     else if ( data.userType() >= QMetaType::User && data.canConvert<int>() )
     {
-        QComboBox* combo = static_cast<QComboBox*>(editor);
-        const QMetaObject* mo = QMetaType::metaObjectForType(data.userType());
-        if ( !mo )
-            return;
-
-        int index = mo->indexOfEnumerator(
-            model::detail::naked_type_name(data.typeName()).toStdString().c_str()
-        );
-        if ( index == -1 )
-            return;
-
-        QMetaEnum meta_enum = mo->enumerator(index);
-        int intval = data.toInt();
-        for ( int i = 0; i < meta_enum.keyCount(); i++ )
-        {
-            combo->addItem(meta_enum.key(i), meta_enum.value(i));
-            if ( meta_enum.value(i) == intval )
-                combo->setCurrentIndex(combo->count() - 1);
-        }
-
+        EnumCombo* combo = static_cast<EnumCombo*>(editor);
+        combo->set_data_from_qvariant(data);
         return;
     }
 
@@ -182,7 +163,9 @@ void PropertyDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     const QWidget* widget = option.widget;
 
     // Disable decoration
-    if ( index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
+    auto data = index.data();
+    if ( (data.userType() >= QMetaType::User && data.canConvert<int>()) ||
+        index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
     {
         opt.icon = QIcon();
         opt.features &= ~QStyleOptionViewItem::HasDecoration;

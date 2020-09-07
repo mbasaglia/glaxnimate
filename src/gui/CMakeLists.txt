@@ -49,6 +49,7 @@ widgets/flow_layout.cpp
 widgets/spin2d.cpp
 widgets/tools/shape_tool_widget.cpp
 widgets/tools/shape_tool_widget.ui
+widgets/enum_combo.cpp
 )
 
 if(${PYTHON_ENABLED})

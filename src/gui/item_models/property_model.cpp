@@ -6,6 +6,7 @@
 
 #include "command/property_commands.hpp"
 #include "app/application.hpp"
+#include "widgets/enum_combo.hpp"
 
 class item_models::PropertyModel::Private
 {
@@ -37,7 +38,6 @@ public:
         id_type parent = 0;
         std::vector<Subtree*> children;
         id_type id = 0;
-
     };
 
     void connect(model::Object* object, PropertyModel* model)
@@ -462,6 +462,14 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
             if ( role == ReferenceProperty )
                 return QVariant::fromValue(static_cast<model::ReferencePropertyBase*>(tree->prop));
 
+            return {};
+        }
+        else if ( traits.type == model::PropertyTraits::Enum )
+        {
+            if ( role == Qt::DisplayRole || role == Qt::EditRole )
+                return prop->value();
+            if ( role == Qt::DecorationRole )
+                return QIcon::fromTheme(EnumCombo::data_for(prop->value()).second);
             return {};
         }
         else

@@ -15,7 +15,7 @@ class Stroke : public Modifier
 public:
     enum Cap
     {
-        FlatCap = Qt::FlatCap,
+        ButtCap = Qt::FlatCap,
         RoundCap = Qt::RoundCap,
         SquareCap = Qt::SquareCap,
     };
