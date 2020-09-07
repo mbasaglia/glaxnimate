@@ -3,6 +3,13 @@
 
         <!-- Collapsed navigation -->
         <div class="navbar-header">
+            <!-- Main title -->
+            <a class="navbar-brand" href="{{ nav.homepage.url|url }}">
+                <img src='{{ "/img/logo.svg"|url }}' width="32" />
+                <span>{{ config.site_name }}</span>
+                <span style="font-size: 0.7em;">{{ config.extra.version }}</span>
+            </a>
+
             {%- if nav|length>1 or (page and (page.next_page or page.previous_page)) or config.repo_url %}
             <!-- Expander button -->
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -12,13 +19,6 @@
                 <span class="icon-bar"></span>
             </button>
             {% endif %}
-
-            <!-- Main title -->
-            <a class="navbar-brand" href="{{ nav.homepage.url|url }}">
-                <img src='{{ "/img/logo.svg"|url }}' width="32" />
-                <span>{{ config.site_name }}</span>
-                <span style="font-size: 0.7em;">{{ config.extra.version }}</span>
-            </a>
         </div>
 
         <!-- Expanded navigation -->

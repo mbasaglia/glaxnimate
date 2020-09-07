@@ -24,7 +24,10 @@ nav:
         - ui/menus.md
     - 'Contributing':
         - contributing/index.md
-        - "Readme": contributing/read_me.md
+        - "Building From Source":
+            - "Readme": contributing/read_me.md
+            - contributing/code_structure.md
+            - contributing/cross_compiling.md
         - contributing/documentation.md
-        - contributing/code_structure.md
+        - contributing/plugins.md
     - "Links": links.md

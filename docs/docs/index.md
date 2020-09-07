@@ -14,6 +14,12 @@ disable_toc: 1
     justify-content: center;
     padding: 0;
     margin: 1.5em 0;
+    flex-flow: row wrap;
+}
+
+[role="main"] ul li
+{
+    margin: 1ex;
 }
 
 [role="main"] ul li a
@@ -22,7 +28,7 @@ disable_toc: 1
     color: #fff;
     padding: 1ex;
     border-radius: 5px;
-    margin: 0 1ex;
+    white-space: nowrap;
 }
 
 [role="main"] ul li a:hover,
