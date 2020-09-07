@@ -201,6 +201,11 @@ public:
 
     void paint(QPainter* painter, FrameTime time, PaintMode mode) const;
 
+    QTransform transform_matrix(FrameTime t) const;
+    QTransform transform_matrix() const;
+    virtual QTransform local_transform_matrix() const { return QTransform(); }
+    virtual QTransform local_transform_matrix(FrameTime) const { return QTransform(); }
+
 private:
     template<class T=DocumentNode>
     std::vector<T*> docnode_find_impl(const QString& type_name, std::vector<T*>& matches, const char* t_name)

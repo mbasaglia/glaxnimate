@@ -15,6 +15,7 @@ public:
         ui.check_group->setChecked(app::settings::get<bool>("tools", "shape_group"));
         ui.check_fill->setChecked(app::settings::get<bool>("tools", "shape_fill"));
         ui.check_stroke->setChecked(app::settings::get<bool>("tools", "shape_stroke"));
+        ui.check_transform->setChecked(app::settings::get<bool>("tools", "shape_transform"));
         ui.spin_stroke_width->setValue(app::settings::get<double>("tools", "stroke_width"));
         check_checks();
     }
@@ -25,25 +26,44 @@ public:
         app::settings::set("tools", "shape_fill", ui.check_fill->isChecked());
         app::settings::set("tools", "shape_stroke", ui.check_stroke->isChecked());
         app::settings::set("tools", "stroke_width", ui.spin_stroke_width->value());
+        app::settings::set("tools", "shape_transform", ui.check_transform->isChecked());
     }
 
     void check_checks()
     {
         if ( !ui.check_group->isChecked() )
         {
-            ui.check_fill->setEnabled(false);
-            ui.check_fill->setChecked(false);
-            ui.check_stroke->setEnabled(false);
-            ui.check_stroke->setChecked(false);
-            ui.spin_stroke_width->setEnabled(false);
+            if ( ui.check_fill->isEnabled() )
+            {
+                old_check_fill = ui.check_fill->isChecked();
+                ui.check_fill->setEnabled(false);
+                ui.check_fill->setChecked(false);
+
+                old_check_stroke = ui.check_stroke->isChecked();
+                ui.check_stroke->setEnabled(false);
+                ui.check_stroke->setChecked(false);
+                ui.spin_stroke_width->setEnabled(false);
+
+                old_check_transform = ui.check_transform->isChecked();
+                ui.check_transform->setEnabled(false);
+                ui.check_transform->setChecked(false);
+            }
         }
-        else
+        else if ( !ui.check_fill->isEnabled() )
         {
             ui.check_fill->setEnabled(true);
+            ui.check_fill->setChecked(old_check_fill);
+
             ui.check_stroke->setEnabled(true);
+            ui.check_stroke->setChecked(old_check_stroke);
             ui.spin_stroke_width->setEnabled(ui.check_stroke->isChecked());
+
+            ui.check_transform->setEnabled(true);
+            ui.check_transform->setChecked(old_check_transform);
         }
     }
+
+    bool old_check_fill, old_check_stroke, old_check_transform;
 };
 
 ShapeToolWidget::ShapeToolWidget(QWidget* parent)
@@ -97,9 +117,7 @@ void ShapeToolWidget::showEvent(QShowEvent* event)
     d->load_settings();
 }
 
-
-
-
-
-
-
+bool ShapeToolWidget::create_transform() const
+{
+    return d->ui.check_transform->isChecked();
+}

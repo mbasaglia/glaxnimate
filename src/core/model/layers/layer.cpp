@@ -103,17 +103,13 @@ void model::Layer::on_property_changed ( const BaseProperty* prop, const QVarian
         DocumentNode::on_property_changed(prop, value);
 }
 
-QTransform model::Layer::transform_matrix() const
+QTransform model::Layer::local_transform_matrix() const
 {
-    if ( parent.get() )
-        return transform.get()->transform_matrix() * parent.get()->transform_matrix();
     return transform.get()->transform_matrix();
 }
 
-QTransform model::Layer::transform_matrix(model::FrameTime t) const
+QTransform model::Layer::local_transform_matrix(model::FrameTime t) const
 {
-    if ( parent.get() )
-        return transform.get()->transform_matrix(t) * parent.get()->transform_matrix(t);
     return transform.get()->transform_matrix(t);
 }
 
@@ -121,25 +117,6 @@ QRectF model::Layer::local_bounding_rect(FrameTime) const
 {
     return QRectF(QPointF(0, 0), QSizeF(document()->size()));
 }
-
-// QPolygonF model::Layer::unaligned_bounding_rect(FrameTime t) const
-// {
-//     QTransform tf = transform.get()->transform_matrix(t);
-//     QRectF rect = local_bounding_rect(t);
-//     return QPolygonF({
-//         tf.map(rect.topLeft()),
-//         tf.map(rect.topRight()),
-//         tf.map(rect.bottomRight()),
-//         tf.map(rect.bottomLeft())
-//     });
-// }
-//
-// QRectF model::Layer::bounding_rect(FrameTime t) const
-// {
-//     QTransform tf = transform.get()->transform_matrix(t);
-//     QRectF rect = local_bounding_rect(t);
-//     return tf.mapRect(rect);
-// }
 
 void model::Layer::on_paint(QPainter* painter, FrameTime time, PaintMode mode) const
 {

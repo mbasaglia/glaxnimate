@@ -11,13 +11,28 @@
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QCheckBox" name="check_fill">
      <property name="text">
       <string>Fill</string>
      </property>
      <property name="icon">
-      <iconset theme="format-fill-color"/>
+      <iconset theme="format-fill-color">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QCheckBox" name="check_stroke">
+     <property name="text">
+      <string>Stroke</string>
+     </property>
+     <property name="icon">
+      <iconset theme="format-stroke-color">
+       <normaloff>.</normaloff>.</iconset>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -30,27 +45,15 @@
       <string>Group</string>
      </property>
      <property name="icon">
-      <iconset theme="object-group"/>
+      <iconset theme="object-group">
+       <normaloff>.</normaloff>.</iconset>
      </property>
      <property name="checked">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QCheckBox" name="check_stroke">
-     <property name="text">
-      <string>Stroke</string>
-     </property>
-     <property name="icon">
-      <iconset theme="format-stroke-color"/>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QDoubleSpinBox" name="spin_stroke_width">
      <property name="toolTip">
       <string>Stroke Width</string>
@@ -60,6 +63,19 @@
      </property>
      <property name="value">
       <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="check_transform">
+     <property name="text">
+      <string>Transform</string>
+     </property>
+     <property name="icon">
+      <iconset theme="transform-move"/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -90,8 +106,8 @@
    <slot>check_checks()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>39</x>
-     <y>40</y>
+     <x>45</x>
+     <y>70</y>
     </hint>
     <hint type="destinationlabel">
      <x>296</x>
@@ -112,6 +128,22 @@
     <hint type="destinationlabel">
      <x>309</x>
      <y>123</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>check_transform</sender>
+   <signal>clicked()</signal>
+   <receiver>ShapeToolWidget</receiver>
+   <slot>check_checks()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>84</x>
+     <y>31</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>235</x>
+     <y>33</y>
     </hint>
    </hints>
   </connection>

@@ -16,6 +16,7 @@ public:
     bool create_group() const;
     bool create_fill() const;
     bool create_stroke() const;
+    bool create_transform() const;
     qreal stroke_width() const;
 
 protected:

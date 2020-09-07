@@ -88,8 +88,6 @@ public:
 
 
     QRectF local_bounding_rect(FrameTime t) const override;
-//     QRectF bounding_rect(FrameTime t) const override;
-//     QPolygonF unaligned_bounding_rect(FrameTime t) const override;
 
     /**
      * \brief Returns the (frame) time relative to this layer
@@ -105,8 +103,8 @@ public:
     Composition* composition() const { return composition_; }
     void set_composition(Composition* composition);
 
-    QTransform transform_matrix() const;
-    QTransform transform_matrix(FrameTime t) const;
+    QTransform local_transform_matrix(FrameTime) const override;
+    QTransform local_transform_matrix() const override;
 
 signals:
     void transform_matrix_changed(const QTransform& t);

@@ -97,6 +97,7 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("shape_fill",   {},             {},                        Setting::Internal,  true),
         Setting("shape_stroke", {},             {},                        Setting::Internal,  true),
         Setting("stroke_width", {},             {},                        Setting::Internal,  1.),
+        Setting("shape_transform",{},           {},                        Setting::Internal,  true),
     }});
 }
 
