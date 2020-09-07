@@ -83,3 +83,22 @@ linux:appimage:
         paths:
             - build/glaxnimate-x86_64.AppImage
     when: always
+
+mxe:build:
+    image: mattbas/mxe-qt5:latest
+    stage: build
+    before_script:
+        - git submodule update --init --recursive
+    script:
+        - mkdir build
+        - cd build
+        - x86_64-w64-mingw32.shared.posix-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/
+        - make
+        - make translations
+        - make install DESTDIR=glaxnimate-x86_64
+        - /mxedeployqt/mxedeployqt --mxepath "/mxe" --mxetarget x86_64-w64-mingw32.shared.posix glaxnimate/bin/
+        - zip -r glaxnimate-x86_64.zip glaxnimate-x86_64
+    artifacts:
+        paths:
+            - build/glaxnimate-x86_64.zip
+    when: always
