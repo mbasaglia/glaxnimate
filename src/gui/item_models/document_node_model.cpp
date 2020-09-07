@@ -128,7 +128,7 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
     switch ( index.column() )
     {
         case ColumnColor:
-            if ( role == Qt::DisplayRole || role == Qt::EditRole || role == Qt::BackgroundColorRole )
+            if ( role == Qt::DisplayRole || role == Qt::EditRole || role == Qt::BackgroundRole )
                 return n->docnode_group_color();
             break;
         case ColumnName:

@@ -95,9 +95,10 @@ mxe:build:
         - x86_64-w64-mingw32.shared.posix-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/
         - make
         - make translations
-        - make install DESTDIR=glaxnimate-x86_64 >/dev/null
+        - make install DESTDIR=glaxnimate >/dev/null
         - /mxedeployqt/mxedeployqt --mxepath "/mxe" --mxetarget x86_64-w64-mingw32.shared.posix glaxnimate/bin/
-        - zip -r glaxnimate-x86_64.zip glaxnimate-x86_64 >/dev/null
+        - cp external/Qt-Color-Widgets/libQtColorWidgets.dll
+        - zip -r glaxnimate-x86_64.zip glaxnimate >/dev/null
     artifacts:
         paths:
             - build/glaxnimate-x86_64.zip
