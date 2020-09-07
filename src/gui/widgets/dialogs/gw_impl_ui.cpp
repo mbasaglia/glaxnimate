@@ -4,8 +4,8 @@
 
 #include "tools/base.hpp"
 
-#include "dialogs/io_status_dialog.hpp"
-#include "dialogs/about_dialog.hpp"
+#include "widgets/dialogs/io_status_dialog.hpp"
+#include "widgets/dialogs/about_dialog.hpp"
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
 #include "style/better_elide_delegate.hpp"
@@ -165,7 +165,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.view_logs->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 //     ui.view_logs->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     ui.view_logs->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
-    auto del = new BetterElideDelegate(Qt::ElideLeft, ui.view_logs);
+    auto del = new style::BetterElideDelegate(Qt::ElideLeft, ui.view_logs);
     ui.view_logs->setItemDelegateForColumn(2, del);
 
     // Arrange docks

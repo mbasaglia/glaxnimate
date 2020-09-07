@@ -1,4 +1,4 @@
-#include "dialogs/glaxnimate_window.hpp"
+#include "widgets/dialogs/glaxnimate_window.hpp"
 #include "app/scripting/python/register_machinery.hpp"
 
 PYBIND11_EMBEDDED_MODULE(glaxnimate_gui, m)

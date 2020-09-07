@@ -62,8 +62,8 @@ public:
     QString redo_text;
     color_widgets::ColorPaletteModel palette_model;
     color_widgets::ColorDelegate color_delegate;
-    PropertyDelegate property_delegate;
-    DockWidgetStyle dock_style;
+    style::PropertyDelegate property_delegate;
+    style::DockWidgetStyle dock_style;
     ViewTransformWidget* view_trans_widget;
     bool started = false;
     IoStatusDialog* dialog_import_status;

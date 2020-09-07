@@ -71,11 +71,6 @@ Code for the graphical user interface.
 
 The GUI uses [Qt](https://doc.qt.io/) extensively.
 
-#### src/gui/dialogs
-
-Code for dialogs and windows.
-All widgets that are displayed on their own (ie: not as part of some other widget).
-
 #### src/gui/graphics
 
 Elements relating to the main canvas.
@@ -94,7 +89,12 @@ Editor tools, they define how the user can interact with the canvas.
 
 #### src/gui/widgets
 
-All classes derived from QWidget (that aren't stand-alone windows or dialogs).
+All classes derived from QWidget.
+
+##### src/gui/widgets/dialogs
+
+Code for dialogs and windows.
+All widgets that are displayed on their own (ie: not as part of some other widget).
 
 ## test
 

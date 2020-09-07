@@ -11,7 +11,7 @@
 #include "graphics/document_node_graphics_item.hpp"
 #include "widgets/glaxnimate_graphics_view.hpp"
 #include "widgets/scalable_button.hpp"
-#include "dialogs/glaxnimate_window.hpp"
+#include "widgets/dialogs/glaxnimate_window.hpp"
 #include "app/settings/setting.hpp"
 #include "app/settings/widget_builder.hpp"
 

@@ -22,17 +22,17 @@ tools/ellipse.cpp
 tools/rectangle.cpp
 tools/draw_tool.cpp
 
-dialogs/glaxnimate_window.cpp
-dialogs/glaxnimate_window.ui
-dialogs/io_status_dialog.cpp
-dialogs/io_status_dialog.ui
-dialogs/about_dialog.cpp
-dialogs/about_dialog.ui
-dialogs/gw_impl_color.cpp
-dialogs/gw_impl_document.cpp
-dialogs/gw_impl_model.cpp
-dialogs/gw_impl_script.cpp
-dialogs/gw_impl_ui.cpp
+widgets/dialogs/glaxnimate_window.cpp
+widgets/dialogs/glaxnimate_window.ui
+widgets/dialogs/io_status_dialog.cpp
+widgets/dialogs/io_status_dialog.ui
+widgets/dialogs/about_dialog.cpp
+widgets/dialogs/about_dialog.ui
+widgets/dialogs/gw_impl_color.cpp
+widgets/dialogs/gw_impl_document.cpp
+widgets/dialogs/gw_impl_model.cpp
+widgets/dialogs/gw_impl_script.cpp
+widgets/dialogs/gw_impl_ui.cpp
 
 widgets/timeline/keyframe_transition_widget.cpp
 widgets/timeline/keyframe_editor_widget.cpp

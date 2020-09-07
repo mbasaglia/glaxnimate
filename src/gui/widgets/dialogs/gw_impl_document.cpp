@@ -6,8 +6,8 @@
 #include <QImageWriter>
 #include <QtSvg/QSvgGenerator>
 
-#include "dialogs/import_export_dialog.hpp"
-#include "dialogs/io_status_dialog.hpp"
+#include "widgets/dialogs/import_export_dialog.hpp"
+#include "widgets/dialogs/io_status_dialog.hpp"
 #include "io/lottie/lottie_html_format.hpp"
 #include "app_info.hpp"
 #include "model/layers/shape_layer.hpp"

@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <QStyleOption>
 
+namespace style {
 
 class DockWidgetStyle: public QProxyStyle
 {
@@ -28,3 +29,4 @@ public:
     }
 };
 
+} // namespace style

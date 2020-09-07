@@ -3,6 +3,7 @@
 #include <QStyledItemDelegate>
 #include <QApplication>
 
+namespace style {
 /*
  * Dunno why but by default the table view messes up text elision,
  * this fixes the issue and also allows for different text elision modes
@@ -30,3 +31,5 @@ protected:
 private:
     Qt::TextElideMode mode;
 };
+
+} // namespace style

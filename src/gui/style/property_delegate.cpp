@@ -8,6 +8,8 @@
 #include "item_models/property_model.hpp"
 #include "widgets/spin2d.hpp"
 
+using namespace style;
+
 void PropertyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QVariant data = index.data();

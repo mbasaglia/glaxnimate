@@ -4,6 +4,8 @@
 
 #include "math/vector.hpp"
 
+namespace style {
+
 class PropertyDelegate : public color_widgets::ColorDelegate
 {
 protected:
@@ -34,3 +36,5 @@ private:
 
     void paint_plaintext(const QString& text, QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
+
+} // namespace style

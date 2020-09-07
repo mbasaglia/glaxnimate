@@ -8,7 +8,7 @@
 #include "style/property_delegate.hpp"
 #include "glaxnimate_app.hpp"
 #include "command/animation_commands.hpp"
-#include "dialogs/keyframe_editor_dialog.hpp"
+#include "widgets/dialogs/keyframe_editor_dialog.hpp"
 
 class CompoundTimelineWidget::Private
 {
@@ -198,7 +198,7 @@ public:
 
     Ui::CompoundTimelineWidget ui;
     item_models::PropertyModel property_model{true};
-    PropertyDelegate property_delegate;
+    style::PropertyDelegate property_delegate;
 
     QAction* action_title;
     QMenu menu_property;
