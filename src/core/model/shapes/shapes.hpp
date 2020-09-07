@@ -7,3 +7,4 @@
 #include "path.hpp"
 
 #include "fill.hpp"
+#include "stroke.hpp"

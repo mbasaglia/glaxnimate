@@ -27,6 +27,7 @@ model/shapes/rect.cpp
 model/shapes/group.cpp
 model/shapes/ellipse.cpp
 model/shapes/path.cpp
+model/shapes/stroke.cpp
 )
 
 if(${PYTHON_ENABLED})
