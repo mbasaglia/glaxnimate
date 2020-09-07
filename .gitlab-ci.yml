@@ -95,7 +95,7 @@ mxe:build:
         - x86_64-w64-mingw32.shared.posix-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/
         - make
         - make translations
-        - make install DESTDIR=glaxnimate-x86_64
+        - make install DESTDIR=glaxnimate-x86_64 >/dev/null
         - /mxedeployqt/mxedeployqt --mxepath "/mxe" --mxetarget x86_64-w64-mingw32.shared.posix glaxnimate/bin/
         - zip -r glaxnimate-x86_64.zip glaxnimate-x86_64
     artifacts:
