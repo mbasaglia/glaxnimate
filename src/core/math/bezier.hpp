@@ -221,12 +221,12 @@ public:
         for ( int i = 1; i < size(); i++ )
         {
             out.cubicTo(points_[i-1].tan_out, points_[i].tan_in, points_[i].pos);
+        }
 
-            if ( closed_ )
-            {
-                out.cubicTo(points_.back().tan_out, points_[0].tan_in, points_[0].pos);
-                out.closeSubpath();
-            }
+        if ( closed_ )
+        {
+            out.cubicTo(points_.back().tan_out, points_[0].tan_in, points_[0].pos);
+            out.closeSubpath();
         }
     }
 
