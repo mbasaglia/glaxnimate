@@ -5,6 +5,7 @@
 #include "model/shapes/shapes.hpp"
 #include "position_item.hpp"
 #include "sizepos_item.hpp"
+#include "bezier_item.hpp"
 
 graphics::GraphicsItemFactory::GraphicsItemFactory()
 {
@@ -49,6 +50,14 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             editors_list v;
             v.push_back(std::make_unique<graphics::PositionItem>(&rect->position));
             v.push_back(std::make_unique<graphics::SizePosItem>(&rect->size, &rect->position));
+            return v;
+        }
+    );
+    register_builder<model::Path>(
+        &GraphicsItemFactory::make_graphics_item_default,
+        [](model::Path* shape){
+            editors_list v;
+            v.push_back(std::make_unique<graphics::BezierItem>(shape));
             return v;
         }
     );

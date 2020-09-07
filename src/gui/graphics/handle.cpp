@@ -15,6 +15,7 @@ public:
     QColor color_highlighted;
     QColor color_selected;
     QColor color_border;
+    bool dragged = false;
 
     qreal external_radius()
     {
@@ -108,11 +109,17 @@ void graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setFocus(Qt::MouseFocusReason);
     event->accept();
-    emit drag_starting(pos(), event->modifiers());
+    d->dragged = false;
 }
 
 void graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
+    if ( !d->dragged )
+    {
+        d->dragged = true;
+        emit drag_starting(pos(), event->modifiers());
+    }
+
     QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
     QPointF oldp = scene_to_parent.map(scenePos());
     QPointF p = scene_to_parent.map(event->scenePos());
@@ -130,7 +137,15 @@ void graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     clearFocus();
     event->accept();
-    emit drag_finished();
+    if ( d->dragged )
+    {
+        emit drag_finished();
+        d->dragged = false;
+    }
+    else
+    {
+        emit clicked(event->modifiers());
+    }
 }
 
 void graphics::MoveHandle::change_shape(graphics::MoveHandle::Shape shape, int radius)

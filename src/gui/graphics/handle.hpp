@@ -61,6 +61,7 @@ signals:
     void dragged_x(qreal x, Qt::KeyboardModifiers modifiers);
     void dragged_y(qreal y, Qt::KeyboardModifiers modifiers);
     void drag_finished();
+    void clicked(Qt::KeyboardModifiers modifiers);
 
 private:
     class Private;

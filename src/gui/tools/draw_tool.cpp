@@ -88,7 +88,7 @@ void tools::DrawTool::mouse_press(const tools::MouseEvent& event)
         return;
 
     if ( bezier.empty() )
-        bezier.push_back(math::BezierPoint(event.scene_pos, event.scene_pos, event.scene_pos, point_type));
+        bezier.push_back(math::BezierPoint(event.scene_pos, event.scene_pos, event.scene_pos, math::Corner));
 
     dragging = true;
 }

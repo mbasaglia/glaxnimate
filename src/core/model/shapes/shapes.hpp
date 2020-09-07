@@ -1,6 +1,9 @@
 #pragma once
 
-#include "fill.hpp"
-#include "rect.hpp"
 #include "group.hpp"
+
+#include "rect.hpp"
 #include "ellipse.hpp"
+#include "path.hpp"
+
+#include "fill.hpp"
