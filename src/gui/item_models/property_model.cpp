@@ -377,9 +377,7 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
         model::BaseProperty* prop = tree->prop;
         model::PropertyTraits traits = prop->traits();
 
-
-
-        if ( role == Qt::TextColorRole )
+        if ( role == Qt::ForegroundRole )
         {
             if ( (traits.flags & (model::PropertyTraits::List|model::PropertyTraits::ReadOnly))
                 || traits.type == model::PropertyTraits::Object || traits.type == model::PropertyTraits::Unknown
@@ -407,7 +405,7 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
                 }
 
             }
-            else if ( role == Qt::BackgroundColorRole )
+            else if ( role == Qt::BackgroundRole )
             {
                 switch ( frame_status )
                 {
@@ -421,7 +419,7 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
                         return QColor::fromHsv(0, 0, 120);
                 }
             }
-            else if ( role == Qt::TextColorRole )
+            else if ( role == Qt::ForegroundRole )
             {
                 return QColor(Qt::white);
             }

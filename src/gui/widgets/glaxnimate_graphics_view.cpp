@@ -278,7 +278,7 @@ void GlaxnimateGraphicsView::keyReleaseEvent(QKeyEvent* event)
 
 void GlaxnimateGraphicsView::wheelEvent(QWheelEvent* event)
 {
-    if ( event->delta() < 0 )
+    if ( event->angleDelta().y() < 0 )
         zoom_out();
     else
         zoom_in();

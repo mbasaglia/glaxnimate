@@ -33,7 +33,7 @@ void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
         QModelIndex ind = node_index(node);
         QModelIndex par = node_index(node->docnode_parent());
         QModelIndex changed = index(ind.row(), ColumnColor, par);
-        dataChanged(changed, changed, {Qt::BackgroundColorRole, Qt::EditRole, Qt::DisplayRole});
+        dataChanged(changed, changed, {Qt::BackgroundRole, Qt::EditRole, Qt::DisplayRole});
     });
     connect(node, &model::DocumentNode::docnode_name_changed, this, [this, node]() {
         QModelIndex ind = node_index(node);
