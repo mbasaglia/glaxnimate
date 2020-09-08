@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QJsonDocument>
+#include <QCborMap>
 #include "io/base.hpp"
 
 namespace io::lottie {
@@ -22,7 +22,7 @@ public:
         };
     }
 
-    static QJsonDocument to_json(model::Document* document, bool strip = false);
+    static QCborMap to_json(model::Document* document, bool strip = false);
 
 private:
     bool on_save(QIODevice& file, const QString& filename,

@@ -1,6 +1,5 @@
 #include "lottie_format.hpp"
-
-#include <QJsonObject>
+#include "cbor_write_json.hpp"
 
 #include <zlib.h>
 
@@ -33,9 +32,9 @@ private:
     bool on_save(QIODevice& file, const QString&,
                  model::Document* document, const QVariantMap&) override
     {
-        QJsonDocument json = LottieFormat::to_json(document, true);
-        json.object()["tgs"] = 1;
-        QByteArray data = json.toJson(QJsonDocument::Compact);
+        QCborMap json = LottieFormat::to_json(document, true);
+        json[QLatin1String("tgs")] = 1;
+        QByteArray data = cbor_write_json(json, true);
         z_stream zip_stream;
 
         zip_stream.zalloc = Z_NULL;

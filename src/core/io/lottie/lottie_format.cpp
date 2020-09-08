@@ -2,12 +2,16 @@
 
 #include <set>
 
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QCborValue>
+#include <QCborArray>
 
 #include "app/log/log.hpp"
 #include "model/layers/layers.hpp"
 #include "model/shapes/shapes.hpp"
+#include "cbor_write_json.hpp"
 
 using namespace model;
 
@@ -166,29 +170,35 @@ const QMap<QString, QString> shape_types = {
 //     {"Twist", "tw"},
 };
 
+QLatin1String operator "" _l(const char* c, std::size_t sz)
+{
+    return QLatin1String(c, sz);
+}
+
 class LottieExporterState
 {
 public:
     explicit LottieExporterState(model::Document* document, bool strip)
         : document(document), strip(strip) {}
 
-    QJsonObject to_json()
+    QCborMap to_json()
     {
         /// @todo make a system that preserves key order as that is needed for lottie android
         return convert_animation(document->main_composition());
     }
 
-    QJsonObject convert_animation(MainComposition* animation)
+    QCborMap convert_animation(MainComposition* animation)
     {
         layer_indices.clear();
-        QJsonObject json = convert_object_basic(animation);
-        json["v"] = "5.5.2";
+        QCborMap json;
+        json["v"_l] = "5.5.2";
+        convert_object_basic(animation, json);
 
-        QJsonArray layers;
+        QCborArray layers;
         for ( const auto& layer : animation->layers )
             layers.append(convert_layer(layer.get()));
 
-        json["layers"] = layers;
+        json["layers"_l] = layers;
         return json;
     }
 
@@ -201,69 +211,78 @@ public:
         return layer_indices[layer->uuid.get()];
     }
 
-    QJsonObject convert_layer(Layer* layer)
+    QCborMap convert_layer(Layer* layer)
     {
         int parent_index = layer_index(layer->parent.get());
-        QJsonObject json = convert_object_basic(layer);
-        json["ty"] = layer_types[layer->type_name()];
-        json["ind"] = layer_index(layer);
+        QCborMap json;
+        json["ty"_l] = layer_types[layer->type_name()];
+        json["ind"_l] = layer_index(layer);
+        convert_object_basic(layer, json);
 
-        QJsonObject transform = convert_transform(layer->transform.get(), &layer->opacity);
-        json["ks"] = transform;
+        QCborMap transform = convert_transform(layer->transform.get(), &layer->opacity);
+        json["ks"_l] = transform;
         if ( parent_index != -1 )
-            json["parent"] = parent_index;
+            json["parent"_l] = parent_index;
 
         if ( layer->type_name() == "SolidColorLayer" )
-            json["sc"] = static_cast<SolidColorLayer*>(layer)->color.get().name();
+            json["sc"_l] = static_cast<SolidColorLayer*>(layer)->color.get().name();
         if ( layer->type_name() == "ShapeLayer" )
-            json["shapes"] = convert_shapes(static_cast<ShapeLayer*>(layer)->shapes);
+            json["shapes"_l] = convert_shapes(static_cast<ShapeLayer*>(layer)->shapes);
         return json;
     }
 
-    QJsonObject convert_transform(Transform* tf, model::AnimatableBase* opacity)
+    QCborMap convert_transform(Transform* tf, model::AnimatableBase* opacity)
     {
-        QJsonObject json = convert_object_basic(tf);
-        json["o"] = convert_animated(
+        QCborMap json;
+        convert_object_basic(tf, json);
+        json["o"_l] = convert_animated(
             opacity,
             [](const QVariant& v) -> QVariant { return v.toFloat() * 100;}
         );
         return json;
     }
 
-    QJsonValue value_from_variant(const QVariant& v)
+    QCborValue value_from_variant(const QVariant& v)
     {
         if ( v.userType() == QMetaType::QPointF )
         {
             auto vv = v.toPointF();
-            return QJsonArray{vv.x(), vv.y()};
+            return QCborArray{vv.x(), vv.y()};
         }
         else if ( v.userType() == QMetaType::QVector2D )
         {
             auto vv = v.value<QVector2D>() * 100;
-            return QJsonArray{vv.x(), vv.y()};
+            return QCborArray{vv.x(), vv.y()};
         }
         else if ( v.userType() == QMetaType::QSizeF )
         {
             auto vv = v.toSizeF();
-            return QJsonArray{vv.width(), vv.height()};
+            return QCborArray{vv.width(), vv.height()};
         }
         else if ( v.userType() == QMetaType::QColor )
         {
             auto vv = v.value<QColor>().toRgb();
-            return QJsonArray{vv.redF(), vv.greenF(), vv.blueF(), vv.alphaF()};
+            return QCborArray{vv.redF(), vv.greenF(), vv.blueF(), vv.alphaF()};
         }
-        return QJsonValue::fromVariant(v);
+        return QCborValue::fromVariant(v);
     }
 
-    QJsonObject convert_object_basic(model::Object* obj)
+    void convert_object_from_meta(model::Object* obj, const QMetaObject* mo, QCborMap& json_obj)
     {
-        QJsonObject json_obj;
-        for ( const QMetaObject* mo = obj->metaObject(); mo; mo = mo->superClass() )
-            convert_object_properties(obj, fields[model::detail::naked_type_name(mo)], json_obj);
-        return json_obj;
+        auto super = mo->superClass();
+        if ( super )
+            convert_object_from_meta(obj, super, json_obj);
+        auto it = fields.find(model::detail::naked_type_name(mo));
+        if ( it != fields.end() )
+            convert_object_properties(obj, *it, json_obj);
     }
 
-    void convert_object_properties(model::Object* obj, const QVector<FieldInfo>& fields, QJsonObject& json_obj)
+    void convert_object_basic(model::Object* obj, QCborMap& json_obj)
+    {
+        convert_object_from_meta(obj, obj->metaObject(), json_obj);
+    }
+
+    void convert_object_properties(model::Object* obj, const QVector<FieldInfo>& fields, QCborMap& json_obj)
     {
         for ( const auto& field : fields )
         {
@@ -288,72 +307,73 @@ public:
         }
     }
 
-    QJsonObject convert_animated(
+    QCborMap convert_animated(
         AnimatableBase* prop,
         const std::function<QVariant (const QVariant&)>& transform_values = {}
     )
     {
         /// @todo for position fields also add spatial bezier handles
-        QJsonObject jobj;
+        QCborMap jobj;
         if ( prop->animated() )
         {
-            jobj["a"] = 1;
-            QJsonArray keyframes;
+            jobj["a"_l] = 1;
+            QCborArray keyframes;
             for ( int i = 0, e = prop->keyframe_count(); i < e; i++ )
             {
                 auto kf = prop->keyframe(i);
-                QJsonObject jkf;
-                jkf["t"] = kf->time();
+                QCborMap jkf;
+                jkf["t"_l] = kf->time();
                 QVariant v = kf->value();
                 if ( transform_values )
                     v = transform_values(v);
-                jkf["s"] = value_from_variant(v);
-                jkf["i"] = keyframe_bezier_handle(kf->transition().before_handle());
-                jkf["o"] = keyframe_bezier_handle(kf->transition().after_handle());
-                jkf["h"] = kf->transition().hold() ? 1 : 0;
+                jkf["s"_l] = value_from_variant(v);
+                jkf["i"_l] = keyframe_bezier_handle(kf->transition().before_handle());
+                jkf["o"_l] = keyframe_bezier_handle(kf->transition().after_handle());
+                jkf["h"_l] = kf->transition().hold() ? 1 : 0;
                 keyframes.push_back(jkf);
             }
-            jobj["k"] = keyframes;
+            jobj["k"_l] = keyframes;
         }
         else
         {
-            jobj["a"] = 0;
+            jobj["a"_l] = 0;
                 QVariant v = prop->value();
                 if ( transform_values )
                     v = transform_values(v);
-            jobj["k"] = value_from_variant(v);
+            jobj["k"_l] = value_from_variant(v);
         }
         return jobj;
     }
 
-    QJsonObject keyframe_bezier_handle(const QPointF& p)
+    QCborMap keyframe_bezier_handle(const QPointF& p)
     {
-        QJsonObject jobj;
-        jobj["x"] = p.x();
-        jobj["y"] = p.y();
+        QCborMap jobj;
+        jobj["x"_l] = p.x();
+        jobj["y"_l] = p.y();
         return jobj;
     }
 
 
-    QJsonObject convert_shape(model::ShapeElement* shape)
+    QCborMap convert_shape(model::ShapeElement* shape)
     {
-        QJsonObject jsh = convert_object_basic(shape);
-        jsh["ty"] = shape_types[shape->type_name()];
+        QCborMap jsh;
+        jsh["ty"_l] = shape_types[shape->type_name()];
 //         jsh["d"] = 0;
+        convert_object_basic(shape, jsh);
         if ( shape->type_name() == "Group" )
         {
             auto gr = static_cast<model::Group*>(shape);
             auto shapes = convert_shapes(gr->shapes);
             auto transform = convert_transform(gr->transform.get(), &gr->opacity);
-            transform["ty"] = "tr";
+            transform["ty"_l] = "tr";
             shapes.push_back(transform);
-            jsh["it"] = shapes;
+            jsh["it"_l] = shapes;
         }
         else if ( shape->type_name() == "Fill" )
         {
             auto fill = static_cast<model::Fill*>(shape);
-            jsh["r"] = int(fill->fill_rule.get());
-            jsh["o"] = convert_animated(
+            jsh["r"_l] = int(fill->fill_rule.get());
+            jsh["o"_l] = convert_animated(
                 &fill->opacity,
                 [](const QVariant& v) -> QVariant { return v.toFloat() * 100;}
             );
@@ -363,17 +383,17 @@ public:
             auto str = static_cast<model::BaseStroke*>(shape);
             switch ( str->cap.get() )
             {
-                case model::BaseStroke::ButtCap:  jsh["lc"] = 1; break;
-                case model::BaseStroke::RoundCap: jsh["lc"] = 2; break;
-                case model::BaseStroke::SquareCap:jsh["lc"] = 3; break;
+                case model::BaseStroke::ButtCap:  jsh["lc"_l] = 1; break;
+                case model::BaseStroke::RoundCap: jsh["lc"_l] = 2; break;
+                case model::BaseStroke::SquareCap:jsh["lc"_l] = 3; break;
             }
             switch ( str->join.get() )
             {
-                case model::BaseStroke::MiterJoin: jsh["lj"] = 1; break;
-                case model::BaseStroke::RoundJoin: jsh["lj"] = 2; break;
-                case model::BaseStroke::BevelJoin: jsh["lj"] = 3; break;
+                case model::BaseStroke::MiterJoin: jsh["lj"_l] = 1; break;
+                case model::BaseStroke::RoundJoin: jsh["lj"_l] = 2; break;
+                case model::BaseStroke::BevelJoin: jsh["lj"_l] = 3; break;
             }
-            jsh["o"] = convert_animated(
+            jsh["o"_l] = convert_animated(
                 &str->opacity,
                 [](const QVariant& v) -> QVariant { return v.toFloat() * 100;}
             );
@@ -382,9 +402,9 @@ public:
         return jsh;
     }
 
-    QJsonArray convert_shapes(const ShapeListProperty& shapes)
+    QCborArray convert_shapes(const ShapeListProperty& shapes)
     {
-        QJsonArray jshapes;
+        QCborArray jshapes;
         for ( const auto& shape : shapes )
             jshapes.push_front(convert_shape(shape.get()));
         return jshapes;
@@ -661,14 +681,14 @@ private:
 bool io::lottie::LottieFormat::on_save(QIODevice& file, const QString&,
                                          model::Document* document, const QVariantMap& setting_values)
 {
-    file.write(to_json(document).toJson(setting_values["pretty"].toBool() ? QJsonDocument::Indented : QJsonDocument::Compact));
+    file.write(cbor_write_json(to_json(document), !setting_values["pretty"].toBool()));
     return true;
 }
 
-QJsonDocument io::lottie::LottieFormat::to_json(model::Document* document, bool strip)
+QCborMap io::lottie::LottieFormat::to_json(model::Document* document, bool strip)
 {
     LottieExporterState exp(document, strip);
-    return QJsonDocument(exp.to_json());
+    return exp.to_json();
 }
 
 bool io::lottie::LottieFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)

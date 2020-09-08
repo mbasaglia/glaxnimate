@@ -1,6 +1,6 @@
 #include "lottie_html_format.hpp"
 #include "lottie_format.hpp"
-
+#include "cbor_write_json.hpp"
 
 bool io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QString&,
                                            model::Document* document, const QVariantMap&)
@@ -41,7 +41,7 @@ R"(<!DOCTYPE html>
     .toUtf8()
     );
 
-    file.write(LottieFormat::to_json(document).toJson());
+    file.write(cbor_write_json(LottieFormat::to_json(document), false));
 
     file.write(R"(
     };
