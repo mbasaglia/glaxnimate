@@ -98,6 +98,7 @@ mxe:build:
         - make install DESTDIR=glaxnimate >/dev/null
         - /mxedeployqt/mxedeployqt --mxepath "/mxe" --mxetarget x86_64-w64-mingw32.shared.posix glaxnimate/bin/
         - cp external/Qt-Color-Widgets/libQtColorWidgets.dll glaxnimate/bin/
+        - cp ../deploy/glaxnimate.bat glaxnimate
         - zip -r glaxnimate-x86_64.zip glaxnimate >/dev/null
     artifacts:
         paths:
