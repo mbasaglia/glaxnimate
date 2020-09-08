@@ -169,8 +169,8 @@ const QMap<QString, QString> shape_types = {
 class LottieExporterState
 {
 public:
-    explicit LottieExporterState(model::Document* document)
-        : document(document) {}
+    explicit LottieExporterState(model::Document* document, bool strip)
+        : document(document), strip(strip) {}
 
     QJsonObject to_json()
     {
@@ -267,7 +267,7 @@ public:
     {
         for ( const auto& field : fields )
         {
-            if ( field.mode != Auto )
+            if ( field.mode != Auto || (strip && !field.essential) )
                 continue;
 
             model::BaseProperty * prop = obj->get_property(field.name);
@@ -386,11 +386,12 @@ public:
     {
         QJsonArray jshapes;
         for ( const auto& shape : shapes )
-            jshapes.push_back(convert_shape(shape.get()));
+            jshapes.push_front(convert_shape(shape.get()));
         return jshapes;
     }
 
     model::Document* document;
+    bool strip;
     QMap<QUuid, int> layer_indices;
     app::log::Log logger{"Lottie Export"};
 
@@ -664,9 +665,9 @@ bool io::lottie::LottieFormat::on_save(QIODevice& file, const QString&,
     return true;
 }
 
-QJsonDocument io::lottie::LottieFormat::to_json(model::Document* document)
+QJsonDocument io::lottie::LottieFormat::to_json(model::Document* document, bool strip)
 {
-    LottieExporterState exp(document);
+    LottieExporterState exp(document, strip);
     return QJsonDocument(exp.to_json());
 }
 

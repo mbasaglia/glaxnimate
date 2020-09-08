@@ -22,12 +22,12 @@ public:
         };
     }
 
-    static QJsonDocument to_json(model::Document* document);
+    static QJsonDocument to_json(model::Document* document, bool strip = false);
 
 private:
     bool on_save(QIODevice& file, const QString& filename,
                  model::Document* document, const QVariantMap& setting_values) override;
-                 
+
     bool on_open(QIODevice& file, const QString& filename,
                  model::Document* document, const QVariantMap& setting_values) override;
 private:

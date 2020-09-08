@@ -14,11 +14,12 @@ Dependencies
 * Qt5 (qtbase, qtsvg)
 * CMake
 * Python3
+* ZLib
 
 
 ### Installing Dependencies on Deb systems
 
-    apt-get install -y g++ cmake qtbase5-dev libqt5svg5-dev libpython3-dev
+    apt-get install -y g++ cmake qtbase5-dev libqt5svg5-dev libpython3-dev zlib1g-dev
 
 
 Getting the Latest Code
