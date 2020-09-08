@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>200</width>
+    <width>197</width>
     <height>282</height>
    </rect>
   </property>
@@ -62,6 +62,84 @@
           <string>Cap</string>
          </property>
         </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="layout_cap">
+         <item>
+          <widget class="QToolButton" name="button_cap_butt">
+           <property name="toolTip">
+            <string>Butt</string>
+           </property>
+           <property name="text">
+            <string>Butt</string>
+           </property>
+           <property name="icon">
+            <iconset theme="stroke-cap-butt"/>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="button_cap_round">
+           <property name="toolTip">
+            <string>Round</string>
+           </property>
+           <property name="text">
+            <string>Round</string>
+           </property>
+           <property name="icon">
+            <iconset theme="stroke-cap-round"/>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="button_cap_square">
+           <property name="toolTip">
+            <string>Square</string>
+           </property>
+           <property name="text">
+            <string>Square</string>
+           </property>
+           <property name="icon">
+            <iconset theme="stroke-cap-square"/>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_3">
@@ -140,84 +218,6 @@
            </property>
            <property name="icon">
             <iconset theme="stroke-join-miter"/>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="1">
-        <layout class="QHBoxLayout" name="layout_cap">
-         <item>
-          <widget class="QToolButton" name="button_cap_butt">
-           <property name="toolTip">
-            <string>Butt</string>
-           </property>
-           <property name="text">
-            <string>Butt</string>
-           </property>
-           <property name="icon">
-            <iconset theme="stroke-cap-butt"/>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QToolButton" name="button_cap_round">
-           <property name="toolTip">
-            <string>Round</string>
-           </property>
-           <property name="text">
-            <string>Round</string>
-           </property>
-           <property name="icon">
-            <iconset theme="stroke-cap-round"/>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QToolButton" name="button_cap_square">
-           <property name="toolTip">
-            <string>Square</string>
-           </property>
-           <property name="text">
-            <string>Square</string>
-           </property>
-           <property name="icon">
-            <iconset theme="stroke-cap-square"/>
            </property>
            <property name="checkable">
             <bool>true</bool>

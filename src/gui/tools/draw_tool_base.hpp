@@ -5,6 +5,7 @@
 #include "model/shapes/fill.hpp"
 #include "model/shapes/group.hpp"
 #include "model/layers/shape_layer.hpp"
+#include "model/shapes/stroke.hpp"
 #include "command/layer_commands.hpp"
 #include "command/shape_commands.hpp"
 
@@ -119,7 +120,22 @@ protected:
             index++;
         }
 
-        // TODO create stroke
+        if ( options->create_stroke() )
+        {
+            auto stroke = std::make_unique<model::SolidStroke>(document);
+            event.window->set_best_name(stroke.get(), QObject::tr("%1 Stroke").arg(name));
+            stroke->color.set(event.window->secondary_color());
+            QPen pen_style = event.window->current_pen_style();
+            stroke->width.set(pen_style.width());
+            stroke->cap.set(model::Stroke::Cap(pen_style.capStyle()));
+            stroke->join.set(model::Stroke::Join(pen_style.joinStyle()));
+            stroke->miter_limit.set(pen_style.miterLimit());
+
+            document->undo_stack().push(
+                new command::AddShape(prop, std::move(stroke), index)
+            );
+            index++;
+        }
 
         shape->name.set(name);
         document->undo_stack().push(

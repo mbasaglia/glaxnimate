@@ -75,6 +75,7 @@ protected:
             QPainterPath path;
             path.addPolygon(event.view->mapFromScene(rect));
             path.closeSubpath();
+
             draw_shape(event, path);
         }
     }
