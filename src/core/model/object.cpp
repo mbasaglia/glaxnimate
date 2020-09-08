@@ -13,7 +13,6 @@ class model::Object::Private
 public:
     std::unordered_map<QString, BaseProperty*> props;
     std::vector<BaseProperty*> prop_order;
-    std::list<UnknownProperty> unknowns;
     Document* document;
 };
 
@@ -74,20 +73,11 @@ model::BaseProperty * model::Object::get_property ( const QString& property )
     return it->second;
 }
 
-bool model::Object::set(const QString& property, const QVariant& value, bool allow_unknown)
+bool model::Object::set(const QString& property, const QVariant& value)
 {
     auto it = d->props.find(property);
     if ( it == d->props.end() )
-    {
-        if ( allow_unknown )
-        {
-            d->unknowns.emplace_back(this, property, value);
-            add_property(&d->unknowns.back());
-            emit property_added(property, value);
-            return true;
-        }
         return false;
-    }
 
     return it->second->set_value(value);
 }

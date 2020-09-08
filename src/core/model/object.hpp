@@ -37,7 +37,7 @@ public:
     virtual void assign_from(const Object* other);
 
     QVariant get(const QString& property) const;
-    bool set(const QString& property, const QVariant& value, bool allow_unknown = false);
+    bool set(const QString& property, const QVariant& value);
     bool set_undoable(const QString& property, const QVariant& value);
     bool has(const QString& property) const;
 
@@ -53,7 +53,6 @@ public:
     Document* document() const;
 
 signals:
-    void property_added(const QString& name, const QVariant& value);
     void property_changed(const model::BaseProperty* prop, const QVariant& value);
 
 protected:

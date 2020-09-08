@@ -73,7 +73,8 @@ public:
         {
             if ( !target->has(it.key()) && it.key() != "__type__" )
             {
-                target->set(it.key(), it->toVariant(), true);
+                if ( !target->set(it.key(), it->toVariant()) )
+                    emit fmt->error(tr("Could not set property %1").arg(it.key()));
             }
         }
     }

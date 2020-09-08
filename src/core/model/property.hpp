@@ -489,34 +489,6 @@ private:
     PropertyCallback<bool, Type> validator;
 };
 
-
-class UnknownProperty : public BaseProperty
-{
-public:
-    UnknownProperty(Object* obj, const QString& name, QVariant value)
-        : BaseProperty(obj, name, {PropertyTraits::Unknown, PropertyTraits::ReadOnly}),
-          variant(std::move(value))
-    {}
-
-    QVariant value() const override
-    {
-        return variant;
-    }
-
-    bool set_value(const QVariant& val) override
-    {
-        variant = val;
-        value_changed();
-        return true;
-    }
-
-    void set_time(FrameTime) override {}
-
-private:
-    QVariant variant;
-};
-
-
 class ObjectListPropertyBase : public BaseProperty
 {
 public:

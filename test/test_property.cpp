@@ -18,11 +18,6 @@ struct PropertyChangedInspector
         QObject::connect(&obj, &Object::property_changed, [this](const BaseProperty* prop, const QVariant& value){(*this)(prop->name(), value);});
     }
 
-    void connect_added(Object& obj)
-    {
-        QObject::connect(&obj, &Object::property_added, [this](const QString& name, const QVariant& value){(*this)(name, value);});
-    }
-
     void operator()(const QString& name, const QVariant& value)
     {
         this->name = name;
@@ -134,19 +129,6 @@ private slots:
         QVERIFY(!prop.set_value(QVariant(QPoint(1, 2))));
         QCOMPARE(prop.get(), 456);
         QVERIFY(pci.not_called());
-    }
-
-    void test_unknown_property_variant()
-    {
-        PropertyChangedInspector pci;
-        Object obj(nullptr);
-        pci.connect(obj);
-
-        UnknownProperty prop(&obj, "foo", 123);
-        QCOMPARE(prop.value(), QVariant(123));
-        QVERIFY(prop.set_value(QVariant(456)));
-        QVERIFY(pci.called_with("foo", 456));
-        QCOMPARE(prop.value(), QVariant(456));
     }
 
     void test_traits_get_type()
