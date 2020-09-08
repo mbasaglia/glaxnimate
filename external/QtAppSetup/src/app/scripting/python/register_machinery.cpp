@@ -44,6 +44,10 @@ SETUP_TYPE(QMetaType::QVariant,     QVariant)
 SETUP_TYPE(QMetaType::QStringList,  QStringList)
 SETUP_TYPE(QMetaType::QVariantMap,  QVariantMap)
 SETUP_TYPE(QMetaType::QVariantHash, QVariantHash)
+SETUP_TYPE(QMetaType::QPointF,      QPointF)
+SETUP_TYPE(QMetaType::QSizeF,       QSizeF)
+SETUP_TYPE(QMetaType::QVector2D,    QVector2D)
+SETUP_TYPE(QMetaType::QRectF,       QRectF)
 // If you add stuff here, remember to add it to supported_types too
 
 TYPE_NAME(std::vector<QObject*>)
@@ -68,7 +72,11 @@ using supported_types = std::integer_sequence<int,
     QMetaType::QVariant,
     QMetaType::QStringList,
     QMetaType::QVariantMap,
-    QMetaType::QVariantHash
+    QMetaType::QVariantHash,
+    QMetaType::QPointF,
+    QMetaType::QSizeF,
+    QMetaType::QVector2D,
+    QMetaType::QRectF
     // Ensure new types have SETUP_TYPE
 >;
 
@@ -123,6 +131,8 @@ RetT type_dispatch(int meta_type, FuncArgs&&... args)
 {
     if ( meta_type >= QMetaType::User )
     {
+        if ( QMetaType(meta_type).flags() & QMetaType::IsEnumeration )
+            return Func<int>::do_the_thing(std::forward<FuncArgs>(args)...);
         return Func<QObject*>::do_the_thing(std::forward<FuncArgs>(args)...);
     }
     RetT ret;
@@ -164,9 +174,9 @@ PyPropertyInfo register_property(const QMetaProperty& prop)
     if ( !prop.isScriptable() )
         return {};
 
-    PyPropertyInfo pyprop = type_dispatch<RegisterProperty, PyPropertyInfo>(prop.type(), prop);
+    PyPropertyInfo pyprop = type_dispatch<RegisterProperty, PyPropertyInfo>(prop.userType(), prop);
     if ( !pyprop.name )
-        log::LogStream("Python", "", log::Error) << "Invalid property" << prop.name() << "of type" << prop.type() << prop.typeName();
+        log::LogStream("Python", "", log::Error) << "Invalid property" << prop.name() << "of type" << prop.userType() << prop.typeName();
     return pyprop;
 }
 
@@ -394,7 +404,6 @@ bool qvariant_type_caster_cast(
     return (qvariant_type_caster_cast_impl<i>(into, src, policy, parent)||...);
 }
 
-
 } // namespace app::scripting::python
 
 using namespace app::scripting::python;
@@ -416,8 +425,13 @@ pybind11::handle pybind11::detail::type_caster<QVariant>::cast(QVariant src, ret
 
     policy = py::return_value_policy::automatic_reference;
 
-    if ( src.type() == QVariant::UserType )
+    int meta_type = src.userType();
+    if ( meta_type >= QMetaType::User )
+    {
+        if ( QMetaType(meta_type).flags() & QMetaType::IsEnumeration )
+            return pybind11::detail::make_caster<int>::cast(src.value<int>(), policy, parent);
         return pybind11::detail::make_caster<QObject*>::cast(src.value<QObject*>(), policy, parent);
+    }
 
     pybind11::handle ret;
     qvariant_type_caster_cast(ret, src, policy, parent, supported_types());

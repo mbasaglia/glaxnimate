@@ -2,6 +2,7 @@
 
 
 #include "app/scripting/python/register_machinery.hpp"
+#include "app/log/log.hpp"
 
 
 app::scripting::ScriptEngine::Autoregister<app::scripting::python::PythonEngine> app::scripting::python::PythonEngine::autoreg;
@@ -61,14 +62,17 @@ QString app::scripting::python::PythonContext::eval_to_string(const QString& cod
         py::exec(std_code);
         return {};
     } catch ( const py::error_already_set& pyexc ) {
-
         throw ScriptError(pyexc.what());
     }
 }
 
 void app::scripting::python::PythonContext::app_module ( const QString& name )
 {
-    d->my_modules.push_back(py::module::import(name.toStdString().c_str()));
+    try {
+        d->my_modules.push_back(py::module::import(name.toStdString().c_str()));
+    } catch ( const py::error_already_set& pyexc ) {
+        log::Log("Python", name).log(pyexc.what(), log::Error);
+    }
 }
 
 

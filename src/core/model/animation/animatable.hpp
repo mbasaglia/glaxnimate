@@ -103,7 +103,7 @@ public:
     /**
      * \brief Get the value at the given time
      */
-    Q_INVOKABLE virtual QVariant value(FrameTime time) const = 0;
+    virtual QVariant value(FrameTime time) const = 0;
 
     using BaseProperty::value;
 

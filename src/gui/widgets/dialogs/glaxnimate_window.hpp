@@ -5,8 +5,7 @@
 #include <memory>
 
 #include "model/document.hpp"
-
-namespace model { class Document; }
+#include "model/shapes/shape.hpp"
 
 namespace app::scripting {
 

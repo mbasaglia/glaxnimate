@@ -2,10 +2,8 @@
 
 void GlaxnimateWindow::Private::console_error(const app::scripting::ScriptError& err)
 {
-    QColor col = ui.console_output->textColor();
     ui.console_output->setTextColor(Qt::red);
     ui.console_output->append(err.message());
-    ui.console_output->setTextColor(col);
 }
 
 void GlaxnimateWindow::Private::console_commit(QString text)
@@ -22,6 +20,7 @@ void GlaxnimateWindow::Private::console_commit(QString text)
     c.clearSelection();
     ui.console_output->setTextCursor(c);
 
+    ui.console_output->setTextColor(parent->palette().text().color());
     ui.console_output->append(text);
     auto ctx = script_contexts[ui.console_language->currentIndex()].get();
     try {
