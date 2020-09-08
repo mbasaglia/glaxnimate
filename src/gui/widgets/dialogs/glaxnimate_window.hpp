@@ -49,6 +49,8 @@ public:
     QColor secondary_color() const;
     void set_secondary_color(const QColor& c);
 
+    QPen current_pen_style() const;
+
     /**
      * @brief Shows a warning popup
      */

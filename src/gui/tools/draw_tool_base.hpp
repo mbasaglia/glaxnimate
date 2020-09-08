@@ -55,7 +55,7 @@ protected:
                 event.painter->setBrush(Qt::transparent);
 
             if ( options->create_stroke() )
-                event.painter->setPen(QPen(event.window->secondary_color(), options->stroke_width()));
+                event.painter->setPen(event.window->current_pen_style());
             else
                 event.painter->setPen(Qt::NoPen);
 

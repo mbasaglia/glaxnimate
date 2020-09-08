@@ -68,6 +68,22 @@ Opening and saving supports Gimp Palette files (.gpl).
 
 Clicking on one of the colors, selects it as the current color.
 
+## Stroke
+
+![Stroke Style Dock](/img/screenshots/stroke_style.png)
+
+This view shows various stroke (outline) settings.
+
+At the bottom it shows a preview of the current settings.
+
+The "Width" spin box determines how thick the stroke is.
+
+The "Cap" buttons determine the style of the ends of the line.
+
+The "Join" buttons determine the style of sharp corners.
+
+The spin box after the "Join" buttons determines how far a Miter join can reach.
+
 ## Layers
 
 ## Timeline

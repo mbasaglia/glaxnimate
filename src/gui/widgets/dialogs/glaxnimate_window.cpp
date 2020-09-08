@@ -291,3 +291,7 @@ void GlaxnimateWindow::set_current_document_node(model::DocumentNode* node)
     d->set_current_document_node(node);
 }
 
+QPen GlaxnimateWindow::current_pen_style() const
+{
+    return d->ui.stroke_style_widget->pen_style(secondary_color());
+}

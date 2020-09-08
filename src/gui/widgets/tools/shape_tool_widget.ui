@@ -6,25 +6,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>184</width>
-    <height>100</height>
+    <width>208</width>
+    <height>128</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="QCheckBox" name="check_fill">
-     <property name="text">
-      <string>Fill</string>
-     </property>
-     <property name="icon">
-      <iconset theme="format-fill-color">
-       <normaloff>.</normaloff>.</iconset>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="0">
     <widget class="QCheckBox" name="check_stroke">
      <property name="text">
@@ -32,6 +18,34 @@
      </property>
      <property name="icon">
       <iconset theme="format-stroke-color">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="check_transform">
+     <property name="text">
+      <string>Transform</string>
+     </property>
+     <property name="icon">
+      <iconset theme="transform-move">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="check_fill">
+     <property name="text">
+      <string>Fill</string>
+     </property>
+     <property name="icon">
+      <iconset theme="format-fill-color">
        <normaloff>.</normaloff>.</iconset>
      </property>
      <property name="checked">
@@ -53,32 +67,6 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QDoubleSpinBox" name="spin_stroke_width">
-     <property name="toolTip">
-      <string>Stroke Width</string>
-     </property>
-     <property name="maximum">
-      <double>999.990000000000009</double>
-     </property>
-     <property name="value">
-      <double>1.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QCheckBox" name="check_transform">
-     <property name="text">
-      <string>Transform</string>
-     </property>
-     <property name="icon">
-      <iconset theme="transform-move"/>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources/>
@@ -94,7 +82,7 @@
      <y>19</y>
     </hint>
     <hint type="destinationlabel">
-     <x>282</x>
+     <x>207</x>
      <y>19</y>
     </hint>
    </hints>
@@ -110,7 +98,7 @@
      <y>70</y>
     </hint>
     <hint type="destinationlabel">
-     <x>296</x>
+     <x>207</x>
      <y>46</y>
     </hint>
    </hints>
@@ -122,11 +110,11 @@
    <slot>check_checks()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>39</x>
-     <y>82</y>
+     <x>45</x>
+     <y>116</y>
     </hint>
     <hint type="destinationlabel">
-     <x>309</x>
+     <x>207</x>
      <y>123</y>
     </hint>
    </hints>
@@ -138,11 +126,11 @@
    <slot>check_checks()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>84</x>
-     <y>31</y>
+     <x>90</x>
+     <y>55</y>
     </hint>
     <hint type="destinationlabel">
-     <x>235</x>
+     <x>207</x>
      <y>33</y>
     </hint>
    </hints>

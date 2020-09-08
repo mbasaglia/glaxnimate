@@ -610,6 +610,39 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="dock_stroke">
+   <property name="windowIcon">
+    <iconset theme="object-stroke-style"/>
+   </property>
+   <property name="windowTitle">
+    <string>Stroke</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_8">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="action_new">
    <property name="icon">
     <iconset theme="document-new">
@@ -1214,6 +1247,12 @@
    <class>ColorSelector</class>
    <extends>QWidget</extends>
    <header>widgets/color_selector.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StrokeStyleWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/stroke_style_widget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

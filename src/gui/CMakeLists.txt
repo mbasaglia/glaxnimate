@@ -52,6 +52,8 @@ widgets/tools/shape_tool_widget.ui
 widgets/enum_combo.cpp
 widgets/color_selector.cpp
 widgets/color_selector.ui
+widgets/stroke_style_widget.cpp
+widgets/stroke_style_widget.ui
 )
 
 if(${PYTHON_ENABLED})

@@ -171,6 +171,8 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     parent->tabifyDockWidget(ui.dock_logs, ui.dock_script_console);
     parent->tabifyDockWidget(ui.dock_script_console, ui.dock_timeline);
 
+    parent->tabifyDockWidget(ui.dock_stroke, ui.dock_colors);
+
     parent->resizeDocks(
         {ui.dock_layers, ui.dock_properties},
         {1, 1},
@@ -270,6 +272,7 @@ void GlaxnimateWindow::Private::shutdown()
     app::settings::set("open_save", "recent_files", recent_files);
 
     ui.color_selector->save_settings();
+    ui.stroke_style_widget->save_settings();
 
     QStringList history = ui.console_input->history();
     int max_history = app::settings::get<int>("scripting", "max_history");
