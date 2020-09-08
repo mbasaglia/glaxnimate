@@ -7,6 +7,7 @@
 
 #include "app/log/log.hpp"
 #include "model/layers/layers.hpp"
+#include "model/shapes/shapes.hpp"
 
 using namespace model;
 
@@ -47,7 +48,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"first_frame",     "ip"},
     }},
     {"Composition", {
-        FieldInfo("layers"),
+        FieldInfo("layers", Custom),
     }},
     {"MainComposition", {
         FieldInfo("v", Custom),
@@ -85,6 +86,9 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"height",         "sh"},
         FieldInfo{"width",          "sw"},
     }},
+    {"ShapeLayer", {
+        FieldInfo{"shapes", Custom},
+    }},
     {"Transform", {
         FieldInfo{"anchor_point",   "a"},
         FieldInfo("px", Custom),
@@ -96,12 +100,70 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("o"),
         FieldInfo("sk"),
         FieldInfo("sa"),
-    }}
+    }},
+    {"ShapeElement", {
+        FieldInfo{"ty", Custom},
+        FieldInfo{"ix"},
+        FieldInfo{"bm"},
+        FieldInfo{"hd"},
+    }},
+    {"Shape", {
+        FieldInfo{"d"},
+    }},
+    {"Rect", {
+        FieldInfo{"position",       "p"},
+        FieldInfo{"size",           "s"},
+        FieldInfo{"rounded",        "r"},
+    }},
+    {"Ellipse", {
+        FieldInfo{"position",       "p"},
+        FieldInfo{"size",           "s"},
+    }},
+    {"Path", {
+//         FieldInfo{"shape",          "ks"},
+    }},
+    {"Group", {
+        FieldInfo{"np"},
+        FieldInfo{"it", Custom},
+    }},
+    {"Fill", {
+        FieldInfo{"o", Custom},
+        FieldInfo{"color",          "c"},
+        FieldInfo{"r", Custom},
+    }},
+    {"BaseStroke", {
+        FieldInfo{"o", Custom},
+        FieldInfo{"lc", Custom},
+        FieldInfo{"lj", Custom},
+        FieldInfo{"miter_limit",    "ml"},
+        FieldInfo{"width",          "w"},
+        FieldInfo{"d"},
+    }},
+    {"Stroke", {
+        FieldInfo{"color",          "c"},
+    }},
 };
 const QMap<QString, int> layer_types = {
     {"SolidColorLayer", 1},
     {"EmptyLayer", 3},
     {"ShapeLayer", 4}
+};
+const QMap<QString, QString> shape_types = {
+    {"Rect", "rc"},
+//     {"Star", "sr"},
+    {"Ellipse", "el"},
+    {"Path", "sh"},
+    {"Group", "gr"},
+    {"Fill", "fl"},
+    {"Stroke", "st"},
+//     {"GradientFill", "gf"},
+//     {"GradientStroke", "gs"},
+//     {"TransformShape", "tr"},
+//     {"Trim", "tm"},
+//     {"Repeater", "rp"},
+//     {"EoundedCorners", "rd"},
+//     {"Merge", "mm"},
+//     {"Twist", "tw"},
 };
 
 class LottieExporterState
@@ -145,23 +207,26 @@ public:
         QJsonObject json = convert_object_basic(layer);
         json["ty"] = layer_types[layer->type_name()];
         json["ind"] = layer_index(layer);
-        json["ks"] = convert_transform(layer->transform.get());
+
+        QJsonObject transform = convert_transform(layer->transform.get(), &layer->opacity);
+        json["ks"] = transform;
         if ( parent_index != -1 )
             json["parent"] = parent_index;
-        /// \todo add opacity to layer and set it to ks.o
 
         if ( layer->type_name() == "SolidColorLayer" )
             json["sc"] = static_cast<SolidColorLayer*>(layer)->color.get().name();
+        if ( layer->type_name() == "ShapeLayer" )
+            json["shapes"] = convert_shapes(static_cast<ShapeLayer*>(layer)->shapes);
         return json;
     }
 
-    QJsonObject convert_transform(Transform* tf)
+    QJsonObject convert_transform(Transform* tf, model::AnimatableBase* opacity)
     {
         QJsonObject json = convert_object_basic(tf);
-        QJsonObject o;
-        o["a"] = 0;
-        o["k"] = 100;
-        json["o"] = o;
+        json["o"] = convert_animated(
+            opacity,
+            [](const QVariant& v) -> QVariant { return v.toFloat() * 100;}
+        );
         return json;
     }
 
@@ -176,6 +241,16 @@ public:
         {
             auto vv = v.value<QVector2D>() * 100;
             return QJsonArray{vv.x(), vv.y()};
+        }
+        else if ( v.userType() == QMetaType::QSizeF )
+        {
+            auto vv = v.toSizeF();
+            return QJsonArray{vv.width(), vv.height()};
+        }
+        else if ( v.userType() == QMetaType::QColor )
+        {
+            auto vv = v.value<QColor>().toRgb();
+            return QJsonArray{vv.redF(), vv.greenF(), vv.blueF(), vv.alphaF()};
         }
         return QJsonValue::fromVariant(v);
     }
@@ -213,7 +288,10 @@ public:
         }
     }
 
-    QJsonObject convert_animated(AnimatableBase* prop)
+    QJsonObject convert_animated(
+        AnimatableBase* prop,
+        const std::function<QVariant (const QVariant&)>& transform_values = {}
+    )
     {
         /// @todo for position fields also add spatial bezier handles
         QJsonObject jobj;
@@ -226,7 +304,10 @@ public:
                 auto kf = prop->keyframe(i);
                 QJsonObject jkf;
                 jkf["t"] = kf->time();
-                jkf["s"] = value_from_variant(kf->value());
+                QVariant v = kf->value();
+                if ( transform_values )
+                    v = transform_values(v);
+                jkf["s"] = value_from_variant(v);
                 jkf["i"] = keyframe_bezier_handle(kf->transition().before_handle());
                 jkf["o"] = keyframe_bezier_handle(kf->transition().after_handle());
                 jkf["h"] = kf->transition().hold() ? 1 : 0;
@@ -237,7 +318,10 @@ public:
         else
         {
             jobj["a"] = 0;
-            jobj["k"] = value_from_variant(prop->value());
+                QVariant v = prop->value();
+                if ( transform_values )
+                    v = transform_values(v);
+            jobj["k"] = value_from_variant(v);
         }
         return jobj;
     }
@@ -248,6 +332,62 @@ public:
         jobj["x"] = p.x();
         jobj["y"] = p.y();
         return jobj;
+    }
+
+
+    QJsonObject convert_shape(model::ShapeElement* shape)
+    {
+        QJsonObject jsh = convert_object_basic(shape);
+        jsh["ty"] = shape_types[shape->type_name()];
+//         jsh["d"] = 0;
+        if ( shape->type_name() == "Group" )
+        {
+            auto gr = static_cast<model::Group*>(shape);
+            auto shapes = convert_shapes(gr->shapes);
+            auto transform = convert_transform(gr->transform.get(), &gr->opacity);
+            transform["ty"] = "tr";
+            shapes.push_back(transform);
+            jsh["it"] = shapes;
+        }
+        else if ( shape->type_name() == "Fill" )
+        {
+            auto fill = static_cast<model::Fill*>(shape);
+            jsh["r"] = int(fill->fill_rule.get());
+            jsh["o"] = convert_animated(
+                &fill->opacity,
+                [](const QVariant& v) -> QVariant { return v.toFloat() * 100;}
+            );
+        }
+        else if ( shape->type_name() == "Stroke" )
+        {
+            auto str = static_cast<model::BaseStroke*>(shape);
+            switch ( str->cap.get() )
+            {
+                case model::BaseStroke::ButtCap:  jsh["lc"] = 1; break;
+                case model::BaseStroke::RoundCap: jsh["lc"] = 2; break;
+                case model::BaseStroke::SquareCap:jsh["lc"] = 3; break;
+            }
+            switch ( str->join.get() )
+            {
+                case model::BaseStroke::MiterJoin: jsh["lj"] = 1; break;
+                case model::BaseStroke::RoundJoin: jsh["lj"] = 2; break;
+                case model::BaseStroke::BevelJoin: jsh["lj"] = 3; break;
+            }
+            jsh["o"] = convert_animated(
+                &str->opacity,
+                [](const QVariant& v) -> QVariant { return v.toFloat() * 100;}
+            );
+        }
+
+        return jsh;
+    }
+
+    QJsonArray convert_shapes(const ShapeListProperty& shapes)
+    {
+        QJsonArray jshapes;
+        for ( const auto& shape : shapes )
+            jshapes.push_back(convert_shape(shape.get()));
+        return jshapes;
     }
 
     model::Document* document;

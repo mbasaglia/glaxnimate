@@ -8,7 +8,7 @@
 
 namespace model {
 
-class Stroke : public Modifier
+class BaseStroke : public Modifier
 {
     Q_OBJECT
 
@@ -63,7 +63,7 @@ protected:
     }
 };
 
-class SolidStroke : public ObjectBase<SolidStroke, Stroke>
+class Stroke : public ObjectBase<Stroke, BaseStroke>
 {
     GLAXNIMATE_OBJECT
     GLAXNIMATE_ANIMATABLE(QColor, color, QColor())

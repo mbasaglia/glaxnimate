@@ -19,6 +19,7 @@ class Layer : public AnimationContainer
     GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent, &Layer::valid_parents, &Layer::is_valid_parent)
     GLAXNIMATE_PROPERTY(float, start_time, 0, {}, {}, PropertyTraits::Visual)
     GLAXNIMATE_SUBOBJECT(Transform, transform)
+    GLAXNIMATE_ANIMATABLE(float, opacity, 1)
 
 public:
     class ChildLayerIterator

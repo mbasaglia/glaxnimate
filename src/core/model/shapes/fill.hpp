@@ -8,7 +8,7 @@
 
 namespace model {
 
-class Fill : public Modifier
+class BaseFill : public Modifier
 {
     Q_OBJECT
 
@@ -44,7 +44,7 @@ protected:
     }
 };
 
-class SolidFill : public ObjectBase<SolidFill, Fill>
+class Fill : public ObjectBase<Fill, BaseFill>
 {
     GLAXNIMATE_OBJECT
     GLAXNIMATE_ANIMATABLE(QColor, color, QColor())

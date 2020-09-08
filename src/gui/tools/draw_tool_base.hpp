@@ -111,7 +111,7 @@ protected:
 
         if ( options->create_fill() )
         {
-            auto fill = std::make_unique<model::SolidFill>(document);
+            auto fill = std::make_unique<model::Fill>(document);
             event.window->set_best_name(fill.get(), QObject::tr("%1 Fill").arg(name));
             fill->color.set(event.window->current_color());
             document->undo_stack().push(
@@ -122,7 +122,7 @@ protected:
 
         if ( options->create_stroke() )
         {
-            auto stroke = std::make_unique<model::SolidStroke>(document);
+            auto stroke = std::make_unique<model::Stroke>(document);
             event.window->set_best_name(stroke.get(), QObject::tr("%1 Stroke").arg(name));
             stroke->color.set(event.window->secondary_color());
             QPen pen_style = event.window->current_pen_style();
