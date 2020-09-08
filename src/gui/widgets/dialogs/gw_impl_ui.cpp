@@ -75,11 +75,6 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
         ui.menu_tools->addSeparator();
     }
 
-    // Colors
-    update_color(Qt::white, true, nullptr);
-    ui.palette_widget->setModel(&palette_model);
-    palette_model.setSearchPaths(app::Application::instance()->data_paths_unchecked("palettes"));
-
     // Item views
     ui.view_document_node->setModel(&document_node_model);
     ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnName, QHeaderView::Stretch);
@@ -273,6 +268,8 @@ void GlaxnimateWindow::Private::shutdown()
     app::settings::set("ui", "window_geometry", parent->saveGeometry());
     app::settings::set("ui", "window_state", parent->saveState());
     app::settings::set("open_save", "recent_files", recent_files);
+
+    ui.color_selector->save_settings();
 
     QStringList history = ui.console_input->history();
     int max_history = app::settings::get<int>("scripting", "max_history");

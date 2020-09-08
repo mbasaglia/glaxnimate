@@ -28,7 +28,6 @@ widgets/dialogs/io_status_dialog.cpp
 widgets/dialogs/io_status_dialog.ui
 widgets/dialogs/about_dialog.cpp
 widgets/dialogs/about_dialog.ui
-widgets/dialogs/gw_impl_color.cpp
 widgets/dialogs/gw_impl_document.cpp
 widgets/dialogs/gw_impl_model.cpp
 widgets/dialogs/gw_impl_script.cpp
@@ -42,6 +41,7 @@ widgets/timeline/frame_controls_widget.ui
 widgets/timeline/timeline_widget.cpp
 widgets/timeline/compound_timeline_widget.cpp
 widgets/timeline/compound_timeline_widget.ui
+
 widgets/glaxnimate_graphics_view.cpp
 widgets/view_transform_widget.cpp
 widgets/view_transform_widget.ui
@@ -50,6 +50,8 @@ widgets/spin2d.cpp
 widgets/tools/shape_tool_widget.cpp
 widgets/tools/shape_tool_widget.ui
 widgets/enum_combo.cpp
+widgets/color_selector.cpp
+widgets/color_selector.ui
 )
 
 if(${PYTHON_ENABLED})

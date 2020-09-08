@@ -126,7 +126,7 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> lay
 
     if ( auto scl = qobject_cast<model::SolidColorLayer*>(layer.get()) )
     {
-        scl->color.set(current_color());
+        scl->color.set(ui.color_selector->current_color());
     }
 
     model::Layer* ptr = layer.get();
@@ -149,4 +149,3 @@ void GlaxnimateWindow::Private::layer_delete()
         current_document->undo_stack().push(new command::RemoveLayer(curr_lay->composition(), curr_lay));
     }
 }
-

@@ -1,4 +1,10 @@
-#include "glaxnimate_window_p.hpp"
+#include "color_selector.hpp"
+#include "ui_color_selector.h"
+
+#include "QtColorWidgets/color_palette_model.hpp"
+#include "app/application.hpp"
+#include "app/settings/settings.hpp"
+
 
 namespace {
 
@@ -23,8 +29,39 @@ void color_k(QColor& c, int v) { c.setCmyk(c.cyan(), c.magenta(), c.yellow(), v,
 
 } // namespace
 
+class ColorSelector::Private
+{
+public:
+    bool updating_color = false;
+    Ui::ColorSelector ui;
+    color_widgets::ColorPaletteModel palette_model;
 
-void GlaxnimateWindow::Private::update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,
+
+    void setup_ui(ColorSelector* parent)
+    {
+        ui.setupUi(parent);
+
+        update_color(QColor(app::settings::get<QString>("tools", "color_main")), true, nullptr);
+        ui.palette_widget->setModel(&palette_model);
+        palette_model.setSearchPaths(app::Application::instance()->data_paths_unchecked("palettes"));
+        ui.color_preview_secondary->setColor(QColor(app::settings::get<QString>("tools", "color_secondary")));
+
+    }
+
+    void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,
+                             void (*func)(QColor&, int), int val, int min = 0, int max = 255);
+    void update_color_hue_slider(color_widgets::HueSlider* slider, const QColor& c, int hue);
+    QColor current_color();
+    QColor current_color_secondary();
+    void set_current_color(const QColor c);
+    void set_current_color_secondary(const QColor c);
+    void update_color(const QColor& c, bool alpha, QObject* source);
+    void update_color_component(int val, QObject* sender);
+    void color_swap();
+};
+
+
+void ColorSelector::Private::update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,
                             void (*func)(QColor&, int), int val, int min, int max)
 {
     QColor c1 = c;
@@ -37,7 +74,7 @@ void GlaxnimateWindow::Private::update_color_slider(color_widgets::GradientSlide
     slider->setValue(val);
 }
 
-void GlaxnimateWindow::Private::update_color_hue_slider(color_widgets::HueSlider* slider, const QColor& c, int hue)
+void ColorSelector::Private::update_color_hue_slider(color_widgets::HueSlider* slider, const QColor& c, int hue)
 {
     slider->setColorSaturation(c.saturationF());
     slider->setColorValue(c.valueF());
@@ -45,27 +82,27 @@ void GlaxnimateWindow::Private::update_color_hue_slider(color_widgets::HueSlider
 }
 
 
-QColor GlaxnimateWindow::Private::current_color()
+QColor ColorSelector::Private::current_color()
 {
     return ui.color_preview->color();
 }
 
-QColor GlaxnimateWindow::Private::current_color_secondary()
+QColor ColorSelector::Private::current_color_secondary()
 {
     return ui.color_preview_secondary->color();
 }
 
-void GlaxnimateWindow::Private::set_current_color(const QColor c)
+void ColorSelector::Private::set_current_color(const QColor c)
 {
     update_color(c, true, nullptr);
 }
 
-void GlaxnimateWindow::Private::set_current_color_secondary(const QColor c)
+void ColorSelector::Private::set_current_color_secondary(const QColor c)
 {
     ui.color_preview_secondary->setColor(c);
 }
 
-void GlaxnimateWindow::Private::update_color(const QColor& c, bool alpha, QObject* source)
+void ColorSelector::Private::update_color(const QColor& c, bool alpha, QObject* source)
 {
     if ( updating_color )
         return;
@@ -121,7 +158,7 @@ void GlaxnimateWindow::Private::update_color(const QColor& c, bool alpha, QObjec
     updating_color = false;
 }
 
-void GlaxnimateWindow::Private::update_color_component(int val, QObject* sender)
+void ColorSelector::Private::update_color_component(int val, QObject* sender)
 {
     if ( updating_color )
         return;
@@ -166,10 +203,75 @@ void GlaxnimateWindow::Private::update_color_component(int val, QObject* sender)
 }
 
 
-void GlaxnimateWindow::Private::color_swap()
+void ColorSelector::Private::color_swap()
 {
     QColor c = ui.color_preview_secondary->color();
     ui.color_preview_secondary->setColor(current_color());
     ui.color_preview->setColor(c);
     update_color(c, true, nullptr);
+}
+
+ColorSelector::ColorSelector(QWidget* parent)
+    : QWidget(parent), d(std::make_unique<Private>())
+{
+    d->setup_ui(this);
+}
+
+ColorSelector::~ColorSelector() {}
+
+void ColorSelector::changeEvent(QEvent* e)
+{
+    QWidget::changeEvent(e);
+    if ( e->type() == QEvent::LanguageChange)
+    {
+        d->ui.retranslateUi(this);
+    }
+}
+
+void ColorSelector::save_settings()
+{
+    app::settings::set("tools", "color_main", d->current_color().name());
+    app::settings::set("tools", "color_secondary", d->current_color_secondary().name());
+}
+
+
+void ColorSelector::color_swap()
+{
+    d->color_swap();
+}
+
+void ColorSelector::color_update_alpha ( const QColor& col )
+{
+    d->update_color(col, true, QObject::sender());
+}
+
+void ColorSelector::color_update_noalpha ( const QColor& col )
+{
+
+    d->update_color(col, false, QObject::sender());
+}
+
+void ColorSelector::color_update_component ( int value )
+{
+    d->update_color_component(value, QObject::sender());
+}
+
+QColor ColorSelector::current_color() const
+{
+    return d->current_color();
+}
+
+QColor ColorSelector::secondary_color() const
+{
+    return d->current_color_secondary();
+}
+
+void ColorSelector::set_current_color(const QColor& c)
+{
+    d->set_current_color(c);
+}
+
+void ColorSelector::set_secondary_color(const QColor& c)
+{
+    d->set_current_color_secondary(c);
 }

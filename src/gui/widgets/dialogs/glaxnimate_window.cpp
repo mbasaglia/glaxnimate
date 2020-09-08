@@ -58,23 +58,6 @@ void GlaxnimateWindow::document_open_dialog()
     d->document_open();
 }
 
-
-void GlaxnimateWindow::color_update_alpha ( const QColor& col )
-{
-    d->update_color(col, true, QObject::sender());
-}
-
-void GlaxnimateWindow::color_update_noalpha ( const QColor& col )
-{
-
-    d->update_color(col, false, QObject::sender());
-}
-
-void GlaxnimateWindow::color_update_component ( int value )
-{
-    d->update_color_component(value, QObject::sender());
-}
-
 void GlaxnimateWindow::document_treeview_clicked ( const QModelIndex& index )
 {
     auto node = d->document_node_model.node(index);
@@ -222,11 +205,6 @@ void GlaxnimateWindow::save_frame_svg()
     d->save_frame_svg();
 }
 
-void GlaxnimateWindow::color_swap()
-{
-    d->color_swap();
-}
-
 void GlaxnimateWindow::document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
 {
     d->document_treeview_selection_changed(selected, deselected);
@@ -270,22 +248,22 @@ model::Layer * GlaxnimateWindow::current_layer() const
 
 QColor GlaxnimateWindow::current_color() const
 {
-    return d->current_color();
+    return d->ui.color_selector->current_color();
 }
 
 QColor GlaxnimateWindow::secondary_color() const
 {
-    return d->current_color_secondary();
+    return d->ui.color_selector->secondary_color();
 }
 
 void GlaxnimateWindow::set_current_color(const QColor& c)
 {
-    d->set_current_color(c);
+    d->ui.color_selector->set_current_color(c);
 }
 
 void GlaxnimateWindow::set_secondary_color(const QColor& c)
 {
-    d->set_current_color_secondary(c);
+    d->ui.color_selector->set_secondary_color(c);
 }
 
 model::ShapeElement * GlaxnimateWindow::current_shape()

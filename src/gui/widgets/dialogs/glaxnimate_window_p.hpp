@@ -4,7 +4,6 @@
 #include <QToolButton>
 #include <QMessageBox>
 
-#include "QtColorWidgets/color_palette_model.hpp"
 #include "QtColorWidgets/color_delegate.hpp"
 
 #include "ui_glaxnimate_window.h"
@@ -48,8 +47,6 @@ public:
 
     GlaxnimateWindow* parent = nullptr;
 
-    bool updating_color = false;
-
     QStringList recent_files;
 
     std::vector<app::scripting::ScriptContext> script_contexts;
@@ -60,7 +57,6 @@ public:
     int tool_rows = 3; ///< @todo setting
     QString undo_text;
     QString redo_text;
-    color_widgets::ColorPaletteModel palette_model;
     color_widgets::ColorDelegate color_delegate;
     style::PropertyDelegate property_delegate;
     style::DockWidgetStyle dock_style;
@@ -99,18 +95,6 @@ public:
     void scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
     void switch_tool(tools::Tool* tool);
     void switch_tool_action(QAction* action);
-
-    // color
-    void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,
-                             void (*func)(QColor&, int), int val, int min = 0, int max = 255);
-    void update_color_hue_slider(color_widgets::HueSlider* slider, const QColor& c, int hue);
-    QColor current_color();
-    QColor current_color_secondary();
-    void set_current_color(const QColor c);
-    void set_current_color_secondary(const QColor c);
-    void update_color(const QColor& c, bool alpha, QObject* source);
-    void update_color_component(int val, QObject* sender);
-    void color_swap();
 
     // Model
     model::Composition* current_composition();

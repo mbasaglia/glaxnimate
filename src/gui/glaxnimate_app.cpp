@@ -92,12 +92,17 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("max_history",  {},             {},                        Setting::Internal,  100),
     }});
     Settings::instance().add_group(SettingGroup{"tools", tr("Tools"), "tools", {
-        //      slug            Label           Tooltip                    Type                default
-        Setting("shape_group",  {},             {},                        Setting::Internal,  true),
-        Setting("shape_fill",   {},             {},                        Setting::Internal,  true),
-        Setting("shape_stroke", {},             {},                        Setting::Internal,  true),
-        Setting("stroke_width", {},             {},                        Setting::Internal,  1.),
-        Setting("shape_transform",{},           {},                        Setting::Internal,  true),
+        //      slug                Label       Tooltip                    Type                default
+        Setting("shape_group",      {},         {},                        Setting::Internal,  true),
+        Setting("shape_fill",       {},         {},                        Setting::Internal,  true),
+        Setting("shape_stroke",     {},         {},                        Setting::Internal,  true),
+        Setting("shape_transform",  {},         {},                        Setting::Internal,  true),
+        Setting("color_main",       {},         {},                        Setting::Internal,  "#ffffff"),
+        Setting("color_secondary",  {},         {},                        Setting::Internal,  "#000000"),
+        Setting("stroke_width",     {},         {},                        Setting::Internal,  1.),
+        Setting("stroke_cap",       {},         {},                        Setting::Internal,  int(Qt::RoundCap)),
+        Setting("stroke_join",      {},         {},                        Setting::Internal,  int(Qt::RoundJoin)),
+        Setting("stroke_miter",     {},         {},                        Setting::Internal,  4.),
     }});
 }
 
