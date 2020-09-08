@@ -8,7 +8,7 @@
 namespace model {
 
 
-class Group : public Shape
+class Group : public ObjectBase<Group, Shape>
 {
     GLAXNIMATE_OBJECT
 
@@ -25,7 +25,7 @@ public:
     GLAXNIMATE_ANIMATABLE(float, opacity, 1)
 
 public:
-    using Shape::Shape;
+    using Ctor::Ctor;
 
     int docnode_child_count() const override { return shapes.size(); }
     DocumentNode* docnode_child(int index) const override { return &shapes[index]; }

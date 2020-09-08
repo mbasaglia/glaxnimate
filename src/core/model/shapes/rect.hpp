@@ -5,7 +5,7 @@
 namespace model {
 
 
-class Rect : public Shape
+class Rect : public ObjectBase<Rect, Shape>
 {
     GLAXNIMATE_OBJECT
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF())
@@ -13,7 +13,7 @@ class Rect : public Shape
     GLAXNIMATE_ANIMATABLE(float, rounded, 0)
 
 public:
-    using Shape::Shape;
+    using Ctor::Ctor;
 
     QIcon docnode_icon() const override
     {

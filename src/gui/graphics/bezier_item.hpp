@@ -271,9 +271,11 @@ public slots:
                 do_add_point(i);
         }
 
-
-        items.front()->show_tan_in(bezier_.closed());
-        items.back()->show_tan_out(bezier_.closed());
+        if ( !bezier_.empty() )
+        {
+            items.front()->show_tan_in(bezier_.closed());
+            items.back()->show_tan_out(bezier_.closed());
+        }
 
         prepareGeometryChange();
     }

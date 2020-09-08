@@ -3,6 +3,7 @@
 #include <QUuid>
 #include <QJsonArray>
 
+#include "math/bezier.hpp"
 
 class io::glaxnimate::GlaxnimateFormat::ImportState
 {
@@ -155,17 +156,17 @@ public:
                         fmt->error(tr("Keyframe must specify a value"));
                         continue;
                     }
-                    
+
                     model::KeyframeBase* kf = anim->set_keyframe(
                         kfobj["time"].toDouble(),
                         load_prop_value(target, kfobj["value"], false)
                     );
-                    if ( !kf )   
+                    if ( !kf )
                     {
                         fmt->error(tr("Could not add keyframe"));
                         continue;
                     }
-                    
+
                     QPointF before, after;
                     if ( load_2d(kfobj["before"], "x", "y", before) && load_2d(kfobj["after"], "x", "y", after) )
                     {
@@ -264,11 +265,34 @@ public:
                     return p;
                 return {};
             }
+            case model::PropertyTraits::Bezier:
+            {
+                if ( !val.isObject() )
+                    return {};
+
+                math::Bezier bezier;
+                QJsonObject obj = val.toObject();
+                bezier.set_closed(obj["closed"].toBool());
+
+                for ( const auto& jspv : obj["points"].toArray() )
+                {
+                    if ( !jspv.isObject() )
+                        continue;
+                    QJsonObject jsp = jspv.toObject();
+                    math::BezierPoint p{{}, {}, {}};
+                    load_2d(jsp["pos"], "x", "y", p.pos);
+                    load_2d(jsp["tan_in"], "x", "y", p.tan_in);
+                    load_2d(jsp["tan_out"], "x", "y", p.tan_out);
+                    p.type = math::BezierPointType(jsp["type"].toInt());
+                    bezier.push_back(p);
+                }
+                return QVariant::fromValue(bezier);
+            }
             default:
                 return val.toVariant();
         }
     }
-    
+
     template<class Type>
     bool load_2d(const QJsonValue& val, const QString& x, const QString& y, Type& ret)
     {
@@ -289,7 +313,7 @@ public:
 
         if ( auto obj = model::Factory::instance().make_any(type, document, composition) )
             return obj;
-        
+
         emit fmt->error(tr("Unknow object of type '%1'").arg(type));
         return new model::Object(document);
     }

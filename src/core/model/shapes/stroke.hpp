@@ -63,13 +63,13 @@ protected:
     }
 };
 
-class SolidStroke : public Stroke
+class SolidStroke : public ObjectBase<SolidStroke, Stroke>
 {
     GLAXNIMATE_OBJECT
     GLAXNIMATE_ANIMATABLE(QColor, color, QColor())
 
 public:
-    using Stroke::Stroke;
+    using Ctor::Ctor;
 
     QIcon docnode_icon() const override
     {

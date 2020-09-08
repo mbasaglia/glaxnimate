@@ -4,6 +4,7 @@
 #include <QJsonArray>
 
 #include "app_info.hpp"
+#include "math/bezier.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 
@@ -60,7 +61,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
         QJsonObject jso;
         if ( !anim->animated() )
         {
-            jso["value"] = to_json(anim->value());
+            jso["value"] = to_json(anim->value(), property->traits());
         }
         else
         {
@@ -70,11 +71,11 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
                 auto kf = anim->keyframe(i);
                 QJsonObject jkf;
                 jkf["time"] = kf->time();
-                jkf["value"] = to_json(kf->value());
+                jkf["value"] = to_json(kf->value(), property->traits());
                 if ( !kf->transition().hold() )
                 {
-                    jkf["before"] = to_json(kf->transition().before_handle());
-                    jkf["after"] = to_json(kf->transition().after_handle());
+                    jkf["before"] = to_json(kf->transition().before_handle(), property->traits());
+                    jkf["after"] = to_json(kf->transition().after_handle(), property->traits());
                 }
                 keyframes.push_back(jkf);
             }
@@ -86,26 +87,53 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
     return to_json(property->value(), property->traits());
 }
 
+namespace detail {
+
+QJsonValue to_json(const QPointF& v)
+{
+    QJsonObject o;
+    o["x"] = v.x();
+    o["y"] = v.y();
+    return o;
+}
+
+} // namespace detail
+
 QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, model::PropertyTraits traits )
 {
-    if ( traits.type == model::PropertyTraits::Object )
+    switch ( traits.type )
     {
-        if ( auto obj = value.value<model::Object*>() )
-            return to_json(obj);
-        return {};
+        case model::PropertyTraits::Object:
+            if ( auto obj = value.value<model::Object*>() )
+                return to_json(obj);
+            return {};
+        case model::PropertyTraits::ObjectReference:
+            if ( auto dn = value.value<model::DocumentNode*>() )
+                return QJsonValue::fromVariant(dn->uuid.get());
+            return {};
+        case model::PropertyTraits::Enum:
+            return value.toString();
+        case model::PropertyTraits::Bezier:
+        {
+            math::Bezier bezier = value.value<math::Bezier>();
+            QJsonObject jsbez;
+            jsbez["closed"] = bezier.closed();
+            QJsonArray points;
+            for ( const auto& p : bezier )
+            {
+                QJsonObject jsp;
+                jsp["pos"] = detail::to_json(p.pos);
+                jsp["tan_in"] = detail::to_json(p.tan_in);
+                jsp["tan_out"] = detail::to_json(p.tan_out);
+                jsp["type"] = p.type;
+                points.push_back(jsp);
+            }
+            jsbez["points"] = points;
+            return jsbez;
+        }
+        default:
+            return to_json(value);
     }
-    else if ( traits.type == model::PropertyTraits::ObjectReference )
-    {
-        if ( auto dn = value.value<model::DocumentNode*>() )
-            return QJsonValue::fromVariant(dn->uuid.get());
-        return {};
-    }
-    else if ( traits.type == model::PropertyTraits::Enum )
-    {
-        return value.toString();
-    }
-
-    return to_json(value);
 }
 
 
@@ -173,13 +201,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             return o;
         }
         case QVariant::PointF:
-        {
-            auto v = value.toPointF();
-            QJsonObject o;
-            o["x"] = v.x();
-            o["y"] = v.y();
-            return o;
-        }
+            return detail::to_json(value.toPointF());
         case QVariant::Color:
         {
             auto v = value.value<QColor>();

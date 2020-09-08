@@ -8,7 +8,7 @@
 namespace model {
 
 
-class Path : public Shape
+class Path : public ObjectBase<Path, Shape>
 {
     GLAXNIMATE_OBJECT
     using BezierPointType = math::BezierPointType;
@@ -20,7 +20,7 @@ public:
     GLAXNIMATE_PROPERTY(bool, closed, false, &Path::closed_changed)
 
 public:
-    using Shape::Shape;
+    using Ctor::Ctor;
 
     QIcon docnode_icon() const override
     {

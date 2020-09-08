@@ -44,13 +44,13 @@ protected:
     }
 };
 
-class SolidFill : public Fill
+class SolidFill : public ObjectBase<SolidFill, Fill>
 {
     GLAXNIMATE_OBJECT
     GLAXNIMATE_ANIMATABLE(QColor, color, QColor())
 
 public:
-    using Fill::Fill;
+    using Ctor::Ctor;
 
     QIcon docnode_icon() const override
     {

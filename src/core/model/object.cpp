@@ -5,6 +5,7 @@
 #include "property.hpp"
 #include "model/document.hpp"
 #include "command/property_commands.hpp"
+#include "app/log/log.hpp"
 
 
 class model::Object::Private
@@ -32,6 +33,14 @@ void model::Object::assign_from(const model::Object* other)
 
 void model::Object::clone_into(model::Object* dest) const
 {
+    if ( dest->metaObject() != metaObject() )
+    {
+        app::log::Log log("Object", type_name());
+        log.stream(app::log::Error) << "trying to clone into" << dest->type_name() << "from" << type_name();
+        log.stream(app::log::Info) << "make sure clone_covariant is implemented for" << type_name() << "or inherit from ObjectBase";
+        return;
+    }
+
     for ( BaseProperty* prop : d->prop_order )
         dest->get_property(prop->name())->assign_from(prop);
 }
