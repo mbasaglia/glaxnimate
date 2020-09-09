@@ -235,7 +235,8 @@ public:
         json["ind"_l] = layer_index(layer);
         convert_object_basic(layer, json);
 
-        QCborMap transform = convert_transform(layer->transform.get(), &layer->opacity);
+        QCborMap transform;
+        convert_transform(layer->transform.get(), &layer->opacity, transform);
         json["ks"_l] = transform;
         if ( parent_index != -1 )
             json["parent"_l] = parent_index;
@@ -247,15 +248,13 @@ public:
         return json;
     }
 
-    QCborMap convert_transform(Transform* tf, model::AnimatableBase* opacity)
+    void convert_transform(Transform* tf, model::AnimatableBase* opacity, QCborMap& json)
     {
-        QCborMap json;
         convert_object_basic(tf, json);
         json["o"_l] = convert_animated(
             opacity,
             FloatMult(100)
         );
-        return json;
     }
 
     QCborArray point_to_lottie(const QPointF& vv)
@@ -405,8 +404,9 @@ public:
         {
             auto gr = static_cast<model::Group*>(shape);
             auto shapes = convert_shapes(gr->shapes);
-            auto transform = convert_transform(gr->transform.get(), &gr->opacity);
+            QCborMap transform;
             transform["ty"_l] = "tr";
+            convert_transform(gr->transform.get(), &gr->opacity, transform);
             shapes.push_back(transform);
             jsh["it"_l] = shapes;
         }
@@ -849,7 +849,7 @@ private:
         }
         else
         {
-            load_value(prop, obj["k"]);
+            load_value(prop, obj["k"], trans);
         }
     }
 
