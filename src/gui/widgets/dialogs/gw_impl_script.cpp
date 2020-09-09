@@ -1,9 +1,21 @@
 #include "glaxnimate_window_p.hpp"
 
-void GlaxnimateWindow::Private::console_error(const app::scripting::ScriptError& err)
+
+void GlaxnimateWindow::Private::console_stderr(const QString& line)
 {
     ui.console_output->setTextColor(Qt::red);
-    ui.console_output->append(err.message());
+    ui.console_output->append(line);
+}
+
+void GlaxnimateWindow::Private::console_stdout(const QString& line)
+{
+    ui.console_output->setTextColor(parent->palette().text().color());
+    ui.console_output->append(line);
+}
+
+void GlaxnimateWindow::Private::console_error(const app::scripting::ScriptError& err)
+{
+    console_stderr(err.message());
 }
 
 void GlaxnimateWindow::Private::console_commit(QString text)
@@ -20,13 +32,12 @@ void GlaxnimateWindow::Private::console_commit(QString text)
     c.clearSelection();
     ui.console_output->setTextCursor(c);
 
-    ui.console_output->setTextColor(parent->palette().text().color());
-    ui.console_output->append(text);
+    console_stdout(text);
     auto ctx = script_contexts[ui.console_language->currentIndex()].get();
     try {
         QString out = ctx->eval_to_string(text);
         if ( !out.isEmpty() )
-            ui.console_output->append(out);
+            console_stdout(out);
     } catch ( const app::scripting::ScriptError& err ) {
         console_error(err);
     }
@@ -54,6 +65,8 @@ void GlaxnimateWindow::Private::create_script_context()
         ctx->app_module("glaxnimate_gui");
         ctx->expose("window", QVariant::fromValue(parent));
         ctx->expose("document", QVariant::fromValue(current_document.get()));
+        connect(ctx.get(), &app::scripting::ScriptExecutionContext::stdout, [this](const QString& s){ console_stdout(s);});
+        connect(ctx.get(), &app::scripting::ScriptExecutionContext::stderr, [this](const QString& s){ console_stderr(s);});
         script_contexts.push_back(std::move(ctx));
     }
 }

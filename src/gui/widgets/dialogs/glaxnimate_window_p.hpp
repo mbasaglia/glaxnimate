@@ -116,6 +116,8 @@ public:
 
     // script
     void console_error(const app::scripting::ScriptError& err);
+    void console_stderr(const QString& line);
+    void console_stdout(const QString& line);
     void console_commit(QString text);
     bool ensure_script_contexts();
     void create_script_context();

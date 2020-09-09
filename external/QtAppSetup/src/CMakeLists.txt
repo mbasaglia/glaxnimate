@@ -4,6 +4,7 @@ app/application.cpp
 app/settings/settings.cpp
 app/translation_service.cpp
 app/scripting/plugin.cpp
+app/scripting/script_engine.cpp
 app/widgets/plugin_settings_widget.cpp
 app/widgets/plugin_settings_widget.ui
 app/widgets/settings_dialog.cpp

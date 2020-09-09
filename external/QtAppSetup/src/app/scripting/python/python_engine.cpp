@@ -9,13 +9,90 @@ app::scripting::ScriptEngine::Autoregister<app::scripting::python::PythonEngine>
 
 static int counter = 0;
 
+
+class CaptureStream
+{
+public:
+    using OwnerT = app::scripting::ScriptExecutionContext;
+    using SignalT = void (OwnerT::*)(const QString&);
+
+    CaptureStream(OwnerT* owner = nullptr, SignalT signal = nullptr)
+        : owner(owner), signal(signal)
+    {}
+
+    ~CaptureStream()
+    {
+        if ( owner )
+        {
+            py::delattr(stream, "write");
+            py::delattr(stream, "flush");
+        }
+    }
+
+    void setup(OwnerT* owner, SignalT signal, py::object dest)
+    {
+        this->owner = owner;
+        this->signal = signal;
+        dest.attr("write") = py::cpp_function([this](const QString& s){ write(s); });
+        dest.attr("flush") = py::cpp_function([this](){ flush(); });
+        stream = dest;
+    }
+
+    void write(const QString& data)
+    {
+        if ( data.isEmpty() )
+            return;
+
+        int from = 0;
+        int to = data.indexOf('\n');
+        while ( to != -1 )
+        {
+            QString txt;
+            if ( !buf.isEmpty() )
+            {
+                txt = buf;
+                buf.clear();
+            }
+            txt += data.mid(from, to-from);
+            (owner->*signal)(txt);
+            from = to+1;
+            to = data.indexOf('\n', from);
+        }
+        buf += data.mid(from);
+    }
+
+    void flush()
+    {
+        (owner->*signal)(buf);
+        buf.clear();
+    }
+
+private:
+    OwnerT* owner;
+    SignalT signal;
+    QString buf;
+    py::object stream;
+};
+
+
 class app::scripting::python::PythonContext::Private
 {
 public:
+    void init_capture(PythonContext* ctx)
+    {
+        sys = py::module::import("sys");
+        stdout.setup(ctx, &PythonContext::stdout, sys.attr("stdout"));
+        stderr.setup(ctx, &PythonContext::stderr, sys.attr("stderr"));
+    }
+
     std::vector<pybind11::module> my_modules;
     py::dict globals;
     py::function compile;
     const ScriptEngine* engine;
+    py::module sys;
+
+    CaptureStream stderr, stdout;
+
 };
 
 app::scripting::python::PythonContext::PythonContext(const ScriptEngine* engine)
@@ -29,6 +106,7 @@ app::scripting::python::PythonContext::PythonContext(const ScriptEngine* engine)
     d->globals = py::globals();
     d->compile = py::function(py::module(d->globals["__builtins__"]).attr("compile"));
     d->engine = engine;
+    d->init_capture(this);
 }
 
 app::scripting::python::PythonContext::~PythonContext()
@@ -81,9 +159,8 @@ void app::scripting::python::PythonContext::app_module ( const QString& name )
 class ModuleSetter
 {
 public:
-    ModuleSetter(const QString& append)
+    ModuleSetter(py::module& sys, const QString& append) : sys(sys)
     {
-        sys = py::module::import("sys");
         python_path = py::list(sys.attr("path"));
         py::list python_path_new(sys.attr("path"));
         python_path_new.append(append);
@@ -95,7 +172,7 @@ public:
         py::setattr(sys, "path", python_path);
     }
 
-    py::module sys;
+    py::module& sys;
     py::list python_path;
 };
 
@@ -106,7 +183,7 @@ bool app::scripting::python::PythonContext::run_from_module (
     const QVariantList& args
 )
 {
-    ModuleSetter{path.path()};
+    ModuleSetter{d->sys, path.path()};
 
     try {
         py::module exec_module = py::module::import(module.toStdString().c_str());

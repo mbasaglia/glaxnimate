@@ -30,6 +30,7 @@ class ScriptEngine;
  */
 class ScriptExecutionContext : public QObject
 {
+    Q_OBJECT
 public:
 
     ScriptExecutionContext() = default;
@@ -66,6 +67,10 @@ public:
      * \brief Engine that created the context
      */
     virtual const ScriptEngine* engine() const = 0;
+
+signals:
+    void stderr(const QString&);
+    void stdout(const QString&);
 
 private:
     ScriptExecutionContext(const ScriptExecutionContext&) = delete;
