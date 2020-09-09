@@ -358,20 +358,32 @@ public:
         {
             jobj["a"_l] = 1;
             QCborArray keyframes;
+            QCborMap jkf;
             for ( int i = 0, e = prop->keyframe_count(); i < e; i++ )
             {
                 auto kf = prop->keyframe(i);
-                QCborMap jkf;
-                jkf["t"_l] = kf->time();
                 QVariant v = kf->value();
                 if ( transform_values )
                     v = transform_values(v);
-                jkf["s"_l] = value_from_variant(v);
-                jkf["i"_l] = keyframe_bezier_handle(kf->transition().before_handle());
-                jkf["o"_l] = keyframe_bezier_handle(kf->transition().after_handle());
-                jkf["h"_l] = kf->transition().hold() ? 1 : 0;
-                keyframes.push_back(jkf);
+                QCborValue kf_value = value_from_variant(v);
+                if ( i != 0 )
+                {
+                    jkf["e"_l] = kf_value;
+                    keyframes.push_back(jkf);
+                }
+
+                jkf.clear();
+                jkf["t"_l] = kf->time();
+                jkf["s"_l] = kf_value;
+
+                if ( i != e - 1 )
+                {
+                    jkf["i"_l] = keyframe_bezier_handle(kf->transition().before_handle());
+                    jkf["o"_l] = keyframe_bezier_handle(kf->transition().after_handle());
+                    jkf["h"_l] = kf->transition().hold() ? 1 : 0;
+                }
             }
+            keyframes.push_back(jkf);
             jobj["k"_l] = keyframes;
         }
         else
@@ -388,8 +400,12 @@ public:
     QCborMap keyframe_bezier_handle(const QPointF& p)
     {
         QCborMap jobj;
-        jobj["x"_l] = p.x();
-        jobj["y"_l] = p.y();
+        QCborArray x;
+        x.push_back(p.x());
+        QCborArray y;
+        y.push_back(p.y());
+        jobj["x"_l] = x;
+        jobj["y"_l] = y;
         return jobj;
     }
 
