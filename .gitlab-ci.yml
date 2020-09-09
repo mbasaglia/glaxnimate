@@ -61,23 +61,23 @@ linux:appimage:
     before_script:
         - apt-get update -qq
         - apt-get install -y libpython3-dev git python3-pip software-properties-common desktop-file-utils wget zlib1g-dev
-        - add-apt-repository ppa:beineri/opt-qt-5.10.1-xenial -y
+        - add-apt-repository ppa:beineri/opt-qt-5.15.0-xenial -y
         - add-apt-repository ppa:ubuntu-toolchain-r/test -y
         - apt update -qq
-        - apt-get install -y qt510base qt510svg qt510tools qt510translations libgl1-mesa-dev g++-9
+        - apt-get install -y qt515base qt515svg qt515tools qt515translations libgl1-mesa-dev g++-9
         - pip3 install cmake
         - git submodule update --init --recursive
     script:
         - mkdir build
         - cd build
-        - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_PREFIX_PATH=/opt/qt510/lib/cmake/Qt5LinguistTools/
+        - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_PREFIX_PATH=/opt/qt515/lib/cmake/Qt5LinguistTools/
         - make
         - make translations
         - make AppDir_base
         - wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
         - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
         - ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
-        - PATH="/opt/qt510/bin/:$PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes/libqgtk3.so -appimage
+        - PATH="/opt/qt515/bin/:$PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes/libqgtk3.so -appimage
         - mv glaxnimate-dev-x86_64.AppImage glaxnimate-x86_64.AppImage
         - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
     artifacts:
