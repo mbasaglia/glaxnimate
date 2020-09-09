@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QMap>
 #include <QHash>
+#include <QByteArray>
 
 
 #undef slots
@@ -85,6 +86,30 @@ public:
     bool load(handle src, bool ic);
 
     static handle cast(QVariant, return_value_policy policy, handle parent);
+};
+
+template <> struct type_caster<QByteArray>
+{
+public:
+    PYBIND11_TYPE_CASTER(QByteArray, _("QByteArray"));
+
+    bool load(handle src, bool)
+    {
+        PyObject *source = src.ptr();
+        if ( !PyBytes_Check(source) )
+            return false;
+        char* buffer;
+        Py_ssize_t len;
+        if ( PyBytes_AsStringAndSize(source, &buffer, &len) == -1)
+            return false;
+        value = QByteArray(buffer, len);
+        return true;
+    }
+
+    static handle cast(QByteArray ba, return_value_policy, handle)
+    {
+        return PyBytes_FromStringAndSize(ba.data(), ba.size());
+    }
 };
 
 

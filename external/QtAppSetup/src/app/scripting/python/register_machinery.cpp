@@ -9,6 +9,7 @@
 #include <QSizeF>
 #include <QVector2D>
 #include <QRectF>
+#include <QByteArray>
 
 #include "app/log/log.hpp"
 
@@ -52,6 +53,7 @@ SETUP_TYPE(QMetaType::QPointF,      QPointF)
 SETUP_TYPE(QMetaType::QSizeF,       QSizeF)
 SETUP_TYPE(QMetaType::QVector2D,    QVector2D)
 SETUP_TYPE(QMetaType::QRectF,       QRectF)
+SETUP_TYPE(QMetaType::QByteArray,   QByteArray)
 // If you add stuff here, remember to add it to supported_types too
 
 TYPE_NAME(std::vector<QObject*>)
@@ -80,7 +82,8 @@ using supported_types = std::integer_sequence<int,
     QMetaType::QPointF,
     QMetaType::QSizeF,
     QMetaType::QVector2D,
-    QMetaType::QRectF
+    QMetaType::QRectF,
+    QMetaType::QByteArray
     // Ensure new types have SETUP_TYPE
 >;
 
