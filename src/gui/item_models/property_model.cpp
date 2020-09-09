@@ -466,7 +466,9 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
         }
         else if ( traits.type == model::PropertyTraits::Enum )
         {
-            if ( role == Qt::DisplayRole || role == Qt::EditRole )
+            if ( role == Qt::DisplayRole )
+                return EnumCombo::data_for(prop->value()).first;
+            if ( role == Qt::EditRole )
                 return prop->value();
             if ( role == Qt::DecorationRole )
                 return QIcon::fromTheme(EnumCombo::data_for(prop->value()).second);

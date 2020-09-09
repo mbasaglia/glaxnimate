@@ -22,7 +22,7 @@ public:
 private:
     Q_ENUM(Rule);
 
-    GLAXNIMATE_PROPERTY(Rule, fill_rule, NonZero)
+    GLAXNIMATE_PROPERTY(Rule, fill_rule, NonZero, nullptr, nullptr, PropertyTraits::Visual)
     GLAXNIMATE_ANIMATABLE(float, opacity, 1)
 
 public:

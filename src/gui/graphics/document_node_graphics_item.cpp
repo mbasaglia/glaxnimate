@@ -26,7 +26,7 @@ void graphics::DocumentNodeGraphicsItem::paint(QPainter* painter, const QStyleOp
 
 void graphics::DocumentNodeGraphicsItem::on_property_changed(const model::BaseProperty* prop)
 {
-    if ( prop->traits().flags & model::PropertyTraits::Animated )
+    if ( prop->traits().flags & model::PropertyTraits::Visual )
     {
         prepareGeometryChange();
         update();

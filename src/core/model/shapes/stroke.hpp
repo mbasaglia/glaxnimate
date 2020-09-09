@@ -31,11 +31,11 @@ private:
     Q_ENUM(Cap);
     Q_ENUM(Join);
 
-    GLAXNIMATE_PROPERTY(Cap, cap, RoundCap)
-    GLAXNIMATE_PROPERTY(Join, join, RoundJoin)
+    GLAXNIMATE_PROPERTY(Cap, cap, RoundCap, nullptr, nullptr, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(Join, join, RoundJoin, nullptr, nullptr, PropertyTraits::Visual)
     GLAXNIMATE_ANIMATABLE(float, width, 1)
     GLAXNIMATE_ANIMATABLE(float, opacity, 1)
-    GLAXNIMATE_PROPERTY(float, miter_limit, 0)
+    GLAXNIMATE_PROPERTY(float, miter_limit, 0, nullptr, nullptr, PropertyTraits::Visual)
 
 public:
     using Modifier::Modifier;

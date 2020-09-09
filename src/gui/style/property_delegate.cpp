@@ -30,7 +30,7 @@ void PropertyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 QWidget* PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QVariant data = index.data();
+    QVariant data = index.data(Qt::EditRole);
 
     if ( index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
         return new QComboBox(parent);
@@ -59,7 +59,7 @@ QWidget* PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
 void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & index ) const
 {
-    QVariant data = index.data();
+    QVariant data = index.data(Qt::EditRole);
 
     if ( index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
     {
@@ -120,7 +120,7 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
 
 void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * model, const QModelIndex & index ) const
 {
-    QVariant data = index.data();
+    QVariant data = index.data(Qt::EditRole);
 
     if (
         (data.userType() >= QMetaType::User && data.canConvert<int>()) ||
@@ -163,7 +163,7 @@ void PropertyDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     const QWidget* widget = option.widget;
 
     // Disable decoration
-    auto data = index.data();
+    auto data = index.data(Qt::EditRole);
     if ( (data.userType() >= QMetaType::User && data.canConvert<int>()) ||
         index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
     {
