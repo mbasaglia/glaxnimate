@@ -35,6 +35,15 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         }
     );
 
+    auto make_item_for_modifier = [](model::ShapeElement* shape){
+        auto item = GraphicsItemFactory::make_graphics_item_default(shape);
+        QObject::connect(shape, &model::ShapeElement::position_updated,
+                         item, &DocumentNodeGraphicsItem::shape_changed);
+        QObject::connect(shape, &model::ShapeElement::siblings_changed,
+                         item, &DocumentNodeGraphicsItem::shape_changed);
+        return item;
+    };
+
     register_builder<model::Rect>(
         &GraphicsItemFactory::make_graphics_item_default,
         [](model::Rect* rect){
@@ -60,6 +69,10 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             v.push_back(std::make_unique<graphics::BezierItem>(shape));
             return v;
         }
+    );
+    register_builder<model::Modifier>(
+        make_item_for_modifier,
+        &GraphicsItemFactory::make_graphics_editor_default
     );
 }
 

@@ -568,6 +568,7 @@ public:
         objects.insert(objects.begin()+position, std::move(p));
         on_insert(position);
         callback_insert(this->object(), ptr);
+        value_changed();
     }
 
     bool valid_index(int index)
@@ -585,6 +586,7 @@ public:
         objects.erase(it);
         on_remove(index);
         callback_remove(object(), v.get());
+        value_changed();
         return v;
     }
 
@@ -595,6 +597,7 @@ public:
 
         std::swap(objects[index_a], objects[index_b]);
         on_swap(index_a, index_b);
+        value_changed();
     }
 
     QVariant value() const override

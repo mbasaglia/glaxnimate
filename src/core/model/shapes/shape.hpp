@@ -36,15 +36,20 @@ public:
         return bez;
     }
 
+signals:
+    void position_updated();
+    void siblings_changed();
 
 protected:
     const ShapeListProperty& siblings() const;
+    const ShapeListProperty* property() const { return property_; }
 
 private:
     void set_position(ShapeListProperty* property, int pos)
     {
         property_ = property;
         position_ = pos;
+        position_updated();
     }
 
     ShapeListProperty* property_ = nullptr;
@@ -64,21 +69,31 @@ public:
     iterator past_first_modifier() const;
 
 protected:
+    void update_pos(int index)
+    {
+        int i;
+        for ( i = size() - 1; i >= index; i-- )
+            objects[i]->set_position(this, i);
+        for ( ; i >= 0; i-- )
+            objects[i]->siblings_changed();
+    }
+
     void on_insert(int index) override
     {
-        objects[index]->set_position(this, index);
+        update_pos(index);
     }
 
     void on_remove(int index) override
     {
-        for ( int i = index; i < size(); i++ )
-            objects[i]->set_position(this, i);
+        update_pos(index);
     }
 
     void on_swap(int index_a, int index_b) override
     {
         objects[index_a]->set_position(this, index_a);
         objects[index_b]->set_position(this, index_b);
+        for ( int i = 0, e = std::max(index_a, index_b); i < e; i++ )
+            objects[i]->siblings_changed();
     }
 };
 
@@ -112,8 +127,10 @@ public:
 protected:
     void collect_shapes(FrameTime t, math::MultiBezier& bez) const
     {
+        if ( !property() )
+            return;
         const ShapeListProperty& prop = siblings();
-        for ( auto it = prop.begin() + position() + 1; it != prop.end(); ++it )
+        for ( auto it = prop.begin() + position() + 1; it < prop.end(); ++it )
         {
             (*it)->add_shapes(t, bez);
             if ( qobject_cast<Modifier*>(it->get()) )

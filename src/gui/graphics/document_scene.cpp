@@ -59,6 +59,7 @@ public:
 graphics::DocumentScene::DocumentScene()
     : d(std::make_unique<Private>())
 {
+    setItemIndexMethod(QGraphicsScene::ItemIndexMethod::NoIndex);
 }
 
 graphics::DocumentScene::~DocumentScene()
@@ -130,9 +131,8 @@ void graphics::DocumentScene::disconnect_node ( model::DocumentNode* node )
     auto item = d->node_to_item.find(node);
     if ( item != d->node_to_item.end() )
     {
-        removeItem(item->second);
-        delete item->second;
         d->node_to_item.erase(item);
+        delete item->second;
     }
 }
 

@@ -14,6 +14,14 @@ graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::DocumentNode
     connect(node, &model::Object::property_changed, this, &DocumentNodeGraphicsItem::on_property_changed);
 }
 
+graphics::DocumentNodeGraphicsItem::~DocumentNodeGraphicsItem()
+{}
+
+void graphics::DocumentNodeGraphicsItem::shape_changed()
+{
+    prepareGeometryChange();
+}
+
 QRectF graphics::DocumentNodeGraphicsItem::boundingRect() const
 {
     return node_->local_bounding_rect(node_->document()->current_time());

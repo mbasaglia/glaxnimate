@@ -17,6 +17,7 @@ class DocumentNodeGraphicsItem : public QGraphicsObject
 
 public:
     explicit DocumentNodeGraphicsItem(model::DocumentNode* node, QGraphicsItem* parent = nullptr);
+    ~DocumentNodeGraphicsItem();
 
     QRectF boundingRect() const override;
 //     QPainterPath shape() const override;
@@ -33,11 +34,7 @@ public slots:
         setVisible(v);
     }
 
-    void shape_changed()
-    {
-        prepareGeometryChange();
-    }
-
+    void shape_changed();
 
     void set_transform_matrix(const QTransform& t)
     {
