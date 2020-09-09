@@ -81,8 +81,8 @@ public:
     void init_capture(PythonContext* ctx)
     {
         sys = py::module::import("sys");
-        stdout.setup(ctx, &PythonContext::stdout, sys.attr("stdout"));
-        stderr.setup(ctx, &PythonContext::stderr, sys.attr("stderr"));
+        stdout_cap.setup(ctx, &PythonContext::stdout_line, sys.attr("stdout"));
+        stderr_cap.setup(ctx, &PythonContext::stderr_line, sys.attr("stderr"));
     }
 
     std::vector<pybind11::module> my_modules;
@@ -91,7 +91,7 @@ public:
     const ScriptEngine* engine;
     py::module sys;
 
-    CaptureStream stderr, stdout;
+    CaptureStream stderr_cap, stdout_cap;
 
 };
 

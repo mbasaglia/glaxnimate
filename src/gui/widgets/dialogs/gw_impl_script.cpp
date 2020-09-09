@@ -65,8 +65,8 @@ void GlaxnimateWindow::Private::create_script_context()
         ctx->app_module("glaxnimate_gui");
         ctx->expose("window", QVariant::fromValue(parent));
         ctx->expose("document", QVariant::fromValue(current_document.get()));
-        connect(ctx.get(), &app::scripting::ScriptExecutionContext::stdout, [this](const QString& s){ console_stdout(s);});
-        connect(ctx.get(), &app::scripting::ScriptExecutionContext::stderr, [this](const QString& s){ console_stderr(s);});
+        connect(ctx.get(), &app::scripting::ScriptExecutionContext::stdout_line, [this](const QString& s){ console_stdout(s);});
+        connect(ctx.get(), &app::scripting::ScriptExecutionContext::stderr_line, [this](const QString& s){ console_stderr(s);});
         script_contexts.push_back(std::move(ctx));
     }
 }

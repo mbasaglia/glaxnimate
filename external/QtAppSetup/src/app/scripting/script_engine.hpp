@@ -69,8 +69,8 @@ public:
     virtual const ScriptEngine* engine() const = 0;
 
 signals:
-    void stderr(const QString&);
-    void stdout(const QString&);
+    void stderr_line(const QString&);
+    void stdout_line(const QString&);
 
 private:
     ScriptExecutionContext(const ScriptExecutionContext&) = delete;
