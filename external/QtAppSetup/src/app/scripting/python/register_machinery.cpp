@@ -5,6 +5,10 @@
 #include <QColor>
 #include <QUuid>
 #include <QVariant>
+#include <QPointF>
+#include <QSizeF>
+#include <QVector2D>
+#include <QRectF>
 
 #include "app/log/log.hpp"
 
