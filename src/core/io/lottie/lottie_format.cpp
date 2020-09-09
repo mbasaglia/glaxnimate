@@ -20,6 +20,20 @@ io::Autoreg<io::lottie::LottieFormat> io::lottie::LottieFormat::autoreg;
 
 namespace  {
 
+using TransformFunc = std::function<QVariant (const QVariant&)>;
+class FloatMult
+{
+public:
+    explicit FloatMult(float factor) : factor(factor) {}
+
+    QVariant operator()(const QVariant& v) const
+    {
+        return v.toFloat() * factor;
+    }
+private:
+    float factor;
+};
+
 enum FieldMode
 {
     Ignored,
@@ -227,7 +241,7 @@ public:
 
         if ( layer->type_name() == "SolidColorLayer" )
             json["sc"_l] = static_cast<SolidColorLayer*>(layer)->color.get().name();
-        if ( layer->type_name() == "ShapeLayer" )
+        else if ( layer->type_name() == "ShapeLayer" )
             json["shapes"_l] = convert_shapes(static_cast<ShapeLayer*>(layer)->shapes);
         return json;
     }
@@ -238,7 +252,7 @@ public:
         convert_object_basic(tf, json);
         json["o"_l] = convert_animated(
             opacity,
-            [](const QVariant& v) -> QVariant { return v.toFloat() * 100;}
+            FloatMult(100)
         );
         return json;
     }
@@ -286,6 +300,10 @@ public:
             jsbez["o"_l] = tan_out;
             return jsbez;
         }
+        else if ( v.userType() == QMetaType::QUuid )
+        {
+            return v.toString();
+        }
         return QCborValue::fromVariant(v);
     }
 
@@ -331,7 +349,7 @@ public:
 
     QCborMap convert_animated(
         AnimatableBase* prop,
-        const std::function<QVariant (const QVariant&)>& transform_values = {}
+        const TransformFunc& transform_values = {}
     )
     {
         /// @todo for position fields also add spatial bezier handles
@@ -395,10 +413,7 @@ public:
         {
             auto fill = static_cast<model::Fill*>(shape);
             jsh["r"_l] = int(fill->fill_rule.get());
-            jsh["o"_l] = convert_animated(
-                &fill->opacity,
-                [](const QVariant& v) -> QVariant { return v.toFloat() * 100;}
-            );
+            jsh["o"_l] = convert_animated(&fill->opacity, FloatMult(100));
         }
         else if ( shape->type_name() == "Stroke" )
         {
@@ -417,7 +432,7 @@ public:
             }
             jsh["o"_l] = convert_animated(
                 &str->opacity,
-                [](const QVariant& v) -> QVariant { return v.toFloat() * 100;}
+                FloatMult(100)
             );
         }
 
@@ -533,11 +548,56 @@ private:
             }
         }
 
-        load_basic(json["ks"].toObject(), layer->transform.get());
+        load_transform(json["ks"].toObject(), layer->transform.get(), &layer->opacity);
 
 
         if ( layer->type_name() == "SolidColorLayer" )
             static_cast<SolidColorLayer*>(layer)->color.set(QColor(json["sc"].toString()));
+        else if ( layer->type_name() == "ShapeLayer" )
+            load_shapes(static_cast<ShapeLayer*>(layer)->shapes, json["shapes"].toArray());
+
+    }
+
+    void load_shapes(ShapeListProperty& shapes, const QJsonArray& jshapes)
+    {
+        deferred.clear();
+
+        for ( int i = jshapes.size() - 1; i >= 0; i-- )
+            create_shape(jshapes[i].toObject(), shapes);
+
+        auto deferred_shapes = std::move(deferred);
+        deferred.clear();
+
+        for ( const auto& pair: deferred_shapes )
+            load_shape(pair.second, static_cast<model::ShapeElement*>(pair.first));
+    }
+
+    void create_shape(const QJsonObject& json, ShapeListProperty& shapes)
+    {
+        if ( !json.contains("ty") || !json["ty"].isString() )
+        {
+            emit format->error(QObject::tr("Missing shape type"));
+            return;
+        }
+
+        QString type = shape_types.key(json["ty"].toString());
+        if ( type.isEmpty() )
+        {
+            emit format->error(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()));
+            return;
+        }
+
+        model::ShapeElement* shape = static_cast<model::ShapeElement*>(
+            model::Factory::instance().make_object(type, document)
+        );
+        if ( !shape )
+        {
+            emit format->error(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()));
+            return;
+        }
+
+        deferred.emplace_back(shape, json);
+        shapes.insert(std::unique_ptr<model::ShapeElement>(shape), shapes.size());
     }
 
     void load_basic(const QJsonObject& json_obj, model::Object* obj)
@@ -557,6 +617,65 @@ private:
 
         for ( const auto& not_found : props )
             emit format->error(QObject::tr("Unknown field %1").arg(not_found));
+    }
+
+    void load_transform(const QJsonObject& transform, model::Transform* tf, model::AnimatableBase* opacity)
+    {
+        load_basic(transform, tf);
+        if ( transform.contains("o") )
+            load_animated(opacity, transform["o"], FloatMult(0.01));
+    }
+
+    void load_shape(const QJsonObject& json, model::ShapeElement* shape)
+    {
+        load_basic(json, shape);
+
+        if ( shape->type_name() == "Group" )
+        {
+            auto gr = static_cast<model::Group*>(shape);
+            QJsonArray shapes = json["it"].toArray();
+            QJsonObject transform;
+
+            for ( int i = shapes.size() - 1; i >= 0; i-- )
+            {
+                QJsonObject shi = shapes[i].toObject();
+                if ( shi["ty"] == "tr" )
+                {
+                    transform = shi;
+                    transform.remove("ty");
+                    shapes.erase(shapes.begin() + i);
+                    break;
+                }
+            }
+            if ( !transform.empty() )
+                load_transform(transform, gr->transform.get(), &gr->opacity);
+
+            load_shapes(gr->shapes, shapes);
+        }
+        else if ( shape->type_name() == "Fill" )
+        {
+            auto fill = static_cast<model::Fill*>(shape);
+            fill->fill_rule.set(model::Fill::Rule(json["r"].toInt()));
+            load_animated(&fill->opacity, json["o"].toObject(), FloatMult(0.01));
+        }
+        else if ( shape->type_name() == "Stroke" )
+        {
+            auto str = static_cast<model::BaseStroke*>(shape);
+            switch ( json["lc"].toInt() )
+            {
+                case 1: str->cap.set(model::BaseStroke::ButtCap); break;
+                case 2: str->cap.set(model::BaseStroke::RoundCap); break;
+                case 3: str->cap.set(model::BaseStroke::SquareCap); break;
+            }
+            switch ( json["lj"].toInt() )
+            {
+                case 1: str->join.set(model::BaseStroke::MiterJoin); break;
+                case 2: str->join.set(model::BaseStroke::RoundJoin); break;
+                case 3: str->join.set(model::BaseStroke::BevelJoin); break;
+            }
+            load_animated(&str->opacity, json["o"], FloatMult(0.01));
+        }
+
     }
 
     void load_properties(
@@ -591,13 +710,23 @@ private:
     }
 
     template<class T>
-    std::optional<QVariant> compound_value_2d(const QJsonValue& val, double mul = 1)
+    bool compound_value_2d_raw(const QJsonValue& val, T& out, double mul = 1)
     {
         QJsonArray arr = val.toArray();
         if ( arr.size() < 2 || !arr[0].isDouble() || !arr[1].isDouble() )
-            return {};
+            return false;
 
-        return QVariant::fromValue(T(arr[0].toDouble() * mul, arr[1].toDouble() * mul));
+        out = T(arr[0].toDouble() * mul, arr[1].toDouble() * mul);
+        return true;
+    }
+
+    template<class T>
+    std::optional<QVariant> compound_value_2d(const QJsonValue& val, double mul = 1)
+    {
+        T v;
+        if ( !compound_value_2d_raw(val, v, mul) )
+            return {};
+        return QVariant::fromValue(v);
     }
 
     std::optional<QVariant> value_to_variant(model::BaseProperty * prop, const QJsonValue& val)
@@ -616,20 +745,60 @@ private:
                 return compound_value_2d<QSizeF>(val);
             case model::PropertyTraits::Scale:
                 return compound_value_2d<QVector2D>(val, 0.01);
+            case model::PropertyTraits::Color:
+            {
+                QJsonArray arr = val.toArray();
+                if ( arr.size() == 3 )
+                    return QVariant::fromValue(QColor::fromRgbF(
+                        arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble()
+                    ));
+                else if ( arr.size() == 4 )
+                    return QVariant::fromValue(QColor::fromRgbF(
+                        arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble(), arr[3].toDouble()
+                    ));
+                else
+                    return {};
+            }
+            case model::PropertyTraits::Bezier:
+            {
+                QJsonObject jsbez = val.toObject();
+                math::Bezier bezier;
+                bezier.set_closed(jsbez["c"].toBool());
+                QJsonArray pos = jsbez["v"].toArray();
+                QJsonArray tan_in = jsbez["i"].toArray();
+                QJsonArray tan_out = jsbez["o"].toArray();
+                int sz = std::min(pos.size(), std::min(tan_in.size(), tan_out.size()));
+                for ( int i = 0; i < sz; i++ )
+                {
+                    QPointF p, ti, to;
+                    if ( !compound_value_2d_raw(pos[i], p) )
+                    {
+                        emit format->error(
+                            QObject::tr("Invalid bezier point %1")
+                            .arg(i)
+                        );
+                        continue;
+                    }
+                    compound_value_2d_raw(tan_in[i], ti);
+                    compound_value_2d_raw(tan_out[i], to);
+                    bezier.push_back(math::BezierPoint::from_relative(p, ti, to));
+                }
+                return QVariant::fromValue(bezier);
+            }
             default:
                 logger.stream(app::log::Error) << "Unsupported type" << prop->traits().type << "for" << prop->name();
                 return {};
         }
     }
 
-    void load_value(model::BaseProperty * prop, const QJsonValue& val)
+    void load_value(model::BaseProperty * prop, const QJsonValue& val, const TransformFunc& trans = {})
     {
         auto v = value_to_variant(prop, val);
-        if ( !v || !prop->set_value(*v) )
+        if ( !v || !prop->set_value(trans ? trans(*v) : *v) )
             emit format->error(QObject::tr("Invalid value for %1").arg(prop->name()));
     }
 
-    void load_animated(model::AnimatableBase* prop, const QJsonValue& val)
+    void load_animated(model::AnimatableBase* prop, const QJsonValue& val, const TransformFunc& trans = {})
     {
         if ( !val.isObject() )
         {
@@ -659,7 +828,7 @@ private:
                 auto v = value_to_variant(prop, jkf["s"]);
                 model::KeyframeBase* kf = nullptr;
                 if ( v )
-                    kf = prop->set_keyframe(time, *v);
+                    kf = prop->set_keyframe(time, trans ? trans(*v) : *v);
 
                 if ( kf )
                 {
