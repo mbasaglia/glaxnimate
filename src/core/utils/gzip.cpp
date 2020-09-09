@@ -3,26 +3,90 @@
 #include <QApplication>
 #include <zlib.h>
 
-
-#define CALL_ZLIB(func, ...) \
-    zlib_check(#func, func(__VA_ARGS__), on_error)
-
 namespace {
 
-const int chunk_size = 0x4000;
-using Buffer = std::array<Bytef, chunk_size>;
-
-bool zlib_check(const char* func, int result, const utils::gzip::ErrorFunc& on_error)
+class Gzipper
 {
-    if ( result == Z_OK || result == Z_STREAM_END )
-        return true;
+public:
+    static const int chunk_size = 0x4000;
+    using Buffer = std::array<Bytef, chunk_size>;
 
-    on_error(QApplication::tr("ZLib %1 returned %2").arg(func).arg(result));
-    return false;
-}
+    struct BufferView
+    {
+        const char* data;
+        std::size_t size;
+    };
 
-struct Compressor
-{
+    explicit Gzipper(const utils::gzip::ErrorFunc& on_error)
+        : on_error(on_error)
+    {
+        zip_stream.zalloc = Z_NULL;
+        zip_stream.zfree  = Z_NULL;
+        zip_stream.opaque = Z_NULL;
+    }
+
+    void add_data(const QByteArray& data)
+    {
+        add_data(data.data(), data.size());
+    }
+
+    void add_data(const char* data, std::size_t size)
+    {
+        zip_stream.next_in = (Bytef*) data;
+        zip_stream.avail_in = size;
+        zip_stream.avail_out = 0;
+    }
+
+    bool finished() const
+    {
+        return zip_stream.avail_out != 0;
+    }
+
+    bool inflate_init()
+    {
+        process_fn = &inflate;
+        end_fn = &inflateEnd;
+        op = "inflate";
+        return zlib_check("inflateInit2", inflateInit2(&zip_stream, 16|MAX_WBITS));
+    }
+
+    BufferView process()
+    {
+        zip_stream.avail_out = chunk_size;
+        zip_stream.next_out = buffer.data();
+        zlib_check(op, process_fn(&zip_stream, Z_FINISH));
+        return {(const char*)buffer.data(), chunk_size - zip_stream.avail_out};
+    }
+
+    bool end()
+    {
+        return zlib_check(op, end_fn(&zip_stream), "End");
+    }
+
+    bool deflate_init(int level)
+    {
+        process_fn = &deflate;
+        end_fn = &deflateEnd;
+        op = "deflate";
+        return zlib_check("deflateInit2", deflateInit2(&zip_stream, level, Z_DEFLATED, 15 | 16, 8, Z_DEFAULT_STRATEGY));
+    }
+
+private:
+    bool zlib_check(const char* func, int result, const char* extra = "")
+    {
+        if ( result == Z_OK || result == Z_STREAM_END )
+            return true;
+
+        on_error(QApplication::tr("ZLib %1%2 returned %3").arg(func).arg(extra).arg(result));
+        return false;
+    }
+
+    z_stream zip_stream;
+    utils::gzip::ErrorFunc on_error;
+    Buffer buffer;
+    int (*process_fn)(z_streamp, int);
+    int (*end_fn)(z_streamp);
+    const char* op;
 };
 
 } // namespace
@@ -30,61 +94,60 @@ struct Compressor
 bool utils::gzip::compress(const QByteArray& data, QIODevice& output,
                            const utils::gzip::ErrorFunc& on_error, int level)
 {
-    z_stream zip_stream;
+    Gzipper gz(on_error);
 
-    zip_stream.zalloc = Z_NULL;
-    zip_stream.zfree  = Z_NULL;
-    zip_stream.opaque = Z_NULL;
-    if ( !CALL_ZLIB(deflateInit2, &zip_stream, level, Z_DEFLATED, 15 | 16, 8, Z_DEFAULT_STRATEGY) )
+    if ( !gz.deflate_init(level) )
         return false;
 
-    Buffer buffer;
-    zip_stream.next_in = (Bytef*) data.data();
-    zip_stream.avail_in = data.size();
-    zip_stream.avail_out = 0;
+    gz.add_data(data);
 
-    while ( zip_stream.avail_out == 0 )
+    while ( !gz.finished() )
     {
-        zip_stream.avail_out = chunk_size;
-        zip_stream.next_out = buffer.data();
-        CALL_ZLIB(deflate, &zip_stream, Z_FINISH);
-        output.write((const char*)buffer.data(), chunk_size - zip_stream.avail_out);
+        auto bv = gz.process();
+        output.write(bv.data, bv.size);
     }
 
-    return CALL_ZLIB(deflateEnd, &zip_stream);
+    return gz.end();
 }
 
 bool utils::gzip::decompress(QIODevice& input, QByteArray& output, const utils::gzip::ErrorFunc& on_error)
 {
-    return decompress(input.readAll(), output, on_error);
+    Gzipper gz(on_error);
+    if ( !gz.inflate_init() )
+        return false;
+
+    while ( true )
+    {
+        QByteArray data = input.read(Gzipper::chunk_size);
+        if ( data.isEmpty() )
+            break;
+
+        gz.add_data(data);
+        while ( !gz.finished() )
+        {
+            auto bv = gz.process();
+            output.append(bv.data, bv.size);
+        }
+    }
+    return gz.end();
 }
 
 
 bool utils::gzip::decompress(const QByteArray& input, QByteArray& output, const utils::gzip::ErrorFunc& on_error)
 {
-    z_stream zip_stream;
-
-    zip_stream.zalloc = Z_NULL;
-    zip_stream.zfree  = Z_NULL;
-    zip_stream.opaque = Z_NULL;
-    if ( !CALL_ZLIB(inflateInit2, &zip_stream, 16|MAX_WBITS) )
+    Gzipper gz(on_error);
+    if ( !gz.inflate_init() )
         return false;
 
-    Buffer buffer;
-    zip_stream.next_in = (Bytef*) input.data();
-    zip_stream.avail_in = input.size();
-    zip_stream.avail_out = 0;
+    gz.add_data(input);
 
-    while ( zip_stream.avail_out == 0 )
+    while ( !gz.finished() )
     {
-        zip_stream.avail_out = chunk_size;
-        zip_stream.next_out = buffer.data();
-        CALL_ZLIB(inflate, &zip_stream, Z_FINISH);
-        output.append((const char*)buffer.data(), chunk_size - zip_stream.avail_out);
+        auto bv = gz.process();
+        output.append(bv.data, bv.size);
     }
 
-
-    return CALL_ZLIB(inflateEnd, &zip_stream);
+    return gz.end();
 }
 
 
