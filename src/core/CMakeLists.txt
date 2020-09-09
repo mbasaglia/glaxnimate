@@ -30,6 +30,8 @@ model/shapes/group.cpp
 model/shapes/ellipse.cpp
 model/shapes/path.cpp
 model/shapes/stroke.cpp
+
+utils/gzip.cpp
 )
 
 if(${PYTHON_ENABLED})

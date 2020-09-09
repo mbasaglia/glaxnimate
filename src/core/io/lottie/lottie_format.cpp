@@ -81,6 +81,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("chars"),
         FieldInfo("markers"),
         FieldInfo("motion_blur"),
+        FieldInfo("tgs"),
     }},
     {"Layer", {
         FieldInfo("ddd"),
@@ -882,12 +883,12 @@ QCborMap io::lottie::LottieFormat::to_json(model::Document* document, bool strip
     return exp.to_json();
 }
 
-bool io::lottie::LottieFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
+bool io::lottie::LottieFormat::load_json(const QByteArray& data, model::Document* document)
 {
     QJsonDocument jdoc;
 
     try {
-        jdoc = QJsonDocument::fromJson(file.readAll());
+        jdoc = QJsonDocument::fromJson(data);
     } catch ( const QJsonParseError& err ) {
         emit error(tr("Could not parse JSON: %1").arg(err.errorString()));
         return false;
@@ -904,4 +905,9 @@ bool io::lottie::LottieFormat::on_open(QIODevice& file, const QString&, model::D
     LottieImporterState imp{document, this};
     imp.load(top_level);
     return true;
+}
+
+bool io::lottie::LottieFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
+{
+    return load_json(file.readAll(), document);
 }

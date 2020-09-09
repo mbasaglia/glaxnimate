@@ -10,4 +10,4 @@
  * Browser preview
  * Basic Animations
  * Basic Shapes
- * Save Telegram animated stickers
+ * Open/Save Telegram animated stickers

@@ -23,6 +23,7 @@ public:
     }
 
     static QCborMap to_json(model::Document* document, bool strip = false);
+    bool load_json(const QByteArray& data, model::Document* document);
 
 private:
     bool on_save(QIODevice& file, const QString& filename,
