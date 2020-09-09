@@ -10,6 +10,9 @@
 #include <QVector2D>
 #include <QRectF>
 #include <QByteArray>
+#include <QDateTime>
+#include <QDate>
+#include <QTime>
 
 #include "app/log/log.hpp"
 
@@ -54,6 +57,9 @@ SETUP_TYPE(QMetaType::QSizeF,       QSizeF)
 SETUP_TYPE(QMetaType::QVector2D,    QVector2D)
 SETUP_TYPE(QMetaType::QRectF,       QRectF)
 SETUP_TYPE(QMetaType::QByteArray,   QByteArray)
+SETUP_TYPE(QMetaType::QDateTime,    QDateTime)
+SETUP_TYPE(QMetaType::QDate,        QDate)
+SETUP_TYPE(QMetaType::QTime,        QTime)
 // If you add stuff here, remember to add it to supported_types too
 
 TYPE_NAME(std::vector<QObject*>)
@@ -83,7 +89,10 @@ using supported_types = std::integer_sequence<int,
     QMetaType::QSizeF,
     QMetaType::QVector2D,
     QMetaType::QRectF,
-    QMetaType::QByteArray
+    QMetaType::QByteArray,
+    QMetaType::QDateTime,
+    QMetaType::QDate,
+    QMetaType::QTime
     // Ensure new types have SETUP_TYPE
 >;
 

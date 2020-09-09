@@ -7,11 +7,15 @@
 #include <QMap>
 #include <QHash>
 #include <QByteArray>
+#include <QDateTime>
+#include <QDate>
+#include <QTime>
 
 
 #undef slots
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
+#include <datetime.h>
 
 
 namespace pybind11::detail {
@@ -112,6 +116,122 @@ public:
     }
 };
 
+template <> struct type_caster<QDateTime>
+{
+public:
+    PYBIND11_TYPE_CASTER(QDateTime, _("QDateTime"));
+
+    bool load(handle src, bool)
+    {
+        if ( !PyDateTimeAPI ) PyDateTime_IMPORT;
+
+        PyObject *source = src.ptr();
+        if ( !PyDateTime_Check(source) )
+            return false;
+
+        value = QDateTime(
+            QDate(
+                PyDateTime_GET_YEAR(source),
+                PyDateTime_GET_MONTH(source),
+                PyDateTime_GET_DAY(source)
+            ),
+            QTime(
+                PyDateTime_DATE_GET_HOUR(source),
+                PyDateTime_DATE_GET_MINUTE(source),
+                PyDateTime_DATE_GET_SECOND(source),
+                PyDateTime_DATE_GET_MICROSECOND(source) / 1000
+            )
+        );
+
+        return true;
+    }
+
+    static handle cast(QDateTime val, return_value_policy, handle)
+    {
+        if ( !PyDateTimeAPI ) PyDateTime_IMPORT;
+
+        return PyDateTime_FromDateAndTime(
+            val.date().year(), val.date().month(), val.date().day(),
+            val.time().hour(), val.time().minute(), val.time().second(), val.time().msec() * 1000
+        );
+    }
+};
+template <> struct type_caster<QDate>
+{
+public:
+    PYBIND11_TYPE_CASTER(QDate, _("QDate"));
+
+    bool load(handle src, bool)
+    {
+        if ( !PyDateTimeAPI ) PyDateTime_IMPORT;
+
+        PyObject *source = src.ptr();
+
+        if ( !PyDate_Check(source) )
+            return false;
+
+        value = QDate(
+            PyDateTime_GET_YEAR(source),
+            PyDateTime_GET_MONTH(source),
+            PyDateTime_GET_DAY(source)
+        );
+
+        return true;
+    }
+
+    static handle cast(QDate val, return_value_policy, handle)
+    {
+        if ( !PyDateTimeAPI ) PyDateTime_IMPORT;
+
+        return PyDate_FromDate(
+            val.year(), val.month(), val.day()
+        );
+    }
+};
+template <> struct type_caster<QTime>
+{
+public:
+    PYBIND11_TYPE_CASTER(QTime, _("QTime"));
+
+    bool load(handle src, bool)
+    {
+        if ( !PyDateTimeAPI ) PyDateTime_IMPORT;
+
+        PyObject *source = src.ptr();
+        if ( PyTime_Check(source) )
+        {
+            value = QTime(
+                PyDateTime_TIME_GET_HOUR(source),
+                PyDateTime_TIME_GET_MINUTE(source),
+                PyDateTime_TIME_GET_SECOND(source),
+                PyDateTime_TIME_GET_MICROSECOND(source) / 1000
+            );
+
+            return true;
+        }
+        if ( PyDateTime_Check(source) )
+        {
+            value = QTime(
+                PyDateTime_DATE_GET_HOUR(source),
+                PyDateTime_DATE_GET_MINUTE(source),
+                PyDateTime_DATE_GET_SECOND(source),
+                PyDateTime_DATE_GET_MICROSECOND(source) / 1000
+            );
+
+            return true;
+        }
+        return false;
+    }
+
+    static handle cast(QTime val, return_value_policy, handle)
+    {
+        if ( !PyDateTimeAPI ) PyDateTime_IMPORT;
+
+        return PyTime_FromTime(
+            val.hour(), val.minute(), val.second(), val.msec() * 1000
+        );
+    }
+};
 
 template <typename Type> struct type_caster<QList<Type>> : list_caster<QList<Type>, Type> {};
 template <typename Type> struct type_caster<QVector<Type>> : list_caster<QVector<Type>, Type> {};
