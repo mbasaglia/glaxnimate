@@ -3,9 +3,12 @@
 #include "model/document.hpp"
 #include "model/layers/layers.hpp"
 #include "model/shapes/shapes.hpp"
+#include "command/animation_commands.hpp"
 
 #include "app/scripting/python/register_machinery.hpp"
 
+auto no_own = py::return_value_policy::automatic_reference;
+using namespace app::scripting::python;
 
 template<class T>
 void register_animatable(py::module& m)
@@ -15,10 +18,8 @@ void register_animatable(py::module& m)
     py::class_<model::AnimatedProperty<T>, model::AnimatableBase>(m, name.c_str());
 }
 
-PYBIND11_EMBEDDED_MODULE(glaxnimate, m)
+void define_utils(py::module& m)
 {
-    using namespace app::scripting::python;
-
     py::module utils = m.def_submodule("utils", "");
     py::class_<QColor>(utils, "Color")
         .def(py::init<int, int, int, int>())
@@ -96,6 +97,39 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, m)
         .def("length_squared", &QVector2D::lengthSquared)
         .def("__repr__", qdebug_operator_to_string<QVector2D>())
     ;
+}
+
+void define_animatable(py::module& m)
+{
+    register_from_meta<model::KeyframeTransition, QObject>(m);
+    py::class_<model::KeyframeBase>(m, "Keyframe")
+        .def_property_readonly("time", &model::KeyframeBase::time)
+        .def_property_readonly("value", &model::KeyframeBase::value)
+        .def_property_readonly("transition",
+            (const model::KeyframeTransition& (model::KeyframeBase::*)()const)
+            &model::KeyframeBase::transition,
+            no_own
+        )
+    ;
+    register_from_meta<model::AnimatableBase, QObject>(m)
+        .def("keyframe", [](const model::AnimatableBase& a, model::FrameTime t){ return a.keyframe(t); }, no_own)
+        .def("set_keyframe", [](model::AnimatableBase& a, model::FrameTime time, const QVariant& value){
+            a.object()->document()->undo_stack().push(
+                new command::SetKeyframe(&a, time, value, true)
+            );
+            return a.keyframe(a.keyframe_index(time));
+        }, no_own)
+        .def("remove_keyframe_at_time", [](model::AnimatableBase& a, model::FrameTime time){
+            a.object()->document()->undo_stack().push(
+                new command::RemoveKeyframeTime(&a, time)
+            );
+        })
+    ;
+}
+
+PYBIND11_EMBEDDED_MODULE(glaxnimate, m)
+{
+    define_utils(m);
 
     py::module detail = m.def_submodule("__detail", "");
     py::class_<QObject>(detail, "__QObject");
@@ -106,7 +140,7 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, m)
     register_from_meta<model::DocumentNode, model::Object>(model);
     register_from_meta<model::Composition, model::DocumentNode>(model);
     register_from_meta<model::MainComposition, model::Composition>(model);
-    register_from_meta<model::AnimatableBase, QObject>(model);
+    define_animatable(model);
     register_animatable<QPointF>(detail);
     register_animatable<QSizeF>(detail);
     register_animatable<QVector2D>(detail);
@@ -124,31 +158,7 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, m)
     register_from_meta<model::Shape, model::ShapeElement>(shapes);
     register_from_meta<model::Modifier, model::ShapeElement>(shapes);
 
-    QMetaProperty prop;
-    const QMetaObject& mo = model::Rect::staticMetaObject;
-    for ( int i = 0; i < mo.propertyCount(); i++ )
-        if ( mo.property(i).name() == QString("position") )
-            prop = mo.property(i);
-    register_from_meta<model::Rect, model::Shape>(shapes)
-    .def("foo", [](model::Rect& r)->model::AnimatableBase*{
-        return &r.position;
-    }, py::return_value_policy::automatic_reference)
-    .def("foo1", [prop](model::Rect& r)->model::AnimatableBase*{
-        return prop.read(&r).value<model::AnimatableBase*>();
-    }, py::return_value_policy::automatic_reference)
-    .def("foo2", [prop](model::Rect& r)->QObject*{
-        return prop.read(&r).value<QObject*>();
-    }, py::return_value_policy::automatic_reference)
-    .def("foo3", [](model::Rect& r)->QObject*{
-        return &r.position;
-    }, py::return_value_policy::automatic_reference)
-    .def("bar", [](model::Rect& r)->model::Rect*{
-        return &r;
-    }, py::return_value_policy::automatic_reference)
-    .def("bar1", [](model::Rect& r)->QObject*{
-        return &r;
-    }, py::return_value_policy::automatic_reference)
-    ;
+    register_from_meta<model::Rect, model::Shape>(shapes);
     register_from_meta<model::Ellipse, model::Shape>(shapes);
     register_from_meta<model::Group, model::Shape>(shapes);
 

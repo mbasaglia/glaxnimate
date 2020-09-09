@@ -57,5 +57,3 @@ private:
 };
 
 } // namespace graphics
-
-Q_DECLARE_METATYPE(std::vector<model::DocumentNode*>)

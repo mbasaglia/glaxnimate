@@ -158,41 +158,32 @@ public:
     }
 
     template<class T=DocumentNode>
-    T* docnode_find_by_uuid(const QUuid& uuid) const
+    T* docnode_find_by_uuid(const QUuid& uuid)
     {
+        if ( this->uuid.get() == uuid && qobject_cast<T*>(this) )
+            return this;
         for ( DocumentNode* child : docnode_children() )
-        {
-            if ( child->uuid.get() == uuid )
-                return qobject_cast<T*>(child);
-            if ( T* matched = child->docnode_find_by_uuid<T>(uuid) )
-                return matched;
-        }
-
+            if ( auto found = child->docnode_find_by_uuid<T>(uuid) )
+                return found;
         return nullptr;
     }
 
     template<class T=DocumentNode>
-    T* docnode_find_by_name(const QString& name) const
+    T* docnode_find_by_name(const QString& name)
     {
+        if ( this->name.get() == name && qobject_cast<T*>(this) )
+            return this;
         for ( DocumentNode* child : docnode_children() )
-        {
-            if ( child->name.get() == name )
-                return qobject_cast<T*>(child);
-            if ( T* matched = child->docnode_find_by_name<T>(name) )
-                return matched;
-        }
-
+            if ( auto found = child->docnode_find_by_name<T>(name) )
+                return found;
         return nullptr;
     }
 
     template<class T=DocumentNode>
-    std::vector<T*> docnode_find(const QString& type_name, bool include_self = true)
+    std::vector<T*> docnode_find_by_type_name(const QString& type_name)
     {
         std::vector<T*> matches;
-        const char* t_name = T::staticMetaObject.className();
-        if ( include_self )
-            docnode_find_impl_add(type_name, matches, t_name);
-        docnode_find_impl(type_name, matches, t_name);
+        docnode_find_impl(type_name, matches);
         return matches;
     }
 
@@ -206,21 +197,29 @@ public:
     virtual QTransform local_transform_matrix() const { return QTransform(); }
     virtual QTransform local_transform_matrix(FrameTime) const { return QTransform(); }
 
+    Q_INVOKABLE model::DocumentNode* find_by_name(const QString& name) { return docnode_find_by_name(name); }
+    Q_INVOKABLE model::DocumentNode* find_by_uuid(const QUuid& uuid) { return docnode_find_by_uuid(uuid); }
+    Q_INVOKABLE QVariantList find_by_type_name(const QString& type_name)
+    {
+        auto ob = docnode_find_by_type_name(type_name);
+        QVariantList ret;
+        ret.reserve(ob.size());
+        for ( auto o : ob )
+            ret.push_back(QVariant::fromValue(o));
+        return ret;
+
+    }
+
 private:
     template<class T=DocumentNode>
-    std::vector<T*> docnode_find_impl(const QString& type_name, std::vector<T*>& matches, const char* t_name)
+    void docnode_find_impl(const QString& type_name, std::vector<T*>& matches)
     {
+        if ( docnode_is_instance(type_name) )
+            if ( auto obj = qobject_cast<T*>(this) )
+                matches.push_back(obj);
+
         for ( DocumentNode* child : docnode_children() )
-        {
-            child->docnode_find_impl_add(type_name, matches, t_name);
-            child->docnode_find_impl(type_name, matches, t_name);
-        }
-    }
-    template<class T=DocumentNode>
-    void docnode_find_impl_add(const QString& type_name, std::vector<T*>& matches, const char* t_name)
-    {
-        if ( inherits(t_name) && docnode_is_instance(type_name) )
-            matches.push_back(static_cast<T*>(this));
+            child->docnode_find_impl<T>(type_name, matches);
     }
 
 protected:
@@ -365,6 +364,6 @@ private:
     Type* value_ = nullptr;
 };
 
-
-
 } // namespace model
+
+Q_DECLARE_METATYPE(std::vector<model::DocumentNode*>)

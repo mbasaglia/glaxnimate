@@ -66,9 +66,19 @@ void model::Document::set_io_options(const io::Options& opt)
         emit filename_changed(d->io_options.filename);
 }
 
-model::DocumentNode * model::Document::node_by_uuid(const QUuid& n) const
+model::DocumentNode * model::Document::find_by_uuid(const QUuid& n) const
 {
     return d->main_composition.docnode_find_by_uuid(n);
+}
+
+model::DocumentNode * model::Document::find_by_name(const QString& name) const
+{
+    return d->main_composition.docnode_find_by_name(name);
+}
+
+QVariantList model::Document::find_by_type_name(const QString& type_name) const
+{
+    return d->main_composition.find_by_type_name(type_name);
 }
 
 bool model::Document::redo()

@@ -34,7 +34,9 @@ public:
 
     void set_io_options(const io::Options& opt);
 
-    DocumentNode* node_by_uuid(const QUuid& n) const;
+    Q_INVOKABLE model::DocumentNode* find_by_uuid(const QUuid& n) const;
+    Q_INVOKABLE model::DocumentNode* find_by_name(const QString& name) const;
+    Q_INVOKABLE QVariantList find_by_type_name(const QString& type_name) const;
 
     Q_INVOKABLE bool undo();
     Q_INVOKABLE bool redo();
@@ -50,7 +52,7 @@ public:
     bool has_file() const;
 
     void set_has_file(bool hf);
-    
+
     /**
      * \brief Whether animated values should add keyframes when their value changes
      */

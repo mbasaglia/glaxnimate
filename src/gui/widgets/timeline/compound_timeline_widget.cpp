@@ -379,6 +379,6 @@ void CompoundTimelineWidget::remove_keyframe()
         return;
 
     d->menu_anim->object()->document()->undo_stack().push(
-        new command::RemoveKeyframe(d->menu_anim, d->menu_kf_exit->time())
+        new command::RemoveKeyframeTime(d->menu_anim, d->menu_kf_exit->time())
     );
 }

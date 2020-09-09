@@ -25,7 +25,7 @@ public:
         for ( auto it = unresolved_references.begin(); it != unresolved_references.end(); ++it )
         {
             model::BaseProperty* prop = it.key();
-            model::DocumentNode* node = document->node_by_uuid(*it);
+            model::DocumentNode* node = document->find_by_uuid(*it);
             if ( !node )
             {
                 emit fmt->error(tr("Property %1 of %2 refers to unexisting object %3")

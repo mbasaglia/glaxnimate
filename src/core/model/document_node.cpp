@@ -158,3 +158,4 @@ QTransform model::DocumentNode::transform_matrix() const
         return local_transform_matrix() * parent->transform_matrix();
     return local_transform_matrix();
 }
+

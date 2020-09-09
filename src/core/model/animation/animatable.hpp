@@ -44,7 +44,7 @@ class AnimatableBase : public QObject, public BaseProperty
     Q_OBJECT
 
     Q_PROPERTY(int keyframe_count READ keyframe_count)
-    Q_PROPERTY(QVariant value READ value)
+    Q_PROPERTY(QVariant value READ value WRITE set_undoable)
     Q_PROPERTY(bool animated READ animated)
 
 public:
@@ -72,7 +72,7 @@ public:
      *
      * keyframe(i).time() < keyframe(j).time() <=> i < j
      */
-    Q_INVOKABLE virtual const KeyframeBase* keyframe(int i) const = 0;
+    virtual const KeyframeBase* keyframe(int i) const = 0;
     virtual KeyframeBase* keyframe(int i) = 0;
 
     /**
@@ -81,24 +81,24 @@ public:
      * \return The keyframe or nullptr if it couldn't be added.
      * If there is already a keyframe at \p time the returned value might be an existing keyframe
      */
-    Q_INVOKABLE virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value) = 0;
+    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value) = 0;
 
     /**
      * \brief Removes the keyframe at index \p i
      */
-    Q_INVOKABLE virtual void remove_keyframe(int i) = 0;
+    virtual void remove_keyframe(int i) = 0;
 
     /**
      * \brief Removes all keyframes
      * \post !animated()
      */
-    Q_INVOKABLE virtual void clear_keyframes() = 0;
+    virtual void clear_keyframes() = 0;
 
     /**
      * \brief Removes the keyframe with the given time
      * \returns whether a keyframe was found and removed
      */
-    Q_INVOKABLE virtual bool remove_keyframe_at_time(FrameTime time) = 0;
+    virtual bool remove_keyframe_at_time(FrameTime time) = 0;
 
     /**
      * \brief Get the value at the given time
@@ -121,7 +121,7 @@ public:
     /**
      * If animated(), whether the current value has been changed over the animated value
      */
-    virtual bool value_mismatch() const = 0;
+    Q_INVOKABLE virtual bool value_mismatch() const = 0;
 
     bool assign_from(const BaseProperty* prop) override;
 
