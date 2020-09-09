@@ -11,6 +11,7 @@
 #include "app/log/log.hpp"
 #include "model/layers/layers.hpp"
 #include "model/shapes/shapes.hpp"
+#include "math/bezier.hpp"
 #include "cbor_write_json.hpp"
 
 using namespace model;
@@ -124,7 +125,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"size",           "s"},
     }},
     {"Path", {
-//         FieldInfo{"shape",          "ks"},
+        FieldInfo{"shape",          "ks"},
     }},
     {"Group", {
         FieldInfo{"np"},
@@ -242,12 +243,16 @@ public:
         return json;
     }
 
+    QCborArray point_to_lottie(const QPointF& vv)
+    {
+        return QCborArray{vv.x(), vv.y()};
+    }
+
     QCborValue value_from_variant(const QVariant& v)
     {
         if ( v.userType() == QMetaType::QPointF )
         {
-            auto vv = v.toPointF();
-            return QCborArray{vv.x(), vv.y()};
+            return point_to_lottie(v.toPointF());
         }
         else if ( v.userType() == QMetaType::QVector2D )
         {
@@ -263,6 +268,23 @@ public:
         {
             auto vv = v.value<QColor>().toRgb();
             return QCborArray{vv.redF(), vv.greenF(), vv.blueF(), vv.alphaF()};
+        }
+        else if ( v.userType() == qMetaTypeId<math::Bezier>() )
+        {
+            math::Bezier bezier = v.value<math::Bezier>();
+            QCborMap jsbez;
+            jsbez["c"_l] = bezier.closed();
+            QCborArray pos, tan_in, tan_out;
+            for ( const auto& p : bezier )
+            {
+                pos.push_back(point_to_lottie(p.pos));
+                tan_in.push_back(point_to_lottie(p.tan_in - p.pos));
+                tan_out.push_back(point_to_lottie(p.tan_out - p.pos));
+            }
+            jsbez["v"_l] = pos;
+            jsbez["i"_l] = tan_in;
+            jsbez["o"_l] = tan_out;
+            return jsbez;
         }
         return QCborValue::fromVariant(v);
     }
