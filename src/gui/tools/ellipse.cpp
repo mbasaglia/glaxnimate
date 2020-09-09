@@ -16,6 +16,7 @@ public:
         {
             dragging = false;
             auto shape = std::make_unique<model::Ellipse>(event.window->document());
+            rect = rect.normalized();
             shape->position.set(rect.center());
             shape->size.set(rect.size());
             create_shape(QObject::tr("Draw Ellipse"), event, std::move(shape));

@@ -97,6 +97,8 @@ void Spin2D::set_value(const QPointF& v)
 
 void Spin2D::set_value(const QSizeF& v)
 {
+    spin_x->setMinimum(0);
+    spin_y->setMinimum(0);
     set_value(v.width(), v.height());
 }
 

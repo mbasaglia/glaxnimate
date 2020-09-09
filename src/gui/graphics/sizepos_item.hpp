@@ -55,8 +55,12 @@ private slots:
         if ( modifiers & Qt::ControlModifier )
         {
             find_candidate(p, start_tl);
-//             handle_tl.setPos(p);
         }
+
+        if ( p.x() > rect.right() )
+            p.setX(rect.right());
+        if ( p.y() > rect.bottom() )
+            p.setY(rect.bottom());
 
         if ( modifiers & Qt::ShiftModifier )
         {
@@ -78,8 +82,12 @@ private slots:
         if ( modifiers & Qt::ControlModifier )
         {
             find_candidate(p, start_br);
-//             handle_br.setPos(p);
         }
+
+        if ( p.x() < rect.left() )
+            p.setX(rect.left());
+        if ( p.y() < rect.top() )
+            p.setY(rect.top());
 
         if ( modifiers & Qt::ShiftModifier )
         {
