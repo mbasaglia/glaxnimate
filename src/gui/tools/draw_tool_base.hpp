@@ -95,7 +95,7 @@ protected:
         }
 
         ShapeToolWidget* options = widget();
-        int index = prop->index_of(event.window->current_shape(), 0);
+        int index = prop->index_of(event.window->current_shape(), 0) + 1;
         if ( options->create_group() )
         {
             auto group = std::make_unique<model::Group>(document);

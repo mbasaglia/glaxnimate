@@ -4,14 +4,16 @@
 void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
 {
     connect(node, &model::DocumentNode::docnode_child_add_begin, this, [this, node](int row) {
-        beginInsertRows(node_index(node), row, row);
+        int rows = node->docnode_child_count();
+        beginInsertRows(node_index(node), rows - row, rows - row);
     });
     connect(node, &model::DocumentNode::docnode_child_add_end, this, [this, node](model::DocumentNode* child) {
         endInsertRows();
         connect_node(child);
     });
     connect(node, &model::DocumentNode::docnode_child_remove_begin, this, [this, node](int row) {
-        beginRemoveRows(node_index(node), row, row);
+        int rows = node->docnode_child_count();
+        beginRemoveRows(node_index(node), rows - row - 1, rows - row - 1);
     });
     connect(node, &model::DocumentNode::docnode_child_remove_end, this, [this, node](model::DocumentNode* child) {
         endRemoveRows();
@@ -82,10 +84,11 @@ QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const Q
     }
 
     auto n = node(parent);
-    if ( !n || row < 0 || row >= n->docnode_child_count() )
+    int rows = n->docnode_child_count();
+    if ( !n || row < 0 || row >= rows )
         return {};
 
-    return createIndex(row, column, n->docnode_child(row));
+    return createIndex(row, column, n->docnode_child(rows - row - 1));
 }
 
 Qt::ItemFlags item_models::DocumentNodeModel::flags ( const QModelIndex& index ) const
@@ -221,10 +224,11 @@ QModelIndex item_models::DocumentNodeModel::node_index ( model::DocumentNode* no
         return createIndex(0, 0, node);
     }
 
-    for ( int i = 0; i < parent->docnode_child_count(); i++ )
+    int rows = parent->docnode_child_count();
+    for ( int i = 0; i < rows; i++ )
     {
         if ( parent->docnode_child(i) == node )
-            return createIndex(i, 0, node);
+            return createIndex(rows - i - 1, 0, node);
     }
 
     return {};

@@ -101,13 +101,16 @@ void graphics::DocumentScene::connect_node ( model::DocumentNode* node )
     {
         auto it = d->node_to_item.find(parent_node);
         if ( it != d->node_to_item.end() )
+        {
             parent = it->second;
-        child->setZValue(parent_node->docnode_child_index(node));
+            child->setParentItem(parent);
+            int index = parent_node->docnode_child_index(node);
+            if ( index < parent_node->docnode_child_count() - 1 )
+                child->stackBefore(d->node_to_item.find(parent_node->docnode_child(index+1))->second);
+        }
     }
 
-    if ( parent )
-        child->setParentItem(parent);
-    else
+    if ( !parent )
         addItem(child);
 
     for ( model::DocumentNode* child : node->docnode_children() )
