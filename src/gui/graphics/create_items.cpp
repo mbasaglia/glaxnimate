@@ -30,7 +30,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             editors_list v;
             auto p = std::make_unique<graphics::TransformGraphicsItem>(layer->transform.get(), layer, nullptr);
             QObject::connect(layer, &model::Layer::transform_matrix_changed, p.get(), &graphics::TransformGraphicsItem::set_transform_matrix);
-            p->set_transform_matrix(layer->transform_matrix());
+            p->set_transform_matrix(layer->transform_matrix(layer->time()));
             v.push_back(std::move(p));
             return v;
         }
@@ -69,6 +69,22 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         [](model::Path* shape){
             editors_list v;
             v.push_back(std::make_unique<graphics::BezierItem>(shape));
+            return v;
+        }
+    );
+    register_builder<model::Group>(
+        [](model::Group* layer){
+            auto item = new DocumentNodeGraphicsItem(layer);
+            QObject::connect(layer, &model::Group::transform_matrix_changed, item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
+            return item;
+        },
+        [](model::Group* layer){
+            editors_list v;
+            auto p = std::make_unique<graphics::TransformGraphicsItem>(layer->transform.get(), layer, nullptr);
+            QObject::connect(layer, &model::Group::transform_matrix_changed,
+                             p.get(), &graphics::TransformGraphicsItem::set_transform_matrix);
+            p->set_transform_matrix(layer->transform_matrix(layer->time()));
+            v.push_back(std::move(p));
             return v;
         }
     );

@@ -553,6 +553,8 @@ public:
 
     value_type get_at(FrameTime time) const
     {
+        if ( time == this->time() )
+            return value_;
         return get_at_impl(time).second;
     }
 

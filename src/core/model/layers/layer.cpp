@@ -103,11 +103,6 @@ void model::Layer::on_property_changed ( const BaseProperty* prop, const QVarian
         DocumentNode::on_property_changed(prop, value);
 }
 
-QTransform model::Layer::local_transform_matrix() const
-{
-    return transform.get()->transform_matrix();
-}
-
 QTransform model::Layer::local_transform_matrix(model::FrameTime t) const
 {
     return transform.get()->transform_matrix(t);
@@ -127,7 +122,7 @@ void model::Layer::on_paint(QPainter* painter, FrameTime time, PaintMode mode) c
 
 void model::Layer::on_transform_matrix_changed()
 {
-    emit transform_matrix_changed(transform_matrix());
+    emit transform_matrix_changed(transform_matrix(time()));
 }
 
 void model::Layer::set_time(model::FrameTime t)

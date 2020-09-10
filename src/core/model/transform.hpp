@@ -21,8 +21,8 @@ public:
 
     virtual QString type_name_human() const override { return tr("Transform"); }
 
-    QTransform transform_matrix() const;
     QTransform transform_matrix(FrameTime f) const;
+    void set_transform_matrix(const QTransform& t);
 };
 
 

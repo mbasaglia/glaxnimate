@@ -25,7 +25,12 @@ public:
     GLAXNIMATE_ANIMATABLE(float, opacity, 1)
 
 public:
-    using Ctor::Ctor;
+    Group(Document* document)
+        : Ctor(document)
+    {
+        connect(transform.get(), &Object::property_changed,
+                this, &Group::on_transform_matrix_changed);
+    }
 
     int docnode_child_count() const override { return shapes.size(); }
     DocumentNode* docnode_child(int index) const override { return &shapes[index]; }
@@ -69,9 +74,19 @@ public:
         return rect;
     }
 
-// signals:
-//     void shape_added(ShapeElement* layer);
-//     void shape_removed(ShapeElement* layer);
+    QTransform local_transform_matrix(model::FrameTime t) const override
+    {
+        return transform.get()->transform_matrix(t);
+    }
+
+private slots:
+    void on_transform_matrix_changed()
+    {
+        emit transform_matrix_changed(transform_matrix(time()));
+    }
+
+signals:
+    void transform_matrix_changed(const QTransform& t);
 };
 
 } // namespace model

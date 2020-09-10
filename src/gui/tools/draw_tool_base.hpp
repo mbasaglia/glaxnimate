@@ -65,7 +65,8 @@ protected:
 
     }
 
-    void create_shape(const QString& command_name, const Event& event, std::unique_ptr<model::Shape> shape)
+    void create_shape(const QString& command_name, const Event& event,
+                      std::unique_ptr<model::Shape> shape)
     {
         auto document = event.window->document();
         document->undo_stack().beginMacro(command_name);
@@ -74,25 +75,7 @@ protected:
 
         QString name = event.window->get_best_name(shape.get());
 
-        auto container = event.window->current_shape_container();
-        model::ShapeListProperty* prop = nullptr;
-        if ( container )
-        {
-            prop = static_cast<model::ShapeListProperty*>(container->get_property("shapes"));
-        }
-        else
-        {
-            auto comp = event.window->current_composition();
-            auto layer = std::make_unique<model::ShapeLayer>(document, comp);
-            int layer_index = comp->docnode_child_index(event.window->current_layer());
-            if ( layer_index == -1 )
-                layer_index = 0;
-            prop = &layer->shapes;
-            event.window->set_best_name(layer.get());
-            document->undo_stack().push(
-                new command::AddLayer(comp, std::move(layer), layer_index)
-            );
-        }
+        model::ShapeListProperty* prop = get_container(event.window);
 
         ShapeToolWidget* options = widget();
         int index = prop->index_of(event.window->current_shape()) + 1;
@@ -103,6 +86,11 @@ protected:
             event.window->set_best_name(group.get(), QObject::tr("%1 Group").arg(name));
             auto super_prop = prop;
             prop = &group->shapes;
+
+            QPointF center = shape->local_bounding_rect(0).center();
+            group->transform.get()->anchor_point.set(center);
+            group->transform.get()->position.set(center);
+
             document->undo_stack().push(
                 new command::AddShape(super_prop, std::move(group), index)
             );
@@ -150,6 +138,38 @@ protected:
     ShapeToolWidget* widget()
     {
         return static_cast<ShapeToolWidget*>(get_settings_widget());
+    }
+
+private:
+    model::ShapeListProperty* get_container(GlaxnimateWindow* window)
+    {
+        if ( auto container = window->current_shape_container() )
+            return  static_cast<model::ShapeListProperty*>(container->get_property("shapes"));
+
+        auto comp = window->current_composition();
+        for ( int i = comp->docnode_child_count() - 1; i >= 0; i-- )
+        {
+            if ( auto lay = qobject_cast<model::ShapeLayer*>(comp->docnode_child(i)) )
+                return &lay->shapes;
+        }
+
+        auto document = window->document();
+        auto layer = std::make_unique<model::ShapeLayer>(document, comp);
+        int layer_index = comp->docnode_child_index(window->current_layer());
+        if ( layer_index == -1 )
+            layer_index = 0;
+
+        QPointF center(
+            document->main_composition()->width.get()/2,
+            document->main_composition()->height.get()/2
+        );
+        layer->transform.get()->anchor_point.set(center);
+        layer->transform.get()->position.set(center);
+        window->set_best_name(layer.get());
+        document->undo_stack().push(
+            new command::AddLayer(comp, std::move(layer), layer_index)
+        );
+        return &layer->shapes;
     }
 
 };

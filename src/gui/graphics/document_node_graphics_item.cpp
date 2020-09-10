@@ -24,12 +24,12 @@ void graphics::DocumentNodeGraphicsItem::shape_changed()
 
 QRectF graphics::DocumentNodeGraphicsItem::boundingRect() const
 {
-    return node_->local_bounding_rect(node_->document()->current_time());
+    return node_->local_bounding_rect(node_->time());
 }
 
 void graphics::DocumentNodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    node_->paint(painter, node_->document()->current_time(), model::DocumentNode::NoTransform);
+    node_->paint(painter, node_->time(), model::DocumentNode::NoTransform);
 }
 
 void graphics::DocumentNodeGraphicsItem::on_property_changed(const model::BaseProperty* prop)

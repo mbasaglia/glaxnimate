@@ -105,7 +105,6 @@ public:
     void set_composition(Composition* composition);
 
     QTransform local_transform_matrix(FrameTime) const override;
-    QTransform local_transform_matrix() const override;
 
 signals:
     void transform_matrix_changed(const QTransform& t);

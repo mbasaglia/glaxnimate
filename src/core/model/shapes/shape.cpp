@@ -8,7 +8,7 @@ const model::ShapeListProperty& model::ShapeElement::siblings() const
 
 model::DocumentNode * model::ShapeElement::docnode_parent() const
 {
-    return static_cast<DocumentNode*>(property_->object());
+    return property_ ? static_cast<DocumentNode*>(property_->object()) : nullptr;
 }
 
 model::ObjectListProperty<model::ShapeElement>::iterator model::ShapeListProperty::past_first_modifier() const

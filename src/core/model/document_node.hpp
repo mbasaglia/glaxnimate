@@ -193,8 +193,6 @@ public:
     void paint(QPainter* painter, FrameTime time, PaintMode mode) const;
 
     QTransform transform_matrix(FrameTime t) const;
-    QTransform transform_matrix() const;
-    virtual QTransform local_transform_matrix() const { return QTransform(); }
     virtual QTransform local_transform_matrix(FrameTime) const { return QTransform(); }
 
     Q_INVOKABLE model::DocumentNode* find_by_name(const QString& name) { return docnode_find_by_name(name); }

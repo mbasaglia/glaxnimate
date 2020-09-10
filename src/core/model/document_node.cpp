@@ -150,12 +150,3 @@ QTransform model::DocumentNode::transform_matrix(model::FrameTime t) const
         return local_transform_matrix(t) * parent->transform_matrix(t);
     return local_transform_matrix(t);
 }
-
-QTransform model::DocumentNode::transform_matrix() const
-{
-    auto parent = docnode_group_parent();
-    if ( parent )
-        return local_transform_matrix() * parent->transform_matrix();
-    return local_transform_matrix();
-}
-

@@ -178,7 +178,7 @@ graphics::TransformGraphicsItem::~TransformGraphicsItem() = default;
 void graphics::TransformGraphicsItem::update_handles()
 {
     prepareGeometryChange();
-    d->cache = d->target->local_bounding_rect(d->target->document()->current_time());
+    d->cache = d->target->local_bounding_rect(d->target->time());
     for ( const auto& h : d->handles )
     {
         d->set_pos(h);
@@ -187,7 +187,7 @@ void graphics::TransformGraphicsItem::update_handles()
 
 void graphics::TransformGraphicsItem::update_transform()
 {
-    d->transform_matrix = d->transform->transform_matrix();
+    d->transform_matrix = d->transform->transform_matrix(d->transform->time());
     d->transform_matrix_inv = d->transform_matrix.inverted();
     d->set_pos(d->handles[Private::Rot]);
     d->set_pos(d->handles[Private::Anchor]);
