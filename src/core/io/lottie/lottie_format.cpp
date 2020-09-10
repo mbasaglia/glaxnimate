@@ -636,6 +636,13 @@ private:
             emit format->error(QObject::tr("Unknown field %1").arg(not_found));
     }
 
+    void load_basic(const QJsonObject& json_obj, model::DocumentNode* obj)
+    {
+        load_basic(json_obj, static_cast<model::Object*>(obj));
+        if ( obj->name.get().isEmpty() )
+            document->set_best_name(obj);
+    }
+
     void load_transform(const QJsonObject& transform, model::Transform* tf, model::AnimatableBase* opacity)
     {
         load_basic(transform, tf);
