@@ -129,7 +129,7 @@ public:
      * \brief Set the current time
      * \post value() == value(time)
      */
-    void set_time(FrameTime time)
+    void set_time(FrameTime time) override
     {
         current_time = time;
         on_set_time(time);

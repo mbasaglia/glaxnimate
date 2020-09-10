@@ -183,9 +183,9 @@ private:                                                    \
     // macro end
 
 
-#define GLAXNIMATE_ANIMATABLE(type, name, default_value)        \
+#define GLAXNIMATE_ANIMATABLE(type, name, ...)                  \
 public:                                                         \
-    AnimatedProperty<type> name{this, #name, default_value};    \
+    AnimatedProperty<type> name{this, #name, __VA_ARGS__};      \
     AnimatableBase* get_##name() { return &name; }              \
 private:                                                        \
     Q_PROPERTY(AnimatableBase* name READ get_##name)            \

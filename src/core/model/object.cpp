@@ -14,6 +14,7 @@ public:
     std::unordered_map<QString, BaseProperty*> props;
     std::vector<BaseProperty*> prop_order;
     Document* document;
+    FrameTime current_time = 0;
 };
 
 
@@ -122,9 +123,16 @@ bool model::Object::set_undoable ( const QString& property, const QVariant& valu
 
 void model::Object::set_time(model::FrameTime t)
 {
+    d->current_time = t;
     for ( auto prop: d->prop_order )
         prop->set_time(t);
 }
+
+model::FrameTime model::Object::time() const
+{
+    return d->current_time;
+}
+
 
 
 bool model::BaseProperty::set_undoable ( const QVariant& val )

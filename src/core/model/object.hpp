@@ -47,6 +47,7 @@ public:
     virtual QString object_name() const { return type_name_human(); }
     virtual QString type_name_human() const { return tr("Uknown Object"); }
     virtual void set_time(FrameTime t);
+    FrameTime time() const;
 
     QString type_name() const;
 

@@ -6,6 +6,7 @@
 #include "position_item.hpp"
 #include "sizepos_item.hpp"
 #include "bezier_item.hpp"
+#include "rect_rounder.hpp"
 
 graphics::GraphicsItemFactory::GraphicsItemFactory()
 {
@@ -49,6 +50,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         [](model::Rect* rect){
             editors_list v;
             v.push_back(std::make_unique<graphics::PositionItem>(&rect->position));
+            v.push_back(std::make_unique<graphics::RectRounder>(rect));
             v.push_back(std::make_unique<graphics::SizePosItem>(&rect->size, &rect->position));
             return v;
         }
