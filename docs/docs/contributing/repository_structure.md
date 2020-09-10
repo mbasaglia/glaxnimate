@@ -1,6 +1,6 @@
 Authors: Mattia Basaglia
 
-# Code Structure
+# Repository Structure
 
 This page describes the layout of source file in the repository.
 

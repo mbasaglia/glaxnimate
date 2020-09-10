@@ -26,8 +26,11 @@ nav:
         - contributing/index.md
         - "Building From Source":
             - "Readme": contributing/read_me.md
-            - contributing/code_structure.md
+            - contributing/repository_structure.md
             - contributing/cross_compiling.md
         - contributing/documentation.md
         - contributing/plugins.md
+        - "Writing Code":
+            - contributing/code/settings.md
+            - contributing/code/model_objects.md
     - "Links": links.md

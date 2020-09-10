@@ -1,3 +1,5 @@
+Authors: Mattia Basaglia
+
 # Cross Compiling
 
 This page shows how to cross compile from Linux to windows using [mxe](https://mxe.cc/).

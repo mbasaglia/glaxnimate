@@ -48,7 +48,7 @@ struct FieldInfo
     bool essential;
     FieldMode mode;
 
-    FieldInfo(const char* name, const char* lottie, bool essential = true)
+    FieldInfo(const char* lottie, const char* name, bool essential = true)
         : name(name), lottie(lottie), essential(essential), mode(Auto)
     {}
     FieldInfo(const char* lottie, FieldMode mode = Ignored)
@@ -59,21 +59,21 @@ struct FieldInfo
 // static mapping data
 const QMap<QString, QVector<FieldInfo>> fields = {
     {"DocumentNode", {
-        FieldInfo{"name",           "nm", false},
-        FieldInfo{"uuid",           "mn", false},
+        FieldInfo{"nm", "name", false},
+        FieldInfo{"mn", "uuid", false},
     }},
     {"AnimationContainer", {
-        FieldInfo{"last_frame",     "op"},
-        FieldInfo{"first_frame",     "ip"},
+        FieldInfo{"op", "last_frame"},
+        FieldInfo{"ip", "first_frame"},
     }},
     {"Composition", {
         FieldInfo("layers", Custom),
     }},
     {"MainComposition", {
         FieldInfo("v", Custom),
-        FieldInfo{"fps",            "fr"},
-        FieldInfo{"width",          "w"},
-        FieldInfo{"height",         "h"},
+        FieldInfo{"fr", "fps"},
+        FieldInfo{"w", "width"},
+        FieldInfo{"h", "height"},
         FieldInfo("ddd"),
         FieldInfo("assets"),
         FieldInfo("comps"),
@@ -91,7 +91,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("sr"),
         FieldInfo("ks", Custom),
         FieldInfo("ao"),
-        FieldInfo{"start_time",     "st"},
+        FieldInfo{"st", "start_time"},
         FieldInfo("bm"),
         FieldInfo("tt"),
         FieldInfo("ind", Custom),
@@ -103,20 +103,20 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     }},
     {"SolidColorLayer", {
         FieldInfo{"sc", Custom},
-        FieldInfo{"height",         "sh"},
-        FieldInfo{"width",          "sw"},
+        FieldInfo{"sh", "height"},
+        FieldInfo{"sw", "width"},
     }},
     {"ShapeLayer", {
         FieldInfo{"shapes", Custom},
     }},
     {"Transform", {
-        FieldInfo{"anchor_point",   "a"},
+        FieldInfo{"a", "anchor_point"},
         FieldInfo("px", Custom),
         FieldInfo("py", Custom),
         FieldInfo("pz", Custom),
-        FieldInfo{"position",       "p"},
-        FieldInfo{"scale",          "s"},
-        FieldInfo{"rotation",       "r"},
+        FieldInfo{"p", "position"},
+        FieldInfo{"s", "scale"},
+        FieldInfo{"r", "rotation"},
         FieldInfo("o"),
         FieldInfo("sk"),
         FieldInfo("sa"),
@@ -131,16 +131,16 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"d"},
     }},
     {"Rect", {
-        FieldInfo{"position",       "p"},
-        FieldInfo{"size",           "s"},
-        FieldInfo{"rounded",        "r"},
+        FieldInfo{"p", "position"},
+        FieldInfo{"s", "size"},
+        FieldInfo{"r", "rounded"},
     }},
     {"Ellipse", {
-        FieldInfo{"position",       "p"},
-        FieldInfo{"size",           "s"},
+        FieldInfo{"p", "position"},
+        FieldInfo{"s", "size"},
     }},
     {"Path", {
-        FieldInfo{"shape",          "ks"},
+        FieldInfo{"ks", "shape"},
     }},
     {"Group", {
         FieldInfo{"np"},
@@ -148,19 +148,19 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     }},
     {"Fill", {
         FieldInfo{"o", Custom},
-        FieldInfo{"color",          "c"},
+        FieldInfo{"c", "color"},
         FieldInfo{"r", Custom},
     }},
     {"BaseStroke", {
         FieldInfo{"o", Custom},
         FieldInfo{"lc", Custom},
         FieldInfo{"lj", Custom},
-        FieldInfo{"miter_limit",    "ml"},
-        FieldInfo{"width",          "w"},
+        FieldInfo{"ml", "miter_limit"},
+        FieldInfo{"w", "width"},
         FieldInfo{"d"},
     }},
     {"Stroke", {
-        FieldInfo{"color",          "c"},
+        FieldInfo{"c", "color"},
     }},
 };
 const QMap<QString, int> layer_types = {

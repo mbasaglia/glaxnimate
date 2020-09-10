@@ -127,14 +127,14 @@ void define_animatable(py::module& m)
     ;
 }
 
-PYBIND11_EMBEDDED_MODULE(glaxnimate, m)
+PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
 {
-    define_utils(m);
+    define_utils(glaxnimate_module);
 
-    py::module detail = m.def_submodule("__detail", "");
+    py::module detail = glaxnimate_module.def_submodule("__detail", "");
     py::class_<QObject>(detail, "__QObject");
 
-    py::module model = m.def_submodule("model", "");
+    py::module model = glaxnimate_module.def_submodule("model", "");
     py::class_<model::Object, QObject>(model, "Object");
     register_from_meta<model::Document, QObject>(model);
     register_from_meta<model::DocumentNode, model::Object>(model);
