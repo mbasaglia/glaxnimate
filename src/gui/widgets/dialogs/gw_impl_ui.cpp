@@ -165,19 +165,19 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
 
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
-    parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_properties);
-    parent->tabifyDockWidget(ui.dock_properties, ui.dock_layers);
 
     parent->tabifyDockWidget(ui.dock_logs, ui.dock_script_console);
-    parent->tabifyDockWidget(ui.dock_script_console, ui.dock_timeline);
+    parent->tabifyDockWidget(ui.dock_script_console, ui.dock_properties);
+    parent->tabifyDockWidget(ui.dock_properties, ui.dock_timeline);
 
     parent->tabifyDockWidget(ui.dock_stroke, ui.dock_colors);
 
     parent->resizeDocks(
-        {ui.dock_layers, ui.dock_properties},
-        {1, 1},
+        {ui.dock_layers},
+        {1},
         Qt::Horizontal
     );
+    parent->resizeDocks({ui.dock_tools}, {200}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_timeline}, {parent->height()/3}, Qt::Vertical);
     ui.dock_script_console->setVisible(false);
     ui.dock_logs->setVisible(false);

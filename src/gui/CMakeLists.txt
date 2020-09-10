@@ -66,6 +66,10 @@ if(${PYTHON_ENABLED})
     list(APPEND SOURCES gui_python.cpp)
 endif()
 
+configure_file(resources/glaxnimate.in.qrc resources/glaxnimate.qrc)
+qt5_add_resources(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/resources/glaxnimate.qrc)
+
+
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/core)
 add_library(${LIB_NAME_GUI} OBJECT ${SOURCES})
