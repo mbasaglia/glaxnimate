@@ -36,9 +36,9 @@ private:
 class RemoveShape : public QUndoCommand
 {
 public:
-    RemoveShape(model::ShapeListProperty* parent, model::ShapeElement* shape)
+    RemoveShape(model::ShapeElement* shape)
         : QUndoCommand(QObject::tr("Remove %1").arg(shape->docnode_name())),
-          parent(parent),
+          parent(shape->owner()),
           shape(shape),
           position(shape->position())
     {}
@@ -46,12 +46,12 @@ public:
 
     void undo() override
     {
-        shape = parent->remove(position);
+        parent->insert(std::move(shape), position);
     }
 
     void redo() override
     {
-        parent->insert(std::move(shape), position);
+        shape = parent->remove(position);
     }
 
 private:

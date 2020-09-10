@@ -36,13 +36,14 @@ public:
         return bez;
     }
 
+    ShapeListProperty* owner() const { return property_; }
+
 signals:
     void position_updated();
     void siblings_changed();
 
 protected:
     const ShapeListProperty& siblings() const;
-    const ShapeListProperty* property() const { return property_; }
 
 private:
     void set_position(ShapeListProperty* property, int pos)
@@ -127,7 +128,7 @@ public:
 protected:
     void collect_shapes(FrameTime t, math::MultiBezier& bez) const
     {
-        if ( !property() )
+        if ( !owner() )
             return;
         const ShapeListProperty& prop = siblings();
         for ( auto it = prop.begin() + position() + 1; it < prop.end(); ++it )
@@ -144,28 +145,6 @@ protected:
         collect_shapes(t, bez);
         return bez;
     }
-//     class AffectedRange
-//     {
-//     public:
-//         AffectedRange(const Modifier* item)
-//         : list(&item->siblings()),
-//         position(item->position())
-//         {}
-//
-//         ShapeListProperty::iterator begin() const
-//         {
-//             return list->begin() + position;
-//         }
-//
-//         ShapeListProperty::iterator end() const
-//         {
-//             return list->end();
-//         }
-//
-//     private:
-//         const ShapeListProperty* list;
-//         int position;
-//     };
 };
 
 } // namespace model

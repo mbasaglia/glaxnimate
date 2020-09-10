@@ -276,16 +276,6 @@ model::DocumentNode * GlaxnimateWindow::current_shape_container()
     return d->current_shape_container();
 }
 
-QString GlaxnimateWindow::get_best_name(const model::DocumentNode* node, const QString& suggestion)
-{
-    return d->get_best_name(node, suggestion);
-}
-
-void GlaxnimateWindow::set_best_name(model::DocumentNode* node, const QString& suggestion)
-{
-    d->set_best_name(node, suggestion);
-}
-
 void GlaxnimateWindow::set_current_document_node(model::DocumentNode* node)
 {
     d->set_current_document_node(node);

@@ -70,51 +70,11 @@ void GlaxnimateWindow::Private::set_current_document_node(model::DocumentNode* n
     ui.view_document_node->setCurrentIndex(document_node_model.node_index(node));
 }
 
-
-void collect_names(const model::DocumentNode* node, const QString& prefix, QVector<QString>& out)
-{
-    if ( node->name.get().startsWith(prefix) )
-        out.push_back(node->name.get());
-    for ( int i = 0, e = node->docnode_child_count(); i < e; i++ )
-        collect_names(node->docnode_child(i), prefix, out);
-}
-
-QString GlaxnimateWindow::Private::get_best_name(const model::DocumentNode* node, const QString& suggestion)
-{
-    if ( !node )
-        return {};
-
-    QVector<QString> names;
-
-    QString base_name = suggestion;
-    if ( base_name.isEmpty() )
-        base_name = node->type_name_human();
-    QString name = base_name;
-
-    /// \todo Also collect for precompositions
-    collect_names(current_document->main_composition(), base_name, names);
-
-    int n = 0;
-    while ( names.contains(name) )
-    {
-        n += 1;
-        name = tr("%1 %2").arg(base_name).arg(n);
-    }
-
-    return name;
-}
-
-void GlaxnimateWindow::Private::set_best_name(model::DocumentNode* node, const QString& suggestion)
-{
-    if ( node )
-        node->name.set(get_best_name(node, suggestion));
-}
-
 void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> layer)
 {
     model::Composition* composition = current_composition();
 
-    set_best_name(layer.get(), {});
+    current_document->set_best_name(layer.get(), {});
 
     layer->last_frame.set(current_document->main_composition()->last_frame.get());
     QPointF pos(
@@ -132,7 +92,7 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> lay
     model::Layer* ptr = layer.get();
 
     int position = composition->layer_position(current_layer());
-    current_document->undo_stack().push(new command::AddLayer(composition, std::move(layer), position));
+    current_document->add_command(new command::AddLayer(composition, std::move(layer), position));
 
     ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
 }
@@ -146,6 +106,6 @@ void GlaxnimateWindow::Private::layer_delete()
 
     if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
     {
-        current_document->undo_stack().push(new command::RemoveLayer(curr_lay->composition(), curr_lay));
+        current_document->add_command(new command::RemoveLayer(curr_lay));
     }
 }

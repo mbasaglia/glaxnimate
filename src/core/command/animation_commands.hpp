@@ -4,6 +4,7 @@
 
 #include "command/base.hpp"
 #include "model/animation/animatable.hpp"
+#include "model/document.hpp"
 
 namespace command {
 

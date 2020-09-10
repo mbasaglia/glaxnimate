@@ -9,6 +9,8 @@
 #include "model/animation/frame_time.hpp"
 #include "model/factory.hpp"
 
+class QUndoCommand;
+
 namespace model {
 
 class BaseProperty;
@@ -52,6 +54,7 @@ public:
     QString type_name() const;
 
     Document* document() const;
+    void add_command(QUndoCommand* cmd);
 
 signals:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);

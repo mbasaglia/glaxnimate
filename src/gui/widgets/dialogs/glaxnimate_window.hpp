@@ -60,9 +60,6 @@ public:
      */
     Q_INVOKABLE void status(const QString& message) const;
 
-    Q_INVOKABLE QString get_best_name(const model::DocumentNode* node, const QString& suggestion="");
-    Q_INVOKABLE void set_best_name(model::DocumentNode* node, const QString& suggestion="");
-
 public slots:
     void document_save();
     void document_save_as();

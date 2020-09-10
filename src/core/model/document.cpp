@@ -1,5 +1,7 @@
 #include "document.hpp"
 
+#include <QRegularExpression>
+
 #include "io/glaxnimate/glaxnimate_format.hpp"
 
 
@@ -139,4 +141,63 @@ void model::Document::set_record_to_keyframe(bool r)
     emit(record_to_keyframe_changed(d->record_to_keyframe = r));
 }
 
+void model::Document::add_command(QUndoCommand* cmd)
+{
+    d->undo_stack.push(cmd);
+}
 
+
+static void collect_names(const model::DocumentNode* node, const QString& prefix, QVector<QString>& out)
+{
+    if ( node->name.get().startsWith(prefix) )
+        out.push_back(node->name.get());
+    for ( int i = 0, e = node->docnode_child_count(); i < e; i++ )
+        collect_names(node->docnode_child(i), prefix, out);
+}
+
+QString model::Document::get_best_name(const model::DocumentNode* node, const QString& suggestion) const
+{
+    if ( !node )
+        return {};
+
+
+
+    QVector<QString> names;
+
+    int n = 0;
+    QString base_name = suggestion;
+    if ( base_name.isEmpty() )
+    {
+        base_name = node->type_name_human();
+    }
+    else
+    {
+        static QRegularExpression detect_numbers("^(.*) ([0-9]+)$");
+        QRegularExpressionMatch match = detect_numbers.match(base_name);
+        if ( match.hasMatch() )
+        {
+            base_name = match.captured(1);
+            n = match.captured(2).toInt();
+        }
+    }
+
+    QString name = base_name;
+
+    /// \todo Also collect for precompositions
+    collect_names(&d->main_composition, base_name, names);
+
+    QString name_pattern = "%1 %2";
+    while ( names.contains(name) )
+    {
+        n += 1;
+        name = name_pattern.arg(base_name).arg(n);
+    }
+
+    return name;
+}
+
+void model::Document::set_best_name(model::DocumentNode* node, const QString& suggestion) const
+{
+    if ( node )
+        node->name.set(get_best_name(node, suggestion));
+}

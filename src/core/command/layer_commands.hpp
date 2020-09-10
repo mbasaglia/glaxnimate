@@ -38,12 +38,11 @@ private:
 class RemoveLayer : public QUndoCommand
 {
 public:
-    RemoveLayer(model::Composition* parent, model::Layer* layer)
+    RemoveLayer(model::Layer* layer)
         : QUndoCommand(QObject::tr("Remove %1").arg(layer->docnode_name())),
-          parent(parent),
+          parent(layer->composition()),
           uuid(layer->uuid.get()),
           position(parent->layer_position(layer, -1))
-
     {}
 
 

@@ -10,7 +10,6 @@ model::DocumentNode::DocumentNode(Document* document)
     uuid.set_value(QUuid::createUuid());
 }
 
-
 QString model::DocumentNode::docnode_name() const
 {
     return name.get();
@@ -149,4 +148,11 @@ QTransform model::DocumentNode::transform_matrix(model::FrameTime t) const
     if ( parent )
         return local_transform_matrix(t) * parent->transform_matrix(t);
     return local_transform_matrix(t);
+}
+
+void model::DocumentNode::recursive_rename()
+{
+    document()->set_best_name(this, name.get());
+    for ( auto child : docnode_children() )
+        child->recursive_rename();
 }

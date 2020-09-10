@@ -112,6 +112,12 @@ model::Document * model::Object::document() const
     return d->document;
 }
 
+void model::Object::add_command(QUndoCommand* cmd)
+{
+    d->document->add_command(cmd);
+}
+
+
 bool model::Object::set_undoable ( const QString& property, const QVariant& value )
 {
 

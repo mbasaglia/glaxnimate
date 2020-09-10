@@ -114,8 +114,8 @@ void graphics::DocumentScene::connect_node ( model::DocumentNode* node )
     if ( !parent )
         addItem(child);
 
-    for ( model::DocumentNode* child : node->docnode_children() )
-        connect_node(child);
+    for ( auto i = node->docnode_child_count() - 1; i >= 0; i-- )
+        connect_node(node->docnode_child(i));
 }
 
 void graphics::DocumentScene::disconnect_node ( model::DocumentNode* node )

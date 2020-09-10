@@ -41,6 +41,8 @@ public:
     Q_INVOKABLE bool undo();
     Q_INVOKABLE bool redo();
 
+    void add_command(QUndoCommand* cmd);
+
     FrameTime current_time() const;
     void set_current_time(FrameTime t);
 
@@ -58,6 +60,9 @@ public:
      */
     bool record_to_keyframe() const;
     void set_record_to_keyframe(bool r);
+
+    Q_INVOKABLE QString get_best_name(const model::DocumentNode* node, const QString& suggestion={}) const;
+    Q_INVOKABLE void set_best_name(model::DocumentNode* node, const QString& suggestion={}) const;
 
 signals:
     void filename_changed(const QString& n);

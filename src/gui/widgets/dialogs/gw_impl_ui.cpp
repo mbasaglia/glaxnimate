@@ -8,6 +8,7 @@
 #include "widgets/dialogs/about_dialog.hpp"
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
+#include "widgets/node_menu.hpp"
 #include "style/better_elide_delegate.hpp"
 #include "glaxnimate_app.hpp"
 
@@ -82,6 +83,15 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.view_document_node->setItemDelegateForColumn(item_models::DocumentNodeModel::ColumnColor, &color_delegate);
     QObject::connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::currentChanged,
                         parent, &GlaxnimateWindow::document_treeview_current_changed);
+
+    ui.view_document_node->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(ui.view_document_node, &QWidget::customContextMenuRequested, parent,
+        [this](const QPoint& pos){
+            auto index = ui.view_document_node->indexAt(pos);
+            if ( auto node = document_node_model.node(index) )
+                NodeMenu(node, this->parent).exec(ui.view_document_node->mapToGlobal(pos));
+        }
+    );
 
     ui.view_properties->setModel(&property_model);
     ui.view_properties->setItemDelegateForColumn(1, &property_delegate);

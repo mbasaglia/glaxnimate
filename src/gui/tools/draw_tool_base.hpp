@@ -73,7 +73,7 @@ protected:
 
         model::DocumentNode* select = shape.get();
 
-        QString name = event.window->get_best_name(shape.get());
+        QString name = document->get_best_name(shape.get());
 
         model::ShapeListProperty* prop = get_container(event.window);
 
@@ -83,7 +83,7 @@ protected:
         {
             auto group = std::make_unique<model::Group>(document);
             select = group.get();
-            event.window->set_best_name(group.get(), QObject::tr("%1 Group").arg(name));
+            document->set_best_name(group.get(), QObject::tr("%1 Group").arg(name));
             auto super_prop = prop;
             prop = &group->shapes;
 
@@ -100,7 +100,7 @@ protected:
         if ( options->create_fill() )
         {
             auto fill = std::make_unique<model::Fill>(document);
-            event.window->set_best_name(fill.get(), QObject::tr("%1 Fill").arg(name));
+            document->set_best_name(fill.get(), QObject::tr("%1 Fill").arg(name));
             fill->color.set(event.window->current_color());
             document->undo_stack().push(
                 new command::AddShape(prop, std::move(fill), index)
@@ -111,7 +111,7 @@ protected:
         if ( options->create_stroke() )
         {
             auto stroke = std::make_unique<model::Stroke>(document);
-            event.window->set_best_name(stroke.get(), QObject::tr("%1 Stroke").arg(name));
+            document->set_best_name(stroke.get(), QObject::tr("%1 Stroke").arg(name));
             stroke->color.set(event.window->secondary_color());
             QPen pen_style = event.window->current_pen_style();
             stroke->width.set(pen_style.width());
@@ -165,7 +165,7 @@ private:
         );
         layer->transform.get()->anchor_point.set(center);
         layer->transform.get()->position.set(center);
-        window->set_best_name(layer.get());
+        document->set_best_name(layer.get());
         document->undo_stack().push(
             new command::AddLayer(comp, std::move(layer), layer_index)
         );

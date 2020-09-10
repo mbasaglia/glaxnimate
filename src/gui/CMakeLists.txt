@@ -42,18 +42,20 @@ widgets/timeline/timeline_widget.cpp
 widgets/timeline/compound_timeline_widget.cpp
 widgets/timeline/compound_timeline_widget.ui
 
+widgets/tools/shape_tool_widget.cpp
+widgets/tools/shape_tool_widget.ui
+
 widgets/glaxnimate_graphics_view.cpp
 widgets/view_transform_widget.cpp
 widgets/view_transform_widget.ui
 widgets/flow_layout.cpp
 widgets/spin2d.cpp
-widgets/tools/shape_tool_widget.cpp
-widgets/tools/shape_tool_widget.ui
 widgets/enum_combo.cpp
 widgets/color_selector.cpp
 widgets/color_selector.ui
 widgets/stroke_style_widget.cpp
 widgets/stroke_style_widget.ui
+widgets/node_menu.cpp
 )
 
 if(${PYTHON_ENABLED})

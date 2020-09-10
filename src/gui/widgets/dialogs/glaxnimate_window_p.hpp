@@ -111,8 +111,6 @@ public:
     }
     void layer_new_impl(std::unique_ptr<model::Layer> layer);
     void layer_delete();
-    QString get_best_name(const model::DocumentNode* node, const QString& suggestion);
-    void set_best_name(model::DocumentNode* node, const QString& suggestion);
 
     // script
     void console_error(const app::scripting::ScriptError& err);
