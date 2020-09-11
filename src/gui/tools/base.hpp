@@ -32,21 +32,34 @@ struct Event
 
 struct MouseEvent : Event
 {
+    /// Originating Qt event
     QMouseEvent* event;
+    /// Mouse position in scene coordinates
     QPointF scene_pos;
 
+    /// Mouse press that started the event (also available in move events)
     Qt::MouseButton press_button;
+    /// Position of when the button has been pressed (scene coordinates)
     QPointF press_scene_pos;
+    /// Position of when the button has been pressed (screen coordinates)
     QPoint press_screen_pos;
+    /// Position of the last known mouse position (scene coordinates)
     QPointF last_scene_pos;
+    /// Position of the last known mouse position (screen coordinates)
     QPoint last_screen_pos;
 
+    /// Modifiers being held during the event
     Qt::KeyboardModifiers modifiers() const { return event->modifiers(); }
+    /// Button that triggered press/release
     Qt::MouseButton button() const { return event->button(); }
+    /// Buttons being held during the event
     Qt::MouseButtons buttons() const { return event->buttons(); }
+    /// Position of the event in view coordinates
     const QPointF& pos() const { return event->localPos(); }
+    /// Tell the Qt event that it should not propagate
     void accept() const { event->accept(); }
 
+    /// Use the default behaviour for this event (useful to select items etc)
     void forward_to_scene() const;
 };
 

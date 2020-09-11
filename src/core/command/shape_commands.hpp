@@ -15,7 +15,6 @@ public:
           position(position)
     {}
 
-
     void undo() override
     {
         shape = parent->remove(position);

@@ -1,5 +1,7 @@
 #include "base.hpp"
 
+#include "widgets/node_menu.hpp"
+
 namespace tools {
 
 class SelectTool : public Tool
@@ -22,39 +24,46 @@ private:
 
     void mouse_press(const MouseEvent& event) override
     {
-        if ( event.modifiers() & Qt::AltModifier )
+        if ( event.press_button == Qt::LeftButton )
         {
-            drag_mode = DrawSelect;
-            draw_path.moveTo(event.scene_pos);
-            return;
+            if ( event.modifiers() & Qt::AltModifier )
+            {
+                drag_mode = DrawSelect;
+                draw_path.moveTo(event.scene_pos);
+                return;
+            }
+
+            drag_mode = Click;
+
+            if ( mouse_on_handle(event) )
+            {
+                drag_mode = ForwardEvents;
+                event.forward_to_scene();
+                return;
+            }
+
+            rubber_p1 = event.event->localPos();
         }
-
-        drag_mode = Click;
-
-        if ( mouse_on_handle(event) )
-        {
-            drag_mode = ForwardEvents;
-            event.forward_to_scene();
-            return;
-        }
-
-        rubber_p1 = event.event->localPos();
     }
+
     void mouse_move(const MouseEvent& event) override
     {
-        if ( drag_mode == ForwardEvents )
+        if ( event.press_button == Qt::LeftButton )
         {
-            event.forward_to_scene();
-        }
-        else if ( drag_mode == DrawSelect )
-        {
-            draw_path.lineTo(event.scene_pos);
-        }
-        else if ( drag_mode == Click || drag_mode == RubberBand )
-        {
-            rubber_p2 = event.event->localPos();
-            if ( drag_mode == Click && (rubber_p1 - rubber_p2).manhattanLength() > 4 )
-                drag_mode = RubberBand;
+            if ( drag_mode == ForwardEvents )
+            {
+                event.forward_to_scene();
+            }
+            else if ( drag_mode == DrawSelect )
+            {
+                draw_path.lineTo(event.scene_pos);
+            }
+            else if ( drag_mode == Click || drag_mode == RubberBand )
+            {
+                rubber_p2 = event.event->localPos();
+                if ( drag_mode == Click && (rubber_p1 - rubber_p2).manhattanLength() > 4 )
+                    drag_mode = RubberBand;
+            }
         }
     }
 
@@ -78,48 +87,55 @@ private:
 
     void mouse_release(const MouseEvent& event) override
     {
-        if ( drag_mode == ForwardEvents )
+        if ( event.button() == Qt::LeftButton )
         {
-            event.forward_to_scene();
-        }
-        else if ( drag_mode == DrawSelect )
-        {
-            draw_path.lineTo(event.scene_pos);
-
-            complex_select(event, event.scene->nodes(draw_path, event.view->viewportTransform()));
-            draw_path = {};
-            event.view->viewport()->update();
-        }
-        else if ( drag_mode == RubberBand )
-        {
-            rubber_p2 = event.event->localPos();
-            auto poly = event.view->mapToScene(QRect(rubber_p1.toPoint(), rubber_p2.toPoint()).normalized());
-            complex_select(event, event.scene->nodes(poly, event.view->viewportTransform()));
-
-            drag_mode = None;
-            event.view->viewport()->update();
-        }
-        else if ( drag_mode == Click )
-        {
-            std::vector<model::DocumentNode*> selection;
-
-            for ( auto item : event.scene->nodes(event.scene_pos, event.view->viewportTransform()) )
+            if ( drag_mode == ForwardEvents )
             {
-                if ( item->node()->docnode_selectable() && !item->node()->docnode_selection_container() )
+                event.forward_to_scene();
+            }
+            else if ( drag_mode == DrawSelect )
+            {
+                draw_path.lineTo(event.scene_pos);
+
+                complex_select(event, event.scene->nodes(draw_path, event.view->viewportTransform()));
+                draw_path = {};
+                event.view->viewport()->update();
+            }
+            else if ( drag_mode == RubberBand )
+            {
+                rubber_p2 = event.event->localPos();
+                auto poly = event.view->mapToScene(QRect(rubber_p1.toPoint(), rubber_p2.toPoint()).normalized());
+                complex_select(event, event.scene->nodes(poly, event.view->viewportTransform()));
+
+                drag_mode = None;
+                event.view->viewport()->update();
+            }
+            else if ( drag_mode == Click )
+            {
+                std::vector<model::DocumentNode*> selection;
+
+                for ( auto item : event.scene->nodes(event.scene_pos, event.view->viewportTransform()) )
                 {
-                    selection.push_back(item->node());
-                    break;
+                    if ( item->node()->docnode_selectable() && !item->node()->docnode_selection_container() )
+                    {
+                        selection.push_back(item->node());
+                        break;
+                    }
                 }
+
+                auto mode = graphics::DocumentScene::Replace;
+                if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
+                    mode = graphics::DocumentScene::Toggle;
+
+                event.scene->user_select(selection, mode);
             }
 
-            auto mode = graphics::DocumentScene::Replace;
-            if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
-                mode = graphics::DocumentScene::Toggle;
-
-            event.scene->user_select(selection, mode);
+            drag_mode = None;
         }
-
-        drag_mode = None;
+        else if ( event.press_button == Qt::RightButton )
+        {
+            context_menu(event);
+        }
     }
 
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
@@ -158,6 +174,48 @@ private:
     void disable_event(const Event& event) override { Q_UNUSED(event); }
 
     QCursor cursor() override { return Qt::ArrowCursor; }
+
+    void context_menu(const MouseEvent& event)
+    {
+        auto items = event.scene->nodes(event.scene_pos, event.view->viewportTransform());
+        model::DocumentNode* preferred = event.window->current_shape();
+        model::DocumentNode* best = nullptr;
+        for ( auto item : items )
+        {
+            if ( !best )
+            {
+                best = item->node();
+            }
+            else if ( item->node() == preferred )
+            {
+                best = preferred;
+                break;
+            }
+            else if ( item->isSelected() )
+            {
+                best = item->node();
+            }
+        }
+
+        QMenu menu;
+        auto undo_stack = &event.window->document()->undo_stack();
+        menu.addAction(QIcon::fromTheme("edit-undo"), undo_stack->undoText(),
+                       undo_stack, &QUndoStack::undo)->setEnabled(undo_stack->canUndo());
+        menu.addAction(QIcon::fromTheme("edit-redo"), undo_stack->redoText(),
+                       undo_stack, &QUndoStack::redo)->setEnabled(undo_stack->canRedo());
+
+        if ( best )
+        {
+            menu.addSeparator();
+            auto obj_menu = new NodeMenu(best, &menu);
+            if ( obj_menu->actions().size() > 1 )
+                menu.addAction(obj_menu->menuAction());
+            else
+                delete obj_menu;
+        }
+
+        menu.exec(event.press_screen_pos);
+    }
 
     DragMode drag_mode;
     QPainterPath draw_path;

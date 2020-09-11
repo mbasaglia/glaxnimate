@@ -2,6 +2,8 @@ set(SOURCES
 
 app_info.cpp
 
+command/structure_commands.cpp
+
 io/lottie/lottie_format.cpp
 io/lottie/lottie_html_format.cpp
 io/lottie/tgs_format.cpp
