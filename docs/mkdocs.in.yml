@@ -24,6 +24,7 @@ nav:
         - ui/menus.md
     - 'Contributing':
         - contributing/index.md
+        - "Roadmap": contributing/roadmap.md
         - "Building From Source":
             - "Readme": contributing/read_me.md
             - contributing/repository_structure.md

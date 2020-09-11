@@ -42,6 +42,28 @@ disable_toc: 1
     outline: thin dotted #008cba;
     outline-offset: 5px;
 }
+
+.cards {
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    display: flex;
+    flex-flow: column;
+    border: 1px solid #008cba;
+    border-radius: 5px;
+    background: #dff7ff;
+    align-items: center;
+    margin: .5em;
+    padding: 1em;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.card img {
+    width: 128px;
+}
 </style>
 
 # Glaxnimate
@@ -59,7 +81,20 @@ Glaxnimate is a simple and fast vector graphics animation program.
 
 ## Features
 
-TODO
+<div class="cards">
+    <div class="card">
+        <img src="/img/ui/icons/draw-bezier-curves.svg" />
+        <span>Vector graphics and tweening animations</span>
+    </div>
+    <div class="card">
+        <img src="/img/ui/icons/edit-paste.svg" />
+        <span>Easily copy and paste shapes across applications</span>
+    </div>
+    <div class="card">
+        <img src="/img/ui/icons/internet-web-browser.svg" />
+        <span>Export animations for the web</span>
+    </div>
+</div>
 
 ## Learn
 
