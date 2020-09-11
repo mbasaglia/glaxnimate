@@ -15,7 +15,8 @@ public:
     static constexpr const int format_version = 1;
 
     QString name() const override { return tr("Glaxnimate Animation"); }
-    QStringList extensions() const override { return {"glaxnim"}; }
+    // RAWR = Reasonable Animation at Whatever Resolution
+    QStringList extensions() const override { return {"rawr"}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return true; }
 
