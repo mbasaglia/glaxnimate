@@ -4,6 +4,7 @@
 #include "command/shape_commands.hpp"
 #include "command/layer_commands.hpp"
 #include "command/animation_commands.hpp"
+#include "command/property_commands.hpp"
 
 
 namespace {
@@ -30,6 +31,28 @@ public:
     model::Document* doc;
     model::Transform* trans;
 };
+
+QAction* action_for_node(model::DocumentNode* node, model::DocumentNode* selected, QMenu* parent, QActionGroup* group)
+{
+    QAction* act = new QAction(parent);
+    if ( node )
+    {
+        act->setIcon(node->docnode_group_icon());
+        act->setText(node->object_name());
+    }
+    else
+    {
+        act->setIcon(QIcon::fromTheme("edit-none"));
+        act->setText(NodeMenu::tr("None"));
+    }
+
+    act->setActionGroup(group);
+    act->setCheckable(true);
+    act->setChecked(node == selected);
+    act->setData(QVariant::fromValue(node));
+    parent->addAction(act);
+    return act;
+}
 
 } // namespace
 
@@ -59,6 +82,26 @@ NodeMenu::NodeMenu(model::DocumentNode* node, QWidget* parent)
         addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
             ResetTransform{lay->document(), lay->transform.get()}
         );
+
+        QMenu* menu_parent = new QMenu(tr("Parent"), this);
+        menu_parent->setIcon(QIcon::fromTheme("go-parent-folder"));
+        QActionGroup* group_parent = new QActionGroup(this);
+        auto layparent = lay->parent.get();
+        action_for_node(nullptr, layparent, menu_parent, group_parent);
+        for ( const auto& other_lay : lay->composition()->layers )
+            if ( other_lay.get() != lay )
+                action_for_node(other_lay.get(), layparent, menu_parent, group_parent);
+        connect(menu_parent, &QMenu::triggered, this, [lay](QAction* act){
+            lay->add_command(
+                new command::SetPropertyValue(
+                    &lay->parent,
+                    lay->parent.value(),
+                    act->data(),
+                    true
+                )
+            );
+        });
+        addAction(menu_parent->menuAction());
     }
     else if ( auto shape = qobject_cast<model::ShapeElement*>(node) )
     {
