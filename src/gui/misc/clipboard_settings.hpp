@@ -1,6 +1,6 @@
 #pragma once
 #include "app/settings/custom_settings_group.hpp"
-
+#include "io/mime/mime_serializer.hpp"
 
 class ClipboardSettings : public app::settings::CustomSettingsGroupBase
 {
@@ -12,7 +12,14 @@ public:
     void save(QSettings & settings) override;
     QWidget * make_widget(QWidget * parent) override;
 
-    static bool svg();
-    static bool png();
-    static bool json();
+    struct MimeSettings
+    {
+        QString slug;
+        io::mime::MimeSerializer* serializer;
+        bool enabled;
+        QIcon icon;
+    };
+
+    static const std::vector<MimeSettings>& mime_types();
+
 };

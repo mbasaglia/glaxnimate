@@ -5,16 +5,16 @@
 #include <QFileDialog>
 #include <QImageWriter>
 #include <QClipboard>
-#include <QMimeData>
 
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "io/lottie/lottie_html_format.hpp"
 #include "app_info.hpp"
 #include "model/layers/shape_layer.hpp"
-#include "rendering/inkscape_svg.hpp"
+#include "io/svg/inkscape_svg.hpp"
 #include "misc/clipboard_settings.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
+#include "io/mime/raster_mime.hpp"
 
 void GlaxnimateWindow::Private::setup_document(const QString& filename)
 {
@@ -295,11 +295,7 @@ void GlaxnimateWindow::Private::save_frame_bmp()
     if ( fd.exec() == QDialog::Rejected )
         return;
 
-    QImage image(current_document->size(), QImage::Format_ARGB32);
-    image.fill(Qt::transparent);
-    QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing);
-    current_document->main_composition()->paint(&painter, frame, model::DocumentNode::Recursive);
+    QImage image = io::mime::RasterMime().to_image({current_document->main_composition()});
     if ( !image.save(fd.selectedFiles()[0]) )
         show_warning(tr("Render Frame"), tr("Could not save image"));
 }
@@ -326,7 +322,7 @@ void GlaxnimateWindow::Private::save_frame_svg()
         return;
     }
 
-    rendering::InkscapeSvgRenderer(&file).write_document(current_document.get());
+    io::svg::InkscapeSvgRenderer(&file).write_document(current_document.get());
 }
 
 void GlaxnimateWindow::Private::copy()
@@ -335,41 +331,12 @@ void GlaxnimateWindow::Private::copy()
     if ( selection.empty() )
         return;
 
-    QMimeData* mime = new QMimeData;
-
-    if ( ClipboardSettings::svg() )
+    QMimeData* data = new QMimeData;
+    for ( const auto& mime : ClipboardSettings::mime_types() )
     {
-        QByteArray data;
-        QBuffer buffer(&data);
-        buffer.open(QIODevice::WriteOnly);
-        rendering::InkscapeSvgRenderer svg_rend(&buffer);
-        for ( auto node : selection )
-            svg_rend.write_node(node);
-        svg_rend.close();
-        mime->setData("image/svg+xml", data);
+        if ( mime.enabled )
+            mime.serializer->to_mime_data(*data, selection);
     }
 
-    if ( ClipboardSettings::png() )
-    {
-        QImage image(current_document->size(), QImage::Format_ARGB32);
-        image.fill(Qt::transparent);
-        QPainter painter(&image);
-        painter.setRenderHint(QPainter::Antialiasing);
-        for ( auto node : selection )
-            node->paint(&painter, node->time(), model::DocumentNode::Recursive);
-        mime->setImageData(image);
-    }
-
-    QJsonDocument json = io::glaxnimate::GlaxnimateFormat::serialize_json(selection);
-
-    if ( ClipboardSettings::json() )
-    {
-        QByteArray pretty_json = json.toJson(QJsonDocument::Indented);
-        mime->setData("application/json", pretty_json);
-        mime->setText(pretty_json);
-    }
-
-    mime->setData(io::glaxnimate::GlaxnimateFormat::mime_type(), json.toJson());
-
-    QGuiApplication::clipboard()->setMimeData(mime);
+    QGuiApplication::clipboard()->setMimeData(data);
 }

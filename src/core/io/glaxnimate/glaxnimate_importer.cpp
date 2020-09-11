@@ -368,7 +368,7 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
 
 std::vector<std::unique_ptr<model::DocumentNode>> io::glaxnimate::GlaxnimateFormat::deserialize(
     const QByteArray& data, model::Document* owner_document, model::Composition* owner_composition
-)
+)  const
 {
     QJsonDocument jdoc;
 

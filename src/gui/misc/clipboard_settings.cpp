@@ -6,33 +6,39 @@
 #include <QSpacerItem>
 
 #include "app/application.hpp"
+#include "io/glaxnimate/glaxnimate_format.hpp"
+#include "io/mime/txt_mime.hpp"
+#include "io/mime/svg_mime.hpp"
+#include "io/mime/raster_mime.hpp"
 
-static bool svg = true;
-static bool json = false;
-static bool png = false;
+static std::vector<ClipboardSettings::MimeSettings>& mutable_mime_types()
+{
+    static std::vector<ClipboardSettings::MimeSettings> settings {
+        {"", io::glaxnimate::GlaxnimateFormat::instance(), true, QIcon(app::Application::instance()->data_file("data/images/logo/svg"))},
+        {"svg", new io::mime::SvgMime, false, QIcon::fromTheme("image-svg+xml")},
+        {"raster", new io::mime::RasterMime, false, QIcon::fromTheme("image-png")},
+        {"json", new io::mime::JsonMime, false, QIcon::fromTheme("application-json")},
+    };
+    return settings;
+}
+
+const std::vector<ClipboardSettings::MimeSettings>& ClipboardSettings::mime_types()
+{
+    return mutable_mime_types();
+}
 
 void ClipboardSettings::load(const QSettings & settings)
 {
-    ::svg = settings.value("svg", ::svg).toBool();
-    ::json = settings.value("json", ::json).toBool();
-    ::png = settings.value("png", ::png).toBool();
+    for ( auto& set : mutable_mime_types() )
+        if ( !set.slug.isEmpty() )
+            set.enabled = settings.value(set.slug, set.enabled).toBool();
 }
 
 void ClipboardSettings::save(QSettings & settings)
 {
-    settings.setValue("svg", ::svg);
-    settings.setValue("json", ::json);
-    settings.setValue("png", ::png);
-}
-
-static QCheckBox* mk_checkbox(const QString& name, const QString& icon, bool* target, QWidget* parent)
-{
-    QCheckBox* check = new QCheckBox(name, parent);
-    check->setCheckable(true);
-    check->setChecked(*target);
-    check->setIcon(QIcon::fromTheme(icon));
-    QObject::connect(check, &QCheckBox::clicked, [target](bool b){ *target = b; });
-    return check;
+    for ( auto& set : mutable_mime_types() )
+        if ( !set.slug.isEmpty() )
+            settings.setValue(set.slug, set.enabled);
 }
 
 QWidget * ClipboardSettings::make_widget(QWidget* parent)
@@ -41,35 +47,22 @@ QWidget * ClipboardSettings::make_widget(QWidget* parent)
     QVBoxLayout* lay = new QVBoxLayout(wid);
     wid->setLayout(lay);
 
+    for ( auto& mt : mutable_mime_types() )
+    {
+        QCheckBox* check = new QCheckBox(mt.serializer->name(), parent);
+        check->setCheckable(true);
+        check->setChecked(mt.enabled);
+        check->setIcon(mt.icon);
+        if ( mt.slug.isEmpty() )
+            check->setEnabled(false);
+        else
+            QObject::connect(check, &QCheckBox::clicked, [&mt](bool b){ mt.enabled = b; });
+        lay->addWidget(check);
+    }
 
-    QCheckBox* check = new QCheckBox(QWidget::tr("Rawr"), wid);
-    check->setCheckable(true);
-    check->setChecked(true);
-    check->setEnabled(false);
-    check->setIcon(QIcon(app::Application::instance()->data_file("data/images/logo/svg")));
-    lay->addWidget(check);
-
-    lay->addWidget(mk_checkbox(QWidget::tr("SVG"), "image-svg+xml", &::svg, wid));
-    lay->addWidget(mk_checkbox(QWidget::tr("JSON"), "application-json", &::json, wid));
-    lay->addWidget(mk_checkbox(QWidget::tr("PNG"), "image-png", &::png, wid));
     lay->insertStretch(-1);
 
     return wid;
-}
-
-bool ClipboardSettings::json()
-{
-    return ::json;
-}
-
-bool ClipboardSettings::png()
-{
-    return ::png;
-}
-
-bool ClipboardSettings::svg()
-{
-    return ::svg;
 }
 
 

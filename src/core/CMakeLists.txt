@@ -11,6 +11,8 @@ io/lottie/cbor_write_json.cpp
 io/glaxnimate/glaxnimate_format.cpp
 io/glaxnimate/glaxnimate_importer.cpp
 io/base.cpp
+io/svg/inkscape_svg.cpp
+
 
 model/main_composition.cpp
 model/composition.cpp
@@ -32,8 +34,6 @@ model/shapes/group.cpp
 model/shapes/ellipse.cpp
 model/shapes/path.cpp
 model/shapes/stroke.cpp
-
-rendering/inkscape_svg.cpp
 
 utils/gzip.cpp
 )

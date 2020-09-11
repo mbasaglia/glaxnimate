@@ -8,7 +8,7 @@ namespace model {
     class MainComposition;
 } // namespace model
 
-namespace rendering {
+namespace io::svg {
 
 class InkscapeSvgRenderer
 {
@@ -30,4 +30,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace rendering
+} // namespace io::svg

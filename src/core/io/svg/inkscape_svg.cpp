@@ -8,7 +8,7 @@
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/group.hpp"
 
-class rendering::InkscapeSvgRenderer::Private
+class io::svg::InkscapeSvgRenderer::Private
 {
 public:
     using Style = std::map<QString, QString>;
@@ -261,7 +261,7 @@ static const std::map<QString, QString> xmlns = {
     {"xlink", "http://www.w3.org/1999/xlink"},
 };
 
-rendering::InkscapeSvgRenderer::InkscapeSvgRenderer(QIODevice* device)
+io::svg::InkscapeSvgRenderer::InkscapeSvgRenderer(QIODevice* device)
     : d(std::make_unique<Private>())
 {
     d->writer.setDevice(device);
@@ -279,17 +279,17 @@ rendering::InkscapeSvgRenderer::InkscapeSvgRenderer(QIODevice* device)
     d->write_attribute("inkscape:export-ydpi", "96");
 }
 
-rendering::InkscapeSvgRenderer::~InkscapeSvgRenderer()
+io::svg::InkscapeSvgRenderer::~InkscapeSvgRenderer()
 {
     close();
 }
 
-void rendering::InkscapeSvgRenderer::write_document(model::Document* document)
+void io::svg::InkscapeSvgRenderer::write_document(model::Document* document)
 {
     write_main_composition(document->main_composition());
 }
 
-void rendering::InkscapeSvgRenderer::write_composition(model::Composition* comp)
+void io::svg::InkscapeSvgRenderer::write_composition(model::Composition* comp)
 {
     d->collect_defs(comp->document());
     d->start_layer(comp);
@@ -298,7 +298,7 @@ void rendering::InkscapeSvgRenderer::write_composition(model::Composition* comp)
 }
 
 
-void rendering::InkscapeSvgRenderer::write_main_composition(model::MainComposition* comp)
+void io::svg::InkscapeSvgRenderer::write_main_composition(model::MainComposition* comp)
 {
     if ( d->at_start )
     {
@@ -317,19 +317,19 @@ void rendering::InkscapeSvgRenderer::write_main_composition(model::MainCompositi
     }
 }
 
-void rendering::InkscapeSvgRenderer::write_layer(model::Layer* layer)
+void io::svg::InkscapeSvgRenderer::write_layer(model::Layer* layer)
 {
     d->collect_defs(layer->document());
     d->write_layer(layer);
 }
 
-void rendering::InkscapeSvgRenderer::write_shape(model::ShapeElement* shape)
+void io::svg::InkscapeSvgRenderer::write_shape(model::ShapeElement* shape)
 {
     d->collect_defs(shape->document());
     d->write_shape(shape, true);
 }
 
-void rendering::InkscapeSvgRenderer::write_node(model::DocumentNode* node)
+void io::svg::InkscapeSvgRenderer::write_node(model::DocumentNode* node)
 {
     if ( auto mc = qobject_cast<model::MainComposition*>(node) )
         write_main_composition(mc);
@@ -341,7 +341,7 @@ void rendering::InkscapeSvgRenderer::write_node(model::DocumentNode* node)
         write_shape(sh);
 }
 
-void rendering::InkscapeSvgRenderer::close()
+void io::svg::InkscapeSvgRenderer::close()
 {
     if ( !d->closed )
     {
