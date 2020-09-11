@@ -220,12 +220,17 @@ QString io::glaxnimate::GlaxnimateFormat::mime_type()
     return "application/vnd.glaxnimate.rawr+json";
 }
 
-QByteArray io::glaxnimate::GlaxnimateFormat::serialize(const std::vector<model::Object*>& objects, bool pretty)
+QJsonDocument io::glaxnimate::GlaxnimateFormat::serialize_json(const std::vector<model::DocumentNode *>& objects)
 {
     QJsonArray arr;
     for ( auto object : objects )
         arr.push_back(to_json(object));
-    return QJsonDocument(arr).toJson(pretty ? QJsonDocument::Indented : QJsonDocument::Compact);
+    return QJsonDocument(arr);
+}
+
+QByteArray io::glaxnimate::GlaxnimateFormat::serialize(const std::vector<model::DocumentNode*>& objects, bool pretty)
+{
+    return serialize_json(objects).toJson(pretty ? QJsonDocument::Indented : QJsonDocument::Compact);
 }
 
 QVariant io::glaxnimate::GlaxnimateFormat::serialize(model::Object* object)

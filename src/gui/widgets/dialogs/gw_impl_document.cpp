@@ -4,7 +4,8 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QImageWriter>
-//#include <QtSvg/QSvgGenerator>
+#include <QClipboard>
+#include <QMimeData>
 
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/dialogs/io_status_dialog.hpp"
@@ -12,7 +13,8 @@
 #include "app_info.hpp"
 #include "model/layers/shape_layer.hpp"
 #include "rendering/inkscape_svg.hpp"
-
+#include "misc/clipboard_settings.hpp"
+#include "io/glaxnimate/glaxnimate_format.hpp"
 
 void GlaxnimateWindow::Private::setup_document(const QString& filename)
 {
@@ -325,13 +327,49 @@ void GlaxnimateWindow::Private::save_frame_svg()
     }
 
     rendering::InkscapeSvgRenderer(&file).write_document(current_document.get());
-/*
-    QSvgGenerator image;
-    image.setSize(current_document->size());
-    image.setOutputDevice(&file);
-    image.setResolution(96);
-    QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing);
-    current_document->main_composition()->paint(&painter, frame, model::DocumentNode::Recursive);
-*/
+}
+
+void GlaxnimateWindow::Private::copy()
+{
+    auto selection = cleaned_selection();
+    if ( selection.empty() )
+        return;
+
+    QMimeData* mime = new QMimeData;
+
+    if ( ClipboardSettings::svg() )
+    {
+        QByteArray data;
+        QBuffer buffer(&data);
+        buffer.open(QIODevice::WriteOnly);
+        rendering::InkscapeSvgRenderer svg_rend(&buffer);
+        for ( auto node : selection )
+            svg_rend.write_node(node);
+        svg_rend.close();
+        mime->setData("image/svg+xml", data);
+    }
+
+    if ( ClipboardSettings::png() )
+    {
+        QImage image(current_document->size(), QImage::Format_ARGB32);
+        image.fill(Qt::transparent);
+        QPainter painter(&image);
+        painter.setRenderHint(QPainter::Antialiasing);
+        for ( auto node : selection )
+            node->paint(&painter, node->time(), model::DocumentNode::Recursive);
+        mime->setImageData(image);
+    }
+
+    QJsonDocument json = io::glaxnimate::GlaxnimateFormat::serialize_json(selection);
+
+    if ( ClipboardSettings::json() )
+    {
+        QByteArray pretty_json = json.toJson(QJsonDocument::Indented);
+        mime->setData("application/json", pretty_json);
+        mime->setText(pretty_json);
+    }
+
+    mime->setData(io::glaxnimate::GlaxnimateFormat::mime_type(), json.toJson());
+
+    QGuiApplication::clipboard()->setMimeData(mime);
 }

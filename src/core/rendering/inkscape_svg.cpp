@@ -82,6 +82,7 @@ public:
         else if ( auto stroke = qobject_cast<model::Stroke*>(shape) )
         {
             Style style;
+            style["fill"] = "none";
             style["stroke"] = stroke->color.get().name();
             style["stroke-width"] = QString::number(stroke->width.get());
             style["stroke-opacity"] = QString::number(stroke->opacity.get());
@@ -247,6 +248,7 @@ public:
 
     QXmlStreamWriter writer;
     bool at_start = true;
+    bool closed = false;
 };
 
 static const std::map<QString, QString> xmlns = {
@@ -279,7 +281,7 @@ rendering::InkscapeSvgRenderer::InkscapeSvgRenderer(QIODevice* device)
 
 rendering::InkscapeSvgRenderer::~InkscapeSvgRenderer()
 {
-    d->writer.writeEndDocument();
+    close();
 }
 
 void rendering::InkscapeSvgRenderer::write_document(model::Document* document)
@@ -339,3 +341,11 @@ void rendering::InkscapeSvgRenderer::write_node(model::DocumentNode* node)
         write_shape(sh);
 }
 
+void rendering::InkscapeSvgRenderer::close()
+{
+    if ( !d->closed )
+    {
+        d->writer.writeEndDocument();
+        d->closed = true;
+    }
+}

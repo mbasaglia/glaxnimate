@@ -1,5 +1,7 @@
 #include "glaxnimate_window_p.hpp"
 
+#include <queue>
+
 #include "command/layer_commands.hpp"
 #include "app/settings/widget_builder.hpp"
 #include "model/layers/solid_color_layer.hpp"
@@ -108,4 +110,49 @@ void GlaxnimateWindow::Private::layer_delete()
     {
         current_document->add_command(new command::RemoveLayer(curr_lay));
     }
+}
+
+namespace {
+
+struct SelectionFetcher
+{
+    std::set<model::DocumentNode*> to_search;
+    int draw_order = 0;
+    std::vector<int> indices;
+    std::vector<model::DocumentNode*> selection;
+
+    void gather(model::DocumentNode* node)
+    {
+        if ( to_search.count(node) )
+        {
+            auto it = std::upper_bound(indices.begin(), indices.end(), draw_order);
+            indices.insert(it, draw_order);
+            selection.insert(selection.begin() + (it - indices.begin()), node);
+            draw_order++;
+        }
+        else
+        {
+            for ( auto ch : node->docnode_children() )
+                gather(ch);
+        }
+    }
+};
+
+} // namespace
+
+std::vector<model::DocumentNode *> GlaxnimateWindow::Private::cleaned_selection()
+{
+    SelectionFetcher fetcher;
+
+    for ( const auto& index : ui.view_document_node->selectionModel()->selectedIndexes() )
+    {
+        model::DocumentNode* node = document_node_model.node(index);
+        if ( !node )
+            continue;
+        fetcher.to_search.insert(node);
+    }
+    fetcher.indices.reserve(fetcher.to_search.size());
+    fetcher.selection.reserve(fetcher.to_search.size());
+    fetcher.gather(current_composition());
+    return fetcher.selection;
 }

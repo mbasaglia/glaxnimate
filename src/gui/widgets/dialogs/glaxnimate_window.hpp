@@ -60,10 +60,20 @@ public:
      */
     Q_INVOKABLE void status(const QString& message) const;
 
+    /**
+     * \brief Selected nodes, removing nodes that are descendants of other selected nodes
+     */
+    std::vector<model::DocumentNode*> cleaned_selection() const;
+
+
 public slots:
     void document_save();
     void document_save_as();
     void view_fit();
+    /**
+     * \brief Copies the current selection to the clipboard
+     */
+    void copy() const;
 
 private slots:
     void document_new();

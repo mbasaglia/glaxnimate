@@ -23,6 +23,8 @@ public:
     void write_shape(model::ShapeElement* shape);
     void write_node(model::DocumentNode* node);
 
+    void close();
+
 private:
     class Private;
     std::unique_ptr<Private> d;

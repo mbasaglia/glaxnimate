@@ -34,6 +34,9 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.action_undo->setShortcut(QKeySequence::Undo);
     ui.action_redo->setShortcut(QKeySequence::Redo);
 
+    // Actions
+    connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
+
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
     {

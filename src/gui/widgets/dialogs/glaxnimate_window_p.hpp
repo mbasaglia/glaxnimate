@@ -103,6 +103,8 @@ public:
     void set_current_document_node(model::DocumentNode* node);
     model::ShapeElement* current_shape();
     model::DocumentNode* current_shape_container();
+    std::vector<model::DocumentNode*> cleaned_selection();
+    void copy();
 
     template<class LayerT>
     void layer_new()

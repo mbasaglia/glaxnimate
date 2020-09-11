@@ -6,6 +6,7 @@
 #include "app/settings/settings.hpp"
 #include "app_info.hpp"
 #include "app/scripting/plugin_settings_group.hpp"
+#include "misc/clipboard_settings.hpp"
 
 namespace {
 
@@ -121,6 +122,9 @@ void GlaxnimateApp::on_initialize()
 
     app::settings::Settings::instance().add_custom_group(std::make_unique<app::scripting::PluginSettingsGroup>(QStringList{
     }));
+    app::settings::Settings::instance().add_custom_group(std::make_unique<ClipboardSettings>());
+
+
 
     app::log::Logger::instance().add_listener<app::log::ListenerStderr>();
     store_logger = app::log::Logger::instance().add_listener<app::log::ListenerStore>();

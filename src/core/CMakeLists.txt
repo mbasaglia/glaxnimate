@@ -59,6 +59,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 
 add_library(${LIB_NAME} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME} PUBLIC Qt5::Svg QtAppSetup ZLIB::ZLIB)
+target_link_libraries(${LIB_NAME} PUBLIC QtAppSetup ZLIB::ZLIB)
 set_property(TARGET ${LIB_NAME} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 target_include_directories(${LIB_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

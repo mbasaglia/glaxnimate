@@ -204,6 +204,10 @@ private:
         menu.addAction(QIcon::fromTheme("edit-redo"), undo_stack->redoText(),
                        undo_stack, &QUndoStack::redo)->setEnabled(undo_stack->canRedo());
 
+        menu.addSeparator();
+        menu.addAction(QIcon::fromTheme("edit-copy"), GlaxnimateWindow::tr("Copy"),
+                       event.window, &GlaxnimateWindow::copy);
+
         if ( best )
         {
             menu.addSeparator();

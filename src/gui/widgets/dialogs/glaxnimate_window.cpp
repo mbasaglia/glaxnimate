@@ -285,3 +285,14 @@ QPen GlaxnimateWindow::current_pen_style() const
 {
     return d->ui.stroke_style_widget->pen_style(secondary_color());
 }
+
+std::vector<model::DocumentNode *> GlaxnimateWindow::cleaned_selection() const
+{
+    return d->cleaned_selection();
+}
+
+void GlaxnimateWindow::copy() const
+{
+    d->copy();
+}
+
