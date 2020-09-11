@@ -129,9 +129,6 @@ class ShapeOperator : public ShapeElement
 public:
     ShapeOperator(model::Document* doc);
 
-protected:
-    void collect_shapes(FrameTime t, math::MultiBezier& bez) const;
-
     math::MultiBezier collect_shapes(FrameTime t) const
     {
         math::MultiBezier bez;
@@ -139,8 +136,10 @@ protected:
         return bez;
     }
 
-//     const std::vector<ShapeElement*>& affected() const { return affected_elements; }
+protected:
+    void collect_shapes(FrameTime t, math::MultiBezier& bez) const;
 
+//     const std::vector<ShapeElement*>& affected() const { return affected_elements; }
 
 private slots:
     void update_affected();

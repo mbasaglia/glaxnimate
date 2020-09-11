@@ -33,6 +33,7 @@ public:
     auto cend() const { return points_.end(); }
     void push_back(const BezierPoint& p) { points_.push_back(p); }
     void clear() { points_.clear(); closed_ = false; }
+    const BezierPoint& back() const { return points_.back(); }
 
     const BezierPoint& operator[](int index) const { return points_[index]; }
     BezierPoint& operator[](int index) { return points_[index]; }

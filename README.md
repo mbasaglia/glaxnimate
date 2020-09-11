@@ -11,7 +11,7 @@ Dependencies
 ---------------------------------------
 
 * C++17 compliant compiler
-* Qt5 (qtbase, qtsvg)
+* Qt5 (qtbase)
 * CMake
 * Python3
 * ZLib
@@ -19,7 +19,7 @@ Dependencies
 
 ### Installing Dependencies on Deb systems
 
-    apt-get install -y g++ cmake qtbase5-dev libqt5svg5-dev libpython3-dev zlib1g-dev
+    apt-get install -y g++ cmake qtbase5-dev libpython3-dev zlib1g-dev
 
 
 Getting the Latest Code

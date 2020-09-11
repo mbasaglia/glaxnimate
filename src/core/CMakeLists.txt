@@ -33,6 +33,8 @@ model/shapes/ellipse.cpp
 model/shapes/path.cpp
 model/shapes/stroke.cpp
 
+rendering/inkscape_svg.cpp
+
 utils/gzip.cpp
 )
 

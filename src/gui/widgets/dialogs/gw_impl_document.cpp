@@ -4,13 +4,14 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QImageWriter>
-#include <QtSvg/QSvgGenerator>
+//#include <QtSvg/QSvgGenerator>
 
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "io/lottie/lottie_html_format.hpp"
 #include "app_info.hpp"
 #include "model/layers/shape_layer.hpp"
+#include "rendering/inkscape_svg.hpp"
 
 
 void GlaxnimateWindow::Private::setup_document(const QString& filename)
@@ -323,6 +324,8 @@ void GlaxnimateWindow::Private::save_frame_svg()
         return;
     }
 
+    rendering::InkscapeSvgRenderer(&file).write_document(current_document.get());
+/*
     QSvgGenerator image;
     image.setSize(current_document->size());
     image.setOutputDevice(&file);
@@ -330,4 +333,5 @@ void GlaxnimateWindow::Private::save_frame_svg()
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);
     current_document->main_composition()->paint(&painter, frame, model::DocumentNode::Recursive);
+*/
 }

@@ -1,7 +1,7 @@
 default:
     before_script:
         - apt-get update -qq
-        - apt-get install -y cmake qtbase5-dev libpython3-dev git libqt5svg5-dev python3-pip qttools5-dev-tools zlib1g-dev
+        - apt-get install -y cmake qtbase5-dev libpython3-dev git python3-pip qttools5-dev-tools zlib1g-dev
         - git submodule update --init --recursive
 
 variables:
@@ -64,7 +64,7 @@ linux:appimage:
         - add-apt-repository ppa:beineri/opt-qt-5.15.0-xenial -y
         - add-apt-repository ppa:ubuntu-toolchain-r/test -y
         - apt update -qq
-        - apt-get install -y qt515base qt515svg qt515tools qt515translations libgl1-mesa-dev g++-9
+        - apt-get install -y qt515base qt515tools qt515translations libgl1-mesa-dev g++-9
         - pip3 install cmake
         - git submodule update --init --recursive
     script:
