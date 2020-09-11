@@ -110,9 +110,12 @@ public:
         return true;
     }
 
-    static handle cast(QByteArray ba, return_value_policy, handle)
+    static handle cast(const QByteArray& data, return_value_policy, handle)
     {
-        return PyBytes_FromStringAndSize(ba.data(), ba.size());
+        PyObject * obj = PyBytes_FromStringAndSize(data.data(), data.size());
+        if ( obj )
+            return obj;
+        return {};
     }
 };
 

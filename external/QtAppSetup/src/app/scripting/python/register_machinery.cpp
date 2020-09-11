@@ -19,13 +19,13 @@
 
 namespace app::scripting::python {
 
-template<class T> const char* type_name();
+template<class T> const char* type_name() { return QMetaType::typeName(qMetaTypeId<T>()); }
 template<int> struct meta_2_cpp_s;
 template<class> struct cpp_2_meta_s;
 
-#define TYPE_NAME(Type) template<> const char* type_name<Type>() { return #Type; }
+#define TYPE_NAME(Type) //template<> const char* type_name<Type>() { return #Type; }
 #define SETUP_TYPE(MetaInt, Type)                                   \
-    template<> const char* type_name<Type>() { return #Type; }      \
+    TYPE_NAME(Type)                                                 \
     template<> struct meta_2_cpp_s<MetaInt> { using type = Type; }; \
     template<> struct cpp_2_meta_s<Type> { static constexpr const int value = MetaInt; };
 
@@ -201,7 +201,7 @@ PyPropertyInfo register_property(const QMetaProperty& prop)
 class ArgumentBuffer
 {
 public:
-    ArgumentBuffer() = default;
+    ArgumentBuffer(const QMetaMethod& method) : method(method) {}
     ArgumentBuffer(const ArgumentBuffer&) = delete;
     ArgumentBuffer& operator=(const ArgumentBuffer&) = delete;
     ~ArgumentBuffer()
@@ -211,16 +211,44 @@ public:
     }
 
     template<class CppType>
-    CppType* allocate()
+    const char* object_type_name(const CppType&)
+    {
+        return type_name<CppType>();
+    }
+
+    std::string object_type_name(QObject* value)
+    {
+        std::string s = value->metaObject()->className();
+        std::string target = method.parameterTypes()[arguments].toStdString();
+        if ( !target.empty() && target.back() == '*' )
+        {
+            target.pop_back();
+            if ( s != target )
+            {
+                for ( auto mo = value->metaObject()->superClass(); mo; mo = mo->superClass() )
+                {
+                    std::string moname = mo->className();
+                    if ( moname == target )
+                        return target + "*";
+                }
+            }
+        }
+        return s + "*";
+    }
+
+    template<class CppType>
+    CppType* allocate(const CppType& value)
     {
         if ( avail() < int(sizeof(CppType)) )
             throw py::type_error("Cannot allocate argument");
 
         CppType* addr = new (next_mem()) CppType;
         buffer_used += sizeof(CppType);
-        generic_args[arguments] = { type_name<CppType>(), addr };
+        names[arguments] = object_type_name(value);
+        generic_args[arguments] = { names[arguments].c_str(), addr };
         ensure_destruction(addr);
         arguments += 1;
+        *addr = value;
         return addr;
     }
 
@@ -253,8 +281,10 @@ private:
     std::array<char, 128> buffer;
     std::vector<std::function<void()>> destructors;
     std::array<QGenericArgument, 9> generic_args;
+    std::array<std::string, 9> names;
     QGenericReturnArgument ret;
     void* ret_addr = nullptr;
+    QMetaMethod method;
 
 
     int avail() { return buffer.size() - buffer_used; }
@@ -281,7 +311,7 @@ template<class CppType>
     {
         static bool do_the_thing(const py::handle& val, ArgumentBuffer& buf)
         {
-            *buf.allocate<CppType>() = val.cast<CppType>();
+            buf.allocate<CppType>(val.cast<CppType>());
             return true;
         }
     };
@@ -300,13 +330,13 @@ struct RegisterMethod
         PyMethodInfo py;
         py.name = meth.name();
         py.method = py::cpp_function(
-            [meth](QObject* o, py::args args)
+            [meth](QObject* o, py::args args) -> ReturnType
             {
                 int len = py::len(args);
                 if ( len > 9 )
                     throw pybind11::value_error("Invalid argument count");
 
-                ArgumentBuffer argbuf;
+                ArgumentBuffer argbuf(meth);
 
                 argbuf.allocate_return_type<ReturnType>();
 

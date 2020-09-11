@@ -120,12 +120,15 @@ app::scripting::python::PythonContext::~PythonContext()
 
 void app::scripting::python::PythonContext::expose(const QString& name, const QVariant& obj)
 {
-    d->globals[name.toStdString().c_str()] = obj;
+    try {
+        d->globals[name.toStdString().c_str()] = obj;
+    } catch ( const py::error_already_set& pyexc ) {
+        throw ScriptError(pyexc.what());
+    }
 }
 
 QString app::scripting::python::PythonContext::eval_to_string(const QString& code)
 {
-
     std::string std_code = code.toStdString();
     bool eval = false;
 
@@ -140,6 +143,8 @@ QString app::scripting::python::PythonContext::eval_to_string(const QString& cod
         py::exec(std_code);
         return {};
     } catch ( const py::error_already_set& pyexc ) {
+        throw ScriptError(pyexc.what());
+    } catch ( const py::builtin_exception& pyexc ) {
         throw ScriptError(pyexc.what());
     }
 }
