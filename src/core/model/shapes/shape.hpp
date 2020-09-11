@@ -7,6 +7,9 @@ namespace model {
 
 class ShapeListProperty;
 
+/**
+ * \brief Base class for all shape elements
+ */
 class ShapeElement : public DocumentNode
 {
     Q_OBJECT
@@ -98,6 +101,9 @@ protected:
     }
 };
 
+/**
+ * \brief Classes that define shapes on their own (but not necessarily style)
+ */
 class Shape : public ShapeElement
 {
     Q_OBJECT
@@ -113,31 +119,18 @@ public:
     }
 };
 
-class Modifier : public ShapeElement
+/**
+ * \brief Base class for types that perform operations on their sibling shapes
+ */
+class ShapeOperator : public ShapeElement
 {
     Q_OBJECT
 
 public:
-    using ShapeElement::ShapeElement;
-
-    void add_shapes(FrameTime t, math::MultiBezier& bez) const override
-    {
-        collect_shapes(t, bez);
-    }
+    ShapeOperator(model::Document* doc);
 
 protected:
-    void collect_shapes(FrameTime t, math::MultiBezier& bez) const
-    {
-        if ( !owner() )
-            return;
-        const ShapeListProperty& prop = siblings();
-        for ( auto it = prop.begin() + position() + 1; it < prop.end(); ++it )
-        {
-            (*it)->add_shapes(t, bez);
-            if ( qobject_cast<Modifier*>(it->get()) )
-                break;
-        }
-    }
+    void collect_shapes(FrameTime t, math::MultiBezier& bez) const;
 
     math::MultiBezier collect_shapes(FrameTime t) const
     {
@@ -145,6 +138,52 @@ protected:
         collect_shapes(t, bez);
         return bez;
     }
+
+//     const std::vector<ShapeElement*>& affected() const { return affected_elements; }
+
+
+private slots:
+    void update_affected();
+
+    void sibling_prop_changed(const model::BaseProperty* prop);
+
+signals:
+    void shape_changed();
+
+private:
+    std::vector<ShapeElement*> affected_elements;
+};
+
+/**
+ * \brief Base class for elements that modify other shapes
+ */
+class Modifier : public ShapeOperator
+{
+    Q_OBJECT
+
+public:
+    using ShapeOperator::ShapeOperator;
+
+    void add_shapes(FrameTime t, math::MultiBezier& bez) const override
+    {
+        bez.append(process(collect_shapes(t)));
+    }
+
+protected:
+    virtual math::MultiBezier process(const math::MultiBezier& mbez) const = 0;
+};
+
+/**
+ * \brief Base class for elements that add a style
+ */
+class Styler : public ShapeOperator
+{
+    Q_OBJECT
+
+public:
+    using ShapeOperator::ShapeOperator;
+
+    void add_shapes(FrameTime, math::MultiBezier&) const override {}
 };
 
 } // namespace model

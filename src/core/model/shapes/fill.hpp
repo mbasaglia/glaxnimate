@@ -8,7 +8,7 @@
 
 namespace model {
 
-class BaseFill : public Modifier
+class BaseFill : public Styler
 {
     Q_OBJECT
 
@@ -26,7 +26,7 @@ private:
     GLAXNIMATE_ANIMATABLE(float, opacity, 1)
 
 public:
-    using Modifier::Modifier;
+    using Styler::Styler;
 
     QRectF local_bounding_rect(FrameTime t) const override
     {

@@ -36,11 +36,9 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         }
     );
 
-    auto make_item_for_modifier = [](model::ShapeElement* shape){
+    auto make_item_for_modifier = [](model::ShapeOperator* shape){
         auto item = GraphicsItemFactory::make_graphics_item_default(shape);
-        QObject::connect(shape, &model::ShapeElement::position_updated,
-                         item, &DocumentNodeGraphicsItem::shape_changed);
-        QObject::connect(shape, &model::ShapeElement::siblings_changed,
+        QObject::connect(shape, &model::ShapeOperator::shape_changed,
                          item, &DocumentNodeGraphicsItem::shape_changed);
         return item;
     };
@@ -88,7 +86,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             return v;
         }
     );
-    register_builder<model::Modifier>(
+    register_builder<model::ShapeOperator>(
         make_item_for_modifier,
         &GraphicsItemFactory::make_graphics_editor_default
     );

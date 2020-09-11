@@ -1,14 +1,16 @@
 #pragma once
 
-#include "shape.hpp"
-#include "model/animation/animatable.hpp"
+#include <set>
 
 #include <QBrush>
 #include <QPainter>
 
+#include "shape.hpp"
+#include "model/animation/animatable.hpp"
+
 namespace model {
 
-class BaseStroke : public Modifier
+class BaseStroke : public Styler
 {
     Q_OBJECT
 
@@ -38,7 +40,7 @@ private:
     GLAXNIMATE_PROPERTY(float, miter_limit, 0, nullptr, nullptr, PropertyTraits::Visual)
 
 public:
-    using Modifier::Modifier;
+    using Styler::Styler;
 
     QRectF local_bounding_rect(FrameTime t) const override
     {

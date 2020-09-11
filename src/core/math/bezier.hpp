@@ -360,6 +360,11 @@ public:
         return p;
     }
 
+    void append(const MultiBezier& other)
+    {
+        beziers_.insert(beziers_.end(), other.beziers_.begin(), other.beziers_.end());
+    }
+
 private:
     void handle_end()
     {
