@@ -2,6 +2,7 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QByteArray>
 #include "io/base.hpp"
 
 namespace io::glaxnimate {
@@ -26,8 +27,17 @@ public:
     static QJsonValue to_json(const QVariant& value);
     static QJsonValue to_json(const QVariant& value, model::PropertyTraits traits);
     static QJsonObject format_metadata();
+    static GlaxnimateFormat* instance() { return autoreg.registered; }
 
-    static GlaxnimateFormat* registered() { return autoreg.registered; }
+    static QString mime_type();
+    static QByteArray serialize(const std::vector<model::Object*>& objects, bool pretty=false);
+    static std::vector<std::unique_ptr<model::DocumentNode>> deserialize(
+        const QByteArray& data,
+        model::Document* owner_document,
+        model::Composition* owner_composition
+    );
+
+    Q_INVOKABLE QVariant serialize(model::Object* object);
 
 protected:
     bool on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;

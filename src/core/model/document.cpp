@@ -11,7 +11,7 @@ public:
     Private(Document* doc)
         : main_composition(doc)
     {
-        io_options.format = io::glaxnimate::GlaxnimateFormat::registered();
+        io_options.format = io::glaxnimate::GlaxnimateFormat::instance();
     }
 
     MainComposition main_composition;

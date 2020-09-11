@@ -20,6 +20,12 @@ public:
 
     ~ImportState() {}
 
+    void error(const QString& msg)
+    {
+        if ( fmt )
+            emit fmt->error(msg);
+    }
+
     void resolve()
     {
         for ( auto it = unresolved_references.begin(); it != unresolved_references.end(); ++it )
@@ -28,7 +34,7 @@ public:
             model::DocumentNode* node = document->find_by_uuid(*it);
             if ( !node )
             {
-                emit fmt->error(tr("Property %1 of %2 refers to unexisting object %3")
+                error(tr("Property %1 of %2 refers to unexisting object %3")
                     .arg(prop->name())
                     .arg(prop->object()->object_name())
                     .arg(it->toString())
@@ -37,7 +43,7 @@ public:
             else
             {
                 if ( !prop->set_value(QVariant::fromValue(node)) )
-                    emit fmt->error(tr("Could not load %1 for %2: uuid refers to an unacceptable object")
+                    error(tr("Could not load %1 for %2: uuid refers to an unacceptable object")
                         .arg(prop->name())
                         .arg(prop->object()->object_name())
                     );
@@ -48,7 +54,7 @@ public:
         {
             if ( obj )
             {
-                emit fmt->error(tr("Object %1 is invalid").arg(obj->object_name()));
+                error(tr("Object %1 is invalid").arg(obj->object_name()));
                 delete obj;
             }
         }
@@ -58,12 +64,12 @@ public:
     {
         QString type = object["__type__"].toString();
         if ( type != target->type_name() )
-            emit fmt->error(tr("Wrong object type: expected '%1' but got '%2'").arg(target->type_name()).arg(type));
+            error(tr("Wrong object type: expected '%1' but got '%2'").arg(target->type_name()).arg(type));
 
         for ( model::BaseProperty* prop : target->properties() )
         {
             if ( !load_prop(prop, object[prop->name()]) )
-                emit fmt->error(tr("Could not load %1 for %2")
+                error(tr("Could not load %1 for %2")
                     .arg(prop->name())
                     .arg(prop->object()->object_name())
                 );
@@ -74,7 +80,7 @@ public:
             if ( !target->has(it.key()) && it.key() != "__type__" )
             {
                 if ( !target->set(it.key(), it->toVariant()) )
-                    emit fmt->error(tr("Could not set property %1").arg(it.key()));
+                    error(tr("Could not set property %1").arg(it.key()));
             }
         }
     }
@@ -99,7 +105,7 @@ public:
                     model::ObjectListPropertyBase* prop = static_cast<model::ObjectListPropertyBase*>(target);
                     if ( !ptr )
                     {
-                        emit fmt->error(
+                        error(
                             tr("Item %1 for %2 in %3 isn't an object")
                             .arg(index)
                             .arg(target->name())
@@ -111,7 +117,7 @@ public:
                         auto inserted = prop->insert_clone(ptr);
                         if ( !inserted )
                         {
-                            emit fmt->error(
+                            error(
                                 tr("Item %1 for %2 in %3 is not acceptable")
                                 .arg(index)
                                 .arg(target->name())
@@ -149,12 +155,12 @@ public:
                     QJsonObject kfobj = v.toObject();
                     if ( !kfobj.contains("time") )
                     {
-                        fmt->error(tr("Keyframe must specify a time"));
+                        error(tr("Keyframe must specify a time"));
                         continue;
                     }
                     if ( !kfobj.contains("value") )
                     {
-                        fmt->error(tr("Keyframe must specify a value"));
+                        error(tr("Keyframe must specify a value"));
                         continue;
                     }
 
@@ -164,7 +170,7 @@ public:
                     );
                     if ( !kf )
                     {
-                        fmt->error(tr("Could not add keyframe"));
+                        error(tr("Could not add keyframe"));
                         continue;
                     }
 
@@ -308,14 +314,14 @@ public:
     {
         if ( type == "MainComposition" )
         {
-            emit fmt->error(tr("Objects of type 'MainComposition' can only be at the top level of the document"));
+            error(tr("Objects of type 'MainComposition' can only be at the top level of the document"));
             return nullptr;
         }
 
         if ( auto obj = model::Factory::instance().make_any(type, document, composition) )
             return obj;
 
-        emit fmt->error(tr("Unknow object of type '%1'").arg(type));
+        error(tr("Unknow object of type '%1'").arg(type));
         return new model::Object(document);
     }
 
@@ -358,4 +364,53 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
     state.resolve();
 
     return true;
+}
+
+std::vector<std::unique_ptr<model::DocumentNode>> io::glaxnimate::GlaxnimateFormat::deserialize(
+    const QByteArray& data, model::Document* owner_document, model::Composition* owner_composition
+)
+{
+    QJsonDocument jdoc;
+
+    try {
+        jdoc = QJsonDocument::fromJson(data);
+    } catch ( const QJsonParseError& err ) {
+        return {};
+    }
+
+    if ( !jdoc.isArray() )
+        return {};
+
+    QJsonArray input_objects = jdoc.array();
+
+    ImportState state(nullptr);
+    state.document = owner_document;
+    state.composition = owner_composition;
+
+    std::vector<std::unique_ptr<model::DocumentNode>> output_objects;
+    output_objects.reserve(input_objects.size());
+
+    for ( const auto& json_val : input_objects )
+    {
+        if ( !json_val.isObject() )
+            continue;
+
+        QJsonObject json_object = json_val.toObject();
+        auto obj = model::Factory::instance().make_any(json_object["__type__"].toString(), owner_document, owner_composition);
+        if ( !obj )
+            continue;
+
+        auto docnode = qobject_cast<model::DocumentNode*>(obj);
+        if ( !docnode )
+        {
+            delete obj;
+            return {};
+        }
+
+        output_objects.emplace_back(docnode);
+        state.load_object(output_objects.back().get(), json_object);
+    }
+
+    state.resolve();
+    return output_objects;
 }

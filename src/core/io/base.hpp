@@ -5,6 +5,7 @@
 
 #include <QFileInfo>
 #include <QObject>
+#include <QBuffer>
 
 namespace io {
 
@@ -15,15 +16,20 @@ class ImportExport : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QStringList extensions READ extensions)
+    Q_PROPERTY(bool can_open READ can_open)
+    Q_PROPERTY(bool can_save READ can_save)
+
 public:
     virtual ~ImportExport() = default;
 
-    bool can_handle_extension(const QString& extension) const
+    Q_INVOKABLE bool can_handle_extension(const QString& extension) const
     {
         return extensions().contains(extension);
     }
 
-    bool can_handle_filename(const QString& filename) const
+    Q_INVOKABLE bool can_handle_filename(const QString& filename) const
     {
         return can_handle_extension(QFileInfo(filename).completeSuffix());
     }
@@ -52,6 +58,9 @@ public:
         return ok;
     }
 
+    Q_INVOKABLE QByteArray save(model::Document* document, const QVariantMap& setting_values={}, const QString& filename = "data");
+
+
     virtual QString name() const = 0;
     virtual QStringList extensions() const = 0;
     virtual SettingList open_settings() const { return {}; }
@@ -62,7 +71,7 @@ public:
     /**
      * \brief File dialog name filter
      */
-    QString name_filter() const;
+    Q_INVOKABLE QString name_filter() const;
 
 
     class Factory

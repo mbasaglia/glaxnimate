@@ -287,7 +287,7 @@ void GlaxnimateWindow::Private::shutdown()
     QStringList history = ui.console_input->history();
     int max_history = app::settings::get<int>("scripting", "max_history");
     if ( history.size() > max_history )
-        history.erase(history.begin() + max_history, history.end());
+        history.erase(history.begin(), history.end() - max_history);
     app::settings::set("scripting", "history", history);
     script_contexts.clear();
 }
