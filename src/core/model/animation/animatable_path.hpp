@@ -22,9 +22,6 @@ public:
         return value_;
     }
 
-    QVariant extra_variant() const override { return {}; }
-    bool set_extra_variant(const QVariant&) override { return false; }
-
     QVariant value() const override
     {
         return QVariant::fromValue(value_);

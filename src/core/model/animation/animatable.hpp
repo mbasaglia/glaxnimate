@@ -21,8 +21,6 @@ public:
 
     virtual QVariant value() const = 0;
     virtual bool set_value(const QVariant& value) = 0;
-    virtual QVariant extra_variant() const = 0;
-    virtual bool set_extra_variant(const QVariant&) = 0;
 
     FrameTime time() const { return time_; }
     void set_time(FrameTime t) { time_ = t; }
@@ -108,9 +106,6 @@ public:
     bool set_undoable(const QVariant& val, bool commit=true) override;
 
     using BaseProperty::value;
-
-    virtual QVariant extra_variant() const = 0;
-    virtual bool set_extra_variant(const QVariant&) = 0;
 
     /**
      * \brief Moves a keyframe
@@ -217,84 +212,19 @@ private:
     FrameTime current_time = 0;
 };
 
-namespace detail {
-    template<class ExtraDataType>
-    class KeyframeExtra : public KeyframeBase
-    {
-    public:
-        using extra_type = ExtraDataType;
-        using KeyframeBase::KeyframeBase;
-
-        QVariant extra_variant() const override { return QVariant::fromValue(extra()); }
-        bool set_extra_variant(const QVariant& val) override
-        {
-            if ( auto v = detail::variant_cast<ExtraDataType>(val) )
-            {
-                set_extra(*v);
-                return true;
-            }
-            return false;
-        }
-
-        const ExtraDataType& extra() const { return extra_; }
-        void set_extra(const ExtraDataType& v) { extra_ = v; }
-
-    protected:
-        ExtraDataType extra_;
-    };
-
-    template<class Type>
-    class KeyframeWithExtra : public KeyframeBase
-    {
-    public:
-        using KeyframeBase::KeyframeBase;
-
-        QVariant extra_variant() const override { return {}; }
-        bool set_extra_variant(const QVariant&) override { return false; }
-
-    protected:
-        void extra_data_reset() {}
-    };
-
-    template<>
-    class KeyframeWithExtra<QColor> : public KeyframeExtra<QString>
-    {
-    public:
-        using KeyframeExtra<QString>::KeyframeExtra;
-
-    protected:
-        void extra_data_reset()
-        {
-            set_extra("");
-        }
-    };
-
-    template<>
-    class KeyframeWithExtra<QPointF> : public KeyframeExtra<QPair<QPointF, QPointF>>
-    {
-    public:
-        using KeyframeExtra<QPair<QPointF, QPointF>>::KeyframeExtra;
-
-    protected:
-        void extra_data_reset()  {}
-    };
-} // namespace detail
-
-
 template<class Type>
-class Keyframe : public detail::KeyframeWithExtra<Type>
+class Keyframe : public KeyframeBase
 {
 public:
     using value_type = Type;
     using reference = const Type&;
 
     Keyframe(FrameTime time, Type value)
-        : detail::KeyframeWithExtra<Type>(time), value_(std::move(value)) {}
+        : KeyframeBase(time), value_(std::move(value)) {}
 
     void set(reference value)
     {
         value_ = value;
-        this->extra_data_reset();
     }
 
     reference get() const
@@ -331,69 +261,8 @@ private:
     Type value_;
 };
 
-namespace detail {
-    template<class ExtraDataType>
-    class AnimatableExtra : public AnimatableBase
-    {
-    public:
-        using extra_type = ExtraDataType;
-        using AnimatableBase::AnimatableBase;
-
-        QVariant extra_variant() const override { return QVariant::fromValue(extra()); }
-        bool set_extra_variant(const QVariant& val) override
-        {
-            if ( auto v = detail::variant_cast<ExtraDataType>(val) )
-            {
-                set_extra(*v);
-                return true;
-            }
-            return false;
-        }
-
-        const ExtraDataType& extra() const { return extra_; }
-        void set_extra(const ExtraDataType& v) { extra_ = v; }
-
-    protected:
-        ExtraDataType extra_;
-    };
-
-
-    template<class Type>
-    class AnimatableWithExtra : public AnimatableBase
-    {
-    public:
-        using AnimatableBase::AnimatableBase;
-
-        QVariant extra_variant() const override { return {}; }
-        bool set_extra_variant(const QVariant&) override { return false; }
-
-    protected:
-        void extra_data_reset() {}
-        void extra_data_reset(const Keyframe<Type>*) {}
-    };
-
-    template<>
-    class AnimatableWithExtra<QColor> : public AnimatableExtra<QString>
-    {
-    public:
-        using AnimatableExtra<QString>::AnimatableExtra;
-
-    protected:
-        void extra_data_reset()
-        {
-            set_extra("");
-        }
-        void extra_data_reset(const Keyframe<QColor>* kf)
-        {
-            if ( kf )
-                set_extra(kf->extra());
-        }
-    };
-
-} // namespace detail
-
 template<class Type>
-class AnimatedProperty : public detail::AnimatableWithExtra<Type>
+class AnimatedProperty : public AnimatableBase
 {
 public:
     using keyframe_type = Keyframe<Type>;
@@ -406,7 +275,7 @@ public:
         reference default_value,
         PropertyCallback<void, Type> emitter = {}
     )
-    : detail::AnimatableWithExtra<Type>(
+    : AnimatableBase(
         object, name, PropertyTraits::from_scalar<Type>(
             PropertyTraits::Animated|PropertyTraits::Visual
         )),
@@ -492,7 +361,6 @@ public:
     {
         value_ = val;
         mismatched_ = !keyframes_.empty();
-        this->extra_data_reset();
         this->value_changed();
         emitter(this->object(), value_);
         return true;
@@ -610,7 +478,6 @@ protected:
         {
             const keyframe_type* kf;
             std::tie(kf, value_) = get_at_impl(time);
-            this->extra_data_reset(kf);
             this->value_changed();
         }
         mismatched_ = false;
