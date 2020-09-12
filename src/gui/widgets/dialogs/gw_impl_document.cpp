@@ -4,7 +4,6 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QImageWriter>
-#include <QClipboard>
 
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/dialogs/io_status_dialog.hpp"
@@ -12,7 +11,6 @@
 #include "app_info.hpp"
 #include "model/layers/shape_layer.hpp"
 #include "io/svg/inkscape_svg.hpp"
-#include "misc/clipboard_settings.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "io/mime/raster_mime.hpp"
 
@@ -323,20 +321,4 @@ void GlaxnimateWindow::Private::save_frame_svg()
     }
 
     io::svg::InkscapeSvgRenderer(&file).write_document(current_document.get());
-}
-
-void GlaxnimateWindow::Private::copy()
-{
-    auto selection = cleaned_selection();
-    if ( selection.empty() )
-        return;
-
-    QMimeData* data = new QMimeData;
-    for ( const auto& mime : ClipboardSettings::mime_types() )
-    {
-        if ( mime.enabled )
-            mime.serializer->to_mime_data(*data, selection);
-    }
-
-    QGuiApplication::clipboard()->setMimeData(data);
 }

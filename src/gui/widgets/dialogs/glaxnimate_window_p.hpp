@@ -95,6 +95,7 @@ public:
     void scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
     void switch_tool(tools::Tool* tool);
     void switch_tool_action(QAction* action);
+    void status_message(const QString& msg, int duration=5000);
 
     // Model
     model::Composition* current_composition();
@@ -102,9 +103,10 @@ public:
     model::DocumentNode* current_document_node();
     void set_current_document_node(model::DocumentNode* node);
     model::ShapeElement* current_shape();
-    model::DocumentNode* current_shape_container();
+    model::ShapeListProperty* current_shape_container();
     std::vector<model::DocumentNode*> cleaned_selection();
     void copy();
+    void paste();
 
     template<class LayerT>
     void layer_new()
@@ -112,6 +114,7 @@ public:
         layer_new_impl(current_composition()->make_layer<LayerT>());
     }
     void layer_new_impl(std::unique_ptr<model::Layer> layer);
+    void layer_new_prepare(model::Layer* layer);
     void layer_delete();
 
     // script

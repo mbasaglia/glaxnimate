@@ -160,8 +160,6 @@ QString model::Document::get_best_name(const model::DocumentNode* node, const QS
     if ( !node )
         return {};
 
-
-
     QVector<QString> names;
 
     int n = 0;
@@ -200,4 +198,9 @@ void model::Document::set_best_name(model::DocumentNode* node, const QString& su
 {
     if ( node )
         node->name.set(get_best_name(node, suggestion));
+}
+
+QRectF model::Document::rect() const
+{
+    return QRectF(QPointF(0, 0), size());
 }

@@ -46,7 +46,8 @@ public:
     FrameTime current_time() const;
     void set_current_time(FrameTime t);
 
-    QSize size() const;
+    Q_INVOKABLE QSize size() const;
+    Q_INVOKABLE QRectF rect() const;
 
     /**
      * \brief Whether filename() refers to an actual file

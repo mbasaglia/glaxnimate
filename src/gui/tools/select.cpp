@@ -207,6 +207,8 @@ private:
         menu.addSeparator();
         menu.addAction(QIcon::fromTheme("edit-copy"), GlaxnimateWindow::tr("Copy"),
                        event.window, &GlaxnimateWindow::copy);
+        menu.addAction(QIcon::fromTheme("edit-paste"), GlaxnimateWindow::tr("Paste"),
+                       event.window, &GlaxnimateWindow::paste);
 
         if ( best )
         {

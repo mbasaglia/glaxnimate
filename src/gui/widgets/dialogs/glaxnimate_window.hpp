@@ -24,7 +24,7 @@ class GlaxnimateWindow : public QMainWindow
     Q_PROPERTY(model::Layer* current_layer READ current_layer)
     Q_PROPERTY(model::DocumentNode* current_document_node READ current_document_node WRITE set_current_document_node)
     Q_PROPERTY(model::ShapeElement* current_shape READ current_shape)
-    Q_PROPERTY(model::DocumentNode* current_shape_container READ current_shape_container)
+    Q_PROPERTY(model::Object* current_shape_container READ current_shape_container_script)
     Q_PROPERTY(QColor current_color READ current_color WRITE set_current_color)
     Q_PROPERTY(QColor secondary_color READ secondary_color WRITE set_secondary_color)
 
@@ -41,7 +41,8 @@ public:
     model::DocumentNode* current_document_node() const;
     void set_current_document_node(model::DocumentNode* node);
     model::ShapeElement* current_shape();
-    model::DocumentNode* current_shape_container();
+    model::ShapeListProperty* current_shape_container();
+    model::Object* current_shape_container_script();
 
     QColor current_color() const;
     void set_current_color(const QColor& c);
@@ -74,6 +75,7 @@ public slots:
      * \brief Copies the current selection to the clipboard
      */
     void copy() const;
+    void paste() const;
 
 private slots:
     void document_new();

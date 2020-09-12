@@ -47,6 +47,8 @@ public:
         for ( const QString& mime : mime_types() )
             if ( data.hasFormat(mime) )
                 return deserialize(data.data(mime), owner_document, owner_composition);
+
+        return {};
     }
 
 };

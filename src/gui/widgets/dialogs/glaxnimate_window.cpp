@@ -40,17 +40,17 @@ void GlaxnimateWindow::document_new()
 void GlaxnimateWindow::document_save()
 {
     if ( d->save_document(false, true) )
-        d->ui.status_bar->showMessage(tr("File saved"), 5000);
+        d->status_message(tr("File saved"));
     else
-        d->ui.status_bar->showMessage(tr("Could not save file"));
+        d->status_message(tr("Could not save file"), 0);
 }
 
 void GlaxnimateWindow::document_save_as()
 {
     if ( d->save_document(true, true) )
-        d->ui.status_bar->showMessage(tr("File saved"), 5000);
+        d->status_message(tr("File saved"));
     else
-        d->ui.status_bar->showMessage(tr("Could not save file"));
+        d->status_message(tr("Could not save file"), 0);
 }
 
 void GlaxnimateWindow::document_open_dialog()
@@ -171,7 +171,7 @@ void GlaxnimateWindow::warning ( const QString& message, const QString& title ) 
 
 void GlaxnimateWindow::status ( const QString& message ) const
 {
-    d->ui.status_bar->showMessage(message, 5000);
+    d->status_message(message);
 }
 
 
@@ -271,10 +271,17 @@ model::ShapeElement * GlaxnimateWindow::current_shape()
     return d->current_shape();
 }
 
-model::DocumentNode * GlaxnimateWindow::current_shape_container()
+model::ShapeListProperty * GlaxnimateWindow::current_shape_container()
 {
     return d->current_shape_container();
 }
+
+model::Object * GlaxnimateWindow::current_shape_container_script()
+{
+    auto prop = d->current_shape_container();
+    return prop ? prop->object() : nullptr;
+}
+
 
 void GlaxnimateWindow::set_current_document_node(model::DocumentNode* node)
 {
@@ -294,5 +301,10 @@ std::vector<model::DocumentNode *> GlaxnimateWindow::cleaned_selection() const
 void GlaxnimateWindow::copy() const
 {
     d->copy();
+}
+
+void GlaxnimateWindow::paste() const
+{
+    d->paste();
 }
 

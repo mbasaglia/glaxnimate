@@ -144,7 +144,7 @@ private:
     model::ShapeListProperty* get_container(GlaxnimateWindow* window)
     {
         if ( auto container = window->current_shape_container() )
-            return  static_cast<model::ShapeListProperty*>(container->get_property("shapes"));
+            return container;
 
         auto comp = window->current_composition();
         for ( int i = comp->docnode_child_count() - 1; i >= 0; i-- )

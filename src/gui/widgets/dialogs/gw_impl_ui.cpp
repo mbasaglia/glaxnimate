@@ -36,6 +36,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
+    connect(ui.action_paste, &QAction::triggered, parent, &GlaxnimateWindow::paste);
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
@@ -349,4 +350,9 @@ void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
 void GlaxnimateWindow::Private::switch_tool_action(QAction* action)
 {
     switch_tool(action->data().value<tools::Tool*>());
+}
+
+void GlaxnimateWindow::Private::status_message(const QString& message, int duration)
+{
+    ui.status_bar->showMessage(message, duration);
 }

@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include <functional>
+#include <iterator>
 
 #include <QString>
 #include <QPointF>
@@ -530,7 +531,31 @@ public:
     using reference = Type&;
 //     using const_reference = const Type&;
     using iterator = typename std::vector<pointer>::const_iterator;
-//     using const_iterator = typename std::vector<pointer>::const_iterator;
+
+    /**
+     * \brief Utility to perform raw operations on the list of objects
+     * \warning Use with care, this won't invoke any callbacks
+     */
+    class Raw
+    {
+    public:
+        using iterator = typename std::vector<pointer>::iterator;
+        using move_iterator = std::move_iterator<iterator>;
+
+        void clear()
+        {
+            subject->objects.clear();
+        }
+        iterator begin() { return subject->objects.begin(); }
+        iterator end() { return subject->objects.end(); }
+        move_iterator move_begin() { return move_iterator(begin()); }
+        move_iterator move_end() { return move_iterator(end()); }
+
+    private:
+        friend ObjectListProperty;
+        Raw(ObjectListProperty* subject) : subject(subject) {}
+        ObjectListProperty* subject;
+    };
 
     ObjectListProperty(
         Object* obj,
@@ -638,6 +663,12 @@ public:
                 return i;
         return not_found;
     }
+
+    /**
+     * \brief Allows to perform raw operations on the elements
+     * \warning Use with care, no callbacks will be invoked
+     */
+    Raw raw() { return Raw{this}; }
 
 protected:
     virtual void on_insert(int index) { Q_UNUSED(index); }
