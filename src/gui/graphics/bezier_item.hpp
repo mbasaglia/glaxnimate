@@ -96,6 +96,8 @@ public:
 
                 p_in.length = p_out.length = (p_in.length + p_out.length) / 2;
                 qreal in_angle = (p_in.angle + p_out.angle + M_PI) / 2;
+                if ( p_in.angle < p_out.angle )
+                    in_angle += M_PI;
                 p_in.angle = in_angle;
                 p_out.angle = in_angle + M_PI;
 
