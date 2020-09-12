@@ -48,6 +48,14 @@ public:
         ui.color_preview_secondary->setColor(QColor(app::settings::get<QString>("tools", "color_secondary")));
         connect(ui.color_preview_secondary, &color_widgets::ColorSelector::colorSelected, parent, &ColorSelector::secondary_color_changed);
 
+        for ( auto slider : parent->findChildren<QSlider*>() )
+            connect(slider, &QSlider::sliderReleased, parent, &ColorSelector::commit_current_color);
+        for ( auto spin : parent->findChildren<QSpinBox*>() )
+            connect(spin, &QSpinBox::editingFinished, parent, &ColorSelector::commit_current_color);
+        for ( auto wheel : parent->findChildren<color_widgets::ColorWheel*>() )
+            connect(wheel, &color_widgets::ColorWheel::editingFinished, parent, &ColorSelector::commit_current_color);
+
+
     }
 
     void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,
@@ -247,6 +255,7 @@ void ColorSelector::color_swap()
 void ColorSelector::color_update_alpha ( const QColor& col )
 {
     d->update_color(col, true, QObject::sender());
+    emit current_color_committed(col);
 }
 
 void ColorSelector::color_update_noalpha ( const QColor& col )
@@ -283,4 +292,9 @@ void ColorSelector::hide_secondary()
 {
     d->ui.color_preview_secondary->hide();
     d->ui.color_swap->hide();
+}
+
+void ColorSelector::commit_current_color()
+{
+    emit current_color_committed(d->current_color());
 }

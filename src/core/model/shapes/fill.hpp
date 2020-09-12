@@ -8,9 +8,9 @@
 
 namespace model {
 
-class BaseFill : public Styler
+class Fill : public ObjectBase<Fill, Styler>
 {
-    Q_OBJECT
+    GLAXNIMATE_OBJECT
 
 public:
     enum Rule
@@ -22,36 +22,17 @@ public:
 private:
     Q_ENUM(Rule);
 
+    GLAXNIMATE_ANIMATABLE(QColor, color, QColor())
     GLAXNIMATE_PROPERTY(Rule, fill_rule, NonZero, nullptr, nullptr, PropertyTraits::Visual)
     GLAXNIMATE_ANIMATABLE(float, opacity, 1)
 
 public:
-    using Styler::Styler;
+    using Ctor::Ctor;
 
     QRectF local_bounding_rect(FrameTime t) const override
     {
         return collect_shapes(t).bounding_box();
     }
-
-protected:
-    virtual QBrush brush(FrameTime t) const = 0;
-
-    void on_paint(QPainter* p, FrameTime t, PaintMode) const override
-    {
-        p->setBrush(brush(t));
-        p->setPen(Qt::NoPen);
-        p->drawPath(collect_shapes(t).painter_path());
-    }
-};
-
-class Fill : public ObjectBase<Fill, BaseFill>
-{
-    GLAXNIMATE_OBJECT
-    GLAXNIMATE_ANIMATABLE(QColor, color, QColor())
-
-public:
-    using Ctor::Ctor;
-
     QIcon docnode_icon() const override
     {
         return QIcon::fromTheme("format-fill-color");
@@ -62,11 +43,20 @@ public:
         return tr("Fill");
     }
 
+
 protected:
-    QBrush brush(FrameTime t) const override
+    QBrush brush(FrameTime t) const
     {
         return color.get_at(t);
     }
+
+    void on_paint(QPainter* p, FrameTime t, PaintMode) const override
+    {
+        p->setBrush(brush(t));
+        p->setPen(Qt::NoPen);
+        p->drawPath(collect_shapes(t).painter_path());
+    }
 };
+
 
 } // namespace model

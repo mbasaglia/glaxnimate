@@ -105,6 +105,8 @@ public:
      */
     virtual QVariant value(FrameTime time) const = 0;
 
+    bool set_undoable(const QVariant& val, bool commit=true) override;
+
     using BaseProperty::value;
 
     virtual QVariant extra_variant() const = 0;

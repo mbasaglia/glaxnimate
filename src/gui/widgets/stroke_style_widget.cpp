@@ -18,6 +18,13 @@ public:
     QButtonGroup group_join;
     bool dark_theme = false;
     QPalette::ColorRole background = QPalette::Base;
+    model::Stroke* target = nullptr;
+    bool updating = false;
+
+    bool can_update_target()
+    {
+        return target && !target->docnode_locked_by_ancestor();
+    }
 
     void update_background(const QColor& color)
     {
@@ -31,6 +38,61 @@ public:
 
         if ( swap )
             background = QPalette::Text;
+    }
+
+    void update_from_target()
+    {
+        if ( target && !updating )
+        {
+            ui.spin_stroke_width->setValue(target->width.get());
+            set_cap_style(target->cap.get());
+            set_join_style(target->join.get());
+            ui.spin_miter->setValue(target->miter_limit.get());
+            ui.color_selector->set_current_color(target->color.get());
+        }
+    }
+
+    void set_cap_style(model::Stroke::Cap cap)
+    {
+        this->cap = Qt::PenCapStyle(cap);
+
+        switch ( cap )
+        {
+            case model::Stroke::ButtCap:
+                ui.button_cap_butt->setChecked(true);
+                break;
+            case model::Stroke::RoundCap:
+                ui.button_cap_round->setChecked(true);
+                break;
+            case model::Stroke::SquareCap:
+                ui.button_cap_square->setChecked(true);
+                break;
+        }
+    }
+
+    void set_join_style(model::Stroke::Join join)
+    {
+        this->join = Qt::PenJoinStyle(join);
+
+        switch ( join )
+        {
+            case model::Stroke::BevelJoin:
+                ui.button_join_bevel->setChecked(true);
+                break;
+            case model::Stroke::RoundJoin:
+                ui.button_join_round->setChecked(true);
+                break;
+            case model::Stroke::MiterJoin:
+                ui.button_join_miter->setChecked(true);
+                break;
+        }
+    }
+
+    void set(model::BaseProperty& prop, const QVariant& value, bool commit)
+    {
+        updating = true;
+        prop.set_undoable(value, commit);
+        updating = false;
     }
 };
 
@@ -49,8 +111,8 @@ StrokeStyleWidget::StrokeStyleWidget(QWidget* parent)
 
     d->ui.spin_stroke_width->setValue(app::settings::get<qreal>("tools", "stroke_width"));
     d->ui.spin_miter->setValue(app::settings::get<qreal>("tools", "stroke_miter"));
-    set_cap_style(app::settings::get<model::Stroke::Cap>("tools", "stroke_cap"));
-    set_join_style(app::settings::get<model::Stroke::Join>("tools", "stroke_join"));
+    d->set_cap_style(app::settings::get<model::Stroke::Cap>("tools", "stroke_cap"));
+    d->set_join_style(app::settings::get<model::Stroke::Join>("tools", "stroke_join"));
 
     d->ui.tab_widget->setTabEnabled(2, false);
 
@@ -114,6 +176,10 @@ void StrokeStyleWidget::check_cap()
         d->cap = Qt::RoundCap;
     else if ( d->ui.button_cap_square->isChecked() )
         d->cap = Qt::SquareCap;
+
+    if ( d->can_update_target() )
+        d->set(d->target->cap, int(d->cap), true);
+
     update();
 }
 
@@ -125,6 +191,10 @@ void StrokeStyleWidget::check_join()
         d->join = Qt::RoundJoin;
     else if ( d->ui.button_join_miter->isChecked() )
         d->join = Qt::MiterJoin;
+
+    if ( d->can_update_target() )
+        d->set(d->target->join, int(d->join), true);
+
     update();
 }
 
@@ -134,44 +204,6 @@ void StrokeStyleWidget::save_settings() const
     app::settings::set("tools", "stroke_miter", d->ui.spin_miter->value());
     app::settings::set("tools", "stroke_cap", int(d->cap));
     app::settings::set("tools", "stroke_join", int(d->join));
-}
-
-void StrokeStyleWidget::set_cap_style(model::Stroke::Cap cap)
-{
-    d->cap = Qt::PenCapStyle(cap);
-
-    switch ( cap )
-    {
-        case model::Stroke::ButtCap:
-            d->ui.button_cap_butt->setChecked(true);
-            break;
-        case model::Stroke::RoundCap:
-            d->ui.button_cap_round->setChecked(true);
-            break;
-        case model::Stroke::SquareCap:
-            d->ui.button_cap_square->setChecked(true);
-            break;
-    }
-    update();
-}
-
-void StrokeStyleWidget::set_join_style(model::Stroke::Join join)
-{
-    d->join = Qt::PenJoinStyle(join);
-
-    switch ( join )
-    {
-        case model::Stroke::BevelJoin:
-            d->ui.button_join_bevel->setChecked(true);
-            break;
-        case model::Stroke::RoundJoin:
-            d->ui.button_join_round->setChecked(true);
-            break;
-        case model::Stroke::MiterJoin:
-            d->ui.button_join_miter->setChecked(true);
-            break;
-    }
-    update();
 }
 
 QPen StrokeStyleWidget::pen_style() const
@@ -186,11 +218,67 @@ QPen StrokeStyleWidget::pen_style() const
 void StrokeStyleWidget::set_color(const QColor& color)
 {
     d->ui.color_selector->set_current_color(color);
+    if ( d->can_update_target() )
+        d->set(d->target->color, color, true);
 }
 
 void StrokeStyleWidget::check_color(const QColor& color)
 {
     d->update_background(color);
+    if ( d->can_update_target() )
+        d->set(d->target->color, color, false);
     update();
     emit color_changed(color);
+}
+
+void StrokeStyleWidget::set_shape(model::Stroke* target)
+{
+    if ( d->target )
+    {
+        disconnect(d->target, &model::Object::property_changed, this, &StrokeStyleWidget::property_changed);
+    }
+
+    d->target = target;
+
+    if ( target )
+    {
+        d->update_from_target();
+        emit color_changed(d->target->color.get());
+        connect(target, &model::Object::property_changed, this, &StrokeStyleWidget::property_changed);
+        update();
+    }
+}
+
+void StrokeStyleWidget::property_changed(const model::BaseProperty* prop)
+{
+    d->update_from_target();
+    if ( prop == &d->target->color )
+        emit color_changed(d->target->color.get());
+    update();
+}
+
+void StrokeStyleWidget::check_miter(double w)
+{
+    if ( d->can_update_target() )
+        d->set(d->target->miter_limit, w, false);
+    update();
+}
+
+void StrokeStyleWidget::check_width(double w)
+{
+    if ( d->can_update_target() )
+        d->set(d->target->width, w, false);
+    update();
+}
+
+void StrokeStyleWidget::color_committed(const QColor& color)
+{
+    if ( d->can_update_target() )
+        d->set(d->target->color, color, true);
+}
+
+void StrokeStyleWidget::commit_width()
+{
+    if ( d->can_update_target() && !qFuzzyCompare(d->target->width.get(), float(d->ui.spin_stroke_width->value())) )
+        d->set(d->target->width, d->ui.spin_stroke_width->value(), true);
 }

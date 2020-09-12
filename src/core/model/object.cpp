@@ -141,12 +141,12 @@ model::FrameTime model::Object::time() const
 
 
 
-bool model::BaseProperty::set_undoable ( const QVariant& val )
+bool model::BaseProperty::set_undoable ( const QVariant& val, bool commit )
 {
     QVariant before = value();
     if ( !set_value(val) )
         return false;
 
-    object_->document()->undo_stack().push(new command::SetPropertyValue(this, before, val));
+    object_->document()->undo_stack().push(new command::SetPropertyValue(this, before, val, commit));
     return true;
 }

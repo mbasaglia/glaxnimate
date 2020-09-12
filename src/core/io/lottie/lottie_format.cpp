@@ -434,18 +434,18 @@ public:
         }
         else if ( shape->type_name() == "Stroke" )
         {
-            auto str = static_cast<model::BaseStroke*>(shape);
+            auto str = static_cast<model::Stroke*>(shape);
             switch ( str->cap.get() )
             {
-                case model::BaseStroke::ButtCap:  jsh["lc"_l] = 1; break;
-                case model::BaseStroke::RoundCap: jsh["lc"_l] = 2; break;
-                case model::BaseStroke::SquareCap:jsh["lc"_l] = 3; break;
+                case model::Stroke::ButtCap:  jsh["lc"_l] = 1; break;
+                case model::Stroke::RoundCap: jsh["lc"_l] = 2; break;
+                case model::Stroke::SquareCap:jsh["lc"_l] = 3; break;
             }
             switch ( str->join.get() )
             {
-                case model::BaseStroke::MiterJoin: jsh["lj"_l] = 1; break;
-                case model::BaseStroke::RoundJoin: jsh["lj"_l] = 2; break;
-                case model::BaseStroke::BevelJoin: jsh["lj"_l] = 3; break;
+                case model::Stroke::MiterJoin: jsh["lj"_l] = 1; break;
+                case model::Stroke::RoundJoin: jsh["lj"_l] = 2; break;
+                case model::Stroke::BevelJoin: jsh["lj"_l] = 3; break;
             }
             jsh["o"_l] = convert_animated(
                 &str->opacity,
@@ -684,18 +684,18 @@ private:
         }
         else if ( shape->type_name() == "Stroke" )
         {
-            auto str = static_cast<model::BaseStroke*>(shape);
+            auto str = static_cast<model::Stroke*>(shape);
             switch ( json["lc"].toInt() )
             {
-                case 1: str->cap.set(model::BaseStroke::ButtCap); break;
-                case 2: str->cap.set(model::BaseStroke::RoundCap); break;
-                case 3: str->cap.set(model::BaseStroke::SquareCap); break;
+                case 1: str->cap.set(model::Stroke::ButtCap); break;
+                case 2: str->cap.set(model::Stroke::RoundCap); break;
+                case 3: str->cap.set(model::Stroke::SquareCap); break;
             }
             switch ( json["lj"].toInt() )
             {
-                case 1: str->join.set(model::BaseStroke::MiterJoin); break;
-                case 2: str->join.set(model::BaseStroke::RoundJoin); break;
-                case 3: str->join.set(model::BaseStroke::BevelJoin); break;
+                case 1: str->join.set(model::Stroke::MiterJoin); break;
+                case 2: str->join.set(model::Stroke::RoundJoin); break;
+                case 3: str->join.set(model::Stroke::BevelJoin); break;
             }
             load_animated(&str->opacity, json["o"], FloatMult(0.01));
         }

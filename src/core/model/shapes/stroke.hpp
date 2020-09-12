@@ -10,9 +10,9 @@
 
 namespace model {
 
-class BaseStroke : public Styler
+class Stroke : public ObjectBase<Stroke, Styler>
 {
-    Q_OBJECT
+    GLAXNIMATE_OBJECT
 
 public:
     enum Cap
@@ -33,14 +33,16 @@ private:
     Q_ENUM(Cap);
     Q_ENUM(Join);
 
+
+    GLAXNIMATE_ANIMATABLE(QColor, color, QColor())
+    GLAXNIMATE_ANIMATABLE(float, width, 1)
     GLAXNIMATE_PROPERTY(Cap, cap, RoundCap, nullptr, nullptr, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(Join, join, RoundJoin, nullptr, nullptr, PropertyTraits::Visual)
-    GLAXNIMATE_ANIMATABLE(float, width, 1)
     GLAXNIMATE_ANIMATABLE(float, opacity, 1)
     GLAXNIMATE_PROPERTY(float, miter_limit, 0, nullptr, nullptr, PropertyTraits::Visual)
 
 public:
-    using Styler::Styler;
+    using Ctor::Ctor;
 
     QRectF local_bounding_rect(FrameTime t) const override
     {
@@ -49,29 +51,6 @@ public:
             -half_width, -half_width, half_width, half_width
         );
     }
-
-protected:
-    virtual QBrush brush(FrameTime t) const = 0;
-
-    void on_paint(QPainter* p, FrameTime t, PaintMode) const override
-    {
-        QPen pen(brush(t), width.get_at(t));
-        pen.setCapStyle(Qt::PenCapStyle(cap.get()));
-        pen.setJoinStyle(Qt::PenJoinStyle(join.get()));
-        pen.setMiterLimit(miter_limit.get());
-        p->setBrush(Qt::NoBrush);
-        p->setPen(pen);
-        p->drawPath(collect_shapes(t).painter_path());
-    }
-};
-
-class Stroke : public ObjectBase<Stroke, BaseStroke>
-{
-    GLAXNIMATE_OBJECT
-    GLAXNIMATE_ANIMATABLE(QColor, color, QColor())
-
-public:
-    using Ctor::Ctor;
 
     QIcon docnode_icon() const override
     {
@@ -84,7 +63,18 @@ public:
     }
 
 protected:
-    QBrush brush(FrameTime t) const override
+    void on_paint(QPainter* p, FrameTime t, PaintMode) const override
+    {
+        QPen pen(brush(t), width.get_at(t));
+        pen.setCapStyle(Qt::PenCapStyle(cap.get()));
+        pen.setJoinStyle(Qt::PenJoinStyle(join.get()));
+        pen.setMiterLimit(miter_limit.get());
+        p->setBrush(Qt::NoBrush);
+        p->setPen(pen);
+        p->drawPath(collect_shapes(t).painter_path());
+    }
+
+    QBrush brush(FrameTime t) const
     {
         return color.get_at(t);
     }

@@ -214,7 +214,7 @@ public:
 
     virtual QVariant value() const = 0;
     virtual bool set_value(const QVariant& val) = 0;
-    virtual bool set_undoable(const QVariant& val);
+    virtual bool set_undoable(const QVariant& val, bool commit = true);
     virtual void set_time(FrameTime t) = 0;
 
     virtual bool assign_from(const BaseProperty* prop)

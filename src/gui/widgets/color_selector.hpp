@@ -4,7 +4,6 @@
 #include <memory>
 #include <QWidget>
 
-
 class ColorSelector : public QWidget
 {
     Q_OBJECT
@@ -29,10 +28,12 @@ private slots:
     void color_update_alpha(const QColor& col);
     void color_update_component(int value);
     void color_swap();
+    void commit_current_color();
 
 signals:
     void current_color_changed(const QColor& c);
     void secondary_color_changed(const QColor& c);
+    void current_color_committed(const QColor& c);
 
 protected:
     void changeEvent ( QEvent* e ) override;

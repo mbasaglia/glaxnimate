@@ -338,6 +338,7 @@
    <slots>
     <signal>secondary_color_changed(QColor)</signal>
     <signal>current_color_changed(QColor)</signal>
+    <signal>current_color_committed(QColor)</signal>
     <slot>set_secondary_color(QColor)</slot>
    </slots>
   </customwidget>
@@ -460,7 +461,7 @@
    <sender>spin_stroke_width</sender>
    <signal>valueChanged(double)</signal>
    <receiver>StrokeStyleWidget</receiver>
-   <slot>update()</slot>
+   <slot>check_width(double)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>176</x>
@@ -476,7 +477,7 @@
    <sender>spin_miter</sender>
    <signal>valueChanged(double)</signal>
    <receiver>StrokeStyleWidget</receiver>
-   <slot>update()</slot>
+   <slot>check_miter(double)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>176</x>
@@ -504,10 +505,46 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>color_selector</sender>
+   <signal>current_color_changed(QColor)</signal>
+   <receiver>StrokeStyleWidget</receiver>
+   <slot>color_committed(QColor)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>314</x>
+     <y>121</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_stroke_width</sender>
+   <signal>editingFinished()</signal>
+   <receiver>StrokeStyleWidget</receiver>
+   <slot>commit_width()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>324</x>
+     <y>35</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>check_join()</slot>
   <slot>check_cap()</slot>
   <slot>check_color(QColor)</slot>
+  <slot>check_width(double)</slot>
+  <slot>check_miter(double)</slot>
+  <slot>color_committed(QColor)</slot>
+  <slot>commit_width()</slot>
  </slots>
 </ui>

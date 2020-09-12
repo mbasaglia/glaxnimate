@@ -18,8 +18,7 @@ public:
 
     void save_settings() const;
 
-    void set_cap_style(model::Stroke::Cap cap);
-    void set_join_style(model::Stroke::Join join);
+    void set_shape(model::Stroke* stroke);
 
     QPen pen_style() const;
 
@@ -37,6 +36,11 @@ private slots:
     void check_cap();
     void check_join();
     void check_color(const QColor& color);
+    void color_committed(const QColor& color);
+    void property_changed(const model::BaseProperty* prop);
+    void check_width(double w);
+    void check_miter(double w);
+    void commit_width();
 
 private:
     class Private;

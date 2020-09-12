@@ -188,8 +188,6 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     register_from_meta<model::Ellipse, model::Shape>(shapes);
     register_from_meta<model::Group, model::Shape>(shapes);
 
-    register_from_meta<model::BaseFill, model::Styler>(shapes, enums<model::Fill::Rule>{});
-    register_from_meta<model::Fill, model::BaseFill>(shapes);
-    register_from_meta<model::BaseStroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});
-    register_from_meta<model::Stroke, model::BaseStroke>(shapes);
+    register_from_meta<model::Fill, model::Styler>(shapes, enums<model::Fill::Rule>{});
+    register_from_meta<model::Stroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});
 }
