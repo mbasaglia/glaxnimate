@@ -308,3 +308,8 @@ void GlaxnimateWindow::paste() const
     d->paste();
 }
 
+void GlaxnimateWindow::cut() const
+{
+    d->cut();
+}
+

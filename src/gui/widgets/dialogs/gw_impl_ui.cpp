@@ -38,6 +38,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
     connect(ui.action_paste, &QAction::triggered, parent, &GlaxnimateWindow::paste);
+    connect(ui.action_cut, &QAction::triggered, parent, &GlaxnimateWindow::cut);
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )

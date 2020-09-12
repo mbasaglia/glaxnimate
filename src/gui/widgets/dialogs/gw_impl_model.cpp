@@ -5,6 +5,7 @@
 
 #include "command/layer_commands.hpp"
 #include "command/shape_commands.hpp"
+#include "command/structure_commands.hpp"
 #include "app/settings/widget_builder.hpp"
 #include "model/layers/solid_color_layer.hpp"
 #include "model/layers/shape_layer.hpp"
@@ -165,23 +166,36 @@ std::vector<model::DocumentNode *> GlaxnimateWindow::Private::cleaned_selection(
     return fetcher.selection;
 }
 
-
-void GlaxnimateWindow::Private::copy()
+void GlaxnimateWindow::Private::cut()
 {
-    auto selection = cleaned_selection();
+    auto selection = copy();
     if ( selection.empty() )
         return;
 
-    QMimeData* data = new QMimeData;
-    for ( const auto& mime : ClipboardSettings::mime_types() )
-    {
-        if ( mime.enabled )
-            mime.serializer->to_mime_data(*data, selection);
-    }
-
-    QGuiApplication::clipboard()->setMimeData(data);
+    current_document->undo_stack().beginMacro(tr("Cut"));
+    for ( auto item : selection )
+        current_document->add_command(new command::DeleteCommand(item));
+    current_document->undo_stack().endMacro();
 }
 
+std::vector<model::DocumentNode*> GlaxnimateWindow::Private::copy()
+{
+    auto selection = cleaned_selection();
+
+    if ( !selection.empty() )
+    {
+        QMimeData* data = new QMimeData;
+        for ( const auto& mime : ClipboardSettings::mime_types() )
+        {
+            if ( mime.enabled )
+                mime.serializer->to_mime_data(*data, selection);
+        }
+
+        QGuiApplication::clipboard()->setMimeData(data);
+    }
+
+    return selection;
+}
 
 void GlaxnimateWindow::Private::paste()
 {

@@ -76,6 +76,7 @@ public slots:
      */
     void copy() const;
     void paste() const;
+    void cut() const;
 
 private slots:
     void document_new();

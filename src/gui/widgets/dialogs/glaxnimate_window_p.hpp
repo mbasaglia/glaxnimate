@@ -105,8 +105,9 @@ public:
     model::ShapeElement* current_shape();
     model::ShapeListProperty* current_shape_container();
     std::vector<model::DocumentNode*> cleaned_selection();
-    void copy();
+    std::vector<model::DocumentNode*> copy();
     void paste();
+    void cut();
 
     template<class LayerT>
     void layer_new()
