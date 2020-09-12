@@ -204,20 +204,6 @@ public:
         return &nodes.find(id)->second;
     }
 
-    bool set_property(model::BaseProperty* prop, const QVariant& after)
-    {
-        QVariant before = prop->value();
-        if ( !prop->set_value(after) )
-            return false;
-        if ( prop->traits().flags & model::PropertyTraits::Animated )
-        {
-
-        }
-        document->undo_stack().push(new command::SetPropertyValue(prop, before, after));
-        return true;
-    }
-
-
     model::Document* document = nullptr;
     model::Object* root = nullptr;
     id_type root_id = 0;
@@ -510,7 +496,7 @@ bool item_models::PropertyModel::setData(const QModelIndex& index, const QVarian
     {
         if ( role == Qt::CheckStateRole )
         {
-            return d->set_property(prop, value.value<Qt::CheckState>() == Qt::Checked);
+            return prop->set_undoable(value.value<Qt::CheckState>() == Qt::Checked);
         }
         return false;
     }
@@ -518,7 +504,7 @@ bool item_models::PropertyModel::setData(const QModelIndex& index, const QVarian
     {
         if ( role == Qt::EditRole )
         {
-            return d->set_property(prop, value);
+            return prop->set_undoable(value);
         }
         return false;
     }
