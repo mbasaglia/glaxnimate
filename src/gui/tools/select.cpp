@@ -220,7 +220,7 @@ private:
                 delete obj_menu;
         }
 
-        menu.exec(event.press_screen_pos);
+        menu.exec(QCursor::pos());
     }
 
     DragMode drag_mode;
