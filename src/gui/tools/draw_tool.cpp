@@ -10,6 +10,13 @@ void tools::DrawTool::create(const tools::Event& event)
     {
         bezier.points().pop_back();
         auto shape = std::make_unique<model::Path>(event.window->document());
+        // use symmetrical length while drawing but for editing having smooth nodes is nicer
+        // the user can always change them back
+        for ( auto & point : bezier )
+        {
+            if ( point.type == math::BezierPointType::Symmetrical )
+                point.type = math::BezierPointType::Smooth;
+        }
         shape->shape.set(bezier);
         clear();
         create_shape(QObject::tr("Draw Shape"), event, std::move(shape));
