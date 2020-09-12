@@ -112,9 +112,9 @@ model::Document * model::Object::document() const
     return d->document;
 }
 
-void model::Object::add_command(QUndoCommand* cmd)
+void model::Object::push_command(QUndoCommand* cmd)
 {
-    d->document->add_command(cmd);
+    d->document->push_command(cmd);
 }
 
 

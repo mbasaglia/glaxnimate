@@ -54,7 +54,7 @@ public:
     QString type_name() const;
 
     Document* document() const;
-    void add_command(QUndoCommand* cmd);
+    void push_command(QUndoCommand* cmd);
 
 signals:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);

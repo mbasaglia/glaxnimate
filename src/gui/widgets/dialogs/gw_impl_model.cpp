@@ -103,7 +103,7 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> lay
     model::Layer* ptr = layer.get();
 
     int position = composition->layer_position(current_layer());
-    current_document->add_command(new command::AddLayer(composition, std::move(layer), position));
+    current_document->push_command(new command::AddLayer(composition, std::move(layer), position));
 
     ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
 }
@@ -117,7 +117,7 @@ void GlaxnimateWindow::Private::layer_delete()
 
     if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
     {
-        current_document->add_command(new command::RemoveLayer(curr_lay));
+        current_document->push_command(new command::RemoveLayer(curr_lay));
     }
 }
 
@@ -174,7 +174,7 @@ void GlaxnimateWindow::Private::cut()
 
     current_document->undo_stack().beginMacro(tr("Cut"));
     for ( auto item : selection )
-        current_document->add_command(new command::DeleteCommand(item));
+        current_document->push_command(new command::DeleteCommand(item));
     current_document->undo_stack().endMacro();
 }
 
@@ -261,14 +261,14 @@ void GlaxnimateWindow::Private::paste()
             layer_new_prepare(new_layer.get());
             shape_cont = &new_layer->shapes;
             select.push_back(new_layer.get());
-            current_document->add_command(new command::AddLayer(composition, std::move(new_layer), layer_insertion_point++));
+            current_document->push_command(new command::AddLayer(composition, std::move(new_layer), layer_insertion_point++));
         }
         int shape_insertion_point = shape_cont->size();
         for ( auto& shape : shapes )
         {
             select.push_back(shape.get());
             shape->recursive_rename();
-            current_document->add_command(new command::AddShape(shape_cont, std::move(shape), shape_insertion_point++));
+            current_document->push_command(new command::AddShape(shape_cont, std::move(shape), shape_insertion_point++));
         }
     }
 
@@ -276,7 +276,7 @@ void GlaxnimateWindow::Private::paste()
     {
         select.push_back(layer.get());
         layer->recursive_rename();
-        current_document->add_command(new command::AddLayer(composition, std::move(layer), layer_insertion_point++));
+        current_document->push_command(new command::AddLayer(composition, std::move(layer), layer_insertion_point++));
     }
 
     current_document->undo_stack().endMacro();

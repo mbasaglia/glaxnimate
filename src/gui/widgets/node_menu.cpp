@@ -13,7 +13,7 @@ class ResetTransform
 public:
     void operator()() const
     {
-        doc->add_command(new command::SetMultipleAnimated(
+        doc->push_command(new command::SetMultipleAnimated(
             NodeMenu::tr("ResetTransform"),
             true,
             {
@@ -65,11 +65,11 @@ NodeMenu::NodeMenu(model::DocumentNode* node, QWidget* parent)
     if ( auto lay = qobject_cast<model::Layer*>(node) )
     {
         addAction(QIcon::fromTheme("edit-delete-remove"), tr("Delete"), this, [lay]{
-            lay->add_command(new command::DeleteCommand(lay));
+            lay->push_command(new command::DeleteCommand(lay));
         });
 
         addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), this, [lay]{
-            lay->add_command(new command::DuplicateCommand(lay));
+            lay->push_command(new command::DuplicateCommand(lay));
         });
 
         addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
@@ -85,7 +85,7 @@ NodeMenu::NodeMenu(model::DocumentNode* node, QWidget* parent)
             if ( other_lay.get() != lay )
                 action_for_node(other_lay.get(), layparent, menu_parent, group_parent);
         connect(menu_parent, &QMenu::triggered, this, [lay](QAction* act){
-            lay->add_command(
+            lay->push_command(
                 new command::SetPropertyValue(
                     &lay->parent,
                     lay->parent.value(),
@@ -99,11 +99,11 @@ NodeMenu::NodeMenu(model::DocumentNode* node, QWidget* parent)
     else if ( auto shape = qobject_cast<model::ShapeElement*>(node) )
     {
         addAction(QIcon::fromTheme("edit-delete-remove"), tr("Delete"), this, [shape]{
-            shape->add_command(new command::DeleteCommand(shape));
+            shape->push_command(new command::DeleteCommand(shape));
         });
 
         addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), this, [shape]{
-            shape->add_command(new command::DuplicateCommand(shape));
+            shape->push_command(new command::DuplicateCommand(shape));
         });
 
         if ( auto group = qobject_cast<model::Group*>(shape) )

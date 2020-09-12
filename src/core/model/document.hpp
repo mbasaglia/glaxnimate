@@ -41,7 +41,7 @@ public:
     Q_INVOKABLE bool undo();
     Q_INVOKABLE bool redo();
 
-    void add_command(QUndoCommand* cmd);
+    void push_command(QUndoCommand* cmd);
 
     FrameTime current_time() const;
     void set_current_time(FrameTime t);

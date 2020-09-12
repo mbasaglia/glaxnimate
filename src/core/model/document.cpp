@@ -141,7 +141,7 @@ void model::Document::set_record_to_keyframe(bool r)
     emit(record_to_keyframe_changed(d->record_to_keyframe = r));
 }
 
-void model::Document::add_command(QUndoCommand* cmd)
+void model::Document::push_command(QUndoCommand* cmd)
 {
     d->undo_stack.push(cmd);
 }

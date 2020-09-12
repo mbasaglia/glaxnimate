@@ -35,7 +35,7 @@ bool model::AnimatableBase::set_undoable(const QVariant& val, bool commit)
     if ( !set_value(val) )
         return false;
 
-    object()->add_command(new command::SetMultipleAnimated(
+    object()->push_command(new command::SetMultipleAnimated(
         tr("Update %1").arg(name()),
         {this},
         {before},
