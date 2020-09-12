@@ -13,6 +13,7 @@ io/glaxnimate/glaxnimate_importer.cpp
 io/base.cpp
 io/svg/inkscape_svg.cpp
 
+math/bezier.cpp
 
 model/main_composition.cpp
 model/composition.cpp
