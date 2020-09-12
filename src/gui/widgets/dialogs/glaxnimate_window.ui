@@ -219,7 +219,7 @@
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="windowTitle">
-    <string>Colors</string>
+    <string>Fill</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -612,7 +612,8 @@
   </widget>
   <widget class="QDockWidget" name="dock_stroke">
    <property name="windowIcon">
-    <iconset theme="object-stroke-style"/>
+    <iconset theme="object-stroke-style">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="windowTitle">
     <string>Stroke</string>
@@ -1248,12 +1249,20 @@
    <extends>QWidget</extends>
    <header>widgets/color_selector.hpp</header>
    <container>1</container>
+   <slots>
+    <signal>secondary_color_changed(QColor)</signal>
+    <slot>set_secondary_color(QColor)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>StrokeStyleWidget</class>
    <extends>QWidget</extends>
    <header>widgets/stroke_style_widget.hpp</header>
    <container>1</container>
+   <slots>
+    <signal>color_changed(QColor)</signal>
+    <slot>set_color(QColor)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -1655,6 +1664,38 @@
     <hint type="destinationlabel">
      <x>656</x>
      <y>466</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>color_selector</sender>
+   <signal>secondary_color_changed(QColor)</signal>
+   <receiver>stroke_style_widget</receiver>
+   <slot>set_color(QColor)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1282</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1270</x>
+     <y>414</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stroke_style_widget</sender>
+   <signal>color_changed(QColor)</signal>
+   <receiver>color_selector</receiver>
+   <slot>set_secondary_color(QColor)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1239</x>
+     <y>394</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1240</x>
+     <y>292</y>
     </hint>
    </hints>
   </connection>

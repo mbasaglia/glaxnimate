@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>243</width>
+    <width>300</width>
     <height>447</height>
    </rect>
   </property>
@@ -18,15 +18,56 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTabWidget" name="tab_6">
+    <widget class="QComboBox" name="comboBox">
+     <property name="toolTip">
+      <string>Color Mode</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>HSV</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>HSL</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>RGB</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>CYMK</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Palette</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="tab_6">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab_2">
-      <attribute name="title">
-       <string>HSV</string>
-      </attribute>
+     <widget class="QWidget" name="tab_6Page1">
       <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item row="2" column="0">
         <widget class="QLabel" name="label_2">
          <property name="toolTip">
@@ -144,11 +185,20 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
-      <attribute name="title">
-       <string>HSL</string>
-      </attribute>
+     <widget class="QWidget" name="tab_6Page2">
       <layout class="QGridLayout" name="gridLayout_3">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item row="1" column="1">
         <widget class="color_widgets::HueSlider" name="slider_hsl_hue">
          <property name="toolTip">
@@ -245,11 +295,20 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>RGB</string>
-      </attribute>
+     <widget class="QWidget" name="tab_6Page3">
       <layout class="QGridLayout" name="gridLayout_4">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item row="2" column="1">
         <widget class="color_widgets::GradientSlider" name="slider_rgb_b">
          <property name="toolTip">
@@ -342,91 +401,20 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_4">
-      <attribute name="title">
-       <string>CMYK</string>
-      </attribute>
+     <widget class="QWidget" name="tab_6Page4">
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="8" column="3">
-        <widget class="QSpinBox" name="spinBox_14">
-         <property name="toolTip">
-          <string>Black</string>
-         </property>
-         <property name="maximum">
-          <number>255</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" colspan="2">
-        <widget class="color_widgets::GradientSlider" name="slider_cmyk_c">
-         <property name="toolTip">
-          <string>Cyan</string>
-         </property>
-         <property name="maximum">
-          <number>255</number>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_14">
-         <property name="toolTip">
-          <string>Black</string>
-         </property>
-         <property name="text">
-          <string>K</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QSpinBox" name="spinBox_11">
-         <property name="toolTip">
-          <string>Cyan</string>
-         </property>
-         <property name="maximum">
-          <number>255</number>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="2">
-        <widget class="color_widgets::GradientSlider" name="slider_cmyk_y">
-         <property name="toolTip">
-          <string>Yellow</string>
-         </property>
-         <property name="maximum">
-          <number>255</number>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QLabel" name="label_12">
-         <property name="toolTip">
-          <string>Yellow</string>
-         </property>
-         <property name="text">
-          <string>Y</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="3">
-        <widget class="QSpinBox" name="spinBox_12">
-         <property name="toolTip">
-          <string>Yellow</string>
-         </property>
-         <property name="maximum">
-          <number>255</number>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1" colspan="2">
-        <widget class="color_widgets::GradientSlider" name="slider_cmyk_k">
-         <property name="toolTip">
-          <string>Black</string>
-         </property>
-         <property name="maximum">
-          <number>255</number>
-         </property>
-        </widget>
-       </item>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item row="0" column="0">
         <widget class="QLabel" name="label_11">
          <property name="toolTip">
@@ -437,10 +425,20 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
-        <widget class="color_widgets::GradientSlider" name="slider_cmyk_m">
+       <item row="0" column="1">
+        <widget class="color_widgets::GradientSlider" name="slider_cmyk_c">
          <property name="toolTip">
-          <string>Magenta</string>
+          <string>Cyan</string>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QSpinBox" name="spinBox_11">
+         <property name="toolTip">
+          <string>Cyan</string>
          </property>
          <property name="maximum">
           <number>255</number>
@@ -457,7 +455,17 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="3">
+       <item row="1" column="1">
+        <widget class="color_widgets::GradientSlider" name="slider_cmyk_m">
+         <property name="toolTip">
+          <string>Magenta</string>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
         <widget class="QSpinBox" name="spinBox_13">
          <property name="toolTip">
           <string>Magenta</string>
@@ -467,13 +475,76 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_12">
+         <property name="toolTip">
+          <string>Yellow</string>
+         </property>
+         <property name="text">
+          <string>Y</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="color_widgets::GradientSlider" name="slider_cmyk_y">
+         <property name="toolTip">
+          <string>Yellow</string>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QSpinBox" name="spinBox_12">
+         <property name="toolTip">
+          <string>Yellow</string>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_14">
+         <property name="toolTip">
+          <string>Black</string>
+         </property>
+         <property name="text">
+          <string>K</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="color_widgets::GradientSlider" name="slider_cmyk_k">
+         <property name="toolTip">
+          <string>Black</string>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QSpinBox" name="spinBox_14">
+         <property name="toolTip">
+          <string>Black</string>
+         </property>
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_5">
-      <attribute name="title">
-       <string>Palette</string>
-      </attribute>
+     <widget class="QWidget" name="tab_6Page5">
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="color_widgets::ColorPaletteWidget" name="palette_widget"/>
        </item>
@@ -668,6 +739,39 @@
    <header>QtColorWidgets/color_line_edit.hpp</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>slider_hsv_hue</tabstop>
+  <tabstop>spinBox</tabstop>
+  <tabstop>slider_hsv_sat</tabstop>
+  <tabstop>spinBox_2</tabstop>
+  <tabstop>slider_hsv_value</tabstop>
+  <tabstop>spinBox_3</tabstop>
+  <tabstop>slider_alpha</tabstop>
+  <tabstop>spinBox_4</tabstop>
+  <tabstop>color_swap</tabstop>
+  <tabstop>color_line_edit</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>slider_hsl_hue</tabstop>
+  <tabstop>spinBox_5</tabstop>
+  <tabstop>slider_hsl_sat</tabstop>
+  <tabstop>spinBox_6</tabstop>
+  <tabstop>slider_hsl_light</tabstop>
+  <tabstop>spinBox_7</tabstop>
+  <tabstop>slider_rgb_r</tabstop>
+  <tabstop>spinBox_8</tabstop>
+  <tabstop>slider_rgb_g</tabstop>
+  <tabstop>spinBox_9</tabstop>
+  <tabstop>slider_rgb_b</tabstop>
+  <tabstop>spinBox_10</tabstop>
+  <tabstop>slider_cmyk_c</tabstop>
+  <tabstop>spinBox_11</tabstop>
+  <tabstop>slider_cmyk_m</tabstop>
+  <tabstop>spinBox_13</tabstop>
+  <tabstop>slider_cmyk_y</tabstop>
+  <tabstop>spinBox_12</tabstop>
+  <tabstop>slider_cmyk_k</tabstop>
+  <tabstop>spinBox_14</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -709,12 +813,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>257</y>
+     <x>166</x>
+     <y>278</y>
     </hint>
     <hint type="destinationlabel">
-     <x>226</x>
-     <y>263</y>
+     <x>293</x>
+     <y>284</y>
     </hint>
    </hints>
   </connection>
@@ -725,12 +829,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>226</x>
-     <y>263</y>
+     <x>293</x>
+     <y>284</y>
     </hint>
     <hint type="destinationlabel">
-     <x>160</x>
-     <y>257</y>
+     <x>166</x>
+     <y>278</y>
     </hint>
    </hints>
   </connection>
@@ -741,12 +845,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>295</y>
+     <x>166</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel">
-     <x>226</x>
-     <y>301</y>
+     <x>293</x>
+     <y>322</y>
     </hint>
    </hints>
   </connection>
@@ -757,12 +861,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>226</x>
-     <y>301</y>
+     <x>293</x>
+     <y>322</y>
     </hint>
     <hint type="destinationlabel">
-     <x>160</x>
-     <y>295</y>
+     <x>166</x>
+     <y>316</y>
     </hint>
    </hints>
   </connection>
@@ -773,12 +877,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>333</y>
+     <x>166</x>
+     <y>354</y>
     </hint>
     <hint type="destinationlabel">
-     <x>226</x>
-     <y>339</y>
+     <x>293</x>
+     <y>360</y>
     </hint>
    </hints>
   </connection>
@@ -789,12 +893,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>226</x>
-     <y>339</y>
+     <x>293</x>
+     <y>360</y>
     </hint>
     <hint type="destinationlabel">
-     <x>160</x>
-     <y>333</y>
+     <x>166</x>
+     <y>354</y>
     </hint>
    </hints>
   </connection>
@@ -805,12 +909,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>64</x>
-     <y>249</y>
+     <x>70</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>199</x>
-     <y>243</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -821,12 +925,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>199</x>
-     <y>243</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>64</x>
-     <y>249</y>
+     <x>70</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -837,12 +941,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>64</x>
-     <y>287</y>
+     <x>70</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>199</x>
-     <y>281</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -853,12 +957,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>199</x>
-     <y>281</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>64</x>
-     <y>287</y>
+     <x>70</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -869,12 +973,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>64</x>
-     <y>325</y>
+     <x>70</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>199</x>
-     <y>319</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -885,12 +989,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>199</x>
-     <y>319</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>64</x>
-     <y>325</y>
+     <x>70</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -933,8 +1037,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>257</y>
+     <x>166</x>
+     <y>278</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -949,8 +1053,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>295</y>
+     <x>166</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -965,8 +1069,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>333</y>
+     <x>166</x>
+     <y>354</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -997,8 +1101,8 @@
    <slot>color_update_noalpha(QColor)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>143</x>
-     <y>170</y>
+     <x>133</x>
+     <y>171</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1013,8 +1117,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>64</x>
-     <y>249</y>
+     <x>70</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1029,8 +1133,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>64</x>
-     <y>287</y>
+     <x>70</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1045,8 +1149,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>64</x>
-     <y>325</y>
+     <x>70</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1061,8 +1165,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>276</y>
+     <x>57</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1077,8 +1181,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>188</y>
+     <x>57</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1093,8 +1197,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>100</y>
+     <x>57</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1109,8 +1213,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>59</x>
-     <y>291</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1125,8 +1229,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>59</x>
-     <y>221</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1141,8 +1245,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>59</x>
-     <y>151</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1157,8 +1261,8 @@
    <slot>color_update_component(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>59</x>
-     <y>81</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1189,12 +1293,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>100</y>
+     <x>57</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>212</x>
-     <y>94</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1205,12 +1309,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>212</x>
-     <y>94</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>51</x>
-     <y>100</y>
+     <x>57</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1221,12 +1325,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>188</y>
+     <x>57</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>212</x>
-     <y>182</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1237,12 +1341,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>212</x>
-     <y>182</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>51</x>
-     <y>188</y>
+     <x>57</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1253,12 +1357,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>276</y>
+     <x>57</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>212</x>
-     <y>270</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1269,12 +1373,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>212</x>
-     <y>270</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>51</x>
-     <y>276</y>
+     <x>57</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1285,12 +1389,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>59</x>
-     <y>81</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>204</x>
-     <y>75</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1301,12 +1405,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>204</x>
-     <y>75</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>59</x>
-     <y>81</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1317,12 +1421,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>59</x>
-     <y>151</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>204</x>
-     <y>145</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1333,12 +1437,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>204</x>
-     <y>145</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>59</x>
-     <y>151</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1349,12 +1453,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>59</x>
-     <y>221</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>204</x>
-     <y>215</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1365,12 +1469,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>204</x>
-     <y>215</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>59</x>
-     <y>221</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1381,12 +1485,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>59</x>
-     <y>291</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>204</x>
-     <y>285</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1397,12 +1501,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>204</x>
-     <y>285</y>
+     <x>105</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel">
-     <x>59</x>
-     <y>291</y>
+     <x>65</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -1413,8 +1517,8 @@
    <slot>color_swap()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>149</x>
-     <y>428</y>
+     <x>206</x>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1435,6 +1539,22 @@
     <hint type="destinationlabel">
      <x>242</x>
      <y>438</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox</sender>
+   <signal>activated(int)</signal>
+   <receiver>tab_6</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>43</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>293</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>

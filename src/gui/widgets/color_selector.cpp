@@ -35,16 +35,18 @@ public:
     bool updating_color = false;
     Ui::ColorSelector ui;
     color_widgets::ColorPaletteModel palette_model;
-
+    ColorSelector* parent;
 
     void setup_ui(ColorSelector* parent)
     {
+        this->parent = parent;
         ui.setupUi(parent);
 
         update_color(QColor(app::settings::get<QString>("tools", "color_main")), true, nullptr);
         ui.palette_widget->setModel(&palette_model);
         palette_model.setSearchPaths(app::Application::instance()->data_paths_unchecked("palettes"));
         ui.color_preview_secondary->setColor(QColor(app::settings::get<QString>("tools", "color_secondary")));
+        connect(ui.color_preview_secondary, &color_widgets::ColorSelector::colorSelected, parent, &ColorSelector::secondary_color_changed);
 
     }
 
@@ -156,6 +158,7 @@ void ColorSelector::Private::update_color(const QColor& c, bool alpha, QObject* 
     ui.palette_widget->setDefaultColor(col);
 
     updating_color = false;
+    emit parent->current_color_changed(col);
 }
 
 void ColorSelector::Private::update_color_component(int val, QObject* sender)
@@ -209,6 +212,7 @@ void ColorSelector::Private::color_swap()
     ui.color_preview_secondary->setColor(current_color());
     ui.color_preview->setColor(c);
     update_color(c, true, nullptr);
+    emit parent->secondary_color_changed(current_color_secondary());
 }
 
 ColorSelector::ColorSelector(QWidget* parent)
@@ -247,7 +251,6 @@ void ColorSelector::color_update_alpha ( const QColor& col )
 
 void ColorSelector::color_update_noalpha ( const QColor& col )
 {
-
     d->update_color(col, false, QObject::sender());
 }
 
@@ -274,4 +277,10 @@ void ColorSelector::set_current_color(const QColor& c)
 void ColorSelector::set_secondary_color(const QColor& c)
 {
     d->set_current_color_secondary(c);
+}
+
+void ColorSelector::hide_secondary()
+{
+    d->ui.color_preview_secondary->hide();
+    d->ui.color_swap->hide();
 }

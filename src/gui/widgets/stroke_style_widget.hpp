@@ -21,15 +21,22 @@ public:
     void set_cap_style(model::Stroke::Cap cap);
     void set_join_style(model::Stroke::Join join);
 
-    QPen pen_style(const QBrush& color) const;
+    QPen pen_style() const;
 
 protected:
     void changeEvent ( QEvent* e ) override;
     void paintEvent(QPaintEvent * event) override;
 
+public slots:
+    void set_color(const QColor& color);
+
+signals:
+    void color_changed(const QColor& color);
+
 private slots:
     void check_cap();
     void check_join();
+    void check_color(const QColor& color);
 
 private:
     class Private;

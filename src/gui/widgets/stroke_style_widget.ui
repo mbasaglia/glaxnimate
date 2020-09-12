@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>197</width>
+    <width>262</width>
     <height>282</height>
    </rect>
   </property>
@@ -74,7 +74,8 @@
             <string>Butt</string>
            </property>
            <property name="icon">
-            <iconset theme="stroke-cap-butt"/>
+            <iconset theme="stroke-cap-butt">
+             <normaloff>.</normaloff>.</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -103,7 +104,8 @@
             <string>Round</string>
            </property>
            <property name="icon">
-            <iconset theme="stroke-cap-round"/>
+            <iconset theme="stroke-cap-round">
+             <normaloff>.</normaloff>.</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -132,7 +134,8 @@
             <string>Square</string>
            </property>
            <property name="icon">
-            <iconset theme="stroke-cap-square"/>
+            <iconset theme="stroke-cap-square">
+             <normaloff>.</normaloff>.</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -159,7 +162,8 @@
             <string>Bevel</string>
            </property>
            <property name="icon">
-            <iconset theme="stroke-join-bevel"/>
+            <iconset theme="stroke-join-bevel">
+             <normaloff>.</normaloff>.</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -188,7 +192,8 @@
             <string>Round</string>
            </property>
            <property name="icon">
-            <iconset theme="stroke-join-round"/>
+            <iconset theme="stroke-join-round">
+             <normaloff>.</normaloff>.</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -217,7 +222,8 @@
             <string>Miter</string>
            </property>
            <property name="icon">
-            <iconset theme="stroke-join-miter"/>
+            <iconset theme="stroke-join-miter">
+             <normaloff>.</normaloff>.</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -261,6 +267,28 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Color</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="ColorSelector" name="color_selector" native="true"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_2">
       <property name="enabled">
        <bool>false</bool>
@@ -301,6 +329,19 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColorSelector</class>
+   <extends>QWidget</extends>
+   <header>widgets/color_selector.hpp</header>
+   <container>1</container>
+   <slots>
+    <signal>secondary_color_changed(QColor)</signal>
+    <signal>current_color_changed(QColor)</signal>
+    <slot>set_secondary_color(QColor)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -310,12 +351,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>163</x>
-     <y>137</y>
+     <x>244</x>
+     <y>153</y>
     </hint>
     <hint type="destinationlabel">
-     <x>154</x>
-     <y>174</y>
+     <x>244</x>
+     <y>193</y>
     </hint>
    </hints>
   </connection>
@@ -331,7 +372,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>91</x>
-     <y>-47</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>
@@ -342,12 +383,12 @@
    <slot>check_cap()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>118</x>
-     <y>98</y>
+     <x>167</x>
+     <y>113</y>
     </hint>
     <hint type="destinationlabel">
      <x>116</x>
-     <y>-65</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>
@@ -358,8 +399,8 @@
    <slot>check_cap()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>180</x>
-     <y>94</y>
+     <x>244</x>
+     <y>113</y>
     </hint>
     <hint type="destinationlabel">
      <x>255</x>
@@ -374,8 +415,8 @@
    <slot>check_join()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>175</x>
-     <y>133</y>
+     <x>244</x>
+     <y>153</y>
     </hint>
     <hint type="destinationlabel">
      <x>243</x>
@@ -394,7 +435,7 @@
      <y>138</y>
     </hint>
     <hint type="destinationlabel">
-     <x>-23</x>
+     <x>0</x>
      <y>128</y>
     </hint>
    </hints>
@@ -406,11 +447,11 @@
    <slot>check_join()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>113</x>
-     <y>146</y>
+     <x>167</x>
+     <y>153</y>
     </hint>
     <hint type="destinationlabel">
-     <x>337</x>
+     <x>261</x>
      <y>180</y>
     </hint>
    </hints>
@@ -447,9 +488,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>color_selector</sender>
+   <signal>current_color_changed(QColor)</signal>
+   <receiver>StrokeStyleWidget</receiver>
+   <slot>check_color(QColor)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>203</x>
+     <y>158</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>464</x>
+     <y>203</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>check_join()</slot>
   <slot>check_cap()</slot>
+  <slot>check_color(QColor)</slot>
  </slots>
 </ui>

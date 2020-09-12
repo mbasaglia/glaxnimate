@@ -290,7 +290,7 @@ void GlaxnimateWindow::set_current_document_node(model::DocumentNode* node)
 
 QPen GlaxnimateWindow::current_pen_style() const
 {
-    return d->ui.stroke_style_widget->pen_style(secondary_color());
+    return d->ui.stroke_style_widget->pen_style();
 }
 
 std::vector<model::DocumentNode *> GlaxnimateWindow::cleaned_selection() const
