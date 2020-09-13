@@ -38,7 +38,6 @@ public:
     RemoveShape(model::ShapeElement* shape)
         : QUndoCommand(QObject::tr("Remove %1").arg(shape->docnode_name())),
           parent(shape->owner()),
-          shape(shape),
           position(shape->position())
     {}
 
