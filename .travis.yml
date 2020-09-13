@@ -38,7 +38,7 @@ jobs:
             - brew list cmake || brew install cmake
             - brew list qt || brew install qt
             - brew list python || brew install python
-            - brew install gcc@10
+            - brew upgrade gcc
         script:
             - mkdir build
             - cd build
