@@ -33,6 +33,7 @@ jobs:
             - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
       - name: "Mac"
         stage: build
+        if: branch = master
         os: osx
         compiler: gcc
         env:
@@ -48,4 +49,7 @@ jobs:
             - cd build
             - cmake .. -DQt5_DIR=$(brew --prefix qt)/lib/cmake/Qt5
             - make
+        after_success:
+            - ls bin
+            - ../deploy/bintray_upload.sh Dev bin/glaxnimate MacOs/glaxnimate
 
