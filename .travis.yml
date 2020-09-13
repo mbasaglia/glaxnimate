@@ -31,3 +31,13 @@ jobs:
             - PATH="/opt/qt515/bin/:$PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes/libqgtk3.so -appimage
             - mv glaxnimate-dev-x86_64.AppImage glaxnimate-x86_64.AppImage
             - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
+      - name: "Mac"
+        os: osx
+        before_install:
+            - brew install cmake qt5
+        script:
+            - mkdir build
+            - cd build
+            - cmake ..
+            - make
+
