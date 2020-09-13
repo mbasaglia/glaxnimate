@@ -112,7 +112,7 @@ Qt::ItemFlags item_models::DocumentNodeModel::flags ( const QModelIndex& index )
     }
 
     auto n = node(index);
-    if ( n && !n->docnode_locked_by_ancestor() )
+    if ( n && !n->docnode_locked_recursive() )
     {
         flags |= Qt::ItemIsDropEnabled;
         if ( !qobject_cast<model::MainComposition*>(n) )

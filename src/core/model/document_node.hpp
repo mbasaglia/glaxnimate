@@ -118,12 +118,26 @@ public:
      */
     virtual QRectF local_bounding_rect(FrameTime t) const = 0;
 
-    bool docnode_visible() const { return visible_; }
-    bool docnode_locked() const { return locked_; }
+    /**
+     * \brief \b true iff this node and all of its ancestors are visible and unlocked
+     */
     bool docnode_selectable() const;
+    /**
+     * \brief Visible setting for this node
+     */
+    bool docnode_visible() const;
+    /**
+     * \brief \b true iff this node and all of its ancestors are visible
+     */
     bool docnode_visible_recursive() const;
-
-    bool docnode_locked_by_ancestor() const;
+    /**
+     * \brief Locked setting for this node
+     */
+    bool docnode_locked() const;
+    /**
+     * \brief \b true iff this node or any of its ancestors is locked
+     */
+    bool docnode_locked_recursive() const;
 
     QString object_name() const override;
 
@@ -176,7 +190,13 @@ public:
 
     void paint(QPainter* painter, FrameTime time, PaintMode mode) const;
 
+    /**
+     * \brief Transform matrix mapping points from document coordinates to local coordinates
+     */
     QTransform transform_matrix(FrameTime t) const;
+    /**
+     * \brief Transform matrix mapping points from parent coordinates to local coordinates
+     */
     virtual QTransform local_transform_matrix(FrameTime) const { return QTransform(); }
 
     Q_INVOKABLE model::DocumentNode* find_by_name(const QString& name) { return docnode_find_by_name(name); }
@@ -191,6 +211,10 @@ public:
         return ret;
     }
 
+    /**
+     * \brief Updates the name of this node and all of its children
+     *        using the "best name" document functions
+     */
     void recursive_rename();
 
 private:

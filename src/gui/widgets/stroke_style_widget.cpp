@@ -23,7 +23,7 @@ public:
 
     bool can_update_target()
     {
-        return target && !target->docnode_locked_by_ancestor();
+        return target && !target->docnode_locked_recursive();
     }
 
     void update_background(const QColor& color)

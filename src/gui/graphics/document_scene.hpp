@@ -34,8 +34,15 @@ public:
     void toggle_selection(model::DocumentNode* node);
     void clear_selection();
     void user_select(const std::vector<model::DocumentNode*>& selected, SelectMode flags);
+
+    /// Currently selected nodes
     const std::vector<model::DocumentNode*>& selection() const;
+    /// Top-level items for selected nodes
+    std::vector<model::DocumentNode*> cleaned_selection();
+
+
     bool is_selected(model::DocumentNode* node) const;
+    bool is_descendant_of_selection(model::DocumentNode* node) const;
     void show_editors(model::DocumentNode* node);
 
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const;

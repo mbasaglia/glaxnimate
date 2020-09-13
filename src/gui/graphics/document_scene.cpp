@@ -1,6 +1,6 @@
 #include "document_scene.hpp"
 
-#include <unordered_set>
+#include <set>
 
 #include "graphics/document_node_graphics_item.hpp"
 #include "graphics/create_items.hpp"
@@ -45,6 +45,11 @@ public:
     std::vector<model::DocumentNode*>::iterator selection_find(model::DocumentNode* node)
     {
         return std::find(selection.begin(), selection.end(), node);
+    }
+
+    model::Composition* current_composition()
+    {
+        return document->main_composition();
     }
 
 
@@ -290,6 +295,53 @@ std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(
 bool graphics::DocumentScene::is_selected(model::DocumentNode* node) const
 {
     return d->selection_find(node) != d->selection.end();
+}
+
+bool graphics::DocumentScene::is_descendant_of_selection(model::DocumentNode* node) const
+{
+    for ( ; node ; node = node->docnode_parent() )
+        if ( is_selected(node) )
+            return true;
+    return false;
+}
+
+
+namespace {
+
+struct SelectionFetcher
+{
+    std::set<model::DocumentNode*> to_search;
+    int draw_order = 0;
+    std::vector<int> indices;
+    std::vector<model::DocumentNode*> selection;
+
+    void gather(model::DocumentNode* node)
+    {
+        if ( to_search.count(node) )
+        {
+            auto it = std::upper_bound(indices.begin(), indices.end(), draw_order);
+            indices.insert(it, draw_order);
+            selection.insert(selection.begin() + (it - indices.begin()), node);
+            draw_order++;
+        }
+        else
+        {
+            for ( auto ch : node->docnode_children() )
+                gather(ch);
+        }
+    }
+};
+
+} // namespace
+
+std::vector<model::DocumentNode *> graphics::DocumentScene::cleaned_selection()
+{
+    SelectionFetcher fetcher;
+    fetcher.to_search.insert(d->selection.begin(), d->selection.end());
+    fetcher.indices.reserve(fetcher.to_search.size());
+    fetcher.selection.reserve(fetcher.to_search.size());
+    fetcher.gather(d->current_composition());
+    return fetcher.selection;
 }
 
 const std::vector<model::DocumentNode *> & graphics::DocumentScene::selection() const

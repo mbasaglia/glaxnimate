@@ -1,5 +1,7 @@
 #include "base.hpp"
 
+#include <variant>
+#include "model/shapes/path.hpp"
 #include "widgets/node_menu.hpp"
 
 namespace tools {
@@ -20,6 +22,62 @@ private:
         RubberBand,
         ForwardEvents,
         DrawSelect,
+        DragObject,
+    };
+
+
+    struct DragObjectData
+    {
+        template<class Prop>
+        struct PropData
+        {
+            Prop* property;
+            typename Prop::value_type start_value;
+        };
+        using Variant = std::variant<
+            PropData<model::AnimatedProperty<QPointF>>,
+            PropData<model::AnimatablePath>
+        >;
+
+        template<class T>
+        DragObjectData(model::DocumentNode* node, T* property, const QPointF& scene_pos)
+        : transform(node->transform_matrix(node->time())),
+          data(PropData<T>{property, property->get()}),
+          start_point(transform.map(scene_pos))
+        {}
+
+        static void push(model::DocumentNode* node, const QPointF& scene_pos, std::vector<DragObjectData>& out)
+        {
+            if ( auto prop = node->get_property("position") )
+                out.push_back(DragObjectData(node, static_cast<model::AnimatedProperty<QPointF>*>(prop), scene_pos));
+            if ( auto prop = node->get_property("transform") )
+                out.push_back(DragObjectData(
+                    node,
+                    &static_cast<model::SubObjectProperty<model::Transform>*>(prop)->get()->position,
+                    scene_pos)
+                );
+            else if ( auto shape = qobject_cast<model::Path*>(node) )
+                out.push_back(DragObjectData(node, &shape->shape, scene_pos));
+        }
+
+        void drag(const QPointF& dragged_to, bool commit) const
+        {
+            QPointF delta = transform.map(dragged_to) - start_point;
+            if ( data.index() == 0 )
+            {
+                std::get<0>(data).property->set_undoable(std::get<0>(data).start_value + delta, commit);
+                return;
+            }
+
+            math::Bezier new_bezier = std::get<1>(data).start_value;
+            for ( auto& point : new_bezier )
+                point.translate(delta);
+            std::get<1>(data).property->set_undoable(QVariant::fromValue(new_bezier), commit);
+        }
+
+        QTransform transform;
+        Variant data;
+        QPointF start_point;
     };
 
     void mouse_press(const MouseEvent& event) override
@@ -34,15 +92,43 @@ private:
             }
 
             drag_mode = Click;
+            rubber_p1 = event.event->localPos();
 
-            if ( mouse_on_handle(event) )
+            auto clicked_on = under_mouse(event, true);
+            if ( clicked_on.handle )
             {
                 drag_mode = ForwardEvents;
                 event.forward_to_scene();
                 return;
             }
+            else if ( !clicked_on.nodes.empty() )
+            {
+                drag_data.clear();
+                replace_selection = nullptr;
 
-            rubber_p1 = event.event->localPos();
+                bool drag_selection = false;
+
+                for ( auto node : clicked_on.nodes )
+                {
+                    if ( event.scene->is_descendant_of_selection(node) )
+                    {
+                        drag_selection = true;
+                        break;
+                    }
+                }
+
+                if ( drag_selection )
+                {
+                    for ( auto node : event.scene->cleaned_selection() )
+                        DragObjectData::push(node, event.event->localPos(), drag_data);
+                }
+                else
+                {
+                    replace_selection = clicked_on.nodes[0];
+                    DragObjectData::push(clicked_on.nodes[0], event.event->localPos(), drag_data);
+                }
+            }
+
         }
     }
 
@@ -50,19 +136,39 @@ private:
     {
         if ( event.press_button == Qt::LeftButton )
         {
-            if ( drag_mode == ForwardEvents )
+            switch ( drag_mode )
             {
-                event.forward_to_scene();
-            }
-            else if ( drag_mode == DrawSelect )
-            {
-                draw_path.lineTo(event.scene_pos);
-            }
-            else if ( drag_mode == Click || drag_mode == RubberBand )
-            {
-                rubber_p2 = event.event->localPos();
-                if ( drag_mode == Click && (rubber_p1 - rubber_p2).manhattanLength() > 4 )
-                    drag_mode = RubberBand;
+                case None:
+                    break;
+                case ForwardEvents:
+                    event.forward_to_scene();
+                    break;
+                case DrawSelect:
+                    draw_path.lineTo(event.scene_pos);
+                    break;
+                case Click:
+                    if ( !drag_data.empty() )
+                    {
+                        if ( replace_selection )
+                        {
+                            event.scene->user_select({replace_selection}, graphics::DocumentScene::Replace);
+                            replace_selection = nullptr;
+                        }
+                        drag_mode = DragObject;
+                    }
+                    else
+                    {
+                        drag_mode = RubberBand;
+                    }
+                    mouse_move(event);
+                    break;
+                case RubberBand:
+                    rubber_p2 = event.event->localPos();
+                    break;
+                case DragObject:
+                    for ( const auto& dragger : drag_data )
+                        dragger.drag(event.event->localPos(), false);
+                    break;
             }
         }
     }
@@ -89,45 +195,56 @@ private:
     {
         if ( event.button() == Qt::LeftButton )
         {
-            if ( drag_mode == ForwardEvents )
+            switch ( drag_mode )
             {
-                event.forward_to_scene();
-            }
-            else if ( drag_mode == DrawSelect )
-            {
-                draw_path.lineTo(event.scene_pos);
-
-                complex_select(event, event.scene->nodes(draw_path, event.view->viewportTransform()));
-                draw_path = {};
-                event.view->viewport()->update();
-            }
-            else if ( drag_mode == RubberBand )
-            {
-                rubber_p2 = event.event->localPos();
-                auto poly = event.view->mapToScene(QRect(rubber_p1.toPoint(), rubber_p2.toPoint()).normalized());
-                complex_select(event, event.scene->nodes(poly, event.view->viewportTransform()));
-
-                drag_mode = None;
-                event.view->viewport()->update();
-            }
-            else if ( drag_mode == Click )
-            {
-                std::vector<model::DocumentNode*> selection;
-
-                for ( auto item : event.scene->nodes(event.scene_pos, event.view->viewportTransform()) )
+                case None:
+                    break;
+                case ForwardEvents:
+                    event.forward_to_scene();
+                    break;
+                case DrawSelect:
+                    draw_path.lineTo(event.scene_pos);
+                    complex_select(event, event.scene->nodes(draw_path, event.view->viewportTransform()));
+                    draw_path = {};
+                    event.view->viewport()->update();
+                    break;
+                case RubberBand:
+                    rubber_p2 = event.event->localPos();
+                    complex_select(event, event.scene->nodes(
+                        event.view->mapToScene(QRect(rubber_p1.toPoint(), rubber_p2.toPoint()).normalized()),
+                        event.view->viewportTransform())
+                    );
+                    drag_mode = None;
+                    event.view->viewport()->update();
+                    break;
+                case Click:
                 {
-                    if ( item->node()->docnode_selectable() && !item->node()->docnode_selection_container() )
+                    replace_selection = nullptr;
+
+                    std::vector<model::DocumentNode*> selection;
+
+                    for ( auto node : under_mouse(event, true).nodes )
                     {
-                        selection.push_back(item->node());
-                        break;
+                        if ( !node->docnode_selection_container() )
+                        {
+                            selection.push_back(node);
+                            break;
+                        }
                     }
+
+                    auto mode = graphics::DocumentScene::Replace;
+                    if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
+                        mode = graphics::DocumentScene::Toggle;
+
+                    event.scene->user_select(selection, mode);
                 }
-
-                auto mode = graphics::DocumentScene::Replace;
-                if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
-                    mode = graphics::DocumentScene::Toggle;
-
-                event.scene->user_select(selection, mode);
+                break;
+                case DragObject:
+                    for ( const auto& dragger : drag_data )
+                        dragger.drag(event.event->localPos(), true);
+                    drag_data.clear();
+                    replace_selection = nullptr;
+                    break;
             }
 
             drag_mode = None;
@@ -229,6 +346,9 @@ private:
     QPainterPath draw_path;
     QPointF rubber_p1;
     QPointF rubber_p2;
+    std::vector<DragObjectData> drag_data;
+    model::DocumentNode* replace_selection = nullptr;
+
     static Autoreg<SelectTool> autoreg;
 };
 

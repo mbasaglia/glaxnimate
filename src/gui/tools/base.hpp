@@ -166,12 +166,29 @@ public:
     virtual void disable_event(const Event& event) = 0;
 
 protected:
-    bool mouse_on_handle(const MouseEvent& event) const
+    struct UnderMouse
     {
+        QGraphicsItem* handle = nullptr;
+        std::vector<model::DocumentNode*> nodes;
+    };
+
+    UnderMouse under_mouse(const MouseEvent& event, bool only_selectable) const
+    {
+        UnderMouse ret;
         for ( auto item : event.scene->items(event.scene_pos, Qt::IntersectsItemShape, Qt::DescendingOrder, event.view->viewportTransform()) )
-            if ( item->flags() & QGraphicsItem::ItemIsFocusable && !event.scene->item_to_node(item) )
-                return true;
-        return false;
+        {
+            if ( auto node = event.scene->item_to_node(item) )
+            {
+                if ( !only_selectable || node->docnode_selectable() )
+                    ret.nodes.push_back(node);
+            }
+            else if ( !ret.handle && (item->flags() & QGraphicsItem::ItemIsFocusable) )
+            {
+                ret.handle = item;
+            }
+        }
+
+        return ret;
     }
 
     virtual QWidget* on_create_widget()

@@ -201,7 +201,8 @@ public:
 
     Subtree* node(id_type id)
     {
-        return &nodes.find(id)->second;
+        auto it = nodes.find(id);
+        return it != nodes.end() ? &it->second : nullptr;
     }
 
     model::Document* document = nullptr;

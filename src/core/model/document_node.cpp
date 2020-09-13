@@ -101,7 +101,12 @@ const QPixmap & model::DocumentNode::docnode_group_icon() const
     return group_icon;
 }
 
-bool model::DocumentNode::docnode_locked_by_ancestor() const
+bool model::DocumentNode::docnode_locked() const
+{
+    return locked_;
+}
+
+bool model::DocumentNode::docnode_locked_recursive() const
 {
     for ( const DocumentNode* n = this; n; n = n->docnode_parent() )
     {
@@ -132,13 +137,18 @@ bool model::DocumentNode::docnode_selectable() const
     return true;
 }
 
+bool model::DocumentNode::docnode_visible() const
+{
+    return visible_;
+}
+
 bool model::DocumentNode::docnode_visible_recursive() const
 {
     if ( !visible_ )
         return false;
     auto p = docnode_parent();
     if ( p )
-        return p->docnode_selectable();
+        return p->docnode_visible_recursive();
     return true;
 }
 
