@@ -33,7 +33,6 @@ jobs:
             - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
       - name: "Mac"
         stage: build
-        if: branch = master
         os: osx
         compiler: gcc
         env:
@@ -51,5 +50,5 @@ jobs:
             - make
         after_success:
             - ls bin
-            - ../deploy/bintray_upload.sh Dev bin/glaxnimate MacOs/glaxnimate
+            - ../deploy/bintray_upload.sh Dev bin/glaxnimate "$TRAVIS_BRANCH/MacOs/glaxnimate"
 
