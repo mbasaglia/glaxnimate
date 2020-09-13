@@ -17,11 +17,6 @@ Dependencies
 * ZLib
 
 
-### Installing Dependencies on Deb systems
-
-    apt-get install -y g++ cmake qtbase5-dev libpython3-dev zlib1g-dev
-
-
 Getting the Latest Code
 ---------------------------------------
 
@@ -35,6 +30,8 @@ To clone with git:
 Building
 ---------------------------------------
 
+### Generic Overview
+
 If you are building from git, ensure your submodules are up to date
 
     git submodule update --init --recursive
@@ -47,6 +44,35 @@ Standard CMake build commands work
     make -j 4 # This uses 4 cores to compile
 
 It will produce the executable `bin/glaxnimate` relative to the build directory
+
+
+### Deb-based systems (Ubuntu, Debian, etc)
+
+Install the dependencies:
+
+    apt-get install -y g++ cmake qtbase5-dev libpython3-dev zlib1g-dev
+
+The generic `cmake` commands listed above should work.
+
+
+### MacOS
+
+Install the dependencies with homebrew:
+
+    brew install cmake qt python gcc@10
+
+Ensure you are using GCC (it seems clang has issues with C++17).
+
+    export CC=gcc-10
+    export CXX=g++-10
+
+
+Build with `cmake`, specifying the Qt installation path:
+
+    mkdir build
+    cd build
+    cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5"
+    make
 
 
 Contacts
