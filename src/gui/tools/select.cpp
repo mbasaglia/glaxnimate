@@ -1,7 +1,10 @@
 #include "base.hpp"
 
 #include <variant>
+
 #include "model/shapes/path.hpp"
+#include "command/structure_commands.hpp"
+
 #include "widgets/node_menu.hpp"
 
 namespace tools {
@@ -257,7 +260,14 @@ private:
 
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
-    void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
+    void key_release(const KeyEvent& event) override
+    {
+        if ( drag_mode == None && (event.key() == Qt::Key_Delete || event.key() == Qt::Key_Backspace) )
+        {
+            event.window->delete_selected();
+            event.accept();
+        }
+    }
 
     void paint(const PaintEvent& event) override
     {
@@ -328,6 +338,10 @@ private:
                        event.window, &GlaxnimateWindow::copy);
         menu.addAction(QIcon::fromTheme("edit-paste"), GlaxnimateWindow::tr("Paste"),
                        event.window, &GlaxnimateWindow::paste);
+
+        menu.addSeparator();
+        menu.addAction(QIcon::fromTheme("edit-delete-remove"), GlaxnimateWindow::tr("Delete"),
+                       event.window, &GlaxnimateWindow::delete_selected);
 
         if ( best )
         {

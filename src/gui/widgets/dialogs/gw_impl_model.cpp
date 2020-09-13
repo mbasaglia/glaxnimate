@@ -126,6 +126,19 @@ std::vector<model::DocumentNode *> GlaxnimateWindow::Private::cleaned_selection(
     return scene.cleaned_selection();
 }
 
+
+void GlaxnimateWindow::Private::delete_selected()
+{
+    auto selection = cleaned_selection();
+    if ( selection.empty() )
+        return;
+
+    current_document->undo_stack().beginMacro(tr("Delete"));
+    for ( auto item : selection )
+        current_document->push_command(new command::DeleteCommand(item));
+    current_document->undo_stack().endMacro();
+}
+
 void GlaxnimateWindow::Private::cut()
 {
     auto selection = copy();

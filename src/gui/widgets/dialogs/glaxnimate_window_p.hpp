@@ -108,6 +108,7 @@ public:
     std::vector<model::DocumentNode*> copy();
     void paste();
     void cut();
+    void delete_selected();
 
     template<class LayerT>
     void layer_new()

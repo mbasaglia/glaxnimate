@@ -313,3 +313,7 @@ void GlaxnimateWindow::cut() const
     d->cut();
 }
 
+void GlaxnimateWindow::delete_selected()
+{
+    d->delete_selected();
+}

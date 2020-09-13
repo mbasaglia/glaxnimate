@@ -66,6 +66,8 @@ public:
      */
     std::vector<model::DocumentNode*> cleaned_selection() const;
 
+    void delete_selected();
+
 
 public slots:
     void document_save();
