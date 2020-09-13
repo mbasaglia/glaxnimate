@@ -34,6 +34,10 @@ jobs:
       - name: "Mac"
         stage: build
         os: osx
+        compiler: gcc
+        env:
+            - CC=gcc-10
+            - CXX=g++-10
         before_install:
             - brew list cmake || brew install cmake
             - brew list qt || brew install qt

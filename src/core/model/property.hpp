@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <functional>
 #include <iterator>
+#include <optional>
 
 #include <QString>
 #include <QPointF>
