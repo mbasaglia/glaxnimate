@@ -36,11 +36,11 @@ jobs:
         os: osx
         before_install:
             - brew list cmake || brew install cmake
-            - brew list qt5 || brew install qt5
+            - brew list qt || brew install qt
             - brew list python || brew install python
         script:
             - mkdir build
             - cd build
-            - cmake ..
+            - cmake .. -DQt5_DIR=$(brew --prefix qt)/lib/cmake/Qt5
             - make
 
