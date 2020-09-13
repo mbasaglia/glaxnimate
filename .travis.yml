@@ -10,12 +10,13 @@ jobs:
         dist: xenial
         before_install:
             - sudo apt-get update -qq
-            - sudo apt-get install -y libpython3-dev git python3-pip software-properties-common desktop-file-utils wget zlib1g-dev
+            - sudo apt-get install -y libpython3-dev git python3-pip software-properties-common desktop-file-utils wget zlib1g-dev python3
             - sudo add-apt-repository ppa:beineri/opt-qt-5.15.0-xenial -y
             - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
             - sudo apt update -qq
             - sudo apt-get install -y qt515base qt515tools qt515translations libgl1-mesa-dev g++-9
             - sudo pip3 install cmake
+            - sudo rm -rf /opt/pyenv/
         script:
             - mkdir build
             - cd build
