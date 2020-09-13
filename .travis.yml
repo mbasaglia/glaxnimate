@@ -32,9 +32,12 @@ jobs:
             - mv glaxnimate-dev-x86_64.AppImage glaxnimate-x86_64.AppImage
             - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
       - name: "Mac"
+        stage: build
         os: osx
         before_install:
-            - brew install cmake qt5
+            - brew list cmake || brew install cmake
+            - brew list qt5 || brew install qt5
+            - brew list python || brew install python
         script:
             - mkdir build
             - cd build
