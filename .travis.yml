@@ -16,7 +16,6 @@ jobs:
             - sudo apt update -qq
             - sudo apt-get install -y qt515base qt515tools qt515translations libgl1-mesa-dev g++-9
             - sudo pip3 install cmake
-        after_install:
             - sudo apt-get remove cmake
         script:
             - mkdir build
