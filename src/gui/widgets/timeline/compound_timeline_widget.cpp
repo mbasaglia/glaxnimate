@@ -349,7 +349,7 @@ void CompoundTimelineWidget::add_keyframe()
     if ( !d->menu_anim )
         return;
 
-    d->menu_anim->object()->document()->undo_stack().push(
+    d->menu_anim->object()->push_command(
         new command::SetKeyframe(d->menu_anim, d->menu_anim->time(), d->menu_anim->value(), true)
     );
 }

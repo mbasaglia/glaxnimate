@@ -21,7 +21,7 @@ public:
         time(time),
         before(prop->value(time)),
         after(value),
-        had_before(prop->keyframe_status(time) != model::AnimatableBase::Tween)
+        had_before(prop->has_keyframe(time))
     {}
 
     void undo() override

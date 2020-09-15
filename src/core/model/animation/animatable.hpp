@@ -200,6 +200,13 @@ public:
         return Tween;
     }
 
+    bool has_keyframe(FrameTime time) const
+    {
+        if ( !animated() )
+            return false;
+        return keyframe(keyframe_index(time))->time() == time;
+    }
+
 signals:
     void keyframe_added(int index, KeyframeBase* keyframe);
     void keyframe_removed(int index);
@@ -325,6 +332,7 @@ public:
         {
             keyframes_.erase(keyframes_.begin() + i);
             emit this->keyframe_removed(i);
+            value_changed();
         }
     }
 
@@ -344,6 +352,7 @@ public:
             {
                 keyframes_.erase(it);
                 emit this->keyframe_removed(it - keyframes_.begin());
+                value_changed();
                 return true;
             }
         }
