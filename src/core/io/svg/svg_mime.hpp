@@ -6,11 +6,12 @@
 #include "io/svg/svg_renderer.hpp"
 #include "io/mime/mime_serializer.hpp"
 
-namespace io::mime {
+namespace io::svg {
 
 class SvgMime : public io::mime::MimeSerializer
 {
 public:
+    QString slug() const override { return "svg"; }
     QString name() const override { return QObject::tr("SVG"); }
     QStringList mime_types() const override { return {"image/svg+xml"}; }
 
@@ -47,6 +48,9 @@ public:
 
     /// \todo show in settings
     io::svg::SvgParser::GroupMode deserialize_group_mode = io::svg::SvgParser::Inkscape;
+
+private:
+    static Autoreg<SvgMime> autoreg;
 };
 
-} // namespace io::mime
+} // namespace io::svg

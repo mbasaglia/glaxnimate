@@ -218,7 +218,7 @@ void GlaxnimateWindow::Private::document_open_from_filename(const QString& filen
     if ( finfo.isFile() )
     {
         io::Options opts;
-        opts.format = io::ImportExport::factory().from_filename(filename);
+        opts.format = io::IoRegistry::instance().from_filename(filename);
         opts.path = finfo.dir();
         opts.filename = filename;
 

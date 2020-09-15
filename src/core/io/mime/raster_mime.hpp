@@ -12,6 +12,7 @@ namespace io::mime {
 class RasterMime : public io::mime::MimeSerializer
 {
 public:
+    QString slug() const override { return "raster"; }
     QString name() const override { return QObject::tr("Raster Image"); }
     QStringList mime_types() const override { return {}; }
 
@@ -49,6 +50,8 @@ public:
             node->paint(&painter, node->time(), model::DocumentNode::Recursive);
         return image;
     }
+private:
+    static Autoreg<RasterMime> autoreg;
 };
 
 } // namespace io::mime

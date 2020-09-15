@@ -4,7 +4,7 @@
 #include <QDialogButtonBox>
 #include <QMessageBox>
 
-#include "io/base.hpp"
+#include "io/io_registry.hpp"
 #include "model/document.hpp"
 #include "app/settings/widget_builder.hpp"
 
@@ -31,10 +31,10 @@ public:
         dialog.setWindowTitle(QObject::tr("Save file"));
         dialog.setAcceptMode(QFileDialog::AcceptSave);
         dialog.setFileMode(QFileDialog::AnyFile);
-        setup_file_dialog(dialog, io::ImportExport::factory().exporters(), io_options_.format, false);
+        setup_file_dialog(dialog, io::IoRegistry::instance().exporters(), io_options_.format, false);
         while ( true )
         {
-            if ( !show_file_dialog(dialog, io::ImportExport::factory().exporters()) )
+            if ( !show_file_dialog(dialog, io::IoRegistry::instance().exporters()) )
                 return false;
 
             // For some reason the file dialog shows the option to do this automatically but it's disabled
@@ -71,8 +71,8 @@ public:
         dialog.setWindowTitle(QObject::tr("Open file"));
         dialog.setAcceptMode(QFileDialog::AcceptOpen);
         dialog.setFileMode(QFileDialog::ExistingFile);
-        setup_file_dialog(dialog, io::ImportExport::factory().importers(), io_options_.format, true);
-        if ( show_file_dialog(dialog, io::ImportExport::factory().importers()) )
+        setup_file_dialog(dialog, io::IoRegistry::instance().importers(), io_options_.format, true);
+        if ( show_file_dialog(dialog, io::IoRegistry::instance().importers()) )
             return options_dialog(io_options_.format->open_settings());
         return false;
     }
@@ -107,7 +107,7 @@ private:
         }
         else
         {
-            io_options_.format = io::ImportExport::factory().from_filename(io_options_.filename);
+            io_options_.format = io::IoRegistry::instance().from_filename(io_options_.filename);
         }
 
         if ( !io_options_.format )

@@ -1,12 +1,17 @@
 #pragma once
 
+#include <memory>
+
 #include <QString>
 #include <QStringList>
 #include <QByteArray>
 #include <QMimeData>
-#include <QIcon>
 
-#include "model/document_node.hpp"
+namespace model {
+    class DocumentNode;
+    class Document;
+    class Composition;
+} // namespace model
 
 namespace io::mime {
 
@@ -15,6 +20,7 @@ class MimeSerializer
 public:
     virtual ~MimeSerializer() = default;
 
+    virtual QString slug() const = 0;
     virtual QString name() const = 0;
     virtual QStringList mime_types() const = 0;
 
@@ -39,17 +45,7 @@ public:
         const QMimeData& data,
         model::Document* owner_document,
         model::Composition* owner_composition
-    ) const
-    {
-        if ( !can_deserialize() )
-            return {};
-
-        for ( const QString& mime : mime_types() )
-            if ( data.hasFormat(mime) )
-                return deserialize(data.data(mime), owner_document, owner_composition);
-
-        return {};
-    }
+    ) const;
 
 };
 

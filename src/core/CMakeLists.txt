@@ -10,10 +10,12 @@ io/lottie/tgs_format.cpp
 io/lottie/cbor_write_json.cpp
 io/glaxnimate/glaxnimate_format.cpp
 io/glaxnimate/glaxnimate_importer.cpp
+io/glaxnimate/glaxnimate_mime.cpp
 io/svg/svg_renderer.cpp
 io/svg/svg_parser.cpp
 io/svg/detail.cpp
 io/svg/svg_format.cpp
+io/mime/mime_serializer.cpp
 io/base.cpp
 
 math/bezier.cpp

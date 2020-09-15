@@ -6,18 +6,15 @@
 #include <QSpacerItem>
 
 #include "app/application.hpp"
-#include "io/glaxnimate/glaxnimate_format.hpp"
-#include "io/mime/txt_mime.hpp"
-#include "io/mime/svg_mime.hpp"
-#include "io/mime/raster_mime.hpp"
+#include "io/io_registry.hpp"
 
 static std::vector<ClipboardSettings::MimeSettings>& mutable_mime_types()
 {
     static std::vector<ClipboardSettings::MimeSettings> settings {
-        {"", io::glaxnimate::GlaxnimateFormat::instance(), true, QIcon(app::Application::instance()->data_file("images/logo.svg"))},
-        {"svg", new io::mime::SvgMime, true, QIcon::fromTheme("image-svg+xml")},
-        {"raster", new io::mime::RasterMime, false, QIcon::fromTheme("image-png")},
-        {"json", new io::mime::JsonMime, false, QIcon::fromTheme("application-json")},
+        {io::IoRegistry::instance().serializer_from_slug("glaxnimate"), true, QIcon(app::Application::instance()->data_file("images/logo.svg"))},
+        {io::IoRegistry::instance().serializer_from_slug("svg"),        true, QIcon::fromTheme("image-svg+xml")},
+        {io::IoRegistry::instance().serializer_from_slug("raster"),     false, QIcon::fromTheme("image-png")},
+        {io::IoRegistry::instance().serializer_from_slug("json"),       false, QIcon::fromTheme("application-json")},
     };
     return settings;
 }
@@ -30,15 +27,15 @@ const std::vector<ClipboardSettings::MimeSettings>& ClipboardSettings::mime_type
 void ClipboardSettings::load(const QSettings & settings)
 {
     for ( auto& set : mutable_mime_types() )
-        if ( !set.slug.isEmpty() )
-            set.enabled = settings.value(set.slug, set.enabled).toBool();
+        if ( set.serializer->slug() != "glaxnimate" )
+            set.enabled = settings.value(set.serializer->slug(), set.enabled).toBool();
 }
 
 void ClipboardSettings::save(QSettings & settings)
 {
     for ( auto& set : mutable_mime_types() )
-        if ( !set.slug.isEmpty() )
-            settings.setValue(set.slug, set.enabled);
+        if ( set.serializer->slug() != "glaxnimate" )
+            settings.setValue(set.serializer->slug(), set.enabled);
 }
 
 QWidget * ClipboardSettings::make_widget(QWidget* parent)
@@ -53,7 +50,7 @@ QWidget * ClipboardSettings::make_widget(QWidget* parent)
         check->setCheckable(true);
         check->setChecked(mt.enabled);
         check->setIcon(mt.icon);
-        if ( mt.slug.isEmpty() )
+        if ( mt.serializer->slug() == "glaxnimate" )
             check->setEnabled(false);
         else
             QObject::connect(check, &QCheckBox::clicked, [&mt](bool b){ mt.enabled = b; });

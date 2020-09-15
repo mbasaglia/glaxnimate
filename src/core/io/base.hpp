@@ -74,62 +74,6 @@ public:
     Q_INVOKABLE QString name_filter() const;
 
 
-    class Factory
-    {
-    public:
-        ImportExport* register_object(std::unique_ptr<ImportExport> ie)
-        {
-            object_list.push_back(std::move(ie));
-            ImportExport* format = object_list.back().get();
-            if ( format->can_save() )
-                exporters_.push_back(format);
-            if ( format->can_open() )
-                importers_.push_back(format);
-            return format;
-        }
-
-        const std::vector<ImportExport*>& importers() const { return importers_; }
-        const std::vector<ImportExport*>& exporters() const { return exporters_; }
-
-        const std::vector<std::unique_ptr<ImportExport>>& registered() const
-        {
-            return object_list;
-        }
-
-        ImportExport* from_extension(const QString& extension) const
-        {
-            for ( const auto& p : object_list )
-                if ( p->can_handle_extension(extension) )
-                    return p.get();
-
-            return nullptr;
-        }
-
-        ImportExport* from_filename(const QString& filename) const
-        {
-            for ( const auto& p : object_list )
-                if ( p->can_handle_filename(filename) )
-                    return p.get();
-
-            return nullptr;
-        }
-
-    private:
-        std::vector<std::unique_ptr<ImportExport>> object_list;
-        std::vector<ImportExport*> importers_;
-        std::vector<ImportExport*> exporters_;
-
-        Factory() = default;
-        ~Factory() = default;
-        friend ImportExport;
-    };
-
-    static Factory& factory()
-    {
-        static Factory factory;
-        return factory;
-    }
-
 protected:
     virtual bool on_open(QIODevice& file, const QString& filename,
                       model::Document* document, const QVariantMap& setting_values)
@@ -156,21 +100,6 @@ signals:
     void progress_max_changed(int max);
     void progress(int value);
     void completed(bool success);
-};
-
-
-
-template<class Derived>
-class Autoreg
-{
-public:
-    template<class... Args>
-    Autoreg(Args&&... args)
-    : registered { static_cast<Derived*>(
-        ImportExport::factory().register_object(std::make_unique<Derived>(std::forward<Args>(args)...))
-    ) } {}
-
-    Derived* const registered;
 };
 
 } // namespace io

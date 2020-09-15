@@ -4,12 +4,12 @@
 #include <QJsonObject>
 #include <QByteArray>
 #include "io/base.hpp"
-#include "io/mime/mime_serializer.hpp"
+#include "io/io_registry.hpp"
 
 namespace io::glaxnimate {
 
 
-class GlaxnimateFormat : public ImportExport, public io::mime::MimeSerializer
+class GlaxnimateFormat : public ImportExport
 {
     Q_OBJECT
 
@@ -30,25 +30,12 @@ public:
     static QJsonObject format_metadata();
     static GlaxnimateFormat* instance() { return autoreg.registered; }
 
-    QStringList mime_types() const override;
-    static QJsonDocument serialize_json(const std::vector<model::DocumentNode*>& objects);
-    QByteArray serialize(const std::vector<model::DocumentNode*>& objects) const override;
-    std::vector<std::unique_ptr<model::DocumentNode>> deserialize(
-        const QByteArray& data,
-        model::Document* owner_document,
-        model::Composition* owner_composition
-    ) const override;
-    bool can_deserialize() const override { return true; }
-
-    Q_INVOKABLE QVariant serialize(model::Object* object);
-
 protected:
     bool on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
     bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
 
 private:
     static Autoreg<GlaxnimateFormat> autoreg;
-    class ImportState;
 };
 
 

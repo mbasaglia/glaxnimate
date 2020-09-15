@@ -105,15 +105,24 @@ void define_io(py::module& m)
 {
     py::module io = m.def_submodule("io", "Input/Output utilities");
 
-    using Fac = io::ImportExport::Factory;
-    py::class_<Fac, std::unique_ptr<Fac, py::nodelete>>(io, "Factory")
+    py::class_<io::mime::MimeSerializer>(io, "MimeSerializer")
+        .def_property_readonly("slug", &io::mime::MimeSerializer::slug)
+        .def_property_readonly("name", &io::mime::MimeSerializer::name)
+        .def_property_readonly("mime_types", &io::mime::MimeSerializer::mime_types)
+        .def("serialize", &io::mime::MimeSerializer::serialize)
+    ;
+
+    using Fac = io::IoRegistry;
+    py::class_<Fac, std::unique_ptr<Fac, py::nodelete>>(io, "IoRegistry")
         .def("importers", &Fac::importers, no_own)
         .def("exporters", &Fac::exporters, no_own)
         .def("from_extension", &Fac::from_extension, no_own)
         .def("from_filename", &Fac::from_filename, no_own)
+        .def("serializers", &Fac::serializers, no_own)
+        .def("serializer_from_slug", &Fac::serializer_from_slug, no_own)
     ;
 
-    io.attr("factory") = std::unique_ptr<Fac, py::nodelete>(&io::ImportExport::factory());
+    io.attr("registry") = std::unique_ptr<Fac, py::nodelete>(&io::IoRegistry::instance());
 
     register_from_meta<io::ImportExport, QObject>(io);
     register_from_meta<io::glaxnimate::GlaxnimateFormat, io::ImportExport>(io)

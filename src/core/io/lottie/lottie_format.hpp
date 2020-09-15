@@ -2,6 +2,7 @@
 
 #include <QCborMap>
 #include "io/base.hpp"
+#include "io/io_registry.hpp"
 
 namespace io::lottie {
 

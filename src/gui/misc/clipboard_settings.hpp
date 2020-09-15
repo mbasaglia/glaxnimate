@@ -14,7 +14,6 @@ public:
 
     struct MimeSettings
     {
-        QString slug;
         io::mime::MimeSerializer* serializer;
         bool enabled;
         QIcon icon;

@@ -214,26 +214,3 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
 
     return {};
 }
-
-QStringList io::glaxnimate::GlaxnimateFormat::mime_types() const
-{
-    return {"application/vnd.glaxnimate.rawr+json"};
-}
-
-QJsonDocument io::glaxnimate::GlaxnimateFormat::serialize_json(const std::vector<model::DocumentNode *>& objects)
-{
-    QJsonArray arr;
-    for ( auto object : objects )
-        arr.push_back(to_json(object));
-    return QJsonDocument(arr);
-}
-
-QByteArray io::glaxnimate::GlaxnimateFormat::serialize(const std::vector<model::DocumentNode*>& objects) const
-{
-    return serialize_json(objects).toJson(QJsonDocument::Compact);
-}
-
-QVariant io::glaxnimate::GlaxnimateFormat::serialize(model::Object* object)
-{
-    return QJsonDocument(to_json(object)).toJson(QJsonDocument::Compact);
-}

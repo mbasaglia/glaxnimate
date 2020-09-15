@@ -1,6 +1,7 @@
 #pragma once
 
 #include "io/base.hpp"
+#include "io/io_registry.hpp"
 
 namespace io::svg {
 
@@ -20,7 +21,6 @@ protected:
 
 private:
     static Autoreg<SvgFormat> autoreg;
-    class ImportState;
 };
 
 
