@@ -67,8 +67,16 @@ public:
     void load_object ( model::Object* target, const QJsonObject& object )
     {
         QString type = object["__type__"].toString();
+
         if ( type != target->type_name() )
             error(GlaxnimateFormat::tr("Wrong object type: expected '%1' but got '%2'").arg(target->type_name()).arg(type));
+
+
+        if ( auto node = qobject_cast<model::DocumentNode*>(target) )
+        {
+            node->docnode_set_visible(object["visible"].toBool(true));
+            node->docnode_set_locked(object["locked"].toBool(false));
+        }
 
         for ( model::BaseProperty* prop : target->properties() )
         {

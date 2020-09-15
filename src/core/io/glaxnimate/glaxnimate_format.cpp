@@ -38,6 +38,12 @@ QJsonObject io::glaxnimate::GlaxnimateFormat::to_json ( model::Object* object )
     QJsonObject obj;
     obj["__type__"] = object->type_name();
 
+    if ( auto node = qobject_cast<model::DocumentNode*>(object) )
+    {
+        obj["visible"] = node->docnode_visible();
+        obj["locked"] = node->docnode_locked();
+    }
+
     for ( model::BaseProperty* prop : object->properties() )
         obj[prop->name()] = to_json(prop);
 
