@@ -44,11 +44,13 @@ public:
     {
         if ( target && !updating )
         {
+            updating = true;
             ui.spin_stroke_width->setValue(target->width.get());
             set_cap_style(target->cap.get());
             set_join_style(target->join.get());
             ui.spin_miter->setValue(target->miter_limit.get());
             ui.color_selector->set_current_color(target->color.get());
+            updating = false;
         }
     }
 
@@ -90,9 +92,8 @@ public:
 
     void set(model::BaseProperty& prop, const QVariant& value, bool commit)
     {
-        updating = true;
-        prop.set_undoable(value, commit);
-        updating = false;
+        if ( !updating )
+            prop.set_undoable(value, commit);
     }
 };
 
