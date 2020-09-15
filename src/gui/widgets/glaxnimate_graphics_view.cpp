@@ -249,6 +249,7 @@ void GlaxnimateGraphicsView::mouseReleaseEvent(QMouseEvent * event)
         d->tool->mouse_release(d->mouse_event(event));
     }
 
+    d->press_button = Qt::NoButton;
     d->update_mouse_cursor();
 }
 

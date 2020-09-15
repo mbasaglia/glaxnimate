@@ -1,4 +1,4 @@
-#include "rectangle.hpp"
+#include "rectangle_tool.hpp"
 #include "model/shapes/ellipse.hpp"
 
 namespace tools {

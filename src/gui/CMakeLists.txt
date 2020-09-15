@@ -19,10 +19,11 @@ style/property_delegate.cpp
 
 tools/base.cpp
 tools/dummy.cpp
-tools/select.cpp
-tools/ellipse.cpp
-tools/rectangle.cpp
+tools/select_tool.cpp
+tools/ellipse_tool.cpp
+tools/rectangle_tool.cpp
 tools/draw_tool.cpp
+tools/edit_tool.cpp
 
 widgets/dialogs/glaxnimate_window.cpp
 widgets/dialogs/glaxnimate_window.ui
