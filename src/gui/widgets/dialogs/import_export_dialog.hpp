@@ -129,7 +129,7 @@ private:
         {
             for ( const QString& ext : reg->extensions() )
             {
-                all += ext + " ";
+                all += "*." + ext + " ";
             }
 
             filters << reg->name_filter();

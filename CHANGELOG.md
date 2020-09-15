@@ -1,13 +1,20 @@
 ## Unreleased
- * Layer Management
- * Open/Save Glaxnim files
- * JS Scripting capabilities
- * Python Scripting capabilities
- * Menu action plugins
- * Open/Save Lottie files
- * Render still frames as images
- * Render still frames as SVG
- * Browser preview
- * Basic Animations
- * Basic Shapes
- * Open/Save Telegram animated stickers
+ * Editing:
+    * Layer Management
+    * Basic Animations
+    * Basic Shapes
+ * Formats:
+    * Open/Save Rawr files
+    * Open/Save Lottie files
+    * Open/Save Telegram animated stickers
+    * Open SVG (without animations)
+    * Render still frames as images
+    * Render still frames as SVG
+    * Browser preview
+    * Copy/Paste within Glaxnimate
+    * Copy/Paste SVG
+    * Copy selection as images
+ * Scripting:
+    * JS Scripting capabilities
+    * Python Scripting capabilities
+    * Menu action plugins

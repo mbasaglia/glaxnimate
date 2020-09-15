@@ -28,5 +28,14 @@ constexpr Numeric sign(Numeric x) noexcept
     return x < 0 ? -1 : 1;
 }
 
+constexpr qreal rad2deg(qreal rad) noexcept
+{
+    return rad / pi * 180;
+}
+
+constexpr qreal deg2rad(qreal rad) noexcept
+{
+    return rad * pi / 180;
+}
 
 } // namespace math

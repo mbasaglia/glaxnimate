@@ -73,7 +73,9 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
     register_builder<model::Group>(
         [](model::Group* layer){
             auto item = new DocumentNodeGraphicsItem(layer);
-            QObject::connect(layer, &model::Group::transform_matrix_changed, item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
+            item->set_transform_matrix(layer->local_transform_matrix(layer->time()));
+            QObject::connect(layer, &model::Group::local_transform_matrix_changed,
+                             item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
             return item;
         },
         [](model::Group* layer){

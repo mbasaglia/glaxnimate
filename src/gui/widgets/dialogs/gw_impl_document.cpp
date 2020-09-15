@@ -10,7 +10,7 @@
 #include "io/lottie/lottie_html_format.hpp"
 #include "app_info.hpp"
 #include "model/layers/shape_layer.hpp"
-#include "io/svg/inkscape_svg.hpp"
+#include "io/svg/svg_renderer.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "io/mime/raster_mime.hpp"
 
@@ -320,5 +320,5 @@ void GlaxnimateWindow::Private::save_frame_svg()
         return;
     }
 
-    io::svg::InkscapeSvgRenderer(&file).write_document(current_document.get());
+    io::svg::SvgRenderer(&file).write_document(current_document.get());
 }

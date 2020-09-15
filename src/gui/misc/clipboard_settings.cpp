@@ -15,7 +15,7 @@ static std::vector<ClipboardSettings::MimeSettings>& mutable_mime_types()
 {
     static std::vector<ClipboardSettings::MimeSettings> settings {
         {"", io::glaxnimate::GlaxnimateFormat::instance(), true, QIcon(app::Application::instance()->data_file("images/logo.svg"))},
-        {"svg", new io::mime::SvgMime, false, QIcon::fromTheme("image-svg+xml")},
+        {"svg", new io::mime::SvgMime, true, QIcon::fromTheme("image-svg+xml")},
         {"raster", new io::mime::RasterMime, false, QIcon::fromTheme("image-png")},
         {"json", new io::mime::JsonMime, false, QIcon::fromTheme("application-json")},
     };

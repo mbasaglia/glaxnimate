@@ -10,8 +10,11 @@ io/lottie/tgs_format.cpp
 io/lottie/cbor_write_json.cpp
 io/glaxnimate/glaxnimate_format.cpp
 io/glaxnimate/glaxnimate_importer.cpp
+io/svg/svg_renderer.cpp
+io/svg/svg_parser.cpp
+io/svg/detail.cpp
+io/svg/svg_format.cpp
 io/base.cpp
-io/svg/inkscape_svg.cpp
 
 math/bezier.cpp
 
@@ -60,6 +63,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 
 add_library(${LIB_NAME} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME} PUBLIC QtAppSetup ZLIB::ZLIB)
+target_link_libraries(${LIB_NAME} PUBLIC QtAppSetup ZLIB::ZLIB Qt5::Xml)
 set_property(TARGET ${LIB_NAME} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 target_include_directories(${LIB_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

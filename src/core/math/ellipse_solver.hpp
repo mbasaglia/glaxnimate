@@ -58,7 +58,7 @@ public:
         qreal firststep = qMin(angle_left, step) * sign;
         qreal alpha = _alpha(firststep);
         QPointF q1 = derivative(angle1) * alpha;
-        points.push_back(BezierPoint::from_relative(point(angle1), QPointF(0, 0), q1));
+        points.push_back(BezierPoint::from_relative(point(angle1), QPointF(0, 0), q1, math::Symmetrical));
 
         // Then we iterate until the angle has been completed
         qreal tolerance = step / 2;
@@ -73,13 +73,13 @@ public:
             QPointF p2 = point(angle2);
             QPointF q2 = derivative(angle2) * alpha;
 
-            points.push_back(BezierPoint::from_relative(p2, -q2, q2));
+            points.push_back(BezierPoint::from_relative(p2, -q2, q2, math::Symmetrical));
             angle1 = angle2;
         }
         return points;
     }
 
-    static Bezier  from_svg_arc(
+    static Bezier from_svg_arc(
         QPointF start, qreal rx, qreal ry, qreal xrot,
         bool large, bool sweep, QPointF dest
     )
@@ -97,7 +97,7 @@ public:
         qreal x1p = p1.x();
         qreal y1p = p1.y();
 
-        qreal cr = x1p * x1p / rx * rx + y1p * y1p / ry * ry;
+        qreal cr = (x1p * x1p) / (rx * rx) + (y1p * y1p) / (ry * ry);
         if ( cr > 1 )
         {
             qreal s = qSqrt(cr);
@@ -112,7 +112,7 @@ public:
             cpm = -cpm;
         QPointF cp(cpm * rx * y1p / ry, -cpm * ry * x1p / rx);
         QPointF c = _matrix_mul(phi, cp) + QPointF((x1+x2)/2, (y1+y2)/2);
-        qreal theta1 = _angle(QPointF(1, 0), QPointF((x1p - c.x()) / rx, (y1p - cp.y()) / ry));
+        qreal theta1 = _angle(QPointF(1, 0), QPointF((x1p - cp.x()) / rx, (y1p - cp.y()) / ry));
         qreal deltatheta = std::fmod(_angle(
             QPointF((x1p - cp.x()) / rx, (y1p - cp.y()) / ry),
             QPointF((-x1p - cp.x()) / rx, (-y1p - cp.y()) / ry)

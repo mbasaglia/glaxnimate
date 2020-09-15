@@ -82,11 +82,13 @@ public:
 private slots:
     void on_transform_matrix_changed()
     {
+        emit local_transform_matrix_changed(local_transform_matrix(time()));
         emit transform_matrix_changed(transform_matrix(time()));
     }
 
 signals:
     void transform_matrix_changed(const QTransform& t);
+    void local_transform_matrix_changed(const QTransform& t);
 };
 
 } // namespace model

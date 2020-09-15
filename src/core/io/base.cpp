@@ -5,7 +5,7 @@ QString io::ImportExport::name_filter() const
     QString ext_str;
     for ( const QString& ext : extensions() )
     {
-        ext_str += ext + " ";
+        ext_str += "*." + ext + " ";
     }
 
     if ( ext_str.isEmpty() )

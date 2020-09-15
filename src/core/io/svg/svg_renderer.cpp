@@ -1,4 +1,4 @@
-#include "inkscape_svg.hpp"
+#include "svg_renderer.hpp"
 
 #include <QXmlStreamWriter>
 
@@ -8,11 +8,13 @@
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/group.hpp"
 
-class io::svg::InkscapeSvgRenderer::Private
+#include "detail.hpp"
+
+using namespace io::svg::detail;
+
+class io::svg::SvgRenderer::Private
 {
 public:
-    using Style = std::map<QString, QString>;
-
     void collect_defs(model::Document* doc)
     {
         if ( !at_start )
@@ -38,13 +40,22 @@ public:
             write_layer(lay.get());
     }
 
+    void write_visibility_attributes(model::DocumentNode* node)
+    {
+        if ( !node->docnode_visible() )
+            write_attribute("display", "none");
+        if ( node->docnode_locked() )
+            writer.writeAttribute(detail::xmlns.at("sodipodi"), "insensitive", "true");
+    }
+
     void write_layer(model::Layer* lay)
     {
         start_layer(lay);
-        Style style;
+        Style::Map style;
         transform_to_style(lay->transform_matrix(lay->time()), style);
         style["opacity"] = lay->opacity.get();
         write_style(style);
+        write_visibility_attributes(lay);
         if ( auto sc = qobject_cast<model::SolidColorLayer*>(lay) )
             write_solid_layer(sc);
         else if ( auto sl = qobject_cast<model::ShapeLayer*>(lay) )
@@ -81,7 +92,7 @@ public:
         }
         else if ( auto stroke = qobject_cast<model::Stroke*>(shape) )
         {
-            Style style;
+            Style::Map style;
             style["fill"] = "none";
             style["stroke"] = stroke->color.get().name();
             style["stroke-width"] = QString::number(stroke->width.get());
@@ -113,17 +124,20 @@ public:
             }
             style["stroke-dasharray"] = "none";
             write_bezier(stroke->collect_shapes(stroke->time()), style, stroke);
+            write_visibility_attributes(shape);
         }
         else if ( auto fill = qobject_cast<model::Fill*>(shape) )
         {
-            Style style;
+            Style::Map style;
             style["fill"] = fill->color.get().name();
             style["fill-opacity"] = QString::number(fill->opacity.get());
             write_bezier(fill->collect_shapes(fill->time()), style, fill);
+            write_visibility_attributes(shape);
         }
         else if ( force_draw )
         {
             write_bezier(shape->shapes(shape->time()), {}, shape);
+            write_visibility_attributes(shape);
         }
     }
 
@@ -141,7 +155,7 @@ public:
         }
     }
 
-    void write_bezier(const math::MultiBezier& shape, const Style& style, model::ShapeElement* node)
+    void write_bezier(const math::MultiBezier& shape, const Style::Map& style, model::ShapeElement* node)
     {
         writer.writeEmptyElement("path");
         write_style(style);
@@ -183,15 +197,16 @@ public:
     void write_group_shape(model::Group* group)
     {
         start_group(group);
-        Style style;
+        Style::Map style;
         transform_to_style(group->transform_matrix(group->time()), style);
         style["opacity"] = group->opacity.get();
         write_style(style);
+        write_visibility_attributes(group);
         write_shapes(group->shapes);
         writer.writeEndElement();
     }
 
-    void transform_to_style(const QTransform& matr, Style& style)
+    void transform_to_style(const QTransform& matr, Style::Map& style)
     {
         style["transform"] = QString("matrix(%1, %2, %3, %4, %5 %6)")
             .arg(matr.m11())
@@ -203,7 +218,7 @@ public:
         ;
     }
 
-    void write_style(const Style& s)
+    void write_style(const Style::Map& s)
     {
         QString st;
         for ( auto it : s )
@@ -251,25 +266,16 @@ public:
     bool closed = false;
 };
 
-static const std::map<QString, QString> xmlns = {
-    {"dc", "http://purl.org/dc/elements/1.1/"},
-    {"cc", "http://creativecommons.org/ns#"},
-    {"rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"},
-    {"svg", "http://www.w3.org/2000/svg"},
-    {"sodipodi", "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"},
-    {"inkscape", "http://www.inkscape.org/namespaces/inkscape"},
-    {"xlink", "http://www.w3.org/1999/xlink"},
-};
 
-io::svg::InkscapeSvgRenderer::InkscapeSvgRenderer(QIODevice* device)
+io::svg::SvgRenderer::SvgRenderer(QIODevice* device)
     : d(std::make_unique<Private>())
 {
     d->writer.setDevice(device);
     d->writer.setAutoFormatting(true);
     d->writer.writeStartDocument();
     d->writer.writeStartElement("svg");
-    d->writer.writeAttribute("xmlns", xmlns.at("svg"));
-    for ( const auto& p : xmlns )
+    d->writer.writeAttribute("xmlns", detail::xmlns.at("svg"));
+    for ( const auto& p : detail::xmlns )
         d->writer.writeNamespace(p.second, p.first);
     d->write_style({
         {"fill", "none"},
@@ -279,17 +285,17 @@ io::svg::InkscapeSvgRenderer::InkscapeSvgRenderer(QIODevice* device)
     d->write_attribute("inkscape:export-ydpi", "96");
 }
 
-io::svg::InkscapeSvgRenderer::~InkscapeSvgRenderer()
+io::svg::SvgRenderer::~SvgRenderer()
 {
     close();
 }
 
-void io::svg::InkscapeSvgRenderer::write_document(model::Document* document)
+void io::svg::SvgRenderer::write_document(model::Document* document)
 {
     write_main_composition(document->main_composition());
 }
 
-void io::svg::InkscapeSvgRenderer::write_composition(model::Composition* comp)
+void io::svg::SvgRenderer::write_composition(model::Composition* comp)
 {
     d->collect_defs(comp->document());
     d->start_layer(comp);
@@ -298,7 +304,7 @@ void io::svg::InkscapeSvgRenderer::write_composition(model::Composition* comp)
 }
 
 
-void io::svg::InkscapeSvgRenderer::write_main_composition(model::MainComposition* comp)
+void io::svg::SvgRenderer::write_main_composition(model::MainComposition* comp)
 {
     if ( d->at_start )
     {
@@ -317,19 +323,19 @@ void io::svg::InkscapeSvgRenderer::write_main_composition(model::MainComposition
     }
 }
 
-void io::svg::InkscapeSvgRenderer::write_layer(model::Layer* layer)
+void io::svg::SvgRenderer::write_layer(model::Layer* layer)
 {
     d->collect_defs(layer->document());
     d->write_layer(layer);
 }
 
-void io::svg::InkscapeSvgRenderer::write_shape(model::ShapeElement* shape)
+void io::svg::SvgRenderer::write_shape(model::ShapeElement* shape)
 {
     d->collect_defs(shape->document());
     d->write_shape(shape, true);
 }
 
-void io::svg::InkscapeSvgRenderer::write_node(model::DocumentNode* node)
+void io::svg::SvgRenderer::write_node(model::DocumentNode* node)
 {
     if ( auto mc = qobject_cast<model::MainComposition*>(node) )
         write_main_composition(mc);
@@ -341,7 +347,7 @@ void io::svg::InkscapeSvgRenderer::write_node(model::DocumentNode* node)
         write_shape(sh);
 }
 
-void io::svg::InkscapeSvgRenderer::close()
+void io::svg::SvgRenderer::close()
 {
     if ( !d->closed )
     {

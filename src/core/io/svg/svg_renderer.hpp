@@ -10,11 +10,11 @@ namespace model {
 
 namespace io::svg {
 
-class InkscapeSvgRenderer
+class SvgRenderer
 {
 public:
-    InkscapeSvgRenderer(QIODevice* device);
-    ~InkscapeSvgRenderer();
+    SvgRenderer(QIODevice* device);
+    ~SvgRenderer();
 
     void write_document(model::Document* document);
     void write_composition(model::Composition* comp);

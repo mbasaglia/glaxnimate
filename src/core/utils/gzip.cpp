@@ -150,4 +150,7 @@ bool utils::gzip::decompress(const QByteArray& input, QByteArray& output, const 
     return gz.end();
 }
 
-
+bool utils::gzip::is_compressed(QIODevice& input)
+{
+    return input.peek(2) == "\x1f\x8b";
+}

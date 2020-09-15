@@ -48,14 +48,14 @@ void model::Transform::set_transform_matrix(const QTransform& t)
     if ( a != 0 || b != 0 )
     {
         qreal r = math::hypot(a, b);
-        rotation.set(-math::sign(b) * math::acos(a/r));
+        rotation.set(-math::rad2deg(-math::sign(b) * math::acos(a/r)));
         sx = r;
         sy = delta / r;
     }
     else
     {
         qreal r = math::hypot(c, d);
-        rotation.set(math::pi / 2 + math::sign(d) * math::acos(c / r));
+        rotation.set(-math::rad2deg(math::pi / 2 + math::sign(d) * math::acos(c / r)));
         sx = delta / r;
         sy = r;
     }
