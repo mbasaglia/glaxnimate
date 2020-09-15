@@ -54,6 +54,7 @@ SETUP_TYPE(QMetaType::QVariantMap,  QVariantMap)
 SETUP_TYPE(QMetaType::QVariantHash, QVariantHash)
 SETUP_TYPE(QMetaType::QPointF,      QPointF)
 SETUP_TYPE(QMetaType::QSizeF,       QSizeF)
+SETUP_TYPE(QMetaType::QSize,        QSize)
 SETUP_TYPE(QMetaType::QVector2D,    QVector2D)
 SETUP_TYPE(QMetaType::QRectF,       QRectF)
 SETUP_TYPE(QMetaType::QByteArray,   QByteArray)
@@ -87,6 +88,7 @@ using supported_types = std::integer_sequence<int,
     QMetaType::QVariantHash,
     QMetaType::QPointF,
     QMetaType::QSizeF,
+    QMetaType::QSize,
     QMetaType::QVector2D,
     QMetaType::QRectF,
     QMetaType::QByteArray,
