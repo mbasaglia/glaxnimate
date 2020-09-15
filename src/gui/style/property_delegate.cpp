@@ -199,3 +199,11 @@ void PropertyDelegate::paint_plaintext(const QString& text, QPainter *painter, c
     QStyle *style = widget ? widget->style() : QApplication::style();
     style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, widget);
 }
+
+QSize style::PropertyDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    auto sh = color_widgets::ColorDelegate::sizeHint(option, index);
+    if ( force_height )
+        sh.setHeight(force_height);
+    return sh;
+}

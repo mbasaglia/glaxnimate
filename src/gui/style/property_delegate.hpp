@@ -8,6 +8,9 @@ namespace style {
 
 class PropertyDelegate : public color_widgets::ColorDelegate
 {
+public:
+    void set_forced_height(int height) { force_height = height; }
+
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
@@ -18,6 +21,8 @@ protected:
     void setModelData ( QWidget * editor, QAbstractItemModel * model, const QModelIndex & index ) const override;
 
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
+    QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const override;
 
 private:
     template<class T>
@@ -35,6 +40,8 @@ private:
     }
 
     void paint_plaintext(const QString& text, QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+    int force_height = 0;
 };
 
 } // namespace style

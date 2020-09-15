@@ -370,7 +370,7 @@ public:
     {
         return QRectF(
             QPointF(start_time, -header_height),
-            QPointF(end_time, std::max(row_height*rows, parent->height()))
+            QPointF(end_time, std::max(row_height*(rows+1), parent->height()))
         );
     }
 

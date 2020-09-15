@@ -34,14 +34,11 @@ public:
         connect(&property_model, &QAbstractItemModel::dataChanged,
                 ui.properties->viewport(), (void (QWidget::*)())&QWidget::update);
         ui.properties->setItemDelegateForColumn(1, &property_delegate);
-        ui.properties->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-        ui.properties->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-        ui.properties->horizontalHeader()->setFixedHeight(ui.timeline->header_height());
+        ui.properties->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+        ui.properties->header()->setSectionResizeMode(1, QHeaderView::Stretch);
+        ui.properties->header()->setFixedHeight(ui.timeline->header_height());
+        property_delegate.set_forced_height(ui.timeline->header_height());
 
-        ui.properties->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-        ui.properties->verticalHeader()->setMinimumSectionSize(ui.timeline->row_height());
-        ui.properties->verticalHeader()->setMaximumSectionSize(ui.timeline->row_height());
-        ui.properties->verticalHeader()->setDefaultSectionSize(ui.timeline->row_height());
 
         ui.properties->verticalScrollBar()->setPageStep(ui.scrollbar->pageStep());
         connect(ui.properties->verticalScrollBar(), &QScrollBar::valueChanged, ui.scrollbar, &QScrollBar::setValue);
