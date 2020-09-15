@@ -176,18 +176,64 @@ void define_animatable(py::module& m)
     ;
 }
 
+struct UndoMacroGuard
+{
+    UndoMacroGuard(const QString& name, model::Document* document)
+    : name(name), document(document)
+    {}
+
+    ~UndoMacroGuard()
+    {
+        exit();
+    }
+
+
+    void enter()
+    {
+        if ( !end_macro )
+        {
+            end_macro = true;
+            document->undo_stack().beginMacro(name);
+        }
+    }
+
+    void exit()
+    {
+        if ( end_macro )
+        {
+            end_macro = false;
+            document->undo_stack().endMacro();
+        }
+    }
+
+
+    QString name;
+    model::Document* document;
+    bool end_macro = false;
+};
+
 PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
 {
     define_utils(glaxnimate_module);
 
     py::module detail = glaxnimate_module.def_submodule("__detail", "");
     py::class_<QObject>(detail, "__QObject");
+    py::class_<UndoMacroGuard>(detail, "UndoMacroGuard")
+        .def("__enter__", &UndoMacroGuard::enter)
+        .def("__exit__", &UndoMacroGuard::exit)
+        .def("start", &UndoMacroGuard::enter)
+        .def("finish", &UndoMacroGuard::exit)
+    ;
 
     define_io(glaxnimate_module);
 
     py::module model = glaxnimate_module.def_submodule("model", "");
     py::class_<model::Object, QObject>(model, "Object");
-    register_from_meta<model::Document, QObject>(model);
+    register_from_meta<model::Document, QObject>(model)
+        .def("macro", [](model::Document* document, const QString& str){
+            return new UndoMacroGuard(str, document);
+        }, py::return_value_policy::take_ownership);
+    ;
     register_from_meta<model::DocumentNode, model::Object>(model);
     register_from_meta<model::Composition, model::DocumentNode>(model);
     register_from_meta<model::MainComposition, model::Composition>(model);
