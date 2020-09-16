@@ -50,5 +50,5 @@ jobs:
             - cpack -G DragNDrop
         after_success:
             - mv Glaxnimate-*.dmg glaxnimate.dmg
-            - ../deploy/bintray_upload.sh Dev bin/glaxnimate "$TRAVIS_BRANCH/MacOs/glaxnimate.dmg"
+            - ../deploy/bintray_upload.sh Dev glaxnimate.dmg "$TRAVIS_BRANCH/MacOs/glaxnimate.dmg"
 
