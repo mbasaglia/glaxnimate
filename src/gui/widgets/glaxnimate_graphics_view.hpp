@@ -28,7 +28,7 @@ public:
 
 
     /// Overload QGraphicsView::translate
-    void translate(const QPointF& d) { QGraphicsView::translate(d.x(),d.y()); }
+    void translate(const QPointF& d);
 
     void set_active_tool(tools::Tool* tool);
     void set_tool_target(GlaxnimateWindow* window);
@@ -91,7 +91,7 @@ public slots:
     void set_rotation(qreal radians);
     void reset_rotation() { set_rotation(0); }
 
-    void view_fit(const QRect& fit_target);
+    void view_fit();
 
 signals:
     /**
@@ -115,6 +115,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void keyPressEvent(QKeyEvent * event) override;
     void keyReleaseEvent(QKeyEvent * event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     void do_rotate(qreal radians, const QPointF& scene_anchor);

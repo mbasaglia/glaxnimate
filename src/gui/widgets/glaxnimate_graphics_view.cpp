@@ -49,6 +49,7 @@ public:
     QPoint transform_center;
     QPointF transform_center_scene;
     qreal scale_start_zoom = 1;
+    bool resize_fit = true;
 
 
     void expand_scene_rect(float margin)
@@ -319,6 +320,8 @@ void GlaxnimateGraphicsView::zoom_view_anchor(qreal factor, const QPointF& scene
     d->expand_scene_rect(0);
 
     d->zoom_factor *= factor;
+
+    d->resize_fit = false;
     emit zoomed(d->zoom_factor);
 }
 
@@ -374,6 +377,9 @@ void GlaxnimateGraphicsView::do_rotate(qreal radians, const QPointF& scene_ancho
     d->rotation = std::fmod(d->rotation, 2*M_PI);
     if ( d->rotation < 0 )
         d->rotation += 2*M_PI;
+
+
+    d->resize_fit = false;
     emit rotated(d->rotation);
 }
 
@@ -382,12 +388,23 @@ void GlaxnimateGraphicsView::set_rotation(qreal radians)
     do_rotate(radians-d->rotation, d->anchor_scene());
 }
 
-void GlaxnimateGraphicsView::view_fit(const QRect& fit_target)
+void GlaxnimateGraphicsView::view_fit()
 {
     setTransform(QTransform());
     d->rotation = 0;
     d->zoom_factor = 1;
     emit rotated(0);
+
+
+    QRect fit_target;
+
+    if ( d->tool_target->document() )
+        fit_target = QRect(
+            -32,
+            -32,
+            d->tool_target->document()->main_composition()->width.get() + 64,
+            d->tool_target->document()->main_composition()->height.get() + 64
+        );
 
     if ( fit_target.isValid() && width() > 0 && height() > 0 )
     {
@@ -401,6 +418,8 @@ void GlaxnimateGraphicsView::view_fit(const QRect& fit_target)
     {
         emit zoomed(1);
     }
+
+    d->resize_fit = true;
 }
 
 void GlaxnimateGraphicsView::set_active_tool(tools::Tool* tool)
@@ -419,4 +438,17 @@ void GlaxnimateGraphicsView::set_active_tool(tools::Tool* tool)
 void GlaxnimateGraphicsView::set_tool_target(GlaxnimateWindow* window)
 {
     d->tool_target = window;
+}
+
+void GlaxnimateGraphicsView::translate(const QPointF& p)
+{
+     d->resize_fit = false;
+     QGraphicsView::translate(p.x(), p.y());
+}
+
+void GlaxnimateGraphicsView::resizeEvent(QResizeEvent* event)
+{
+    QGraphicsView::resizeEvent(event);
+    if ( d->resize_fit )
+        view_fit();
 }

@@ -275,14 +275,7 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
 
 void GlaxnimateWindow::Private::view_fit()
 {
-    ui.graphics_view->view_fit(
-        QRect(
-            -32,
-            -32,
-            current_document->main_composition()->width.get() + 64,
-            current_document->main_composition()->height.get() + 64
-        )
-    );
+    ui.graphics_view->view_fit();
 }
 
 void GlaxnimateWindow::Private::reload_recent_menu()
