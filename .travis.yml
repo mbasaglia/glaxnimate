@@ -42,8 +42,6 @@ jobs:
             - brew list cmake || brew install cmake
             - brew list qt || brew install qt
             - brew list python || brew install python
-            - gcc --version
-            - brew upgrade gcc@10
         script:
             - mkdir build
             - cd build
@@ -51,7 +49,6 @@ jobs:
             - make
             - cpack -G DragNDrop
         after_success:
-            - ls bin
-            - ls
-            - ../deploy/bintray_upload.sh Dev bin/glaxnimate "$TRAVIS_BRANCH/MacOs/glaxnimate"
+            - mv Glaxnimate-*.dmg glaxnimate.dmg
+            - ../deploy/bintray_upload.sh Dev bin/glaxnimate "$TRAVIS_BRANCH/MacOs/glaxnimate.dmg"
 
