@@ -48,7 +48,9 @@ jobs:
             - cd build
             - cmake .. -DQt5_DIR=$(brew --prefix qt)/lib/cmake/Qt5
             - make
+            - cpack -G DragNDrop
         after_success:
             - ls bin
+            - ls
             - ../deploy/bintray_upload.sh Dev bin/glaxnimate "$TRAVIS_BRANCH/MacOs/glaxnimate"
 

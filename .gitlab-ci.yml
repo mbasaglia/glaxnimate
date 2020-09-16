@@ -55,6 +55,23 @@ linux:build:
         - make
     when: always
 
+linux:deb:
+    image: ubuntu:latest
+    stage: build
+    script:
+        - mkdir build
+        - cd build
+        - cmake .. -DCMAKE_BUILD_TYPE=Release -DCPACK_DEBIAN_FILE_NAME=glaxnimate.deb
+        - make
+        - make translations
+        - cpack -G DEB
+        - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
+    artifacts:
+        paths:
+            - build/glaxnimate.deb
+            - build/checksum.txt
+    when: always
+
 linux:appimage:
     image: ubuntu:16.04
     stage: build
