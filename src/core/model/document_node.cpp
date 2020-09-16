@@ -166,3 +166,21 @@ void model::DocumentNode::recursive_rename()
     for ( auto child : docnode_children() )
         child->recursive_rename();
 }
+
+void model::DocumentNode::docnode_set_visible(bool visible)
+{
+    emit docnode_visible_changed(visible_ = visible);
+    emit docnode_visible_recursive_changed(visible);
+
+    for ( auto ch : docnode_group_children() )
+        ch->propagate_visible(visible);
+}
+
+void model::DocumentNode::propagate_visible(bool visible)
+{
+    if ( !visible_ )
+        return;
+    emit docnode_visible_recursive_changed(visible);
+    for ( auto ch : docnode_group_children() )
+        ch->propagate_visible(visible && visible_);
+}

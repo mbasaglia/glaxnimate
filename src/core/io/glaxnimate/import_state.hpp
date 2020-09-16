@@ -64,7 +64,7 @@ public:
         }
     }
 
-    void load_object ( model::Object* target, const QJsonObject& object )
+    void load_object ( model::Object* target, QJsonObject object )
     {
         QString type = object["__type__"].toString();
 
@@ -75,7 +75,9 @@ public:
         if ( auto node = qobject_cast<model::DocumentNode*>(target) )
         {
             node->docnode_set_visible(object["visible"].toBool(true));
+            object.remove("visible");
             node->docnode_set_locked(object["locked"].toBool(false));
+            object.remove("locked");
         }
 
         for ( model::BaseProperty* prop : target->properties() )

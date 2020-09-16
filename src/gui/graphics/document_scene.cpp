@@ -100,8 +100,6 @@ void graphics::DocumentScene::connect_node ( model::DocumentNode* node )
     child->setData(Private::data_key_ptr, QVariant::fromValue(node));
     connect(node, &model::DocumentNode::docnode_child_add_end, this, &DocumentScene::connect_node);
     connect(node, &model::DocumentNode::docnode_child_remove_end, this, &DocumentScene::disconnect_node);
-    connect(node, &model::DocumentNode::docnode_visible_changed, child, &DocumentNodeGraphicsItem::set_visible);
-    child->set_visible(node->docnode_visible_recursive());
 
     DocumentNodeGraphicsItem* parent = nullptr;
     if ( auto parent_node = node->docnode_parent() )

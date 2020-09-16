@@ -86,6 +86,24 @@ model::DocumentNode * model::Layer::docnode_group_parent() const
     return composition_;
 }
 
+model::DocumentNode * model::Layer::docnode_group_child(int index) const
+{
+    ChildLayerIterator iter(composition_, this, 0);
+    std::advance(iter, index);
+    return &*iter;
+}
+
+int model::Layer::docnode_group_child_count() const
+{
+    int sz = 0;
+    for ( const auto& sib : composition_->layers )
+        if ( sib->parent.get() == this )
+            sz++;
+    return sz;
+}
+
+
+
 void model::Layer::set_composition ( model::Composition* composition )
 {
     if ( composition_ == composition || !composition )

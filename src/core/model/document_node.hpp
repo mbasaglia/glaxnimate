@@ -229,6 +229,8 @@ private:
             child->docnode_find_impl<T>(type_name, matches);
     }
 
+    void propagate_visible(bool visible);
+
 protected:
     void docnode_on_update_group(bool force = false);
     void on_property_changed(const BaseProperty* prop, const QVariant&) override;
@@ -237,10 +239,7 @@ protected:
 
 
 public slots:
-    void docnode_set_visible(bool visible)
-    {
-        emit docnode_visible_changed(visible_ = visible);
-    }
+    void docnode_set_visible(bool visible);
 
     void docnode_set_locked(bool locked)
     {
@@ -256,6 +255,7 @@ signals:
 
     void docnode_visible_changed(bool);
     void docnode_locked_changed(bool);
+    void docnode_visible_recursive_changed(bool);
     void docnode_name_changed(const QString&);
     void docnode_group_color_changed(const QColor&);
 

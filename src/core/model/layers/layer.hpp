@@ -28,6 +28,8 @@ public:
         using value_type = Layer;
         using reference = value_type&;
         using pointer = value_type*;
+        using difference_type = int;
+        using iterator_category = std::forward_iterator_tag;
 
         ChildLayerIterator& operator++()
         {
@@ -85,6 +87,8 @@ public:
     QString type_name_human() const override { return tr("Uknown Layer"); }
     DocumentNode* docnode_parent() const override;
     DocumentNode* docnode_group_parent() const override;
+    int docnode_group_child_count() const override;
+    DocumentNode* docnode_group_child(int index) const override;
     void set_time(FrameTime t) override;
 
 
