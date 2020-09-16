@@ -245,6 +245,19 @@ void GlaxnimateWindow::Private::document_open_from_filename(const QString& filen
     reload_recent_menu();
 }
 
+
+void GlaxnimateWindow::Private::document_reload()
+{
+    if ( !current_document->has_file() )
+    {
+        status_message(tr("No file to reload from"));
+        return;
+    }
+
+    auto options = current_document->io_options();
+    setup_document_open(options);
+}
+
 void GlaxnimateWindow::Private::web_preview()
 {
     QDir tempdir = QDir::temp();

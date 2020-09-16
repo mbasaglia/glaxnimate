@@ -84,6 +84,7 @@ private slots:
     void document_new();
     void document_open_dialog();
     void document_open(const QString& filename);
+    void document_reload();
 
     void document_treeview_clicked(const QModelIndex& index);
     void document_treeview_current_changed(const QModelIndex& index);

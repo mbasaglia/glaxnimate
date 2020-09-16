@@ -77,6 +77,7 @@ public:
     bool save_document(bool force_dialog, bool overwrite_doc);
     void document_open();
     void document_open_from_filename(const QString& filename);
+    void document_reload();
     void web_preview();
     void save_frame_bmp();
     void save_frame_svg();

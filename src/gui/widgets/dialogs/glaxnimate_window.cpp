@@ -159,6 +159,11 @@ void GlaxnimateWindow::document_open(const QString& filename)
     d->document_open_from_filename(filename);
 }
 
+void GlaxnimateWindow::document_reload()
+{
+    d->document_reload();
+}
+
 model::Document * GlaxnimateWindow::document() const
 {
     return d->current_document.get();
