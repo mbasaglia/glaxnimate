@@ -15,6 +15,6 @@
     * Copy/Paste SVG
     * Copy selection as images
  * Scripting:
-    * JS Scripting capabilities
     * Python Scripting capabilities
     * Menu action plugins
+    * Python console

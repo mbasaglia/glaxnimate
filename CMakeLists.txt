@@ -45,6 +45,7 @@ endif()
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic -Wextra")
 
 # sub projects and stuff
+set(SCRIPTING_PY ON)
 add_subdirectory(external/QtAppSetup)
 add_subdirectory(src bin)
 

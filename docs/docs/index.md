@@ -46,6 +46,7 @@ disable_toc: 1
 .cards {
     display: flex;
     justify-content: center;
+    flex-flow: row wrap;
 }
 
 .card {
