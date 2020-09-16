@@ -138,13 +138,17 @@ private:
         if ( add_all )
         {
             all.resize(all.size() - 1);
-            filters << QObject::tr("All files (%1)").arg(all);
+            QString all_filter = QObject::tr("All files (%1)").arg(all);
+            filters << all_filter;
+            dialog.selectNameFilter(all_filter);
+        }
+        else if ( selected )
+        {
+            dialog.selectNameFilter(selected->name_filter());
         }
 
         dialog.setNameFilters(filters);
 
-        if ( selected )
-            dialog.selectNameFilter(selected->name_filter());
     }
 
     QWidget* parent;
