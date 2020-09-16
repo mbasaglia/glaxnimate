@@ -147,12 +147,12 @@ void model::Document::push_command(QUndoCommand* cmd)
 }
 
 
-static void collect_names(const model::DocumentNode* node, const QString& prefix, QVector<QString>& out)
+static void collect_names(const model::DocumentNode* node, const QString& prefix, QVector<QString>& out, const model::DocumentNode* target)
 {
-    if ( node->name.get().startsWith(prefix) )
+    if ( node != target && node->name.get().startsWith(prefix) )
         out.push_back(node->name.get());
     for ( int i = 0, e = node->docnode_child_count(); i < e; i++ )
-        collect_names(node->docnode_child(i), prefix, out);
+        collect_names(node->docnode_child(i), prefix, out, target);
 }
 
 QString model::Document::get_best_name(const model::DocumentNode* node, const QString& suggestion) const
@@ -182,7 +182,7 @@ QString model::Document::get_best_name(const model::DocumentNode* node, const QS
     QString name = base_name;
 
     /// \todo Also collect for precompositions
-    collect_names(&d->main_composition, base_name, names);
+    collect_names(&d->main_composition, base_name, names, node);
 
     QString name_pattern = "%1 %2";
     while ( names.contains(name) )

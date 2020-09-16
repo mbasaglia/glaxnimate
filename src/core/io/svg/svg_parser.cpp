@@ -66,19 +66,32 @@ public:
 
         model::ShapeLayer* parent_layer = parse_objects(svg);
 
+        parent_layer->name.set(
+            attr(svg, "sodipodi", "docname", svg.attribute("id", parent_layer->type_name_human()))
+        );
+
         if ( write_to_document )
-            write_document_data(parent_layer);
+            write_document_data(svg);
     }
 
-    void write_document_data(model::ShapeLayer* parent_layer)
+    void write_document_data(const QDomElement& svg)
     {
         document->main_composition()->width.set(size.width());
         document->main_composition()->height.set(size.height());
-        document->set_best_name(
-            document->main_composition(),
-            attr(dom.documentElement(), "sodipodi", "docname")
+
+        for ( int i = 0; i < int(objects.size()); i++ )
+        {
+            document->main_composition()->layers.insert(
+                std::unique_ptr<model::Layer>(static_cast<model::Layer*>(objects[i].release())),
+                i
+            );
+        }
+
+        document->main_composition()->recursive_rename();
+
+        document->main_composition()->name.set(
+            attr(svg, "sodipodi", "docname", document->main_composition()->type_name_human())
         );
-        parent_layer->recursive_rename();
     }
 
     model::ShapeLayer* parse_objects(const QDomElement& svg)
@@ -164,15 +177,8 @@ public:
     LayT* add_layer(model::Layer* parent)
     {
         LayT* lay = new LayT(document, composition);
-        if ( write_to_document )
-            document->main_composition()->layers.insert(
-                std::unique_ptr<model::Layer>(lay), layer_insert++
-            );
-        else
-            objects.emplace_back(lay);
-
+        objects.emplace_back(lay);
         lay->parent.set(parent);
-
         return lay;
     }
 
@@ -253,6 +259,29 @@ public:
         return t;
     }
 
+    void populate_ids(const QDomElement& elem)
+    {
+        if ( elem.hasAttribute("id") )
+            map_ids[elem.attribute("id")] = elem;
+
+        for ( const auto& domnode : ItemCountRange(elem.childNodes()) )
+        {
+            if ( domnode.isElement() )
+                populate_ids(domnode.toElement());
+        }
+    }
+
+    QDomElement element_by_id(const QString& id)
+    {
+        // dom.elementById() doesn't work ;_;
+        if ( map_ids.empty() )
+            populate_ids(dom.documentElement());
+        auto it = map_ids.find(id);
+        if ( it == map_ids.end() )
+            return {};
+        return it->second;
+    }
+
     void parse_transform(
         const QDomElement& element,
         model::DocumentNode* node,
@@ -269,7 +298,10 @@ public:
         }
 
         if ( element.hasAttribute("transform") )
-            transform->set_transform_matrix(svg_transform(element.attribute("transform")));
+            transform->set_transform_matrix(svg_transform(
+                element.attribute("transform"),
+                transform->transform_matrix(transform->time())
+            ));
 
         /// \todo adjust anchor point
     }
@@ -284,10 +316,8 @@ public:
         return args;
     }
 
-    QTransform svg_transform(const QString& attr)
+    QTransform svg_transform(const QString& attr, QTransform trans)
     {
-        QTransform trans;
-
         for ( const QRegularExpressionMatch& match : utils::regexp::find_all(transform_re, attr) )
         {
             auto args = double_args(match.captured(2));
@@ -635,13 +665,36 @@ public:
         parse_bezier_impl(args, handle_poly(args, true));
     }
 
-
     void parseshape_path(const ParseFuncArgs& args)
     {
         QString d = args.element.attribute("d");
         math::MultiBezier bez = PathDParser(d.splitRef(separator)).parse();
         /// \todo sodipodi:nodetypes
         parse_bezier_impl(args, bez);
+    }
+
+    void parseshape_use(const ParseFuncArgs& args)
+    {
+        QString id = attr(args.element, "xlink", "href");
+        if ( !id.startsWith('#') )
+            return;
+        id.remove(0,  1);
+        QDomElement element = element_by_id(id);
+        if ( element.isNull() )
+            return;
+
+        Style style = parse_style(args.element, args.parent_style);
+        auto group = std::make_unique<model::Group>(document);
+        apply_common_style(group.get(), args.element, style);
+        set_name(group.get(), args.element);
+
+        parse_shape({element, args.layer_parent, &group->shapes, style, true});
+
+        group->transform.get()->position.set(
+            QPointF(len_attr(args.element, "x", 0), len_attr(args.element, "y", 0))
+        );
+        parse_transform(args.element, group.get(), group->transform.get());
+        args.shape_parent->insert(std::move(group));
     }
 
     QDomDocument dom;
@@ -652,7 +705,6 @@ public:
     model::Document* document;
     model::Composition* composition;
     std::vector<std::unique_ptr<model::DocumentNode>> objects;
-    int layer_insert = 0;
 
     GroupMode group_mode;
     bool write_to_document = false;
@@ -666,9 +718,10 @@ public:
         {"polyline", &Private::parseshape_polyline},
         {"polygon", &Private::parseshape_polygon},
         {"path", &Private::parseshape_path},
-        /// \todo
-        /// * use
+        {"use", &Private::parseshape_use},
     };
+
+    std::unordered_map<QString, QDomElement> map_ids;
 
     QRegularExpression unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
     QRegularExpression separator{",\\s*|\\s+"};

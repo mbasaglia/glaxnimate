@@ -23,6 +23,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
     register_builder<model::Layer>(
         [](model::Layer* layer){
             auto item = new DocumentNodeGraphicsItem(layer);
+            item->set_transform_matrix(layer->transform_matrix(layer->time()));
             QObject::connect(layer, &model::Layer::transform_matrix_changed, item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
             return item;
         },
