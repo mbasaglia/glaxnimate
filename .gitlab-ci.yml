@@ -65,7 +65,7 @@ linux:deb:
         - make
         - make translations
         - cpack -G DEB
-        - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
+        - sha1sum glaxnimate.deb >checksum.txt
     artifacts:
         paths:
             - build/glaxnimate.deb
