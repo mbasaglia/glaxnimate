@@ -79,6 +79,8 @@ Glaxnimate is a simple and fast vector graphics animation program.
 * [Experimental Version](download.md#development-snapshots)
 * [Building from Source](contributing/read_me.md)
 
+<img src="/img/screenshots/main_window.png" style="max-width: 100vw;"/>
+
 ## Features
 
 <div class="cards">
