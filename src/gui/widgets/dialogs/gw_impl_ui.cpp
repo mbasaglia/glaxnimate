@@ -373,6 +373,12 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
             QItemSelectionModel::NoUpdate
         );
     }
+    else
+    {
+        auto current = ui.view_document_node->currentIndex();
+        if ( current.isValid() && ! ui.view_document_node->selectionModel()->isSelected(current) )
+            ui.view_document_node->setCurrentIndex(QModelIndex{});
+    }
 }
 
 void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
