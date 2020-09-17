@@ -3,6 +3,8 @@
 
 #include "model/shapes/shape.hpp"
 
+namespace model { class Group; }
+
 namespace command {
 
 class AddShape : public QUndoCommand
@@ -93,6 +95,28 @@ private:
     int position_after;
 };
 
+
+class GroupShapes : public QUndoCommand
+{
+public:
+    struct Data
+    {
+        std::vector<model::ShapeElement*> elements;
+        model::ShapeListProperty* parent = nullptr;
+    };
+
+    GroupShapes(const Data& data);
+
+    static Data collect_shapes(const std::vector<model::DocumentNode *>& selection);
+
+    void undo() override;
+    void redo() override;
+
+
+private:
+    model::Group* group = nullptr;
+    std::vector<std::unique_ptr<QUndoCommand>> children;
+};
 
 } // namespace command
 

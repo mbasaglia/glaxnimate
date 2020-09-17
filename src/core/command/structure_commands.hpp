@@ -50,7 +50,6 @@ private:
     static QString name(model::DocumentNode* node);
 };
 
-
 class ReorderCommand : public DeferredCommandBase
 {
 public:
@@ -72,7 +71,6 @@ public:
 
 private:
     static QString name(model::DocumentNode* node);
-
 };
 
 } // namespace command

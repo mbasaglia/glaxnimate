@@ -35,6 +35,8 @@ widgets/dialogs/gw_impl_document.cpp
 widgets/dialogs/gw_impl_model.cpp
 widgets/dialogs/gw_impl_script.cpp
 widgets/dialogs/gw_impl_ui.cpp
+widgets/dialogs/shape_parent_dialog.cpp
+widgets/dialogs/shape_parent_dialog.ui
 
 widgets/timeline/keyframe_transition_widget.cpp
 widgets/timeline/keyframe_editor_widget.cpp

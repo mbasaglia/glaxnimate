@@ -4,8 +4,8 @@
 #include "command/structure_commands.hpp"
 #include "command/animation_commands.hpp"
 #include "command/property_commands.hpp"
-
-
+#include "command/shape_commands.hpp"
+#include "widgets/dialogs/shape_parent_dialog.hpp"
 
 namespace {
 
@@ -97,7 +97,7 @@ void move_action(
 
 
 
-NodeMenu::NodeMenu(model::DocumentNode* node, QWidget* parent)
+NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget* parent)
     : QMenu(node->object_name(), parent)
 {
     setIcon(node->docnode_icon());
@@ -173,6 +173,14 @@ NodeMenu::NodeMenu(model::DocumentNode* node, QWidget* parent)
         move_action(this, shape, command::ReorderCommand::MoveUp);
         move_action(this, shape, command::ReorderCommand::MoveDown);
         move_action(this, shape, command::ReorderCommand::MoveBottom);
+
+        addAction(QIcon::fromTheme("selection-move-to-layer-above"), tr("Move to..."), this, [shape, window]{
+            if ( auto parent = ShapeParentDialog(window->model(), window).get_shape_parent() )
+            {
+                if ( shape->owner() != parent )
+                    shape->push_command(new command::MoveShape(shape, parent, parent->size()));
+            }
+        });
     }
 }
 

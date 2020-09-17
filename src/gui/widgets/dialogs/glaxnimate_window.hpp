@@ -14,6 +14,10 @@ class PluginScript;
 
 } // namespace app::scripting
 
+namespace item_models {
+class DocumentNodeModel;
+} // namespace item_models
+
 class QItemSelection;
 
 class GlaxnimateWindow : public QMainWindow
@@ -68,6 +72,7 @@ public:
 
     void delete_selected();
 
+    item_models::DocumentNodeModel* model() const;
 
 public slots:
     void document_save();

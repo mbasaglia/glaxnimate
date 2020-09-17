@@ -100,7 +100,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
         [this](const QPoint& pos){
             auto index = ui.view_document_node->indexAt(pos);
             if ( auto node = document_node_model.node(index) )
-                NodeMenu(node, this->parent).exec(ui.view_document_node->mapToGlobal(pos));
+                NodeMenu(node, this->parent, this->parent).exec(ui.view_document_node->mapToGlobal(pos));
         }
     );
 

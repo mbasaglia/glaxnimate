@@ -346,7 +346,7 @@ private:
         if ( best )
         {
             menu.addSeparator();
-            auto obj_menu = new NodeMenu(best, &menu);
+            auto obj_menu = new NodeMenu(best, event.window, &menu);
             if ( obj_menu->actions().size() > 1 )
                 menu.addAction(obj_menu->menuAction());
             else

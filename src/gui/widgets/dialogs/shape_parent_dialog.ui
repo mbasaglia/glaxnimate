@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShapeParentDialog</class>
+ <widget class="QDialog" name="ShapeParentDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>394</width>
+    <height>425</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>ShapeParentDialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTreeView" name="view_document_node">
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::InternalMove</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="headerMinimumSectionSize">
+      <number>32</number>
+     </attribute>
+     <attribute name="headerDefaultSectionSize">
+      <number>32</number>
+     </attribute>
+     <attribute name="headerStretchLastSection">
+      <bool>false</bool>
+     </attribute>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="icon">
+        <iconset theme="dialog-cancel"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>Move</string>
+       </property>
+       <property name="icon">
+        <iconset theme="dialog-ok"/>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>view_document_node</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>pushButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ShapeParentDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>46</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>60</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>ShapeParentDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>153</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>187</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>view_document_node</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>ShapeParentDialog</receiver>
+   <slot>select(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>154</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>187</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>view_document_node</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>ShapeParentDialog</receiver>
+   <slot>select_and_accept(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>75</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>187</x>
+     <y>39</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>select(QModelIndex)</slot>
+  <slot>select_and_accept(QModelIndex)</slot>
+ </slots>
+</ui>

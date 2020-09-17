@@ -3,6 +3,7 @@ set(SOURCES
 app_info.cpp
 
 command/structure_commands.cpp
+command/shape_commands.cpp
 
 io/lottie/lottie_format.cpp
 io/lottie/lottie_html_format.cpp

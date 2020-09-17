@@ -348,3 +348,8 @@ void GlaxnimateWindow::layer_bottom()
 {
     d->move_current(command::ReorderCommand::MoveBottom);
 }
+
+item_models::DocumentNodeModel * GlaxnimateWindow::model() const
+{
+    return &d->document_node_model;
+}
