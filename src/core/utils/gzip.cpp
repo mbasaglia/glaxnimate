@@ -92,7 +92,8 @@ private:
 } // namespace
 
 bool utils::gzip::compress(const QByteArray& data, QIODevice& output,
-                           const utils::gzip::ErrorFunc& on_error, int level)
+                           const utils::gzip::ErrorFunc& on_error, int level,
+                           quint32* compressed_size)
 {
     Gzipper gz(on_error);
 
@@ -101,11 +102,16 @@ bool utils::gzip::compress(const QByteArray& data, QIODevice& output,
 
     gz.add_data(data);
 
+    quint32 total_size = 0;
     while ( !gz.finished() )
     {
         auto bv = gz.process();
         output.write(bv.data, bv.size);
+        total_size += bv.size;
     }
+
+    if ( compressed_size )
+        *compressed_size = total_size;
 
     return gz.end();
 }
