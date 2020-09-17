@@ -113,6 +113,7 @@ public:
     void delete_selected();
     void move_current(command::ReorderCommand::SpecialPosition pos);
     void group_shapes();
+    void ungroup_shapes();
 
     template<class LayerT>
     void layer_new()

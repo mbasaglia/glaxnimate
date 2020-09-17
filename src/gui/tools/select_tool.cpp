@@ -348,6 +348,9 @@ private:
         menu.addAction(QIcon::fromTheme("object-group"), GlaxnimateWindow::tr("Group Shapes"),
                        event.window, &GlaxnimateWindow::group_shapes);
 
+        menu.addAction(QIcon::fromTheme("object-ungroup"), GlaxnimateWindow::tr("Ungroup Shapes"),
+                       event.window, &GlaxnimateWindow::ungroup_shapes);
+
         if ( best )
         {
             menu.addSeparator();

@@ -103,7 +103,7 @@ command::GroupShapes::Data command::GroupShapes::collect_shapes(const std::vecto
 }
 
 command::GroupShapes::GroupShapes(const command::GroupShapes::Data& data)
-    : QUndoCommand(QObject::tr("Group Shapes"))
+    : detail::RedoInCtor(QObject::tr("Group Shapes"))
 {
     if ( data.parent )
     {
@@ -119,7 +119,7 @@ command::GroupShapes::GroupShapes(const command::GroupShapes::Data& data)
     }
 }
 
-void command::GroupShapes::redo()
+void command::detail::RedoInCtor::redo()
 {
     if ( !did )
     {
@@ -128,12 +128,22 @@ void command::GroupShapes::redo()
     }
 }
 
-void command::GroupShapes::undo()
+void command::detail::RedoInCtor::undo()
 {
     QUndoCommand::undo();
     did = false;
 }
 
 
+command::UngroupShapes::UngroupShapes(model::Group* group)
+    : detail::RedoInCtor(QObject::tr("Ungroup Shapes"))
+{
+    int pos = group->owner()->index_of(group);
+    (new RemoveShape(group, this))->redo();
+    for ( int i = 0, e = group->shapes.size(); i < e; i++ )
+    {
+        (new MoveShape(&group->shapes[0], group->owner(), pos+i, this))->redo();
+    }
+}
 
 

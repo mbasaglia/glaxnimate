@@ -358,3 +358,8 @@ void GlaxnimateWindow::group_shapes()
 {
     d->group_shapes();
 }
+
+void GlaxnimateWindow::ungroup_shapes()
+{
+    d->ungroup_shapes();
+}

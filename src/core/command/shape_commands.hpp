@@ -105,8 +105,24 @@ private:
     int position_after;
 };
 
+namespace detail {
 
-class GroupShapes : public QUndoCommand
+class RedoInCtor : public QUndoCommand
+{
+public:
+    void undo() override;
+    void redo() override;
+
+protected:
+    using QUndoCommand::QUndoCommand;
+
+private:
+    bool did = true;
+};
+
+} // namespace detail
+
+class GroupShapes : public detail::RedoInCtor
 {
 public:
     struct Data
@@ -119,13 +135,19 @@ public:
 
     static Data collect_shapes(const std::vector<model::DocumentNode *>& selection);
 
-    void undo() override;
-    void redo() override;
-
 
 private:
     model::Group* group = nullptr;
-    bool did = true;
+};
+
+class UngroupShapes : public detail::RedoInCtor
+{
+public:
+    UngroupShapes(model::Group* group);
+
+private:
+    model::Group* group = nullptr;
+
 };
 
 } // namespace command

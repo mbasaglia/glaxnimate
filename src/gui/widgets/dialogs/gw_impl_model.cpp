@@ -291,3 +291,19 @@ void GlaxnimateWindow::Private::group_shapes()
             new command::GroupShapes(data)
         );
 }
+
+void GlaxnimateWindow::Private::ungroup_shapes()
+{
+    model::Group* group = qobject_cast<model::Group*>(current_document_node());
+
+    if ( !group )
+    {
+        auto sp = current_shape_container();
+        if ( !sp )
+            return;
+        group = qobject_cast<model::Group*>(sp->object());
+    }
+
+    if ( group )
+        current_document->push_command(new command::UngroupShapes(group));
+}
