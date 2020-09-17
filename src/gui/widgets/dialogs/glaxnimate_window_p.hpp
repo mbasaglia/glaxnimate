@@ -10,8 +10,9 @@
 #include "glaxnimate_window.hpp"
 
 #include "model/document.hpp"
-#include "graphics/document_scene.hpp"
+#include "command/structure_commands.hpp"
 
+#include "graphics/document_scene.hpp"
 #include "item_models/document_node_model.hpp"
 #include "item_models/property_model.hpp"
 
@@ -110,6 +111,7 @@ public:
     void paste();
     void cut();
     void delete_selected();
+    void move_current(command::ReorderCommand::SpecialPosition pos);
 
     template<class LayerT>
     void layer_new()

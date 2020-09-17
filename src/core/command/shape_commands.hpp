@@ -59,6 +59,41 @@ private:
 };
 
 
+class MoveShape : public QUndoCommand
+{
+public:
+    MoveShape(model::ShapeElement* shape, model::ShapeListProperty* parent_after, int position_after)
+        : QUndoCommand(QObject::tr("Move Shape")),
+          parent_before(shape->owner()),
+          position_before(parent_before->index_of(shape, -1)),
+          parent_after(parent_after),
+          position_after(position_after)
+    {}
+
+    void undo() override
+    {
+        if ( parent_before == parent_after )
+            parent_before->move(position_before, position_after);
+        else if ( auto shape = parent_after->remove(position_after) )
+            parent_before->insert(std::move(shape), position_before);
+    }
+
+    void redo() override
+    {
+        if ( parent_before == parent_after )
+            parent_before->move(position_before, position_after);
+        else if ( auto shape = parent_before->remove(position_before) )
+            parent_after->insert(std::move(shape), position_after);
+    }
+
+private:
+    model::ShapeListProperty* parent_before;
+    int position_before;
+    model::ShapeListProperty* parent_after;
+    int position_after;
+};
+
+
 } // namespace command
 
 

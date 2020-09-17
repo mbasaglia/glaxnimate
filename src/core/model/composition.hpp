@@ -1,5 +1,6 @@
 #pragma once
 
+#include "model/property/object_list_property.hpp"
 #include "model/layers/layer.hpp"
 
 namespace model {

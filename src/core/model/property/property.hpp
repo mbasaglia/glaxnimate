@@ -4,17 +4,21 @@
 #include <functional>
 #include <iterator>
 #include <optional>
+#include <memory>
 
 #include <QString>
 #include <QPointF>
 #include <QVector2D>
 #include <QColor>
+#include <QVariant>
 
-#include "object.hpp"
+#include "model/animation/frame_time.hpp"
 
 namespace math { class Bezier; }
 
 namespace model {
+
+class Object;
 
 struct PropertyTraits
 {
@@ -156,26 +160,6 @@ private:                                                    \
     Q_PROPERTY(type* name READ get_##name WRITE set_##name) \
     // macro end
 
-#define GLAXNIMATE_PROPERTY_LIST_IMPL(name)                 \
-public:                                                     \
-    QVariantList get_##name() const                         \
-    {                                                       \
-        QVariantList ret;                                   \
-        for ( const auto & ptr : name )                     \
-            ret.push_back(QVariant::fromValue(ptr.get()));  \
-        return ret;                                         \
-    }                                                       \
-private:                                                    \
-    Q_PROPERTY(QVariantList name READ get_##name)           \
-    // macro end
-
-#define GLAXNIMATE_PROPERTY_LIST(type, name, ...)           \
-public:                                                     \
-    ObjectListProperty<type> name{this, #name, __VA_ARGS__};\
-    GLAXNIMATE_PROPERTY_LIST_IMPL(name)                     \
-    // macro end
-
-
 #define GLAXNIMATE_PROPERTY_RO(type, name, default_value)   \
 public:                                                     \
     Property<type> name{this, #name, default_value, {}, {}, PropertyTraits::ReadOnly}; \
@@ -184,32 +168,10 @@ private:                                                    \
     Q_PROPERTY(type name READ get_##name)                   \
     // macro end
 
-
-#define GLAXNIMATE_ANIMATABLE(type, name, ...)                  \
-public:                                                         \
-    AnimatedProperty<type> name{this, #name, __VA_ARGS__};      \
-    AnimatableBase* get_##name() { return &name; }              \
-private:                                                        \
-    Q_PROPERTY(AnimatableBase* name READ get_##name)            \
-    // macro end
-
-#define GLAXNIMATE_SUBOBJECT(type, name)                    \
-public:                                                     \
-    SubObjectProperty<type> name{this, #name};              \
-    type* get_##name() { return name.get(); }               \
-private:                                                    \
-    Q_PROPERTY(type* name READ get_##name)                  \
-    // macro end
-
-
 class BaseProperty
 {
 public:
-    BaseProperty(Object* object, const QString& name, PropertyTraits traits)
-        : object_(object), name_(name), traits_(traits)
-    {
-        object_->add_property(this);
-    }
+    BaseProperty(Object* object, const QString& name, PropertyTraits traits);
 
     virtual ~BaseProperty() = default;
 
@@ -239,10 +201,7 @@ public:
     }
 
 protected:
-    void value_changed()
-    {
-        object_->property_value_changed(this, value());
-    }
+    void value_changed();
 
 private:
     Object* object_;
@@ -258,7 +217,7 @@ template<> inline void defval<void>() {}
 
 } // namespace detail
 
-template<class Return, class ArgType>
+template<class Return, class... ArgType>
 class PropertyCallback
 {
 private:
@@ -266,36 +225,36 @@ private:
     {
     public:
         virtual ~HolderBase() = default;
-        virtual Return invoke(Object* obj, const ArgType& v) const = 0;
+        virtual Return invoke(Object* obj, const ArgType&... v) const = 0;
     };
 
-    template<class ObjT, class Arg>
+    template<class ObjT, class... Arg>
     class Holder : public HolderBase
     {
     public:
-        using FuncP = std::function<Return (ObjT*, Arg)>;
+        using FuncP = std::function<Return (ObjT*, Arg...)>;
 
         Holder(FuncP func) : func(std::move(func)) {}
 
-        Return invoke(Object* obj, const ArgType& v) const override
+        Return invoke(Object* obj, const ArgType&... v) const override
         {
-            return func(static_cast<ObjT*>(obj), v);
+            return func(static_cast<ObjT*>(obj), v...);
         }
 
         FuncP func;
     };
 
-    template<class ObjT, class Arg>
+    template<class ObjT, class... Arg>
     class HolderConst : public HolderBase
     {
     public:
-        using FuncP = std::function<Return (const ObjT*, Arg)>;
+        using FuncP = std::function<Return (const ObjT*, Arg...)>;
 
         HolderConst(FuncP func) : func(std::move(func)) {}
 
-        Return invoke(Object* obj, const ArgType& v) const override
+        Return invoke(Object* obj, const ArgType&... v) const override
         {
-            return func(static_cast<ObjT*>(obj), v);
+            return func(static_cast<ObjT*>(obj), v...);
         }
 
         FuncP func;
@@ -309,7 +268,7 @@ private:
 
         HolderNoarg(FuncP func) : func(std::move(func)) {}
 
-        Return invoke(Object* obj, const ArgType&) const override
+        Return invoke(Object* obj, const ArgType&...) const override
         {
             return func(static_cast<ObjT*>(obj));
         }
@@ -323,14 +282,14 @@ public:
 
     PropertyCallback(std::nullptr_t) {}
 
-    template<class ObjT, class Arg>
-    PropertyCallback(Return (ObjT::*func)(const Arg&)) : holder(std::make_unique<Holder<ObjT, const Arg&>>(func)) {}
-    template<class ObjT, class Arg>
-    PropertyCallback(Return (ObjT::*func)(const Arg&) const) : holder(std::make_unique<HolderConst<ObjT, const Arg&>>(func)) {}
-    template<class ObjT, class Arg>
-    PropertyCallback(Return (ObjT::*func)(Arg)) : holder(std::make_unique<Holder<ObjT, Arg>>(func)) {}
-    template<class ObjT, class Arg>
-    PropertyCallback(Return (ObjT::*func)(Arg) const) : holder(std::make_unique<HolderConst<ObjT, Arg>>(func)) {}
+    template<class ObjT, class... Arg>
+    PropertyCallback(Return (ObjT::*func)(const Arg&...)) : holder(std::make_unique<Holder<ObjT, const Arg&...>>(func)) {}
+    template<class ObjT, class... Arg>
+    PropertyCallback(Return (ObjT::*func)(const Arg&...) const) : holder(std::make_unique<HolderConst<ObjT, const Arg&...>>(func)) {}
+    template<class ObjT, class... Arg>
+    PropertyCallback(Return (ObjT::*func)(Arg...)) : holder(std::make_unique<Holder<ObjT, Arg...>>(func)) {}
+    template<class ObjT, class... Arg>
+    PropertyCallback(Return (ObjT::*func)(Arg...) const) : holder(std::make_unique<HolderConst<ObjT, Arg...>>(func)) {}
     template<class ObjT>
     PropertyCallback(Return (ObjT::*func)()) : holder(std::make_unique<HolderNoarg<ObjT>>(func)) {}
     template<class ObjT>
@@ -342,10 +301,10 @@ public:
         return bool(holder);
     }
 
-    Return operator() (Object* obj, const ArgType& v) const
+    Return operator() (Object* obj, const ArgType&... v) const
     {
         if ( holder )
-            return holder->invoke(obj, v);
+            return holder->invoke(obj, v...);
         return detail::defval<Return>();
     }
 };
@@ -489,260 +448,6 @@ private:
     Type value_;
     PropertyCallback<void, Type> emitter;
     PropertyCallback<bool, Type> validator;
-};
-
-class ObjectListPropertyBase : public BaseProperty
-{
-public:
-    ObjectListPropertyBase(Object* obj, const QString& name)
-        : BaseProperty(obj, name, {PropertyTraits::Object, PropertyTraits::List|PropertyTraits::Visual})
-    {}
-
-    /**
-     * \brief Inserts a clone of the passed object
-     * \return The internal object or \b nullptr in case of failure
-     */
-    virtual Object* insert_clone(Object* object, int index = -1) = 0;
-
-
-    bool set_value(const QVariant& val) override
-    {
-        if ( !val.canConvert<QVariantList>() )
-            return false;
-
-        for ( const auto& v : val.toList() )
-        {
-            if ( !v.canConvert<Object*>() )
-                continue;
-
-            insert_clone(v.value<Object*>());
-        }
-
-        return true;
-    }
-};
-
-
-template<class Type>
-class ObjectListProperty : public ObjectListPropertyBase
-{
-public:
-    using value_type = Type;
-    using pointer = std::unique_ptr<Type>;
-    using reference = Type&;
-//     using const_reference = const Type&;
-    using iterator = typename std::vector<pointer>::const_iterator;
-
-    /**
-     * \brief Utility to perform raw operations on the list of objects
-     * \warning Use with care, this won't invoke any callbacks
-     */
-    class Raw
-    {
-    public:
-        using iterator = typename std::vector<pointer>::iterator;
-        using move_iterator = std::move_iterator<iterator>;
-
-        void clear()
-        {
-            subject->objects.clear();
-        }
-        iterator begin() { return subject->objects.begin(); }
-        iterator end() { return subject->objects.end(); }
-        move_iterator move_begin() { return move_iterator(begin()); }
-        move_iterator move_end() { return move_iterator(end()); }
-
-    private:
-        friend ObjectListProperty;
-        Raw(ObjectListProperty* subject) : subject(subject) {}
-        ObjectListProperty* subject;
-    };
-
-    ObjectListProperty(
-        Object* obj,
-        const QString& name,
-        PropertyCallback<void, Type*> callback_insert = {},
-        PropertyCallback<void, Type*> callback_remove = {},
-        PropertyCallback<void, int> callback_insert_begin = {},
-        PropertyCallback<void, int> callback_remove_begin = {}
-    )
-        : ObjectListPropertyBase(obj, name),
-        callback_insert(std::move(callback_insert)),
-        callback_remove(std::move(callback_remove)),
-        callback_insert_begin(std::move(callback_insert_begin)),
-        callback_remove_begin(std::move(callback_remove_begin))
-    {}
-
-    reference operator[](int i) const { return *objects[i]; }
-    int size() const { return objects.size(); }
-    bool empty() const { return objects.empty(); }
-    iterator begin() const { return objects.begin(); }
-    iterator end() const { return objects.end(); }
-
-    reference back() const
-    {
-        return *objects.back();
-    }
-
-    void insert(pointer p, int position = -1)
-    {
-        if ( !valid_index(position) )
-            position = size();
-
-        callback_insert_begin(this->object(), position);
-        auto ptr = p.get();
-        objects.insert(objects.begin()+position, std::move(p));
-        on_insert(position);
-        callback_insert(this->object(), ptr);
-        value_changed();
-    }
-
-    bool valid_index(int index)
-    {
-        return index >= 0 && index < int(objects.size());
-    }
-
-    pointer remove(int index)
-    {
-        if ( !valid_index(index) )
-            return {};
-        callback_remove_begin(object(), index);
-        auto it = objects.begin() + index;
-        auto v = std::move(*it);
-        objects.erase(it);
-        on_remove(index);
-        callback_remove(object(), v.get());
-        value_changed();
-        return v;
-    }
-
-    void swap(int index_a, int index_b)
-    {
-        if ( !valid_index(index_a) || !valid_index(index_b) || index_a == index_b )
-            return;
-
-        std::swap(objects[index_a], objects[index_b]);
-        on_swap(index_a, index_b);
-        value_changed();
-    }
-
-    QVariant value() const override
-    {
-        QVariantList list;
-        for ( const auto& p : objects )
-            list.append(QVariant::fromValue((Object*)p.get()));
-        return list;
-    }
-
-    Object* insert_clone(Object* object, int index = -1) override
-    {
-        if ( !object )
-            return nullptr;
-
-        auto basep = object->clone();
-
-        Type* casted = qobject_cast<Type*>(basep.get());
-        if ( casted )
-        {
-            basep.release();
-            insert(pointer(casted), index);
-            return casted;
-        }
-        return nullptr;
-    }
-
-    void set_time(FrameTime t) override
-    {
-        for ( const auto& o : objects )
-            o->set_time(t);
-    }
-
-    int index_of(value_type* obj, int not_found = -1) const
-    {
-        for ( int i = 0; i < size(); i++ )
-            if ( objects[i].get() == obj )
-                return i;
-        return not_found;
-    }
-
-    /**
-     * \brief Allows to perform raw operations on the elements
-     * \warning Use with care, no callbacks will be invoked
-     */
-    Raw raw() { return Raw{this}; }
-
-protected:
-    virtual void on_insert(int index) { Q_UNUSED(index); }
-    virtual void on_remove(int index) { Q_UNUSED(index); }
-    virtual void on_swap(int index_a, int index_b) { Q_UNUSED(index_a); Q_UNUSED(index_b); }
-
-    std::vector<pointer> objects;
-    PropertyCallback<void, Type*> callback_insert;
-    PropertyCallback<void, Type*> callback_remove;
-    PropertyCallback<void, int> callback_insert_begin;
-    PropertyCallback<void, int> callback_remove_begin;
-};
-
-
-class SubObjectPropertyBase : public BaseProperty
-{
-public:
-    SubObjectPropertyBase(Object* obj, const QString& name)
-        : BaseProperty(obj, name, {PropertyTraits::Object})
-    {}
-
-    virtual const model::Object* sub_object() const = 0;
-    virtual model::Object* sub_object() = 0;
-};
-
-template<class Type>
-class SubObjectProperty : public SubObjectPropertyBase
-{
-public:
-    SubObjectProperty(Object* obj, const QString& name)
-        : SubObjectPropertyBase(obj, name),
-        sub_obj(obj->document())
-    {}
-
-    QVariant value() const override
-    {
-        return QVariant::fromValue(const_cast<Type*>(&sub_obj));
-    }
-
-    bool set_value(const QVariant& val) override
-    {
-        if ( !val.canConvert<Type*>() )
-            return false;
-
-        if ( Type* t = val.value<Type*>() )
-            return set_clone(t);
-
-        return false;
-    }
-
-    Type* set_clone(Type* object)
-    {
-        if ( !object )
-            return nullptr;
-
-        sub_obj.assign_from(object);
-        return &sub_obj;
-    }
-
-    Type* get() { return &sub_obj; }
-    const Type* get() const { return &sub_obj; }
-
-    model::Object * sub_object() override { return &sub_obj; }
-    const model::Object * sub_object() const override { return &sub_obj; }
-
-
-    void set_time(FrameTime t) override
-    {
-        sub_obj.set_time(t);
-    }
-
-private:
-    Type sub_obj;
 };
 
 } // namespace model

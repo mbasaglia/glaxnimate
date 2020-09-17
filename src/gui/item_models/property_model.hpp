@@ -2,7 +2,6 @@
 
 #include <QAbstractItemModel>
 
-#include "model/property.hpp"
 #include "model/document.hpp"
 
 namespace item_models {

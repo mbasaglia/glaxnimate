@@ -1,6 +1,7 @@
 #pragma once
 
 #include "model/animation/animatable.hpp"
+#include "model/object.hpp"
 
 #include <QTransform>
 

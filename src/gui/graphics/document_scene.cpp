@@ -52,6 +52,13 @@ public:
         return document->main_composition();
     }
 
+    DocumentNodeGraphicsItem* item_from_node(model::DocumentNode* node)
+    {
+        auto it = node_to_item.find(node);
+        if ( it == node_to_item.end() )
+            return nullptr;
+        return it->second;
+    }
 
     model::Document* document = nullptr;
     std::unordered_map<model::DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
@@ -100,6 +107,7 @@ void graphics::DocumentScene::connect_node ( model::DocumentNode* node )
     child->setData(Private::data_key_ptr, QVariant::fromValue(node));
     connect(node, &model::DocumentNode::docnode_child_add_end, this, &DocumentScene::connect_node);
     connect(node, &model::DocumentNode::docnode_child_remove_end, this, &DocumentScene::disconnect_node);
+    connect(node, &model::DocumentNode::docnode_child_move_end, this, &DocumentScene::move_node);
 
     DocumentNodeGraphicsItem* parent = nullptr;
     if ( auto parent_node = node->docnode_parent() )
@@ -376,6 +384,21 @@ void graphics::DocumentScene::set_active_tool(tools::Tool* tool)
             it = d->node_to_editors.erase(it);
         else
             ++it;
+    }
+
+}
+
+void graphics::DocumentScene::move_node(model::DocumentNode* node, int, int)
+{
+    model::DocumentNode* parent_node = node->docnode_parent();
+    int siblings_count = parent_node->docnode_child_count();
+
+    QGraphicsItem* above = d->item_from_node(parent_node->docnode_child(siblings_count - 1));
+    for ( int i = siblings_count - 2; i >= 0; i-- )
+    {
+        QGraphicsItem* item = d->item_from_node(parent_node->docnode_child(i));
+        item->stackBefore(above);
+        above = item;
     }
 
 }

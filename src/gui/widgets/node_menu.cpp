@@ -6,6 +6,7 @@
 #include "command/property_commands.hpp"
 
 
+
 namespace {
 
 class ResetTransform
@@ -53,7 +54,47 @@ QAction* action_for_node(model::DocumentNode* node, model::DocumentNode* selecte
     return act;
 }
 
+void move_action(
+    NodeMenu* menu,
+    model::DocumentNode* node,
+    command::ReorderCommand::SpecialPosition pos
+)
+{
+    QIcon icon;
+    QString label;
+
+    switch ( pos )
+    {
+        case command::ReorderCommand::MoveTop:
+            icon = QIcon::fromTheme("layer-top");
+            label = NodeMenu::tr("Move to Top");
+            break;
+        case command::ReorderCommand::MoveUp:
+            icon = QIcon::fromTheme("layer-raise");
+            label = NodeMenu::tr("Raise");
+            break;
+        case command::ReorderCommand::MoveDown:
+            icon = QIcon::fromTheme("layer-lower");
+            label = NodeMenu::tr("Lower");
+            break;
+        case command::ReorderCommand::MoveBottom:
+            icon = QIcon::fromTheme("layer-bottom");
+            label = NodeMenu::tr("Move to Bottom");
+            break;
+    }
+
+    QAction* act = menu->addAction(icon, label, menu, [node, pos]{
+        node->push_command(new command::ReorderCommand(node, pos));
+    });
+
+    int position = pos;
+    if ( !command::ReorderCommand::resolve_position(node, position) )
+        act->setEnabled(false);
+}
+
+
 } // namespace
+
 
 
 NodeMenu::NodeMenu(model::DocumentNode* node, QWidget* parent)
@@ -72,9 +113,13 @@ NodeMenu::NodeMenu(model::DocumentNode* node, QWidget* parent)
             lay->push_command(new command::DuplicateCommand(lay));
         });
 
+        addSeparator();
+
         addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
             ResetTransform{lay->document(), lay->transform.get()}
         );
+
+        addSeparator();
 
         QMenu* menu_parent = new QMenu(tr("Parent"), this);
         menu_parent->setIcon(QIcon::fromTheme("go-parent-folder"));
@@ -95,6 +140,14 @@ NodeMenu::NodeMenu(model::DocumentNode* node, QWidget* parent)
             );
         });
         addAction(menu_parent->menuAction());
+
+        addSeparator();
+
+        move_action(this, lay, command::ReorderCommand::MoveTop);
+        move_action(this, lay, command::ReorderCommand::MoveUp);
+        move_action(this, lay, command::ReorderCommand::MoveDown);
+        move_action(this, lay, command::ReorderCommand::MoveBottom);
+
     }
     else if ( auto shape = qobject_cast<model::ShapeElement*>(node) )
     {
@@ -106,12 +159,20 @@ NodeMenu::NodeMenu(model::DocumentNode* node, QWidget* parent)
             shape->push_command(new command::DuplicateCommand(shape));
         });
 
+        addSeparator();
         if ( auto group = qobject_cast<model::Group*>(shape) )
         {
             addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
                 ResetTransform{group->document(), group->transform.get()}
             );
         }
+
+        addSeparator();
+
+        move_action(this, shape, command::ReorderCommand::MoveTop);
+        move_action(this, shape, command::ReorderCommand::MoveUp);
+        move_action(this, shape, command::ReorderCommand::MoveDown);
+        move_action(this, shape, command::ReorderCommand::MoveBottom);
     }
 }
 

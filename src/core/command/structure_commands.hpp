@@ -51,4 +51,28 @@ private:
 };
 
 
+class ReorderCommand : public DeferredCommandBase
+{
+public:
+    enum SpecialPosition
+    {
+        MoveUp = -1,
+        MoveDown = -2,
+        MoveTop = -3,
+        MoveBottom = -4,
+    };
+
+    static bool resolve_position(model::Layer* node,        int& position);
+    static bool resolve_position(model::ShapeElement* node, int& position);
+    static bool resolve_position(model::DocumentNode* node, int& position);
+
+    ReorderCommand(model::DocumentNode* node, int new_position);
+    ReorderCommand(model::Layer* node, int new_position);
+    ReorderCommand(model::ShapeElement* node, int new_position);
+
+private:
+    static QString name(model::DocumentNode* node);
+
+};
+
 } // namespace command

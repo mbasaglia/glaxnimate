@@ -2,7 +2,7 @@
 #include <QPoint>
 #include <QMetaProperty>
 
-#include "model/property.hpp"
+#include "model/property/object_list_property.hpp"
 #include "model/document.hpp"
 
 using namespace model;

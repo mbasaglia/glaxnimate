@@ -3,6 +3,7 @@
 #include "shape.hpp"
 
 #include "model/transform.hpp"
+#include "model/property/sub_object_property.hpp"
 #include "utils/range.hpp"
 
 namespace model {
@@ -39,7 +40,7 @@ public:
 
     QIcon docnode_icon() const override
     {
-        return QIcon::fromTheme("draw-rectangle");
+        return QIcon::fromTheme("object-group");
     }
 
     QString type_name_human() const override

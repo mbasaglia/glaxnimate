@@ -63,6 +63,40 @@ private:
     int position;
 };
 
+class MoveLayer : public QUndoCommand
+{
+public:
+    MoveLayer(model::Layer* layer, model::Composition* parent_after, int position_after)
+        : QUndoCommand(QObject::tr("Move Layer")),
+          parent_before(layer->composition()),
+          position_before(parent_before->layer_position(layer, -1)),
+          parent_after(parent_after),
+          position_after(position_after)
+    {}
+
+    void undo() override
+    {
+        if ( parent_before == parent_after )
+            parent_before->layers.move(position_before, position_after);
+        else if ( auto layer = parent_after->layers.remove(position_after) )
+            parent_before->add_layer(std::move(layer), position_before);
+    }
+
+    void redo() override
+    {
+        if ( parent_before == parent_after )
+            parent_before->layers.move(position_before, position_after);
+        else if ( auto layer = parent_before->layers.remove(position_before) )
+            parent_after->add_layer(std::move(layer), position_after);
+    }
+
+private:
+    model::Composition* parent_before;
+    int position_before;
+    model::Composition* parent_after;
+    int position_after;
+};
+
 
 } // namespace command
 

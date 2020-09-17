@@ -98,6 +98,11 @@ private slots:
     void layer_new_color();
     void layer_delete();
 
+    void layer_top();
+    void layer_raise();
+    void layer_lower();
+    void layer_bottom();
+
     void help_about();
     void help_manual();
     void help_issue();

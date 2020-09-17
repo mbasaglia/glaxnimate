@@ -322,3 +322,23 @@ void GlaxnimateWindow::delete_selected()
 {
     d->delete_selected();
 }
+
+void GlaxnimateWindow::layer_top()
+{
+    d->move_current(command::ReorderCommand::MoveTop);
+}
+
+void GlaxnimateWindow::layer_raise()
+{
+    d->move_current(command::ReorderCommand::MoveUp);
+}
+
+void GlaxnimateWindow::layer_lower()
+{
+    d->move_current(command::ReorderCommand::MoveDown);
+}
+
+void GlaxnimateWindow::layer_bottom()
+{
+    d->move_current(command::ReorderCommand::MoveBottom);
+}

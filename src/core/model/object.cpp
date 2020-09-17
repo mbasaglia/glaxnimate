@@ -2,9 +2,8 @@
 
 #include <unordered_map>
 
-#include "property.hpp"
+#include "property/property.hpp"
 #include "model/document.hpp"
-#include "command/property_commands.hpp"
 #include "app/log/log.hpp"
 
 
@@ -137,16 +136,4 @@ void model::Object::set_time(model::FrameTime t)
 model::FrameTime model::Object::time() const
 {
     return d->current_time;
-}
-
-
-
-bool model::BaseProperty::set_undoable ( const QVariant& val, bool commit )
-{
-    QVariant before = value();
-    if ( !set_value(val) )
-        return false;
-
-    object_->document()->undo_stack().push(new command::SetPropertyValue(this, before, val, commit));
-    return true;
 }

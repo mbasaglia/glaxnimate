@@ -40,6 +40,8 @@ model/shapes/group.cpp
 model/shapes/ellipse.cpp
 model/shapes/path.cpp
 model/shapes/stroke.cpp
+model/property/property.cpp
+model/property/reference_property.cpp
 
 utils/gzip.cpp
 )

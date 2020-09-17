@@ -43,6 +43,20 @@ void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
         QModelIndex changed = index(ind.row(), ColumnName, par);
         dataChanged(changed, changed, {Qt::EditRole, Qt::DisplayRole});
     });
+    connect(node, &model::DocumentNode::docnode_child_move_begin, this, [this, node](int a, int b) {
+        int rows = node->docnode_child_count();
+
+        int src = rows - a - 1;
+        int dest = rows - b - 1;
+        if ( src < dest )
+            dest++;
+
+        QModelIndex parent = node_index(node);
+        beginMoveRows(parent, src, src, parent, dest);
+    });
+    connect(node, &model::DocumentNode::docnode_child_move_end, this, [this]() {
+        endMoveRows();
+    });
 
     for ( model::DocumentNode* child : node->docnode_children() )
         connect_node(child);

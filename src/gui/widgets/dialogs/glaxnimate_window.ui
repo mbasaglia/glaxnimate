@@ -111,15 +111,18 @@
     <addaction name="action_undo"/>
     <addaction name="action_redo"/>
     <addaction name="separator"/>
-    <addaction name="action_copy"/>
     <addaction name="action_cut"/>
+    <addaction name="action_copy"/>
     <addaction name="action_paste"/>
     <addaction name="action_select_all"/>
     <addaction name="separator"/>
-    <addaction name="action_raise_to_Top"/>
+    <addaction name="action_raise_to_top"/>
     <addaction name="action_raise"/>
     <addaction name="action_lower"/>
     <addaction name="action_lower_to_bottom"/>
+    <addaction name="separator"/>
+    <addaction name="action_group"/>
+    <addaction name="action_ungroup"/>
     <addaction name="separator"/>
     <addaction name="actionPr_eferences"/>
    </widget>
@@ -207,7 +210,7 @@
    <addaction name="separator"/>
    <addaction name="action_select_all"/>
    <addaction name="separator"/>
-   <addaction name="action_raise_to_Top"/>
+   <addaction name="action_raise_to_top"/>
    <addaction name="action_raise"/>
    <addaction name="action_lower"/>
    <addaction name="action_lower_to_bottom"/>
@@ -983,7 +986,7 @@
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
-    <string>&amp;Cut</string>
+    <string>Cu&amp;t</string>
    </property>
   </action>
   <action name="action_paste">
@@ -1004,10 +1007,9 @@
     <string>&amp;Select All</string>
    </property>
   </action>
-  <action name="action_raise_to_Top">
+  <action name="action_raise_to_top">
    <property name="icon">
-    <iconset theme="object-order-front">
-     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
+    <iconset theme="layer-top"/>
    </property>
    <property name="text">
     <string>Raise to &amp;Top</string>
@@ -1018,8 +1020,7 @@
   </action>
   <action name="action_raise">
    <property name="icon">
-    <iconset theme="object-order-raise">
-     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
+    <iconset theme="layer-raise"/>
    </property>
    <property name="text">
     <string>&amp;Raise</string>
@@ -1030,8 +1031,7 @@
   </action>
   <action name="action_lower">
    <property name="icon">
-    <iconset theme="object-order-lower">
-     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
+    <iconset theme="layer-lower"/>
    </property>
    <property name="text">
     <string>&amp;Lower</string>
@@ -1042,8 +1042,7 @@
   </action>
   <action name="action_lower_to_bottom">
    <property name="icon">
-    <iconset theme="object-order-back">
-     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
+    <iconset theme="layer-bottom"/>
    </property>
    <property name="text">
     <string>Lower to &amp;Bottom</string>
@@ -1209,6 +1208,24 @@
    </property>
    <property name="text">
     <string>Report &amp;Issue...</string>
+   </property>
+  </action>
+  <action name="action_group">
+   <property name="icon">
+    <iconset theme="object-group">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Group</string>
+   </property>
+  </action>
+  <action name="action_ungroup">
+   <property name="icon">
+    <iconset theme="object-ungroup">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Ungroup</string>
    </property>
   </action>
  </widget>
@@ -1699,6 +1716,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_layer_top</sender>
+   <signal>clicked()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>layer_top()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>243</x>
+     <y>898</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>234</x>
+     <y>975</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_layer_up</sender>
+   <signal>clicked()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>layer_raise()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>277</x>
+     <y>881</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>285</x>
+     <y>977</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_layer_down</sender>
+   <signal>clicked()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>layer_lower()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>308</x>
+     <y>880</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>314</x>
+     <y>962</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_layer_bottom</sender>
+   <signal>clicked()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>layer_bottom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>350</x>
+     <y>880</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>348</x>
+     <y>945</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
@@ -1726,5 +1807,9 @@
   <slot>color_swap()</slot>
   <slot>help_manual()</slot>
   <slot>help_issue()</slot>
+  <slot>layer_top()</slot>
+  <slot>layer_raise()</slot>
+  <slot>layer_lower()</slot>
+  <slot>layer_bottom()</slot>
  </slots>
 </ui>

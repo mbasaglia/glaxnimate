@@ -4,7 +4,16 @@
 #include <QList>
 
 #include "model/animation/keyframe_transition.hpp"
-#include "model/property.hpp"
+#include "model/property/property.hpp"
+
+
+#define GLAXNIMATE_ANIMATABLE(type, name, ...)                  \
+public:                                                         \
+    AnimatedProperty<type> name{this, #name, __VA_ARGS__};      \
+    AnimatableBase* get_##name() { return &name; }              \
+private:                                                        \
+    Q_PROPERTY(AnimatableBase* name READ get_##name)            \
+    // macro end
 
 
 namespace model {

@@ -2,6 +2,7 @@
 
 #include "model/document_node.hpp"
 #include "math/bezier.hpp"
+#include "model/property/object_list_property.hpp"
 
 namespace model {
 
@@ -92,11 +93,15 @@ protected:
         update_pos(index);
     }
 
-    void on_swap(int index_a, int index_b) override
+    void on_move(int index_a, int index_b) override
     {
-        objects[index_a]->set_position(this, index_a);
-        objects[index_b]->set_position(this, index_b);
-        for ( int i = 0, e = std::max(index_a, index_b); i < e; i++ )
+        if ( index_b < index_a )
+            std::swap(index_a, index_b);
+
+        for ( int i = index_a; i <= index_b; i++ )
+            objects[i]->set_position(this, i);
+
+        for ( int i = 0; i <= index_b; i++ )
             objects[i]->siblings_changed();
     }
 };

@@ -3,7 +3,7 @@
 #include <QVector>
 
 #include "command/base.hpp"
-#include "model/property.hpp"
+#include "model/property/property.hpp"
 
 namespace command {
 

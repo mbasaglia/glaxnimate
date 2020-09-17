@@ -261,3 +261,15 @@ void GlaxnimateWindow::Private::paste()
     }
     ui.view_document_node->selectionModel()->select(item_select, QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Rows);
 }
+
+
+void GlaxnimateWindow::Private::move_current(command::ReorderCommand::SpecialPosition pos)
+{
+    auto current = current_document_node();
+    if ( !current )
+        return;
+    auto cmd = std::make_unique<command::ReorderCommand>(current, pos);
+    if ( !cmd->has_action() )
+        return;
+    current->push_command(cmd.release());
+}

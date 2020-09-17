@@ -2,7 +2,8 @@
 
 #include <QMetaType>
 
-#include "model/property.hpp"
+#include "model/property/reference_property.hpp"
+#include "model/property/sub_object_property.hpp"
 #include "model/document_node.hpp"
 #include "model/transform.hpp"
 #include "utils/range.hpp"
