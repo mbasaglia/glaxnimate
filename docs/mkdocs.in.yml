@@ -23,6 +23,7 @@ nav:
         - ui/tools.md
         - ui/docks.md
         - ui/menus.md
+        - "ChangeLog": changelog.md
     - 'Contributing':
         - contributing/index.md
         - "Roadmap": contributing/roadmap.md
