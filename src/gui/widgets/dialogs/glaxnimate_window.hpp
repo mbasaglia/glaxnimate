@@ -71,6 +71,7 @@ public:
     std::vector<model::DocumentNode*> cleaned_selection() const;
 
     void delete_selected();
+    void group_shapes();
 
     item_models::DocumentNodeModel* model() const;
 

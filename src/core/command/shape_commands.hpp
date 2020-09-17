@@ -116,6 +116,7 @@ public:
 private:
     model::Group* group = nullptr;
     std::vector<std::unique_ptr<QUndoCommand>> children;
+    bool did = true;
 };
 
 } // namespace command

@@ -34,6 +34,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.action_select_all->setShortcut(QKeySequence::SelectAll);
     ui.action_undo->setShortcut(QKeySequence::Undo);
     ui.action_redo->setShortcut(QKeySequence::Redo);
+    ui.action_group->setShortcut(QKeySequence("Ctrl+G"));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
@@ -44,6 +45,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     connect(ui.action_raise, &QAction::triggered, parent, &GlaxnimateWindow::layer_raise);
     connect(ui.action_lower, &QAction::triggered, parent, &GlaxnimateWindow::layer_lower);
     connect(ui.action_lower_to_bottom, &QAction::triggered, parent, &GlaxnimateWindow::layer_bottom);
+    connect(ui.action_group, &QAction::triggered, parent, &GlaxnimateWindow::group_shapes);
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )

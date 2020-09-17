@@ -353,3 +353,8 @@ item_models::DocumentNodeModel * GlaxnimateWindow::model() const
 {
     return &d->document_node_model;
 }
+
+void GlaxnimateWindow::group_shapes()
+{
+    d->group_shapes();
+}

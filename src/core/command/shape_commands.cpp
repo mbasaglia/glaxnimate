@@ -7,7 +7,7 @@
 namespace {
 model::DocumentNode* shape_parent(model::ShapeElement* shape)
 {
-    return static_cast<model::ShapeElement*>(shape->owner()->object());
+    return static_cast<model::DocumentNode*>(shape->owner()->object());
 }
 
 model::DocumentNode* shape_parent(model::DocumentNode* shape)
@@ -21,7 +21,7 @@ struct PathToLayer
 {
     PathToLayer() = default;
 
-    PathToLayer(model::DocumentNode* node)
+    explicit PathToLayer(model::DocumentNode* node)
     {
         layer = nullptr;
         while ( node && !layer )
@@ -47,7 +47,7 @@ struct PathToLayer
 
     model::ShapeListProperty* lowest() const
     {
-        if ( steps.empty() )
+        if ( !steps.empty() )
             return &steps.back()->shapes;
         return &layer->shapes;
     }
@@ -68,7 +68,7 @@ struct PathToLayer
             return lowest();
         }
 
-        return nullptr;
+        return &layer->shapes;
     }
 };
 
@@ -85,13 +85,13 @@ command::GroupShapes::Data command::GroupShapes::collect_shapes(const std::vecto
     int i = 0;
     for ( ; i < int(selection.size()) && !data.parent; i++ )
     {
-        collected = shape_parent(selection[i]);
+        collected = PathToLayer(shape_parent(selection[i]));
         data.parent = collected.lowest();
     }
 
-    for ( i++; i < int(selection.size()) && data.parent; i++ )
+    for ( ; i < int(selection.size()) && data.parent; i++ )
     {
-        data.parent = collected.combine(shape_parent(selection[i]));
+        data.parent = collected.combine(PathToLayer(shape_parent(selection[i])));
         if ( !data.parent )
             return {};
     }
@@ -112,19 +112,30 @@ command::GroupShapes::GroupShapes(const command::GroupShapes::Data& data)
         group = grp.get();
         data.parent->object()->document()->set_best_name(group);
         children.push_back(std::make_unique<AddShape>(data.parent, std::move(grp), data.parent->size()));
+        children.back()->redo();
+
         for ( int i = 0; i < int(data.elements.size()); i++ )
+        {
             children.push_back(std::make_unique<MoveShape>(data.elements[i], &group->shapes, i));
+            children.back()->redo();
+        }
     }
 }
 
 void command::GroupShapes::redo()
 {
-    for ( const auto& ch : children )
-        ch->redo();
+    if ( !did )
+    {
+        for ( const auto& ch : children )
+            ch->redo();
+        did = true;
+    }
 }
 
 void command::GroupShapes::undo()
 {
+    did = false;
+
     for ( int i = int(children.size()) - 1; i >= 0; i-- )
         children[i]->undo();
 }

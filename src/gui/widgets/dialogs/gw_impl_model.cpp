@@ -282,3 +282,12 @@ void GlaxnimateWindow::Private::move_current(command::ReorderCommand::SpecialPos
         return;
     current->push_command(cmd.release());
 }
+
+void GlaxnimateWindow::Private::group_shapes()
+{
+    auto data = command::GroupShapes::collect_shapes(cleaned_selection());
+    if ( data.parent )
+        current_document->push_command(
+            new command::GroupShapes(data)
+        );
+}

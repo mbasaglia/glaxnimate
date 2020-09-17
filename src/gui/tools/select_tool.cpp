@@ -343,6 +343,11 @@ private:
         menu.addAction(QIcon::fromTheme("edit-delete-remove"), GlaxnimateWindow::tr("Delete"),
                        event.window, &GlaxnimateWindow::delete_selected);
 
+
+        menu.addSeparator();
+        menu.addAction(QIcon::fromTheme("object-group"), GlaxnimateWindow::tr("Group Shapes"),
+                       event.window, &GlaxnimateWindow::group_shapes);
+
         if ( best )
         {
             menu.addSeparator();
