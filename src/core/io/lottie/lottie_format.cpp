@@ -151,15 +151,13 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"c", "color"},
         FieldInfo{"r", Custom},
     }},
-    {"BaseStroke", {
+    {"Stroke", {
         FieldInfo{"o", Custom},
         FieldInfo{"lc", Custom},
         FieldInfo{"lj", Custom},
         FieldInfo{"ml", "miter_limit"},
         FieldInfo{"w", "width"},
         FieldInfo{"d"},
-    }},
-    {"Stroke", {
         FieldInfo{"c", "color"},
     }},
 };
