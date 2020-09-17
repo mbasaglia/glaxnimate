@@ -96,8 +96,9 @@ private slots:
     void layer_new_shape();
     void layer_new_precomp();
     void layer_new_color();
-    void layer_delete();
 
+    void layer_delete();
+    void layer_duplicate();
     void layer_top();
     void layer_raise();
     void layer_lower();

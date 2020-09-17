@@ -106,6 +106,12 @@ void GlaxnimateWindow::layer_delete()
     d->layer_delete();
 }
 
+void GlaxnimateWindow::layer_duplicate()
+{
+    d->layer_duplicate();
+}
+
+
 void GlaxnimateWindow::view_fit()
 {
     d->view_fit();

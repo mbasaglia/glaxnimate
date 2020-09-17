@@ -110,15 +110,24 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> lay
 
 void GlaxnimateWindow::Private::layer_delete()
 {
-    /// @todo Remove shapes / precompositions
-    model::DocumentNode* curr = current_document_node();
-    if ( !curr )
+    auto current = current_document_node();
+    if ( !current )
         return;
+    auto cmd = std::make_unique<command::DeleteCommand>(current);
+    if ( !cmd->has_action() )
+        return;
+    current->push_command(cmd.release());
+}
 
-    if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
-    {
-        current_document->push_command(new command::RemoveLayer(curr_lay));
-    }
+void GlaxnimateWindow::Private::layer_duplicate()
+{
+    auto current = current_document_node();
+    if ( !current )
+        return;
+    auto cmd = std::make_unique<command::DuplicateCommand>(current);
+    if ( !cmd->has_action() )
+        return;
+    current->push_command(cmd.release());
 }
 
 std::vector<model::DocumentNode *> GlaxnimateWindow::Private::cleaned_selection()

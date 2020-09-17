@@ -1780,6 +1780,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_layer_duplicate</sender>
+   <signal>clicked()</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>layer_duplicate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>50</x>
+     <y>880</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>68</x>
+     <y>958</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>document_save()</slot>
@@ -1811,5 +1827,6 @@
   <slot>layer_raise()</slot>
   <slot>layer_lower()</slot>
   <slot>layer_bottom()</slot>
+  <slot>layer_duplicate()</slot>
  </slots>
 </ui>

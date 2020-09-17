@@ -121,6 +121,7 @@ public:
     void layer_new_impl(std::unique_ptr<model::Layer> layer);
     void layer_new_prepare(model::Layer* layer);
     void layer_delete();
+    void layer_duplicate();
 
     // script
     void console_error(const app::scripting::ScriptError& err);
