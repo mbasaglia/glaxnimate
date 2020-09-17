@@ -107,17 +107,14 @@ command::GroupShapes::GroupShapes(const command::GroupShapes::Data& data)
 {
     if ( data.parent )
     {
-        children.reserve(data.elements.size() + 1);
         std::unique_ptr<model::Group> grp = std::make_unique<model::Group>(data.parent->object()->document());
         group = grp.get();
         data.parent->object()->document()->set_best_name(group);
-        children.push_back(std::make_unique<AddShape>(data.parent, std::move(grp), data.parent->size()));
-        children.back()->redo();
+        (new AddShape(data.parent, std::move(grp), data.parent->size(), this))->redo();
 
         for ( int i = 0; i < int(data.elements.size()); i++ )
         {
-            children.push_back(std::make_unique<MoveShape>(data.elements[i], &group->shapes, i));
-            children.back()->redo();
+            (new MoveShape(data.elements[i], &group->shapes, i, this))->redo();
         }
     }
 }
@@ -126,18 +123,15 @@ void command::GroupShapes::redo()
 {
     if ( !did )
     {
-        for ( const auto& ch : children )
-            ch->redo();
+        QUndoCommand::redo();
         did = true;
     }
 }
 
 void command::GroupShapes::undo()
 {
+    QUndoCommand::undo();
     did = false;
-
-    for ( int i = int(children.size()) - 1; i >= 0; i-- )
-        children[i]->undo();
 }
 
 

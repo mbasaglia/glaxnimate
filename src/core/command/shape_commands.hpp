@@ -10,25 +10,30 @@ namespace command {
 class AddShape : public QUndoCommand
 {
 public:
-    AddShape(model::ShapeListProperty* parent, std::unique_ptr<model::ShapeElement> shape, int position)
-        : QUndoCommand(QObject::tr("Create %1").arg(shape->docnode_name())),
-          parent(parent),
+    AddShape(
+        model::ShapeListProperty* shape_parent,
+        std::unique_ptr<model::ShapeElement> shape,
+        int position,
+        QUndoCommand* parent = nullptr
+    )
+        : QUndoCommand(QObject::tr("Create %1").arg(shape->docnode_name()), parent),
+          shape_parent(shape_parent),
           shape(std::move(shape)),
           position(position)
     {}
 
     void undo() override
     {
-        shape = parent->remove(position);
+        shape = shape_parent->remove(position);
     }
 
     void redo() override
     {
-        parent->insert(std::move(shape), position);
+        shape_parent->insert(std::move(shape), position);
     }
 
 private:
-    model::ShapeListProperty* parent;
+    model::ShapeListProperty* shape_parent;
     std::unique_ptr<model::ShapeElement> shape;
     int position;
 };
@@ -37,25 +42,25 @@ private:
 class RemoveShape : public QUndoCommand
 {
 public:
-    RemoveShape(model::ShapeElement* shape)
-        : QUndoCommand(QObject::tr("Remove %1").arg(shape->docnode_name())),
-          parent(shape->owner()),
+    RemoveShape(model::ShapeElement* shape, QUndoCommand* parent = nullptr)
+        : QUndoCommand(QObject::tr("Remove %1").arg(shape->docnode_name()), parent),
+          shape_parent(shape->owner()),
           position(shape->position())
     {}
 
 
     void undo() override
     {
-        parent->insert(std::move(shape), position);
+        shape_parent->insert(std::move(shape), position);
     }
 
     void redo() override
     {
-        shape = parent->remove(position);
+        shape = shape_parent->remove(position);
     }
 
 private:
-    model::ShapeListProperty* parent;
+    model::ShapeListProperty* shape_parent;
     std::unique_ptr<model::ShapeElement> shape;
     int position;
 };
@@ -64,8 +69,13 @@ private:
 class MoveShape : public QUndoCommand
 {
 public:
-    MoveShape(model::ShapeElement* shape, model::ShapeListProperty* parent_after, int position_after)
-        : QUndoCommand(QObject::tr("Move Shape")),
+    MoveShape(
+        model::ShapeElement* shape,
+        model::ShapeListProperty* parent_after,
+        int position_after,
+        QUndoCommand* parent = nullptr
+    )
+        : QUndoCommand(QObject::tr("Move Shape"), parent),
           parent_before(shape->owner()),
           position_before(parent_before->index_of(shape, -1)),
           parent_after(parent_after),
@@ -115,7 +125,6 @@ public:
 
 private:
     model::Group* group = nullptr;
-    std::vector<std::unique_ptr<QUndoCommand>> children;
     bool did = true;
 };
 
