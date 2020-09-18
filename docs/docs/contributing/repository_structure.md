@@ -22,7 +22,7 @@ Includes custom icons (ones not found in the icon theme), logos, and other image
 
 ### data/plugins
 
-To contain default plugins. See also [Writing Plugins](plugins.md).
+To contain default plugins. See also [Writing Plugins](scripting/plugins.md).
 
 ### data/translations
 

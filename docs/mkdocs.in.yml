@@ -19,8 +19,9 @@ nav:
     - download.md
     - 'Documentation':
         - ui/index.md
-        - ui/canvas.md
         - ui/tools.md
+        - ui/shapes.md
+        - ui/canvas.md
         - ui/docks.md
         - ui/menus.md
         - "ChangeLog": changelog.md
