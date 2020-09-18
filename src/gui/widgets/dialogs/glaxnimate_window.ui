@@ -26,7 +26,7 @@
      <height>30</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_File">
+   <widget class="QMenu" name="menu_file">
     <property name="title">
      <string>&amp;File</string>
     </property>
@@ -57,7 +57,7 @@
      <string>&amp;Tools</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menu_Layers">
+   <widget class="QMenu" name="menu_layers">
     <property name="title">
      <string>&amp;Layers</string>
     </property>
@@ -79,7 +79,7 @@
     <addaction name="actionNew_Pre_Composition"/>
     <addaction name="separator"/>
    </widget>
-   <widget class="QMenu" name="menu_Path">
+   <widget class="QMenu" name="menu_path">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -130,7 +130,7 @@
     <addaction name="separator"/>
     <addaction name="actionPr_eferences"/>
    </widget>
-   <widget class="QMenu" name="menu_View">
+   <widget class="QMenu" name="menu_view">
     <property name="title">
      <string>&amp;View</string>
     </property>
@@ -148,7 +148,7 @@
     <addaction name="action_view_fit"/>
     <addaction name="action_Reset_Rotation"/>
    </widget>
-   <widget class="QMenu" name="menu_Help">
+   <widget class="QMenu" name="menu_help">
     <property name="title">
      <string>&amp;Help</string>
     </property>
@@ -161,11 +161,11 @@
      <string>Plu&amp;gins</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menu_Render">
+   <widget class="QMenu" name="menu_render">
     <property name="title">
      <string>&amp;Render</string>
     </property>
-    <widget class="QMenu" name="menuSingle_Frame">
+    <widget class="QMenu" name="menu_render_single_frame">
      <property name="title">
       <string>Single &amp;Frame</string>
      </property>
@@ -176,18 +176,18 @@
      <addaction name="actionRaster"/>
      <addaction name="actionS_VG"/>
     </widget>
-    <addaction name="menuSingle_Frame"/>
+    <addaction name="menu_render_single_frame"/>
     <addaction name="action_Web_Preview"/>
    </widget>
-   <addaction name="menu_File"/>
+   <addaction name="menu_file"/>
    <addaction name="menu_edit"/>
    <addaction name="menu_tools"/>
-   <addaction name="menu_View"/>
-   <addaction name="menu_Layers"/>
-   <addaction name="menu_Path"/>
-   <addaction name="menu_Render"/>
+   <addaction name="menu_view"/>
+   <addaction name="menu_layers"/>
+   <addaction name="menu_path"/>
+   <addaction name="menu_render"/>
    <addaction name="menu_plugins"/>
-   <addaction name="menu_Help"/>
+   <addaction name="menu_help"/>
   </widget>
   <widget class="QStatusBar" name="status_bar"/>
   <widget class="QToolBar" name="toolbar_main">

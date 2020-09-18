@@ -209,6 +209,20 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.dock_script_console->setVisible(false);
     ui.dock_logs->setVisible(false);
 
+    // Auto Screenshots for docs
+#if 0
+    for ( auto widget : parent->findChildren<QMenu*>() )
+    {
+        QDir("/tmp/").mkpath("menus");
+        widget->show();
+        QString name = "/tmp/menus/" + widget->objectName().mid(5);
+        QPixmap pic(widget->size());
+        widget->render(&pic);
+        name += ".png";
+        pic.save(name);
+    }
+#endif
+
     // Restore state
     // NOTE: keep at the end so we do this once all the widgets are in their default spots
     parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
