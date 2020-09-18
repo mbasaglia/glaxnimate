@@ -184,3 +184,10 @@ void model::DocumentNode::propagate_visible(bool visible)
     for ( auto ch : docnode_group_children() )
         ch->propagate_visible(visible && visible_);
 }
+
+void model::DocumentNode::propagate_transform_matrix_changed(const QTransform& t)
+{
+    emit transform_matrix_changed(t);
+    for ( auto ch : docnode_group_children() )
+        ch->propagate_transform_matrix_changed(ch->local_transform_matrix(ch->time()) * t);
+}

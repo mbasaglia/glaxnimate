@@ -111,9 +111,6 @@ public:
 
     QTransform local_transform_matrix(FrameTime) const override;
 
-signals:
-    void transform_matrix_changed(const QTransform& t);
-
 protected:
     void on_property_changed(const BaseProperty* prop, const QVariant&) override;
     void on_paint(QPainter*, FrameTime, PaintMode) const override;

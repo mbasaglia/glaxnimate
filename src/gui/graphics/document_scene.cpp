@@ -4,6 +4,7 @@
 
 #include "graphics/document_node_graphics_item.hpp"
 #include "graphics/create_items.hpp"
+#include "graphics/graphics_editor.hpp"
 #include "tools/base.hpp"
 
 class graphics::DocumentScene::Private
@@ -12,7 +13,7 @@ public:
     static constexpr int editor_z = 1000;
     static constexpr int data_key_ptr = 0;
 
-    using EditorMap = std::unordered_map<model::DocumentNode*, std::vector<std::unique_ptr<QGraphicsItem>>>;
+    using EditorMap = std::unordered_map<model::DocumentNode*, std::unique_ptr<graphics::GraphicsEditor>>;
 
     void remove_selection(model::DocumentNode* node)
     {
@@ -358,14 +359,12 @@ const std::vector<model::DocumentNode *> & graphics::DocumentScene::selection() 
 
 void graphics::DocumentScene::show_editors(model::DocumentNode* node)
 {
-    auto items = d->item_factory.make_graphics_editor(node);
-    for ( const auto& item : items )
+    if ( auto item = d->item_factory.make_graphics_editor(node) )
     {
         item->setZValue(Private::editor_z);
         addItem(item.get());
+        d->node_to_editors.emplace(node, std::move(item));
     }
-
-    d->node_to_editors.emplace(node, std::move(items));
 }
 
 void graphics::DocumentScene::set_active_tool(tools::Tool* tool)

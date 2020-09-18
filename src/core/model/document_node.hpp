@@ -236,6 +236,7 @@ protected:
     void docnode_on_update_group(bool force = false);
     void on_property_changed(const BaseProperty* prop, const QVariant&) override;
     bool docnode_valid_color() const;
+    void propagate_transform_matrix_changed(const QTransform& t);
     virtual void on_paint(QPainter*, FrameTime, PaintMode) const {}
 
 
@@ -264,6 +265,8 @@ signals:
     void docnode_group_color_changed(const QColor&);
 
     void bounding_rect_changed();
+    void transform_matrix_changed(const QTransform& t);
+    void local_transform_matrix_changed(const QTransform& t);
 
 private:
     bool visible_ = true;

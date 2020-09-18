@@ -13,16 +13,15 @@ namespace model {
 namespace graphics {
 
 class DocumentNodeGraphicsItem;
+class GraphicsEditor;
 
 class GraphicsItemFactory
 {
 public:
-    using editors_list = std::vector<std::unique_ptr<QGraphicsItem>>;
-
     GraphicsItemFactory();
 
     DocumentNodeGraphicsItem* make_graphics_item(model::DocumentNode* node) const;
-    editors_list make_graphics_editor(model::DocumentNode* node) const;
+    std::unique_ptr<GraphicsEditor> make_graphics_editor(model::DocumentNode* node) const;
 
 
 private:
@@ -31,7 +30,7 @@ private:
     public:
         virtual ~AbstractBuilder() = default;
         virtual DocumentNodeGraphicsItem* make_graphics_item(model::DocumentNode* node) const = 0;
-        virtual editors_list make_graphics_editor(model::DocumentNode* node) const = 0;
+        virtual std::unique_ptr<GraphicsEditor> make_graphics_editor(model::DocumentNode* node) const = 0;
     };
 
     template<class DocT, class FuncItem, class FuncEdit>
@@ -49,7 +48,7 @@ private:
             return func_item(static_cast<DocT*>(node));
         }
 
-        editors_list make_graphics_editor(model::DocumentNode* node) const override
+        std::unique_ptr<GraphicsEditor> make_graphics_editor(model::DocumentNode* node) const override
         {
             return func_edit(static_cast<DocT*>(node));
         }
@@ -67,7 +66,7 @@ private:
     }
 
     static graphics::DocumentNodeGraphicsItem* make_graphics_item_default(model::DocumentNode* node);
-    static editors_list make_graphics_editor_default(model::DocumentNode* node);
+    static std::unique_ptr<GraphicsEditor> make_graphics_editor_default(model::DocumentNode* node);
 
     AbstractBuilder* builder_for(model::DocumentNode* node) const;
 
