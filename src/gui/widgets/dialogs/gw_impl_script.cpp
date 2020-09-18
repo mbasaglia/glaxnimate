@@ -32,7 +32,7 @@ void GlaxnimateWindow::Private::console_commit(QString text)
     c.clearSelection();
     ui.console_output->setTextCursor(c);
 
-    console_stdout(text);
+    console_stdout("> " + text);
     auto ctx = script_contexts[ui.console_language->currentIndex()].get();
     try {
         QString out = ctx->eval_to_string(text);

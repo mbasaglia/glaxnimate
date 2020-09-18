@@ -156,6 +156,8 @@ bool GlaxnimateWindow::Private::close_document()
         current_document->undo_stack().clear();
     }
 
+    ui.stroke_style_widget->set_shape(nullptr);
+    ui.color_selector->set_shape(nullptr);
     document_node_model.clear_document();
     property_model.clear_document();
     scene.clear_document();

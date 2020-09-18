@@ -326,10 +326,16 @@ private:
 
         QMenu menu;
         auto undo_stack = &event.window->document()->undo_stack();
-        menu.addAction(QIcon::fromTheme("edit-undo"), undo_stack->undoText(),
-                       undo_stack, &QUndoStack::undo)->setEnabled(undo_stack->canUndo());
-        menu.addAction(QIcon::fromTheme("edit-redo"), undo_stack->redoText(),
-                       undo_stack, &QUndoStack::redo)->setEnabled(undo_stack->canRedo());
+        menu.addAction(
+            QIcon::fromTheme("edit-undo"),
+            GlaxnimateWindow::tr("Undo %1").arg(undo_stack->undoText()),
+            undo_stack, &QUndoStack::undo
+        )->setEnabled(undo_stack->canUndo());
+        menu.addAction(
+            QIcon::fromTheme("edit-redo"),
+            GlaxnimateWindow::tr("Redo %1").arg(undo_stack->redoText()),
+            undo_stack, &QUndoStack::redo
+        )->setEnabled(undo_stack->canRedo());
 
         menu.addSeparator();
         menu.addAction(QIcon::fromTheme("edit-cut"), GlaxnimateWindow::tr("Cut"),

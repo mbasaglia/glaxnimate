@@ -52,7 +52,12 @@ protected:
 
     void key_press(const KeyEvent& event) override
     {
-        if ( dragging )
+        if ( event.key() == Qt::Key_Escape )
+        {
+            dragging = false;
+            event.repaint();
+        }
+        else if ( dragging )
         {
             update_rect(event.modifiers());
             event.repaint();

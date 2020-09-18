@@ -4,9 +4,23 @@ Authors: Mattia Basaglia
 
 ## Tools
 
-## Colors
+![Tools View](/img/screenshots/views/tools.png)
 
-![Colors View](/img/screenshots/colors/main.png)
+This view allows you to select the active [tool](tools.md).
+
+See [Tools](tools.md) for details on how each tool works.
+
+## Tool Options
+
+![Shape Options](/img/screenshots/tools/shape_options.png)
+
+This view shows extra option for the currently active [tool](tools.md).
+
+See [Tools](tools.md) for details on how each tool works.
+
+## Fill
+
+![Colors View](/img/screenshots/colors/hsv.png)
 
 This view allows to select / modify the current color.
 
@@ -70,9 +84,11 @@ Clicking on one of the colors, selects it as the current color.
 
 ## Stroke
 
-![Stroke Style Dock](/img/screenshots/stroke_style.png)
-
 This view shows various stroke (outline) settings.
+
+### Stroke Style
+
+![Stroke Style Dock](/img/screenshots/stroke/style.png)
 
 At the bottom it shows a preview of the current settings.
 
@@ -84,7 +100,31 @@ The "Join" buttons determine the style of sharp corners.
 
 The spin box after the "Join" buttons determines how far a Miter join can reach.
 
+### Stroke Color
+
+![Stroke Style Dock](/img/screenshots/stroke/color.png)
+
+This tab selects the stroke color in a similar way as to how the [Fill View](#Fill)
+selects the fill color.
+
 ## Layers
+
+![Stroke Style Dock](/img/screenshots/views/layers.png)
+
+This view shows layers and shapes.
+
+From here you can rename them by double clicking on their name.
+You can hide and lock them by clicking on the eye and padlock icons respectively.
+
+You can also select a grouping color by clicking on the rectangle to thee left.
+This has no effect other than changing how layers are shown in this view to help organize them.
+
+### Context Menu
+
+![Context Menu](/img/screenshots/tools/shape_menu.png)
+
+Right clicking on an item will bring a context menu with quick actions for that item.
+
 
 ## Timeline
 
@@ -93,6 +133,8 @@ The spin box after the "Join" buttons determines how far a Miter join can reach.
 The timeline view allows to manage keyframes for the animatable properties of the active object.
 
 ### Playback Buttons
+
+![Playback Buttons](/img/screenshots/timeline/buttons.png)
 
 At the top of the Timeline view shows the current frame, and various playback buttons.
 
@@ -177,7 +219,7 @@ To choose a preset transition for one of the two ends, you can select a value fr
 
 ## Properties
 
-![Property View](/img/screenshots/property_view.png)
+![Property View](/img/screenshots/views/properties.png)
 
 The Properties view allows the user to view or modify any property of the active object.
 
@@ -188,4 +230,15 @@ Animatable properties are highlighted as explained in [Property List](#property-
 
 ## Script Console
 
+![Script Console](/img/screenshots/views/console.png)
+
+This view (hidden by default) allows you to inspect and modify the open document
+with Python.
+
+See [Scripting](/contributing/scripting/index.md) for details.
+
 ## Logs
+
+![Log View](/img/screenshots/views/log.png)
+
+This view (hidden by default) shows internal reporting, errors, etc.

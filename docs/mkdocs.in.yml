@@ -25,15 +25,17 @@ nav:
         - ui/menus.md
         - "ChangeLog": changelog.md
     - 'Contributing':
-        - contributing/index.md
-        - "Roadmap": contributing/roadmap.md
+        - "Introduction": contributing/index.md
+        - "Scripting":
+            - contributing/scripting/index.md
+            - contributing/scripting/plugins.md
         - "Building From Source":
             - "Readme": contributing/read_me.md
             - contributing/repository_structure.md
             - contributing/cross_compiling.md
-        - contributing/documentation.md
-        - contributing/plugins.md
         - "Writing Code":
             - contributing/code/settings.md
             - contributing/code/model_objects.md
+        - "Writing Documentation": contributing/documentation.md
+        - "Roadmap": contributing/roadmap.md
     - "Links": links.md

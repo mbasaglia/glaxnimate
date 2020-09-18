@@ -45,8 +45,8 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
     if ( event.key() == Qt::Key_Delete || event.key() == Qt::Key_Backspace )
     {
         bezier.points().pop_back();
-        bezier.empty();
-        clear();
+        if ( bezier.empty() )
+            clear();
         event.accept();
         event.repaint();
     }
