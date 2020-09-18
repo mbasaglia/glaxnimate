@@ -357,6 +357,10 @@ private:
         menu.addAction(QIcon::fromTheme("object-ungroup"), GlaxnimateWindow::tr("Ungroup Shapes"),
                        event.window, &GlaxnimateWindow::ungroup_shapes);
 
+        menu.addSeparator();
+        menu.addAction(QIcon::fromTheme("selection-move-to-layer-above"), GlaxnimateWindow::tr("Move to..."),
+                       event.window, &GlaxnimateWindow::move_to);
+
         if ( best )
         {
             menu.addSeparator();

@@ -80,6 +80,9 @@
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menu_Path">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>&amp;Path</string>
     </property>
@@ -120,6 +123,7 @@
     <addaction name="action_raise"/>
     <addaction name="action_lower"/>
     <addaction name="action_lower_to_bottom"/>
+    <addaction name="action_move_to"/>
     <addaction name="separator"/>
     <addaction name="action_group"/>
     <addaction name="action_ungroup"/>
@@ -214,6 +218,7 @@
    <addaction name="action_raise"/>
    <addaction name="action_lower"/>
    <addaction name="action_lower_to_bottom"/>
+   <addaction name="action_move_to"/>
    <addaction name="separator"/>
   </widget>
   <widget class="QDockWidget" name="dock_colors">
@@ -828,6 +833,9 @@
    </property>
   </action>
   <action name="action_new_layer_precomp">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="video-x-generic">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -837,6 +845,9 @@
    </property>
   </action>
   <action name="action_Move_To_Composition">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="archive-extract">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -846,6 +857,9 @@
    </property>
   </action>
   <action name="actionNew_Pre_Composition">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="folder-video">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -999,6 +1013,9 @@
    </property>
   </action>
   <action name="action_select_all">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="edit-select-all">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1009,7 +1026,8 @@
   </action>
   <action name="action_raise_to_top">
    <property name="icon">
-    <iconset theme="layer-top"/>
+    <iconset theme="layer-top">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Raise to &amp;Top</string>
@@ -1020,7 +1038,8 @@
   </action>
   <action name="action_raise">
    <property name="icon">
-    <iconset theme="layer-raise"/>
+    <iconset theme="layer-raise">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Raise</string>
@@ -1031,7 +1050,8 @@
   </action>
   <action name="action_lower">
    <property name="icon">
-    <iconset theme="layer-lower"/>
+    <iconset theme="layer-lower">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Lower</string>
@@ -1042,7 +1062,8 @@
   </action>
   <action name="action_lower_to_bottom">
    <property name="icon">
-    <iconset theme="layer-bottom"/>
+    <iconset theme="layer-bottom">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Lower to &amp;Bottom</string>
@@ -1226,6 +1247,14 @@
    </property>
    <property name="text">
     <string>&amp;Ungroup</string>
+   </property>
+  </action>
+  <action name="action_move_to">
+   <property name="icon">
+    <iconset theme="selection-move-to-layer-above"/>
+   </property>
+   <property name="text">
+    <string>&amp;Move to...</string>
    </property>
   </action>
  </widget>

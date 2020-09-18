@@ -114,6 +114,7 @@ public:
     void move_current(command::ReorderCommand::SpecialPosition pos);
     void group_shapes();
     void ungroup_shapes();
+    void move_to();
 
     template<class LayerT>
     void layer_new()

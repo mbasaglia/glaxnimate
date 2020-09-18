@@ -73,6 +73,7 @@ public:
     void delete_selected();
     void group_shapes();
     void ungroup_shapes();
+    void move_to();
 
     item_models::DocumentNodeModel* model() const;
 

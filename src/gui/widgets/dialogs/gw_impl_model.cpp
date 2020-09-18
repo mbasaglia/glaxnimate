@@ -11,6 +11,7 @@
 #include "model/layers/shape_layer.hpp"
 #include "model/shapes/group.hpp"
 #include "misc/clipboard_settings.hpp"
+#include "widgets/dialogs/shape_parent_dialog.hpp"
 
 
 model::Composition* GlaxnimateWindow::Private::current_composition()
@@ -306,4 +307,30 @@ void GlaxnimateWindow::Private::ungroup_shapes()
 
     if ( group )
         current_document->push_command(new command::UngroupShapes(group));
+}
+
+
+void GlaxnimateWindow::Private::move_to()
+{
+    auto sel = cleaned_selection();
+    std::vector<model::ShapeElement*> shapes;
+    shapes.reserve(sel.size());
+    for ( const auto& node : sel )
+    {
+        if ( auto shape = qobject_cast<model::ShapeElement*>(node) )
+            shapes.push_back(shape);
+    }
+
+    if ( shapes.empty() )
+        return;
+
+
+    if ( auto parent = ShapeParentDialog(&document_node_model, this->parent).get_shape_parent() )
+    {
+        current_document->undo_stack().beginMacro(tr("Move Shapes"));
+        for ( auto shape : shapes )
+            if ( shape->owner() != parent )
+                shape->push_command(new command::MoveShape(shape, parent, parent->size()));
+        current_document->undo_stack().endMacro();
+    }
 }
