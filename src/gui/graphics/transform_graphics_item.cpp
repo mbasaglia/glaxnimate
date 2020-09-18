@@ -403,9 +403,11 @@ void graphics::TransformGraphicsItem::drag_a(const QPointF& p)
     QPointF anchor = p;
     QPointF anchor_old = d->transform->anchor_point.get();
 
-    QPointF p1 = sceneTransform().map(QPointF(0, 0));
+
+    QPointF p1 = d->transform_matrix.map(QPointF(0, 0));
     d->transform->anchor_point.set(anchor);
-    QPointF p2 = sceneTransform().map(QPointF(0, 0));
+    QPointF p2 = d->transform_matrix.map(QPointF(0, 0));
+
     QPointF pos = d->transform->position.get() - p2 + p1;
     d->transform->anchor_point.set(anchor_old);
     d->target->document()->undo_stack().push(new command::SetMultipleAnimated(
