@@ -83,7 +83,7 @@ void graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGraphicsIt
     else
         painter->setBrush(d->color_rest);
 
-    if ( d->shape == Diamond )
+    if ( d->shape == Diamond || d->shape == Saltire )
     {
         painter->rotate(45);
         radius /= M_SQRT2;
@@ -99,6 +99,28 @@ void graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGraphicsIt
             break;
         case Circle:
             painter->drawEllipse(rect);
+            break;
+        case Cross:
+        case Saltire:
+        {
+            const qreal r_big = radius;
+            const qreal r_sml = radius/4;
+            std::array<QPointF, 12> p = {
+                QPointF{-r_big, -r_sml},
+                QPointF{-r_sml, -r_sml},
+                QPointF{-r_sml, -r_big},
+                QPointF{+r_sml, -r_big},
+                QPointF{+r_sml, -r_sml},
+                QPointF{+r_big, -r_sml},
+                QPointF{+r_big, +r_sml},
+                QPointF{+r_sml, +r_sml},
+                QPointF{+r_sml, +r_big},
+                QPointF{-r_sml, +r_big},
+                QPointF{-r_sml, +r_sml},
+                QPointF{-r_big, +r_sml}
+            };
+            painter->drawPolygon(p.data(), p.size());
+        }
             break;
     }
 

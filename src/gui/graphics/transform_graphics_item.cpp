@@ -114,7 +114,7 @@ public:
                 &TransformGraphicsItem::drag_r
             },
             Handle{
-                new MoveHandle(parent, MoveHandle::Any, MoveHandle::Square, 6, true),
+                new MoveHandle(parent, MoveHandle::Any, MoveHandle::Saltire, 12, true),
                 &TransformGraphicsItem::Private::get_a,
                 &TransformGraphicsItem::drag_a
             },

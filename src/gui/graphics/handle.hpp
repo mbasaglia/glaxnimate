@@ -24,7 +24,9 @@ public:
     {
         Square,
         Diamond,
-        Circle
+        Circle,
+        Cross,
+        Saltire,
     };
 
 
