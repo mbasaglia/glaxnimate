@@ -15,8 +15,8 @@ class Fill : public ObjectBase<Fill, Styler>
 public:
     enum Rule
     {
-        NonZero = 1,
-        EvenOdd = 2,
+        NonZero = Qt::WindingFill,
+        EvenOdd = Qt::OddEvenFill,
     };
 
 private:
@@ -54,7 +54,9 @@ protected:
     {
         p->setBrush(brush(t));
         p->setPen(Qt::NoPen);
-        p->drawPath(collect_shapes(t).painter_path());
+        QPainterPath path = collect_shapes(t).painter_path();
+        path.setFillRule(Qt::FillRule(fill_rule.get()));
+        p->drawPath(path);
     }
 };
 

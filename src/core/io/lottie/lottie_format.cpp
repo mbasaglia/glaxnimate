@@ -427,7 +427,7 @@ public:
         else if ( shape->type_name() == "Fill" )
         {
             auto fill = static_cast<model::Fill*>(shape);
-            jsh["r"_l] = int(fill->fill_rule.get());
+            jsh["r"_l] = fill->fill_rule.get() == model::Fill::NonZero ? 1 : 2;
             jsh["o"_l] = convert_animated(&fill->opacity, FloatMult(100));
         }
         else if ( shape->type_name() == "Stroke" )
