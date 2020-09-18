@@ -21,7 +21,7 @@ pages:
     after_script:
         - mv build/docs/site public
         - mv build/coverage public/coverage
-        - mv build/docs/html public/doxygen
+        - mv build/doxygen/html public/doxygen
     artifacts:
         paths:
             - public
