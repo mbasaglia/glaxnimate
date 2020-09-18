@@ -218,6 +218,11 @@ public:
      */
     Raw raw() { return Raw{this}; }
 
+    model::DocumentNode* owner_node() const
+    {
+        return static_cast<model::DocumentNode*>(object());
+    }
+
 protected:
     virtual void on_insert(int index) { Q_UNUSED(index); }
     virtual void on_remove(int index) { Q_UNUSED(index); }

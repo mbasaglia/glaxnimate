@@ -87,9 +87,14 @@ protected:
             auto super_prop = prop;
             prop = &group->shapes;
 
+            QTransform parent_t = super_prop->owner_node()->transform_matrix(super_prop->owner_node()->time());
+            QTransform parent_t_inv = parent_t.inverted();
+            group->transform.get()->set_transform_matrix(parent_t_inv);
+
             QPointF center = shape->local_bounding_rect(0).center();
             group->transform.get()->anchor_point.set(center);
-            group->transform.get()->position.set(center);
+            group->transform.get()->position.set(parent_t_inv.map(center));
+
 
             document->undo_stack().push(
                 new command::AddShape(super_prop, std::move(group), index)
