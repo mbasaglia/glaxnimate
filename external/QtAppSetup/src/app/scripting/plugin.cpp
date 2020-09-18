@@ -246,7 +246,7 @@ void app::scripting::PluginRegistry::load_setting ( const QString& slug, const Q
         return;
     }
     QString label = jobj["label"].toString(slug);
-    QString description = jobj["slug"].toString();
+    QString description = jobj["description"].toString();
     QVariant default_value = jobj["default"].toVariant();
 
     if ( type == "info" )
