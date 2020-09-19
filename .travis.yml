@@ -51,4 +51,6 @@ jobs:
             - cpack -G Bundle
         after_success:
             - mv Glaxnimate-*.dmg glaxnimate.dmg
+            - shasum -a 1 glaxnimate.dmg >checksum.txt
             - ../deploy/bintray_upload.sh Dev glaxnimate.dmg "$TRAVIS_BRANCH/MacOs/glaxnimate.dmg"
+            - ../deploy/bintray_upload.sh Dev checksum.txt "$TRAVIS_BRANCH/MacOs/checksum.txt"
