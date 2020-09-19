@@ -95,7 +95,7 @@ linux:appimage:
         - wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
         - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
         - ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
-        - PATH="/opt/qt515/bin/:$PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes/libqgtk3.so -appimage
+        - PATH="/opt/qt515/bin/:$PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes/libqgtk3.so,iconengines/libqsvgicon.so -appimage
         - mv glaxnimate-dev-x86_64.AppImage glaxnimate-x86_64.AppImage
         - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
     artifacts:
