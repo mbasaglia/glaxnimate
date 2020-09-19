@@ -84,4 +84,8 @@ execute_process(COMMAND dpkg-architecture -qDEB_BUILD_ARCH OUTPUT_VARIABLE CPACK
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libqt5xml5 (>= 5.10.0), libqt5widgets5 (>= 5.10.0), libpython3.8 (>= 3.8.0), zlib1g (>= 1:1.2.11)")
 set(CPACK_DEBIAN_PACKAGE_SECTION "graphics")
 
+set(CPACK_BUNDLE_NAME ${PROJECT_SLUG})
+set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/deploy/bundle.xml.plist")
+set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/data/images/logo.svg")
+
 include(CPack)
