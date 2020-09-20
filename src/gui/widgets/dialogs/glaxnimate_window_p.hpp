@@ -82,6 +82,7 @@ public:
     void web_preview();
     void save_frame_bmp();
     void save_frame_svg();
+    void validate_tgs();
 
     // ui
     void setupUi(GlaxnimateWindow* parent);

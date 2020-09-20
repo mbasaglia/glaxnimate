@@ -368,3 +368,8 @@ void GlaxnimateWindow::move_to()
 {
     d->move_to();
 }
+
+void GlaxnimateWindow::validate_tgs()
+{
+    d->validate_tgs();
+}

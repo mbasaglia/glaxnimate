@@ -17,6 +17,9 @@ public:
 
     void reset(io::ImportExport* ie, const QString& label);
 
+    bool has_errors() const;
+    void show_errors(const QString& success, const QString& failure);
+
 protected:
     void closeEvent(QCloseEvent* ev) override;
     void changeEvent(QEvent *e) override;

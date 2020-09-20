@@ -50,6 +50,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     connect(ui.action_ungroup, &QAction::triggered, parent, &GlaxnimateWindow::ungroup_shapes);
     connect(ui.action_quit, &QAction::triggered, parent, &GlaxnimateWindow::close);
     connect(ui.action_move_to, &QAction::triggered, parent, &GlaxnimateWindow::move_to);
+    connect(ui.action_validate_tgs, &QAction::triggered, parent, &GlaxnimateWindow::validate_tgs);
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )

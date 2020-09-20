@@ -20,6 +20,7 @@
     * Copy/Paste within Glaxnimate
     * Copy/Paste SVG
     * Copy selection as images
+    * Telegram sticker validation
  * Scripting:
     * Python Scripting capabilities
     * Menu action plugins

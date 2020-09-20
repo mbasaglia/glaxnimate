@@ -13,6 +13,7 @@
 #include "io/svg/svg_renderer.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "io/mime/raster_mime.hpp"
+#include "io/lottie/tgs_format.hpp"
 
 void GlaxnimateWindow::Private::setup_document(const QString& filename)
 {
@@ -336,4 +337,14 @@ void GlaxnimateWindow::Private::save_frame_svg()
     }
 
     io::svg::SvgRenderer(&file).write_document(current_document.get());
+}
+
+void GlaxnimateWindow::Private::validate_tgs()
+{
+    IoStatusDialog dialog(QIcon::fromTheme("telegram"), "", false, parent);
+    io::lottie::TgsFormat fmt;
+    dialog.reset(&fmt, tr("Validate Telegram Sticker"));
+    fmt.validate(current_document.get());
+    dialog.show_errors(tr("No issues found"), tr("Some issues detected"));
+    dialog.exec();
 }

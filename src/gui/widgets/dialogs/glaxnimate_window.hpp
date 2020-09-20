@@ -123,6 +123,7 @@ private slots:
     void save_frame_bmp();
     void save_frame_svg();
     void tool_triggered(bool checked);
+    void validate_tgs();
 
     void console_commit(const QString& text);
     void script_needs_running(const app::scripting::Plugin& plugin, const app::scripting::PluginScript& script, const QVariantMap& settings);

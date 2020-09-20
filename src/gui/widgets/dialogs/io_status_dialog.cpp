@@ -24,6 +24,25 @@ IoStatusDialog::IoStatusDialog(const QIcon& icon, const QString& title, bool del
 IoStatusDialog::~IoStatusDialog() = default;
 
 
+void IoStatusDialog::show_errors(const QString& success, const QString& failure)
+{
+    d->progress_bar->hide();
+    d->button_box->setEnabled(true);
+
+    if ( d->has_errors )
+    {
+        d->group_box->show();
+        d->icon_label->setPixmap(QIcon::fromTheme("dialog-error").pixmap(64));
+        d->label->setText(failure);
+    }
+    else
+    {
+        d->icon_label->setPixmap(QIcon::fromTheme("dialog-positive").pixmap(64));
+        d->label->setText(success);
+    }
+
+}
+
 void IoStatusDialog::_on_completed(bool success)
 {
     d->finished = true;
@@ -60,7 +79,6 @@ void IoStatusDialog::_on_error(const QString& message)
     d->list_widget->addItem(new QListWidgetItem(QIcon::fromTheme("data-warning"), message));
     d->has_errors = true;
     show();
-
 }
 
 void IoStatusDialog::_on_progress(int value)
@@ -113,4 +131,9 @@ void IoStatusDialog::changeEvent(QEvent *e)
     {
         d->retranslateUi(this);
     }
+}
+
+bool IoStatusDialog::has_errors() const
+{
+    return d->has_errors;
 }
