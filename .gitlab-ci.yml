@@ -92,6 +92,7 @@ linux:appimage:
         - make translations
         - make install DESTDIR=AppDir
         - cp AppDir/usr/share/glaxnimate/glaxnimate/glaxnimate.desktop AppDir
+        - cp AppDir/usr/share/glaxnimate/glaxnimate/images/glaxnimate.png AppDir
         - wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
         - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
         - ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
