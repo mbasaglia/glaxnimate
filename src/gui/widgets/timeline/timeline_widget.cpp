@@ -762,3 +762,36 @@ std::pair<model::KeyframeBase*, model::KeyframeBase*> TimelineWidget::keyframe_a
     }
     return {nullptr, nullptr};
 }
+
+void TimelineWidget::keyPressEvent(QKeyEvent* event)
+{
+    if ( !d->document )
+        return;
+
+    /// \todo figure why pageup/end etc aren't received here...
+    switch ( event->key() )
+    {
+        case Qt::Key_PageDown:
+        case Qt::Key_Left:
+            if ( d->document->current_time() - 1 >= d->start_time )
+                emit frame_clicked(d->document->current_time() - 1);
+            event->accept();
+            break;
+        case Qt::Key_PageUp:
+        case Qt::Key_Right:
+            if ( d->document->current_time() + 1 <= d->end_time )
+                emit frame_clicked(d->document->current_time() + 1);
+            event->accept();
+            break;
+        case Qt::Key_Home:
+            emit frame_clicked(d->start_time);
+            event->accept();
+            break;
+        case Qt::Key_End:
+            emit frame_clicked(d->end_time);
+            event->accept();
+            break;
+    }
+
+    QGraphicsView::keyPressEvent(event);
+}

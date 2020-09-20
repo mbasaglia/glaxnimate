@@ -43,6 +43,8 @@ protected:
     void scrollContentsBy(int dx, int dy) override;
     void mouseMoveEvent(QMouseEvent * event) override;
     void leaveEvent(QEvent * event) override;
+    void keyPressEvent(QKeyEvent * event) override;
+
     
 signals:
     void frame_clicked(int frame);
