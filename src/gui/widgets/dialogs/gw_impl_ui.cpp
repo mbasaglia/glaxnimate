@@ -98,6 +98,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnName, QHeaderView::Stretch);
     ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnColor, QHeaderView::ResizeToContents);
     ui.view_document_node->setItemDelegateForColumn(item_models::DocumentNodeModel::ColumnColor, &color_delegate);
+    ui.view_document_node->header()->hideSection(item_models::DocumentNodeModel::ColumnLocked);
     QObject::connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::currentChanged,
                         parent, &GlaxnimateWindow::document_treeview_current_changed);
 
