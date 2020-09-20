@@ -7,8 +7,6 @@
 
 #include "widgets/node_menu.hpp"
 
-#include <QDebug>
-
 namespace tools {
 
 class SelectTool : public Tool

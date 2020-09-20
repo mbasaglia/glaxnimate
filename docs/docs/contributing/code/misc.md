@@ -6,7 +6,8 @@ Authors: Mattia Basaglia
 
 To click on the window to record and start recording straight away:
 
-    recordmydesktop --windowid `xwininfo -display :0 | grep 'id: 0x' | grep -oE "0x\w+"`
+    recordmydesktop -o /tmp/out.ogv --windowid `xwininfo -display :0 | grep 'id: 0x' | grep -oE "0x\w+"`
+    ffmpeg -i /tmp/out.ogv /tmp/out.mp4
 
 ## Test GitLab CI jobs
 

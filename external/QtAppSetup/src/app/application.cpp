@@ -1,6 +1,9 @@
 #include "application.hpp"
 
 #include <QStandardPaths>
+#include <QMetaEnum>
+
+#include "app/log/log.hpp"
 
 
 QString app::Application::writable_data_path(const QString& name) const
@@ -71,4 +74,14 @@ QString app::Application::data_file(const QString& name) const
 QSettings app::Application::qsettings() const
 {
     return QSettings(writable_data_path("settings.ini"), QSettings::IniFormat);
+}
+
+bool app::Application::notify(QObject* receiver, QEvent* e)
+{
+    try {
+        return QApplication::notify(receiver, e);
+    } catch ( const std::exception& exc ) {
+        log::Log("Event", QMetaEnum::fromType<QEvent::Type>().valueToKey(e->type())).stream(log::Error) << exc.what();
+        return false;
+    }
 }

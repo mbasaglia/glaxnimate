@@ -71,6 +71,8 @@ public:
      */
     QList<QDir> data_roots() const;
 
+    bool notify(QObject *receiver, QEvent *e) override;
+
 protected:
     /**
      * \brief Called after construction, before anything else
