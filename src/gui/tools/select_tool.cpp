@@ -7,6 +7,8 @@
 
 #include "widgets/node_menu.hpp"
 
+#include <QDebug>
+
 namespace tools {
 
 class SelectTool : public Tool
@@ -44,7 +46,7 @@ private:
 
         template<class T>
         DragObjectData(model::DocumentNode* node, T* property, const QPointF& scene_pos)
-        : transform(node->transform_matrix(node->time())),
+        : transform(node->transform_matrix(node->time()).inverted()),
           data(PropData<T>{property, property->get()}),
           start_point(transform.map(scene_pos))
         {}
@@ -66,6 +68,8 @@ private:
         void drag(const QPointF& dragged_to, bool commit) const
         {
             QPointF delta = transform.map(dragged_to) - start_point;
+
+
             if ( data.index() == 0 )
             {
                 std::get<0>(data).property->set_undoable(std::get<0>(data).start_value + delta, commit);
@@ -123,12 +127,12 @@ private:
                 if ( drag_selection )
                 {
                     for ( auto node : event.scene->cleaned_selection() )
-                        DragObjectData::push(node, event.event->localPos(), drag_data);
+                        DragObjectData::push(node, event.scene_pos, drag_data);
                 }
                 else
                 {
                     replace_selection = clicked_on.nodes[0];
-                    DragObjectData::push(clicked_on.nodes[0], event.event->localPos(), drag_data);
+                    DragObjectData::push(clicked_on.nodes[0], event.scene_pos, drag_data);
                 }
             }
 
@@ -170,7 +174,7 @@ private:
                     break;
                 case DragObject:
                     for ( const auto& dragger : drag_data )
-                        dragger.drag(event.event->localPos(), false);
+                        dragger.drag(event.scene_pos, false);
                     break;
             }
         }
@@ -244,7 +248,7 @@ private:
                 break;
                 case DragObject:
                     for ( const auto& dragger : drag_data )
-                        dragger.drag(event.event->localPos(), true);
+                        dragger.drag(event.scene_pos, true);
                     drag_data.clear();
                     replace_selection = nullptr;
                     break;
