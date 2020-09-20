@@ -166,6 +166,9 @@ The animation statuses are as follow:
 The right handside of the Timeline view shows the actual timeline.
 
 
+Pressing left/right arrow keys changes the current frame when this area is focused.
+
+
 #### Time Bar
 
 ![Time Bar](/img/screenshots/timeline/time_bar.png)
