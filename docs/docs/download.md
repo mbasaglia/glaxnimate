@@ -8,17 +8,101 @@ No release has been made yet.
 
 ## Development Snapshots
 
+[![](https://gitlab.com/mattia.basaglia/glaxnimate/badges/master/pipeline.svg)](https://gitlab.com/mattia.basaglia/glaxnimate/-/pipelines)
+
 These packages are built continuosly as new changes are made.
 They contain all the latest features but might also include bugs and broken features.
 
+
 All packages provided here are for the x86_64 architecture.
 
-* [Linux AppImage](https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/glaxnimate-x86_64.AppImage?job=linux%3Aappimage) ([SHA1](https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/checksum.txt?job=linux%3Aappimage))
-* [Deb Package](https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/glaxnimate.deb?job=linux%3Adeb) ([SHA1](https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/checksum.txt?job=linux%3Adeb))
-* [Windows Zip](https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/glaxnimate-x86_64.zip?job=mxe%3Abuild) ([SHA1](https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/checksum.txt?job=mxe%3Abuild))
-* [Mac dmg](https://dl.bintray.com/mattbas/Glaxnimate/master/MacOs/glaxnimate.dmg) ([SHA1](https://dl.bintray.com/mattbas/Glaxnimate/master/MacOs/checksum.txt))
+<table>
+<tr><th>Package</th><th>Checksum</th><th>Notes</th></tr>
+<tr>
+<td><i class="fab fa-linux"></i> <a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/glaxnimate-x86_64.AppImage?job=linux%3Aappimage">Linux AppImage</a></td>
+<td><a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/checksum.txt?job=linux%3Aappimage">SHA1</a></td>
+<td><a href="#linux-appimage">Notes</a></td>
+</tr>
+<tr>
+<td><i class="fab fa-ubuntu"></i> <a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/glaxnimate.deb?job=linux%3Adeb">Deb Package</a></td>
+<td><a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/checksum.txt?job=linux%3Adeb">SHA1</a></td>
+<td><a href="#deb-package">Notes</a></td>
+</tr>
+<tr>
+<td><i class="fab fa-windows"></i> <a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/glaxnimate-x86_64.zip?job=mxe%3Abuild">Windows Zip</a></td>
+<td><a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/master/raw/build/checksum.txt?job=mxe%3Abuild">SHA1</a></td>
+<td><a href="#windows-zip">Notes</a></td>
+</tr>
+<tr>
+<td><i class="fab fa-apple"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/master/MacOs/glaxnimate.dmg">Mac dmg</a></td>
+<td><a href="https://dl.bintray.com/mattbas/Glaxnimate/master/MacOs/checksum.txt">SHA1</a></td>
+<td><a href="#mac-dmg">Notes</a></td>
+</tr>
+</table>
 
 
 ## Building from Source
 
 See the [build instructions](contributing/read_me.md).
+
+# Installation Notes
+
+## Linux AppImage
+
+Make sure the AppImage is executable
+
+    chmod a+x glaxnimate-x86_64.AppImage
+
+Running the AppImage should start Glaxnimate.
+
+If your system doen't support mounting user level filesystems use the following commands instead:
+
+    ./glaxnimate-x86_64.AppImage --appimage-extract
+    ./squashfs-root/AppRun
+
+## Deb Package
+
+Open the deb with your package manager and follow the instructions to install it.
+
+Or from the command line:
+
+    sudo dpkg -i  glaxnimate.deb
+
+## Windows Zip
+
+Extract the zip and execute the file at the top level `glaxnimate.bat`.
+
+### Limitations
+
+Python scripting (and plugins) aren't available with this package.
+
+### Antivirus
+
+Sometimes the antivirus will delete random files, which will prevent glaxnimate from running
+(This has been observed with Norton).
+
+If this happens, you must tell your antivirus to restore the files.
+
+## Mac dmg
+
+You need to install the dependencies with [Homebrew](https://brew.sh/):
+
+    brew install python qt
+
+Open (mount) the dmg file, then either open `glaxnimate.app` to run it or drag it
+to Applications to install it.
+
+### Author Not Verified
+
+If you get an error message saying the author isn't verified:
+
+* Go to System Preferences > Security & Privacy > General
+* Click on the lock to make changes
+* Under *Allow Apps download from*, select glaxnimate
+
+### Incompatible Library Version
+
+If you get an error saying "Incompatible Library Version" you might need to
+upgrade some of the dependencies:
+
+    brew upgrade qt
