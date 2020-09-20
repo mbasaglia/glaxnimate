@@ -10,8 +10,6 @@ install(DIRECTORY plugins DESTINATION ${DATA_INSTALL})
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 install(DIRECTORY images DESTINATION ${DATA_INSTALL})
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg COPYONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/scalable/ )
 
 # Translation
 include(../cmake/qt.cmake)
@@ -31,3 +29,17 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/glaxnimate.in.desktop ${CMAKE_CURRENT
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop DESTINATION ${DATA_INSTALL})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop DESTINATION share/applications)
 
+# Icon
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg COPYONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/scalable/ )
+
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
+    COMMAND inkscape ${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg -o ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg
+)
+add_custom_target(
+    logo_png
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
+)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png DESTINATION share/icons/hicolor/512x512/ )
