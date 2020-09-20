@@ -72,6 +72,9 @@ Or from the command line:
 
 Extract the zip and execute the file at the top level `glaxnimate.bat`.
 
+Note that the built-in zip extraction that comes with Windows is excruciatingly slow,
+so you are better off using 7zip or something like that.
+
 ### Limitations
 
 Python scripting (and plugins) aren't available with this package.
