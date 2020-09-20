@@ -18,8 +18,10 @@ public:
         {
             int size = pixelMetric(QStyle::PM_ToolBarIconSize);
             int margin = baseStyle()->pixelMetric(QStyle::PM_DockWidgetTitleMargin);
+            QRect title_rect = subElementRect(SE_DockWidgetTitleBarText, option, widget);
+            size = qMin(size, title_rect.height());
 
-            QPoint pos(margin + option->rect.left(), margin + option->rect.center().y() - size/2);
+            QPoint pos(margin + title_rect.left(), margin + title_rect.center().y() - size/2);
 
             painter->drawPixmap(pos, widget->windowIcon().pixmap(size, size));
 

@@ -55,7 +55,7 @@ Make sure the AppImage is executable
 
 Running the AppImage should start Glaxnimate.
 
-If your system doen't support mounting user level filesystems use the following commands instead:
+If your system doesn't support mounting user level filesystems use the following commands instead:
 
     ./glaxnimate-x86_64.AppImage --appimage-extract
     ./squashfs-root/AppRun
