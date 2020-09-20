@@ -5,8 +5,16 @@
   <key>CFBundleExecutable</key>
   <string>Resources/bin/glaxnimate</string>
   <key>CFBundleIconFile</key>
-  <string></string>
+  <string>${PROJECT_NAME}.icns</string>
   <key>CFBundleIdentifier</key>
   <string>org.mattbas.glaxnimate</string>
+  <key>CFBundleName</key>
+  <string>${PROJECT_NAME}</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleShortVersionString</key>
+  <string>${PROJECT_VERSION}</string>
+	<key>CFBundleGetInfoString</key>
+	<string>${PROJECT_NAME} ${PROJECT_VERSION}</string>
 </dict>
 </plist>

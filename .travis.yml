@@ -43,11 +43,13 @@ jobs:
             - brew list qt || brew install qt
             - brew list python || brew install python
             - brew upgrade gcc@10 || true
+            - brew list makeicns || brew install makeicns
         script:
             - mkdir build
             - cd build
-            - cmake .. -DQt5_DIR=$(brew --prefix qt)/lib/cmake/Qt5
+            - cmake .. -DQt5_DIR=$(brew --prefix qt)/lib/cmake/
             - make
+            - makeicns -512 ../data/images/glaxnimate.png -out glaxnimate.icns
             - cpack -G Bundle
         after_success:
             - mv Glaxnimate-*.dmg glaxnimate.dmg

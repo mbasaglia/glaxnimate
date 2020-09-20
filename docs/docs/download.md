@@ -95,9 +95,9 @@ You need to install the dependencies with [Homebrew](https://brew.sh/):
 Open (mount) the dmg file, then either open `glaxnimate.app` to run it or drag it
 to Applications to install it.
 
-### Author Not Verified
+### Developer cannot be verified
 
-If you get an error message saying the author isn't verified:
+If you get an error message saying the developer isn't verified:
 
 * Go to System Preferences > Security & Privacy > General
 * Click on the lock to make changes
