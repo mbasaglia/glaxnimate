@@ -56,9 +56,15 @@ protected:
                 event.painter->setBrush(Qt::transparent);
 
             if ( options->create_stroke() )
-                event.painter->setPen(event.window->current_pen_style());
+            {
+                QPen p = event.window->current_pen_style();
+                p.setWidthF(p.widthF() * event.window->current_zoom());
+                event.painter->setPen(p);
+            }
             else
+            {
                 event.painter->setPen(Qt::NoPen);
+            }
 
             event.painter->drawPath(path);
         }

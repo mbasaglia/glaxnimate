@@ -373,3 +373,8 @@ void GlaxnimateWindow::validate_tgs()
 {
     d->validate_tgs();
 }
+
+qreal GlaxnimateWindow::current_zoom() const
+{
+    return d->ui.graphics_view->get_zoom_factor();
+}

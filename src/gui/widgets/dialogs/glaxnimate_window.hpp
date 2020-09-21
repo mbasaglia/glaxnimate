@@ -77,6 +77,8 @@ public:
 
     item_models::DocumentNodeModel* model() const;
 
+    qreal current_zoom() const;
+
 public slots:
     void document_save();
     void document_save_as();
