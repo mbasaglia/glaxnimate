@@ -63,16 +63,7 @@ public:
 
     QRectF local_bounding_rect(FrameTime t) const override
     {
-        QRectF rect;
-        for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
-        {
-            if ( rect.isNull() )
-                rect = ch->local_bounding_rect(t);
-            else
-                rect |= ch->local_bounding_rect(t);
-        }
-
-        return rect;
+        return shapes.bounding_rect(t);
     }
 
     QTransform local_transform_matrix(model::FrameTime t) const override

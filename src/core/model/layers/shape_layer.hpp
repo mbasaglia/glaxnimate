@@ -21,8 +21,6 @@ public:
     GLAXNIMATE_PROPERTY_LIST_IMPL(shapes)
 
 public:
-    // shapes
-
     using Ctor::Ctor;
 
     int docnode_child_count() const override { return shapes.size(); }
@@ -36,9 +34,7 @@ public:
 
     QString type_name_human() const override { return tr("Shape Layer"); }
 
-// signals:
-//     void shape_added(ShapeElement* shape);
-//     void shape_removed(ShapeElement* shape);
+    QRectF local_bounding_rect(model::FrameTime t) const override;
 };
 
 

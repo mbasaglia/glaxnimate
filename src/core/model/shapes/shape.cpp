@@ -1,5 +1,5 @@
 #include "shape.hpp"
-
+#include "utils/range.hpp"
 
 const model::ShapeListProperty& model::ShapeElement::siblings() const
 {
@@ -19,6 +19,20 @@ model::ObjectListProperty<model::ShapeElement>::iterator model::ShapeListPropert
     if ( it != end() )
         ++it;
     return it;
+}
+
+QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
+{
+    QRectF rect;
+    for ( const auto& ch : utils::Range(begin(), past_first_modifier()) )
+    {
+        if ( rect.isNull() )
+            rect = ch->local_bounding_rect(t);
+        else
+            rect |= ch->local_bounding_rect(t);
+    }
+
+    return rect;
 }
 
 model::ShapeOperator::ShapeOperator(model::Document* doc)

@@ -73,6 +73,8 @@ public:
      */
     iterator past_first_modifier() const;
 
+    QRectF bounding_rect(FrameTime t) const;
+
 protected:
     void update_pos(int index)
     {
