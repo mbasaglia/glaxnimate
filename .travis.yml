@@ -47,7 +47,7 @@ jobs:
         script:
             - mkdir build
             - cd build
-            - cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5" -DVERSION_SUFFIX="mac-$TRAVIS_COMMIT"
+            - cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5" -DVERSION_SUFFIX="mac-${TRAVIS_COMMIT::8}"
             - make
             - makeicns -512 ../data/images/glaxnimate.png -out glaxnimate.icns
             - cpack -G Bundle

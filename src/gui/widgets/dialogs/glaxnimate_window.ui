@@ -165,13 +165,13 @@
      <string>Plu&amp;gins</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menu_render">
+   <widget class="QMenu" name="menu_document">
     <property name="title">
-     <string>&amp;Render</string>
+     <string>&amp;Document</string>
     </property>
     <widget class="QMenu" name="menu_render_single_frame">
      <property name="title">
-      <string>Single &amp;Frame</string>
+      <string>Render Single &amp;Frame</string>
      </property>
      <property name="icon">
       <iconset theme="image-x-generic">
@@ -182,14 +182,15 @@
     </widget>
     <addaction name="menu_render_single_frame"/>
     <addaction name="action_Web_Preview"/>
+    <addaction name="action_resize"/>
    </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_edit"/>
    <addaction name="menu_tools"/>
    <addaction name="menu_view"/>
+   <addaction name="menu_document"/>
    <addaction name="menu_layers"/>
    <addaction name="menu_path"/>
-   <addaction name="menu_render"/>
    <addaction name="menu_plugins"/>
    <addaction name="menu_help"/>
   </widget>
@@ -1269,6 +1270,14 @@
    </property>
    <property name="text">
     <string>Validate &amp;Telegram Sticker</string>
+   </property>
+  </action>
+  <action name="action_resize">
+   <property name="icon">
+    <iconset theme="transform-scale"/>
+   </property>
+   <property name="text">
+    <string>Re&amp;size...</string>
    </property>
   </action>
  </widget>

@@ -11,9 +11,9 @@ void model::Layer::ChildLayerIterator::find_first()
         ++index;
 }
 
-model::Layer & model::Layer::ChildLayerIterator::operator*() const
+model::Layer * model::Layer::ChildLayerIterator::operator*() const
 {
-    return comp->layers[index];
+    return &comp->layers[index];
 }
 
 model::Layer * model::Layer::ChildLayerIterator::operator->() const
@@ -90,7 +90,7 @@ model::DocumentNode * model::Layer::docnode_group_child(int index) const
 {
     ChildLayerIterator iter(composition_, this, 0);
     std::advance(iter, index);
-    return &*iter;
+    return *iter;
 }
 
 int model::Layer::docnode_group_child_count() const

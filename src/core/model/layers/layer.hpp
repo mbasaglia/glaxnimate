@@ -39,7 +39,7 @@ public:
             return *this;
         }
 
-        Layer& operator*() const;
+        Layer* operator*() const;
         Layer* operator->() const;
 
         bool operator==(const ChildLayerIterator& other) const

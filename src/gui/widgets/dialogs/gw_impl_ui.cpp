@@ -7,6 +7,7 @@
 
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/dialogs/about_dialog.hpp"
+#include "widgets/dialogs/resize_dialog.hpp"
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
 #include "widgets/node_menu.hpp"
@@ -51,6 +52,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     connect(ui.action_quit, &QAction::triggered, parent, &GlaxnimateWindow::close);
     connect(ui.action_move_to, &QAction::triggered, parent, &GlaxnimateWindow::move_to);
     connect(ui.action_validate_tgs, &QAction::triggered, parent, &GlaxnimateWindow::validate_tgs);
+    connect(ui.action_resize, &QAction::triggered, parent, [this]{ ResizeDialog(this->parent).resize_document(current_document.get()); });
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
