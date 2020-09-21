@@ -83,9 +83,10 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("duration",     tr("Duration"), tr("Duration in seconds"),    3, 0, 90000),
     }});
     Settings::instance().add_group(SettingGroup{"open_save", tr("Open / Save"), "document-save", {
-        Setting("max_recent_files", tr("Max Recent Files"), {},               5, 0, 16),
-        Setting("path",         {},             {},                        Setting::Internal,  QString{}),
-        Setting("recent_files", {},             {},                        Setting::Internal,  QStringList{}),
+        Setting("max_recent_files", tr("Max Recent Files"), {},                                                 5, 0, 16),
+        Setting("path",             {},                     {},                                                 Setting::Internal,  QString{}),
+        Setting("recent_files",     {},                     {},                                                 Setting::Internal,  QStringList{}),
+        Setting("backup_frequency", tr("Backup Frequency"), tr("How often to save a backup copy (in minutes)"), 5, 0, 60),
     }});
     Settings::instance().add_group(SettingGroup{"scripting", tr("Scripting"), "utilities-terminal", {
         //      slug            Label           Tooltip                    Type                default
@@ -119,13 +120,17 @@ void GlaxnimateApp::on_initialize()
     search_paths += QIcon::themeSearchPaths();
     QIcon::setThemeSearchPaths(search_paths);
 
-
     app::settings::Settings::instance().add_custom_group(std::make_unique<app::scripting::PluginSettingsGroup>(QStringList{
     }));
     app::settings::Settings::instance().add_custom_group(std::make_unique<ClipboardSettings>());
 
-
+    QDir().mkpath(backup_path());
 
     app::log::Logger::instance().add_listener<app::log::ListenerStderr>();
     store_logger = app::log::Logger::instance().add_listener<app::log::ListenerStore>();
+}
+
+QString GlaxnimateApp::backup_path(const QString& file) const
+{
+    return writable_data_path("backup/"+file);
 }

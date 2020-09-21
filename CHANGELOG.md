@@ -9,7 +9,7 @@
     * Bezier Draw Tool
     * Rectangle Draw Tool
     * Ellipse Draw Tool
- * Formats:
+ * I/O:
     * Open/Save Rawr files
     * Open/Save Lottie files
     * Open/Save Telegram animated stickers
@@ -21,6 +21,7 @@
     * Copy/Paste SVG
     * Copy selection as images
     * Telegram sticker validation
+    * Automatic backups
  * Scripting:
     * Python Scripting capabilities
     * Menu action plugins

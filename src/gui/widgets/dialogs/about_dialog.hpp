@@ -30,6 +30,7 @@ private slots:
     void copy_system();
     void about_qt();
     void dir_open(const QModelIndex& index);
+    void open_backup();
 
 private:
     std::unique_ptr<Ui::AboutDialog> d;

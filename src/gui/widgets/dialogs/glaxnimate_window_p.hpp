@@ -55,7 +55,9 @@ public:
     tools::Tool* active_tool = nullptr;
 
     // "set and forget" kida variables
-    int tool_rows = 3; ///< @todo setting
+    int autosave_timer = 0;
+    int autosave_timer_mins = 0;
+    bool autosave_load = false;
     QString undo_text;
     QString redo_text;
     color_widgets::ColorDelegate color_delegate;
@@ -83,6 +85,12 @@ public:
     void save_frame_bmp();
     void save_frame_svg();
     void validate_tgs();
+    void autosave_timer_load_settings();
+    void autosave_timer_start(int mins = -1);
+    void autosave_timer_tick();
+    QString backup_name();
+    QString backup_name(const QUuid& uuid);
+    void load_backup(const QUuid& uuid);
 
     // ui
     void setupUi(GlaxnimateWindow* parent);

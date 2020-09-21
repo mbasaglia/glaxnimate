@@ -14,6 +14,7 @@ GlaxnimateWindow::GlaxnimateWindow(QWidget *parent, Qt::WindowFlags flags)
 {
     d->setupUi(this);
     d->setup_document_new(tr("New Animation"));
+    d->autosave_timer_start();
 }
 
 GlaxnimateWindow::~GlaxnimateWindow() = default;
@@ -130,6 +131,7 @@ void GlaxnimateWindow::showEvent(QShowEvent * event)
 void GlaxnimateWindow::preferences()
 {
     app::SettingsDialog(this).exec();
+    d->autosave_timer_load_settings();
 }
 
 void GlaxnimateWindow::closeEvent ( QCloseEvent* event )
@@ -377,4 +379,9 @@ void GlaxnimateWindow::validate_tgs()
 qreal GlaxnimateWindow::current_zoom() const
 {
     return d->ui.graphics_view->get_zoom_factor();
+}
+
+void GlaxnimateWindow::timerEvent(QTimerEvent*)
+{
+    d->autosave_timer_tick();
 }

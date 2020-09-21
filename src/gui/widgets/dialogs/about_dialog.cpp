@@ -7,7 +7,7 @@
 #include <QClipboard>
 #include <QUrl>
 
-#include "app/application.hpp"
+#include "glaxnimate_app.hpp"
 
 AboutDialog::AboutDialog(QWidget* parent)
     : QDialog(parent), d(new Ui::AboutDialog)
@@ -20,6 +20,7 @@ AboutDialog::AboutDialog(QWidget* parent)
     d->label_version->setText(qApp->applicationVersion());
     d->line_settings->setText(app::Application::instance()->data_file("settings.ini"));
     d->line_user_data->setText(app::Application::instance()->writable_data_path(""));
+    d->line_backup->setText(GlaxnimateApp::instance()->backup_path());
 
     populate_view(d->view_data, app::Application::instance()->data_paths_unchecked(""));
     populate_view(d->view_icons, QIcon::themeSearchPaths());
@@ -93,4 +94,9 @@ void AboutDialog::copy_system()
 void AboutDialog::dir_open(const QModelIndex& index)
 {
     QDesktopServices::openUrl(QUrl::fromLocalFile(index.data().toString()));
+}
+
+void AboutDialog::open_backup()
+{
+    QDesktopServices::openUrl(QUrl::fromLocalFile(d->line_backup->text()));
 }

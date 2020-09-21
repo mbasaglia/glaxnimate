@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QImageWriter>
 
+#include "glaxnimate_app.hpp"
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "io/lottie/lottie_html_format.hpp"
@@ -114,7 +115,7 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 
     app::settings::set<QString>("open_save", "path", options.path.absolutePath());
 
-    if ( ok )
+    if ( ok && !autosave_load )
         most_recent_file(options.filename);
 
     view_fit();
@@ -123,6 +124,31 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 
     current_document->set_io_options(options);
     ui.play_controls->set_range(current_document->main_composition()->first_frame.get(), current_document->main_composition()->last_frame.get());
+
+    if ( !autosave_load && QFileInfo(backup_name()).exists() )
+    {
+        WindowMessageWidget::Message msg{
+            tr("Looks like this file is being edited by another Glaxnimate instance or it was being edited when Glaxnimate crashed."),
+            app::log::Info
+        };
+
+        msg.add_action(
+            QIcon::fromTheme("document-close"),
+            tr("Close Document"),
+            parent,
+            &GlaxnimateWindow::document_new
+        );
+
+        msg.add_action(
+            QIcon::fromTheme("document-revert"),
+            tr("Load Backup"),
+            parent,
+            [this, uuid=current_document->main_composition()->uuid.get()]{ load_backup(uuid); }
+        );
+
+        ui.message_widget->queue_message(std::move(msg));
+    }
+
     return ok;
 }
 
@@ -137,24 +163,30 @@ void GlaxnimateWindow::Private::refresh_title()
 
 bool GlaxnimateWindow::Private::close_document()
 {
-    if ( current_document && !current_document->undo_stack().isClean() )
+    if ( current_document )
     {
-        QMessageBox warning(parent);
-        warning.setWindowTitle(QObject::tr("Closing Animation"));
-        warning.setText(QObject::tr("The animation has unsaved changes.\nDo you want to save your changes?"));
-        warning.setInformativeText(current_document->filename());
-        warning.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-        warning.setDefaultButton(QMessageBox::Save);
-        warning.setIcon(QMessageBox::Warning);
-        int result = warning.exec();
+        if ( !autosave_load )
+            QDir().remove(backup_name());
 
-        if ( result == QMessageBox::Save )
-            save_document(false, false);
-        else if ( result == QMessageBox::Cancel )
-            return false;
+        if ( !current_document->undo_stack().isClean() )
+        {
+            QMessageBox warning(parent);
+            warning.setWindowTitle(QObject::tr("Closing Animation"));
+            warning.setText(QObject::tr("The animation has unsaved changes.\nDo you want to save your changes?"));
+            warning.setInformativeText(current_document->filename());
+            warning.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+            warning.setDefaultButton(QMessageBox::Save);
+            warning.setIcon(QMessageBox::Warning);
+            int result = warning.exec();
 
-        // Prevent signals on the destructor
-        current_document->undo_stack().clear();
+            if ( result == QMessageBox::Save )
+                save_document(false, false);
+            else if ( result == QMessageBox::Cancel )
+                return false;
+
+            // Prevent signals on the destructor
+            current_document->undo_stack().clear();
+        }
     }
 
     ui.stroke_style_widget->set_shape(nullptr);
@@ -347,4 +379,69 @@ void GlaxnimateWindow::Private::validate_tgs()
     fmt.validate(current_document.get());
     dialog.show_errors(tr("No issues found"), tr("Some issues detected"));
     dialog.exec();
+}
+
+void GlaxnimateWindow::Private::autosave_timer_start(int mins)
+{
+    if ( mins == -1 )
+        mins = app::settings::get<int>("open_save", "backup_frequency");
+    autosave_timer_mins = mins;
+    if ( autosave_timer_mins )
+        autosave_timer = parent->startTimer(autosave_timer_mins * 1000 * 60);
+}
+
+void GlaxnimateWindow::Private::autosave_timer_tick()
+{
+    if ( current_document && !current_document->undo_stack().isClean() && !autosave_load )
+    {
+        QFile file(backup_name());
+        file.open(QIODevice::WriteOnly);
+        io::glaxnimate::GlaxnimateFormat().save(file, file.fileName(), current_document.get(), {});
+    }
+
+}
+
+void GlaxnimateWindow::Private::autosave_timer_load_settings()
+{
+    int mins = app::settings::get<int>("open_save", "backup_frequency");
+    if ( mins != autosave_timer_mins )
+    {
+        if ( autosave_timer )
+            parent->killTimer(autosave_timer);
+        autosave_timer = 0;
+        autosave_timer_start(mins);
+    }
+}
+
+QString GlaxnimateWindow::Private::backup_name()
+{
+    return backup_name(current_document->main_composition()->uuid.get());
+}
+
+QString GlaxnimateWindow::Private::backup_name(const QUuid& id)
+{
+    return GlaxnimateApp::instance()->backup_path(id.toString(QUuid::Id128) + ".bak.rawr");
+}
+
+void GlaxnimateWindow::Private::load_backup(const QUuid& id)
+{
+    if ( id != current_document->main_composition()->uuid.get() )
+    {
+        show_warning(tr("Backup"), tr("Cannot load backup of a closed file"));
+        return;
+    }
+
+    auto io_options_old = current_document->io_options();
+
+    io::Options io_options_bak {
+        io::glaxnimate::GlaxnimateFormat::instance(),
+        GlaxnimateApp::instance()->backup_path(),
+        backup_name(id),
+        {}
+    };
+
+    autosave_load = true;
+    setup_document_open(io_options_bak);
+    current_document->set_io_options(io_options_old);
+    autosave_load = false;
 }

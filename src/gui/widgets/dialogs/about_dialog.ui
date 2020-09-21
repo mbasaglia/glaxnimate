@@ -119,7 +119,7 @@
             <x>0</x>
             <y>0</y>
             <width>464</width>
-            <height>436</height>
+            <height>376</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -183,9 +183,9 @@ p, li { white-space: pre-wrap; }
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-86</y>
+            <y>0</y>
             <width>448</width>
-            <height>368</height>
+            <height>432</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -248,6 +248,37 @@ p, li { white-space: pre-wrap; }
                <property name="icon">
                 <iconset theme="document-open">
                  <normaloff>.</normaloff>.</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Backup Directory:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QLineEdit" name="line_backup">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="toolButton_3">
+               <property name="toolTip">
+                <string>Open</string>
+               </property>
+               <property name="text">
+                <string>Open</string>
+               </property>
+               <property name="icon">
+                <iconset theme="folder-open"/>
                </property>
               </widget>
              </item>
@@ -424,8 +455,8 @@ p, li { white-space: pre-wrap; }
    <slot>open_user_data()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>457</x>
-     <y>102</y>
+     <x>458</x>
+     <y>200</y>
     </hint>
     <hint type="destinationlabel">
      <x>504</x>
@@ -440,8 +471,8 @@ p, li { white-space: pre-wrap; }
    <slot>open_settings_file()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>439</x>
-     <y>168</y>
+     <x>458</x>
+     <y>264</y>
     </hint>
     <hint type="destinationlabel">
      <x>504</x>
@@ -456,8 +487,8 @@ p, li { white-space: pre-wrap; }
    <slot>copy_system()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>443</x>
-     <y>418</y>
+     <x>102</x>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
      <x>579</x>
@@ -472,8 +503,8 @@ p, li { white-space: pre-wrap; }
    <slot>about_qt()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>68</x>
-     <y>413</y>
+     <x>53</x>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
      <x>254</x>
@@ -488,8 +519,8 @@ p, li { white-space: pre-wrap; }
    <slot>dir_open(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>289</x>
-     <y>257</y>
+     <x>299</x>
+     <y>446</y>
     </hint>
     <hint type="destinationlabel">
      <x>617</x>
@@ -504,12 +535,28 @@ p, li { white-space: pre-wrap; }
    <slot>dir_open(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>378</x>
-     <y>371</y>
+     <x>388</x>
+     <y>563</y>
     </hint>
     <hint type="destinationlabel">
      <x>556</x>
      <y>366</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>AboutDialog</receiver>
+   <slot>open_backup()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>435</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>653</x>
+     <y>342</y>
     </hint>
    </hints>
   </connection>
@@ -520,5 +567,6 @@ p, li { white-space: pre-wrap; }
   <slot>copy_system()</slot>
   <slot>about_qt()</slot>
   <slot>dir_open(QModelIndex)</slot>
+  <slot>open_backup()</slot>
  </slots>
 </ui>

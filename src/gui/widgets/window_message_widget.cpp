@@ -44,6 +44,8 @@ void WindowMessageWidget::next_message()
     d->messages.pop();
     if ( d->messages.empty() )
         hide();
+    else
+        show_message(d->messages.front());
 }
 
 void WindowMessageWidget::show_message(const WindowMessageWidget::Message& msg)
@@ -73,7 +75,9 @@ void WindowMessageWidget::show_message(const WindowMessageWidget::Message& msg)
         btn->setIcon(action->icon());
         btn->setText(action->text());
         btn->setToolTip(action->toolTip());
+        d->ui.lay_buttons->addWidget(btn);
         connect(btn, &QPushButton::clicked, action.get(), &QAction::trigger);
+        connect(btn, &QPushButton::clicked, this, &WindowMessageWidget::next_message);
         connect(action.get(), &QObject::destroyed, btn, &QObject::deleteLater);
     }
 }

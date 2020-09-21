@@ -23,6 +23,8 @@ public:
         return static_cast<GlaxnimateApp *>(QCoreApplication::instance());
     }
 
+    QString backup_path(const QString& file = {}) const;
+
 protected:
     void on_initialize() override;
 
