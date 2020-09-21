@@ -22,6 +22,7 @@
     * Copy selection as images
     * Telegram sticker validation
     * Automatic backups
+    * Drop files to open them
  * Scripting:
     * Python Scripting capabilities
     * Menu action plugins

@@ -385,3 +385,27 @@ void GlaxnimateWindow::timerEvent(QTimerEvent*)
 {
     d->autosave_timer_tick();
 }
+
+void GlaxnimateWindow::dragEnterEvent(QDragEnterEvent* event)
+{
+    if ( !d->drop_event_data(event).isEmpty() )
+        event->acceptProposedAction();
+}
+
+void GlaxnimateWindow::dragLeaveEvent(QDragLeaveEvent* event)
+{
+    event->accept();
+}
+
+void GlaxnimateWindow::dragMoveEvent(QDragMoveEvent* event)
+{
+    if ( !d->drop_event_data(event).isEmpty() )
+        event->acceptProposedAction();
+}
+
+void GlaxnimateWindow::dropEvent(QDropEvent* event)
+{
+    auto str = d->drop_event_data(event);
+    if ( !str.isEmpty() )
+        document_open(str);
+}

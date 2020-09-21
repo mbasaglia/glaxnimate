@@ -138,6 +138,11 @@ protected:
     void closeEvent ( QCloseEvent * event ) override;
     void timerEvent(QTimerEvent * event) override;
 
+   void dragEnterEvent(QDragEnterEvent* event) override;
+   void dragMoveEvent(QDragMoveEvent* event) override;
+   void dragLeaveEvent(QDragLeaveEvent* event) override;
+   void dropEvent(QDropEvent* event) override;
+
 private:
     class Private;
     std::unique_ptr<Private> d;

@@ -91,6 +91,7 @@ public:
     QString backup_name();
     QString backup_name(const QUuid& uuid);
     void load_backup(const QUuid& uuid);
+    QString drop_event_data(QDropEvent* ev);
 
     // ui
     void setupUi(GlaxnimateWindow* parent);

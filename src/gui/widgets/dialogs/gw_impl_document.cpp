@@ -445,3 +445,27 @@ void GlaxnimateWindow::Private::load_backup(const QUuid& id)
     current_document->set_io_options(io_options_old);
     autosave_load = false;
 }
+
+
+QString GlaxnimateWindow::Private::drop_event_data(QDropEvent* event)
+{
+    const QMimeData* data = event->mimeData();
+
+    if ( !data->hasUrls() )
+       return {};
+
+    for ( const auto& url : data->urls() )
+    {
+        if ( url.isLocalFile() )
+        {
+            QString filename = url.toLocalFile();
+            QString extension = QFileInfo(filename).completeSuffix();
+            if ( auto impex = io::IoRegistry::instance().from_extension(extension) )
+                if ( impex->can_open() )
+                    return filename;
+        }
+    }
+
+    return {};
+
+}

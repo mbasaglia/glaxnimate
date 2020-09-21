@@ -10,13 +10,20 @@
     <height>933</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="WindowMessageWidget" name="message_widget" native="true"/>
     </item>
     <item>
-     <widget class="GlaxnimateGraphicsView" name="graphics_view"/>
+     <widget class="GlaxnimateGraphicsView" name="graphics_view">
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -1654,7 +1661,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>939</x>
-     <y>900</y>
+     <y>898</y>
     </hint>
     <hint type="destinationlabel">
      <x>727</x>
@@ -1781,8 +1788,8 @@
    <slot>layer_top()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>243</x>
-     <y>898</y>
+     <x>199</x>
+     <y>900</y>
     </hint>
     <hint type="destinationlabel">
      <x>234</x>
@@ -1797,8 +1804,8 @@
    <slot>layer_raise()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>277</x>
-     <y>881</y>
+     <x>237</x>
+     <y>900</y>
     </hint>
     <hint type="destinationlabel">
      <x>285</x>
@@ -1813,8 +1820,8 @@
    <slot>layer_lower()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>308</x>
-     <y>880</y>
+     <x>275</x>
+     <y>900</y>
     </hint>
     <hint type="destinationlabel">
      <x>314</x>
@@ -1829,8 +1836,8 @@
    <slot>layer_bottom()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>350</x>
-     <y>880</y>
+     <x>313</x>
+     <y>900</y>
     </hint>
     <hint type="destinationlabel">
      <x>348</x>
