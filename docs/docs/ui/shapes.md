@@ -18,11 +18,13 @@ that allow editing of various properties:
 The X-shaped handle in the middle allows you to change the anchor point around
 which other transformations are performed.
 
-The Circle on the top allows you to rotate the group.
+The Circle on the top allows you to rotate the group.<br/>
+Holding Ctrl while dragging it will snap the rotation to increments of 15 degrees.
 
 The Squares on the corners change X and Y scale at the same time.
 
-The Diamonds on the edges change scale for one component at the time.
+The Diamonds on the edges change scale for one component at the time.<br/>
+Holding Ctrl while dragging them will preserve the aspect ratio.
 
 ## Actual Shapes
 

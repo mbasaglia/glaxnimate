@@ -30,7 +30,7 @@ public:
     {
         MoveHandle* handle;
         QPointF (Private::* get_p)()const;
-        void (TransformGraphicsItem::* signal)(const QPointF&);
+        void (TransformGraphicsItem::* signal)(const QPointF&, Qt::KeyboardModifiers);
     };
 
     model::Transform* transform;
@@ -150,6 +150,44 @@ public:
         ));
     }
 
+    bool find_scale_y(const QPointF& p, qreal y, qreal& scale)
+    {
+        qreal size_to_anchor_y = y - transform->anchor_point.get().y();
+        if ( size_to_anchor_y == 0 )
+        {
+            scale = transform->scale.get().y();
+            return false;
+        }
+
+        scale = find_scale(
+            QPointF(transform->anchor_point.get().x(), p.y()),
+            size_to_anchor_y,
+            transform->anchor_point.get().y(),
+            p.y(),
+            transform->scale.get().y()
+        );
+        return true;
+    }
+
+    bool find_scale_x(const QPointF& p, qreal x, qreal& scale)
+    {
+        qreal size_to_anchor_x = x - transform->anchor_point.get().x();
+        if ( size_to_anchor_x == 0 )
+        {
+            scale = transform->scale.get().x();
+            return false;
+        }
+
+        scale = find_scale(
+            QPointF(p.x(), transform->anchor_point.get().y()),
+            size_to_anchor_x,
+            transform->anchor_point.get().x(),
+            p.x(),
+            transform->scale.get().x()
+        );
+        return true;
+    }
+
 };
 
 graphics::TransformGraphicsItem::TransformGraphicsItem(
@@ -194,211 +232,91 @@ void graphics::TransformGraphicsItem::update_transform()
 }
 
 
-void graphics::TransformGraphicsItem::drag_tl(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_tl(const QPointF& p, Qt::KeyboardModifiers modifiers)
 {
-    auto scale = d->transform->scale.get();
-    qreal size_to_anchor_y = d->cache.top() - d->transform->anchor_point.get().y();
-    qreal size_to_anchor_x = d->cache.left() - d->transform->anchor_point.get().x();
+    qreal scale_y;
+    bool has_y = d->find_scale_y(p, d->cache.top(), scale_y);
+    qreal scale_x;
+    bool has_x = d->find_scale_x(p, d->cache.left(), scale_x);
 
-    if ( size_to_anchor_y != 0 )
-    {
-        scale.setY(d->find_scale(
-            QPointF(d->transform->anchor_point.get().x(), p.y()),
-            size_to_anchor_y,
-            d->transform->anchor_point.get().y(),
-            p.y(),
-            scale.y()
-        ));
-    }
+    if ( modifiers & Qt::ControlModifier )
+        scale_x = scale_y = (scale_x + scale_y) / 2;
 
-    if ( size_to_anchor_x != 0 )
-    {
-        scale.setX(d->find_scale(
-            QPointF(p.x(), d->transform->anchor_point.get().y()),
-            size_to_anchor_x,
-            d->transform->anchor_point.get().x(),
-            p.x(),
-            scale.x()
-        ));
-    }
-
-    if ( size_to_anchor_x || size_to_anchor_y )
-        d->push_command(d->transform->scale, scale, false);
+    if ( has_x || has_y )
+        d->push_command(d->transform->scale, QVector2D(scale_x, scale_y), false);
 }
 
-void graphics::TransformGraphicsItem::drag_tr(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_tr(const QPointF& p, Qt::KeyboardModifiers modifiers)
 {
-    auto scale = d->transform->scale.get();
-    qreal size_to_anchor_y = d->cache.top() - d->transform->anchor_point.get().y();
-    qreal size_to_anchor_x = d->cache.right() - d->transform->anchor_point.get().x();
+    qreal scale_y;
+    bool has_y = d->find_scale_y(p, d->cache.top(), scale_y);
+    qreal scale_x;
+    bool has_x = d->find_scale_x(p, d->cache.right(), scale_x);
 
-    if ( size_to_anchor_y != 0 )
-    {
-        scale.setY(d->find_scale(
-            QPointF(d->transform->anchor_point.get().x(), p.y()),
-            size_to_anchor_y,
-            d->transform->anchor_point.get().y(),
-            p.y(),
-            scale.y()
-        ));
-    }
+    if ( modifiers & Qt::ControlModifier )
+        scale_x = scale_y = (scale_x + scale_y) / 2;
 
-    if ( size_to_anchor_x != 0 )
-    {
-        scale.setX(d->find_scale(
-            QPointF(p.x(), d->transform->anchor_point.get().y()),
-            size_to_anchor_x,
-            d->transform->anchor_point.get().x(),
-            p.x(),
-            scale.x()
-        ));
-    }
-
-    if ( size_to_anchor_x || size_to_anchor_y )
-        d->push_command(d->transform->scale, scale, false);
+    if ( has_x || has_y )
+        d->push_command(d->transform->scale, QVector2D(scale_x, scale_y), false);
 }
 
-void graphics::TransformGraphicsItem::drag_br(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_br(const QPointF& p, Qt::KeyboardModifiers modifiers)
 {
-    auto scale = d->transform->scale.get();
-    qreal size_to_anchor_y = d->cache.bottom() - d->transform->anchor_point.get().y();
-    qreal size_to_anchor_x = d->cache.right() - d->transform->anchor_point.get().x();
+    qreal scale_y;
+    bool has_y = d->find_scale_y(p, d->cache.bottom(), scale_y);
+    qreal scale_x;
+    bool has_x = d->find_scale_x(p, d->cache.right(), scale_x);
 
-    if ( size_to_anchor_y != 0 )
-    {
-        scale.setY(d->find_scale(
-            QPointF(d->transform->anchor_point.get().x(), p.y()),
-            size_to_anchor_y,
-            d->transform->anchor_point.get().y(),
-            p.y(),
-            scale.y()
-        ));
-    }
+    if ( modifiers & Qt::ControlModifier )
+        scale_x = scale_y = (scale_x + scale_y) / 2;
 
-    if ( size_to_anchor_x != 0 )
-    {
-        scale.setX(d->find_scale(
-            QPointF(p.x(), d->transform->anchor_point.get().y()),
-            size_to_anchor_x,
-            d->transform->anchor_point.get().x(),
-            p.x(),
-            scale.x()
-        ));
-    }
-
-    if ( size_to_anchor_x || size_to_anchor_y )
-        d->push_command(d->transform->scale, scale, false);
+    if ( has_x || has_y )
+        d->push_command(d->transform->scale, QVector2D(scale_x, scale_y), false);
 }
 
-void graphics::TransformGraphicsItem::drag_bl(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_bl(const QPointF& p, Qt::KeyboardModifiers modifiers)
 {
-    auto scale = d->transform->scale.get();
-    qreal size_to_anchor_y = d->cache.bottom() - d->transform->anchor_point.get().y();
-    qreal size_to_anchor_x = d->cache.left() - d->transform->anchor_point.get().x();
+    qreal scale_y;
+    bool has_y = d->find_scale_y(p, d->cache.bottom(), scale_y);
+    qreal scale_x;
+    bool has_x = d->find_scale_x(p, d->cache.left(), scale_x);
 
-    if ( size_to_anchor_y != 0 )
-    {
-        scale.setY(d->find_scale(
-            QPointF(d->transform->anchor_point.get().x(), p.y()),
-            size_to_anchor_y,
-            d->transform->anchor_point.get().y(),
-            p.y(),
-            scale.y()
-        ));
-    }
+    if ( modifiers & Qt::ControlModifier )
+        scale_x = scale_y = (scale_x + scale_y) / 2;
 
-    if ( size_to_anchor_x != 0 )
-    {
-        scale.setX(d->find_scale(
-            QPointF(p.x(), d->transform->anchor_point.get().y()),
-            size_to_anchor_x,
-            d->transform->anchor_point.get().x(),
-            p.x(),
-            scale.x()
-        ));
-    }
-
-    if ( size_to_anchor_x || size_to_anchor_y )
-        d->push_command(d->transform->scale, scale, false);
+    if ( has_x || has_y )
+        d->push_command(d->transform->scale, QVector2D(scale_x, scale_y), false);
 }
 
-void graphics::TransformGraphicsItem::drag_t(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_t(const QPointF& p, Qt::KeyboardModifiers)
 {
-    qreal size_to_anchor = d->cache.top() - d->transform->anchor_point.get().y();
-    if ( size_to_anchor != 0 )
-    {
-        auto old = d->transform->scale.get();
-        qreal new_scale = d->find_scale(
-            QPointF(d->transform->anchor_point.get().x(), p.y()),
-            size_to_anchor,
-            d->transform->anchor_point.get().y(),
-            p.y(),
-            old.y()
-        );
-
-        QVector2D scale(old.x(), new_scale);
-        d->push_command(d->transform->scale, scale, false);
-    }
+    qreal scale;
+    if ( d->find_scale_y(p, d->cache.top(), scale) )
+        d->push_command(d->transform->scale, QVector2D(d->transform->scale.get().x(), scale), false);
 }
 
-void graphics::TransformGraphicsItem::drag_b(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_b(const QPointF& p, Qt::KeyboardModifiers)
 {
-    qreal size_to_anchor = d->cache.bottom() - d->transform->anchor_point.get().y();
-    if ( size_to_anchor != 0 )
-    {
-        auto old = d->transform->scale.get();
-        qreal new_scale = d->find_scale(
-            QPointF(d->transform->anchor_point.get().x(), p.y()),
-            size_to_anchor,
-            d->transform->anchor_point.get().y(),
-            p.y(),
-            old.y()
-        );
-
-        QVector2D scale(old.x(), new_scale);
-        d->push_command(d->transform->scale, scale, false);
-    }
+    qreal scale;
+    if ( d->find_scale_y(p, d->cache.bottom(), scale) )
+        d->push_command(d->transform->scale, QVector2D(d->transform->scale.get().x(), scale), false);
 }
 
-void graphics::TransformGraphicsItem::drag_l(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_l(const QPointF& p, Qt::KeyboardModifiers)
 {
-    qreal size_to_anchor = d->cache.left() - d->transform->anchor_point.get().x();
-    if ( size_to_anchor != 0 )
-    {
-        auto old = d->transform->scale.get();
-        qreal new_scale = d->find_scale(
-            QPointF(p.x(), d->transform->anchor_point.get().y()),
-            size_to_anchor,
-            d->transform->anchor_point.get().x(),
-            p.x(),
-            old.x()
-        );
-
-        QVector2D scale(new_scale, old.y());
-        d->push_command(d->transform->scale, scale, false);
-    }
+    qreal scale;
+    if ( d->find_scale_x(p, d->cache.left(), scale) )
+        d->push_command(d->transform->scale, QVector2D(scale, d->transform->scale.get().y()), false);
 }
 
-void graphics::TransformGraphicsItem::drag_r(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_r(const QPointF& p, Qt::KeyboardModifiers)
 {
-    qreal size_to_anchor = d->cache.right() - d->transform->anchor_point.get().x();
-    if ( size_to_anchor != 0 )
-    {
-        auto old = d->transform->scale.get();
-        qreal new_scale = d->find_scale(
-            QPointF(p.x(), d->transform->anchor_point.get().y()),
-            size_to_anchor,
-            d->transform->anchor_point.get().x(),
-            p.x(),
-            old.x()
-        );
-
-        QVector2D scale(new_scale, old.y());
-        d->push_command(d->transform->scale, scale, false);
-    }
+    qreal scale;
+    if ( d->find_scale_x(p, d->cache.right(), scale) )
+        d->push_command(d->transform->scale, QVector2D(scale, d->transform->scale.get().y()), false);
 }
 
-void graphics::TransformGraphicsItem::drag_a(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_a(const QPointF& p, Qt::KeyboardModifiers)
 {
     QPointF anchor = p;
     QPointF anchor_old = d->transform->anchor_point.get();
@@ -419,7 +337,7 @@ void graphics::TransformGraphicsItem::drag_a(const QPointF& p)
     ));
 }
 
-void graphics::TransformGraphicsItem::drag_rot(const QPointF& p)
+void graphics::TransformGraphicsItem::drag_rot(const QPointF& p, Qt::KeyboardModifiers modifiers)
 {
     QPointF diff_old = d->get_rot() - d->transform->anchor_point.get();
     QVector2D scale = d->transform->scale.get();
@@ -429,9 +347,12 @@ void graphics::TransformGraphicsItem::drag_rot(const QPointF& p)
     QPointF ap = d->transform_matrix.map(d->transform->anchor_point.get());
     QPointF diff_new = p_new - ap;
     qreal angle_new = std::atan2(diff_new.y(), diff_new.x());
-    qreal angle = angle_new - angle_to_rot_handle;
+    qreal angle = qRadiansToDegrees(angle_new - angle_to_rot_handle);
 
-    d->push_command(d->transform->rotation, qRadiansToDegrees(angle), false);
+    if ( modifiers & Qt::ControlModifier )
+        angle = qRound(angle/15) * 15;
+
+    d->push_command(d->transform->rotation, angle, false);
 }
 
 void graphics::TransformGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt, QWidget*)
