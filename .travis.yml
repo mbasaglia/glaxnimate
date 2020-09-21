@@ -47,9 +47,7 @@ jobs:
         script:
             - mkdir build
             - cd build
-            - echo "$(brew --prefix qt)/lib/cmake/"
-            - ls "$(brew --prefix qt)/lib/cmake/"
-            - cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/"
+            - cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5"
             - make
             - makeicns -512 ../data/images/glaxnimate.png -out glaxnimate.icns
             - cpack -G Bundle
