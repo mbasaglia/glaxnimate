@@ -27,6 +27,8 @@ AboutDialog::AboutDialog(QWidget* parent)
 
 
     int row = 0;
+    d->view_system->verticalHeaderItem(0)->setText(qApp->applicationDisplayName());
+    d->view_system->setItem(row++, 0, new QTableWidgetItem(qApp->applicationVersion()));
     d->view_system->setItem(row++, 0, new QTableWidgetItem(QSysInfo::prettyProductName()));
     d->view_system->setItem(row++, 0, new QTableWidgetItem(QSysInfo::kernelType() + " " + QSysInfo::kernelVersion()));
     d->view_system->setItem(row++, 0, new QTableWidgetItem(QSysInfo::currentCpuArchitecture()));
@@ -83,7 +85,6 @@ void AboutDialog::copy_system()
     QString text_template("%1: %2\n");
 
     QString text;
-    text += text_template.arg(qApp->applicationDisplayName()).arg(qApp->applicationVersion());
     for ( int i = 0; i < d->view_system->rowCount(); i++ )
         text += text_template.arg(d->view_system->verticalHeaderItem(i)->text()).arg(d->view_system->item(i, 0)->text());
 

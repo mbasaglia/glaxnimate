@@ -187,7 +187,7 @@ p, li { white-space: pre-wrap; }
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>448</width>
+            <width>136</width>
             <height>432</height>
            </rect>
           </property>
@@ -281,7 +281,8 @@ p, li { white-space: pre-wrap; }
                 <string>Open</string>
                </property>
                <property name="icon">
-                <iconset theme="folder-open"/>
+                <iconset theme="folder-open">
+                 <normaloff>.</normaloff>.</iconset>
                </property>
               </widget>
              </item>
@@ -346,6 +347,11 @@ p, li { white-space: pre-wrap; }
          <attribute name="horizontalHeaderStretchLastSection">
           <bool>true</bool>
          </attribute>
+         <row>
+          <property name="text">
+           <string notr="true">Glaxnimate</string>
+          </property>
+         </row>
          <row>
           <property name="text">
            <string>System</string>
