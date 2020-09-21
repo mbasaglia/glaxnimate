@@ -61,7 +61,7 @@ linux:deb:
     script:
         - mkdir build
         - cd build
-        - cmake .. -DCMAKE_BUILD_TYPE=Release -DCPACK_DEBIAN_FILE_NAME=glaxnimate.deb
+        - cmake .. -DCPACK_DEBIAN_FILE_NAME=glaxnimate.deb -DVERSION_SUFFIX="deb-$CI_COMMIT_SHORT_SHA"
         - make
         - make translations
         - cpack -G DEB
@@ -87,7 +87,7 @@ linux:appimage:
     script:
         - mkdir build
         - cd build
-        - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_PREFIX_PATH=/opt/qt515/lib/cmake/Qt5LinguistTools/
+        - cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_PREFIX_PATH=/opt/qt515/lib/cmake/Qt5LinguistTools/ -DVERSION_SUFFIX="appimage-$CI_COMMIT_SHORT_SHA"
         - make
         - make translations
         - make install DESTDIR=AppDir
@@ -113,7 +113,7 @@ mxe:build:
     script:
         - mkdir build
         - cd build
-        - x86_64-w64-mingw32.shared.posix-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/
+        - x86_64-w64-mingw32.shared.posix-cmake .. -DCMAKE_INSTALL_PREFIX=/ -DVERSION_SUFFIX="win-$CI_COMMIT_SHORT_SHA"
         - make
         - make translations
         - make install DESTDIR=glaxnimate >/dev/null

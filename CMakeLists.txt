@@ -31,12 +31,17 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Git
-git_describe(GIT_DESC --tags)
-if ( NOT ${GIT_DESC} MATCHES ".*NOTFOUND" )
-    set(PROJECT_VERSION ${GIT_DESC})
+set(VERSION_SUFFIX "" CACHE STRING "")
+if (VERSION_SUFFIX STREQUAL "")
+    git_describe(GIT_DESC --tags)
+    if ( NOT ${GIT_DESC} MATCHES ".*NOTFOUND" )
+        set(PROJECT_VERSION ${GIT_DESC})
+    endif()
+else()
+    set(PROJECT_VERSION "${PROJECT_VERSION}+${VERSION_SUFFIX}")
 endif()
 
-message(STATUS ${PROJECT_VERSION})
+message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION}")
 
 # Debug flags
 if(CMAKE_BUILD_TYPE EQUAL "")
