@@ -329,15 +329,10 @@ void GlaxnimateWindow::Private::most_recent_file(const QString& s)
     reload_recent_menu();
 }
 
-void GlaxnimateWindow::Private::show_warning(const QString& title, const QString& message, QMessageBox::Icon icon)
+void GlaxnimateWindow::Private::show_warning(const QString& title, const QString& message, app::log::Severity icon)
 {
-    QMessageBox warning(parent);
-    warning.setWindowTitle(title);
-    warning.setText(message);
-    warning.setStandardButtons(QMessageBox::Ok);
-    warning.setDefaultButton(QMessageBox::Ok);
-    warning.setIcon(icon);
-    warning.exec();
+    ui.message_widget->queue_message({message, icon});
+    app::log::Log(title).log(message, icon);
 }
 
 void GlaxnimateWindow::Private::help_about()

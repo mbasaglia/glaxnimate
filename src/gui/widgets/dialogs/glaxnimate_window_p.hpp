@@ -91,7 +91,7 @@ public:
     void document_treeview_current_changed(const QModelIndex& index);
     void reload_recent_menu();
     void most_recent_file(const QString& s);
-    void show_warning(const QString& title, const QString& message, QMessageBox::Icon icon = QMessageBox::Warning);
+    void show_warning(const QString& title, const QString& message, app::log::Severity icon = app::log::Warning);
     void help_about();
     void shutdown();
     void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);

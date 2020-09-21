@@ -13,6 +13,9 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="WindowMessageWidget" name="message_widget" native="true"/>
+    </item>
+    <item>
      <widget class="GlaxnimateGraphicsView" name="graphics_view"/>
     </item>
    </layout>
@@ -1261,7 +1264,8 @@
   </action>
   <action name="action_validate_tgs">
    <property name="icon">
-    <iconset theme="telegram"/>
+    <iconset theme="telegram">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Validate &amp;Telegram Sticker</string>
@@ -1319,6 +1323,12 @@
     <signal>color_changed(QColor)</signal>
     <slot>set_color(QColor)</slot>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>WindowMessageWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/window_message_widget.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

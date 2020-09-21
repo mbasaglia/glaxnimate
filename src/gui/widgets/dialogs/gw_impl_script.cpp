@@ -90,14 +90,14 @@ void GlaxnimateWindow::Private::script_needs_running ( const app::scripting::Plu
             try {
                 QVariantList args{QVariant::fromValue(parent), QVariant::fromValue(current_document.get()), settings};
                 if ( !ctx->run_from_module(plugin.data().dir, script.module, script.function, args) )
-                    show_warning(plugin.data().name, tr("Could not run the plugin"), QMessageBox::Critical);
+                    show_warning(plugin.data().name, tr("Could not run the plugin"), app::log::Error);
             } catch ( const app::scripting::ScriptError& err ) {
                 console_error(err);
-                show_warning(plugin.data().name, tr("Plugin raised an exception"), QMessageBox::Critical);
+                show_warning(plugin.data().name, tr("Plugin raised an exception"), app::log::Error);
             }
             return;
         }
     }
 
-    show_warning(plugin.data().name, tr("Could not find an interpreter"), QMessageBox::Critical);
+    show_warning(plugin.data().name, tr("Could not find an interpreter"), app::log::Error);
 }
