@@ -33,3 +33,7 @@ QUrl AppInfo::url_issues() const
     return QUrl(URL_ISSUES);
 }
 
+QString AppInfo::description() const
+{
+    return PROJECT_DESCRIPTION;
+}

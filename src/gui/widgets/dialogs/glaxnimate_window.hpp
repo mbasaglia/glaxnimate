@@ -79,6 +79,8 @@ public:
 
     qreal current_zoom() const;
 
+    void document_open(const QString& filename);
+
 public slots:
     void document_save();
     void document_save_as();
@@ -93,7 +95,6 @@ public slots:
 private slots:
     void document_new();
     void document_open_dialog();
-    void document_open(const QString& filename);
     void document_reload();
 
     void document_treeview_clicked(const QModelIndex& index);

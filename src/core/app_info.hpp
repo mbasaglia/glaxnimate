@@ -45,6 +45,11 @@ public:
      */
     QUrl url_issues() const;
 
+    /**
+     * \brief Application description
+     */
+    QString description() const;
+
 private:
     AppInfo() = default;
     ~AppInfo() = default;
