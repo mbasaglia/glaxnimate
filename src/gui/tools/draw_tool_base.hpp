@@ -177,10 +177,11 @@ private:
         layer->transform.get()->anchor_point.set(center);
         layer->transform.get()->position.set(center);
         document->set_best_name(layer.get());
+        auto prop = &layer->shapes;
         document->undo_stack().push(
             new command::AddLayer(comp, std::move(layer), layer_index)
         );
-        return &layer->shapes;
+        return prop;
     }
 
 };
