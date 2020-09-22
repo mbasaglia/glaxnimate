@@ -80,8 +80,8 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
                 jkf["value"] = to_json(kf->value(), property->traits());
                 if ( !kf->transition().hold() )
                 {
-                    jkf["before"] = to_json(kf->transition().before_handle(), property->traits());
-                    jkf["after"] = to_json(kf->transition().after_handle(), property->traits());
+                    jkf["before"] = to_json(kf->transition().before_handle());
+                    jkf["after"] = to_json(kf->transition().after_handle());
                 }
                 keyframes.push_back(jkf);
             }
