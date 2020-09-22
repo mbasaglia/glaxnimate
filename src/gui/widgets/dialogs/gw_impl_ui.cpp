@@ -25,7 +25,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.action_new->setShortcut(QKeySequence::New);
     ui.action_open->setShortcut(QKeySequence::Open);
     ui.action_close->setShortcut(QKeySequence::Close);
-    ui.action_reload->setShortcut(QKeySequence("Ctrl+F5"));
+    ui.action_reload->setShortcut(QKeySequence("Ctrl+F5", QKeySequence::PortableText));
     ui.action_save->setShortcut(QKeySequence::Save);
     ui.action_save_as->setShortcut(QKeySequence::SaveAs);
     ui.action_quit->setShortcut(QKeySequence::Quit);
@@ -35,8 +35,8 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.action_select_all->setShortcut(QKeySequence::SelectAll);
     ui.action_undo->setShortcut(QKeySequence::Undo);
     ui.action_redo->setShortcut(QKeySequence::Redo);
-    ui.action_group->setShortcut(QKeySequence("Ctrl+G"));
-    ui.action_ungroup->setShortcut(QKeySequence("Ctrl+Shift+G"));
+    ui.action_group->setShortcut(QKeySequence("Ctrl+G", QKeySequence::PortableText));
+    ui.action_ungroup->setShortcut(QKeySequence("Ctrl+Shift+G", QKeySequence::PortableText));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
