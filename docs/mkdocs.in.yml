@@ -21,13 +21,13 @@ nav:
         - documentation/index.md
         - documentation/shapes.md
         - documentation/formats.md
-        - "ChangeLog": changelog.md
         - "User Interface":
             - documentation/ui/tools.md
             - documentation/ui/canvas.md
             - documentation/ui/docks.md
             - documentation/ui/menus.md
             - documentation/ui/settings.md
+        - "ChangeLog": changelog.md
     - 'Contributing':
         - "Introduction": contributing/index.md
         - "Scripting":
@@ -38,6 +38,7 @@ nav:
             - contributing/repository_structure.md
             - contributing/cross_compiling.md
         - "Writing Code":
+            - contributing/code/branches.md
             - contributing/code/settings.md
             - contributing/code/model_objects.md
             - contributing/code/misc.md
