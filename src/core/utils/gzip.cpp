@@ -74,7 +74,7 @@ public:
 private:
     bool zlib_check(const char* func, int result, const char* extra = "")
     {
-        if ( result == Z_OK || result == Z_STREAM_END )
+        if ( result >= 0 || (result == Z_BUF_ERROR && zip_stream.avail_out == 0) )
             return true;
 
         on_error(QApplication::tr("ZLib %1%2 returned %3").arg(func).arg(extra).arg(result));

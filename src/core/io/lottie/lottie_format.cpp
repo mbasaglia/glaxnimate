@@ -847,7 +847,10 @@ private:
             for ( const QJsonValue& jkf : obj["k"].toArray() )
             {
                 model::FrameTime time = jkf["t"].toDouble();
-                auto v = value_to_variant(prop, jkf["s"]);
+                QJsonValue s = jkf["s"];
+                if ( s.isArray() )
+                    s = s.toArray()[0];
+                auto v = value_to_variant(prop, s);
                 model::KeyframeBase* kf = nullptr;
                 if ( v )
                     kf = prop->set_keyframe(time, trans ? trans(*v) : *v);
