@@ -15,7 +15,10 @@ public:
     Keyframe(FrameTime time, math::Bezier value)
         : KeyframeBase(time), value_(std::move(value)) {}
 
-    void set(reference) {}
+    void set(reference v)
+    {
+        value_ = v;
+    }
 
     reference get() const
     {
