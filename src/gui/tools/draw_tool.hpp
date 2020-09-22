@@ -32,7 +32,7 @@ private:
     math::Bezier bezier;
     bool dragging = false;
     math::BezierPointType point_type = math::Symmetrical;
-    qreal join_radius = 3;
+    qreal join_radius = 5;
     bool joining = false;
 
     static Autoreg<DrawTool> autoreg;
