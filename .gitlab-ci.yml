@@ -84,8 +84,6 @@ linux:appimage:
         - apt-get install -y qt515base qt515tools qt515translations libgl1-mesa-dev g++-9 qt515svg
         - pip3 install cmake
         - git submodule update --init --recursive
-        - git describe --tags || echo "git failed :<"
-        - ls -la
     script:
         - mkdir build
         - cd build
