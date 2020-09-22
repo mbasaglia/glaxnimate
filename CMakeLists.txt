@@ -15,7 +15,7 @@ set(PROJECT_DESCRIPTION "Simple vector animation program")
 # CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_SOURCE_DIR}/external/cmake-modules")
 include(misc)
-include(GetGitRevisionDescription)
+# include(GetGitRevisionDescription)
 
 # C++
 set(CMAKE_CXX_STANDARD 17)
@@ -31,14 +31,27 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Git
-set(VERSION_SUFFIX "" CACHE STRING "")
-if (VERSION_SUFFIX STREQUAL "")
-    git_describe(GIT_DESC --tags)
-    if ( NOT ${GIT_DESC} MATCHES ".*NOTFOUND" )
-        set(PROJECT_VERSION ${GIT_DESC})
-    endif()
+# set(VERSION_SUFFIX "" CACHE STRING "")
+# if (VERSION_SUFFIX STREQUAL "")
+#     git_describe(GIT_DESC --tags)
+#     if ( NOT ${GIT_DESC} MATCHES ".*NOTFOUND" )
+#         set(PROJECT_VERSION ${GIT_DESC})
+#     endif()
+# else()
+#     set(PROJECT_VERSION "${PROJECT_VERSION}+${VERSION_SUFFIX}")
+# endif()
+set(GIT_DESC "")
+execute_process(
+    COMMAND git describe --tags
+    OUTPUT_VARIABLE GIT_DESC
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+if ( NOT GIT_DESC STREQUAL "" )
+    set(PROJECT_VERSION ${GIT_DESC})
 else()
-    set(PROJECT_VERSION "${PROJECT_VERSION}+${VERSION_SUFFIX}")
+    message(STATUS "No Git :<")
 endif()
 
 message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION}")
