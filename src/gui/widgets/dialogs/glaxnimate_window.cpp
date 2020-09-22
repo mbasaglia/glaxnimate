@@ -3,6 +3,7 @@
 
 #include <QDesktopServices>
 #include <QCloseEvent>
+#include <QDragEnterEvent>
 
 #include "app/widgets/settings_dialog.hpp"
 #include "app_info.hpp"

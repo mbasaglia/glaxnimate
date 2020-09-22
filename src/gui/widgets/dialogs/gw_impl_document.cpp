@@ -4,6 +4,7 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QImageWriter>
+#include <QDropEvent>
 
 #include "glaxnimate_app.hpp"
 #include "widgets/dialogs/import_export_dialog.hpp"
