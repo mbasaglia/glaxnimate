@@ -117,12 +117,12 @@ These add visual elements to other shapes.
 ## Fill
 
 Adds a fill color to the other shapes in the same group.
-This can be changed using the [fill style view](docks.md#fill).
+This can be changed using the [fill style view](ui/docks.md#fill).
 
 ## Stroke
 
 Adds an outline to the other shapes in the same group.
-This can be changed using the [stroke style view](docks.md#stroke).
+This can be changed using the [stroke style view](ui/docks.md#stroke).
 
 # Layers
 

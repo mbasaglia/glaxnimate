@@ -214,7 +214,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.dock_logs->setVisible(false);
 
     // Auto Screenshots for docs
-#if 0
+#if 1
     for ( auto widget : parent->findChildren<QMenu*>() )
     {
         QDir("/tmp/").mkpath("menus");

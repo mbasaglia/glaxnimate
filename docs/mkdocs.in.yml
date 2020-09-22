@@ -18,13 +18,16 @@ nav:
     - index.md
     - download.md
     - 'Documentation':
-        - ui/index.md
-        - ui/tools.md
-        - ui/shapes.md
-        - ui/canvas.md
-        - ui/docks.md
-        - ui/menus.md
+        - documentation/index.md
+        - documentation/shapes.md
+        - documentation/formats.md
         - "ChangeLog": changelog.md
+        - "User Interface":
+            - documentation/ui/tools.md
+            - documentation/ui/canvas.md
+            - documentation/ui/docks.md
+            - documentation/ui/menus.md
+            - documentation/ui/settings.md
     - 'Contributing':
         - "Introduction": contributing/index.md
         - "Scripting":

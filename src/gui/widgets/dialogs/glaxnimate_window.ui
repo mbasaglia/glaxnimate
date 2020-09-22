@@ -57,7 +57,6 @@
     <addaction name="separator"/>
     <addaction name="action_save"/>
     <addaction name="action_save_as"/>
-    <addaction name="action_validate_tgs"/>
     <addaction name="separator"/>
     <addaction name="action_close"/>
     <addaction name="separator"/>
@@ -188,6 +187,7 @@
      <addaction name="actionS_VG"/>
     </widget>
     <addaction name="menu_render_single_frame"/>
+    <addaction name="action_validate_tgs"/>
     <addaction name="action_Web_Preview"/>
     <addaction name="action_resize"/>
    </widget>
@@ -1281,7 +1281,8 @@
   </action>
   <action name="action_resize">
    <property name="icon">
-    <iconset theme="transform-scale"/>
+    <iconset theme="transform-scale">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Re&amp;size...</string>

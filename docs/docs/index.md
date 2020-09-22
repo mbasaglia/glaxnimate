@@ -47,6 +47,7 @@ disable_toc: 1
     display: flex;
     justify-content: center;
     flex-flow: row wrap;
+    align-items: stretch;
 }
 
 .card {
@@ -60,10 +61,15 @@ disable_toc: 1
     padding: 1em;
     flex-grow: 1;
     flex-basis: 0;
+    color: black;
 }
 
 .card img {
     width: 128px;
+}
+
+.card heading {
+    font-weight: bold;
 }
 </style>
 
@@ -85,23 +91,30 @@ Glaxnimate is a simple and fast vector graphics animation program.
 ## Features
 
 <div class="cards">
-    <div class="card">
+    <a href="documentation/" class="card">
         <img src="/img/ui/icons/draw-bezier-curves.svg" />
+        <heading>Smooth Animations</heading>
         <span>Vector graphics and tweening animations</span>
-    </div>
-    <div class="card">
+    </a>
+    <a href="download/" class="card">
+        <img src="/img/ui/icons/computer.svg" />
+        <heading>Cross Platform</heading>
+        <span>Download for GNU/Linux, Windows, and Mac</span>
+    </a>
+    <!--div class="card">
         <img src="/img/ui/icons/edit-paste.svg" />
         <span>Easily copy and paste shapes across applications</span>
-    </div>
-    <div class="card">
+    </div-->
+    <a href="documentation/formats/" class="card">
         <img src="/img/ui/icons/internet-web-browser.svg" />
-        <span>Export animations for the web</span>
-    </div>
+        <heading>Export animations for the web</heading>
+        <span>Support for Lottie animations (animated SVG coming soon)</span>
+    </a>
 </div>
 
 ## Learn
 
-* [Documentation](ui/index.md)
+* [Documentation](documentation/index.md)
 
 ## Get Involved
 

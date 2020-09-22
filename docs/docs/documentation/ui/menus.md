@@ -6,6 +6,8 @@ Authors: Mattia Basaglia
 
 ![file menu](/img/screenshots/menus/file.png)
 
+The usual File menu actions.
+
 ## Edit
 
 ![edit menu](/img/screenshots/menus/edit.png)
@@ -22,6 +24,22 @@ This menu toggles which is the active [tool](tools.md).
 
 This menu toggles which [views](docks.md) are visible.
 
+
+## Document
+
+![document menu](/img/screenshots/menus/document.png)
+
+### Single frame
+
+![render single frame menu](/img/screenshots/menus/render_single_frame.png)
+
+### Resize Dialog
+
+![resize dialog](/img/screenshots/dialogs/resize.png)
+
+Allows to resize the animation and scale all layers.
+
+
 ## Layers
 
 ![layers menu](/img/screenshots/menus/layers.png)
@@ -33,14 +51,6 @@ This menu toggles which [views](docks.md) are visible.
 ## Path
 
 ![path menu](/img/screenshots/menus/path.png)
-
-## Render
-
-![render menu](/img/screenshots/menus/render.png)
-
-### Single frame
-
-![render single frame menu](/img/screenshots/menus/render_single_frame.png)
 
 ## Help
 

@@ -9,7 +9,7 @@ and these objects.
 ## Document Nodes
 
 "Document Nodes" are Model Objects that correspond to a visual element of the
-animation. These are listed in the [Layers View](../../ui/docks.md#layers).
+animation. These are listed in the [Layers View](../../documentation/ui/docks.md#layers).
 
 # How to define a new class
 

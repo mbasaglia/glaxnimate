@@ -35,11 +35,11 @@ for each keyframe and the animation is automatically created from those.
 
 Glaxnimate user interface has the following components:
 
-* The [canvas](canvas.md) is the area in the middle of the window, where you
+* The [canvas](ui/canvas.md) is the area in the middle of the window, where you
   can preview and edit the animation.
-* Around the canvas are the [dockable views](docks.md), that give quick access
+* Around the canvas are the [dockable views](ui/docks.md), that give quick access
   to all the main functionality of Glaxnimate.
   These can be hidden and re-arranged to fit your taste.
-* On top are the [menu and tool bars](menus.md), these work like in most user interfaces.
+* On top are the [menu and tool bars](ui/menus.md), these work like in most user interfaces.
 
 You can click on the links to the various pages to get more details on each interface component.
