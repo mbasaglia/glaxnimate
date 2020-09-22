@@ -37,3 +37,4 @@
     * Timeline View
     * Properties View
     * Document Node View
+    * Undo History View
