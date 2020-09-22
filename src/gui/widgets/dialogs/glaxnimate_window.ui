@@ -53,8 +53,8 @@
     <addaction name="action_new"/>
     <addaction name="action_open"/>
     <addaction name="menu_open_recent"/>
-    <addaction name="action_reload"/>
     <addaction name="separator"/>
+    <addaction name="action_reload"/>
     <addaction name="action_save"/>
     <addaction name="action_save_as"/>
     <addaction name="separator"/>
@@ -660,6 +660,28 @@
      </property>
      <item>
       <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_undo">
+   <property name="windowIcon">
+    <iconset theme="edit-undo-history"/>
+   </property>
+   <property name="windowTitle">
+    <string>Undo History</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_9">
+    <layout class="QVBoxLayout" name="verticalLayout_10">
+     <item>
+      <widget class="QUndoView" name="view_undo">
+       <property name="cleanIcon">
+        <iconset theme="document-save"/>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

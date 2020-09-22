@@ -197,11 +197,14 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
 
-    parent->tabifyDockWidget(ui.dock_logs, ui.dock_script_console);
-    parent->tabifyDockWidget(ui.dock_script_console, ui.dock_properties);
-    parent->tabifyDockWidget(ui.dock_properties, ui.dock_timeline);
+    parent->tabifyDockWidget(ui.dock_timeline, ui.dock_properties);
+    parent->tabifyDockWidget(ui.dock_properties, ui.dock_script_console);
+    parent->tabifyDockWidget(ui.dock_script_console, ui.dock_logs);
+    ui.dock_timeline->raise();
 
-    parent->tabifyDockWidget(ui.dock_stroke, ui.dock_colors);
+    parent->tabifyDockWidget(ui.dock_colors, ui.dock_stroke);
+    parent->tabifyDockWidget(ui.dock_stroke, ui.dock_undo);
+    ui.dock_colors->raise();
 
     parent->resizeDocks(
         {ui.dock_layers},
@@ -215,9 +218,9 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
 
     // Auto Screenshots for docs
 #if 0
+    QDir("/tmp/").mkpath("menus");
     for ( auto widget : parent->findChildren<QMenu*>() )
     {
-        QDir("/tmp/").mkpath("menus");
         widget->show();
         QString name = "/tmp/menus/" + widget->objectName().mid(5);
         QPixmap pic(widget->size());
@@ -227,10 +230,12 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     }
 #endif
 
+#if 1
     // Restore state
     // NOTE: keep at the end so we do this once all the widgets are in their default spots
     parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
     parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
+#endif
 
 }
 

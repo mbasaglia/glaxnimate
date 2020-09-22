@@ -230,6 +230,17 @@ To edit a property double click on its value.
 
 Animatable properties are highlighted as explained in [Property List](#property-list).
 
+## Undo History
+
+![Undo History View](/img/screenshots/views/undo.png)
+
+This view allows you to see the action history for the current document,
+clicking on the listed actions will revert the document to that action.
+
+Useful for when you want to undo or redo several actions at once.
+
+A little icon will be shown next to the action corresponding to the last time you saved the document.
+
 
 ## Script Console
 

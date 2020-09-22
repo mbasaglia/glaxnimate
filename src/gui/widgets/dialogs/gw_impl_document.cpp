@@ -51,6 +51,8 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
 
     ui.timeline_widget->set_document(current_document.get());
 
+    ui.view_undo->setStack(&current_document->undo_stack());
+
     // Scripting
     script_contexts.clear();
 
@@ -196,6 +198,7 @@ bool GlaxnimateWindow::Private::close_document()
     property_model.clear_document();
     scene.clear_document();
     ui.timeline_widget->clear_document();
+    ui.view_undo->setStack(nullptr);
 
     return true;
 }
