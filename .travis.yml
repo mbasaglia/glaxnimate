@@ -4,33 +4,6 @@ stages:
     - build
 jobs:
     include:
-      - name: "AppImage"
-        stage: build
-        os: linux
-        dist: xenial
-        before_install:
-            - sudo apt-get update -qq
-            - sudo apt-get install -y libpython3-dev git python3-pip software-properties-common desktop-file-utils wget zlib1g-dev python3
-            - sudo add-apt-repository ppa:beineri/opt-qt-5.15.0-xenial -y
-            - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-            - sudo apt update -qq
-            - sudo apt-get install -y qt515base qt515tools qt515translations libgl1-mesa-dev g++-9
-            - sudo pip3 install cmake
-            - sudo rm -rf /opt/pyenv/
-        script:
-            - mkdir build
-            - cd build
-            - /usr/local/bin/cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_PREFIX_PATH=/opt/qt515/lib/cmake/Qt5LinguistTools/
-            - make
-            - make translations
-            - make install DESTDIR=AppDir
-            - cp AppDir/usr/share/glaxnimate/glaxnimate/glaxnimate.desktop AppDir
-            - wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
-            - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
-            - ./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract
-            - PATH="/opt/qt515/bin/:$PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes/libqgtk3.so -appimage
-            - mv glaxnimate-dev-x86_64.AppImage glaxnimate-x86_64.AppImage
-            - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
       - name: "Mac"
         stage: build
         os: osx
