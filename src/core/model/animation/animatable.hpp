@@ -497,6 +497,7 @@ protected:
             const keyframe_type* kf;
             std::tie(kf, value_) = get_at_impl(time);
             this->value_changed();
+            emitter(this->object(), value_);
         }
         mismatched_ = false;
     }
