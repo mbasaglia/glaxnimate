@@ -1,11 +1,13 @@
 #pragma once
 
-#include "app/settings/setting.hpp"
-#include "model/document.hpp"
-
 #include <QFileInfo>
 #include <QObject>
 #include <QBuffer>
+
+#include "app/settings/setting.hpp"
+#include "app/log/log_line.hpp"
+
+#include "model/document.hpp"
 
 namespace io {
 
@@ -73,6 +75,20 @@ public:
      */
     Q_INVOKABLE QString name_filter() const;
 
+    Q_INVOKABLE void warning(const QString& message)
+    {
+        emit this->message(message, app::log::Warning);
+    }
+
+    Q_INVOKABLE void information(const QString& message)
+    {
+        emit this->message(message, app::log::Info);
+    }
+
+    Q_INVOKABLE void error(const QString& message)
+    {
+        emit this->message(message, app::log::Error);
+    }
 
 protected:
     virtual bool on_open(QIODevice& file, const QString& filename,
@@ -96,7 +112,7 @@ protected:
     }
 
 signals:
-    void error(const QString& message);
+    void message(const QString& message, app::log::Severity severity);
     void progress_max_changed(int max);
     void progress(int value);
     void completed(bool success);

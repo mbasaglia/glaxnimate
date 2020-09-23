@@ -27,7 +27,7 @@ public:
     void error(const QString& msg)
     {
         if ( fmt )
-            emit fmt->error(msg);
+            emit fmt->warning(msg);
     }
 
     void resolve()

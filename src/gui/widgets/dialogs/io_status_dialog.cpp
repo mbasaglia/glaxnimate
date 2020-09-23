@@ -73,10 +73,23 @@ void IoStatusDialog::_on_completed(bool success)
     d->ie = nullptr;
 }
 
-void IoStatusDialog::_on_error(const QString& message)
+void IoStatusDialog::_on_error(const QString& message, app::log::Severity severity)
 {
     d->group_box->show();
-    d->list_widget->addItem(new QListWidgetItem(QIcon::fromTheme("data-warning"), message));
+    QIcon icon;
+    switch ( severity )
+    {
+        case app::log::Info:
+            icon = QIcon::fromTheme("data-information");
+            break;
+        case app::log::Warning:
+            icon = QIcon::fromTheme("data-warning");
+            break;
+        case app::log::Error:
+            icon = QIcon::fromTheme("data-error");
+            break;
+    }
+    d->list_widget->addItem(new QListWidgetItem(icon, message));
     d->has_errors = true;
     show();
 }
@@ -107,7 +120,7 @@ void IoStatusDialog::reset(io::ImportExport* ie, const QString& label)
 
 
     d->ie = ie;
-    connect(ie, &io::ImportExport::error, this, &IoStatusDialog::_on_error);
+    connect(ie, &io::ImportExport::message, this, &IoStatusDialog::_on_error);
     connect(ie, &io::ImportExport::progress, this, &IoStatusDialog::_on_progress);
     connect(ie, &io::ImportExport::progress_max_changed, this, &IoStatusDialog::_on_progress_max_changed);
     connect(ie, &io::ImportExport::completed, this, &IoStatusDialog::_on_completed);

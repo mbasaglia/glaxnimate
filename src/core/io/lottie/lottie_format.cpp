@@ -528,7 +528,7 @@ private:
         int index = json["ind"].toInt();
         if ( !json.contains("ty") || !json["ty"].isDouble() )
         {
-            emit format->error(QObject::tr("Missing layer type for %1").arg(index));
+            emit format->warning(QObject::tr("Missing layer type for %1").arg(index));
             invalid_indices.insert(index);
             return;
         }
@@ -536,7 +536,7 @@ private:
         QString type = layer_types.key(json["ty"].toInt());
         if ( type.isEmpty() )
         {
-            emit format->error(QObject::tr("Unsupported layer type %1").arg(json["ty"].toInt()));
+            emit format->warning(QObject::tr("Unsupported layer type %1").arg(json["ty"].toInt()));
             invalid_indices.insert(index);
             return;
         }
@@ -544,7 +544,7 @@ private:
         model::Layer* layer = model::Factory::instance().make_layer(type, document, composition);
         if ( !layer )
         {
-            emit format->error(QObject::tr("Unsupported layer type %1").arg(json["ty"].toInt()));
+            emit format->warning(QObject::tr("Unsupported layer type %1").arg(json["ty"].toInt()));
             invalid_indices.insert(index);
             return;
         }
@@ -563,7 +563,7 @@ private:
             int parent_index = json["parent"].toInt();
             if ( invalid_indices.count(parent_index) )
             {
-                emit format->error(
+                emit format->warning(
                     QObject::tr("Cannot use %1 as parent as it couldn't be loaded")
                     .arg(parent_index)
                 );
@@ -573,7 +573,7 @@ private:
                 auto it = layer_indices.find(parent_index);
                 if ( it == layer_indices.end() )
                 {
-                    emit format->error(
+                    emit format->warning(
                         QObject::tr("Invalid parent layer %1")
                         .arg(parent_index)
                     );
@@ -613,14 +613,14 @@ private:
     {
         if ( !json.contains("ty") || !json["ty"].isString() )
         {
-            emit format->error(QObject::tr("Missing shape type"));
+            emit format->warning(QObject::tr("Missing shape type"));
             return;
         }
 
         QString type = shape_types.key(json["ty"].toString());
         if ( type.isEmpty() )
         {
-            emit format->error(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()));
+            emit format->warning(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()));
             return;
         }
 
@@ -629,7 +629,7 @@ private:
         );
         if ( !shape )
         {
-            emit format->error(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()));
+            emit format->warning(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()));
             return;
         }
 
@@ -653,7 +653,7 @@ private:
             );
 
         for ( const auto& not_found : props )
-            emit format->error(QObject::tr("Unknown field %1").arg(not_found));
+            emit format->information(QObject::tr("Unknown field %1").arg(not_found));
     }
 
     void load_basic(const QJsonObject& json_obj, model::DocumentNode* obj)
@@ -816,7 +816,7 @@ private:
                     QPointF p, ti, to;
                     if ( !compound_value_2d_raw(pos[i], p) )
                     {
-                        emit format->error(
+                        emit format->warning(
                             QObject::tr("Invalid bezier point %1")
                             .arg(i)
                         );
@@ -838,21 +838,21 @@ private:
     {
         auto v = value_to_variant(prop, val);
         if ( !v || !prop->set_value(trans ? trans(*v, 0) : *v) )
-            emit format->error(QObject::tr("Invalid value for %1").arg(prop->name()));
+            emit format->warning(QObject::tr("Invalid value for %1").arg(prop->name()));
     }
 
     void load_animated(model::AnimatableBase* prop, const QJsonValue& val, const TransformFunc& trans = {})
     {
         if ( !val.isObject() )
         {
-            emit format->error(QObject::tr("Invalid value for %1").arg(prop->name()));
+            emit format->warning(QObject::tr("Invalid value for %1").arg(prop->name()));
             return;
         }
 
         QJsonObject obj = val.toObject();
         if ( !obj.contains("a") || !obj.contains("k") )
         {
-            emit format->error(QObject::tr("Invalid value for %1").arg(prop->name()));
+            emit format->warning(QObject::tr("Invalid value for %1").arg(prop->name()));
             return;
         }
 
@@ -860,7 +860,7 @@ private:
         {
             if ( !obj["k"].isArray() )
             {
-                emit format->error(QObject::tr("Invalid keyframes for %1").arg(prop->name()));
+                emit format->warning(QObject::tr("Invalid keyframes for %1").arg(prop->name()));
                 return;
             }
 
@@ -886,7 +886,7 @@ private:
                 }
                 else
                 {
-                    emit format->error(QObject::tr("Cannot load keyframe at %1 for %2")
+                    emit format->warning(QObject::tr("Cannot load keyframe at %1 for %2")
                         .arg(time).arg(prop->name())
                     );
                 }

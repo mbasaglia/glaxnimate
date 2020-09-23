@@ -10,7 +10,7 @@ bool io::svg::SvgFormat::on_open(QIODevice& file, const QString& filename, model
     /// \todo layer mode setting
     SvgParser::GroupMode mode = SvgParser::Inkscape;
 
-    auto on_error = [this](const QString& s){error(s);};
+    auto on_error = [this](const QString& s){warning(s);};
     try
     {
         if ( utils::gzip::is_compressed(file) )

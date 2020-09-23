@@ -17,7 +17,7 @@ private:
         if ( !found_star && qobject_cast<model::PolyStar*>(node) )
         {
             found_star = true;
-            fmt->error(TgsFormat::tr("Star Shapes are not officially supported"));
+            fmt->information(TgsFormat::tr("Star Shapes are not officially supported"));
         }
     }
 
