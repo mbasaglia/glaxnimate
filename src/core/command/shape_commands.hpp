@@ -16,7 +16,7 @@ public:
         int position,
         QUndoCommand* parent = nullptr
     )
-        : QUndoCommand(QObject::tr("Create %1").arg(shape->docnode_name()), parent),
+        : QUndoCommand(QObject::tr("Create %1").arg(shape->object_name()), parent),
           shape_parent(shape_parent),
           shape(std::move(shape)),
           position(position)
@@ -43,7 +43,7 @@ class RemoveShape : public QUndoCommand
 {
 public:
     RemoveShape(model::ShapeElement* shape, QUndoCommand* parent = nullptr)
-        : QUndoCommand(QObject::tr("Remove %1").arg(shape->docnode_name()), parent),
+        : QUndoCommand(QObject::tr("Remove %1").arg(shape->object_name()), parent),
           shape_parent(shape->owner()),
           position(shape->position())
     {}

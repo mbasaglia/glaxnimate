@@ -5,14 +5,9 @@
 #include <QGraphicsItem>
 
 model::DocumentNode::DocumentNode(Document* document)
-    : Object(document)
+    : ReferenceTarget(document)
 {
     uuid.set_value(QUuid::createUuid());
-}
-
-QString model::DocumentNode::docnode_name() const
-{
-    return name.get();
 }
 
 QColor model::DocumentNode::docnode_group_color() const
@@ -29,11 +24,7 @@ QColor model::DocumentNode::docnode_group_color() const
 
 void model::DocumentNode::on_property_changed(const BaseProperty* prop, const QVariant&)
 {
-    if ( prop == &name )
-    {
-        emit docnode_name_changed(this->name.get());
-    }
-    else if ( prop == &group_color )
+    if ( prop == &group_color )
     {
         if ( !group_icon.isNull() )
         {
@@ -84,12 +75,12 @@ bool model::DocumentNode::docnode_valid_color() const
     return col.isValid() && col.alpha() > 0;
 }
 
-const QPixmap & model::DocumentNode::docnode_group_icon() const
+QIcon model::DocumentNode::reftarget_icon() const
 {
     if ( !docnode_valid_color() )
     {
         if ( auto parent = docnode_group_parent() )
-            return parent->docnode_group_icon();
+            return parent->reftarget_icon();
     }
 
     if ( group_icon.isNull() )

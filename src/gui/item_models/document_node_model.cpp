@@ -150,7 +150,7 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
             break;
         case ColumnName:
             if ( role == Qt::DisplayRole || role == Qt::EditRole )
-                return n->docnode_name();
+                return n->object_name();
             else if ( role == Qt::DecorationRole )
                 return n->docnode_icon();
             break;

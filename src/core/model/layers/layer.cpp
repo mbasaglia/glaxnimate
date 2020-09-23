@@ -41,9 +41,9 @@ model::DocumentNode * model::Layer::docnode_parent() const
     return composition_;
 }
 
-std::vector<model::DocumentNode *> model::Layer::valid_parents() const
+std::vector<model::ReferenceTarget*> model::Layer::valid_parents() const
 {
-    std::vector<model::DocumentNode *> refs;
+    std::vector<model::ReferenceTarget*> refs;
     refs.push_back(nullptr);
     for ( const auto& lay : composition_->layers )
     {
@@ -54,7 +54,7 @@ std::vector<model::DocumentNode *> model::Layer::valid_parents() const
     return refs;
 }
 
-bool model::Layer::is_valid_parent(model::DocumentNode* node) const
+bool model::Layer::is_valid_parent(model::ReferenceTarget* node) const
 {
     if ( node == nullptr )
         return true;

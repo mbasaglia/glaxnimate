@@ -1,5 +1,6 @@
 #pragma once
-#include "model/document_node.hpp"
+#include "model/reference_target.hpp"
+#include "model/property/property.hpp"
 
 namespace model {
 
@@ -8,10 +9,10 @@ class ReferencePropertyBase : public BaseProperty
     Q_GADGET
 public:
     ReferencePropertyBase(
-        DocumentNode* obj,
+        Object* obj,
         const QString& name,
-        PropertyCallback<std::vector<DocumentNode*>, void> valid_options,
-        PropertyCallback<bool, DocumentNode*> is_valid_option,
+        PropertyCallback<std::vector<ReferenceTarget*>, void> valid_options,
+        PropertyCallback<bool, ReferenceTarget*> is_valid_option,
         PropertyTraits::Flags flags = PropertyTraits::Visual)
         : BaseProperty(obj, name, PropertyTraits{PropertyTraits::ObjectReference, flags}),
         valid_options_(std::move(valid_options)),
@@ -19,12 +20,12 @@ public:
     {
     }
 
-    std::vector<DocumentNode*> valid_options() const
+    std::vector<ReferenceTarget*> valid_options() const
     {
         return valid_options_(object());
     }
 
-    bool is_valid_option(DocumentNode* ptr) const
+    bool is_valid_option(ReferenceTarget* ptr) const
     {
         return is_valid_option_(object(), ptr);
     }
@@ -32,8 +33,8 @@ public:
     void set_time(FrameTime) override {}
 
 private:
-    PropertyCallback<std::vector<DocumentNode*>, void> valid_options_;
-    PropertyCallback<bool, DocumentNode*> is_valid_option_;
+    PropertyCallback<std::vector<ReferenceTarget*>, void> valid_options_;
+    PropertyCallback<bool, ReferenceTarget*> is_valid_option_;
 };
 
 template<class Type>

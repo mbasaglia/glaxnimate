@@ -12,7 +12,6 @@ namespace model {
 
 
 class Composition;
-class Layer;
 
 class Layer : public AnimationContainer
 {
@@ -127,8 +126,8 @@ private:
         return clone_covariant();
     }
 
-    std::vector<DocumentNode*> valid_parents() const;
-    bool is_valid_parent(DocumentNode* node) const;
+    std::vector<ReferenceTarget*> valid_parents() const;
+    bool is_valid_parent(ReferenceTarget* node) const;
 };
 
 namespace detail {

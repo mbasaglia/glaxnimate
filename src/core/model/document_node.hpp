@@ -1,11 +1,10 @@
 #pragma once
 
 #include <QList>
-#include <QIcon>
 #include <QUuid>
 
 #include "model/animation/animatable.hpp"
-#include "model/object.hpp"
+#include "model/reference_target.hpp"
 
 namespace model {
 
@@ -15,7 +14,7 @@ class ReferencePropertyBase;
 /**
  * \brief Base class for elements of the document tree, that need to show in the tree view etc.
  */
-class DocumentNode : public Object
+class DocumentNode : public ReferenceTarget
 {
     Q_OBJECT
 
@@ -23,7 +22,7 @@ public:
     /**
      * @brief Name of the node, used to display it in the UI
      */
-    GLAXNIMATE_PROPERTY(QString, name, "")
+    GLAXNIMATE_PROPERTY(QString, name, "", &DocumentNode::docnode_name_changed)
     /**
      * @brief Color of the node the tree UI to highlight grouped items
      *
@@ -142,10 +141,8 @@ public:
 
     QString object_name() const override;
 
-    QString docnode_name() const;
-
     QColor docnode_group_color() const;
-    const QPixmap& docnode_group_icon() const;
+    QIcon reftarget_icon() const override;
 
     ChildRange docnode_children() const noexcept
     {

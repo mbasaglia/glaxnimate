@@ -37,7 +37,7 @@ QAction* action_for_node(model::DocumentNode* node, model::DocumentNode* selecte
     QAction* act = new QAction(parent);
     if ( node )
     {
-        act->setIcon(node->docnode_group_icon());
+        act->setIcon(node->reftarget_icon());
         act->setText(node->object_name());
     }
     else
