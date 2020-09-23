@@ -736,7 +736,7 @@ io::svg::SvgParser::SvgParser(QIODevice* device, GroupMode group_mode, model::Do
     d->group_mode = group_mode;
 
     SvgParseError err;
-    if ( !d->dom.setContent(device, true) )
+    if ( !d->dom.setContent(device, true, &err.message, &err.line, &err.column) )
         throw err;
 }
 

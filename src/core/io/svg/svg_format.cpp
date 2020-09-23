@@ -15,12 +15,9 @@ bool io::svg::SvgFormat::on_open(QIODevice& file, const QString& filename, model
     {
         if ( utils::gzip::is_compressed(file) )
         {
-            QByteArray decompressed;
-            if ( !utils::gzip::decompress(file, decompressed, on_error) )
-                return false;
-            QBuffer buffer(&decompressed);
-            buffer.open(QIODevice::ReadOnly);
-            SvgParser(&buffer, mode, document, document->main_composition()).parse_to_document(on_error);
+            utils::gzip::GzipStream decompressed(&file, on_error);
+            decompressed.open(QIODevice::ReadOnly);
+            SvgParser(&decompressed, mode, document, document->main_composition()).parse_to_document(on_error);
             return true;
         }
 
