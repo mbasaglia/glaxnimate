@@ -35,10 +35,13 @@ public:
     {
         QBuffer buffer(const_cast<QByteArray*>(&data));
         buffer.open(QIODevice::ReadOnly);
+
+        auto on_error = [this](const QString& s){message(s);};
         try {
-            return io::svg::SvgParser(&buffer, deserialize_group_mode, document, composition)
+            return io::svg::SvgParser(&buffer, deserialize_group_mode, document, composition, on_error)
                 .parse_to_objects();
-        } catch ( const io::svg::SvgParseError& ) {
+        } catch ( const io::svg::SvgParseError& err ) {
+            message(err.formatted("Clipboard"));
             return {};
         }
 

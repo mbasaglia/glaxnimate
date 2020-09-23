@@ -30,11 +30,15 @@ std::vector<std::unique_ptr<model::DocumentNode>> io::glaxnimate::GlaxnimateMime
     try {
         jdoc = QJsonDocument::fromJson(data);
     } catch ( const QJsonParseError& err ) {
+        message(GlaxnimateFormat::tr("Could not parse JSON: %1").arg(err.errorString()));
         return {};
     }
 
     if ( !jdoc.isArray() )
+    {
+        message(GlaxnimateFormat::tr("No JSON object found"));
         return {};
+    }
 
     QJsonArray input_objects = jdoc.array();
 

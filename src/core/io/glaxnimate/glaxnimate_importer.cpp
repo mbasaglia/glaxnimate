@@ -9,13 +9,13 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
     try {
         jdoc = QJsonDocument::fromJson(file.readAll());
     } catch ( const QJsonParseError& err ) {
-        emit error(tr("Could not parse JSON: %1").arg(err.errorString()));
+        error(tr("Could not parse JSON: %1").arg(err.errorString()));
         return false;
     }
 
     if ( !jdoc.isObject() )
     {
-        emit error(tr("No JSON object found"));
+        error(tr("No JSON object found"));
         return false;
     }
 
@@ -28,7 +28,7 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
 
     if ( !top_level["animation"].isObject() )
     {
-        emit error(tr("Missing animation object"));
+        error(tr("Missing animation object"));
         return false;
     }
 

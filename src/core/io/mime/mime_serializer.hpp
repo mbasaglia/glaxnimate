@@ -7,6 +7,8 @@
 #include <QByteArray>
 #include <QMimeData>
 
+#include "app/log/log_line.hpp"
+
 namespace model {
     class DocumentNode;
     class Document;
@@ -46,6 +48,9 @@ public:
         model::Document* owner_document,
         model::Composition* owner_composition
     ) const;
+
+protected:
+    void message(const QString& message, app::log::Severity severity = app::log::Warning) const;
 
 };
 

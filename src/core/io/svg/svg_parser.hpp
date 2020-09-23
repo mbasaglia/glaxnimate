@@ -46,13 +46,16 @@ public:
     /**
      * \throws SvgParseError on error
      */
-    SvgParser(QIODevice* device,
-            GroupMode group_mode,
-            model::Document* document,
-            model::Composition* composition);
+    SvgParser(
+        QIODevice* device,
+        GroupMode group_mode,
+        model::Document* document,
+        model::Composition* composition,
+        const std::function<void(const QString&)>& on_warning = {}
+    );
     ~SvgParser();
 
-    void parse_to_document(const std::function<void(const QString&)>& on_warning);
+    void parse_to_document();
     std::vector<std::unique_ptr<model::DocumentNode>> parse_to_objects();
 
 private:

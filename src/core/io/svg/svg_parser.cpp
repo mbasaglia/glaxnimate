@@ -728,12 +728,19 @@ public:
     QRegularExpression transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"};
 };
 
-io::svg::SvgParser::SvgParser(QIODevice* device, GroupMode group_mode, model::Document* document, model::Composition* composition)
+io::svg::SvgParser::SvgParser(
+    QIODevice* device,
+    GroupMode group_mode,
+    model::Document* document,
+    model::Composition* composition,
+    const std::function<void(const QString&)>& on_warning
+)
     : d(std::make_unique<Private>())
 {
     d->document = document;
     d->composition = composition;
     d->group_mode = group_mode;
+    d->on_warning = on_warning;
 
     SvgParseError err;
     if ( !d->dom.setContent(device, true, &err.message, &err.line, &err.column) )
@@ -751,8 +758,7 @@ std::vector<std::unique_ptr<model::DocumentNode> > io::svg::SvgParser::parse_to_
     return std::move(d->objects);
 }
 
-void io::svg::SvgParser::parse_to_document(const std::function<void(const QString&)>& on_warning)
+void io::svg::SvgParser::parse_to_document()
 {
-    d->on_warning = on_warning;
     d->parse(true);
 }
