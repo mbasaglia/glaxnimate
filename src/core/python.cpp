@@ -1,5 +1,7 @@
 #include <pybind11/operators.h>
 
+#include "app/log/log.hpp"
+
 #include "model/document.hpp"
 #include "model/layers/layers.hpp"
 #include "model/shapes/shapes.hpp"
@@ -176,6 +178,15 @@ void define_animatable(py::module& m)
     ;
 }
 
+
+void define_log(py::module& m)
+{
+    py::module log = m.def_submodule("log", "Logging utilities");
+    log.def("info", [](const QString& msg){ app::log::Log("Python").log(msg, app::log::Info); });
+    log.def("warning", [](const QString& msg){ app::log::Log("Python").log(msg, app::log::Warning); });
+    log.def("error", [](const QString& msg){ app::log::Log("Python").log(msg, app::log::Error); });
+}
+
 struct UndoMacroGuard
 {
     UndoMacroGuard(const QString& name, model::Document* document)
@@ -215,6 +226,7 @@ struct UndoMacroGuard
 PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
 {
     define_utils(glaxnimate_module);
+    define_log(glaxnimate_module);
 
     py::module detail = glaxnimate_module.def_submodule("__detail", "");
     py::class_<QObject>(detail, "__QObject");

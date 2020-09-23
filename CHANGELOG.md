@@ -1,6 +1,10 @@
 ## 0.2.0
  * Editing:
     * Star/Polygon Shapes
+ * Tools:
+    * Star/Polygon Draw Tool
+ * Scripting:
+    * Logging support
 
 ## 0.1.0
  * Editing:
