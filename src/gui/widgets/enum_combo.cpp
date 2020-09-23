@@ -4,6 +4,7 @@
 
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
+#include "model/shapes/polystar.hpp"
 
 EnumCombo::EnumCombo(const QMetaEnum& meta_enum, int current_value, QWidget* parent)
     : QComboBox(parent), meta_enum(meta_enum)
@@ -68,6 +69,16 @@ std::pair<QString, const char*> EnumCombo::data_for(const QMetaEnum& meta_enum, 
                 return {tr("Round"), "stroke-join-round"};
             case model::Stroke::BevelJoin:
                 return {tr("Bevel"), "stroke-cap-bevel"};
+        }
+    }
+    else if ( std::strcmp(meta_enum.name(), "StarType") == 0 )
+    {
+        switch ( model::PolyStar::StarType(value) )
+        {
+            case model::PolyStar::Star:
+                return {tr("Star"), "draw-star"};
+            case model::PolyStar::Polygon:
+                return {tr("Polygon"), "draw-polygon"};
         }
     }
 

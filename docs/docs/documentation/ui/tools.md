@@ -55,7 +55,7 @@ This tool allows you to select and edit Bezier shapes.
 
 <img src="/img/ui/icons/draw-bezier-curves.svg" width="64" />
 
-This tool allows you to create Bezier shapes.
+This tool allows you to create [Bezier shapes](../shapes.md#path).
 
 It has the [common shape options](#shape-options).
 
@@ -96,7 +96,7 @@ Pressing escape will remove the unfinished shape and exit drawing mode.
 
 <img src="/img/ui/icons/draw-rectangle.svg" width="64" />
 
-This tool allows you to create rectangles and squares.
+This tool allows you to create [rectangles and squares](../shapes.md#rectangle).
 
 It has the [common shape options](#shape-options).
 
@@ -118,9 +118,38 @@ Pressing Escape will cancel the rectangle currently being dragged.
 
 <img src="/img/ui/icons/draw-ellipse.svg" width="64" />
 
-This tool allows you to create ellipses and circles.
+This tool allows you to create [ellipses and circles](../shapes.md#ellipse).
 
 It works the same way as the [rectangle tool](#rectangle).
+
+## Star / Polygon
+
+<img src="/img/ui/icons/draw-polygon-star.svg" width="64" />
+
+This tool allows you to create [stars and regular polygons](../shapes.md#polystar).
+
+### Mouse Interactions
+
+You click and drag, the point where you initiated the drag defines the center
+and the point you release the drag defines one of the corners.
+
+### Keyboard Interactions
+
+Pressing Escape will cancel the shape currently being dragged.
+
+### Options
+
+![Star Options](/img/screenshots/tools/star_options.png)
+
+The combo box at the top allows you to toggle between star and regular polygon mode.
+
+**Spoke Ratio** determines the ratio between the outer and inner radius for stars.<br/>
+The value goes between 0 and 1, the closer to 0 the pointier the star will look.
+
+**Corners** is the number of corners for the shape
+(eg: 5 will produce a 5-pointed star or a pentagon).
+
+The other options are the [common shape options](#shape-options).
 
 ## Shape Options
 

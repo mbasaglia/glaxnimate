@@ -1,3 +1,7 @@
+## 0.2.0
+ * Editing:
+    * Star/Polygon Shapes
+
 ## 0.1.0
  * Editing:
     * Layer Management

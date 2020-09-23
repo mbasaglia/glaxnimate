@@ -1,74 +1,18 @@
-#include "shape_tool_widget.hpp"
-#include "ui_shape_tool_widget.h"
+#include "shape_tool_widget_p.hpp"
 
-#include <QEvent>
-
-#include "app/settings/settings.hpp"
-
-class ShapeToolWidget::Private
-{
-public:
-    Ui::ShapeToolWidget ui;
-
-    void load_settings()
-    {
-        ui.check_group->setChecked(app::settings::get<bool>("tools", "shape_group"));
-        ui.check_fill->setChecked(app::settings::get<bool>("tools", "shape_fill"));
-        ui.check_stroke->setChecked(app::settings::get<bool>("tools", "shape_stroke"));
-        check_checks();
-    }
-
-    void save_settings()
-    {
-        app::settings::set("tools", "shape_group", ui.check_group->isChecked());
-        app::settings::set("tools", "shape_fill", ui.check_fill->isChecked());
-        app::settings::set("tools", "shape_stroke", ui.check_stroke->isChecked());
-    }
-
-    void check_checks()
-    {
-        if ( !ui.check_group->isChecked() )
-        {
-            if ( ui.check_fill->isEnabled() )
-            {
-                old_check_fill = ui.check_fill->isChecked();
-                ui.check_fill->setEnabled(false);
-                ui.check_fill->setChecked(false);
-
-                old_check_stroke = ui.check_stroke->isChecked();
-                ui.check_stroke->setEnabled(false);
-                ui.check_stroke->setChecked(false);
-            }
-        }
-        else if ( !ui.check_fill->isEnabled() )
-        {
-            ui.check_fill->setEnabled(true);
-            ui.check_fill->setChecked(old_check_fill);
-
-            ui.check_stroke->setEnabled(true);
-            ui.check_stroke->setChecked(old_check_stroke);
-        }
-    }
-
-    bool old_check_fill, old_check_stroke;
-};
 
 ShapeToolWidget::ShapeToolWidget(QWidget* parent)
-    : QWidget(parent), d(std::make_unique<Private>())
-{
-    d->ui.setupUi(this);
-    d->load_settings();
-}
+    : ShapeToolWidget(std::make_unique<Private>(), parent)
+{}
 
 ShapeToolWidget::~ShapeToolWidget() = default;
-
 
 void ShapeToolWidget::changeEvent ( QEvent* e )
 {
     QWidget::changeEvent(e);
     if ( e->type() == QEvent::LanguageChange )
     {
-        d->ui.retranslateUi(this);
+        d->retranslate(this);
     }
 }
 
@@ -80,21 +24,33 @@ void ShapeToolWidget::check_checks()
 
 bool ShapeToolWidget::create_fill() const
 {
-    return d->ui.check_fill->isChecked();
+    return d->create_fill();
 }
 
 bool ShapeToolWidget::create_group() const
 {
-    return d->ui.check_group->isChecked();
+    return d->create_group();
 }
 
 bool ShapeToolWidget::create_stroke() const
 {
-    return d->ui.check_stroke->isChecked();
+    return d->create_stroke();
 }
 
 void ShapeToolWidget::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
     d->load_settings();
+}
+
+ShapeToolWidget::ShapeToolWidget(std::unique_ptr<Private> dd, QWidget* parent)
+    : QWidget(parent), d(std::move(dd))
+{
+    d->setup_ui(this);
+    d->load_settings();
+}
+
+void ShapeToolWidget::save_settings()
+{
+    d->save_settings();
 }

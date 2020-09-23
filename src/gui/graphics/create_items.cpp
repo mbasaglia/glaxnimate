@@ -8,6 +8,7 @@
 #include "bezier_item.hpp"
 #include "rect_rounder.hpp"
 #include "graphics_editor.hpp"
+#include "star_radius_item.hpp"
 
 graphics::GraphicsItemFactory::GraphicsItemFactory()
 {
@@ -58,6 +59,15 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             auto v = std::make_unique<GraphicsEditor>(rect);
             v->add_child<graphics::PositionItem>(&rect->position);
             v->add_child<graphics::SizePosItem>(&rect->size, &rect->position);
+            return v;
+        }
+    );
+    register_builder<model::PolyStar>(
+        &GraphicsItemFactory::make_graphics_item_default,
+        [](model::PolyStar* star){
+            auto v = std::make_unique<GraphicsEditor>(star);
+            v->add_child<graphics::PositionItem>(&star->position);
+            v->add_child<graphics::StarRadiusItem>(star);
             return v;
         }
     );

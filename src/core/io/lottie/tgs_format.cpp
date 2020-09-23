@@ -1,7 +1,47 @@
 #include "tgs_format.hpp"
 #include "cbor_write_json.hpp"
 #include "utils/gzip.hpp"
+#include "model/shapes/polystar.hpp"
+#include "model/visitor.hpp"
 
+namespace io::lottie {
+
+class TgsVisitor : public model::Visitor
+{
+public:
+    TgsVisitor(TgsFormat* fmt) : fmt(fmt) {}
+
+private:
+    void on_visit(model::DocumentNode * node) override
+    {
+        if ( !found_star && qobject_cast<model::PolyStar*>(node) )
+        {
+            found_star = true;
+            fmt->error(TgsFormat::tr("Star Shapes are not officially supported"));
+        }
+    }
+
+    void on_visit(model::Document * document) override
+    {
+        qreal width = document->main_composition()->height.get();
+        if ( width != 512 )
+            fmt->error(TgsFormat::tr("Invalid width: %1, should be 512").arg(width));
+
+        qreal height = document->main_composition()->height.get();
+        if ( height != 512 )
+            fmt->error(TgsFormat::tr("Invalid height: %1, should be 512").arg(height));
+
+        qreal fps = document->main_composition()->fps.get();
+        if ( fps != 30 && fps != 60 )
+            fmt->error(TgsFormat::tr("Invalid fps: %1, should be 30 or 60").arg(fps));
+    }
+
+
+    TgsFormat* fmt;
+    bool found_star = false;
+};
+
+} // namespace io::lottie
 
 bool io::lottie::TgsFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
 {
@@ -33,17 +73,7 @@ bool io::lottie::TgsFormat::on_save(QIODevice& file, const QString&, model::Docu
 
 void io::lottie::TgsFormat::validate(model::Document* document)
 {
-    qreal width = document->main_composition()->height.get();
-    if ( width != 512 )
-        error(tr("Invalid width: %1, should be 512").arg(width));
-
-    qreal height = document->main_composition()->height.get();
-    if ( height != 512 )
-        error(tr("Invalid height: %1, should be 512").arg(height));
-
-    qreal fps = document->main_composition()->fps.get();
-    if ( fps != 30 && fps != 60 )
-        error(tr("Invalid fps: %1, should be 30 or 60").arg(fps));
+    TgsVisitor(this).visit(document);
 }
 
 

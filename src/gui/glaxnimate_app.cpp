@@ -104,6 +104,9 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("stroke_cap",       {},         {},                        Setting::Internal,  int(Qt::RoundCap)),
         Setting("stroke_join",      {},         {},                        Setting::Internal,  int(Qt::RoundJoin)),
         Setting("stroke_miter",     {},         {},                        Setting::Internal,  4.),
+        Setting("star_type",        {},         {},                        Setting::Internal,  1),
+        Setting("star_ratio",       {},         {},                        Setting::Internal,  0.5),
+        Setting("star_points",      {},         {},                        Setting::Internal,  5),
     }});
 }
 

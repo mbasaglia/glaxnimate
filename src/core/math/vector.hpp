@@ -479,6 +479,10 @@ struct PolarVector
     scalar length;
     scalar angle;
 
+    constexpr PolarVector() noexcept
+    : PolarVector(0, 0)
+    {}
+
     constexpr PolarVector(scalar length, scalar angle) noexcept
     : length(length), angle(angle)
     {}

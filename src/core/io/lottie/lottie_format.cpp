@@ -20,13 +20,13 @@ io::Autoreg<io::lottie::LottieFormat> io::lottie::LottieFormat::autoreg;
 
 namespace  {
 
-using TransformFunc = std::function<QVariant (const QVariant&)>;
+using TransformFunc = std::function<QVariant (const QVariant&, FrameTime)>;
 class FloatMult
 {
 public:
     explicit FloatMult(float factor) : factor(factor) {}
 
-    QVariant operator()(const QVariant& v) const
+    QVariant operator()(const QVariant& v, FrameTime) const
     {
         return v.toFloat() * factor;
     }
@@ -142,6 +142,16 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     {"Path", {
         FieldInfo{"ks", "shape"},
     }},
+    {"PolyStar", {
+        FieldInfo{"p", "position"},
+        FieldInfo{"or", "outer_radius"},
+        FieldInfo{"ir", "inner_radius"},
+        FieldInfo{"is"},
+        FieldInfo{"os"},
+        FieldInfo{"r", "angle"},
+        FieldInfo{"pt", "points"},
+        FieldInfo{"sy", "type"},
+    }},
     {"Group", {
         FieldInfo{"np"},
         FieldInfo{"it", Custom},
@@ -168,7 +178,7 @@ const QMap<QString, int> layer_types = {
 };
 const QMap<QString, QString> shape_types = {
     {"Rect", "rc"},
-//     {"Star", "sr"},
+    {"PolyStar", "sr"},
     {"Ellipse", "el"},
     {"Path", "sh"},
     {"Group", "gr"},
@@ -302,6 +312,10 @@ public:
         {
             return v.toString();
         }
+        else if ( v.userType() >= QMetaType::User && v.canConvert<int>() )
+        {
+            return v.toInt();
+        }
         return QCborValue::fromVariant(v);
     }
 
@@ -362,7 +376,7 @@ public:
                 auto kf = prop->keyframe(i);
                 QVariant v = kf->value();
                 if ( transform_values )
-                    v = transform_values(v);
+                    v = transform_values(v, kf->time());
                 QCborValue kf_value = value_from_variant(v);
                 if ( i != 0 )
                 {
@@ -389,7 +403,7 @@ public:
             jobj["a"_l] = 0;
                 QVariant v = prop->value();
                 if ( transform_values )
-                    v = transform_values(v);
+                    v = transform_values(v, 0);
             jobj["k"_l] = value_from_variant(v);
         }
         return jobj;
@@ -449,6 +463,14 @@ public:
                 &str->opacity,
                 FloatMult(100)
             );
+        }
+        else if ( shape->type_name() == "PolyStar" )
+        {
+            QCborMap fake;
+            fake["a"_l] = 0;
+            fake["k"_l] = 0;
+            jsh["os"_l] = fake;
+            jsh["is"_l] = fake;
         }
 
         return jsh;
@@ -697,7 +719,6 @@ private:
             }
             load_animated(&str->opacity, json["o"], FloatMult(0.01));
         }
-
     }
 
     void load_properties(
@@ -816,7 +837,7 @@ private:
     void load_value(model::BaseProperty * prop, const QJsonValue& val, const TransformFunc& trans = {})
     {
         auto v = value_to_variant(prop, val);
-        if ( !v || !prop->set_value(trans ? trans(*v) : *v) )
+        if ( !v || !prop->set_value(trans ? trans(*v, 0) : *v) )
             emit format->error(QObject::tr("Invalid value for %1").arg(prop->name()));
     }
 
@@ -853,7 +874,7 @@ private:
                 auto v = value_to_variant(prop, s);
                 model::KeyframeBase* kf = nullptr;
                 if ( v )
-                    kf = prop->set_keyframe(time, trans ? trans(*v) : *v);
+                    kf = prop->set_keyframe(time, trans ? trans(*v, time) : *v);
 
                 if ( kf )
                 {

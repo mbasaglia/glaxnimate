@@ -24,6 +24,7 @@ tools/ellipse_tool.cpp
 tools/rectangle_tool.cpp
 tools/draw_tool.cpp
 tools/edit_tool.cpp
+tools/star_tool.cpp
 
 widgets/dialogs/glaxnimate_window.cpp
 widgets/dialogs/glaxnimate_window.ui
@@ -51,6 +52,7 @@ widgets/timeline/compound_timeline_widget.ui
 
 widgets/tools/shape_tool_widget.cpp
 widgets/tools/shape_tool_widget.ui
+widgets/tools/star_tool_widget.cpp
 
 widgets/glaxnimate_graphics_view.cpp
 widgets/view_transform_widget.cpp

@@ -89,11 +89,30 @@ than pull the shape in different direction giving it its final shape.
 
 The Point handles come in different types:
 
-![Bezier points](/img/screenshots/shapes/bezier_points.png)
+![Bezier points](/img/screenshots/shapes/bezier-points.png)
 
 * Corner points appear as diamonds and leave the tangents free to roam
 * Smooth points appear as squares and keep the same angle on both the tangents
 * Symmetrical points appear as squares and keep both tangents on the same
+
+### PolyStar
+
+![PolyStar](/img/screenshots/shapes/star.png)
+
+This shape can be used to draw stars and regular polygons.
+
+#### Editing
+
+When a star shape is being edited, it shows the following handles:
+
+The Square handle in the middle shows the center of the star, dragging it moves
+the star around.
+
+The Square handle near the corner defines angle and radius for the star.
+Holding Ctrl while dragging it will change the radius without affecting the angle.
+
+If the polystar is a star (as opposed to a regular polygon) there's an additional
+Diamond handle which is used to change the secondary radius of the star.
 
 #### Interactions
 

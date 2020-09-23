@@ -17,15 +17,19 @@ public:
     bool create_fill() const;
     bool create_stroke() const;
 
-protected:
-    void changeEvent ( QEvent* e ) override;
-    void showEvent(QShowEvent *event) override;
-
 private slots:
     void check_checks();
 
-private:
+protected slots:
+    void save_settings();
+
+protected:
     class Private;
+    ShapeToolWidget(std::unique_ptr<Private> d, QWidget* parent);
+
+    void changeEvent ( QEvent* e ) override;
+    void showEvent(QShowEvent *event) override;
+
     std::unique_ptr<Private> d;
 };
 
