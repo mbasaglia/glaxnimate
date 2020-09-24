@@ -583,7 +583,8 @@
             <string>Unlink</string>
            </property>
            <property name="icon">
-            <iconset theme="remove-link"/>
+            <iconset theme="remove-link">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -609,7 +610,8 @@
             <string>Add</string>
            </property>
            <property name="icon">
-            <iconset theme="list-add"/>
+            <iconset theme="list-add">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -619,7 +621,8 @@
             <string>Remove</string>
            </property>
            <property name="icon">
-            <iconset theme="list-remove"/>
+            <iconset theme="list-remove">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -1690,7 +1693,7 @@
   </connection>
   <connection>
    <sender>swatch</sender>
-   <signal>selectedChanged(int)</signal>
+   <signal>clicked(int)</signal>
    <receiver>ColorSelector</receiver>
    <slot>swatch_link(int)</slot>
    <hints>

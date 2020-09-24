@@ -8,6 +8,7 @@
 
 #include "app/settings/settings.hpp"
 #include "model/document.hpp"
+#include "command/animation_commands.hpp"
 
 class StrokeStyleWidget::Private
 {
@@ -50,7 +51,14 @@ public:
             set_cap_style(target->cap.get());
             set_join_style(target->join.get());
             ui.spin_miter->setValue(target->miter_limit.get());
-            ui.color_selector->set_current_color(target->color.get());
+
+
+            QColor color;
+            if (  auto named_color = qobject_cast<model::NamedColor*>(target->use.get()) )
+                color = named_color->color.get();
+            else
+                color = target->color.get();
+            ui.color_selector->set_current_color(color);
             updating = false;
         }
     }
@@ -96,6 +104,27 @@ public:
         if ( !updating )
             prop.set_undoable(value, commit);
     }
+
+    void set_color(const QColor& color, bool commit)
+    {
+        if ( !target || updating )
+            return;
+
+        if (  auto named_color = qobject_cast<model::NamedColor*>(target->use.get()) )
+        {
+            target->push_command(new command::SetMultipleAnimated(
+                tr("Update Stroke Color"),
+                commit,
+                {&named_color->color, &target->color},
+                color,
+                color
+            ));
+        }
+        else
+        {
+            target->color.set_undoable(color, commit);
+        }
+    }
 };
 
 StrokeStyleWidget::StrokeStyleWidget(QWidget* parent)
@@ -122,6 +151,8 @@ StrokeStyleWidget::StrokeStyleWidget(QWidget* parent)
     d->ui.color_selector->hide_secondary();
 
     d->dark_theme = palette().window().color().valueF() < 0.5;
+
+    connect(d->ui.color_selector, &ColorSelector::current_color_def, this, &StrokeStyleWidget::set_target_def);
 }
 
 StrokeStyleWidget::~StrokeStyleWidget() = default;
@@ -221,22 +252,15 @@ void StrokeStyleWidget::set_color(const QColor& color)
 {
     d->ui.color_selector->set_current_color(color);
     if ( d->can_update_target() )
-        d->set(d->target->color, color, true);
+        d->set_color(color, true);
 }
 
 void StrokeStyleWidget::check_color(const QColor& color)
 {
     d->update_background(color);
     if ( d->can_update_target() )
-    {
-        d->target->document()->undo_stack().beginMacro(tr("Update Stroke Color"));
-        d->set(d->target->color, color, false);
+        d->set_color(color, false);
 
-        if (  auto named_color = qobject_cast<model::NamedColor*>(d->target->use.get()) )
-           named_color->color.set(color);
-
-        d->target->document()->undo_stack().endMacro();
-    }
     update();
     emit color_changed(color);
 }
@@ -253,7 +277,7 @@ void StrokeStyleWidget::set_shape(model::Stroke* target)
     if ( target )
     {
         d->update_from_target();
-        emit color_changed(d->target->color.get());
+        emit color_changed(d->ui.color_selector->current_color());
         connect(target, &model::Object::property_changed, this, &StrokeStyleWidget::property_changed);
         update();
     }
@@ -262,8 +286,8 @@ void StrokeStyleWidget::set_shape(model::Stroke* target)
 void StrokeStyleWidget::property_changed(const model::BaseProperty* prop)
 {
     d->update_from_target();
-    if ( prop == &d->target->color )
-        emit color_changed(d->target->color.get());
+    if ( prop == &d->target->color || prop == &d->target->use )
+        emit color_changed(d->ui.color_selector->current_color());
     update();
 }
 
@@ -284,7 +308,7 @@ void StrokeStyleWidget::check_width(double w)
 void StrokeStyleWidget::color_committed(const QColor& color)
 {
     if ( d->can_update_target() )
-        d->set(d->target->color, color, true);
+        d->set_color(color, true);
 }
 
 void StrokeStyleWidget::commit_width()
@@ -303,5 +327,19 @@ void StrokeStyleWidget::set_target_def(model::BrushStyle* def)
 {
     if ( !d->target || d->updating )
         return;
-    d->target->use.set_undoable(QVariant::fromValue(def));
+
+    if ( !def )
+    {
+        d->target->document()->undo_stack().beginMacro(tr("Unlink Stroke Color"));
+        if ( auto col = qobject_cast<model::NamedColor*>(d->target->use.get()) )
+            d->target->color.set_undoable(col->color.get());
+        d->target->use.set_undoable(QVariant::fromValue(def));
+        d->target->document()->undo_stack().endMacro();
+    }
+    else
+    {
+        d->target->document()->undo_stack().beginMacro(tr("Link Stroke Color"));
+        d->target->use.set_undoable(QVariant::fromValue(def));
+        d->target->document()->undo_stack().endMacro();
+    }
 }

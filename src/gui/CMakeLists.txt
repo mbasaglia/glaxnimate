@@ -67,6 +67,7 @@ widgets/stroke_style_widget.ui
 widgets/node_menu.cpp
 widgets/window_message_widget.cpp
 widgets/window_message_widget.ui
+widgets/fill_style_widget.cpp
 )
 
 if(${PYTHON_ENABLED})

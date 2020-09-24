@@ -8,7 +8,7 @@ std::vector<model::ReferenceTarget*> model::Styler::valid_uses() const
 
 bool model::Styler::is_valid_use(ReferenceTarget* node) const
 {
-    return document()->defs()->has_brush_style(node);
+    return document()->defs()->is_valid_brush_style(node);
 }
 
 void model::Styler::on_use_changed(model::BrushStyle* new_use, model::BrushStyle* old_use)
