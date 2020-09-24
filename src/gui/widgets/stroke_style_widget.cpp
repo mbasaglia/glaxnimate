@@ -7,6 +7,7 @@
 #include <QStyleOptionFrame>
 
 #include "app/settings/settings.hpp"
+#include "model/document.hpp"
 
 class StrokeStyleWidget::Private
 {
@@ -227,7 +228,15 @@ void StrokeStyleWidget::check_color(const QColor& color)
 {
     d->update_background(color);
     if ( d->can_update_target() )
+    {
+        d->target->document()->undo_stack().beginMacro(tr("Update Stroke Color"));
         d->set(d->target->color, color, false);
+
+        if (  auto named_color = qobject_cast<model::NamedColor*>(d->target->use.get()) )
+           named_color->color.set(color);
+
+        d->target->document()->undo_stack().endMacro();
+    }
     update();
     emit color_changed(color);
 }
@@ -282,4 +291,17 @@ void StrokeStyleWidget::commit_width()
 {
     if ( d->can_update_target() && !qFuzzyCompare(d->target->width.get(), float(d->ui.spin_stroke_width->value())) )
         d->set(d->target->width, d->ui.spin_stroke_width->value(), true);
+}
+
+void StrokeStyleWidget::set_document(model::Document* document)
+{
+    d->ui.color_selector->set_document(document);
+}
+
+
+void StrokeStyleWidget::set_target_def(model::BrushStyle* def)
+{
+    if ( !d->target || d->updating )
+        return;
+    d->target->use.set_undoable(QVariant::fromValue(def));
 }

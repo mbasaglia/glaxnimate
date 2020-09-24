@@ -178,7 +178,7 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
             if ( auto parent = ShapeParentDialog(window->model(), window).get_shape_parent() )
             {
                 if ( shape->owner() != parent )
-                    shape->push_command(new command::MoveShape(shape, parent, parent->size()));
+                    shape->push_command(new command::MoveShape(shape, shape->owner(), parent, parent->size()));
             }
         });
     }

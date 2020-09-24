@@ -5,6 +5,10 @@
 #include "app/application.hpp"
 #include "app/settings/settings.hpp"
 
+#include "model/defs/defs.hpp"
+#include "model/document.hpp"
+#include "command/object_list_commands.hpp"
+#include "command/animation_commands.hpp"
 
 namespace {
 
@@ -36,6 +40,7 @@ public:
     Ui::ColorSelector ui;
     color_widgets::ColorPaletteModel palette_model;
     ColorSelector* parent;
+    model::Document* document = nullptr;
 
     void setup_ui(ColorSelector* parent)
     {
@@ -298,3 +303,64 @@ void ColorSelector::commit_current_color()
 {
     emit current_color_committed(d->current_color());
 }
+
+void ColorSelector::set_document(model::Document* document)
+{
+    auto palette = &d->ui.swatch->palette();
+
+    if ( d->document )
+    {
+        disconnect(palette, nullptr, d->document->defs(), nullptr);
+    }
+
+    d->document = document;
+
+    if ( d->document )
+    {
+        auto defs = d->document->defs();
+        palette->setColors(QVector<QColor>{});
+        for ( const auto& col : defs->colors )
+            palette->appendColor(col->color.get(), col->name.get());
+
+        connect(palette, &color_widgets::ColorPalette::colorAdded, defs, [defs, palette](int index){
+            auto col = std::make_unique<model::NamedColor>(defs->document());
+            col->color.set(palette->colorAt(index));
+            col->name.set(palette->nameAt(index));
+            defs->push_command(new command::AddObject<model::NamedColor>(&defs->colors, std::move(col), index));
+        });
+
+        connect(palette, &color_widgets::ColorPalette::colorRemoved, defs, [defs, palette](int index){
+            if ( defs->colors.valid_index(index) )
+                defs->push_command(new command::RemoveObject<model::NamedColor>(index, &defs->colors));
+        });
+
+        connect(palette, &color_widgets::ColorPalette::colorChanged, defs, [defs, palette](int index){
+            if ( !defs->colors.valid_index(index) )
+                return;
+
+            defs->document()->undo_stack().beginMacro(tr("Modify Palette Color"));
+            auto color = &defs->colors[index];
+            color->name.set_undoable(palette->nameAt(index));
+            color->color.set_undoable(palette->colorAt(index));
+            defs->document()->undo_stack().endMacro();
+        });
+    }
+}
+
+void ColorSelector::swatch_add()
+{
+    d->ui.swatch->palette().appendColor(d->current_color());
+    swatch_link(d->ui.swatch->palette().count() - 1);
+}
+
+void ColorSelector::swatch_link(int index)
+{
+    if ( d->document )
+        emit current_color_def(&d->document->defs()->colors[index]);
+}
+
+void ColorSelector::swatch_unlink()
+{
+    emit current_color_def(nullptr);
+}
+

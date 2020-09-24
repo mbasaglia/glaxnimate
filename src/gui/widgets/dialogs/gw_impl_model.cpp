@@ -330,7 +330,7 @@ void GlaxnimateWindow::Private::move_to()
         current_document->undo_stack().beginMacro(tr("Move Shapes"));
         for ( auto shape : shapes )
             if ( shape->owner() != parent )
-                shape->push_command(new command::MoveShape(shape, parent, parent->size()));
+                shape->push_command(new command::MoveShape(shape, shape->owner(), parent, parent->size()));
         current_document->undo_stack().endMacro();
     }
 }

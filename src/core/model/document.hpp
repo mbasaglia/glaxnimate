@@ -9,6 +9,8 @@
 
 namespace model {
 
+class Defs;
+
 class Document : public QObject
 {
     Q_OBJECT
@@ -64,6 +66,8 @@ public:
 
     Q_INVOKABLE QString get_best_name(const model::DocumentNode* node, const QString& suggestion={}) const;
     Q_INVOKABLE void set_best_name(model::DocumentNode* node, const QString& suggestion={}) const;
+
+    model::Defs* defs() const;
 
 signals:
     void filename_changed(const QString& n);

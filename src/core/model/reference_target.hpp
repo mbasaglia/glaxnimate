@@ -9,6 +9,7 @@ namespace model {
 
 class ReferenceTarget : public Object
 {
+    Q_OBJECT
 public:
     using Object::Object;
 

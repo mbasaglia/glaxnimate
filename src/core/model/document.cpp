@@ -3,13 +3,15 @@
 #include <QRegularExpression>
 
 #include "io/glaxnimate/glaxnimate_format.hpp"
+#include "model/defs/defs.hpp"
 
 
 class model::Document::Private
 {
 public:
     Private(Document* doc)
-        : main_composition(doc)
+        : main_composition(doc),
+          defs(doc)
     {
         io_options.format = io::glaxnimate::GlaxnimateFormat::instance();
     }
@@ -24,6 +26,7 @@ public:
     FrameTime current_time = 0;
     bool has_file = false;
     bool record_to_keyframe = false;
+    Defs defs;
 };
 
 
@@ -203,4 +206,9 @@ void model::Document::set_best_name(model::DocumentNode* node, const QString& su
 QRectF model::Document::rect() const
 {
     return QRectF(QPointF(0, 0), size());
+}
+
+model::Defs * model::Document::defs() const
+{
+    return &d->defs;
 }

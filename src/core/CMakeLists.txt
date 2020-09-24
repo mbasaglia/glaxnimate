@@ -28,10 +28,16 @@ model/document_node.cpp
 model/object.cpp
 model/transform.cpp
 model/factory.cpp
+model/reference_target.cpp
+
 model/animation/keyframe_transition.cpp
 model/animation/animatable.cpp
 model/property/property.cpp
 model/property/reference_property.cpp
+
+model/defs/defs.cpp
+model/defs/brush_style.cpp
+model/defs/named_color.cpp
 
 model/layers/layer.cpp
 model/layers/empty_layer.cpp
@@ -46,6 +52,7 @@ model/shapes/ellipse.cpp
 model/shapes/path.cpp
 model/shapes/stroke.cpp
 model/shapes/polystar.cpp
+model/shapes/styler.cpp
 
 
 utils/gzip.cpp

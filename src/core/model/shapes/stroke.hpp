@@ -5,7 +5,7 @@
 #include <QBrush>
 #include <QPainter>
 
-#include "shape.hpp"
+#include "styler.hpp"
 #include "model/animation/animatable.hpp"
 
 namespace model {
@@ -34,11 +34,9 @@ private:
     Q_ENUM(Join);
 
 
-    GLAXNIMATE_ANIMATABLE(QColor, color, QColor())
     GLAXNIMATE_ANIMATABLE(float, width, 1)
     GLAXNIMATE_PROPERTY(Cap, cap, RoundCap, nullptr, nullptr, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(Join, join, RoundJoin, nullptr, nullptr, PropertyTraits::Visual)
-    GLAXNIMATE_ANIMATABLE(float, opacity, 1)
     GLAXNIMATE_PROPERTY(float, miter_limit, 0, nullptr, nullptr, PropertyTraits::Visual)
 
 public:
@@ -72,11 +70,6 @@ protected:
         p->setBrush(Qt::NoBrush);
         p->setPen(pen);
         p->drawPath(collect_shapes(t).painter_path());
-    }
-
-    QBrush brush(FrameTime t) const
-    {
-        return color.get_at(t);
     }
 };
 

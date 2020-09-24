@@ -1,6 +1,8 @@
 #pragma once
 #include "color_selector.hpp"
 #include "model/shapes/fill.hpp"
+#include "model/defs/named_color.hpp"
+#include "model/document.hpp"
 
 class FillStyleWidget : public ColorSelector
 {
@@ -12,6 +14,8 @@ public:
                 this, &FillStyleWidget::set_target_color);
         connect(this, &ColorSelector::current_color_committed,
                 this, &FillStyleWidget::commit_target_color);
+        connect(this, &ColorSelector::current_color_def,
+                this, &FillStyleWidget::set_target_def);
     }
 
 
@@ -48,7 +52,14 @@ private slots:
     {
         if ( !target || updating )
             return;
+
+        target->document()->undo_stack().beginMacro(tr("Update Fill Color"));
         target->color.set_undoable(color, false);
+
+        if (  auto named_color = qobject_cast<model::NamedColor*>(target->use.get()) )
+            named_color->color.set(color);
+
+        target->document()->undo_stack().endMacro();
     }
 
     void commit_target_color()
@@ -64,6 +75,13 @@ private slots:
         {
             update_from_target();
         }
+    }
+
+    void set_target_def(model::BrushStyle* def)
+    {
+        if ( !target || updating )
+            return;
+        target->use.set_undoable(QVariant::fromValue(def));
     }
 
 private:

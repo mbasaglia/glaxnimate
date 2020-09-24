@@ -20,6 +20,8 @@ public:
 
     void set_shape(model::Stroke* stroke);
 
+    void set_document(model::Document* document);
+
     QPen pen_style() const;
 
 protected:
@@ -41,6 +43,7 @@ private slots:
     void check_width(double w);
     void check_miter(double w);
     void commit_width();
+    void set_target_def(model::BrushStyle* def);
 
 private:
     class Private;
