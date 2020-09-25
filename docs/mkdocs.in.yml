@@ -15,8 +15,8 @@ markdown_extensions:
 extra_css:
     - style/style.css
 nav:
-    - index.md
     - download.md
+    - "Donate": donate.md
     - 'Documentation':
         - documentation/index.md
         - documentation/shapes.md

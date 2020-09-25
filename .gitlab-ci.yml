@@ -127,3 +127,19 @@ mxe:build:
             - build/glaxnimate-x86_64.zip
             - build/checksum.txt
     when: always
+
+release:
+    stage: build
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y python3-pip
+        - pip3 install requests
+    script:
+        - ./deploy/make_release.py
+    dependencies:
+        - linux:test
+        - linux:appimage
+        - linux:deb
+        - mxe:build
+    only:
+        - tags
