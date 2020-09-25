@@ -129,7 +129,7 @@ mxe:build:
     when: always
 
 release:
-    stage: build
+    stage: deploy
     before_script:
         - apt-get update -qq
         - apt-get install -y python3-pip
@@ -143,3 +143,5 @@ release:
         - mxe:build
     only:
         - tags
+
+# https://gitlab.com/mattia.basaglia/glaxnimate/-/ci/lint
