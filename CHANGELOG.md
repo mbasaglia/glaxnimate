@@ -1,6 +1,7 @@
 ## 0.2.0
  * Editing:
     * Star/Polygon Shapes
+    * Document Swatch
  * Tools:
     * Star/Polygon Draw Tool
  * Scripting:
