@@ -118,6 +118,7 @@ private slots:
     void help_about();
     void help_manual();
     void help_issue();
+    void help_donate();
 
     void refresh_title();
     void document_open_recent(QAction* action);

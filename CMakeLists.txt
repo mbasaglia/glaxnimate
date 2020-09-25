@@ -6,11 +6,15 @@ project(Glaxnimate VERSION 0.1.0 LANGUAGES CXX)
 set(PROJECT_SLUG "glaxnimate")
 set(LIB_NAME "${PROJECT_SLUG}_core")
 set(LIB_NAME_GUI "${PROJECT_SLUG}_gui")
-set(URL_DOCS "https://glaxnimate.mattbas.org/")
-set(PROJECT_HOMEPAGE_URL "https://glaxnimate.mattbas.org/")
-set(URL_ISSUES "https://gitlab.com/mattia.basaglia/glaxnimate/-/issues")
 set(DATA_INSTALL "share/${PROJECT_SLUG}/${PROJECT_SLUG}")
+
+set(PROJECT_HOMEPAGE_URL "https://glaxnimate.mattbas.org/")
+set(URL_DOCS "https://glaxnimate.mattbas.org/")
+set(URL_ISSUES "https://gitlab.com/mattia.basaglia/glaxnimate/-/issues")
+set(URL_DONATE "https://glaxnimate.mattbas.org/donate/")
+
 set(PROJECT_DESCRIPTION "Simple vector animation program")
+set(PROJECT_MANINTAINER "Mattia Basaglia <glanimate@mattbas.org>")
 
 # CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_SOURCE_DIR}/external/cmake-modules")
@@ -82,7 +86,7 @@ endif(DOXYGEN_FOUND)
 
 # Packaging
 # -- see https://gitlab.kitware.com/cmake/community/-/wikis/doc/cpack/PackageGenerators
-set(CPACK_PACKAGE_CONTACT "Mattia Basaglia <glanimate@mattbas.org>")
+set(CPACK_PACKAGE_CONTACT ${PROJECT_MANINTAINER})
 set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
 

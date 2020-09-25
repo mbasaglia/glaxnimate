@@ -53,6 +53,7 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     connect(ui.action_move_to, &QAction::triggered, parent, &GlaxnimateWindow::move_to);
     connect(ui.action_validate_tgs, &QAction::triggered, parent, &GlaxnimateWindow::validate_tgs);
     connect(ui.action_resize, &QAction::triggered, parent, [this]{ ResizeDialog(this->parent).resize_document(current_document.get()); });
+    connect(ui.action_donate, &QAction::triggered, parent, &GlaxnimateWindow::help_donate);
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
