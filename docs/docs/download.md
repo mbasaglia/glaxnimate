@@ -4,7 +4,33 @@ Authors: Mattia Basaglia
 
 ## Stable Releases
 
-No release has been made yet.
+You can also see the [list of previous releases](https://gitlab.com/mattia.basaglia/glaxnimate/-/releases).
+
+<table>
+<tr><th>Package</th><th>Checksum</th><th>Notes</th></tr>
+<tr>
+<td><i class="fab fa-linux"></i> <a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/release/raw/build/glaxnimate-x86_64.AppImage?job=linux%3Aappimage">Linux AppImage</a></td>
+<td><a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/release/raw/build/checksum.txt?job=linux%3Aappimage">SHA1</a></td>
+<td><a href="#linux-appimage">Notes</a></td>
+</tr>
+<tr>
+<td><i class="fab fa-ubuntu"></i> <a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/release/raw/build/glaxnimate.deb?job=linux%3Adeb">Deb Package</a></td>
+<td><a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/release/raw/build/checksum.txt?job=linux%3Adeb">SHA1</a></td>
+<td><a href="#deb-package">Notes</a></td>
+</tr>
+<tr>
+<td><i class="fab fa-windows"></i> <a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/release/raw/build/glaxnimate-x86_64.zip?job=mxe%3Abuild">Windows Zip</a></td>
+<td><a href="https://gitlab.com/mattia.basaglia/glaxnimate/-/jobs/artifacts/release/raw/build/checksum.txt?job=mxe%3Abuild">SHA1</a></td>
+<td><a href="#windows-zip">Notes</a></td>
+</tr>
+<tr>
+<td><i class="fab fa-apple"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/release/MacOs/glaxnimate.dmg">Mac dmg</a></td>
+<td><a href="https://dl.bintray.com/mattbas/Glaxnimate/release/MacOs/checksum.txt">SHA1</a></td>
+<td><a href="#mac-dmg">Notes</a></td>
+</tr>
+</table>
+
+If you enjoy using Glaxnimate consider [donating](donate.md).
 
 ## Development Snapshots
 
@@ -39,6 +65,8 @@ All packages provided here are for the x86_64 architecture.
 <td><a href="#mac-dmg">Notes</a></td>
 </tr>
 </table>
+
+If you enjoy using Glaxnimate consider [donating](donate.md).
 
 
 ## Building from Source

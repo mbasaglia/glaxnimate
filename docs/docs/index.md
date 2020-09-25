@@ -1,6 +1,8 @@
 Authors: Mattia Basaglia
 disable_toc: 1
 
+# Glaxnimate
+
 <style>
 .container
 {
@@ -73,7 +75,7 @@ disable_toc: 1
 }
 </style>
 
-# Glaxnimate
+
 
 <img src="/img/logo.svg" width="128" />
 
@@ -82,9 +84,9 @@ Glaxnimate is a simple and fast vector graphics animation program.
 
 ## Download
 
-* [Stable Version (TODO)](download.md#stable-releases)
+* [Stable Version](download.md#stable-releases)
 * [Experimental Version](download.md#development-snapshots)
-* [Building from Source](contributing/read_me.md)
+* [Source](contributing/read_me.md)
 
 <img src="/img/screenshots/main_window.png" style="max-width: 100vw;"/>
 
@@ -118,6 +120,7 @@ Glaxnimate is a simple and fast vector graphics animation program.
 
 ## Get Involved
 
+* [Donate](donate.md)
 * [Contribute](contributing/index.md)
 * [Report Issues](https://gitlab.com/mattia.basaglia/glaxnimate/-/issues)
 * [Chat](https://t.me/Glaxnimate)

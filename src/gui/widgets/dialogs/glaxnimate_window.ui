@@ -163,6 +163,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="action_online_manual"/>
+    <addaction name="action_donate"/>
     <addaction name="action_report_issue"/>
     <addaction name="actionAbout"/>
    </widget>
@@ -666,7 +667,8 @@
   </widget>
   <widget class="QDockWidget" name="dock_undo">
    <property name="windowIcon">
-    <iconset theme="edit-undo-history"/>
+    <iconset theme="edit-undo-history">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="windowTitle">
     <string>Undo History</string>
@@ -679,7 +681,8 @@
      <item>
       <widget class="QUndoView" name="view_undo">
        <property name="cleanIcon">
-        <iconset theme="document-save"/>
+        <iconset theme="document-save">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -1308,6 +1311,14 @@
    </property>
    <property name="text">
     <string>Re&amp;size...</string>
+   </property>
+  </action>
+  <action name="action_donate">
+   <property name="icon">
+    <iconset theme="love"/>
+   </property>
+   <property name="text">
+    <string>Donate...</string>
    </property>
   </action>
  </widget>
