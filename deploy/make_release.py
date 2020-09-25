@@ -109,6 +109,10 @@ notes = """
 </tr>
 </table>
 
+## User Manual
+
+See the [Documentation](https://glaxnimate.mattbas.org/documentation/) page.
+
 ## Changes
 {chlog}
 
