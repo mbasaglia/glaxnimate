@@ -1,10 +1,11 @@
 Authors: Mattia Basaglia
+disable_toc: 1
 
 # Donate
 
 Glaxnimate is free and developed on spare time.
 
-If you enjoy using Glaxnimate, consider donating as that helps keeping development going:
+If you enjoy using Glaxnimate, consider donating as that helps keeping development going.
 
 Here are the ways you can donate:
 
