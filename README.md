@@ -74,6 +74,25 @@ Build with `cmake`, specifying the Qt installation path:
     cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5"
     make
 
+### Windows
+
+* Install [CMake](https://cmake.org/download/)
+* Install Python, you can do so from the [store](https://www.microsoft.com/store/productId/9MSSZTT1N39L)
+* Install [Qt](https://www.qt.io/download-qt-installer), instructions below assume it's in `C:/Qt/`
+* Install [MinGW64](http://mingw-w64.yaxm.org/doku.php/download/mingw-builds),
+instructions below assume it's in `C:/WinGW64/`
+* Install [ZLIB](https://sourceforge.net/projects/gnuwin32/files/zlib/),
+instructions below assume it's in `C:/Program Files (x86)/GnuWin32`
+
+    mkdir build
+    cd build
+    $ENV:PATH="$ENV:PATH;C:/MinGW64/mingw64/bin"
+    cmake .. -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="C:/Qt/5.14.1/mingw73_64/" -DZLIB_INCLUDE_DIR="C:/Program Files (x86)/GnuWin32/include" -DZLIB_LIBRARY="C:/Program Files (x86)/GnuWin32/lib/libz.a" -DBUILD_OBJECT_LIBS=ON
+    mingw32-make.exe
+
+
+
+
 
 Contacts
 ---------------------------------------

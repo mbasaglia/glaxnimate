@@ -61,7 +61,7 @@ if(${PYTHON_ENABLED})
     list(APPEND SOURCES python.cpp)
 endif()
 
-find_package(ZLIB)
+find_package(ZLIB REQUIRED)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/application_info_generated.in.hpp
@@ -72,6 +72,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 
 add_library(${LIB_NAME} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME} PUBLIC QtAppSetup ZLIB::ZLIB Qt5::Xml)
+target_link_libraries(${LIB_NAME} PUBLIC QtAppSetup ZLIB::ZLIB Qt5::Xml z)
 set_property(TARGET ${LIB_NAME} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 target_include_directories(${LIB_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
