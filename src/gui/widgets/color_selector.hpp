@@ -38,17 +38,7 @@ private slots:
     void color_update_component(int value);
     void color_swap();
     void commit_current_color();
-
-
-    void swatch_link(int index);
-    void swatch_unlink();
-    void swatch_add();
-    void swatch_palette_color_added(int index);
-    void swatch_palette_color_removed(int index);
-    void swatch_palette_color_changed(int index);
-    void swatch_doc_color_added(int position, model::NamedColor* color);
-    void swatch_doc_color_removed(int pos);
-    void swatch_doc_color_changed(int position, model::NamedColor* color);
+    void swatch_give_color();
 
 signals:
     void current_color_changed(const QColor& c);

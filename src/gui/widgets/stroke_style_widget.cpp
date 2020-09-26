@@ -343,3 +343,8 @@ void StrokeStyleWidget::set_target_def(model::BrushStyle* def)
         d->target->document()->undo_stack().endMacro();
     }
 }
+
+model::Stroke * StrokeStyleWidget::shape() const
+{
+    return d->target;
+}

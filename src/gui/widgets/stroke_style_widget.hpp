@@ -19,6 +19,7 @@ public:
     void save_settings() const;
 
     void set_shape(model::Stroke* stroke);
+    model::Stroke* shape() const;
 
     void set_document(model::Document* document);
 

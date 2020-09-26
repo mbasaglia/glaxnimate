@@ -7,8 +7,9 @@ class FillStyleWidget : public ColorSelector
 public:
     FillStyleWidget(QWidget* parent = nullptr);
 
-
     void set_shape(model::Fill* target);
+
+    model::Fill* shape() const;
 
 private:
     void update_from_target();

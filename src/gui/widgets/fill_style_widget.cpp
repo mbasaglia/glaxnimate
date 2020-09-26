@@ -35,6 +35,12 @@ void FillStyleWidget::set_shape(model::Fill* target)
     }
 }
 
+model::Fill * FillStyleWidget::shape() const
+{
+    return target;
+}
+
+
 void FillStyleWidget::update_from_target()
 {
     updating = true;

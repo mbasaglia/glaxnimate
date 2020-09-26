@@ -68,6 +68,8 @@ widgets/node_menu.cpp
 widgets/window_message_widget.cpp
 widgets/window_message_widget.ui
 widgets/fill_style_widget.cpp
+widgets/document_swatch_widget.cpp
+widgets/document_swatch_widget.ui
 )
 
 if(${PYTHON_ENABLED})

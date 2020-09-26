@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DocumentSwatchWidget</class>
+ <widget class="QWidget" name="DocumentSwatchWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>312</width>
+    <height>244</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="color_widgets::Swatch" name="swatch">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="colorSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QToolButton" name="toolButton_3">
+       <property name="toolTip">
+        <string>Unlink selected from swatch</string>
+       </property>
+       <property name="text">
+        <string>Unlink</string>
+       </property>
+       <property name="icon">
+        <iconset theme="remove-link">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton">
+       <property name="toolTip">
+        <string>Add color</string>
+       </property>
+       <property name="text">
+        <string>Add</string>
+       </property>
+       <property name="icon">
+        <iconset theme="list-add">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_2">
+       <property name="text">
+        <string>Remove</string>
+       </property>
+       <property name="icon">
+        <iconset theme="list-remove">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>color_widgets::Swatch</class>
+   <extends>QWidget</extends>
+   <header>QtColorWidgets/swatch.hpp</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>toolButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>swatch</receiver>
+   <slot>removeSelected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>366</x>
+     <y>223</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>295</x>
+     <y>158</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DocumentSwatchWidget</receiver>
+   <slot>swatch_add()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>336</x>
+     <y>226</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>317</x>
+     <y>406</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>DocumentSwatchWidget</receiver>
+   <slot>swatch_unlink()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>30</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>39</x>
+     <y>398</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>swatch</sender>
+   <signal>clicked(int)</signal>
+   <receiver>DocumentSwatchWidget</receiver>
+   <slot>swatch_link(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>176</x>
+     <y>161</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>254</x>
+     <y>481</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>swatch_add()</slot>
+  <slot>swatch_unlink()</slot>
+  <slot>swatch_link(int)</slot>
+ </slots>
+</ui>

@@ -5,11 +5,7 @@
 #include "app/application.hpp"
 #include "app/settings/settings.hpp"
 
-#include "model/defs/defs.hpp"
-#include "model/document.hpp"
-#include "command/object_list_commands.hpp"
-#include "command/animation_commands.hpp"
-#include "utils/pseudo_mutex.hpp"
+#include "model/defs/brush_style.hpp"
 
 namespace {
 
@@ -41,8 +37,6 @@ public:
     Ui::ColorSelector ui;
     color_widgets::ColorPaletteModel palette_model;
     ColorSelector* parent;
-    model::Document* document = nullptr;
-    utils::PseudoMutex updating_swatch;
 
     void setup_ui(ColorSelector* parent)
     {
@@ -232,11 +226,7 @@ ColorSelector::ColorSelector(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Private>())
 {
     d->setup_ui(this);
-
-    auto palette = &d->ui.swatch->palette();
-    connect(palette, &color_widgets::ColorPalette::colorAdded, this, &ColorSelector::swatch_palette_color_added);
-    connect(palette, &color_widgets::ColorPalette::colorRemoved, this, &ColorSelector::swatch_palette_color_removed);
-    connect(palette, &color_widgets::ColorPalette::colorChanged, this, &ColorSelector::swatch_palette_color_changed);
+    connect(d->ui.document_swatch_widget, &DocumentSwatchWidget::current_color_def, this, &ColorSelector::current_color_def);
 }
 
 ColorSelector::~ColorSelector() {}
@@ -311,119 +301,10 @@ void ColorSelector::commit_current_color()
 
 void ColorSelector::set_document(model::Document* document)
 {
-    auto palette = &d->ui.swatch->palette();
-
-    if ( d->document )
-    {
-        disconnect(d->document->defs(), nullptr, this, nullptr);
-    }
-
-    d->document = document;
-
-    if ( d->document )
-    {
-        auto l = d->updating_swatch.get_lock();
-        palette->setColors(QVector<QColor>{});
-        for ( const auto& col : d->document->defs()->colors )
-            palette->appendColor(col->color.get(), col->name.get());
-
-        connect(d->document->defs(), &model::Defs::color_added, this, &ColorSelector::swatch_doc_color_added);
-        connect(d->document->defs(), &model::Defs::color_removed, this, &ColorSelector::swatch_doc_color_removed);
-        connect(d->document->defs(), &model::Defs::color_changed, this, &ColorSelector::swatch_doc_color_changed);
-    }
+    d->ui.document_swatch_widget->set_document(document);
 }
 
-void ColorSelector::swatch_palette_color_added(int index)
+void ColorSelector::swatch_give_color()
 {
-    if ( !d->document )
-        return;
-
-    if ( auto l = d->updating_swatch.get_lock() )
-    {
-        auto defs = d->document->defs();
-        auto palette = &d->ui.swatch->palette();
-
-        auto col = std::make_unique<model::NamedColor>(d->document);
-        col->color.set(palette->colorAt(index));
-        col->name.set(palette->nameAt(index));
-        defs->push_command(new command::AddObject<model::NamedColor>(&defs->colors, std::move(col), index));
-    }
-}
-
-void ColorSelector::swatch_palette_color_removed(int index)
-{
-    if ( !d->document )
-        return;
-
-    if ( auto l = d->updating_swatch.get_lock() )
-    {
-        auto defs = d->document->defs();
-
-        if ( defs->colors.valid_index(index) )
-            defs->push_command(new command::RemoveObject<model::NamedColor>(index, &defs->colors));
-    }
-}
-
-void ColorSelector::swatch_palette_color_changed(int index)
-{
-    if ( !d->document )
-        return;
-
-    if ( auto l = d->updating_swatch.get_lock() )
-    {
-
-        auto defs = d->document->defs();
-        auto palette = &d->ui.swatch->palette();
-
-        if ( !defs->colors.valid_index(index) )
-            return;
-
-        d->document->undo_stack().beginMacro(tr("Modify Palette Color"));
-        auto color = &defs->colors[index];
-        color->name.set_undoable(palette->nameAt(index));
-        color->color.set_undoable(palette->colorAt(index));
-        d->document->undo_stack().endMacro();
-    }
-}
-
-void ColorSelector::swatch_add()
-{
-    d->ui.swatch->palette().appendColor(d->current_color());
-    swatch_link(d->ui.swatch->palette().count() - 1);
-}
-
-void ColorSelector::swatch_link(int index)
-{
-    if ( d->document && index != -1 )
-        emit current_color_def(&d->document->defs()->colors[index]);
-}
-
-void ColorSelector::swatch_unlink()
-{
-    emit current_color_def(nullptr);
-}
-
-
-void ColorSelector::swatch_doc_color_added(int position, model::NamedColor* color)
-{
-    if ( auto l = d->updating_swatch.get_lock() )
-    {
-        d->ui.swatch->palette().insertColor(position, color->color.get(), color->name.get());
-    }
-}
-
-void ColorSelector::swatch_doc_color_removed(int pos)
-{
-    if ( auto l = d->updating_swatch.get_lock() )
-    {
-        d->ui.swatch->palette().eraseColor(pos);
-    }
-}
-
-void ColorSelector::swatch_doc_color_changed(int position, model::NamedColor* color)
-{
-    if ( auto l = d->updating_swatch.get_lock() )
-    {
-        d->ui.swatch->palette().setColorAt(position, color->color.get(), color->name.get());
-    }
+    d->ui.document_swatch_widget->add_new_color(current_color());
 }
