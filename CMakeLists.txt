@@ -55,6 +55,12 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic -Wextra")
 
 # sub projects and stuff
 set(SCRIPTING_PY ON)
+
+option(WIN_WEIRD "" OFF)
+if ( WIN32 AND WIN_WEIRD )
+    add_definitions(-DQTCOLORWIDGETS_STATICALLY_LINKED)
+endif()
+
 add_subdirectory(external/QtAppSetup)
 add_subdirectory(src bin)
 
@@ -62,6 +68,17 @@ SET(BUILD_STATIC_LIBS ON CACHE BOOL "")
 SET(BUILD_SHARED_LIBS OFF CACHE BOOL "")
 add_subdirectory(external/Qt-Color-Widgets EXCLUDE_FROM_ALL)
 
+
+if ( WIN32 AND WIN_WEIRD )
+    get_target_property(COL_SRC QtColorWidgets SOURCES)
+    set(COL_SRC_CLEAN)
+    foreach ( SRC ${COL_SRC} )
+        if ( SRC MATCHES ".*BUILD_INTERFACE:.*" )
+            list(APPEND COL_SRC_CLEAN ${SRC})
+        endif()
+    endforeach()
+    target_sources(${PROJECT_SLUG} PUBLIC ${COL_SRC})
+endif()
 
 set(ALL_SOURCE_DIRECTORIES src)
 find_sources(ALL_SOURCES *.cpp *.hpp)

@@ -87,7 +87,7 @@ instructions below assume it's in `C:/Program Files (x86)/GnuWin32`
     mkdir build
     cd build
     $ENV:PATH="$ENV:PATH;C:/MinGW64/mingw64/bin"
-    cmake .. -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="C:/Qt/5.14.1/mingw73_64/" -DZLIB_INCLUDE_DIR="C:/Program Files (x86)/GnuWin32/include" -DZLIB_LIBRARY="C:/Program Files (x86)/GnuWin32/lib/libz.a" -DBUILD_OBJECT_LIBS=ON
+    cmake .. -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="C:/Qt/5.14.1/mingw73_64/" -DZLIB_INCLUDE_DIR="C:/Program Files (x86)/GnuWin32/include" -DZLIB_LIBRARY="C:/Program Files (x86)/GnuWin32/lib/libz.a" -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DWIN_WEIRD=ON -DCMAKE_CXX_FLAGS=-Wno-attributes
     mingw32-make.exe
 
 
