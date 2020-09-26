@@ -29,12 +29,14 @@ void model::Defs::on_color_added(model::NamedColor* color, int position)
     connect(color, &Object::property_changed, this, [position, color, this]{
         emit color_changed(position, color);
     });
+    color->attach();
     emit color_added(position, color);
 }
 
 void model::Defs::on_color_removed(model::NamedColor* color, int position)
 {
     disconnect(color, nullptr, this, nullptr);
+    color->detach();
     emit color_removed(position);
 }
 
