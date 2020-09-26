@@ -40,6 +40,10 @@ private slots:
     void swatch_doc_color_removed(int pos);
     void swatch_doc_color_changed(int position, model::NamedColor* color);
 
+    void generate();
+    void open();
+    void save();
+
 signals:
     void current_color_def(model::BrushStyle* def);
     void secondary_color_def(model::BrushStyle* def);

@@ -44,6 +44,19 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="button_extra">
+       <property name="toolTip">
+        <string>Swatch</string>
+       </property>
+       <property name="text">
+        <string>Swatch</string>
+       </property>
+       <property name="icon">
+        <iconset theme="open-menu-symbolic"/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -84,6 +97,33 @@
     </layout>
    </item>
   </layout>
+  <action name="action_generate">
+   <property name="icon">
+    <iconset theme="document-export"/>
+   </property>
+   <property name="text">
+    <string>Generate</string>
+   </property>
+   <property name="toolTip">
+    <string>Generate Swatch from the open Document</string>
+   </property>
+  </action>
+  <action name="action_save">
+   <property name="icon">
+    <iconset theme="document-save"/>
+   </property>
+   <property name="text">
+    <string>Save Palette...</string>
+   </property>
+  </action>
+  <action name="action_open">
+   <property name="icon">
+    <iconset theme="document-open"/>
+   </property>
+   <property name="text">
+    <string>Open Palette File...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

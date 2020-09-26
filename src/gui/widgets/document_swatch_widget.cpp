@@ -1,12 +1,16 @@
 #include "document_swatch_widget.hpp"
 #include "ui_document_swatch_widget.h"
 
+#include <QMenu>
 
 #include "model/defs/defs.hpp"
 #include "model/document.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/animation_commands.hpp"
 #include "utils/pseudo_mutex.hpp"
+#include "model/visitor.hpp"
+#include "model/shapes/styler.hpp"
+#include "model/defs/named_color.hpp"
 
 class DocumentSwatchWidget::Private
 {
@@ -14,6 +18,64 @@ public:
     Ui::DocumentSwatchWidget ui;
     model::Document* document = nullptr;
     utils::PseudoMutex updating_swatch;
+
+
+    class FetchColorVisitor : public model::Visitor
+    {
+    private:
+        void on_visit(model::Document * doc) override
+        {
+            defs = doc->defs();
+            doc->undo_stack().beginMacro(tr("Gather Document Swatch"));
+            for ( const auto& color : defs->colors )
+            {
+                if ( !color->color.animated() )
+                {
+                    QColor c = color->color.get();
+                    colors[c.name(QColor::HexArgb)] = color.get();
+                }
+            }
+        }
+
+        void on_visit_end(model::Document * document) override
+        {
+            document->undo_stack().endMacro();
+        }
+
+        void on_visit(model::DocumentNode * node) override
+        {
+            if ( auto sty = qobject_cast<model::Styler*>(node) )
+            {
+                if ( !sty->use.get() && !sty->color.animated() )
+                {
+                    QString color_name = sty->color.get().name(QColor::HexArgb);
+                    auto it = colors.find(color_name);
+                    model::NamedColor* def = nullptr;
+                    if ( it == colors.end() )
+                    {
+                        auto ptr = std::make_unique<model::NamedColor>(node->document());
+                        ptr->color.set(sty->color.get());
+                        def = ptr.get();
+                        node->push_command(new command::AddObject<model::NamedColor>(
+                            &defs->colors,
+                            std::move(ptr),
+                            defs->colors.size()
+                        ));
+                        colors[color_name] = def;
+                    }
+                    else
+                    {
+                        def = it->second;
+                    }
+
+                    sty->use.set_undoable(QVariant::fromValue(def));
+                }
+            }
+        }
+
+        std::map<QString, model::NamedColor*> colors;
+        model::Defs* defs;
+    };
 };
 
 DocumentSwatchWidget::DocumentSwatchWidget(QWidget* parent)
@@ -25,6 +87,15 @@ DocumentSwatchWidget::DocumentSwatchWidget(QWidget* parent)
     connect(palette, &color_widgets::ColorPalette::colorAdded, this, &DocumentSwatchWidget::swatch_palette_color_added);
     connect(palette, &color_widgets::ColorPalette::colorRemoved, this, &DocumentSwatchWidget::swatch_palette_color_removed);
     connect(palette, &color_widgets::ColorPalette::colorChanged, this, &DocumentSwatchWidget::swatch_palette_color_changed);
+
+    QMenu* menu = new QMenu(this);
+    menu->addAction(d->ui.action_generate);
+    menu->addAction(d->ui.action_open);
+    menu->addAction(d->ui.action_save);
+    d->ui.button_extra->setMenu(menu);
+    connect(d->ui.action_generate, &QAction::triggered, this, &DocumentSwatchWidget::generate);
+    connect(d->ui.action_open, &QAction::triggered, this, &DocumentSwatchWidget::open);
+    connect(d->ui.action_save, &QAction::triggered, this, &DocumentSwatchWidget::save);
 }
 
 DocumentSwatchWidget::~DocumentSwatchWidget() = default;
@@ -180,4 +251,18 @@ model::NamedColor * DocumentSwatchWidget::current_color() const
         return nullptr;
 
     return &d->document->defs()->colors[index];
+}
+
+void DocumentSwatchWidget::generate()
+{
+    Private::FetchColorVisitor().visit(d->document);
+}
+
+void DocumentSwatchWidget::open()
+{
+}
+
+void DocumentSwatchWidget::save()
+{
+
 }
