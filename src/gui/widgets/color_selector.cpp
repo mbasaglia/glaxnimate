@@ -1,7 +1,6 @@
 #include "color_selector.hpp"
 #include "ui_color_selector.h"
 
-#include "QtColorWidgets/color_palette_model.hpp"
 #include "app/application.hpp"
 #include "app/settings/settings.hpp"
 
@@ -35,7 +34,6 @@ class ColorSelector::Private
 public:
     bool updating_color = false;
     Ui::ColorSelector ui;
-    color_widgets::ColorPaletteModel palette_model;
     ColorSelector* parent;
 
     void setup_ui(ColorSelector* parent)
@@ -44,8 +42,6 @@ public:
         ui.setupUi(parent);
 
         update_color(QColor(app::settings::get<QString>("tools", "color_main")), true, nullptr);
-        ui.palette_widget->setModel(&palette_model);
-        palette_model.setSearchPaths(app::Application::instance()->data_paths_unchecked("palettes"));
         ui.color_preview_secondary->setColor(QColor(app::settings::get<QString>("tools", "color_secondary")));
         connect(ui.color_preview_secondary, &color_widgets::ColorSelector::colorSelected, parent, &ColorSelector::secondary_color_changed);
 
@@ -307,4 +303,9 @@ void ColorSelector::set_document(model::Document* document)
 void ColorSelector::swatch_give_color()
 {
     d->ui.document_swatch_widget->add_new_color(current_color());
+}
+
+void ColorSelector::set_palette_model(color_widgets::ColorPaletteModel* palette_model)
+{
+    d->ui.palette_widget->setModel(palette_model);
 }

@@ -195,6 +195,14 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.view_logs->setItemDelegateForColumn(2, del);
 
     // Swatches
+
+    palette_model.setSearchPaths(app::Application::instance()->data_paths_unchecked("palettes"));
+    palette_model.setSavePath(app::Application::instance()->writable_data_path("palettes"));
+    palette_model.load();
+    ui.color_selector->set_palette_model(&palette_model);
+    ui.stroke_style_widget->set_palette_model(&palette_model);
+    ui.document_swatch_widget->set_palette_model(&palette_model);
+
     connect(ui.document_swatch_widget, &DocumentSwatchWidget::needs_new_color, [this]{
         ui.document_swatch_widget->add_new_color(ui.color_selector->current_color());
     });

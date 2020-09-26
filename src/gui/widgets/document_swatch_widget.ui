@@ -113,7 +113,7 @@
     <iconset theme="document-save"/>
    </property>
    <property name="text">
-    <string>Save Palette...</string>
+    <string>Save Palette</string>
    </property>
   </action>
   <action name="action_open">

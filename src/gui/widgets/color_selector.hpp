@@ -4,8 +4,11 @@
 #include <memory>
 #include <QWidget>
 
-namespace model {
+namespace color_widgets {
+class ColorPaletteModel;
+} // namespace color_widgets
 
+namespace model {
 class Document;
 class BrushStyle;
 class NamedColor;
@@ -27,6 +30,8 @@ public:
     void save_settings();
 
     void set_document(model::Document* document);
+
+    void set_palette_model(color_widgets::ColorPaletteModel* palette_model);
 
 public slots:
     void set_current_color(const QColor& c);

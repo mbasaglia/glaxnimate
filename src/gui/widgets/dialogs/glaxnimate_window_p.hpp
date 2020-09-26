@@ -5,6 +5,7 @@
 #include <QMessageBox>
 
 #include "QtColorWidgets/color_delegate.hpp"
+#include "QtColorWidgets/color_palette_model.hpp"
 
 #include "ui_glaxnimate_window.h"
 #include "glaxnimate_window.hpp"
@@ -70,6 +71,7 @@ public:
     AboutDialog* about_dialog;
     FlowLayout* dock_tools_layout;
     app::log::LogModel log_model;
+    color_widgets::ColorPaletteModel palette_model;
 
     // document
     void setup_document(const QString& filename);

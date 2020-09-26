@@ -7,6 +7,10 @@
 #include "model/shapes/stroke.hpp"
 
 
+namespace color_widgets {
+class ColorPaletteModel;
+} // namespace color_
+
 class StrokeStyleWidget : public QWidget
 {
     Q_OBJECT
@@ -24,6 +28,8 @@ public:
     void set_document(model::Document* document);
 
     QPen pen_style() const;
+
+    void set_palette_model(color_widgets::ColorPaletteModel* palette_model);
 
 protected:
     void changeEvent ( QEvent* e ) override;

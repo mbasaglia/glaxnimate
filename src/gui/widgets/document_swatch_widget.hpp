@@ -5,8 +5,11 @@
 #include <memory>
 
 
-namespace model {
+namespace color_widgets {
+class ColorPaletteModel;
+} // namespace color_widgets
 
+namespace model {
 class Document;
 class BrushStyle;
 class NamedColor;
@@ -25,6 +28,8 @@ public:
     void add_new_color(const QColor& color);
 
     model::NamedColor* current_color() const;
+
+    void set_palette_model(color_widgets::ColorPaletteModel* palette_model);
 
 protected:
     void changeEvent ( QEvent* e ) override;

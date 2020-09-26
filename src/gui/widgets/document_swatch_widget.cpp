@@ -3,6 +3,8 @@
 
 #include <QMenu>
 
+#include <QtColorWidgets/color_palette_model.hpp>
+
 #include "model/defs/defs.hpp"
 #include "model/document.hpp"
 #include "command/object_list_commands.hpp"
@@ -18,6 +20,8 @@ public:
     Ui::DocumentSwatchWidget ui;
     model::Document* document = nullptr;
     utils::PseudoMutex updating_swatch;
+    color_widgets::ColorPaletteModel* palette_model = nullptr;
+    QPersistentModelIndex palette_index;
 
 
     class FetchColorVisitor : public model::Visitor
@@ -126,6 +130,8 @@ void DocumentSwatchWidget::set_document(model::Document* document)
         palette->setColors(QVector<QColor>{});
         for ( const auto& col : d->document->defs()->colors )
             palette->appendColor(col->color.get(), col->name.get());
+
+        palette->setName("");
 
         connect(d->document->defs(), &model::Defs::color_added, this, &DocumentSwatchWidget::swatch_doc_color_added);
         connect(d->document->defs(), &model::Defs::color_removed, this, &DocumentSwatchWidget::swatch_doc_color_removed);
@@ -264,5 +270,21 @@ void DocumentSwatchWidget::open()
 
 void DocumentSwatchWidget::save()
 {
+    if ( d->ui.swatch->palette().name().isEmpty() )
+        d->ui.swatch->palette().setName(d->document->main_composition()->name.get());
 
+    if ( !d->palette_index.isValid() )
+    {
+        d->palette_model->addPalette(d->ui.swatch->palette(), true);
+        d->palette_index = d->palette_model->index(d->palette_model->count() - 1, 0);
+    }
+    else
+    {
+        d->palette_model->updatePalette(d->palette_index.row(), d->ui.swatch->palette(), true);
+    }
+}
+
+void DocumentSwatchWidget::set_palette_model(color_widgets::ColorPaletteModel* palette_model)
+{
+    d->palette_model = palette_model;
 }

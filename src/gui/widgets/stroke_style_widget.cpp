@@ -348,3 +348,8 @@ model::Stroke * StrokeStyleWidget::shape() const
 {
     return d->target;
 }
+
+void StrokeStyleWidget::set_palette_model(color_widgets::ColorPaletteModel* palette_model)
+{
+    d->ui.color_selector->set_palette_model(palette_model);
+}
