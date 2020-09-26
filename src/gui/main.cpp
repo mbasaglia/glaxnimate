@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addPositionalArgument("file", "File to open");
+    parser.addOption({"default-ui", "If present, doen't restore the main window state"});
     parser.process(app);
     QStringList args = parser.positionalArguments();
 
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
 
     app.initialize();
 
-    GlaxnimateWindow window;
+    GlaxnimateWindow window(!parser.isSet("default-ui"));
     sc.finish(&window);
     window.show();
 

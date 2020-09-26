@@ -124,19 +124,25 @@ void DocumentSwatchWidget::swatch_add()
 void DocumentSwatchWidget::add_new_color(const QColor& color)
 {
     d->ui.swatch->palette().appendColor(color);
-    swatch_link(d->ui.swatch->palette().count() - 1);
+    swatch_link(d->ui.swatch->palette().count() - 1, {});
 }
 
 
-void DocumentSwatchWidget::swatch_link(int index)
+void DocumentSwatchWidget::swatch_link(int index, Qt::KeyboardModifiers mod)
 {
     if ( d->document && index != -1 )
-        emit current_color_def(&d->document->defs()->colors[index]);
+    {
+        if ( mod & Qt::ShiftModifier )
+            emit secondary_color_def(&d->document->defs()->colors[index]);
+        else
+            emit current_color_def(&d->document->defs()->colors[index]);
+    }
 }
 
 void DocumentSwatchWidget::swatch_unlink()
 {
     emit current_color_def(nullptr);
+    emit secondary_color_def(nullptr);
 }
 
 
@@ -162,4 +168,16 @@ void DocumentSwatchWidget::swatch_doc_color_changed(int position, model::NamedCo
     {
         d->ui.swatch->palette().setColorAt(position, color->color.get(), color->name.get());
     }
+}
+
+model::NamedColor * DocumentSwatchWidget::current_color() const
+{
+    if ( !d->document )
+        return nullptr;
+
+    int index = d->ui.swatch->selected();
+    if ( index == -1 )
+        return nullptr;
+
+    return &d->document->defs()->colors[index];
 }

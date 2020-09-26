@@ -144,9 +144,9 @@
   </connection>
   <connection>
    <sender>swatch</sender>
-   <signal>clicked(int)</signal>
+   <signal>clicked(int,Qt::KeyboardModifiers)</signal>
    <receiver>DocumentSwatchWidget</receiver>
-   <slot>swatch_link(int)</slot>
+   <slot>swatch_link(int,Qt::KeyboardModifiers)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>176</x>

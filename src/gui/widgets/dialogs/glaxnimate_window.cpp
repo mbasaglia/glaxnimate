@@ -10,10 +10,10 @@
 #include "model/layers/layers.hpp"
 
 
-GlaxnimateWindow::GlaxnimateWindow(QWidget *parent, Qt::WindowFlags flags)
+GlaxnimateWindow::GlaxnimateWindow(bool restore_state, QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags), d(std::make_unique<Private>())
 {
-    d->setupUi(this);
+    d->setupUi(restore_state, this);
     d->setup_document_new(tr("New Animation"));
     d->autosave_timer_start();
 }

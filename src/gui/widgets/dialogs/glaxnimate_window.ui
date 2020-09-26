@@ -666,7 +666,8 @@
   </widget>
   <widget class="QDockWidget" name="dock_undo">
    <property name="windowIcon">
-    <iconset theme="edit-undo-history"/>
+    <iconset theme="edit-undo-history">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="windowTitle">
     <string>Undo History</string>
@@ -679,9 +680,28 @@
      <item>
       <widget class="QUndoView" name="view_undo">
        <property name="cleanIcon">
-        <iconset theme="document-save"/>
+        <iconset theme="document-save">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_swatches">
+   <property name="windowIcon">
+    <iconset theme="paint-swatch"/>
+   </property>
+   <property name="windowTitle">
+    <string>Swatch</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_10">
+    <layout class="QVBoxLayout" name="verticalLayout_11">
+     <item>
+      <widget class="DocumentSwatchWidget" name="document_swatch_widget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -1369,6 +1389,15 @@
    <header>widgets/window_message_widget.hpp</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>DocumentSwatchWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/document_swatch_widget.hpp</header>
+   <container>1</container>
+   <slots>
+    <signal>needs_new_color()</signal>
+   </slots>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -1779,12 +1808,12 @@
    <slot>set_color(QColor)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1282</x>
-     <y>200</y>
+     <x>1311</x>
+     <y>139</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1270</x>
-     <y>414</y>
+     <x>1311</x>
+     <y>215</y>
     </hint>
    </hints>
   </connection>
@@ -1795,12 +1824,12 @@
    <slot>set_secondary_color(QColor)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1239</x>
-     <y>394</y>
+     <x>1311</x>
+     <y>215</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1240</x>
-     <y>292</y>
+     <x>1311</x>
+     <y>139</y>
     </hint>
    </hints>
   </connection>

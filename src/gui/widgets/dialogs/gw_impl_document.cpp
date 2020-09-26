@@ -55,6 +55,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
 
     ui.color_selector->set_document(current_document.get());
     ui.stroke_style_widget->set_document(current_document.get());
+    ui.document_swatch_widget->set_document(current_document.get());
 
     // Scripting
     script_contexts.clear();
@@ -204,6 +205,7 @@ bool GlaxnimateWindow::Private::close_document()
     ui.view_undo->setStack(nullptr);
     ui.color_selector->set_document(nullptr);
     ui.stroke_style_widget->set_document(nullptr);
+    ui.document_swatch_widget->set_document(nullptr);
 
     return true;
 }

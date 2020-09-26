@@ -24,11 +24,13 @@ public:
 
     void add_new_color(const QColor& color);
 
+    model::NamedColor* current_color() const;
+
 protected:
     void changeEvent ( QEvent* e ) override;
 
 private slots:
-    void swatch_link(int index);
+    void swatch_link(int index, Qt::KeyboardModifiers mod);
     void swatch_unlink();
     void swatch_add();
     void swatch_palette_color_added(int index);
@@ -40,6 +42,7 @@ private slots:
 
 signals:
     void current_color_def(model::BrushStyle* def);
+    void secondary_color_def(model::BrushStyle* def);
     void needs_new_color();
 
 private:
