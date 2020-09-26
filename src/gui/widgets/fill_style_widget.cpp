@@ -62,7 +62,8 @@ void FillStyleWidget::set_target_color(const QColor& color)
 
 void FillStyleWidget::commit_target_color()
 {
-    set_color(target->color.get(), true);
+    if ( target )
+        set_color(target->color.get(), true);
 }
 
 void FillStyleWidget::property_changed(const model::BaseProperty* prop)
