@@ -1,4 +1,5 @@
 Authors: Mattia Basaglia
+nav_icon: fa fa-download
 
 # Download
 

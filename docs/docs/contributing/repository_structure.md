@@ -30,7 +30,7 @@ Translation source files, see [Translations](index.md#translations) for details.
 
 ## docs
 
-Contains documentation files, see [Documentation](documentation.md) for details.
+Contains documentation files, see [documentation](documentation.md) for details.
 
 ## external
 

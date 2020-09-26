@@ -1,5 +1,6 @@
 Authors: Mattia Basaglia
 disable_toc: 1
+nav_icon: fa fa-heart
 
 # Donate
 

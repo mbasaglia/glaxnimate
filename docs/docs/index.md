@@ -1,5 +1,6 @@
 Authors: Mattia Basaglia
 disable_toc: 1
+no_nav: 1
 
 # Glaxnimate
 
@@ -93,7 +94,7 @@ Glaxnimate is a simple and fast vector graphics animation program.
 ## Features
 
 <div class="cards">
-    <a href="documentation/" class="card">
+    <a href="manual/" class="card">
         <img src="/img/ui/icons/draw-bezier-curves.svg" />
         <heading>Smooth Animations</heading>
         <span>Vector graphics and tweening animations</span>
@@ -107,7 +108,7 @@ Glaxnimate is a simple and fast vector graphics animation program.
         <img src="/img/ui/icons/edit-paste.svg" />
         <span>Easily copy and paste shapes across applications</span>
     </div-->
-    <a href="documentation/formats/" class="card">
+    <a href="manual/formats/" class="card">
         <img src="/img/ui/icons/internet-web-browser.svg" />
         <heading>Export animations for the web</heading>
         <span>Support for Lottie animations (animated SVG coming soon)</span>
@@ -116,7 +117,7 @@ Glaxnimate is a simple and fast vector graphics animation program.
 
 ## Learn
 
-* [Documentation](documentation/index.md)
+* [User Manual](manual/index.md)
 
 ## Get Involved
 

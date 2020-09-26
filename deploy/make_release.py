@@ -111,7 +111,7 @@ notes = """
 
 ## User Manual
 
-See the [Documentation](https://glaxnimate.mattbas.org/documentation/) page.
+See the [Documentation](https://glaxnimate.mattbas.org/manual/) page.
 
 ## Changes
 {chlog}

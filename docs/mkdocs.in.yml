@@ -15,20 +15,21 @@ markdown_extensions:
 extra_css:
     - style/style.css
 nav:
-    - download.md
+    - index.md
+    - "Download": download.md
     - "Donate": donate.md
-    - 'Documentation':
-        - documentation/index.md
-        - documentation/shapes.md
-        - documentation/formats.md
+    - "<i class='fa fa-book'></i> User Manual":
+        - manual/index.md
+        - manual/shapes.md
+        - manual/formats.md
         - "User Interface":
-            - documentation/ui/tools.md
-            - documentation/ui/canvas.md
-            - documentation/ui/docks.md
-            - documentation/ui/menus.md
-            - documentation/ui/settings.md
+            - manual/ui/tools.md
+            - manual/ui/canvas.md
+            - manual/ui/docks.md
+            - manual/ui/menus.md
+            - manual/ui/settings.md
         - "ChangeLog": changelog.md
-    - 'Contributing':
+    - "<i class='fa fa-hands-helping'></i> Contributing":
         - "Introduction": contributing/index.md
         - "Scripting":
             - contributing/scripting/index.md
@@ -44,4 +45,7 @@ nav:
             - contributing/code/misc.md
         - "Writing Documentation": contributing/documentation.md
         - "Roadmap": contributing/roadmap.md
-    - "Links": links.md
+    - "<i class='fa fa-globe'></i> Links":
+        - '<i class="fab fa-telegram"></i> Telegram Chat': https://t.me/Glaxnimate
+        - '<i class="fab fa-gitlab"></i>   Code Browser': https://gitlab.com/mattia.basaglia/glaxnimate
+        - '<i class="fa fa-bug"></i>       Issues': https://gitlab.com/mattia.basaglia/glaxnimate/-/issues
