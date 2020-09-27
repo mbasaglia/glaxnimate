@@ -53,8 +53,6 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
 
     ui.view_undo->setStack(&current_document->undo_stack());
 
-    ui.color_selector->set_document(current_document.get());
-    ui.stroke_style_widget->set_document(current_document.get());
     ui.document_swatch_widget->set_document(current_document.get());
 
     // Scripting
@@ -197,14 +195,12 @@ bool GlaxnimateWindow::Private::close_document()
     }
 
     ui.stroke_style_widget->set_shape(nullptr);
-    ui.color_selector->set_shape(nullptr);
+    ui.fill_style_widget->set_shape(nullptr);
     document_node_model.clear_document();
     property_model.clear_document();
     scene.clear_document();
     ui.timeline_widget->clear_document();
     ui.view_undo->setStack(nullptr);
-    ui.color_selector->set_document(nullptr);
-    ui.stroke_style_widget->set_document(nullptr);
     ui.document_swatch_widget->set_document(nullptr);
 
     return true;
@@ -478,5 +474,46 @@ QString GlaxnimateWindow::Private::drop_event_data(QDropEvent* event)
     }
 
     return {};
+}
 
+void GlaxnimateWindow::Private::set_color_def_primary(model::BrushStyle* def)
+{
+    if ( auto target = ui.fill_style_widget->shape() )
+    {
+        if ( !def )
+        {
+            current_document->undo_stack().beginMacro(tr("Unlink Fill Color"));
+            if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
+                target->color.set_undoable(col->color.get());
+            target->use.set_undoable(QVariant::fromValue(def));
+            current_document->undo_stack().endMacro();
+        }
+        else
+        {
+            current_document->undo_stack().beginMacro(tr("Link Fill Color"));
+            target->use.set_undoable(QVariant::fromValue(def));
+            current_document->undo_stack().endMacro();
+        }
+    }
+}
+
+void GlaxnimateWindow::Private::set_color_def_secondary(model::BrushStyle* def)
+{
+    if ( auto target = ui.stroke_style_widget->shape() )
+    {
+        if ( !def )
+        {
+            current_document->undo_stack().beginMacro(tr("Unlink Stroke Color"));
+            if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
+                target->color.set_undoable(col->color.get());
+            target->use.set_undoable(QVariant::fromValue(def));
+            current_document->undo_stack().endMacro();
+        }
+        else
+        {
+            current_document->undo_stack().beginMacro(tr("Link StrokeColor"));
+            target->use.set_undoable(QVariant::fromValue(def));
+            current_document->undo_stack().endMacro();
+        }
+    }
 }

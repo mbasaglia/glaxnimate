@@ -47,11 +47,6 @@
        <string>Palette</string>
       </property>
      </item>
-     <item>
-      <property name="text">
-       <string>Document Swatch</string>
-      </property>
-     </item>
     </widget>
    </item>
    <item>
@@ -555,28 +550,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="DocumentSwatchWidget" name="document_swatch_widget" native="true"/>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
    <item>
@@ -764,15 +737,6 @@
    <class>color_widgets::ColorLineEdit</class>
    <extends>QLineEdit</extends>
    <header>QtColorWidgets/color_line_edit.hpp</header>
-  </customwidget>
-  <customwidget>
-   <class>DocumentSwatchWidget</class>
-   <extends>QWidget</extends>
-   <header>widgets/shape_style/document_swatch_widget.hpp</header>
-   <container>1</container>
-   <slots>
-    <signal>needs_new_color()</signal>
-   </slots>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -1591,22 +1555,6 @@
     <hint type="destinationlabel">
      <x>293</x>
      <y>91</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>document_swatch_widget</sender>
-   <signal>needs_new_color()</signal>
-   <receiver>ColorSelector</receiver>
-   <slot>swatch_give_color()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>148</x>
-     <y>115</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>624</x>
-     <y>211</y>
     </hint>
    </hints>
   </connection>

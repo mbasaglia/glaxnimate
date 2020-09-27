@@ -10,8 +10,6 @@ class ColorPaletteModel;
 
 namespace model {
 class Document;
-class BrushStyle;
-class NamedColor;
 } // namespace model
 
 class ColorSelector : public QWidget
@@ -29,8 +27,6 @@ public:
 
     void save_settings();
 
-    void set_document(model::Document* document);
-
     void set_palette_model(color_widgets::ColorPaletteModel* palette_model);
 
 public slots:
@@ -43,13 +39,11 @@ private slots:
     void color_update_component(int value);
     void color_swap();
     void commit_current_color();
-    void swatch_give_color();
 
 signals:
     void current_color_changed(const QColor& c);
     void secondary_color_changed(const QColor& c);
     void current_color_committed(const QColor& c);
-    void current_color_def(model::BrushStyle* def);
 
 protected:
     void changeEvent ( QEvent* e ) override;

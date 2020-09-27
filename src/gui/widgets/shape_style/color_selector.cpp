@@ -222,7 +222,6 @@ ColorSelector::ColorSelector(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Private>())
 {
     d->setup_ui(this);
-    connect(d->ui.document_swatch_widget, &DocumentSwatchWidget::current_color_def, this, &ColorSelector::current_color_def);
 }
 
 ColorSelector::~ColorSelector() {}
@@ -293,16 +292,6 @@ void ColorSelector::hide_secondary()
 void ColorSelector::commit_current_color()
 {
     emit current_color_committed(d->current_color());
-}
-
-void ColorSelector::set_document(model::Document* document)
-{
-    d->ui.document_swatch_widget->set_document(document);
-}
-
-void ColorSelector::swatch_give_color()
-{
-    d->ui.document_swatch_widget->add_new_color(current_color());
 }
 
 void ColorSelector::set_palette_model(color_widgets::ColorPaletteModel* palette_model)

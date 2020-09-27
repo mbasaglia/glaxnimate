@@ -15,21 +15,14 @@ class NamedColor : public ObjectBase<NamedColor, BrushStyle>
 public:
     using Ctor::Ctor;
 
-    QString type_name_human() const override
-    {
-        return tr("Unnamed Color");
-    }
+    QString object_name() const override;
 
-    QBrush brush_style(FrameTime t) const override
-    {
-        return color.get_at(t);
-    }
+    QString type_name_human() const override;
+
+    QBrush brush_style(FrameTime t) const override;
 
 protected:
-    void fill_icon(QPixmap& icon) const override
-    {
-        icon.fill(color.get_at(0));
-    }
+    void fill_icon(QPixmap& icon) const override;
 
 };
 

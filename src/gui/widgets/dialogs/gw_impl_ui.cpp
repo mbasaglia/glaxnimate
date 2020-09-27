@@ -200,12 +200,12 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     palette_model.setSearchPaths(app::Application::instance()->data_paths_unchecked("palettes"));
     palette_model.setSavePath(app::Application::instance()->writable_data_path("palettes"));
     palette_model.load();
-    ui.color_selector->set_palette_model(&palette_model);
+    ui.fill_style_widget->set_palette_model(&palette_model);
     ui.stroke_style_widget->set_palette_model(&palette_model);
     ui.document_swatch_widget->set_palette_model(&palette_model);
 
     connect(ui.document_swatch_widget, &DocumentSwatchWidget::needs_new_color, [this]{
-        ui.document_swatch_widget->add_new_color(ui.color_selector->current_color());
+        ui.document_swatch_widget->add_new_color(ui.fill_style_widget->current_color());
     });
     connect(ui.document_swatch_widget, &DocumentSwatchWidget::current_color_def, [this](model::BrushStyle* sty){
         set_color_def_primary(sty);
@@ -326,7 +326,7 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
 
     ui.stroke_style_widget->set_shape(stroke);
     /// \todo rename to fill_style_widget
-    ui.color_selector->set_shape(fill);
+    ui.fill_style_widget->set_shape(fill);
 }
 
 void GlaxnimateWindow::Private::view_fit()
@@ -375,7 +375,7 @@ void GlaxnimateWindow::Private::shutdown()
     app::settings::set("ui", "window_state", parent->saveState());
     app::settings::set("open_save", "recent_files", recent_files);
 
-    ui.color_selector->save_settings();
+    ui.fill_style_widget->save_settings();
     ui.stroke_style_widget->save_settings();
 
     QStringList history = ui.console_input->history();
@@ -453,14 +453,3 @@ void GlaxnimateWindow::Private::status_message(const QString& message, int durat
     ui.status_bar->showMessage(message, duration);
 }
 
-void GlaxnimateWindow::Private::set_color_def_primary(model::BrushStyle* sty)
-{
-    if ( auto shape = ui.color_selector->shape() )
-        shape->use.set_undoable(QVariant::fromValue(sty));
-}
-
-void GlaxnimateWindow::Private::set_color_def_secondary(model::BrushStyle* sty)
-{
-    if ( auto shape = ui.stroke_style_widget->shape() )
-        shape->use.set_undoable(QVariant::fromValue(sty));
-}

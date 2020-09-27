@@ -98,7 +98,7 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> lay
 
     if ( auto scl = qobject_cast<model::SolidColorLayer*>(layer.get()) )
     {
-        scl->color.set(ui.color_selector->current_color());
+        scl->color.set(ui.fill_style_widget->current_color());
     }
 
     model::Layer* ptr = layer.get();

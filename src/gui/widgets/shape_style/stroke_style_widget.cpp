@@ -151,8 +151,6 @@ StrokeStyleWidget::StrokeStyleWidget(QWidget* parent)
     d->ui.color_selector->hide_secondary();
 
     d->dark_theme = palette().window().color().valueF() < 0.5;
-
-    connect(d->ui.color_selector, &ColorSelector::current_color_def, this, &StrokeStyleWidget::set_target_def);
 }
 
 StrokeStyleWidget::~StrokeStyleWidget() = default;
@@ -315,33 +313,6 @@ void StrokeStyleWidget::commit_width()
 {
     if ( d->can_update_target() && !qFuzzyCompare(d->target->width.get(), float(d->ui.spin_stroke_width->value())) )
         d->set(d->target->width, d->ui.spin_stroke_width->value(), true);
-}
-
-void StrokeStyleWidget::set_document(model::Document* document)
-{
-    d->ui.color_selector->set_document(document);
-}
-
-
-void StrokeStyleWidget::set_target_def(model::BrushStyle* def)
-{
-    if ( !d->target || d->updating )
-        return;
-
-    if ( !def )
-    {
-        d->target->document()->undo_stack().beginMacro(tr("Unlink Stroke Color"));
-        if ( auto col = qobject_cast<model::NamedColor*>(d->target->use.get()) )
-            d->target->color.set_undoable(col->color.get());
-        d->target->use.set_undoable(QVariant::fromValue(def));
-        d->target->document()->undo_stack().endMacro();
-    }
-    else
-    {
-        d->target->document()->undo_stack().beginMacro(tr("Link Stroke Color"));
-        d->target->use.set_undoable(QVariant::fromValue(def));
-        d->target->document()->undo_stack().endMacro();
-    }
 }
 
 model::Stroke * StrokeStyleWidget::shape() const

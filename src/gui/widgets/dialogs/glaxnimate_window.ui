@@ -263,7 +263,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="FillStyleWidget" name="color_selector" native="true"/>
+      <widget class="FillStyleWidget" name="fill_style_widget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -691,7 +691,8 @@
   </widget>
   <widget class="QDockWidget" name="dock_swatches">
    <property name="windowIcon">
-    <iconset theme="paint-swatch"/>
+    <iconset theme="paint-swatch">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="windowTitle">
     <string>Swatch</string>
@@ -1333,7 +1334,8 @@
   </action>
   <action name="action_donate">
    <property name="icon">
-    <iconset theme="love"/>
+    <iconset theme="love">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Donate...</string>
@@ -1811,7 +1813,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>color_selector</sender>
+   <sender>fill_style_widget</sender>
    <signal>secondary_color_changed(QColor)</signal>
    <receiver>stroke_style_widget</receiver>
    <slot>set_color(QColor)</slot>
@@ -1829,7 +1831,7 @@
   <connection>
    <sender>stroke_style_widget</sender>
    <signal>color_changed(QColor)</signal>
-   <receiver>color_selector</receiver>
+   <receiver>fill_style_widget</receiver>
    <slot>set_secondary_color(QColor)</slot>
    <hints>
     <hint type="sourcelabel">

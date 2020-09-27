@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>312</width>
-    <height>244</height>
+    <height>276</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -25,24 +25,13 @@
        <height>32</height>
       </size>
      </property>
+     <property name="showClearColor">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QToolButton" name="toolButton_3">
-       <property name="toolTip">
-        <string>Unlink selected from swatch</string>
-       </property>
-       <property name="text">
-        <string>Unlink</string>
-       </property>
-       <property name="icon">
-        <iconset theme="remove-link">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QToolButton" name="button_extra">
        <property name="toolTip">
@@ -52,7 +41,8 @@
         <string>Swatch</string>
        </property>
        <property name="icon">
-        <iconset theme="open-menu-symbolic"/>
+        <iconset theme="open-menu-symbolic">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -99,7 +89,8 @@
   </layout>
   <action name="action_generate">
    <property name="icon">
-    <iconset theme="document-export"/>
+    <iconset theme="document-export">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Generate</string>
@@ -110,7 +101,8 @@
   </action>
   <action name="action_save">
    <property name="icon">
-    <iconset theme="document-save"/>
+    <iconset theme="document-save">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Save Palette</string>
@@ -118,7 +110,8 @@
   </action>
   <action name="action_open">
    <property name="icon">
-    <iconset theme="document-open"/>
+    <iconset theme="document-open">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Open Palette File...</string>
@@ -141,8 +134,8 @@
    <slot>removeSelected()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>366</x>
-     <y>223</y>
+     <x>304</x>
+     <y>236</y>
     </hint>
     <hint type="destinationlabel">
      <x>295</x>
@@ -157,28 +150,12 @@
    <slot>swatch_add()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>336</x>
-     <y>226</y>
+     <x>266</x>
+     <y>236</y>
     </hint>
     <hint type="destinationlabel">
      <x>317</x>
      <y>406</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>toolButton_3</sender>
-   <signal>clicked()</signal>
-   <receiver>DocumentSwatchWidget</receiver>
-   <slot>swatch_unlink()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>30</x>
-     <y>211</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>39</x>
-     <y>398</y>
     </hint>
    </hints>
   </connection>
@@ -198,10 +175,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>swatch</sender>
+   <signal>rightClicked(int,Qt::KeyboardModifiers)</signal>
+   <receiver>DocumentSwatchWidget</receiver>
+   <slot>swatch_menu(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>swatch_add()</slot>
   <slot>swatch_unlink()</slot>
   <slot>swatch_link(int)</slot>
+  <slot>swatch_menu(int)</slot>
  </slots>
 </ui>

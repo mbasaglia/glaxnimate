@@ -36,7 +36,6 @@ protected:
 
 private slots:
     void swatch_link(int index, Qt::KeyboardModifiers mod);
-    void swatch_unlink();
     void swatch_add();
     void swatch_palette_color_added(int index);
     void swatch_palette_color_removed(int index);
@@ -44,6 +43,7 @@ private slots:
     void swatch_doc_color_added(int position, model::NamedColor* color);
     void swatch_doc_color_removed(int pos);
     void swatch_doc_color_changed(int position, model::NamedColor* color);
+    void swatch_menu(int index);
 
     void generate();
     void open();

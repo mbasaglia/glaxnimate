@@ -23,8 +23,6 @@ private slots:
 
     void property_changed(const model::BaseProperty* prop);
 
-    void set_target_def(model::BrushStyle* def);
-
 private:
     model::Fill* target = nullptr;
     bool updating = false;

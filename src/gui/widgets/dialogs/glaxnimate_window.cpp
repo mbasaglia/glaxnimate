@@ -267,22 +267,22 @@ model::Layer * GlaxnimateWindow::current_layer() const
 
 QColor GlaxnimateWindow::current_color() const
 {
-    return d->ui.color_selector->current_color();
+    return d->ui.fill_style_widget->current_color();
 }
 
 QColor GlaxnimateWindow::secondary_color() const
 {
-    return d->ui.color_selector->secondary_color();
+    return d->ui.fill_style_widget->secondary_color();
 }
 
 void GlaxnimateWindow::set_current_color(const QColor& c)
 {
-    d->ui.color_selector->set_current_color(c);
+    d->ui.fill_style_widget->set_current_color(c);
 }
 
 void GlaxnimateWindow::set_secondary_color(const QColor& c)
 {
-    d->ui.color_selector->set_secondary_color(c);
+    d->ui.fill_style_widget->set_secondary_color(c);
 }
 
 model::ShapeElement * GlaxnimateWindow::current_shape()

@@ -2,8 +2,10 @@
 #include "ui_document_swatch_widget.h"
 
 #include <QMenu>
+#include <QInputDialog>
 
 #include <QtColorWidgets/color_palette_model.hpp>
+#include <QtColorWidgets/ColorDialog>
 
 #include "model/defs/defs.hpp"
 #include "model/document.hpp"
@@ -127,6 +129,7 @@ void DocumentSwatchWidget::set_document(model::Document* document)
     if ( d->document )
     {
         auto l = d->updating_swatch.get_lock();
+
         palette->setColors(QVector<QColor>{});
         for ( const auto& col : d->document->defs()->colors )
             palette->appendColor(col->color.get(), col->name.get());
@@ -207,21 +210,16 @@ void DocumentSwatchWidget::add_new_color(const QColor& color)
 
 void DocumentSwatchWidget::swatch_link(int index, Qt::KeyboardModifiers mod)
 {
-    if ( d->document && index != -1 )
+    if ( d->document )
     {
+        auto def = index != -1 ? &d->document->defs()->colors[index] : nullptr;
+
         if ( mod & Qt::ShiftModifier )
-            emit secondary_color_def(&d->document->defs()->colors[index]);
+            emit secondary_color_def(def);
         else
-            emit current_color_def(&d->document->defs()->colors[index]);
+            emit current_color_def(def);
     }
 }
-
-void DocumentSwatchWidget::swatch_unlink()
-{
-    emit current_color_def(nullptr);
-    emit secondary_color_def(nullptr);
-}
-
 
 void DocumentSwatchWidget::swatch_doc_color_added(int position, model::NamedColor* color)
 {
@@ -287,4 +285,113 @@ void DocumentSwatchWidget::save()
 void DocumentSwatchWidget::set_palette_model(color_widgets::ColorPaletteModel* palette_model)
 {
     d->palette_model = palette_model;
+}
+
+void DocumentSwatchWidget::swatch_menu ( int index )
+{
+    QMenu menu;
+
+    if ( index == -1 )
+    {
+        menu.addSection(tr("Unlink Color"));
+
+        menu.addAction(
+            QIcon::fromTheme("format-fill-color"),
+            tr("Unlink fill"),
+            this,
+            [this]{
+                emit current_color_def(nullptr);
+            }
+        );
+
+        menu.addAction(
+            QIcon::fromTheme("format-stroke-color"),
+            tr("Unlink stroke"),
+            this,
+            [this]{
+                emit secondary_color_def(nullptr);
+            }
+        );
+    }
+    else
+    {
+        model::NamedColor* item = &d->document->defs()->colors[index];
+        menu.addSection(item->object_name());
+
+        menu.addAction(
+            QIcon::fromTheme("edit-rename"),
+            tr("Rename..."),
+            this,
+            [item, this]{
+                bool ok = false;
+                QString name = QInputDialog::getText(this, tr("Rename Swatch Color"), tr("Name"), QLineEdit::Normal, item->type_name_human(), &ok);
+                if ( ok )
+                    item->name.set_undoable(name);
+            }
+        );
+
+        menu.addAction(
+            QIcon::fromTheme("color-management"),
+            tr("Edit Color..."),
+            this,
+            [item, this]{
+                color_widgets::ColorDialog dialog(this);
+                QColor old = item->color.get();
+                dialog.setColor(old);
+                connect(&dialog, &color_widgets::ColorDialog::colorChanged, &item->color, &model::AnimatedProperty<QColor>::set);
+                auto result = dialog.exec();
+                item->color.set(old);
+                if ( result == QDialog::Accepted )
+                    item->color.set_undoable(dialog.color());
+            }
+        );
+
+        menu.addSeparator();
+
+        menu.addAction(
+            QIcon::fromTheme("list-remove"),
+            tr("Remove"),
+            this,
+            [index, this]{
+                d->ui.swatch->palette().eraseColor(index);
+            }
+        );
+
+        menu.addAction(
+            QIcon::fromTheme("edit-duplicate"),
+            tr("Duplicate"),
+            this,
+            [item, index, this]{
+                auto clone = item->clone_covariant();
+                item->push_command(new command::AddObject(
+                    &d->document->defs()->colors,
+                    std::move(clone),
+                    index+1
+                ));
+            }
+        );
+
+        menu.addSeparator();
+
+        menu.addAction(
+            QIcon::fromTheme("format-fill-color"),
+            tr("Set as fill"),
+            this,
+            [item, this]{
+                emit current_color_def(item);
+            }
+        );
+
+        menu.addAction(
+            QIcon::fromTheme("format-stroke-color"),
+            tr("Set as stroke"),
+            this,
+            [item, this]{
+                emit secondary_color_def(item);
+            }
+        );
+    }
+
+    menu.exec(QCursor::pos());
+
 }

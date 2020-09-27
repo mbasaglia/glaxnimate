@@ -12,8 +12,6 @@ FillStyleWidget::FillStyleWidget(QWidget* parent )
             this, &FillStyleWidget::set_target_color);
     connect(this, &ColorSelector::current_color_committed,
             this, &FillStyleWidget::commit_target_color);
-    connect(this, &ColorSelector::current_color_def,
-            this, &FillStyleWidget::set_target_def);
 }
 
 
@@ -71,27 +69,6 @@ void FillStyleWidget::property_changed(const model::BaseProperty* prop)
     if ( prop == &target->color || prop == &target->use )
     {
         update_from_target();
-    }
-}
-
-void FillStyleWidget::set_target_def(model::BrushStyle* def)
-{
-    if ( !target || updating )
-        return;
-
-    if ( !def )
-    {
-        target->document()->undo_stack().beginMacro(tr("Unlink Fill Color"));
-        if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
-            target->color.set_undoable(col->color.get());
-        target->use.set_undoable(QVariant::fromValue(def));
-        target->document()->undo_stack().endMacro();
-    }
-    else
-    {
-        target->document()->undo_stack().beginMacro(tr("Link Fill Color"));
-        target->use.set_undoable(QVariant::fromValue(def));
-        target->document()->undo_stack().endMacro();
     }
 }
 
