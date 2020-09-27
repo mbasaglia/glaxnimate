@@ -421,6 +421,16 @@ public:
         return jobj;
     }
 
+    void convert_styler(model::Styler* shape, QCborMap& jsh)
+    {
+        jsh["o"_l] = convert_animated(&shape->opacity, FloatMult(100));
+
+        if ( auto used = shape->use.get() )
+        {
+            if ( auto color = qobject_cast<model::NamedColor*>(used) )
+                jsh["c"_l] = convert_animated(&color->color);
+        }
+    }
 
     QCborMap convert_shape(model::ShapeElement* shape)
     {
@@ -442,7 +452,7 @@ public:
         {
             auto fill = static_cast<model::Fill*>(shape);
             jsh["r"_l] = fill->fill_rule.get() == model::Fill::NonZero ? 1 : 2;
-            jsh["o"_l] = convert_animated(&fill->opacity, FloatMult(100));
+            convert_styler(fill, jsh);
         }
         else if ( shape->type_name() == "Stroke" )
         {
@@ -459,10 +469,7 @@ public:
                 case model::Stroke::RoundJoin: jsh["lj"_l] = 2; break;
                 case model::Stroke::BevelJoin: jsh["lj"_l] = 3; break;
             }
-            jsh["o"_l] = convert_animated(
-                &str->opacity,
-                FloatMult(100)
-            );
+            convert_styler(str, jsh);
         }
         else if ( shape->type_name() == "PolyStar" )
         {
