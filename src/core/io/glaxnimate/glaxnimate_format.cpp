@@ -114,7 +114,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, mo
                 return to_json(obj);
             return {};
         case model::PropertyTraits::ObjectReference:
-            if ( auto dn = value.value<model::DocumentNode*>() )
+            if ( auto dn = value.value<model::ReferenceTarget*>() )
                 return QJsonValue::fromVariant(dn->uuid.get());
             return {};
         case model::PropertyTraits::Enum:

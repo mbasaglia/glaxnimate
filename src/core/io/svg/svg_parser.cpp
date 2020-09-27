@@ -108,7 +108,7 @@ public:
             if ( id.isEmpty() )
                 continue;
 
-            if ( attr(linear_gradient, "obs", "paint") == "solid" )
+            if ( attr(linear_gradient, "osb", "paint") == "solid" )
                 parse_named_color(linear_gradient, id);
             else
                 parse_brush_style_check(linear_gradient, later);
