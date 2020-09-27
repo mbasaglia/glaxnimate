@@ -40,3 +40,10 @@ void model::Defs::on_color_removed(model::NamedColor* color, int position)
     emit color_removed(position);
 }
 
+model::ReferenceTarget* model::Defs::find_by_uuid ( const QUuid& n ) const
+{
+    for ( const auto& c : colors )
+        if ( c->uuid.get() == n )
+            return c.get();
+    return nullptr;
+}

@@ -18,6 +18,8 @@ public:
     std::vector<ReferenceTarget*> valid_brush_styles() const;
     bool is_valid_brush_style(ReferenceTarget* style) const;
 
+    Q_INVOKABLE model::ReferenceTarget* find_by_uuid(const QUuid& n) const;
+
 signals:
     void color_added(int position, model::NamedColor* color);
     void color_removed(int position);

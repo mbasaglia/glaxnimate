@@ -71,8 +71,10 @@ void model::Document::set_io_options(const io::Options& opt)
         emit filename_changed(d->io_options.filename);
 }
 
-model::DocumentNode * model::Document::find_by_uuid(const QUuid& n) const
+model::ReferenceTarget * model::Document::find_by_uuid(const QUuid& n) const
 {
+    if ( auto it = d->defs.find_by_uuid(n) )
+        return it;
     return d->main_composition.docnode_find_by_uuid(n);
 }
 
