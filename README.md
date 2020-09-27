@@ -80,7 +80,7 @@ Contacts
 
 * [Telegram (Chat)](https://t.me/Glaxnimate)
 * [GitLab (Code, Issues)](https://gitlab.com/mattia.basaglia/glaxnimate)
-* [Documentation](https://glaxnimate.mattbas.org)
+* [User Manual](https://glaxnimate.mattbas.org)
 
 
 License

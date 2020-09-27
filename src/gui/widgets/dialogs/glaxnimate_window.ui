@@ -163,6 +163,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="action_online_manual"/>
+    <addaction name="action_donate"/>
     <addaction name="action_report_issue"/>
     <addaction name="actionAbout"/>
    </widget>
@@ -1328,6 +1329,14 @@
    </property>
    <property name="text">
     <string>Re&amp;size...</string>
+   </property>
+  </action>
+  <action name="action_donate">
+   <property name="icon">
+    <iconset theme="love"/>
+   </property>
+   <property name="text">
+    <string>Donate...</string>
    </property>
   </action>
  </widget>

@@ -245,6 +245,11 @@ void GlaxnimateWindow::help_issue()
     QDesktopServices::openUrl(AppInfo::instance().url_issues());
 }
 
+void GlaxnimateWindow::help_donate()
+{
+    QDesktopServices::openUrl(AppInfo::instance().url_donate());
+}
+
 model::Composition * GlaxnimateWindow::current_composition() const
 {
     return d->current_composition();

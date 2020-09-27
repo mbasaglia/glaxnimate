@@ -37,3 +37,8 @@ QString AppInfo::description() const
 {
     return PROJECT_DESCRIPTION;
 }
+
+QUrl AppInfo::url_donate() const
+{
+    return QUrl(URL_DONATE);
+}

@@ -2,12 +2,12 @@
     <div class="container">
 
         <!-- Collapsed navigation -->
-        <div class="navbar-header">
+        <div class="navbar-header{% if nav.homepage.active %} active{% endif %}">
             <!-- Main title -->
             <a class="navbar-brand" href="{{ nav.homepage.url|url }}">
                 <img src='{{ "/img/logo.svg"|url }}' width="32" />
                 <span>{{ config.site_name }}</span>
-                <span style="font-size: 0.7em;">{{ config.extra.version }}</span>
+                <!--span style="font-size: 0.7em;">{{ config.extra.version }}</span-->
             </a>
 
             {%- if nav|length>1 or (page and (page.next_page or page.previous_page)) or config.repo_url %}
@@ -37,9 +37,12 @@
                         {% endfor %}
                         </ul>
                     </li>
-                {% else %}
+                {% elif not nav_item.is_page or not nav_item.meta.no_nav %}
                     <li {% if nav_item.active %}class="active"{% endif %}>
-                        <a href="{{ nav_item.url|url }}">{{ nav_item.title }}</a>
+                        <a href="{{ nav_item.url|url }}">
+                        {%- if nav_item.is_page and nav_item.meta.nav_icon -%}
+                            <i class="{{ nav_item.meta.nav_icon }}"></i>
+                        {%- endif %} {{ nav_item.title }}</a>
                     </li>
                 {% endif %}
                 {% endfor %}
@@ -74,22 +77,8 @@
                 {%- endblock %}
 
                 {%- block repo %}
-                    {%- if page and page.edit_url %}
-                    <li>
-                        <a href="{{ page.edit_url }}">
-                            {%- if config.repo_name == 'GitHub' -%}
-                            <i class="fab fa-github"></i> Edit on {{ config.repo_name }}
-                            {%- elif config.repo_name == 'Bitbucket' -%}
-                            <i class="fab fa-bitbucket"></i> Edit on {{ config.repo_name }}
-                            {%- elif config.repo_name == 'GitLab' -%}
-                            <i class="fab fa-gitlab"></i> Edit on {{ config.repo_name }}
-                            {%- else -%}
-                            Edit on {{ config.repo_name }}
-                            {%- endif -%}
-                        </a>
-                    </li>
-                    {%- elif config.repo_url %}
-                    <li>
+                    {%- if config.repo_url and 0 %}
+                        <li>
                         <a href="{{ config.repo_url }}">
                             {%- if config.repo_name == 'GitHub' -%}
                             <i class="fab fa-github"></i> {{ config.repo_name }}
@@ -101,7 +90,7 @@
                             {{ config.repo_name }}
                             {%- endif -%}
                         </a>
-                    </li>
+                        </li>
                     {%- endif %}
                 {%- endblock %}
             </ul>

@@ -1,5 +1,8 @@
 Authors: Mattia Basaglia
 disable_toc: 1
+no_nav: 1
+
+# Glaxnimate
 
 <style>
 .container
@@ -73,7 +76,7 @@ disable_toc: 1
 }
 </style>
 
-# Glaxnimate
+
 
 <img src="/img/logo.svg" width="128" />
 
@@ -82,16 +85,16 @@ Glaxnimate is a simple and fast vector graphics animation program.
 
 ## Download
 
-* [Stable Version (TODO)](download.md#stable-releases)
+* [Stable Version](download.md#stable-releases)
 * [Experimental Version](download.md#development-snapshots)
-* [Building from Source](contributing/read_me.md)
+* [Source](contributing/read_me.md)
 
 <img src="/img/screenshots/main_window.png" style="max-width: 100vw;"/>
 
 ## Features
 
 <div class="cards">
-    <a href="documentation/" class="card">
+    <a href="manual/" class="card">
         <img src="/img/ui/icons/draw-bezier-curves.svg" />
         <heading>Smooth Animations</heading>
         <span>Vector graphics and tweening animations</span>
@@ -105,7 +108,7 @@ Glaxnimate is a simple and fast vector graphics animation program.
         <img src="/img/ui/icons/edit-paste.svg" />
         <span>Easily copy and paste shapes across applications</span>
     </div-->
-    <a href="documentation/formats/" class="card">
+    <a href="manual/formats/" class="card">
         <img src="/img/ui/icons/internet-web-browser.svg" />
         <heading>Export animations for the web</heading>
         <span>Support for Lottie animations (animated SVG coming soon)</span>
@@ -114,10 +117,11 @@ Glaxnimate is a simple and fast vector graphics animation program.
 
 ## Learn
 
-* [Documentation](documentation/index.md)
+* [User Manual](manual/index.md)
 
 ## Get Involved
 
+* [Donate](donate.md)
 * [Contribute](contributing/index.md)
 * [Report Issues](https://gitlab.com/mattia.basaglia/glaxnimate/-/issues)
 * [Chat](https://t.me/Glaxnimate)

@@ -2,6 +2,13 @@ Contributing To Glaxnimate
 =======================================
 
 
+Donating
+---------------------------------------
+
+If you don't have any technical skill you can still support Glaxnimate by
+[donating](https://glaxnimate.mattbas.org/donate).
+
+
 Reporting Issues
 ---------------------------------------
 
