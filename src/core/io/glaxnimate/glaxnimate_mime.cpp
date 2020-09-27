@@ -1,5 +1,7 @@
 #include "glaxnimate_mime.hpp"
 #include "import_state.hpp"
+#include "model/shapes/shape.hpp"
+#include "model/defs/named_color.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateMime> io::glaxnimate::GlaxnimateMime::autoreg;
 
@@ -21,7 +23,7 @@ QByteArray io::glaxnimate::GlaxnimateMime::serialize(const std::vector<model::Do
     return serialize_json(objects).toJson(QJsonDocument::Compact);
 }
 
-std::vector<std::unique_ptr<model::DocumentNode>> io::glaxnimate::GlaxnimateMime::deserialize(
+io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(
     const QByteArray& data, model::Document* owner_document, model::Composition* owner_composition
 )  const
 {
@@ -46,8 +48,7 @@ std::vector<std::unique_ptr<model::DocumentNode>> io::glaxnimate::GlaxnimateMime
     state.document = owner_document;
     state.composition = owner_composition;
 
-    std::vector<std::unique_ptr<model::DocumentNode>> output_objects;
-    output_objects.reserve(input_objects.size());
+    io::mime::DeserializedData output_objects;
 
     for ( const auto& json_val : input_objects )
     {
@@ -59,15 +60,21 @@ std::vector<std::unique_ptr<model::DocumentNode>> io::glaxnimate::GlaxnimateMime
         if ( !obj )
             continue;
 
-        auto docnode = qobject_cast<model::DocumentNode*>(obj);
-        if ( !docnode )
+        if ( auto layer = qobject_cast<model::Layer*>(obj) )
+            output_objects.layers.emplace_back(layer);
+        else if ( auto shape = qobject_cast<model::ShapeElement*>(obj) )
+            output_objects.shapes.emplace_back(shape);
+        else if ( auto composition = qobject_cast<model::Composition*>(obj) )
+            output_objects.compositions.emplace_back(composition);
+        else if ( auto color = qobject_cast<model::NamedColor*>(obj) )
+            output_objects.named_colors.emplace_back(color);
+        else
         {
             delete obj;
-            return {};
+            continue;
         }
 
-        output_objects.emplace_back(docnode);
-        state.load_object(output_objects.back().get(), json_object);
+        state.load_object(obj, json_object);
     }
 
     state.resolve();

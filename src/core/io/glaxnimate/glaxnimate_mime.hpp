@@ -15,7 +15,7 @@ public:
     QString name() const override { return GlaxnimateFormat::tr("Glaxnimate Animation"); }
     QStringList mime_types() const override;
     QByteArray serialize(const std::vector<model::DocumentNode*>& objects) const override;
-    std::vector<std::unique_ptr<model::DocumentNode>> deserialize(
+    io::mime::DeserializedData deserialize(
         const QByteArray& data,
         model::Document* owner_document,
         model::Composition* owner_composition

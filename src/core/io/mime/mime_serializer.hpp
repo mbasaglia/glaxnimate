@@ -13,9 +13,33 @@ namespace model {
     class DocumentNode;
     class Document;
     class Composition;
+    class Object;
+    class Layer;
+    class NamedColor;
+    class ShapeElement;
 } // namespace model
 
 namespace io::mime {
+
+struct DeserializedData
+{
+    DeserializedData();
+    DeserializedData(const DeserializedData&) = delete;
+    DeserializedData(DeserializedData&&);
+    DeserializedData& operator=(const DeserializedData&) = delete;
+    DeserializedData& operator=(DeserializedData&&);
+    ~DeserializedData();
+
+    std::vector<std::unique_ptr<model::Layer>> layers;
+    std::vector<std::unique_ptr<model::Composition>> compositions;
+    std::vector<std::unique_ptr<model::ShapeElement>> shapes;
+    std::vector<std::unique_ptr<model::NamedColor>> named_colors;
+
+    bool empty() const
+    {
+        return layers.empty() && compositions.empty() && shapes.empty() && named_colors.empty();
+    }
+};
 
 class MimeSerializer
 {
@@ -28,11 +52,11 @@ public:
 
     virtual QByteArray serialize(const std::vector<model::DocumentNode*>& objects) const = 0;
 
-    virtual std::vector<std::unique_ptr<model::DocumentNode>> deserialize(
+    virtual io::mime::DeserializedData deserialize(
         const QByteArray& data,
         model::Document* owner_document,
         model::Composition* owner_composition
-    ) const = 0;
+    ) const;
 
     virtual bool can_deserialize() const = 0;
 
@@ -43,7 +67,7 @@ public:
             out.setData(mime, data);
     }
 
-    std::vector<std::unique_ptr<model::DocumentNode>> from_mime_data(
+    io::mime::DeserializedData from_mime_data(
         const QMimeData& data,
         model::Document* owner_document,
         model::Composition* owner_composition

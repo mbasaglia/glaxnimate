@@ -8,6 +8,7 @@
 #include "model/shapes/shapes.hpp"
 #include "model/layers/layers.hpp"
 #include "model/document.hpp"
+#include "model/defs/named_color.hpp"
 
 #include "detail.hpp"
 #include "path_parser.hpp"
@@ -62,7 +63,12 @@ public:
         size.setWidth(len_attr(svg, "width", size.width()));
         size.setHeight(len_attr(svg, "height", size.height()));
 
-        /// \todo Parse defs
+        parse_defs();
+        if ( write_to_document )
+        {
+            for ( auto& nc : objects.named_colors )
+                document->defs()->colors.insert(std::move(nc));
+        }
 
         model::ShapeLayer* parent_layer = parse_objects(svg);
 
@@ -79,19 +85,91 @@ public:
         document->main_composition()->width.set(size.width());
         document->main_composition()->height.set(size.height());
 
-        for ( int i = 0; i < int(objects.size()); i++ )
-        {
-            document->main_composition()->layers.insert(
-                std::unique_ptr<model::Layer>(static_cast<model::Layer*>(objects[i].release())),
-                i
-            );
-        }
+        for ( auto& layer : objects.layers )
+            document->main_composition()->layers.insert(std::move(layer));
 
         document->main_composition()->recursive_rename();
 
         document->main_composition()->name.set(
             attr(svg, "sodipodi", "docname", document->main_composition()->type_name_human())
         );
+    }
+
+    void parse_defs()
+    {
+        std::vector<QDomElement> later;
+
+        for ( const auto& domnode : ItemCountRange(dom.elementsByTagName("linearGradient")) )
+        {
+            if ( !domnode.isElement() )
+                continue;
+            auto linear_gradient = domnode.toElement();
+            QString id = linear_gradient.attribute("id");
+            if ( id.isEmpty() )
+                continue;
+
+            if ( attr(linear_gradient, "obs", "paint") == "solid" )
+                parse_named_color(linear_gradient, id);
+            else
+                parse_brush_style_check(linear_gradient, later);
+        }
+
+        std::vector<QDomElement> unprocessed;
+        while ( !later.empty() && unprocessed.size() != later.size() )
+        {
+            unprocessed.clear();
+
+            for ( const auto& element : later )
+                parse_brush_style_check(element, unprocessed);
+
+            std::swap(later, unprocessed);
+        }
+
+    }
+
+    bool parse_brush_style_check(const QDomElement& element, std::vector<QDomElement>& later)
+    {
+        QString link = attr(element, "xlink", "href");
+        if ( link.isEmpty() )
+            return true;
+
+        if ( !link.startsWith("#") )
+            return false;
+
+        auto it = brush_styles.find(link);
+        if ( it != brush_styles.end() )
+            brush_styles["#" + element.attribute("id")] = it->second;
+        else
+            later.push_back(element);
+        return false;
+    }
+
+    void parse_named_color(const QDomElement& linear_gradient, const QString& id)
+    {
+
+        for ( const auto& domnode : ItemCountRange(linear_gradient.childNodes()) )
+        {
+            if ( !domnode.isElement() )
+                continue;
+
+            auto stop = domnode.toElement();
+
+            if ( stop.tagName() != "stop" )
+                continue;
+
+            Style style = parse_style(stop, {});
+            if ( !style.contains("stop-color") )
+                continue;
+
+            auto col = std::make_unique<model::NamedColor>(document);
+            col->name.set(id);
+            QColor color = parse_color(style["stop-color"], QColor());
+            color.setAlphaF(color.alphaF() * style.get("stop-opacity", "1").toDouble());
+            col->color.set(color);
+            brush_styles["#"+id] = col.get();
+            objects.named_colors.push_back(std::move(col));
+            return;
+        }
     }
 
     model::ShapeLayer* parse_objects(const QDomElement& svg)
@@ -177,7 +255,7 @@ public:
     LayT* add_layer(model::Layer* parent)
     {
         LayT* lay = new LayT(document, composition);
-        objects.emplace_back(lay);
+        objects.layers.emplace_back(lay);
         lay->parent.set(parent);
         return lay;
     }
@@ -450,7 +528,7 @@ public:
             return;
 
         auto stroke = std::make_unique<model::Stroke>(document);
-        stroke->color.set(parse_color(stroke_color, style.color));
+        set_styler_style(stroke.get(), stroke_color, style.color);
 
         stroke->opacity.set(percent_1(style.get("stroke-opacity", "1")));
         stroke->width.set(parse_unit(style.get("stroke-width", "1")));
@@ -482,6 +560,29 @@ public:
         return s.toDouble();
     }
 
+    void set_styler_style(model::Styler* styler, const QString& color_str, const QColor& current_color)
+    {
+        if ( !color_str.startsWith("url") )
+        {
+            styler->color.set(parse_color(color_str, current_color));
+            return;
+        }
+
+        auto match = url_re.match(color_str);
+        if ( match.hasMatch() )
+        {
+            QString id = match.captured(1);
+            auto it = brush_styles.find(id);
+            if ( it != brush_styles.end() )
+            {
+                styler->use.set(it->second);
+                return;
+            }
+        }
+
+        styler->color.set(current_color);
+    }
+
     void add_fill(model::ShapeListProperty* shapes, const Style& style)
     {
         QString fill_color = style.get("fill", "none");
@@ -489,8 +590,7 @@ public:
             return;
 
         auto fill = std::make_unique<model::Fill>(document);
-        fill->color.set(parse_color(fill_color, style.color));
-
+        set_styler_style(fill.get(), fill_color, style.color);
         fill->opacity.set(percent_1(style.get("fill-opacity", "1")));
 
         if ( style.get("fill-rule", "") == "evenodd" )
@@ -704,29 +804,37 @@ public:
 
     model::Document* document;
     model::Composition* composition;
-    std::vector<std::unique_ptr<model::DocumentNode>> objects;
+    io::mime::DeserializedData objects;
+
 
     GroupMode group_mode;
     bool write_to_document = false;
     std::function<void(const QString&)> on_warning;
-    std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers = {
-        {"g", &Private::parseshape_g},
-        {"rect", &Private::parseshape_rect},
-        {"ellipse", &Private::parseshape_ellipse},
-        {"circle", &Private::parseshape_circle},
-        {"line", &Private::parseshape_line},
-        {"polyline", &Private::parseshape_polyline},
-        {"polygon", &Private::parseshape_polygon},
-        {"path", &Private::parseshape_path},
-        {"use", &Private::parseshape_use},
-    };
-
     std::unordered_map<QString, QDomElement> map_ids;
+    std::unordered_map<QString, model::BrushStyle*> brush_styles;
 
-    QRegularExpression unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
-    QRegularExpression separator{",\\s*|\\s+"};
-    QRegularExpression transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"};
+    static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
+    static const QRegularExpression unit_re;
+    static const QRegularExpression separator;
+    static const QRegularExpression transform_re;
+    static const QRegularExpression url_re;
 };
+
+const std::map<QString, void (io::svg::SvgParser::Private::*)(const io::svg::SvgParser::Private::ParseFuncArgs&)> io::svg::SvgParser::Private::shape_parsers = {
+    {"g",       &io::svg::SvgParser::Private::parseshape_g},
+    {"rect",    &io::svg::SvgParser::Private::parseshape_rect},
+    {"ellipse", &io::svg::SvgParser::Private::parseshape_ellipse},
+    {"circle",  &io::svg::SvgParser::Private::parseshape_circle},
+    {"line",    &io::svg::SvgParser::Private::parseshape_line},
+    {"polyline",&io::svg::SvgParser::Private::parseshape_polyline},
+    {"polygon", &io::svg::SvgParser::Private::parseshape_polygon},
+    {"path",    &io::svg::SvgParser::Private::parseshape_path},
+    {"use",     &io::svg::SvgParser::Private::parseshape_use},
+};
+const QRegularExpression io::svg::SvgParser::Private::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
+const QRegularExpression io::svg::SvgParser::Private::separator{",\\s*|\\s+"};
+const QRegularExpression io::svg::SvgParser::Private::transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"};
+const QRegularExpression io::svg::SvgParser::Private::url_re{R"(url\s*\(\s*(#[-a-zA-Z0-9_]+)\s*\)\s*)"};
 
 io::svg::SvgParser::SvgParser(
     QIODevice* device,
@@ -752,7 +860,7 @@ io::svg::SvgParser::~SvgParser()
 }
 
 
-std::vector<std::unique_ptr<model::DocumentNode> > io::svg::SvgParser::parse_to_objects()
+io::mime::DeserializedData io::svg::SvgParser::parse_to_objects()
 {
     d->parse(false);
     return std::move(d->objects);
