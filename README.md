@@ -85,21 +85,25 @@ instructions below assume it's in `C:/WinGW64/`
 * Install [ZLIB](https://sourceforge.net/projects/gnuwin32/files/zlib/),
 instructions below assume it's in `C:/Program Files (x86)/GnuWin32`
 
+    # Prepare the environment, Change these to fit your installation directories
     $PYTHON_DIR=$(echo "import os; print(os.path.dirname(os.path.dirname(os.__file__)));" | python)
     $MINGW_DIR="C:/MinGW64/mingw64"
     $ZLIB_DIR="C:/Program Files (x86)/GnuWin32"
     $QT_DIR="C:/Qt/5.14.1"
+    $ENV:PATH="$ENV:PATH;$MINGW_DIR/bin"
 
+    # Build
     mkdir build
     cd build
-    $ENV:PATH="$ENV:PATH;$MINGW_DIR/bin"
     cmake .. -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="$QT_DIR/mingw73_64/" -DZLIB_INCLUDE_DIR="$ZLIB_DIR/include" -DZLIB_LIBRARY="$ZLIB_DIR/lib/libz.a" -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_CXX_FLAGS=-Wno-attributes
     mingw32-make.exe
-    $QT_DIR/mingw73_64/bin/qtenv2.bat
-    $QT_DIR/mingw73_64/bin/windeployqt.exe ./bin/glaxnimate.exe
+
+    # Copy library files because windows is weird like that
+    . "$QT_DIR/mingw73_64/bin/qtenv2.bat"
+    . "$QT_DIR/mingw73_64/bin/windeployqt.exe" ./bin/glaxnimate.exe
     cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll bin
     cp $MINGW_DIR/bin/*.dll bin
-    cp '$PYTHON_DIR/python38.dll' bin
+    cp "$PYTHON_DIR/python38.dll" bin
 
 
 Contacts
