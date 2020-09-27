@@ -60,16 +60,17 @@ widgets/view_transform_widget.ui
 widgets/flow_layout.cpp
 widgets/spin2d.cpp
 widgets/enum_combo.cpp
-widgets/color_selector.cpp
-widgets/color_selector.ui
-widgets/stroke_style_widget.cpp
-widgets/stroke_style_widget.ui
 widgets/node_menu.cpp
 widgets/window_message_widget.cpp
 widgets/window_message_widget.ui
-widgets/fill_style_widget.cpp
-widgets/document_swatch_widget.cpp
-widgets/document_swatch_widget.ui
+
+widgets/shape_style/color_selector.cpp
+widgets/shape_style/color_selector.ui
+widgets/shape_style/stroke_style_widget.cpp
+widgets/shape_style/stroke_style_widget.ui
+widgets/shape_style/fill_style_widget.cpp
+widgets/shape_style/document_swatch_widget.cpp
+widgets/shape_style/document_swatch_widget.ui
 )
 
 if(${PYTHON_ENABLED})

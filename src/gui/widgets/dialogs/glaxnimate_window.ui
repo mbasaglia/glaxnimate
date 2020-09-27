@@ -1366,7 +1366,7 @@
   <customwidget>
    <class>FillStyleWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/fill_style_widget.hpp</header>
+   <header>widgets/shape_style/fill_style_widget.hpp</header>
    <container>1</container>
    <slots>
     <signal>secondary_color_changed(QColor)</signal>
@@ -1376,7 +1376,7 @@
   <customwidget>
    <class>StrokeStyleWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/stroke_style_widget.hpp</header>
+   <header>widgets/shape_style/stroke_style_widget.hpp</header>
    <container>1</container>
    <slots>
     <signal>color_changed(QColor)</signal>
@@ -1392,7 +1392,7 @@
   <customwidget>
    <class>DocumentSwatchWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/document_swatch_widget.hpp</header>
+   <header>widgets/shape_style/document_swatch_widget.hpp</header>
    <container>1</container>
    <slots>
     <signal>needs_new_color()</signal>

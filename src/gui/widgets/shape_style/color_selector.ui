@@ -768,7 +768,7 @@
   <customwidget>
    <class>DocumentSwatchWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/document_swatch_widget.hpp</header>
+   <header>widgets/shape_style/document_swatch_widget.hpp</header>
    <container>1</container>
    <slots>
     <signal>needs_new_color()</signal>
