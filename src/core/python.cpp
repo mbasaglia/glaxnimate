@@ -7,6 +7,8 @@
 #include "model/shapes/shapes.hpp"
 #include "command/animation_commands.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
+#include "model/defs/defs.hpp"
+#include "model/defs/named_color.hpp"
 
 #include "app/scripting/python/register_machinery.hpp"
 
@@ -246,7 +248,8 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
             return new UndoMacroGuard(str, document);
         }, py::return_value_policy::take_ownership);
     ;
-    register_from_meta<model::DocumentNode, model::Object>(model);
+    register_from_meta<model::ReferenceTarget, model::Object>(model);
+    register_from_meta<model::DocumentNode, model::ReferenceTarget>(model);
     register_from_meta<model::Composition, model::DocumentNode>(model);
     register_from_meta<model::MainComposition, model::Composition>(model);
     define_animatable(model);
@@ -255,6 +258,10 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     register_animatable<QVector2D>(detail);
     register_animatable<QColor>(detail);
     register_animatable<float>(detail);
+
+    py::module defs = model.def_submodule("defs", "");
+    register_from_meta<model::Defs, model::Object>(defs);
+    register_from_meta<model::NamedColor, model::ReferenceTarget>(defs);
 
     py::module layers = model.def_submodule("layers", "");
     register_from_meta<model::Layer, model::DocumentNode>(layers);
@@ -271,6 +278,7 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     register_from_meta<model::Rect, model::Shape>(shapes);
     register_from_meta<model::Ellipse, model::Shape>(shapes);
     register_from_meta<model::Group, model::Shape>(shapes);
+    register_from_meta<model::PolyStar, model::Shape>(shapes);
 
     register_from_meta<model::Fill, model::Styler>(shapes, enums<model::Fill::Rule>{});
     register_from_meta<model::Stroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});
