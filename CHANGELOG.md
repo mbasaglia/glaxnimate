@@ -5,7 +5,10 @@
  * Tools:
     * Star/Polygon Draw Tool
  * Scripting:
-    * Logging support
+    * Added logging support integration with Python
+ * Bug Fixes:
+    * Fixed palettes not being saved correctly
+    * Undoing commands no longer adds spurious keyframes
 
 ## 0.1.0
  * Editing:

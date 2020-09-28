@@ -1,7 +1,5 @@
 #include <QSplashScreen>
 
-// #include <QCommandLineParser>
-
 #include "app/cli.hpp"
 #include "glaxnimate_app.hpp"
 #include "app_info.hpp"

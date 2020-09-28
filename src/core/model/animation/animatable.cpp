@@ -1,6 +1,7 @@
 #include "animatable.hpp"
 
 #include "command/animation_commands.hpp"
+#include "model/object.hpp"
 
 bool model::AnimatableBase::assign_from(const model::BaseProperty* prop)
 {
