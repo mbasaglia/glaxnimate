@@ -2,7 +2,9 @@ Authors: Mattia Basaglia
 
 # Dockable Views
 
-## Tools
+
+Tools
+-----
 
 ![Tools View](/img/screenshots/views/tools.png)
 
@@ -10,7 +12,9 @@ This view allows you to select the active [tool](tools.md).
 
 See [Tools](tools.md) for details on how each tool works.
 
-## Tool Options
+
+Tool Options
+------------
 
 ![Shape Options](/img/screenshots/tools/shape_options.png)
 
@@ -18,7 +22,8 @@ This view shows extra option for the currently active [tool](tools.md).
 
 See [Tools](tools.md) for details on how each tool works.
 
-## Fill
+Fill
+----
 
 ![Colors View](/img/screenshots/colors/hsv.png)
 
@@ -82,7 +87,8 @@ Opening and saving supports Gimp Palette files (.gpl).
 
 Clicking on one of the colors, selects it as the current color.
 
-## Stroke
+Stroke
+------
 
 This view shows various stroke (outline) settings.
 
@@ -107,7 +113,9 @@ The spin box after the "Join" buttons determines how far a Miter join can reach.
 This tab selects the stroke color in a similar way as to how the [Fill View](#Fill)
 selects the fill color.
 
-## Layers
+
+Layers
+------
 
 ![Stroke Style Dock](/img/screenshots/views/layers.png)
 
@@ -126,7 +134,8 @@ This has no effect other than changing how layers are shown in this view to help
 Right clicking on an item will bring a context menu with quick actions for that item.
 
 
-## Timeline
+Timeline
+--------
 
 ![Timeline Dock](/img/screenshots/timeline/timeline.png)
 
@@ -220,7 +229,9 @@ and the vertical axis is the interpolation factor between the two values.
 
 To choose a preset transition for one of the two ends, you can select a value from the dropdowns.
 
-## Properties
+
+Properties
+----------
 
 ![Property View](/img/screenshots/views/properties.png)
 
@@ -230,7 +241,9 @@ To edit a property double click on its value.
 
 Animatable properties are highlighted as explained in [Property List](#property-list).
 
-## Undo History
+
+Undo History
+------------
 
 ![Undo History View](/img/screenshots/views/undo.png)
 
@@ -242,7 +255,103 @@ Useful for when you want to undo or redo several actions at once.
 A little icon will be shown next to the action corresponding to the last time you saved the document.
 
 
-## Script Console
+Swatch
+------
+
+![Swatch View](/img/screenshots/swatch/swatch.png)
+
+This view shows the colors in the document swatch.
+
+The document swatch is a palette specific to the open document.
+When an object is assigned a color from the document swatch, it gets linked to it.
+Modifying the color in the swatch will reflect the change in all linked objects,
+so you can recolor multiple objects at once.
+
+The view shows the palette for the document swatch, which each color in its own
+rectangle. There is an extra rectangle that's used to unlink the selected object
+from the swatch (the object will retain its color but modifying the swatch will no
+longer affect that object).
+
+These are the buttons at the bottom:
+
+
+<img src="/img/ui/icons/open-menu-symbolic.svg" width="32" /><br/>
+Clicking and holding on this button will show [a menu with extra options](#swatch-extra-options).
+
+<img src="/img/ui/icons/list-add.svg" width="32" /><br/> Adds the current fill color to the swatch.
+  If an object is selected, its fill color will be linked to the swatch.
+
+<img src="/img/ui/icons/list-remove.svg" width="32" /><br/> Removes the last clicked color from the swatch
+
+### Swatch Extra Options
+
+![Menu Extra](/img/screenshots/swatch/extra_menu.png)
+
+<img src="/img/ui/icons/document-export.svg" width="32" /> *Generate* <br/>
+Pulls the colors off the open document and link all objects to the swatch
+
+<img src="/img/ui/icons/document-open.svg" width="32" /> *From Palette...*<br/>
+Shows a [dialog](#from-palette) with option to populate the swatch from an existing palette.
+
+<img src="/img/ui/icons/document-save.svg" width="32" /> *Save Palette*<br/>
+Saves the swatch and it will show up as a [palette in the Fill and Stroke views](#palette).
+
+### Mouse interactions
+
+Left-clicking on one of the rectangles of the swatch will link the fill color of the selected object
+(or unlink if you click the rectangle marked with an X).
+
+Holding Shift when you click will affect the stroke color instead of the fill color.
+
+Right clicking will show the following context menu:
+
+![Context Menu](/img/screenshots/swatch/context_menu.png)
+
+At the top of the menu you see the name of the color
+
+<img src="/img/ui/icons/edit-rename.svg" width="32" /> *Rename...* <br/>
+Shows a dialog where you can change the name of the color.
+
+<img src="/img/ui/icons/color-management.svg" width="32" /> *Edit Color...* <br/>
+Shows a dialog where you can change the color
+
+<img src="/img/ui/icons/list-remove.svg" width="32" /> *Remove* <br/>
+Will remove the color from the swatch.
+This will have no visual changes, but all objects previously linked to this
+color will be unlinked.
+
+<img src="/img/ui/icons/edit-duplicate.svg" width="32" /> *Duplicate* <br/>
+Will add a new identical color to the swatch.
+
+<img src="/img/ui/icons/list-remove.svg" width="32" /> *Set as fill* <br/>
+Does the same as clicking
+
+<img src="/img/ui/icons/format-fill-color.svg" width="32" /> *Set as stroke* <br/>
+Does the same as shift-clicking
+
+<img src="/img/ui/icons/format-stroke-color.svg" width="32" /> *Link shapes with matching colors* <br/>
+Searches the document for all shapes with the same color as the one in the rectangle you clicked, and links them to the swatch.
+
+### From Palette
+
+![From Palette Dialog](/img/screenshots/swatch/from_palette.png)
+
+At the top it shows a dropdown with the palettes currently loaded by glaxnimate.
+The selected item will define the colors used by the document swatch.
+
+To add more palettes, you can do so in the [Palette section of the fill View](#palette).
+
+* *Overwrite on save* means that clicking *Save Palette* for the document swatch
+  will overwrite the selected palette.
+* *Link shapes matching colors* When checked, Glaxnimate will scan the document
+  for objects with colors in the palette and link them to the swatch.
+* *Remove existing colors* If checked, any existing colors in the document swatch
+  will be removed before adding new ones from the palette.
+  Note that this means all objects will become unlinked.
+
+
+Script Console
+--------------
 
 ![Script Console](/img/screenshots/views/console.png)
 
@@ -251,7 +360,9 @@ with Python.
 
 See [Scripting](/contributing/scripting/index.md) for details.
 
-## Logs
+
+Logs
+----
 
 ![Log View](/img/screenshots/views/log.png)
 

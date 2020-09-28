@@ -56,7 +56,7 @@ public:
         {
             if ( auto sty = qobject_cast<model::Styler*>(node) )
             {
-                if ( !sty->use.get() && !sty->color.animated() )
+                if ( !sty->use.get() && !sty->color.animated() && !sty->docnode_locked_recursive() )
                 {
                     QString color_name = sty->color.get().name(QColor::HexArgb);
                     auto it = colors.find(color_name);
@@ -122,7 +122,7 @@ public:
         {
             if ( auto sty = qobject_cast<model::Styler*>(node) )
             {
-                if ( !sty->use.get() && !sty->color.animated() )
+                if ( !sty->use.get() && !sty->color.animated() && !sty->docnode_locked_recursive() )
                 {
                     QString color_name = sty->color.get().name(QColor::HexArgb);
                     auto it = colors.find(color_name);
@@ -314,6 +314,7 @@ void DocumentSwatchWidget::generate()
 void DocumentSwatchWidget::open()
 {
     QDialog dialog(this);
+    dialog.setWindowTitle(tr("Swatch from Palette"));
     QVBoxLayout* lay = new QVBoxLayout(&dialog);
     dialog.setLayout(lay);
 
