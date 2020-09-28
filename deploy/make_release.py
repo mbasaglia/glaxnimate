@@ -36,7 +36,8 @@ class GitlabApi:
         if "json" in kwargs:
             kwargs["headers"]["Content-Type"] = "application/json"
         res = requests.request(method, url, **kwargs)
-        res.raise_for_status()
+        if not kwargs.pop(can_fail, False):
+            res.raise_for_status()
         return res.json()
 
     def project_request(self, method, url, **kwargs):
@@ -134,6 +135,6 @@ release = api.project_request(
         "description": notes
     }
 )
-api.project_request("put", ["releases", api.tag], json={
+api.project_request("put", ["releases", api.tag], can_fail=True, json={
     "milestones": [api.tag]
 })
