@@ -185,7 +185,7 @@ private slots:
         test_subject.prop_list.insert(std::make_unique<MetaTestSubject>(&doc));
         QCOMPARE(test_subject.prop_list.size(), 1);
         QCOMPARE(prop_2.read(&test_subject).toList().size(), 1);
-        QCOMPARE(prop_2.read(&test_subject).toList()[0].value<MetaTestSubject*>(), &test_subject.prop_list[0]);
+        QCOMPARE(prop_2.read(&test_subject).toList()[0].value<MetaTestSubject*>(), test_subject.prop_list[0]);
     }
 
     void test_callback_val()
