@@ -213,6 +213,8 @@ void app::scripting::PluginRegistry::load_service ( const QJsonObject& jobj, app
         act->label = jobj["label"].toString();
         act->tooltip = jobj["tooltip"].toString();
         act->icon = jobj["icon"].toString();
+        if ( act->icon.isEmpty() )
+            act->icon = data.icon;
         data.services.emplace_back(std::move(act));
     }
     else
@@ -261,6 +263,8 @@ void app::scripting::PluginRegistry::load_setting ( const QString& slug, const Q
         script.settings.emplace_back(slug, label, description, default_value.toString());
     else if ( type == "choice" )
         script.settings.emplace_back(slug, label, description, app::settings::Setting::String, load_choices(jobj["choices"]));
+    else if ( type == "color" )
+        script.settings.emplace_back(slug, label, description, app::settings::Setting::Color, default_value);
     else
         logger.stream() << "Unknown type" << type << "for plugin setting" << slug;
 }

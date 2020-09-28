@@ -9,6 +9,7 @@
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "model/defs/defs.hpp"
 #include "model/defs/named_color.hpp"
+#include "model/visitor.hpp"
 
 #include "app/scripting/python/register_machinery.hpp"
 
@@ -34,12 +35,11 @@ void define_utils(py::module& m)
         .def_property("red", &QColor::red, &QColor::setRed)
         .def_property("green", &QColor::red, &QColor::setRed)
         .def_property("blue", &QColor::blue, &QColor::setBlue)
-        .def_property("name",
-            [](const QColor& c){return c.name();},
-            [](QColor& c, const QString& name){c.setNamedColor(name);}
-        )
+        .def_property("name", qOverload<>(&QColor::name), qOverload<const QString&>(&QColor::setNamedColor))
         .def("__str__", [](const QColor& c){return c.name();})
         .def("__repr__", qdebug_operator_to_string<QColor>())
+        .def(py::self == py::self)
+        .def(py::self != py::self)
     ;
     py::class_<QPointF>(utils, "Point")
         .def(py::init<>())
@@ -219,10 +219,46 @@ struct UndoMacroGuard
         }
     }
 
+    void pyexit(pybind11::object, pybind11::object, pybind11::object)
+    {
+        exit();
+    }
 
     QString name;
     model::Document* document;
     bool end_macro = false;
+};
+
+class PyVisitorPublic : public model::Visitor
+{
+public:
+    virtual void on_visit_document(model::Document *){}
+    virtual void on_visit_node(model::DocumentNode*){}
+
+private:
+    void on_visit(model::Document * document) override
+    {
+        on_visit_document(document);
+    }
+
+    void on_visit(model::DocumentNode * node) override
+    {
+        on_visit_node(node);
+    }
+};
+
+class PyVisitorTrampoline : public PyVisitorPublic
+{
+public:
+    void on_visit_document(model::Document * document) override
+    {
+        PYBIND11_OVERLOAD(void, PyVisitorPublic, on_visit_document, document);
+    }
+
+    void on_visit(model::DocumentNode * node) override
+    {
+        PYBIND11_OVERLOAD_PURE(void, PyVisitorPublic, on_visit_node, node);
+    }
 };
 
 PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
@@ -234,7 +270,7 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     py::class_<QObject>(detail, "__QObject");
     py::class_<UndoMacroGuard>(detail, "UndoMacroGuard")
         .def("__enter__", &UndoMacroGuard::enter)
-        .def("__exit__", &UndoMacroGuard::exit)
+        .def("__exit__", &UndoMacroGuard::pyexit)
         .def("start", &UndoMacroGuard::enter)
         .def("finish", &UndoMacroGuard::exit)
     ;
@@ -258,6 +294,13 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     register_animatable<QVector2D>(detail);
     register_animatable<QColor>(detail);
     register_animatable<float>(detail);
+    py::class_<PyVisitorPublic, PyVisitorTrampoline>(model, "Visitor")
+        .def(py::init())
+        .def("visit", (void (PyVisitorPublic::*)(model::Document*))&PyVisitorPublic::visit)
+        .def("visit", (void (PyVisitorPublic::*)(model::DocumentNode*))&PyVisitorPublic::visit)
+        .def("on_visit_document", &PyVisitorPublic::on_visit_document)
+        .def("on_visit_node", &PyVisitorPublic::on_visit_node)
+    ;
 
     py::module defs = model.def_submodule("defs", "");
     register_from_meta<model::Defs, model::Object>(defs);
