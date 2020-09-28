@@ -10,7 +10,7 @@ This tool allows you to select items and move them.
 
 ### Mouse Actions
 
-This tool has a moltitude of mouse interactions:
+This tool has a multitude of mouse interactions:
 
 Left click: Select the item under the mouse.
 
