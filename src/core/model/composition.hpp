@@ -24,7 +24,7 @@ public:
 
     DocumentNode* docnode_child(int index) const override
     {
-        return &layers[index];
+        return layers[index];
     }
 
     DocumentNode* docnode_parent() const override

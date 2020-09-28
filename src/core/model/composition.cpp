@@ -18,7 +18,7 @@ std::unique_ptr<model::Layer> model::Composition::remove_layer(const QUuid& uuid
 {
     for ( int i = 0; i < layers.size(); i++ )
     {
-        if ( layers[i].uuid.get() == uuid )
+        if ( layers[i]->uuid.get() == uuid )
         {
             return layers.remove(i);
         }
@@ -31,7 +31,7 @@ int model::Composition::layer_position(model::Layer* layer, int not_found) const
 {
     for ( int i = 0; i < layers.size(); i++ )
     {
-        if ( &layers[i] == layer )
+        if ( layers[i] == layer )
             return i;
     }
 

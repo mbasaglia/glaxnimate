@@ -125,7 +125,7 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 
     view_fit();
     if ( !current_document->main_composition()->layers.empty() )
-        ui.view_document_node->setCurrentIndex(document_node_model.node_index(&current_document->main_composition()->layers[0]));
+        ui.view_document_node->setCurrentIndex(document_node_model.node_index(current_document->main_composition()->layers[0]));
 
     current_document->set_io_options(options);
     ui.play_controls->set_range(current_document->main_composition()->first_frame.get(), current_document->main_composition()->last_frame.get());

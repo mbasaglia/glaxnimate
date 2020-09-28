@@ -7,18 +7,18 @@
 
 void model::Layer::ChildLayerIterator::find_first()
 {
-    while ( index < comp->layers.size() && comp->layers[index].parent.get() != parent )
+    while ( index < comp->layers.size() && comp->layers[index]->parent.get() != parent )
         ++index;
 }
 
 model::Layer * model::Layer::ChildLayerIterator::operator*() const
 {
-    return &comp->layers[index];
+    return comp->layers[index];
 }
 
 model::Layer * model::Layer::ChildLayerIterator::operator->() const
 {
-    return &comp->layers[index];
+    return comp->layers[index];
 }
 
 model::Layer::Layer(Document* doc, Composition* composition)

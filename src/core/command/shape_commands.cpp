@@ -142,7 +142,7 @@ command::UngroupShapes::UngroupShapes(model::Group* group)
     (new RemoveShape(group, group->owner(), this))->redo();
     for ( int i = 0, e = group->shapes.size(); i < e; i++ )
     {
-        (new MoveShape(&group->shapes[0], group->shapes[0].owner(), group->owner(), pos+i, this))->redo();
+        (new MoveShape(group->shapes[0], group->shapes[0]->owner(), group->owner(), pos+i, this))->redo();
     }
 }
 

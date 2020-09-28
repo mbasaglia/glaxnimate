@@ -50,7 +50,7 @@ public:
     {}
 
     RemoveObject(int index, PropT* object_parent, QUndoCommand* parent = nullptr)
-        : QUndoCommand(QObject::tr("Remove %1").arg((*object_parent)[index].object_name()), parent),
+        : QUndoCommand(QObject::tr("Remove %1").arg((*object_parent)[index]->object_name()), parent),
           object_parent(object_parent),
           position(index)
     {}

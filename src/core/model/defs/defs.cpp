@@ -1,5 +1,6 @@
 #include "defs.hpp"
 #include "model/document.hpp"
+#include "command/object_list_commands.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::Defs)
 
@@ -46,4 +47,14 @@ model::ReferenceTarget* model::Defs::find_by_uuid ( const QUuid& n ) const
         if ( c->uuid.get() == n )
             return c.get();
     return nullptr;
+}
+
+model::NamedColor* model::Defs::add_color(const QColor& color, const QString& name)
+{
+    auto ptr = std::make_unique<model::NamedColor>(document());
+    ptr->color.set(color);
+    ptr->name.set(name);
+    auto raw = ptr.get();
+    push_command(new command::AddObject(&colors, std::move(ptr), colors.size()));
+    return raw;
 }

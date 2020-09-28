@@ -111,15 +111,15 @@ public:
         callback_move_end(std::move(callback_move_end))
     {}
 
-    reference operator[](int i) const { return *objects[i]; }
+    value_type* operator[](int i) const { return objects[i].get(); }
     int size() const { return objects.size(); }
     bool empty() const { return objects.empty(); }
     iterator begin() const { return objects.begin(); }
     iterator end() const { return objects.end(); }
 
-    reference back() const
+    value_type* back() const
     {
-        return *objects.back();
+        return objects.back().get();
     }
 
     void insert(pointer p, int position = -1)

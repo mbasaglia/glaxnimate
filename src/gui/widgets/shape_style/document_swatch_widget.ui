@@ -114,7 +114,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Open Palette File...</string>
+    <string>From Palette...</string>
    </property>
   </action>
  </widget>

@@ -3,6 +3,10 @@
 
 #include <QMenu>
 #include <QInputDialog>
+#include <QVBoxLayout>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QDialogButtonBox>
 
 #include <QtColorWidgets/color_palette_model.hpp>
 #include <QtColorWidgets/ColorDialog>
@@ -59,14 +63,7 @@ public:
                     model::NamedColor* def = nullptr;
                     if ( it == colors.end() )
                     {
-                        auto ptr = std::make_unique<model::NamedColor>(node->document());
-                        ptr->color.set(sty->color.get());
-                        def = ptr.get();
-                        node->push_command(new command::AddObject<model::NamedColor>(
-                            &defs->colors,
-                            std::move(ptr),
-                            defs->colors.size()
-                        ));
+                        def = defs->add_color(sty->color.get());
                         colors[color_name] = def;
                     }
                     else
@@ -81,6 +78,61 @@ public:
 
         std::map<QString, model::NamedColor*> colors;
         model::Defs* defs;
+    };
+
+    class ApplyColorVisitor : public model::Visitor
+    {
+    public:
+        ApplyColorVisitor(const std::vector<model::NamedColor*>& col)
+        {
+            for ( auto color : col )
+            {
+                if ( !color->color.animated() )
+                {
+                    QColor c = color->color.get();
+                    colors[c.name(QColor::HexArgb)] = color;
+                }
+            }
+        }
+
+        ApplyColorVisitor(model::Document * doc)
+        {
+            for ( const auto& color : doc->defs()->colors )
+            {
+                if ( !color->color.animated() )
+                {
+                    QColor c = color->color.get();
+                    colors[c.name(QColor::HexArgb)] = color.get();
+                }
+            }
+        }
+
+    private:
+        void on_visit(model::Document * doc) override
+        {
+            doc->undo_stack().beginMacro(tr("Link Shapes to Swatch"));
+        }
+
+        void on_visit_end(model::Document * document) override
+        {
+            document->undo_stack().endMacro();
+        }
+
+        void on_visit(model::DocumentNode * node) override
+        {
+            if ( auto sty = qobject_cast<model::Styler*>(node) )
+            {
+                if ( !sty->use.get() && !sty->color.animated() )
+                {
+                    QString color_name = sty->color.get().name(QColor::HexArgb);
+                    auto it = colors.find(color_name);
+                    if ( it != colors.end() )
+                        sty->use.set_undoable(QVariant::fromValue(it->second));
+                }
+            }
+        }
+
+        std::map<QString, model::NamedColor*> colors;
     };
 };
 
@@ -153,10 +205,7 @@ void DocumentSwatchWidget::swatch_palette_color_added(int index)
         auto defs = d->document->defs();
         auto palette = &d->ui.swatch->palette();
 
-        auto col = std::make_unique<model::NamedColor>(d->document);
-        col->color.set(palette->colorAt(index));
-        col->name.set(palette->nameAt(index));
-        defs->push_command(new command::AddObject<model::NamedColor>(&defs->colors, std::move(col), index));
+        defs->add_color(palette->colorAt(index), palette->nameAt(index));
     }
 }
 
@@ -189,7 +238,7 @@ void DocumentSwatchWidget::swatch_palette_color_changed(int index)
             return;
 
         d->document->undo_stack().beginMacro(tr("Modify Palette Color"));
-        auto color = &defs->colors[index];
+        auto color = defs->colors[index];
         color->name.set_undoable(palette->nameAt(index));
         color->color.set_undoable(palette->colorAt(index));
         d->document->undo_stack().endMacro();
@@ -212,7 +261,7 @@ void DocumentSwatchWidget::swatch_link(int index, Qt::KeyboardModifiers mod)
 {
     if ( d->document )
     {
-        auto def = index != -1 ? &d->document->defs()->colors[index] : nullptr;
+        auto def = index != -1 ? d->document->defs()->colors[index] : nullptr;
 
         if ( mod & Qt::ShiftModifier )
             emit secondary_color_def(def);
@@ -254,7 +303,7 @@ model::NamedColor * DocumentSwatchWidget::current_color() const
     if ( index == -1 )
         return nullptr;
 
-    return &d->document->defs()->colors[index];
+    return d->document->defs()->colors[index];
 }
 
 void DocumentSwatchWidget::generate()
@@ -264,6 +313,59 @@ void DocumentSwatchWidget::generate()
 
 void DocumentSwatchWidget::open()
 {
+    QDialog dialog(this);
+    QVBoxLayout* lay = new QVBoxLayout(&dialog);
+    dialog.setLayout(lay);
+
+    QComboBox combo;
+    combo.setModel(d->palette_model);
+    lay->addWidget(&combo);
+
+    QCheckBox check_overwrite;
+    check_overwrite.setText(tr("Overwrite on save"));
+    lay->addWidget(&check_overwrite);
+
+    QCheckBox check_link;
+    check_link.setText(tr("Link shapes with matching colors"));
+    lay->addWidget(&check_link);
+
+    QCheckBox check_clear;
+    check_clear.setChecked(true);
+    check_clear.setText(tr("Remove existing colors"));
+    lay->addWidget(&check_clear);
+
+    QDialogButtonBox buttons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    lay->addWidget(&buttons);
+    connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    connect(&buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+
+    if ( dialog.exec() == QDialog::Rejected )
+        return;
+
+    if ( check_overwrite.isChecked() )
+        d->palette_index = d->palette_model->index(combo.currentIndex(), 0);
+    else
+        d->palette_index = QPersistentModelIndex();
+
+    d->document->undo_stack().beginMacro(tr("Load Palette"));
+
+    if ( check_clear.isChecked() )
+    {
+        while ( d->document->defs()->colors.size() )
+            d->document->push_command(new command::RemoveObject(
+                d->document->defs()->colors.back(),
+                &d->document->defs()->colors
+            ));
+    }
+
+    for ( const auto& p : d->palette_model->palette(combo.currentIndex()).colors() )
+        d->document->defs()->add_color(p.first, p.second);
+
+    if ( check_link.isChecked() )
+        Private::ApplyColorVisitor(d->document).visit(d->document);
+
+    d->document->undo_stack().endMacro();
+
 }
 
 void DocumentSwatchWidget::save()
@@ -315,7 +417,7 @@ void DocumentSwatchWidget::swatch_menu ( int index )
     }
     else
     {
-        model::NamedColor* item = &d->document->defs()->colors[index];
+        model::NamedColor* item = d->document->defs()->colors[index];
         menu.addSection(item->object_name());
 
         menu.addAction(
@@ -390,6 +492,19 @@ void DocumentSwatchWidget::swatch_menu ( int index )
                 emit secondary_color_def(item);
             }
         );
+
+        if ( !item->color.animated() )
+        {
+            menu.addAction(
+                QIcon::fromTheme("insert-link"),
+                tr("Link shapes with matching colors"),
+                this,
+                [item, this]{
+                    Private::ApplyColorVisitor({item}).visit(d->document);
+                }
+            );
+        }
+
     }
 
     menu.exec(QCursor::pos());
