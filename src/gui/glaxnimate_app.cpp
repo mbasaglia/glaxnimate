@@ -112,11 +112,6 @@ void GlaxnimateApp::load_settings_metadata() const
 
 void GlaxnimateApp::on_initialize()
 {
-    AppInfo& info = AppInfo::instance();
-    setApplicationName(info.slug());
-    setApplicationDisplayName(info.name());
-    setApplicationVersion(info.version());
-    setOrganizationName(info.organization());
     setWindowIcon(QIcon(data_file("images/logo.svg")));
 
     QStringList search_paths = data_paths("icons");
@@ -136,4 +131,13 @@ void GlaxnimateApp::on_initialize()
 QString GlaxnimateApp::backup_path(const QString& file) const
 {
     return writable_data_path("backup/"+file);
+}
+
+void GlaxnimateApp::init_info()
+{
+    AppInfo& info = AppInfo::instance();
+    setApplicationName(info.slug());
+    setApplicationDisplayName(info.name());
+    setApplicationVersion(info.version());
+    setOrganizationName(info.organization());
 }

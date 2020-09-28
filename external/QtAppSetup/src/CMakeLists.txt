@@ -11,6 +11,7 @@ app/widgets/settings_dialog.cpp
 app/widgets/settings_dialog.ui
 app/log/logger.cpp
 app/log/log_model.cpp
+app/cli.cpp
 )
 
 include(CheckCXXCompilerFlag)

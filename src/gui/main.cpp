@@ -1,23 +1,46 @@
 #include <QSplashScreen>
 
-#include <QCommandLineParser>
+// #include <QCommandLineParser>
 
+#include "app/cli.hpp"
 #include "glaxnimate_app.hpp"
 #include "app_info.hpp"
 #include "widgets/dialogs/glaxnimate_window.hpp"
+
+auto parse_cli(const QStringList& args)
+{
+    app::cli::Parser parser(AppInfo::instance().description());
+
+    parser.add_group(QApplication::tr("Informational Options"));
+    parser.add_argument({{"--help", "-h"}, QApplication::tr("Show this help and exit"), app::cli::Argument::ShowHelp});
+    parser.add_argument({{"--version", "-v"}, QApplication::tr("Show version information and exit"), app::cli::Argument::ShowVersion});
+
+    parser.add_group(QApplication::tr("Options"));
+    parser.add_argument({{"file"}, QApplication::tr("File to open")});
+
+    parser.add_group(QApplication::tr("GUI Options"));
+    parser.add_argument({{"--default-ui"}, QApplication::tr("If present, doen't restore the main window state")});
+    parser.add_argument({
+        {"--window-size"},
+        QApplication::tr("Use a specific size for the main window"),
+        app::cli::Argument::Size,
+        {},
+        "WIDTHxHEIGHT"
+    });
+
+    return parser.parse(args);
+}
 
 int main(int argc, char *argv[])
 {
     GlaxnimateApp app(argc, argv);
 
-    QCommandLineParser parser;
-    parser.setApplicationDescription(AppInfo::instance().description());
-    parser.addHelpOption();
-    parser.addVersionOption();
-    parser.addPositionalArgument("file", "File to open");
-    parser.addOption({"default-ui", "If present, doen't restore the main window state"});
-    parser.process(app);
-    QStringList args = parser.positionalArguments();
+    app.init_info();
+
+    auto args = parse_cli(app.arguments());
+
+    if ( args.return_value )
+        return *args.return_value;
 
     QSplashScreen sc;
     sc.setPixmap(QPixmap(":glaxnimate/splash.svg"));
@@ -26,12 +49,15 @@ int main(int argc, char *argv[])
 
     app.initialize();
 
-    GlaxnimateWindow window(!parser.isSet("default-ui"));
+    GlaxnimateWindow window(!args.has_flag("default-ui"));
     sc.finish(&window);
     window.show();
 
-    if ( !args.empty() )
-        window.document_open(args[0]);
+    if ( args.is_defined("file") )
+        window.document_open(args.value("file").toString());
+
+    if ( args.is_defined("window-size") )
+        window.resize(args.value("window-size").toSize());
 
     int ret = app.exec();
 
