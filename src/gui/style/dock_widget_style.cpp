@@ -11,8 +11,9 @@ void style::DockWidgetStyle::drawControl(
 
         int margin = baseStyle()->pixelMetric(QStyle::PM_DockWidgetTitleMargin);
         QRect title_rect = subElementRect(SE_DockWidgetTitleBarText, option, widget);
-        int size = title_rect.height();
-        QPoint pos(margin + title_rect.left(), title_rect.top());
+        int size = qMin(pixelMetric(QStyle::PM_ToolBarIconSize), title_rect.height());
+        int padding = (title_rect.height() - size) / 2;
+        QPoint pos(margin + padding + title_rect.left(), title_rect.top() + padding);
         
         option_copy.rect = option->rect.adjusted(size+margin*2, 0, 0, 0);
         QProxyStyle::drawControl(element, &option_copy, painter, widget);
