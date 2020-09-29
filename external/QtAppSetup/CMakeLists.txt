@@ -41,5 +41,3 @@ if(PythonLibs_FOUND AND SCRIPTING_PY)
 else()
     set(PYTHON_ENABLED OFF PARENT_SCOPE)
 endif()
-
-add_subdirectory(external/Qt-History-LineEdit)

@@ -11,7 +11,7 @@
 	path = external/QtAppSetup/external/pybind11
 	url = https://github.com/pybind/pybind11.git
 [submodule "external/Qt-History-LineEdit"]
-	path = external/QtAppSetup/external/Qt-History-LineEdit
+	path = external/Qt-History-LineEdit
 	url = https://gitlab.com/mattia.basaglia/Qt-History-LineEdit.git
 [submodule "data/icons/breeze-icons"]
 	path = data/icons/breeze-icons

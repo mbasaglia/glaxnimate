@@ -65,8 +65,10 @@ else ()
 endif()
 
 add_subdirectory(external/QtAppSetup)
-add_subdirectory(src bin)
 
+add_subdirectory(external/Qt-History-LineEdit)
+
+add_subdirectory(src bin)
 
 add_subdirectory(external/Qt-Color-Widgets EXCLUDE_FROM_ALL)
 
