@@ -12,6 +12,7 @@ namespace tools {
 class SelectTool : public Tool
 {
 public:
+    QString id() const override { return "select"; }
     QIcon icon() const override { return QIcon::fromTheme("edit-select"); }
     QString name() const override { return QObject::tr("Select"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F1"), QKeySequence::PortableText); }

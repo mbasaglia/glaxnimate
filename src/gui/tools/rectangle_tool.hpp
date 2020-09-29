@@ -9,6 +9,7 @@ namespace tools {
 class RectangleTool : public DrawToolBase
 {
 public:
+    QString id() const override { return "draw-rect"; }
     QIcon icon() const override { return QIcon::fromTheme("draw-rectangle"); }
     QString name() const override { return QObject::tr("Rectangle"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F4"), QKeySequence::PortableText); }
@@ -18,7 +19,7 @@ protected:
     {
         if ( event.button() == Qt::LeftButton )
         {
-            dragging = true;
+            dragging = false;
             p1 = p2 = event.scene_pos;
             rect = QRectF(p1, p2);
         }
@@ -26,6 +27,9 @@ protected:
 
     void mouse_move(const MouseEvent& event) override
     {
+        if ( !dragging && event.press_button == Qt::LeftButton )
+            dragging = true;
+
         if ( dragging )
         {
             p2 = event.scene_pos;
@@ -36,15 +40,22 @@ protected:
 
     void mouse_release(const MouseEvent& event) override
     {
-        if ( event.button() == Qt::LeftButton && dragging )
+        if ( event.button() == Qt::LeftButton )
         {
-            dragging = false;
-            auto shape = std::make_unique<model::Rect>(event.window->document());
-            rect = rect.normalized();
-            shape->position.set(rect.center());
-            shape->size.set(rect.size());
-            create_shape(QObject::tr("Draw Rectangle"), event, std::move(shape));
-            event.repaint();
+            if ( dragging )
+            {
+                dragging = false;
+                auto shape = std::make_unique<model::Rect>(event.window->document());
+                rect = rect.normalized();
+                shape->position.set(rect.center());
+                shape->size.set(rect.size());
+                create_shape(QObject::tr("Draw Rectangle"), event, std::move(shape));
+                event.repaint();
+            }
+            else
+            {
+                check_click(event);
+            }
         }
     }
 

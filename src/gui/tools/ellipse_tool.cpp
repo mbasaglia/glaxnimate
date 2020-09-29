@@ -6,21 +6,29 @@ namespace tools {
 class EllipseTool : public RectangleTool
 {
 public:
+    QString id() const override { return "draw-ellipse"; }
     QIcon icon() const override { return QIcon::fromTheme("draw-ellipse"); }
     QString name() const override { return QObject::tr("Ellipse"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F5"), QKeySequence::PortableText); }
 
     void mouse_release(const MouseEvent& event) override
     {
-        if ( event.button() == Qt::LeftButton && dragging )
+        if ( event.button() == Qt::LeftButton )
         {
-            dragging = false;
-            auto shape = std::make_unique<model::Ellipse>(event.window->document());
-            rect = rect.normalized();
-            shape->position.set(rect.center());
-            shape->size.set(rect.size());
-            create_shape(QObject::tr("Draw Ellipse"), event, std::move(shape));
-            event.repaint();
+            if ( dragging )
+            {
+                dragging = false;
+                auto shape = std::make_unique<model::Ellipse>(event.window->document());
+                rect = rect.normalized();
+                shape->position.set(rect.center());
+                shape->size.set(rect.size());
+                create_shape(QObject::tr("Draw Ellipse"), event, std::move(shape));
+                event.repaint();
+            }
+            else
+            {
+                check_click(event);
+            }
         }
     }
 

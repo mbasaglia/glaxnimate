@@ -415,3 +415,8 @@ void GlaxnimateWindow::dropEvent(QDropEvent* event)
     if ( !str.isEmpty() )
         document_open(str);
 }
+
+void GlaxnimateWindow::switch_tool(tools::Tool* tool)
+{
+    d->switch_tool(tool);
+}

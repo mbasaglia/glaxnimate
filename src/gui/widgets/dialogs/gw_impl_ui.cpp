@@ -434,8 +434,11 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
 
 void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
 {
-    if ( !tool )
+    if ( !tool || tool == active_tool )
         return;
+
+    if ( !tool->get_action()->isChecked() )
+        tool->get_action()->setChecked(true);
 
     active_tool = tool;
     ui.graphics_view->set_active_tool(tool);

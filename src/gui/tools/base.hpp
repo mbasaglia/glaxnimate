@@ -89,6 +89,7 @@ class Tool
 public:
     virtual ~Tool() = default;
 
+    virtual QString id() const = 0;
     virtual QIcon icon() const = 0;
     virtual QString name() const = 0;
     virtual QString tooltip() const { return name(); }
@@ -240,7 +241,16 @@ public:
 
     void register_tool(int group, qreal priority, std::unique_ptr<Tool> tool)
     {
+        by_id[tool->id()] = tool.get();
         tools[group].emplace(priority, std::move(tool));
+    }
+
+    Tool* tool(const QString& id) const
+    {
+        auto it = by_id.find(id);
+        if ( it == by_id.end() )
+            return nullptr;
+        return it->second;
     }
 
 
@@ -250,6 +260,7 @@ private:
     ~Registry() = default;
 
     container tools;
+    std::map<QString, Tool*> by_id;
 };
 
 

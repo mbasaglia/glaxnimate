@@ -105,6 +105,7 @@ public:
         start_group(styler);
         write_style(style);
         write_visibility_attributes(styler);
+        write_attribute("id", id(styler));
 
         for ( model::ShapeElement* subshape : styler->affected() )
         {
