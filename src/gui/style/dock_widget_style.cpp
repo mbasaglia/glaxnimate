@@ -1,5 +1,6 @@
 #include "dock_widget_style.hpp"
 
+#include <QtGlobal>
 
 void style::DockWidgetStyle::drawControl(
     ControlElement element, const QStyleOption* option,
@@ -14,8 +15,10 @@ void style::DockWidgetStyle::drawControl(
         int size = qMin(pixelMetric(QStyle::PM_ToolBarIconSize), title_rect.height());
         int padding = (title_rect.height() - size) / 2;
         QPoint pos(margin + padding + title_rect.left(), title_rect.top() + padding);
-        
+
+#ifndef Q_OS_MACOS
         option_copy.rect = option->rect.adjusted(size+margin*2, 0, 0, 0);
+#endif
         QProxyStyle::drawControl(element, &option_copy, painter, widget);
 
         painter->drawPixmap(pos, widget->windowIcon().pixmap(size, size));
