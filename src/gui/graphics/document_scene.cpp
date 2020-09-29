@@ -26,6 +26,13 @@ public:
             selection.erase(it2);
     }
 
+    void remove_selection_recursive(model::DocumentNode* node)
+    {
+        remove_selection(node);
+        for ( auto ch : node->docnode_group_children() )
+            remove_selection_recursive(ch);
+    }
+
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const
     {
         return item->data(data_key_ptr).value<model::DocumentNode*>();
@@ -109,6 +116,7 @@ void graphics::DocumentScene::connect_node ( model::DocumentNode* node )
     connect(node, &model::DocumentNode::docnode_child_add_end, this, &DocumentScene::connect_node);
     connect(node, &model::DocumentNode::docnode_child_remove_end, this, &DocumentScene::disconnect_node);
     connect(node, &model::DocumentNode::docnode_child_move_end, this, &DocumentScene::move_node);
+    connect(node, &model::DocumentNode::docnode_locked_changed, this, &DocumentScene::node_locked);
 
     DocumentNodeGraphicsItem* parent = nullptr;
     if ( auto parent_node = node->docnode_parent() )
@@ -159,7 +167,7 @@ void graphics::DocumentScene::add_selection(model::DocumentNode* node)
         return;
 
     d->selection.push_back(node);
-    if ( d->tool && d->tool->show_editors(node) )
+    if ( d->tool && d->tool->show_editors(node) && !node->docnode_locked_recursive() )
         show_editors(node);
 }
 
@@ -398,6 +406,16 @@ void graphics::DocumentScene::move_node(model::DocumentNode* node, int, int)
         QGraphicsItem* item = d->item_from_node(parent_node->docnode_child(i));
         item->stackBefore(above);
         above = item;
+    }
+
+}
+
+void graphics::DocumentScene::node_locked(bool locked)
+{
+    if ( locked )
+    {
+        model::DocumentNode* node = qobject_cast<model::DocumentNode*>(sender());
+        d->remove_selection_recursive(node);
     }
 
 }

@@ -74,7 +74,7 @@ void FillStyleWidget::property_changed(const model::BaseProperty* prop)
 
 void FillStyleWidget::set_color(const QColor& color, bool commit)
 {
-    if ( !target || updating )
+    if ( !target || updating || target->docnode_locked_recursive() )
         return;
 
     if (  auto named_color = qobject_cast<model::NamedColor*>(target->use.get()) )

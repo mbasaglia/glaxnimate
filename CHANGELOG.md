@@ -5,6 +5,7 @@
 * Editing:
     * Star/Polygon Shapes
     * Document Swatch
+    * Ability to lock objects to avoid editing them
 * Tools:
     * Star/Polygon Draw Tool
     * Clicking with the simple shapes drawing tools switches to the select tool

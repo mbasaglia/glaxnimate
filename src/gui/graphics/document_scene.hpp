@@ -58,6 +58,7 @@ private slots:
     void connect_node(model::DocumentNode* node);
     void disconnect_node(model::DocumentNode* node);
     void move_node(model::DocumentNode* node, int from, int to);
+    void node_locked(bool locked);
 
 private:
     class Private;
