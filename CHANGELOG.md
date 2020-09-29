@@ -15,6 +15,7 @@
 * Bug Fixes:
     * Fixed palettes not being saved correctly
     * Undoing commands no longer adds spurious keyframes
+    * Dock widgets have their icon displayed correctly on all supported systems
 
 ## 0.1.0
 
