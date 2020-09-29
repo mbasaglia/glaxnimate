@@ -90,7 +90,7 @@ linux:appimage:
         - cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_PREFIX_PATH=/opt/qt515/lib/cmake/Qt5LinguistTools/ -DVERSION_SUFFIX="appimage-$CI_COMMIT_SHORT_SHA"
         - make
         - make translations
-        - make install DESTDIR=AppDir
+        - make install DESTDIR=AppDir >/dev/null
         - cp AppDir/usr/share/glaxnimate/glaxnimate/glaxnimate.desktop AppDir
         - cp AppDir/usr/share/glaxnimate/glaxnimate/images/glaxnimate.png AppDir
         - wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
