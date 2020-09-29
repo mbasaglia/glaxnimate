@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QDialogButtonBox>
+#include <QMessageBox>
 
 #include <QtColorWidgets/color_palette_model.hpp>
 #include <QtColorWidgets/ColorDialog>
@@ -313,6 +314,16 @@ void DocumentSwatchWidget::generate()
 
 void DocumentSwatchWidget::open()
 {
+    if ( d->palette_model->count() == 0 )
+    {
+        QMessageBox::information(
+            this,
+            tr("Load from Palette"),
+            tr("No palettes are installed")
+        );
+        return;
+    }
+
     QDialog dialog(this);
     dialog.setWindowTitle(tr("Swatch from Palette"));
     QVBoxLayout* lay = new QVBoxLayout(&dialog);
@@ -341,6 +352,9 @@ void DocumentSwatchWidget::open()
     connect(&buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
 
     if ( dialog.exec() == QDialog::Rejected )
+        return;
+
+    if ( combo.currentIndex() < 0 || combo.currentIndex() >= d->palette_model->count() )
         return;
 
     if ( check_overwrite.isChecked() )
