@@ -12,6 +12,7 @@
 
 #include "detail.hpp"
 #include "path_parser.hpp"
+#include "math/misc.hpp"
 
 using namespace io::svg::detail;
 
@@ -767,10 +768,52 @@ public:
 
     void parseshape_path(const ParseFuncArgs& args)
     {
+        if ( parse_star(args) )
+            return;
         QString d = args.element.attribute("d");
         math::MultiBezier bez = PathDParser(d.splitRef(separator)).parse();
         /// \todo sodipodi:nodetypes
         parse_bezier_impl(args, bez);
+    }
+
+    bool parse_star(const ParseFuncArgs& args)
+    {
+        if ( attr(args.element, "sodipodi", "type") != "star" )
+            return false;
+
+        qreal randomized = attr(args.element, "inkscape", "randomized", "0").toDouble();
+        if ( !qFuzzyCompare(randomized, 0.0) )
+            return false;
+
+        qreal rounded = attr(args.element, "inkscape", "rounded", "0").toDouble();
+        if ( !qFuzzyCompare(rounded, 0.0) )
+            return false;
+
+
+        ShapeCollection shapes;
+        auto shape = push<model::PolyStar>(shapes);
+        shape->points.set(
+            attr(args.element, "sodipodi", "sides").toInt()
+        );
+        auto flat = attr(args.element, "inkscape", "flatsided");
+        shape->type.set(
+            flat == "true" ?
+            model::PolyStar::Polygon :
+            model::PolyStar::Star
+        );
+        shape->position.set(QPointF(
+            attr(args.element, "sodipodi", "cx").toDouble(),
+            attr(args.element, "sodipodi", "cy").toDouble()
+        ));
+        shape->outer_radius.set(attr(args.element, "sodipodi", "r1").toDouble());
+        shape->inner_radius.set(attr(args.element, "sodipodi", "r2").toDouble());
+        shape->angle.set(
+            math::rad2deg(attr(args.element, "sodipodi", "arg1").toDouble())
+            +90
+        );
+
+        add_shapes(args, std::move(shapes));
+        return true;
     }
 
     void parseshape_use(const ParseFuncArgs& args)

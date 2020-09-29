@@ -143,10 +143,10 @@ public:
         return bez;
     }
 
+    const std::vector<ShapeElement*>& affected() const { return affected_elements; }
+
 protected:
     void collect_shapes(FrameTime t, math::MultiBezier& bez) const;
-
-//     const std::vector<ShapeElement*>& affected() const { return affected_elements; }
 
 private slots:
     void update_affected();

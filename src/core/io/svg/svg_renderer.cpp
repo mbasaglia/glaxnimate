@@ -4,9 +4,8 @@
 
 #include "model/document.hpp"
 #include "model/layers/layers.hpp"
-#include "model/shapes/fill.hpp"
-#include "model/shapes/stroke.hpp"
-#include "model/shapes/group.hpp"
+#include "model/shapes/shapes.hpp"
+#include "math/misc.hpp"
 
 #include "detail.hpp"
 
@@ -93,6 +92,83 @@ public:
         return styler->color.get().name();
     }
 
+    void write_styler_shapes(model::Styler* styler, const Style::Map& style)
+    {
+        if ( styler->affected().size() == 1 )
+        {
+            write_shape_shape(styler->affected()[0], style);
+            write_visibility_attributes(styler);
+            write_attribute("id", id(styler));
+            return;
+        }
+
+        start_group(styler);
+        write_style(style);
+        write_visibility_attributes(styler);
+
+        for ( model::ShapeElement* subshape : styler->affected() )
+        {
+            write_shape_shape(subshape, style);
+        }
+
+        writer.writeEndElement();
+    }
+
+    void write_shape_shape(model::ShapeElement* shape, const Style::Map& style)
+    {
+        model::FrameTime time = shape->time();
+
+        if ( auto rect = qobject_cast<model::Rect*>(shape) )
+        {
+            writer.writeEmptyElement("rect");
+            write_style(style);
+            QPointF c = rect->position.get_at(time);
+            QSizeF s = rect->size.get_at(time);
+            write_attribute("x", c.x() - s.width()/2);
+            write_attribute("y", c.y() - s.height()/2);
+            write_attribute("width", s.width());
+            write_attribute("height", s.height());
+        }
+        else if ( auto ellipse = qobject_cast<model::Ellipse*>(shape) )
+        {
+            writer.writeEmptyElement("ellipse");
+            write_style(style);
+            QPointF c = ellipse->position.get_at(time);
+            QSizeF s = ellipse->size.get_at(time);
+            write_attribute("cx", c.x());
+            write_attribute("cy", c.y());
+            write_attribute("rx", s.width() / 2);
+            write_attribute("ry", s.height() / 2);
+        }
+        else if ( auto star = qobject_cast<model::PolyStar*>(shape) )
+        {
+            write_bezier(shape->shapes(time), style);
+
+            write_attribute("sodipodi:type", "star");
+            write_attribute("inkscape:randomized", "0");
+            write_attribute("inkscape:rounded", "0");
+            int sides = star->points.get_at(time);
+            write_attribute("sodipodi:sides", sides);
+            write_attribute(
+                "inkscape:flatsided",
+                star->type.get() == model::PolyStar::Polygon ?
+                "true" : "false"
+            );
+            QPointF c = star->position.get_at(time);
+            write_attribute("sodipodi:cx", c.x());
+            write_attribute("sodipodi:cy", c.y());
+            write_attribute("sodipodi:r1", star->outer_radius.get_at(time));
+            write_attribute("sodipodi:r2", star->inner_radius.get_at(time));
+            qreal angle = math::deg2rad(star->angle.get_at(time) - 90);
+            write_attribute("sodipodi:arg1", angle);
+            write_attribute("sodipodi:arg2", angle + math::pi / sides);
+        }
+        else if ( !qobject_cast<model::Styler*>(shape) )
+        {
+            write_bezier(shape->shapes(time), style);
+        }
+    }
+
     void write_shape(model::ShapeElement* shape, bool force_draw)
     {
         if ( auto grp = qobject_cast<model::Group*>(shape) )
@@ -132,21 +208,20 @@ public:
                     break;
             }
             style["stroke-dasharray"] = "none";
-            write_bezier(stroke->collect_shapes(stroke->time()), style, stroke);
-            write_visibility_attributes(shape);
+            write_styler_shapes(stroke, style);
         }
         else if ( auto fill = qobject_cast<model::Fill*>(shape) )
         {
             Style::Map style;
             style["fill"] = styler_to_css(fill);
             style["fill-opacity"] = QString::number(fill->opacity.get());
-            write_bezier(fill->collect_shapes(fill->time()), style, fill);
-            write_visibility_attributes(shape);
+            write_styler_shapes(fill, style);
         }
         else if ( force_draw )
         {
-            write_bezier(shape->shapes(shape->time()), {}, shape);
+            write_shape_shape(shape, {});
             write_visibility_attributes(shape);
+            write_attribute("id", id(shape));
         }
     }
 
@@ -164,7 +239,7 @@ public:
         }
     }
 
-    void write_bezier(const math::MultiBezier& shape, const Style::Map& style, model::ShapeElement* node)
+    void write_bezier(const math::MultiBezier& shape, const Style::Map& style)
     {
         writer.writeEmptyElement("path");
         write_style(style);
@@ -200,7 +275,6 @@ public:
         }
         write_attribute("d", d);
         write_attribute("sodipodi:nodetypes", nodetypes);
-        write_attribute("id", id(node));
     }
 
     void write_group_shape(model::Group* group)
