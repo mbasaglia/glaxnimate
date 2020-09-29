@@ -5,10 +5,13 @@
 #include <exception>
 #include <QIODevice>
 
+#include "io/mime/mime_serializer.hpp"
+
 namespace model {
     class Composition;
     class Document;
     class DocumentNode;
+    class Object;
 } // namespace model
 
 
@@ -56,7 +59,7 @@ public:
     ~SvgParser();
 
     void parse_to_document();
-    std::vector<std::unique_ptr<model::DocumentNode>> parse_to_objects();
+    io::mime::DeserializedData parse_to_objects();
 
 private:
     class Private;

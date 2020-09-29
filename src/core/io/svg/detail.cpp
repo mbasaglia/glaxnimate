@@ -2,6 +2,7 @@
 
 
 const std::map<QString, QString> io::svg::detail::xmlns = {
+    {"osb", "http://www.openswatchbook.org/uri/2009/osb"},
     {"dc", "http://purl.org/dc/elements/1.1/"},
     {"cc", "http://creativecommons.org/ns#"},
     {"rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"},

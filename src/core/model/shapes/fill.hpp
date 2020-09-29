@@ -1,10 +1,10 @@
 #pragma once
 
-#include "shape.hpp"
-#include "model/animation/animatable.hpp"
-
 #include <QBrush>
 #include <QPainter>
+
+#include "styler.hpp"
+#include "model/animation/animatable.hpp"
 
 namespace model {
 
@@ -22,9 +22,7 @@ public:
 private:
     Q_ENUM(Rule);
 
-    GLAXNIMATE_ANIMATABLE(QColor, color, QColor())
     GLAXNIMATE_PROPERTY(Rule, fill_rule, NonZero, nullptr, nullptr, PropertyTraits::Visual)
-    GLAXNIMATE_ANIMATABLE(float, opacity, 1)
 
 public:
     using Ctor::Ctor;
@@ -43,13 +41,7 @@ public:
         return tr("Fill");
     }
 
-
 protected:
-    QBrush brush(FrameTime t) const
-    {
-        return color.get_at(t);
-    }
-
     void on_paint(QPainter* p, FrameTime t, PaintMode) const override
     {
         p->setBrush(brush(t));

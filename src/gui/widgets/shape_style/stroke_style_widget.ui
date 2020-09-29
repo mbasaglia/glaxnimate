@@ -333,7 +333,7 @@
   <customwidget>
    <class>ColorSelector</class>
    <extends>QWidget</extends>
-   <header>widgets/color_selector.hpp</header>
+   <header>widgets/shape_style/color_selector.hpp</header>
    <container>1</container>
    <slots>
     <signal>secondary_color_changed(QColor)</signal>
@@ -507,7 +507,7 @@
   </connection>
   <connection>
    <sender>color_selector</sender>
-   <signal>current_color_changed(QColor)</signal>
+   <signal>current_color_committed(QColor)</signal>
    <receiver>StrokeStyleWidget</receiver>
    <slot>color_committed(QColor)</slot>
    <hints>

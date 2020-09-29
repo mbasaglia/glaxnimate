@@ -7,6 +7,7 @@ namespace tools {
 class EditTool : public Tool
 {
 public:
+    QString id() const override { return "edit"; }
     QIcon icon() const override { return QIcon::fromTheme("edit-node"); }
     QString name() const override { return QObject::tr("Edit"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F2"), QKeySequence::PortableText); }

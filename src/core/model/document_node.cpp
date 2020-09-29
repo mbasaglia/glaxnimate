@@ -4,12 +4,6 @@
 #include <QPainter>
 #include <QGraphicsItem>
 
-model::DocumentNode::DocumentNode(Document* document)
-    : ReferenceTarget(document)
-{
-    uuid.set_value(QUuid::createUuid());
-}
-
 QColor model::DocumentNode::docnode_group_color() const
 {
     if ( !docnode_valid_color() )

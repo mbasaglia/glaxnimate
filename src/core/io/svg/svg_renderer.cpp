@@ -4,9 +4,8 @@
 
 #include "model/document.hpp"
 #include "model/layers/layers.hpp"
-#include "model/shapes/fill.hpp"
-#include "model/shapes/stroke.hpp"
-#include "model/shapes/group.hpp"
+#include "model/shapes/shapes.hpp"
+#include "math/misc.hpp"
 
 #include "detail.hpp"
 
@@ -22,7 +21,8 @@ public:
 
         at_start = false;
         writer.writeStartElement("defs");
-        Q_UNUSED(doc)
+        for ( const auto& color : doc->defs()->colors )
+            write_named_color(color.get());
         writer.writeEndElement();
 
         writer.writeStartElement("sodipodi:namedview");
@@ -84,6 +84,92 @@ public:
             write_shape(shape.get(), false);
     }
 
+
+    QString styler_to_css(model::Styler* styler)
+    {
+        if ( styler->use.get() )
+            return "url(#" + non_uuid_ids_map[styler->use.get()] + ")";
+        return styler->color.get().name();
+    }
+
+    void write_styler_shapes(model::Styler* styler, const Style::Map& style)
+    {
+        if ( styler->affected().size() == 1 )
+        {
+            write_shape_shape(styler->affected()[0], style);
+            write_visibility_attributes(styler);
+            write_attribute("id", id(styler));
+            return;
+        }
+
+        start_group(styler);
+        write_style(style);
+        write_visibility_attributes(styler);
+        write_attribute("id", id(styler));
+
+        for ( model::ShapeElement* subshape : styler->affected() )
+        {
+            write_shape_shape(subshape, style);
+        }
+
+        writer.writeEndElement();
+    }
+
+    void write_shape_shape(model::ShapeElement* shape, const Style::Map& style)
+    {
+        model::FrameTime time = shape->time();
+
+        if ( auto rect = qobject_cast<model::Rect*>(shape) )
+        {
+            writer.writeEmptyElement("rect");
+            write_style(style);
+            QPointF c = rect->position.get_at(time);
+            QSizeF s = rect->size.get_at(time);
+            write_attribute("x", c.x() - s.width()/2);
+            write_attribute("y", c.y() - s.height()/2);
+            write_attribute("width", s.width());
+            write_attribute("height", s.height());
+        }
+        else if ( auto ellipse = qobject_cast<model::Ellipse*>(shape) )
+        {
+            writer.writeEmptyElement("ellipse");
+            write_style(style);
+            QPointF c = ellipse->position.get_at(time);
+            QSizeF s = ellipse->size.get_at(time);
+            write_attribute("cx", c.x());
+            write_attribute("cy", c.y());
+            write_attribute("rx", s.width() / 2);
+            write_attribute("ry", s.height() / 2);
+        }
+        else if ( auto star = qobject_cast<model::PolyStar*>(shape) )
+        {
+            write_bezier(shape->shapes(time), style);
+
+            write_attribute("sodipodi:type", "star");
+            write_attribute("inkscape:randomized", "0");
+            write_attribute("inkscape:rounded", "0");
+            int sides = star->points.get_at(time);
+            write_attribute("sodipodi:sides", sides);
+            write_attribute(
+                "inkscape:flatsided",
+                star->type.get() == model::PolyStar::Polygon ?
+                "true" : "false"
+            );
+            QPointF c = star->position.get_at(time);
+            write_attribute("sodipodi:cx", c.x());
+            write_attribute("sodipodi:cy", c.y());
+            write_attribute("sodipodi:r1", star->outer_radius.get_at(time));
+            write_attribute("sodipodi:r2", star->inner_radius.get_at(time));
+            qreal angle = math::deg2rad(star->angle.get_at(time) - 90);
+            write_attribute("sodipodi:arg1", angle);
+            write_attribute("sodipodi:arg2", angle + math::pi / sides);
+        }
+        else if ( !qobject_cast<model::Styler*>(shape) )
+        {
+            write_bezier(shape->shapes(time), style);
+        }
+    }
+
     void write_shape(model::ShapeElement* shape, bool force_draw)
     {
         if ( auto grp = qobject_cast<model::Group*>(shape) )
@@ -94,7 +180,7 @@ public:
         {
             Style::Map style;
             style["fill"] = "none";
-            style["stroke"] = stroke->color.get().name();
+            style["stroke"] = styler_to_css(stroke);
             style["stroke-width"] = QString::number(stroke->width.get());
             style["stroke-opacity"] = QString::number(stroke->opacity.get());
             switch ( stroke->cap.get() )
@@ -123,21 +209,20 @@ public:
                     break;
             }
             style["stroke-dasharray"] = "none";
-            write_bezier(stroke->collect_shapes(stroke->time()), style, stroke);
-            write_visibility_attributes(shape);
+            write_styler_shapes(stroke, style);
         }
         else if ( auto fill = qobject_cast<model::Fill*>(shape) )
         {
             Style::Map style;
-            style["fill"] = fill->color.get().name();
+            style["fill"] = styler_to_css(fill);
             style["fill-opacity"] = QString::number(fill->opacity.get());
-            write_bezier(fill->collect_shapes(fill->time()), style, fill);
-            write_visibility_attributes(shape);
+            write_styler_shapes(fill, style);
         }
         else if ( force_draw )
         {
-            write_bezier(shape->shapes(shape->time()), {}, shape);
+            write_shape_shape(shape, {});
             write_visibility_attributes(shape);
+            write_attribute("id", id(shape));
         }
     }
 
@@ -155,7 +240,7 @@ public:
         }
     }
 
-    void write_bezier(const math::MultiBezier& shape, const Style::Map& style, model::ShapeElement* node)
+    void write_bezier(const math::MultiBezier& shape, const Style::Map& style)
     {
         writer.writeEmptyElement("path");
         write_style(style);
@@ -191,7 +276,6 @@ public:
         }
         write_attribute("d", d);
         write_attribute("sodipodi:nodetypes", nodetypes);
-        write_attribute("id", id(node));
     }
 
     void write_group_shape(model::Group* group)
@@ -244,7 +328,7 @@ public:
         writer.writeAttribute("inkscape:groupmode", "layer");
     }
 
-    QString id(model::DocumentNode* node)
+    QString id(model::ReferenceTarget* node)
     {
         return node->type_name() + "_" + node->uuid.get().toString(QUuid::Id128);
     }
@@ -252,6 +336,65 @@ public:
     void write_attribute(const QString& name, const QString& val)
     {
         writer.writeAttribute(name, val);
+    }
+
+    /// Avoid locale nonsense by defining these functions (on ASCII chars) manually
+    static constexpr bool valid_id_start(char c) noexcept
+    {
+        return  ( c >= 'a' && c <= 'z') ||
+                ( c >= 'A' && c <= 'Z') ||
+                c == '_';
+    }
+
+    static constexpr bool valid_id(char c) noexcept
+    {
+        return  valid_id_start(c) ||
+                ( c >= '0' && c <= '9') ||
+                c == '-';
+    }
+
+    void write_named_color(model::NamedColor* color)
+    {
+        writer.writeStartElement("linearGradient");
+        writer.writeAttribute("osb:paint", "solid");
+        QString id = pretty_id(color->name.get(), color);
+        non_uuid_ids_map[color] = id;
+        writer.writeAttribute("id", id);
+
+        writer.writeEmptyElement("stop");
+        writer.writeAttribute("offset", "0");
+        writer.writeAttribute("style", "stop-color:" + color->color.get().name());
+
+        writer.writeEndElement();
+    }
+
+    QString pretty_id(const QString& s, model::ReferenceTarget* node)
+    {
+        if ( s.isEmpty() )
+            return id(node);
+
+        QByteArray str = s.toLatin1();
+        QString id_attempt;
+        if ( !valid_id_start(str[0]) )
+            id_attempt.push_back('_');
+
+        for ( char c : str )
+        {
+            if ( c == ' ' )
+                id_attempt.push_back('_');
+            else if ( valid_id(c) )
+                id_attempt.push_back(c);
+        }
+
+        if ( id_attempt.isEmpty() )
+            return id(node);
+
+        QString id_final = id_attempt;
+        int i = 1;
+        while ( non_uuid_ids.count(id_final) )
+            id_final = id_attempt + QString::number(i++);
+
+        return id_final;
     }
 
     template<class T>
@@ -264,6 +407,8 @@ public:
     QXmlStreamWriter writer;
     bool at_start = true;
     bool closed = false;
+    std::set<QString> non_uuid_ids;
+    std::map<model::ReferenceTarget*, QString> non_uuid_ids_map;
 };
 
 

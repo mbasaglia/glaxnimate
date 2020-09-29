@@ -209,11 +209,23 @@ private:
     PropertyTraits traits_;
 };
 
-
 namespace detail {
 
 template<class T> inline T defval() { return T(); }
 template<> inline void defval<void>() {}
+
+
+template<class FuncT, class... Args, std::size_t... I>
+auto invoke_impl(const FuncT& fun, std::index_sequence<I...>, const std::tuple<Args...>& args)
+{
+  return fun(std::get<I>(args)...);
+}
+
+template<int ArgCount, class FuncT, class... Args>
+auto invoke(const FuncT& fun, const Args&... t)
+{
+  return invoke_impl(fun, std::make_index_sequence<ArgCount>(), std::make_tuple(t...));
+}
 
 } // namespace detail
 
@@ -238,44 +250,11 @@ private:
 
         Return invoke(Object* obj, const ArgType&... v) const override
         {
-            return func(static_cast<ObjT*>(obj), v...);
+            return detail::invoke<sizeof...(Arg)+1>(func, static_cast<ObjT*>(obj), v...);
         }
 
         FuncP func;
     };
-
-    template<class ObjT, class... Arg>
-    class HolderConst : public HolderBase
-    {
-    public:
-        using FuncP = std::function<Return (const ObjT*, Arg...)>;
-
-        HolderConst(FuncP func) : func(std::move(func)) {}
-
-        Return invoke(Object* obj, const ArgType&... v) const override
-        {
-            return func(static_cast<ObjT*>(obj), v...);
-        }
-
-        FuncP func;
-    };
-
-    template<class ObjT>
-    class HolderNoarg : public HolderBase
-    {
-    public:
-        using FuncP = std::function<Return (ObjT*)>;
-
-        HolderNoarg(FuncP func) : func(std::move(func)) {}
-
-        Return invoke(Object* obj, const ArgType&...) const override
-        {
-            return func(static_cast<ObjT*>(obj));
-        }
-
-        FuncP func;
-    };
-
     std::unique_ptr<HolderBase> holder;
 public:
     PropertyCallback() = default;
@@ -283,17 +262,9 @@ public:
     PropertyCallback(std::nullptr_t) {}
 
     template<class ObjT, class... Arg>
-    PropertyCallback(Return (ObjT::*func)(const Arg&...)) : holder(std::make_unique<Holder<ObjT, const Arg&...>>(func)) {}
-    template<class ObjT, class... Arg>
-    PropertyCallback(Return (ObjT::*func)(const Arg&...) const) : holder(std::make_unique<HolderConst<ObjT, const Arg&...>>(func)) {}
-    template<class ObjT, class... Arg>
     PropertyCallback(Return (ObjT::*func)(Arg...)) : holder(std::make_unique<Holder<ObjT, Arg...>>(func)) {}
     template<class ObjT, class... Arg>
-    PropertyCallback(Return (ObjT::*func)(Arg...) const) : holder(std::make_unique<HolderConst<ObjT, Arg...>>(func)) {}
-    template<class ObjT>
-    PropertyCallback(Return (ObjT::*func)()) : holder(std::make_unique<HolderNoarg<ObjT>>(func)) {}
-    template<class ObjT>
-    PropertyCallback(Return (ObjT::*func)() const) : holder(std::make_unique<HolderNoarg<ObjT>>(func)) {}
+    PropertyCallback(Return (ObjT::*func)(Arg...) const) : holder(std::make_unique<Holder<ObjT, Arg...>>(func)) {}
 
 
     explicit operator bool() const
@@ -305,75 +276,6 @@ public:
     {
         if ( holder )
             return holder->invoke(obj, v...);
-        return detail::defval<Return>();
-    }
-};
-
-
-template<class Return>
-class PropertyCallback<Return, void>
-{
-private:
-
-    class HolderBase
-    {
-    public:
-        virtual ~HolderBase() = default;
-        virtual Return invoke(Object* obj) const = 0;
-    };
-
-    template<class ObjT>
-    class Holder : public HolderBase
-    {
-    public:
-        using FuncP = std::function<Return (ObjT*)>;
-
-        Holder(FuncP func) : func(std::move(func)) {}
-
-        Return invoke(Object* obj) const override
-        {
-            return func(static_cast<ObjT*>(obj));
-        }
-
-        FuncP func;
-    };
-
-    template<class ObjT>
-    class HolderConst : public HolderBase
-    {
-    public:
-        using FuncP = std::function<Return (const ObjT*)>;
-
-        HolderConst(FuncP func) : func(std::move(func)) {}
-
-        Return invoke(Object* obj) const override
-        {
-            return func(static_cast<ObjT*>(obj));
-        }
-
-        FuncP func;
-    };
-
-    std::unique_ptr<HolderBase> holder;
-public:
-    PropertyCallback() = default;
-
-    PropertyCallback(std::nullptr_t) {}
-
-    template<class ObjT>
-    PropertyCallback(Return (ObjT::*func)()) : holder(std::make_unique<Holder<ObjT>>(func)) {}
-    template<class ObjT>
-    PropertyCallback(Return (ObjT::*func)() const) : holder(std::make_unique<HolderConst<ObjT>>(func)) {}
-
-    explicit operator bool() const
-    {
-        return bool(holder);
-    }
-
-    Return operator() (Object* obj) const
-    {
-        if ( holder )
-            return holder->invoke(obj);
         return detail::defval<Return>();
     }
 };

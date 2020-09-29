@@ -1,23 +1,34 @@
 ## 0.2.0
- * Editing:
+
+## 0.1.1
+
+* Editing:
     * Star/Polygon Shapes
- * Tools:
+    * Document Swatch
+* Tools:
     * Star/Polygon Draw Tool
- * Scripting:
-    * Logging support
+    * Clicking with the simple shapes drawing tools switches to the select tool
+* Scripting:
+    * Added logging support integration with Python
+* I/O:
+    * SVG ouput now preserve shapes instead of converting everything to path
+* Bug Fixes:
+    * Fixed palettes not being saved correctly
+    * Undoing commands no longer adds spurious keyframes
 
 ## 0.1.0
- * Editing:
+
+* Editing:
     * Layer Management
     * Basic Animations
     * Basic Shapes
- * Tools:
+* Tools:
     * Select Tool
     * Bezier Edit Tool
     * Bezier Draw Tool
     * Rectangle Draw Tool
     * Ellipse Draw Tool
- * I/O:
+* I/O:
     * Open/Save Rawr files
     * Open/Save Lottie files
     * Open/Save Telegram animated stickers
@@ -31,11 +42,11 @@
     * Telegram sticker validation
     * Automatic backups
     * Drop files to open them
- * Scripting:
+* Scripting:
     * Python Scripting capabilities
     * Menu action plugins
     * Python console
- * UI:
+* UI:
     * Color Selection View
     * Stroke Style View
     * Scripting Console

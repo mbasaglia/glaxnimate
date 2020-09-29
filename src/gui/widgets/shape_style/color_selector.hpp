@@ -4,6 +4,14 @@
 #include <memory>
 #include <QWidget>
 
+namespace color_widgets {
+class ColorPaletteModel;
+} // namespace color_widgets
+
+namespace model {
+class Document;
+} // namespace model
+
 class ColorSelector : public QWidget
 {
     Q_OBJECT
@@ -18,6 +26,8 @@ public:
     QColor secondary_color() const;
 
     void save_settings();
+
+    void set_palette_model(color_widgets::ColorPaletteModel* palette_model);
 
 public slots:
     void set_current_color(const QColor& c);

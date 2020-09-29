@@ -5,6 +5,7 @@
 #include <QMessageBox>
 
 #include "QtColorWidgets/color_delegate.hpp"
+#include "QtColorWidgets/color_palette_model.hpp"
 
 #include "ui_glaxnimate_window.h"
 #include "glaxnimate_window.hpp"
@@ -70,6 +71,7 @@ public:
     AboutDialog* about_dialog;
     FlowLayout* dock_tools_layout;
     app::log::LogModel log_model;
+    color_widgets::ColorPaletteModel palette_model;
 
     // document
     void setup_document(const QString& filename);
@@ -94,7 +96,7 @@ public:
     QString drop_event_data(QDropEvent* ev);
 
     // ui
-    void setupUi(GlaxnimateWindow* parent);
+    void setupUi(bool restore_state, GlaxnimateWindow* parent);
     void retranslateUi(QMainWindow* parent);
     void view_fit();
     void document_treeview_current_changed(const QModelIndex& index);
@@ -108,6 +110,8 @@ public:
     void switch_tool(tools::Tool* tool);
     void switch_tool_action(QAction* action);
     void status_message(const QString& msg, int duration=5000);
+    void set_color_def_primary(model::BrushStyle* sty);
+    void set_color_def_secondary(model::BrushStyle* sty);
 
     // Model
     model::Composition* current_composition();

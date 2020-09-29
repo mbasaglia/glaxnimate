@@ -95,8 +95,8 @@ public:
     ObjectListProperty(
         Object* obj,
         const QString& name,
-        PropertyCallback<void, Type*> callback_insert = &DocumentNode::docnode_child_add_end,
-        PropertyCallback<void, Type*> callback_remove = &DocumentNode::docnode_child_remove_end,
+        PropertyCallback<void, Type*, int> callback_insert = &DocumentNode::docnode_child_add_end,
+        PropertyCallback<void, Type*, int> callback_remove = &DocumentNode::docnode_child_remove_end,
         PropertyCallback<void, int> callback_insert_begin = &DocumentNode::docnode_child_add_begin,
         PropertyCallback<void, int> callback_remove_begin = &DocumentNode::docnode_child_remove_begin,
         PropertyCallback<void, int, int> callback_move_begin = &DocumentNode::docnode_child_move_begin,
@@ -111,15 +111,15 @@ public:
         callback_move_end(std::move(callback_move_end))
     {}
 
-    reference operator[](int i) const { return *objects[i]; }
+    value_type* operator[](int i) const { return objects[i].get(); }
     int size() const { return objects.size(); }
     bool empty() const { return objects.empty(); }
     iterator begin() const { return objects.begin(); }
     iterator end() const { return objects.end(); }
 
-    reference back() const
+    value_type* back() const
     {
-        return *objects.back();
+        return objects.back().get();
     }
 
     void insert(pointer p, int position = -1)
@@ -131,7 +131,7 @@ public:
         auto ptr = p.get();
         objects.insert(objects.begin()+position, std::move(p));
         on_insert(position);
-        callback_insert(this->object(), ptr);
+        callback_insert(this->object(), ptr, position);
         value_changed();
     }
 
@@ -149,7 +149,7 @@ public:
         auto v = std::move(*it);
         objects.erase(it);
         on_remove(index);
-        callback_remove(object(), v.get());
+        callback_remove(object(), v.get(), index);
         value_changed();
         return v;
     }
@@ -229,8 +229,8 @@ protected:
     virtual void on_move(int index_a, int index_b) { Q_UNUSED(index_a); Q_UNUSED(index_b); }
 
     std::vector<pointer> objects;
-    PropertyCallback<void, Type*> callback_insert;
-    PropertyCallback<void, Type*> callback_remove;
+    PropertyCallback<void, Type*, int> callback_insert;
+    PropertyCallback<void, Type*, int> callback_remove;
     PropertyCallback<void, int> callback_insert_begin;
     PropertyCallback<void, int> callback_remove_begin;
     PropertyCallback<void, int, int> callback_move_begin;

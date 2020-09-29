@@ -143,10 +143,10 @@ public:
         return bez;
     }
 
+    const std::vector<ShapeElement*>& affected() const { return affected_elements; }
+
 protected:
     void collect_shapes(FrameTime t, math::MultiBezier& bez) const;
-
-//     const std::vector<ShapeElement*>& affected() const { return affected_elements; }
 
 private slots:
     void update_affected();
@@ -179,17 +179,5 @@ protected:
     virtual math::MultiBezier process(const math::MultiBezier& mbez) const = 0;
 };
 
-/**
- * \brief Base class for elements that add a style
- */
-class Styler : public ShapeOperator
-{
-    Q_OBJECT
-
-public:
-    using ShapeOperator::ShapeOperator;
-
-    void add_shapes(FrameTime, math::MultiBezier&) const override {}
-};
 
 } // namespace model

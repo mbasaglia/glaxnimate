@@ -15,6 +15,7 @@ public:
     {
         on_visit(doc);
         visit(doc->main_composition());
+        on_visit_end(doc);
     }
 
     void visit(model::DocumentNode* node)
@@ -22,11 +23,14 @@ public:
         on_visit(node);
         for ( auto ch : node->docnode_children() )
             visit(ch);
+        on_visit_end(node);
     }
 
 private:
     virtual void on_visit(model::DocumentNode* node) = 0;
-    virtual void on_visit(model::Document*) {}
+    virtual void on_visit_end(model::DocumentNode* node) { Q_UNUSED(node) }
+    virtual void on_visit(model::Document* document) { Q_UNUSED(document) }
+    virtual void on_visit_end(model::Document* document) { Q_UNUSED(document) }
 };
 
 } // namespace model

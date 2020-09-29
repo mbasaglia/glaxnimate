@@ -18,12 +18,6 @@ public:
         return json.toJson(QJsonDocument::Indented);
     }
 
-    std::vector<std::unique_ptr<model::DocumentNode>> deserialize(
-        const QByteArray&,
-        model::Document*,
-        model::Composition*
-    ) const override { return {}; }
-
     bool can_deserialize() const override { return false; }
 
 private:

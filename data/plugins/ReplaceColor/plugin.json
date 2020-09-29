@@ -1,0 +1,29 @@
+{
+    "name": "Replace Color",
+    "author": "Glax",
+    "engine": "python",
+    "version": 1,
+    "icon": "theme:edit-find-replace",
+    "services": [
+        {
+            "type": "action",
+            "label": "Replace Color",
+            "script": {
+                "module": "replace_color",
+                "function": "main",
+                "settings": {
+                    "search": {
+                        "label": "Search:",
+                        "type": "color",
+                        "default": "#000000"
+                    },
+                    "replace": {
+                        "label": "Replace with:",
+                        "type": "color",
+                        "default": "#000000"
+                    }
+                }
+            }
+        }
+    ]
+}

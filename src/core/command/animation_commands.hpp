@@ -4,7 +4,6 @@
 
 #include "command/base.hpp"
 #include "model/animation/animatable.hpp"
-#include "model/document.hpp"
 
 namespace command {
 
@@ -16,34 +15,13 @@ public:
         model::FrameTime time,
         const QVariant& value,
         bool commit
-    ) : Parent(QObject::tr("Update %1 keyframe at %2").arg(prop->name()).arg(time), commit),
-        prop(prop),
-        time(time),
-        before(prop->value(time)),
-        after(value),
-        had_before(prop->has_keyframe(time))
-    {}
+    );
 
-    void undo() override
-    {
-        if ( had_before )
-            prop->set_keyframe(time, before);
-        else
-            prop->remove_keyframe_at_time(time);
-    }
+    void undo() override;
 
-    void redo() override
-    {
-        prop->set_keyframe(time, after);
-    }
+    void redo() override;
 
-    bool merge_with(const SetKeyframe& other)
-    {
-        if ( other.prop != prop )
-            return false;
-        after = other.after;
-        return true;
-    }
+    bool merge_with(const SetKeyframe& other);
 
 private:
     model::AnimatableBase* prop;
@@ -59,21 +37,11 @@ public:
     RemoveKeyframeTime(
         model::AnimatableBase* prop,
         model::FrameTime time
-    ) : QUndoCommand(QObject::tr("Remove %1 keyframe at %2").arg(prop->name()).arg(time)),
-        prop(prop),
-        time(time),
-        before(prop->value(time))
-    {}
+    );
 
-    void undo() override
-    {
-        prop->set_keyframe(time, before);
-    }
+    void undo() override;
 
-    void redo() override
-    {
-        prop->remove_keyframe_at_time(time);
-    }
+    void redo() override;
 
 private:
     model::AnimatableBase* prop;
@@ -89,15 +57,7 @@ private:
 class SetMultipleAnimated : public MergeableCommand<Id::SetMultipleAnimated, SetMultipleAnimated>
 {
 public:
-    SetMultipleAnimated(model::AnimatableBase* prop, QVariant after, bool commit)
-        : SetMultipleAnimated(
-            auto_name(prop),
-            {prop},
-            {},
-            {after},
-            commit
-        )
-    {}
+    SetMultipleAnimated(model::AnimatableBase* prop, QVariant after, bool commit);
 
     template<class... Args>
     SetMultipleAnimated(
@@ -119,83 +79,16 @@ public:
         const QVariantList& before,
         const QVariantList& after,
         bool commit
-    )
-        : Parent(name, commit), props(props), before(before), after(after),
-        keyframe_after(props[0]->object()->document()->record_to_keyframe()),
-        time(props[0]->time())
-    {
-        bool add_before = before.empty();
+    );
 
-        for ( auto prop : props )
-        {
-            if ( add_before )
-                this->before.push_back(prop->value());
-            keyframe_before.push_back(prop->keyframe_status(time) != model::AnimatableBase::Tween);
-        }
-    }
+    void undo() override;
 
-    void undo() override
-    {
-        for ( int i = 0; i < int(props.size()); i++ )
-        {
-            auto prop = props[i];
-            if ( keyframe_after )
-            {
-                if ( keyframe_before[i] )
-                    prop->set_keyframe(time, before[i]);
-                else
-                    prop->remove_keyframe_at_time(time);
-            }
-            else
-            {
-                if ( keyframe_before[i] )
-                    prop->set_keyframe(time, before[i]);
-                else if ( !prop->animated() || prop->time() == time )
-                    prop->set_value(before[i]);
-            }
-        }
-    }
+    void redo() override;
 
-    void redo() override
-    {
-        for ( int i = 0; i < int(props.size()); i++ )
-        {
-            auto prop = props[i];
-            if ( keyframe_after )
-                prop->set_keyframe(time, after[i]);
-            else if ( !prop->animated() || prop->time() == time )
-                prop->set_value(after[i]);
-        }
-    }
-
-
-    bool merge_with(const SetMultipleAnimated& other)
-    {
-        if ( other.props.size() != props.size() || keyframe_after != other.keyframe_after || time != other.time )
-            return false;
-
-        for ( int i = 0; i < int(props.size()); i++ )
-            if ( props[i] != other.props[i] )
-                return false;
-
-        after = other.after;
-        return true;
-    }
+    bool merge_with(const SetMultipleAnimated& other);
 
 private:
-    static QString auto_name(model::AnimatableBase* prop)
-    {
-        bool key_before = prop->keyframe_status(prop->time()) != model::AnimatableBase::Tween;
-        bool key_after = prop->object()->document()->record_to_keyframe();
-
-        if ( key_after && !key_before )
-            return QObject::tr("Add keyframe for %1 at %2").arg(prop->name()).arg(prop->time());
-
-        if ( key_before )
-            return QObject::tr("Update %1 at %2").arg(prop->name()).arg(prop->time());
-
-        return QObject::tr("Update %1").arg(prop->name());
-    }
+    static QString auto_name(model::AnimatableBase* prop);
 
     std::vector<model::AnimatableBase*> props;
     QVariantList before;
@@ -215,53 +108,16 @@ public:
         model::KeyframeTransition::Descriptive desc,
         const QPointF& point,
         bool before_transition
-    ) : QUndoCommand(QObject::tr("Update keyframe transition")),
-        prop(prop),
-        keyframe_index(keyframe_index),
-        undo_value(
-            before_transition ? keyframe()->transition().before_handle() : keyframe()->transition().after_handle()
-        ),
-        undo_desc(
-            before_transition ? keyframe()->transition().before() : keyframe()->transition().after()
-        ),
-        redo_value(point),
-        redo_desc(desc),
-        before_transition(before_transition)
-    {}
+    );
 
-    void undo() override
-    {
-        set_handle(undo_value, undo_desc);
-    }
+    void undo() override;
 
-    void redo() override
-    {
-        set_handle(redo_value, redo_desc);
-    }
+    void redo() override;
 
 private:
-    model::KeyframeBase* keyframe() const
-    {
-        return prop->keyframe(keyframe_index);
-    }
+    model::KeyframeBase* keyframe() const;
 
-    void set_handle(const QPointF& v, model::KeyframeTransition::Descriptive desc) const
-    {
-        if ( desc == model::KeyframeTransition::Custom )
-        {
-            if ( before_transition )
-                keyframe()->transition().set_before_handle(v);
-            else
-                keyframe()->transition().set_after_handle(v);
-        }
-        else
-        {
-            if ( before_transition )
-                keyframe()->transition().set_before(desc);
-            else
-                keyframe()->transition().set_after(desc);
-        }
-    }
+    void set_handle(const QPointF& v, model::KeyframeTransition::Descriptive desc) const;
 
     model::AnimatableBase* prop;
     int keyframe_index;
@@ -283,22 +139,11 @@ public:
         model::AnimatableBase* prop,
         int keyframe_index,
         model::FrameTime time_after
-    ) : QUndoCommand(QObject::tr("Move keyframe")),
-        prop(prop),
-        keyframe_index_before(keyframe_index),
-        time_before(prop->keyframe(keyframe_index)->time()),
-        time_after(time_after)
-    {}
+    );
 
-    void undo() override
-    {
-        prop->move_keyframe(keyframe_index_after, time_before);
-    }
+    void undo() override;
 
-    void redo() override
-    {
-        keyframe_index_after = prop->move_keyframe(keyframe_index_before, time_after);
-    }
+    void redo() override;
 
 private:
     model::AnimatableBase* prop;

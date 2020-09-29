@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>512</width>
-    <height>146</height>
+    <height>130</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,14 +30,14 @@
        <widget class="QLabel" name="label_icon">
         <property name="minimumSize">
          <size>
-          <width>80</width>
-          <height>80</height>
+          <width>64</width>
+          <height>64</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
-          <height>80</height>
+          <width>64</width>
+          <height>64</height>
          </size>
         </property>
         <property name="text">
@@ -87,7 +87,8 @@
         <string>Hide</string>
        </property>
        <property name="icon">
-        <iconset theme="dialog-close"/>
+        <iconset theme="dialog-close">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>

@@ -75,7 +75,7 @@ static std::unique_ptr<QUndoCommand> delete_layer(model::Layer* lay)
 
 static std::unique_ptr<QUndoCommand> delete_shape(model::ShapeElement* shape)
 {
-    return std::make_unique<command::RemoveShape>(shape);
+    return std::make_unique<command::RemoveShape>(shape, shape->owner());
 }
 
 QString command::DeleteCommand::name(model::DocumentNode* node)
@@ -177,7 +177,7 @@ std::unique_ptr<QUndoCommand> reorder_shape(model::ShapeElement* shape, int new_
 {
     if ( !command::ReorderCommand::resolve_position(shape, new_position) )
         return {};
-    return std::make_unique<command::MoveShape>(shape, shape->owner(), new_position);
+    return std::make_unique<command::MoveShape>(shape, shape->owner(), shape->owner(), new_position);
 }
 
 command::ReorderCommand::ReorderCommand(model::DocumentNode* node, int new_position)

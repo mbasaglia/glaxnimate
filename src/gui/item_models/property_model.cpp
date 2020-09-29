@@ -435,7 +435,7 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
                 QVariant value = prop->value();
                 if ( value.isNull() )
                     return "";
-                return value.value<model::DocumentNode*>()->object_name();
+                return value.value<model::ReferenceTarget*>()->object_name();
             }
 
             if ( role == Qt::DecorationRole )
@@ -443,7 +443,7 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
                 QVariant value = prop->value();
                 if ( value.isNull() )
                     return {};
-                return QIcon(value.value<model::DocumentNode*>()->reftarget_icon());
+                return QIcon(value.value<model::ReferenceTarget*>()->reftarget_icon());
             }
 
             if ( role == ReferenceProperty )

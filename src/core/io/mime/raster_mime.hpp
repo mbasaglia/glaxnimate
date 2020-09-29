@@ -24,12 +24,6 @@ public:
         return data;
     }
 
-    std::vector<std::unique_ptr<model::DocumentNode>> deserialize(
-        const QByteArray&,
-        model::Document*,
-        model::Composition*
-    ) const override { return {}; }
-
     bool can_deserialize() const override { return false; }
 
     void to_mime_data(QMimeData& mime, const std::vector<model::DocumentNode*>& objects) const override

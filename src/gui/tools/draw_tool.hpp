@@ -9,6 +9,7 @@ namespace tools {
 class DrawTool : public DrawToolBase
 {
 public:
+    QString id() const override { return "draw-bezier"; }
     QIcon icon() const override { return QIcon::fromTheme("draw-bezier-curves"); }
     QString name() const override { return QObject::tr("Draw Bezier"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F3"), QKeySequence::PortableText); }

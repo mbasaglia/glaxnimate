@@ -14,7 +14,7 @@
 #include "style/better_elide_delegate.hpp"
 #include "glaxnimate_app.hpp"
 
-void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
+void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* parent)
 {
     this->parent = parent;
     ui.setupUi(parent);
@@ -195,6 +195,25 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     auto del = new style::BetterElideDelegate(Qt::ElideLeft, ui.view_logs);
     ui.view_logs->setItemDelegateForColumn(2, del);
 
+    // Swatches
+
+    palette_model.setSearchPaths(app::Application::instance()->data_paths_unchecked("palettes"));
+    palette_model.setSavePath(app::Application::instance()->writable_data_path("palettes"));
+    palette_model.load();
+    ui.fill_style_widget->set_palette_model(&palette_model);
+    ui.stroke_style_widget->set_palette_model(&palette_model);
+    ui.document_swatch_widget->set_palette_model(&palette_model);
+
+    connect(ui.document_swatch_widget, &DocumentSwatchWidget::needs_new_color, [this]{
+        ui.document_swatch_widget->add_new_color(ui.fill_style_widget->current_color());
+    });
+    connect(ui.document_swatch_widget, &DocumentSwatchWidget::current_color_def, [this](model::BrushStyle* sty){
+        set_color_def_primary(sty);
+    });
+    connect(ui.document_swatch_widget, &DocumentSwatchWidget::secondary_color_def, [this](model::BrushStyle* sty){
+        set_color_def_secondary(sty);
+    });
+
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
 
@@ -204,8 +223,10 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     ui.dock_timeline->raise();
 
     parent->tabifyDockWidget(ui.dock_colors, ui.dock_stroke);
-    parent->tabifyDockWidget(ui.dock_stroke, ui.dock_undo);
+    parent->tabifyDockWidget(ui.dock_stroke, ui.dock_swatches);
+    parent->tabifyDockWidget(ui.dock_swatches, ui.dock_undo);
     ui.dock_colors->raise();
+    ui.dock_swatches->setVisible(false);
 
     parent->resizeDocks(
         {ui.dock_layers},
@@ -231,13 +252,13 @@ void GlaxnimateWindow::Private::setupUi(GlaxnimateWindow* parent)
     }
 #endif
 
-#if 1
     // Restore state
     // NOTE: keep at the end so we do this once all the widgets are in their default spots
-    parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
-    parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
-#endif
-
+    if ( restore_state )
+    {
+        parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
+        parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
+    }
 }
 
 void GlaxnimateWindow::Private::retranslateUi(QMainWindow* parent)
@@ -305,7 +326,7 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
 
     ui.stroke_style_widget->set_shape(stroke);
     /// \todo rename to fill_style_widget
-    ui.color_selector->set_shape(fill);
+    ui.fill_style_widget->set_shape(fill);
 }
 
 void GlaxnimateWindow::Private::view_fit()
@@ -354,7 +375,7 @@ void GlaxnimateWindow::Private::shutdown()
     app::settings::set("ui", "window_state", parent->saveState());
     app::settings::set("open_save", "recent_files", recent_files);
 
-    ui.color_selector->save_settings();
+    ui.fill_style_widget->save_settings();
     ui.stroke_style_widget->save_settings();
 
     QStringList history = ui.console_input->history();
@@ -413,8 +434,11 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
 
 void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
 {
-    if ( !tool )
+    if ( !tool || tool == active_tool )
         return;
+
+    if ( !tool->get_action()->isChecked() )
+        tool->get_action()->setChecked(true);
 
     active_tool = tool;
     ui.graphics_view->set_active_tool(tool);
@@ -431,3 +455,4 @@ void GlaxnimateWindow::Private::status_message(const QString& message, int durat
 {
     ui.status_bar->showMessage(message, duration);
 }
+

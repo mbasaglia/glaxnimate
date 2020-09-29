@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QList>
-#include <QUuid>
 
 #include "model/animation/animatable.hpp"
 #include "model/reference_target.hpp"
@@ -30,10 +29,6 @@ public:
      * be grouped with each other even if they are children of a composition
      */
     GLAXNIMATE_PROPERTY(QColor, group_color, QColor(0, 0, 0, 0))
-    /**
-     * @brief Unique identifier for the node
-     */
-    GLAXNIMATE_PROPERTY_RO(QUuid, uuid, {})
 
 private:
     class ChildRange;
@@ -93,7 +88,7 @@ public:
         Recursive       ///< Paint this and children, apply transform
     };
 
-    explicit DocumentNode(Document* document);
+    using ReferenceTarget::ReferenceTarget;
 
     virtual QIcon docnode_icon() const = 0;
 

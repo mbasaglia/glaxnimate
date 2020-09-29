@@ -98,7 +98,7 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> lay
 
     if ( auto scl = qobject_cast<model::SolidColorLayer*>(layer.get()) )
     {
-        scl->color.set(ui.color_selector->current_color());
+        scl->color.set(ui.fill_style_widget->current_color());
     }
 
     model::Layer* ptr = layer.get();
@@ -183,7 +183,7 @@ std::vector<model::DocumentNode*> GlaxnimateWindow::Private::copy()
 void GlaxnimateWindow::Private::paste()
 {
     const QMimeData* data = QGuiApplication::clipboard()->mimeData();
-    std::vector<std::unique_ptr<model::DocumentNode>> raw_pasted;
+    io::mime::DeserializedData raw_pasted;
     for ( const auto& mime : ClipboardSettings::mime_types() )
     {
         if ( mime.enabled )
@@ -199,31 +199,22 @@ void GlaxnimateWindow::Private::paste()
         return;
     }
 
-    std::vector<std::unique_ptr<model::Layer>> layers;
-    std::vector<std::unique_ptr<model::ShapeElement>> shapes;
     /// \todo precompositions
-    /// \todo document defs
-    for ( auto& ptr : raw_pasted )
+    for ( auto it = raw_pasted.compositions.begin(); it != raw_pasted.compositions.end(); )
     {
-        if ( auto main_comp = qobject_cast<model::MainComposition*>(ptr.get()) )
+        if ( auto main_comp = qobject_cast<model::MainComposition*>(it->get()) )
         {
-            layers.reserve(layers.size() + main_comp->layers.size());
+            raw_pasted.layers.reserve(raw_pasted.layers.size() + main_comp->layers.size());
             auto raw = main_comp->layers.raw();
-            layers.insert(layers.end(), raw.move_begin(), raw.move_end());
+            raw_pasted.layers.insert(raw_pasted.layers.end(), raw.move_begin(), raw.move_end());
             raw.clear();
+            it = raw_pasted.compositions.erase(it);
         }
-        else if ( auto lay = qobject_cast<model::Layer*>(ptr.get()) )
+        else
         {
-            ptr.release();
-            layers.emplace_back(lay);
-        }
-        else if ( auto shape = qobject_cast<model::ShapeElement*>(ptr.get()) )
-        {
-            ptr.release();
-            shapes.emplace_back(shape);
+            ++it;
         }
     }
-    raw_pasted.clear();
 
     current_document->undo_stack().beginMacro(tr("Paste"));
 
@@ -236,7 +227,7 @@ void GlaxnimateWindow::Private::paste()
         layer_insertion_point = composition->layers.size();
 
     std::vector<model::DocumentNode*> select;
-    if ( !shapes.empty() )
+    if ( !raw_pasted.shapes.empty() )
     {
         if ( !shape_cont )
         {
@@ -247,7 +238,7 @@ void GlaxnimateWindow::Private::paste()
             current_document->push_command(new command::AddLayer(composition, std::move(new_layer), layer_insertion_point++));
         }
         int shape_insertion_point = shape_cont->size();
-        for ( auto& shape : shapes )
+        for ( auto& shape : raw_pasted.shapes )
         {
             select.push_back(shape.get());
             shape->recursive_rename();
@@ -255,11 +246,20 @@ void GlaxnimateWindow::Private::paste()
         }
     }
 
-    for ( auto& layer : layers )
+    for ( auto& layer : raw_pasted.layers )
     {
         select.push_back(layer.get());
         layer->recursive_rename();
         current_document->push_command(new command::AddLayer(composition, std::move(layer), layer_insertion_point++));
+    }
+
+    for ( auto& color : raw_pasted.named_colors )
+    {
+        current_document->push_command(new command::AddObject(
+            &current_document->defs()->colors,
+            std::move(color),
+            current_document->defs()->colors.size()
+        ));
     }
 
     current_document->undo_stack().endMacro();
@@ -330,7 +330,7 @@ void GlaxnimateWindow::Private::move_to()
         current_document->undo_stack().beginMacro(tr("Move Shapes"));
         for ( auto shape : shapes )
             if ( shape->owner() != parent )
-                shape->push_command(new command::MoveShape(shape, parent, parent->size()));
+                shape->push_command(new command::MoveShape(shape, shape->owner(), parent, parent->size()));
         current_document->undo_stack().endMacro();
     }
 }

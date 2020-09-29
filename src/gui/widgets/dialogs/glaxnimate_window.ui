@@ -263,7 +263,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="FillStyleWidget" name="color_selector" native="true"/>
+      <widget class="FillStyleWidget" name="fill_style_widget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -685,6 +685,25 @@
          <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_swatches">
+   <property name="windowIcon">
+    <iconset theme="paint-swatch">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="windowTitle">
+    <string>Swatch</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_10">
+    <layout class="QVBoxLayout" name="verticalLayout_11">
+     <item>
+      <widget class="DocumentSwatchWidget" name="document_swatch_widget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -1315,7 +1334,8 @@
   </action>
   <action name="action_donate">
    <property name="icon">
-    <iconset theme="love"/>
+    <iconset theme="love">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Donate...</string>
@@ -1357,7 +1377,7 @@
   <customwidget>
    <class>FillStyleWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/fill_style_widget.hpp</header>
+   <header>widgets/shape_style/fill_style_widget.hpp</header>
    <container>1</container>
    <slots>
     <signal>secondary_color_changed(QColor)</signal>
@@ -1367,7 +1387,7 @@
   <customwidget>
    <class>StrokeStyleWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/stroke_style_widget.hpp</header>
+   <header>widgets/shape_style/stroke_style_widget.hpp</header>
    <container>1</container>
    <slots>
     <signal>color_changed(QColor)</signal>
@@ -1379,6 +1399,15 @@
    <extends>QWidget</extends>
    <header>widgets/window_message_widget.hpp</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DocumentSwatchWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/shape_style/document_swatch_widget.hpp</header>
+   <container>1</container>
+   <slots>
+    <signal>needs_new_color()</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -1784,34 +1813,34 @@
    </hints>
   </connection>
   <connection>
-   <sender>color_selector</sender>
+   <sender>fill_style_widget</sender>
    <signal>secondary_color_changed(QColor)</signal>
    <receiver>stroke_style_widget</receiver>
    <slot>set_color(QColor)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1282</x>
-     <y>200</y>
+     <x>1311</x>
+     <y>139</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1270</x>
-     <y>414</y>
+     <x>1311</x>
+     <y>215</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>stroke_style_widget</sender>
    <signal>color_changed(QColor)</signal>
-   <receiver>color_selector</receiver>
+   <receiver>fill_style_widget</receiver>
    <slot>set_secondary_color(QColor)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1239</x>
-     <y>394</y>
+     <x>1311</x>
+     <y>215</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1240</x>
-     <y>292</y>
+     <x>1311</x>
+     <y>139</y>
     </hint>
    </hints>
   </connection>

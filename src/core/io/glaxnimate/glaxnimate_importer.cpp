@@ -35,6 +35,7 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
     detail::ImportState state(this);
     state.document = document;
     state.composition = document->main_composition();
+    state.load_object(document->defs(), top_level["defs"].toObject());
     state.load_object(document->main_composition(), top_level["animation"].toObject());
     state.resolve();
 

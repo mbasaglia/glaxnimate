@@ -25,6 +25,8 @@ public:
 
     QString backup_path(const QString& file = {}) const;
 
+    void init_info();
+
 protected:
     void on_initialize() override;
 

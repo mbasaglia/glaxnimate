@@ -11,7 +11,7 @@ public:
     ReferencePropertyBase(
         Object* obj,
         const QString& name,
-        PropertyCallback<std::vector<ReferenceTarget*>, void> valid_options,
+        PropertyCallback<std::vector<ReferenceTarget*>> valid_options,
         PropertyCallback<bool, ReferenceTarget*> is_valid_option,
         PropertyTraits::Flags flags = PropertyTraits::Visual)
         : BaseProperty(obj, name, PropertyTraits{PropertyTraits::ObjectReference, flags}),
@@ -33,7 +33,7 @@ public:
     void set_time(FrameTime) override {}
 
 private:
-    PropertyCallback<std::vector<ReferenceTarget*>, void> valid_options_;
+    PropertyCallback<std::vector<ReferenceTarget*>> valid_options_;
     PropertyCallback<bool, ReferenceTarget*> is_valid_option_;
 };
 
@@ -43,14 +43,26 @@ class ReferenceProperty : public ReferencePropertyBase
 public:
     using value_type = Type*;
 
-    using ReferencePropertyBase::ReferencePropertyBase;
+    ReferenceProperty(
+        Object* obj,
+        const QString& name,
+        PropertyCallback<std::vector<ReferenceTarget*>> valid_options,
+        PropertyCallback<bool, ReferenceTarget*> is_valid_option,
+        PropertyCallback<void, Type*, Type*> on_changed = {},
+        PropertyTraits::Flags flags = PropertyTraits::Visual)
+        : ReferencePropertyBase(obj, name, std::move(valid_options), std::move(is_valid_option), flags),
+        on_changed(std::move(on_changed))
+    {
+    }
 
     bool set(Type* value)
     {
         if ( !is_valid_option(value) )
             return false;
+        auto old = value_;
         value_ = value;
         value_changed();
+        on_changed(object(), value_, old);
         return true;
     }
 
@@ -73,8 +85,14 @@ public:
         return true;
     }
 
+    Type* operator->() const
+    {
+        return value_;
+    }
+
 private:
     Type* value_ = nullptr;
+    PropertyCallback<void, Type*, Type*> on_changed;
 };
 
 } // namespace model

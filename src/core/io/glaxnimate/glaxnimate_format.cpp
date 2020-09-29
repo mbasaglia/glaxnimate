@@ -29,6 +29,7 @@ QJsonDocument io::glaxnimate::GlaxnimateFormat::to_json ( model::Document* docum
     QJsonObject doc_obj;
     doc_obj["format"] = format_metadata();
     doc_obj["metadata"] = QJsonObject::fromVariantMap(document->metadata());
+    doc_obj["defs"] = to_json(document->defs());
     doc_obj["animation"] = to_json(document->main_composition());
     return QJsonDocument(doc_obj);
 }
@@ -114,7 +115,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, mo
                 return to_json(obj);
             return {};
         case model::PropertyTraits::ObjectReference:
-            if ( auto dn = value.value<model::DocumentNode*>() )
+            if ( auto dn = value.value<model::ReferenceTarget*>() )
                 return QJsonValue::fromVariant(dn->uuid.get());
             return {};
         case model::PropertyTraits::Enum:

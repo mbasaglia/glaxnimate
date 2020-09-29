@@ -151,6 +151,18 @@ protected:
         return static_cast<ShapeToolWidget*>(get_settings_widget());
     }
 
+    void check_click(const MouseEvent& event)
+    {
+        auto clicked_on = under_mouse(event, true);
+        if ( !clicked_on.nodes.empty() )
+        {
+            auto tool = Registry::instance().tool("select");
+            event.window->switch_tool(tool);
+            tool->mouse_press(event);
+            tool->mouse_release(event);
+        }
+    }
+
 private:
     model::ShapeListProperty* get_container(GlaxnimateWindow* window)
     {

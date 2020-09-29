@@ -27,7 +27,7 @@ public:
         return data;
     }
 
-    std::vector<std::unique_ptr<model::DocumentNode>> deserialize(
+    io::mime::DeserializedData deserialize(
         const QByteArray& data,
         model::Document* document,
         model::Composition* composition

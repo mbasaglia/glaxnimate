@@ -18,6 +18,11 @@ namespace item_models {
 class DocumentNodeModel;
 } // namespace item_models
 
+
+namespace tools {
+class Tool;
+} // namespace tools
+
 class QItemSelection;
 
 class GlaxnimateWindow : public QMainWindow
@@ -34,7 +39,7 @@ class GlaxnimateWindow : public QMainWindow
 
 public:
 
-    explicit GlaxnimateWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+    explicit GlaxnimateWindow(bool restore_state = true, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
     ~GlaxnimateWindow();
 
@@ -80,6 +85,8 @@ public:
     qreal current_zoom() const;
 
     void document_open(const QString& filename);
+
+    void switch_tool(tools::Tool* tool);
 
 public slots:
     void document_save();
