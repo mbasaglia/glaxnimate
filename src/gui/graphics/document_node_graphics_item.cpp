@@ -6,10 +6,11 @@ graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::DocumentNode
     : QGraphicsObject(parent), node_(node)
 {
 //     setFlag(QGraphicsItem::ItemIsFocusable);
-//     setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemIsMovable, false);
 
     /// \todo Setting
-    setBoundingRegionGranularity(0.25);
+    setBoundingRegionGranularity(0);
 
     connect(node, &model::Object::property_changed, this, &DocumentNodeGraphicsItem::on_property_changed);
     connect(node, &model::DocumentNode::docnode_visible_recursive_changed, this, &DocumentNodeGraphicsItem::set_visible);

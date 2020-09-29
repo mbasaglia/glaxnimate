@@ -9,6 +9,12 @@
 #include "rect_rounder.hpp"
 #include "graphics_editor.hpp"
 #include "star_radius_item.hpp"
+#include "shape_graphics_item.hpp"
+
+static graphics::DocumentNodeGraphicsItem * make_graphics_item_shape(model::ShapeElement* node)
+{
+    return new graphics::ShapeGraphicsItem(node);
+}
 
 graphics::GraphicsItemFactory::GraphicsItemFactory()
 {
@@ -41,11 +47,12 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         auto item = GraphicsItemFactory::make_graphics_item_default(shape);
         QObject::connect(shape, &model::ShapeOperator::shape_changed,
                          item, &DocumentNodeGraphicsItem::shape_changed);
+        item->setFlag(QGraphicsItem::ItemIsSelectable, false);
         return item;
     };
 
     register_builder<model::Rect>(
-        &GraphicsItemFactory::make_graphics_item_default,
+        &make_graphics_item_shape,
         [](model::Rect* rect){
             auto v = std::make_unique<GraphicsEditor>(rect);
             v->add_child<graphics::PositionItem>(&rect->position);
@@ -55,7 +62,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         }
     );
     register_builder<model::Ellipse>(
-        &GraphicsItemFactory::make_graphics_item_default,
+        &make_graphics_item_shape,
         [](model::Ellipse* rect){
             auto v = std::make_unique<GraphicsEditor>(rect);
             v->add_child<graphics::PositionItem>(&rect->position);
@@ -64,7 +71,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         }
     );
     register_builder<model::PolyStar>(
-        &GraphicsItemFactory::make_graphics_item_default,
+        &make_graphics_item_shape,
         [](model::PolyStar* star){
             auto v = std::make_unique<GraphicsEditor>(star);
             v->add_child<graphics::PositionItem>(&star->position);
@@ -73,7 +80,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         }
     );
     register_builder<model::Path>(
-        &GraphicsItemFactory::make_graphics_item_default,
+        &make_graphics_item_shape,
         [](model::Path* shape){
             auto v = std::make_unique<GraphicsEditor>(shape);
             v->add_child<graphics::BezierItem>(shape);

@@ -173,24 +173,7 @@ protected:
         std::vector<model::DocumentNode*> nodes;
     };
 
-    UnderMouse under_mouse(const MouseEvent& event, bool only_selectable) const
-    {
-        UnderMouse ret;
-        for ( auto item : event.scene->items(event.scene_pos, Qt::IntersectsItemShape, Qt::DescendingOrder, event.view->viewportTransform()) )
-        {
-            if ( auto node = event.scene->item_to_node(item) )
-            {
-                if ( !only_selectable || node->docnode_selectable() )
-                    ret.nodes.push_back(node);
-            }
-            else if ( !ret.handle && (item->flags() & QGraphicsItem::ItemIsFocusable) )
-            {
-                ret.handle = item;
-            }
-        }
-
-        return ret;
-    }
+    UnderMouse under_mouse(const MouseEvent& event, bool only_selectable) const;
 
     virtual QWidget* on_create_widget()
     {

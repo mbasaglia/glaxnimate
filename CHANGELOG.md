@@ -6,6 +6,7 @@
     * Star/Polygon Shapes
     * Document Swatch
     * Ability to lock objects to avoid editing them
+    * More precise selection when clicking on the canvas
 * Tools:
     * Star/Polygon Draw Tool
     * Clicking with the simple shapes drawing tools switches to the select tool

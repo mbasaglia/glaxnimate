@@ -20,7 +20,6 @@ public:
     ~DocumentNodeGraphicsItem();
 
     QRectF boundingRect() const override;
-//     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
     model::DocumentNode* node() const
@@ -48,15 +47,6 @@ public slots:
 
 private slots:
     void on_property_changed(const model::BaseProperty* prop);
-/*
-signals:
-    void focused(DocumentNode* document_node);
-
-protected:
-    void focusInEvent(QFocusEvent *) override
-    {
-        emit focused(node);
-    }*/
 
 private:
     model::DocumentNode* node_;

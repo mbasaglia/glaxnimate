@@ -41,3 +41,25 @@ void tools::MouseEvent::forward_to_scene() const
     
     event->setAccepted(mouse_event.isAccepted());
 }
+
+tools::Tool::UnderMouse tools::Tool::under_mouse(const tools::MouseEvent& event, bool only_selectable) const
+{
+    UnderMouse ret;
+    for ( auto item : event.scene->items(event.scene_pos, Qt::IntersectsItemShape, Qt::DescendingOrder, event.view->viewportTransform()) )
+    {
+        if ( !(item->flags() & (QGraphicsItem::ItemIsSelectable|QGraphicsItem::ItemIsFocusable)) )
+            continue;
+
+        if ( auto node = event.scene->item_to_node(item) )
+        {
+            if ( !only_selectable || node->docnode_selectable() )
+                ret.nodes.push_back(node);
+        }
+        else if ( !ret.handle )
+        {
+            ret.handle = item;
+        }
+    }
+
+    return ret;
+}
