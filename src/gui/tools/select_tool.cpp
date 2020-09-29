@@ -40,7 +40,7 @@ private:
         };
         using Variant = std::variant<
             PropData<model::AnimatedProperty<QPointF>>,
-            PropData<model::AnimatablePath>
+            PropData<model::AnimatedProperty<math::Bezier>>
         >;
 
         template<class T>

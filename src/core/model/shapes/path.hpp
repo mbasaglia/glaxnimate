@@ -15,7 +15,7 @@ class Path : public ObjectBase<Path, Shape>
     Q_ENUM(BezierPointType)
 
 public:
-    AnimatablePath shape{this, "shape", &Path::shape_changed};
+    GLAXNIMATE_ANIMATABLE(math::Bezier, shape, &Path::shape_changed)
 
     GLAXNIMATE_PROPERTY(bool, closed, false, &Path::closed_changed)
 

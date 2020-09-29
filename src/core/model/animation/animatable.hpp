@@ -277,6 +277,8 @@ private:
     Type value_;
 };
 
+namespace detail {
+
 template<class Type>
 class AnimatedProperty : public AnimatableBase
 {
@@ -528,6 +530,16 @@ protected:
     std::vector<std::unique_ptr<keyframe_type>> keyframes_;
     bool mismatched_ = false;
     PropertyCallback<void, Type> emitter;
+};
+
+} // namespace detail
+
+
+template<class Type>
+class AnimatedProperty : public detail::AnimatedProperty<Type>
+{
+public:
+    using detail::AnimatedProperty<Type>::AnimatedProperty;
 };
 
 } // namespace model

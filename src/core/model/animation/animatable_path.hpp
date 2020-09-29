@@ -41,16 +41,17 @@ public:
     }
 
 private:
-    friend class AnimatablePath;
+    friend class AnimatedProperty<math::Bezier>;
     math::Bezier value_;
 };
 
-class AnimatablePath : public AnimatedProperty<math::Bezier>
+template<>
+class AnimatedProperty<math::Bezier> : public detail::AnimatedProperty<math::Bezier>
 {
 public:
-    AnimatablePath(Object* object, const QString& name,
+    AnimatedProperty(Object* object, const QString& name,
                    PropertyCallback<void, math::Bezier> emitter = {})
-    : AnimatedProperty(object, name, {}, std::move(emitter))
+    : detail::AnimatedProperty<math::Bezier>(object, name, {}, std::move(emitter))
     {}
 
     int size() const
@@ -111,5 +112,6 @@ public:
 private:
     math::Bezier value_;
 };
+
 
 } // namespace model
