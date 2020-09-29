@@ -221,9 +221,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     parent->tabifyDockWidget(ui.dock_script_console, ui.dock_logs);
     ui.dock_timeline->raise();
 
+    parent->splitDockWidget(ui.dock_colors, ui.dock_swatches, Qt::Horizontal);
     parent->tabifyDockWidget(ui.dock_colors, ui.dock_stroke);
-    parent->tabifyDockWidget(ui.dock_stroke, ui.dock_swatches);
-    parent->tabifyDockWidget(ui.dock_swatches, ui.dock_undo);
+    parent->tabifyDockWidget(ui.dock_stroke, ui.dock_undo);
     ui.dock_colors->raise();
     ui.dock_swatches->setVisible(false);
 
