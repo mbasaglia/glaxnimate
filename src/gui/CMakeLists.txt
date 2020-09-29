@@ -16,6 +16,7 @@ item_models/property_model.cpp
 misc/clipboard_settings.cpp
 
 style/property_delegate.cpp
+style/dock_widget_style.cpp
 
 tools/base.cpp
 tools/dummy.cpp

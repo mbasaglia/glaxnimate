@@ -85,6 +85,8 @@ instructions below assume it's in `C:/WinGW64/`
 * Install [ZLIB](https://sourceforge.net/projects/gnuwin32/files/zlib/),
 instructions below assume it's in `C:/Program Files (x86)/GnuWin32`
 
+    # These commands were tested on PowerShell
+
     # Prepare the environment, Change these to fit your installation directories
     $PYTHON_DIR=$(echo "import os; print(os.path.dirname(os.path.dirname(os.__file__)));" | python)
     $MINGW_DIR="C:/MinGW64/mingw64"

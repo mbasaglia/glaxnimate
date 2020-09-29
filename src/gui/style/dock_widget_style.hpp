@@ -12,23 +12,7 @@ class DockWidgetStyle: public QProxyStyle
 {
 public:
     void drawControl(ControlElement element, const QStyleOption* option,
-        QPainter* painter, const QWidget* widget) const override
-    {
-        if ( widget && element == QStyle::CE_DockWidgetTitle && !widget->windowIcon().isNull() )
-        {
-            int size = pixelMetric(QStyle::PM_ToolBarIconSize);
-            int margin = baseStyle()->pixelMetric(QStyle::PM_DockWidgetTitleMargin);
-            QRect title_rect = subElementRect(SE_DockWidgetTitleBarText, option, widget);
-            size = qMin(size, title_rect.height());
-
-            QPoint pos(margin + title_rect.left(), margin + title_rect.center().y() - size/2);
-
-            painter->drawPixmap(pos, widget->windowIcon().pixmap(size, size));
-
-            const_cast<QStyleOption*>(option)->rect = option->rect.adjusted(size, 0, 0, 0);
-        }
-        QProxyStyle::drawControl(element, option, painter, widget);
-    }
+        QPainter* painter, const QWidget* widget) const override;
 };
 
 } // namespace style
