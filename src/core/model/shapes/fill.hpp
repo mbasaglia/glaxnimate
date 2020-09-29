@@ -42,14 +42,7 @@ public:
     }
 
 protected:
-    void on_paint(QPainter* p, FrameTime t, PaintMode) const override
-    {
-        p->setBrush(brush(t));
-        p->setPen(Qt::NoPen);
-        QPainterPath path = collect_shapes(t).painter_path();
-        path.setFillRule(Qt::FillRule(fill_rule.get()));
-        p->drawPath(path);
-    }
+    void on_paint(QPainter* p, FrameTime t, PaintMode) const override;
 };
 
 

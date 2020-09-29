@@ -135,6 +135,9 @@ void model::Layer::on_paint(QPainter* painter, FrameTime time, PaintMode mode) c
 {
     if ( mode != NoTransform )
         painter->setTransform(transform_matrix(time), true);
+    painter->setOpacity(
+        painter->opacity() * opacity.get_at(time)
+    );
     on_paint_untransformed(painter, time);
 }
 

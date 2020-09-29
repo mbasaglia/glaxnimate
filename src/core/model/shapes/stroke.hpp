@@ -61,16 +61,7 @@ public:
     }
 
 protected:
-    void on_paint(QPainter* p, FrameTime t, PaintMode) const override
-    {
-        QPen pen(brush(t), width.get_at(t));
-        pen.setCapStyle(Qt::PenCapStyle(cap.get()));
-        pen.setJoinStyle(Qt::PenJoinStyle(join.get()));
-        pen.setMiterLimit(miter_limit.get());
-        p->setBrush(Qt::NoBrush);
-        p->setPen(pen);
-        p->drawPath(collect_shapes(t).painter_path());
-    }
+    void on_paint(QPainter* p, FrameTime t, PaintMode) const override;
 };
 
 } // namespace model

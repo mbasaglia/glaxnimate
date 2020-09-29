@@ -27,6 +27,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             auto item = new DocumentNodeGraphicsItem(layer);
             item->set_transform_matrix(layer->transform_matrix(layer->time()));
             QObject::connect(layer, &model::Layer::transform_matrix_changed, item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
+            QObject::connect(layer, &model::Layer::opacity_changed, item, &graphics::DocumentNodeGraphicsItem::set_opacity);
             return item;
         },
         [](model::Layer* layer){
@@ -85,6 +86,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             item->set_transform_matrix(layer->local_transform_matrix(layer->time()));
             QObject::connect(layer, &model::Group::local_transform_matrix_changed,
                              item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
+            QObject::connect(layer, &model::Group::opacity_changed, item, &graphics::DocumentNodeGraphicsItem::set_opacity);
             return item;
         },
         [](model::Group* layer){

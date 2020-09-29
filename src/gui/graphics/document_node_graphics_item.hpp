@@ -41,6 +41,11 @@ public slots:
         setTransform(t);
     }
 
+    void set_opacity(qreal op)
+    {
+        setOpacity(op);
+    }
+
 private slots:
     void on_property_changed(const model::BaseProperty* prop);
 /*

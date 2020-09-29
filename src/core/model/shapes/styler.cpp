@@ -40,3 +40,10 @@ void model::Styler::on_update_style()
 {
     emit property_changed(&use, use.value());
 }
+
+QBrush model::Styler::brush(FrameTime t) const
+{
+    if ( use.get() )
+        return use->brush_style(t);
+    return color.get_at(t);
+}

@@ -24,12 +24,7 @@ public:
     void add_shapes(FrameTime, math::MultiBezier&) const override {}
 
 protected:
-    QBrush brush(FrameTime t) const
-    {
-        if ( use.get() )
-            return use->brush_style(t);
-        return color.get_at(t);
-    }
+    QBrush brush(FrameTime t) const;
 
 private:
     std::vector<ReferenceTarget*> valid_uses() const;

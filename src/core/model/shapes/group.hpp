@@ -23,7 +23,7 @@ public:
 
     GLAXNIMATE_PROPERTY_LIST_IMPL(shapes)
     GLAXNIMATE_SUBOBJECT(Transform, transform)
-    GLAXNIMATE_ANIMATABLE(float, opacity, 1, {}, 0, 1)
+    GLAXNIMATE_ANIMATABLE(float, opacity, 1, &Group::opacity_changed, 0, 1)
 
 public:
     Group(Document* document)
@@ -70,6 +70,12 @@ public:
     {
         return transform.get()->transform_matrix(t);
     }
+
+signals:
+    void opacity_changed(float op);
+
+protected:
+    void on_paint(QPainter*, FrameTime, PaintMode) const override;
 
 private slots:
     void on_transform_matrix_changed()
