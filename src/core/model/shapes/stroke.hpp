@@ -34,7 +34,7 @@ private:
     Q_ENUM(Join);
 
 
-    GLAXNIMATE_ANIMATABLE(float, width, 1)
+    GLAXNIMATE_ANIMATABLE(float, width, 1, {}, 0)
     GLAXNIMATE_PROPERTY(Cap, cap, RoundCap, nullptr, nullptr, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(Join, join, RoundJoin, nullptr, nullptr, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(float, miter_limit, 0, nullptr, nullptr, PropertyTraits::Visual)

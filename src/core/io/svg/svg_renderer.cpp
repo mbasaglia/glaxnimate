@@ -5,7 +5,7 @@
 #include "model/document.hpp"
 #include "model/layers/layers.hpp"
 #include "model/shapes/shapes.hpp"
-#include "math/misc.hpp"
+#include "math/math.hpp"
 
 #include "detail.hpp"
 

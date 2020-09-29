@@ -1,6 +1,6 @@
 #include "draw_tool_base.hpp"
 #include "model/shapes/polystar.hpp"
-#include "math/misc.hpp"
+#include "math/math.hpp"
 #include "widgets/tools/star_tool_widget.hpp"
 
 namespace tools {

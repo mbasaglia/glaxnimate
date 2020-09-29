@@ -10,7 +10,7 @@ class Rect : public ObjectBase<Rect, Shape>
     GLAXNIMATE_OBJECT
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF())
     GLAXNIMATE_ANIMATABLE(QSizeF, size, QSizeF())
-    GLAXNIMATE_ANIMATABLE(float, rounded, 0)
+    GLAXNIMATE_ANIMATABLE(float, rounded, 0, {}, 0)
 
 public:
     using Ctor::Ctor;

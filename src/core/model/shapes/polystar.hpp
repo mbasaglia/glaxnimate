@@ -20,11 +20,11 @@ public:
 
     GLAXNIMATE_PROPERTY(StarType, type, Star, {}, {}, PropertyTraits::Visual)
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF())
-//     GLAXNIMATE_ANIMATABLE(float, inner_roundness, 0)
-    GLAXNIMATE_ANIMATABLE(float, outer_radius, 0)
-    GLAXNIMATE_ANIMATABLE(float, inner_radius, 0)
-//     GLAXNIMATE_ANIMATABLE(float, outner_roundness, 0)
-    GLAXNIMATE_ANIMATABLE(float, angle, 0)
+//     GLAXNIMATE_ANIMATABLE(float, inner_roundness, 0, {}, 0)
+    GLAXNIMATE_ANIMATABLE(float, outer_radius, 0, {}, 0)
+    GLAXNIMATE_ANIMATABLE(float, inner_radius, 0, {}, 0)
+//     GLAXNIMATE_ANIMATABLE(float, outner_roundness, 0, {}, 0)
+    GLAXNIMATE_ANIMATABLE(float, angle, 0, {}, 0, 360, true)
     GLAXNIMATE_ANIMATABLE(int, points, 5)
 
 public:

@@ -1,11 +1,12 @@
 #pragma once
 
+#include <limits>
 #include <QVariant>
 #include <QList>
 
 #include "model/animation/keyframe_transition.hpp"
 #include "model/property/property.hpp"
-
+#include "math/math.hpp"
 
 #define GLAXNIMATE_ANIMATABLE(type, name, ...)                  \
 public:                                                         \
@@ -277,6 +278,10 @@ private:
     Type value_;
 };
 
+
+template<class Type>
+class AnimatedProperty;
+
 namespace detail {
 
 template<class Type>
@@ -333,7 +338,7 @@ public:
     keyframe_type* set_keyframe(FrameTime time, const QVariant& val) override
     {
         if ( auto v = detail::variant_cast<Type>(val) )
-            return set_keyframe(time, *v);
+            return static_cast<model::AnimatedProperty<Type>*>(this)->set_keyframe(time, *v);
         return nullptr;
     }
 
@@ -373,7 +378,7 @@ public:
     bool set_value(const QVariant& val) override
     {
         if ( auto v = detail::variant_cast<Type>(val) )
-            return set(*v);
+            return static_cast<model::AnimatedProperty<Type>*>(this)->set(*v);
         return false;
     }
 
@@ -541,5 +546,55 @@ class AnimatedProperty : public detail::AnimatedProperty<Type>
 public:
     using detail::AnimatedProperty<Type>::AnimatedProperty;
 };
+
+
+template<>
+class AnimatedProperty<float> : public detail::AnimatedProperty<float>
+{
+public:
+    AnimatedProperty(
+        Object* object,
+        const QString& name,
+        reference default_value,
+        PropertyCallback<void, float> emitter = {},
+        float min = std::numeric_limits<float>::min(),
+        float max = std::numeric_limits<float>::max(),
+        bool cycle = false
+    ) : detail::AnimatedProperty<float>(object, name, default_value, std::move(emitter)),
+        min_(min),
+        max_(max),
+        cycle_(cycle)
+    {
+    }
+
+    float max() const { return max_; }
+    float min() const { return min_; }
+
+    bool set(reference val)
+    {
+        return detail::AnimatedProperty<float>::set(bound(val));
+    }
+
+    using AnimatableBase::set_keyframe;
+
+    keyframe_type* set_keyframe(FrameTime time, reference value)
+    {
+        return detail::AnimatedProperty<float>::set_keyframe(time, bound(value));
+    }
+
+private:
+    float bound(float value) const
+    {
+        return cycle_ ?
+            math::fmod(value, max_) :
+            math::bound(min_, value, max_)
+        ;
+    }
+
+    float min_;
+    float max_;
+    bool cycle_;
+};
+
 
 } // namespace model

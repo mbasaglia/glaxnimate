@@ -49,7 +49,21 @@ QWidget* PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
             return new Spin2D(true, parent);
         case QMetaType::Float:
         case QMetaType::Double:
-            return new SmallerSpinBox(false, parent);
+        {
+            auto box = new SmallerSpinBox(false, parent);
+            QVariant min = index.data(item_models::PropertyModel::MinValue);
+            if ( min.isValid() )
+                box->setMinimum(min.toDouble());
+            QVariant max = index.data(item_models::PropertyModel::MaxValue);
+            if ( max.isValid() )
+            {
+                qreal maxf = max.toDouble();
+                box->setMaximum(maxf);
+                if ( max == 1 )
+                    box->setSingleStep(0.1);
+            }
+            return box;
+        }
         case QMetaType::Int:
             return new SmallerSpinBoxInt(parent);
     }

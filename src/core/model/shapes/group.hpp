@@ -23,7 +23,7 @@ public:
 
     GLAXNIMATE_PROPERTY_LIST_IMPL(shapes)
     GLAXNIMATE_SUBOBJECT(Transform, transform)
-    GLAXNIMATE_ANIMATABLE(float, opacity, 1)
+    GLAXNIMATE_ANIMATABLE(float, opacity, 1, {}, 0, 1)
 
 public:
     Group(Document* document)

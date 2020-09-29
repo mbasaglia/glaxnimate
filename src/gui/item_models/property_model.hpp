@@ -14,6 +14,8 @@ public:
     enum CustomData
     {
         ReferenceProperty = Qt::UserRole,
+        MinValue,
+        MaxValue
     };
 
     PropertyModel(bool animation_only=false);

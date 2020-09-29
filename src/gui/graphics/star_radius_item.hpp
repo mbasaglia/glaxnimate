@@ -6,7 +6,7 @@
 #include "model/document.hpp"
 #include "command/animation_commands.hpp"
 #include "model/shapes/polystar.hpp"
-#include "math/misc.hpp"
+#include "math/math.hpp"
 
 namespace graphics {
 

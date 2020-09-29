@@ -12,7 +12,7 @@
 
 #include "detail.hpp"
 #include "path_parser.hpp"
-#include "math/misc.hpp"
+#include "math/math.hpp"
 
 using namespace io::svg::detail;
 

@@ -410,6 +410,14 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
             {
                 return QColor(Qt::white);
             }
+            else if ( role == MinValue && traits.type == model::PropertyTraits::Float )
+            {
+                return static_cast<model::AnimatedProperty<float>*>(anprop)->min();
+            }
+            else if ( role == MaxValue && traits.type == model::PropertyTraits::Float )
+            {
+                return static_cast<model::AnimatedProperty<float>*>(anprop)->max();
+            }
         }
 
         if ( (traits.flags & model::PropertyTraits::List) || traits.type == model::PropertyTraits::Unknown )

@@ -1,5 +1,5 @@
 #include "polystar.hpp"
-#include "math/misc.hpp"
+#include "math/math.hpp"
 
 
 GLAXNIMATE_OBJECT_IMPL(model::PolyStar)
