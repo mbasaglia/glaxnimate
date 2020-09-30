@@ -10,6 +10,7 @@
 * Tools:
     * Star/Polygon Draw Tool
     * Clicking with the simple shapes drawing tools switches to the select tool
+    * Color picking tool
 * Scripting:
     * Added logging support integration with Python
 * I/O:

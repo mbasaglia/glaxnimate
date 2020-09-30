@@ -160,3 +160,27 @@ These options allow you to select what gets created when you finish drawing the 
 * Group: Will add a shape group containing the shape. Disabling this will disable the other two.
 * Stroke: Will create a stroke shape. See the [stroke style view](docks.md#stroke) for information on how to change the stroke style.
 * Fill: Will create a fill shape. See the [fill style view](docks.md#fill) for information on how to change the stroke style.
+
+
+## Color Picker
+
+<img src="/img/ui/icons/color-picker.svg" width="64" />
+
+Selects a color from the screen.
+
+
+### Mouse Interactions
+
+Moving the mouse on the canvas will show the color being picked.
+Clicking assigns the color to the selected shape.
+
+If you click and drag, you will be able to select color outside the canvas.
+
+### Options
+
+![Color Picker Options](/img/screenshots/tools/picker_options.png)
+
+* *Fill* When clicking, sets the fill color
+* *Stroke* When clicking, sets the stroke color
+
+Holding *Shift* will toggle the two.

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ColorPickerWidget</class>
+ <widget class="QWidget" name="ColorPickerWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>148</width>
+    <height>173</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QRadioButton" name="check_fill">
+     <property name="text">
+      <string>Fill</string>
+     </property>
+     <property name="icon">
+      <iconset theme="format-fill-color"/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="check_stroke">
+     <property name="text">
+      <string>Stroke</string>
+     </property>
+     <property name="icon">
+      <iconset theme="format-stroke-color"/>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="color_widgets::ColorPreview" name="color_preview">
+     <property name="color">
+      <color>
+       <red>0</red>
+       <green>0</green>
+       <blue>0</blue>
+      </color>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>color_widgets::ColorPreview</class>
+   <extends>QWidget</extends>
+   <header>QtColorWidgets/color_preview.hpp</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

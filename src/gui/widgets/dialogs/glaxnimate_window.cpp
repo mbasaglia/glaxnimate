@@ -282,7 +282,7 @@ void GlaxnimateWindow::set_current_color(const QColor& c)
 
 void GlaxnimateWindow::set_secondary_color(const QColor& c)
 {
-    d->ui.fill_style_widget->set_secondary_color(c);
+    d->ui.stroke_style_widget->set_color(c);
 }
 
 model::ShapeElement * GlaxnimateWindow::current_shape()

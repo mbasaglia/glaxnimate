@@ -207,6 +207,7 @@ public:
         Core,
         Draw,
         Shape,
+        Style,
         User
     };
 
