@@ -12,7 +12,6 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("draw-polygon-star"); }
     QString name() const override { return QObject::tr("Star"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("*"), QKeySequence::PortableText); }
-    app::settings::SettingList settings() const override { return {}; }
 
 protected:
     void mouse_press(const MouseEvent& event) override
