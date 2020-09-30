@@ -54,6 +54,7 @@ model/shapes/path.cpp
 model/shapes/stroke.cpp
 model/shapes/polystar.cpp
 model/shapes/styler.cpp
+model/shapes/layer.cpp
 
 
 utils/gzip.cpp

@@ -64,8 +64,8 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     refresh_title();
 
     // Playback
-    QObject::connect(current_document->main_composition(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
-    QObject::connect(current_document->main_composition(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
+    QObject::connect(current_document->main_composition()->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
+    QObject::connect(current_document->main_composition()->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
     QObject::connect(current_document->main_composition(), &model::MainComposition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
     QObject::connect(ui.play_controls, &FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
     QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &FrameControlsWidget::set_frame);
@@ -83,11 +83,11 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     current_document->main_composition()->fps.set(app::settings::get<int>("defaults", "fps"));
     float duration = app::settings::get<float>("defaults", "duration");
     int out_point = current_document->main_composition()->fps.get() * duration;
-    current_document->main_composition()->last_frame.set(out_point);
+    current_document->main_composition()->animation->last_frame.set(out_point);
 
 
     auto layer = current_document->main_composition()->make_layer<model::ShapeLayer>();
-    layer->last_frame.set(out_point);
+    layer->animation->last_frame.set(out_point);
     layer->name.set(layer->type_name_human());
     QPointF pos(
         current_document->main_composition()->width.get() / 2.0,
@@ -128,7 +128,7 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(current_document->main_composition()->layers[0]));
 
     current_document->set_io_options(options);
-    ui.play_controls->set_range(current_document->main_composition()->first_frame.get(), current_document->main_composition()->last_frame.get());
+    ui.play_controls->set_range(current_document->main_composition()->animation->first_frame.get(), current_document->main_composition()->animation->last_frame.get());
 
     if ( !autosave_load && QFileInfo(backup_name()).exists() )
     {

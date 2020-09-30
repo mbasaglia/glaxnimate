@@ -22,7 +22,7 @@ model::Layer * model::Layer::ChildLayerIterator::operator->() const
 }
 
 model::Layer::Layer(Document* doc, Composition* composition)
-    : AnimationContainer(doc), composition_(composition)
+    : DocumentNode(doc), composition_(composition)
 {
     connect(transform.get(), &Object::property_changed, this, &Layer::on_transform_matrix_changed);
 }

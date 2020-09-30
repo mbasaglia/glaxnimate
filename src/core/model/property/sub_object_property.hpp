@@ -32,6 +32,16 @@ public:
         sub_obj(obj->document())
     {}
 
+    const Type* operator->() const
+    {
+        return &sub_obj;
+    }
+
+    Type* operator->()
+    {
+        return &sub_obj;
+    }
+
     QVariant value() const override
     {
         return QVariant::fromValue(const_cast<Type*>(&sub_obj));

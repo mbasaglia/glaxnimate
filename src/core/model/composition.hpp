@@ -5,10 +5,11 @@
 
 namespace model {
 
-class Composition : public AnimationContainer
+class Composition : public DocumentNode
 {
     Q_OBJECT
 
+    GLAXNIMATE_SUBOBJECT(AnimationContainer, animation)
     GLAXNIMATE_PROPERTY_LIST(Layer, layers, &Composition::layer_added, &Composition::layer_removed, &DocumentNode::docnode_child_add_begin, &DocumentNode::docnode_child_remove_begin)
 
 public:

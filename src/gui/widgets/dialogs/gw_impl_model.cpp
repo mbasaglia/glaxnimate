@@ -83,7 +83,7 @@ void GlaxnimateWindow::Private::layer_new_prepare(model::Layer* layer)
 {
     current_document->set_best_name(layer, {});
 
-    layer->last_frame.set(current_document->main_composition()->last_frame.get());
+    layer->animation->last_frame.set(current_document->main_composition()->animation->last_frame.get());
     QPointF pos = current_document->rect().center();
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);

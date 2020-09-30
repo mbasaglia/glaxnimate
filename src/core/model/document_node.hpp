@@ -270,14 +270,14 @@ private:
 /**
  * \brief Base class for document nodes that enclose an animation
  */
-class AnimationContainer: public DocumentNode
+class AnimationContainer: public ObjectBase<AnimationContainer, Object>
 {
-    Q_OBJECT
+    GLAXNIMATE_OBJECT
     GLAXNIMATE_PROPERTY(int,    first_frame,  0, &AnimationContainer::first_frame_changed, &AnimationContainer::validate_first_frame, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(int,    last_frame, 180, &AnimationContainer::last_frame_changed,  &AnimationContainer::validate_last_frame,  PropertyTraits::Visual)
 
 public:
-    using DocumentNode::DocumentNode;
+    using Ctor::Ctor;
 
 signals:
     void first_frame_changed(int);

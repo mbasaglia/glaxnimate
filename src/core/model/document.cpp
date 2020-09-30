@@ -111,7 +111,7 @@ model::FrameTime model::Document::current_time() const
 
 void model::Document::set_current_time(model::FrameTime t)
 {
-    if ( t >= 0 && t <= d->main_composition.last_frame.get() )
+    if ( t >= 0 && t <= d->main_composition.animation->last_frame.get() )
     {
         d->main_composition.set_time(t);
         emit current_time_changed(d->current_time = t);
