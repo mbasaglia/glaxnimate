@@ -35,8 +35,9 @@ class GitlabApi:
         kwargs["headers"]["PRIVATE-TOKEN"] = self.api_key
         if "json" in kwargs:
             kwargs["headers"]["Content-Type"] = "application/json"
+        can_fail = not kwargs.pop("can_fail", False)
         res = requests.request(method, url, **kwargs)
-        if not kwargs.pop("can_fail", False):
+        if can_fail:
             res.raise_for_status()
         return res.json()
 
