@@ -136,6 +136,8 @@ release:
         - pip3 install requests
     script:
         - ./deploy/make_release.py
+        - ./deploy/bintray_release.sh 0.1.1 MacOs/glaxnimate.dm
+        - ./deploy/bintray_release.sh 0.1.1 MacOs/checksum.txt
     dependencies:
         - linux:test
         - linux:appimage
