@@ -13,3 +13,12 @@ void model::Stroke::on_paint(QPainter* p, model::FrameTime t, model::DocumentNod
     p->setOpacity(p->opacity() * opacity.get_at(t));
     p->drawPath(collect_shapes(t).painter_path());
 }
+
+void model::Stroke::set_pen_style ( const QPen& pen_style )
+{
+    color.set(pen_style.color());
+    width.set(pen_style.width());
+    cap.set(model::Stroke::Cap(pen_style.capStyle()));
+    join.set(model::Stroke::Join(pen_style.joinStyle()));
+    miter_limit.set(pen_style.miterLimit());
+}

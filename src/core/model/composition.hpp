@@ -1,16 +1,24 @@
 #pragma once
 
 #include "model/property/object_list_property.hpp"
-#include "model/layers/layer.hpp"
+#include "model/shapes/layer.hpp"
 
 namespace model {
 
 class Composition : public DocumentNode
 {
+    using Layer = Layer__new;
     Q_OBJECT
 
     GLAXNIMATE_SUBOBJECT(AnimationContainer, animation)
-    GLAXNIMATE_PROPERTY_LIST(Layer, layers, &Composition::layer_added, &Composition::layer_removed, &DocumentNode::docnode_child_add_begin, &DocumentNode::docnode_child_remove_begin)
+
+public:
+    ShapeListProperty shapes{this, "shapes",
+        &DocumentNode::docnode_child_add_end,
+        &DocumentNode::docnode_child_remove_end,
+        &DocumentNode::docnode_child_add_begin,
+        &DocumentNode::docnode_child_remove_begin
+    };
 
 public:
     explicit Composition(Document* document);
@@ -18,14 +26,14 @@ public:
     utils::Range<Layer::ChildLayerIterator> top_level() const
     {
         return {
-            Layer::ChildLayerIterator(this, nullptr, 0),
-            Layer::ChildLayerIterator(this, nullptr, layers.size())
+            Layer::ChildLayerIterator(&shapes, nullptr, 0),
+            Layer::ChildLayerIterator(&shapes, nullptr, shapes.size())
         };
     }
 
     DocumentNode* docnode_child(int index) const override
     {
-        return layers[index];
+        return shapes[index];
     }
 
     DocumentNode* docnode_parent() const override
@@ -35,28 +43,10 @@ public:
 
     int docnode_child_count() const override
     {
-        return layers.size();
+        return shapes.size();
     }
 
     int docnode_child_index(DocumentNode* dn) const override;
-
-    void add_layer(std::unique_ptr<Layer> lay, int position);
-
-    std::unique_ptr<Layer> remove_layer(const QUuid& uuid);
-
-    int layer_position(Layer* layer, int not_found=0) const;
-
-    template<class LayerT>
-    std::unique_ptr<LayerT> make_layer()
-    {
-        return std::make_unique<LayerT>(document(), this);
-    }
-
-signals:
-    void layer_added(Layer* layer);
-    void layer_removed(Layer* layer);
-
-
 };
 
 } // namespace model

@@ -7,8 +7,6 @@
 
 #include "app/widgets/settings_dialog.hpp"
 #include "app_info.hpp"
-#include "model/layers/layers.hpp"
-
 
 GlaxnimateWindow::GlaxnimateWindow(bool restore_state, QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags), d(std::make_unique<Private>())
@@ -80,22 +78,7 @@ void GlaxnimateWindow::document_treeview_current_changed(const QModelIndex& inde
 
 void GlaxnimateWindow::layer_new_menu()
 {
-    layer_new_shape();
-}
-
-void GlaxnimateWindow::layer_new_empty()
-{
-    d->layer_new<model::EmptyLayer>();
-}
-
-void GlaxnimateWindow::layer_new_precomp()
-{
-//     d->layer_new<model::PrecompLayer>();
-}
-
-void GlaxnimateWindow::layer_new_shape()
-{
-    d->layer_new<model::ShapeLayer>();
+    d->layer_new_layer();
 }
 
 void GlaxnimateWindow::refresh_title()
@@ -197,11 +180,6 @@ void GlaxnimateWindow::script_needs_running ( const app::scripting::Plugin& plug
 void GlaxnimateWindow::script_reloaded()
 {
     d->script_contexts.clear();
-}
-
-void GlaxnimateWindow::layer_new_color()
-{
-    d->layer_new<model::SolidColorLayer>();
 }
 
 void GlaxnimateWindow::web_preview()

@@ -6,7 +6,6 @@
 #include "model/shapes/group.hpp"
 #include "model/layers/shape_layer.hpp"
 #include "model/shapes/stroke.hpp"
-#include "command/layer_commands.hpp"
 #include "command/shape_commands.hpp"
 
 #include "widgets/tools/shape_tool_widget.hpp"
@@ -123,12 +122,7 @@ protected:
         {
             auto stroke = std::make_unique<model::Stroke>(document);
             document->set_best_name(stroke.get(), QObject::tr("%1 Stroke").arg(name));
-            stroke->color.set(event.window->secondary_color());
-            QPen pen_style = event.window->current_pen_style();
-            stroke->width.set(pen_style.width());
-            stroke->cap.set(model::Stroke::Cap(pen_style.capStyle()));
-            stroke->join.set(model::Stroke::Join(pen_style.joinStyle()));
-            stroke->miter_limit.set(pen_style.miterLimit());
+            stroke->set_pen_style(event.window->current_pen_style());
 
             document->undo_stack().push(
                 new command::AddShape(prop, std::move(stroke), index)
@@ -166,34 +160,7 @@ protected:
 private:
     model::ShapeListProperty* get_container(GlaxnimateWindow* window)
     {
-        if ( auto container = window->current_shape_container() )
-            return container;
-
-        auto comp = window->current_composition();
-        for ( int i = comp->docnode_child_count() - 1; i >= 0; i-- )
-        {
-            if ( auto lay = qobject_cast<model::ShapeLayer*>(comp->docnode_child(i)) )
-                return &lay->shapes;
-        }
-
-        auto document = window->document();
-        auto layer = std::make_unique<model::ShapeLayer>(document, comp);
-        int layer_index = comp->docnode_child_index(window->current_layer());
-        if ( layer_index == -1 )
-            layer_index = 0;
-
-        QPointF center(
-            document->main()->width.get()/2,
-            document->main()->height.get()/2
-        );
-        layer->transform.get()->anchor_point.set(center);
-        layer->transform.get()->position.set(center);
-        document->set_best_name(layer.get());
-        auto prop = &layer->shapes;
-        document->undo_stack().push(
-            new command::AddLayer(comp, std::move(layer), layer_index)
-        );
-        return prop;
+        return window->current_shape_container();
     }
 
 };

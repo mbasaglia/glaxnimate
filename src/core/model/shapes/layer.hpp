@@ -55,6 +55,7 @@ public:
 
         void find_first();
         friend Layer;
+        friend Composition;
         const ShapeListProperty* comp;
         const Layer* parent;
         int index;
@@ -79,6 +80,8 @@ public:
     FrameTime relative_time(FrameTime time) const { return time; }
 
     bool is_ancestor_of(const Layer* other) const;
+
+    bool is_top_level() const;
 
 private:
     std::vector<ReferenceTarget*> valid_parents() const;

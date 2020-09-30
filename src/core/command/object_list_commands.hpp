@@ -14,9 +14,10 @@ public:
         PropT* object_parent,
         std::unique_ptr<ItemT> object,
         int position,
-        QUndoCommand* parent = nullptr
+        QUndoCommand* parent = nullptr,
+        const QString& name = {}
     )
-        : QUndoCommand(QObject::tr("Create %1").arg(object->object_name()), parent),
+        : QUndoCommand(name.isEmpty() ? QObject::tr("Create %1").arg(object->object_name()) : name, parent),
           object_parent(object_parent),
           object(std::move(object)),
           position(position)

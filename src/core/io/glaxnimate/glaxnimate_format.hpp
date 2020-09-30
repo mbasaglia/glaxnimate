@@ -14,7 +14,7 @@ class GlaxnimateFormat : public ImportExport
     Q_OBJECT
 
 public:
-    static constexpr const int format_version = 1;
+    static constexpr const int format_version = 2;
 
     QString name() const override { return tr("Glaxnimate Animation"); }
     // RAWR = Reasonable Animation at Whatever Resolution

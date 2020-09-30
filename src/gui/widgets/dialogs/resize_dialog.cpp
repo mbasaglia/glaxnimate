@@ -4,7 +4,7 @@
 #include <QEvent>
 
 #include "command/property_commands.hpp"
-#include "command/layer_commands.hpp"
+#include "command/shape_commands.hpp"
 #include "model/layers/empty_layer.hpp"
 
 class ResizeDialog::Private
@@ -66,23 +66,15 @@ void ResizeDialog::resize_document(model::Document* doc)
     if ( exec() == QDialog::Rejected )
         return;
 
-    if ( d->ui.check_scale_layers->isChecked() && !comp->layers.empty() )
+    if ( d->ui.check_scale_layers->isChecked() && !comp->shapes.empty() )
     {
         doc->undo_stack().beginMacro(tr("Resize Document"));
 
-        auto range = comp->top_level();
-        auto it = range.begin();
-        model::Layer* layer = *it;
-        if ( ++it != range.end() || layer->transform.get()->position.get() != QPointF(0, 0) )
-        {
-            auto nl = std::make_unique<model::EmptyLayer>(doc, comp);
-            layer = nl.get();
-            doc->set_best_name(layer, tr("Resize"));
-            for ( auto lay : range )
-                lay->parent.set_undoable(QVariant::fromValue(layer));
-            doc->push_command(new command::AddLayer(comp, std::move(nl), comp->layers.size()));
-        }
-
+        auto nl = std::make_unique<model::Layer__new>(doc);
+        model::Layer__new* layer = nl.get();
+        doc->set_best_name(layer, tr("Resize"));
+        doc->push_command(new command::AddShape(&comp->shapes, std::move(nl), comp->shapes.size()));
+        /// TODO
         qreal scale_w = comp->width.get() != 0 ? double(d->ui.spin_width->value()) / comp->width.get() : 1;
         qreal scale_h = comp->height.get() != 0 ? double(d->ui.spin_height->value()) / comp->height.get() : 1;
         if ( d->ui.check_layer_ratio->isChecked() )

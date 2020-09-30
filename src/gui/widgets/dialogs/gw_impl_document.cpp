@@ -86,7 +86,7 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     current_document->main()->animation->last_frame.set(out_point);
 
 
-    auto layer = current_document->main()->make_layer<model::ShapeLayer>();
+    auto layer = std::make_unique<model::Layer__new>(current_document.get());
     layer->animation->last_frame.set(out_point);
     layer->name.set(layer->type_name_human());
     QPointF pos(
@@ -95,8 +95,8 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     );
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
-    model::Layer* ptr = layer.get();
-    current_document->main()->add_layer(std::move(layer), 0);
+    model::ShapeElement* ptr = layer.get();
+    current_document->main()->shapes.insert(std::move(layer), 0);
 
     QDir path = app::settings::get<QString>("open_save", "path");
     auto opts = current_document->io_options();
@@ -124,8 +124,8 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
         most_recent_file(options.filename);
 
     view_fit();
-    if ( !current_document->main()->layers.empty() )
-        ui.view_document_node->setCurrentIndex(document_node_model.node_index(current_document->main()->layers[0]));
+    if ( !current_document->main()->shapes.empty() )
+        ui.view_document_node->setCurrentIndex(document_node_model.node_index(current_document->main()->shapes[0]));
 
     current_document->set_io_options(options);
     ui.play_controls->set_range(current_document->main()->animation->first_frame.get(), current_document->main()->animation->last_frame.get());

@@ -86,8 +86,8 @@ public:
         document->main()->width.set(size.width());
         document->main()->height.set(size.height());
 
-        for ( auto& layer : objects.layers )
-            document->main()->layers.insert(std::move(layer));
+        for ( auto& layer : objects.shapes )
+            document->main()->shapes.insert(std::move(layer));
 
         document->main()->recursive_rename();
 

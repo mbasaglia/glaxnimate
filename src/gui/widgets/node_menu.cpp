@@ -32,7 +32,7 @@ public:
     model::Transform* trans;
 };
 
-QAction* action_for_node(model::DocumentNode* node, model::DocumentNode* selected, QMenu* parent, QActionGroup* group)
+QAction* action_for_node(model::ReferenceTarget* node, model::ReferenceTarget* selected, QMenu* parent, QActionGroup* group)
 {
     QAction* act = new QAction(parent);
     if ( node )
@@ -56,7 +56,7 @@ QAction* action_for_node(model::DocumentNode* node, model::DocumentNode* selecte
 
 void move_action(
     NodeMenu* menu,
-    model::DocumentNode* node,
+    model::ShapeElement* node,
     command::ReorderCommand::SpecialPosition pos
 )
 {
@@ -103,60 +103,14 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
     setIcon(node->docnode_icon());
     addSection(node->docnode_icon(), node->object_name());
 
-    if ( auto lay = qobject_cast<model::Layer*>(node) )
-    {
-        addAction(QIcon::fromTheme("edit-delete-remove"), tr("Delete"), this, [lay]{
-            lay->push_command(new command::DeleteCommand(lay));
-        });
-
-        addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), this, [lay]{
-            lay->push_command(new command::DuplicateCommand(lay));
-        });
-
-        addSeparator();
-
-        addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
-            ResetTransform{lay->document(), lay->transform.get()}
-        );
-
-        addSeparator();
-
-        QMenu* menu_parent = new QMenu(tr("Parent"), this);
-        menu_parent->setIcon(QIcon::fromTheme("go-parent-folder"));
-        QActionGroup* group_parent = new QActionGroup(this);
-        auto layparent = lay->parent.get();
-        action_for_node(nullptr, layparent, menu_parent, group_parent);
-        for ( const auto& other_lay : lay->composition()->layers )
-            if ( other_lay.get() != lay )
-                action_for_node(other_lay.get(), layparent, menu_parent, group_parent);
-        connect(menu_parent, &QMenu::triggered, this, [lay](QAction* act){
-            lay->push_command(
-                new command::SetPropertyValue(
-                    &lay->parent,
-                    lay->parent.value(),
-                    act->data(),
-                    true
-                )
-            );
-        });
-        addAction(menu_parent->menuAction());
-
-        addSeparator();
-
-        move_action(this, lay, command::ReorderCommand::MoveTop);
-        move_action(this, lay, command::ReorderCommand::MoveUp);
-        move_action(this, lay, command::ReorderCommand::MoveDown);
-        move_action(this, lay, command::ReorderCommand::MoveBottom);
-
-    }
-    else if ( auto shape = qobject_cast<model::ShapeElement*>(node) )
+    if ( auto shape = qobject_cast<model::ShapeElement*>(node) )
     {
         addAction(QIcon::fromTheme("edit-delete-remove"), tr("Delete"), this, [shape]{
-            shape->push_command(new command::DeleteCommand(shape));
+            shape->push_command(new command::RemoveShape(shape, shape->owner()));
         });
 
         addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), this, [shape]{
-            shape->push_command(new command::DuplicateCommand(shape));
+            shape->push_command(command::duplicate_shape(shape));
         });
 
         addSeparator();
@@ -181,6 +135,28 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
                     shape->push_command(new command::MoveShape(shape, shape->owner(), parent, parent->size()));
             }
         });
+
+        if ( auto lay = qobject_cast<model::Layer__new*>(shape) )
+        {
+            QMenu* menu_parent = new QMenu(tr("Parent"), this);
+            menu_parent->setIcon(QIcon::fromTheme("go-parent-folder"));
+            QActionGroup* group_parent = new QActionGroup(this);
+            auto layparent = lay->parent.get();
+            action_for_node(nullptr, layparent, menu_parent, group_parent);
+            for ( auto other_lay : lay->parent.valid_options() )
+                action_for_node(other_lay, layparent, menu_parent, group_parent);
+            connect(menu_parent, &QMenu::triggered, this, [lay](QAction* act){
+                lay->push_command(
+                    new command::SetPropertyValue(
+                        &lay->parent,
+                        lay->parent.value(),
+                        act->data(),
+                        true
+                    )
+                );
+            });
+            addAction(menu_parent->menuAction());
+        }
     }
 }
 

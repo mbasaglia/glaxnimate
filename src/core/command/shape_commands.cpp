@@ -147,3 +147,19 @@ command::UngroupShapes::UngroupShapes(model::Group* group)
 }
 
 
+command::AddShape * command::duplicate_shape ( model::ShapeElement* shape )
+{
+    std::unique_ptr<model::ShapeElement> new_shape (
+        static_cast<model::ShapeElement*>(shape->clone().release())
+    );
+    new_shape->recursive_rename();
+
+    return new command::AddShape(
+        shape->owner(),
+        std::move(new_shape),
+        shape->owner()->index_of(shape),
+        nullptr,
+        QObject::tr("Duplicate %1").arg(shape->object_name())
+    );
+}
+

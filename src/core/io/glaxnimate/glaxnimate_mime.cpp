@@ -60,9 +60,7 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(
         if ( !obj )
             continue;
 
-        if ( auto layer = qobject_cast<model::Layer*>(obj) )
-            output_objects.layers.emplace_back(layer);
-        else if ( auto shape = qobject_cast<model::ShapeElement*>(obj) )
+        if ( auto shape = qobject_cast<model::ShapeElement*>(obj) )
             output_objects.shapes.emplace_back(shape);
         else if ( auto composition = qobject_cast<model::Composition*>(obj) )
             output_objects.compositions.emplace_back(composition);

@@ -4,6 +4,7 @@
 
 bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&, model::Document* document, const QVariantMap& )
 {
+    /// TODO if format is 1 convert "layers" to "shapes"
     QJsonDocument jdoc;
 
     try {

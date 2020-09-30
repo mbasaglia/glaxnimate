@@ -60,6 +60,8 @@ public:
         return tr("Stroke");
     }
 
+    void set_pen_style(const QPen& p);
+
 protected:
     void on_paint(QPainter* p, FrameTime t, PaintMode) const override;
 };

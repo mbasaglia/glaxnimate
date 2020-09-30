@@ -36,8 +36,8 @@ public:
 
     void write_composition(model::Composition* comp)
     {
-        for ( const auto& lay : comp->layers )
-            write_layer(lay.get());
+        for ( const auto& lay : comp->shapes )
+            write_shape(lay.get(), false);
     }
 
     void write_visibility_attributes(model::DocumentNode* node)
@@ -46,36 +46,6 @@ public:
             write_attribute("display", "none");
         if ( node->docnode_locked() )
             writer.writeAttribute(detail::xmlns.at("sodipodi"), "insensitive", "true");
-    }
-
-    void write_layer(model::Layer* lay)
-    {
-        start_layer(lay);
-        Style::Map style;
-        transform_to_style(lay->transform_matrix(lay->time()), style);
-        style["opacity"] = lay->opacity.get();
-        write_style(style);
-        write_visibility_attributes(lay);
-        if ( auto sc = qobject_cast<model::SolidColorLayer*>(lay) )
-            write_solid_layer(sc);
-        else if ( auto sl = qobject_cast<model::ShapeLayer*>(lay) )
-            write_shape_layer(sl);
-        writer.writeEndElement();
-    }
-
-    void write_solid_layer(model::SolidColorLayer* lay)
-    {
-        writer.writeEmptyElement("rect");
-        write_style({{"fill", lay->color.get().name()}});
-        write_attribute("x", "0");
-        write_attribute("y", "0");
-        write_attribute("width", lay->width.get());
-        write_attribute("height", lay->height.get());
-    }
-
-    void write_shape_layer(model::ShapeLayer* lay)
-    {
-        write_shapes(lay->shapes);
     }
 
     void write_shapes(const model::ShapeListProperty& shapes)
@@ -280,7 +250,10 @@ public:
 
     void write_group_shape(model::Group* group)
     {
-        start_group(group);
+        if ( qobject_cast<model::Layer__new*>(group) )
+            start_layer(group);
+        else
+            start_group(group);
         Style::Map style;
         transform_to_style(group->transform_matrix(group->time()), style);
         style["opacity"] = group->opacity.get();
@@ -468,12 +441,6 @@ void io::svg::SvgRenderer::write_main(model::MainComposition* comp)
     }
 }
 
-void io::svg::SvgRenderer::write_layer(model::Layer* layer)
-{
-    d->collect_defs(layer->document());
-    d->write_layer(layer);
-}
-
 void io::svg::SvgRenderer::write_shape(model::ShapeElement* shape)
 {
     d->collect_defs(shape->document());
@@ -486,8 +453,6 @@ void io::svg::SvgRenderer::write_node(model::DocumentNode* node)
         write_main(mc);
     else if ( auto co = qobject_cast<model::Composition*>(node) )
         write_composition(co);
-    else if ( auto la = qobject_cast<model::Layer*>(node) )
-        write_layer(la);
     else if ( auto sh = qobject_cast<model::ShapeElement*>(node) )
         write_shape(sh);
 }

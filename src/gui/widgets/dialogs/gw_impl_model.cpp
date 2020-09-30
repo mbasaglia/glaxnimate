@@ -3,7 +3,6 @@
 #include <queue>
 #include <QClipboard>
 
-#include "command/layer_commands.hpp"
 #include "command/shape_commands.hpp"
 #include "command/structure_commands.hpp"
 #include "app/settings/widget_builder.hpp"
@@ -16,15 +15,6 @@
 
 model::Composition* GlaxnimateWindow::Private::current_composition()
 {
-    model::DocumentNode* curr = current_document_node();
-    if ( curr )
-    {
-        if ( auto curr_comp = qobject_cast<model::Composition*>(curr) )
-            return curr_comp;
-
-        if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
-            return curr_lay->composition();
-    }
     return current_document->main();
 }
 
@@ -54,19 +44,21 @@ model::ShapeElement* GlaxnimateWindow::Private::current_shape()
 model::ShapeListProperty* GlaxnimateWindow::Private::current_shape_container()
 {
     model::DocumentNode* sh = current_document_node();
-    if ( auto lay = qobject_cast<model::ShapeLayer*>(sh) )
+    if ( auto lay = qobject_cast<model::Composition*>(sh) )
         return &lay->shapes;
 
-    sh = qobject_cast<model::ShapeElement*>(sh);
+    if ( !qobject_cast<model::Layer__new*>(sh) )
+        sh = sh->docnode_parent();
+
     while ( sh )
     {
-        sh = sh->docnode_parent();
         if ( auto grp = qobject_cast<model::Group*>(sh) )
             return &grp->shapes;
-        if ( auto lay = qobject_cast<model::ShapeLayer*>(sh) )
+        if ( auto lay = qobject_cast<model::Composition*>(sh) )
             return &lay->shapes;
+        sh = sh->docnode_parent();
     }
-    return nullptr;
+    return &current_composition()->shapes;
 }
 
 model::DocumentNode* GlaxnimateWindow::Private::current_document_node()
@@ -79,56 +71,73 @@ void GlaxnimateWindow::Private::set_current_document_node(model::DocumentNode* n
     ui.view_document_node->setCurrentIndex(document_node_model.node_index(node));
 }
 
-void GlaxnimateWindow::Private::layer_new_prepare(model::Layer* layer)
-{
-    current_document->set_best_name(layer, {});
 
+void GlaxnimateWindow::Private::layer_new_layer()
+{
+    auto layer = std::make_unique<model::Layer__new>(current_document.get());
     layer->animation->last_frame.set(current_document->main()->animation->last_frame.get());
     QPointF pos = current_document->rect().center();
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
-    layer->set_time(current_document->current_time());
+    layer_new_impl(std::move(layer));
 }
 
-void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::Layer> layer)
+void GlaxnimateWindow::Private::layer_new_fill()
 {
-    model::Composition* composition = current_composition();
+    auto layer = std::make_unique<model::Fill>(current_document.get());
+    layer->color.set(ui.fill_style_widget->current_color());
+    layer_new_impl(std::move(layer));
+}
 
-    layer_new_prepare(layer.get());
+void GlaxnimateWindow::Private::layer_new_stroke()
+{
+    auto layer = std::make_unique<model::Stroke>(current_document.get());
+    layer->set_pen_style(ui.stroke_style_widget->pen_style());
+    layer_new_impl(std::move(layer));
+}
+
+void GlaxnimateWindow::Private::layer_new_group()
+{
+    auto layer = std::make_unique<model::Group>(current_document.get());
+    QPointF pos = current_document->rect().center();
+    layer->transform.get()->anchor_point.set(pos);
+    layer->transform.get()->position.set(pos);
+    layer_new_impl(std::move(layer));
+}
+
+void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::ShapeElement> layer)
+{
+    current_document->set_best_name(layer.get(), {});
+    layer->set_time(current_document_node()->time());
 
     if ( auto scl = qobject_cast<model::SolidColorLayer*>(layer.get()) )
     {
         scl->color.set(ui.fill_style_widget->current_color());
     }
 
-    model::Layer* ptr = layer.get();
+    model::ShapeElement* ptr = layer.get();
 
-    int position = composition->layer_position(current_layer());
-    current_document->push_command(new command::AddLayer(composition, std::move(layer), position));
+    auto cont = current_shape_container();
+    int position = cont->index_of(current_shape());
+    current_document->push_command(new command::AddShape(cont, std::move(layer), position));
 
     ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
 }
 
 void GlaxnimateWindow::Private::layer_delete()
 {
-    auto current = current_document_node();
-    if ( !current )
+    auto current = current_shape();
+    if ( !current || current->docnode_locked() )
         return;
-    auto cmd = std::make_unique<command::DeleteCommand>(current);
-    if ( !cmd->has_action() )
-        return;
-    current->push_command(cmd.release());
+    current->push_command(new command::RemoveShape(current, current->owner()));
 }
 
 void GlaxnimateWindow::Private::layer_duplicate()
 {
-    auto current = current_document_node();
+    auto current = current_shape();
     if ( !current )
         return;
-    auto cmd = std::make_unique<command::DuplicateCommand>(current);
-    if ( !cmd->has_action() )
-        return;
-    current->push_command(cmd.release());
+    current->push_command(command::duplicate_shape(current));
 }
 
 std::vector<model::DocumentNode *> GlaxnimateWindow::Private::cleaned_selection()
@@ -145,7 +154,11 @@ void GlaxnimateWindow::Private::delete_selected()
 
     current_document->undo_stack().beginMacro(tr("Delete"));
     for ( auto item : selection )
-        current_document->push_command(new command::DeleteCommand(item));
+    {
+        if ( auto shape = qobject_cast<model::Shape*>(item) )
+            if ( !shape->docnode_locked() )
+                current_document->push_command(new command::RemoveShape(shape, shape->owner()));
+    }
     current_document->undo_stack().endMacro();
 }
 
@@ -157,7 +170,11 @@ void GlaxnimateWindow::Private::cut()
 
     current_document->undo_stack().beginMacro(tr("Cut"));
     for ( auto item : selection )
-        current_document->push_command(new command::DeleteCommand(item));
+    {
+        if ( auto shape = qobject_cast<model::Shape*>(item) )
+            if ( !shape->docnode_locked() )
+                current_document->push_command(new command::RemoveShape(shape, shape->owner()));
+    }
     current_document->undo_stack().endMacro();
 }
 
@@ -204,9 +221,9 @@ void GlaxnimateWindow::Private::paste()
     {
         if ( auto main_comp = qobject_cast<model::MainComposition*>(it->get()) )
         {
-            raw_pasted.layers.reserve(raw_pasted.layers.size() + main_comp->layers.size());
-            auto raw = main_comp->layers.raw();
-            raw_pasted.layers.insert(raw_pasted.layers.end(), raw.move_begin(), raw.move_end());
+            raw_pasted.shapes.reserve(raw_pasted.shapes.size() + main_comp->shapes.size());
+            auto raw = main_comp->shapes.raw();
+            raw_pasted.shapes.insert(raw_pasted.shapes.end(), raw.move_begin(), raw.move_end());
             raw.clear();
             it = raw_pasted.compositions.erase(it);
         }
@@ -218,25 +235,11 @@ void GlaxnimateWindow::Private::paste()
 
     current_document->undo_stack().beginMacro(tr("Paste"));
 
-    model::Composition* composition = current_composition();
     model::ShapeListProperty* shape_cont = current_shape_container();
-    int layer_insertion_point = 0;
-    if ( model::Layer* curr_layer = current_layer() )
-        layer_insertion_point = composition->layer_position(curr_layer, -1) + 1;
-    else
-        layer_insertion_point = composition->layers.size();
 
     std::vector<model::DocumentNode*> select;
     if ( !raw_pasted.shapes.empty() )
     {
-        if ( !shape_cont )
-        {
-            auto new_layer = std::make_unique<model::ShapeLayer>(current_document.get(), composition);
-            layer_new_prepare(new_layer.get());
-            shape_cont = &new_layer->shapes;
-            select.push_back(new_layer.get());
-            current_document->push_command(new command::AddLayer(composition, std::move(new_layer), layer_insertion_point++));
-        }
         int shape_insertion_point = shape_cont->size();
         for ( auto& shape : raw_pasted.shapes )
         {
@@ -244,13 +247,6 @@ void GlaxnimateWindow::Private::paste()
             shape->recursive_rename();
             current_document->push_command(new command::AddShape(shape_cont, std::move(shape), shape_insertion_point++));
         }
-    }
-
-    for ( auto& layer : raw_pasted.layers )
-    {
-        select.push_back(layer.get());
-        layer->recursive_rename();
-        current_document->push_command(new command::AddLayer(composition, std::move(layer), layer_insertion_point++));
     }
 
     for ( auto& color : raw_pasted.named_colors )
@@ -275,7 +271,7 @@ void GlaxnimateWindow::Private::paste()
 
 void GlaxnimateWindow::Private::move_current(command::ReorderCommand::SpecialPosition pos)
 {
-    auto current = current_document_node();
+    auto current = current_shape();
     if ( !current )
         return;
     auto cmd = std::make_unique<command::ReorderCommand>(current, pos);

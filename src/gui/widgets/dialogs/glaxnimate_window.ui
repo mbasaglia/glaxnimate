@@ -82,10 +82,10 @@
       <iconset theme="list-add">
        <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
      </property>
-     <addaction name="action_new_layer_empty"/>
-     <addaction name="action_new_layer_shape"/>
-     <addaction name="action_new_layer_precomp"/>
-     <addaction name="action_new_layer_color"/>
+     <addaction name="action_new_layer"/>
+     <addaction name="action_new_group"/>
+     <addaction name="action_new_fill"/>
+     <addaction name="action_new_stroke"/>
     </widget>
     <addaction name="menu_new_layer"/>
     <addaction name="action_Move_To_Composition"/>
@@ -882,13 +882,13 @@
     <string>&amp;Empty Layer</string>
    </property>
   </action>
-  <action name="action_new_layer_shape">
+  <action name="action_new_group">
    <property name="icon">
     <iconset theme="shapes">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
-    <string>&amp;Shape Layer</string>
+    <string>&amp;Group</string>
    </property>
   </action>
   <action name="action_new_layer_precomp">
@@ -1344,6 +1344,33 @@
     <string>Donate...</string>
    </property>
   </action>
+  <action name="action_new_fill">
+   <property name="icon">
+    <iconset theme="format-fill-color">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Fill</string>
+   </property>
+  </action>
+  <action name="action_new_stroke">
+   <property name="icon">
+    <iconset theme="format-stroke-color">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Stroke</string>
+   </property>
+  </action>
+  <action name="action_new_layer">
+   <property name="icon">
+    <iconset theme="folder">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Layer</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1492,70 +1519,6 @@
     <hint type="destinationlabel">
      <x>1119</x>
      <y>1096</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>action_new_layer_color</sender>
-   <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
-   <slot>layer_new_color()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>656</x>
-     <y>526</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>action_new_layer_empty</sender>
-   <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
-   <slot>layer_new_empty()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>656</x>
-     <y>526</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>action_new_layer_precomp</sender>
-   <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
-   <slot>layer_new_precomp()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>656</x>
-     <y>526</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>action_new_layer_shape</sender>
-   <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
-   <slot>layer_new_shape()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>656</x>
-     <y>526</y>
     </hint>
    </hints>
   </connection>

@@ -219,7 +219,7 @@ public:
         convert_object_basic(animation, json);
 
         QCborArray layers;
-        for ( const auto& layer : animation->layers )
+        for ( const auto& layer : animation->shapes )
             layers.append(convert_layer(layer.get()));
 
         json["layers"_l] = layers;
@@ -235,24 +235,25 @@ public:
         return layer_indices[layer->uuid.get()];
     }
 
-    QCborMap convert_layer(Layer* layer)
+    QCborMap convert_layer(ShapeElement* shape)
     {
-        int parent_index = layer_index(layer->parent.get());
+        /// TODO
+//         int parent_index = layer_index(layer->parent.get());
         QCborMap json;
-        json["ty"_l] = layer_types[layer->type_name()];
-        json["ind"_l] = layer_index(layer);
-        convert_object_basic(layer, json);
+//         json["ty"_l] = layer_types[layer->type_name()];
+//         json["ind"_l] = layer_index(layer);
+        convert_object_basic(shape, json);
 
-        QCborMap transform;
-        convert_transform(layer->transform.get(), &layer->opacity, transform);
-        json["ks"_l] = transform;
-        if ( parent_index != -1 )
-            json["parent"_l] = parent_index;
+//         QCborMap transform;
+//         convert_transform(layer->transform.get(), &layer->opacity, transform);
+//         json["ks"_l] = transform;
+//         if ( parent_index != -1 )
+//             json["parent"_l] = parent_index;
 
-        if ( layer->type_name() == "SolidColorLayer" )
-            json["sc"_l] = static_cast<SolidColorLayer*>(layer)->color.get().name();
-        else if ( layer->type_name() == "ShapeLayer" )
-            json["shapes"_l] = convert_shapes(static_cast<ShapeLayer*>(layer)->shapes);
+//         if ( layer->type_name() == "SolidColorLayer" )
+//             json["sc"_l] = static_cast<SolidColorLayer*>(layer)->color.get().name();
+//         else if ( layer->type_name() == "ShapeLayer" )
+//             json["shapes"_l] = convert_shapes(static_cast<ShapeLayer*>(layer)->shapes);
         return json;
     }
 
@@ -558,7 +559,8 @@ private:
 
         layer_indices[layer_indices.size()] = layer;
         deferred.emplace_back(layer, json);
-        composition->add_layer(std::unique_ptr<Layer>(layer), composition->docnode_child_count());
+        /// TODO
+//         composition->add_layer(std::unique_ptr<Layer>(layer), composition->docnode_child_count());
     }
 
     void load_layer(const QJsonObject& json, model::Layer* layer)

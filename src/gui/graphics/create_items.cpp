@@ -28,20 +28,6 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             return v;
         }
     );
-    register_builder<model::Layer>(
-        [](model::Layer* layer){
-            auto item = new DocumentNodeGraphicsItem(layer);
-            item->set_transform_matrix(layer->transform_matrix(layer->time()));
-            QObject::connect(layer, &model::Layer::transform_matrix_changed, item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
-            QObject::connect(layer, &model::Layer::opacity_changed, item, &graphics::DocumentNodeGraphicsItem::set_opacity);
-            return item;
-        },
-        [](model::Layer* layer){
-            auto v = std::make_unique<GraphicsEditor>(layer);
-            v->add_child<graphics::TransformGraphicsItem>(layer->transform.get(), layer, nullptr);
-            return v;
-        }
-    );
 
     auto make_item_for_modifier = [](model::ShapeOperator* shape){
         auto item = GraphicsItemFactory::make_graphics_item_default(shape);

@@ -110,10 +110,6 @@ private slots:
     void scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
 
     void layer_new_menu();
-    void layer_new_empty();
-    void layer_new_shape();
-    void layer_new_precomp();
-    void layer_new_color();
 
     void layer_delete();
     void layer_duplicate();

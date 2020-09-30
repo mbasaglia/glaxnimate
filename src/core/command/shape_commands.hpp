@@ -57,6 +57,8 @@ private:
 
 };
 
+AddShape* duplicate_shape(model::ShapeElement* shape);
+
 } // namespace command
 
 

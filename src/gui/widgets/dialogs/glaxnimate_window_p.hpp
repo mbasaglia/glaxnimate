@@ -130,13 +130,11 @@ public:
     void ungroup_shapes();
     void move_to();
 
-    template<class LayerT>
-    void layer_new()
-    {
-        layer_new_impl(current_composition()->make_layer<LayerT>());
-    }
-    void layer_new_impl(std::unique_ptr<model::Layer> layer);
-    void layer_new_prepare(model::Layer* layer);
+    void layer_new_layer();
+    void layer_new_fill();
+    void layer_new_stroke();
+    void layer_new_group();
+    void layer_new_impl(std::unique_ptr<model::ShapeElement> layer);
     void layer_delete();
     void layer_duplicate();
 

@@ -7,18 +7,18 @@
 
 void model::Layer::ChildLayerIterator::find_first()
 {
-    while ( index < comp->layers.size() && comp->layers[index]->parent.get() != parent )
-        ++index;
+//     while ( index < comp->layers.size() && comp->layers[index]->parent.get() != parent )
+//         ++index;
 }
 
 model::Layer * model::Layer::ChildLayerIterator::operator*() const
 {
-    return comp->layers[index];
+    return nullptr;//comp->layers[index];
 }
 
 model::Layer * model::Layer::ChildLayerIterator::operator->() const
 {
-    return comp->layers[index];
+    return nullptr;//comp->layers[index];
 }
 
 model::Layer::Layer(Document* doc, Composition* composition)
@@ -45,11 +45,11 @@ std::vector<model::ReferenceTarget*> model::Layer::valid_parents() const
 {
     std::vector<model::ReferenceTarget*> refs;
     refs.push_back(nullptr);
-    for ( const auto& lay : composition_->layers )
-    {
-        if ( !is_ancestor_of(lay.get()) )
-            refs.push_back(lay.get());
-    }
+//     for ( const auto& lay : composition_->layers )
+//     {
+//         if ( !is_ancestor_of(lay.get()) )
+//             refs.push_back(lay.get());
+//     }
 
     return refs;
 }
@@ -96,9 +96,9 @@ model::DocumentNode * model::Layer::docnode_group_child(int index) const
 int model::Layer::docnode_group_child_count() const
 {
     int sz = 0;
-    for ( const auto& sib : composition_->layers )
-        if ( sib->parent.get() == this )
-            sz++;
+//     for ( const auto& sib : composition_->shapes )
+//         if ( sib->parent.get() == this )
+//             sz++;
     return sz;
 }
 
