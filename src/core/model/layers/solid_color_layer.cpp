@@ -11,8 +11,8 @@ GLAXNIMATE_OBJECT_IMPL(model::SolidColorLayer)
 model::SolidColorLayer::SolidColorLayer ( model::Document* doc, model::Composition* composition )
     : Ctor(doc, composition)
 {
-    width.set(doc->main_composition()->width.get());
-    height.set(doc->main_composition()->height.get());
+    width.set(doc->main()->width.get());
+    height.set(doc->main()->height.get());
 }
 
 

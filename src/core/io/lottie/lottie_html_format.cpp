@@ -36,8 +36,8 @@ R"(<!DOCTYPE html>
         autoplay: true,
         animationData:
 )")
-    .arg(document->main_composition()->width.get())
-    .arg(document->main_composition()->height.get())
+    .arg(document->main()->width.get())
+    .arg(document->main()->height.get())
     .toUtf8()
     );
 

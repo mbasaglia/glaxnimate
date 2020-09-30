@@ -10,13 +10,13 @@ class model::Document::Private
 {
 public:
     Private(Document* doc)
-        : main_composition(doc),
+        : main(doc),
           defs(doc)
     {
         io_options.format = io::glaxnimate::GlaxnimateFormat::instance();
     }
 
-    MainComposition main_composition;
+    MainComposition main;
     QUndoStack undo_stack;
     QVariantMap metadata;
     io::Options io_options;
@@ -43,9 +43,9 @@ QString model::Document::filename() const
     return d->io_options.filename;
 }
 
-model::MainComposition * model::Document::main_composition()
+model::MainComposition * model::Document::main()
 {
-    return &d->main_composition;
+    return &d->main;
 }
 
 QVariantMap & model::Document::metadata() const
@@ -75,17 +75,17 @@ model::ReferenceTarget * model::Document::find_by_uuid(const QUuid& n) const
 {
     if ( auto it = d->defs.find_by_uuid(n) )
         return it;
-    return d->main_composition.docnode_find_by_uuid(n);
+    return d->main.docnode_find_by_uuid(n);
 }
 
 model::DocumentNode * model::Document::find_by_name(const QString& name) const
 {
-    return d->main_composition.docnode_find_by_name(name);
+    return d->main.docnode_find_by_name(name);
 }
 
 QVariantList model::Document::find_by_type_name(const QString& type_name) const
 {
-    return d->main_composition.find_by_type_name(type_name);
+    return d->main.find_by_type_name(type_name);
 }
 
 bool model::Document::redo()
@@ -111,9 +111,9 @@ model::FrameTime model::Document::current_time() const
 
 void model::Document::set_current_time(model::FrameTime t)
 {
-    if ( t >= 0 && t <= d->main_composition.animation->last_frame.get() )
+    if ( t >= 0 && t <= d->main.animation->last_frame.get() )
     {
-        d->main_composition.set_time(t);
+        d->main.set_time(t);
         emit current_time_changed(d->current_time = t);
     }
 }
@@ -121,8 +121,8 @@ void model::Document::set_current_time(model::FrameTime t)
 QSize model::Document::size() const
 {
     return {
-        d->main_composition.width.get(),
-        d->main_composition.height.get()
+        d->main.width.get(),
+        d->main.height.get()
     };
 }
 
@@ -187,7 +187,7 @@ QString model::Document::get_best_name(const model::DocumentNode* node, const QS
     QString name = base_name;
 
     /// \todo Also collect for precompositions
-    collect_names(&d->main_composition, base_name, names, node);
+    collect_names(&d->main, base_name, names, node);
 
     QString name_pattern = "%1 %2";
     while ( names.contains(name) )

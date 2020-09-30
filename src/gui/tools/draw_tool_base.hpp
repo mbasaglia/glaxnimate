@@ -183,8 +183,8 @@ private:
             layer_index = 0;
 
         QPointF center(
-            document->main_composition()->width.get()/2,
-            document->main_composition()->height.get()/2
+            document->main()->width.get()/2,
+            document->main()->height.get()/2
         );
         layer->transform.get()->anchor_point.set(center);
         layer->transform.get()->position.set(center);

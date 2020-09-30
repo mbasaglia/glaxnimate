@@ -14,7 +14,7 @@ public:
     void visit(model::Document* doc)
     {
         on_visit(doc);
-        visit(doc->main_composition());
+        visit(doc->main());
         on_visit_end(doc);
     }
 

@@ -492,10 +492,10 @@ void TimelineWidget::set_document(model::Document* document)
 
     if ( document )
     {
-        connect(document->main_composition()->animation.get(), &model::AnimationContainer::first_frame_changed, this, &TimelineWidget::update_timeline_start);
-        connect(document->main_composition()->animation.get(), &model::AnimationContainer::last_frame_changed, this, &TimelineWidget::update_timeline_end);
-        update_timeline_end(document->main_composition()->animation->last_frame.get());
-        update_timeline_start(document->main_composition()->animation->first_frame.get());
+        connect(document->main()->animation.get(), &model::AnimationContainer::first_frame_changed, this, &TimelineWidget::update_timeline_start);
+        connect(document->main()->animation.get(), &model::AnimationContainer::last_frame_changed, this, &TimelineWidget::update_timeline_end);
+        update_timeline_end(document->main()->animation->last_frame.get());
+        update_timeline_start(document->main()->animation->first_frame.get());
         connect(this, &TimelineWidget::frame_clicked, document, &model::Document::set_current_time);
         connect(document, &model::Document::current_time_changed, viewport(), (void (QWidget::*)())&QWidget::update);
     }

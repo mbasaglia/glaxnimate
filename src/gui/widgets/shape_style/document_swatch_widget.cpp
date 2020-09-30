@@ -386,7 +386,7 @@ void DocumentSwatchWidget::open()
 void DocumentSwatchWidget::save()
 {
     if ( d->ui.swatch->palette().name().isEmpty() )
-        d->ui.swatch->palette().setName(d->document->main_composition()->name.get());
+        d->ui.swatch->palette().setName(d->document->main()->name.get());
 
     if ( !d->palette_index.isValid() )
     {

@@ -208,7 +208,7 @@ public:
     QCborMap to_json()
     {
         /// @todo make a system that preserves key order as that is needed for lottie android
-        return convert_animation(document->main_composition());
+        return convert_animation(document->main());
     }
 
     QCborMap convert_animation(MainComposition* animation)
@@ -509,7 +509,7 @@ public:
 
     void load(const QJsonObject& json)
     {
-        load_composition(json, document->main_composition());
+        load_composition(json, document->main());
     }
 
 private:

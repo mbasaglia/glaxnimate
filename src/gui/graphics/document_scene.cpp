@@ -57,7 +57,7 @@ public:
 
     model::Composition* current_composition()
     {
-        return document->main_composition();
+        return document->main();
     }
 
     DocumentNodeGraphicsItem* item_from_node(model::DocumentNode* node)
@@ -91,7 +91,7 @@ void graphics::DocumentScene::set_document ( model::Document* document )
 {
     if ( d->document )
     {
-        disconnect_node(d->document->main_composition());
+        disconnect_node(d->document->main());
     }
 
     clear_selection();
@@ -101,7 +101,7 @@ void graphics::DocumentScene::set_document ( model::Document* document )
 
     if ( d->document )
     {
-        connect_node(d->document->main_composition());
+        connect_node(d->document->main());
     }
 }
 

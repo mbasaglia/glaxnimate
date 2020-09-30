@@ -18,7 +18,7 @@ public:
         doc->push_command(new command::SetMultipleProperties(
             tr("Resize Document"),
             true,
-            {&doc->main_composition()->width, &doc->main_composition()->height},
+            {&doc->main()->width, &doc->main()->height},
             ui.spin_width->value(),
             ui.spin_height->value()
         ));
@@ -57,7 +57,7 @@ void ResizeDialog::height_changed(int h)
 
 void ResizeDialog::resize_document(model::Document* doc)
 {
-    auto comp = doc->main_composition();
+    auto comp = doc->main();
     d->ui.spin_width->setValue(comp->width.get());
     d->ui.spin_height->setValue(comp->height.get());
     d->ratio = double(comp->width.get()) / comp->height.get();

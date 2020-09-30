@@ -18,7 +18,7 @@ public:
 
     void write_document(model::Document* document);
     void write_composition(model::Composition* comp);
-    void write_main_composition(model::MainComposition* comp);
+    void write_main(model::MainComposition* comp);
     void write_layer(model::Layer* layer);
     void write_shape(model::ShapeElement* shape);
     void write_node(model::DocumentNode* node);

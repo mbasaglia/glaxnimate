@@ -15,7 +15,7 @@ class Document : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString filename READ filename)
-    Q_PROPERTY(MainComposition* main_composition READ main_composition)
+    Q_PROPERTY(MainComposition* main READ main)
     Q_PROPERTY(double current_time READ current_time WRITE set_current_time NOTIFY current_time_changed)
     Q_PROPERTY(bool record_to_keyframe READ record_to_keyframe WRITE set_record_to_keyframe NOTIFY record_to_keyframe_changed)
     Q_PROPERTY(Defs* defs READ defs)
@@ -28,7 +28,7 @@ public:
 
     QVariantMap& metadata() const;
 
-    MainComposition* main_composition();
+    MainComposition* main();
 
     QUndoStack& undo_stack();
 

@@ -94,7 +94,7 @@ QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const Q
     if ( !parent.isValid() )
     {
         // TODO add precomps
-        return createIndex(row, column, document->main_composition());
+        return createIndex(row, column, document->main());
     }
 
     auto n = node(parent);
@@ -200,7 +200,7 @@ void item_models::DocumentNodeModel::set_document ( model::Document* doc )
     beginResetModel();
     document = doc;
     if ( doc )
-        connect_node(doc->main_composition());
+        connect_node(doc->main());
     endResetModel();
 }
 

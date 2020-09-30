@@ -402,8 +402,8 @@ void GlaxnimateGraphicsView::view_fit()
         fit_target = QRect(
             -32,
             -32,
-            d->tool_target->document()->main_composition()->width.get() + 64,
-            d->tool_target->document()->main_composition()->height.get() + 64
+            d->tool_target->document()->main()->width.get() + 64,
+            d->tool_target->document()->main()->height.get() + 64
         );
 
     if ( fit_target.isValid() && width() > 0 && height() > 0 )

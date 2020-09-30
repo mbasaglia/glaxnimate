@@ -437,7 +437,7 @@ io::svg::SvgRenderer::~SvgRenderer()
 
 void io::svg::SvgRenderer::write_document(model::Document* document)
 {
-    write_main_composition(document->main_composition());
+    write_main(document->main());
 }
 
 void io::svg::SvgRenderer::write_composition(model::Composition* comp)
@@ -449,7 +449,7 @@ void io::svg::SvgRenderer::write_composition(model::Composition* comp)
 }
 
 
-void io::svg::SvgRenderer::write_main_composition(model::MainComposition* comp)
+void io::svg::SvgRenderer::write_main(model::MainComposition* comp)
 {
     if ( d->at_start )
     {
@@ -483,7 +483,7 @@ void io::svg::SvgRenderer::write_shape(model::ShapeElement* shape)
 void io::svg::SvgRenderer::write_node(model::DocumentNode* node)
 {
     if ( auto mc = qobject_cast<model::MainComposition*>(node) )
-        write_main_composition(mc);
+        write_main(mc);
     else if ( auto co = qobject_cast<model::Composition*>(node) )
         write_composition(co);
     else if ( auto la = qobject_cast<model::Layer*>(node) )

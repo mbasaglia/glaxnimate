@@ -23,15 +23,15 @@ private:
 
     void on_visit(model::Document * document) override
     {
-        qreal width = document->main_composition()->height.get();
+        qreal width = document->main()->height.get();
         if ( width != 512 )
             fmt->error(TgsFormat::tr("Invalid width: %1, should be 512").arg(width));
 
-        qreal height = document->main_composition()->height.get();
+        qreal height = document->main()->height.get();
         if ( height != 512 )
             fmt->error(TgsFormat::tr("Invalid height: %1, should be 512").arg(height));
 
-        qreal fps = document->main_composition()->fps.get();
+        qreal fps = document->main()->fps.get();
         if ( fps != 30 && fps != 60 )
             fmt->error(TgsFormat::tr("Invalid fps: %1, should be 30 or 60").arg(fps));
     }

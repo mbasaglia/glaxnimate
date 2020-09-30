@@ -17,11 +17,11 @@ bool io::svg::SvgFormat::on_open(QIODevice& file, const QString& filename, model
         {
             utils::gzip::GzipStream decompressed(&file, on_error);
             decompressed.open(QIODevice::ReadOnly);
-            SvgParser(&decompressed, mode, document, document->main_composition(), on_error).parse_to_document();
+            SvgParser(&decompressed, mode, document, document->main(), on_error).parse_to_document();
             return true;
         }
 
-        SvgParser(&file, mode, document, document->main_composition(), on_error).parse_to_document();
+        SvgParser(&file, mode, document, document->main(), on_error).parse_to_document();
         return true;
 
     }

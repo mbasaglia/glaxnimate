@@ -83,16 +83,16 @@ public:
 
     void write_document_data(const QDomElement& svg)
     {
-        document->main_composition()->width.set(size.width());
-        document->main_composition()->height.set(size.height());
+        document->main()->width.set(size.width());
+        document->main()->height.set(size.height());
 
         for ( auto& layer : objects.layers )
-            document->main_composition()->layers.insert(std::move(layer));
+            document->main()->layers.insert(std::move(layer));
 
-        document->main_composition()->recursive_rename();
+        document->main()->recursive_rename();
 
-        document->main_composition()->name.set(
-            attr(svg, "sodipodi", "docname", document->main_composition()->type_name_human())
+        document->main()->name.set(
+            attr(svg, "sodipodi", "docname", document->main()->type_name_human())
         );
     }
 

@@ -45,7 +45,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     document_node_model.set_document(current_document.get());
 
     property_model.set_document(current_document.get());
-    property_model.set_object(current_document->main_composition());
+    property_model.set_object(current_document->main());
 
     scene.set_document(current_document.get());
 
@@ -64,9 +64,9 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     refresh_title();
 
     // Playback
-    QObject::connect(current_document->main_composition()->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
-    QObject::connect(current_document->main_composition()->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
-    QObject::connect(current_document->main_composition(), &model::MainComposition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
+    QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
+    QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
+    QObject::connect(current_document->main(), &model::MainComposition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
     QObject::connect(ui.play_controls, &FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
     QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &FrameControlsWidget::set_frame);
     QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &FrameControlsWidget::set_record_enabled);
@@ -77,26 +77,26 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
 {
     setup_document(filename);
 
-    current_document->main_composition()->name.set(current_document->main_composition()->type_name_human());
-    current_document->main_composition()->width.set(app::settings::get<int>("defaults", "width"));
-    current_document->main_composition()->height.set(app::settings::get<int>("defaults", "height"));
-    current_document->main_composition()->fps.set(app::settings::get<int>("defaults", "fps"));
+    current_document->main()->name.set(current_document->main()->type_name_human());
+    current_document->main()->width.set(app::settings::get<int>("defaults", "width"));
+    current_document->main()->height.set(app::settings::get<int>("defaults", "height"));
+    current_document->main()->fps.set(app::settings::get<int>("defaults", "fps"));
     float duration = app::settings::get<float>("defaults", "duration");
-    int out_point = current_document->main_composition()->fps.get() * duration;
-    current_document->main_composition()->animation->last_frame.set(out_point);
+    int out_point = current_document->main()->fps.get() * duration;
+    current_document->main()->animation->last_frame.set(out_point);
 
 
-    auto layer = current_document->main_composition()->make_layer<model::ShapeLayer>();
+    auto layer = current_document->main()->make_layer<model::ShapeLayer>();
     layer->animation->last_frame.set(out_point);
     layer->name.set(layer->type_name_human());
     QPointF pos(
-        current_document->main_composition()->width.get() / 2.0,
-        current_document->main_composition()->height.get() / 2.0
+        current_document->main()->width.get() / 2.0,
+        current_document->main()->height.get() / 2.0
     );
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
     model::Layer* ptr = layer.get();
-    current_document->main_composition()->add_layer(std::move(layer), 0);
+    current_document->main()->add_layer(std::move(layer), 0);
 
     QDir path = app::settings::get<QString>("open_save", "path");
     auto opts = current_document->io_options();
@@ -124,11 +124,11 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
         most_recent_file(options.filename);
 
     view_fit();
-    if ( !current_document->main_composition()->layers.empty() )
-        ui.view_document_node->setCurrentIndex(document_node_model.node_index(current_document->main_composition()->layers[0]));
+    if ( !current_document->main()->layers.empty() )
+        ui.view_document_node->setCurrentIndex(document_node_model.node_index(current_document->main()->layers[0]));
 
     current_document->set_io_options(options);
-    ui.play_controls->set_range(current_document->main_composition()->animation->first_frame.get(), current_document->main_composition()->animation->last_frame.get());
+    ui.play_controls->set_range(current_document->main()->animation->first_frame.get(), current_document->main()->animation->last_frame.get());
 
     if ( !autosave_load && QFileInfo(backup_name()).exists() )
     {
@@ -148,7 +148,7 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
             QIcon::fromTheme("document-revert"),
             tr("Load Backup"),
             parent,
-            [this, uuid=current_document->main_composition()->uuid.get()]{ load_backup(uuid); }
+            [this, uuid=current_document->main()->uuid.get()]{ load_backup(uuid); }
         );
 
         ui.message_widget->queue_message(std::move(msg));
@@ -348,7 +348,7 @@ void GlaxnimateWindow::Private::save_frame_bmp()
     if ( fd.exec() == QDialog::Rejected )
         return;
 
-    QImage image = io::mime::RasterMime().to_image({current_document->main_composition()});
+    QImage image = io::mime::RasterMime().to_image({current_document->main()});
     if ( !image.save(fd.selectedFiles()[0]) )
         show_warning(tr("Render Frame"), tr("Could not save image"));
 }
@@ -422,7 +422,7 @@ void GlaxnimateWindow::Private::autosave_timer_load_settings()
 
 QString GlaxnimateWindow::Private::backup_name()
 {
-    return backup_name(current_document->main_composition()->uuid.get());
+    return backup_name(current_document->main()->uuid.get());
 }
 
 QString GlaxnimateWindow::Private::backup_name(const QUuid& id)
@@ -432,7 +432,7 @@ QString GlaxnimateWindow::Private::backup_name(const QUuid& id)
 
 void GlaxnimateWindow::Private::load_backup(const QUuid& id)
 {
-    if ( id != current_document->main_composition()->uuid.get() )
+    if ( id != current_document->main()->uuid.get() )
     {
         show_warning(tr("Backup"), tr("Cannot load backup of a closed file"));
         return;
