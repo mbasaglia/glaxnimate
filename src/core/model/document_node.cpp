@@ -83,6 +83,7 @@ void model::DocumentNode::docnode_on_update_group(bool force)
         for ( const auto& gc : docnode_children() )
             gc->docnode_on_update_group();
     }
+    emit group_transform_matrix_changed(group_transform_matrix(time()));
 }
 
 bool model::DocumentNode::docnode_valid_color() const
