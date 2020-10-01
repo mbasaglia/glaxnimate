@@ -99,3 +99,12 @@ bool model::Layer::is_top_level() const
 {
     return qobject_cast<Composition*>(docnode_parent());
 }
+
+void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) const
+{
+    time = relative_time(time);
+    if ( !animation->time_visible(time) )
+        return;
+
+    DocumentNode::paint(painter, time, mode);
+}

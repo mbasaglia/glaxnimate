@@ -182,7 +182,7 @@ public:
 
     bool docnode_is_instance(const QString& type_name) const;
 
-    void paint(QPainter* painter, FrameTime time, PaintMode mode) const;
+    virtual void paint(QPainter* painter, FrameTime time, PaintMode mode) const;
 
     /**
      * \brief Transform matrix mapping points from document coordinates to local coordinates

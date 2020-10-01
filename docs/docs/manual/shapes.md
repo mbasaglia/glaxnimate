@@ -26,6 +26,16 @@ The Squares on the corners change X and Y scale at the same time.
 The Diamonds on the edges change scale for one component at the time.<br/>
 Holding Ctrl while dragging them will preserve the aspect ratio.
 
+### Layer
+
+A Layer is a special kind of group with a couple extra properties.
+
+Top level layers can have other top-level layers set as their parents,
+inheriting their parent's transformations, this allows some more advanced layouts
+for example you could have two layers with the same parent layer and a third unrelated layer
+between them. This is not possible with plain group shapes.
+
+
 ## Actual Shapes
 
 These define the actual shapes to draw, but no styling information.
@@ -142,28 +152,3 @@ This can be changed using the [fill style view](ui/docks.md#fill).
 
 Adds an outline to the other shapes in the same group.
 This can be changed using the [stroke style view](ui/docks.md#stroke).
-
-# Layers
-
-## Shape Layer
-
-![Shape Layer](/img/screenshots/shapes/group.png)
-
-Shape layers are layers that can contain shapes.
-
-### Difference between Group shapes and Layers
-
-Groups shapes and Shape Layers have very similar functionality.
-
-The main difference is that with layers parenting doesn't change the drawing order.
-
-For example you could have two layers with the same parent layer and a third unrelated layer
-between them. This is not possible with group shapes.
-
-## Empty Layer
-
-This is only used for parenting. It has its own transform which is applied to any children.
-
-## Solid Color Layer
-
-This is a layer that appears as a rectangle with a solid color.

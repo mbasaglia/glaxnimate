@@ -84,6 +84,8 @@ public:
 
     bool is_top_level() const;
 
+    void paint(QPainter*, FrameTime, PaintMode) const override;
+
 private:
     std::vector<ReferenceTarget*> valid_parents() const;
     bool is_valid_parent(ReferenceTarget* node) const;

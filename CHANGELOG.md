@@ -2,6 +2,7 @@
 
 * Bug Fixes:
     * Star shapes propely imported from lottie files
+    * Layers are properly hidden when outside their frame range
 
 ## 0.1.1
 

@@ -74,12 +74,20 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         }
     );
     register_builder<model::Group>(
-        [](model::Group* layer){
-            auto item = new DocumentNodeGraphicsItem(layer);
-            item->set_transform_matrix(layer->group_transform_matrix(layer->time()));
-            QObject::connect(layer, &model::Group::group_transform_matrix_changed,
+        [](model::Group* group){
+            auto item = new DocumentNodeGraphicsItem(group);
+            item->set_transform_matrix(group->group_transform_matrix(group->time()));
+            QObject::connect(group, &model::Group::group_transform_matrix_changed,
                              item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
-            QObject::connect(layer, &model::Group::opacity_changed, item, &graphics::DocumentNodeGraphicsItem::set_opacity);
+            QObject::connect(group, &model::Group::opacity_changed, item, &graphics::DocumentNodeGraphicsItem::set_opacity);
+
+            if ( auto layer = qobject_cast<model::Layer*>(group) )
+            {
+                item->set_visible_permitted(layer->animation->time_visible());
+                QObject::connect(layer->animation.get(), &model::AnimationContainer::time_visible_changed,
+                                 item, &graphics::DocumentNodeGraphicsItem::set_visible_permitted);
+            }
+
             return item;
         },
         [](model::Group* layer){

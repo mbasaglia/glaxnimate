@@ -30,7 +30,14 @@ public:
 public slots:
     void set_visible(bool v)
     {
-        setVisible(v);
+        visible = v;
+        setVisible(visible && visible_permitted);
+    }
+
+    void set_visible_permitted(bool v)
+    {
+        visible_permitted = v;
+        setVisible(visible && visible_permitted);
     }
 
     void shape_changed();
@@ -50,6 +57,8 @@ private slots:
 
 private:
     model::DocumentNode* node_;
+    bool visible_permitted = true;
+    bool visible = true;
 };
 
 } // namespace graphics
