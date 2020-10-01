@@ -2,6 +2,7 @@
 
 #include "group.hpp"
 #include "model/property/reference_property.hpp"
+#include "model/animation_container.hpp"
 
 namespace model {
 

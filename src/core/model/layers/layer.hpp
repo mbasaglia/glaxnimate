@@ -7,6 +7,7 @@
 #include "model/document_node.hpp"
 #include "model/transform.hpp"
 #include "utils/range.hpp"
+#include "model/animation_container.hpp"
 
 namespace model {
 

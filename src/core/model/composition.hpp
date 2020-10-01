@@ -2,6 +2,7 @@
 
 #include "model/property/object_list_property.hpp"
 #include "model/shapes/layer.hpp"
+#include "model/animation_container.hpp"
 
 namespace model {
 
