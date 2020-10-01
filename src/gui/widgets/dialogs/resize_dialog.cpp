@@ -73,7 +73,9 @@ void ResizeDialog::resize_document(model::Document* doc)
         model::Layer* layer = nl.get();
         doc->set_best_name(layer, tr("Resize"));
         doc->push_command(new command::AddShape(&comp->shapes, std::move(nl), comp->shapes.size()));
-        /// TODO
+        while ( comp->shapes[0] != layer )
+            doc->push_command(new command::MoveShape(comp->shapes[0], &comp->shapes, &layer->shapes, layer->shapes.size()));
+
         qreal scale_w = comp->width.get() != 0 ? double(d->ui.spin_width->value()) / comp->width.get() : 1;
         qreal scale_h = comp->height.get() != 0 ? double(d->ui.spin_height->value()) / comp->height.get() : 1;
         if ( d->ui.check_layer_ratio->isChecked() )
