@@ -101,14 +101,6 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("masksProperties"),
         FieldInfo("ef"),
     }},
-//     {"SolidColorLayer", {
-//         FieldInfo{"sc", Custom},
-//         FieldInfo{"sh", "height"},
-//         FieldInfo{"sw", "width"},
-//     }},
-//     {"ShapeLayer", {
-//         FieldInfo{"shapes", Custom},
-//     }},
     {"Transform", {
         FieldInfo{"a", "anchor_point"},
         FieldInfo("px", Custom),
@@ -171,11 +163,6 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"c", "color"},
     }},
 };
-// const QMap<QString, int> layer_types = {
-//     {"SolidColorLayer", 1},
-//     {"EmptyLayer", 3},
-//     {"ShapeLayer", 4}
-// };
 const QMap<QString, QString> shape_types = {
     {"Rect", "rc"},
     {"PolyStar", "sr"},
@@ -541,6 +528,12 @@ public:
     }
 
 private:
+    void load_animation_container(const QJsonObject& json, model::AnimationContainer* animation)
+    {
+        animation->first_frame.set(json["ip"].toInt());
+        animation->last_frame.set(json["op"].toInt());
+    }
+
     void load_composition(const QJsonObject& json, model::Composition* composition)
     {
         this->composition = composition;
@@ -548,6 +541,7 @@ private:
         layer_indices.clear();
         deferred.clear();
 
+        load_animation_container(json, composition->animation.get());
         load_basic(json, composition);
         for ( const auto& layer : json["layers"].toArray() )
             create_layer(layer.toObject());
@@ -568,24 +562,19 @@ private:
             return;
         }
 
-        /// TODO
-        QString type = "";//layer_types.key(json["ty"].toInt());
-        if ( type.isEmpty() )
-        {
-            emit format->warning(QObject::tr("Unsupported layer type %1").arg(json["ty"].toInt()));
-            invalid_indices.insert(index);
-            return;
-        }
-
         auto layer = std::make_unique<model::Layer>(document);
         layer_indices[layer_indices.size()] = layer.get();
         deferred.emplace_back(layer.get(), json);
-        composition->shapes.insert(std::move(layer), composition->docnode_child_count());
+        composition->shapes.insert(std::move(layer), 0);
     }
 
     void load_layer(const QJsonObject& json, model::Layer* layer)
     {
-        load_basic(json, layer);
+        auto props = load_basic_setup(json);
+
+        load_animation_container(json, layer->animation.get());
+        load_properties(layer, fields["DocumentNode"], json, props);
+        load_properties(layer, fields["__Layer__"], json, props);
 
         if ( json.contains("parent") )
         {
@@ -616,14 +605,38 @@ private:
 
         load_transform(json["ks"].toObject(), layer->transform.get(), &layer->opacity);
 
+        switch ( json["ty"].toInt(-1) )
+        {
+            case 1: // solid color
+            {
+                props.erase("sw");
+                props.erase("sh");
+                props.erase("sc");
+                auto rect = std::make_unique<model::Rect>(document);
+                rect->size.set(QSizeF(
+                    json["sw"].toDouble(),
+                    json["sh"].toDouble()
+                ));
+                layer->shapes.insert(std::move(rect));
 
-        // TODO
-//         if ( layer->type_name() == "SolidColorLayer" )
-//             static_cast<SolidColorLayer*>(layer)->color.set(QColor(json["sc"].toString()));
-//         else if ( layer->type_name() == "ShapeLayer" )
-//             load_shapes(static_cast<ShapeLayer*>(layer)->shapes, json["shapes"].toArray());
+                auto fill = std::make_unique<model::Fill>(document);
+                fill->color.set(QColor(json["sc"].toString()));
+                layer->shapes.insert(std::move(fill));
+                break;
+            }
+            case 3: // empty
+                break;
+            case 4: // shape
+                props.erase("shapes");
+                load_shapes(layer->shapes, json["shapes"].toArray());
+                break;
+            default:
+                emit format->warning(QObject::tr("Unsupported layer type %1").arg(json["ty"].toString()));
+        }
 
+        load_basic_check(props);
     }
+
 
     void load_shapes(ShapeListProperty& shapes, const QJsonArray& jshapes)
     {
@@ -667,12 +680,25 @@ private:
         shapes.insert(std::unique_ptr<model::ShapeElement>(shape), shapes.size());
     }
 
-    void load_basic(const QJsonObject& json_obj, model::Object* obj)
+    std::set<QString> load_basic_setup(const QJsonObject& json_obj)
     {
         std::set<QString> props;
 
         for ( auto it = json_obj.begin(); it != json_obj.end(); ++it )
             props.insert(it.key());
+
+        return props;
+    }
+
+    void load_basic_check(const std::set<QString>& props)
+    {
+        for ( const auto& not_found : props )
+            emit format->information(QObject::tr("Unknown field %1").arg(not_found));
+    }
+
+    void load_basic(const QJsonObject& json_obj, model::Object* obj)
+    {
+        std::set<QString> props = load_basic_setup(json_obj);
 
         for ( const QMetaObject* mo = obj->metaObject(); mo; mo = mo->superClass() )
             load_properties(
@@ -681,9 +707,6 @@ private:
                 json_obj,
                 props
             );
-
-        for ( const auto& not_found : props )
-            emit format->information(QObject::tr("Unknown field %1").arg(not_found));
     }
 
     void load_basic(const QJsonObject& json_obj, model::DocumentNode* obj)
@@ -858,6 +881,8 @@ private:
                 }
                 return QVariant::fromValue(bezier);
             }
+            case model::PropertyTraits::Enum:
+                return val.toInt();
             default:
                 logger.stream(app::log::Error) << "Unsupported type" << prop->traits().type << "for" << prop->name();
                 return {};

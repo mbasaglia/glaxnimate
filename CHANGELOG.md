@@ -1,5 +1,8 @@
 ## 0.2.0
 
+* Bug Fixes:
+    * Star shapes propely imported from lottie files
+
 ## 0.1.1
 
 * Editing:
