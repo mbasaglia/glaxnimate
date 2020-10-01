@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <optional>
 
 #include <QVariantHash>
 #include <QString>
