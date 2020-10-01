@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "math/vector.hpp"
 
 namespace math {

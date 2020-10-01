@@ -59,7 +59,7 @@ The generic `cmake` commands listed above should work.
 
 Install the dependencies with homebrew:
 
-    brew install cmake qt python gcc@10
+    brew install cmake qt python
 
 Ensure you are using GCC (it seems clang has issues with C++17).
 

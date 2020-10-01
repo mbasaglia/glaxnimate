@@ -1,3 +1,4 @@
 build/
+build_*/
 docs/site/
 docs/mkdocs.yml
