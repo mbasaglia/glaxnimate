@@ -14,7 +14,6 @@ namespace model {
     class Document;
     class Composition;
     class Object;
-    class Layer;
     class NamedColor;
     class ShapeElement;
 } // namespace model
@@ -30,14 +29,13 @@ struct DeserializedData
     DeserializedData& operator=(DeserializedData&&);
     ~DeserializedData();
 
-    std::vector<std::unique_ptr<model::Layer>> layers;
     std::vector<std::unique_ptr<model::Composition>> compositions;
     std::vector<std::unique_ptr<model::ShapeElement>> shapes;
     std::vector<std::unique_ptr<model::NamedColor>> named_colors;
 
     bool empty() const
     {
-        return layers.empty() && compositions.empty() && shapes.empty() && named_colors.empty();
+        return shapes.empty() && compositions.empty() && named_colors.empty();
     }
 };
 
@@ -54,8 +52,7 @@ public:
 
     virtual io::mime::DeserializedData deserialize(
         const QByteArray& data,
-        model::Document* owner_document,
-        model::Composition* owner_composition
+        model::Document* owner_document
     ) const;
 
     virtual bool can_deserialize() const = 0;
@@ -69,8 +66,7 @@ public:
 
     io::mime::DeserializedData from_mime_data(
         const QMimeData& data,
-        model::Document* owner_document,
-        model::Composition* owner_composition
+        model::Document* owner_document
     ) const;
 
 protected:

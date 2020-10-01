@@ -41,11 +41,6 @@ model/defs/defs.cpp
 model/defs/brush_style.cpp
 model/defs/named_color.cpp
 
-model/layers/layer.cpp
-model/layers/empty_layer.cpp
-model/layers/shape_layer.cpp
-model/layers/solid_color_layer.cpp
-
 model/shapes/shape.cpp
 model/shapes/fill.cpp
 model/shapes/rect.cpp

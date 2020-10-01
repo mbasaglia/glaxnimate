@@ -1,5 +1,4 @@
 #include "node_menu.hpp"
-#include "model/layers/layer.hpp"
 #include "model/shapes/group.hpp"
 #include "command/structure_commands.hpp"
 #include "command/animation_commands.hpp"

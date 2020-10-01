@@ -3,7 +3,6 @@
 #include <QXmlStreamWriter>
 
 #include "model/document.hpp"
-#include "model/layers/layers.hpp"
 #include "model/shapes/shapes.hpp"
 #include "math/math.hpp"
 

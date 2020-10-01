@@ -5,7 +5,6 @@
 
 #include "command/property_commands.hpp"
 #include "command/shape_commands.hpp"
-#include "model/layers/empty_layer.hpp"
 
 class ResizeDialog::Private
 {

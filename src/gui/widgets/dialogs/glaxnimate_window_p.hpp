@@ -115,7 +115,6 @@ public:
 
     // Model
     model::Composition* current_composition();
-    model::Layer* current_layer();
     model::DocumentNode* current_document_node();
     void set_current_document_node(model::DocumentNode* node);
     model::ShapeElement* current_shape();

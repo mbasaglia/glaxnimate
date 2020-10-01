@@ -5,7 +5,6 @@
 
 #include "model/document_node.hpp"
 #include "model/shapes/shape.hpp"
-#include "model/layers/layer.hpp"
 
 namespace command {
 

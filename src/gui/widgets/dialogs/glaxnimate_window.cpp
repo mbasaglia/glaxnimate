@@ -238,11 +238,6 @@ model::DocumentNode * GlaxnimateWindow::current_document_node() const
     return d->current_document_node();
 }
 
-model::Layer * GlaxnimateWindow::current_layer() const
-{
-    return d->current_layer();
-}
-
 QColor GlaxnimateWindow::current_color() const
 {
     return d->ui.fill_style_widget->current_color();

@@ -3,7 +3,6 @@
 #include "app/log/log.hpp"
 
 #include "model/document.hpp"
-#include "model/layers/layers.hpp"
 #include "model/shapes/shapes.hpp"
 #include "command/animation_commands.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
@@ -286,6 +285,8 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     ;
     register_from_meta<model::ReferenceTarget, model::Object>(model);
     register_from_meta<model::DocumentNode, model::ReferenceTarget>(model);
+    register_from_meta<model::AnimationContainer, model::Object>(model);
+    register_from_meta<model::Transform, model::Object>(model);
     register_from_meta<model::Composition, model::DocumentNode>(model);
     register_from_meta<model::MainComposition, model::Composition>(model);
     define_animatable(model);
@@ -306,11 +307,6 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     register_from_meta<model::Defs, model::Object>(defs);
     register_from_meta<model::NamedColor, model::ReferenceTarget>(defs);
 
-    py::module layers = model.def_submodule("layers", "");
-    register_from_meta<model::Layer, model::DocumentNode>(layers);
-    register_from_meta<model::ShapeLayer, model::Layer>(layers);
-    register_from_meta<model::EmptyLayer, model::Layer>(layers);
-    register_from_meta<model::SolidColorLayer, model::Layer>(layers);
 
     py::module shapes = model.def_submodule("shapes", "");
     register_from_meta<model::ShapeElement, model::DocumentNode>(shapes);
@@ -320,8 +316,9 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
 
     register_from_meta<model::Rect, model::Shape>(shapes);
     register_from_meta<model::Ellipse, model::Shape>(shapes);
-    register_from_meta<model::Group, model::Shape>(shapes);
     register_from_meta<model::PolyStar, model::Shape>(shapes);
+    register_from_meta<model::Group, model::Shape>(shapes);
+    register_from_meta<model::Layer__new, model::Shape>(shapes);
 
     register_from_meta<model::Fill, model::Styler>(shapes, enums<model::Fill::Rule>{});
     register_from_meta<model::Stroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});

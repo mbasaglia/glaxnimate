@@ -14,7 +14,6 @@ class ImportState
 public:
     GlaxnimateFormat* fmt;
     model::Document* document = nullptr;
-    model::Composition* composition = nullptr;
     QMap<QString, model::DocumentNode*> references;
     QMap<model::BaseProperty*, QUuid> unresolved_references;
     QMap<model::Object*, QJsonObject> deferred_loads;
@@ -332,7 +331,7 @@ public:
             return nullptr;
         }
 
-        if ( auto obj = model::Factory::instance().make_any(type, document, composition) )
+        if ( auto obj = model::Factory::instance().build(type, document) )
             return obj;
 
         error(GlaxnimateFormat::tr("Unknow object of type '%1'").arg(type));

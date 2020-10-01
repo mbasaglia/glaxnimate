@@ -6,7 +6,6 @@
 
 #include "utils/regexp.hpp"
 #include "model/shapes/shapes.hpp"
-#include "model/layers/layers.hpp"
 #include "model/document.hpp"
 #include "model/defs/named_color.hpp"
 
@@ -48,7 +47,6 @@ public:
     struct ParseFuncArgs
     {
         const QDomElement& element;
-        model::Layer* layer_parent;
         model::ShapeListProperty* shape_parent;
         const Style& parent_style;
         bool in_group;
@@ -71,7 +69,7 @@ public:
                 document->defs()->colors.insert(std::move(nc));
         }
 
-        model::ShapeLayer* parent_layer = parse_objects(svg);
+        model::Layer__new* parent_layer = parse_objects(svg);
 
         parent_layer->name.set(
             attr(svg, "sodipodi", "docname", svg.attribute("id", parent_layer->type_name_human()))
@@ -173,9 +171,9 @@ public:
         }
     }
 
-    model::ShapeLayer* parse_objects(const QDomElement& svg)
+    model::Layer__new* parse_objects(const QDomElement& svg)
     {
-        model::ShapeLayer* parent_layer = add_layer<model::ShapeLayer>(nullptr);
+        model::Layer__new* parent_layer = add_layer(nullptr);
         parent_layer->name.set(parent_layer->type_name_human());
         if ( svg.hasAttribute("viewBox") )
         {
@@ -191,7 +189,7 @@ public:
             }
         }
 
-        parse_children({svg, parent_layer, &parent_layer->shapes, parse_style(svg, {}), false});
+        parse_children({svg, &parent_layer->shapes, parse_style(svg, {}), false});
 
         return parent_layer;
     }
@@ -252,12 +250,13 @@ public:
             on_warning(msg);
     }
 
-    template<class LayT>
-    LayT* add_layer(model::Layer* parent)
+    model::Layer__new* add_layer(model::ShapeListProperty* parent)
     {
-        LayT* lay = new LayT(document, composition);
-        objects.layers.emplace_back(lay);
-        lay->parent.set(parent);
+        model::Layer__new* lay = new model::Layer__new(document);
+        if ( parent )
+            parent->insert(std::unique_ptr<model::Layer__new>(lay));
+        else
+            objects.shapes.emplace_back(lay);
         return lay;
     }
 
@@ -273,7 +272,7 @@ public:
             if ( domnode.isElement() )
             {
                 auto child = domnode.toElement();
-                parse_shape({child, args.layer_parent, args.shape_parent, args.parent_style, args.in_group});
+                parse_shape({child, args.shape_parent, args.parent_style, args.in_group});
             }
         }
     }
@@ -677,9 +676,9 @@ public:
     void parse_g_to_layer(const ParseFuncArgs& args)
     {
         Style style = parse_style(args.element, args.parent_style);
-        auto layer = add_layer<model::ShapeLayer>(args.layer_parent);
+        auto layer = add_layer(args.shape_parent);
         parse_g_common(
-            {args.element, layer, &layer->shapes, style, false},
+            {args.element, &layer->shapes, style, false},
             layer,
             layer->transform.get()
         );
@@ -690,7 +689,7 @@ public:
         Style style = parse_style(args.element, args.parent_style);
         auto group = std::make_unique<model::Group>(document);
         parse_g_common(
-            {args.element, args.layer_parent, &group->shapes, style, true},
+            {args.element, &group->shapes, style, true},
             group.get(),
             group->transform.get()
         );
@@ -831,7 +830,7 @@ public:
         apply_common_style(group.get(), args.element, style);
         set_name(group.get(), args.element);
 
-        parse_shape({element, args.layer_parent, &group->shapes, style, true});
+        parse_shape({element, &group->shapes, style, true});
 
         group->transform.get()->position.set(
             QPointF(len_attr(args.element, "x", 0), len_attr(args.element, "y", 0))
@@ -846,7 +845,6 @@ public:
     QSizeF size;
 
     model::Document* document;
-    model::Composition* composition;
     io::mime::DeserializedData objects;
 
 
@@ -883,13 +881,11 @@ io::svg::SvgParser::SvgParser(
     QIODevice* device,
     GroupMode group_mode,
     model::Document* document,
-    model::Composition* composition,
     const std::function<void(const QString&)>& on_warning
 )
     : d(std::make_unique<Private>())
 {
     d->document = document;
-    d->composition = composition;
     d->group_mode = group_mode;
     d->on_warning = on_warning;
 

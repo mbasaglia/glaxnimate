@@ -6,8 +6,6 @@
 #include "command/shape_commands.hpp"
 #include "command/structure_commands.hpp"
 #include "app/settings/widget_builder.hpp"
-#include "model/layers/solid_color_layer.hpp"
-#include "model/layers/shape_layer.hpp"
 #include "model/shapes/group.hpp"
 #include "misc/clipboard_settings.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
@@ -17,18 +15,6 @@ model::Composition* GlaxnimateWindow::Private::current_composition()
 {
     return current_document->main();
 }
-
-model::Layer* GlaxnimateWindow::Private::current_layer()
-{
-    model::DocumentNode* curr = current_document_node();
-    if ( curr )
-    {
-        if ( auto curr_lay = qobject_cast<model::Layer*>(curr) )
-            return curr_lay;
-    }
-    return nullptr;
-}
-
 
 model::ShapeElement* GlaxnimateWindow::Private::current_shape()
 {
@@ -63,7 +49,9 @@ model::ShapeListProperty* GlaxnimateWindow::Private::current_shape_container()
 
 model::DocumentNode* GlaxnimateWindow::Private::current_document_node()
 {
-    return document_node_model.node(ui.view_document_node->currentIndex());
+    if ( auto dn = document_node_model.node(ui.view_document_node->currentIndex()) )
+        return dn;
+    return current_document->main();
 }
 
 void GlaxnimateWindow::Private::set_current_document_node(model::DocumentNode* node)
@@ -109,11 +97,6 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::ShapeEleme
 {
     current_document->set_best_name(layer.get(), {});
     layer->set_time(current_document_node()->time());
-
-    if ( auto scl = qobject_cast<model::SolidColorLayer*>(layer.get()) )
-    {
-        scl->color.set(ui.fill_style_widget->current_color());
-    }
 
     model::ShapeElement* ptr = layer.get();
 
@@ -205,7 +188,7 @@ void GlaxnimateWindow::Private::paste()
     {
         if ( mime.enabled )
         {
-            raw_pasted = mime.serializer->from_mime_data(*data, current_document.get(), current_composition());
+            raw_pasted = mime.serializer->from_mime_data(*data, current_document.get());
             if ( !raw_pasted.empty() )
                 break;
         }

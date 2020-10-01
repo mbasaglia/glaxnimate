@@ -29,8 +29,7 @@ public:
 
     io::mime::DeserializedData deserialize(
         const QByteArray& data,
-        model::Document* document,
-        model::Composition* composition
+        model::Document* document
     ) const override
     {
         QBuffer buffer(const_cast<QByteArray*>(&data));
@@ -38,7 +37,7 @@ public:
 
         auto on_error = [this](const QString& s){message(s);};
         try {
-            return io::svg::SvgParser(&buffer, deserialize_group_mode, document, composition, on_error)
+            return io::svg::SvgParser(&buffer, deserialize_group_mode, document, on_error)
                 .parse_to_objects();
         } catch ( const io::svg::SvgParseError& err ) {
             message(err.formatted("Clipboard"));

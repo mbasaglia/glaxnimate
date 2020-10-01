@@ -30,7 +30,6 @@ class GlaxnimateWindow : public QMainWindow
     Q_OBJECT
 
     Q_PROPERTY(model::Document* document READ document)
-    Q_PROPERTY(model::Layer* current_layer READ current_layer)
     Q_PROPERTY(model::DocumentNode* current_document_node READ current_document_node WRITE set_current_document_node)
     Q_PROPERTY(model::ShapeElement* current_shape READ current_shape)
     Q_PROPERTY(model::Object* current_shape_container READ current_shape_container_script)
@@ -46,7 +45,6 @@ public:
     model::Document* document() const;
 
     model::Composition* current_composition() const;
-    model::Layer* current_layer() const;
     model::DocumentNode* current_document_node() const;
     void set_current_document_node(model::DocumentNode* node);
     model::ShapeElement* current_shape();

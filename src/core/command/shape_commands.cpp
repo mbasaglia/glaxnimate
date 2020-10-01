@@ -1,6 +1,6 @@
 #include "shape_commands.hpp"
 #include "model/shapes/group.hpp"
-#include "model/layers/shape_layer.hpp"
+#include "model/composition.hpp"
 #include "model/document.hpp"
 
 
@@ -26,7 +26,7 @@ struct PathToLayer
         layer = nullptr;
         while ( node && !layer )
         {
-            layer = qobject_cast<model::ShapeLayer*>(node);
+            layer = qobject_cast<model::Composition*>(node);
             if ( layer )
                 break;
 
@@ -43,7 +43,7 @@ struct PathToLayer
     }
 
     std::vector<model::Group*> steps;
-    model::ShapeLayer* layer = nullptr;
+    model::Composition* layer = nullptr;
 
     model::ShapeListProperty* lowest() const
     {

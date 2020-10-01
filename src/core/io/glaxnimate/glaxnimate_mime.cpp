@@ -24,7 +24,7 @@ QByteArray io::glaxnimate::GlaxnimateMime::serialize(const std::vector<model::Do
 }
 
 io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(
-    const QByteArray& data, model::Document* owner_document, model::Composition* owner_composition
+    const QByteArray& data, model::Document* owner_document
 )  const
 {
     QJsonDocument jdoc;
@@ -46,7 +46,6 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(
 
     detail::ImportState state(nullptr);
     state.document = owner_document;
-    state.composition = owner_composition;
 
     io::mime::DeserializedData output_objects;
 
@@ -56,7 +55,7 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(
             continue;
 
         QJsonObject json_object = json_val.toObject();
-        auto obj = model::Factory::instance().make_any(json_object["__type__"].toString(), owner_document, owner_composition);
+        auto obj = model::Factory::instance().build(json_object["__type__"].toString(), owner_document);
         if ( !obj )
             continue;
 

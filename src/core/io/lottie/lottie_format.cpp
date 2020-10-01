@@ -9,7 +9,6 @@
 #include <QCborArray>
 
 #include "app/log/log.hpp"
-#include "model/layers/layers.hpp"
 #include "model/shapes/shapes.hpp"
 #include "math/bezier.hpp"
 #include "cbor_write_json.hpp"
@@ -226,7 +225,7 @@ public:
         return json;
     }
 
-    int layer_index(Layer* layer)
+    int layer_index(Layer__new* layer)
     {
         if ( !layer )
             return -1;
@@ -528,7 +527,7 @@ private:
         auto deferred_layers = std::move(deferred);
         deferred.clear();
         for ( const auto& pair: deferred_layers )
-            load_layer(pair.second, static_cast<Layer*>(pair.first));
+            load_layer(pair.second, static_cast<Layer__new*>(pair.first));
     }
 
     void create_layer(const QJsonObject& json)
@@ -541,6 +540,7 @@ private:
             return;
         }
 
+        /// TODO
         QString type = layer_types.key(json["ty"].toInt());
         if ( type.isEmpty() )
         {
@@ -549,21 +549,13 @@ private:
             return;
         }
 
-        model::Layer* layer = model::Factory::instance().make_layer(type, document, composition);
-        if ( !layer )
-        {
-            emit format->warning(QObject::tr("Unsupported layer type %1").arg(json["ty"].toInt()));
-            invalid_indices.insert(index);
-            return;
-        }
-
-        layer_indices[layer_indices.size()] = layer;
-        deferred.emplace_back(layer, json);
-        /// TODO
-//         composition->add_layer(std::unique_ptr<Layer>(layer), composition->docnode_child_count());
+        auto layer = std::make_unique<model::Layer__new>(document);
+        layer_indices[layer_indices.size()] = layer.get();
+        deferred.emplace_back(layer.get(), json);
+        composition->shapes.insert(std::move(layer), composition->docnode_child_count());
     }
 
-    void load_layer(const QJsonObject& json, model::Layer* layer)
+    void load_layer(const QJsonObject& json, model::Layer__new* layer)
     {
         load_basic(json, layer);
 
@@ -597,10 +589,11 @@ private:
         load_transform(json["ks"].toObject(), layer->transform.get(), &layer->opacity);
 
 
-        if ( layer->type_name() == "SolidColorLayer" )
-            static_cast<SolidColorLayer*>(layer)->color.set(QColor(json["sc"].toString()));
-        else if ( layer->type_name() == "ShapeLayer" )
-            load_shapes(static_cast<ShapeLayer*>(layer)->shapes, json["shapes"].toArray());
+        // TODO
+//         if ( layer->type_name() == "SolidColorLayer" )
+//             static_cast<SolidColorLayer*>(layer)->color.set(QColor(json["sc"].toString()));
+//         else if ( layer->type_name() == "ShapeLayer" )
+//             load_shapes(static_cast<ShapeLayer*>(layer)->shapes, json["shapes"].toArray());
 
     }
 
@@ -634,7 +627,7 @@ private:
         }
 
         model::ShapeElement* shape = static_cast<model::ShapeElement*>(
-            model::Factory::instance().make_object(type, document)
+            model::Factory::instance().build(type, document)
         );
         if ( !shape )
         {
@@ -915,7 +908,7 @@ private:
 
     model::Document* document;
     io::lottie::LottieFormat* format;
-    QMap<int, model::Layer*> layer_indices;
+    QMap<int, model::Layer__new*> layer_indices;
     std::set<int> invalid_indices;
     std::vector<std::pair<Object*, QJsonObject>> deferred;
     model::Composition* composition = nullptr;

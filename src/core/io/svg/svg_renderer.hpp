@@ -2,7 +2,6 @@
 
 #include <QIODevice>
 #include "model/shapes/shape.hpp"
-#include "model/layers/layer.hpp"
 
 namespace model {
     class MainComposition;

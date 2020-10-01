@@ -4,7 +4,6 @@
 
 #include "model/shapes/fill.hpp"
 #include "model/shapes/group.hpp"
-#include "model/layers/shape_layer.hpp"
 #include "model/shapes/stroke.hpp"
 #include "command/shape_commands.hpp"
 

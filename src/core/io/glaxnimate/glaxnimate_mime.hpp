@@ -17,8 +17,7 @@ public:
     QByteArray serialize(const std::vector<model::DocumentNode*>& objects) const override;
     io::mime::DeserializedData deserialize(
         const QByteArray& data,
-        model::Document* owner_document,
-        model::Composition* owner_composition
+        model::Document* owner_document
     ) const override;
     bool can_deserialize() const override { return true; }
 

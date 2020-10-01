@@ -11,7 +11,6 @@
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "io/lottie/lottie_html_format.hpp"
 #include "app_info.hpp"
-#include "model/layers/shape_layer.hpp"
 #include "io/svg/svg_renderer.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "io/mime/raster_mime.hpp"

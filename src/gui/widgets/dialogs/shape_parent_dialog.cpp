@@ -2,7 +2,6 @@
 #include "ui_shape_parent_dialog.h"
 #include <QtColorWidgets/ColorDelegate>
 #include "model/shapes/group.hpp"
-#include "model/layers/shape_layer.hpp"
 
 class ShapeParentDialog::Private
 {
@@ -19,7 +18,7 @@ public:
             return nullptr;
         if ( auto grp = qobject_cast<model::Group*>(node) )
             return &grp->shapes;
-        if ( auto lay = qobject_cast<model::ShapeLayer*>(node) )
+        if ( auto lay = qobject_cast<model::Composition*>(node) )
             return &lay->shapes;
         return nullptr;
     }
