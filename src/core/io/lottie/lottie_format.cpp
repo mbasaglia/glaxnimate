@@ -61,11 +61,9 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"nm", "name", false},
         FieldInfo{"mn", "uuid", false},
     }},
-    {"AnimationContainer", {
-        FieldInfo{"op", "last_frame"},
-        FieldInfo{"ip", "first_frame"},
-    }},
     {"Composition", {
+        FieldInfo{"op", Custom},
+        FieldInfo{"ip", Custom},
         FieldInfo("layers", Custom),
     }},
     {"MainComposition", {
@@ -82,7 +80,10 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("motion_blur"),
         FieldInfo("tgs"),
     }},
-    {"Layer", {
+    // Layer is converted explicitly
+    {"__Layer__", {
+        FieldInfo{"op", Custom},
+        FieldInfo{"ip", Custom},
         FieldInfo("ddd"),
         FieldInfo("hd"),
         FieldInfo("ty", Custom),
@@ -100,14 +101,14 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("masksProperties"),
         FieldInfo("ef"),
     }},
-    {"SolidColorLayer", {
-        FieldInfo{"sc", Custom},
-        FieldInfo{"sh", "height"},
-        FieldInfo{"sw", "width"},
-    }},
-    {"ShapeLayer", {
-        FieldInfo{"shapes", Custom},
-    }},
+//     {"SolidColorLayer", {
+//         FieldInfo{"sc", Custom},
+//         FieldInfo{"sh", "height"},
+//         FieldInfo{"sw", "width"},
+//     }},
+//     {"ShapeLayer", {
+//         FieldInfo{"shapes", Custom},
+//     }},
     {"Transform", {
         FieldInfo{"a", "anchor_point"},
         FieldInfo("px", Custom),
@@ -170,17 +171,18 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"c", "color"},
     }},
 };
-const QMap<QString, int> layer_types = {
-    {"SolidColorLayer", 1},
-    {"EmptyLayer", 3},
-    {"ShapeLayer", 4}
-};
+// const QMap<QString, int> layer_types = {
+//     {"SolidColorLayer", 1},
+//     {"EmptyLayer", 3},
+//     {"ShapeLayer", 4}
+// };
 const QMap<QString, QString> shape_types = {
     {"Rect", "rc"},
     {"PolyStar", "sr"},
     {"Ellipse", "el"},
     {"Path", "sh"},
     {"Group", "gr"},
+    {"Layer", "gr"},
     {"Fill", "fl"},
     {"Stroke", "st"},
 //     {"GradientFill", "gf"},
@@ -201,8 +203,8 @@ QLatin1String operator "" _l(const char* c, std::size_t sz)
 class LottieExporterState
 {
 public:
-    explicit LottieExporterState(model::Document* document, bool strip)
-        : document(document), strip(strip) {}
+    explicit LottieExporterState(io::lottie::LottieFormat* format, model::Document* document, bool strip)
+        : format(format), document(document), strip(strip) {}
 
     QCborMap to_json()
     {
@@ -210,16 +212,23 @@ public:
         return convert_animation(document->main());
     }
 
+    void convert_animation_container(model::AnimationContainer* animation, QCborMap& json)
+    {
+        json["ip"_l] = animation->first_frame.get();
+        json["op"_l] = animation->last_frame.get();
+    }
+
     QCborMap convert_animation(MainComposition* animation)
     {
         layer_indices.clear();
         QCborMap json;
         json["v"_l] = "5.5.2";
+        convert_animation_container(animation->animation.get(), json);
         convert_object_basic(animation, json);
 
         QCborArray layers;
         for ( const auto& layer : animation->shapes )
-            layers.append(convert_layer(layer.get()));
+            layers.push_front(convert_layer(layer.get()));
 
         json["layers"_l] = layers;
         return json;
@@ -234,25 +243,42 @@ public:
         return layer_indices[layer->uuid.get()];
     }
 
+    QCborMap wrap_layer_shape(ShapeElement* shape)
+    {
+        QCborMap json;
+        json["ty"_l] = 4;
+        convert_animation_container(document->main()->animation.get(), json);
+        QCborArray shapes;
+        shapes.push_back(convert_shape(shape));
+        json["shapes"_l] = shapes;
+        return json;
+    }
+
     QCborMap convert_layer(ShapeElement* shape)
     {
-        /// TODO
-//         int parent_index = layer_index(layer->parent.get());
+        auto layer = qobject_cast<Layer*>(shape);
+        if ( !layer )
+            return wrap_layer_shape(shape);
+
+        int parent_index = layer_index(layer->parent.get());
         QCborMap json;
-//         json["ty"_l] = layer_types[layer->type_name()];
-//         json["ind"_l] = layer_index(layer);
-        convert_object_basic(shape, json);
 
-//         QCborMap transform;
-//         convert_transform(layer->transform.get(), &layer->opacity, transform);
-//         json["ks"_l] = transform;
-//         if ( parent_index != -1 )
-//             json["parent"_l] = parent_index;
+        json["ty"_l] = layer->shapes.empty() ? 3 : 4;
+        json["ind"_l] = layer_index(layer);
 
-//         if ( layer->type_name() == "SolidColorLayer" )
-//             json["sc"_l] = static_cast<SolidColorLayer*>(layer)->color.get().name();
-//         else if ( layer->type_name() == "ShapeLayer" )
-//             json["shapes"_l] = convert_shapes(static_cast<ShapeLayer*>(layer)->shapes);
+        convert_animation_container(layer->animation.get(), json);
+        convert_object_properties(layer, fields["DocumentNode"], json);
+        convert_object_properties(layer, fields["__Layer__"], json);
+
+        QCborMap transform;
+        convert_transform(layer->transform.get(), &layer->opacity, transform);
+        json["ks"_l] = transform;
+        if ( parent_index != -1 )
+            json["parent"_l] = parent_index;
+
+        if ( !layer->shapes.empty() )
+            json["shapes"_l] = convert_shapes(layer->shapes);
+
         return json;
     }
 
@@ -321,9 +347,9 @@ public:
 
     void convert_object_from_meta(model::Object* obj, const QMetaObject* mo, QCborMap& json_obj)
     {
-        auto super = mo->superClass();
-        if ( super )
+        if ( auto super = mo->superClass() )
             convert_object_from_meta(obj, super, json_obj);
+
         auto it = fields.find(model::detail::naked_type_name(mo));
         if ( it != fields.end() )
             convert_object_properties(obj, *it, json_obj);
@@ -438,9 +464,10 @@ public:
         jsh["ty"_l] = shape_types[shape->type_name()];
 //         jsh["d"] = 0;
         convert_object_basic(shape, jsh);
-        if ( shape->type_name() == "Group" )
+        if ( auto gr = qobject_cast<model::Group*>(shape) )
         {
-            auto gr = static_cast<model::Group*>(shape);
+            if ( qobject_cast<model::Layer*>(gr) )
+                format->information(io::lottie::LottieFormat::tr("Lottie only supports layers in the top level"));
             auto shapes = convert_shapes(gr->shapes);
             QCborMap transform;
             transform["ty"_l] = "tr";
@@ -491,6 +518,7 @@ public:
         return jshapes;
     }
 
+    io::lottie::LottieFormat* format;
     model::Document* document;
     bool strip;
     QMap<QUuid, int> layer_indices;
@@ -541,7 +569,7 @@ private:
         }
 
         /// TODO
-        QString type = layer_types.key(json["ty"].toInt());
+        QString type = "";//layer_types.key(json["ty"].toInt());
         if ( type.isEmpty() )
         {
             emit format->warning(QObject::tr("Unsupported layer type %1").arg(json["ty"].toInt()));
@@ -926,7 +954,7 @@ bool io::lottie::LottieFormat::on_save(QIODevice& file, const QString&,
 
 QCborMap io::lottie::LottieFormat::to_json(model::Document* document, bool strip)
 {
-    LottieExporterState exp(document, strip);
+    LottieExporterState exp(this, document, strip);
     return exp.to_json();
 }
 

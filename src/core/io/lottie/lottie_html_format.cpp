@@ -41,7 +41,7 @@ R"(<!DOCTYPE html>
     .toUtf8()
     );
 
-    file.write(cbor_write_json(LottieFormat::to_json(document), false));
+    file.write(cbor_write_json(LottieFormat().to_json(document), false));
 
     file.write(R"(
     };
