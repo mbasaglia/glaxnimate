@@ -1,5 +1,6 @@
 #include "shape.hpp"
 #include "utils/range.hpp"
+#include "styler.hpp"
 
 const model::ShapeListProperty& model::ShapeElement::siblings() const
 {
@@ -60,6 +61,9 @@ void model::ShapeOperator::update_affected()
     curr_siblings.reserve(owner()->size() - position());
     for ( auto it = owner()->begin() + position() + 1; it < owner()->end(); ++it )
     {
+        if ( qobject_cast<Styler*>(it->get()) )
+            continue;
+
         curr_siblings.push_back(it->get());
         if ( qobject_cast<Modifier*>(it->get()) )
             break;
