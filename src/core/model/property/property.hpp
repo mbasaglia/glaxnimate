@@ -38,6 +38,7 @@ struct PropertyTraits
         Enum,
         Uuid,
         Bezier,
+        Data,
     };
 
     enum Flags
@@ -102,6 +103,7 @@ template<> struct GetType<QString, void> { static constexpr const PropertyTraits
 template<> struct GetType<QUuid, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Uuid; };
 template<> struct GetType<QPointF, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Point; };
 template<> struct GetType<math::Bezier, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Bezier; };
+template<> struct GetType<QByteArray, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Data; };
 
 template<class ObjT>
 struct GetType<ObjT, std::enable_if_t<std::is_integral_v<ObjT>>>
@@ -146,18 +148,6 @@ public:                                                     \
     }                                                       \
 private:                                                    \
     Q_PROPERTY(type name READ get_##name WRITE set_##name)  \
-    // macro end
-
-#define GLAXNIMATE_PROPERTY_REFERENCE(type, name, ...)      \
-public:                                                     \
-    ReferenceProperty<type> name{this, #name, __VA_ARGS__}; \
-    type* get_##name() const { return name.get(); }         \
-    bool set_##name(type* v)                                \
-    {                                                       \
-        return name.set_undoable(QVariant::fromValue(v));   \
-    }                                                       \
-private:                                                    \
-    Q_PROPERTY(type* name READ get_##name WRITE set_##name) \
     // macro end
 
 #define GLAXNIMATE_PROPERTY_RO(type, name, default_value)   \

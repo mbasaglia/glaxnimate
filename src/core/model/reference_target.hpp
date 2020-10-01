@@ -25,7 +25,6 @@ public:
         uuid.set_value(QUuid::createUuid());
      }
 
-
     virtual QIcon reftarget_icon() const = 0;
 };
 

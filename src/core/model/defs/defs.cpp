@@ -25,6 +25,23 @@ bool model::Defs::is_valid_brush_style(model::ReferenceTarget* style) const
     return false;
 }
 
+std::vector<model::ReferenceTarget *> model::Defs::valid_images() const
+{
+    std::vector<model::ReferenceTarget *> res;
+    res.reserve(images.size());
+    for ( const auto& c : images )
+        res.push_back(c.get());
+    return res;
+}
+
+bool model::Defs::is_valid_image(model::ReferenceTarget* style) const
+{
+    for ( const auto& c : images )
+        if ( c.get() == style )
+            return true;
+    return false;
+}
+
 void model::Defs::on_color_added(model::NamedColor* color, int position)
 {
     connect(color, &Object::property_changed, this, [position, color, this]{

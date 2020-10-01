@@ -2,6 +2,20 @@
 #include "model/reference_target.hpp"
 #include "model/property/property.hpp"
 
+
+#define GLAXNIMATE_PROPERTY_REFERENCE(type, name, ...)      \
+public:                                                     \
+    ReferenceProperty<type> name{this, #name, __VA_ARGS__}; \
+    type* get_##name() const { return name.get(); }         \
+    bool set_##name(type* v)                                \
+    {                                                       \
+        return name.set_undoable(QVariant::fromValue(v));   \
+    }                                                       \
+private:                                                    \
+    Q_PROPERTY(type* name READ get_##name WRITE set_##name) \
+    // macro end
+
+
 namespace model {
 
 class ReferencePropertyBase : public BaseProperty

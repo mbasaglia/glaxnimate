@@ -3,6 +3,7 @@
 #include "model/object.hpp"
 #include "model/property/object_list_property.hpp"
 #include "named_color.hpp"
+#include "bitmap.hpp"
 
 namespace model {
 
@@ -11,6 +12,7 @@ class Defs : public ObjectBase<Defs, Object>
     GLAXNIMATE_OBJECT
 
     GLAXNIMATE_PROPERTY_LIST(NamedColor, colors, &Defs::on_color_added, &Defs::on_color_removed, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(Bitmap, images, {}, {}, {}, {}, {}, {})
 
 public:
     using Ctor::Ctor;
@@ -18,8 +20,11 @@ public:
     std::vector<ReferenceTarget*> valid_brush_styles() const;
     bool is_valid_brush_style(ReferenceTarget* style) const;
 
-    Q_INVOKABLE model::ReferenceTarget* find_by_uuid(const QUuid& n) const;
 
+    std::vector<ReferenceTarget*> valid_images() const;
+    bool is_valid_image(ReferenceTarget* style) const;
+
+    Q_INVOKABLE model::ReferenceTarget* find_by_uuid(const QUuid& n) const;
     Q_INVOKABLE model::NamedColor* add_color(const QColor& color, const QString& name = {});
 
 signals:
