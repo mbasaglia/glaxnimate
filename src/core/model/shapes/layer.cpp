@@ -1,37 +1,37 @@
 #include "layer.hpp"
 #include "model/composition.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::Layer__new)
+GLAXNIMATE_OBJECT_IMPL(model::Layer)
 
-void model::Layer__new::ChildLayerIterator::find_first()
+void model::Layer::ChildLayerIterator::find_first()
 {
     while ( index < comp->size() && (*comp)[index]->docnode_group_parent() != parent )
         ++index;
 }
 
-model::DocumentNode * model::Layer__new::ChildLayerIterator::operator*() const
+model::DocumentNode * model::Layer::ChildLayerIterator::operator*() const
 {
     return (*comp)[index];
 }
 
-model::DocumentNode* model::Layer__new::ChildLayerIterator::operator->() const
+model::DocumentNode* model::Layer::ChildLayerIterator::operator->() const
 {
     return (*comp)[index];
 }
 
-model::DocumentNode * model::Layer__new::docnode_group_parent() const
+model::DocumentNode * model::Layer::docnode_group_parent() const
 {
     return parent.get();
 }
 
-model::DocumentNode * model::Layer__new::docnode_group_child(int index) const
+model::DocumentNode * model::Layer::docnode_group_child(int index) const
 {
     ChildLayerIterator iter(owner(), this, 0);
     std::advance(iter, index);
     return *iter;
 }
 
-int model::Layer__new::docnode_group_child_count() const
+int model::Layer::docnode_group_child_count() const
 {
     if ( !owner() )
         return 0;
@@ -43,7 +43,7 @@ int model::Layer__new::docnode_group_child_count() const
 }
 
 
-std::vector<model::ReferenceTarget*> model::Layer__new::valid_parents() const
+std::vector<model::ReferenceTarget*> model::Layer::valid_parents() const
 {
     std::vector<model::ReferenceTarget*> refs;
     refs.push_back(nullptr);
@@ -52,7 +52,7 @@ std::vector<model::ReferenceTarget*> model::Layer__new::valid_parents() const
     {
         for ( const auto& sh : *owner() )
         {
-            if ( auto lay = qobject_cast<model::Layer__new*>(sh.get()) )
+            if ( auto lay = qobject_cast<model::Layer*>(sh.get()) )
                 if ( !is_ancestor_of(lay) )
                     refs.push_back(lay);
         }
@@ -61,21 +61,21 @@ std::vector<model::ReferenceTarget*> model::Layer__new::valid_parents() const
     return refs;
 }
 
-bool model::Layer__new::is_valid_parent(model::ReferenceTarget* node) const
+bool model::Layer::is_valid_parent(model::ReferenceTarget* node) const
 {
     if ( node == nullptr )
         return true;
 
     if ( is_top_level() )
     {
-        if ( Layer__new* layer = qobject_cast<Layer__new*>(node) )
+        if ( Layer* layer = qobject_cast<Layer*>(node) )
             return !is_ancestor_of(layer);
     }
 
     return false;
 }
 
-bool model::Layer__new::is_ancestor_of ( const model::Layer__new* other ) const
+bool model::Layer::is_ancestor_of ( const model::Layer* other ) const
 {
     while ( other )
     {
@@ -89,13 +89,13 @@ bool model::Layer__new::is_ancestor_of ( const model::Layer__new* other ) const
 }
 
 
-void model::Layer__new::set_time(model::FrameTime t)
+void model::Layer::set_time(model::FrameTime t)
 {
     Object::set_time(relative_time(t));
 }
 
 
-bool model::Layer__new::is_top_level() const
+bool model::Layer::is_top_level() const
 {
     return qobject_cast<Composition*>(docnode_parent());
 }

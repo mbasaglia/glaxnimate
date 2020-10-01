@@ -6,12 +6,11 @@
 
 namespace model {
 
-class Layer__new : public ObjectBase<Layer__new, Group>
+class Layer : public ObjectBase<Layer, Group>
 {
-    using Layer = Layer__new;
     GLAXNIMATE_OBJECT
     GLAXNIMATE_SUBOBJECT(AnimationContainer, animation)
-    GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent, &Layer::valid_parents, &Layer::is_valid_parent, &Layer__new::docnode_on_update_group)
+    GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent, &Layer::valid_parents, &Layer::is_valid_parent, &Layer::docnode_on_update_group)
     GLAXNIMATE_PROPERTY(float, start_time, 0, {}, {}, PropertyTraits::Visual)
 
 

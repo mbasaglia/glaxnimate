@@ -69,7 +69,7 @@ public:
                 document->defs()->colors.insert(std::move(nc));
         }
 
-        model::Layer__new* parent_layer = parse_objects(svg);
+        model::Layer* parent_layer = parse_objects(svg);
 
         parent_layer->name.set(
             attr(svg, "sodipodi", "docname", svg.attribute("id", parent_layer->type_name_human()))
@@ -171,9 +171,9 @@ public:
         }
     }
 
-    model::Layer__new* parse_objects(const QDomElement& svg)
+    model::Layer* parse_objects(const QDomElement& svg)
     {
-        model::Layer__new* parent_layer = add_layer(nullptr);
+        model::Layer* parent_layer = add_layer(nullptr);
         parent_layer->name.set(parent_layer->type_name_human());
         if ( svg.hasAttribute("viewBox") )
         {
@@ -250,11 +250,11 @@ public:
             on_warning(msg);
     }
 
-    model::Layer__new* add_layer(model::ShapeListProperty* parent)
+    model::Layer* add_layer(model::ShapeListProperty* parent)
     {
-        model::Layer__new* lay = new model::Layer__new(document);
+        model::Layer* lay = new model::Layer(document);
         if ( parent )
-            parent->insert(std::unique_ptr<model::Layer__new>(lay));
+            parent->insert(std::unique_ptr<model::Layer>(lay));
         else
             objects.shapes.emplace_back(lay);
         return lay;

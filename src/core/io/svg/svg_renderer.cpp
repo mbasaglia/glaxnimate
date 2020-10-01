@@ -249,7 +249,7 @@ public:
 
     void write_group_shape(model::Group* group)
     {
-        if ( qobject_cast<model::Layer__new*>(group) )
+        if ( qobject_cast<model::Layer*>(group) )
             start_layer(group);
         else
             start_group(group);

@@ -69,8 +69,8 @@ void ResizeDialog::resize_document(model::Document* doc)
     {
         doc->undo_stack().beginMacro(tr("Resize Document"));
 
-        auto nl = std::make_unique<model::Layer__new>(doc);
-        model::Layer__new* layer = nl.get();
+        auto nl = std::make_unique<model::Layer>(doc);
+        model::Layer* layer = nl.get();
         doc->set_best_name(layer, tr("Resize"));
         doc->push_command(new command::AddShape(&comp->shapes, std::move(nl), comp->shapes.size()));
         /// TODO

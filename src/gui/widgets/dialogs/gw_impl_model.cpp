@@ -33,7 +33,7 @@ model::ShapeListProperty* GlaxnimateWindow::Private::current_shape_container()
     if ( auto lay = qobject_cast<model::Composition*>(sh) )
         return &lay->shapes;
 
-    if ( !qobject_cast<model::Layer__new*>(sh) )
+    if ( !qobject_cast<model::Layer*>(sh) )
         sh = sh->docnode_parent();
 
     while ( sh )
@@ -62,7 +62,7 @@ void GlaxnimateWindow::Private::set_current_document_node(model::DocumentNode* n
 
 void GlaxnimateWindow::Private::layer_new_layer()
 {
-    auto layer = std::make_unique<model::Layer__new>(current_document.get());
+    auto layer = std::make_unique<model::Layer>(current_document.get());
     layer->animation->last_frame.set(current_document->main()->animation->last_frame.get());
     QPointF pos = current_document->rect().center();
     layer->transform.get()->anchor_point.set(pos);

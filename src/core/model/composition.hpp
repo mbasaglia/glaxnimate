@@ -8,7 +8,6 @@ namespace model {
 
 class Composition : public DocumentNode
 {
-    using Layer = Layer__new;
     Q_OBJECT
 
     GLAXNIMATE_SUBOBJECT(AnimationContainer, animation)

@@ -135,7 +135,7 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
             }
         });
 
-        if ( auto lay = qobject_cast<model::Layer__new*>(shape) )
+        if ( auto lay = qobject_cast<model::Layer*>(shape) )
         {
             QMenu* menu_parent = new QMenu(tr("Parent"), this);
             menu_parent->setIcon(QIcon::fromTheme("go-parent-folder"));

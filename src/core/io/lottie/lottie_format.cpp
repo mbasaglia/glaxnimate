@@ -225,7 +225,7 @@ public:
         return json;
     }
 
-    int layer_index(Layer__new* layer)
+    int layer_index(Layer* layer)
     {
         if ( !layer )
             return -1;
@@ -527,7 +527,7 @@ private:
         auto deferred_layers = std::move(deferred);
         deferred.clear();
         for ( const auto& pair: deferred_layers )
-            load_layer(pair.second, static_cast<Layer__new*>(pair.first));
+            load_layer(pair.second, static_cast<Layer*>(pair.first));
     }
 
     void create_layer(const QJsonObject& json)
@@ -549,13 +549,13 @@ private:
             return;
         }
 
-        auto layer = std::make_unique<model::Layer__new>(document);
+        auto layer = std::make_unique<model::Layer>(document);
         layer_indices[layer_indices.size()] = layer.get();
         deferred.emplace_back(layer.get(), json);
         composition->shapes.insert(std::move(layer), composition->docnode_child_count());
     }
 
-    void load_layer(const QJsonObject& json, model::Layer__new* layer)
+    void load_layer(const QJsonObject& json, model::Layer* layer)
     {
         load_basic(json, layer);
 
@@ -908,7 +908,7 @@ private:
 
     model::Document* document;
     io::lottie::LottieFormat* format;
-    QMap<int, model::Layer__new*> layer_indices;
+    QMap<int, model::Layer*> layer_indices;
     std::set<int> invalid_indices;
     std::vector<std::pair<Object*, QJsonObject>> deferred;
     model::Composition* composition = nullptr;

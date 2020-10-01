@@ -85,7 +85,7 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     current_document->main()->animation->last_frame.set(out_point);
 
 
-    auto layer = std::make_unique<model::Layer__new>(current_document.get());
+    auto layer = std::make_unique<model::Layer>(current_document.get());
     layer->animation->last_frame.set(out_point);
     layer->name.set(layer->type_name_human());
     QPointF pos(
