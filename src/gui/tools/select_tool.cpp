@@ -45,7 +45,7 @@ private:
 
         template<class T>
         DragObjectData(model::DocumentNode* node, T* property, const QPointF& scene_pos)
-        : transform(node->docnode_group_parent()->transform_matrix(node->time()).inverted()),
+        : transform(node->docnode_fuzzy_parent()->transform_matrix(node->time()).inverted()),
           data(PropData<T>{property, property->get()}),
           start_point(transform.map(scene_pos))
         {}

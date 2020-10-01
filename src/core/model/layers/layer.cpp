@@ -144,7 +144,7 @@ void model::Layer::on_paint(QPainter* painter, FrameTime time, PaintMode mode) c
 void model::Layer::on_transform_matrix_changed()
 {
     emit local_transform_matrix_changed(local_transform_matrix(time()));
-    propagate_transform_matrix_changed(transform_matrix(time()));
+    propagate_transform_matrix_changed(transform_matrix(time()), group_transform_matrix(time()));
 }
 
 void model::Layer::set_time(model::FrameTime t)

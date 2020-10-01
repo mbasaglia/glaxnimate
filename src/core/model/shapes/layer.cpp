@@ -21,10 +21,7 @@ model::DocumentNode* model::Layer__new::ChildLayerIterator::operator->() const
 
 model::DocumentNode * model::Layer__new::docnode_group_parent() const
 {
-    if ( parent.get() )
-        return parent.get();
-
-    return Shape::docnode_group_parent();
+    return parent.get();
 }
 
 model::DocumentNode * model::Layer__new::docnode_group_child(int index) const

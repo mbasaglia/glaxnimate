@@ -78,11 +78,7 @@ protected:
     void on_paint(QPainter*, FrameTime, PaintMode) const override;
 
 private slots:
-    void on_transform_matrix_changed()
-    {
-        emit local_transform_matrix_changed(local_transform_matrix(time()));
-        propagate_transform_matrix_changed(transform_matrix(time()));
-    }
+    void on_transform_matrix_changed();
 };
 
 } // namespace model

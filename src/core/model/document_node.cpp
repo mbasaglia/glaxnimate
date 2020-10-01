@@ -4,11 +4,31 @@
 #include <QPainter>
 #include <QGraphicsItem>
 
+
+model::DocumentNode* model::DocumentNode::docnode_group_parent() const
+{
+    return nullptr;
+}
+int model::DocumentNode::docnode_group_child_count() const
+{
+    return 0;
+}
+model::DocumentNode* model::DocumentNode::docnode_group_child(int) const
+{
+    return nullptr;
+}
+model::DocumentNode* model::DocumentNode::docnode_fuzzy_parent() const
+{
+    if ( auto p = docnode_group_parent() )
+        return p;
+    return docnode_parent();
+}
+
 QColor model::DocumentNode::docnode_group_color() const
 {
     if ( !docnode_valid_color() )
     {
-        if ( auto parent = docnode_group_parent() )
+        if ( auto parent = docnode_fuzzy_parent() )
             return parent->docnode_group_color();
         else
             return Qt::white;
@@ -60,6 +80,8 @@ void model::DocumentNode::docnode_on_update_group(bool force)
         emit docnode_group_color_changed(this->group_color.get());
         for ( const auto& gc : docnode_group_children() )
             gc->docnode_on_update_group();
+        for ( const auto& gc : docnode_children() )
+            gc->docnode_on_update_group();
     }
 }
 
@@ -73,7 +95,7 @@ QIcon model::DocumentNode::reftarget_icon() const
 {
     if ( !docnode_valid_color() )
     {
-        if ( auto parent = docnode_group_parent() )
+        if ( auto parent = docnode_fuzzy_parent() )
             return parent->reftarget_icon();
     }
 
@@ -139,6 +161,14 @@ bool model::DocumentNode::docnode_visible_recursive() const
 
 QTransform model::DocumentNode::transform_matrix(model::FrameTime t) const
 {
+    auto parent = docnode_fuzzy_parent();
+    if ( parent )
+        return local_transform_matrix(t) * parent->transform_matrix(t);
+    return local_transform_matrix(t);
+}
+
+QTransform model::DocumentNode::group_transform_matrix(model::FrameTime t) const
+{
     auto parent = docnode_group_parent();
     if ( parent )
         return local_transform_matrix(t) * parent->transform_matrix(t);
@@ -157,7 +187,7 @@ void model::DocumentNode::docnode_set_visible(bool visible)
     emit docnode_visible_changed(visible_ = visible);
     emit docnode_visible_recursive_changed(visible);
 
-    for ( auto ch : docnode_group_children() )
+    for ( auto ch : docnode_children() )
         ch->propagate_visible(visible);
 }
 
@@ -166,13 +196,24 @@ void model::DocumentNode::propagate_visible(bool visible)
     if ( !visible_ )
         return;
     emit docnode_visible_recursive_changed(visible);
-    for ( auto ch : docnode_group_children() )
+    for ( auto ch : docnode_children() )
         ch->propagate_visible(visible && visible_);
 }
 
-void model::DocumentNode::propagate_transform_matrix_changed(const QTransform& t)
+void model::DocumentNode::propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group)
 {
-    emit transform_matrix_changed(t);
+    emit transform_matrix_changed(t_global);
+    emit group_transform_matrix_changed(t_group);
+
     for ( auto ch : docnode_group_children() )
-        ch->propagate_transform_matrix_changed(ch->local_transform_matrix(ch->time()) * t);
+    {
+        auto ltm = ch->local_transform_matrix(ch->time());
+        ch->propagate_transform_matrix_changed(ltm * t_global, ltm * t_group);
+    }
+
+    for ( auto ch : docnode_children() )
+    {
+        auto ltm = ch->local_transform_matrix(ch->time());
+        ch->propagate_transform_matrix_changed(ltm * t_global, ltm);
+    }
 }

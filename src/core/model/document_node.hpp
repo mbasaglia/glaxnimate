@@ -97,9 +97,10 @@ public:
     virtual DocumentNode* docnode_child(int index) const = 0;
     virtual int docnode_child_index(DocumentNode* dn) const = 0;
 
-    virtual DocumentNode* docnode_group_parent() const { return docnode_parent(); }
-    virtual int docnode_group_child_count() const { return docnode_child_count(); }
-    virtual DocumentNode* docnode_group_child(int index) const { return docnode_child(index); }
+    virtual DocumentNode* docnode_group_parent() const;
+    virtual int docnode_group_child_count() const;
+    virtual DocumentNode* docnode_group_child(int index) const;
+    DocumentNode* docnode_fuzzy_parent() const;
 
     /**
      * \brief If \b true, the node is mainly used to contain other nodes so it can be ignored on selections
@@ -187,6 +188,7 @@ public:
      * \brief Transform matrix mapping points from document coordinates to local coordinates
      */
     QTransform transform_matrix(FrameTime t) const;
+    QTransform group_transform_matrix(FrameTime t) const;
     /**
      * \brief Transform matrix mapping points from parent coordinates to local coordinates
      */
@@ -228,7 +230,7 @@ protected:
     void docnode_on_update_group(bool force = false);
     void on_property_changed(const BaseProperty* prop, const QVariant&) override;
     bool docnode_valid_color() const;
-    void propagate_transform_matrix_changed(const QTransform& t);
+    void propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group);
     virtual void on_paint(QPainter*, FrameTime, PaintMode) const {}
 
 
@@ -258,6 +260,7 @@ signals:
 
     void bounding_rect_changed();
     void transform_matrix_changed(const QTransform& t);
+    void group_transform_matrix_changed(const QTransform& t);
     void local_transform_matrix_changed(const QTransform& t);
 
 private:

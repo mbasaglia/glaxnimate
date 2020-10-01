@@ -29,7 +29,7 @@ public:
     void remove_selection_recursive(model::DocumentNode* node)
     {
         remove_selection(node);
-        for ( auto ch : node->docnode_group_children() )
+        for ( auto ch : node->docnode_children() )
             remove_selection_recursive(ch);
     }
 
