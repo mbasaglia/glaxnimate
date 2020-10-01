@@ -53,23 +53,11 @@ public:
         return {};
     }
 
-    void add_shapes(model::FrameTime t, math::MultiBezier & bez) const override
-    {
-        for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
-        {
-            ch->add_shapes(t, bez);
-        }
-    }
+    void add_shapes(model::FrameTime t, math::MultiBezier & bez) const override;
 
-    QRectF local_bounding_rect(FrameTime t) const override
-    {
-        return shapes.bounding_rect(t);
-    }
+    QRectF local_bounding_rect(FrameTime t) const override;
 
-    QTransform local_transform_matrix(model::FrameTime t) const override
-    {
-        return transform.get()->transform_matrix(t);
-    }
+    QTransform local_transform_matrix(model::FrameTime t) const override;
 
 signals:
     void opacity_changed(float op);

@@ -69,6 +69,7 @@ public:
     QIcon docnode_icon() const override { return QIcon::fromTheme("folder"); }
     QString type_name_human() const override { return tr("Layer"); }
     void set_time(FrameTime t) override;
+    bool docnode_selection_container() const override { return true; }
 
     /**
      * \brief Returns the (frame) time relative to this layer

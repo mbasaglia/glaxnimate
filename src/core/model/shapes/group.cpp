@@ -2,6 +2,8 @@
 
 #include <QPainter>
 
+#include "model/document.hpp"
+
 GLAXNIMATE_OBJECT_IMPL(model::Group)
 
 
@@ -16,4 +18,24 @@ void model::Group::on_transform_matrix_changed()
 {
     emit local_transform_matrix_changed(local_transform_matrix(time()));
     propagate_transform_matrix_changed(transform_matrix(time()), group_transform_matrix(time()));
+}
+
+void model::Group::add_shapes(model::FrameTime t, math::MultiBezier & bez) const
+{
+    for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
+    {
+        ch->add_shapes(t, bez);
+    }
+}
+
+QRectF model::Group::local_bounding_rect(FrameTime t) const
+{
+    if ( shapes.empty() )
+        return QRectF(QPointF(0, 0), document()->size());
+    return shapes.bounding_rect(t);
+}
+
+QTransform model::Group::local_transform_matrix(model::FrameTime t) const
+{
+    return transform.get()->transform_matrix(t);
 }
