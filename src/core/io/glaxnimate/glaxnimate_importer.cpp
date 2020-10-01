@@ -4,7 +4,6 @@
 
 bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&, model::Document* document, const QVariantMap& )
 {
-    /// TODO if format is 1 convert "layers" to "shapes"
     QJsonDocument jdoc;
 
     try {
@@ -22,8 +21,6 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
 
     QJsonObject top_level = jdoc.object();
 
-    /// @todo check / handle format version
-    // int document_format_version = top_level["format"].toObject()["format_version"].toInt(0);
 
     document->metadata() = top_level["metadata"].toObject().toVariantMap();
 
@@ -35,6 +32,9 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
 
     detail::ImportState state(this);
     state.document = document;
+    state.document_version = top_level["format"].toObject()["format_version"].toInt(0);
+    if ( state.document_version > format_version )
+        warning(tr("Opening a file from a newer version of Glaxnimate"));
     state.load_object(document->defs(), top_level["defs"].toObject());
     state.load_object(document->main(), top_level["animation"].toObject());
     state.resolve();

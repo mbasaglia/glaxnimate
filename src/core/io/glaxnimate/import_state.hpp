@@ -18,6 +18,7 @@ public:
     QMap<model::BaseProperty*, QUuid> unresolved_references;
     QMap<model::Object*, QJsonObject> deferred_loads;
     std::vector<model::Object*> unwanted;
+    int document_version = GlaxnimateFormat::format_version;
 
     ImportState(GlaxnimateFormat* fmt) : fmt(fmt) {}
 
@@ -63,8 +64,44 @@ public:
         }
     }
 
+    void version_fixup(model::Object*, QJsonObject& object)
+    {
+        if ( document_version == 1 )
+        {
+            QString type = object["__type__"].toString();
+            static const auto fix_ac = [](QJsonObject& object){
+                QJsonObject ac;
+                ac["__type__"] = "AnimationContainer";
+                ac["first_frame"] = object["first_frame"];
+                ac["last_frame"] = object["last_frame"];
+                object.remove("first_frame");
+                object.remove("last_frame");
+            };
+
+            if ( type == "MainComposition" )
+            {
+                fix_ac(object);
+                object["shapes"] = object["layers"];
+                object.remove("layers");
+            }
+            else if ( type == "ShapeLayer" )
+            {
+                fix_ac(object);
+                object["__type__"] = "Layer";
+            }
+            else if ( type == "EmptyLayer" )
+            {
+                fix_ac(object);
+                object["__type__"] = "Layer";
+                object["shapes"] = QJsonArray();
+            }
+        }
+    }
+
     void load_object ( model::Object* target, QJsonObject object )
     {
+        version_fixup(target, object);
+
         QString type = object["__type__"].toString();
 
         if ( type != target->type_name() )
