@@ -223,7 +223,7 @@ public:
 
         QCborArray layers;
         for ( const auto& layer : animation->shapes )
-            layers.push_front(convert_layer(layer.get()));
+            convert_layer(layer_type(layer.get()), layer.get(), layers);
 
         json["layers"_l] = layers;
         return json;
@@ -240,29 +240,57 @@ public:
 
     QCborMap wrap_layer_shape(ShapeElement* shape)
     {
-        if ( auto image = qobject_cast<model::Image*>(shape) )
-            return convert_image_layer(image);
         QCborMap json;
         json["ty"_l] = 4;
         convert_animation_container(document->main()->animation.get(), json);
         json["st"_l] = 0;
+
+        model::Transform tf(document);
+        QCborMap transform;
+        convert_transform(&tf, nullptr, transform);
+        json["ks"_l] = transform;
+
         QCborArray shapes;
         shapes.push_back(convert_shape(shape));
         json["shapes"_l] = shapes;
         return json;
     }
 
-    QCborMap convert_layer(ShapeElement* shape)
+    enum class LayerType { Shape, Layer, Image };
+
+    LayerType layer_type(model::ShapeElement* shape)
     {
-        auto layer = qobject_cast<Layer*>(shape);
-        if ( !layer )
-            return wrap_layer_shape(shape);
+        if ( qobject_cast<model::Layer*>(shape) )
+            return LayerType::Layer;
+        if ( qobject_cast<model::Image*>(shape) )
+            return LayerType::Image;
+        return LayerType::Layer;
+    }
+
+    void convert_layer(LayerType type, ShapeElement* shape, QCborArray& output, int forced_parent = -1)
+    {
+        switch ( type )
+        {
+            case LayerType::Shape:
+                output.push_back(wrap_layer_shape(shape));
+                return;
+            case LayerType::Image:
+                output.push_back(convert_image_layer(static_cast<model::Image*>(shape)));
+                return;
+            case LayerType::Layer:
+                break;
+        }
+
+        auto layer = static_cast<Layer*>(shape);
 
         int parent_index = layer_index(layer->parent.get());
-        QCborMap json;
+        if ( forced_parent != -1 )
+            parent_index = forced_parent;
 
+        QCborMap json;
         json["ty"_l] = layer->shapes.empty() ? 3 : 4;
-        json["ind"_l] = layer_index(layer);
+        int index = layer_index(layer);
+        json["ind"_l] = index;
 
         convert_animation_container(layer->animation.get(), json);
         convert_object_properties(layer, fields["DocumentNode"], json);
@@ -275,9 +303,25 @@ public:
             json["parent"_l] = parent_index;
 
         if ( !layer->shapes.empty() )
-            json["shapes"_l] = convert_shapes(layer->shapes);
+        {
+            std::vector<LayerType> children_types;
+            children_types.reserve(layer->shapes.size());
+            for ( const auto& shape : layer->shapes )
+                children_types.push_back(layer_type(shape.get()));
 
-        return json;
+            if ( std::find(children_types.begin(), children_types.end(), LayerType::Shape) != children_types.end() )
+            {
+                json["shapes"_l] = convert_shapes(layer->shapes);
+            }
+            else
+            {
+                json["ty"_l] = 3;
+                for ( int i = 0; i < layer->shapes.size(); i++ )
+                    convert_layer(children_types[i], layer->shapes[i], output, index);
+            }
+        }
+
+        output.push_back(json);
     }
 
     void convert_transform(Transform* tf, model::AnimatableBase* opacity, QCborMap& json)
@@ -512,7 +556,12 @@ public:
     {
         QCborArray jshapes;
         for ( const auto& shape : shapes )
-            jshapes.push_front(convert_shape(shape.get()));
+        {
+            if ( qobject_cast<model::Image*>(shape.get()) )
+                format->warning(io::lottie::LottieFormat::tr("Images cannot be grouped with other shapes"));
+            else
+                jshapes.push_front(convert_shape(shape.get()));
+        }
         return jshapes;
     }
 
