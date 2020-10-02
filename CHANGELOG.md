@@ -2,6 +2,7 @@
 
 * Editing:
     * Ability to embed external images
+    * Quick action to reopen the last opened/saved document
 * I/O:
     * Paste images
 * Bug Fixes:

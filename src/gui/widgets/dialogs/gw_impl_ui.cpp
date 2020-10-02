@@ -37,6 +37,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_redo->setShortcut(QKeySequence::Redo);
     ui.action_group->setShortcut(QKeySequence("Ctrl+G", QKeySequence::PortableText));
     ui.action_ungroup->setShortcut(QKeySequence("Ctrl+Shift+G", QKeySequence::PortableText));
+    ui.action_open_last->setShortcut(QKeySequence("Ctrl+Shift+O", QKeySequence::PortableText));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
@@ -58,6 +59,10 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_new_group, &QAction::triggered, parent, [this]{layer_new_group();});
     connect(ui.action_new_fill, &QAction::triggered, parent, [this]{layer_new_fill();});
     connect(ui.action_new_stroke, &QAction::triggered, parent, [this]{layer_new_stroke();});
+    connect(ui.action_open_last, &QAction::triggered, parent, [this]{
+        if ( !recent_files.isEmpty() )
+            document_open_from_filename(recent_files[0]);
+    });
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
@@ -153,6 +158,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
 
     // Recent files
     recent_files = app::settings::get<QStringList>("open_save", "recent_files");
+    ui.action_open_last->setEnabled(!recent_files.isEmpty());
     reload_recent_menu();
     connect(ui.menu_open_recent, &QMenu::triggered, parent, &GlaxnimateWindow::document_open_recent);
 
@@ -353,6 +359,7 @@ void GlaxnimateWindow::Private::most_recent_file(const QString& s)
 {
     recent_files.removeAll(s);
     recent_files.push_front(s);
+    ui.action_open_last->setEnabled(true);
 
     int max = app::settings::get<int>("open_save", "max_recent_files");
     if ( recent_files.size() > max )

@@ -55,6 +55,7 @@
     </widget>
     <addaction name="action_new"/>
     <addaction name="action_open"/>
+    <addaction name="action_open_last"/>
     <addaction name="menu_open_recent"/>
     <addaction name="separator"/>
     <addaction name="action_reload"/>
@@ -1369,6 +1370,18 @@
    </property>
    <property name="text">
     <string>&amp;Layer</string>
+   </property>
+  </action>
+  <action name="action_open_last">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="document-open-recent">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Open Most Recent</string>
    </property>
   </action>
  </widget>
