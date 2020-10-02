@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QPixmap>
+#include <QFileInfo>
 
 #include "model/reference_target.hpp"
 
@@ -37,6 +38,8 @@ public:
     QUrl to_url() const;
 
     QString object_name() const override;
+
+    QFileInfo file_info() const;
 
 public slots:
     void refresh(bool rebuild_embedded);

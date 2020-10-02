@@ -162,6 +162,14 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"d"},
         FieldInfo{"c", "color"},
     }},
+    {"Bitmap", {
+        FieldInfo{"h", "height"},
+        FieldInfo{"w", "width"},
+        FieldInfo{"id", Custom},
+        FieldInfo{"p", Custom},
+        FieldInfo{"u", Custom},
+        FieldInfo{"e", Custom},
+    }},
 };
 const QMap<QString, QString> shape_types = {
     {"Rect", "rc"},
@@ -195,8 +203,7 @@ public:
 
     QCborMap to_json()
     {
-        /// @todo make a system that preserves key order as that is needed for lottie android
-        return convert_animation(document->main());
+        return convert_main(document->main());
     }
 
     void convert_animation_container(model::AnimationContainer* animation, QCborMap& json)
@@ -205,13 +212,14 @@ public:
         json["op"_l] = animation->last_frame.get();
     }
 
-    QCborMap convert_animation(MainComposition* animation)
+    QCborMap convert_main(MainComposition* animation)
     {
         layer_indices.clear();
         QCborMap json;
         json["v"_l] = "5.5.2";
         convert_animation_container(animation->animation.get(), json);
         convert_object_basic(animation, json);
+        json["assets"_l] = convert_assets();
 
         QCborArray layers;
         for ( const auto& layer : animation->shapes )
@@ -232,9 +240,12 @@ public:
 
     QCborMap wrap_layer_shape(ShapeElement* shape)
     {
+        if ( auto image = qobject_cast<model::Image*>(shape) )
+            return convert_image_layer(image);
         QCborMap json;
         json["ty"_l] = 4;
         convert_animation_container(document->main()->animation.get(), json);
+        json["st"_l] = 0;
         QCborArray shapes;
         shapes.push_back(convert_shape(shape));
         json["shapes"_l] = shapes;
@@ -503,6 +514,52 @@ public:
         for ( const auto& shape : shapes )
             jshapes.push_front(convert_shape(shape.get()));
         return jshapes;
+    }
+
+    QCborArray convert_assets()
+    {
+        QCborArray assets;
+        for ( const auto& bmp : document->defs()->images )
+            assets.push_back(convert_bitmat(bmp.get()));
+        return assets;
+    }
+
+    QCborMap convert_bitmat(model::Bitmap* bmp)
+    {
+        QCborMap out;
+        convert_object_basic(bmp, out);
+        out["id"_l] = bmp->uuid.get().toString();
+        out["e"_l] = int(bmp->embedded());
+        if ( bmp->embedded() )
+        {
+            out["u"_l] = "";
+            out["p"_l] = bmp->to_url().toString();
+        }
+        else
+        {
+            auto finfo = bmp->file_info();
+            out["u"_l] = finfo.absolutePath();
+            out["p"_l] = finfo.fileName();
+        }
+        return out;
+    }
+
+    QCborMap convert_image_layer(model::Image* image)
+    {
+        QCborMap json;
+        json["ty"_l] = 2;
+        convert_animation_container(document->main()->animation.get(), json);
+        json["st"_l] = 0;
+        QCborMap transform;
+        convert_object_basic(image->transform.get(), transform);
+        transform["o"_l] = QCborMap{
+            {"a"_l, 0},
+            {"k"_l, 100},
+        };
+        json["ks"_l] = transform;
+        if ( image->image.get() )
+            json["refId"_l] = image->image->uuid.get().toString();
+        return json;
     }
 
     io::lottie::LottieFormat* format;

@@ -4,6 +4,14 @@
 
 GLAXNIMATE_OBJECT_IMPL(model::Image)
 
+
+model::Image::Image(model::Document* doc)
+    : Ctor(doc)
+{
+    connect(transform.get(), &Object::property_changed, this, &Image::on_transform_matrix_changed);
+}
+
+
 bool model::Image::is_valid_image(model::ReferenceTarget* node) const
 {
     return document()->defs()->is_valid_image(node);
@@ -39,4 +47,14 @@ void model::Image::on_image_changed(model::Bitmap* new_use, model::Bitmap* old_u
 void model::Image::on_update_image()
 {
     emit property_changed(&image, {});
+}
+
+QTransform model::Image::local_transform_matrix(model::FrameTime t) const
+{
+    return transform->transform_matrix(t);
+}
+
+void model::Image::on_transform_matrix_changed()
+{
+    emit local_transform_matrix_changed(transform->transform_matrix(time()));
 }

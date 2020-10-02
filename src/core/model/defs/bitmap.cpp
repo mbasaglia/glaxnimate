@@ -22,10 +22,10 @@ void model::Bitmap::refresh(bool rebuild_embedded)
 
     if ( (rebuild_embedded && !filename.get().isEmpty()) || data.get().isEmpty() )
     {
-        QFileInfo finfo(document()->io_options().path, filename.get());
+        QFileInfo finfo = file_info();
         if ( !finfo.isFile() )
             return;
-        reader.setFileName(filename.get());
+        reader.setFileName(finfo.absoluteFilePath());
         format.set(reader.format());
         qimage = reader.read();
         if ( rebuild_embedded && embedded() )
@@ -123,8 +123,7 @@ QUrl model::Bitmap::to_url() const
 {
     if ( !embedded() )
     {
-        QFileInfo finfo(document()->io_options().path, filename.get());
-        return QUrl::fromLocalFile(finfo.absoluteFilePath());
+        return QUrl::fromLocalFile(file_info().absoluteFilePath());
     }
 
     QByteArray fmt = format.get().toLatin1();
@@ -151,4 +150,10 @@ QString model::Bitmap::object_name() const
     if ( embedded() )
         return tr("Embedded image");
     return QFileInfo(filename.get()).fileName();
+}
+
+
+QFileInfo model::Bitmap::file_info() const
+{
+    return QFileInfo(document()->io_options().path, filename.get());
 }

@@ -9,10 +9,12 @@ namespace model {
 class Image : public ObjectBase<Image, ShapeElement>
 {
     GLAXNIMATE_OBJECT
+
+    GLAXNIMATE_SUBOBJECT(Transform, transform)
     GLAXNIMATE_PROPERTY_REFERENCE(Bitmap, image, &Image::valid_images, &Image::is_valid_image, &Image::on_image_changed)
 
 public:
-    using Ctor::Ctor;
+    Image(model::Document* doc);
 
     void add_shapes(FrameTime, math::MultiBezier&) const override { return; }
 
@@ -26,9 +28,13 @@ public:
 
     QRectF local_bounding_rect(FrameTime t) const override;
 
+    QTransform local_transform_matrix(model::FrameTime t) const override;
 
 protected:
     void on_paint(QPainter* p, FrameTime t, PaintMode) const override;
+
+private slots:
+    void on_transform_matrix_changed();
 
 private:
     std::vector<ReferenceTarget*> valid_images() const;

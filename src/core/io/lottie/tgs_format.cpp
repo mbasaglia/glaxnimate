@@ -1,7 +1,11 @@
 #include "tgs_format.hpp"
+
+#include <set>
+
 #include "cbor_write_json.hpp"
 #include "utils/gzip.hpp"
 #include "model/shapes/polystar.hpp"
+#include "model/shapes/image.hpp"
 #include "model/visitor.hpp"
 
 namespace io::lottie {
@@ -12,13 +16,35 @@ public:
     TgsVisitor(TgsFormat* fmt) : fmt(fmt) {}
 
 private:
+    enum TreeError
+    {
+        StarShape,
+        Image
+    };
+
+    void show_error(TreeError code)
+    {
+        if ( shown.count(code) )
+            return;
+
+        shown.insert(code);
+        switch ( code )
+        {
+            case StarShape:
+                fmt->information(TgsFormat::tr("Star Shapes are not officially supported"));
+                break;
+            case Image:
+                fmt->error(TgsFormat::tr("Images are not supported"));
+                break;
+        }
+    }
+
     void on_visit(model::DocumentNode * node) override
     {
-        if ( !found_star && qobject_cast<model::PolyStar*>(node) )
-        {
-            found_star = true;
-            fmt->information(TgsFormat::tr("Star Shapes are not officially supported"));
-        }
+        if ( qobject_cast<model::PolyStar*>(node) )
+            show_error(StarShape);
+        else if ( qobject_cast<model::Image*>(node) )
+            show_error(Image);
     }
 
     void on_visit(model::Document * document) override
@@ -36,9 +62,8 @@ private:
             fmt->error(TgsFormat::tr("Invalid fps: %1, should be 30 or 60").arg(fps));
     }
 
-
     TgsFormat* fmt;
-    bool found_star = false;
+    std::set<TreeError> shown;
 };
 
 } // namespace io::lottie
