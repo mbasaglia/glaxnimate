@@ -30,6 +30,14 @@ void model::Object::assign_from(const model::Object* other)
     other->clone_into(this);
 }
 
+void model::Object::transfer(model::Document* document)
+{
+    d->document = document;
+    for ( auto prop: d->prop_order )
+        prop->transfer(document);
+}
+
+
 void model::Object::clone_into(model::Object* dest) const
 {
     if ( dest->metaObject() != metaObject() )

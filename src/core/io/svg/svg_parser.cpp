@@ -52,10 +52,8 @@ public:
         bool in_group;
     };
 
-    void parse(bool write_to_document)
+    void parse()
     {
-        this->write_to_document = write_to_document;
-
         size = document->size();
         auto svg = dom.documentElement();
         dpi = attr(svg, "inkscape", "export-xdpi", "96").toDouble();
@@ -63,11 +61,6 @@ public:
         size.setHeight(len_attr(svg, "height", size.height()));
 
         parse_defs();
-        if ( write_to_document )
-        {
-            for ( auto& nc : objects.named_colors )
-                document->defs()->colors.insert(std::move(nc));
-        }
 
         model::Layer* parent_layer = parse_objects(svg);
 
@@ -75,17 +68,13 @@ public:
             attr(svg, "sodipodi", "docname", svg.attribute("id", parent_layer->type_name_human()))
         );
 
-        if ( write_to_document )
-            write_document_data(svg);
+        write_document_data(svg);
     }
 
     void write_document_data(const QDomElement& svg)
     {
         document->main()->width.set(size.width());
         document->main()->height.set(size.height());
-
-        for ( auto& layer : objects.shapes )
-            document->main()->shapes.insert(std::move(layer));
 
         document->main()->recursive_rename();
 
@@ -166,14 +155,14 @@ public:
             color.setAlphaF(color.alphaF() * style.get("stop-opacity", "1").toDouble());
             col->color.set(color);
             brush_styles["#"+id] = col.get();
-            objects.named_colors.push_back(std::move(col));
+            document->defs()->colors.insert(std::move(col));
             return;
         }
     }
 
     model::Layer* parse_objects(const QDomElement& svg)
     {
-        model::Layer* parent_layer = add_layer(nullptr);
+        model::Layer* parent_layer = add_layer(&document->main()->shapes);
         parent_layer->name.set(parent_layer->type_name_human());
         if ( svg.hasAttribute("viewBox") )
         {
@@ -253,10 +242,7 @@ public:
     model::Layer* add_layer(model::ShapeListProperty* parent)
     {
         model::Layer* lay = new model::Layer(document);
-        if ( parent )
-            parent->insert(std::unique_ptr<model::Layer>(lay));
-        else
-            objects.shapes.emplace_back(lay);
+        parent->insert(std::unique_ptr<model::Layer>(lay));
         return lay;
     }
 
@@ -845,11 +831,9 @@ public:
     QSizeF size;
 
     model::Document* document;
-    io::mime::DeserializedData objects;
 
 
     GroupMode group_mode;
-    bool write_to_document = false;
     std::function<void(const QString&)> on_warning;
     std::unordered_map<QString, QDomElement> map_ids;
     std::unordered_map<QString, model::BrushStyle*> brush_styles;
@@ -901,11 +885,14 @@ io::svg::SvgParser::~SvgParser()
 
 io::mime::DeserializedData io::svg::SvgParser::parse_to_objects()
 {
-    d->parse(false);
-    return std::move(d->objects);
+    io::mime::DeserializedData data;
+    data.initialize_data();
+    d->document = data.document.get();
+    d->parse();
+    return data;
 }
 
 void io::svg::SvgParser::parse_to_document()
 {
-    d->parse(true);
+    d->parse();
 }

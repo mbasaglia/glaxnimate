@@ -122,6 +122,12 @@ public:
         return objects.back().get();
     }
 
+
+    void emplace(value_type* p, int position = -1)
+    {
+        insert(std::unique_ptr<value_type>(p), position);
+    }
+
     void insert(pointer p, int position = -1)
     {
         if ( !valid_index(position) )
@@ -218,9 +224,10 @@ public:
      */
     Raw raw() { return Raw{this}; }
 
-    model::DocumentNode* owner_node() const
+    void transfer(Document* doc) override
     {
-        return static_cast<model::DocumentNode*>(object());
+        for ( const auto& obj : objects )
+            obj->transfer(doc);
     }
 
 protected:

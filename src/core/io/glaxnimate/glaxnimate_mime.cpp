@@ -2,6 +2,7 @@
 #include "import_state.hpp"
 #include "model/shapes/shape.hpp"
 #include "model/defs/named_color.hpp"
+#include "model/defs/bitmap.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateMime> io::glaxnimate::GlaxnimateMime::autoreg;
 
@@ -47,7 +48,8 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(
     detail::ImportState state(nullptr);
     state.document = owner_document;
 
-    io::mime::DeserializedData output_objects;
+    io::mime::DeserializedData output;
+    output.initialize_data();
 
     for ( const auto& json_val : input_objects )
     {
@@ -60,11 +62,22 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(
             continue;
 
         if ( auto shape = qobject_cast<model::ShapeElement*>(obj) )
-            output_objects.shapes.emplace_back(shape);
-        else if ( auto composition = qobject_cast<model::Composition*>(obj) )
-            output_objects.compositions.emplace_back(composition);
+        {
+            output.document->main()->shapes.emplace(shape);
+        }
+        else if ( auto composition = qobject_cast<model::MainComposition*>(obj) )
+        {
+            output.document->main()->assign_from(composition);
+            delete composition;
+        }
         else if ( auto color = qobject_cast<model::NamedColor*>(obj) )
-            output_objects.named_colors.emplace_back(color);
+        {
+            output.document->defs()->colors.emplace(color);
+        }
+        else if ( auto bitmap = qobject_cast<model::Bitmap*>(obj) )
+        {
+            output.document->defs()->images.emplace(bitmap);
+        }
         else
         {
             delete obj;
@@ -75,6 +88,6 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(
     }
 
     state.resolve();
-    return output_objects;
+    return output;
 }
 

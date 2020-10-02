@@ -19,6 +19,7 @@ namespace math { class Bezier; }
 namespace model {
 
 class Object;
+class Document;
 
 struct PropertyTraits
 {
@@ -169,6 +170,7 @@ public:
     virtual bool set_value(const QVariant& val) = 0;
     virtual bool set_undoable(const QVariant& val, bool commit = true);
     virtual void set_time(FrameTime t) = 0;
+    virtual void transfer(Document*) {};
 
     virtual bool assign_from(const BaseProperty* prop)
     {

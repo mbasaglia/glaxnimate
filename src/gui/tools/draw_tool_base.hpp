@@ -91,7 +91,8 @@ protected:
             auto super_prop = prop;
             prop = &group->shapes;
 
-            QTransform parent_t = super_prop->owner_node()->transform_matrix(super_prop->owner_node()->time());
+            model::DocumentNode* owner_node = static_cast<model::DocumentNode*>(super_prop->object());
+            QTransform parent_t = owner_node->transform_matrix(owner_node->time());
             QTransform parent_t_inv = parent_t.inverted();
             group->transform.get()->set_transform_matrix(parent_t_inv);
 

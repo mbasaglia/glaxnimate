@@ -73,11 +73,16 @@ public:
     {
         if ( !is_valid_option(value) )
             return false;
+        set_force(value);
+        return true;
+    }
+
+    void set_force(Type* value)
+    {
         auto old = value_;
         value_ = value;
         value_changed();
         on_changed(object(), value_, old);
-        return true;
     }
 
     Type* get() const

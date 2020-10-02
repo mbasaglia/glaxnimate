@@ -218,3 +218,4 @@ void model::DocumentNode::propagate_transform_matrix_changed(const QTransform& t
         ch->propagate_transform_matrix_changed(ltm * t_global, ltm);
     }
 }
+

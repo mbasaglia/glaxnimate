@@ -79,6 +79,11 @@ public:
         sub_obj.set_time(t);
     }
 
+    void transfer(Document* doc) override
+    {
+        sub_obj.transfer(doc);
+    }
+
 private:
     Type sub_obj;
 };

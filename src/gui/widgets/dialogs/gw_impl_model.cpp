@@ -200,44 +200,42 @@ void GlaxnimateWindow::Private::paste()
     }
 
     /// \todo precompositions
-    for ( auto it = raw_pasted.compositions.begin(); it != raw_pasted.compositions.end(); )
-    {
-        if ( auto main_comp = qobject_cast<model::MainComposition*>(it->get()) )
-        {
-            raw_pasted.shapes.reserve(raw_pasted.shapes.size() + main_comp->shapes.size());
-            auto raw = main_comp->shapes.raw();
-            raw_pasted.shapes.insert(raw_pasted.shapes.end(), raw.move_begin(), raw.move_end());
-            raw.clear();
-            it = raw_pasted.compositions.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
 
     current_document->undo_stack().beginMacro(tr("Paste"));
 
     model::ShapeListProperty* shape_cont = current_shape_container();
 
     std::vector<model::DocumentNode*> select;
-    if ( !raw_pasted.shapes.empty() )
+    if ( !raw_pasted.document->main()->shapes.empty() )
     {
         int shape_insertion_point = shape_cont->size();
-        for ( auto& shape : raw_pasted.shapes )
+        for ( auto& shape : raw_pasted.document->main()->shapes.raw() )
         {
-            select.push_back(shape.get());
-            shape->recursive_rename();
+            auto ptr = shape.get();
+            select.push_back(ptr);
+            shape->transfer(current_document.get());
             current_document->push_command(new command::AddShape(shape_cont, std::move(shape), shape_insertion_point++));
+            ptr->recursive_rename();
         }
     }
 
-    for ( auto& color : raw_pasted.named_colors )
+    for ( auto& color : raw_pasted.document->defs()->colors.raw() )
     {
+        color->transfer(current_document.get());
         current_document->push_command(new command::AddObject(
             &current_document->defs()->colors,
             std::move(color),
             current_document->defs()->colors.size()
+        ));
+    }
+
+    for ( auto& image : raw_pasted.document->defs()->images.raw() )
+    {
+        image->transfer(current_document.get());
+        current_document->push_command(new command::AddObject(
+            &current_document->defs()->images,
+            std::move(image),
+            current_document->defs()->images.size()
         ));
     }
 

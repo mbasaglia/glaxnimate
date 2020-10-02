@@ -10,12 +10,8 @@
 #include "app/log/log_line.hpp"
 
 namespace model {
-    class DocumentNode;
     class Document;
-    class Composition;
-    class Object;
-    class NamedColor;
-    class ShapeElement;
+    class DocumentNode;
 } // namespace model
 
 namespace io::mime {
@@ -29,14 +25,10 @@ struct DeserializedData
     DeserializedData& operator=(DeserializedData&&);
     ~DeserializedData();
 
-    std::vector<std::unique_ptr<model::Composition>> compositions;
-    std::vector<std::unique_ptr<model::ShapeElement>> shapes;
-    std::vector<std::unique_ptr<model::NamedColor>> named_colors;
+    std::unique_ptr<model::Document> document;
 
-    bool empty() const
-    {
-        return shapes.empty() && compositions.empty() && named_colors.empty();
-    }
+    bool empty() const;
+    void initialize_data();
 };
 
 class MimeSerializer

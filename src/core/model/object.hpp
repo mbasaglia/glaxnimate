@@ -54,6 +54,7 @@ public:
     QString type_name() const;
 
     Document* document() const;
+    void transfer(Document* document);
     void push_command(QUndoCommand* cmd);
 
 signals:

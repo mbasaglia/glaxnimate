@@ -6,9 +6,7 @@
 #include "json_mime.hpp"
 #include "raster_mime.hpp"
 #include "io/svg/svg_mime.hpp"
-
-#include "model/shapes/shape.hpp"
-#include "model/defs/named_color.hpp"
+#include "model/document.hpp"
 
 
 io::Autoreg<io::mime::JsonMime> io::mime::JsonMime::autoreg;
@@ -50,3 +48,13 @@ io::mime::DeserializedData::DeserializedData(io::mime::DeserializedData &&) = de
 io::mime::DeserializedData & io::mime::DeserializedData::operator=(io::mime::DeserializedData &&) = default;
 io::mime::DeserializedData::~DeserializedData() = default;
 
+bool io::mime::DeserializedData::empty() const
+{
+    return !document || document->main()->shapes.empty();
+}
+
+
+void io::mime::DeserializedData::initialize_data()
+{
+    document = std::make_unique<model::Document>("");
+}
