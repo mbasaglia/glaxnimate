@@ -30,6 +30,10 @@ public:
         return tr("Bitmap");
     }
 
+    bool from_url(const QUrl& url);
+    bool from_file(const QString& file);
+    bool from_base64(const QString& data);
+
 public slots:
     void refresh(bool rebuild_embedded);
 

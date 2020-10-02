@@ -4,6 +4,7 @@
 #include <QImageReader>
 #include <QFileInfo>
 #include <QBuffer>
+#include <QUrl>
 
 GLAXNIMATE_OBJECT_IMPL(model::Bitmap)
 
@@ -77,4 +78,43 @@ void model::Bitmap::on_refresh()
 QIcon model::Bitmap::reftarget_icon() const
 {
     return image;
+}
+
+bool model::Bitmap::from_url(const QUrl& url)
+{
+    if ( url.scheme().isEmpty() || url.scheme() == "file" )
+        return from_file(url.path());
+
+    if ( url.scheme() == "data" )
+        return from_base64(url.path());
+
+    return false;
+}
+
+bool model::Bitmap::from_file(const QString& file)
+{
+    if ( !QFileInfo(file).isFile() )
+        return false;
+
+    filename.set(file);
+    return !image.isNull();
+}
+
+bool model::Bitmap::from_base64(const QString& data)
+{
+    auto chunks = data.splitRef(',');
+    if ( chunks.size() != 2 )
+        return false;
+    auto mime_settings = chunks[0].split(';');
+    if ( mime_settings.size() != 2 || mime_settings[1] != "base64" )
+        return false;
+
+    auto formats = QImageReader::imageFormatsForMimeType(mime_settings[0].toLatin1());
+    if ( formats.empty() )
+        return false;
+
+    auto decoded = QByteArray::fromBase64(chunks[1].toLatin1());
+    format.set(formats[0]);
+    this->data.set(decoded);
+    return !image.isNull();
 }

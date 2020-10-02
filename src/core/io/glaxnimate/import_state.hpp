@@ -345,6 +345,8 @@ public:
                 }
                 return QVariant::fromValue(bezier);
             }
+            case model::PropertyTraits::Data:
+                return QByteArray::fromBase64(val.toString().toLatin1());
             default:
                 return val.toVariant();
         }

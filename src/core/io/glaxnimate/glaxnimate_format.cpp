@@ -165,12 +165,14 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
         case QMetaType::Float:
         case QMetaType::QChar:
         case QMetaType::QString:
-        case QMetaType::QByteArray:
         case QMetaType::QJsonArray:
         case QMetaType::QJsonObject:
         case QMetaType::QJsonValue:
         case QMetaType::QUuid:
             return QJsonValue::fromVariant(value);
+
+        case QMetaType::QByteArray:
+            return QString(value.toByteArray().toBase64());
 
         case QVariant::Invalid:
             return {};
