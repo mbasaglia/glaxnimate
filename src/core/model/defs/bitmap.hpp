@@ -34,6 +34,10 @@ public:
     bool from_file(const QString& file);
     bool from_base64(const QString& data);
 
+    QUrl to_url() const;
+
+    QString object_name() const override;
+
 public slots:
     void refresh(bool rebuild_embedded);
 

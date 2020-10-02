@@ -187,6 +187,18 @@ public:
             style["fill-opacity"] = QString::number(fill->opacity.get());
             write_styler_shapes(fill, style);
         }
+        else if ( auto img = qobject_cast<model::Image*>(shape) )
+        {
+            if ( img->image.get() )
+            {
+                writer.writeEmptyElement("image");
+                write_attribute("x", 0);
+                write_attribute("y", 0);
+                write_attribute("width", img->image->width.get());
+                write_attribute("height", img->image->height.get());
+                write_attribute("xlink:href", img->image->to_url().toString());
+            }
+        }
         else if ( force_draw )
         {
             write_shape_shape(shape, {});

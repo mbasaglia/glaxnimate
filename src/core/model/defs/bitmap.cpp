@@ -6,6 +6,8 @@
 #include <QBuffer>
 #include <QUrl>
 
+#include "model/document.hpp"
+
 GLAXNIMATE_OBJECT_IMPL(model::Bitmap)
 
 void model::Bitmap::paint(QPainter* painter) const
@@ -18,9 +20,10 @@ void model::Bitmap::refresh(bool rebuild_embedded)
     QImageReader reader;
     QImage qimage;
 
-    if ( rebuild_embedded || data.get().isEmpty() )
+    if ( (rebuild_embedded && !filename.get().isEmpty()) || data.get().isEmpty() )
     {
-        if ( !QFileInfo::exists(filename.get()) )
+        QFileInfo finfo(document()->io_options().path, filename.get());
+        if ( !finfo.isFile() )
             return;
         reader.setFileName(filename.get());
         format.set(reader.format());
@@ -93,9 +96,6 @@ bool model::Bitmap::from_url(const QUrl& url)
 
 bool model::Bitmap::from_file(const QString& file)
 {
-    if ( !QFileInfo(file).isFile() )
-        return false;
-
     filename.set(file);
     return !image.isNull();
 }
@@ -117,4 +117,38 @@ bool model::Bitmap::from_base64(const QString& data)
     format.set(formats[0]);
     this->data.set(decoded);
     return !image.isNull();
+}
+
+QUrl model::Bitmap::to_url() const
+{
+    if ( !embedded() )
+    {
+        QFileInfo finfo(document()->io_options().path, filename.get());
+        return QUrl::fromLocalFile(finfo.absoluteFilePath());
+    }
+
+    QByteArray fmt = format.get().toLatin1();
+    QByteArray mime_type;
+    for ( const auto& mime : QImageWriter::supportedMimeTypes() )
+        if ( QImageWriter::imageFormatsForMimeType(mime).contains(fmt) )
+        {
+            mime_type = mime;
+            break;
+        }
+
+    if ( mime_type.isEmpty() )
+        return {};
+
+    QString data_url = "data:";
+    data_url += mime_type;
+    data_url += ";base64,";
+    data_url += data.get().toBase64();
+    return QUrl(data_url);
+}
+
+QString model::Bitmap::object_name() const
+{
+    if ( embedded() )
+        return tr("Embedded image");
+    return QFileInfo(filename.get()).fileName();
 }
