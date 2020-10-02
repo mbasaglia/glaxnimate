@@ -123,12 +123,12 @@ public:
     }
 
 
-    void emplace(value_type* p, int position = -1)
+    value_type* emplace(value_type* p, int position = -1)
     {
-        insert(std::unique_ptr<value_type>(p), position);
+        return insert(std::unique_ptr<value_type>(p), position);
     }
 
-    void insert(pointer p, int position = -1)
+    value_type* insert(pointer p, int position = -1)
     {
         if ( !valid_index(position) )
             position = size();
@@ -139,6 +139,7 @@ public:
         on_insert(position);
         callback_insert(this->object(), ptr, position);
         value_changed();
+        return ptr;
     }
 
     bool valid_index(int index)

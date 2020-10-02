@@ -52,7 +52,7 @@ model/shapes/stroke.cpp
 model/shapes/polystar.cpp
 model/shapes/styler.cpp
 model/shapes/layer.cpp
-
+model/shapes/image.cpp
 
 utils/gzip.cpp
 )

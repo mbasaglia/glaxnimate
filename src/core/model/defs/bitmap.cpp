@@ -22,8 +22,9 @@ void model::Bitmap::refresh(bool rebuild_embedded)
         if ( !QFileInfo::exists(filename.get()) )
             return;
         reader.setFileName(filename.get());
+        format.set(reader.format());
         qimage = reader.read();
-        if ( rebuild_embedded )
+        if ( rebuild_embedded && embedded() )
             build_embedded(qimage);
     }
     else
@@ -31,13 +32,14 @@ void model::Bitmap::refresh(bool rebuild_embedded)
         QBuffer buf(const_cast<QByteArray*>(&data.get()));
         buf.open(QIODevice::ReadOnly);
         reader.setDevice(&buf);
+        format.set(reader.format());
         qimage = reader.read();
     }
 
     image = QPixmap::fromImage(qimage);
     width.set(image.width());
     height.set(image.height());
-    format.set(reader.format());
+
     emit loaded();
 }
 

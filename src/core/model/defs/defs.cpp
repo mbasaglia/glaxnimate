@@ -63,6 +63,9 @@ model::ReferenceTarget* model::Defs::find_by_uuid ( const QUuid& n ) const
     for ( const auto& c : colors )
         if ( c->uuid.get() == n )
             return c.get();
+    for ( const auto& c : images )
+        if ( c->uuid.get() == n )
+            return c.get();
     return nullptr;
 }
 

@@ -825,6 +825,36 @@ public:
         args.shape_parent->insert(std::move(group));
     }
 
+    QString image_get_path(const ParseFuncArgs& args)
+    {
+        QString href = attr(args.element, "xlink", "href");
+        if ( !href.contains(':') )
+            return href;
+
+        QUrl url(href);
+        if ( url.scheme() != "file" )
+            return {};
+
+        return url.path();
+    }
+
+    void parseshape_image(const ParseFuncArgs& args)
+    {
+        QString path = image_get_path(args);
+        if ( path.isEmpty() || !QFileInfo::exists(path) )
+        {
+            path = attr(args.element, "sodipodi", "absref");
+            if ( path.isEmpty() || !QFileInfo::exists(path) )
+                return;
+        }
+
+        auto bitmap = document->defs()->images.insert(std::make_unique<model::Bitmap>(document));
+        bitmap->filename.set(path);
+        auto image = std::make_unique<model::Image>(document);
+        image->image.set(bitmap);
+        args.shape_parent->insert(std::move(image));
+    }
+
     QDomDocument dom;
 
     qreal dpi = 96;
@@ -855,6 +885,7 @@ const std::map<QString, void (io::svg::SvgParser::Private::*)(const io::svg::Svg
     {"polygon", &io::svg::SvgParser::Private::parseshape_polygon},
     {"path",    &io::svg::SvgParser::Private::parseshape_path},
     {"use",     &io::svg::SvgParser::Private::parseshape_use},
+    {"image",   &io::svg::SvgParser::Private::parseshape_image},
 };
 const QRegularExpression io::svg::SvgParser::Private::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
 const QRegularExpression io::svg::SvgParser::Private::separator{",\\s*|\\s+"};

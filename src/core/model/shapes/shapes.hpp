@@ -1,6 +1,7 @@
 #pragma once
 
 #include "group.hpp"
+#include "layer.hpp"
 
 #include "rect.hpp"
 #include "ellipse.hpp"
@@ -9,3 +10,5 @@
 
 #include "fill.hpp"
 #include "stroke.hpp"
+
+#include "image.hpp"
