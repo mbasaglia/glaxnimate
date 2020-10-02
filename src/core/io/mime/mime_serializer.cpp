@@ -14,17 +14,14 @@ io::Autoreg<io::mime::RasterMime> io::mime::RasterMime::autoreg;
 io::Autoreg<io::svg::SvgMime> io::svg::SvgMime::autoreg;
 
 
-io::mime::DeserializedData io::mime::MimeSerializer::from_mime_data(
-    const QMimeData& data,
-    model::Document* owner_document
-) const
+io::mime::DeserializedData io::mime::MimeSerializer::from_mime_data(const QMimeData& data) const
 {
     if ( !can_deserialize() )
         return {};
 
     for ( const QString& mime : mime_types() )
         if ( data.hasFormat(mime) )
-            return deserialize(data.data(mime), owner_document);
+            return deserialize(data.data(mime));
 
     return {};
 }
@@ -35,10 +32,7 @@ void io::mime::MimeSerializer::message(const QString& message, app::log::Severit
 }
 
 
-io::mime::DeserializedData io::mime::MimeSerializer::deserialize(
-    const QByteArray&,
-    model::Document*
-) const
+io::mime::DeserializedData io::mime::MimeSerializer::deserialize(const QByteArray&) const
 {
     return {};
 }

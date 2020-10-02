@@ -42,10 +42,7 @@ public:
 
     virtual QByteArray serialize(const std::vector<model::DocumentNode*>& objects) const = 0;
 
-    virtual io::mime::DeserializedData deserialize(
-        const QByteArray& data,
-        model::Document* owner_document
-    ) const;
+    virtual io::mime::DeserializedData deserialize(const QByteArray& data) const;
 
     virtual bool can_deserialize() const = 0;
 
@@ -56,10 +53,7 @@ public:
             out.setData(mime, data);
     }
 
-    io::mime::DeserializedData from_mime_data(
-        const QMimeData& data,
-        model::Document* owner_document
-    ) const;
+    io::mime::DeserializedData from_mime_data(const QMimeData& data) const;
 
 protected:
     void message(const QString& message, app::log::Severity severity = app::log::Warning) const;

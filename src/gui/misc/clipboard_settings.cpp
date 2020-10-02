@@ -13,7 +13,7 @@ static std::vector<ClipboardSettings::MimeSettings>& mutable_mime_types()
     static std::vector<ClipboardSettings::MimeSettings> settings {
         {io::IoRegistry::instance().serializer_from_slug("glaxnimate"), true, QIcon(app::Application::instance()->data_file("images/logo.svg"))},
         {io::IoRegistry::instance().serializer_from_slug("svg"),        true, QIcon::fromTheme("image-svg+xml")},
-        {io::IoRegistry::instance().serializer_from_slug("raster"),     false, QIcon::fromTheme("image-png")},
+        {io::IoRegistry::instance().serializer_from_slug("raster"),     true, QIcon::fromTheme("image-png")},
         {io::IoRegistry::instance().serializer_from_slug("json"),       false, QIcon::fromTheme("application-json")},
     };
     return settings;

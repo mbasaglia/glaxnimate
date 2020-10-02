@@ -188,7 +188,7 @@ void GlaxnimateWindow::Private::paste()
     {
         if ( mime.enabled )
         {
-            raw_pasted = mime.serializer->from_mime_data(*data, current_document.get());
+            raw_pasted = mime.serializer->from_mime_data(*data);
             if ( !raw_pasted.empty() )
                 break;
         }

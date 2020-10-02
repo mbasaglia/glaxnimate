@@ -1,5 +1,9 @@
 ## 0.2.0
 
+* Editing:
+    * Ability to embed external images
+* I/O:
+    * Paste images
 * Bug Fixes:
     * Star shapes propely imported from lottie files
     * Layers are properly hidden when outside their frame range

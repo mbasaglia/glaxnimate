@@ -6,6 +6,7 @@
 
 #include "io/mime/mime_serializer.hpp"
 #include "model/document.hpp"
+#include "model/shapes/image.hpp"
 
 namespace io::mime {
 
@@ -14,7 +15,7 @@ class RasterMime : public io::mime::MimeSerializer
 public:
     QString slug() const override { return "raster"; }
     QString name() const override { return QObject::tr("Raster Image"); }
-    QStringList mime_types() const override { return {}; }
+    QStringList mime_types() const override { return {"image/png"}; }
 
     QByteArray serialize(const std::vector<model::DocumentNode*>& selection) const override
     {
@@ -24,7 +25,7 @@ public:
         return data;
     }
 
-    bool can_deserialize() const override { return false; }
+    bool can_deserialize() const override { return true; }
 
     void to_mime_data(QMimeData& mime, const std::vector<model::DocumentNode*>& objects) const override
     {
@@ -44,6 +45,19 @@ public:
             node->paint(&painter, node->time(), model::DocumentNode::Recursive);
         return image;
     }
+
+    io::mime::DeserializedData deserialize(const QByteArray& data) const override
+    {
+        io::mime::DeserializedData out;
+        out.initialize_data();
+        auto bmp = out.document->defs()->images.insert(std::make_unique<model::Bitmap>(out.document.get()));
+        bmp->data.set(data);
+        auto img = std::make_unique<model::Image>(out.document.get());
+        img->image.set(bmp);
+        out.document->main()->shapes.insert(std::move(img));
+        return out;
+    }
+
 private:
     static Autoreg<RasterMime> autoreg;
 };

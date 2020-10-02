@@ -15,10 +15,7 @@ public:
     QString name() const override { return GlaxnimateFormat::tr("Glaxnimate Animation"); }
     QStringList mime_types() const override;
     QByteArray serialize(const std::vector<model::DocumentNode*>& objects) const override;
-    io::mime::DeserializedData deserialize(
-        const QByteArray& data,
-        model::Document* owner_document
-    ) const override;
+    io::mime::DeserializedData deserialize(const QByteArray& data) const override;
     bool can_deserialize() const override { return true; }
 
     static QJsonDocument serialize_json(const std::vector<model::DocumentNode*>& objects);

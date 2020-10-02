@@ -27,17 +27,14 @@ public:
         return data;
     }
 
-    io::mime::DeserializedData deserialize(
-        const QByteArray& data,
-        model::Document* document
-    ) const override
+    io::mime::DeserializedData deserialize(const QByteArray& data) const override
     {
         QBuffer buffer(const_cast<QByteArray*>(&data));
         buffer.open(QIODevice::ReadOnly);
 
         auto on_error = [this](const QString& s){message(s);};
         try {
-            return io::svg::SvgParser(&buffer, deserialize_group_mode, document, on_error)
+            return io::svg::SvgParser(&buffer, deserialize_group_mode, nullptr, on_error)
                 .parse_to_objects();
         } catch ( const io::svg::SvgParseError& err ) {
             message(err.formatted("Clipboard"));
