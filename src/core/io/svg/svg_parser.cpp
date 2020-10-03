@@ -836,6 +836,7 @@ public:
         }
         auto image = std::make_unique<model::Image>(document);
         image->image.set(document->defs()->images.insert(std::move(bitmap)));
+        parse_transform(args.element, image.get(), image->transform.get());
         args.shape_parent->insert(std::move(image));
     }
 

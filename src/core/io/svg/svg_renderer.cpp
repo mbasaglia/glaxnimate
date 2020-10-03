@@ -196,6 +196,9 @@ public:
                 write_attribute("y", 0);
                 write_attribute("width", img->image->width.get());
                 write_attribute("height", img->image->height.get());
+                Style::Map style;
+                transform_to_style(img->transform_matrix(img->time()), style);
+                write_attributes(style);
                 write_attribute("xlink:href", img->image->to_url().toString());
             }
         }
@@ -320,6 +323,12 @@ public:
     void write_attribute(const QString& name, const QString& val)
     {
         writer.writeAttribute(name, val);
+    }
+
+    void write_attributes(const Style::Map& attributes)
+    {
+        for ( auto it : attributes )
+            write_attribute(it.first, it.second);
     }
 
     /// Avoid locale nonsense by defining these functions (on ASCII chars) manually
