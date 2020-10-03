@@ -264,7 +264,14 @@ private:
         }
     }
 
-    void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
+    void mouse_double_click(const MouseEvent& event) override
+    {
+        auto clicked_on = under_mouse(event, true, SelectionMode::Shape).nodes;
+
+        if ( !clicked_on.empty() )
+            event.scene->user_select({clicked_on[0]->node()}, graphics::DocumentScene::Replace);
+    }
+
     void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
     void key_release(const KeyEvent& event) override
     {
@@ -302,6 +309,7 @@ private:
     bool show_editors(model::DocumentNode*) const override
     {
         return true;
+//         return node->has("transform");
     }
     void enable_event(const Event& event) override { Q_UNUSED(event); }
     void disable_event(const Event& event) override { Q_UNUSED(event); }
