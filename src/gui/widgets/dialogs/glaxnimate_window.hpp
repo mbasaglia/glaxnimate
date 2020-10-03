@@ -86,6 +86,12 @@ public:
 
     void switch_tool(tools::Tool* tool);
 
+    /**
+     * \brief Shows a file dialog to open an image file
+     * \returns The selected name or an empty string if the user canceled the operation
+     */
+    Q_INVOKABLE QString get_open_image_file(const QString& title, const QString& dir = "") const;
+
 public slots:
     void document_save();
     void document_save_as();

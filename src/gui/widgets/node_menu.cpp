@@ -1,10 +1,14 @@
 #include "node_menu.hpp"
+
+#include <QDesktopServices>
+
 #include "model/shapes/group.hpp"
 #include "command/structure_commands.hpp"
 #include "command/animation_commands.hpp"
 #include "command/property_commands.hpp"
 #include "command/shape_commands.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
+#include "model/shapes/image.hpp"
 
 namespace {
 
@@ -91,6 +95,28 @@ void move_action(
         act->setEnabled(false);
 }
 
+QMenu* menu_ref_property(const QIcon& icon, const QString& text, QWidget* parent, model::ReferencePropertyBase* prop)
+{
+    QMenu* menu = new QMenu(text, parent);
+    menu->setIcon(icon);
+    QActionGroup* group = new QActionGroup(parent);
+    auto value = prop->value().value<model::ReferenceTarget*>();
+    for ( auto other_lay : prop->valid_options() )
+        action_for_node(other_lay, value, menu, group);
+
+    QObject::connect(menu, &QMenu::triggered, parent, [prop](QAction* act){
+        prop->object()->push_command(
+            new command::SetPropertyValue(
+                prop,
+                prop->value(),
+                act->data(),
+                true
+            )
+        );
+    });
+
+    return menu;
+}
 
 } // namespace
 
@@ -137,25 +163,50 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
 
         if ( auto lay = qobject_cast<model::Layer*>(shape) )
         {
-            QMenu* menu_parent = new QMenu(tr("Parent"), this);
-            menu_parent->setIcon(QIcon::fromTheme("go-parent-folder"));
-            QActionGroup* group_parent = new QActionGroup(this);
-            auto layparent = lay->parent.get();
-            action_for_node(nullptr, layparent, menu_parent, group_parent);
-            for ( auto other_lay : lay->parent.valid_options() )
-                action_for_node(other_lay, layparent, menu_parent, group_parent);
-            connect(menu_parent, &QMenu::triggered, this, [lay](QAction* act){
-                lay->push_command(
-                    new command::SetPropertyValue(
-                        &lay->parent,
-                        lay->parent.value(),
-                        act->data(),
-                        true
-                    )
-                );
+            addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), tr("Parent"), this, &lay->parent)->menuAction());
+        }
+        else if ( auto image = qobject_cast<model::Image*>(shape) )
+        {
+            addSeparator();
+
+            addAction(menu_ref_property(QIcon::fromTheme("folder-pictures"), tr("Image"), this, &image->image)->menuAction());
+
+            addAction(QIcon::fromTheme("mail-attachment-symbolic"), tr("Embed"), this, [image]{
+                if ( image->image.get() )
+                    image->image->embed(true);
+            })->setEnabled(image->image.get() && !image->image->embedded());
+
+            addAction(QIcon::fromTheme("editimage"), tr("Open with External Application"), this, [image, window]{
+                if ( image->image.get() )
+                {
+                    if ( !QDesktopServices::openUrl(image->image->to_url()) )
+                        window->warning(tr("Could not find suitable application, check your system settings."));
+                }
+            })->setEnabled(image->image.get());
+
+
+            addAction(QIcon::fromTheme("document-open"), tr("From File..."), this, [image, window]{
+                auto bmp = image->image.get();
+                QString filename = window->get_open_image_file(tr("Update Image"), bmp ? bmp->file_info().absolutePath() : "");
+                if ( filename.isEmpty() )
+                    return;
+
+                image->document()->undo_stack().beginMacro(tr("Update Image"));
+                if ( bmp )
+                {
+                    bmp->data.set_undoable(QByteArray());
+                    bmp->filename.set_undoable(filename);
+                }
+                else
+                {
+                    auto img = image->document()->defs()->add_image(filename, false);
+                    if ( img )
+                        image->image.set_undoable(QVariant::fromValue(img));
+                }
+
+
+                image->document()->undo_stack().endMacro();
             });
-            addAction(menu_parent->menuAction());
         }
     }
 }
-

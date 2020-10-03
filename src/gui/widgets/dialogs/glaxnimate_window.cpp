@@ -393,3 +393,9 @@ void GlaxnimateWindow::switch_tool(tools::Tool* tool)
 {
     d->switch_tool(tool);
 }
+
+QString GlaxnimateWindow::get_open_image_file(const QString& title, const QString& dir) const
+{
+    return d->get_open_image_file(title, dir);
+}
+

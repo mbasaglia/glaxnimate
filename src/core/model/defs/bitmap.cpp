@@ -29,7 +29,7 @@ void model::Bitmap::refresh(bool rebuild_embedded)
         format.set(reader.format());
         qimage = reader.read();
         if ( rebuild_embedded && embedded() )
-            build_embedded(qimage);
+            data.set(build_embedded(qimage));
     }
     else
     {
@@ -47,14 +47,14 @@ void model::Bitmap::refresh(bool rebuild_embedded)
     emit loaded();
 }
 
-void model::Bitmap::build_embedded(const QImage& img)
+QByteArray model::Bitmap::build_embedded(const QImage& img)
 {
     QByteArray new_data;
     QBuffer buf(&new_data);
     buf.open(QIODevice::WriteOnly);
     QImageWriter writer(&buf, format.get().toLatin1());
     writer.write(img);
-    data.set(new_data);
+    return new_data;
 }
 
 bool model::Bitmap::embedded() const
@@ -68,9 +68,9 @@ void model::Bitmap::embed(bool embedded)
         return;
 
     if ( !embedded )
-        data.set({});
+        data.set_undoable({});
     else
-        build_embedded(image.toImage());
+        data.set_undoable(build_embedded(image.toImage()));
 }
 
 void model::Bitmap::on_refresh()

@@ -3,6 +3,7 @@
 * Editing:
     * Ability to embed external images
     * Quick action to reopen the last opened/saved document
+    * Right clicking with the select tool shows actions for all the objects under the mouse
 * I/O:
     * Paste images
 * Bug Fixes:

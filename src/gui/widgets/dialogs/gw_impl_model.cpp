@@ -316,10 +316,9 @@ void GlaxnimateWindow::Private::move_to()
     }
 }
 
-
-void GlaxnimateWindow::Private::import_image()
+QString GlaxnimateWindow::Private::get_open_image_file(const QString& title, const QString& dir)
 {
-    QFileDialog dialog(parent, tr("Import Image"), current_document->io_options().path.absolutePath());
+    QFileDialog dialog(parent, title, dir);
     QStringList filters;
     for ( const auto& baf : QImageReader::supportedMimeTypes() )
         filters.push_back(QString(baf));
@@ -329,11 +328,20 @@ void GlaxnimateWindow::Private::import_image()
     dialog.setFileMode(QFileDialog::ExistingFile);
 
     if ( dialog.exec() == QDialog::Rejected )
+        return {};
+
+    return dialog.selectedFiles()[0];
+}
+
+
+void GlaxnimateWindow::Private::import_image()
+{
+    QString image_file = get_open_image_file(tr("Import Image"), current_document->io_options().path.absolutePath());
+    if ( image_file.isEmpty() )
         return;
 
-
     auto bitmap = std::make_unique<model::Bitmap>(current_document.get());
-    bitmap->filename.set(dialog.selectedFiles()[0]);
+    bitmap->filename.set(image_file);
     if ( bitmap->pixmap().isNull() )
     {
         show_warning(tr("Import Image"), tr("Could not import image"));

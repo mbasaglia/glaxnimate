@@ -50,7 +50,7 @@ public slots:
     void embed(bool embedded);
 
 private:
-    void build_embedded(const QImage& img);
+    QByteArray build_embedded(const QImage& img);
 
 private slots:
     void on_refresh();

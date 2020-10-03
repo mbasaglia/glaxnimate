@@ -113,6 +113,7 @@ public:
     void status_message(const QString& msg, int duration=5000);
     void set_color_def_primary(model::BrushStyle* sty);
     void set_color_def_secondary(model::BrushStyle* sty);
+    QString get_open_image_file(const QString& title, const QString& dir);
 
     // Model
     model::Composition* current_composition();

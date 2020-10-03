@@ -308,24 +308,6 @@ private:
     void context_menu(const MouseEvent& event)
     {
         auto items = event.scene->nodes(event.scene_pos, event.view->viewportTransform());
-        model::DocumentNode* preferred = event.window->current_shape();
-        model::DocumentNode* best = nullptr;
-        for ( auto item : items )
-        {
-            if ( !best )
-            {
-                best = item->node();
-            }
-            else if ( item->node() == preferred )
-            {
-                best = preferred;
-                break;
-            }
-            else if ( item->isSelected() )
-            {
-                best = item->node();
-            }
-        }
 
         QMenu menu;
         auto undo_stack = &event.window->document()->undo_stack();
@@ -364,15 +346,24 @@ private:
         menu.addAction(QIcon::fromTheme("selection-move-to-layer-above"), GlaxnimateWindow::tr("Move to..."),
                        event.window, &GlaxnimateWindow::move_to);
 
-        if ( best )
+
+        menu.addSeparator();
+
+        model::DocumentNode* preferred = event.window->current_shape();
+
+        for ( auto item : items )
         {
-            menu.addSeparator();
-            auto obj_menu = new NodeMenu(best, event.window, &menu);
+            auto obj_menu = new NodeMenu(item->node(), event.window, &menu);
+            if ( item->node() == preferred )
+                preferred = nullptr;
             if ( obj_menu->actions().size() > 1 )
                 menu.addAction(obj_menu->menuAction());
             else
                 delete obj_menu;
         }
+
+        if ( preferred )
+            menu.addAction((new NodeMenu(preferred, event.window, &menu))->menuAction());
 
         menu.exec(QCursor::pos());
     }
