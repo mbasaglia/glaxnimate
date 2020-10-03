@@ -1,7 +1,10 @@
 #include "glaxnimate_window_p.hpp"
 
 #include <queue>
+
 #include <QClipboard>
+#include <QImageReader>
+#include <QFileDialog>
 
 #include "command/shape_commands.hpp"
 #include "command/structure_commands.hpp"
@@ -9,6 +12,7 @@
 #include "model/shapes/group.hpp"
 #include "misc/clipboard_settings.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
+#include "model/shapes/image.hpp"
 
 
 model::Composition* GlaxnimateWindow::Private::current_composition()
@@ -310,4 +314,44 @@ void GlaxnimateWindow::Private::move_to()
                 shape->push_command(new command::MoveShape(shape, shape->owner(), parent, parent->size()));
         current_document->undo_stack().endMacro();
     }
+}
+
+
+void GlaxnimateWindow::Private::import_image()
+{
+    QFileDialog dialog(parent, tr("Import Image"), current_document->io_options().path.absolutePath());
+    QStringList filters;
+    for ( const auto& baf : QImageReader::supportedMimeTypes() )
+        filters.push_back(QString(baf));
+    dialog.setMimeTypeFilters(filters);
+
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+
+    if ( dialog.exec() == QDialog::Rejected )
+        return;
+
+
+    auto bitmap = std::make_unique<model::Bitmap>(current_document.get());
+    bitmap->filename.set(dialog.selectedFiles()[0]);
+    if ( bitmap->pixmap().isNull() )
+    {
+        show_warning(tr("Import Image"), tr("Could not import image"));
+        return;
+    }
+    /// \todo dialog asking whether to embed
+
+    current_document->undo_stack().beginMacro(tr("Import Image"));
+
+    auto defs = current_document->defs();
+    auto bmp_ptr = bitmap.get();
+    current_document->push_command(new command::AddObject(&defs->images, std::move(bitmap), defs->images.size()));
+
+    auto image = std::make_unique<model::Image>(current_document.get());
+    image->image.set(bmp_ptr);
+    auto comp = current_composition();
+    auto select = image.get();
+    current_document->push_command(new command::AddShape(&comp->shapes, std::move(image), comp->shapes.size()));
+    current_document->undo_stack().endMacro();
+    set_current_document_node(select);
 }

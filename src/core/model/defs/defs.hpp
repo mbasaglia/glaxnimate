@@ -26,6 +26,7 @@ public:
 
     Q_INVOKABLE model::ReferenceTarget* find_by_uuid(const QUuid& n) const;
     Q_INVOKABLE model::NamedColor* add_color(const QColor& color, const QString& name = {});
+    Q_INVOKABLE model::Bitmap* add_image(const QString& filename, bool embed);
 
 signals:
     void color_added(int position, model::NamedColor* color);

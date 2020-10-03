@@ -55,6 +55,7 @@
     </widget>
     <addaction name="action_new"/>
     <addaction name="action_open"/>
+    <addaction name="action_import_image"/>
     <addaction name="action_open_last"/>
     <addaction name="menu_open_recent"/>
     <addaction name="separator"/>
@@ -1382,6 +1383,14 @@
    </property>
    <property name="text">
     <string>Open Most Recent</string>
+   </property>
+  </action>
+  <action name="action_import_image">
+   <property name="icon">
+    <iconset theme="insert-image"/>
+   </property>
+   <property name="text">
+    <string>Import Image...</string>
    </property>
   </action>
  </widget>

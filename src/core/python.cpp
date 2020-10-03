@@ -305,7 +305,9 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
 
     py::module defs = model.def_submodule("defs", "");
     register_from_meta<model::Defs, model::Object>(defs);
-    register_from_meta<model::NamedColor, model::ReferenceTarget>(defs);
+    register_from_meta<model::BrushStyle, model::ReferenceTarget>(defs);
+    register_from_meta<model::NamedColor, model::BrushStyle>(defs);
+    register_from_meta<model::Bitmap, model::ReferenceTarget>(defs);
 
 
     py::module shapes = model.def_submodule("shapes", "");
@@ -317,9 +319,12 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     register_from_meta<model::Rect, model::Shape>(shapes);
     register_from_meta<model::Ellipse, model::Shape>(shapes);
     register_from_meta<model::PolyStar, model::Shape>(shapes);
-    register_from_meta<model::Group, model::Shape>(shapes);
+
     register_from_meta<model::Layer, model::Shape>(shapes);
+    register_from_meta<model::Group, model::Shape>(shapes);
 
     register_from_meta<model::Fill, model::Styler>(shapes, enums<model::Fill::Rule>{});
     register_from_meta<model::Stroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});
+
+    register_from_meta<model::Image, model::ShapeElement>(shapes);
 }

@@ -38,6 +38,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_group->setShortcut(QKeySequence("Ctrl+G", QKeySequence::PortableText));
     ui.action_ungroup->setShortcut(QKeySequence("Ctrl+Shift+G", QKeySequence::PortableText));
     ui.action_open_last->setShortcut(QKeySequence("Ctrl+Shift+O", QKeySequence::PortableText));
+    ui.action_import_image->setShortcut(QKeySequence("Ctrl+I", QKeySequence::PortableText));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
@@ -63,6 +64,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         if ( !recent_files.isEmpty() )
             document_open_from_filename(recent_files[0]);
     });
+    connect(ui.action_import_image, &QAction::triggered, parent, [this]{import_image();});
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )

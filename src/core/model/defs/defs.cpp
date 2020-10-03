@@ -78,3 +78,15 @@ model::NamedColor* model::Defs::add_color(const QColor& color, const QString& na
     push_command(new command::AddObject(&colors, std::move(ptr), colors.size()));
     return raw;
 }
+
+model::Bitmap * model::Defs::add_image(const QString& filename, bool embed)
+{
+    auto image = std::make_unique<model::Bitmap>(document());
+    image->filename.set(filename);
+    if ( image->pixmap().isNull() )
+        return nullptr;
+    image->embed(embed);
+    auto ptr = image.get();
+    push_command(new command::AddObject(&images, std::move(image), images.size()));
+    return ptr;
+}

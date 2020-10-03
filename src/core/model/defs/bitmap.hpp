@@ -42,6 +42,8 @@ public:
 
     QFileInfo file_info() const;
 
+    const QPixmap& pixmap() const { return image; }
+
 public slots:
     void refresh(bool rebuild_embedded);
 
