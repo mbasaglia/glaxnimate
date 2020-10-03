@@ -42,7 +42,7 @@ void tools::MouseEvent::forward_to_scene() const
     event->setAccepted(mouse_event.isAccepted());
 }
 
-tools::Tool::UnderMouse tools::Tool::under_mouse(const tools::MouseEvent& event, bool only_selectable) const
+tools::Tool::UnderMouse tools::Tool::under_mouse(const tools::MouseEvent& event, bool only_selectable, SelectionMode mode) const
 {
     UnderMouse ret;
     for ( auto item : event.scene->items(event.scene_pos, Qt::IntersectsItemShape, Qt::DescendingOrder, event.view->viewportTransform()) )
@@ -53,7 +53,11 @@ tools::Tool::UnderMouse tools::Tool::under_mouse(const tools::MouseEvent& event,
         if ( auto node = event.scene->item_to_node(item) )
         {
             if ( !only_selectable || node->docnode_selectable() )
-                ret.nodes.push_back(node);
+            {
+                auto dnitem = static_cast<graphics::DocumentNodeGraphicsItem*>(item);
+                if ( !only_selectable || dnitem->selection_mode() >= mode )
+                    ret.nodes.push_back(dnitem);
+            }
         }
         else if ( !ret.handle )
         {

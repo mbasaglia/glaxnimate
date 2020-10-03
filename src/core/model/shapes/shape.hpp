@@ -22,7 +22,6 @@ public:
     int docnode_child_count() const override { return 0; }
     DocumentNode* docnode_child(int) const override { return nullptr; }
     int docnode_child_index(DocumentNode*) const override { return -1; }
-    bool docnode_selection_container() const override { return false; }
 
     /**
      * \brief Index within its parent

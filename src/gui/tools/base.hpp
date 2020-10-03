@@ -87,6 +87,8 @@ class Tool
     Q_GADGET
 
 public:
+    using SelectionMode = graphics::DocumentNodeGraphicsItem::SelectionMode;
+
     virtual ~Tool() = default;
 
     virtual QString id() const = 0;
@@ -170,10 +172,10 @@ protected:
     struct UnderMouse
     {
         QGraphicsItem* handle = nullptr;
-        std::vector<model::DocumentNode*> nodes;
+        std::vector<graphics::DocumentNodeGraphicsItem*> nodes;
     };
 
-    UnderMouse under_mouse(const MouseEvent& event, bool only_selectable) const;
+    UnderMouse under_mouse(const MouseEvent& event, bool only_selectable, SelectionMode mode) const;
 
     virtual QWidget* on_create_widget()
     {

@@ -2,6 +2,7 @@
 
 #include <set>
 
+#include "app/application.hpp"
 #include "graphics/document_node_graphics_item.hpp"
 #include "graphics/create_items.hpp"
 #include "graphics/graphics_editor.hpp"
@@ -74,12 +75,14 @@ public:
     GraphicsItemFactory item_factory;
     std::vector<model::DocumentNode*> selection;
     tools::Tool* tool = nullptr;
+    QBrush back;
 };
 
 graphics::DocumentScene::DocumentScene()
     : d(std::make_unique<Private>())
 {
     setItemIndexMethod(QGraphicsScene::ItemIndexMethod::NoIndex);
+    d->back.setTexture(QPixmap(app::Application::instance()->data_file("images/widgets/background.png")));
 }
 
 graphics::DocumentScene::~DocumentScene()
@@ -417,5 +420,12 @@ void graphics::DocumentScene::node_locked(bool locked)
         model::DocumentNode* node = qobject_cast<model::DocumentNode*>(sender());
         d->remove_selection_recursive(node);
     }
+
+}
+
+void graphics::DocumentScene::drawBackground(QPainter* painter, const QRectF& rect)
+{
+    painter->fillRect(rect, palette().base());
+    painter->fillRect(rect.intersected(QRectF(QPointF(0, 0), d->document->size())), d->back);
 
 }

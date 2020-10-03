@@ -54,6 +54,9 @@ public:
 signals:
     void node_user_selected(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
 
+protected:
+    void drawBackground(QPainter * painter, const QRectF & rect) override;
+
 private slots:
     void connect_node(model::DocumentNode* node);
     void disconnect_node(model::DocumentNode* node);

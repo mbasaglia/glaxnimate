@@ -147,7 +147,7 @@ protected:
 
     void check_click(const MouseEvent& event)
     {
-        auto clicked_on = under_mouse(event, true);
+        auto clicked_on = under_mouse(event, true, SelectionMode::Group);
         if ( !clicked_on.nodes.empty() )
         {
             auto tool = Registry::instance().tool("select");

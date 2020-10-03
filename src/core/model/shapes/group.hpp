@@ -36,7 +36,6 @@ public:
     int docnode_child_count() const override { return shapes.size(); }
     DocumentNode* docnode_child(int index) const override { return shapes[index]; }
     int docnode_child_index(DocumentNode* obj) const override { return shapes.index_of(static_cast<ShapeElement*>(obj)); }
-    bool docnode_selection_container() const override { return true; }
 
     QIcon docnode_icon() const override
     {

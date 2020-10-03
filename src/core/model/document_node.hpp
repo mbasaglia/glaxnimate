@@ -103,13 +103,6 @@ public:
     DocumentNode* docnode_fuzzy_parent() const;
 
     /**
-     * \brief If \b true, the node is mainly used to contain other nodes so it can be ignored on selections
-     *
-     * This does not affect docnode_selectable() for this or its ancestors
-     */
-    virtual bool docnode_selection_container() const { return true; }
-
-    /**
      * \brief Bounding rect in local coordinates (current frame)
      */
     virtual QRectF local_bounding_rect(FrameTime t) const = 0;

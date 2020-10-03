@@ -100,7 +100,8 @@ private:
             drag_mode = Click;
             rubber_p1 = event.event->localPos();
 
-            auto clicked_on = under_mouse(event, true);
+            auto selection_mode = event.modifiers() & Qt::ControlModifier ? SelectionMode::Shape : SelectionMode::Group;
+            auto clicked_on = under_mouse(event, true, selection_mode);
             if ( clicked_on.handle )
             {
                 drag_mode = ForwardEvents;
@@ -116,7 +117,7 @@ private:
 
                 for ( auto node : clicked_on.nodes )
                 {
-                    if ( event.scene->is_descendant_of_selection(node) )
+                    if ( event.scene->is_descendant_of_selection(node->node()) )
                     {
                         drag_selection = true;
                         break;
@@ -130,8 +131,8 @@ private:
                 }
                 else
                 {
-                    replace_selection = clicked_on.nodes[0];
-                    DragObjectData::push(clicked_on.nodes[0], event.scene_pos, drag_data);
+                    replace_selection = clicked_on.nodes[0]->node();
+                    DragObjectData::push(clicked_on.nodes[0]->node(), event.scene_pos, drag_data);
                 }
             }
 
@@ -183,14 +184,15 @@ private:
     {
 
         auto mode = graphics::DocumentScene::Replace;
-        if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
+        if ( event.modifiers() & Qt::ShiftModifier )
             mode = graphics::DocumentScene::Append;
 
-        std::vector<model::DocumentNode*> selection;
+        auto selection_mode = event.modifiers() & Qt::ControlModifier ? SelectionMode::Shape : SelectionMode::Group;
 
+        std::vector<model::DocumentNode*> selection;
         for ( auto item : items )
         {
-            if ( item->node()->docnode_selectable() && !item->node()->docnode_selection_container() )
+            if ( item->node()->docnode_selectable() && item->selection_mode() >= selection_mode )
                 selection.push_back(item->node());
         }
 
@@ -229,17 +231,18 @@ private:
 
                     std::vector<model::DocumentNode*> selection;
 
-                    for ( auto node : under_mouse(event, true).nodes )
+                    auto selection_mode = event.modifiers() & Qt::ControlModifier ? SelectionMode::Shape : SelectionMode::Group;
+                    for ( auto node : under_mouse(event, true, selection_mode).nodes )
                     {
-                        if ( !node->docnode_selection_container() )
+                        if ( node->selection_mode() != SelectionMode::None )
                         {
-                            selection.push_back(node);
+                            selection.push_back(node->node());
                             break;
                         }
                     }
 
                     auto mode = graphics::DocumentScene::Replace;
-                    if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
+                    if ( event.modifiers() & Qt::ShiftModifier )
                         mode = graphics::DocumentScene::Toggle;
 
                     event.scene->user_select(selection, mode);

@@ -16,6 +16,13 @@ class DocumentNodeGraphicsItem : public QGraphicsObject
     Q_OBJECT
 
 public:
+    enum SelectionMode
+    {
+        None,
+        Group,
+        Shape,
+    };
+
     explicit DocumentNodeGraphicsItem(model::DocumentNode* node, QGraphicsItem* parent = nullptr);
     ~DocumentNodeGraphicsItem();
 
@@ -26,6 +33,9 @@ public:
     {
         return node_;
     }
+
+    SelectionMode selection_mode() const { return selection_mode_; }
+    void set_selection_mode(SelectionMode selection_mode) { selection_mode_ = selection_mode; }
 
 public slots:
     void set_visible(bool v)
@@ -59,6 +69,7 @@ private:
     model::DocumentNode* node_;
     bool visible_permitted = true;
     bool visible = true;
+    SelectionMode selection_mode_ = SelectionMode::Shape;
 };
 
 } // namespace graphics

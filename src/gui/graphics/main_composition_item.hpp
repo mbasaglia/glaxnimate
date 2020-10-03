@@ -23,13 +23,8 @@ public:
     {
         connect(animation, &model::MainComposition::width_changed, this, &MainCompositionItem::size_changed);
         connect(animation, &model::MainComposition::height_changed, this, &MainCompositionItem::size_changed);
-        back.setTexture(QPixmap(app::Application::instance()->data_file("images/widgets/background.png")));
         setFlag(QGraphicsItem::ItemIsSelectable, false);
-    }
-
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override
-    {
-        painter->fillRect(boundingRect(), back);
+        set_selection_mode(None);
     }
 
 private slots:
@@ -40,7 +35,6 @@ private slots:
 
 private:
     model::MainComposition* animation;
-    QBrush back;
 };
 
 class MainCompositionTransformItem : public QGraphicsObject

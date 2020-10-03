@@ -31,7 +31,7 @@ private:
             drag_mode = Click;
             rubber_p1 = event.event->localPos();
 
-            auto clicked_on = under_mouse(event, true);
+            auto clicked_on = under_mouse(event, true, SelectionMode::Shape);
             if ( clicked_on.handle )
             {
                 drag_mode = ForwardEvents;
@@ -63,9 +63,9 @@ private:
         else if ( event.buttons() == Qt::NoButton )
         {
             highlight = nullptr;
-            for ( auto node : under_mouse(event, true).nodes )
+            for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
             {
-                if ( auto path = qobject_cast<model::Path*>(node) )
+                if ( auto path = qobject_cast<model::Path*>(node->node()) )
                 {
                     if ( !event.scene->is_selected(path) )
                     {
@@ -97,11 +97,11 @@ private:
                 {
                     std::vector<model::DocumentNode*> selection;
 
-                    for ( auto node : under_mouse(event, true).nodes )
+                    for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
                     {
-                        if ( qobject_cast<model::Path*>(node) )
+                        if ( qobject_cast<model::Path*>(node->node()) )
                         {
-                            selection.push_back(node);
+                            selection.push_back(node->node());
                             break;
                         }
                     }

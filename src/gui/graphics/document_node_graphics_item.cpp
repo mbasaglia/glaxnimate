@@ -8,6 +8,7 @@ graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::DocumentNode
 //     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIsMovable, false);
+    setFlag(QGraphicsItem::ItemStacksBehindParent);
 
     /// \todo Setting
     setBoundingRegionGranularity(0);
