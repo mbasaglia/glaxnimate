@@ -836,7 +836,16 @@ public:
         }
         auto image = std::make_unique<model::Image>(document);
         image->image.set(document->defs()->images.insert(std::move(bitmap)));
-        parse_transform(args.element, image.get(), image->transform.get());
+
+        QTransform trans;
+        if ( args.element.hasAttribute("transform") )
+            trans = svg_transform(args.element.attribute("transform"), trans);
+        trans.translate(
+            len_attr(args.element, "x", 0),
+            len_attr(args.element, "y", 0)
+        );
+        image->transform->set_transform_matrix(trans);
+
         args.shape_parent->insert(std::move(image));
     }
 

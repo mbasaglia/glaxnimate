@@ -100,17 +100,13 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         [](model::Image* shape){
             auto item = new DocumentNodeGraphicsItem(shape);
             item->set_transform_matrix(shape->local_transform_matrix(shape->time()));
-            QObject::connect(shape, &model::Group::local_transform_matrix_changed,
+            QObject::connect(shape, &model::Image::local_transform_matrix_changed,
                              item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
             return item;
         },
         [](model::Image* shape){
             auto v = std::make_unique<GraphicsEditor>(shape);
-            auto tgi = v->add_child<graphics::TransformGraphicsItem>(shape->transform.get(), shape, nullptr);
-            QObject::connect(
-                shape, &model::DocumentNode::local_transform_matrix_changed,
-                tgi, &graphics::TransformGraphicsItem::set_transform_matrix
-            );
+            v->add_child<graphics::TransformGraphicsItem>(shape->transform.get(), shape, nullptr);
             return v;
         }
     );

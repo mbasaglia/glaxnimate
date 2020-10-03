@@ -2,6 +2,7 @@
 
 #include <QPixmap>
 #include <QFileInfo>
+#include <QUrl>
 
 #include "model/reference_target.hpp"
 
