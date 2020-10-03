@@ -1,8 +1,10 @@
 Authors: Mattia Basaglia
 
-# Shapes
+# Shapes and Layers
 
-## Group
+## Containers
+
+### Group
 
 ![Group shape](/img/screenshots/shapes/group.png)
 
@@ -10,7 +12,7 @@ A Group shape is a shape that contains other shapes.
 
 It can define transformations and opacity for the contained group.
 
-### Editing
+#### Editing
 
 When a group is selected and editable, there some handles around its bounding box
 that allow editing of various properties:
@@ -36,7 +38,7 @@ for example you could have two layers with the same parent layer and a third unr
 between them. This is not possible with plain group shapes.
 
 
-## Actual Shapes
+## Shapes
 
 These define the actual shapes to draw, but no styling information.
 
@@ -143,12 +145,39 @@ to keep the angle between them constant.
 
 These add visual elements to other shapes.
 
-## Fill
+### Fill
 
 Adds a fill color to the other shapes in the same group.
 This can be changed using the [fill style view](ui/docks.md#fill).
 
-## Stroke
+### Stroke
 
 Adds an outline to the other shapes in the same group.
 This can be changed using the [stroke style view](ui/docks.md#stroke).
+
+## Miscellaneous
+
+### Image
+
+An image shows a raster image file, this could be from an external file of with data
+embedded within the Glaxnimate file.
+
+#### Editing
+
+Image objects are edited the same way as [Group shapes](#group).
+
+#### Context Menu
+
+Besides the usual options, you have:
+
+<img src="/img/ui/icons/folder-pictures.svg" width="32" /> *Image*<br/>
+Shows a submenu with a list of images loaded in this document.
+
+<img src="/img/ui/icons/mail-attachment-symbolic.svg" width="32" /> *Embed*<br/>
+Copies the linked external image inside the Glaxnimate file.
+
+<img src="/img/ui/icons/editimage.svg" width="32" /> *Open with External Application*<br/>
+Opens that image with the default application for the given file type.
+
+<img src="/img/ui/icons/document-open.svg" width="32" /> *From File...*<br/>
+Shows a file dialog to change the file being displayed by the image object.
