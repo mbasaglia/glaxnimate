@@ -61,12 +61,6 @@ Install the dependencies with homebrew:
 
     brew install cmake qt python
 
-Ensure you are using GCC (it seems clang has issues with C++17).
-
-    export CC=gcc-10
-    export CXX=g++-10
-
-
 Build with `cmake`, specifying the Qt installation path:
 
     mkdir build
@@ -91,18 +85,18 @@ instructions below assume it's in `C:/Program Files (x86)/GnuWin32`
     $PYTHON_DIR=$(echo "import os; print(os.path.dirname(os.path.dirname(os.__file__)));" | python)
     $MINGW_DIR="C:/MinGW64/mingw64"
     $ZLIB_DIR="C:/Program Files (x86)/GnuWin32"
-    $QT_DIR="C:/Qt/5.14.1"
+    $QT_DIR="C:/Qt/5.14.1/mingw73_64"
     $ENV:PATH="$ENV:PATH;$MINGW_DIR/bin"
 
     # Build
     mkdir build
     cd build
-    cmake .. -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="$QT_DIR/mingw73_64/" -DZLIB_INCLUDE_DIR="$ZLIB_DIR/include" -DZLIB_LIBRARY="$ZLIB_DIR/lib/libz.a" -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_CXX_FLAGS=-Wno-attributes
+    cmake .. -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="$QT_DIR" -DZLIB_INCLUDE_DIR="$ZLIB_DIR/include" -DZLIB_LIBRARY="$ZLIB_DIR/lib/libz.a" -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF -DCMAKE_CXX_FLAGS=-Wno-attributes
     mingw32-make.exe
 
     # Copy library files because windows is weird like that
-    . "$QT_DIR/mingw73_64/bin/qtenv2.bat"
-    . "$QT_DIR/mingw73_64/bin/windeployqt.exe" ./bin/glaxnimate.exe
+    . "$QT_DIR/bin/qtenv2.bat"
+    . "$QT_DIR/bin/windeployqt.exe" ./bin/glaxnimate.exe
     cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll bin
     cp $MINGW_DIR/bin/*.dll bin
     cp "$PYTHON_DIR/python38.dll" bin

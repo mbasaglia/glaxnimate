@@ -9,6 +9,7 @@
 * Bug Fixes:
     * Star shapes propely imported from lottie files
     * Layers are properly hidden when outside their frame range
+    * Editing Path objects properly registers undo commands and keyframes
 
 ## 0.1.1
 

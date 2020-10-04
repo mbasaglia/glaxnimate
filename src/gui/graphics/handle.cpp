@@ -4,6 +4,8 @@
 #include <QCursor>
 #include <QGraphicsSceneMouseEvent>
 
+#include "graphics/item_data.hpp"
+
 class graphics::MoveHandle::Private
 {
 public:
@@ -49,6 +51,8 @@ graphics::MoveHandle::MoveHandle(
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
     setAcceptedMouseButtons(Qt::LeftButton);
+
+    setData(ItemData::HandleRole, HandleRole::Unknown);
 
     if ( d->direction == Horizontal )
         setCursor(Qt::SizeHorCursor);
@@ -179,4 +183,14 @@ void graphics::MoveHandle::change_shape(graphics::MoveHandle::Shape shape, int r
         prepareGeometryChange();
     }
     update();
+}
+
+graphics::MoveHandle::HandleRole graphics::MoveHandle::role() const
+{
+    return HandleRole(data(ItemData::HandleRole).toInt());
+}
+
+void graphics::MoveHandle::set_role(graphics::MoveHandle::HandleRole role)
+{
+    setData(ItemData::HandleRole, role);
 }

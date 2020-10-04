@@ -29,6 +29,13 @@ public:
         Saltire,
     };
 
+    enum HandleRole
+    {
+        NoHandle,
+        Unknown,
+        Vertex,
+        Tangent
+    };
 
     MoveHandle(
         QGraphicsItem* parent,
@@ -49,6 +56,9 @@ public:
     QRectF boundingRect() const override;
 
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
+
+    HandleRole role() const;
+    void set_role(HandleRole role);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * event) override;

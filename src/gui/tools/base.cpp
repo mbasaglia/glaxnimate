@@ -2,6 +2,8 @@
 
 #include <QGraphicsSceneMouseEvent>
 
+#include "graphics/item_data.hpp"
+
 void tools::MouseEvent::forward_to_scene() const
 {
     QEvent::Type type;
@@ -59,9 +61,9 @@ tools::Tool::UnderMouse tools::Tool::under_mouse(const tools::MouseEvent& event,
                     ret.nodes.push_back(dnitem);
             }
         }
-        else if ( !ret.handle )
+        else if ( !ret.handle && item->data(graphics::ItemData::HandleRole).toInt() )
         {
-            ret.handle = item;
+            ret.handle = static_cast<graphics::MoveHandle*>(item);
         }
     }
 

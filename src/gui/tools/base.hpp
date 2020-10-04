@@ -9,6 +9,7 @@
 
 #include "graphics/document_scene.hpp"
 #include "graphics/document_node_graphics_item.hpp"
+#include "graphics/handle.hpp"
 #include "widgets/glaxnimate_graphics_view.hpp"
 #include "widgets/scalable_button.hpp"
 #include "widgets/dialogs/glaxnimate_window.hpp"
@@ -171,7 +172,7 @@ public:
 protected:
     struct UnderMouse
     {
-        QGraphicsItem* handle = nullptr;
+        graphics::MoveHandle* handle = nullptr;
         std::vector<graphics::DocumentNodeGraphicsItem*> nodes;
     };
 

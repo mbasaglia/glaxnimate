@@ -6,13 +6,13 @@
 #include "graphics/document_node_graphics_item.hpp"
 #include "graphics/create_items.hpp"
 #include "graphics/graphics_editor.hpp"
+#include "graphics/item_data.hpp"
 #include "tools/base.hpp"
 
 class graphics::DocumentScene::Private
 {
 public:
     static constexpr int editor_z = 1000;
-    static constexpr int data_key_ptr = 0;
 
     using EditorMap = std::unordered_map<model::DocumentNode*, std::unique_ptr<graphics::GraphicsEditor>>;
 
@@ -36,7 +36,7 @@ public:
 
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const
     {
-        return item->data(data_key_ptr).value<model::DocumentNode*>();
+        return item->data(ItemData::NodePointer).value<model::DocumentNode*>();
     }
 
 
@@ -115,7 +115,7 @@ void graphics::DocumentScene::connect_node ( model::DocumentNode* node )
         return;
 
     d->node_to_item[node] = child;
-    child->setData(Private::data_key_ptr, QVariant::fromValue(node));
+    child->setData(ItemData::NodePointer, QVariant::fromValue(node));
     connect(node, &model::DocumentNode::docnode_child_add_end, this, &DocumentScene::connect_node);
     connect(node, &model::DocumentNode::docnode_child_remove_end, this, &DocumentScene::disconnect_node);
     connect(node, &model::DocumentNode::docnode_child_move_end, this, &DocumentScene::move_node);
