@@ -4,12 +4,14 @@
     * Ability to embed external images
     * Quick action to reopen the last opened/saved document
     * Right clicking with the select tool shows actions for all the objects under the mouse
+    * The node editing tool now shows a context menu when right-clicking on nodes
 * I/O:
     * Paste images
 * Bug Fixes:
     * Star shapes propely imported from lottie files
     * Layers are properly hidden when outside their frame range
-    * Editing Path objects properly registers undo commands and keyframes
+    * Editing Path objects registers undo commands and keyframes
+    * Changing Path node types now affects the shape correctly
 
 ## 0.1.1
 

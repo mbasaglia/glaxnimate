@@ -23,14 +23,18 @@ public:
 
     void set_index(int index);
 
+    int index() const;
+
     void set_point_type(math::BezierPointType type);
 
     void show_tan_in(bool show);
 
     void show_tan_out(bool show);
 
-    const math::BezierPoint& get_point() const;
+    const math::BezierPoint& point() const;
     void modify(const math::BezierPoint& pt, const QString& undo_name);
+
+    class BezierItem* parent_editor() const;
 
 signals:
     void modified(int index, const math::BezierPoint& point, bool commit, const QString& name);
@@ -54,8 +58,8 @@ private:
     MoveHandle tan_in{nullptr, MoveHandle::Any, MoveHandle::Circle, 6};
     MoveHandle tan_out{nullptr, MoveHandle::Any, MoveHandle::Circle, 6};
 
-    int index;
-    math::BezierPoint point;
+    int index_;
+    math::BezierPoint point_;
 };
 
 
@@ -81,6 +85,7 @@ private slots:
     void on_dragged(int index, const math::BezierPoint& point, bool commit, const QString& name);
 
 private:
+    void do_update(bool commit, const QString& name);
     void do_add_point(int index);
 
     math::Bezier bezier_;

@@ -1,6 +1,9 @@
 #include "base.hpp"
 
+#include <QMenu>
+
 #include "model/shapes/path.hpp"
+#include "graphics/bezier_item.hpp"
 
 namespace tools {
 
@@ -114,6 +117,10 @@ private:
                 }
             }
         }
+        else if ( event.button() == Qt::RightButton )
+        {
+            context_menu(event);
+        }
 
     }
 
@@ -163,6 +170,67 @@ private:
     void disable_event(const Event&) override
     {
         highlight = nullptr;
+    }
+
+    void node_type_action(QMenu* menu, QActionGroup* group, graphics::BezierPointItem* item, math::BezierPointType type)
+    {
+        QIcon icon;
+        QString label;
+        switch ( type )
+        {
+            case math::BezierPointType::Corner:
+                icon = QIcon::fromTheme("node-type-cusp");
+                label = QObject::tr("Cusp");
+                break;
+            case math::BezierPointType::Smooth:
+                icon = QIcon::fromTheme("node-type-smooth");
+                label = QObject::tr("Smooth");
+                break;
+            case math::BezierPointType::Symmetrical:
+                icon = QIcon::fromTheme("node-type-auto-smooth");
+                label = QObject::tr("Symmetrical");
+                break;
+        }
+        QAction* action = menu->addAction(icon, label, item, [item, type, label]{
+            auto point = item->point();
+            point.type = type;
+            point.adjust_handles_from_type();
+            item->modify(point, QObject::tr("Set %1 Node").arg(label));
+        });
+
+        action->setCheckable(true);
+        action->setActionGroup(group);
+
+        if ( item->point().type == type )
+            action->setChecked(true);
+    }
+
+    void context_menu(const MouseEvent& event)
+    {
+        auto handle = under_mouse(event, true, SelectionMode::Shape).handle;
+        if ( !handle )
+            return;
+        if ( handle->role() != graphics::MoveHandle::Vertex && handle->role() != graphics::MoveHandle::Tangent )
+            return;
+
+        auto item = static_cast<graphics::BezierPointItem*>(handle->parentItem());
+
+        QMenu menu;
+        QActionGroup grp(&menu);
+
+        menu.addSection(QObject::tr("Node"));
+
+        node_type_action(&menu, &grp, item, math::BezierPointType::Corner);
+        node_type_action(&menu, &grp, item, math::BezierPointType::Smooth);
+        node_type_action(&menu, &grp, item, math::BezierPointType::Symmetrical);
+
+        menu.addSeparator();
+
+        menu.addAction(QIcon::fromTheme("format-remove-node"), QObject::tr("Remove Node"), item, [item]{
+            item->parent_editor()->remove_point(item->index());
+        });
+
+        menu.exec(QCursor::pos());
     }
 
 private:

@@ -21,6 +21,7 @@ io/mime/mime_serializer.cpp
 io/base.cpp
 
 math/bezier.cpp
+math/bezier_point.cpp
 
 model/main_composition.cpp
 model/composition.cpp
