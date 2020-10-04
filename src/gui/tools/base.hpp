@@ -188,10 +188,11 @@ protected:
 
     virtual void on_translate() {}
 
-
     QVariantMap settings_values;
 
     static constexpr Priority max_priority = std::numeric_limits<Priority>::min();
+
+    void edit_clicked(const MouseEvent& event);
 
 private:
     QAction* action = nullptr;

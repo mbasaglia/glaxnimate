@@ -3,6 +3,9 @@
 #include <variant>
 
 #include "model/shapes/path.hpp"
+#include "model/shapes/rect.hpp"
+#include "model/shapes/ellipse.hpp"
+#include "model/shapes/polystar.hpp"
 #include "command/structure_commands.hpp"
 
 #include "widgets/node_menu.hpp"
@@ -266,10 +269,7 @@ private:
 
     void mouse_double_click(const MouseEvent& event) override
     {
-        auto clicked_on = under_mouse(event, true, SelectionMode::Shape).nodes;
-
-        if ( !clicked_on.empty() )
-            event.scene->user_select({clicked_on[0]->node()}, graphics::DocumentScene::Replace);
+        edit_clicked(event);
     }
 
     void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
@@ -306,10 +306,9 @@ private:
         }
     }
 
-    bool show_editors(model::DocumentNode*) const override
+    bool show_editors(model::DocumentNode* node) const override
     {
-        return true;
-//         return node->has("transform");
+        return node->has("transform");
     }
     void enable_event(const Event& event) override { Q_UNUSED(event); }
     void disable_event(const Event& event) override { Q_UNUSED(event); }

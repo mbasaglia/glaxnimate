@@ -57,6 +57,10 @@ public:
     void transfer(Document* document);
     void push_command(QUndoCommand* cmd);
 
+    template<class T> T* cast() { return qobject_cast<T*>(this); }
+    template<class T> const T* cast() const { return qobject_cast<const T*>(this); }
+    template<class T> bool is_instance() const { return metaObject()->inherits(&T::staticMetaObject); }
+
 signals:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);
 

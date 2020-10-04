@@ -2,7 +2,7 @@
 
 #include <QMenu>
 
-#include "model/shapes/path.hpp"
+#include "model/shapes/shape.hpp"
 #include "graphics/bezier_item.hpp"
 
 namespace tools {
@@ -75,7 +75,7 @@ private:
             highlight = nullptr;
             for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
             {
-                if ( auto path = qobject_cast<model::Path*>(node->node()) )
+                if ( auto path = node->node()->cast<model::Shape>() )
                 {
                     if ( !event.scene->is_selected(path) )
                     {
@@ -109,7 +109,7 @@ private:
 
                     for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
                     {
-                        if ( qobject_cast<model::Path*>(node->node()) )
+                        if ( node->node()->is_instance<model::Shape>() )
                         {
                             selection.push_back(node->node());
                             break;
@@ -151,7 +151,7 @@ private:
             QColor select_color = event.view->palette().color(QPalette::Highlight);
             QPen pen(select_color, 1);
             QPainterPath p;
-            highlight->shape.get().add_to_painter_path(p);
+            highlight->to_bezier(highlight->time()).add_to_painter_path(p);
             QTransform trans = highlight->transform_matrix(highlight->time()) * event.view->viewportTransform();
             p = trans.map(p);
             event.painter->setPen(pen);
@@ -163,15 +163,42 @@ private:
     void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
     void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
+
     bool show_editors(model::DocumentNode* node) const override
     {
-        return qobject_cast<model::Path*>(node);
+        return node->is_instance<model::Shape>();
+    }
+
+    static void impl_extract_selection_recursive_item(model::DocumentNode* node, std::vector<model::DocumentNode*>& extra)
+    {
+        auto meta = node->metaObject();
+        if ( meta->inherits(&model::Shape::staticMetaObject) )
+        {
+            extra.push_back(node);
+        }
+        else if ( meta->inherits(&model::Group::staticMetaObject) )
+        {
+            for ( const auto& sub : static_cast<model::Group*>(node)->shapes )
+                impl_extract_selection_recursive_item(sub.get(), extra);
+        }
+    }
+
+    std::vector<model::DocumentNode *> extract_selection_recursive(graphics::DocumentScene* scene) const
+    {
+        std::vector<model::DocumentNode*> extra;
+        for ( auto obj : scene->selection() )
+            impl_extract_selection_recursive_item(obj, extra);
+        return extra;
     }
 
     void enable_event(const Event& event) override
     {
-        Q_UNUSED(event)
         highlight = nullptr;
+
+        /// \todo keep selection and editors separate in the scene, and have each tool
+        /// toggle editors as it sees fit.
+        std::vector<model::DocumentNode*> extra = extract_selection_recursive(event.scene);
+        event.scene->user_select(extra, graphics::DocumentScene::Append);
     }
 
     void disable_event(const Event&) override
@@ -260,7 +287,7 @@ private:
     DragMode drag_mode;
     QPointF rubber_p1;
     QPointF rubber_p2;
-    model::Path* highlight = nullptr;
+    model::Shape* highlight = nullptr;
     std::vector<Selection> selection;
 
     static Autoreg<EditTool> autoreg;

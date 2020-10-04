@@ -69,3 +69,16 @@ tools::Tool::UnderMouse tools::Tool::under_mouse(const tools::MouseEvent& event,
 
     return ret;
 }
+
+void tools::Tool::edit_clicked(const tools::MouseEvent& event)
+{
+    auto clicked_on = under_mouse(event, true, SelectionMode::Shape).nodes;
+
+    if ( !clicked_on.empty() )
+    {
+        event.scene->user_select({clicked_on[0]->node()}, graphics::DocumentScene::Replace);
+        auto meta = clicked_on[0]->node()->metaObject();
+        if ( meta->inherits(&model::Shape::staticMetaObject) )
+            event.window->switch_tool(Registry::instance().tool("edit"));
+    }
+}

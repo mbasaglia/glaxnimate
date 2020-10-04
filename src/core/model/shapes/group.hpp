@@ -9,7 +9,7 @@
 namespace model {
 
 
-class Group : public ObjectBase<Group, Shape>
+class Group : public ObjectBase<Group, ShapeElement>
 {
     GLAXNIMATE_OBJECT
 
@@ -45,11 +45,6 @@ public:
     QString type_name_human() const override
     {
         return tr("Group");
-    }
-
-    math::Bezier to_bezier(FrameTime) const override
-    {
-        return {};
     }
 
     void add_shapes(model::FrameTime t, math::MultiBezier & bez) const override;
