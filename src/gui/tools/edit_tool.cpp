@@ -25,6 +25,13 @@ private:
         ForwardEvents,
     };
 
+    struct Selection
+    {
+        model::DocumentNode* owner;
+        model::AnimatedProperty<math::Bezier>* property;
+        std::vector<int> indices;
+    };
+
     void mouse_press(const MouseEvent& event) override
     {
         highlight = nullptr;
@@ -210,7 +217,9 @@ private:
         auto handle = under_mouse(event, true, SelectionMode::Shape).handle;
         if ( !handle )
             return;
-        if ( handle->role() != graphics::MoveHandle::Vertex && handle->role() != graphics::MoveHandle::Tangent )
+
+        auto role = handle->role();
+        if ( role != graphics::MoveHandle::Vertex && role != graphics::MoveHandle::Tangent )
             return;
 
         auto item = static_cast<graphics::BezierPointItem*>(handle->parentItem());
@@ -226,9 +235,23 @@ private:
 
         menu.addSeparator();
 
-        menu.addAction(QIcon::fromTheme("format-remove-node"), QObject::tr("Remove Node"), item, [item]{
-            item->parent_editor()->remove_point(item->index());
-        });
+        if ( role == graphics::MoveHandle::Vertex )
+        {
+            menu.addAction(QIcon::fromTheme("format-remove-node"), QObject::tr("Remove Node"), item, [item]{
+                item->parent_editor()->remove_point(item->index());
+            });
+
+            menu.addAction(QIcon::fromTheme("show-node-handles"), QObject::tr("Show Tangents"), item, [item]{
+                item->show_tan_in(true);
+                item->show_tan_out(true);
+            });
+        }
+        else
+        {
+            menu.addAction(QIcon::fromTheme("show-node-handles"), QObject::tr("Remove Tangent"), item, [item, handle]{
+                item->remove_tangent(handle);
+            });
+        }
 
         menu.exec(QCursor::pos());
     }
@@ -238,6 +261,7 @@ private:
     QPointF rubber_p1;
     QPointF rubber_p2;
     model::Path* highlight = nullptr;
+    std::vector<Selection> selection;
 
     static Autoreg<EditTool> autoreg;
 };

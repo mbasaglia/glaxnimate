@@ -70,6 +70,9 @@ void graphics::BezierPointItem::set_point(const math::BezierPoint& p)
     tan_in.setPos(p.tan_in);
     tan_out.setPos(p.tan_out);
 
+    tan_in.setVisible(has_tan_in && !tan_in_empty());
+    tan_out.setVisible(has_tan_out && !tan_out_empty());
+
     switch ( point_.type )
     {
         case math::BezierPointType::Corner:
@@ -99,13 +102,13 @@ void graphics::BezierPointItem::set_point_type(math::BezierPointType type)
 
 void graphics::BezierPointItem::show_tan_in(bool show)
 {
-    tan_in.setVisible(show);
+    tan_in.setVisible(show && has_tan_in);
     update();
 }
 
 void graphics::BezierPointItem::show_tan_out(bool show)
 {
-    tan_out.setVisible(show);
+    tan_out.setVisible(show && has_tan_out);
     update();
 }
 void graphics::BezierPointItem::tan_in_dragged(const QPointF& p, Qt::KeyboardModifiers mods)
@@ -169,7 +172,6 @@ void graphics::BezierPointItem::on_commit()
     on_modified(true);
 }
 
-
 void graphics::BezierPointItem::pos_clicked(Qt::KeyboardModifiers mod)
 {
     if ( mod & Qt::ControlModifier )
@@ -194,7 +196,6 @@ void graphics::BezierPointItem::drag_preserve_angle(QPointF& dragged, QPointF& o
     other = point_.pos + math::PolarVector<QPointF>(length, angle).to_cartesian();
 }
 
-
 graphics::BezierItem * graphics::BezierPointItem::parent_editor() const
 {
     return static_cast<graphics::BezierItem *>(parentItem());
@@ -203,6 +204,45 @@ graphics::BezierItem * graphics::BezierPointItem::parent_editor() const
 int graphics::BezierPointItem::index() const
 {
     return index_;
+}
+
+void graphics::BezierPointItem::remove_tangent(graphics::MoveHandle* handle)
+{
+    if ( point_.type == math::Symmetrical )
+        return;
+
+    if ( handle == &tan_in )
+        tan_in.setPos(point_.tan_in = point_.pos);
+    else if ( handle == &tan_out )
+        tan_out.setPos(point_.tan_out = point_.pos);
+    else
+        return;
+
+    handle->setVisible(false);
+    on_modified(true, tr("Remove node tangent"));
+    update();
+}
+
+bool graphics::BezierPointItem::tan_in_empty() const
+{
+    return point_.tan_in == point_.pos;
+}
+
+bool graphics::BezierPointItem::tan_out_empty() const
+{
+    return point_.tan_out == point_.pos;
+}
+
+void graphics::BezierPointItem::set_has_tan_in(bool show)
+{
+    has_tan_in = show;
+    show_tan_in(!tan_in_empty());
+}
+
+void graphics::BezierPointItem::set_has_tan_out(bool show)
+{
+    has_tan_out = show;
+    show_tan_out(!tan_out_empty());
 }
 
 
@@ -242,27 +282,33 @@ void graphics::BezierItem::set_bezier(const math::Bezier& bez)
     int old_size = bezier_.size();
     bezier_ = bez;
 
+    // Bezier has fewer points, remove excess
     if ( old_size > bezier_.size() )
         items.erase(items.begin() + bezier_.size(), items.end());
 
+    // Update points
     for ( int i = 0; i < int(items.size()); i++ )
     {
         items[i]->set_index(i);
         items[i]->set_point(bezier_[i]);
     }
 
+    // Bezier has more points, add missing
     if ( old_size < bezier_.size() )
     {
+        // Last point might not have the out tangent visible, so ensure it is
         if ( !items.empty() )
-            items.back()->show_tan_out(true);
+            items.back()->set_has_tan_out(true);
+
         for ( int i = old_size; i < bezier_.size(); i++ )
             do_add_point(i);
     }
 
+    // Hide/show first/last tangent if needed
     if ( !bezier_.empty() )
     {
-        items.front()->show_tan_in(bezier_.closed());
-        items.back()->show_tan_out(bezier_.closed());
+        items.front()->set_has_tan_in(bezier_.closed());
+        items.back()->set_has_tan_out(bezier_.closed());
     }
 
     prepareGeometryChange();
@@ -277,7 +323,7 @@ void graphics::BezierItem::remove_point(int index)
 
     items.erase(items.begin() + index);
     if ( !bezier_.closed() )
-        items.back()->show_tan_out(false);
+        items.back()->set_has_tan_out(false);
 
     do_update(true, tr("Remove Point"));
 }
@@ -307,6 +353,15 @@ void graphics::BezierItem::do_add_point(int index)
     items.push_back(std::make_unique<BezierPointItem>(index, bezier_[index], this));
     connect(items.back().get(), &BezierPointItem::modified, this, &BezierItem::on_dragged);
     if ( !bezier_.closed() && index == int(items.size()) - 1 && items.size() > 2)
-        items[index-1]->show_tan_out(true);
+        items[index-1]->set_has_tan_out(true);
 }
 
+model::AnimatedProperty<math::Bezier> * graphics::BezierItem::target_property() const
+{
+    return &node->shape;
+}
+
+model::DocumentNode* graphics::BezierItem::target_object() const
+{
+    return node;
+}

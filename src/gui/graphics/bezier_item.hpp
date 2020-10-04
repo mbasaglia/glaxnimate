@@ -19,10 +19,6 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *) override;
 
-    void set_point(const math::BezierPoint& p);
-
-    void set_index(int index);
-
     int index() const;
 
     void set_point_type(math::BezierPointType type);
@@ -31,10 +27,15 @@ public:
 
     void show_tan_out(bool show);
 
+    void remove_tangent(MoveHandle* handle);
+
     const math::BezierPoint& point() const;
     void modify(const math::BezierPoint& pt, const QString& undo_name);
 
     class BezierItem* parent_editor() const;
+
+    bool tan_in_empty() const;
+    bool tan_out_empty() const;
 
 signals:
     void modified(int index, const math::BezierPoint& point, bool commit, const QString& name);
@@ -54,12 +55,21 @@ private slots:
 private:
     void drag_preserve_angle(QPointF& dragged, QPointF& other, const QPointF& dragged_new);
 
+    void set_point(const math::BezierPoint& p);
+    void set_index(int index);
+    void set_has_tan_in(bool show);
+    void set_has_tan_out(bool show);
+
+
     MoveHandle pos{nullptr, MoveHandle::Any, MoveHandle::Diamond, 8};
     MoveHandle tan_in{nullptr, MoveHandle::Any, MoveHandle::Circle, 6};
     MoveHandle tan_out{nullptr, MoveHandle::Any, MoveHandle::Circle, 6};
 
     int index_;
     math::BezierPoint point_;
+    bool has_tan_in = true;
+    bool has_tan_out = true;
+    friend class BezierItem;
 };
 
 
@@ -75,6 +85,9 @@ public:
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget*) override;
 
     void set_type(int index, math::BezierPointType type);
+
+    model::AnimatedProperty<math::Bezier>* target_property() const;
+    model::DocumentNode* target_object() const;
 
 public slots:
     void set_bezier(const math::Bezier& bez);
