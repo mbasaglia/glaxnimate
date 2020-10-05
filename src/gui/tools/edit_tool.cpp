@@ -6,6 +6,7 @@
 #include "model/shapes/shape.hpp"
 #include "graphics/bezier_item.hpp"
 #include "graphics/item_data.hpp"
+#include "command/animation_commands.hpp"
 
 namespace tools {
 
@@ -30,11 +31,47 @@ private:
 
     struct Selection
     {
-        std::set<graphics::BezierItem*> selected;
+        struct SelectedBezier
+        {
+            graphics::BezierItem* item;
+            QTransform transform;
+            QPointF start_point;
+
+            SelectedBezier(graphics::BezierItem* item)
+                : item(item)
+            {}
+
+            void start_drag(const QPointF& drag_start_point)
+            {
+                transform = item->target_object()->docnode_fuzzy_parent()->transform_matrix(item->target_object()->time()).inverted();
+                start_point = transform.map(drag_start_point);
+            }
+
+            void drag(
+                const QPointF& scene_pos,
+                std::vector<model::AnimatableBase*>& props,
+                QVariantList& before,
+                QVariantList& after
+            )
+            {
+                props.push_back(item->target_property());
+
+                math::Bezier bezier = item->bezier();
+                before.push_back(QVariant::fromValue(bezier));
+
+                QPointF pos = transform.map(scene_pos);
+                QPointF delta = pos - start_point;
+                for ( int i : item->selected_indices() )
+                    bezier[i].translate(delta);
+                after.push_back(QVariant::fromValue(bezier));
+                start_point = pos;
+            }
+        };
+
+        std::map<graphics::BezierItem*, SelectedBezier> selected;
         QPointer<graphics::BezierPointItem> initial = nullptr;
 
         QPointF drag_start;
-        QPointF drag_last;
 
         bool empty() const
         {
@@ -44,8 +81,8 @@ private:
         void clear()
         {
             initial = nullptr;
-            for ( auto item : selected )
-                item->clear_selected_indices();
+            for ( const auto& p : selected )
+                p.second.item->clear_selected_indices();
             selected.clear();
         }
 
@@ -66,7 +103,8 @@ private:
         {
             auto parent = static_cast<graphics::BezierPointItem*>(item->parentItem());
             auto grandpa = parent->parent_editor();
-            if ( selected.find(grandpa) == selected.end() )
+            auto it = selected.find(grandpa);
+            if ( it == selected.end() )
             {
                 add_bezier_item(grandpa);
                 grandpa->select_index(parent->index());
@@ -74,15 +112,43 @@ private:
             else
             {
                 grandpa->toggle_index(parent->index());
+                if ( grandpa->selected_indices().empty() )
+                    selected.erase(it);
             }
         }
 
         void add_bezier_item(graphics::BezierItem* item)
         {
-            selected.emplace(item);
+            selected.emplace(item, SelectedBezier(item));
             QObject::connect(item, &QObject::destroyed, item, [this, item]{
                 selected.erase(item);
             });
+        }
+
+        void start_drag()
+        {
+            for ( auto& p : selected )
+                p.second.start_drag(drag_start);
+        }
+
+        void drag(const MouseEvent& event, bool commit)
+        {
+            std::vector<model::AnimatableBase*> props;
+            QVariantList before;
+            QVariantList after;
+
+            for ( auto& p : selected )
+            {
+                p.second.drag(event.scene_pos, props, before, after);
+            }
+
+            event.window->document()->push_command(new command::SetMultipleAnimated(
+                QObject::tr("Drag nodes"),
+                props,
+                before,
+                after,
+                commit
+            ));
         }
     };
 
@@ -101,7 +167,7 @@ private:
                 if ( clicked_on.handle->role() == graphics::MoveHandle::Vertex )
                 {
                     drag_mode = VertexClick;
-                    selection.drag_start = selection.drag_last = event.scene_pos;
+                    selection.drag_start = event.scene_pos;
                     selection.initial = static_cast<graphics::BezierPointItem*>(clicked_on.handle->parentItem());
                 }
                 else
@@ -132,9 +198,12 @@ private:
                     break;
                 case VertexClick:
                     drag_mode = VertexDrag;
+                    if ( selection.initial && !selection.initial->parent_editor()->selected_indices().count(selection.initial->index()) )
+                        selection.add_handle(selection.initial);
+                    selection.start_drag();
                     [[fallthrough]];
                 case VertexDrag:
-                    selection.drag_last = event.scene_pos;
+                    selection.drag(event, false);
                     break;
             }
         }
@@ -213,8 +282,11 @@ private:
                             selection.clear();
                         selection.toggle_handle(handle_under_mouse(event));
                     }
+                    selection.initial = nullptr;
                     break;
                 case VertexDrag:
+                    selection.drag(event, true);
+                    selection.initial = nullptr;
                     break;
             }
         }

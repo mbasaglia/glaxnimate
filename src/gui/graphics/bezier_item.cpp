@@ -400,3 +400,7 @@ void graphics::BezierItem::toggle_index(int i)
         select_index(i);
 }
 
+const math::Bezier & graphics::BezierItem::bezier() const
+{
+    return bezier_;
+}

@@ -95,6 +95,7 @@ public:
     void deselect_index(int i);
     void toggle_index(int i);
 
+    const math::Bezier& bezier() const;
 
 public slots:
     void set_bezier(const math::Bezier& bez);
