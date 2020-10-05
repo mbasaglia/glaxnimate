@@ -54,6 +54,8 @@ public:
     std::vector<app::scripting::ScriptContext> script_contexts;
 
     tools::Tool* active_tool = nullptr;
+    std::map<QString, std::vector<QWidget*>> tool_widgets;
+    std::map<QString, std::vector<QAction*>> tool_actions;
 
     // "set and forget" kida variables
     int autosave_timer = 0;

@@ -95,31 +95,28 @@
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menu_path">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
     <property name="title">
      <string>&amp;Path</string>
     </property>
     <addaction name="separator"/>
-    <addaction name="actionObject_to_Path"/>
+    <addaction name="action_object_to_path"/>
     <addaction name="separator"/>
-    <addaction name="action_Add"/>
-    <addaction name="action_Subtract"/>
-    <addaction name="action_Intersect"/>
-    <addaction name="action_XOR"/>
+    <addaction name="action_path_add"/>
+    <addaction name="action_path_subtract"/>
+    <addaction name="action_path_intersect"/>
+    <addaction name="action_path_xor"/>
     <addaction name="separator"/>
-    <addaction name="action_Reverse"/>
+    <addaction name="action_path_reverse"/>
     <addaction name="separator"/>
-    <addaction name="actionAdd_Node"/>
-    <addaction name="action_Remove_Node"/>
+    <addaction name="action_node_add"/>
+    <addaction name="action_node_remove"/>
     <addaction name="separator"/>
-    <addaction name="action_Join_Nodes"/>
-    <addaction name="actionS_plit_Nodes"/>
+    <addaction name="action_node_join"/>
+    <addaction name="action_node_split"/>
     <addaction name="separator"/>
-    <addaction name="action_Corner"/>
-    <addaction name="action_Smooth"/>
-    <addaction name="actionSy_mmetric"/>
+    <addaction name="action_node_type_corner"/>
+    <addaction name="action_node_type_smooth"/>
+    <addaction name="action_node_type_symmetric"/>
    </widget>
    <widget class="QMenu" name="menu_edit">
     <property name="title">
@@ -713,6 +710,25 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QToolBar" name="toolbar_node">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_node_type_corner"/>
+   <addaction name="action_node_type_smooth"/>
+   <addaction name="action_node_type_symmetric"/>
+   <addaction name="separator"/>
+   <addaction name="action_node_remove"/>
+  </widget>
   <action name="action_new">
    <property name="icon">
     <iconset theme="document-new">
@@ -929,7 +945,10 @@
     <string>New &amp;Pre Composition</string>
    </property>
   </action>
-  <action name="action_Add">
+  <action name="action_path_add">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="path-union">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -938,7 +957,10 @@
     <string>&amp;Union</string>
    </property>
   </action>
-  <action name="action_Subtract">
+  <action name="action_path_subtract">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="path-difference">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -947,7 +969,10 @@
     <string>&amp;Difference</string>
    </property>
   </action>
-  <action name="action_Intersect">
+  <action name="action_path_intersect">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="path-intersection">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -956,7 +981,10 @@
     <string>&amp;Intersect</string>
    </property>
   </action>
-  <action name="action_XOR">
+  <action name="action_path_xor">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="path-exclusion">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -965,7 +993,10 @@
     <string>E&amp;xclusion</string>
    </property>
   </action>
-  <action name="action_Reverse">
+  <action name="action_path_reverse">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="path-reverse">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -974,7 +1005,10 @@
     <string>Re&amp;verse</string>
    </property>
   </action>
-  <action name="actionObject_to_Path">
+  <action name="action_object_to_path">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="object-to-path">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -983,7 +1017,10 @@
     <string>Object to &amp;Path</string>
    </property>
   </action>
-  <action name="actionAdd_Node">
+  <action name="action_node_add">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="format-add-node">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -992,16 +1029,25 @@
     <string>Add &amp;Node</string>
    </property>
   </action>
-  <action name="action_Remove_Node">
+  <action name="action_node_remove">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="format-remove-node">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
-    <string>&amp;Remove Node</string>
+    <string>&amp;Delete Nodes</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete Nodes</string>
    </property>
   </action>
-  <action name="action_Join_Nodes">
+  <action name="action_node_join">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="format-join-node">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1010,7 +1056,10 @@
     <string>&amp;Join Nodes</string>
    </property>
   </action>
-  <action name="actionS_plit_Nodes">
+  <action name="action_node_split">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="format-break-node">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1019,7 +1068,10 @@
     <string>S&amp;plit Nodes</string>
    </property>
   </action>
-  <action name="action_Corner">
+  <action name="action_node_type_corner">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="node-type-cusp">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1028,7 +1080,10 @@
     <string>&amp;Cusp</string>
    </property>
   </action>
-  <action name="action_Smooth">
+  <action name="action_node_type_smooth">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="node-type-smooth">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1037,7 +1092,10 @@
     <string>&amp;Smooth</string>
    </property>
   </action>
-  <action name="actionSy_mmetric">
+  <action name="action_node_type_symmetric">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="node-type-auto-smooth">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1387,7 +1445,8 @@
   </action>
   <action name="action_import_image">
    <property name="icon">
-    <iconset theme="insert-image"/>
+    <iconset theme="insert-image">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Import Image...</string>

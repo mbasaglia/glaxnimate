@@ -107,6 +107,15 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         }
         ui.menu_tools->addSeparator();
     }
+    tool_widgets["edit"] = {
+        ui.toolbar_node
+    };
+    this->tool_actions["edit"] = {
+        ui.action_node_remove,
+        ui.action_node_type_corner,
+        ui.action_node_type_smooth,
+        ui.action_node_type_symmetric,
+    };
 
     // Item views
     ui.view_document_node->setModel(&document_node_model);
@@ -207,7 +216,6 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.view_logs->setItemDelegateForColumn(2, del);
 
     // Swatches
-
     palette_model.setSearchPaths(app::Application::instance()->data_paths_unchecked("palettes"));
     palette_model.setSavePath(app::Application::instance()->writable_data_path("palettes"));
     palette_model.load();
@@ -270,6 +278,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
         parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
     }
+
+    // Hide tool widgets, as they might get shown by restoreState
+    ui.toolbar_node->setVisible(false);
 }
 
 void GlaxnimateWindow::Private::retranslateUi(QMainWindow* parent)
@@ -451,6 +462,32 @@ void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
 
     if ( !tool->get_action()->isChecked() )
         tool->get_action()->setChecked(true);
+
+    if ( active_tool )
+    {
+        for ( const auto& widget : tool_widgets[active_tool->id()] )
+        {
+            widget->setVisible(false);
+            widget->setEnabled(false);
+        }
+
+        for ( const auto& action : tool_actions[active_tool->id()] )
+        {
+            action->setEnabled(false);
+        }
+    }
+
+
+    for ( const auto& widget : tool_widgets[tool->id()] )
+    {
+        widget->setVisible(true);
+        widget->setEnabled(true);
+    }
+
+    for ( const auto& action : tool_actions[tool->id()] )
+    {
+        action->setEnabled(true);
+    }
 
     active_tool = tool;
     ui.graphics_view->set_active_tool(tool);
