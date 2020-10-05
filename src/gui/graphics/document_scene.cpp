@@ -443,3 +443,7 @@ void graphics::DocumentScene::hide_editors(model::DocumentNode* node, bool recur
 }
 
 
+bool graphics::DocumentScene::has_editors(model::DocumentNode* node) const
+{
+    return d->node_to_editors.find(node) != d->node_to_editors.end();
+}

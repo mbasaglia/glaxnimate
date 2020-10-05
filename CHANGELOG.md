@@ -6,6 +6,7 @@
     * Right clicking with the select tool shows actions for all the objects under the mouse
     * The shape editing tool now shows a context menu when right-clicking on nodes
     * The select tool now can only modify transforms, all other editing operations are done by the edit tool
+    * The select tool will show an outline for selected shapes (that are not groups)
 * I/O:
     * Paste images
 * Bug Fixes:

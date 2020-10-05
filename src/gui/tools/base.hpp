@@ -174,6 +174,7 @@ protected:
     };
 
     UnderMouse under_mouse(const MouseEvent& event, bool only_selectable, SelectionMode mode) const;
+    graphics::MoveHandle* handle_under_mouse(const MouseEvent& event) const;
 
     virtual QWidget* on_create_widget() = 0;
     virtual void on_translate() {}

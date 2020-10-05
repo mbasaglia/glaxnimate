@@ -70,6 +70,22 @@ tools::Tool::UnderMouse tools::Tool::under_mouse(const tools::MouseEvent& event,
     return ret;
 }
 
+graphics::MoveHandle * tools::Tool::handle_under_mouse(const tools::MouseEvent& event) const
+{
+
+    for ( auto item : event.scene->items(event.scene_pos, Qt::IntersectsItemShape, Qt::DescendingOrder, event.view->viewportTransform()) )
+    {
+        if ( !(item->flags() & (QGraphicsItem::ItemIsSelectable|QGraphicsItem::ItemIsFocusable)) )
+            continue;
+
+        if ( item->data(graphics::ItemData::HandleRole).toInt() )
+            return static_cast<graphics::MoveHandle*>(item);
+    }
+
+    return nullptr;
+}
+
+
 void tools::Tool::edit_clicked(const tools::MouseEvent& event)
 {
     auto mode = event.modifiers() & Qt::ControlModifier ? SelectionMode::Shape : SelectionMode::Group;

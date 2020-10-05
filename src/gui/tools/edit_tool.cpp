@@ -1,9 +1,11 @@
 #include "base.hpp"
 
 #include <QMenu>
+#include <QPointer>
 
 #include "model/shapes/shape.hpp"
 #include "graphics/bezier_item.hpp"
+#include "graphics/item_data.hpp"
 
 namespace tools {
 
@@ -22,13 +24,66 @@ private:
         Click,
         RubberBand,
         ForwardEvents,
+        VertexClick,
+        VertexDrag,
     };
 
     struct Selection
     {
-        model::DocumentNode* owner;
-        model::AnimatedProperty<math::Bezier>* property;
-        std::vector<int> indices;
+        std::set<graphics::BezierItem*> selected;
+        QPointer<graphics::BezierPointItem> initial = nullptr;
+
+        QPointF drag_start;
+        QPointF drag_last;
+
+        bool empty() const
+        {
+            return selected.empty();
+        }
+
+        void clear()
+        {
+            initial = nullptr;
+            for ( auto item : selected )
+                item->clear_selected_indices();
+            selected.clear();
+        }
+
+        void add_handle(QGraphicsItem* item)
+        {
+            auto role = graphics::MoveHandle::HandleRole(item->data(graphics::ItemData::HandleRole).toInt());
+            if ( role != graphics::MoveHandle::Vertex )
+                return;
+
+            auto parent = static_cast<graphics::BezierPointItem*>(item->parentItem());
+            auto grandpa = parent->parent_editor();
+            if ( selected.find(grandpa) == selected.end() )
+                add_bezier_item(grandpa);
+            grandpa->select_index(parent->index());
+        }
+
+        void toggle_handle(graphics::MoveHandle* item)
+        {
+            auto parent = static_cast<graphics::BezierPointItem*>(item->parentItem());
+            auto grandpa = parent->parent_editor();
+            if ( selected.find(grandpa) == selected.end() )
+            {
+                add_bezier_item(grandpa);
+                grandpa->select_index(parent->index());
+            }
+            else
+            {
+                grandpa->toggle_index(parent->index());
+            }
+        }
+
+        void add_bezier_item(graphics::BezierItem* item)
+        {
+            selected.emplace(item);
+            QObject::connect(item, &QObject::destroyed, item, [this, item]{
+                selected.erase(item);
+            });
+        }
     };
 
     void mouse_press(const MouseEvent& event) override
@@ -43,9 +98,17 @@ private:
             auto clicked_on = under_mouse(event, true, SelectionMode::Shape);
             if ( clicked_on.handle )
             {
-                drag_mode = ForwardEvents;
-                event.forward_to_scene();
-                return;
+                if ( clicked_on.handle->role() == graphics::MoveHandle::Vertex )
+                {
+                    drag_mode = VertexClick;
+                    selection.drag_start = selection.drag_last = event.scene_pos;
+                    selection.initial = static_cast<graphics::BezierPointItem*>(clicked_on.handle->parentItem());
+                }
+                else
+                {
+                    drag_mode = ForwardEvents;
+                    event.forward_to_scene();
+                }
             }
         }
     }
@@ -67,6 +130,12 @@ private:
                 case RubberBand:
                     rubber_p2 = event.event->localPos();
                     break;
+                case VertexClick:
+                    drag_mode = VertexDrag;
+                    [[fallthrough]];
+                case VertexDrag:
+                    selection.drag_last = event.scene_pos;
+                    break;
             }
         }
         else if ( event.buttons() == Qt::NoButton )
@@ -76,11 +145,9 @@ private:
             {
                 if ( auto path = node->node()->cast<model::Shape>() )
                 {
-                    if ( !event.scene->is_selected(path) )
-                    {
+                    if ( !event.scene->has_editors(path) )
                         highlight = path;
-                        break;
-                    }
+                    break;
                 }
             }
         }
@@ -98,14 +165,27 @@ private:
                     event.forward_to_scene();
                     break;
                 case RubberBand:
+                {
                     rubber_p2 = event.event->localPos();
                     drag_mode = None;
+                    if ( !(event.modifiers() & Qt::ShiftModifier) )
+                        selection.clear();
+                    auto items = event.scene->items(
+                        event.view->mapToScene(
+                            QRect(rubber_p1.toPoint(), rubber_p2.toPoint()).normalized().normalized()
+                        ),
+                        Qt::IntersectsItemShape,
+                        Qt::DescendingOrder,
+                        event.view->viewportTransform()
+                    );
+                    for ( auto item : items )
+                        selection.add_handle(item);
                     event.view->viewport()->update();
                     break;
+                }
                 case Click:
                 {
                     std::vector<model::DocumentNode*> selection;
-
 
                     auto nodes = under_mouse(event, true, SelectionMode::Group).nodes;
 
@@ -117,7 +197,25 @@ private:
                         mode = graphics::DocumentScene::Toggle;
 
                     event.scene->user_select(selection, mode);
+                    break;
                 }
+                case VertexClick:
+                    if ( event.modifiers() & Qt::ControlModifier )
+                    {
+                        if ( selection.initial->point().type == math::BezierPointType::Corner )
+                            selection.initial->set_point_type(math::BezierPointType::Smooth);
+                        else
+                            selection.initial->set_point_type(math::BezierPointType::Corner);
+                    }
+                    else
+                    {
+                        if ( !(event.modifiers() & Qt::ShiftModifier) )
+                            selection.clear();
+                        selection.toggle_handle(handle_under_mouse(event));
+                    }
+                    break;
+                case VertexDrag:
+                    break;
             }
         }
         else if ( event.button() == Qt::RightButton )
@@ -131,7 +229,7 @@ private:
 
     void paint(const PaintEvent& event) override
     {
-        /*if ( drag_mode == RubberBand )
+        if ( drag_mode == RubberBand )
         {
             event.painter->setBrush(Qt::transparent);
             QColor select_color = event.view->palette().color(QPalette::Highlight);
@@ -142,7 +240,7 @@ private:
             event.painter->setBrush(select_color);
             event.painter->drawRect(QRectF(rubber_p1, rubber_p2));
         }
-        else*/ if ( highlight )
+        else if ( highlight )
         {
             QColor select_color = event.view->palette().color(QPalette::Highlight);
             QPen pen(select_color, 1);
@@ -276,7 +374,7 @@ private:
     QPointF rubber_p1;
     QPointF rubber_p2;
     model::Shape* highlight = nullptr;
-    std::vector<Selection> selection;
+    Selection selection;
 
     static Autoreg<EditTool> autoreg;
 };

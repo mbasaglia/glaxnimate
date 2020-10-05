@@ -13,7 +13,6 @@ graphics::BezierPointItem::BezierPointItem(int index, const math::BezierPoint& p
     connect(&tan_out, &MoveHandle::drag_finished, this, &BezierPointItem::on_commit);
     connect(&pos, &MoveHandle::dragged, this, &BezierPointItem::pos_dragged);
     connect(&pos, &MoveHandle::drag_finished, this, &BezierPointItem::on_commit);
-    connect(&pos, &MoveHandle::clicked, this, &BezierPointItem::pos_clicked);
 
     pos.setParentItem(this);
     tan_in.setParentItem(this);
@@ -172,17 +171,6 @@ void graphics::BezierPointItem::on_commit()
     on_modified(true);
 }
 
-void graphics::BezierPointItem::pos_clicked(Qt::KeyboardModifiers mod)
-{
-    if ( mod & Qt::ControlModifier )
-    {
-        if ( point_.type == math::BezierPointType::Corner )
-            set_point_type(math::BezierPointType::Smooth);
-        else
-            set_point_type(math::BezierPointType::Corner);
-    }
-}
-
 void graphics::BezierPointItem::drag_preserve_angle(QPointF& dragged, QPointF& other, const QPointF& dragged_new)
 {
     QPointF rel_other = other - point_.pos;
@@ -284,13 +272,18 @@ void graphics::BezierItem::set_bezier(const math::Bezier& bez)
 
     // Bezier has fewer points, remove excess
     if ( old_size > bezier_.size() )
+    {
+        for ( int i = bezier_.size(); i < int(items.size()); i++ )
+            selected_indices_.erase(i);
         items.erase(items.begin() + bezier_.size(), items.end());
+    }
 
     // Update points
     for ( int i = 0; i < int(items.size()); i++ )
     {
         items[i]->set_index(i);
         items[i]->set_point(bezier_[i]);
+        items[i]->pos.setSelected(selected_indices_.count(i));
     }
 
     // Bezier has more points, add missing
@@ -321,9 +314,11 @@ void graphics::BezierItem::remove_point(int index)
     for ( int i = index + 1; i < int(items.size()); i++ )
         items[i]->set_index(i-1);
 
+    selected_indices_.erase(index);
     items.erase(items.begin() + index);
     if ( !bezier_.closed() )
         items.back()->set_has_tan_out(false);
+
 
     do_update(true, tr("Remove Point"));
 }
@@ -365,3 +360,43 @@ model::DocumentNode* graphics::BezierItem::target_object() const
 {
     return node;
 }
+
+const std::set<int> & graphics::BezierItem::selected_indices()
+{
+    return selected_indices_;
+}
+
+void graphics::BezierItem::clear_selected_indices()
+{
+    for ( const auto& item : items )
+        item->pos.setSelected(false);
+    selected_indices_.clear();
+}
+
+void graphics::BezierItem::select_index(int i)
+{
+    if ( !selected_indices_.count(i) && i >= 0 && i < int(items.size()) )
+    {
+        selected_indices_.insert(i);
+        items[i]->pos.setSelected(true);
+    }
+}
+
+void graphics::BezierItem::deselect_index(int i)
+{
+    if ( selected_indices_.count(i) )
+    {
+        selected_indices_.erase(i);
+        if ( i >= 0 && i < int(items.size()) )
+            items[i]->pos.setSelected(false);
+    }
+}
+
+void graphics::BezierItem::toggle_index(int i)
+{
+    if ( selected_indices_.count(i) )
+        deselect_index(i);
+    else
+        select_index(i);
+}
+

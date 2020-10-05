@@ -49,6 +49,7 @@ graphics::MoveHandle::MoveHandle(
         dont_move, color_rest, color_highlighted, color_selected, color_border}))
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
+    setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
     setAcceptedMouseButtons(Qt::LeftButton);
 
@@ -77,13 +78,15 @@ void graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGraphicsIt
 {
     painter->save();
 
-    qreal radius = hasFocus() ? d->external_radius() : d->radius;
+    qreal radius = hasFocus() || ( isSelected() && isUnderMouse() ) ? d->external_radius() : d->radius;
 
     painter->setPen(QPen(d->color_border, 1));
     if ( hasFocus() )
         painter->setBrush(d->color_selected);
     else if ( isUnderMouse() )
         painter->setBrush(d->color_highlighted);
+    else if ( isSelected() )
+        painter->setBrush(d->color_selected);
     else
         painter->setBrush(d->color_rest);
 

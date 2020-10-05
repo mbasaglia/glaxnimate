@@ -1,5 +1,7 @@
 #pragma once
 
+#include<set>
+
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
@@ -50,8 +52,6 @@ private slots:
     void on_modified(bool commit, const QString& name="");
     void on_commit();
 
-    void pos_clicked(Qt::KeyboardModifiers mod);
-
 private:
     void drag_preserve_angle(QPointF& dragged, QPointF& other, const QPointF& dragged_new);
 
@@ -89,6 +89,13 @@ public:
     model::AnimatedProperty<math::Bezier>* target_property() const;
     model::DocumentNode* target_object() const;
 
+    const std::set<int>& selected_indices();
+    void clear_selected_indices();
+    void select_index(int i);
+    void deselect_index(int i);
+    void toggle_index(int i);
+
+
 public slots:
     void set_bezier(const math::Bezier& bez);
 
@@ -105,6 +112,7 @@ private:
     std::vector<std::unique_ptr<BezierPointItem>> items;
     model::Path* node;
     utils::PseudoMutex updating;
+    std::set<int> selected_indices_;
 };
 
 

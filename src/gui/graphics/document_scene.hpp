@@ -45,6 +45,7 @@ public:
     bool is_descendant_of_selection(model::DocumentNode* node) const;
     void show_editors(model::DocumentNode* node);
     void hide_editors(model::DocumentNode* node, bool recursive, bool if_not_selected);
+    bool has_editors(model::DocumentNode* node) const;
 
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const;
 
