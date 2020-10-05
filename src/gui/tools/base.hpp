@@ -13,9 +13,6 @@
 #include "widgets/glaxnimate_graphics_view.hpp"
 #include "widgets/scalable_button.hpp"
 #include "widgets/dialogs/glaxnimate_window.hpp"
-#include "app/settings/setting.hpp"
-#include "app/settings/widget_builder.hpp"
-
 
 namespace tools {
 
@@ -97,7 +94,6 @@ public:
     virtual QString name() const = 0;
     virtual QString tooltip() const { return name(); }
     virtual QKeySequence key_sequence() const = 0;
-    virtual app::settings::SettingList settings() const = 0;
 
     QAction* get_action()
     {
@@ -153,7 +149,6 @@ public:
         button->setText(name());
         button->setToolTip(QObject::tr("%1 (%2)").arg(name()).arg(key_sequence().toString()));
 
-        app::settings::WidgetBuilder().translate_widgets(settings(), settings_widget);
         on_translate();
     }
 
@@ -178,13 +173,7 @@ protected:
 
     UnderMouse under_mouse(const MouseEvent& event, bool only_selectable, SelectionMode mode) const;
 
-    virtual QWidget* on_create_widget()
-    {
-        QWidget* widget = new QWidget();
-        QFormLayout* layout = new QFormLayout(widget);
-        app::settings::WidgetBuilder().add_widgets(settings(), widget, layout, settings_values);
-        return widget;
-    }
+    virtual QWidget* on_create_widget() = 0;
 
     virtual void on_translate() {}
 

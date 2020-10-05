@@ -9,7 +9,6 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("draw-freehand"); }
     QString name() const override { return QObject::tr("Draw Freehand"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F6"), QKeySequence::PortableText); }
-    app::settings::SettingList settings() const override { return {}; }
 
     void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_move(const MouseEvent& event) override { Q_UNUSED(event); }

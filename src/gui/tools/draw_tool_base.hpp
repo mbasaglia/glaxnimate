@@ -15,8 +15,6 @@ namespace tools {
 class DrawToolBase : public Tool
 {
 public:
-    app::settings::SettingList settings() const override { return {}; }
-
     QCursor cursor() override { return Qt::CrossCursor; }
 
 protected:

@@ -14,7 +14,6 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("edit-node"); }
     QString name() const override { return QObject::tr("Edit"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F2"), QKeySequence::PortableText); }
-    app::settings::SettingList settings() const override { return {}; }
 
 private:
     enum DragMode
@@ -281,6 +280,11 @@ private:
         }
 
         menu.exec(QCursor::pos());
+    }
+
+    QWidget* on_create_widget() override
+    {
+        return new QWidget();
     }
 
 private:

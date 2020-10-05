@@ -12,7 +12,6 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("color-picker"); }
     QString name() const override { return QObject::tr("Color Picker"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F7"), QKeySequence::PortableText); }
-    app::settings::SettingList settings() const override { return {}; }
 
     void mouse_move(const MouseEvent& event) override
     {
