@@ -234,14 +234,9 @@ private:
                     std::vector<model::DocumentNode*> selection;
 
                     auto selection_mode = event.modifiers() & Qt::ControlModifier ? SelectionMode::Shape : SelectionMode::Group;
-                    for ( auto node : under_mouse(event, true, selection_mode).nodes )
-                    {
-                        if ( node->selection_mode() != SelectionMode::None )
-                        {
-                            selection.push_back(node->node());
-                            break;
-                        }
-                    }
+                    auto nodes = under_mouse(event, true, selection_mode).nodes;
+                    if ( !nodes.empty() )
+                        selection.push_back(nodes[0]->node());
 
                     auto mode = graphics::DocumentScene::Replace;
                     if ( event.modifiers() & Qt::ShiftModifier )
@@ -283,6 +278,21 @@ private:
 
     void paint(const PaintEvent& event) override
     {
+        if ( !selected_shapes.empty() )
+        {
+            QColor select_color = event.view->palette().color(QPalette::Highlight);
+            QPen pen(select_color, 1);
+            event.painter->setPen(pen);
+            event.painter->setBrush(Qt::NoBrush);
+            for ( auto shape : selected_shapes )
+            {
+                QPainterPath p;
+                shape->to_bezier(shape->time()).add_to_painter_path(p);
+                QTransform trans = shape->transform_matrix(shape->time()) * event.view->viewportTransform();
+                event.painter->drawPath(trans.map(p));
+            }
+        }
+
         if ( drag_mode == DrawSelect )
         {
             event.painter->setTransform(event.view->viewportTransform());
@@ -306,7 +316,7 @@ private:
     }
 
     void enable_event(const Event& event) override { Q_UNUSED(event); }
-    void disable_event(const Event& event) override { Q_UNUSED(event); }
+    void disable_event(const Event&) override { selected_shapes.clear(); }
 
     QCursor cursor() override { return Qt::ArrowCursor; }
 
@@ -381,8 +391,35 @@ private:
     void on_selected(graphics::DocumentScene * scene, model::DocumentNode * node) override
     {
         if ( node->has("transform") )
+        {
             scene->show_editors(node);
+        }
+        else if ( auto shape = node->cast<model::Shape>() )
+        {
+            selected_shapes.push_back(shape);
+            scene->invalidate(
+                shape->transform_matrix(shape->time())
+                .map(shape->local_bounding_rect(shape->time()))
+                .boundingRect()
+            );
+        }
     }
+
+    void on_deselected(graphics::DocumentScene * scene, model::DocumentNode * node) override
+    {
+        Tool::on_deselected(scene, node);
+
+        if ( auto shape = node->cast<model::Shape>() )
+        {
+            selected_shapes.erase(std::remove(selected_shapes.begin(), selected_shapes.end(), shape), selected_shapes.end());
+            scene->invalidate(
+                shape->transform_matrix(shape->time())
+                .map(shape->local_bounding_rect(shape->time()))
+                .boundingRect()
+            );
+        }
+    }
+
 
     DragMode drag_mode;
     QPainterPath draw_path;
@@ -390,6 +427,7 @@ private:
     QPointF rubber_p2;
     std::vector<DragObjectData> drag_data;
     model::DocumentNode* replace_selection = nullptr;
+    std::vector<model::Shape*> selected_shapes;
 
     static Autoreg<SelectTool> autoreg;
 };
