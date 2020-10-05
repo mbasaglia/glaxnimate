@@ -18,13 +18,25 @@ public:
 
     void remove_selection(model::DocumentNode* node)
     {
-        auto it = node_to_editors.find(node);
-        if ( it != node_to_editors.end() )
-            node_to_editors.erase(it);
+        remove_editors(node, false, false);
 
         auto it2 = selection_find(node);
         if ( it2 != selection.end() )
             selection.erase(it2);
+    }
+
+    void remove_editors(model::DocumentNode* node, bool recursive, bool check_selection)
+    {
+        auto it = node_to_editors.find(node);
+        if ( it != node_to_editors.end() )
+            node_to_editors.erase(it);
+
+        if ( recursive )
+        {
+            for ( auto child: node->docnode_children() )
+                if ( !check_selection || selection_find(child) == selection.end() )
+                    remove_editors(child, true, check_selection);
+        }
     }
 
     void remove_selection_recursive(model::DocumentNode* node)
@@ -150,7 +162,7 @@ void graphics::DocumentScene::disconnect_node ( model::DocumentNode* node )
     for ( model::DocumentNode* child : node->docnode_children() )
         disconnect_node(child);
 
-    d->remove_selection(node);
+    d->remove_selection_recursive(node);
 
     auto item = d->node_to_item.find(node);
     if ( item != d->node_to_item.end() )
@@ -170,14 +182,15 @@ void graphics::DocumentScene::add_selection(model::DocumentNode* node)
         return;
 
     d->selection.push_back(node);
-    if ( d->tool && d->tool->show_editors(node) && !node->docnode_locked_recursive() )
-        show_editors(node);
+
+    d->tool->on_selected(this, node);
 }
 
 
 void graphics::DocumentScene::remove_selection(model::DocumentNode* node)
 {
     d->remove_selection(node);
+    d->tool->on_deselected(this, node);
 }
 
 void graphics::DocumentScene::toggle_selection(model::DocumentNode* node)
@@ -289,6 +302,9 @@ void graphics::DocumentScene::user_select(const std::vector<model::DocumentNode 
         d->selection.end()
     );
 
+    for ( auto old_sel : *deselected )
+        d->tool->on_deselected(this, old_sel);
+
     for ( auto new_sel : *selected )
         add_selection(new_sel);
 
@@ -370,32 +386,23 @@ const std::vector<model::DocumentNode *> & graphics::DocumentScene::selection() 
 
 void graphics::DocumentScene::show_editors(model::DocumentNode* node)
 {
-    if ( auto item = d->item_factory.make_graphics_editor(node) )
+    if ( !d->node_to_editors.count(node) )
     {
-        item->setZValue(Private::editor_z);
-        addItem(item.get());
-        d->node_to_editors.emplace(node, std::move(item));
+        if ( auto item = d->item_factory.make_graphics_editor(node) )
+        {
+            item->setZValue(Private::editor_z);
+            addItem(item.get());
+            d->node_to_editors.emplace(node, std::move(item));
+        }
     }
 }
 
 void graphics::DocumentScene::set_active_tool(tools::Tool* tool)
 {
     d->tool = tool;
-
-    for ( auto node : d->selection )
-    {
-        if ( tool->show_editors(node) && !d->node_to_editors.count(node) )
-            show_editors(node);
-    }
-
-    for ( auto it = d->node_to_editors.begin(); it != d->node_to_editors.end(); )
-    {
-        if ( !tool->show_editors(it->first) )
-            it = d->node_to_editors.erase(it);
-        else
-            ++it;
-    }
-
+    d->node_to_editors.clear();
+    for ( auto node : selection() )
+        d->tool->on_selected(this, node);
 }
 
 void graphics::DocumentScene::move_node(model::DocumentNode* node, int, int)
@@ -429,3 +436,10 @@ void graphics::DocumentScene::drawBackground(QPainter* painter, const QRectF& re
     painter->fillRect(rect.intersected(QRectF(QPointF(0, 0), d->document->size())), d->back);
 
 }
+
+void graphics::DocumentScene::hide_editors(model::DocumentNode* node, bool recursive, bool if_not_selected)
+{
+    d->remove_editors(node, recursive, if_not_selected);
+}
+
+

@@ -18,7 +18,6 @@ public:
     void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
     void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
-    bool show_editors(model::DocumentNode* node) const override { Q_UNUSED(node); return true; }
     void enable_event(const Event& event) override { Q_UNUSED(event); }
     void disable_event(const Event& event) override { Q_UNUSED(event); }
 

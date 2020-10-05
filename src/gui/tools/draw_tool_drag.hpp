@@ -57,7 +57,6 @@ protected:
     void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     void disable_event(const Event& event) override { Q_UNUSED(event); }
     void enable_event(const Event& event) override { Q_UNUSED(event); }
-    bool show_editors(model::DocumentNode*) const override { return false; }
 
     virtual void on_drag_start() = 0;
     virtual void on_drag(const MouseEvent& event) = 0;

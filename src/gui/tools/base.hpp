@@ -77,7 +77,6 @@ struct KeyEvent : public Event
     void accept() const { event->accept(); }
 };
 
-
 using Priority = int;
 
 class Tool
@@ -160,9 +159,12 @@ public:
     virtual void key_press(const KeyEvent& event) = 0;
     virtual void key_release(const KeyEvent& event) = 0;
     virtual QCursor cursor() = 0;
-    virtual bool show_editors(model::DocumentNode* node) const = 0;
     virtual void enable_event(const Event& event) = 0;
     virtual void disable_event(const Event& event) = 0;
+
+
+    virtual void on_selected(graphics::DocumentScene* scene, model::DocumentNode* node) { Q_UNUSED(scene); Q_UNUSED(node); }
+    virtual void on_deselected(graphics::DocumentScene* scene, model::DocumentNode* node);
 
 protected:
     struct UnderMouse
@@ -174,7 +176,6 @@ protected:
     UnderMouse under_mouse(const MouseEvent& event, bool only_selectable, SelectionMode mode) const;
 
     virtual QWidget* on_create_widget() = 0;
-
     virtual void on_translate() {}
 
     QVariantMap settings_values;

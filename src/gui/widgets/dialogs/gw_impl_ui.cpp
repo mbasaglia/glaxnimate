@@ -400,15 +400,15 @@ void GlaxnimateWindow::Private::shutdown()
 
 void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
 {
-    for ( const auto& index : selected.indexes() )
-        if ( index.column() == 0 )
-            if ( auto node = document_node_model.node(index) )
-                scene.add_selection(node);
-
     for ( const auto& index : deselected.indexes() )
         if ( index.column() == 0 )
             if ( auto node = document_node_model.node(index) )
                 scene.remove_selection(node);
+
+    for ( const auto& index : selected.indexes() )
+        if ( index.column() == 0 )
+            if ( auto node = document_node_model.node(index) )
+                scene.add_selection(node);
 }
 
 void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected)

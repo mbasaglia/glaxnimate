@@ -106,14 +106,11 @@ private:
                 {
                     std::vector<model::DocumentNode*> selection;
 
-                    for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
-                    {
-                        if ( node->node()->is_instance<model::Shape>() )
-                        {
-                            selection.push_back(node->node());
-                            break;
-                        }
-                    }
+
+                    auto nodes = under_mouse(event, true, SelectionMode::Group).nodes;
+
+                    if ( !nodes.empty() )
+                        selection.push_back(nodes[0]->node());
 
                     auto mode = graphics::DocumentScene::Replace;
                     if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
@@ -163,41 +160,28 @@ private:
     void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
     QCursor cursor() override { return {}; }
 
-    bool show_editors(model::DocumentNode* node) const override
-    {
-        return node->is_instance<model::Shape>();
-    }
-
-    static void impl_extract_selection_recursive_item(model::DocumentNode* node, std::vector<model::DocumentNode*>& extra)
+    static void impl_extract_selection_recursive_item(graphics::DocumentScene * scene, model::DocumentNode* node)
     {
         auto meta = node->metaObject();
         if ( meta->inherits(&model::Shape::staticMetaObject) )
         {
-            extra.push_back(node);
+            scene->show_editors(node);
         }
         else if ( meta->inherits(&model::Group::staticMetaObject) )
         {
             for ( const auto& sub : static_cast<model::Group*>(node)->shapes )
-                impl_extract_selection_recursive_item(sub.get(), extra);
+                impl_extract_selection_recursive_item(scene, sub.get());
         }
     }
 
-    std::vector<model::DocumentNode *> extract_selection_recursive(graphics::DocumentScene* scene) const
+    void on_selected(graphics::DocumentScene * scene, model::DocumentNode * node) override
     {
-        std::vector<model::DocumentNode*> extra;
-        for ( auto obj : scene->selection() )
-            impl_extract_selection_recursive_item(obj, extra);
-        return extra;
+        impl_extract_selection_recursive_item(scene, node);
     }
 
-    void enable_event(const Event& event) override
+    void enable_event(const Event&) override
     {
         highlight = nullptr;
-
-        /// \todo keep selection and editors separate in the scene, and have each tool
-        /// toggle editors as it sees fit.
-        std::vector<model::DocumentNode*> extra = extract_selection_recursive(event.scene);
-        event.scene->user_select(extra, graphics::DocumentScene::Append);
     }
 
     void disable_event(const Event&) override

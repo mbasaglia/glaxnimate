@@ -305,10 +305,6 @@ private:
         }
     }
 
-    bool show_editors(model::DocumentNode* node) const override
-    {
-        return node->has("transform");
-    }
     void enable_event(const Event& event) override { Q_UNUSED(event); }
     void disable_event(const Event& event) override { Q_UNUSED(event); }
 
@@ -380,6 +376,12 @@ private:
     QWidget* on_create_widget() override
     {
         return new QWidget();
+    }
+
+    void on_selected(graphics::DocumentScene * scene, model::DocumentNode * node) override
+    {
+        if ( node->has("transform") )
+            scene->show_editors(node);
     }
 
     DragMode drag_mode;

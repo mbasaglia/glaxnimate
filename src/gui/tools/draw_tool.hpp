@@ -21,7 +21,6 @@ public:
     void paint(const PaintEvent& event) override;
     void key_press(const KeyEvent& event) override;
     void key_release(const KeyEvent& event) override;
-    bool show_editors(model::DocumentNode* node) const override;
     void enable_event(const Event& event) override { Q_UNUSED(event); }
     void disable_event(const Event& event) override { Q_UNUSED(event); }
 

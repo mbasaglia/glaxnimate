@@ -72,7 +72,8 @@ tools::Tool::UnderMouse tools::Tool::under_mouse(const tools::MouseEvent& event,
 
 void tools::Tool::edit_clicked(const tools::MouseEvent& event)
 {
-    auto clicked_on = under_mouse(event, true, SelectionMode::Shape).nodes;
+    auto mode = event.modifiers() & Qt::ControlModifier ? SelectionMode::Shape : SelectionMode::Group;
+    auto clicked_on = under_mouse(event, true, mode).nodes;
 
     if ( !clicked_on.empty() )
     {
@@ -82,3 +83,9 @@ void tools::Tool::edit_clicked(const tools::MouseEvent& event)
             event.window->switch_tool(Registry::instance().tool("edit"));
     }
 }
+
+void tools::Tool::on_deselected(graphics::DocumentScene* scene, model::DocumentNode* node)
+{
+    scene->hide_editors(node, true, true);
+}
+

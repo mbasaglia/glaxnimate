@@ -193,15 +193,3 @@ void tools::DrawTool::paint(const tools::PaintEvent& event)
         }
     }
 }
-
-bool tools::DrawTool::show_editors(model::DocumentNode*) const
-{
-    return false;
-}
-
-
-
-
-
-
-

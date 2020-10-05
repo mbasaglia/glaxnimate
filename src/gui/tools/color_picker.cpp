@@ -40,8 +40,6 @@ public:
 
     QCursor cursor() override { return Qt::CrossCursor; }
 
-    bool show_editors(model::DocumentNode*) const override { return false; }
-
     void mouse_press(const MouseEvent& event) override { Q_UNUSED(event); }
     void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
     void paint(const PaintEvent& event) override { Q_UNUSED(event); }
