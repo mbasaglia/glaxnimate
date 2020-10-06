@@ -357,6 +357,9 @@ void GlaxnimateWindow::Private::import_image()
 
     auto image = std::make_unique<model::Image>(current_document.get());
     image->image.set(bmp_ptr);
+    QPointF p(bmp_ptr->pixmap().width() / 2.0, bmp_ptr->pixmap().height() / 2.0);
+    image->transform->anchor_point.set(p);
+    image->transform->position.set(p);
     auto comp = current_composition();
     auto select = image.get();
     current_document->push_command(new command::AddShape(&comp->shapes, std::move(image), comp->shapes.size()));

@@ -18,6 +18,7 @@ io/svg/svg_parser.cpp
 io/svg/detail.cpp
 io/svg/svg_format.cpp
 io/mime/mime_serializer.cpp
+io/raster/raster_format.cpp
 io/base.cpp
 
 math/bezier.cpp

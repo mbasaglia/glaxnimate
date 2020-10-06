@@ -4,13 +4,11 @@
 
 #include "model/object.hpp"
 #include "json_mime.hpp"
-#include "raster_mime.hpp"
 #include "io/svg/svg_mime.hpp"
 #include "model/document.hpp"
 
 
 io::Autoreg<io::mime::JsonMime> io::mime::JsonMime::autoreg;
-io::Autoreg<io::mime::RasterMime> io::mime::RasterMime::autoreg;
 io::Autoreg<io::svg::SvgMime> io::svg::SvgMime::autoreg;
 
 

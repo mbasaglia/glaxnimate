@@ -13,7 +13,7 @@
 #include "app_info.hpp"
 #include "io/svg/svg_renderer.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
-#include "io/mime/raster_mime.hpp"
+#include "io/raster/raster_mime.hpp"
 #include "io/lottie/tgs_format.hpp"
 
 void GlaxnimateWindow::Private::setup_document(const QString& filename)
@@ -347,7 +347,7 @@ void GlaxnimateWindow::Private::save_frame_bmp()
     if ( fd.exec() == QDialog::Rejected )
         return;
 
-    QImage image = io::mime::RasterMime().to_image({current_document->main()});
+    QImage image = io::raster::RasterMime().to_image({current_document->main()});
     if ( !image.save(fd.selectedFiles()[0]) )
         show_warning(tr("Render Frame"), tr("Could not save image"));
 }

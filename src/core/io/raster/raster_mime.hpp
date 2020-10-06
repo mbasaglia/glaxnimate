@@ -8,7 +8,7 @@
 #include "model/document.hpp"
 #include "model/shapes/image.hpp"
 
-namespace io::mime {
+namespace io::raster {
 
 class RasterMime : public io::mime::MimeSerializer
 {
@@ -54,6 +54,9 @@ public:
         bmp->data.set(data);
         auto img = std::make_unique<model::Image>(out.document.get());
         img->image.set(bmp);
+        QPointF p(bmp->pixmap().width() / 2.0, bmp->pixmap().height() / 2.0);
+        img->transform->anchor_point.set(p);
+        img->transform->position.set(p);
         out.document->main()->shapes.insert(std::move(img));
         return out;
     }

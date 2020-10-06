@@ -10,8 +10,10 @@
     * Implemented node type menu actions
     * Added node/layer delete menu action
     * Added segment curve/straighten menu action
+    * Imported/pasted images have the transform anchor point set to their center
 * I/O:
     * Paste images
+    * Open images
 * Bug Fixes:
     * Star shapes propely imported from lottie files
     * Layers are properly hidden when outside their frame range
