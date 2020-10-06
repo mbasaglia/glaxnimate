@@ -117,6 +117,9 @@
     <addaction name="action_node_type_corner"/>
     <addaction name="action_node_type_smooth"/>
     <addaction name="action_node_type_symmetric"/>
+    <addaction name="separator"/>
+    <addaction name="action_segment_lines"/>
+    <addaction name="action_segment_curve"/>
    </widget>
    <widget class="QMenu" name="menu_edit">
     <property name="title">
@@ -712,9 +715,6 @@
    </widget>
   </widget>
   <widget class="QToolBar" name="toolbar_node">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -729,6 +729,9 @@
    <addaction name="action_node_type_symmetric"/>
    <addaction name="separator"/>
    <addaction name="action_node_remove"/>
+   <addaction name="separator"/>
+   <addaction name="action_segment_lines"/>
+   <addaction name="action_segment_curve"/>
   </widget>
   <action name="action_new">
    <property name="icon">
@@ -1455,10 +1458,33 @@
   </action>
   <action name="action_delete">
    <property name="icon">
-    <iconset theme="edit-delete"/>
+    <iconset theme="edit-delete">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Delete</string>
+   </property>
+  </action>
+  <action name="action_segment_lines">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="node-segment-line"/>
+   </property>
+   <property name="text">
+    <string>Make segments straight</string>
+   </property>
+  </action>
+  <action name="action_segment_curve">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="node-segment-curve"/>
+   </property>
+   <property name="text">
+    <string>Make segments curved</string>
    </property>
   </action>
  </widget>

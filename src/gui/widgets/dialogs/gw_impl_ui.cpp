@@ -124,6 +124,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         ui.action_node_type_corner,
         ui.action_node_type_smooth,
         ui.action_node_type_symmetric,
+        ui.action_segment_lines,
+        ui.action_segment_curve,
     };
     tools::EditTool* edit_tool = static_cast<tools::EditTool*>(tools::Registry::instance().tool("edit"));
     connect(ui.action_node_type_corner, &QAction::triggered, parent, [this, edit_tool]{
@@ -137,6 +139,12 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     });
     connect(ui.action_node_remove, &QAction::triggered, parent, [this, edit_tool]{
         edit_tool->selection_delete();
+    });
+    connect(ui.action_segment_lines, &QAction::triggered, parent, [this, edit_tool]{
+        edit_tool->selection_straighten();
+    });
+    connect(ui.action_segment_curve, &QAction::triggered, parent, [this, edit_tool]{
+        edit_tool->selection_curve();
     });
 
 

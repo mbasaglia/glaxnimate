@@ -9,6 +9,7 @@
     * The select tool will show an outline for selected shapes (that are not groups)
     * Implemented node type menu actions
     * Added node/layer delete menu action
+    * Added segment curve/straighten menu action
 * I/O:
     * Paste images
 * Bug Fixes:

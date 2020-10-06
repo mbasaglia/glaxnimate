@@ -476,7 +476,6 @@ void tools::EditTool::selection_delete()
     if ( d->selection.empty() )
         return;
 
-
     auto doc = d->selection.selected.begin()->first->target_object()->document();
     doc->undo_stack().beginMacro(QObject::tr("Set node type"));
 
@@ -509,4 +508,113 @@ void tools::EditTool::selection_delete()
     doc->undo_stack().endMacro();
 
     d->selection.initial = nullptr;
+}
+
+void tools::EditTool::selection_straighten()
+{
+    if ( d->selection.empty() )
+        return;
+
+    auto doc = d->selection.selected.begin()->first->target_object()->document();
+
+    bool macro_started = false;
+
+    for ( const auto& p : d->selection.selected )
+    {
+        auto bez = p.first->bezier();
+        bool modified = false;
+        for ( int index : p.first->selected_indices() )
+        {
+            int prev_index = index-1;
+            if ( index == 0 && bez.closed() )
+                prev_index = bez.size() - 1;
+            int next_index = index+1;
+            if ( index == bez.size()-1 && bez.closed() )
+                next_index = 0;
+
+            if ( p.first->selected_indices().count(prev_index) )
+            {
+                bez[index].tan_in = bez[index].pos;
+                bez[index].type = math::Corner;
+                modified = true;
+            }
+
+            if ( p.first->selected_indices().count(next_index) )
+            {
+                bez[index].tan_out = bez[index].pos;
+                bez[index].type = math::Corner;
+                modified = true;
+            }
+
+        }
+
+        if ( modified )
+        {
+            if ( !macro_started )
+            {
+                doc->undo_stack().beginMacro(QObject::tr("Straighten segments"));
+                macro_started = true;
+            }
+            p.first->target_property()->set_undoable(QVariant::fromValue(bez));
+        }
+    }
+
+    if ( macro_started )
+        doc->undo_stack().endMacro();
+}
+
+void tools::EditTool::selection_curve()
+{
+    if ( d->selection.empty() )
+        return;
+
+    auto doc = d->selection.selected.begin()->first->target_object()->document();
+
+    bool macro_started = false;
+
+    for ( const auto& p : d->selection.selected )
+    {
+        auto bez = p.first->bezier();
+        bool modified = false;
+        for ( int index : p.first->selected_indices() )
+        {
+            bool mod_in = false;
+            int prev_index = index-1;
+            if ( index == 0 && bez.closed() )
+                prev_index = bez.size() - 1;
+
+            int next_index = index+1;
+            if ( index == bez.size()-1 && bez.closed() )
+                next_index = 0;
+
+            if ( bez[index].tan_in == bez[index].pos && p.first->selected_indices().count(prev_index) )
+            {
+                bez[index].tan_in = math::lerp(bez[index].pos, bez[prev_index].pos, 1/3.);
+                modified = mod_in = true;
+            }
+
+            if ( bez[index].tan_out == bez[index].pos && p.first->selected_indices().count(next_index) )
+            {
+                bez[index].tan_out = math::lerp(bez[index].pos, bez[next_index].pos, 1/3.);
+                modified = true;
+                if ( mod_in )
+                {
+                    bez[index].set_point_type(math::Smooth);
+                }
+            }
+        }
+
+        if ( modified )
+        {
+            if ( !macro_started )
+            {
+                doc->undo_stack().beginMacro(QObject::tr("Curve segments"));
+                macro_started = true;
+            }
+            p.first->target_property()->set_undoable(QVariant::fromValue(bez));
+        }
+    }
+
+    if ( macro_started )
+        doc->undo_stack().endMacro();
 }

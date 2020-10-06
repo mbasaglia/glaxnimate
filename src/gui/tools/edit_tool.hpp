@@ -17,6 +17,8 @@ public:
 
     void selection_set_vertex_type(math::BezierPointType t);
     void selection_delete();
+    void selection_straighten();
+    void selection_curve();
 
 private:
     void mouse_press(const MouseEvent& event) override;
