@@ -30,7 +30,7 @@ Something along these lines:
 3. Push `pre-release`
 4. Wait for CI to complete <https://gitlab.com/mattia.basaglia/glaxnimate/-/pipelines>
 5. No errors: go to 6. else fix the errors and go back to 3.
-5. `git tag` the new release
+6. `git tag` the new release
 7. Update the `release` branch
 
     ./deploy/tag_branch.sh release
