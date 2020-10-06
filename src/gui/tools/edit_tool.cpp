@@ -1,4 +1,4 @@
-#include "base.hpp"
+#include "edit_tool.hpp"
 
 #include <QMenu>
 #include <QPointer>
@@ -8,17 +8,11 @@
 #include "graphics/item_data.hpp"
 #include "command/animation_commands.hpp"
 
-namespace tools {
+tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
 
-class EditTool : public Tool
+class tools::EditTool::Private
 {
 public:
-    QString id() const override { return "edit"; }
-    QIcon icon() const override { return QIcon::fromTheme("edit-node"); }
-    QString name() const override { return QObject::tr("Edit"); }
-    QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F2"), QKeySequence::PortableText); }
-
-private:
     enum DragMode
     {
         None,
@@ -152,184 +146,6 @@ private:
         }
     };
 
-    void mouse_press(const MouseEvent& event) override
-    {
-        highlight = nullptr;
-
-        if ( event.press_button == Qt::LeftButton )
-        {
-            drag_mode = Click;
-            rubber_p1 = event.event->localPos();
-
-            auto clicked_on = under_mouse(event, true, SelectionMode::Shape);
-            if ( clicked_on.handle )
-            {
-                if ( clicked_on.handle->role() == graphics::MoveHandle::Vertex )
-                {
-                    drag_mode = VertexClick;
-                    selection.drag_start = event.scene_pos;
-                    selection.initial = static_cast<graphics::BezierPointItem*>(clicked_on.handle->parentItem());
-                }
-                else
-                {
-                    drag_mode = ForwardEvents;
-                    event.forward_to_scene();
-                }
-            }
-        }
-    }
-
-    void mouse_move(const MouseEvent& event) override
-    {
-        if ( event.press_button == Qt::LeftButton )
-        {
-            switch ( drag_mode )
-            {
-                case None:
-                    break;
-                case ForwardEvents:
-                    event.forward_to_scene();
-                    break;
-                case Click:
-                    drag_mode = RubberBand;
-                    [[fallthrough]];
-                case RubberBand:
-                    rubber_p2 = event.event->localPos();
-                    break;
-                case VertexClick:
-                    drag_mode = VertexDrag;
-                    if ( selection.initial && !selection.initial->parent_editor()->selected_indices().count(selection.initial->index()) )
-                        selection.add_handle(selection.initial);
-                    selection.start_drag();
-                    [[fallthrough]];
-                case VertexDrag:
-                    selection.drag(event, false);
-                    break;
-            }
-        }
-        else if ( event.buttons() == Qt::NoButton )
-        {
-            highlight = nullptr;
-            for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
-            {
-                if ( auto path = node->node()->cast<model::Shape>() )
-                {
-                    if ( !event.scene->has_editors(path) )
-                        highlight = path;
-                    break;
-                }
-            }
-        }
-    }
-
-    void mouse_release(const MouseEvent& event) override
-    {
-        if ( event.button() == Qt::LeftButton )
-        {
-            switch ( drag_mode )
-            {
-                case None:
-                    break;
-                case ForwardEvents:
-                    event.forward_to_scene();
-                    break;
-                case RubberBand:
-                {
-                    rubber_p2 = event.event->localPos();
-                    drag_mode = None;
-                    if ( !(event.modifiers() & Qt::ShiftModifier) )
-                        selection.clear();
-                    auto items = event.scene->items(
-                        event.view->mapToScene(
-                            QRect(rubber_p1.toPoint(), rubber_p2.toPoint()).normalized().normalized()
-                        ),
-                        Qt::IntersectsItemShape,
-                        Qt::DescendingOrder,
-                        event.view->viewportTransform()
-                    );
-                    for ( auto item : items )
-                        selection.add_handle(item);
-                    event.view->viewport()->update();
-                    break;
-                }
-                case Click:
-                {
-                    std::vector<model::DocumentNode*> selection;
-
-                    auto nodes = under_mouse(event, true, SelectionMode::Group).nodes;
-
-                    if ( !nodes.empty() )
-                        selection.push_back(nodes[0]->node());
-
-                    auto mode = graphics::DocumentScene::Replace;
-                    if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
-                        mode = graphics::DocumentScene::Toggle;
-
-                    event.scene->user_select(selection, mode);
-                    break;
-                }
-                case VertexClick:
-                    if ( event.modifiers() & Qt::ControlModifier )
-                    {
-                        if ( selection.initial->point().type == math::BezierPointType::Corner )
-                            selection.initial->set_point_type(math::BezierPointType::Smooth);
-                        else
-                            selection.initial->set_point_type(math::BezierPointType::Corner);
-                    }
-                    else
-                    {
-                        if ( !(event.modifiers() & Qt::ShiftModifier) )
-                            selection.clear();
-                        selection.toggle_handle(handle_under_mouse(event));
-                    }
-                    selection.initial = nullptr;
-                    break;
-                case VertexDrag:
-                    selection.drag(event, true);
-                    selection.initial = nullptr;
-                    break;
-            }
-        }
-        else if ( event.button() == Qt::RightButton )
-        {
-            context_menu(event);
-        }
-
-    }
-
-    void mouse_double_click(const MouseEvent& event) override { Q_UNUSED(event); }
-
-    void paint(const PaintEvent& event) override
-    {
-        if ( drag_mode == RubberBand )
-        {
-            event.painter->setBrush(Qt::transparent);
-            QColor select_color = event.view->palette().color(QPalette::Highlight);
-            QPen pen(select_color, 1);
-            pen.setCosmetic(true);
-            event.painter->setPen(pen);
-            select_color.setAlpha(128);
-            event.painter->setBrush(select_color);
-            event.painter->drawRect(QRectF(rubber_p1, rubber_p2));
-        }
-        else if ( highlight )
-        {
-            QColor select_color = event.view->palette().color(QPalette::Highlight);
-            QPen pen(select_color, 1);
-            QPainterPath p;
-            highlight->to_bezier(highlight->time()).add_to_painter_path(p);
-            QTransform trans = highlight->transform_matrix(highlight->time()) * event.view->viewportTransform();
-            p = trans.map(p);
-            event.painter->setPen(pen);
-            event.painter->setBrush(Qt::NoBrush);
-            event.painter->drawPath(p);
-        }
-    }
-
-    void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
-    void key_release(const KeyEvent& event) override { Q_UNUSED(event); }
-    QCursor cursor() override { return {}; }
-
     static void impl_extract_selection_recursive_item(graphics::DocumentScene * scene, model::DocumentNode* node)
     {
         auto meta = node->metaObject();
@@ -344,22 +160,7 @@ private:
         }
     }
 
-    void on_selected(graphics::DocumentScene * scene, model::DocumentNode * node) override
-    {
-        impl_extract_selection_recursive_item(scene, node);
-    }
-
-    void enable_event(const Event&) override
-    {
-        highlight = nullptr;
-    }
-
-    void disable_event(const Event&) override
-    {
-        highlight = nullptr;
-    }
-
-    void node_type_action(QMenu* menu, QActionGroup* group, graphics::BezierPointItem* item, math::BezierPointType type)
+    static void node_type_action(QMenu* menu, QActionGroup* group, graphics::BezierPointItem* item, math::BezierPointType type)
     {
         QIcon icon;
         QString label;
@@ -392,9 +193,9 @@ private:
             action->setChecked(true);
     }
 
-    void context_menu(const MouseEvent& event)
+    static void context_menu(EditTool*thus, const MouseEvent& event)
     {
-        auto handle = under_mouse(event, true, SelectionMode::Shape).handle;
+        auto handle = thus->under_mouse(event, true, SelectionMode::Shape).handle;
         if ( !handle )
             return;
 
@@ -436,21 +237,243 @@ private:
         menu.exec(QCursor::pos());
     }
 
-    QWidget* on_create_widget() override
-    {
-        return new QWidget();
-    }
 
-private:
     DragMode drag_mode;
     QPointF rubber_p1;
     QPointF rubber_p2;
     model::Shape* highlight = nullptr;
     Selection selection;
-
-    static Autoreg<EditTool> autoreg;
 };
 
-} // namespace tools
+tools::EditTool::EditTool()
+    : d(std::make_unique<Private>())
+{}
 
-tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
+tools::EditTool::~EditTool() = default;
+
+void tools::EditTool::mouse_press(const MouseEvent& event)
+{
+    d->highlight = nullptr;
+
+    if ( event.press_button == Qt::LeftButton )
+    {
+        d->drag_mode = Private::Click;
+        d->rubber_p1 = event.event->localPos();
+
+        auto clicked_on = under_mouse(event, true, SelectionMode::Shape);
+        if ( clicked_on.handle )
+        {
+            if ( clicked_on.handle->role() == graphics::MoveHandle::Vertex )
+            {
+                d->drag_mode = Private::VertexClick;
+                d->selection.drag_start = event.scene_pos;
+                d->selection.initial = static_cast<graphics::BezierPointItem*>(clicked_on.handle->parentItem());
+            }
+            else
+            {
+                d->drag_mode = Private::ForwardEvents;
+                event.forward_to_scene();
+            }
+        }
+    }
+}
+
+void tools::EditTool::mouse_move(const MouseEvent& event)
+{
+    if ( event.press_button == Qt::LeftButton )
+    {
+        switch ( d->drag_mode )
+        {
+            case Private::None:
+                break;
+            case Private::ForwardEvents:
+                event.forward_to_scene();
+                break;
+            case Private::Click:
+                d->drag_mode = Private::RubberBand;
+                [[fallthrough]];
+            case Private::RubberBand:
+                d->rubber_p2 = event.event->localPos();
+                break;
+            case Private::VertexClick:
+                d->drag_mode = Private::VertexDrag;
+                if ( d->selection.initial && !d->selection.initial->parent_editor()->selected_indices().count(d->selection.initial->index()) )
+                    d->selection.add_handle(d->selection.initial);
+                d->selection.start_drag();
+                [[fallthrough]];
+            case Private::VertexDrag:
+                d->selection.drag(event, false);
+                break;
+        }
+    }
+    else if ( event.buttons() == Qt::NoButton )
+    {
+        d->highlight = nullptr;
+        for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
+        {
+            if ( auto path = node->node()->cast<model::Shape>() )
+            {
+                if ( !event.scene->has_editors(path) )
+                    d->highlight = path;
+                break;
+            }
+        }
+    }
+}
+
+void tools::EditTool::mouse_release(const MouseEvent& event)
+{
+    if ( event.button() == Qt::LeftButton )
+    {
+        switch ( d->drag_mode )
+        {
+            case Private::None:
+                break;
+            case Private::ForwardEvents:
+                event.forward_to_scene();
+                break;
+            case Private::RubberBand:
+            {
+                d->rubber_p2 = event.event->localPos();
+                d->drag_mode = Private::None;
+                if ( !(event.modifiers() & Qt::ShiftModifier) )
+                    d->selection.clear();
+                auto items = event.scene->items(
+                    event.view->mapToScene(
+                        QRect(d->rubber_p1.toPoint(), d->rubber_p2.toPoint()).normalized().normalized()
+                    ),
+                    Qt::IntersectsItemShape,
+                    Qt::DescendingOrder,
+                    event.view->viewportTransform()
+                );
+                for ( auto item : items )
+                    d->selection.add_handle(item);
+                event.view->viewport()->update();
+                break;
+            }
+            case Private::Click:
+            {
+                std::vector<model::DocumentNode*> selection;
+
+                auto nodes = under_mouse(event, true, SelectionMode::Group).nodes;
+
+                if ( !nodes.empty() )
+                    selection.push_back(nodes[0]->node());
+
+                auto mode = graphics::DocumentScene::Replace;
+                if ( event.modifiers() & (Qt::ShiftModifier|Qt::ControlModifier) )
+                    mode = graphics::DocumentScene::Toggle;
+
+                event.scene->user_select(selection, mode);
+                break;
+            }
+            case Private::VertexClick:
+                if ( event.modifiers() & Qt::ControlModifier )
+                {
+                    if ( d->selection.initial->point().type == math::BezierPointType::Corner )
+                        d->selection.initial->set_point_type(math::BezierPointType::Smooth);
+                    else
+                        d->selection.initial->set_point_type(math::BezierPointType::Corner);
+                }
+                else
+                {
+                    if ( !(event.modifiers() & Qt::ShiftModifier) )
+                        d->selection.clear();
+                    d->selection.toggle_handle(handle_under_mouse(event));
+                }
+                d->selection.initial = nullptr;
+                break;
+            case Private::VertexDrag:
+                d->selection.drag(event, true);
+                d->selection.initial = nullptr;
+                break;
+        }
+
+        d->drag_mode = Private::None;
+    }
+    else if ( event.button() == Qt::RightButton )
+    {
+        Private::context_menu(this, event);
+    }
+
+}
+
+void tools::EditTool::mouse_double_click(const MouseEvent& event) { Q_UNUSED(event); }
+
+void tools::EditTool::paint(const PaintEvent& event)
+{
+    if ( d->drag_mode == Private::RubberBand )
+    {
+        event.painter->setBrush(Qt::transparent);
+        QColor select_color = event.view->palette().color(QPalette::Highlight);
+        QPen pen(select_color, 1);
+        pen.setCosmetic(true);
+        event.painter->setPen(pen);
+        select_color.setAlpha(128);
+        event.painter->setBrush(select_color);
+        event.painter->drawRect(QRectF(d->rubber_p1, d->rubber_p2));
+    }
+    else if ( d->highlight )
+    {
+        QColor select_color = event.view->palette().color(QPalette::Highlight);
+        QPen pen(select_color, 1);
+        QPainterPath p;
+        d->highlight->to_bezier(d->highlight->time()).add_to_painter_path(p);
+        QTransform trans = d->highlight->transform_matrix(d->highlight->time()) * event.view->viewportTransform();
+        p = trans.map(p);
+        event.painter->setPen(pen);
+        event.painter->setBrush(Qt::NoBrush);
+        event.painter->drawPath(p);
+    }
+}
+
+void tools::EditTool::key_press(const KeyEvent& event) { Q_UNUSED(event); }
+
+void tools::EditTool::key_release(const KeyEvent& event) { Q_UNUSED(event); }
+
+QCursor tools::EditTool::cursor() { return Qt::ArrowCursor; }
+
+void tools::EditTool::on_selected(graphics::DocumentScene * scene, model::DocumentNode * node)
+{
+    Private::impl_extract_selection_recursive_item(scene, node);
+}
+
+void tools::EditTool::enable_event(const Event&)
+{
+    d->highlight = nullptr;
+}
+
+void tools::EditTool::disable_event(const Event&)
+{
+    d->highlight = nullptr;
+}
+
+
+QWidget* tools::EditTool::on_create_widget()
+{
+    return new QWidget();
+}
+
+
+void tools::EditTool::selection_set_vertex_type(math::BezierPointType t)
+{
+    if ( d->selection.empty() )
+        return;
+
+    auto doc = d->selection.selected.begin()->first->target_object()->document();
+    doc->undo_stack().beginMacro(QObject::tr("Set node type"));
+    for ( const auto& p : d->selection.selected )
+    {
+        auto bez = p.first->bezier();
+        for ( int index : p.first->selected_indices() )
+            bez[index].set_point_type(t);
+        p.first->target_property()->set_undoable(QVariant::fromValue(bez));
+    }
+    doc->undo_stack().endMacro();
+}
+
+void tools::EditTool::selection_delete()
+{
+    if ( d->selection.empty() )
+        return;
+}

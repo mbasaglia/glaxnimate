@@ -13,6 +13,7 @@
 #include "widgets/node_menu.hpp"
 #include "style/better_elide_delegate.hpp"
 #include "glaxnimate_app.hpp"
+#include "tools/edit_tool.hpp"
 
 void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* parent)
 {
@@ -107,6 +108,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         }
         ui.menu_tools->addSeparator();
     }
+
+    /// \todo Have some way of creating/connecting actions from the tools
     tool_widgets["edit"] = {
         ui.toolbar_node
     };
@@ -116,6 +119,20 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         ui.action_node_type_smooth,
         ui.action_node_type_symmetric,
     };
+    tools::EditTool* edit_tool = static_cast<tools::EditTool*>(tools::Registry::instance().tool("edit"));
+    connect(ui.action_node_type_corner, &QAction::triggered, parent, [this, edit_tool]{
+        edit_tool->selection_set_vertex_type(math::Corner);
+    });
+    connect(ui.action_node_type_smooth, &QAction::triggered, parent, [this, edit_tool]{
+        edit_tool->selection_set_vertex_type(math::Smooth);
+    });
+    connect(ui.action_node_type_symmetric, &QAction::triggered, parent, [this, edit_tool]{
+        edit_tool->selection_set_vertex_type(math::Symmetrical);
+    });
+    connect(ui.action_node_remove, &QAction::triggered, parent, [this, edit_tool]{
+        edit_tool->selection_delete();
+    });
+
 
     // Item views
     ui.view_document_node->setModel(&document_node_model);

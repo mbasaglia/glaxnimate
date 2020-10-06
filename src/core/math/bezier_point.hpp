@@ -75,6 +75,12 @@ struct BezierPoint
 
     void adjust_handles_from_type();
 
+    void set_point_type(BezierPointType t)
+    {
+        type = t;
+        adjust_handles_from_type();
+    }
+
     static QPointF drag_tangent(const QPointF& dragged, const QPointF& other, const QPointF& pos, BezierPointType type)
     {
         if ( type == math::BezierPointType::Symmetrical )
