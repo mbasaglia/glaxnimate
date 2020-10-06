@@ -142,7 +142,7 @@ void GlaxnimateWindow::Private::delete_selected()
     current_document->undo_stack().beginMacro(tr("Delete"));
     for ( auto item : selection )
     {
-        if ( auto shape = qobject_cast<model::Shape*>(item) )
+        if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
             if ( !shape->docnode_locked() )
                 current_document->push_command(new command::RemoveShape(shape, shape->owner()));
     }
@@ -158,7 +158,7 @@ void GlaxnimateWindow::Private::cut()
     current_document->undo_stack().beginMacro(tr("Cut"));
     for ( auto item : selection )
     {
-        if ( auto shape = qobject_cast<model::Shape*>(item) )
+        if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
             if ( !shape->docnode_locked() )
                 current_document->push_command(new command::RemoveShape(shape, shape->owner()));
     }

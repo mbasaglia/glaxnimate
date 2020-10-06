@@ -130,6 +130,7 @@
     <addaction name="action_copy"/>
     <addaction name="action_paste"/>
     <addaction name="action_select_all"/>
+    <addaction name="action_delete"/>
     <addaction name="separator"/>
     <addaction name="action_raise_to_top"/>
     <addaction name="action_raise"/>
@@ -1450,6 +1451,14 @@
    </property>
    <property name="text">
     <string>Import Image...</string>
+   </property>
+  </action>
+  <action name="action_delete">
+   <property name="icon">
+    <iconset theme="edit-delete"/>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
    </property>
   </action>
  </widget>

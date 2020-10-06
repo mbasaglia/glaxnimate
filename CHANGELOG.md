@@ -7,8 +7,8 @@
     * The shape editing tool now shows a context menu when right-clicking on nodes
     * The select tool now can only modify transforms, all other editing operations are done by the edit tool
     * The select tool will show an outline for selected shapes (that are not groups)
-    * Implemented node type actions
-    * Implemented node delete action
+    * Implemented node type menu actions
+    * Added node/layer delete menu action
 * I/O:
     * Paste images
 * Bug Fixes:
@@ -16,6 +16,7 @@
     * Layers are properly hidden when outside their frame range
     * Editing Path objects registers undo commands and keyframes
     * Changing Path node types now affects the shape correctly
+    * Cut/Delete properly remove groups/layers
 
 ## 0.1.1
 

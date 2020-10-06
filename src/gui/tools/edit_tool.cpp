@@ -449,12 +449,10 @@ void tools::EditTool::disable_event(const Event&)
     d->highlight = nullptr;
 }
 
-
 QWidget* tools::EditTool::on_create_widget()
 {
     return new QWidget();
 }
-
 
 void tools::EditTool::selection_set_vertex_type(math::BezierPointType t)
 {

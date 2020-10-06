@@ -41,6 +41,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_open_last->setShortcut(QKeySequence("Ctrl+Shift+O", QKeySequence::PortableText));
     ui.action_import_image->setShortcut(QKeySequence("Ctrl+I", QKeySequence::PortableText));
     ui.action_node_remove->setShortcut(QKeySequence("Del", QKeySequence::PortableText));
+    ui.action_delete->setShortcut(QKeySequence("Del", QKeySequence::PortableText));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
@@ -67,6 +68,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
             document_open_from_filename(recent_files[0]);
     });
     connect(ui.action_import_image, &QAction::triggered, parent, [this]{import_image();});
+    connect(ui.action_delete, &QAction::triggered, parent, &GlaxnimateWindow::delete_selected);
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
@@ -111,6 +113,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     }
 
     /// \todo Have some way of creating/connecting actions from the tools
+    this->tool_actions["select"] = {
+        ui.action_delete,
+    };
     tool_widgets["edit"] = {
         ui.toolbar_node
     };
