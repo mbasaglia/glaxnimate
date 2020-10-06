@@ -269,7 +269,7 @@ private:
     void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
     void key_release(const KeyEvent& event) override
     {
-        if ( drag_mode == None && (event.key() == Qt::Key_Delete || event.key() == Qt::Key_Backspace) )
+        if ( drag_mode == None && (event.key() == Qt::Key_Backspace) )
         {
             event.window->delete_selected();
             event.accept();

@@ -27,9 +27,10 @@ it will select all items intersecting that path.
 Right click: show a contect menu with actions regarding the current selection
 and the item under the mouse.
 
+Double click: edit the item under the mouse
+
 All selection actions (click, draw drag, rectangle drag) will replace the current
-selection by default, or add to the current selection if you are holding Shift or
-Ctrl when releasing the mouse button.
+selection by default, or add to the current selection if you are holding Shift while releasing the mouse button.
 
 ### Keyboard Actions
 
@@ -49,7 +50,38 @@ At the bottom you get a submenu for the item under the mouse cursor:
 
 <img src="/img/ui/icons/edit-node.svg" width="64" />
 
-This tool allows you to select and edit Bezier shapes.
+This tool allows you to select and edit Shapes.
+
+### Mouse Actions
+
+Clicking on bezier nodes will select them (Shift+Click to add to the selection).
+
+Clicking on shapes, will selected them and enable their editing.
+
+Dragging from an empty spot will create a rectangular selection area to select bezier nodes.
+
+Right clicking on the handles for a bezier node or its tangents will show a context menu
+
+### Context Menu
+
+![Context Menu](/img/screenshots/tools/menu_vertex.png)
+![Context Menu](/img/screenshots/tools/menu_tangent.png)
+
+The menu is slightly different depending on whether you clicked on a node or tangent.
+
+The first few actions change the node type.
+
+<img src="/img/ui/icons/show-node-handles.svg" width="32" /> *Remove Tangent*<br/>
+Removes the selected tangent, making the curve exiting straight as it exits
+the node in the tangent's direction.
+If the tangent on the other side has also been removed, the segment between the
+two nodes will be straight.
+
+<img src="/img/ui/icons/format-remove-node.svg" width="32" /> *Remove Node*<br/>
+Removes the selected node.
+
+<img src="/img/ui/icons/show-node-handles.svg" width="32" /> *Show Tangents*<br/>
+Shows the handles for removed tangents.
 
 ## Draw Bezier
 
@@ -110,6 +142,8 @@ If you hold Ctrl while dragging, the rectangle will be a square (all sides with 
 
 If you hold Shift, the first point will be interpreted as the center of the rectangle rather than a corner.
 
+Clicking (without dragging) on an existing object will switch to the edit tool.
+
 ### Keyboard Interactions
 
 Pressing Escape will cancel the rectangle currently being dragged.
@@ -132,6 +166,8 @@ This tool allows you to create [stars and regular polygons](../shapes.md#polysta
 
 You click and drag, the point where you initiated the drag defines the center
 and the point you release the drag defines one of the corners.
+
+Clicking (without dragging) on an existing object will switch to the edit tool.
 
 ### Keyboard Interactions
 
