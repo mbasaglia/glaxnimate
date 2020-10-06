@@ -7,6 +7,7 @@
 #include "graphics/bezier_item.hpp"
 #include "graphics/item_data.hpp"
 #include "command/animation_commands.hpp"
+#include "command/object_list_commands.hpp"
 
 tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
 
@@ -476,4 +477,38 @@ void tools::EditTool::selection_delete()
 {
     if ( d->selection.empty() )
         return;
+
+
+    auto doc = d->selection.selected.begin()->first->target_object()->document();
+    doc->undo_stack().beginMacro(QObject::tr("Set node type"));
+
+    auto selected = std::move(d->selection.selected);
+    d->selection.selected = {};
+    for ( const auto& p : selected )
+    {
+        const auto& bez = p.first->bezier();
+        math::Bezier new_bez;
+        new_bez.set_closed(bez.closed());
+
+        for ( int i = 0; i < bez.size(); i++ )
+            if ( !p.first->selected_indices().count(i) )
+                new_bez.push_back(bez[i]);
+
+        p.first->clear_selected_indices();
+
+        if ( new_bez.size() < 2 && !p.first->target_property()->animated() )
+        {
+            // At the moment it always is a Path, but it might change in the future (ie: masks)
+            if ( auto path = p.first->target_object()->cast<model::Path>() )
+            {
+                doc->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
+                continue;
+            }
+        }
+
+        p.first->target_property()->set_undoable(QVariant::fromValue(new_bez));
+    }
+    doc->undo_stack().endMacro();
+
+    d->selection.initial = nullptr;
 }

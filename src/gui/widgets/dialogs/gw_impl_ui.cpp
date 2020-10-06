@@ -40,6 +40,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_ungroup->setShortcut(QKeySequence("Ctrl+Shift+G", QKeySequence::PortableText));
     ui.action_open_last->setShortcut(QKeySequence("Ctrl+Shift+O", QKeySequence::PortableText));
     ui.action_import_image->setShortcut(QKeySequence("Ctrl+I", QKeySequence::PortableText));
+    ui.action_node_remove->setShortcut(QKeySequence("Del", QKeySequence::PortableText));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
