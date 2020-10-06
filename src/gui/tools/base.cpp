@@ -94,9 +94,7 @@ void tools::Tool::edit_clicked(const tools::MouseEvent& event)
     if ( !clicked_on.empty() )
     {
         event.scene->user_select({clicked_on[0]->node()}, graphics::DocumentScene::Replace);
-        auto meta = clicked_on[0]->node()->metaObject();
-        if ( meta->inherits(&model::Shape::staticMetaObject) )
-            event.window->switch_tool(Registry::instance().tool("edit"));
+        event.window->switch_tool(Registry::instance().tool("edit"));
     }
 }
 
