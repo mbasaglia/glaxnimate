@@ -70,6 +70,10 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &FrameControlsWidget::set_frame);
     QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &FrameControlsWidget::set_record_enabled);
     QObject::connect(ui.play_controls, &FrameControlsWidget::record_toggled, current_document.get(), &model::Document::set_record_to_keyframe);
+
+    // Export
+    export_options = {};
+    ui.action_export->setText(tr("Export..."));
 }
 
 void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
@@ -153,6 +157,9 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
         ui.message_widget->queue_message(std::move(msg));
     }
 
+    export_options = options;
+    export_options.filename = "";
+
     return ok;
 }
 
@@ -206,11 +213,11 @@ bool GlaxnimateWindow::Private::close_document()
 }
 
 
-bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool overwrite_doc)
+bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opts)
 {
-    io::Options opts = current_document->io_options();
+    io::Options opts = export_opts ? export_options : current_document->io_options();
 
-    if ( !opts.format || !opts.format->can_save() || !current_document->has_file() )
+    if ( !opts.format || !opts.format->can_save() || !current_document->has_file() || opts.filename.isEmpty() )
         force_dialog = true;
 
     if ( force_dialog )
@@ -233,7 +240,12 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool overwrite_
 
     current_document->undo_stack().setClean();
 
-    if ( overwrite_doc )
+    if ( export_opts )
+    {
+        export_options = opts;
+        ui.action_export->setText(tr("Export to %s").arg(QFileInfo(opts.filename).baseName()));
+    }
+    else
     {
         app::settings::set<QString>("open_save", "path", opts.path.absolutePath());
         current_document->set_io_options(opts);

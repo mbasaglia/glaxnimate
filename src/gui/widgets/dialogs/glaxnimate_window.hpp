@@ -95,6 +95,8 @@ public:
 public slots:
     void document_save();
     void document_save_as();
+    void document_export();
+    void document_export_as();
     void view_fit();
     /**
      * \brief Copies the current selection to the clipboard

@@ -1,5 +1,12 @@
 ## 0.2.0
 
+## 0.1.3
+
+* Editing:
+    * Export action
+* Bug Fixes:
+    * Fixed crash when exporting lottie
+
 ## 0.1.2
 
 * Editing:

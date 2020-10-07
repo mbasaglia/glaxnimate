@@ -63,6 +63,9 @@
     <addaction name="action_save"/>
     <addaction name="action_save_as"/>
     <addaction name="separator"/>
+    <addaction name="action_export"/>
+    <addaction name="action_export_as"/>
+    <addaction name="separator"/>
     <addaction name="action_close"/>
     <addaction name="separator"/>
     <addaction name="action_quit"/>
@@ -223,6 +226,7 @@
    <addaction name="action_open"/>
    <addaction name="action_save"/>
    <addaction name="action_save_as"/>
+   <addaction name="action_export"/>
    <addaction name="separator"/>
    <addaction name="action_undo"/>
    <addaction name="action_redo"/>
@@ -1470,7 +1474,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="node-segment-line"/>
+    <iconset theme="node-segment-line">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Make segments straight</string>
@@ -1481,10 +1486,27 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="node-segment-curve"/>
+    <iconset theme="node-segment-curve">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Make segments curved</string>
+   </property>
+  </action>
+  <action name="action_export">
+   <property name="icon">
+    <iconset theme="document-export"/>
+   </property>
+   <property name="text">
+    <string>&amp;Export...</string>
+   </property>
+  </action>
+  <action name="action_export_as">
+   <property name="icon">
+    <iconset theme="document-export"/>
+   </property>
+   <property name="text">
+    <string>E&amp;xport As...</string>
    </property>
   </action>
  </widget>

@@ -39,7 +39,7 @@ void GlaxnimateWindow::document_new()
 
 void GlaxnimateWindow::document_save()
 {
-    if ( d->save_document(false, true) )
+    if ( d->save_document(false, false) )
         d->status_message(tr("File saved"));
     else
         d->status_message(tr("Could not save file"), 0);
@@ -47,10 +47,26 @@ void GlaxnimateWindow::document_save()
 
 void GlaxnimateWindow::document_save_as()
 {
-    if ( d->save_document(true, true) )
+    if ( d->save_document(true, false) )
         d->status_message(tr("File saved"));
     else
         d->status_message(tr("Could not save file"), 0);
+}
+
+void GlaxnimateWindow::document_export()
+{
+    if ( d->save_document(false, true) )
+        d->status_message(tr("File exported"));
+    else
+        d->status_message(tr("Could not export file"), 0);
+}
+
+void GlaxnimateWindow::document_export_as()
+{
+    if ( d->save_document(true, true) )
+        d->status_message(tr("File exported"));
+    else
+        d->status_message(tr("Could not export file"), 0);
 }
 
 void GlaxnimateWindow::document_open_dialog()

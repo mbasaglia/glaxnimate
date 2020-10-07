@@ -50,6 +50,7 @@ public:
     GlaxnimateWindow* parent = nullptr;
 
     QStringList recent_files;
+    io::Options export_options;
 
     std::vector<app::scripting::ScriptContext> script_contexts;
 
@@ -81,7 +82,7 @@ public:
     bool setup_document_open(const io::Options& options);
     void refresh_title();
     bool close_document();
-    bool save_document(bool force_dialog, bool overwrite_doc);
+    bool save_document(bool force_dialog, bool export_opts);
     void document_open();
     void document_open_from_filename(const QString& filename);
     void document_reload();

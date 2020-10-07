@@ -42,6 +42,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_import_image->setShortcut(QKeySequence("Ctrl+I", QKeySequence::PortableText));
     ui.action_node_remove->setShortcut(QKeySequence("Del", QKeySequence::PortableText));
     ui.action_delete->setShortcut(QKeySequence("Del", QKeySequence::PortableText));
+    ui.action_export->setShortcut(QKeySequence("Ctrl+E", QKeySequence::PortableText));
+    ui.action_export_as->setShortcut(QKeySequence("Ctrl+Shift+E", QKeySequence::PortableText));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
@@ -69,6 +71,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     });
     connect(ui.action_import_image, &QAction::triggered, parent, [this]{import_image();});
     connect(ui.action_delete, &QAction::triggered, parent, &GlaxnimateWindow::delete_selected);
+    connect(ui.action_export, &QAction::triggered, parent, &GlaxnimateWindow::document_export);
+    connect(ui.action_export_as, &QAction::triggered, parent, &GlaxnimateWindow::document_export_as);
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )

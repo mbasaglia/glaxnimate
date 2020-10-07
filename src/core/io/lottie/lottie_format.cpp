@@ -264,7 +264,7 @@ public:
             return LayerType::Layer;
         if ( qobject_cast<model::Image*>(shape) )
             return LayerType::Image;
-        return LayerType::Layer;
+        return LayerType::Shape;
     }
 
     void convert_layer(LayerType type, ShapeElement* shape, QCborArray& output, int forced_parent = -1)
