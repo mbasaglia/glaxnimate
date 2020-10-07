@@ -92,6 +92,16 @@ if(DOXYGEN_FOUND)
     create_doxygen_target(doxygen)
 endif(DOXYGEN_FOUND)
 
+# Release
+
+add_custom_target(
+    pre_release
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/pre_release.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt
+)
+add_custom_target(
+    release
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt
+)
 
 # Packaging
 # -- see https://gitlab.kitware.com/cmake/community/-/wikis/doc/cpack/PackageGenerators
