@@ -4,8 +4,7 @@
 
 #include "import_state.hpp"
 #include "model/shapes/shape.hpp"
-#include "model/defs/named_color.hpp"
-#include "model/defs/bitmap.hpp"
+#include "model/defs/defs.hpp"
 #include "model/visitor.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateMime> io::glaxnimate::GlaxnimateMime::autoreg;

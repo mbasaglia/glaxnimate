@@ -10,12 +10,6 @@ QIcon model::BrushStyle::reftarget_icon() const
     return icon;
 }
 
-void model::BrushStyle::fill_icon(QPixmap& icon) const
-{
-    QPainter p(&icon);
-    p.fillRect(icon.rect(), brush_style(0));
-}
-
 void model::BrushStyle::add_user(model::BrushStyle::User* user)
 {
     if ( !detaching )
@@ -51,3 +45,9 @@ void model::BrushStyle::detach()
     }
 }
 
+QString model::BrushStyle::object_name() const
+{
+    if ( name.get().isEmpty() )
+        return type_name_human();
+    return name.get();
+}

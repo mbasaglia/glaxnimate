@@ -214,3 +214,8 @@ model::Defs * model::Document::defs() const
 {
     return &d->defs;
 }
+
+model::Object * model::Document::defs_obj() const
+{
+    return defs();
+}

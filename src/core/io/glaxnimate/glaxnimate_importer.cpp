@@ -1,6 +1,7 @@
 #include "glaxnimate_format.hpp"
 
 #include "import_state.hpp"
+#include "model/defs/defs.hpp"
 
 bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&, model::Document* document, const QVariantMap& )
 {

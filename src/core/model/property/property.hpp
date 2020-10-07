@@ -11,6 +11,7 @@
 #include <QVector2D>
 #include <QColor>
 #include <QVariant>
+#include <QGradient>
 
 #include "model/animation/frame_time.hpp"
 
@@ -40,6 +41,7 @@ struct PropertyTraits
         Uuid,
         Bezier,
         Data,
+        Gradient,
     };
 
     enum Flags
@@ -105,6 +107,7 @@ template<> struct GetType<QUuid, void> { static constexpr const PropertyTraits::
 template<> struct GetType<QPointF, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Point; };
 template<> struct GetType<math::Bezier, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Bezier; };
 template<> struct GetType<QByteArray, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Data; };
+template<> struct GetType<QGradientStops, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Gradient; };
 
 template<class ObjT>
 struct GetType<ObjT, std::enable_if_t<std::is_integral_v<ObjT>>>

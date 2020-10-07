@@ -15,6 +15,8 @@ class BrushStyle : public ReferenceTarget
 {
     Q_OBJECT
 
+    GLAXNIMATE_PROPERTY(QString, name, "")
+
 public:
     using User = ReferenceProperty<BrushStyle>;
 
@@ -32,11 +34,12 @@ public:
     void detach();
 
 
+    QString object_name() const override;
 signals:
     void style_changed();
 
 protected:
-    virtual void fill_icon(QPixmap& icon) const;
+    virtual void fill_icon(QPixmap& icon) const = 0;
 
     void invalidate_icon()
     {

@@ -4,12 +4,17 @@
 
 std::vector<model::ReferenceTarget*> model::Styler::valid_uses() const
 {
-    return document()->defs()->valid_brush_styles();
+    auto v = document()->defs()->gradients.valid_reference_values(true);
+    auto v2 = document()->defs()->colors.valid_reference_values(false);
+    v.insert(v.end(), v2.begin(), v2.end());
+    return v;
 }
 
 bool model::Styler::is_valid_use(ReferenceTarget* node) const
 {
-    return document()->defs()->is_valid_brush_style(node);
+    return
+        document()->defs()->gradients.is_valid_reference_value(node, true) ||
+        document()->defs()->colors.is_valid_reference_value(node, false);
 }
 
 void model::Styler::on_use_changed(model::BrushStyle* new_use, model::BrushStyle* old_use)

@@ -54,6 +54,9 @@ public:
 
         return true;
     }
+
+    virtual std::vector<model::ReferenceTarget *> valid_reference_values(bool allow_null) const = 0;
+    virtual bool is_valid_reference_value(model::ReferenceTarget *, bool allow_null) const = 0;
 };
 
 
@@ -229,6 +232,36 @@ public:
     {
         for ( const auto& obj : objects )
             obj->transfer(doc);
+    }
+
+    std::vector<model::ReferenceTarget *> valid_reference_values(bool allow_null) const override
+    {
+        std::vector<model::ReferenceTarget *> res;
+        if ( allow_null )
+        {
+            res.reserve(objects.size() + 1);
+            res.push_back(nullptr);
+        }
+        else
+        {
+            res.reserve(objects.size());
+        }
+
+        for ( const auto& c : objects )
+            res.push_back(c.get());
+
+        return res;
+    }
+
+    virtual bool is_valid_reference_value(model::ReferenceTarget * value, bool allow_null) const override
+    {
+        if ( !value )
+            return allow_null;
+
+        for ( const auto& c : objects )
+            if ( c.get() == value )
+                return true;
+        return false;
     }
 
 protected:

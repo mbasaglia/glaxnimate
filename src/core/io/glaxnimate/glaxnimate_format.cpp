@@ -5,6 +5,7 @@
 
 #include "app_info.hpp"
 #include "math/bezier.hpp"
+#include "model/defs/defs.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 

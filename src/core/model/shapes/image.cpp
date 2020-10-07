@@ -14,12 +14,12 @@ model::Image::Image(model::Document* doc)
 
 bool model::Image::is_valid_image(model::ReferenceTarget* node) const
 {
-    return document()->defs()->is_valid_image(node);
+    return document()->defs()->images.is_valid_reference_value(node, false);
 }
 
 std::vector<model::ReferenceTarget *> model::Image::valid_images() const
 {
-    return document()->defs()->valid_images();
+    return document()->defs()->images.valid_reference_values(false);
 }
 
 QRectF model::Image::local_bounding_rect(model::FrameTime) const

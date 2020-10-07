@@ -4,6 +4,8 @@
 #include "model/property/object_list_property.hpp"
 #include "named_color.hpp"
 #include "bitmap.hpp"
+#include "gradient.hpp"
+
 
 namespace model {
 
@@ -13,16 +15,11 @@ class Defs : public ObjectBase<Defs, Object>
 
     GLAXNIMATE_PROPERTY_LIST(NamedColor, colors, &Defs::on_color_added, &Defs::on_color_removed, {}, {}, {}, {})
     GLAXNIMATE_PROPERTY_LIST(Bitmap, images, {}, {}, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(GradientColors, gradient_colors, {}, {}, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(Gradient, gradients, {}, {}, {}, {}, {}, {})
 
 public:
     using Ctor::Ctor;
-
-    std::vector<ReferenceTarget*> valid_brush_styles() const;
-    bool is_valid_brush_style(ReferenceTarget* style) const;
-
-
-    std::vector<ReferenceTarget*> valid_images() const;
-    bool is_valid_image(ReferenceTarget* style) const;
 
     Q_INVOKABLE model::ReferenceTarget* find_by_uuid(const QUuid& n) const;
     Q_INVOKABLE model::NamedColor* add_color(const QColor& color, const QString& name = {});

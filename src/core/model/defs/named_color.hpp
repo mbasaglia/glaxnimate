@@ -9,13 +9,10 @@ class NamedColor : public ObjectBase<NamedColor, BrushStyle>
 {
     GLAXNIMATE_OBJECT
 
-    GLAXNIMATE_PROPERTY(QString, name, "")
     GLAXNIMATE_ANIMATABLE(QColor, color, QColor(0, 0, 0), &NamedColor::invalidate_icon)
 
 public:
     using Ctor::Ctor;
-
-    QString object_name() const override;
 
     QString type_name_human() const override;
 

@@ -43,6 +43,7 @@ model/defs/defs.cpp
 model/defs/brush_style.cpp
 model/defs/named_color.cpp
 model/defs/bitmap.cpp
+model/defs/gradient.cpp
 
 model/shapes/shape.cpp
 model/shapes/fill.cpp

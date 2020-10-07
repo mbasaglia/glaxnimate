@@ -2,14 +2,6 @@
 
 GLAXNIMATE_OBJECT_IMPL(model::NamedColor)
 
-
-QString model::NamedColor::object_name() const
-{
-    if ( name.get().isEmpty() )
-        return type_name_human();
-    return name.get();
-}
-
 QString model::NamedColor::type_name_human() const
 {
     return tr("Unnamed Color");
