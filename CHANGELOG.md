@@ -1,5 +1,7 @@
 ## 0.2.0
 
+## 0.1.2
+
 * Editing:
     * Ability to embed external images
     * Quick action to reopen the last opened/saved document
