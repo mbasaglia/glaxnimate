@@ -1,5 +1,10 @@
 ## 0.2.0
 
+## 0.1.4
+
+* Editing:
+    * Added support for copy/pasting document defs
+
 ## 0.1.3
 
 * Editing:

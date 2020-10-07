@@ -207,8 +207,33 @@ void GlaxnimateWindow::Private::paste()
 
     current_document->undo_stack().beginMacro(tr("Paste"));
 
-    model::ShapeListProperty* shape_cont = current_shape_container();
+    for ( auto& color : raw_pasted.document->defs()->colors.raw() )
+    {
+        if ( !current_document->defs()->find_by_uuid(color->uuid.get()) )
+        {
+            color->transfer(current_document.get());
+            current_document->push_command(new command::AddObject(
+                &current_document->defs()->colors,
+                std::move(color),
+                current_document->defs()->colors.size()
+            ));
+        }
+    }
 
+    for ( auto& image : raw_pasted.document->defs()->images.raw() )
+    {
+        if ( !current_document->defs()->find_by_uuid(image->uuid.get()) )
+        {
+            image->transfer(current_document.get());
+            current_document->push_command(new command::AddObject(
+                &current_document->defs()->images,
+                std::move(image),
+                current_document->defs()->images.size()
+            ));
+        }
+    }
+
+    model::ShapeListProperty* shape_cont = current_shape_container();
     std::vector<model::DocumentNode*> select;
     if ( !raw_pasted.document->main()->shapes.empty() )
     {
@@ -216,31 +241,12 @@ void GlaxnimateWindow::Private::paste()
         for ( auto& shape : raw_pasted.document->main()->shapes.raw() )
         {
             auto ptr = shape.get();
+            shape->refresh_uuid();
             select.push_back(ptr);
             shape->transfer(current_document.get());
             current_document->push_command(new command::AddShape(shape_cont, std::move(shape), shape_insertion_point++));
             ptr->recursive_rename();
         }
-    }
-
-    for ( auto& color : raw_pasted.document->defs()->colors.raw() )
-    {
-        color->transfer(current_document.get());
-        current_document->push_command(new command::AddObject(
-            &current_document->defs()->colors,
-            std::move(color),
-            current_document->defs()->colors.size()
-        ));
-    }
-
-    for ( auto& image : raw_pasted.document->defs()->images.raw() )
-    {
-        image->transfer(current_document.get());
-        current_document->push_command(new command::AddObject(
-            &current_document->defs()->images,
-            std::move(image),
-            current_document->defs()->images.size()
-        ));
     }
 
     current_document->undo_stack().endMacro();

@@ -26,6 +26,11 @@ public:
      }
 
     virtual QIcon reftarget_icon() const = 0;
+
+    /**
+     * \brief Recursively updates uuid
+     */
+    void refresh_uuid();
 };
 
 } // namespace model

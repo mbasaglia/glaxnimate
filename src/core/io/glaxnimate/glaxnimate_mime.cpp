@@ -1,10 +1,44 @@
 #include "glaxnimate_mime.hpp"
+
+#include <set>
+
 #include "import_state.hpp"
 #include "model/shapes/shape.hpp"
 #include "model/defs/named_color.hpp"
 #include "model/defs/bitmap.hpp"
+#include "model/visitor.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateMime> io::glaxnimate::GlaxnimateMime::autoreg;
+
+namespace {
+
+class GetDeps : public model::Visitor
+{
+public:
+    GetDeps(const std::vector<model::DocumentNode*>& objects)
+        : skip(objects.begin(), objects.end())
+    {}
+
+    void on_visit(model::DocumentNode * node) override
+    {
+        for ( auto property : node->properties() )
+        {
+            if ( property->traits().type == model::PropertyTraits::ObjectReference && property->name() != "parent" )
+            {
+                auto ptr = static_cast<model::ReferencePropertyBase*>(property)->get_ref();
+                if ( !ptr || skip.count(ptr))
+                    continue;
+
+                referenced[ptr->uuid.get().toString()] = ptr;
+            }
+        }
+    }
+
+    std::set<model::ReferenceTarget*> skip;
+    std::map<QString, model::ReferenceTarget*> referenced;
+};
+
+} // namespace
 
 QStringList io::glaxnimate::GlaxnimateMime::mime_types() const
 {
@@ -14,8 +48,17 @@ QStringList io::glaxnimate::GlaxnimateMime::mime_types() const
 QJsonDocument io::glaxnimate::GlaxnimateMime::serialize_json(const std::vector<model::DocumentNode *>& objects)
 {
     QJsonArray arr;
+    GetDeps gd(objects);
+
     for ( auto object : objects )
+    {
+        gd.visit(object);
         arr.push_back(GlaxnimateFormat::to_json(object));
+    }
+
+    for ( const auto& p: gd.referenced )
+        arr.push_front(GlaxnimateFormat::to_json(p.second));
+
     return QJsonDocument(arr);
 }
 

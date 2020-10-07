@@ -46,6 +46,11 @@ public:
 
     void set_time(FrameTime) override {}
 
+    void transfer(Document*) override;
+
+    virtual bool set_ref(model::ReferenceTarget* t) = 0;
+    virtual model::ReferenceTarget* get_ref() const = 0;
+
 private:
     PropertyCallback<std::vector<ReferenceTarget*>> valid_options_;
     PropertyCallback<bool, ReferenceTarget*> is_valid_option_;
@@ -105,6 +110,20 @@ public:
     }
 
     Type* operator->() const
+    {
+        return value_;
+    }
+
+    bool set_ref(model::ReferenceTarget* t) override
+    {
+        if ( !t )
+            return set(nullptr);
+        if ( auto p = qobject_cast<Type*>(t) )
+            return set(p);
+        return false;
+    }
+
+    model::ReferenceTarget* get_ref() const override
     {
         return value_;
     }

@@ -96,11 +96,11 @@ endif(DOXYGEN_FOUND)
 
 add_custom_target(
     pre_release
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/pre_release.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/pre_release.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt
 )
 add_custom_target(
     release
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt
 )
 
 # Packaging
