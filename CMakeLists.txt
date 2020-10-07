@@ -10,7 +10,7 @@ set(DATA_INSTALL "share/${PROJECT_SLUG}/${PROJECT_SLUG}")
 
 set(PROJECT_HOMEPAGE_URL "https://glaxnimate.mattbas.org/")
 set(URL_DOCS "https://glaxnimate.mattbas.org/")
-set(URL_ISSUES "https://gitlab.com/mattia.basaglia/glaxnimate/-/issues")
+set(URL_ISSUES "https://gitlab.com/mattbas/glaxnimate/-/issues")
 set(URL_DONATE "https://glaxnimate.mattbas.org/donate/")
 
 set(PROJECT_DESCRIPTION "Simple vector animation program")

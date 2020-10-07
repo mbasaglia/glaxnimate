@@ -123,5 +123,5 @@ Glaxnimate is a simple and fast vector graphics animation program.
 
 * [Donate](donate.md)
 * [Contribute](contributing/index.md)
-* [Report Issues](https://gitlab.com/mattia.basaglia/glaxnimate/-/issues)
+* [Report Issues](https://gitlab.com/mattbas/glaxnimate/-/issues)
 * [Chat](https://t.me/Glaxnimate)

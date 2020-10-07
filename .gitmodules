@@ -1,9 +1,9 @@
 [submodule "cmake"]
 	path = cmake
-	url = https://gitlab.com/mattia.basaglia/CMake-Lib.git
+	url = https://gitlab.com/mattbas/CMake-Lib.git
 [submodule "external/Qt-Color-Widgets"]
 	path = external/Qt-Color-Widgets
-	url = https://gitlab.com/mattia.basaglia/Qt-Color-Widgets.git
+	url = https://gitlab.com/mattbas/Qt-Color-Widgets.git
 [submodule "external/cmake-modules"]
 	path = external/cmake-modules
 	url = https://github.com/rpavlik/cmake-modules.git
@@ -12,7 +12,7 @@
 	url = https://github.com/pybind/pybind11.git
 [submodule "external/Qt-History-LineEdit"]
 	path = external/Qt-History-LineEdit
-	url = https://gitlab.com/mattia.basaglia/Qt-History-LineEdit.git
+	url = https://gitlab.com/mattbas/Qt-History-LineEdit.git
 [submodule "data/icons/breeze-icons"]
 	path = data/icons/breeze-icons
 	url = https://github.com/KDE/breeze-icons.git

@@ -12,7 +12,7 @@ If you don't have any technical skill you can still support Glaxnimate by
 Reporting Issues
 ---------------------------------------
 
-You can report issues on [GitLab](https://gitlab.com/mattia.basaglia/glaxnimate/-/issues).
+You can report issues on [GitLab](https://gitlab.com/mattbas/glaxnimate/-/issues).
 
 Bug reports and feature requests are welcome.
 
@@ -68,7 +68,7 @@ Code
 
 See the [README](https://glaxnimate.mattbas.org/contributing/read_me/) for build instructions.
 
-You can open [merge requests on GitLab](https://gitlab.com/mattia.basaglia/glaxnimate/-/merge_requests)
+You can open [merge requests on GitLab](https://gitlab.com/mattbas/glaxnimate/-/merge_requests)
 to get your changes merged into Glaxnimate.
 
 ### License

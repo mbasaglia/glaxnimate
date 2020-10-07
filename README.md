@@ -20,11 +20,11 @@ Dependencies
 Getting the Latest Code
 ---------------------------------------
 
-You can find the code on [GitLab](https://gitlab.com/mattia.basaglia/glaxnimate).
+You can find the code on [GitLab](https://gitlab.com/mattbas/glaxnimate).
 
 To clone with git:
 
-    git clone --recursive https://gitlab.com/mattia.basaglia/glaxnimate.git
+    git clone --recursive https://gitlab.com/mattbas/glaxnimate.git
 
 
 Building
@@ -106,7 +106,7 @@ Contacts
 ---------------------------------------
 
 * [Telegram (Chat)](https://t.me/Glaxnimate)
-* [GitLab (Code, Issues)](https://gitlab.com/mattia.basaglia/glaxnimate)
+* [GitLab (Code, Issues)](https://gitlab.com/mattbas/glaxnimate)
 * [User Manual](https://glaxnimate.mattbas.org)
 
 

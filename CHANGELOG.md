@@ -4,6 +4,8 @@
 
 * Editing:
     * Added support for copy/pasting document defs
+* Housekeeping:
+    * Moved the project to GitLab group to have access to more CI minutes
 
 ## 0.1.3
 

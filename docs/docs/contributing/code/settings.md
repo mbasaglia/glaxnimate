@@ -37,5 +37,5 @@ User-facing settings have more options, that will affect the settings dialog.
 Otherwise, if a setting is used only to store some internal state, you can
 define an internal setting that can leave most fields empty.
 
-See [GlaxnimateApp::load_settings_metadata()](https://gitlab.com/mattia.basaglia/glaxnimate/-/blob/master/src/gui/glaxnimate_app.cpp)
+See [GlaxnimateApp::load_settings_metadata()](https://gitlab.com/mattbas/glaxnimate/-/blob/master/src/gui/glaxnimate_app.cpp)
 for examples of how the current settings are defined.

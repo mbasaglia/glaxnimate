@@ -56,7 +56,7 @@ root_dir = Path(__file__).absolute().parent.parent
 if ns.fake_env:
     fake_ver = re.search("project\(.* VERSION (\S+)", open(root_dir / "CMakeLists.txt").read()).group(1)
     os.environ.setdefault("CI_COMMIT_TAG", fake_ver)
-    os.environ.setdefault("CI_PROJECT_URL", "https://gitlab.com/mattia.basaglia/glaxnimate")
+    os.environ.setdefault("CI_PROJECT_URL", "https://gitlab.com/mattbas/glaxnimate")
     os.environ.setdefault("CI_PROJECT_ID", "19921167")
 
 

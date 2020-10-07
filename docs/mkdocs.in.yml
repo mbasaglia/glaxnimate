@@ -8,7 +8,7 @@ theme:
     name: cinder
     custom_dir: theme
     highlightjs: false
-repo_url: https://gitlab.com/mattia.basaglia/glaxnimate
+repo_url: https://gitlab.com/mattbas/glaxnimate
 edit_uri: -/edit/master/docs/docs
 markdown_extensions:
     - fontawesome_markdown
@@ -47,5 +47,5 @@ nav:
         - "Roadmap": contributing/roadmap.md
     - "<i class='fa fa-globe'></i> Links":
         - '<i class="fab fa-telegram"></i> Telegram Chat': https://t.me/Glaxnimate
-        - '<i class="fab fa-gitlab"></i>   Code Browser': https://gitlab.com/mattia.basaglia/glaxnimate
-        - '<i class="fa fa-bug"></i>       Issues': https://gitlab.com/mattia.basaglia/glaxnimate/-/issues
+        - '<i class="fab fa-gitlab"></i>   Code Browser': https://gitlab.com/mattbas/glaxnimate
+        - '<i class="fa fa-bug"></i>       Issues': https://gitlab.com/mattbas/glaxnimate/-/issues
