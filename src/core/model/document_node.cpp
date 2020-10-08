@@ -51,13 +51,6 @@ void model::DocumentNode::on_property_changed(const BaseProperty* prop, const QV
     }
 }
 
-QString model::DocumentNode::object_name() const
-{
-    if ( name.get().isEmpty() )
-        return type_name_human();
-    return name.get();
-}
-
 
 bool model::DocumentNode::docnode_is_instance(const QString& type_name) const
 {

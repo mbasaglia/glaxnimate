@@ -26,3 +26,10 @@ void model::ReferenceTarget::refresh_uuid()
     }
 }
 
+
+QString model::ReferenceTarget::object_name() const
+{
+    if ( name.get().isEmpty() )
+        return type_name_human();
+    return name.get();
+}

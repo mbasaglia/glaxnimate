@@ -19,10 +19,6 @@ class DocumentNode : public ReferenceTarget
 
 public:
     /**
-     * @brief Name of the node, used to display it in the UI
-     */
-    GLAXNIMATE_PROPERTY(QString, name, "", &DocumentNode::docnode_name_changed)
-    /**
      * @brief Color of the node the tree UI to highlight grouped items
      *
      * Generally parent/child relationshitps define groups but layers can
@@ -127,8 +123,6 @@ public:
      * \brief \b true iff this node or any of its ancestors is locked
      */
     bool docnode_locked_recursive() const;
-
-    QString object_name() const override;
 
     QColor docnode_group_color() const;
     QIcon reftarget_icon() const override;
@@ -248,7 +242,6 @@ signals:
     void docnode_visible_changed(bool);
     void docnode_locked_changed(bool);
     void docnode_visible_recursive_changed(bool);
-    void docnode_name_changed(const QString&);
     void docnode_group_color_changed(const QColor&);
 
     void bounding_rect_changed();

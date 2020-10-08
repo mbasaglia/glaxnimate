@@ -15,7 +15,14 @@ class Defs : public ObjectBase<Defs, Object>
 
     GLAXNIMATE_PROPERTY_LIST(NamedColor, colors, &Defs::on_color_added, &Defs::on_color_removed, {}, {}, {}, {})
     GLAXNIMATE_PROPERTY_LIST(Bitmap, images, {}, {}, {}, {}, {}, {})
-    GLAXNIMATE_PROPERTY_LIST(GradientColors, gradient_colors, {}, {}, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(GradientColors, gradient_colors,
+        &Defs::gradient_add_end,
+        &Defs::gradient_remove_end,
+        &Defs::gradient_add_begin,
+        &Defs::gradient_remove_begin,
+        &Defs::gradient_move_begin,
+        &Defs::gradient_move_end
+    )
     GLAXNIMATE_PROPERTY_LIST(Gradient, gradients, {}, {}, {}, {}, {}, {})
 
 public:
@@ -29,6 +36,14 @@ signals:
     void color_added(int position, model::NamedColor* color);
     void color_removed(int position);
     void color_changed(int position, model::NamedColor* color);
+
+
+    void gradient_add_begin(int row);
+    void gradient_add_end(GradientColors* node);
+    void gradient_remove_begin(int row);
+    void gradient_remove_end(GradientColors* node);
+    void gradient_move_begin(int from, int to);
+    void gradient_move_end(GradientColors* node, int from, int to);
 
 private:
     void on_color_added(NamedColor* color, int position);

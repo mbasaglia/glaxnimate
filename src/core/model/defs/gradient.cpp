@@ -1,4 +1,7 @@
 #include "gradient.hpp"
+
+#include <QPainter>
+
 #include "model/document.hpp"
 #include "model/defs/defs.hpp"
 
@@ -47,10 +50,16 @@ void model::Gradient::on_ref_visual_changed()
 void model::Gradient::on_ref_changed ( model::GradientColors* new_ref, model::GradientColors* old_ref )
 {
     if ( old_ref )
+    {
+        old_ref->remove_user(&colors);
         disconnect(old_ref, &GradientColors::colors_changed, this, &Gradient::on_ref_visual_changed);
+    }
 
     if ( new_ref )
+    {
+        old_ref->add_user(&colors);
         connect(new_ref, &GradientColors::colors_changed, this, &Gradient::on_ref_visual_changed);
+    }
 }
 
 QString model::LinearGradient::type_name_human() const

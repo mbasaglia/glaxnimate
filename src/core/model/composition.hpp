@@ -20,6 +20,8 @@ public:
         &DocumentNode::docnode_child_remove_begin
     };
 
+    GLAXNIMATE_PROPERTY_LIST_IMPL(shapes)
+
 public:
     explicit Composition(Document* document);
 
