@@ -243,7 +243,7 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
     if ( export_opts )
     {
         export_options = opts;
-        ui.action_export->setText(tr("Export to %s").arg(QFileInfo(opts.filename).baseName()));
+        ui.action_export->setText(tr("Export to %1").arg(QFileInfo(opts.filename).fileName()));
     }
     else
     {

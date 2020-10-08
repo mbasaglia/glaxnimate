@@ -11,6 +11,7 @@
     * Fixed rlottie layer transforms for exported lottie
     * Importing lottie keyframe checks the type before unwrapping arrays
     * Fixed crash when selecting handles
+    * Export menu action shows the right file name after exporting
 
 ## 0.1.3
 
