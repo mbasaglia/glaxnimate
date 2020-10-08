@@ -12,6 +12,7 @@
 #include "model/shapes/shapes.hpp"
 #include "math/bezier.hpp"
 #include "cbor_write_json.hpp"
+#include <QDebug>
 
 using namespace model;
 
@@ -241,6 +242,7 @@ public:
     QCborMap wrap_layer_shape(ShapeElement* shape)
     {
         QCborMap json;
+        json["ddd"_l] = 0;
         json["ty"_l] = 4;
         convert_animation_container(document->main()->animation.get(), json);
         json["st"_l] = 0;
@@ -288,6 +290,7 @@ public:
             parent_index = forced_parent;
 
         QCborMap json;
+        json["ddd"_l] = 0;
         json["ty"_l] = layer->shapes.empty() ? 3 : 4;
         int index = layer_index(layer);
         json["ind"_l] = index;
@@ -596,6 +599,7 @@ public:
     QCborMap convert_image_layer(model::Image* image)
     {
         QCborMap json;
+        json["ddd"_l] = 0;
         json["ty"_l] = 2;
         convert_animation_container(document->main()->animation.get(), json);
         json["st"_l] = 0;
@@ -931,6 +935,22 @@ private:
         return QVariant::fromValue(v);
     }
 
+    bool is_scalar(model::BaseProperty * prop)
+    {
+        switch ( prop->traits().type )
+        {
+            case model::PropertyTraits::Bool:
+            case model::PropertyTraits::Int:
+            case model::PropertyTraits::Float:
+            case model::PropertyTraits::String:
+            case model::PropertyTraits::Uuid:
+            case model::PropertyTraits::Enum:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     std::optional<QVariant> value_to_variant(model::BaseProperty * prop, const QJsonValue& val)
     {
         switch ( prop->traits().type )
@@ -1030,8 +1050,9 @@ private:
             {
                 model::FrameTime time = jkf["t"].toDouble();
                 QJsonValue s = jkf["s"];
-                if ( s.isArray() )
+                if ( s.isArray() && is_scalar(prop) )
                     s = s.toArray()[0];
+
                 auto v = value_to_variant(prop, s);
                 model::KeyframeBase* kf = nullptr;
                 if ( v )
