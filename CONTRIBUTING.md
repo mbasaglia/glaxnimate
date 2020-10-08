@@ -80,3 +80,19 @@ so your contributions must be under the same license.
 
 See [Cross Compiling](https://glaxnimate.mattbas.org/contributing/cross_compiling/)
 for intructions of how to build Glaxnimate using MXE.
+
+
+Credits and Licensing
+---------------------------------------
+
+If you make significant contributions add your name or nickname in the appropriate section of AUTHORS.md,
+you can also include your email but you don't have to.
+
+If you contribute to the Glaxnimate, you agree that your contributions are
+compatible with the licensing terms.
+
+For documentation contributions the license is dual GPLv3+ and CC BY-SA 4.0.
+
+For everything else in the Glaxnimate repository, the license is GPLv3+.
+
+Some submodules have their own licensing terms.
