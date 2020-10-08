@@ -4,11 +4,13 @@
 
 * Editing:
     * Added support for copy/pasting document defs
+    * Dragging bezier handles now replaces the current selection when needed
 * Housekeeping:
     * Moved the project to GitLab group to have access to more CI minutes
 * Bug Fixes:
     * Fixed rlottie layer transforms for exported lottie
     * Importing lottie keyframe checks the type before unwrapping arrays
+    * Fixed crash when selecting handles
 
 ## 0.1.3
 

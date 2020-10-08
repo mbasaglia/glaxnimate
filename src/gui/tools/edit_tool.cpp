@@ -11,6 +11,7 @@
 
 tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
 
+#include <QDebug>
 class tools::EditTool::Private
 {
 public:
@@ -81,17 +82,12 @@ public:
             selected.clear();
         }
 
-        void add_handle(QGraphicsItem* item)
+        void add_bezier_point_item(graphics::BezierPointItem* item)
         {
-            auto role = graphics::MoveHandle::HandleRole(item->data(graphics::ItemData::HandleRole).toInt());
-            if ( role != graphics::MoveHandle::Vertex )
-                return;
-
-            auto parent = static_cast<graphics::BezierPointItem*>(item->parentItem());
-            auto grandpa = parent->parent_editor();
+            auto grandpa = item->parent_editor();
             if ( selected.find(grandpa) == selected.end() )
                 add_bezier_item(grandpa);
-            grandpa->select_index(parent->index());
+            grandpa->select_index(item->index());
         }
 
         void toggle_handle(graphics::MoveHandle* item)
@@ -299,7 +295,11 @@ void tools::EditTool::mouse_move(const MouseEvent& event)
             case Private::VertexClick:
                 d->drag_mode = Private::VertexDrag;
                 if ( d->selection.initial && !d->selection.initial->parent_editor()->selected_indices().count(d->selection.initial->index()) )
-                    d->selection.add_handle(d->selection.initial);
+                {
+                    graphics::BezierPointItem* initial = d->selection.initial;
+                    d->selection.clear();
+                    d->selection.add_bezier_point_item(initial);
+                }
                 d->selection.start_drag();
                 [[fallthrough]];
             case Private::VertexDrag:
@@ -348,7 +348,8 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
                     event.view->viewportTransform()
                 );
                 for ( auto item : items )
-                    d->selection.add_handle(item);
+                    if ( item->data(graphics::ItemData::HandleRole).toInt() == graphics::MoveHandle::Vertex )
+                        d->selection.add_bezier_point_item(static_cast<graphics::BezierPointItem*>(item->parentItem()));
                 event.view->viewport()->update();
                 break;
             }
