@@ -13,14 +13,14 @@ public:
     AddObject(
         PropT* object_parent,
         std::unique_ptr<ItemT> object,
-        int position,
+        int position = -1,
         QUndoCommand* parent = nullptr,
         const QString& name = {}
     )
         : QUndoCommand(name.isEmpty() ? QObject::tr("Create %1").arg(object->object_name()) : name, parent),
           object_parent(object_parent),
           object(std::move(object)),
-          position(position)
+          position(position == -1 ? object_parent->size() : position)
     {}
 
     void undo() override

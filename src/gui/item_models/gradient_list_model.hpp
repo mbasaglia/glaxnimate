@@ -27,10 +27,14 @@ public:
     QVariant data(const QModelIndex & index, int role) const override;
     Qt::ItemFlags flags(const QModelIndex & index) const override;
     bool setData(const QModelIndex & index, const QVariant & value, int role) override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+
+    QModelIndex gradient_to_index(model::GradientColors* gradient) const;
+    model::GradientColors* gradient(const QModelIndex& index) const;
 
 private slots:
-    void on_add_end(model::GradientColors*, int);
-    void on_remove_end(model::GradientColors*, int);
+    void on_add_end(model::GradientColors*);
+    void on_remove_end(model::GradientColors*);
     void on_add_begin(int);
     void on_remove_begin(int);
     void on_move_begin(int, int);

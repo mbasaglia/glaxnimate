@@ -55,6 +55,11 @@ public:
         return true;
     }
 
+    bool valid_value(const QVariant& val) const override
+    {
+        return val.canConvert<QVariantList>();
+    }
+
     virtual std::vector<model::ReferenceTarget *> valid_reference_values(bool allow_null) const = 0;
     virtual bool is_valid_reference_value(model::ReferenceTarget *, bool allow_null) const = 0;
 };

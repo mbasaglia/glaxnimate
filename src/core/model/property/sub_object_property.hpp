@@ -47,6 +47,11 @@ public:
         return QVariant::fromValue(const_cast<Type*>(&sub_obj));
     }
 
+    bool valid_value(const QVariant & v) const override
+    {
+        return v.value<Type*>();
+    }
+
     bool set_value(const QVariant& val) override
     {
         if ( !val.canConvert<Type*>() )

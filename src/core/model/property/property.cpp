@@ -15,10 +15,9 @@ void model::BaseProperty::value_changed()
 
 bool model::BaseProperty::set_undoable ( const QVariant& val, bool commit )
 {
-    QVariant before = value();
-    if ( !set_value(val) )
+    if ( !valid_value(val) )
         return false;
 
-    object_->push_command(new command::SetPropertyValue(this, before, val, commit));
+    object_->push_command(new command::SetPropertyValue(this, value(), val, commit));
     return true;
 }

@@ -9,6 +9,7 @@
 #include "model/defs/defs.hpp"
 #include "model/defs/named_color.hpp"
 #include "model/visitor.hpp"
+#include "model/undo_macro_guard.hpp"
 
 #include "app/scripting/python/register_machinery.hpp"
 
@@ -188,46 +189,6 @@ void define_log(py::module& m)
     log.def("error", [](const QString& msg){ app::log::Log("Python").log(msg, app::log::Error); });
 }
 
-struct UndoMacroGuard
-{
-    UndoMacroGuard(const QString& name, model::Document* document)
-    : name(name), document(document)
-    {}
-
-    ~UndoMacroGuard()
-    {
-        exit();
-    }
-
-
-    void enter()
-    {
-        if ( !end_macro )
-        {
-            end_macro = true;
-            document->undo_stack().beginMacro(name);
-        }
-    }
-
-    void exit()
-    {
-        if ( end_macro )
-        {
-            end_macro = false;
-            document->undo_stack().endMacro();
-        }
-    }
-
-    void pyexit(pybind11::object, pybind11::object, pybind11::object)
-    {
-        exit();
-    }
-
-    QString name;
-    model::Document* document;
-    bool end_macro = false;
-};
-
 class PyVisitorPublic : public model::Visitor
 {
 public:
@@ -267,20 +228,22 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
 
     py::module detail = glaxnimate_module.def_submodule("__detail", "");
     py::class_<QObject>(detail, "__QObject");
-    py::class_<UndoMacroGuard>(detail, "UndoMacroGuard")
-        .def("__enter__", &UndoMacroGuard::enter)
-        .def("__exit__", &UndoMacroGuard::pyexit)
-        .def("start", &UndoMacroGuard::enter)
-        .def("finish", &UndoMacroGuard::exit)
-    ;
 
     define_io(glaxnimate_module);
 
     py::module model = glaxnimate_module.def_submodule("model", "");
+    py::class_<model::UndoMacroGuard>(model, "UndoMacroGuard")
+        .def("__enter__", &model::UndoMacroGuard::start)
+        .def("__exit__", [](model::UndoMacroGuard& g, pybind11::object, pybind11::object, pybind11::object){
+            g.finish();
+        })
+        .def("start", &model::UndoMacroGuard::start)
+        .def("finish", &model::UndoMacroGuard::finish)
+    ;
     py::class_<model::Object, QObject>(model, "Object");
     register_from_meta<model::Document, QObject>(model)
         .def("macro", [](model::Document* document, const QString& str){
-            return new UndoMacroGuard(str, document);
+            return new model::UndoMacroGuard(str, document, false);
         }, py::return_value_policy::take_ownership);
     ;
     register_from_meta<model::ReferenceTarget, model::Object>(model);

@@ -179,8 +179,6 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     // Tool buttons
     ui.btn_layer_add->setMenu(ui.menu_new_layer);
 
-    // Time spinner
-
     // Transform Widget
     view_trans_widget = new ViewTransformWidget(ui.status_bar);
     ui.status_bar->addPermanentWidget(view_trans_widget);
@@ -197,7 +195,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.graphics_view->set_tool_target(parent);
     connect(&scene, &graphics::DocumentScene::node_user_selected, parent, &GlaxnimateWindow::scene_selection_changed);
 
-    // dialogs
+    // Dialogs
     dialog_import_status = new IoStatusDialog(QIcon::fromTheme("document-open"), tr("Open File"), false, parent);
     dialog_export_status = new IoStatusDialog(QIcon::fromTheme("document-save"), tr("Save File"), false, parent);
     about_dialog = new AboutDialog(parent);
@@ -268,6 +266,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         set_color_def_secondary(sty);
     });
 
+    // Gradients
+    ui.widget_gradients->set_window(parent);
+
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
 
@@ -279,8 +280,10 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     parent->splitDockWidget(ui.dock_colors, ui.dock_swatches, Qt::Horizontal);
     parent->tabifyDockWidget(ui.dock_colors, ui.dock_stroke);
     parent->tabifyDockWidget(ui.dock_stroke, ui.dock_undo);
+    parent->tabifyDockWidget(ui.dock_swatches, ui.dock_gradients);
     ui.dock_colors->raise();
     ui.dock_swatches->setVisible(false);
+    ui.dock_gradients->setVisible(false);
 
     parent->resizeDocks(
         {ui.dock_layers},
@@ -384,6 +387,7 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
     ui.stroke_style_widget->set_shape(stroke);
     /// \todo rename to fill_style_widget
     ui.fill_style_widget->set_shape(fill);
+    ui.widget_gradients->set_targets(fill, stroke);
 }
 
 void GlaxnimateWindow::Private::view_fit()

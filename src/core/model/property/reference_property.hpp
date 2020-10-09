@@ -34,6 +34,11 @@ public:
     {
     }
 
+    bool valid_value(const QVariant & v) const override
+    {
+        return is_valid_option_(object(), v.value<ReferenceTarget*>());
+    }
+
     std::vector<ReferenceTarget*> valid_options() const
     {
         return valid_options_(object());

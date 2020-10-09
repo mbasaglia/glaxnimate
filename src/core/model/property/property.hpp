@@ -174,6 +174,7 @@ public:
     virtual bool set_undoable(const QVariant& val, bool commit = true);
     virtual void set_time(FrameTime t) = 0;
     virtual void transfer(Document*) {};
+    virtual bool valid_value(const QVariant& v) const = 0;
 
     virtual bool assign_from(const BaseProperty* prop)
     {
@@ -310,6 +311,13 @@ public:
           emitter(std::move(emitter)),
           validator(std::move(validator))
     {}
+
+    bool valid_value(const QVariant& val) const override
+    {
+        if ( auto v = detail::variant_cast<Type>(val) )
+            return !validator || validator(object(), *v);
+        return false;
+    }
 
     bool set(Type value)
     {

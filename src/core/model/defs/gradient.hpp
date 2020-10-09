@@ -22,6 +22,7 @@ public:
     using Ctor::Ctor;
 
     QIcon reftarget_icon() const override;
+    QString type_name_human() const override;
 
 signals:
     void colors_changed(const QGradientStops&);

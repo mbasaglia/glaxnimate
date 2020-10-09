@@ -32,14 +32,13 @@ bool model::AnimatableBase::assign_from(const model::BaseProperty* prop)
 
 bool model::AnimatableBase::set_undoable(const QVariant& val, bool commit)
 {
-    QVariant before = value();
-    if ( !set_value(val) )
+    if ( !valid_value(val) )
         return false;
 
     object()->push_command(new command::SetMultipleAnimated(
         tr("Update %1").arg(name()),
         {this},
-        {before},
+        {value()},
         {val},
         commit
     ));

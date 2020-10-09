@@ -53,6 +53,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     ui.view_undo->setStack(&current_document->undo_stack());
 
     ui.document_swatch_widget->set_document(current_document.get());
+    ui.widget_gradients->set_document(current_document.get());
 
     // Scripting
     script_contexts.clear();
@@ -208,6 +209,7 @@ bool GlaxnimateWindow::Private::close_document()
     ui.timeline_widget->clear_document();
     ui.view_undo->setStack(nullptr);
     ui.document_swatch_widget->set_document(nullptr);
+    ui.widget_gradients->set_document(nullptr);
 
     return true;
 }

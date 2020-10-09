@@ -12,6 +12,7 @@ graphics/bezier_item.cpp
 
 item_models/document_node_model.cpp
 item_models/property_model.cpp
+item_models/gradient_list_model.cpp
 
 misc/clipboard_settings.cpp
 
@@ -75,6 +76,8 @@ widgets/shape_style/stroke_style_widget.ui
 widgets/shape_style/fill_style_widget.cpp
 widgets/shape_style/document_swatch_widget.cpp
 widgets/shape_style/document_swatch_widget.ui
+widgets/shape_style/gradient_list_widget.cpp
+widgets/shape_style/gradient_list_widget.ui
 )
 
 if(${PYTHON_ENABLED})

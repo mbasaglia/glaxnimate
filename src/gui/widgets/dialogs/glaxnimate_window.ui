@@ -737,6 +737,36 @@
    <addaction name="action_segment_lines"/>
    <addaction name="action_segment_curve"/>
   </widget>
+  <widget class="QDockWidget" name="dock_gradients">
+   <property name="windowIcon">
+    <iconset theme="color-gradient"/>
+   </property>
+   <property name="windowTitle">
+    <string>Gradients</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_11">
+    <layout class="QVBoxLayout" name="verticalLayout_12">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="GradientListWidget" name="widget_gradients" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="action_new">
    <property name="icon">
     <iconset theme="document-new">
@@ -1495,7 +1525,8 @@
   </action>
   <action name="action_export">
    <property name="icon">
-    <iconset theme="document-export"/>
+    <iconset theme="document-export">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Export...</string>
@@ -1503,7 +1534,8 @@
   </action>
   <action name="action_export_as">
    <property name="icon">
-    <iconset theme="document-export"/>
+    <iconset theme="document-export">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>E&amp;xport As...</string>
@@ -1576,6 +1608,12 @@
    <slots>
     <signal>needs_new_color()</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>GradientListWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/shape_style/gradient_list_widget.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

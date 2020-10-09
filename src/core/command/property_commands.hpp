@@ -14,8 +14,11 @@ public:
         : SetPropertyValue(prop, prop->value(), value, false)
     {}
 
-    SetPropertyValue(model::BaseProperty* prop, const QVariant& before, const QVariant& after, bool commit = true)
-        : Parent(QObject::tr("Update %1").arg(prop->name()), commit), prop(prop), before(before), after(after)
+    SetPropertyValue(model::BaseProperty* prop, const QVariant& before, const QVariant& after, bool commit = true, const QString& name = {})
+        : Parent(name.isEmpty() ? QObject::tr("Update %1").arg(prop->name()) : name, commit),
+            prop(prop),
+            before(before),
+            after(after)
     {}
 
     void undo() override

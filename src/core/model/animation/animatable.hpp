@@ -382,6 +382,13 @@ public:
         return false;
     }
 
+    bool valid_value(const QVariant& val) const override
+    {
+        if ( detail::variant_cast<Type>(val) )
+            return true;
+        return false;
+    }
+
     bool set(reference val)
     {
         value_ = val;
