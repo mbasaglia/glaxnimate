@@ -62,11 +62,18 @@ public:
 
     void set_gradient(bool secondary, bool radial)
     {
-        model::GradientColors* colors = current();
 
         model::Styler* styler = secondary ? (model::Styler*)stroke : (model::Styler*)fill;
-        if ( !styler || !colors )
+        if ( !styler )
             return;
+
+        model::GradientColors* colors = current();
+        if ( !colors )
+        {
+            add_gradient();
+            colors = current();
+        }
+
 
         model::UndoMacroGuard macro(tr("Set %1 Gradient").arg(radial ? "Radial" : "Linear"), document);
 
@@ -209,11 +216,11 @@ public:
 
         clear_buttons();
 
-        if ( !gradient_fill && !gradient_stroke )
-            return;
+        model::GradientColors* colors_fill = gradient_fill ? gradient_fill->colors.get() : nullptr;
+        model::GradientColors* colors_stroke = gradient_stroke ? gradient_stroke->colors.get() : nullptr;
 
-        auto colors_fill = gradient_fill->colors.get();
-        auto colors_stroke = gradient_stroke->colors.get();
+        if ( !colors_fill && !colors_stroke )
+            return;
 
         model::GradientColors* colors = colors_fill ? colors_fill : colors_stroke;
 
@@ -234,7 +241,23 @@ public:
             else
                 ui.btn_stroke_linear->setChecked(true);
         }
+    }
 
+    void delete_gradient()
+    {
+        model::GradientColors* colors = current();
+        if ( !colors )
+        {
+            if ( document->defs()->gradient_colors.empty() )
+                return;
+
+            colors = document->defs()->gradient_colors[document->defs()->gradient_colors.size()-1];
+        }
+
+        document->push_command(new command::RemoveObject(
+            colors,
+            &document->defs()->gradient_colors
+        ));
     }
 };
 
@@ -247,6 +270,7 @@ GradientListWidget::GradientListWidget(QWidget* parent)
     d->ui.list_view->setItemDelegateForColumn(item_models::GradientListModel::Gradient, &d->delegrate);
 
     connect(d->ui.btn_new, &QAbstractButton::clicked, this, [this]{ d->add_gradient(); });
+    connect(d->ui.btn_remove, &QAbstractButton::clicked, this, [this]{ d->delete_gradient(); });
     connect(d->ui.btn_fill_linear, &QAbstractButton::clicked, this, Private::TypeButtonSlot{d->ui.btn_fill_radial, this, false, false});
     connect(d->ui.btn_fill_radial, &QAbstractButton::clicked, this, Private::TypeButtonSlot{d->ui.btn_fill_linear, this, true, false});
     connect(d->ui.btn_stroke_linear, &QAbstractButton::clicked, this, Private::TypeButtonSlot{d->ui.btn_stroke_radial, this, false, true});

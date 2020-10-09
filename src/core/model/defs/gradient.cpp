@@ -50,7 +50,7 @@ bool model::Gradient::is_valid_ref ( model::ReferenceTarget* node ) const
 
 void model::Gradient::on_ref_visual_changed()
 {
-    emit style_changed();
+    emit property_changed(&colors, {});
 }
 
 void model::Gradient::on_ref_changed ( model::GradientColors* new_ref, model::GradientColors* old_ref )
@@ -65,6 +65,10 @@ void model::Gradient::on_ref_changed ( model::GradientColors* new_ref, model::Gr
     {
         new_ref->add_user(&colors);
         connect(new_ref, &GradientColors::colors_changed, this, &Gradient::on_ref_visual_changed);
+    }
+    else
+    {
+        detach();
     }
 }
 

@@ -14,16 +14,16 @@ class Defs : public ObjectBase<Defs, Object>
     GLAXNIMATE_OBJECT
 
     GLAXNIMATE_PROPERTY_LIST(NamedColor, colors, &Defs::on_color_added, &Defs::on_color_removed, {}, {}, {}, {})
-    GLAXNIMATE_PROPERTY_LIST(Bitmap, images, {}, {}, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(Bitmap, images, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
     GLAXNIMATE_PROPERTY_LIST(GradientColors, gradient_colors,
-        &Defs::gradient_add_end,
-        &Defs::gradient_remove_end,
+        &Defs::on_gradient_colors_added,
+        &Defs::on_gradient_colors_removed,
         &Defs::gradient_add_begin,
         &Defs::gradient_remove_begin,
         &Defs::gradient_move_begin,
         &Defs::gradient_move_end
     )
-    GLAXNIMATE_PROPERTY_LIST(Gradient, gradients, {}, {}, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(Gradient, gradients, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
 
 public:
     using Ctor::Ctor;
@@ -48,6 +48,12 @@ signals:
 private:
     void on_color_added(NamedColor* color, int position);
     void on_color_removed(NamedColor* color, int position);
+
+    void on_gradient_colors_added(GradientColors* color);
+    void on_gradient_colors_removed(GradientColors* color);
+
+    void on_added(Def* def);
+    void on_removed(Def* def);
 };
 
 } // namespace model

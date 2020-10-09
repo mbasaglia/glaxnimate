@@ -20,6 +20,20 @@ void model::Defs::on_color_removed(model::NamedColor* color, int position)
     emit color_removed(position);
 }
 
+void model::Defs::on_gradient_colors_added(model::GradientColors* color)
+{
+    color->attach();
+    emit gradient_add_end(color);
+}
+
+void model::Defs::on_gradient_colors_removed(model::GradientColors* color)
+{
+    color->detach();
+    emit gradient_remove_end(color);
+}
+
+
+
 model::ReferenceTarget* model::Defs::find_by_uuid ( const QUuid& n ) const
 {
     for ( const auto& c : colors )
@@ -51,4 +65,14 @@ model::Bitmap * model::Defs::add_image(const QString& filename, bool embed)
     auto ptr = image.get();
     push_command(new command::AddObject(&images, std::move(image), images.size()));
     return ptr;
+}
+
+void model::Defs::on_added(model::Def* def)
+{
+    def->attach();
+}
+
+void model::Defs::on_removed(model::Def* def)
+{
+    def->detach();
 }

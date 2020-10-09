@@ -4,11 +4,11 @@
 #include <QFileInfo>
 #include <QUrl>
 
-#include "model/reference_target.hpp"
+#include "model/defs/def.hpp"
 
 namespace model {
 
-class Bitmap : public ObjectBase<Bitmap, ReferenceTarget>
+class Bitmap : public ObjectBase<Bitmap, Def>
 {
     GLAXNIMATE_OBJECT
     GLAXNIMATE_PROPERTY(QByteArray, data, {}, &Bitmap::on_refresh)

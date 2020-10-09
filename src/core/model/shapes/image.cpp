@@ -38,10 +38,16 @@ void model::Image::on_paint(QPainter* p, model::FrameTime, model::DocumentNode::
 void model::Image::on_image_changed(model::Bitmap* new_use, model::Bitmap* old_use)
 {
     if ( old_use )
+    {
+        old_use->remove_user(&image);
         disconnect(old_use, &Bitmap::loaded, this, &Image::on_update_image);
+    }
 
     if ( new_use )
+    {
+        new_use->add_user(&image);
         connect(new_use, &Bitmap::loaded, this, &Image::on_update_image);
+    }
 }
 
 void model::Image::on_update_image()
