@@ -50,7 +50,7 @@ bool model::Gradient::is_valid_ref ( model::ReferenceTarget* node ) const
 
 void model::Gradient::on_ref_visual_changed()
 {
-    emit property_changed(&colors, {});
+    emit style_changed();
 }
 
 void model::Gradient::on_ref_changed ( model::GradientColors* new_ref, model::GradientColors* old_ref )
@@ -72,52 +72,71 @@ void model::Gradient::on_ref_changed ( model::GradientColors* new_ref, model::Gr
     }
 }
 
-QString model::LinearGradient::type_name_human() const
+QString model::Gradient::type_name_human() const
 {
-    return tr("Linear Gradient");
+    return tr("%1 Gradient").arg(gradient_type_name(type.get()));
 }
 
-QBrush model::LinearGradient::brush_style ( model::FrameTime t ) const
+QBrush model::Gradient::brush_style ( model::FrameTime t ) const
 {
-    QLinearGradient g(start_point.get_at(t), end_point.get_at(t));
-    if ( colors.get() )
-        g.setStops(colors->colors.get_at(t));
-    g.setSpread(QGradient::PadSpread);
-    return g;
+    if ( type.get() == Radial )
+    {
+        QRadialGradient g(start_point.get_at(t), radius(t), highlight_center.get_at(t));
+        if ( colors.get() )
+            g.setStops(colors->colors.get_at(t));
+        g.setSpread(QGradient::PadSpread);
+        return g;
+    }
+    else
+    {
+        QLinearGradient g(start_point.get_at(t), end_point.get_at(t));
+        if ( colors.get() )
+            g.setStops(colors->colors.get_at(t));
+        g.setSpread(QGradient::PadSpread);
+        return g;
+    }
 }
 
 
-void model::LinearGradient::fill_icon(QPixmap& icon) const
-{
-    QPainter p(&icon);
-    QLinearGradient g(0, 0, icon.width(), 0);
-    if ( colors.get() )
-        g.setStops(colors->colors.get());
-    p.fillRect(icon.rect(), g);
-}
-
-QString model::RadialGradient::type_name_human() const
-{
-    return tr("Radial Gradient");
-}
-
-QBrush model::RadialGradient::brush_style ( model::FrameTime t ) const
-{
-    QRadialGradient g(center.get_at(t), radius.get_at(t), highlight_center.get_at(t));
-    if ( colors.get() )
-        g.setStops(colors->colors.get_at(t));
-    g.setSpread(QGradient::PadSpread);
-    return g;
-}
-
-void model::RadialGradient::fill_icon ( QPixmap& icon ) const
+void model::Gradient::fill_icon(QPixmap& icon) const
 {
     QPainter p(&icon);
-    QRadialGradient g(icon.width() / 2, icon.height() / 2, icon.width() / 2);
-    if ( colors.get() )
-        g.setStops(colors->colors.get());
-    p.fillRect(icon.rect(), g);
+
+    if ( type.get() == Radial )
+    {
+        QLinearGradient g(0, 0, icon.width(), 0);
+        if ( colors.get() )
+            g.setStops(colors->colors.get());
+        p.fillRect(icon.rect(), g);
+    }
+    else
+    {
+        QRadialGradient g(icon.width() / 2, icon.height() / 2, icon.width() / 2);
+        if ( colors.get() )
+            g.setStops(colors->colors.get());
+        p.fillRect(icon.rect(), g);
+    }
 }
 
+qreal model::Gradient::radius(model::FrameTime t) const
+{
+    return math::length(start_point.get_at(t) - end_point.get_at(t));
+}
 
+QString model::Gradient::gradient_type_name(Type t)
+{
+    switch ( t )
+    {
+        case Linear:
+            return tr("Linear");
+        case Radial:
+            return tr("Radial");
+    }
 
+    return {};
+}
+
+void model::Gradient::on_property_changed(const model::BaseProperty*, const QVariant&)
+{
+    emit style_changed();
+}

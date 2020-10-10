@@ -42,7 +42,7 @@ public:
     {
         QToolButton* btn_other;
         GradientListWidget* widget;
-        bool radial;
+        model::Gradient::Type gradient_type;
         bool secondary;
 
         void operator() (bool checked)
@@ -54,13 +54,33 @@ public:
             else
             {
                 btn_other->setChecked(false);
-                widget->d->set_gradient(secondary, radial);
+                widget->d->set_gradient(secondary, gradient_type);
             }
         }
     };
 
+    TypeButtonSlot slot_radial(GradientListWidget* widget, bool secondary)
+    {
+        return {
+            secondary ? ui.btn_stroke_linear : ui.btn_fill_linear,
+            widget,
+            model::Gradient::Radial,
+            secondary
+        };
+    }
 
-    void set_gradient(bool secondary, bool radial)
+    TypeButtonSlot slot_linear(GradientListWidget* widget, bool secondary)
+    {
+        return {
+            secondary ? ui.btn_stroke_radial : ui.btn_fill_radial,
+            widget,
+            model::Gradient::Linear,
+            secondary
+        };
+    }
+
+
+    void set_gradient(bool secondary, model::Gradient::Type gradient_type)
     {
 
         model::Styler* styler = secondary ? (model::Styler*)stroke : (model::Styler*)fill;
@@ -70,12 +90,16 @@ public:
         model::GradientColors* colors = current();
         if ( !colors )
         {
-            add_gradient();
+            if ( document->defs()->gradient_colors.empty() )
+                add_gradient();
+            else
+                ui.list_view->setCurrentIndex(model.gradient_to_index(document->defs()->gradient_colors.back()));
+
             colors = current();
         }
 
 
-        model::UndoMacroGuard macro(tr("Set %1 Gradient").arg(radial ? "Radial" : "Linear"), document);
+        model::UndoMacroGuard macro(tr("Set %1 Gradient").arg(model::Gradient::gradient_type_name(gradient_type)), document);
 
         model::Gradient* old = nullptr;
 
@@ -85,18 +109,17 @@ public:
 
             if ( old )
             {
-                if ( (radial && old->is_instance<model::RadialGradient>()) ||
-                     (!radial && old->is_instance<model::LinearGradient>()) )
-                {
-                    document->push_command(new command::SetPropertyValue(
-                        &old->colors,
-                        old->colors.value(),
-                        QVariant::fromValue(colors),
-                        true
-                    ));
+                document->push_command(new command::SetPropertyValue(
+                    &old->type,
+                    QVariant::fromValue(gradient_type)
+                ));
 
-                    return;
-                }
+                document->push_command(new command::SetPropertyValue(
+                    &old->colors,
+                    QVariant::fromValue(colors)
+                ));
+
+                return;
             }
         }
 
@@ -116,35 +139,24 @@ public:
         if ( bounds.isNull() )
             bounds = QRectF(QPointF(0, 0), document->size());
 
-        model::Gradient* gradient;
 
-        if ( radial )
-        {
-            auto grad = std::make_unique<model::RadialGradient>(document);
-            grad->colors.set(colors);
-            grad->center.set(bounds.center());
-            grad->highlight_center.set(bounds.center());
-            grad->radius.set(qMin(bounds.width(), bounds.height()) / 2);
-            gradient = grad.get();
+        auto grad = std::make_unique<model::Gradient>(document);
+        grad->colors.set(colors);
+        grad->type.set(gradient_type);
 
-            document->push_command(new command::AddObject<model::Gradient>(
-                &document->defs()->gradients,
-                std::move(grad)
-            ));
-        }
+        if ( gradient_type == model::Gradient::Radial )
+            grad->start_point.set(bounds.center());
         else
-        {
-            auto grad = std::make_unique<model::LinearGradient>(document);
-            grad->colors.set(colors);
             grad->start_point.set(QPointF(bounds.left(), bounds.center().y()));
-            grad->end_point.set(QPointF(bounds.right(), bounds.center().y()));
-            gradient = grad.get();
 
-            document->push_command(new command::AddObject<model::Gradient>(
-                &document->defs()->gradients,
-                std::move(grad)
-            ));
-        }
+        grad->highlight_center.set(grad->start_point.get());
+        grad->end_point.set(QPointF(bounds.right(), bounds.center().y()));
+
+        model::Gradient* gradient = grad.get();
+        document->push_command(new command::AddObject<model::Gradient>(
+            &document->defs()->gradients,
+            std::move(grad)
+        ));
 
 
         styler->use.set_undoable(QVariant::fromValue(gradient));
@@ -228,16 +240,16 @@ public:
 
         if ( colors_fill )
         {
-            if ( gradient_fill->is_instance<model::LinearGradient>() )
-                ui.btn_fill_linear->setChecked(true);
+            if ( gradient_fill->type.get() == model::Gradient::Radial )
+                ui.btn_fill_radial->setChecked(true);
             else
                 ui.btn_fill_linear->setChecked(true);
         }
 
         if ( colors_stroke == colors )
         {
-            if ( gradient_stroke->is_instance<model::LinearGradient>() )
-                ui.btn_stroke_linear->setChecked(true);
+            if ( gradient_stroke->type.get() == model::Gradient::Radial )
+                ui.btn_stroke_radial->setChecked(true);
             else
                 ui.btn_stroke_linear->setChecked(true);
         }
@@ -251,7 +263,7 @@ public:
             if ( document->defs()->gradient_colors.empty() )
                 return;
 
-            colors = document->defs()->gradient_colors[document->defs()->gradient_colors.size()-1];
+            colors = document->defs()->gradient_colors.back();
         }
 
         document->push_command(new command::RemoveObject(
@@ -271,10 +283,10 @@ GradientListWidget::GradientListWidget(QWidget* parent)
 
     connect(d->ui.btn_new, &QAbstractButton::clicked, this, [this]{ d->add_gradient(); });
     connect(d->ui.btn_remove, &QAbstractButton::clicked, this, [this]{ d->delete_gradient(); });
-    connect(d->ui.btn_fill_linear, &QAbstractButton::clicked, this, Private::TypeButtonSlot{d->ui.btn_fill_radial, this, false, false});
-    connect(d->ui.btn_fill_radial, &QAbstractButton::clicked, this, Private::TypeButtonSlot{d->ui.btn_fill_linear, this, true, false});
-    connect(d->ui.btn_stroke_linear, &QAbstractButton::clicked, this, Private::TypeButtonSlot{d->ui.btn_stroke_radial, this, false, true});
-    connect(d->ui.btn_stroke_radial, &QAbstractButton::clicked, this, Private::TypeButtonSlot{d->ui.btn_stroke_linear, this, true, true});
+    connect(d->ui.btn_fill_linear,   &QAbstractButton::clicked, this, d->slot_linear(this, false));
+    connect(d->ui.btn_fill_radial,   &QAbstractButton::clicked, this, d->slot_radial(this, false));
+    connect(d->ui.btn_stroke_linear, &QAbstractButton::clicked, this, d->slot_linear(this, true));
+    connect(d->ui.btn_stroke_radial, &QAbstractButton::clicked, this, d->slot_radial(this, true));
 }
 
 GradientListWidget::~GradientListWidget() = default;

@@ -10,8 +10,8 @@ namespace command {
 class SetPropertyValue : public MergeableCommand<Id::SetPropertyValue, SetPropertyValue>
 {
 public:
-    SetPropertyValue(model::BaseProperty* prop, const QVariant& value)
-        : SetPropertyValue(prop, prop->value(), value, false)
+    SetPropertyValue(model::BaseProperty* prop, const QVariant& value, bool commit = true)
+        : SetPropertyValue(prop, prop->value(), value, commit)
     {}
 
     SetPropertyValue(model::BaseProperty* prop, const QVariant& before, const QVariant& after, bool commit = true, const QString& name = {})
