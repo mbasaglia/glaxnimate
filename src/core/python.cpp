@@ -276,12 +276,12 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     ;
 
     py::module defs = model.def_submodule("defs", "");
-    register_from_meta<model::Def, model::ReferenceTarget>(defs);
-    register_from_meta<model::BrushStyle, model::Def>(defs);
+    register_from_meta<model::Asset, model::ReferenceTarget>(defs);
+    register_from_meta<model::BrushStyle, model::Asset>(defs);
     register_from_meta<model::NamedColor, model::BrushStyle>(defs);
-    register_from_meta<model::GradientColors, model::Def>(defs);
+    register_from_meta<model::GradientColors, model::Asset>(defs);
     register_from_meta<model::Gradient, model::BrushStyle>(defs);
-    register_from_meta<model::Bitmap, model::Def>(defs);
+    register_from_meta<model::Bitmap, model::Asset>(defs);
     register_from_meta<model::Defs, model::Object>(defs);
 
 

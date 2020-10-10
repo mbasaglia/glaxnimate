@@ -52,8 +52,8 @@ private:
     void on_gradient_colors_added(GradientColors* color);
     void on_gradient_colors_removed(GradientColors* color);
 
-    void on_added(Def* def);
-    void on_removed(Def* def);
+    void on_added(Asset* def);
+    void on_removed(Asset* def);
 };
 
 } // namespace model

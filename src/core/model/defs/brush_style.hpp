@@ -3,18 +3,18 @@
 #include <QBrush>
 #include <QPixmap>
 
-#include "model/defs/def.hpp"
+#include "model/defs/asset.hpp"
 
 namespace model {
 
-class BrushStyle : public Def
+class BrushStyle : public Asset
 {
     Q_OBJECT
 
 public:
     using User = ReferenceProperty<BrushStyle>;
 
-    using Def::Def;
+    using Asset::Asset;
 
     QIcon reftarget_icon() const override;
 

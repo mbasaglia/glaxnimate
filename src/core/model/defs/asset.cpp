@@ -1,6 +1,6 @@
-#include "def.hpp"
+#include "asset.hpp"
 
-void model::Def::add_user(model::Def::User* user)
+void model::Asset::add_user(model::Asset::User* user)
 {
     if ( !detaching )
     {
@@ -9,7 +9,7 @@ void model::Def::add_user(model::Def::User* user)
     }
 }
 
-void model::Def::remove_user(model::Def::User* user)
+void model::Asset::remove_user(model::Asset::User* user)
 {
     if ( !detaching )
     {
@@ -18,12 +18,12 @@ void model::Def::remove_user(model::Def::User* user)
     }
 }
 
-const std::unordered_set<model::Def::User*> & model::Def::users() const
+const std::unordered_set<model::Asset::User*> & model::Asset::users() const
 {
     return users_;
 }
 
-void model::Def::attach()
+void model::Asset::attach()
 {
     if ( auto lock = detaching.get_lock() )
     {
@@ -32,7 +32,7 @@ void model::Def::attach()
     }
 }
 
-void model::Def::detach()
+void model::Asset::detach()
 {
     if ( auto lock = detaching.get_lock() )
     {

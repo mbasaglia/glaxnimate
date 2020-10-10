@@ -75,12 +75,12 @@ model::Bitmap * model::Defs::add_image(const QString& filename, bool embed)
     return ptr;
 }
 
-void model::Defs::on_added(model::Def* def)
+void model::Defs::on_added(model::Asset* def)
 {
     def->attach();
 }
 
-void model::Defs::on_removed(model::Def* def)
+void model::Defs::on_removed(model::Asset* def)
 {
     def->detach();
 }

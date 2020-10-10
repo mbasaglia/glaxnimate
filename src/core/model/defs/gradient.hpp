@@ -12,7 +12,7 @@ QGradientStops lerp<QGradientStops>(const QGradientStops& a, const QGradientStop
 
 namespace model {
 
-class GradientColors : public ObjectBase<GradientColors, Def>
+class GradientColors : public ObjectBase<GradientColors, Asset>
 {
     GLAXNIMATE_OBJECT
 

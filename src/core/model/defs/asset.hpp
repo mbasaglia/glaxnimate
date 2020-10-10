@@ -8,7 +8,7 @@
 
 namespace model {
 
-class Def : public ReferenceTarget
+class Asset : public ReferenceTarget
 {
     Q_OBJECT
 
