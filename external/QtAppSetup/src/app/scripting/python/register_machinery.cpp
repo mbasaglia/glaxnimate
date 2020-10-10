@@ -13,6 +13,7 @@
 #include <QDateTime>
 #include <QDate>
 #include <QTime>
+#include <QGradient>
 
 #include "app/log/log.hpp"
 
@@ -478,6 +479,8 @@ pybind11::handle pybind11::detail::type_caster<QVariant>::cast(QVariant src, ret
     {
         if ( QMetaType(meta_type).flags() & QMetaType::IsEnumeration )
             return pybind11::detail::make_caster<int>::cast(src.value<int>(), policy, parent);
+        else if ( meta_type == qMetaTypeId<QGradientStops>() )
+            return pybind11::detail::make_caster<QGradientStops>::cast(src.value<QGradientStops>(), policy, parent);
         return pybind11::detail::make_caster<QObject*>::cast(src.value<QObject*>(), policy, parent);
     }
 

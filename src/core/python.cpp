@@ -237,10 +237,18 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
         .def("finish", &command::UndoMacroGuard::finish)
     ;
 
+    // for some reason some classes arent seen without this o_O
+    static std::vector<int> foo = {
+        qMetaTypeId<model::ReferenceTarget*>(),
+        qMetaTypeId<model::NamedColor*>(),
+        qMetaTypeId<model::Bitmap*>(),
+    };
+
     define_io(glaxnimate_module);
 
     py::module model = glaxnimate_module.def_submodule("model", "");
     py::class_<model::Object, QObject>(model, "Object");
+
     register_from_meta<model::Document, QObject>(model)
         .def("macro", [](model::Document* document, const QString& str){
             return new command::UndoMacroGuard(str, document, false);
@@ -258,6 +266,7 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     register_animatable<QVector2D>(detail);
     register_animatable<QColor>(detail);
     register_animatable<float>(detail);
+    register_animatable<QGradientStops>(detail);
     py::class_<PyVisitorPublic, PyVisitorTrampoline>(model, "Visitor")
         .def(py::init())
         .def("visit", (void (PyVisitorPublic::*)(model::Document*))&PyVisitorPublic::visit)
@@ -267,10 +276,13 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     ;
 
     py::module defs = model.def_submodule("defs", "");
-    register_from_meta<model::Defs, model::Object>(defs);
-    register_from_meta<model::BrushStyle, model::ReferenceTarget>(defs);
+    register_from_meta<model::Def, model::ReferenceTarget>(defs);
+    register_from_meta<model::BrushStyle, model::Def>(defs);
     register_from_meta<model::NamedColor, model::BrushStyle>(defs);
-    register_from_meta<model::Bitmap, model::ReferenceTarget>(defs);
+    register_from_meta<model::GradientColors, model::Def>(defs);
+    register_from_meta<model::Gradient, model::BrushStyle>(defs);
+    register_from_meta<model::Bitmap, model::Def>(defs);
+    register_from_meta<model::Defs, model::Object>(defs);
 
 
     py::module shapes = model.def_submodule("shapes", "");

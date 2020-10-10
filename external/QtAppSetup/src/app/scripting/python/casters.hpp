@@ -284,12 +284,48 @@ template <typename Type, typename Key, typename Value> struct qt_map_caster {
     PYBIND11_TYPE_CASTER(Type, _("Dict[") + key_conv::name + _(", ") + value_conv::name + _("]"));
 };
 
-
-
 template <typename Key, typename Value> struct type_caster<QMap<Key, Value>>
   : qt_map_caster<QMap<Key, Value>, Key, Value> { };
 template <typename Key, typename Value> struct type_caster<QHash<Key, Value>>
   : qt_map_caster<QHash<Key, Value>, Key, Value> { };
+
+
+
+
+
+template <typename V1, typename V2> struct type_caster<QPair<V1,V2>> {
+    using cast1 = make_caster<V1>;
+    using cast2 = make_caster<V2>;
+    using pair_t = QPair<V1,V2>;
+
+    PYBIND11_TYPE_CASTER(pair_t, _("QPair[") + cast1::name + _(",") + cast2::name + _("]"));
+
+    bool load(handle src, bool convert) {
+        if (!isinstance<tuple>(src))
+            return false;
+
+        auto d = reinterpret_borrow<tuple>(src);
+        if ( d.size() != 2 )
+            return false;
+
+        cast1 conv1;
+        cast2 conv2;
+        if ( !conv1.load(d[0].ptr(), convert) || !conv2.load(d[1].ptr(), convert) )
+            return false;
+
+        value.first = cast_op<V1&&>(std::move(conv1));
+        value.second = cast_op<V2&&>(std::move(conv2));
+        return true;
+    }
+
+    static handle cast(const pair_t& val, return_value_policy policy, handle parent)
+    {
+        tuple t(2);
+        t[0] = reinterpret_steal<object>(cast1::cast(val.first, policy, parent));
+        t[1] = reinterpret_steal<object>(cast2::cast(val.second, policy, parent));
+        return t.release();
+    }
+};
 
 } // namespace pybind11::detail
 
