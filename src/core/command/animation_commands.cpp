@@ -73,7 +73,10 @@ command::SetMultipleAnimated::SetMultipleAnimated(
     const QVariantList& after,
     bool commit
 )
-    : Parent(name, commit), props(props), before(before), after(after),
+    : Parent(name, commit),
+    props(props),
+    before(before),
+    after(after),
     keyframe_after(props[0]->object()->document()->record_to_keyframe()),
     time(props[0]->time())
 {
@@ -85,6 +88,22 @@ command::SetMultipleAnimated::SetMultipleAnimated(
             this->before.push_back(prop->value());
         keyframe_before.push_back(prop->has_keyframe(time));
     }
+}
+
+
+command::SetMultipleAnimated::SetMultipleAnimated(const QString& name, bool commit)
+    : Parent(name, commit)
+{
+}
+
+void command::SetMultipleAnimated::push_property(model::AnimatableBase* prop, const QVariant& after_val)
+{
+    keyframe_after = prop->object()->document()->record_to_keyframe();
+    time = prop->time();
+    props.push_back(prop);
+    before.push_back(prop->value());
+    after.push_back(after_val);
+    keyframe_before.push_back(prop->has_keyframe(time));
 }
 
 void command::SetMultipleAnimated::undo()

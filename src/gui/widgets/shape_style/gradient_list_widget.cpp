@@ -9,8 +9,8 @@
 #include "model/defs/defs.hpp"
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
-#include "model/undo_macro_guard.hpp"
 
+#include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/property_commands.hpp"
 
@@ -99,7 +99,7 @@ public:
         }
 
 
-        model::UndoMacroGuard macro(tr("Set %1 Gradient").arg(model::Gradient::gradient_type_name(gradient_type)), document);
+        command::UndoMacroGuard macro(tr("Set %1 Gradient").arg(model::Gradient::gradient_type_name(gradient_type)), document);
 
         model::Gradient* old = nullptr;
 
@@ -149,7 +149,7 @@ public:
         else
             grad->start_point.set(QPointF(bounds.left(), bounds.center().y()));
 
-        grad->highlight_center.set(grad->start_point.get());
+        grad->highlight.set(grad->start_point.get());
         grad->end_point.set(QPointF(bounds.right(), bounds.center().y()));
 
         model::Gradient* gradient = grad.get();
@@ -183,7 +183,7 @@ public:
         if ( !styler )
             return;
 
-        model::UndoMacroGuard macro(tr("Remove Gradient"), document);
+        command::UndoMacroGuard macro(tr("Remove Gradient"), document);
 
         auto old = styler->use.get();
 

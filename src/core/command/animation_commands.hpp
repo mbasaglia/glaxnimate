@@ -81,6 +81,10 @@ public:
         bool commit
     );
 
+    SetMultipleAnimated(const QString& name, bool commit);
+
+    void push_property(model::AnimatableBase* prop, const QVariant& after);
+
     void undo() override;
 
     void redo() override;

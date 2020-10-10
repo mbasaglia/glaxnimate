@@ -9,6 +9,7 @@ graphics/document_scene.cpp
 graphics/transform_graphics_item.cpp
 graphics/create_items.cpp
 graphics/bezier_item.cpp
+graphics/gradient_editor.cpp
 
 item_models/document_node_model.cpp
 item_models/property_model.cpp

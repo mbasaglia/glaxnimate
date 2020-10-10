@@ -2,7 +2,7 @@
 
 #include "model/document.hpp"
 
-namespace model {
+namespace command {
 
 
 class UndoMacroGuard
@@ -19,7 +19,6 @@ public:
     {
         finish();
     }
-
 
     void start()
     {
@@ -46,4 +45,4 @@ private:
 };
 
 
-} // namespace model
+} // namespace command

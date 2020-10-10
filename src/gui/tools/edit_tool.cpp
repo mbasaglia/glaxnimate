@@ -146,7 +146,7 @@ public:
     static void impl_extract_selection_recursive_item(graphics::DocumentScene * scene, model::DocumentNode* node)
     {
         auto meta = node->metaObject();
-        if ( meta->inherits(&model::Shape::staticMetaObject) )
+        if ( meta->inherits(&model::Shape::staticMetaObject) || meta->inherits(&model::ShapeOperator::staticMetaObject) )
         {
             scene->show_editors(node);
         }

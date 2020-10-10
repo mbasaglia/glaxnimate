@@ -34,7 +34,9 @@ public:
         NoHandle,
         Unknown,
         Vertex,
-        Tangent
+        Tangent,
+        GradientStop,
+        GradientHighlight,
     };
 
     MoveHandle(

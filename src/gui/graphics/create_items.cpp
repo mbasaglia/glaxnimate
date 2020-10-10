@@ -10,6 +10,7 @@
 #include "graphics_editor.hpp"
 #include "star_radius_item.hpp"
 #include "shape_graphics_item.hpp"
+#include "gradient_editor.hpp"
 
 static graphics::DocumentNodeGraphicsItem * make_graphics_item_shape(model::ShapeElement* node)
 {
@@ -117,9 +118,13 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             return v;
         }
     );
-    register_builder<model::ShapeOperator>(
+    register_builder<model::Styler>(
         make_item_for_modifier,
-        &GraphicsItemFactory::make_graphics_editor_default
+        [](model::Styler* styler){
+            auto v = std::make_unique<GraphicsEditor>(styler);
+            v->add_child<graphics::GradientEditor>(styler);
+            return v;
+        }
     );
 }
 

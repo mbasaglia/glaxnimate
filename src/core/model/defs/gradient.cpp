@@ -5,6 +5,11 @@
 #include "model/document.hpp"
 #include "model/defs/defs.hpp"
 
+
+GLAXNIMATE_OBJECT_IMPL(model::GradientColors)
+GLAXNIMATE_OBJECT_IMPL(model::Gradient)
+
+
 template<>
 QGradientStops math::lerp<QGradientStops>(const QGradientStops& a, const QGradientStops& b, double factor)
 {
@@ -81,7 +86,7 @@ QBrush model::Gradient::brush_style ( model::FrameTime t ) const
 {
     if ( type.get() == Radial )
     {
-        QRadialGradient g(start_point.get_at(t), radius(t), highlight_center.get_at(t));
+        QRadialGradient g(start_point.get_at(t), radius(t), highlight.get_at(t));
         if ( colors.get() )
             g.setStops(colors->colors.get_at(t));
         g.setSpread(QGradient::PadSpread);
@@ -104,14 +109,14 @@ void model::Gradient::fill_icon(QPixmap& icon) const
 
     if ( type.get() == Radial )
     {
-        QLinearGradient g(0, 0, icon.width(), 0);
+        QRadialGradient g(icon.width() / 2, icon.height() / 2, icon.width() / 2);
         if ( colors.get() )
             g.setStops(colors->colors.get());
         p.fillRect(icon.rect(), g);
     }
     else
     {
-        QRadialGradient g(icon.width() / 2, icon.height() / 2, icon.width() / 2);
+        QLinearGradient g(0, 0, icon.width(), 0);
         if ( colors.get() )
             g.setStops(colors->colors.get());
         p.fillRect(icon.rect(), g);

@@ -34,6 +34,9 @@ private:
     void on_use_changed(BrushStyle* new_use, BrushStyle* old_use);
 
     void on_update_style();
+
+signals:
+    void use_changed(BrushStyle* new_use);
 };
 
 } // namespace model

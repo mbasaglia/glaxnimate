@@ -52,7 +52,7 @@ linux:build:
         - mkdir build
         - cd build
         - cmake .. -DCMAKE_CXX_FLAGS="-Werror -pedantic"
-        - make
+        - make VERBOSE=1
     when: always
 
 linux:deb:

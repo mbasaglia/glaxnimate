@@ -47,7 +47,7 @@ public:
     GLAXNIMATE_ANIMATABLE(QPointF, start_point, {})
     GLAXNIMATE_ANIMATABLE(QPointF, end_point, {})
 
-    GLAXNIMATE_ANIMATABLE(QPointF, highlight_center, {})
+    GLAXNIMATE_ANIMATABLE(QPointF, highlight, {})
 
 public:
     using Ctor::Ctor;

@@ -5,7 +5,8 @@ namespace graphics {
 enum ItemData
 {
     NodePointer,
-    HandleRole
+    HandleRole,
+    GradientStopIndex
 };
 
 } // namespace graphics

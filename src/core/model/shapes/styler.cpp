@@ -39,6 +39,8 @@ void model::Styler::on_use_changed(model::BrushStyle* new_use, model::BrushStyle
 
     if ( reset.isValid() )
         color.set(reset);
+
+    emit use_changed(new_use);
 }
 
 void model::Styler::on_update_style()
