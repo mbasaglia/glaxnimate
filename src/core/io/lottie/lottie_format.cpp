@@ -20,18 +20,113 @@ io::Autoreg<io::lottie::LottieFormat> io::lottie::LottieFormat::autoreg;
 
 namespace  {
 
-using TransformFunc = std::function<QVariant (const QVariant&, FrameTime)>;
-class FloatMult
+class ValueTransform
+{
+public:
+    virtual ~ValueTransform() {}
+
+    virtual QVariant to_lottie(const QVariant& v, FrameTime) const = 0;
+    virtual QVariant from_lottie(const QVariant& v, FrameTime) const = 0;
+};
+
+class FloatMult : public ValueTransform
 {
 public:
     explicit FloatMult(float factor) : factor(factor) {}
 
-    QVariant operator()(const QVariant& v, FrameTime) const
+    QVariant to_lottie(const QVariant& v, FrameTime) const override
     {
         return v.toFloat() * factor;
     }
+
+    QVariant from_lottie(const QVariant& v, FrameTime) const override
+    {
+        return v.toFloat() / factor;
+    }
 private:
     float factor;
+};
+
+class EnumMap : public ValueTransform
+{
+public:
+    EnumMap(QMap<int, int> values) : values(std::move(values)) {}
+
+    QVariant to_lottie(const QVariant& v, FrameTime) const override
+    {
+        return values[v.toInt()];
+    }
+
+    QVariant from_lottie(const QVariant& v, FrameTime) const override
+    {
+        return values.key(v.toInt());
+    }
+
+    QMap<int, int> values;
+};
+
+class GradientLoad : public ValueTransform
+{
+public:
+    GradientLoad(int count) : count(count) {}
+
+    QVariant to_lottie(const QVariant&, FrameTime) const override { return {}; }
+
+    QVariant from_lottie(const QVariant& v, FrameTime) const override
+    {
+        auto vlist = v.toList();
+        if ( vlist.size() < count * 4 )
+            return {};
+
+        QGradientStops s;
+        s.reserve(count);
+        bool alpha = vlist.size() >= count * 5;
+        for ( int i = 0; i < count; i++ )
+        {
+            s.push_back({
+                vlist[i*4].toDouble(),
+                QColor::fromRgbF(
+                    vlist[i*4+1].toDouble(),
+                    vlist[i*4+2].toDouble(),
+                    vlist[i*4+3].toDouble(),
+                    alpha ? vlist[count*4+i].toDouble() : 1
+                )
+            });
+        }
+
+        return QVariant::fromValue(s);
+    }
+
+    int count = 0;
+};
+
+
+class TransformFunc
+{
+public:
+    template<class T, class = std::enable_if_t<std::is_base_of_v<ValueTransform, T>>>
+    TransformFunc(const T& t) : trans(std::make_shared<T>(t)) {}
+
+    TransformFunc() {}
+    TransformFunc(TransformFunc&&) = default;
+    TransformFunc(const TransformFunc&) = default;
+
+    QVariant to_lottie(const QVariant& v, FrameTime t) const
+    {
+        if ( !trans )
+            return v;
+        return trans->to_lottie(v, t);
+    }
+
+    QVariant from_lottie(const QVariant& v, FrameTime t) const
+    {
+        if ( !trans )
+            return v;
+        return trans->from_lottie(v, t);
+    }
+
+private:
+    std::shared_ptr<ValueTransform> trans;
 };
 
 enum FieldMode
@@ -41,16 +136,19 @@ enum FieldMode
     Custom
 };
 
+
 struct FieldInfo
 {
     QString name;
     QString lottie;
     bool essential;
     FieldMode mode;
+    TransformFunc transform;
 
-    FieldInfo(const char* lottie, const char* name, bool essential = true)
-        : name(name), lottie(lottie), essential(essential), mode(Auto)
+    FieldInfo(const char* lottie, const char* name, TransformFunc transform = {}, bool essential = true)
+        : name(name), lottie(lottie), essential(essential), mode(Auto), transform(std::move(transform))
     {}
+
     FieldInfo(const char* lottie, FieldMode mode = Ignored)
         : lottie(lottie), essential(false), mode(mode)
     {}
@@ -59,8 +157,8 @@ struct FieldInfo
 // static mapping data
 const QMap<QString, QVector<FieldInfo>> fields = {
     {"DocumentNode", {
-        FieldInfo{"nm", "name", false},
-        FieldInfo{"mn", "uuid", false},
+        FieldInfo{"nm", "name", {}, false},
+        FieldInfo{"mn", "uuid", {}, false},
     }},
     {"Composition", {
         FieldInfo{"op", Custom},
@@ -149,19 +247,30 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"np"},
         FieldInfo{"it", Custom},
     }},
-    {"Fill", {
-        FieldInfo{"o", Custom},
+    {"Styler", {
+        FieldInfo{"o", "opacity", FloatMult(100)},
         FieldInfo{"c", "color"},
-        FieldInfo{"r", Custom},
+    }},
+    {"Fill", {
+        FieldInfo{"r", "fill_rule", EnumMap{{
+            {model::Fill::NonZero, 1},
+            {model::Fill::EvenOdd, 2},
+        }}},
     }},
     {"Stroke", {
-        FieldInfo{"o", Custom},
-        FieldInfo{"lc", Custom},
-        FieldInfo{"lj", Custom},
+        FieldInfo{"lc", "cap", EnumMap{{
+            {model::Stroke::ButtCap,   1},
+            {model::Stroke::RoundCap,  2},
+            {model::Stroke::SquareCap, 3},
+        }}},
+        FieldInfo{"lj", "join", EnumMap{{
+            {model::Stroke::MiterJoin, 1},
+            {model::Stroke::RoundJoin, 2},
+            {model::Stroke::BevelJoin, 3},
+        }}},
         FieldInfo{"ml", "miter_limit"},
         FieldInfo{"w", "width"},
         FieldInfo{"d"},
-        FieldInfo{"c", "color"},
     }},
     {"Bitmap", {
         FieldInfo{"h", "height"},
@@ -170,6 +279,14 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"p", Custom},
         FieldInfo{"u", Custom},
         FieldInfo{"e", Custom},
+    }},
+    {"Gradient", {
+        FieldInfo{"s", "start_point"},
+        FieldInfo{"e", "end_point"},
+        FieldInfo{"t", "type"},
+        FieldInfo{"h", Custom}, /// \todo
+        FieldInfo{"a", Custom}, /// \todo
+        FieldInfo{"g", Custom},
     }},
 };
 const QMap<QString, QString> shape_types = {
@@ -189,6 +306,11 @@ const QMap<QString, QString> shape_types = {
 //     {"EoundedCorners", "rd"},
 //     {"Merge", "mm"},
 //     {"Twist", "tw"},
+};
+
+const QMap<QString, QString> shape_types_repeat = {
+    {"gf", "Fill"},
+    {"gs", "Stroke"},
 };
 
 QLatin1String operator "" _l(const char* c, std::size_t sz)
@@ -343,26 +465,30 @@ public:
 
     QCborValue value_from_variant(const QVariant& v)
     {
-        if ( v.userType() == QMetaType::QPointF )
+        switch ( v.userType() )
         {
-            return point_to_lottie(v.toPointF());
+            case QMetaType::QPointF:
+                return point_to_lottie(v.toPointF());
+            case QMetaType::QVector2D:
+            {
+                auto vv = v.value<QVector2D>() * 100;
+                return QCborArray{vv.x(), vv.y()};
+            }
+            case QMetaType::QSizeF:
+            {
+                auto vv = v.toSizeF();
+                return QCborArray{vv.width(), vv.height()};
+            }
+            case QMetaType::QColor:
+            {
+                auto vv = v.value<QColor>().toRgb();
+                return QCborArray{vv.redF(), vv.greenF(), vv.blueF(), vv.alphaF()};
+            }
+            case QMetaType::QUuid:
+                return v.toString();
         }
-        else if ( v.userType() == QMetaType::QVector2D )
-        {
-            auto vv = v.value<QVector2D>() * 100;
-            return QCborArray{vv.x(), vv.y()};
-        }
-        else if ( v.userType() == QMetaType::QSizeF )
-        {
-            auto vv = v.toSizeF();
-            return QCborArray{vv.width(), vv.height()};
-        }
-        else if ( v.userType() == QMetaType::QColor )
-        {
-            auto vv = v.value<QColor>().toRgb();
-            return QCborArray{vv.redF(), vv.greenF(), vv.blueF(), vv.alphaF()};
-        }
-        else if ( v.userType() == qMetaTypeId<math::Bezier>() )
+
+        if ( v.userType() == qMetaTypeId<math::Bezier>() )
         {
             math::Bezier bezier = v.value<math::Bezier>();
             QCborMap jsbez;
@@ -379,9 +505,20 @@ public:
             jsbez["o"_l] = tan_out;
             return jsbez;
         }
-        else if ( v.userType() == QMetaType::QUuid )
+        else if ( v.userType() == qMetaTypeId<QGradientStops>() )
         {
-            return v.toString();
+            QCborArray weird_ass_representation;
+            auto gradient = v.value<QGradientStops>();
+            for ( const auto& stop : gradient )
+            {
+                weird_ass_representation.push_back(stop.first);
+                weird_ass_representation.push_back(stop.second.redF());
+                weird_ass_representation.push_back(stop.second.greenF());
+                weird_ass_representation.push_back(stop.second.blueF());
+            }
+            for ( const auto& stop : gradient )
+                weird_ass_representation.push_back(stop.second.alphaF());
+            return weird_ass_representation;
         }
         else if ( v.userType() >= QMetaType::User && v.canConvert<int>() )
         {
@@ -421,18 +558,18 @@ public:
 
             if ( prop->traits().flags & PropertyTraits::Animated )
             {
-                json_obj[field.lottie] = convert_animated(static_cast<AnimatableBase*>(prop));
+                json_obj[field.lottie] = convert_animated(static_cast<AnimatableBase*>(prop), field.transform);
             }
             else
             {
-                json_obj[field.lottie] = value_from_variant(prop->value());
+                json_obj[field.lottie] = value_from_variant(field.transform.to_lottie(prop->value(), 0));
             }
         }
     }
 
     QCborMap convert_animated(
         AnimatableBase* prop,
-        const TransformFunc& transform_values = {}
+        const TransformFunc& transform_values
     )
     {
         /// @todo for position fields also add spatial bezier handles
@@ -445,9 +582,7 @@ public:
             for ( int i = 0, e = prop->keyframe_count(); i < e; i++ )
             {
                 auto kf = prop->keyframe(i);
-                QVariant v = kf->value();
-                if ( transform_values )
-                    v = transform_values(v, kf->time());
+                QVariant v = transform_values.to_lottie(kf->value(), kf->time());
                 QCborValue kf_value = value_from_variant(v);
                 if ( i != 0 )
                 {
@@ -472,9 +607,7 @@ public:
         else
         {
             jobj["a"_l] = 0;
-                QVariant v = prop->value();
-                if ( transform_values )
-                    v = transform_values(v, 0);
+            QVariant v = transform_values.to_lottie(prop->value(), 0);
             jobj["k"_l] = value_from_variant(v);
         }
         return jobj;
@@ -494,13 +627,35 @@ public:
 
     void convert_styler(model::Styler* shape, QCborMap& jsh)
     {
-        jsh["o"_l] = convert_animated(&shape->opacity, FloatMult(100));
+        auto used = shape->use.get();
+        if ( !used )
+            return ;
 
-        if ( auto used = shape->use.get() )
+        if ( auto color = qobject_cast<model::NamedColor*>(used) )
         {
-            if ( auto color = qobject_cast<model::NamedColor*>(used) )
-                jsh["c"_l] = convert_animated(&color->color);
+            jsh["c"_l] = convert_animated(&color->color, {});
+            return;
         }
+
+        auto gradient = qobject_cast<model::Gradient*>(used);
+        if ( !gradient || !gradient->colors.get() )
+            return;
+
+        jsh.remove("c"_l);
+        convert_object_basic(gradient, jsh);
+
+        if ( shape->type_name() == "Fill" )
+            jsh["ty"_l] = "gf";
+        else
+            jsh["ty"_l] = "gs";
+
+        /// \todo highlight
+
+        auto colors = gradient->colors.get();
+        QCborMap jcolors;
+        jcolors["p"_l] = colors->colors.get().size();
+        jcolors["k"_l] = convert_animated(&colors->colors, {});
+        jsh["g"_l] = jcolors;
     }
 
     QCborMap convert_shape(model::ShapeElement* shape)
@@ -520,27 +675,13 @@ public:
             shapes.push_back(transform);
             jsh["it"_l] = shapes;
         }
-        else if ( shape->type_name() == "Fill" )
+        else if ( auto styler = shape->cast<model::Styler>() )
         {
-            auto fill = static_cast<model::Fill*>(shape);
-            jsh["r"_l] = fill->fill_rule.get() == model::Fill::NonZero ? 1 : 2;
-            convert_styler(fill, jsh);
+            convert_styler(styler, jsh);
         }
         else if ( shape->type_name() == "Stroke" )
         {
             auto str = static_cast<model::Stroke*>(shape);
-            switch ( str->cap.get() )
-            {
-                case model::Stroke::ButtCap:  jsh["lc"_l] = 1; break;
-                case model::Stroke::RoundCap: jsh["lc"_l] = 2; break;
-                case model::Stroke::SquareCap:jsh["lc"_l] = 3; break;
-            }
-            switch ( str->join.get() )
-            {
-                case model::Stroke::MiterJoin: jsh["lj"_l] = 1; break;
-                case model::Stroke::RoundJoin: jsh["lj"_l] = 2; break;
-                case model::Stroke::BevelJoin: jsh["lj"_l] = 3; break;
-            }
             convert_styler(str, jsh);
         }
         else if ( shape->type_name() == "PolyStar" )
@@ -773,8 +914,12 @@ private:
         QString type = shape_types.key(json["ty"].toString());
         if ( type.isEmpty() )
         {
-            emit format->warning(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()));
-            return;
+            type = shape_types_repeat[json["ty"].toString()];
+            if ( type.isEmpty() )
+            {
+                emit format->warning(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()));
+                return;
+            }
         }
 
         model::ShapeElement* shape = static_cast<model::ShapeElement*>(
@@ -817,6 +962,8 @@ private:
                 json_obj,
                 props
             );
+
+        load_basic_check(props);
     }
 
     void load_basic(const QJsonObject& json_obj, model::DocumentNode* obj)
@@ -830,11 +977,46 @@ private:
     {
         load_basic(transform, tf);
         if ( transform.contains("o") )
-            load_animated(opacity, transform["o"], FloatMult(0.01));
+            load_animated(opacity, transform["o"], FloatMult(100));
+    }
+
+    void load_styler(model::Styler* styler, const QJsonObject& json_obj)
+    {
+        std::set<QString> props = load_basic_setup(json_obj);
+        for ( const QMetaObject* mo = styler->metaObject(); mo; mo = mo->superClass() )
+            load_properties(
+                styler,
+                fields[model::detail::naked_type_name(mo)],
+                json_obj,
+                props
+            );
+
+        if ( json_obj["ty"].toString().startsWith('g') )
+        {
+            auto gradient = document->defs()->gradients.insert(std::make_unique<model::Gradient>(document));
+            styler->use.set(gradient);
+            auto colors = document->defs()->gradient_colors.insert(std::make_unique<model::GradientColors>(document));
+            gradient->colors.set(colors);
+            load_properties(gradient, fields["Gradient"], json_obj, props);
+
+            /// \todo load highlight from h/a if present
+            styler->highlight.set(styler->start_point.get());
+
+            auto jcolors = json_obj["g"].toObject();
+            load_animated(&colors->colors, jcolors["k"], GradientLoad{jcolors["p"].toInt()});
+        }
+
+        if ( styler->name.get().isEmpty() )
+            document->set_best_name(styler);
+
+        load_basic_check(props);
     }
 
     void load_shape(const QJsonObject& json, model::ShapeElement* shape)
     {
+        if ( auto styler = shape->cast<model::Styler>() )
+            return load_styler(styler, json);
+
         load_basic(json, shape);
 
         if ( shape->type_name() == "Group" )
@@ -858,29 +1040,6 @@ private:
                 load_transform(transform, gr->transform.get(), &gr->opacity);
 
             load_shapes(gr->shapes, shapes);
-        }
-        else if ( shape->type_name() == "Fill" )
-        {
-            auto fill = static_cast<model::Fill*>(shape);
-            fill->fill_rule.set(model::Fill::Rule(json["r"].toInt()));
-            load_animated(&fill->opacity, json["o"].toObject(), FloatMult(0.01));
-        }
-        else if ( shape->type_name() == "Stroke" )
-        {
-            auto str = static_cast<model::Stroke*>(shape);
-            switch ( json["lc"].toInt() )
-            {
-                case 1: str->cap.set(model::Stroke::ButtCap); break;
-                case 2: str->cap.set(model::Stroke::RoundCap); break;
-                case 3: str->cap.set(model::Stroke::SquareCap); break;
-            }
-            switch ( json["lj"].toInt() )
-            {
-                case 1: str->join.set(model::Stroke::MiterJoin); break;
-                case 2: str->join.set(model::Stroke::RoundJoin); break;
-                case 3: str->join.set(model::Stroke::BevelJoin); break;
-            }
-            load_animated(&str->opacity, json["o"], FloatMult(0.01));
         }
     }
 
@@ -906,11 +1065,11 @@ private:
 
             if ( prop->traits().flags & PropertyTraits::Animated )
             {
-                load_animated(static_cast<AnimatableBase*>(prop), json_obj[field.lottie]);
+                load_animated(static_cast<AnimatableBase*>(prop), json_obj[field.lottie], field.transform);
             }
             else
             {
-                load_value(prop, json_obj[field.lottie]);
+                load_value(prop, json_obj[field.lottie], field.transform);
             }
         }
     }
@@ -1009,20 +1168,22 @@ private:
             }
             case model::PropertyTraits::Enum:
                 return val.toInt();
+            case model::PropertyTraits::Gradient:
+                return val.toArray().toVariantList();
             default:
                 logger.stream(app::log::Error) << "Unsupported type" << prop->traits().type << "for" << prop->name();
                 return {};
         }
     }
 
-    void load_value(model::BaseProperty * prop, const QJsonValue& val, const TransformFunc& trans = {})
+    void load_value(model::BaseProperty * prop, const QJsonValue& val, const TransformFunc& trans)
     {
         auto v = value_to_variant(prop, val);
-        if ( !v || !prop->set_value(trans ? trans(*v, 0) : *v) )
+        if ( !v || !prop->set_value(trans.from_lottie(*v, 0)) )
             emit format->warning(QObject::tr("Invalid value for %1").arg(prop->name()));
     }
 
-    void load_animated(model::AnimatableBase* prop, const QJsonValue& val, const TransformFunc& trans = {})
+    void load_animated(model::AnimatableBase* prop, const QJsonValue& val, const TransformFunc& trans)
     {
         if ( !val.isObject() )
         {
@@ -1056,7 +1217,7 @@ private:
                 auto v = value_to_variant(prop, s);
                 model::KeyframeBase* kf = nullptr;
                 if ( v )
-                    kf = prop->set_keyframe(time, trans ? trans(*v, time) : *v);
+                    kf = prop->set_keyframe(time, trans.from_lottie(*v, time));
 
                 if ( kf )
                 {
