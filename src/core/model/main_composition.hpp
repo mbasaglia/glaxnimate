@@ -4,9 +4,9 @@
 
 namespace model {
 
-class MainComposition : public ObjectBase<MainComposition, Composition>
+class MainComposition : public Composition
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(MainComposition)
 
     //                  type    name    default  notify                       validate
     GLAXNIMATE_PROPERTY(float,  fps,         60, &MainComposition::fps_changed,     &MainComposition::validate_fps)
@@ -14,7 +14,7 @@ class MainComposition : public ObjectBase<MainComposition, Composition>
     GLAXNIMATE_PROPERTY(int,    height,     512, &MainComposition::height_changed,  &MainComposition::validate_nonzero, PropertyTraits::Visual)
 
 public:
-    using Ctor::Ctor;
+    using Composition::Composition;
 
     QIcon docnode_icon() const override
     {

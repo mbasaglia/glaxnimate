@@ -44,7 +44,7 @@ void model::Object::clone_into(model::Object* dest) const
     {
         app::log::Log log("Object", type_name());
         log.stream(app::log::Error) << "trying to clone into" << dest->type_name() << "from" << type_name();
-        log.stream(app::log::Info) << "make sure clone_covariant is implemented for" << type_name() << "or inherit from ObjectBase";
+        log.stream(app::log::Info) << "make sure clone_covariant is implemented for" << type_name() << "or use GLAXNIMATE_OBJECT";
         return;
     }
 

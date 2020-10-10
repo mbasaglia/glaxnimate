@@ -22,13 +22,11 @@ Follows an example:
 ```c++
 namespace model {
 
-
-// ObjectBase is a CRTP class that adds cloning function for the new type
-// required for concrete types, not for abstract classes.
-class MyNewObject : public ObjectBase<MyNewObject, Object>
+class MyNewObject : public Object
 {
-    // This adds registration code for the factory
-    GLAXNIMATE_OBJECT
+    // This adds registration code for the factory and cloning functionality.
+    // It's required for concrete types, not for abstract classes.
+    GLAXNIMATE_OBJECT(MyNewObject)
 
     // You can define properties like this, they will be editable from the UI
     // the paramters to the macro are (type, name, default)
@@ -37,8 +35,8 @@ class MyNewObject : public ObjectBase<MyNewObject, Object>
     GLAXNIMATE_ANIMATABLE(float, my_animated, 0.3)
 
 public:
-    // Use the base class constructor ObjectBase adds this typedef for convenience
-    using Ctor::Ctor;
+    // Use the base class constructor
+    using Object::Object;
 
     // Overriding this allows a translated name to be shown in the UI
     QString type_name_human() const override { return tr("My New Object"); }
@@ -97,7 +95,6 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     // ...
 
     // The template parameters are the class to be declared and its parent
-    // (You can skip unnecessary parent classes like ObjectBase)
     // The function argument is the module you want to define the class into.
     register_from_meta<model::MyNewObject, Object>(glaxnimate_module);
     // Abstract classes should also be declared,
@@ -142,7 +139,7 @@ Note that the order of properties is important in some lottie renderers.
 Glaxnimate keeps the automatic properties in the order defined into `fields`
 but care needs to be taken when setting `Custom` properties.
 
-If you define new shapes or layers that have a corresponding lottie type,
-you need to add them to `shape_types` or `layer_types` respectively,
+If you define new shapes that have a corresponding lottie type,
+you need to add them to `shape_types`
 which maps Glaxnimate class names (without namespace) to the lottie `ty` field
 corresponding to the right object.

@@ -5,14 +5,14 @@
 
 namespace model {
 
-class NamedColor : public ObjectBase<NamedColor, BrushStyle>
+class NamedColor : public BrushStyle
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(NamedColor)
 
     GLAXNIMATE_ANIMATABLE(QColor, color, QColor(0, 0, 0), &NamedColor::invalidate_icon)
 
 public:
-    using Ctor::Ctor;
+    using BrushStyle::BrushStyle;
 
     QString type_name_human() const override;
 

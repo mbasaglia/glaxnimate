@@ -10,9 +10,9 @@
 
 namespace model {
 
-class Stroke : public ObjectBase<Stroke, Styler>
+class Stroke : public Styler
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(Stroke)
 
 public:
     enum Cap
@@ -40,7 +40,7 @@ private:
     GLAXNIMATE_PROPERTY(float, miter_limit, 0, nullptr, nullptr, PropertyTraits::Visual)
 
 public:
-    using Ctor::Ctor;
+    using Styler::Styler;
 
     QRectF local_bounding_rect(FrameTime t) const override
     {

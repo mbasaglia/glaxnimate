@@ -9,9 +9,9 @@
 namespace model {
 
 
-class Group : public ObjectBase<Group, ShapeElement>
+class Group : public ShapeElement
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(Group)
 
 public:
     ShapeListProperty shapes{this, "shapes",
@@ -27,7 +27,7 @@ public:
 
 public:
     Group(Document* document)
-        : Ctor(document)
+        : ShapeElement(document)
     {
         connect(transform.get(), &Object::property_changed,
                 this, &Group::on_transform_matrix_changed);

@@ -8,9 +8,9 @@
 
 namespace model {
 
-class Bitmap : public ObjectBase<Bitmap, Asset>
+class Bitmap : public Asset
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(Bitmap)
     GLAXNIMATE_PROPERTY(QByteArray, data, {}, &Bitmap::on_refresh)
     GLAXNIMATE_PROPERTY(QString, filename, {}, &Bitmap::on_refresh)
     GLAXNIMATE_PROPERTY_RO(QString, format, {})
@@ -19,7 +19,7 @@ class Bitmap : public ObjectBase<Bitmap, Asset>
     Q_PROPERTY(bool embedded READ embedded WRITE embed)
 
 public:
-    using Ctor::Ctor;
+    using Asset::Asset;
 
     void paint(QPainter* painter) const;
 

@@ -9,9 +9,9 @@
 
 namespace model {
 
-class Defs : public ObjectBase<Defs, Object>
+class Defs : public Object
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(Defs)
 
     GLAXNIMATE_PROPERTY_LIST(NamedColor, colors, &Defs::on_color_added, &Defs::on_color_removed, {}, {}, {}, {})
     GLAXNIMATE_PROPERTY_LIST(Bitmap, images, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
@@ -26,7 +26,7 @@ class Defs : public ObjectBase<Defs, Object>
     GLAXNIMATE_PROPERTY_LIST(Gradient, gradients, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
 
 public:
-    using Ctor::Ctor;
+    using Object::Object;
 
     Q_INVOKABLE model::ReferenceTarget* find_by_uuid(const QUuid& n) const;
     Q_INVOKABLE model::NamedColor* add_color(const QColor& color, const QString& name = {});

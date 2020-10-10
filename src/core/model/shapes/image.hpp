@@ -6,9 +6,9 @@
 
 namespace model {
 
-class Image : public ObjectBase<Image, ShapeElement>
+class Image : public ShapeElement
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(Image)
 
     GLAXNIMATE_SUBOBJECT(Transform, transform)
     GLAXNIMATE_PROPERTY_REFERENCE(Bitmap, image, &Image::valid_images, &Image::is_valid_image, &Image::on_image_changed)

@@ -8,9 +8,9 @@
 
 namespace model {
 
-class Fill : public ObjectBase<Fill, Styler>
+class Fill : public Styler
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(Fill)
 
 public:
     enum Rule
@@ -25,7 +25,7 @@ private:
     GLAXNIMATE_PROPERTY(Rule, fill_rule, NonZero, nullptr, nullptr, PropertyTraits::Visual)
 
 public:
-    using Ctor::Ctor;
+    using Styler::Styler;
 
     QRectF local_bounding_rect(FrameTime t) const override
     {

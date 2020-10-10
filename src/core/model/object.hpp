@@ -94,30 +94,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-/**
- * \brief Simple CRTP to help with the clone boilerplate
- */
-template <class Derived, class Base>
-class ObjectBase : public Base
-{
-public:
-    std::unique_ptr<Derived> clone_covariant() const
-    {
-        auto object = std::make_unique<Derived>(this->document());
-        this->clone_into(object.get());
-        return object;
-    }
-
-protected:
-    using Base::Base;
-    using Ctor = ObjectBase;
-
-private:
-    std::unique_ptr<Object> clone_impl() const override
-    {
-        return clone_covariant();
-    }
-};
-
-
 } // namespace model

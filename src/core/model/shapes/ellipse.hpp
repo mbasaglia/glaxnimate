@@ -6,14 +6,14 @@
 namespace model {
 
 
-class Ellipse : public ObjectBase<Ellipse, Shape>
+class Ellipse : public Shape
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(Ellipse)
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF())
     GLAXNIMATE_ANIMATABLE(QSizeF, size, QSizeF())
 
 public:
-    using Ctor::Ctor;
+    using Shape::Shape;
 
     QIcon docnode_icon() const override
     {

@@ -9,16 +9,16 @@
 namespace model {
 
 
-class Transform : public ObjectBase<Transform, Object>
+class Transform : public Object
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(Transform)
     GLAXNIMATE_ANIMATABLE(QPointF, anchor_point, QPointF(0, 0))
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF(0, 0))
     GLAXNIMATE_ANIMATABLE(QVector2D, scale, QVector2D(1, 1))
     GLAXNIMATE_ANIMATABLE(float, rotation, 0, {}, 0, 360, true)
 
 public:
-    using Ctor::Ctor;
+    using Object::Object;
 
     virtual QString type_name_human() const override { return tr("Transform"); }
 

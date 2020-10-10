@@ -5,9 +5,9 @@
 namespace model {
 
 
-class PolyStar : public ObjectBase<PolyStar, Shape>
+class PolyStar : public Shape
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(PolyStar)
 
 public:
     enum StarType
@@ -28,7 +28,7 @@ public:
     GLAXNIMATE_ANIMATABLE(int, points, 5)
 
 public:
-    using Ctor::Ctor;
+    using Shape::Shape;
 
     QIcon docnode_icon() const override
     {

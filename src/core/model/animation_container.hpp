@@ -9,15 +9,15 @@ namespace model {
 /**
  * \brief Base class for document nodes that enclose an animation
  */
-class AnimationContainer: public ObjectBase<AnimationContainer, Object>
+class AnimationContainer: public Object
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(AnimationContainer)
     GLAXNIMATE_PROPERTY(int,    first_frame,  0, &AnimationContainer::on_first_frame_changed, &AnimationContainer::validate_first_frame, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(int,    last_frame, 180, &AnimationContainer::on_last_frame_changed,  &AnimationContainer::validate_last_frame,  PropertyTraits::Visual)
     Q_PROPERTY(bool time_visible READ time_visible)
 
 public:
-    using Ctor::Ctor;
+    using Object::Object;
 
     /**
      * \brief Whether time() is within first/last frame

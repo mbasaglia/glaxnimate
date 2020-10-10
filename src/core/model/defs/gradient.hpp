@@ -12,14 +12,14 @@ QGradientStops lerp<QGradientStops>(const QGradientStops& a, const QGradientStop
 
 namespace model {
 
-class GradientColors : public ObjectBase<GradientColors, Asset>
+class GradientColors : public Asset
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(GradientColors)
 
     GLAXNIMATE_ANIMATABLE(QGradientStops, colors, {}, &GradientColors::colors_changed)
 
 public:
-    using Ctor::Ctor;
+    using Asset::Asset;
 
     QIcon reftarget_icon() const override;
     QString type_name_human() const override;
@@ -28,9 +28,9 @@ signals:
     void colors_changed(const QGradientStops&);
 };
 
-class Gradient : public ObjectBase<Gradient, BrushStyle>
+class Gradient : public BrushStyle
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(Gradient)
 
 public:
     enum Type
@@ -50,7 +50,7 @@ public:
     GLAXNIMATE_ANIMATABLE(QPointF, highlight, {})
 
 public:
-    using Ctor::Ctor;
+    using BrushStyle::BrushStyle;
 
     QString type_name_human() const override;
     QBrush brush_style(FrameTime t) const override;

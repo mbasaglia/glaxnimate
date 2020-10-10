@@ -6,7 +6,7 @@ GLAXNIMATE_OBJECT_IMPL(model::Image)
 
 
 model::Image::Image(model::Document* doc)
-    : Ctor(doc)
+    : ShapeElement(doc)
 {
     connect(transform.get(), &Object::property_changed, this, &Image::on_transform_matrix_changed);
 }

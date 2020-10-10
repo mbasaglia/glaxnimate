@@ -6,9 +6,9 @@
 
 namespace model {
 
-class Layer : public ObjectBase<Layer, Group>
+class Layer : public Group
 {
-    GLAXNIMATE_OBJECT
+    GLAXNIMATE_OBJECT(Layer)
     GLAXNIMATE_SUBOBJECT(AnimationContainer, animation)
     GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent, &Layer::valid_parents, &Layer::is_valid_parent, &Layer::docnode_on_update_group)
     GLAXNIMATE_PROPERTY(float, start_time, 0, {}, {}, PropertyTraits::Visual)
@@ -61,7 +61,7 @@ public:
         int index;
     };
 
-    using Ctor::Ctor;
+    using Group::Group;
 
     DocumentNode* docnode_group_parent() const override;
     int docnode_group_child_count() const override;
