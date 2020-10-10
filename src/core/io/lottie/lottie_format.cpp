@@ -1000,7 +1000,7 @@ private:
             load_properties(gradient, fields["Gradient"], json_obj, props);
 
             /// \todo load highlight from h/a if present
-            styler->highlight.set(styler->start_point.get());
+            gradient->highlight.set(gradient->start_point.get());
 
             auto jcolors = json_obj["g"].toObject();
             load_animated(&colors->colors, jcolors["k"], GradientLoad{jcolors["p"].toInt()});
