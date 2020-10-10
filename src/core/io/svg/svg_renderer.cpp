@@ -22,6 +22,10 @@ public:
         writer.writeStartElement("defs");
         for ( const auto& color : doc->defs()->colors )
             write_named_color(color.get());
+        for ( const auto& color : doc->defs()->gradient_colors )
+            write_gradient_colors(color.get());
+        for ( const auto& gradient : doc->defs()->gradients )
+            write_gradient(gradient.get());
         writer.writeEndElement();
 
         writer.writeStartElement("sodipodi:namedview");
@@ -395,6 +399,55 @@ public:
     write_attribute(const QString& name, T val)
     {
         writer.writeAttribute(name, QString::number(val));
+    }
+
+    void write_gradient_colors(model::GradientColors* gradient)
+    {
+        writer.writeStartElement("linearGradient");
+        QString id = pretty_id(gradient->name.get(), gradient);
+        non_uuid_ids_map[gradient] = id;
+        writer.writeAttribute("id", id);
+
+        for ( const auto& stop : gradient->colors.get() )
+        {
+            writer.writeEmptyElement("stop");
+            write_attribute("offset", stop.first);
+            writer.writeAttribute("style", "stop-color:" + stop.second.name() + ";stop-opacity:1;");
+        }
+
+        writer.writeEndElement();
+    }
+
+    void write_gradient(model::Gradient* gradient)
+    {
+        if ( gradient->type.get() == model::Gradient::Radial )
+        {
+            writer.writeStartElement("radialGradient");
+            write_attribute("cx", gradient->start_point.get().x());
+            write_attribute("cy", gradient->start_point.get().y());
+            write_attribute("r", math::length(gradient->start_point.get() - gradient->end_point.get()));
+            write_attribute("fx", gradient->highlight.get().x());
+            write_attribute("fy", gradient->highlight.get().y());
+        }
+        else
+        {
+            writer.writeStartElement("linearGradient");
+            write_attribute("x1", gradient->start_point.get().x());
+            write_attribute("y1", gradient->start_point.get().y());
+            write_attribute("x2", gradient->end_point.get().x());
+            write_attribute("y2", gradient->end_point.get().y());
+        }
+
+        QString id = pretty_id(gradient->name.get(), gradient);
+        non_uuid_ids_map[gradient] = id;
+        writer.writeAttribute("id", id);
+        writer.writeAttribute("gradientUnits", "userSpaceOnUse");
+
+        auto it = non_uuid_ids_map.find(gradient->colors.get());
+        if ( it != non_uuid_ids_map.end() )
+            writer.writeAttribute("xlink:href", "#" + it->second);
+
+        writer.writeEndElement();
     }
 
     QXmlStreamWriter writer;
