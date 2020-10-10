@@ -85,7 +85,7 @@ if(${PYTHON_ENABLED})
     include(CheckCXXCompilerFlag)
     CHECK_CXX_COMPILER_FLAG(-Wno-attributes WTF_IS_THIS_WARNING)
     if ( ${WTF_IS_THIS_WARNING} )
-        SET(CMAKE_CXX_FLAGS  ${CMAKE_CXX_FLAGS} -Wno-attributes)
+        SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-attributes")
     endif()
 
     list(APPEND SOURCES gui_python.cpp)

@@ -32,16 +32,24 @@ void model::Defs::on_gradient_colors_removed(model::GradientColors* color)
     emit gradient_remove_end(color);
 }
 
-
-
 model::ReferenceTarget* model::Defs::find_by_uuid ( const QUuid& n ) const
 {
-    for ( const auto& c : colors )
+    for ( const auto& c : gradient_colors )
         if ( c->uuid.get() == n )
             return c.get();
+
+    for ( const auto& c : gradients )
+        if ( c->uuid.get() == n )
+            return c.get();
+
     for ( const auto& c : images )
         if ( c->uuid.get() == n )
             return c.get();
+
+    for ( const auto& c : colors )
+        if ( c->uuid.get() == n )
+            return c.get();
+
     return nullptr;
 }
 

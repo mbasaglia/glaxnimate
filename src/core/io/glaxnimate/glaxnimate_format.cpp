@@ -139,6 +139,18 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, mo
             jsbez["points"] = points;
             return jsbez;
         }
+        case model::PropertyTraits::Gradient:
+        {
+            QJsonArray stops;
+            for ( const auto stop : value.value<QGradientStops>() )
+            {
+                QJsonObject jstop;
+                jstop["offset"] = stop.first;
+                jstop["color"] = to_json(stop.second);
+                stops.push_back(jstop);
+            }
+            return stops;
+        }
         default:
             return to_json(value);
     }

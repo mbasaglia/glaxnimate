@@ -264,6 +264,20 @@ public:
         return true;
     }
 
+    QColor load_color(const QJsonValue& val)
+    {
+        QString name = val.toString();
+        // We want #rrggbbaa, qt does #aarrggbb
+        if ( name.startsWith("#") && name.size() == 9 )
+        {
+            int alpha = name.right(2).toInt(nullptr, 16);
+            QColor col(name);
+            col.setAlpha(alpha);
+            return col;
+        }
+        return QColor(name);
+    }
+
 
     QVariant load_prop_value ( model::BaseProperty* target, const QJsonValue& val, bool load_objects )
     {
@@ -288,19 +302,7 @@ public:
                 // handled above
                 return {};
             case model::PropertyTraits::Color:
-            {
-                QString name = val.toString();
-                // We want #rrggbbaa, qt does #aarrggbb
-                if ( name.startsWith("#") && name.size() == 9 )
-                {
-                    int alpha = name.right(2).toInt(nullptr, 16);
-                    QColor col(name);
-                    col.setAlpha(alpha);
-                    return col;
-                }
-                return QColor(name);
-
-            }
+                return load_color(val);
             case model::PropertyTraits::Point:
             {
                 QPointF p;
@@ -344,6 +346,22 @@ public:
                     bezier.push_back(p);
                 }
                 return QVariant::fromValue(bezier);
+            }
+            case model::PropertyTraits::Gradient:
+            {
+                if ( !val.isArray() )
+                    return {};
+
+                QGradientStops stops;
+                for ( const auto& jstopv : val.toArray() )
+                {
+                    if ( !jstopv.isObject() )
+                        continue;
+                    auto jstop = jstopv.toObject();
+                    stops.push_back({jstop["offset"].toDouble(), load_color(jstop["color"])});
+                }
+
+                return QVariant::fromValue(stops);
             }
             case model::PropertyTraits::Data:
                 return QByteArray::fromBase64(val.toString().toLatin1());
