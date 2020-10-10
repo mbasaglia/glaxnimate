@@ -51,7 +51,7 @@ linux:build:
     script:
         - mkdir build
         - cd build
-        - cmake ..
+        - cmake .. -DCMAKE_CXX_FLAGS="-Werror -pedantic"
         - make
     when: always
 
