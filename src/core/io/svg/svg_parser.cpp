@@ -38,6 +38,7 @@ public:
         ItemCountRange(const T& dom_list) : dom_list(dom_list) {}
         iterator begin() const { return {this, 0}; }
         iterator end() const { return {this, dom_list.count()}; }
+        int size() const { return dom_list.count(); }
 
         T dom_list;
     };
@@ -88,19 +89,10 @@ public:
         std::vector<QDomElement> later;
 
         for ( const auto& domnode : ItemCountRange(dom.elementsByTagName("linearGradient")) )
-        {
-            if ( !domnode.isElement() )
-                continue;
-            auto linear_gradient = domnode.toElement();
-            QString id = linear_gradient.attribute("id");
-            if ( id.isEmpty() )
-                continue;
+            parse_gradient_node(domnode, later);
 
-            if ( attr(linear_gradient, "osb", "paint") == "solid" )
-                parse_named_color(linear_gradient, id);
-            else
-                parse_brush_style_check(linear_gradient, later);
-        }
+        for ( const auto& domnode : ItemCountRange(dom.elementsByTagName("radialGradient")) )
+            parse_gradient_node(domnode, later);
 
         std::vector<QDomElement> unprocessed;
         while ( !later.empty() && unprocessed.size() != later.size() )
@@ -112,7 +104,20 @@ public:
 
             std::swap(later, unprocessed);
         }
+    }
 
+    void parse_gradient_node(const QDomNode& domnode, std::vector<QDomElement>& later)
+    {
+        if ( !domnode.isElement() )
+            return;
+
+        auto gradient = domnode.toElement();
+        QString id = gradient.attribute("id");
+        if ( id.isEmpty() )
+            return;
+
+        if ( parse_brush_style_check(gradient, later) )
+            parse_gradient_nolink(gradient, id);
     }
 
     bool parse_brush_style_check(const QDomElement& element, std::vector<QDomElement>& later)
@@ -126,16 +131,28 @@ public:
 
         auto it = brush_styles.find(link);
         if ( it != brush_styles.end() )
+        {
             brush_styles["#" + element.attribute("id")] = it->second;
-        else
-            later.push_back(element);
+            return false;
+        }
+
+
+        auto it1 = gradients.find(link);
+        if ( it1 != gradients.end() )
+        {
+            parse_gradient(element, element.attribute("id"), it1->second);
+            return false;
+        }
+
+        later.push_back(element);
         return false;
     }
 
-    void parse_named_color(const QDomElement& linear_gradient, const QString& id)
+    QGradientStops parse_gradient_stops(const QDomElement& gradient)
     {
+        QGradientStops stops;
 
-        for ( const auto& domnode : ItemCountRange(linear_gradient.childNodes()) )
+        for ( const auto& domnode : ItemCountRange(gradient.childNodes()) )
         {
             if ( !domnode.isElement() )
                 continue;
@@ -148,16 +165,97 @@ public:
             Style style = parse_style(stop, {});
             if ( !style.contains("stop-color") )
                 continue;
-
-            auto col = std::make_unique<model::NamedColor>(document);
-            col->name.set(id);
             QColor color = parse_color(style["stop-color"], QColor());
             color.setAlphaF(color.alphaF() * style.get("stop-opacity", "1").toDouble());
-            col->color.set(color);
+
+            stops.push_back({stop.attribute("offset", "0").toDouble(), color});
+        }
+
+        std::sort(stops.begin(), stops.end(), [](const QGradientStop& a, const QGradientStop& b){
+            return a.first <= b.first;
+        });
+
+        return stops;
+    }
+
+    void parse_gradient_nolink(const QDomElement& gradient, const QString& id)
+    {
+        QGradientStops stops = parse_gradient_stops(gradient);
+
+        if ( stops.empty() )
+            return;
+
+        if ( stops.size() == 1 )
+        {
+            auto col = std::make_unique<model::NamedColor>(document);
+            col->name.set(id);
+            col->color.set(stops[0].second);
             brush_styles["#"+id] = col.get();
             document->defs()->colors.insert(std::move(col));
             return;
         }
+
+        auto colors = std::make_unique<model::GradientColors>(document);
+        colors->name.set(id);
+        colors->colors.set(stops);
+        gradients["#"+id] = colors.get();
+        auto ptr = colors.get();
+        document->defs()->gradient_colors.insert(std::move(colors));
+        parse_gradient(gradient, id, ptr);
+    }
+
+    void parse_gradient(const QDomElement& element, const QString& id, model::GradientColors* colors)
+    {
+        auto gradient = std::make_unique<model::Gradient>(document);
+        if ( element.tagName() == "linearGradient" )
+        {
+            if ( !element.hasAttribute("x1") || !element.hasAttribute("x2") ||
+                 !element.hasAttribute("y1") || !element.hasAttribute("y2") )
+                return;
+
+            gradient->type.set(model::Gradient::Linear);
+
+            gradient->start_point.set(QPointF(
+                len_attr(element, "x1"),
+                len_attr(element, "y1")
+            ));
+            gradient->end_point.set(QPointF(
+                len_attr(element, "x2"),
+                len_attr(element, "y2")
+            ));
+        }
+        else if ( element.tagName() == "radialGradient" )
+        {
+            if ( !element.hasAttribute("cx") || !element.hasAttribute("cy") || !element.hasAttribute("r") )
+                return;
+
+            gradient->type.set(model::Gradient::Radial);
+
+            QPointF c = QPointF(
+                len_attr(element, "cx"),
+                len_attr(element, "cy")
+            );
+            gradient->start_point.set(c);
+
+            if ( element.hasAttribute("fx") )
+                gradient->highlight.set({
+                    len_attr(element, "fx"),
+                    len_attr(element, "fy")
+                });
+            else
+                gradient->highlight.set(c);
+
+            gradient->end_point.set({c.x() + len_attr(element, "r"), c.y()});
+        }
+        else
+        {
+            return;
+        }
+
+        gradient->name.set(id);
+        gradient->colors.set(colors);
+        brush_styles["#"+id] = gradient.get();
+        document->defs()->gradients.insert(std::move(gradient));
     }
 
     model::Layer* parse_objects(const QDomElement& svg)
@@ -183,7 +281,7 @@ public:
         return parent_layer;
     }
 
-    qreal len_attr(const QDomElement& e, const QString& name, qreal defval)
+    qreal len_attr(const QDomElement& e, const QString& name, qreal defval = 0)
     {
         if ( e.hasAttribute(name) )
             return parse_unit(e.attribute(name));
@@ -861,6 +959,7 @@ public:
     std::function<void(const QString&)> on_warning;
     std::unordered_map<QString, QDomElement> map_ids;
     std::unordered_map<QString, model::BrushStyle*> brush_styles;
+    std::unordered_map<QString, model::GradientColors*> gradients;
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const QRegularExpression unit_re;
