@@ -2,8 +2,16 @@
 #include "ui_gradient_list_widget.h"
 
 #include <QEvent>
+#include <QMenu>
+#include <QMetaEnum>
+#include <QRegularExpression>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QComboBox>
+#include <QVBoxLayout>
 
 #include <QtColorWidgets/gradient_delegate.hpp>
+#include <QtColorWidgets/gradient_list_model.hpp>
 
 #include "model/document.hpp"
 #include "model/defs/defs.hpp"
@@ -27,6 +35,8 @@ public:
     model::Fill* fill = nullptr;
     model::Stroke* stroke = nullptr;
     color_widgets::GradientDelegate delegate;
+    color_widgets::GradientListModel presets;
+    QMenu presets_menu;
 
     model::GradientColors* current()
     {
@@ -195,12 +205,18 @@ public:
 
     void add_gradient()
     {
+        add_gradient({{0, window->current_color()}, {1, window->secondary_color()}}, tr("Gradient"));
+    }
+
+    void add_gradient(const QGradientStops& stops, const QString& name)
+    {
         if ( !document )
             return;
 
         auto ptr = std::make_unique<model::GradientColors>(document);
         auto raw = ptr.get();
-        ptr->colors.set({{0, window->current_color()}, {1, window->secondary_color()}});
+        ptr->colors.set(stops);
+        ptr->name.set(name);
         document->push_command(new command::AddObject(
             &document->defs()->gradient_colors,
             std::move(ptr)
@@ -271,6 +287,47 @@ public:
             &document->defs()->gradient_colors
         ));
     }
+
+    void build_presets()
+    {
+        QMetaEnum meta = QMetaEnum::fromType<QGradient::Preset>();
+        static QRegularExpression nocamel {"(\\w)([A-Z])"};
+
+        for ( int i = 0; i < meta.keyCount(); i++ )
+        {
+            QString name = meta.key(i);
+            name.replace(nocamel, "\\1 \\2");
+            QGradient grad(QGradient::Preset(meta.value(i)));
+            presets.setGradient(name, grad.stops());
+        }
+        presets.setEditMode(color_widgets::GradientListModel::EditName);
+
+        presets_menu.addAction(QIcon::fromTheme("folder"), tr("From Preset..."), &presets, [this]{
+            QDialog dialog(window);
+            dialog.setWindowTitle(tr("Gradient Presets"));
+            dialog.setWindowIcon(QIcon::fromTheme("color-gradient"));
+            QVBoxLayout lay;
+            dialog.setLayout(&lay);
+            QComboBox combo;
+            combo.setModel(&presets);
+            combo.setEditable(true);
+            combo.setInsertPolicy(QComboBox::NoInsert);
+            lay.addWidget(&combo);
+            QDialogButtonBox buttons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+            lay.addWidget(&buttons);
+            connect(&buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+            connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+            if ( dialog.exec() != QDialog::Rejected )
+            {
+                int index = combo.currentIndex();
+                if ( index != -1 )
+                    add_gradient(presets.gradientStops(index), presets.nameFromIndex(index));
+            }
+        });
+
+        ui.btn_new->setMenu(&presets_menu);
+    }
 };
 
 GradientListWidget::GradientListWidget(QWidget* parent)
@@ -280,6 +337,8 @@ GradientListWidget::GradientListWidget(QWidget* parent)
     d->ui.list_view->setModel(&d->model);
     d->ui.list_view->horizontalHeader()->setSectionResizeMode(item_models::GradientListModel::Users, QHeaderView::ResizeToContents);
     d->ui.list_view->setItemDelegateForColumn(item_models::GradientListModel::Gradient, &d->delegate);
+
+    d->build_presets();
 
     connect(d->ui.btn_new, &QAbstractButton::clicked, this, [this]{ d->add_gradient(); });
     connect(d->ui.btn_remove, &QAbstractButton::clicked, this, [this]{ d->delete_gradient(); });
@@ -324,4 +383,3 @@ void GradientListWidget::set_targets(model::Fill* fill, model::Stroke* stroke)
 {
     d->set_targets(fill, stroke);
 }
-
