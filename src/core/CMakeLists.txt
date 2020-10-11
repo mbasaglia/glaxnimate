@@ -23,6 +23,7 @@ io/base.cpp
 
 math/bezier.cpp
 math/bezier_point.cpp
+math/bezier_simplify.cpp
 
 model/main_composition.cpp
 model/composition.cpp
