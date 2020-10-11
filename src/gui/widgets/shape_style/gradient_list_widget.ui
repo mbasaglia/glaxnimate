@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>177</width>
-    <height>382</height>
+    <height>353</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -28,21 +28,48 @@
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="1" rowspan="2">
-      <widget class="Line" name="line">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QToolButton" name="btn_new">
+       <property name="toolTip">
+        <string>Add Gradient</string>
        </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+       <property name="text">
+        <string>New</string>
+       </property>
+       <property name="icon">
+        <iconset theme="list-add">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item>
+      <widget class="QToolButton" name="btn_preset">
+       <property name="toolTip">
+        <string>Add from Preset</string>
+       </property>
+       <property name="text">
+        <string>Preset</string>
+       </property>
+       <property name="icon">
+        <iconset theme="folder"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QToolButton" name="btn_remove">
        <property name="toolTip">
         <string>Remove Gradient</string>
@@ -56,8 +83,25 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="3">
-      <widget class="QToolButton" name="btn_stroke_linear">
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Fill</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QToolButton" name="btn_fill_linear">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Linear</string>
        </property>
@@ -73,35 +117,11 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Fill</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="4">
-      <widget class="QToolButton" name="btn_fill_radial">
-       <property name="toolTip">
-        <string>Radial</string>
-       </property>
-       <property name="text">
-        <string>Radial</string>
-       </property>
-       <property name="icon">
-        <iconset theme="paint-gradient-radial">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="4">
+     <item row="1" column="3">
       <widget class="QToolButton" name="btn_stroke_radial">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Radial</string>
        </property>
@@ -117,21 +137,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QToolButton" name="btn_new">
-       <property name="toolTip">
-        <string>Add Gradient</string>
-       </property>
-       <property name="text">
-        <string>New</string>
-       </property>
-       <property name="icon">
-        <iconset theme="list-add">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
+     <item row="1" column="1">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Stroke</string>
@@ -142,7 +148,30 @@
       </widget>
      </item>
      <item row="0" column="3">
-      <widget class="QToolButton" name="btn_fill_linear">
+      <widget class="QToolButton" name="btn_fill_radial">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Radial</string>
+       </property>
+       <property name="text">
+        <string>Radial</string>
+       </property>
+       <property name="icon">
+        <iconset theme="paint-gradient-radial">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QToolButton" name="btn_stroke_linear">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Linear</string>
        </property>
@@ -163,5 +192,41 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>list_view</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>GradientListWidget</receiver>
+   <slot>change_current_gradient()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>93</x>
+     <y>98</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>278</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>list_view</sender>
+   <signal>entered(QModelIndex)</signal>
+   <receiver>GradientListWidget</receiver>
+   <slot>change_current_gradient()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>59</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>264</x>
+     <y>275</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>change_current_gradient()</slot>
+ </slots>
 </ui>

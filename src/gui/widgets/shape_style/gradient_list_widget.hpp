@@ -26,6 +26,9 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
+private slots:
+    void change_current_gradient();
+
 private:
     class Private;
     std::unique_ptr<Private> d;

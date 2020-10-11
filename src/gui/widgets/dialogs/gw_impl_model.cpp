@@ -372,3 +372,57 @@ void GlaxnimateWindow::Private::import_image()
     current_document->undo_stack().endMacro();
     set_current_document_node(select);
 }
+
+void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIndex& index)
+{
+    model::Stroke* stroke = nullptr;
+    model::Fill* fill = nullptr;
+    if ( auto node = document_node_model.node(index) )
+    {
+        property_model.set_object(node);
+        ui.timeline_widget->set_active(node);
+        ui.view_properties->expandAll();
+
+        stroke = qobject_cast<model::Stroke*>(node);
+        fill = qobject_cast<model::Fill*>(node);
+        if ( !stroke && !fill )
+        {
+            auto group = qobject_cast<model::Group*>(node);
+
+            if ( !group )
+            {
+                if ( auto parent = node->docnode_parent() )
+                    group = qobject_cast<model::Group*>(parent);
+            }
+
+            if ( group )
+            {
+                int stroke_count = 0;
+                int fill_count = 0;
+                for ( const auto& shape : group->shapes )
+                {
+                    if ( auto s = qobject_cast<model::Stroke*>(shape.get()) )
+                    {
+                        stroke = s;
+                        stroke_count++;
+                    }
+                    else if ( auto f = qobject_cast<model::Fill*>(shape.get()) )
+                    {
+                        fill = f;
+                        fill_count++;
+                    }
+                }
+
+                if ( stroke_count > 1 )
+                    stroke = nullptr;
+
+                if ( fill_count > 1 )
+                    fill = nullptr;
+            }
+        }
+    }
+
+    ui.stroke_style_widget->set_shape(stroke);
+    ui.fill_style_widget->set_shape(fill);
+    ui.widget_gradients->set_targets(fill, stroke);
+}

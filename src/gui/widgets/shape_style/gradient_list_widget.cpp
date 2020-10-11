@@ -2,7 +2,6 @@
 #include "ui_gradient_list_widget.h"
 
 #include <QEvent>
-#include <QMenu>
 #include <QMetaEnum>
 #include <QRegularExpression>
 #include <QDialog>
@@ -36,7 +35,6 @@ public:
     model::Stroke* stroke = nullptr;
     color_widgets::GradientDelegate delegate;
     color_widgets::GradientListModel presets;
-    QMenu presets_menu;
 
     model::GradientColors* current()
     {
@@ -239,6 +237,16 @@ public:
         this->fill = fill;
         this->stroke = stroke;
 
+        ui.btn_fill_linear->setEnabled(fill);
+        ui.btn_fill_radial->setEnabled(fill);
+        ui.btn_stroke_linear->setEnabled(stroke);
+        ui.btn_stroke_radial->setEnabled(stroke);
+
+        buttons_from_targets(true);
+    }
+
+    void buttons_from_targets(bool set_current)
+    {
         auto gradient_fill = fill ? qobject_cast<model::Gradient*>(fill->use.get()) : nullptr;
         auto gradient_stroke = stroke ? qobject_cast<model::Gradient*>(stroke->use.get()) : nullptr;
 
@@ -250,11 +258,21 @@ public:
         if ( !colors_fill && !colors_stroke )
             return;
 
-        model::GradientColors* colors = colors_fill ? colors_fill : colors_stroke;
+        model::GradientColors* colors;
 
-        ui.list_view->setCurrentIndex(model.gradient_to_index(colors));
+        if ( set_current )
+        {
+            colors = colors_fill ? colors_fill : colors_stroke;
+            ui.list_view->setCurrentIndex(model.gradient_to_index(colors));
+        }
+        else
+        {
+            colors = current();
+        }
 
-        if ( colors_fill )
+
+
+        if ( colors_fill == colors )
         {
             if ( gradient_fill->type.get() == model::Gradient::Radial )
                 ui.btn_fill_radial->setChecked(true);
@@ -269,6 +287,18 @@ public:
             else
                 ui.btn_stroke_linear->setChecked(true);
         }
+    }
+
+    void current_gradient_changed()
+    {
+        model::GradientColors* colors = current();
+        if ( !colors )
+        {
+            clear_buttons();
+            return;
+        }
+
+        buttons_from_targets(false);
     }
 
     void delete_gradient()
@@ -301,32 +331,32 @@ public:
             presets.setGradient(name, grad.stops());
         }
         presets.setEditMode(color_widgets::GradientListModel::EditName);
+        connect(ui.btn_preset, &QAbstractButton::clicked, ui.btn_preset, [this]{ from_preset(); });
+    }
 
-        presets_menu.addAction(QIcon::fromTheme("folder"), tr("From Preset..."), &presets, [this]{
-            QDialog dialog(window);
-            dialog.setWindowTitle(tr("Gradient Presets"));
-            dialog.setWindowIcon(QIcon::fromTheme("color-gradient"));
-            QVBoxLayout lay;
-            dialog.setLayout(&lay);
-            QComboBox combo;
-            combo.setModel(&presets);
-            combo.setEditable(true);
-            combo.setInsertPolicy(QComboBox::NoInsert);
-            lay.addWidget(&combo);
-            QDialogButtonBox buttons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
-            lay.addWidget(&buttons);
-            connect(&buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-            connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    void from_preset()
+    {
+        QDialog dialog(window);
+        dialog.setWindowTitle(tr("Gradient Presets"));
+        dialog.setWindowIcon(QIcon::fromTheme("color-gradient"));
+        QVBoxLayout lay;
+        dialog.setLayout(&lay);
+        QComboBox combo;
+        combo.setModel(&presets);
+        combo.setEditable(true);
+        combo.setInsertPolicy(QComboBox::NoInsert);
+        lay.addWidget(&combo);
+        QDialogButtonBox buttons(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+        lay.addWidget(&buttons);
+        connect(&buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+        connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
 
-            if ( dialog.exec() != QDialog::Rejected )
-            {
-                int index = combo.currentIndex();
-                if ( index != -1 )
-                    add_gradient(presets.gradientStops(index), presets.nameFromIndex(index));
-            }
-        });
-
-        ui.btn_new->setMenu(&presets_menu);
+        if ( dialog.exec() != QDialog::Rejected )
+        {
+            int index = combo.currentIndex();
+            if ( index != -1 )
+                add_gradient(presets.gradientStops(index), presets.nameFromIndex(index));
+        }
     }
 };
 
@@ -382,4 +412,9 @@ void GradientListWidget::set_window(GlaxnimateWindow* window)
 void GradientListWidget::set_targets(model::Fill* fill, model::Stroke* stroke)
 {
     d->set_targets(fill, stroke);
+}
+
+void GradientListWidget::change_current_gradient()
+{
+    d->current_gradient_changed();
 }

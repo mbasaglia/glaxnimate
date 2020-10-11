@@ -62,6 +62,7 @@ void graphics::GradientEditor::on_use_changed(model::BrushStyle* new_use)
         start.setVisible(false);
         finish.setVisible(false);
         highlight.setVisible(false);
+        update();
         return;
     }
 
@@ -185,10 +186,13 @@ QRectF graphics::GradientEditor::boundingRect() const
 
 void graphics::GradientEditor::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*)
 {
-    QPen p(option->palette.highlight(), 1);
-    p.setCosmetic(true);
-    painter->setPen(p);
-    painter->drawLine(start.pos(), finish.pos());
+    if ( gradient )
+    {
+        QPen p(option->palette.highlight(), 1);
+        p.setCosmetic(true);
+        painter->setPen(p);
+        painter->drawLine(start.pos(), finish.pos());
+    }
 }
 
 void graphics::GradientEditor::remove_highlight()
