@@ -5,6 +5,7 @@
 #include <QtXml/QDomDocument>
 
 #include "utils/regexp.hpp"
+#include "utils/sort_gradient.hpp"
 #include "model/shapes/shapes.hpp"
 #include "model/document.hpp"
 #include "model/defs/named_color.hpp"
@@ -171,9 +172,7 @@ public:
             stops.push_back({stop.attribute("offset", "0").toDouble(), color});
         }
 
-        std::sort(stops.begin(), stops.end(), [](const QGradientStop& a, const QGradientStop& b){
-            return a.first <= b.first;
-        });
+        utils::sort_gradient(stops);
 
         return stops;
     }

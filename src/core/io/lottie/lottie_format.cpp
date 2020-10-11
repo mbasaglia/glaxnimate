@@ -650,6 +650,8 @@ public:
             jsh["ty"_l] = "gs";
 
         /// \todo highlight
+        jsh["h"_l] = fake_animated(0);
+        jsh["a"_l] = fake_animated(0);
 
         auto colors = gradient->colors.get();
         QCborMap jcolors;
@@ -686,14 +688,20 @@ public:
         }
         else if ( shape->type_name() == "PolyStar" )
         {
-            QCborMap fake;
-            fake["a"_l] = 0;
-            fake["k"_l] = 0;
+            QCborMap fake = fake_animated(0);
             jsh["os"_l] = fake;
             jsh["is"_l] = fake;
         }
 
         return jsh;
+    }
+
+    QCborMap fake_animated(const QCborValue& val)
+    {
+        QCborMap fake;
+        fake["a"_l] = 0;
+        fake["k"_l] = val;
+        return fake;
     }
 
     QCborArray convert_shapes(const ShapeListProperty& shapes)

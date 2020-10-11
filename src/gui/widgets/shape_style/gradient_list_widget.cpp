@@ -26,7 +26,7 @@ public:
     GlaxnimateWindow* window = nullptr;
     model::Fill* fill = nullptr;
     model::Stroke* stroke = nullptr;
-    color_widgets::GradientDelegate delegrate;
+    color_widgets::GradientDelegate delegate;
 
     model::GradientColors* current()
     {
@@ -279,7 +279,7 @@ GradientListWidget::GradientListWidget(QWidget* parent)
     d->ui.setupUi(this);
     d->ui.list_view->setModel(&d->model);
     d->ui.list_view->horizontalHeader()->setSectionResizeMode(item_models::GradientListModel::Users, QHeaderView::ResizeToContents);
-    d->ui.list_view->setItemDelegateForColumn(item_models::GradientListModel::Gradient, &d->delegrate);
+    d->ui.list_view->setItemDelegateForColumn(item_models::GradientListModel::Gradient, &d->delegate);
 
     connect(d->ui.btn_new, &QAbstractButton::clicked, this, [this]{ d->add_gradient(); });
     connect(d->ui.btn_remove, &QAbstractButton::clicked, this, [this]{ d->delete_gradient(); });
