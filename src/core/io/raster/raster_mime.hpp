@@ -42,7 +42,7 @@ public:
         QPainter painter(&image);
         painter.setRenderHint(QPainter::Antialiasing);
         for ( auto node : selection )
-            node->paint(&painter, node->time(), model::DocumentNode::Recursive);
+            node->paint(&painter, node->time(), model::DocumentNode::Render);
         return image;
     }
 

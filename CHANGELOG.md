@@ -4,6 +4,7 @@
 
 * Editing:
     * Added gradient support
+    * Option to exclude some layers from being rendered / exported
 * Bug Fixes:
     * Exporting the document no longer alters the document save state
     * Fixed crash on Lottie export

@@ -268,10 +268,16 @@ public:
 
     void write_group_shape(model::Group* group)
     {
-        if ( qobject_cast<model::Layer*>(group) )
+        if ( auto layer = group->cast<model::Layer>() )
+        {
+            if ( !layer->render.get() )
+                return;
             start_layer(group);
+        }
         else
+        {
             start_group(group);
+        }
         Style::Map style;
         transform_to_style(group->transform_matrix(group->time()), style);
         style["opacity"] = group->opacity.get();

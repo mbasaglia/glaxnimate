@@ -12,7 +12,10 @@ class Layer : public Group
     GLAXNIMATE_SUBOBJECT(AnimationContainer, animation)
     GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent, &Layer::valid_parents, &Layer::is_valid_parent, &Layer::docnode_on_update_group)
     GLAXNIMATE_PROPERTY(float, start_time, 0, {}, {}, PropertyTraits::Visual)
-
+    /**
+     * \brief Whether the layer will be rendered / exported in other formats
+     */
+    GLAXNIMATE_PROPERTY(bool, render, true)
 
 public:
     class ChildLayerIterator

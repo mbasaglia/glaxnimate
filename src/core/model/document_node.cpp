@@ -117,7 +117,7 @@ void model::DocumentNode::paint(QPainter* painter, FrameTime time, PaintMode mod
 {
     painter->save();
     on_paint(painter, time, mode);
-    if ( mode == Recursive )
+    if ( mode >= Recursive )
         for ( const auto& c : docnode_children() )
             c->paint(painter, time, mode);
     painter->restore();

@@ -42,7 +42,6 @@ int model::Layer::docnode_group_child_count() const
     return sz;
 }
 
-
 std::vector<model::ReferenceTarget*> model::Layer::valid_parents() const
 {
     std::vector<model::ReferenceTarget*> refs;
@@ -88,7 +87,6 @@ bool model::Layer::is_ancestor_of ( const model::Layer* other ) const
     return false;
 }
 
-
 void model::Layer::set_time(model::FrameTime t)
 {
     Object::set_time(relative_time(t));
@@ -106,5 +104,6 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
     if ( !animation->time_visible(time) )
         return;
 
-    DocumentNode::paint(painter, time, mode);
+    if ( mode != Render || render.get() )
+        DocumentNode::paint(painter, time, mode);
 }

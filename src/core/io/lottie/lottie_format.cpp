@@ -407,6 +407,9 @@ public:
 
         auto layer = static_cast<Layer*>(shape);
 
+        if ( !layer->render.get() )
+            return;
+
         int parent_index = layer_index(layer->parent.get());
         if ( forced_parent != -1 )
             parent_index = forced_parent;
