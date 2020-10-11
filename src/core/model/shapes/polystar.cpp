@@ -4,14 +4,14 @@
 
 GLAXNIMATE_OBJECT_IMPL(model::PolyStar)
 
-math::Bezier model::PolyStar::to_bezier(model::FrameTime t) const
+math::bezier::Bezier model::PolyStar::to_bezier(model::FrameTime t) const
 {
     return draw(type.get(), position.get_at(t), inner_radius.get_at(t), outer_radius.get_at(t), math::deg2rad(angle.get_at(t)), points.get_at(t));
 }
 
-math::Bezier model::PolyStar::draw(model::PolyStar::StarType type, const QPointF& pos, float r1, float r2, float angle_radians, int p)
+math::bezier::Bezier model::PolyStar::draw(model::PolyStar::StarType type, const QPointF& pos, float r1, float r2, float angle_radians, int p)
 {
-    math::Bezier bezier;
+    math::bezier::Bezier bezier;
     bezier.close();
 
     qreal halfd = - math::pi / p;

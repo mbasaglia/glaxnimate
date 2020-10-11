@@ -20,7 +20,7 @@ void model::Group::on_transform_matrix_changed()
     propagate_transform_matrix_changed(transform_matrix(time()), group_transform_matrix(time()));
 }
 
-void model::Group::add_shapes(model::FrameTime t, math::MultiBezier & bez) const
+void model::Group::add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez) const
 {
     for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
     {

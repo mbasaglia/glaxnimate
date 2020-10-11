@@ -25,7 +25,7 @@ public:
         return tr("Rectangle");
     }
 
-    math::Bezier to_bezier(FrameTime t) const override;
+    math::bezier::Bezier to_bezier(FrameTime t) const override;
 
     QRectF local_bounding_rect(FrameTime t) const override
     {

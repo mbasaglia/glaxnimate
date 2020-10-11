@@ -74,7 +74,7 @@ protected:
 
 private:
     math::PolarVector<QPointF> polar;
-    math::Bezier bez;
+    math::bezier::Bezier bez;
 
 
     StarToolWidget* widget()

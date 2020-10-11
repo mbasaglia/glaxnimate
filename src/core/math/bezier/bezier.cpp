@@ -1,9 +1,7 @@
 #include "bezier.hpp"
 
 
-
-
-QRectF math::Bezier::bounding_box() const
+QRectF math::bezier::Bezier::bounding_box() const
 {
     if ( size() < 2 )
         return {};
@@ -25,7 +23,7 @@ QRectF math::Bezier::bounding_box() const
     return box;
 }
 
-void math::Bezier::split_segment(int index, qreal factor)
+void math::bezier::Bezier::split_segment(int index, qreal factor)
 {
     if ( index <= 0 )
     {
@@ -41,7 +39,7 @@ void math::Bezier::split_segment(int index, qreal factor)
     auto split_points = solver_for_point(index-1).split(factor);
     points_[index-1].tan_out = split_points.first[1];
     points_[index].tan_in = split_points.second[2];
-    points_.insert(points_.begin() + index, BezierPoint(
+    points_.insert(points_.begin() + index, Point(
         split_points.first[3],
         split_points.first[2],
         split_points.second[1]
@@ -49,7 +47,7 @@ void math::Bezier::split_segment(int index, qreal factor)
 }
 
 
-void math::Bezier::add_to_painter_path(QPainterPath& out) const
+void math::bezier::Bezier::add_to_painter_path(QPainterPath& out) const
 {
     if ( size() < 2 )
         return;
@@ -67,16 +65,16 @@ void math::Bezier::add_to_painter_path(QPainterPath& out) const
     }
 }
 
-math::Bezier math::Bezier::lerp(const math::Bezier& other, qreal factor) const
+math::bezier::Bezier math::bezier::Bezier::lerp(const math::bezier::Bezier& other, qreal factor) const
 {
     if ( other.closed_ != closed_ || other.size() != size() )
         return *this;
 
-    math::Bezier lerped;
+    math::bezier::Bezier lerped;
     lerped.closed_ = closed_;
     lerped.points_.reserve(size());
     for ( int i = 0; i < size(); i++ )
-        lerped.points_.push_back(BezierPoint::from_relative(
+        lerped.points_.push_back(Point::from_relative(
             math::lerp(points_[i].pos, other.points_[i].pos, factor),
             math::lerp(
                 points_[i].tan_out - points_[i].pos,
@@ -93,7 +91,7 @@ math::Bezier math::Bezier::lerp(const math::Bezier& other, qreal factor) const
 }
 
 
-QRectF math::MultiBezier::bounding_box() const
+QRectF math::bezier::MultiBezier::bounding_box() const
 {
     if ( beziers_.empty() )
         return {};

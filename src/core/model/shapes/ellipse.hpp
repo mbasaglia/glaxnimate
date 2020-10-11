@@ -25,7 +25,7 @@ public:
         return tr("Ellipse");
     }
 
-    math::Bezier to_bezier(FrameTime t) const override
+    math::bezier::Bezier to_bezier(FrameTime t) const override
     {
         QSizeF sz = size.get_at(t);
         return math::EllipseSolver(position.get_at(t), QPointF(sz.width()/2, sz.height()/2), 0).to_bezier(0, 2*M_PI);

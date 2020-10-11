@@ -791,7 +791,7 @@ public:
         parse_transform(args.element, g_node, transform);
     }
 
-    void parse_bezier_impl(const ParseFuncArgs& args, const math::MultiBezier& bez)
+    void parse_bezier_impl(const ParseFuncArgs& args, const math::bezier::MultiBezier& bez)
     {
         if ( bez.beziers().empty() )
             return;
@@ -807,7 +807,7 @@ public:
 
     void parseshape_line(const ParseFuncArgs& args)
     {
-        math::MultiBezier bez;
+        math::bezier::MultiBezier bez;
         bez.move_to(QPointF(
             len_attr(args.element, "x1", 0),
             len_attr(args.element, "y1", 0)
@@ -819,9 +819,9 @@ public:
         parse_bezier_impl(args, bez);
     }
 
-    math::MultiBezier handle_poly(const ParseFuncArgs& args, bool close)
+    math::bezier::MultiBezier handle_poly(const ParseFuncArgs& args, bool close)
     {
-        math::MultiBezier bez;
+        math::bezier::MultiBezier bez;
 
         auto coords = double_args(args.element.attribute("points", ""));
         if ( coords.size() < 4 )
@@ -853,7 +853,7 @@ public:
         if ( parse_star(args) )
             return;
         QString d = args.element.attribute("d");
-        math::MultiBezier bez = PathDParser(d.splitRef(separator)).parse();
+        math::bezier::MultiBezier bez = PathDParser(d.splitRef(separator)).parse();
         /// \todo sodipodi:nodetypes
         parse_bezier_impl(args, bez);
     }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "draw_tool_base.hpp"
-#include "math/bezier.hpp"
+#include "math/bezier/bezier.hpp"
 
 namespace tools {
 
@@ -29,9 +29,9 @@ private:
     void adjust_point_type(Qt::KeyboardModifiers mod);
     void clear();
 
-    math::Bezier bezier;
+    math::bezier::Bezier bezier;
     bool dragging = false;
-    math::BezierPointType point_type = math::Symmetrical;
+    math::bezier::PointType point_type = math::bezier::Symmetrical;
     qreal join_radius = 5;
     bool joining = false;
 

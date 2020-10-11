@@ -21,7 +21,7 @@ class Styler : public ShapeOperator
 public:
     using ShapeOperator::ShapeOperator;
 
-    void add_shapes(FrameTime, math::MultiBezier&) const override {}
+    void add_shapes(FrameTime, math::bezier::MultiBezier&) const override {}
 
 protected:
     QBrush brush(FrameTime t) const;

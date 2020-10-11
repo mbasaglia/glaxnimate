@@ -53,7 +53,7 @@ public:
             {
                 props.push_back(item->target_property());
 
-                math::Bezier bezier = item->bezier();
+                math::bezier::Bezier bezier = item->bezier();
                 before.push_back(QVariant::fromValue(bezier));
 
                 QPointF pos = transform.map(scene_pos);
@@ -66,7 +66,7 @@ public:
         };
 
         std::map<graphics::BezierItem*, SelectedBezier> selected;
-        QPointer<graphics::BezierPointItem> initial = nullptr;
+        QPointer<graphics::PointItem> initial = nullptr;
 
         QPointF drag_start;
 
@@ -83,7 +83,7 @@ public:
             selected.clear();
         }
 
-        void add_bezier_point_item(graphics::BezierPointItem* item)
+        void add_bezier_point_item(graphics::PointItem* item)
         {
             auto grandpa = item->parent_editor();
             if ( selected.find(grandpa) == selected.end() )
@@ -93,7 +93,7 @@ public:
 
         void toggle_handle(graphics::MoveHandle* item)
         {
-            auto parent = static_cast<graphics::BezierPointItem*>(item->parentItem());
+            auto parent = static_cast<graphics::PointItem*>(item->parentItem());
             auto grandpa = parent->parent_editor();
             auto it = selected.find(grandpa);
             if ( it == selected.end() )
@@ -158,21 +158,21 @@ public:
         }
     }
 
-    static void node_type_action(QMenu* menu, QActionGroup* group, graphics::BezierPointItem* item, math::BezierPointType type)
+    static void node_type_action(QMenu* menu, QActionGroup* group, graphics::PointItem* item, math::bezier::PointType type)
     {
         QIcon icon;
         QString label;
         switch ( type )
         {
-            case math::BezierPointType::Corner:
+            case math::bezier::PointType::Corner:
                 icon = QIcon::fromTheme("node-type-cusp");
                 label = QObject::tr("Cusp");
                 break;
-            case math::BezierPointType::Smooth:
+            case math::bezier::PointType::Smooth:
                 icon = QIcon::fromTheme("node-type-smooth");
                 label = QObject::tr("Smooth");
                 break;
-            case math::BezierPointType::Symmetrical:
+            case math::bezier::PointType::Symmetrical:
                 icon = QIcon::fromTheme("node-type-auto-smooth");
                 label = QObject::tr("Symmetrical");
                 break;
@@ -201,16 +201,16 @@ public:
         if ( role != graphics::MoveHandle::Vertex && role != graphics::MoveHandle::Tangent )
             return;
 
-        auto item = static_cast<graphics::BezierPointItem*>(handle->parentItem());
+        auto item = static_cast<graphics::PointItem*>(handle->parentItem());
 
         QMenu menu;
         QActionGroup grp(&menu);
 
         menu.addSection(QObject::tr("Node"));
 
-        node_type_action(&menu, &grp, item, math::BezierPointType::Corner);
-        node_type_action(&menu, &grp, item, math::BezierPointType::Smooth);
-        node_type_action(&menu, &grp, item, math::BezierPointType::Symmetrical);
+        node_type_action(&menu, &grp, item, math::bezier::PointType::Corner);
+        node_type_action(&menu, &grp, item, math::bezier::PointType::Smooth);
+        node_type_action(&menu, &grp, item, math::bezier::PointType::Symmetrical);
 
         menu.addSeparator();
 
@@ -265,7 +265,7 @@ void tools::EditTool::mouse_press(const MouseEvent& event)
             {
                 d->drag_mode = Private::VertexClick;
                 d->selection.drag_start = event.scene_pos;
-                d->selection.initial = static_cast<graphics::BezierPointItem*>(clicked_on.handle->parentItem());
+                d->selection.initial = static_cast<graphics::PointItem*>(clicked_on.handle->parentItem());
             }
             else
             {
@@ -297,7 +297,7 @@ void tools::EditTool::mouse_move(const MouseEvent& event)
                 d->drag_mode = Private::VertexDrag;
                 if ( d->selection.initial && !d->selection.initial->parent_editor()->selected_indices().count(d->selection.initial->index()) )
                 {
-                    graphics::BezierPointItem* initial = d->selection.initial;
+                    graphics::PointItem* initial = d->selection.initial;
                     d->selection.clear();
                     d->selection.add_bezier_point_item(initial);
                 }
@@ -350,7 +350,7 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
                 );
                 for ( auto item : items )
                     if ( item->data(graphics::ItemData::HandleRole).toInt() == graphics::MoveHandle::Vertex )
-                        d->selection.add_bezier_point_item(static_cast<graphics::BezierPointItem*>(item->parentItem()));
+                        d->selection.add_bezier_point_item(static_cast<graphics::PointItem*>(item->parentItem()));
                 event.view->viewport()->update();
                 break;
             }
@@ -373,10 +373,10 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
             case Private::VertexClick:
                 if ( event.modifiers() & Qt::ControlModifier )
                 {
-                    if ( d->selection.initial->point().type == math::BezierPointType::Corner )
-                        d->selection.initial->set_point_type(math::BezierPointType::Smooth);
+                    if ( d->selection.initial->point().type == math::bezier::PointType::Corner )
+                        d->selection.initial->set_point_type(math::bezier::PointType::Smooth);
                     else
-                        d->selection.initial->set_point_type(math::BezierPointType::Corner);
+                        d->selection.initial->set_point_type(math::bezier::PointType::Corner);
                 }
                 else
                 {
@@ -456,7 +456,7 @@ QWidget* tools::EditTool::on_create_widget()
     return new QWidget();
 }
 
-void tools::EditTool::selection_set_vertex_type(math::BezierPointType t)
+void tools::EditTool::selection_set_vertex_type(math::bezier::PointType t)
 {
     if ( d->selection.empty() )
         return;
@@ -485,7 +485,7 @@ void tools::EditTool::selection_delete()
     for ( const auto& p : selected )
     {
         const auto& bez = p.first->bezier();
-        math::Bezier new_bez;
+        math::bezier::Bezier new_bez;
         new_bez.set_closed(bez.closed());
 
         for ( int i = 0; i < bez.size(); i++ )
@@ -535,14 +535,14 @@ void tools::EditTool::selection_straighten()
             if ( p.first->selected_indices().count(prev_index) )
             {
                 bez[index].tan_in = bez[index].pos;
-                bez[index].type = math::Corner;
+                bez[index].type = math::bezier::Corner;
                 modified = true;
             }
 
             if ( p.first->selected_indices().count(next_index) )
             {
                 bez[index].tan_out = bez[index].pos;
-                bez[index].type = math::Corner;
+                bez[index].type = math::bezier::Corner;
                 modified = true;
             }
 
@@ -593,7 +593,7 @@ void tools::EditTool::selection_curve()
                 modified = true;
                 if ( mod_in )
                 {
-                    bez[index].set_point_type(math::Smooth);
+                    bez[index].set_point_type(math::bezier::Smooth);
                 }
             }
         }

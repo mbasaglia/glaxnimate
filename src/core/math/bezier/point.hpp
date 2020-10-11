@@ -3,39 +3,39 @@
 #include <QPointF>
 #include "math/vector.hpp"
 
-namespace math {
+namespace math::bezier {
 
-enum BezierPointType
+enum PointType
 {
     Corner,
     Smooth,
     Symmetrical,
 };
 
-struct BezierPoint
+struct Point
 {
     QPointF pos;
     QPointF tan_in;
     QPointF tan_out;
-    BezierPointType type;
+    PointType type;
 
-    BezierPoint(
+    Point(
         const QPointF& pos,
         const QPointF& tan_in,
         const QPointF& tan_out,
-        BezierPointType type = Corner
+        PointType type = Corner
     ) : pos(pos), tan_in(tan_in), tan_out(tan_out), type(type)
     {}
 
-    BezierPoint(const QPointF& pos)
-        : BezierPoint(pos, pos, pos, Corner)
+    Point(const QPointF& pos)
+        : Point(pos, pos, pos, Corner)
     {}
 
-    static BezierPoint from_relative(
+    static Point from_relative(
         const QPointF& pos,
         const QPointF& tan_in_rel = {0, 0},
         const QPointF& tan_out_rel = {0, 0},
-        BezierPointType type = Corner
+        PointType type = Corner
     )
     {
         return {pos, pos+tan_in_rel, pos+tan_out_rel, type};
@@ -75,19 +75,19 @@ struct BezierPoint
 
     void adjust_handles_from_type();
 
-    void set_point_type(BezierPointType t)
+    void set_point_type(PointType t)
     {
         type = t;
         adjust_handles_from_type();
     }
 
-    static QPointF drag_tangent(const QPointF& dragged, const QPointF& other, const QPointF& pos, BezierPointType type)
+    static QPointF drag_tangent(const QPointF& dragged, const QPointF& other, const QPointF& pos, PointType type)
     {
-        if ( type == math::BezierPointType::Symmetrical )
+        if ( type == math::bezier::PointType::Symmetrical )
         {
             return 2*pos - dragged;
         }
-        else if ( type == math::BezierPointType::Smooth )
+        else if ( type == math::bezier::PointType::Smooth )
         {
             return math::PolarVector<QPointF>{
                 math::length(other - pos),
@@ -112,4 +112,4 @@ struct BezierPoint
 
 };
 
-} // namespace math
+} // namespace math::bezier

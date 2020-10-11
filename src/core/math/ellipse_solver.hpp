@@ -3,7 +3,7 @@
 #include <QPointF>
 #include <QtMath>
 
-#include "bezier.hpp"
+#include "bezier/bezier.hpp"
 #include "vector.hpp"
 
 namespace math {
@@ -46,9 +46,9 @@ public:
         );
     }
 
-    Bezier to_bezier(qreal anglestart, qreal angle_delta)
+    bezier::Bezier to_bezier(qreal anglestart, qreal angle_delta)
     {
-        Bezier points;
+        bezier::Bezier points;
         qreal angle1 = anglestart;
         qreal angle_left = qAbs(angle_delta);
         qreal step = M_PI / 2;
@@ -58,7 +58,7 @@ public:
         qreal firststep = qMin(angle_left, step) * sign;
         qreal alpha = _alpha(firststep);
         QPointF q1 = derivative(angle1) * alpha;
-        points.push_back(BezierPoint::from_relative(point(angle1), QPointF(0, 0), q1, math::Symmetrical));
+        points.push_back(bezier::Point::from_relative(point(angle1), QPointF(0, 0), q1, math::bezier::Symmetrical));
 
         // Then we iterate until the angle has been completed
         qreal tolerance = step / 2;
@@ -73,13 +73,13 @@ public:
             QPointF p2 = point(angle2);
             QPointF q2 = derivative(angle2) * alpha;
 
-            points.push_back(BezierPoint::from_relative(p2, -q2, q2, math::Symmetrical));
+            points.push_back(bezier::Point::from_relative(p2, -q2, q2, math::bezier::Symmetrical));
             angle1 = angle2;
         }
         return points;
     }
 
-    static Bezier from_svg_arc(
+    static bezier::Bezier from_svg_arc(
         QPointF start, qreal rx, qreal ry, qreal xrot,
         bool large, bool sweep, QPointF dest
     )

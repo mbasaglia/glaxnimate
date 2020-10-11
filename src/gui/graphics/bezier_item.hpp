@@ -11,11 +11,11 @@
 
 namespace graphics {
 
-class BezierPointItem : public QGraphicsObject
+class PointItem : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    BezierPointItem(int index, const math::BezierPoint& point, QGraphicsItem* parent);
+    PointItem(int index, const math::bezier::Point& point, QGraphicsItem* parent);
 
     QRectF boundingRect() const override;
 
@@ -23,7 +23,7 @@ public:
 
     int index() const;
 
-    void set_point_type(math::BezierPointType type);
+    void set_point_type(math::bezier::PointType type);
 
     void show_tan_in(bool show);
 
@@ -31,8 +31,8 @@ public:
 
     void remove_tangent(MoveHandle* handle);
 
-    const math::BezierPoint& point() const;
-    void modify(const math::BezierPoint& pt, const QString& undo_name);
+    const math::bezier::Point& point() const;
+    void modify(const math::bezier::Point& pt, const QString& undo_name);
 
     class BezierItem* parent_editor() const;
 
@@ -40,7 +40,7 @@ public:
     bool tan_out_empty() const;
 
 signals:
-    void modified(int index, const math::BezierPoint& point, bool commit, const QString& name);
+    void modified(int index, const math::bezier::Point& point, bool commit, const QString& name);
 
 private slots:
     void tan_in_dragged(const QPointF& p, Qt::KeyboardModifiers mods);
@@ -55,7 +55,7 @@ private slots:
 private:
     void drag_preserve_angle(QPointF& dragged, QPointF& other, const QPointF& dragged_new);
 
-    void set_point(const math::BezierPoint& p);
+    void set_point(const math::bezier::Point& p);
     void set_index(int index);
     void set_has_tan_in(bool show);
     void set_has_tan_out(bool show);
@@ -66,7 +66,7 @@ private:
     MoveHandle tan_out{nullptr, MoveHandle::Any, MoveHandle::Circle, 6};
 
     int index_;
-    math::BezierPoint point_;
+    math::bezier::Point point_;
     bool has_tan_in = true;
     bool has_tan_out = true;
     friend class BezierItem;
@@ -84,9 +84,9 @@ public:
 
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget*) override;
 
-    void set_type(int index, math::BezierPointType type);
+    void set_type(int index, math::bezier::PointType type);
 
-    model::AnimatedProperty<math::Bezier>* target_property() const;
+    model::AnimatedProperty<math::bezier::Bezier>* target_property() const;
     model::DocumentNode* target_object() const;
 
     const std::set<int>& selected_indices();
@@ -95,22 +95,22 @@ public:
     void deselect_index(int i);
     void toggle_index(int i);
 
-    const math::Bezier& bezier() const;
+    const math::bezier::Bezier& bezier() const;
 
 public slots:
-    void set_bezier(const math::Bezier& bez);
+    void set_bezier(const math::bezier::Bezier& bez);
 
     void remove_point(int index);
 
 private slots:
-    void on_dragged(int index, const math::BezierPoint& point, bool commit, const QString& name);
+    void on_dragged(int index, const math::bezier::Point& point, bool commit, const QString& name);
 
 private:
     void do_update(bool commit, const QString& name);
     void do_add_point(int index);
 
-    math::Bezier bezier_;
-    std::vector<std::unique_ptr<BezierPointItem>> items;
+    math::bezier::Bezier bezier_;
+    std::vector<std::unique_ptr<PointItem>> items;
     model::Path* node;
     utils::PseudoMutex updating;
     std::set<int> selected_indices_;

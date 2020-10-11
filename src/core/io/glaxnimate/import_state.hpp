@@ -3,7 +3,7 @@
 #include <QUuid>
 #include <QJsonArray>
 
-#include "math/bezier.hpp"
+#include "math/bezier/bezier.hpp"
 #include "glaxnimate_format.hpp"
 
 namespace io::glaxnimate::detail {
@@ -320,7 +320,7 @@ public:
                 if ( !val.isObject() )
                     return {};
 
-                math::Bezier bezier;
+                math::bezier::Bezier bezier;
                 QJsonObject obj = val.toObject();
                 bezier.set_closed(obj["closed"].toBool());
 
@@ -329,11 +329,11 @@ public:
                     if ( !jspv.isObject() )
                         continue;
                     QJsonObject jsp = jspv.toObject();
-                    math::BezierPoint p{{}, {}, {}};
+                    math::bezier::Point p{{}, {}, {}};
                     load_2d(jsp["pos"], "x", "y", p.pos);
                     load_2d(jsp["tan_in"], "x", "y", p.tan_in);
                     load_2d(jsp["tan_out"], "x", "y", p.tan_out);
-                    p.type = math::BezierPointType(jsp["type"].toInt());
+                    p.type = math::bezier::PointType(jsp["type"].toInt());
                     bezier.push_back(p);
                 }
                 return QVariant::fromValue(bezier);

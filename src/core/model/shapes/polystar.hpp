@@ -42,7 +42,7 @@ public:
         return tr("PolyStar");
     }
 
-    math::Bezier to_bezier(FrameTime t) const override;
+    math::bezier::Bezier to_bezier(FrameTime t) const override;
 
     QRectF local_bounding_rect(FrameTime t) const override
     {
@@ -50,7 +50,7 @@ public:
         return QRectF(position.get_at(t) - QPointF(radius, radius), QSizeF(radius*2, radius*2));
     }
 
-    static math::Bezier draw(StarType type, const QPointF& pos, float r1, float r2, float angle_radians, int p);
+    static math::bezier::Bezier draw(StarType type, const QPointF& pos, float r1, float r2, float angle_radians, int p);
 };
 
 } // namespace model

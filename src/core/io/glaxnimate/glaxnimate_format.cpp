@@ -4,7 +4,7 @@
 #include <QJsonArray>
 
 #include "app_info.hpp"
-#include "math/bezier.hpp"
+#include "math/bezier/bezier.hpp"
 #include "model/defs/defs.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
@@ -117,7 +117,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, mo
             return value.toString();
         case model::PropertyTraits::Bezier:
         {
-            math::Bezier bezier = value.value<math::Bezier>();
+            math::bezier::Bezier bezier = value.value<math::bezier::Bezier>();
             QJsonObject jsbez;
             jsbez["closed"] = bezier.closed();
             QJsonArray points;

@@ -14,8 +14,8 @@ void tools::DrawTool::create(const tools::Event& event)
         // the user can always change them back
         for ( auto & point : bezier )
         {
-            if ( point.type == math::BezierPointType::Symmetrical )
-                point.type = math::BezierPointType::Smooth;
+            if ( point.type == math::bezier::PointType::Symmetrical )
+                point.type = math::bezier::PointType::Smooth;
         }
         shape->shape.set(bezier);
         clear();
@@ -27,11 +27,11 @@ void tools::DrawTool::create(const tools::Event& event)
 void tools::DrawTool::adjust_point_type(Qt::KeyboardModifiers mod)
 {
     if ( mod & Qt::ShiftModifier )
-        point_type = math::Corner;
+        point_type = math::bezier::Corner;
     else if ( mod & Qt::ControlModifier )
-        point_type = math::Smooth;
+        point_type = math::bezier::Smooth;
     else
-        point_type = math::Symmetrical;
+        point_type = math::bezier::Symmetrical;
 
     if ( !bezier.empty() )
         bezier.points().back().type = point_type;
@@ -72,7 +72,7 @@ void tools::DrawTool::clear()
 {
     dragging = false;
     bezier.clear();
-    point_type = math::Symmetrical;
+    point_type = math::bezier::Symmetrical;
     joining = false;
 }
 
@@ -95,7 +95,7 @@ void tools::DrawTool::mouse_press(const tools::MouseEvent& event)
         return;
 
     if ( bezier.empty() )
-        bezier.push_back(math::BezierPoint(event.scene_pos, event.scene_pos, event.scene_pos, math::Corner));
+        bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, math::bezier::Corner));
 
     dragging = true;
 }
@@ -138,7 +138,7 @@ void tools::DrawTool::mouse_release(const tools::MouseEvent& event)
         }
         else
         {
-            bezier.push_back(math::BezierPoint(event.scene_pos, event.scene_pos, event.scene_pos, point_type));
+            bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, point_type));
             event.repaint();
         }
     }

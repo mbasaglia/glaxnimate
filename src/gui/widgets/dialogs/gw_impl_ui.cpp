@@ -133,13 +133,13 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     };
     tools::EditTool* edit_tool = static_cast<tools::EditTool*>(tools::Registry::instance().tool("edit"));
     connect(ui.action_node_type_corner, &QAction::triggered, parent, [this, edit_tool]{
-        edit_tool->selection_set_vertex_type(math::Corner);
+        edit_tool->selection_set_vertex_type(math::bezier::Corner);
     });
     connect(ui.action_node_type_smooth, &QAction::triggered, parent, [this, edit_tool]{
-        edit_tool->selection_set_vertex_type(math::Smooth);
+        edit_tool->selection_set_vertex_type(math::bezier::Smooth);
     });
     connect(ui.action_node_type_symmetric, &QAction::triggered, parent, [this, edit_tool]{
-        edit_tool->selection_set_vertex_type(math::Symmetrical);
+        edit_tool->selection_set_vertex_type(math::bezier::Symmetrical);
     });
     connect(ui.action_node_remove, &QAction::triggered, parent, [this, edit_tool]{
         edit_tool->selection_delete();

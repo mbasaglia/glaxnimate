@@ -42,7 +42,7 @@ private:
         };
         using Variant = std::variant<
             PropData<model::AnimatedProperty<QPointF>>,
-            PropData<model::AnimatedProperty<math::Bezier>>
+            PropData<model::AnimatedProperty<math::bezier::Bezier>>
         >;
 
         template<class T>
@@ -77,7 +77,7 @@ private:
                 return;
             }
 
-            math::Bezier new_bezier = std::get<1>(data).start_value;
+            math::bezier::Bezier new_bezier = std::get<1>(data).start_value;
             for ( auto& point : new_bezier )
                 point.translate(delta);
             std::get<1>(data).property->set_undoable(QVariant::fromValue(new_bezier), commit);

@@ -10,7 +10,7 @@
 
 #include "app/log/log.hpp"
 #include "model/shapes/shapes.hpp"
-#include "math/bezier.hpp"
+#include "math/bezier/bezier.hpp"
 #include "cbor_write_json.hpp"
 #include <QDebug>
 
@@ -491,9 +491,9 @@ public:
                 return v.toString();
         }
 
-        if ( v.userType() == qMetaTypeId<math::Bezier>() )
+        if ( v.userType() == qMetaTypeId<math::bezier::Bezier>() )
         {
-            math::Bezier bezier = v.value<math::Bezier>();
+            math::bezier::Bezier bezier = v.value<math::bezier::Bezier>();
             QCborMap jsbez;
             jsbez["c"_l] = bezier.closed();
             QCborArray pos, tan_in, tan_out;
@@ -1154,7 +1154,7 @@ private:
             case model::PropertyTraits::Bezier:
             {
                 QJsonObject jsbez = val.toObject();
-                math::Bezier bezier;
+                math::bezier::Bezier bezier;
                 bezier.set_closed(jsbez["c"].toBool());
                 QJsonArray pos = jsbez["v"].toArray();
                 QJsonArray tan_in = jsbez["i"].toArray();
@@ -1173,7 +1173,7 @@ private:
                     }
                     compound_value_2d_raw(tan_in[i], ti);
                     compound_value_2d_raw(tan_out[i], to);
-                    bezier.push_back(math::BezierPoint::from_relative(p, ti, to));
+                    bezier.push_back(math::bezier::Point::from_relative(p, ti, to));
                 }
                 return QVariant::fromValue(bezier);
             }

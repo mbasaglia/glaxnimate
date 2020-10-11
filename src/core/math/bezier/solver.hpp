@@ -4,7 +4,7 @@
 
 #include "math/vector.hpp"
 
-namespace math {
+namespace math::bezier {
 
 template<class Vec>
 class CubicBezierSolver
@@ -187,4 +187,4 @@ private:
     std::array<Vec, 4> points_;
 };
 
-} // namespace math
+} // namespace math::bezier

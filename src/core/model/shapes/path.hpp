@@ -11,11 +11,11 @@ namespace model {
 class Path : public Shape
 {
     GLAXNIMATE_OBJECT(Path)
-    using BezierPointType = math::BezierPointType;
-    Q_ENUM(BezierPointType)
+    using PointType = math::bezier::PointType;
+    Q_ENUM(PointType)
 
 public:
-    GLAXNIMATE_ANIMATABLE(math::Bezier, shape, &Path::shape_changed)
+    GLAXNIMATE_ANIMATABLE(math::bezier::Bezier, shape, &Path::shape_changed)
 
     GLAXNIMATE_PROPERTY(bool, closed, false, &Path::closed_changed)
 
@@ -32,7 +32,7 @@ public:
         return tr("Path");
     }
 
-    math::Bezier to_bezier(FrameTime t) const override
+    math::bezier::Bezier to_bezier(FrameTime t) const override
     {
         return shape.get_at(t);
     }
@@ -49,7 +49,7 @@ private:
     }
 
 signals:
-    void shape_changed(const math::Bezier& bez);
+    void shape_changed(const math::bezier::Bezier& bez);
 };
 
 } // namespace model

@@ -126,7 +126,7 @@ static constexpr const int SUBDIVISION_MAX_ITERATIONS = 10;
 static constexpr const int SPLINE_TABLE_SIZE = 11;
 static constexpr const double SAMPLE_STEP_SIZE = 1.0 / (SPLINE_TABLE_SIZE - 1.0);
 
-using Bez = math::CubicBezierSolver<QPointF>;
+using Bez = math::bezier::CubicBezierSolver<QPointF>;
 
 double _binary_subdivide(double x, double interval_start, double interval_end, const Bez& bez)
 {

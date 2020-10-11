@@ -1,18 +1,18 @@
 #pragma once
 
 #include "animatable.hpp"
-#include "math/bezier.hpp"
+#include "math/bezier/bezier.hpp"
 
 namespace model {
 
 template<>
-class Keyframe<math::Bezier> : public KeyframeBase
+class Keyframe<math::bezier::Bezier> : public KeyframeBase
 {
 public:
-    using value_type = math::Bezier;
-    using reference = const math::Bezier&;
+    using value_type = math::bezier::Bezier;
+    using reference = const math::bezier::Bezier&;
 
-    Keyframe(FrameTime time, math::Bezier value)
+    Keyframe(FrameTime time, math::bezier::Bezier value)
         : KeyframeBase(time), value_(std::move(value)) {}
 
     void set(reference v)
@@ -41,17 +41,17 @@ public:
     }
 
 private:
-    friend class AnimatedProperty<math::Bezier>;
-    math::Bezier value_;
+    friend class AnimatedProperty<math::bezier::Bezier>;
+    math::bezier::Bezier value_;
 };
 
 template<>
-class AnimatedProperty<math::Bezier> : public detail::AnimatedProperty<math::Bezier>
+class AnimatedProperty<math::bezier::Bezier> : public detail::AnimatedProperty<math::bezier::Bezier>
 {
 public:
     AnimatedProperty(Object* object, const QString& name,
-                   PropertyCallback<void, math::Bezier> emitter = {})
-    : detail::AnimatedProperty<math::Bezier>(object, name, {}, std::move(emitter))
+                   PropertyCallback<void, math::bezier::Bezier> emitter = {})
+    : detail::AnimatedProperty<math::bezier::Bezier>(object, name, {}, std::move(emitter))
     {}
 
     int size() const
@@ -110,7 +110,7 @@ public:
     }
 
 private:
-    math::Bezier value_;
+    math::bezier::Bezier value_;
 };
 
 

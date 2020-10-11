@@ -21,9 +21,9 @@ io/mime/mime_serializer.cpp
 io/raster/raster_format.cpp
 io/base.cpp
 
-math/bezier.cpp
-math/bezier_point.cpp
-math/bezier_simplify.cpp
+math/bezier/bezier.cpp
+math/bezier/point.cpp
+math/bezier/operations.cpp
 
 model/main_composition.cpp
 model/composition.cpp

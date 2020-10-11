@@ -16,7 +16,7 @@ class Image : public ShapeElement
 public:
     Image(model::Document* doc);
 
-    void add_shapes(FrameTime, math::MultiBezier&) const override { return; }
+    void add_shapes(FrameTime, math::bezier::MultiBezier&) const override { return; }
 
     QIcon docnode_icon() const override { return QIcon::fromTheme("x-shape-image"); }
 

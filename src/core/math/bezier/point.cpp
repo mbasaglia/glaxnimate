@@ -1,9 +1,9 @@
-#include "bezier_point.hpp"
+#include "point.hpp"
 
 
-void math::BezierPoint::adjust_handles_from_type()
+void math::bezier::Point::adjust_handles_from_type()
 {
-    if ( type != math::BezierPointType::Corner )
+    if ( type != math::bezier::PointType::Corner )
     {
         math::PolarVector<QPointF> p_in(tan_in - pos);
         math::PolarVector<QPointF> p_out(tan_out - pos);
@@ -14,7 +14,7 @@ void math::BezierPoint::adjust_handles_from_type()
         p_in.angle = in_angle;
         p_out.angle = in_angle + M_PI;
 
-        if ( type == math::BezierPointType::Symmetrical )
+        if ( type == math::bezier::PointType::Symmetrical )
             p_in.length = p_out.length = (p_in.length + p_out.length) / 2;
 
         tan_in = p_in.to_cartesian() + pos;

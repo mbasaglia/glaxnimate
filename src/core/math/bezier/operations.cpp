@@ -1,22 +1,9 @@
-#include "bezier_simplify.hpp"
+#include "operations.hpp"
 #include <vector>
 
 
-qreal triangle_area(const math::Bezier& curve, int point)
-{
-    QPointF prev = curve[point-1].pos;
-    QPointF here = curve[point].pos;
-    QPointF next = curve[point+1].pos;
-
-    return qAbs(
-        prev.x() * here.y() - here.x() * prev.y() +
-        here.x() * next.y() - next.x() * here.y() +
-        next.x() * prev.y() - prev.x() * next.y()
-    );
-}
-
 // Algoritm from https://www.particleincell.com/2012/bezier-splines/
-void auto_smooth(math::Bezier& curve)
+void math::bezier::auto_smooth(math::bezier::Bezier& curve)
 {
     int n = curve.size() - 1;
 
@@ -61,12 +48,26 @@ void auto_smooth(math::Bezier& curve)
         QPointF relative = (last - curve[i].pos);
         curve[i].tan_in = curve[i].pos - relative;
         curve[i].tan_out = curve[i].pos + relative;
-        curve[i].type = math::Smooth;
+        curve[i].type = math::bezier::Smooth;
     }
 
 }
 
-void math::simplify(math::Bezier& curve, qreal threshold)
+
+static qreal triangle_area(const math::bezier::Bezier& curve, int point)
+{
+    QPointF prev = curve[point-1].pos;
+    QPointF here = curve[point].pos;
+    QPointF next = curve[point+1].pos;
+
+    return qAbs(
+        prev.x() * here.y() - here.x() * prev.y() +
+        here.x() * next.y() - next.x() * here.y() +
+        next.x() * prev.y() - prev.x() * next.y()
+    );
+}
+
+void math::bezier::simplify(math::bezier::Bezier& curve, qreal threshold)
 {
     if ( curve.size() < 3 || threshold <= 0 )
         return;

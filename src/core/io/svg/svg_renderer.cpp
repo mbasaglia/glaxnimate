@@ -214,27 +214,27 @@ public:
         }
     }
 
-    char bezier_node_type(const math::BezierPoint& p)
+    char bezier_node_type(const math::bezier::Point& p)
     {
         switch ( p.type )
         {
-            case math::BezierPointType::Smooth:
+            case math::bezier::PointType::Smooth:
                 return 's';
-            case math::BezierPointType::Symmetrical:
+            case math::bezier::PointType::Symmetrical:
                 return 'z';
-            case math::BezierPointType::Corner:
+            case math::bezier::PointType::Corner:
             default:
                 return 'c';
         }
     }
 
-    void write_bezier(const math::MultiBezier& shape, const Style::Map& style)
+    void write_bezier(const math::bezier::MultiBezier& shape, const Style::Map& style)
     {
         writer.writeEmptyElement("path");
         write_style(style);
         QString d;
         QString nodetypes;
-        for ( const math::Bezier& b : shape.beziers() )
+        for ( const math::bezier::Bezier& b : shape.beziers() )
         {
             if ( b.empty() )
                 continue;

@@ -47,7 +47,7 @@ public:
         return tr("Group");
     }
 
-    void add_shapes(model::FrameTime t, math::MultiBezier & bez) const override;
+    void add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez) const override;
 
     QRectF local_bounding_rect(FrameTime t) const override;
 

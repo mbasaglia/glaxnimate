@@ -1,6 +1,6 @@
 #include "draw_tool_base.hpp"
 #include "model/shapes/path.hpp"
-#include "math/bezier_simplify.hpp"
+#include "math/bezier/operations.hpp"
 
 namespace tools {
 
@@ -33,7 +33,7 @@ public:
         if ( path.size() > 1 )
         {
             auto shape = std::make_unique<model::Path>(event.window->document());
-            math::simplify(path, 20);
+            math::bezier::simplify(path, 20);
             shape->shape.set(path);
             path.clear();
             create_shape(QObject::tr("Draw Freehand"), event, std::move(shape));
@@ -77,7 +77,7 @@ public:
 
 private:
     static Autoreg<FreehandTool> autoreg;
-    math::Bezier path;
+    math::bezier::Bezier path;
 };
 
 

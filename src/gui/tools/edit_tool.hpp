@@ -1,6 +1,6 @@
 #pragma once
 #include "base.hpp"
-#include "math/bezier_point.hpp"
+#include"math/bezier/point.hpp"
 
 namespace tools {
 
@@ -15,7 +15,7 @@ public:
     QString name() const override { return QObject::tr("Edit"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F2"), QKeySequence::PortableText); }
 
-    void selection_set_vertex_type(math::BezierPointType t);
+    void selection_set_vertex_type(math::bezier::PointType t);
     void selection_delete();
     void selection_straighten();
     void selection_curve();

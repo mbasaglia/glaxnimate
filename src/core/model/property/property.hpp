@@ -15,7 +15,7 @@
 
 #include "model/animation/frame_time.hpp"
 
-namespace math { class Bezier; }
+namespace math::bezier { class Bezier; }
 
 namespace model {
 
@@ -105,7 +105,7 @@ template<> struct GetType<QSizeF, void> { static constexpr const PropertyTraits:
 template<> struct GetType<QString, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::String; };
 template<> struct GetType<QUuid, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Uuid; };
 template<> struct GetType<QPointF, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Point; };
-template<> struct GetType<math::Bezier, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Bezier; };
+template<> struct GetType<math::bezier::Bezier, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Bezier; };
 template<> struct GetType<QByteArray, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Data; };
 template<> struct GetType<QGradientStops, void> { static constexpr const PropertyTraits::Type value = PropertyTraits::Gradient; };
 

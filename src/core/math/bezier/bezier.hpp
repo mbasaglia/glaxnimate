@@ -2,26 +2,26 @@
 
 #include <QPointF>
 #include <QPainterPath>
-#include "math/bezier_solver.hpp"
-#include "math/bezier_point.hpp"
+#include "math/bezier/solver.hpp"
+#include "math/bezier/point.hpp"
 
-namespace math {
+namespace math::bezier {
 
 class Bezier
 {
 public:
-    using value_type = BezierPoint;
+    using value_type = Point;
 
     Bezier() = default;
-    explicit Bezier(const BezierPoint& initial_point)
+    explicit Bezier(const Point& initial_point)
         : points_(1, initial_point)
     {}
     explicit Bezier(const QPointF& initial_point)
         : points_(1, initial_point)
     {}
 
-    const std::vector<BezierPoint>& points() const { return points_; }
-    std::vector<BezierPoint>& points() { return points_; }
+    const std::vector<Point>& points() const { return points_; }
+    std::vector<Point>& points() { return points_; }
 
     int size() const { return points_.size(); }
     bool empty() const { return points_.empty(); }
@@ -31,12 +31,12 @@ public:
     auto end() { return points_.end(); }
     auto end() const { return points_.end(); }
     auto cend() const { return points_.end(); }
-    void push_back(const BezierPoint& p) { points_.push_back(p); }
+    void push_back(const Point& p) { points_.push_back(p); }
     void clear() { points_.clear(); closed_ = false; }
-    const BezierPoint& back() const { return points_.back(); }
+    const Point& back() const { return points_.back(); }
 
-    const BezierPoint& operator[](int index) const { return points_[index]; }
-    BezierPoint& operator[](int index) { return points_[index]; }
+    const Point& operator[](int index) const { return points_[index]; }
+    Point& operator[](int index) { return points_[index]; }
 
     bool closed() const { return closed_; }
     void set_closed(bool closed) { closed_ = closed; }
@@ -47,7 +47,7 @@ public:
      * \param p     Point to add
      * \returns \c this, for easy chaining
      */
-    Bezier& insert_point(int index, const BezierPoint& p)
+    Bezier& insert_point(int index, const Point& p)
     {
         points_.insert(points_.begin() + qBound(0, index, size()), p);
         return *this;
@@ -59,7 +59,7 @@ public:
      */
     Bezier& add_point(const QPointF& p, const QPointF& in_t = {0, 0}, const QPointF& out_t = {0, 0})
     {
-        points_.push_back(BezierPoint::from_relative(p, in_t, out_t));
+        points_.push_back(Point::from_relative(p, in_t, out_t));
         return *this;
     }
 
@@ -157,9 +157,9 @@ public:
 
     void add_to_painter_path(QPainterPath& out) const;
 
-    math::Bezier lerp(const math::Bezier& other, qreal factor) const;
+    math::bezier::Bezier lerp(const math::bezier::Bezier& other, qreal factor) const;
 
-    void set_point(int index, const math::BezierPoint& p)
+    void set_point(int index, const math::bezier::Point& p)
     {
         if ( index >= 0 && index < size() )
             points_[index] = p;
@@ -169,7 +169,7 @@ private:
     /**
      * \brief Solver for the point \p p to the point \p p + 1
      */
-    math::CubicBezierSolver<QPointF> solver_for_point(int p) const
+    math::bezier::CubicBezierSolver<QPointF> solver_for_point(int p) const
     {
         return {
             points_[p].pos,
@@ -179,7 +179,7 @@ private:
         };
     }
 
-    std::vector<BezierPoint> points_;
+    std::vector<Point> points_;
     bool closed_ = false;
 };
 
@@ -259,4 +259,4 @@ private:
 
 } // namespace math
 
-Q_DECLARE_METATYPE(math::Bezier)
+Q_DECLARE_METATYPE(math::bezier::Bezier)

@@ -44,7 +44,7 @@ model::ShapeOperator::ShapeOperator(model::Document* doc)
 }
 
 
-void model::ShapeOperator::collect_shapes(model::FrameTime t, math::MultiBezier& bez) const
+void model::ShapeOperator::collect_shapes(model::FrameTime t, math::bezier::MultiBezier& bez) const
 {
     for ( auto sib : affected_elements )
     {

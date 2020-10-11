@@ -6,7 +6,7 @@
 #include <QPointF>
 #include <QVector>
 
-#include "math/bezier.hpp"
+#include "math/bezier/bezier.hpp"
 #include "math/ellipse_solver.hpp"
 
 namespace io::svg::detail {
@@ -33,7 +33,7 @@ public:
         }
     }
 
-    const math::MultiBezier& parse()
+    const math::bezier::MultiBezier& parse()
     {
         while ( !eof() )
         {
@@ -226,7 +226,7 @@ private:
         {
             auto& prev = bez.beziers().back().points().back();
             QPointF tan_out = prev.pos - prev.relative_tan_in();
-            prev.type = math::Symmetrical;
+            prev.type = math::bezier::Symmetrical;
             bez.cubic_to(tan_out, tan_in, p);
         }
 
@@ -253,7 +253,7 @@ private:
         {
             auto& prev = bez.beziers().back().points().back();
             QPointF tan_out = prev.pos - prev.relative_tan_in();
-            prev.type = math::Symmetrical;
+            prev.type = math::bezier::Symmetrical;
             bez.cubic_to(tan_out, tan_in, p);
         }
 
@@ -305,7 +305,7 @@ private:
         {
             auto& prev = bez.beziers().back().points().back();
             QPointF tan_out = prev.pos - prev.relative_tan_in();
-            prev.type = math::Symmetrical;
+            prev.type = math::bezier::Symmetrical;
             bez.quadratic_to(tan_out, p);
         }
 
@@ -331,7 +331,7 @@ private:
         {
             auto& prev = bez.beziers().back().points().back();
             QPointF tan_out = prev.pos - prev.relative_tan_in();
-            prev.type = math::Symmetrical;
+            prev.type = math::bezier::Symmetrical;
             bez.quadratic_to(tan_out, p);
         }
 
@@ -354,7 +354,7 @@ private:
         if ( bez.beziers().empty() || bez.beziers().back().empty() )
             return;
 
-        math::Bezier points = math::EllipseSolver::from_svg_arc(
+        math::bezier::Bezier points = math::EllipseSolver::from_svg_arc(
             p, rx, ry, xrot, large, sweep, dest
         );
 
@@ -434,7 +434,7 @@ private:
     int index = 0;
     ushort implicit = 'M';
     QPointF p{0, 0};
-    math::MultiBezier bez;
+    math::bezier::MultiBezier bez;
 };
 
 } // namespace io::svg::detail

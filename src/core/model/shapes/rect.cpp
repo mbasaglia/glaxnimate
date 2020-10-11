@@ -2,9 +2,9 @@
 
 GLAXNIMATE_OBJECT_IMPL(model::Rect)
 
-math::Bezier model::Rect::to_bezier(model::FrameTime t) const
+math::bezier::Bezier model::Rect::to_bezier(model::FrameTime t) const
 {
-    math::Bezier bezier;
+    math::bezier::Bezier bezier;
     QRectF bb = local_bounding_rect(t);
     float rounded = this->rounded.get_at(t);
     float max_r = std::min(bb.width()/2, bb.height()/2);

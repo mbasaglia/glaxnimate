@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/bezier_solver.hpp"
+#include"math/bezier/solver.hpp"
 
 #include <QObject>
 #include <QPointF>
@@ -39,7 +39,7 @@ public:
     };
     Q_ENUM(Descriptive)
 
-    const math::CubicBezierSolver<QPointF>& bezier() const { return bezier_; }
+    const math::bezier::CubicBezierSolver<QPointF>& bezier() const { return bezier_; }
     bool hold() const { return hold_; }
 
     Descriptive before() const;
@@ -78,7 +78,7 @@ signals:
     void after_changed(Descriptive d);
 
 private:
-    math::CubicBezierSolver<QPointF> bezier_ { QPointF(0, 0), QPointF(0, 0), QPointF(1, 1), QPointF(1, 1) };
+    math::bezier::CubicBezierSolver<QPointF> bezier_ { QPointF(0, 0), QPointF(0, 0), QPointF(1, 1), QPointF(1, 1) };
     bool hold_ = false;
     mutable detail::SampleCache sample_cache_;
 };

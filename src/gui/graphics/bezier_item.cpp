@@ -4,15 +4,15 @@
 
 #include "command/animation_commands.hpp"
 
-graphics::BezierPointItem::BezierPointItem(int index, const math::BezierPoint& point, QGraphicsItem* parent)
+graphics::PointItem::PointItem(int index, const math::bezier::Point& point, QGraphicsItem* parent)
 : QGraphicsObject(parent), index_(index), point_(point)
 {
-    connect(&tan_in, &MoveHandle::dragged, this, &BezierPointItem::tan_in_dragged);
-    connect(&tan_in, &MoveHandle::drag_finished, this, &BezierPointItem::on_commit);
-    connect(&tan_out, &MoveHandle::dragged, this, &BezierPointItem::tan_out_dragged);
-    connect(&tan_out, &MoveHandle::drag_finished, this, &BezierPointItem::on_commit);
-    connect(&pos, &MoveHandle::dragged, this, &BezierPointItem::pos_dragged);
-    connect(&pos, &MoveHandle::drag_finished, this, &BezierPointItem::on_commit);
+    connect(&tan_in, &MoveHandle::dragged, this, &PointItem::tan_in_dragged);
+    connect(&tan_in, &MoveHandle::drag_finished, this, &PointItem::on_commit);
+    connect(&tan_out, &MoveHandle::dragged, this, &PointItem::tan_out_dragged);
+    connect(&tan_out, &MoveHandle::drag_finished, this, &PointItem::on_commit);
+    connect(&pos, &MoveHandle::dragged, this, &PointItem::pos_dragged);
+    connect(&pos, &MoveHandle::drag_finished, this, &PointItem::on_commit);
 
     pos.setParentItem(this);
     tan_in.setParentItem(this);
@@ -25,24 +25,24 @@ graphics::BezierPointItem::BezierPointItem(int index, const math::BezierPoint& p
     set_point(point);
 }
 
-const math::BezierPoint & graphics::BezierPointItem::point() const
+const math::bezier::Point & graphics::PointItem::point() const
 {
     return point_;
 }
 
-void graphics::BezierPointItem::modify(const math::BezierPoint& pt, const QString& undo_name)
+void graphics::PointItem::modify(const math::bezier::Point& pt, const QString& undo_name)
 {
     set_point(pt);
     on_modified(true, undo_name);
 }
 
 
-QRectF graphics::BezierPointItem::boundingRect() const
+QRectF graphics::PointItem::boundingRect() const
 {
     return QRectF(tan_in.pos(), tan_out.pos()).normalized();
 }
 
-void graphics::BezierPointItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
+void graphics::PointItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     QPolygonF path;
     if ( tan_in.isVisible() )
@@ -62,7 +62,7 @@ void graphics::BezierPointItem::paint(QPainter *painter, const QStyleOptionGraph
     }
 }
 
-void graphics::BezierPointItem::set_point(const math::BezierPoint& p)
+void graphics::PointItem::set_point(const math::bezier::Point& p)
 {
     point_ = p;
     pos.setPos(p.pos);
@@ -74,24 +74,24 @@ void graphics::BezierPointItem::set_point(const math::BezierPoint& p)
 
     switch ( point_.type )
     {
-        case math::BezierPointType::Corner:
+        case math::bezier::PointType::Corner:
             pos.change_shape(MoveHandle::Diamond, 8);
             break;
-        case math::BezierPointType::Smooth:
+        case math::bezier::PointType::Smooth:
             pos.change_shape(MoveHandle::Square, 6);
             break;
-        case math::BezierPointType::Symmetrical:
+        case math::bezier::PointType::Symmetrical:
             pos.change_shape(MoveHandle::Circle, 7);
             break;
     }
 }
 
-void graphics::BezierPointItem::set_index(int index)
+void graphics::PointItem::set_index(int index)
 {
     index_ = index;
 }
 
-void graphics::BezierPointItem::set_point_type(math::BezierPointType type)
+void graphics::PointItem::set_point_type(math::bezier::PointType type)
 {
     point_.type = type;
     point_.adjust_handles_from_type();
@@ -99,20 +99,20 @@ void graphics::BezierPointItem::set_point_type(math::BezierPointType type)
     on_modified(true);
 }
 
-void graphics::BezierPointItem::show_tan_in(bool show)
+void graphics::PointItem::show_tan_in(bool show)
 {
     tan_in.setVisible(show && has_tan_in);
     update();
 }
 
-void graphics::BezierPointItem::show_tan_out(bool show)
+void graphics::PointItem::show_tan_out(bool show)
 {
     tan_out.setVisible(show && has_tan_out);
     update();
 }
-void graphics::BezierPointItem::tan_in_dragged(const QPointF& p, Qt::KeyboardModifiers mods)
+void graphics::PointItem::tan_in_dragged(const QPointF& p, Qt::KeyboardModifiers mods)
 {
-    if ( point_.type == math::Corner && (mods & Qt::ShiftModifier) )
+    if ( point_.type == math::bezier::Corner && (mods & Qt::ShiftModifier) )
     {
         drag_preserve_angle(point_.tan_in, point_.tan_out, p);
     }
@@ -131,9 +131,9 @@ void graphics::BezierPointItem::tan_in_dragged(const QPointF& p, Qt::KeyboardMod
     on_modified(false);
 }
 
-void graphics::BezierPointItem::tan_out_dragged(const QPointF& p, Qt::KeyboardModifiers mods)
+void graphics::PointItem::tan_out_dragged(const QPointF& p, Qt::KeyboardModifiers mods)
 {
-    if ( point_.type == math::Corner && (mods & Qt::ShiftModifier) )
+    if ( point_.type == math::bezier::Corner && (mods & Qt::ShiftModifier) )
     {
         drag_preserve_angle(point_.tan_out, point_.tan_in, p);
     }
@@ -152,7 +152,7 @@ void graphics::BezierPointItem::tan_out_dragged(const QPointF& p, Qt::KeyboardMo
     on_modified(false);
 }
 
-void graphics::BezierPointItem::pos_dragged(const QPointF& p)
+void graphics::PointItem::pos_dragged(const QPointF& p)
 {
     auto delta = p - point_.pos;
     tan_in.setPos(point_.tan_in += delta);
@@ -161,17 +161,17 @@ void graphics::BezierPointItem::pos_dragged(const QPointF& p)
     on_modified(false);
 }
 
-void graphics::BezierPointItem::on_modified(bool commit, const QString& name)
+void graphics::PointItem::on_modified(bool commit, const QString& name)
 {
     emit modified(index_, point_, commit, name);
 }
 
-void graphics::BezierPointItem::on_commit()
+void graphics::PointItem::on_commit()
 {
     on_modified(true);
 }
 
-void graphics::BezierPointItem::drag_preserve_angle(QPointF& dragged, QPointF& other, const QPointF& dragged_new)
+void graphics::PointItem::drag_preserve_angle(QPointF& dragged, QPointF& other, const QPointF& dragged_new)
 {
     QPointF rel_other = other - point_.pos;
     QPointF rel_dragged_old = dragged - point_.pos;
@@ -184,19 +184,19 @@ void graphics::BezierPointItem::drag_preserve_angle(QPointF& dragged, QPointF& o
     other = point_.pos + math::PolarVector<QPointF>(length, angle).to_cartesian();
 }
 
-graphics::BezierItem * graphics::BezierPointItem::parent_editor() const
+graphics::BezierItem * graphics::PointItem::parent_editor() const
 {
     return static_cast<graphics::BezierItem *>(parentItem());
 }
 
-int graphics::BezierPointItem::index() const
+int graphics::PointItem::index() const
 {
     return index_;
 }
 
-void graphics::BezierPointItem::remove_tangent(graphics::MoveHandle* handle)
+void graphics::PointItem::remove_tangent(graphics::MoveHandle* handle)
 {
-    if ( point_.type == math::Symmetrical )
+    if ( point_.type == math::bezier::Symmetrical )
         return;
 
     if ( handle == &tan_in )
@@ -211,23 +211,23 @@ void graphics::BezierPointItem::remove_tangent(graphics::MoveHandle* handle)
     update();
 }
 
-bool graphics::BezierPointItem::tan_in_empty() const
+bool graphics::PointItem::tan_in_empty() const
 {
     return point_.tan_in == point_.pos;
 }
 
-bool graphics::BezierPointItem::tan_out_empty() const
+bool graphics::PointItem::tan_out_empty() const
 {
     return point_.tan_out == point_.pos;
 }
 
-void graphics::BezierPointItem::set_has_tan_in(bool show)
+void graphics::PointItem::set_has_tan_in(bool show)
 {
     has_tan_in = show;
     show_tan_in(!tan_in_empty());
 }
 
-void graphics::BezierPointItem::set_has_tan_out(bool show)
+void graphics::PointItem::set_has_tan_out(bool show)
 {
     has_tan_out = show;
     show_tan_out(!tan_out_empty());
@@ -257,12 +257,12 @@ void graphics::BezierItem::paint(QPainter * painter, const QStyleOptionGraphicsI
     painter->drawPath(path);
 }
 
-void graphics::BezierItem::set_type(int index, math::BezierPointType type)
+void graphics::BezierItem::set_type(int index, math::bezier::PointType type)
 {
     items[index]->set_point_type(type);
 }
 
-void graphics::BezierItem::set_bezier(const math::Bezier& bez)
+void graphics::BezierItem::set_bezier(const math::bezier::Bezier& bez)
 {
     if ( updating )
         return;
@@ -337,7 +337,7 @@ void graphics::BezierItem::do_update(bool commit, const QString& name)
     prepareGeometryChange();
 }
 
-void graphics::BezierItem::on_dragged(int index, const math::BezierPoint& point, bool commit, const QString& name)
+void graphics::BezierItem::on_dragged(int index, const math::bezier::Point& point, bool commit, const QString& name)
 {
     bezier_.set_point(index, point);
     do_update(commit, name.isEmpty() ? tr("Update shape") : name);
@@ -345,13 +345,13 @@ void graphics::BezierItem::on_dragged(int index, const math::BezierPoint& point,
 
 void graphics::BezierItem::do_add_point(int index)
 {
-    items.push_back(std::make_unique<BezierPointItem>(index, bezier_[index], this));
-    connect(items.back().get(), &BezierPointItem::modified, this, &BezierItem::on_dragged);
+    items.push_back(std::make_unique<PointItem>(index, bezier_[index], this));
+    connect(items.back().get(), &PointItem::modified, this, &BezierItem::on_dragged);
     if ( !bezier_.closed() && index == int(items.size()) - 1 && items.size() > 2)
         items[index-1]->set_has_tan_out(true);
 }
 
-model::AnimatedProperty<math::Bezier> * graphics::BezierItem::target_property() const
+model::AnimatedProperty<math::bezier::Bezier> * graphics::BezierItem::target_property() const
 {
     return &node->shape;
 }
@@ -400,7 +400,7 @@ void graphics::BezierItem::toggle_index(int i)
         select_index(i);
 }
 
-const math::Bezier & graphics::BezierItem::bezier() const
+const math::bezier::Bezier & graphics::BezierItem::bezier() const
 {
     return bezier_;
 }
