@@ -260,9 +260,16 @@ static void valueToJson(const QCborValue &v, QByteArray &json, int indent, bool 
     case QCborValue::Double: {
         const double d = v.toDouble();
         if (qIsFinite(d))
-            json += QByteArray::number(d, 'g', QLocale::FloatingPointShortest);
+        {
+            if ( compact )
+                json += QByteArray::number(d, 'g', 3);
+            else
+                json += QByteArray::number(d, 'g', QLocale::FloatingPointShortest);
+        }
         else
+        {
             json += "null"; // +INF || -INF || NaN (see RFC4627#section2.4)
+        }
         break;
     }
     case QCborValue::String:
