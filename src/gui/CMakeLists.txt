@@ -21,7 +21,7 @@ style/property_delegate.cpp
 style/dock_widget_style.cpp
 
 tools/base.cpp
-tools/dummy.cpp
+tools/freehand.cpp
 tools/select_tool.cpp
 tools/ellipse_tool.cpp
 tools/rectangle_tool.cpp

@@ -5,7 +5,7 @@
 
 namespace tools {
 
-class FreehandTool : public Tool
+class ColorPickerTool : public Tool
 {
 public:
     QString id() const override { return "color-picker"; }
@@ -59,12 +59,12 @@ protected:
 
 private:
     bool grabbing = false;
-    static Autoreg<FreehandTool> autoreg;
+    static Autoreg<ColorPickerTool> autoreg;
 };
 
 
 } // namespace tools
 
 
-tools::Autoreg<tools::FreehandTool> tools::FreehandTool::autoreg{tools::Registry::Style, max_priority};
+tools::Autoreg<tools::ColorPickerTool> tools::ColorPickerTool::autoreg{tools::Registry::Style, max_priority};
 
