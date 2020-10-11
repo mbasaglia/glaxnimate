@@ -54,13 +54,6 @@ public:
     Q_INVOKABLE QRectF rect() const;
 
     /**
-     * \brief Whether filename() refers to an actual file
-     */
-    bool has_file() const;
-
-    void set_has_file(bool hf);
-
-    /**
      * \brief Whether animated values should add keyframes when their value changes
      */
     bool record_to_keyframe() const;

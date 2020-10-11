@@ -452,10 +452,10 @@ public:
     void convert_transform(Transform* tf, model::AnimatableBase* opacity, QCborMap& json)
     {
         convert_object_basic(tf, json);
-        json["o"_l] = convert_animated(
-            opacity,
-            FloatMult(100)
-        );
+        if ( opacity )
+            json["o"_l] = convert_animated(opacity, FloatMult(100));
+        else
+            json["o"_l] = fake_animated(100);
     }
 
     QCborArray point_to_lottie(const QPointF& vv)

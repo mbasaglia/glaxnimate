@@ -21,6 +21,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     if ( !close_document() )
         return;
 
+    current_document_has_file = false;
     current_document = std::make_unique<model::Document>(filename);
 
     // Undo Redo
@@ -119,6 +120,7 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     if ( !file.open(QFile::ReadOnly) )
         return false;
 
+    current_document_has_file = true;
     dialog_import_status->reset(options.format, options.filename);
     bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
 
@@ -219,7 +221,7 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
 {
     io::Options opts = export_opts ? export_options : current_document->io_options();
 
-    if ( !opts.format || !opts.format->can_save() || !current_document->has_file() || opts.filename.isEmpty() )
+    if ( !opts.format || !opts.format->can_save() || !current_document_has_file || opts.filename.isEmpty() )
         force_dialog = true;
 
     if ( force_dialog )
@@ -238,10 +240,6 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
     if ( !opts.format->save(file, opts.filename, current_document.get(), opts.settings) )
         return false;
 
-    most_recent_file(opts.filename);
-
-    current_document->undo_stack().setClean();
-
     if ( export_opts )
     {
         export_options = opts;
@@ -249,6 +247,9 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
     }
     else
     {
+        most_recent_file(opts.filename);
+        current_document->undo_stack().setClean();
+        current_document_has_file = true;
         app::settings::set<QString>("open_save", "path", opts.path.absolutePath());
         current_document->set_io_options(opts);
     }
@@ -303,7 +304,7 @@ void GlaxnimateWindow::Private::document_open_from_filename(const QString& filen
 
 void GlaxnimateWindow::Private::document_reload()
 {
-    if ( !current_document->has_file() )
+    if ( !current_document_has_file )
     {
         status_message(tr("No file to reload from"));
         return;

@@ -51,6 +51,7 @@ public:
 
     QStringList recent_files;
     io::Options export_options;
+    bool current_document_has_file = false;
 
     std::vector<app::scripting::ScriptContext> script_contexts;
 
