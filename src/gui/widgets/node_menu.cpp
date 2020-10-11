@@ -9,6 +9,7 @@
 #include "command/shape_commands.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
 #include "model/shapes/image.hpp"
+#include "command/undo_macro_guard.hpp"
 
 namespace {
 
@@ -191,7 +192,7 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
                 if ( filename.isEmpty() )
                     return;
 
-                image->document()->undo_stack().beginMacro(tr("Update Image"));
+                command::UndoMacroGuard macro(tr("Update Image"), image->document());
                 if ( bmp )
                 {
                     bmp->data.set_undoable(QByteArray());
@@ -203,9 +204,6 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
                     if ( img )
                         image->image.set_undoable(QVariant::fromValue(img));
                 }
-
-
-                image->document()->undo_stack().endMacro();
             });
         }
     }

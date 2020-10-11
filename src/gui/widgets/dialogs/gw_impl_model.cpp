@@ -13,6 +13,7 @@
 #include "misc/clipboard_settings.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
 #include "model/shapes/image.hpp"
+#include "command/undo_macro_guard.hpp"
 
 
 model::Composition* GlaxnimateWindow::Private::current_composition()
@@ -139,14 +140,13 @@ void GlaxnimateWindow::Private::delete_selected()
     if ( selection.empty() )
         return;
 
-    current_document->undo_stack().beginMacro(tr("Delete"));
+    command::UndoMacroGuard macro(tr("Delete"), current_document.get());
     for ( auto item : selection )
     {
         if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
             if ( !shape->docnode_locked() )
                 current_document->push_command(new command::RemoveShape(shape, shape->owner()));
     }
-    current_document->undo_stack().endMacro();
 }
 
 void GlaxnimateWindow::Private::cut()
@@ -155,14 +155,13 @@ void GlaxnimateWindow::Private::cut()
     if ( selection.empty() )
         return;
 
-    current_document->undo_stack().beginMacro(tr("Cut"));
+    command::UndoMacroGuard macro(tr("Cut"), current_document.get());
     for ( auto item : selection )
     {
         if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
             if ( !shape->docnode_locked() )
                 current_document->push_command(new command::RemoveShape(shape, shape->owner()));
     }
-    current_document->undo_stack().endMacro();
 }
 
 std::vector<model::DocumentNode*> GlaxnimateWindow::Private::copy()
@@ -205,7 +204,7 @@ void GlaxnimateWindow::Private::paste()
 
     /// \todo precompositions
 
-    current_document->undo_stack().beginMacro(tr("Paste"));
+    command::UndoMacroGuard macro(tr("Paste"), current_document.get());
 
     for ( auto& color : raw_pasted.document->defs()->colors.raw() )
     {
@@ -248,8 +247,6 @@ void GlaxnimateWindow::Private::paste()
             ptr->recursive_rename();
         }
     }
-
-    current_document->undo_stack().endMacro();
 
     QItemSelection item_select;
     for ( auto node : select )
@@ -314,11 +311,10 @@ void GlaxnimateWindow::Private::move_to()
 
     if ( auto parent = ShapeParentDialog(&document_node_model, this->parent).get_shape_parent() )
     {
-        current_document->undo_stack().beginMacro(tr("Move Shapes"));
+        command::UndoMacroGuard macro(tr("Move Shapes"), current_document.get());
         for ( auto shape : shapes )
             if ( shape->owner() != parent )
                 shape->push_command(new command::MoveShape(shape, shape->owner(), parent, parent->size()));
-        current_document->undo_stack().endMacro();
     }
 }
 
@@ -355,7 +351,7 @@ void GlaxnimateWindow::Private::import_image()
     }
     /// \todo dialog asking whether to embed
 
-    current_document->undo_stack().beginMacro(tr("Import Image"));
+    command::UndoMacroGuard macro(tr("Import Image"), current_document.get());
 
     auto defs = current_document->defs();
     auto bmp_ptr = bitmap.get();
@@ -369,7 +365,6 @@ void GlaxnimateWindow::Private::import_image()
     auto comp = current_composition();
     auto select = image.get();
     current_document->push_command(new command::AddShape(&comp->shapes, std::move(image), comp->shapes.size()));
-    current_document->undo_stack().endMacro();
     set_current_document_node(select);
 }
 

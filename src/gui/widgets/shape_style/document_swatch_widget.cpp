@@ -20,6 +20,7 @@
 #include "model/visitor.hpp"
 #include "model/shapes/styler.hpp"
 #include "model/defs/named_color.hpp"
+#include "command/undo_macro_guard.hpp"
 
 class DocumentSwatchWidget::Private
 {
@@ -36,8 +37,9 @@ public:
     private:
         void on_visit(model::Document * doc) override
         {
+            macro = command::UndoMacroGuard(tr("Gather Document Swatch"), doc);
+
             defs = doc->defs();
-            doc->undo_stack().beginMacro(tr("Gather Document Swatch"));
             for ( const auto& color : defs->colors )
             {
                 if ( !color->color.animated() )
@@ -46,11 +48,6 @@ public:
                     colors[c.name(QColor::HexArgb)] = color.get();
                 }
             }
-        }
-
-        void on_visit_end(model::Document * document) override
-        {
-            document->undo_stack().endMacro();
         }
 
         void on_visit(model::DocumentNode * node) override
@@ -77,6 +74,7 @@ public:
             }
         }
 
+        command::UndoMacroGuard macro;
         std::map<QString, model::NamedColor*> colors;
         model::Defs* defs;
     };
@@ -111,12 +109,7 @@ public:
     private:
         void on_visit(model::Document * doc) override
         {
-            doc->undo_stack().beginMacro(tr("Link Shapes to Swatch"));
-        }
-
-        void on_visit_end(model::Document * document) override
-        {
-            document->undo_stack().endMacro();
+            macro = command::UndoMacroGuard(tr("Link Shapes to Swatch"), doc);
         }
 
         void on_visit(model::DocumentNode * node) override
@@ -133,6 +126,8 @@ public:
             }
         }
 
+
+        command::UndoMacroGuard macro;
         std::map<QString, model::NamedColor*> colors;
     };
 };
@@ -238,11 +233,10 @@ void DocumentSwatchWidget::swatch_palette_color_changed(int index)
         if ( !defs->colors.valid_index(index) )
             return;
 
-        d->document->undo_stack().beginMacro(tr("Modify Palette Color"));
+        command::UndoMacroGuard macro(tr("Modify Palette Color"), d->document);
         auto color = defs->colors[index];
         color->name.set_undoable(palette->nameAt(index));
         color->color.set_undoable(palette->colorAt(index));
-        d->document->undo_stack().endMacro();
     }
 }
 
@@ -362,7 +356,7 @@ void DocumentSwatchWidget::open()
     else
         d->palette_index = QPersistentModelIndex();
 
-    d->document->undo_stack().beginMacro(tr("Load Palette"));
+    command::UndoMacroGuard macro(tr("Load Palette"), d->document);
 
     if ( check_clear.isChecked() )
     {
@@ -378,9 +372,6 @@ void DocumentSwatchWidget::open()
 
     if ( check_link.isChecked() )
         Private::ApplyColorVisitor(d->document).visit(d->document);
-
-    d->document->undo_stack().endMacro();
-
 }
 
 void DocumentSwatchWidget::save()

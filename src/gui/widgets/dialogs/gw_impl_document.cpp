@@ -15,6 +15,8 @@
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "io/raster/raster_mime.hpp"
 #include "io/lottie/tgs_format.hpp"
+#include "command/undo_macro_guard.hpp"
+#include "command/undo_macro_guard.hpp"
 
 void GlaxnimateWindow::Private::setup_document(const QString& filename)
 {
@@ -496,17 +498,15 @@ void GlaxnimateWindow::Private::set_color_def_primary(model::BrushStyle* def)
     {
         if ( !def )
         {
-            current_document->undo_stack().beginMacro(tr("Unlink Fill Color"));
+            command::UndoMacroGuard macro(tr("Unlink Fill Color"), current_document.get());
             if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
                 target->color.set_undoable(col->color.get());
             target->use.set_undoable(QVariant::fromValue(def));
-            current_document->undo_stack().endMacro();
         }
         else
         {
-            current_document->undo_stack().beginMacro(tr("Link Fill Color"));
+            command::UndoMacroGuard macro(tr("Link Fill Color"), current_document.get());
             target->use.set_undoable(QVariant::fromValue(def));
-            current_document->undo_stack().endMacro();
         }
     }
 }
@@ -517,17 +517,15 @@ void GlaxnimateWindow::Private::set_color_def_secondary(model::BrushStyle* def)
     {
         if ( !def )
         {
-            current_document->undo_stack().beginMacro(tr("Unlink Stroke Color"));
+            command::UndoMacroGuard macro(tr("Unlink Stroke Color"), current_document.get());
             if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
                 target->color.set_undoable(col->color.get());
             target->use.set_undoable(QVariant::fromValue(def));
-            current_document->undo_stack().endMacro();
         }
         else
         {
-            current_document->undo_stack().beginMacro(tr("Link StrokeColor"));
+            command::UndoMacroGuard macro(tr("Link StrokeColor"), current_document.get());
             target->use.set_undoable(QVariant::fromValue(def));
-            current_document->undo_stack().endMacro();
         }
     }
 }

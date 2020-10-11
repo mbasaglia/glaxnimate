@@ -8,6 +8,7 @@
 #include "command/shape_commands.hpp"
 
 #include "widgets/tools/shape_tool_widget.hpp"
+#include "command/undo_macro_guard.hpp"
 
 
 namespace tools {
@@ -71,7 +72,7 @@ protected:
                       std::unique_ptr<model::Shape> shape)
     {
         auto document = event.window->document();
-        document->undo_stack().beginMacro(command_name);
+        command::UndoMacroGuard macro(command_name, document);
 
         model::DocumentNode* select = shape.get();
 
@@ -132,8 +133,6 @@ protected:
         document->undo_stack().push(
             new command::AddShape(prop, std::move(shape), index)
         );
-
-        document->undo_stack().endMacro();
 
         event.window->set_current_document_node(select);
     }

@@ -4,6 +4,9 @@
 
 * Editing:
     * Added gradient support
+* Bug Fixes:
+    * Exporting the document no longer alters the document save state
+    * Fixed crash on Lottie export
 
 ## 0.1.4
 

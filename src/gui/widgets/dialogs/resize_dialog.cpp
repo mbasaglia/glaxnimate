@@ -5,6 +5,7 @@
 
 #include "command/property_commands.hpp"
 #include "command/shape_commands.hpp"
+#include "command/undo_macro_guard.hpp"
 
 class ResizeDialog::Private
 {
@@ -67,7 +68,7 @@ void ResizeDialog::resize_document(model::Document* doc)
 
     if ( d->ui.check_scale_layers->isChecked() && !comp->shapes.empty() )
     {
-        doc->undo_stack().beginMacro(tr("Resize Document"));
+        command::UndoMacroGuard macro(tr("Resize Document"), doc);
 
         auto nl = std::make_unique<model::Layer>(doc);
         model::Layer* layer = nl.get();
@@ -84,7 +85,6 @@ void ResizeDialog::resize_document(model::Document* doc)
         layer->transform.get()->scale.set_undoable(QVector2D(scale_w, scale_h));
 
         d->resize(doc);
-        doc->undo_stack().endMacro();
     }
     else
     {

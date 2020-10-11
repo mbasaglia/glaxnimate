@@ -12,6 +12,7 @@
 tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
 
 #include <QDebug>
+#include "command/undo_macro_guard.hpp"
 class tools::EditTool::Private
 {
 public:
@@ -461,7 +462,7 @@ void tools::EditTool::selection_set_vertex_type(math::BezierPointType t)
         return;
 
     auto doc = d->selection.selected.begin()->first->target_object()->document();
-    doc->undo_stack().beginMacro(QObject::tr("Set node type"));
+    command::UndoMacroGuard macro(QObject::tr("Set node type"), doc);
     for ( const auto& p : d->selection.selected )
     {
         auto bez = p.first->bezier();
@@ -469,7 +470,6 @@ void tools::EditTool::selection_set_vertex_type(math::BezierPointType t)
             bez[index].set_point_type(t);
         p.first->target_property()->set_undoable(QVariant::fromValue(bez));
     }
-    doc->undo_stack().endMacro();
 }
 
 void tools::EditTool::selection_delete()
@@ -478,7 +478,7 @@ void tools::EditTool::selection_delete()
         return;
 
     auto doc = d->selection.selected.begin()->first->target_object()->document();
-    doc->undo_stack().beginMacro(QObject::tr("Set node type"));
+    command::UndoMacroGuard macro(QObject::tr("Set node type"), doc);
 
     auto selected = std::move(d->selection.selected);
     d->selection.selected = {};
@@ -506,7 +506,6 @@ void tools::EditTool::selection_delete()
 
         p.first->target_property()->set_undoable(QVariant::fromValue(new_bez));
     }
-    doc->undo_stack().endMacro();
 
     d->selection.initial = nullptr;
 }
@@ -518,7 +517,7 @@ void tools::EditTool::selection_straighten()
 
     auto doc = d->selection.selected.begin()->first->target_object()->document();
 
-    bool macro_started = false;
+    command::UndoMacroGuard macro(QObject::tr("Straighten segments"), doc, false);
 
     for ( const auto& p : d->selection.selected )
     {
@@ -551,17 +550,11 @@ void tools::EditTool::selection_straighten()
 
         if ( modified )
         {
-            if ( !macro_started )
-            {
-                doc->undo_stack().beginMacro(QObject::tr("Straighten segments"));
-                macro_started = true;
-            }
+            if ( !macro.started() )
+                macro.start();
             p.first->target_property()->set_undoable(QVariant::fromValue(bez));
         }
     }
-
-    if ( macro_started )
-        doc->undo_stack().endMacro();
 }
 
 void tools::EditTool::selection_curve()
@@ -571,7 +564,7 @@ void tools::EditTool::selection_curve()
 
     auto doc = d->selection.selected.begin()->first->target_object()->document();
 
-    bool macro_started = false;
+    command::UndoMacroGuard macro(QObject::tr("Curve segments"), doc, false);
 
     for ( const auto& p : d->selection.selected )
     {
@@ -607,15 +600,9 @@ void tools::EditTool::selection_curve()
 
         if ( modified )
         {
-            if ( !macro_started )
-            {
-                doc->undo_stack().beginMacro(QObject::tr("Curve segments"));
-                macro_started = true;
-            }
+            if ( !macro.started() )
+                macro.start();
             p.first->target_property()->set_undoable(QVariant::fromValue(bez));
         }
     }
-
-    if ( macro_started )
-        doc->undo_stack().endMacro();
 }

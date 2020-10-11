@@ -9,6 +9,7 @@
 #include "glaxnimate_app.hpp"
 #include "command/animation_commands.hpp"
 #include "widgets/dialogs/keyframe_editor_dialog.hpp"
+#include "command/undo_macro_guard.hpp"
 
 class CompoundTimelineWidget::Private
 {
@@ -152,12 +153,10 @@ public:
         if ( index == -1 )
             return;
 
-        QUndoStack& stack = menu_anim->object()->document()->undo_stack();
-
         QVariant data = action->data();
         if ( data.isValid() )
         {
-            stack.push(
+            menu_anim->object()->push_command(
                 new command::SetKeyframeTransition(
                     menu_anim, index, data.value<model::KeyframeTransition::Descriptive>(),
                     before_transition ? keyframe->transition().before_handle() : keyframe->transition().after_handle(),
@@ -171,8 +170,8 @@ public:
             keyframe_editor.setWindowModality(Qt::ApplicationModal);
             if ( keyframe_editor.exec() )
             {
-                stack.beginMacro(tr("Update keyframe transition"));
-                stack.push(
+                command::UndoMacroGuard macro(tr("Update keyframe transition"), menu_anim->object()->document());
+                menu_anim->object()->push_command(
                     new command::SetKeyframeTransition(
                         menu_anim, index,
                         keyframe_editor.before(),
@@ -180,7 +179,7 @@ public:
                         true
                     )
                 );
-                stack.push(
+                menu_anim->object()->push_command(
                     new command::SetKeyframeTransition(
                         menu_anim, index,
                         keyframe_editor.after(),
@@ -188,7 +187,6 @@ public:
                         false
                     )
                 );
-                stack.endMacro();
             }
         }
     }
