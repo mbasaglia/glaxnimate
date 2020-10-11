@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 
 #include <vector>
-#include "math/bezier_solver.hpp"
+#include "math/bezier/solver.hpp"
 #include "print_vec.hpp"
 
 class TestCase: public QObject
@@ -79,7 +79,7 @@ private slots:
         math::Vec2 c{50, -20};
         math::Vec2 d{40, 0};
 
-        math::CubicBezierSolver<math::Vec2> bs{a, b, c, d};
+        math::bezier::CubicBezierSolver<math::Vec2> bs{a, b, c, d};
 
         auto explicit_solve = [a,b,c,d](double t) {
             auto p1 = math::lerp(a, b, t);
@@ -144,7 +144,7 @@ private slots:
         math::Vec2 h2{40, 20};
         math::Vec2 ep{40, 30};
 
-        math::CubicBezierSolver<math::Vec2> bs{sp, h1, h2, ep};
+        math::bezier::CubicBezierSolver<math::Vec2> bs{sp, h1, h2, ep};
         QCOMPARE(bs.tangent_angle(0.00), M_PI/2);
         QVERIFY(bs.tangent_angle(0.1) > 0);
         QVERIFY(bs.tangent_angle(0.50) < 0);
@@ -195,7 +195,7 @@ private slots:
         math::Vec2 h2 = ep + math::Vec2{-10, 20};
         double mid_x = 50;
 
-        math::CubicBezierSolver<math::Vec2> bs{sp, h1, h2, ep};
+        math::bezier::CubicBezierSolver<math::Vec2> bs{sp, h1, h2, ep};
         auto split = bs.split(0.5);
 
         // Fisrt split
@@ -297,7 +297,7 @@ private slots:
         VecT b{15, 40};
         VecT c{30, 10};
         VecT d{40, 15};
-        math::CubicBezierSolver<VecT> bs{a, b, c, d};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
         QBENCHMARK{
             for ( double t = 0; t <= 1; t += 0.01 )
                 bs.solve(t);
@@ -316,7 +316,7 @@ private slots:
         VecT b{15, 40};
         VecT c{30, 10};
         VecT d{40, 15};
-        math::CubicBezierSolver<VecT> bs{a, b, c, d};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
         QBENCHMARK{
             for ( double t = 0; t <= 1; t += 0.01 )
                 bs.solve(t);
@@ -332,7 +332,7 @@ private slots:
         VecT b{15, 40};
         VecT c{30, 10};
         VecT d{40, 15};
-        math::CubicBezierSolver<VecT> bs{a, b, c, d};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
         QBENCHMARK{
             for ( double t = 0; t <= 1; t += 0.01 )
                 bs.solve(t);
@@ -364,7 +364,7 @@ private slots:
         using VecT = QPointF;
         VecT a{20, 30};
         VecT d{130, 250};
-        math::CubicBezierSolver<VecT> bs{a, a, d, d};
+        math::bezier::CubicBezierSolver<VecT> bs{a, a, d, d};
         auto bbox = bs.bounds();
         QCOMPARE(bbox.first, a);
         QCOMPARE(bbox.second, d);
@@ -375,7 +375,7 @@ private slots:
         using VecT = QPointF;
         VecT a{130, 30};
         VecT d{20, 250};
-        math::CubicBezierSolver<VecT> bs{a, a, d, d};
+        math::bezier::CubicBezierSolver<VecT> bs{a, a, d, d};
         auto bbox = bs.bounds();
         QCOMPARE(bbox.first, VecT(20, 30));
         QCOMPARE(bbox.second, VecT(130, 250));
@@ -388,7 +388,7 @@ private slots:
         VecT b{20, 200};
         VecT c{130, 100};
         VecT d{130, 250};
-        math::CubicBezierSolver<VecT> bs{a, b, c, d};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
         auto bbox = bs.bounds();
         QCOMPARE(bbox.first, a);
         QCOMPARE(bbox.second, d);
@@ -401,7 +401,7 @@ private slots:
         VecT b{200, 20};
         VecT c{100, 130};
         VecT d{250, 130};
-        math::CubicBezierSolver<VecT> bs{a, b, c, d};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
         auto bbox = bs.bounds();
         QCOMPARE(bbox.first, a);
         QCOMPARE(bbox.second, d);
@@ -414,7 +414,7 @@ private slots:
         VecT b{-40, 160};
         VecT c{330, 370};
         VecT d{250, 130};
-        math::CubicBezierSolver<VecT> bs{a, b, c, d};
+        math::bezier::CubicBezierSolver<VecT> bs{a, b, c, d};
         auto bbox = bs.bounds();
         FUZZY_COMPARE(bbox.first, VecT(21.1349479424, 20));
         FUZZY_COMPARE(bbox.second, VecT(261.392510712, 239.272612647));
@@ -423,4 +423,3 @@ private slots:
 
 QTEST_GUILESS_MAIN(TestCase)
 #include "test_bezier_solver.moc"
-

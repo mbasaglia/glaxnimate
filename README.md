@@ -74,8 +74,8 @@ Build with `cmake`, specifying the Qt installation path:
 * Install [CMake](https://cmake.org/download/)
 * Install Python, you can do so from the [store](https://www.microsoft.com/store/productId/9MSSZTT1N39L)
 * Install [Qt](https://www.qt.io/download-qt-installer), instructions below assume it's in `C:/Qt/`
-* Install [MinGW64](http://mingw-w64.yaxm.org/doku.php/download/mingw-builds),
-instructions below assume it's in `C:/WinGW64/`
+* Install [MinGW64](http://winlibs.com/),
+instructions below assume it's in `C:/WinGW64/mingw64`
 * Install [ZLIB](https://sourceforge.net/projects/gnuwin32/files/zlib/),
 instructions below assume it's in `C:/Program Files (x86)/GnuWin32`
 
