@@ -137,13 +137,13 @@ Right clicking on an item will bring a context menu with quick actions for that 
 Timeline
 --------
 
-![Timeline Dock](/img/screenshots/timeline/timeline.png)
+![Timeline Dock](/img/screenshots/views/timeline/timeline.png)
 
 The timeline view allows to manage keyframes for the animatable properties of the active object.
 
 ### Playback Buttons
 
-![Playback Buttons](/img/screenshots/timeline/buttons.png)
+![Playback Buttons](/img/screenshots/views/timeline/buttons.png)
 
 At the top of the Timeline view shows the current frame, and various playback buttons.
 
@@ -159,7 +159,7 @@ The frame spin box shows the current frame, and allows jumping to a specific fra
 
 ### Property List
 
-![Property List](/img/screenshots/timeline/property_list.png)
+![Property List](/img/screenshots/views/timeline/property_list.png)
 
 On its left handside, the the Timeline view has the list of properties: showing their name, current value, and animation status.
 
@@ -180,14 +180,14 @@ Pressing left/right arrow keys changes the current frame when this area is focus
 
 #### Time Bar
 
-![Time Bar](/img/screenshots/timeline/time_bar.png)
+![Time Bar](/img/screenshots/views/timeline/time_bar.png)
 
 The bar at the top highlights the current frame.
 Clicking or dragging with the mouse will jump to the frame whose number is under the mouse cursor.
 
 #### Keyframe Area
 
-![Keyframe Area](/img/screenshots/timeline/keyframe_area.png)
+![Keyframe Area](/img/screenshots/views/timeline/keyframe_area.png)
 
 Under that, there are rows for each of the animatable properties, and icons showing the keyframes for said properties.
 
@@ -207,19 +207,19 @@ To scroll up and down either use the scrollbar to the side or use the *Mouse Whe
 
 Right clicking on the row of a property, will show a context menu with the name of the property and the ability to add a keyframe:
 
-![Property Menu](/img/screenshots/timeline/property_menu.png)
+![Property Menu](/img/screenshots/views/timeline/property_menu.png)
 
 Clicking on "Add Keyframe" will add a keyframe at the current frame with the current value of the property.
 
 Right clicking on an existing keyframe icon, will show a menu with options relating to that keyframe:
 
-![Keyframe Menu](/img/screenshots/timeline/keyframe_menu.png)
+![Keyframe Menu](/img/screenshots/views/timeline/keyframe_menu.png)
 
 Clicking on "Custom..." for the incoming or outgoing transitions will show the [Custom Easing Dialog](#custom-easing-dialog).
 
 ### Custom Easing Dialog
 
-![Custom Easing Dialog](/img/screenshots/timeline/custom_easing.png)
+![Custom Easing Dialog](/img/screenshots/views/timeline/custom_easing.png)
 
 This dialog gives full freedom to specify easing curves.
 
@@ -255,10 +255,80 @@ Useful for when you want to undo or redo several actions at once.
 A little icon will be shown next to the action corresponding to the last time you saved the document.
 
 
+Gradients
+---------
+
+![Gradients View](/img/screenshots/views/gradients/gradients_view.png)
+
+This view shows the gradients used in the document.
+
+It's hidden by default, to show it use the *View* > *Views* > *Gradients* menu action.
+
+At the top of the view is the list of gradients, showing a preview, its name,
+and the number of shapes using it.
+
+Below that, you have a few buttons:
+
+* <img src="/img/ui/icons/list-add.svg" width="32" /> Adds a new gradient based on the current colors.
+* <img src="/img/ui/icons/folder.svg" width="32" /> Adds a new gradients from a list of presets.
+* <img src="/img/ui/icons/list-remove.svg" width="32" /> Removes the selected gradient.
+
+Then buttons to apply the selected griandient for fill or stroke:
+
+<img src="/img/ui/icons/paint-gradient-linear.svg" width="32" /> for a linear gradient.<br/>
+<img src="/img/ui/icons/paint-gradient-radial.svg" width="32" /> for a radial gradient.
+
+Click on the checked button to remove the gradient from an object.
+
+### Presets
+
+![Gradients Presets](/img/screenshots/views/gradients/presets.png)
+
+This menu shows a drop down with the available presets, based on <https://webgradients.com/>.
+
+### Editing from the List
+
+You can rename gradients by double-clicking on their name and typing a new name.
+
+Similarly, you can double click on the preview to make it editable:
+
+![Gradients View](/img/screenshots/views/gradients/gradients_view.png)
+
+While in this mode, you can drag the lines representing the gradient stops to move them,
+drag them off the rectangle to remove them, and double click to show a dialog to set the color.
+
+Right-clicking shows this menu:
+
+![Gradients View](/img/screenshots/views/gradients/edit_context_menu.png)
+
+
+### Editing from the Canvas
+
+With the [edit tool](tools.md#edit-tool) active, the gradient controls will appear on the canvas.<br/>
+
+Dragging the end points will change the extent of the gradient and dragging the smaller handles
+will change the offset of the corresponding gradient stop.
+
+For a Linear gradient:
+
+![Linear Gradient](/img/screenshots/views/gradients/linear.png)
+
+For a radial gradient:
+
+![Radial Gradient](/img/screenshots/views/gradients/radial.png)
+
+When you have a radial gradient, you can shift click on the start handle to reveal
+a new X-shaped handle that controls the highlight position for the gradient:
+
+![Radial Highlight](/img/screenshots/views/gradients/radial_highlight.png)
+
+To hide it again, shift-click on it.
+
+
 Swatch
 ------
 
-![Swatch View](/img/screenshots/swatch/swatch.png)
+![Swatch View](/img/screenshots/views/swatch/swatch.png)
 
 This view shows the colors in the document swatch.
 
@@ -285,7 +355,7 @@ Clicking and holding on this button will show [a menu with extra options](#swatc
 
 ### Swatch Extra Options
 
-![Menu Extra](/img/screenshots/swatch/extra_menu.png)
+![Menu Extra](/img/screenshots/views/swatch/extra_menu.png)
 
 <img src="/img/ui/icons/document-export.svg" width="32" /> *Generate* <br/>
 Pulls the colors off the open document and link all objects to the swatch
@@ -305,7 +375,7 @@ Holding Shift when you click will affect the stroke color instead of the fill co
 
 Right clicking will show the following context menu:
 
-![Context Menu](/img/screenshots/swatch/context_menu.png)
+![Context Menu](/img/screenshots/views/swatch/context_menu.png)
 
 At the top of the menu you see the name of the color
 
@@ -334,7 +404,7 @@ Searches the document for all shapes with the same color as the one in the recta
 
 ### From Palette
 
-![From Palette Dialog](/img/screenshots/swatch/from_palette.png)
+![From Palette Dialog](/img/screenshots/views/swatch/from_palette.png)
 
 At the top it shows a dropdown with the palettes currently loaded by glaxnimate.
 The selected item will define the colors used by the document swatch.
