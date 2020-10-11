@@ -45,9 +45,9 @@ public:
 
     void write_visibility_attributes(model::DocumentNode* node)
     {
-        if ( !node->docnode_visible() )
+        if ( !node->visible.get() )
             write_attribute("display", "none");
-        if ( node->docnode_locked() )
+        if ( node->locked.get() )
             writer.writeAttribute(detail::xmlns.at("sodipodi"), "insensitive", "true");
     }
 

@@ -107,15 +107,6 @@ public:
         if ( type != target->type_name() )
             error(GlaxnimateFormat::tr("Wrong object type: expected '%1' but got '%2'").arg(target->type_name()).arg(type));
 
-
-        if ( auto node = qobject_cast<model::DocumentNode*>(target) )
-        {
-            node->docnode_set_visible(object["visible"].toBool(true));
-            object.remove("visible");
-            node->docnode_set_locked(object["locked"].toBool(false));
-            object.remove("locked");
-        }
-
         for ( model::BaseProperty* prop : target->properties() )
         {
             if ( !load_prop(prop, object[prop->name()]) )

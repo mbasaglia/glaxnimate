@@ -558,8 +558,8 @@ public:
     void apply_common_style(model::DocumentNode* node, const QDomElement& element, const Style& style)
     {
         if ( style.get("display") == "none" || style.get("visibility") == "hidden" )
-            node->docnode_set_visible(false);
-        node->docnode_set_locked(attr(element, "sodipodi", "insensitive") == "true");
+            node->visible.set(false);
+        node->locked.set(attr(element, "sodipodi", "insensitive") == "true");
         node->set("opacity", style.get("opacity", "1").toDouble());
         node->get("transform").value<model::Transform*>();
     }

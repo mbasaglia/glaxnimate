@@ -157,7 +157,7 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
         case ColumnVisible:
             if ( role == Qt::DecorationRole )
             {
-                if ( n->docnode_visible() )
+                if ( n->visible.get() )
                     return QIcon::fromTheme("view-visible");
                 return QIcon::fromTheme("view-hidden");
             }
@@ -165,7 +165,7 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
         case ColumnLocked:
             if ( role == Qt::DecorationRole )
             {
-                if ( n->docnode_locked() )
+                if ( n->locked.get() )
                     return QIcon::fromTheme("object-locked");
                 return QIcon::fromTheme("object-unlocked");
             }

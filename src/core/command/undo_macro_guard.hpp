@@ -32,6 +32,7 @@ public:
         std::swap(name, other.name);
         std::swap(document, other.document);
         std::swap(end_macro, other.end_macro);
+        return *this;
     }
 
     ~UndoMacroGuard()

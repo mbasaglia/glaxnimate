@@ -115,7 +115,7 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::ShapeEleme
 void GlaxnimateWindow::Private::layer_delete()
 {
     auto current = current_shape();
-    if ( !current || current->docnode_locked() )
+    if ( !current || current->locked.get() )
         return;
     current->push_command(new command::RemoveShape(current, current->owner()));
 }
@@ -144,7 +144,7 @@ void GlaxnimateWindow::Private::delete_selected()
     for ( auto item : selection )
     {
         if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
-            if ( !shape->docnode_locked() )
+            if ( !shape->locked.get() )
                 current_document->push_command(new command::RemoveShape(shape, shape->owner()));
     }
 }
@@ -159,7 +159,7 @@ void GlaxnimateWindow::Private::cut()
     for ( auto item : selection )
     {
         if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
-            if ( !shape->docnode_locked() )
+            if ( !shape->locked.get() )
                 current_document->push_command(new command::RemoveShape(shape, shape->owner()));
     }
 }

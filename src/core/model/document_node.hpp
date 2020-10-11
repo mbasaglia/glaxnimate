@@ -25,6 +25,14 @@ public:
      * be grouped with each other even if they are children of a composition
      */
     GLAXNIMATE_PROPERTY(QColor, group_color, QColor(0, 0, 0, 0))
+    /**
+     * \brief Visible setting for this node
+     */
+    GLAXNIMATE_PROPERTY(bool, visible, true, &DocumentNode::on_visible_changed)
+    /**
+     * \brief Locked setting for this node
+     */
+    GLAXNIMATE_PROPERTY(bool, locked, false, &DocumentNode::docnode_locked_changed)
 
 private:
     class ChildRange;
@@ -108,17 +116,9 @@ public:
      */
     bool docnode_selectable() const;
     /**
-     * \brief Visible setting for this node
-     */
-    bool docnode_visible() const;
-    /**
      * \brief \b true iff this node and all of its ancestors are visible
      */
     bool docnode_visible_recursive() const;
-    /**
-     * \brief Locked setting for this node
-     */
-    bool docnode_locked() const;
     /**
      * \brief \b true iff this node or any of its ancestors is locked
      */
@@ -220,15 +220,6 @@ protected:
     void propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group);
     virtual void on_paint(QPainter*, FrameTime, PaintMode) const {}
 
-
-public slots:
-    void docnode_set_visible(bool visible);
-
-    void docnode_set_locked(bool locked)
-    {
-        emit docnode_locked_changed(locked_ = locked);
-    }
-
 signals:
     void docnode_child_add_begin(int row);
     void docnode_child_add_end(DocumentNode* node);
@@ -250,8 +241,8 @@ signals:
     void local_transform_matrix_changed(const QTransform& t);
 
 private:
-    bool visible_ = true;
-    bool locked_ = false;
+    void on_visible_changed(bool visible);
+
     mutable QPixmap group_icon;
 };
 
