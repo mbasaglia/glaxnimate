@@ -130,6 +130,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         ui.action_node_type_symmetric,
         ui.action_segment_lines,
         ui.action_segment_curve,
+        ui.action_node_add,
     };
     tools::EditTool* edit_tool = static_cast<tools::EditTool*>(tools::Registry::instance().tool("edit"));
     connect(ui.action_node_type_corner, &QAction::triggered, parent, [this, edit_tool]{
@@ -149,6 +150,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     });
     connect(ui.action_segment_curve, &QAction::triggered, parent, [this, edit_tool]{
         edit_tool->selection_curve();
+    });
+    connect(ui.action_node_add, &QAction::triggered, parent, [this, edit_tool]{
+        edit_tool->add_point_mode();
     });
 
 

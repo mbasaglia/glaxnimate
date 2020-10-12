@@ -6,6 +6,7 @@
     * Added gradient support
     * Option to exclude some layers from being rendered / exported
     * Freehand drawing tool
+    * Interactive "add node" with the edit tool
 * Bug Fixes:
     * Exporting the document no longer alters the document save state
     * Fixed crash on Lottie export

@@ -236,7 +236,7 @@ void graphics::PointItem::set_has_tan_out(bool show)
 
 
 graphics::BezierItem::BezierItem(model::Path* node, QGraphicsItem* parent)
-: QGraphicsObject(parent), node(node)
+: Ctor(parent), node(node)
 {
     set_bezier(node->shape.get());
     connect(node, &model::Path::shape_changed, this, &BezierItem::set_bezier);

@@ -33,7 +33,7 @@ public:
         if ( path.size() > 1 )
         {
             auto shape = std::make_unique<model::Path>(event.window->document());
-            math::bezier::simplify(path, 20);
+            math::bezier::simplify(path, 128);
             shape->shape.set(path);
             path.clear();
             create_shape(QObject::tr("Draw Freehand"), event, std::move(shape));

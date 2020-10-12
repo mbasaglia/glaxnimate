@@ -76,7 +76,7 @@ protected:
 
         model::DocumentNode* select = shape.get();
 
-        QString name = document->get_best_name(shape.get());
+        QString name = document->get_best_name(shape.get(), shape->name.get());
 
         model::ShapeListProperty* prop = get_container(event.window);
 

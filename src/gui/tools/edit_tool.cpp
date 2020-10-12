@@ -8,11 +8,12 @@
 #include "graphics/item_data.hpp"
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
+#include "command/undo_macro_guard.hpp"
+
+#include "math/bezier/operations.hpp"
 
 tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
 
-#include <QDebug>
-#include "command/undo_macro_guard.hpp"
 class tools::EditTool::Private
 {
 public:
@@ -24,6 +25,7 @@ public:
         ForwardEvents,
         VertexClick,
         VertexDrag,
+        VertexAdd,
     };
 
     struct Selection
@@ -241,6 +243,10 @@ public:
     QPointF rubber_p2;
     model::Shape* highlight = nullptr;
     Selection selection;
+
+    math::bezier::ProjectResult insert_params;
+    math::bezier::Point insert_preview{{}};
+    graphics::BezierItem* insert_item = nullptr;
 };
 
 tools::EditTool::EditTool()
@@ -253,7 +259,7 @@ void tools::EditTool::mouse_press(const MouseEvent& event)
 {
     d->highlight = nullptr;
 
-    if ( event.press_button == Qt::LeftButton )
+    if ( event.press_button == Qt::LeftButton && d->drag_mode == Private::None )
     {
         d->drag_mode = Private::Click;
         d->rubber_p1 = event.event->localPos();
@@ -306,18 +312,54 @@ void tools::EditTool::mouse_move(const MouseEvent& event)
             case Private::VertexDrag:
                 d->selection.drag(event, false);
                 break;
+            case Private::VertexAdd:
+                break;
         }
     }
     else if ( event.buttons() == Qt::NoButton )
     {
-        d->highlight = nullptr;
-        for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
+        if ( d->drag_mode == Private::VertexAdd )
         {
-            if ( auto path = node->node()->cast<model::Shape>() )
+            d->insert_params = {};
+            d->insert_item = nullptr;
+
+            if ( d->selection.empty() )
             {
-                if ( !event.scene->has_editors(path) )
-                    d->highlight = path;
-                break;
+                for ( auto it : event.scene->items() )
+                {
+                    if ( auto item = qgraphicsitem_cast<graphics::BezierItem*>(it) )
+                        d->selection.add_bezier_item(item);
+                }
+            }
+
+            for ( const auto& it : d->selection.selected )
+            {
+                auto closest = math::bezier::project(it.first->bezier(), event.scene_pos);
+                if ( closest.distance < d->insert_params.distance )
+                {
+                    d->insert_params = closest;
+                    d->insert_item = it.first;
+                }
+            }
+
+            if ( d->insert_item )
+            {
+                d->insert_preview = d->insert_item->bezier().split_segment_point(
+                    d->insert_params.index, d->insert_params.factor
+                );
+            }
+        }
+        else
+        {
+            d->highlight = nullptr;
+            for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
+            {
+                if ( auto path = node->node()->cast<model::Shape>() )
+                {
+                    if ( !event.scene->has_editors(path) )
+                        d->highlight = path;
+                    break;
+                }
             }
         }
     }
@@ -390,6 +432,20 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
                 d->selection.drag(event, true);
                 d->selection.initial = nullptr;
                 break;
+            case Private::VertexAdd:
+                if ( d->insert_item )
+                {
+                    auto bez = d->insert_item->bezier();
+                    bez.split_segment(d->insert_params.index, d->insert_params.factor);
+                    event.window->document()->push_command(new command::SetMultipleAnimated(
+                        d->insert_item->target_property(),
+                        QVariant::fromValue(bez),
+                        true
+                    ));
+                    exit_add_point_mode();
+                    emit cursor_changed(Qt::ArrowCursor);
+                }
+                break;
         }
 
         d->drag_mode = Private::None;
@@ -416,6 +472,24 @@ void tools::EditTool::paint(const PaintEvent& event)
         event.painter->setBrush(select_color);
         event.painter->drawRect(QRectF(d->rubber_p1, d->rubber_p2));
     }
+    else if ( d->drag_mode == Private::VertexAdd )
+    {
+        if ( d->insert_item )
+        {
+            QColor select_color = event.view->palette().color(QPalette::Highlight);
+            QPen pen(select_color, 1);
+            pen.setCosmetic(true);
+            event.painter->setPen(pen);
+            event.painter->drawLine(
+                event.view->mapFromScene(d->insert_preview.tan_in),
+                event.view->mapFromScene(d->insert_preview.tan_out)
+            );
+
+            select_color.setAlpha(128);
+            event.painter->setBrush(select_color);
+            event.painter->drawEllipse(event.view->mapFromScene(d->insert_preview.pos), 6, 6);
+        }
+    }
     else if ( d->highlight )
     {
         QColor select_color = event.view->palette().color(QPalette::Highlight);
@@ -432,9 +506,25 @@ void tools::EditTool::paint(const PaintEvent& event)
 
 void tools::EditTool::key_press(const KeyEvent& event) { Q_UNUSED(event); }
 
-void tools::EditTool::key_release(const KeyEvent& event) { Q_UNUSED(event); }
+void tools::EditTool::key_release(const KeyEvent& event)
+{
+    if ( event.key() == Qt::Key_Escape )
+    {
+        if ( d->drag_mode == Private::VertexAdd )
+        {
+            exit_add_point_mode();
+            emit cursor_changed(Qt::ArrowCursor);
+        }
+        event.accept();
+    }
+}
 
-QCursor tools::EditTool::cursor() { return Qt::ArrowCursor; }
+QCursor tools::EditTool::cursor()
+{
+    if ( d->drag_mode == Private::VertexAdd )
+        return Qt::DragCopyCursor;
+    return Qt::ArrowCursor;
+}
 
 void tools::EditTool::on_selected(graphics::DocumentScene * scene, model::DocumentNode * node)
 {
@@ -444,11 +534,13 @@ void tools::EditTool::on_selected(graphics::DocumentScene * scene, model::Docume
 void tools::EditTool::enable_event(const Event&)
 {
     d->highlight = nullptr;
+    exit_add_point_mode();
 }
 
 void tools::EditTool::disable_event(const Event&)
 {
     d->highlight = nullptr;
+    exit_add_point_mode();
 }
 
 QWidget* tools::EditTool::on_create_widget()
@@ -605,4 +697,17 @@ void tools::EditTool::selection_curve()
             p.first->target_property()->set_undoable(QVariant::fromValue(bez));
         }
     }
+}
+
+void tools::EditTool::add_point_mode()
+{
+    d->drag_mode = Private::VertexAdd;
+    emit cursor_changed(cursor());
+}
+
+void tools::EditTool::exit_add_point_mode()
+{
+    d->insert_item = nullptr;
+    d->insert_params = {};
+    d->drag_mode = Private::None;
 }

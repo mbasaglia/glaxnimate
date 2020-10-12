@@ -3,9 +3,12 @@
 
 
 // Algoritm from https://www.particleincell.com/2012/bezier-splines/
-void math::bezier::auto_smooth(math::bezier::Bezier& curve)
+void math::bezier::auto_smooth(math::bezier::Bezier& curve, int start, int end)
 {
-    int n = curve.size() - 1;
+    if ( start < 0 || end > curve.size() || end - start < 2 )
+        return;
+
+    int n = end - start - 1;
 
     // rhs vector
     std::vector<qreal> a, b, c;
@@ -15,7 +18,7 @@ void math::bezier::auto_smooth(math::bezier::Bezier& curve)
     a.push_back(0);
     b.push_back(2);
     c.push_back(1);
-    r.push_back(curve[0].pos + 2 * curve[1].pos);
+    r.push_back(curve[start].pos + 2 * curve[start+1].pos);
 
     // internal segments
     for ( int i = 1; i < n - 1; i++ )
@@ -23,14 +26,14 @@ void math::bezier::auto_smooth(math::bezier::Bezier& curve)
         a.push_back(1);
         b.push_back(4);
         c.push_back(1);
-        r.push_back(4 * curve[i].pos + 2 * curve[i+1].pos);
+        r.push_back(4 * curve[start+i].pos + 2 * curve[start+i+1].pos);
     }
 
     // right segment
     a.push_back(2);
     b.push_back(7);
     c.push_back(0);
-    r.push_back(8 * curve[n-1].pos + curve[n].pos);
+    r.push_back(8 * curve[end-2].pos + curve[end-1].pos);
 
     // solves Ax=b with the Thomas algorithm (from Wikipedia)
     for ( int i = 1; i < n; i++ )
@@ -41,14 +44,14 @@ void math::bezier::auto_smooth(math::bezier::Bezier& curve)
     }
 
     QPointF last = r[n-1]/b[n-1];
-    curve[n-1].tan_in = last;
+    curve[end-2].tan_in = last;
     for ( int i = n - 2; i >= 0; --i )
     {
         last = (r[i] - c[i] * last) / b[i];
-        QPointF relative = (last - curve[i].pos);
-        curve[i].tan_in = curve[i].pos - relative;
-        curve[i].tan_out = curve[i].pos + relative;
-        curve[i].type = math::bezier::Smooth;
+        QPointF relative = (last - curve[start+i].pos);
+        curve[start+i].tan_in = curve[start+i].pos - relative;
+        curve[start+i].tan_out = curve[start+i].pos + relative;
+        curve[start+i].type = math::bezier::Smooth;
     }
 
 }
@@ -107,6 +110,75 @@ void math::bezier::simplify(math::bezier::Bezier& curve, qreal threshold)
     }
 
     // Fake smoothness
-    auto_smooth(curve);
+    auto_smooth(curve, 0, curve.size());
 
+}
+
+static void project_impl(const math::bezier::Bezier& curve, const QPointF& p, int index, math::bezier::ProjectResult& best)
+{
+
+    math::bezier::CubicBezierSolver<QPointF> solver{
+        curve[index].pos - p,
+        curve[index].tan_out - p,
+        curve[(index + 1) % curve.size()].tan_in - p,
+        curve[(index + 1) % curve.size()].pos - p
+    };
+
+    static constexpr const int max_iter = 8;
+
+    qreal tmin = 0;
+    qreal tmax = 1;
+    qreal tmid;
+    qreal dmin = math::length_squared(solver.solve(tmin));
+    qreal dmax = math::length_squared(solver.solve(tmax));
+    qreal dmid;
+
+    for ( int i = 0; i < max_iter; i++ )
+    {
+        tmid = (tmin + tmax) / 2;
+        dmid = math::length_squared(solver.solve(tmid));
+
+        if ( dmax < dmin )
+        {
+            dmin = dmid;
+            tmin = tmid;
+        }
+        else
+        {
+            dmax = dmid;
+            tmax = tmid;
+        }
+    }
+
+    if ( dmax < dmin )
+    {
+        dmin = dmax;
+        tmin = tmax;
+    }
+
+    if ( dmin < best.distance )
+    {
+        best.factor = tmin;
+        best.index = index;
+        best.point = solver.solve(tmin) + p;
+        best.distance = dmin;
+    }
+}
+
+math::bezier::ProjectResult math::bezier::project(const math::bezier::Bezier& curve, const QPointF& p)
+{
+    if ( curve.empty() )
+        return {0, 0, 0, p};
+
+    if ( curve.size() == 1 )
+        return {0, 0, math::length_squared(curve[0].pos - p), curve[0].pos};
+
+    ProjectResult best {0, 0, std::numeric_limits<qreal>::max(), curve[0].pos};
+    for ( int i = 0; i < curve.size() - 1; i++ )
+        project_impl(curve, p, i, best);
+
+    if ( curve.closed() )
+        project_impl(curve, p, curve.size() - 1, best);
+
+    return best;
 }

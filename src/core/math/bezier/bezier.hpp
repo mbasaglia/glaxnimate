@@ -143,11 +143,16 @@ public:
 
     /**
      * \brief Split a segmet
-     * \param index index of the point at the end of the segment to split
+     * \param index index of the point at the beginning of the segment to split
      * \param factor Value between [0,1] to determine the split point
-     * \post size() increased by one and points[index] is the new point
+     * \post size() increased by one and points[index+1] is the new point
      */
     void split_segment(int index, qreal factor);
+
+    /**
+     * \brief The point you'd get by calling split_segment(index, factor)
+     */
+    Point split_segment_point(int index, qreal factor) const;
 
     void remove_point(int index)
     {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include<set>
+#include <set>
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
@@ -8,6 +8,7 @@
 #include "handle.hpp"
 #include "model/shapes/path.hpp"
 #include "utils/pseudo_mutex.hpp"
+#include "typed_item.hpp"
 
 namespace graphics {
 
@@ -73,7 +74,7 @@ private:
 };
 
 
-class BezierItem : public QGraphicsObject
+class BezierItem : public TypedItem<Types::BezierItem>
 {
     Q_OBJECT
 

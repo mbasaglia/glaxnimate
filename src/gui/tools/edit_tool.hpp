@@ -20,6 +20,8 @@ public:
     void selection_straighten();
     void selection_curve();
 
+    void add_point_mode();
+
 private:
     void mouse_press(const MouseEvent& event) override;
     void mouse_move(const MouseEvent& event) override;
@@ -38,6 +40,9 @@ private:
     void disable_event(const Event&) override;
 
     QWidget* on_create_widget() override;
+
+
+    void exit_add_point_mode();
 
 private:
     class Private;

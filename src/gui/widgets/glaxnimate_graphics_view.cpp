@@ -425,11 +425,16 @@ void GlaxnimateGraphicsView::view_fit()
 void GlaxnimateGraphicsView::set_active_tool(tools::Tool* tool)
 {
     if ( d->tool )
+    {
         d->tool->disable_event(d->event());
+        disconnect(d->tool, nullptr, this, nullptr);
+    }
 
     d->tool = tool;
 
     d->tool->enable_event(d->event());
+
+    connect(d->tool, &tools::Tool::cursor_changed, this, &QWidget::setCursor);
 
     if ( d->mouse_view_mode == Private::NoDrag )
         setCursor(tool->cursor());

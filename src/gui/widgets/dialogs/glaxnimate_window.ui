@@ -111,7 +111,6 @@
     <addaction name="separator"/>
     <addaction name="action_path_reverse"/>
     <addaction name="separator"/>
-    <addaction name="action_node_add"/>
     <addaction name="action_node_remove"/>
     <addaction name="separator"/>
     <addaction name="action_node_join"/>
@@ -733,13 +732,15 @@
    <addaction name="action_node_type_symmetric"/>
    <addaction name="separator"/>
    <addaction name="action_node_remove"/>
+   <addaction name="action_node_add"/>
    <addaction name="separator"/>
    <addaction name="action_segment_lines"/>
    <addaction name="action_segment_curve"/>
   </widget>
   <widget class="QDockWidget" name="dock_gradients">
    <property name="windowIcon">
-    <iconset theme="color-gradient"/>
+    <iconset theme="color-gradient">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="windowTitle">
     <string>Gradients</string>
@@ -1064,7 +1065,7 @@
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
-    <string>Add &amp;Node</string>
+    <string>Add &amp;Node...</string>
    </property>
   </action>
   <action name="action_node_remove">
