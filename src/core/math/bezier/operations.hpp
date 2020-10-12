@@ -23,6 +23,12 @@ struct ProjectResult
     QPointF point = {};
 };
 
+/**
+ * \brief Projects a point onto a bezier curve
+ * \param curve The target bezier
+ * \param p     The point to project
+ * \returns ProjectResult with the point on \p curve closest to \p p
+ */
 ProjectResult project(const Bezier& curve, const QPointF& p);
 
 } // namespace math

@@ -114,6 +114,11 @@ void math::bezier::simplify(math::bezier::Bezier& curve, qreal threshold)
 
 }
 
+static math::bezier::ProjectResult project_extreme(int index, qreal t, const QPointF& p)
+{
+    return {index, t, math::length_squared(p), p};
+}
+
 static void project_impl(const math::bezier::Bezier& curve, const QPointF& p, int index, math::bezier::ProjectResult& best)
 {
 
@@ -124,44 +129,34 @@ static void project_impl(const math::bezier::Bezier& curve, const QPointF& p, in
         curve[(index + 1) % curve.size()].pos - p
     };
 
-    static constexpr const int max_iter = 8;
+    static constexpr const double min_dist = 0.01;
 
-    qreal tmin = 0;
-    qreal tmax = 1;
-    qreal tmid;
-    qreal dmin = math::length_squared(solver.solve(tmin));
-    qreal dmax = math::length_squared(solver.solve(tmax));
-    qreal dmid;
+    math::bezier::ProjectResult left = project_extreme(index, 0, solver.points()[0]);
+    math::bezier::ProjectResult right = project_extreme(index, 1, solver.points()[3]);
+    math::bezier::ProjectResult middle = {index, 0, 0, {}};
 
-    for ( int i = 0; i < max_iter; i++ )
+    while ( true )
     {
-        tmid = (tmin + tmax) / 2;
-        dmid = math::length_squared(solver.solve(tmid));
+        middle.factor = (left.factor + right.factor) / 2;
+        middle.point = solver.solve(middle.factor);
+        middle.distance = math::length_squared(middle.point);
 
-        if ( dmax < dmin )
-        {
-            dmin = dmid;
-            tmin = tmid;
-        }
+        if ( right.distance < left.distance )
+            left = middle;
         else
-        {
-            dmax = dmid;
-            tmax = tmid;
-        }
+            right = middle;
+
+        if ( math::length_squared(left.point - right.point) <= min_dist )
+            break;
     }
 
-    if ( dmax < dmin )
-    {
-        dmin = dmax;
-        tmin = tmax;
-    }
+    if ( right.distance < left.distance )
+        left = right;
 
-    if ( dmin < best.distance )
+    if ( left.distance < best.distance )
     {
-        best.factor = tmin;
-        best.index = index;
-        best.point = solver.solve(tmin) + p;
-        best.distance = dmin;
+        best = left;
+        best.point += p;
     }
 }
 

@@ -513,6 +513,7 @@ void tools::EditTool::key_release(const KeyEvent& event)
         if ( d->drag_mode == Private::VertexAdd )
         {
             exit_add_point_mode();
+            event.repaint();
             emit cursor_changed(Qt::ArrowCursor);
         }
         event.accept();
@@ -615,6 +616,7 @@ void tools::EditTool::selection_straighten()
     {
         auto bez = p.first->bezier();
         bool modified = false;
+
         for ( int index : p.first->selected_indices() )
         {
             int prev_index = index-1;
