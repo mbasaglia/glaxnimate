@@ -3,14 +3,16 @@
 #include <QMenu>
 #include <QPointer>
 
+#include "math/bezier/operations.hpp"
 #include "model/shapes/shape.hpp"
-#include "graphics/bezier_item.hpp"
-#include "graphics/item_data.hpp"
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/undo_macro_guard.hpp"
 
-#include "math/bezier/operations.hpp"
+#include "graphics/bezier_item.hpp"
+#include "graphics/item_data.hpp"
+#include "graphics/graphics_editor.hpp"
+
 
 tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
 
@@ -146,12 +148,33 @@ public:
         }
     };
 
-    static void impl_extract_selection_recursive_item(graphics::DocumentScene * scene, model::DocumentNode* node)
+    void extract_editor(graphics::DocumentScene * scene, model::DocumentNode* node)
+    {
+        auto editor_parent = scene->get_editor(node);
+        if ( !editor_parent )
+            return;
+
+        for ( auto editor_child : editor_parent->childItems() )
+        {
+            if ( auto editor = qgraphicsitem_cast<graphics::BezierItem*>(editor_child) )
+            {
+                active.insert(editor);
+                connect(editor, &QObject::destroyed, editor, [this, editor]{
+                    active.erase(editor);
+                });
+            }
+        }
+    }
+
+    void impl_extract_selection_recursive_item(graphics::DocumentScene * scene, model::DocumentNode* node)
     {
         auto meta = node->metaObject();
         if ( meta->inherits(&model::Shape::staticMetaObject) || meta->inherits(&model::ShapeOperator::staticMetaObject) )
         {
             scene->show_editors(node);
+
+            if ( meta->inherits(&model::Path::staticMetaObject) )
+                extract_editor(scene, node);
         }
         else if ( meta->inherits(&model::Group::staticMetaObject) )
         {
@@ -244,9 +267,10 @@ public:
     model::Shape* highlight = nullptr;
     Selection selection;
 
+    std::set<graphics::BezierItem*> active;
     math::bezier::ProjectResult insert_params;
     math::bezier::Point insert_preview{{}};
-    graphics::BezierItem* insert_item = nullptr;
+    QPointer<graphics::BezierItem> insert_item = nullptr;
 };
 
 tools::EditTool::EditTool()
@@ -323,22 +347,13 @@ void tools::EditTool::mouse_move(const MouseEvent& event)
             d->insert_params = {};
             d->insert_item = nullptr;
 
-            if ( d->selection.empty() )
+            for ( const auto& it : d->active )
             {
-                for ( auto it : event.scene->items() )
-                {
-                    if ( auto item = qgraphicsitem_cast<graphics::BezierItem*>(it) )
-                        d->selection.add_bezier_item(item);
-                }
-            }
-
-            for ( const auto& it : d->selection.selected )
-            {
-                auto closest = math::bezier::project(it.first->bezier(), event.scene_pos);
+                auto closest = math::bezier::project(it->bezier(), event.scene_pos);
                 if ( closest.distance < d->insert_params.distance )
                 {
                     d->insert_params = closest;
-                    d->insert_item = it.first;
+                    d->insert_item = it;
                 }
             }
 
@@ -529,7 +544,7 @@ QCursor tools::EditTool::cursor()
 
 void tools::EditTool::on_selected(graphics::DocumentScene * scene, model::DocumentNode * node)
 {
-    Private::impl_extract_selection_recursive_item(scene, node);
+    d->impl_extract_selection_recursive_item(scene, node);
 }
 
 void tools::EditTool::enable_event(const Event&)
@@ -541,6 +556,7 @@ void tools::EditTool::enable_event(const Event&)
 void tools::EditTool::disable_event(const Event&)
 {
     d->highlight = nullptr;
+    d->active.clear();
     exit_add_point_mode();
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "base.hpp"
-#include"math/bezier/point.hpp"
+#include "math/bezier/point.hpp"
 
 namespace tools {
 
