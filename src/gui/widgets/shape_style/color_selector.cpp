@@ -4,7 +4,10 @@
 #include "app/application.hpp"
 #include "app/settings/settings.hpp"
 
-#include "model/defs/brush_style.hpp"
+#include "model/defs/named_color.hpp"
+#include "model/defs/gradient.hpp"
+#include "model/shapes/styler.hpp"
+#include "command/animation_commands.hpp"
 
 namespace {
 
@@ -297,4 +300,57 @@ void ColorSelector::commit_current_color()
 void ColorSelector::set_palette_model(color_widgets::ColorPaletteModel* palette_model)
 {
     d->ui.palette_widget->setModel(palette_model);
+}
+
+void ColorSelector::from_styler(model::Styler* styler, int gradient_stop)
+{
+    if ( !styler )
+        return;
+
+
+    if ( auto named_color = qobject_cast<model::NamedColor*>(styler->use.get()) )
+        return d->set_current_color(named_color->color.get());
+
+    if ( auto gradient = qobject_cast<model::Gradient*>(styler->use.get()) )
+    {
+        auto colors = gradient->colors.get();
+        if ( colors && !colors->colors.get().empty() )
+        {
+            gradient_stop = qBound(0, gradient_stop, colors->colors.get().size() - 1);
+            return d->set_current_color(colors->colors.get()[gradient_stop].second);
+        }
+    }
+
+
+    d->set_current_color(styler->color.get());
+
+}
+
+void ColorSelector::to_styler(const QString& text, model::Styler* styler, int gradient_stop, bool commit)
+{
+    if ( !styler || styler->docnode_locked_recursive() )
+        return;
+
+    QColor color = d->current_color();
+
+    auto cmd = new command::SetMultipleAnimated(text, commit);
+    cmd->push_property(&styler->color, color);
+
+    if ( auto named_color = qobject_cast<model::NamedColor*>(styler->use.get()) )
+    {
+        cmd->push_property(&named_color->color, color);
+    }
+    else if ( auto gradient = qobject_cast<model::Gradient*>(styler->use.get()) )
+    {
+        auto colors = gradient->colors.get();
+        if ( colors && !colors->colors.get().empty() )
+        {
+            gradient_stop = qBound(0, gradient_stop, colors->colors.get().size() - 1);
+            auto stops = colors->colors.get();
+            stops[gradient_stop].second = color;
+            cmd->push_property(&colors->colors, QVariant::fromValue(stops));
+        }
+    }
+
+    styler->push_command(cmd);
 }

@@ -15,7 +15,7 @@ FillStyleWidget::FillStyleWidget(QWidget* parent )
 }
 
 
-void FillStyleWidget::set_shape(model::Fill* target)
+void FillStyleWidget::set_shape(model::Fill* target, int gradient_stop)
 {
     if ( this->target )
     {
@@ -24,6 +24,7 @@ void FillStyleWidget::set_shape(model::Fill* target)
     }
 
     this->target = target;
+    stop = gradient_stop;
 
     if ( target )
     {
@@ -41,16 +42,11 @@ model::Fill * FillStyleWidget::shape() const
 
 void FillStyleWidget::update_from_target()
 {
-    updating = true;
+    auto lock = updating.get_lock();
     QColor color;
-    if (  auto named_color = qobject_cast<model::NamedColor*>(target->use.get()) )
-        color = named_color->color.get();
-    else
-        color = target->color.get();
-    set_current_color(color);
-    emit current_color_changed(color);
+    from_styler(target, stop);
+    emit current_color_changed(current_color());
     update();
-    updating = false;
 }
 
 void FillStyleWidget::set_target_color(const QColor& color)
@@ -72,23 +68,16 @@ void FillStyleWidget::property_changed(const model::BaseProperty* prop)
     }
 }
 
-void FillStyleWidget::set_color(const QColor& color, bool commit)
+void FillStyleWidget::set_color(const QColor&, bool commit)
 {
-    if ( !target || updating || target->docnode_locked_recursive() )
+    if ( updating )
         return;
 
-    if (  auto named_color = qobject_cast<model::NamedColor*>(target->use.get()) )
-    {
-        target->push_command(new command::SetMultipleAnimated(
-            tr("Update Fill Color"),
-            commit,
-            {&named_color->color, &target->color},
-            color,
-            color
-        ));
-    }
-    else
-    {
-        target->color.set_undoable(color, commit);
-    }
+    to_styler(tr("Update Fill Color"), target, stop, commit);
+}
+
+void FillStyleWidget::set_gradient_stop(model::Styler* styler, int index)
+{
+    if ( auto fill = styler->cast<model::Fill>() )
+        set_shape(fill, index);
 }

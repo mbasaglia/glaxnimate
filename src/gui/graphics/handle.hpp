@@ -35,7 +35,6 @@ public:
         Unknown,
         Vertex,
         Tangent,
-        GradientRange,
         GradientStop,
         GradientHighlight,
     };

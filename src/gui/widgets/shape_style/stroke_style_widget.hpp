@@ -22,8 +22,10 @@ public:
 
     void save_settings() const;
 
-    void set_shape(model::Stroke* stroke);
+    void set_shape(model::Stroke* stroke, int gradient_stop = 0);
     model::Stroke* shape() const;
+
+    void set_gradient_stop(model::Styler* styler, int index);
 
     QPen pen_style() const;
 

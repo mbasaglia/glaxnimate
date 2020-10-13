@@ -9,6 +9,7 @@
 #include "app/settings/settings.hpp"
 #include "model/document.hpp"
 #include "command/animation_commands.hpp"
+#include "utils/pseudo_mutex.hpp"
 
 class StrokeStyleWidget::Private
 {
@@ -21,7 +22,8 @@ public:
     bool dark_theme = false;
     QPalette::ColorRole background = QPalette::Base;
     model::Stroke* target = nullptr;
-    bool updating = false;
+    utils::PseudoMutex updating;
+    int stop = 0;
 
     bool can_update_target()
     {
@@ -46,20 +48,13 @@ public:
     {
         if ( target && !updating )
         {
-            updating = true;
+            auto lock = updating.get_lock();
             ui.spin_stroke_width->setValue(target->width.get());
             set_cap_style(target->cap.get());
             set_join_style(target->join.get());
             ui.spin_miter->setValue(target->miter_limit.get());
 
-
-            QColor color;
-            if (  auto named_color = qobject_cast<model::NamedColor*>(target->use.get()) )
-                color = named_color->color.get();
-            else
-                color = target->color.get();
-            ui.color_selector->set_current_color(color);
-            updating = false;
+            ui.color_selector->from_styler(target, stop);
         }
     }
 
@@ -105,25 +100,12 @@ public:
             prop.set_undoable(value, commit);
     }
 
-    void set_color(const QColor& color, bool commit)
+    void set_color(const QColor&, bool commit)
     {
-        if ( !target || updating )
+        if ( updating )
             return;
 
-        if (  auto named_color = qobject_cast<model::NamedColor*>(target->use.get()) )
-        {
-            target->push_command(new command::SetMultipleAnimated(
-                tr("Update Stroke Color"),
-                commit,
-                {&named_color->color, &target->color},
-                color,
-                color
-            ));
-        }
-        else
-        {
-            target->color.set_undoable(color, commit);
-        }
+        ui.color_selector->to_styler(tr("Update Stroke Color"), target, stop, commit);
     }
 };
 
@@ -263,7 +245,7 @@ void StrokeStyleWidget::check_color(const QColor& color)
     emit color_changed(color);
 }
 
-void StrokeStyleWidget::set_shape(model::Stroke* target)
+void StrokeStyleWidget::set_shape(model::Stroke* target, int gradient_stop)
 {
     if ( d->target )
     {
@@ -271,6 +253,7 @@ void StrokeStyleWidget::set_shape(model::Stroke* target)
     }
 
     d->target = target;
+    d->stop = gradient_stop;
 
     if ( target )
     {
@@ -323,4 +306,10 @@ model::Stroke * StrokeStyleWidget::shape() const
 void StrokeStyleWidget::set_palette_model(color_widgets::ColorPaletteModel* palette_model)
 {
     d->ui.color_selector->set_palette_model(palette_model);
+}
+
+void StrokeStyleWidget::set_gradient_stop(model::Styler* styler, int index)
+{
+    if ( auto stroke = styler->cast<model::Stroke>() )
+        set_shape(stroke, index);
 }

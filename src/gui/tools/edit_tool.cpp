@@ -13,6 +13,7 @@
 #include "graphics/bezier_item.hpp"
 #include "graphics/item_data.hpp"
 #include "graphics/graphics_editor.hpp"
+#include "graphics/gradient_editor.hpp"
 
 
 tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
@@ -430,6 +431,15 @@ void tools::EditTool::mouse_press(const MouseEvent& event)
             }
             else
             {
+                if ( clicked_on.handle->role() == graphics::MoveHandle::GradientStop )
+                {
+                    auto editor = static_cast<graphics::GradientEditor*>(clicked_on.handle->parentItem());
+                    emit gradient_stop_changed(
+                        editor->styler(),
+                        clicked_on.handle->data(graphics::GradientStopIndex).toInt()
+                    );
+                }
+
                 d->drag_mode = Private::ForwardEvents;
                 event.forward_to_scene();
             }

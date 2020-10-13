@@ -10,6 +10,7 @@ class ColorPaletteModel;
 
 namespace model {
 class Document;
+class Styler;
 } // namespace model
 
 class ColorSelector : public QWidget
@@ -28,6 +29,10 @@ public:
     void save_settings();
 
     void set_palette_model(color_widgets::ColorPaletteModel* palette_model);
+
+    void from_styler(model::Styler* styler, int gradient_stop);
+
+    void to_styler(const QString& text, model::Styler* styler, int gradient_stop, bool commit);
 
 public slots:
     void set_current_color(const QColor& c);

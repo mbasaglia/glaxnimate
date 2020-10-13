@@ -2,10 +2,16 @@
 #include "base.hpp"
 #include "math/bezier/point.hpp"
 
+namespace model {
+class Styler;
+} // namespace model
+
 namespace tools {
 
 class EditTool : public Tool
 {
+    Q_OBJECT
+
 public:
     EditTool();
     ~EditTool();
@@ -45,6 +51,9 @@ private:
     void set_cursor(Qt::CursorShape shape);
 
     void exit_add_point_mode();
+
+signals:
+    void gradient_stop_changed(model::Styler* styler, int stop);
 
 private:
     class Private;

@@ -9,19 +9,22 @@
 #include "utils/sort_gradient.hpp"
 
 graphics::GradientEditor::GradientEditor(model::Styler* styler)
-    : styler(styler)
+    : styler_(styler)
 {
     start.setVisible(false);
     finish.setVisible(false);
     highlight.setVisible(false);
 
-    start.set_role(MoveHandle::GradientRange);
-    finish.set_role(MoveHandle::GradientRange);
+    start.set_role(MoveHandle::GradientStop);
+    finish.set_role(MoveHandle::GradientStop);
     highlight.set_role(MoveHandle::GradientHighlight);
 
-    on_use_changed(styler->use.get());
+    start.setData(graphics::GradientStopIndex, 0);
+    finish.setData(graphics::GradientStopIndex, 0);
 
-    connect(styler, &model::Styler::use_changed, this, &GradientEditor::on_use_changed);
+    on_use_changed(styler_->use.get());
+
+    connect(styler_, &model::Styler::use_changed, this, &GradientEditor::on_use_changed);
 
     connect(&start,     &MoveHandle::dragged,       this, &GradientEditor::start_dragged);
     connect(&start,     &MoveHandle::drag_finished, this, &GradientEditor::start_committed);
@@ -104,7 +107,7 @@ void graphics::GradientEditor::start_dragged(QPointF p, Qt::KeyboardModifiers mo
     if ( !highlight.isVisible() )
         cmd->push_property(&gradient->highlight, p);
 
-    styler->push_command(cmd);
+    styler_->push_command(cmd);
 
     update_stop_pos();
     update();
@@ -122,7 +125,7 @@ void graphics::GradientEditor::start_committed()
     if ( !highlight.isVisible() )
         cmd->push_property(&gradient->highlight, gradient->start_point.value());
 
-    styler->push_command(cmd);
+    styler_->push_command(cmd);
 }
 
 void graphics::GradientEditor::finish_dragged(QPointF p, Qt::KeyboardModifiers mods)
@@ -137,7 +140,7 @@ void graphics::GradientEditor::finish_dragged(QPointF p, Qt::KeyboardModifiers m
     }
 
 
-    styler->push_command(
+    styler_->push_command(
         new command::SetMultipleAnimated(&gradient->end_point, p, false)
     );
 
@@ -150,7 +153,7 @@ void graphics::GradientEditor::finish_committed()
     if ( !gradient )
         return;
 
-    styler->push_command(
+    styler_->push_command(
         new command::SetMultipleAnimated(&gradient->end_point, gradient->end_point.value(), true)
     );
 }
@@ -161,7 +164,7 @@ void graphics::GradientEditor::highlight_dragged(const QPointF& p)
     if ( !gradient )
         return;
 
-    styler->push_command(
+    styler_->push_command(
         new command::SetMultipleAnimated(&gradient->highlight, p, false)
     );
 }
@@ -171,7 +174,7 @@ void graphics::GradientEditor::highlight_committed()
     if ( !gradient )
         return;
 
-    styler->push_command(
+    styler_->push_command(
         new command::SetMultipleAnimated(&gradient->highlight, gradient->highlight.value(), true)
     );
 }
@@ -234,6 +237,7 @@ void graphics::GradientEditor::update_stops()
         connect(&stops.back(), &MoveHandle::dragged, this, &GradientEditor::stop_dragged);
         connect(&stops.back(), &MoveHandle::drag_finished, this, &GradientEditor::stop_committed);
     }
+    finish.setData(graphics::GradientStopIndex, gradient->colors->colors.get().size() - 1);
 }
 
 void graphics::GradientEditor::update_stop_pos()
@@ -337,4 +341,9 @@ void graphics::GradientEditor::update_stops_from_gradient()
         update_stops();
     else
         update_stop_pos();
+}
+
+model::Styler * graphics::GradientEditor::styler()
+{
+    return styler_;
 }
