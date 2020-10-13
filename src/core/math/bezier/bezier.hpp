@@ -4,6 +4,7 @@
 #include <QPainterPath>
 #include "math/bezier/solver.hpp"
 #include "math/bezier/point.hpp"
+#include "math/bezier/segment.hpp"
 
 namespace math::bezier {
 
@@ -35,8 +36,8 @@ public:
     void clear() { points_.clear(); closed_ = false; }
     const Point& back() const { return points_.back(); }
 
-    const Point& operator[](int index) const { return points_[index]; }
-    Point& operator[](int index) { return points_[index]; }
+    const Point& operator[](int index) const { return points_[index % points_.size()]; }
+    Point& operator[](int index) { return points_[index % points_.size()]; }
 
     bool closed() const { return closed_; }
     void set_closed(bool closed) { closed_ = closed; }
@@ -170,18 +171,19 @@ public:
             points_[index] = p;
     }
 
+    BezierSegment segment(int index) const;
+    void set_segment(int index, const BezierSegment& s);
+
+    Bezier transformed(const QTransform& t) const;
+    void transform(const QTransform& t);
+
 private:
     /**
      * \brief Solver for the point \p p to the point \p p + 1
      */
     math::bezier::CubicBezierSolver<QPointF> solver_for_point(int p) const
     {
-        return {
-            points_[p].pos,
-            points_[p].tan_out,
-            points_[(p+1) % size()].tan_in,
-            points_[(p+1) % size()].pos
-        };
+        return segment(p);
     }
 
     std::vector<Point> points_;

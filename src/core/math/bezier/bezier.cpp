@@ -50,7 +50,7 @@ void math::bezier::Bezier::split_segment(int index, qreal factor)
         split_points.first[3],
         split_points.first[2],
         split_points.second[1],
-        Smooth
+        type
     ));
 }
 
@@ -119,6 +119,39 @@ math::bezier::Bezier math::bezier::Bezier::lerp(const math::bezier::Bezier& othe
         ));
     return lerped;
 }
+
+math::bezier::BezierSegment math::bezier::Bezier::segment(int index) const
+{
+    return {
+        points_[index].pos,
+        points_[index].tan_out,
+        points_[index+1].tan_in,
+        points_[index+1].pos
+    };
+}
+
+void math::bezier::Bezier::set_segment(int index, const math::bezier::BezierSegment& s)
+{
+    points_[index].pos = s[0];
+    points_[index].drag_tan_out(s[1]);
+    points_[index+1].pos = s[3];
+    points_[index+1].drag_tan_in(s[2]);
+}
+
+math::bezier::Bezier math::bezier::Bezier::transformed(const QTransform& t) const
+{
+    auto copy = *this;
+    copy.transform(t);
+    return copy;
+}
+
+void math::bezier::Bezier::transform(const QTransform& t)
+{
+    for ( auto& p : points_ )
+        p.transform(t);
+}
+
+
 
 
 QRectF math::bezier::MultiBezier::bounding_box() const

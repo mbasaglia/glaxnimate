@@ -4,6 +4,7 @@
 #include <QPointer>
 
 #include "math/bezier/operations.hpp"
+#include "math/bezier/cubic_struts.hpp"
 #include "model/shapes/shape.hpp"
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
@@ -28,6 +29,7 @@ public:
         VertexClick,
         VertexDrag,
         VertexAdd,
+        MoldCurve
     };
 
     struct Selection
@@ -148,6 +150,19 @@ public:
         }
     };
 
+    struct PathCache
+    {
+        QTransform forward_transform;
+        QTransform inverse_transform;
+
+        PathCache() = default;
+
+        PathCache(graphics::BezierItem* item)
+        :   forward_transform(item->target_object()->transform_matrix(item->target_object()->time())),
+            inverse_transform(forward_transform.inverted())
+        {}
+    };
+
     void extract_editor(graphics::DocumentScene * scene, model::DocumentNode* node)
     {
         auto editor_parent = scene->get_editor(node);
@@ -158,9 +173,13 @@ public:
         {
             if ( auto editor = qgraphicsitem_cast<graphics::BezierItem*>(editor_child) )
             {
-                active.insert(editor);
+                active[editor] = PathCache(editor);
+
                 connect(editor, &QObject::destroyed, editor, [this, editor]{
                     active.erase(editor);
+                });
+                connect(editor->target_object(), &model::DocumentNode::transform_matrix_changed, editor, [this, editor]{
+                    active[editor] = PathCache(editor);
                 });
             }
         }
@@ -260,6 +279,43 @@ public:
         menu.exec(QCursor::pos());
     }
 
+    void mold_bezier(const QPointF& scene_pos, bool commit)
+    {
+        using namespace math::bezier;
+        if ( !insert_item )
+            return;
+
+        // see https://pomax.github.io/bezierinfo/#molding
+        QPointF B = active[insert_item].inverse_transform.map(scene_pos);
+        BezierStruts struts_ideal = cubic_struts_idealized(mold_original, B);
+        auto struts_proj = cubic_struts_projection(mold_original, B, insert_params);
+        qreal falloff = 512;
+        qreal dist = math::length(insert_params.point - B);
+        qreal interp = math::min(falloff, dist) / falloff;
+
+        BezierStruts struts_interp = {
+            B,
+            math::lerp(struts_proj.t, struts_ideal.t, interp),
+            math::lerp(struts_proj.e1, struts_ideal.e1, interp),
+            math::lerp(struts_proj.e2, struts_ideal.e2, interp),
+        };
+
+        // adjust interpolated struts so the pass through B
+        QPointF offset = B - math::lerp(struts_interp.e1, struts_interp.e2, struts_interp.t);
+        struts_interp.e1 += offset;
+        struts_interp.e2 += offset;
+
+        auto bez = insert_item->bezier();
+        bez.set_segment(insert_params.index, cubic_segment_from_struts(mold_original, struts_interp));
+
+        insert_item->target_object()->push_command(
+            new command::SetMultipleAnimated(
+                insert_item->target_property(),
+                QVariant::fromValue(bez),
+                commit
+            )
+        );
+    }
 
     DragMode drag_mode;
     QPointF rubber_p1;
@@ -267,10 +323,15 @@ public:
     model::Shape* highlight = nullptr;
     Selection selection;
 
-    std::set<graphics::BezierItem*> active;
+    std::map<graphics::BezierItem*, PathCache> active;
     math::bezier::ProjectResult insert_params;
     math::bezier::Point insert_preview{{}};
     QPointer<graphics::BezierItem> insert_item = nullptr;
+    math::bezier::BezierSegment mold_original;
+
+    Qt::CursorShape cursor = Qt::ArrowCursor;
+
+    static const int drag_dist = 36; // distance squared
 };
 
 tools::EditTool::EditTool()
@@ -302,6 +363,13 @@ void tools::EditTool::mouse_press(const MouseEvent& event)
                 d->drag_mode = Private::ForwardEvents;
                 event.forward_to_scene();
             }
+        }
+        else if ( d->insert_item && d->insert_params.distance <= d->drag_dist / event.view->get_zoom_factor() )
+        {
+            d->drag_mode = Private::MoldCurve;
+            d->insert_params = math::bezier::project(d->insert_item->bezier(), d->active[d->insert_item].inverse_transform.map(event.scene_pos));
+            d->mold_original = d->insert_item->bezier().segment(d->insert_params.index);
+            set_cursor(Qt::ClosedHandCursor);
         }
     }
 }
@@ -338,43 +406,50 @@ void tools::EditTool::mouse_move(const MouseEvent& event)
                 break;
             case Private::VertexAdd:
                 break;
+            case Private::MoldCurve:
+                d->mold_bezier(event.scene_pos, false);
+                break;
         }
     }
     else if ( event.buttons() == Qt::NoButton )
     {
-        if ( d->drag_mode == Private::VertexAdd )
+        // find closest point on a bezier
+        d->insert_params = {};
+        d->insert_item = nullptr;
+        for ( const auto& it : d->active )
         {
-            d->insert_params = {};
-            d->insert_item = nullptr;
 
-            for ( const auto& it : d->active )
+            auto closest = math::bezier::project(it.first->bezier(), it.second.inverse_transform.map(event.scene_pos));
+            if ( closest.distance < d->insert_params.distance )
             {
-                auto closest = math::bezier::project(it->bezier(), event.scene_pos);
-                if ( closest.distance < d->insert_params.distance )
-                {
-                    d->insert_params = closest;
-                    d->insert_item = it;
-                }
-            }
-
-            if ( d->insert_item )
-            {
-                d->insert_preview = d->insert_item->bezier().split_segment_point(
-                    d->insert_params.index, d->insert_params.factor
-                );
+                d->insert_params = closest;
+                d->insert_item = it.first;
             }
         }
-        else
+        // get tangents
+        if ( d->insert_item && d->drag_mode == Private::VertexAdd )
         {
-            d->highlight = nullptr;
-            for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
+            d->insert_preview = d->insert_item->bezier().split_segment_point(
+                d->insert_params.index, d->insert_params.factor
+            );
+            d->insert_preview.transform(d->active[d->insert_item].forward_transform);
+        }
+
+        if ( d->insert_item && d->drag_mode == Private::None &&
+            d->insert_params.distance <= d->drag_dist / event.view->get_zoom_factor() )
+            set_cursor(Qt::OpenHandCursor);
+        else if ( d->drag_mode != Private::VertexAdd )
+            set_cursor(Qt::ArrowCursor);
+
+        // Find shape to highlight
+        d->highlight = nullptr;
+        for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
+        {
+            if ( auto path = node->node()->cast<model::Shape>() )
             {
-                if ( auto path = node->node()->cast<model::Shape>() )
-                {
-                    if ( !event.scene->has_editors(path) )
-                        d->highlight = path;
-                    break;
-                }
+                if ( !event.scene->has_editors(path) )
+                    d->highlight = path;
+                break;
             }
         }
     }
@@ -458,8 +533,11 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
                         true
                     ));
                     exit_add_point_mode();
-                    emit cursor_changed(Qt::ArrowCursor);
                 }
+                break;
+            case Private::MoldCurve:
+                d->mold_bezier(event.scene_pos, true);
+                set_cursor(Qt::OpenHandCursor);
                 break;
         }
 
@@ -473,6 +551,7 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
 }
 
 void tools::EditTool::mouse_double_click(const MouseEvent& event) { Q_UNUSED(event); }
+
 
 void tools::EditTool::paint(const PaintEvent& event)
 {
@@ -529,7 +608,6 @@ void tools::EditTool::key_release(const KeyEvent& event)
         {
             exit_add_point_mode();
             event.repaint();
-            emit cursor_changed(Qt::ArrowCursor);
         }
         event.accept();
     }
@@ -537,9 +615,7 @@ void tools::EditTool::key_release(const KeyEvent& event)
 
 QCursor tools::EditTool::cursor()
 {
-    if ( d->drag_mode == Private::VertexAdd )
-        return Qt::DragCopyCursor;
-    return Qt::ArrowCursor;
+    return d->cursor;
 }
 
 void tools::EditTool::on_selected(graphics::DocumentScene * scene, model::DocumentNode * node)
@@ -720,7 +796,7 @@ void tools::EditTool::selection_curve()
 void tools::EditTool::add_point_mode()
 {
     d->drag_mode = Private::VertexAdd;
-    emit cursor_changed(cursor());
+    set_cursor(Qt::DragCopyCursor);
 }
 
 void tools::EditTool::exit_add_point_mode()
@@ -728,4 +804,11 @@ void tools::EditTool::exit_add_point_mode()
     d->insert_item = nullptr;
     d->insert_params = {};
     d->drag_mode = Private::None;
+    set_cursor(Qt::ArrowCursor);
+}
+
+void tools::EditTool::set_cursor(Qt::CursorShape shape)
+{
+    if ( shape != d->cursor )
+        emit cursor_changed(d->cursor = shape);
 }

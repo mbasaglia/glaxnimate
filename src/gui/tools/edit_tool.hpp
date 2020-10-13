@@ -41,6 +41,7 @@ private:
 
     QWidget* on_create_widget() override;
 
+    void set_cursor(Qt::CursorShape shape);
 
     void exit_add_point_mode();
 

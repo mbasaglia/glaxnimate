@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QPointF>
+#include <QTransform>
 #include "math/vector.hpp"
 
 namespace math::bezier {
@@ -109,6 +110,8 @@ struct Point
     {
         translate(new_pos - pos);
     }
+
+    void transform(const QTransform& t);
 
 };
 

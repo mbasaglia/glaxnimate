@@ -21,9 +21,11 @@ io/mime/mime_serializer.cpp
 io/raster/raster_format.cpp
 io/base.cpp
 
+math/geom.cpp
 math/bezier/bezier.cpp
 math/bezier/point.cpp
 math/bezier/operations.cpp
+math/bezier/cubic_struts.cpp
 
 model/main_composition.cpp
 model/composition.cpp

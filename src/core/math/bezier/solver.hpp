@@ -16,6 +16,8 @@ public:
     constexpr CubicBezierSolver(Vec p0, Vec p1, Vec p2, Vec p3) noexcept
     : points_{p0, p1, p2, p3} {}
 
+    constexpr CubicBezierSolver(const std::array<Vec, 4>& points) noexcept
+    : points_(points) {}
 
     /**
      * \brief Finds the point along the bezier curve

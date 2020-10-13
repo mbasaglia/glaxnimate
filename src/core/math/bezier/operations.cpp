@@ -119,16 +119,8 @@ static math::bezier::ProjectResult project_extreme(int index, qreal t, const QPo
     return {index, t, math::length_squared(p), p};
 }
 
-static void project_impl(const math::bezier::Bezier& curve, const QPointF& p, int index, math::bezier::ProjectResult& best)
+static void project_impl(const math::bezier::CubicBezierSolver<QPointF>& solver, const QPointF& p, int index, math::bezier::ProjectResult& best)
 {
-
-    math::bezier::CubicBezierSolver<QPointF> solver{
-        curve[index].pos - p,
-        curve[index].tan_out - p,
-        curve[(index + 1) % curve.size()].tan_in - p,
-        curve[(index + 1) % curve.size()].pos - p
-    };
-
     static constexpr const double min_dist = 0.01;
 
     math::bezier::ProjectResult left = project_extreme(index, 0, solver.points()[0]);
@@ -160,6 +152,18 @@ static void project_impl(const math::bezier::Bezier& curve, const QPointF& p, in
     }
 }
 
+static void project_impl(const math::bezier::Bezier& curve, const QPointF& p, int index, math::bezier::ProjectResult& best)
+{
+    math::bezier::CubicBezierSolver<QPointF> solver{
+        curve[index].pos - p,
+        curve[index].tan_out - p,
+        curve[index + 1].tan_in - p,
+        curve[index + 1].pos - p
+    };
+
+    project_impl(solver, p, index, best);
+}
+
 math::bezier::ProjectResult math::bezier::project(const math::bezier::Bezier& curve, const QPointF& p)
 {
     if ( curve.empty() )
@@ -174,6 +178,21 @@ math::bezier::ProjectResult math::bezier::project(const math::bezier::Bezier& cu
 
     if ( curve.closed() )
         project_impl(curve, p, curve.size() - 1, best);
+
+    return best;
+}
+
+math::bezier::ProjectResult math::bezier::project(const math::bezier::BezierSegment& segment, const QPointF& p)
+{
+    ProjectResult best {0, 0, std::numeric_limits<qreal>::max(), segment[0]};
+    math::bezier::CubicBezierSolver<QPointF> solver{
+        segment[0] - p,
+        segment[1] - p,
+        segment[2] - p,
+        segment[3] - p
+    };
+
+    project_impl(solver, p, 0, best);
 
     return best;
 }

@@ -31,4 +31,6 @@ struct ProjectResult
  */
 ProjectResult project(const Bezier& curve, const QPointF& p);
 
+ProjectResult project(const BezierSegment& segment, const QPointF& p);
+
 } // namespace math
