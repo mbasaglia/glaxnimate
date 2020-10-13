@@ -8,6 +8,7 @@
     * Freehand drawing tool
     * Interactive "add node" with the edit tool
     * Bezier molding, click and drag on a curve to edit it, without using handles
+    * "Dissolve nodes", remove bezier nodes while trying to keep the old shape
 * Bug Fixes:
     * Exporting the document no longer alters the document save state
     * Fixed crash on Lottie export

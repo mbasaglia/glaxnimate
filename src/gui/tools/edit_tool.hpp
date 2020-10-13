@@ -19,6 +19,7 @@ public:
     void selection_delete();
     void selection_straighten();
     void selection_curve();
+    void selection_dissolve();
 
     void add_point_mode();
 

@@ -317,6 +317,76 @@ public:
         );
     }
 
+    void delete_nodes_bezier(graphics::BezierItem* item, bool dissolve)
+    {
+        if ( item->selected_indices().empty() )
+            return;
+
+        const auto& bez = item->bezier();
+        math::bezier::Bezier new_bez;
+        new_bez.set_closed(bez.closed());
+
+        for ( int i = 0; i < bez.size(); i++ )
+            if ( !item->selected_indices().count(i) )
+                new_bez.push_back(bez[i]);
+
+        if ( dissolve && item->selected_indices().size() == 1 )
+        {
+            int index = *item->selected_indices().begin();
+            if ( bez.closed() || (index > 0 && index < bez.size() - 1) )
+            {
+                auto old_point = bez[index];
+                old_point.set_point_type(math::bezier::Smooth);
+                auto segment = new_bez.segment(index-1);
+                qreal d1 = math::length(new_bez[index-1].pos - old_point.pos);
+                qreal d2 = math::length(new_bez[index].pos - old_point.pos);
+                qreal t = d1 / (d1 + d2);
+
+                auto approx = math::bezier::cubic_segment_from_struts(
+                    segment,
+                    {
+                        old_point.pos,
+                        t,
+                        old_point.tan_in,
+                        old_point.tan_out
+                    }
+                );
+
+                new_bez.set_segment(index-1, approx);
+            }
+        }
+
+        item->clear_selected_indices();
+
+        if ( new_bez.size() < 2 && !item->target_property()->animated() )
+        {
+            // At the moment it always is a Path, but it might change in the future (ie: masks)
+            if ( auto path = item->target_object()->cast<model::Path>() )
+            {
+                item->target_object()->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
+                return;
+            }
+        }
+
+        item->target_property()->set_undoable(QVariant::fromValue(new_bez));
+    }
+
+    void delete_nodes(bool dissolve)
+    {
+        if ( selection.empty() )
+            return;
+
+        auto doc = selection.selected.begin()->first->target_object()->document();
+        command::UndoMacroGuard macro(dissolve ? QObject::tr("Dissolve Nodes") : QObject::tr("Delete Nodes"), doc);
+
+        auto selected = std::move(selection.selected);
+        selection.selected = {};
+        for ( const auto& p : selected )
+            delete_nodes_bezier(p.first, dissolve);
+
+        selection.initial = nullptr;
+    }
+
     DragMode drag_mode;
     QPointF rubber_p1;
     QPointF rubber_p2;
@@ -659,41 +729,14 @@ void tools::EditTool::selection_set_vertex_type(math::bezier::PointType t)
 
 void tools::EditTool::selection_delete()
 {
-    if ( d->selection.empty() )
-        return;
-
-    auto doc = d->selection.selected.begin()->first->target_object()->document();
-    command::UndoMacroGuard macro(QObject::tr("Set node type"), doc);
-
-    auto selected = std::move(d->selection.selected);
-    d->selection.selected = {};
-    for ( const auto& p : selected )
-    {
-        const auto& bez = p.first->bezier();
-        math::bezier::Bezier new_bez;
-        new_bez.set_closed(bez.closed());
-
-        for ( int i = 0; i < bez.size(); i++ )
-            if ( !p.first->selected_indices().count(i) )
-                new_bez.push_back(bez[i]);
-
-        p.first->clear_selected_indices();
-
-        if ( new_bez.size() < 2 && !p.first->target_property()->animated() )
-        {
-            // At the moment it always is a Path, but it might change in the future (ie: masks)
-            if ( auto path = p.first->target_object()->cast<model::Path>() )
-            {
-                doc->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
-                continue;
-            }
-        }
-
-        p.first->target_property()->set_undoable(QVariant::fromValue(new_bez));
-    }
-
-    d->selection.initial = nullptr;
+    d->delete_nodes(false);
 }
+
+void tools::EditTool::selection_dissolve()
+{
+    d->delete_nodes(true);
+}
+
 
 void tools::EditTool::selection_straighten()
 {

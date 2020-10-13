@@ -111,7 +111,9 @@
     <addaction name="separator"/>
     <addaction name="action_path_reverse"/>
     <addaction name="separator"/>
+    <addaction name="action_node_dissolve"/>
     <addaction name="action_node_remove"/>
+    <addaction name="action_node_add"/>
     <addaction name="separator"/>
     <addaction name="action_node_join"/>
     <addaction name="action_node_split"/>
@@ -731,6 +733,7 @@
    <addaction name="action_node_type_smooth"/>
    <addaction name="action_node_type_symmetric"/>
    <addaction name="separator"/>
+   <addaction name="action_node_dissolve"/>
    <addaction name="action_node_remove"/>
    <addaction name="action_node_add"/>
    <addaction name="separator"/>
@@ -1061,7 +1064,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="format-add-node">
+    <iconset theme="format-insert-node">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
@@ -1540,6 +1543,17 @@
    </property>
    <property name="text">
     <string>E&amp;xport As...</string>
+   </property>
+  </action>
+  <action name="action_node_dissolve">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="format-node-curve"/>
+   </property>
+   <property name="text">
+    <string>Dissolve Nodes</string>
    </property>
   </action>
  </widget>
