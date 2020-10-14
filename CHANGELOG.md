@@ -10,9 +10,12 @@
     * Bezier molding, click and drag on a curve to edit it, without using handles
     * "Dissolve nodes", remove bezier nodes while trying to keep the old shape
     * Right-clicking on a handle with the select or edit tools will display a context menu for it
+* I/O:
+    * Floats get truncated to 3 digits on compact lottie / tgs output
 * Bug Fixes:
     * Exporting the document no longer alters the document save state
     * Fixed crash on Lottie export
+    * Fixed keyframe Lottie export
 
 ## 0.1.4
 

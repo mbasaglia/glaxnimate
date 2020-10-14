@@ -570,6 +570,15 @@ public:
         }
     }
 
+    QCborValue keyframe_value_from_variant(const QVariant& v)
+    {
+        auto cb = value_from_variant(v);
+        if ( cb.isArray() )
+            return cb;
+
+        return QCborArray{cb};
+    }
+
     QCborMap convert_animated(
         AnimatableBase* prop,
         const TransformFunc& transform_values
@@ -586,7 +595,7 @@ public:
             {
                 auto kf = prop->keyframe(i);
                 QVariant v = transform_values.to_lottie(kf->value(), kf->time());
-                QCborValue kf_value = value_from_variant(v);
+                QCborValue kf_value = keyframe_value_from_variant(v);
                 if ( i != 0 )
                 {
                     jkf["e"_l] = kf_value;
@@ -599,9 +608,16 @@ public:
 
                 if ( i != e - 1 )
                 {
-                    jkf["i"_l] = keyframe_bezier_handle(kf->transition().before_handle());
-                    jkf["o"_l] = keyframe_bezier_handle(kf->transition().after_handle());
-                    jkf["h"_l] = kf->transition().hold() ? 1 : 0;
+                    if ( kf->transition().hold() )
+                    {
+                        jkf["h"_l] =  1;
+                    }
+                    else
+                    {
+                        jkf["h"_l] =  0;
+                        jkf["i"_l] = keyframe_bezier_handle(kf->transition().before_handle());
+                        jkf["o"_l] = keyframe_bezier_handle(kf->transition().after_handle());
+                    }
                 }
             }
             keyframes.push_back(jkf);
