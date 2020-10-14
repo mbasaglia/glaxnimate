@@ -21,8 +21,10 @@ public:
 
     void remove_highlight();
     void show_highlight();
+    bool highlight_visible() const;
 
-    model::Styler* styler();
+    model::Styler* styler() const;
+    model::Gradient* gradient() const;
 
 private:
     void on_use_changed(model::BrushStyle* new_use);
@@ -48,7 +50,7 @@ private:
     std::list<MoveHandle> stops;
 
     model::Styler* styler_;
-    model::Gradient* gradient = nullptr;
+    model::Gradient* gradient_ = nullptr;
 };
 
 } // namespace graphics

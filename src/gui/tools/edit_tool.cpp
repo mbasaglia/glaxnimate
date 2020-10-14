@@ -3,6 +3,8 @@
 #include <QMenu>
 #include <QPointer>
 
+#include <QtColorWidgets/ColorDialog>
+
 #include "app/application.hpp"
 
 #include "math/bezier/operations.hpp"
@@ -11,6 +13,7 @@
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/undo_macro_guard.hpp"
+#include "utils/sort_gradient.hpp"
 
 #include "graphics/bezier_item.hpp"
 #include "graphics/item_data.hpp"
@@ -269,6 +272,75 @@ public:
         }
     }
 
+    static void gradient_menu(QMenu& menu, graphics::MoveHandle* handle, QWidget* dialog_parent)
+    {
+        auto item = static_cast<graphics::GradientEditor*>(handle->parentItem());
+        int index = handle->data(graphics::GradientStopIndex).toInt();
+
+        if ( !item->styler() || !item->gradient() )
+            return;
+
+        auto gradient = item->gradient();
+        auto gradient_colors = item->gradient()->colors.get();
+        auto doc = gradient->document();
+
+        QMenu* use_menu = new QMenu(tr("Gradient Colors"), &menu);
+        use_menu->setIcon(QIcon::fromTheme("color-gradient"));
+
+        for ( const auto& colors : doc->defs()->gradient_colors )
+        {
+            use_menu->addAction(
+                colors->reftarget_icon(),
+                colors->name.get()
+            )->setData(QVariant::fromValue(colors.get()));
+        }
+
+        connect(use_menu, &QMenu::triggered, gradient, [gradient](QAction* act){
+            gradient->colors.set_undoable(act->data());
+        });
+
+        menu.addAction(use_menu->menuAction());
+
+        menu.addAction(QIcon::fromTheme("color-management"), tr("Stop Color..."), gradient_colors, [gradient_colors, index, dialog_parent]{
+            color_widgets::ColorDialog dialog(dialog_parent);
+            auto colors = gradient_colors->colors.get();
+            dialog.setColor(colors[index].second);
+            if ( dialog.exec() != QDialog::Accepted )
+                return;
+
+            colors[index].second = dialog.color();
+            gradient_colors->colors.set_undoable(QVariant::fromValue(colors));
+        });
+
+
+        menu.addAction(QIcon::fromTheme("list-add"), tr("Add Stop"), gradient_colors, [gradient_colors, index]{
+            auto colors = gradient_colors->colors.get();
+            int before = index;
+            int after = index+1;
+
+            if ( index >= colors.size() )
+            {
+                before = colors.size() - 2;
+                after = colors.size() - 1;
+            }
+
+            colors.push_back({
+                (colors[before].first + colors[after].first) / 2,
+                math::lerp(colors[before].second, colors[after].second, 0.5)
+            });
+
+            utils::sort_gradient(colors);
+            gradient_colors->colors.set_undoable(QVariant::fromValue(colors));
+        });
+
+        menu.addAction(QIcon::fromTheme("list-remove"), tr("Remove Stop"), gradient_colors, [gradient_colors, index]{
+            auto colors = gradient_colors->colors.get();
+            colors.erase(colors.begin() + index);
+            gradient_colors->colors.set_undoable(QVariant::fromValue(colors));
+        });
+
+    }
+
     static void context_menu(EditTool* thus, const MouseEvent& event)
     {
         auto handle = thus->under_mouse(event, true, SelectionMode::Shape).handle;
@@ -280,6 +352,8 @@ public:
         auto role = handle->role();
         if ( role == graphics::MoveHandle::Vertex || role == graphics::MoveHandle::Tangent )
             vertex_menu(menu, static_cast<graphics::PointItem*>(handle->parentItem()), role, handle);
+        else if ( role == graphics::MoveHandle::GradientStop )
+            gradient_menu(menu, handle, event.window);
 
         add_property_menu_actions(thus, &menu, handle);
 
