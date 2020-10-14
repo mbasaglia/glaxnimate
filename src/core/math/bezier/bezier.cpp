@@ -125,8 +125,8 @@ math::bezier::BezierSegment math::bezier::Bezier::segment(int index) const
     return {
         points_[index].pos,
         points_[index].tan_out,
-        points_[index+1].tan_in,
-        points_[index+1].pos
+        points_[(index+1) % points_.size()].tan_in,
+        points_[(index+1) % points_.size()].pos
     };
 }
 
@@ -134,8 +134,8 @@ void math::bezier::Bezier::set_segment(int index, const math::bezier::BezierSegm
 {
     points_[index].pos = s[0];
     points_[index].drag_tan_out(s[1]);
-    points_[index+1].pos = s[3];
-    points_[index+1].drag_tan_in(s[2]);
+    points_[(index+1) % points_.size()].pos = s[3];
+    points_[(index+1) % points_.size()].drag_tan_in(s[2]);
 }
 
 math::bezier::Bezier math::bezier::Bezier::transformed(const QTransform& t) const
