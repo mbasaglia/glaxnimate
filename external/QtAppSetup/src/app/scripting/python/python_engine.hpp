@@ -40,14 +40,10 @@ public:
     QString slug() const override { return "python"; }
     QString label() const override { return "Python"; }
 
-    ScriptContext create_context() const override
-    {
-        return std::make_unique<PythonContext>(this);
-    }
+    ScriptContext create_context() const override;
 
 private:
     static Autoregister<PythonEngine> autoreg;
 };
 
 } // namespace app::scripting::python
-

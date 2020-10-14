@@ -62,6 +62,9 @@ void GlaxnimateWindow::Private::create_script_context()
     {
         auto ctx = engine->create_context();
 
+        if ( !ctx )
+            continue;
+
         connect(ctx.get(), &app::scripting::ScriptExecutionContext::stdout_line, [this](const QString& s){ console_stdout(s);});
         connect(ctx.get(), &app::scripting::ScriptExecutionContext::stderr_line, [this](const QString& s){ console_stderr(s);});
 

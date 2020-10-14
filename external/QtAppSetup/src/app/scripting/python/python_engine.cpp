@@ -1,5 +1,6 @@
-#include "python_engine.hpp"
+#include <QtGlobal>
 
+#include "python_engine.hpp"
 
 #include "app/scripting/python/register_machinery.hpp"
 #include "app/log/log.hpp"
@@ -212,3 +213,63 @@ const app::scripting::ScriptEngine * app::scripting::python::PythonContext::engi
 {
     return d->engine;
 }
+
+#ifdef Q_OS_WIN
+#include <QProcess>
+#include <stdlib.h>
+
+static bool python_setup_env()
+{
+    static int already_done = -1;
+    if ( already_done > 0 )
+        return already_done;
+
+    QString pyhome = getenv("PYTHONHOME");
+    if ( !pyhome.isEmpty() )
+    {
+        app::log::Log("Python").stream(app::log::Info) << "Using PYTHONHOME from the environment:" << pyhome;
+        return already_done = 1;
+    }
+
+    QProcess process;
+    process.start("python", {}, QProcess::ReadWrite);
+    if ( !process.waitForStarted() )
+    {
+        app::log::Log("Python").log("No system interpreter", app::log::Error);
+        return already_done = 0;
+    }
+
+    process.write("import sys; print(sys.exec_prefix)\n");
+    process.closeWriteChannel();
+
+    if ( !process.waitForFinished() )
+    {
+        app::log::Log("Python").log("Broken system interpreter", app::log::Error);
+        return already_done = 0;
+    }
+
+    if ( process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0 )
+    {
+        app::log::Log("Python").log("Could not invoke system interpreter", app::log::Error);
+        return already_done = 0;
+    }
+
+    pyhome = process.readAllStandardOutput().trimmed();
+    app::log::Log("Python").stream(app::log::Info) << "Using PYTHONHOME:" << pyhome;
+    putenv(("PYTHONHOME=" + pyhome).toStdString().c_str());
+    return already_done = 1;
+}
+
+app::scripting::ScriptContext app::scripting::python::PythonEngine::create_context() const
+{
+    if ( !python_setup_env() )
+        app::log::Log("Python").log("Could not determine PYTHONHOME, please set it in your environment", app::log::Error);
+
+    return std::make_unique<PythonContext>(this);
+}
+#else
+app::scripting::ScriptContext app::scripting::python::PythonEngine::create_context() const
+{
+    return std::make_unique<PythonContext>(this);
+}
+#endif
