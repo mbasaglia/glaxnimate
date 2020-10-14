@@ -1,11 +1,17 @@
 #pragma once
 #include "base.hpp"
-#include"math/bezier/point.hpp"
+#include "math/bezier/point.hpp"
+
+namespace model {
+class Styler;
+} // namespace model
 
 namespace tools {
 
 class EditTool : public Tool
 {
+    Q_OBJECT
+
 public:
     EditTool();
     ~EditTool();
@@ -19,6 +25,9 @@ public:
     void selection_delete();
     void selection_straighten();
     void selection_curve();
+    void selection_dissolve();
+
+    void add_point_mode();
 
 private:
     void mouse_press(const MouseEvent& event) override;
@@ -38,6 +47,13 @@ private:
     void disable_event(const Event&) override;
 
     QWidget* on_create_widget() override;
+
+    void set_cursor(Qt::CursorShape shape);
+
+    void exit_add_point_mode();
+
+signals:
+    void gradient_stop_changed(model::Styler* styler, int stop);
 
 private:
     class Private;

@@ -73,42 +73,6 @@ public:
         emitter(object(), value_);
     }
 
-    void add_point(int index, qreal factor)
-    {
-        value_.split_segment(index, factor);
-        for ( auto& keyframe : keyframes_ )
-            keyframe->value_.split_segment(index, factor);
-        value_changed();
-        emitter(object(), value_);
-    }
-
-    void remove_point(int index)
-    {
-        value_.remove_point(index);
-        for ( auto& keyframe : keyframes_ )
-            keyframe->value_.remove_point(index);
-        value_changed();
-        emitter(object(), value_);
-    }
-
-    void move_point(int index, const QPointF& pos)
-    {
-        value_.points()[index].pos = pos;
-        value_changed();
-    }
-
-    void move_tan_in(int index, const QPointF& tan_in)
-    {
-        value_.points()[index].tan_in = tan_in;
-        value_changed();
-    }
-
-    void move_tan_out(int index, const QPointF& tan_out)
-    {
-        value_.points()[index].tan_out = tan_out;
-        value_changed();
-    }
-
 private:
     math::bezier::Bezier value_;
 };

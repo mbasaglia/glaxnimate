@@ -9,19 +9,22 @@
 #include "utils/sort_gradient.hpp"
 
 graphics::GradientEditor::GradientEditor(model::Styler* styler)
-    : styler(styler)
+    : styler_(styler)
 {
     start.setVisible(false);
     finish.setVisible(false);
     highlight.setVisible(false);
 
-    start.set_role(MoveHandle::GradientRange);
-    finish.set_role(MoveHandle::GradientRange);
+    start.set_role(MoveHandle::GradientStop);
+    finish.set_role(MoveHandle::GradientStop);
     highlight.set_role(MoveHandle::GradientHighlight);
 
-    on_use_changed(styler->use.get());
+    start.setData(graphics::GradientStopIndex, 0);
+    finish.setData(graphics::GradientStopIndex, 0);
 
-    connect(styler, &model::Styler::use_changed, this, &GradientEditor::on_use_changed);
+    on_use_changed(styler_->use.get());
+
+    connect(styler_, &model::Styler::use_changed, this, &GradientEditor::on_use_changed);
 
     connect(&start,     &MoveHandle::dragged,       this, &GradientEditor::start_dragged);
     connect(&start,     &MoveHandle::drag_finished, this, &GradientEditor::start_committed);
@@ -62,9 +65,18 @@ void graphics::GradientEditor::on_use_changed(model::BrushStyle* new_use)
         start.setVisible(false);
         finish.setVisible(false);
         highlight.setVisible(false);
+
+        start.clear_associated_properties();
+        finish.clear_associated_properties();
+        highlight.clear_associated_properties();
         update();
         return;
     }
+
+
+    start.set_associated_property(&gradient->start_point);
+    finish.set_associated_property(&gradient->end_point);
+    highlight.set_associated_property(&gradient->highlight);
 
     connect(gradient, &model::Gradient::style_changed, this, &GradientEditor::update_stops_from_gradient);
 
@@ -104,7 +116,7 @@ void graphics::GradientEditor::start_dragged(QPointF p, Qt::KeyboardModifiers mo
     if ( !highlight.isVisible() )
         cmd->push_property(&gradient->highlight, p);
 
-    styler->push_command(cmd);
+    styler_->push_command(cmd);
 
     update_stop_pos();
     update();
@@ -122,7 +134,7 @@ void graphics::GradientEditor::start_committed()
     if ( !highlight.isVisible() )
         cmd->push_property(&gradient->highlight, gradient->start_point.value());
 
-    styler->push_command(cmd);
+    styler_->push_command(cmd);
 }
 
 void graphics::GradientEditor::finish_dragged(QPointF p, Qt::KeyboardModifiers mods)
@@ -137,7 +149,7 @@ void graphics::GradientEditor::finish_dragged(QPointF p, Qt::KeyboardModifiers m
     }
 
 
-    styler->push_command(
+    styler_->push_command(
         new command::SetMultipleAnimated(&gradient->end_point, p, false)
     );
 
@@ -150,7 +162,7 @@ void graphics::GradientEditor::finish_committed()
     if ( !gradient )
         return;
 
-    styler->push_command(
+    styler_->push_command(
         new command::SetMultipleAnimated(&gradient->end_point, gradient->end_point.value(), true)
     );
 }
@@ -161,7 +173,7 @@ void graphics::GradientEditor::highlight_dragged(const QPointF& p)
     if ( !gradient )
         return;
 
-    styler->push_command(
+    styler_->push_command(
         new command::SetMultipleAnimated(&gradient->highlight, p, false)
     );
 }
@@ -171,7 +183,7 @@ void graphics::GradientEditor::highlight_committed()
     if ( !gradient )
         return;
 
-    styler->push_command(
+    styler_->push_command(
         new command::SetMultipleAnimated(&gradient->highlight, gradient->highlight.value(), true)
     );
 }
@@ -223,6 +235,10 @@ void graphics::GradientEditor::update_stops()
     QPointF start = gradient->start_point.get();
     QPointF end = gradient->end_point.get();
 
+    this->start.setPos(start);
+    finish.setPos(end);
+    highlight.setPos(gradient->highlight.get());
+
     int i = 0;
     for ( const auto& stop : gradient->colors->colors.get() )
     {
@@ -231,15 +247,23 @@ void graphics::GradientEditor::update_stops()
         stops.back().setData(graphics::GradientStopIndex, i++);
         stops.back().setPos(math::lerp(start, end, stop.first));
         stops.back().setZValue(-10);
+        stops.back().set_associated_property(&gradient->colors->colors);
         connect(&stops.back(), &MoveHandle::dragged, this, &GradientEditor::stop_dragged);
         connect(&stops.back(), &MoveHandle::drag_finished, this, &GradientEditor::stop_committed);
     }
+    finish.setData(graphics::GradientStopIndex, gradient->colors->colors.get().size() - 1);
+
+    update();
 }
 
 void graphics::GradientEditor::update_stop_pos()
 {
     QPointF start = gradient->start_point.get();
     QPointF end = gradient->end_point.get();
+
+    this->start.setPos(start);
+    finish.setPos(end);
+    highlight.setPos(gradient->highlight.get());
 
     const auto& colors = gradient->colors->colors.get();
     int i = 0;
@@ -248,6 +272,7 @@ void graphics::GradientEditor::update_stop_pos()
         handle.setPos(math::lerp(start, end, colors[i++].first));
     }
 
+    update();
 }
 
 void graphics::GradientEditor::stop_dragged()
@@ -337,4 +362,9 @@ void graphics::GradientEditor::update_stops_from_gradient()
         update_stops();
     else
         update_stop_pos();
+}
+
+model::Styler * graphics::GradientEditor::styler()
+{
+    return styler_;
 }

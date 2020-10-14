@@ -30,6 +30,9 @@ public:
         connect(&handle_br, &MoveHandle::drag_finished, this, &SizePosItem::on_commit);
         connect(size->object(), &model::Object::property_changed, this, &SizePosItem::on_prop_changed);
         reset_rect();
+
+        handle_tl.set_associated_properties({size, pos});
+        handle_br.set_associated_properties({size, pos});
     }
 
     QRectF boundingRect() const override

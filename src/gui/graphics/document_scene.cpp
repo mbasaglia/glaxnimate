@@ -447,3 +447,12 @@ bool graphics::DocumentScene::has_editors(model::DocumentNode* node) const
 {
     return d->node_to_editors.find(node) != d->node_to_editors.end();
 }
+
+graphics::GraphicsEditor * graphics::DocumentScene::get_editor(model::DocumentNode* node) const
+{
+    auto it = d->node_to_editors.find(node);
+    if ( it == d->node_to_editors.end() )
+        return nullptr;
+
+    return it->second.get();
+}

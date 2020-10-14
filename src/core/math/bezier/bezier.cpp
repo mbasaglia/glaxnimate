@@ -25,7 +25,7 @@ QRectF math::bezier::Bezier::bounding_box() const
 
 void math::bezier::Bezier::split_segment(int index, qreal factor)
 {
-    if ( index <= 0 )
+    if ( index < 0 )
     {
         points_.insert(points_.begin(), points_[0]);
         return;
@@ -36,15 +36,45 @@ void math::bezier::Bezier::split_segment(int index, qreal factor)
         return;
     }
 
-    auto split_points = solver_for_point(index-1).split(factor);
-    points_[index-1].tan_out = split_points.first[1];
-    points_[index].tan_in = split_points.second[2];
-    points_.insert(points_.begin() + index, Point(
+    auto split_points = solver_for_point(index).split(factor);
+    points_[index].tan_out = split_points.first[1];
+    points_[(index+1) % size()].tan_in = split_points.second[2];
+
+    auto type = Smooth;
+    if ( factor <= 0 )
+        type = points_[index].type;
+    else if ( factor >= 1 )
+        type = points_[(index+1) % size()].type;
+
+    points_.insert(points_.begin() + index + 1, Point(
         split_points.first[3],
         split_points.first[2],
-        split_points.second[1]
+        split_points.second[1],
+        type
     ));
 }
+
+math::bezier::Point math::bezier::Bezier::split_segment_point(int index, qreal factor) const
+{
+    if ( index < 0 )
+        return points_[0];
+    else if ( index >= size() )
+        return points_.back();
+
+    if ( factor <= 0 )
+        return points_[index];
+    else if ( factor >= 1 )
+        return points_[(index+1) % size()];
+
+    auto split_points = solver_for_point(index).split(factor);
+    return Point(
+        split_points.first[3],
+        split_points.first[2],
+        split_points.second[1],
+        Smooth
+    );
+}
+
 
 
 void math::bezier::Bezier::add_to_painter_path(QPainterPath& out) const
@@ -89,6 +119,39 @@ math::bezier::Bezier math::bezier::Bezier::lerp(const math::bezier::Bezier& othe
         ));
     return lerped;
 }
+
+math::bezier::BezierSegment math::bezier::Bezier::segment(int index) const
+{
+    return {
+        points_[index].pos,
+        points_[index].tan_out,
+        points_[(index+1) % points_.size()].tan_in,
+        points_[(index+1) % points_.size()].pos
+    };
+}
+
+void math::bezier::Bezier::set_segment(int index, const math::bezier::BezierSegment& s)
+{
+    points_[index].pos = s[0];
+    points_[index].drag_tan_out(s[1]);
+    points_[(index+1) % points_.size()].pos = s[3];
+    points_[(index+1) % points_.size()].drag_tan_in(s[2]);
+}
+
+math::bezier::Bezier math::bezier::Bezier::transformed(const QTransform& t) const
+{
+    auto copy = *this;
+    copy.transform(t);
+    return copy;
+}
+
+void math::bezier::Bezier::transform(const QTransform& t)
+{
+    for ( auto& p : points_ )
+        p.transform(t);
+}
+
+
 
 
 QRectF math::bezier::MultiBezier::bounding_box() const

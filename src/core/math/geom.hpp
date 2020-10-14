@@ -12,16 +12,11 @@ namespace math {
  * \param p      Point to find the closest of
  * \returns The point on the line that is closest to \p p
  */
-inline QPointF line_closest_point(const QPointF& line_a, const QPointF& line_b, const QPointF& p)
-{
-    QPointF a_to_p = p - line_a;
-    QPointF a_to_b = line_b - line_a;
+QPointF line_closest_point(const QPointF& line_a, const QPointF& line_b, const QPointF& p);
 
-    qreal atb2 = length_squared(a_to_b);
-    qreal atp_dot_atb = QPointF::dotProduct(a_to_p, a_to_b);
-    qreal t = atp_dot_atb / atb2;
-
-    return line_a + a_to_b * t;
-}
+/**
+ * \brief Gets the center of the circle passing through 3 points
+ */
+QPointF circle_center(const QPointF& p1, const QPointF& p2, const QPointF& p3);
 
 } // namespace math

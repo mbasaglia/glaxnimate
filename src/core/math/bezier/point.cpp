@@ -22,3 +22,9 @@ void math::bezier::Point::adjust_handles_from_type()
     }
 }
 
+void math::bezier::Point::transform(const QTransform& t)
+{
+    pos = t.map(pos);
+    tan_in = t.map(tan_in);
+    tan_out = t.map(tan_out);
+}

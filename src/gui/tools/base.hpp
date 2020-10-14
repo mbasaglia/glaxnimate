@@ -79,9 +79,9 @@ struct KeyEvent : public Event
 
 using Priority = int;
 
-class Tool
+class Tool : public QObject
 {
-    Q_GADGET
+    Q_OBJECT
 
 public:
     using SelectionMode = graphics::DocumentNodeGraphicsItem::SelectionMode;
@@ -184,6 +184,9 @@ protected:
     static constexpr Priority max_priority = std::numeric_limits<Priority>::min();
 
     void edit_clicked(const MouseEvent& event);
+
+signals:
+    void cursor_changed(const QCursor&);
 
 private:
     QAction* action = nullptr;

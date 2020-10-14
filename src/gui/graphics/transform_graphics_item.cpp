@@ -28,9 +28,22 @@ public:
 
     struct Handle
     {
+        using Getter = QPointF (Private::*)()const;
+        using Signal = void (TransformGraphicsItem::*)(const QPointF&, Qt::KeyboardModifiers);
+
         MoveHandle* handle;
-        QPointF (Private::* get_p)()const;
-        void (TransformGraphicsItem::* signal)(const QPointF&, Qt::KeyboardModifiers);
+        Getter get_p;
+        Signal signal;
+
+        Handle(
+            MoveHandle* handle,
+            Getter get_p,
+            Signal signal,
+            const std::vector<model::AnimatableBase*>& props
+        ) : handle(handle), get_p(get_p), signal(signal)
+        {
+            handle->set_associated_properties(props);
+        }
     };
 
     model::Transform* transform;
@@ -76,52 +89,62 @@ public:
             Handle{
                 new MoveHandle(parent, MoveHandle::DiagonalDown, MoveHandle::Square, 6, true),
                 &TransformGraphicsItem::Private::get_tl,
-                &TransformGraphicsItem::drag_tl
+                &TransformGraphicsItem::drag_tl,
+                {&transform->position, &transform->scale}
             },
             Handle{
                 new MoveHandle(parent, MoveHandle::DiagonalUp, MoveHandle::Square, 6, true),
                 &TransformGraphicsItem::Private::get_tr,
-                &TransformGraphicsItem::drag_tr
+                &TransformGraphicsItem::drag_tr,
+                {&transform->position, &transform->scale}
             },
             Handle{
                 new MoveHandle(parent, MoveHandle::DiagonalDown, MoveHandle::Square, 6, true),
                 &TransformGraphicsItem::Private::get_br,
-                &TransformGraphicsItem::drag_br
+                &TransformGraphicsItem::drag_br,
+                {&transform->position, &transform->scale}
             },
             Handle{
                 new MoveHandle(parent, MoveHandle::DiagonalUp, MoveHandle::Square, 6, true),
                 &TransformGraphicsItem::Private::get_bl,
-                &TransformGraphicsItem::drag_bl
+                &TransformGraphicsItem::drag_bl,
+                {&transform->position, &transform->scale}
             },
             Handle{
                 new MoveHandle(parent, MoveHandle::Vertical, MoveHandle::Diamond, 8, true),
                 &TransformGraphicsItem::Private::get_t,
-                &TransformGraphicsItem::drag_t
+                &TransformGraphicsItem::drag_t,
+                {&transform->position, &transform->scale}
             },
             Handle{
                 new MoveHandle(parent, MoveHandle::Vertical, MoveHandle::Diamond, 8, true),
                 &TransformGraphicsItem::Private::get_b,
-                &TransformGraphicsItem::drag_b
+                &TransformGraphicsItem::drag_b,
+                {&transform->position, &transform->scale}
             },
             Handle{
                 new MoveHandle(parent, MoveHandle::Horizontal, MoveHandle::Diamond, 8, true),
                 &TransformGraphicsItem::Private::get_l,
-                &TransformGraphicsItem::drag_l
+                &TransformGraphicsItem::drag_l,
+                {&transform->position, &transform->scale}
             },
             Handle{
                 new MoveHandle(parent, MoveHandle::Horizontal, MoveHandle::Diamond, 8, true),
                 &TransformGraphicsItem::Private::get_r,
-                &TransformGraphicsItem::drag_r
+                &TransformGraphicsItem::drag_r,
+                {&transform->position, &transform->scale}
             },
             Handle{
                 new MoveHandle(parent, MoveHandle::Any, MoveHandle::Saltire, 12, true),
                 &TransformGraphicsItem::Private::get_a,
-                &TransformGraphicsItem::drag_a
+                &TransformGraphicsItem::drag_a,
+                {&transform->anchor_point}
             },
             Handle{
                 new MoveHandle(parent, MoveHandle::Rotate, MoveHandle::Circle, 6, true),
                 &TransformGraphicsItem::Private::get_rot,
-                &TransformGraphicsItem::drag_rot
+                &TransformGraphicsItem::drag_rot,
+                {&transform->rotation}
             },
         }
     {

@@ -6,7 +6,8 @@ enum ItemData
 {
     NodePointer,
     HandleRole,
-    GradientStopIndex
+    GradientStopIndex,
+    AssociatedProperty
 };
 
 } // namespace graphics

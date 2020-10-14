@@ -55,4 +55,6 @@ template <typename T>
 constexpr  inline const T &bound(const T &vmin, const T &val, const T &vmax) noexcept
 { return max(vmin, min(vmax, val)); }
 
+template<class T> constexpr inline T abs(T t) noexcept { return t < 0 ? -t : t; }
+
 } // namespace math

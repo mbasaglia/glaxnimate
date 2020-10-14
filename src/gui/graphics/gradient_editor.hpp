@@ -22,6 +22,8 @@ public:
     void remove_highlight();
     void show_highlight();
 
+    model::Styler* styler();
+
 private:
     void on_use_changed(model::BrushStyle* new_use);
 
@@ -45,7 +47,7 @@ private:
     MoveHandle highlight{this, MoveHandle::Any, MoveHandle::Saltire, 8};
     std::list<MoveHandle> stops;
 
-    model::Styler* styler;
+    model::Styler* styler_;
     model::Gradient* gradient = nullptr;
 };
 

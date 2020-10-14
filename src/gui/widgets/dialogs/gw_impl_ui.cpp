@@ -130,6 +130,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         ui.action_node_type_symmetric,
         ui.action_segment_lines,
         ui.action_segment_curve,
+        ui.action_node_add,
+        ui.action_node_dissolve,
     };
     tools::EditTool* edit_tool = static_cast<tools::EditTool*>(tools::Registry::instance().tool("edit"));
     connect(ui.action_node_type_corner, &QAction::triggered, parent, [this, edit_tool]{
@@ -150,6 +152,14 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_segment_curve, &QAction::triggered, parent, [this, edit_tool]{
         edit_tool->selection_curve();
     });
+    connect(ui.action_node_add, &QAction::triggered, parent, [this, edit_tool]{
+        edit_tool->add_point_mode();
+    });
+    connect(ui.action_node_dissolve, &QAction::triggered, parent, [this, edit_tool]{
+        edit_tool->selection_dissolve();
+    });
+    connect(edit_tool, &tools::EditTool::gradient_stop_changed, ui.fill_style_widget, &FillStyleWidget::set_gradient_stop);
+    connect(edit_tool, &tools::EditTool::gradient_stop_changed, ui.stroke_style_widget, &StrokeStyleWidget::set_gradient_stop);
 
 
     // Item views
