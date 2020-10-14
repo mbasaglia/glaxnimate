@@ -5,7 +5,6 @@
 #include "command/animation_commands.hpp"
 #include "handle.hpp"
 
-#include <QDebug>
 namespace graphics {
 
 class RectRounder : public QGraphicsObject
@@ -19,6 +18,7 @@ public:
         connect(&handle, &MoveHandle::dragged, this, &RectRounder::on_drag);
         connect(&handle, &MoveHandle::drag_finished, this, &RectRounder::on_commit);
         connect(target, &model::Rect::property_changed, this, &RectRounder::on_prop_changed);
+        handle.set_associated_property(&target->rounded);
     }
 
     QRectF boundingRect() const override { return {}; }

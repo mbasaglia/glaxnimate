@@ -25,6 +25,9 @@ public:
         connect(&handle_inner, &MoveHandle::dragged, this, &StarRadiusItem::on_drag_inner);
         connect(&handle_inner, &MoveHandle::drag_finished, this, &StarRadiusItem::on_commit_inner);
         connect(shape, &model::Object::property_changed, this, &StarRadiusItem::on_prop_changed);
+
+        handle_inner.set_associated_property(&shape->inner_radius);
+        handle_outer.set_associated_property(&shape->outer_radius);
     }
 
     QRectF boundingRect() const override

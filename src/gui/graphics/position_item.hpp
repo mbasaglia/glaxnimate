@@ -17,6 +17,7 @@ public:
         connect(&handle, &MoveHandle::dragged, this, &PositionItem::on_drag);
         connect(&handle, &MoveHandle::drag_finished, this, &PositionItem::on_commit);
         connect(target->object(), &model::Object::property_changed, this, &PositionItem::on_prop_changed);
+        handle.set_associated_property(target);
     }
 
     QRectF boundingRect() const override { return {}; }

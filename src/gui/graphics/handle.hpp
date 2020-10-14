@@ -1,7 +1,17 @@
 #pragma once
 
 #include <memory>
+#include <vector>
+
 #include <QGraphicsObject>
+
+#include "item_data.hpp"
+
+namespace model {
+
+class AnimatableBase;
+
+} // namespace model
 
 namespace graphics {
 
@@ -61,6 +71,10 @@ public:
 
     HandleRole role() const;
     void set_role(HandleRole role);
+
+    void set_associated_properties(std::vector<model::AnimatableBase*> props);
+    void set_associated_property(model::AnimatableBase* prop);
+    void clear_associated_properties();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * event) override;

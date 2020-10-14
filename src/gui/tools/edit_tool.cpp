@@ -3,6 +3,8 @@
 #include <QMenu>
 #include <QPointer>
 
+#include "app/application.hpp"
+
 #include "math/bezier/operations.hpp"
 #include "math/bezier/cubic_struts.hpp"
 #include "model/shapes/shape.hpp"
@@ -14,7 +16,7 @@
 #include "graphics/item_data.hpp"
 #include "graphics/graphics_editor.hpp"
 #include "graphics/gradient_editor.hpp"
-
+#include "handle_menu.hpp"
 
 tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
 
@@ -236,26 +238,15 @@ public:
             action->setChecked(true);
     }
 
-    static void context_menu(EditTool*thus, const MouseEvent& event)
+    static void vertex_menu(QMenu& menu, graphics::PointItem* item, int role, graphics::MoveHandle* handle)
     {
-        auto handle = thus->under_mouse(event, true, SelectionMode::Shape).handle;
-        if ( !handle )
-            return;
-
-        auto role = handle->role();
-        if ( role != graphics::MoveHandle::Vertex && role != graphics::MoveHandle::Tangent )
-            return;
-
-        auto item = static_cast<graphics::PointItem*>(handle->parentItem());
-
-        QMenu menu;
-        QActionGroup grp(&menu);
+        auto grp = new QActionGroup(&menu);
 
         menu.addSection(QObject::tr("Node"));
 
-        node_type_action(&menu, &grp, item, math::bezier::PointType::Corner);
-        node_type_action(&menu, &grp, item, math::bezier::PointType::Smooth);
-        node_type_action(&menu, &grp, item, math::bezier::PointType::Symmetrical);
+        node_type_action(&menu, grp, item, math::bezier::PointType::Corner);
+        node_type_action(&menu, grp, item, math::bezier::PointType::Smooth);
+        node_type_action(&menu, grp, item, math::bezier::PointType::Symmetrical);
 
         menu.addSeparator();
 
@@ -276,8 +267,25 @@ public:
                 item->remove_tangent(handle);
             });
         }
+    }
 
-        menu.exec(QCursor::pos());
+    static void context_menu(EditTool* thus, const MouseEvent& event)
+    {
+        auto handle = thus->under_mouse(event, true, SelectionMode::Shape).handle;
+        if ( !handle )
+            return;
+
+        QMenu menu;
+
+        auto role = handle->role();
+        if ( role == graphics::MoveHandle::Vertex || role == graphics::MoveHandle::Tangent )
+            vertex_menu(menu, static_cast<graphics::PointItem*>(handle->parentItem()), role, handle);
+
+        add_property_menu_actions(thus, &menu, handle);
+
+        if ( !menu.actions().empty() )
+            menu.exec(QCursor::pos());
+
     }
 
     void mold_bezier(const QPointF& scene_pos, bool commit)

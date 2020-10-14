@@ -65,9 +65,18 @@ void graphics::GradientEditor::on_use_changed(model::BrushStyle* new_use)
         start.setVisible(false);
         finish.setVisible(false);
         highlight.setVisible(false);
+
+        start.clear_associated_properties();
+        finish.clear_associated_properties();
+        highlight.clear_associated_properties();
         update();
         return;
     }
+
+
+    start.set_associated_property(&gradient->start_point);
+    finish.set_associated_property(&gradient->end_point);
+    highlight.set_associated_property(&gradient->highlight);
 
     connect(gradient, &model::Gradient::style_changed, this, &GradientEditor::update_stops_from_gradient);
 
@@ -226,6 +235,10 @@ void graphics::GradientEditor::update_stops()
     QPointF start = gradient->start_point.get();
     QPointF end = gradient->end_point.get();
 
+    this->start.setPos(start);
+    finish.setPos(end);
+    highlight.setPos(gradient->highlight.get());
+
     int i = 0;
     for ( const auto& stop : gradient->colors->colors.get() )
     {
@@ -234,16 +247,23 @@ void graphics::GradientEditor::update_stops()
         stops.back().setData(graphics::GradientStopIndex, i++);
         stops.back().setPos(math::lerp(start, end, stop.first));
         stops.back().setZValue(-10);
+        stops.back().set_associated_property(&gradient->colors->colors);
         connect(&stops.back(), &MoveHandle::dragged, this, &GradientEditor::stop_dragged);
         connect(&stops.back(), &MoveHandle::drag_finished, this, &GradientEditor::stop_committed);
     }
     finish.setData(graphics::GradientStopIndex, gradient->colors->colors.get().size() - 1);
+
+    update();
 }
 
 void graphics::GradientEditor::update_stop_pos()
 {
     QPointF start = gradient->start_point.get();
     QPointF end = gradient->end_point.get();
+
+    this->start.setPos(start);
+    finish.setPos(end);
+    highlight.setPos(gradient->highlight.get());
 
     const auto& colors = gradient->colors->colors.get();
     int i = 0;
@@ -252,6 +272,7 @@ void graphics::GradientEditor::update_stop_pos()
         handle.setPos(math::lerp(start, end, colors[i++].first));
     }
 
+    update();
 }
 
 void graphics::GradientEditor::stop_dragged()

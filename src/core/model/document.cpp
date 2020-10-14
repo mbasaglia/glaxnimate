@@ -113,6 +113,7 @@ void model::Document::set_current_time(model::FrameTime t)
     if ( t >= 0 && t <= d->main.animation->last_frame.get() )
     {
         d->main.set_time(t);
+        d->defs.set_time(t);
         emit current_time_changed(d->current_time = t);
     }
 }

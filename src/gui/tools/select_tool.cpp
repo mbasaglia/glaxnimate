@@ -9,6 +9,7 @@
 #include "command/structure_commands.hpp"
 
 #include "widgets/node_menu.hpp"
+#include "handle_menu.hpp"
 
 namespace tools {
 
@@ -322,7 +323,7 @@ private:
 
     void context_menu(const MouseEvent& event)
     {
-        auto items = event.scene->nodes(event.scene_pos, event.view->viewportTransform());
+        auto targets = under_mouse(event, true, graphics::DocumentNodeGraphicsItem::None);
 
         QMenu menu;
         auto undo_stack = &event.window->document()->undo_stack();
@@ -366,7 +367,7 @@ private:
 
         model::DocumentNode* preferred = event.window->current_shape();
 
-        for ( auto item : items )
+        for ( auto item : targets.nodes )
         {
             auto obj_menu = new NodeMenu(item->node(), event.window, &menu);
             if ( item->node() == preferred )
@@ -379,6 +380,10 @@ private:
 
         if ( preferred )
             menu.addAction((new NodeMenu(preferred, event.window, &menu))->menuAction());
+
+        if ( targets.handle )
+            add_property_menu_actions(this, &menu, targets.handle);
+
 
         menu.exec(QCursor::pos());
     }

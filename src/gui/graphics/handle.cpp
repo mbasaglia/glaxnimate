@@ -4,7 +4,7 @@
 #include <QCursor>
 #include <QGraphicsSceneMouseEvent>
 
-#include "graphics/item_data.hpp"
+#include "model/animation/animatable.hpp"
 
 class graphics::MoveHandle::Private
 {
@@ -196,4 +196,23 @@ graphics::MoveHandle::HandleRole graphics::MoveHandle::role() const
 void graphics::MoveHandle::set_role(graphics::MoveHandle::HandleRole role)
 {
     setData(ItemData::HandleRole, role);
+}
+
+void graphics::MoveHandle::set_associated_properties ( std::vector<model::AnimatableBase *> props )
+{
+    QVariantList p;
+    for ( auto prop : props )
+        p.push_back(QVariant::fromValue(prop));
+
+    setData(AssociatedProperty, p);
+}
+
+void graphics::MoveHandle::set_associated_property ( model::AnimatableBase * prop )
+{
+    set_associated_properties({prop});
+}
+
+void graphics::MoveHandle::clear_associated_properties()
+{
+    setData(AssociatedProperty, {});
 }
