@@ -167,8 +167,8 @@ void graphics::DocumentScene::disconnect_node ( model::DocumentNode* node )
     auto item = d->node_to_item.find(node);
     if ( item != d->node_to_item.end() )
     {
-        d->node_to_item.erase(item);
         delete item->second;
+        d->node_to_item.erase(item);
     }
 }
 
