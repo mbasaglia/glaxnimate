@@ -12,13 +12,9 @@ jobs:
         before_install:
             - brew list cmake || brew install cmake
             - brew list qt || brew install qt
-            - brew list python || brew install python
-            # - brew upgrade gcc@10 || true
+            #- brew list python || brew install python
+            - brew upgrade python@3.8 || true
             - brew list makeicns || brew install makeicns
-            # - export CXX="$(brew list gcc | grep -F bin/g++ | sed 's/.*\///')"
-            # - export CC="$(brew list gcc | grep -E "bin/gcc-[0-9]" | sed 's/.*\///')"
-            # - echo $CXX
-            # - $CXX --version
         script:
             - mkdir build
             - cd build

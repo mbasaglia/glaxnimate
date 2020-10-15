@@ -36,6 +36,7 @@ auto parse_cli(const QStringList& args)
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     GlaxnimateApp app(argc, argv);
 
     app.init_info();

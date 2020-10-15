@@ -12,7 +12,7 @@
 static QVariantMap avail_icon_themes()
 {
     QVariantMap avail_icon_themes;
-    avail_icon_themes[app::settings::Settings::tr("Default")] = "";
+    avail_icon_themes[app::settings::Settings::tr("Glaxnimate Default")] = "";
     for ( QDir search : QIcon::themeSearchPaths() )
     {
         for ( const auto& avail : search.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot) )
