@@ -24,7 +24,7 @@ const std::vector<ClipboardSettings::MimeSettings>& ClipboardSettings::mime_type
     return mutable_mime_types();
 }
 
-void ClipboardSettings::load(const QSettings & settings)
+void ClipboardSettings::load(QSettings & settings)
 {
     for ( auto& set : mutable_mime_types() )
         if ( set.serializer->slug() != "glaxnimate" )

@@ -116,6 +116,7 @@ protected:
     void keyPressEvent(QKeyEvent * event) override;
     void keyReleaseEvent(QKeyEvent * event) override;
     void resizeEvent(QResizeEvent* event) override;
+    void changeEvent(QEvent* event) override;
 
 private:
     void do_rotate(qreal radians, const QPointF& scene_anchor);

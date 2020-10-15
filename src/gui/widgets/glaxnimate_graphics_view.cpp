@@ -330,7 +330,6 @@ void GlaxnimateGraphicsView::set_zoom(qreal factor)
     set_zoom_anchor(factor, d->anchor_scene());
 }
 
-
 void GlaxnimateGraphicsView::set_zoom_anchor(qreal factor, const QPointF& anchor)
 {
     if ( factor < 0.01 )
@@ -456,4 +455,13 @@ void GlaxnimateGraphicsView::resizeEvent(QResizeEvent* event)
     QGraphicsView::resizeEvent(event);
     if ( d->resize_fit )
         view_fit();
+}
+
+void GlaxnimateGraphicsView::changeEvent(QEvent* event)
+{
+    QWidget::changeEvent ( event );
+
+    if ( event->type() == QEvent::PaletteChange ) {
+        scene()->setPalette(palette());
+    }
 }

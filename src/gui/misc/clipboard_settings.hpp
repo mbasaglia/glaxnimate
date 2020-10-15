@@ -7,8 +7,8 @@ class ClipboardSettings : public app::settings::CustomSettingsGroupBase
 public:
     QString slug() const override { return "clipboard"; }
     QString label() const override { return QObject::tr("Clipboard"); }
-    QIcon icon() const override { return QIcon::fromTheme("edit-paste"); }
-    void load(const QSettings & settings) override;
+    QIcon icon() const override { return QIcon::fromTheme("edit-paste-symbolic"); }
+    void load(QSettings & settings) override;
     void save(QSettings & settings) override;
     QWidget * make_widget(QWidget * parent) override;
 

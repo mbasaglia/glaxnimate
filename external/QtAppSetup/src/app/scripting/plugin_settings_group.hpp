@@ -15,7 +15,7 @@ public:
     QString slug() const override { return "plugins"; }
     QIcon icon() const override { return QIcon::fromTheme("system-software-install"); }
     QString label() const override { return QObject::tr("Plugins"); }
-    void load ( const QSettings & settings ) override
+    void load ( QSettings & settings ) override
     {
         PluginRegistry::instance().load();
 

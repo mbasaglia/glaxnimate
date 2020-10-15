@@ -12,6 +12,8 @@
     * Right-clicking on a handle with the select or edit tools will display a context menu for it
 * I/O:
     * Floats get truncated to 3 digits on compact lottie / tgs output
+* UI:
+    * Configurable widget themes
 * Bug Fixes:
     * Exporting the document no longer alters the document save state
     * Fixed crash on Lottie export

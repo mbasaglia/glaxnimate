@@ -3,6 +3,7 @@
 
 #include <QFormLayout>
 
+#include "app/application.hpp"
 #include "app/settings/settings.hpp"
 #include "app/settings/widget_builder.hpp"
 
@@ -19,7 +20,7 @@ app::SettingsDialog::SettingsDialog ( QWidget* parent ) :
         if ( !group.has_visible_settings() )
             continue;
 
-        new QListWidgetItem(QIcon::fromTheme(group.icon).pixmap(64), group.label, d->list_widget);
+        new QListWidgetItem(QIcon::fromTheme(group.icon), group.label, d->list_widget);
         QWidget* page = new QWidget();
         d->stacked_widget->addWidget(page);
         QFormLayout* lay = new QFormLayout(page);
@@ -31,7 +32,7 @@ app::SettingsDialog::SettingsDialog ( QWidget* parent ) :
 
     for ( const auto& group : app::settings::Settings::instance().custom_groups() )
     {
-        new QListWidgetItem(group->icon().pixmap(64), group->label(), d->list_widget);
+        new QListWidgetItem(group->icon(), group->label(), d->list_widget);
         d->stacked_widget->addWidget(group->make_widget(d->stacked_widget));
     }
 

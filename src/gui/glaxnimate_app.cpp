@@ -7,10 +7,9 @@
 #include "app_info.hpp"
 #include "app/scripting/plugin_settings_group.hpp"
 #include "misc/clipboard_settings.hpp"
+#include "app/settings/palette_settings.hpp"
 
-namespace {
-
-QVariantMap avail_icon_themes()
+static QVariantMap avail_icon_themes()
 {
     QVariantMap avail_icon_themes;
     avail_icon_themes[app::settings::Settings::tr("Default")] = "";
@@ -27,7 +26,7 @@ QVariantMap avail_icon_themes()
     return avail_icon_themes;
 }
 
-void set_icon_theme(const QVariant& v)
+static void set_icon_theme(const QVariant& v)
 {
     QString theme_name = v.toString();
 
@@ -43,7 +42,7 @@ void set_icon_theme(const QVariant& v)
     QIcon::setThemeName(theme_name);
 }
 
-QVariantMap avail_languages()
+static QVariantMap avail_languages()
 {
     QVariantMap avail_languages;
     for ( const QString& name : app::TranslationService::instance().available_languages().keys() )
@@ -54,13 +53,18 @@ QVariantMap avail_languages()
     return avail_languages;
 }
 
-void set_language(const QVariant& v)
+static void set_language(const QVariant& v)
 {
     QString code = v.toString();
     app::TranslationService::instance().change_lang_code(code);
 }
 
-} // namespace
+
+static void icon_theme_fixup()
+{
+    if ( QIcon::themeName() == "icons" || QIcon::themeName() == "icons-dark" )
+        set_icon_theme("");
+}
 
 
 void GlaxnimateApp::load_settings_metadata() const
@@ -71,7 +75,7 @@ void GlaxnimateApp::load_settings_metadata() const
     Settings::instance().add_group(SettingGroup{"ui", tr("User Interface"), "preferences-desktop-theme", {
         //      slug            Label              Tooltip                    Type                default     choices             side effects
         Setting("language",     tr("Language"),    tr("Interface Language"),  Setting::String,    curr_lang,  avail_languages(),  set_language),
-        Setting("icon_theme",   tr("Icon Theme"),  "",                        Setting::String,    "",         avail_icon_themes(), set_icon_theme),
+        Setting("icon_theme",   tr("Icon Theme"),  "",                        Setting::String,    "",         avail_icon_themes(), ::set_icon_theme),
         Setting("window_state", {},                {},                        Setting::Internal,  QByteArray{}),
         Setting("window_geometry", {},             {},                        Setting::Internal,  QByteArray{}),
     }});
@@ -110,6 +114,19 @@ void GlaxnimateApp::load_settings_metadata() const
     }});
 }
 
+
+static void load_themes(GlaxnimateApp* app, app::settings::PaletteSettings* settings)
+{
+    for ( QDir themedir : app->data_paths("themes") )
+    {
+        for ( const auto& theme : themedir.entryList({"*.ini"}, QDir::Files|QDir::Readable, QDir::Name|QDir::IgnoreCase) )
+        {
+            QSettings ini_parser(themedir.absoluteFilePath(theme), QSettings::IniFormat);
+            settings->load_palette(ini_parser);
+        }
+    }
+}
+
 void GlaxnimateApp::on_initialize()
 {
     setWindowIcon(QIcon(data_file("images/logo.svg")));
@@ -121,6 +138,11 @@ void GlaxnimateApp::on_initialize()
     app::settings::Settings::instance().add_custom_group(std::make_unique<app::scripting::PluginSettingsGroup>(QStringList{
     }));
     app::settings::Settings::instance().add_custom_group(std::make_unique<ClipboardSettings>());
+
+    connect(this, &QGuiApplication::paletteChanged, this, &icon_theme_fixup);
+    auto palette_settings = std::make_unique<app::settings::PaletteSettings>();
+    load_themes(this, palette_settings.get());
+    app::settings::Settings::instance().add_custom_group(std::move(palette_settings));
 
     QDir().mkpath(backup_path());
 

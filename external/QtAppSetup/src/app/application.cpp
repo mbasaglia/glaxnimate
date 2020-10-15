@@ -2,6 +2,7 @@
 
 #include <QStandardPaths>
 #include <QMetaEnum>
+#include <QIcon>
 
 #include "app/log/log.hpp"
 
@@ -81,7 +82,7 @@ bool app::Application::notify(QObject* receiver, QEvent* e)
     try {
         return QApplication::notify(receiver, e);
     } catch ( const std::exception& exc ) {
-        log::Log("Event", QMetaEnum::fromType<QEvent::Type>().valueToKey(e->type())).stream(log::Error) << exc.what();
+        log::Log("Event", QMetaEnum::fromType<QEvent::Type>().valueToKey(e->type())).stream(log::Error) << "Exception:" << exc.what();
         return false;
     }
 }
