@@ -20,6 +20,8 @@ You can also see the [list of previous releases](https://gitlab.com/mattbas/glax
 <td><a href="#deb-package">Notes</a></td>
 </tr>
 <tr>
+<!-- <td><i class="fab fa-windows"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/pre-release/Win/glaxnimate-x86_64.zip">Windows Zip</a></td> -->
+<!-- <td><a href="https://dl.bintray.com/mattbas/Glaxnimate/pre-release/Win/checksum.txt">SHA1</a></td> -->
 <td><i class="fab fa-windows"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/release/raw/build/glaxnimate-x86_64.zip?job=mxe%3Abuild">Windows Zip</a></td>
 <td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/release/raw/build/checksum.txt?job=mxe%3Abuild">SHA1</a></td>
 <td><a href="#windows-zip">Notes</a></td>
@@ -56,8 +58,8 @@ All packages provided here are for the x86_64 architecture.
 <td><a href="#deb-package">Notes</a></td>
 </tr>
 <tr>
-<td><i class="fab fa-windows"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/build/glaxnimate-x86_64.zip?job=mxe%3Abuild">Windows Zip</a></td>
-<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/build/checksum.txt?job=mxe%3Abuild">SHA1</a></td>
+<td><i class="fab fa-windows"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/master/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
+<td><a href="https://dl.bintray.com/mattbas/Glaxnimate/master/Win/checksum.txt">SHA1</a></td>
 <td><a href="#windows-zip">Notes</a></td>
 </tr>
 <tr>

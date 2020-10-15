@@ -100,8 +100,8 @@ notes = """
 <td><a href="{install_notes_url}#deb-package">Installation Instructions</a></td>
 </tr>
 <tr>
-<td><a href="{artifacts_url}/glaxnimate-x86_64.zip?job=mxe%3Abuild">Windows Zip</a></td>
-<td><a href="{artifacts_url}/checksum.txt?job=mxe%3Abuild">SHA1</a></td>
+<td><a href="{bintray_url}/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
+<td><a href="{bintray_url}/Win/checksum.txt">SHA1</a></td>
 <td><a href="{install_notes_url}#windows-zip">Installation Instructions</a></td>
 </tr>
 <tr>

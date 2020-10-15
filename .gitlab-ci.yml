@@ -105,28 +105,28 @@ linux:appimage:
             - build/checksum.txt
     when: always
 
-mxe:build:
-    image: mattbas/mxe-qt5:latest
-    stage: build
-    before_script:
-        - git submodule update --init --recursive
-    script:
-        - mkdir build
-        - cd build
-        - x86_64-w64-mingw32.shared.posix-cmake .. -DCMAKE_INSTALL_PREFIX=/ -DVERSION_SUFFIX="win-$CI_COMMIT_SHORT_SHA"
-        - make
-        - make translations
-        - make install DESTDIR=glaxnimate >/dev/null
-        - /mxedeployqt/mxedeployqt --mxepath "/mxe" --mxetarget x86_64-w64-mingw32.shared.posix glaxnimate/bin/
-        - cp external/Qt-Color-Widgets/libQtColorWidgets.dll glaxnimate/bin/
-        - cp ../deploy/glaxnimate.bat glaxnimate
-        - zip -r glaxnimate-x86_64.zip glaxnimate >/dev/null
-        - sha1sum glaxnimate-x86_64.zip >checksum.txt
-    artifacts:
-        paths:
-            - build/glaxnimate-x86_64.zip
-            - build/checksum.txt
-    when: always
+#mxe:build:
+    #image: mattbas/mxe-qt5:latest
+    #stage: build
+    #before_script:
+        #- git submodule update --init --recursive
+    #script:
+        #- mkdir build
+        #- cd build
+        #- x86_64-w64-mingw32.shared.posix-cmake .. -DCMAKE_INSTALL_PREFIX=/ -DVERSION_SUFFIX="win-$CI_COMMIT_SHORT_SHA"
+        #- make
+        #- make translations
+        #- make install DESTDIR=glaxnimate >/dev/null
+        #- /mxedeployqt/mxedeployqt --mxepath "/mxe" --mxetarget x86_64-w64-mingw32.shared.posix glaxnimate/bin/
+        #- cp external/Qt-Color-Widgets/libQtColorWidgets.dll glaxnimate/bin/
+        #- cp ../deploy/glaxnimate.bat glaxnimate
+        #- zip -r glaxnimate-x86_64.zip glaxnimate >/dev/null
+        #- sha1sum glaxnimate-x86_64.zip >checksum.txt
+    #artifacts:
+        #paths:
+            #- build/glaxnimate-x86_64.zip
+            #- build/checksum.txt
+    #when: always
 
 release:
     stage: deploy
@@ -138,11 +138,13 @@ release:
         - ./deploy/make_release.py
         - ./deploy/bintray_release.sh $CI_COMMIT_TAG MacOs/glaxnimate.dmg
         - ./deploy/bintray_release.sh $CI_COMMIT_TAG MacOs/checksum.txt
+        - ./deploy/bintray_release.sh $CI_COMMIT_TAG Win/glaxnimate-x86_64.zip
+        - ./deploy/bintray_release.sh $CI_COMMIT_TAG Win/checksum.txt
     dependencies:
         - linux:test
         - linux:appimage
         - linux:deb
-        - mxe:build
+        #- mxe:build
     only:
         - tags
 
