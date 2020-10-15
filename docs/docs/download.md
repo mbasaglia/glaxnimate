@@ -108,7 +108,7 @@ so you are better off using 7zip or something like that.
 
 ### Limitations
 
-Python scripting (and plugins) aren't available with this package.
+When using Python scripting `sys.stderr`, `sys.stdout`, and `print()` won't work.
 
 ### Antivirus
 

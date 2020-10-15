@@ -32,11 +32,16 @@ public:
 
     void setup(OwnerT* owner, SignalT signal, py::object dest)
     {
-        this->owner = owner;
-        this->signal = signal;
-        dest.attr("write") = py::cpp_function([this](const QString& s){ write(s); });
-        dest.attr("flush") = py::cpp_function([this](){ flush(); });
-        stream = dest;
+        try {
+            dest.attr("write") = py::cpp_function([this](const QString& s){ write(s); });
+            dest.attr("flush") = py::cpp_function([this](){ flush(); });
+            stream = dest;
+            this->owner = owner;
+            this->signal = signal;
+        } catch ( const py::error_already_set& pyexc ) {
+            app::log::Log("Python").stream(app::log::Error)
+                << "Could not initialize stream capture:" << pyexc.what();
+        }
     }
 
     void write(const QString& data)
@@ -82,8 +87,15 @@ public:
     void init_capture(PythonContext* ctx)
     {
         sys = py::module::import("sys");
-        stdout_cap.setup(ctx, &PythonContext::stdout_line, sys.attr("stdout"));
-        stderr_cap.setup(ctx, &PythonContext::stderr_line, sys.attr("stderr"));
+        py::object py_stdout = sys.attr("stdout");
+        py::object py_stderr = sys.attr("stderr");
+
+        if ( !py_stdout.is(py::none()) )
+        {
+            stdout_cap.setup(ctx, &PythonContext::stdout_line, py_stdout);
+            stderr_cap.setup(ctx, &PythonContext::stderr_line, py_stderr);
+        }
+
     }
 
     std::vector<pybind11::module> my_modules;
@@ -218,17 +230,15 @@ const app::scripting::ScriptEngine * app::scripting::python::PythonContext::engi
 #include <QProcess>
 #include <stdlib.h>
 
-static bool python_setup_env()
-{
-    static int already_done = -1;
-    if ( already_done > 0 )
-        return already_done;
 
-    QString pyhome = getenv("PYTHONHOME");
+static bool python_setup_env_impl(const char* var, const char* cmd)
+{
+    QString pyhome = getenv(var);
+
     if ( !pyhome.isEmpty() )
     {
-        app::log::Log("Python").stream(app::log::Info) << "Using PYTHONHOME from the environment:" << pyhome;
-        return already_done = 1;
+        app::log::Log("Python").stream(app::log::Info) << "Using " << var << " from the environment:" << pyhome;
+        return true;
     }
 
     QProcess process;
@@ -236,27 +246,45 @@ static bool python_setup_env()
     if ( !process.waitForStarted() )
     {
         app::log::Log("Python").log("No system interpreter", app::log::Error);
-        return already_done = 0;
+        return false;
     }
 
-    process.write("import sys; print(sys.exec_prefix)\n");
+    process.write(cmd);
     process.closeWriteChannel();
 
     if ( !process.waitForFinished() )
     {
         app::log::Log("Python").log("Broken system interpreter", app::log::Error);
-        return already_done = 0;
+        return false;
     }
 
     if ( process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0 )
     {
         app::log::Log("Python").log("Could not invoke system interpreter", app::log::Error);
-        return already_done = 0;
+        return false;
     }
 
     pyhome = process.readAllStandardOutput().trimmed();
-    app::log::Log("Python").stream(app::log::Info) << "Using PYTHONHOME:" << pyhome;
-    putenv(("PYTHONHOME=" + pyhome).toStdString().c_str());
+    app::log::Log("Python").stream(app::log::Info) << "Using " << var << ":" << pyhome;
+    putenv(QString("%1=%2").arg(var).arg(pyhome).toStdString().c_str());
+    
+    return true;
+}
+
+
+static bool python_setup_env()
+{
+    static int already_done = -1;
+    if ( already_done > 0 )
+        return already_done;
+
+    if ( !python_setup_env_impl("PYTHONHOME", "import sys; print(sys.exec_prefix)\n") )
+        return already_done = 0;
+
+
+    if ( !python_setup_env_impl("PYTHONPATH", "import os, re;print(os.path.dirname(re.__file__))\n") )
+        return already_done = 0;
+
     return already_done = 1;
 }
 
