@@ -99,7 +99,7 @@ Or from the command line:
 
 ## Windows Zip
 
-Extract the zip and execute the file at the top level `glaxnimate.bat`.
+Extract the zip and execute the file at the top level `glaxnimate.vbs`.
 
 Note that the built-in zip extraction that comes with Windows is excruciatingly slow,
 so you are better off using 7zip or something like that.

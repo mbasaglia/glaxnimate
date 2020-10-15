@@ -90,7 +90,6 @@ Install [MSYS2](https://www.msys2.org/) and run these commands on it:
     windeployqt.exe bin/glaxnimate.exe
     cp /mingw64/bin/*.dll bin
     cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll bin
-    cp /mingw64/lib/libpython3.8.dll.a bin/libpython3.8.dll
 
 
 Contacts
