@@ -41,6 +41,11 @@ the next release.
 <td><a href="https://dl.bintray.com/mattbas/Glaxnimate/pre-release/MacOs/checksum.txt">SHA1</a></td>
 <td><a href="#mac-dmg">Notes</a></td>
 </tr>
+<tr>
+<td><i class="fas fa-wrench"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/pre-release/raw/glaxnimate-src.tar.gz?job=tarball">Source Tarball</a></td>
+<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/pre-release/raw/sha256.txt?job=tarball">SHA256</a></td>
+<td><a href="/contributing/read_me/">Notes</a></td>
+</tr>
 </table>
 
 ## `master`
@@ -61,14 +66,19 @@ This is the main development branch, CI will use it to create the development sn
 <td><a href="#deb-package">Notes</a></td>
 </tr>
 <tr>
-<td><i class="fab fa-windows"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/build/glaxnimate-x86_64.zip?job=mxe%3Abuild">Windows Zip</a></td>
-<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/build/checksum.txt?job=mxe%3Abuild">SHA1</a></td>
+<td><i class="fab fa-windows"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/master/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
+<td><a href="https://dl.bintray.com/mattbas/Glaxnimate/master/Win/checksum.txt">SHA1</a></td>
 <td><a href="#windows-zip">Notes</a></td>
 </tr>
 <tr>
 <td><i class="fab fa-apple"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/master/MacOs/glaxnimate.dmg">Mac dmg</a></td>
 <td><a href="https://dl.bintray.com/mattbas/Glaxnimate/master/MacOs/checksum.txt">SHA1</a></td>
 <td><a href="#mac-dmg">Notes</a></td>
+</tr>
+<tr>
+<td><i class="fas fa-wrench"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/glaxnimate-src.tar.gz?job=tarball">Source Tarball</a></td>
+<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/sha256.txt?job=tarball">SHA256</a></td>
+<td><a href="/contributing/read_me/">Notes</a></td>
 </tr>
 </table>
 

@@ -130,6 +130,7 @@ tarball:
     stage: build
     before_script:
     script:
+        - rm -rf .git
         - cd ..
         - tar -caf /tmp/glaxnimate-src.tar.gz "$(basename "$CI_PROJECT_DIR")"
         - cd "$CI_PROJECT_DIR"

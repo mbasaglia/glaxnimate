@@ -31,6 +31,11 @@ You can also see the [list of previous releases](https://gitlab.com/mattbas/glax
 <td><a href="https://dl.bintray.com/mattbas/Glaxnimate/release/MacOs/checksum.txt">SHA1</a></td>
 <td><a href="#mac-dmg">Notes</a></td>
 </tr>
+<!--<tr>
+<td><i class="fas fa-wrench"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/release/raw/glaxnimate-src.tar.gz?job=tarball">Source Tarball</a></td>
+<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/release/raw/sha256.txt?job=tarball">SHA256</a></td>
+<td><a href="/contributing/read_me/">Notes</a></td>
+</tr>-->
 </table>
 
 If you enjoy using Glaxnimate consider [donating](donate.md).
@@ -66,6 +71,16 @@ All packages provided here are for the x86_64 architecture.
 <td><i class="fab fa-apple"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/master/MacOs/glaxnimate.dmg">Mac dmg</a></td>
 <td><a href="https://dl.bintray.com/mattbas/Glaxnimate/master/MacOs/checksum.txt">SHA1</a></td>
 <td><a href="#mac-dmg">Notes</a></td>
+</tr>
+<tr>
+<td><i class="fas fa-wrench"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/glaxnimate-src.tar.gz?job=tarball">Source Tarball</a></td>
+<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/sha256.txt?job=tarball">SHA256</a></td>
+<td><a href="/contributing/read_me/">Notes</a></td>
+</tr>
+<tr>
+<td><i class="fas fa-code-branch"></i> <a href="https://gitlab.com/mattbas/glaxnimate.git">Git Repo</a></td>
+<td></td>
+<td><a href="/contributing/read_me/">Notes</a></td>
 </tr>
 </table>
 
