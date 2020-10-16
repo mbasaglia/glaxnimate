@@ -325,6 +325,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     {
         parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
         parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
+        ui.timeline_widget->load_state(app::settings::get<QByteArray>("ui", "timeline_splitter"));
     }
 
     // Hide tool widgets, as they might get shown by restoreState
@@ -390,6 +391,7 @@ void GlaxnimateWindow::Private::shutdown()
 {
     app::settings::set("ui", "window_geometry", parent->saveGeometry());
     app::settings::set("ui", "window_state", parent->saveState());
+    app::settings::set("ui", "timeline_splitter", ui.timeline_widget->save_state());
     app::settings::set("open_save", "recent_files", recent_files);
 
     ui.fill_style_widget->save_settings();

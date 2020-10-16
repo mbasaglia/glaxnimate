@@ -377,3 +377,15 @@ void CompoundTimelineWidget::remove_keyframe()
         new command::RemoveKeyframeTime(d->menu_anim, d->menu_kf_exit->time())
     );
 }
+
+void CompoundTimelineWidget::load_state(const QByteArray& state)
+{
+    d->ui.splitter->restoreState(state);
+}
+
+QByteArray CompoundTimelineWidget::save_state() const
+{
+    return d->ui.splitter->saveState();
+}
+
+

@@ -78,6 +78,7 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("icon_theme",   tr("Icon Theme"),  "",                        Setting::String,    "",         avail_icon_themes(), ::set_icon_theme),
         Setting("window_state", {},                {},                        Setting::Internal,  QByteArray{}),
         Setting("window_geometry", {},             {},                        Setting::Internal,  QByteArray{}),
+        Setting("timeline_splitter", {},           {},                        Setting::Internal,  QByteArray{}),
     }});
     Settings::instance().add_group(SettingGroup{"defaults", tr("New Animation Defaults"), "document-new", {
         //      slug            Label           Tooltip                  default min max

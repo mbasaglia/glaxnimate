@@ -14,6 +14,7 @@
     * Floats get truncated to 3 digits on compact lottie / tgs output
 * UI:
     * Configurable widget themes
+    * The property area of the timeline view can now be dragged by the user to expand it
 * Bug Fixes:
     * Exporting the document no longer alters the document save state
     * Fixed crash on Lottie export
