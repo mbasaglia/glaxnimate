@@ -109,6 +109,11 @@ notes = """
 <td><a href="{bintray_url}/MacOs/checksum.txt">SHA1</a></td>
 <td><a href="{install_notes_url}#mac-dmg">Installation Instructions</a></td>
 </tr>
+<tr>
+<td><a href="{artifacts_url}/glaxnimate-src.tar.gz?job=tarball">Source Tarball</a></td>
+<td><a href="{artifacts_url}/sha256.txt?job=tarball">SHA256</a></td>
+<td><a href="{install_notes_url}#building-from-source">Notes</a></td>
+</tr>
 </table>
 
 ## User Manual
