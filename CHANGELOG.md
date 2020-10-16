@@ -19,6 +19,7 @@
     * Exporting the document no longer alters the document save state
     * Fixed crash on Lottie export
     * Fixed keyframe Lottie export
+    * Timeline view always shows the last frame
 
 ## 0.1.4
 
