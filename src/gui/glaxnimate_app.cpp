@@ -26,18 +26,21 @@ static QVariantMap avail_icon_themes()
     return avail_icon_themes;
 }
 
+static QString default_icon_theme()
+{
+    QPalette palette = QGuiApplication::palette();
+    if ( palette.color(QPalette::Button).value() < 100 )
+        return "icons-dark";
+    else
+        return "icons";
+}
+
 static void set_icon_theme(const QVariant& v)
 {
     QString theme_name = v.toString();
 
     if ( theme_name.isEmpty() )
-    {
-        QPalette palette = QGuiApplication::palette();
-        if ( palette.color(QPalette::Button).value() < 100 )
-            theme_name = "icons-dark";
-        else
-            theme_name = "icons";
-    }
+        theme_name = default_icon_theme();
 
     QIcon::setThemeName(theme_name);
 }
@@ -62,8 +65,14 @@ static void set_language(const QVariant& v)
 
 static void icon_theme_fixup()
 {
-    if ( QIcon::themeName() == "icons" || QIcon::themeName() == "icons-dark" )
-        set_icon_theme("");
+    QString default_theme = default_icon_theme();
+    QIcon::setFallbackThemeName(default_theme);
+
+    QString old = QIcon::themeName();
+    if ( old == "icons" || old == "icons-dark" )
+        QIcon::setThemeName(default_theme);
+    else
+        set_icon_theme(old);
 }
 
 
@@ -127,6 +136,7 @@ static void load_themes(GlaxnimateApp* app, app::settings::PaletteSettings* sett
         }
     }
 }
+
 
 void GlaxnimateApp::on_initialize()
 {

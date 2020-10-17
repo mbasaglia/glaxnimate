@@ -1,5 +1,10 @@
 ## 0.2.0
 
+## 0.1.6
+
+* UI:
+    * Improved support for changing the icon theme
+
 ## 0.1.5
 
 * Editing:
