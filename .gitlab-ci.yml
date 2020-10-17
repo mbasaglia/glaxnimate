@@ -72,6 +72,35 @@ linux:deb:
             - build/checksum.txt
     when: always
 
+linux:aur:
+    stage: deploy
+    needs: ["linux:deb"]
+    dependencies:
+        - linux:deb
+    only:
+        - tags
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y
+    script:
+        - test -n "$AUR_SSH_KEY"
+        - chmod 700 $AUR_SSH_KEY
+        - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/glaxnimate-bin.git
+        - CHECKSUM="$(grep -Eo "^[^ ]+" checksum.txt)"
+        - echo "$CHECKSUM"
+        - test -n "$CHECKSUM"
+        - PROJECT_VERSION="$(grep -Po "PROJECT_VERSION:STATIC=\K.*" ../CMakeCache.txt)"
+        - echo "$PROJECT_VERSION"
+        - test -n "$PROJECT_VERSION"
+        - cd glaxnimate-bin
+        - sed -i -e "s/pkgver=.*/pkgver=$PROJECT_VERSION/" -e "s/sha1sums=.*/sha1sums=('$CHECKSUM')/" PKGBUILD
+        - sed -i -e "s/pkgver = .*/pkgver = $PROJECT_VERSION/" -e "s/sha1sums = .*/sha1sums = $CHECKSUM/" .SRCINFO
+        - git config user.name "Glaxnimate CI"
+        - git config user.email "glaxnimate-ci@mattbas.org"
+        - git add PKGBUILD .SRCINFO
+        - git commit -m "Update to version $PACKAGE_VERSION"
+        - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push
+
 linux:appimage:
     image: ubuntu:16.04
     stage: build
@@ -157,7 +186,6 @@ release:
         - linux:test
         - linux:appimage
         - linux:deb
-        #- mxe:build
     only:
         - tags
 

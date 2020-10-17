@@ -20,6 +20,11 @@ You can also see the [list of previous releases](https://gitlab.com/mattbas/glax
 <td><a href="#deb-package">Notes</a></td>
 </tr>
 <tr>
+<td><img src="/img/misc/arch-icon.svg" style="height:1.2rem;" /> <a href="https://aur.archlinux.org/packages/glaxnimate-bin/">AUR Package</a></td>
+<td></td>
+<td><a href="#aur-package">Notes</a></td>
+</tr>
+<tr>
 <td><i class="fab fa-windows"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/release/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
 <td><a href="https://dl.bintray.com/mattbas/Glaxnimate/release/Win/checksum.txt">SHA1</a></td>
 <td><a href="#windows-zip">Notes</a></td>
@@ -153,3 +158,9 @@ If you get an error saying "Incompatible Library Version" you might need to
 upgrade some of the dependencies:
 
     brew upgrade qt
+
+## Aur Package
+
+    git clone https://aur.archlinux.org/glaxnimate-bin.git
+    cd glaxnimate-bin
+    makepkg -rsi

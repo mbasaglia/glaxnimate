@@ -35,6 +35,7 @@ public:
     model::Stroke* stroke = nullptr;
     color_widgets::GradientDelegate delegate;
     color_widgets::GradientListModel presets;
+    GradientListWidget* parent;
 
     model::GradientColors* current()
     {
@@ -166,8 +167,10 @@ public:
             std::move(grad)
         ));
 
-
         styler->use.set_undoable(QVariant::fromValue(gradient));
+
+        emit parent->gradient_changed(gradient, secondary);
+
         remove_old(old);
 
     }
@@ -196,6 +199,9 @@ public:
         auto old = styler->use.get();
 
         styler->use.set_undoable(QVariant::fromValue((model::BrushStyle*)nullptr));
+
+
+        emit parent->gradient_changed(nullptr, secondary);
 
         if ( old )
             remove_old(old->cast<model::Gradient>());
@@ -363,6 +369,7 @@ public:
 GradientListWidget::GradientListWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Private>())
 {
+    d->parent = this;
     d->ui.setupUi(this);
     d->ui.list_view->setModel(&d->model);
     d->ui.list_view->horizontalHeader()->setSectionResizeMode(item_models::GradientListModel::Users, QHeaderView::ResizeToContents);

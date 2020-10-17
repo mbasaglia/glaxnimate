@@ -111,6 +111,7 @@ protected:
             auto fill = std::make_unique<model::Fill>(document);
             document->set_best_name(fill.get(), QObject::tr("%1 Fill").arg(name));
             fill->color.set(event.window->current_color());
+            fill->use.set(event.window->linked_brush_style(false));
             document->undo_stack().push(
                 new command::AddShape(prop, std::move(fill), index)
             );
@@ -122,6 +123,7 @@ protected:
             auto stroke = std::make_unique<model::Stroke>(document);
             document->set_best_name(stroke.get(), QObject::tr("%1 Stroke").arg(name));
             stroke->set_pen_style(event.window->current_pen_style());
+            stroke->use.set(event.window->linked_brush_style(true));
 
             document->undo_stack().push(
                 new command::AddShape(prop, std::move(stroke), index)

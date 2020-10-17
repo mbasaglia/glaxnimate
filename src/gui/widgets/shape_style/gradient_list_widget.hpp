@@ -8,6 +8,8 @@ namespace model {
     class Document;
     class Fill;
     class Stroke;
+    class BrushStyle;
+    class Gradient;
 } // namespace model
 class GlaxnimateWindow;
 
@@ -25,6 +27,9 @@ public:
 
 protected:
     void changeEvent ( QEvent* e ) override;
+
+signals:
+    void gradient_changed(model::Gradient* gradient, bool secondary);
 
 private slots:
     void change_current_gradient();

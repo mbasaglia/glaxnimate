@@ -415,3 +415,10 @@ QString GlaxnimateWindow::get_open_image_file(const QString& title, const QStrin
     return d->get_open_image_file(title, dir);
 }
 
+model::BrushStyle * GlaxnimateWindow::linked_brush_style ( bool secondary ) const
+{
+    if ( secondary )
+        return d->secondary_brush;
+    return d->main_brush;
+}
+

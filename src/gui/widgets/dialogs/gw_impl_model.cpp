@@ -420,4 +420,8 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
     ui.stroke_style_widget->set_shape(stroke);
     ui.fill_style_widget->set_shape(fill);
     ui.widget_gradients->set_targets(fill, stroke);
+    if ( fill )
+        set_main_brush(fill->use.get());
+    if ( stroke )
+        set_secondary_brush(stroke->use.get());
 }

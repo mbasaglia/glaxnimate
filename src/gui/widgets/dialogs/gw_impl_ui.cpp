@@ -278,6 +278,12 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
 
     // Gradients
     ui.widget_gradients->set_window(parent);
+    connect(ui.widget_gradients, &GradientListWidget::gradient_changed, [this](model::Gradient* sty, bool secondary){
+        if ( secondary )
+            set_secondary_brush(sty);
+        else
+            set_main_brush(sty);
+    });
 
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);

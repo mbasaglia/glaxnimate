@@ -509,6 +509,8 @@ void GlaxnimateWindow::Private::set_color_def_primary(model::BrushStyle* def)
             target->use.set_undoable(QVariant::fromValue(def));
         }
     }
+
+    set_main_brush(def);
 }
 
 void GlaxnimateWindow::Private::set_color_def_secondary(model::BrushStyle* def)
@@ -528,4 +530,16 @@ void GlaxnimateWindow::Private::set_color_def_secondary(model::BrushStyle* def)
             target->use.set_undoable(QVariant::fromValue(def));
         }
     }
+
+    set_secondary_brush(def);
+}
+
+void GlaxnimateWindow::Private::set_main_brush ( model::BrushStyle* sty )
+{
+    main_brush = sty;
+}
+
+void GlaxnimateWindow::Private::set_secondary_brush ( model::BrushStyle* sty )
+{
+    secondary_brush = sty;
 }

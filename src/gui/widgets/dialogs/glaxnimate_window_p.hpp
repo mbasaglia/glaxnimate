@@ -3,6 +3,7 @@
 
 #include <QToolButton>
 #include <QMessageBox>
+#include <QPointer>
 
 #include "QtColorWidgets/color_delegate.hpp"
 #include "QtColorWidgets/color_palette_model.hpp"
@@ -54,6 +55,9 @@ public:
     bool current_document_has_file = false;
 
     std::vector<app::scripting::ScriptContext> script_contexts;
+
+    QPointer<model::BrushStyle> main_brush;
+    QPointer<model::BrushStyle> secondary_brush;
 
     tools::Tool* active_tool = nullptr;
     std::map<QString, std::vector<QWidget*>> tool_widgets;
@@ -118,6 +122,8 @@ public:
     void set_color_def_primary(model::BrushStyle* sty);
     void set_color_def_secondary(model::BrushStyle* sty);
     QString get_open_image_file(const QString& title, const QString& dir);
+    void set_main_brush(model::BrushStyle* sty);
+    void set_secondary_brush(model::BrushStyle* sty);
 
     // Model
     model::Composition* current_composition();

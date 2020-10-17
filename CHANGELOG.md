@@ -2,6 +2,8 @@
 
 ## 0.1.6
 
+* Editing:
+    * Last used Gradient / Named Color will be used for new shapes
 * UI:
     * Improved support for changing the icon theme
 

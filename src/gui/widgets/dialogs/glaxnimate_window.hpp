@@ -23,6 +23,10 @@ namespace tools {
 class Tool;
 } // namespace tools
 
+namespace model {
+class BrushStyle;
+} // namespace model
+
 class QItemSelection;
 
 class GlaxnimateWindow : public QMainWindow
@@ -91,6 +95,8 @@ public:
      * \returns The selected name or an empty string if the user canceled the operation
      */
     Q_INVOKABLE QString get_open_image_file(const QString& title, const QString& dir = "") const;
+
+    model::BrushStyle* linked_brush_style(bool secondary) const;
 
 public slots:
     void document_save();
