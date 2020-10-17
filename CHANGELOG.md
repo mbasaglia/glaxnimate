@@ -20,6 +20,7 @@
     * Fixed crash on Lottie export
     * Fixed keyframe Lottie export
     * Timeline view always shows the last frame
+    * Improved performance when dragging multiple objects
 
 ## 0.1.4
 

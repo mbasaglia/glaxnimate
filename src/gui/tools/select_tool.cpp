@@ -67,27 +67,49 @@ private:
                 out.push_back(DragObjectData(node, &shape->shape, scene_pos));
         }
 
-        void drag(const QPointF& dragged_to, bool commit) const
+        void drag(const QPointF& dragged_to, command::SetMultipleAnimated* cmd) const
         {
             QPointF delta = transform.map(dragged_to) - start_point;
 
 
             if ( data.index() == 0 )
             {
-                std::get<0>(data).property->set_undoable(std::get<0>(data).start_value + delta, commit);
+                cmd->push_property(std::get<0>(data).property, std::get<0>(data).start_value + delta);
                 return;
             }
 
             math::bezier::Bezier new_bezier = std::get<1>(data).start_value;
             for ( auto& point : new_bezier )
                 point.translate(delta);
-            std::get<1>(data).property->set_undoable(QVariant::fromValue(new_bezier), commit);
+
+            cmd->push_property(std::get<1>(data).property, QVariant::fromValue(new_bezier));
+        }
+
+        model::Document* doc() const
+        {
+            if ( data.index() == 0 )
+                return std::get<0>(data).property->object()->document();
+            return std::get<1>(data).property->object()->document();
         }
 
         QTransform transform;
         Variant data;
         QPointF start_point;
     };
+
+    void do_drag(const QPointF& scene_pos, bool commit)
+    {
+        if ( drag_data.empty() )
+            return;
+
+        auto cmd = new command::SetMultipleAnimated(tr("Drag"), commit);
+        model::Document* doc = drag_data[0].doc();
+
+        for ( const auto& dragger : drag_data )
+            dragger.drag(scene_pos, cmd);
+
+        doc->push_command(cmd);
+    }
 
     void mouse_press(const MouseEvent& event) override
     {
@@ -176,8 +198,7 @@ private:
                     rubber_p2 = event.event->localPos();
                     break;
                 case DragObject:
-                    for ( const auto& dragger : drag_data )
-                        dragger.drag(event.scene_pos, false);
+                    do_drag(event.scene_pos, false);
                     break;
             }
         }
@@ -247,8 +268,7 @@ private:
                 }
                 break;
                 case DragObject:
-                    for ( const auto& dragger : drag_data )
-                        dragger.drag(event.scene_pos, true);
+                    do_drag(event.scene_pos, true);
                     drag_data.clear();
                     replace_selection = nullptr;
                     break;
