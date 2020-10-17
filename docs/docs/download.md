@@ -20,8 +20,8 @@ You can also see the [list of previous releases](https://gitlab.com/mattbas/glax
 <td><a href="#deb-package">Notes</a></td>
 </tr>
 <tr>
-<td><i class="fab fa-windows"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/pre-release/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
-<td><a href="https://dl.bintray.com/mattbas/Glaxnimate/pre-release/Win/checksum.txt">SHA1</a></td>
+<td><i class="fab fa-windows"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/release/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
+<td><a href="https://dl.bintray.com/mattbas/Glaxnimate/release/Win/checksum.txt">SHA1</a></td>
 <td><a href="#windows-zip">Notes</a></td>
 </tr>
 <tr>
