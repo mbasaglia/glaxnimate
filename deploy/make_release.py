@@ -90,13 +90,13 @@ notes = """
 <table>
 <tr><th>Package</th><th>Checksum</th><th>Installation Instructions</th></tr>
 <tr>
-<td><a href="{artifacts_url}/glaxnimate-x86_64.AppImage?job=linux%3Aappimage">Linux AppImage</a></td>
-<td><a href="{artifacts_url}/checksum.txt?job=linux%3Aappimage">SHA1</a></td>
+<td><a href="{artifacts_url}/build/glaxnimate-x86_64.AppImage?job=linux%3Aappimage">Linux AppImage</a></td>
+<td><a href="{artifacts_url}/build/checksum.txt?job=linux%3Aappimage">SHA1</a></td>
 <td><a href="{install_notes_url}#linux-appimage">Installation Instructions</a></td>
 </tr>
 <tr>
-<td><a href="{artifacts_url}/glaxnimate.deb?job=linux%3Adeb">Deb Package</a></td>
-<td><a href="{artifacts_url}/checksum.txt?job=linux%3Adeb">SHA1</a></td>
+<td><a href="{artifacts_url}/build/glaxnimate.deb?job=linux%3Adeb">Deb Package</a></td>
+<td><a href="{artifacts_url}/build/checksum.txt?job=linux%3Adeb">SHA1</a></td>
 <td><a href="{install_notes_url}#deb-package">Installation Instructions</a></td>
 </tr>
 <tr>
@@ -127,7 +127,7 @@ See the [Documentation](https://glaxnimate.mattbas.org/manual/) page.
     version=api.tag,
     chlog=chlog,
     project_url=api.project_url,
-    artifacts_url=api.project_url+"/-/jobs/artifacts/" + download_tag + "/raw/build",
+    artifacts_url=api.project_url+"/-/jobs/artifacts/" + download_tag + "/raw",
     install_notes_url="https://glaxnimate.mattbas.org/download/",
     bintray_url="https://dl.bintray.com/mattbas/Glaxnimate/" + download_tag
 )
