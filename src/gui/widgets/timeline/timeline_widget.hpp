@@ -18,7 +18,6 @@ public:
     void set_document(model::Document* document);
     void clear();
     void set_active(model::DocumentNode* node);
-    void add_container(model::AnimationContainer* cont);
     void add_animatable(model::AnimatableBase* anim);
     int row_height() const;
     void set_row_height(int w);
@@ -33,6 +32,13 @@ public slots:
     void update_timeline_start(model::FrameTime start);
     void update_timeline_end(model::FrameTime end);
     void reset_view();
+
+private slots:
+    void update_layer_start(model::FrameTime start);
+    void update_layer_end(model::FrameTime en);
+
+private:
+    void set_anim_container(model::AnimationContainer* cont);
 
 protected:    
     void mousePressEvent(QMouseEvent * event) override;
