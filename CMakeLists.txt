@@ -122,4 +122,8 @@ configure_file(
 set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_BINARY_DIR}/bundle.xml.plist")
 set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.icns")
 
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/deploy/snapcraft.in.yaml"
+    "${CMAKE_CURRENT_BINARY_DIR}/snapcraft.yaml"
+)
 include(CPack)
