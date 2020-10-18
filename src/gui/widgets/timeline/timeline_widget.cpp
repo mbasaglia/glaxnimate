@@ -93,10 +93,10 @@ public:
         QPointF framep = parent->mapFromScene(QPoint(frame, 0));
         QPointF framep1 = parent->mapFromScene(QPoint(frame+1, 0));
         painter.fillRect(
-            framep.x(),
+            framep.x() + 1,
             0,
-            framep1.x() - framep.x() + 1,
-            header_height,
+            framep1.x() - framep.x() - 0.5,
+            header_height - 0.5,
             color
         );
     }
@@ -122,6 +122,26 @@ public:
         }
 
         return document->main()->animation.get();
+    }
+
+    QRectF frame_text_rect(int f, TimelineWidget* parent)
+    {
+
+        int fs = f / frame_skip * frame_skip;
+        int box_x1 = parent->mapFromScene(fs, 0).x();
+        int box_x2 = parent->mapFromScene(fs+frame_skip, 0).x();
+        return QRectF(
+            QPointF(box_x1+1, header_height / 4),
+            QPointF(box_x2-0.5, header_height-0.5)
+        );
+    }
+
+    void paint_frame_rect(TimelineWidget* parent, QPainter& painter, int f, const QBrush& brush, const QPen& pen)
+    {
+        QRectF text_rect = frame_text_rect(f, parent);
+        painter.fillRect(text_rect, brush);
+        painter.setPen(pen);
+        painter.drawText(text_rect, Qt::AlignLeft|Qt::AlignBottom,  QString::number(f));
     }
 };
 
@@ -304,12 +324,6 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
         palette().base()
     );
 
-    if ( d->document )
-        d->paint_highligted_frame(d->document->current_time(), painter, palette().text());
-
-    if ( d->mouse_frame > -1 )
-        d->paint_highligted_frame(d->mouse_frame, painter, palette().highlight());
-
     painter.setPen(dark);
     painter.drawLine(event->rect().left(), d->header_height, event->rect().right(), d->header_height);
 
@@ -327,56 +341,32 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
         {
             QPoint p1 = mapFromScene(f, scene_tl.y());
             int height = d->header_height;
-            bool under_mouse = f == d->mouse_frame;
-            bool current_frame = d->document && f == d->document->current_time();
 
-            if ( f % d->frame_skip == 0 || under_mouse || current_frame )
+            if ( f % d->frame_skip == 0 )
             {
-                bool draw = true;
-                int fs = f / d->frame_skip * d->frame_skip;
-                int box_x1 = mapFromScene(fs, 0).x();
-                int box_x2 = mapFromScene(fs+d->frame_skip, 0).x();
-                QRect text_rect(
-                    QPoint(box_x1+1, small_height),
-                    QPoint(box_x2, d->header_height-1)
-                );
-
-                if ( current_frame && !under_mouse && d->mouse_frame != -1 )
-                {
-                    int mfs = d->mouse_frame / d->frame_skip * d->frame_skip;
-
-                    if ( fs == mfs )
-                        draw = false;
-                }
-
-                if ( draw )
-                {
-                    if ( under_mouse )
-                    {
-                        painter.fillRect(text_rect, palette().highlight());
-                        painter.setPen(QPen(palette().highlightedText(), 1));
-                    }
-                    else if ( current_frame )
-                    {
-                        painter.fillRect(text_rect, palette().text());
-                        painter.setPen(QPen(palette().base(), 1));
-                    }
-                    else
-                    {
-                        painter.setPen(dark);
-                    }
-
-                    painter.drawText(text_rect, Qt::AlignLeft|Qt::AlignBottom,  QString::number(f));
-                    painter.setPen(light);
-                }
+                d->paint_frame_rect(this, painter, f, Qt::NoBrush, dark);
+                painter.setPen(light);
             }
-
-            if ( f % d->frame_skip )
+            else
             {
                 height = small_height;
             }
 
             painter.drawLine(QPoint(p1.x(), 0), QPoint(p1.x(), height));
+        }
+
+        d->paint_frame_rect(this, painter, d->layer_start, palette().base(), dark);
+
+        if ( d->document )
+        {
+            d->paint_highligted_frame(d->document->current_time(), painter, palette().text());
+            d->paint_frame_rect(this, painter, d->document->current_time(), palette().text(), QPen(palette().base(), 1));
+        }
+
+        if ( d->mouse_frame > -1 )
+        {
+            d->paint_highligted_frame(d->mouse_frame, painter, palette().highlight());
+            d->paint_frame_rect(this, painter, d->mouse_frame, palette().highlight(), QPen(palette().highlightedText(), 1));
         }
     }
 }
