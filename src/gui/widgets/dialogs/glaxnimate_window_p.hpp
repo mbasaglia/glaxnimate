@@ -122,8 +122,7 @@ public:
     void set_color_def_primary(model::BrushStyle* sty);
     void set_color_def_secondary(model::BrushStyle* sty);
     QString get_open_image_file(const QString& title, const QString& dir);
-    void set_main_brush(model::BrushStyle* sty);
-    void set_secondary_brush(model::BrushStyle* sty);
+    void set_brush_reference(model::BrushStyle* sty, bool secondary);
 
     // Model
     model::Composition* current_composition();

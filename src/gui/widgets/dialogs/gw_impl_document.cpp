@@ -510,7 +510,7 @@ void GlaxnimateWindow::Private::set_color_def_primary(model::BrushStyle* def)
         }
     }
 
-    set_main_brush(def);
+    set_brush_reference(def, false);
 }
 
 void GlaxnimateWindow::Private::set_color_def_secondary(model::BrushStyle* def)
@@ -531,15 +531,17 @@ void GlaxnimateWindow::Private::set_color_def_secondary(model::BrushStyle* def)
         }
     }
 
-    set_secondary_brush(def);
+    set_brush_reference(def, true);
 }
 
-void GlaxnimateWindow::Private::set_main_brush ( model::BrushStyle* sty )
+void GlaxnimateWindow::Private::set_brush_reference ( model::BrushStyle* sty, bool secondary )
 {
-    main_brush = sty;
+    if ( qobject_cast<model::Gradient*>(sty) )
+        sty = nullptr;
+
+    if ( secondary )
+        secondary_brush = sty;
+    else
+        main_brush = sty;
 }
 
-void GlaxnimateWindow::Private::set_secondary_brush ( model::BrushStyle* sty )
-{
-    secondary_brush = sty;
-}

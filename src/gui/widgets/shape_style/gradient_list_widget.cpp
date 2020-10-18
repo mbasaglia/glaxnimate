@@ -169,8 +169,6 @@ public:
 
         styler->use.set_undoable(QVariant::fromValue(gradient));
 
-        emit parent->gradient_changed(gradient, secondary);
-
         remove_old(old);
 
     }
@@ -199,9 +197,6 @@ public:
         auto old = styler->use.get();
 
         styler->use.set_undoable(QVariant::fromValue((model::BrushStyle*)nullptr));
-
-
-        emit parent->gradient_changed(nullptr, secondary);
 
         if ( old )
             remove_old(old->cast<model::Gradient>());
