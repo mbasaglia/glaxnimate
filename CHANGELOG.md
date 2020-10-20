@@ -10,6 +10,7 @@
 * Bug Fixes:
     * Fixed misleading mouse cursor when hovering over bezier node handles
     * Releasing shift/ctrl on the draw tool correctly updates the path
+    * Canceling a node in the draw tool properly resets tangents
 
 ## 0.1.5
 

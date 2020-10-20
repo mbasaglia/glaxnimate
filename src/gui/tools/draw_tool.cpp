@@ -50,6 +50,8 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
         bezier.points().pop_back();
         if ( bezier.empty() )
             clear();
+        else
+            bezier.points().back().tan_in = bezier.points().back().pos;
         event.accept();
         event.repaint();
     }
