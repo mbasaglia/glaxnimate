@@ -2,6 +2,7 @@
 
 #include <QMimeData>
 #include <QDataStream>
+#include <QSet>
 
 #include "command/property_commands.hpp"
 #include "command/object_list_commands.hpp"
