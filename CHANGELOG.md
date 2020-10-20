@@ -7,6 +7,8 @@
 * UI:
     * Improved support for changing the icon theme
     * Drag/Drop in the layer view
+* Bug Fixes:
+    * Fixed misleading mouse cursor when hovering over bezier node handles
 
 ## 0.1.5
 

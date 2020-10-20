@@ -597,15 +597,19 @@ void tools::EditTool::mouse_move(const MouseEvent& event)
             d->insert_preview.transform(d->active[d->insert_item].forward_transform);
         }
 
-        if ( d->insert_item && d->drag_mode == Private::None &&
-            d->insert_params.distance <= d->drag_dist / event.view->get_zoom_factor() )
+        // update cursor
+        auto um = under_mouse(event, true, SelectionMode::Shape);
+        if (
+            d->insert_item && d->drag_mode == Private::None && !um.handle &&
+            d->insert_params.distance <= d->drag_dist / event.view->get_zoom_factor()
+        )
             set_cursor(Qt::OpenHandCursor);
         else if ( d->drag_mode != Private::VertexAdd )
             set_cursor(Qt::ArrowCursor);
 
         // Find shape to highlight
         d->highlight = nullptr;
-        for ( auto node : under_mouse(event, true, SelectionMode::Shape).nodes )
+        for ( auto node : um.nodes )
         {
             if ( auto path = node->node()->cast<model::Shape>() )
             {
