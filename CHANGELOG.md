@@ -6,6 +6,7 @@
     * Last used Named Color will be used for new shapes
 * UI:
     * Improved support for changing the icon theme
+    * Drag/Drop in the layer view
 
 ## 0.1.5
 

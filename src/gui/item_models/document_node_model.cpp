@@ -1,5 +1,14 @@
 #include "document_node_model.hpp"
+
+#include <QMimeData>
+#include <QDataStream>
+
 #include "command/property_commands.hpp"
+#include "command/object_list_commands.hpp"
+#include "command/undo_macro_guard.hpp"
+
+#include "model/shapes/shape.hpp"
+
 
 void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
 {
@@ -128,7 +137,8 @@ Qt::ItemFlags item_models::DocumentNodeModel::flags ( const QModelIndex& index )
     auto n = node(index);
     if ( n && !n->docnode_locked_recursive() )
     {
-        flags |= Qt::ItemIsDropEnabled;
+        if ( n->has("shapes") )
+            flags |= Qt::ItemIsDropEnabled;
         if ( !qobject_cast<model::MainComposition*>(n) )
             flags |= Qt::ItemIsDragEnabled;
     }
@@ -171,6 +181,8 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
             }
             break;
     }
+    if ( role == Qt::UserRole )
+        return n->uuid.get();
     return {};
 }
 
@@ -260,9 +272,85 @@ bool item_models::DocumentNodeModel::removeRows ( int row, int count, const QMod
     return false;
 }
 
-
 Qt::DropActions item_models::DocumentNodeModel::supportedDropActions() const
 {
     return Qt::MoveAction;
+}
+
+QStringList item_models::DocumentNodeModel::mimeTypes() const
+{
+    return {"application/x.glaxnimate-node-uuid"};
+}
+
+QMimeData * item_models::DocumentNodeModel::mimeData(const QModelIndexList& indexes) const
+{
+    if ( !document )
+        return nullptr;
+
+    QMimeData *data = new QMimeData();
+    QByteArray encoded;
+    QDataStream stream(&encoded, QIODevice::WriteOnly);
+    QSet<QUuid> uniq;
+    for ( const auto& index : indexes )
+    {
+        if ( auto n = node(index) )
+        {
+            if ( !uniq.contains(n->uuid.get()) )
+            {
+                stream << n->uuid.get();
+                uniq.insert(n->uuid.get());
+            }
+        }
+    }
+    data->setData("application/x.glaxnimate-node-uuid", encoded);
+    return data;
+}
+
+bool item_models::DocumentNodeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent)
+{
+    Q_UNUSED(column);
+
+    if ( !data || action != Qt::MoveAction || !document )
+        return false;
+
+    if ( !data->hasFormat("application/x.glaxnimate-node-uuid") )
+        return false;
+
+    auto parent_node = node(parent);
+    if ( !parent_node )
+        return false;
+
+    auto dest = static_cast<model::ShapeListProperty*>(parent_node->get_property("shapes"));
+    if ( !dest )
+        return false;
+
+    int max_child = parent_node->docnode_child_count();
+    int insert = max_child - row;
+
+    if ( row > max_child || row < 0)
+        insert = max_child;
+
+
+    QByteArray encoded = data->data("application/x.glaxnimate-node-uuid");
+    QDataStream stream(&encoded, QIODevice::ReadOnly);
+
+    command::UndoMacroGuard guard(tr("Move Layers"), document);
+
+    while ( !stream.atEnd() )
+    {
+        QUuid uuid;
+        stream >> uuid;
+        auto n = document->find_by_uuid(uuid);
+        if ( !n )
+            continue;
+        auto shape = n->cast<model::ShapeElement>();
+        if ( !shape )
+            continue;
+
+        document->push_command(new command::MoveObject(
+            shape, shape->owner(), dest, insert
+        ));
+    }
+    return true;
 }
 

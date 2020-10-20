@@ -29,8 +29,11 @@ public:
     Qt::ItemFlags flags ( const QModelIndex & index ) const override;
     QModelIndex parent ( const QModelIndex & child ) const override;
     bool setData ( const QModelIndex & index, const QVariant & value, int role ) override;
-    Qt::DropActions supportedDropActions() const override;
 
+    QStringList mimeTypes() const override;
+    QMimeData *mimeData(const QModelIndexList &indexes) const override;
+    Qt::DropActions supportedDropActions() const override;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
 
     void clear_document();
     void set_document(model::Document* doc);
