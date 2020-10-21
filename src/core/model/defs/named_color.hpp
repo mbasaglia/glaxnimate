@@ -18,6 +18,8 @@ public:
 
     QBrush brush_style(FrameTime t) const override;
 
+    bool remove_if_unused(bool clean_lists) override;
+
 protected:
     void fill_icon(QPixmap& icon) const override;
 

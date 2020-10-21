@@ -44,6 +44,21 @@ QIcon model::GradientColors::reftarget_icon() const
     return icon;
 }
 
+bool model::GradientColors::remove_if_unused(bool clean_lists)
+{
+    if ( clean_lists && users().empty() )
+    {
+        document()->push_command(new command::RemoveObject(
+            this,
+            &document()->defs()->gradient_colors
+        ));
+        return true;
+    }
+
+    return false;
+}
+
+
 std::vector<model::ReferenceTarget *> model::Gradient::valid_refs() const
 {
     return document()->defs()->gradient_colors.valid_reference_values(false);
@@ -147,7 +162,7 @@ void model::Gradient::on_property_changed(const model::BaseProperty*, const QVar
     emit style_changed();
 }
 
-void model::Gradient::remove_if_unused()
+bool model::Gradient::remove_if_unused(bool)
 {
     if ( users().empty() )
     {
@@ -156,5 +171,7 @@ void model::Gradient::remove_if_unused()
             this,
             &document()->defs()->gradients
         ));
+        return true;
     }
+    return false;
 }

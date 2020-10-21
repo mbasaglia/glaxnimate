@@ -201,6 +201,7 @@
     <addaction name="action_validate_tgs"/>
     <addaction name="action_Web_Preview"/>
     <addaction name="action_resize"/>
+    <addaction name="action_document_cleanup"/>
    </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_edit"/>
@@ -1558,6 +1559,17 @@
    </property>
    <property name="text">
     <string>Dissolve Nodes</string>
+   </property>
+  </action>
+  <action name="action_document_cleanup">
+   <property name="icon">
+    <iconset theme="document-cleanup"/>
+   </property>
+   <property name="text">
+    <string>Cleanup</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove unused assets</string>
    </property>
   </action>
  </widget>

@@ -7,6 +7,8 @@
 #include <QUrl>
 
 #include "model/document.hpp"
+#include "model/defs/defs.hpp"
+#include "command/object_list_commands.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::Bitmap)
 
@@ -156,4 +158,18 @@ QString model::Bitmap::object_name() const
 QFileInfo model::Bitmap::file_info() const
 {
     return QFileInfo(document()->io_options().path, filename.get());
+}
+
+
+bool model::Bitmap::remove_if_unused(bool)
+{
+    if ( users().empty() )
+    {
+        document()->push_command(new command::RemoveObject(
+            this,
+            &document()->defs()->images
+        ));
+        return true;
+    }
+    return false;
 }

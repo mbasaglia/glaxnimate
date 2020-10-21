@@ -73,6 +73,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_delete, &QAction::triggered, parent, &GlaxnimateWindow::delete_selected);
     connect(ui.action_export, &QAction::triggered, parent, &GlaxnimateWindow::document_export);
     connect(ui.action_export_as, &QAction::triggered, parent, &GlaxnimateWindow::document_export_as);
+    connect(ui.action_document_cleanup, &QAction::triggered, parent, [this]{cleanup_document();});
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
@@ -270,10 +271,10 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         ui.document_swatch_widget->add_new_color(ui.fill_style_widget->current_color());
     });
     connect(ui.document_swatch_widget, &DocumentSwatchWidget::current_color_def, [this](model::BrushStyle* sty){
-        set_color_def_primary(sty);
+        set_color_def(sty, false);
     });
     connect(ui.document_swatch_widget, &DocumentSwatchWidget::secondary_color_def, [this](model::BrushStyle* sty){
-        set_color_def_secondary(sty);
+        set_color_def(sty, true);
     });
 
     // Gradients

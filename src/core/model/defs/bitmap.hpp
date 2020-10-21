@@ -44,6 +44,8 @@ public:
 
     const QPixmap& pixmap() const { return image; }
 
+    bool remove_if_unused(bool clean_lists) override;
+
 public slots:
     void refresh(bool rebuild_embedded);
 

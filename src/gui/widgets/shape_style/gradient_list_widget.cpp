@@ -176,7 +176,7 @@ public:
     void remove_old(model::Gradient* old)
     {
         if ( old )
-            old->remove_if_unused();
+            old->remove_if_unused(false);
     }
 
     void clear_gradient(bool secondary)

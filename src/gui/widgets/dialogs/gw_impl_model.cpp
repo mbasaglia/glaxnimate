@@ -6,14 +6,17 @@
 #include <QImageReader>
 #include <QFileDialog>
 
+#include "app/settings/widget_builder.hpp"
+
 #include "command/shape_commands.hpp"
 #include "command/structure_commands.hpp"
-#include "app/settings/widget_builder.hpp"
+#include "command/undo_macro_guard.hpp"
+
+#include "model/shapes/image.hpp"
 #include "model/shapes/group.hpp"
+
 #include "misc/clipboard_settings.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
-#include "model/shapes/image.hpp"
-#include "command/undo_macro_guard.hpp"
 
 
 model::Composition* GlaxnimateWindow::Private::current_composition()
@@ -424,4 +427,29 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
         set_brush_reference(fill->use.get(), false);
     if ( stroke )
         set_brush_reference(stroke->use.get(), true);
+}
+
+template<class T>
+static void remove_assets(T& prop, int& count)
+{
+    for ( int i = 0; i < prop.size();  )
+    {
+        if ( prop[i]->remove_if_unused(true) )
+            count++;
+        else
+            i++;
+    }
+}
+
+void GlaxnimateWindow::Private::cleanup_document()
+{
+    command::UndoMacroGuard guard(tr("Cleanup Document"), current_document.get());
+    int count = 0;
+
+    remove_assets(current_document->defs()->gradients, count);
+    remove_assets(current_document->defs()->gradient_colors, count);
+    remove_assets(current_document->defs()->colors, count);
+    remove_assets(current_document->defs()->images, count);
+
+    status_message(tr("Removed %1 assets").arg(count), 0);
 }

@@ -24,7 +24,12 @@ public:
     void attach();
     void detach();
 
-    virtual void remove_if_unused() {}
+    /**
+     * \brief Removes the asset if it isn't needed
+     * \param clean_lists when \b true, remove even if the asset is in a useful list
+     * \return Whether it has been removed
+     */
+    virtual bool remove_if_unused(bool clean_lists) = 0;
 
 signals:
     void users_changed();
