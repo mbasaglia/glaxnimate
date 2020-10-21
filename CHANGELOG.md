@@ -1,7 +1,5 @@
 ## 0.2.0
 
-## 0.1.6
-
 * Editing:
     * Last used Named Color will be used for new shapes
 * UI:
@@ -11,6 +9,7 @@
     * Fixed misleading mouse cursor when hovering over bezier node handles
     * Releasing shift/ctrl on the draw tool correctly updates the path
     * Canceling a node in the draw tool properly resets tangents
+    * Unused gradient settings are removed when no longer needed
 
 ## 0.1.5
 

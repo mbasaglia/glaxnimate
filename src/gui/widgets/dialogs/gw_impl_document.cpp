@@ -496,17 +496,23 @@ void GlaxnimateWindow::Private::set_color_def_primary(model::BrushStyle* def)
 {
     if ( auto target = ui.fill_style_widget->shape() )
     {
+        auto old = target->use.get();
+
         if ( !def )
         {
             command::UndoMacroGuard macro(tr("Unlink Fill Color"), current_document.get());
             if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
                 target->color.set_undoable(col->color.get());
             target->use.set_undoable(QVariant::fromValue(def));
+            if ( old )
+                old->remove_if_unused();
         }
         else
         {
             command::UndoMacroGuard macro(tr("Link Fill Color"), current_document.get());
             target->use.set_undoable(QVariant::fromValue(def));
+            if ( old )
+                old->remove_if_unused();
         }
     }
 
@@ -517,17 +523,23 @@ void GlaxnimateWindow::Private::set_color_def_secondary(model::BrushStyle* def)
 {
     if ( auto target = ui.stroke_style_widget->shape() )
     {
+        auto old = target->use.get();
+
         if ( !def )
         {
             command::UndoMacroGuard macro(tr("Unlink Stroke Color"), current_document.get());
             if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
                 target->color.set_undoable(col->color.get());
             target->use.set_undoable(QVariant::fromValue(def));
+            if ( old )
+                old->remove_if_unused();
         }
         else
         {
             command::UndoMacroGuard macro(tr("Link StrokeColor"), current_document.get());
             target->use.set_undoable(QVariant::fromValue(def));
+            if ( old )
+                old->remove_if_unused();
         }
     }
 

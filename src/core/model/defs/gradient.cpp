@@ -4,6 +4,7 @@
 
 #include "model/document.hpp"
 #include "model/defs/defs.hpp"
+#include "command/object_list_commands.hpp"
 
 
 GLAXNIMATE_OBJECT_IMPL(model::GradientColors)
@@ -144,4 +145,16 @@ QString model::Gradient::gradient_type_name(Type t)
 void model::Gradient::on_property_changed(const model::BaseProperty*, const QVariant&)
 {
     emit style_changed();
+}
+
+void model::Gradient::remove_if_unused()
+{
+    if ( users().empty() )
+    {
+        colors.set_undoable(QVariant::fromValue((model::GradientColors*)nullptr));
+        document()->push_command(new command::RemoveObject(
+            this,
+            &document()->defs()->gradients
+        ));
+    }
 }

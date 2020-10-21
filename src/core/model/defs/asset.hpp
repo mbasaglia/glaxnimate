@@ -24,6 +24,8 @@ public:
     void attach();
     void detach();
 
+    virtual void remove_if_unused() {}
+
 signals:
     void users_changed();
 

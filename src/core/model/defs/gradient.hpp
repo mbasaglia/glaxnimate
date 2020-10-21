@@ -59,8 +59,9 @@ public:
 
     static QString gradient_type_name(Type t);
 
-private:
+    void remove_if_unused() override;
 
+private:
     std::vector<ReferenceTarget*> valid_refs() const;
     bool is_valid_ref(ReferenceTarget* node) const;
 

@@ -173,17 +173,10 @@ public:
 
     }
 
-    /// \todo Always check, maybe on use removed in the gradient/brush_style
     void remove_old(model::Gradient* old)
     {
-        if ( old && old->users().empty() )
-        {
-            old->colors.set_undoable(QVariant::fromValue((model::GradientColors*)nullptr));
-            document->push_command(new command::RemoveObject(
-                old,
-                &document->defs()->gradients
-            ));
-        }
+        if ( old )
+            old->remove_if_unused();
     }
 
     void clear_gradient(bool secondary)
