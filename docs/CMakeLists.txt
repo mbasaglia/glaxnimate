@@ -13,11 +13,6 @@ add_custom_target(
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml"
 )
 
-find_program(PYTHON_PIP pip3)
-if(NOT PYTHON_PIP)
-    find_program(PYTHON_PIP pip)
-endif()
-
 if(PYTHON_PIP)
     add_custom_target(
         docs_depends_install
