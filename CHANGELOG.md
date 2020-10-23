@@ -2,6 +2,7 @@
 
 * Editing:
     * Last used Named Color will be used for new shapes
+    * Dragging bezier very close to nodes no longer initiates molding
 * UI:
     * Improved support for changing the icon theme
     * Drag/Drop in the layer view

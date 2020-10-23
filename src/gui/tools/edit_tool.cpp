@@ -470,6 +470,11 @@ public:
         selection.initial = nullptr;
     }
 
+    bool mold_grab(const MouseEvent& event)
+    {
+        return insert_item && insert_params.distance <= drag_dist / event.view->get_zoom_factor() && insert_params.factor > 0.1 && insert_params.factor < 0.9;
+    }
+
     DragMode drag_mode;
     QPointF rubber_p1;
     QPointF rubber_p2;
@@ -526,7 +531,7 @@ void tools::EditTool::mouse_press(const MouseEvent& event)
                 event.forward_to_scene();
             }
         }
-        else if ( d->insert_item && d->insert_params.distance <= d->drag_dist / event.view->get_zoom_factor() )
+        else if ( d->mold_grab(event) )
         {
             d->drag_mode = Private::MoldCurve;
             d->insert_params = math::bezier::project(d->insert_item->bezier(), d->active[d->insert_item].inverse_transform.map(event.scene_pos));
@@ -599,10 +604,7 @@ void tools::EditTool::mouse_move(const MouseEvent& event)
 
         // update cursor
         auto um = under_mouse(event, true, SelectionMode::Shape);
-        if (
-            d->insert_item && d->drag_mode == Private::None && !um.handle &&
-            d->insert_params.distance <= d->drag_dist / event.view->get_zoom_factor()
-        )
+        if ( d->drag_mode == Private::None && !um.handle && d->mold_grab(event) )
             set_cursor(Qt::OpenHandCursor);
         else if ( d->drag_mode != Private::VertexAdd )
             set_cursor(Qt::ArrowCursor);
