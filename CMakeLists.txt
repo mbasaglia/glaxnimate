@@ -4,7 +4,7 @@ cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 
 project(Glaxnimate VERSION 0.1.5 LANGUAGES CXX)
 set(PROJECT_SLUG "glaxnimate")
-set(LIB_NAME "${PROJECT_SLUG}_core")
+set(LIB_NAME_CORE "${PROJECT_SLUG}_core")
 set(LIB_NAME_GUI "${PROJECT_SLUG}_gui")
 set(DATA_INSTALL "share/${PROJECT_SLUG}/${PROJECT_SLUG}")
 

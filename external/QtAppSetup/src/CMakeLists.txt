@@ -17,12 +17,6 @@ app/log/log_model.cpp
 app/cli.cpp
 )
 
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG(-Wno-attributes WTF_IS_THIS_WARNING)
-if ( ${WTF_IS_THIS_WARNING} )
-    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-attributes")
-endif()
-
 add_library(${PROJECT_SLUG} OBJECT ${SOURCES})
 target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets QtColorWidgets)
 target_include_directories(${PROJECT_SLUG} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
