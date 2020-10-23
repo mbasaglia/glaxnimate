@@ -7,6 +7,8 @@
     * Improved support for changing the icon theme
     * Drag/Drop in the layer view
     * Menu action to remove unused assets
+* Scripting:
+    * Python module
 * Bug Fixes:
     * Fixed misleading mouse cursor when hovering over bezier node handles
     * Releasing shift/ctrl on the draw tool correctly updates the path

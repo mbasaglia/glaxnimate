@@ -221,7 +221,7 @@ public:
     }
 };
 
-PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
+void register_py_module(py::module& glaxnimate_module)
 {
     define_utils(glaxnimate_module);
     define_log(glaxnimate_module);

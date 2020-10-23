@@ -72,6 +72,8 @@ add_subdirectory(src bin)
 
 add_subdirectory(external/Qt-Color-Widgets EXCLUDE_FROM_ALL)
 
+add_subdirectory(py_module EXCLUDE_FROM_ALL)
+
 set(ALL_SOURCE_DIRECTORIES src)
 find_sources(ALL_SOURCES *.cpp *.hpp)
 

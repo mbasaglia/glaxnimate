@@ -62,11 +62,9 @@ model/shapes/layer.cpp
 model/shapes/image.cpp
 
 utils/gzip.cpp
-)
 
-if(${PYTHON_ENABLED})
-    list(APPEND SOURCES python.cpp)
-endif()
+python/python.cpp
+)
 
 find_package(ZLIB REQUIRED)
 
