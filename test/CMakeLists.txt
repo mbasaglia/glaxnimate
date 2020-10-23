@@ -21,7 +21,7 @@ endfunction(test_case)
 include_directories(${CMAKE_SOURCE_DIR}/src/core)
 
 test_case(test_property)
-target_link_libraries(test_property PRIVATE ${LIB_NAME})
+target_link_libraries(test_property PRIVATE ${LIB_NAME_CORE})
 
 test_case(test_math_vector)
 test_case(test_bezier_solver)
