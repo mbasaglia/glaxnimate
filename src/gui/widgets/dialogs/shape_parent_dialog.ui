@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ShapeParentDialog</string>
+   <string>Destination</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -41,7 +41,8 @@
         <string>Cancel</string>
        </property>
        <property name="icon">
-        <iconset theme="dialog-cancel"/>
+        <iconset theme="dialog-cancel">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -51,7 +52,8 @@
         <string>Move</string>
        </property>
        <property name="icon">
-        <iconset theme="dialog-ok"/>
+        <iconset theme="dialog-ok">
+         <normaloff>.</normaloff>.</iconset>
        </property>
        <property name="default">
         <bool>true</bool>

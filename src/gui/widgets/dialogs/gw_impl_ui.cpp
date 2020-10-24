@@ -8,12 +8,14 @@
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/dialogs/about_dialog.hpp"
 #include "widgets/dialogs/resize_dialog.hpp"
+#include "widgets/dialogs/timing_dialog.hpp"
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
 #include "widgets/node_menu.hpp"
+
 #include "style/better_elide_delegate.hpp"
-#include "glaxnimate_app.hpp"
 #include "tools/edit_tool.hpp"
+#include "glaxnimate_app.hpp"
 
 void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* parent)
 {
@@ -74,6 +76,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_export, &QAction::triggered, parent, &GlaxnimateWindow::document_export);
     connect(ui.action_export_as, &QAction::triggered, parent, &GlaxnimateWindow::document_export_as);
     connect(ui.action_document_cleanup, &QAction::triggered, parent, [this]{cleanup_document();});
+    connect(ui.action_timing, &QAction::triggered, parent, [this]{
+        TimingDialog(current_document.get(), this->parent).exec();
+    });
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )

@@ -200,7 +200,10 @@
     <addaction name="menu_render_single_frame"/>
     <addaction name="action_validate_tgs"/>
     <addaction name="action_Web_Preview"/>
+    <addaction name="separator"/>
     <addaction name="action_resize"/>
+    <addaction name="action_timing"/>
+    <addaction name="separator"/>
     <addaction name="action_document_cleanup"/>
    </widget>
    <addaction name="menu_file"/>
@@ -1563,13 +1566,22 @@
   </action>
   <action name="action_document_cleanup">
    <property name="icon">
-    <iconset theme="document-cleanup"/>
+    <iconset theme="document-cleanup">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Cleanup</string>
    </property>
    <property name="toolTip">
     <string>Remove unused assets</string>
+   </property>
+  </action>
+  <action name="action_timing">
+   <property name="icon">
+    <iconset theme="player-time"/>
+   </property>
+   <property name="text">
+    <string>Timing...</string>
    </property>
   </action>
  </widget>

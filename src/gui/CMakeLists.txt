@@ -44,6 +44,8 @@ widgets/dialogs/shape_parent_dialog.cpp
 widgets/dialogs/shape_parent_dialog.ui
 widgets/dialogs/resize_dialog.cpp
 widgets/dialogs/resize_dialog.ui
+widgets/dialogs/timing_dialog.cpp
+widgets/dialogs/timing_dialog.ui
 
 widgets/timeline/keyframe_transition_widget.cpp
 widgets/timeline/keyframe_editor_widget.cpp

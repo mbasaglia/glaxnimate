@@ -7,6 +7,7 @@
     * Improved support for changing the icon theme
     * Drag/Drop in the layer view
     * Menu action to remove unused assets
+    * Dialog to change animation timing
 * Scripting:
     * Python module
 * Bug Fixes:
@@ -14,6 +15,7 @@
     * Releasing shift/ctrl on the draw tool correctly updates the path
     * Canceling a node in the draw tool properly resets tangents
     * Unused gradient settings are removed when no longer needed
+    * Fixed title of the "Move To" dialog
 
 ## 0.1.5
 
