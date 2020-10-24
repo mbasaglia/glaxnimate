@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+import re
 import sys
+import types
 import inspect
 
 import glaxnimate
@@ -19,8 +21,23 @@ class MdWriter:
     def sublevel(self, amount: int = 1):
         return MdLevel(self, amount)
 
-    #def skip(self):
-        #self.out.write("\n")
+    def end_table(self):
+        self.out.write("\n")
+
+    def table_row(self, *cells):
+        self.out.write("| ")
+        for c in cells:
+            self.out.write(str(c))
+            self.out.write(" | ")
+        self.out.write("\n")
+
+    def table_header(self, *cells):
+        self.table_row(*cells)
+        self.out.write("| ---- " * len(cells))
+        self.out.write("|\n")
+
+    def code(self, string):
+        return "`%s`" % string
 
 
 class MdLevel:
@@ -38,7 +55,8 @@ class MdLevel:
 class ModuleDocs:
     def __init__(self, module):
         self.module = module
-        self.vars = []
+        self.props = []
+        self.const = []
         self.classes = []
         self.functions = []
         self.docs = inspect.getdoc(module)
@@ -51,6 +69,20 @@ class ModuleDocs:
 
         if self.docs:
             writer.p(self.docs)
+
+        if self.props:
+            writer.title("Properties", 1)
+            writer.table_header("name", "type", "notes", "docs")
+            for v in self.props:
+                v.print(writer)
+            writer.end_table()
+
+        if self.const:
+            writer.title("Constants", 1)
+            writer.table_header("name", "type", "value", "docs")
+            for v in self.const:
+                v.print(writer)
+            writer.end_table()
 
         with writer.sublevel():
             for func in self.functions:
@@ -67,7 +99,7 @@ class ModuleDocs:
                 submod = ModuleDocs(val)
                 submod.inspect(modules, submod.classes)
                 modules.append(submod)
-            elif inspect.isfunction(val) or inspect.ismethod(val):
+            elif inspect.isfunction(val) or inspect.ismethod(val) or isinstance(val, types.BuiltinMethodType):
                 self.functions.append(FunctionDoc(self.child_name(name), val))
             elif inspect.isclass(val):
                 cls = ClassDoc(self.child_name(name), val)
@@ -75,8 +107,12 @@ class ModuleDocs:
                 classes.append(cls)
             elif type(val).__name__ == "instancemethod":
                 self.functions.append(FunctionDoc(self.child_name(name), val.__func__))
+            elif isinstance(val, property):
+                self.props.append(PropertyDoc(name, val))
+            elif hasattr(type(val), "__int__"):
+                self.const.append(Constant.enum(val))
             else:
-                print("Skipped %s" % val)
+                self.const.append(Constant(name, None, type(val)))
 
     def child_name(self, child):
         return self.name() + "." + child
@@ -95,6 +131,29 @@ class FunctionDoc:
             writer.p(self.docs)
 
 
+class PropertyDoc:
+    extract_type = re.compile("-> ([^\n]+)")
+
+    def __init__(self, name, prop):
+        self.name = name
+        self.prop = prop
+        self.docs = inspect.getdoc(prop)
+        match = self.extract_type.search(prop.fget.__doc__ or "")
+        if match:
+            self.type = match.group(1)
+        else:
+            self.type = None
+        self.readonly = prop.fset is None
+
+    def print(self, writer: MdWriter):
+        writer.table_row(
+            writer.code(self.name),
+            self.type,
+            "Read only" if self.readonly else "",
+            self.docs
+        )
+
+
 class ClassDoc(ModuleDocs):
     def __init__(self, full_name, cls):
         super().__init__(cls)
@@ -102,6 +161,26 @@ class ClassDoc(ModuleDocs):
 
     def name(self):
         return self.full_name
+
+
+class Constant:
+    def __init__(self, name, value, type):
+        self.name = name
+        self.value = value
+        self.type = type.__module__ + "." + type.__name__
+        self.docs = ""
+
+    @classmethod
+    def enum(cls, value):
+        return cls(value.name, int(value), type(value))
+
+    def print(self, writer: MdWriter):
+        writer.table_row(
+            writer.code(self.name),
+            self.type,
+            writer.code(repr(self.value)) if self.value is not None else "",
+            self.docs
+        )
 
 
 class DocBuilder:
