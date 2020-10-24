@@ -586,7 +586,7 @@ public:
     {
         /// @todo for position fields also add spatial bezier handles
         QCborMap jobj;
-        if ( prop->animated() )
+        if ( prop->keyframe_count() > 1 )
         {
             jobj["a"_l] = 1;
             QCborArray keyframes;
