@@ -17,6 +17,7 @@
     * Unused gradient settings are removed when no longer needed
     * Fixed title of the "Move To" dialog
     * Fixed lottie export of properties with exactly 1 keyframe
+    * Fixed layer order on lottie export
 
 ## 0.1.5
 
