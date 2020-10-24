@@ -8,6 +8,7 @@ FrameControlsWidget::FrameControlsWidget(QWidget* parent)
     d->button_next_kf->setVisible(false);
     d->button_prev_kf->setVisible(false);
     connect(d->button_record, &QAbstractButton::clicked, this, &FrameControlsWidget::record_toggled);
+    connect(d->button_loop, &QAbstractButton::clicked, this, &FrameControlsWidget::loop_changed);
 }
 
 FrameControlsWidget::~FrameControlsWidget() = default;
@@ -74,6 +75,7 @@ void FrameControlsWidget::play()
 
         d->button_play->setChecked(true);
         d->button_play->setIcon(QIcon::fromTheme("media-playback-pause"));
+        emit play_started();
     }
 }
 
@@ -85,6 +87,7 @@ void FrameControlsWidget::pause()
         timer = 0;
         d->button_play->setChecked(false);
         d->button_play->setIcon(QIcon::fromTheme("media-playback-start"));
+        emit play_stopped();
     }
 }
 
@@ -133,4 +136,17 @@ void FrameControlsWidget::set_frame(int frame)
 void FrameControlsWidget::set_record_enabled(bool enabled)
 {
     d->button_record->setChecked(enabled);
+}
+
+void FrameControlsWidget::toggle_play()
+{
+    if ( timer )
+        pause();
+    else
+        play();
+}
+
+void FrameControlsWidget::set_loop(bool loop)
+{
+    d->button_loop->setChecked(loop);
 }

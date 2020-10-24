@@ -24,19 +24,25 @@ public:
 public slots:
     void play();
     void pause();
+    void toggle_play();
     void set_record_enabled(bool enabled);
+    void set_loop(bool loop);
 
-signals:
-    void frame_selected(int frame);
-    void record_toggled(bool enabled);
-
-private slots:
-    void play_toggled(bool play);
-    void commit_time();
     void go_first();
     void go_prev();
     void go_next();
     void go_last();
+
+signals:
+    void frame_selected(int frame);
+    void record_toggled(bool enabled);
+    void play_started();
+    void play_stopped();
+    void loop_changed(bool b);
+
+private slots:
+    void play_toggled(bool play);
+    void commit_time();
 
 
 protected:

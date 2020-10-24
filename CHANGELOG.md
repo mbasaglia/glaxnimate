@@ -8,6 +8,8 @@
     * Drag/Drop in the layer view
     * Menu action to remove unused assets
     * Dialog to change animation timing
+    * Added Playback menu
+    * Left/Right arrow keys change frame even if the timeline isn't focused
 * Scripting:
     * Python module
 * Bug Fixes:

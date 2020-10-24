@@ -46,6 +46,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_delete->setShortcut(QKeySequence("Del", QKeySequence::PortableText));
     ui.action_export->setShortcut(QKeySequence("Ctrl+E", QKeySequence::PortableText));
     ui.action_export_as->setShortcut(QKeySequence("Ctrl+Shift+E", QKeySequence::PortableText));
+    ui.action_frame_prev->setShortcut(QKeySequence("Left", QKeySequence::PortableText));
+    ui.action_frame_next->setShortcut(QKeySequence("Right", QKeySequence::PortableText));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
@@ -79,6 +81,25 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_timing, &QAction::triggered, parent, [this]{
         TimingDialog(current_document.get(), this->parent).exec();
     });
+    connect(ui.action_play, &QAction::triggered, ui.play_controls, &FrameControlsWidget::toggle_play);
+    connect(ui.play_controls, &FrameControlsWidget::play_started, parent, [this]{
+        ui.action_play->setText(tr("Pause"));
+        ui.action_play->setIcon(QIcon::fromTheme("media-playback-pause"));
+    });
+    connect(ui.play_controls, &FrameControlsWidget::play_stopped, parent, [this]{
+        ui.action_play->setText(tr("Play"));
+        ui.action_play->setIcon(QIcon::fromTheme("media-playback-start"));
+    });
+    connect(ui.play_controls, &FrameControlsWidget::record_toggled, ui.action_record, &QAction::setChecked);
+    connect(ui.action_record, &QAction::triggered, ui.play_controls, &FrameControlsWidget::set_record_enabled);
+    connect(ui.action_frame_first, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_first);
+    connect(ui.action_frame_prev, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_prev);
+    connect(ui.action_frame_next, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_next);
+    connect(ui.action_frame_last, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_last);
+    connect(ui.play_controls, &FrameControlsWidget::loop_changed, ui.action_play_loop, &QAction::setChecked);
+    connect(ui.action_play_loop, &QAction::triggered, ui.play_controls, &FrameControlsWidget::set_loop);
+
+
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )

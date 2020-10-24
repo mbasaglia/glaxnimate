@@ -34,6 +34,10 @@ This menu toggles which [views](docks.md) are visible.
 ![render single frame menu](/img/screenshots/menus/render_single_frame.png)
 
 
+## Playback
+
+![playback menu](/img/screenshots/menus/playback.png)
+
 ## Layers
 
 ![layers menu](/img/screenshots/menus/layers.png)
