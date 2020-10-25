@@ -199,7 +199,7 @@ linux:snap_tag:
         - apt-get install -y
     script:
         - test -n "$SNAPCRAFT_LOGIN_FILE"
-        - mkdir build
+        - mkdir -p build
         - cd build
         - cmake ..
         - cd ..
@@ -214,11 +214,12 @@ linux:snap_beta:
     only:
         - master
     before_script:
-        - apt-get update -qq
-        - apt-get install -y
+        - snap install snapcraft
+        #- apt-get update -qq
+        #- apt-get install -y
     script:
         - test -n "$SNAPCRAFT_LOGIN_FILE"
-        - mkdir build
+        - mkdir -p build
         - cd build
         - cmake .. -DVERSION_SUFFIX="snap-$CI_COMMIT_SHORT_SHA"
         - cd ..
