@@ -214,6 +214,8 @@ linux:snap_beta:
     stage: deploy
     only:
         - master
+    dependencies:
+    needs: []
     before_script:
         - apt-get update -qq
         - apt-get install -y python3-pip
@@ -224,6 +226,7 @@ linux:snap_beta:
         - mkdir -p build
         - cd build
         - cmake .. -DSNAP_IS_SUCH_A_PAIN=ON -DVERSION_SUFFIX="snap-$CI_COMMIT_SHORT_SHA" || true
+        - ls -lah .
         - cd ..
         - mkdir snap
         - cp build/snapcraft.yml snap

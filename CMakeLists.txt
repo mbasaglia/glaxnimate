@@ -18,6 +18,28 @@ set(PROJECT_MANINTAINER_NAME "Mattia Basaglia")
 set(PROJECT_MANINTAINER_EMAIL "glanimate@mattbas.org")
 set(PROJECT_MANINTAINER "${PROJECT_MANINTAINER_NAME} <${PROJECT_MANINTAINER_EMAIL}>")
 
+# CMake modules
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_SOURCE_DIR}/external/cmake-modules")
+include(misc)
+include(GetGitRevisionDescription)
+
+# C++
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Git
+set(VERSION_SUFFIX "" CACHE STRING "")
+if (VERSION_SUFFIX STREQUAL "")
+    git_describe(GIT_DESC --tags)
+    if ( NOT ${GIT_DESC} MATCHES ".*NOTFOUND" )
+        set(PROJECT_VERSION ${GIT_DESC})
+    endif()
+else()
+    set(PROJECT_VERSION "${PROJECT_VERSION}+${VERSION_SUFFIX}")
+endif()
+
+message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION}")
+
 # Snapcraft stuff here because we don't care if cmake fails on CI
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/deploy/snapcraft.in.yaml"
@@ -27,15 +49,6 @@ option(SNAP_IS_SUCH_A_PAIN "" OFF)
 if ( SNAP_IS_SUCH_A_PAIN  )
     return()
 endif()
-
-# CMake modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_SOURCE_DIR}/external/cmake-modules")
-include(misc)
-include(GetGitRevisionDescription)
-
-# C++
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Python
 find_program(PYTHON_PIP pip3)
@@ -56,19 +69,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-# Git
-set(VERSION_SUFFIX "" CACHE STRING "")
-if (VERSION_SUFFIX STREQUAL "")
-    git_describe(GIT_DESC --tags)
-    if ( NOT ${GIT_DESC} MATCHES ".*NOTFOUND" )
-        set(PROJECT_VERSION ${GIT_DESC})
-    endif()
-else()
-    set(PROJECT_VERSION "${PROJECT_VERSION}+${VERSION_SUFFIX}")
-endif()
-
-message(STATUS "Building ${PROJECT_NAME} ${PROJECT_VERSION}")
 
 # Debug flags
 if(CMAKE_BUILD_TYPE EQUAL "")
