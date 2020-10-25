@@ -210,13 +210,13 @@ linux:snap_tag:
         - snapcraft upload --release=stable glaxnimate_*.snap
 
 linux:snap_beta:
+    image: snapcore/snapcraft:beta
     stage: deploy
     only:
         - master
     before_script:
-        - apt-get update -qq
-        - apt-get install -y snapd
-        - snap install snapcraft
+        #- apt-get update -qq
+        #- apt-get install -y snapd snapcraft
     script:
         - test -n "$SNAPCRAFT_LOGIN_FILE"
         - mkdir -p build
