@@ -220,7 +220,7 @@ linux:snap_beta:
         - test -n "$SNAPCRAFT_LOGIN_FILE"
         - mkdir build
         - cd build
-        - cmake ..
+        - cmake .. -DVERSION_SUFFIX="snap-$CI_COMMIT_SHORT_SHA"
         - cd ..
         - mkdir snap
         - cp build/snapcraft.yml snap
