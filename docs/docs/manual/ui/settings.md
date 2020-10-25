@@ -43,3 +43,17 @@ Here you can select what is going to be supported when copying / pasting shapes.
   paste on image editing software.
 * JSON: Copy only, the selection will be copied as text, with the contents as if
   saved as a Glaxnimate file.
+
+## Widget Theme
+
+![settings dialog](/img/screenshots/dialogs/settings/theme.png)
+
+Here you can select the interface theme colors.
+
+You can select a preset, or create your own style.
+
+## Keyboard Shortcuts
+
+![settings dialog](/img/screenshots/dialogs/settings/keyboard.png)
+
+Here you can assign keyboard shortcuts for the various menu actions.
