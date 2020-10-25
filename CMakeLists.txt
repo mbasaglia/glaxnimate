@@ -18,6 +18,12 @@ set(PROJECT_MANINTAINER_NAME "Mattia Basaglia")
 set(PROJECT_MANINTAINER_EMAIL "glanimate@mattbas.org")
 set(PROJECT_MANINTAINER "${PROJECT_MANINTAINER_NAME} <${PROJECT_MANINTAINER_EMAIL}>")
 
+# Snapcraft stuff here because we don't care if cmake fails on CI
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/deploy/snapcraft.in.yaml"
+    "${CMAKE_CURRENT_BINARY_DIR}/snapcraft.yaml"
+)
+
 # CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_SOURCE_DIR}/external/cmake-modules")
 include(misc)
@@ -137,8 +143,4 @@ configure_file(
 set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_BINARY_DIR}/bundle.xml.plist")
 set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.icns")
 
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/deploy/snapcraft.in.yaml"
-    "${CMAKE_CURRENT_BINARY_DIR}/snapcraft.yaml"
-)
 include(CPack)
