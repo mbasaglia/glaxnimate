@@ -20,11 +20,6 @@ You can also see the [list of previous releases](https://gitlab.com/mattbas/glax
 <td><a href="#deb-package">Notes</a></td>
 </tr>
 <tr>
-<td><img src="/img/misc/arch-icon.svg" style="height:1.2rem;" /> <a href="https://aur.archlinux.org/packages/glaxnimate-bin/">AUR Package</a></td>
-<td></td>
-<td><a href="#aur-package">Notes</a></td>
-</tr>
-<tr>
 <td><i class="fab fa-windows"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/release/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
 <td><a href="https://dl.bintray.com/mattbas/Glaxnimate/release/Win/checksum.txt">SHA1</a></td>
 <td><a href="#windows-zip">Notes</a></td>
@@ -42,6 +37,20 @@ You can also see the [list of previous releases](https://gitlab.com/mattbas/glax
 </table>
 
 If you enjoy using Glaxnimate consider [donating](donate.md).
+
+## Package Managers
+<table>
+<tr><th>Package</th><th>Notes</th></tr>
+<tr>
+<td><img src="/img/misc/arch-icon.svg" style="height:1.2rem;" /> <a href="https://aur.archlinux.org/packages/glaxnimate-bin/">AUR</a></td>
+<td><a href="#aur-package">Notes</a></td>
+</tr>
+<tr>
+<td><img src="/img/misc/snap.svg" style="height:1.2rem;" /> <a href="https://snapcraft.io/glaxnimate">Snap</a></td>
+<td><a href="#snap">Notes</a></td>
+</tr>
+</table>
+
 
 ## Development Snapshots
 
@@ -164,3 +173,13 @@ upgrade some of the dependencies:
     git clone https://aur.archlinux.org/glaxnimate-bin.git
     cd glaxnimate-bin
     makepkg -rsi
+
+## Snap
+
+For the stable version:
+
+    snap install glaxnimate
+
+For the testing version:
+
+    snap install --beta glaxnimate

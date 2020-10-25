@@ -1,3 +1,5 @@
 build*/
 docs/site/
 docs/mkdocs.yml
+snap/
+*.snap

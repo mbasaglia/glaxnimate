@@ -1,3 +1,4 @@
+# https://gitlab.com/mattia.basaglia/glaxnimate/-/ci/lint
 default:
     before_script:
         - apt-get update -qq
@@ -81,7 +82,7 @@ linux:aur:
         - tags
     before_script:
         - apt-get update -qq
-        - apt-get install -y
+        - apt-get install -y git
     script:
         - test -n "$AUR_SSH_KEY"
         - chmod 700 $AUR_SSH_KEY
@@ -189,4 +190,40 @@ release:
     only:
         - tags
 
-# https://gitlab.com/mattia.basaglia/glaxnimate/-/ci/lint
+linux:snap_tag:
+    stage: deploy
+    only:
+        - tags
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y
+    script:
+        - test -n "$SNAPCRAFT_LOGIN_FILE"
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd ..
+        - mkdir snap
+        - cp build/snapcraft.yml snap
+        - snapcraft
+        - snapcraft login --with "$SNAPCRAFT_LOGIN_FILE"
+        - snapcraft upload --release=stable glaxnimate_*.snap
+
+linux:snap_beta:
+    stage: deploy
+    only:
+        - master
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y
+    script:
+        - test -n "$SNAPCRAFT_LOGIN_FILE"
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cd ..
+        - mkdir snap
+        - cp build/snapcraft.yml snap
+        - snapcraft
+        - snapcraft login --with "$SNAPCRAFT_LOGIN_FILE"
+        - snapcraft upload --release=beta glaxnimate_*.snap
