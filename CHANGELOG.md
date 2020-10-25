@@ -10,6 +10,7 @@
     * Dialog to change animation timing
     * Added Playback menu
     * Left/Right arrow keys change frame even if the timeline isn't focused
+    * Settings page to change keyboard shortcuts
 * Scripting:
     * Python module
 * Bug Fixes:

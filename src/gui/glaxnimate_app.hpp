@@ -4,6 +4,8 @@
 #include "app/log/listener_store.hpp"
 
 
+namespace app::settings { class ShortcutSettings; }
+
 class GlaxnimateApp : public app::Application
 {
     Q_OBJECT
@@ -27,10 +29,13 @@ public:
 
     void init_info();
 
+    app::settings::ShortcutSettings* shortcuts() const;
+
 protected:
     void on_initialize() override;
 
 private:
     app::log::ListenerStore* store_logger;
+    app::settings::ShortcutSettings* shortcut_settings;
 
 };

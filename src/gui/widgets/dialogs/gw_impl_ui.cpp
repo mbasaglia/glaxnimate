@@ -1,6 +1,6 @@
 #include "glaxnimate_window_p.hpp"
 
-#include "app/application.hpp"
+#include "app/settings/keyboard_shortcuts.hpp"
 
 #include "tools/base.hpp"
 #include "model/shapes/group.hpp"
@@ -98,8 +98,6 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_frame_last, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_last);
     connect(ui.play_controls, &FrameControlsWidget::loop_changed, ui.action_play_loop, &QAction::setChecked);
     connect(ui.action_play_loop, &QAction::triggered, ui.play_controls, &FrameControlsWidget::set_loop);
-
-
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
@@ -331,6 +329,20 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     parent->resizeDocks({ui.dock_timeline}, {parent->height()/3}, Qt::Vertical);
     ui.dock_script_console->setVisible(false);
     ui.dock_logs->setVisible(false);
+
+    // Load keyboard shortcuts
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_file);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_edit);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_document);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_tools);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_layers);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_path);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_new_layer);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_views);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_help);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_view);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_render_single_frame);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_playback);
 
     // Auto Screenshots for docs
 #if 0

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ClearableKeysequenceEdit</class>
+ <widget class="QWidget" name="ClearableKeysequenceEdit">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>195</width>
+    <height>34</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QKeySequenceEdit" name="sequence_edit"/>
+   </item>
+   <item>
+    <widget class="QToolButton" name="toolButton_2">
+     <property name="toolTip">
+      <string>Use Default</string>
+     </property>
+     <property name="text">
+      <string>Use Default</string>
+     </property>
+     <property name="icon">
+      <iconset theme="document-revert"/>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QToolButton" name="toolButton">
+     <property name="toolTip">
+      <string>Clear</string>
+     </property>
+     <property name="text">
+      <string>Clear</string>
+     </property>
+     <property name="icon">
+      <iconset theme="edit-clear">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>toolButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>ClearableKeysequenceEdit</receiver>
+   <slot>use_default()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>131</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ClearableKeysequenceEdit</receiver>
+   <slot>use_nothing()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>182</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>236</x>
+     <y>18</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>use_default()</slot>
+  <slot>use_nothing()</slot>
+ </slots>
+</ui>
