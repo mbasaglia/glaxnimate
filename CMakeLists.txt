@@ -23,6 +23,10 @@ configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/deploy/snapcraft.in.yaml"
     "${CMAKE_CURRENT_BINARY_DIR}/snapcraft.yaml"
 )
+option(SNAP_IS_SUCH_A_PAIN "" OFF)
+if ( SNAP_IS_SUCH_A_PAIN  )
+    return()
+endif()
 
 # CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_SOURCE_DIR}/external/cmake-modules")
