@@ -215,8 +215,10 @@ linux:snap_beta:
     only:
         - master
     before_script:
-        #- apt-get update -qq
-        #- apt-get install -y snapd snapcraft
+        - apt-get update -qq
+        - apt-get install -y python3-pip
+        - apt remove cmake
+        - pip3 install cmake
     script:
         - test -n "$SNAPCRAFT_LOGIN_FILE"
         - mkdir -p build
