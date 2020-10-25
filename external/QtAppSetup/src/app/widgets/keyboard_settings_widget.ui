@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>KeyboardSettingsWidget</class>
+ <widget class="QWidget" name="KeyboardSettingsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLineEdit" name="filter">
+       <property name="placeholderText">
+        <string>Filter</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton">
+       <property name="toolTip">
+        <string>Clear Filter</string>
+       </property>
+       <property name="text">
+        <string>Clear Filter</string>
+       </property>
+       <property name="icon">
+        <iconset theme="edit-clear"/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTreeView" name="tree_view"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>KeyboardSettingsWidget</receiver>
+   <slot>clear_filter()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>364</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>515</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filter</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>KeyboardSettingsWidget</receiver>
+   <slot>filter(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>429</x>
+     <y>177</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>clear_filter()</slot>
+  <slot>filter(QString)</slot>
+ </slots>
+</ui>

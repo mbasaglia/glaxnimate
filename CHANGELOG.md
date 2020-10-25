@@ -1,11 +1,26 @@
 ## 0.2.0
 
-## 0.1.6
-
 * Editing:
-    * Last used Gradient / Named Color will be used for new shapes
+    * Last used Named Color will be used for new shapes
+    * Dragging bezier very close to nodes no longer initiates molding
 * UI:
     * Improved support for changing the icon theme
+    * Drag/Drop in the layer view
+    * Menu action to remove unused assets
+    * Dialog to change animation timing
+    * Added Playback menu
+    * Left/Right arrow keys change frame even if the timeline isn't focused
+    * Settings page to change keyboard shortcuts
+* Scripting:
+    * Python module
+* Bug Fixes:
+    * Fixed misleading mouse cursor when hovering over bezier node handles
+    * Releasing shift/ctrl on the draw tool correctly updates the path
+    * Canceling a node in the draw tool properly resets tangents
+    * Unused gradient settings are removed when no longer needed
+    * Fixed title of the "Move To" dialog
+    * Fixed lottie export of properties with exactly 1 keyframe
+    * Fixed layer order on lottie export
 
 ## 0.1.5
 

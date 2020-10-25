@@ -4,7 +4,7 @@ cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 
 project(Glaxnimate VERSION 0.1.5 LANGUAGES CXX)
 set(PROJECT_SLUG "glaxnimate")
-set(LIB_NAME "${PROJECT_SLUG}_core")
+set(LIB_NAME_CORE "${PROJECT_SLUG}_core")
 set(LIB_NAME_GUI "${PROJECT_SLUG}_gui")
 set(DATA_INSTALL "share/${PROJECT_SLUG}/${PROJECT_SLUG}")
 
@@ -14,7 +14,9 @@ set(URL_ISSUES "https://gitlab.com/mattbas/glaxnimate/-/issues")
 set(URL_DONATE "https://glaxnimate.mattbas.org/donate/")
 
 set(PROJECT_DESCRIPTION "Simple vector animation program")
-set(PROJECT_MANINTAINER "Mattia Basaglia <glanimate@mattbas.org>")
+set(PROJECT_MANINTAINER_NAME "Mattia Basaglia")
+set(PROJECT_MANINTAINER_EMAIL "glanimate@mattbas.org")
+set(PROJECT_MANINTAINER "${PROJECT_MANINTAINER_NAME} <${PROJECT_MANINTAINER_EMAIL}>")
 
 # CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${CMAKE_CURRENT_SOURCE_DIR}/external/cmake-modules")
@@ -24,6 +26,17 @@ include(GetGitRevisionDescription)
 # C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Python
+find_program(PYTHON_PIP pip3)
+if(NOT PYTHON_PIP)
+    find_program(PYTHON_PIP pip)
+endif()
+
+find_program(PYTHON_EXEC python3)
+if(NOT PYTHON_EXEC)
+    find_program(PYTHON_EXEC python)
+endif()
 
 # Qt
 set (QT_SUPPORTED_VERSIONS 5)
@@ -71,6 +84,8 @@ add_subdirectory(external/Qt-History-LineEdit)
 add_subdirectory(src bin)
 
 add_subdirectory(external/Qt-Color-Widgets EXCLUDE_FROM_ALL)
+
+add_subdirectory(py_module EXCLUDE_FROM_ALL)
 
 set(ALL_SOURCE_DIRECTORIES src)
 find_sources(ALL_SOURCES *.cpp *.hpp)

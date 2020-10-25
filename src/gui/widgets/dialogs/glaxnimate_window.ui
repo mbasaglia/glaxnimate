@@ -200,13 +200,31 @@
     <addaction name="menu_render_single_frame"/>
     <addaction name="action_validate_tgs"/>
     <addaction name="action_Web_Preview"/>
+    <addaction name="separator"/>
     <addaction name="action_resize"/>
+    <addaction name="action_timing"/>
+    <addaction name="separator"/>
+    <addaction name="action_document_cleanup"/>
+   </widget>
+   <widget class="QMenu" name="menu_playback">
+    <property name="title">
+     <string>&amp;Playback</string>
+    </property>
+    <addaction name="action_play"/>
+    <addaction name="action_play_loop"/>
+    <addaction name="action_record"/>
+    <addaction name="separator"/>
+    <addaction name="action_frame_first"/>
+    <addaction name="action_frame_prev"/>
+    <addaction name="action_frame_next"/>
+    <addaction name="action_frame_last"/>
    </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_edit"/>
    <addaction name="menu_tools"/>
    <addaction name="menu_view"/>
    <addaction name="menu_document"/>
+   <addaction name="menu_playback"/>
    <addaction name="menu_layers"/>
    <addaction name="menu_path"/>
    <addaction name="menu_plugins"/>
@@ -340,13 +358,16 @@
      <item>
       <widget class="QTreeView" name="view_document_node">
        <property name="dragEnabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="dragDropMode">
-        <enum>QAbstractItemView::NoDragDrop</enum>
+        <enum>QAbstractItemView::InternalMove</enum>
        </property>
        <property name="selectionMode">
         <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+       <property name="autoExpandDelay">
+        <number>500</number>
        </property>
        <attribute name="headerVisible">
         <bool>false</bool>
@@ -1550,10 +1571,104 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="format-node-curve"/>
+    <iconset theme="format-node-curve">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Dissolve Nodes</string>
+   </property>
+  </action>
+  <action name="action_document_cleanup">
+   <property name="icon">
+    <iconset theme="document-cleanup">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Cleanup</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove unused assets</string>
+   </property>
+  </action>
+  <action name="action_timing">
+   <property name="icon">
+    <iconset theme="player-time">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Timing...</string>
+   </property>
+  </action>
+  <action name="action_play">
+   <property name="icon">
+    <iconset theme="media-playback-start">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Play</string>
+   </property>
+  </action>
+  <action name="action_play_loop">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="media-playlist-repeat">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Loop</string>
+   </property>
+  </action>
+  <action name="action_record">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="media-record">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Record Keyframes</string>
+   </property>
+  </action>
+  <action name="action_frame_first">
+   <property name="icon">
+    <iconset theme="go-first">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Jump to &amp;Start</string>
+   </property>
+  </action>
+  <action name="action_frame_last">
+   <property name="icon">
+    <iconset theme="go-last">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Jump to &amp;End</string>
+   </property>
+  </action>
+  <action name="action_frame_next">
+   <property name="icon">
+    <iconset theme="go-next">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Next Frame</string>
+   </property>
+  </action>
+  <action name="action_frame_prev">
+   <property name="icon">
+    <iconset theme="go-previous">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Pre&amp;vious Frame</string>
    </property>
   </action>
  </widget>

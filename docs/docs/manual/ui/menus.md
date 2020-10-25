@@ -33,12 +33,10 @@ This menu toggles which [views](docks.md) are visible.
 
 ![render single frame menu](/img/screenshots/menus/render_single_frame.png)
 
-### Resize Dialog
 
-![resize dialog](/img/screenshots/dialogs/resize.png)
+## Playback
 
-Allows to resize the animation and scale all layers.
-
+![playback menu](/img/screenshots/menus/playback.png)
 
 ## Layers
 

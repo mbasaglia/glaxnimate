@@ -44,6 +44,8 @@ widgets/dialogs/shape_parent_dialog.cpp
 widgets/dialogs/shape_parent_dialog.ui
 widgets/dialogs/resize_dialog.cpp
 widgets/dialogs/resize_dialog.ui
+widgets/dialogs/timing_dialog.cpp
+widgets/dialogs/timing_dialog.ui
 
 widgets/timeline/keyframe_transition_widget.cpp
 widgets/timeline/keyframe_editor_widget.cpp
@@ -53,6 +55,7 @@ widgets/timeline/frame_controls_widget.ui
 widgets/timeline/timeline_widget.cpp
 widgets/timeline/compound_timeline_widget.cpp
 widgets/timeline/compound_timeline_widget.ui
+widgets/timeline/timeline_items.cpp
 
 widgets/tools/shape_tool_widget.cpp
 widgets/tools/shape_tool_widget.ui
@@ -82,12 +85,6 @@ widgets/shape_style/gradient_list_widget.ui
 )
 
 if(${PYTHON_ENABLED})
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG(-Wno-attributes WTF_IS_THIS_WARNING)
-    if ( ${WTF_IS_THIS_WARNING} )
-        SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-attributes")
-    endif()
-
     list(APPEND SOURCES gui_python.cpp)
 endif()
 
@@ -98,4 +95,4 @@ qt5_add_resources(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/resources/glaxnimate.qrc)
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/core)
 add_library(${LIB_NAME_GUI} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME_GUI} PUBLIC Qt5::Widgets QtColorWidgets QtHistoryLineEdit ${LIB_NAME})
+target_link_libraries(${LIB_NAME_GUI} PUBLIC Qt5::Widgets QtColorWidgets QtHistoryLineEdit ${LIB_NAME_CORE})

@@ -396,10 +396,10 @@ public:
         switch ( type )
         {
             case LayerType::Shape:
-                output.push_back(wrap_layer_shape(shape));
+                output.push_front(wrap_layer_shape(shape));
                 return;
             case LayerType::Image:
-                output.push_back(convert_image_layer(static_cast<model::Image*>(shape)));
+                output.push_front(convert_image_layer(static_cast<model::Image*>(shape)));
                 return;
             case LayerType::Layer:
                 break;
@@ -449,7 +449,7 @@ public:
             }
         }
 
-        output.push_back(json);
+        output.push_front(json);
     }
 
     void convert_transform(Transform* tf, model::AnimatableBase* opacity, QCborMap& json)
@@ -586,7 +586,7 @@ public:
     {
         /// @todo for position fields also add spatial bezier handles
         QCborMap jobj;
-        if ( prop->animated() )
+        if ( prop->keyframe_count() > 1 )
         {
             jobj["a"_l] = 1;
             QCborArray keyframes;

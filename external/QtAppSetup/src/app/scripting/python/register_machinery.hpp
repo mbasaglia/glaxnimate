@@ -7,25 +7,26 @@
 #include <QDebug>
 
 #include "app/scripting/python/casters.hpp"
+#include "app/scripting/python/attribute.hpp"
 
 namespace py = pybind11;
 
 namespace app::scripting::python {
 
-struct PyPropertyInfo
+struct PY_HIDDEN PyPropertyInfo
 {
     const char* name = nullptr;
     py::cpp_function get;
     py::cpp_function set;
 };
 
-struct PyMethodInfo
+struct PY_HIDDEN PyMethodInfo
 {
     const char* name = nullptr;
     py::cpp_function method;
 };
 
-struct PyEnumInfo
+struct PY_HIDDEN PyEnumInfo
 {
     const char* name = nullptr;
     py::handle enum_handle;

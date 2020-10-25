@@ -1,6 +1,6 @@
 #include "glaxnimate_window_p.hpp"
 
-#include "app/application.hpp"
+#include "app/settings/keyboard_shortcuts.hpp"
 
 #include "tools/base.hpp"
 #include "model/shapes/group.hpp"
@@ -8,12 +8,14 @@
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/dialogs/about_dialog.hpp"
 #include "widgets/dialogs/resize_dialog.hpp"
+#include "widgets/dialogs/timing_dialog.hpp"
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
 #include "widgets/node_menu.hpp"
+
 #include "style/better_elide_delegate.hpp"
-#include "glaxnimate_app.hpp"
 #include "tools/edit_tool.hpp"
+#include "glaxnimate_app.hpp"
 
 void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* parent)
 {
@@ -44,6 +46,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_delete->setShortcut(QKeySequence("Del", QKeySequence::PortableText));
     ui.action_export->setShortcut(QKeySequence("Ctrl+E", QKeySequence::PortableText));
     ui.action_export_as->setShortcut(QKeySequence("Ctrl+Shift+E", QKeySequence::PortableText));
+    ui.action_frame_prev->setShortcut(QKeySequence("Left", QKeySequence::PortableText));
+    ui.action_frame_next->setShortcut(QKeySequence("Right", QKeySequence::PortableText));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
@@ -73,6 +77,27 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_delete, &QAction::triggered, parent, &GlaxnimateWindow::delete_selected);
     connect(ui.action_export, &QAction::triggered, parent, &GlaxnimateWindow::document_export);
     connect(ui.action_export_as, &QAction::triggered, parent, &GlaxnimateWindow::document_export_as);
+    connect(ui.action_document_cleanup, &QAction::triggered, parent, [this]{cleanup_document();});
+    connect(ui.action_timing, &QAction::triggered, parent, [this]{
+        TimingDialog(current_document.get(), this->parent).exec();
+    });
+    connect(ui.action_play, &QAction::triggered, ui.play_controls, &FrameControlsWidget::toggle_play);
+    connect(ui.play_controls, &FrameControlsWidget::play_started, parent, [this]{
+        ui.action_play->setText(tr("Pause"));
+        ui.action_play->setIcon(QIcon::fromTheme("media-playback-pause"));
+    });
+    connect(ui.play_controls, &FrameControlsWidget::play_stopped, parent, [this]{
+        ui.action_play->setText(tr("Play"));
+        ui.action_play->setIcon(QIcon::fromTheme("media-playback-start"));
+    });
+    connect(ui.play_controls, &FrameControlsWidget::record_toggled, ui.action_record, &QAction::setChecked);
+    connect(ui.action_record, &QAction::triggered, ui.play_controls, &FrameControlsWidget::set_record_enabled);
+    connect(ui.action_frame_first, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_first);
+    connect(ui.action_frame_prev, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_prev);
+    connect(ui.action_frame_next, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_next);
+    connect(ui.action_frame_last, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_last);
+    connect(ui.play_controls, &FrameControlsWidget::loop_changed, ui.action_play_loop, &QAction::setChecked);
+    connect(ui.action_play_loop, &QAction::triggered, ui.play_controls, &FrameControlsWidget::set_loop);
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
@@ -270,20 +295,14 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         ui.document_swatch_widget->add_new_color(ui.fill_style_widget->current_color());
     });
     connect(ui.document_swatch_widget, &DocumentSwatchWidget::current_color_def, [this](model::BrushStyle* sty){
-        set_color_def_primary(sty);
+        set_color_def(sty, false);
     });
     connect(ui.document_swatch_widget, &DocumentSwatchWidget::secondary_color_def, [this](model::BrushStyle* sty){
-        set_color_def_secondary(sty);
+        set_color_def(sty, true);
     });
 
     // Gradients
     ui.widget_gradients->set_window(parent);
-    connect(ui.widget_gradients, &GradientListWidget::gradient_changed, [this](model::Gradient* sty, bool secondary){
-        if ( secondary )
-            set_secondary_brush(sty);
-        else
-            set_main_brush(sty);
-    });
 
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
@@ -310,6 +329,20 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     parent->resizeDocks({ui.dock_timeline}, {parent->height()/3}, Qt::Vertical);
     ui.dock_script_console->setVisible(false);
     ui.dock_logs->setVisible(false);
+
+    // Load keyboard shortcuts
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_file);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_edit);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_document);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_tools);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_layers);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_path);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_new_layer);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_views);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_help);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_view);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_render_single_frame);
+    GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_playback);
 
     // Auto Screenshots for docs
 #if 0

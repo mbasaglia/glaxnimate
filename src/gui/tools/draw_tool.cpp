@@ -34,7 +34,10 @@ void tools::DrawTool::adjust_point_type(Qt::KeyboardModifiers mod)
         point_type = math::bezier::Symmetrical;
 
     if ( !bezier.empty() )
+    {
         bezier.points().back().type = point_type;
+        bezier.points().back().drag_tan_out(bezier.points().back().tan_out);
+    }
 }
 
 void tools::DrawTool::key_press(const tools::KeyEvent& event)
@@ -47,6 +50,8 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
         bezier.points().pop_back();
         if ( bezier.empty() )
             clear();
+        else
+            bezier.points().back().tan_in = bezier.points().back().pos;
         event.accept();
         event.repaint();
     }

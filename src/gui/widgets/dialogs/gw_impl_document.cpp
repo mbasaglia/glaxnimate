@@ -492,54 +492,54 @@ QString GlaxnimateWindow::Private::drop_event_data(QDropEvent* event)
     return {};
 }
 
-void GlaxnimateWindow::Private::set_color_def_primary(model::BrushStyle* def)
+void GlaxnimateWindow::Private::set_color_def(model::BrushStyle* def, bool secondary)
 {
-    if ( auto target = ui.fill_style_widget->shape() )
+    model::Styler* target;
+    QString what;
+    if ( secondary )
     {
+        target = ui.stroke_style_widget->shape();
+        what = tr("Fill");
+    }
+    else
+    {
+        target = ui.fill_style_widget->shape();
+        what = tr("Stroke");
+    }
+
+    if ( target )
+    {
+        auto old = target->use.get();
+
         if ( !def )
         {
-            command::UndoMacroGuard macro(tr("Unlink Fill Color"), current_document.get());
+            command::UndoMacroGuard macro(tr("Unlink %1 Color").arg(what), current_document.get());
             if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
                 target->color.set_undoable(col->color.get());
             target->use.set_undoable(QVariant::fromValue(def));
+            if ( old )
+                old->remove_if_unused(false);
         }
         else
         {
-            command::UndoMacroGuard macro(tr("Link Fill Color"), current_document.get());
+            command::UndoMacroGuard macro(tr("Link %1 Color").arg(what), current_document.get());
             target->use.set_undoable(QVariant::fromValue(def));
+            if ( old )
+                old->remove_if_unused(false);
         }
     }
 
-    set_main_brush(def);
+    set_brush_reference(def, false);
 }
 
-void GlaxnimateWindow::Private::set_color_def_secondary(model::BrushStyle* def)
+void GlaxnimateWindow::Private::set_brush_reference ( model::BrushStyle* sty, bool secondary )
 {
-    if ( auto target = ui.stroke_style_widget->shape() )
-    {
-        if ( !def )
-        {
-            command::UndoMacroGuard macro(tr("Unlink Stroke Color"), current_document.get());
-            if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
-                target->color.set_undoable(col->color.get());
-            target->use.set_undoable(QVariant::fromValue(def));
-        }
-        else
-        {
-            command::UndoMacroGuard macro(tr("Link StrokeColor"), current_document.get());
-            target->use.set_undoable(QVariant::fromValue(def));
-        }
-    }
+    if ( qobject_cast<model::Gradient*>(sty) )
+        sty = nullptr;
 
-    set_secondary_brush(def);
+    if ( secondary )
+        secondary_brush = sty;
+    else
+        main_brush = sty;
 }
 
-void GlaxnimateWindow::Private::set_main_brush ( model::BrushStyle* sty )
-{
-    main_brush = sty;
-}
-
-void GlaxnimateWindow::Private::set_secondary_brush ( model::BrushStyle* sty )
-{
-    secondary_brush = sty;
-}

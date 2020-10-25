@@ -13,11 +13,6 @@ add_custom_target(
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml"
 )
 
-find_program(PYTHON_PIP pip3)
-if(NOT PYTHON_PIP)
-    find_program(PYTHON_PIP pip)
-endif()
-
 if(PYTHON_PIP)
     add_custom_target(
         docs_depends_install
@@ -25,3 +20,10 @@ if(PYTHON_PIP)
     )
 endif()
 
+
+add_custom_target(
+    docs_build_python
+    COMMAND PYTHONPATH=${CMAKE_BINARY_DIR}/py_module/build/lib ${PYTHON_EXEC} "${CMAKE_CURRENT_SOURCE_DIR}/build_py_doc.py" > "${CMAKE_CURRENT_SOURCE_DIR}/docs/contributing/scripting/python_reference.md"
+    BYPRODUCTS "${CMAKE_CURRENT_SOURCE_DIR}/docs/contributing/scripting/python_reference.md"
+    DEPENDS glaxnimate_python
+)

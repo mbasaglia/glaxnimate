@@ -3,6 +3,8 @@ set(SOURCES
 app/application.cpp
 app/settings/settings.cpp
 app/settings/palette_settings.cpp
+app/settings/keyboard_shortcuts.cpp
+app/settings/keyboard_shortcuts_model.cpp
 app/translation_service.cpp
 app/scripting/plugin.cpp
 app/scripting/script_engine.cpp
@@ -12,16 +14,14 @@ app/widgets/settings_dialog.cpp
 app/widgets/settings_dialog.ui
 app/widgets/widget_palette_editor.cpp
 app/widgets/widget_palette_editor.ui
+app/widgets/clearable_keysequence_edit.cpp
+app/widgets/clearable_keysequence_edit.ui
+app/widgets/keyboard_settings_widget.cpp
+app/widgets/keyboard_settings_widget.ui
 app/log/logger.cpp
 app/log/log_model.cpp
 app/cli.cpp
 )
-
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG(-Wno-attributes WTF_IS_THIS_WARNING)
-if ( ${WTF_IS_THIS_WARNING} )
-    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-attributes")
-endif()
 
 add_library(${PROJECT_SLUG} OBJECT ${SOURCES})
 target_link_libraries(${PROJECT_SLUG} PUBLIC Qt5::Widgets QtColorWidgets)

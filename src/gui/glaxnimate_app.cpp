@@ -4,10 +4,11 @@
 #include <QPalette>
 
 #include "app/settings/settings.hpp"
-#include "app_info.hpp"
 #include "app/scripting/plugin_settings_group.hpp"
-#include "misc/clipboard_settings.hpp"
 #include "app/settings/palette_settings.hpp"
+#include "app/settings/keyboard_shortcuts.hpp"
+#include "app_info.hpp"
+#include "misc/clipboard_settings.hpp"
 
 static QVariantMap avail_icon_themes()
 {
@@ -155,6 +156,10 @@ void GlaxnimateApp::on_initialize()
     load_themes(this, palette_settings.get());
     app::settings::Settings::instance().add_custom_group(std::move(palette_settings));
 
+    auto sc_settings = std::make_unique<app::settings::ShortcutSettings>();
+    shortcut_settings = sc_settings.get();
+    app::settings::Settings::instance().add_custom_group(std::move(sc_settings));
+
     QDir().mkpath(backup_path());
 
     app::log::Logger::instance().add_listener<app::log::ListenerStderr>();
@@ -173,4 +178,9 @@ void GlaxnimateApp::init_info()
     setApplicationDisplayName(info.name());
     setApplicationVersion(info.version());
     setOrganizationName(info.organization());
+}
+
+app::settings::ShortcutSettings * GlaxnimateApp::shortcuts() const
+{
+    return shortcut_settings;
 }

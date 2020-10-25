@@ -26,6 +26,7 @@ nav:
             - manual/ui/tools.md
             - manual/ui/canvas.md
             - manual/ui/docks.md
+            - manual/ui/dialogs.md
             - manual/ui/menus.md
             - manual/ui/settings.md
         - "ChangeLog": changelog.md
@@ -34,6 +35,7 @@ nav:
         - "Scripting":
             - contributing/scripting/index.md
             - contributing/scripting/plugins.md
+            - "Reference": contributing/scripting/python_reference.md
         - "Building From Source":
             - "Readme": contributing/read_me.md
             - contributing/repository_structure.md

@@ -4,6 +4,7 @@
 
 #include "model/document.hpp"
 #include "model/defs/defs.hpp"
+#include "command/object_list_commands.hpp"
 
 
 GLAXNIMATE_OBJECT_IMPL(model::GradientColors)
@@ -42,6 +43,21 @@ QIcon model::GradientColors::reftarget_icon() const
     p.fillRect(icon.rect(), g);
     return icon;
 }
+
+bool model::GradientColors::remove_if_unused(bool clean_lists)
+{
+    if ( clean_lists && users().empty() )
+    {
+        document()->push_command(new command::RemoveObject(
+            this,
+            &document()->defs()->gradient_colors
+        ));
+        return true;
+    }
+
+    return false;
+}
+
 
 std::vector<model::ReferenceTarget *> model::Gradient::valid_refs() const
 {
@@ -144,4 +160,18 @@ QString model::Gradient::gradient_type_name(Type t)
 void model::Gradient::on_property_changed(const model::BaseProperty*, const QVariant&)
 {
     emit style_changed();
+}
+
+bool model::Gradient::remove_if_unused(bool)
+{
+    if ( users().empty() )
+    {
+        colors.set_undoable(QVariant::fromValue((model::GradientColors*)nullptr));
+        document()->push_command(new command::RemoveObject(
+            this,
+            &document()->defs()->gradients
+        ));
+        return true;
+    }
+    return false;
 }

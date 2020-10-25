@@ -11,7 +11,7 @@ app::scripting::ScriptEngine::Autoregister<app::scripting::python::PythonEngine>
 static int counter = 0;
 
 
-class CaptureStream
+class PY_HIDDEN CaptureStream
 {
 public:
     using OwnerT = app::scripting::ScriptExecutionContext;
@@ -81,7 +81,7 @@ private:
 };
 
 
-class app::scripting::python::PythonContext::Private
+class PY_HIDDEN app::scripting::python::PythonContext::Private
 {
 public:
     void init_capture(PythonContext* ctx)
@@ -174,7 +174,7 @@ void app::scripting::python::PythonContext::app_module ( const QString& name )
 }
 
 
-class ModuleSetter
+class PY_HIDDEN ModuleSetter
 {
 public:
     ModuleSetter(py::module& sys, const QString& append) : sys(sys)

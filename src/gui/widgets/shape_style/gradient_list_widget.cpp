@@ -169,23 +169,14 @@ public:
 
         styler->use.set_undoable(QVariant::fromValue(gradient));
 
-        emit parent->gradient_changed(gradient, secondary);
-
         remove_old(old);
 
     }
 
-    /// \todo Always check, maybe on use removed in the gradient/brush_style
     void remove_old(model::Gradient* old)
     {
-        if ( old && old->users().empty() )
-        {
-            old->colors.set_undoable(QVariant::fromValue((model::GradientColors*)nullptr));
-            document->push_command(new command::RemoveObject(
-                old,
-                &document->defs()->gradients
-            ));
-        }
+        if ( old )
+            old->remove_if_unused(false);
     }
 
     void clear_gradient(bool secondary)
@@ -199,9 +190,6 @@ public:
         auto old = styler->use.get();
 
         styler->use.set_undoable(QVariant::fromValue((model::BrushStyle*)nullptr));
-
-
-        emit parent->gradient_changed(nullptr, secondary);
 
         if ( old )
             remove_old(old->cast<model::Gradient>());

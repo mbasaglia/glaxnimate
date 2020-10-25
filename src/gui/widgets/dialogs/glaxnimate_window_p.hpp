@@ -119,11 +119,9 @@ public:
     void switch_tool(tools::Tool* tool);
     void switch_tool_action(QAction* action);
     void status_message(const QString& msg, int duration=5000);
-    void set_color_def_primary(model::BrushStyle* sty);
-    void set_color_def_secondary(model::BrushStyle* sty);
+    void set_color_def(model::BrushStyle* sty, bool secondary);
     QString get_open_image_file(const QString& title, const QString& dir);
-    void set_main_brush(model::BrushStyle* sty);
-    void set_secondary_brush(model::BrushStyle* sty);
+    void set_brush_reference(model::BrushStyle* sty, bool secondary);
 
     // Model
     model::Composition* current_composition();
@@ -140,6 +138,7 @@ public:
     void group_shapes();
     void ungroup_shapes();
     void move_to();
+    void cleanup_document();
 
     void layer_new_layer();
     void layer_new_fill();

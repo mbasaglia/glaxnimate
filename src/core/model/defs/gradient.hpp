@@ -24,6 +24,8 @@ public:
     QIcon reftarget_icon() const override;
     QString type_name_human() const override;
 
+    bool remove_if_unused(bool clean_lists) override;
+
 signals:
     void colors_changed(const QGradientStops&);
 };
@@ -59,8 +61,9 @@ public:
 
     static QString gradient_type_name(Type t);
 
-private:
+    bool remove_if_unused(bool clean_lists) override;
 
+private:
     std::vector<ReferenceTarget*> valid_refs() const;
     bool is_valid_ref(ReferenceTarget* node) const;
 

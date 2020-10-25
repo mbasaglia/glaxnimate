@@ -17,3 +17,8 @@
     color: #fff;
     background-color: #272727;
 }
+
+.bs-sidenav a {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

@@ -1,352 +1,9 @@
 #include "timeline_widget.hpp"
 
-#include <QGraphicsObject>
-#include <QStyleOptionGraphicsItem>
 #include <QScrollBar>
-#include <QGraphicsSceneMouseEvent>
 #include <QWheelEvent>
 
-#include "app/application.hpp"
-#include "model/document.hpp"
-#include "command/animation_commands.hpp"
-
-class KeyframeSplitItem : public QGraphicsObject
-{
-    Q_OBJECT
-
-public:
-    static const int icon_size = 16;
-    static const int pen = 2;
-
-    KeyframeSplitItem(QGraphicsItem* parent) : QGraphicsObject(parent)
-    {
-        setFlags(
-            QGraphicsItem::ItemIsSelectable|
-            QGraphicsItem::ItemIgnoresTransformations
-        );
-    }
-
-    QRectF boundingRect() const override
-    {
-        return QRectF(-icon_size/2-pen, -icon_size/2-pen, icon_size+2*pen, icon_size+2*pen);
-    }
-
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget * widget) override
-    {
-        if ( isSelected() )
-        {
-            QColor sel_border = widget->palette().color(QPalette::Highlight);
-            if ( parentItem()->isSelected() )
-                sel_border = widget->palette().color(QPalette::HighlightedText);
-            QColor sel_fill = sel_border;
-            sel_fill.setAlpha(128);
-            painter->setPen(QPen(sel_border, pen));
-            painter->setBrush(sel_fill);
-            painter->drawRect(boundingRect());
-        }
-
-        painter->drawPixmap(-icon_size/2, -icon_size/2, pix_enter);
-        painter->drawPixmap(0, -icon_size/2, pix_exit);
-    }
-
-
-    void set_enter(model::KeyframeTransition::Descriptive enter)
-    {
-        icon_enter = icon_from_kdf(enter, "finish");
-        pix_enter = icon_enter.pixmap(icon_size);
-        update();
-    }
-
-    void set_exit(model::KeyframeTransition::Descriptive exit)
-    {
-        icon_exit = icon_from_kdf(exit, "start");
-        pix_exit = icon_exit.pixmap(icon_size);
-        update();
-    }
-
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent * event) override
-    {
-        if ( event->button() == Qt::LeftButton )
-        {
-            event->accept();
-            bool multi_select = (event->modifiers() & (Qt::ControlModifier|Qt::ShiftModifier)) != 0;
-            if ( !multi_select && !isSelected() )
-                scene()->clearSelection();
-
-            setSelected(true);
-            for ( auto item : scene()->selectedItems() )
-            {
-                if ( auto kf = dynamic_cast<KeyframeSplitItem*>(item) )
-                    kf->drag_init();
-            }
-        }
-        else
-        {
-            QGraphicsObject::mousePressEvent(event);
-        }
-    }
-
-    void mouseMoveEvent(QGraphicsSceneMouseEvent * event) override
-    {
-        if ( (event->buttons() & Qt::LeftButton) && isSelected() )
-        {
-            event->accept();
-            qreal delta = qRound(event->scenePos().x()) - drag_start;
-            for ( auto item : scene()->selectedItems() )
-            {
-                if ( auto kf = dynamic_cast<KeyframeSplitItem*>(item) )
-                    kf->drag_move(delta);
-            }
-        }
-        else
-        {
-            QGraphicsObject::mouseMoveEvent(event);
-        }
-    }
-
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override
-    {
-        if ( event->button() == Qt::LeftButton && isSelected() )
-        {
-            event->accept();
-            for ( auto item : scene()->selectedItems() )
-            {
-                if ( auto kf = dynamic_cast<KeyframeSplitItem*>(item) )
-                    kf->drag_end();
-            }
-        }
-        else
-        {
-            QGraphicsObject::mouseReleaseEvent(event);
-        }
-    }
-
-signals:
-    void dragged(model::FrameTime t);
-
-private:
-    QIcon icon_from_kdf(model::KeyframeTransition::Descriptive desc, const char* ba)
-    {
-        QString icon_name = QString("images/keyframe/%1/%2.svg");
-        QString which;
-        switch ( desc )
-        {
-            case model::KeyframeTransition::Hold: which = "hold"; break;
-            case model::KeyframeTransition::Linear: which = "linear"; break;
-            case model::KeyframeTransition::Ease: which = "ease"; break;
-            case model::KeyframeTransition::Custom: which = "custom"; break;
-        }
-        return QIcon(app::Application::instance()->data_file(icon_name.arg(ba).arg(which)));
-    }
-
-    void drag_init()
-    {
-        drag_start = x();
-    }
-
-    void drag_move(qreal delta)
-    {
-        setX(drag_start+delta);
-    }
-
-    void drag_end()
-    {
-        emit dragged(x());
-    }
-
-    QPixmap pix_enter;
-    QPixmap pix_exit;
-    QIcon icon_enter;
-    QIcon icon_exit;
-    model::FrameTime drag_start;
-};
-
-class AnimatableItem : public QGraphicsObject
-{
-    Q_OBJECT
-
-public:
-    AnimatableItem(model::AnimatableBase* animatable, int time_start, int time_end, int height)
-        : animatable(animatable), time_start(time_start), time_end(time_end), height(height)
-    {
-        setFlags(QGraphicsItem::ItemIsSelectable);
-
-        for ( int i = 0; i < animatable->keyframe_count(); i++ )
-            add_keyframe(i);
-
-
-        connect(animatable, &model::AnimatableBase::keyframe_added, this, &AnimatableItem::add_keyframe);
-        connect(animatable, &model::AnimatableBase::keyframe_removed, this, &AnimatableItem::remove_keyframe);
-        connect(animatable, &model::AnimatableBase::keyframe_updated, this, &AnimatableItem::update_keyframe);
-    }
-
-    void set_time_start(int time)
-    {
-        time_start = time;
-        prepareGeometryChange();
-    }
-
-    void set_time_end(int time)
-    {
-        time_end = time;
-        prepareGeometryChange();
-    }
-
-    void set_height(int h)
-    {
-        height = h;
-        prepareGeometryChange();
-    }
-
-    QRectF boundingRect() const override
-    {
-        return QRectF(time_start, 0, time_end, height);
-    }
-
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override
-    {
-        if ( isSelected() )
-        {
-            QColor selcol = widget->palette().color(QPalette::Highlight);
-            painter->fillRect(option->rect, selcol);
-        }
-
-        QPen p(widget->palette().color(QPalette::Text), 1);
-        p.setCosmetic(true);
-        painter->setPen(p);
-        painter->drawLine(option->rect.left(), height, option->rect.right(), height);
-    }
-
-    std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframes(KeyframeSplitItem* item)
-    {
-        for ( int i = 0; i < int(kf_split_items.size()); i++ )
-        {
-            if ( kf_split_items[i] == item )
-            {
-                if ( i == 0 )
-                    return {nullptr, animatable->keyframe(i)};
-                return {animatable->keyframe(i-1), animatable->keyframe(i)};
-            }
-        }
-
-        return {nullptr, nullptr};
-    }
-
-    void mousePressEvent(QGraphicsSceneMouseEvent * event) override
-    {
-        bool sel = isSelected();
-        QGraphicsObject::mousePressEvent(event);
-        if ( !sel && isSelected() )
-            emit animatable_clicked(animatable);
-    }
-
-public slots:
-    void add_keyframe(int index)
-    {
-        model::KeyframeBase* kf = animatable->keyframe(index);
-        if ( index == 0 && !kf_split_items.empty() )
-            kf_split_items[0]->set_enter(kf->transition().after());
-
-        model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
-        auto item = new KeyframeSplitItem(this);
-        item->setPos(kf->time(), height / 2.0);
-        item->set_exit(kf->transition().before());
-        item->set_enter(prev ? prev->transition().after() : model::KeyframeTransition::Hold);
-        kf_split_items.insert(kf_split_items.begin() + index, item);
-
-        connect(&kf->transition(), &model::KeyframeTransition::after_changed, this, &AnimatableItem::transition_changed_after);
-        connect(&kf->transition(), &model::KeyframeTransition::before_changed, this, &AnimatableItem::transition_changed_before);
-        connect(item, &KeyframeSplitItem::dragged, this, &AnimatableItem::keyframe_dragged);
-    }
-
-    void remove_keyframe(int index)
-    {
-        delete kf_split_items[index];
-        kf_split_items.erase(kf_split_items.begin() + index);
-        if ( index < int(kf_split_items.size()) && index > 0 )
-        {
-            kf_split_items[index]->set_enter(animatable->keyframe(index-1)->transition().after());
-        }
-    }
-
-signals:
-    void animatable_clicked(model::AnimatableBase* animatable);
-
-private slots:
-    void transition_changed_before(model::KeyframeTransition::Descriptive d)
-    {
-        int index = transition_changed_index();
-        if ( index == -1 )
-            return;
-
-        kf_split_items[index]->set_exit(d);
-    }
-
-    void transition_changed_after(model::KeyframeTransition::Descriptive d)
-    {
-        int index = transition_changed_index();
-        if ( index == -1 )
-            return;
-
-        index += 1;
-        if ( index >= int(kf_split_items.size()) )
-            return;
-
-        kf_split_items[index]->set_enter(d);
-    }
-
-    void keyframe_dragged(model::FrameTime t)
-    {
-        auto it = std::find(kf_split_items.begin(), kf_split_items.end(), static_cast<KeyframeSplitItem*>(sender()));
-        if ( it != kf_split_items.end() )
-        {
-            int index = it - kf_split_items.begin();
-            if ( animatable->keyframe(index)->time() != t )
-            {
-                animatable->object()->document()->undo_stack().push(
-                    new command::MoveKeyframe(animatable, index, t)
-                );
-            }
-        }
-    }
-
-    void update_keyframe(int index, model::KeyframeBase* kf)
-    {
-        auto item_start = kf_split_items[index];
-        item_start->setPos(kf->time(), height / 2.0);
-        item_start->set_exit(kf->transition().before());
-
-        if ( index < int(kf_split_items.size()) - 1 )
-        {
-            auto item_end = kf_split_items[index];
-            item_end->set_enter(kf->transition().after());
-        }
-    }
-
-private:
-    int transition_changed_index()
-    {
-        model::KeyframeTransition* s = static_cast<model::KeyframeTransition*>(sender());
-
-        for ( int i = 0, e = animatable->keyframe_count(); i < e; i++ )
-        {
-            if ( &animatable->keyframe(i)->transition() == s )
-                return i;
-        }
-
-        return -1;
-    }
-
-public:
-    model::AnimatableBase* animatable;
-    std::vector<KeyframeSplitItem*> kf_split_items;
-    int time_start;
-    int time_end;
-    int height;
-};
-
-#include "timeline_widget.moc"
+#include "timeline_items.hpp"
 
 class TimelineWidget::Private
 {
@@ -365,10 +22,18 @@ public:
     int mouse_frame = -1;
     model::Document* document = nullptr;
     bool dragging_frame = false;
+    int layer_start = 0;
+    int layer_end = 0;
+    model::AnimationContainer* limit = nullptr;
 
     int rounded_end_time()
     {
-        return (end_time/frame_skip + 1) * frame_skip;
+        return time_round_to_ticks(end_time);
+    }
+
+    int time_round_to_ticks(int time)
+    {
+        return (time/frame_skip + 1) * frame_skip;
     }
 
     QRectF scene_rect()
@@ -428,10 +93,10 @@ public:
         QPointF framep = parent->mapFromScene(QPoint(frame, 0));
         QPointF framep1 = parent->mapFromScene(QPoint(frame+1, 0));
         painter.fillRect(
-            framep.x(),
+            framep.x() + 1,
             0,
-            framep1.x() - framep.x() + 1,
-            header_height,
+            framep1.x() - framep.x() - 0.5,
+            header_height - 0.5,
             color
         );
     }
@@ -441,6 +106,42 @@ public:
         scene.clear();
         rows = 0;
         anim_items.clear();
+    }
+
+    model::AnimationContainer* anim(model::DocumentNode* node)
+    {
+        while ( node )
+        {
+            const QMetaObject* mo = node->metaObject();
+            if ( mo->inherits(&model::Layer::staticMetaObject) )
+                return static_cast<model::Layer*>(node)->animation.get();
+            else if ( mo->inherits(&model::Composition::staticMetaObject) )
+                return static_cast<model::Composition*>(node)->animation.get();
+
+            node = node->docnode_parent();
+        }
+
+        return document->main()->animation.get();
+    }
+
+    QRectF frame_text_rect(int f, TimelineWidget* parent)
+    {
+
+        int fs = f / frame_skip * frame_skip;
+        int box_x1 = parent->mapFromScene(fs, 0).x();
+        int box_x2 = parent->mapFromScene(fs+frame_skip, 0).x();
+        return QRectF(
+            QPointF(box_x1+1, header_height / 4),
+            QPointF(box_x2-0.5, header_height-0.5)
+        );
+    }
+
+    void paint_frame_rect(TimelineWidget* parent, QPainter& painter, int f, const QBrush& brush, const QPen& pen)
+    {
+        QRectF text_rect = frame_text_rect(f, parent);
+        painter.fillRect(text_rect, brush);
+        painter.setPen(pen);
+        painter.drawText(text_rect, Qt::AlignLeft|Qt::AlignBottom,  QString::number(f));
     }
 };
 
@@ -461,11 +162,6 @@ TimelineWidget::~TimelineWidget()
 {
 }
 
-void TimelineWidget::add_container(model::AnimationContainer* cont)
-{
-    Q_UNUSED(cont)
-}
-
 void TimelineWidget::add_animatable(model::AnimatableBase* anim)
 {
     d->add_animatable(anim);
@@ -476,6 +172,7 @@ void TimelineWidget::set_active(model::DocumentNode* node)
     clear();
     d->add_object(node);
     setSceneRect(d->scene_rect());
+    set_anim_container(d->anim(node));
     reset_view();
 }
 
@@ -499,6 +196,8 @@ void TimelineWidget::set_document(model::Document* document)
     if ( d->document )
     {
         disconnect(this, nullptr, d->document, nullptr);
+        disconnect(d->document->main()->animation.get(), nullptr, this, nullptr);
+        disconnect(d->document, nullptr, viewport(), nullptr);
     }
 
     clear();
@@ -511,6 +210,11 @@ void TimelineWidget::set_document(model::Document* document)
         update_timeline_start(document->main()->animation->first_frame.get());
         connect(this, &TimelineWidget::frame_clicked, document, &model::Document::set_current_time);
         connect(document, &model::Document::current_time_changed, viewport(), (void (QWidget::*)())&QWidget::update);
+        set_anim_container(document->main()->animation.get());
+    }
+    else
+    {
+        set_anim_container(nullptr);
     }
 
     d->document = document;
@@ -567,14 +271,22 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     int small_height = d->header_height / 4;
     QPointF scene_tl = mapToScene(event->rect().topLeft());
     QPointF scene_br = mapToScene(event->rect().bottomRight());
+    QBrush disabled = palette().brush(QPalette::Disabled, QPalette::Base);
 
     // bg
     QPainter painter;
     painter.begin(viewport());
-    // gray out the area after the last frame
+    // gray out the area after the outside the layer range
+    if ( d->layer_start > d->start_time )
+    {
+        painter.fillRect(
+            QRectF(mapFromScene(d->start_time, scene_tl.y()), mapFromScene(d->layer_start, scene_br.y())),
+            disabled
+        );
+    }
     painter.fillRect(
-        QRectF(mapFromScene(d->end_time, scene_tl.y()), mapFromScene(d->rounded_end_time(), scene_br.y())),
-        palette().brush(QPalette::Disabled, QPalette::Base)
+        QRectF(mapFromScene(d->layer_end, scene_tl.y()), mapFromScene(d->rounded_end_time(), scene_br.y())),
+        disabled
     );
     painter.end();
 
@@ -593,20 +305,24 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
         painter.drawLine(cur_x, event->rect().top(), cur_x, event->rect().bottom());
     }
 
-    painter.fillRect(event->rect().left(), 0, event->rect().right(), d->header_height, palette().base());
+    // Fill the header background
+    painter.fillRect(event->rect().left(), 0, event->rect().right(), d->header_height, disabled);
+
+    // Gray out ticks outside layer range
     painter.fillRect(
         QRectF(
-            QPointF(mapFromScene(d->end_time+1, 0).x(), 0),
-            QPointF(mapFromScene(d->rounded_end_time(), 0).x(), small_height)
+            QPointF(mapFromScene(d->layer_start, 0).x(), 0),
+            QPointF(mapFromScene(d->layer_end+1, 0).x(), small_height)
         ),
-        palette().brush(QPalette::Disabled, QPalette::Base)
+        palette().base()
     );
-
-    if ( d->document )
-        d->paint_highligted_frame(d->document->current_time(), painter, palette().text());
-
-    if ( d->mouse_frame > -1 )
-        d->paint_highligted_frame(d->mouse_frame, painter, palette().highlight());
+    painter.fillRect(
+        QRectF(
+            QPointF(mapFromScene(d->time_round_to_ticks(d->layer_start) - d->frame_skip, 0).x(), small_height),
+            QPointF(mapFromScene(d->time_round_to_ticks(d->layer_end), 0).x(), d->header_height)
+        ),
+        palette().base()
+    );
 
     painter.setPen(dark);
     painter.drawLine(event->rect().left(), d->header_height, event->rect().right(), d->header_height);
@@ -625,56 +341,32 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
         {
             QPoint p1 = mapFromScene(f, scene_tl.y());
             int height = d->header_height;
-            bool under_mouse = f == d->mouse_frame;
-            bool current_frame = d->document && f == d->document->current_time();
 
-            if ( f % d->frame_skip == 0 || under_mouse || current_frame )
+            if ( f % d->frame_skip == 0 )
             {
-                bool draw = true;
-                int fs = f / d->frame_skip * d->frame_skip;
-                int box_x1 = mapFromScene(fs, 0).x();
-                int box_x2 = mapFromScene(fs+d->frame_skip, 0).x();
-                QRect text_rect(
-                    QPoint(box_x1+1, small_height),
-                    QPoint(box_x2, d->header_height-1)
-                );
-
-                if ( current_frame && !under_mouse && d->mouse_frame != -1 )
-                {
-                    int mfs = d->mouse_frame / d->frame_skip * d->frame_skip;
-
-                    if ( fs == mfs )
-                        draw = false;
-                }
-
-                if ( draw )
-                {
-                    if ( under_mouse )
-                    {
-                        painter.fillRect(text_rect, palette().highlight());
-                        painter.setPen(QPen(palette().highlightedText(), 1));
-                    }
-                    else if ( current_frame )
-                    {
-                        painter.fillRect(text_rect, palette().text());
-                        painter.setPen(QPen(palette().base(), 1));
-                    }
-                    else
-                    {
-                        painter.setPen(dark);
-                    }
-
-                    painter.drawText(text_rect, Qt::AlignLeft|Qt::AlignBottom,  QString::number(f));
-                    painter.setPen(light);
-                }
+                d->paint_frame_rect(this, painter, f, Qt::NoBrush, dark);
+                painter.setPen(light);
             }
-
-            if ( f % d->frame_skip )
+            else
             {
                 height = small_height;
             }
 
             painter.drawLine(QPoint(p1.x(), 0), QPoint(p1.x(), height));
+        }
+
+        d->paint_frame_rect(this, painter, d->layer_start, palette().base(), dark);
+
+        if ( d->document )
+        {
+            d->paint_highligted_frame(d->document->current_time(), painter, palette().text());
+            d->paint_frame_rect(this, painter, d->document->current_time(), palette().text(), QPen(palette().base(), 1));
+        }
+
+        if ( d->mouse_frame > -1 )
+        {
+            d->paint_highligted_frame(d->mouse_frame, painter, palette().highlight());
+            d->paint_frame_rect(this, painter, d->mouse_frame, palette().highlight(), QPen(palette().highlightedText(), 1));
         }
     }
 }
@@ -818,4 +510,35 @@ void TimelineWidget::keyPressEvent(QKeyEvent* event)
     }
 
     QGraphicsView::keyPressEvent(event);
+}
+
+void TimelineWidget::set_anim_container(model::AnimationContainer* cont)
+{
+
+    if ( d->limit )
+    {
+        disconnect(d->limit, nullptr, this, nullptr);
+    }
+
+    d->limit = cont;
+
+    if ( d->limit )
+    {
+        connect(cont, &model::AnimationContainer::first_frame_changed, this, &TimelineWidget::update_layer_start);
+        connect(cont, &model::AnimationContainer::last_frame_changed, this, &TimelineWidget::update_layer_end);
+        update_layer_end(cont->last_frame.get());
+        update_layer_start(cont->first_frame.get());
+    }
+}
+
+void TimelineWidget::update_layer_end(model::FrameTime end)
+{
+    d->layer_end = end;
+    viewport()->update();
+}
+
+void TimelineWidget::update_layer_start(model::FrameTime start)
+{
+    d->layer_start = start;
+    viewport()->update();
 }
