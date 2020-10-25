@@ -229,7 +229,7 @@ linux:snap_beta:
         - ls -lah .
         - cd ..
         - mkdir snap
-        - cp build/snapcraft.yml snap
+        - cp build/snapcraft.yaml snap
         - snapcraft
         - snapcraft login --with "$SNAPCRAFT_LOGIN_FILE"
         - snapcraft upload --release=beta glaxnimate_*.snap
