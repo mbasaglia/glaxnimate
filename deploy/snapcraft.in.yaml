@@ -85,3 +85,4 @@ parts:
            snapcraftctl prime
            cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* $SNAPCRAFT_PRIME
            cp -r /opt $SNAPCRAFT_PRIME/opt
+           cp -r $SNAPCRAFT_STAGE/lib $SNAPCRAFT_PRIME
