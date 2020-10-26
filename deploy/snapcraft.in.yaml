@@ -80,8 +80,8 @@ parts:
             make translations
             make install DESTDIR=$SNAPCRAFT_PART_INSTALL
         # I think there's a better way of doing this? but documentation isn't clear
-        override-stage: apt search libpython3; snapcraftctl stage; cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* /root/stage
+        override-stage: apt search libpython3; snapcraftctl stage; cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* $SNAPCRAFT_STAGE
         override-prime: |
            snapcraftctl prime
-           cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* /root/prime
-           cp -r /opt /root/prime/opt
+           cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* $SNAPCRAFT_PRIME
+           cp -r /opt $SNAPCRAFT_PRIME/opt
