@@ -75,13 +75,13 @@ parts:
             apt-get install -y qt514base qt514tools qt514translations libgl1-mesa-dev g++-9 qt514svg
             pip3 install cmake
             export LD_LIBRARY_PATH=/opt/qt514/lib/
-            cmake /root/parts/glaxnimate/src -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DQt5_DIR=/opt/qt514/lib/cmake/Qt5 -DCMAKE_PREFIX_PATH=/opt/qt514/lib/cmake/Qt5LinguistTools/
+            cmake $SNAPCRAFT_PART_SRC -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DQt5_DIR=/opt/qt514/lib/cmake/Qt5 -DCMAKE_PREFIX_PATH=/opt/qt514/lib/cmake/Qt5LinguistTools/
             make -j2
             make translations
-            make install DESTDIR=/root/parts/glaxnimate/install/
+            make install DESTDIR=$SNAPCRAFT_PART_INSTALL
         # I think there's a better way of doing this? but documentation isn't clear
-        override-stage: apt search libpython3; snapcraftctl stage; cp -r /root/parts/glaxnimate/install/usr/local/* /root/stage
+        override-stage: apt search libpython3; snapcraftctl stage; cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* /root/stage
         override-prime: |
            snapcraftctl prime
-           cp -r /root/parts/glaxnimate/install/usr/local/* /root/prime
+           cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* /root/prime
            cp -r /opt /root/prime/opt
