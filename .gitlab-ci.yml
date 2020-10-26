@@ -210,7 +210,8 @@ linux:snap_tag:
         - snapcraft upload --release=stable glaxnimate_*.snap
 
 linux:snap_beta:
-    image: snapcore/snapcraft:stable
+    #image: snapcore/snapcraft:stable
+    image: mattbas/snapcraft:latest
     stage: deploy
     only:
         - master
