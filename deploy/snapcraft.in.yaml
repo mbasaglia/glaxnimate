@@ -19,8 +19,6 @@ passthrough:
 apps:
     ${PROJECT_SLUG}:
         command: bin/${PROJECT_SLUG}
-        environment:
-            LD_LIBRARY_PATH: "$SNAP/opt:$LD_LIBRARY_PATH"
         desktop: share/${PROJECT_SLUG}/${PROJECT_SLUG}/${PROJECT_SLUG}.desktop
         plugs:
             - desktop
@@ -30,6 +28,29 @@ apps:
             - home
         extensions:
             - kde-neon
+        #command-chain:
+            #- snap/command-chain/snapcraft-runner
+            #- snap/command-chain/desktop-launch
+
+#assumes:
+    #- command-chain
+#environment:
+    #SNAP_DESKTOP_RUNTIME: "$SNAP/kf5"
+    #LD_LIBRARY_PATH: "$SNAP/opt:$LD_LIBRARY_PATH"
+#plugs:
+    #icon-themes:
+        #interface: content
+        #target: $SNAP/data-dir/icons
+        #default-provider: gtk-common-themes
+    #kde-frameworks-5-plug:
+        #interface: content
+        #content: kde-frameworks-5-core18-all
+        #target: $SNAP/kf5
+        #default-provider: kde-frameworks-5-core18
+    #sound-themes:
+        #interface: content
+        #target: $SNAP/data-dir/sounds
+        #default-provider: gtk-common-themes
 
 parts:
     ${PROJECT_SLUG}:
@@ -82,7 +103,8 @@ parts:
         # I think there's a better way of doing this? but documentation isn't clear
         override-stage: apt search libpython3; snapcraftctl stage; cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* $SNAPCRAFT_STAGE
         override-prime: |
-           snapcraftctl prime
-           cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* $SNAPCRAFT_PRIME
-           cp -r /opt $SNAPCRAFT_PRIME/opt
-           cp -r $SNAPCRAFT_STAGE/lib/* $SNAPCRAFT_PRIME/lib || true
+            snapcraftctl prime
+            cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* $SNAPCRAFT_PRIME
+            cp -fr /opt/qt514/* $SNAPCRAFT_PRIME
+            #rm -rf $SNAPCRAFT_PRIME/kd5/lib
+            #cp -r /opt/lib/qt514/lib $SNAPCRAFT_PRIME/kd5/
