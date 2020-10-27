@@ -167,7 +167,10 @@
          <item row="5" column="0">
           <widget class="QLineEdit" name="lineEdit">
            <property name="text">
-            <string>Hello World</string>
+            <string/>
+           </property>
+           <property name="placeholderText">
+            <string>Placeholder</string>
            </property>
           </widget>
          </item>

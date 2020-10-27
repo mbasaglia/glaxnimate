@@ -49,9 +49,9 @@ void app::settings::PaletteSettings::write_palette ( QSettings& settings, const 
     settings.setValue("name", name);
     for ( const auto& p : roles() )
     {
-        settings.setValue(p.first + "_active", palette.color(QPalette::Active, p.second).name());
-        settings.setValue(p.first + "_inactive", palette.color(QPalette::Inactive, p.second).name());
-        settings.setValue(p.first + "_disabled", palette.color(QPalette::Disabled, p.second).name());
+        settings.setValue(p.first + "_active",   color_to_string(palette.color(QPalette::Active, p.second)));
+        settings.setValue(p.first + "_inactive", color_to_string(palette.color(QPalette::Inactive, p.second)));
+        settings.setValue(p.first + "_disabled", color_to_string(palette.color(QPalette::Disabled, p.second)));
     }
 }
 
@@ -66,9 +66,9 @@ void app::settings::PaletteSettings::load_palette ( const QSettings& settings )
 
     for ( const auto& p : roles() )
     {
-        palette.setColor(QPalette::Active,   p.second, QColor(settings.value(p.first + "_active").toString()));
-        palette.setColor(QPalette::Inactive, p.second, QColor(settings.value(p.first + "_inactive").toString()));
-        palette.setColor(QPalette::Disabled, p.second, QColor(settings.value(p.first + "_disabled").toString()));
+        palette.setColor(QPalette::Active,   p.second, string_to_color(settings.value(p.first + "_active").toString()));
+        palette.setColor(QPalette::Inactive, p.second, string_to_color(settings.value(p.first + "_inactive").toString()));
+        palette.setColor(QPalette::Disabled, p.second, string_to_color(settings.value(p.first + "_disabled").toString()));
     }
 
     palettes.insert(name, palette);
@@ -145,4 +145,25 @@ void app::settings::PaletteSettings::apply_palette(const QPalette& palette)
     for ( auto window : QApplication::topLevelWidgets() )
         window->setPalette(palette);
 }
+
+QString app::settings::PaletteSettings::color_to_string(const QColor& c)
+{
+    QString s = c.name();
+    if ( c.alpha() < 255 )
+        s += QString::number(0x100|c.alpha(), 16).rightRef(2);
+    return s;
+}
+
+QColor app::settings::PaletteSettings::string_to_color(const QString& s)
+{
+    if ( s.startsWith('#') && s.length() == 9 )
+    {
+        QColor c(s.leftRef(7));
+        c.setAlpha(s.right(2).toInt(nullptr, 16));
+        return c;
+    }
+
+    return QColor(s);
+}
+
 

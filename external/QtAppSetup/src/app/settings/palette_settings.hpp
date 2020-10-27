@@ -30,6 +30,9 @@ public:
 
     void apply_palette(const QPalette& palette);
 
+    static QString color_to_string(const QColor& c);
+    static QColor string_to_color(const QString& s);
+
     QMap<QString, QPalette> palettes;
     QString selected;
     QPalette default_palette;

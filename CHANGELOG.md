@@ -21,6 +21,7 @@
     * Fixed title of the "Move To" dialog
     * Fixed lottie export of properties with exactly 1 keyframe
     * Fixed layer order on lottie export
+    * Theme editor properly supports transparency
 
 ## 0.1.5
 
