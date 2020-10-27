@@ -92,7 +92,7 @@ linux:aur:
         - CHECKSUM="$(grep -Eo "^[^ ]+" checksum.txt)"
         - echo "$CHECKSUM"
         - test -n "$CHECKSUM"
-        - PROJECT_VERSION="$(grep -Po "PROJECT_VERSION:STATIC=\K.*" ../CMakeCache.txt)"
+        - PROJECT_VERSION="$(grep -Po "PROJECT_VERSION:STATIC=\K.*" ./CMakeCache.txt)"
         - echo "$PROJECT_VERSION"
         - test -n "$PROJECT_VERSION"
         - cd glaxnimate-bin
