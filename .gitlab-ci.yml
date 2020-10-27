@@ -85,6 +85,7 @@ linux:aur:
         - apt-get install -y git
     script:
         - test -n "$AUR_SSH_KEY"
+        - test -f "$AUR_SSH_KEY"
         - chmod 700 $AUR_SSH_KEY
         - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/glaxnimate-bin.git
         - CHECKSUM="$(grep -Eo "^[^ ]+" checksum.txt)"
@@ -191,20 +192,28 @@ release:
         - tags
 
 linux:snap_tag:
+    #image: snapcore/snapcraft:stable
+    image: mattbas/snapcraft:latest
     stage: deploy
     only:
         - tags
+    dependencies:
+    needs: []
     before_script:
         - apt-get update -qq
-        - apt-get install -y
+        - apt-get install -y python3-pip
+        - apt remove cmake
+        - pip3 install cmake
     script:
         - test -n "$SNAPCRAFT_LOGIN_FILE"
+        - test -f "$SNAPCRAFT_LOGIN_FILE"
         - mkdir -p build
         - cd build
-        - cmake ..
+        - cmake .. -DSNAP_IS_SUCH_A_PAIN=ON -DVERSION_SUFFIX="" || true
+        - ls -lah .
         - cd ..
         - mkdir snap
-        - cp build/snapcraft.yml snap
+        - cp build/snapcraft.yaml snap
         - snapcraft
         - snapcraft login --with "$SNAPCRAFT_LOGIN_FILE"
         - snapcraft upload --release=stable glaxnimate_*.snap
@@ -224,6 +233,7 @@ linux:snap_beta:
         - pip3 install cmake
     script:
         - test -n "$SNAPCRAFT_LOGIN_FILE"
+        - test -f "$SNAPCRAFT_LOGIN_FILE"
         - mkdir -p build
         - cd build
         - cmake .. -DSNAP_IS_SUCH_A_PAIN=ON -DVERSION_SUFFIX="snap-$CI_COMMIT_SHORT_SHA" || true
