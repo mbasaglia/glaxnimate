@@ -71,6 +71,7 @@ linux:deb:
         paths:
             - build/glaxnimate.deb
             - build/checksum.txt
+            - build/CMakeCache.txt
     when: always
 
 linux:aur:
