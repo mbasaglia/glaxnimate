@@ -84,6 +84,7 @@ linux:aur:
         - apt-get update -qq
         - apt-get install -y git
     script:
+        - cd build
         - test -n "$AUR_SSH_KEY"
         - test -f "$AUR_SSH_KEY"
         - chmod 700 $AUR_SSH_KEY
