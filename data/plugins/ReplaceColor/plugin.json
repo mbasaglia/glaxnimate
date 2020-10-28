@@ -11,18 +11,20 @@
             "script": {
                 "module": "replace_color",
                 "function": "main",
-                "settings": {
-                    "search": {
+                "settings": [
+                    {
+                        "name": "search",
                         "label": "Search:",
                         "type": "color",
                         "default": "#000000"
                     },
-                    "replace": {
+                    {
+                        "name": "replace",
                         "label": "Replace with:",
                         "type": "color",
                         "default": "#000000"
                     }
-                }
+                ]
             }
         }
     ]

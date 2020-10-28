@@ -67,18 +67,18 @@ It has the following fields:
 Settings provide parameters to pass the invoked function.
 The user will be shown a dialog with all these settings before the script execution.
 
-They are defined as a JSON object where the keys are the names of the setting
-and the values are JSON objects with the following keys:
+They are defined as a JSON array os settings objects:
 
-| Name      | Required  | Type   | Description                              |
-| --------- | --------- | ------ | ---------------------------------------- |
-| `type`    | Required  | string | Setting type                             |
-| `label`   |           | string | Form label (defaults to the setting name) |
-|`description`|         | string | Extra description                        |
-| `default` |           | (any)  | Default value for the setting            |
-| `min`     |           | number | Minimum value (for `int` and `float`)    |
-| `max`     |           | number | Maximum value (for `int` and `float`)    |
-| `choices` |           | array  | Available choices (for `choice`)         |
+| Name      | Required  | Type   | Description                                  |
+| --------- | --------- | ------ | -------------------------------------------- |
+| `name`    | Required  | string | Name, will be used as dict keys for values   |
+| `type`    | Required  | string | Setting type                                 |
+| `label`   |           | string | Form label (defaults to the setting name)    |
+|`description`|         | string | Extra description                            |
+| `default` |           | (any)  | Default value for the setting                |
+| `min`     |           | number | Minimum value (for `int` and `float`)        |
+| `max`     |           | number | Maximum value (for `int` and `float`)        |
+| `choices` |           | array  | Available choices (for `choice`)             |
 
 ### Setting types
 
@@ -117,13 +117,14 @@ The above plugin will have an ID of `MyPlugin`.
             "script": {
                 "module": "hello_world",
                 "function": "main",
-                "settings": {
-                    "greeting": {
+                "settings": [
+                    {
+                        "name": "greeting",
                         "label": "Type a greeting:",
                         "type": "string",
                         "default": "Hello World"
                     }
-                }
+                ]
             }
         }
     ]

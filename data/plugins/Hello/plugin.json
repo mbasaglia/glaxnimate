@@ -10,13 +10,14 @@
             "script": {
                 "module": "hello_world",
                 "function": "main",
-                "settings": {
-                    "greeting": {
+                "settings": [
+                    {
+                        "name": "greeting",
                         "label": "Type a greeting:",
                         "type": "string",
                         "default": "Hello World"
                     }
-                }
+                ]
             }
         }
     ]

@@ -5,8 +5,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/breeze-icons/icons-dark DESTINATION 
 install(DIRECTORY icons/breeze-icons/icons DESTINATION ${DATA_INSTALL}/icons PATTERN *@* EXCLUDE)
 install(DIRECTORY icons/breeze-icons/icons-dark DESTINATION ${DATA_INSTALL}/icons PATTERN *@* EXCLUDE)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/plugins DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-install(DIRECTORY plugins DESTINATION ${DATA_INSTALL})
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 install(DIRECTORY images DESTINATION ${DATA_INSTALL})
@@ -46,3 +44,23 @@ add_custom_target(
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
 )
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png DESTINATION share/icons/hicolor/512x512/ )
+
+# Plugins
+install(DIRECTORY plugins DESTINATION ${DATA_INSTALL})
+
+function(plugin name)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/plugins/${name}/plugin.json ${CMAKE_CURRENT_BINARY_DIR}/plugins/${name}/plugin.json COPYONLY)
+    foreach(file ${ARGN})
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/plugins/${name}/${file} ${CMAKE_CURRENT_BINARY_DIR}/plugins/${name}/${file} COPYONLY)
+    endforeach()
+endfunction()
+
+plugin(
+    Hello
+    hello_world.py
+)
+
+plugin(
+    ReplaceColor
+    replace_color.py
+)

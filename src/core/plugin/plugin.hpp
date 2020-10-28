@@ -262,7 +262,7 @@ private:
 
     void load_service(const QJsonObject& jobj, PluginData& data) const;
     PluginScript load_script(const QJsonObject& jobj) const;
-    void load_setting(const QString& slug, const QJsonObject& jobj, PluginScript& script) const;
+    void load_setting(const QJsonObject& jobj, PluginScript& script) const;
     QVariantMap load_choices(const QJsonValue& val) const;
 
     std::vector<std::unique_ptr<Plugin>> plugins_;

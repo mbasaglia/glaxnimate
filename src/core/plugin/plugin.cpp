@@ -230,21 +230,22 @@ plugin::PluginScript plugin::PluginRegistry::load_script ( const QJsonObject& jo
     PluginScript s;
     s.module = jobj["module"].toString();
     s.function = jobj["function"].toString();
-    QJsonObject settings = jobj["settings"].toObject();
-    for ( auto it = settings.begin(); it != settings.end(); ++it )
+    QJsonArray settings = jobj["settings"].toArray();
+    for ( const auto& setting : settings )
     {
-        load_setting(it.key(), it->toObject(), s);
+        load_setting(setting.toObject(), s);
     }
 
     return s;
 }
 
-void plugin::PluginRegistry::load_setting ( const QString& slug, const QJsonObject& jobj, plugin::PluginScript& script ) const
+void plugin::PluginRegistry::load_setting (const QJsonObject& jobj, plugin::PluginScript& script ) const
 {
     QString type = jobj["type"].toString();
+    QString slug = jobj["name"].toString();
     if ( slug.isEmpty() )
     {
-        logger.stream() << "Skipping setting with no slug";
+        logger.stream() << "Skipping setting with no name";
         return;
     }
     QString label = jobj["label"].toString(slug);
