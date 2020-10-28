@@ -252,23 +252,23 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     }
 
     // Plugins
-    auto& par = app::scripting::PluginActionRegistry::instance();
+    auto& par = plugin::PluginActionRegistry::instance();
     for ( auto act : par.enabled() )
     {
         ui.menu_plugins->addAction(par.make_qaction(act));
     }
-    connect(&par, &app::scripting::PluginActionRegistry::action_added, parent, [this](app::scripting::ActionService* action) {
-        ui.menu_plugins->addAction(app::scripting::PluginActionRegistry::instance().make_qaction(action));
+    connect(&par, &plugin::PluginActionRegistry::action_added, parent, [this](plugin::ActionService* action) {
+        ui.menu_plugins->addAction(plugin::PluginActionRegistry::instance().make_qaction(action));
     });
     connect(
-        &app::scripting::PluginRegistry::instance(),
-        &app::scripting::PluginRegistry::script_needs_running,
+        &plugin::PluginRegistry::instance(),
+        &plugin::PluginRegistry::script_needs_running,
         parent,
         &GlaxnimateWindow::script_needs_running
     );
     connect(
-        &app::scripting::PluginRegistry::instance(),
-        &app::scripting::PluginRegistry::loaded,
+        &plugin::PluginRegistry::instance(),
+        &plugin::PluginRegistry::loaded,
         parent,
         &GlaxnimateWindow::script_reloaded
     );

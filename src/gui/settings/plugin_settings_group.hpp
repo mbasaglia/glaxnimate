@@ -1,10 +1,10 @@
 #pragma once
 
 #include "app/settings/custom_settings_group.hpp"
-#include "app/widgets/plugin_settings_widget.hpp"
-#include "app/scripting/plugin.hpp"
+#include "widgets/plugin_settings_widget.hpp"
+#include "plugin/plugin.hpp"
 
-namespace app::scripting {
+namespace settings {
 
 class PluginSettingsGroup : public app::settings::CustomSettingsGroupBase
 {
@@ -17,11 +17,11 @@ public:
     QString label() const override { return QObject::tr("Plugins"); }
     void load ( QSettings & settings ) override
     {
-        PluginRegistry::instance().load();
+        plugin::PluginRegistry::instance().load();
 
         enabled = settings.value("enabled", enabled).toStringList();
 
-        for ( const auto& plugin : PluginRegistry::instance().plugins() )
+        for ( const auto& plugin : plugin::PluginRegistry::instance().plugins() )
             if ( enabled.contains(plugin->data().id) )
                 plugin->enable();
     }
@@ -30,7 +30,7 @@ public:
     {
         enabled.clear();
 
-        for ( const auto& plugin : PluginRegistry::instance().plugins() )
+        for ( const auto& plugin : plugin::PluginRegistry::instance().plugins() )
             if ( plugin->enabled() )
                 enabled.push_back(plugin->data().id);
 
@@ -43,4 +43,4 @@ private:
     QStringList enabled;
 };
 
-} // namespace app::scripting
+} // namespace settings

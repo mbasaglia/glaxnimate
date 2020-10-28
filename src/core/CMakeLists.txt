@@ -61,6 +61,9 @@ model/shapes/styler.cpp
 model/shapes/layer.cpp
 model/shapes/image.cpp
 
+
+plugin/plugin.cpp
+
 utils/gzip.cpp
 
 python/python.cpp

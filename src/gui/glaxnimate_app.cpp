@@ -4,11 +4,11 @@
 #include <QPalette>
 
 #include "app/settings/settings.hpp"
-#include "app/scripting/plugin_settings_group.hpp"
+#include "settings/plugin_settings_group.hpp"
 #include "app/settings/palette_settings.hpp"
 #include "app/settings/keyboard_shortcuts.hpp"
 #include "app_info.hpp"
-#include "misc/clipboard_settings.hpp"
+#include "settings/clipboard_settings.hpp"
 
 static QVariantMap avail_icon_themes()
 {
@@ -147,9 +147,9 @@ void GlaxnimateApp::on_initialize()
     search_paths += QIcon::themeSearchPaths();
     QIcon::setThemeSearchPaths(search_paths);
 
-    app::settings::Settings::instance().add_custom_group(std::make_unique<app::scripting::PluginSettingsGroup>(QStringList{
+    app::settings::Settings::instance().add_custom_group(std::make_unique<settings::PluginSettingsGroup>(QStringList{
     }));
-    app::settings::Settings::instance().add_custom_group(std::make_unique<ClipboardSettings>());
+    app::settings::Settings::instance().add_custom_group(std::make_unique<settings::ClipboardSettings>());
 
     connect(this, &QGuiApplication::paletteChanged, this, &icon_theme_fixup);
     auto palette_settings = std::make_unique<app::settings::PaletteSettings>();

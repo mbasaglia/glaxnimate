@@ -2,6 +2,8 @@
 #include "app/settings/custom_settings_group.hpp"
 #include "io/mime/mime_serializer.hpp"
 
+namespace settings {
+
 class ClipboardSettings : public app::settings::CustomSettingsGroupBase
 {
 public:
@@ -22,3 +24,5 @@ public:
     static const std::vector<MimeSettings>& mime_types();
 
 };
+
+} // namespace settings

@@ -6,10 +6,7 @@ app/settings/palette_settings.cpp
 app/settings/keyboard_shortcuts.cpp
 app/settings/keyboard_shortcuts_model.cpp
 app/translation_service.cpp
-app/scripting/plugin.cpp
 app/scripting/script_engine.cpp
-app/widgets/plugin_settings_widget.cpp
-app/widgets/plugin_settings_widget.ui
 app/widgets/settings_dialog.cpp
 app/widgets/settings_dialog.ui
 app/widgets/widget_palette_editor.cpp

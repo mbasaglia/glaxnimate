@@ -81,7 +81,7 @@ void GlaxnimateWindow::Private::create_script_context()
     }
 }
 
-void GlaxnimateWindow::Private::script_needs_running ( const app::scripting::Plugin& plugin, const app::scripting::PluginScript& script, const QVariantMap& settings )
+void GlaxnimateWindow::Private::script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantMap& settings )
 {
     if ( !ensure_script_contexts() )
         return;

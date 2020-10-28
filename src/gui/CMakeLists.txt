@@ -15,7 +15,7 @@ item_models/document_node_model.cpp
 item_models/property_model.cpp
 item_models/gradient_list_model.cpp
 
-misc/clipboard_settings.cpp
+settings/clipboard_settings.cpp
 
 style/property_delegate.cpp
 style/dock_widget_style.cpp
@@ -72,6 +72,8 @@ widgets/enum_combo.cpp
 widgets/node_menu.cpp
 widgets/window_message_widget.cpp
 widgets/window_message_widget.ui
+widgets/plugin_settings_widget.cpp
+widgets/plugin_settings_widget.ui
 
 widgets/shape_style/color_selector.cpp
 widgets/shape_style/color_selector.ui

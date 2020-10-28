@@ -7,12 +7,12 @@
 #include "model/document.hpp"
 #include "model/shapes/shape.hpp"
 
-namespace app::scripting {
+namespace plugin {
 
 class Plugin;
 class PluginScript;
 
-} // namespace app::scripting
+} // namespace plugin
 
 namespace item_models {
 class DocumentNodeModel;
@@ -145,7 +145,7 @@ private slots:
     void validate_tgs();
 
     void console_commit(const QString& text);
-    void script_needs_running(const app::scripting::Plugin& plugin, const app::scripting::PluginScript& script, const QVariantMap& settings);
+    void script_needs_running(const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantMap& settings);
     void script_reloaded();
 
 protected:

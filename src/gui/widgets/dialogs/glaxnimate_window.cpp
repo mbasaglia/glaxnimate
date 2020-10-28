@@ -188,7 +188,7 @@ void GlaxnimateWindow::status ( const QString& message ) const
 }
 
 
-void GlaxnimateWindow::script_needs_running ( const app::scripting::Plugin& plugin, const app::scripting::PluginScript& script, const QVariantMap& settings )
+void GlaxnimateWindow::script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantMap& settings )
 {
     d->script_needs_running(plugin, script, settings);
 }

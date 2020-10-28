@@ -8,9 +8,9 @@
 #include "app/application.hpp"
 #include "io/io_registry.hpp"
 
-static std::vector<ClipboardSettings::MimeSettings>& mutable_mime_types()
+static std::vector<settings::ClipboardSettings::MimeSettings>& mutable_mime_types()
 {
-    static std::vector<ClipboardSettings::MimeSettings> settings {
+    static std::vector<settings::ClipboardSettings::MimeSettings> settings {
         {io::IoRegistry::instance().serializer_from_slug("glaxnimate"), true, QIcon(app::Application::instance()->data_file("images/logo.svg"))},
         {io::IoRegistry::instance().serializer_from_slug("svg"),        true, QIcon::fromTheme("image-svg+xml")},
         {io::IoRegistry::instance().serializer_from_slug("raster"),     true, QIcon::fromTheme("image-png")},
@@ -19,26 +19,26 @@ static std::vector<ClipboardSettings::MimeSettings>& mutable_mime_types()
     return settings;
 }
 
-const std::vector<ClipboardSettings::MimeSettings>& ClipboardSettings::mime_types()
+const std::vector<settings::ClipboardSettings::MimeSettings>& settings::ClipboardSettings::mime_types()
 {
     return mutable_mime_types();
 }
 
-void ClipboardSettings::load(QSettings & settings)
+void settings::ClipboardSettings::load(QSettings & settings)
 {
     for ( auto& set : mutable_mime_types() )
         if ( set.serializer->slug() != "glaxnimate" )
             set.enabled = settings.value(set.serializer->slug(), set.enabled).toBool();
 }
 
-void ClipboardSettings::save(QSettings & settings)
+void settings::ClipboardSettings::save(QSettings & settings)
 {
     for ( auto& set : mutable_mime_types() )
         if ( set.serializer->slug() != "glaxnimate" )
             settings.setValue(set.serializer->slug(), set.enabled);
 }
 
-QWidget * ClipboardSettings::make_widget(QWidget* parent)
+QWidget * settings::ClipboardSettings::make_widget(QWidget* parent)
 {
     QWidget* wid = new QWidget(parent);
     QVBoxLayout* lay = new QVBoxLayout(wid);

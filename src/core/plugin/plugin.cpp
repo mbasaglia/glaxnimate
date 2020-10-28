@@ -8,7 +8,7 @@
 #include "app/scripting/script_engine.hpp"
 #include "app/application.hpp"
 
-QAction * app::scripting::PluginActionRegistry::make_qaction ( app::scripting::ActionService* action )
+QAction * plugin::PluginActionRegistry::make_qaction ( plugin::ActionService* action )
 {
     QAction* act = new QAction;
     act->setIcon(action->plugin()->make_icon(action->icon));
@@ -23,7 +23,7 @@ QAction * app::scripting::PluginActionRegistry::make_qaction ( app::scripting::A
     return act;
 }
 
-void app::scripting::PluginActionRegistry::add_action ( app::scripting::ActionService* action )
+void plugin::PluginActionRegistry::add_action ( plugin::ActionService* action )
 {
     if ( enabled_actions.contains(action) )
         return;
@@ -32,7 +32,7 @@ void app::scripting::PluginActionRegistry::add_action ( app::scripting::ActionSe
     emit action_added(action);
 }
 
-void app::scripting::PluginActionRegistry::remove_action ( app::scripting::ActionService* action )
+void plugin::PluginActionRegistry::remove_action ( plugin::ActionService* action )
 {
     if ( !enabled_actions.contains(action) )
         return;
@@ -42,13 +42,13 @@ void app::scripting::PluginActionRegistry::remove_action ( app::scripting::Actio
 
 }
 
-QIcon app::scripting::ActionService::service_icon() const
+QIcon plugin::ActionService::service_icon() const
 {
     return plugin()->make_icon(icon);
 }
 
 
-void app::scripting::ActionService::trigger() const
+void plugin::ActionService::trigger() const
 {
     QVariantMap settings_value;
     if ( !script.settings.empty() )
@@ -63,7 +63,7 @@ void app::scripting::ActionService::trigger() const
 }
 
 
-void app::scripting::Plugin::run_script ( const app::scripting::PluginScript& script, const QVariantMap& settings ) const
+void plugin::Plugin::run_script ( const plugin::PluginScript& script, const QVariantMap& settings ) const
 {
      if ( !data_.engine )
          return;
@@ -71,7 +71,7 @@ void app::scripting::Plugin::run_script ( const app::scripting::PluginScript& sc
      emit PluginRegistry::instance().script_needs_running(*this, script, settings);
 }
 
-void app::scripting::PluginRegistry::load()
+void plugin::PluginRegistry::load()
 {
     QString writable_path = app::Application::instance()->writable_data_path("plugins");
 
@@ -91,7 +91,7 @@ void app::scripting::PluginRegistry::load()
     emit loaded();
 }
 
-bool app::scripting::PluginRegistry::load_plugin ( const QString& path, bool user_installed )
+bool plugin::PluginRegistry::load_plugin ( const QString& path, bool user_installed )
 {
     logger.set_detail(path);
     QFileInfo file_info(path);
@@ -137,13 +137,13 @@ bool app::scripting::PluginRegistry::load_plugin ( const QString& path, bool use
         Plugin* plug = plugins_[*it].get();
         if ( plug->data().version >= data.version )
         {
-            logger.stream(log::Info) << "Skipping Plugin (newer version exists)";
+            logger.stream(app::log::Info) << "Skipping Plugin (newer version exists)";
             return false;
         }
 
         if ( plug->enabled() )
         {
-            logger.stream(log::Info) << "Skipping Plugin (older version is currently enabled)";
+            logger.stream(app::log::Info) << "Skipping Plugin (older version is currently enabled)";
             return false;
         }
 
@@ -151,7 +151,7 @@ bool app::scripting::PluginRegistry::load_plugin ( const QString& path, bool use
     }
 
     data.engine_name = jobj["engine"].toString();
-    data.engine = ScriptEngineFactory::instance().engine(data.engine_name);
+    data.engine = app::scripting::ScriptEngineFactory::instance().engine(data.engine_name);
     if ( !data.engine)
     {
         logger.stream() << "Plugin refers to an unknown engine" << data.engine_name;
@@ -197,7 +197,7 @@ bool app::scripting::PluginRegistry::load_plugin ( const QString& path, bool use
     return true;
 }
 
-void app::scripting::PluginRegistry::load_service ( const QJsonObject& jobj, app::scripting::PluginData& data ) const
+void plugin::PluginRegistry::load_service ( const QJsonObject& jobj, plugin::PluginData& data ) const
 {
     QString type = jobj["type"].toString();
 
@@ -225,7 +225,7 @@ void app::scripting::PluginRegistry::load_service ( const QJsonObject& jobj, app
 
 }
 
-app::scripting::PluginScript app::scripting::PluginRegistry::load_script ( const QJsonObject& jobj ) const
+plugin::PluginScript plugin::PluginRegistry::load_script ( const QJsonObject& jobj ) const
 {
     PluginScript s;
     s.module = jobj["module"].toString();
@@ -239,7 +239,7 @@ app::scripting::PluginScript app::scripting::PluginRegistry::load_script ( const
     return s;
 }
 
-void app::scripting::PluginRegistry::load_setting ( const QString& slug, const QJsonObject& jobj, app::scripting::PluginScript& script ) const
+void plugin::PluginRegistry::load_setting ( const QString& slug, const QJsonObject& jobj, plugin::PluginScript& script ) const
 {
     QString type = jobj["type"].toString();
     if ( slug.isEmpty() )
@@ -269,7 +269,7 @@ void app::scripting::PluginRegistry::load_setting ( const QString& slug, const Q
         logger.stream() << "Unknown type" << type << "for plugin setting" << slug;
 }
 
-QVariantMap app::scripting::PluginRegistry::load_choices ( const QJsonValue& val ) const
+QVariantMap plugin::PluginRegistry::load_choices ( const QJsonValue& val ) const
 {
     QVariantMap ret;
 
@@ -292,7 +292,7 @@ QVariantMap app::scripting::PluginRegistry::load_choices ( const QJsonValue& val
 }
 
 
-app::scripting::Plugin * app::scripting::PluginRegistry::plugin ( const QString& id ) const
+plugin::Plugin * plugin::PluginRegistry::plugin ( const QString& id ) const
 {
     auto it = names.find(id);
     if ( it == names.end() )

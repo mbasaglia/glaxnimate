@@ -1,11 +1,9 @@
 #include "plugin_settings_widget.hpp"
 #include "ui_plugin_settings_widget.h"
 
-#include "app/scripting/plugin.hpp"
+#include "plugin/plugin.hpp"
 
 #include <QEvent>
-
-using namespace app::scripting;
 
 PluginSettingsWidget::PluginSettingsWidget(QWidget* parent)
     : QWidget(parent), d ( std::make_unique<Ui::PluginSettingsWidget>() )
@@ -28,14 +26,14 @@ void PluginSettingsWidget::changeEvent ( QEvent* e )
     }
 }
 
-void app::scripting::PluginSettingsWidget::current_changed ( QListWidgetItem* item )
+void PluginSettingsWidget::current_changed ( QListWidgetItem* item )
 {
     d->stacked_widget->setCurrentWidget(d->page_noplugin);
 
     if ( !item )
         return;
 
-    current = PluginRegistry::instance().plugin(item->data(Qt::UserRole).toString());
+    current = plugin::PluginRegistry::instance().plugin(item->data(Qt::UserRole).toString());
     if ( !current )
         return;
 
@@ -54,7 +52,7 @@ void app::scripting::PluginSettingsWidget::current_changed ( QListWidgetItem* it
     for ( const auto& svc : current->data().services )
     {
         QString type = tr("Unknown");
-        if ( svc->type() == ServiceType::Action )
+        if ( svc->type() == plugin::ServiceType::Action )
             type = tr("Menu Action");
 
         QTableWidgetItem* it;
@@ -73,7 +71,7 @@ void app::scripting::PluginSettingsWidget::current_changed ( QListWidgetItem* it
 
 }
 
-void app::scripting::PluginSettingsWidget::disable_current()
+void PluginSettingsWidget::disable_current()
 {
     if ( current )
     {
@@ -82,7 +80,7 @@ void app::scripting::PluginSettingsWidget::disable_current()
     }
 }
 
-void app::scripting::PluginSettingsWidget::enable_current()
+void PluginSettingsWidget::enable_current()
 {
     if ( current )
     {
@@ -91,24 +89,24 @@ void app::scripting::PluginSettingsWidget::enable_current()
     }
 }
 
-void app::scripting::PluginSettingsWidget::install_dialog()
+void PluginSettingsWidget::install_dialog()
 {
     /// @todo
 }
 
-void app::scripting::PluginSettingsWidget::refresh_plugins()
+void PluginSettingsWidget::refresh_plugins()
 {
     clear_selection();
-    PluginRegistry::instance().load();
+    plugin::PluginRegistry::instance().load();
     update_entries();
 }
 
-void app::scripting::PluginSettingsWidget::uninstall_current()
+void PluginSettingsWidget::uninstall_current()
 {
     /// @todo
 }
 
-void app::scripting::PluginSettingsWidget::update_entries()
+void PluginSettingsWidget::update_entries()
 {
     clear_selection();
 
@@ -123,7 +121,7 @@ void app::scripting::PluginSettingsWidget::update_entries()
     d->list_plugins->blockSignals(true);
     d->list_plugins->clear();
 
-    for ( const auto& plugin : PluginRegistry::instance().plugins() )
+    for ( const auto& plugin : plugin::PluginRegistry::instance().plugins() )
     {
         QListWidgetItem* item = new QListWidgetItem();
         item->setIcon(plugin->icon());
@@ -153,7 +151,7 @@ void app::scripting::PluginSettingsWidget::update_entries()
 
 }
 
-void app::scripting::PluginSettingsWidget::clear_selection()
+void PluginSettingsWidget::clear_selection()
 {
     current = nullptr;
     d->stacked_widget->setCurrentWidget(d->page_noplugin);

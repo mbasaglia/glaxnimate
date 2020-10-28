@@ -6,10 +6,10 @@
 
 class QListWidgetItem;
 
-namespace app::scripting
+namespace plugin
 {
-
 class Plugin;
+}
 
 namespace Ui
 {
@@ -42,9 +42,8 @@ private:
     void clear_selection();
 
     std::unique_ptr<Ui::PluginSettingsWidget> d;
-    Plugin* current = nullptr;
+    plugin::Plugin* current = nullptr;
 };
 
-}
 
 #endif // SCRIPTING_PLUGINSETTINGSWIDGET_H

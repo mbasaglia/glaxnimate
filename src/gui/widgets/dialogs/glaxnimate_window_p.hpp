@@ -23,7 +23,7 @@
 
 #include "app/settings/settings.hpp"
 #include "app/scripting/script_engine.hpp"
-#include "app/scripting/plugin.hpp"
+#include "plugin/plugin.hpp"
 #include "app/log/log_model.hpp"
 
 class IoStatusDialog;
@@ -155,7 +155,7 @@ public:
     void console_commit(QString text);
     bool ensure_script_contexts();
     void create_script_context();
-    void script_needs_running ( const app::scripting::Plugin& plugin, const app::scripting::PluginScript& script, const QVariantMap& settings );
+    void script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantMap& settings );
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

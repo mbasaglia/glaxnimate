@@ -14,6 +14,12 @@
 
 namespace app::scripting {
 
+class ScriptEngine;
+
+} // namespace app::scripting
+
+namespace plugin {
+
 
 class ActionService;
 
@@ -115,7 +121,6 @@ signals:
     void disabled();
 };
 
-class ScriptEngine;
 
 struct PluginData
 {
@@ -123,7 +128,7 @@ struct PluginData
     QString id;
 
     int version = 0;
-    const ScriptEngine* engine = nullptr;
+    const app::scripting::ScriptEngine* engine = nullptr;
     QString engine_name;
     QString name;
     QString author;
@@ -262,7 +267,7 @@ private:
 
     std::vector<std::unique_ptr<Plugin>> plugins_;
     QMap<QString, int> names;
-    log::Log logger{"Plugins"};
+    app::log::Log logger{"Plugins"};
 };
 
-} // namespace app::scripting
+} // namespace plugin

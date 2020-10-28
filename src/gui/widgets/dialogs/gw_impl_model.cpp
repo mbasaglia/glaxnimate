@@ -15,7 +15,7 @@
 #include "model/shapes/image.hpp"
 #include "model/shapes/group.hpp"
 
-#include "misc/clipboard_settings.hpp"
+#include "settings/clipboard_settings.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
 
 
@@ -174,7 +174,7 @@ std::vector<model::DocumentNode*> GlaxnimateWindow::Private::copy()
     if ( !selection.empty() )
     {
         QMimeData* data = new QMimeData;
-        for ( const auto& mime : ClipboardSettings::mime_types() )
+        for ( const auto& mime : settings::ClipboardSettings::mime_types() )
         {
             if ( mime.enabled )
                 mime.serializer->to_mime_data(*data, selection);
@@ -190,7 +190,7 @@ void GlaxnimateWindow::Private::paste()
 {
     const QMimeData* data = QGuiApplication::clipboard()->mimeData();
     io::mime::DeserializedData raw_pasted;
-    for ( const auto& mime : ClipboardSettings::mime_types() )
+    for ( const auto& mime : settings::ClipboardSettings::mime_types() )
     {
         if ( mime.enabled )
         {
