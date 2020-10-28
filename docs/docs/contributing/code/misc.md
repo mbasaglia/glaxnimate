@@ -33,4 +33,5 @@ Something along these lines:
 6. build the `release` target
 7. Wait for CI to complete
 8. New release should be ready at <https://gitlab.com/mattbas/glaxnimate/-/releases>
-9. Merge `release` / `pre-release` back into master if there have been any new commits
+9. Run `./deploy/release_check.py` or `make post_release` to check the release is ok
+10. Merge `release` / `pre-release` back into master if there have been any new commits

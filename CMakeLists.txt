@@ -127,6 +127,10 @@ add_custom_target(
     release
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt
 )
+add_custom_target(
+    post_release
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_check.py ${PROJECT_VERSION}
+)
 
 # Packaging
 # -- see https://gitlab.kitware.com/cmake/community/-/wikis/doc/cpack/PackageGenerators
