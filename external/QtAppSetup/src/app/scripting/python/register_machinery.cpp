@@ -199,8 +199,6 @@ PyPropertyInfo register_property(const QMetaProperty& prop)
     return pyprop;
 }
 
-
-
 class ArgumentBuffer
 {
 public:
@@ -209,8 +207,11 @@ public:
     ArgumentBuffer& operator=(const ArgumentBuffer&) = delete;
     ~ArgumentBuffer()
     {
-        for ( const auto& d : destructors )
-            d();
+        for ( int i = 0; i < destructors_used; i++)
+        {
+            destructors[i]->destruct();
+            delete destructors[i];
+        }
     }
 
     template<class CppType>
@@ -279,19 +280,43 @@ public:
     const QGenericReturnArgument& return_arg() const { return ret; }
 
 private:
+    class Destructor
+    {
+    public:
+        Destructor() = default;
+        Destructor(const Destructor&) = delete;
+        Destructor& operator=(const Destructor&) = delete;
+        virtual ~Destructor() = default;
+        virtual void destruct() const = 0;
+    };
+
+    template<class CppType>
+    struct DestructorImpl : public Destructor
+    {
+        DestructorImpl(CppType* addr) : addr(addr) {}
+
+        void destruct() const override
+        {
+            addr->~CppType();
+        }
+
+        CppType* addr;
+    };
+
     int arguments = 0;
     int buffer_used = 0;
     std::array<char, 128> buffer;
-    std::vector<std::function<void()>> destructors;
+    std::array<Destructor*, 9> destructors;
     std::array<QGenericArgument, 9> generic_args;
     std::array<std::string, 9> names;
     QGenericReturnArgument ret;
     void* ret_addr = nullptr;
     QMetaMethod method;
+    int destructors_used = 0;
 
 
     int avail() { return buffer.size() - buffer_used; }
-    void* next_mem() { return &buffer + buffer_used; }
+    void* next_mem() { return buffer.data() + buffer_used; }
 
 
     template<class CppType>
@@ -301,7 +326,8 @@ private:
     template<class CppType>
         std::enable_if_t<!std::is_pod_v<CppType>> ensure_destruction(CppType* addr)
         {
-           destructors.push_back([addr]{ addr->~CppType(); });
+            destructors[destructors_used] = new DestructorImpl<CppType>(addr);
+            destructors_used++;
         }
 };
 
@@ -323,7 +349,6 @@ bool convert_argument(int meta_type, const py::handle& value, ArgumentBuffer& bu
 {
     return type_dispatch<ConvertArgument, bool>(meta_type, value, buf);
 }
-
 
 template<class ReturnType>
 struct RegisterMethod
