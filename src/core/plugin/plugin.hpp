@@ -224,6 +224,11 @@ public:
 
     bool enabled() const { return enabled_; }
 
+    app::log::Log logger() const
+    {
+        return {"Plugins", data_.name};
+    }
+
 private:
     PluginData data_;
     bool enabled_ = false;

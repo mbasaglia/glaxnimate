@@ -54,14 +54,15 @@ public:
     io::Options export_options;
     bool current_document_has_file = false;
 
-    std::vector<app::scripting::ScriptContext> script_contexts;
-
     QPointer<model::BrushStyle> main_brush;
     QPointer<model::BrushStyle> secondary_brush;
 
     tools::Tool* active_tool = nullptr;
     std::map<QString, std::vector<QWidget*>> tool_widgets;
     std::map<QString, std::vector<QAction*>> tool_actions;
+
+    std::vector<app::scripting::ScriptContext> script_contexts;
+    const plugin::Plugin* current_plugin = nullptr;
 
     // "set and forget" kida variables
     int autosave_timer = 0;
@@ -156,6 +157,7 @@ public:
     bool ensure_script_contexts();
     void create_script_context();
     void script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantMap& settings );
+    PluginUiDialog * create_dialog(const QString& ui_file);
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

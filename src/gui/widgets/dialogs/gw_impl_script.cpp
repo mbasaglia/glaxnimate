@@ -1,5 +1,5 @@
 #include "glaxnimate_window_p.hpp"
-
+#include "widgets/dialogs/plugin_ui_dialog.hpp"
 
 void GlaxnimateWindow::Private::console_stderr(const QString& line)
 {
@@ -90,6 +90,7 @@ void GlaxnimateWindow::Private::script_needs_running ( const plugin::Plugin& plu
     {
         if ( ctx->engine() == plugin.data().engine )
         {
+            current_plugin = &plugin;
             try {
                 QVariantList args{QVariant::fromValue(parent), QVariant::fromValue(current_document.get()), settings};
                 if ( !ctx->run_from_module(plugin.data().dir, script.module, script.function, args) )
@@ -98,9 +99,31 @@ void GlaxnimateWindow::Private::script_needs_running ( const plugin::Plugin& plu
                 console_error(err);
                 show_warning(plugin.data().name, tr("Plugin raised an exception"), app::log::Error);
             }
+            current_plugin = nullptr;
             return;
         }
     }
 
     show_warning(plugin.data().name, tr("Could not find an interpreter"), app::log::Error);
+}
+
+PluginUiDialog * GlaxnimateWindow::Private::create_dialog(const QString& ui_file)
+{
+    if ( !current_plugin )
+        return nullptr;
+
+    if ( !current_plugin->data().dir.exists(ui_file) )
+    {
+        current_plugin->logger().stream(app::log::Error) << "UI file not found:" << ui_file;
+        return nullptr;
+    }
+
+    QFile file(current_plugin->data().dir.absoluteFilePath(ui_file));
+    if ( !file.open(QIODevice::ReadOnly) )
+    {
+        current_plugin->logger().stream(app::log::Error) << "Could not open UI file:" << ui_file;
+        return nullptr;
+    }
+
+    return new PluginUiDialog(file, *current_plugin, parent);
 }

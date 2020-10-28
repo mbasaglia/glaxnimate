@@ -8,10 +8,8 @@
 #include "model/shapes/shape.hpp"
 
 namespace plugin {
-
 class Plugin;
 class PluginScript;
-
 } // namespace plugin
 
 namespace item_models {
@@ -28,6 +26,8 @@ class BrushStyle;
 } // namespace model
 
 class QItemSelection;
+
+class PluginUiDialog;
 
 class GlaxnimateWindow : public QMainWindow
 {
@@ -97,6 +97,8 @@ public:
     Q_INVOKABLE QString get_open_image_file(const QString& title, const QString& dir = "") const;
 
     model::BrushStyle* linked_brush_style(bool secondary) const;
+
+    PluginUiDialog* create_dialog(const QString& ui_file) const;
 
 public slots:
     void document_save();

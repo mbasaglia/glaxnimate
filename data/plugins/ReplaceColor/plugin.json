@@ -10,21 +10,7 @@
             "label": "Replace Color",
             "script": {
                 "module": "replace_color",
-                "function": "main",
-                "settings": [
-                    {
-                        "name": "search",
-                        "label": "Search:",
-                        "type": "color",
-                        "default": "#000000"
-                    },
-                    {
-                        "name": "replace",
-                        "label": "Replace with:",
-                        "type": "color",
-                        "default": "#000000"
-                    }
-                ]
+                "function": "main"
             }
         }
     ]

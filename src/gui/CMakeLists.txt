@@ -46,6 +46,7 @@ widgets/dialogs/resize_dialog.cpp
 widgets/dialogs/resize_dialog.ui
 widgets/dialogs/timing_dialog.cpp
 widgets/dialogs/timing_dialog.ui
+widgets/dialogs/plugin_ui_dialog.cpp
 
 widgets/timeline/keyframe_transition_widget.cpp
 widgets/timeline/keyframe_editor_widget.cpp
@@ -97,4 +98,4 @@ qt5_add_resources(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/resources/glaxnimate.qrc)
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/core)
 add_library(${LIB_NAME_GUI} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME_GUI} PUBLIC Qt5::Widgets QtColorWidgets QtHistoryLineEdit ${LIB_NAME_CORE})
+target_link_libraries(${LIB_NAME_GUI} PUBLIC Qt5::Widgets Qt5::UiTools QtColorWidgets QtHistoryLineEdit ${LIB_NAME_CORE})

@@ -63,4 +63,5 @@ plugin(
 plugin(
     ReplaceColor
     replace_color.py
+    replace.ui
 )

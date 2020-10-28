@@ -13,5 +13,11 @@ class Replacer(glaxnimate.model.Visitor):
 
 
 def main(window, document, settings):
-    with document.macro("Replace color"):
-        Replacer(settings["search"], settings["replace"]).visit(document)
+    dialog = window.create_dialog("replace.ui")
+    if not dialog:
+        return
+
+    dialog.set_value("search", "color", window.current_color)
+    if dialog.exec():
+        with document.macro("Replace color"):
+            Replacer(dialog.get_value("search", "color"), dialog.get_value("replace", "color")).visit(document)

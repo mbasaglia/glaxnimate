@@ -422,3 +422,7 @@ model::BrushStyle * GlaxnimateWindow::linked_brush_style ( bool secondary ) cons
     return d->main_brush;
 }
 
+PluginUiDialog * GlaxnimateWindow::create_dialog(const QString& ui_file) const
+{
+    return d->create_dialog(ui_file);
+}

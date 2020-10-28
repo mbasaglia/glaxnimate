@@ -1,3 +1,8 @@
+## 0.2.1
+
+* Scripting:
+    * Ability to load Qt designer UI files.
+
 ## 0.2.0
 
 * Editing:
