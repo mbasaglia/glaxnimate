@@ -93,17 +93,8 @@ add_subdirectory(external/Qt-History-LineEdit)
 
 add_subdirectory(src bin)
 
-find_package(Qt5Designer)
 set(QTCOLORWIDGETS_DESIGNER_PLUGIN ON)
 add_subdirectory(external/Qt-Color-Widgets EXCLUDE_FROM_ALL)
-add_custom_target(dummy ALL)
-add_dependencies(dummy QtColorWidgetsPlugin)
-set_target_properties(
-    QtColorWidgetsPlugin PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${DATA_INSTALL}/lib/"
-)
-install(TARGETS QtColorWidgetsPlugin DESTINATION "${DATA_INSTALL}/lib/")
-
 
 add_subdirectory(py_module EXCLUDE_FROM_ALL)
 
