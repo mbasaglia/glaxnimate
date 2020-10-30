@@ -269,8 +269,8 @@ void register_py_module(py::module& glaxnimate_module)
     register_animatable<QGradientStops>(detail);
     py::class_<PyVisitorPublic, PyVisitorTrampoline>(model, "Visitor")
         .def(py::init())
-        .def("visit", (void (PyVisitorPublic::*)(model::Document*))&PyVisitorPublic::visit)
-        .def("visit", (void (PyVisitorPublic::*)(model::DocumentNode*))&PyVisitorPublic::visit)
+        .def("visit", (void (PyVisitorPublic::*)(model::Document*, bool))&PyVisitorPublic::visit)
+        .def("visit", (void (PyVisitorPublic::*)(model::DocumentNode*, bool))&PyVisitorPublic::visit)
         .def("on_visit_document", &PyVisitorPublic::on_visit_document)
         .def("on_visit_node", &PyVisitorPublic::on_visit_node)
     ;

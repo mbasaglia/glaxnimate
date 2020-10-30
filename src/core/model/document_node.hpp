@@ -34,6 +34,10 @@ public:
      */
     GLAXNIMATE_PROPERTY(bool, locked, false, &DocumentNode::docnode_locked_changed)
 
+    Q_PROPERTY(bool visible_recursive READ docnode_visible_recursive)
+    Q_PROPERTY(bool locked_recursive READ docnode_locked_recursive)
+    Q_PROPERTY(bool selectable READ docnode_selectable)
+
 private:
     class ChildRange;
 

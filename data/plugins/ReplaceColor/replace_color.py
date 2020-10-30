@@ -8,7 +8,10 @@ class Replacer(glaxnimate.model.Visitor):
         self.color_replace = color_replace
 
     def on_visit_node(self, node):
-        if isinstance(node, glaxnimate.model.shapes.Styler) and node.color.value == self.color_search:
+        if (
+            isinstance(node, glaxnimate.model.shapes.Styler) and
+            node.color.value == self.color_search
+        ):
             node.color.value = self.color_replace
 
 
@@ -20,4 +23,4 @@ def main(window, document, settings):
     dialog.set_value("search", "color", window.current_color)
     if dialog.exec():
         with document.macro("Replace color"):
-            Replacer(dialog.get_value("search", "color"), dialog.get_value("replace", "color")).visit(document)
+            Replacer(dialog.get_value("search", "color"), dialog.get_value("replace", "color")).visit(document, True)

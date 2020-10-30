@@ -67,6 +67,8 @@ It has the following fields:
 Settings provide parameters to pass the invoked function.
 The user will be shown a dialog with all these settings before the script execution.
 
+If you need more advanced control over the dialog, see the [dialog example](examples.md#showing-a-dialog).
+
 They are defined as a JSON array os settings objects:
 
 | Name      | Required  | Type   | Description                                  |

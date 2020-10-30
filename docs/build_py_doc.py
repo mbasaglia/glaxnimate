@@ -15,6 +15,13 @@ class MdWriter:
     def title(self, text, level=0):
         self.out.write("%s %s\n\n" % ("#"*(level+self.level), text))
 
+    def fancy_title(self, text, id, level=0):
+        self.out.write("<h{level} id='{id}'><a href='#{id}'>{text}</a></h{level}>\n\n".format(
+            text=text,
+            id=id,
+            level=level+self.level-1
+        ))
+
     def p(self, text):
         self.out.write(text + "\n\n")
 
@@ -84,12 +91,17 @@ class ModuleDocs:
                 v.print(writer)
             writer.end_table()
 
-        with writer.sublevel():
-            for func in self.functions:
-                func.print(writer)
+        if self.functions:
+            writer.title("Functions", 1)
+            with writer.sublevel(2):
+                for func in self.functions:
+                    func.print(writer)
 
-            for cls in self.classes:
-                cls.print(writer)
+        if self.classes:
+            writer.title("Classes", 1)
+            with writer.sublevel(2):
+                for cls in self.classes:
+                    cls.print(writer)
 
     def inspect(self, modules, classes):
         for name, val in inspect.getmembers(self.module):
@@ -100,13 +112,13 @@ class ModuleDocs:
                 submod.inspect(modules, submod.classes)
                 modules.append(submod)
             elif inspect.isfunction(val) or inspect.ismethod(val) or isinstance(val, types.BuiltinMethodType):
-                self.functions.append(FunctionDoc(self.child_name(name), val))
+                self.functions.append(FunctionDoc(name, self.child_name(name), val))
             elif inspect.isclass(val):
                 cls = ClassDoc(self.child_name(name), val)
                 cls.inspect([], classes)
                 classes.append(cls)
             elif type(val).__name__ == "instancemethod":
-                self.functions.append(FunctionDoc(self.child_name(name), val.__func__))
+                self.functions.append(FunctionDoc(name, self.child_name(name), val.__func__))
             elif isinstance(val, property):
                 self.props.append(PropertyDoc(name, val))
             elif hasattr(type(val), "__int__"):
@@ -119,13 +131,19 @@ class ModuleDocs:
 
 
 class FunctionDoc:
-    def __init__(self, full_name, function):
+    re_sig = re.compile(r"^(?:[0-9]+\. )?([a-zA-Z0-9_]+\(.*\)(?: -> .*)?)$", re.M)
+
+    def __init__(self, name, full_name, function):
         self.function = function
+        self.name = name
         self.full_name = full_name
         self.docs = inspect.getdoc(function)
+        if self.docs:
+            self.docs = self.docs.replace("(self: glaxnimate.__detail.__QObject", "(self")
+            self.docs = self.re_sig.sub("```python\n\\1\n```", self.docs)
 
     def print(self, writer: MdWriter):
-        writer.title(self.full_name)
+        writer.fancy_title(self.name + "()", self.full_name)
 
         if self.docs:
             writer.p(self.docs)

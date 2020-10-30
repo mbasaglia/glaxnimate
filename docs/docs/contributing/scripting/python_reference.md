@@ -10,9 +10,11 @@ Input/Output utilities
 | ---- | ---- | ---- | ---- |
 | `registry` | glaxnimate.io.IoRegistry |  |  | 
 
-## glaxnimate.io.GlaxnimateFormat
+## Classes
 
-### Properties
+### glaxnimate.io.GlaxnimateFormat
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -21,50 +23,72 @@ Input/Output utilities
 | `extensions` | List[QString] | Read only |  | 
 | `name` | QString | Read only |  | 
 
-### Constants
+#### Constants
 
 | name | type | value | docs | 
 | ---- | ---- | ---- | ---- |
 | `instance` | glaxnimate.io.GlaxnimateFormat |  |  | 
 
-### glaxnimate.io.GlaxnimateFormat.can_handle_extension
+#### Functions
 
-can_handle_extension(self: glaxnimate.__detail.__QObject, *args) -> bool
+<h4 id='glaxnimate.io.GlaxnimateFormat.can_handle_extension'><a href='#glaxnimate.io.GlaxnimateFormat.can_handle_extension'>can_handle_extension()</a></h4>
 
-### glaxnimate.io.GlaxnimateFormat.can_handle_filename
+```python
+can_handle_extension(self, *args) -> bool
+```
 
-can_handle_filename(self: glaxnimate.__detail.__QObject, *args) -> bool
+<h4 id='glaxnimate.io.GlaxnimateFormat.can_handle_filename'><a href='#glaxnimate.io.GlaxnimateFormat.can_handle_filename'>can_handle_filename()</a></h4>
 
-### glaxnimate.io.GlaxnimateFormat.error
+```python
+can_handle_filename(self, *args) -> bool
+```
 
-error(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.io.GlaxnimateFormat.error'><a href='#glaxnimate.io.GlaxnimateFormat.error'>error()</a></h4>
 
-### glaxnimate.io.GlaxnimateFormat.information
+```python
+error(self, *args) -> None
+```
 
-information(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.io.GlaxnimateFormat.information'><a href='#glaxnimate.io.GlaxnimateFormat.information'>information()</a></h4>
 
-### glaxnimate.io.GlaxnimateFormat.name_filter
+```python
+information(self, *args) -> None
+```
 
-name_filter(self: glaxnimate.__detail.__QObject, *args) -> QString
+<h4 id='glaxnimate.io.GlaxnimateFormat.name_filter'><a href='#glaxnimate.io.GlaxnimateFormat.name_filter'>name_filter()</a></h4>
 
-### glaxnimate.io.GlaxnimateFormat.save
+```python
+name_filter(self, *args) -> QString
+```
 
+<h4 id='glaxnimate.io.GlaxnimateFormat.save'><a href='#glaxnimate.io.GlaxnimateFormat.save'>save()</a></h4>
+
+```python
 save(*args, **kwargs)
+```
 Overloaded function.
 
-1. save(self: glaxnimate.__detail.__QObject, *args) -> QByteArray
+```python
+save(self, *args) -> QByteArray
+```
 
-2. save(self: glaxnimate.__detail.__QObject, *args) -> QByteArray
+```python
+save(self, *args) -> QByteArray
+```
 
-3. save(self: glaxnimate.__detail.__QObject, *args) -> QByteArray
+```python
+save(self, *args) -> QByteArray
+```
 
-### glaxnimate.io.GlaxnimateFormat.warning
+<h4 id='glaxnimate.io.GlaxnimateFormat.warning'><a href='#glaxnimate.io.GlaxnimateFormat.warning'>warning()</a></h4>
 
-warning(self: glaxnimate.__detail.__QObject, *args) -> None
+```python
+warning(self, *args) -> None
+```
 
-## glaxnimate.io.ImportExport
+### glaxnimate.io.ImportExport
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -73,70 +97,106 @@ warning(self: glaxnimate.__detail.__QObject, *args) -> None
 | `extensions` | List[QString] | Read only |  | 
 | `name` | QString | Read only |  | 
 
-### glaxnimate.io.ImportExport.can_handle_extension
+#### Functions
 
-can_handle_extension(self: glaxnimate.__detail.__QObject, *args) -> bool
+<h4 id='glaxnimate.io.ImportExport.can_handle_extension'><a href='#glaxnimate.io.ImportExport.can_handle_extension'>can_handle_extension()</a></h4>
 
-### glaxnimate.io.ImportExport.can_handle_filename
+```python
+can_handle_extension(self, *args) -> bool
+```
 
-can_handle_filename(self: glaxnimate.__detail.__QObject, *args) -> bool
+<h4 id='glaxnimate.io.ImportExport.can_handle_filename'><a href='#glaxnimate.io.ImportExport.can_handle_filename'>can_handle_filename()</a></h4>
 
-### glaxnimate.io.ImportExport.error
+```python
+can_handle_filename(self, *args) -> bool
+```
 
-error(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.io.ImportExport.error'><a href='#glaxnimate.io.ImportExport.error'>error()</a></h4>
 
-### glaxnimate.io.ImportExport.information
+```python
+error(self, *args) -> None
+```
 
-information(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.io.ImportExport.information'><a href='#glaxnimate.io.ImportExport.information'>information()</a></h4>
 
-### glaxnimate.io.ImportExport.name_filter
+```python
+information(self, *args) -> None
+```
 
-name_filter(self: glaxnimate.__detail.__QObject, *args) -> QString
+<h4 id='glaxnimate.io.ImportExport.name_filter'><a href='#glaxnimate.io.ImportExport.name_filter'>name_filter()</a></h4>
 
-### glaxnimate.io.ImportExport.save
+```python
+name_filter(self, *args) -> QString
+```
 
+<h4 id='glaxnimate.io.ImportExport.save'><a href='#glaxnimate.io.ImportExport.save'>save()</a></h4>
+
+```python
 save(*args, **kwargs)
+```
 Overloaded function.
 
-1. save(self: glaxnimate.__detail.__QObject, *args) -> QByteArray
+```python
+save(self, *args) -> QByteArray
+```
 
-2. save(self: glaxnimate.__detail.__QObject, *args) -> QByteArray
+```python
+save(self, *args) -> QByteArray
+```
 
-3. save(self: glaxnimate.__detail.__QObject, *args) -> QByteArray
+```python
+save(self, *args) -> QByteArray
+```
 
-### glaxnimate.io.ImportExport.warning
+<h4 id='glaxnimate.io.ImportExport.warning'><a href='#glaxnimate.io.ImportExport.warning'>warning()</a></h4>
 
-warning(self: glaxnimate.__detail.__QObject, *args) -> None
+```python
+warning(self, *args) -> None
+```
 
-## glaxnimate.io.IoRegistry
+### glaxnimate.io.IoRegistry
 
-### glaxnimate.io.IoRegistry.exporters
+#### Functions
 
+<h4 id='glaxnimate.io.IoRegistry.exporters'><a href='#glaxnimate.io.IoRegistry.exporters'>exporters()</a></h4>
+
+```python
 exporters(self: glaxnimate.io.IoRegistry) -> List[io::ImportExport]
+```
 
-### glaxnimate.io.IoRegistry.from_extension
+<h4 id='glaxnimate.io.IoRegistry.from_extension'><a href='#glaxnimate.io.IoRegistry.from_extension'>from_extension()</a></h4>
 
+```python
 from_extension(self: glaxnimate.io.IoRegistry, arg0: QString) -> io::ImportExport
+```
 
-### glaxnimate.io.IoRegistry.from_filename
+<h4 id='glaxnimate.io.IoRegistry.from_filename'><a href='#glaxnimate.io.IoRegistry.from_filename'>from_filename()</a></h4>
 
+```python
 from_filename(self: glaxnimate.io.IoRegistry, arg0: QString) -> io::ImportExport
+```
 
-### glaxnimate.io.IoRegistry.importers
+<h4 id='glaxnimate.io.IoRegistry.importers'><a href='#glaxnimate.io.IoRegistry.importers'>importers()</a></h4>
 
+```python
 importers(self: glaxnimate.io.IoRegistry) -> List[io::ImportExport]
+```
 
-### glaxnimate.io.IoRegistry.serializer_from_slug
+<h4 id='glaxnimate.io.IoRegistry.serializer_from_slug'><a href='#glaxnimate.io.IoRegistry.serializer_from_slug'>serializer_from_slug()</a></h4>
 
+```python
 serializer_from_slug(self: glaxnimate.io.IoRegistry, arg0: QString) -> glaxnimate.io.MimeSerializer
+```
 
-### glaxnimate.io.IoRegistry.serializers
+<h4 id='glaxnimate.io.IoRegistry.serializers'><a href='#glaxnimate.io.IoRegistry.serializers'>serializers()</a></h4>
 
+```python
 serializers(self: glaxnimate.io.IoRegistry) -> List[glaxnimate.io.MimeSerializer]
+```
 
-## glaxnimate.io.MimeSerializer
+### glaxnimate.io.MimeSerializer
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -144,40 +204,54 @@ serializers(self: glaxnimate.io.IoRegistry) -> List[glaxnimate.io.MimeSerializer
 | `name` | QString | Read only |  | 
 | `slug` | QString | Read only |  | 
 
-### glaxnimate.io.MimeSerializer.serialize
+#### Functions
 
+<h4 id='glaxnimate.io.MimeSerializer.serialize'><a href='#glaxnimate.io.MimeSerializer.serialize'>serialize()</a></h4>
+
+```python
 serialize(self: glaxnimate.io.MimeSerializer, arg0: List[model::DocumentNode]) -> QByteArray
+```
 
 # glaxnimate.log
 
 Logging utilities
 
-## glaxnimate.log.error
+## Functions
 
+<h2 id='glaxnimate.log.error'><a href='#glaxnimate.log.error'>error()</a></h2>
+
+```python
 error(arg0: QString) -> None
+```
 
-## glaxnimate.log.info
+<h2 id='glaxnimate.log.info'><a href='#glaxnimate.log.info'>info()</a></h2>
 
+```python
 info(arg0: QString) -> None
+```
 
-## glaxnimate.log.warning
+<h2 id='glaxnimate.log.warning'><a href='#glaxnimate.log.warning'>warning()</a></h2>
 
+```python
 warning(arg0: QString) -> None
+```
 
 # glaxnimate.model.defs
 
-## glaxnimate.model.defs.Asset
+## Classes
 
-### Properties
+### glaxnimate.model.defs.Asset
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `name` | QString |  |  | 
 | `uuid` | QUuid | Read only |  | 
 
-## glaxnimate.model.defs.Bitmap
+### glaxnimate.model.defs.Bitmap
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -190,26 +264,32 @@ warning(arg0: QString) -> None
 | `uuid` | QUuid | Read only |  | 
 | `width` | int | Read only |  | 
 
-### glaxnimate.model.defs.Bitmap.embed
+#### Functions
 
-embed(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.model.defs.Bitmap.embed'><a href='#glaxnimate.model.defs.Bitmap.embed'>embed()</a></h4>
 
-### glaxnimate.model.defs.Bitmap.refresh
+```python
+embed(self, *args) -> None
+```
 
-refresh(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.model.defs.Bitmap.refresh'><a href='#glaxnimate.model.defs.Bitmap.refresh'>refresh()</a></h4>
 
-## glaxnimate.model.defs.BrushStyle
+```python
+refresh(self, *args) -> None
+```
 
-### Properties
+### glaxnimate.model.defs.BrushStyle
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `name` | QString |  |  | 
 | `uuid` | QUuid | Read only |  | 
 
-## glaxnimate.model.defs.Defs
+### glaxnimate.model.defs.Defs
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -218,26 +298,38 @@ refresh(self: glaxnimate.__detail.__QObject, *args) -> None
 | `gradients` | List[QVariant] | Read only |  | 
 | `images` | List[QVariant] | Read only |  | 
 
-### glaxnimate.model.defs.Defs.add_color
+#### Functions
 
+<h4 id='glaxnimate.model.defs.Defs.add_color'><a href='#glaxnimate.model.defs.Defs.add_color'>add_color()</a></h4>
+
+```python
 add_color(*args, **kwargs)
+```
 Overloaded function.
 
-1. add_color(self: glaxnimate.__detail.__QObject, *args) -> glaxnimate.__detail.__QObject
+```python
+add_color(self, *args) -> glaxnimate.__detail.__QObject
+```
 
-2. add_color(self: glaxnimate.__detail.__QObject, *args) -> glaxnimate.__detail.__QObject
+```python
+add_color(self, *args) -> glaxnimate.__detail.__QObject
+```
 
-### glaxnimate.model.defs.Defs.add_image
+<h4 id='glaxnimate.model.defs.Defs.add_image'><a href='#glaxnimate.model.defs.Defs.add_image'>add_image()</a></h4>
 
-add_image(self: glaxnimate.__detail.__QObject, *args) -> glaxnimate.__detail.__QObject
+```python
+add_image(self, *args) -> glaxnimate.__detail.__QObject
+```
 
-### glaxnimate.model.defs.Defs.find_by_uuid
+<h4 id='glaxnimate.model.defs.Defs.find_by_uuid'><a href='#glaxnimate.model.defs.Defs.find_by_uuid'>find_by_uuid()</a></h4>
 
-find_by_uuid(self: glaxnimate.__detail.__QObject, *args) -> glaxnimate.__detail.__QObject
+```python
+find_by_uuid(self, *args) -> glaxnimate.__detail.__QObject
+```
 
-## glaxnimate.model.defs.Gradient
+### glaxnimate.model.defs.Gradient
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -249,13 +341,17 @@ find_by_uuid(self: glaxnimate.__detail.__QObject, *args) -> glaxnimate.__detail.
 | `type` | int |  |  | 
 | `uuid` | QUuid | Read only |  | 
 
-### glaxnimate.model.defs.Gradient.radius
+#### Functions
 
-radius(self: glaxnimate.__detail.__QObject, *args) -> float
+<h4 id='glaxnimate.model.defs.Gradient.radius'><a href='#glaxnimate.model.defs.Gradient.radius'>radius()</a></h4>
 
-## glaxnimate.model.defs.GradientColors
+```python
+radius(self, *args) -> float
+```
 
-### Properties
+### glaxnimate.model.defs.GradientColors
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -263,9 +359,9 @@ radius(self: glaxnimate.__detail.__QObject, *args) -> float
 | `name` | QString |  |  | 
 | `uuid` | QUuid | Read only |  | 
 
-## glaxnimate.model.defs.NamedColor
+### glaxnimate.model.defs.NamedColor
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -275,25 +371,34 @@ radius(self: glaxnimate.__detail.__QObject, *args) -> float
 
 # glaxnimate.model.shapes
 
-## glaxnimate.model.shapes.Ellipse
+## Classes
 
-### Properties
+### glaxnimate.model.shapes.Ellipse
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
 | `position` | glaxnimate.__detail.__QObject | Read only |  | 
+| `selectable` | bool | Read only |  | 
 | `size` | glaxnimate.__detail.__QObject | Read only |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.shapes.Ellipse.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.Ellipse.find_by_type_name'><a href='#glaxnimate.model.shapes.Ellipse.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.shapes.Fill.Rule
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
+
+### glaxnimate.model.shapes.Fill.Rule
 
 Members:
 
@@ -301,22 +406,22 @@ NonZero
 
 EvenOdd
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `name` | str | Read only | name(self: handle) -> str | 
 
-### Constants
+#### Constants
 
 | name | type | value | docs | 
 | ---- | ---- | ---- | ---- |
 | `EvenOdd` | glaxnimate.model.shapes.Rule | `0` |  | 
 | `NonZero` | glaxnimate.model.shapes.Rule | `1` |  | 
 
-## glaxnimate.model.shapes.Fill
+### glaxnimate.model.shapes.Fill
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -324,95 +429,130 @@ EvenOdd
 | `fill_rule` | int |  |  | 
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
 | `opacity` | glaxnimate.__detail.__QObject | Read only |  | 
+| `selectable` | bool | Read only |  | 
 | `use` | glaxnimate.__detail.__QObject |  |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.shapes.Fill.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.Fill.find_by_type_name'><a href='#glaxnimate.model.shapes.Fill.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.shapes.Group
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-### Properties
+### glaxnimate.model.shapes.Group
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
 | `opacity` | glaxnimate.__detail.__QObject | Read only |  | 
+| `selectable` | bool | Read only |  | 
 | `shapes` | List[QVariant] | Read only |  | 
 | `transform` | glaxnimate.__detail.__QObject | Read only |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.shapes.Group.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.Group.find_by_type_name'><a href='#glaxnimate.model.shapes.Group.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.shapes.Image
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-### Properties
+### glaxnimate.model.shapes.Image
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `image` | glaxnimate.__detail.__QObject |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
+| `selectable` | bool | Read only |  | 
 | `transform` | glaxnimate.__detail.__QObject | Read only |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.shapes.Image.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.Image.find_by_type_name'><a href='#glaxnimate.model.shapes.Image.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.shapes.Layer
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-### Properties
+### glaxnimate.model.shapes.Layer
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `animation` | glaxnimate.__detail.__QObject | Read only |  | 
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
 | `opacity` | glaxnimate.__detail.__QObject | Read only |  | 
 | `parent` | glaxnimate.__detail.__QObject |  |  | 
 | `render` | bool |  |  | 
+| `selectable` | bool | Read only |  | 
 | `shapes` | List[QVariant] | Read only |  | 
 | `start_time` | float |  |  | 
 | `transform` | glaxnimate.__detail.__QObject | Read only |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.shapes.Layer.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.Layer.find_by_type_name'><a href='#glaxnimate.model.shapes.Layer.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.shapes.Modifier
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-### Properties
+### glaxnimate.model.shapes.Modifier
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
+| `selectable` | bool | Read only |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.shapes.Modifier.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.Modifier.find_by_type_name'><a href='#glaxnimate.model.shapes.Modifier.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.shapes.PolyStar
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-### Properties
+### glaxnimate.model.shapes.PolyStar
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -420,70 +560,98 @@ find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `inner_radius` | glaxnimate.__detail.__QObject | Read only |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
 | `outer_radius` | glaxnimate.__detail.__QObject | Read only |  | 
 | `points` | glaxnimate.__detail.__QObject | Read only |  | 
 | `position` | glaxnimate.__detail.__QObject | Read only |  | 
+| `selectable` | bool | Read only |  | 
 | `type` | int |  |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.shapes.PolyStar.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.PolyStar.find_by_type_name'><a href='#glaxnimate.model.shapes.PolyStar.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.shapes.Rect
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-### Properties
+### glaxnimate.model.shapes.Rect
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
 | `position` | glaxnimate.__detail.__QObject | Read only |  | 
 | `rounded` | glaxnimate.__detail.__QObject | Read only |  | 
+| `selectable` | bool | Read only |  | 
 | `size` | glaxnimate.__detail.__QObject | Read only |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.shapes.Rect.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.Rect.find_by_type_name'><a href='#glaxnimate.model.shapes.Rect.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.shapes.Shape
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-### Properties
+### glaxnimate.model.shapes.Shape
 
-| name | type | notes | docs | 
-| ---- | ---- | ---- | ---- |
-| `group_color` | glaxnimate.utils.Color |  |  | 
-| `locked` | bool |  |  | 
-| `name` | QString |  |  | 
-| `uuid` | QUuid | Read only |  | 
-| `visible` | bool |  |  | 
-
-### glaxnimate.model.shapes.Shape.find_by_type_name
-
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
-
-## glaxnimate.model.shapes.ShapeElement
-
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
+| `selectable` | bool | Read only |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.shapes.ShapeElement.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.Shape.find_by_type_name'><a href='#glaxnimate.model.shapes.Shape.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.shapes.Stroke.Cap
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
+
+### glaxnimate.model.shapes.ShapeElement
+
+#### Properties
+
+| name | type | notes | docs | 
+| ---- | ---- | ---- | ---- |
+| `group_color` | glaxnimate.utils.Color |  |  | 
+| `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
+| `name` | QString |  |  | 
+| `selectable` | bool | Read only |  | 
+| `uuid` | QUuid | Read only |  | 
+| `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
+
+#### Functions
+
+<h4 id='glaxnimate.model.shapes.ShapeElement.find_by_type_name'><a href='#glaxnimate.model.shapes.ShapeElement.find_by_type_name'>find_by_type_name()</a></h4>
+
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
+
+### glaxnimate.model.shapes.Stroke.Cap
 
 Members:
 
@@ -493,13 +661,13 @@ RoundCap
 
 SquareCap
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `name` | str | Read only | name(self: handle) -> str | 
 
-### Constants
+#### Constants
 
 | name | type | value | docs | 
 | ---- | ---- | ---- | ---- |
@@ -507,7 +675,7 @@ SquareCap
 | `RoundCap` | glaxnimate.model.shapes.Cap | `32` |  | 
 | `SquareCap` | glaxnimate.model.shapes.Cap | `16` |  | 
 
-## glaxnimate.model.shapes.Stroke.Join
+### glaxnimate.model.shapes.Stroke.Join
 
 Members:
 
@@ -517,13 +685,13 @@ RoundJoin
 
 BevelJoin
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `name` | str | Read only | name(self: handle) -> str | 
 
-### Constants
+#### Constants
 
 | name | type | value | docs | 
 | ---- | ---- | ---- | ---- |
@@ -531,9 +699,9 @@ BevelJoin
 | `MiterJoin` | glaxnimate.model.shapes.Join | `0` |  | 
 | `RoundJoin` | glaxnimate.model.shapes.Join | `128` |  | 
 
-## glaxnimate.model.shapes.Stroke
+### glaxnimate.model.shapes.Stroke
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -542,42 +710,58 @@ BevelJoin
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `join` | int |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `miter_limit` | float |  |  | 
 | `name` | QString |  |  | 
 | `opacity` | glaxnimate.__detail.__QObject | Read only |  | 
+| `selectable` | bool | Read only |  | 
 | `use` | glaxnimate.__detail.__QObject |  |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 | `width` | glaxnimate.__detail.__QObject | Read only |  | 
 
-### glaxnimate.model.shapes.Stroke.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.Stroke.find_by_type_name'><a href='#glaxnimate.model.shapes.Stroke.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.shapes.Styler
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-### Properties
+### glaxnimate.model.shapes.Styler
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `color` | glaxnimate.__detail.__QObject | Read only |  | 
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
 | `opacity` | glaxnimate.__detail.__QObject | Read only |  | 
+| `selectable` | bool | Read only |  | 
 | `use` | glaxnimate.__detail.__QObject |  |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.shapes.Styler.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.shapes.Styler.find_by_type_name'><a href='#glaxnimate.model.shapes.Styler.find_by_type_name'>find_by_type_name()</a></h4>
+
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
 # glaxnimate.model
 
-## glaxnimate.model.AnimatableBase
+## Classes
 
-### Properties
+### glaxnimate.model.AnimatableBase
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -585,29 +769,41 @@ find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
 | `keyframe_count` | int | Read only |  | 
 | `value` | QVariant |  |  | 
 
-### glaxnimate.model.AnimatableBase.keyframe
+#### Functions
 
+<h4 id='glaxnimate.model.AnimatableBase.keyframe'><a href='#glaxnimate.model.AnimatableBase.keyframe'>keyframe()</a></h4>
+
+```python
 keyframe(self: glaxnimate.model.AnimatableBase, arg0: float) -> glaxnimate.model.Keyframe
+```
 
-### glaxnimate.model.AnimatableBase.keyframe_index
+<h4 id='glaxnimate.model.AnimatableBase.keyframe_index'><a href='#glaxnimate.model.AnimatableBase.keyframe_index'>keyframe_index()</a></h4>
 
-keyframe_index(self: glaxnimate.__detail.__QObject, *args) -> int
+```python
+keyframe_index(self, *args) -> int
+```
 
-### glaxnimate.model.AnimatableBase.remove_keyframe_at_time
+<h4 id='glaxnimate.model.AnimatableBase.remove_keyframe_at_time'><a href='#glaxnimate.model.AnimatableBase.remove_keyframe_at_time'>remove_keyframe_at_time()</a></h4>
 
+```python
 remove_keyframe_at_time(self: glaxnimate.model.AnimatableBase, arg0: float) -> None
+```
 
-### glaxnimate.model.AnimatableBase.set_keyframe
+<h4 id='glaxnimate.model.AnimatableBase.set_keyframe'><a href='#glaxnimate.model.AnimatableBase.set_keyframe'>set_keyframe()</a></h4>
 
+```python
 set_keyframe(self: glaxnimate.model.AnimatableBase, arg0: float, arg1: QVariant) -> glaxnimate.model.Keyframe
+```
 
-### glaxnimate.model.AnimatableBase.value_mismatch
+<h4 id='glaxnimate.model.AnimatableBase.value_mismatch'><a href='#glaxnimate.model.AnimatableBase.value_mismatch'>value_mismatch()</a></h4>
 
-value_mismatch(self: glaxnimate.__detail.__QObject, *args) -> bool
+```python
+value_mismatch(self, *args) -> bool
+```
 
-## glaxnimate.model.AnimationContainer
+### glaxnimate.model.AnimationContainer
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -615,27 +811,34 @@ value_mismatch(self: glaxnimate.__detail.__QObject, *args) -> bool
 | `last_frame` | int |  |  | 
 | `time_visible` | bool | Read only |  | 
 
-## glaxnimate.model.Composition
+### glaxnimate.model.Composition
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `animation` | glaxnimate.__detail.__QObject | Read only |  | 
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
+| `selectable` | bool | Read only |  | 
 | `shapes` | List[QVariant] | Read only |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.Composition.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.Composition.find_by_type_name'><a href='#glaxnimate.model.Composition.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.Document
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-### Properties
+### glaxnimate.model.Document
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -645,71 +848,106 @@ find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
 | `main` | glaxnimate.__detail.__QObject | Read only |  | 
 | `record_to_keyframe` | bool |  |  | 
 
-### glaxnimate.model.Document.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.Document.find_by_type_name'><a href='#glaxnimate.model.Document.find_by_type_name'>find_by_type_name()</a></h4>
 
-### glaxnimate.model.Document.find_by_uuid
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-find_by_uuid(self: glaxnimate.__detail.__QObject, *args) -> glaxnimate.__detail.__QObject
+<h4 id='glaxnimate.model.Document.find_by_uuid'><a href='#glaxnimate.model.Document.find_by_uuid'>find_by_uuid()</a></h4>
 
-### glaxnimate.model.Document.get_best_name
+```python
+find_by_uuid(self, *args) -> glaxnimate.__detail.__QObject
+```
 
+<h4 id='glaxnimate.model.Document.get_best_name'><a href='#glaxnimate.model.Document.get_best_name'>get_best_name()</a></h4>
+
+```python
 get_best_name(*args, **kwargs)
+```
 Overloaded function.
 
-1. get_best_name(self: glaxnimate.__detail.__QObject, *args) -> QString
+```python
+get_best_name(self, *args) -> QString
+```
 
-2. get_best_name(self: glaxnimate.__detail.__QObject, *args) -> QString
+```python
+get_best_name(self, *args) -> QString
+```
 
-### glaxnimate.model.Document.macro
+<h4 id='glaxnimate.model.Document.macro'><a href='#glaxnimate.model.Document.macro'>macro()</a></h4>
 
+```python
 macro(self: glaxnimate.model.Document, arg0: QString) -> glaxnimate.__detail.UndoMacroGuard
+```
 
-### glaxnimate.model.Document.rect
+<h4 id='glaxnimate.model.Document.rect'><a href='#glaxnimate.model.Document.rect'>rect()</a></h4>
 
-rect(self: glaxnimate.__detail.__QObject, *args) -> QRectF
+```python
+rect(self, *args) -> QRectF
+```
 
-### glaxnimate.model.Document.redo
+<h4 id='glaxnimate.model.Document.redo'><a href='#glaxnimate.model.Document.redo'>redo()</a></h4>
 
-redo(self: glaxnimate.__detail.__QObject, *args) -> bool
+```python
+redo(self, *args) -> bool
+```
 
-### glaxnimate.model.Document.set_best_name
+<h4 id='glaxnimate.model.Document.set_best_name'><a href='#glaxnimate.model.Document.set_best_name'>set_best_name()</a></h4>
 
+```python
 set_best_name(*args, **kwargs)
+```
 Overloaded function.
 
-1. set_best_name(self: glaxnimate.__detail.__QObject, *args) -> None
+```python
+set_best_name(self, *args) -> None
+```
 
-2. set_best_name(self: glaxnimate.__detail.__QObject, *args) -> None
+```python
+set_best_name(self, *args) -> None
+```
 
-### glaxnimate.model.Document.size
+<h4 id='glaxnimate.model.Document.size'><a href='#glaxnimate.model.Document.size'>size()</a></h4>
 
-size(self: glaxnimate.__detail.__QObject, *args) -> glaxnimate.utils.IntSize
+```python
+size(self, *args) -> glaxnimate.utils.IntSize
+```
 
-### glaxnimate.model.Document.undo
+<h4 id='glaxnimate.model.Document.undo'><a href='#glaxnimate.model.Document.undo'>undo()</a></h4>
 
-undo(self: glaxnimate.__detail.__QObject, *args) -> bool
+```python
+undo(self, *args) -> bool
+```
 
-## glaxnimate.model.DocumentNode
+### glaxnimate.model.DocumentNode
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
+| `selectable` | bool | Read only |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 
-### glaxnimate.model.DocumentNode.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.DocumentNode.find_by_type_name'><a href='#glaxnimate.model.DocumentNode.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.Keyframe
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-### Properties
+### glaxnimate.model.Keyframe
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -717,9 +955,9 @@ find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
 | `transition` | glaxnimate.model.KeyframeTransition | Read only |  | 
 | `value` | QVariant | Read only |  | 
 
-## glaxnimate.model.KeyframeTransition
+### glaxnimate.model.KeyframeTransition
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -729,41 +967,59 @@ find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
 | `before_handle` | glaxnimate.utils.Point |  |  | 
 | `hold` | bool |  |  | 
 
-### glaxnimate.model.KeyframeTransition.bezier_parameter
+#### Functions
 
-bezier_parameter(self: glaxnimate.__detail.__QObject, *args) -> float
+<h4 id='glaxnimate.model.KeyframeTransition.bezier_parameter'><a href='#glaxnimate.model.KeyframeTransition.bezier_parameter'>bezier_parameter()</a></h4>
 
-### glaxnimate.model.KeyframeTransition.lerp_factor
+```python
+bezier_parameter(self, *args) -> float
+```
 
-lerp_factor(self: glaxnimate.__detail.__QObject, *args) -> float
+<h4 id='glaxnimate.model.KeyframeTransition.lerp_factor'><a href='#glaxnimate.model.KeyframeTransition.lerp_factor'>lerp_factor()</a></h4>
 
-### glaxnimate.model.KeyframeTransition.set_after
+```python
+lerp_factor(self, *args) -> float
+```
 
-set_after(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.model.KeyframeTransition.set_after'><a href='#glaxnimate.model.KeyframeTransition.set_after'>set_after()</a></h4>
 
-### glaxnimate.model.KeyframeTransition.set_after_handle
+```python
+set_after(self, *args) -> None
+```
 
-set_after_handle(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.model.KeyframeTransition.set_after_handle'><a href='#glaxnimate.model.KeyframeTransition.set_after_handle'>set_after_handle()</a></h4>
 
-### glaxnimate.model.KeyframeTransition.set_before
+```python
+set_after_handle(self, *args) -> None
+```
 
-set_before(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.model.KeyframeTransition.set_before'><a href='#glaxnimate.model.KeyframeTransition.set_before'>set_before()</a></h4>
 
-### glaxnimate.model.KeyframeTransition.set_before_handle
+```python
+set_before(self, *args) -> None
+```
 
-set_before_handle(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.model.KeyframeTransition.set_before_handle'><a href='#glaxnimate.model.KeyframeTransition.set_before_handle'>set_before_handle()</a></h4>
 
-### glaxnimate.model.KeyframeTransition.set_handles
+```python
+set_before_handle(self, *args) -> None
+```
 
-set_handles(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.model.KeyframeTransition.set_handles'><a href='#glaxnimate.model.KeyframeTransition.set_handles'>set_handles()</a></h4>
 
-### glaxnimate.model.KeyframeTransition.set_hold
+```python
+set_handles(self, *args) -> None
+```
 
-set_hold(self: glaxnimate.__detail.__QObject, *args) -> None
+<h4 id='glaxnimate.model.KeyframeTransition.set_hold'><a href='#glaxnimate.model.KeyframeTransition.set_hold'>set_hold()</a></h4>
 
-## glaxnimate.model.MainComposition
+```python
+set_hold(self, *args) -> None
+```
 
-### Properties
+### glaxnimate.model.MainComposition
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -772,30 +1028,37 @@ set_hold(self: glaxnimate.__detail.__QObject, *args) -> None
 | `group_color` | glaxnimate.utils.Color |  |  | 
 | `height` | int |  |  | 
 | `locked` | bool |  |  | 
+| `locked_recursive` | bool | Read only |  | 
 | `name` | QString |  |  | 
+| `selectable` | bool | Read only |  | 
 | `shapes` | List[QVariant] | Read only |  | 
 | `uuid` | QUuid | Read only |  | 
 | `visible` | bool |  |  | 
+| `visible_recursive` | bool | Read only |  | 
 | `width` | int |  |  | 
 
-### glaxnimate.model.MainComposition.find_by_type_name
+#### Functions
 
-find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
+<h4 id='glaxnimate.model.MainComposition.find_by_type_name'><a href='#glaxnimate.model.MainComposition.find_by_type_name'>find_by_type_name()</a></h4>
 
-## glaxnimate.model.Object
+```python
+find_by_type_name(self, *args) -> List[QVariant]
+```
 
-## glaxnimate.model.ReferenceTarget
+### glaxnimate.model.Object
 
-### Properties
+### glaxnimate.model.ReferenceTarget
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `name` | QString |  |  | 
 | `uuid` | QUuid | Read only |  | 
 
-## glaxnimate.model.Transform
+### glaxnimate.model.Transform
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -804,30 +1067,44 @@ find_by_type_name(self: glaxnimate.__detail.__QObject, *args) -> List[QVariant]
 | `rotation` | glaxnimate.__detail.__QObject | Read only |  | 
 | `scale` | glaxnimate.__detail.__QObject | Read only |  | 
 
-## glaxnimate.model.Visitor
+### glaxnimate.model.Visitor
 
-### glaxnimate.model.Visitor.on_visit_document
+#### Functions
 
+<h4 id='glaxnimate.model.Visitor.on_visit_document'><a href='#glaxnimate.model.Visitor.on_visit_document'>on_visit_document()</a></h4>
+
+```python
 on_visit_document(self: glaxnimate.model.Visitor, arg0: glaxnimate.model.Document) -> None
+```
 
-### glaxnimate.model.Visitor.on_visit_node
+<h4 id='glaxnimate.model.Visitor.on_visit_node'><a href='#glaxnimate.model.Visitor.on_visit_node'>on_visit_node()</a></h4>
 
+```python
 on_visit_node(self: glaxnimate.model.Visitor, arg0: glaxnimate.model.DocumentNode) -> None
+```
 
-### glaxnimate.model.Visitor.visit
+<h4 id='glaxnimate.model.Visitor.visit'><a href='#glaxnimate.model.Visitor.visit'>visit()</a></h4>
 
+```python
 visit(*args, **kwargs)
+```
 Overloaded function.
 
-1. visit(self: glaxnimate.model.Visitor, arg0: glaxnimate.model.Document) -> None
+```python
+visit(self: glaxnimate.model.Visitor, arg0: glaxnimate.model.Document, arg1: bool) -> None
+```
 
-2. visit(self: glaxnimate.model.Visitor, arg0: glaxnimate.model.DocumentNode) -> None
+```python
+visit(self: glaxnimate.model.Visitor, arg0: glaxnimate.model.DocumentNode, arg1: bool) -> None
+```
 
 # glaxnimate.utils
 
-## glaxnimate.utils.Color
+## Classes
 
-### Properties
+### glaxnimate.utils.Color
+
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -836,18 +1113,18 @@ Overloaded function.
 | `name` | QString |  |  | 
 | `red` | int |  |  | 
 
-## glaxnimate.utils.IntSize
+### glaxnimate.utils.IntSize
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `height` | float |  |  | 
 | `width` | float |  |  | 
 
-## glaxnimate.utils.Point
+### glaxnimate.utils.Point
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
@@ -855,41 +1132,53 @@ Overloaded function.
 | `x` | float |  |  | 
 | `y` | float |  |  | 
 
-## glaxnimate.utils.Size
+### glaxnimate.utils.Size
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `height` | float |  |  | 
 | `width` | float |  |  | 
 
-## glaxnimate.utils.Vector2D
+### glaxnimate.utils.Vector2D
 
-### Properties
+#### Properties
 
 | name | type | notes | docs | 
 | ---- | ---- | ---- | ---- |
 | `x` | float |  |  | 
 | `y` | float |  |  | 
 
-### glaxnimate.utils.Vector2D.length
+#### Functions
 
+<h4 id='glaxnimate.utils.Vector2D.length'><a href='#glaxnimate.utils.Vector2D.length'>length()</a></h4>
+
+```python
 length(self: glaxnimate.utils.Vector2D) -> float
+```
 
-### glaxnimate.utils.Vector2D.length_squared
+<h4 id='glaxnimate.utils.Vector2D.length_squared'><a href='#glaxnimate.utils.Vector2D.length_squared'>length_squared()</a></h4>
 
+```python
 length_squared(self: glaxnimate.utils.Vector2D) -> float
+```
 
-### glaxnimate.utils.Vector2D.normalize
+<h4 id='glaxnimate.utils.Vector2D.normalize'><a href='#glaxnimate.utils.Vector2D.normalize'>normalize()</a></h4>
 
+```python
 normalize(self: glaxnimate.utils.Vector2D) -> None
+```
 
-### glaxnimate.utils.Vector2D.normalized
+<h4 id='glaxnimate.utils.Vector2D.normalized'><a href='#glaxnimate.utils.Vector2D.normalized'>normalized()</a></h4>
 
+```python
 normalized(self: glaxnimate.utils.Vector2D) -> glaxnimate.utils.Vector2D
+```
 
-### glaxnimate.utils.Vector2D.to_point
+<h4 id='glaxnimate.utils.Vector2D.to_point'><a href='#glaxnimate.utils.Vector2D.to_point'>to_point()</a></h4>
 
+```python
 to_point(self: glaxnimate.utils.Vector2D) -> glaxnimate.utils.Point
+```
 

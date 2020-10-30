@@ -11,18 +11,21 @@ class Visitor
 public:
     virtual ~Visitor() {}
 
-    void visit(model::Document* doc)
+    void visit(model::Document* doc, bool skip_locked = false)
     {
         on_visit(doc);
-        visit(doc->main());
+        visit(doc->main(), skip_locked);
         on_visit_end(doc);
     }
 
-    void visit(model::DocumentNode* node)
+    void visit(model::DocumentNode* node, bool skip_locked = false)
     {
+        if ( skip_locked && node->locked.get() )
+            return;
+
         on_visit(node);
         for ( auto ch : node->docnode_children() )
-            visit(ch);
+            visit(ch, skip_locked);
         on_visit_end(node);
     }
 
