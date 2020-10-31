@@ -4,7 +4,7 @@ Constants:
 
 | name          | type           | value                 | docs | 
 | ------------- | -------------- | --------------------- | ---- | 
-| `__version__` | `builtins.str` | `'0.2.0-17-g6803d97'` |      | 
+| `__version__` | `builtins.str` | `'0.2.0-18-g7133330'` |      | 
 
 # glaxnimate.utils
 
@@ -424,13 +424,13 @@ add_image(self, filename: str, embed: bool) -> glaxnimate.model.Bitmap
 <h3 id='glaxnimate.model.defs.Defs.add_gradient'><a href='#glaxnimate.model.defs.Defs.add_gradient'>add_gradient()</a></h3>
 
 ```python
-add_gradient(self: glaxnimate.model.defs.Defs) -> glaxnimate.model.defs.Gradient
+add_gradient(self: glaxnimate.model.defs.Defs, index: int = -1) -> glaxnimate.model.defs.Gradient
 ```
 
 <h3 id='glaxnimate.model.defs.Defs.add_gradient_colors'><a href='#glaxnimate.model.defs.Defs.add_gradient_colors'>add_gradient_colors()</a></h3>
 
 ```python
-add_gradient_colors(self: glaxnimate.model.defs.Defs) -> glaxnimate.model.defs.GradientColors
+add_gradient_colors(self: glaxnimate.model.defs.Defs, index: int = -1) -> glaxnimate.model.defs.GradientColors
 ```
 
 # glaxnimate.model.shapes
@@ -551,7 +551,7 @@ Properties:
 <h3 id='glaxnimate.model.shapes.Group.add_shape'><a href='#glaxnimate.model.shapes.Group.add_shape'>add_shape()</a></h3>
 
 ```python
-add_shape(self: glaxnimate.model.shapes.Group, arg0: str) -> glaxnimate.model.shapes.ShapeElement
+add_shape(self: glaxnimate.model.shapes.Group, type_name: str, index: int = -1) -> glaxnimate.model.shapes.ShapeElement
 ```
 
 Adds a shape from its class name
@@ -752,7 +752,8 @@ set_best_name(self, node: glaxnimate.model.DocumentNode) -> None
 Signature:
 
 ```python
-render_image(self, time: FrameTime, size: glaxnimate.utils.IntSize) -> PIL.Image.Image
+render_image(self, time: float, size: glaxnimate.utils.IntSize) -> PIL.Image.Image
+render_image(self, time: float) -> PIL.Image.Image
 render_image(self) -> PIL.Image.Image
 ```
 
@@ -861,7 +862,7 @@ Properties:
 <h3 id='glaxnimate.model.Composition.add_shape'><a href='#glaxnimate.model.Composition.add_shape'>add_shape()</a></h3>
 
 ```python
-add_shape(self: glaxnimate.model.Composition, arg0: str) -> glaxnimate.model.ShapeElement
+add_shape(self: glaxnimate.model.Composition, type_name: str, index: int = -1) -> glaxnimate.model.ShapeElement
 ```
 
 Adds a shape from its class name

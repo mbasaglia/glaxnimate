@@ -21,6 +21,8 @@ class Document : public QObject
     Q_PROPERTY(double current_time READ current_time WRITE set_current_time NOTIFY current_time_changed)
     Q_PROPERTY(bool record_to_keyframe READ record_to_keyframe WRITE set_record_to_keyframe NOTIFY record_to_keyframe_changed)
     Q_PROPERTY(Object* defs READ defs_obj)
+    Q_PROPERTY(QSize size READ size)
+    Q_PROPERTY(QRectF rect READ rect)
 
 public:
     explicit Document(const QString& filename);
@@ -50,8 +52,8 @@ public:
     FrameTime current_time() const;
     void set_current_time(FrameTime t);
 
-    Q_INVOKABLE QSize size() const;
-    Q_INVOKABLE QRectF rect() const;
+    QSize size() const;
+    QRectF rect() const;
 
     /**
      * \brief Whether animated values should add keyframes when their value changes
@@ -62,7 +64,7 @@ public:
     Q_INVOKABLE QString get_best_name(const model::DocumentNode* node, const QString& suggestion={}) const;
     Q_INVOKABLE void set_best_name(model::DocumentNode* node, const QString& suggestion={}) const;
 
-    Q_INVOKABLE QImage render_image(FrameTime time, QSize size) const;
+    Q_INVOKABLE QImage render_image(float time, QSize size = {}) const;
     Q_INVOKABLE QImage render_image() const;
 
     model::Defs* defs() const;

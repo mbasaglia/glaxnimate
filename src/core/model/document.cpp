@@ -211,9 +211,11 @@ model::Object * model::Document::defs_obj() const
     return defs();
 }
 
-QImage model::Document::render_image(model::FrameTime time, QSize image_size) const
+QImage model::Document::render_image(float time, QSize image_size) const
 {
     QSizeF real_size = size();
+    if ( !image_size.isValid() )
+        image_size = real_size.toSize();
     QImage image(image_size, QImage::Format_RGBA8888);
     image.fill(Qt::transparent);
 

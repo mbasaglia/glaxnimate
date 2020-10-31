@@ -77,13 +77,14 @@ void define_utils(py::module& m)
         .def(py::self /= qreal())
         .def(py::self == py::self)
         .def(py::self != py::self)
+        .def("to_point", [](const QSizeF& sz){ return QPointF(sz.width(), sz.height()); })
         .def("__repr__", qdebug_operator_to_string<QSizeF>())
     ;
     py::class_<QSize>(utils, "IntSize")
         .def(py::init<>())
         .def(py::init<int, int>())
-        .def_property("width", &QSizeF::width, &QSizeF::setWidth)
-        .def_property("height", &QSizeF::height, &QSizeF::setHeight)
+        .def_property("width", &QSize::width, &QSize::setWidth)
+        .def_property("height", &QSize::height, &QSize::setHeight)
         .def(py::self += py::self)
         .def(py::self + py::self)
         .def(py::self -= py::self)
@@ -94,6 +95,7 @@ void define_utils(py::module& m)
         .def(py::self /= qreal())
         .def(py::self == py::self)
         .def(py::self != py::self)
+        .def("to_point", [](const QSize& sz){ return QPointF(sz.width(), sz.height()); })
         .def("__repr__", qdebug_operator_to_string<QSize>())
     ;
     py::class_<QVector2D>(utils, "Vector2D")
@@ -249,14 +251,14 @@ public:
 
     CreateObject(PtrMem p) noexcept : ptr(p) {}
 
-    ItemT* operator() (Owner* owner, const QString& clsname) const
+    ItemT* operator() (Owner* owner, const QString& clsname, int index = -1) const
     {
-        return create(owner->document(), owner->*ptr, clsname);
+        return create(owner->document(), owner->*ptr, clsname, index);
     }
 
 
 private:
-    ItemT* create(model::Document* doc, PropT& prop, const QString& clsname) const
+    ItemT* create(model::Document* doc, PropT& prop, const QString& clsname, int index) const
     {
         auto obj = model::Factory::instance().build(clsname, doc);
         if ( !obj )
@@ -274,7 +276,7 @@ private:
             doc->set_best_name(static_cast<model::DocumentNode*>(cast));
         else
             cast->name.set(cast->type_name_human());
-        doc->push_command(new command::AddObject<ItemT, PropT>(&prop, std::unique_ptr<ItemT>(cast)));
+        doc->push_command(new command::AddObject<ItemT, PropT>(&prop, std::unique_ptr<ItemT>(cast), index));
         return cast;
     }
 
@@ -289,18 +291,18 @@ public:
 
     CreateFixedObject(PtrMem p) noexcept : ptr(p) {}
 
-    ItemT* operator() (Owner* owner) const
+    ItemT* operator() (Owner* owner, int index = -1) const
     {
-        return create(owner->document(), owner->*ptr);
+        return create(owner->document(), owner->*ptr, index);
     }
 
 
 private:
-    ItemT* create(model::Document* doc, PropT& prop) const
+    ItemT* create(model::Document* doc, PropT& prop, int index) const
     {
         auto ptr = new ItemT(doc);
         ptr->name.set(ptr->type_name_human());
-        doc->push_command(new command::AddObject<ItemT, PropT>(&prop, std::unique_ptr<ItemT>(ptr)));
+        doc->push_command(new command::AddObject<ItemT, PropT>(&prop, std::unique_ptr<ItemT>(ptr), index));
         return ptr;
     }
 
@@ -354,7 +356,9 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::Transform, model::Object>(model);
     register_from_meta<model::Composition, model::DocumentNode>(model)
         .def("add_shape", CreateObject(&model::Composition::shapes), no_own,
-            "Adds a shape from its class name"
+            "Adds a shape from its class name",
+             py::arg("type_name"),
+             py::arg("index") = -1
         )
     ;
     register_from_meta<model::MainComposition, model::Composition>(model);
@@ -381,8 +385,8 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::Gradient, model::BrushStyle>(defs);
     register_from_meta<model::Bitmap, model::Asset>(defs);
     register_from_meta<model::Defs, model::Object>(defs)
-        .def("add_gradient", CreateFixedObject(&model::Defs::gradients), no_own)
-        .def("add_gradient_colors", CreateFixedObject(&model::Defs::gradient_colors), no_own)
+        .def("add_gradient", CreateFixedObject(&model::Defs::gradients), no_own, py::arg("index") = -1)
+        .def("add_gradient_colors", CreateFixedObject(&model::Defs::gradient_colors), no_own, py::arg("index") = -1)
     ;
 
 
@@ -398,7 +402,9 @@ void register_py_module(py::module& glaxnimate_module)
 
     register_from_meta<model::Group, model::ShapeElement>(shapes)
         .def("add_shape", CreateObject(&model::Group::shapes), no_own,
-            "Adds a shape from its class name"
+            "Adds a shape from its class name",
+             py::arg("type_name"),
+             py::arg("index") = -1
         )
     ;
     register_from_meta<model::Layer, model::Group>(shapes);

@@ -29,8 +29,6 @@ void GlaxnimateWindow::Private::console_commit(QString text)
         return;
 
     auto c = ui.console_output->textCursor();
-    c.clearSelection();
-    ui.console_output->setTextCursor(c);
 
     console_stdout("> " + text);
     auto ctx = script_contexts[ui.console_language->currentIndex()].get();
@@ -42,6 +40,11 @@ void GlaxnimateWindow::Private::console_commit(QString text)
         console_error(err);
     }
     ui.console_input->setText("");
+
+
+    c.clearSelection();
+    c.movePosition(QTextCursor::End);
+    ui.console_output->setTextCursor(c);
 }
 
 bool GlaxnimateWindow::Private::ensure_script_contexts()

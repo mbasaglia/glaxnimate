@@ -34,11 +34,11 @@ class GlaxnimateWindow : public QMainWindow
     Q_OBJECT
 
     Q_PROPERTY(model::Document* document READ document)
-    Q_PROPERTY(model::DocumentNode* current_document_node READ current_document_node WRITE set_current_document_node)
+    Q_PROPERTY(model::DocumentNode* current_item READ current_document_node WRITE set_current_document_node)
     Q_PROPERTY(model::ShapeElement* current_shape READ current_shape)
     Q_PROPERTY(model::Object* current_shape_container READ current_shape_container_script)
-    Q_PROPERTY(QColor current_color READ current_color WRITE set_current_color)
-    Q_PROPERTY(QColor secondary_color READ secondary_color WRITE set_secondary_color)
+    Q_PROPERTY(QColor fill_color READ current_color WRITE set_current_color)
+    Q_PROPERTY(QColor stroke_color READ secondary_color WRITE set_secondary_color)
 
 public:
 
@@ -65,7 +65,7 @@ public:
     /**
      * @brief Shows a warning popup
      */
-    Q_INVOKABLE void warning(const QString& message, const QString& title = "123") const;
+    Q_INVOKABLE void warning(const QString& message, const QString& title = "") const;
 
     /**
      * @brief Shows a message in the status bar
