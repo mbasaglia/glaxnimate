@@ -10,6 +10,7 @@
 #include <QDateTime>
 #include <QDate>
 #include <QTime>
+#include <QImage>
 
 #include <QDebug>
 
@@ -68,8 +69,6 @@ public:
 
     static handle cast(QUuid src, return_value_policy policy, handle parent);
 };
-
-
 
 template <> struct type_caster<QVariant>
 {
@@ -278,10 +277,6 @@ template <typename Key, typename Value> struct type_caster<QMap<Key, Value>>
 template <typename Key, typename Value> struct type_caster<QHash<Key, Value>>
   : qt_map_caster<QHash<Key, Value>, Key, Value> { };
 
-
-
-
-
 template <typename V1, typename V2> struct type_caster<QPair<V1,V2>> {
     using cast1 = make_caster<V1>;
     using cast2 = make_caster<V2>;
@@ -316,6 +311,16 @@ template <typename V1, typename V2> struct type_caster<QPair<V1,V2>> {
     }
 };
 
+
+
+template <> struct type_caster<QImage>
+{
+public:
+    PYBIND11_TYPE_CASTER(QImage, _("QImage"));
+
+    bool load(handle src, bool ic);
+
+    static handle cast(QImage src, return_value_policy policy, handle parent);
+};
+
 } // namespace pybind11::detail
-
-

@@ -1,6 +1,7 @@
 #include "document.hpp"
 
 #include <QRegularExpression>
+#include <QPainter>
 
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "model/defs/defs.hpp"
@@ -208,4 +209,25 @@ model::Defs * model::Document::defs() const
 model::Object * model::Document::defs_obj() const
 {
     return defs();
+}
+
+QImage model::Document::render_image(model::FrameTime time, QSize image_size) const
+{
+    QSizeF real_size = size();
+    QImage image(image_size, QImage::Format_RGBA8888);
+    image.fill(Qt::transparent);
+
+    QPainter painter(&image);
+    painter.scale(
+        image_size.width() / real_size.width(),
+        image_size.height() / real_size.height()
+    );
+    d->main.paint(&painter, time, DocumentNode::Render);
+
+    return image;
+}
+
+QImage model::Document::render_image() const
+{
+    return render_image(d->current_time, size());
 }

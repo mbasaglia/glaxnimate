@@ -62,6 +62,7 @@ SETUP_TYPE(QMetaType::QByteArray,   QByteArray)
 SETUP_TYPE(QMetaType::QDateTime,    QDateTime)
 SETUP_TYPE(QMetaType::QDate,        QDate)
 SETUP_TYPE(QMetaType::QTime,        QTime)
+SETUP_TYPE(QMetaType::QImage,       QImage)
 // If you add stuff here, remember to add it to supported_types too
 
 TYPE_NAME(std::vector<QObject*>)
@@ -95,7 +96,8 @@ using supported_types = std::integer_sequence<int,
     QMetaType::QByteArray,
     QMetaType::QDateTime,
     QMetaType::QDate,
-    QMetaType::QTime
+    QMetaType::QTime,
+    QMetaType::QImage
     // Ensure new types have SETUP_TYPE
 >;
 
@@ -185,6 +187,8 @@ std::string fix_type(QByteArray ba)
         return "float";
     else if ( ba == "void" )
         return "None";
+    else if ( ba == "QImage" )
+        return "PIL.Image.Image";
 
     return ba.toStdString();
 }
@@ -575,3 +579,87 @@ pybind11::handle pybind11::detail::type_caster<QUuid>::cast(QUuid src, return_va
     auto str = type_caster<QString>::cast(src.toString(), policy, parent);
     return pybind11::module_::import("uuid").attr("UUID")(str).release();
 }
+
+
+
+bool pybind11::detail::type_caster<QImage>::load(handle src, bool)
+{
+    if ( !isinstance(src, pybind11::module_::import("PIL.Image").attr("Image")) )
+        return false;
+
+    std::string mode = src.attr("mode").cast<std::string>();
+    QImage::Format format;
+    if ( mode == "RGBA" )
+    {
+        format = QImage::Format_RGBA8888;
+    }
+    else if ( mode == "RGB" )
+    {
+        format = QImage::Format_RGB888;
+    }
+    else if ( mode == "RGBa" )
+    {
+        format = QImage::Format_RGBA8888_Premultiplied;
+    }
+    else if ( mode == "RGBX" )
+    {
+        format = QImage::Format_RGBX8888;
+    }
+    else
+    {
+        format = QImage::Format_RGBA8888;
+        src = src.attr("convert")("RGBA");
+    }
+
+    std::string data = src.attr("tobytes")().cast<std::string>();
+    value = QImage(
+        (const uchar*)data.c_str(),
+        src.attr("width").cast<int>(),
+        src.attr("height").cast<int>(),
+        format
+    );
+    return true;
+}
+
+pybind11::handle pybind11::detail::type_caster<QImage>::cast(QImage src, return_value_policy, handle)
+{
+    auto mod = pybind11::module_::import("PIL.Image");
+    auto frombytes = mod.attr("frombytes");
+
+    const char* mode;
+
+    switch ( src.format() )
+    {
+        case QImage::Format_Invalid:
+            return mod.attr("Image")().release();
+        case QImage::Format_RGB888:
+            mode = "RGB";
+            break;
+        case QImage::Format_RGBA8888:
+            mode = "RGBA";
+            break;
+        case QImage::Format_RGBA8888_Premultiplied:
+            mode = "RGBa";
+            break;
+        case QImage::Format_RGBX8888:
+            mode = "RGBX";
+            break;
+        default:
+            mode = "RGBA";
+            src = src.convertToFormat(QImage::Format_RGBA8888);
+            break;
+    }
+
+    py::tuple size(2);
+    size[0] = py::int_(src.width());
+    size[1] = py::int_(src.height());
+
+    auto image = frombytes(
+        mode,
+        size,
+        py::bytes((const char*)src.bits(), src.sizeInBytes())
+    );
+
+    return image.release();
+}
+

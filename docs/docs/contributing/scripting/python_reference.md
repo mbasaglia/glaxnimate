@@ -741,6 +741,15 @@ set_best_name(self, node: glaxnimate.model.DocumentNode, suggestion: str) -> Non
 set_best_name(self, node: glaxnimate.model.DocumentNode) -> None
 ```
 
+<h3 id='glaxnimate.model.Document.render_image'><a href='#glaxnimate.model.Document.render_image'>render_image()</a></h3>
+
+Signature:
+
+```python
+render_image(self, time: FrameTime, size: glaxnimate.utils.IntSize) -> PIL.Image.Image
+render_image(self) -> PIL.Image.Image
+```
+
 <h3 id='glaxnimate.model.Document.macro'><a href='#glaxnimate.model.Document.macro'>macro()</a></h3>
 
 ```python
