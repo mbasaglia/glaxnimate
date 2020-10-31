@@ -218,6 +218,7 @@ QImage model::Document::render_image(model::FrameTime time, QSize image_size) co
     image.fill(Qt::transparent);
 
     QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
     painter.scale(
         image_size.width() / real_size.width(),
         image_size.height() / real_size.height()
