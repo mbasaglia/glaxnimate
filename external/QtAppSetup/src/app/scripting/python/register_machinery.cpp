@@ -350,6 +350,26 @@ bool convert_argument(int meta_type, const py::handle& value, ArgumentBuffer& bu
     return type_dispatch<ConvertArgument, bool>(meta_type, value, buf);
 }
 
+std::string fix_type(QByteArray ba)
+{
+    if ( ba.endsWith('*') || ba.endsWith('&') )
+        ba.remove(ba.size()-1, 1);
+
+    if ( ba.startsWith("const ") )
+        ba.remove(0, 6);
+
+    if ( ba == "QString" )
+        return "str";
+    else if ( ba == "QVariantList" )
+        return "list";
+    else if ( ba == "double" )
+        return "float";
+    else if ( ba == "void" )
+        return "None";
+
+    return ba.toStdString();
+}
+
 template<class ReturnType>
 struct RegisterMethod
 {
@@ -357,6 +377,21 @@ struct RegisterMethod
     {
         PyMethodInfo py;
         py.name = meth.name();
+        std::string signature = "---override sig---\n";
+        signature += meth.name().toStdString();
+        signature += "(self";
+        QByteArray qt_signature = meth.methodSignature().split('(')[1];
+        qt_signature.remove(qt_signature.size()-1, 1);
+        int argn = 0;
+        for ( const auto& chunk : qt_signature.split(',') )
+        {
+            signature += ", arg";
+            signature += std::to_string(argn++);
+            signature += ": ";
+            signature += fix_type(chunk);
+        }
+        signature += ") -> ";
+        signature += fix_type(QMetaType::typeName(qMetaTypeId<ReturnType>()));
         py.method = py::cpp_function(
             [meth](QObject* o, py::args args) -> ReturnType
             {
@@ -398,7 +433,8 @@ struct RegisterMethod
             py::name(py.name),
             py::is_method(handle),
             py::sibling(py::getattr(handle, py.name, py::none())),
-            py::return_value_policy::automatic_reference
+            py::return_value_policy::automatic_reference,
+            py::doc(signature.c_str())
         );
         return py;
     }

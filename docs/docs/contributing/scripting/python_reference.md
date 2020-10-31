@@ -126,7 +126,7 @@ Properties:
 <h3 id='glaxnimate.io.MimeSerializer.serialize'><a href='#glaxnimate.io.MimeSerializer.serialize'>serialize()</a></h3>
 
 ```python
-serialize(self: glaxnimate.io.MimeSerializer, arg0: List[glaxnimate.model.e]) -> bytes
+serialize(self: glaxnimate.io.MimeSerializer, arg0: List[glaxnimate.model.DocumentNode]) -> bytes
 ```
 
 ## glaxnimate.io.IoRegistry
@@ -134,25 +134,25 @@ serialize(self: glaxnimate.io.MimeSerializer, arg0: List[glaxnimate.model.e]) ->
 <h3 id='glaxnimate.io.IoRegistry.importers'><a href='#glaxnimate.io.IoRegistry.importers'>importers()</a></h3>
 
 ```python
-importers(self: glaxnimate.io.IoRegistry) -> List[glaxnimate.io.t]
+importers(self: glaxnimate.io.IoRegistry) -> List[glaxnimate.io.ImportExport]
 ```
 
 <h3 id='glaxnimate.io.IoRegistry.exporters'><a href='#glaxnimate.io.IoRegistry.exporters'>exporters()</a></h3>
 
 ```python
-exporters(self: glaxnimate.io.IoRegistry) -> List[glaxnimate.io.t]
+exporters(self: glaxnimate.io.IoRegistry) -> List[glaxnimate.io.ImportExport]
 ```
 
 <h3 id='glaxnimate.io.IoRegistry.from_extension'><a href='#glaxnimate.io.IoRegistry.from_extension'>from_extension()</a></h3>
 
 ```python
-from_extension(self: glaxnimate.io.IoRegistry, arg0: str) -> glaxnimate.io.t
+from_extension(self: glaxnimate.io.IoRegistry, arg0: str) -> glaxnimate.io.ImportExport
 ```
 
 <h3 id='glaxnimate.io.IoRegistry.from_filename'><a href='#glaxnimate.io.IoRegistry.from_filename'>from_filename()</a></h3>
 
 ```python
-from_filename(self: glaxnimate.io.IoRegistry, arg0: str) -> glaxnimate.io.t
+from_filename(self: glaxnimate.io.IoRegistry, arg0: str) -> glaxnimate.io.ImportExport
 ```
 
 <h3 id='glaxnimate.io.IoRegistry.serializers'><a href='#glaxnimate.io.IoRegistry.serializers'>serializers()</a></h3>
@@ -184,57 +184,60 @@ Properties:
 
 <h3 id='glaxnimate.io.ImportExport.can_handle_extension'><a href='#glaxnimate.io.ImportExport.can_handle_extension'>can_handle_extension()</a></h3>
 
+Signature:
+
 ```python
-can_handle_extension(self, *args) -> bool
+can_handle_extension(self, arg0: str) -> bool
 ```
 
 <h3 id='glaxnimate.io.ImportExport.can_handle_filename'><a href='#glaxnimate.io.ImportExport.can_handle_filename'>can_handle_filename()</a></h3>
 
+Signature:
+
 ```python
-can_handle_filename(self, *args) -> bool
+can_handle_filename(self, arg0: str) -> bool
 ```
 
 <h3 id='glaxnimate.io.ImportExport.save'><a href='#glaxnimate.io.ImportExport.save'>save()</a></h3>
 
-```python
-save(*args, **kwargs)
-```
-Overloaded function.
+Signature:
 
 ```python
-save(self, *args) -> bytes
-```
-
-```python
-save(self, *args) -> bytes
-```
-
-```python
-save(self, *args) -> bytes
+save(self, arg0: glaxnimate.model.Document, arg1: QVariantMap, arg2: str) -> bytes
+save(self, arg0: glaxnimate.model.Document, arg1: QVariantMap) -> bytes
+save(self, arg0: glaxnimate.model.Document) -> bytes
 ```
 
 <h3 id='glaxnimate.io.ImportExport.name_filter'><a href='#glaxnimate.io.ImportExport.name_filter'>name_filter()</a></h3>
 
+Signature:
+
 ```python
-name_filter(self, *args) -> str
+name_filter(self, arg0: ) -> str
 ```
 
 <h3 id='glaxnimate.io.ImportExport.warning'><a href='#glaxnimate.io.ImportExport.warning'>warning()</a></h3>
 
+Signature:
+
 ```python
-warning(self, *args) -> None
+warning(self, arg0: str) -> None
 ```
 
 <h3 id='glaxnimate.io.ImportExport.information'><a href='#glaxnimate.io.ImportExport.information'>information()</a></h3>
 
+Signature:
+
 ```python
-information(self, *args) -> None
+information(self, arg0: str) -> None
 ```
 
 <h3 id='glaxnimate.io.ImportExport.error'><a href='#glaxnimate.io.ImportExport.error'>error()</a></h3>
 
+Signature:
+
 ```python
-error(self, *args) -> None
+error(self, arg0: str) -> None
 ```
 
 ## glaxnimate.io.GlaxnimateFormat
@@ -316,8 +319,10 @@ Properties:
 
 <h3 id='glaxnimate.model.defs.Gradient.radius'><a href='#glaxnimate.model.defs.Gradient.radius'>radius()</a></h3>
 
+Signature:
+
 ```python
-radius(self, *args) -> float
+radius(self, arg0: FrameTime) -> float
 ```
 
 ## glaxnimate.model.defs.Bitmap
@@ -339,14 +344,18 @@ Properties:
 
 <h3 id='glaxnimate.model.defs.Bitmap.refresh'><a href='#glaxnimate.model.defs.Bitmap.refresh'>refresh()</a></h3>
 
+Signature:
+
 ```python
-refresh(self, *args) -> None
+refresh(self, arg0: bool) -> None
 ```
 
 <h3 id='glaxnimate.model.defs.Bitmap.embed'><a href='#glaxnimate.model.defs.Bitmap.embed'>embed()</a></h3>
 
+Signature:
+
 ```python
-embed(self, *args) -> None
+embed(self, arg0: bool) -> None
 ```
 
 ## glaxnimate.model.defs.Defs
@@ -357,38 +366,36 @@ Base classes:
 
 Properties:
 
-| name              | type             | notes     | docs | 
-| ----------------- | ---------------- | --------- | ---- | 
-| `colors`          | `List[QVariant]` | Read only |      | 
-| `images`          | `List[QVariant]` | Read only |      | 
-| `gradient_colors` | `List[QVariant]` | Read only |      | 
-| `gradients`       | `List[QVariant]` | Read only |      | 
+| name              | type   | notes     | docs | 
+| ----------------- | ------ | --------- | ---- | 
+| `colors`          | `list` | Read only |      | 
+| `images`          | `list` | Read only |      | 
+| `gradient_colors` | `list` | Read only |      | 
+| `gradients`       | `list` | Read only |      | 
 
 <h3 id='glaxnimate.model.defs.Defs.find_by_uuid'><a href='#glaxnimate.model.defs.Defs.find_by_uuid'>find_by_uuid()</a></h3>
 
+Signature:
+
 ```python
-find_by_uuid(self, *args) -> object
+find_by_uuid(self, arg0: uuid.UUID) -> object
 ```
 
 <h3 id='glaxnimate.model.defs.Defs.add_color'><a href='#glaxnimate.model.defs.Defs.add_color'>add_color()</a></h3>
 
-```python
-add_color(*args, **kwargs)
-```
-Overloaded function.
+Signature:
 
 ```python
-add_color(self, *args) -> object
-```
-
-```python
-add_color(self, *args) -> object
+add_color(self, arg0: glaxnimate.utils.Color, arg1: str) -> object
+add_color(self, arg0: glaxnimate.utils.Color) -> object
 ```
 
 <h3 id='glaxnimate.model.defs.Defs.add_image'><a href='#glaxnimate.model.defs.Defs.add_image'>add_image()</a></h3>
 
+Signature:
+
 ```python
-add_image(self, *args) -> object
+add_image(self, arg0: str, arg1: bool) -> object
 ```
 
 # glaxnimate.model.shapes
@@ -500,11 +507,11 @@ Sub classes:
 
 Properties:
 
-| name        | type             | notes     | docs | 
-| ----------- | ---------------- | --------- | ---- | 
-| `shapes`    | `List[QVariant]` | Read only |      | 
-| `transform` | `object`         | Read only |      | 
-| `opacity`   | `object`         | Read only |      | 
+| name        | type     | notes     | docs | 
+| ----------- | -------- | --------- | ---- | 
+| `shapes`    | `list`   | Read only |      | 
+| `transform` | `object` | Read only |      | 
+| `opacity`   | `object` | Read only |      | 
 
 ## glaxnimate.model.shapes.Layer
 
@@ -655,68 +662,68 @@ Properties:
 
 <h3 id='glaxnimate.model.Document.find_by_uuid'><a href='#glaxnimate.model.Document.find_by_uuid'>find_by_uuid()</a></h3>
 
+Signature:
+
 ```python
-find_by_uuid(self, *args) -> object
+find_by_uuid(self, arg0: uuid.UUID) -> object
 ```
 
 <h3 id='glaxnimate.model.Document.find_by_type_name'><a href='#glaxnimate.model.Document.find_by_type_name'>find_by_type_name()</a></h3>
 
+Signature:
+
 ```python
-find_by_type_name(self, *args) -> List[QVariant]
+find_by_type_name(self, arg0: str) -> list
 ```
 
 <h3 id='glaxnimate.model.Document.undo'><a href='#glaxnimate.model.Document.undo'>undo()</a></h3>
 
+Signature:
+
 ```python
-undo(self, *args) -> bool
+undo(self, arg0: ) -> bool
 ```
 
 <h3 id='glaxnimate.model.Document.redo'><a href='#glaxnimate.model.Document.redo'>redo()</a></h3>
 
+Signature:
+
 ```python
-redo(self, *args) -> bool
+redo(self, arg0: ) -> bool
 ```
 
 <h3 id='glaxnimate.model.Document.size'><a href='#glaxnimate.model.Document.size'>size()</a></h3>
 
+Signature:
+
 ```python
-size(self, *args) -> glaxnimate.utils.IntSize
+size(self, arg0: ) -> glaxnimate.utils.IntSize
 ```
 
 <h3 id='glaxnimate.model.Document.rect'><a href='#glaxnimate.model.Document.rect'>rect()</a></h3>
 
+Signature:
+
 ```python
-rect(self, *args) -> QRectF
+rect(self, arg0: ) -> QRectF
 ```
 
 <h3 id='glaxnimate.model.Document.get_best_name'><a href='#glaxnimate.model.Document.get_best_name'>get_best_name()</a></h3>
 
-```python
-get_best_name(*args, **kwargs)
-```
-Overloaded function.
+Signature:
 
 ```python
-get_best_name(self, *args) -> str
-```
-
-```python
-get_best_name(self, *args) -> str
+get_best_name(self, arg0: glaxnimate.model.DocumentNode, arg1: str) -> str
+get_best_name(self, arg0: glaxnimate.model.DocumentNode) -> str
 ```
 
 <h3 id='glaxnimate.model.Document.set_best_name'><a href='#glaxnimate.model.Document.set_best_name'>set_best_name()</a></h3>
 
-```python
-set_best_name(*args, **kwargs)
-```
-Overloaded function.
+Signature:
 
 ```python
-set_best_name(self, *args) -> None
-```
-
-```python
-set_best_name(self, *args) -> None
+set_best_name(self, arg0: glaxnimate.model.DocumentNode, arg1: str) -> None
+set_best_name(self, arg0: glaxnimate.model.DocumentNode) -> None
 ```
 
 <h3 id='glaxnimate.model.Document.macro'><a href='#glaxnimate.model.Document.macro'>macro()</a></h3>
@@ -769,8 +776,10 @@ Properties:
 
 <h3 id='glaxnimate.model.DocumentNode.find_by_type_name'><a href='#glaxnimate.model.DocumentNode.find_by_type_name'>find_by_type_name()</a></h3>
 
+Signature:
+
 ```python
-find_by_type_name(self, *args) -> List[QVariant]
+find_by_type_name(self, arg0: str) -> list
 ```
 
 ## glaxnimate.model.AnimationContainer
@@ -814,10 +823,10 @@ Sub classes:
 
 Properties:
 
-| name        | type             | notes     | docs | 
-| ----------- | ---------------- | --------- | ---- | 
-| `animation` | `object`         | Read only |      | 
-| `shapes`    | `List[QVariant]` | Read only |      | 
+| name        | type     | notes     | docs | 
+| ----------- | -------- | --------- | ---- | 
+| `animation` | `object` | Read only |      | 
+| `shapes`    | `list`   | Read only |      | 
 
 ## glaxnimate.model.MainComposition
 
@@ -847,50 +856,66 @@ Properties:
 
 <h3 id='glaxnimate.model.KeyframeTransition.set_hold'><a href='#glaxnimate.model.KeyframeTransition.set_hold'>set_hold()</a></h3>
 
+Signature:
+
 ```python
-set_hold(self, *args) -> None
+set_hold(self, arg0: bool) -> None
 ```
 
 <h3 id='glaxnimate.model.KeyframeTransition.set_before'><a href='#glaxnimate.model.KeyframeTransition.set_before'>set_before()</a></h3>
 
+Signature:
+
 ```python
-set_before(self, *args) -> None
+set_before(self, arg0: Descriptive) -> None
 ```
 
 <h3 id='glaxnimate.model.KeyframeTransition.set_after'><a href='#glaxnimate.model.KeyframeTransition.set_after'>set_after()</a></h3>
 
+Signature:
+
 ```python
-set_after(self, *args) -> None
+set_after(self, arg0: Descriptive) -> None
 ```
 
 <h3 id='glaxnimate.model.KeyframeTransition.set_handles'><a href='#glaxnimate.model.KeyframeTransition.set_handles'>set_handles()</a></h3>
 
+Signature:
+
 ```python
-set_handles(self, *args) -> None
+set_handles(self, arg0: glaxnimate.utils.Point, arg1: glaxnimate.utils.Point) -> None
 ```
 
 <h3 id='glaxnimate.model.KeyframeTransition.set_before_handle'><a href='#glaxnimate.model.KeyframeTransition.set_before_handle'>set_before_handle()</a></h3>
 
+Signature:
+
 ```python
-set_before_handle(self, *args) -> None
+set_before_handle(self, arg0: glaxnimate.utils.Point) -> None
 ```
 
 <h3 id='glaxnimate.model.KeyframeTransition.set_after_handle'><a href='#glaxnimate.model.KeyframeTransition.set_after_handle'>set_after_handle()</a></h3>
 
+Signature:
+
 ```python
-set_after_handle(self, *args) -> None
+set_after_handle(self, arg0: glaxnimate.utils.Point) -> None
 ```
 
 <h3 id='glaxnimate.model.KeyframeTransition.lerp_factor'><a href='#glaxnimate.model.KeyframeTransition.lerp_factor'>lerp_factor()</a></h3>
 
+Signature:
+
 ```python
-lerp_factor(self, *args) -> float
+lerp_factor(self, arg0: float) -> float
 ```
 
 <h3 id='glaxnimate.model.KeyframeTransition.bezier_parameter'><a href='#glaxnimate.model.KeyframeTransition.bezier_parameter'>bezier_parameter()</a></h3>
 
+Signature:
+
 ```python
-bezier_parameter(self, *args) -> float
+bezier_parameter(self, arg0: float) -> float
 ```
 
 ## glaxnimate.model.Keyframe
@@ -924,14 +949,18 @@ Properties:
 
 <h3 id='glaxnimate.model.AnimatableBase.value_mismatch'><a href='#glaxnimate.model.AnimatableBase.value_mismatch'>value_mismatch()</a></h3>
 
+Signature:
+
 ```python
-value_mismatch(self, *args) -> bool
+value_mismatch(self, arg0: ) -> bool
 ```
 
 <h3 id='glaxnimate.model.AnimatableBase.keyframe_index'><a href='#glaxnimate.model.AnimatableBase.keyframe_index'>keyframe_index()</a></h3>
 
+Signature:
+
 ```python
-keyframe_index(self, *args) -> int
+keyframe_index(self, arg0: FrameTime) -> int
 ```
 
 <h3 id='glaxnimate.model.AnimatableBase.keyframe'><a href='#glaxnimate.model.AnimatableBase.keyframe'>keyframe()</a></h3>

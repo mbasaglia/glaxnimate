@@ -168,8 +168,15 @@ class TypeFixer:
         ("QByteArray", "bytes"),
         ("QUuid", "uuid.UUID"),
         ("glaxnimate.__detail.__QObject", "object"),
+        ("QColor", "glaxnimate.utils.Color"),
+        ("QPointF", "glaxnimate.utils.Point"),
+        ("QSizeF", "glaxnimate.utils.Size"),
+        ("QSize", "glaxnimate.utils.IntSize"),
+        ("QVector2D", "glaxnimate.utils.Vector2D"),
+        ("QObject", "object"),
+        ("List[QVariant]", "list"),
     ]
-    wrong_ns = re.compile(r"\b([a-z]+)::([a-zA-Z0-9_])+")
+    wrong_ns = re.compile(r"\b([a-z]+)::([a-zA-Z0-9_]+)")
     link_re = re.compile(r"(glaxnimate\.[a-z.]+\.([a-zA-Z0-9_]+))")
 
     @classmethod
@@ -207,9 +214,17 @@ class FunctionDoc:
         self.full_name = full_name
         self.docs = inspect.getdoc(function)
         if self.docs:
-            self.docs = self.docs.replace("(self: glaxnimate.__detail.__QObject", "(self")
-            self.docs = TypeFixer.fix(self.docs)
-            self.docs = self.re_sig.sub("```python\n\\1\n```", self.docs)
+            if "---override sig---" in self.docs:
+                lines = self.docs.splitlines()
+                self.docs = "Signature:\n\n```python\n"
+                for i in range(len(lines)):
+                    if lines[i] == "---override sig---":
+                        self.docs += TypeFixer.fix(lines[i+1]) + "\n"
+                self.docs += "```"
+            else:
+                self.docs = self.docs.replace("(self: glaxnimate.__detail.__QObject", "(self")
+                self.docs = TypeFixer.fix(self.docs)
+                self.docs = self.re_sig.sub("```python\n\\1\n```", self.docs)
 
     def print(self, writer: MdWriter):
         writer.fancy_title(self.name + "()", self.full_name)
