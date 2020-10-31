@@ -11,6 +11,7 @@
 #include "model/visitor.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
+#include "app_info.hpp"
 
 #include "app/scripting/python/register_machinery.hpp"
 
@@ -308,6 +309,8 @@ private:
 
 void register_py_module(py::module& glaxnimate_module)
 {
+    glaxnimate_module.attr("__version__") = AppInfo::instance().version();
+
     define_utils(glaxnimate_module);
     define_log(glaxnimate_module);
 

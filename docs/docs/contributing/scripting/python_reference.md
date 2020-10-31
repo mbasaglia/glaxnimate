@@ -1,5 +1,11 @@
 # glaxnimate
 
+Constants:
+
+| name          | type           | value                 | docs | 
+| ------------- | -------------- | --------------------- | ---- | 
+| `__version__` | `builtins.str` | `'0.2.0-17-g6803d97'` |      | 
+
 # glaxnimate.utils
 
 ## glaxnimate.utils.Color

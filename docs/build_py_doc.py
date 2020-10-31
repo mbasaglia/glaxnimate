@@ -139,7 +139,7 @@ class ModuleDocs:
 
     def inspect(self, modules, classes):
         for name, val in vars(self.module).items():
-            if name.startswith("__"):
+            if name.startswith("__") and name != "__version__":
                 continue
             elif inspect.ismodule(val):
                 submod = ModuleDocs(val)
@@ -158,7 +158,7 @@ class ModuleDocs:
             elif hasattr(type(val), "__int__"):
                 self.const.append(Constant.enum(val))
             else:
-                self.const.append(Constant(name, None, type(val)))
+                self.const.append(Constant(name, val if " at 0x" not in repr(val) else None, type(val)))
 
     def child_name(self, child):
         return self.name() + "." + child

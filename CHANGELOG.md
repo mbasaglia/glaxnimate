@@ -2,6 +2,7 @@
 
 * Scripting:
     * Ability to load Qt designer UI files.
+    * Rendering to PIL images
 
 ## 0.2.0
 
