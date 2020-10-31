@@ -11,6 +11,7 @@
 #include <QDate>
 #include <QTime>
 
+#include <QDebug>
 
 #undef slots
 #include <pybind11/embed.h>
@@ -77,6 +78,18 @@ public:
     static handle cast(QUuid src, return_value_policy policy, handle parent)
     {
         return type_caster<QString>::cast(src.toString(), policy, parent);
+        /*auto str = type_caster<QString>::cast(src.toString(), policy, parent);
+        try {
+            qDebug() << "import";
+            auto uuid_m = module::import("uuid");
+            qDebug() << "get";
+            auto uuid = uuid_m.attr("UUID");
+            qDebug() << "build";
+            return uuid(str);
+        } catch ( const std::exception& ex ) {
+            qDebug() << "err" << ex.what();
+            return str;
+        }*/
     }
 };
 

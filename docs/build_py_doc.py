@@ -11,37 +11,66 @@ class MdWriter:
     def __init__(self):
         self.out = sys.stdout
         self.level = 1
+        self._table_data = []
 
     def title(self, text, level=0):
         self.out.write("%s %s\n\n" % ("#"*(level+self.level), text))
+        #self.fancy_title(text, text, level)
 
     def fancy_title(self, text, id, level=0):
         self.out.write("<h{level} id='{id}'><a href='#{id}'>{text}</a></h{level}>\n\n".format(
             text=text,
             id=id,
-            level=level+self.level-1
+            level=level+self.level
         ))
 
     def p(self, text):
         self.out.write(text + "\n\n")
 
+    def li(self, text):
+        self.out.write("* %s\n" % text)
+
+    def a(self, text, href):
+        return "[%s](%s)" % (text, href)
+
+    def nl(self):
+        self.out.write("\n")
+
     def sublevel(self, amount: int = 1):
         return MdLevel(self, amount)
 
     def end_table(self):
+        lengths = [
+            max(len(row[1][col]) for row in self._table_data)
+            for col in range(len(self._table_data[0][1]))
+        ]
+
+        for row in self._table_data:
+            self.out.write("| ")
+            for cell, length in zip(row[1], lengths):
+                self.out.write(cell.ljust(length))
+                self.out.write(" | ")
+            self.out.write("\n")
+
+            if row[0]:
+                self.out.write("| ")
+                for length in lengths:
+                    self.out.write("-" * length)
+                    self.out.write(" | ")
+                self.out.write("\n")
+
         self.out.write("\n")
+        self._table_data = []
 
     def table_row(self, *cells):
-        self.out.write("| ")
-        for c in cells:
-            self.out.write(str(c))
-            self.out.write(" | ")
-        self.out.write("\n")
+        self._table_data.append(
+            (False, list(map(str, cells)))
+        )
 
     def table_header(self, *cells):
-        self.table_row(*cells)
-        self.out.write("| ---- " * len(cells))
-        self.out.write("|\n")
+        self._table_data.append(
+            (True, list(map(str, cells)))
+        )
 
     def code(self, string):
         return "`%s`" % string
@@ -71,40 +100,43 @@ class ModuleDocs:
     def name(self):
         return self.module.__name__
 
+    def print_intro(self, writer: MdWriter):
+        pass
+
     def print(self, writer: MdWriter):
         writer.title(self.name())
 
         if self.docs:
             writer.p(self.docs)
 
+        self.print_intro(writer)
+
         if self.props:
-            writer.title("Properties", 1)
+            writer.p("Properties:")
             writer.table_header("name", "type", "notes", "docs")
             for v in self.props:
                 v.print(writer)
             writer.end_table()
 
         if self.const:
-            writer.title("Constants", 1)
+            writer.p("Constants:")
             writer.table_header("name", "type", "value", "docs")
             for v in self.const:
                 v.print(writer)
             writer.end_table()
 
         if self.functions:
-            writer.title("Functions", 1)
-            with writer.sublevel(2):
+            with writer.sublevel(1):
                 for func in self.functions:
                     func.print(writer)
 
         if self.classes:
-            writer.title("Classes", 1)
-            with writer.sublevel(2):
+            with writer.sublevel(1):
                 for cls in self.classes:
                     cls.print(writer)
 
     def inspect(self, modules, classes):
-        for name, val in inspect.getmembers(self.module):
+        for name, val in vars(self.module).items():
             if name.startswith("__"):
                 continue
             elif inspect.ismodule(val):
@@ -130,6 +162,42 @@ class ModuleDocs:
         return self.name() + "." + child
 
 
+class TypeFixer:
+    basic = [
+        ("QString", "str"),
+        ("QByteArray", "bytes"),
+        ("QUuid", "uuid.UUID"),
+        ("glaxnimate.__detail.__QObject", "object"),
+    ]
+    wrong_ns = re.compile(r"\b([a-z]+)::([a-zA-Z0-9_])+")
+    link_re = re.compile(r"(glaxnimate\.[a-z.]+\.([a-zA-Z0-9_]+))")
+
+    @classmethod
+    def fix(cls, text: str) -> str:
+        for qt, py in cls.basic:
+            text = text.replace(qt, py)
+        text = cls.wrong_ns.sub(r"glaxnimate.\1.\2", text)
+        return text
+
+    @classmethod
+    def classlink(cls, full_name):
+        return "#" + full_name.replace(".", "").lower()
+
+    @classmethod
+    def format(cls, text: str) -> str:
+        text = cls.fix(text)
+        text = cls.link_re.sub(
+            lambda m: r"[{txt}]({link})".format(
+                txt=m.group(2),
+                link=cls.classlink(m.group(0))
+            ),
+            text
+        )
+        if "glaxnimate" not in text:
+            text = "`%s`" % text
+        return text
+
+
 class FunctionDoc:
     re_sig = re.compile(r"^(?:[0-9]+\. )?([a-zA-Z0-9_]+\(.*\)(?: -> .*)?)$", re.M)
 
@@ -140,6 +208,7 @@ class FunctionDoc:
         self.docs = inspect.getdoc(function)
         if self.docs:
             self.docs = self.docs.replace("(self: glaxnimate.__detail.__QObject", "(self")
+            self.docs = TypeFixer.fix(self.docs)
             self.docs = self.re_sig.sub("```python\n\\1\n```", self.docs)
 
     def print(self, writer: MdWriter):
@@ -158,7 +227,7 @@ class PropertyDoc:
         self.docs = inspect.getdoc(prop)
         match = self.extract_type.search(prop.fget.__doc__ or "")
         if match:
-            self.type = match.group(1)
+            self.type = TypeFixer.format(match.group(1))
         else:
             self.type = None
         self.readonly = prop.fset is None
@@ -176,9 +245,34 @@ class ClassDoc(ModuleDocs):
     def __init__(self, full_name, cls):
         super().__init__(cls)
         self.full_name = full_name
+        self.bases = [
+            base
+            for base in cls.__bases__
+            if "__" not in base.__name__ and "pybind11" not in base.__name__
+        ]
+        self.children = cls.__subclasses__()
 
     def name(self):
         return self.full_name
+
+    def print_intro(self, writer: MdWriter):
+        if self.bases:
+            writer.p("Base classes:")
+            for base in self.bases:
+                writer.li(writer.a(
+                    base.__name__,
+                    TypeFixer.classlink(base.__module__ + '.' + base.__name__)
+                ))
+            writer.nl()
+
+        if self.children:
+            writer.p("Sub classes:")
+            for base in self.children:
+                writer.li(writer.a(
+                    base.__name__,
+                    TypeFixer.classlink(base.__module__ + '.' + base.__name__)
+                ))
+            writer.nl()
 
 
 class Constant:
@@ -195,7 +289,7 @@ class Constant:
     def print(self, writer: MdWriter):
         writer.table_row(
             writer.code(self.name),
-            self.type,
+            TypeFixer.format(self.type),
             writer.code(repr(self.value)) if self.value is not None else "",
             self.docs
         )
