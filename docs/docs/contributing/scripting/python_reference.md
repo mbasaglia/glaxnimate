@@ -395,7 +395,7 @@ Properties:
 Signature:
 
 ```python
-find_by_uuid(self, n: uuid.UUID) -> object
+find_by_uuid(self, n: uuid.UUID) -> glaxnimate.model.ReferenceTarget
 ```
 
 <h3 id='glaxnimate.model.defs.Defs.add_color'><a href='#glaxnimate.model.defs.Defs.add_color'>add_color()</a></h3>
@@ -403,8 +403,8 @@ find_by_uuid(self, n: uuid.UUID) -> object
 Signature:
 
 ```python
-add_color(self, color: glaxnimate.utils.Color, name: str) -> object
-add_color(self, color: glaxnimate.utils.Color) -> object
+add_color(self, color: glaxnimate.utils.Color, name: str) -> glaxnimate.model.NamedColor
+add_color(self, color: glaxnimate.utils.Color) -> glaxnimate.model.NamedColor
 ```
 
 <h3 id='glaxnimate.model.defs.Defs.add_image'><a href='#glaxnimate.model.defs.Defs.add_image'>add_image()</a></h3>
@@ -412,7 +412,7 @@ add_color(self, color: glaxnimate.utils.Color) -> object
 Signature:
 
 ```python
-add_image(self, filename: str, embed: bool) -> object
+add_image(self, filename: str, embed: bool) -> glaxnimate.model.Bitmap
 ```
 
 <h3 id='glaxnimate.model.defs.Defs.add_gradient'><a href='#glaxnimate.model.defs.Defs.add_gradient'>add_gradient()</a></h3>
@@ -680,7 +680,7 @@ Properties:
 Signature:
 
 ```python
-find_by_uuid(self, n: uuid.UUID) -> object
+find_by_uuid(self, n: uuid.UUID) -> glaxnimate.model.ReferenceTarget
 ```
 
 <h3 id='glaxnimate.model.Document.find_by_type_name'><a href='#glaxnimate.model.Document.find_by_type_name'>find_by_type_name()</a></h3>

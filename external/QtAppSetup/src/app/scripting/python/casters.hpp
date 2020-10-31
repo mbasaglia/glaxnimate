@@ -64,16 +64,7 @@ template <> struct type_caster<QUuid>
 public:
     PYBIND11_TYPE_CASTER(QUuid, _("QUuid"));
 
-    bool load(handle src, bool ic)
-    {
-        type_caster<QString> stdc;
-        if ( stdc.load(src, ic) )
-        {
-            value = QUuid::fromString((const QString &)stdc);
-            return true;
-        }
-        return false;
-    }
+    bool load(handle src, bool ic);
 
     static handle cast(QUuid src, return_value_policy policy, handle parent);
 };

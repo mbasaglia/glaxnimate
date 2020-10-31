@@ -281,14 +281,14 @@ public:
     }
 
     template<class CppType>
-    void allocate_return_type()
+    void allocate_return_type(const char* name)
     {
         if ( avail() < int(sizeof(CppType)) )
             throw py::type_error("Cannot allocate return value");
 
         CppType* addr = new (next_mem()) CppType;
         buffer_used += sizeof(CppType);
-        ret = { type_name<CppType>(), addr };
+        ret = { name, addr };
         ensure_destruction(addr);
         ret_addr = addr;
     }
@@ -355,7 +355,7 @@ private:
         }
 };
 
-template<> void ArgumentBuffer::allocate_return_type<void>(){}
+template<> void ArgumentBuffer::allocate_return_type<void>(const char*){}
 template<> void ArgumentBuffer::return_value<void>(){}
 
 
@@ -395,7 +395,7 @@ struct RegisterMethod
             signature += fix_type(types[i]);
         }
         signature += ") -> ";
-        signature += fix_type(QMetaType::typeName(qMetaTypeId<ReturnType>()));
+        signature += fix_type(meth.typeName());
 
         py.method = py::cpp_function(
             [meth](QObject* o, py::args args) -> ReturnType
@@ -406,7 +406,7 @@ struct RegisterMethod
 
                 ArgumentBuffer argbuf(meth);
 
-                argbuf.allocate_return_type<ReturnType>();
+                argbuf.allocate_return_type<ReturnType>(meth.typeName());
 
                 for ( int i = 0; i < len; i++ )
                 {
@@ -557,7 +557,21 @@ pybind11::handle pybind11::detail::type_caster<QVariant>::cast(QVariant src, ret
 }
 
 
+bool pybind11::detail::type_caster<QUuid>::load(handle src, bool ic)
+{
+    if ( isinstance(src, pybind11::module_::import("uuid").attr("UUID")) )
+        src = py::str(src);
+    type_caster<QString> stdc;
+    if ( stdc.load(src, ic) )
+    {
+        value = QUuid::fromString((const QString &)stdc);
+        return true;
+    }
+    return false;
+}
+
 pybind11::handle pybind11::detail::type_caster<QUuid>::cast(QUuid src, return_value_policy policy, handle parent)
 {
-    return type_caster<QString>::cast(src.toString(), policy, parent);
+    auto str = type_caster<QString>::cast(src.toString(), policy, parent);
+    return pybind11::module_::import("uuid").attr("UUID")(str).release();
 }
