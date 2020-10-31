@@ -381,21 +381,22 @@ struct RegisterMethod
     {
         PyMethodInfo py;
         py.name = meth.name();
+
         std::string signature = "Signature:\n";
         signature += meth.name().toStdString();
         signature += "(self";
-        QByteArray qt_signature = meth.methodSignature().split('(')[1];
-        qt_signature.remove(qt_signature.size()-1, 1);
-        int argn = 0;
-        for ( const auto& chunk : qt_signature.split(',') )
+        auto names = meth.parameterNames();
+        auto types = meth.parameterTypes();
+        for ( int i = 0; i < meth.parameterCount(); i++ )
         {
-            signature += ", arg";
-            signature += std::to_string(argn++);
+            signature += ", ";
+            signature += names[i].toStdString();
             signature += ": ";
-            signature += fix_type(chunk);
+            signature += fix_type(types[i]);
         }
         signature += ") -> ";
         signature += fix_type(QMetaType::typeName(qMetaTypeId<ReturnType>()));
+
         py.method = py::cpp_function(
             [meth](QObject* o, py::args args) -> ReturnType
             {
@@ -438,8 +439,9 @@ struct RegisterMethod
             py::is_method(handle),
             py::sibling(py::getattr(handle, py.name, py::none())),
             py::return_value_policy::automatic_reference,
-            py::doc(signature.c_str())
+            signature.c_str()
         );
+
         return py;
     }
 };
@@ -552,4 +554,10 @@ pybind11::handle pybind11::detail::type_caster<QVariant>::cast(QVariant src, ret
     pybind11::handle ret;
     qvariant_type_caster_cast(ret, src, policy, parent, supported_types());
     return ret;
+}
+
+
+pybind11::handle pybind11::detail::type_caster<QUuid>::cast(QUuid src, return_value_policy policy, handle parent)
+{
+    return type_caster<QString>::cast(src.toString(), policy, parent);
 }

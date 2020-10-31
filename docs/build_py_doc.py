@@ -96,6 +96,8 @@ class ModuleDocs:
         self.classes = []
         self.functions = []
         self.docs = inspect.getdoc(module)
+        if self.docs and "Members:" in self.docs:
+            self.docs = ""
 
     def name(self):
         return self.module.__name__
@@ -173,11 +175,15 @@ class TypeFixer:
         ("QSizeF", "glaxnimate.utils.Size"),
         ("QSize", "glaxnimate.utils.IntSize"),
         ("QVector2D", "glaxnimate.utils.Vector2D"),
+        ("QRectF", "glaxnimate.utils.Rect"),
         ("QObject", "object"),
         ("List[QVariant]", "list"),
+        ("AnimatableBase", "glaxnimate.model.AnimatableBase"),
+        ("QVariantMap", "dict"),
+        ("QVariant", "<type>"),
     ]
     wrong_ns = re.compile(r"\b([a-z]+)::([a-zA-Z0-9_]+)")
-    link_re = re.compile(r"(glaxnimate\.[a-z.]+\.([a-zA-Z0-9_]+))")
+    link_re = re.compile(r"(glaxnimate\.[a-zA-Z0-9._]+\.([a-zA-Z0-9_]+))")
 
     @classmethod
     def fix(cls, text: str) -> str:
@@ -271,7 +277,11 @@ class ClassDoc(ModuleDocs):
             for base in cls.__bases__
             if "__" not in base.__name__ and "pybind11" not in base.__name__
         ]
-        self.children = cls.__subclasses__()
+        self.children = [
+            cls
+            for cls in cls.__subclasses__()
+            if "AnimatedProperty_" not in cls.__name__
+        ]
 
     def name(self):
         return self.full_name
@@ -300,7 +310,7 @@ class Constant:
     def __init__(self, name, value, type):
         self.name = name
         self.value = value
-        self.type = type.__module__ + "." + type.__name__
+        self.type = type.__module__ + "." + type.__qualname__
         self.docs = ""
 
     @classmethod

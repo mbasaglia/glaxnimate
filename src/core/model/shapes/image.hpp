@@ -10,8 +10,8 @@ class Image : public ShapeElement
 {
     GLAXNIMATE_OBJECT(Image)
 
-    GLAXNIMATE_SUBOBJECT(Transform, transform)
-    GLAXNIMATE_PROPERTY_REFERENCE(Bitmap, image, &Image::valid_images, &Image::is_valid_image, &Image::on_image_changed)
+    GLAXNIMATE_SUBOBJECT(model::Transform, transform)
+    GLAXNIMATE_PROPERTY_REFERENCE(model::Bitmap, image, &Image::valid_images, &Image::is_valid_image, &Image::on_image_changed)
 
 public:
     Image(model::Document* doc);

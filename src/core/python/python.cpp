@@ -120,6 +120,22 @@ void define_utils(py::module& m)
         .def("length_squared", &QVector2D::lengthSquared)
         .def("__repr__", qdebug_operator_to_string<QVector2D>())
     ;
+    py::class_<QRectF>(utils, "Rect")
+        .def(py::init<>())
+        .def(py::init<double, double, double, double>())
+        .def(py::init<QPointF, QPointF>())
+        .def(py::init<QPointF, QSizeF>())
+        .def_property("left", &QRectF::left, &QRectF::setLeft)
+        .def_property("right", &QRectF::right, &QRectF::setRight)
+        .def_property("top", &QRectF::top, &QRectF::setTop)
+        .def_property("bottom", &QRectF::bottom, &QRectF::setBottom)
+        .def_property("center", &QRectF::center, &QRectF::moveCenter)
+        .def_property("top_left", &QRectF::topLeft, &QRectF::setTopLeft)
+        .def_property("top_right", &QRectF::topRight, &QRectF::setTopRight)
+        .def_property("bottom_right", &QRectF::bottomRight, &QRectF::setBottomRight)
+        .def_property("bottom_left", &QRectF::bottomLeft, &QRectF::setBottomLeft)
+        .def_property("size", &QRectF::size, &QRectF::setSize)
+    ;
 }
 
 
