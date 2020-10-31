@@ -214,11 +214,11 @@ class FunctionDoc:
         self.full_name = full_name
         self.docs = inspect.getdoc(function)
         if self.docs:
-            if "---override sig---" in self.docs:
+            if "Signature:" in self.docs:
                 lines = self.docs.splitlines()
                 self.docs = "Signature:\n\n```python\n"
                 for i in range(len(lines)):
-                    if lines[i] == "---override sig---":
+                    if lines[i] == "Signature:":
                         self.docs += TypeFixer.fix(lines[i+1]) + "\n"
                 self.docs += "```"
             else:
@@ -235,16 +235,22 @@ class FunctionDoc:
 
 class PropertyDoc:
     extract_type = re.compile("-> ([^\n]+)")
+    extract_type_qt = re.compile("Type: (.*)")
 
     def __init__(self, name, prop):
         self.name = name
         self.prop = prop
         self.docs = inspect.getdoc(prop)
-        match = self.extract_type.search(prop.fget.__doc__ or "")
-        if match:
-            self.type = TypeFixer.format(match.group(1))
-        else:
+        if not prop.fget.__doc__:
             self.type = None
+        elif "Type: " in prop.fget.__doc__:
+            self.type = TypeFixer.format(self.extract_type_qt.search(prop.fget.__doc__).group(1))
+        else:
+            match = self.extract_type.search(prop.fget.__doc__)
+            if match:
+                self.type = TypeFixer.format(match.group(1))
+            else:
+                self.type = None
         self.readonly = prop.fset is None
 
     def print(self, writer: MdWriter):

@@ -285,9 +285,9 @@ Base classes:
 
 Properties:
 
-| name    | type     | notes     | docs | 
-| ------- | -------- | --------- | ---- | 
-| `color` | `object` | Read only |      | 
+| name    | type             | notes     | docs | 
+| ------- | ---------------- | --------- | ---- | 
+| `color` | `AnimatableBase` | Read only |      | 
 
 ## glaxnimate.model.defs.GradientColors
 
@@ -297,9 +297,9 @@ Base classes:
 
 Properties:
 
-| name     | type     | notes     | docs | 
-| -------- | -------- | --------- | ---- | 
-| `colors` | `object` | Read only |      | 
+| name     | type                                             | notes     | docs | 
+| -------- | ------------------------------------------------ | --------- | ---- | 
+| `colors` | [AnimatableBase](#glaxnimatemodelanimatablebase) | Read only |      | 
 
 ## glaxnimate.model.defs.Gradient
 
@@ -309,13 +309,13 @@ Base classes:
 
 Properties:
 
-| name          | type     | notes     | docs | 
-| ------------- | -------- | --------- | ---- | 
-| `colors`      | `object` |           |      | 
-| `type`        | `int`    |           |      | 
-| `start_point` | `object` | Read only |      | 
-| `end_point`   | `object` | Read only |      | 
-| `highlight`   | `object` | Read only |      | 
+| name          | type                                             | notes     | docs | 
+| ------------- | ------------------------------------------------ | --------- | ---- | 
+| `colors`      | [GradientColors](#glaxnimatemodelgradientcolors) |           |      | 
+| `type`        | `Type`                                           |           |      | 
+| `start_point` | [AnimatableBase](#glaxnimatemodelanimatablebase) | Read only |      | 
+| `end_point`   | [AnimatableBase](#glaxnimatemodelanimatablebase) | Read only |      | 
+| `highlight`   | [AnimatableBase](#glaxnimatemodelanimatablebase) | Read only |      | 
 
 <h3 id='glaxnimate.model.defs.Gradient.radius'><a href='#glaxnimate.model.defs.Gradient.radius'>radius()</a></h3>
 
@@ -445,11 +445,11 @@ Sub classes:
 
 Properties:
 
-| name      | type     | notes     | docs | 
-| --------- | -------- | --------- | ---- | 
-| `color`   | `object` | Read only |      | 
-| `opacity` | `object` | Read only |      | 
-| `use`     | `object` |           |      | 
+| name      | type                                             | notes     | docs | 
+| --------- | ------------------------------------------------ | --------- | ---- | 
+| `color`   | [AnimatableBase](#glaxnimatemodelanimatablebase) | Read only |      | 
+| `opacity` | [AnimatableBase](#glaxnimatemodelanimatablebase) | Read only |      | 
+| `use`     | [BrushStyle](#glaxnimatemodelbrushstyle)         |           |      | 
 
 ## glaxnimate.model.shapes.Rect
 
@@ -459,11 +459,11 @@ Base classes:
 
 Properties:
 
-| name       | type     | notes     | docs | 
-| ---------- | -------- | --------- | ---- | 
-| `position` | `object` | Read only |      | 
-| `size`     | `object` | Read only |      | 
-| `rounded`  | `object` | Read only |      | 
+| name       | type             | notes     | docs | 
+| ---------- | ---------------- | --------- | ---- | 
+| `position` | `AnimatableBase` | Read only |      | 
+| `size`     | `AnimatableBase` | Read only |      | 
+| `rounded`  | `AnimatableBase` | Read only |      | 
 
 ## glaxnimate.model.shapes.Ellipse
 
@@ -473,10 +473,10 @@ Base classes:
 
 Properties:
 
-| name       | type     | notes     | docs | 
-| ---------- | -------- | --------- | ---- | 
-| `position` | `object` | Read only |      | 
-| `size`     | `object` | Read only |      | 
+| name       | type             | notes     | docs | 
+| ---------- | ---------------- | --------- | ---- | 
+| `position` | `AnimatableBase` | Read only |      | 
+| `size`     | `AnimatableBase` | Read only |      | 
 
 ## glaxnimate.model.shapes.PolyStar
 
@@ -486,14 +486,14 @@ Base classes:
 
 Properties:
 
-| name           | type     | notes     | docs | 
-| -------------- | -------- | --------- | ---- | 
-| `type`         | `int`    |           |      | 
-| `position`     | `object` | Read only |      | 
-| `outer_radius` | `object` | Read only |      | 
-| `inner_radius` | `object` | Read only |      | 
-| `angle`        | `object` | Read only |      | 
-| `points`       | `object` | Read only |      | 
+| name           | type             | notes     | docs | 
+| -------------- | ---------------- | --------- | ---- | 
+| `type`         | `StarType`       |           |      | 
+| `position`     | `AnimatableBase` | Read only |      | 
+| `outer_radius` | `AnimatableBase` | Read only |      | 
+| `inner_radius` | `AnimatableBase` | Read only |      | 
+| `angle`        | `AnimatableBase` | Read only |      | 
+| `points`       | `AnimatableBase` | Read only |      | 
 
 ## glaxnimate.model.shapes.Group
 
@@ -507,11 +507,11 @@ Sub classes:
 
 Properties:
 
-| name        | type     | notes     | docs | 
-| ----------- | -------- | --------- | ---- | 
-| `shapes`    | `list`   | Read only |      | 
-| `transform` | `object` | Read only |      | 
-| `opacity`   | `object` | Read only |      | 
+| name        | type                                             | notes     | docs | 
+| ----------- | ------------------------------------------------ | --------- | ---- | 
+| `shapes`    | `list`                                           | Read only |      | 
+| `transform` | [Transform](#glaxnimatemodeltransform)           | Read only |      | 
+| `opacity`   | [AnimatableBase](#glaxnimatemodelanimatablebase) | Read only |      | 
 
 ## glaxnimate.model.shapes.Layer
 
@@ -521,12 +521,12 @@ Base classes:
 
 Properties:
 
-| name         | type     | notes     | docs | 
-| ------------ | -------- | --------- | ---- | 
-| `animation`  | `object` | Read only |      | 
-| `parent`     | `object` |           |      | 
-| `start_time` | `float`  |           |      | 
-| `render`     | `bool`   |           |      | 
+| name         | type                                                     | notes     | docs | 
+| ------------ | -------------------------------------------------------- | --------- | ---- | 
+| `animation`  | [AnimationContainer](#glaxnimatemodelanimationcontainer) | Read only |      | 
+| `parent`     | `Layer`                                                  |           |      | 
+| `start_time` | `float`                                                  |           |      | 
+| `render`     | `bool`                                                   |           |      | 
 
 ## glaxnimate.model.shapes.Fill.Rule
 
@@ -557,9 +557,9 @@ Base classes:
 
 Properties:
 
-| name        | type  | notes | docs | 
-| ----------- | ----- | ----- | ---- | 
-| `fill_rule` | `int` |       |      | 
+| name        | type   | notes | docs | 
+| ----------- | ------ | ----- | ---- | 
+| `fill_rule` | `Rule` |       |      | 
 
 ## glaxnimate.model.shapes.Stroke.Cap
 
@@ -617,12 +617,12 @@ Base classes:
 
 Properties:
 
-| name          | type     | notes     | docs | 
-| ------------- | -------- | --------- | ---- | 
-| `width`       | `object` | Read only |      | 
-| `cap`         | `int`    |           |      | 
-| `join`        | `int`    |           |      | 
-| `miter_limit` | `float`  |           |      | 
+| name          | type             | notes     | docs | 
+| ------------- | ---------------- | --------- | ---- | 
+| `width`       | `AnimatableBase` | Read only |      | 
+| `cap`         | `Cap`            |           |      | 
+| `join`        | `Join`           |           |      | 
+| `miter_limit` | `float`          |           |      | 
 
 ## glaxnimate.model.shapes.Image
 
@@ -632,10 +632,10 @@ Base classes:
 
 Properties:
 
-| name        | type     | notes     | docs | 
-| ----------- | -------- | --------- | ---- | 
-| `transform` | `object` | Read only |      | 
-| `image`     | `object` |           |      | 
+| name        | type        | notes     | docs | 
+| ----------- | ----------- | --------- | ---- | 
+| `transform` | `Transform` | Read only |      | 
+| `image`     | `Bitmap`    |           |      | 
 
 # glaxnimate.model
 
@@ -652,13 +652,13 @@ Sub classes:
 
 Properties:
 
-| name                 | type     | notes     | docs | 
-| -------------------- | -------- | --------- | ---- | 
-| `filename`           | `str`    | Read only |      | 
-| `main`               | `object` | Read only |      | 
-| `current_time`       | `float`  |           |      | 
-| `record_to_keyframe` | `bool`   |           |      | 
-| `defs`               | `object` | Read only |      | 
+| name                 | type                                               | notes     | docs | 
+| -------------------- | -------------------------------------------------- | --------- | ---- | 
+| `filename`           | `str`                                              | Read only |      | 
+| `main`               | [MainComposition](#glaxnimatemodelmaincomposition) | Read only |      | 
+| `current_time`       | `float`                                            |           |      | 
+| `record_to_keyframe` | `bool`                                             |           |      | 
+| `defs`               | `Object`                                           | Read only |      | 
 
 <h3 id='glaxnimate.model.Document.find_by_uuid'><a href='#glaxnimate.model.Document.find_by_uuid'>find_by_uuid()</a></h3>
 
@@ -804,12 +804,12 @@ Base classes:
 
 Properties:
 
-| name           | type     | notes     | docs | 
-| -------------- | -------- | --------- | ---- | 
-| `anchor_point` | `object` | Read only |      | 
-| `position`     | `object` | Read only |      | 
-| `scale`        | `object` | Read only |      | 
-| `rotation`     | `object` | Read only |      | 
+| name           | type             | notes     | docs | 
+| -------------- | ---------------- | --------- | ---- | 
+| `anchor_point` | `AnimatableBase` | Read only |      | 
+| `position`     | `AnimatableBase` | Read only |      | 
+| `scale`        | `AnimatableBase` | Read only |      | 
+| `rotation`     | `AnimatableBase` | Read only |      | 
 
 ## glaxnimate.model.Composition
 
@@ -823,10 +823,10 @@ Sub classes:
 
 Properties:
 
-| name        | type     | notes     | docs | 
-| ----------- | -------- | --------- | ---- | 
-| `animation` | `object` | Read only |      | 
-| `shapes`    | `list`   | Read only |      | 
+| name        | type                                                     | notes     | docs | 
+| ----------- | -------------------------------------------------------- | --------- | ---- | 
+| `animation` | [AnimationContainer](#glaxnimatemodelanimationcontainer) | Read only |      | 
+| `shapes`    | `list`                                                   | Read only |      | 
 
 ## glaxnimate.model.MainComposition
 
@@ -849,8 +849,8 @@ Properties:
 | name            | type                           | notes | docs | 
 | --------------- | ------------------------------ | ----- | ---- | 
 | `hold`          | `bool`                         |       |      | 
-| `before`        | `int`                          |       |      | 
-| `after`         | `int`                          |       |      | 
+| `before`        | `Descriptive`                  |       |      | 
+| `after`         | `Descriptive`                  |       |      | 
 | `before_handle` | [Point](#glaxnimateutilspoint) |       |      | 
 | `after_handle`  | [Point](#glaxnimateutilspoint) |       |      | 
 

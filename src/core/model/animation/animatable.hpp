@@ -13,7 +13,7 @@ public:                                                         \
     AnimatedProperty<type> name{this, #name, __VA_ARGS__};      \
     AnimatableBase* get_##name() { return &name; }              \
 private:                                                        \
-    Q_PROPERTY(AnimatableBase* name READ get_##name)            \
+    Q_PROPERTY(model::AnimatableBase* name READ get_##name)     \
     // macro end
 
 

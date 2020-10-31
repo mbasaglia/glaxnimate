@@ -167,6 +167,28 @@ static RetT type_dispatch_maybe_void(int meta_type, FuncArgs&&... args)
     return type_dispatch<Func, RetT>(meta_type, std::forward<FuncArgs>(args)...);
 }
 
+std::string fix_type(QByteArray ba)
+{
+    if ( ba.endsWith('*') || ba.endsWith('&') )
+        ba.remove(ba.size()-1, 1);
+
+    if ( ba.startsWith("const ") )
+        ba.remove(0, 6);
+
+    if ( ba == "QString" )
+        return "str";
+    else if ( ba == "QVariantList" )
+        return "list";
+    if ( ba == "QStringList" )
+        return "List[str]";
+    else if ( ba == "double" )
+        return "float";
+    else if ( ba == "void" )
+        return "None";
+
+    return ba.toStdString();
+}
+
 
 template<class CppType>
     struct RegisterProperty
@@ -175,9 +197,11 @@ template<class CppType>
         {
             PyPropertyInfo py;
             py.name = prop.name();
+            std::string sig = "Type: " + fix_type(prop.typeName());
             py.get = py::cpp_function(
                 [prop](const QObject* o) { return qvariant_to_cpp<CppType>(prop.read(o)); },
-                py::return_value_policy::automatic_reference
+                py::return_value_policy::automatic_reference,
+                sig.c_str()
             );
 
             if ( prop.isWritable() )
@@ -350,26 +374,6 @@ bool convert_argument(int meta_type, const py::handle& value, ArgumentBuffer& bu
     return type_dispatch<ConvertArgument, bool>(meta_type, value, buf);
 }
 
-std::string fix_type(QByteArray ba)
-{
-    if ( ba.endsWith('*') || ba.endsWith('&') )
-        ba.remove(ba.size()-1, 1);
-
-    if ( ba.startsWith("const ") )
-        ba.remove(0, 6);
-
-    if ( ba == "QString" )
-        return "str";
-    else if ( ba == "QVariantList" )
-        return "list";
-    else if ( ba == "double" )
-        return "float";
-    else if ( ba == "void" )
-        return "None";
-
-    return ba.toStdString();
-}
-
 template<class ReturnType>
 struct RegisterMethod
 {
@@ -377,7 +381,7 @@ struct RegisterMethod
     {
         PyMethodInfo py;
         py.name = meth.name();
-        std::string signature = "---override sig---\n";
+        std::string signature = "Signature:\n";
         signature += meth.name().toStdString();
         signature += "(self";
         QByteArray qt_signature = meth.methodSignature().split('(')[1];

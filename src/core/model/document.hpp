@@ -17,7 +17,7 @@ class Document : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString filename READ filename)
-    Q_PROPERTY(MainComposition* main READ main)
+    Q_PROPERTY(model::MainComposition* main READ main)
     Q_PROPERTY(double current_time READ current_time WRITE set_current_time NOTIFY current_time_changed)
     Q_PROPERTY(bool record_to_keyframe READ record_to_keyframe WRITE set_record_to_keyframe NOTIFY record_to_keyframe_changed)
     Q_PROPERTY(Object* defs READ defs_obj)

@@ -10,7 +10,7 @@ class Composition : public DocumentNode
 {
     Q_OBJECT
 
-    GLAXNIMATE_SUBOBJECT(AnimationContainer, animation)
+    GLAXNIMATE_SUBOBJECT(model::AnimationContainer, animation)
 
 public:
     ShapeListProperty shapes{this, "shapes",

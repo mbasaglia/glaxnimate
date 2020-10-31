@@ -43,7 +43,7 @@ public:
 
     Q_ENUM(Type)
 
-    GLAXNIMATE_PROPERTY_REFERENCE(GradientColors, colors, &Gradient::valid_refs, &Gradient::is_valid_ref, &Gradient::on_ref_changed)
+    GLAXNIMATE_PROPERTY_REFERENCE(model::GradientColors, colors, &Gradient::valid_refs, &Gradient::is_valid_ref, &Gradient::on_ref_changed)
     GLAXNIMATE_PROPERTY(Type, type, Linear, {}, {}, PropertyTraits::Visual)
 
     GLAXNIMATE_ANIMATABLE(QPointF, start_point, {})

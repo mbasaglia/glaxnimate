@@ -85,7 +85,7 @@ py::class_<CppClass, Args...> register_from_meta(py::handle scope, enums<Enums..
     {
         PyPropertyInfo pyprop = register_property(meta.property(i));
         if ( pyprop.name )
-            reg.def_property(pyprop.name, pyprop.get, pyprop.set);
+            reg.def_property(pyprop.name, pyprop.get, pyprop.set, "");
     }
 
     for ( int i = !super ? 0 : super->methodCount(); i < meta.methodCount(); i++ )

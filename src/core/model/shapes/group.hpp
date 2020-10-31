@@ -22,7 +22,7 @@ public:
     };
 
     GLAXNIMATE_PROPERTY_LIST_IMPL(shapes)
-    GLAXNIMATE_SUBOBJECT(Transform, transform)
+    GLAXNIMATE_SUBOBJECT(model::Transform, transform)
     GLAXNIMATE_ANIMATABLE(float, opacity, 1, &Group::opacity_changed, 0, 1)
 
 public:
