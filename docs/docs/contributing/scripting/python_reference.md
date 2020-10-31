@@ -6,13 +6,13 @@
 
 Properties:
 
-| name    | type  | notes | docs | 
-| ------- | ----- | ----- | ---- | 
-| `red`   | `int` |       |      | 
-| `green` | `int` |       |      | 
-| `blue`  | `int` |       |      | 
-| `alpha` | `int` |       |      | 
-| `name`  | `str` |       |      | 
+| name    | type  | notes | docs                                     | 
+| ------- | ----- | ----- | ---------------------------------------- | 
+| `red`   | `int` |       | Red component between 0 and 255          | 
+| `green` | `int` |       | Green component between 0 and 255        | 
+| `blue`  | `int` |       | Blue component between 0 and 255         | 
+| `alpha` | `int` |       | Transparency component between 0 and 255 | 
+| `name`  | `str` |       |                                          | 
 
 ## glaxnimate.utils.Point
 
@@ -724,6 +724,8 @@ set_best_name(self, *args) -> None
 ```python
 macro(self: glaxnimate.model.Document, arg0: str) -> glaxnimate.__detail.UndoMacroGuard
 ```
+
+Context manager to group changes into a single undo command
 
 ## glaxnimate.model.ReferenceTarget
 

@@ -32,10 +32,10 @@ void define_utils(py::module& m)
         .def(py::init<>())
         .def(py::init<int, int, int>())
         .def(py::init<QString>())
-        .def_property("red", &QColor::red, &QColor::setRed)
-        .def_property("green", &QColor::red, &QColor::setRed)
-        .def_property("blue", &QColor::blue, &QColor::setBlue)
-        .def_property("alpha", &QColor::alpha, &QColor::setAlpha)
+        .def_property("red", &QColor::red, &QColor::setRed, "Red component between 0 and 255")
+        .def_property("green", &QColor::red, &QColor::setRed, "Green component between 0 and 255")
+        .def_property("blue", &QColor::blue, &QColor::setBlue, "Blue component between 0 and 255")
+        .def_property("alpha", &QColor::alpha, &QColor::setAlpha, "Transparency component between 0 and 255")
         .def_property("name", qOverload<>(&QColor::name), qOverload<const QString&>(&QColor::setNamedColor))
         .def("__str__", [](const QColor& c){return c.name();})
         .def("__repr__", qdebug_operator_to_string<QColor>())
@@ -251,9 +251,14 @@ void register_py_module(py::module& glaxnimate_module)
     py::class_<model::Object, QObject>(model, "Object");
 
     register_from_meta<model::Document, QObject>(model)
-        .def("macro", [](model::Document* document, const QString& str){
-            return new command::UndoMacroGuard(str, document, false);
-        }, py::return_value_policy::take_ownership);
+        .def(
+            "macro",
+             [](model::Document* document, const QString& str){
+                return new command::UndoMacroGuard(str, document, false);
+            },
+            py::return_value_policy::take_ownership,
+            "Context manager to group changes into a single undo command"
+        );
     ;
     register_from_meta<model::ReferenceTarget, model::Object>(model);
     register_from_meta<model::DocumentNode, model::ReferenceTarget>(model);
