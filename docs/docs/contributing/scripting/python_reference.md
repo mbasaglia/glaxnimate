@@ -415,6 +415,18 @@ Signature:
 add_image(self, filename: str, embed: bool) -> object
 ```
 
+<h3 id='glaxnimate.model.defs.Defs.add_gradient'><a href='#glaxnimate.model.defs.Defs.add_gradient'>add_gradient()</a></h3>
+
+```python
+add_gradient(self: glaxnimate.model.defs.Defs) -> glaxnimate.model.defs.Gradient
+```
+
+<h3 id='glaxnimate.model.defs.Defs.add_gradient_colors'><a href='#glaxnimate.model.defs.Defs.add_gradient_colors'>add_gradient_colors()</a></h3>
+
+```python
+add_gradient_colors(self: glaxnimate.model.defs.Defs) -> glaxnimate.model.defs.GradientColors
+```
+
 # glaxnimate.model.shapes
 
 ## glaxnimate.model.shapes.ShapeElement
@@ -529,6 +541,14 @@ Properties:
 | `shapes`    | `list`                                                          | Read only |      | 
 | `transform` | [Transform](#glaxnimatemodeltransform)                          | Read only |      | 
 | `opacity`   | [AnimatableBase](#glaxnimatemodelglaxnimatemodelanimatablebase) | Read only |      | 
+
+<h3 id='glaxnimate.model.shapes.Group.add_shape'><a href='#glaxnimate.model.shapes.Group.add_shape'>add_shape()</a></h3>
+
+```python
+add_shape(self: glaxnimate.model.shapes.Group, arg0: str) -> glaxnimate.model.shapes.ShapeElement
+```
+
+Adds a shape from its class name
 
 ## glaxnimate.model.shapes.Layer
 
@@ -822,6 +842,14 @@ Properties:
 | ----------- | -------------------------------------------------------- | --------- | ---- | 
 | `animation` | [AnimationContainer](#glaxnimatemodelanimationcontainer) | Read only |      | 
 | `shapes`    | `list`                                                   | Read only |      | 
+
+<h3 id='glaxnimate.model.Composition.add_shape'><a href='#glaxnimate.model.Composition.add_shape'>add_shape()</a></h3>
+
+```python
+add_shape(self: glaxnimate.model.Composition, arg0: str) -> glaxnimate.model.ShapeElement
+```
+
+Adds a shape from its class name
 
 ## glaxnimate.model.MainComposition
 

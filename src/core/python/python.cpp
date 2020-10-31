@@ -10,6 +10,7 @@
 #include "model/defs/named_color.hpp"
 #include "model/visitor.hpp"
 #include "command/undo_macro_guard.hpp"
+#include "command/object_list_commands.hpp"
 
 #include "app/scripting/python/register_machinery.hpp"
 
@@ -238,6 +239,73 @@ public:
     }
 };
 
+
+template<class Owner, class PropT, class ItemT = typename PropT::value_type>
+class CreateObject
+{
+public:
+    using PtrMem = PropT Owner::*;
+
+    CreateObject(PtrMem p) noexcept : ptr(p) {}
+
+    ItemT* operator() (Owner* owner, const QString& clsname) const
+    {
+        return create(owner->document(), owner->*ptr, clsname);
+    }
+
+
+private:
+    ItemT* create(model::Document* doc, PropT& prop, const QString& clsname) const
+    {
+        auto obj = model::Factory::instance().build(clsname, doc);
+        if ( !obj )
+            return nullptr;
+
+        auto cast = obj->cast<ItemT>();
+
+        if ( !cast )
+        {
+            delete obj;
+            return nullptr;
+        }
+
+        if constexpr ( std::is_base_of_v<model::DocumentNode, ItemT> )
+            doc->set_best_name(static_cast<model::DocumentNode*>(cast));
+        else
+            cast->name.set(cast->type_name_human());
+        doc->push_command(new command::AddObject<ItemT, PropT>(&prop, std::unique_ptr<ItemT>(cast)));
+        return cast;
+    }
+
+    PtrMem ptr;
+};
+
+template<class Owner, class PropT, class ItemT = typename PropT::value_type>
+class CreateFixedObject
+{
+public:
+    using PtrMem = PropT Owner::*;
+
+    CreateFixedObject(PtrMem p) noexcept : ptr(p) {}
+
+    ItemT* operator() (Owner* owner) const
+    {
+        return create(owner->document(), owner->*ptr);
+    }
+
+
+private:
+    ItemT* create(model::Document* doc, PropT& prop) const
+    {
+        auto ptr = new ItemT(doc);
+        ptr->name.set(ptr->type_name_human());
+        doc->push_command(new command::AddObject<ItemT, PropT>(&prop, std::unique_ptr<ItemT>(ptr)));
+        return ptr;
+    }
+
+    PtrMem ptr;
+};
+
 void register_py_module(py::module& glaxnimate_module)
 {
     define_utils(glaxnimate_module);
@@ -267,6 +335,7 @@ void register_py_module(py::module& glaxnimate_module)
     py::class_<model::Object, QObject>(model, "Object");
 
     register_from_meta<model::Document, QObject>(model)
+        .def(py::init<QString>())
         .def(
             "macro",
              [](model::Document* document, const QString& str){
@@ -280,7 +349,11 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::DocumentNode, model::ReferenceTarget>(model);
     register_from_meta<model::AnimationContainer, model::Object>(model);
     register_from_meta<model::Transform, model::Object>(model);
-    register_from_meta<model::Composition, model::DocumentNode>(model);
+    register_from_meta<model::Composition, model::DocumentNode>(model)
+        .def("add_shape", CreateObject(&model::Composition::shapes), no_own,
+            "Adds a shape from its class name"
+        )
+    ;
     register_from_meta<model::MainComposition, model::Composition>(model);
     define_animatable(model);
     register_animatable<QPointF>(detail);
@@ -304,7 +377,10 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::GradientColors, model::Asset>(defs);
     register_from_meta<model::Gradient, model::BrushStyle>(defs);
     register_from_meta<model::Bitmap, model::Asset>(defs);
-    register_from_meta<model::Defs, model::Object>(defs);
+    register_from_meta<model::Defs, model::Object>(defs)
+        .def("add_gradient", CreateFixedObject(&model::Defs::gradients), no_own)
+        .def("add_gradient_colors", CreateFixedObject(&model::Defs::gradient_colors), no_own)
+    ;
 
 
     py::module shapes = model.def_submodule("shapes", "");
@@ -317,7 +393,11 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::Ellipse, model::Shape>(shapes);
     register_from_meta<model::PolyStar, model::Shape>(shapes);
 
-    register_from_meta<model::Group, model::ShapeElement>(shapes);
+    register_from_meta<model::Group, model::ShapeElement>(shapes)
+        .def("add_shape", CreateObject(&model::Group::shapes), no_own,
+            "Adds a shape from its class name"
+        )
+    ;
     register_from_meta<model::Layer, model::Group>(shapes);
 
     register_from_meta<model::Fill, model::Styler>(shapes, enums<model::Fill::Rule>{});
