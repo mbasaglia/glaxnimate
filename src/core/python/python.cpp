@@ -399,6 +399,7 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::Rect, model::Shape>(shapes);
     register_from_meta<model::Ellipse, model::Shape>(shapes);
     register_from_meta<model::PolyStar, model::Shape>(shapes);
+    register_from_meta<model::Path, model::Shape>(shapes);
 
     register_from_meta<model::Group, model::ShapeElement>(shapes)
         .def("add_shape", CreateObject(&model::Group::shapes), no_own,

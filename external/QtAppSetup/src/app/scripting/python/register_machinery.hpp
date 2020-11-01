@@ -79,20 +79,31 @@ py::class_<CppClass, Args...> register_from_meta(py::handle scope, enums<Enums..
 
     py::class_<CppClass, Args...> reg(scope, clean_name);
 
-    auto super = meta.superClass();
-
-    for ( int i = !super ? 0 : super->propertyCount(); i < meta.propertyCount(); i++ )
+    for ( int i = meta.propertyOffset(); i < meta.propertyCount(); i++ )
     {
         PyPropertyInfo pyprop = register_property(meta.property(i));
         if ( pyprop.name )
             reg.def_property(pyprop.name, pyprop.get, pyprop.set, "");
     }
 
-    for ( int i = !super ? 0 : super->methodCount(); i < meta.methodCount(); i++ )
+    for ( int i = meta.methodOffset(); i < meta.methodCount(); i++ )
     {
         PyMethodInfo pymeth = register_method(meta.method(i), reg);
         if ( pymeth.name )
             reg.attr(pymeth.name) = pymeth.method;
+    }
+
+    if ( meta.classInfoOffset() < meta.classInfoCount() )
+    {
+        py::dict classinfo;
+
+        for ( int i = meta.classInfoOffset(); i < meta.classInfoCount(); i++ )
+        {
+            auto info = meta.classInfo(i);
+            classinfo[info.name()] = info.value();
+        }
+
+        reg.attr("__classinfo__") = classinfo;
     }
 
     std::vector<PyEnumInfo> enum_info;

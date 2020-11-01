@@ -3,13 +3,16 @@
 #include <QDesktopServices>
 
 #include "model/shapes/group.hpp"
+#include "model/shapes/image.hpp"
+#include "model/defs/defs.hpp"
+
 #include "command/structure_commands.hpp"
 #include "command/animation_commands.hpp"
 #include "command/property_commands.hpp"
 #include "command/shape_commands.hpp"
-#include "widgets/dialogs/shape_parent_dialog.hpp"
-#include "model/shapes/image.hpp"
 #include "command/undo_macro_guard.hpp"
+
+#include "widgets/dialogs/shape_parent_dialog.hpp"
 
 namespace {
 

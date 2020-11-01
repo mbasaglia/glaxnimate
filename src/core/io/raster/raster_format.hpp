@@ -5,6 +5,7 @@
 #include "io/base.hpp"
 #include "io/io_registry.hpp"
 #include "model/shapes/image.hpp"
+#include "model/defs/defs.hpp"
 
 namespace io::raster {
 

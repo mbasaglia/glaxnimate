@@ -13,6 +13,7 @@ public:                                                     \
     }                                                       \
 private:                                                    \
     Q_PROPERTY(type* name READ get_##name WRITE set_##name) \
+    Q_CLASSINFO(#name, "property ref " #type)               \
     // macro end
 
 

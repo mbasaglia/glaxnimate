@@ -13,14 +13,12 @@ class Composition : public DocumentNode
     GLAXNIMATE_SUBOBJECT(model::AnimationContainer, animation)
 
 public:
-    ShapeListProperty shapes{this, "shapes",
+    GLAXNIMATE_PROPERTY_LIST(model::ShapeElement, shapes,
         &DocumentNode::docnode_child_add_end,
         &DocumentNode::docnode_child_remove_end,
         &DocumentNode::docnode_child_add_begin,
         &DocumentNode::docnode_child_remove_begin
-    };
-
-    GLAXNIMATE_PROPERTY_LIST_IMPL(shapes)
+    )
 
 public:
     explicit Composition(Document* document);

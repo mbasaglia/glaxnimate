@@ -6,7 +6,7 @@
 
 namespace model {
 
-class ShapeListProperty;
+using ShapeListProperty = ObjectListProperty<class ShapeElement>;
 
 /**
  * \brief Base class for all shape elements
@@ -59,13 +59,14 @@ private:
     ShapeListProperty* property_ = nullptr;
     int position_ = -1;
 
-    friend class ShapeListProperty;
+    friend ShapeListProperty;
 };
 
-class ShapeListProperty : public ObjectListProperty<ShapeElement>
+template<>
+class ObjectListProperty<ShapeElement> : public detail::ObjectListProperty<ShapeElement>
 {
 public:
-    using ObjectListProperty<ShapeElement>::ObjectListProperty;
+    using detail::ObjectListProperty<ShapeElement>::ObjectListProperty;
 
     /**
      * \brief End iterator for a range that includes a modifier then stops

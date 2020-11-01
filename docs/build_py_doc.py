@@ -3,13 +3,14 @@ import re
 import sys
 import types
 import inspect
+import argparse
 
 import glaxnimate
 
 
 class MdWriter:
-    def __init__(self):
-        self.out = sys.stdout
+    def __init__(self, file):
+        self.out = file
         self.level = 1
         self._table_data = []
 
@@ -95,6 +96,7 @@ class ModuleDocs:
         self.const = []
         self.classes = []
         self.functions = []
+        self.file_props = []
         self.docs = inspect.getdoc(module)
         if self.docs and "Members:" in self.docs:
             self.docs = ""
@@ -154,7 +156,11 @@ class ModuleDocs:
             elif type(val).__name__ == "instancemethod":
                 self.functions.append(FunctionDoc(name, self.child_name(name), val.__func__))
             elif isinstance(val, property):
-                self.props.append(PropertyDoc(name, val))
+                classinfo = getattr(self.module, "__classinfo__", {}).get(name)
+                prop = PropertyDoc(name, val, classinfo)
+                self.props.append(prop)
+                if classinfo:
+                    self.file_props.append(prop)
             elif hasattr(type(val), "__int__"):
                 self.const.append(Constant.enum(val))
             else:
@@ -181,6 +187,7 @@ class TypeFixer:
         ("AnimatableBase", "glaxnimate.model.AnimatableBase"),
         ("QVariantMap", "dict"),
         ("QVariant", "<type>"),
+        ("QGradientStops", "List[GradientStop]"),
     ]
     wrong_ns = re.compile(r"\b([a-z]+)::([a-zA-Z0-9_]+)")
     link_re = re.compile(r"(glaxnimate\.[a-zA-Z0-9._]+\.([a-zA-Z0-9_]+))")
@@ -197,16 +204,26 @@ class TypeFixer:
         return "#" + full_name.replace(".", "").lower()
 
     @classmethod
-    def format(cls, text: str) -> str:
+    def format(cls, text: str, json=False) -> str:
         text = cls.fix(text)
         text = cls.link_re.sub(
             lambda m: r"[{txt}]({link})".format(
                 txt=m.group(2),
-                link=cls.classlink(m.group(0))
+                link=cls.classlink(m.group(0)) if not json else "#" + m.group(2).lower()
             ),
             text
         )
-        if "glaxnimate" not in text:
+
+        if json:
+            text = text.replace("List[", "array of ")
+            if text.endswith("]"):
+                text = text[:-1]
+            text = text.replace("GradientStop", "[Gradient Stop](#gradient-stop)")
+            text = text.replace("uuid.UUID", "[UUID](#uuid)")
+            text = text.replace("str", "string")
+            text = text.replace("bytes", "Base64 string")
+
+        if "glaxnimate" not in text and "](" not in text and " " not in text:
             text = "`%s`" % text
         return text
 
@@ -242,30 +259,61 @@ class FunctionDoc:
 class PropertyDoc:
     extract_type = re.compile("-> ([^\n]+)")
     extract_type_qt = re.compile("Type: (.*)")
+    extract_type_classinfo = re.compile("^property (?:([a-z]+) )?(.*)$")
 
-    def __init__(self, name, prop):
+    def __init__(self, name, prop, classinfo=None):
         self.name = name
         self.prop = prop
-        self.docs = inspect.getdoc(prop)
-        if not prop.fget.__doc__:
+        self.docs = inspect.getdoc(prop) or ""
+        self.reference = False
+
+        if classinfo:
+            match = self.extract_type_classinfo.match(classinfo)
+            self.type = TypeFixer.fix(match.group(2))
+            if match.group(1) == "list":
+                self.type = "List[%s]" % self.type
+            elif match.group(1) == "ref":
+                self.reference = True
+        elif not prop.fget.__doc__:
             self.type = None
         elif "Type: " in prop.fget.__doc__:
-            self.type = TypeFixer.format(self.extract_type_qt.search(prop.fget.__doc__).group(1))
+            self.type = TypeFixer.fix(self.extract_type_qt.search(prop.fget.__doc__).group(1))
         else:
             match = self.extract_type.search(prop.fget.__doc__)
             if match:
-                self.type = TypeFixer.format(match.group(1))
+                self.type = TypeFixer.fix(match.group(1))
             else:
                 self.type = None
+
         self.readonly = prop.fset is None
 
     def print(self, writer: MdWriter):
+        notes = []
+        if self.readonly:
+            notes.append("Read only")
+        if self.reference:
+            notes.append("Reference")
+
         writer.table_row(
             writer.code(self.name),
-            self.type,
-            "Read only" if self.readonly else "",
+            TypeFixer.format(self.type),
+            ",".join(notes),
             self.docs
         )
+
+    def print_json(self, writer: MdWriter):
+        if self.reference:
+            writer.table_row(
+                writer.code(self.name),
+                TypeFixer.format("uuid.UUID", True),
+                "References " + TypeFixer.format(self.type, True) + ". " + self.docs
+            )
+        else:
+            writer.table_row(
+                writer.code(self.name),
+                TypeFixer.format(self.type, True),
+                self.docs
+            )
 
 
 class ClassDoc(ModuleDocs):
@@ -305,6 +353,42 @@ class ClassDoc(ModuleDocs):
                 ))
             writer.nl()
 
+    def print_json(self, writer: MdWriter):
+        writer.title(self.module.__name__, 1)
+        if self.bases:
+            writer.p("Base types:")
+            for base in self.bases:
+                writer.li(writer.a(
+                    base.__name__,
+                    "#" + base.__name__.lower()
+                ))
+            writer.nl()
+
+        if self.children:
+            writer.p("Sub types:")
+            for base in self.children:
+                writer.li(writer.a(
+                    base.__name__,
+                    "#" + base.__name__.lower()
+                ))
+            writer.nl()
+
+        if self.file_props:
+            writer.p("Properties:")
+
+            writer.table_header("name", "type", "docs")
+            for v in self.file_props:
+                v.print_json(writer)
+            writer.end_table()
+
+    def print_json_enum(self, writer: MdWriter):
+        writer.title(self.module.__name__, 1)
+
+        writer.table_header("value", "docs")
+        for v in self.const:
+            v.print_json(writer)
+        writer.end_table()
+
 
 class Constant:
     def __init__(self, name, value, type):
@@ -325,6 +409,12 @@ class Constant:
             self.docs
         )
 
+    def print_json(self, writer: MdWriter):
+        writer.table_row(
+            writer.code(self.name),
+            self.docs
+        )
+
 
 class DocBuilder:
     def __init__(self):
@@ -335,12 +425,37 @@ class DocBuilder:
         self.modules.append(module)
         module.inspect(self.modules, None)
 
-    def print(self):
-        writer = MdWriter()
+    def print(self, py_doc_file):
+        writer = MdWriter(py_doc_file)
         for module in self.modules:
             module.print(writer)
 
+    def print_json(self, json_doc_file):
+        writer = MdWriter(json_doc_file)
+        enums = []
+        writer.level = 2
+        for module in self.modules:
+            for cls in module.classes:
+                if issubclass(cls.module, glaxnimate.model.Object):
+                    cls.print_json(writer)
+                elif cls.const and not cls.functions and all(type(x.value) is int for x in cls.const):
+                    enums.append(cls)
+
+        writer.title("Enumerations")
+        for enum in enums:
+            enum.print_json_enum(writer)
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("py_doc_file")
+parser.add_argument("json_doc_file")
+ns = parser.parse_args()
 
 doc = DocBuilder()
 doc.module(glaxnimate)
-doc.print()
+
+with open(ns.py_doc_file, "w") as py_doc_file:
+    doc.print(py_doc_file)
+
+with open(ns.json_doc_file, "w") as json_doc_file:
+    doc.print_json(json_doc_file)

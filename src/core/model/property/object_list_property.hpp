@@ -3,7 +3,7 @@
 #include "model/document_node.hpp"
 
 
-#define GLAXNIMATE_PROPERTY_LIST_IMPL(name)                 \
+#define GLAXNIMATE_PROPERTY_LIST_IMPL(type, name)           \
 public:                                                     \
     QVariantList get_##name() const                         \
     {                                                       \
@@ -14,12 +14,13 @@ public:                                                     \
     }                                                       \
 private:                                                    \
     Q_PROPERTY(QVariantList name READ get_##name)           \
+    Q_CLASSINFO(#name, "property list " #type)              \
     // macro end
 
 #define GLAXNIMATE_PROPERTY_LIST(type, name, ...)           \
 public:                                                     \
     ObjectListProperty<type> name{this, #name, __VA_ARGS__};\
-    GLAXNIMATE_PROPERTY_LIST_IMPL(name)                     \
+    GLAXNIMATE_PROPERTY_LIST_IMPL(type, name)               \
     // macro end
 
 
@@ -64,7 +65,7 @@ public:
     virtual bool is_valid_reference_value(model::ReferenceTarget *, bool allow_null) const = 0;
 };
 
-
+namespace detail {
 template<class Type>
 class ObjectListProperty : public ObjectListPropertyBase
 {
@@ -282,6 +283,14 @@ protected:
     PropertyCallback<void, int, int> callback_move_begin;
     PropertyCallback<void, Type*, int, int> callback_move_end;
 };
+} // namespace detail
 
+
+template<class Type>
+class ObjectListProperty : public detail::ObjectListProperty<Type>
+{
+public:
+    using detail::ObjectListProperty<Type>::ObjectListProperty;
+};
 
 } // namespace model

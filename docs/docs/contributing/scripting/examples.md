@@ -151,7 +151,7 @@ rect.position.value = document.size.to_point() / 2
 group.add_shape("Fill", 0).color.value = "#0000ff"
 
 # Select the created group
-window.current_item = rect
+window.current_item = group
 ```
 
 ## Showing messages to the user

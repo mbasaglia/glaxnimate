@@ -13,9 +13,9 @@ class Defs : public Object
 {
     GLAXNIMATE_OBJECT(Defs)
 
-    GLAXNIMATE_PROPERTY_LIST(NamedColor, colors, &Defs::on_color_added, &Defs::on_color_removed, {}, {}, {}, {})
-    GLAXNIMATE_PROPERTY_LIST(Bitmap, images, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
-    GLAXNIMATE_PROPERTY_LIST(GradientColors, gradient_colors,
+    GLAXNIMATE_PROPERTY_LIST(model::NamedColor, colors, &Defs::on_color_added, &Defs::on_color_removed, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(model::Bitmap, images, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(model::GradientColors, gradient_colors,
         &Defs::on_gradient_colors_added,
         &Defs::on_gradient_colors_removed,
         &Defs::gradient_add_begin,
@@ -23,7 +23,7 @@ class Defs : public Object
         &Defs::gradient_move_begin,
         &Defs::gradient_move_end
     )
-    GLAXNIMATE_PROPERTY_LIST(Gradient, gradients, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(model::Gradient, gradients, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
 
 public:
     using Object::Object;

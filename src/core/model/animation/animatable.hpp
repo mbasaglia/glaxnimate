@@ -14,6 +14,7 @@ public:                                                         \
     AnimatableBase* get_##name() { return &name; }              \
 private:                                                        \
     Q_PROPERTY(model::AnimatableBase* name READ get_##name)     \
+    Q_CLASSINFO(#name, "property animated " #type)              \
     // macro end
 
 

@@ -128,36 +128,6 @@ inline constexpr PropertyTraits::Type PropertyTraits::get_type() noexcept
     return detail::GetType<T>::value;
 }
 
-/**
- * \brief Sets up declarations of concrete Object sub-classes
- * \note Call GLAXNIMATE_OBJECT_IMPL for every class declared with GLAXNIMATE_OBJECT
- */
-#define GLAXNIMATE_OBJECT(cls)                                          \
-private:                                                                \
-    Q_OBJECT                                                            \
-    static bool _reg;                                                   \
-    std::unique_ptr<Object> clone_impl() const override;                \
-public:                                                                 \
-    std::unique_ptr<cls> clone_covariant() const;                       \
-    // macro end
-
-/**
- * \brief Registers a class declared with GLAXNIMATE_OBJECT to be constructed
- * with model::Factory
- */
-#define GLAXNIMATE_OBJECT_IMPL(cls)                                     \
-    bool cls::_reg{model::Factory::instance().register_type<cls>()};    \
-    std::unique_ptr<cls> cls::clone_covariant() const                   \
-    {                                                                   \
-        auto object = std::make_unique<cls>(this->document());          \
-        this->clone_into(object.get());                                 \
-        return object;                                                  \
-    }                                                                   \
-    std::unique_ptr<model::Object> cls::clone_impl() const              \
-    {                                                                   \
-        return clone_covariant();                                       \
-    }                                                                   \
-    // macro end
 
 #define GLAXNIMATE_PROPERTY(type, name, ...)                \
 public:                                                     \
@@ -168,6 +138,7 @@ public:                                                     \
     }                                                       \
 private:                                                    \
     Q_PROPERTY(type name READ get_##name WRITE set_##name)  \
+    Q_CLASSINFO(#name, "property " #type)                   \
     // macro end
 
 #define GLAXNIMATE_PROPERTY_RO(type, name, default_value)   \
@@ -176,6 +147,7 @@ public:                                                     \
     type get_##name() const { return name.get(); }          \
 private:                                                    \
     Q_PROPERTY(type name READ get_##name)                   \
+    Q_CLASSINFO(#name, "property " #type)                   \
     // macro end
 
 class BaseProperty

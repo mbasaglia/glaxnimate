@@ -1,8 +1,10 @@
 #pragma once
 
 #include "model/defs/bitmap.hpp"
-#include "model/shapes/shapes.hpp"
+#include "model/shapes/shape.hpp"
+#include "model/transform.hpp"
 #include "model/property/reference_property.hpp"
+#include "model/property/sub_object_property.hpp"
 
 namespace model {
 

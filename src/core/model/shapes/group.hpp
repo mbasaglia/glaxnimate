@@ -14,14 +14,12 @@ class Group : public ShapeElement
     GLAXNIMATE_OBJECT(Group)
 
 public:
-    ShapeListProperty shapes{this, "shapes",
+    GLAXNIMATE_PROPERTY_LIST(model::ShapeElement, shapes,
         &DocumentNode::docnode_child_add_end,
         &DocumentNode::docnode_child_remove_end,
         &DocumentNode::docnode_child_add_begin,
         &DocumentNode::docnode_child_remove_begin
-    };
-
-    GLAXNIMATE_PROPERTY_LIST_IMPL(shapes)
+    )
     GLAXNIMATE_SUBOBJECT(model::Transform, transform)
     GLAXNIMATE_ANIMATABLE(float, opacity, 1, &Group::opacity_changed, 0, 1)
 

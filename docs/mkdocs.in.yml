@@ -48,6 +48,7 @@ nav:
             - contributing/code/misc.md
         - "Writing Documentation": contributing/documentation.md
         - "Roadmap": contributing/roadmap.md
+        - "File Format": contributing/json_reference.md
     - "<i class='fa fa-globe'></i> Links":
         - '<i class="fab fa-telegram"></i> Telegram Chat': https://t.me/Glaxnimate
         - '<i class="fab fa-gitlab"></i>   Code Browser': https://gitlab.com/mattbas/glaxnimate
