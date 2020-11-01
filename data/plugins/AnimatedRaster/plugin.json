@@ -11,7 +11,7 @@
             "extensions": ["gif"],
             "open": {
                 "module": "animated_raster",
-                "function": "open_gif"
+                "function": "open_image"
             },
             "save": {
                 "module": "animated_raster",
@@ -24,7 +24,7 @@
             "extensions": ["webp"],
             "open": {
                 "module": "animated_raster",
-                "function": "open_webp"
+                "function": "open_image"
             },
             "save": {
                 "module": "animated_raster",

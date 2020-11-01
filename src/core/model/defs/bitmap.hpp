@@ -43,6 +43,7 @@ public:
     QFileInfo file_info() const;
 
     const QPixmap& pixmap() const { return image; }
+    void set_pixmap(const QImage& qimage, const QString& format);
 
     bool remove_if_unused(bool clean_lists) override;
 

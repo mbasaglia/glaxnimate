@@ -4,7 +4,7 @@ Constants:
 
 | name          | type           | value                 | docs | 
 | ------------- | -------------- | --------------------- | ---- | 
-| `__version__` | `builtins.str` | `'0.2.0-19-g5b1f0b0'` |      | 
+| `__version__` | `builtins.str` | `'0.2.0-22-g620d390'` |      | 
 
 # glaxnimate.utils
 
@@ -207,6 +207,7 @@ serializer_from_slug(self: glaxnimate.io.IoRegistry, arg0: str) -> glaxnimate.io
 Sub classes:
 
 * [GlaxnimateFormat](#glaxnimateioglaxnimateformat)
+* [IoFormat](#glaxnimateioioformat)
 
 Properties:
 
@@ -275,6 +276,18 @@ Signature:
 error(self, message: str) -> None
 ```
 
+<h3 id='glaxnimate.io.ImportExport.progress_max_changed'><a href='#glaxnimate.io.ImportExport.progress_max_changed'>progress_max_changed()</a></h3>
+
+```python
+progress_max_changed(self: glaxnimate.io.ImportExport, arg0: int) -> None
+```
+
+<h3 id='glaxnimate.io.ImportExport.progress'><a href='#glaxnimate.io.ImportExport.progress'>progress()</a></h3>
+
+```python
+progress(self: glaxnimate.io.ImportExport, arg0: int) -> None
+```
+
 ## glaxnimate.io.GlaxnimateFormat
 
 Base classes:
@@ -286,6 +299,12 @@ Constants:
 | name       | type                                              | value | docs | 
 | ---------- | ------------------------------------------------- | ----- | ---- | 
 | `instance` | [GlaxnimateFormat](#glaxnimateioglaxnimateformat) |       |      | 
+
+## glaxnimate.io.IoFormat
+
+Base classes:
+
+* [ImportExport](#glaxnimateioimportexport)
 
 # glaxnimate.model.defs
 
@@ -425,12 +444,21 @@ add_color(self, color: glaxnimate.utils.Color, name: str) -> glaxnimate.model.Na
 add_color(self, color: glaxnimate.utils.Color) -> glaxnimate.model.NamedColor
 ```
 
+<h3 id='glaxnimate.model.defs.Defs.add_image_file'><a href='#glaxnimate.model.defs.Defs.add_image_file'>add_image_file()</a></h3>
+
+Signature:
+
+```python
+add_image_file(self, filename: str, embed: bool) -> glaxnimate.model.Bitmap
+```
+
 <h3 id='glaxnimate.model.defs.Defs.add_image'><a href='#glaxnimate.model.defs.Defs.add_image'>add_image()</a></h3>
 
 Signature:
 
 ```python
-add_image(self, filename: str, embed: bool) -> glaxnimate.model.Bitmap
+add_image(self, image: PIL.Image.Image, store_as: str) -> glaxnimate.model.Bitmap
+add_image(self, image: PIL.Image.Image) -> glaxnimate.model.Bitmap
 ```
 
 <h3 id='glaxnimate.model.defs.Defs.add_gradient'><a href='#glaxnimate.model.defs.Defs.add_gradient'>add_gradient()</a></h3>
@@ -695,6 +723,22 @@ Sub classes:
 * [Transform](#glaxnimatemodeltransform)
 * [Defs](#glaxnimatemodeldefsdefs)
 
+## glaxnimate.model.UndoMacroGuard
+
+C
+
+<h3 id='glaxnimate.model.UndoMacroGuard.start'><a href='#glaxnimate.model.UndoMacroGuard.start'>start()</a></h3>
+
+```python
+start(self: glaxnimate.model.UndoMacroGuard) -> None
+```
+
+<h3 id='glaxnimate.model.UndoMacroGuard.finish'><a href='#glaxnimate.model.UndoMacroGuard.finish'>finish()</a></h3>
+
+```python
+finish(self: glaxnimate.model.UndoMacroGuard) -> None
+```
+
 ## glaxnimate.model.Document
 
 Properties:
@@ -772,7 +816,7 @@ render_image(self) -> PIL.Image.Image
 <h3 id='glaxnimate.model.Document.macro'><a href='#glaxnimate.model.Document.macro'>macro()</a></h3>
 
 ```python
-macro(self: glaxnimate.model.Document, arg0: str) -> glaxnimate.__detail.UndoMacroGuard
+macro(self: glaxnimate.model.Document, arg0: str) -> glaxnimate.model.UndoMacroGuard
 ```
 
 Context manager to group changes into a single undo command
@@ -833,11 +877,11 @@ Base classes:
 
 Properties:
 
-| name           | type   | notes     | docs | 
-| -------------- | ------ | --------- | ---- | 
-| `first_frame`  | `int`  |           |      | 
-| `last_frame`   | `int`  |           |      | 
-| `time_visible` | `bool` | Read only |      | 
+| name           | type    | notes     | docs | 
+| -------------- | ------- | --------- | ---- | 
+| `first_frame`  | `float` |           |      | 
+| `last_frame`   | `float` |           |      | 
+| `time_visible` | `bool`  | Read only |      | 
 
 ## glaxnimate.model.Transform
 

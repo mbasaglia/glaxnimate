@@ -1,3 +1,4 @@
+import os
 from PIL import Image
 from PIL import features
 
@@ -67,3 +68,38 @@ def save_webp(window, document, file, name, import_export, settings):
         quality=settings["quality"],
         method=settings["method"]
     )
+
+
+def open_image(window, document, file, name, import_export, settings):
+    raster = Image.open(file)
+    document.main.width = raster.width
+    document.main.height = raster.height
+
+    if not hasattr(raster, "is_animated"):
+        raster.n_frames = 1
+        raster.seek = lambda x: None
+
+    parent_layer = document.main.add_shape("Layer")
+    parent_layer.name = document.main.name = os.path.basename(name)
+    time = 0
+
+    for frame in range(raster.n_frames):
+        layer = parent_layer.add_shape("Layer")
+        layer.name = "Frame %s Layer" % frame
+        layer.animation.first_frame = time
+
+        raster.seek(frame)
+
+        if "duration" in raster.info:
+            time += raster.info.get("duration") / 1000 * document.main.fps
+        else:
+            time += 1
+        layer.animation.last_frame = time
+
+        asset = document.defs.add_image(raster)
+
+        shape = layer.add_shape("Image")
+        shape.image = asset
+        shape.name = "Frame %s" % frame
+
+    document.main.animation.last_frame = parent_layer.animation.last_frame = time

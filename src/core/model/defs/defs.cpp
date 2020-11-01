@@ -63,7 +63,7 @@ model::NamedColor* model::Defs::add_color(const QColor& color, const QString& na
     return raw;
 }
 
-model::Bitmap * model::Defs::add_image(const QString& filename, bool embed)
+model::Bitmap * model::Defs::add_image_file(const QString& filename, bool embed)
 {
     auto image = std::make_unique<model::Bitmap>(document());
     image->filename.set(filename);
@@ -83,4 +83,13 @@ void model::Defs::on_added(model::Asset* def)
 void model::Defs::on_removed(model::Asset* def)
 {
     def->detach();
+}
+
+model::Bitmap * model::Defs::add_image(const QImage& qimage, const QString& store_as)
+{
+    auto image = std::make_unique<model::Bitmap>(document());
+    image->set_pixmap(qimage, store_as);
+    auto ptr = image.get();
+    push_command(new command::AddObject(&images, std::move(image), images.size()));
+    return ptr;
 }

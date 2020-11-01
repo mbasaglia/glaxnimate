@@ -22,13 +22,13 @@ void model::AnimationContainer::set_time(model::FrameTime t)
         emit time_visible_changed(new_visible);
 }
 
-void model::AnimationContainer::on_first_frame_changed(int x)
+void model::AnimationContainer::on_first_frame_changed(float x)
 {
     emit time_visible_changed(time_visible());
     emit first_frame_changed(x);
 }
 
-void model::AnimationContainer::on_last_frame_changed(int x)
+void model::AnimationContainer::on_last_frame_changed(float x)
 {
     emit time_visible_changed(time_visible());
     emit last_frame_changed(x);

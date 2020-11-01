@@ -203,7 +203,7 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
                 }
                 else
                 {
-                    auto img = image->document()->defs()->add_image(filename, false);
+                    auto img = image->document()->defs()->add_image_file(filename, false);
                     if ( img )
                         image->image.set_undoable(QVariant::fromValue(img));
                 }

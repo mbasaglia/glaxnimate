@@ -340,6 +340,7 @@ void register_py_module(py::module& glaxnimate_module)
             return f.read(size);
         }, py::arg("size") = qint64(-1))
         .def("readall", &QIODevice::readAll)
+        .def("readline", [](QIODevice& f){ return f.readLine(); })
     ;
     py::class_<QFile, QIODevice>(detail, "QFile");
 

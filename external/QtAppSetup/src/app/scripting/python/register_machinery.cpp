@@ -587,7 +587,8 @@ bool pybind11::detail::type_caster<QImage>::load(handle src, bool)
     if ( !isinstance(src, pybind11::module_::import("PIL.Image").attr("Image")) )
         return false;
 
-    std::string mode = src.attr("mode").cast<std::string>();
+    py::object obj = py::reinterpret_borrow<py::object>(src);
+    std::string mode = obj.attr("mode").cast<std::string>();
     QImage::Format format;
     if ( mode == "RGBA" )
     {
@@ -608,16 +609,17 @@ bool pybind11::detail::type_caster<QImage>::load(handle src, bool)
     else
     {
         format = QImage::Format_RGBA8888;
-        src = src.attr("convert")("RGBA");
+        obj = obj.attr("convert")("RGBA");
     }
 
-    std::string data = src.attr("tobytes")().cast<std::string>();
-    value = QImage(
-        (const uchar*)data.c_str(),
-        src.attr("width").cast<int>(),
-        src.attr("height").cast<int>(),
-        format
-    );
+    std::string data = obj.attr("tobytes")().cast<std::string>();
+
+    int width = obj.attr("width").cast<int>();
+    int height = obj.attr("height").cast<int>();
+    value = QImage(width, height, format);
+    if ( data.size() != std::size_t(value.sizeInBytes()) )
+        return false;
+    std::memcpy(value.bits(), data.data(), data.size());
     return true;
 }
 

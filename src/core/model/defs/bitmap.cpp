@@ -173,3 +173,9 @@ bool model::Bitmap::remove_if_unused(bool)
     }
     return false;
 }
+
+void model::Bitmap::set_pixmap(const QImage& pix, const QString& format)
+{
+    this->format.set(format);
+    data.set(build_embedded(pix));
+}

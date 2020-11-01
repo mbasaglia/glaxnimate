@@ -12,8 +12,8 @@ namespace model {
 class AnimationContainer: public Object
 {
     GLAXNIMATE_OBJECT(AnimationContainer)
-    GLAXNIMATE_PROPERTY(int,    first_frame,  0, &AnimationContainer::on_first_frame_changed, &AnimationContainer::validate_first_frame, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(int,    last_frame, 180, &AnimationContainer::on_last_frame_changed,  &AnimationContainer::validate_last_frame,  PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(float, first_frame,  0, &AnimationContainer::on_first_frame_changed, &AnimationContainer::validate_first_frame, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(float, last_frame, 180, &AnimationContainer::on_last_frame_changed,  &AnimationContainer::validate_last_frame,  PropertyTraits::Visual)
     Q_PROPERTY(bool time_visible READ time_visible)
 
 public:
@@ -29,13 +29,13 @@ public:
     void set_time(FrameTime t) override;
 
 signals:
-    void first_frame_changed(int);
-    void last_frame_changed(int);
+    void first_frame_changed(float);
+    void last_frame_changed(float);
     void time_visible_changed(bool visible);
 
 private slots:
-    void on_first_frame_changed(int);
-    void on_last_frame_changed(int);
+    void on_first_frame_changed(float);
+    void on_last_frame_changed(float);
 
 private:
     bool validate_first_frame(int f) const

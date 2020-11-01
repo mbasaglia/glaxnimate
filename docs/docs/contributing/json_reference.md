@@ -430,10 +430,10 @@ Base types:
 
 Properties:
 
-| name          | type  | docs | 
-| ------------- | ----- | ---- | 
-| `first_frame` | `int` |      | 
-| `last_frame`  | `int` |      | 
+| name          | type    | docs | 
+| ------------- | ------- | ---- | 
+| `first_frame` | `float` |      | 
+| `last_frame`  | `float` |      | 
 
 ### Transform
 
