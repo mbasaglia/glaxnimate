@@ -4,13 +4,16 @@
 
 #include "model/document.hpp"
 #include "model/shapes/shapes.hpp"
-#include "command/animation_commands.hpp"
-#include "io/glaxnimate/glaxnimate_format.hpp"
 #include "model/defs/defs.hpp"
 #include "model/defs/named_color.hpp"
 #include "model/visitor.hpp"
+
+#include "command/animation_commands.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
+
+#include "io/glaxnimate/glaxnimate_format.hpp"
+#include "plugin/io.hpp"
 #include "app_info.hpp"
 
 #include "app/scripting/python/register_machinery.hpp"
@@ -166,10 +169,14 @@ void define_io(py::module& m)
 
     io.attr("registry") = std::unique_ptr<Fac, py::nodelete>(&io::IoRegistry::instance());
 
-    register_from_meta<io::ImportExport, QObject>(io);
+    register_from_meta<io::ImportExport, QObject>(io)
+        .def("progress_max_changed", &io::ImportExport::progress_max_changed)
+        .def("progress", &io::ImportExport::progress)
+    ;
     register_from_meta<io::glaxnimate::GlaxnimateFormat, io::ImportExport>(io)
         .attr("instance") = std::unique_ptr<io::glaxnimate::GlaxnimateFormat, py::nodelete>(io::glaxnimate::GlaxnimateFormat::instance())
     ;
+    register_from_meta<plugin::IoFormat, io::ImportExport>(io);
 }
 
 
@@ -318,14 +325,23 @@ void register_py_module(py::module& glaxnimate_module)
 
     py::module detail = glaxnimate_module.def_submodule("__detail", "");
     py::class_<QObject>(detail, "__QObject");
-    py::class_<command::UndoMacroGuard>(detail, "UndoMacroGuard")
-        .def("__enter__", &command::UndoMacroGuard::start)
-        .def("__exit__", [](command::UndoMacroGuard& g, pybind11::object, pybind11::object, pybind11::object){
-            g.finish();
-        })
-        .def("start", &command::UndoMacroGuard::start)
-        .def("finish", &command::UndoMacroGuard::finish)
+    py::class_<QIODevice>(detail, "QIODevice")
+        .def("write", qOverload<const QByteArray&>(&QIODevice::write))
+        .def("close", &QIODevice::close)
+        .def_property_readonly("closed", [](const QIODevice& f){ return !f.isOpen(); })
+        .def("readable", [](const QIODevice& f){ return f.openMode() & QIODevice::ReadOnly; })
+        .def("seek", &QIODevice::seek)
+        .def("seekable", [](const QIODevice& f){ return !f.isSequential(); } )
+        .def("tell", &QIODevice::pos)
+        .def("writable", [](const QIODevice& f){ return f.openMode() & QIODevice::WriteOnly; })
+        .def("read", [](QIODevice& f, qint64 size) {
+            if ( size == qint64(-1) )
+                return f.readAll();
+            return f.read(size);
+        }, py::arg("size") = qint64(-1))
+        .def("readall", &QIODevice::readAll)
     ;
+    py::class_<QFile, QIODevice>(detail, "QFile");
 
     // for some reason some classes arent seen without this o_O
     static std::vector<int> foo = {
@@ -338,6 +354,17 @@ void register_py_module(py::module& glaxnimate_module)
 
     py::module model = glaxnimate_module.def_submodule("model", "");
     py::class_<model::Object, QObject>(model, "Object");
+
+    py::class_<command::UndoMacroGuard>(model, "UndoMacroGuard")
+        .def_readonly_static("__doc__", "Context manager that creates undo macros")
+        .def("__enter__", &command::UndoMacroGuard::start)
+        .def("__exit__", [](command::UndoMacroGuard& g, pybind11::object, pybind11::object, pybind11::object){
+            g.finish();
+        })
+        .def("start", &command::UndoMacroGuard::start)
+        .def("finish", &command::UndoMacroGuard::finish)
+
+    ;
 
     register_from_meta<model::Document, QObject>(model)
         .def(py::init<QString>())

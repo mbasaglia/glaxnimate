@@ -156,7 +156,7 @@ public:
     void console_commit(QString text);
     bool ensure_script_contexts();
     void create_script_context();
-    void script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantMap& settings );
+    void script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& args );
     PluginUiDialog * create_dialog(const QString& ui_file);
 };
 

@@ -25,6 +25,19 @@ public:
         return format;
     }
 
+    void unregister(ImportExport* object)
+    {
+        for ( auto it = object_list.begin(); it != object_list.end(); ++it )
+        {
+            if ( it->get() == object )
+            {
+                object_list.erase(it);
+                break;
+            }
+        }
+        importers_.erase(std::remove(importers_.begin(), importers_.end(), object), importers_.end());
+        exporters_.erase(std::remove(exporters_.begin(), exporters_.end(), object), exporters_.end());
+    }
 
     mime::MimeSerializer* register_object(std::unique_ptr<mime::MimeSerializer> ie)
     {

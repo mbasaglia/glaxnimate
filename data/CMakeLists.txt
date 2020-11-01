@@ -65,3 +65,8 @@ plugin(
     replace_color.py
     replace.ui
 )
+
+plugin(
+    AnimatedRaster
+    animated_raster.py
+)

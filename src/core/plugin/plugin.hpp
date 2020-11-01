@@ -2,15 +2,10 @@
 
 #include <memory>
 
-#include <QString>
-#include <QIcon>
 #include <QDir>
-#include <QAction>
-#include <QSet>
 
-#include "app/settings/setting.hpp"
 #include "app/log/log.hpp"
-
+#include "plugin/service.hpp"
 
 namespace app::scripting {
 
@@ -19,108 +14,6 @@ class ScriptEngine;
 } // namespace app::scripting
 
 namespace plugin {
-
-
-class ActionService;
-
-class PluginActionRegistry : public QObject
-{
-    Q_OBJECT
-
-public:
-    static PluginActionRegistry& instance()
-    {
-        static PluginActionRegistry instance;
-        return instance;
-    }
-
-    QAction* make_qaction(ActionService* action);
-
-    void add_action(ActionService* action);
-    void remove_action(ActionService* action);
-
-    const QSet<ActionService*>& enabled() const { return enabled_actions; }
-
-signals:
-    void action_added(ActionService*);
-    void action_removed(ActionService*);
-
-private:
-    PluginActionRegistry() = default;
-    ~PluginActionRegistry() = default;
-    QSet<ActionService*> enabled_actions;
-};
-
-
-class PluginScript
-{
-    Q_GADGET
-public:
-    QString module;
-    QString function;
-    app::settings::SettingList settings;
-
-    bool valid() const
-    {
-        return !module.isEmpty() && !function.isEmpty();
-    }
-};
-
-enum class ServiceType
-{
-    Action,
-    Import,
-    Export,
-};
-
-
-class Plugin;
-
-class PluginService : public QObject
-{
-public:
-    virtual ~PluginService() = default;
-
-    virtual ServiceType type() const = 0;
-    virtual QString name() const = 0;
-    virtual void enable() = 0;
-    virtual void disable() = 0;
-    virtual QIcon service_icon() const = 0;
-
-    Plugin* plugin() const { return owner; }
-    void set_plugin(Plugin* plugin) { owner = plugin; }
-
-private:
-    Plugin* owner = nullptr;
-};
-
-class ActionService : public PluginService
-{
-    Q_OBJECT
-
-public:
-    ServiceType type() const override { return ServiceType::Action; }
-    QString name() const override { return label; }
-    void enable() override { PluginActionRegistry::instance().add_action(this); }
-    void disable() override
-    {
-        PluginActionRegistry::instance().remove_action(this);
-        emit disabled();
-    }
-    QIcon service_icon() const override;
-
-    QString label;
-    QString tooltip;
-    QString icon;
-    PluginScript script;
-
-public slots:
-    void trigger() const;
-
-signals:
-    void disabled();
-};
-
 
 struct PluginData
 {
@@ -220,7 +113,7 @@ public:
         return icon_;
     }
 
-    void run_script(const PluginScript& script, const QVariantMap& settings) const;
+    void run_script(const PluginScript& script, const QVariantList& args) const;
 
     bool enabled() const { return enabled_; }
 
@@ -257,7 +150,7 @@ public:
     Plugin* plugin(const QString& id) const;
 
 signals:
-    void script_needs_running(const Plugin& plugin, const PluginScript& script, const QVariantMap& settings);
+    void script_needs_running(const Plugin& plugin, const PluginScript& script, const QVariantList& args);
     void loaded();
 
 private:

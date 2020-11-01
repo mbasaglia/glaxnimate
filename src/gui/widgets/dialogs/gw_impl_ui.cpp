@@ -4,6 +4,7 @@
 
 #include "tools/base.hpp"
 #include "model/shapes/group.hpp"
+#include "plugin/action.hpp"
 
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/dialogs/about_dialog.hpp"

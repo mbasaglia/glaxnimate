@@ -54,6 +54,8 @@ void PluginSettingsWidget::current_changed ( QListWidgetItem* item )
         QString type = tr("Unknown");
         if ( svc->type() == plugin::ServiceType::Action )
             type = tr("Menu Action");
+        else if ( svc->type() == plugin::ServiceType::IoFormat )
+            type = tr("File Format");
 
         QTableWidgetItem* it;
 

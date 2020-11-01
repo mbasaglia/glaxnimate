@@ -1,0 +1,71 @@
+{
+    "name": "Animated Raster",
+    "author": "Glax",
+    "engine": "python",
+    "version": 1,
+    "icon": "theme:image-gif",
+    "services": [
+        {
+            "type": "format",
+            "name": "GIF",
+            "extensions": ["gif"],
+            "open": {
+                "module": "animated_raster",
+                "function": "open_gif"
+            },
+            "save": {
+                "module": "animated_raster",
+                "function": "save_gif"
+            }
+        },
+        {
+            "type": "format",
+            "name": "WebP",
+            "extensions": ["webp"],
+            "open": {
+                "module": "animated_raster",
+                "function": "open_webp"
+            },
+            "save": {
+                "module": "animated_raster",
+                "function": "save_webp",
+                "settings": [
+                    {
+                        "name": "lossless",
+                        "label": "Lossless",
+                        "type": "bool",
+                        "default": false,
+                        "description": "If enabled, use lossless compression"
+                    },
+                    {
+                        "name": "quality",
+                        "label": "Quality",
+                        "type": "int",
+                        "default": 80,
+                        "min": 0,
+                        "max": 100,
+                        "description": "Compression effort between 0 and 100\nfor lossy 0 gives the smallest size\nfor lossless 0 gives the largest file"
+                    },
+                    {
+                        "name": "method",
+                        "label": "Method",
+                        "type": "int",
+                        "default": 0,
+                        "min": 0,
+                        "max": 6,
+                        "description": "Quality/speed trade-off (0=fast, 6=slower-better)"
+                    },
+                    {
+                        "name": "skip_frames",
+                        "label": "Frame Step",
+                        "type": "int",
+                        "default": 1,
+                        "min": 1,
+                        "max": 8,
+                        "description": "Only renderer 1 out of these many frames"
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -51,7 +51,6 @@ void model::DocumentNode::on_property_changed(const BaseProperty* prop, const QV
     }
 }
 
-
 bool model::DocumentNode::docnode_is_instance(const QString& type_name) const
 {
     if ( type_name.isEmpty() )
@@ -116,6 +115,9 @@ bool model::DocumentNode::docnode_locked_recursive() const
 void model::DocumentNode::paint(QPainter* painter, FrameTime time, PaintMode mode) const
 {
     painter->save();
+    if ( mode != NoTransform )
+        painter->setTransform(local_transform_matrix(time), true);
+
     on_paint(painter, time, mode);
     if ( mode >= Recursive )
         for ( const auto& c : docnode_children() )

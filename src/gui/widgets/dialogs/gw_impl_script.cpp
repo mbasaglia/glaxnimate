@@ -84,7 +84,7 @@ void GlaxnimateWindow::Private::create_script_context()
     }
 }
 
-void GlaxnimateWindow::Private::script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantMap& settings )
+void GlaxnimateWindow::Private::script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& in_args )
 {
     if ( !ensure_script_contexts() )
         return;
@@ -95,7 +95,21 @@ void GlaxnimateWindow::Private::script_needs_running ( const plugin::Plugin& plu
         {
             current_plugin = &plugin;
             try {
-                QVariantList args{QVariant::fromValue(parent), QVariant::fromValue(current_document.get()), settings};
+                QVariantList args{QVariant::fromValue(parent)};
+
+                bool doc_found = false;
+                for ( const auto& v: in_args )
+                {
+                    if ( v.userType() == qMetaTypeId<model::Document*>() )
+                    {
+                        doc_found = true;
+                        break;
+                    }
+                }
+                if ( !doc_found )
+                    args.push_back(QVariant::fromValue(current_document.get()));
+
+                args.append(in_args);
                 if ( !ctx->run_from_module(plugin.data().dir, script.module, script.function, args) )
                     show_warning(plugin.data().name, tr("Could not run the plugin"), app::log::Error);
             } catch ( const app::scripting::ScriptError& err ) {

@@ -63,6 +63,8 @@ model/shapes/image.cpp
 
 
 plugin/plugin.cpp
+plugin/action.cpp
+plugin/io.cpp
 
 utils/gzip.cpp
 

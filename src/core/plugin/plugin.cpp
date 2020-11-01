@@ -4,71 +4,18 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "app/settings/widget_builder.hpp"
 #include "app/scripting/script_engine.hpp"
 #include "app/application.hpp"
 
-QAction * plugin::PluginActionRegistry::make_qaction ( plugin::ActionService* action )
-{
-    QAction* act = new QAction;
-    act->setIcon(action->plugin()->make_icon(action->icon));
-    if ( action->label.isEmpty() )
-        act->setText(action->plugin()->data().name);
-    else
-        act->setText(action->label);
-    act->setToolTip(action->tooltip);
-    connect(act, &QAction::triggered, action, &ActionService::trigger);
-    connect(action, &ActionService::disabled, act, &QAction::deleteLater);
+#include "plugin/action.hpp"
+#include "plugin/io.hpp"
 
-    return act;
-}
-
-void plugin::PluginActionRegistry::add_action ( plugin::ActionService* action )
-{
-    if ( enabled_actions.contains(action) )
-        return;
-
-    enabled_actions.insert(action);
-    emit action_added(action);
-}
-
-void plugin::PluginActionRegistry::remove_action ( plugin::ActionService* action )
-{
-    if ( !enabled_actions.contains(action) )
-        return;
-
-    enabled_actions.remove(action);
-    emit action_removed(action);
-
-}
-
-QIcon plugin::ActionService::service_icon() const
-{
-    return plugin()->make_icon(icon);
-}
-
-
-void plugin::ActionService::trigger() const
-{
-    QVariantMap settings_value;
-    if ( !script.settings.empty() )
-    {
-        if ( !app::settings::WidgetBuilder().show_dialog(
-            script.settings, settings_value, plugin()->data().name
-        ) )
-            return;
-    }
-
-    plugin()->run_script(script, settings_value);
-}
-
-
-void plugin::Plugin::run_script ( const plugin::PluginScript& script, const QVariantMap& settings ) const
+void plugin::Plugin::run_script ( const plugin::PluginScript& script, const QVariantList& args ) const
 {
      if ( !data_.engine )
          return;
 
-     emit PluginRegistry::instance().script_needs_running(*this, script, settings);
+     emit PluginRegistry::instance().script_needs_running(*this, script, args);
 }
 
 void plugin::PluginRegistry::load()
@@ -216,6 +163,44 @@ void plugin::PluginRegistry::load_service ( const QJsonObject& jobj, plugin::Plu
         if ( act->icon.isEmpty() )
             act->icon = data.icon;
         data.services.emplace_back(std::move(act));
+    }
+    else if ( type == "format" )
+    {
+        auto svc = std::make_unique<IoService>();
+        svc->save = load_script(jobj["save"].toObject());
+        svc->open = load_script(jobj["open"].toObject());
+        if ( !svc->save.valid() && !svc->open.valid() )
+        {
+            logger.stream() << "Skipping format service with no open nor save";
+            return;
+        }
+
+        svc->label = jobj["name"].toString();
+        for ( const auto& extv : jobj["extensions"].toArray() )
+        {
+            QString ext = extv.toString();
+            if ( ext.startsWith(".") )
+            {
+                logger.stream() << "Format extensions should not have the leading dot";
+                ext = ext.mid(1);
+            }
+
+            if ( ext.isEmpty() )
+            {
+                logger.stream() << "Empty extension";
+                continue;
+            }
+
+            svc->extensions.push_back(ext);
+        }
+
+        if ( svc->extensions.isEmpty() )
+        {
+            logger.stream() << "Skipping format service with no extensions";
+            return;
+        }
+
+        data.services.emplace_back(std::move(svc));
     }
     else
     {

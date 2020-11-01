@@ -49,6 +49,33 @@ The script function will be invoked with these arguments:
 * The open document
 * A `dict` with the [settings](#settings) values.
 
+### Format
+
+Format services services add support for opening and saving to more file formats.
+
+They will be visible in the open and save dialogs.
+
+The service JSON object has the following fields:
+
+| Name          | Required  | Type   | Description                                  |
+| ------------- | --------- | ------ | -------------------------------------------- |
+| `type`        | Required  | string | `format`                                     |
+| `name`        |           | string | Text shown in the dialog                     |
+| `open`        |           | object | [Script object](#scripts) to execute on open |
+| `save`        |           | object | [Script object](#scripts) to execute on save |
+| `extensions`  | Required  | array  | Array of file extensions (without the dot)   |
+
+At least one between `open` and `save` must be present.
+
+`open` and `save` will be invoked with the following arguments:
+
+* The application window
+* The document to read from / write into
+* A file-like object to perform io operations on
+* The name of the file
+* An ImportExport object to report back
+* A `dict` with the [settings](#settings) values
+
 ## Scripts
 
 A plugin script is defined as a JSON object that provides information on
