@@ -7,6 +7,8 @@
 #include "model/document.hpp"
 #include "model/shapes/shape.hpp"
 
+#include "plugin/executor.hpp"
+
 namespace plugin {
 class Plugin;
 class PluginScript;
@@ -29,7 +31,7 @@ class QItemSelection;
 
 class PluginUiDialog;
 
-class GlaxnimateWindow : public QMainWindow
+class GlaxnimateWindow : public QMainWindow, public plugin::Executor
 {
     Q_OBJECT
 
@@ -100,6 +102,9 @@ public:
 
     PluginUiDialog* create_dialog(const QString& ui_file) const;
 
+    bool execute(const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& in_args) override;
+    QVariant get_global(const QString & name) override;
+
 public slots:
     void document_save();
     void document_save_as();
@@ -147,7 +152,6 @@ private slots:
     void validate_tgs();
 
     void console_commit(const QString& text);
-    void script_needs_running(const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& args);
     void script_reloaded();
 
 protected:

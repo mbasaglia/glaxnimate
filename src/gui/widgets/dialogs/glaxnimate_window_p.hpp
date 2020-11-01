@@ -156,8 +156,9 @@ public:
     void console_commit(QString text);
     bool ensure_script_contexts();
     void create_script_context();
-    void script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& args );
+    bool execute_script ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& args );
     PluginUiDialog * create_dialog(const QString& ui_file);
+    void init_plugins();
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

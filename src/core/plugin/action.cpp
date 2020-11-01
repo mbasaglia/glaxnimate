@@ -54,6 +54,10 @@ void plugin::ActionService::trigger() const
             return;
     }
 
-    plugin()->run_script(script, {settings_value});
+    plugin()->run_script(script, {
+        PluginRegistry::instance().global_parameter("window"),
+        PluginRegistry::instance().global_parameter("document"),
+        settings_value
+    });
 }
 

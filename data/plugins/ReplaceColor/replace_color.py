@@ -20,7 +20,7 @@ def main(window, document, settings):
     if not dialog:
         return
 
-    dialog.set_value("search", "color", window.current_color)
+    dialog.set_value("search", "color", window.fill_color)
     if dialog.exec():
         with document.macro("Replace color"):
             Replacer(dialog.get_value("search", "color"), dialog.get_value("replace", "color")).visit(document, True)

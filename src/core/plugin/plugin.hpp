@@ -113,7 +113,7 @@ public:
         return icon_;
     }
 
-    void run_script(const PluginScript& script, const QVariantList& args) const;
+    bool run_script(const PluginScript& script, const QVariantList& args) const;
 
     bool enabled() const { return enabled_; }
 
@@ -128,6 +128,8 @@ private:
     bool user_installed_ = false;
     QIcon icon_;
 };
+
+class Executor;
 
 
 class PluginRegistry : public QObject
@@ -149,8 +151,11 @@ public:
 
     Plugin* plugin(const QString& id) const;
 
+    Executor* executor() const;
+    void set_executor(Executor* exec);
+    QVariant global_parameter(const QString& name) const;
+
 signals:
-    void script_needs_running(const Plugin& plugin, const PluginScript& script, const QVariantList& args);
     void loaded();
 
 private:
@@ -164,6 +169,7 @@ private:
     QVariantMap load_choices(const QJsonValue& val) const;
 
     std::vector<std::unique_ptr<Plugin>> plugins_;
+    Executor* executor_ = nullptr;
     QMap<QString, int> names;
     app::log::Log logger{"Plugins"};
 };

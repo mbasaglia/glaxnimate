@@ -17,18 +17,26 @@ void plugin::IoService::disable()
 
 bool plugin::IoFormat::on_open(QIODevice& file, const QString& name, model::Document* document, const QVariantMap& settings)
 {
-    service->plugin()->run_script(service->open, {
-        QVariant::fromValue(document), QVariant::fromValue(&file), name, QVariant::fromValue(this), settings
+    return service->plugin()->run_script(service->open, {
+        PluginRegistry::instance().global_parameter("window"),
+        QVariant::fromValue(document),
+        QVariant::fromValue(&file),
+        name,
+        QVariant::fromValue(this),
+        settings
     });
-    return true;
 }
 
 bool plugin::IoFormat::on_save(QIODevice& file, const QString& name, model::Document* document, const QVariantMap& settings)
 {
-    service->plugin()->run_script(service->save, {
-        QVariant::fromValue(document), QVariant::fromValue(&file), name, QVariant::fromValue(this), settings
+    return service->plugin()->run_script(service->save, {
+        PluginRegistry::instance().global_parameter("window"),
+        QVariant::fromValue(document),
+        QVariant::fromValue(&file),
+        name,
+        QVariant::fromValue(this),
+        settings
     });
-    return true;
 }
 
 

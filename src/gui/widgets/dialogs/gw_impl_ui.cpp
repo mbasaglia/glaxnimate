@@ -4,7 +4,6 @@
 
 #include "tools/base.hpp"
 #include "model/shapes/group.hpp"
-#include "plugin/action.hpp"
 
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/dialogs/about_dialog.hpp"
@@ -253,26 +252,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     }
 
     // Plugins
-    auto& par = plugin::PluginActionRegistry::instance();
-    for ( auto act : par.enabled() )
-    {
-        ui.menu_plugins->addAction(par.make_qaction(act));
-    }
-    connect(&par, &plugin::PluginActionRegistry::action_added, parent, [this](plugin::ActionService* action) {
-        ui.menu_plugins->addAction(plugin::PluginActionRegistry::instance().make_qaction(action));
-    });
-    connect(
-        &plugin::PluginRegistry::instance(),
-        &plugin::PluginRegistry::script_needs_running,
-        parent,
-        &GlaxnimateWindow::script_needs_running
-    );
-    connect(
-        &plugin::PluginRegistry::instance(),
-        &plugin::PluginRegistry::loaded,
-        parent,
-        &GlaxnimateWindow::script_reloaded
-    );
+    init_plugins();
 
     // Logs
     log_model.populate(GlaxnimateApp::instance()->log_lines());

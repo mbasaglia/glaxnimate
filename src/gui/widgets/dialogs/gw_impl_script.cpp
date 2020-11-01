@@ -1,5 +1,6 @@
 #include "glaxnimate_window_p.hpp"
 #include "widgets/dialogs/plugin_ui_dialog.hpp"
+#include "plugin/action.hpp"
 
 void GlaxnimateWindow::Private::console_stderr(const QString& line)
 {
@@ -84,44 +85,33 @@ void GlaxnimateWindow::Private::create_script_context()
     }
 }
 
-void GlaxnimateWindow::Private::script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& in_args )
+bool GlaxnimateWindow::Private::execute_script ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& args )
 {
     if ( !ensure_script_contexts() )
-        return;
+        return false;
 
     for ( const auto& ctx : script_contexts )
     {
         if ( ctx->engine() == plugin.data().engine )
         {
             current_plugin = &plugin;
+            bool ok = false;
             try {
-                QVariantList args{QVariant::fromValue(parent)};
-
-                bool doc_found = false;
-                for ( const auto& v: in_args )
-                {
-                    if ( v.userType() == qMetaTypeId<model::Document*>() )
-                    {
-                        doc_found = true;
-                        break;
-                    }
-                }
-                if ( !doc_found )
-                    args.push_back(QVariant::fromValue(current_document.get()));
-
-                args.append(in_args);
-                if ( !ctx->run_from_module(plugin.data().dir, script.module, script.function, args) )
+                ok = ctx->run_from_module(plugin.data().dir, script.module, script.function, args);
+                if ( !ok )
                     show_warning(plugin.data().name, tr("Could not run the plugin"), app::log::Error);
             } catch ( const app::scripting::ScriptError& err ) {
                 console_error(err);
                 show_warning(plugin.data().name, tr("Plugin raised an exception"), app::log::Error);
+                ok = false;
             }
             current_plugin = nullptr;
-            return;
+            return ok;
         }
     }
 
     show_warning(plugin.data().name, tr("Could not find an interpreter"), app::log::Error);
+    return false;
 }
 
 PluginUiDialog * GlaxnimateWindow::Private::create_dialog(const QString& ui_file)
@@ -143,4 +133,25 @@ PluginUiDialog * GlaxnimateWindow::Private::create_dialog(const QString& ui_file
     }
 
     return new PluginUiDialog(file, *current_plugin, parent);
+}
+
+
+void GlaxnimateWindow::Private::init_plugins()
+{
+    auto& par = plugin::PluginActionRegistry::instance();
+    for ( auto act : par.enabled() )
+    {
+        ui.menu_plugins->addAction(par.make_qaction(act));
+    }
+    connect(&par, &plugin::PluginActionRegistry::action_added, parent, [this](plugin::ActionService* action) {
+        ui.menu_plugins->addAction(plugin::PluginActionRegistry::instance().make_qaction(action));
+    });
+    connect(
+        &plugin::PluginRegistry::instance(),
+        &plugin::PluginRegistry::loaded,
+        parent,
+        &GlaxnimateWindow::script_reloaded
+    );
+
+    plugin::PluginRegistry::instance().set_executor(parent);
 }

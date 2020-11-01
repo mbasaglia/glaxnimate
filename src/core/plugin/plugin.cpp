@@ -9,13 +9,23 @@
 
 #include "plugin/action.hpp"
 #include "plugin/io.hpp"
+#include "plugin/executor.hpp"
 
-void plugin::Plugin::run_script ( const plugin::PluginScript& script, const QVariantList& args ) const
+bool plugin::Plugin::run_script ( const plugin::PluginScript& script, const QVariantList& args ) const
 {
      if ( !data_.engine )
-         return;
+     {
+         logger().log("Can't run script from a plugin with no engine", app::log::Error);
+         return false;
+     }
 
-     emit PluginRegistry::instance().script_needs_running(*this, script, args);
+     if ( !PluginRegistry::instance().executor() )
+     {
+         logger().log("No script executor", app::log::Error);
+         return false;
+     }
+
+     return PluginRegistry::instance().executor()->execute(*this, script, args);
 }
 
 void plugin::PluginRegistry::load()
@@ -285,4 +295,22 @@ plugin::Plugin * plugin::PluginRegistry::plugin ( const QString& id ) const
         return {};
     return plugins_[*it].get();
 }
+
+void plugin::PluginRegistry::set_executor(plugin::Executor* exec)
+{
+    executor_ = exec;
+}
+
+plugin::Executor * plugin::PluginRegistry::executor() const
+{
+    return executor_;
+}
+
+QVariant plugin::PluginRegistry::global_parameter(const QString& name) const
+{
+    if ( !executor_ )
+        return {};
+    return executor_->get_global(name);
+}
+
 

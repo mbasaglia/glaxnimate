@@ -188,10 +188,20 @@ void GlaxnimateWindow::status ( const QString& message ) const
 }
 
 
-void GlaxnimateWindow::script_needs_running ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& args )
+bool GlaxnimateWindow::execute ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& args )
 {
-    d->script_needs_running(plugin, script, args);
+    return d->execute_script(plugin, script, args);
 }
+
+QVariant GlaxnimateWindow::get_global(const QString& name)
+{
+    if ( name == "window" )
+        return QVariant::fromValue(this);
+    else if ( name == "document" )
+        return QVariant::fromValue(d->current_document.get());
+    return {};
+}
+
 
 void GlaxnimateWindow::script_reloaded()
 {
