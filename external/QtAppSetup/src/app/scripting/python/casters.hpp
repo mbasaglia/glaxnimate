@@ -73,11 +73,39 @@ public:
 template <> struct type_caster<QVariant>
 {
 public:
+    struct CustomConverter
+    {
+        std::function<bool (const handle&, QVariant&)> load;
+        std::function<handle (const QVariant&, return_value_policy, const handle&)> cast;
+    };
+
     PYBIND11_TYPE_CASTER(QVariant, _("QVariant"));
 
     bool load(handle src, bool ic);
 
     static handle cast(QVariant, return_value_policy policy, handle parent);
+
+    template<class T>
+    static void add_custom_type()
+    {
+        custom_converters[qMetaTypeId<T>()] = {
+            [](const handle& src, QVariant& value){
+                auto caster = pybind11::detail::make_caster<T>();
+                if ( caster.load(src, false) )
+                {
+                    value = QVariant::fromValue(pybind11::detail::cast_op<T>(caster));
+                    return true;
+                }
+                return false;
+            },
+            [](const QVariant& src, return_value_policy policy, const handle& parent){
+                return pybind11::detail::make_caster<T>::cast(src.value<T>(), policy, parent);
+            }
+        };
+    }
+
+private:
+    static std::map<int, CustomConverter> custom_converters;
 };
 
 template <> struct type_caster<QByteArray>

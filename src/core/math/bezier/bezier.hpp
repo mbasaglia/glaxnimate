@@ -70,7 +70,8 @@ public:
      */
     Bezier& add_smooth_point(const QPointF& p, const QPointF& in_t)
     {
-        return add_point(p, in_t, -in_t);
+        points_.push_back(Point::from_relative(p, in_t, -in_t, Smooth));
+        return *this;
     }
 
     /**

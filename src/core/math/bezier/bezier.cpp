@@ -25,6 +25,9 @@ QRectF math::bezier::Bezier::bounding_box() const
 
 void math::bezier::Bezier::split_segment(int index, qreal factor)
 {
+    if ( points_.empty() )
+        return;
+
     if ( index < 0 )
     {
         points_.insert(points_.begin(), points_[0]);

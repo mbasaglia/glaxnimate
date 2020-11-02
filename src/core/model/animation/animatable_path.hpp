@@ -5,6 +5,12 @@
 
 namespace model {
 
+namespace detail {
+class AnimatedPropertyBezier;
+} // namespace name
+
+
+
 template<>
 class Keyframe<math::bezier::Bezier> : public KeyframeBase
 {
@@ -41,15 +47,18 @@ public:
     }
 
 private:
-    friend class AnimatedProperty<math::bezier::Bezier>;
+    friend detail::AnimatedPropertyBezier;
     math::bezier::Bezier value_;
 };
 
-template<>
-class AnimatedProperty<math::bezier::Bezier> : public detail::AnimatedProperty<math::bezier::Bezier>
+namespace detail {
+
+// Intermediare non-templated class so Q_OBJECT works
+class AnimatedPropertyBezier : public detail::AnimatedProperty<math::bezier::Bezier>
 {
+    Q_OBJECT
 public:
-    AnimatedProperty(Object* object, const QString& name,
+    AnimatedPropertyBezier(Object* object, const QString& name,
                    PropertyCallback<void, math::bezier::Bezier> emitter = {})
     : detail::AnimatedProperty<math::bezier::Bezier>(object, name, {}, std::move(emitter))
     {}
@@ -64,19 +73,18 @@ public:
         return value_.closed();
     }
 
-    void set_closed(bool closed)
-    {
-        value_.set_closed(closed);
-        for ( auto& keyframe : keyframes_ )
-            keyframe->value_.set_closed(closed);
-        value_changed();
-        emitter(object(), value_);
-    }
+    void set_closed(bool closed);
 
-    void split_segment(int index, qreal factor);
+    Q_INVOKABLE void split_segment(int index, qreal factor);
+};
 
-private:
-    math::bezier::Bezier value_;
+} // namespace detail
+
+template<>
+class AnimatedProperty<math::bezier::Bezier> : public detail::AnimatedPropertyBezier
+{
+public:
+    using detail::AnimatedPropertyBezier::AnimatedPropertyBezier;
 };
 
 

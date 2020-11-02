@@ -4,7 +4,17 @@
 #include "command/animation_commands.hpp"
 
 
-void model::AnimatedProperty<math::bezier::Bezier>::split_segment(int index, qreal factor)
+void model::detail::AnimatedPropertyBezier::set_closed(bool closed)
+{
+    value_.set_closed(closed);
+    for ( auto& keyframe : keyframes_ )
+        keyframe->value_.set_closed(closed);
+    value_changed();
+    emitter(object(), value_);
+}
+
+
+void model::detail::AnimatedPropertyBezier::split_segment(int index, qreal factor)
 {
     command::UndoMacroGuard guard(tr("Split Segment"), object()->document());
     bool set = true;
@@ -27,7 +37,5 @@ void model::AnimatedProperty<math::bezier::Bezier>::split_segment(int index, qre
         QVariant after = QVariant::fromValue(value_);
         object()->push_command(new command::SetMultipleAnimated("", {this}, {before}, {after}, true));
     }
-
-    value_changed();
 }
 

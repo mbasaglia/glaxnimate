@@ -21,12 +21,62 @@
 auto no_own = py::return_value_policy::automatic_reference;
 using namespace app::scripting::python;
 
-template<class T>
+template<class T, class Base=model::AnimatableBase>
 void register_animatable(py::module& m)
 {
-    std::string name = "AnimatedProperty_";
+    std::string name = "AnimatedProperty<";
     name += QMetaType::typeName(qMetaTypeId<T>());
-    py::class_<model::AnimatedProperty<T>, model::AnimatableBase>(m, name.c_str());
+    name += ">";
+    py::class_<model::AnimatedProperty<T>, Base>(m, name.c_str());
+}
+
+void define_bezier(py::module& m)
+{
+    py::module bezier = m.def_submodule("bezier", "");
+
+    py::enum_<math::bezier::PointType>(bezier, "PointType")
+        .value("Corner", math::bezier::Corner)
+        .value("Smooth", math::bezier::Smooth)
+        .value("Symmetrical", math::bezier::Symmetrical)
+    ;
+
+    py::class_<math::bezier::Point>(bezier, "Point")
+        .def(py::init<QPointF>())
+        .def(
+            py::init<QPointF, QPointF, QPointF, math::bezier::PointType>(),
+            py::arg("pos"), py::arg("tan_in"), py::arg("tan_out"), py::arg("type") = math::bezier::Corner
+        )
+        .def_readwrite("pos", &math::bezier::Point::pos)
+        .def_property("tan_in", [](const math::bezier::Point& p){return p.tan_in;}, &math::bezier::Point::drag_tan_in)
+        .def_property("tan_out", [](const math::bezier::Point& p){return p.tan_out;}, &math::bezier::Point::drag_tan_out)
+        .def_property("type", [](const math::bezier::Point& p){return p.type;}, &math::bezier::Point::set_point_type)
+        .def("translate", &math::bezier::Point::translate)
+        .def("translate_to", &math::bezier::Point::translate_to)
+    ;
+
+    py::class_<math::bezier::Bezier>(bezier, "Bezier")
+        .def(py::init<>())
+        .def("__len__", &math::bezier::Bezier::size)
+        .def_property_readonly("empty", &math::bezier::Bezier::empty)
+        .def("clear", &math::bezier::Bezier::clear)
+        .def("__getitem__", [](math::bezier::Bezier& b, int index){ return b[index];}, no_own)
+        .def_property("closed", &math::bezier::Bezier::closed, &math::bezier::Bezier::set_closed)
+        .def("insert_point", &math::bezier::Bezier::insert_point, no_own)
+        .def("add_point", &math::bezier::Bezier::add_point, no_own)
+        .def("add_smooth_point", &math::bezier::Bezier::add_smooth_point, no_own)
+        .def("close", &math::bezier::Bezier::close, no_own)
+        .def("line_to", &math::bezier::Bezier::line_to, no_own)
+        .def("quadratic_to", &math::bezier::Bezier::quadratic_to, no_own)
+        .def("cubic_to", &math::bezier::Bezier::cubic_to, no_own)
+        .def("reverse", &math::bezier::Bezier::reverse)
+        .def("bounding_box", &math::bezier::Bezier::bounding_box)
+        .def("split_segment", &math::bezier::Bezier::split_segment)
+        .def("split_segment_point", &math::bezier::Bezier::split_segment_point)
+        .def("remove_point", &math::bezier::Bezier::remove_point)
+        .def("lerp", &math::bezier::Bezier::lerp)
+    ;
+
+    pybind11::detail::type_caster<QVariant>::add_custom_type<math::bezier::Bezier>();
 }
 
 void define_utils(py::module& m)
@@ -143,8 +193,9 @@ void define_utils(py::module& m)
         .def_property("bottom_left", &QRectF::bottomLeft, &QRectF::setBottomLeft)
         .def_property("size", &QRectF::size, &QRectF::setSize)
     ;
-}
 
+    define_bezier(utils);
+}
 
 void define_io(py::module& m)
 {
@@ -316,14 +367,9 @@ private:
     PtrMem ptr;
 };
 
-void register_py_module(py::module& glaxnimate_module)
+py::module define_detail(py::module& parent)
 {
-    glaxnimate_module.attr("__version__") = AppInfo::instance().version();
-
-    define_utils(glaxnimate_module);
-    define_log(glaxnimate_module);
-
-    py::module detail = glaxnimate_module.def_submodule("__detail", "");
+    py::module detail = parent.def_submodule("__detail", "");
     py::class_<QObject>(detail, "__QObject");
     py::class_<QIODevice>(detail, "QIODevice")
         .def("write", qOverload<const QByteArray&>(&QIODevice::write))
@@ -343,6 +389,17 @@ void register_py_module(py::module& glaxnimate_module)
         .def("readline", [](QIODevice& f){ return f.readLine(); })
     ;
     py::class_<QFile, QIODevice>(detail, "QFile");
+
+    return detail;
+}
+
+void register_py_module(py::module& glaxnimate_module)
+{
+    glaxnimate_module.attr("__version__") = AppInfo::instance().version();
+
+    define_utils(glaxnimate_module);
+    define_log(glaxnimate_module);
+    py::module detail = define_detail(glaxnimate_module);
 
     // for some reason some classes arent seen without this o_O
     static std::vector<int> foo = {
@@ -389,6 +446,7 @@ void register_py_module(py::module& glaxnimate_module)
         )
     ;
     register_from_meta<model::MainComposition, model::Composition>(model);
+
     define_animatable(model);
     register_animatable<QPointF>(detail);
     register_animatable<QSizeF>(detail);
@@ -396,6 +454,9 @@ void register_py_module(py::module& glaxnimate_module)
     register_animatable<QColor>(detail);
     register_animatable<float>(detail);
     register_animatable<QGradientStops>(detail);
+    register_from_meta<model::detail::AnimatedPropertyBezier, model::AnimatableBase>(detail);
+    register_animatable<math::bezier::Bezier, model::detail::AnimatedPropertyBezier>(detail);
+
     py::class_<PyVisitorPublic, PyVisitorTrampoline>(model, "Visitor")
         .def(py::init())
         .def("visit", (void (PyVisitorPublic::*)(model::Document*, bool))&PyVisitorPublic::visit)
@@ -427,11 +488,6 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::Ellipse, model::Shape>(shapes);
     register_from_meta<model::PolyStar, model::Shape>(shapes, enums<model::PolyStar::StarType>{});
     register_from_meta<model::Path, model::Shape>(shapes);
-    py::enum_<model::Path::PointType>(shapes, "PointType")
-        .value("Corner", math::bezier::Corner)
-        .value("Smooth", math::bezier::Smooth)
-        .value("Symmetrical", math::bezier::Symmetrical)
-    ;
 
     register_from_meta<model::Group, model::ShapeElement>(shapes)
         .def("add_shape", CreateObject(&model::Group::shapes), no_own,
