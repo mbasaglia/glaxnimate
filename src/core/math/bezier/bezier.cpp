@@ -107,13 +107,13 @@ math::bezier::Bezier math::bezier::Bezier::lerp(const math::bezier::Bezier& othe
         lerped.points_.push_back(Point::from_relative(
             math::lerp(points_[i].pos, other.points_[i].pos, factor),
             math::lerp(
-                points_[i].tan_out - points_[i].pos,
-                other.points_[i].tan_out - other.points_[i].pos,
+                points_[i].tan_in - points_[i].pos,
+                other.points_[i].tan_in - other.points_[i].pos,
                 factor
             ),
             math::lerp(
-                points_[i].tan_in - points_[i].pos,
-                other.points_[i].tan_in - other.points_[i].pos,
+                points_[i].tan_out - points_[i].pos,
+                other.points_[i].tan_out - other.points_[i].pos,
                 factor
             )
         ));

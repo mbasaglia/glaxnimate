@@ -73,6 +73,8 @@ public:
         emitter(object(), value_);
     }
 
+    void split_segment(int index, qreal factor);
+
 private:
     math::bezier::Bezier value_;
 };

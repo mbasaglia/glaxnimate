@@ -39,6 +39,7 @@ model/animation_container.cpp
 
 model/animation/keyframe_transition.cpp
 model/animation/animatable.cpp
+model/animation/animatable_path.cpp
 model/property/property.cpp
 model/property/reference_property.cpp
 

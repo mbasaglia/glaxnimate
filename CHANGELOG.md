@@ -6,6 +6,8 @@
     * Ability to load Qt designer UI files.
     * Rendering to PIL images
     * Import/Export plugin types
+* Bug Fixes:
+    * Animated Path shapes keeps the correct tangents
 
 ## 0.2.0
 

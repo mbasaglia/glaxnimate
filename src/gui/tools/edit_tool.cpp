@@ -693,13 +693,7 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
             case Private::VertexAdd:
                 if ( d->insert_item )
                 {
-                    auto bez = d->insert_item->bezier();
-                    bez.split_segment(d->insert_params.index, d->insert_params.factor);
-                    event.window->document()->push_command(new command::SetMultipleAnimated(
-                        d->insert_item->target_property(),
-                        QVariant::fromValue(bez),
-                        true
-                    ));
+                    d->insert_item->target_property()->split_segment(d->insert_params.index, d->insert_params.factor);
                     exit_add_point_mode();
                 }
                 break;
