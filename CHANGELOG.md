@@ -8,6 +8,7 @@
     * Import/Export plugin types
 * Bug Fixes:
     * Animated Path shapes keeps the correct tangents
+    * Fixed inconsistencies with closed/open bezier paths
 
 ## 0.2.0
 
