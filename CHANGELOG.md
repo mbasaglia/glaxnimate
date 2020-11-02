@@ -1,8 +1,11 @@
 ## 0.2.1
 
+* I/O:
+    * Support for rendering and loading animated GIF and WebP
 * Scripting:
     * Ability to load Qt designer UI files.
     * Rendering to PIL images
+    * Import/Export plugin types
 
 ## 0.2.0
 

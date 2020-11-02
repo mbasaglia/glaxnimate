@@ -161,7 +161,7 @@ Properties:
 | name          | type            | docs                                           | 
 | ------------- | --------------- | ---------------------------------------------- | 
 | `colors`      | [UUID](#uuid)   | References [GradientColors](#gradientcolors).  | 
-| `type`        | `Type`          |                                                | 
+| `type`        | [Type](#type)   |                                                | 
 | `start_point` | [Point](#point) |                                                | 
 | `end_point`   | [Point](#point) |                                                | 
 | `highlight`   | [Point](#point) |                                                | 
@@ -284,14 +284,14 @@ Base types:
 
 Properties:
 
-| name           | type            | docs | 
-| -------------- | --------------- | ---- | 
-| `type`         | `StarType`      |      | 
-| `position`     | [Point](#point) |      | 
-| `outer_radius` | `float`         |      | 
-| `inner_radius` | `float`         |      | 
-| `angle`        | `float`         |      | 
-| `points`       | `int`           |      | 
+| name           | type                  | docs | 
+| -------------- | --------------------- | ---- | 
+| `type`         | [StarType](#startype) |      | 
+| `position`     | [Point](#point)       |      | 
+| `outer_radius` | `float`               |      | 
+| `inner_radius` | `float`               |      | 
+| `angle`        | `float`               |      | 
+| `points`       | `int`                 |      | 
 
 ### Path
 
@@ -331,11 +331,11 @@ Base types:
 
 Properties:
 
-| name         | type          | docs                 | 
-| ------------ | ------------- | -------------------- | 
-| `parent`     | [UUID](#uuid) | References `Layer`.  | 
-| `start_time` | `float`       |                      | 
-| `render`     | `bool`        |                      | 
+| name         | type          | docs                         | 
+| ------------ | ------------- | ---------------------------- | 
+| `parent`     | [UUID](#uuid) | References [Layer](#layer).  | 
+| `start_time` | `float`       |                              | 
+| `render`     | `bool`        |                              | 
 
 ### Fill
 
@@ -345,9 +345,9 @@ Base types:
 
 Properties:
 
-| name        | type   | docs | 
-| ----------- | ------ | ---- | 
-| `fill_rule` | `Rule` |      | 
+| name        | type          | docs | 
+| ----------- | ------------- | ---- | 
+| `fill_rule` | [Rule](#rule) |      | 
 
 ### Stroke
 
@@ -357,12 +357,12 @@ Base types:
 
 Properties:
 
-| name          | type    | docs | 
-| ------------- | ------- | ---- | 
-| `width`       | `float` |      | 
-| `cap`         | `Cap`   |      | 
-| `join`        | `Join`  |      | 
-| `miter_limit` | `float` |      | 
+| name          | type          | docs | 
+| ------------- | ------------- | ---- | 
+| `width`       | `float`       |      | 
+| `cap`         | [Cap](#cap)   |      | 
+| `join`        | [Join](#join) |      | 
+| `miter_limit` | `float`       |      | 
 
 ### Image
 
@@ -482,6 +482,28 @@ Properties:
 
 ## Enumerations
 
+### Type
+
+| value    | docs | 
+| -------- | ---- | 
+| `Linear` |      | 
+| `Radial` |      | 
+
+### StarType
+
+| value     | docs | 
+| --------- | ---- | 
+| `Star`    |      | 
+| `Polygon` |      | 
+
+### PointType
+
+| value         | docs | 
+| ------------- | ---- | 
+| `Corner`      |      | 
+| `Smooth`      |      | 
+| `Symmetrical` |      | 
+
 ### Rule
 
 | value     | docs | 
@@ -504,4 +526,13 @@ Properties:
 | `MiterJoin` |      | 
 | `RoundJoin` |      | 
 | `BevelJoin` |      | 
+
+### Descriptive
+
+| value    | docs | 
+| -------- | ---- | 
+| `Hold`   |      | 
+| `Linear` |      | 
+| `Ease`   |      | 
+| `Custom` |      | 
 

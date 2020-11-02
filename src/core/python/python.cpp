@@ -182,7 +182,7 @@ void define_io(py::module& m)
 
 void define_animatable(py::module& m)
 {
-    register_from_meta<model::KeyframeTransition, QObject>(m);
+    register_from_meta<model::KeyframeTransition, QObject>(m, enums<model::KeyframeTransition::Descriptive>{});
     py::class_<model::KeyframeBase>(m, "Keyframe")
         .def_property_readonly("time", &model::KeyframeBase::time)
         .def_property_readonly("value", &model::KeyframeBase::value)
@@ -357,14 +357,13 @@ void register_py_module(py::module& glaxnimate_module)
     py::class_<model::Object, QObject>(model, "Object");
 
     py::class_<command::UndoMacroGuard>(model, "UndoMacroGuard")
-        .def_readonly_static("__doc__", "Context manager that creates undo macros")
         .def("__enter__", &command::UndoMacroGuard::start)
         .def("__exit__", [](command::UndoMacroGuard& g, pybind11::object, pybind11::object, pybind11::object){
             g.finish();
         })
         .def("start", &command::UndoMacroGuard::start)
         .def("finish", &command::UndoMacroGuard::finish)
-
+        .attr("__doc__") = "Context manager that creates undo macros"
     ;
 
     register_from_meta<model::Document, QObject>(model)
@@ -410,7 +409,7 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::BrushStyle, model::Asset>(defs);
     register_from_meta<model::NamedColor, model::BrushStyle>(defs);
     register_from_meta<model::GradientColors, model::Asset>(defs);
-    register_from_meta<model::Gradient, model::BrushStyle>(defs);
+    register_from_meta<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::Type>{});
     register_from_meta<model::Bitmap, model::Asset>(defs);
     register_from_meta<model::Defs, model::Object>(defs)
         .def("add_gradient", CreateFixedObject(&model::Defs::gradients), no_own, py::arg("index") = -1)
@@ -426,8 +425,13 @@ void register_py_module(py::module& glaxnimate_module)
 
     register_from_meta<model::Rect, model::Shape>(shapes);
     register_from_meta<model::Ellipse, model::Shape>(shapes);
-    register_from_meta<model::PolyStar, model::Shape>(shapes);
+    register_from_meta<model::PolyStar, model::Shape>(shapes, enums<model::PolyStar::StarType>{});
     register_from_meta<model::Path, model::Shape>(shapes);
+    py::enum_<model::Path::PointType>(shapes, "PointType")
+        .value("Corner", math::bezier::Corner)
+        .value("Smooth", math::bezier::Smooth)
+        .value("Symmetrical", math::bezier::Symmetrical)
+    ;
 
     register_from_meta<model::Group, model::ShapeElement>(shapes)
         .def("add_shape", CreateObject(&model::Group::shapes), no_own,
