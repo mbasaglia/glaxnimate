@@ -188,6 +188,7 @@ class TypeFixer:
         ("QVariantMap", "dict"),
         ("QVariant", "<type>"),
         ("QGradientStops", "List[GradientStop]"),
+        ("builtins.", "")
     ]
     wrong_ns = re.compile(r"\b([a-z]+)::([a-zA-Z0-9_]+)")
     link_re = re.compile(r"(glaxnimate\.[a-zA-Z0-9._]+\.([a-zA-Z0-9_]+))")
@@ -232,6 +233,8 @@ class TypeFixer:
             text = text.replace("uuid.UUID", "[UUID](#uuid)")
             text = text.replace("str", "string")
             text = text.replace("bytes", "Base64 string")
+        else:
+            text = text.replace("GradientStop", "Tuple[`float`, [Color](#glaxnimateutilscolor)]")
 
         if text in cls.types:
             text = cls.classlink(text, cls.types[text], json)

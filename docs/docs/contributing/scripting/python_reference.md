@@ -2,9 +2,9 @@
 
 Constants:
 
-| name          | type           | value                 | docs | 
-| ------------- | -------------- | --------------------- | ---- | 
-| `__version__` | `builtins.str` | `'0.2.0-23-g8394b05'` |      | 
+| name          | type  | value                 | docs | 
+| ------------- | ----- | --------------------- | ---- | 
+| `__version__` | `str` | `'0.2.0-24-ga2110fe'` |      | 
 
 # glaxnimate.utils
 
@@ -351,9 +351,9 @@ Base classes:
 
 Properties:
 
-| name     | type                 | notes     | docs | 
-| -------- | -------------------- | --------- | ---- | 
-| `colors` | `List[GradientStop]` | Read only |      | 
+| name     | type                                                 | notes     | docs | 
+| -------- | ---------------------------------------------------- | --------- | ---- | 
+| `colors` | List[Tuple[`float`, [Color](#glaxnimateutilscolor)]] | Read only |      | 
 
 ## glaxnimate.model.defs.Gradient.Type
 
