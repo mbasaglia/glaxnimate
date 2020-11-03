@@ -153,6 +153,7 @@ command::AddShape * command::duplicate_shape ( model::ShapeElement* shape )
         static_cast<model::ShapeElement*>(shape->clone().release())
     );
     new_shape->recursive_rename();
+    new_shape->set_time(shape->docnode_parent()->time());
 
     return new command::AddShape(
         shape->owner(),

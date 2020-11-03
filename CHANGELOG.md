@@ -14,6 +14,7 @@
     * Animated Path shapes keeps the correct tangents
     * Fixed inconsistencies with closed/open bezier paths
     * Removed spurious warning when loading animated gradients
+    * Duplicating shapes correctly sets up the duplicate's animations
 
 ## 0.2.0
 
