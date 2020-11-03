@@ -528,6 +528,11 @@ bool qvariant_type_caster_cast(
 
 using namespace app::scripting::python;
 
+
+
+
+std::map<int, pybind11::detail::type_caster<QVariant>::CustomConverter> pybind11::detail::type_caster<QVariant>::custom_converters;
+
 bool pybind11::detail::type_caster<QVariant>::load(handle src, bool)
 {
     if ( src.ptr() == Py_None )
@@ -535,7 +540,14 @@ bool pybind11::detail::type_caster<QVariant>::load(handle src, bool)
         value = QVariant();
         return true;
     }
-    return qvariant_type_caster_load(value, src, supported_types());
+
+    if ( qvariant_type_caster_load(value, src, supported_types()) )
+        return true;
+
+    for ( const auto& p : custom_converters )
+        if ( p.second.load(src, value) )
+            return true;
+    return false;
 }
 
 pybind11::handle pybind11::detail::type_caster<QVariant>::cast(QVariant src, return_value_policy policy, handle parent)
@@ -552,6 +564,10 @@ pybind11::handle pybind11::detail::type_caster<QVariant>::cast(QVariant src, ret
             return pybind11::detail::make_caster<int>::cast(src.value<int>(), policy, parent);
         else if ( meta_type == qMetaTypeId<QGradientStops>() )
             return pybind11::detail::make_caster<QGradientStops>::cast(src.value<QGradientStops>(), policy, parent);
+
+        auto it = custom_converters.find(meta_type);
+        if ( it != custom_converters.end() )
+            return it->second.cast(src, policy, parent);
         return pybind11::detail::make_caster<QObject*>::cast(src.value<QObject*>(), policy, parent);
     }
 
@@ -664,4 +680,3 @@ pybind11::handle pybind11::detail::type_caster<QImage>::cast(QImage src, return_
 
     return image.release();
 }
-

@@ -1,8 +1,21 @@
 ## 0.2.1
 
+* Editing:
+    * Adding or removing bezier nodes will affect all keyframes
+    * Adding or removing gradient stops will affect all keyframes
+    * Options on what to do with layers when re-timing a document
+    * Adding new keyframes will preserve easing across the affected keyframes
+* I/O:
+    * Support for rendering and loading animated GIF and WebP
 * Scripting:
     * Ability to load Qt designer UI files.
     * Rendering to PIL images
+    * Import/Export plugin types
+* Bug Fixes:
+    * Animated Path shapes keeps the correct tangents
+    * Fixed inconsistencies with closed/open bezier paths
+    * Removed spurious warning when loading animated gradients
+    * Duplicating shapes correctly sets up the duplicate's animations
 
 ## 0.2.0
 

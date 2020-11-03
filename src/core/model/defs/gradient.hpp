@@ -26,6 +26,9 @@ public:
 
     bool remove_if_unused(bool clean_lists) override;
 
+    Q_INVOKABLE void split_segment(int segment_index, float factor = 0.5, const QColor& new_color = {});
+    Q_INVOKABLE void remove_stop(int index);
+
 signals:
     void colors_changed(const QGradientStops&);
 };

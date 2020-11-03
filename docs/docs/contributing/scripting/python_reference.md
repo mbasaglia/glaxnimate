@@ -2,9 +2,9 @@
 
 Constants:
 
-| name          | type           | value                 | docs | 
-| ------------- | -------------- | --------------------- | ---- | 
-| `__version__` | `builtins.str` | `'0.2.0-22-g620d390'` |      | 
+| name          | type  | value                 | docs | 
+| ------------- | ----- | --------------------- | ---- | 
+| `__version__` | `str` | `'0.2.0-24-ga2110fe'` |      | 
 
 # glaxnimate.utils
 
@@ -351,9 +351,24 @@ Base classes:
 
 Properties:
 
-| name     | type                 | notes     | docs | 
-| -------- | -------------------- | --------- | ---- | 
-| `colors` | `List[GradientStop]` | Read only |      | 
+| name     | type                                                 | notes     | docs | 
+| -------- | ---------------------------------------------------- | --------- | ---- | 
+| `colors` | List[Tuple[`float`, [Color](#glaxnimateutilscolor)]] | Read only |      | 
+
+## glaxnimate.model.defs.Gradient.Type
+
+Properties:
+
+| name   | type  | notes     | docs | 
+| ------ | ----- | --------- | ---- | 
+| `name` | `str` | Read only |      | 
+
+Constants:
+
+| name     | type                                     | value | docs | 
+| -------- | ---------------------------------------- | ----- | ---- | 
+| `Linear` | [Type](#glaxnimatemodeldefsgradienttype) | `1`   |      | 
+| `Radial` | [Type](#glaxnimatemodeldefsgradienttype) | `2`   |      | 
 
 ## glaxnimate.model.defs.Gradient
 
@@ -366,7 +381,7 @@ Properties:
 | name          | type                                             | notes     | docs | 
 | ------------- | ------------------------------------------------ | --------- | ---- | 
 | `colors`      | [GradientColors](#glaxnimatemodelgradientcolors) | Reference |      | 
-| `type`        | `Type`                                           |           |      | 
+| `type`        | [Type](#glaxnimatemodeldefsgradienttype)         |           |      | 
 | `start_point` | [Point](#glaxnimateutilspoint)                   | Read only |      | 
 | `end_point`   | [Point](#glaxnimateutilspoint)                   | Read only |      | 
 | `highlight`   | [Point](#glaxnimateutilspoint)                   | Read only |      | 
@@ -554,6 +569,21 @@ Properties:
 | `position` | [Point](#glaxnimateutilspoint) | Read only |      | 
 | `size`     | [Size](#glaxnimateutilssize)   | Read only |      | 
 
+## glaxnimate.model.shapes.PolyStar.StarType
+
+Properties:
+
+| name   | type  | notes     | docs | 
+| ------ | ----- | --------- | ---- | 
+| `name` | `str` | Read only |      | 
+
+Constants:
+
+| name      | type                                               | value | docs | 
+| --------- | -------------------------------------------------- | ----- | ---- | 
+| `Star`    | [StarType](#glaxnimatemodelshapespolystarstartype) | `1`   |      | 
+| `Polygon` | [StarType](#glaxnimatemodelshapespolystarstartype) | `2`   |      | 
+
 ## glaxnimate.model.shapes.PolyStar
 
 Base classes:
@@ -562,14 +592,14 @@ Base classes:
 
 Properties:
 
-| name           | type                           | notes     | docs | 
-| -------------- | ------------------------------ | --------- | ---- | 
-| `type`         | `StarType`                     |           |      | 
-| `position`     | [Point](#glaxnimateutilspoint) | Read only |      | 
-| `outer_radius` | `float`                        | Read only |      | 
-| `inner_radius` | `float`                        | Read only |      | 
-| `angle`        | `float`                        | Read only |      | 
-| `points`       | `int`                          | Read only |      | 
+| name           | type                                               | notes     | docs | 
+| -------------- | -------------------------------------------------- | --------- | ---- | 
+| `type`         | [StarType](#glaxnimatemodelshapespolystarstartype) |           |      | 
+| `position`     | [Point](#glaxnimateutilspoint)                     | Read only |      | 
+| `outer_radius` | `float`                                            | Read only |      | 
+| `inner_radius` | `float`                                            | Read only |      | 
+| `angle`        | `float`                                            | Read only |      | 
+| `points`       | `int`                                              | Read only |      | 
 
 ## glaxnimate.model.shapes.Path
 
@@ -583,6 +613,22 @@ Properties:
 | -------- | ----------------------------------------------- | --------- | ---- | 
 | `shape`  | [Bezier](#glaxnimatemathglaxnimatebezierbezier) | Read only |      | 
 | `closed` | `bool`                                          |           |      | 
+
+## glaxnimate.model.shapes.PointType
+
+Properties:
+
+| name   | type  | notes     | docs | 
+| ------ | ----- | --------- | ---- | 
+| `name` | `str` | Read only |      | 
+
+Constants:
+
+| name          | type                                         | value | docs | 
+| ------------- | -------------------------------------------- | ----- | ---- | 
+| `Corner`      | [PointType](#glaxnimatemodelshapespointtype) | `0`   |      | 
+| `Smooth`      | [PointType](#glaxnimatemodelshapespointtype) | `1`   |      | 
+| `Symmetrical` | [PointType](#glaxnimatemodelshapespointtype) | `2`   |      | 
 
 ## glaxnimate.model.shapes.Group
 
@@ -621,7 +667,7 @@ Properties:
 | name         | type                                                     | notes     | docs | 
 | ------------ | -------------------------------------------------------- | --------- | ---- | 
 | `animation`  | [AnimationContainer](#glaxnimatemodelanimationcontainer) | Read only |      | 
-| `parent`     | `Layer`                                                  | Reference |      | 
+| `parent`     | [Layer](#glaxnimatemodellayer)                           | Reference |      | 
 | `start_time` | `float`                                                  |           |      | 
 | `render`     | `bool`                                                   |           |      | 
 
@@ -629,9 +675,9 @@ Properties:
 
 Properties:
 
-| name   | type  | notes     | docs                      | 
-| ------ | ----- | --------- | ------------------------- | 
-| `name` | `str` | Read only | name(self: handle) -> str | 
+| name   | type  | notes     | docs | 
+| ------ | ----- | --------- | ---- | 
+| `name` | `str` | Read only |      | 
 
 Constants:
 
@@ -648,17 +694,17 @@ Base classes:
 
 Properties:
 
-| name        | type   | notes | docs | 
-| ----------- | ------ | ----- | ---- | 
-| `fill_rule` | `Rule` |       |      | 
+| name        | type                                   | notes | docs | 
+| ----------- | -------------------------------------- | ----- | ---- | 
+| `fill_rule` | [Rule](#glaxnimatemodelshapesfillrule) |       |      | 
 
 ## glaxnimate.model.shapes.Stroke.Cap
 
 Properties:
 
-| name   | type  | notes     | docs                      | 
-| ------ | ----- | --------- | ------------------------- | 
-| `name` | `str` | Read only | name(self: handle) -> str | 
+| name   | type  | notes     | docs | 
+| ------ | ----- | --------- | ---- | 
+| `name` | `str` | Read only |      | 
 
 Constants:
 
@@ -672,9 +718,9 @@ Constants:
 
 Properties:
 
-| name   | type  | notes     | docs                      | 
-| ------ | ----- | --------- | ------------------------- | 
-| `name` | `str` | Read only | name(self: handle) -> str | 
+| name   | type  | notes     | docs | 
+| ------ | ----- | --------- | ---- | 
+| `name` | `str` | Read only |      | 
 
 Constants:
 
@@ -692,12 +738,12 @@ Base classes:
 
 Properties:
 
-| name          | type    | notes     | docs | 
-| ------------- | ------- | --------- | ---- | 
-| `width`       | `float` | Read only |      | 
-| `cap`         | `Cap`   |           |      | 
-| `join`        | `Join`  |           |      | 
-| `miter_limit` | `float` |           |      | 
+| name          | type                                     | notes     | docs | 
+| ------------- | ---------------------------------------- | --------- | ---- | 
+| `width`       | `float`                                  | Read only |      | 
+| `cap`         | [Cap](#glaxnimatemodelshapesstrokecap)   |           |      | 
+| `join`        | [Join](#glaxnimatemodelshapesstrokejoin) |           |      | 
+| `miter_limit` | `float`                                  |           |      | 
 
 ## glaxnimate.model.shapes.Image
 
@@ -725,7 +771,7 @@ Sub classes:
 
 ## glaxnimate.model.UndoMacroGuard
 
-C
+Context manager that creates undo macros
 
 <h3 id='glaxnimate.model.UndoMacroGuard.start'><a href='#glaxnimate.model.UndoMacroGuard.start'>start()</a></h3>
 
@@ -749,7 +795,7 @@ Properties:
 | `main`               | [MainComposition](#glaxnimatemodelmaincomposition) | Read only |      | 
 | `current_time`       | `float`                                            |           |      | 
 | `record_to_keyframe` | `bool`                                             |           |      | 
-| `defs`               | `Object`                                           | Read only |      | 
+| `defs`               | [Object](#glaxnimatemodelobject)                   | Read only |      | 
 | `size`               | [IntSize](#glaxnimateutilsintsize)                 | Read only |      | 
 | `rect`               | [Rect](#glaxnimateutilsrect)                       | Read only |      | 
 
@@ -937,17 +983,34 @@ Properties:
 | `width`  | `int`   |       |      | 
 | `height` | `int`   |       |      | 
 
+## glaxnimate.model.KeyframeTransition.Descriptive
+
+Properties:
+
+| name   | type  | notes     | docs | 
+| ------ | ----- | --------- | ---- | 
+| `name` | `str` | Read only |      | 
+
+Constants:
+
+| name     | type                                                         | value | docs | 
+| -------- | ------------------------------------------------------------ | ----- | ---- | 
+| `Hold`   | [Descriptive](#glaxnimatemodelkeyframetransitiondescriptive) | `0`   |      | 
+| `Linear` | [Descriptive](#glaxnimatemodelkeyframetransitiondescriptive) | `1`   |      | 
+| `Ease`   | [Descriptive](#glaxnimatemodelkeyframetransitiondescriptive) | `2`   |      | 
+| `Custom` | [Descriptive](#glaxnimatemodelkeyframetransitiondescriptive) | `3`   |      | 
+
 ## glaxnimate.model.KeyframeTransition
 
 Properties:
 
-| name            | type                           | notes | docs | 
-| --------------- | ------------------------------ | ----- | ---- | 
-| `hold`          | `bool`                         |       |      | 
-| `before`        | `Descriptive`                  |       |      | 
-| `after`         | `Descriptive`                  |       |      | 
-| `before_handle` | [Point](#glaxnimateutilspoint) |       |      | 
-| `after_handle`  | [Point](#glaxnimateutilspoint) |       |      | 
+| name            | type                                                         | notes | docs | 
+| --------------- | ------------------------------------------------------------ | ----- | ---- | 
+| `hold`          | `bool`                                                       |       |      | 
+| `before`        | [Descriptive](#glaxnimatemodelkeyframetransitiondescriptive) |       |      | 
+| `after`         | [Descriptive](#glaxnimatemodelkeyframetransitiondescriptive) |       |      | 
+| `before_handle` | [Point](#glaxnimateutilspoint)                               |       |      | 
+| `after_handle`  | [Point](#glaxnimateutilspoint)                               |       |      | 
 
 <h3 id='glaxnimate.model.KeyframeTransition.set_hold'><a href='#glaxnimate.model.KeyframeTransition.set_hold'>set_hold()</a></h3>
 

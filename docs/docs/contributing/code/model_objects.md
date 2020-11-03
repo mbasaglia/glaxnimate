@@ -51,6 +51,28 @@ class MyNewAbstractClass : public Object
     GLAXNIMATE_PROPERTY(float, myprop, 0.2)
 
 public:
+    using Object::Object;
+};
+
+// You can also define enums, as long as they are exposed with Q_ENUM
+class MyClassWithEnum : public Object
+{
+    Q_OBJECT
+
+public:
+    enum MyEnum
+    {
+        Value1,
+        Value2
+    }
+
+    Q_ENUM(MyEnum)
+
+    GLAXNIMATE_PROPERTY(MyEnum, type, Value1)
+
+
+public:
+    using Object::Object;
 };
 
 } // namespace model
@@ -87,6 +109,8 @@ It supports basic c++ types (like `int`, etc), common Qt types (eg: `QString`),
 QObject-derived classes, and exposed enums.
 Properties or methods using other types, need to be declared manually here.
 
+If a
+
 Example:
 
 ```c++
@@ -100,6 +124,8 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
     // Abstract classes should also be declared,
     // otherwise their properties won't be visible from python.
     register_from_meta<model::MyNewAbstractClass, Object>(glaxnimate_module);
+    // If you define enums, you need to list them like this:
+    register_from_meta<model::MyClassWithEnum, Object>(glaxnimate_module, enums<model::MyClassWithEnum::MyEnum>{});
 }
 ```
 
@@ -130,6 +156,11 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         // fields marked with Custom need to be manually read/written in the lottie code
         FieldInfo{"custom", Custom},
     }},
+    {"MyClassWithEnum", {
+        // If the enum values are the same in lottie you don't have to do much,
+        // otherwise you need to use Custom
+        FieldInfo{"type", "type"},
+    }}
 
     // ...
 };
@@ -143,3 +174,8 @@ If you define new shapes that have a corresponding lottie type,
 you need to add them to `shape_types`
 which maps Glaxnimate class names (without namespace) to the lottie `ty` field
 corresponding to the right object.
+
+
+### SVG Import/Export
+
+SVG rendering is done mostly manually so you'd need to add the appropriate code.

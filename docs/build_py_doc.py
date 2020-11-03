@@ -188,9 +188,16 @@ class TypeFixer:
         ("QVariantMap", "dict"),
         ("QVariant", "<type>"),
         ("QGradientStops", "List[GradientStop]"),
+        ("builtins.", "")
     ]
     wrong_ns = re.compile(r"\b([a-z]+)::([a-zA-Z0-9_]+)")
     link_re = re.compile(r"(glaxnimate\.[a-zA-Z0-9._]+\.([a-zA-Z0-9_]+))")
+    types = {}
+    unlinked = set()
+
+    @classmethod
+    def add_class(cls, class_):
+        cls.types[class_.__name__] = class_.__module__ + "." + class_.__qualname__
 
     @classmethod
     def fix(cls, text: str) -> str:
@@ -200,17 +207,21 @@ class TypeFixer:
         return text
 
     @classmethod
-    def classlink(cls, full_name):
+    def classhref(cls, full_name):
         return "#" + full_name.replace(".", "").lower()
+
+    @classmethod
+    def classlink(cls, name, full_name, json):
+        return r"[{txt}]({link})".format(
+            txt=name,
+            link=cls.classhref(full_name) if not json else "#" + name.lower()
+        )
 
     @classmethod
     def format(cls, text: str, json=False) -> str:
         text = cls.fix(text)
         text = cls.link_re.sub(
-            lambda m: r"[{txt}]({link})".format(
-                txt=m.group(2),
-                link=cls.classlink(m.group(0)) if not json else "#" + m.group(2).lower()
-            ),
+            lambda m: cls.classlink(m.group(2), m.group(0), json),
             text
         )
 
@@ -222,8 +233,14 @@ class TypeFixer:
             text = text.replace("uuid.UUID", "[UUID](#uuid)")
             text = text.replace("str", "string")
             text = text.replace("bytes", "Base64 string")
+        else:
+            text = text.replace("GradientStop", "Tuple[`float`, [Color](#glaxnimateutilscolor)]")
+
+        if text in cls.types:
+            text = cls.classlink(text, cls.types[text], json)
 
         if "glaxnimate" not in text and "](" not in text and " " not in text:
+            TypeFixer.unlinked.add(text)
             text = "`%s`" % text
         return text
 
@@ -285,6 +302,9 @@ class PropertyDoc:
             else:
                 self.type = None
 
+        if "->" in self.docs:
+            self.docs = "\n".join(self.docs.splitlines()[1:])
+
         self.readonly = prop.fset is None
 
     def print(self, writer: MdWriter):
@@ -319,6 +339,7 @@ class PropertyDoc:
 class ClassDoc(ModuleDocs):
     def __init__(self, full_name, cls):
         super().__init__(cls)
+        TypeFixer.add_class(cls)
         self.full_name = full_name
         self.bases = [
             base
@@ -340,7 +361,7 @@ class ClassDoc(ModuleDocs):
             for base in self.bases:
                 writer.li(writer.a(
                     base.__name__,
-                    TypeFixer.classlink(base.__module__ + '.' + base.__name__)
+                    TypeFixer.classhref(base.__module__ + '.' + base.__name__)
                 ))
             writer.nl()
 
@@ -349,7 +370,7 @@ class ClassDoc(ModuleDocs):
             for base in self.children:
                 writer.li(writer.a(
                     base.__name__,
-                    TypeFixer.classlink(base.__module__ + '.' + base.__name__)
+                    TypeFixer.classhref(base.__module__ + '.' + base.__name__)
                 ))
             writer.nl()
 
@@ -459,3 +480,5 @@ with open(ns.py_doc_file, "w") as py_doc_file:
 
 with open(ns.json_doc_file, "w") as json_doc_file:
     doc.print_json(json_doc_file)
+
+print(TypeFixer.unlinked)

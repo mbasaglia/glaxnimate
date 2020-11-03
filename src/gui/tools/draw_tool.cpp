@@ -18,6 +18,8 @@ void tools::DrawTool::create(const tools::Event& event)
                 point.type = math::bezier::PointType::Smooth;
         }
         shape->shape.set(bezier);
+        if ( bezier.closed() )
+            shape->closed.set(true);
         clear();
         create_shape(QObject::tr("Draw Shape"), event, std::move(shape));
         event.repaint();

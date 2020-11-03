@@ -1,5 +1,7 @@
 #include "edit_tool.hpp"
 
+#include <algorithm>
+
 #include <QMenu>
 #include <QPointer>
 
@@ -13,7 +15,6 @@
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/undo_macro_guard.hpp"
-#include "utils/sort_gradient.hpp"
 
 #include "graphics/bezier_item.hpp"
 #include "graphics/item_data.hpp"
@@ -314,29 +315,11 @@ public:
 
 
         menu.addAction(QIcon::fromTheme("list-add"), tr("Add Stop"), gradient_colors, [gradient_colors, index]{
-            auto colors = gradient_colors->colors.get();
-            int before = index;
-            int after = index+1;
-
-            if ( index >= colors.size() )
-            {
-                before = colors.size() - 2;
-                after = colors.size() - 1;
-            }
-
-            colors.push_back({
-                (colors[before].first + colors[after].first) / 2,
-                math::lerp(colors[before].second, colors[after].second, 0.5)
-            });
-
-            utils::sort_gradient(colors);
-            gradient_colors->colors.set_undoable(QVariant::fromValue(colors));
+            gradient_colors->split_segment(index);
         });
 
         menu.addAction(QIcon::fromTheme("list-remove"), tr("Remove Stop"), gradient_colors, [gradient_colors, index]{
-            auto colors = gradient_colors->colors.get();
-            colors.erase(colors.begin() + index);
-            gradient_colors->colors.set_undoable(QVariant::fromValue(colors));
+            gradient_colors->remove_stop(index);
         });
 
     }
@@ -405,16 +388,25 @@ public:
         if ( item->selected_indices().empty() )
             return;
 
-        const auto& bez = item->bezier();
-        math::bezier::Bezier new_bez;
-        new_bez.set_closed(bez.closed());
+        auto prop = item->target_property();
+        int sz1 = item->selected_indices().size() + 1;
+        if ( sz1 >= item->bezier().size() && std::all_of(prop->begin(), prop->end(), [sz1](const auto& kf){ return sz1 > kf.get().size(); }) )
+        {
+            // At the moment it always is a Path, but it might change in the future (ie: masks)
+            if ( auto path = item->target_object()->cast<model::Path>() )
+            {
+                item->target_object()->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
+                return;
+            }
+        }
 
-        for ( int i = 0; i < bez.size(); i++ )
-            if ( !item->selected_indices().count(i) )
-                new_bez.push_back(bez[i]);
+        auto bez = item->bezier();
+        prop->remove_points(item->selected_indices());
 
         if ( dissolve && item->selected_indices().size() == 1 )
         {
+            math::bezier::Bezier new_bez = prop->get();
+
             int index = *item->selected_indices().begin();
             if ( bez.closed() || (index > 0 && index < bez.size() - 1) )
             {
@@ -437,21 +429,10 @@ public:
 
                 new_bez.set_segment(index-1, approx);
             }
+            prop->set_undoable(QVariant::fromValue(new_bez));
         }
 
         item->clear_selected_indices();
-
-        if ( new_bez.size() < 2 && !item->target_property()->animated() )
-        {
-            // At the moment it always is a Path, but it might change in the future (ie: masks)
-            if ( auto path = item->target_object()->cast<model::Path>() )
-            {
-                item->target_object()->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
-                return;
-            }
-        }
-
-        item->target_property()->set_undoable(QVariant::fromValue(new_bez));
     }
 
     void delete_nodes(bool dissolve)
@@ -693,13 +674,7 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
             case Private::VertexAdd:
                 if ( d->insert_item )
                 {
-                    auto bez = d->insert_item->bezier();
-                    bez.split_segment(d->insert_params.index, d->insert_params.factor);
-                    event.window->document()->push_command(new command::SetMultipleAnimated(
-                        d->insert_item->target_property(),
-                        QVariant::fromValue(bez),
-                        true
-                    ));
+                    d->insert_item->target_property()->split_segment(d->insert_params.index, d->insert_params.factor);
                     exit_add_point_mode();
                 }
                 break;

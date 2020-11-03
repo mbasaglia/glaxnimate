@@ -1,6 +1,8 @@
 #pragma once
 
 #include <limits>
+#include <iterator>
+
 #include <QVariant>
 #include <QList>
 
@@ -65,6 +67,12 @@ public:
         Mismatch        ///< Value is animated and the current value doesn't match the animated value
     };
 
+    struct SetKeyframeInfo
+    {
+        bool insertion;
+        int index;
+    };
+
     using BaseProperty::BaseProperty;
 
     virtual ~AnimatableBase() = default;
@@ -86,11 +94,14 @@ public:
 
     /**
      * \brief Sets a value at a keyframe
+     * \param time  Time to set the value at
+     * \param value Value to set
+     * \param info  If not nullptr, it will be written to with information about what has been node
      * \post value(time) == \p value && animate() == true
      * \return The keyframe or nullptr if it couldn't be added.
      * If there is already a keyframe at \p time the returned value might be an existing keyframe
      */
-    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value) = 0;
+    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value, SetKeyframeInfo* info = nullptr) = 0;
 
     /**
      * \brief Removes the keyframe at index \p i
@@ -293,6 +304,98 @@ public:
     using value_type = typename Keyframe<Type>::value_type;
     using reference = typename Keyframe<Type>::reference;
 
+    class iterator
+    {
+    public:
+        using value_type = keyframe_type;
+        using pointer = const value_type*;
+        using reference = const value_type&;
+        using difference_type = int;
+        using iterator_category = std::random_access_iterator_tag;
+
+        iterator(const AnimatedProperty* prop, int index) noexcept
+        : prop(prop), index(index) {}
+
+        reference operator*() const { return *prop->keyframes_[index]; }
+        pointer operator->() const { return prop->keyframes_[index].get(); }
+
+        bool operator==(const iterator& other) const noexcept
+        {
+            return prop == other.prop && index == other.index;
+        }
+        bool operator!=(const iterator& other) const noexcept
+        {
+            return prop != other.prop || index != other.index;
+        }
+        bool operator<=(const iterator& other) const noexcept
+        {
+            return prop < other.prop || (prop == other.prop && index <= other.index);
+        }
+        bool operator<(const iterator& other) const noexcept
+        {
+            return prop < other.prop || (prop == other.prop && index < other.index);
+        }
+        bool operator>=(const iterator& other) const noexcept
+        {
+            return prop > other.prop || (prop == other.prop && index >= other.index);
+        }
+        bool operator>(const iterator& other) const noexcept
+        {
+            return prop > other.prop || (prop == other.prop && index > other.index);
+        }
+
+        iterator& operator++() noexcept
+        {
+            index++;
+            return *this;
+        }
+        iterator operator++(int) noexcept
+        {
+            auto copy = this;
+            index++;
+            return copy;
+        }
+        iterator& operator--() noexcept
+        {
+            index--;
+            return *this;
+        }
+        iterator operator--(int) noexcept
+        {
+            auto copy = this;
+            index--;
+            return copy;
+        }
+        iterator& operator+=(difference_type d) noexcept
+        {
+            index += d;
+            return *this;
+        }
+        iterator operator+(difference_type d) const noexcept
+        {
+            auto copy = this;
+            return copy += d;
+        }
+        iterator& operator-=(difference_type d) noexcept
+        {
+            index -= d;
+            return *this;
+        }
+        iterator operator-(difference_type d) const noexcept
+        {
+            auto copy = this;
+            return copy -= d;
+        }
+        difference_type operator-(const iterator& other) const noexcept
+        {
+            return index - other.index;
+        }
+
+    private:
+        const AnimatedProperty* prop;
+        int index;
+    };
+
     AnimatedProperty(
         Object* object,
         const QString& name,
@@ -336,10 +439,10 @@ public:
         return QVariant::fromValue(get_at(time));
     }
 
-    keyframe_type* set_keyframe(FrameTime time, const QVariant& val) override
+    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr) override
     {
         if ( auto v = detail::variant_cast<Type>(val) )
-            return static_cast<model::AnimatedProperty<Type>*>(this)->set_keyframe(time, *v);
+            return static_cast<model::AnimatedProperty<Type>*>(this)->set_keyframe(time, *v, info);
         return nullptr;
     }
 
@@ -367,9 +470,10 @@ public:
         {
             if ( (*it)->time() == time )
             {
+                int index = it - keyframes_.begin();
                 keyframes_.erase(it);
-                emit this->keyframe_removed(it - keyframes_.begin());
-                value_changed();
+                emit this->keyframe_removed(index);
+                on_keyframe_updated(time, index-1, index);
                 return true;
             }
         }
@@ -399,7 +503,7 @@ public:
         return true;
     }
 
-    keyframe_type* set_keyframe(FrameTime time, reference value)
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
     {
         // First keyframe
         if ( keyframes_.empty() )
@@ -409,6 +513,8 @@ public:
             emitter(this->object(), value_);
             keyframes_.push_back(std::make_unique<keyframe_type>(time, value));
             emit this->keyframe_added(0, keyframes_.back().get());
+            if ( info )
+                *info = {true, 0};
             return keyframes_.back().get();
         }
 
@@ -429,6 +535,9 @@ public:
         {
             kf->set(value);
             emit this->keyframe_updated(index, kf);
+            on_keyframe_updated(time, index-1, index+1);
+            if ( info )
+                *info = {false, index};
             return kf;
         }
 
@@ -437,6 +546,9 @@ public:
         {
             keyframes_.insert(keyframes_.begin(), std::make_unique<keyframe_type>(time, value));
             emit this->keyframe_added(0, keyframes_.front().get());
+            on_keyframe_updated(time, -1, 1);
+            if ( info )
+                *info = {true, 0};
             return keyframes_.front().get();
         }
 
@@ -446,6 +558,9 @@ public:
             std::make_unique<keyframe_type>(time, value)
         );
         emit this->keyframe_added(index + 1, it->get());
+        on_keyframe_updated(time, index, index+2);
+        if ( info )
+            *info = {true, index+1};
         return it->get();
     }
 
@@ -504,6 +619,9 @@ public:
         return new_index;
     }
 
+    iterator begin() const { return iterator{this, 0}; }
+    iterator end() const { return iterator{this, int(keyframes_.size())}; }
+
 protected:
     void on_set_time(FrameTime time) override
     {
@@ -515,6 +633,29 @@ protected:
             emitter(this->object(), value_);
         }
         mismatched_ = false;
+    }
+
+    void on_keyframe_updated(FrameTime kf_time, int prev_index, int next_index)
+    {
+        auto cur_time = time();
+        // if no keyframes or the current keyframe is being modified => update value_
+        if ( !keyframes_.empty() && cur_time != kf_time )
+        {
+            if ( kf_time > cur_time )
+            {
+                // if the modified keyframe is far ahead => don't update value_
+                if ( prev_index >= 0 && keyframes_[prev_index]->time() > cur_time )
+                    return;
+            }
+            else
+            {
+                // if the modified keyframe is far behind => don't update value_
+                if ( next_index < int(keyframes_.size()) && keyframes_[next_index]->time() < cur_time )
+                    return;
+            }
+        }
+
+        on_set_time(cur_time);
     }
 
     std::pair<const keyframe_type*, value_type> get_at_impl(FrameTime time) const
@@ -585,9 +726,9 @@ public:
 
     using AnimatableBase::set_keyframe;
 
-    keyframe_type* set_keyframe(FrameTime time, reference value)
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
     {
-        return detail::AnimatedProperty<float>::set_keyframe(time, bound(value));
+        return detail::AnimatedProperty<float>::set_keyframe(time, bound(value), info);
     }
 
 private:

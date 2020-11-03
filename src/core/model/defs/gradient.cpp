@@ -4,7 +4,12 @@
 
 #include "model/document.hpp"
 #include "model/defs/defs.hpp"
+
 #include "command/object_list_commands.hpp"
+#include "command/animation_commands.hpp"
+#include "command/undo_macro_guard.hpp"
+
+#include "utils/sort_gradient.hpp"
 
 
 GLAXNIMATE_OBJECT_IMPL(model::GradientColors)
@@ -58,6 +63,71 @@ bool model::GradientColors::remove_if_unused(bool clean_lists)
     return false;
 }
 
+static QVariant split_gradient(QGradientStops colors, int index, float factor, const QColor& new_color)
+{
+    int before = index;
+    int after = index+1;
+
+    if ( index >= colors.size() )
+    {
+        before = colors.size() - 2;
+        after = colors.size() - 1;
+    }
+
+    colors.push_back({
+        math::lerp(colors[before].first, colors[after].first, factor),
+        new_color.isValid() ? new_color : math::lerp(colors[before].second, colors[after].second, 0.5)
+    });
+
+    utils::sort_gradient(colors);
+    return QVariant::fromValue(colors);
+}
+
+void model::GradientColors::split_segment(int segment_index, float factor, const QColor& new_color)
+{
+    command::UndoMacroGuard guard(tr("Add color to %1").arg(name.get()), document());
+    if ( segment_index < 0 )
+        segment_index = 0;
+
+    if ( !colors.animated() )
+    {
+        colors.set_undoable(split_gradient(colors.get(), segment_index, factor, new_color));
+    }
+    else
+    {
+        for ( const auto& kf : colors )
+            document()->push_command(new command::SetKeyframe(
+                &colors, kf.time(), split_gradient(kf.get(), segment_index, factor, new_color), true
+            ));
+    }
+}
+
+void model::GradientColors::remove_stop(int index)
+{
+    command::UndoMacroGuard guard(tr("Remove color from %1").arg(name.get()), document());
+
+    if ( index < 0 )
+        index = 0;
+
+    if ( !colors.animated() )
+    {
+        auto stops = colors.get();
+        stops.erase(std::min(stops.begin() + index, stops.end()));
+        colors.set_undoable(QVariant::fromValue(stops));
+    }
+    else
+    {
+        for ( const auto& kf : colors )
+        {
+            auto stops = kf.get();
+            stops.erase(std::min(stops.begin() + index, stops.end()));
+
+            document()->push_command(new command::SetKeyframe(
+                &colors, kf.time(), QVariant::fromValue(stops), true
+            ));
+        }
+    }
+}
 
 std::vector<model::ReferenceTarget *> model::Gradient::valid_refs() const
 {
