@@ -122,6 +122,44 @@ QMenu* menu_ref_property(const QIcon& icon, const QString& text, QWidget* parent
     return menu;
 }
 
+template<class ToType>
+class ConvertGroupType
+{
+public:
+    ConvertGroupType(model::Group* from)
+        : from(from), owner(static_cast<model::ShapeListProperty*>(from->docnode_parent()->get_property("shapes")))
+    {}
+
+    void operator()()
+    {
+        auto to = new ToType(from->document());
+        std::unique_ptr<model::ShapeElement> uto(to);
+
+        for ( auto prop : to->properties() )
+        {
+            if ( prop != &to->uuid && prop != &to->shapes )
+            {
+                if ( auto src = from->get_property(prop->name()) )
+                    prop->assign_from(src);
+            }
+        }
+
+        command::UndoMacroGuard guard(NodeMenu::tr("Convert %1 to %2").arg(from->name.get()).arg(to->type_name_human()), from->document());
+        from->push_command(new command::AddObject(owner, std::move(uto), owner->index_of(from)));
+        std::vector<model::ShapeElement*> shapes;
+        shapes.reserve(from->shapes.size());
+        for ( const auto& shape : from->shapes )
+            shapes.push_back(shape.get());
+        for ( std::size_t i = 0; i < shapes.size(); i++ )
+            from->push_command(new command::MoveObject(shapes[i], &from->shapes, &to->shapes, i));
+        from->push_command(new command::RemoveObject<model::ShapeElement>(from, owner));
+    }
+
+private:
+    model::Group* from;
+    model::ShapeListProperty* owner;
+};
+
 } // namespace
 
 
@@ -168,6 +206,11 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
         if ( auto lay = qobject_cast<model::Layer*>(shape) )
         {
             addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), tr("Parent"), this, &lay->parent)->menuAction());
+            addAction(QIcon::fromTheme("object-group"), tr("Convert to Group"), this, ConvertGroupType<model::Group>(lay));
+        }
+        else if ( auto grp = qobject_cast<model::Group*>(shape) )
+        {
+            addAction(QIcon::fromTheme("folder"), tr("Convert to Layer"), this, ConvertGroupType<model::Layer>(grp));
         }
         else if ( auto image = qobject_cast<model::Image*>(shape) )
         {

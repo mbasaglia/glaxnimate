@@ -5,6 +5,7 @@
     * Adding or removing gradient stops will affect all keyframes
     * Options on what to do with layers when re-timing a document
     * Adding new keyframes will preserve easing across the affected keyframes
+    * Menu action to convert between Layers and Groups
 * I/O:
     * Support for rendering and loading animated GIF and WebP
 * Scripting:
