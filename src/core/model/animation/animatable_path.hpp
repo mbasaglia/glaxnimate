@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+
 #include "animatable.hpp"
 #include "math/bezier/bezier.hpp"
 
@@ -76,6 +78,8 @@ public:
     void set_closed(bool closed);
 
     Q_INVOKABLE void split_segment(int index, qreal factor);
+    Q_INVOKABLE void remove_point(int index);
+    void remove_points(const std::set<int>& indices);
 };
 
 } // namespace detail

@@ -136,7 +136,9 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(current_document->main()->shapes[0]));
 
     current_document->set_io_options(options);
-    ui.play_controls->set_range(current_document->main()->animation->first_frame.get(), current_document->main()->animation->last_frame.get());
+    auto first_frame = current_document->main()->animation->first_frame.get();
+    ui.play_controls->set_range(first_frame, current_document->main()->animation->last_frame.get());
+    current_document->set_current_time(first_frame);
 
     if ( !autosave_load && QFileInfo(backup_name()).exists() )
     {

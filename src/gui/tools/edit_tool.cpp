@@ -1,5 +1,7 @@
 #include "edit_tool.hpp"
 
+#include <algorithm>
+
 #include <QMenu>
 #include <QPointer>
 
@@ -405,16 +407,25 @@ public:
         if ( item->selected_indices().empty() )
             return;
 
-        const auto& bez = item->bezier();
-        math::bezier::Bezier new_bez;
-        new_bez.set_closed(bez.closed());
+        auto prop = item->target_property();
+        int sz1 = item->selected_indices().size() + 1;
+        if ( sz1 >= item->bezier().size() && std::all_of(prop->begin(), prop->end(), [sz1](const auto& kf){ return sz1 > kf.get().size(); }) )
+        {
+            // At the moment it always is a Path, but it might change in the future (ie: masks)
+            if ( auto path = item->target_object()->cast<model::Path>() )
+            {
+                item->target_object()->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
+                return;
+            }
+        }
 
-        for ( int i = 0; i < bez.size(); i++ )
-            if ( !item->selected_indices().count(i) )
-                new_bez.push_back(bez[i]);
+        auto bez = item->bezier();
+        prop->remove_points(item->selected_indices());
 
         if ( dissolve && item->selected_indices().size() == 1 )
         {
+            math::bezier::Bezier new_bez = prop->get();
+
             int index = *item->selected_indices().begin();
             if ( bez.closed() || (index > 0 && index < bez.size() - 1) )
             {
@@ -437,21 +448,10 @@ public:
 
                 new_bez.set_segment(index-1, approx);
             }
+            prop->set_undoable(QVariant::fromValue(new_bez));
         }
 
         item->clear_selected_indices();
-
-        if ( new_bez.size() < 2 && !item->target_property()->animated() )
-        {
-            // At the moment it always is a Path, but it might change in the future (ie: masks)
-            if ( auto path = item->target_object()->cast<model::Path>() )
-            {
-                item->target_object()->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
-                return;
-            }
-        }
-
-        item->target_property()->set_undoable(QVariant::fromValue(new_bez));
     }
 
     void delete_nodes(bool dissolve)

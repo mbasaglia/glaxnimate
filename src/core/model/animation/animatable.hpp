@@ -1,6 +1,8 @@
 #pragma once
 
 #include <limits>
+#include <iterator>
+
 #include <QVariant>
 #include <QList>
 
@@ -293,6 +295,98 @@ public:
     using value_type = typename Keyframe<Type>::value_type;
     using reference = typename Keyframe<Type>::reference;
 
+    class iterator
+    {
+    public:
+        using value_type = keyframe_type;
+        using pointer = const value_type*;
+        using reference = const value_type&;
+        using difference_type = int;
+        using iterator_category = std::random_access_iterator_tag;
+
+        iterator(const AnimatedProperty* prop, int index) noexcept
+        : prop(prop), index(index) {}
+
+        reference operator*() const { return *prop->keyframes_[index]; }
+        pointer operator->() const { return prop->keyframes_[index].get(); }
+
+        bool operator==(const iterator& other) const noexcept
+        {
+            return prop == other.prop && index == other.index;
+        }
+        bool operator!=(const iterator& other) const noexcept
+        {
+            return prop != other.prop || index != other.index;
+        }
+        bool operator<=(const iterator& other) const noexcept
+        {
+            return prop < other.prop || (prop == other.prop && index <= other.index);
+        }
+        bool operator<(const iterator& other) const noexcept
+        {
+            return prop < other.prop || (prop == other.prop && index < other.index);
+        }
+        bool operator>=(const iterator& other) const noexcept
+        {
+            return prop > other.prop || (prop == other.prop && index >= other.index);
+        }
+        bool operator>(const iterator& other) const noexcept
+        {
+            return prop > other.prop || (prop == other.prop && index > other.index);
+        }
+
+        iterator& operator++() noexcept
+        {
+            index++;
+            return *this;
+        }
+        iterator operator++(int) noexcept
+        {
+            auto copy = this;
+            index++;
+            return copy;
+        }
+        iterator& operator--() noexcept
+        {
+            index--;
+            return *this;
+        }
+        iterator operator--(int) noexcept
+        {
+            auto copy = this;
+            index--;
+            return copy;
+        }
+        iterator& operator+=(difference_type d) noexcept
+        {
+            index += d;
+            return *this;
+        }
+        iterator operator+(difference_type d) const noexcept
+        {
+            auto copy = this;
+            return copy += d;
+        }
+        iterator& operator-=(difference_type d) noexcept
+        {
+            index -= d;
+            return *this;
+        }
+        iterator operator-(difference_type d) const noexcept
+        {
+            auto copy = this;
+            return copy -= d;
+        }
+        difference_type operator-(const iterator& other) const noexcept
+        {
+            return index - other.index;
+        }
+
+    private:
+        const AnimatedProperty* prop;
+        int index;
+    };
+
     AnimatedProperty(
         Object* object,
         const QString& name,
@@ -367,9 +461,10 @@ public:
         {
             if ( (*it)->time() == time )
             {
+                int index = it - keyframes_.begin();
                 keyframes_.erase(it);
-                emit this->keyframe_removed(it - keyframes_.begin());
-                value_changed();
+                emit this->keyframe_removed(index);
+                on_keyframe_updated(time, index-1, index);
                 return true;
             }
         }
@@ -429,6 +524,7 @@ public:
         {
             kf->set(value);
             emit this->keyframe_updated(index, kf);
+            on_keyframe_updated(time, index-1, index+1);
             return kf;
         }
 
@@ -437,6 +533,7 @@ public:
         {
             keyframes_.insert(keyframes_.begin(), std::make_unique<keyframe_type>(time, value));
             emit this->keyframe_added(0, keyframes_.front().get());
+            on_keyframe_updated(time, -1, 1);
             return keyframes_.front().get();
         }
 
@@ -446,6 +543,7 @@ public:
             std::make_unique<keyframe_type>(time, value)
         );
         emit this->keyframe_added(index + 1, it->get());
+        on_keyframe_updated(time, index, index+2);
         return it->get();
     }
 
@@ -504,6 +602,9 @@ public:
         return new_index;
     }
 
+    iterator begin() const { return iterator{this, 0}; }
+    iterator end() const { return iterator{this, int(keyframes_.size())}; }
+
 protected:
     void on_set_time(FrameTime time) override
     {
@@ -515,6 +616,29 @@ protected:
             emitter(this->object(), value_);
         }
         mismatched_ = false;
+    }
+
+    void on_keyframe_updated(FrameTime kf_time, int prev_index, int next_index)
+    {
+        auto cur_time = time();
+        // if no keyframes or the current keyframe is being modified => update value_
+        if ( !keyframes_.empty() && cur_time != kf_time )
+        {
+            if ( kf_time > cur_time )
+            {
+                // if the modified keyframe is far ahead => don't update value_
+                if ( prev_index >= 0 && keyframes_[prev_index]->time() > cur_time )
+                    return;
+            }
+            else
+            {
+                // if the modified keyframe is far behind => don't update value_
+                if ( next_index < int(keyframes_.size()) && keyframes_[next_index]->time() < cur_time )
+                    return;
+            }
+        }
+
+        on_set_time(cur_time);
     }
 
     std::pair<const keyframe_type*, value_type> get_at_impl(FrameTime time) const

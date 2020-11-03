@@ -1,5 +1,7 @@
 ## 0.2.1
 
+* Editing:
+    * Adding or removing bezier nodes will affect all keyframes
 * I/O:
     * Support for rendering and loading animated GIF and WebP
 * Scripting:

@@ -169,7 +169,6 @@ QString command::SetMultipleAnimated::auto_name(model::AnimatableBase* prop)
 }
 
 
-
 command::SetKeyframeTransition::SetKeyframeTransition(
     model::AnimatableBase* prop,
     int keyframe_index,
