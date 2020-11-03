@@ -3,6 +3,7 @@
 * Editing:
     * Adding or removing bezier nodes will affect all keyframes
     * Adding or removing gradient stops will affect all keyframes
+    * Options on what to do with layers when re-timing a document
 * I/O:
     * Support for rendering and loading animated GIF and WebP
 * Scripting:

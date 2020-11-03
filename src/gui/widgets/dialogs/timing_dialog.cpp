@@ -6,6 +6,7 @@
 #include <QEvent>
 
 #include "command/undo_macro_guard.hpp"
+#include "model/simple_visitor.hpp"
 
 class TimingDialog::Private
 {
@@ -68,10 +69,13 @@ void TimingDialog::btn_clicked(QAbstractButton* button)
     {
         command::UndoMacroGuard guard(tr("Change Animation Properties"), d->document);
 
-        d->document->main()->animation->last_frame.set_undoable(
-            d->document->main()->animation->first_frame.get() +
-            d->ui.spin_frames->value()
-        );
+        qreal last_frame = d->document->main()->animation->first_frame.get() + d->ui.spin_frames->value();
+        d->document->main()->animation->last_frame.set_undoable(last_frame);
+
+        model::simple_visit<model::Layer>(d->document->main(), true, [last_frame](model::Layer* layer){
+            if ( layer->animation->last_frame.get() > last_frame )
+                layer->animation->last_frame.set(last_frame);
+        });
 
         d->document->main()->fps.set(d->ui.spin_fps->value());
     }
