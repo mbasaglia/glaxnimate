@@ -15,7 +15,6 @@
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/undo_macro_guard.hpp"
-#include "utils/sort_gradient.hpp"
 
 #include "graphics/bezier_item.hpp"
 #include "graphics/item_data.hpp"
@@ -316,29 +315,11 @@ public:
 
 
         menu.addAction(QIcon::fromTheme("list-add"), tr("Add Stop"), gradient_colors, [gradient_colors, index]{
-            auto colors = gradient_colors->colors.get();
-            int before = index;
-            int after = index+1;
-
-            if ( index >= colors.size() )
-            {
-                before = colors.size() - 2;
-                after = colors.size() - 1;
-            }
-
-            colors.push_back({
-                (colors[before].first + colors[after].first) / 2,
-                math::lerp(colors[before].second, colors[after].second, 0.5)
-            });
-
-            utils::sort_gradient(colors);
-            gradient_colors->colors.set_undoable(QVariant::fromValue(colors));
+            gradient_colors->split_segment(index);
         });
 
         menu.addAction(QIcon::fromTheme("list-remove"), tr("Remove Stop"), gradient_colors, [gradient_colors, index]{
-            auto colors = gradient_colors->colors.get();
-            colors.erase(colors.begin() + index);
-            gradient_colors->colors.set_undoable(QVariant::fromValue(colors));
+            gradient_colors->remove_stop(index);
         });
 
     }

@@ -226,6 +226,8 @@ public:
                         kf->transition().set_hold(true);
                     }
                 }
+
+                return true;
             }
         }
 
