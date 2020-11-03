@@ -29,6 +29,14 @@ private:
     QVariant before;
     QVariant after;
     bool had_before;
+    bool calculated = false;
+    int insert_index = -1;
+    QPointF handle_b1;
+    QPointF handle_b2;
+    QPointF handle_l1;
+    QPointF handle_l2;
+    QPointF handle_r1;
+    QPointF handle_r2;
 };
 
 class RemoveKeyframeTime : public QUndoCommand

@@ -4,6 +4,7 @@
     * Adding or removing bezier nodes will affect all keyframes
     * Adding or removing gradient stops will affect all keyframes
     * Options on what to do with layers when re-timing a document
+    * Adding new keyframes will preserve easing across the affected keyframes
 * I/O:
     * Support for rendering and loading animated GIF and WebP
 * Scripting:

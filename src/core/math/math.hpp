@@ -57,4 +57,17 @@ constexpr  inline const T &bound(const T &vmin, const T &val, const T &vmax) noe
 
 template<class T> constexpr inline T abs(T t) noexcept { return t < 0 ? -t : t; }
 
+/**
+ * \brief Reverses linear interpolation
+ * \param a First value interpolated from
+ * \param b Second value interpolated from
+ * \param c Interpolation result
+ * \pre a < b && a <= c <= b
+ * \returns Factor \p f so that lerp(a, b, f) == c
+ */
+template<class T> constexpr qreal unlerp(const T& a, const T& b, const T& c)
+{
+    return qreal(c-a) / qreal(b-a);
+}
+
 } // namespace math

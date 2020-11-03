@@ -67,6 +67,12 @@ public:
         Mismatch        ///< Value is animated and the current value doesn't match the animated value
     };
 
+    struct SetKeyframeInfo
+    {
+        bool insertion;
+        int index;
+    };
+
     using BaseProperty::BaseProperty;
 
     virtual ~AnimatableBase() = default;
@@ -88,11 +94,14 @@ public:
 
     /**
      * \brief Sets a value at a keyframe
+     * \param time  Time to set the value at
+     * \param value Value to set
+     * \param info  If not nullptr, it will be written to with information about what has been node
      * \post value(time) == \p value && animate() == true
      * \return The keyframe or nullptr if it couldn't be added.
      * If there is already a keyframe at \p time the returned value might be an existing keyframe
      */
-    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value) = 0;
+    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value, SetKeyframeInfo* info = nullptr) = 0;
 
     /**
      * \brief Removes the keyframe at index \p i
@@ -430,10 +439,10 @@ public:
         return QVariant::fromValue(get_at(time));
     }
 
-    keyframe_type* set_keyframe(FrameTime time, const QVariant& val) override
+    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr) override
     {
         if ( auto v = detail::variant_cast<Type>(val) )
-            return static_cast<model::AnimatedProperty<Type>*>(this)->set_keyframe(time, *v);
+            return static_cast<model::AnimatedProperty<Type>*>(this)->set_keyframe(time, *v, info);
         return nullptr;
     }
 
@@ -494,7 +503,7 @@ public:
         return true;
     }
 
-    keyframe_type* set_keyframe(FrameTime time, reference value)
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
     {
         // First keyframe
         if ( keyframes_.empty() )
@@ -504,6 +513,8 @@ public:
             emitter(this->object(), value_);
             keyframes_.push_back(std::make_unique<keyframe_type>(time, value));
             emit this->keyframe_added(0, keyframes_.back().get());
+            if ( info )
+                *info = {true, 0};
             return keyframes_.back().get();
         }
 
@@ -525,6 +536,8 @@ public:
             kf->set(value);
             emit this->keyframe_updated(index, kf);
             on_keyframe_updated(time, index-1, index+1);
+            if ( info )
+                *info = {false, index};
             return kf;
         }
 
@@ -534,6 +547,8 @@ public:
             keyframes_.insert(keyframes_.begin(), std::make_unique<keyframe_type>(time, value));
             emit this->keyframe_added(0, keyframes_.front().get());
             on_keyframe_updated(time, -1, 1);
+            if ( info )
+                *info = {true, 0};
             return keyframes_.front().get();
         }
 
@@ -544,6 +559,8 @@ public:
         );
         emit this->keyframe_added(index + 1, it->get());
         on_keyframe_updated(time, index, index+2);
+        if ( info )
+            *info = {true, index+1};
         return it->get();
     }
 
@@ -709,9 +726,9 @@ public:
 
     using AnimatableBase::set_keyframe;
 
-    keyframe_type* set_keyframe(FrameTime time, reference value)
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
     {
-        return detail::AnimatedProperty<float>::set_keyframe(time, bound(value));
+        return detail::AnimatedProperty<float>::set_keyframe(time, bound(value), info);
     }
 
 private:

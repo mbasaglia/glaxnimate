@@ -21,11 +21,79 @@ void command::SetKeyframe::undo()
         prop->set_keyframe(time, before);
     else
         prop->remove_keyframe_at_time(time);
+
+    if ( insert_index > 0 )
+    {
+        prop->keyframe(insert_index-1)->transition().set_before_handle(handle_b1);
+        prop->keyframe(insert_index-1)->transition().set_after_handle(handle_b2);
+    }
 }
 
 void command::SetKeyframe::redo()
 {
-    prop->set_keyframe(time, after);
+    model::AnimatableBase::SetKeyframeInfo info;
+    auto kf = prop->set_keyframe(time, after, &info);
+    if ( !calculated )
+    {
+        if ( kf && info.insertion && info.index > 0 && info.index + 1 < prop->keyframe_count() )
+        {
+            insert_index = info.index;
+            auto kf_before = prop->keyframe(info.index - 1);
+            auto kf_after = prop->keyframe(info.index + 1);
+            auto orig_transition = kf_before->transition().bezier();
+            handle_b1 = orig_transition.points()[1];
+            handle_b2 = orig_transition.points()[2];
+
+            qreal x = math::unlerp(kf_before->time(), kf_after->time(), kf->time());
+            qreal t = kf_before->transition().bezier_parameter(x);
+            if ( t == 0 )
+            {
+                handle_l1 = handle_r1 = kf_before->transition().before_handle();
+                handle_l2 = handle_r2 = kf_before->transition().after_handle();
+            }
+            else if ( t < 1 )
+            {
+                qreal y = kf_before->transition().lerp_factor(x);
+                math::bezier::BezierSegment left, right;
+                std::tie(left, right) = orig_transition.split(t);
+
+                qreal left_factor_x = 1 / x;
+                qreal left_factor_y = 1 / y;
+                handle_l1 =  {
+                    left[1].x() * left_factor_x,
+                    left[1].y() * left_factor_y
+                };
+                handle_l2 =  {
+                    left[2].x() * left_factor_x,
+                    left[2].y() * left_factor_y
+                };
+
+                qreal right_factor_x = 1 / (1-x);
+                qreal right_factor_y = 1 / (1-y);
+                handle_r1 =  {
+                    (right[1].x() - x) * right_factor_x,
+                    (right[1].y() - y) * right_factor_y
+                };
+                handle_r2 =  {
+                    (right[2].x() - x) * right_factor_x,
+                    (right[2].y() - y) * right_factor_y
+                };
+            }
+            else
+            {
+                insert_index = -1;
+            }
+        }
+    }
+
+    if ( insert_index > 0 )
+    {
+        prop->keyframe(insert_index-1)->transition().set_before_handle(handle_l1);
+        prop->keyframe(insert_index-1)->transition().set_after_handle(handle_l2);
+        prop->keyframe(insert_index)->transition().set_before_handle(handle_r1);
+        prop->keyframe(insert_index)->transition().set_after_handle(handle_r2);
+    }
+
 }
 
 bool command::SetKeyframe::merge_with(const SetKeyframe& other)
