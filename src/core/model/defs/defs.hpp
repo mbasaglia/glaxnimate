@@ -32,6 +32,8 @@ public:
     Q_INVOKABLE model::NamedColor* add_color(const QColor& color, const QString& name = {});
     Q_INVOKABLE model::Bitmap* add_image_file(const QString& filename, bool embed);
     Q_INVOKABLE model::Bitmap* add_image(const QImage& image, const QString& store_as = "png");
+    Q_INVOKABLE model::GradientColors* add_gradient_colors(int index = -1);
+    Q_INVOKABLE model::Gradient* add_gradient(int index = -1);
 
 signals:
     void color_added(int position, model::NamedColor* color);

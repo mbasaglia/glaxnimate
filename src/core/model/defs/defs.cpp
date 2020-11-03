@@ -93,3 +93,19 @@ model::Bitmap * model::Defs::add_image(const QImage& qimage, const QString& stor
     push_command(new command::AddObject(&images, std::move(image), images.size()));
     return ptr;
 }
+
+model::GradientColors* model::Defs::add_gradient_colors(int index)
+{
+    model::GradientColors *ptr = new model::GradientColors(document());
+    ptr->name.set(ptr->type_name_human());
+    push_command(new command::AddObject(&gradient_colors, std::unique_ptr<model::GradientColors>(ptr), index));
+    return ptr;
+}
+
+model::Gradient* model::Defs::add_gradient(int index)
+{
+    model::Gradient *ptr = new model::Gradient(document());
+    ptr->name.set(ptr->type_name_human());
+    push_command(new command::AddObject(&gradients, std::unique_ptr<model::Gradient>(ptr), index));
+    return ptr;
+}

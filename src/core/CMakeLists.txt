@@ -71,6 +71,10 @@ utils/gzip.cpp
 python/python.cpp
 )
 
+if ( WIN32 )
+    LIST(APPEND SOURCES python/winweird.cpp)
+endif()
+
 find_package(ZLIB REQUIRED)
 
 configure_file(

@@ -107,6 +107,8 @@ public:
         return instance;
     }
 
+    static Object* static_build(const QString& name, model::Document* doc);
+
 private:
     ~Factory() = default;
     Factory() = default;

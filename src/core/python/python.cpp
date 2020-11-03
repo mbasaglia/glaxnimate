@@ -1,5 +1,7 @@
 #include <pybind11/operators.h>
 
+#include <QtGlobal>
+
 #include "app/log/log.hpp"
 
 #include "model/document.hpp"
@@ -249,6 +251,13 @@ public:
     }
 };
 
+#ifdef Q_OS_WIN
+#define WINWEIRD_DECL(ItemT) \
+    command::AddObject<ItemT, model::ObjectListProperty<ItemT>>* \
+        winweird(model::ObjectListProperty<ItemT>* propptr, ItemT* object, int index);
+
+WINWEIRD_DECL(model::ShapeElement)
+#endif
 
 template<class Owner, class PropT, class ItemT = typename PropT::value_type>
 class CreateObject
@@ -267,7 +276,7 @@ public:
 private:
     ItemT* create(model::Document* doc, PropT& prop, const QString& clsname, int index) const
     {
-        auto obj = model::Factory::instance().build(clsname, doc);
+        auto obj = model::Factory::static_build(clsname, doc);
         if ( !obj )
             return nullptr;
 
@@ -283,34 +292,14 @@ private:
             doc->set_best_name(static_cast<model::DocumentNode*>(cast));
         else
             cast->name.set(cast->type_name_human());
+
+#ifdef Q_OS_WIN
+        doc->push_command(winweird(&prop, cast, index));
+#else
         doc->push_command(new command::AddObject<ItemT, PropT>(&prop, std::unique_ptr<ItemT>(cast), index));
+#endif
+
         return cast;
-    }
-
-    PtrMem ptr;
-};
-
-template<class Owner, class PropT, class ItemT = typename PropT::value_type>
-class CreateFixedObject
-{
-public:
-    using PtrMem = PropT Owner::*;
-
-    CreateFixedObject(PtrMem p) noexcept : ptr(p) {}
-
-    ItemT* operator() (Owner* owner, int index = -1) const
-    {
-        return create(owner->document(), owner->*ptr, index);
-    }
-
-
-private:
-    ItemT* create(model::Document* doc, PropT& prop, int index) const
-    {
-        auto ptr = new ItemT(doc);
-        ptr->name.set(ptr->type_name_human());
-        doc->push_command(new command::AddObject<ItemT, PropT>(&prop, std::unique_ptr<ItemT>(ptr), index));
-        return ptr;
     }
 
     PtrMem ptr;
@@ -412,11 +401,7 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::GradientColors, model::Asset>(defs);
     register_from_meta<model::Gradient, model::BrushStyle>(defs);
     register_from_meta<model::Bitmap, model::Asset>(defs);
-    register_from_meta<model::Defs, model::Object>(defs)
-        .def("add_gradient", CreateFixedObject(&model::Defs::gradients), no_own, py::arg("index") = -1)
-        .def("add_gradient_colors", CreateFixedObject(&model::Defs::gradient_colors), no_own, py::arg("index") = -1)
-    ;
-
+    register_from_meta<model::Defs, model::Object>(defs);
 
     py::module shapes = model.def_submodule("shapes", "");
     register_from_meta<model::ShapeElement, model::DocumentNode>(shapes);
