@@ -8,6 +8,8 @@
     * Menu action to convert between Layers and Groups
 * I/O:
     * Support for rendering and loading animated GIF and WebP
+* UI:
+    * Dialog to edit document metadata
 * Scripting:
     * Ability to load Qt designer UI files.
     * Rendering to PIL images
