@@ -70,11 +70,8 @@ plugin/io.cpp
 utils/gzip.cpp
 
 python/python.cpp
+python/miscdefs.cpp
 )
-
-if ( WIN32 )
-    LIST(APPEND SOURCES python/winweird.cpp)
-endif()
 
 find_package(ZLIB REQUIRED)
 
