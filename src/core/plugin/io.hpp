@@ -20,6 +20,7 @@ public:
     QStringList extensions;
     PluginScript open;
     PluginScript save;
+    bool auto_open;
 
     io::ImportExport* registered = nullptr;
 };
@@ -39,6 +40,7 @@ public:
     io::SettingList save_settings() const override { return service->save.settings; }
 
 protected:
+    bool auto_open() const override { return service->auto_open; }
     bool on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
     bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
 

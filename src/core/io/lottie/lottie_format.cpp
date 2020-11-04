@@ -802,6 +802,7 @@ public:
 
     void load(const QJsonObject& json)
     {
+        load_assets(json["assets"].toArray());
         load_composition(json, document->main());
     }
 
@@ -901,6 +902,13 @@ private:
                 fill->color.set(QColor(json["sc"].toString()));
                 layer->shapes.insert(std::move(fill));
                 break;
+            }
+            case 2: // image layer
+            {
+                auto image = std::make_unique<model::Image>(document);
+                image->image.set(bitmap_ids[json["refId"].toString()]);
+                layer->shapes.insert(std::move(image));
+                props.erase("refId");
             }
             case 3: // empty
                 break;
@@ -1274,6 +1282,31 @@ private:
         return {jobj["x"].toDouble(), jobj["y"].toDouble()};
     }
 
+    void load_assets(const QJsonArray& assets)
+    {
+        for ( const auto& assetv : assets )
+        {
+            QJsonObject asset = assetv.toObject();
+            if ( asset.contains("e") && asset.contains("p") && asset.contains("w") )
+                load_asset_bitmap(asset);
+        }
+    }
+
+    void load_asset_bitmap(const QJsonObject& asset)
+    {
+        auto bmp = document->defs()->images.insert(std::make_unique<model::Bitmap>(document));
+        bitmap_ids[asset["id"].toString()] = bmp;
+        if ( asset["e"].toInt() )
+        {
+            bmp->from_url(asset["p"].toString());
+        }
+        else
+        {
+            QDir dir(asset["u"].toString());
+            bmp->from_file(dir.filePath(asset["p"].toString()));
+        }
+    }
+
     model::Document* document;
     io::lottie::LottieFormat* format;
     QMap<int, model::Layer*> layer_indices;
@@ -1281,6 +1314,7 @@ private:
     std::vector<std::pair<Object*, QJsonObject>> deferred;
     model::Composition* composition = nullptr;
     app::log::Log logger{"Lottie Import"};
+    QMap<QString, model::Bitmap*> bitmap_ids;
 };
 
 } // namespace

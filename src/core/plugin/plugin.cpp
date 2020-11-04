@@ -210,6 +210,8 @@ void plugin::PluginRegistry::load_service ( const QJsonObject& jobj, plugin::Plu
             return;
         }
 
+        svc->auto_open = jobj["auto_open"].toBool(true);
+
         data.services.emplace_back(std::move(svc));
     }
     else

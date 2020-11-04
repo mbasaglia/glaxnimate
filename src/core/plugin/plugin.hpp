@@ -61,7 +61,7 @@ public:
             if ( icon.startsWith("theme:") )
                 return QIcon::fromTheme(icon.mid(6));
             if ( data_.dir.exists(icon) )
-                return QIcon(data_.dir.cleanPath(icon));
+                return QIcon(data_.dir.absoluteFilePath(icon));
         }
         return icon_;
     }

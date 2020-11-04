@@ -37,28 +37,19 @@ public:
     }
 
     /**
-     * @pre @p file is open appropriately && @p setting_values contains all the settings correctly && can_open()
+     * @pre @p setting_values contains all the settings correctly && can_open()
      */
     bool open(QIODevice& file, const QString& filename,
-                      model::Document* document, const QVariantMap& setting_values)
-    {
-        bool ok = on_open(file, filename, document, setting_values);
-        emit completed(ok);
-        return ok;
-    }
+        model::Document* document, const QVariantMap& setting_values);
 
     /**
-     * @pre @p file is open appropriately && @p setting_values contains all the settings correctly && can_open()
+     * @pre @p setting_values contains all the settings correctly && can_open()
      */
     bool save(QIODevice& file, const QString& filename,
-                      model::Document* document, const QVariantMap& setting_values)
-    {
-        bool ok = on_save(file, filename, document, setting_values);
-        emit completed(ok);
-        return ok;
-    }
+        model::Document* document, const QVariantMap& setting_values);
 
     Q_INVOKABLE QByteArray save(model::Document* document, const QVariantMap& setting_values={}, const QString& filename = "data");
+    Q_INVOKABLE bool load(model::Document* document, const QByteArray& data, const QVariantMap& setting_values={}, const QString& filename = "data");
 
 
     virtual QString name() const = 0;
@@ -89,6 +80,8 @@ public:
     }
 
 protected:
+    virtual bool auto_open() const { return true; }
+
     virtual bool on_open(QIODevice& file, const QString& filename,
                       model::Document* document, const QVariantMap& setting_values)
     {

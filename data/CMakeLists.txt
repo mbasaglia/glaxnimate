@@ -70,3 +70,9 @@ plugin(
     AnimatedRaster
     animated_raster.py
 )
+
+plugin(
+    dotLottie
+    dotlottie.py
+    icon.svg
+)

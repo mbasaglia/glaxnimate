@@ -8,6 +8,7 @@
     * Menu action to convert between Layers and Groups
 * I/O:
     * Support for rendering and loading animated GIF and WebP
+    * Open/Save dotLottie animations
 * UI:
     * Dialog to edit document metadata
 * Scripting:
@@ -19,6 +20,8 @@
     * Fixed inconsistencies with closed/open bezier paths
     * Removed spurious warning when loading animated gradients
     * Duplicating shapes correctly sets up the duplicate's animations
+    * File-based plugin icons are correctly loaded
+    * Images are properly loaded from lottie files
 
 ## 0.2.0
 

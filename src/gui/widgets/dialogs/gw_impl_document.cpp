@@ -119,8 +119,6 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 {
     setup_document(options.filename);
     QFile file(options.filename);
-    if ( !file.open(QFile::ReadOnly) )
-        return false;
 
     current_document_has_file = true;
     dialog_import_status->reset(options.format, options.filename);
@@ -239,7 +237,6 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
     }
 
     QFile file(opts.filename);
-    file.open(QFile::WriteOnly);
     dialog_export_status->reset(opts.format, opts.filename);
     if ( !opts.format->save(file, opts.filename, current_document.get(), opts.settings) )
         return false;

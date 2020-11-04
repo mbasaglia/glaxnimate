@@ -1,0 +1,66 @@
+{
+    "name": "dotLottie",
+    "author": "Glax",
+    "engine": "python",
+    "version": 1,
+    "icon": "icon.svg",
+    "services": [
+        {
+            "type": "format",
+            "name": "dotLottie",
+            "extensions": ["lottie"],
+            "auto_open": false,
+            "open": {
+                "module": "dotlottie",
+                "function": "open_dotlottie"
+            },
+            "save": {
+                "module": "dotlottie",
+                "function": "save_dotlottie",
+                "settings": [
+                    {
+                        "name": "id",
+                        "label": "Id",
+                        "type": "string",
+                        "default": "",
+                        "description": "ID of the animation"
+                    },
+                    {
+                        "name": "append",
+                        "label": "Append",
+                        "type": "bool",
+                        "default": false,
+                        "description": "Append animation to existing archive"
+                    },
+                    {
+                        "name": "speed",
+                        "label": "Speed",
+                        "type": "float",
+                        "default": 1,
+                        "min": 0.01,
+                        "max": 100,
+                        "description": "Playback speed"
+                    },
+                    {
+                        "name": "theme_color",
+                        "label": "Theme Color",
+                        "type": "color",
+                        "default": "#ffffff"
+                    },
+                    {
+                        "name": "loop",
+                        "label": "Loop",
+                        "type": "bool",
+                        "default": true
+                    },
+                    {
+                        "name": "pack_assets",
+                        "label": "Pack Assets",
+                        "type": "bool",
+                        "default": true
+                    }
+                ]
+            }
+        }
+    ]
+}

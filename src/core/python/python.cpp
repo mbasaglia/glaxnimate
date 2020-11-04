@@ -1,6 +1,7 @@
 #include <pybind11/operators.h>
 
 #include <QtGlobal>
+#include <QGuiApplication>
 
 #include "app/log/log.hpp"
 
@@ -356,6 +357,7 @@ private:
     PtrMem ptr;
 };
 
+
 py::module define_detail(py::module& parent)
 {
     py::module detail = parent.def_submodule("__detail", "");
@@ -365,7 +367,20 @@ py::module define_detail(py::module& parent)
         .def("close", &QIODevice::close)
         .def_property_readonly("closed", [](const QIODevice& f){ return !f.isOpen(); })
         .def("readable", [](const QIODevice& f){ return f.openMode() & QIODevice::ReadOnly; })
-        .def("seek", &QIODevice::seek)
+        .def("seek", [](QIODevice& f, qint64 off, int whence){
+            switch ( whence ) {
+                case 0:
+                    f.seek(off);
+                    break;
+                case 1:
+                    f.seek(off + f.pos());
+                    break;
+                case 2:
+                    f.readAll();
+                    f.seek(off + f.pos());
+                    break;
+            }
+        }, py::arg("offset"), py::arg("whence") = 0)
         .def("seekable", [](const QIODevice& f){ return !f.isSequential(); } )
         .def("tell", &QIODevice::pos)
         .def("writable", [](const QIODevice& f){ return f.openMode() & QIODevice::WriteOnly; })
@@ -376,10 +391,58 @@ py::module define_detail(py::module& parent)
         }, py::arg("size") = qint64(-1))
         .def("readall", &QIODevice::readAll)
         .def("readline", [](QIODevice& f){ return f.readLine(); })
+        .def("open", [](QIODevice&f, const QString& mode){
+            QIODevice::OpenMode flags;
+            if ( mode.contains('w') )
+                flags |= QIODevice::WriteOnly;
+            if ( mode.contains('r') )
+                flags |= QIODevice::ReadOnly;
+            if ( mode.contains('a') )
+                flags |= QIODevice::Append|QIODevice::WriteOnly;
+            if ( !mode.contains('b') )
+                flags |= QIODevice::Text;
+            f.open(flags);
+        })
     ;
-    py::class_<QFile, QIODevice>(detail, "QFile");
+    py::class_<QFile, QIODevice>(detail, "QFile")
+        .def("flush", &QFile::flush)
+    ;
+
+    py::class_<QGuiApplication>(detail, "QGuiApplication");
 
     return detail;
+}
+
+class HeadlessManager
+{
+public:
+    void enter()
+    {
+        if ( !qGuiApp )
+            app = std::make_unique<QGuiApplication>(fake_argc, (char**)fake_argv);
+    }
+
+    void exit(const pybind11::args&)
+    {
+        app.reset();
+    }
+
+private:
+    std::unique_ptr<QGuiApplication> app;
+    int fake_argc;
+    const char* fake_argv = {""};
+};
+
+void define_environment(py::module& glaxnimate_module)
+{
+    py::module environment = glaxnimate_module.def_submodule("environment", "");
+
+    py::class_<HeadlessManager>(environment, "Headless")
+        .def(py::init<>())
+        .def("__enter__", &HeadlessManager::enter)
+        .def("__exit__", &HeadlessManager::exit)
+        .attr("__doc__") = "Context manager that initializes a headless environment"
+    ;
 }
 
 void register_py_module(py::module& glaxnimate_module)
@@ -389,12 +452,14 @@ void register_py_module(py::module& glaxnimate_module)
     define_utils(glaxnimate_module);
     define_log(glaxnimate_module);
     py::module detail = define_detail(glaxnimate_module);
+    define_environment(glaxnimate_module);
 
     // for some reason some classes arent seen without this o_O
     static std::vector<int> foo = {
         qMetaTypeId<model::ReferenceTarget*>(),
         qMetaTypeId<model::NamedColor*>(),
         qMetaTypeId<model::Bitmap*>(),
+        qMetaTypeId<model::Gradient*>(),
     };
 
     define_io(glaxnimate_module);

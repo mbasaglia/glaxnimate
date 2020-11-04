@@ -148,7 +148,7 @@ void GlaxnimateApp::on_initialize()
     QIcon::setThemeSearchPaths(search_paths);
 
     app::settings::Settings::instance().add_custom_group(std::make_unique<settings::PluginSettingsGroup>(QStringList{
-        "AnimatedRaster", "ReplaceColor"
+        "AnimatedRaster", "ReplaceColor", "dotLottie"
     }));
     app::settings::Settings::instance().add_custom_group(std::make_unique<settings::ClipboardSettings>());
 

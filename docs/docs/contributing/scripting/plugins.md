@@ -64,6 +64,7 @@ The service JSON object has the following fields:
 | `open`        |           | object | [Script object](#scripts) to execute on open |
 | `save`        |           | object | [Script object](#scripts) to execute on save |
 | `extensions`  | Required  | array  | Array of file extensions (without the dot)   |
+| `auto_open`   |           | bool   | If set to **false**, the file will not be opened before the plugin invokation |
 
 At least one between `open` and `save` must be present.
 

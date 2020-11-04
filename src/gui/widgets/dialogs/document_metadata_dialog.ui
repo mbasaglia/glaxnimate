@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DocumentMetadataDialog</class>
+ <widget class="QDialog" name="DocumentMetadataDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Document Metadata</string>
+  </property>
+  <property name="windowIcon">
+   <iconset theme="documentinfo">
+    <normaloff>.</normaloff>.</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTableWidget" name="table_widget">
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Value</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="button_box">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>table_widget</sender>
+   <signal>itemChanged(QTableWidgetItem*)</signal>
+   <receiver>DocumentMetadataDialog</receiver>
+   <slot>update_item(QTableWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>158</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>163</x>
+     <y>401</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_box</sender>
+   <signal>clicked(QAbstractButton*)</signal>
+   <receiver>DocumentMetadataDialog</receiver>
+   <slot>button_clicked(QAbstractButton*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>update_item(QTableWidgetItem*)</slot>
+  <slot>button_clicked(QAbstractButton*)</slot>
+ </slots>
+</ui>
