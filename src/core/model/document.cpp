@@ -48,7 +48,7 @@ model::MainComposition * model::Document::main()
     return &d->main;
 }
 
-QVariantMap & model::Document::metadata() const
+QVariantMap & model::Document::metadata()
 {
     return d->metadata;
 }
@@ -233,4 +233,9 @@ QImage model::Document::render_image(float time, QSize image_size) const
 QImage model::Document::render_image() const
 {
     return render_image(d->current_time, size());
+}
+
+void model::Document::set_metadata(const QVariantMap& meta)
+{
+    d->metadata = meta;
 }

@@ -23,6 +23,7 @@ class Document : public QObject
     Q_PROPERTY(Object* defs READ defs_obj)
     Q_PROPERTY(QSize size READ size)
     Q_PROPERTY(QRectF rect READ rect)
+    Q_PROPERTY(QVariantMap metadata READ metadata WRITE set_metadata)
 
 public:
     explicit Document(const QString& filename);
@@ -30,7 +31,8 @@ public:
 
     QString filename() const;
 
-    QVariantMap& metadata() const;
+    QVariantMap& metadata();
+    void set_metadata(const QVariantMap& meta);
 
     MainComposition* main();
 

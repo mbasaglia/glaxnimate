@@ -47,6 +47,8 @@ widgets/dialogs/resize_dialog.ui
 widgets/dialogs/timing_dialog.cpp
 widgets/dialogs/timing_dialog.ui
 widgets/dialogs/plugin_ui_dialog.cpp
+widgets/dialogs/document_metadata_dialog.cpp
+widgets/dialogs/document_metadata_dialog.ui
 
 widgets/timeline/keyframe_transition_widget.cpp
 widgets/timeline/keyframe_editor_widget.cpp

@@ -9,6 +9,7 @@
 #include "widgets/dialogs/about_dialog.hpp"
 #include "widgets/dialogs/resize_dialog.hpp"
 #include "widgets/dialogs/timing_dialog.hpp"
+#include "widgets/dialogs/document_metadata_dialog.hpp"
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
 #include "widgets/node_menu.hpp"
@@ -98,6 +99,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_frame_last, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_last);
     connect(ui.play_controls, &FrameControlsWidget::loop_changed, ui.action_play_loop, &QAction::setChecked);
     connect(ui.action_play_loop, &QAction::triggered, ui.play_controls, &FrameControlsWidget::set_loop);
+    connect(ui.action_metadata, &QAction::triggered, parent, [this]{
+        DocumentMetadataDialog(current_document.get(), this->parent).exec();
+    });
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
