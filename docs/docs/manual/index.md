@@ -2,6 +2,22 @@ Authors: Mattia Basaglia
 
 # Introduction
 
+## User Interface
+
+![Main Window](/img/screenshots/main_window.png)
+
+Glaxnimate user interface has the following components:
+
+* The [canvas](ui/canvas.md) is the area in the middle of the window, where you
+  can preview and edit the animation.
+* Around the canvas are the [dockable views](ui/docks.md), that give quick access
+  to all the main functionality of Glaxnimate.
+  These can be hidden and re-arranged to fit your taste.
+* On top are the [menu and tool bars](ui/menus.md), these work like in most user interfaces.
+
+You can click on the links to the various pages to get more details on each interface component.
+
+
 ## Core Concepts
 
 ### Vector graphics
@@ -28,18 +44,3 @@ for each keyframe and the animation is automatically created from those.
 
 * [Inbetweening](https://en.wikipedia.org/wiki/Inbetweening)
 * [Vector Graphics](https://en.wikipedia.org/wiki/Vector_graphics)
-
-## User Interface
-
-![Main Window](/img/screenshots/main_window.png)
-
-Glaxnimate user interface has the following components:
-
-* The [canvas](ui/canvas.md) is the area in the middle of the window, where you
-  can preview and edit the animation.
-* Around the canvas are the [dockable views](ui/docks.md), that give quick access
-  to all the main functionality of Glaxnimate.
-  These can be hidden and re-arranged to fit your taste.
-* On top are the [menu and tool bars](ui/menus.md), these work like in most user interfaces.
-
-You can click on the links to the various pages to get more details on each interface component.

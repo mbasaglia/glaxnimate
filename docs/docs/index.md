@@ -77,7 +77,6 @@ no_nav: 1
 </style>
 
 
-
 <img src="/img/logo.svg" width="128" />
 
 Glaxnimate is a simple and fast vector graphics animation program.
@@ -89,7 +88,7 @@ Glaxnimate is a simple and fast vector graphics animation program.
 * [Experimental Version](download.md#development-snapshots)
 * [Source](contributing/read_me.md)
 
-<img src="/img/screenshots/main_window.png" style="max-width: 100vw;"/>
+<a href="manual/"><img src="/img/screenshots/main_window.png" style="max-width: 100vw;"/></a>
 
 ## Features
 
@@ -111,13 +110,19 @@ Glaxnimate is a simple and fast vector graphics animation program.
     <a href="manual/formats/" class="card">
         <img src="/img/ui/icons/internet-web-browser.svg" />
         <heading>Export animations for the web</heading>
-        <span>Support for Lottie animations (animated SVG coming soon)</span>
+        <span>Support for Lottie animations, GIF, WebP, animated SVG coming soon</span>
+    </a>
+    <a href="contributing/scripting/" class="card">
+        <img src="/img/ui/icons/preferences-plugin.svg" />
+        <heading>Easily Extensible</heading>
+        <span>You can use Python to manipulate animation and creating plugins.</span>
     </a>
 </div>
 
-## Learn
+## Learn More
 
 * [User Manual](manual/index.md)
+* [Scripting Guide](contributing/scripting/index.md)
 
 ## Get Involved
 

@@ -30,7 +30,7 @@ with document.macro("Resize"):
 
 Sometimes a plugin might need to show a dialog to the user.
 
-Todo so, you can create a UI file using [Qt Designer](https://doc.qt.io/qt-5/qtdesigner-manual.html).
+To do so, you can create a UI file using [Qt Designer](https://doc.qt.io/qt-5/qtdesigner-manual.html).
 
 You can then load that file and display the dialog through the `window` object:
 
@@ -42,7 +42,7 @@ def plugin_main(window, document, settings):
     # Load the dialog from myform.ui
     dialog = window.create_dialog("myform.ui")
 
-    # If there's an error, it will be logged
+    # Check if the dialog has been loaded correctly
     if not dialog:
         return
 
