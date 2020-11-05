@@ -123,6 +123,7 @@ public:
     void set_color_def(model::BrushStyle* sty, bool secondary);
     QString get_open_image_file(const QString& title, const QString& dir);
     void set_brush_reference(model::BrushStyle* sty, bool secondary);
+    void trace_dialog(model::ReferenceTarget* object);
 
     // Model
     model::Composition* current_composition();

@@ -68,6 +68,7 @@ plugin/action.cpp
 plugin/io.cpp
 
 utils/gzip.cpp
+utils/trace.cpp
 
 python/python.cpp
 python/miscdefs.cpp
@@ -82,8 +83,9 @@ configure_file(
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
+include_directories(${Potrace_INCLUDE_DIRS})
 
 add_library(${LIB_NAME_CORE} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt5::Xml)
+target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt5::Xml ${Potrace_LIBRARIES})
 set_property(TARGET ${LIB_NAME_CORE} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 target_include_directories(${LIB_NAME_CORE} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

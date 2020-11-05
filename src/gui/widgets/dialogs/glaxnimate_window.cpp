@@ -436,3 +436,9 @@ PluginUiDialog * GlaxnimateWindow::create_dialog(const QString& ui_file) const
 {
     return d->create_dialog(ui_file);
 }
+
+
+void GlaxnimateWindow::trace_dialog(model::ReferenceTarget* object)
+{
+    return d->trace_dialog(object);
+}

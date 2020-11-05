@@ -103,6 +103,7 @@
     </property>
     <addaction name="separator"/>
     <addaction name="action_object_to_path"/>
+    <addaction name="action_trace_bitmap"/>
     <addaction name="separator"/>
     <addaction name="action_path_add"/>
     <addaction name="action_path_subtract"/>
@@ -1674,10 +1675,19 @@
   </action>
   <action name="action_metadata">
    <property name="icon">
-    <iconset theme="documentinfo"/>
+    <iconset theme="documentinfo">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Metadata...</string>
+   </property>
+  </action>
+  <action name="action_trace_bitmap">
+   <property name="icon">
+    <iconset theme="bitmap-trace"/>
+   </property>
+   <property name="text">
+    <string>Trace Bitmap...</string>
    </property>
   </action>
  </widget>

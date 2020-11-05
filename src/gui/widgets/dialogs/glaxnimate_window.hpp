@@ -105,6 +105,8 @@ public:
     bool execute(const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& in_args) override;
     QVariant get_global(const QString & name) override;
 
+    void trace_dialog(model::ReferenceTarget* object);
+
 public slots:
     void document_save();
     void document_save_as();

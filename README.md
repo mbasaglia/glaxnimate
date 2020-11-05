@@ -15,6 +15,7 @@ Dependencies
 * CMake >= 3.5
 * Python3
 * ZLib
+* Potrace
 
 
 Getting the Latest Code
@@ -50,7 +51,7 @@ It will produce the executable `bin/glaxnimate` relative to the build directory
 
 Install the dependencies:
 
-    apt-get install -y g++ cmake qtbase5-dev libpython3-dev zlib1g-dev
+    apt-get install -y g++ cmake qtbase5-dev libpython3-dev zlib1g-dev libpotrace-dev
 
 The generic `cmake` commands listed above should work.
 

@@ -4,12 +4,15 @@
 
 #include "tools/base.hpp"
 #include "model/shapes/group.hpp"
+#include "model/shapes/image.hpp"
 
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/dialogs/about_dialog.hpp"
 #include "widgets/dialogs/resize_dialog.hpp"
 #include "widgets/dialogs/timing_dialog.hpp"
 #include "widgets/dialogs/document_metadata_dialog.hpp"
+#include "widgets/dialogs/trace_dialog.hpp"
+
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
 #include "widgets/node_menu.hpp"
@@ -101,6 +104,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_play_loop, &QAction::triggered, ui.play_controls, &FrameControlsWidget::set_loop);
     connect(ui.action_metadata, &QAction::triggered, parent, [this]{
         DocumentMetadataDialog(current_document.get(), this->parent).exec();
+    });
+    connect(ui.action_trace_bitmap, &QAction::triggered, parent, [this]{
+        trace_dialog(current_shape());
     });
 
     // Menu Views
@@ -525,3 +531,44 @@ void GlaxnimateWindow::Private::status_message(const QString& message, int durat
     ui.status_bar->showMessage(message, duration);
 }
 
+void GlaxnimateWindow::Private::trace_dialog(model::ReferenceTarget* object)
+{
+    model::Image* bmp = 0;
+    if ( object )
+    {
+        bmp = object->cast<model::Image>();
+    }
+
+    if ( !bmp )
+    {
+        for ( const auto& sel : scene.selection() )
+        {
+            if ( auto image = sel->cast<model::Image>() )
+            {
+                if ( bmp )
+                {
+                    show_warning(tr("Trace Bitmap"), tr("Only select one image"), app::log::Info);
+                    return;
+                }
+                bmp = image;
+            }
+        }
+
+        if ( !bmp )
+        {
+            show_warning(tr("Trace Bitmap"), tr("You need to select an image to trace"), app::log::Info);
+            return;
+        }
+    }
+
+    if ( !bmp->image.get() )
+    {
+        show_warning(tr("Trace Bitmap"), tr("You selected an image with no data"), app::log::Info);
+        return;
+    }
+
+    TraceDialog dialog(bmp, parent);
+    dialog.exec();
+    if ( auto created = dialog.created() )
+        ui.view_document_node->setCurrentIndex(document_node_model.node_index(created));
+}

@@ -62,3 +62,8 @@ void model::Transform::set_transform_matrix(const QTransform& t)
 
     scale.set(QVector2D(sx, sy));
 }
+
+void model::Transform::copy(model::Transform* other)
+{
+    other->clone_into(this);
+}

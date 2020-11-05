@@ -24,6 +24,7 @@ public:
 
     QTransform transform_matrix(FrameTime f) const;
     void set_transform_matrix(const QTransform& t);
+    void copy(Transform* other);
 };
 
 
