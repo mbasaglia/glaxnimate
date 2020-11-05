@@ -8,6 +8,8 @@
 #include <QUrl>
 
 #include "glaxnimate_app.hpp"
+#include "utils/trace.hpp"
+#include "utils/gzip.hpp"
 
 AboutDialog::AboutDialog(QWidget* parent)
     : QDialog(parent), d(new Ui::AboutDialog)
@@ -34,6 +36,8 @@ AboutDialog::AboutDialog(QWidget* parent)
     d->view_system->setItem(row++, 0, new QTableWidgetItem(QSysInfo::currentCpuArchitecture()));
     d->view_system->setItem(row++, 0, new QTableWidgetItem(QT_VERSION_STR));
     d->view_system->setItem(row++, 0, new QTableWidgetItem(qVersion()));
+    d->view_system->setItem(row++, 0, new QTableWidgetItem(utils::gzip::zlib_version()));
+    d->view_system->setItem(row++, 0, new QTableWidgetItem(utils::trace::Tracer::potrace_version()));
 
 }
 

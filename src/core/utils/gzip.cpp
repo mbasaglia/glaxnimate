@@ -338,3 +338,12 @@ qint64 utils::gzip::GzipStream::ouput_size() const
 {
     return d->total_size;
 }
+
+#ifdef zlib_version
+#undef zlib_version
+#endif
+
+QString utils::gzip::zlib_version()
+{
+    return zlibVersion();
+}

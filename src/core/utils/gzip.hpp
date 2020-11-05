@@ -38,4 +38,6 @@ private:
     std::unique_ptr<Private> d;
 };
 
+QString zlib_version();
+
 } // namespace utils::gzip

@@ -187,7 +187,7 @@ p, li { white-space: pre-wrap; }
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>136</width>
+            <width>448</width>
             <height>432</height>
            </rect>
           </property>
@@ -375,6 +375,16 @@ p, li { white-space: pre-wrap; }
          <row>
           <property name="text">
            <string>System Qt</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>ZLib</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Potrace</string>
           </property>
          </row>
          <column>
