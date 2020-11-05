@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>594</width>
-    <height>440</height>
+    <width>771</width>
+    <height>585</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,12 +42,17 @@
            <widget class="QComboBox" name="combo_mode">
             <item>
              <property name="text">
-              <string>Monochrome</string>
+              <string>Transparency</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Color</string>
+              <string>Closest Color</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Extract Colors</string>
              </property>
             </item>
             <item>
@@ -66,12 +71,15 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QStackedWidget" name="stackedWidget">
+            <widget class="QStackedWidget" name="stacked_widget">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="currentIndex">
+              <number>1</number>
              </property>
              <widget class="QWidget" name="page">
               <layout class="QFormLayout" name="formLayout_2">
@@ -113,9 +121,106 @@
                  </property>
                 </widget>
                </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Threshold</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QSpinBox" name="spin_alpha_threshold">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximum">
+                  <number>255</number>
+                 </property>
+                 <property name="value">
+                  <number>128</number>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="page_2"/>
+             <widget class="QWidget" name="page_2">
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <item>
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Colors</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QListWidget" name="list_colors"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <item>
+                  <widget class="QToolButton" name="toolButton">
+                   <property name="toolTip">
+                    <string>Add Color</string>
+                   </property>
+                   <property name="text">
+                    <string>Add</string>
+                   </property>
+                   <property name="icon">
+                    <iconset theme="list-add"/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="toolButton_2">
+                   <property name="toolTip">
+                    <string>Remove Color</string>
+                   </property>
+                   <property name="text">
+                    <string>Remove</string>
+                   </property>
+                   <property name="icon">
+                    <iconset theme="list-remove"/>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <item>
+                  <widget class="QPushButton" name="pushButton_2">
+                   <property name="text">
+                    <string>Detect Colors</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="spin_color_count">
+                   <property name="maximum">
+                    <number>32</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
           </layout>
@@ -241,7 +346,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>84</x>
-     <y>420</y>
+     <y>565</y>
     </hint>
     <hint type="destinationlabel">
      <x>99</x>
@@ -257,7 +362,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>566</x>
-     <y>419</y>
+     <y>564</y>
     </hint>
     <hint type="destinationlabel">
      <x>521</x>
@@ -273,11 +378,75 @@
    <hints>
     <hint type="sourcelabel">
      <x>356</x>
-     <y>412</y>
+     <y>557</y>
     </hint>
     <hint type="destinationlabel">
      <x>386</x>
-     <y>599</y>
+     <y>584</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>combo_mode</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>change_mode(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>185</x>
+     <y>14</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>140</x>
+     <y>584</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>add_color()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>47</x>
+     <y>347</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>179</x>
+     <y>729</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>remove_color()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>334</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>339</x>
+     <y>753</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>auto_colors()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>90</x>
+     <y>388</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>761</y>
     </hint>
    </hints>
   </connection>
@@ -285,5 +454,9 @@
  <slots>
   <slot>update_preview()</slot>
   <slot>apply()</slot>
+  <slot>change_mode(int)</slot>
+  <slot>add_color()</slot>
+  <slot>remove_color()</slot>
+  <slot>auto_colors()</slot>
  </slots>
 </ui>

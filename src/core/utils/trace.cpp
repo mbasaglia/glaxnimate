@@ -89,27 +89,43 @@ public:
         }
     };
 
-//     bool threshold_alpha() const noexcept;
-//     bool threshold_color() const noexcept;
-
     static void progress_callback(double progress, void* privdata)
     {
         reinterpret_cast<Tracer*>(privdata)->progress(progress);
     }
 
-    QImage image;
-    int min_alpha = 128;
+    int get_bit_alpha(const uchar* pixel) const noexcept
+    {
+        return pixel[3] >= target_alpha;
+    }
+
+    int get_bit_alpha_neg(const uchar* pixel) const noexcept
+    {
+        return pixel[3] < target_alpha;
+    }
+
+    int get_bit_color(const uchar* pixel) const noexcept
+    {
+        return qRgba(pixel[0], pixel[1], pixel[2], pixel[3]) == target_color;
+    }
+
+    int get_bit_index(const uchar* pixel) const noexcept
+    {
+        return *pixel == target_color;
+    }
+
+    using callback_type = int (Private::*)(const uchar*) const noexcept;
+    callback_type callback = &Private::get_bit_alpha;
+    int target_alpha = 128;
     QRgb target_color;
+    QImage image;
     potrace_param_s params;
 };
 
 utils::trace::Tracer::Tracer(const QImage& image, const TraceOptions& options)
     : d(std::make_unique<Private>())
 {
-    if ( image.format() != QImage::Format_RGBA8888 )
-        d->image = image.convertToFormat(QImage::Format_RGBA8888);
-    else
-        d->image = image;
+    d->image = image;
     d->params = *options.d->params;
     d->params.progress = {
         &Private::progress_callback,
@@ -124,18 +140,24 @@ utils::trace::Tracer::~Tracer() = default;
 
 bool utils::trace::Tracer::trace(math::bezier::MultiBezier& mbez)
 {
+
+    QImage::Format target_format = d->callback == &Private::get_bit_index ? QImage::Format_Indexed8 : QImage::Format_RGBA8888;
+    if ( d->image.format() != target_format )
+        d->image = d->image.convertToFormat(target_format);
+
     int line_len = d->image.width() / sizeof(potrace_word);
     if ( d->image.width() % sizeof(potrace_word) )
         line_len += 1;
 
     static constexpr int N = sizeof(potrace_word) * CHAR_BIT;
+    const int x_off = d->callback == &Private::get_bit_index ? 1 : 4;
     std::vector<potrace_word> data(line_len * d->image.height(), 0);
     for ( int y = 0, h = d->image.height(), w = d->image.width(); y < h; y++ )
     {
         auto line = d->image.constScanLine(y);
         for ( int x = 0; x < w; x++ )
         {
-            (data.data() + y*line_len)[x/N] |= (1ul << (N-1-x%N)) * (line[x*4+3] > 128);
+            (data.data() + y*line_len)[x/N] |= (1ul << (N-1-x%N)) * (d.get()->*d->callback)(line+x*x_off);
         }
     }
 
@@ -167,9 +189,26 @@ QString utils::trace::Tracer::potrace_version()
     return ::potrace_version();
 }
 
-
 void utils::trace::Tracer::set_progress_range(double min, double max)
 {
     d->params.progress.min = min;
     d->params.progress.max = max;
+}
+
+void utils::trace::Tracer::set_target_alpha(int threshold, bool invert)
+{
+    d->target_alpha = threshold;
+    d->callback = invert ? &Private::get_bit_alpha_neg : &Private::get_bit_alpha;
+}
+
+void utils::trace::Tracer::set_target_color(const QColor& color)
+{
+    d->target_color = color.rgba();
+    d->callback = &Private::get_bit_color;
+}
+
+void utils::trace::Tracer::set_target_index(uchar index)
+{
+    d->target_color = index;
+    d->callback = &Private::get_bit_index;
 }

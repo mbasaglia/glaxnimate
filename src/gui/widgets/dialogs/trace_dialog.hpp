@@ -25,6 +25,10 @@ protected:
 private slots:
     void update_preview();
     void apply();
+    void change_mode(int mode);
+    void add_color();
+    void remove_color();
+    void auto_colors();
 
 private:
     class Private;

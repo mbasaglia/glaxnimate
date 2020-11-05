@@ -38,6 +38,10 @@ public:
 
     void set_progress_range(double min, double max);
 
+    void set_target_alpha(int threshold, bool invert);
+    void set_target_color(const QColor& color);
+    void set_target_index(uchar index);
+
 signals:
     void progress(double value);
 
