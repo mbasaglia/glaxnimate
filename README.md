@@ -78,7 +78,7 @@ Install [MSYS2](https://www.msys2.org/) and run these commands on it:
     pacman --noconfirm -Sy
     pacman --noconfirm -Su
     # Restart msys2 before continuing
-    pacman --noconfirm -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-qt5 mingw-w64-x86_64-zlib mingw-w64-x86_64-cmake mingw-w64-x86_64-python
+    pacman --noconfirm -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-qt5 mingw-w64-x86_64-zlib mingw-w64-x86_64-cmake mingw-w64-x86_64-python mingw-w64-x86_64-potrace
 
     # Build
     # cd to where the code is
