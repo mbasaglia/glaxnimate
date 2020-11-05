@@ -158,7 +158,7 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
         d->source_image = d->source_image.convertToFormat(QImage::Format_RGBA8888);
 
     d->ui.preview->setScene(&d->scene);
-    d->ui.spin_min_area->setValue(d->options.min_area());
+    d->ui.spin_min_area->setValue(qMax(d->options.min_area(), d->source_image.width() / 32));
     d->ui.spin_smoothness->setValue(d->options.smoothness() * 100);
     d->ui.progress_bar->hide();
 
@@ -215,9 +215,9 @@ void TraceDialog::apply()
         {
             auto group = std::make_unique<model::Group>(d->image->document());
             group->name.set(result.color.name());
-            group->set_group_color(result.color);
+            group->group_color.set(result.color);
             d->result_to_shapes(group->shapes, result);
-            layer->shapes.insert(std::move(group));
+            layer->shapes.insert(std::move(group), 0);
         }
     }
 
@@ -265,10 +265,13 @@ void TraceDialog::remove_color()
 
 void TraceDialog::auto_colors()
 {
+    /// \todo k-means or something
+
     std::unordered_map<QRgb, int> count;
     const uchar* data = d->source_image.constBits();
 
-    for ( int i = 0, c = d->source_image.width() * d->source_image.height(); i < c; i++ )
+    int n_pixels = d->source_image.width() * d->source_image.height();
+    for ( int i = 0; i < n_pixels; i++ )
         if ( data[i*4+3] > 128 )
             ++count[qRgb(data[i*4], data[i*4+1], data[i*4+2])];
 
@@ -277,19 +280,20 @@ void TraceDialog::auto_colors()
     count.clear();
     std::sort(sortme.begin(), sortme.end(), [](const Pair& a, const Pair& b){ return a.second > b.second; });
 
-    for ( int i = 0; i < qMin<int>(sortme.size(), d->ui.spin_color_count->value()); i++ )
-    {
-        QColor c(sortme[i].first);
+    while ( d->ui.list_colors->model()->rowCount() )
+        d->ui.list_colors->model()->removeRow(0);
 
-        if ( i >= d->ui.list_colors->model()->rowCount() )
-        {
-            d->add_color(c);
-        }
-        else
-        {
-            auto item = d->ui.list_colors->item(i);
-            item->setData(Qt::EditRole, c);
-            item->setData(Qt::DisplayRole, c);
-        }
+    int n_colors = d->ui.spin_color_count->value();
+    if ( n_colors )
+    {
+        for ( int i = 0; i < qMin<int>(sortme.size(), n_colors); i++ )
+            d->add_color(QColor(sortme[i].first));
     }
+}
+
+void TraceDialog::resizeEvent(QResizeEvent* event)
+{
+    QDialog::resizeEvent(event);
+
+    d->ui.preview->fitInView(d->scene.sceneRect(), Qt::KeepAspectRatio);
 }

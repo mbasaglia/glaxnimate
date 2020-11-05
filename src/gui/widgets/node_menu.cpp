@@ -251,6 +251,11 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
                         image->image.set_undoable(QVariant::fromValue(img));
                 }
             });
+
+
+            addAction(QIcon::fromTheme("bitmap-trace"), tr("Trace Bitmap..."), this, [image, window]{
+                window->trace_dialog(image);
+            });
         }
     }
 }
