@@ -60,7 +60,7 @@ The generic `cmake` commands listed above should work.
 
 Install the dependencies with homebrew:
 
-    brew install cmake qt python
+    brew install cmake qt python potrace
 
 Build with `cmake`, specifying the Qt installation path:
 

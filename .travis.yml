@@ -15,6 +15,7 @@ jobs:
             #- brew list python || brew install python
             - brew upgrade python@3.8 || true
             - brew list makeicns || brew install makeicns
+            - brew list potrace || brew install potrace
         script:
             - mkdir build
             - cd build
