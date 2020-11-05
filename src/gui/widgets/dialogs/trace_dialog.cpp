@@ -215,6 +215,7 @@ void TraceDialog::apply()
         {
             auto group = std::make_unique<model::Group>(d->image->document());
             group->name.set(result.color.name());
+            group->set_group_color(result.color);
             d->result_to_shapes(group->shapes, result);
             layer->shapes.insert(std::move(group));
         }
