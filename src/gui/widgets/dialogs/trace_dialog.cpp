@@ -16,6 +16,7 @@
 #include "model/shapes/layer.hpp"
 #include "model/shapes/path.hpp"
 #include "model/shapes/fill.hpp"
+#include "model/shapes/stroke.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/rect.hpp"
 #include "utils/trace.hpp"
@@ -132,8 +133,14 @@ public:
         }
 
 
+        std::reverse(result.begin(), result.end());
         ui.progress_bar->hide();
         return result;
+    }
+
+    bool has_outline()
+    {
+        return ui.spin_outline->value() > 0 && (ui.combo_mode->currentIndex() == Mode::Closest || ui.combo_mode->currentIndex() == Mode::Exact);
     }
 
     void result_to_shapes(model::ShapeListProperty& prop, const TraceResult& result)
@@ -141,6 +148,14 @@ public:
         auto fill = std::make_unique<model::Fill>(image->document());
         fill->color.set(result.color);
         prop.insert(std::move(fill));
+
+        if ( has_outline() )
+        {
+            auto stroke = std::make_unique<model::Stroke>(image->document());
+            stroke->color.set(result.color);
+            stroke->width.set(ui.spin_outline->value());
+            prop.insert(std::move(stroke));
+        }
 
         for ( const auto& bez : result.bezier.beziers() )
         {
@@ -222,7 +237,13 @@ void TraceDialog::update_preview()
     for ( const auto& result : d->trace() )
     {
         if ( !result.bezier.beziers().empty() )
-            d->scene.addPath(result.bezier.painter_path(), Qt::NoPen, result.color);
+        {
+            QPen pen = Qt::NoPen;
+            if ( d->has_outline() )
+                pen = QPen(result.color, d->ui.spin_outline->value());
+
+            d->scene.addPath(result.bezier.painter_path(), pen, result.color);
+        }
 
         if ( !result.rects.empty() )
         {
@@ -255,7 +276,7 @@ void TraceDialog::apply()
             group->name.set(result.color.name());
             group->group_color.set(result.color);
             d->result_to_shapes(group->shapes, result);
-            layer->shapes.insert(std::move(group), 0);
+            layer->shapes.insert(std::move(group));
         }
     }
 

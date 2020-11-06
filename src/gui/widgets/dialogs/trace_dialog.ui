@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>771</width>
-    <height>626</height>
+    <height>660</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -156,7 +156,17 @@
                 </widget>
                </item>
                <item>
-                <widget class="QListWidget" name="list_colors"/>
+                <widget class="QListWidget" name="list_colors">
+                 <property name="dragEnabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="dragDropMode">
+                  <enum>QAbstractItemView::InternalMove</enum>
+                 </property>
+                 <property name="defaultDropAction">
+                  <enum>Qt::MoveAction</enum>
+                 </property>
+                </widget>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -204,15 +214,15 @@
                 </layout>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_6">
-                 <item>
-                  <widget class="QLabel" name="label_tolerance">
+                <layout class="QGridLayout" name="gridLayout">
+                 <item row="2" column="0">
+                  <widget class="QPushButton" name="pushButton_2">
                    <property name="text">
-                    <string>Tolerance</string>
+                    <string>Detect Colors</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
+                 <item row="0" column="1">
                   <widget class="QSpinBox" name="spin_tolerance">
                    <property name="minimum">
                     <number>0</number>
@@ -228,25 +238,38 @@
                    </property>
                   </widget>
                  </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_5">
-                 <item>
-                  <widget class="QPushButton" name="pushButton_2">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_tolerance">
                    <property name="text">
-                    <string>Detect Colors</string>
+                    <string>Tolerance</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
+                 <item row="2" column="1">
                   <widget class="QSpinBox" name="spin_color_count">
                    <property name="maximum">
                     <number>32</number>
                    </property>
                   </widget>
                  </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_9">
+                   <property name="text">
+                    <string>Outline</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QDoubleSpinBox" name="spin_outline">
+                   <property name="singleStep">
+                    <double>0.500000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_5"/>
                </item>
               </layout>
              </widget>
