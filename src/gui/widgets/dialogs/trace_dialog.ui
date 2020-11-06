@@ -250,13 +250,14 @@
                </item>
               </layout>
              </widget>
+             <widget class="QWidget" name="page_3"/>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupBox">
+         <widget class="QGroupBox" name="group_potrace">
           <property name="title">
            <string>Curve Options</string>
           </property>

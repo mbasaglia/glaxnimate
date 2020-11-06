@@ -43,6 +43,15 @@ void utils::trace::TraceOptions::set_smoothness(qreal smoothness)
     d->params->alphamax = smoothness * Private::alphamax_max;
 }
 
+static inline constexpr QRgb rgba888(const uchar* pixel) noexcept
+{
+    return qRgba(pixel[0], pixel[1], pixel[2], pixel[3]);
+}
+
+static inline constexpr uchar rgba888_alpha(const uchar* pixel) noexcept
+{
+    return pixel[3];
+}
 
 class utils::trace::Tracer::Private
 {
@@ -98,17 +107,17 @@ public:
 
     int get_bit_alpha(const uchar* pixel) const noexcept
     {
-        return pixel[3] >= target_alpha;
+        return rgba888_alpha(pixel) >= target_alpha;
     }
 
     int get_bit_alpha_neg(const uchar* pixel) const noexcept
     {
-        return pixel[3] < target_alpha;
+        return rgba888_alpha(pixel) < target_alpha;
     }
 
     int get_bit_color(const uchar* pixel) const noexcept
     {
-        return qRgba(pixel[0], pixel[1], pixel[2], pixel[3]) == target_color;
+        return rgba888(pixel) == target_color;
     }
 
     int get_bit_color_tolerance(const uchar* pixel) const noexcept
@@ -220,4 +229,113 @@ void utils::trace::Tracer::set_target_index(uchar index)
 {
     d->target_color = index;
     d->callback = &Private::get_bit_index;
+}
+
+
+struct PixelRect
+{
+    QRectF rect;
+    QRgb color;
+};
+
+struct PixelTraceData
+{
+    std::map<int, PixelRect*> last_rects;
+    QList<PixelRect> all_rects;
+
+    void merge_up(PixelRect* last_rect, std::map<int, PixelRect*>& rects)
+    {
+        if ( !last_rect )
+            return;
+
+        auto yrect = get_rect(last_rect->rect.left());
+        if ( yrect && yrect->rect.width() == last_rect->rect.width() && yrect->color == last_rect->color )
+        {
+            yrect->rect.setBottom(yrect->rect.bottom()+1);
+            rects[last_rect->rect.left()] = yrect;
+
+            for ( auto it = all_rects.begin(); it != all_rects.end(); ++it )
+                if ( &*it == last_rect )
+                {
+                    all_rects.erase(it);
+                    break;
+                }
+        }
+    }
+
+    PixelRect* get_rect(int left)
+    {
+        auto yrect = last_rects.find(left);
+        if ( yrect == last_rects.end() )
+            return nullptr;
+        return &*yrect->second;
+    }
+
+    PixelRect* add_rect(QRgb color, int x, int y)
+    {
+        all_rects.push_back({QRectF(x, y, 1, 1), color});
+        return &all_rects.back();
+    }
+
+};
+
+
+std::map<QRgb, std::vector<QRectF> > utils::trace::trace_pixels(QImage image)
+{
+    if ( image.format() != QImage::Format_RGBA8888 )
+        image = image.convertToFormat(QImage::Format_RGBA8888);
+
+    int w = image.width();
+    int h = image.height();
+
+    PixelTraceData data;
+
+    for ( int y = 0; y < h; y++ )
+    {
+        std::map<int, PixelRect*> rects;
+        QRgb last_color = 0;
+        PixelRect* last_rect = nullptr;
+
+        auto line = image.scanLine(y);
+        for ( int x = 0; x < w; x++ )
+        {
+            if ( rgba888_alpha(line+x*4) == 0 )
+            {
+                last_color = 0;
+                last_rect = nullptr;
+                continue;
+            }
+
+            QRgb colort = rgba888(line+x*4);
+
+            auto yrect = data.get_rect(x);
+
+            if ( colort == last_color )
+            {
+                last_rect->rect.setRight(last_rect->rect.right() + 1);
+            }
+            else if ( yrect && colort == yrect->color && yrect->rect.width() == 1 )
+            {
+                yrect->rect.setBottom(yrect->rect.bottom()+1);
+                rects[x] = yrect;
+                last_rect = nullptr;
+                colort = 0;
+            }
+            else
+            {
+                data.merge_up(last_rect, rects);
+                last_rect = data.add_rect(colort, x, y);
+                rects.emplace(x, last_rect);
+            }
+            last_color = colort;
+        }
+        data.merge_up(last_rect, rects);
+        std::swap(data.last_rects, rects);
+    }
+
+    std::map<QRgb, std::vector<QRectF> > traced;
+    for ( const auto& r : data.all_rects )
+        traced[r.color].push_back(r.rect);
+
+    return traced;
 }

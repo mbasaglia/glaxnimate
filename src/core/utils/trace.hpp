@@ -50,4 +50,6 @@ private:
     std::unique_ptr<Private> d;
 };
 
+std::map<QRgb, std::vector<QRectF>> trace_pixels(QImage image);
+
 } // namespace utils::trace

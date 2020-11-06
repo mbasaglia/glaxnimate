@@ -17,6 +17,7 @@
 #include "model/shapes/path.hpp"
 #include "model/shapes/fill.hpp"
 #include "model/shapes/image.hpp"
+#include "model/shapes/rect.hpp"
 #include "utils/trace.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
@@ -28,6 +29,7 @@ public:
     {
         QColor color;
         math::bezier::MultiBezier bezier;
+        std::vector<QRectF> rects;
     };
 
     enum Mode
@@ -103,6 +105,14 @@ public:
         }
     }
 
+    void trace_pixel(std::vector<TraceResult>& result)
+    {
+        auto pixdata = utils::trace::trace_pixels(source_image);
+        result.reserve(pixdata.size());
+        for ( const auto& p : pixdata )
+            result.push_back({p.first, {}, p.second});
+    }
+    
     std::vector<TraceResult> trace()
     {
         options.set_min_area(ui.spin_min_area->value());
@@ -118,6 +128,7 @@ public:
             case Mode::Alpha: trace_mono(result); break;
             case Mode::Closest: trace_closest(result); break;
             case Mode::Exact: trace_exact(result); break;
+            case Mode::Pixel: trace_pixel(result); break;
         }
 
 
@@ -136,6 +147,14 @@ public:
             auto path = std::make_unique<model::Path>(image->document());
             path->shape.set(bez);
             prop.insert(std::move(path));
+        }
+
+        for ( const auto& rect : result.rects )
+        {
+            auto shape = std::make_unique<model::Rect>(image->document());
+            shape->position.set(rect.center());
+            shape->size.set(rect.size());
+            prop.insert(std::move(shape));
         }
     }
 
@@ -172,12 +191,16 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     d->delegate.setSizeHintForColor({24, 24});
     d->ui.list_colors->setItemDelegate(&d->delegate);
 
-    auto item = static_cast<QStandardItemModel*>(d->ui.combo_mode->model())->item(Private::Pixel);
-    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
-    d->ui.combo_mode->setCurrentIndex(Private::Closest);
-
     d->ui.spin_color_count->setValue(4);
     auto_colors();
+
+    if ( d->source_image.width() > 128 || d->source_image.height() > 128 )
+    {
+        auto item = static_cast<QStandardItemModel*>(d->ui.combo_mode->model())->item(Private::Pixel);
+        item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+    }
+
+    d->ui.combo_mode->setCurrentIndex(Private::Closest);
 }
 
 TraceDialog::~TraceDialog() = default;
@@ -198,7 +221,14 @@ void TraceDialog::update_preview()
 
     for ( const auto& result : d->trace() )
     {
-        d->scene.addPath(result.bezier.painter_path(), Qt::NoPen, result.color);
+        if ( !result.bezier.beziers().empty() )
+            d->scene.addPath(result.bezier.painter_path(), Qt::NoPen, result.color);
+
+        if ( !result.rects.empty() )
+        {
+            for ( const auto& rect : result.rects )
+                d->scene.addRect(rect, Qt::NoPen, result.color);
+        }
     }
 
     d->fit_view();
@@ -247,9 +277,12 @@ void TraceDialog::change_mode(int mode)
 {
     if ( mode == Private::Alpha )
         d->ui.stacked_widget->setCurrentIndex(0);
+    else if ( mode == Private::Pixel )
+        d->ui.stacked_widget->setCurrentIndex(2);
     else
         d->ui.stacked_widget->setCurrentIndex(1);
 
+    d->ui.group_potrace->setEnabled(mode != Private::Pixel);
     d->ui.label_tolerance->setEnabled(mode == Private::Exact);
     d->ui.spin_tolerance->setEnabled(mode == Private::Exact);
 }

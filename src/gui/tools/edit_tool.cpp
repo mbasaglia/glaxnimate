@@ -459,7 +459,7 @@ public:
     DragMode drag_mode;
     QPointF rubber_p1;
     QPointF rubber_p2;
-    model::Shape* highlight = nullptr;
+    QPointer<model::Shape> highlight = nullptr;
     Selection selection;
 
     std::map<graphics::BezierItem*, PathCache> active;

@@ -23,6 +23,7 @@
     * Duplicating shapes correctly sets up the duplicate's animations
     * File-based plugin icons are correctly loaded
     * Images are properly loaded from lottie files
+    * Fixed crash when opening a document
 
 ## 0.2.0
 
