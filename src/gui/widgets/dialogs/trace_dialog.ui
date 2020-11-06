@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>771</width>
-    <height>585</height>
+    <height>626</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -169,7 +169,8 @@
                     <string>Add</string>
                    </property>
                    <property name="icon">
-                    <iconset theme="list-add"/>
+                    <iconset theme="list-add">
+                     <normaloff>.</normaloff>.</iconset>
                    </property>
                   </widget>
                  </item>
@@ -195,7 +196,35 @@
                     <string>Remove</string>
                    </property>
                    <property name="icon">
-                    <iconset theme="list-remove"/>
+                    <iconset theme="list-remove">
+                     <normaloff>.</normaloff>.</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                 <item>
+                  <widget class="QLabel" name="label_tolerance">
+                   <property name="text">
+                    <string>Tolerance</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="spin_tolerance">
+                   <property name="minimum">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <number>512</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>10</number>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
                    </property>
                   </widget>
                  </item>
@@ -285,34 +314,85 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QGraphicsView" name="preview"/>
-       </item>
-       <item>
-        <widget class="QProgressBar" name="progress_bar">
-         <property name="value">
-          <number>24</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QGroupBox" name="">
+       <property name="title">
+        <string>Preview</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QGraphicsView" name="preview"/>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="progress_bar">
+          <property name="value">
+           <number>24</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Update</string>
+            </property>
+            <property name="icon">
+             <iconset theme="document-preview">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Zoom</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spin_preview_zoom">
+            <property name="suffix">
+             <string>%</string>
+            </property>
+            <property name="decimals">
+             <number>0</number>
+            </property>
+            <property name="minimum">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>10000.000000000000000</double>
+            </property>
+            <property name="stepType">
+             <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+            </property>
+            <property name="value">
+             <double>100.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>Update Preview</string>
-       </property>
-       <property name="icon">
-        <iconset theme="document-preview">
-         <normaloff>.</normaloff>.</iconset>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="standardButtons">
@@ -345,44 +425,12 @@
    <slot>update_preview()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>84</x>
-     <y>565</y>
+     <x>396</x>
+     <y>572</y>
     </hint>
     <hint type="destinationlabel">
      <x>99</x>
      <y>534</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>566</x>
-     <y>564</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>521</x>
-     <y>568</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>apply()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>356</x>
-     <y>557</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>386</x>
-     <y>584</y>
     </hint>
    </hints>
   </connection>
@@ -414,7 +462,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>179</x>
-     <y>729</y>
+     <y>625</y>
     </hint>
    </hints>
   </connection>
@@ -425,12 +473,12 @@
    <slot>remove_color()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>249</x>
-     <y>334</y>
+     <x>281</x>
+     <y>355</y>
     </hint>
     <hint type="destinationlabel">
      <x>339</x>
-     <y>753</y>
+     <y>625</y>
     </hint>
    </hints>
   </connection>
@@ -441,12 +489,60 @@
    <slot>auto_colors()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>90</x>
-     <y>388</y>
+     <x>112</x>
+     <y>437</y>
     </hint>
     <hint type="destinationlabel">
      <x>159</x>
-     <y>761</y>
+     <y>625</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>apply()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>534</x>
+     <y>599</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>590</x>
+     <y>718</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>651</x>
+     <y>604</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>755</x>
+     <y>730</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_preview_zoom</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>zoom_preview(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>706</x>
+     <y>548</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>921</x>
+     <y>636</y>
     </hint>
    </hints>
   </connection>
@@ -458,5 +554,6 @@
   <slot>add_color()</slot>
   <slot>remove_color()</slot>
   <slot>auto_colors()</slot>
+  <slot>zoom_preview(double)</slot>
  </slots>
 </ui>

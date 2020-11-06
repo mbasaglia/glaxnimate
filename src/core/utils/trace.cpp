@@ -2,6 +2,8 @@
 
 #include "potracelib.h"
 
+#include "utils/color.hpp"
+
 
 class utils::trace::TraceOptions::Private
 {
@@ -109,6 +111,11 @@ public:
         return qRgba(pixel[0], pixel[1], pixel[2], pixel[3]) == target_color;
     }
 
+    int get_bit_color_tolerance(const uchar* pixel) const noexcept
+    {
+        return utils::color::rgba_distance_squared(target_color, pixel[0], pixel[1], pixel[2], pixel[3]) <= target_tolerance;
+    }
+
     int get_bit_index(const uchar* pixel) const noexcept
     {
         return *pixel == target_color;
@@ -118,6 +125,7 @@ public:
     callback_type callback = &Private::get_bit_alpha;
     int target_alpha = 128;
     QRgb target_color;
+    qint32 target_tolerance = 0;
     QImage image;
     potrace_param_s params;
 };
@@ -201,10 +209,11 @@ void utils::trace::Tracer::set_target_alpha(int threshold, bool invert)
     d->callback = invert ? &Private::get_bit_alpha_neg : &Private::get_bit_alpha;
 }
 
-void utils::trace::Tracer::set_target_color(const QColor& color)
+void utils::trace::Tracer::set_target_color(const QColor& color, qint32 tolerance)
 {
     d->target_color = color.rgba();
-    d->callback = &Private::get_bit_color;
+    d->target_tolerance = tolerance;
+    d->callback = tolerance > 0 ? &Private::get_bit_color_tolerance : &Private::get_bit_color;
 }
 
 void utils::trace::Tracer::set_target_index(uchar index)

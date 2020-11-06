@@ -45,6 +45,7 @@ public:
     QGraphicsScene scene;
     utils::trace::TraceOptions options;
     color_widgets::ColorDelegate delegate;
+    qreal zoom = 1;
 
     void trace_mono(std::vector<TraceResult>& result)
     {
@@ -69,7 +70,7 @@ public:
         {
             result[i].color = ui.list_colors->item(i)->data(Qt::DisplayRole).value<QColor>();
             utils::trace::Tracer tracer(source_image, options);
-            tracer.set_target_color(result[i].color);
+            tracer.set_target_color(result[i].color, ui.spin_tolerance->value() * ui.spin_tolerance->value());
             connect(&tracer, &utils::trace::Tracer::progress, ui.progress_bar, &QProgressBar::setValue);
             tracer.set_progress_range(100 * i, 100 * (i+1));
             tracer.trace(result[i].bezier);
@@ -146,6 +147,12 @@ public:
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         ui.list_colors->addItem(item);
     }
+
+    void fit_view()
+    {
+        ui.preview->fitInView(scene.sceneRect(), Qt::KeepAspectRatio);
+        ui.preview->scale(zoom, zoom);
+    }
 };
 
 TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
@@ -162,6 +169,7 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     d->ui.spin_smoothness->setValue(d->options.smoothness() * 100);
     d->ui.progress_bar->hide();
 
+    d->delegate.setSizeHintForColor({24, 24});
     d->ui.list_colors->setItemDelegate(&d->delegate);
 
     auto item = static_cast<QStandardItemModel*>(d->ui.combo_mode->model())->item(Private::Pixel);
@@ -193,7 +201,7 @@ void TraceDialog::update_preview()
         d->scene.addPath(result.bezier.painter_path(), Qt::NoPen, result.color);
     }
 
-    d->ui.preview->fitInView(d->scene.sceneRect(), Qt::KeepAspectRatio);
+    d->fit_view();
 }
 
 void TraceDialog::apply()
@@ -241,6 +249,9 @@ void TraceDialog::change_mode(int mode)
         d->ui.stacked_widget->setCurrentIndex(0);
     else
         d->ui.stacked_widget->setCurrentIndex(1);
+
+    d->ui.label_tolerance->setEnabled(mode == Private::Exact);
+    d->ui.spin_tolerance->setEnabled(mode == Private::Exact);
 }
 
 
@@ -294,6 +305,12 @@ void TraceDialog::auto_colors()
 void TraceDialog::resizeEvent(QResizeEvent* event)
 {
     QDialog::resizeEvent(event);
+    d->fit_view();
+}
 
-    d->ui.preview->fitInView(d->scene.sceneRect(), Qt::KeepAspectRatio);
+void TraceDialog::zoom_preview(qreal percent)
+{
+    qreal scale = percent / 100 / d->zoom;
+    d->ui.preview->scale(scale, scale);
+    d->zoom = percent / 100;
 }
