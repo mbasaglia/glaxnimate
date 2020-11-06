@@ -28,3 +28,24 @@ jobs:
             - shasum -a 1 glaxnimate.dmg >checksum.txt
             - ../deploy/bintray_upload.sh Dev glaxnimate.dmg "$TRAVIS_BRANCH/MacOs/glaxnimate.dmg"
             - ../deploy/bintray_upload.sh Dev checksum.txt "$TRAVIS_BRANCH/MacOs/checksum.txt"
+      - name: "Mac PyPI"
+        if: tag IS present
+        stage: build
+        os: osx
+        osx_image: xcode11.3
+        before_install:
+            - brew list cmake || brew install cmake
+            - brew list qt || brew install qt
+            #- brew list python || brew install python
+            - brew upgrade python@3.8 || true
+            - brew list potrace || brew install potrace
+        script:
+            - mkdir build
+            - cd build
+            - cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt)/lib/cmake/Qt5Designer" -DVERSION_SUFFIX="mac-${TRAVIS_COMMIT::8}"
+            - make glaxnimate_python_depends_install
+            - make glaxnimate_python
+            - libpath="$(echo 'from distutils.util import get_platform; import sys; print("lib.%s-%d.%d" % (get_platform(), *sys.version_info[:2]))' | python3)"
+            - ln -s lib py_module/build/$libpath
+            - make glaxnimate_python_wheel
+            - make glaxnimate_python_upload
