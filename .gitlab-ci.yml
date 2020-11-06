@@ -246,3 +246,17 @@ linux:snap_beta:
         - snapcraft
         - snapcraft login --with "$SNAPCRAFT_LOGIN_FILE"
         - snapcraft upload --release=beta glaxnimate_*.snap
+
+
+linux:pypi:
+    image: ubuntu:latest
+    stage: build
+    script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - make glaxnimate_python_depends_install
+        - make glaxnimate_python_wheel
+        - make glaxnimate_python_upload
+    only:
+        - tags
