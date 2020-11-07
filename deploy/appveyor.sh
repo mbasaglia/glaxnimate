@@ -1,5 +1,7 @@
 git submodule update --init --recursive
 
+set -x
+
 # Build
 cmake.exe .. \
     -DQt5_DIR=/mingw64/lib/cmake/Qt5 \
