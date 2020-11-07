@@ -1,6 +1,6 @@
 git submodule update --init --recursive
 
-set -x
+set -xe
 
 # Build
 cmake.exe .. \
@@ -39,3 +39,5 @@ cp glaxnimate-x86_64.zip ../$APPVEYOR_REPO_BRANCH/Win
 cp checksum.txt ../$APPVEYOR_REPO_BRANCH/Win
 cd ..
 ls -l $APPVEYOR_REPO_BRANCH/Win
+zip -r bintray.zip $APPVEYOR_REPO_BRANCH
+zipinfo bintray.zip
