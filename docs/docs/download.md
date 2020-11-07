@@ -49,6 +49,10 @@ If you enjoy using Glaxnimate consider [donating](donate.md).
 <td><img src="/img/misc/snap.svg" style="height:1.2rem;" /> <a href="https://snapcraft.io/glaxnimate">Snap</a></td>
 <td><a href="#snap">Notes</a></td>
 </tr>
+<tr>
+<td><i class="fab fa-python"></i> <a href="https://pypi.org/project/glaxnimate/">PyPI</a></td>
+<td><a href="#pypi">Notes</a></td>
+</tr>
 </table>
 
 
@@ -183,3 +187,7 @@ For the stable version:
 For the testing version:
 
     snap install --beta glaxnimate
+
+## PyPI
+
+This package is for the [python module](contributing/scripting/index.md) only, not for the full program.

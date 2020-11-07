@@ -15,7 +15,7 @@ subparsers = parser.add_subparsers(dest="cmd")
 
 md = subparsers.add_parser("md")
 md.add_argument("icon")
-md.add_argument("size", type=int)
+md.add_argument("size", type=int, default="32", nargs="?")
 
 add = subparsers.add_parser("add")
 add.add_argument("icon")
