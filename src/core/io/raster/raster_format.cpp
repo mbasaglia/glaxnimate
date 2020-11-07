@@ -27,5 +27,7 @@ bool io::raster::RasterFormat::on_open(QIODevice& dev, const QString&, model::Do
     img->transform->anchor_point.set(p);
     img->transform->position.set(p);
     document->main()->shapes.insert(std::move(img));
+    document->main()->width.set(bmp->pixmap().width());
+    document->main()->height.set(bmp->pixmap().height());
     return !bmp->pixmap().isNull();
 }

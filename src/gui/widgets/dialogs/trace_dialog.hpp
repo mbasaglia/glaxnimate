@@ -31,6 +31,7 @@ private slots:
     void remove_color();
     void auto_colors();
     void zoom_preview(qreal percent);
+    void show_help();
 
 private:
     class Private;

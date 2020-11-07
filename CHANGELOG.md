@@ -24,6 +24,7 @@
     * File-based plugin icons are correctly loaded
     * Images are properly loaded from lottie files
     * Fixed crash when opening a document
+    * Opening a raster image correctly sets up the canvas size
 
 ## 0.2.0
 

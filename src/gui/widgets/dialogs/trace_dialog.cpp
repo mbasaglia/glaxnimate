@@ -8,8 +8,12 @@
 #include <QEvent>
 #include <QGraphicsScene>
 #include <QStandardItemModel>
+#include <QDesktopServices>
 
 #include <QtColorWidgets/ColorDelegate>
+
+#include "app/application.hpp"
+#include "app_info.hpp"
 
 #include "model/defs/bitmap.hpp"
 #include "model/shapes/group.hpp"
@@ -186,6 +190,14 @@ public:
     {
         ui.preview->fitInView(scene.sceneRect(), Qt::KeepAspectRatio);
         ui.preview->scale(zoom, zoom);
+        rescale_preview_background();
+    }
+
+    void rescale_preview_background()
+    {
+        QBrush b = ui.preview->backgroundBrush();
+        b.setTransform(ui.preview->transform().inverted());
+        ui.preview->setBackgroundBrush(b);
     }
 };
 
@@ -216,6 +228,8 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     }
 
     d->ui.combo_mode->setCurrentIndex(Private::Closest);
+
+    d->ui.preview->setBackgroundBrush(QPixmap(app::Application::instance()->data_file("images/widgets/background.png")));
 }
 
 TraceDialog::~TraceDialog() = default;
@@ -330,7 +344,7 @@ void TraceDialog::remove_color()
 
 void TraceDialog::auto_colors()
 {
-    /// \todo k-means or something
+    /// \todo k-medoids, octrees, or something like that
 
     std::unordered_map<QRgb, int> count;
     const uchar* data = d->source_image.constBits();
@@ -367,4 +381,13 @@ void TraceDialog::zoom_preview(qreal percent)
     qreal scale = percent / 100 / d->zoom;
     d->ui.preview->scale(scale, scale);
     d->zoom = percent / 100;
+    d->rescale_preview_background();
+}
+
+void TraceDialog::show_help()
+{
+    QUrl docs = AppInfo::instance().url_docs();
+    docs.setPath("/manual/ui/dialogs/");
+    docs.setFragment("trace-bitmap");
+    QDesktopServices::openUrl(docs);
 }

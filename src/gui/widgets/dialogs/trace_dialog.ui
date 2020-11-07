@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Trace</string>
+   <string>Trace Bitmap</string>
   </property>
   <property name="windowIcon">
    <iconset theme="bitmap-trace">
@@ -338,13 +338,17 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="">
+      <widget class="QGroupBox" name="groupBox">
        <property name="title">
         <string>Preview</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="QGraphicsView" name="preview"/>
+         <widget class="QGraphicsView" name="preview">
+          <property name="renderHints">
+           <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QProgressBar" name="progress_bar">
@@ -418,6 +422,16 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="text">
+        <string>Help...</string>
+       </property>
+       <property name="icon">
+        <iconset theme="help-contents"/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="standardButtons">
         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
@@ -481,8 +495,8 @@
    <slot>add_color()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>47</x>
-     <y>347</y>
+     <x>59</x>
+     <y>345</y>
     </hint>
     <hint type="destinationlabel">
      <x>179</x>
@@ -498,7 +512,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>281</x>
-     <y>355</y>
+     <y>345</y>
     </hint>
     <hint type="destinationlabel">
      <x>339</x>
@@ -523,50 +537,34 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>apply()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>534</x>
-     <y>599</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>590</x>
-     <y>718</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>651</x>
-     <y>604</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>755</x>
-     <y>730</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>spin_preview_zoom</sender>
    <signal>valueChanged(double)</signal>
    <receiver>TraceDialog</receiver>
    <slot>zoom_preview(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>706</x>
-     <y>548</y>
+     <x>754</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>921</x>
      <y>636</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>show_help()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>50</x>
+     <y>634</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>128</x>
+     <y>714</y>
     </hint>
    </hints>
   </connection>
@@ -579,5 +577,6 @@
   <slot>remove_color()</slot>
   <slot>auto_colors()</slot>
   <slot>zoom_preview(double)</slot>
+  <slot>show_help()</slot>
  </slots>
 </ui>

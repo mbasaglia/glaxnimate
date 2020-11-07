@@ -63,6 +63,11 @@ Alternatively, you can click on *Detect Colors* which will fill the list with
 the most common colors in the image (you select how many colors you want with
 the spin box next to the button.
 
+Sometimes there might be gaps between shapes of different colors, you can increase
+*Outline* to fill them up. When you have large outlines, the order of the colors in the list
+is important (shapes higher up on the list are drawn over the ones below).
+You can drag and drop colors in the list to rearrange them.
+
 ### Extract Colors
 
 ![Trace dialog](/img/screenshots/dialogs/trace/extract.png)
@@ -84,6 +89,9 @@ the best available color for each area.
 Generally, *Closest Color* is the best choice when you want to trace the whole image,
 *Extract Colors* when you only need specific elements.
 
+*Extract Colors* has the option *Tolerance*, which determines how close the pixels
+have to be to the specified color.
+
 ### Transparency
 
 ![Trace dialog](/img/screenshots/dialogs/trace/alpha.png)
@@ -97,6 +105,17 @@ It has the following options:
 * Threshold - Alpha value below which a pixel is considered transparent
 
 This mode is best suited for converting monochrome logos and the like.
+
+
+### Pixel
+
+![Trace dialog](/img/screenshots/dialogs/trace/pixel.png)
+
+This mode is designed for pixel art and is only available for small pictures.
+
+It keeps the edges of every pixel intact and uses all colors from the source image.
+
+With this mode there are no extra options.
 
 ### Curve Options
 
