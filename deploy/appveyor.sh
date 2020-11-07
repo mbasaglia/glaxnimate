@@ -11,6 +11,7 @@ cmake.exe .. \
 mingw32-make.exe
 
 # Setup package
+mingw32-make.exe translations
 mingw32-make.exe install DESTDIR=glaxnimate
 windeployqt.exe glaxnimate/bin/glaxnimate.exe
 cp /mingw64/bin/*.dll glaxnimate/bin
