@@ -172,15 +172,6 @@ QString GlaxnimateApp::backup_path(const QString& file) const
     return writable_data_path("backup/"+file);
 }
 
-void GlaxnimateApp::init_info()
-{
-    AppInfo& info = AppInfo::instance();
-    setApplicationName(info.slug());
-    setApplicationDisplayName(info.name());
-    setApplicationVersion(info.version());
-    setOrganizationName(info.organization());
-}
-
 app::settings::ShortcutSettings * GlaxnimateApp::shortcuts() const
 {
     return shortcut_settings;

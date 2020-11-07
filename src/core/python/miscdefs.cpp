@@ -1,3 +1,5 @@
+#include "miscdefs.hpp"
+
 #include <pybind11/operators.h>
 
 #include <QVector2D>
@@ -10,10 +12,9 @@
 #include <QGuiApplication>
 
 #include "app/log/log.hpp"
-
 #include "math/bezier/bezier.hpp"
+#include "app_info.hpp"
 
-#include "miscdefs.hpp"
 
 void define_bezier(py::module& m)
 {
@@ -252,7 +253,12 @@ public:
     void enter()
     {
         if ( !qGuiApp )
+        {
+            QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+            QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
             app = std::make_unique<QGuiApplication>(fake_argc, (char**)fake_argv);
+            AppInfo::instance().init_qapplication();
+        }
     }
 
     void exit(const pybind11::args&)
@@ -262,8 +268,8 @@ public:
 
 private:
     std::unique_ptr<QGuiApplication> app;
-    int fake_argc;
-    const char* fake_argv = {""};
+    int fake_argc = 1;
+    const char* fake_argv[1] = {"glaxnimate_headless"};
 };
 
 void define_environment(py::module& glaxnimate_module)

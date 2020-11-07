@@ -27,8 +27,6 @@ public:
 
     QString backup_path(const QString& file = {}) const;
 
-    void init_info();
-
     app::settings::ShortcutSettings* shortcuts() const;
 
 protected:

@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     GlaxnimateApp app(argc, argv);
 
-    app.init_info();
+    AppInfo::instance().init_qapplication();
 
     auto args = parse_cli(app.arguments());
 
