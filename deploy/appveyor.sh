@@ -38,4 +38,5 @@ sha1sum glaxnimate-x86_64.zip >checksum.txt
 cp glaxnimate-x86_64.zip ../$APPVEYOR_REPO_BRANCH/Win
 cp checksum.txt ../$APPVEYOR_REPO_BRANCH/Win
 cd ..
-zip -r bintray.zip $APPVEYOR_REPO_BRANCH
+ls -l $APPVEYOR_REPO_BRANCH
+zip -r bintray.zip $APPVEYOR_REPO_BRANCH || zipinfo bintray.zip
