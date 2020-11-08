@@ -1,0 +1,22 @@
+{
+    "name": "Synfig",
+    "author": "Glax",
+    "engine": "python",
+    "version": 1,
+    "icon": "theme:synfig_icon",
+    "services": [
+        {
+            "type": "format",
+            "name": "Synfig",
+            "extensions": ["sifz", "sif"],
+            "open": {
+                "module": "synfig",
+                "function": "open_synfig"
+            },
+            "save": {
+                "module": "synfig",
+                "function": "save_synfig"
+            }
+        }
+    ]
+}

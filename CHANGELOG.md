@@ -10,6 +10,7 @@
 * I/O:
     * Support for rendering and loading animated GIF and WebP
     * Open/Save dotLottie animations
+    * Open/Save Synfig files
 * UI:
     * Dialog to edit document metadata
 * Scripting:

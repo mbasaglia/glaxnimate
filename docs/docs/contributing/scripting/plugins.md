@@ -19,9 +19,31 @@ It's a JSON file with the following keys:
 | `version` |           | number | Plugin version number, used to resolve multiple installations of the same plugin |
 | `engine`  | Required  | string | Script engine to use. (Currently must be `python`) |
 | `author`  |           | string | Name of the plugin author.           |
-| `icon`    |           | string | File name or theme icon name.        |
+| `icon`    |           | string | See [Icons](#icons)                  |
 | `services`| Required  | array  | Array of [services](#services).      |
 
+### Icons
+
+`icon` fields can use a file name relative to the plugin directory:
+
+```json
+{
+    "icon": "my_icon.svg"
+}
+```
+
+If the field value starts with "theme:" it will load an icon from the icon theme:
+
+```json
+{
+    "icon": "theme:image-gif"
+}
+```
+
+Theme icons follow the [Freedesktop icon naming specs](https://specifications.freedesktop.org/icon-naming-spec/latest/ar01s04.html).
+
+There are also several icons not in the specs available in the default theme,
+you can use [this icon searcher](https://icon-search.mattbas.org/) to find them.
 
 ## Services
 
@@ -41,7 +63,7 @@ The service JSON object has the following fields:
 | `script`  | Required  | object | [Script object](#scripts) to execute |
 | `label`   |           | string | Text shown in the menu               |
 | `tooltip` |           | string | Menu item tooltip                    |
-| `icon`    |           | string | File name or theme icon name         |
+| `icon`    |           | string | See [Icons](#icons)                  |
 
 The script function will be invoked with these arguments:
 

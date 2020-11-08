@@ -78,3 +78,8 @@ plugin(
     dotlottie.py
     icon.svg
 )
+
+plugin(
+    Synfig
+    synfig.py
+)
