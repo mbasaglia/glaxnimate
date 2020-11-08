@@ -37,6 +37,8 @@ private:
 class PythonEngine : public ScriptEngine
 {
 public:
+    static void add_module_search_paths(const QStringList& paths);
+
     QString slug() const override { return "python"; }
     QString label() const override { return "Python"; }
 

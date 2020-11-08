@@ -1,8 +1,10 @@
 #include <QSplashScreen>
 
 #include "app/cli.hpp"
+#include "app/scripting/python/python_engine.hpp"
 #include "glaxnimate_app.hpp"
 #include "app_info.hpp"
+
 #include "widgets/dialogs/glaxnimate_window.hpp"
 
 auto parse_cli(const QStringList& args)
@@ -41,6 +43,8 @@ int main(int argc, char *argv[])
     GlaxnimateApp app(argc, argv);
 
     AppInfo::instance().init_qapplication();
+
+    app::scripting::python::PythonEngine::add_module_search_paths(app.data_paths("lib/python-lottie/lib"));
 
     auto args = parse_cli(app.arguments());
 

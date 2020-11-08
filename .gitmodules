@@ -16,3 +16,6 @@
 [submodule "data/icons/breeze-icons"]
 	path = data/icons/breeze-icons
 	url = https://github.com/KDE/breeze-icons.git
+[submodule "data/lib/python-lottie"]
+	path = data/lib/python-lottie
+	url = https://gitlab.com/mattbas/python-lottie.git

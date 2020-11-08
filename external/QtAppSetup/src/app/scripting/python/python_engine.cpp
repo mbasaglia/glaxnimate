@@ -4,6 +4,7 @@
 
 #include "app/scripting/python/register_machinery.hpp"
 #include "app/log/log.hpp"
+#include "app/env.hpp"
 
 
 app::scripting::ScriptEngine::Autoregister<app::scripting::python::PythonEngine> app::scripting::python::PythonEngine::autoreg;
@@ -228,16 +229,14 @@ const app::scripting::ScriptEngine * app::scripting::python::PythonContext::engi
 
 #ifdef Q_OS_WIN
 #include <QProcess>
-#include <stdlib.h>
-
 
 static bool python_setup_env_impl(const char* var, const char* cmd)
 {
-    QString pyhome = getenv(var);
+    auto pyhome = app::Environment::Variable(var);
 
-    if ( !pyhome.isEmpty() )
+    if ( !pyhome.empty() )
     {
-        app::log::Log("Python").stream(app::log::Info) << "Using " << var << " from the environment:" << pyhome;
+        app::log::Log("Python").stream(app::log::Info) << "Using " << var << " from the environment:" << pyhome.get();
         return true;
     }
 
@@ -265,17 +264,15 @@ static bool python_setup_env_impl(const char* var, const char* cmd)
     }
 
     pyhome = process.readAllStandardOutput().trimmed();
-    app::log::Log("Python").stream(app::log::Info) << "Using " << var << ":" << pyhome;
-    putenv(QString("%1=%2").arg(var).arg(pyhome).toStdString().c_str());
+    app::log::Log("Python").stream(app::log::Info) << "Using " << var << ":" << pyhome.get();
     
     return true;
 }
 
-
 static bool python_setup_env()
 {
     static int already_done = -1;
-    if ( already_done > 0 )
+    if ( already_done >= 0 )
         return already_done;
 
     if ( !python_setup_env_impl("PYTHONHOME", "import sys; print(sys.exec_prefix)\n") )
@@ -288,6 +285,12 @@ static bool python_setup_env()
     return already_done = 1;
 }
 
+void app::scripting::python::PythonEngine::add_module_search_paths(const QStringList& paths)
+{
+    python_setup_env();
+    app::Environment::Variable("PYTHONPATH").push_back(paths);
+}
+
 app::scripting::ScriptContext app::scripting::python::PythonEngine::create_context() const
 {
     if ( !python_setup_env() )
@@ -295,9 +298,18 @@ app::scripting::ScriptContext app::scripting::python::PythonEngine::create_conte
 
     return std::make_unique<PythonContext>(this);
 }
+
 #else
+
 app::scripting::ScriptContext app::scripting::python::PythonEngine::create_context() const
 {
     return std::make_unique<PythonContext>(this);
 }
+
+void app::scripting::python::PythonEngine::add_module_search_paths(const QStringList& paths)
+{
+    app::Environment::Variable("PYTHONPATH").push_back(paths);
+}
+
 #endif
+
