@@ -17,6 +17,8 @@
     * Ability to load Qt designer UI files.
     * Rendering to PIL images
     * Import/Export plugin types
+    * Button to clear the script console
+    * Button to reload plugin modules
 * Bug Fixes:
     * Animated Path shapes keeps the correct tangents
     * Fixed inconsistencies with closed/open bezier paths

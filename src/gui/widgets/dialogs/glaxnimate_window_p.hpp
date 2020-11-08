@@ -61,9 +61,6 @@ public:
     std::map<QString, std::vector<QWidget*>> tool_widgets;
     std::map<QString, std::vector<QAction*>> tool_actions;
 
-    std::vector<app::scripting::ScriptContext> script_contexts;
-    const plugin::Plugin* current_plugin = nullptr;
-
     // "set and forget" kida variables
     int autosave_timer = 0;
     int autosave_timer_mins = 0;
@@ -124,6 +121,7 @@ public:
     QString get_open_image_file(const QString& title, const QString& dir);
     void set_brush_reference(model::BrushStyle* sty, bool secondary);
     void trace_dialog(model::ReferenceTarget* object);
+    void init_plugins();
 
     // Model
     model::Composition* current_composition();
@@ -149,17 +147,6 @@ public:
     void layer_new_impl(std::unique_ptr<model::ShapeElement> layer);
     void layer_delete();
     void layer_duplicate();
-
-    // script
-    void console_error(const app::scripting::ScriptError& err);
-    void console_stderr(const QString& line);
-    void console_stdout(const QString& line);
-    void console_commit(QString text);
-    bool ensure_script_contexts();
-    void create_script_context();
-    bool execute_script ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& args );
-    PluginUiDialog * create_dialog(const QString& ui_file);
-    void init_plugins();
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

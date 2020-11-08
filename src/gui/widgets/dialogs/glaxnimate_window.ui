@@ -603,32 +603,7 @@
    <widget class="QWidget" name="dockWidgetContents_2">
     <layout class="QVBoxLayout" name="verticalLayout_7">
      <item>
-      <widget class="QTextEdit" name="console_output">
-       <property name="font">
-        <font>
-         <family>Monospace</family>
-        </font>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="HistoryLineEdit" name="console_input">
-         <property name="font">
-          <font>
-           <family>Monospace</family>
-          </font>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="console_language"/>
-       </item>
-      </layout>
+      <widget class="ScriptConsole" name="console" native="true"/>
      </item>
     </layout>
    </widget>
@@ -1684,7 +1659,8 @@
   </action>
   <action name="action_trace_bitmap">
    <property name="icon">
-    <iconset theme="bitmap-trace"/>
+    <iconset theme="bitmap-trace">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Trace Bitmap...</string>
@@ -1701,14 +1677,6 @@
     <slot>reset_zoom()</slot>
     <slot>zoom_in()</slot>
     <slot>zoom_out()</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
-   <class>HistoryLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>history_line_edit.hpp</header>
-   <slots>
-    <signal>lineExecuted(QString)</signal>
    </slots>
   </customwidget>
   <customwidget>
@@ -1762,6 +1730,12 @@
    <class>GradientListWidget</class>
    <extends>QWidget</extends>
    <header>widgets/shape_style/gradient_list_widget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ScriptConsole</class>
+   <extends>QWidget</extends>
+   <header>widgets/script_console.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -2008,22 +1982,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>console_input</sender>
-   <signal>lineExecuted(QString)</signal>
-   <receiver>GlaxnimateWindow</receiver>
-   <slot>console_commit(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>939</x>
-     <y>898</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>727</x>
-     <y>1079</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>action_Web_Preview</sender>
    <signal>triggered()</signal>
    <receiver>GlaxnimateWindow</receiver>
@@ -2111,11 +2069,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>1311</x>
-     <y>139</y>
+     <y>128</y>
     </hint>
     <hint type="destinationlabel">
      <x>1311</x>
-     <y>215</y>
+     <y>192</y>
     </hint>
    </hints>
   </connection>
@@ -2127,11 +2085,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>1311</x>
-     <y>215</y>
+     <y>192</y>
     </hint>
     <hint type="destinationlabel">
      <x>1311</x>
-     <y>139</y>
+     <y>128</y>
     </hint>
    </hints>
   </connection>

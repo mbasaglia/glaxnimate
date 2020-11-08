@@ -19,6 +19,7 @@
 
 #include "style/better_elide_delegate.hpp"
 #include "tools/edit_tool.hpp"
+#include "plugin/action.hpp"
 #include "glaxnimate_app.hpp"
 
 void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* parent)
@@ -252,16 +253,10 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.menu_open_recent, &QMenu::triggered, parent, &GlaxnimateWindow::document_open_recent);
 
     // Scripting
-    ui.console_input->setHistory(app::settings::get<QStringList>("scripting", "history"));
-
-    for ( const auto& engine : app::scripting::ScriptEngineFactory::instance().engines() )
-    {
-        ui.console_language->addItem(engine->label());
-        if ( engine->slug() == "python" )
-            ui.console_language->setCurrentIndex(ui.console_language->count()-1);
-    }
-
-    // Plugins
+    connect(ui.console, &ScriptConsole::error, parent, [this](const QString& plugin, const QString& message){
+        show_warning(plugin, message, app::log::Error);
+    });
+    ui.console->set_global("window", QVariant::fromValue(parent));
     init_plugins();
 
     // Logs
@@ -427,12 +422,8 @@ void GlaxnimateWindow::Private::shutdown()
     ui.fill_style_widget->save_settings();
     ui.stroke_style_widget->save_settings();
 
-    QStringList history = ui.console_input->history();
-    int max_history = app::settings::get<int>("scripting", "max_history");
-    if ( history.size() > max_history )
-        history.erase(history.begin(), history.end() - max_history);
-    app::settings::set("scripting", "history", history);
-    script_contexts.clear();
+    ui.console->save_settings();
+    ui.console->clear_contexts();
 }
 
 void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
@@ -571,4 +562,25 @@ void GlaxnimateWindow::Private::trace_dialog(model::ReferenceTarget* object)
     dialog.exec();
     if ( auto created = dialog.created() )
         ui.view_document_node->setCurrentIndex(document_node_model.node_index(created));
+}
+
+
+void GlaxnimateWindow::Private::init_plugins()
+{
+    auto& par = plugin::PluginActionRegistry::instance();
+    for ( auto act : par.enabled() )
+    {
+        ui.menu_plugins->addAction(par.make_qaction(act));
+    }
+    connect(&par, &plugin::PluginActionRegistry::action_added, parent, [this](plugin::ActionService* action) {
+        ui.menu_plugins->addAction(plugin::PluginActionRegistry::instance().make_qaction(action));
+    });
+    connect(
+        &plugin::PluginRegistry::instance(),
+        &plugin::PluginRegistry::loaded,
+        ui.console,
+        &ScriptConsole::clear_contexts
+    );
+
+    plugin::PluginRegistry::instance().set_executor(ui.console);
 }

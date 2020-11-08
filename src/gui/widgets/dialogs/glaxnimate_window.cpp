@@ -157,11 +157,6 @@ void GlaxnimateWindow::help_about()
     d->help_about();
 }
 
-void GlaxnimateWindow::console_commit(const QString& text)
-{
-    d->console_commit(text);
-}
-
 void GlaxnimateWindow::document_open(const QString& filename)
 {
     d->document_open_from_filename(filename);
@@ -185,27 +180,6 @@ void GlaxnimateWindow::warning ( const QString& message, const QString& title ) 
 void GlaxnimateWindow::status ( const QString& message ) const
 {
     d->status_message(message);
-}
-
-
-bool GlaxnimateWindow::execute ( const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& args )
-{
-    return d->execute_script(plugin, script, args);
-}
-
-QVariant GlaxnimateWindow::get_global(const QString& name)
-{
-    if ( name == "window" )
-        return QVariant::fromValue(this);
-    else if ( name == "document" )
-        return QVariant::fromValue(d->current_document.get());
-    return {};
-}
-
-
-void GlaxnimateWindow::script_reloaded()
-{
-    d->script_contexts.clear();
 }
 
 void GlaxnimateWindow::web_preview()
@@ -434,7 +408,7 @@ model::BrushStyle * GlaxnimateWindow::linked_brush_style ( bool secondary ) cons
 
 PluginUiDialog * GlaxnimateWindow::create_dialog(const QString& ui_file) const
 {
-    return d->create_dialog(ui_file);
+    return d->ui.console->create_dialog(ui_file);
 }
 
 

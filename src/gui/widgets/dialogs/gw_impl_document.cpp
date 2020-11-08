@@ -59,7 +59,8 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     ui.widget_gradients->set_document(current_document.get());
 
     // Scripting
-    script_contexts.clear();
+    ui.console->clear_contexts();
+    ui.console->set_global("document", QVariant::fromValue(current_document.get()));
 
     // Title
     QObject::connect(current_document.get(), &model::Document::filename_changed, parent, &GlaxnimateWindow::refresh_title);

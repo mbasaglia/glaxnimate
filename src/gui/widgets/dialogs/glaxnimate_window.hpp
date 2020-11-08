@@ -31,7 +31,7 @@ class QItemSelection;
 
 class PluginUiDialog;
 
-class GlaxnimateWindow : public QMainWindow, public plugin::Executor
+class GlaxnimateWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -102,9 +102,6 @@ public:
 
     PluginUiDialog* create_dialog(const QString& ui_file) const;
 
-    bool execute(const plugin::Plugin& plugin, const plugin::PluginScript& script, const QVariantList& in_args) override;
-    QVariant get_global(const QString & name) override;
-
     void trace_dialog(model::ReferenceTarget* object);
 
 public slots:
@@ -152,9 +149,6 @@ private slots:
     void save_frame_svg();
     void tool_triggered(bool checked);
     void validate_tgs();
-
-    void console_commit(const QString& text);
-    void script_reloaded();
 
 protected:
     void changeEvent(QEvent *e) override;

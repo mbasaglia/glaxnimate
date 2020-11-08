@@ -16,11 +16,20 @@ snippets and modify the current document.
 Here you can access the `glaxnimate` module and you have the global objects
 `window` and `document` defined.
 
+The console has a button to reload the script module, this means that if you make changes
+to a python module / script and want the change to take effect, you can click it and you'll
+see the up to date modules (instead of the version previously cached by Python).
+
+This also affects modules loaded for plugins.
+
 ## Plugins
 
 You can write plugins to perform common actions, add support for more file formats, and more.
 
 See [Plugins](/contributing/scripting/plugins.md) for a full description of the structure of a plugin.
+
+If you are developing a plugin, the easiest way to reload the modules when you make changes, is to
+click on *Reload Script Modules* in the script console.
 
 ## As a Python module
 

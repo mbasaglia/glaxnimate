@@ -38,7 +38,6 @@ widgets/dialogs/about_dialog.cpp
 widgets/dialogs/about_dialog.ui
 widgets/dialogs/gw_impl_document.cpp
 widgets/dialogs/gw_impl_model.cpp
-widgets/dialogs/gw_impl_script.cpp
 widgets/dialogs/gw_impl_ui.cpp
 widgets/dialogs/shape_parent_dialog.cpp
 widgets/dialogs/shape_parent_dialog.ui
@@ -79,6 +78,8 @@ widgets/window_message_widget.cpp
 widgets/window_message_widget.ui
 widgets/plugin_settings_widget.cpp
 widgets/plugin_settings_widget.ui
+widgets/script_console.cpp
+widgets/script_console.ui
 
 widgets/shape_style/color_selector.cpp
 widgets/shape_style/color_selector.ui
