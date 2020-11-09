@@ -4,6 +4,12 @@
 #include <QString>
 #include <QStringList>
 
+#ifdef Q_OS_WIN
+#   define ENV_SEPARATOR ";"
+#else
+#   define ENV_SEPARATOR ":"
+#endif
+
 namespace app {
 
 class Environment
@@ -67,40 +73,40 @@ public:
             return get() != val;
         }
 
-        void push_back(const QString& item, const QString& separator=":")
+        void push_back(const QString& item, const QString& separator=ENV_SEPARATOR)
         {
             ensure_loaded();
-            if ( value.isEmpty() )
+            if ( !value.isEmpty() )
                 value += separator;
             value += item;
             qputenv(name, value.toUtf8());
         }
 
-        void push_back(const QStringList& items, const QString& separator=":")
+        void push_back(const QStringList& items, const QString& separator=ENV_SEPARATOR)
         {
             if ( items.empty() )
                 return;
             push_back(items.join(separator), separator);
         }
 
-        void push_front(const QString& item, const QString& separator=":")
+        void push_front(const QString& item, const QString& separator=ENV_SEPARATOR)
         {
             ensure_loaded();
             QString new_value = item;
-            if ( value.isEmpty() )
+            if ( !value.isEmpty() )
                 value += separator;
             new_value += value;
             set(new_value);
         }
 
-        void push_front(const QStringList& items, const QString& separator=":")
+        void push_front(const QStringList& items, const QString& separator=ENV_SEPARATOR)
         {
             if ( items.empty() )
                 return;
             push_front(items.join(separator), separator);
         }
 
-        QStringList to_list(const QString& separator=":") const
+        QStringList to_list(const QString& separator=ENV_SEPARATOR) const
         {
             ensure_loaded();
             return value.split(separator);
