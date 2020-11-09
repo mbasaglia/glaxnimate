@@ -8,8 +8,7 @@ cmake.exe .. \
     -DZLIB_LIBRARY=/mingw64/lib/libz.a \
     -DCMAKE_PREFIX_PATH='/mingw64/lib/' \
     -DZLIB_INCLUDE_DIR=/mingw64/include \
-    -DPYTHON_PREFIX=/mingw64/ \
-    -DPYTHON_LIBRARIES=/mingw64/bin/libpython3.8.dll \
+    -DPYTHON_EXECUTABLE=/mingw64/bin/python3 \
     -G 'MSYS Makefiles' \
     -DCMAKE_INSTALL_PREFIX=''
 mingw32-make.exe
