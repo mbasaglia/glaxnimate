@@ -2,12 +2,21 @@ git submodule update --init --recursive
 
 set -xe
 
+env
+
+if [ -d /c/Python39-x64 ]
+then
+    mv /c/Python39-x64 /c/gtfo
+fi
+
 # Build
 cmake.exe .. \
     -DQt5_DIR=/mingw64/lib/cmake/Qt5 \
     -DZLIB_LIBRARY=/mingw64/lib/libz.a \
     -DCMAKE_PREFIX_PATH='/mingw64/lib/' \
     -DZLIB_INCLUDE_DIR=/mingw64/include \
+    -DPYTHON_PREFIX=/mingw64/ \
+    -DPYTHON_LIBRARIES=/mingw64/bin/libpython3.8.dll \
     -DPYTHON_EXECUTABLE=/mingw64/bin/python3 \
     -G 'MSYS Makefiles' \
     -DCMAKE_INSTALL_PREFIX=''
