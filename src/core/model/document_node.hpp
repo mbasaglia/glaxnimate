@@ -24,7 +24,7 @@ public:
      * Generally parent/child relationshitps define groups but layers can
      * be grouped with each other even if they are children of a composition
      */
-    GLAXNIMATE_PROPERTY(QColor, group_color, QColor(0, 0, 0, 0))
+    GLAXNIMATE_PROPERTY(QColor, group_color, QColor(0, 0, 0, 0), &DocumentNode::on_group_color_changed)
     /**
      * \brief Visible setting for this node
      */
@@ -218,9 +218,10 @@ private:
 
     void propagate_visible(bool visible);
 
+    void on_group_color_changed(const QColor& color);
+
 protected:
     void docnode_on_update_group(bool force = false);
-    void on_property_changed(const BaseProperty* prop, const QVariant&) override;
     bool docnode_valid_color() const;
     void propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group);
     virtual void on_paint(QPainter*, FrameTime, PaintMode) const {}

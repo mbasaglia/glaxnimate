@@ -706,7 +706,7 @@ public:
         const QString& name,
         reference default_value,
         PropertyCallback<void, float> emitter = {},
-        float min = std::numeric_limits<float>::min(),
+        float min = std::numeric_limits<float>::lowest(),
         float max = std::numeric_limits<float>::max(),
         bool cycle = false
     ) : detail::AnimatedProperty<float>(object, name, default_value, std::move(emitter)),

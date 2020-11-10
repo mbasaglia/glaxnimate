@@ -47,14 +47,10 @@ signals:
 
 protected:
     const ShapeListProperty& siblings() const;
+    void on_property_changed(const BaseProperty* prop, const QVariant& value) override;
 
 private:
-    void set_position(ShapeListProperty* property, int pos)
-    {
-        property_ = property;
-        position_ = pos;
-        position_updated();
-    }
+    void set_position(ShapeListProperty* property, int pos);
 
     ShapeListProperty* property_ = nullptr;
     int position_ = -1;

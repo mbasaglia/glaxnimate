@@ -36,19 +36,16 @@ QColor model::DocumentNode::docnode_group_color() const
     return group_color.get();
 }
 
-void model::DocumentNode::on_property_changed(const BaseProperty* prop, const QVariant&)
+void model::DocumentNode::on_group_color_changed(const QColor& color)
 {
-    if ( prop == &group_color )
+    if ( !group_icon.isNull() )
     {
-        if ( !group_icon.isNull() )
-        {
-            if ( docnode_valid_color() )
-                group_icon.fill(group_color.get());
-            else
-                group_icon.fill(Qt::white);
-        }
-        docnode_on_update_group(true);
+        if ( docnode_valid_color() )
+            group_icon.fill(group_color.get());
+        else
+            group_icon.fill(Qt::white);
     }
+    docnode_on_update_group(true);
 }
 
 bool model::DocumentNode::docnode_is_instance(const QString& type_name) const

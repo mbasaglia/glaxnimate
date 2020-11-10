@@ -22,6 +22,32 @@ model::ObjectListProperty<model::ShapeElement>::iterator model::ShapeListPropert
     return it;
 }
 
+void model::ShapeElement::set_position(ShapeListProperty* property, int pos)
+{
+    model::DocumentNode* old_parent = docnode_parent();
+
+    property_ = property;
+    position_ = pos;
+    position_updated();
+
+    model::DocumentNode* new_parent = docnode_parent();
+    if ( old_parent != new_parent )
+    {
+        if ( old_parent )
+            disconnect(this, &DocumentNode::bounding_rect_changed, old_parent, &DocumentNode::bounding_rect_changed);
+
+        if ( new_parent )
+            connect(this, &DocumentNode::bounding_rect_changed, new_parent, &DocumentNode::bounding_rect_changed);
+    }
+}
+
+void model::ShapeElement::on_property_changed(const model::BaseProperty* prop, const QVariant& value)
+{
+    if ( prop->traits().flags & PropertyTraits::Visual )
+        emit bounding_rect_changed();
+}
+
+
 QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
 {
     QRectF rect;
