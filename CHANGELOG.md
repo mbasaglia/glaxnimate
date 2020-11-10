@@ -1,4 +1,4 @@
-## 0.2.1
+## 0.3.0
 
 * Editing:
     * Adding or removing bezier nodes will affect all keyframes
@@ -28,6 +28,7 @@
     * Images are properly loaded from lottie files
     * Fixed crash when opening a document
     * Opening a raster image correctly sets up the canvas size
+    * Groups and Layers get their bounding boxes properly updated when changing frames
 
 ## 0.2.0
 
