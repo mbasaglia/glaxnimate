@@ -29,6 +29,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Git
+set(VERSION_NAKED ${PROJECT_VERSION})
 set(VERSION_SUFFIX "" CACHE STRING "")
 if (VERSION_SUFFIX STREQUAL "")
     git_describe(GIT_DESC --tags)
@@ -138,7 +139,7 @@ add_custom_target(
 )
 add_custom_target(
     release_check
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_check.py ${PROJECT_VERSION}
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_check.py ${VERSION_NAKED}
 )
 
 # Packaging

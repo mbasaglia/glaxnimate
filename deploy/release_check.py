@@ -14,11 +14,8 @@ class GitlabApi:
         self.api_url = "https://gitlab.com/api/v4/projects/%s/repository" % project_id
 
     def get(self, *url, **kwargs):
-        #can_fail = not kwargs.pop("can_fail", False)
         url = "/".join((self.api_url,) + url)
         res = requests.request("get", url, **kwargs)
-        #if can_fail:
-        #res.raise_for_status()
         return (res.json(), res.status_code)
 
 
@@ -38,7 +35,7 @@ def log(indent, msg):
 def error(indent, msg):
     global retcode
     retcode += 1
-    sys.stderr.write(" " * (indent*4) + "\x1b[31m%s\x1b[m\n" % msg)
+    print(" " * (indent*4) + "\x1b[31m%s\x1b[m\n" % msg)
 
 
 def get_link(td, row, col):
@@ -150,6 +147,8 @@ parser.add_argument("version")
 ns = parser.parse_args()
 
 api = GitlabApi()
+log(0, "Checking %s" % ns.version)
 check_tag()
-check_download_page()
+if retcode == 0:
+    check_download_page()
 sys.exit(retcode)
