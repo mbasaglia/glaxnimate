@@ -461,12 +461,14 @@ public:
     bool closed = false;
     std::set<QString> non_uuid_ids;
     std::map<model::ReferenceTarget*, QString> non_uuid_ids_map;
+    AnimationType animated;
 };
 
 
-io::svg::SvgRenderer::SvgRenderer(QIODevice* device)
+io::svg::SvgRenderer::SvgRenderer(QIODevice* device, AnimationType animated)
     : d(std::make_unique<Private>())
 {
+    d->animated = animated;
     d->writer.setDevice(device);
     d->writer.setAutoFormatting(true);
     d->writer.writeStartDocument();

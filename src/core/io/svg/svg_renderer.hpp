@@ -9,10 +9,16 @@ namespace model {
 
 namespace io::svg {
 
+enum AnimationType
+{
+    NotAnimated,
+//     SMIL
+};
+
 class SvgRenderer
 {
 public:
-    SvgRenderer(QIODevice* device);
+    SvgRenderer(QIODevice* device, AnimationType animated);
     ~SvgRenderer();
 
     void write_document(model::Document* document);

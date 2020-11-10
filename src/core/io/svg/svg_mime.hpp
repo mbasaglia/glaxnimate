@@ -20,7 +20,7 @@ public:
         QByteArray data;
         QBuffer buffer(&data);
         buffer.open(QIODevice::WriteOnly);
-        io::svg::SvgRenderer svg_rend(&buffer);
+        io::svg::SvgRenderer svg_rend(&buffer, io::svg::NotAnimated);
         for ( auto node : selection )
             svg_rend.write_node(node);
         svg_rend.close();
@@ -40,7 +40,6 @@ public:
             message(err.formatted("Clipboard"));
             return {};
         }
-
     }
 
     bool can_deserialize() const override { return true; }
