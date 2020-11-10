@@ -41,7 +41,7 @@ void model::ShapeElement::set_position(ShapeListProperty* property, int pos)
     }
 }
 
-void model::ShapeElement::on_property_changed(const model::BaseProperty* prop, const QVariant& value)
+void model::ShapeElement::on_property_changed(const model::BaseProperty* prop, const QVariant&)
 {
     if ( prop->traits().flags & PropertyTraits::Visual )
         emit bounding_rect_changed();
@@ -53,10 +53,16 @@ QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
     QRectF rect;
     for ( const auto& ch : utils::Range(begin(), past_first_modifier()) )
     {
+        QRectF local_rect = ch->local_bounding_rect(t);
+        if ( local_rect.isNull() )
+            continue;
+
+        QRectF child_rect = ch->local_transform_matrix(t).map(local_rect).boundingRect();
+
         if ( rect.isNull() )
-            rect = ch->local_bounding_rect(t);
+            rect = child_rect;
         else
-            rect |= ch->local_bounding_rect(t);
+            rect |= child_rect;
     }
 
     return rect;

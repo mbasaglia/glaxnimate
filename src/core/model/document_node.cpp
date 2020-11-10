@@ -36,7 +36,7 @@ QColor model::DocumentNode::docnode_group_color() const
     return group_color.get();
 }
 
-void model::DocumentNode::on_group_color_changed(const QColor& color)
+void model::DocumentNode::on_group_color_changed(const QColor&)
 {
     if ( !group_icon.isNull() )
     {
