@@ -125,15 +125,19 @@ endif(DOXYGEN_FOUND)
 # Release
 
 add_custom_target(
-    pre_release
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/pre_release.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt
+    release_0
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_0.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt
 )
 add_custom_target(
-    release
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt
+    release_1
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_1.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt
 )
 add_custom_target(
-    post_release
+    release_2
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_2.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt
+)
+add_custom_target(
+    release_check
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_check.py ${PROJECT_VERSION}
 )
 

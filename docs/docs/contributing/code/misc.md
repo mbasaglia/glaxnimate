@@ -24,14 +24,16 @@ Something along these lines:
 
 1. Update the version number on the root `CMakeLists.txt`
 2. Ensure `CHANGELOG.md` is up to date and changes are under the heading for the scheduled release
-3. Build the `pre_release` target
+3. Build the `release_0` target
 4. Wait for CI to complete <https://gitlab.com/mattbas/glaxnimate/-/pipelines>
 5. If there are erros
     * fix the errors
     * `./deploy/tag-branch.sh`
     * go back to 4.
-6. build the `release` target
+6. build the `release_1` target, this builds the `release` branch
 7. Wait for CI to complete
-8. New release should be ready at <https://gitlab.com/mattbas/glaxnimate/-/releases>
-9. Run `./deploy/release_check.py` or `make post_release` to check the release is ok
-10. Merge `release` / `pre-release` back into master if there have been any new commits
+7. build the `release_2` target, this creates the release on gitlab and copies bintray artifacts
+8. Wait for CI to complete
+9. New release should be ready at <https://gitlab.com/mattbas/glaxnimate/-/releases>
+10. Run `./deploy/release_check.py` or `make release_check` to check the release is ok
+11. Merge `release` / `pre-release` back into master if there have been any new commits

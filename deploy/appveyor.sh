@@ -34,7 +34,7 @@ cp ../deploy/glaxnimate.vbs glaxnimate
 if [ "$APPVEYOR_REPO_TAG" = true ]
 then
     pacman --noconfirm -S mingw-w64-x86_64-python-pip
-    cmingw32-make.exe .. -DVERSION_SUFFIX=""
+    mingw32-make.exe .. -DVERSION_SUFFIX=""
     mingw32-make.exe glaxnimate_python_depends_install
     mingw32-make.exe glaxnimate_python
     (cd py_module && ./setup.py build --compiler=unix bdist_wheel && cd ..)
