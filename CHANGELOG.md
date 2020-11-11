@@ -1,3 +1,7 @@
+## 0.3.1
+
+
+
 ## 0.3.0
 
 * Editing:
@@ -14,7 +18,8 @@
 * UI:
     * Dialog to edit document metadata
 * Scripting:
-    * Ability to load Qt designer UI files.
+    * Ability to load Qt designer UI files
+    * Ability to create any document object
     * Rendering to PIL images
     * Import/Export plugin types
     * Button to clear the script console

@@ -31,59 +31,36 @@ void command::SetKeyframe::undo()
 
 void command::SetKeyframe::redo()
 {
-    model::AnimatableBase::SetKeyframeInfo info;
-    auto kf = prop->set_keyframe(time, after, &info);
     if ( !calculated )
     {
+        auto mid = prop->mid_transition(time);
+        model::AnimatableBase::SetKeyframeInfo info;
+        auto kf = prop->set_keyframe(time, after, &info);
         if ( kf && info.insertion && info.index > 0 && info.index + 1 < prop->keyframe_count() )
         {
-            insert_index = info.index;
-            auto kf_before = prop->keyframe(info.index - 1);
-            auto kf_after = prop->keyframe(info.index + 1);
-            auto orig_transition = kf_before->transition().bezier();
-            handle_b1 = orig_transition.points()[1];
-            handle_b2 = orig_transition.points()[2];
-
-            qreal x = math::unlerp(kf_before->time(), kf_after->time(), kf->time());
-            qreal t = kf_before->transition().bezier_parameter(x);
-            if ( t == 0 )
-            {
-                handle_l1 = handle_r1 = kf_before->transition().before_handle();
-                handle_l2 = handle_r2 = kf_before->transition().after_handle();
-            }
-            else if ( t < 1 )
-            {
-                qreal y = kf_before->transition().lerp_factor(x);
-                math::bezier::BezierSegment left, right;
-                std::tie(left, right) = orig_transition.split(t);
-
-                qreal left_factor_x = 1 / x;
-                qreal left_factor_y = 1 / y;
-                handle_l1 =  {
-                    left[1].x() * left_factor_x,
-                    left[1].y() * left_factor_y
-                };
-                handle_l2 =  {
-                    left[2].x() * left_factor_x,
-                    left[2].y() * left_factor_y
-                };
-
-                qreal right_factor_x = 1 / (1-x);
-                qreal right_factor_y = 1 / (1-y);
-                handle_r1 =  {
-                    (right[1].x() - x) * right_factor_x,
-                    (right[1].y() - y) * right_factor_y
-                };
-                handle_r2 =  {
-                    (right[2].x() - x) * right_factor_x,
-                    (right[2].y() - y) * right_factor_y
-                };
-            }
-            else
+            if ( mid.type != model::AnimatableBase::MidTransition::Middle )
             {
                 insert_index = -1;
             }
+            else
+            {
+                insert_index = info.index;
+
+                auto kf_before = prop->keyframe(info.index - 1);
+                auto orig_transition = kf_before->transition().bezier();
+                handle_b1 = orig_transition.points()[1];
+                handle_b2 = orig_transition.points()[2];
+
+                handle_l1 = mid.from_previous.first;
+                handle_l2 = mid.from_previous.second;
+                handle_r1 = mid.to_next.first;
+                handle_r2 = mid.to_next.second;
+            }
         }
+    }
+    else
+    {
+        prop->set_keyframe(time, after, nullptr);
     }
 
     if ( insert_index > 0 )

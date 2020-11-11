@@ -73,6 +73,21 @@ public:
         int index;
     };
 
+    struct MidTransition
+    {
+        enum Type
+        {
+            Invalid,
+            SingleKeyframe,
+            Middle,
+        };
+        Type type = Invalid;
+
+        QVariant value;
+        QPair<QPointF, QPointF> from_previous;
+        QPair<QPointF, QPointF> to_next;
+    };
+
     using BaseProperty::BaseProperty;
 
     virtual ~AnimatableBase() = default;
@@ -229,6 +244,8 @@ public:
         return keyframe(keyframe_index(time))->time() == time;
     }
 
+    MidTransition mid_transition(FrameTime time) const;
+
 signals:
     void keyframe_added(int index, KeyframeBase* keyframe);
     void keyframe_removed(int index);
@@ -236,6 +253,9 @@ signals:
 
 protected:
     virtual void on_set_time(FrameTime time) = 0;
+
+    MidTransition do_mid_transition(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio) const;
+    virtual QVariant do_mid_transition_value(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio) const = 0;
 
 private:
     FrameTime current_time = 0;
@@ -678,6 +698,16 @@ protected:
         double scaled_time = (time - first->time()) / (second->time() - first->time());
         double lerp_factor = first->transition().lerp_factor(scaled_time);
         return {nullptr, first->lerp(second->get(), lerp_factor)};
+    }
+
+    QVariant do_mid_transition_value(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio) const override
+    {
+        return QVariant::fromValue(
+            static_cast<const keyframe_type*>(kf_before)->lerp(
+                static_cast<const keyframe_type*>(kf_after)->get(),
+                ratio
+            )
+        );
     }
 
     value_type value_;
