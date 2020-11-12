@@ -1,6 +1,7 @@
 ## 0.3.1
 
-
+* Editing:
+    * Menu action to convert any shape into a Path
 
 ## 0.3.0
 

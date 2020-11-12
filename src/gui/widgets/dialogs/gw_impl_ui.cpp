@@ -109,6 +109,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_trace_bitmap, &QAction::triggered, parent, [this]{
         trace_dialog(current_shape());
     });
+    connect(ui.action_object_to_path, &QAction::triggered, parent, [this]{to_path();});
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )

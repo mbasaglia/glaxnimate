@@ -71,9 +71,43 @@ QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
 }
 
 
-model::Path * model::Shape::to_path() const
+std::unique_ptr<model::Path> model::Shape::to_path() const
 {
-    return nullptr;
+    std::vector<AnimatableBase*> properties;
+    auto flags = PropertyTraits::Visual|PropertyTraits::Animated;
+    for ( auto prop : this->properties() )
+    {
+        if ( (prop->traits().flags & flags) == flags )
+            properties.push_back(static_cast<AnimatableBase*>(prop));
+    }
+
+    auto path = std::make_unique<model::Path>(document());
+    path->name.set(name.get());
+    path->group_color.set(group_color.get());
+    path->visible.set(visible.get());
+
+    if ( !properties.empty() )
+    {
+
+        JoinAnimatables ja(std::move(properties));
+        FrameTime cur_time = ja.properties()[0]->time();
+        path->set_time(cur_time);
+
+        if ( ja.animated() )
+        {
+            for ( const auto & kf : ja )
+            {
+                auto path_kf = path->shape.set_keyframe(kf.time, to_bezier(kf.time));
+                auto trans = kf.transition();
+                path_kf->transition().set_before_handle(trans.first);
+                path_kf->transition().set_after_handle(trans.second);
+            }
+        }
+
+        path->shape.set(to_bezier(cur_time));
+    }
+
+    return path;
 }
 
 

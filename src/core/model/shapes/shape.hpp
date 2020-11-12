@@ -123,7 +123,7 @@ public:
         bez.beziers().push_back(to_bezier(t));
     }
 
-    Path* to_path() const;
+    std::unique_ptr<Path> to_path() const;
 };
 
 /**

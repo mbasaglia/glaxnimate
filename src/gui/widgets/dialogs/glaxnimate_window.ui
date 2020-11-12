@@ -1046,9 +1046,6 @@
    </property>
   </action>
   <action name="action_object_to_path">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="icon">
     <iconset theme="object-to-path">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>

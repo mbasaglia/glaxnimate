@@ -7,171 +7,118 @@
 
 namespace model {
 
-namespace detail {
-
-inline void collect_times(std::set<FrameTime>&) {}
-
-template<class Head, class... Tail>
-void collect_times(std::set<FrameTime>& times, model::AnimatedProperty<Head>* head, model::AnimatedProperty<Tail>*... tail)
-{
-    for ( const auto& kf : head )
-        times.insert(kf.time());
-
-    collect_times(times, tail...);
-}
-
-
-template<class T>
-struct JoinedAnimatableItem
-{
-    JoinedAnimatableItem(const T& value) : value {value} {}
-
-    T value;
-    KeyframeTransition transition;
-};
-
-void collect_transition(int& count, QPointF& in, QPointF& out)
-{
-    in /= count;
-    out /= count;
-}
-
-template<class Head, class... Tail>
-void collect_transition(int& count, QPointF& in, QPointF& out,
-                        const JoinedAnimatableItem<Head>& head,
-                        const JoinedAnimatableItem<Tail>&... tail)
-{
-    count++;
-    in += head.transition.before_handle();
-    out += head.transition.after_handle();
-    collect_transition(count, in, out, tail...);
-}
-
-template<class... Types, std::size_t... Indices>
-void collect_transition_tuple(int& count, QPointF& in, QPointF& out,
-                              const std::tuple<JoinedAnimatableItem<Types>...>& items,
-                              std::index_sequence<Indices...>)
-{
-    collect_transition(count, in, out, std::get<Indices>(items)...);
-}
-
-
-template<class... Types, std::size_t... Indices>
-std::tuple<Types...> get_current_value(
-    const std::tuple<model::AnimatedProperty<Types>*...>& properties,
-    std::index_sequence<Indices...>
-)
-{
-    return {
-        std::get<Indices>(properties)->get()...
-    };
-}
-
-} // namespace detail
-
-template<class... Types>
 class JoinAnimatables
 {
 private:
     using MidTransition = model::AnimatableBase::MidTransition;
-    using Indices = std::make_index_sequence<sizeof...(Types)>;
-
-    static std::array<MidTransition, sizeof...(Types)> get_mid(
-        FrameTime time,
-        model::AnimatedProperty<Types>*... properties
-    )
-    {
-        return {
-            properties->mid_transition(time)...
-        };
-    }
 
 public:
     struct Keyframe
     {
         FrameTime time;
-        std::tuple<detail::JoinedAnimatableItem<Types>...> items;
+        std::vector<QVariant> values;
+        std::vector<QPair<QPointF, QPointF>> transitions;
 
-        template<int index>
-        const auto& value() const
+        Keyframe(FrameTime time, std::size_t prop_count)
+            : time(time)
         {
-            return std::get<index>(items).value;
+            values.reserve(prop_count);
+            transitions.reserve(prop_count);
         }
 
-        KeyframeTransition transition() const
+        QPair<QPointF, QPointF> transition() const
         {
-            int count = 0;
             QPointF in;
             QPointF out;
-            collect_transition_tuple(count, in, out, items, Indices{});
-            KeyframeTransition ret;
-            ret.set_before_handle(in);
-            ret.set_after_handle(out);
+            for ( const auto& transition : transitions )
+            {
+                 in += transition.first;
+                 out += transition.second;
+            }
+
+            in /= transitions.size();
+            out /= transitions.size();
+
+            return {in, out};
         }
     };
 
     using iterator = typename std::vector<Keyframe>::const_iterator;
 
-    JoinAnimatables(model::AnimatedProperty<Types>*... properties)
-    : properties{properties...}
+    JoinAnimatables(std::vector<model::AnimatableBase*> properties)
+    : properties_(std::move(properties))
     {
         std::set<FrameTime> time_set;
-        detail::collect_times(time_set, properties...);
+        for ( auto prop : properties_ )
+            for ( int i = 0, e = prop->keyframe_count(); i < e; i++ )
+                time_set.insert(prop->keyframe(i)->time());
         std::vector<FrameTime> time_vector(time_set.begin(), time_set.end());
         time_set.clear();
 
-        std::vector<std::array<MidTransition, sizeof...(Types)>> mids;
+        std::vector<std::vector<MidTransition>> mids;
         mids.reserve(time_vector.size());
         for ( FrameTime t : time_vector )
-            mids.push_back(get_mid(time, properties...));
+        {
+            mids.push_back({});
+            mids.back().resize(properties_.size());
+            for ( auto prop : properties_ )
+                mids.back().push_back(prop->mid_transition(t));
+        }
 
-        keyframes.reserve(time_vector.size());
+        keyframes_.reserve(time_vector.size());
         for ( std::size_t i = 0; i < time_vector.size(); i++ )
         {
-            keyframes.push_back({time, {mids[i].value.template value<Types>()...}});
+            keyframes_.emplace_back(time_vector[i], properties_.size());
 
-            for ( std::size_t j = 0; j < sizeof...(Types); j++ )
+            for ( std::size_t j = 0; j < properties_.size(); j++ )
             {
-                keyframes.back()[j].transition.set_before_handle(mids[i].to_next.first);
-                keyframes.back()[j].transition.set_after_handle(mids[i].to_next.second);
+                keyframes_.back().values.push_back(mids[i][j].value);
+                keyframes_.back().transitions.push_back(mids[i][j].to_next);
                 if ( mids[i][j].type == MidTransition::Middle && i > 0 && mids[i-1][j].type != MidTransition::Middle )
                 {
-                    keyframes[i-1][j].transition.set_before_handle(mids[i].from_previous.first);
-                    keyframes[i-1][j].transition.set_after_handle(mids[i].from_previous.second);
+                    keyframes_[i-1].transitions[j] = mids[i][j].from_previous;
                 }
             }
         }
     }
 
-    template<int index>
-    auto property() const
-    {
-        return std::get<index>(properties);
-    }
-
     bool animated() const
     {
-        return !keyframes.empty();
+        return !keyframes_.empty();
     }
 
     auto begin() const
     {
-        return keyframes.begin();
+        return keyframes_.begin();
     }
 
     auto end() const
     {
-        return keyframes.end();
+        return keyframes_.end();
     }
 
-    std::tuple<Types...> current_value() const
+    std::vector<QVariant> current_value() const
     {
-        return detail::get_current_value(properties, Indices{});
+        std::vector<QVariant> values;
+        values.reserve(properties_.size());
+        for ( auto prop : properties_ )
+            values.push_back(prop->value());
+        return values;
+    }
+
+    const std::vector<model::AnimatableBase*>& properties() const
+    {
+        return properties_;
+    }
+
+    const std::vector<Keyframe>& keyframes() const
+    {
+        return keyframes_;
     }
 
 private:
-    std::tuple<model::AnimatedProperty<Types>*...> properties;
-    std::vector<Keyframe> keyframes;
+    std::vector<model::AnimatableBase*> properties_;
+    std::vector<Keyframe> keyframes_;
 
 };
 

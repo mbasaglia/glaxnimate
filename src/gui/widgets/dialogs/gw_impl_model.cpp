@@ -14,6 +14,8 @@
 
 #include "model/shapes/image.hpp"
 #include "model/shapes/group.hpp"
+#include "model/shapes/path.hpp"
+#include "model/simple_visitor.hpp"
 
 #include "settings/clipboard_settings.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
@@ -66,7 +68,6 @@ void GlaxnimateWindow::Private::set_current_document_node(model::DocumentNode* n
 {
     ui.view_document_node->setCurrentIndex(document_node_model.node_index(node));
 }
-
 
 void GlaxnimateWindow::Private::layer_new_layer()
 {
@@ -452,4 +453,35 @@ void GlaxnimateWindow::Private::cleanup_document()
     remove_assets(current_document->defs()->images, count);
 
     status_message(tr("Removed %1 assets").arg(count), 0);
+}
+
+void GlaxnimateWindow::Private::to_path()
+{
+    std::set<model::Shape*> shapes;
+
+    auto callback = [&shapes](model::Shape* shape){ shapes.insert(shape); };
+    for ( auto selected : scene.selection() )
+        model::simple_visit<model::Shape>(selected, true, callback);
+
+    if ( shapes.empty() )
+        return;
+
+    QString macro_name = tr("Convert to path");
+    if ( shapes.size() == 1 )
+        macro_name = tr("Convert %1 to path").arg((*shapes.begin())->name.get());
+
+    command::UndoMacroGuard guard(macro_name, current_document.get());
+    for ( auto shape : shapes )
+    {
+        current_document->push_command(
+            new command::AddObject<model::ShapeElement>(
+                shape->owner(),
+                shape->to_path(),
+                shape->position()
+            )
+        );
+        current_document->push_command(
+            new command::RemoveObject<model::ShapeElement>(shape, shape->owner())
+        );
+    }
 }

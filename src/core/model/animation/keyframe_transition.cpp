@@ -214,3 +214,7 @@ double model::KeyframeTransition::bezier_parameter(double ratio) const
         return 1;
     return t_for_x(ratio, bezier_, sample_cache_);
 }
+
+model::KeyframeTransition::KeyframeTransition(const QPointF& before_handle, const QPointF& after_handle)
+    : bezier_({0, 0}, before_handle, after_handle, {1,1})
+{}

@@ -139,6 +139,7 @@ public:
     void ungroup_shapes();
     void move_to();
     void cleanup_document();
+    void to_path();
 
     void layer_new_layer();
     void layer_new_fill();
