@@ -1,6 +1,8 @@
 #include "shape.hpp"
 #include "utils/range.hpp"
 #include "styler.hpp"
+#include "path.hpp"
+#include "model/animation/join_animatables.hpp"
 
 const model::ShapeListProperty& model::ShapeElement::siblings() const
 {
@@ -67,6 +69,13 @@ QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
 
     return rect;
 }
+
+
+model::Path * model::Shape::to_path() const
+{
+    return nullptr;
+}
+
 
 model::ShapeOperator::ShapeOperator(model::Document* doc)
     : ShapeElement(doc)

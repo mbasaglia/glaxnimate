@@ -104,6 +104,8 @@ protected:
     }
 };
 
+class Path;
+
 /**
  * \brief Classes that define shapes on their own (but not necessarily style)
  */
@@ -120,6 +122,8 @@ public:
     {
         bez.beziers().push_back(to_bezier(t));
     }
+
+    Path* to_path() const;
 };
 
 /**

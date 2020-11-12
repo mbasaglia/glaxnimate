@@ -51,7 +51,12 @@ model::AnimatableBase::MidTransition model::AnimatableBase::mid_transition(model
     int keyframe_index = this->keyframe_index(time);
     const KeyframeBase* kf_before = this->keyframe(keyframe_index);
     if ( !kf_before )
-        return {};
+        return {
+            MidTransition::Invalid,
+            value(),
+            {{}, {1, 1}},
+            {{}, {1, 1}}
+        };
 
     auto before_time = kf_before->time();
 
@@ -85,28 +90,32 @@ model::AnimatableBase::MidTransition model::AnimatableBase::mid_transition(model
         };
 
     qreal x = math::unlerp(before_time, after_time, time);
-    return do_mid_transition(kf_before, kf_after, x);
+    return do_mid_transition(kf_before, kf_after, x, keyframe_index);
 }
 
 
 model::AnimatableBase::MidTransition model::AnimatableBase::do_mid_transition(
     const model::KeyframeBase* kf_before,
     const model::KeyframeBase* kf_after,
-    qreal x
+    qreal x,
+    int index
 ) const
 {
-    auto orig_transition = kf_before->transition().bezier();
-    QPointF handle_b1 = orig_transition.points()[1];
-    QPointF handle_b2 = orig_transition.points()[2];
-
     qreal t = kf_before->transition().bezier_parameter(x);
 
     if ( t <= 0 )
     {
+        QPair<QPointF, QPointF> from_previous = {{}, {1, 1}};
+        if ( index > 0 )
+        {
+            const model::KeyframeBase* kf_before_still = keyframe(index-1);
+            from_previous = {kf_before_still->transition().before_handle(), kf_before_still->transition().after_handle()};
+        }
+
         return {
             MidTransition::SingleKeyframe,
             kf_before->value(),
-            {{}, {1, 1}},
+            from_previous,
             {kf_before->transition().before_handle(), kf_before->transition().after_handle()},
         };
     }
@@ -119,6 +128,8 @@ model::AnimatableBase::MidTransition model::AnimatableBase::do_mid_transition(
             {kf_after->transition().before_handle(), kf_after->transition().after_handle()},
         };
     }
+
+    auto orig_transition = kf_before->transition().bezier();
 
     model::AnimatableBase::MidTransition mt;
     mt.type = MidTransition::Middle;

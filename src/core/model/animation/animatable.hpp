@@ -254,7 +254,7 @@ signals:
 protected:
     virtual void on_set_time(FrameTime time) = 0;
 
-    MidTransition do_mid_transition(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio) const;
+    MidTransition do_mid_transition(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio, int index) const;
     virtual QVariant do_mid_transition_value(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio) const = 0;
 
 private:
