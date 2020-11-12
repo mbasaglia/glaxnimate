@@ -2,6 +2,10 @@
 
 * Editing:
     * Menu action to convert any shape into a Path
+* Bug Fixes:
+    * Removed spurious warnings when loading lottie
+    * Bezier data is loaded correctly from lottie
+    * Fixed layer parenting when loading lottie
 
 ## 0.3.0
 

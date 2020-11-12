@@ -156,7 +156,7 @@ struct FieldInfo
 
 // static mapping data
 const QMap<QString, QVector<FieldInfo>> fields = {
-    {"DocumentNode", {
+    {"ReferenceTarget", {
         FieldInfo{"nm", "name", {}, false},
         FieldInfo{"mn", "uuid", {}, false},
     }},
@@ -211,6 +211,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("o"),
         FieldInfo("sk"),
         FieldInfo("sa"),
+        FieldInfo("nm"),
     }},
     {"ShapeElement", {
         FieldInfo{"ty", Custom},
@@ -232,6 +233,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     }},
     {"Path", {
         FieldInfo{"ks", "shape"},
+        FieldInfo{"ind"},
     }},
     {"PolyStar", {
         FieldInfo{"p", "position"},
@@ -421,7 +423,7 @@ public:
         json["ind"_l] = index;
 
         convert_animation_container(layer->animation.get(), json);
-        convert_object_properties(layer, fields["DocumentNode"], json);
+        convert_object_properties(layer, fields["ReferenceTarget"], json);
         convert_object_properties(layer, fields["__Layer__"], json);
 
         QCborMap transform;
@@ -842,7 +844,7 @@ private:
         }
 
         auto layer = std::make_unique<model::Layer>(document);
-        layer_indices[layer_indices.size()] = layer.get();
+        layer_indices[index] = layer.get();
         deferred.emplace_back(layer.get(), json);
         composition->shapes.insert(std::move(layer), 0);
     }
@@ -850,9 +852,10 @@ private:
     void load_layer(const QJsonObject& json, model::Layer* layer)
     {
         auto props = load_basic_setup(json);
+        props.erase("ind");
 
         load_animation_container(json, layer->animation.get());
-        load_properties(layer, fields["DocumentNode"], json, props);
+        load_properties(layer, fields["ReferenceTarget"], json, props);
         load_properties(layer, fields["__Layer__"], json, props);
 
         if ( json.contains("parent") )
@@ -1139,6 +1142,7 @@ private:
             case model::PropertyTraits::String:
             case model::PropertyTraits::Uuid:
             case model::PropertyTraits::Enum:
+            case model::PropertyTraits::Bezier:
                 return true;
             default:
                 return false;
