@@ -844,7 +844,7 @@ private:
         }
 
         auto layer = std::make_unique<model::Layer>(document);
-        layer_indices[layer_indices.size()] = layer.get();
+        layer_indices[index] = layer.get();
         deferred.emplace_back(layer.get(), json);
         composition->shapes.insert(std::move(layer), 0);
     }
