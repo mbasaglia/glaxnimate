@@ -1142,6 +1142,7 @@ private:
             case model::PropertyTraits::String:
             case model::PropertyTraits::Uuid:
             case model::PropertyTraits::Enum:
+            case model::PropertyTraits::Bezier:
                 return true;
             default:
                 return false;

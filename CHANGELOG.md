@@ -1,7 +1,8 @@
 ## 0.3.1
 
 * Bug Fixes:
-    * Removed spurious warnings when loading lottie files
+    * Removed spurious warnings when loading lottie
+    * Bezier data is loaded correctly from lottie
 
 ## 0.3.0
 
