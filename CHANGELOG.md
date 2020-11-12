@@ -1,3 +1,8 @@
+## 0.3.1
+
+* Bug Fixes:
+    * Removed spurious warnings when loading lottie files
+
 ## 0.3.0
 
 * Editing:
