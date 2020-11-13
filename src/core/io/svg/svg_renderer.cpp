@@ -1,6 +1,6 @@
 #include "svg_renderer.hpp"
 
-#include <QXmlStreamWriter>
+#include <QDomDocument>
 
 #include "model/document.hpp"
 #include "model/shapes/shapes.hpp"
@@ -19,42 +19,47 @@ public:
             return;
 
         at_start = false;
-        writer.writeStartElement("defs");
+        QDomElement defs = element(svg, "defs");
         for ( const auto& color : doc->defs()->colors )
-            write_named_color(color.get());
+            write_named_color(defs, color.get());
         for ( const auto& color : doc->defs()->gradient_colors )
-            write_gradient_colors(color.get());
+            write_gradient_colors(defs, color.get());
         for ( const auto& gradient : doc->defs()->gradients )
-            write_gradient(gradient.get());
-        writer.writeEndElement();
+            write_gradient(defs, gradient.get());
 
-        writer.writeStartElement("sodipodi:namedview");
-        write_attribute("inkscape:pagecheckerboard", "true");
-        write_attribute("borderlayer", "true");
-        write_attribute("bordercolor", "#666666");
-        write_attribute("pagecolor", "#ffffff");
-        write_attribute("inkscape:document-units", "px");
-        writer.writeEndElement();
+        auto view = element(svg, "sodipodi:namedview");
+        view.setAttribute("inkscape:pagecheckerboard", "true");
+        view.setAttribute("borderlayer", "true");
+        view.setAttribute("bordercolor", "#666666");
+        view.setAttribute("pagecolor", "#ffffff");
+        view.setAttribute("inkscape:document-units", "px");
     }
 
-    void write_composition(model::Composition* comp)
+    QDomElement element(QDomElement& parent, const char* tag)
+    {
+        QDomElement e = dom.createElement(tag);
+        parent.appendChild(e);
+        return e;
+    }
+
+    void write_composition(QDomElement& parent, model::Composition* comp)
     {
         for ( const auto& lay : comp->shapes )
-            write_shape(lay.get(), false);
+            write_shape(parent, lay.get(), false);
     }
 
-    void write_visibility_attributes(model::DocumentNode* node)
+    void write_visibility_attributes(QDomElement& parent, model::DocumentNode* node)
     {
         if ( !node->visible.get() )
-            write_attribute("display", "none");
+            parent.setAttribute("display", "none");
         if ( node->locked.get() )
-            writer.writeAttribute(detail::xmlns.at("sodipodi"), "insensitive", "true");
+            parent.setAttribute("sodipodi:insensitive", "true");
     }
 
-    void write_shapes(const model::ShapeListProperty& shapes)
+    void write_shapes(QDomElement& parent, const model::ShapeListProperty& shapes)
     {
         for ( const auto& shape : shapes )
-            write_shape(shape.get(), false);
+            write_shape(parent, shape.get(), false);
     }
 
 
@@ -65,90 +70,84 @@ public:
         return styler->color.get().name();
     }
 
-    void write_styler_shapes(model::Styler* styler, const Style::Map& style)
+    void write_styler_shapes(QDomElement& parent, model::Styler* styler, const Style::Map& style)
     {
         if ( styler->affected().size() == 1 )
         {
-            write_shape_shape(styler->affected()[0], style);
-            write_visibility_attributes(styler);
-            write_attribute("id", id(styler));
+            write_shape_shape(parent, styler->affected()[0], style);
+            write_visibility_attributes(parent, styler);
+            parent.setAttribute("id", id(styler));
             return;
         }
 
-        start_group(styler);
-        write_style(style);
-        write_visibility_attributes(styler);
-        write_attribute("id", id(styler));
+        auto g = start_group(parent, styler);
+        write_style(g, style);
+        write_visibility_attributes(g, styler);
+        g.setAttribute("id", id(styler));
 
         for ( model::ShapeElement* subshape : styler->affected() )
         {
-            write_shape_shape(subshape, style);
+            write_shape_shape(g, subshape, style);
         }
-
-        writer.writeEndElement();
     }
 
-    void write_shape_shape(model::ShapeElement* shape, const Style::Map& style)
+    void write_shape_shape(QDomElement& parent, model::ShapeElement* shape, const Style::Map& style)
     {
         model::FrameTime time = shape->time();
 
         if ( auto rect = qobject_cast<model::Rect*>(shape) )
         {
-            writer.writeEmptyElement("rect");
-            write_style(style);
+            auto e = element(parent, "rect");
+            write_style(e, style);
             QPointF c = rect->position.get_at(time);
             QSizeF s = rect->size.get_at(time);
-            write_attribute("x", c.x() - s.width()/2);
-            write_attribute("y", c.y() - s.height()/2);
-            write_attribute("width", s.width());
-            write_attribute("height", s.height());
-            write_attribute("ry", rect->rounded.get_at(time));
+            set_attribute(e, "x", c.x() - s.width()/2);
+            set_attribute(e, "y", c.y() - s.height()/2);
+            set_attribute(e, "width", s.width());
+            set_attribute(e, "height", s.height());
+            set_attribute(e, "ry", rect->rounded.get_at(time));
         }
         else if ( auto ellipse = qobject_cast<model::Ellipse*>(shape) )
         {
-            writer.writeEmptyElement("ellipse");
-            write_style(style);
+            auto e = element(parent, "ellipse");
+            write_style(e, style);
             QPointF c = ellipse->position.get_at(time);
             QSizeF s = ellipse->size.get_at(time);
-            write_attribute("cx", c.x());
-            write_attribute("cy", c.y());
-            write_attribute("rx", s.width() / 2);
-            write_attribute("ry", s.height() / 2);
+            set_attribute(e, "cx", c.x());
+            set_attribute(e, "cy", c.y());
+            set_attribute(e, "rx", s.width() / 2);
+            set_attribute(e, "ry", s.height() / 2);
         }
         else if ( auto star = qobject_cast<model::PolyStar*>(shape) )
         {
-            write_bezier(shape->shapes(time), style);
+            auto e = write_bezier(parent, shape->shapes(time), style);
 
-            write_attribute("sodipodi:type", "star");
-            write_attribute("inkscape:randomized", "0");
-            write_attribute("inkscape:rounded", "0");
+            set_attribute(e, "sodipodi:type", "star");
+            set_attribute(e, "inkscape:randomized", "0");
+            set_attribute(e, "inkscape:rounded", "0");
             int sides = star->points.get_at(time);
-            write_attribute("sodipodi:sides", sides);
-            write_attribute(
-                "inkscape:flatsided",
-                star->type.get() == model::PolyStar::Polygon ?
-                "true" : "false"
-            );
+            set_attribute(e, "sodipodi:sides", sides);
+            set_attribute(e, "inkscape:flatsided", star->type.get() == model::PolyStar::Polygon);
             QPointF c = star->position.get_at(time);
-            write_attribute("sodipodi:cx", c.x());
-            write_attribute("sodipodi:cy", c.y());
-            write_attribute("sodipodi:r1", star->outer_radius.get_at(time));
-            write_attribute("sodipodi:r2", star->inner_radius.get_at(time));
+            set_attribute(e, "sodipodi:cx", c.x());
+            set_attribute(e, "sodipodi:cy", c.y());
+            set_attribute(e, "sodipodi:r1", star->outer_radius.get_at(time));
+            set_attribute(e, "sodipodi:r2", star->inner_radius.get_at(time));
             qreal angle = math::deg2rad(star->angle.get_at(time) - 90);
-            write_attribute("sodipodi:arg1", angle);
-            write_attribute("sodipodi:arg2", angle + math::pi / sides);
+            set_attribute(e, "sodipodi:arg1", angle);
+            set_attribute(e, "sodipodi:arg2", angle + math::pi / sides);
         }
         else if ( !qobject_cast<model::Styler*>(shape) )
         {
-            write_bezier(shape->shapes(time), style);
+            write_bezier(parent, shape->shapes(time), style);
         }
     }
 
-    void write_shape(model::ShapeElement* shape, bool force_draw)
+    void write_shape(QDomElement& parent, model::ShapeElement* shape, bool force_draw)
     {
         if ( auto grp = qobject_cast<model::Group*>(shape) )
         {
-            write_group_shape(grp);
+            write_group_shape(parent, grp);
         }
         else if ( auto stroke = qobject_cast<model::Stroke*>(shape) )
         {
@@ -183,35 +182,33 @@ public:
                     break;
             }
             style["stroke-dasharray"] = "none";
-            write_styler_shapes(stroke, style);
+            write_styler_shapes(parent, stroke, style);
         }
         else if ( auto fill = qobject_cast<model::Fill*>(shape) )
         {
             Style::Map style;
             style["fill"] = styler_to_css(fill);
             style["fill-opacity"] = QString::number(fill->opacity.get());
-            write_styler_shapes(fill, style);
+            write_styler_shapes(parent, fill, style);
         }
         else if ( auto img = qobject_cast<model::Image*>(shape) )
         {
             if ( img->image.get() )
             {
-                writer.writeEmptyElement("image");
-                write_attribute("x", 0);
-                write_attribute("y", 0);
-                write_attribute("width", img->image->width.get());
-                write_attribute("height", img->image->height.get());
-                Style::Map style;
-                transform_to_style(img->transform_matrix(img->time()), style);
-                write_attributes(style);
-                write_attribute("xlink:href", img->image->to_url().toString());
+                auto e = element(parent, "image");
+                set_attribute(e, "x", 0);
+                set_attribute(e, "y", 0);
+                set_attribute(e, "width", img->image->width.get());
+                set_attribute(e, "height", img->image->height.get());
+                transform_to_attr(e, img->transform_matrix(img->time()));
+                set_attribute(e, "xlink:href", img->image->to_url().toString());
             }
         }
         else if ( force_draw )
         {
-            write_shape_shape(shape, {});
-            write_visibility_attributes(shape);
-            write_attribute("id", id(shape));
+            write_shape_shape(parent, shape, {});
+            write_visibility_attributes(parent, shape);
+            set_attribute(parent, "id", id(shape));
         }
     }
 
@@ -229,10 +226,10 @@ public:
         }
     }
 
-    void write_bezier(const math::bezier::MultiBezier& shape, const Style::Map& style)
+    QDomElement write_bezier(QDomElement& parent, const math::bezier::MultiBezier& shape, const Style::Map& style)
     {
-        writer.writeEmptyElement("path");
-        write_style(style);
+        QDomElement path = element(parent, "path");
+        write_style(path, style);
         QString d;
         QString nodetypes;
         for ( const math::bezier::Bezier& b : shape.beziers() )
@@ -263,44 +260,43 @@ public:
                 d += " Z";
             }
         }
-        write_attribute("d", d);
-        write_attribute("sodipodi:nodetypes", nodetypes);
+        set_attribute(path, "d", d);
+        set_attribute(path, "sodipodi:nodetypes", nodetypes);
+        return path;
     }
 
-    void write_group_shape(model::Group* group)
+    void write_group_shape(QDomElement& parent, model::Group* group)
     {
+        QDomElement g;
         if ( auto layer = group->cast<model::Layer>() )
         {
             if ( !layer->render.get() )
                 return;
-            start_layer(group);
+            g = start_layer(parent, group);
         }
         else
         {
-            start_group(group);
+            g = start_group(parent, group);
         }
-        Style::Map style;
-        transform_to_style(group->transform_matrix(group->time()), style);
-        style["opacity"] = group->opacity.get();
-        write_style(style);
-        write_visibility_attributes(group);
-        write_shapes(group->shapes);
-        writer.writeEndElement();
+        transform_to_attr(g, group->transform_matrix(group->time()));
+        set_attribute(g, "opacity", group->opacity.get());
+        write_visibility_attributes(g, group);
+        write_shapes(g, group->shapes);
     }
 
-    void transform_to_style(const QTransform& matr, Style::Map& style)
+    void transform_to_attr(QDomElement& parent, const QTransform& matr)
     {
-        style["transform"] = QString("matrix(%1, %2, %3, %4, %5 %6)")
+        parent.setAttribute("transform", QString("matrix(%1, %2, %3, %4, %5 %6)")
             .arg(matr.m11())
             .arg(matr.m12())
             .arg(matr.m21())
             .arg(matr.m22())
             .arg(matr.m31())
             .arg(matr.m32())
-        ;
+        );
     }
 
-    void write_style(const Style::Map& s)
+    void write_style(QDomElement& element, const Style::Map& s)
     {
         QString st;
         for ( auto it : s )
@@ -310,36 +306,27 @@ public:
             st.append(it.second);
             st.append(';');
         }
-        writer.writeAttribute("style", st);
+        element.setAttribute("style", st);
     }
 
-    void start_group(model::DocumentNode* node)
+    QDomElement start_group(QDomElement& parent, model::DocumentNode* node)
     {
-        writer.writeStartElement("g");
-        writer.writeAttribute("id", id(node));
-        writer.writeAttribute("inkscape:label", node->name.get());
+        QDomElement g = element(parent, "g");
+        g.setAttribute("id", id(node));
+        g.setAttribute("inkscape:label", node->name.get());
+        return g;
     }
 
-    void start_layer(model::DocumentNode* node)
+    QDomElement start_layer(QDomElement& parent, model::DocumentNode* node)
     {
-        start_group(node);
-        writer.writeAttribute("inkscape:groupmode", "layer");
+        auto g = start_group(parent, node);
+        g.setAttribute("inkscape:groupmode", "layer");
+        return g;
     }
 
     QString id(model::ReferenceTarget* node)
     {
         return node->type_name() + "_" + node->uuid.get().toString(QUuid::Id128);
-    }
-
-    void write_attribute(const QString& name, const QString& val)
-    {
-        writer.writeAttribute(name, val);
-    }
-
-    void write_attributes(const Style::Map& attributes)
-    {
-        for ( auto it : attributes )
-            write_attribute(it.first, it.second);
     }
 
     /// Avoid locale nonsense by defining these functions (on ASCII chars) manually
@@ -357,19 +344,17 @@ public:
                 c == '-';
     }
 
-    void write_named_color(model::NamedColor* color)
+    void write_named_color(QDomElement& parent, model::NamedColor* color)
     {
-        writer.writeStartElement("linearGradient");
-        writer.writeAttribute("osb:paint", "solid");
+        auto gradient = element(parent, "linearGradient");
+        gradient.setAttribute("osb:paint", "solid");
         QString id = pretty_id(color->name.get(), color);
         non_uuid_ids_map[color] = id;
-        writer.writeAttribute("id", id);
+        gradient.setAttribute("id", id);
 
-        writer.writeEmptyElement("stop");
-        writer.writeAttribute("offset", "0");
-        writer.writeAttribute("style", "stop-color:" + color->color.get().name());
-
-        writer.writeEndElement();
+        auto stop = element(gradient, "stop");
+        stop.setAttribute("offset", "0");
+        stop.setAttribute("style", "stop-color:" + color->color.get().name());
     }
 
     QString pretty_id(const QString& s, model::ReferenceTarget* node)
@@ -402,87 +387,104 @@ public:
     }
 
     template<class T>
-    std::enable_if_t<std::is_arithmetic_v<T>>
-    write_attribute(const QString& name, T val)
+    std::enable_if_t<std::is_arithmetic_v<T> && !std::is_same_v<T, bool>>
+    set_attribute(QDomElement& e, const QString& name, T val)
     {
-        writer.writeAttribute(name, QString::number(val));
+        // not using e.setAttribute overloads to bypass locale settings
+        e.setAttribute(name, QString::number(val));
     }
 
-    void write_gradient_colors(model::GradientColors* gradient)
+    void set_attribute(QDomElement& e, const QString& name, bool val)
     {
-        writer.writeStartElement("linearGradient");
+        e.setAttribute(name, val ? "true" : "false");
+    }
+
+    void set_attribute(QDomElement& e, const QString& name, const QString& val)
+    {
+        e.setAttribute(name, val);
+    }
+
+
+    void write_gradient_colors(QDomElement& parent, model::GradientColors* gradient)
+    {
+        auto e = element(parent, "linearGradient");
         QString id = pretty_id(gradient->name.get(), gradient);
         non_uuid_ids_map[gradient] = id;
-        writer.writeAttribute("id", id);
+        e.setAttribute("id", id);
 
         for ( const auto& stop : gradient->colors.get() )
         {
-            writer.writeEmptyElement("stop");
-            write_attribute("offset", stop.first);
-            writer.writeAttribute("style", "stop-color:" + stop.second.name() + ";stop-opacity:1;");
+            auto s = element(e, "stop");
+            set_attribute(s, "offset", stop.first);
+            s.setAttribute("style", "stop-color:" + stop.second.name() + ";stop-opacity:1;");
         }
-
-        writer.writeEndElement();
     }
 
-    void write_gradient(model::Gradient* gradient)
+    void write_gradient(QDomElement& parent, model::Gradient* gradient)
     {
+        QDomElement e;
         if ( gradient->type.get() == model::Gradient::Radial )
         {
-            writer.writeStartElement("radialGradient");
-            write_attribute("cx", gradient->start_point.get().x());
-            write_attribute("cy", gradient->start_point.get().y());
-            write_attribute("r", math::length(gradient->start_point.get() - gradient->end_point.get()));
-            write_attribute("fx", gradient->highlight.get().x());
-            write_attribute("fy", gradient->highlight.get().y());
+            e = element(parent, "radialGradient");
+            set_attribute(e, "cx", gradient->start_point.get().x());
+            set_attribute(e, "cy", gradient->start_point.get().y());
+            set_attribute(e, "r", math::length(gradient->start_point.get() - gradient->end_point.get()));
+            set_attribute(e, "fx", gradient->highlight.get().x());
+            set_attribute(e, "fy", gradient->highlight.get().y());
         }
         else
         {
-            writer.writeStartElement("linearGradient");
-            write_attribute("x1", gradient->start_point.get().x());
-            write_attribute("y1", gradient->start_point.get().y());
-            write_attribute("x2", gradient->end_point.get().x());
-            write_attribute("y2", gradient->end_point.get().y());
+            e = element(parent, "linearGradient");
+            set_attribute(e, "x1", gradient->start_point.get().x());
+            set_attribute(e, "y1", gradient->start_point.get().y());
+            set_attribute(e, "x2", gradient->end_point.get().x());
+            set_attribute(e, "y2", gradient->end_point.get().y());
         }
 
         QString id = pretty_id(gradient->name.get(), gradient);
         non_uuid_ids_map[gradient] = id;
-        writer.writeAttribute("id", id);
-        writer.writeAttribute("gradientUnits", "userSpaceOnUse");
+        e.setAttribute("id", id);
+        e.setAttribute("gradientUnits", "userSpaceOnUse");
 
         auto it = non_uuid_ids_map.find(gradient->colors.get());
         if ( it != non_uuid_ids_map.end() )
-            writer.writeAttribute("xlink:href", "#" + it->second);
-
-        writer.writeEndElement();
+            e.setAttribute("xlink:href", "#" + it->second);
     }
 
-    QXmlStreamWriter writer;
+    void write()
+    {
+        device->write(dom.toByteArray(4));
+    }
+
+    QDomDocument dom;
     bool at_start = true;
     bool closed = false;
     std::set<QString> non_uuid_ids;
     std::map<model::ReferenceTarget*, QString> non_uuid_ids_map;
     AnimationType animated;
+    QIODevice* device;
+    QDomElement svg;
 };
 
 
 io::svg::SvgRenderer::SvgRenderer(QIODevice* device, AnimationType animated)
     : d(std::make_unique<Private>())
 {
+    d->device = device;
     d->animated = animated;
-    d->writer.setDevice(device);
-    d->writer.setAutoFormatting(true);
-    d->writer.writeStartDocument();
-    d->writer.writeStartElement("svg");
-    d->writer.writeAttribute("xmlns", detail::xmlns.at("svg"));
+    d->svg = d->dom.createElement("svg");
+    d->dom.appendChild(d->svg);
+    d->svg.setAttribute("xmlns", detail::xmlns.at("svg"));
     for ( const auto& p : detail::xmlns )
-        d->writer.writeNamespace(p.second, p.first);
-    d->write_style({
+        d->svg.setAttribute("xmlns:" + p.first, p.second);
+
+    d->write_style(d->svg, {
         {"fill", "none"},
         {"stroke", "none"}
     });
-    d->write_attribute("inkscape:export-xdpi", "96");
-    d->write_attribute("inkscape:export-ydpi", "96");
+    d->svg.setAttribute("inkscape:export-xdpi", "96");
+    d->svg.setAttribute("inkscape:export-ydpi", "96");
+    d->svg.setAttribute("version", "1.1");
 }
 
 io::svg::SvgRenderer::~SvgRenderer()
@@ -498,9 +500,8 @@ void io::svg::SvgRenderer::write_document(model::Document* document)
 void io::svg::SvgRenderer::write_composition(model::Composition* comp)
 {
     d->collect_defs(comp->document());
-    d->start_layer(comp);
-    d->write_composition(comp);
-    d->writer.writeEndElement();
+    auto g = d->start_layer(d->svg, comp);
+    d->write_composition(g, comp);
 }
 
 
@@ -510,10 +511,9 @@ void io::svg::SvgRenderer::write_main(model::MainComposition* comp)
     {
         QString w  = QString::number(comp->width.get());
         QString h = QString::number(comp->height.get());
-        d->writer.writeAttribute("width", w);
-        d->writer.writeAttribute("height", h);
-        d->writer.writeAttribute("version", "1.1");
-        d->writer.writeAttribute("viewBox", QString("0 0 %1 %2").arg(w).arg(h));
+        d->svg.setAttribute("width", w);
+        d->svg.setAttribute("height", h);
+        d->svg.setAttribute("viewBox", QString("0 0 %1 %2").arg(w).arg(h));
         d->collect_defs(comp->document());
         write_composition(comp);
     }
@@ -526,7 +526,7 @@ void io::svg::SvgRenderer::write_main(model::MainComposition* comp)
 void io::svg::SvgRenderer::write_shape(model::ShapeElement* shape)
 {
     d->collect_defs(shape->document());
-    d->write_shape(shape, true);
+    d->write_shape(d->svg, shape, true);
 }
 
 void io::svg::SvgRenderer::write_node(model::DocumentNode* node)
@@ -543,7 +543,7 @@ void io::svg::SvgRenderer::close()
 {
     if ( !d->closed )
     {
-        d->writer.writeEndDocument();
+        d->write();
         d->closed = true;
     }
 }
