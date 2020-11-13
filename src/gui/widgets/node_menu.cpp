@@ -176,8 +176,10 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
             shape->push_command(new command::RemoveShape(shape, shape->owner()));
         });
 
-        addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), this, [shape]{
-            shape->push_command(command::duplicate_shape(shape));
+        addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), this, [shape, window]{
+            auto cmd = command::duplicate_shape(shape);
+            shape->push_command(cmd);
+            window->set_current_document_node(cmd->object());
         });
 
         addSeparator();

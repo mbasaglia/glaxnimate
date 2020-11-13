@@ -19,23 +19,30 @@ public:
     )
         : QUndoCommand(name.isEmpty() ? QObject::tr("Create %1").arg(object->object_name()) : name, parent),
           object_parent(object_parent),
-          object(std::move(object)),
+          object_(std::move(object)),
           position(position == -1 ? object_parent->size() : position)
     {}
 
     void undo() override
     {
-        object = object_parent->remove(position);
+        object_ = object_parent->remove(position);
     }
 
     void redo() override
     {
-        object_parent->insert(std::move(object), position);
+        object_parent->insert(std::move(object_), position);
+    }
+
+    ItemT* object() const
+    {
+        if ( object_ )
+            return object_.get();
+        return (*object_parent)[position];
     }
 
 private:
     PropT* object_parent;
-    std::unique_ptr<ItemT> object;
+    std::unique_ptr<ItemT> object_;
     int position;
 };
 

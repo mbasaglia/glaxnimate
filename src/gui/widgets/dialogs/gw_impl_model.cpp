@@ -129,7 +129,10 @@ void GlaxnimateWindow::Private::layer_duplicate()
     auto current = current_shape();
     if ( !current )
         return;
-    current->push_command(command::duplicate_shape(current));
+
+    auto cmd = command::duplicate_shape(current);
+    current->push_command(cmd);
+    set_current_document_node(cmd->object());
 }
 
 std::vector<model::DocumentNode *> GlaxnimateWindow::Private::cleaned_selection()

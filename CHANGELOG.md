@@ -10,6 +10,7 @@
     * Bezier data is loaded correctly from lottie
     * Fixed layer parenting when loading lottie
     * Rounded rectangles are correctly exported to SVG
+    * Duplicating shapes selects the new shape and places it on top of the original
 
 ## 0.3.0
 

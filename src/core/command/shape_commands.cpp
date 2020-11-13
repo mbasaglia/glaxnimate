@@ -158,7 +158,7 @@ command::AddShape * command::duplicate_shape ( model::ShapeElement* shape )
     return new command::AddShape(
         shape->owner(),
         std::move(new_shape),
-        shape->owner()->index_of(shape),
+        shape->owner()->index_of(shape)+1,
         nullptr,
         QObject::tr("Duplicate %1").arg(shape->object_name())
     );
