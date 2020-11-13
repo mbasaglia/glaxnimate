@@ -102,6 +102,7 @@ public:
             write_attribute("y", c.y() - s.height()/2);
             write_attribute("width", s.width());
             write_attribute("height", s.height());
+            write_attribute("ry", rect->rounded.get_at(time));
         }
         else if ( auto ellipse = qobject_cast<model::Ellipse*>(shape) )
         {

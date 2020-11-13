@@ -12,7 +12,7 @@ namespace io::svg {
 enum AnimationType
 {
     NotAnimated,
-//     SMIL
+    SMIL
 };
 
 class SvgRenderer
