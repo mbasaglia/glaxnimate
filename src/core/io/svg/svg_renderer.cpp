@@ -40,7 +40,7 @@ public:
         view.setAttribute("inkscape:document-units", "px");
     }
 
-    QDomElement element(QDomElement& parent, const char* tag)
+    QDomElement element(QDomNode& parent, const char* tag)
     {
         QDomElement e = dom.createElement(tag);
         parent.appendChild(e);
@@ -153,7 +153,7 @@ public:
             last = time;
         }
 
-        void add_dom(QDomElement& element)
+        void add_dom(QDomElement& element, const char* tag = "animate", const QString& type = {})
         {
             if ( last < parent->op )
             {
@@ -170,7 +170,7 @@ public:
             QString key_splines_str = key_splines.join("; ");
             for ( const auto& data : attributes )
             {
-                QDomElement animation = parent->element(element, "animate");
+                QDomElement animation = parent->element(element, tag);
                 animation.setAttribute("begin", parent->clock(parent->ip));
                 animation.setAttribute("dur", parent->clock(parent->op-parent->ip));
                 animation.setAttribute("attributeName", data.attribute);
@@ -179,6 +179,8 @@ public:
                 animation.setAttribute("keyTimes", key_times_str);
                 animation.setAttribute("keySplines", key_splines_str);
                 animation.setAttribute("repeatCount", "indefinite");
+                if ( !type.isEmpty() )
+                    animation.setAttribute("type", type);
             }
         }
 
@@ -408,7 +410,7 @@ public:
                 set_attribute(e, "y", 0);
                 set_attribute(e, "width", img->image->width.get());
                 set_attribute(e, "height", img->image->height.get());
-                transform_to_attr(e, img->transform_matrix(img->time()));
+                transform_to_attr(e, img->transform.get());
                 set_attribute(e, "xlink:href", img->image->to_url().toString());
             }
         }
@@ -519,22 +521,69 @@ public:
         {
             g = start_group(parent, group);
         }
-        transform_to_attr(g, group->transform_matrix(group->time()));
+        transform_to_attr(g, group->transform.get());
         set_attribute(g, "opacity", group->opacity.get());
         write_visibility_attributes(g, group);
         write_shapes(g, group->shapes);
     }
 
-    void transform_to_attr(QDomElement& parent, const QTransform& matr)
+    template<class PropT, class Callback>
+    QDomElement transform_property(QDomElement& e, const char* name, PropT* prop, const Callback& callback)
     {
-        parent.setAttribute("transform", QString("matrix(%1, %2, %3, %4, %5 %6)")
-            .arg(matr.m11())
-            .arg(matr.m12())
-            .arg(matr.m21())
-            .arg(matr.m22())
-            .arg(matr.m31())
-            .arg(matr.m32())
-        );
+        model::JoinAnimatables j({prop}, model::JoinAnimatables::NoValues);
+
+        auto parent = e.parentNode();
+        QDomElement g = dom.createElement("g");
+        parent.insertBefore(g, e);
+        parent.removeChild(e);
+        g.appendChild(e);
+
+        if ( j.animated() )
+        {
+            AnimationData data(this, {"transform"}, j.keyframes().size());
+
+            for ( const auto& kf : j )
+            {
+                auto trans = kf.transition();
+                data.add_keyframe(kf.time, {callback(prop->get_at(kf.time))}, trans.first, trans.second);
+            }
+            data.add_dom(g, "animateTransform", name);
+        }
+
+        g.setAttribute("transform", QString("%1(%2)").arg(name).arg(callback(prop->get())));
+        return g;
+    }
+
+    void transform_to_attr(QDomElement& parent, model::Transform* transf)
+    {
+        if ( animated && (transf->position.animated() || transf->scale.animated() || transf->rotation.animated() || transf->anchor_point.animated()) )
+        {
+            QDomElement subject = parent;
+            subject = transform_property(subject, "translate", &transf->anchor_point, [](const QPointF& val){
+                return QString("%1 %2").arg(-val.x()).arg(-val.y());
+            });
+            subject = transform_property(subject, "scale", &transf->scale, [](const QVector2D& val){
+                return QString("%1 %2").arg(val.x()).arg(val.y());
+            });
+            subject = transform_property(subject, "rotate", &transf->rotation, [](qreal val){
+                return QString::number(val);
+            });
+            subject = transform_property(subject, "translate", &transf->position, [](const QPointF& val){
+                return QString("%1 %2").arg(val.x()).arg(val.y());
+            });
+        }
+        else
+        {
+            auto matr = transf->transform_matrix(transf->time());
+            parent.setAttribute("transform", QString("matrix(%1, %2, %3, %4, %5, %6)")
+                .arg(matr.m11())
+                .arg(matr.m12())
+                .arg(matr.m21())
+                .arg(matr.m22())
+                .arg(matr.m31())
+                .arg(matr.m32())
+            );
+        }
     }
 
     void write_style(QDomElement& element, const Style::Map& s)

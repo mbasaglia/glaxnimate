@@ -209,8 +209,8 @@
      <addaction name="action_svg_preview"/>
     </widget>
     <addaction name="menu_render_single_frame"/>
-    <addaction name="action_validate_tgs"/>
     <addaction name="menu_web_preview"/>
+    <addaction name="action_validate_tgs"/>
     <addaction name="separator"/>
     <addaction name="action_resize"/>
     <addaction name="action_timing"/>
