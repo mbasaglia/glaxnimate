@@ -5,7 +5,6 @@
 
 namespace io::svg {
 
-
 class SvgHtmlFormat : public SvgFormat
 {
 public:
@@ -26,7 +25,4 @@ private:
     }
 };
 
-
 } // namespace io::svg
-
-

@@ -352,8 +352,8 @@ public:
             {
                 style["stroke"] = styler_to_css(stroke);
                 style["stroke-opacity"] = QString::number(stroke->opacity.get());
+                style["stroke-width"] = QString::number(stroke->width.get());
             }
-            style["stroke-width"] = QString::number(stroke->width.get());
             switch ( stroke->cap.get() )
             {
                 case model::Stroke::Cap::ButtCap:
@@ -382,7 +382,10 @@ public:
             style["stroke-dasharray"] = "none";
             QDomElement g = write_styler_shapes(parent, stroke, style);
             if ( animated )
+            {
                 write_styler_attrs(g, stroke, "stroke");
+                write_property(g, &stroke->width, "stroke-width");
+            }
         }
         else if ( auto fill = qobject_cast<model::Fill*>(shape) )
         {
