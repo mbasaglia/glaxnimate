@@ -11,7 +11,7 @@ math::bezier::Bezier model::Rect::to_bezier(model::FrameTime t) const
     if ( rounded > max_r )
         rounded = max_r;
 
-    if ( rounded == 0 )
+    if ( rounded == 0 && !this->rounded.animated() )
     {
         bezier.add_point(bb.topLeft());
         bezier.add_point(bb.topRight());
