@@ -16,17 +16,17 @@ For more details, you can check the [GitLab Board](https://gitlab.com/mattbas/gl
 * ✔️ Custom Format Open / Save
 * ✔️ Layer Management
 * ✔️ Python Scripting Extensibility
-* 🔧 Plugin system
+* ✔️ Plugin system
 * ✔️ Lottie Open / Save
 * ✔️ SVG Open / Save
-* 🐍 Synfig Open / Save
-* 🐍 Gif/WebP Export
+* ✔️ Synfig Open / Save
+* ✔️ Gif/WebP Export
 * ✔️ Copy/Paste within Glaxnimate
 * ✔️ Copy/Paste SVG
-* 🔧 Copy/Paste Images
+* ✔️ Copy/Paste Images
 * ✔️ Basic Shapes
 * ✔️ Vector Editing
 * ✔️ Basic Animations
 * 🐍 Preset Animation Effects
-* ❌ Document-wide palette
+* ✔️ Document-wide palette
 * 🐍 Precompositions
