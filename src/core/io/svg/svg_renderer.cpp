@@ -250,6 +250,15 @@ public:
         }
     }
 
+    static std::vector<QString> callback_point(const std::vector<QVariant>& values)
+    {
+        QPointF c = values[0].toPointF();
+        return std::vector<QString>{
+            QString::number(c.x()),
+            QString::number(c.y())
+        };
+    }
+
     void write_shape_shape(QDomElement& parent, model::ShapeElement* shape, const Style::Map& style)
     {
         model::FrameTime time = shape->time();
@@ -284,15 +293,7 @@ public:
         {
             auto e = element(parent, "ellipse");
             write_style(e, style);
-            write_properties(e, {&ellipse->position}, {"cx", "cy"},
-                [](const std::vector<QVariant>& values){
-                    QPointF c = values[0].toPointF();
-                    return std::vector<QString>{
-                        QString::number(c.x()),
-                        QString::number(c.y())
-                    };
-                }
-            );
+            write_properties(e, {&ellipse->position}, {"cx", "cy"}, &Private::callback_point);
             write_properties(e, {&ellipse->position}, {"rx", "ry"},
                 [](const std::vector<QVariant>& values){
                     QSizeF s = values[0].toSizeF();
@@ -721,19 +722,21 @@ public:
         if ( gradient->type.get() == model::Gradient::Radial )
         {
             e = element(parent, "radialGradient");
-            set_attribute(e, "cx", gradient->start_point.get().x());
-            set_attribute(e, "cy", gradient->start_point.get().y());
-            set_attribute(e, "r", math::length(gradient->start_point.get() - gradient->end_point.get()));
-            set_attribute(e, "fx", gradient->highlight.get().x());
-            set_attribute(e, "fy", gradient->highlight.get().y());
+            write_properties(e, {&gradient->start_point}, {"cx", "cy"}, &Private::callback_point);
+            write_properties(e, {&gradient->highlight}, {"fx", "fy"}, &Private::callback_point);
+
+            write_properties(e, {&gradient->start_point, &gradient->end_point}, {"r"},
+                [](const std::vector<QVariant>& values) -> std::vector<QString> {
+                    return { QString::number(
+                        math::length(values[1].toPointF() - values[0].toPointF())
+                    )};
+            });
         }
         else
         {
             e = element(parent, "linearGradient");
-            set_attribute(e, "x1", gradient->start_point.get().x());
-            set_attribute(e, "y1", gradient->start_point.get().y());
-            set_attribute(e, "x2", gradient->end_point.get().x());
-            set_attribute(e, "y2", gradient->end_point.get().y());
+            write_properties(e, {&gradient->start_point}, {"x1", "y1"}, &Private::callback_point);
+            write_properties(e, {&gradient->end_point}, {"x2", "y2"}, &Private::callback_point);
         }
 
         QString id = pretty_id(gradient->name.get(), gradient);
