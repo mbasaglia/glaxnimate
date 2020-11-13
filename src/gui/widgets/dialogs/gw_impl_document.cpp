@@ -391,7 +391,9 @@ void GlaxnimateWindow::Private::save_frame_svg()
         return;
     }
 
-    io::svg::SvgRenderer(&file, io::svg::NotAnimated).write_document(current_document.get());
+    io::svg::SvgRenderer rend(io::svg::NotAnimated);
+    rend.write_document(current_document.get());
+    rend.write(&file, true);
 }
 
 void GlaxnimateWindow::Private::validate_tgs()

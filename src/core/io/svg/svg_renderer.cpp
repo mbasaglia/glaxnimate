@@ -1,9 +1,8 @@
 #include "svg_renderer.hpp"
 
-#include <QDomDocument>
-
 #include "model/document.hpp"
 #include "model/shapes/shapes.hpp"
+#include "model/animation/join_animatables.hpp"
 #include "math/math.hpp"
 
 #include "detail.hpp"
@@ -17,6 +16,12 @@ public:
     {
         if ( !at_start )
             return;
+
+        fps = doc->main()->fps.get();
+        ip = doc->main()->animation->first_frame.get();
+        op = doc->main()->animation->last_frame.get();
+        if ( ip >= op )
+            animated = NotAnimated;
 
         at_start = false;
         QDomElement defs = element(svg, "defs");
@@ -91,6 +96,156 @@ public:
         }
     }
 
+    struct AnimationData
+    {
+        struct Attribute
+        {
+            QString attribute;
+            QStringList values = {};
+        };
+
+        AnimationData(SvgRenderer::Private* parent, const std::vector<QString>& attrs, int n_keyframes)
+            : parent(parent)
+        {
+            attributes.reserve(attrs.size());
+            for ( const auto& attr : attrs )
+            {
+                attributes.push_back({attr});
+                attributes.back().values.reserve(n_keyframes);
+            }
+        }
+
+        QString key_spline(const QPointF& before, const QPointF& after)
+        {
+            return QString("%1 %2 %3 %4")
+                .arg(before.x(), 0, 'f')
+                .arg(before.y(), 0, 'f')
+                .arg(after.x(), 0, 'f')
+                .arg(after.y(), 0, 'f')
+            ;
+        }
+
+
+        void add_values(const std::vector<QString>& vals)
+        {
+            for ( std::size_t i = 0; i != attributes.size(); i++ )
+                attributes[i].values.push_back(vals[i]);
+        }
+
+        void add_keyframe(model::FrameTime time, const std::vector<QString>& vals,
+                          const QPointF& before, const QPointF& after)
+        {
+            if ( key_times.empty() && time > parent->ip )
+            {
+                key_times.push_back("0");
+                key_splines.push_back("0 0 1 1");
+                add_values(vals);
+            }
+
+            key_times.push_back(QString::number(math::unlerp(parent->ip, parent->op, time), 'f'));
+            key_splines.push_back(key_spline(before, after));
+
+            for ( std::size_t i = 0; i != attributes.size(); i++ )
+                attributes[i].values.push_back(vals[i]);
+
+            last = time;
+        }
+
+        void add_dom(QDomElement& element)
+        {
+            if ( last < parent->op )
+            {
+                key_times.push_back("1");
+                for ( auto& attr : attributes )
+                    attr.values.push_back(attr.values.back());
+            }
+            else
+            {
+                key_splines.pop_back();
+            }
+
+            QString key_times_str = key_times.join("; ");
+            QString key_splines_str = key_splines.join("; ");
+            for ( const auto& data : attributes )
+            {
+                QDomElement animation = parent->element(element, "animate");
+                animation.setAttribute("begin", parent->clock(parent->ip));
+                animation.setAttribute("dur", parent->clock(parent->op-parent->ip));
+                animation.setAttribute("attributeName", data.attribute);
+                animation.setAttribute("calcMode", "spline");
+                animation.setAttribute("values", data.values.join("; "));
+                animation.setAttribute("keyTimes", key_times_str);
+                animation.setAttribute("keySplines", key_splines_str);
+                animation.setAttribute("repeatCount", "indefinite");
+            }
+        }
+
+        SvgRenderer::Private* parent;
+        std::vector<Attribute> attributes;
+        QStringList key_times = {};
+        QStringList key_splines = {};
+        model::FrameTime last = 0;
+    };
+
+    void write_property(
+        QDomElement& element,
+        model::AnimatableBase* property,
+        const QString& attr
+    )
+    {
+        element.setAttribute(attr, property->value().toString());
+
+        if ( animated )
+        {
+            int kf_count = property->keyframe_count();
+            if ( kf_count < 2 )
+                return;
+
+            AnimationData data(this, {attr}, property->keyframe_count());
+
+            for ( int i = 0; i < kf_count; i++ )
+            {
+                auto kf = property->keyframe(i);
+                data.add_keyframe(kf->time(), {kf->value().toString()},
+                                  kf->transition().before_handle(),
+                                  kf->transition().after_handle());
+            }
+
+            data.add_dom(element);
+        }
+    }
+
+    template<class Callback>
+    void write_properties(
+        QDomElement& element,
+        std::vector<model::AnimatableBase*> properties,
+        const std::vector<QString>& attrs,
+        const Callback& callback
+    )
+    {
+        auto jflags = animated == NotAnimated ? model::JoinAnimatables::NoKeyframes : model::JoinAnimatables::Normal;
+        model::JoinAnimatables j(std::move(properties), jflags);
+
+        {
+            auto vals = callback(j.current_value());
+            for ( std::size_t i = 0; i != attrs.size(); i++ )
+                element.setAttribute(attrs[i], vals[i]);
+        }
+
+        if ( j.animated() && animated )
+        {
+            AnimationData data(this, attrs, j.keyframes().size());
+
+            for ( const auto& kf : j )
+            {
+                auto trans = kf.transition();
+                data.add_keyframe(kf.time, callback(kf.values), trans.first, trans.second);
+            }
+
+            data.add_dom(element);
+        }
+    }
+
     void write_shape_shape(QDomElement& parent, model::ShapeElement* shape, const Style::Map& style)
     {
         model::FrameTime time = shape->time();
@@ -99,28 +254,54 @@ public:
         {
             auto e = element(parent, "rect");
             write_style(e, style);
-            QPointF c = rect->position.get_at(time);
-            QSizeF s = rect->size.get_at(time);
-            set_attribute(e, "x", c.x() - s.width()/2);
-            set_attribute(e, "y", c.y() - s.height()/2);
-            set_attribute(e, "width", s.width());
-            set_attribute(e, "height", s.height());
-            set_attribute(e, "ry", rect->rounded.get_at(time));
+            write_properties(e, {&rect->position, &rect->size}, {"x", "y"},
+                [](const std::vector<QVariant>& values){
+                    QPointF c = values[0].toPointF();
+                    QSizeF s = values[1].toSizeF();
+                    return std::vector<QString>{
+                        QString::number(c.x() - s.width()/2),
+                        QString::number(c.y() - s.height()/2)
+                    };
+                }
+            );
+            write_properties(e, {&rect->size}, {"width", "height"},
+                [](const std::vector<QVariant>& values){
+                    QSizeF s = values[0].toSizeF();
+                    return std::vector<QString>{
+                        QString::number(s.width()),
+                        QString::number(s.height())
+                    };
+                }
+            );
+            write_property(e, &rect->rounded, "ry");
+
         }
         else if ( auto ellipse = qobject_cast<model::Ellipse*>(shape) )
         {
             auto e = element(parent, "ellipse");
             write_style(e, style);
-            QPointF c = ellipse->position.get_at(time);
-            QSizeF s = ellipse->size.get_at(time);
-            set_attribute(e, "cx", c.x());
-            set_attribute(e, "cy", c.y());
-            set_attribute(e, "rx", s.width() / 2);
-            set_attribute(e, "ry", s.height() / 2);
+            write_properties(e, {&ellipse->position}, {"cx", "cy"},
+                [](const std::vector<QVariant>& values){
+                    QPointF c = values[0].toPointF();
+                    return std::vector<QString>{
+                        QString::number(c.x()),
+                        QString::number(c.y())
+                    };
+                }
+            );
+            write_properties(e, {&ellipse->position}, {"rx", "ry"},
+                [](const std::vector<QVariant>& values){
+                    QSizeF s = values[0].toSizeF();
+                    return std::vector<QString>{
+                        QString::number(s.width() / 2),
+                        QString::number(s.height() / 2)
+                    };
+                }
+            );
         }
         else if ( auto star = qobject_cast<model::PolyStar*>(shape) )
         {
-            auto e = write_bezier(parent, shape->shapes(time), style);
+            auto e = write_bezier(parent, shape, style);
 
             set_attribute(e, "sodipodi:type", "star");
             set_attribute(e, "inkscape:randomized", "0");
@@ -139,7 +320,7 @@ public:
         }
         else if ( !qobject_cast<model::Styler*>(shape) )
         {
-            write_bezier(parent, shape->shapes(time), style);
+            write_bezier(parent, shape, style);
         }
     }
 
@@ -226,10 +407,8 @@ public:
         }
     }
 
-    QDomElement write_bezier(QDomElement& parent, const math::bezier::MultiBezier& shape, const Style::Map& style)
+    std::pair<QString, QString> path_data(const math::bezier::MultiBezier& shape)
     {
-        QDomElement path = element(parent, "path");
-        write_style(path, style);
         QString d;
         QString nodetypes;
         for ( const math::bezier::Bezier& b : shape.beziers() )
@@ -260,8 +439,43 @@ public:
                 d += " Z";
             }
         }
+        return {d, nodetypes};
+    }
+
+    QDomElement write_bezier(QDomElement& parent, model::ShapeElement* shape, const Style::Map& style)
+    {
+        QDomElement path = element(parent, "path");
+        write_style(path, style);
+        QString d;
+        QString nodetypes;
+        std::tie(d, nodetypes) = path_data(shape->shapes(shape->time()));
         set_attribute(path, "d", d);
         set_attribute(path, "sodipodi:nodetypes", nodetypes);
+
+        if ( animated )
+        {
+            std::vector<model::AnimatableBase*> props;
+            for ( auto prop : shape->properties() )
+            {
+                if ( prop->traits().flags & model::PropertyTraits::Animated )
+                    props.push_back(static_cast<model::AnimatableBase*>(prop));
+            }
+
+            model::JoinAnimatables j(std::move(props), model::JoinAnimatables::NoValues);
+
+            if ( j.animated() )
+            {
+                AnimationData data(this, {"d"}, j.keyframes().size());
+
+                for ( const auto& kf : j )
+                {
+                    auto trans = kf.transition();
+                    data.add_keyframe(kf.time, {path_data(shape->shapes(kf.time)).first}, trans.first, trans.second);
+                }
+
+                data.add_dom(path);
+            }
+        }
         return path;
     }
 
@@ -451,26 +665,26 @@ public:
             e.setAttribute("xlink:href", "#" + it->second);
     }
 
-    void write()
+    QString clock(model::FrameTime time)
     {
-        device->write(dom.toByteArray(4));
+        return QString::number(time / fps, 'f');
     }
 
     QDomDocument dom;
+    qreal fps = 60;
+    qreal ip = 0;
+    qreal op = 60;
     bool at_start = true;
-    bool closed = false;
     std::set<QString> non_uuid_ids;
     std::map<model::ReferenceTarget*, QString> non_uuid_ids_map;
     AnimationType animated;
-    QIODevice* device;
     QDomElement svg;
 };
 
 
-io::svg::SvgRenderer::SvgRenderer(QIODevice* device, AnimationType animated)
+io::svg::SvgRenderer::SvgRenderer(AnimationType animated)
     : d(std::make_unique<Private>())
 {
-    d->device = device;
     d->animated = animated;
     d->svg = d->dom.createElement("svg");
     d->dom.appendChild(d->svg);
@@ -489,7 +703,6 @@ io::svg::SvgRenderer::SvgRenderer(QIODevice* device, AnimationType animated)
 
 io::svg::SvgRenderer::~SvgRenderer()
 {
-    close();
 }
 
 void io::svg::SvgRenderer::write_document(model::Document* document)
@@ -539,11 +752,12 @@ void io::svg::SvgRenderer::write_node(model::DocumentNode* node)
         write_shape(sh);
 }
 
-void io::svg::SvgRenderer::close()
+QDomDocument io::svg::SvgRenderer::dom() const
 {
-    if ( !d->closed )
-    {
-        d->write();
-        d->closed = true;
-    }
+    return d->dom;
+}
+
+void io::svg::SvgRenderer::write(QIODevice* device, bool indent)
+{
+    device->write(d->dom.toByteArray(indent ? 4 : -1));
 }

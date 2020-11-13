@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QIODevice>
+#include <QDomDocument>
+
 #include "model/shapes/shape.hpp"
 
 namespace model {
@@ -18,7 +20,7 @@ enum AnimationType
 class SvgRenderer
 {
 public:
-    SvgRenderer(QIODevice* device, AnimationType animated);
+    SvgRenderer(AnimationType animated);
     ~SvgRenderer();
 
     void write_document(model::Document* document);
@@ -27,7 +29,9 @@ public:
     void write_shape(model::ShapeElement* shape);
     void write_node(model::DocumentNode* node);
 
-    void close();
+    QDomDocument dom() const;
+
+    void write(QIODevice* device, bool indent);
 
 private:
     class Private;

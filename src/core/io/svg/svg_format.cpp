@@ -4,6 +4,9 @@
 
 #include "utils/gzip.hpp"
 #include "svg_parser.hpp"
+#include "svg_renderer.hpp"
+
+io::Autoreg<io::svg::SvgFormat> io::svg::SvgFormat::autoreg;
 
 bool io::svg::SvgFormat::on_open(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& )
 {
@@ -32,4 +35,27 @@ bool io::svg::SvgFormat::on_open(QIODevice& file, const QString& filename, model
     }
 }
 
-io::Autoreg<io::svg::SvgFormat> io::svg::SvgFormat::autoreg;
+io::SettingList io::svg::SvgFormat::save_settings() const
+{
+    return {};
+}
+
+bool io::svg::SvgFormat::on_save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap&)
+{
+    auto on_error = [this](const QString& s){warning(s);};
+    SvgRenderer rend(SMIL);
+    rend.write_document(document);
+    if ( filename.endsWith(".svgz") )
+    {
+        utils::gzip::GzipStream compressed(&file, on_error);
+        compressed.open(QIODevice::WriteOnly);
+        rend.write(&compressed, false);
+    }
+    else
+    {
+        rend.write(&file, true);
+    }
+
+    return true;
+}
+

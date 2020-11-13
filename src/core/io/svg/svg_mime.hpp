@@ -1,7 +1,5 @@
 #pragma once
 
-#include <QBuffer>
-
 #include "io/svg/svg_parser.hpp"
 #include "io/svg/svg_renderer.hpp"
 #include "io/mime/mime_serializer.hpp"
@@ -17,14 +15,10 @@ public:
 
     QByteArray serialize(const std::vector<model::DocumentNode*>& selection) const override
     {
-        QByteArray data;
-        QBuffer buffer(&data);
-        buffer.open(QIODevice::WriteOnly);
-        io::svg::SvgRenderer svg_rend(&buffer, io::svg::NotAnimated);
+        io::svg::SvgRenderer svg_rend(io::svg::NotAnimated);
         for ( auto node : selection )
             svg_rend.write_node(node);
-        svg_rend.close();
-        return data;
+        return svg_rend.dom().toByteArray(0);
     }
 
     io::mime::DeserializedData deserialize(const QByteArray& data) const override
