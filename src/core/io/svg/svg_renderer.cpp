@@ -708,11 +708,44 @@ public:
         non_uuid_ids_map[gradient] = id;
         e.setAttribute("id", id);
 
-        for ( const auto& stop : gradient->colors.get() )
+        if ( animated && gradient->colors.keyframe_count() > 1 )
         {
-            auto s = element(e, "stop");
-            set_attribute(s, "offset", stop.first);
-            s.setAttribute("style", "stop-color:" + stop.second.name() + ";stop-opacity:1;");
+            int n_stops = std::numeric_limits<int>::max();
+            for ( const auto& kf : gradient->colors )
+                if ( kf.get().size() < n_stops )
+                    n_stops = kf.get().size();
+
+            auto stops = gradient->colors.get();
+            for ( int i = 0; i < n_stops; i++ )
+            {
+                AnimationData data(this, {"offset", "stop-color"}, gradient->colors.keyframe_count());
+                for ( const auto& kf : gradient->colors )
+                {
+                    auto stop = kf.get()[i];
+                    data.add_keyframe(
+                        kf.time(),
+                        {QString::number(stop.first), stop.second.name()},
+                        kf.transition().before_handle(),
+                        kf.transition().after_handle()
+                    );
+                }
+
+                auto s = element(e, "stop");
+                s.setAttribute("stop-opacity", "1");
+                set_attribute(s, "offset", stops[i].first);
+                s.setAttribute("stop-color", stops[i].second.name());
+                data.add_dom(s);
+            }
+        }
+        else
+        {
+            for ( const auto& stop : gradient->colors.get() )
+            {
+                auto s = element(e, "stop");
+                s.setAttribute("stop-opacity", "1");
+                set_attribute(s, "offset", stop.first);
+                s.setAttribute("stop-color", stop.second.name());
+            }
         }
     }
 
