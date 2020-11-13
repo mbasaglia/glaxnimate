@@ -613,6 +613,11 @@ public:
         e.setAttribute(name, val ? "true" : "false");
     }
 
+    void set_attribute(QDomElement& e, const QString& name, const char* val)
+    {
+        e.setAttribute(name, val);
+    }
+
     void set_attribute(QDomElement& e, const QString& name, const QString& val)
     {
         e.setAttribute(name, val);
