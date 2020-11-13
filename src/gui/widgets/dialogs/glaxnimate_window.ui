@@ -198,9 +198,19 @@
      <addaction name="actionRaster"/>
      <addaction name="actionS_VG"/>
     </widget>
+    <widget class="QMenu" name="menu_web_preview">
+     <property name="title">
+      <string>&amp;Web Preview</string>
+     </property>
+     <property name="icon">
+      <iconset theme="internet-web-browser"/>
+     </property>
+     <addaction name="action_lottie_preview"/>
+     <addaction name="action_svg_preview"/>
+    </widget>
     <addaction name="menu_render_single_frame"/>
     <addaction name="action_validate_tgs"/>
-    <addaction name="action_Web_Preview"/>
+    <addaction name="menu_web_preview"/>
     <addaction name="separator"/>
     <addaction name="action_resize"/>
     <addaction name="action_timing"/>
@@ -1360,15 +1370,6 @@
     <string>S&amp;VG...</string>
    </property>
   </action>
-  <action name="action_Web_Preview">
-   <property name="icon">
-    <iconset theme="internet-web-browser">
-     <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Web Preview</string>
-   </property>
-  </action>
   <action name="action_online_manual">
    <property name="icon">
     <iconset theme="help-browser">
@@ -1661,6 +1662,16 @@
    </property>
    <property name="text">
     <string>Trace Bitmap...</string>
+   </property>
+  </action>
+  <action name="action_lottie_preview">
+   <property name="text">
+    <string>&amp;Lottie</string>
+   </property>
+  </action>
+  <action name="action_svg_preview">
+   <property name="text">
+    <string>&amp;SVG (SMIL)</string>
    </property>
   </action>
  </widget>
@@ -1967,22 +1978,6 @@
    <signal>triggered()</signal>
    <receiver>GlaxnimateWindow</receiver>
    <slot>help_about()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>656</x>
-     <y>526</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>action_Web_Preview</sender>
-   <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
-   <slot>web_preview()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

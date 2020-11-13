@@ -6,17 +6,20 @@
 #include <QImageWriter>
 #include <QDropEvent>
 
-#include "glaxnimate_app.hpp"
-#include "widgets/dialogs/import_export_dialog.hpp"
-#include "widgets/dialogs/io_status_dialog.hpp"
 #include "io/lottie/lottie_html_format.hpp"
-#include "app_info.hpp"
 #include "io/svg/svg_renderer.hpp"
+#include "io/svg/svg_html_format.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "io/raster/raster_mime.hpp"
 #include "io/lottie/tgs_format.hpp"
+
 #include "command/undo_macro_guard.hpp"
 #include "command/undo_macro_guard.hpp"
+
+#include "glaxnimate_app.hpp"
+#include "app_info.hpp"
+#include "widgets/dialogs/import_export_dialog.hpp"
+#include "widgets/dialogs/io_status_dialog.hpp"
 
 void GlaxnimateWindow::Private::setup_document(const QString& filename)
 {
@@ -316,7 +319,8 @@ void GlaxnimateWindow::Private::document_reload()
     setup_document_open(options);
 }
 
-void GlaxnimateWindow::Private::web_preview()
+
+void GlaxnimateWindow::Private::preview(io::ImportExport& exporter, const QVariantMap& options)
 {
     QDir tempdir = QDir::temp();
     QString subdir = AppInfo::instance().slug();
@@ -326,10 +330,10 @@ void GlaxnimateWindow::Private::web_preview()
         if ( !tempdir.mkpath(subdir) )
             path = "";
 
-    QTemporaryFile tempf(path + "/XXXXXX.html");
+    QTemporaryFile tempf(path + "/XXXXXX." + exporter.extensions()[0]);
     tempf.setAutoRemove(false);
-    bool ok = tempf.open() && io::lottie::LottieHtmlFormat().save(
-        tempf, tempf.fileName(), current_document.get(), {}
+    bool ok = tempf.open() && exporter.save(
+        tempf, tempf.fileName(), current_document.get(), options
     );
 
     if ( !ok )
@@ -345,6 +349,17 @@ void GlaxnimateWindow::Private::web_preview()
     }
 }
 
+void GlaxnimateWindow::Private::preview_lottie()
+{
+    io::lottie::LottieHtmlFormat fmt;
+    preview(fmt, {});
+}
+
+void GlaxnimateWindow::Private::preview_svg()
+{
+    io::svg::SvgHtmlFormat fmt;
+    preview(fmt, {});
+}
 
 void GlaxnimateWindow::Private::save_frame_bmp()
 {

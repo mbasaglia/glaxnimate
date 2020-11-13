@@ -144,7 +144,6 @@ private slots:
     void refresh_title();
     void document_open_recent(QAction* action);
     void preferences();
-    void web_preview();
     void save_frame_bmp();
     void save_frame_svg();
     void tool_triggered(bool checked);

@@ -182,11 +182,6 @@ void GlaxnimateWindow::status ( const QString& message ) const
     d->status_message(message);
 }
 
-void GlaxnimateWindow::web_preview()
-{
-    d->web_preview();
-}
-
 void GlaxnimateWindow::save_frame_bmp()
 {
     d->save_frame_bmp();

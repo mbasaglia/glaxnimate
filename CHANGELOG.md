@@ -4,6 +4,7 @@
     * Menu action to convert any shape into a Path
 * I/O:
     * Support for exporting SMIL animated SVG
+    * Browser SVG preview
 * Bug Fixes:
     * Removed spurious warnings when loading lottie
     * Bezier data is loaded correctly from lottie

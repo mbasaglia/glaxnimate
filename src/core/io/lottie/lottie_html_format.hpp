@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QJsonDocument>
 #include "io/base.hpp"
 
 namespace io::lottie {
@@ -15,6 +14,8 @@ public:
     QStringList extensions() const override { return {"html", "htm"}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return false; }
+
+    static QByteArray html_head(ImportExport* ie, model::Document* document, const QString& extra);
 
 private:
     bool on_save(QIODevice& file, const QString& filename,
