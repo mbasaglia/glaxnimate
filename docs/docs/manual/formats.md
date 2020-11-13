@@ -20,10 +20,10 @@ The same validation is performed when saving, if there are some issues the file 
 [SVG files](https://developer.mozilla.org/en-US/docs/Web/SVG) can be opened and saved.<br/>
 You can also copy and paste SVG documents from the canvas view.
 
-As of 0.1.0 only static SVG are supported, but animated ones are coming soon.
+As of 0.3.1 Glaxnimate can export SMIL animations for SVG.
 
 In particular, Glaxnimate support most of the extra attributes used by [Inkscape](https://inkscape.org/),
-making inter-operability with it rather easy.
+making interoperability with it rather easy.
 
 ## Raster Images
 

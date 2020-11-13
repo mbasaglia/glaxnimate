@@ -116,7 +116,7 @@ Glaxnimate is a simple and fast vector graphics animation program.
         <heading>Animations for the web</heading>
         <span>Lottie animations</span>
         <span>Animated GIF and WebP</span>
-        <span>Animated SVG coming soon</span>
+        <span>Animated SVG</span>
     </a>
     <a href="contributing/scripting/" class="card">
         <img src="/img/ui/icons/preferences-plugin.svg" />
