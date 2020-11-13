@@ -645,7 +645,7 @@ public:
 
         auto stop = element(gradient, "stop");
         stop.setAttribute("offset", "0");
-        stop.setAttribute("style", "stop-color:" + color->color.get().name());
+        write_property(stop, &color->color, "stop-color");
     }
 
     QString pretty_id(const QString& s, model::ReferenceTarget* node)
