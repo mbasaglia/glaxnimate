@@ -75,14 +75,14 @@ public:
         return styler->color.get().name();
     }
 
-    void write_styler_shapes(QDomElement& parent, model::Styler* styler, const Style::Map& style)
+    QDomElement write_styler_shapes(QDomElement& parent, model::Styler* styler, const Style::Map& style)
     {
         if ( styler->affected().size() == 1 )
         {
             write_shape_shape(parent, styler->affected()[0], style);
             write_visibility_attributes(parent, styler);
             parent.setAttribute("id", id(styler));
-            return;
+            return parent;
         }
 
         auto g = start_group(parent, styler);
@@ -94,6 +94,8 @@ public:
         {
             write_shape_shape(g, subshape, style);
         }
+
+        return g;
     }
 
     struct AnimationData
@@ -324,6 +326,18 @@ public:
         }
     }
 
+    void write_styler_attrs(QDomElement& element, model::Styler* styler, const QString& attr)
+    {
+        if ( styler->use.get() )
+        {
+            element.setAttribute(attr, "url(#" + non_uuid_ids_map[styler->use.get()] + ")");
+            return;
+        }
+
+        write_property(element, &styler->color, attr);
+        write_property(element, &styler->opacity, attr+"-opacity");
+    }
+
     void write_shape(QDomElement& parent, model::ShapeElement* shape, bool force_draw)
     {
         if ( auto grp = qobject_cast<model::Group*>(shape) )
@@ -334,9 +348,12 @@ public:
         {
             Style::Map style;
             style["fill"] = "none";
-            style["stroke"] = styler_to_css(stroke);
+            if ( !animated )
+            {
+                style["stroke"] = styler_to_css(stroke);
+                style["stroke-opacity"] = QString::number(stroke->opacity.get());
+            }
             style["stroke-width"] = QString::number(stroke->width.get());
-            style["stroke-opacity"] = QString::number(stroke->opacity.get());
             switch ( stroke->cap.get() )
             {
                 case model::Stroke::Cap::ButtCap:
@@ -363,14 +380,21 @@ public:
                     break;
             }
             style["stroke-dasharray"] = "none";
-            write_styler_shapes(parent, stroke, style);
+            QDomElement g = write_styler_shapes(parent, stroke, style);
+            if ( animated )
+                write_styler_attrs(g, stroke, "stroke");
         }
         else if ( auto fill = qobject_cast<model::Fill*>(shape) )
         {
             Style::Map style;
-            style["fill"] = styler_to_css(fill);
-            style["fill-opacity"] = QString::number(fill->opacity.get());
-            write_styler_shapes(parent, fill, style);
+            if ( !animated )
+            {
+                style["fill"] = styler_to_css(fill);
+                style["fill-opacity"] = QString::number(fill->opacity.get());
+            }
+            QDomElement g = write_styler_shapes(parent, fill, style);
+            if ( animated )
+                write_styler_attrs(g, fill, "fill");
         }
         else if ( auto img = qobject_cast<model::Image*>(shape) )
         {
