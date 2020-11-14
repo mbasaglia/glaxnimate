@@ -447,6 +447,18 @@ inline QColor lerp(const QColor& a, const QColor& b, double factor)
     );
 }
 
+template<class T>
+constexpr std::vector<T> lerp(const std::vector<T>& a, const std::vector<T>& b, double factor)
+{
+    if ( a.size() != b.size() )
+        return a;
+    std::vector<T> c;
+    c.reserve(a.size());
+    for ( std::size_t i = 0; i < a.size(); i++ )
+        c.push_back(lerp(a[i], b[i], factor));
+    return c;
+}
+
 template<class VecT>
 constexpr scalar_type<VecT> length_squared(const VecT& v)
 {

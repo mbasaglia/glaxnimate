@@ -26,7 +26,7 @@ public:
             transitions.reserve(prop_count);
         }
 
-        KeyframeTransition transition() const
+        static KeyframeTransition mix_transitions(const std::vector<KeyframeTransition>& transitions)
         {
             int count = 0;
             QPointF in;
@@ -45,6 +45,11 @@ public:
                 return {{0, 0}, {1, 1}, true};
 
             return {in / count, out / count};
+        }
+
+        KeyframeTransition transition() const
+        {
+            return mix_transitions(transitions);
         }
     };
 

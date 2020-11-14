@@ -2,16 +2,14 @@
 
 #include <unordered_set>
 
-#include <QtXml/QDomDocument>
-
 #include "utils/regexp.hpp"
 #include "utils/sort_gradient.hpp"
 #include "model/shapes/shapes.hpp"
 #include "model/document.hpp"
 #include "model/defs/named_color.hpp"
 
-#include "detail.hpp"
 #include "path_parser.hpp"
+#include "animate_parser.hpp"
 #include "math/math.hpp"
 
 using namespace io::svg::detail;
@@ -19,31 +17,6 @@ using namespace io::svg::detail;
 class io::svg::SvgParser::Private
 {
 public:
-    template<class T>
-    struct ItemCountRange
-    {
-//         using value_type = decltype(std::declval<T>().item(0));
-        struct iterator
-        {
-            auto operator*() const { return range->dom_list.item(index); }
-            iterator& operator++() { index++; return *this; }
-            bool operator != (const iterator& it) const
-            {
-                return range != it.range || index != it.index;
-            }
-
-            const ItemCountRange* range;
-            int index;
-        };
-
-        ItemCountRange(const T& dom_list) : dom_list(dom_list) {}
-        iterator begin() const { return {this, 0}; }
-        iterator end() const { return {this, dom_list.count()}; }
-        int size() const { return dom_list.count(); }
-
-        T dom_list;
-    };
-
     using ShapeCollection = std::vector<std::unique_ptr<model::Shape>>;
 
     struct ParseFuncArgs
@@ -83,6 +56,9 @@ public:
         document->main()->name.set(
             attr(svg, "sodipodi", "docname", document->main()->type_name_human())
         );
+
+        if ( max_time > 0 )
+            document->main()->animation->last_frame.set(max_time);
     }
 
     void parse_defs()
@@ -345,7 +321,7 @@ public:
 
     QStringList split_attr(const QDomElement& e, const QString& name)
     {
-        return e.attribute(name).split(separator, QString::SkipEmptyParts);
+        return e.attribute(name).split(AnimateParser::separator, QString::SkipEmptyParts);
     }
 
     void parse_children(const ParseFuncArgs& args)
@@ -469,7 +445,7 @@ public:
 
     std::vector<qreal> double_args(const QString& str)
     {
-        auto args_s = str.splitRef(separator, QString::SkipEmptyParts);
+        auto args_s = str.splitRef(AnimateParser::separator, QString::SkipEmptyParts);
         std::vector<qreal> args;
         args.reserve(args_s.size());
         std::transform(args_s.begin(), args_s.end(), std::back_inserter(args),
@@ -805,10 +781,26 @@ public:
         add_shapes(args, std::move(shapes));
     }
 
+
+    model::Path* parse_bezier_impl_single(const ParseFuncArgs& args, const math::bezier::Bezier& bez)
+    {
+        ShapeCollection shapes;
+        auto path = push<model::Path>(shapes);
+        path->shape.set(bez);
+        add_shapes(args, {std::move(shapes)});
+        return path;
+    }
+
+    void add_keyframes(const std::vector<detail::AnimateParser::JoinedPropertyKeyframe>& kfs)
+    {
+        if ( !kfs.empty() && kfs.back().time > max_time)
+            max_time = kfs.back().time;
+    }
+
     void parseshape_line(const ParseFuncArgs& args)
     {
-        math::bezier::MultiBezier bez;
-        bez.move_to(QPointF(
+        math::bezier::Bezier bez;
+        bez.add_point(QPointF(
             len_attr(args.element, "x1", 0),
             len_attr(args.element, "y1", 0)
         ));
@@ -816,7 +808,16 @@ public:
             len_attr(args.element, "x2", 0),
             len_attr(args.element, "y2", 0)
         ));
-        parse_bezier_impl(args, bez);
+        auto path = parse_bezier_impl_single(args, bez);
+        auto kfs = animate_parser.parse_animated_properties(args.element).joined({"x1", "y1", "x2", "y2"});
+        add_keyframes(kfs);
+        for ( const auto& kf : kfs )
+        {
+            math::bezier::Bezier bez;
+            bez.add_point({kf.values[0][0], kf.values[1][0]});
+            bez.add_point({kf.values[2][0], kf.values[3][0]});
+            path->shape.set_keyframe(kf.time, bez)->set_transition(kf.transition);
+        }
     }
 
     math::bezier::MultiBezier handle_poly(const ParseFuncArgs& args, bool close)
@@ -853,7 +854,7 @@ public:
         if ( parse_star(args) )
             return;
         QString d = args.element.attribute("d");
-        math::bezier::MultiBezier bez = PathDParser(d.splitRef(separator)).parse();
+        math::bezier::MultiBezier bez = PathDParser(d.splitRef(AnimateParser::separator)).parse();
         /// \todo sodipodi:nodetypes
         parse_bezier_impl(args, bez);
     }
@@ -953,7 +954,8 @@ public:
 
     model::Document* document;
 
-
+    AnimateParser animate_parser;
+    model::FrameTime max_time = 0;
     GroupMode group_mode;
     std::function<void(const QString&)> on_warning;
     std::unordered_map<QString, QDomElement> map_ids;
@@ -962,7 +964,6 @@ public:
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const QRegularExpression unit_re;
-    static const QRegularExpression separator;
     static const QRegularExpression transform_re;
     static const QRegularExpression url_re;
 };
@@ -980,9 +981,11 @@ const std::map<QString, void (io::svg::SvgParser::Private::*)(const io::svg::Svg
     {"image",   &io::svg::SvgParser::Private::parseshape_image},
 };
 const QRegularExpression io::svg::SvgParser::Private::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
-const QRegularExpression io::svg::SvgParser::Private::separator{",\\s*|\\s+"};
 const QRegularExpression io::svg::SvgParser::Private::transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"};
 const QRegularExpression io::svg::SvgParser::Private::url_re{R"(url\s*\(\s*(#[-a-zA-Z0-9_]+)\s*\)\s*)"};
+const QRegularExpression io::svg::detail::AnimateParser::separator{"\\s*,\\s*|\\s+"};
+const QRegularExpression io::svg::detail::AnimateParser::clock_re{R"((?:(?:(?<hours>[0-9]+):)?(?:(?<minutes>[0-9]{2}):)?(?<seconds>[0-9]+(?:\.[0-9]+)?))|(?:(?<timecount>[0-9]+(?:\.[0-9]+)?)(?<unit>h|min|s|ms)))"};
+const QRegularExpression io::svg::detail::AnimateParser::frame_separator_re{"\\s*;\\s*"};
 
 io::svg::SvgParser::SvgParser(
     QIODevice* device,
@@ -993,8 +996,9 @@ io::svg::SvgParser::SvgParser(
     : d(std::make_unique<Private>())
 {
     d->document = document;
+    d->animate_parser.fps = document->main()->fps.get();
     d->group_mode = group_mode;
-    d->on_warning = on_warning;
+    d->animate_parser.on_warning = d->on_warning = on_warning;
 
     SvgParseError err;
     if ( !d->dom.setContent(device, true, &err.message, &err.line, &err.column) )

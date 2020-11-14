@@ -37,4 +37,30 @@ public:
 
 extern const std::unordered_set<QString> css_atrrs;
 
+
+template<class T>
+struct ItemCountRange
+{
+//         using value_type = decltype(std::declval<T>().item(0));
+    struct iterator
+    {
+        auto operator*() const { return range->dom_list.item(index); }
+        iterator& operator++() { index++; return *this; }
+        bool operator != (const iterator& it) const
+        {
+            return range != it.range || index != it.index;
+        }
+
+        const ItemCountRange* range;
+        int index;
+    };
+
+    ItemCountRange(const T& dom_list) : dom_list(dom_list) {}
+    iterator begin() const { return {this, 0}; }
+    iterator end() const { return {this, dom_list.count()}; }
+    int size() const { return dom_list.count(); }
+
+    T dom_list;
+};
+
 } // io::svg::detail

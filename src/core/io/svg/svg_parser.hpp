@@ -60,8 +60,8 @@ public:
     void parse_to_document();
     io::mime::DeserializedData parse_to_objects();
 
-private:
     class Private;
+private:
     std::unique_ptr<Private> d;
 };
 
