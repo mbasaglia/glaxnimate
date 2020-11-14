@@ -26,6 +26,10 @@ protected:
     void focusOutEvent(QFocusEvent * event) override;
     void leaveEvent(QEvent * event) override;
 
+signals:
+    void before_changed(model::KeyframeTransition::Descriptive v);
+    void after_changed(model::KeyframeTransition::Descriptive v);
+
 private:
     class Private;
     std::unique_ptr<Private> d;

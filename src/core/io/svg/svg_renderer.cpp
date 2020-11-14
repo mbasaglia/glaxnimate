@@ -117,13 +117,13 @@ public:
             }
         }
 
-        QString key_spline(const QPointF& before, const QPointF& after)
+        QString key_spline(const model::KeyframeTransition& trans)
         {
             return QString("%1 %2 %3 %4")
-                .arg(before.x(), 0, 'f')
-                .arg(before.y(), 0, 'f')
-                .arg(after.x(), 0, 'f')
-                .arg(after.y(), 0, 'f')
+                .arg(trans.before().x(), 0, 'f')
+                .arg(trans.before().y(), 0, 'f')
+                .arg(trans.after().x(), 0, 'f')
+                .arg(trans.after().y(), 0, 'f')
             ;
         }
 
@@ -135,7 +135,7 @@ public:
         }
 
         void add_keyframe(model::FrameTime time, const std::vector<QString>& vals,
-                          const QPointF& before, const QPointF& after)
+                          const model::KeyframeTransition& trans)
         {
             if ( key_times.empty() && time > parent->ip )
             {
@@ -145,7 +145,7 @@ public:
             }
 
             key_times.push_back(QString::number(math::unlerp(parent->ip, parent->op, time), 'f'));
-            key_splines.push_back(key_spline(before, after));
+            key_splines.push_back(key_spline(trans));
 
             for ( std::size_t i = 0; i != attributes.size(); i++ )
                 attributes[i].values.push_back(vals[i]);
@@ -210,9 +210,7 @@ public:
             for ( int i = 0; i < kf_count; i++ )
             {
                 auto kf = property->keyframe(i);
-                data.add_keyframe(kf->time(), {kf->value().toString()},
-                                  kf->transition().before_handle(),
-                                  kf->transition().after_handle());
+                data.add_keyframe(kf->time(), {kf->value().toString()}, kf->transition());
             }
 
             data.add_dom(element);
@@ -241,10 +239,7 @@ public:
             AnimationData data(this, attrs, j.keyframes().size());
 
             for ( const auto& kf : j )
-            {
-                auto trans = kf.transition();
-                data.add_keyframe(kf.time, callback(kf.values), trans.first, trans.second);
-            }
+                data.add_keyframe(kf.time, callback(kf.values), kf.transition());
 
             data.add_dom(element);
         }
@@ -498,10 +493,7 @@ public:
                 AnimationData data(this, {"d"}, j.keyframes().size());
 
                 for ( const auto& kf : j )
-                {
-                    auto trans = kf.transition();
-                    data.add_keyframe(kf.time, {path_data(shape->shapes(kf.time)).first}, trans.first, trans.second);
-                }
+                    data.add_keyframe(kf.time, {path_data(shape->shapes(kf.time)).first}, kf.transition());
 
                 data.add_dom(path);
             }
@@ -544,10 +536,7 @@ public:
             AnimationData data(this, {"transform"}, j.keyframes().size());
 
             for ( const auto& kf : j )
-            {
-                auto trans = kf.transition();
-                data.add_keyframe(kf.time, {callback(prop->get_at(kf.time))}, trans.first, trans.second);
-            }
+                data.add_keyframe(kf.time, {callback(prop->get_at(kf.time))}, kf.transition());
             data.add_dom(g, "animateTransform", name);
         }
 
@@ -725,8 +714,7 @@ public:
                     data.add_keyframe(
                         kf.time(),
                         {QString::number(stop.first), stop.second.name()},
-                        kf.transition().before_handle(),
-                        kf.transition().after_handle()
+                        kf.transition()
                     );
                 }
 

@@ -23,10 +23,7 @@ void command::SetKeyframe::undo()
         prop->remove_keyframe_at_time(time);
 
     if ( insert_index > 0 )
-    {
-        prop->keyframe(insert_index-1)->transition().set_before_handle(handle_b1);
-        prop->keyframe(insert_index-1)->transition().set_after_handle(handle_b2);
-    }
+        prop->keyframe(insert_index-1)->set_transition(trans_before);
 }
 
 void command::SetKeyframe::redo()
@@ -47,14 +44,10 @@ void command::SetKeyframe::redo()
                 insert_index = info.index;
 
                 auto kf_before = prop->keyframe(info.index - 1);
-                auto orig_transition = kf_before->transition().bezier();
-                handle_b1 = orig_transition.points()[1];
-                handle_b2 = orig_transition.points()[2];
+                trans_before = kf_before->transition();
 
-                handle_l1 = mid.from_previous.first;
-                handle_l2 = mid.from_previous.second;
-                handle_r1 = mid.to_next.first;
-                handle_r2 = mid.to_next.second;
+                left = mid.from_previous;
+                right = mid.to_next;
             }
         }
     }
@@ -65,10 +58,8 @@ void command::SetKeyframe::redo()
 
     if ( insert_index > 0 )
     {
-        prop->keyframe(insert_index-1)->transition().set_before_handle(handle_l1);
-        prop->keyframe(insert_index-1)->transition().set_after_handle(handle_l2);
-        prop->keyframe(insert_index)->transition().set_before_handle(handle_r1);
-        prop->keyframe(insert_index)->transition().set_after_handle(handle_r2);
+        prop->keyframe(insert_index-1)->set_transition(left);
+        prop->keyframe(insert_index)->set_transition(right);
     }
 
 }
@@ -214,57 +205,57 @@ QString command::SetMultipleAnimated::auto_name(model::AnimatableBase* prop)
 }
 
 
+
+command::SetKeyframeTransition::SetKeyframeTransition(
+        model::AnimatableBase* prop,
+        int keyframe_index,
+        const model::KeyframeTransition& transition
+    )
+: QUndoCommand(QObject::tr("Update keyframe transition")),
+    prop(prop),
+    keyframe_index(keyframe_index),
+    undo_value(keyframe()->transition()),
+    redo_value(transition)
+{
+}
+
 command::SetKeyframeTransition::SetKeyframeTransition(
     model::AnimatableBase* prop,
     int keyframe_index,
     model::KeyframeTransition::Descriptive desc,
     const QPointF& point,
     bool before_transition
-) : QUndoCommand(QObject::tr("Update keyframe transition")),
-    prop(prop),
-    keyframe_index(keyframe_index),
-    undo_value(
-        before_transition ? keyframe()->transition().before_handle() : keyframe()->transition().after_handle()
-    ),
-    undo_desc(
-        before_transition ? keyframe()->transition().before() : keyframe()->transition().after()
-    ),
-    redo_value(point),
-    redo_desc(desc),
-    before_transition(before_transition)
-{}
+) : SetKeyframeTransition(prop, keyframe_index, prop->keyframe(keyframe_index)->transition())
+{
+    if ( desc == model::KeyframeTransition::Custom )
+    {
+        if ( before_transition )
+            redo_value.set_before(point);
+        else
+            redo_value.set_after(point);
+    }
+    else
+    {
+        if ( before_transition )
+            redo_value.set_before_descriptive(desc);
+        else
+            redo_value.set_after_descriptive(desc);
+    }
+}
 
 void command::SetKeyframeTransition::undo()
 {
-    set_handle(undo_value, undo_desc);
+    keyframe()->set_transition(undo_value);
 }
 
 void command::SetKeyframeTransition::redo()
 {
-    set_handle(redo_value, redo_desc);
+    keyframe()->set_transition(redo_value);
 }
 
 model::KeyframeBase* command::SetKeyframeTransition::keyframe() const
 {
     return prop->keyframe(keyframe_index);
-}
-
-void command::SetKeyframeTransition::set_handle(const QPointF& v, model::KeyframeTransition::Descriptive desc) const
-{
-    if ( desc == model::KeyframeTransition::Custom )
-    {
-        if ( before_transition )
-            keyframe()->transition().set_before_handle(v);
-        else
-            keyframe()->transition().set_after_handle(v);
-    }
-    else
-    {
-        if ( before_transition )
-            keyframe()->transition().set_before(desc);
-        else
-            keyframe()->transition().set_after(desc);
-    }
 }
 
 command::MoveKeyframe::MoveKeyframe(

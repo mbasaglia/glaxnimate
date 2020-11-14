@@ -159,32 +159,21 @@ public:
             menu_anim->object()->push_command(
                 new command::SetKeyframeTransition(
                     menu_anim, index, data.value<model::KeyframeTransition::Descriptive>(),
-                    before_transition ? keyframe->transition().before_handle() : keyframe->transition().after_handle(),
+                    before_transition ? keyframe->transition().before() : keyframe->transition().after(),
                     before_transition
                 )
             );
         }
         else
         {
-            KeyframeEditorDialog keyframe_editor(&keyframe->transition(), parent);
+            KeyframeEditorDialog keyframe_editor(keyframe->transition(), parent);
             keyframe_editor.setWindowModality(Qt::ApplicationModal);
             if ( keyframe_editor.exec() )
             {
-                command::UndoMacroGuard macro(tr("Update keyframe transition"), menu_anim->object()->document());
                 menu_anim->object()->push_command(
                     new command::SetKeyframeTransition(
                         menu_anim, index,
-                        keyframe_editor.before(),
-                        keyframe_editor.before_handle(),
-                        true
-                    )
-                );
-                menu_anim->object()->push_command(
-                    new command::SetKeyframeTransition(
-                        menu_anim, index,
-                        keyframe_editor.after(),
-                        keyframe_editor.after_handle(),
-                        false
+                        keyframe_editor.transition()
                     )
                 );
             }
@@ -300,7 +289,7 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
         d->enter.setEnabled(d->menu_kf_enter);
         if ( d->menu_kf_enter )
         {
-            switch ( d->menu_kf_enter->transition().after() )
+            switch ( d->menu_kf_enter->transition().after_descriptive() )
             {
                 case model::KeyframeTransition::Hold:
                     d->action_enter_hold.setChecked(true);
@@ -317,7 +306,7 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
             }
         }
 
-        switch ( d->menu_kf_exit->transition().after() )
+        switch ( d->menu_kf_exit->transition().before_descriptive() )
         {
             case model::KeyframeTransition::Hold:
                 d->action_exit_hold.setChecked(true);

@@ -63,13 +63,31 @@ void define_io(py::module& m)
 
 void define_animatable(py::module& m)
 {
-    register_from_meta<model::KeyframeTransition, QObject>(m, enums<model::KeyframeTransition::Descriptive>{});
+    py::class_<model::KeyframeTransition> kt(m, "KeyframeTransition");
+    kt.attr("Descriptive") = py::enum_<model::KeyframeTransition::Descriptive>(kt, "Descriptive")
+        .value("Hold", model::KeyframeTransition::Hold)
+        .value("Linear", model::KeyframeTransition::Linear)
+        .value("Ease", model::KeyframeTransition::Ease)
+        .value("Custom", model::KeyframeTransition::Custom)
+    ;
+    kt
+        .def(py::init<>())
+        .def(py::init<const QPointF&, const QPointF&>())
+        .def_property("hold", &model::KeyframeTransition::hold, &model::KeyframeTransition::set_hold)
+        .def_property("before", &model::KeyframeTransition::before, &model::KeyframeTransition::set_before)
+        .def_property("after", &model::KeyframeTransition::after, &model::KeyframeTransition::set_after)
+        .def_property("before_descriptive", &model::KeyframeTransition::before_descriptive, &model::KeyframeTransition::set_before_descriptive)
+        .def_property("after_descriptive", &model::KeyframeTransition::after_descriptive, &model::KeyframeTransition::set_after_descriptive)
+        .def("lerp_factor", &model::KeyframeTransition::lerp_factor)
+        .def("bezier_parameter", &model::KeyframeTransition::bezier_parameter)
+    ;
+
     py::class_<model::KeyframeBase>(m, "Keyframe")
         .def_property_readonly("time", &model::KeyframeBase::time)
         .def_property_readonly("value", &model::KeyframeBase::value)
-        .def_property_readonly("transition",
-            (const model::KeyframeTransition& (model::KeyframeBase::*)()const)
+        .def_property("transition",
             &model::KeyframeBase::transition,
+            &model::KeyframeBase::set_transition,
             no_own
         )
     ;

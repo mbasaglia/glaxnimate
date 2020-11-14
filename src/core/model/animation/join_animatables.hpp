@@ -17,7 +17,7 @@ public:
     {
         FrameTime time;
         std::vector<QVariant> values;
-        std::vector<QPair<QPointF, QPointF>> transitions;
+        std::vector<KeyframeTransition> transitions;
 
         Keyframe(FrameTime time, std::size_t prop_count)
             : time(time)
@@ -26,20 +26,25 @@ public:
             transitions.reserve(prop_count);
         }
 
-        QPair<QPointF, QPointF> transition() const
+        KeyframeTransition transition() const
         {
+            int count = 0;
             QPointF in;
             QPointF out;
             for ( const auto& transition : transitions )
             {
-                 in += transition.first;
-                 out += transition.second;
+                if ( !transition.hold() )
+                {
+                    in += transition.before();
+                    out += transition.after();
+                    count++;
+                }
             }
 
-            in /= transitions.size();
-            out /= transitions.size();
+            if ( count == 0 )
+                return {{0, 0}, {1, 1}, true};
 
-            return {in, out};
+            return {in / count, out / count};
         }
     };
 

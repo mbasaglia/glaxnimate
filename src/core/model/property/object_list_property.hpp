@@ -145,6 +145,7 @@ public:
         callback_insert_begin(this->object(), position);
         auto ptr = p.get();
         objects.insert(objects.begin()+position, std::move(p));
+        ptr->set_time(object()->time());
         on_insert(position);
         callback_insert(this->object(), ptr, position);
         value_changed();

@@ -246,17 +246,16 @@ public slots:
     {
         model::KeyframeBase* kf = animatable->keyframe(index);
         if ( index == 0 && !kf_split_items.empty() )
-            kf_split_items[0]->set_enter(kf->transition().after());
+            kf_split_items[0]->set_enter(kf->transition().after_descriptive());
 
         model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
         auto item = new KeyframeSplitItem(this);
         item->setPos(kf->time(), height / 2.0);
-        item->set_exit(kf->transition().before());
-        item->set_enter(prev ? prev->transition().after() : model::KeyframeTransition::Hold);
+        item->set_exit(kf->transition().before_descriptive());
+        item->set_enter(prev ? prev->transition().after_descriptive() : model::KeyframeTransition::Hold);
         kf_split_items.insert(kf_split_items.begin() + index, item);
 
-        connect(&kf->transition(), &model::KeyframeTransition::after_changed, this, &AnimatableItem::transition_changed_after);
-        connect(&kf->transition(), &model::KeyframeTransition::before_changed, this, &AnimatableItem::transition_changed_before);
+        connect(kf, &model::KeyframeBase::transition_changed, this, &AnimatableItem::transition_changed);
         connect(item, &KeyframeSplitItem::dragged, this, &AnimatableItem::keyframe_dragged);
     }
 
@@ -266,7 +265,7 @@ public slots:
         kf_split_items.erase(kf_split_items.begin() + index);
         if ( index < int(kf_split_items.size()) && index > 0 )
         {
-            kf_split_items[index]->set_enter(animatable->keyframe(index-1)->transition().after());
+            kf_split_items[index]->set_enter(animatable->keyframe(index-1)->transition().after_descriptive());
         }
     }
 
@@ -274,26 +273,20 @@ signals:
     void animatable_clicked(model::AnimatableBase* animatable);
 
 private slots:
-    void transition_changed_before(model::KeyframeTransition::Descriptive d)
+    void transition_changed(model::KeyframeTransition::Descriptive before, model::KeyframeTransition::Descriptive after)
     {
-        int index = transition_changed_index();
+        int index = animatable->keyframe_index(static_cast<model::KeyframeBase*>(sender()));
         if ( index == -1 )
             return;
 
-        kf_split_items[index]->set_exit(d);
-    }
+        kf_split_items[index]->set_exit(before);
 
-    void transition_changed_after(model::KeyframeTransition::Descriptive d)
-    {
-        int index = transition_changed_index();
-        if ( index == -1 )
-            return;
 
         index += 1;
         if ( index >= int(kf_split_items.size()) )
             return;
 
-        kf_split_items[index]->set_enter(d);
+        kf_split_items[index]->set_enter(after);
     }
 
     void keyframe_dragged(model::FrameTime t)
@@ -315,27 +308,13 @@ private slots:
     {
         auto item_start = kf_split_items[index];
         item_start->setPos(kf->time(), height / 2.0);
-        item_start->set_exit(kf->transition().before());
+        item_start->set_exit(kf->transition().before_descriptive());
 
         if ( index < int(kf_split_items.size()) - 1 )
         {
             auto item_end = kf_split_items[index];
-            item_end->set_enter(kf->transition().after());
+            item_end->set_enter(kf->transition().after_descriptive());
         }
-    }
-
-private:
-    int transition_changed_index()
-    {
-        model::KeyframeTransition* s = static_cast<model::KeyframeTransition*>(sender());
-
-        for ( int i = 0, e = animatable->keyframe_count(); i < e; i++ )
-        {
-            if ( &animatable->keyframe(i)->transition() == s )
-                return i;
-        }
-
-        return -1;
     }
 
 public:

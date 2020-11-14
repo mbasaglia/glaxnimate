@@ -1,4 +1,5 @@
 #include "keyframe_transition.hpp"
+#include "math/bezier/segment.hpp"
 
 namespace {
 
@@ -12,7 +13,7 @@ constexpr QPointF bound_vec(const QPointF& v)
 
 } // namespace
 
-model::KeyframeTransition::Descriptive model::KeyframeTransition::before() const
+model::KeyframeTransition::Descriptive model::KeyframeTransition::before_descriptive() const
 {
     if ( hold_ )
         return Hold;
@@ -26,7 +27,7 @@ model::KeyframeTransition::Descriptive model::KeyframeTransition::before() const
     return Custom;
 }
 
-model::KeyframeTransition::Descriptive model::KeyframeTransition::after() const
+model::KeyframeTransition::Descriptive model::KeyframeTransition::after_descriptive() const
 {
     if ( hold_ )
         return Hold;
@@ -40,9 +41,8 @@ model::KeyframeTransition::Descriptive model::KeyframeTransition::after() const
     return Custom;
 }
 
-void model::KeyframeTransition::set_before(model::KeyframeTransition::Descriptive d)
+void model::KeyframeTransition::set_before_descriptive(model::KeyframeTransition::Descriptive d)
 {
-    bool old_hold = hold_;
     switch ( d )
     {
         case Hold:
@@ -60,14 +60,10 @@ void model::KeyframeTransition::set_before(model::KeyframeTransition::Descriptiv
             hold_ = false;
             break;
     }
-    emit before_changed(before());
-    if ( old_hold != hold_ )
-        emit after_changed(after());
 }
 
-void model::KeyframeTransition::set_after(model::KeyframeTransition::Descriptive d)
+void model::KeyframeTransition::set_after_descriptive(model::KeyframeTransition::Descriptive d)
 {
-    bool old_hold = hold_;
     switch ( d )
     {
         case Hold:
@@ -85,36 +81,29 @@ void model::KeyframeTransition::set_after(model::KeyframeTransition::Descriptive
             hold_ = false;
             break;
     }
-    emit after_changed(after());
-    if ( old_hold != hold_ )
-        emit before_changed(before());
 }
 
-void model::KeyframeTransition::set_after_handle(const QPointF& after)
+void model::KeyframeTransition::set_after(const QPointF& after)
 {
-    sample_cache_.clean = false;
+    sample_cache_.clear();
     bezier_.points()[2] = bound_vec(after);
-    emit after_changed(this->after());
 }
 
-void model::KeyframeTransition::set_before_handle(const QPointF& before)
+void model::KeyframeTransition::set_before(const QPointF& before)
 {
-    sample_cache_.clean = false;
+    sample_cache_.clear();
     bezier_.points()[1] = bound_vec(before);
-    emit before_changed(this->before());
 }
 
 void model::KeyframeTransition::set_handles(const QPointF& before, const QPointF& after)
 {
-    set_before_handle(before);
-    set_after_handle(after);
+    set_before(before);
+    set_after(after);
 }
 
 void model::KeyframeTransition::set_hold(bool hold)
 {
     hold_ = hold;
-    emit before_changed(before());
-    emit after_changed(after());
 }
 
 namespace {
@@ -162,11 +151,11 @@ double _newton_raphson(double x, double t_guess, const Bez& bez)
 
 void _get_sample_values(const Bez& bez, model::detail::SampleCache& sample_cache)
 {
-    if ( !sample_cache.clean )
+    if ( sample_cache.empty() )
     {
-        sample_cache.clean = true;
+        sample_cache.resize(SPLINE_TABLE_SIZE);
         for ( int i = 0; i < SPLINE_TABLE_SIZE; i++ )
-            sample_cache.sample_values[i] = bez.solve_component(i *  SAMPLE_STEP_SIZE, 0);
+            sample_cache[i] = bez.solve_component(i *  SAMPLE_STEP_SIZE, 0);
     }
 }
 
@@ -176,14 +165,14 @@ double t_for_x(double x, const Bez& bez, model::detail::SampleCache& sample_cach
     double interval_start = 0;
     int current_sample = 1;
     int last_sample = SPLINE_TABLE_SIZE - 1;
-    while ( current_sample != last_sample && sample_cache.sample_values[current_sample] <= x )
+    while ( current_sample != last_sample && sample_cache[current_sample] <= x )
     {
         interval_start += SAMPLE_STEP_SIZE;
         current_sample += 1;
     }
     current_sample -= 1;
 
-    double dist = (x - sample_cache.sample_values[current_sample]) / (sample_cache.sample_values[current_sample+1] - sample_cache.sample_values[current_sample]);
+    double dist = (x - sample_cache[current_sample]) / (sample_cache[current_sample+1] - sample_cache[current_sample]);
     double t_guess = interval_start + dist * SAMPLE_STEP_SIZE;
     double initial_slope = bez.derivative(t_guess, 0);
     if ( initial_slope >= NEWTON_MIN_SLOPE )
@@ -215,6 +204,33 @@ double model::KeyframeTransition::bezier_parameter(double ratio) const
     return t_for_x(ratio, bezier_, sample_cache_);
 }
 
-model::KeyframeTransition::KeyframeTransition(const QPointF& before_handle, const QPointF& after_handle)
-    : bezier_({0, 0}, before_handle, after_handle, {1,1})
+model::KeyframeTransition::KeyframeTransition(const QPointF& before_handle, const QPointF& after_handle, bool hold)
+    : bezier_({0, 0}, before_handle, after_handle, {1,1}),
+    hold_(hold)
 {}
+
+std::pair<model::KeyframeTransition, model::KeyframeTransition> model::KeyframeTransition::split(double x) const
+{
+    if ( hold_ )
+        return { {{0, 0}, {1, 1}, true}, {{0, 0}, {1, 1}, true} };
+
+    qreal t = t_for_x(x, bezier_, sample_cache_);
+    qreal y = bezier_.solve_component(t, 1);
+    math::bezier::BezierSegment left, right;
+    std::tie(left, right) = bezier_.split(t);
+
+    qreal left_factor_x = 1 / x;
+    qreal left_factor_y = 1 / y;
+    qreal right_factor_x = 1 / (1-x);
+    qreal right_factor_y = 1 / (1-y);
+    return {
+        {
+            {left[1].x() * left_factor_x, left[1].y() * left_factor_y},
+            {left[2].x() * left_factor_x, left[2].y() * left_factor_y}
+        },
+        {
+            {(right[1].x() - x) * right_factor_x, (right[1].y() - y) * right_factor_y},
+            {(right[2].x() - x) * right_factor_x, (right[2].y() - y) * right_factor_y}
+        }
+    };
+}

@@ -31,12 +31,9 @@ private:
     bool had_before;
     bool calculated = false;
     int insert_index = -1;
-    QPointF handle_b1;
-    QPointF handle_b2;
-    QPointF handle_l1;
-    QPointF handle_l2;
-    QPointF handle_r1;
-    QPointF handle_r2;
+    model::KeyframeTransition trans_before;
+    model::KeyframeTransition left;
+    model::KeyframeTransition right;
 };
 
 class RemoveKeyframeTime : public QUndoCommand
@@ -122,25 +119,22 @@ public:
         bool before_transition
     );
 
-    void undo() override;
+    SetKeyframeTransition(
+        model::AnimatableBase* prop,
+        int keyframe_index,
+        const model::KeyframeTransition& transition
+    );
 
+    void undo() override;
     void redo() override;
 
 private:
     model::KeyframeBase* keyframe() const;
 
-    void set_handle(const QPointF& v, model::KeyframeTransition::Descriptive desc) const;
-
     model::AnimatableBase* prop;
     int keyframe_index;
-
-    QPointF undo_value;
-    model::KeyframeTransition::Descriptive undo_desc;
-
-    QPointF redo_value;
-    model::KeyframeTransition::Descriptive redo_desc;
-
-    bool before_transition;
+    model::KeyframeTransition undo_value;
+    model::KeyframeTransition redo_value;
 };
 
 

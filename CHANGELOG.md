@@ -11,6 +11,7 @@
     * Fixed layer parenting when loading lottie
     * Rounded rectangles are correctly exported to SVG
     * Duplicating shapes selects the new shape and places it on top of the original
+    * Keyframes added on newly created objects are on the right frame
 
 ## 0.3.0
 

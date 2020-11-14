@@ -218,12 +218,11 @@ public:
                     QPointF before, after;
                     if ( load_2d(kfobj["before"], "x", "y", before) && load_2d(kfobj["after"], "x", "y", after) )
                     {
-                        kf->transition().set_before_handle(before);
-                        kf->transition().set_after_handle(after);
+                        kf->set_transition({before, after});
                     }
                     else
                     {
-                        kf->transition().set_hold(true);
+                        kf->set_transition({{0, 0}, {1, 1}, true});
                     }
                 }
 

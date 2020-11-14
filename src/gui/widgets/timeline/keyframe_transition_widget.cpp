@@ -52,13 +52,6 @@ public:
         };
     }
 
-    void move_handle(QPoint p, int width, int height)
-    {
-        if ( selected_handle == 1 )
-            target->set_before_handle(unmap_pt(p, width, height));
-        else if ( selected_handle == 2 )
-            target->set_after_handle(unmap_pt(p, width, height));
-    }
 };
 
 
@@ -75,6 +68,11 @@ void KeyframeTransitionWidget::set_target(model::KeyframeTransition* kft)
 {
     d->target = kft;
     update();
+    if ( kft )
+    {
+        emit before_changed(kft->before_descriptive());
+        emit after_changed(kft->after_descriptive());
+    }
 }
 
 void KeyframeTransitionWidget::paintEvent(QPaintEvent*)
@@ -182,7 +180,17 @@ void KeyframeTransitionWidget::mouseMoveEvent(QMouseEvent* event)
     if ( d->selected_handle )
     {
         QPoint pos = event->pos() - d->drag_start_mouse + d->drag_start_handle;
-        d->move_handle(pos, width(), height());
+
+        if ( d->selected_handle == 1 )
+        {
+            d->target->set_before(d->unmap_pt(pos, width(), height()));
+            emit before_changed(d->target->before_descriptive());
+        }
+        else if ( d->selected_handle == 2 )
+        {
+            d->target->set_after(d->unmap_pt(pos, width(), height()));
+            emit after_changed(d->target->after_descriptive());
+        }
         update();
     }
     else if ( isEnabled() )

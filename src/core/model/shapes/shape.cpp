@@ -98,9 +98,7 @@ std::unique_ptr<model::Path> model::Shape::to_path() const
             for ( const auto & kf : ja )
             {
                 auto path_kf = path->shape.set_keyframe(kf.time, to_bezier(kf.time));
-                auto trans = kf.transition();
-                path_kf->transition().set_before_handle(trans.first);
-                path_kf->transition().set_after_handle(trans.second);
+                path_kf->set_transition(kf.transition());
             }
         }
 

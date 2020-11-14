@@ -617,8 +617,8 @@ public:
                     else
                     {
                         jkf["h"_l] =  0;
-                        jkf["i"_l] = keyframe_bezier_handle(kf->transition().before_handle());
-                        jkf["o"_l] = keyframe_bezier_handle(kf->transition().after_handle());
+                        jkf["i"_l] = keyframe_bezier_handle(kf->transition().before());
+                        jkf["o"_l] = keyframe_bezier_handle(kf->transition().after());
                     }
                 }
             }
@@ -1260,11 +1260,11 @@ private:
 
                 if ( kf )
                 {
-                    kf->transition().set_before_handle(keyframe_bezier_handle(jkf["i"]));
-                    kf->transition().set_after_handle(keyframe_bezier_handle(jkf["o"]));
-
-                    if ( jkf["h"].toInt() )
-                        kf->transition().set_hold(true);
+                    kf->set_transition({
+                        keyframe_bezier_handle(jkf["i"]),
+                        keyframe_bezier_handle(jkf["o"]),
+                        bool(jkf["h"].toInt())
+                    });
                 }
                 else
                 {

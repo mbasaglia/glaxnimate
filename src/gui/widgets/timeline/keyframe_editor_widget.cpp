@@ -33,6 +33,9 @@ KeyframeEditorWidget::KeyframeEditorWidget(QWidget* parent)
     d->setupUi(this);
     set_icons(d->combo_before, "start");
     set_icons(d->combo_after, "finish");
+
+    connect(d->bezier_editor, &KeyframeTransitionWidget::before_changed, this, &KeyframeEditorWidget::update_before);
+    connect(d->bezier_editor, &KeyframeTransitionWidget::after_changed, this, &KeyframeEditorWidget::update_after);
 }
 
 KeyframeEditorWidget::~KeyframeEditorWidget() = default;
@@ -48,20 +51,7 @@ void KeyframeEditorWidget::changeEvent ( QEvent* e )
 
 void KeyframeEditorWidget::set_target(model::KeyframeTransition* kft)
 {
-    if ( d->bezier_editor->target() )
-    {
-        disconnect(d->bezier_editor->target(), nullptr, this, nullptr);
-    }
-
     d->bezier_editor->set_target(kft);
-
-    if ( kft )
-    {
-        connect(kft, &model::KeyframeTransition::before_changed, this, &KeyframeEditorWidget::update_before);
-        connect(kft, &model::KeyframeTransition::after_changed, this, &KeyframeEditorWidget::update_after);
-        update_before(kft->before());
-        update_after(kft->after());
-    }
 }
 
 void KeyframeEditorWidget::preset_after(int index)
@@ -69,7 +59,7 @@ void KeyframeEditorWidget::preset_after(int index)
     if ( !d->bezier_editor->target() )
         return;
 
-    d->bezier_editor->target()->set_after(model::KeyframeTransition::Descriptive(index));
+    d->bezier_editor->target()->set_after_descriptive(model::KeyframeTransition::Descriptive(index));
     d->bezier_editor->update();
 }
 
@@ -78,7 +68,7 @@ void KeyframeEditorWidget::preset_before(int index)
     if ( !d->bezier_editor->target() )
         return;
 
-    d->bezier_editor->target()->set_before(model::KeyframeTransition::Descriptive(index));
+    d->bezier_editor->target()->set_before_descriptive(model::KeyframeTransition::Descriptive(index));
     d->bezier_editor->update();
 }
 
@@ -91,6 +81,3 @@ void KeyframeEditorWidget::update_before(model::KeyframeTransition::Descriptive 
 {
     d->combo_before->setCurrentIndex(int(v));
 }
-
-
-

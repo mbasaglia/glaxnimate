@@ -21,11 +21,7 @@ bool model::AnimatableBase::assign_from(const model::BaseProperty* prop)
         const KeyframeBase* kf_other = other->keyframe(i);
         KeyframeBase* kf = set_keyframe(kf_other->time(), kf_other->value());
         if ( kf )
-        {
-            kf->transition().set_hold(kf_other->transition().hold());
-            kf->transition().set_before_handle(kf_other->transition().before_handle());
-            kf->transition().set_after_handle(kf_other->transition().after_handle());
-        }
+            kf->set_transition(kf_other->transition());
     }
 
     return true;
@@ -51,33 +47,18 @@ model::AnimatableBase::MidTransition model::AnimatableBase::mid_transition(model
     int keyframe_index = this->keyframe_index(time);
     const KeyframeBase* kf_before = this->keyframe(keyframe_index);
     if ( !kf_before )
-        return {
-            MidTransition::Invalid,
-            value(),
-            {{}, {1, 1}},
-            {{}, {1, 1}}
-        };
+        return {MidTransition::Invalid, value(), {}, {}};
 
     auto before_time = kf_before->time();
 
     if ( before_time >= time )
-        return {
-            MidTransition::SingleKeyframe,
-            kf_before->value(),
-            {{}, {1, 1}},
-            {kf_before->transition().before_handle(), kf_before->transition().after_handle()},
-        };
+        return {MidTransition::SingleKeyframe, kf_before->value(), {}, kf_before->transition(),};
 
 
     const KeyframeBase* kf_after = this->keyframe(keyframe_index + 1);
 
     if ( !kf_after )
-        return {
-            MidTransition::SingleKeyframe,
-            kf_before->value(),
-            {kf_before->transition().before_handle(), kf_before->transition().after_handle()},
-            {{}, {}},
-        };
+        return {MidTransition::SingleKeyframe, kf_before->value(), kf_before->transition(), {},};
 
     auto after_time = kf_after->time();
 
@@ -85,8 +66,8 @@ model::AnimatableBase::MidTransition model::AnimatableBase::mid_transition(model
         return {
             MidTransition::SingleKeyframe,
             kf_after->value(),
-            {kf_before->transition().before_handle(), kf_before->transition().after_handle()},
-            {kf_after->transition().before_handle(), kf_after->transition().after_handle()},
+            kf_before->transition(),
+            kf_after->transition(),
         };
 
     qreal x = math::unlerp(before_time, after_time, time);
@@ -105,61 +86,21 @@ model::AnimatableBase::MidTransition model::AnimatableBase::do_mid_transition(
 
     if ( t <= 0 )
     {
-        QPair<QPointF, QPointF> from_previous = {{}, {1, 1}};
+        KeyframeTransition from_previous = {{}, {1, 1}};
         if ( index > 0 )
-        {
-            const model::KeyframeBase* kf_before_still = keyframe(index-1);
-            from_previous = {kf_before_still->transition().before_handle(), kf_before_still->transition().after_handle()};
-        }
+            from_previous = keyframe(index-1)->transition();
 
-        return {
-            MidTransition::SingleKeyframe,
-            kf_before->value(),
-            from_previous,
-            {kf_before->transition().before_handle(), kf_before->transition().after_handle()},
-        };
+        return {MidTransition::SingleKeyframe, kf_before->value(), from_previous, kf_before->transition()};
     }
     else if ( t >= 1 )
     {
-        return {
-            MidTransition::SingleKeyframe,
-            kf_before->value(),
-            {kf_before->transition().before_handle(), kf_before->transition().after_handle()},
-            {kf_after->transition().before_handle(), kf_after->transition().after_handle()},
-        };
+        return {MidTransition::SingleKeyframe, kf_before->value(), kf_before->transition(), kf_after->transition(),};
     }
 
-    auto orig_transition = kf_before->transition().bezier();
 
     model::AnimatableBase::MidTransition mt;
     mt.type = MidTransition::Middle;
     mt.value = do_mid_transition_value(kf_before, kf_after, x);
-
-    qreal y = kf_before->transition().lerp_factor(x);
-    math::bezier::BezierSegment left, right;
-    std::tie(left, right) = orig_transition.split(t);
-
-    qreal left_factor_x = 1 / x;
-    qreal left_factor_y = 1 / y;
-    mt.from_previous.first =  {
-        left[1].x() * left_factor_x,
-        left[1].y() * left_factor_y
-    };
-    mt.from_previous.second =  {
-        left[2].x() * left_factor_x,
-        left[2].y() * left_factor_y
-    };
-
-    qreal right_factor_x = 1 / (1-x);
-    qreal right_factor_y = 1 / (1-y);
-    mt.to_next.first =  {
-        (right[1].x() - x) * right_factor_x,
-        (right[1].y() - y) * right_factor_y
-    };
-    mt.to_next.second =  {
-        (right[2].x() - x) * right_factor_x,
-        (right[2].y() - y) * right_factor_y
-    };
-
+    std::tie(mt.from_previous, mt.to_next) = kf_before->transition().split(x);
     return mt;
 }

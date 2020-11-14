@@ -22,9 +22,9 @@ private:                                                        \
 
 namespace model {
 
-class KeyframeBase
+class KeyframeBase : public QObject
 {
-    Q_GADGET
+    Q_OBJECT
 
     Q_PROPERTY(QVariant value READ value)
     Q_PROPERTY(double time READ time)
@@ -43,7 +43,14 @@ public:
      */
     const KeyframeTransition& transition() const { return transition_; }
 
-    KeyframeTransition& transition() { return transition_; }
+    void set_transition(const KeyframeTransition& trans)
+    {
+        transition_ = trans;
+        emit transition_changed(transition_.before_descriptive(), transition_.after_descriptive());
+    }
+
+signals:
+    void transition_changed(KeyframeTransition::Descriptive before, KeyframeTransition::Descriptive after);
 
 private:
     FrameTime time_;
@@ -84,8 +91,8 @@ public:
         Type type = Invalid;
 
         QVariant value;
-        QPair<QPointF, QPointF> from_previous;
-        QPair<QPointF, QPointF> to_next;
+        model::KeyframeTransition from_previous;
+        model::KeyframeTransition to_next;
     };
 
     using BaseProperty::BaseProperty;
