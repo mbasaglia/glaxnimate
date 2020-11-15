@@ -138,7 +138,7 @@ public:
                 new MoveHandle(parent, MoveHandle::Any, MoveHandle::Saltire, 12, true),
                 &TransformGraphicsItem::Private::get_a,
                 &TransformGraphicsItem::drag_a,
-                {&transform->anchor_point}
+                {&transform->anchor_point, &transform->position}
             },
             Handle{
                 new MoveHandle(parent, MoveHandle::Rotate, MoveHandle::Circle, 6, true),

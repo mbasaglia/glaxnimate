@@ -2,6 +2,7 @@
 
 * Editing:
     * Menu action to convert any shape into a Path
+    * Removing keyframes will preserve easing across the affected keyframes
 * I/O:
     * Support for SVG SMIL animations
     * Browser SVG preview

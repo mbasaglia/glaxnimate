@@ -475,7 +475,7 @@ public:
 
     void remove_keyframe(int i) override
     {
-        if ( i > 0 && i <= int(keyframes_.size()) )
+        if ( i >= 0 && i <= int(keyframes_.size()) )
         {
             keyframes_.erase(keyframes_.begin() + i);
             emit this->keyframe_removed(i);

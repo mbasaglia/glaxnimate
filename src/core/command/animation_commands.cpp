@@ -78,17 +78,30 @@ command::RemoveKeyframeTime::RemoveKeyframeTime(
 ) : QUndoCommand(QObject::tr("Remove %1 keyframe at %2").arg(prop->name()).arg(time)),
     prop(prop),
     time(time),
+    index(prop->keyframe_index(time)),
     before(prop->value(time))
-{}
+{
+    if ( index > 0 )
+    {
+        prev_transition_after = prev_transition_before = prop->keyframe(index-1)->transition();
+        if ( !prev_transition_after.hold() )
+            prev_transition_after.set_after(prop->keyframe(index)->transition().after());
+    }
+}
 
 void command::RemoveKeyframeTime::undo()
 {
     prop->set_keyframe(time, before);
+    if ( index > 0 )
+        prop->keyframe(index-1)->set_transition(prev_transition_before);
+
 }
 
 void command::RemoveKeyframeTime::redo()
 {
-    prop->remove_keyframe_at_time(time);
+    if ( index > 0 )
+        prop->keyframe(index-1)->set_transition(prev_transition_after);
+    prop->remove_keyframe(index);
 }
 
 

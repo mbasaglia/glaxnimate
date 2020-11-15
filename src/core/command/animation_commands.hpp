@@ -51,7 +51,10 @@ public:
 private:
     model::AnimatableBase* prop;
     model::FrameTime time;
+    int index;
     QVariant before;
+    model::KeyframeTransition prev_transition_before;
+    model::KeyframeTransition prev_transition_after;
 };
 
 
