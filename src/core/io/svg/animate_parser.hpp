@@ -74,7 +74,7 @@ public:
             for ( const auto& name : prop_names )
             {
                 auto it = properties.find(name);
-                if ( it == properties.end() )
+                if ( it == properties.end() || it->second.keyframes.empty() )
                 {
                     props.push_back({&name});
                 }
@@ -121,7 +121,7 @@ public:
                     if ( p.prop.index() == 0 )
                     {
                         auto kf = p.keyframe();
-                        if ( p.at_end() || (p.index == 0 && kf->time > time) )
+                        if ( (p.at_end() && kf->time <= time) || (p.index == 0 && kf->time > time) )
                         {
                             values.push_back(kf->values);
                         }
