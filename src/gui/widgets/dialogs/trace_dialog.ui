@@ -427,7 +427,8 @@
         <string>Help...</string>
        </property>
        <property name="icon">
-        <iconset theme="help-contents"/>
+        <iconset theme="help-contents">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -565,6 +566,38 @@
     <hint type="destinationlabel">
      <x>128</x>
      <y>714</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>594</x>
+     <y>643</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>616</x>
+     <y>779</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>apply()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>513</x>
+     <y>633</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>513</x>
+     <y>798</y>
     </hint>
    </hints>
   </connection>
