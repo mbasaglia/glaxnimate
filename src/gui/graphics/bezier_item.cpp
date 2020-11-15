@@ -73,8 +73,11 @@ void graphics::PointItem::set_point(const math::bezier::Point& p)
     tan_in.setPos(p.tan_in);
     tan_out.setPos(p.tan_out);
 
-    tan_in.setVisible(has_tan_in && !tan_in_empty());
-    tan_out.setVisible(has_tan_out && !tan_out_empty());
+    shows_tan_in = !tan_in_empty();
+    shows_tan_out = !tan_out_empty();
+
+    tan_in.setVisible(shows_tan_in && pos.isSelected());
+    tan_out.setVisible(shows_tan_out && pos.isSelected());
 
     switch ( point_.type )
     {
@@ -105,13 +108,15 @@ void graphics::PointItem::set_point_type(math::bezier::PointType type)
 
 void graphics::PointItem::show_tan_in(bool show)
 {
-    tan_in.setVisible(show && has_tan_in);
+    shows_tan_in = show && has_tan_in;
+    tan_in.setVisible(shows_tan_in);
     update();
 }
 
 void graphics::PointItem::show_tan_out(bool show)
 {
-    tan_out.setVisible(show && has_tan_out);
+    shows_tan_out = show && has_tan_out;
+    tan_out.setVisible(shows_tan_out);
     update();
 }
 void graphics::PointItem::tan_in_dragged(const QPointF& p, Qt::KeyboardModifiers mods)
@@ -188,6 +193,15 @@ void graphics::PointItem::drag_preserve_angle(QPointF& dragged, QPointF& other, 
     other = point_.pos + math::PolarVector<QPointF>(length, angle).to_cartesian();
 }
 
+void graphics::PointItem::set_selected(bool selected)
+{
+    pos.setSelected(selected);
+    tan_in.setVisible(selected && shows_tan_in && has_tan_in);
+    tan_out.setVisible(selected && shows_tan_out && has_tan_out);
+    update();
+}
+
+
 graphics::BezierItem * graphics::PointItem::parent_editor() const
 {
     return static_cast<graphics::BezierItem *>(parentItem());
@@ -228,13 +242,15 @@ bool graphics::PointItem::tan_out_empty() const
 void graphics::PointItem::set_has_tan_in(bool show)
 {
     has_tan_in = show;
-    show_tan_in(!tan_in_empty());
+    tan_in.setVisible(show && shows_tan_in && !tan_in_empty() && pos.isSelected());
+    update();
 }
 
 void graphics::PointItem::set_has_tan_out(bool show)
 {
     has_tan_out = show;
-    show_tan_out(!tan_out_empty());
+    tan_out.setVisible(show && shows_tan_out && !tan_out_empty() && pos.isSelected());
+    update();
 }
 
 
@@ -373,7 +389,7 @@ const std::set<int> & graphics::BezierItem::selected_indices()
 void graphics::BezierItem::clear_selected_indices()
 {
     for ( const auto& item : items )
-        item->pos.setSelected(false);
+        item->set_selected(false);
     selected_indices_.clear();
 }
 
@@ -382,7 +398,7 @@ void graphics::BezierItem::select_index(int i)
     if ( !selected_indices_.count(i) && i >= 0 && i < int(items.size()) )
     {
         selected_indices_.insert(i);
-        items[i]->pos.setSelected(true);
+        items[i]->set_selected(true);
     }
 }
 
@@ -392,7 +408,7 @@ void graphics::BezierItem::deselect_index(int i)
     {
         selected_indices_.erase(i);
         if ( i >= 0 && i < int(items.size()) )
-            items[i]->pos.setSelected(false);
+            items[i]->set_selected(false);
     }
 }
 

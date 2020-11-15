@@ -40,6 +40,8 @@ public:
     bool tan_in_empty() const;
     bool tan_out_empty() const;
 
+    void set_selected(bool selected);
+
 signals:
     void modified(int index, const math::bezier::Point& point, bool commit, const QString& name);
 
@@ -70,6 +72,8 @@ private:
     math::bezier::Point point_;
     bool has_tan_in = true;
     bool has_tan_out = true;
+    bool shows_tan_in = true;
+    bool shows_tan_out = true;
     friend class BezierItem;
 };
 

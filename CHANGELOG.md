@@ -5,6 +5,7 @@
     * Removing keyframes will preserve easing across the affected keyframes
     * Fill tool
     * The context menu for bezier handles now shows property actions
+    * Bezier tangent handles are only shown for the selected nodes
 * I/O:
     * Support for SVG SMIL animations
     * Browser SVG preview
