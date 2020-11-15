@@ -3,7 +3,7 @@
 * Editing:
     * Menu action to convert any shape into a Path
 * I/O:
-    * Support for exporting SMIL animated SVG
+    * Support for SVG SMIL animations
     * Browser SVG preview
 * Bug Fixes:
     * Removed spurious warnings when loading lottie

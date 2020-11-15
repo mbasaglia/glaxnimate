@@ -170,6 +170,13 @@ public:
             col->name.set(id);
             col->color.set(stops[0].second);
             brush_styles["#"+id] = col.get();
+            auto anim = parse_animated(gradient.firstChildElement("stop"));
+
+            for ( const auto& kf : add_keyframes(anim.single("stop-color")) )
+                col->color.set_keyframe(kf.time,
+                    QColor::fromRgbF(kf.values[0], kf.values[1], kf.values[2], kf.values[3])
+                )->set_transition(kf.transition);
+
             document->defs()->colors.insert(std::move(col));
             return;
         }
@@ -202,6 +209,12 @@ public:
                 len_attr(element, "x2"),
                 len_attr(element, "y2")
             ));
+
+            auto anim = parse_animated(element);
+            for ( const auto& kf : add_keyframes(anim.joined({"x1", "y1"})) )
+                gradient->start_point.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+            for ( const auto& kf : add_keyframes(anim.joined({"x2", "y2"})) )
+                gradient->end_point.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
         }
         else if ( element.tagName() == "radialGradient" )
         {
@@ -225,6 +238,20 @@ public:
                 gradient->highlight.set(c);
 
             gradient->end_point.set({c.x() + len_attr(element, "r"), c.y()});
+
+
+            auto anim = parse_animated(element);
+            for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
+                gradient->start_point.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+
+            for ( const auto& kf : add_keyframes(anim.joined({"fx", "fy"})) )
+                gradient->highlight.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+
+            for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy", "r"})) )
+                gradient->end_point.set_keyframe(kf.time,
+                    {kf.values[0][0] + kf.values[2][0], kf.values[1][0]}
+                )->set_transition(kf.transition);
+
         }
         else
         {
