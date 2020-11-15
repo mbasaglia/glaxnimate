@@ -58,7 +58,6 @@ protected:
     }
 
 private:
-    bool grabbing = false;
     static Autoreg<ColorPickerTool> autoreg;
 };
 

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FillToolWidget</class>
+ <widget class="QWidget" name="FillToolWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>146</width>
+    <height>90</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QRadioButton" name="check_fill">
+     <property name="text">
+      <string>Fill</string>
+     </property>
+     <property name="icon">
+      <iconset theme="format-fill-color">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="check_stroke">
+     <property name="text">
+      <string>Stroke</string>
+     </property>
+     <property name="icon">
+      <iconset theme="format-stroke-color">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="check_both">
+     <property name="text">
+      <string>Fill and Stroke</string>
+     </property>
+     <property name="icon">
+      <iconset theme="edit-paste-style"/>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

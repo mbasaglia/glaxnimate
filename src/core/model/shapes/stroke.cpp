@@ -22,3 +22,13 @@ void model::Stroke::set_pen_style ( const QPen& pen_style )
     join.set(model::Stroke::Join(pen_style.joinStyle()));
     miter_limit.set(pen_style.miterLimit());
 }
+
+void model::Stroke::set_pen_style_undoable(const QPen& pen_style)
+{
+    color.set_undoable(pen_style.color());
+    width.set_undoable(pen_style.width());
+    cap.set_undoable(QVariant::fromValue(model::Stroke::Cap(pen_style.capStyle())));
+    join.set_undoable(QVariant::fromValue(model::Stroke::Join(pen_style.joinStyle())));
+    miter_limit.set_undoable(pen_style.miterLimit());
+}
+
