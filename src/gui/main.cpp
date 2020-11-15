@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     AppInfo::instance().init_qapplication();
 
-    app::scripting::python::PythonEngine::add_module_search_paths(app.data_paths("lib/python-lottie/lib"));
+    app::scripting::python::PythonEngine::add_module_search_paths(app.data_paths("lib/"));
 
     auto args = parse_cli(app.arguments());
 
