@@ -14,6 +14,7 @@
     * Duplicating shapes selects the new shape and places it on top of the original
     * Keyframes added on newly created objects are on the right frame
     * OK/Cancel buttons in the Trace Bitmap dialog now react to user input
+    * When the selected object is deleted, the timeline and property views are cleared
 
 ## 0.3.0
 

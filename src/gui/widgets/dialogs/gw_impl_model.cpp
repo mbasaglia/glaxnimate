@@ -423,6 +423,11 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
             }
         }
     }
+    else
+    {
+        property_model.set_object(nullptr);
+        ui.timeline_widget->set_active(nullptr);
+    }
 
     ui.stroke_style_widget->set_shape(stroke);
     ui.fill_style_widget->set_shape(fill);

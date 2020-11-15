@@ -170,10 +170,13 @@ void TimelineWidget::add_animatable(model::AnimatableBase* anim)
 void TimelineWidget::set_active(model::DocumentNode* node)
 {
     clear();
-    d->add_object(node);
-    setSceneRect(d->scene_rect());
-    set_anim_container(d->anim(node));
-    reset_view();
+    if ( node )
+    {
+        d->add_object(node);
+        setSceneRect(d->scene_rect());
+        set_anim_container(d->anim(node));
+        reset_view();
+    }
 }
 
 void TimelineWidget::clear()
