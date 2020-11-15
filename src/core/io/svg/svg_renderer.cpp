@@ -833,6 +833,7 @@ void io::svg::SvgRenderer::write_main(model::MainComposition* comp)
         d->svg.setAttribute("height", h);
         d->svg.setAttribute("viewBox", QString("0 0 %1 %2").arg(w).arg(h));
         d->collect_defs(comp->document());
+        d->svg.appendChild(d->dom.createElement("title")).appendChild(d->dom.createTextNode(comp->name.get()));
         write_composition(comp);
     }
     else
