@@ -446,6 +446,22 @@ public:
             ));
 
         /// \todo adjust anchor point
+
+        auto anim = animate_parser.parse_animated_transform(element);
+        for ( const auto& kf : add_keyframes(anim.single("translate")) )
+            transform->position.set_keyframe(kf.time, {kf.values[0], kf.values[1]})->set_transition(kf.transition);
+        for ( const auto& kf : add_keyframes(anim.single("scale")) )
+            transform->scale.set_keyframe(kf.time, QVector2D(kf.values[0], kf.values[1]))->set_transition(kf.transition);
+        for ( const auto& kf : add_keyframes(anim.single("rotate")) )
+        {
+            transform->rotation.set_keyframe(kf.time, kf.values[0])->set_transition(kf.transition);
+            if ( kf.values.size() == 3 )
+            {
+                QPointF p = {kf.values[1], kf.values[2]};
+                transform->anchor_point.set_keyframe(kf.time, p)->set_transition(kf.transition);
+                transform->position.set_keyframe(kf.time, p)->set_transition(kf.transition);
+            }
+        }
     }
 
     std::vector<qreal> double_args(const QString& str)

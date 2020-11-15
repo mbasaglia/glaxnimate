@@ -399,15 +399,32 @@ public:
             if ( domnode.isElement() )
             {
                 auto child = domnode.toElement();
+
+                if ( child.tagName() == "animate" )
+                {
+                    if ( child.hasAttribute("attributeName") )
+                        parse_animate(child, props.properties[child.attribute("attributeName")]);
+                }
+            }
+        }
+
+        return props;
+    }
+
+    AnimatedProperties parse_animated_transform(const QDomElement& parent)
+    {
+        AnimatedProperties props;
+        props.element = parent;
+
+        for ( const auto& domnode : ItemCountRange(parent.childNodes()) )
+        {
+            if ( domnode.isElement() )
+            {
+                auto child = domnode.toElement();
                 if ( child.tagName() == "animateTransform" )
                 {
                     if ( child.hasAttribute("type") && child.attribute("attributeName") == "transform" )
                         parse_animate(child, props.properties[child.attribute("type")]);
-                }
-                else if ( child.tagName() == "animate" )
-                {
-                    if ( child.hasAttribute("attributeName") )
-                        parse_animate(child, props.properties[child.attribute("attributeName")]);
                 }
             }
         }
