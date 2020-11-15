@@ -4,6 +4,7 @@
     * Menu action to convert any shape into a Path
     * Removing keyframes will preserve easing across the affected keyframes
     * Fill tool
+    * The context menu for bezier handles now shows property actions
 * I/O:
     * Support for SVG SMIL animations
     * Browser SVG preview

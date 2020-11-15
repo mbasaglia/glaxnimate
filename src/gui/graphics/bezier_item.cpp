@@ -4,7 +4,7 @@
 
 #include "command/animation_commands.hpp"
 
-graphics::PointItem::PointItem(int index, const math::bezier::Point& point, QGraphicsItem* parent)
+graphics::PointItem::PointItem(int index, const math::bezier::Point& point, QGraphicsItem* parent, model::AnimatedProperty<math::bezier::Bezier>* property)
 : QGraphicsObject(parent), index_(index), point_(point)
 {
     connect(&tan_in, &MoveHandle::dragged, this, &PointItem::tan_in_dragged);
@@ -21,6 +21,10 @@ graphics::PointItem::PointItem(int index, const math::bezier::Point& point, QGra
     pos.set_role(MoveHandle::Vertex);
     tan_in.set_role(MoveHandle::Tangent);
     tan_out.set_role(MoveHandle::Tangent);
+
+    pos.set_associated_property(property);
+    tan_in.set_associated_property(property);
+    tan_out.set_associated_property(property);
 
     set_point(point);
 }
@@ -345,7 +349,7 @@ void graphics::BezierItem::on_dragged(int index, const math::bezier::Point& poin
 
 void graphics::BezierItem::do_add_point(int index)
 {
-    items.push_back(std::make_unique<PointItem>(index, bezier_[index], this));
+    items.push_back(std::make_unique<PointItem>(index, bezier_[index], this, target_property()));
     connect(items.back().get(), &PointItem::modified, this, &BezierItem::on_dragged);
     if ( !bezier_.closed() && index == int(items.size()) - 1 && items.size() > 2)
         items[index-1]->set_has_tan_out(true);
