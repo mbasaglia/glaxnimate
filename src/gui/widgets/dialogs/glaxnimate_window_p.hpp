@@ -89,7 +89,7 @@ public:
     void document_open();
     void document_open_from_filename(const QString& filename);
     void document_reload();
-    void preview_lottie();
+    void preview_lottie(const QString& renderer);
     void preview_svg();
     void preview(io::ImportExport& exporter, const QVariantMap& options);
     void save_frame_bmp();

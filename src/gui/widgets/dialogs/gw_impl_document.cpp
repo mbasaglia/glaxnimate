@@ -349,10 +349,10 @@ void GlaxnimateWindow::Private::preview(io::ImportExport& exporter, const QVaria
     }
 }
 
-void GlaxnimateWindow::Private::preview_lottie()
+void GlaxnimateWindow::Private::preview_lottie(const QString& renderer)
 {
     io::lottie::LottieHtmlFormat fmt;
-    preview(fmt, {});
+    preview(fmt, {{"renderer", renderer}});
 }
 
 void GlaxnimateWindow::Private::preview_svg()

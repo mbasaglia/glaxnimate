@@ -203,9 +203,11 @@
       <string>&amp;Web Preview</string>
      </property>
      <property name="icon">
-      <iconset theme="internet-web-browser"/>
+      <iconset theme="internet-web-browser">
+       <normaloff>.</normaloff>.</iconset>
      </property>
      <addaction name="action_lottie_preview"/>
+     <addaction name="action_lottie_canvas_preview"/>
      <addaction name="action_svg_preview"/>
     </widget>
     <addaction name="menu_render_single_frame"/>
@@ -1666,12 +1668,17 @@
   </action>
   <action name="action_lottie_preview">
    <property name="text">
-    <string>&amp;Lottie</string>
+    <string>&amp;Lottie (SVG)</string>
    </property>
   </action>
   <action name="action_svg_preview">
    <property name="text">
     <string>&amp;SVG (SMIL)</string>
+   </property>
+  </action>
+  <action name="action_lottie_canvas_preview">
+   <property name="text">
+    <string>Lottie (canvas)</string>
    </property>
   </action>
  </widget>

@@ -5,6 +5,7 @@
 * I/O:
     * Support for SVG SMIL animations
     * Browser SVG preview
+    * Browser Lottie canvas preview
 * Bug Fixes:
     * Removed spurious warnings when loading lottie
     * Bezier data is loaded correctly from lottie
@@ -12,6 +13,7 @@
     * Rounded rectangles are correctly exported to SVG
     * Duplicating shapes selects the new shape and places it on top of the original
     * Keyframes added on newly created objects are on the right frame
+    * OK/Cancel buttons in the Trace Bitmap dialog now react to user input
 
 ## 0.3.0
 

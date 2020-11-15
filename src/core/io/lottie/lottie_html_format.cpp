@@ -36,21 +36,24 @@ R"(<!DOCTYPE html>
 }
 
 bool io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QString&,
-                                           model::Document* document, const QVariantMap&)
+                                           model::Document* document, const QVariantMap& settings)
 {
     file.write(html_head(this, document, "<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.3/lottie.js'></script>"));
-    file.write(R"(
+    file.write(QString(R"(
 <body>
 <div id="animation"></div>
 
 <script>
     var animData = {
         container: document.getElementById('animation'),
-        renderer: 'svg',
+        renderer: '%1',
         loop: true,
         autoplay: true,
         animationData:
-)");
+)")
+        .arg(settings["renderer"].toString())
+        .toUtf8()
+    );
 
     file.write(cbor_write_json(LottieFormat().to_json(document), false));
 
