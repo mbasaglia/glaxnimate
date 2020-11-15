@@ -58,7 +58,11 @@ public:
         );
 
         if ( max_time > 0 )
+        {
             document->main()->animation->last_frame.set(max_time);
+            for ( auto lay : layers )
+                lay->animation->last_frame.set(max_time);
+        }
     }
 
     void parse_defs()
@@ -316,6 +320,7 @@ public:
     {
         model::Layer* lay = new model::Layer(document);
         parent->insert(std::unique_ptr<model::Layer>(lay));
+        layers.push_back(lay);
         return lay;
     }
 
@@ -680,8 +685,22 @@ public:
         rect->size.set(QSizeF(w, h));
         qreal rx = len_attr(args.element, "rx", 0);
         qreal ry = len_attr(args.element, "ry", 0);
-        rect->rounded.set((rx + ry) / 2);
+        rect->rounded.set(qMax(rx, ry));
         add_shapes(args, std::move(shapes));
+
+
+        auto anim = parse_animated(args.element);
+        for ( const auto& kf : add_keyframes(anim.joined({"x", "y", "width", "height"})) )
+            rect->position.set_keyframe(kf.time, {
+                kf.values[0][0] + kf.values[2][0] / 2,
+                kf.values[1][0] + kf.values[3][0] / 2
+            })->set_transition(kf.transition);
+
+        for ( const auto& kf : add_keyframes(anim.joined({"width", "height"})) )
+            rect->size.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+
+        for ( const auto& kf : add_keyframes(anim.joined({"rx", "ry"})) )
+            rect->rounded.set_keyframe(kf.time, qMax(kf.values[0][0], kf.values[1][0]))->set_transition(kf.transition);
     }
 
     void parseshape_ellipse(const ParseFuncArgs& args)
@@ -696,6 +715,12 @@ public:
         qreal ry = len_attr(args.element, "ry", 0);
         ellipse->size.set(QSizeF(rx * 2, ry * 2));
         add_shapes(args, std::move(shapes));
+
+        auto anim = parse_animated(args.element);
+        for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
+            ellipse->position.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+        for ( const auto& kf : add_keyframes(anim.joined({"rx", "ry"})) )
+            ellipse->size.set_keyframe(kf.time, {kf.values[0][0]*2, kf.values[1][0]*2})->set_transition(kf.transition);
     }
 
     void parseshape_circle(const ParseFuncArgs& args)
@@ -709,6 +734,12 @@ public:
         qreal d = len_attr(args.element, "r", 0) * 2;
         ellipse->size.set(QSizeF(d, d));
         add_shapes(args, std::move(shapes));
+
+        auto anim = parse_animated(args.element);
+        for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
+            ellipse->position.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+        for ( const auto& kf : add_keyframes(anim.single({"r"})) )
+            ellipse->size.set_keyframe(kf.time, {kf.values[0]*2, kf.values[0]*2})->set_transition(kf.transition);
     }
 
     void parseshape_g(const ParseFuncArgs& args)
@@ -791,10 +822,18 @@ public:
         return path;
     }
 
-    void add_keyframes(const std::vector<detail::AnimateParser::JoinedPropertyKeyframe>& kfs)
+    template<class KfCollection>
+    KfCollection add_keyframes(KfCollection&& kfs)
     {
         if ( !kfs.empty() && kfs.back().time > max_time)
             max_time = kfs.back().time;
+
+        return std::move(kfs);
+    }
+
+    detail::AnimateParser::AnimatedProperties parse_animated(const QDomElement& element)
+    {
+        return animate_parser.parse_animated_properties(element);
     }
 
     void parseshape_line(const ParseFuncArgs& args)
@@ -809,9 +848,7 @@ public:
             len_attr(args.element, "y2", 0)
         ));
         auto path = parse_bezier_impl_single(args, bez);
-        auto kfs = animate_parser.parse_animated_properties(args.element).joined({"x1", "y1", "x2", "y2"});
-        add_keyframes(kfs);
-        for ( const auto& kf : kfs )
+        for ( const auto& kf : add_keyframes(parse_animated(args.element).joined({"x1", "y1", "x2", "y2"})) )
         {
             math::bezier::Bezier bez;
             bez.add_point({kf.values[0][0], kf.values[1][0]});
@@ -820,15 +857,18 @@ public:
         }
     }
 
-    math::bezier::MultiBezier handle_poly(const ParseFuncArgs& args, bool close)
+    math::bezier::Bezier build_poly(const std::vector<qreal>& coords, bool close)
     {
-        math::bezier::MultiBezier bez;
+        math::bezier::Bezier bez;
 
-        auto coords = double_args(args.element.attribute("points", ""));
         if ( coords.size() < 4 )
+        {
+            if ( !coords.empty() )
+                warning("Not enough `points` for `polygon` / `polyline`");
             return bez;
+        }
 
-        bez.move_to(QPointF(coords[0], coords[1]));
+        bez.add_point(QPointF(coords[0], coords[1]));
 
         for ( int i = 2; i < int(coords.size()); i+= 2 )
             bez.line_to(QPointF(coords[i], coords[i+1]));
@@ -839,14 +879,25 @@ public:
         return bez;
     }
 
+    void handle_poly(const ParseFuncArgs& args, bool close)
+    {
+        auto path = parse_bezier_impl_single(args, build_poly(double_args(args.element.attribute("points", "")), close));
+        if ( !path )
+            return;
+
+        for ( const auto& kf : add_keyframes(parse_animated(args.element).single("points")) )
+            path->shape.set_keyframe(kf.time, build_poly(kf.values, close))->set_transition(kf.transition);
+
+    }
+
     void parseshape_polyline(const ParseFuncArgs& args)
     {
-        parse_bezier_impl(args, handle_poly(args, false));
+        handle_poly(args, false);
     }
 
     void parseshape_polygon(const ParseFuncArgs& args)
     {
-        parse_bezier_impl(args, handle_poly(args, true));
+        handle_poly(args, true);
     }
 
     void parseshape_path(const ParseFuncArgs& args)
@@ -961,6 +1012,7 @@ public:
     std::unordered_map<QString, QDomElement> map_ids;
     std::unordered_map<QString, model::BrushStyle*> brush_styles;
     std::unordered_map<QString, model::GradientColors*> gradients;
+    std::vector<model::Layer*> layers;
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const QRegularExpression unit_re;

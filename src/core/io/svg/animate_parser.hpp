@@ -66,6 +66,14 @@ public:
             return properties.count(name);
         }
 
+        std::vector<PropertyKeyframe> single(const QString& prop_name) const
+        {
+            auto it = properties.find(prop_name);
+            if ( it == properties.end() || it->second.keyframes.size() < 2 )
+                return {};
+            return it->second.keyframes;
+        }
+
         std::vector<JoinedPropertyKeyframe> joined(const std::vector<QString>& prop_names) const
         {
             std::vector<JoinedProperty> props;
@@ -74,7 +82,7 @@ public:
             for ( const auto& name : prop_names )
             {
                 auto it = properties.find(name);
-                if ( it == properties.end() || it->second.keyframes.empty() )
+                if ( it == properties.end() || it->second.keyframes.size() < 2 )
                 {
                     props.push_back({&name});
                 }
@@ -352,6 +360,7 @@ public:
                 }
                 transitions.push_back({{params[0], params[1]}, {params[2], params[3]}});
             }
+            transitions.emplace_back();
         }
         else
         {
