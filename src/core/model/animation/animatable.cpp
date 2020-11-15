@@ -82,7 +82,11 @@ model::AnimatableBase::MidTransition model::AnimatableBase::do_mid_transition(
     int index
 ) const
 {
-    qreal t = kf_before->transition().bezier_parameter(x);
+    const auto& beftrans = kf_before->transition();
+    if ( beftrans.hold() || (beftrans.before() == QPointF(0, 0) && beftrans.after() == QPointF(1,1)) )
+        return {MidTransition::Middle, kf_before->value(), beftrans, beftrans};
+
+    qreal t = beftrans.bezier_parameter(x);
 
     if ( t <= 0 )
     {
@@ -90,17 +94,17 @@ model::AnimatableBase::MidTransition model::AnimatableBase::do_mid_transition(
         if ( index > 0 )
             from_previous = keyframe(index-1)->transition();
 
-        return {MidTransition::SingleKeyframe, kf_before->value(), from_previous, kf_before->transition()};
+        return {MidTransition::SingleKeyframe, kf_before->value(), from_previous, beftrans};
     }
     else if ( t >= 1 )
     {
-        return {MidTransition::SingleKeyframe, kf_before->value(), kf_before->transition(), kf_after->transition(),};
+        return {MidTransition::SingleKeyframe, kf_before->value(), beftrans, kf_after->transition(),};
     }
 
 
     model::AnimatableBase::MidTransition mt;
     mt.type = MidTransition::Middle;
     mt.value = do_mid_transition_value(kf_before, kf_after, x);
-    std::tie(mt.from_previous, mt.to_next) = kf_before->transition().split(x);
+    std::tie(mt.from_previous, mt.to_next) = beftrans.split(x);
     return mt;
 }

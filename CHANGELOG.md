@@ -16,6 +16,7 @@
     * Keyframes added on newly created objects are on the right frame
     * OK/Cancel buttons in the Trace Bitmap dialog now react to user input
     * When the selected object is deleted, the timeline and property views are cleared
+    * Adding keyframes preserves linear/hold easing
 
 ## 0.3.0
 
