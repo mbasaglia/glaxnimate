@@ -166,6 +166,19 @@ public:
 
     static std::vector<qreal> split_values(const QString& v)
     {
+        if ( !v.contains(separator) )
+        {
+            bool ok = false;
+            qreal val = v.toDouble(&ok);
+            if ( ok )
+                return {val};
+
+            QColor c(v);
+            if ( c.isValid() )
+                return {c.redF(), c.greenF(), c.blueF(), c.alphaF()};
+            return {};
+        }
+
         auto split = v.splitRef(separator, QString::SkipEmptyParts);
         std::vector<qreal> values;
         values.reserve(split.size());

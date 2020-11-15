@@ -552,7 +552,7 @@ public:
         apply_common_style(group.get(), args.element, style);
         set_name(group.get(), args.element);
 
-        add_style_shapes(&group->shapes, style);
+        add_style_shapes(args, &group->shapes, style);
 
         for ( auto& shape : shapes )
             group->shapes.insert(std::move(shape));
@@ -570,7 +570,7 @@ public:
         node->name.set(name);
     }
 
-    void add_style_shapes(model::ShapeListProperty* shapes, const Style& style)
+    void add_style_shapes(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
     {
         QString paint_order = style.get("paint-order", "normal");
         if ( paint_order == "normal" )
@@ -579,13 +579,13 @@ public:
         for ( const auto& sr : paint_order.splitRef(' ', QString::SkipEmptyParts) )
         {
             if ( sr == "fill" )
-                add_fill(shapes, style);
+                add_fill(args, shapes, style);
             else if ( sr == "stroke" )
-                add_stroke(shapes, style);
+                add_stroke(args, shapes, style);
         }
     }
 
-    void add_stroke(model::ShapeListProperty* shapes, const Style& style)
+    void add_stroke(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
     {
         QString stroke_color = style.get("stroke", "none");
         if ( stroke_color == "none" )
@@ -612,6 +612,19 @@ public:
             stroke->join.set(model::Stroke::BevelJoin);
         else if ( linejoin == "miter" || linejoin == "arcs" || linejoin == "miter-clip" )
             stroke->join.set(model::Stroke::MiterJoin);
+
+
+        auto anim = parse_animated(args.element);
+        for ( const auto& kf : add_keyframes(anim.single("stroke")) )
+            stroke->color.set_keyframe(kf.time,
+                QColor::fromRgbF(kf.values[0], kf.values[1], kf.values[2], kf.values[3])
+            )->set_transition(kf.transition);
+
+        for ( const auto& kf : add_keyframes(anim.single("stroke-opacity")) )
+            stroke->opacity.set_keyframe(kf.time, kf.values[0])->set_transition(kf.transition);
+
+        for ( const auto& kf : add_keyframes(anim.single("stroke-width")) )
+            stroke->width.set_keyframe(kf.time, kf.values[0])->set_transition(kf.transition);
 
         shapes->insert(std::move(stroke));
     }
@@ -647,7 +660,7 @@ public:
         styler->color.set(current_color);
     }
 
-    void add_fill(model::ShapeListProperty* shapes, const Style& style)
+    void add_fill(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
     {
         QString fill_color = style.get("fill", "none");
         if ( fill_color == "none" )
@@ -659,6 +672,15 @@ public:
 
         if ( style.get("fill-rule", "") == "evenodd" )
             fill->fill_rule.set(model::Fill::EvenOdd);
+
+        auto anim = parse_animated(args.element);
+        for ( const auto& kf : add_keyframes(anim.single("fill")) )
+            fill->color.set_keyframe(kf.time,
+                QColor::fromRgbF(kf.values[0], kf.values[1], kf.values[2], kf.values[3])
+            )->set_transition(kf.transition);
+
+        for ( const auto& kf : add_keyframes(anim.single("fill-opacity")) )
+            fill->opacity.set_keyframe(kf.time, kf.values[0])->set_transition(kf.transition);
 
         shapes->insert(std::move(fill));
     }
