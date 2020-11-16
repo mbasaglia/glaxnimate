@@ -252,7 +252,8 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
     }
     else
     {
-        most_recent_file(opts.filename);
+        if ( opts.format->can_open() )
+            most_recent_file(opts.filename);
         current_document->undo_stack().setClean();
         current_document_has_file = true;
         app::settings::set<QString>("open_save", "path", opts.path.absolutePath());

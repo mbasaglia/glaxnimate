@@ -10,6 +10,7 @@
     * Support for SVG SMIL animations
     * Browser SVG preview
     * Browser Lottie canvas preview
+    * Video export
 * Bug Fixes:
     * Removed spurious warnings when loading lottie
     * Bezier data is loaded correctly from lottie
