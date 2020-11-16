@@ -270,7 +270,6 @@ void GlaxnimateWindow::Private::document_open()
     ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
     if ( dialog.import_dialog() )
         setup_document_open(dialog.io_options());
-
 }
 
 

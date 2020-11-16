@@ -10,7 +10,7 @@
     * Support for SVG SMIL animations
     * Browser SVG preview
     * Browser Lottie canvas preview
-    * Video export
+    * Video export, supporting most video formats that ffmpeg supports
 * Bug Fixes:
     * Removed spurious warnings when loading lottie
     * Bezier data is loaded correctly from lottie

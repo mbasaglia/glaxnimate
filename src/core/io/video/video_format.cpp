@@ -1,6 +1,7 @@
 #include "video_format.hpp"
 
 #include <mutex>
+#include <cstring>
 
 extern "C" {
 #include <libavformat/avformat.h>
@@ -462,9 +463,28 @@ private:
 
 io::Autoreg<io::video::VideoFormat> io::video::VideoFormat::autoreg;
 
+
+static QStringList out_ext;
+
+static void get_formats()
+{
+    void* opaque = nullptr;
+    out_ext.push_back("mp4");
+
+    while ( auto format = av_muxer_iterate(&opaque) )
+    {
+        if ( std::strcmp(format->name, "image2") == 0 )
+            continue;
+
+        out_ext += QString(format->extensions).split(',', QString::SkipEmptyParts);
+    }
+}
+
 QStringList io::video::VideoFormat::extensions() const
 {
-    return {"mp4"};
+    if ( out_ext.empty() )
+        get_formats();
+    return out_ext;
 }
 
 bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
