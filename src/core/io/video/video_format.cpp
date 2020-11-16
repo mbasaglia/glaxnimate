@@ -49,98 +49,98 @@ private:
 // a wrapper around a single output AVStream
 struct OutputStream
 {
-    AVStream *st = nullptr;
-    AVCodecContext *enc = nullptr;
+    OutputStream(
+        AVFormatContext *oc,
+        AVCodecID codec_id
+    )
+    {
+        format_context = oc;
+
+        // find the encoder
+        codec = avcodec_find_encoder(codec_id);
+        if ( !codec )
+            throw av::Error(QObject::tr("Could not find encoder for '%1'").arg(avcodec_get_name(codec_id)));
+
+        stream = avformat_new_stream(oc, nullptr);
+        if (!stream)
+            throw av::Error(QObject::tr("Could not allocate stream"));
+
+        stream->id = oc->nb_streams-1;
+        codec_context = avcodec_alloc_context3(codec);
+        if ( !codec_context )
+            throw av::Error(QObject::tr("Could not alloc an encoding context"));
+
+        // Some formats want stream headers to be separate.
+        if (oc->oformat->flags & AVFMT_GLOBALHEADER)
+            codec_context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+    }
+
+    ~OutputStream()
+    {
+        avcodec_free_context(&codec_context);
+        av_frame_free(&frame);
+        av_frame_free(&tmp_frame);
+        sws_freeContext(sws_context);
+    }
+
+    int read_packets()
+    {
+        int ret = 0;
+
+        while ( ret >= 0 )
+        {
+            AVPacket pkt;
+            memset(&pkt, 0, sizeof(AVPacket));
+
+            ret = avcodec_receive_packet(codec_context, &pkt);
+            if ( ret == AVERROR(EAGAIN) || ret == AVERROR_EOF )
+                break;
+            else if (ret < 0)
+                throw av::Error(QObject::tr("Error encoding a frame: %1").arg(av::err2str(ret)));
+
+            // rescale output packet timestamp values from codec to stream timebase
+            av_packet_rescale_ts(&pkt, codec_context->time_base, stream->time_base);
+            pkt.stream_index = stream->index;
+
+            // Write the compressed frame to the media file.
+            ret = av_interleaved_write_frame(format_context, &pkt);
+            av_packet_unref(&pkt);
+            if (ret < 0)
+                throw av::Error(QObject::tr("Error while writing output packet: %1").arg(av::err2str(ret)));
+        }
+
+        return ret;
+    }
+
+    int write_frame(AVFrame *frame)
+    {
+        // send the frame to the encoder
+        int ret = avcodec_send_frame(codec_context, frame);
+        if ( ret < 0 )
+            throw av::Error(QObject::tr("Error sending a frame to the encoder: %1").arg(av::err2str(ret)));
+
+        return read_packets();
+    }
+
+
+    int flush_frames()
+    {
+        return write_frame(nullptr);
+    }
+
+    AVStream *stream = nullptr;
+    AVCodecContext *codec_context = nullptr;
 
     // pts of the next frame that will be generated
     int64_t next_pts = 0;
-    int samples_count = 0;
 
     AVFrame *frame = nullptr;
     AVFrame *tmp_frame = nullptr;
 
-    struct SwsContext *sws_ctx = nullptr;
+    SwsContext *sws_context = nullptr;
+    AVFormatContext *format_context = nullptr;
+    AVCodec *codec = nullptr;
 };
-
-
-int read_packets(AVFormatContext *fmt_ctx, AVCodecContext *c, AVStream *st)
-{
-    int written = 0;
-    int ret = 0;
-
-    while ( ret >= 0 )
-    {
-        AVPacket pkt;
-        memset(&pkt, 0, sizeof(AVPacket));
-
-        ret = avcodec_receive_packet(c, &pkt);
-        if ( ret == AVERROR(EAGAIN) || ret == AVERROR_EOF )
-            break;
-        else if (ret < 0)
-            throw av::Error(QObject::tr("Error encoding a frame: %1").arg(av::err2str(ret)));
-
-        written++;
-        // rescale output packet timestamp values from codec to stream timebase
-        av_packet_rescale_ts(&pkt, c->time_base, st->time_base);
-        pkt.stream_index = st->index;
-
-        // Write the compressed frame to the media file.
-        ret = av_interleaved_write_frame(fmt_ctx, &pkt);
-        av_packet_unref(&pkt);
-        if (ret < 0)
-            throw av::Error(QObject::tr("Error while writing output packet: %1").arg(av::err2str(ret)));
-    }
-
-    return written;
-}
-
-int write_frame(AVFormatContext *fmt_ctx, AVCodecContext *c, AVStream *st, AVFrame *frame)
-{
-    // send the frame to the encoder
-    int ret = avcodec_send_frame(c, frame);
-    if ( ret < 0 )
-        throw av::Error(QObject::tr("Error sending a frame to the encoder: %1").arg(av::err2str(ret)));
-
-    return read_packets(fmt_ctx, c, st);
-}
-
-
-int flush_frames(AVFormatContext *fmt_ctx, AVCodecContext *c, AVStream *st)
-{
-    return write_frame(fmt_ctx, c, st, nullptr);
-}
-
-// Add an output stream.
-AVCodecContext* add_stream(
-    av::OutputStream *ost,
-    AVFormatContext *oc,
-    AVCodec **codec,
-    AVCodecID codec_id
-)
-{
-    AVCodecContext *c;
-
-    // find the encoder
-    *codec = avcodec_find_encoder(codec_id);
-    if ( !*codec )
-        throw av::Error(QObject::tr("Could not find encoder for '%1'").arg(avcodec_get_name(codec_id)));
-
-    ost->st = avformat_new_stream(oc, nullptr);
-    if (!ost->st)
-        throw av::Error(QObject::tr("Could not allocate stream"));
-
-    ost->st->id = oc->nb_streams-1;
-    c = avcodec_alloc_context3(*codec);
-    if (!c)
-        throw av::Error(QObject::tr("Could not alloc an encoding context"));
-    ost->enc = c;
-
-    // Some formats want stream headers to be separate.
-    if (oc->oformat->flags & AVFMT_GLOBALHEADER)
-        c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
-
-    return c;
-}
 
 class Video
 {
@@ -217,42 +217,40 @@ public:
     }
 
     Video(AVFormatContext *oc,  AVDictionary *opt_arg, int64_t bit_rate, int width, int height, int fps)
-        : oc(oc)
+        : ost(oc, oc->oformat->video_codec)
     {
-        AVCodecContext* c = add_stream(&ost, oc, &codec, oc->oformat->video_codec);
-
-        if ( codec->type != AVMEDIA_TYPE_VIDEO )
+        if ( ost.codec->type != AVMEDIA_TYPE_VIDEO )
             throw Error(QObject::tr("No video codec"));
 
-        c->codec_id = oc->oformat->video_codec;
+        ost.codec_context->codec_id = oc->oformat->video_codec;
 
-        c->bit_rate = bit_rate;
+        ost.codec_context->bit_rate = bit_rate;
 
         // Resolution must be a multiple of two
-        c->width = width;
-        if ( c->width % 2 )
-            c->width -= 1;
-        c->height = height;
-        if ( c->height % 2 )
-            c->height -= 1;
+        ost.codec_context->width = width;
+        if ( ost.codec_context->width % 2 )
+            ost.codec_context->width -= 1;
+        ost.codec_context->height = height;
+        if ( ost.codec_context->height % 2 )
+            ost.codec_context->height -= 1;
 
         // timebase: This is the fundamental unit of time (in seconds) in terms
         // of which frame timestamps are represented. For fixed-fps content,
         // timebase should be 1/framerate and timestamp increments should be
         // identical to 1.
-        ost.st->time_base = AVRational{ 1, fps };
-        c->time_base = ost.st->time_base;
+        ost.stream->time_base = AVRational{ 1, fps };
+        ost.codec_context->time_base = ost.stream->time_base;
 
         // emit one intra frame every twelve frames at most
-        c->gop_size = 12;
-        if ( codec->pix_fmts == nullptr )
+        ost.codec_context->gop_size = 12;
+        if ( ost.codec->pix_fmts == nullptr )
             throw av::Error(QObject::tr("Could not determine pixel format"));
         // get_format() for some reason returns an invalid value
-        c->pix_fmt = codec->pix_fmts[0];
+        ost.codec_context->pix_fmt = ost.codec->pix_fmts[0];
 
         // just for testing, we also add B-frames
-        if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO)
-            c->max_b_frames = 2;
+        if ( ost.codec_context->codec_id == AV_CODEC_ID_MPEG2VIDEO )
+            ost.codec_context->max_b_frames = 2;
 
         int ret;
         AVDictionary *opt = nullptr;
@@ -260,20 +258,20 @@ public:
         av_dict_copy(&opt, opt_arg, 0);
 
         // open the codec
-        ret = avcodec_open2(c, codec, &opt);
+        ret = avcodec_open2(ost.codec_context, ost.codec, &opt);
         av_dict_free(&opt);
         if (ret < 0)
             throw av::Error(QObject::tr("Could not open video codec: %1").arg(av::err2str(ret)));
 
         // allocate and init a re-usable frame
-        ost.frame = alloc_picture(c->pix_fmt, c->width, c->height);
+        ost.frame = alloc_picture(ost.codec_context->pix_fmt, ost.codec_context->width, ost.codec_context->height);
         if (!ost.frame)
             throw av::Error(QObject::tr("Could not allocate video frame"));
 
         ost.tmp_frame = nullptr;
 
         /* copy the stream parameters to the muxer */
-        ret = avcodec_parameters_from_context(ost.st->codecpar, c);
+        ret = avcodec_parameters_from_context(ost.stream->codecpar, ost.codec_context);
         if (ret < 0)
             throw av::Error(QObject::tr("Could not copy the stream parameters"));
     }
@@ -292,8 +290,6 @@ public:
 
     AVFrame *get_video_frame(QImage image)
     {
-        AVCodecContext *c = ost.enc;
-
         // when we pass a frame to the encoder, it may keep a reference to it
         // internally; make sure we do not overwrite it here
         if ( av_frame_make_writable(ost.frame) < 0 )
@@ -302,7 +298,7 @@ public:
         auto format = image_format(image.format());
         if ( format.first == AV_PIX_FMT_NONE )
         {
-            image = QImage(c->width, c->height, QImage::Format_RGB888);
+            image = QImage(ost.codec_context->width, ost.codec_context->height, QImage::Format_RGB888);
             format.first = AV_PIX_FMT_RGB24;
         }
         else if ( format.second != image.format() )
@@ -310,17 +306,17 @@ public:
             image = image.convertToFormat(format.second);
         }
 
-        if ( c->pix_fmt != format.first || image.width() != c->width || image.height() != c->height )
+        if ( ost.codec_context->pix_fmt != format.first || image.width() != ost.codec_context->width || image.height() != ost.codec_context->height )
         {
-            if (!ost.sws_ctx)
+            if (!ost.sws_context)
             {
-                ost.sws_ctx = sws_getContext(
+                ost.sws_context = sws_getContext(
                     image.width(), image.height(), format.first,
-                    c->width, c->height, c->pix_fmt,
+                    ost.codec_context->width, ost.codec_context->height, ost.codec_context->pix_fmt,
                     SWS_BICUBIC,
                     nullptr, nullptr, nullptr
                 );
-                if (!ost.sws_ctx)
+                if (!ost.sws_context)
                     throw av::Error(QObject::tr("Could not initialize the conversion context"));
             }
             if ( !ost.tmp_frame )
@@ -330,8 +326,8 @@ public:
                     throw av::Error(QObject::tr("Could not allocate temporary picture"));
             }
             fill_image(ost.tmp_frame, image);
-            sws_scale(ost.sws_ctx, (const uint8_t * const *) ost.tmp_frame->data,
-                    ost.tmp_frame->linesize, 0, c->height, ost.frame->data,
+            sws_scale(ost.sws_context, (const uint8_t * const *) ost.tmp_frame->data,
+                    ost.tmp_frame->linesize, 0, ost.codec_context->height, ost.frame->data,
                     ost.frame->linesize);
         }
         else
@@ -346,26 +342,16 @@ public:
 
     void write_video_frame(const QImage& image)
     {
-        write_frame(oc, ost.enc, ost.st, get_video_frame(image));
+        ost.write_frame(get_video_frame(image));
     }
 
     void flush()
     {
-        flush_frames(oc, ost.enc, ost.st);
-    }
-
-    ~Video()
-    {
-        avcodec_free_context(&ost.enc);
-        av_frame_free(&ost.frame);
-        av_frame_free(&ost.tmp_frame);
-        sws_freeContext(ost.sws_ctx);
+        ost.flush_frames();
     }
 
 private:
-    AVFormatContext *oc;
     OutputStream ost;
-    AVCodec *codec;
 };
 
 
@@ -564,7 +550,7 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
         // allocate the output media context
         AVFormatContext *oc;
         QString format_hint = settings["format"].toString();
-        if ( format_hint.isEmpty() )
+        if ( !format_hint.isEmpty() )
         {
             avformat_alloc_output_context2(&oc, nullptr, format_hint.toUtf8().data(), filename.data());
             if ( !oc )
