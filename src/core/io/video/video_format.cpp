@@ -4,7 +4,9 @@
 #include <cstring>
 
 extern "C" {
+#include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavformat/avio.h>
 #include <libswscale/swscale.h>
 }
 
@@ -511,10 +513,14 @@ static QStringList out_ext;
 
 static void get_formats()
 {
-    void* opaque = nullptr;
     out_ext.push_back("mp4");
 
+#if LIBAVFORMAT_VERSION_INT >= AV_VERSION_INT(58, 9, 100)
+    void* opaque = nullptr;
     while ( auto format = av_muxer_iterate(&opaque) )
+#else
+    for ( auto format = av_iformat_next(nullptr); format; format = av_iformat_next(format) )
+#endif
     {
         if ( std::strcmp(format->name, "image2") == 0 )
             continue;
