@@ -11,7 +11,7 @@ class SvgFormat : public ImportExport
     Q_OBJECT
 
 public:
-    QString name() const override { return tr("Scalable Vector Graphics"); }
+    QString name() const override { return tr("SVG"); }
     QStringList extensions() const override { return {"svg", "svgz"}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return true; }

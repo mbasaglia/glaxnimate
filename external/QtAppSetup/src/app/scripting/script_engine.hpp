@@ -9,19 +9,12 @@
 #include <QDir>
 #include <QVariant>
 
+#include "app/qstring_exception.hpp"
+
 
 namespace app::scripting {
 
-class ScriptError : public std::runtime_error
-{
-public:
-    ScriptError(const QString& what) : std::runtime_error(what.toStdString()) {}
-
-    QString message() const
-    {
-        return QString(what());
-    }
-};
+class ScriptError : public QStringException<>{ using Ctor::Ctor; };
 
 class ScriptEngine;
 

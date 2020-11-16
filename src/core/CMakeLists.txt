@@ -19,6 +19,7 @@ io/svg/detail.cpp
 io/svg/svg_format.cpp
 io/mime/mime_serializer.cpp
 io/raster/raster_format.cpp
+io/video/video_format.cpp
 io/base.cpp
 
 math/geom.cpp
@@ -85,7 +86,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 include_directories(${Potrace_INCLUDE_DIRS})
 
+find_package(Libav COMPONENTS codec util format swscale)
+include_directories(${Libav_INCLUDE_DIRS})
+
+
 add_library(${LIB_NAME_CORE} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt5::Xml ${Potrace_LIBRARIES})
+target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt5::Xml ${Potrace_LIBRARIES} ${Libav_LIBRARIES})
 set_property(TARGET ${LIB_NAME_CORE} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 target_include_directories(${LIB_NAME_CORE} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

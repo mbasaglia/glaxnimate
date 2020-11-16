@@ -296,7 +296,7 @@ std::map<QRgb, std::vector<QRectF> > utils::trace::trace_pixels(QImage image)
         QRgb last_color = 0;
         PixelRect* last_rect = nullptr;
 
-        auto line = image.scanLine(y);
+        auto line = image.constScanLine(y);
         for ( int x = 0; x < w; x++ )
         {
             if ( rgba888_alpha(line+x*4) == 0 )
