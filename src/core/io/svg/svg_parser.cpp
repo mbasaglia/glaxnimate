@@ -520,7 +520,7 @@ public:
             }
             else if ( name == "scale" )
             {
-                trans.scale(args[0] / 100, (args.size() > 1 ? args[1] : args[0]) / 100);
+                trans.scale(args[0], (args.size() > 1 ? args[1] : args[0]));
             }
             else if ( name == "rotate" )
             {
