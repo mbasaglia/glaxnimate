@@ -58,12 +58,7 @@ struct OutputStream
     AVFrame *frame = nullptr;
     AVFrame *tmp_frame = nullptr;
 
-//     float t = 0;
-//     float tincr = 0;
-//     float tincr2 = 0;
-
     struct SwsContext *sws_ctx = nullptr;
-//     struct SwrContext *swr_ctx = nullptr;
 };
 
 int flush_frame(AVFormatContext *fmt_ctx, AVCodecContext *c, AVStream *st)
@@ -83,7 +78,7 @@ int flush_frame(AVFormatContext *fmt_ctx, AVCodecContext *c, AVStream *st)
             throw av::Error(QObject::tr("Error encoding a frame: %1").arg(av::err2str(ret)));
 
         written++;
-        /* rescale output packet timestamp values from codec to stream timebase */
+        // rescale output packet timestamp values from codec to stream timebase
         av_packet_rescale_ts(&pkt, c->time_base, st->time_base);
         pkt.stream_index = st->index;
 
@@ -124,7 +119,7 @@ public:
         picture->width  = width;
         picture->height = height;
 
-        /* allocate the buffers for the frame data */
+        // allocate the buffers for the frame data
         ret = av_frame_get_buffer(picture, 0);
         if (ret < 0)
             throw av::Error(QObject::tr("Could not allocate frame data."));
@@ -192,20 +187,17 @@ public:
 
         av_dict_copy(&opt, opt_arg, 0);
 
-        /* open the codec */
+        // open the codec
         ret = avcodec_open2(c, codec, &opt);
         av_dict_free(&opt);
         if (ret < 0)
             throw av::Error(QObject::tr("Could not open video codec: %1").arg(av::err2str(ret)));
 
-        /* allocate and init a re-usable frame */
+        // allocate and init a re-usable frame
         ost->frame = alloc_picture(c->pix_fmt, c->width, c->height);
         if (!ost->frame)
             throw av::Error(QObject::tr("Could not allocate video frame"));
 
-        /* If the output format is not YUV420P, then a temporary YUV420P
-        * picture is needed too. It is then converted to the required
-        * output format. */
         ost->tmp_frame = nullptr;
 
         /* copy the stream parameters to the muxer */
@@ -232,9 +224,9 @@ public:
     {
         AVCodecContext *c = ost->enc;
 
-        /* when we pass a frame to the encoder, it may keep a reference to it
-        * internally; make sure we do not overwrite it here */
-        if (av_frame_make_writable(ost->frame) < 0)
+        // when we pass a frame to the encoder, it may keep a reference to it
+        // internally; make sure we do not overwrite it here
+        if ( av_frame_make_writable(ost->frame) < 0 )
             throw av::Error(QObject::tr("Error while creating video frame"));
 
         auto format = image_format(image.format());
@@ -307,7 +299,6 @@ public:
         av_frame_free(&ost->frame);
         av_frame_free(&ost->tmp_frame);
         sws_freeContext(ost->sws_ctx);
-//         swr_free(&ost->swr_ctx);
     }
 
 private:
@@ -413,9 +404,9 @@ void add_stream(
 {
     AVCodecContext *c;
 
-    /* find the encoder */
+    // find the encoder
     *codec = avcodec_find_encoder(codec_id);
-    if (!(*codec))
+    if ( !*codec )
         throw av::Error(QObject::tr("Could not find encoder for '%1'").arg(avcodec_get_name(codec_id)));
 
     ost->st = avformat_new_stream(oc, nullptr);
@@ -428,33 +419,8 @@ void add_stream(
         throw av::Error(QObject::tr("Could not alloc an encoding context"));
     ost->enc = c;
 
-    switch ((*codec)->type) {
-/*    case AVMEDIA_TYPE_AUDIO:
-        c->sample_fmt  = (*codec)->sample_fmts ?
-            (*codec)->sample_fmts[0] : AV_SAMPLE_FMT_FLTP;
-        c->bit_rate    = 64000;
-        c->sample_rate = 44100;
-        if ((*codec)->supported_samplerates) {
-            c->sample_rate = (*codec)->supported_samplerates[0];
-            for (int i = 0; (*codec)->supported_samplerates[i]; i++) {
-                if ((*codec)->supported_samplerates[i] == 44100)
-                    c->sample_rate = 44100;
-            }
-        }
-        c->channels        = av_get_channel_layout_nb_channels(c->channel_layout);
-        c->channel_layout = AV_CH_LAYOUT_STEREO;
-        if ((*codec)->channel_layouts) {
-            c->channel_layout = (*codec)->channel_layouts[0];
-            for (int i = 0; (*codec)->channel_layouts[i]; i++) {
-                if ((*codec)->channel_layouts[i] == AV_CH_LAYOUT_STEREO)
-                    c->channel_layout = AV_CH_LAYOUT_STEREO;
-            }
-        }
-        c->channels        = av_get_channel_layout_nb_channels(c->channel_layout);
-        ost->st->time_base = AVRational{ 1, c->sample_rate };
-        break;
-*/
-    case AVMEDIA_TYPE_VIDEO:
+    if ( (*codec)->type == AVMEDIA_TYPE_VIDEO )
+    {
         c->codec_id = codec_id;
 
         /// \todo setting
@@ -484,171 +450,12 @@ void add_stream(
         // just for testing, we also add B-frames
         if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO)
             c->max_b_frames = 2;
-        break;
-
-    default:
-        break;
     }
 
     // Some formats want stream headers to be separate.
     if (oc->oformat->flags & AVFMT_GLOBALHEADER)
         c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 }
-
-#if 0
-static AVFrame *alloc_audio_frame(enum AVSampleFormat sample_fmt,
-                                  uint64_t channel_layout,
-                                  int sample_rate, int nb_samples)
-{
-    AVFrame *frame = av_frame_alloc();
-    int ret;
-
-    if (!frame)
-        throw av::Error(QObject::tr("Error allocating an audio frame"));
-
-    frame->format = sample_fmt;
-    frame->channel_layout = channel_layout;
-    frame->sample_rate = sample_rate;
-    frame->nb_samples = nb_samples;
-
-    if (nb_samples) {
-        ret = av_frame_get_buffer(frame, 0);
-        if (ret < 0)
-            throw av::Error(QObject::tr("Error allocating an audio buffer"));
-    }
-
-    return frame;
-}
-
-static void open_audio(AVFormatContext *oc, AVCodec *codec, OutputStream *ost, AVDictionary *opt_arg)
-{
-    AVCodecContext *c;
-    int nb_samples;
-    int ret;
-    AVDictionary *opt = nullptr;
-
-    c = ost->enc;
-
-    // open it
-    av_dict_copy(&opt, opt_arg, 0);
-    ret = avcodec_open2(c, codec, &opt);
-    av_dict_free(&opt);
-    if (ret < 0)
-        throw av::Error(QObject::tr("Could not open audio codec: %1").arg(av::err2str(ret)));
-
-    // init signal generator
-    ost->t     = 0;
-    ost->tincr = 2 * M_PI * 110.0 / c->sample_rate;
-    // increment frequency by 110 Hz per second
-    ost->tincr2 = 2 * M_PI * 110.0 / c->sample_rate / c->sample_rate;
-
-    if (c->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
-        nb_samples = 10000;
-    else
-        nb_samples = c->frame_size;
-
-    ost->frame     = alloc_audio_frame(c->sample_fmt, c->channel_layout,
-                                       c->sample_rate, nb_samples);
-    ost->tmp_frame = alloc_audio_frame(AV_SAMPLE_FMT_S16, c->channel_layout,
-                                       c->sample_rate, nb_samples);
-
-    // copy the stream parameters to the muxer
-    ret = avcodec_parameters_from_context(ost->st->codecpar, c);
-    if (ret < 0)
-        throw av::Error(QObject::tr("Could not copy the stream parameters"));
-
-    // create resampler context
-    ost->swr_ctx = swr_alloc();
-    if (!ost->swr_ctx)
-        throw av::Error(QObject::tr("Could not allocate resampler context"));
-
-    // set options
-    av_opt_set_int       (ost->swr_ctx, "in_channel_count",   c->channels,       0);
-    av_opt_set_int       (ost->swr_ctx, "in_sample_rate",     c->sample_rate,    0);
-    av_opt_set_sample_fmt(ost->swr_ctx, "in_sample_fmt",      AV_SAMPLE_FMT_S16, 0);
-    av_opt_set_int       (ost->swr_ctx, "out_channel_count",  c->channels,       0);
-    av_opt_set_int       (ost->swr_ctx, "out_sample_rate",    c->sample_rate,    0);
-    av_opt_set_sample_fmt(ost->swr_ctx, "out_sample_fmt",     c->sample_fmt,     0);
-
-    // initialize the resampling context
-    if ((ret = swr_init(ost->swr_ctx)) < 0)
-        throw av::Error(QObject::tr("Failed to initialize the resampling context"));
-}
-
-/* Prepare a 16 bit dummy audio frame of 'frame_size' samples and
- * 'nb_channels' channels. */
-static AVFrame *get_audio_frame(OutputStream *ost)
-{
-    AVFrame *frame = ost->tmp_frame;
-    int j, i, v;
-    int16_t *q = (int16_t*)frame->data[0];
-
-    /* check if we want to generate more frames */
-    if (av_compare_ts(ost->next_pts, ost->enc->time_base,
-                      STREAM_DURATION, AVRational{ 1, 1 }) > 0)
-        return nullptr;
-
-    for (j = 0; j <frame->nb_samples; j++) {
-        v = (int)(sin(ost->t) * 10000);
-        for (i = 0; i < ost->enc->channels; i++)
-            *q++ = v;
-        ost->t     += ost->tincr;
-        ost->tincr += ost->tincr2;
-    }
-
-    frame->pts = ost->next_pts;
-    ost->next_pts  += frame->nb_samples;
-
-    return frame;
-}
-
-/*
- * encode one audio frame and send it to the muxer
- * return 1 when encoding is finished, 0 otherwise
- */
-static int write_audio_frame(AVFormatContext *oc, OutputStream *ost)
-{
-    AVCodecContext *c;
-    AVFrame *frame;
-    int ret;
-    int dst_nb_samples;
-
-    c = ost->enc;
-
-    frame = get_audio_frame(ost);
-
-    if (frame) {
-        /* convert samples from native format to destination codec format, using the resampler */
-        /* compute destination number of samples */
-        dst_nb_samples = av_rescale_rnd(swr_get_delay(ost->swr_ctx, c->sample_rate) + frame->nb_samples,
-                                        c->sample_rate, c->sample_rate, AV_ROUND_UP);
-        av_assert0(dst_nb_samples == frame->nb_samples);
-
-        /* when we pass a frame to the encoder, it may keep a reference to it
-         * internally;
-         * make sure we do not overwrite it here
-         */
-        ret = av_frame_make_writable(ost->frame);
-        if (ret < 0)
-            throw av::Error(QObject::tr("Error while creating audio frame"));
-
-        /* convert to destination format */
-        ret = swr_convert(ost->swr_ctx,
-                          ost->frame->data, dst_nb_samples,
-                          (const uint8_t **)frame->data, frame->nb_samples);
-        if (ret < 0)
-            throw av::Error(QObject::tr("Error while converting"));
-        frame = ost->frame;
-
-        frame->pts = av_rescale_q(ost->samples_count, AVRational{1, c->sample_rate}, c->time_base);
-        ost->samples_count += dst_nb_samples;
-    }
-
-    return write_frame(oc, c, ost->st, frame);
-}
-
-#endif
-
 
 } // namespace av
 
@@ -669,15 +476,8 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
 
         auto filename = name.toUtf8();
 
-        av::OutputStream video_st;
-        AVOutputFormat *fmt;
-        AVFormatContext *oc;
-        // OutputStream audio_st;
-        // AVCodec *audio_codec;
-        AVCodec *video_codec;
-        int ret;
-        AVDictionary *opt = nullptr;
 
+        AVDictionary *opt = nullptr;
         /*
         for (int i = 2; i+1 < argc; i+=2) {
             if (!strcmp(argv[i], "-flags") || !strcmp(argv[i], "-fflags"))
@@ -686,6 +486,7 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
         */
 
         // allocate the output media context
+        AVFormatContext *oc;
         avformat_alloc_output_context2(&oc, nullptr, nullptr, filename.data());
         if ( !oc )
         {
@@ -700,70 +501,43 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
 
         av::CGuard guard(&avformat_free_context, oc);
 
-        fmt = oc->oformat;
-
         // Add the audio and video streams using the default format codecs
         // and initialize the codecs.
-        if ( fmt->video_codec == AV_CODEC_ID_NONE )
+        if ( oc->oformat->video_codec == AV_CODEC_ID_NONE )
         {
             error(tr("No video codec"));
             return false;
         }
 
-        add_stream(&video_st, oc, &video_codec, fmt->video_codec, document);
-
-        // if (fmt->audio_codec != AV_CODEC_ID_NONE) {
-        //     add_stream(&audio_st, oc, &audio_codec, fmt->audio_codec);
-        //     have_audio = 1;
-        //     encode_audio = 1;
-        // }
+        av::OutputStream video_st;
+        AVCodec *video_codec;
+        add_stream(&video_st, oc, &video_codec, oc->oformat->video_codec, document);
 
         // Now that all the parameters are set, we can open the audio and
         // video codecs and allocate the necessary encode buffers.
         av::Video video(oc, video_codec, &video_st, opt);
 
-        // if (have_audio)
-        //     open_audio(oc, audio_codec, &audio_st, opt);
-
         av_dump_format(oc, 0, filename, 1);
 
         // open the output file, if needed
-        if (!(fmt->flags & AVFMT_NOFILE))
+        if ( !(oc->oformat->flags & AVFMT_NOFILE) )
         {
-            ret = avio_open(&oc->pb, filename, AVIO_FLAG_WRITE);
-            if (ret < 0)
+            int ret = avio_open(&oc->pb, filename, AVIO_FLAG_WRITE);
+            if ( ret < 0 )
             {
                 error(tr("Could not open '%1': %2").arg(name).arg(av::err2str(ret)));
                 return false;
             }
         }
 
-        /* Write the stream header, if any. */
-        ret = avformat_write_header(oc, &opt);
-        if (ret < 0)
+        // Write the stream header, if any
+        int ret = avformat_write_header(oc, &opt);
+        if ( ret < 0 )
         {
             error(tr("Error occurred when opening output file: %1").arg(av::err2str(ret)));
             return false;
         }
 
-        /*
-        while (encode_video || encode_audio)
-        {
-            // select the stream to encode
-            if (encode_video &&
-                (!encode_audio || av_compare_ts(video_st.next_pts, video_st.enc->time_base,
-                                                audio_st.next_pts, audio_st.enc->time_base) <= 0))
-            {
-                encode_video = !write_video_frame(oc, &video_st);
-            }
-            else
-            {
-                encode_audio = !write_audio_frame(oc, &audio_st);
-            }
-        }
-        */
-
-//         if (av_compare_ts(ost->next_pts, c->time_base, STREAM_DURATION, AVRational{ 1, 1 }) > 0)
         auto first_frame = document->main()->animation->first_frame.get();
         auto last_frame = document->main()->animation->last_frame.get();
         emit progress_max_changed(last_frame - first_frame);
@@ -781,11 +555,8 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
         // av_codec_close().
         av_write_trailer(oc);
 
-        // Close each codec.
-        // if (have_audio)
-        //     close_stream(oc, &audio_st);
-
-        if (!(fmt->flags & AVFMT_NOFILE))
+        // Close codec.
+        if ( !(oc->oformat->flags & AVFMT_NOFILE) )
             avio_closep(&oc->pb);
 
         return true;
