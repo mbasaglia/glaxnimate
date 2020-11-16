@@ -116,7 +116,7 @@ linux:appimage:
         - apt update -qq
         - apt-get install -y qt515base qt515tools qt515translations libgl1-mesa-dev g++-9 qt515svg
         - pip3 install cmake
-        - # libav from source
+        - echo libav from source
         - apt-get install -y git build-essential nasm pkg-config
         - git clone https://github.com/FFmpeg/FFmpeg.git
         - cd FFmpeg/
