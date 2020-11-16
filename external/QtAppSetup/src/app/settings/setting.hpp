@@ -74,6 +74,14 @@ struct Setting
         side_effects(std::move(side_effects))
     {}
 
+    Setting(QString slug, QString label, QString description, const QColor& default_value)
+        : type(Color),
+        slug(std::move(slug)),
+        label(std::move(label)),
+        description(std::move(description)),
+        default_value(QVariant::fromValue(default_value))
+    {}
+
     QVariant get_variant(const QVariantMap& map) const
     {
         auto it = map.find(slug);

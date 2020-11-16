@@ -616,10 +616,11 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
 
         auto first_frame = document->main()->animation->first_frame.get();
         auto last_frame = document->main()->animation->last_frame.get();
+        QColor background = settings["background"].value<QColor>();
         emit progress_max_changed(last_frame - first_frame);
         for ( auto i = first_frame; i < last_frame; i++ )
         {
-            video.write_video_frame(document->render_image(i, {width, height}));
+            video.write_video_frame(document->render_image(i, {width, height}, background));
             emit progress(i - first_frame);
         }
 
@@ -643,10 +644,11 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
 io::SettingList io::video::VideoFormat::save_settings() const
 {
     return {
-        io::Setting{"bit_rate", "Bitrate",  "Video bit rate",                               5000,   0, 10000},
-        io::Setting{"width",    "Width",    "If not 0, it will overwrite the size",         0,      0, 10000},
-        io::Setting{"height",   "Height",   "If not 0, it will overwrite the size",         0,      0, 10000},
-        io::Setting{"verbose",  "Verbose",  "Show verbose information on the conversion",   false},
+        io::Setting{"bit_rate",     "Bitrate",      "Video bit rate",                               5000,   0, 10000},
+        io::Setting{"background",   "Background",   "Background color",                             QColor{}},
+        io::Setting{"width",        "Width",        "If not 0, it will overwrite the size",         0,      0, 10000},
+        io::Setting{"height",       "Height",       "If not 0, it will overwrite the size",         0,      0, 10000},
+        io::Setting{"verbose",      "Verbose",      "Show verbose information on the conversion",   false},
     };
 }
 

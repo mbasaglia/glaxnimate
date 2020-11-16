@@ -211,13 +211,16 @@ model::Object * model::Document::defs_obj() const
     return defs();
 }
 
-QImage model::Document::render_image(float time, QSize image_size) const
+QImage model::Document::render_image(float time, QSize image_size, const QColor& background) const
 {
     QSizeF real_size = size();
     if ( !image_size.isValid() )
         image_size = real_size.toSize();
     QImage image(image_size, QImage::Format_RGBA8888);
-    image.fill(Qt::transparent);
+    if ( !background.isValid() )
+        image.fill(Qt::transparent);
+    else
+        image.fill(background);
 
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing);

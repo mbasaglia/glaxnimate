@@ -66,7 +66,7 @@ public:
     Q_INVOKABLE QString get_best_name(const model::DocumentNode* node, const QString& suggestion={}) const;
     Q_INVOKABLE void set_best_name(model::DocumentNode* node, const QString& suggestion={}) const;
 
-    Q_INVOKABLE QImage render_image(float time, QSize size = {}) const;
+    Q_INVOKABLE QImage render_image(float time, QSize size = {}, const QColor& background = {}) const;
     Q_INVOKABLE QImage render_image() const;
 
     model::Defs* defs() const;
