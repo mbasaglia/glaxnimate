@@ -62,7 +62,8 @@ struct OutputStream
     struct SwsContext *sws_ctx = nullptr;
 };
 
-int flush_frame(AVFormatContext *fmt_ctx, AVCodecContext *c, AVStream *st)
+
+int read_packets(AVFormatContext *fmt_ctx, AVCodecContext *c, AVStream *st)
 {
     int written = 0;
     int ret = 0;
@@ -101,7 +102,13 @@ static int write_frame(AVFormatContext *fmt_ctx, AVCodecContext *c,
     if (ret < 0)
         throw av::Error(QObject::tr("Error sending a frame to the encoder: %1").arg(av::err2str(ret)));
 
-    return flush_frame(fmt_ctx, c, st);
+    return read_packets(fmt_ctx, c, st);
+}
+
+
+int flush_frames(AVFormatContext *fmt_ctx, AVCodecContext *c, AVStream *st)
+{
+    return write_frame(fmt_ctx, c, st, nullptr);
 }
 
 // Add an output stream.
@@ -341,20 +348,12 @@ public:
 
     void write_video_frame(const QImage& image)
     {
-        int written = write_frame(oc, ost.enc, ost.st, get_video_frame(image));
-        skipped += 1 - written;
+        write_frame(oc, ost.enc, ost.st, get_video_frame(image));
     }
 
     void flush()
     {
-        for ( int i = 0; i < skipped; )
-        {
-            ost.frame->pts = ost.next_pts++;
-            int c = write_frame(oc, ost.enc, ost.st, ost.frame);
-            if ( c == 0 )
-                break;
-            i += c;
-        }
+        flush_frames(oc, ost.enc, ost.st);
     }
 
     ~Video()
@@ -368,7 +367,6 @@ public:
 private:
     AVFormatContext *oc;
     OutputStream ost;
-    int skipped = 0;
     AVCodec *codec;
 };
 
