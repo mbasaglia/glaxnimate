@@ -603,3 +603,12 @@ io::SettingList io::video::VideoFormat::save_settings() const
     };
 }
 
+QString io::video::VideoFormat::library_version()
+{
+    return QStringList{
+        LIBAVUTIL_IDENT,
+        LIBAVFORMAT_IDENT,
+        LIBAVCODEC_IDENT,
+        LIBSWSCALE_IDENT
+    }.join(", ");
+}

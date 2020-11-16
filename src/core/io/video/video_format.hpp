@@ -17,6 +17,8 @@ public:
     bool can_open() const override { return false; }
     io::SettingList save_settings() const override;
 
+    static QString library_version();
+
 protected:
     bool on_save(QIODevice& dev, const QString&, model::Document* document, const QVariantMap&) override;
 

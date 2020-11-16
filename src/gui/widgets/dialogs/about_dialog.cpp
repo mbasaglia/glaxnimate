@@ -10,6 +10,7 @@
 #include "glaxnimate_app.hpp"
 #include "utils/trace.hpp"
 #include "utils/gzip.hpp"
+#include "io/video/video_format.hpp"
 
 AboutDialog::AboutDialog(QWidget* parent)
     : QDialog(parent), d(new Ui::AboutDialog)
@@ -38,6 +39,7 @@ AboutDialog::AboutDialog(QWidget* parent)
     d->view_system->setItem(row++, 0, new QTableWidgetItem(qVersion()));
     d->view_system->setItem(row++, 0, new QTableWidgetItem(utils::gzip::zlib_version()));
     d->view_system->setItem(row++, 0, new QTableWidgetItem(utils::trace::Tracer::potrace_version()));
+    d->view_system->setItem(row++, 0, new QTableWidgetItem(io::video::VideoFormat::library_version()));
 
 }
 

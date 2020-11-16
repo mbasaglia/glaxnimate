@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>505</width>
-    <height>478</height>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -385,6 +385,11 @@ p, li { white-space: pre-wrap; }
          <row>
           <property name="text">
            <string>Potrace</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Libav</string>
           </property>
          </row>
          <column>
