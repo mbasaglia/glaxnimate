@@ -103,6 +103,38 @@ static int write_frame(AVFormatContext *fmt_ctx, AVCodecContext *c,
     return flush_frame(fmt_ctx, c, st);
 }
 
+// Add an output stream.
+AVCodecContext* add_stream(
+    av::OutputStream *ost,
+    AVFormatContext *oc,
+    AVCodec **codec,
+    AVCodecID codec_id
+)
+{
+    AVCodecContext *c;
+
+    // find the encoder
+    *codec = avcodec_find_encoder(codec_id);
+    if ( !*codec )
+        throw av::Error(QObject::tr("Could not find encoder for '%1'").arg(avcodec_get_name(codec_id)));
+
+    ost->st = avformat_new_stream(oc, nullptr);
+    if (!ost->st)
+        throw av::Error(QObject::tr("Could not allocate stream"));
+
+    ost->st->id = oc->nb_streams-1;
+    c = avcodec_alloc_context3(*codec);
+    if (!c)
+        throw av::Error(QObject::tr("Could not alloc an encoding context"));
+    ost->enc = c;
+
+    // Some formats want stream headers to be separate.
+    if (oc->oformat->flags & AVFMT_GLOBALHEADER)
+        c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+
+    return c;
+}
+
 class Video
 {
 public:
@@ -178,11 +210,45 @@ public:
     }
 
 
-    Video(AVFormatContext *oc, AVCodec *codec, OutputStream *ost, AVDictionary *opt_arg)
-        : oc(oc), ost(ost)
+    Video(AVFormatContext *oc,  AVDictionary *opt_arg, int64_t bit_rate, int width, int height, int fps)
+        : oc(oc)
     {
+        AVCodecContext* c = add_stream(&ost, oc, &codec, oc->oformat->video_codec);
+
+        if ( codec->type != AVMEDIA_TYPE_VIDEO )
+            throw Error(QObject::tr("No video codec"));
+
+        c->codec_id = oc->oformat->video_codec;
+
+        c->bit_rate = bit_rate;
+
+        // Resolution must be a multiple of two
+        c->width = width;
+        if ( c->width % 2 )
+            c->width -= 1;
+        c->height = height;
+        if ( c->height % 2 )
+            c->height -= 1;
+
+        // timebase: This is the fundamental unit of time (in seconds) in terms
+        // of which frame timestamps are represented. For fixed-fps content,
+        // timebase should be 1/framerate and timestamp increments should be
+        // identical to 1.
+        ost.st->time_base = AVRational{ 1, fps };
+        c->time_base = ost.st->time_base;
+
+        // emit one intra frame every twelve frames at most
+        c->gop_size = 12;
+        if ( codec->pix_fmts == nullptr )
+            throw av::Error(QObject::tr("Could not determine pixel format"));
+        // get_format() for some reason returns an invalid value
+        c->pix_fmt = codec->pix_fmts[0];
+
+        // just for testing, we also add B-frames
+        if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO)
+            c->max_b_frames = 2;
+
         int ret;
-        AVCodecContext *c = ost->enc;
         AVDictionary *opt = nullptr;
 
         av_dict_copy(&opt, opt_arg, 0);
@@ -194,22 +260,20 @@ public:
             throw av::Error(QObject::tr("Could not open video codec: %1").arg(av::err2str(ret)));
 
         // allocate and init a re-usable frame
-        ost->frame = alloc_picture(c->pix_fmt, c->width, c->height);
-        if (!ost->frame)
+        ost.frame = alloc_picture(c->pix_fmt, c->width, c->height);
+        if (!ost.frame)
             throw av::Error(QObject::tr("Could not allocate video frame"));
 
-        ost->tmp_frame = nullptr;
+        ost.tmp_frame = nullptr;
 
         /* copy the stream parameters to the muxer */
-        ret = avcodec_parameters_from_context(ost->st->codecpar, c);
+        ret = avcodec_parameters_from_context(ost.st->codecpar, c);
         if (ret < 0)
             throw av::Error(QObject::tr("Could not copy the stream parameters"));
     }
 
-    /* Prepare a dummy image. */
     static void fill_image(AVFrame *pict, const QImage& image)
     {
-
         for ( int y = 0; y < image.height(); y++)
         {
             auto line = image.constScanLine(y);
@@ -222,11 +286,11 @@ public:
 
     AVFrame *get_video_frame(QImage image)
     {
-        AVCodecContext *c = ost->enc;
+        AVCodecContext *c = ost.enc;
 
         // when we pass a frame to the encoder, it may keep a reference to it
         // internally; make sure we do not overwrite it here
-        if ( av_frame_make_writable(ost->frame) < 0 )
+        if ( av_frame_make_writable(ost.frame) < 0 )
             throw av::Error(QObject::tr("Error while creating video frame"));
 
         auto format = image_format(image.format());
@@ -242,42 +306,42 @@ public:
 
         if ( c->pix_fmt != format.first || image.width() != c->width || image.height() != c->height )
         {
-            if (!ost->sws_ctx)
+            if (!ost.sws_ctx)
             {
-                ost->sws_ctx = sws_getContext(
+                ost.sws_ctx = sws_getContext(
                     image.width(), image.height(), format.first,
                     c->width, c->height, c->pix_fmt,
                     /// \todo parameter for scale
                     SWS_BICUBIC,
                     nullptr, nullptr, nullptr
                 );
-                if (!ost->sws_ctx)
+                if (!ost.sws_ctx)
                     throw av::Error(QObject::tr("Could not initialize the conversion context"));
             }
-            if ( !ost->tmp_frame )
+            if ( !ost.tmp_frame )
             {
-                ost->tmp_frame = alloc_picture(format.first, image.width(), image.height());
-                if (!ost->tmp_frame)
+                ost.tmp_frame = alloc_picture(format.first, image.width(), image.height());
+                if (!ost.tmp_frame)
                     throw av::Error(QObject::tr("Could not allocate temporary picture"));
             }
-            fill_image(ost->tmp_frame, image);
-            sws_scale(ost->sws_ctx, (const uint8_t * const *) ost->tmp_frame->data,
-                    ost->tmp_frame->linesize, 0, c->height, ost->frame->data,
-                    ost->frame->linesize);
+            fill_image(ost.tmp_frame, image);
+            sws_scale(ost.sws_ctx, (const uint8_t * const *) ost.tmp_frame->data,
+                    ost.tmp_frame->linesize, 0, c->height, ost.frame->data,
+                    ost.frame->linesize);
         }
         else
         {
-            fill_image(ost->frame, image);
+            fill_image(ost.frame, image);
         }
 
-        ost->frame->pts = ost->next_pts++;
+        ost.frame->pts = ost.next_pts++;
 
-        return ost->frame;
+        return ost.frame;
     }
 
     void write_video_frame(const QImage& image)
     {
-        int written = write_frame(oc, ost->enc, ost->st, get_video_frame(image));
+        int written = write_frame(oc, ost.enc, ost.st, get_video_frame(image));
         skipped += 1 - written;
     }
 
@@ -285,8 +349,8 @@ public:
     {
         for ( int i = 0; i < skipped; )
         {
-            ost->frame->pts = ost->next_pts++;
-            int c = write_frame(oc, ost->enc, ost->st, ost->frame);
+            ost.frame->pts = ost.next_pts++;
+            int c = write_frame(oc, ost.enc, ost.st, ost.frame);
             if ( c == 0 )
                 break;
             i += c;
@@ -295,16 +359,17 @@ public:
 
     ~Video()
     {
-        avcodec_free_context(&ost->enc);
-        av_frame_free(&ost->frame);
-        av_frame_free(&ost->tmp_frame);
-        sws_freeContext(ost->sws_ctx);
+        avcodec_free_context(&ost.enc);
+        av_frame_free(&ost.frame);
+        av_frame_free(&ost.tmp_frame);
+        sws_freeContext(ost.sws_ctx);
     }
 
 private:
     AVFormatContext *oc;
-    OutputStream *ost;
+    OutputStream ost;
     int skipped = 0;
+    AVCodec *codec;
 };
 
 
@@ -393,70 +458,6 @@ private:
     int level;
 };
 
-// Add an output stream.
-void add_stream(
-    av::OutputStream *ost,
-    AVFormatContext *oc,
-    AVCodec **codec,
-    AVCodecID codec_id,
-    model::Document* doc
-)
-{
-    AVCodecContext *c;
-
-    // find the encoder
-    *codec = avcodec_find_encoder(codec_id);
-    if ( !*codec )
-        throw av::Error(QObject::tr("Could not find encoder for '%1'").arg(avcodec_get_name(codec_id)));
-
-    ost->st = avformat_new_stream(oc, nullptr);
-    if (!ost->st)
-        throw av::Error(QObject::tr("Could not allocate stream"));
-
-    ost->st->id = oc->nb_streams-1;
-    c = avcodec_alloc_context3(*codec);
-    if (!c)
-        throw av::Error(QObject::tr("Could not alloc an encoding context"));
-    ost->enc = c;
-
-    if ( (*codec)->type == AVMEDIA_TYPE_VIDEO )
-    {
-        c->codec_id = codec_id;
-
-        /// \todo setting
-        c->bit_rate = 400000;
-        /// \todo size settings
-        // Resolution must be a multiple of two
-        c->width = doc->main()->width.get();
-        if ( c->width % 2 )
-            c->width -= 1;
-        c->height = doc->main()->height.get();
-        if ( c->height % 2 )
-            c->height -= 1;
-        // timebase: This is the fundamental unit of time (in seconds) in terms
-        // of which frame timestamps are represented. For fixed-fps content,
-        // timebase should be 1/framerate and timestamp increments should be
-        // identical to 1.
-        ost->st->time_base = AVRational{ 1, qRound(doc->main()->fps.get()) };
-        c->time_base = ost->st->time_base;
-
-        // emit one intra frame every twelve frames at most
-        c->gop_size = 12;
-        if ( (*codec)->pix_fmts == nullptr )
-            throw av::Error(QObject::tr("Could not determine pixel format"));
-        // get_format() for some reason returns an invalid value
-        c->pix_fmt = (*codec)->pix_fmts[0];
-
-        // just for testing, we also add B-frames
-        if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO)
-            c->max_b_frames = 2;
-    }
-
-    // Some formats want stream headers to be separate.
-    if (oc->oformat->flags & AVFMT_GLOBALHEADER)
-        c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
-}
-
 } // namespace av
 
 io::Autoreg<io::video::VideoFormat> io::video::VideoFormat::autoreg;
@@ -509,13 +510,17 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
             return false;
         }
 
-        av::OutputStream video_st;
-        AVCodec *video_codec;
-        add_stream(&video_st, oc, &video_codec, oc->oformat->video_codec, document);
-
         // Now that all the parameters are set, we can open the audio and
         // video codecs and allocate the necessary encode buffers.
-        av::Video video(oc, video_codec, &video_st, opt);
+        int width = settings["width"].toInt();
+        if ( width == 0 )
+            width = document->main()->width.get();
+        int height = settings["height"].toInt();
+        if ( height == 0 )
+            height = document->main()->height.get();
+        int64_t bit_rate = settings["bit_rate"].toInt();
+        int fps = qRound(document->main()->fps.get());
+        av::Video video(oc, opt, bit_rate*100, width, height, fps);
 
         av_dump_format(oc, 0, filename, 1);
 
@@ -543,7 +548,7 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
         emit progress_max_changed(last_frame - first_frame);
         for ( auto i = first_frame; i < last_frame; i++ )
         {
-            video.write_video_frame(document->render_image(i));
+            video.write_video_frame(document->render_image(i, {width, height}));
             emit progress(i - first_frame);
         }
 
@@ -571,7 +576,10 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
 io::SettingList io::video::VideoFormat::save_settings() const
 {
     return {
-        io::Setting{"verbose", "Verbose", "Show verbose information on the conversion", false}
+        io::Setting{"bit_rate", "Bitrate",  "Video bit rate",                               5000,   0, 10000},
+        io::Setting{"width",    "Width",    "If not 0, it will overwrite the size",         0,      0, 10000},
+        io::Setting{"height",   "Height",   "If not 0, it will overwrite the size",         0,      0, 10000},
+        io::Setting{"verbose",  "Verbose",  "Show verbose information on the conversion",   false},
     };
 }
 
