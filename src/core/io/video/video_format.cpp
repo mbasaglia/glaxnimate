@@ -318,7 +318,6 @@ public:
                 ost.sws_ctx = sws_getContext(
                     image.width(), image.height(), format.first,
                     c->width, c->height, c->pix_fmt,
-                    /// \todo parameter for scale
                     SWS_BICUBIC,
                     nullptr, nullptr, nullptr
                 );
@@ -456,6 +455,68 @@ private:
     int level;
 };
 
+class DeviceIo
+{
+public:
+    DeviceIo(QIODevice* device, int block_size = 4*1024)
+    {
+        buffer = (unsigned char*)av_malloc(block_size);
+        context_ = avio_alloc_context(
+            buffer,
+            block_size,
+            1,
+            device,
+            &DeviceIo::read_packet,
+            &DeviceIo::write_packet,
+            &DeviceIo::seek
+        );
+    }
+
+    ~DeviceIo()
+    {
+        avio_context_free(&context_);
+        av_free(buffer);
+    }
+
+    AVIOContext* context() const noexcept
+    {
+        return context_;
+    }
+
+private:
+    static int read_packet(void *opaque, uint8_t *buf, int buf_size)
+    {
+        QIODevice* device = (QIODevice*)opaque;
+        return device->read((char*)buf, buf_size);
+    }
+
+    static int write_packet(void *opaque, uint8_t *buf, int buf_size)
+    {
+        QIODevice* device = (QIODevice*)opaque;
+        return device->write((char*)buf, buf_size);
+    }
+
+    static int64_t seek(void *opaque, int64_t offset, int whence)
+    {
+        QIODevice* device = (QIODevice*)opaque;
+
+        switch ( whence )
+        {
+            case SEEK_SET:
+                return device->seek(offset);
+            case SEEK_CUR:
+                return device->seek(offset + device->pos());
+            case SEEK_END:
+                device->readAll();
+                return device->seek(offset + device->pos());
+        }
+        return 0;
+    }
+
+    AVIOContext* context_;
+    unsigned char * buffer;
+};
+
 } // namespace av
 
 io::Autoreg<io::video::VideoFormat> io::video::VideoFormat::autoreg;
@@ -486,7 +547,7 @@ QStringList io::video::VideoFormat::extensions() const
 
 bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
 {
-    dev.close();
+//     dev.close();
 
     try
     {
@@ -505,15 +566,29 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
 
         // allocate the output media context
         AVFormatContext *oc;
-        avformat_alloc_output_context2(&oc, nullptr, nullptr, filename.data());
-        if ( !oc )
+        QString format_hint = settings["format"].toString();
+        if ( format_hint.isEmpty() )
         {
-            warning(tr("Could not deduce output format from file extension: using MPEG."));
-            avformat_alloc_output_context2(&oc, nullptr, "mpeg", filename.data());
+            avformat_alloc_output_context2(&oc, nullptr, format_hint.toUtf8().data(), filename.data());
             if ( !oc )
             {
-                error(tr("Could not find output format"));
+                error(tr("Format not supported: %1").arg(format_hint));
                 return false;
+            }
+        }
+        else
+        {
+            avformat_alloc_output_context2(&oc, nullptr, nullptr, filename.data());
+
+            if ( !oc )
+            {
+                warning(tr("Could not deduce output format from file extension: using MPEG."));
+                avformat_alloc_output_context2(&oc, nullptr, "mpeg", filename.data());
+                if ( !oc )
+                {
+                    error(tr("Could not find output format"));
+                    return false;
+                }
             }
         }
 
@@ -539,18 +614,12 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
         int fps = qRound(document->main()->fps.get());
         av::Video video(oc, opt, bit_rate*100, width, height, fps);
 
+        // log format info
         av_dump_format(oc, 0, filename, 1);
 
         // open the output file, if needed
-        if ( !(oc->oformat->flags & AVFMT_NOFILE) )
-        {
-            int ret = avio_open(&oc->pb, filename, AVIO_FLAG_WRITE);
-            if ( ret < 0 )
-            {
-                error(tr("Could not open '%1': %2").arg(name).arg(av::err2str(ret)));
-                return false;
-            }
-        }
+        av::DeviceIo io(&dev);
+        oc->pb = io.context();
 
         // Write the stream header, if any
         int ret = avformat_write_header(oc, &opt);
@@ -576,10 +645,6 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
         // av_write_trailer() may try to use memory that was freed on
         // av_codec_close().
         av_write_trailer(oc);
-
-        // Close codec.
-        if ( !(oc->oformat->flags & AVFMT_NOFILE) )
-            avio_closep(&oc->pb);
 
         return true;
     }
