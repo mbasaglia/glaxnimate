@@ -123,6 +123,7 @@ linux:appimage:
         - ./configure
         - make -j2
         - make install
+        - cd ..
     script:
         - mkdir build
         - cd build
