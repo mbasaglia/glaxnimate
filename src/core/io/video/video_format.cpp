@@ -94,12 +94,11 @@ int read_packets(AVFormatContext *fmt_ctx, AVCodecContext *c, AVStream *st)
     return written;
 }
 
-static int write_frame(AVFormatContext *fmt_ctx, AVCodecContext *c,
-                       AVStream *st, AVFrame *frame)
+int write_frame(AVFormatContext *fmt_ctx, AVCodecContext *c, AVStream *st, AVFrame *frame)
 {
     // send the frame to the encoder
     int ret = avcodec_send_frame(c, frame);
-    if (ret < 0)
+    if ( ret < 0 )
         throw av::Error(QObject::tr("Error sending a frame to the encoder: %1").arg(av::err2str(ret)));
 
     return read_packets(fmt_ctx, c, st);
@@ -547,8 +546,6 @@ QStringList io::video::VideoFormat::extensions() const
 
 bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
 {
-//     dev.close();
-
     try
     {
         av::Logger logger(this, settings["verbose"].toBool() ? AV_LOG_INFO : AV_LOG_WARNING);
