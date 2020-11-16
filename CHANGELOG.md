@@ -20,6 +20,7 @@
     * OK/Cancel buttons in the Trace Bitmap dialog now react to user input
     * When the selected object is deleted, the timeline and property views are cleared
     * Adding keyframes preserves linear/hold easing
+    * SVG scale() is parsed correctly
 
 ## 0.3.0
 
