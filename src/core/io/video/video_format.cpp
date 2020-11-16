@@ -210,7 +210,6 @@ public:
         }
     }
 
-
     Video(AVFormatContext *oc,  AVDictionary *opt_arg, int64_t bit_rate, int width, int height, int fps)
         : oc(oc)
     {
