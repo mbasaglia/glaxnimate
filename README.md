@@ -16,7 +16,7 @@ Dependencies
 * Python3
 * ZLib
 * Potrace
-* libav (libavformat, libswscale, libavcodec, libavutil)
+* libav (libavformat, libswscale, libavcodec, libavutil) >= 59
 
 
 Getting the Latest Code
