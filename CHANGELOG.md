@@ -21,6 +21,7 @@
     * When the selected object is deleted, the timeline and property views are cleared
     * Adding keyframes preserves linear/hold easing
     * SVG scale() is parsed correctly
+    * Resize dialog spin boxes update correctly when ratio is locked
 
 ## 0.3.0
 
