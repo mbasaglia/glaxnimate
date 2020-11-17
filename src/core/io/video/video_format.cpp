@@ -146,6 +146,148 @@ struct OutputStream
     AVCodec *codec = nullptr;
 };
 
+class DictWrapper
+{
+public:
+    class Item
+    {
+    public:
+        Item(AVDictionary** av_dict, QByteArray key)
+        :  av_dict(av_dict), key(std::move(key)), value(nullptr)
+        {}
+
+        operator const char*() const
+        {
+            return get();
+        }
+
+        const char* get() const
+        {
+            if ( value == nullptr )
+            {
+                if ( auto entry = av_dict_get(*av_dict, key.data(), nullptr, 0) )
+                    value = entry->value;
+            }
+            return value;
+        }
+
+        void set(const char* text)
+        {
+            int ret = av_dict_set(av_dict, key.data(), text, 0);
+            if ( ret >= 0 )
+                value = nullptr;
+            else
+                throw Error(QObject::tr("Could not set dict key `%1`: %2").arg(QString(key)).arg(err2str(ret)));
+        }
+
+        void set(const QString& s)
+        {
+            set(s.toUtf8().data());
+        }
+
+        void set(int64_t v)
+        {
+            int ret = av_dict_set_int(av_dict, key.data(), v, 0);
+            if ( ret >= 0 )
+                value = nullptr;
+            else
+                throw Error(QObject::tr("Could not set dict key `%1`: %2").arg(QString(key)).arg(err2str(ret)));
+        }
+
+        Item& operator=(const char* text)
+        {
+            set(text);
+            return *this;
+        }
+
+        Item& operator=(const QString& text)
+        {
+            set(text);
+            return *this;
+        }
+
+        Item& operator=(int64_t v)
+        {
+            set(v);
+            return *this;
+        }
+
+    private:
+        AVDictionary** av_dict;
+        QByteArray key;
+        mutable const char* value;
+    };
+
+    DictWrapper(AVDictionary** av_dict)
+    : av_dict(av_dict)
+    {}
+
+    Item operator[](const QString& key)
+    {
+        return Item(av_dict, key.toUtf8());
+    }
+
+    int size() const
+    {
+        return av_dict_count(*av_dict);
+    }
+
+    void erase(const QString& key)
+    {
+        int ret = av_dict_set(av_dict, key.toUtf8().data(), nullptr, 0);
+        if ( ret < 0 )
+            throw Error(QObject::tr("Could not erase dict key `%1`: %2").arg(key).arg(err2str(ret)));
+    }
+
+private:
+    AVDictionary** av_dict;
+};
+
+class Dict : public DictWrapper
+{
+public:
+    Dict() : DictWrapper(&local_dict) {}
+
+    Dict(Dict&& other) : Dict()
+    {
+        std::swap(local_dict, other.local_dict);
+    }
+
+    Dict(const Dict& other) : Dict()
+    {
+        int ret = av_dict_copy(&local_dict, other.local_dict, 0);
+        if ( ret < 0 )
+            throw Error(QObject::tr("Could not copy dict: %2").arg(err2str(ret)));
+    }
+
+    Dict& operator=(Dict&& other)
+    {
+        std::swap(local_dict, other.local_dict);
+        return *this;
+    }
+
+    Dict& operator=(const Dict& other)
+    {
+        int ret = av_dict_copy(&local_dict, other.local_dict, 0);
+        if ( ret < 0 )
+            throw Error(QObject::tr("Could not copy dict `%1`: %2").arg(err2str(ret)));
+        return *this;
+    }
+
+    ~Dict()
+    {
+        av_dict_free(&local_dict);
+    }
+
+    AVDictionary** dict()
+    {
+        return &local_dict;
+    }
+
+private:
+    AVDictionary* local_dict = nullptr;
+};
+
 class Video
 {
 public:
@@ -220,7 +362,7 @@ public:
         }
     }
 
-    Video(AVFormatContext *oc,  AVDictionary *opt_arg, int64_t bit_rate, int width, int height, int fps)
+    Video(AVFormatContext *oc, Dict options, int64_t bit_rate, int width, int height, int fps)
         : ost(oc, oc->oformat->video_codec)
     {
         if ( ost.codec->type != AVMEDIA_TYPE_VIDEO )
@@ -257,13 +399,8 @@ public:
             ost.codec_context->max_b_frames = 2;
 
         int ret;
-        AVDictionary *opt = nullptr;
-
-        av_dict_copy(&opt, opt_arg, 0);
-
         // open the codec
-        ret = avcodec_open2(ost.codec_context, ost.codec, &opt);
-        av_dict_free(&opt);
+        ret = avcodec_open2(ost.codec_context, ost.codec, options.dict());
         if (ret < 0)
             throw av::Error(QObject::tr("Could not open video codec: %1").arg(av::err2str(ret)));
 
@@ -541,6 +678,7 @@ QStringList io::video::VideoFormat::extensions() const
     return out_ext;
 }
 
+#include <QDebug>
 bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
 {
     try
@@ -550,7 +688,7 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
         auto filename = name.toUtf8();
 
 
-        AVDictionary *opt = nullptr;
+        av::Dict opt;
         /*
         for (int i = 2; i+1 < argc; i+=2) {
             if (!strcmp(argv[i], "-flags") || !strcmp(argv[i], "-fflags"))
@@ -560,6 +698,7 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
 
         // allocate the output media context
         AVFormatContext *oc;
+
         QString format_hint = settings["format"].toString();
         if ( !format_hint.isEmpty() )
         {
@@ -585,6 +724,11 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
                 }
             }
         }
+
+        av::DictWrapper metadata(&oc->metadata);
+        metadata["title"] = document->main()->name.get();
+        for ( auto it = document->metadata().begin(); it != document->metadata().end(); ++it )
+            metadata[it.key()] = it->toString();
 
         av::CGuard guard(&avformat_free_context, oc);
 
@@ -616,7 +760,7 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
         oc->pb = io.context();
 
         // Write the stream header, if any
-        int ret = avformat_write_header(oc, &opt);
+        int ret = avformat_write_header(oc, opt.dict());
         if ( ret < 0 )
         {
             error(tr("Error occurred when opening output file: %1").arg(av::err2str(ret)));
