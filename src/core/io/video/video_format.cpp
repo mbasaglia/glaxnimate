@@ -725,6 +725,7 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
             }
         }
 
+        // see https://libav.org/documentation/doxygen/master/group__metadata__api.html
         av::DictWrapper metadata(&oc->metadata);
         metadata["title"] = document->main()->name.get();
         for ( auto it = document->metadata().begin(); it != document->metadata().end(); ++it )
