@@ -67,9 +67,9 @@ void model::DocumentNode::docnode_on_update_group(bool force)
     if ( force || docnode_valid_color() )
     {
         emit docnode_group_color_changed(this->group_color.get());
-        for ( const auto& gc : docnode_group_children() )
+        for ( auto gc : docnode_group_children() )
             gc->docnode_on_update_group();
-        for ( const auto& gc : docnode_children() )
+        for ( auto gc : docnode_children() )
             gc->docnode_on_update_group();
     }
     emit group_transform_matrix_changed(group_transform_matrix(time()));
@@ -117,7 +117,7 @@ void model::DocumentNode::paint(QPainter* painter, FrameTime time, PaintMode mod
 
     on_paint(painter, time, mode);
     if ( mode >= Recursive )
-        for ( const auto& c : docnode_children() )
+        for ( auto c : docnode_children() )
             c->paint(painter, time, mode);
     painter->restore();
 }
@@ -200,4 +200,3 @@ void model::DocumentNode::propagate_transform_matrix_changed(const QTransform& t
         ch->propagate_transform_matrix_changed(ltm * t_global, ltm);
     }
 }
-

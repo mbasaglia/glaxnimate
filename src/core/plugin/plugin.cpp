@@ -126,7 +126,7 @@ bool plugin::PluginRegistry::load_plugin ( const QString& path, bool user_instal
         return false;
     }
 
-    for ( const QJsonValue& val : arr )
+    for ( QJsonValue val : arr )
     {
         if ( !val.isObject() )
             logger.stream() << "Skipping invalid service";
@@ -186,7 +186,7 @@ void plugin::PluginRegistry::load_service ( const QJsonObject& jobj, plugin::Plu
         }
 
         svc->label = jobj["name"].toString();
-        for ( const auto& extv : jobj["extensions"].toArray() )
+        for ( auto extv : jobj["extensions"].toArray() )
         {
             QString ext = extv.toString();
             if ( ext.startsWith(".") )
@@ -228,7 +228,7 @@ plugin::PluginScript plugin::PluginRegistry::load_script ( const QJsonObject& jo
     s.module = jobj["module"].toString();
     s.function = jobj["function"].toString();
     QJsonArray settings = jobj["settings"].toArray();
-    for ( const auto& setting : settings )
+    for ( auto setting : settings )
     {
         load_setting(setting.toObject(), s);
     }
@@ -279,7 +279,7 @@ QVariantMap plugin::PluginRegistry::load_choices ( const QJsonValue& val ) const
     }
     else if ( val.isArray() )
     {
-        for ( const auto& i : val.toArray() )
+        for ( auto i : val.toArray() )
         {
             QVariant v = i.toVariant();
             ret[v.toString()] = v;
@@ -314,5 +314,3 @@ QVariant plugin::PluginRegistry::global_parameter(const QString& name) const
         return {};
     return executor_->get_global(name);
 }
-
-

@@ -136,7 +136,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, mo
         case model::PropertyTraits::Gradient:
         {
             QJsonArray stops;
-            for ( const auto stop : value.value<QGradientStops>() )
+            for ( const auto& stop : value.value<QGradientStops>() )
             {
                 QJsonObject jstop;
                 jstop["offset"] = stop.first;

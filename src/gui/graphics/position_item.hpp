@@ -50,7 +50,6 @@ private:
     }
 
     model::AnimatedProperty<QPointF>* target;
-    model::Document* document;
     MoveHandle handle;
 };
 

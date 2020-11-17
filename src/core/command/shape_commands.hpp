@@ -52,13 +52,8 @@ class UngroupShapes : public detail::RedoInCtor
 public:
     UngroupShapes(model::Group* group);
 
-private:
-    model::Group* group = nullptr;
-
 };
 
 AddShape* duplicate_shape(model::ShapeElement* shape);
 
 } // namespace command
-
-

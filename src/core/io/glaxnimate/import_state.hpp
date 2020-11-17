@@ -134,7 +134,7 @@ public:
                 return false;
 
             QVariantList list;
-            for ( const QJsonValue& item : val.toArray() )
+            for ( QJsonValue item : val.toArray() )
                 list.push_back(load_prop_value(target, item, false));
 
             if ( target->traits().type == model::PropertyTraits::Object )
@@ -191,7 +191,7 @@ public:
             else
             {
                 model::AnimatableBase* anim = static_cast<model::AnimatableBase*>(target);
-                for ( const auto& v : jso["keyframes"].toArray() )
+                for ( auto v : jso["keyframes"].toArray() )
                 {
                     QJsonObject kfobj = v.toObject();
                     if ( !kfobj.contains("time") )
@@ -325,7 +325,7 @@ public:
                 QJsonObject obj = val.toObject();
                 bezier.set_closed(obj["closed"].toBool());
 
-                for ( const auto& jspv : obj["points"].toArray() )
+                for ( auto jspv : obj["points"].toArray() )
                 {
                     if ( !jspv.isObject() )
                         continue;
@@ -345,7 +345,7 @@ public:
                     return {};
 
                 QGradientStops stops;
-                for ( const auto& jstopv : val.toArray() )
+                for ( auto jstopv : val.toArray() )
                 {
                     if ( !jstopv.isObject() )
                         continue;

@@ -175,7 +175,6 @@ private:
 
     model::AnimatedProperty<QSizeF>* size;
     model::AnimatedProperty<QPointF>* pos;
-    model::Document* document;
     QRectF rect;
     QPointF start_tl;
     QPointF start_br;

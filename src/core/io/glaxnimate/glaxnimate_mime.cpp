@@ -91,7 +91,7 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(const QBy
     state.document = output.document.get();
 
 
-    for ( const auto& json_val : input_objects )
+    for ( auto json_val : input_objects )
     {
         if ( !json_val.isObject() )
             continue;
@@ -130,4 +130,3 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(const QBy
     state.resolve();
     return output;
 }
-

@@ -43,7 +43,6 @@ model::Fill * FillStyleWidget::shape() const
 void FillStyleWidget::update_from_target()
 {
     auto lock = updating.get_lock();
-    QColor color;
     from_styler(target, stop);
     emit current_color_changed(current_color());
     update();

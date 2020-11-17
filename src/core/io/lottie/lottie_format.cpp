@@ -824,7 +824,7 @@ private:
 
         load_animation_container(json, composition->animation.get());
         load_basic(json, composition);
-        for ( const auto& layer : json["layers"].toArray() )
+        for ( auto layer : json["layers"].toArray() )
             create_layer(layer.toObject());
 
         auto deferred_layers = std::move(deferred);
@@ -1246,7 +1246,7 @@ private:
             }
 
             /// @todo for position fields also add spatial bezier handles
-            for ( const QJsonValue& jkf : obj["k"].toArray() )
+            for ( QJsonValue jkf : obj["k"].toArray() )
             {
                 model::FrameTime time = jkf["t"].toDouble();
                 QJsonValue s = jkf["s"];

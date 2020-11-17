@@ -174,28 +174,28 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         ui.action_node_dissolve,
     };
     tools::EditTool* edit_tool = static_cast<tools::EditTool*>(tools::Registry::instance().tool("edit"));
-    connect(ui.action_node_type_corner, &QAction::triggered, parent, [this, edit_tool]{
+    connect(ui.action_node_type_corner, &QAction::triggered, parent, [edit_tool]{
         edit_tool->selection_set_vertex_type(math::bezier::Corner);
     });
-    connect(ui.action_node_type_smooth, &QAction::triggered, parent, [this, edit_tool]{
+    connect(ui.action_node_type_smooth, &QAction::triggered, parent, [edit_tool]{
         edit_tool->selection_set_vertex_type(math::bezier::Smooth);
     });
-    connect(ui.action_node_type_symmetric, &QAction::triggered, parent, [this, edit_tool]{
+    connect(ui.action_node_type_symmetric, &QAction::triggered, parent, [edit_tool]{
         edit_tool->selection_set_vertex_type(math::bezier::Symmetrical);
     });
-    connect(ui.action_node_remove, &QAction::triggered, parent, [this, edit_tool]{
+    connect(ui.action_node_remove, &QAction::triggered, parent, [edit_tool]{
         edit_tool->selection_delete();
     });
-    connect(ui.action_segment_lines, &QAction::triggered, parent, [this, edit_tool]{
+    connect(ui.action_segment_lines, &QAction::triggered, parent, [edit_tool]{
         edit_tool->selection_straighten();
     });
-    connect(ui.action_segment_curve, &QAction::triggered, parent, [this, edit_tool]{
+    connect(ui.action_segment_curve, &QAction::triggered, parent, [edit_tool]{
         edit_tool->selection_curve();
     });
-    connect(ui.action_node_add, &QAction::triggered, parent, [this, edit_tool]{
+    connect(ui.action_node_add, &QAction::triggered, parent, [edit_tool]{
         edit_tool->add_point_mode();
     });
-    connect(ui.action_node_dissolve, &QAction::triggered, parent, [this, edit_tool]{
+    connect(ui.action_node_dissolve, &QAction::triggered, parent, [edit_tool]{
         edit_tool->selection_dissolve();
     });
     connect(edit_tool, &tools::EditTool::gradient_stop_changed, ui.fill_style_widget, &FillStyleWidget::set_gradient_stop);

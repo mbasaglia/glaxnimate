@@ -19,7 +19,7 @@ class MainCompositionItem : public DocumentNodeGraphicsItem
 {
 public:
     explicit MainCompositionItem(model::MainComposition* animation)
-        : DocumentNodeGraphicsItem(animation), animation(animation)
+        : DocumentNodeGraphicsItem(animation)
     {
         connect(animation, &model::MainComposition::width_changed, this, &MainCompositionItem::size_changed);
         connect(animation, &model::MainComposition::height_changed, this, &MainCompositionItem::size_changed);
@@ -32,9 +32,6 @@ private slots:
     {
         prepareGeometryChange();
     }
-
-private:
-    model::MainComposition* animation;
 };
 
 class MainCompositionTransformItem : public QGraphicsObject
