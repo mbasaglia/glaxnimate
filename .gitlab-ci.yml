@@ -120,7 +120,7 @@ linux:appimage:
         - apt-get install -y git build-essential nasm pkg-config
         - git clone https://github.com/FFmpeg/FFmpeg.git
         - cd FFmpeg/
-        - ./configure
+        - ./configure --disable-static --enable-shared
         - make -j2
         - make install
         - cd ..
@@ -128,7 +128,7 @@ linux:appimage:
         - mkdir build
         - cd build
         - cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_PREFIX_PATH=/opt/qt515/lib/cmake/Qt5LinguistTools/ -DVERSION_SUFFIX="appimage-$CI_COMMIT_SHORT_SHA"
-        - make
+        - make -j2
         - make translations
         - make install DESTDIR=AppDir >/dev/null
         - cp AppDir/usr/share/glaxnimate/glaxnimate/glaxnimate.desktop AppDir
