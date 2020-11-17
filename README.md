@@ -73,20 +73,20 @@ Build with `cmake`, specifying the Qt installation path:
 
 ### Windows
 
-Install [MSYS2](https://www.msys2.org/) and run these commands on it:
+Install [MSYS2](https://www.msys2.org/), select "Mingw-w64 64 bit" when asked, and run these commands on a it:
 
     # Set up dependencies
     pacman --noconfirm -Sy
     pacman --noconfirm -Su
     # Restart msys2 before continuing
-    pacman --noconfirm -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-qt5 mingw-w64-x86_64-zlib mingw-w64-x86_64-cmake mingw-w64-x86_64-python mingw-w64-x86_64-potrace
+    pacman --noconfirm -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-qt5 mingw-w64-x86_64-zlib mingw-w64-x86_64-cmake mingw-w64-x86_64-python mingw-w64-x86_64-potrace mingw-w64-x86_64-ffmpeg
 
     # Build
     # cd to where the code is
     mkdir build
     cd build
-    cmake.exe .. -DQt5_DIR=/mingw64/lib/cmake/Qt5 -DZLIB_LIBRARY=/mingw64/lib/libz.a -DCMAKE_PREFIX_PATH="/mingw64/lib/;/c/Windows/System32/" -DZLIB_INCLUDE_DIR=/mingw64/include -G "MSYS Makefiles"
-    make.exe
+    cmake.exe .. -DQt5_DIR=/mingw64/lib/cmake/Qt5 -DZLIB_LIBRARY=/mingw64/lib/libz.a -DCMAKE_PREFIX_PATH="/mingw64/lib/" -DZLIB_INCLUDE_DIR=/mingw64/include -G "MSYS Makefiles"
+    mingw32-make.exe
 
     # Copy library files because windows is weird like that
     windeployqt.exe bin/glaxnimate.exe
