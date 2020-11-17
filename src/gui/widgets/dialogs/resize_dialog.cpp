@@ -45,14 +45,22 @@ void ResizeDialog::changeEvent ( QEvent* e )
 void ResizeDialog::width_changed(int w)
 {
     if ( d->ui.check_aspect->isChecked() )
+    {
+        d->ui.spin_height->blockSignals(true);
         d->ui.spin_height->setValue(w / d->ratio);
+        d->ui.spin_height->blockSignals(false);
+    }
 }
 
 
 void ResizeDialog::height_changed(int h)
 {
     if ( d->ui.check_aspect->isChecked() )
+    {
+        d->ui.spin_width->blockSignals(true);
         d->ui.spin_width->setValue(h * d->ratio);
+        d->ui.spin_width->blockSignals(false);
+    }
 }
 
 void ResizeDialog::resize_document(model::Document* doc)
