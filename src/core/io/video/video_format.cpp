@@ -2,6 +2,8 @@
 
 #include <mutex>
 #include <cstring>
+#include <set>
+#include <string>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -513,12 +515,19 @@ static QStringList out_ext;
 
 static void get_formats()
 {
+    std::set<std::string> blacklisted = {
+        "webp", "gif", "ico"
+    };
     out_ext.push_back("mp4");
 
     void* opaque = nullptr;
     while ( auto format = av_muxer_iterate(&opaque) )
     {
-        if ( std::strcmp(format->name, "image2") == 0 )
+        if (
+            blacklisted.count(format->name) ||
+            format->video_codec == AV_CODEC_ID_NONE ||
+            format->flags & (AVFMT_NOFILE|AVFMT_NEEDNUMBER)
+        )
             continue;
 
         out_ext += QString(format->extensions).split(',', QString::SkipEmptyParts);
