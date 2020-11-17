@@ -8,14 +8,13 @@ jobs:
         stage: build
         os: osx
         osx_image: xcode11.3
-        # compiler: gcc
         before_install:
             - brew list cmake || brew install cmake
             - brew list qt || brew install qt
-            #- brew list python || brew install python
             - brew upgrade python@3.8 || true
             - brew list makeicns || brew install makeicns
             - brew list potrace || brew install potrace
+            - brew list ffmpeg || brew install ffmpeg
         script:
             - mkdir build
             - cd build
@@ -36,7 +35,6 @@ jobs:
         before_install:
             - brew list cmake || brew install cmake
             - brew list qt || brew install qt
-            #- brew list python || brew install python
             - brew upgrade python@3.8 || true
             - brew list potrace || brew install potrace
             - brew list ffmpeg || brew install ffmpeg
