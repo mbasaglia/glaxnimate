@@ -39,6 +39,7 @@ jobs:
             #- brew list python || brew install python
             - brew upgrade python@3.8 || true
             - brew list potrace || brew install potrace
+            - brew list ffmpeg || brew install ffmpeg
         script:
             - mkdir build
             - cd build

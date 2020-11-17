@@ -152,7 +152,7 @@ If this happens, you must tell your antivirus to restore the files.
 
 You need to install the dependencies with [Homebrew](https://brew.sh/):
 
-    brew install python qt gcc potrace
+    brew install python qt gcc potrace ffmpeg
 
 Open (mount) the dmg file, then either open `glaxnimate.app` to run it or drag it
 to Applications to install it.

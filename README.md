@@ -61,7 +61,7 @@ The generic `cmake` commands listed above should work.
 
 Install the dependencies with homebrew:
 
-    brew install cmake qt python potrace
+    brew install cmake qt python potrace ffmpeg
 
 Build with `cmake`, specifying the Qt installation path:
 
