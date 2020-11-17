@@ -86,7 +86,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 include_directories(${Potrace_INCLUDE_DIRS})
 
-find_package(Libav COMPONENTS codec util format swscale)
+find_package(Libav COMPONENTS codec util format swscale REQUIRED)
 include_directories(${Libav_INCLUDE_DIRS})
 
 
