@@ -444,7 +444,7 @@ public:
 
     const keyframe_type* keyframe(int i) const override
     {
-        if ( i < 0 || i > int(keyframes_.size()) )
+        if ( i < 0 || i >= int(keyframes_.size()) )
             return nullptr;
         return keyframes_[i].get();
     }
