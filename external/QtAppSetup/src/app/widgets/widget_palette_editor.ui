@@ -14,6 +14,27 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Style</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="combo_style">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QComboBox" name="combo_saved">

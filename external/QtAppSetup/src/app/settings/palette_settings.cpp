@@ -3,6 +3,7 @@
 #include <QSet>
 #include <QApplication>
 #include <QMetaEnum>
+#include <QStyleFactory>
 
 #include "app/widgets/widget_palette_editor.hpp"
 
@@ -30,6 +31,7 @@ QString app::settings::PaletteSettings::label() const
 void app::settings::PaletteSettings::save ( QSettings& settings )
 {
     settings.setValue("theme", selected);
+    settings.setValue("style", style);
 
     settings.beginWriteArray("themes", palettes.size());
 
@@ -78,6 +80,9 @@ void app::settings::PaletteSettings::load_palette ( const QSettings& settings )
 void app::settings::PaletteSettings::load ( QSettings& settings )
 {
     selected = settings.value("theme").toString();
+    style = settings.value("style").toString();
+    if ( !style.isEmpty() )
+        set_style(style);
 
     int n = settings.beginReadArray("themes");
 
@@ -166,4 +171,8 @@ QColor app::settings::PaletteSettings::string_to_color(const QString& s)
     return QColor(s);
 }
 
-
+void app::settings::PaletteSettings::set_style(const QString& name)
+{
+    QApplication::setStyle(QStyleFactory::create(name));
+    style = name;
+}

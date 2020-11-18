@@ -27,8 +27,8 @@ public:
     static const std::vector<std::pair<QString, QPalette::ColorRole>>& roles();
 
     void set_selected(const QString& name);
-
     void apply_palette(const QPalette& palette);
+    void set_style(const QString& name);
 
     static QString color_to_string(const QColor& c);
     static QColor string_to_color(const QString& s);
@@ -36,6 +36,7 @@ public:
     QMap<QString, QPalette> palettes;
     QString selected;
     QPalette default_palette;
+    QString style;
 };
 
 } // namespace app::settings

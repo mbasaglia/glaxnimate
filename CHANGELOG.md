@@ -11,6 +11,8 @@
     * Browser SVG preview
     * Browser Lottie canvas preview
     * Video export, supporting most video formats that ffmpeg supports
+* UI:
+    * Added a theme style selector
 * Bug Fixes:
     * Removed spurious warnings when loading lottie
     * Bezier data is loaded correctly from lottie

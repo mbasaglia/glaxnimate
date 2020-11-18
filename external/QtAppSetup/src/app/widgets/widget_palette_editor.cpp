@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QEvent>
 #include <QInputDialog>
+#include <QStyleFactory>
 
 #include <QtColorWidgets/ColorDelegate>
 
@@ -90,6 +91,7 @@ public:
     Ui::WidgetPaletteEditor ui;
     color_widgets::ColorDelegate delegate;
     QPalette edited;
+    QStyle* style = nullptr;
 };
 
 WidgetPaletteEditor::WidgetPaletteEditor ( app::settings::PaletteSettings* settings, QWidget* parent )
@@ -104,9 +106,29 @@ WidgetPaletteEditor::WidgetPaletteEditor ( app::settings::PaletteSettings* setti
 
     if ( settings->palettes.find(settings->selected) != settings->palettes.end() )
         d->ui.combo_saved->setCurrentText(settings->selected);
+
+    for ( const auto& style : QStyleFactory::keys() )
+        d->ui.combo_style->addItem(style);
+
+    if ( !d->settings->style.isEmpty() )
+        d->ui.combo_style->setCurrentText(d->settings->style);
+
+    connect(d->ui.combo_style, &QComboBox::currentTextChanged, this, [this](const QString& name){
+        if ( d->style )
+            delete d->style;
+        d->style = QStyleFactory::create(name);
+        d->ui.preview_widget->setStyle(d->style);
+        for ( auto wid : d->ui.preview_widget->findChildren<QWidget*>() )
+            wid->setStyle(d->style);
+    });
+
 }
 
-WidgetPaletteEditor::~WidgetPaletteEditor() = default;
+WidgetPaletteEditor::~WidgetPaletteEditor()
+{
+    if ( d->style )
+        delete d->style;
+}
 
 void WidgetPaletteEditor::changeEvent ( QEvent* e )
 {
@@ -183,6 +205,8 @@ void WidgetPaletteEditor::apply_palette()
         d->settings->palettes[name] = d->edited;
         d->settings->set_selected(name);
     }
+
+    d->settings->set_style(d->ui.combo_style->currentText());
 }
 
 void WidgetPaletteEditor::remove_palette()
