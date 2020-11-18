@@ -6,10 +6,10 @@ git submodule update --init --recursive
 
 env
 
-# if [ -d /c/Python39-x64 ]
-# then
-#     mv /c/Python39-x64 /c/gtfo
-# fi
+if [ -d /c/Python39-x64 ]
+then
+    mv /c/Python39-x64 /c/gtfo
+fi
 
 # Build
 cmake.exe .. \
@@ -19,8 +19,7 @@ cmake.exe .. \
     -DZLIB_INCLUDE_DIR=/mingw64/include \
     -DPYTHON_PREFIX=/mingw64/ \
     -DPYTHON_LIBRARIES=/mingw64/bin/libpython3.8.dll \
-    -DPython_EXECUTABLE=/mingw64/bin/python3 \
-    -DPYBIND11_FINDPYTHON=ON \
+    -DPYTHON_EXECUTABLE=/mingw64/bin/python3 \
     -G 'MSYS Makefiles' \
     -DCMAKE_INSTALL_PREFIX=''
 mingw32-make.exe
