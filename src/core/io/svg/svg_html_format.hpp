@@ -8,6 +8,7 @@ namespace io::svg {
 class SvgHtmlFormat : public SvgFormat
 {
 public:
+    QString slug() const override { return "svg_html"; }
     QString name() const override { return SvgFormat::tr("SVG Preview"); }
     QStringList extensions() const override { return {"html", "htm"}; }
     bool can_save() const override { return true; }

@@ -10,6 +10,7 @@ class LottieHtmlFormat : public ImportExport
     Q_OBJECT
 
 public:
+    QString slug() const override { return "lottie_html"; }
     QString name() const override { return tr("Lottie HTML Preview"); }
     QStringList extensions() const override { return {"html", "htm"}; }
     bool can_save() const override { return true; }

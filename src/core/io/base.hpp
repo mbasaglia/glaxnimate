@@ -19,6 +19,7 @@ class ImportExport : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QString slug READ slug)
     Q_PROPERTY(QStringList extensions READ extensions)
     Q_PROPERTY(bool can_open READ can_open)
     Q_PROPERTY(bool can_save READ can_save)
@@ -53,6 +54,7 @@ public:
 
 
     virtual QString name() const = 0;
+    virtual QString slug() const = 0;
     virtual QStringList extensions() const = 0;
     virtual SettingList open_settings() const { return {}; }
     virtual SettingList save_settings() const { return {}; }

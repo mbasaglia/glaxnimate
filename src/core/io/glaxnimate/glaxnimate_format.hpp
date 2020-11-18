@@ -16,6 +16,7 @@ class GlaxnimateFormat : public ImportExport
 public:
     static constexpr const int format_version = 2;
 
+    QString slug() const override { return "glaxnimate"; }
     QString name() const override { return tr("Glaxnimate Animation"); }
     // RAWR = Reasonable Animation at Whatever Resolution
     QStringList extensions() const override { return {"rawr"}; }

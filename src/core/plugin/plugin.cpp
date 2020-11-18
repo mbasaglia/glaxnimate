@@ -212,6 +212,10 @@ void plugin::PluginRegistry::load_service ( const QJsonObject& jobj, plugin::Plu
 
         svc->auto_open = jobj["auto_open"].toBool(true);
 
+        svc->slug = jobj["slug"].toString();
+        if ( svc->slug.isEmpty() )
+            svc->slug = svc->extensions[0];
+
         data.services.emplace_back(std::move(svc));
     }
     else

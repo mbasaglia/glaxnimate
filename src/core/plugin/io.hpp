@@ -16,6 +16,7 @@ public:
 
     QIcon service_icon() const override { return QIcon::fromTheme("document-save"); }
 
+    QString slug;
     QString label;
     QStringList extensions;
     PluginScript open;
@@ -32,6 +33,7 @@ class IoFormat : public io::ImportExport
 public:
     IoFormat(IoService* service) : service(service) {}
 
+    QString slug() const override { return service->slug; }
     QString name() const override { return service->label; }
     QStringList extensions() const override { return service->extensions; }
     bool can_save() const override { return service->save.valid(); }

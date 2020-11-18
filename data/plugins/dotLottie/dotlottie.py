@@ -67,7 +67,7 @@ def save_dotlottie(window, document, file, fname, import_export, settings):
         "loop": settings["loop"],
     })
 
-    lottie_str = glaxnimate.io.registry.from_extension("json").save(document)
+    lottie_str = glaxnimate.io.registry["lottie"].save(document)
     lottie_dict = json.loads(lottie_str)
 
     if settings["pack_assets"]:
@@ -136,7 +136,7 @@ def open_dotlottie(window, document, file, fname, import_export, settings):
                 with zf.open(asset_fname) as asset_file:
                     load_asset(asset, asset_file)
 
-        glaxnimate.io.registry.from_extension("json").load(document, json.dumps(lottie).encode("utf-8"))
+        glaxnimate.io.registry["lottie"].load(document, json.dumps(lottie).encode("utf-8"))
 
         meta["custom"]["author"] = meta["author"]
         meta["custom"]["revision"] = meta["revision"]

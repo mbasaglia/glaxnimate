@@ -74,6 +74,15 @@ public:
         return nullptr;
     }
 
+    ImportExport* from_slug(const QString& slug) const
+    {
+        for ( const auto& p : object_list )
+            if ( p->slug() == slug )
+                return p.get();
+
+        return nullptr;
+    }
+
     mime::MimeSerializer* serializer_from_slug(const QString& slug) const
     {
         for ( const auto& serializer : mime_list )

@@ -12,6 +12,7 @@ class LottieFormat : public ImportExport
     Q_OBJECT
 
 public:
+    QString slug() const override { return "lottie"; }
     QString name() const override { return tr("Lottie Animation"); }
     QStringList extensions() const override { return {"json"}; }
     bool can_save() const override { return true; }

@@ -76,10 +76,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Potrace REQUIRED)
 
 # Debug flags
-if(CMAKE_BUILD_TYPE EQUAL "")
+if(CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic -Wextra")
+message(STATUS "${CMAKE_BUILD_TYPE} build")
 
 # sub projects and stuff
 set(SCRIPTING_PY ON)

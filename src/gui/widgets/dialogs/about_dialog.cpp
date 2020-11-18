@@ -6,11 +6,37 @@
 #include <QMessageBox>
 #include <QClipboard>
 #include <QUrl>
+#include <QScrollBar>
 
 #include "glaxnimate_app.hpp"
 #include "utils/trace.hpp"
 #include "utils/gzip.hpp"
 #include "io/video/video_format.hpp"
+#include "io/io_registry.hpp"
+
+static void populate_io(QTableWidget* widget, const std::vector<io::ImportExport*>& data)
+{
+    widget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    widget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    widget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    int height = 0;
+
+    widget->setRowCount(data.size());
+    int row = 0;
+    for ( auto item : data )
+    {
+        widget->setItem(row, 0, new QTableWidgetItem(item->name()));
+        widget->setItem(row, 1, new QTableWidgetItem(item->slug()));
+        widget->setItem(row, 2, new QTableWidgetItem(item->extensions().join(", ")));
+        height += widget->rowHeight(row);
+        row++;
+    }
+
+    height += height / data.size() / 2;
+    height += widget->horizontalHeader()->height();
+    height += widget->horizontalScrollBar()->height();
+    widget->setMinimumHeight(height);
+}
 
 AboutDialog::AboutDialog(QWidget* parent)
     : QDialog(parent), d(new Ui::AboutDialog)
@@ -41,6 +67,8 @@ AboutDialog::AboutDialog(QWidget* parent)
     d->view_system->setItem(row++, 0, new QTableWidgetItem(utils::trace::Tracer::potrace_version()));
     d->view_system->setItem(row++, 0, new QTableWidgetItem(io::video::VideoFormat::library_version()));
 
+    populate_io(d->table_formats_input, io::IoRegistry::instance().importers());
+    populate_io(d->table_formats_output, io::IoRegistry::instance().exporters());
 }
 
 AboutDialog::~AboutDialog() = default;

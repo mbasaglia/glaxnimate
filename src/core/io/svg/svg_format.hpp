@@ -11,6 +11,7 @@ class SvgFormat : public ImportExport
     Q_OBJECT
 
 public:
+    QString slug() const override { return "svg"; }
     QString name() const override { return tr("SVG"); }
     QStringList extensions() const override { return {"svg", "svgz"}; }
     bool can_save() const override { return true; }

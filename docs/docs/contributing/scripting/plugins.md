@@ -79,13 +79,14 @@ They will be visible in the open and save dialogs.
 
 The service JSON object has the following fields:
 
-| Name          | Required  | Type   | Description                                  |
-| ------------- | --------- | ------ | -------------------------------------------- |
-| `type`        | Required  | string | `format`                                     |
-| `name`        |           | string | Text shown in the dialog                     |
-| `open`        |           | object | [Script object](#scripts) to execute on open |
-| `save`        |           | object | [Script object](#scripts) to execute on save |
-| `extensions`  | Required  | array  | Array of file extensions (without the dot)   |
+| Name          | Required  | Type   | Description                                                                   |
+| ------------- | --------- | ------ | ----------------------------------------------------------------------------- |
+| `type`        | Required  | string | `format`                                                                      |
+| `name`        |           | string | Text shown in the dialog                                                      |
+| `open`        |           | object | [Script object](#scripts) to execute on open                                  |
+| `save`        |           | object | [Script object](#scripts) to execute on save                                  |
+| `extensions`  | Required  | array  | Array of file extensions (without the dot)                                    |
+| `slug`        |           | string | Format identifier, defaults to the first value in `extensions`                |
 | `auto_open`   |           | bool   | If set to **false**, the file will not be opened before the plugin invokation |
 
 At least one between `open` and `save` must be present.
