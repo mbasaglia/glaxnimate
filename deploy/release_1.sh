@@ -9,3 +9,6 @@ echo "Pushing release for version $TAG_NAME"
 cd "$HERE/.."
 
 "$HERE/tag-branch.sh" release
+
+git tag -f "$TAG_NAME"
+git push --tags -f

@@ -203,6 +203,7 @@ release:
         - linux:deb
     only:
         - tags
+    when: manual
 
 linux:snap_tag:
     #image: snapcore/snapcraft:stable

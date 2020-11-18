@@ -135,10 +135,6 @@ add_custom_target(
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_1.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt
 )
 add_custom_target(
-    release_2
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_2.sh ${CMAKE_CURRENT_BINARY_DIR}/CMakeCache.txt
-)
-add_custom_target(
     release_check
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_check.py ${VERSION_NAKED}
 )
