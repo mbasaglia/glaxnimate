@@ -1,7 +1,7 @@
 set -xe
 
-git config --global core.symlinks true
 git submodule update --init --recursive
+(cd data/icons/breeze-icons/ && git config core.symlinks true && git reset --hard)
 # find data/icons/breeze-icons/ -name '*@?x' -exec rm -rf {} \;
 
 env
