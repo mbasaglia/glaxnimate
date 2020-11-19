@@ -1,3 +1,8 @@
+## 0.3.2
+
+* Bug Fixes:
+    * Fixed crash caused by switching between certain themes
+
 ## 0.3.1
 
 * Editing:

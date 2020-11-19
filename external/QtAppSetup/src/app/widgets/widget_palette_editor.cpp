@@ -85,8 +85,14 @@ public:
         return ui.combo_saved->currentIndex() == 0;
     }
 
-    app::settings::PaletteSettings* settings;
+    void apply_style(QStyle* style)
+    {
+        ui.preview_widget->setStyle(style);
+        for ( auto wid : ui.preview_widget->findChildren<QWidget*>() )
+            wid->setStyle(style);
+    }
 
+    app::settings::PaletteSettings* settings;
 
     Ui::WidgetPaletteEditor ui;
     color_widgets::ColorDelegate delegate;
@@ -114,12 +120,11 @@ WidgetPaletteEditor::WidgetPaletteEditor ( app::settings::PaletteSettings* setti
         d->ui.combo_style->setCurrentText(d->settings->style);
 
     connect(d->ui.combo_style, &QComboBox::currentTextChanged, this, [this](const QString& name){
-        if ( d->style )
-            delete d->style;
+        auto old_style = d->style;
         d->style = QStyleFactory::create(name);
-        d->ui.preview_widget->setStyle(d->style);
-        for ( auto wid : d->ui.preview_widget->findChildren<QWidget*>() )
-            wid->setStyle(d->style);
+        d->apply_style(d->style);
+        if ( old_style )
+            delete old_style;
     });
 
 }

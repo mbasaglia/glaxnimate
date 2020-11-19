@@ -22,7 +22,7 @@ cmake.exe .. \
     -DPYTHON_EXECUTABLE=/mingw64/bin/python3 \
     -G 'MSYS Makefiles' \
     -DCMAKE_INSTALL_PREFIX=''
-mingw32-make.exe
+mingw32-make.exe -j2
 
 # Setup package
 mingw32-make.exe translations
