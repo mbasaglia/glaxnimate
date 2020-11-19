@@ -32,8 +32,8 @@ Something along these lines:
     * go back to 4.
 6. build the `release_1` target, this builds the `release` branch
 7. Wait for CI to complete
-7. In the tag pipeline, manually run the `release` job
-8. Wait for CI to complete
-9. New release should be ready at <https://gitlab.com/mattbas/glaxnimate/-/releases>
-10. Run `./deploy/release_check.py` or `make release_check` to check the release is ok
-11. Merge `release` / `pre-release` back into master if there have been any new commits
+8. In the tag pipeline, manually run the `release` job
+9. Wait for CI to complete
+10. New release should be ready at <https://gitlab.com/mattbas/glaxnimate/-/releases>
+11. Run `./deploy/release_check.py` or `make release_check` to check the release is ok
+12. Merge `release` / `pre-release` back into master if there have been any new commits
