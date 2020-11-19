@@ -162,23 +162,14 @@ private:
     model::FrameTime drag_start;
 };
 
-class AnimatableItem : public QGraphicsObject
+class LineItem : public QGraphicsObject
 {
     Q_OBJECT
-
 public:
-    AnimatableItem(model::AnimatableBase* animatable, int time_start, int time_end, int height)
-        : animatable(animatable), time_start(time_start), time_end(time_end), height(height)
+    LineItem(int time_start, int time_end, int height)
+        : time_start(time_start), time_end(time_end), height_(height)
     {
         setFlags(QGraphicsItem::ItemIsSelectable);
-
-        for ( int i = 0; i < animatable->keyframe_count(); i++ )
-            add_keyframe(i);
-
-
-        connect(animatable, &model::AnimatableBase::keyframe_added, this, &AnimatableItem::add_keyframe);
-        connect(animatable, &model::AnimatableBase::keyframe_removed, this, &AnimatableItem::remove_keyframe);
-        connect(animatable, &model::AnimatableBase::keyframe_updated, this, &AnimatableItem::update_keyframe);
     }
 
     void set_time_start(int time)
@@ -195,13 +186,13 @@ public:
 
     void set_height(int h)
     {
-        height = h;
+        height_ = h;
         prepareGeometryChange();
     }
 
     QRectF boundingRect() const override
     {
-        return QRectF(time_start, 0, time_end, height);
+        return QRectF(time_start, 0, time_end, height_);
     }
 
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override
@@ -215,7 +206,34 @@ public:
         QPen p(widget->palette().color(QPalette::Text), 1);
         p.setCosmetic(true);
         painter->setPen(p);
-        painter->drawLine(option->rect.left(), height, option->rect.right(), height);
+        painter->drawLine(option->rect.left(), height_, option->rect.right(), height_);
+    }
+
+    int height() const
+    {
+        return height_;
+    }
+
+private:
+    int time_start;
+    int time_end;
+    int height_;
+};
+
+class AnimatableItem : public LineItem
+{
+    Q_OBJECT
+
+public:
+    AnimatableItem(model::AnimatableBase* animatable, int time_start, int time_end, int height)
+        : LineItem(time_start, time_end, height), animatable(animatable)
+    {
+        for ( int i = 0; i < animatable->keyframe_count(); i++ )
+            add_keyframe(i);
+
+        connect(animatable, &model::AnimatableBase::keyframe_added, this, &AnimatableItem::add_keyframe);
+        connect(animatable, &model::AnimatableBase::keyframe_removed, this, &AnimatableItem::remove_keyframe);
+        connect(animatable, &model::AnimatableBase::keyframe_updated, this, &AnimatableItem::update_keyframe);
     }
 
     std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframes(KeyframeSplitItem* item)
@@ -250,7 +268,7 @@ public slots:
 
         model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
         auto item = new KeyframeSplitItem(this);
-        item->setPos(kf->time(), height / 2.0);
+        item->setPos(kf->time(), height() / 2.0);
         item->set_exit(kf->transition().before_descriptive());
         item->set_enter(prev ? prev->transition().after_descriptive() : model::KeyframeTransition::Hold);
         kf_split_items.insert(kf_split_items.begin() + index, item);
@@ -307,7 +325,7 @@ private slots:
     void update_keyframe(int index, model::KeyframeBase* kf)
     {
         auto item_start = kf_split_items[index];
-        item_start->setPos(kf->time(), height / 2.0);
+        item_start->setPos(kf->time(), height() / 2.0);
         item_start->set_exit(kf->transition().before_descriptive());
 
         if ( index < int(kf_split_items.size()) - 1 )
@@ -320,7 +338,4 @@ private slots:
 public:
     model::AnimatableBase* animatable;
     std::vector<KeyframeSplitItem*> kf_split_items;
-    int time_start;
-    int time_end;
-    int height;
 };

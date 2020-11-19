@@ -89,6 +89,9 @@
          <property name="uniformRowHeights">
           <bool>true</bool>
          </property>
+         <property name="itemsExpandable">
+          <bool>false</bool>
+         </property>
         </widget>
         <widget class="TimelineWidget" name="timeline">
          <property name="sizePolicy">

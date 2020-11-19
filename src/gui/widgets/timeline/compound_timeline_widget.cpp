@@ -229,6 +229,7 @@ void CompoundTimelineWidget::changeEvent ( QEvent* e )
 void CompoundTimelineWidget::set_active(model::DocumentNode* node)
 {
     d->property_model.set_object(node);
+    d->ui.properties->expandAll();
     d->ui.timeline->set_active(node);
     d->clear_menu_data();
 }

@@ -51,11 +51,19 @@ public:
         connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::animatable_clicked);
         item->setPos(0, rows * row_height);
         anim_items[anim] = item;
+        rows += 1;
         scene.addItem(item);
+    }
+
+    void add_empty()
+    {
+        auto item = new LineItem(start_time, rounded_end_time(), row_height);
+        scene.addItem(item);
+        item->setPos(0, rows * row_height);
         rows += 1;
     }
 
-    void add_object(model::Object* obj)
+    void add_sub_object(model::Object* obj)
     {
         for ( auto prop : obj->properties() )
         {
@@ -63,8 +71,14 @@ public:
             if ( flags & model::PropertyTraits::Animated )
                 add_animatable(static_cast<model::AnimatableBase*>(prop));
             else if ( prop->traits().type == model::PropertyTraits::Object && !(flags & model::PropertyTraits::List) )
-                add_object(static_cast<model::SubObjectPropertyBase*>(prop)->sub_object());
+                add_sub_object(static_cast<model::SubObjectPropertyBase*>(prop)->sub_object());
         }
+    }
+
+    void add_object(model::Object* obj)
+    {
+        add_empty();
+        add_sub_object(obj);
     }
 
     void adjust_min_scale(int wpw)

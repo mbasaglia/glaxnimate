@@ -40,12 +40,11 @@ public:
         id_type id = 0;
     };
 
-    void connect(model::Object* object, PropertyModel* model)
+    void add_object(model::Object* object, PropertyModel* model)
     {
-        root = object;
-        root_id = next_id;
-        add_node(Subtree{object, 0});
-        connect_recursive(object, model, root_id);
+        auto node = add_node(Subtree{object, 0});
+        roots.push_back(node);
+        connect_recursive(object, model, node->id);
     }
 
     /*void connect_list(Subtree* prop_node)
@@ -88,7 +87,7 @@ public:
                 }
                 else if ( prop->traits().flags & model::PropertyTraits::Animated )
                 {
-                    properties[prop] = add_node(Subtree{prop, this_node});
+                    properties[prop] = add_node(Subtree{prop, this_node})->id;
                 }
             }
             else
@@ -99,9 +98,8 @@ public:
                 )
                     continue;
 
-                id_type prop_node_id = add_node(Subtree{prop, this_node});
-                Subtree* prop_node = node(prop_node_id);
-                properties[prop] = prop_node_id;
+                Subtree* prop_node = add_node(Subtree{prop, this_node});
+                properties[prop] = prop_node->id;
 
                 /*if ( prop->traits().flags & model::PropertyTraits::List )
                 {
@@ -113,7 +111,7 @@ public:
                     model::Object* subobj = prop->value().value<model::Object*>();
                     prop_node->object = subobj;
                     if ( prop->traits().type == model::PropertyTraits::Object )
-                        connect_recursive(subobj, model, prop_node_id);
+                        connect_recursive(subobj, model, prop_node->id);
                 }
             }
         }
@@ -168,32 +166,31 @@ public:
         node->children.clear();
     }
 
-    void disconnect(PropertyModel* model)
+    void clear(PropertyModel* model)
     {
-        auto it = nodes.find(root_id);
-        if ( it != nodes.end() )
-            disconnect_recursive(&it->second, model);
-        root = nullptr;
+        for ( const auto& p : roots )
+            disconnect_recursive(p, model);
+
+        roots.clear();
+        next_id = 1;
         nodes.clear();
         objects.clear();
     }
 
-    id_type add_node(Subtree st)
+    Subtree* add_node(Subtree st)
     {
         auto it = nodes.insert({next_id, st}).first;
         if ( st.parent )
             node(st.parent)->children.push_back(&it->second);
         it->second.id = next_id;
-        return next_id++;
+        next_id++;
+        return &it->second;
     }
 
     Subtree* node_from_index(const QModelIndex& index)
     {
         if ( !index.isValid() )
-        {
-            auto it = nodes.find(root_id);
-            return it == nodes.end() ? nullptr : &it->second;
-        }
+            return nullptr;
 
         auto it = nodes.find(index.internalId());
         return it == nodes.end() ? nullptr : &it->second;
@@ -206,8 +203,7 @@ public:
     }
 
     model::Document* document = nullptr;
-    model::Object* root = nullptr;
-    id_type root_id = 0;
+    std::vector<Subtree*> roots;
     id_type next_id = 1;
     std::unordered_map<id_type, Subtree> nodes;
     std::unordered_map<model::Object*, id_type> objects;
@@ -228,7 +224,11 @@ QModelIndex item_models::PropertyModel::index(int row, int column, const QModelI
 {
     Private::Subtree* tree = d->node_from_index(parent);
     if ( !tree )
+    {
+        if ( row >= 0 && row < int(d->roots.size()) )
+            return createIndex(row, column, d->roots[row]->id);
         return {};
+    }
 
 
     if ( row >= 0 && row < int(tree->children.size()) )
@@ -259,13 +259,10 @@ QModelIndex item_models::PropertyModel::parent(const QModelIndex& child) const
 
 void item_models::PropertyModel::set_object(model::Object* object)
 {
-    if ( d->root )
-    {
-        d->disconnect(this);
-    }
-
     beginResetModel();
-    d->connect(object, this);
+    d->clear(this);
+    if ( object )
+        d->add_object(object, this);
     endResetModel();
 }
 
@@ -276,19 +273,19 @@ int item_models::PropertyModel::columnCount(const QModelIndex&) const
 
 int item_models::PropertyModel::rowCount(const QModelIndex& parent) const
 {
-    if ( !d->root )
+    if ( d->roots.empty() )
         return 0;
 
     Private::Subtree* tree = d->node_from_index(parent);
     if ( !tree )
-        return 0;
+        return d->roots.size();
 
     return tree->children.size();
 }
 
 Qt::ItemFlags item_models::PropertyModel::flags(const QModelIndex& index) const
 {
-    if ( !d->root || !index.isValid() )
+    if ( d->roots.empty() || !index.isValid() )
         return {};
 
     Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
@@ -327,7 +324,7 @@ Qt::ItemFlags item_models::PropertyModel::flags(const QModelIndex& index) const
 
 QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) const
 {
-    if ( !d->root || !index.isValid() )
+    if ( d->roots.empty() || !index.isValid() )
         return {};
 
 
@@ -343,6 +340,8 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
                 return tree->prop_index;
             else if ( tree->prop )
                 return tree->prop->name();
+            else if ( tree->object )
+                return tree->object->object_name();
         }
         else if ( role == Qt::FontRole )
         {
@@ -481,7 +480,7 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
 
 bool item_models::PropertyModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if ( !d->root || !index.isValid() || index.column() != 1 )
+    if ( d->roots.empty() || !index.isValid() || index.column() != 1 )
         return false;
 
     Private::Subtree* tree = d->node_from_index(index);
