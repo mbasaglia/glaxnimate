@@ -193,6 +193,11 @@ public:
     void parse_gradient(const QDomElement& element, const QString& id, model::GradientColors* colors)
     {
         auto gradient = std::make_unique<model::Gradient>(document);
+        QTransform gradient_transform;
+
+        if ( element.hasAttribute("gradientTransform") )
+            gradient_transform = svg_transform(element.attribute("gradientTransform"), {});
+
         if ( element.tagName() == "linearGradient" )
         {
             if ( !element.hasAttribute("x1") || !element.hasAttribute("x2") ||
@@ -201,14 +206,14 @@ public:
 
             gradient->type.set(model::Gradient::Linear);
 
-            gradient->start_point.set(QPointF(
+            gradient->start_point.set(gradient_transform.map(QPointF(
                 len_attr(element, "x1"),
                 len_attr(element, "y1")
-            ));
-            gradient->end_point.set(QPointF(
+            )));
+            gradient->end_point.set(gradient_transform.map(QPointF(
                 len_attr(element, "x2"),
                 len_attr(element, "y2")
-            ));
+            )));
 
             auto anim = parse_animated(element);
             for ( const auto& kf : add_keyframes(anim.joined({"x1", "y1"})) )
@@ -227,29 +232,35 @@ public:
                 len_attr(element, "cx"),
                 len_attr(element, "cy")
             );
-            gradient->start_point.set(c);
+            gradient->start_point.set(gradient_transform.map(c));
 
             if ( element.hasAttribute("fx") )
-                gradient->highlight.set({
+                gradient->highlight.set(gradient_transform.map(QPointF(
                     len_attr(element, "fx"),
                     len_attr(element, "fy")
-                });
+                )));
             else
-                gradient->highlight.set(c);
+                gradient->highlight.set(gradient_transform.map(c));
 
-            gradient->end_point.set({c.x() + len_attr(element, "r"), c.y()});
+            gradient->end_point.set(gradient_transform.map(QPointF(
+                c.x() + len_attr(element, "r"), c.y()
+            )));
 
 
             auto anim = parse_animated(element);
             for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
-                gradient->start_point.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+                gradient->start_point.set_keyframe(kf.time,
+                    gradient_transform.map(QPointF{kf.values[0][0], kf.values[1][0]})
+                )->set_transition(kf.transition);
 
             for ( const auto& kf : add_keyframes(anim.joined({"fx", "fy"})) )
-                gradient->highlight.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+                gradient->highlight.set_keyframe(kf.time,
+                    gradient_transform.map(QPointF{kf.values[0][0], kf.values[1][0]})
+                )->set_transition(kf.transition);
 
             for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy", "r"})) )
                 gradient->end_point.set_keyframe(kf.time,
-                    {kf.values[0][0] + kf.values[2][0], kf.values[1][0]}
+                    gradient_transform.map(QPointF{kf.values[0][0] + kf.values[2][0], kf.values[1][0]})
                 )->set_transition(kf.transition);
 
         }
