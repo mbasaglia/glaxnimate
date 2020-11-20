@@ -18,6 +18,21 @@ public:
         MaxValue
     };
 
+    struct Item
+    {
+        constexpr Item() noexcept = default;
+        constexpr Item(model::Object* object) noexcept : object(object) {}
+        constexpr Item(model::AnimatableBase* animatable) noexcept : animatable(animatable) {}
+
+        explicit constexpr operator bool() const noexcept
+        {
+            return object || animatable;
+        }
+
+        model::Object* object = nullptr;
+        model::AnimatableBase* animatable = nullptr;
+    };
+
     PropertyModel(bool animation_only=false);
     ~PropertyModel();
 
@@ -45,8 +60,10 @@ public:
         set_object(nullptr);
     }
 
-    model::AnimatableBase* animatable(const QModelIndex& index) const;
+    Item item(const QModelIndex& index) const;
+
     QModelIndex property_index(model::BaseProperty* anim) const;
+    QModelIndex object_index(model::Object* obj) const;
 
 private slots:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);

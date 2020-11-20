@@ -4,12 +4,15 @@
 #include <QMenu>
 #include <QScrollBar>
 
-#include "item_models/property_model.hpp"
-#include "style/property_delegate.hpp"
-#include "glaxnimate_app.hpp"
 #include "command/animation_commands.hpp"
-#include "widgets/dialogs/keyframe_editor_dialog.hpp"
 #include "command/undo_macro_guard.hpp"
+
+#include "item_models/property_model.hpp"
+#include "glaxnimate_app.hpp"
+
+#include "style/property_delegate.hpp"
+#include "widgets/dialogs/keyframe_editor_dialog.hpp"
+#include "widgets/node_menu.hpp"
 
 class CompoundTimelineWidget::Private
 {
@@ -48,6 +51,7 @@ public:
         connect(ui.scrollbar, &QScrollBar::valueChanged, parent, &CompoundTimelineWidget::on_scroll);
 
         connect(ui.timeline, &TimelineWidget::animatable_clicked, parent, &CompoundTimelineWidget::select_animatable);
+        connect(ui.timeline, &TimelineWidget::object_clicked, parent, &CompoundTimelineWidget::select_object);
 
         ui.action_add_keyframe->setIcon(
             QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/status/key.svg"))
@@ -206,6 +210,8 @@ public:
     model::KeyframeBase* menu_kf_enter = nullptr;
     model::KeyframeBase* menu_kf_exit = nullptr;
 
+    GlaxnimateWindow* window = nullptr;
+
 };
 
 CompoundTimelineWidget::CompoundTimelineWidget(QWidget* parent)
@@ -250,7 +256,7 @@ void CompoundTimelineWidget::clear_document()
 
 void CompoundTimelineWidget::select_property(const QModelIndex& index)
 {
-    d->ui.timeline->select(d->property_model.animatable(index));
+    d->ui.timeline->select(d->property_model.item(index));
     d->ui.properties->viewport()->update();
 }
 
@@ -260,15 +266,23 @@ void CompoundTimelineWidget::select_animatable(model::AnimatableBase* anim)
     d->ui.properties->viewport()->update();
 }
 
+void CompoundTimelineWidget::select_object(model::Object* anim)
+{
+    d->ui.properties->setCurrentIndex(d->property_model.object_index(anim));
+    d->ui.properties->viewport()->update();
+}
+
+
 void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
 {
     d->clear_menu_data();
 
     QPoint glob = static_cast<QWidget*>(sender())->mapToGlobal(p);
 
+    item_models::PropertyModel::Item item;
     if ( d->ui.properties->rect().contains(p) )
     {
-        d->menu_anim = d->property_model.animatable(
+        item = d->property_model.item(
             d->ui.properties->indexAt(
                 d->ui.properties->viewport()->mapFromGlobal(glob)
             )
@@ -280,10 +294,12 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
             d->ui.timeline->viewport()->mapFromGlobal(glob)
         );
 
-        d->menu_anim = d->ui.timeline->animatable_at(
+        item = d->ui.timeline->item_at(
             d->ui.timeline->viewport()->mapFromGlobal(glob)
         );
     }
+
+    d->menu_anim = item.animatable;
 
     if ( d->menu_kf_exit )
     {
@@ -329,6 +345,10 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
     {
         d->action_title->setText(d->menu_anim->name());
         d->menu_property.exec(glob);
+    }
+    else if ( auto dn = qobject_cast<model::DocumentNode*>(item.object) )
+    {
+        NodeMenu(dn, d->window, this).exec(glob);
     }
 }
 
@@ -378,4 +398,8 @@ QByteArray CompoundTimelineWidget::save_state() const
     return d->ui.splitter->saveState();
 }
 
+void CompoundTimelineWidget::set_controller(GlaxnimateWindow* window)
+{
+    d->window = window;
+}
 

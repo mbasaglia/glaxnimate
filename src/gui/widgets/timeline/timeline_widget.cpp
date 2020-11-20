@@ -5,6 +5,8 @@
 
 #include "timeline_items.hpp"
 
+using namespace timeline;
+
 class TimelineWidget::Private
 {
 public:
@@ -16,6 +18,7 @@ public:
     int header_height = 24;
     int rows = 0;
     std::unordered_map<model::AnimatableBase*, AnimatableItem*> anim_items;
+    std::unordered_map<model::Object*, ObjectLineItem*> object_items;
     qreal min_scale = 1;
     int frame_skip = 1;
     int min_gap = 32;
@@ -49,18 +52,8 @@ public:
     {
         AnimatableItem* item = new AnimatableItem(anim, start_time, rounded_end_time(), row_height);
         connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::animatable_clicked);
-        item->setPos(0, rows * row_height);
+        add_line(item);
         anim_items[anim] = item;
-        rows += 1;
-        scene.addItem(item);
-    }
-
-    void add_empty()
-    {
-        auto item = new LineItem(start_time, rounded_end_time(), row_height);
-        scene.addItem(item);
-        item->setPos(0, rows * row_height);
-        rows += 1;
     }
 
     void add_sub_object(model::Object* obj)
@@ -75,9 +68,19 @@ public:
         }
     }
 
+    void add_line(LineItem* item)
+    {
+        scene.addItem(item);
+        item->setPos(0, rows * row_height);
+        rows += 1;
+    }
+
     void add_object(model::Object* obj)
     {
-        add_empty();
+        auto item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height);
+        connect(item, &ObjectLineItem::object_clicked, parent, &TimelineWidget::object_clicked);
+        add_line(item);
+        object_items[obj] = item;
         add_sub_object(obj);
     }
 
@@ -100,6 +103,8 @@ public:
         auto et = rounded_end_time();
         for ( const auto& p : anim_items )
             p.second->set_time_end(et);
+        for ( const auto& p : object_items )
+            p.second->set_time_end(et);
     }
 
     void paint_highligted_frame(int frame, QPainter& painter, const QBrush& color)
@@ -120,6 +125,7 @@ public:
         scene.clear();
         rows = 0;
         anim_items.clear();
+        object_items.clear();
     }
 
     model::AnimationContainer* anim(model::DocumentNode* node)
@@ -251,6 +257,8 @@ void TimelineWidget::update_timeline_start(model::FrameTime start)
     setSceneRect(d->scene_rect());
     d->adjust_min_scale(viewport()->width());
     for ( const auto& p : d->anim_items )
+        p.second->set_time_start(start);
+    for ( const auto& p : d->object_items )
         p.second->set_time_start(start);
 }
 
@@ -415,7 +423,11 @@ void TimelineWidget::mousePressEvent(QMouseEvent* event)
 
     if ( event->y() > d->header_height )
     {
+        auto selection = d->scene.selectedItems();
         QGraphicsView::mousePressEvent(event);
+        if ( d->scene.selectedItems().empty() )
+            for ( const auto& s : selection )
+                s->setSelected(true);
     }
     else if ( event->button() == Qt::LeftButton )
     {
@@ -464,23 +476,36 @@ int TimelineWidget::header_height() const
     return d->header_height;
 }
 
-void TimelineWidget::select(model::AnimatableBase* anim)
+void TimelineWidget::select(const item_models::PropertyModel::Item& item)
 {
     d->scene.clearSelection();
-    if ( anim )
+    if ( item.animatable )
     {
-        auto it = d->anim_items.find(anim);
+        auto it = d->anim_items.find(item.animatable);
         if ( it != d->anim_items.end() )
+            it->second->setSelected(true);
+    }
+    else if ( item.object )
+    {
+        auto it = d->object_items.find(item.object);
+        if ( it != d->object_items.end() )
             it->second->setSelected(true);
     }
 }
 
-model::AnimatableBase * TimelineWidget::animatable_at(const QPoint& viewport_pos)
+item_models::PropertyModel::Item TimelineWidget::item_at(const QPoint& viewport_pos)
 {
     for ( QGraphicsItem* it : items(viewport_pos) )
-        if ( auto anit = dynamic_cast<AnimatableItem*>(it) )
-            return anit->animatable;
-    return nullptr;
+    {
+        switch ( ItemTypes(it->type()) )
+        {
+            case ItemTypes::AnimatableItem:
+                return static_cast<AnimatableItem*>(it)->animatable;
+            case ItemTypes::ObjectLineItem:
+                return static_cast<ObjectLineItem*>(it)->object;
+        }
+    }
+    return {};
 }
 
 std::pair<model::KeyframeBase*, model::KeyframeBase*> TimelineWidget::keyframe_at(const QPoint& viewport_pos)

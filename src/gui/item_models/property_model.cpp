@@ -315,7 +315,7 @@ Qt::ItemFlags item_models::PropertyModel::flags(const QModelIndex& index) const
         }
         else
         {
-            return Qt::ItemIsSelectable;
+            return flags;
         }
     }
 
@@ -586,16 +586,19 @@ void item_models::PropertyModel::set_document(model::Document* document)
     clear_object();
 }
 
-model::AnimatableBase * item_models::PropertyModel::animatable(const QModelIndex& index) const
+item_models::PropertyModel::Item item_models::PropertyModel::item(const QModelIndex& index) const
 {
     if ( Private::Subtree* st = d->node_from_index(index) )
     {
+        Item item = st->object;
         if ( st->prop && st->prop->traits().flags & model::PropertyTraits::Animated )
-            return static_cast<model::AnimatableBase*>(st->prop);
+            item.animatable = static_cast<model::AnimatableBase*>(st->prop);
+        return item;
     }
 
-    return nullptr;
+    return {};
 }
+
 
 void item_models::PropertyModel::on_delete_object()
 {
@@ -615,5 +618,26 @@ QModelIndex item_models::PropertyModel::property_index(model::BaseProperty* prop
     Private::Subtree* parent = d->node(prop_node->parent);
 
     int i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
+    return createIndex(i, 1, prop_node->id);
+}
+
+QModelIndex item_models::PropertyModel::object_index(model::Object* obj) const
+{
+    auto it = d->objects.find(obj);
+    if ( it == d->objects.end() )
+        return {};
+
+    Private::Subtree* prop_node = d->node(it->second);
+    if ( !prop_node )
+        return {};
+
+    Private::Subtree* parent = d->node(prop_node->parent);
+
+    int i = 0;
+    if ( !parent )
+        i = std::find(d->roots.begin(), d->roots.end(), prop_node) - d->roots.begin();
+    else
+        i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
+
     return createIndex(i, 1, prop_node->id);
 }

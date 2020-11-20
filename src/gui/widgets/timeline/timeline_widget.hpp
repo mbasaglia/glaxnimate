@@ -5,6 +5,7 @@
 #include <QGraphicsView>
 
 #include "model/document.hpp"
+#include "item_models/property_model.hpp"
 
 
 class TimelineWidget : public QGraphicsView
@@ -23,9 +24,9 @@ public:
     void set_row_height(int w);
     int header_height() const;
     
-    void select(model::AnimatableBase* anim);
+    void select(const item_models::PropertyModel::Item& item);
     
-    model::AnimatableBase* animatable_at(const QPoint& viewport_pos);
+    item_models::PropertyModel::Item item_at(const QPoint& viewport_pos);
     std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframe_at(const QPoint& viewport_pos);
     
 public slots:
@@ -55,6 +56,7 @@ protected:
 signals:
     void frame_clicked(int frame);
     void animatable_clicked(model::AnimatableBase* anim);
+    void object_clicked(model::Object* anim);
     
 private:
     class Private;

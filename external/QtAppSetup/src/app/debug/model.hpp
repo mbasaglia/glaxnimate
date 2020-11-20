@@ -8,10 +8,14 @@ inline void print_model(QAbstractItemModel* model, const QModelIndex& index = {}
 {
     int rows = model->rowCount(index);
     {
+        int cols = model->columnCount(index);
         auto logger = qDebug();
-        logger << QString(2*indent, ' ') << index << "rows" << rows << "cols" << model->columnCount(index) << "data";
+        logger << QString(2*indent, ' ') << index << "rows" << rows << "cols" << cols << "data";
         for ( int role : roles )
             logger << model->data(index, role);
+        logger << "flags";
+        for ( int i = 0; i < cols; i++ )
+            logger << model->flags(model->index(index.row(), i, index.parent()));
     }
     for ( int i = 0; i < rows; i++ )
     {

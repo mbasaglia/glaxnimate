@@ -226,6 +226,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
 
     connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::selectionChanged, parent, &GlaxnimateWindow::document_treeview_selection_changed);
 
+    ui.timeline_widget->set_controller(parent);
+
     // Tool buttons
     ui.btn_layer_add->setMenu(ui.menu_new_layer);
 

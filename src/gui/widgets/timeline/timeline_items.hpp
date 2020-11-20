@@ -10,6 +10,9 @@
 #include "command/animation_commands.hpp"
 #include "model/document.hpp"
 
+namespace timeline {
+
+
 class KeyframeSplitItem : public QGraphicsObject
 {
     Q_OBJECT
@@ -162,9 +165,16 @@ private:
     model::FrameTime drag_start;
 };
 
+enum class ItemTypes
+{
+    ObjectLineItem = QGraphicsItem::UserType + 1,
+    AnimatableItem,
+};
+
 class LineItem : public QGraphicsObject
 {
     Q_OBJECT
+
 public:
     LineItem(int time_start, int time_end, int height)
         : time_start(time_start), time_end(time_end), height_(height)
@@ -214,10 +224,46 @@ public:
         return height_;
     }
 
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent * event) override
+    {
+        bool sel = isSelected();
+        QGraphicsObject::mousePressEvent(event);
+        if ( !sel && isSelected() )
+            click_selected();
+    }
+
+    virtual void click_selected(){}
+
 private:
     int time_start;
     int time_end;
     int height_;
+};
+
+class ObjectLineItem : public LineItem
+{
+    Q_OBJECT
+
+public:
+    ObjectLineItem(model::Object* obj, int time_start, int time_end, int height)
+        : LineItem(time_start, time_end, height), object(obj)
+    {}
+
+    int type() const override { return int(ItemTypes::ObjectLineItem); }
+
+protected:
+    void click_selected() override
+    {
+        emit object_clicked(object);
+    }
+
+signals:
+    void object_clicked(model::Object* object);
+
+public:
+    model::Object* object;
 };
 
 class AnimatableItem : public LineItem
@@ -251,12 +297,12 @@ public:
         return {nullptr, nullptr};
     }
 
-    void mousePressEvent(QGraphicsSceneMouseEvent * event) override
+    int type() const override { return int(ItemTypes::AnimatableItem); }
+
+protected:
+    void click_selected() override
     {
-        bool sel = isSelected();
-        QGraphicsObject::mousePressEvent(event);
-        if ( !sel && isSelected() )
-            emit animatable_clicked(animatable);
+        emit animatable_clicked(animatable);
     }
 
 public slots:
@@ -339,3 +385,6 @@ public:
     model::AnimatableBase* animatable;
     std::vector<KeyframeSplitItem*> kf_split_items;
 };
+
+
+} // namespace timeline

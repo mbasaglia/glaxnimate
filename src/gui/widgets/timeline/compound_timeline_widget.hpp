@@ -5,6 +5,7 @@
 
 #include "model/document.hpp"
 
+class GlaxnimateWindow;
 class CompoundTimelineWidget : public QWidget
 {
     Q_OBJECT
@@ -18,6 +19,7 @@ public:
     void clear_document();
     QByteArray save_state() const;
     void load_state(const QByteArray& state);
+    void set_controller(GlaxnimateWindow* window);
     
 protected:
     void changeEvent ( QEvent* e ) override;
@@ -25,6 +27,7 @@ protected:
 private slots:
     void select_property(const QModelIndex& index);
     void select_animatable(model::AnimatableBase* anim);
+    void select_object(model::Object* anim);
     void custom_context_menu(const QPoint& p);
     void add_keyframe();
     void remove_keyframe();
