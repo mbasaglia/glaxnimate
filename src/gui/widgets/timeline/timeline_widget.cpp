@@ -190,18 +190,30 @@ void TimelineWidget::add_animatable(model::AnimatableBase* anim)
 void TimelineWidget::set_active(model::DocumentNode* node)
 {
     clear();
+
     if ( node )
     {
-        d->add_object(node);
-        setSceneRect(d->scene_rect());
         set_anim_container(d->anim(node));
-        reset_view();
+        d->add_object(node);
+        d->adjust_min_scale(viewport()->width());
     }
+
+    setSceneRect(d->scene_rect());
+    reset_view();
+}
+
+void TimelineWidget::add_object(model::DocumentNode* node)
+{
+    d->add_object(node);
+    setSceneRect(d->scene_rect());
+    reset_view();
 }
 
 void TimelineWidget::clear()
 {
     d->clear();
+    setSceneRect(d->scene_rect());
+    reset_view();
 }
 
 int TimelineWidget::row_height() const

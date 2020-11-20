@@ -235,8 +235,20 @@ void CompoundTimelineWidget::changeEvent ( QEvent* e )
 void CompoundTimelineWidget::set_active(model::DocumentNode* node)
 {
     d->property_model.set_object(node);
-    d->ui.properties->expandAll();
     d->ui.timeline->set_active(node);
+    auto mo = node->metaObject();
+    if ( mo->inherits(&model::Group::staticMetaObject) && !mo->inherits(&model::Layer::staticMetaObject) )
+    {
+        for ( auto child : node->docnode_children() )
+        {
+            if ( !child->is_instance<model::Group>() )
+            {
+                d->ui.timeline->add_object(child);
+                d->property_model.add_object(child);
+            }
+        }
+    }
+    d->ui.properties->expandAll();
     d->clear_menu_data();
 }
 

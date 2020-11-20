@@ -53,12 +53,10 @@ public:
         set_document(nullptr);
     }
 
+    void clear_objects();
     void set_object(model::Object* object);
+    void add_object(model::Object* object);
 
-    void clear_object()
-    {
-        set_object(nullptr);
-    }
 
     Item item(const QModelIndex& index) const;
 

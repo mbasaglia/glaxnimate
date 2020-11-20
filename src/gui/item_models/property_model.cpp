@@ -257,12 +257,27 @@ QModelIndex item_models::PropertyModel::parent(const QModelIndex& child) const
     return {};
 }
 
+
+void item_models::PropertyModel::clear_objects()
+{
+    beginResetModel();
+    d->clear(this);
+    endResetModel();
+}
+
 void item_models::PropertyModel::set_object(model::Object* object)
 {
     beginResetModel();
     d->clear(this);
     if ( object )
         d->add_object(object, this);
+    endResetModel();
+}
+
+void item_models::PropertyModel::add_object(model::Object* object)
+{
+    beginResetModel();
+    d->add_object(object, this);
     endResetModel();
 }
 
@@ -355,8 +370,6 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
     {
         if ( !tree->prop )
         {
-            if ( tree->object && role == Qt::DisplayRole )
-                return tree->object->object_name();
             return {};
         }
 
@@ -583,7 +596,7 @@ QVariant item_models::PropertyModel::headerData(int section, Qt::Orientation ori
 void item_models::PropertyModel::set_document(model::Document* document)
 {
     d->document = document;
-    clear_object();
+    clear_objects();
 }
 
 item_models::PropertyModel::Item item_models::PropertyModel::item(const QModelIndex& index) const
