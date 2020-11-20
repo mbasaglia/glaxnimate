@@ -56,6 +56,7 @@ public:
     void clear_objects();
     void set_object(model::Object* object);
     void add_object(model::Object* object);
+    void add_object_without_properties(model::Object* object);
 
 
     Item item(const QModelIndex& index) const;

@@ -75,7 +75,7 @@ public:
         rows += 1;
     }
 
-    void add_object(model::Object* obj)
+    void add_object_without_properties(model::Object* obj)
     {
         ObjectLineItem* item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height);
         if ( auto layer = obj->cast<model::Layer>() )
@@ -92,6 +92,11 @@ public:
         connect(item, &ObjectLineItem::object_clicked, parent, &TimelineWidget::object_clicked);
         add_line(item);
         object_items[obj] = item;
+    }
+
+    void add_object(model::Object* obj)
+    {
+        add_object_without_properties(obj);
         add_sub_object(obj);
     }
 
@@ -219,6 +224,14 @@ void TimelineWidget::add_object(model::DocumentNode* node)
     setSceneRect(d->scene_rect());
     reset_view();
 }
+
+void TimelineWidget::add_object_without_properties(model::DocumentNode* node)
+{
+    d->add_object_without_properties(node);
+    setSceneRect(d->scene_rect());
+    reset_view();
+}
+
 
 void TimelineWidget::clear()
 {

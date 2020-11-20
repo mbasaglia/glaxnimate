@@ -20,6 +20,7 @@ public:
     void clear();
     void set_active(model::DocumentNode* node);
     void add_object(model::DocumentNode* node);
+    void add_object_without_properties(model::DocumentNode* node);
     void add_animatable(model::AnimatableBase* anim);
     int row_height() const;
     void set_row_height(int w);

@@ -47,6 +47,13 @@ public:
         connect_recursive(object, model, node->id);
     }
 
+    void add_object_without_properties(model::Object* object, PropertyModel* model)
+    {
+        auto node = add_node(Subtree{object, 0});
+        roots.push_back(node);
+        QObject::connect(object, &model::Object::destroyed, model, &PropertyModel::on_delete_object);
+    }
+
     /*void connect_list(Subtree* prop_node)
     {
         if ( prop_node->prop->traits().is_object() )
@@ -276,9 +283,16 @@ void item_models::PropertyModel::set_object(model::Object* object)
 
 void item_models::PropertyModel::add_object(model::Object* object)
 {
-    beginResetModel();
+    beginInsertRows({}, d->roots.size(), d->roots.size());
     d->add_object(object, this);
-    endResetModel();
+    endInsertRows();
+}
+
+void item_models::PropertyModel::add_object_without_properties(model::Object* object)
+{
+    beginInsertRows({}, d->roots.size(), d->roots.size());
+    d->add_object_without_properties(object, this);
+    endInsertRows();
 }
 
 int item_models::PropertyModel::columnCount(const QModelIndex&) const

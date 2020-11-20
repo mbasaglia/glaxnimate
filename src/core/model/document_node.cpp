@@ -31,7 +31,7 @@ QColor model::DocumentNode::docnode_group_color() const
         if ( auto parent = docnode_fuzzy_parent() )
             return parent->docnode_group_color();
         else
-            return Qt::white;
+            return QColor(0xf8, 0xf8, 0xf8);
     }
     return group_color.get();
 }
@@ -62,16 +62,17 @@ bool model::DocumentNode::docnode_is_instance(const QString& type_name) const
     return false;
 }
 
-void model::DocumentNode::docnode_on_update_group(bool force)
+void model::DocumentNode::docnode_on_update_group(bool)
 {
-    if ( force || docnode_valid_color() )
+//     if ( force || docnode_valid_color() )
     {
-        emit docnode_group_color_changed(this->group_color.get());
+        emit docnode_group_color_changed(docnode_group_color());
         for ( auto gc : docnode_group_children() )
             gc->docnode_on_update_group();
         for ( auto gc : docnode_children() )
             gc->docnode_on_update_group();
     }
+
     emit group_transform_matrix_changed(group_transform_matrix(time()));
 }
 
