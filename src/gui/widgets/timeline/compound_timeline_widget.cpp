@@ -241,8 +241,9 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
         auto mo = node->metaObject();
         if ( mo->inherits(&model::Layer::staticMetaObject) || mo->inherits(&model::Composition::staticMetaObject) )
         {
-            for ( auto child : node->docnode_children() )
+            for ( int i = node->docnode_child_count() - 1; i >= 0; i-- )
             {
+                auto child = node->docnode_child(i);
                 auto ch_mo = child->metaObject();
                 if ( ch_mo->inherits(&model::Layer::staticMetaObject) )
                 {
@@ -253,8 +254,9 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
         }
         else if ( mo->inherits(&model::Group::staticMetaObject) )
         {
-            for ( auto child : node->docnode_children() )
+            for ( int i = node->docnode_child_count() - 1; i >= 0; i-- )
             {
+                auto child = node->docnode_child(i);
                 auto ch_mo = child->metaObject();
                 if ( ch_mo->inherits(&model::Layer::staticMetaObject) )
                 {
