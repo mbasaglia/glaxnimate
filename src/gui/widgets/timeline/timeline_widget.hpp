@@ -22,6 +22,7 @@ public:
     void add_object(model::DocumentNode* node);
     void add_object_without_properties(model::DocumentNode* node);
     void add_animatable(model::AnimatableBase* anim);
+    void add_property(model::BaseProperty* anim);
     int row_height() const;
     void set_row_height(int w);
     int header_height() const;
@@ -57,7 +58,7 @@ protected:
     
 signals:
     void frame_clicked(int frame);
-    void animatable_clicked(model::AnimatableBase* anim);
+    void property_clicked(model::BaseProperty* anim);
     void object_clicked(model::Object* anim);
     
 private:

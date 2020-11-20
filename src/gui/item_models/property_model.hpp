@@ -23,6 +23,7 @@ public:
         constexpr Item() noexcept = default;
         constexpr Item(model::Object* object) noexcept : object(object) {}
         constexpr Item(model::AnimatableBase* animatable) noexcept : animatable(animatable) {}
+        constexpr Item(model::BaseProperty* prop) noexcept : property(prop) {}
 
         explicit constexpr operator bool() const noexcept
         {
@@ -31,6 +32,7 @@ public:
 
         model::Object* object = nullptr;
         model::AnimatableBase* animatable = nullptr;
+        model::BaseProperty* property = nullptr;
     };
 
     PropertyModel(bool animation_only=false);

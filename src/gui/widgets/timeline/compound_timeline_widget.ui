@@ -142,7 +142,7 @@
    <sender>properties</sender>
    <signal>pressed(QModelIndex)</signal>
    <receiver>CompoundTimelineWidget</receiver>
-   <slot>select_property(QModelIndex)</slot>
+   <slot>select_index(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>222</x>
@@ -156,7 +156,7 @@
   </connection>
  </connections>
  <slots>
-  <slot>select_property(QModelIndex)</slot>
+  <slot>select_index(QModelIndex)</slot>
   <slot>custom_context_menu(QPoint)</slot>
  </slots>
 </ui>

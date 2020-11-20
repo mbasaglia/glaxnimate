@@ -17,8 +17,7 @@ public:
     int row_height = 24;
     int header_height = 24;
     int rows = 0;
-    std::unordered_map<model::AnimatableBase*, AnimatableItem*> anim_items;
-    std::unordered_map<model::Object*, ObjectLineItem*> object_items;
+
     qreal min_scale = 1;
     int frame_skip = 1;
     int min_gap = 32;
@@ -28,6 +27,10 @@ public:
     int layer_start = 0;
     int layer_end = 0;
     model::AnimationContainer* limit = nullptr;
+
+    std::unordered_map<model::AnimatableBase*, AnimatableItem*> anim_items;
+    std::unordered_map<model::Object*, ObjectLineItem*> object_items;
+    std::unordered_map<model::BaseProperty*, PropertyLineItem*> prop_items;
 
     int rounded_end_time()
     {
@@ -47,24 +50,44 @@ public:
         );
     }
 
+    void add_property(model::BaseProperty* prop)
+    {
+        PropertyLineItem* item = new PropertyLineItem(prop, start_time, rounded_end_time(), row_height);
+        connect(item, &PropertyLineItem::property_clicked, parent, &TimelineWidget::property_clicked);
+        add_line(item);
+        prop_items[prop] = item;
+    }
 
     void add_animatable(model::AnimatableBase* anim)
     {
         AnimatableItem* item = new AnimatableItem(anim, start_time, rounded_end_time(), row_height);
-        connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::animatable_clicked);
+        connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::property_clicked);
         add_line(item);
         anim_items[anim] = item;
     }
 
     void add_sub_object(model::Object* obj)
     {
+        bool is_main_comp = obj->is_instance<model::MainComposition>();
+
         for ( auto prop : obj->properties() )
         {
             auto flags = prop->traits().flags;
             if ( flags & model::PropertyTraits::Animated )
+            {
                 add_animatable(static_cast<model::AnimatableBase*>(prop));
+            }
             else if ( prop->traits().type == model::PropertyTraits::Object && !(flags & model::PropertyTraits::List) )
-                add_sub_object(static_cast<model::SubObjectPropertyBase*>(prop)->sub_object());
+            {
+                model::Object* subobj = static_cast<model::SubObjectPropertyBase*>(prop)->sub_object();
+                if ( subobj && !subobj->is_instance<model::AnimationContainer>() )
+                    add_sub_object(subobj);
+            }
+            else if ( !is_main_comp && flags & model::PropertyTraits::Visual && !(flags & model::PropertyTraits::List) &&
+                prop->name() != "start_time" && prop->traits().type != model::PropertyTraits::ObjectReference )
+            {
+                add_property(prop);
+            }
         }
     }
 
@@ -121,6 +144,8 @@ public:
             p.second->set_time_end(et);
         for ( const auto& p : object_items )
             p.second->set_time_end(et);
+        for ( const auto& p : prop_items )
+            p.second->set_time_end(et);
     }
 
     void paint_highligted_frame(int frame, QPainter& painter, const QBrush& color)
@@ -142,6 +167,7 @@ public:
         rows = 0;
         anim_items.clear();
         object_items.clear();
+        prop_items.clear();
     }
 
     model::AnimationContainer* anim(model::DocumentNode* node)
@@ -201,6 +227,11 @@ TimelineWidget::~TimelineWidget()
 void TimelineWidget::add_animatable(model::AnimatableBase* anim)
 {
     d->add_animatable(anim);
+}
+
+void TimelineWidget::add_property(model::BaseProperty* anim)
+{
+    d->add_property(anim);
 }
 
 void TimelineWidget::set_active(model::DocumentNode* node)
@@ -539,6 +570,8 @@ item_models::PropertyModel::Item TimelineWidget::item_at(const QPoint& viewport_
                 return static_cast<AnimatableItem*>(it)->animatable;
             case ItemTypes::ObjectLineItem:
                 return static_cast<ObjectLineItem*>(it)->object();
+            case ItemTypes::PropertyLineItem:
+                return static_cast<PropertyLineItem*>(it)->property();
         }
     }
     return {};

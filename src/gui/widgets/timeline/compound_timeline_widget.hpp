@@ -25,8 +25,8 @@ protected:
     void changeEvent ( QEvent* e ) override;
     
 private slots:
-    void select_property(const QModelIndex& index);
-    void select_animatable(model::AnimatableBase* anim);
+    void select_index(const QModelIndex& index);
+    void select_property(model::BaseProperty* anim);
     void select_object(model::Object* anim);
     void custom_context_menu(const QPoint& p);
     void add_keyframe();

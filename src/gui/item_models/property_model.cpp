@@ -82,6 +82,7 @@ public:
         objects[object] = this_node;
         QObject::connect(object, &model::Object::property_changed, model, &PropertyModel::property_changed);
         QObject::connect(object, &model::Object::destroyed, model, &PropertyModel::on_delete_object);
+        bool is_main_comp = object->is_instance<model::MainComposition>();
 
         for ( model::BaseProperty* prop : object->properties() )
         {
@@ -90,9 +91,11 @@ public:
                 if ( prop->traits().type == model::PropertyTraits::Object )
                 {
                     model::Object* subobj = prop->value().value<model::Object*>();
-                    connect_recursive(subobj, model, this_node);
+                    if ( subobj && !subobj->is_instance<model::AnimationContainer>() )
+                        connect_recursive(subobj, model, this_node);
                 }
-                else if ( prop->traits().flags & model::PropertyTraits::Animated )
+                else if ( !is_main_comp && prop->traits().flags & model::PropertyTraits::Visual &&
+                    prop->name() != "start_time" && prop->traits().type != model::PropertyTraits::ObjectReference )
                 {
                     properties[prop] = add_node(Subtree{prop, this_node})->id;
                 }
@@ -618,8 +621,12 @@ item_models::PropertyModel::Item item_models::PropertyModel::item(const QModelIn
     if ( Private::Subtree* st = d->node_from_index(index) )
     {
         Item item = st->object;
-        if ( st->prop && st->prop->traits().flags & model::PropertyTraits::Animated )
-            item.animatable = static_cast<model::AnimatableBase*>(st->prop);
+        if ( st->prop )
+        {
+            item.property = st->prop;
+            if ( st->prop->traits().flags & model::PropertyTraits::Animated )
+                item.animatable = static_cast<model::AnimatableBase*>(st->prop);
+        }
         return item;
     }
 

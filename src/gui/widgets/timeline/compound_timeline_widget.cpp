@@ -50,7 +50,7 @@ public:
         connect(ui.properties->verticalScrollBar(), &QScrollBar::rangeChanged, ui.scrollbar, &QScrollBar::setRange);
         connect(ui.scrollbar, &QScrollBar::valueChanged, parent, &CompoundTimelineWidget::on_scroll);
 
-        connect(ui.timeline, &TimelineWidget::animatable_clicked, parent, &CompoundTimelineWidget::select_animatable);
+        connect(ui.timeline, &TimelineWidget::property_clicked, parent, &CompoundTimelineWidget::select_property);
         connect(ui.timeline, &TimelineWidget::object_clicked, parent, &CompoundTimelineWidget::select_object);
 
         ui.action_add_keyframe->setIcon(
@@ -287,13 +287,13 @@ void CompoundTimelineWidget::clear_document()
     d->clear_menu_data();
 }
 
-void CompoundTimelineWidget::select_property(const QModelIndex& index)
+void CompoundTimelineWidget::select_index(const QModelIndex& index)
 {
     d->ui.timeline->select(d->property_model.item(index));
     d->ui.properties->viewport()->update();
 }
 
-void CompoundTimelineWidget::select_animatable(model::AnimatableBase* anim)
+void CompoundTimelineWidget::select_property(model::BaseProperty* anim)
 {
     d->ui.properties->setCurrentIndex(d->property_model.property_index(anim));
     d->ui.properties->viewport()->update();

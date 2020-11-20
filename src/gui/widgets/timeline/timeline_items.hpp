@@ -170,6 +170,7 @@ enum class ItemTypes
 {
     ObjectLineItem = QGraphicsItem::UserType + 1,
     AnimatableItem,
+    PropertyLineItem,
 };
 
 class LineItem : public QGraphicsObject
@@ -500,6 +501,36 @@ private:
     qreal radius;
     model::DocumentNode* node;
     model::AnimationContainer* animation;
+};
+
+
+class PropertyLineItem : public LineItem
+{
+    Q_OBJECT
+
+public:
+    PropertyLineItem(model::BaseProperty* obj, int time_start, int time_end, int height)
+        : LineItem(time_start, time_end, height), property_(obj)
+    {}
+
+    int type() const override { return int(ItemTypes::PropertyLineItem); }
+
+    model::BaseProperty* property() const
+    {
+        return property_;
+    }
+
+protected:
+    void click_selected() override
+    {
+        emit property_clicked(property_);
+    }
+
+signals:
+    void property_clicked(model::BaseProperty* object);
+
+private:
+    model::BaseProperty* property_;
 };
 
 } // namespace timeline
