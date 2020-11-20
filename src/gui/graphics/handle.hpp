@@ -37,6 +37,7 @@ public:
         Circle,
         Cross,
         Saltire,
+        None,
     };
 
     enum HandleRole
@@ -53,7 +54,7 @@ public:
         QGraphicsItem* parent,
         Direction direction,
         Shape shape,
-        int radius = 6,
+        qreal radius = 6,
         bool dont_move = false,
         const QColor& color_rest = QColor(255, 255, 255),
         const QColor& color_highlighted = QColor(255, 255, 128),
@@ -70,8 +71,8 @@ public:
         const QColor& color_border
     );
 
-    void change_shape(Shape shape, int radius=-1);
-    void set_radius(int radius);
+    void change_shape(Shape shape, qreal radius=-1);
+    void set_radius(qreal radius);
 
     QRectF boundingRect() const override;
 

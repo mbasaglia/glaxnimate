@@ -38,14 +38,14 @@ graphics::MoveHandle::MoveHandle(
     QGraphicsItem* parent,
     Direction direction,
     Shape shape,
-    int radius,
+    qreal radius,
     bool dont_move,
     const QColor& color_rest,
     const QColor& color_highlighted,
     const QColor& color_selected,
     const QColor& color_border)
 : QGraphicsObject(parent),
-    d(std::make_unique<Private>(Private{direction, shape, qreal(radius),
+    d(std::make_unique<Private>(Private{direction, shape, radius,
         dont_move, color_rest, color_highlighted, color_selected, color_border}))
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
@@ -129,6 +129,8 @@ void graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGraphicsIt
             painter->drawPolygon(p.data(), p.size());
         }
             break;
+        case None:
+            break;
     }
 
     painter->restore();
@@ -177,7 +179,7 @@ void graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-void graphics::MoveHandle::set_radius(int radius)
+void graphics::MoveHandle::set_radius(qreal radius)
 {
     if ( radius > 0 && radius != d->radius )
     {
@@ -187,7 +189,7 @@ void graphics::MoveHandle::set_radius(int radius)
     update();
 }
 
-void graphics::MoveHandle::change_shape(graphics::MoveHandle::Shape shape, int radius)
+void graphics::MoveHandle::change_shape(graphics::MoveHandle::Shape shape, qreal radius)
 {
     d->shape = shape;
     set_radius(radius);

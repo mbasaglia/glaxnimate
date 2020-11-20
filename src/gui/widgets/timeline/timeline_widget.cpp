@@ -77,11 +77,17 @@ public:
 
     void add_object(model::Object* obj)
     {
-        ObjectLineItem* item;
+        ObjectLineItem* item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height);
         if ( auto layer = obj->cast<model::Layer>() )
-            item = new LayerLineItem(layer, start_time, rounded_end_time(), row_height);
-        else
-            item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height);
+        {
+            auto anim_item = new AnimationContainerItem(layer->animation, row_height - 8, item);
+            anim_item->setPos(0, row_height/2.0);
+        }
+        else if ( auto comp = obj->cast<model::Composition>() )
+        {
+            auto anim_item = new AnimationContainerItem(comp->animation, row_height - 8, item);
+            anim_item->setPos(0, row_height/2.0);
+        }
 
         connect(item, &ObjectLineItem::object_clicked, parent, &TimelineWidget::object_clicked);
         add_line(item);

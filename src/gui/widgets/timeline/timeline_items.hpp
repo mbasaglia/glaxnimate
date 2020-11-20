@@ -396,51 +396,45 @@ public:
     std::vector<KeyframeSplitItem*> kf_split_items;
 };
 
-class LayerLineItem : public ObjectLineItem
+class AnimationContainerItem : public QGraphicsObject
 {
 public:
-    LayerLineItem(model::Layer* layer, int time_start, int time_end, int height)
-        : ObjectLineItem(layer, time_start, time_end, height)
+    AnimationContainerItem(model::SubObjectProperty<model::AnimationContainer>& prop, qreal height, QGraphicsItem* parent)
+    : QGraphicsObject(parent),
+      radius(height/2),
+      node(static_cast<model::DocumentNode*>(prop.object())),
+      animation(prop.get())
+
     {
-        update_color(layer->docnode_group_color());
-        handle_ip.set_radius(height/2.-4);
-        handle_op.set_radius(height/2.-4);
-        handle_ip.setPos(layer->animation->first_frame.get(), height / 2.);
-        handle_op.setPos(layer->animation->last_frame.get(), height / 2.);
-        connect(layer, &model::DocumentNode::docnode_group_color_changed, this, &LayerLineItem::update_color);
-        connect(&handle_ip, &graphics::MoveHandle::dragged_x, this, &LayerLineItem::drag_ip);
-        connect(&handle_op, &graphics::MoveHandle::dragged_x, this, &LayerLineItem::drag_op);
-        connect(layer->animation.get(), &model::AnimationContainer::first_frame_changed, this, &LayerLineItem::update_ip);
-        connect(layer->animation.get(), &model::AnimationContainer::last_frame_changed, this, &LayerLineItem::update_op);
-        connect(&handle_ip, &graphics::MoveHandle::drag_finished, this, &LayerLineItem::commit_ip);
-        connect(&handle_op, &graphics::MoveHandle::drag_finished, this, &LayerLineItem::commit_op);
+        update_color(node->docnode_group_color());
+        handle_ip.set_radius(radius);
+        handle_op.set_radius(radius);
+        handle_ip.setPos(animation->first_frame.get(), 0);
+        handle_op.setPos(animation->last_frame.get(), 0);
+        connect(node, &model::DocumentNode::docnode_group_color_changed, this, &AnimationContainerItem::update_color);
+        connect(&handle_ip, &graphics::MoveHandle::dragged_x, this, &AnimationContainerItem::drag_ip);
+        connect(&handle_op, &graphics::MoveHandle::dragged_x, this, &AnimationContainerItem::drag_op);
+        connect(animation, &model::AnimationContainer::first_frame_changed, this, &AnimationContainerItem::update_ip);
+        connect(animation, &model::AnimationContainer::last_frame_changed, this, &AnimationContainerItem::update_op);
+        connect(&handle_ip, &graphics::MoveHandle::drag_finished, this, &AnimationContainerItem::commit_ip);
+        connect(&handle_op, &graphics::MoveHandle::drag_finished, this, &AnimationContainerItem::commit_op);
     }
 
-    model::Layer* layer() const
+    QRectF boundingRect() const override
     {
-        return static_cast<model::Layer*>(object());
+        return QRectF(
+            QPointF(handle_ip.pos().x(), -radius),
+            QPointF(handle_op.pos().x(), radius)
+        );
     }
 
-    model::AnimationContainer* animation() const
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget *) override
     {
-        return layer()->animation.get();
-    }
-
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override
-    {
-        ObjectLineItem::paint(painter, option, widget);
-
         QPen p(stroke, 1);
         p.setCosmetic(true);
         painter->setPen(p);
         painter->setBrush(color);
-
-        painter->drawRect(QRectF(
-            handle_ip.pos().x(),
-            4,
-            handle_op.pos().x() - handle_ip.pos().x(),
-            height()-8
-        ));
+        painter->drawRect(boundingRect());
     }
 
 private:
@@ -453,54 +447,59 @@ private:
         else
             stroke = Qt::black;
 
-        handle_ip.set_colors(color, color, color, stroke);
-        handle_op.set_colors(color, color, color, stroke);
+//         handle_ip.set_colors(color, color, color, stroke);
+//         handle_op.set_colors(color, color, color, stroke);
         update();
     }
 
     void drag_ip(qreal x)
     {
         x = qRound(x);
-        if ( x >= animation()->last_frame.get() )
-            x = animation()->last_frame.get() - 1;
-        animation()->first_frame.set_undoable(x, false);
+        if ( x >= animation->last_frame.get() )
+            x = animation->last_frame.get() - 1;
+        animation->first_frame.set_undoable(x, false);
     }
 
     void drag_op(qreal x)
     {
         x = qRound(x);
-        if ( x <= animation()->first_frame.get() )
-            x = animation()->first_frame.get() + 1;
-        animation()->last_frame.set_undoable(x, false);
+        if ( x <= animation->first_frame.get() )
+            x = animation->first_frame.get() + 1;
+        animation->last_frame.set_undoable(x, false);
     }
 
     void update_ip(qreal x)
     {
-        handle_ip.setPos(x, handle_ip.pos().y());
+        handle_ip.setPos(x, 0);
+        prepareGeometryChange();
         update();
     }
 
     void update_op(qreal x)
     {
-        handle_op.setPos(x, handle_op.pos().y());
+        handle_op.setPos(x, 0);
+        prepareGeometryChange();
         update();
     }
 
     void commit_ip()
     {
-        animation()->first_frame.set_undoable(animation()->first_frame.get(), true);
+        animation->first_frame.set_undoable(animation->first_frame.get(), true);
     }
 
     void commit_op()
     {
-        animation()->last_frame.set_undoable(animation()->last_frame.get(), true);
+        animation->last_frame.set_undoable(animation->last_frame.get(), true);
     }
 
 private:
-    graphics::MoveHandle handle_ip{this, graphics::MoveHandle::Horizontal, graphics::MoveHandle::Circle, 1, true};
-    graphics::MoveHandle handle_op{this, graphics::MoveHandle::Horizontal, graphics::MoveHandle::Circle, 1, true};
+    graphics::MoveHandle handle_ip{this, graphics::MoveHandle::Horizontal, graphics::MoveHandle::None, 1, true};
+    graphics::MoveHandle handle_op{this, graphics::MoveHandle::Horizontal, graphics::MoveHandle::None, 1, true};
     QColor color;
     QColor stroke;
+    qreal radius;
+    model::DocumentNode* node;
+    model::AnimationContainer* animation;
 };
 
 } // namespace timeline
