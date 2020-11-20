@@ -1,7 +1,11 @@
 ## 0.3.2
 
+* UI:
+    * The timeline now allows editing layer frame ranges
+    * When selecting groups, its inner objects will show in the timeline
 * Bug Fixes:
     * Fixed crash caused by switching between certain themes
+    * Fixed missing canvas handles when selecting the main composition
 
 ## 0.3.1
 
