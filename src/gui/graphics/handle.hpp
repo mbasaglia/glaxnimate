@@ -63,7 +63,15 @@ public:
 
     ~MoveHandle();
 
+    void set_colors(
+        const QColor& color_rest,
+        const QColor& color_highlighted,
+        const QColor& color_selected,
+        const QColor& color_border
+    );
+
     void change_shape(Shape shape, int radius=-1);
+    void set_radius(int radius);
 
     QRectF boundingRect() const override;
 

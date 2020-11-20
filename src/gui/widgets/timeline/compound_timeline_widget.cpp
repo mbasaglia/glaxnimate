@@ -236,15 +236,18 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
 {
     d->property_model.set_object(node);
     d->ui.timeline->set_active(node);
-    auto mo = node->metaObject();
-    if ( mo->inherits(&model::Group::staticMetaObject) && !mo->inherits(&model::Layer::staticMetaObject) )
+    if ( node )
     {
-        for ( auto child : node->docnode_children() )
+        auto mo = node->metaObject();
+        if ( mo->inherits(&model::Group::staticMetaObject) && !mo->inherits(&model::Layer::staticMetaObject) )
         {
-            if ( !child->is_instance<model::Group>() )
+            for ( auto child : node->docnode_children() )
             {
-                d->ui.timeline->add_object(child);
-                d->property_model.add_object(child);
+                if ( !child->is_instance<model::Group>() )
+                {
+                    d->ui.timeline->add_object(child);
+                    d->property_model.add_object(child);
+                }
             }
         }
     }

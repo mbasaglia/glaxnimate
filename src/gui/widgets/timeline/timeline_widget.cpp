@@ -77,7 +77,12 @@ public:
 
     void add_object(model::Object* obj)
     {
-        auto item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height);
+        ObjectLineItem* item;
+        if ( auto layer = obj->cast<model::Layer>() )
+            item = new LayerLineItem(layer, start_time, rounded_end_time(), row_height);
+        else
+            item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height);
+
         connect(item, &ObjectLineItem::object_clicked, parent, &TimelineWidget::object_clicked);
         add_line(item);
         object_items[obj] = item;
@@ -514,7 +519,7 @@ item_models::PropertyModel::Item TimelineWidget::item_at(const QPoint& viewport_
             case ItemTypes::AnimatableItem:
                 return static_cast<AnimatableItem*>(it)->animatable;
             case ItemTypes::ObjectLineItem:
-                return static_cast<ObjectLineItem*>(it)->object;
+                return static_cast<ObjectLineItem*>(it)->object();
         }
     }
     return {};

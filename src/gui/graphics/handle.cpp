@@ -177,14 +177,20 @@ void graphics::MoveHandle::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-void graphics::MoveHandle::change_shape(graphics::MoveHandle::Shape shape, int radius)
+void graphics::MoveHandle::set_radius(int radius)
 {
-    d->shape = shape;
     if ( radius > 0 && radius != d->radius )
     {
         d->radius = radius;
         prepareGeometryChange();
     }
+    update();
+}
+
+void graphics::MoveHandle::change_shape(graphics::MoveHandle::Shape shape, int radius)
+{
+    d->shape = shape;
+    set_radius(radius);
     update();
 }
 
@@ -215,4 +221,12 @@ void graphics::MoveHandle::set_associated_property ( model::AnimatableBase * pro
 void graphics::MoveHandle::clear_associated_properties()
 {
     setData(AssociatedProperty, {});
+}
+
+void graphics::MoveHandle::set_colors(const QColor& color_rest, const QColor& color_highlighted, const QColor& color_selected, const QColor& color_border)
+{
+    d->color_rest = color_rest;
+    d->color_highlighted = color_highlighted;
+    d->color_selected = color_selected;
+    d->color_border = color_border;
 }
