@@ -6,6 +6,7 @@
     * The timeline now shows some non-animated properties for convenience
 * I/O:
     * Added support for gradientTransform when parsing SVG
+    * Added more warnings for features not supported by Telegram
 * Bug Fixes:
     * Fixed crash caused by switching between certain themes
     * Fixed missing canvas handles when selecting the main composition

@@ -28,6 +28,8 @@ public:
 
     void set_time(FrameTime t) override;
 
+    float duration() const;
+
 signals:
     void first_frame_changed(float);
     void last_frame_changed(float);

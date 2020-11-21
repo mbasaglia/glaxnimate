@@ -6,6 +6,7 @@
 #include "utils/gzip.hpp"
 #include "model/shapes/polystar.hpp"
 #include "model/shapes/image.hpp"
+#include "model/shapes/stroke.hpp"
 #include "model/visitor.hpp"
 
 namespace io::lottie {
@@ -19,7 +20,8 @@ private:
     enum TreeError
     {
         StarShape,
-        Image
+        Image,
+        GradientStroke,
     };
 
     void show_error(TreeError code)
@@ -36,15 +38,27 @@ private:
             case Image:
                 fmt->error(TgsFormat::tr("Images are not supported"));
                 break;
+            case GradientStroke:
+                fmt->information(TgsFormat::tr("Gradient strokes are not officially supported"));
+                break;
         }
     }
 
     void on_visit(model::DocumentNode * node) override
     {
         if ( qobject_cast<model::PolyStar*>(node) )
+        {
             show_error(StarShape);
+        }
         else if ( qobject_cast<model::Image*>(node) )
+        {
             show_error(Image);
+        }
+        else if ( auto st = qobject_cast<model::Stroke*>(node) )
+        {
+            if ( qobject_cast<model::Gradient*>(st->use.get()) )
+                show_error(GradientStroke);
+        }
     }
 
     void on_visit(model::Document * document) override
@@ -60,6 +74,10 @@ private:
         qreal fps = document->main()->fps.get();
         if ( fps != 30 && fps != 60 )
             fmt->error(TgsFormat::tr("Invalid fps: %1, should be 30 or 60").arg(fps));
+
+        auto duration = document->main()->animation->duration();
+        if ( duration > 180 )
+            fmt->error(TgsFormat::tr("Too many frames: %1, should be less than 180"));
     }
 
     TgsFormat* fmt;

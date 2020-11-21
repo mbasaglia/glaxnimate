@@ -34,3 +34,7 @@ void model::AnimationContainer::on_last_frame_changed(float x)
     emit last_frame_changed(x);
 }
 
+float model::AnimationContainer::duration() const
+{
+    return last_frame.get() - first_frame.get();
+}
