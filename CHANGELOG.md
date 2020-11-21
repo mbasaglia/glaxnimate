@@ -10,6 +10,7 @@
     * Fixed crash caused by switching between certain themes
     * Fixed missing canvas handles when selecting the main composition
     * Opacity properly displayed when loading objects
+    * Fixed some rounding errors when exporting to tgs
 
 ## 0.3.1
 

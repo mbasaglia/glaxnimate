@@ -262,9 +262,16 @@ static void valueToJson(const QCborValue &v, QByteArray &json, int indent, bool 
         if (qIsFinite(d))
         {
             if ( compact )
-                json += QByteArray::number(d, 'g', 3);
+            {
+                // prec is weird with 'g' so we emulate it
+                QString f = QByteArray::number(d, 'f', 3);
+                QString e = QByteArray::number(d, 'e', 3);
+                json += e.size() < f.size() ? e : f;
+            }
             else
+            {
                 json += QByteArray::number(d, 'g', QLocale::FloatingPointShortest);
+            }
         }
         else
         {
