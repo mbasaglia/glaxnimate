@@ -94,7 +94,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             QObject::connect(group, &model::Group::group_transform_matrix_changed,
                              item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
             QObject::connect(group, &model::Group::opacity_changed, item, &graphics::DocumentNodeGraphicsItem::set_opacity);
-
+            item->set_opacity(group->opacity.get());
 
             return item;
         },
