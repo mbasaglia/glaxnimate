@@ -2,7 +2,6 @@
 
 #include "model/property/object_list_property.hpp"
 #include "model/shapes/layer.hpp"
-#include "model/animation_container.hpp"
 
 namespace model {
 
@@ -10,9 +9,6 @@ class Composition : public DocumentNode
 {
     Q_OBJECT
 
-    GLAXNIMATE_SUBOBJECT(model::AnimationContainer, animation)
-
-public:
     GLAXNIMATE_PROPERTY_LIST(model::ShapeElement, shapes,
         &DocumentNode::docnode_child_add_end,
         &DocumentNode::docnode_child_remove_end,

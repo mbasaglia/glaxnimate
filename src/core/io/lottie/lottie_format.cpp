@@ -805,7 +805,7 @@ public:
     void load(const QJsonObject& json)
     {
         load_assets(json["assets"].toArray());
-        load_composition(json, document->main());
+        load_main_composition(json, document->main());
     }
 
 private:
@@ -815,6 +815,12 @@ private:
         animation->last_frame.set(json["op"].toInt());
     }
 
+    void load_main_composition(const QJsonObject& json, model::MainComposition* composition)
+    {
+        load_animation_container(json, composition->animation.get());
+        load_composition(json, composition);
+    }
+
     void load_composition(const QJsonObject& json, model::Composition* composition)
     {
         this->composition = composition;
@@ -822,7 +828,6 @@ private:
         layer_indices.clear();
         deferred.clear();
 
-        load_animation_container(json, composition->animation.get());
         load_basic(json, composition);
         for ( auto layer : json["layers"].toArray() )
             create_layer(layer.toObject());

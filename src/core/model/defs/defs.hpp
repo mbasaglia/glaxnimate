@@ -5,6 +5,7 @@
 #include "named_color.hpp"
 #include "bitmap.hpp"
 #include "gradient.hpp"
+#include "precomposition.hpp"
 
 
 namespace model {
@@ -24,6 +25,7 @@ class Defs : public Object
         &Defs::gradient_move_end
     )
     GLAXNIMATE_PROPERTY_LIST(model::Gradient, gradients, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(model::Precomposition, precompositions, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
 
 public:
     using Object::Object;
@@ -55,8 +57,8 @@ private:
     void on_gradient_colors_added(GradientColors* color);
     void on_gradient_colors_removed(GradientColors* color);
 
-    void on_added(Asset* def);
-    void on_removed(Asset* def);
+    void on_added(AssetBase* def);
+    void on_removed(AssetBase* def);
 };
 
 } // namespace model

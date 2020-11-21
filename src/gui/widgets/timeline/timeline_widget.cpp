@@ -106,7 +106,7 @@ public:
             auto anim_item = new AnimationContainerItem(layer->animation, row_height - 8, item);
             anim_item->setPos(0, row_height/2.0);
         }
-        else if ( auto comp = obj->cast<model::Composition>() )
+        else if ( auto comp = obj->cast<model::MainComposition>() )
         {
             auto anim_item = new AnimationContainerItem(comp->animation, row_height - 8, item);
             anim_item->setPos(0, row_height/2.0);
@@ -177,8 +177,8 @@ public:
             const QMetaObject* mo = node->metaObject();
             if ( mo->inherits(&model::Layer::staticMetaObject) )
                 return static_cast<model::Layer*>(node)->animation.get();
-            else if ( mo->inherits(&model::Composition::staticMetaObject) )
-                return static_cast<model::Composition*>(node)->animation.get();
+            else if ( mo->inherits(&model::MainComposition::staticMetaObject) )
+                return static_cast<model::MainComposition*>(node)->animation.get();
 
             node = node->docnode_parent();
         }

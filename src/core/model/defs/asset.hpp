@@ -8,14 +8,10 @@
 
 namespace model {
 
-class Asset : public ReferenceTarget
+class AssetBase
 {
-    Q_OBJECT
-
 public:
     using User = ReferencePropertyBase;
-
-    using ReferenceTarget::ReferenceTarget;
 
     const std::unordered_set<User*>& users() const;
     void add_user(User* user);
@@ -31,14 +27,34 @@ public:
      */
     virtual bool remove_if_unused(bool clean_lists) = 0;
 
-signals:
-    void users_changed();
+protected:
+    virtual void on_users_changed() {};
+    virtual model::ReferenceTarget* to_reftarget() = 0;
 
 private:
     std::unordered_set<User*> users_;
     utils::PseudoMutex detaching;
 };
 
+
+class Asset : public ReferenceTarget, public AssetBase
+{
+    Q_OBJECT
+
+public:
+    using ReferenceTarget::ReferenceTarget;
+
+signals:
+    void users_changed();
+
+protected:
+    void on_users_changed() override
+    {
+        emit users_changed();
+    }
+
+    model::ReferenceTarget* to_reftarget() override { return this; }
+};
 
 
 

@@ -50,6 +50,7 @@ model/defs/named_color.cpp
 model/defs/bitmap.cpp
 model/defs/gradient.cpp
 model/defs/asset.cpp
+model/defs/precomposition.cpp
 
 model/shapes/shape.cpp
 model/shapes/fill.cpp

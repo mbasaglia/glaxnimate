@@ -1,12 +1,16 @@
 #pragma once
 
 #include "composition.hpp"
+#include "model/animation_container.hpp"
+
 
 namespace model {
 
 class MainComposition : public Composition
 {
     GLAXNIMATE_OBJECT(MainComposition)
+
+    GLAXNIMATE_SUBOBJECT(model::AnimationContainer, animation)
 
     //                  type    name    default  notify                       validate
     GLAXNIMATE_PROPERTY(float,  fps,         60, &MainComposition::fps_changed,     &MainComposition::validate_fps)

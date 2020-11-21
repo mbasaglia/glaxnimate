@@ -1,38 +1,38 @@
 #include "asset.hpp"
 
-void model::Asset::add_user(model::Asset::User* user)
+void model::AssetBase::add_user(model::AssetBase::User* user)
 {
     if ( !detaching )
     {
         users_.insert(user);
-        emit users_changed();
+        on_users_changed();
     }
 }
 
-void model::Asset::remove_user(model::Asset::User* user)
+void model::AssetBase::remove_user(model::AssetBase::User* user)
 {
     if ( !detaching )
     {
         users_.erase(user);
-        emit users_changed();
+        on_users_changed();
     }
 }
 
-const std::unordered_set<model::Asset::User*> & model::Asset::users() const
+const std::unordered_set<model::AssetBase::User*> & model::AssetBase::users() const
 {
     return users_;
 }
 
-void model::Asset::attach()
+void model::AssetBase::attach()
 {
     if ( auto lock = detaching.get_lock() )
     {
         for ( auto user : users_ )
-            user->set_ref(this);
+            user->set_ref(to_reftarget());
     }
 }
 
-void model::Asset::detach()
+void model::AssetBase::detach()
 {
     if ( auto lock = detaching.get_lock() )
     {
