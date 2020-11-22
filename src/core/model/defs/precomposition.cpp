@@ -12,7 +12,7 @@ QIcon model::Precomposition::docnode_icon() const
 
 QString model::Precomposition::type_name_human() const
 {
-    return tr("Precomposition");
+    return tr("Composition");
 }
 
 QRectF model::Precomposition::local_bounding_rect(FrameTime) const
