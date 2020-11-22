@@ -53,3 +53,4 @@ nav:
         - '<i class="fab fa-telegram"></i> Telegram Chat': https://t.me/Glaxnimate
         - '<i class="fab fa-gitlab"></i>   Code Browser': https://gitlab.com/mattbas/glaxnimate
         - '<i class="fa fa-bug"></i>       Issues': https://gitlab.com/mattbas/glaxnimate/-/issues
+        - '<i class="fas fa-external-link-alt"></i> More Links': contributing/links.md
