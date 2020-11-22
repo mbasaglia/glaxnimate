@@ -76,7 +76,7 @@ void GlaxnimateWindow::document_open_dialog()
 
 void GlaxnimateWindow::document_treeview_clicked ( const QModelIndex& index )
 {
-    auto node = d->document_node_model.node(index);
+    auto node = d->document_node_model.node(d->comp_model.mapToSource(index));
     if ( !node )
         return;
 

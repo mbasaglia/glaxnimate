@@ -177,8 +177,9 @@ QString model::Document::get_best_name(const model::DocumentNode* node, const QS
 
     QString name = base_name;
 
-    /// \todo Also collect for precompositions
     collect_names(&d->main, base_name, names, node);
+    for ( const auto& comp : d->defs.precompositions )
+        collect_names(comp.get(), base_name, names, node);
 
     QString name_pattern = "%1 %2";
     while ( names.contains(name) )

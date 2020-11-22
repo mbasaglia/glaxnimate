@@ -109,3 +109,16 @@ model::Gradient* model::Defs::add_gradient(int index)
     push_command(new command::AddObject(&gradients, std::unique_ptr<model::Gradient>(ptr), index));
     return ptr;
 }
+
+
+void model::Defs::on_precomp_added(model::Precomposition* obj)
+{
+    obj->attach();
+    emit precomp_add_end(obj);
+}
+
+void model::Defs::on_precomp_removed(model::Precomposition* obj)
+{
+    obj->detach();
+    emit precomp_remove_end(obj);
+}

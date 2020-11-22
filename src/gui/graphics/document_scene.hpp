@@ -27,6 +27,7 @@ public:
     ~DocumentScene();
 
     void set_document(model::Document* document);
+    void set_composition(model::Composition* comp);
     void clear_document() { set_document(nullptr); }
     void set_active_tool(tools::Tool* tool);
 

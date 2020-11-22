@@ -18,8 +18,14 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <item>
      <widget class="WindowMessageWidget" name="message_widget" native="true"/>
+    </item>
+    <item>
+     <widget class="QTabBar" name="tab_bar" native="true"/>
     </item>
     <item>
      <widget class="GlaxnimateGraphicsView" name="graphics_view">
@@ -94,7 +100,7 @@
     </widget>
     <addaction name="menu_new_layer"/>
     <addaction name="action_Move_To_Composition"/>
-    <addaction name="actionNew_Pre_Composition"/>
+    <addaction name="action_new_precomp"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menu_path">
@@ -985,16 +991,13 @@
     <string>&amp;Move To Composition</string>
    </property>
   </action>
-  <action name="actionNew_Pre_Composition">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
+  <action name="action_new_precomp">
    <property name="icon">
     <iconset theme="folder-video">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
-    <string>New &amp;Pre Composition</string>
+    <string>New Com&amp;position</string>
    </property>
   </action>
   <action name="action_path_add">
@@ -1753,6 +1756,12 @@
    <header>widgets/script_console.hpp</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>QTabBar</class>
+   <extends>QWidget</extends>
+   <header location="global">QTabBar</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -2099,7 +2108,7 @@
    <slot>layer_top()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>199</x>
+     <x>249</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2115,7 +2124,7 @@
    <slot>layer_raise()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>237</x>
+     <x>287</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2131,7 +2140,7 @@
    <slot>layer_lower()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>275</x>
+     <x>325</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2147,7 +2156,7 @@
    <slot>layer_bottom()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>313</x>
+     <x>363</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">

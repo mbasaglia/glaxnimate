@@ -28,6 +28,8 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
 
     current_document_has_file = false;
     current_document = std::make_unique<model::Document>(filename);
+    comp = current_document->main();
+    comp_model.set_composition(comp);
 
     // Undo Redo
     QObject::connect(ui.action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
@@ -114,7 +116,11 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     opts.path = path;
     current_document->set_io_options(opts);
 
-    ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
+    ui.tab_bar->blockSignals(true);
+    setup_composition(current_document->main());
+    ui.tab_bar->blockSignals(false);
+
+    ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(ptr)));
     ui.play_controls->set_range(0, out_point);
     view_fit();
 }
@@ -128,6 +134,12 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     dialog_import_status->reset(options.format, options.filename);
     bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
 
+    ui.tab_bar->blockSignals(true);
+    setup_composition(current_document->main());
+    for ( const auto& comp : current_document->defs()->precompositions )
+        setup_composition(comp.get());
+    ui.tab_bar->blockSignals(false);
+
     app::settings::set<QString>("open_save", "path", options.path.absolutePath());
 
     if ( ok && !autosave_load )
@@ -135,7 +147,9 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 
     view_fit();
     if ( !current_document->main()->shapes.empty() )
-        ui.view_document_node->setCurrentIndex(document_node_model.node_index(current_document->main()->shapes[0]));
+        ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(
+            document_node_model.node_index(current_document->main()->shapes[0])
+        ));
 
     current_document->set_io_options(options);
     auto first_frame = current_document->main()->animation->first_frame.get();
@@ -209,6 +223,7 @@ bool GlaxnimateWindow::Private::close_document()
         }
     }
 
+    comp = nullptr;
     ui.stroke_style_widget->set_shape(nullptr);
     ui.fill_style_widget->set_shape(nullptr);
     document_node_model.clear_document();
@@ -218,6 +233,13 @@ bool GlaxnimateWindow::Private::close_document()
     ui.view_undo->setStack(nullptr);
     ui.document_swatch_widget->set_document(nullptr);
     ui.widget_gradients->set_document(nullptr);
+    comp_model.set_composition(nullptr);
+
+    ui.tab_bar->blockSignals(true);
+    while ( ui.tab_bar->count() )
+        ui.tab_bar->removeTab(0);
+    ui.tab_bar->blockSignals(false);
+    comp_selections.clear();
 
     return true;
 }

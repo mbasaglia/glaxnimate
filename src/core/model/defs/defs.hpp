@@ -25,7 +25,14 @@ class Defs : public Object
         &Defs::gradient_move_end
     )
     GLAXNIMATE_PROPERTY_LIST(model::Gradient, gradients, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
-    GLAXNIMATE_PROPERTY_LIST(model::Precomposition, precompositions, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
+    GLAXNIMATE_PROPERTY_LIST(model::Precomposition, precompositions,
+        &Defs::on_precomp_added,
+        &Defs::on_precomp_removed,
+        &Defs::precomp_add_begin,
+        &Defs::precomp_remove_begin,
+        &Defs::precomp_move_begin,
+        &Defs::precomp_move_end
+    )
 
 public:
     using Object::Object;
@@ -42,13 +49,19 @@ signals:
     void color_removed(int position);
     void color_changed(int position, model::NamedColor* color);
 
-
     void gradient_add_begin(int row);
     void gradient_add_end(GradientColors* node);
     void gradient_remove_begin(int row);
     void gradient_remove_end(GradientColors* node);
     void gradient_move_begin(int from, int to);
     void gradient_move_end(GradientColors* node, int from, int to);
+
+    void precomp_add_begin(int row);
+    void precomp_add_end(Precomposition* node);
+    void precomp_remove_begin(int row);
+    void precomp_remove_end(Precomposition* node);
+    void precomp_move_begin(int from, int to);
+    void precomp_move_end(Precomposition* node, int from, int to);
 
 private:
     void on_color_added(NamedColor* color, int position);
@@ -59,6 +72,9 @@ private:
 
     void on_added(AssetBase* def);
     void on_removed(AssetBase* def);
+
+    void on_precomp_added(Precomposition* obj);
+    void on_precomp_removed(Precomposition* obj);
 };
 
 } // namespace model

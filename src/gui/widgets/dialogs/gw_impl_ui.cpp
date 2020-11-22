@@ -113,6 +113,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_lottie_preview, &QAction::triggered, parent, [this]{preview_lottie("svg");});
     connect(ui.action_lottie_canvas_preview, &QAction::triggered, parent, [this]{preview_lottie("canvas");});
     connect(ui.action_svg_preview, &QAction::triggered, parent, [this]{preview_svg();});
+    connect(ui.action_new_precomp, &QAction::triggered, parent, [this]{add_composition();});
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
@@ -203,7 +204,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
 
 
     // Item views
-    ui.view_document_node->setModel(&document_node_model);
+    comp_model.setSourceModel(&document_node_model);
+    ui.view_document_node->setModel(&comp_model);
     ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnName, QHeaderView::Stretch);
     ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnColor, QHeaderView::ResizeToContents);
     ui.view_document_node->setItemDelegateForColumn(item_models::DocumentNodeModel::ColumnColor, &color_delegate);
@@ -214,7 +216,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     QObject::connect(ui.view_document_node, &QWidget::customContextMenuRequested, parent,
         [this](const QPoint& pos){
             auto index = ui.view_document_node->indexAt(pos);
-            if ( auto node = document_node_model.node(index) )
+            if ( auto node = document_node_model.node(comp_model.mapToSource(index)) )
                 NodeMenu(node, this->parent, this->parent).exec(ui.view_document_node->mapToGlobal(pos));
         }
     );
@@ -295,6 +297,13 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
 
     // Gradients
     ui.widget_gradients->set_window(parent);
+
+    // Tab bar
+    ui.tab_bar->setAutoHide(true);
+    ui.tab_bar->setDocumentMode(true);
+    ui.tab_bar->setDrawBase(false);
+    ui.tab_bar->setExpanding(false);
+    connect(ui.tab_bar, &QTabBar::currentChanged, parent, [this](int i){ switch_composition(i); });
 
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
@@ -436,12 +445,12 @@ void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemS
 {
     for ( const auto& index : deselected.indexes() )
         if ( index.column() == 0 )
-            if ( auto node = document_node_model.node(index) )
+            if ( auto node = document_node_model.node(comp_model.mapToSource(index)) )
                 scene.remove_selection(node);
 
     for ( const auto& index : selected.indexes() )
         if ( index.column() == 0 )
-            if ( auto node = document_node_model.node(index) )
+            if ( auto node = document_node_model.node(comp_model.mapToSource(index)) )
                 scene.add_selection(node);
 }
 
@@ -450,7 +459,7 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
     for ( model::DocumentNode* node : deselected )
     {
         ui.view_document_node->selectionModel()->select(
-            document_node_model.node_index(node),
+            comp_model.mapFromSource(document_node_model.node_index(node)),
             QItemSelectionModel::Deselect|QItemSelectionModel::Rows
         );
     }
@@ -458,7 +467,7 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
     for ( model::DocumentNode* node : selected )
     {
         ui.view_document_node->selectionModel()->select(
-            document_node_model.node_index(node),
+            comp_model.mapFromSource(document_node_model.node_index(node)),
             QItemSelectionModel::Select|QItemSelectionModel::Rows
         );
     }
@@ -466,7 +475,7 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
     if ( !selected.empty() )
     {
         ui.view_document_node->selectionModel()->setCurrentIndex(
-            document_node_model.node_index(selected.back()),
+            comp_model.mapFromSource(document_node_model.node_index(selected.back())),
             QItemSelectionModel::NoUpdate
         );
     }
@@ -567,7 +576,9 @@ void GlaxnimateWindow::Private::trace_dialog(model::ReferenceTarget* object)
     TraceDialog dialog(bmp, parent);
     dialog.exec();
     if ( auto created = dialog.created() )
-        ui.view_document_node->setCurrentIndex(document_node_model.node_index(created));
+        ui.view_document_node->setCurrentIndex(
+            comp_model.mapFromSource(document_node_model.node_index(created))
+        );
 }
 
 

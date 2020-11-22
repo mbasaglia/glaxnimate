@@ -17,6 +17,7 @@
 #include "graphics/document_scene.hpp"
 #include "item_models/document_node_model.hpp"
 #include "item_models/property_model.hpp"
+#include "item_models/comp_filter_model.hpp"
 
 #include "style/dock_widget_style.hpp"
 #include "style/property_delegate.hpp"
@@ -40,13 +41,22 @@ class Tool;
 class GlaxnimateWindow::Private
 {
 public:
+    struct CompState
+    {
+        std::vector<model::DocumentNode*> selection;
+        model::DocumentNode* current;
+    };
+
     Ui::GlaxnimateWindow ui;
 
     std::unique_ptr<model::Document> current_document;
 
-    item_models::DocumentNodeModel document_node_model;
     item_models::PropertyModel property_model;
+    item_models::DocumentNodeModel document_node_model;
+    item_models::CompFilterModel comp_model{&document_node_model};
     graphics::DocumentScene scene;
+    model::Composition* comp = nullptr;
+
 
     GlaxnimateWindow* parent = nullptr;
 
@@ -61,7 +71,9 @@ public:
     std::map<QString, std::vector<QWidget*>> tool_widgets;
     std::map<QString, std::vector<QAction*>> tool_actions;
 
-    // "set and forget" kida variables
+    std::vector<CompState> comp_selections;
+
+    // "set and forget" kinda variables
     int autosave_timer = 0;
     int autosave_timer_mins = 0;
     bool autosave_load = false;
@@ -142,6 +154,10 @@ public:
     void move_to();
     void cleanup_document();
     void to_path();
+    void switch_composition(int index);
+    void setup_composition(model::Composition* comp);
+    void add_composition();
+    void update_comp_color(int index, model::Composition* comp);
 
     void layer_new_layer();
     void layer_new_fill();

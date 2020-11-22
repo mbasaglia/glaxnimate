@@ -9,6 +9,7 @@
 #include "command/undo_macro_guard.hpp"
 
 #include "model/shapes/shape.hpp"
+#include "model/defs/defs.hpp"
 
 
 void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
@@ -86,7 +87,7 @@ int item_models::DocumentNodeModel::rowCount ( const QModelIndex& parent ) const
         return 0;
 
     if ( !parent.isValid() )
-        return 1; // TODO add precomps
+        return 1 + document->defs()->precompositions.size();
 
     return node(parent)->docnode_child_count();
 }
@@ -103,8 +104,10 @@ QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const Q
 
     if ( !parent.isValid() )
     {
-        // TODO add precomps
-        return createIndex(row, column, document->main());
+        int i = row - 1;
+        if ( i >= 0 && i < document->defs()->precompositions.size() )
+            return createIndex(row, column, document->defs()->precompositions[i]);
+        return createIndex(0, column, document->main());
     }
 
     auto n = node(parent);
@@ -203,17 +206,47 @@ bool item_models::DocumentNodeModel::setData(const QModelIndex& index, const QVa
             document->undo_stack().push(new command::SetPropertyValue(&n->name, n->name.get(), value));
             return true;
     }
-    return false;
 
+    return false;
 }
 
 
 void item_models::DocumentNodeModel::set_document ( model::Document* doc )
 {
     beginResetModel();
+
+    if ( document )
+    {
+        disconnect(document->defs(), nullptr, this, nullptr);
+    }
+
     document = doc;
+
     if ( doc )
+    {
         connect_node(doc->main());
+        for ( const auto& comp : doc->defs()->precompositions )
+            connect_node(comp.get());
+
+        connect(doc->defs(), &model::Defs::precomp_add_begin, this, [this](int row){
+            beginInsertRows({}, row+1, row+1);
+        });
+        connect(doc->defs(), &model::Defs::precomp_add_end, this, [this](){
+            endInsertRows();
+        });
+        connect(doc->defs(), &model::Defs::precomp_remove_begin, this, [this](int row){
+            beginRemoveRows({}, row+1, row+1);
+        });
+        connect(doc->defs(), &model::Defs::precomp_remove_end, this, [this](){
+            endRemoveRows();
+        });
+        connect(doc->defs(), &model::Defs::precomp_move_begin, this, [this](int from, int to){
+            beginMoveRows({}, from+1, from+1, {}, to+1);
+        });
+        connect(doc->defs(), &model::Defs::precomp_move_end, this, [this](){
+            endMoveRows();
+        });
+    }
     endResetModel();
 }
 
@@ -226,8 +259,6 @@ model::DocumentNode * item_models::DocumentNodeModel::node ( const QModelIndex& 
 {
     return (model::DocumentNode*)index.internalPointer();
 }
-
-
 
 QModelIndex item_models::DocumentNodeModel::parent ( const QModelIndex& index ) const
 {
@@ -247,8 +278,16 @@ QModelIndex item_models::DocumentNodeModel::node_index ( model::DocumentNode* no
 
     if ( !parent )
     {
-        // TODO precomps
-        return createIndex(0, 0, node);
+        if ( !document )
+            return {};
+
+        if ( node == document->main() )
+            return createIndex(0, 0, node);
+
+        return createIndex(
+            document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(node))+1,
+            0, node
+        );
     }
 
     int rows = parent->docnode_child_count();
@@ -354,4 +393,3 @@ bool item_models::DocumentNodeModel::dropMimeData(const QMimeData* data, Qt::Dro
     }
     return true;
 }
-

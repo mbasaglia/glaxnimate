@@ -23,7 +23,7 @@
 
 model::Composition* GlaxnimateWindow::Private::current_composition()
 {
-    return current_document->main();
+    return comp;
 }
 
 model::ShapeElement* GlaxnimateWindow::Private::current_shape()
@@ -59,14 +59,14 @@ model::ShapeListProperty* GlaxnimateWindow::Private::current_shape_container()
 
 model::DocumentNode* GlaxnimateWindow::Private::current_document_node()
 {
-    if ( auto dn = document_node_model.node(ui.view_document_node->currentIndex()) )
+    if ( auto dn = document_node_model.node(comp_model.mapToSource(ui.view_document_node->currentIndex())) )
         return dn;
     return current_document->main();
 }
 
 void GlaxnimateWindow::Private::set_current_document_node(model::DocumentNode* node)
 {
-    ui.view_document_node->setCurrentIndex(document_node_model.node_index(node));
+    ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(node)));
 }
 
 void GlaxnimateWindow::Private::layer_new_layer()
@@ -113,7 +113,7 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::ShapeEleme
     int position = cont->index_of(current_shape());
     current_document->push_command(new command::AddShape(cont, std::move(layer), position));
 
-    ui.view_document_node->setCurrentIndex(document_node_model.node_index(ptr));
+    ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(ptr)));
 }
 
 void GlaxnimateWindow::Private::layer_delete()
@@ -258,7 +258,7 @@ void GlaxnimateWindow::Private::paste()
     QItemSelection item_select;
     for ( auto node : select )
     {
-        item_select.push_back(QItemSelectionRange(document_node_model.node_index(node)));
+        item_select.push_back(QItemSelectionRange(comp_model.mapFromSource(document_node_model.node_index(node))));
     }
     ui.view_document_node->selectionModel()->select(item_select, QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Rows);
 }
@@ -379,7 +379,7 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
 {
     model::Stroke* stroke = nullptr;
     model::Fill* fill = nullptr;
-    if ( auto node = document_node_model.node(index) )
+    if ( auto node = document_node_model.node(comp_model.mapToSource(index)) )
     {
         property_model.set_object(node);
         ui.timeline_widget->set_active(node);
@@ -492,4 +492,59 @@ void GlaxnimateWindow::Private::to_path()
             new command::RemoveObject<model::ShapeElement>(shape, shape->owner())
         );
     }
+}
+
+void GlaxnimateWindow::Private::switch_composition(int i)
+{
+    int old_i = current_document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(comp)) + 1;
+    comp_selections[old_i].selection = scene.selection();
+    if ( ui.view_document_node->currentIndex().isValid() )
+        comp_selections[old_i].current = document_node_model.node(comp_model.mapToSource(ui.view_document_node->currentIndex()));
+    else
+        comp_selections[old_i].current = comp;
+
+    int precomp_index = i - 1;
+    if ( precomp_index >= 0 && precomp_index < current_document->defs()->precompositions.size() )
+        comp = current_document->defs()->precompositions[precomp_index];
+    else
+        comp = current_document->main();
+
+
+    comp_model.set_composition(comp);
+    scene.set_composition(comp);
+    scene.user_select(comp_selections[i].selection, graphics::DocumentScene::Replace);
+    auto current = comp_selections[i].current;
+    ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(current)));
+}
+
+void GlaxnimateWindow::Private::setup_composition(model::Composition* comp)
+{
+    int index = ui.tab_bar->addTab(comp->docnode_icon(), comp->object_name());
+    comp_selections.push_back({{}, comp});
+    update_comp_color(index, comp);
+    connect(comp, &model::ReferenceTarget::name_changed, ui.tab_bar, [this, index, comp](){
+        ui.tab_bar->setTabText(index, comp->object_name());
+    });
+    connect(comp, &model::DocumentNode::docnode_group_color_changed, ui.tab_bar, [this, index, comp](){
+        update_comp_color(index, comp);
+    });
+}
+
+void GlaxnimateWindow::Private::add_composition()
+{
+    std::unique_ptr<model::Precomposition> comp = std::make_unique<model::Precomposition>(current_document.get());
+    current_document->set_best_name(comp.get());
+    setup_composition(comp.get());
+    current_document->push_command(new command::AddObject(&current_document->defs()->precompositions, std::move(comp)));
+    ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
+}
+
+void GlaxnimateWindow::Private::update_comp_color(int index, model::Composition* comp)
+{
+    QColor c = comp->group_color.get();
+    if ( c.alpha() == 0 )
+        c = parent->palette().text().color();
+    else
+        c.setAlpha(255);
+    ui.tab_bar->setTabTextColor(index, c);
 }

@@ -88,6 +88,7 @@ public:
     std::vector<model::DocumentNode*> selection;
     tools::Tool* tool = nullptr;
     QBrush back;
+    model::Composition* comp = nullptr;
 };
 
 graphics::DocumentScene::DocumentScene()
@@ -104,19 +105,25 @@ graphics::DocumentScene::~DocumentScene()
 
 void graphics::DocumentScene::set_document ( model::Document* document )
 {
-    if ( d->document )
+    d->document = document;
+    set_composition(document ? document->main() : nullptr);
+}
+
+void graphics::DocumentScene::set_composition(model::Composition* comp)
+{
+    if ( d->comp )
     {
-        disconnect_node(d->document->main());
+        disconnect_node(d->comp);
     }
 
     clear_selection();
     clear();
 
-    d->document = document;
+    d->comp = comp;
 
-    if ( d->document )
+    if ( d->comp )
     {
-        connect_node(d->document->main());
+        connect_node(d->comp);
     }
 }
 
