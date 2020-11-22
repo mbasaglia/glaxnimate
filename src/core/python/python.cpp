@@ -4,6 +4,7 @@
 #include "model/shapes/shapes.hpp"
 #include "model/defs/defs.hpp"
 #include "model/defs/named_color.hpp"
+#include "model/defs/precomposition.hpp"
 #include "model/visitor.hpp"
 
 #include "command/animation_commands.hpp"
@@ -265,6 +266,7 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::GradientColors, model::Asset>(defs);
     register_from_meta<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::Type>{});
     register_from_meta<model::Bitmap, model::Asset>(defs);
+    register_from_meta<model::Precomposition, model::Composition>(defs);
     register_from_meta<model::Defs, model::Object>(defs);
 
     py::module shapes = model.def_submodule("shapes", "");
@@ -286,6 +288,7 @@ void register_py_module(py::module& glaxnimate_module)
         )
     ;
     register_from_meta<model::Layer, model::Group>(shapes);
+    register_from_meta<model::PreCompLayer, model::ShapeElement>(shapes);
 
     register_from_meta<model::Fill, model::Styler>(shapes, enums<model::Fill::Rule>{});
     register_from_meta<model::Stroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});

@@ -63,6 +63,7 @@ model/shapes/polystar.cpp
 model/shapes/styler.cpp
 model/shapes/layer.cpp
 model/shapes/image.cpp
+model/shapes/precomp_layer.cpp
 
 
 plugin/plugin.cpp

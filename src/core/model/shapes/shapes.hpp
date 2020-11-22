@@ -2,6 +2,7 @@
 
 #include "group.hpp"
 #include "layer.hpp"
+#include "precomp_layer.hpp"
 
 #include "rect.hpp"
 #include "ellipse.hpp"

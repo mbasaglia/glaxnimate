@@ -1,5 +1,7 @@
 ## 0.3.2
 
+* Editing:
+    * Added support for precompositions
 * UI:
     * The timeline now allows editing layer frame ranges
     * When selecting groups, its inner objects will show in the timeline
