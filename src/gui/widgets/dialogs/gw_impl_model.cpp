@@ -190,6 +190,23 @@ std::vector<model::DocumentNode*> GlaxnimateWindow::Private::copy()
     return selection;
 }
 
+template<class T>
+static void paste_assets(model::ObjectListProperty<T> (model::Defs::* prop), model::Document* source, model::Document* current_document)
+{
+    for ( auto& item : (source->defs()->*prop).raw() )
+    {
+        if ( !current_document->defs()->find_by_uuid(item->uuid.get()) )
+        {
+            item->transfer(current_document);
+            current_document->push_command(new command::AddObject(
+                &(current_document->defs()->*prop),
+                std::move(item),
+                (current_document->defs()->*prop).size()
+            ));
+        }
+    }
+}
+
 void GlaxnimateWindow::Private::paste()
 {
     const QMimeData* data = QGuiApplication::clipboard()->mimeData();
@@ -209,35 +226,12 @@ void GlaxnimateWindow::Private::paste()
         return;
     }
 
-    /// \todo precompositions
-
     command::UndoMacroGuard macro(tr("Paste"), current_document.get());
-
-    for ( auto& color : raw_pasted.document->defs()->colors.raw() )
-    {
-        if ( !current_document->defs()->find_by_uuid(color->uuid.get()) )
-        {
-            color->transfer(current_document.get());
-            current_document->push_command(new command::AddObject(
-                &current_document->defs()->colors,
-                std::move(color),
-                current_document->defs()->colors.size()
-            ));
-        }
-    }
-
-    for ( auto& image : raw_pasted.document->defs()->images.raw() )
-    {
-        if ( !current_document->defs()->find_by_uuid(image->uuid.get()) )
-        {
-            image->transfer(current_document.get());
-            current_document->push_command(new command::AddObject(
-                &current_document->defs()->images,
-                std::move(image),
-                current_document->defs()->images.size()
-            ));
-        }
-    }
+    paste_assets(&model::Defs::colors, raw_pasted.document.get(), current_document.get());
+    paste_assets(&model::Defs::images, raw_pasted.document.get(), current_document.get());
+    paste_assets(&model::Defs::gradient_colors, raw_pasted.document.get(), current_document.get());
+    paste_assets(&model::Defs::gradients, raw_pasted.document.get(), current_document.get());
+    paste_assets(&model::Defs::precompositions, raw_pasted.document.get(), current_document.get());
 
     model::ShapeListProperty* shape_cont = current_shape_container();
     std::vector<model::DocumentNode*> select;

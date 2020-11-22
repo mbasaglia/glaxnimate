@@ -12,6 +12,7 @@
     * Fixed missing canvas handles when selecting the main composition
     * Opacity properly displayed when loading objects
     * Fixed some rounding errors when exporting to tgs
+    * Fixed copy/pasting gradients
 
 ## 0.3.1
 
