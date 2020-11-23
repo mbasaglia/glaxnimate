@@ -535,7 +535,7 @@ void TimelineWidget::mouseReleaseEvent(QMouseEvent* event)
 void TimelineWidget::leaveEvent(QEvent* event)
 {
     QGraphicsView::leaveEvent(event);
-    d->mouse_frame = -1;
+//     d->mouse_frame = -1;
 }
 
 int TimelineWidget::header_height() const
@@ -652,4 +652,12 @@ void TimelineWidget::update_layer_start(model::FrameTime start)
 {
     d->layer_start = start;
     viewport()->update();
+}
+
+qreal TimelineWidget::highlighted_time() const
+{
+    if ( d->mouse_frame == -1 && d->document )
+        return d->document->current_time();
+
+    return d->mouse_frame;
 }

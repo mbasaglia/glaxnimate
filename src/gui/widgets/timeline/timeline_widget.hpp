@@ -26,6 +26,8 @@ public:
     int row_height() const;
     void set_row_height(int w);
     int header_height() const;
+
+    qreal highlighted_time() const;
     
     void select(const item_models::PropertyModel::Item& item);
     

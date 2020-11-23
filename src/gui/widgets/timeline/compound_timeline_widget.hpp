@@ -34,6 +34,8 @@ private slots:
     void on_scroll(int amount);
     void keyframe_action_enter();
     void keyframe_action_exit();
+    void copy_keyframe();
+    void paste_keyframe();
     
 private:
     class Private;
