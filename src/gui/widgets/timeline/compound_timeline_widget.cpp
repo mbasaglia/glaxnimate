@@ -3,6 +3,8 @@
 
 #include <QMenu>
 #include <QScrollBar>
+#include <QClipboard>
+#include <QMimeData>
 
 #include "command/animation_commands.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -59,6 +61,11 @@ public:
         connect(ui.action_add_keyframe, &QAction::triggered, parent, &CompoundTimelineWidget::add_keyframe);
         action_title = menu_property.addSeparator();
         menu_property.addAction(ui.action_add_keyframe);
+
+        menu_property.addAction(&action_kf_paste);
+        action_kf_paste.setIcon(QIcon::fromTheme("edit-paste"));
+        connect(&action_kf_paste, &QAction::triggered, parent, &CompoundTimelineWidget::paste_keyframe);
+
         connect(parent, &QWidget::customContextMenuRequested, parent, &CompoundTimelineWidget::custom_context_menu);
 
         setup_menu(parent);
@@ -94,6 +101,10 @@ public:
         menu_keyframe.addAction(&action_kf_remove);
         action_kf_remove.setIcon(QIcon::fromTheme("edit-delete-remove"));
         connect(&action_kf_remove, &QAction::triggered, parent, &CompoundTimelineWidget::remove_keyframe);
+
+        menu_keyframe.addAction(&action_kf_copy);
+        action_kf_copy.setIcon(QIcon::fromTheme("edit-copy"));
+        connect(&action_kf_copy, &QAction::triggered, parent, &CompoundTimelineWidget::copy_keyframe);
 
         action_enter = menu_keyframe.addSeparator();
         for ( QAction* ac : enter.actions() )
@@ -132,6 +143,9 @@ public:
         action_exit_custom.setText(action_enter_custom.text());
 
         action_kf_remove.setText(tr("Remove Keyframe"));
+
+        action_kf_copy.setText(tr("Copy Keyframe"));
+        action_kf_paste.setText(tr("Paste Keyframe"));
     }
 
     void retranslateUi(CompoundTimelineWidget* parent)
@@ -202,6 +216,8 @@ public:
     QAction action_exit_linear;
     QAction action_exit_ease;
     QAction action_exit_custom;
+    QAction action_kf_copy;
+    QAction action_kf_paste;
     QMenu menu_keyframe;
     QActionGroup enter{&menu_keyframe};
     QActionGroup exit{&menu_keyframe};
@@ -379,6 +395,21 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
     else if ( d->menu_anim )
     {
         d->action_title->setText(d->menu_anim->name());
+
+        const QMimeData* data = QGuiApplication::clipboard()->mimeData();
+        if ( data->hasFormat("application/x.glaxnimate-keyframe") )
+        {
+            QByteArray encoded = data->data("application/x.glaxnimate-keyframe");
+            QDataStream stream(&encoded, QIODevice::ReadOnly);
+            model::PropertyTraits::Type type = model::PropertyTraits::Unknown;
+            stream >> type;
+            d->action_kf_paste.setEnabled(type == d->menu_anim->traits().type);
+        }
+        else
+        {
+            d->action_kf_paste.setEnabled(true);
+        }
+
         d->menu_property.exec(glob);
     }
     else if ( auto dn = qobject_cast<model::DocumentNode*>(item.object) )
@@ -393,7 +424,7 @@ void CompoundTimelineWidget::add_keyframe()
         return;
 
     d->menu_anim->object()->push_command(
-        new command::SetKeyframe(d->menu_anim, d->menu_anim->time(), d->menu_anim->value(), true)
+        new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), d->menu_anim->value(), true)
     );
 }
 
@@ -438,3 +469,42 @@ void CompoundTimelineWidget::set_controller(GlaxnimateWindow* window)
     d->window = window;
 }
 
+void CompoundTimelineWidget::copy_keyframe()
+{
+    if ( !d->menu_kf_exit || !d->menu_anim )
+        return;
+
+    QMimeData* data = new QMimeData;
+    QByteArray encoded;
+    QDataStream stream(&encoded, QIODevice::WriteOnly);
+    stream << d->menu_anim->traits().type;
+    stream << d->menu_kf_exit->value();
+    /// \todo tangents for position keyframes
+    data->setData("application/x.glaxnimate-keyframe", encoded);
+    QGuiApplication::clipboard()->setMimeData(data);
+}
+
+void CompoundTimelineWidget::paste_keyframe()
+{
+    if ( !d->menu_anim )
+        return;
+
+    const QMimeData* data = QGuiApplication::clipboard()->mimeData();
+    if ( !data->hasFormat("application/x.glaxnimate-keyframe") )
+        return;
+
+    QByteArray encoded = data->data("application/x.glaxnimate-keyframe");
+    QDataStream stream(&encoded, QIODevice::ReadOnly);
+    model::PropertyTraits::Type type = model::PropertyTraits::Unknown;
+    stream >> type;
+    if ( type != d->menu_anim->traits().type )
+        return;
+
+    QVariant value;
+    stream >> value;
+    /// \todo tangents for position keyframes
+
+    d->menu_anim->object()->push_command(
+        new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), value, true)
+    );
+}
