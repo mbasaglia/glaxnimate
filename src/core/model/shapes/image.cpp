@@ -62,6 +62,7 @@ QTransform model::Image::local_transform_matrix(model::FrameTime t) const
 
 void model::Image::on_transform_matrix_changed()
 {
+    emit bounding_rect_changed();
     emit local_transform_matrix_changed(transform->transform_matrix(time()));
     emit transform_matrix_changed(transform_matrix(time()));
 }

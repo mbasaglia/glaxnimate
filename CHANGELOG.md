@@ -16,6 +16,7 @@
     * Opacity properly displayed when loading objects
     * Fixed some rounding errors when exporting to tgs
     * Fixed copy/pasting gradients
+    * Fixed layer bounding boxes not being updated in some cases
 
 ## 0.3.1
 

@@ -6,6 +6,14 @@
 
 GLAXNIMATE_OBJECT_IMPL(model::Group)
 
+
+model::Group::Group(Document* document)
+    : ShapeElement(document)
+{
+    connect(transform.get(), &Object::property_changed,
+            this, &Group::on_transform_matrix_changed);
+}
+
 void model::Group::on_paint(QPainter* painter, model::FrameTime time, model::DocumentNode::PaintMode) const
 {
     painter->setOpacity(
@@ -15,6 +23,7 @@ void model::Group::on_paint(QPainter* painter, model::FrameTime time, model::Doc
 
 void model::Group::on_transform_matrix_changed()
 {
+    emit bounding_rect_changed();
     emit local_transform_matrix_changed(local_transform_matrix(time()));
     propagate_transform_matrix_changed(transform_matrix(time()), group_transform_matrix(time()));
 }

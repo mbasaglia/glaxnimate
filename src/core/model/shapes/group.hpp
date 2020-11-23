@@ -24,12 +24,7 @@ public:
     GLAXNIMATE_ANIMATABLE(float, opacity, 1, &Group::opacity_changed, 0, 1)
 
 public:
-    Group(Document* document)
-        : ShapeElement(document)
-    {
-        connect(transform.get(), &Object::property_changed,
-                this, &Group::on_transform_matrix_changed);
-    }
+    Group(Document* document);
 
     int docnode_child_count() const override { return shapes.size(); }
     DocumentNode* docnode_child(int index) const override { return shapes[index]; }
