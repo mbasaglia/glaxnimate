@@ -161,11 +161,14 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"mn", "uuid", {}, false},
     }},
     {"Composition", {
-        FieldInfo{"op", Custom},
-        FieldInfo{"ip", Custom},
         FieldInfo("layers", Custom),
     }},
+    {"Precomposition", {
+        FieldInfo("id", Custom)
+    }},
     {"MainComposition", {
+        FieldInfo{"op", Custom},
+        FieldInfo{"ip", Custom},
         FieldInfo("v", Custom),
         FieldInfo{"fr", "fps"},
         FieldInfo{"w", "width"},
@@ -290,6 +293,16 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"a", Custom}, /// \todo
         FieldInfo{"g", Custom},
     }},
+    {"PreCompLayer", {
+        FieldInfo{"refId", Custom},
+        FieldInfo{"w", Custom},
+        FieldInfo{"h", Custom},
+        FieldInfo{"ks", Custom},
+        FieldInfo{"ip", Custom},
+        FieldInfo{"op", Custom},
+        FieldInfo{"ind", Custom},
+        FieldInfo{"tm"},
+    }},
 };
 const QMap<QString, QString> shape_types = {
     {"Rect", "rc"},
@@ -337,7 +350,16 @@ public:
         json["op"_l] = animation->last_frame.get();
     }
 
-    QCborMap convert_main(MainComposition* animation)
+    void convert_composition(model::Composition* composition, QCborMap& json)
+    {
+        QCborArray layers;
+        for ( const auto& layer : composition->shapes )
+            convert_layer(layer_type(layer.get()), layer.get(), layers);
+
+        json["layers"_l] = layers;
+    }
+
+    QCborMap convert_main(model::MainComposition* animation)
     {
         layer_indices.clear();
         QCborMap json;
@@ -345,16 +367,11 @@ public:
         convert_animation_container(animation->animation.get(), json);
         convert_object_basic(animation, json);
         json["assets"_l] = convert_assets();
-
-        QCborArray layers;
-        for ( const auto& layer : animation->shapes )
-            convert_layer(layer_type(layer.get()), layer.get(), layers);
-
-        json["layers"_l] = layers;
+        convert_composition(animation, json);
         return json;
     }
 
-    int layer_index(Layer* layer)
+    int layer_index(model::DocumentNode* layer)
     {
         if ( !layer )
             return -1;
@@ -382,14 +399,17 @@ public:
         return json;
     }
 
-    enum class LayerType { Shape, Layer, Image };
+    enum class LayerType { Shape, Layer, Image, PreComp };
 
     LayerType layer_type(model::ShapeElement* shape)
     {
-        if ( qobject_cast<model::Layer*>(shape) )
+        auto meta = shape->metaObject();
+        if ( meta->inherits(&model::Layer::staticMetaObject) )
             return LayerType::Layer;
-        if ( qobject_cast<model::Image*>(shape) )
+        if ( meta->inherits(&model::Image::staticMetaObject) )
             return LayerType::Image;
+        if ( meta->inherits(&model::PreCompLayer::staticMetaObject) )
+            return LayerType::PreComp;
         return LayerType::Shape;
     }
 
@@ -402,6 +422,9 @@ public:
                 return;
             case LayerType::Image:
                 output.push_front(convert_image_layer(static_cast<model::Image*>(shape)));
+                return;
+            case LayerType::PreComp:
+                output.push_front(convert_precomp_layer(static_cast<model::PreCompLayer*>(shape)));
                 return;
             case LayerType::Layer:
                 break;
@@ -418,7 +441,7 @@ public:
 
         QCborMap json;
         json["ddd"_l] = 0;
-        json["ty"_l] = layer->shapes.empty() ? 3 : 4;
+        json["ty"_l] = 3;
         int index = layer_index(layer);
         json["ind"_l] = index;
 
@@ -436,16 +459,21 @@ public:
         {
             std::vector<LayerType> children_types;
             children_types.reserve(layer->shapes.size());
+            bool all_shapes = true;
             for ( const auto& shape : layer->shapes )
-                children_types.push_back(layer_type(shape.get()));
-
-            if ( std::find(children_types.begin(), children_types.end(), LayerType::Shape) != children_types.end() )
             {
+                children_types.push_back(layer_type(shape.get()));
+                if ( children_types.back() != LayerType::Shape )
+                    all_shapes = false;
+            }
+
+            if ( all_shapes )
+            {
+                json["ty"_l] = 4;
                 json["shapes"_l] = convert_shapes(layer->shapes);
             }
             else
             {
-                json["ty"_l] = 3;
                 for ( int i = 0; i < layer->shapes.size(); i++ )
                     convert_layer(children_types[i], layer->shapes[i], output, index);
             }
@@ -730,8 +758,10 @@ public:
         QCborArray jshapes;
         for ( const auto& shape : shapes )
         {
-            if ( qobject_cast<model::Image*>(shape.get()) )
+            if ( shape->is_instance<model::Image>() )
                 format->warning(io::lottie::LottieFormat::tr("Images cannot be grouped with other shapes"));
+            else if ( shape->is_instance<model::PreCompLayer>() )
+                format->warning(io::lottie::LottieFormat::tr("Composition layers cannot be grouped with other shapes"));
             else
                 jshapes.push_front(convert_shape(shape.get()));
         }
@@ -741,8 +771,14 @@ public:
     QCborArray convert_assets()
     {
         QCborArray assets;
+
         for ( const auto& bmp : document->defs()->images )
             assets.push_back(convert_bitmat(bmp.get()));
+
+
+        for ( const auto& comp : document->defs()->precompositions )
+            assets.push_back(convert_precomp(comp.get()));
+
         return assets;
     }
 
@@ -782,6 +818,33 @@ public:
         json["ks"_l] = transform;
         if ( image->image.get() )
             json["refId"_l] = image->image->uuid.get().toString();
+        return json;
+    }
+
+    QCborMap convert_precomp(model::Precomposition* comp)
+    {
+        QCborMap out;
+        convert_object_basic(comp, out);
+        out["id"_l] = comp->uuid.get().toString();
+        convert_composition(comp, out);
+        return out;
+    }
+
+    QCborMap convert_precomp_layer(model::PreCompLayer* layer)
+    {
+        QCborMap json;
+        json["ddd"_l] = 0;
+        json["ty"_l] = 0;
+        json["ind"_l] = layer_index(layer);
+        convert_animation_container(layer->animation.get(), json);
+        json["st"_l] = 0;
+        QCborMap transform;
+        convert_transform(layer->transform.get(), &layer->opacity, transform);
+        json["ks"_l] = transform;
+        if ( layer->composition.get() )
+            json["refId"_l] = layer->composition->uuid.get().toString();
+        json["w"_l] = layer->size.get().width();
+        json["h"_l] = layer->size.get().height();
         return json;
     }
 

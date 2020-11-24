@@ -50,6 +50,10 @@ model::ReferenceTarget* model::Defs::find_by_uuid ( const QUuid& n ) const
         if ( c->uuid.get() == n )
             return c.get();
 
+    for ( const auto& c : precompositions )
+        if ( c->uuid.get() == n )
+            return c.get();
+
     return nullptr;
 }
 
