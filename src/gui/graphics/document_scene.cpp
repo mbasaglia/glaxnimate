@@ -70,7 +70,7 @@ public:
 
     model::Composition* current_composition()
     {
-        return document->main();
+        return comp;
     }
 
     DocumentNodeGraphicsItem* item_from_node(model::DocumentNode* node)

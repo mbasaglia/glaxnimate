@@ -126,6 +126,17 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             return v;
         }
     );
+    register_builder<model::Precomposition>(
+        [](model::Precomposition* comp){
+            auto item = GraphicsItemFactory::make_graphics_item_default(comp);
+            item->set_selection_mode(MainCompositionItem::None);
+            return item;
+        },
+        [](model::Precomposition* comp){
+            auto v = std::make_unique<GraphicsEditor>(comp);
+            return v;
+        }
+    );
     register_builder<model::PreCompLayer>(
         [](model::PreCompLayer* shape){
             auto item = new DocumentNodeGraphicsItem(shape);
