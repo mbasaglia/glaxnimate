@@ -129,7 +129,8 @@ See the [Documentation](https://glaxnimate.mattbas.org/manual/) page.
     project_url=api.project_url,
     artifacts_url=api.project_url+"/-/jobs/artifacts/" + download_tag + "/raw",
     install_notes_url="https://glaxnimate.mattbas.org/download/",
-    bintray_url="https://dl.bintray.com/mattbas/Glaxnimate/" + download_tag
+    extra_artifacts="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/%s" % download_tag,
+    extra_artifactsPost="?inline=false"
 )
 
 

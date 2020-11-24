@@ -25,8 +25,8 @@ jobs:
         after_success:
             - mv Glaxnimate-*.dmg glaxnimate.dmg
             - shasum -a 1 glaxnimate.dmg >checksum.txt
-            - ../deploy/bintray_upload.sh Dev glaxnimate.dmg "$TRAVIS_BRANCH/MacOs/glaxnimate.dmg"
-            - ../deploy/bintray_upload.sh Dev checksum.txt "$TRAVIS_BRANCH/MacOs/checksum.txt"
+            - ../deploy/gitlab_upload.py glaxnimate.dmg "$TRAVIS_BRANCH/MacOs/glaxnimate.dmg"
+            - ../deploy/gitlab_upload.py checksum.txt "$TRAVIS_BRANCH/MacOs/checksum.txt"
       - name: "Mac PyPI"
         if: tag IS present
         stage: build

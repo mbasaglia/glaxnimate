@@ -36,7 +36,7 @@ cp ../deploy/glaxnimate.vbs glaxnimate
 if [ "$APPVEYOR_REPO_TAG" = true ]
 then
     pacman --noconfirm -S mingw-w64-x86_64-python-pip
-    mingw32-make.exe .. -DVERSION_SUFFIX=""
+    cmake.exe .. -DVERSION_SUFFIX=""
     mingw32-make.exe glaxnimate_python_depends_install
     mingw32-make.exe glaxnimate_python
     (cd py_module && ./setup.py build --compiler=unix bdist_wheel && cd ..)
@@ -45,11 +45,15 @@ fi
 
 # Create Artifacts
 zip -r glaxnimate-x86_64.zip glaxnimate
-mkdir -p ../$APPVEYOR_REPO_BRANCH/Win
 sha1sum glaxnimate-x86_64.zip >checksum.txt
-cp glaxnimate-x86_64.zip ../$APPVEYOR_REPO_BRANCH/Win
-cp checksum.txt ../$APPVEYOR_REPO_BRANCH/Win
-cd ..
-ls -l $APPVEYOR_REPO_BRANCH/Win
-zip -r bintray.zip $APPVEYOR_REPO_BRANCH
-zipinfo bintray.zip
+
+if [ \( "$APPVEYOR_REPO_BRANCH" = master -o "$APPVEYOR_REPO_BRANCH" = pre-release -o "$APPVEYOR_REPO_BRANCH" = release -o "$APPVEYOR_REPO_TAG" = true \) -a "$APPVEYOR_PULL_REQUEST_NUMBER" = "" ]
+then
+    path="$APPVEYOR_REPO_BRANCH"
+    if [ "$APPVEYOR_REPO_TAG" = true ]
+    then
+        path="$APPVEYOR_REPO_TAG_NAME"
+    fi
+    ../deploy/gitlab_upload.py glaxnimate-x86_64.zip "$path/Win/glaxnimate-x86_64.zip"
+    ../deploy/gitlab_upload.py checksum.txt "$path/Win/checksum.txt"
+fi
