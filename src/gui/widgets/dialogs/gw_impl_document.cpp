@@ -28,8 +28,12 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
 
     current_document_has_file = false;
     current_document = std::make_unique<model::Document>(filename);
+
+    // Composition
     comp = current_document->main();
     comp_model.set_composition(comp);
+    connect(current_document->defs(), &model::Defs::precomp_remove_begin, parent, [this](int index){remove_precomp(index);});
+    ui.menu_new_comp_layer->setEnabled(false);
 
     // Undo Redo
     QObject::connect(ui.action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
@@ -240,6 +244,7 @@ bool GlaxnimateWindow::Private::close_document()
         ui.tab_bar->removeTab(0);
     ui.tab_bar->blockSignals(false);
     comp_selections.clear();
+    ui.menu_new_comp_layer->clear();
 
     return true;
 }

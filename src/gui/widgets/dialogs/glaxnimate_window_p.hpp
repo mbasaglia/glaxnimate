@@ -154,10 +154,12 @@ public:
     void move_to();
     void cleanup_document();
     void to_path();
+
     void switch_composition(int index);
     void setup_composition(model::Composition* comp);
     void add_composition();
     void update_comp_color(int index, model::Composition* comp);
+    void remove_precomp(int index);
 
     void layer_new_layer();
     void layer_new_fill();
@@ -166,6 +168,7 @@ public:
     void layer_new_impl(std::unique_ptr<model::ShapeElement> layer);
     void layer_delete();
     void layer_duplicate();
+    void layer_new_comp(QAction* act);
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

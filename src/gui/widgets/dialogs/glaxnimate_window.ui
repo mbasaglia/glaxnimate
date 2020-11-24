@@ -93,10 +93,20 @@
       <iconset theme="list-add">
        <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
      </property>
+     <widget class="QMenu" name="menu_new_comp_layer">
+      <property name="title">
+       <string>&amp;Composition</string>
+      </property>
+      <property name="icon">
+       <iconset theme="component"/>
+      </property>
+      <addaction name="separator"/>
+     </widget>
      <addaction name="action_new_layer"/>
      <addaction name="action_new_group"/>
      <addaction name="action_new_fill"/>
      <addaction name="action_new_stroke"/>
+     <addaction name="menu_new_comp_layer"/>
     </widget>
     <addaction name="menu_new_layer"/>
     <addaction name="action_Move_To_Composition"/>

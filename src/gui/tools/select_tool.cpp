@@ -445,7 +445,6 @@ private:
         }
     }
 
-
     DragMode drag_mode;
     QPainterPath draw_path;
     QPointF rubber_p1;

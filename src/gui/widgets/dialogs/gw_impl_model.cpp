@@ -15,6 +15,7 @@
 #include "model/shapes/image.hpp"
 #include "model/shapes/group.hpp"
 #include "model/shapes/path.hpp"
+#include "model/shapes/precomp_layer.hpp"
 #include "model/simple_visitor.hpp"
 
 #include "settings/clipboard_settings.hpp"
@@ -497,11 +498,19 @@ void GlaxnimateWindow::Private::switch_composition(int i)
     else
         comp_selections[old_i].current = comp;
 
+    if ( old_i > 0 )
+        ui.menu_new_comp_layer->actions()[old_i-1]->setEnabled(true);
+
     int precomp_index = i - 1;
     if ( precomp_index >= 0 && precomp_index < current_document->defs()->precompositions.size() )
+    {
         comp = current_document->defs()->precompositions[precomp_index];
+        ui.menu_new_comp_layer->actions()[precomp_index]->setEnabled(false);
+    }
     else
+    {
         comp = current_document->main();
+    }
 
 
     comp_model.set_composition(comp);
@@ -514,20 +523,50 @@ void GlaxnimateWindow::Private::switch_composition(int i)
 void GlaxnimateWindow::Private::setup_composition(model::Composition* comp)
 {
     int index = ui.tab_bar->addTab(comp->docnode_icon(), comp->object_name());
-    comp_selections.push_back({{}, comp});
+    CompState state;
+    if ( !comp->shapes.empty() )
+    {
+        state.selection.push_back(comp->shapes[0]);
+        state.current = comp->shapes[0];
+    }
+    else
+    {
+        state.current = comp;
+    }
+    comp_selections.push_back(std::move(state));
     update_comp_color(index, comp);
-    connect(comp, &model::ReferenceTarget::name_changed, ui.tab_bar, [this, index, comp](){
+    QAction* action = nullptr;
+
+    if ( comp != current_document->main() )
+    {
+        ui.menu_new_comp_layer->setEnabled(true);
+        action = ui.menu_new_comp_layer->addAction(comp->reftarget_icon(), comp->object_name());
+        action->setData(QVariant::fromValue(comp));
+    }
+
+    connect(comp, &model::ReferenceTarget::name_changed, ui.tab_bar, [this, index, comp, action](){
         ui.tab_bar->setTabText(index, comp->object_name());
+        if ( action )
+            action->setText(comp->object_name());
     });
-    connect(comp, &model::DocumentNode::docnode_group_color_changed, ui.tab_bar, [this, index, comp](){
+    connect(comp, &model::DocumentNode::docnode_group_color_changed, ui.tab_bar, [this, index, comp, action](){
         update_comp_color(index, comp);
+        if ( action )
+            action->setIcon(comp->reftarget_icon());
     });
+
 }
 
 void GlaxnimateWindow::Private::add_composition()
 {
     std::unique_ptr<model::Precomposition> comp = std::make_unique<model::Precomposition>(current_document.get());
     current_document->set_best_name(comp.get());
+    auto lay = std::make_unique<model::Layer>(current_document.get());
+    current_document->set_best_name(lay.get());
+    auto center = current_document->rect().center();
+    lay->transform->anchor_point.set(center);
+    lay->transform->position.set(center);
+    comp->shapes.insert(std::move(lay));
     setup_composition(comp.get());
     current_document->push_command(new command::AddObject(&current_document->defs()->precompositions, std::move(comp)));
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
@@ -541,4 +580,28 @@ void GlaxnimateWindow::Private::update_comp_color(int index, model::Composition*
     else
         c.setAlpha(255);
     ui.tab_bar->setTabTextColor(index, c);
+}
+
+void GlaxnimateWindow::Private::remove_precomp(int index)
+{
+    model::Precomposition* precomp = current_document->defs()->precompositions[index];
+    if ( precomp == comp )
+        switch_composition(0);
+
+    ui.tab_bar->removeTab(index);
+    delete ui.menu_new_comp_layer->actions()[index];
+    comp_selections.erase(comp_selections.begin()+index);
+}
+
+
+void GlaxnimateWindow::Private::layer_new_comp(QAction* action)
+{
+    auto layer = std::make_unique<model::PreCompLayer>(current_document.get());
+    layer->animation->last_frame.set(current_document->main()->animation->last_frame.get());
+    layer->composition.set(action->data().value<model::Precomposition*>());
+    layer->size.set(current_document->rect().size());
+    QPointF pos = current_document->rect().center();
+    layer->transform.get()->anchor_point.set(pos);
+    layer->transform.get()->position.set(pos);
+    layer_new_impl(std::move(layer));
 }

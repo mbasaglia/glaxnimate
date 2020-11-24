@@ -126,6 +126,20 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
             return v;
         }
     );
+    register_builder<model::PreCompLayer>(
+        [](model::PreCompLayer* shape){
+            auto item = new DocumentNodeGraphicsItem(shape);
+            item->set_transform_matrix(shape->local_transform_matrix(shape->time()));
+            QObject::connect(shape, &model::Image::local_transform_matrix_changed,
+                             item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
+            return item;
+        },
+        [](model::PreCompLayer* shape){
+            auto v = std::make_unique<GraphicsEditor>(shape);
+            v->add_child<graphics::TransformGraphicsItem>(shape->transform.get(), shape, nullptr);
+            return v;
+        }
+    );
 }
 
 graphics::DocumentNodeGraphicsItem * graphics::GraphicsItemFactory::make_graphics_item(model::DocumentNode* node) const
