@@ -2,7 +2,7 @@
 default:
     before_script:
         - apt-get update -qq
-        - apt-get install -y cmake qtbase5-dev libpython3-dev python3-pip qttools5-dev-tools zlib1g-dev qttools5-dev-tools qttools5-dev libpotrace-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev
+        - apt-get install -y cmake qtbase5-dev libpython3-dev python3-pip zlib1g-dev qttools5-dev-tools qttools5-dev libpotrace-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev
 
 variables:
     DEBIAN_FRONTEND: noninteractive

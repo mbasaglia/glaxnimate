@@ -52,7 +52,7 @@ It will produce the executable `bin/glaxnimate` relative to the build directory
 
 Install the dependencies:
 
-    apt-get install -y g++ cmake qtbase5-dev libpython3-dev zlib1g-dev libpotrace-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev
+    apt-get install -y g++ cmake qtbase5-dev qttools5-dev libpython3-dev zlib1g-dev libpotrace-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev
 
 The generic `cmake` commands listed above should work.
 
