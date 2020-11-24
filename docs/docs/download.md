@@ -79,13 +79,13 @@ All packages provided here are for the x86_64 architecture.
 <td><a href="#deb-package">Notes</a></td>
 </tr>
 <tr>
-<td><i class="fab fa-windows"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/master/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
-<td><a href="https://dl.bintray.com/mattbas/Glaxnimate/master/Win/checksum.txt">SHA1</a></td>
+<td><i class="fab fa-windows"></i> <a href="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/master/master/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
+<td><a href="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/master/master/Win/checksum.txt">SHA1</a></td>
 <td><a href="#windows-zip">Notes</a></td>
 </tr>
 <tr>
-<td><i class="fab fa-apple"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/master/MacOs/glaxnimate.dmg">Mac dmg</a></td>
-<td><a href="https://dl.bintray.com/mattbas/Glaxnimate/master/MacOs/checksum.txt">SHA1</a></td>
+<td><i class="fab fa-apple"></i> <a href="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/master/master/MacOs/glaxnimate.dmg">Mac dmg</a></td>
+<td><a href="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/master/master/MacOs/checksum.txt">SHA1</a></td>
 <td><a href="#mac-dmg">Notes</a></td>
 </tr>
 <tr>

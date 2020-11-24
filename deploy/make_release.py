@@ -100,13 +100,13 @@ notes = """
 <td><a href="{install_notes_url}#deb-package">Installation Instructions</a></td>
 </tr>
 <tr>
-<td><a href="{bintray_url}/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
-<td><a href="{bintray_url}/Win/checksum.txt">SHA1</a></td>
+<td><a href="{extra_artifacts}/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
+<td><a href="{extra_artifacts}/Win/checksum.txt">SHA1</a></td>
 <td><a href="{install_notes_url}#windows-zip">Installation Instructions</a></td>
 </tr>
 <tr>
-<td><a href="{bintray_url}/MacOs/glaxnimate.dmg">Mac dmg</a></td>
-<td><a href="{bintray_url}/MacOs/checksum.txt">SHA1</a></td>
+<td><a href="{extra_artifacts}/MacOs/glaxnimate.dmg">Mac dmg</a></td>
+<td><a href="{extra_artifacts}/MacOs/checksum.txt">SHA1</a></td>
 <td><a href="{install_notes_url}#mac-dmg">Installation Instructions</a></td>
 </tr>
 <tr>
@@ -129,8 +129,7 @@ See the [Documentation](https://glaxnimate.mattbas.org/manual/) page.
     project_url=api.project_url,
     artifacts_url=api.project_url+"/-/jobs/artifacts/" + download_tag + "/raw",
     install_notes_url="https://glaxnimate.mattbas.org/download/",
-    extra_artifacts="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/%s" % download_tag,
-    extra_artifactsPost="?inline=false"
+    extra_artifacts="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/master/%s" % download_tag,
 )
 
 
