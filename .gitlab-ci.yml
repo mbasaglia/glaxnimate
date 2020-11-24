@@ -193,10 +193,10 @@ release:
         - pip3 install requests
     script:
         - ./deploy/make_release.py
-        - ./deploy/bintray_release.sh $CI_COMMIT_TAG MacOs/glaxnimate.dmg
-        - ./deploy/bintray_release.sh $CI_COMMIT_TAG MacOs/checksum.txt
-        - ./deploy/bintray_release.sh $CI_COMMIT_TAG Win/glaxnimate-x86_64.zip
-        - ./deploy/bintray_release.sh $CI_COMMIT_TAG Win/checksum.txt
+        - ./deploy/gitlab_upload.py --copy release/MacOs/glaxnimate.dmg        $CI_COMMIT_TAG/MacOs/glaxnimate.dmg
+        - ./deploy/gitlab_upload.py --copy release/MacOs/checksum.txt          $CI_COMMIT_TAG/MacOs/glaxnimate.dmg
+        - ./deploy/gitlab_upload.py --copy release/Win/glaxnimate-x86_64.zip   $CI_COMMIT_TAG/Win/glaxnimate-x86_64.zip
+        - ./deploy/gitlab_upload.py --copy release/Win/checksum.txt            $CI_COMMIT_TAG/Win/checksum.txt
     dependencies:
         - linux:test
         - linux:appimage
