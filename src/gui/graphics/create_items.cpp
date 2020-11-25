@@ -141,8 +141,14 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         [](model::PreCompLayer* shape){
             auto item = new DocumentNodeGraphicsItem(shape);
             item->set_transform_matrix(shape->local_transform_matrix(shape->time()));
-            QObject::connect(shape, &model::Image::local_transform_matrix_changed,
-                             item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix);
+            QObject::connect(
+                shape, &model::Image::local_transform_matrix_changed,
+                item, &graphics::DocumentNodeGraphicsItem::set_transform_matrix
+            );
+            QObject::connect(
+                shape->document(), &model::Document::current_time_changed,
+                item, [item]{item->update();}
+            );
             return item;
         },
         [](model::PreCompLayer* shape){
