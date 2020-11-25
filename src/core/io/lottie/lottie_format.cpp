@@ -957,6 +957,20 @@ private:
 
         switch ( json["ty"].toInt(-1) )
         {
+            case 0: // precomp
+            {
+                auto precomp = std::make_unique<model::PreCompLayer>(document);
+                precomp->composition.set(precomp_ids[json["refId"].toString()]);
+                props.erase("w");
+                props.erase("h");
+                precomp->size.set(QSize(
+                    json["w"].toInt(),
+                    json["h"].toInt()
+                ));
+                layer->shapes.insert(std::move(precomp));
+                props.erase("refId");
+                break;
+            }
             case 1: // solid color
             {
                 props.erase("sw");
@@ -980,6 +994,7 @@ private:
                 image->image.set(bitmap_ids[json["refId"].toString()]);
                 layer->shapes.insert(std::move(image));
                 props.erase("refId");
+                break;
             }
             case 3: // empty
                 break;
@@ -1361,6 +1376,8 @@ private:
             QJsonObject asset = assetv.toObject();
             if ( asset.contains("e") && asset.contains("p") && asset.contains("w") )
                 load_asset_bitmap(asset);
+            else if ( asset.contains("layers") )
+                load_asset_precomp(asset);
         }
     }
 
@@ -1379,6 +1396,14 @@ private:
         }
     }
 
+    void load_asset_precomp(QJsonObject asset)
+    {
+        auto comp = document->defs()->precompositions.insert(std::make_unique<model::Precomposition>(document));
+        precomp_ids[asset["id"].toString()] = comp;
+        asset.remove("id");
+        load_composition(asset, comp);
+    }
+
     model::Document* document;
     io::lottie::LottieFormat* format;
     QMap<int, model::Layer*> layer_indices;
@@ -1387,6 +1412,7 @@ private:
     model::Composition* composition = nullptr;
     app::log::Log logger{"Lottie Import"};
     QMap<QString, model::Bitmap*> bitmap_ids;
+    QMap<QString, model::Precomposition*> precomp_ids;
 };
 
 } // namespace
