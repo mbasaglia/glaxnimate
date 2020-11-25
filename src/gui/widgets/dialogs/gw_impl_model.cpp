@@ -520,8 +520,6 @@ void GlaxnimateWindow::Private::switch_composition(int i)
     ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(current)));
 }
 
-#include <QDebug>
-
 void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int index)
 {
     index = ui.tab_bar->insertTab(index, comp->docnode_icon(), comp->object_name());
@@ -620,7 +618,7 @@ void GlaxnimateWindow::Private::remove_precomp(int index)
     if ( precomp == comp )
         switch_composition(0);
 
-    ui.tab_bar->removeTab(index);
+    ui.tab_bar->removeTab(index-1);
     delete ui.menu_new_comp_layer->actions()[index];
     comp_selections.erase(comp_selections.begin()+index);
 }
