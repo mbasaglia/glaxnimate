@@ -33,7 +33,11 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     comp = current_document->main();
     comp_model.set_composition(comp);
     connect(current_document->defs(), &model::Defs::precomp_remove_begin, parent, [this](int index){remove_precomp(index);});
+    connect(current_document->defs(), &model::Defs::precomp_add_end, parent, [this](model::Precomposition* node, int row){setup_composition(node, row+1);});
     ui.menu_new_comp_layer->setEnabled(false);
+    ui.tab_bar->blockSignals(true);
+    setup_composition(current_document->main());
+    ui.tab_bar->blockSignals(false);
 
     // Undo Redo
     QObject::connect(ui.action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
@@ -120,10 +124,6 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     opts.path = path;
     current_document->set_io_options(opts);
 
-    ui.tab_bar->blockSignals(true);
-    setup_composition(current_document->main());
-    ui.tab_bar->blockSignals(false);
-
     ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(ptr)));
     ui.play_controls->set_range(0, out_point);
     view_fit();
@@ -137,12 +137,6 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     current_document_has_file = true;
     dialog_import_status->reset(options.format, options.filename);
     bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
-
-    ui.tab_bar->blockSignals(true);
-    setup_composition(current_document->main());
-    for ( const auto& comp : current_document->defs()->precompositions )
-        setup_composition(comp.get());
-    ui.tab_bar->blockSignals(false);
 
     app::settings::set<QString>("open_save", "path", options.path.absolutePath());
 

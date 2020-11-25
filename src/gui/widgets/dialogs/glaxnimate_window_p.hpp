@@ -156,8 +156,9 @@ public:
     void to_path();
 
     void switch_composition(int index);
-    void setup_composition(model::Composition* comp);
+    void setup_composition(model::Composition* comp, int index = -1);
     void add_composition();
+    void add_composition_from_selection();
     void update_comp_color(int index, model::Composition* comp);
     void remove_precomp(int index);
 

@@ -98,7 +98,8 @@
        <string>&amp;Composition</string>
       </property>
       <property name="icon">
-       <iconset theme="component"/>
+       <iconset theme="component">
+        <normaloff>.</normaloff>.</iconset>
       </property>
       <addaction name="separator"/>
      </widget>
@@ -109,7 +110,7 @@
      <addaction name="menu_new_comp_layer"/>
     </widget>
     <addaction name="menu_new_layer"/>
-    <addaction name="action_Move_To_Composition"/>
+    <addaction name="action_new_precomp_selection"/>
     <addaction name="action_new_precomp"/>
     <addaction name="separator"/>
    </widget>
@@ -989,16 +990,13 @@
     <string>&amp;Precomposition Layer</string>
    </property>
   </action>
-  <action name="action_Move_To_Composition">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
+  <action name="action_new_precomp_selection">
    <property name="icon">
     <iconset theme="archive-extract">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
-    <string>&amp;Move To Composition</string>
+    <string>New &amp;Composition from Selection</string>
    </property>
   </action>
   <action name="action_new_precomp">

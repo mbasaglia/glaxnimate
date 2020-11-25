@@ -520,9 +520,11 @@ void GlaxnimateWindow::Private::switch_composition(int i)
     ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(current)));
 }
 
-void GlaxnimateWindow::Private::setup_composition(model::Composition* comp)
+#include <QDebug>
+
+void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int index)
 {
-    int index = ui.tab_bar->addTab(comp->docnode_icon(), comp->object_name());
+    index = ui.tab_bar->insertTab(index, comp->docnode_icon(), comp->object_name());
     CompState state;
     if ( !comp->shapes.empty() )
     {
@@ -533,14 +535,18 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp)
     {
         state.current = comp;
     }
-    comp_selections.push_back(std::move(state));
+    comp_selections.insert(comp_selections.begin() + index, std::move(state));
     update_comp_color(index, comp);
     QAction* action = nullptr;
 
     if ( comp != current_document->main() )
     {
         ui.menu_new_comp_layer->setEnabled(true);
-        action = ui.menu_new_comp_layer->addAction(comp->reftarget_icon(), comp->object_name());
+        action = new QAction(comp->reftarget_icon(), comp->object_name(), comp);
+        if ( ui.menu_new_comp_layer->actions().empty() || index - 1 >= ui.menu_new_comp_layer->actions().size() )
+            ui.menu_new_comp_layer->addAction(action);
+        else
+            ui.menu_new_comp_layer->insertAction(ui.menu_new_comp_layer->actions()[index-1], action);
         action->setData(QVariant::fromValue(comp));
     }
 
@@ -560,15 +566,41 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp)
 void GlaxnimateWindow::Private::add_composition()
 {
     std::unique_ptr<model::Precomposition> comp = std::make_unique<model::Precomposition>(current_document.get());
-    current_document->set_best_name(comp.get());
+
     auto lay = std::make_unique<model::Layer>(current_document.get());
     current_document->set_best_name(lay.get());
     auto center = current_document->rect().center();
     lay->transform->anchor_point.set(center);
     lay->transform->position.set(center);
     comp->shapes.insert(std::move(lay));
-    setup_composition(comp.get());
+
+    current_document->set_best_name(comp.get());
     current_document->push_command(new command::AddObject(&current_document->defs()->precompositions, std::move(comp)));
+    ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
+}
+
+void GlaxnimateWindow::Private::add_composition_from_selection()
+{
+    auto selection = cleaned_selection();
+    if ( selection.empty() )
+        return;
+
+    command::UndoMacroGuard guard(tr("New Composition from Selection"), current_document.get());
+
+    std::unique_ptr<model::Precomposition> ucomp = std::make_unique<model::Precomposition>(current_document.get());
+    model::Precomposition* comp = ucomp.get();
+    current_document->set_best_name(comp);
+    current_document->push_command(new command::AddObject(&current_document->defs()->precompositions, std::move(ucomp)));
+
+
+    for ( auto node : selection )
+    {
+        if ( auto shape = node->cast<model::ShapeElement>() )
+            current_document->push_command(new command::MoveShape(
+                shape, shape->owner(), &comp->shapes, comp->shapes.size()
+            ));
+    }
+
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
 }
 

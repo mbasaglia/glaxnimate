@@ -1009,7 +1009,6 @@ private:
         load_basic_check(props);
     }
 
-
     void load_shapes(ShapeListProperty& shapes, const QJsonArray& jshapes)
     {
         deferred.clear();

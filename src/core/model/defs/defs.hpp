@@ -57,7 +57,7 @@ signals:
     void gradient_move_end(GradientColors* node, int from, int to);
 
     void precomp_add_begin(int row);
-    void precomp_add_end(Precomposition* node);
+    void precomp_add_end(Precomposition* node, int row);
     void precomp_remove_begin(int row);
     void precomp_remove_end(Precomposition* node);
     void precomp_move_begin(int from, int to);
@@ -73,7 +73,7 @@ private:
     void on_added(AssetBase* def);
     void on_removed(AssetBase* def);
 
-    void on_precomp_added(Precomposition* obj);
+    void on_precomp_added(Precomposition* obj, int row);
     void on_precomp_removed(Precomposition* obj);
 };
 

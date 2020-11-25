@@ -115,10 +115,10 @@ model::Gradient* model::Defs::add_gradient(int index)
 }
 
 
-void model::Defs::on_precomp_added(model::Precomposition* obj)
+void model::Defs::on_precomp_added(model::Precomposition* obj, int row)
 {
     obj->attach();
-    emit precomp_add_end(obj);
+    emit precomp_add_end(obj, row);
 }
 
 void model::Defs::on_precomp_removed(model::Precomposition* obj)
