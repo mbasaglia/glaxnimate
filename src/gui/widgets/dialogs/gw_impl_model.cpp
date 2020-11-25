@@ -546,6 +546,13 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int 
         else
             ui.menu_new_comp_layer->insertAction(ui.menu_new_comp_layer->actions()[index-1], action);
         action->setData(QVariant::fromValue(comp));
+
+        auto btn = new QToolButton();
+        btn->setIcon(QIcon::fromTheme("tab-close"));
+        ui.tab_bar->setTabButton(index, QTabBar::RightSide, btn);
+        connect(btn, &QToolButton::clicked, parent, [this, comp]{
+            remove_precomp(static_cast<model::Precomposition*>(comp));
+        });
     }
 
     connect(comp, &model::ReferenceTarget::name_changed, ui.tab_bar, [this, index, comp, action](){
@@ -612,15 +619,15 @@ void GlaxnimateWindow::Private::update_comp_color(int index, model::Composition*
     ui.tab_bar->setTabTextColor(index, c);
 }
 
-void GlaxnimateWindow::Private::remove_precomp(int index)
+void GlaxnimateWindow::Private::on_remove_precomp(int index)
 {
     model::Precomposition* precomp = current_document->defs()->precompositions[index];
     if ( precomp == comp )
         switch_composition(0);
 
-    ui.tab_bar->removeTab(index-1);
+    ui.tab_bar->removeTab(index+1);
     delete ui.menu_new_comp_layer->actions()[index];
-    comp_selections.erase(comp_selections.begin()+index);
+    comp_selections.erase(comp_selections.begin()+index+1);
 }
 
 
@@ -634,4 +641,12 @@ void GlaxnimateWindow::Private::layer_new_comp(QAction* action)
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
     layer_new_impl(std::move(layer));
+}
+
+
+void GlaxnimateWindow::Private::remove_precomp(model::Precomposition* comp)
+{
+    current_document->push_command(new command::RemoveObject(
+        comp, &current_document->defs()->precompositions
+    ));
 }
