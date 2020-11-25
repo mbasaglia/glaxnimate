@@ -161,7 +161,7 @@ public:
     void add_composition_from_selection();
     void update_comp_color(int index, model::Composition* comp);
     void on_remove_precomp(int index);
-    void remove_precomp(model::Precomposition* comp);
+    void composition_close_request(int index);
 
     void layer_new_layer();
     void layer_new_fill();

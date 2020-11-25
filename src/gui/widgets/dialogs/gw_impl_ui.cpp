@@ -306,6 +306,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.tab_bar->setDrawBase(false);
     ui.tab_bar->setExpanding(false);
     connect(ui.tab_bar, &QTabBar::currentChanged, parent, [this](int i){ switch_composition(i); });
+    connect(ui.tab_bar, &QTabBar::tabCloseRequested, parent, [this](int i){ composition_close_request(i); });
 
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);

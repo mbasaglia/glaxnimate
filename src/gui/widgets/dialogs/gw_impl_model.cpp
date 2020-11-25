@@ -20,6 +20,7 @@
 
 #include "settings/clipboard_settings.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
+#include "widgets/tab_bar_close_button.hpp"
 
 
 model::Composition* GlaxnimateWindow::Private::current_composition()
@@ -547,12 +548,7 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int 
             ui.menu_new_comp_layer->insertAction(ui.menu_new_comp_layer->actions()[index-1], action);
         action->setData(QVariant::fromValue(comp));
 
-        auto btn = new QToolButton();
-        btn->setIcon(QIcon::fromTheme("tab-close"));
-        ui.tab_bar->setTabButton(index, QTabBar::RightSide, btn);
-        connect(btn, &QToolButton::clicked, parent, [this, comp]{
-            remove_precomp(static_cast<model::Precomposition*>(comp));
-        });
+        TabBarCloseButton::add_button(ui.tab_bar, index);
     }
 
     connect(comp, &model::ReferenceTarget::name_changed, ui.tab_bar, [this, index, comp, action](){
@@ -644,9 +640,12 @@ void GlaxnimateWindow::Private::layer_new_comp(QAction* action)
 }
 
 
-void GlaxnimateWindow::Private::remove_precomp(model::Precomposition* comp)
+void GlaxnimateWindow::Private::composition_close_request(int index)
 {
-    current_document->push_command(new command::RemoveObject(
-        comp, &current_document->defs()->precompositions
-    ));
+    if ( index > 0 )
+    {
+        current_document->push_command(new command::RemoveObject<model::Precomposition>(
+            index-1, &current_document->defs()->precompositions
+        ));
+    }
 }

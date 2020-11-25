@@ -83,6 +83,7 @@ widgets/plugin_settings_widget.cpp
 widgets/plugin_settings_widget.ui
 widgets/script_console.cpp
 widgets/script_console.ui
+widgets/tab_bar_close_button.cpp
 
 widgets/shape_style/color_selector.cpp
 widgets/shape_style/color_selector.ui
