@@ -93,6 +93,15 @@ public:
         return values;
     }
 
+    std::vector<QVariant> value_at(qreal time) const
+    {
+        std::vector<QVariant> values;
+        values.reserve(properties_.size());
+        for ( auto prop : properties_ )
+            values.push_back(prop->value(time));
+        return values;
+    }
+
     const std::vector<model::AnimatableBase*>& properties() const
     {
         return properties_;

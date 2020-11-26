@@ -97,4 +97,3 @@ void TabBarCloseButton::paintEvent(QPaintEvent *)
 
     style()->drawPrimitive(QStyle::PE_IndicatorTabClose, &opt, &p, this);
 }
-

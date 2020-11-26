@@ -24,7 +24,7 @@ public:
             animated = NotAnimated;
 
         at_start = false;
-        QDomElement defs = element(svg, "defs");
+        defs = element(svg, "defs");
         for ( const auto& color : doc->defs()->colors )
             write_named_color(defs, color.get());
         for ( const auto& color : doc->defs()->gradient_colors )
@@ -217,6 +217,11 @@ public:
         }
     }
 
+    qreal comp_time(qreal time)
+    {
+        return time;
+    }
+
     template<class Callback>
     void write_properties(
         QDomElement& element,
@@ -229,7 +234,7 @@ public:
         model::JoinAnimatables j(std::move(properties), jflags);
 
         {
-            auto vals = callback(j.current_value());
+            auto vals = callback(j.value_at(comp_time(properties[0]->time())));
             for ( std::size_t i = 0; i != attrs.size(); i++ )
                 element.setAttribute(attrs[i], vals[i]);
         }
@@ -239,7 +244,7 @@ public:
             AnimationData data(this, attrs, j.keyframes().size());
 
             for ( const auto& kf : j )
-                data.add_keyframe(kf.time, callback(kf.values), kf.transition());
+                data.add_keyframe(comp_time(kf.time), callback(kf.values), kf.transition());
 
             data.add_dom(element);
         }
@@ -408,6 +413,25 @@ public:
                 set_attribute(e, "height", img->image->height.get());
                 transform_to_attr(e, img->transform.get());
                 set_attribute(e, "xlink:href", img->image->to_url().toString());
+            }
+        }
+        else if ( auto layer = qobject_cast<model::PreCompLayer*>(shape) )
+        {
+            if ( layer->composition.get() )
+            {
+                auto clip = element(defs, "clipPath834");
+                set_attribute(clip, "id", "clip_" + id(shape));
+                set_attribute(clip, "clipPathUnits", "userSpaceOnUse");
+                auto clip_rect = element(clip, "rect");
+                set_attribute(clip_rect, "x", "0");
+                set_attribute(clip_rect, "y", "0");
+                set_attribute(clip_rect, "width", layer->size.get().width());
+                set_attribute(clip_rect, "height", layer->size.get().height());
+
+                auto e = element(parent, "g");
+                transform_to_attr(e, layer->transform.get());
+                write_visibility_attributes(parent, shape);
+                write_composition(e, layer->composition.get());
             }
         }
         else if ( force_draw )
@@ -784,6 +808,7 @@ public:
     std::map<model::ReferenceTarget*, QString> non_uuid_ids_map;
     AnimationType animated;
     QDomElement svg;
+    QDomElement defs;
 };
 
 

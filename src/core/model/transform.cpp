@@ -4,17 +4,17 @@
 namespace {
 
 QTransform make_transform(
-    const QPointF& ap,
-    const QPointF& pos,
-    double rot,
-    QVector2D s
+    const QPointF& anchor_point,
+    const QPointF& position,
+    double rotation,
+    QVector2D scale
 )
 {
     QTransform trans;
-    trans.translate(pos.x(), pos.y());
-    trans.rotate(rot);
-    trans.scale(s.x(), s.y());
-    trans.translate(-ap.x(), -ap.y());
+    trans.translate(position.x(), position.y());
+    trans.rotate(rotation);
+    trans.scale(scale.x(), scale.y());
+    trans.translate(-anchor_point.x(), -anchor_point.y());
     return trans;
 }
 
