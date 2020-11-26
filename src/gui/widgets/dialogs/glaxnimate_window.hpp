@@ -104,6 +104,8 @@ public:
 
     void trace_dialog(model::ReferenceTarget* object);
 
+    void shape_to_precomposition(model::ShapeElement* node);
+
 public slots:
     void document_save();
     void document_save_as();

@@ -406,8 +406,12 @@ PluginUiDialog * GlaxnimateWindow::create_dialog(const QString& ui_file) const
     return d->ui.console->create_dialog(ui_file);
 }
 
-
 void GlaxnimateWindow::trace_dialog(model::ReferenceTarget* object)
 {
     return d->trace_dialog(object);
+}
+
+void GlaxnimateWindow::shape_to_precomposition(model::ShapeElement* node)
+{
+    return d->shape_to_precomposition(node);
 }

@@ -115,7 +115,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_svg_preview, &QAction::triggered, parent, [this]{preview_svg();});
     connect(ui.action_new_precomp, &QAction::triggered, parent, [this]{add_composition();});
     connect(ui.action_new_precomp_selection, &QAction::triggered, parent, [this]{
-        objects_to_new_composition(comp, cleaned_selection());
+        objects_to_new_composition(comp, cleaned_selection(), &comp->shapes, -1);
     });
     connect(ui.menu_new_comp_layer, &QMenu::triggered, parent, [this](QAction* act){layer_new_comp(act);});
 

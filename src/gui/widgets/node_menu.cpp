@@ -209,6 +209,9 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
         {
             addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), tr("Parent"), this, &lay->parent)->menuAction());
             addAction(QIcon::fromTheme("object-group"), tr("Convert to Group"), this, ConvertGroupType<model::Group>(lay));
+            addAction(QIcon::fromTheme("component"), tr("Convert to Composition"), this, [window, lay]{
+                window->shape_to_precomposition(lay);
+            });
         }
         else if ( auto grp = qobject_cast<model::Group*>(shape) )
         {

@@ -576,7 +576,12 @@ void GlaxnimateWindow::Private::add_composition()
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
 }
 
-void GlaxnimateWindow::Private::objects_to_new_composition(model::Composition* comp, const std::vector<model::DocumentNode*>& objects)
+void GlaxnimateWindow::Private::objects_to_new_composition(
+    model::Composition* comp,
+    const std::vector<model::DocumentNode*>& objects,
+    model::ObjectListProperty<model::ShapeElement>* layer_parent,
+    int layer_index
+)
 {
     if ( objects.empty() )
         return;
@@ -597,15 +602,20 @@ void GlaxnimateWindow::Private::objects_to_new_composition(model::Composition* c
             ));
     }
 
+    comp_selections.back().current = objects[0];
+    comp_selections.back().selection = objects;
+
     auto pcl = std::make_unique<model::PreCompLayer>(current_document.get());
     pcl->composition.set(new_comp);
     pcl->size.set(current_document->size());
     current_document->set_best_name(pcl.get());
-    int old_comp_index = current_document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(comp)) + 1;
-    comp_selections[old_comp_index] = pcl.get();
-    current_document->push_command(new command::AddShape(&comp->shapes, std::move(pcl)));
+    auto pcl_ptr = pcl.get();
+    current_document->push_command(new command::AddShape(layer_parent, std::move(pcl), layer_index));
 
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
+
+    int old_comp_index = current_document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(comp)) + 1;
+    comp_selections[old_comp_index] = pcl_ptr;
 }
 
 void GlaxnimateWindow::Private::update_comp_color(int index, model::Composition* comp)
@@ -651,4 +661,33 @@ void GlaxnimateWindow::Private::composition_close_request(int index)
             index-1, &current_document->defs()->precompositions
         ));
     }
+}
+
+void GlaxnimateWindow::Private::shape_to_precomposition(model::ShapeElement* node)
+{
+    if ( !node )
+        return;
+
+    auto parent = node->docnode_parent();
+    if ( !parent )
+        return;
+
+    auto ancestor = parent;
+    auto grand_ancestor = ancestor->docnode_parent();
+    while ( grand_ancestor )
+    {
+        ancestor = grand_ancestor;
+        grand_ancestor = ancestor->docnode_parent();
+    }
+
+    auto owner_comp = ancestor->cast<model::Composition>();
+    if ( !owner_comp )
+        return;
+
+    auto prop = parent->get_property("shapes");
+    if ( !prop )
+        return;
+
+    auto shape_prop = static_cast<model::ObjectListProperty<model::ShapeElement>*>(prop);
+    objects_to_new_composition(owner_comp, {node}, shape_prop, shape_prop->index_of(node));
 }
