@@ -526,14 +526,10 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int 
     index = ui.tab_bar->insertTab(index, comp->docnode_icon(), comp->object_name());
     CompState state;
     if ( !comp->shapes.empty() )
-    {
-        state.selection.push_back(comp->shapes[0]);
-        state.current = comp->shapes[0];
-    }
+        state = comp->shapes[0];
     else
-    {
-        state.current = comp;
-    }
+        state = comp;
+
     comp_selections.insert(comp_selections.begin() + index, std::move(state));
     update_comp_color(index, comp);
     QAction* action = nullptr;
@@ -580,27 +576,34 @@ void GlaxnimateWindow::Private::add_composition()
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
 }
 
-void GlaxnimateWindow::Private::add_composition_from_selection()
+void GlaxnimateWindow::Private::objects_to_new_composition(model::Composition* comp, const std::vector<model::DocumentNode*>& objects)
 {
-    auto selection = cleaned_selection();
-    if ( selection.empty() )
+    if ( objects.empty() )
         return;
 
     command::UndoMacroGuard guard(tr("New Composition from Selection"), current_document.get());
 
     std::unique_ptr<model::Precomposition> ucomp = std::make_unique<model::Precomposition>(current_document.get());
-    model::Precomposition* comp = ucomp.get();
-    current_document->set_best_name(comp);
+    model::Precomposition* new_comp = ucomp.get();
+    current_document->set_best_name(new_comp);
     current_document->push_command(new command::AddObject(&current_document->defs()->precompositions, std::move(ucomp)));
 
 
-    for ( auto node : selection )
+    for ( auto node : objects )
     {
         if ( auto shape = node->cast<model::ShapeElement>() )
             current_document->push_command(new command::MoveShape(
-                shape, shape->owner(), &comp->shapes, comp->shapes.size()
+                shape, shape->owner(), &new_comp->shapes, new_comp->shapes.size()
             ));
     }
+
+    auto pcl = std::make_unique<model::PreCompLayer>(current_document.get());
+    pcl->composition.set(new_comp);
+    pcl->size.set(current_document->size());
+    current_document->set_best_name(pcl.get());
+    int old_comp_index = current_document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(comp)) + 1;
+    comp_selections[old_comp_index] = pcl.get();
+    current_document->push_command(new command::AddShape(&comp->shapes, std::move(pcl)));
 
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
 }

@@ -43,6 +43,12 @@ class GlaxnimateWindow::Private
 public:
     struct CompState
     {
+        CompState(model::DocumentNode* single)
+        : selection(1, single), current(single)
+        {}
+
+        CompState() : current(nullptr) {}
+
         std::vector<model::DocumentNode*> selection;
         model::DocumentNode* current;
     };
@@ -158,7 +164,7 @@ public:
     void switch_composition(int index);
     void setup_composition(model::Composition* comp, int index = -1);
     void add_composition();
-    void add_composition_from_selection();
+    void objects_to_new_composition(model::Composition* comp, const std::vector<model::DocumentNode*>& objects);
     void update_comp_color(int index, model::Composition* comp);
     void on_remove_precomp(int index);
     void composition_close_request(int index);
