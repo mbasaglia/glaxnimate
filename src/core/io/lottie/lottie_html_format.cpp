@@ -39,30 +39,40 @@ bool io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QString&,
                                            model::Document* document, const QVariantMap& settings)
 {
     file.write(html_head(this, document, "<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.3/lottie.js'></script>"));
-    file.write(QString(R"(
+    file.write(R"(
 <body>
 <div id="animation"></div>
 
 <script>
-    var animData = {
-        container: document.getElementById('animation'),
-        renderer: '%1',
-        loop: true,
-        autoplay: true,
-        animationData:
+    var lottie_json = )");
+    file.write(cbor_write_json(LottieFormat().to_json(document), false));
+
+file.write(QString(R"(
+    ;
+
+    var anim = null;
+
+    function reload()
+    {
+        var animData = {
+            container: document.getElementById('animation'),
+            renderer: '%1',
+            loop: true,
+            autoplay: true,
+            animationData: lottie_json
+        };
+        if ( anim != null )
+            anim = anim.destroy();
+        anim = bodymovin.loadAnimation(animData);
+    }
+
+    reload();
+</script>
+</body></html>
 )")
         .arg(settings["renderer"].toString())
         .toUtf8()
     );
-
-    file.write(cbor_write_json(LottieFormat().to_json(document), false));
-
-    file.write(R"(
-    };
-    var anim = bodymovin.loadAnimation(animData);
-</script>
-</body></html>
-)");
 
     return true;
 }

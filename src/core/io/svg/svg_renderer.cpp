@@ -234,7 +234,7 @@ public:
         model::JoinAnimatables j(std::move(properties), jflags);
 
         {
-            auto vals = callback(j.value_at(comp_time(properties[0]->time())));
+            auto vals = callback(j.value_at(comp_time(j.properties()[0]->time())));
             for ( std::size_t i = 0; i != attrs.size(); i++ )
                 element.setAttribute(attrs[i], vals[i]);
         }
