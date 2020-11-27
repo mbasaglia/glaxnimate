@@ -4,6 +4,7 @@
 
 #include "model/shapes/group.hpp"
 #include "model/shapes/image.hpp"
+#include "model/shapes/precomp_layer.hpp"
 #include "model/defs/defs.hpp"
 
 #include "command/structure_commands.hpp"
@@ -260,6 +261,13 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
 
             addAction(QIcon::fromTheme("bitmap-trace"), tr("Trace Bitmap..."), this, [image, window]{
                 window->trace_dialog(image);
+            });
+        }
+        else if ( auto lay = qobject_cast<model::PreCompLayer*>(shape) )
+        {
+            addAction(QIcon::fromTheme("edit-rename"), tr("Rename from Composition"), this, [lay]{
+                if ( lay->composition.get() )
+                    lay->name.set_undoable(lay->composition->object_name());
             });
         }
     }
