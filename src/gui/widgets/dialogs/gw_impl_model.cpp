@@ -639,7 +639,6 @@ void GlaxnimateWindow::Private::on_remove_precomp(int index)
     comp_selections.erase(comp_selections.begin()+index+1);
 }
 
-
 void GlaxnimateWindow::Private::layer_new_comp(QAction* action)
 {
     auto layer = std::make_unique<model::PreCompLayer>(current_document.get());
@@ -651,7 +650,6 @@ void GlaxnimateWindow::Private::layer_new_comp(QAction* action)
     layer->transform.get()->position.set(pos);
     layer_new_impl(std::move(layer));
 }
-
 
 void GlaxnimateWindow::Private::composition_close_request(int index)
 {

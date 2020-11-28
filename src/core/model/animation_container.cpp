@@ -38,3 +38,20 @@ float model::AnimationContainer::duration() const
 {
     return last_frame.get() - first_frame.get();
 }
+
+GLAXNIMATE_OBJECT_IMPL(model::StretchableAnimation)
+
+bool model::StretchableAnimation::validate_stretch(float stretch)
+{
+    return stretch > 0;
+}
+
+float model::StretchableAnimation::time_to_local(float global) const
+{
+    return (global - start_time.get()) / stretch.get();
+}
+
+float model::StretchableAnimation::time_from_local(float local) const
+{
+    return local * stretch.get() + start_time.get();
+}

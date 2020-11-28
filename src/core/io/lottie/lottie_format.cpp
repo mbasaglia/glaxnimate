@@ -444,6 +444,7 @@ public:
         json["ty"_l] = 3;
         int index = layer_index(layer);
         json["ind"_l] = index;
+        json["st"_l] = 0;
 
         convert_animation_container(layer->animation.get(), json);
         convert_object_properties(layer, fields["ReferenceTarget"], json);
@@ -837,7 +838,8 @@ public:
         json["ty"_l] = 0;
         json["ind"_l] = layer_index(layer);
         convert_animation_container(layer->animation.get(), json);
-        json["st"_l] = 0;
+        json["st"_l] = layer->animation->start_time.get();
+        json["sr"_l] = layer->animation->stretch.get();
         QCborMap transform;
         convert_transform(layer->transform.get(), &layer->opacity, transform);
         json["ks"_l] = transform;

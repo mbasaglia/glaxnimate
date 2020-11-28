@@ -26,7 +26,7 @@ QString model::PreCompLayer::type_name_human() const
 
 model::FrameTime model::PreCompLayer::relative_time(model::FrameTime time) const
 {
-    return time;
+    return animation->time_to_local(time);
 }
 
 void model::PreCompLayer::set_time(model::FrameTime t)
