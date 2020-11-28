@@ -136,7 +136,6 @@ enum FieldMode
     Custom
 };
 
-
 struct FieldInfo
 {
     QString name;
@@ -193,7 +192,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("sr"),
         FieldInfo("ks", Custom),
         FieldInfo("ao"),
-        FieldInfo{"st", "start_time"},
+        FieldInfo{"st", Custom},
         FieldInfo("bm"),
         FieldInfo("tt"),
         FieldInfo("ind", Custom),
@@ -297,10 +296,6 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"refId", Custom},
         FieldInfo{"w", Custom},
         FieldInfo{"h", Custom},
-        FieldInfo{"ks", Custom},
-        FieldInfo{"ip", Custom},
-        FieldInfo{"op", Custom},
-        FieldInfo{"ind", Custom},
         FieldInfo{"tm"},
     }},
 };
@@ -874,6 +869,13 @@ public:
     }
 
 private:
+    void load_stretchable_animation_container(const QJsonObject& json, model::StretchableAnimation* animation)
+    {
+        load_animation_container(json, animation);
+        animation->start_time.set(json["st"].toDouble());
+        animation->stretch.set(json["sr"].toDouble(1));
+    }
+
     void load_animation_container(const QJsonObject& json, model::AnimationContainer* animation)
     {
         animation->first_frame.set(json["ip"].toInt());
@@ -894,8 +896,23 @@ private:
         deferred.clear();
 
         load_basic(json, composition);
-        for ( auto layer : json["layers"].toArray() )
-            create_layer(layer.toObject());
+
+        {
+            std::set<int> referenced;
+            std::vector<QJsonObject> layer_jsons;
+            auto layer_array = json["layers"].toArray();
+            layer_jsons.reserve(layer_array.size());
+            for ( auto val : layer_array )
+            {
+                QJsonObject obj = val.toObject();
+                if ( obj.contains("parent") )
+                    referenced.insert(obj["parent"].toInt());
+                layer_array.push_back(obj);
+            }
+
+            for ( auto layer : json["layers"].toArray() )
+                create_layer(layer.toObject(), referenced);
+        }
 
         auto deferred_layers = std::move(deferred);
         deferred.clear();
@@ -903,7 +920,7 @@ private:
             load_layer(pair.second, static_cast<Layer*>(pair.first));
     }
 
-    void create_layer(const QJsonObject& json)
+    void create_layer(const QJsonObject& json, std::set<int>& referenced)
     {
         int index = json["ind"].toInt();
         if ( !json.contains("ty") || !json["ty"].isDouble() )
@@ -913,21 +930,73 @@ private:
             return;
         }
 
-        auto layer = std::make_unique<model::Layer>(document);
-        layer_indices[index] = layer.get();
-        deferred.emplace_back(layer.get(), json);
-        composition->shapes.insert(std::move(layer), 0);
+        int ty = json["ty"].toInt();
+        if ( ty == 0 )
+        {
+            load_precomp_layer(json, referenced);
+        }
+        else
+        {
+            auto layer = std::make_unique<model::Layer>(document);
+            layer_indices[index] = layer.get();
+            deferred.emplace_back(layer.get(), json);
+            composition->shapes.insert(std::move(layer), 0);
+        }
+    }
+
+    void load_precomp_layer(const QJsonObject& json, std::set<int>& referenced)
+    {
+        auto props = load_basic_setup(json);
+
+        auto precomp = std::make_unique<model::PreCompLayer>(document);
+
+        load_stretchable_animation_container(json, precomp->animation.get());
+
+        load_transform(json["ks"].toObject(), precomp->transform.get(), &precomp->opacity);
+
+        for ( const FieldInfo& field : fields["__Layer__"] )
+            props.erase(field.lottie);
+
+        for ( const QMetaObject* mo = precomp->metaObject(); mo; mo = mo->superClass() )
+            load_properties(
+                precomp.get(),
+                fields[model::detail::naked_type_name(mo)],
+                json,
+                props
+            );
+
+        auto comp = precomp_ids[json["refId"].toString()];
+        if ( comp )
+        {
+            precomp->composition.set(comp);
+            if ( !json.contains("nm") )
+                precomp->name.set(comp->name.get());
+        }
+        props.erase("w");
+        props.erase("h");
+        precomp->size.set(QSize(
+            json["w"].toInt(),
+            json["h"].toInt()
+        ));
+
+        int index = json["ind"].toInt();
+        if ( json.contains("parent") || referenced.count(index) )
+        {
+            auto layer = std::make_unique<model::Layer>(document);
+            layer->name.set(precomp->name.get());
+            layer->shapes.insert(std::move(precomp), 0);
+            layer_indices[index] = layer.get();
+            deferred.emplace_back(layer.get(), json);
+            composition->shapes.insert(std::move(layer), 0);
+        }
+        else
+        {
+            composition->shapes.insert(std::move(precomp), 0);
+        }
     }
 
     void load_layer(const QJsonObject& json, model::Layer* layer)
     {
-        auto props = load_basic_setup(json);
-        props.erase("ind");
-
-        load_animation_container(json, layer->animation.get());
-        load_properties(layer, fields["ReferenceTarget"], json, props);
-        load_properties(layer, fields["__Layer__"], json, props);
-
         if ( json.contains("parent") )
         {
             int parent_index = json["parent"].toInt();
@@ -955,24 +1024,22 @@ private:
             }
         }
 
+        if ( !layer->shapes.empty() )
+            return;
+
+        auto props = load_basic_setup(json);
+        props.erase("ind");
+
+        load_animation_container(json, layer->animation.get());
+        load_properties(layer, fields["ReferenceTarget"], json, props);
+        load_properties(layer, fields["__Layer__"], json, props);
+
         load_transform(json["ks"].toObject(), layer->transform.get(), &layer->opacity);
 
         switch ( json["ty"].toInt(-1) )
         {
             case 0: // precomp
-            {
-                auto precomp = std::make_unique<model::PreCompLayer>(document);
-                precomp->composition.set(precomp_ids[json["refId"].toString()]);
-                props.erase("w");
-                props.erase("h");
-                precomp->size.set(QSize(
-                    json["w"].toInt(),
-                    json["h"].toInt()
-                ));
-                layer->shapes.insert(std::move(precomp));
-                props.erase("refId");
                 break;
-            }
             case 1: // solid color
             {
                 props.erase("sw");
@@ -1385,7 +1452,12 @@ private:
     void load_asset_bitmap(const QJsonObject& asset)
     {
         auto bmp = document->defs()->images.insert(std::make_unique<model::Bitmap>(document));
-        bitmap_ids[asset["id"].toString()] = bmp;
+
+        QString id = asset["id"].toString();
+        if ( bitmap_ids.count(id) )
+            format->warning(io::lottie::LottieFormat::tr("Duplicate Precomposition ID: %1").arg(id));
+        bitmap_ids[id] = bmp;
+
         if ( asset["e"].toInt() )
         {
             bmp->from_url(asset["p"].toString());
@@ -1400,9 +1472,14 @@ private:
     void load_asset_precomp(QJsonObject asset)
     {
         auto comp = document->defs()->precompositions.insert(std::make_unique<model::Precomposition>(document));
-        precomp_ids[asset["id"].toString()] = comp;
-        asset.remove("id");
+
+        QString id = asset["id"].toString();
+        if ( precomp_ids.count(id) )
+            format->warning(io::lottie::LottieFormat::tr("Duplicate Precomposition ID: %1").arg(id));
+        precomp_ids[id] = comp;
+
         load_composition(asset, comp);
+        comp->name.set(id);
     }
 
     model::Document* document;
