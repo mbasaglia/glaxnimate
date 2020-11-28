@@ -52,7 +52,7 @@ public:
 
     void add_property(model::BaseProperty* prop)
     {
-        PropertyLineItem* item = new PropertyLineItem(prop, start_time, rounded_end_time(), row_height);
+        PropertyLineItem* item = new PropertyLineItem(prop, start_time, rounded_end_time(), row_height, rows);
         connect(item, &PropertyLineItem::property_clicked, parent, &TimelineWidget::property_clicked);
         add_line(item);
         prop_items[prop] = item;
@@ -60,7 +60,7 @@ public:
 
     void add_animatable(model::AnimatableBase* anim)
     {
-        AnimatableItem* item = new AnimatableItem(anim, start_time, rounded_end_time(), row_height);
+        AnimatableItem* item = new AnimatableItem(anim, start_time, rounded_end_time(), row_height, rows);
         connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::property_clicked);
         add_line(item);
         anim_items[anim] = item;
@@ -84,7 +84,7 @@ public:
                     add_sub_object(subobj);
             }
             else if ( !is_main_comp && flags & model::PropertyTraits::Visual && !(flags & model::PropertyTraits::List) &&
-                prop->name() != "start_time" && prop->traits().type != model::PropertyTraits::ObjectReference )
+                prop->traits().type != model::PropertyTraits::ObjectReference )
             {
                 add_property(prop);
             }
@@ -100,7 +100,7 @@ public:
 
     void add_object_without_properties(model::Object* obj)
     {
-        ObjectLineItem* item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height);
+        ObjectLineItem* item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height, rows);
         if ( auto layer = obj->cast<model::Layer>() )
         {
             auto anim_item = new AnimationContainerItem(layer->animation, row_height - 8, item);
@@ -368,16 +368,41 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     // bg
     QPainter painter;
     painter.begin(viewport());
+
+    // stripy rows
+    auto layer_top_left = mapFromScene(d->layer_start, scene_tl.y());
+    auto layer_top_right = mapFromScene(d->layer_end, scene_tl.y());
+    std::array<QBrush, 2> brushes = {
+        palette().alternateBase(),
+        palette().base(),
+    };
+    for ( int i = 0; i <= d->rows; i++ )
+    {
+        painter.fillRect(
+            QRectF(
+                QPointF(layer_top_left.x(), i*d->row_height),
+                QPointF(layer_top_right.x(), (i+1)*d->row_height)
+            ),
+            brushes[i%2]
+        );
+    }
+
     // gray out the area after the outside the layer range
     if ( d->layer_start > d->start_time )
     {
         painter.fillRect(
-            QRectF(mapFromScene(d->start_time, scene_tl.y()), mapFromScene(d->layer_start, scene_br.y())),
+            QRectF(
+                mapFromScene(d->start_time, scene_tl.y()),
+                QPointF(layer_top_left.x(), event->rect().bottom())
+            ),
             disabled
         );
     }
     painter.fillRect(
-        QRectF(mapFromScene(d->layer_end, scene_tl.y()), mapFromScene(d->rounded_end_time(), scene_br.y())),
+        QRectF(
+            layer_top_right,
+            mapFromScene(d->rounded_end_time(), scene_br.y())
+        ),
         disabled
     );
     painter.end();
