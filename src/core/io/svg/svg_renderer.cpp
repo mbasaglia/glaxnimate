@@ -127,7 +127,6 @@ public:
             ;
         }
 
-
         void add_values(const std::vector<QString>& vals)
         {
             for ( std::size_t i = 0; i != attributes.size(); i++ )
@@ -210,15 +209,17 @@ public:
             for ( int i = 0; i < kf_count; i++ )
             {
                 auto kf = property->keyframe(i);
-                data.add_keyframe(kf->time(), {kf->value().toString()}, kf->transition());
+                data.add_keyframe(time_to_global(kf->time()), {kf->value().toString()}, kf->transition());
             }
 
             data.add_dom(element);
         }
     }
 
-    qreal comp_time(qreal time)
+    qreal time_to_global(qreal time)
     {
+        for ( auto it = timing.rbegin(), end = timing.rend(); it != end; ++it )
+            time = (*it)->time_from_local(time);
         return time;
     }
 
@@ -234,7 +235,7 @@ public:
         model::JoinAnimatables j(std::move(properties), jflags);
 
         {
-            auto vals = callback(j.value_at(comp_time(j.properties()[0]->time())));
+            auto vals = callback(j.current_value());
             for ( std::size_t i = 0; i != attrs.size(); i++ )
                 element.setAttribute(attrs[i], vals[i]);
         }
@@ -244,7 +245,7 @@ public:
             AnimationData data(this, attrs, j.keyframes().size());
 
             for ( const auto& kf : j )
-                data.add_keyframe(comp_time(kf.time), callback(kf.values), kf.transition());
+                data.add_keyframe(time_to_global(kf.time), callback(kf.values), kf.transition());
 
             data.add_dom(element);
         }
@@ -294,7 +295,7 @@ public:
             auto e = element(parent, "ellipse");
             write_style(e, style);
             write_properties(e, {&ellipse->position}, {"cx", "cy"}, &Private::callback_point);
-            write_properties(e, {&ellipse->position}, {"rx", "ry"},
+            write_properties(e, {&ellipse->size}, {"rx", "ry"},
                 [](const std::vector<QVariant>& values){
                     QSizeF s = values[0].toSizeF();
                     return std::vector<QString>{
@@ -419,6 +420,7 @@ public:
         {
             if ( layer->composition.get() )
             {
+                timing.push_back(layer->animation.get());
                 auto clip = element(defs, "clipPath834");
                 set_attribute(clip, "id", "clip_" + id(shape));
                 set_attribute(clip, "clipPathUnits", "userSpaceOnUse");
@@ -432,6 +434,7 @@ public:
                 transform_to_attr(e, layer->transform.get());
                 write_visibility_attributes(parent, shape);
                 write_composition(e, layer->composition.get());
+                timing.pop_back();
             }
         }
         else if ( force_draw )
@@ -517,7 +520,7 @@ public:
                 AnimationData data(this, {"d"}, j.keyframes().size());
 
                 for ( const auto& kf : j )
-                    data.add_keyframe(kf.time, {path_data(shape->shapes(kf.time)).first}, kf.transition());
+                    data.add_keyframe(time_to_global(kf.time), {path_data(shape->shapes(kf.time)).first}, kf.transition());
 
                 data.add_dom(path);
             }
@@ -560,7 +563,7 @@ public:
             AnimationData data(this, {"transform"}, j.keyframes().size());
 
             for ( const auto& kf : j )
-                data.add_keyframe(kf.time, {callback(prop->get_at(kf.time))}, kf.transition());
+                data.add_keyframe(time_to_global(kf.time), {callback(prop->get_at(kf.time))}, kf.transition());
             data.add_dom(g, "animateTransform", name);
         }
 
@@ -736,7 +739,7 @@ public:
                 {
                     auto stop = kf.get()[i];
                     data.add_keyframe(
-                        kf.time(),
+                        time_to_global(kf.time()),
                         {QString::number(stop.first), stop.second.name()},
                         kf.transition()
                     );
@@ -799,6 +802,7 @@ public:
         return QString::number(time / fps, 'f');
     }
 
+    std::vector<model::StretchableAnimation*> timing;
     QDomDocument dom;
     qreal fps = 60;
     qreal ip = 0;

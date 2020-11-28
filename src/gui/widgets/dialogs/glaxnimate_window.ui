@@ -996,7 +996,7 @@
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
-    <string>New &amp;Composition from Selection</string>
+    <string>&amp;Precompose Selection</string>
    </property>
   </action>
   <action name="action_new_precomp">
@@ -1005,7 +1005,7 @@
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
    </property>
    <property name="text">
-    <string>New Com&amp;position</string>
+    <string>New &amp;Composition</string>
    </property>
   </action>
   <action name="action_path_add">
