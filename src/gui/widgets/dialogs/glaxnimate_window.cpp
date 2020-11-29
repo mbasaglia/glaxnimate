@@ -415,3 +415,9 @@ void GlaxnimateWindow::shape_to_precomposition(model::ShapeElement* node)
 {
     return d->shape_to_precomposition(node);
 }
+
+void GlaxnimateWindow::set_current_composition(model::Composition* comp)
+{
+    int index = d->current_document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(comp));
+    d->ui.tab_bar->setCurrentIndex(index+1);
+}

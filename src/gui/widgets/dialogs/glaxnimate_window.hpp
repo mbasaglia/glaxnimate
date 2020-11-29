@@ -51,6 +51,7 @@ public:
     model::Document* document() const;
 
     model::Composition* current_composition() const;
+    void set_current_composition(model::Composition* comp);
     model::DocumentNode* current_document_node() const;
     void set_current_document_node(model::DocumentNode* node);
     model::ShapeElement* current_shape();

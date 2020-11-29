@@ -3,6 +3,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "graphics/item_data.hpp"
+#include "model/shapes/precomp_layer.hpp"
 
 void tools::MouseEvent::forward_to_scene() const
 {
@@ -93,8 +94,17 @@ void tools::Tool::edit_clicked(const tools::MouseEvent& event)
 
     if ( !clicked_on.empty() )
     {
-        event.scene->user_select({clicked_on[0]->node()}, graphics::DocumentScene::Replace);
-        event.window->switch_tool(Registry::instance().tool("edit"));
+        auto selected = clicked_on[0]->node();
+        if ( auto precomp = selected->cast<model::PreCompLayer>() )
+        {
+            if ( precomp->composition.get() )
+                event.window->set_current_composition(precomp->composition.get());
+        }
+        else
+        {
+            event.scene->user_select({selected}, graphics::DocumentScene::Replace);
+            event.window->switch_tool(Registry::instance().tool("edit"));
+        }
     }
 }
 
