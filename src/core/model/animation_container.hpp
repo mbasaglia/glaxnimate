@@ -31,6 +31,8 @@ public:
 
     float duration() const;
 
+    QString type_name_human() const override;
+
 signals:
     void first_frame_changed(float);
     void last_frame_changed(float);

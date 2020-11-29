@@ -39,6 +39,11 @@ float model::AnimationContainer::duration() const
     return last_frame.get() - first_frame.get();
 }
 
+QString model::AnimationContainer::type_name_human() const
+{
+    return tr("Animation Timing");
+}
+
 GLAXNIMATE_OBJECT_IMPL(model::StretchableAnimation)
 
 bool model::StretchableAnimation::validate_stretch(float stretch)

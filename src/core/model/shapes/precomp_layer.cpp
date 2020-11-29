@@ -53,7 +53,7 @@ void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, mod
             painter->opacity() * opacity.get_at(time)
         );
         painter->setClipRect(QRectF(QPointF(0, 0), size.get()), Qt::IntersectClip);
-        composition->paint(painter, time, qMax(mode, model::DocumentNode::Recursive));
+        composition->paint(painter, animation->time_to_local(time), qMax(mode, model::DocumentNode::Recursive));
     }
 }
 
