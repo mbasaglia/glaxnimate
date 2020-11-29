@@ -430,7 +430,7 @@ public:
                 set_attribute(clip_rect, "width", layer->size.get().width());
                 set_attribute(clip_rect, "height", layer->size.get().height());
 
-                auto e = element(parent, "g");
+                auto e = start_layer(parent, layer);
                 transform_to_attr(e, layer->transform.get());
                 write_visibility_attributes(parent, shape);
                 write_composition(e, layer->composition.get());
@@ -620,7 +620,9 @@ public:
     {
         QDomElement g = element(parent, "g");
         g.setAttribute("id", id(node));
-        g.setAttribute("inkscape:label", node->name.get());
+        if ( node->name.get() == "" )
+            g.setAttribute("wtf", node->object_name());
+        g.setAttribute("inkscape:label", node->object_name());
         return g;
     }
 

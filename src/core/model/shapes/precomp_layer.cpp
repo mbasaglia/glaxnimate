@@ -48,7 +48,8 @@ void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, mod
 {
     if ( composition.get() )
     {
-        time = animation->time_to_local(time);
+        if ( mode != model::DocumentNode::NoTransform )
+            time = animation->time_to_local(time);
         if ( !animation->time_visible(time) )
             return;
         painter->setOpacity(
