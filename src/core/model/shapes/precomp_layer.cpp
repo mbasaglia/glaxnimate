@@ -46,14 +46,16 @@ bool model::PreCompLayer::is_valid_precomp(model::ReferenceTarget* node) const
 
 void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, model::DocumentNode::PaintMode mode) const
 {
-
     if ( composition.get() )
     {
+        time = animation->time_to_local(time);
+        if ( !animation->time_visible(time) )
+            return;
         painter->setOpacity(
             painter->opacity() * opacity.get_at(time)
         );
         painter->setClipRect(QRectF(QPointF(0, 0), size.get()), Qt::IntersectClip);
-        composition->paint(painter, animation->time_to_local(time), qMax(mode, model::DocumentNode::Recursive));
+        composition->paint(painter, time, qMax(mode, model::DocumentNode::Recursive));
     }
 }
 

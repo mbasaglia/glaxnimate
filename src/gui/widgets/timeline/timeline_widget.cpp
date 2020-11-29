@@ -4,6 +4,7 @@
 #include <QWheelEvent>
 
 #include "timeline_items.hpp"
+#include "model/shapes/precomp_layer.hpp"
 
 using namespace timeline;
 
@@ -103,12 +104,17 @@ public:
         ObjectLineItem* item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height, rows);
         if ( auto layer = obj->cast<model::Layer>() )
         {
-            auto anim_item = new AnimationContainerItem(layer->animation, row_height - 8, item);
+            auto anim_item = new AnimationContainerItem(layer, layer->animation.get(), row_height - 8, item);
             anim_item->setPos(0, row_height/2.0);
         }
         else if ( auto comp = obj->cast<model::MainComposition>() )
         {
-            auto anim_item = new AnimationContainerItem(comp->animation, row_height - 8, item);
+            auto anim_item = new AnimationContainerItem(comp, comp->animation.get(), row_height - 8, item);
+            anim_item->setPos(0, row_height/2.0);
+        }
+        else if ( auto layer = obj->cast<model::PreCompLayer>() )
+        {
+            auto anim_item = new AnimationContainerItem(layer, layer->animation.get(), row_height - 8, item);
             anim_item->setPos(0, row_height/2.0);
         }
 

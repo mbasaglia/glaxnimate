@@ -389,11 +389,12 @@ public:
 class AnimationContainerItem : public QGraphicsObject
 {
 public:
-    AnimationContainerItem(model::SubObjectProperty<model::AnimationContainer>& prop, qreal height, QGraphicsItem* parent)
+    AnimationContainerItem(model::DocumentNode* node, model::AnimationContainer* animation,
+                           qreal height, QGraphicsItem* parent)
     : QGraphicsObject(parent),
       radius(height/2),
-      node(static_cast<model::DocumentNode*>(prop.object())),
-      animation(prop.get())
+      node(node),
+      animation(animation)
 
     {
         update_color(node->docnode_group_color());

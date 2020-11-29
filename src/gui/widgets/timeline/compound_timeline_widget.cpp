@@ -6,6 +6,7 @@
 #include <QClipboard>
 #include <QMimeData>
 
+#include "model/shapes/precomp_layer.hpp"
 #include "command/animation_commands.hpp"
 #include "command/undo_macro_guard.hpp"
 
@@ -286,7 +287,8 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
             {
                 auto child = node->docnode_child(i);
                 auto ch_mo = child->metaObject();
-                if ( ch_mo->inherits(&model::Layer::staticMetaObject) )
+                if ( ch_mo->inherits(&model::Layer::staticMetaObject) ||
+                    ch_mo->inherits(&model::PreCompLayer::staticMetaObject) )
                 {
                     d->ui.timeline->add_object_without_properties(child);
                     d->property_model.add_object_without_properties(child);
@@ -299,7 +301,9 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
             {
                 auto child = node->docnode_child(i);
                 auto ch_mo = child->metaObject();
-                if ( ch_mo->inherits(&model::Layer::staticMetaObject) )
+                if ( ch_mo->inherits(&model::Layer::staticMetaObject) ||
+                    ch_mo->inherits(&model::PreCompLayer::staticMetaObject)
+                )
                 {
                     d->ui.timeline->add_object_without_properties(child);
                     d->property_model.add_object_without_properties(child);
