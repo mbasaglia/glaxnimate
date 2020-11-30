@@ -7,6 +7,9 @@
 
 #include <QEvent>
 #include <QGraphicsScene>
+#include <QGraphicsRectItem>
+#include <QGraphicsPathItem>
+#include <QGraphicsPixmapItem>
 #include <QStandardItemModel>
 #include <QDesktopServices>
 
@@ -53,6 +56,9 @@ public:
     utils::trace::TraceOptions options;
     color_widgets::ColorDelegate delegate;
     qreal zoom = 1;
+    QGraphicsRectItem *item_parent_shape;
+    QGraphicsRectItem *item_parent_image;
+    QGraphicsPixmapItem *item_image;
 
     void trace_mono(std::vector<TraceResult>& result)
     {
@@ -199,6 +205,21 @@ public:
         b.setTransform(ui.preview->transform().inverted());
         ui.preview->setBackgroundBrush(b);
     }
+
+    void init_scene()
+    {
+        item_parent_shape = scene.addRect(QRectF(0, 0, source_image.width(), source_image.height()));
+        item_parent_shape->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+        item_parent_shape->setBrush(Qt::NoBrush);
+        item_parent_shape->setPen(Qt::NoPen);
+
+        item_parent_image = scene.addRect(QRectF(source_image.width(), 0, 0, source_image.height()));
+        item_parent_image->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
+        item_parent_image->setBrush(Qt::NoBrush);
+        item_parent_image->setPen(Qt::NoPen);
+
+        item_image = new QGraphicsPixmapItem(QPixmap::fromImage(source_image), item_parent_image);
+    }
 };
 
 TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
@@ -209,6 +230,7 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     d->source_image = image->image->pixmap().toImage();
     if ( d->source_image.format() != QImage::Format_RGBA8888 )
         d->source_image = d->source_image.convertToFormat(QImage::Format_RGBA8888);
+    d->init_scene();
 
     d->ui.preview->setScene(&d->scene);
     d->ui.spin_min_area->setValue(qMax(d->options.min_area(), d->source_image.width() / 32));
@@ -246,7 +268,8 @@ void TraceDialog::changeEvent ( QEvent* e )
 
 void TraceDialog::update_preview()
 {
-    d->scene.clear();
+    for ( auto ch : d->item_parent_shape->childItems() )
+        delete ch;
 
     for ( const auto& result : d->trace() )
     {
@@ -256,13 +279,19 @@ void TraceDialog::update_preview()
             if ( d->has_outline() )
                 pen = QPen(result.color, d->ui.spin_outline->value());
 
-            d->scene.addPath(result.bezier.painter_path(), pen, result.color);
+            auto path = new QGraphicsPathItem(result.bezier.painter_path(), d->item_parent_shape);
+            path->setPen(pen);
+            path->setBrush(result.color);
         }
 
         if ( !result.rects.empty() )
         {
             for ( const auto& rect : result.rects )
-                d->scene.addRect(rect, Qt::NoPen, result.color);
+            {
+                auto item = new QGraphicsRectItem(rect, d->item_parent_shape);
+                item->setPen(Qt::NoPen);
+                item->setBrush(result.color);
+            }
         }
     }
 
@@ -390,4 +419,11 @@ void TraceDialog::show_help()
     docs.setPath("/manual/ui/dialogs/");
     docs.setFragment("trace-bitmap");
     QDesktopServices::openUrl(docs);
+}
+
+void TraceDialog::preview_slide(int percent)
+{
+    qreal splitpoint = d->source_image.width() * percent / 100.0;
+    d->item_parent_shape->setRect(0, 0, splitpoint, d->source_image.height());
+    d->item_parent_image->setRect(splitpoint, 0, d->source_image.width() - splitpoint, d->source_image.height());
 }

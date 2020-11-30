@@ -7,6 +7,7 @@
     * The timeline now allows editing layer frame ranges
     * When selecting groups, its inner objects will show in the timeline
     * The timeline now shows some non-animated properties for convenience
+    * The trace dialog has a slider to compare the trace preview to the original image
 * I/O:
     * Added support for gradientTransform when parsing SVG
     * Added more warnings for features not supported by Telegram

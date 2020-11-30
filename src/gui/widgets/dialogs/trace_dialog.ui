@@ -91,14 +91,14 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="color_widgets::ColorSelector" name="color_mono">
+                <widget class="color_widgets::ColorSelector" name="color_mono" native="true">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="color">
+                 <property name="color" stdset="0">
                   <color>
                    <red>0</red>
                    <green>0</green>
@@ -347,6 +347,19 @@
          <widget class="QGraphicsView" name="preview">
           <property name="renderHints">
            <set>QPainter::Antialiasing|QPainter::TextAntialiasing</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="preview_slider">
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -601,6 +614,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>preview_slider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>preview_slide(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>671</x>
+     <y>513</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1068</x>
+     <y>536</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>update_preview()</slot>
@@ -611,5 +640,6 @@
   <slot>auto_colors()</slot>
   <slot>zoom_preview(double)</slot>
   <slot>show_help()</slot>
+  <slot>preview_slide(int)</slot>
  </slots>
 </ui>
