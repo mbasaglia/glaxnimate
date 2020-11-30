@@ -231,14 +231,16 @@ void item_models::DocumentNodeModel::set_document ( model::Document* doc )
         connect(doc->defs(), &model::Defs::precomp_add_begin, this, [this](int row){
             beginInsertRows({}, row+1, row+1);
         });
-        connect(doc->defs(), &model::Defs::precomp_add_end, this, [this](){
+        connect(doc->defs(), &model::Defs::precomp_add_end, this, [this](model::Precomposition* precomp){
             endInsertRows();
+            connect_node(precomp);
         });
         connect(doc->defs(), &model::Defs::precomp_remove_begin, this, [this](int row){
             beginRemoveRows({}, row+1, row+1);
         });
-        connect(doc->defs(), &model::Defs::precomp_remove_end, this, [this](){
+        connect(doc->defs(), &model::Defs::precomp_remove_end, this, [this](model::Precomposition* precomp){
             endRemoveRows();
+            disconnect_node(precomp);
         });
         connect(doc->defs(), &model::Defs::precomp_move_begin, this, [this](int from, int to){
             beginMoveRows({}, from+1, from+1, {}, to+1);
