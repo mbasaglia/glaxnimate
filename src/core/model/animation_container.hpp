@@ -7,7 +7,7 @@ namespace model {
 
 
 /**
- * \brief Base class for document nodes that enclose an animation
+ * \brief Helper class for document nodes that enclose an animation
  */
 class AnimationContainer: public Object
 {
@@ -52,26 +52,6 @@ private:
     {
         return f > first_frame.get();
     }
-};
-
-
-class StretchableAnimation : public AnimationContainer
-{
-    GLAXNIMATE_OBJECT(StretchableAnimation)
-    GLAXNIMATE_PROPERTY(float, start_time, 0, &StretchableAnimation::timing_changed, {}, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(float, stretch, 1,    &StretchableAnimation::timing_changed, {}, PropertyTraits::Visual)
-
-public:
-    using AnimationContainer::AnimationContainer;
-
-    float time_to_local(float global) const;
-    float time_from_local(float local) const;
-
-private:
-    bool validate_stretch(float stretch);
-
-signals:
-    void timing_changed();
 };
 
 } // namespace model

@@ -560,6 +560,9 @@ void item_models::PropertyModel::property_changed(const model::BaseProperty* pro
 
     Private::Subtree* parent = d->node(prop_node->parent);
 
+    if ( !parent )
+        return;
+
     int i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
     QModelIndex index = createIndex(i, 1, prop_node->id);
 

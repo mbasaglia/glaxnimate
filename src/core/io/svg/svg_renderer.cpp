@@ -420,7 +420,7 @@ public:
         {
             if ( layer->composition.get() )
             {
-                timing.push_back(layer->animation.get());
+                timing.push_back(layer->timing.get());
                 auto clip = element(defs, "clipPath834");
                 set_attribute(clip, "id", "clip_" + id(shape));
                 set_attribute(clip, "clipPathUnits", "userSpaceOnUse");
@@ -804,7 +804,7 @@ public:
         return QString::number(time / fps, 'f');
     }
 
-    std::vector<model::StretchableAnimation*> timing;
+    std::vector<model::StretchableTime*> timing;
     QDomDocument dom;
     qreal fps = 60;
     qreal ip = 0;

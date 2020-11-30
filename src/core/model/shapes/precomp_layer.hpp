@@ -1,7 +1,7 @@
 #pragma once
 
 #include "model/property/reference_property.hpp"
-#include "model/animation_container.hpp"
+#include "model/stretchable_time.hpp"
 #include "model/shapes/shape.hpp"
 #include "model/defs/precomposition.hpp"
 
@@ -12,8 +12,8 @@ class PreCompLayer : public ShapeElement
 {
     GLAXNIMATE_OBJECT(PreCompLayer)
 
-    GLAXNIMATE_SUBOBJECT(model::StretchableAnimation, animation)
-    GLAXNIMATE_PROPERTY_REFERENCE(model::Precomposition, composition, &PreCompLayer::valid_precomps, &PreCompLayer::is_valid_precomp)
+    GLAXNIMATE_SUBOBJECT(model::StretchableTime, timing)
+    GLAXNIMATE_PROPERTY_REFERENCE(model::Precomposition, composition, &PreCompLayer::valid_precomps, &PreCompLayer::is_valid_precomp, &PreCompLayer::composition_changed)
     GLAXNIMATE_PROPERTY(QSizeF, size, {})
     GLAXNIMATE_SUBOBJECT(model::Transform, transform)
     GLAXNIMATE_ANIMATABLE(float, opacity, 1, &PreCompLayer::opacity_changed, 0, 1)
@@ -46,6 +46,7 @@ private:
 
 signals:
     void opacity_changed(float op);
+    void composition_changed();
 
 protected:
     void on_paint(QPainter*, FrameTime, PaintMode) const override;

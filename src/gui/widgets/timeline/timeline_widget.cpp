@@ -114,7 +114,7 @@ public:
         }
         else if ( auto layer = obj->cast<model::PreCompLayer>() )
         {
-            auto anim_item = new AnimationContainerItem(layer, layer->animation.get(), row_height - 8, item);
+            auto anim_item = new StretchableTimeItem(layer, row_height - 8, item);
             anim_item->setPos(0, row_height/2.0);
         }
 

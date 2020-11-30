@@ -26,7 +26,7 @@ QString model::PreCompLayer::type_name_human() const
 
 model::FrameTime model::PreCompLayer::relative_time(model::FrameTime time) const
 {
-    return animation->time_to_local(time);
+    return timing->time_to_local(time);
 }
 
 void model::PreCompLayer::set_time(model::FrameTime t)
@@ -49,9 +49,7 @@ void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, mod
     if ( composition.get() )
     {
         if ( mode != model::DocumentNode::NoTransform )
-            time = animation->time_to_local(time);
-        if ( !animation->time_visible(time) )
-            return;
+            time = timing->time_to_local(time);
         painter->setOpacity(
             painter->opacity() * opacity.get_at(time)
         );

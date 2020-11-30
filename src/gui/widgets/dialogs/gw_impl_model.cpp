@@ -642,7 +642,6 @@ void GlaxnimateWindow::Private::on_remove_precomp(int index)
 void GlaxnimateWindow::Private::layer_new_comp(QAction* action)
 {
     auto layer = std::make_unique<model::PreCompLayer>(current_document.get());
-    layer->animation->last_frame.set(current_document->main()->animation->last_frame.get());
     layer->composition.set(action->data().value<model::Precomposition*>());
     layer->size.set(current_document->rect().size());
     QPointF pos = current_document->rect().center();

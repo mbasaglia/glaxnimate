@@ -832,9 +832,8 @@ public:
         json["ddd"_l] = 0;
         json["ty"_l] = 0;
         json["ind"_l] = layer_index(layer);
-        convert_animation_container(layer->animation.get(), json);
-        json["st"_l] = layer->animation->start_time.get();
-        json["sr"_l] = layer->animation->stretch.get();
+        json["st"_l] = layer->timing->start_time.get();
+        json["sr"_l] = layer->timing->stretch.get();
         QCborMap transform;
         convert_transform(layer->transform.get(), &layer->opacity, transform);
         json["ks"_l] = transform;
@@ -864,14 +863,14 @@ public:
 
     void load(const QJsonObject& json)
     {
+        load_animation_container(json, document->main()->animation.get());
         load_assets(json["assets"].toArray());
-        load_main_composition(json, document->main());
+        load_composition(json, document->main());
     }
 
 private:
-    void load_stretchable_animation_container(const QJsonObject& json, model::StretchableAnimation* animation)
+    void load_stretchable_animation_container(const QJsonObject& json, model::StretchableTime* animation)
     {
-        load_animation_container(json, animation);
         animation->start_time.set(json["st"].toDouble());
         animation->stretch.set(json["sr"].toDouble(1));
     }
@@ -880,12 +879,6 @@ private:
     {
         animation->first_frame.set(json["ip"].toInt());
         animation->last_frame.set(json["op"].toInt());
-    }
-
-    void load_main_composition(const QJsonObject& json, model::MainComposition* composition)
-    {
-        load_animation_container(json, composition->animation.get());
-        load_composition(json, composition);
     }
 
     void load_composition(const QJsonObject& json, model::Composition* composition)
@@ -950,7 +943,7 @@ private:
 
         auto precomp = std::make_unique<model::PreCompLayer>(document);
 
-        load_stretchable_animation_container(json, precomp->animation.get());
+        load_stretchable_animation_container(json, precomp->timing.get());
 
         load_transform(json["ks"].toObject(), precomp->transform.get(), &precomp->opacity);
 
@@ -980,7 +973,8 @@ private:
         ));
 
         int index = json["ind"].toInt();
-        if ( json.contains("parent") || referenced.count(index) )
+        auto op = document->main()->animation->last_frame.get();
+        if ( json.contains("parent") || referenced.count(index) || json["ip"].toInt() != 0 || json["op"].toDouble(op) != op )
         {
             auto layer = std::make_unique<model::Layer>(document);
             layer->name.set(precomp->name.get());
@@ -1024,13 +1018,14 @@ private:
             }
         }
 
+        load_animation_container(json, layer->animation.get());
+
         if ( !layer->shapes.empty() )
             return;
 
         auto props = load_basic_setup(json);
         props.erase("ind");
 
-        load_animation_container(json, layer->animation.get());
         load_properties(layer, fields["ReferenceTarget"], json, props);
         load_properties(layer, fields["__Layer__"], json, props);
 

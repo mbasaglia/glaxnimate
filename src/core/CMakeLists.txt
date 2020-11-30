@@ -37,6 +37,7 @@ model/transform.cpp
 model/factory.cpp
 model/reference_target.cpp
 model/animation_container.cpp
+model/stretchable_time.cpp
 
 model/animation/keyframe_transition.cpp
 model/animation/animatable.cpp

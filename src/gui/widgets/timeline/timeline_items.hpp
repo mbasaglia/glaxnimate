@@ -9,6 +9,7 @@
 #include "app/application.hpp"
 #include "command/animation_commands.hpp"
 #include "model/document.hpp"
+#include "model/shapes/precomp_layer.hpp"
 #include "graphics/handle.hpp"
 
 namespace timeline {
@@ -386,37 +387,15 @@ public:
     std::vector<KeyframeSplitItem*> kf_split_items;
 };
 
-class AnimationContainerItem : public QGraphicsObject
+class TimeRectItem : public QGraphicsObject
 {
 public:
-    AnimationContainerItem(model::DocumentNode* node, model::AnimationContainer* animation,
-                           qreal height, QGraphicsItem* parent)
+    TimeRectItem(model::DocumentNode* node, qreal height, QGraphicsItem* parent)
     : QGraphicsObject(parent),
-      radius(height/2),
-      node(node),
-      animation(animation)
-
+      radius(height/2)
     {
         update_color(node->docnode_group_color());
-        handle_ip.set_radius(radius);
-        handle_op.set_radius(radius);
-        handle_ip.setPos(animation->first_frame.get(), 0);
-        handle_op.setPos(animation->last_frame.get(), 0);
-        connect(node, &model::DocumentNode::docnode_group_color_changed, this, &AnimationContainerItem::update_color);
-        connect(&handle_ip, &graphics::MoveHandle::dragged_x, this, &AnimationContainerItem::drag_ip);
-        connect(&handle_op, &graphics::MoveHandle::dragged_x, this, &AnimationContainerItem::drag_op);
-        connect(animation, &model::AnimationContainer::first_frame_changed, this, &AnimationContainerItem::update_ip);
-        connect(animation, &model::AnimationContainer::last_frame_changed, this, &AnimationContainerItem::update_op);
-        connect(&handle_ip, &graphics::MoveHandle::drag_finished, this, &AnimationContainerItem::commit_ip);
-        connect(&handle_op, &graphics::MoveHandle::drag_finished, this, &AnimationContainerItem::commit_op);
-    }
-
-    QRectF boundingRect() const override
-    {
-        return QRectF(
-            QPointF(handle_ip.pos().x(), -radius),
-            QPointF(handle_op.pos().x(), radius)
-        );
+        connect(node, &model::DocumentNode::docnode_group_color_changed, this, &TimeRectItem::update_color);
     }
 
     void paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget *) override
@@ -438,11 +417,45 @@ private:
         else
             stroke = Qt::black;
 
-//         handle_ip.set_colors(color, color, color, stroke);
-//         handle_op.set_colors(color, color, color, stroke);
         update();
     }
 
+protected:
+    QColor color;
+    QColor stroke;
+    qreal radius;
+};
+
+class AnimationContainerItem : public TimeRectItem
+{
+public:
+    AnimationContainerItem(model::DocumentNode* node, model::AnimationContainer* animation,
+                           qreal height, QGraphicsItem* parent)
+    : TimeRectItem(node, height, parent),
+      animation(animation)
+
+    {
+        handle_ip.set_radius(radius);
+        handle_op.set_radius(radius);
+        handle_ip.setPos(animation->first_frame.get(), 0);
+        handle_op.setPos(animation->last_frame.get(), 0);
+        connect(&handle_ip, &graphics::MoveHandle::dragged_x, this, &AnimationContainerItem::drag_ip);
+        connect(&handle_op, &graphics::MoveHandle::dragged_x, this, &AnimationContainerItem::drag_op);
+        connect(animation, &model::AnimationContainer::first_frame_changed, this, &AnimationContainerItem::update_ip);
+        connect(animation, &model::AnimationContainer::last_frame_changed, this, &AnimationContainerItem::update_op);
+        connect(&handle_ip, &graphics::MoveHandle::drag_finished, this, &AnimationContainerItem::commit_ip);
+        connect(&handle_op, &graphics::MoveHandle::drag_finished, this, &AnimationContainerItem::commit_op);
+    }
+
+    QRectF boundingRect() const override
+    {
+        return QRectF(
+            QPointF(handle_ip.pos().x(), -radius),
+            QPointF(handle_op.pos().x(), radius)
+        );
+    }
+
+private:
     void drag_ip(qreal x)
     {
         x = qRound(x);
@@ -486,10 +499,6 @@ private:
 private:
     graphics::MoveHandle handle_ip{this, graphics::MoveHandle::Horizontal, graphics::MoveHandle::None, 1, true};
     graphics::MoveHandle handle_op{this, graphics::MoveHandle::Horizontal, graphics::MoveHandle::None, 1, true};
-    QColor color;
-    QColor stroke;
-    qreal radius;
-    model::DocumentNode* node;
     model::AnimationContainer* animation;
 };
 
@@ -522,5 +531,91 @@ signals:
 private:
     model::BaseProperty* property_;
 };
+
+
+class StretchableTimeItem : public TimeRectItem
+{
+public:
+    StretchableTimeItem(model::PreCompLayer* layer,
+                           qreal height, QGraphicsItem* parent)
+    : TimeRectItem(layer, height, parent),
+      timing(layer->timing.get()),
+      animation(timing->document()->main()->animation.get())
+
+    {
+        handle_ip.set_radius(radius);
+        handle_op.set_radius(radius);
+        update_handles();
+        connect(&handle_ip, &graphics::MoveHandle::dragged_x,               this, &StretchableTimeItem::drag_ip);
+        connect(&handle_op, &graphics::MoveHandle::dragged_x,               this, &StretchableTimeItem::drag_op);
+        connect(timing,     &model::StretchableTime::timing_changed,        this, &StretchableTimeItem::update_handles);
+        connect(layer,      &model::PreCompLayer::composition_changed,      this, &StretchableTimeItem::update_handles);
+        connect(&handle_ip, &graphics::MoveHandle::drag_finished,           this, &StretchableTimeItem::commit_ip);
+        connect(&handle_op, &graphics::MoveHandle::drag_finished,           this, &StretchableTimeItem::commit_op);
+        connect(animation,  &model::AnimationContainer::last_frame_changed, this, &StretchableTimeItem::update_handles);
+
+    }
+
+    QRectF boundingRect() const override
+    {
+        return QRectF(
+            QPointF(handle_ip.pos().x(), -radius),
+            QPointF(handle_op.pos().x(), radius)
+        );
+    }
+
+private:
+    void drag_ip(qreal x)
+    {
+        x = qRound(x);
+        timing->start_time.set_undoable(x, false);
+    }
+
+    void drag_op(qreal x)
+    {
+        x = qRound(x);
+        auto duration = x - timing->start_time.get();
+        if ( duration < 1 )
+            duration = 1;
+
+        auto source_duration = animation->last_frame.get();
+
+        if ( source_duration != 0 )
+            timing->stretch.set_undoable(duration / source_duration, false);
+    }
+
+    void update_ip(qreal x)
+    {
+        handle_ip.setPos(x, 0);
+        prepareGeometryChange();
+        update();
+    }
+
+    void update_handles()
+    {
+        handle_ip.setPos(timing->start_time.get(), 0);
+
+        handle_op.setPos(timing->start_time.get() + animation->last_frame.get() * timing->stretch.get(), 0);
+        prepareGeometryChange();
+        update();
+    }
+
+    void commit_ip()
+    {
+        timing->start_time.set_undoable(timing->start_time.get(), true);
+    }
+
+    void commit_op()
+    {
+        timing->stretch.set_undoable(timing->stretch.get(), true);
+    }
+
+private:
+    model::StretchableTime* timing;
+    model::AnimationContainer* animation;
+    graphics::MoveHandle handle_ip{this, graphics::MoveHandle::Horizontal, graphics::MoveHandle::None, 1, true};
+    graphics::MoveHandle handle_op{this, graphics::MoveHandle::Horizontal, graphics::MoveHandle::None, 1, true};
+};
+
 
 } // namespace timeline
