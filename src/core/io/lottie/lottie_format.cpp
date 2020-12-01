@@ -12,7 +12,6 @@
 #include "model/shapes/shapes.hpp"
 #include "math/bezier/bezier.hpp"
 #include "cbor_write_json.hpp"
-#include <QDebug>
 
 using namespace model;
 
@@ -877,8 +876,8 @@ private:
 
     void load_animation_container(const QJsonObject& json, model::AnimationContainer* animation)
     {
-        animation->first_frame.set(json["ip"].toInt());
-        animation->last_frame.set(json["op"].toInt());
+        animation->first_frame.set(json["ip"].toDouble());
+        animation->last_frame.set(json["op"].toDouble());
     }
 
     void load_composition(const QJsonObject& json, model::Composition* composition)
@@ -974,7 +973,7 @@ private:
 
         int index = json["ind"].toInt();
         auto op = document->main()->animation->last_frame.get();
-        if ( json.contains("parent") || referenced.count(index) || json["ip"].toInt() != 0 || json["op"].toDouble(op) != op )
+        if ( json.contains("parent") || referenced.count(index) || json["ip"].toDouble() != 0 || json["op"].toDouble(op) != op )
         {
             auto layer = std::make_unique<model::Layer>(document);
             layer->name.set(precomp->name.get());

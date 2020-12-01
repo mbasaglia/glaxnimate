@@ -19,6 +19,7 @@
     * Fixed copy/pasting gradients
     * Fixed layer bounding boxes not being updated in some cases
     * Rendering to raster correctly takes into account layer parenting
+    * Loading Lottie layers with non-integer in/out points works correctly
 
 ## 0.3.1
 
