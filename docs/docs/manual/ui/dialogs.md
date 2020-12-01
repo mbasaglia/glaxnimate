@@ -124,3 +124,13 @@ These options affect the appearance of the output shapes
 * Smoothness - A value of 0% will create polygons, a value of 100% will avoid any sharp corners
 * Minimum Area - If a region with the same color doesn't have more than these many pixels, it will be discarder. Useful to remove speckles.
 
+
+### Preview
+
+The right half of the dialog shows a preview of the operation.
+
+Since tracing might be slow, you need to press *Update* for the preview to be updated.
+
+The slider below the preview area shows the tracing result side by side with the original image.
+The area to the left of the slider marker shows the trace result, while the area to the right
+shows the original image. By default the slider is all the way to the right, only revealing the trace result.

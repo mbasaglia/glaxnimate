@@ -203,6 +203,10 @@ The keyframe icons show different shapes and colors depending on the easing tran
 *Ctrl + Mouse Wheel* will zoom the area with respect to time, *Mouse Wheel* by itself moves left or right.
 To scroll up and down either use the scrollbar to the side or use the *Mouse Wheel* on the property list.
 
+Layers will be displayed as rectangles that spans between the first and last frames of that layer:
+
+![Keyframe Area with Layers](/img/screenshots/views/timeline/layers.png)
+
 #### Context Menus
 
 Right clicking on the row of a property, will show a context menu with the name of the property and the ability to add a keyframe:
