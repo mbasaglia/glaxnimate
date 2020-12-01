@@ -40,6 +40,8 @@ public:
 
     void add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez) const override;
 
+    model::Composition* owner_composition() const;
+
 private:
     std::vector<ReferenceTarget*> valid_precomps() const;
     bool is_valid_precomp(ReferenceTarget* node) const;

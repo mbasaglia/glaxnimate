@@ -36,12 +36,16 @@ void model::PreCompLayer::set_time(model::FrameTime t)
 
 std::vector<model::ReferenceTarget *> model::PreCompLayer::valid_precomps() const
 {
-    return document()->defs()->precompositions.valid_reference_values(false);
+    auto v = document()->defs()->precompositions.valid_reference_values(false);
+    auto it = std::find(v.begin(), v.end(), owner_composition());
+    if ( it != v.end() )
+        v.erase(it);
+    return v;
 }
 
 bool model::PreCompLayer::is_valid_precomp(model::ReferenceTarget* node) const
 {
-    return document()->defs()->precompositions.is_valid_reference_value(node, false);
+    return document()->defs()->precompositions.is_valid_reference_value(node, false) && owner_composition() != node;
 }
 
 void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, model::DocumentNode::PaintMode mode) const
@@ -77,4 +81,13 @@ QTransform model::PreCompLayer::local_transform_matrix(model::FrameTime t) const
 
 void model::PreCompLayer::add_shapes(model::FrameTime, math::bezier::MultiBezier&) const
 {
+}
+
+model::Composition* model::PreCompLayer::owner_composition() const
+{
+    auto n = docnode_parent();
+    while ( n && !n->is_instance<model::Composition>() )
+        n = n->docnode_parent();
+
+    return static_cast<model::Composition*>(n);
 }
