@@ -63,9 +63,9 @@ public:
         action_title = menu_property.addSeparator();
         menu_property.addAction(ui.action_add_keyframe);
 
-        menu_property.addAction(&action_kf_paste1);
-        action_kf_paste1.setIcon(QIcon::fromTheme("edit-paste"));
-        connect(&action_kf_paste1, &QAction::triggered, parent, &CompoundTimelineWidget::paste_keyframe);
+        menu_property.addAction(&action_kf_paste);
+        action_kf_paste.setIcon(QIcon::fromTheme("edit-paste"));
+        connect(&action_kf_paste, &QAction::triggered, parent, &CompoundTimelineWidget::paste_keyframe);
 
         connect(parent, &QWidget::customContextMenuRequested, parent, &CompoundTimelineWidget::custom_context_menu);
 
@@ -107,9 +107,7 @@ public:
         action_kf_copy.setIcon(QIcon::fromTheme("edit-copy"));
         connect(&action_kf_copy, &QAction::triggered, parent, &CompoundTimelineWidget::copy_keyframe);
 
-        menu_keyframe.addAction(&action_kf_paste2);
-        action_kf_paste2.setIcon(QIcon::fromTheme("edit-paste"));
-        connect(&action_kf_paste2, &QAction::triggered, parent, &CompoundTimelineWidget::paste_keyframe);
+        menu_keyframe.addAction(&action_kf_paste);
 
         action_enter = menu_keyframe.addSeparator();
         for ( QAction* ac : enter.actions() )
@@ -150,8 +148,7 @@ public:
         action_kf_remove.setText(tr("Remove Keyframe"));
 
         action_kf_copy.setText(tr("Copy Keyframe"));
-        action_kf_paste1.setText(tr("Paste Keyframe"));
-        action_kf_paste2.setText(action_kf_paste1.text());
+        action_kf_paste.setText(tr("Paste Keyframe"));
     }
 
     void retranslateUi(CompoundTimelineWidget* parent)
@@ -217,8 +214,7 @@ public:
             enabled = type == menu_anim->traits().type;
         }
 
-        action_kf_paste1.setEnabled(enabled);
-        action_kf_paste2.setEnabled(enabled);
+        action_kf_paste.setEnabled(enabled);
     }
 
 
@@ -242,8 +238,7 @@ public:
     QAction action_exit_ease;
     QAction action_exit_custom;
     QAction action_kf_copy;
-    QAction action_kf_paste1;
-    QAction action_kf_paste2;
+    QAction action_kf_paste;
     QMenu menu_keyframe;
     QActionGroup enter{&menu_keyframe};
     QActionGroup exit{&menu_keyframe};
@@ -253,7 +248,6 @@ public:
     model::KeyframeBase* menu_kf_exit = nullptr;
 
     GlaxnimateWindow* window = nullptr;
-
 };
 
 CompoundTimelineWidget::CompoundTimelineWidget(QWidget* parent)
@@ -356,6 +350,8 @@ void CompoundTimelineWidget::select_object(model::Object* anim)
 void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
 {
     d->clear_menu_data();
+
+    d->ui.timeline->keep_highlight();
 
     QPoint glob = static_cast<QWidget*>(sender())->mapToGlobal(p);
 

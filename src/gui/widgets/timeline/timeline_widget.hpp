@@ -28,6 +28,8 @@ public:
     int header_height() const;
 
     qreal highlighted_time() const;
+    void set_highlighted_time(int time);
+    void keep_highlight();
     
     void select(const item_models::PropertyModel::Item& item);
     
@@ -55,6 +57,7 @@ protected:
     void scrollContentsBy(int dx, int dy) override;
     void mouseMoveEvent(QMouseEvent * event) override;
     void leaveEvent(QEvent * event) override;
+    void enterEvent(QEvent * event) override;
     void keyPressEvent(QKeyEvent * event) override;
 
     

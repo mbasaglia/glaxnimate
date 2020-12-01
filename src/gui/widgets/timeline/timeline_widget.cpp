@@ -28,6 +28,7 @@ public:
     int layer_start = 0;
     int layer_end = 0;
     model::AnimationContainer* limit = nullptr;
+    bool keep_highlight = false;
 
     std::unordered_map<model::AnimatableBase*, AnimatableItem*> anim_items;
     std::unordered_map<model::Object*, ObjectLineItem*> object_items;
@@ -398,7 +399,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     {
         painter.fillRect(
             QRectF(
-                mapFromScene(d->start_time, scene_tl.y()),
+                QPointF(0, event->rect().top()),
                 QPointF(layer_top_left.x(), event->rect().bottom())
             ),
             disabled
@@ -407,7 +408,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     painter.fillRect(
         QRectF(
             layer_top_right,
-            mapFromScene(d->rounded_end_time(), scene_br.y())
+            QPointF(width(), event->rect().right())
         ),
         disabled
     );
@@ -566,7 +567,18 @@ void TimelineWidget::mouseReleaseEvent(QMouseEvent* event)
 void TimelineWidget::leaveEvent(QEvent* event)
 {
     QGraphicsView::leaveEvent(event);
-//     d->mouse_frame = -1;
+    if ( !d->keep_highlight )
+    {
+        d->mouse_frame = -1;
+        viewport()->update();
+    }
+    d->keep_highlight = false;
+}
+
+void TimelineWidget::enterEvent(QEvent* event)
+{
+    QGraphicsView::enterEvent(event);
+    d->keep_highlight = false;
 }
 
 int TimelineWidget::header_height() const
@@ -691,4 +703,14 @@ qreal TimelineWidget::highlighted_time() const
         return d->document->current_time();
 
     return d->mouse_frame;
+}
+
+void TimelineWidget::set_highlighted_time(int time)
+{
+    d->mouse_frame = time;
+}
+
+void TimelineWidget::keep_highlight()
+{
+    d->keep_highlight = true;
 }
