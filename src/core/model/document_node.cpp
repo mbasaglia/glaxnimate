@@ -114,7 +114,7 @@ void model::DocumentNode::paint(QPainter* painter, FrameTime time, PaintMode mod
 {
     painter->save();
     if ( mode != NoTransform )
-        painter->setTransform(local_transform_matrix(time), true);
+        painter->setTransform(group_transform_matrix(time), true);
 
     on_paint(painter, time, mode);
     if ( mode >= Recursive )

@@ -18,6 +18,7 @@
     * Fixed some rounding errors when exporting to tgs
     * Fixed copy/pasting gradients
     * Fixed layer bounding boxes not being updated in some cases
+    * Rendering to raster correctly takes into account layer parenting
 
 ## 0.3.1
 
