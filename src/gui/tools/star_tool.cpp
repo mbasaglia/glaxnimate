@@ -19,18 +19,12 @@ protected:
         polar = {};
     }
 
-    void on_drag(const MouseEvent&) override
+    void on_drag(const MouseEvent& event) override
     {
-        polar = p2 - p1;
-        polar.angle = polar.angle + math::pi / 2;
-        bez = model::PolyStar::draw(
-            widget()->star_type(),
-            p1,
-            widget()->spoke_ratio() * polar.length,
-            polar.length,
-            polar.angle,
-            widget()->points()
-        );
+        angle_from_points();
+        if ( event.modifiers() & Qt::ControlModifier )
+            snap_angle();
+        update_shape();
     }
 
     void on_drag_complete(const MouseEvent& event) override
@@ -70,9 +64,48 @@ protected:
             bez.clear();
             event.accept();
         }
+        else if ( dragging && event.key() == Qt::Key_Control )
+        {
+            snap_angle();
+            update_shape();
+            event.repaint();
+        }
+    }
+
+    void key_release(const KeyEvent& event) override
+    {
+        if ( dragging && event.key() == Qt::Key_Control )
+        {
+            angle_from_points();
+            update_shape();
+            event.repaint();
+        }
     }
 
 private:
+    void snap_angle()
+    {
+        polar.angle = qRound(polar.angle / math::pi * 180 / 15) * 15. / 180. * math::pi;
+    }
+
+    void angle_from_points()
+    {
+        polar = p2 - p1;
+        polar.angle = polar.angle + math::pi / 2;
+    }
+
+    void update_shape()
+    {
+        bez = model::PolyStar::draw(
+            widget()->star_type(),
+            p1,
+            widget()->spoke_ratio() * polar.length,
+            polar.length,
+            polar.angle,
+            widget()->points()
+        );
+    }
+
     math::PolarVector<QPointF> polar;
     math::bezier::Bezier bez;
 

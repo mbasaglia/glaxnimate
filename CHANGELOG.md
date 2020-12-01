@@ -4,6 +4,7 @@
     * Added support for precompositions
     * Ability to copy/paste keyframe values (through menus)
     * Menu action (and keyboard shortcut) to duplicate the selected shapes
+    * Holding Ctrl while drawing stars/polygons snaps their angle to 15 degrees increments
 * UI:
     * The timeline now allows editing layer frame ranges
     * When selecting groups, its inner objects will show in the timeline
