@@ -259,6 +259,29 @@ void GlaxnimateWindow::Private::paste()
     ui.view_document_node->selectionModel()->select(item_select, QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Rows);
 }
 
+void GlaxnimateWindow::Private::duplicate_selection()
+{
+    auto selection = cleaned_selection();
+
+    if ( !selection.empty() )
+    {
+        std::vector<model::DocumentNode*> duplicated;
+        duplicated.reserve(selection.size());
+
+        for ( const auto& node : selection )
+        {
+            if ( auto shape = node->cast<model::ShapeElement>() )
+            {
+                auto cmd = command::duplicate_shape(shape);
+                current_document->push_command(cmd);
+                duplicated.push_back(cmd->object());
+            }
+        }
+
+        scene.user_select(duplicated, graphics::DocumentScene::Replace);
+    }
+}
+
 
 void GlaxnimateWindow::Private::move_current(command::ReorderCommand::SpecialPosition pos)
 {

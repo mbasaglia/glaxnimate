@@ -3,6 +3,7 @@
 * Editing:
     * Added support for precompositions
     * Ability to copy/paste keyframe values (through menus)
+    * Menu action (and keyboard shortcut) to duplicate the selected shapes
 * UI:
     * The timeline now allows editing layer frame ranges
     * When selecting groups, its inner objects will show in the timeline

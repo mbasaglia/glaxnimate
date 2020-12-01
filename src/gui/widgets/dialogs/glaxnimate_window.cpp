@@ -300,6 +300,11 @@ void GlaxnimateWindow::cut() const
     d->cut();
 }
 
+void GlaxnimateWindow::duplicate_selection() const
+{
+    d->duplicate_selection();
+}
+
 void GlaxnimateWindow::delete_selected()
 {
     d->delete_selected();

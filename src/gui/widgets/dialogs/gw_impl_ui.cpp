@@ -53,11 +53,13 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_export_as->setShortcut(QKeySequence("Ctrl+Shift+E", QKeySequence::PortableText));
     ui.action_frame_prev->setShortcut(QKeySequence("Left", QKeySequence::PortableText));
     ui.action_frame_next->setShortcut(QKeySequence("Right", QKeySequence::PortableText));
+    ui.action_duplicate->setShortcut(QKeySequence("Ctrl+D", QKeySequence::PortableText));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
     connect(ui.action_paste, &QAction::triggered, parent, &GlaxnimateWindow::paste);
     connect(ui.action_cut, &QAction::triggered, parent, &GlaxnimateWindow::cut);
+    connect(ui.action_duplicate, &QAction::triggered, parent, &GlaxnimateWindow::duplicate_selection);
     connect(ui.action_reload, &QAction::triggered, parent, &GlaxnimateWindow::document_reload);
     connect(ui.action_raise_to_top, &QAction::triggered, parent, &GlaxnimateWindow::layer_top);
     connect(ui.action_raise, &QAction::triggered, parent, &GlaxnimateWindow::layer_raise);

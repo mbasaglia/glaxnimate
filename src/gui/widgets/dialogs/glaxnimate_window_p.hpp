@@ -153,6 +153,7 @@ public:
     std::vector<model::DocumentNode*> copy();
     void paste();
     void cut();
+    void duplicate_selection();
     void delete_selected();
     void move_current(command::ReorderCommand::SpecialPosition pos);
     void group_shapes();

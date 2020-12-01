@@ -154,6 +154,7 @@
     <addaction name="action_cut"/>
     <addaction name="action_copy"/>
     <addaction name="action_paste"/>
+    <addaction name="action_duplicate"/>
     <addaction name="action_select_all"/>
     <addaction name="action_delete"/>
     <addaction name="separator"/>
@@ -1690,6 +1691,14 @@
   <action name="action_lottie_canvas_preview">
    <property name="text">
     <string>Lottie (canvas)</string>
+   </property>
+  </action>
+  <action name="action_duplicate">
+   <property name="icon">
+    <iconset theme="edit-duplicate"/>
+   </property>
+   <property name="text">
+    <string>Duplicate</string>
    </property>
   </action>
  </widget>

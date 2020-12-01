@@ -119,6 +119,7 @@ public slots:
     void copy() const;
     void paste() const;
     void cut() const;
+    void duplicate_selection() const;
 
 private slots:
     void document_new();
