@@ -324,14 +324,14 @@ std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(
     return d->items_to_nodes(items(point, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
 }
 
-std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(const QPainterPath& path, const QTransform& device_transform) const
+std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(const QPainterPath& path, const QTransform& device_transform, Qt::ItemSelectionMode mode) const
 {
-    return d->items_to_nodes(items(path, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
+    return d->items_to_nodes(items(path, mode, Qt::DescendingOrder, device_transform));
 }
 
-std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(const QPolygonF& path, const QTransform& device_transform) const
+std::vector<graphics::DocumentNodeGraphicsItem*> graphics::DocumentScene::nodes(const QPolygonF& path, const QTransform& device_transform, Qt::ItemSelectionMode mode) const
 {
-    return d->items_to_nodes(items(path, Qt::IntersectsItemShape, Qt::DescendingOrder, device_transform));
+    return d->items_to_nodes(items(path, mode, Qt::DescendingOrder, device_transform));
 }
 
 bool graphics::DocumentScene::is_selected(model::DocumentNode* node) const

@@ -52,9 +52,9 @@ public:
 
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const;
 
-    std::vector<DocumentNodeGraphicsItem*> nodes(const QPointF& point, const QTransform& device_transform) const;
-    std::vector<DocumentNodeGraphicsItem*> nodes(const QPainterPath& path, const QTransform& device_transform) const;
-    std::vector<DocumentNodeGraphicsItem*> nodes(const QPolygonF& path, const QTransform& device_transform) const;
+    std::vector<DocumentNodeGraphicsItem*> nodes(const QPointF& point,      const QTransform& device_transform) const;
+    std::vector<DocumentNodeGraphicsItem*> nodes(const QPainterPath& path,  const QTransform& device_transform, Qt::ItemSelectionMode mode = Qt::IntersectsItemShape) const;
+    std::vector<DocumentNodeGraphicsItem*> nodes(const QPolygonF& path,     const QTransform& device_transform, Qt::ItemSelectionMode mode = Qt::IntersectsItemShape) const;
 
 signals:
     void node_user_selected(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);

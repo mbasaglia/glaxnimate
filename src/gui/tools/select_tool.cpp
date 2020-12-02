@@ -244,8 +244,9 @@ private:
                     rubber_p2 = event.event->localPos();
                     complex_select(event, event.scene->nodes(
                         event.view->mapToScene(QRect(rubber_p1.toPoint(), rubber_p2.toPoint()).normalized()),
-                        event.view->viewportTransform())
-                    );
+                        event.view->viewportTransform(),
+                        Qt::ContainsItemShape
+                    ));
                     drag_mode = None;
                     event.view->viewport()->update();
                     break;
