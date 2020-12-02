@@ -38,6 +38,29 @@ for example you could have two layers with the same parent layer and a third unr
 between them. This is not possible with plain group shapes.
 
 
+### Precomposition Layer
+
+A precomposition layer shows the contents of a precomposition.
+
+You can create these by selecting the layers you want to precompose and selecting
+*Precompose Selection* from the *Layer* menu.
+
+This thill move the selection to a new composition and replace it with a new
+Precomposition Layer.
+
+If you already have precompositions set up, you can create them with
+*Layer* > *New* > *Composition*.
+
+If you double click on these layers, Glaxnimate will show you the composition they represent.
+You can also switch between composition with the tab bar that appears when you add the first
+precomposition.
+
+In the timeline, you can drag the start point of these layers to change the time at which they start.
+
+You can also drag the end, this will change their speed.
+
+In the canvas (with the select tool active) they show similar controls as the ones described for [Groups](#group).
+
 ## Shapes
 
 These define the actual shapes to draw, but no styling information.

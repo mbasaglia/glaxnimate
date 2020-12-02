@@ -29,6 +29,9 @@ raster graphics where you have a grid of pixels of different colors.
 An advantage of using vector graphics is that you can view the image at any
 resolution without losing quality.
 
+You can learn more about this in the [Vector Graphics](https://en.wikipedia.org/wiki/Vector_graphics)
+article on Wikipedia.
+
 ### Tweening
 
 When animating vector graphics, you have the option of automatically generating
@@ -40,7 +43,33 @@ that define the start and end of the animation.
 Glaxnimate allows you to do just this: you specify shapes and properties
 for each keyframe and the animation is automatically created from those.
 
-### Further reading
+You can learn more about this technique in the [Inbetweening](https://en.wikipedia.org/wiki/Inbetweening)
+article on Wikipedia.
 
-* [Inbetweening](https://en.wikipedia.org/wiki/Inbetweening)
-* [Vector Graphics](https://en.wikipedia.org/wiki/Vector_graphics)
+### Layers
+
+Layers are used to group shapes and objects to have a more organized layout in a file.
+
+Glaxnimate supports having multiple layers and layers nested inside other layers,
+giving flexibility on how the file is structured.
+
+You can easily convert between layers and groups, the main difference is that
+groups are considered individual objects while layers aren't.
+
+You can also read the manual page on [Groups and Layers](shapes.md#group) for a
+more in-depth explanation.
+
+### Precompositions
+
+Precompositions are animations within another animation.
+
+You can use it to animate an element once, and then make it appear in multiple
+places using [Precomposition Layers](shapes.md#precomposition-layer).
+
+When you modify the precomposition, the changes are reflected to all layers that
+point to that composition so you don't have to apply the changed to every instance.
+
+With precompositions you can also change when the animation starts and its duration.
+This gives you the ability of creating elements that have looping animations simply
+by creating multiple precomposition layers with different start times.
+
