@@ -775,19 +775,29 @@ void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition po
         auto transformed_bounds = transform.map(local_bounds).boundingRect();
         data.push_back({item, transform.inverted(), align_point(transformed_bounds, direction, position)});
 
-        if ( ui.action_align_to_selection->isChecked() )
-        {
-            if ( !bounds.isValid() )
-                bounds = transformed_bounds;
-            else
-                bounds |= transformed_bounds;
-        }
+        if ( !bounds.isValid() )
+            bounds = transformed_bounds;
+        else
+            bounds |= transformed_bounds;
     }
 
-    if ( !ui.action_align_to_selection->isChecked() )
-        bounds = current_document->rect();
+    QPointF reference;
 
-    QPointF reference = align_point(bounds, direction, position);
+    if ( ui.action_align_to_selection->isChecked() )
+    {
+        reference = align_point(bounds, direction, position);
+    }
+    else if ( ui.action_align_to_canvas->isChecked() )
+    {
+        reference = align_point(current_document->rect(), direction, position);
+    }
+    else if ( ui.action_align_to_canvas_group->isChecked() )
+    {
+        reference = align_point(current_document->rect(), direction, position);
+        QPointF bounds_point = align_point(bounds, direction, position);
+        for ( auto& item : data )
+            item.bounds_point = bounds_point;
+    }
 
     command::UndoMacroGuard guard(tr("Align Selection"), current_document.get());
 

@@ -350,7 +350,6 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_align_to_canvas->setActionGroup(align_relative);
     ui.action_align_to_selection->setActionGroup(align_relative);
     ui.action_align_to_canvas_group->setActionGroup(align_relative);
-    ui.action_align_to_canvas_group->setVisible(false);
 
     auto combo_align_to = new QComboBox(ui.dock_align->widget());
     combo_align_to->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -358,7 +357,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
 
     action_combo(combo_align_to, ui.action_align_to_selection);
     action_combo(combo_align_to, ui.action_align_to_canvas);
-    connect(ui.action_align_to_selection, &QAction::triggered, parent, [combo_align_to]{ combo_align_to->setCurrentIndex(0); });
+    action_combo(combo_align_to, ui.action_align_to_canvas_group);
     connect(combo_align_to, qOverload<int>(&QComboBox::currentIndexChanged), parent, [combo_align_to](int i){
         combo_align_to->itemData(i).value<QAction*>()->setChecked(true);
     });
