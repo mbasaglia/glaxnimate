@@ -711,3 +711,118 @@ void GlaxnimateWindow::Private::shape_to_precomposition(model::ShapeElement* nod
     auto shape_prop = static_cast<model::ObjectListProperty<model::ShapeElement>*>(prop);
     objects_to_new_composition(owner_comp, {node}, shape_prop, shape_prop->index_of(node));
 }
+
+QPointF GlaxnimateWindow::Private::align_point(const QRectF& rect, AlignDirection direction, AlignPosition position)
+{
+    qreal x;
+    qreal y;
+
+    if ( direction == AlignDirection::Horizontal )
+    {
+        switch ( position )
+        {
+            case AlignPosition::Begin:  x = rect.left(); break;
+            case AlignPosition::Center: x = rect.center().x(); break;
+            case AlignPosition::End:    x = rect.right(); break;
+        }
+        y = rect.center().y();
+    }
+    else
+    {
+        switch ( position )
+        {
+            case AlignPosition::Begin:  y = rect.top(); break;
+            case AlignPosition::Center: y = rect.center().y(); break;
+            case AlignPosition::End:    y = rect.bottom(); break;
+        }
+        x = rect.center().x();
+    }
+
+    return {x, y};
+}
+
+namespace {
+
+struct AlignData
+{
+    model::DocumentNode* node;
+    QTransform transform;
+    QPointF bounds_point;
+};
+
+} // namespace
+
+void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition position)
+{
+    std::vector<model::DocumentNode*> selection = cleaned_selection();
+
+    if ( selection.empty() )
+        return;
+
+    QRectF bounds;
+
+    std::vector<AlignData> data;
+    data.reserve(selection.size());
+
+    for ( const auto& item : selection )
+    {
+        auto t = item->time();
+        QRectF local_bounds(item->local_bounding_rect(t));
+        if ( !local_bounds.isValid() )
+            continue;
+
+        QTransform transform = item->transform_matrix(t);
+        auto transformed_bounds = transform.map(local_bounds).boundingRect();
+        data.push_back({item, transform.inverted(), align_point(transformed_bounds, direction, position)});
+
+        if ( ui.action_align_to_selection->isChecked() )
+        {
+            if ( !bounds.isValid() )
+                bounds = transformed_bounds;
+            else
+                bounds |= transformed_bounds;
+        }
+    }
+
+    if ( !ui.action_align_to_selection->isChecked() )
+        bounds = current_document->rect();
+
+    QPointF reference = align_point(bounds, direction, position);
+
+    command::UndoMacroGuard guard(tr("Align Selection"), current_document.get());
+
+    for ( const auto& item : data )
+    {
+        QPointF target_point = reference;
+        if ( direction == AlignDirection::Horizontal )
+            target_point.setY(item.bounds_point.y());
+        else
+            target_point.setX(item.bounds_point.x());
+
+        QPointF delta = item.transform.map(target_point) - item.transform.map(item.bounds_point);
+
+        if ( auto path = item.node->cast<model::Path>() )
+        {
+            auto bezier = path->shape.get();
+            for ( auto& point : bezier )
+                point.translate(delta);
+            path->shape.set_undoable(QVariant::fromValue(bezier));
+        }
+        else if ( item.node->has("transform") )
+        {
+            auto m = item.node->local_transform_matrix(item.node->time());
+            auto a = m.map(item.transform.map(target_point));
+            auto b = m.map(item.transform.map(item.bounds_point));
+            delta = a - b;
+
+            auto trans = item.node->get("transform").value<model::Transform*>();
+            auto point = trans->position.get() + delta;
+            trans->position.set_undoable(point);
+        }
+        else if ( item.node->has("position") )
+        {
+            auto point = item.node->get("position").toPointF() + delta;
+            item.node->get_property("position")->set_undoable(point);
+        }
+    }
+}

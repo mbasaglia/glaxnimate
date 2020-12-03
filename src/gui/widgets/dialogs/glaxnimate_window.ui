@@ -158,15 +158,6 @@
     <addaction name="action_select_all"/>
     <addaction name="action_delete"/>
     <addaction name="separator"/>
-    <addaction name="action_raise_to_top"/>
-    <addaction name="action_raise"/>
-    <addaction name="action_lower"/>
-    <addaction name="action_lower_to_bottom"/>
-    <addaction name="action_move_to"/>
-    <addaction name="separator"/>
-    <addaction name="action_group"/>
-    <addaction name="action_ungroup"/>
-    <addaction name="separator"/>
     <addaction name="actionPr_eferences"/>
    </widget>
    <widget class="QMenu" name="menu_view">
@@ -251,6 +242,41 @@
     <addaction name="action_frame_next"/>
     <addaction name="action_frame_last"/>
    </widget>
+   <widget class="QMenu" name="menu_object">
+    <property name="title">
+     <string>&amp;Object</string>
+    </property>
+    <widget class="QMenu" name="menu_align">
+     <property name="title">
+      <string>&amp;Align and Distribute</string>
+     </property>
+     <property name="icon">
+      <iconset theme="dialog-align-and-distribute"/>
+     </property>
+     <addaction name="separator_align_relative_to"/>
+     <addaction name="action_align_to_selection"/>
+     <addaction name="action_align_to_canvas"/>
+     <addaction name="action_align_to_canvas_group"/>
+     <addaction name="separator_align_horizontal"/>
+     <addaction name="action_align_hor_left"/>
+     <addaction name="action_align_hor_center"/>
+     <addaction name="action_align_hor_right"/>
+     <addaction name="separator_align_vertical"/>
+     <addaction name="action_align_vert_top"/>
+     <addaction name="action_align_vert_center"/>
+     <addaction name="action_align_vert_bottom"/>
+    </widget>
+    <addaction name="action_raise_to_top"/>
+    <addaction name="action_raise"/>
+    <addaction name="action_lower"/>
+    <addaction name="action_lower_to_bottom"/>
+    <addaction name="action_move_to"/>
+    <addaction name="separator"/>
+    <addaction name="action_group"/>
+    <addaction name="action_ungroup"/>
+    <addaction name="separator"/>
+    <addaction name="menu_align"/>
+   </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_edit"/>
    <addaction name="menu_tools"/>
@@ -258,6 +284,7 @@
    <addaction name="menu_document"/>
    <addaction name="menu_playback"/>
    <addaction name="menu_layers"/>
+   <addaction name="menu_object"/>
    <addaction name="menu_path"/>
    <addaction name="menu_plugins"/>
    <addaction name="menu_help"/>
@@ -797,6 +824,20 @@
       <widget class="GradientListWidget" name="widget_gradients" native="true"/>
      </item>
     </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_align">
+   <property name="windowIcon">
+    <iconset theme="dialog-align-and-distribute"/>
+   </property>
+   <property name="windowTitle">
+    <string>Align</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_12">
+    <layout class="QGridLayout" name="dock_align_grid"/>
    </widget>
   </widget>
   <action name="action_new">
@@ -1695,10 +1736,110 @@
   </action>
   <action name="action_duplicate">
    <property name="icon">
-    <iconset theme="edit-duplicate"/>
+    <iconset theme="edit-duplicate">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Duplicate</string>
+   </property>
+  </action>
+  <action name="action_align_to_selection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="select-rectangular"/>
+   </property>
+   <property name="text">
+    <string>Selection</string>
+   </property>
+  </action>
+  <action name="action_align_to_canvas">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="snap-page"/>
+   </property>
+   <property name="text">
+    <string>Canvas</string>
+   </property>
+  </action>
+  <action name="action_align_hor_left">
+   <property name="icon">
+    <iconset theme="align-horizontal-left"/>
+   </property>
+   <property name="text">
+    <string>Left</string>
+   </property>
+  </action>
+  <action name="action_align_hor_center">
+   <property name="icon">
+    <iconset theme="align-horizontal-center"/>
+   </property>
+   <property name="text">
+    <string>Center</string>
+   </property>
+  </action>
+  <action name="action_align_hor_right">
+   <property name="icon">
+    <iconset theme="align-horizontal-right"/>
+   </property>
+   <property name="text">
+    <string>Right</string>
+   </property>
+  </action>
+  <action name="action_align_vert_top">
+   <property name="icon">
+    <iconset theme="align-vertical-top"/>
+   </property>
+   <property name="text">
+    <string>Top</string>
+   </property>
+  </action>
+  <action name="action_align_vert_center">
+   <property name="icon">
+    <iconset theme="align-vertical-center"/>
+   </property>
+   <property name="text">
+    <string>Center</string>
+   </property>
+  </action>
+  <action name="action_align_vert_bottom">
+   <property name="icon">
+    <iconset theme="align-vertical-bottom"/>
+   </property>
+   <property name="text">
+    <string>Bottom</string>
+   </property>
+  </action>
+  <action name="action_align_to_canvas_group">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="object-group"/>
+   </property>
+   <property name="text">
+    <string>Canvas (as Group)</string>
+   </property>
+  </action>
+  <action name="separator_align_relative_to">
+   <property name="text">
+    <string>Relative To</string>
+   </property>
+  </action>
+  <action name="separator_align_horizontal">
+   <property name="text">
+    <string>Horizontal</string>
+   </property>
+  </action>
+  <action name="separator_align_vertical">
+   <property name="text">
+    <string>Vertical</string>
    </property>
   </action>
  </widget>

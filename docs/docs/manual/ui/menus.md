@@ -22,6 +22,10 @@ This menu toggles which is the active [tool](tools.md).
 
 ![view menu](/img/screenshots/menus/view.png)
 
+### Views
+
+![views menu](/img/screenshots/menus/views.png)
+
 This menu toggles which [views](docks.md) are visible.
 
 
@@ -33,6 +37,12 @@ This menu toggles which [views](docks.md) are visible.
 
 ![render single frame menu](/img/screenshots/menus/render_single_frame.png)
 
+### Web preview
+
+![web preview menu](/img/screenshots/menus/render_single_frame.png)
+
+The actions in this menu will open your browser to an html page that embeds
+the animation using the exporting options associated with said action.
 
 ## Playback
 
@@ -45,6 +55,14 @@ This menu toggles which [views](docks.md) are visible.
 ### New layer
 
 ![new layer menu](/img/screenshots/menus/new_layer.png)
+
+## Object
+
+![object menu](/img/screenshots/menus/object.png)
+
+### Align
+
+![align menu](/img/screenshots/menus/align.png)
 
 ## Path
 

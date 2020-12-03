@@ -1,5 +1,7 @@
 #include "glaxnimate_window_p.hpp"
 
+#include <QComboBox>
+
 #include "app/settings/keyboard_shortcuts.hpp"
 
 #include "tools/base.hpp"
@@ -21,6 +23,27 @@
 #include "tools/edit_tool.hpp"
 #include "plugin/action.hpp"
 #include "glaxnimate_app.hpp"
+
+static QToolButton* action_button(QAction* action, QWidget* parent)
+{
+    auto button = new ScalableButton(parent);
+    button->setDefaultAction(action);
+    button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    return button;
+}
+
+static void action_combo(QComboBox* box, QAction* action)
+{
+    int index = box->count();
+    box->addItem(action->icon(), action->text(), QVariant::fromValue(action));
+    QObject::connect(action, &QAction::triggered, box, [index, box]{
+        box->setCurrentIndex(index);
+    });
+    QObject::connect(action, &QAction::changed, box, [index, box, action]{
+        box->setItemIcon(index, action->icon());
+        box->setItemText(index, action->text());
+    });
+}
 
 void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* parent)
 {
@@ -120,6 +143,12 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
         objects_to_new_composition(comp, cleaned_selection(), &comp->shapes, -1);
     });
     connect(ui.menu_new_comp_layer, &QMenu::triggered, parent, [this](QAction* act){layer_new_comp(act);});
+    connect(ui.action_align_hor_left, &QAction::triggered, parent, [this]{align(AlignDirection::Horizontal, AlignPosition::Begin);});
+    connect(ui.action_align_hor_center, &QAction::triggered, parent, [this]{align(AlignDirection::Horizontal, AlignPosition::Center);});
+    connect(ui.action_align_hor_right, &QAction::triggered, parent, [this]{align(AlignDirection::Horizontal, AlignPosition::End);});
+    connect(ui.action_align_vert_top, &QAction::triggered, parent, [this]{align(AlignDirection::Vertical, AlignPosition::Begin);});
+    connect(ui.action_align_vert_center, &QAction::triggered, parent, [this]{align(AlignDirection::Vertical, AlignPosition::Center);});
+    connect(ui.action_align_vert_bottom, &QAction::triggered, parent, [this]{align(AlignDirection::Vertical, AlignPosition::End);});
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
@@ -312,6 +341,38 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.tab_bar, &QTabBar::currentChanged, parent, [this](int i){ switch_composition(i); });
     connect(ui.tab_bar, &QTabBar::tabCloseRequested, parent, [this](int i){ composition_close_request(i); });
 
+    // Align
+    ui.separator_align_relative_to->setSeparator(true);
+    ui.separator_align_horizontal->setSeparator(true);
+    ui.separator_align_vertical->setSeparator(true);
+    QActionGroup *align_relative = new QActionGroup(parent);
+    align_relative->setExclusive(true);
+    ui.action_align_to_canvas->setActionGroup(align_relative);
+    ui.action_align_to_selection->setActionGroup(align_relative);
+    ui.action_align_to_canvas_group->setActionGroup(align_relative);
+    ui.action_align_to_canvas_group->setVisible(false);
+
+    auto combo_align_to = new QComboBox(ui.dock_align->widget());
+    combo_align_to->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    ui.dock_align_grid->addWidget(combo_align_to, 0, 0, 1, 3);
+
+    action_combo(combo_align_to, ui.action_align_to_selection);
+    action_combo(combo_align_to, ui.action_align_to_canvas);
+    connect(ui.action_align_to_selection, &QAction::triggered, parent, [combo_align_to]{ combo_align_to->setCurrentIndex(0); });
+    connect(combo_align_to, qOverload<int>(&QComboBox::currentIndexChanged), parent, [combo_align_to](int i){
+        combo_align_to->itemData(i).value<QAction*>()->setChecked(true);
+    });
+
+
+    ui.dock_align_grid->addWidget(action_button(ui.action_align_hor_left, ui.dock_align->widget()),     1, 0);
+    ui.dock_align_grid->addWidget(action_button(ui.action_align_hor_center, ui.dock_align->widget()),   1, 1);
+    ui.dock_align_grid->addWidget(action_button(ui.action_align_hor_right, ui.dock_align->widget()),    1, 2);
+    ui.dock_align_grid->addWidget(action_button(ui.action_align_vert_top, ui.dock_align->widget()),     2, 0);
+    ui.dock_align_grid->addWidget(action_button(ui.action_align_vert_center, ui.dock_align->widget()),  2, 1);
+    ui.dock_align_grid->addWidget(action_button(ui.action_align_vert_bottom, ui.dock_align->widget()),  2, 2);
+    ui.dock_align_grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding),    3, 0);
+
+
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
 
@@ -327,6 +388,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.dock_colors->raise();
     ui.dock_swatches->setVisible(false);
     ui.dock_gradients->setVisible(false);
+
+    parent->tabifyDockWidget(ui.dock_tool_options, ui.dock_align);
+    ui.dock_tool_options->raise();
 
     parent->resizeDocks(
         {ui.dock_layers},
@@ -352,8 +416,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_render_single_frame);
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_playback);
 
-    // Auto Screenshots for docs
 #if 0
+    // Auto Screenshots for docs
     QDir("/tmp/").mkpath("menus");
     for ( auto widget : parent->findChildren<QMenu*>() )
     {

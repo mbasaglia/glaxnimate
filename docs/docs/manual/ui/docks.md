@@ -234,6 +234,17 @@ and the vertical axis is the interpolation factor between the two values.
 To choose a preset transition for one of the two ends, you can select a value from the dropdowns.
 
 
+Align
+-----
+
+![Align View](/img/screenshots/views/align.png)
+
+This view shows alignment options, the same actions are available in the [Align Menu](menus.md#align).
+
+The dropdown selects whether to align based on the selection bounding box or the canvas,
+the buttons are the various alignment options.
+
+
 Properties
 ----------
 

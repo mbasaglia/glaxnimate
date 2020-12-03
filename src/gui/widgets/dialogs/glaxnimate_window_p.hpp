@@ -53,6 +53,19 @@ public:
         model::DocumentNode* current;
     };
 
+    enum class AlignPosition
+    {
+        Begin   = 0x01,
+        Center  = 0x02,
+        End     = 0x04,
+    };
+
+    enum class AlignDirection
+    {
+        Horizontal = 0x10,
+        Vertical   = 0x20,
+    };
+
     Ui::GlaxnimateWindow ui;
 
     std::unique_ptr<model::Document> current_document;
@@ -161,6 +174,8 @@ public:
     void move_to();
     void cleanup_document();
     void to_path();
+    void align(AlignDirection direction, AlignPosition position);
+    QPointF align_point(const QRectF& rect, AlignDirection direction, AlignPosition position);
 
     void switch_composition(int index);
     void setup_composition(model::Composition* comp, int index = -1);
