@@ -258,13 +258,17 @@
      <addaction name="action_align_to_canvas"/>
      <addaction name="action_align_to_canvas_group"/>
      <addaction name="separator_align_horizontal"/>
+     <addaction name="action_align_hor_left_out"/>
      <addaction name="action_align_hor_left"/>
      <addaction name="action_align_hor_center"/>
      <addaction name="action_align_hor_right"/>
+     <addaction name="action_align_hor_right_out"/>
      <addaction name="separator_align_vertical"/>
+     <addaction name="action_align_vert_top_out"/>
      <addaction name="action_align_vert_top"/>
      <addaction name="action_align_vert_center"/>
      <addaction name="action_align_vert_bottom"/>
+     <addaction name="action_align_vert_bottom_out"/>
     </widget>
     <addaction name="action_raise_to_top"/>
     <addaction name="action_raise"/>
@@ -1840,6 +1844,38 @@
   <action name="separator_align_vertical">
    <property name="text">
     <string>Vertical</string>
+   </property>
+  </action>
+  <action name="action_align_hor_left_out">
+   <property name="icon">
+    <iconset theme="align-horizontal-right-out"/>
+   </property>
+   <property name="text">
+    <string>Outside Left</string>
+   </property>
+  </action>
+  <action name="action_align_hor_right_out">
+   <property name="icon">
+    <iconset theme="align-horizontal-left-out"/>
+   </property>
+   <property name="text">
+    <string>Outside Right</string>
+   </property>
+  </action>
+  <action name="action_align_vert_top_out">
+   <property name="icon">
+    <iconset theme="align-vertical-bottom-out"/>
+   </property>
+   <property name="text">
+    <string>Outside Top</string>
+   </property>
+  </action>
+  <action name="action_align_vert_bottom_out">
+   <property name="icon">
+    <iconset theme="align-vertical-top-out"/>
+   </property>
+   <property name="text">
+    <string>Outside Bottom</string>
    </property>
   </action>
  </widget>

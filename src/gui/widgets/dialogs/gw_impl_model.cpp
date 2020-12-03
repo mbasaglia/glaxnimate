@@ -752,7 +752,7 @@ struct AlignData
 
 } // namespace
 
-void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition position)
+void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition position, bool outside)
 {
     std::vector<model::DocumentNode*> selection = cleaned_selection();
 
@@ -764,6 +764,15 @@ void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition po
     std::vector<AlignData> data;
     data.reserve(selection.size());
 
+    auto bound_pos = position;
+    if ( outside )
+    {
+        if ( bound_pos == AlignPosition::Begin )
+            bound_pos = AlignPosition::End;
+        else
+            bound_pos = AlignPosition::Begin;
+    }
+
     for ( const auto& item : selection )
     {
         auto t = item->time();
@@ -773,7 +782,7 @@ void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition po
 
         QTransform transform = item->transform_matrix(t);
         auto transformed_bounds = transform.map(local_bounds).boundingRect();
-        data.push_back({item, transform.inverted(), align_point(transformed_bounds, direction, position)});
+        data.push_back({item, transform.inverted(), align_point(transformed_bounds, direction, bound_pos)});
 
         if ( !bounds.isValid() )
             bounds = transformed_bounds;
@@ -794,7 +803,7 @@ void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition po
     else if ( ui.action_align_to_canvas_group->isChecked() )
     {
         reference = align_point(current_document->rect(), direction, position);
-        QPointF bounds_point = align_point(bounds, direction, position);
+        QPointF bounds_point = align_point(bounds, direction, bound_pos);
         for ( auto& item : data )
             item.bounds_point = bounds_point;
     }

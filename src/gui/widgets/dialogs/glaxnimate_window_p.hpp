@@ -174,7 +174,7 @@ public:
     void move_to();
     void cleanup_document();
     void to_path();
-    void align(AlignDirection direction, AlignPosition position);
+    void align(AlignDirection direction, AlignPosition position, bool outside);
     QPointF align_point(const QRectF& rect, AlignDirection direction, AlignPosition position);
 
     void switch_composition(int index);
