@@ -15,6 +15,7 @@ This tool has a multitude of mouse interactions:
 Left click: Select the item under the mouse.
 
 Dragging a selected item: Moves the item while you drag it.
+You can hold Ctrl to snap the movement to the closest orthogonal axis.
 
 Dragging a handle: Moves the handle, editing the associated property.
 

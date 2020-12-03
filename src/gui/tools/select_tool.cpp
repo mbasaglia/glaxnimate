@@ -7,6 +7,7 @@
 #include "model/shapes/ellipse.hpp"
 #include "model/shapes/polystar.hpp"
 #include "command/structure_commands.hpp"
+#include "math/geom.hpp"
 
 #include "widgets/node_menu.hpp"
 #include "handle_menu.hpp"
@@ -31,7 +32,6 @@ private:
         DrawSelect,
         DragObject,
     };
-
 
     struct DragObjectData
     {
@@ -97,10 +97,29 @@ private:
         QPointF start_point;
     };
 
-    void do_drag(const QPointF& scene_pos, bool commit)
+    void do_drag(QPointF scene_pos, Qt::KeyboardModifiers mods, bool commit)
     {
         if ( drag_data.empty() )
             return;
+
+        rubber_p2 = scene_pos;
+        if ( mods & Qt::ControlModifier )
+        {
+            std::array<QPointF, 2> directions = {QPointF(1, 0), QPointF(0, 1)};
+            QPointF best;
+            qreal min_dist = std::numeric_limits<qreal>::max();
+            for ( const auto& dir : directions )
+            {
+                auto p = math::line_closest_point(rubber_p1, rubber_p1 + dir, scene_pos);
+                qreal dist = math::length_squared(p - scene_pos);
+                if ( dist < min_dist )
+                {
+                    min_dist = dist;
+                    best = p;
+                }
+            }
+            scene_pos = best;
+        }
 
         auto cmd = new command::SetMultipleAnimated(tr("Drag"), commit);
         model::Document* doc = drag_data[0].doc();
@@ -135,6 +154,7 @@ private:
             }
             else if ( !clicked_on.nodes.empty() )
             {
+                rubber_p1 = event.scene_pos;
                 drag_data.clear();
                 replace_selection = nullptr;
 
@@ -198,7 +218,7 @@ private:
                     rubber_p2 = event.event->localPos();
                     break;
                 case DragObject:
-                    do_drag(event.scene_pos, false);
+                    do_drag(event.scene_pos, event.modifiers(), false);
                     break;
             }
         }
@@ -269,7 +289,7 @@ private:
                 }
                 break;
                 case DragObject:
-                    do_drag(event.scene_pos, true);
+                    do_drag(event.scene_pos, event.modifiers(), true);
                     drag_data.clear();
                     replace_selection = nullptr;
                     break;
@@ -288,13 +308,25 @@ private:
         edit_clicked(event);
     }
 
-    void key_press(const KeyEvent& event) override { Q_UNUSED(event); }
+    void key_press(const KeyEvent& event) override
+    {
+        if ( drag_mode == DragObject && event.key() == Qt::Key_Control )
+        {
+            do_drag(rubber_p2, event.modifiers(), false);
+        }
+    }
+
+
     void key_release(const KeyEvent& event) override
     {
         if ( drag_mode == None && (event.key() == Qt::Key_Backspace) )
         {
             event.window->delete_selected();
             event.accept();
+        }
+        else if ( drag_mode == DragObject && event.key() == Qt::Key_Control )
+        {
+            do_drag(rubber_p2, event.modifiers(), false);
         }
     }
 
