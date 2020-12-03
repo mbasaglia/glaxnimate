@@ -14,6 +14,8 @@
     * The timeline now shows some non-animated properties for convenience
     * The trace dialog has a slider to compare the trace preview to the original image
     * The timeline has a larger handle between properties and keyframes
+* Scripting:
+    * Color values can be manipulated using the HSV color space
 * I/O:
     * Added support for gradientTransform when parsing SVG
     * Added more warnings for features not supported by Telegram
