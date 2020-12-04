@@ -21,6 +21,7 @@ public:
     void set_active(model::DocumentNode* node);
     void add_object(model::Object* node);
     void add_object_without_properties(model::Object* node);
+    void remove_object(model::Object* node);
     int row_height() const;
     void set_row_height(int w);
     int header_height() const;

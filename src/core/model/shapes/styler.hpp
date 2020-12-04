@@ -37,6 +37,7 @@ private:
 
 signals:
     void use_changed(BrushStyle* new_use);
+    void use_changed_from(BrushStyle* old_use, BrushStyle* new_use);
 };
 
 } // namespace model

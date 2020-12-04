@@ -5,6 +5,7 @@
 #include <QButtonGroup>
 #include <QtMath>
 #include <QStyleOptionFrame>
+#include <QPointer>
 
 #include "app/settings/settings.hpp"
 #include "model/document.hpp"
@@ -21,7 +22,7 @@ public:
     QButtonGroup group_join;
     bool dark_theme = false;
     QPalette::ColorRole background = QPalette::Base;
-    model::Stroke* target = nullptr;
+    QPointer<model::Stroke> target = nullptr;
     utils::PseudoMutex updating;
     int stop = 0;
 

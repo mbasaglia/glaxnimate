@@ -259,6 +259,9 @@ void TimelineWidget::set_active(model::DocumentNode* node)
 
 void TimelineWidget::add_object(model::Object* node)
 {
+    connect(node, &model::Object::removed_from_list, this, [this, node]{
+        remove_object(node);
+    });
     d->add_object(node);
     setSceneRect(d->scene_rect());
     reset_view();
@@ -271,9 +274,35 @@ void TimelineWidget::add_object_without_properties(model::Object* node)
     reset_view();
 }
 
+void TimelineWidget::remove_object(model::Object* obj)
+{
+    auto it = d->find_object_item(obj);
+    if ( it == d->object_items.end() )
+        return;
+
+    qreal delta;
+    if ( (*it)->is_expanded() )
+        delta = (*it)->rows_height();
+    else
+        delta = (*it)->height();
+
+    disconnect(*it, nullptr, this, nullptr);
+    delete *it;
+    it = d->object_items.erase(it);
+    for ( ; it != d->object_items.end(); ++it )
+    {
+        auto p = (*it)->pos();
+        p.setY(p.y() - delta);
+        (*it)->setPos(p);
+    }
+
+    setSceneRect(d->scene_rect());
+}
 
 void TimelineWidget::clear()
 {
+    for ( auto objit : d->object_items )
+        disconnect(objit, nullptr, this, nullptr);
     d->clear();
     setSceneRect(d->scene_rect());
     reset_view();

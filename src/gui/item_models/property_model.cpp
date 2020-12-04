@@ -82,6 +82,7 @@ public:
         objects[object] = this_node;
         QObject::connect(object, &model::Object::property_changed, model, &PropertyModel::property_changed);
         QObject::connect(object, &model::Object::destroyed, model, &PropertyModel::on_delete_object);
+        QObject::connect(object, &model::Object::removed_from_list, model, &PropertyModel::on_delete_object);
         bool is_main_comp = object->is_instance<model::MainComposition>();
 
         for ( model::BaseProperty* prop : object->properties() )
@@ -138,6 +139,10 @@ public:
             return;
 
         Subtree* node = &it2->second;
+
+        auto index = model->object_index(obj);
+        model->beginRemoveRows(index.parent(), index.row(), index.row());
+
         for ( Subtree* child : node->children )
         {
             disconnect_recursive(child, model);
@@ -157,8 +162,14 @@ public:
             }
         }
 
+        auto it_roots = std::find(roots.begin(), roots.end(), node);
+        if ( it_roots != roots.end() )
+            roots.erase(it_roots);
+
         objects.erase(it);
         nodes.erase(it2);
+
+        model->endRemoveRows();
     }
 
     void disconnect_recursive(Subtree* node, PropertyModel* model)
@@ -635,7 +646,6 @@ item_models::PropertyModel::Item item_models::PropertyModel::item(const QModelIn
 
     return {};
 }
-
 
 void item_models::PropertyModel::on_delete_object()
 {
