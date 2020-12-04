@@ -8,7 +8,12 @@ env
 
 if [ -d /c/Python39-x64 ]
 then
-    mv /c/Python39-x64 /c/gtfo
+    mv /c/Python39-x64 /c/gtfo9
+fi
+
+if [ -d /c/Python38-x64 ]
+then
+    mv /c/Python38-x64 /c/gtfo8
 fi
 
 # Build
