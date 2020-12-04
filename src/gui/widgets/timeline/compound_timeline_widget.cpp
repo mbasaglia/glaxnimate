@@ -38,6 +38,7 @@ public:
         ui.properties->setPalette(prop_pal);
 
         ui.properties->setModel(&property_model);
+        ui.timeline->set_model(&property_model);
         connect(&property_model, &QAbstractItemModel::dataChanged,
                 ui.properties->viewport(), (void (QWidget::*)())&QWidget::update);
         ui.properties->setItemDelegateForColumn(1, &property_delegate);
@@ -71,6 +72,7 @@ public:
         connect(parent, &QWidget::customContextMenuRequested, parent, &CompoundTimelineWidget::custom_context_menu);
 
         setup_menu(parent);
+
     }
 
     void setup_menu(CompoundTimelineWidget* parent)
@@ -272,7 +274,6 @@ void CompoundTimelineWidget::changeEvent ( QEvent* e )
 void CompoundTimelineWidget::set_active(model::DocumentNode* node)
 {
     d->property_model.set_object(node);
-    d->ui.timeline->set_active(node);
     if ( node )
     {
         auto mo = node->metaObject();
@@ -285,7 +286,6 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
                 if ( ch_mo->inherits(&model::Layer::staticMetaObject) ||
                     ch_mo->inherits(&model::PreCompLayer::staticMetaObject) )
                 {
-                    d->ui.timeline->add_object_without_properties(child);
                     d->property_model.add_object_without_properties(child);
                 }
             }
@@ -300,17 +300,17 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
                     ch_mo->inherits(&model::PreCompLayer::staticMetaObject)
                 )
                 {
-                    d->ui.timeline->add_object_without_properties(child);
                     d->property_model.add_object_without_properties(child);
                 }
                 else if ( !ch_mo->inherits(&model::Group::staticMetaObject) )
                 {
-                    d->ui.timeline->add_object(child);
                     d->property_model.add_object(child);
                 }
             }
         }
     }
+
+    d->ui.timeline->reset_view();
     d->ui.properties->expandAll();
     d->clear_menu_data();
 }
@@ -318,14 +318,12 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
 void CompoundTimelineWidget::set_document(model::Document* document)
 {
     d->property_model.set_document(document);
-    d->ui.timeline->set_document(document);
     d->clear_menu_data();
 }
 
 void CompoundTimelineWidget::clear_document()
 {
     d->property_model.clear_document();
-    d->ui.timeline->set_document(nullptr);
     d->clear_menu_data();
 }
 
@@ -376,7 +374,8 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
         );
     }
 
-    d->menu_anim = item.animatable;
+    if ( item.property && item.property->traits().flags & model::PropertyTraits::Animated )
+        d->menu_anim = static_cast<model::AnimatableBase*>(item.property);
 
     if ( d->menu_kf_exit )
     {

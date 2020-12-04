@@ -44,6 +44,7 @@ public:
     {
         auto node = add_node(Subtree{object, 0});
         roots.push_back(node);
+        emit model->root_object_added_begin(object);
         connect_recursive(object, model, node->id);
     }
 
@@ -51,6 +52,7 @@ public:
     {
         auto node = add_node(Subtree{object, 0});
         roots.push_back(node);
+        emit model->root_object_added_begin(object);
         QObject::connect(object, &model::Object::destroyed, model, &PropertyModel::on_delete_object);
     }
 
@@ -96,8 +98,9 @@ public:
                         connect_recursive(subobj, model, this_node);
                 }
                 else if ( !is_main_comp && prop->traits().flags & model::PropertyTraits::Visual &&
-                    prop->name() != "start_time" && prop->traits().type != model::PropertyTraits::ObjectReference )
+                    prop->traits().type != model::PropertyTraits::ObjectReference )
                 {
+                    emit model->property_added(prop);
                     properties[prop] = add_node(Subtree{prop, this_node})->id;
                 }
             }
@@ -170,6 +173,7 @@ public:
         nodes.erase(it2);
 
         model->endRemoveRows();
+        emit model->object_removed(obj);
     }
 
     void disconnect_recursive(Subtree* node, PropertyModel* model)
@@ -189,8 +193,12 @@ public:
 
     void clear(PropertyModel* model)
     {
+        emit model->objects_cleared();
         for ( const auto& p : roots )
+        {
+            emit model->object_removed(p->object);
             disconnect_recursive(p, model);
+        }
 
         roots.clear();
         next_id = 1;
@@ -628,6 +636,7 @@ void item_models::PropertyModel::set_document(model::Document* document)
 {
     d->document = document;
     clear_objects();
+    emit document_changed(document);
 }
 
 item_models::PropertyModel::Item item_models::PropertyModel::item(const QModelIndex& index) const
@@ -636,11 +645,7 @@ item_models::PropertyModel::Item item_models::PropertyModel::item(const QModelIn
     {
         Item item = st->object;
         if ( st->prop )
-        {
             item.property = st->prop;
-            if ( st->prop->traits().flags & model::PropertyTraits::Animated )
-                item.animatable = static_cast<model::AnimatableBase*>(st->prop);
-        }
         return item;
     }
 

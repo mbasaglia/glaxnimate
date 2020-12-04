@@ -5,6 +5,7 @@
 
 #include "timeline_items.hpp"
 #include "model/shapes/precomp_layer.hpp"
+#include <model/shapes/styler.hpp>
 
 using namespace timeline;
 
@@ -30,9 +31,8 @@ public:
     model::AnimationContainer* limit = nullptr;
     bool keep_highlight = false;
 
-    std::unordered_map<model::AnimatableBase*, AnimatableItem*> anim_items;
     std::vector<ObjectLineItem*> object_items;
-    std::unordered_map<model::BaseProperty*, PropertyLineItem*> prop_items;
+    std::unordered_map<model::BaseProperty*, LineItem*> prop_items;
 
     int rounded_end_time()
     {
@@ -54,7 +54,7 @@ public:
 
     void add_property(model::BaseProperty* prop, ObjectLineItem* parent_item)
     {
-        PropertyLineItem* item = new PropertyLineItem(prop, start_time, rounded_end_time(), row_height);
+        PropertyLineItem* item = new PropertyLineItem(parent_item->object(), prop, start_time, rounded_end_time(), row_height);
         connect(item, &PropertyLineItem::property_clicked, parent, &TimelineWidget::property_clicked);
         add_line(item, parent_item);
         prop_items[prop] = item;
@@ -62,35 +62,10 @@ public:
 
     void add_animatable(model::AnimatableBase* anim, ObjectLineItem* parent_item)
     {
-        AnimatableItem* item = new AnimatableItem(anim, start_time, rounded_end_time(), row_height);
+        AnimatableItem* item = new AnimatableItem(parent_item->object(), anim, start_time, rounded_end_time(), row_height);
         connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::property_clicked);
         add_line(item, parent_item);
-        anim_items[anim] = item;
-    }
-
-    void add_sub_object(model::Object* obj, ObjectLineItem* parent_item)
-    {
-        bool is_main_comp = obj->is_instance<model::MainComposition>();
-
-        for ( auto prop : obj->properties() )
-        {
-            auto flags = prop->traits().flags;
-            if ( flags & model::PropertyTraits::Animated )
-            {
-                add_animatable(static_cast<model::AnimatableBase*>(prop), parent_item);
-            }
-            else if ( prop->traits().type == model::PropertyTraits::Object && !(flags & model::PropertyTraits::List) )
-            {
-                model::Object* subobj = static_cast<model::SubObjectPropertyBase*>(prop)->sub_object();
-                if ( subobj && !subobj->is_instance<model::AnimationContainer>() )
-                    add_sub_object(subobj, parent_item);
-            }
-            else if ( !is_main_comp && flags & model::PropertyTraits::Visual && !(flags & model::PropertyTraits::List) &&
-                prop->traits().type != model::PropertyTraits::ObjectReference )
-            {
-                add_property(prop, parent_item);
-            }
-        }
+        prop_items[anim] = item;
     }
 
     void add_line(LineItem* item, ObjectLineItem* parent_item)
@@ -128,12 +103,6 @@ public:
         return item;
     }
 
-    void add_object(model::Object* obj)
-    {
-        auto item = add_object_without_properties(obj);
-        add_sub_object(obj, item);
-    }
-
     void adjust_min_scale(int wpw)
     {
         if ( min_scale == 0 || scene_rect().width() == 0 )
@@ -151,12 +120,8 @@ public:
     void update_end_time()
     {
         auto et = rounded_end_time();
-        for ( const auto& p : anim_items )
-            p.second->set_time_end(et);
         for ( const auto& p : object_items )
             p->set_time_end(et);
-        for ( const auto& p : prop_items )
-            p.second->set_time_end(et);
     }
 
     void paint_highligted_frame(int frame, QPainter& painter, const QBrush& color)
@@ -176,7 +141,6 @@ public:
     {
         scene.clear();
         rows = 0;
-        anim_items.clear();
         object_items.clear();
         prop_items.clear();
     }
@@ -242,40 +206,32 @@ TimelineWidget::~TimelineWidget()
 {
 }
 
-void TimelineWidget::set_active(model::DocumentNode* node)
-{
-    clear();
-
-    if ( node )
-    {
-        set_anim_container(d->anim(node));
-        d->add_object(node);
-        d->adjust_min_scale(viewport()->width());
-    }
-
-    setSceneRect(d->scene_rect());
-    reset_view();
-}
-
 void TimelineWidget::add_object(model::Object* node)
 {
-    connect(node, &model::Object::removed_from_list, this, [this, node]{
-        remove_object(node);
-    });
-    d->add_object(node);
-    setSceneRect(d->scene_rect());
-    reset_view();
+    d->add_object_without_properties(node);
 }
 
-void TimelineWidget::add_object_without_properties(model::Object* node)
+void TimelineWidget::add_property(model::BaseProperty* property)
 {
-    d->add_object_without_properties(node);
-    setSceneRect(d->scene_rect());
-    reset_view();
+    if ( !d->object_items.empty() )
+    {
+        if ( property->traits().flags & model::PropertyTraits::Animated )
+            d->add_animatable(static_cast<model::AnimatableBase*>(property), d->object_items.back());
+        else
+            d->add_property(property, d->object_items.back());
+    }
 }
 
 void TimelineWidget::remove_object(model::Object* obj)
 {
+    for ( auto i = d->prop_items.begin(); i != d->prop_items.end(); )
+    {
+        if ( i->second->object() == obj )
+            i = d->prop_items.erase(i);
+        else
+            ++i;
+    }
+
     auto it = d->find_object_item(obj);
     if ( it == d->object_items.end() )
         return;
@@ -360,8 +316,6 @@ void TimelineWidget::update_timeline_start(model::FrameTime start)
     d->start_time = start;
     setSceneRect(d->scene_rect());
     d->adjust_min_scale(viewport()->width());
-    for ( const auto& p : d->anim_items )
-        p.second->set_time_start(start);
     for ( const auto& p : d->object_items )
         p->set_time_start(start);
 }
@@ -533,6 +487,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
 
 void TimelineWidget::reset_view()
 {
+    setSceneRect(d->scene_rect());
     setTransform(QTransform::fromScale(d->min_scale, 1));
     d->update_frame_skip(transform());
 }
@@ -625,10 +580,10 @@ int TimelineWidget::header_height() const
 void TimelineWidget::select(const item_models::PropertyModel::Item& item)
 {
     d->scene.clearSelection();
-    if ( item.animatable )
+    if ( item.property )
     {
-        auto it = d->anim_items.find(item.animatable);
-        if ( it != d->anim_items.end() )
+        auto it = d->prop_items.find(item.property);
+        if ( it != d->prop_items.end() )
             it->second->setSelected(true);
     }
     else if ( item.object )
@@ -636,12 +591,6 @@ void TimelineWidget::select(const item_models::PropertyModel::Item& item)
         auto it = d->find_object_item(item.object);
         if ( it != d->object_items.end() )
             (*it)->setSelected(true);
-    }
-    else if ( item.property )
-    {
-        auto it = d->prop_items.find(item.property);
-        if ( it != d->prop_items.end() )
-            it->second->setSelected(true);
     }
 }
 
@@ -652,11 +601,11 @@ item_models::PropertyModel::Item TimelineWidget::item_at(const QPoint& viewport_
         switch ( ItemTypes(it->type()) )
         {
             case ItemTypes::AnimatableItem:
-                return static_cast<AnimatableItem*>(it)->animatable;
+                return static_cast<AnimatableItem*>(it)->item();
             case ItemTypes::ObjectLineItem:
                 return static_cast<ObjectLineItem*>(it)->object();
             case ItemTypes::PropertyLineItem:
-                return static_cast<PropertyLineItem*>(it)->property();
+                return static_cast<PropertyLineItem*>(it)->item();
         }
     }
     return {};
@@ -789,3 +738,11 @@ void TimelineWidget::expand(model::Object* obj)
     }
 }
 
+void TimelineWidget::set_model(item_models::PropertyModel* model)
+{
+    connect(model, &item_models::PropertyModel::document_changed, this, &TimelineWidget::set_document);
+    connect(model, &item_models::PropertyModel::root_object_added_begin, this, &TimelineWidget::add_object);
+    connect(model, &item_models::PropertyModel::property_added, this, &TimelineWidget::add_property);
+    connect(model, &item_models::PropertyModel::object_removed, this, &TimelineWidget::remove_object);
+    connect(model, &item_models::PropertyModel::objects_cleared, this, &TimelineWidget::clear);
+}

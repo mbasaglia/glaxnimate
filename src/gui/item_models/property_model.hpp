@@ -21,17 +21,17 @@ public:
     struct Item
     {
         constexpr Item() noexcept = default;
-        constexpr Item(model::Object* object) noexcept : object(object) {}
-        constexpr Item(model::AnimatableBase* animatable) noexcept : animatable(animatable) {}
-        constexpr Item(model::BaseProperty* prop) noexcept : property(prop) {}
+        constexpr Item(model::Object* object, model::BaseProperty* property = nullptr) noexcept :
+            object(object),
+            property(property)
+        {}
 
         explicit constexpr operator bool() const noexcept
         {
-            return object || animatable;
+            return object;
         }
 
         model::Object* object = nullptr;
-        model::AnimatableBase* animatable = nullptr;
         model::BaseProperty* property = nullptr;
     };
 
@@ -68,6 +68,29 @@ public:
 private slots:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);
     void on_delete_object();
+
+signals:
+    /**
+     * \brief Emitted on set_document
+     */
+    void document_changed(model::Document* document);
+    /**
+     * \brief Emitted when the model starts adding a root object, before any properties are added
+     */
+    void root_object_added_begin(model::Object* object);
+    /**
+     * \brief Emitted when a property is added, the property belongs to the last
+     * root_object_added_begin() argument or one of its sub-objects
+     */
+    void property_added(model::BaseProperty* property);
+    /**
+     * \brief Emitted when a root object is being removed from the model
+     */
+    void object_removed(model::Object* object);
+    /**
+     * \brief Called when all objects are removed
+     */
+    void objects_cleared();
 
 private:
     class Private;

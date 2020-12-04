@@ -10,7 +10,9 @@
 #include "command/animation_commands.hpp"
 #include "model/document.hpp"
 #include "model/shapes/precomp_layer.hpp"
+
 #include "graphics/handle.hpp"
+#include "item_models/property_model.hpp"
 
 namespace timeline {
 
@@ -179,21 +181,31 @@ class LineItem : public QGraphicsObject
     Q_OBJECT
 
 public:
-    LineItem(int time_start, int time_end, int height)
-        : time_start(time_start), time_end(time_end), height_(height)
+    LineItem(model::Object* obj, int time_start, int time_end, int height):
+        time_start(time_start),
+        time_end(time_end),
+        height_(height),
+        object_(obj)
     {
         setFlags(QGraphicsItem::ItemIsSelectable);
+    }
+
+    model::Object* object() const
+    {
+        return object_;
     }
 
     void set_time_start(int time)
     {
         time_start = time;
+        on_set_time_start(time);
         prepareGeometryChange();
     }
 
     void set_time_end(int time)
     {
         time_end = time;
+        on_set_time_end(time);
         prepareGeometryChange();
     }
 
@@ -226,6 +238,9 @@ protected:
             click_selected();
     }
 
+    virtual void on_set_time_start(int){}
+    virtual void on_set_time_end(int){}
+
     virtual void click_selected(){}
 //     virtual void on_height_changed(int){}
 
@@ -234,6 +249,7 @@ private:
     int time_start;
     int time_end;
     int height_;
+    model::Object* object_;
 };
 
 class ObjectLineItem : public LineItem
@@ -242,16 +258,10 @@ class ObjectLineItem : public LineItem
 
 public:
     ObjectLineItem(model::Object* obj, int time_start, int time_end, int height)
-        : LineItem(time_start, time_end, height),
-        object_(obj)
+        : LineItem(obj, time_start, time_end, height)
     {}
 
     int type() const override { return int(ItemTypes::ObjectLineItem); }
-
-    model::Object* object() const
-    {
-        return object_;
-    }
 
     int row_count() const
     {
@@ -299,14 +309,25 @@ public:
 protected:
     void click_selected() override
     {
-        emit object_clicked(object_);
+        emit object_clicked(object());
+    }
+
+    void on_set_time_start(int time) override
+    {
+        for ( auto row : rows_ )
+            row->set_time_start(time);
+    }
+
+    void on_set_time_end(int time) override
+    {
+        for ( auto row : rows_ )
+            row->set_time_end(time);
     }
 
 signals:
     void object_clicked(model::Object* object);
 
 private:
-    model::Object* object_;
     std::vector<LineItem*> rows_;
 };
 
@@ -316,8 +337,9 @@ class AnimatableItem : public LineItem
     Q_OBJECT
 
 public:
-    AnimatableItem(model::AnimatableBase* animatable, int time_start, int time_end, int height)
-        : LineItem(time_start, time_end, height), animatable(animatable)
+    AnimatableItem(model::Object* obj, model::AnimatableBase* animatable, int time_start, int time_end, int height)
+        : LineItem(obj, time_start, time_end, height),
+        animatable(animatable)
     {
         for ( int i = 0; i < animatable->keyframe_count(); i++ )
             add_keyframe(i);
@@ -343,6 +365,11 @@ public:
     }
 
     int type() const override { return int(ItemTypes::AnimatableItem); }
+
+    item_models::PropertyModel::Item item() const
+    {
+        return {object(), animatable};
+    }
 
 protected:
     void click_selected() override
@@ -426,7 +453,7 @@ private slots:
         }
     }
 
-public:
+private:
     model::AnimatableBase* animatable;
     std::vector<KeyframeSplitItem*> kf_split_items;
 };
@@ -552,8 +579,9 @@ class PropertyLineItem : public LineItem
     Q_OBJECT
 
 public:
-    PropertyLineItem(model::BaseProperty* obj, int time_start, int time_end, int height)
-        : LineItem(time_start, time_end, height), property_(obj)
+    PropertyLineItem(model::Object* obj, model::BaseProperty* prop, int time_start, int time_end, int height)
+        : LineItem(obj, time_start, time_end, height),
+        property_(prop)
     {}
 
     int type() const override { return int(ItemTypes::PropertyLineItem); }
@@ -561,6 +589,11 @@ public:
     model::BaseProperty* property() const
     {
         return property_;
+    }
+
+    item_models::PropertyModel::Item item() const
+    {
+        return {object(), property_};
     }
 
 protected:

@@ -16,12 +16,10 @@ public:
     TimelineWidget(QWidget* parent = nullptr);
     ~TimelineWidget();
     
-    void set_document(model::Document* document);
     void clear();
-    void set_active(model::DocumentNode* node);
-    void add_object(model::Object* node);
-    void add_object_without_properties(model::Object* node);
-    void remove_object(model::Object* node);
+
+    void set_model(item_models::PropertyModel* model);
+
     int row_height() const;
     void set_row_height(int w);
     int header_height() const;
@@ -49,6 +47,10 @@ private slots:
 
 private:
     void set_anim_container(model::AnimationContainer* cont);
+    void set_document(model::Document* document);
+    void add_object(model::Object* node);
+    void add_property(model::BaseProperty* property);
+    void remove_object(model::Object* node);
 
 protected:    
     void mousePressEvent(QMouseEvent * event) override;
