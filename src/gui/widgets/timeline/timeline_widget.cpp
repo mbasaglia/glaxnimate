@@ -52,23 +52,23 @@ public:
         );
     }
 
-    void add_property(model::BaseProperty* prop)
+    void add_property(model::BaseProperty* prop, ObjectLineItem* parent_item)
     {
-        PropertyLineItem* item = new PropertyLineItem(prop, start_time, rounded_end_time(), row_height, rows);
+        PropertyLineItem* item = new PropertyLineItem(prop, start_time, rounded_end_time(), row_height);
         connect(item, &PropertyLineItem::property_clicked, parent, &TimelineWidget::property_clicked);
-        add_line(item);
+        add_line(item, parent_item);
         prop_items[prop] = item;
     }
 
-    void add_animatable(model::AnimatableBase* anim)
+    void add_animatable(model::AnimatableBase* anim, ObjectLineItem* parent_item)
     {
-        AnimatableItem* item = new AnimatableItem(anim, start_time, rounded_end_time(), row_height, rows);
+        AnimatableItem* item = new AnimatableItem(anim, start_time, rounded_end_time(), row_height);
         connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::property_clicked);
-        add_line(item);
+        add_line(item, parent_item);
         anim_items[anim] = item;
     }
 
-    void add_sub_object(model::Object* obj)
+    void add_sub_object(model::Object* obj, ObjectLineItem* parent_item)
     {
         bool is_main_comp = obj->is_instance<model::MainComposition>();
 
@@ -77,32 +77,31 @@ public:
             auto flags = prop->traits().flags;
             if ( flags & model::PropertyTraits::Animated )
             {
-                add_animatable(static_cast<model::AnimatableBase*>(prop));
+                add_animatable(static_cast<model::AnimatableBase*>(prop), parent_item);
             }
             else if ( prop->traits().type == model::PropertyTraits::Object && !(flags & model::PropertyTraits::List) )
             {
                 model::Object* subobj = static_cast<model::SubObjectPropertyBase*>(prop)->sub_object();
                 if ( subobj && !subobj->is_instance<model::AnimationContainer>() )
-                    add_sub_object(subobj);
+                    add_sub_object(subobj, parent_item);
             }
             else if ( !is_main_comp && flags & model::PropertyTraits::Visual && !(flags & model::PropertyTraits::List) &&
                 prop->traits().type != model::PropertyTraits::ObjectReference )
             {
-                add_property(prop);
+                add_property(prop, parent_item);
             }
         }
     }
 
-    void add_line(LineItem* item)
+    void add_line(LineItem* item, ObjectLineItem* parent_item)
     {
-        scene.addItem(item);
-        item->setPos(0, rows * row_height);
+        parent_item->add_row(item);
         rows += 1;
     }
 
-    void add_object_without_properties(model::Object* obj)
+    ObjectLineItem* add_object_without_properties(model::Object* obj)
     {
-        ObjectLineItem* item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height, rows);
+        ObjectLineItem* item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height);
         if ( auto layer = obj->cast<model::Layer>() )
         {
             auto anim_item = new AnimationContainerItem(layer, layer->animation.get(), row_height - 8, item);
@@ -120,14 +119,19 @@ public:
         }
 
         connect(item, &ObjectLineItem::object_clicked, parent, &TimelineWidget::object_clicked);
-        add_line(item);
+
+        scene.addItem(item);
+        item->setPos(0, rows * row_height);
+        rows++;
+
         object_items[obj] = item;
+        return item;
     }
 
     void add_object(model::Object* obj)
     {
-        add_object_without_properties(obj);
-        add_sub_object(obj);
+        auto item = add_object_without_properties(obj);
+        add_sub_object(obj, item);
     }
 
     void adjust_min_scale(int wpw)
@@ -231,16 +235,6 @@ TimelineWidget::~TimelineWidget()
 {
 }
 
-void TimelineWidget::add_animatable(model::AnimatableBase* anim)
-{
-    d->add_animatable(anim);
-}
-
-void TimelineWidget::add_property(model::BaseProperty* anim)
-{
-    d->add_property(anim);
-}
-
 void TimelineWidget::set_active(model::DocumentNode* node)
 {
     clear();
@@ -256,14 +250,14 @@ void TimelineWidget::set_active(model::DocumentNode* node)
     reset_view();
 }
 
-void TimelineWidget::add_object(model::DocumentNode* node)
+void TimelineWidget::add_object(model::Object* node)
 {
     d->add_object(node);
     setSceneRect(d->scene_rect());
     reset_view();
 }
 
-void TimelineWidget::add_object_without_properties(model::DocumentNode* node)
+void TimelineWidget::add_object_without_properties(model::Object* node)
 {
     d->add_object_without_properties(node);
     setSceneRect(d->scene_rect());
@@ -599,6 +593,12 @@ void TimelineWidget::select(const item_models::PropertyModel::Item& item)
     {
         auto it = d->object_items.find(item.object);
         if ( it != d->object_items.end() )
+            it->second->setSelected(true);
+    }
+    else if ( item.property )
+    {
+        auto it = d->prop_items.find(item.property);
+        if ( it != d->prop_items.end() )
             it->second->setSelected(true);
     }
 }

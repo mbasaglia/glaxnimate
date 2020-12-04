@@ -55,6 +55,7 @@ public:
 
         connect(ui.timeline, &TimelineWidget::property_clicked, parent, &CompoundTimelineWidget::select_property);
         connect(ui.timeline, &TimelineWidget::object_clicked, parent, &CompoundTimelineWidget::select_object);
+        connect(ui.properties->selectionModel(), &QItemSelectionModel::currentChanged, parent, &CompoundTimelineWidget::select_index);
 
         ui.action_add_keyframe->setIcon(
             QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/status/key.svg"))

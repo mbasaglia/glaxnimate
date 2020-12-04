@@ -19,10 +19,8 @@ public:
     void set_document(model::Document* document);
     void clear();
     void set_active(model::DocumentNode* node);
-    void add_object(model::DocumentNode* node);
-    void add_object_without_properties(model::DocumentNode* node);
-    void add_animatable(model::AnimatableBase* anim);
-    void add_property(model::BaseProperty* anim);
+    void add_object(model::Object* node);
+    void add_object_without_properties(model::Object* node);
     int row_height() const;
     void set_row_height(int w);
     int header_height() const;
@@ -59,7 +57,6 @@ protected:
     void leaveEvent(QEvent * event) override;
     void enterEvent(QEvent * event) override;
     void keyPressEvent(QKeyEvent * event) override;
-
     
 signals:
     void frame_clicked(int frame);

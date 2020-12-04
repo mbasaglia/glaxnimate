@@ -179,8 +179,8 @@ class LineItem : public QGraphicsObject
     Q_OBJECT
 
 public:
-    LineItem(int time_start, int time_end, int height, int row)
-        : time_start(time_start), time_end(time_end), height_(height), row_(row)
+    LineItem(int time_start, int time_end, int height)
+        : time_start(time_start), time_end(time_end), height_(height)
     {
         setFlags(QGraphicsItem::ItemIsSelectable);
     }
@@ -234,7 +234,6 @@ private:
     int time_start;
     int time_end;
     int height_;
-    int row_;
 };
 
 class ObjectLineItem : public LineItem
@@ -242,8 +241,10 @@ class ObjectLineItem : public LineItem
     Q_OBJECT
 
 public:
-    ObjectLineItem(model::Object* obj, int time_start, int time_end, int height, int row)
-        : LineItem(time_start, time_end, height, row), object_(obj)
+    ObjectLineItem(model::Object* obj, int time_start, int time_end, int height)
+        : LineItem(time_start, time_end, height),
+        object_(obj),
+        rows_(1, this)
     {}
 
     int type() const override { return int(ItemTypes::ObjectLineItem); }
@@ -251,6 +252,19 @@ public:
     model::Object* object() const
     {
         return object_;
+    }
+
+    int row_count() const
+    {
+        return row_count_;
+    }
+
+    void add_row(LineItem* row)
+    {
+        row->setParentItem(this);
+        row->setPos(0, row_count_ * height());
+        row_count_++;
+        rows_.push_back(row);
     }
 
 protected:
@@ -264,6 +278,8 @@ signals:
 
 private:
     model::Object* object_;
+    int row_count_ = 1;
+    std::vector<LineItem*> rows_;
 };
 
 
@@ -272,8 +288,8 @@ class AnimatableItem : public LineItem
     Q_OBJECT
 
 public:
-    AnimatableItem(model::AnimatableBase* animatable, int time_start, int time_end, int height, int row)
-        : LineItem(time_start, time_end, height, row), animatable(animatable)
+    AnimatableItem(model::AnimatableBase* animatable, int time_start, int time_end, int height)
+        : LineItem(time_start, time_end, height), animatable(animatable)
     {
         for ( int i = 0; i < animatable->keyframe_count(); i++ )
             add_keyframe(i);
@@ -508,8 +524,8 @@ class PropertyLineItem : public LineItem
     Q_OBJECT
 
 public:
-    PropertyLineItem(model::BaseProperty* obj, int time_start, int time_end, int height, int row)
-        : LineItem(time_start, time_end, height, row), property_(obj)
+    PropertyLineItem(model::BaseProperty* obj, int time_start, int time_end, int height)
+        : LineItem(time_start, time_end, height), property_(obj)
     {}
 
     int type() const override { return int(ItemTypes::PropertyLineItem); }

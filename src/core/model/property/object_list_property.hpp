@@ -168,6 +168,7 @@ public:
         on_remove(index);
         callback_remove(object(), v.get(), index);
         value_changed();
+        v->removed_from_list();
         return v;
     }
 

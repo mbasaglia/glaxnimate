@@ -60,7 +60,6 @@ public:
     void add_object(model::Object* object);
     void add_object_without_properties(model::Object* object);
 
-
     Item item(const QModelIndex& index) const;
 
     QModelIndex property_index(model::BaseProperty* anim) const;

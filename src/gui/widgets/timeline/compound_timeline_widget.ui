@@ -167,24 +167,7 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>properties</sender>
-   <signal>pressed(QModelIndex)</signal>
-   <receiver>CompoundTimelineWidget</receiver>
-   <slot>select_index(QModelIndex)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>222</x>
-     <y>97</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>231</x>
-     <y>379</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>select_index(QModelIndex)</slot>
   <slot>custom_context_menu(QPoint)</slot>
