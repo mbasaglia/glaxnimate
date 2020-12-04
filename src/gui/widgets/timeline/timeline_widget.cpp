@@ -31,7 +31,7 @@ public:
     bool keep_highlight = false;
 
     std::unordered_map<model::AnimatableBase*, AnimatableItem*> anim_items;
-    std::unordered_map<model::Object*, ObjectLineItem*> object_items;
+    std::vector<ObjectLineItem*> object_items;
     std::unordered_map<model::BaseProperty*, PropertyLineItem*> prop_items;
 
     int rounded_end_time()
@@ -124,7 +124,7 @@ public:
         item->setPos(0, rows * row_height);
         rows++;
 
-        object_items[obj] = item;
+        object_items.push_back(item);
         return item;
     }
 
@@ -154,7 +154,7 @@ public:
         for ( const auto& p : anim_items )
             p.second->set_time_end(et);
         for ( const auto& p : object_items )
-            p.second->set_time_end(et);
+            p->set_time_end(et);
         for ( const auto& p : prop_items )
             p.second->set_time_end(et);
     }
@@ -215,6 +215,13 @@ public:
         painter.fillRect(text_rect, brush);
         painter.setPen(pen);
         painter.drawText(text_rect, Qt::AlignLeft|Qt::AlignBottom,  QString::number(f));
+    }
+
+    std::vector<ObjectLineItem*>::iterator find_object_item(model::Object* obj)
+    {
+        return std::find_if(object_items.begin(), object_items.end(), [obj](ObjectLineItem* item){
+            return item->object() == obj;
+        });
     }
 };
 
@@ -327,7 +334,7 @@ void TimelineWidget::update_timeline_start(model::FrameTime start)
     for ( const auto& p : d->anim_items )
         p.second->set_time_start(start);
     for ( const auto& p : d->object_items )
-        p.second->set_time_start(start);
+        p->set_time_start(start);
 }
 
 void TimelineWidget::wheelEvent(QWheelEvent* event)
@@ -377,7 +384,13 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
         palette().alternateBase(),
         palette().base(),
     };
-    for ( int i = 0; i <= d->rows; i++ )
+
+    int n_rows = d->object_items.size();
+    for ( auto objit : d->object_items )
+        if ( objit->is_expanded() )
+            n_rows += objit->row_count();
+
+    for ( int i = 0; i <= n_rows; i++ )
     {
         painter.fillRect(
             QRectF(
@@ -591,9 +604,9 @@ void TimelineWidget::select(const item_models::PropertyModel::Item& item)
     }
     else if ( item.object )
     {
-        auto it = d->object_items.find(item.object);
+        auto it = d->find_object_item(item.object);
         if ( it != d->object_items.end() )
-            it->second->setSelected(true);
+            (*it)->setSelected(true);
     }
     else if ( item.property )
     {
@@ -714,3 +727,36 @@ void TimelineWidget::keep_highlight()
 {
     d->keep_highlight = true;
 }
+
+void TimelineWidget::collapse(model::Object* obj)
+{
+    auto it = d->find_object_item(obj);
+    if ( it == d->object_items.end() || !(*it)->is_expanded() )
+        return;
+
+    auto delta = (*it)->collapse();
+
+    for ( ++it; it != d->object_items.end(); ++it )
+    {
+        auto p = (*it)->pos();
+        p.setY(p.y() + delta);
+        (*it)->setPos(p);
+    }
+}
+
+void TimelineWidget::expand(model::Object* obj)
+{
+    auto it = d->find_object_item(obj);
+    if ( it == d->object_items.end() || (*it)->is_expanded() )
+        return;
+
+    auto delta = (*it)->expand();
+
+    for ( ++it; it != d->object_items.end(); ++it )
+    {
+        auto p = (*it)->pos();
+        p.setY(p.y() + delta);
+        (*it)->setPos(p);
+    }
+}
+

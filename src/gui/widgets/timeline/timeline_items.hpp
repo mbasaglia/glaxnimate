@@ -243,8 +243,7 @@ class ObjectLineItem : public LineItem
 public:
     ObjectLineItem(model::Object* obj, int time_start, int time_end, int height)
         : LineItem(time_start, time_end, height),
-        object_(obj),
-        rows_(1, this)
+        object_(obj)
     {}
 
     int type() const override { return int(ItemTypes::ObjectLineItem); }
@@ -256,15 +255,45 @@ public:
 
     int row_count() const
     {
-        return row_count_;
+        return rows_.size();
+    }
+
+    int child_rows_height()
+    {
+        return rows_.size() * height();
+    }
+
+    int rows_height()
+    {
+        return (rows_.size() + 1) * height();
     }
 
     void add_row(LineItem* row)
     {
         row->setParentItem(this);
-        row->setPos(0, row_count_ * height());
-        row_count_++;
+        row->setPos(0, rows_height());
         rows_.push_back(row);
+    }
+
+    int expand()
+    {
+        for ( auto item : rows_ )
+            item->setVisible(true);
+
+        return child_rows_height();
+    }
+
+    int collapse()
+    {
+        for ( auto item : rows_ )
+            item->setVisible(false);
+
+        return -child_rows_height();
+    }
+
+    bool is_expanded()
+    {
+        return !rows_.empty() && rows_[0]->isVisible();
     }
 
 protected:
@@ -278,7 +307,6 @@ signals:
 
 private:
     model::Object* object_;
-    int row_count_ = 1;
     std::vector<LineItem*> rows_;
 };
 

@@ -33,7 +33,10 @@ public:
     
     item_models::PropertyModel::Item item_at(const QPoint& viewport_pos);
     std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframe_at(const QPoint& viewport_pos);
-    
+
+    void expand(model::Object* obj);
+    void collapse(model::Object* obj);
+
 public slots:
     void update_timeline_start(model::FrameTime start);
     void update_timeline_end(model::FrameTime end);

@@ -521,3 +521,18 @@ void CompoundTimelineWidget::paste_keyframe()
         new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), value, true)
     );
 }
+
+void CompoundTimelineWidget::collapse_index(const QModelIndex& index)
+{
+    auto item = d->property_model.item(index);
+    if ( item.object )
+        d->ui.timeline->collapse(item.object);
+}
+
+void CompoundTimelineWidget::expand_index(const QModelIndex& index)
+{
+    auto item = d->property_model.item(index);
+    if ( item.object )
+        d->ui.timeline->expand(item.object);
+}
+

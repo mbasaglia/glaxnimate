@@ -36,6 +36,8 @@ private slots:
     void keyframe_action_exit();
     void copy_keyframe();
     void paste_keyframe();
+    void collapse_index(const QModelIndex& index);
+    void expand_index(const QModelIndex& index);
     
 private:
     class Private;

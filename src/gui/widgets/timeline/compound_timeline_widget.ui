@@ -92,7 +92,7 @@
          <property name="uniformRowHeights">
           <bool>true</bool>
          </property>
-         <property name="itemsExpandable">
+         <property name="animated">
           <bool>false</bool>
          </property>
         </widget>
@@ -167,9 +167,44 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>properties</sender>
+   <signal>expanded(QModelIndex)</signal>
+   <receiver>CompoundTimelineWidget</receiver>
+   <slot>expand_index(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>192</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>488</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>properties</sender>
+   <signal>collapsed(QModelIndex)</signal>
+   <receiver>CompoundTimelineWidget</receiver>
+   <slot>collapse_index(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>110</x>
+     <y>368</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
  <slots>
   <slot>select_index(QModelIndex)</slot>
   <slot>custom_context_menu(QPoint)</slot>
+  <slot>expand_index(QModelIndex)</slot>
+  <slot>collapse_index(QModelIndex)</slot>
  </slots>
 </ui>
