@@ -23,16 +23,19 @@ public:
     void add_action(ActionService* action);
     void remove_action(ActionService* action);
 
-    const QSet<ActionService*>& enabled() const { return enabled_actions; }
+    const std::vector<ActionService*>& enabled() const;
 
 signals:
-    void action_added(ActionService*);
+    void action_added(ActionService* action, ActionService* sibling_before);
     void action_removed(ActionService*);
 
 private:
+    std::vector<ActionService*>::iterator find(ActionService* as);
+    static bool compare(ActionService* a, ActionService* b);
+
     PluginActionRegistry() = default;
     ~PluginActionRegistry() = default;
-    QSet<ActionService*> enabled_actions;
+    std::vector<ActionService*> enabled_actions;
 };
 
 class ActionService : public PluginService

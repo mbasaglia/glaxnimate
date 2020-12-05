@@ -664,8 +664,18 @@ void GlaxnimateWindow::Private::init_plugins()
     {
         ui.menu_plugins->addAction(par.make_qaction(act));
     }
-    connect(&par, &plugin::PluginActionRegistry::action_added, parent, [this](plugin::ActionService* action) {
-        ui.menu_plugins->addAction(plugin::PluginActionRegistry::instance().make_qaction(action));
+    connect(&par, &plugin::PluginActionRegistry::action_added, parent, [this](plugin::ActionService* action, plugin::ActionService* before) {
+        QAction* insert = nullptr;
+        for ( auto act : ui.menu_plugins->actions() )
+        {
+            if ( act->data().value<plugin::ActionService*>() == before )
+            {
+                insert = act;
+                break;
+            }
+        }
+
+        ui.menu_plugins->insertAction(insert, plugin::PluginActionRegistry::instance().make_qaction(action));
     });
     connect(
         &plugin::PluginRegistry::instance(),

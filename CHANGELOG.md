@@ -39,6 +39,7 @@
     * The "record" button is unchecked when loading a new animation
     * Transparent gradients are correctly exported to lottie
     * `choices` options are correctly loaded fro plugins
+    * Items in the Plugins menu are now kept always in a sensible order
 
 ## 0.3.1
 
