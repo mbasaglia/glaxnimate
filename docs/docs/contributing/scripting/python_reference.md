@@ -4,7 +4,141 @@ Constants:
 
 | name          | type  | value                 | docs | 
 | ------------- | ----- | --------------------- | ---- | 
-| `__version__` | `str` | `'0.2.0-24-ga2110fe'` |      | 
+| `__version__` | `str` | `'0.3.1-87-g107428e'` |      | 
+
+# glaxnimate.utils.bezier
+
+## glaxnimate.utils.bezier.PointType
+
+Properties:
+
+| name   | type  | notes     | docs | 
+| ------ | ----- | --------- | ---- | 
+| `name` | `str` | Read only |      | 
+
+Constants:
+
+| name          | type                                         | value | docs | 
+| ------------- | -------------------------------------------- | ----- | ---- | 
+| `Corner`      | [PointType](#glaxnimateutilsbezierpointtype) | `0`   |      | 
+| `Smooth`      | [PointType](#glaxnimateutilsbezierpointtype) | `1`   |      | 
+| `Symmetrical` | [PointType](#glaxnimateutilsbezierpointtype) | `2`   |      | 
+
+## glaxnimate.utils.bezier.Point
+
+Properties:
+
+| name      | type                                         | notes | docs | 
+| --------- | -------------------------------------------- | ----- | ---- | 
+| `pos`     | [Point](#glaxnimateutilspoint)               |       |      | 
+| `tan_in`  | [Point](#glaxnimateutilspoint)               |       |      | 
+| `tan_out` | [Point](#glaxnimateutilspoint)               |       |      | 
+| `type`    | [PointType](#glaxnimateutilsbezierpointtype) |       |      | 
+
+<h3 id='glaxnimate.utils.bezier.Point.translate'><a href='#glaxnimate.utils.bezier.Point.translate'>translate()</a></h3>
+
+```python
+translate(self: glaxnimate.utils.bezier.Point, arg0: glaxnimate.utils.Point) -> None
+```
+
+<h3 id='glaxnimate.utils.bezier.Point.translate_to'><a href='#glaxnimate.utils.bezier.Point.translate_to'>translate_to()</a></h3>
+
+```python
+translate_to(self: glaxnimate.utils.bezier.Point, arg0: glaxnimate.utils.Point) -> None
+```
+
+## glaxnimate.utils.bezier.Bezier
+
+Properties:
+
+| name     | type   | notes     | docs | 
+| -------- | ------ | --------- | ---- | 
+| `empty`  | `bool` | Read only |      | 
+| `closed` | `bool` |           |      | 
+
+<h3 id='glaxnimate.utils.bezier.Bezier.clear'><a href='#glaxnimate.utils.bezier.Bezier.clear'>clear()</a></h3>
+
+```python
+clear(self: glaxnimate.utils.bezier.Bezier) -> None
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.insert_point'><a href='#glaxnimate.utils.bezier.Bezier.insert_point'>insert_point()</a></h3>
+
+```python
+insert_point(self: glaxnimate.utils.bezier.Bezier, arg0: int, arg1: glaxnimate.utils.bezier.Point) -> glaxnimate.utils.bezier.Bezier
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.add_point'><a href='#glaxnimate.utils.bezier.Bezier.add_point'>add_point()</a></h3>
+
+```python
+add_point(self: glaxnimate.utils.bezier.Bezier, arg0: glaxnimate.utils.Point, arg1: glaxnimate.utils.Point, arg2: glaxnimate.utils.Point) -> glaxnimate.utils.bezier.Bezier
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.add_smooth_point'><a href='#glaxnimate.utils.bezier.Bezier.add_smooth_point'>add_smooth_point()</a></h3>
+
+```python
+add_smooth_point(self: glaxnimate.utils.bezier.Bezier, arg0: glaxnimate.utils.Point, arg1: glaxnimate.utils.Point) -> glaxnimate.utils.bezier.Bezier
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.close'><a href='#glaxnimate.utils.bezier.Bezier.close'>close()</a></h3>
+
+```python
+close(self: glaxnimate.utils.bezier.Bezier) -> glaxnimate.utils.bezier.Bezier
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.line_to'><a href='#glaxnimate.utils.bezier.Bezier.line_to'>line_to()</a></h3>
+
+```python
+line_to(self: glaxnimate.utils.bezier.Bezier, arg0: glaxnimate.utils.Point) -> glaxnimate.utils.bezier.Bezier
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.quadratic_to'><a href='#glaxnimate.utils.bezier.Bezier.quadratic_to'>quadratic_to()</a></h3>
+
+```python
+quadratic_to(self: glaxnimate.utils.bezier.Bezier, arg0: glaxnimate.utils.Point, arg1: glaxnimate.utils.Point) -> glaxnimate.utils.bezier.Bezier
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.cubic_to'><a href='#glaxnimate.utils.bezier.Bezier.cubic_to'>cubic_to()</a></h3>
+
+```python
+cubic_to(self: glaxnimate.utils.bezier.Bezier, arg0: glaxnimate.utils.Point, arg1: glaxnimate.utils.Point, arg2: glaxnimate.utils.Point) -> glaxnimate.utils.bezier.Bezier
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.reverse'><a href='#glaxnimate.utils.bezier.Bezier.reverse'>reverse()</a></h3>
+
+```python
+reverse(self: glaxnimate.utils.bezier.Bezier) -> None
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.bounding_box'><a href='#glaxnimate.utils.bezier.Bezier.bounding_box'>bounding_box()</a></h3>
+
+```python
+bounding_box(self: glaxnimate.utils.bezier.Bezier) -> glaxnimate.utils.Rect
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.split_segment'><a href='#glaxnimate.utils.bezier.Bezier.split_segment'>split_segment()</a></h3>
+
+```python
+split_segment(self: glaxnimate.utils.bezier.Bezier, arg0: int, arg1: float) -> None
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.split_segment_point'><a href='#glaxnimate.utils.bezier.Bezier.split_segment_point'>split_segment_point()</a></h3>
+
+```python
+split_segment_point(self: glaxnimate.utils.bezier.Bezier, arg0: int, arg1: float) -> glaxnimate.utils.bezier.Point
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.remove_point'><a href='#glaxnimate.utils.bezier.Bezier.remove_point'>remove_point()</a></h3>
+
+```python
+remove_point(self: glaxnimate.utils.bezier.Bezier, arg0: int) -> None
+```
+
+<h3 id='glaxnimate.utils.bezier.Bezier.lerp'><a href='#glaxnimate.utils.bezier.Bezier.lerp'>lerp()</a></h3>
+
+```python
+lerp(self: glaxnimate.utils.bezier.Bezier, arg0: glaxnimate.utils.bezier.Bezier, arg1: float) -> glaxnimate.utils.bezier.Bezier
+```
 
 # glaxnimate.utils
 
@@ -12,13 +146,22 @@ Constants:
 
 Properties:
 
-| name    | type  | notes | docs                                     | 
-| ------- | ----- | ----- | ---------------------------------------- | 
-| `red`   | `int` |       | Red component between 0 and 255          | 
-| `green` | `int` |       | Green component between 0 and 255        | 
-| `blue`  | `int` |       | Blue component between 0 and 255         | 
-| `alpha` | `int` |       | Transparency component between 0 and 255 | 
-| `name`  | `str` |       |                                          | 
+| name         | type  | notes | docs                                     | 
+| ------------ | ----- | ----- | ---------------------------------------- | 
+| `red`        | `int` |       | Red component between 0 and 255          | 
+| `green`      | `int` |       | Green component between 0 and 255        | 
+| `blue`       | `int` |       | Blue component between 0 and 255         | 
+| `alpha`      | `int` |       | Transparency component between 0 and 255 | 
+| `name`       | `str` |       |                                          | 
+| `hue`        | `int` |       |                                          | 
+| `saturation` | `int` |       |                                          | 
+| `value`      | `int` |       |                                          | 
+
+Constants:
+
+| name       | type           | value | docs | 
+| ---------- | -------------- | ----- | ---- | 
+| `from_hsv` | `staticmethod` |       |      | 
 
 ## glaxnimate.utils.Point
 
@@ -138,6 +281,12 @@ warning(arg0: str) -> None
 error(arg0: str) -> None
 ```
 
+# glaxnimate.environment
+
+## glaxnimate.environment.Headless
+
+Context manager that initializes a headless environment
+
 # glaxnimate.io
 
 Input/Output utilities
@@ -190,6 +339,12 @@ from_extension(self: glaxnimate.io.IoRegistry, arg0: str) -> glaxnimate.io.Impor
 from_filename(self: glaxnimate.io.IoRegistry, arg0: str) -> glaxnimate.io.ImportExport
 ```
 
+<h3 id='glaxnimate.io.IoRegistry.from_slug'><a href='#glaxnimate.io.IoRegistry.from_slug'>from_slug()</a></h3>
+
+```python
+from_slug(self: glaxnimate.io.IoRegistry, arg0: str) -> glaxnimate.io.ImportExport
+```
+
 <h3 id='glaxnimate.io.IoRegistry.serializers'><a href='#glaxnimate.io.IoRegistry.serializers'>serializers()</a></h3>
 
 ```python
@@ -214,6 +369,7 @@ Properties:
 | name         | type        | notes     | docs | 
 | ------------ | ----------- | --------- | ---- | 
 | `name`       | `str`       | Read only |      | 
+| `slug`       | `str`       | Read only |      | 
 | `extensions` | `List[str]` | Read only |      | 
 | `can_open`   | `bool`      | Read only |      | 
 | `can_save`   | `bool`      | Read only |      | 
@@ -242,6 +398,16 @@ Signature:
 save(self, document: glaxnimate.model.Document, setting_values: dict, filename: str) -> bytes
 save(self, document: glaxnimate.model.Document, setting_values: dict) -> bytes
 save(self, document: glaxnimate.model.Document) -> bytes
+```
+
+<h3 id='glaxnimate.io.ImportExport.load'><a href='#glaxnimate.io.ImportExport.load'>load()</a></h3>
+
+Signature:
+
+```python
+load(self, document: glaxnimate.model.Document, data: bytes, setting_values: dict, filename: str) -> bool
+load(self, document: glaxnimate.model.Document, data: bytes, setting_values: dict) -> bool
+load(self, document: glaxnimate.model.Document, data: bytes) -> bool
 ```
 
 <h3 id='glaxnimate.io.ImportExport.name_filter'><a href='#glaxnimate.io.ImportExport.name_filter'>name_filter()</a></h3>
@@ -355,7 +521,25 @@ Properties:
 | -------- | ---------------------------------------------------- | --------- | ---- | 
 | `colors` | List[Tuple[`float`, [Color](#glaxnimateutilscolor)]] | Read only |      | 
 
-## glaxnimate.model.defs.Gradient.Type
+<h3 id='glaxnimate.model.defs.GradientColors.split_segment'><a href='#glaxnimate.model.defs.GradientColors.split_segment'>split_segment()</a></h3>
+
+Signature:
+
+```python
+split_segment(self, segment_index: int, factor: float, new_color: glaxnimate.utils.Color) -> None
+split_segment(self, segment_index: int, factor: float) -> None
+split_segment(self, segment_index: int) -> None
+```
+
+<h3 id='glaxnimate.model.defs.GradientColors.remove_stop'><a href='#glaxnimate.model.defs.GradientColors.remove_stop'>remove_stop()</a></h3>
+
+Signature:
+
+```python
+remove_stop(self, index: int) -> None
+```
+
+## glaxnimate.model.defs.Gradient.GradientType
 
 Properties:
 
@@ -365,10 +549,10 @@ Properties:
 
 Constants:
 
-| name     | type                                     | value | docs | 
-| -------- | ---------------------------------------- | ----- | ---- | 
-| `Linear` | [Type](#glaxnimatemodeldefsgradienttype) | `1`   |      | 
-| `Radial` | [Type](#glaxnimatemodeldefsgradienttype) | `2`   |      | 
+| name     | type                                                     | value | docs | 
+| -------- | -------------------------------------------------------- | ----- | ---- | 
+| `Linear` | [GradientType](#glaxnimatemodeldefsgradientgradienttype) | `1`   |      | 
+| `Radial` | [GradientType](#glaxnimatemodeldefsgradientgradienttype) | `2`   |      | 
 
 ## glaxnimate.model.defs.Gradient
 
@@ -378,13 +562,13 @@ Base classes:
 
 Properties:
 
-| name          | type                                             | notes     | docs | 
-| ------------- | ------------------------------------------------ | --------- | ---- | 
-| `colors`      | [GradientColors](#glaxnimatemodelgradientcolors) | Reference |      | 
-| `type`        | [Type](#glaxnimatemodeldefsgradienttype)         |           |      | 
-| `start_point` | [Point](#glaxnimateutilspoint)                   | Read only |      | 
-| `end_point`   | [Point](#glaxnimateutilspoint)                   | Read only |      | 
-| `highlight`   | [Point](#glaxnimateutilspoint)                   | Read only |      | 
+| name          | type                                                     | notes     | docs | 
+| ------------- | -------------------------------------------------------- | --------- | ---- | 
+| `colors`      | [GradientColors](#glaxnimatemodelgradientcolors)         | Reference |      | 
+| `type`        | [GradientType](#glaxnimatemodeldefsgradientgradienttype) |           |      | 
+| `start_point` | [Point](#glaxnimateutilspoint)                           | Read only |      | 
+| `end_point`   | [Point](#glaxnimateutilspoint)                           | Read only |      | 
+| `highlight`   | [Point](#glaxnimateutilspoint)                           | Read only |      | 
 
 <h3 id='glaxnimate.model.defs.Gradient.radius'><a href='#glaxnimate.model.defs.Gradient.radius'>radius()</a></h3>
 
@@ -427,6 +611,12 @@ Signature:
 embed(self, embedded: bool) -> None
 ```
 
+## glaxnimate.model.defs.Precomposition
+
+Base classes:
+
+* [Composition](#glaxnimatemodelcomposition)
+
 ## glaxnimate.model.defs.Defs
 
 Base classes:
@@ -441,6 +631,7 @@ Properties:
 | `images`          | List[[Bitmap](#glaxnimatemodelbitmap)]                 | Read only |      | 
 | `gradient_colors` | List[[GradientColors](#glaxnimatemodelgradientcolors)] | Read only |      | 
 | `gradients`       | List[[Gradient](#glaxnimatemodelgradient)]             | Read only |      | 
+| `precompositions` | List[[Precomposition](#glaxnimatemodelprecomposition)] | Read only |      | 
 
 <h3 id='glaxnimate.model.defs.Defs.find_by_uuid'><a href='#glaxnimate.model.defs.Defs.find_by_uuid'>find_by_uuid()</a></h3>
 
@@ -476,16 +667,22 @@ add_image(self, image: PIL.Image.Image, store_as: str) -> glaxnimate.model.Bitma
 add_image(self, image: PIL.Image.Image) -> glaxnimate.model.Bitmap
 ```
 
-<h3 id='glaxnimate.model.defs.Defs.add_gradient'><a href='#glaxnimate.model.defs.Defs.add_gradient'>add_gradient()</a></h3>
-
-```python
-add_gradient(self: glaxnimate.model.defs.Defs, index: int = -1) -> glaxnimate.model.defs.Gradient
-```
-
 <h3 id='glaxnimate.model.defs.Defs.add_gradient_colors'><a href='#glaxnimate.model.defs.Defs.add_gradient_colors'>add_gradient_colors()</a></h3>
 
+Signature:
+
 ```python
-add_gradient_colors(self: glaxnimate.model.defs.Defs, index: int = -1) -> glaxnimate.model.defs.GradientColors
+add_gradient_colors(self, index: int) -> glaxnimate.model.GradientColors
+add_gradient_colors(self) -> glaxnimate.model.GradientColors
+```
+
+<h3 id='glaxnimate.model.defs.Defs.add_gradient'><a href='#glaxnimate.model.defs.Defs.add_gradient'>add_gradient()</a></h3>
+
+Signature:
+
+```python
+add_gradient(self, index: int) -> glaxnimate.model.Gradient
+add_gradient(self) -> glaxnimate.model.Gradient
 ```
 
 # glaxnimate.model.shapes
@@ -502,6 +699,7 @@ Sub classes:
 * [Modifier](#glaxnimatemodelshapesmodifier)
 * [Styler](#glaxnimatemodelshapesstyler)
 * [Group](#glaxnimatemodelshapesgroup)
+* [PreCompLayer](#glaxnimatemodelshapesprecomplayer)
 * [Image](#glaxnimatemodelshapesimage)
 
 ## glaxnimate.model.shapes.Shape
@@ -614,22 +812,6 @@ Properties:
 | `shape`  | [Bezier](#glaxnimatemathglaxnimatebezierbezier) | Read only |      | 
 | `closed` | `bool`                                          |           |      | 
 
-## glaxnimate.model.shapes.PointType
-
-Properties:
-
-| name   | type  | notes     | docs | 
-| ------ | ----- | --------- | ---- | 
-| `name` | `str` | Read only |      | 
-
-Constants:
-
-| name          | type                                         | value | docs | 
-| ------------- | -------------------------------------------- | ----- | ---- | 
-| `Corner`      | [PointType](#glaxnimatemodelshapespointtype) | `0`   |      | 
-| `Smooth`      | [PointType](#glaxnimatemodelshapespointtype) | `1`   |      | 
-| `Symmetrical` | [PointType](#glaxnimatemodelshapespointtype) | `2`   |      | 
-
 ## glaxnimate.model.shapes.Group
 
 Base classes:
@@ -664,12 +846,27 @@ Base classes:
 
 Properties:
 
-| name         | type                                                     | notes     | docs | 
-| ------------ | -------------------------------------------------------- | --------- | ---- | 
-| `animation`  | [AnimationContainer](#glaxnimatemodelanimationcontainer) | Read only |      | 
-| `parent`     | [Layer](#glaxnimatemodellayer)                           | Reference |      | 
-| `start_time` | `float`                                                  |           |      | 
-| `render`     | `bool`                                                   |           |      | 
+| name        | type                                                     | notes     | docs | 
+| ----------- | -------------------------------------------------------- | --------- | ---- | 
+| `animation` | [AnimationContainer](#glaxnimatemodelanimationcontainer) | Read only |      | 
+| `parent`    | [Layer](#glaxnimatemodellayer)                           | Reference |      | 
+| `render`    | `bool`                                                   |           |      | 
+
+## glaxnimate.model.shapes.PreCompLayer
+
+Base classes:
+
+* [ShapeElement](#glaxnimatemodelshapesshapeelement)
+
+Properties:
+
+| name          | type                                               | notes     | docs | 
+| ------------- | -------------------------------------------------- | --------- | ---- | 
+| `timing`      | [StretchableTime](#glaxnimatemodelstretchabletime) | Read only |      | 
+| `composition` | [Precomposition](#glaxnimatemodelprecomposition)   | Reference |      | 
+| `size`        | [Size](#glaxnimateutilssize)                       |           |      | 
+| `transform`   | [Transform](#glaxnimatemodeltransform)             | Read only |      | 
+| `opacity`     | `float`                                            | Read only |      | 
 
 ## glaxnimate.model.shapes.Fill.Rule
 
@@ -766,6 +963,7 @@ Sub classes:
 
 * [ReferenceTarget](#glaxnimatemodelreferencetarget)
 * [AnimationContainer](#glaxnimatemodelanimationcontainer)
+* [StretchableTime](#glaxnimatemodelstretchabletime)
 * [Transform](#glaxnimatemodeltransform)
 * [Defs](#glaxnimatemodeldefsdefs)
 
@@ -798,6 +996,7 @@ Properties:
 | `defs`               | [Object](#glaxnimatemodelobject)                   | Read only |      | 
 | `size`               | [IntSize](#glaxnimateutilsintsize)                 | Read only |      | 
 | `rect`               | [Rect](#glaxnimateutilsrect)                       | Read only |      | 
+| `metadata`           | `dict`                                             |           |      | 
 
 <h3 id='glaxnimate.model.Document.find_by_uuid'><a href='#glaxnimate.model.Document.find_by_uuid'>find_by_uuid()</a></h3>
 
@@ -854,6 +1053,7 @@ set_best_name(self, node: glaxnimate.model.DocumentNode) -> None
 Signature:
 
 ```python
+render_image(self, time: float, size: glaxnimate.utils.IntSize, background: glaxnimate.utils.Color) -> PIL.Image.Image
 render_image(self, time: float, size: glaxnimate.utils.IntSize) -> PIL.Image.Image
 render_image(self, time: float) -> PIL.Image.Image
 render_image(self) -> PIL.Image.Image
@@ -928,6 +1128,20 @@ Properties:
 | `first_frame`  | `float` |           |      | 
 | `last_frame`   | `float` |           |      | 
 | `time_visible` | `bool`  | Read only |      | 
+| `duration`     | `float` | Read only |      | 
+
+## glaxnimate.model.StretchableTime
+
+Base classes:
+
+* [Object](#glaxnimatemodelobject)
+
+Properties:
+
+| name         | type    | notes | docs | 
+| ------------ | ------- | ----- | ---- | 
+| `start_time` | `float` |       |      | 
+| `stretch`    | `float` |       |      | 
 
 ## glaxnimate.model.Transform
 
@@ -953,13 +1167,13 @@ Base classes:
 Sub classes:
 
 * [MainComposition](#glaxnimatemodelmaincomposition)
+* [Precomposition](#glaxnimatemodeldefsprecomposition)
 
 Properties:
 
-| name        | type                                                     | notes     | docs | 
-| ----------- | -------------------------------------------------------- | --------- | ---- | 
-| `animation` | [AnimationContainer](#glaxnimatemodelanimationcontainer) | Read only |      | 
-| `shapes`    | List[[ShapeElement](#glaxnimatemodelshapeelement)]       | Read only |      | 
+| name     | type                                               | notes     | docs | 
+| -------- | -------------------------------------------------- | --------- | ---- | 
+| `shapes` | List[[ShapeElement](#glaxnimatemodelshapeelement)] | Read only |      | 
 
 <h3 id='glaxnimate.model.Composition.add_shape'><a href='#glaxnimate.model.Composition.add_shape'>add_shape()</a></h3>
 
@@ -977,11 +1191,12 @@ Base classes:
 
 Properties:
 
-| name     | type    | notes | docs | 
-| -------- | ------- | ----- | ---- | 
-| `fps`    | `float` |       |      | 
-| `width`  | `int`   |       |      | 
-| `height` | `int`   |       |      | 
+| name        | type                                                     | notes     | docs | 
+| ----------- | -------------------------------------------------------- | --------- | ---- | 
+| `animation` | [AnimationContainer](#glaxnimatemodelanimationcontainer) | Read only |      | 
+| `fps`       | `float`                                                  |           |      | 
+| `width`     | `int`                                                    |           |      | 
+| `height`    | `int`                                                    |           |      | 
 
 ## glaxnimate.model.KeyframeTransition.Descriptive
 
@@ -1004,76 +1219,24 @@ Constants:
 
 Properties:
 
-| name            | type                                                         | notes | docs | 
-| --------------- | ------------------------------------------------------------ | ----- | ---- | 
-| `hold`          | `bool`                                                       |       |      | 
-| `before`        | [Descriptive](#glaxnimatemodelkeyframetransitiondescriptive) |       |      | 
-| `after`         | [Descriptive](#glaxnimatemodelkeyframetransitiondescriptive) |       |      | 
-| `before_handle` | [Point](#glaxnimateutilspoint)                               |       |      | 
-| `after_handle`  | [Point](#glaxnimateutilspoint)                               |       |      | 
-
-<h3 id='glaxnimate.model.KeyframeTransition.set_hold'><a href='#glaxnimate.model.KeyframeTransition.set_hold'>set_hold()</a></h3>
-
-Signature:
-
-```python
-set_hold(self, hold: bool) -> None
-```
-
-<h3 id='glaxnimate.model.KeyframeTransition.set_before'><a href='#glaxnimate.model.KeyframeTransition.set_before'>set_before()</a></h3>
-
-Signature:
-
-```python
-set_before(self, d: Descriptive) -> None
-```
-
-<h3 id='glaxnimate.model.KeyframeTransition.set_after'><a href='#glaxnimate.model.KeyframeTransition.set_after'>set_after()</a></h3>
-
-Signature:
-
-```python
-set_after(self, d: Descriptive) -> None
-```
-
-<h3 id='glaxnimate.model.KeyframeTransition.set_handles'><a href='#glaxnimate.model.KeyframeTransition.set_handles'>set_handles()</a></h3>
-
-Signature:
-
-```python
-set_handles(self, before: glaxnimate.utils.Point, after: glaxnimate.utils.Point) -> None
-```
-
-<h3 id='glaxnimate.model.KeyframeTransition.set_before_handle'><a href='#glaxnimate.model.KeyframeTransition.set_before_handle'>set_before_handle()</a></h3>
-
-Signature:
-
-```python
-set_before_handle(self, before: glaxnimate.utils.Point) -> None
-```
-
-<h3 id='glaxnimate.model.KeyframeTransition.set_after_handle'><a href='#glaxnimate.model.KeyframeTransition.set_after_handle'>set_after_handle()</a></h3>
-
-Signature:
-
-```python
-set_after_handle(self, after: glaxnimate.utils.Point) -> None
-```
+| name                 | type                                                         | notes | docs | 
+| -------------------- | ------------------------------------------------------------ | ----- | ---- | 
+| `hold`               | `bool`                                                       |       |      | 
+| `before`             | [Point](#glaxnimateutilspoint)                               |       |      | 
+| `after`              | [Point](#glaxnimateutilspoint)                               |       |      | 
+| `before_descriptive` | [Descriptive](#glaxnimatemodelkeyframetransitiondescriptive) |       |      | 
+| `after_descriptive`  | [Descriptive](#glaxnimatemodelkeyframetransitiondescriptive) |       |      | 
 
 <h3 id='glaxnimate.model.KeyframeTransition.lerp_factor'><a href='#glaxnimate.model.KeyframeTransition.lerp_factor'>lerp_factor()</a></h3>
 
-Signature:
-
 ```python
-lerp_factor(self, ratio: float) -> float
+lerp_factor(self: glaxnimate.model.KeyframeTransition, arg0: float) -> float
 ```
 
 <h3 id='glaxnimate.model.KeyframeTransition.bezier_parameter'><a href='#glaxnimate.model.KeyframeTransition.bezier_parameter'>bezier_parameter()</a></h3>
 
-Signature:
-
 ```python
-bezier_parameter(self, ratio: float) -> float
+bezier_parameter(self: glaxnimate.model.KeyframeTransition, arg0: float) -> float
 ```
 
 ## glaxnimate.model.Keyframe
@@ -1084,9 +1247,19 @@ Properties:
 | ------------ | -------------------------------------------------------- | --------- | ---- | 
 | `time`       | `float`                                                  | Read only |      | 
 | `value`      | `<type>`                                                 | Read only |      | 
-| `transition` | [KeyframeTransition](#glaxnimatemodelkeyframetransition) | Read only |      | 
+| `transition` | [KeyframeTransition](#glaxnimatemodelkeyframetransition) |           |      | 
 
 ## glaxnimate.model.AnimatableBase
+
+Sub classes:
+
+* [AnimatedProperty<QPointF>](#glaxnimate__detailanimatedproperty<qpointf>)
+* [AnimatedProperty<QSizeF>](#glaxnimate__detailanimatedproperty<qsizef>)
+* [AnimatedProperty<QVector2D>](#glaxnimate__detailanimatedproperty<qvector2d>)
+* [AnimatedProperty<QColor>](#glaxnimate__detailanimatedproperty<qcolor>)
+* [AnimatedProperty<float>](#glaxnimate__detailanimatedproperty<float>)
+* [AnimatedProperty<QVector<QPair<double,QColor> >>](#glaxnimate__detailanimatedproperty<qvector<qpair<double,qcolor> >>)
+* [AnimatedPropertyBezier](#glaxnimate__detailanimatedpropertybezier)
 
 Properties:
 
@@ -1115,19 +1288,19 @@ keyframe_index(self, time: FrameTime) -> int
 <h3 id='glaxnimate.model.AnimatableBase.keyframe'><a href='#glaxnimate.model.AnimatableBase.keyframe'>keyframe()</a></h3>
 
 ```python
-keyframe(self: glaxnimate.model.glaxnimate.model.AnimatableBase, arg0: float) -> glaxnimate.model.Keyframe
+keyframe(self: glaxnimate.model.glaxnimate.model.AnimatableBase, time: float) -> glaxnimate.model.Keyframe
 ```
 
 <h3 id='glaxnimate.model.AnimatableBase.set_keyframe'><a href='#glaxnimate.model.AnimatableBase.set_keyframe'>set_keyframe()</a></h3>
 
 ```python
-set_keyframe(self: glaxnimate.model.glaxnimate.model.AnimatableBase, arg0: float, arg1: <type>) -> glaxnimate.model.Keyframe
+set_keyframe(self: glaxnimate.model.glaxnimate.model.AnimatableBase, time: float, value: <type>) -> glaxnimate.model.Keyframe
 ```
 
 <h3 id='glaxnimate.model.AnimatableBase.remove_keyframe_at_time'><a href='#glaxnimate.model.AnimatableBase.remove_keyframe_at_time'>remove_keyframe_at_time()</a></h3>
 
 ```python
-remove_keyframe_at_time(self: glaxnimate.model.glaxnimate.model.AnimatableBase, arg0: float) -> None
+remove_keyframe_at_time(self: glaxnimate.model.glaxnimate.model.AnimatableBase, time: float) -> None
 ```
 
 ## glaxnimate.model.Visitor
@@ -1140,11 +1313,11 @@ visit(*args, **kwargs)
 Overloaded function.
 
 ```python
-visit(self: glaxnimate.model.Visitor, arg0: glaxnimate.model.Document, arg1: bool) -> None
+visit(self: glaxnimate.model.Visitor, document: glaxnimate.model.Document, skip_locked: bool) -> None
 ```
 
 ```python
-visit(self: glaxnimate.model.Visitor, arg0: glaxnimate.model.DocumentNode, arg1: bool) -> None
+visit(self: glaxnimate.model.Visitor, node: glaxnimate.model.DocumentNode, skip_locked: bool) -> None
 ```
 
 <h3 id='glaxnimate.model.Visitor.on_visit_document'><a href='#glaxnimate.model.Visitor.on_visit_document'>on_visit_document()</a></h3>

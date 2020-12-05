@@ -264,7 +264,7 @@ void plugin::PluginRegistry::load_setting (const QJsonObject& jobj, plugin::Plug
     else if ( type == "string" )
         script.settings.emplace_back(slug, label, description, default_value.toString());
     else if ( type == "choice" )
-        script.settings.emplace_back(slug, label, description, app::settings::Setting::String, load_choices(jobj["choices"]));
+        script.settings.emplace_back(slug, label, description, app::settings::Setting::String, default_value, load_choices(jobj["choices"]));
     else if ( type == "color" )
         script.settings.emplace_back(slug, label, description, app::settings::Setting::Color, default_value);
     else

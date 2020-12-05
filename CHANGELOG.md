@@ -38,6 +38,7 @@
     * Fixed loading transparent gradients
     * The "record" button is unchecked when loading a new animation
     * Transparent gradients are correctly exported to lottie
+    * `choices` options are correctly loaded fro plugins
 
 ## 0.3.1
 

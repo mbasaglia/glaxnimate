@@ -158,13 +158,13 @@ Base types:
 
 Properties:
 
-| name          | type            | docs                                           | 
-| ------------- | --------------- | ---------------------------------------------- | 
-| `colors`      | [UUID](#uuid)   | References [GradientColors](#gradientcolors).  | 
-| `type`        | [Type](#type)   |                                                | 
-| `start_point` | [Point](#point) |                                                | 
-| `end_point`   | [Point](#point) |                                                | 
-| `highlight`   | [Point](#point) |                                                | 
+| name          | type                          | docs                                           | 
+| ------------- | ----------------------------- | ---------------------------------------------- | 
+| `colors`      | [UUID](#uuid)                 | References [GradientColors](#gradientcolors).  | 
+| `type`        | [GradientType](#gradienttype) |                                                | 
+| `start_point` | [Point](#point)               |                                                | 
+| `end_point`   | [Point](#point)               |                                                | 
+| `highlight`   | [Point](#point)               |                                                | 
 
 ### Bitmap
 
@@ -182,6 +182,12 @@ Properties:
 | `width`    | `int`         |      | 
 | `height`   | `int`         |      | 
 
+### Precomposition
+
+Base types:
+
+* [Composition](#composition)
+
 ### Defs
 
 Base types:
@@ -196,6 +202,7 @@ Properties:
 | `images`          | array of [Bitmap](#bitmap)                 |      | 
 | `gradient_colors` | array of [GradientColors](#gradientcolors) |      | 
 | `gradients`       | array of [Gradient](#gradient)             |      | 
+| `precompositions` | array of [Precomposition](#precomposition) |      | 
 
 ### ShapeElement
 
@@ -209,6 +216,7 @@ Sub types:
 * [Modifier](#modifier)
 * [Styler](#styler)
 * [Group](#group)
+* [PreCompLayer](#precomplayer)
 * [Image](#image)
 
 ### Shape
@@ -331,11 +339,24 @@ Base types:
 
 Properties:
 
-| name         | type          | docs                         | 
-| ------------ | ------------- | ---------------------------- | 
-| `parent`     | [UUID](#uuid) | References [Layer](#layer).  | 
-| `start_time` | `float`       |                              | 
-| `render`     | `bool`        |                              | 
+| name     | type          | docs                         | 
+| -------- | ------------- | ---------------------------- | 
+| `parent` | [UUID](#uuid) | References [Layer](#layer).  | 
+| `render` | `bool`        |                              | 
+
+### PreCompLayer
+
+Base types:
+
+* [ShapeElement](#shapeelement)
+
+Properties:
+
+| name          | type          | docs                                           | 
+| ------------- | ------------- | ---------------------------------------------- | 
+| `composition` | [UUID](#uuid) | References [Precomposition](#precomposition).  | 
+| `size`        | [Size](#size) |                                                | 
+| `opacity`     | `float`       |                                                | 
 
 ### Fill
 
@@ -382,6 +403,7 @@ Sub types:
 
 * [ReferenceTarget](#referencetarget)
 * [AnimationContainer](#animationcontainer)
+* [StretchableTime](#stretchabletime)
 * [Transform](#transform)
 * [Defs](#defs)
 
@@ -435,6 +457,19 @@ Properties:
 | `first_frame` | `float` |      | 
 | `last_frame`  | `float` |      | 
 
+### StretchableTime
+
+Base types:
+
+* [Object](#object)
+
+Properties:
+
+| name         | type    | docs | 
+| ------------ | ------- | ---- | 
+| `start_time` | `float` |      | 
+| `stretch`    | `float` |      | 
+
 ### Transform
 
 Base types:
@@ -459,6 +494,7 @@ Base types:
 Sub types:
 
 * [MainComposition](#maincomposition)
+* [Precomposition](#precomposition)
 
 Properties:
 
@@ -482,7 +518,15 @@ Properties:
 
 ## Enumerations
 
-### Type
+### PointType
+
+| value         | docs | 
+| ------------- | ---- | 
+| `Corner`      |      | 
+| `Smooth`      |      | 
+| `Symmetrical` |      | 
+
+### GradientType
 
 | value    | docs | 
 | -------- | ---- | 
@@ -495,14 +539,6 @@ Properties:
 | --------- | ---- | 
 | `Star`    |      | 
 | `Polygon` |      | 
-
-### PointType
-
-| value         | docs | 
-| ------------- | ---- | 
-| `Corner`      |      | 
-| `Smooth`      |      | 
-| `Symmetrical` |      | 
 
 ### Rule
 
