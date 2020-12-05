@@ -12,6 +12,15 @@ QGradientStops lerp<QGradientStops>(const QGradientStops& a, const QGradientStop
 
 namespace model {
 
+
+namespace detail {
+
+template<>
+std::optional<QGradientStops> variant_cast<QGradientStops>(const QVariant& val);
+
+} // namespace detail
+
+
 class GradientColors : public Asset
 {
     GLAXNIMATE_OBJECT(GradientColors)

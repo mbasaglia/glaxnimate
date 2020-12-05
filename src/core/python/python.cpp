@@ -254,8 +254,8 @@ void register_py_module(py::module& glaxnimate_module)
 
     py::class_<PyVisitorPublic, PyVisitorTrampoline>(model, "Visitor")
         .def(py::init())
-        .def("visit", (void (PyVisitorPublic::*)(model::Document*, bool))&PyVisitorPublic::visit)
-        .def("visit", (void (PyVisitorPublic::*)(model::DocumentNode*, bool))&PyVisitorPublic::visit)
+        .def("visit", (void (PyVisitorPublic::*)(model::Document*, bool))&PyVisitorPublic::visit, py::arg("document"), py::arg("skip_locked"))
+        .def("visit", (void (PyVisitorPublic::*)(model::DocumentNode*, bool))&PyVisitorPublic::visit, py::arg("node"), py::arg("skip_locked"))
         .def("on_visit_document", &PyVisitorPublic::on_visit_document)
         .def("on_visit_node", &PyVisitorPublic::on_visit_node)
     ;

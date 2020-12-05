@@ -83,3 +83,8 @@ plugin(
     Synfig
     synfig.py
 )
+
+plugin(
+    HueShift
+    hue_shift.py
+)

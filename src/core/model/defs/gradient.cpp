@@ -15,6 +15,38 @@
 GLAXNIMATE_OBJECT_IMPL(model::GradientColors)
 GLAXNIMATE_OBJECT_IMPL(model::Gradient)
 
+template<>
+std::optional<QGradientStops> model::detail::variant_cast<QGradientStops>(const QVariant& val)
+{
+    if ( !val.canConvert(qMetaTypeId<QGradientStops>()) )
+    {
+        if ( val.canConvert(QMetaType::QVariantList) )
+        {
+            QGradientStops stops;
+            for ( auto stop : val.toList() )
+            {
+                if ( stop.canConvert<QGradientStop>() )
+                {
+                    stops.push_back(stop.value<QGradientStop>());
+                }
+                else if ( stop.canConvert(QMetaType::QVariantList) )
+                {
+                    auto sl = stop.toList();
+                    if ( sl.size() == 2 && sl[0].canConvert(QMetaType::Double) && sl[1].canConvert(QMetaType::QColor) )
+                        stops.push_back({sl[0].toDouble(), sl[1].value<QColor>()});
+                }
+            }
+            return stops;
+        }
+        return {};
+    }
+
+    QVariant converted = val;
+    if ( !converted.convert(qMetaTypeId<QGradientStops>()) )
+        return {};
+    return converted.value<QGradientStops>();
+}
+
 
 template<>
 QGradientStops math::lerp<QGradientStops>(const QGradientStops& a, const QGradientStops& b, double factor)

@@ -18,6 +18,9 @@
     * The timeline and properties view will show gradient properties when a fill or stroke object is selected
 * Scripting:
     * Color values can be manipulated using the HSV color space
+    * Scripts can update gradient colors
+    * Scripts can read the list of selected shapes
+    * New plugin to shift hues in the selected shapes
 * I/O:
     * Added support for gradientTransform when parsing SVG
     * Added more warnings for features not supported by Telegram

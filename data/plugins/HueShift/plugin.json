@@ -1,0 +1,27 @@
+{
+    "name": "Hue Shift",
+    "author": "Glax",
+    "engine": "python",
+    "version": 1,
+    "icon": "theme:color-management",
+    "services": [
+        {
+            "type": "action",
+            "label": "Hue Shift",
+            "script": {
+                "module": "hue_shift",
+                "function": "main",
+                "settings": [
+                    {
+                        "name": "amount",
+                        "type": "int",
+                        "label": "Amount",
+                        "default": 0,
+                        "min": 0,
+                        "max": 360
+                    }
+                ]
+            }
+        }
+    ]
+}
