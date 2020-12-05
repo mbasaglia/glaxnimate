@@ -344,6 +344,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.tab_bar->setExpanding(false);
     connect(ui.tab_bar, &QTabBar::currentChanged, parent, [this](int i){ switch_composition(i); });
     connect(ui.tab_bar, &QTabBar::tabCloseRequested, parent, [this](int i){ composition_close_request(i); });
+    connect(ui.tab_bar, &ClickableTabBar::context_menu_requested, parent, [this](int i){ composition_context_menu(i); });
 
     // Align
     ui.separator_align_relative_to->setSeparator(true);

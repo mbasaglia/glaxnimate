@@ -845,3 +845,36 @@ void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition po
         }
     }
 }
+
+void GlaxnimateWindow::Private::composition_context_menu(int index)
+{
+    if ( index <= 0 )
+        return;
+
+    auto precomp = current_document->defs()->precompositions[index-1];
+
+    QMenu menu;
+    menu.addSection(precomp->object_name());
+    menu.addAction(QIcon::fromTheme("edit-delete"), tr("Delete"), precomp, [this, index]{
+        composition_close_request(index);
+    });
+    menu.addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), precomp, [this, precomp]{
+        std::unique_ptr<model::Precomposition> new_comp (
+            static_cast<model::Precomposition*>(precomp->clone().release())
+        );
+        new_comp->recursive_rename();
+        new_comp->set_time(current_document->current_time());
+
+        current_document->push_command(
+            new command::AddObject(
+                &current_document->defs()->precompositions,
+                std::move(new_comp),
+                -1,
+                nullptr,
+                QObject::tr("Duplicate %1").arg(precomp->object_name())
+            )
+        );
+    });
+
+    menu.exec(QCursor::pos());
+}

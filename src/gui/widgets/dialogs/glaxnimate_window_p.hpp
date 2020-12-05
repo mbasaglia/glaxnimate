@@ -190,6 +190,7 @@ public:
     void on_remove_precomp(int index);
     void composition_close_request(int index);
     void shape_to_precomposition(model::ShapeElement* node);
+    void composition_context_menu(int index);
 
     void layer_new_layer();
     void layer_new_fill();

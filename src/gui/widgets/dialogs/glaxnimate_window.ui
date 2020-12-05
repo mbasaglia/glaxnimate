@@ -25,7 +25,7 @@
      <widget class="WindowMessageWidget" name="message_widget" native="true"/>
     </item>
     <item>
-     <widget class="QTabBar" name="tab_bar" native="true"/>
+     <widget class="ClickableTabBar" name="tab_bar" native="true"/>
     </item>
     <item>
      <widget class="GlaxnimateGraphicsView" name="graphics_view">
@@ -1951,9 +1951,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QTabBar</class>
+   <class>ClickableTabBar</class>
    <extends>QWidget</extends>
-   <header location="global">QTabBar</header>
+   <header>widgets/clickable_tab_bar.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
