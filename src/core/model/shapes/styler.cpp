@@ -23,7 +23,6 @@ void model::Styler::on_use_changed(model::BrushStyle* new_use, model::BrushStyle
 
     if ( old_use )
     {
-        old_use->remove_user(&use);
         disconnect(old_use, &BrushStyle::style_changed, this, &Styler::on_update_style);
         if ( auto old_col = qobject_cast<model::NamedColor*>(old_use) )
             reset = old_col->color.get();
@@ -32,7 +31,6 @@ void model::Styler::on_use_changed(model::BrushStyle* new_use, model::BrushStyle
     if ( new_use )
     {
         connect(new_use, &BrushStyle::style_changed, this, &Styler::on_update_style);
-        new_use->add_user(&use);
         if ( auto new_col = qobject_cast<model::NamedColor*>(new_use) )
             reset = new_col->color.get();
     }

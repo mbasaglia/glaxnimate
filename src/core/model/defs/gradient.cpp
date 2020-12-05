@@ -147,14 +147,10 @@ void model::Gradient::on_ref_visual_changed()
 void model::Gradient::on_ref_changed ( model::GradientColors* new_ref, model::GradientColors* old_ref )
 {
     if ( old_ref )
-    {
-        old_ref->remove_user(&colors);
         disconnect(old_ref, &GradientColors::colors_changed, this, &Gradient::on_ref_visual_changed);
-    }
 
     if ( new_ref )
     {
-        new_ref->add_user(&colors);
         connect(new_ref, &GradientColors::colors_changed, this, &Gradient::on_ref_visual_changed);
     }
     else

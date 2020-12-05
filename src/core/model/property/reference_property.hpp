@@ -1,4 +1,5 @@
 #pragma once
+#include "model/defs/asset_base.hpp"
 #include "model/reference_target.hpp"
 #include "model/property/property.hpp"
 
@@ -60,6 +61,18 @@ public:
 private:
     PropertyCallback<std::vector<ReferenceTarget*>> valid_options_;
     PropertyCallback<bool, ReferenceTarget*> is_valid_option_;
+
+protected:
+    static void remove_user(ReferencePropertyBase*, void*) {}
+    static void add_user(ReferencePropertyBase*, void*) {}
+    static void remove_user(ReferencePropertyBase* prop, model::AssetBase* obj)
+    {
+        obj->remove_user(prop);
+    }
+    static void add_user(ReferencePropertyBase* prop, model::AssetBase* obj)
+    {
+        obj->add_user(prop);
+    }
 };
 
 template<class Type>
@@ -93,6 +106,10 @@ public:
         auto old = value_;
         value_ = value;
         value_changed();
+        if ( old )
+            remove_user(this, old);
+        if ( value )
+            add_user(this, value);
         on_changed(object(), value_, old);
     }
 
@@ -123,7 +140,10 @@ public:
     bool set_ref(model::ReferenceTarget* t) override
     {
         if ( !t )
-            return set(nullptr);
+        {
+            set_force(nullptr);
+            return true;
+        }
         if ( auto p = qobject_cast<Type*>(t) )
             return set(p);
         return false;

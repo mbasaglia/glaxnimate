@@ -39,13 +39,11 @@ void model::Image::on_image_changed(model::Bitmap* new_use, model::Bitmap* old_u
 {
     if ( old_use )
     {
-        old_use->remove_user(&image);
         disconnect(old_use, &Bitmap::loaded, this, &Image::on_update_image);
     }
 
     if ( new_use )
     {
-        new_use->add_user(&image);
         connect(new_use, &Bitmap::loaded, this, &Image::on_update_image);
     }
 }

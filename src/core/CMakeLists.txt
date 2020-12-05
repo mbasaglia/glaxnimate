@@ -50,6 +50,7 @@ model/defs/brush_style.cpp
 model/defs/named_color.cpp
 model/defs/bitmap.cpp
 model/defs/gradient.cpp
+model/defs/asset_base.cpp
 model/defs/asset.cpp
 model/defs/precomposition.cpp
 
