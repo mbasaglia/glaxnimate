@@ -265,7 +265,7 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::BrushStyle, model::Asset>(defs);
     register_from_meta<model::NamedColor, model::BrushStyle>(defs);
     register_from_meta<model::GradientColors, model::Asset>(defs);
-    register_from_meta<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::Type>{});
+    register_from_meta<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::GradientType>{});
     register_from_meta<model::Bitmap, model::Asset>(defs);
     register_from_meta<model::Precomposition, model::Composition>(defs);
     register_from_meta<model::Defs, model::Object>(defs);

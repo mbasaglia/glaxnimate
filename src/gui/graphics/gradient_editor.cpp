@@ -354,7 +354,11 @@ void graphics::GradientEditor::stop_move(bool commit)
 void graphics::GradientEditor::update_stops_from_gradient()
 {
     if ( !gradient_->colors.get() )
+    {
         on_use_changed(nullptr);
+        update_stops();
+        return;
+    }
 
     const auto& colors = gradient_->colors->colors.get();
 

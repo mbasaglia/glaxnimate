@@ -157,6 +157,8 @@ void model::Gradient::on_ref_changed ( model::GradientColors* new_ref, model::Gr
     {
         detach();
     }
+
+    colors_changed_from(old_ref, new_ref);
 }
 
 QString model::Gradient::type_name_human() const
@@ -210,7 +212,7 @@ qreal model::Gradient::radius(model::FrameTime t) const
     return math::length(start_point.get_at(t) - end_point.get_at(t));
 }
 
-QString model::Gradient::gradient_type_name(Type t)
+QString model::Gradient::gradient_type_name(GradientType t)
 {
     switch ( t )
     {

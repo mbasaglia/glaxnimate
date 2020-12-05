@@ -7,6 +7,7 @@
 #include "command/property_commands.hpp"
 #include "app/application.hpp"
 #include "widgets/enum_combo.hpp"
+#include "model/shapes/styler.hpp"
 
 class item_models::PropertyModel::Private
 {
@@ -40,12 +41,71 @@ public:
         id_type id = 0;
     };
 
-    void add_object(model::Object* object, PropertyModel* model)
+    void add_extra_objects(model::Object* object, PropertyModel* model, bool insert_row)
     {
+        auto mo = object->metaObject();
+        if ( mo->inherits(&model::Styler::staticMetaObject) )
+        {
+            auto styler = static_cast<model::Styler*>(object);
+            if ( styler->use.get() )
+                model->add_object(styler->use.get());
+            QObject::connect(styler, &model::Styler::use_changed_from, model,
+            [this, model, insert_row](model::BrushStyle* old_use, model::BrushStyle* new_use){
+                if ( old_use )
+                    on_delete_object(old_use, model);
+                if ( new_use )
+                    add_object(new_use, model, insert_row);
+            });
+        }
+        else if ( mo->inherits(&model::Gradient::staticMetaObject) )
+        {
+            auto gradient = static_cast<model::Gradient*>(object);
+            if ( gradient->colors.get() )
+                model->add_object(gradient->colors.get());
+            QObject::connect(gradient, &model::Gradient::colors_changed_from, model,
+            [this, model, insert_row](model::GradientColors* old_use, model::GradientColors* new_use){
+                if ( old_use )
+                    on_delete_object(old_use, model);
+                if ( new_use )
+                    add_object(new_use, model, insert_row);
+            });
+        }
+    }
+
+    void remove_extra_objects(model::Object* object, PropertyModel* model)
+    {
+        auto mo = object->metaObject();
+        if ( mo->inherits(&model::Styler::staticMetaObject) )
+        {
+            auto styler = static_cast<model::Styler*>(object);
+            if ( styler->use.get() )
+                on_delete_object(styler->use.get(), model);
+        }
+        else if ( mo->inherits(&model::Gradient::staticMetaObject) )
+        {
+            auto gradient = static_cast<model::Gradient*>(object);
+            if ( gradient->colors.get() )
+                on_delete_object(gradient->colors.get(), model);
+        }
+    }
+
+    void add_object(model::Object* object, PropertyModel* model, bool insert_row)
+    {
+        if ( std::find_if(roots.begin(), roots.end(), [object](Subtree* st){ return st->object == object; }) != roots.end() )
+            return;
+
+        if ( insert_row )
+            model->beginInsertRows({}, roots.size(), roots.size());
+
         auto node = add_node(Subtree{object, 0});
         roots.push_back(node);
         emit model->root_object_added_begin(object);
         connect_recursive(object, model, node->id);
+
+        if ( insert_row )
+            model->endInsertRows();
+
+        add_extra_objects(object, model, insert_row);
     }
 
     void add_object_without_properties(model::Object* object, PropertyModel* model)
@@ -174,6 +234,8 @@ public:
 
         model->endRemoveRows();
         emit model->object_removed(obj);
+
+        remove_extra_objects(obj, model);
     }
 
     void disconnect_recursive(Subtree* node, PropertyModel* model)
@@ -299,15 +361,13 @@ void item_models::PropertyModel::set_object(model::Object* object)
     beginResetModel();
     d->clear(this);
     if ( object )
-        d->add_object(object, this);
+        d->add_object(object, this, false);
     endResetModel();
 }
 
 void item_models::PropertyModel::add_object(model::Object* object)
 {
-    beginInsertRows({}, d->roots.size(), d->roots.size());
-    d->add_object(object, this);
-    endInsertRows();
+    d->add_object(object, this, true);
 }
 
 void item_models::PropertyModel::add_object_without_properties(model::Object* object)

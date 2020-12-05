@@ -5,6 +5,8 @@
 #include <QApplication>
 #include <QMetaEnum>
 
+#include <QtColorWidgets/GradientEditor>
+
 #include "item_models/property_model.hpp"
 #include "widgets/spin2d.hpp"
 #include "widgets/enum_combo.hpp"
@@ -23,6 +25,16 @@ void PropertyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             return paint_xy<QVector2D>(painter, option, index);
         case QMetaType::QSizeF:
             return paint_xy<QSizeF>(painter, option, index);
+    }
+
+
+    if ( data.userType() == qMetaTypeId<QGradientStops>() )
+    {
+        QLinearGradient g(0, 0, 1, 0);
+        g.setStops(data.value<QGradientStops>());
+        g.setCoordinateMode(QGradient::ObjectMode);
+        paintItem(painter, option, index, g);
+        return;
     }
 
     return color_widgets::ColorDelegate::paint(painter, option, index);
@@ -68,6 +80,9 @@ QWidget* PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
             return new SmallerSpinBoxInt(parent);
     }
 
+    if ( data.userType() == qMetaTypeId<QGradientStops>() )
+        return new color_widgets::GradientEditor(Qt::Horizontal, parent);
+
     return color_widgets::ColorDelegate::createEditor(parent, option, index);
 }
 
@@ -111,6 +126,11 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
         combo->set_data_from_qvariant(data);
         return;
     }
+    else if ( data.userType() == qMetaTypeId<QGradientStops>() )
+    {
+        static_cast<color_widgets::GradientEditor*>(editor)->setStops(data.value<QGradientStops>());
+        return;
+    }
 
     switch ( data.userType() )
     {
@@ -143,6 +163,11 @@ void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * mod
     {
         QComboBox* combo = static_cast<QComboBox*>(editor);
         model->setData(index, combo->itemData(combo->currentIndex()));
+        return;
+    }
+    else if ( data.userType() == qMetaTypeId<QGradientStops>() )
+    {
+        model->setData(index, QVariant::fromValue(static_cast<color_widgets::GradientEditor*>(editor)->stops()));
         return;
     }
 

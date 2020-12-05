@@ -15,6 +15,7 @@
     * The trace dialog has a slider to compare the trace preview to the original image
     * The timeline has a larger handle between properties and keyframes
     * Objects in the timeline can be expanded and collapsed
+    * The timeline and properties view will show gradient properties when a fill or stroke object is selected
 * Scripting:
     * Color values can be manipulated using the HSV color space
 * I/O:
@@ -30,6 +31,7 @@
     * Rendering to raster correctly takes into account layer parenting
     * Loading Lottie layers with non-integer in/out points works correctly
     * Pixed python libraries on windows
+    * Fixed crash when deleting a gradient that is being edited
 
 ## 0.3.1
 

@@ -38,16 +38,16 @@ class Gradient : public BrushStyle
     GLAXNIMATE_OBJECT(Gradient)
 
 public:
-    enum Type
+    enum GradientType
     {
         Linear = 1,
         Radial = 2
     };
 
-    Q_ENUM(Type)
+    Q_ENUM(GradientType)
 
     GLAXNIMATE_PROPERTY_REFERENCE(model::GradientColors, colors, &Gradient::valid_refs, &Gradient::is_valid_ref, &Gradient::on_ref_changed)
-    GLAXNIMATE_PROPERTY(Type, type, Linear, {}, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(GradientType, type, Linear, {}, {}, PropertyTraits::Visual)
 
     GLAXNIMATE_ANIMATABLE(QPointF, start_point, {})
     GLAXNIMATE_ANIMATABLE(QPointF, end_point, {})
@@ -62,7 +62,7 @@ public:
 
     Q_INVOKABLE qreal radius(FrameTime t) const;
 
-    static QString gradient_type_name(Type t);
+    static QString gradient_type_name(GradientType t);
 
     bool remove_if_unused(bool clean_lists) override;
 
@@ -77,6 +77,9 @@ private:
     void fill_icon(QPixmap& icon) const override;
 
     void on_property_changed(const BaseProperty* prop, const QVariant& value) override;
+
+signals:
+    void colors_changed_from(GradientColors* old_use, GradientColors* new_use);
 };
 
 } // namespace model

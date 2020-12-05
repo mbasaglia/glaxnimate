@@ -51,7 +51,7 @@ public:
     {
         QToolButton* btn_other;
         GradientListWidget* widget;
-        model::Gradient::Type gradient_type;
+        model::Gradient::GradientType gradient_type;
         bool secondary;
 
         void operator() (bool checked)
@@ -89,7 +89,7 @@ public:
     }
 
 
-    void set_gradient(bool secondary, model::Gradient::Type gradient_type)
+    void set_gradient(bool secondary, model::Gradient::GradientType gradient_type)
     {
 
         model::Styler* styler = secondary ? (model::Styler*)stroke : (model::Styler*)fill;
