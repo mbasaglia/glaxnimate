@@ -545,7 +545,10 @@ public:
                 weird_ass_representation.push_back(stop.second.blueF());
             }
             for ( const auto& stop : gradient )
+            {
+                weird_ass_representation.push_back(stop.first);
                 weird_ass_representation.push_back(stop.second.alphaF());
+            }
             return weird_ass_representation;
         }
         else if ( v.userType() >= QMetaType::User && v.canConvert<int>() )

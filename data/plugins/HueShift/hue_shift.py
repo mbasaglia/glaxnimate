@@ -12,7 +12,8 @@ class HueShiftVisitor(glaxnimate.model.Visitor):
         return glaxnimate.utils.Color.from_hsv(
             (color.hue + self.amount) % 360,
             color.saturation,
-            color.value
+            color.value,
+            color.alpha
         )
 
     def on_visit_node(self, node):
@@ -36,4 +37,5 @@ def main(window, document, settings):
     with document.macro("Hue Shift"):
         visitor = HueShiftVisitor(settings["amount"]);
         for shape in window.cleaned_selection:
-            visitor.visit(document, True)
+            print(shape)
+            visitor.visit(shape, True)

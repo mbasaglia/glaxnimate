@@ -35,6 +35,9 @@
     * Loading Lottie layers with non-integer in/out points works correctly
     * Pixed python libraries on windows
     * Fixed crash when deleting a gradient that is being edited
+    * Fixed loading transparent gradients
+    * The "record" button is unchecked when loading a new animation
+    * Transparent gradients are correctly exported to lottie
 
 ## 0.3.1
 

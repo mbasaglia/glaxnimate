@@ -263,7 +263,7 @@ public:
         if ( name.startsWith("#") && name.size() == 9 )
         {
             int alpha = name.right(2).toInt(nullptr, 16);
-            QColor col(name);
+            QColor col(name.left(7));
             col.setAlpha(alpha);
             return col;
         }

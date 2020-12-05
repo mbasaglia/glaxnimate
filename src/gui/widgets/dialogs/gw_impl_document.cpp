@@ -81,6 +81,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     refresh_title();
 
     // Playback
+    ui.play_controls->set_record_enabled(false);
     QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
     QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
     QObject::connect(current_document->main(), &model::MainComposition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
