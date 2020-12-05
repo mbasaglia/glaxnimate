@@ -291,3 +291,8 @@ void command::MoveKeyframe::redo()
 {
     keyframe_index_after = prop->move_keyframe(keyframe_index_before, time_after);
 }
+
+int command::MoveKeyframe::redo_index() const
+{
+    return keyframe_index_after;
+}

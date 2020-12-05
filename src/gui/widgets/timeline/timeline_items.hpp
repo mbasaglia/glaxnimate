@@ -433,9 +433,13 @@ private slots:
             int index = it - kf_split_items.begin();
             if ( animatable->keyframe(index)->time() != t )
             {
-                animatable->object()->document()->undo_stack().push(
-                    new command::MoveKeyframe(animatable, index, t)
-                );
+                auto cmd = new command::MoveKeyframe(animatable, index, t);
+                animatable->object()->push_command(cmd);
+                if ( cmd->redo_index() != index )
+                {
+                    kf_split_items[index]->setSelected(false);
+                    kf_split_items[cmd->redo_index()]->setSelected(true);
+                }
             }
         }
     }

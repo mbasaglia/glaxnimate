@@ -154,6 +154,12 @@ public:
 
     void redo() override;
 
+    /**
+     * \brief The index after redo()
+     * \pre redo() called at least once
+     */
+    int redo_index() const;
+
 private:
     model::AnimatableBase* prop;
     int keyframe_index_before;

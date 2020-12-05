@@ -40,6 +40,7 @@
     * Transparent gradients are correctly exported to lottie
     * `choices` options are correctly loaded fro plugins
     * Items in the Plugins menu are now kept always in a sensible order
+    * Dragging keframes keeps the correct selection
 
 ## 0.3.1
 
