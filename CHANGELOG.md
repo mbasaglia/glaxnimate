@@ -41,6 +41,7 @@
     * `choices` options are correctly loaded fro plugins
     * Items in the Plugins menu are now kept always in a sensible order
     * Dragging keframes keeps the correct selection
+    * Image shapes that are children of layers are correctly exported to Lottie
 
 ## 0.3.1
 

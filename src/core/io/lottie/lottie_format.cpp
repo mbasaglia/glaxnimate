@@ -13,7 +13,6 @@
 #include "math/bezier/bezier.hpp"
 #include "cbor_write_json.hpp"
 
-using namespace model;
 
 io::Autoreg<io::lottie::LottieFormat> io::lottie::LottieFormat::autoreg;
 
@@ -24,8 +23,8 @@ class ValueTransform
 public:
     virtual ~ValueTransform() {}
 
-    virtual QVariant to_lottie(const QVariant& v, FrameTime) const = 0;
-    virtual QVariant from_lottie(const QVariant& v, FrameTime) const = 0;
+    virtual QVariant to_lottie(const QVariant& v, model::FrameTime) const = 0;
+    virtual QVariant from_lottie(const QVariant& v, model::FrameTime) const = 0;
 };
 
 class FloatMult : public ValueTransform
@@ -33,12 +32,12 @@ class FloatMult : public ValueTransform
 public:
     explicit FloatMult(float factor) : factor(factor) {}
 
-    QVariant to_lottie(const QVariant& v, FrameTime) const override
+    QVariant to_lottie(const QVariant& v, model::FrameTime) const override
     {
         return v.toFloat() * factor;
     }
 
-    QVariant from_lottie(const QVariant& v, FrameTime) const override
+    QVariant from_lottie(const QVariant& v, model::FrameTime) const override
     {
         return v.toFloat() / factor;
     }
@@ -51,12 +50,12 @@ class EnumMap : public ValueTransform
 public:
     EnumMap(QMap<int, int> values) : values(std::move(values)) {}
 
-    QVariant to_lottie(const QVariant& v, FrameTime) const override
+    QVariant to_lottie(const QVariant& v, model::FrameTime) const override
     {
         return values[v.toInt()];
     }
 
-    QVariant from_lottie(const QVariant& v, FrameTime) const override
+    QVariant from_lottie(const QVariant& v, model::FrameTime) const override
     {
         return values.key(v.toInt());
     }
@@ -69,9 +68,9 @@ class GradientLoad : public ValueTransform
 public:
     GradientLoad(int count) : count(count) {}
 
-    QVariant to_lottie(const QVariant&, FrameTime) const override { return {}; }
+    QVariant to_lottie(const QVariant&, model::FrameTime) const override { return {}; }
 
-    QVariant from_lottie(const QVariant& v, FrameTime) const override
+    QVariant from_lottie(const QVariant& v, model::FrameTime) const override
     {
         auto vlist = v.toList();
         if ( vlist.size() < count * 4 )
@@ -110,14 +109,14 @@ public:
     TransformFunc(TransformFunc&&) = default;
     TransformFunc(const TransformFunc&) = default;
 
-    QVariant to_lottie(const QVariant& v, FrameTime t) const
+    QVariant to_lottie(const QVariant& v, model::FrameTime t) const
     {
         if ( !trans )
             return v;
         return trans->to_lottie(v, t);
     }
 
-    QVariant from_lottie(const QVariant& v, FrameTime t) const
+    QVariant from_lottie(const QVariant& v, model::FrameTime t) const
     {
         if ( !trans )
             return v;
@@ -374,7 +373,7 @@ public:
         return layer_indices[layer->uuid.get()];
     }
 
-    QCborMap wrap_layer_shape(ShapeElement* shape)
+    QCborMap wrap_layer_shape(model::ShapeElement* shape)
     {
         QCborMap json;
         json["ddd"_l] = 0;
@@ -407,7 +406,7 @@ public:
         return LayerType::Shape;
     }
 
-    void convert_layer(LayerType type, ShapeElement* shape, QCborArray& output, int forced_parent = -1)
+    void convert_layer(LayerType type, model::ShapeElement* shape, QCborArray& output, model::Layer* forced_parent = nullptr)
     {
         switch ( type )
         {
@@ -415,23 +414,21 @@ public:
                 output.push_front(wrap_layer_shape(shape));
                 return;
             case LayerType::Image:
-                output.push_front(convert_image_layer(static_cast<model::Image*>(shape)));
+                output.push_front(convert_image_layer(static_cast<model::Image*>(shape), forced_parent));
                 return;
             case LayerType::PreComp:
-                output.push_front(convert_precomp_layer(static_cast<model::PreCompLayer*>(shape)));
+                output.push_front(convert_precomp_layer(static_cast<model::PreCompLayer*>(shape), forced_parent));
                 return;
             case LayerType::Layer:
                 break;
         }
 
-        auto layer = static_cast<Layer*>(shape);
+        auto layer = static_cast<model::Layer*>(shape);
 
         if ( !layer->render.get() )
             return;
 
-        int parent_index = layer_index(layer->parent.get());
-        if ( forced_parent != -1 )
-            parent_index = forced_parent;
+        int parent_index = layer_index(forced_parent ? forced_parent : layer->parent.get());
 
         QCborMap json;
         json["ddd"_l] = 0;
@@ -470,14 +467,14 @@ public:
             else
             {
                 for ( int i = 0; i < layer->shapes.size(); i++ )
-                    convert_layer(children_types[i], layer->shapes[i], output, index);
+                    convert_layer(children_types[i], layer->shapes[i], output, layer);
             }
         }
 
         output.push_front(json);
     }
 
-    void convert_transform(Transform* tf, model::AnimatableBase* opacity, QCborMap& json)
+    void convert_transform(model::Transform* tf, model::AnimatableBase* opacity, QCborMap& json)
     {
         convert_object_basic(tf, json);
         if ( opacity )
@@ -587,9 +584,9 @@ public:
                 continue;
             }
 
-            if ( prop->traits().flags & PropertyTraits::Animated )
+            if ( prop->traits().flags & model::PropertyTraits::Animated )
             {
-                json_obj[field.lottie] = convert_animated(static_cast<AnimatableBase*>(prop), field.transform);
+                json_obj[field.lottie] = convert_animated(static_cast<model::AnimatableBase*>(prop), field.transform);
             }
             else
             {
@@ -608,7 +605,7 @@ public:
     }
 
     QCborMap convert_animated(
-        AnimatableBase* prop,
+        model::AnimatableBase* prop,
         const TransformFunc& transform_values
     )
     {
@@ -751,7 +748,7 @@ public:
         return fake;
     }
 
-    QCborArray convert_shapes(const ShapeListProperty& shapes)
+    QCborArray convert_shapes(const model::ShapeListProperty& shapes)
     {
         QCborArray jshapes;
         for ( const auto& shape : shapes )
@@ -800,13 +797,26 @@ public:
         return out;
     }
 
-    QCborMap convert_image_layer(model::Image* image)
+    void convert_fake_layer_parent(model::Layer* parent, QCborMap& json)
+    {
+        if ( parent )
+        {
+            convert_animation_container(parent->animation.get(), json);
+            json["parent"_l] = layer_index(parent);
+        }
+        else
+        {
+            convert_animation_container(document->main()->animation.get(), json);
+        }
+    }
+
+    QCborMap convert_image_layer(model::Image* image, model::Layer* parent)
     {
         QCborMap json;
         json["ddd"_l] = 0;
         json["ty"_l] = 2;
-        convert_animation_container(document->main()->animation.get(), json);
         json["st"_l] = 0;
+        convert_fake_layer_parent(parent, json);
         QCborMap transform;
         convert_object_basic(image->transform.get(), transform);
         transform["o"_l] = QCborMap{
@@ -828,11 +838,12 @@ public:
         return out;
     }
 
-    QCborMap convert_precomp_layer(model::PreCompLayer* layer)
+    QCborMap convert_precomp_layer(model::PreCompLayer* layer, model::Layer* parent)
     {
         QCborMap json;
         json["ddd"_l] = 0;
         json["ty"_l] = 0;
+        convert_fake_layer_parent(parent, json);
         json["ind"_l] = layer_index(layer);
         json["st"_l] = layer->timing->start_time.get();
         json["sr"_l] = layer->timing->stretch.get();
@@ -912,7 +923,7 @@ private:
         auto deferred_layers = std::move(deferred);
         deferred.clear();
         for ( const auto& pair: deferred_layers )
-            load_layer(pair.second, static_cast<Layer*>(pair.first));
+            load_layer(pair.second, static_cast<model::Layer*>(pair.first));
     }
 
     void create_layer(const QJsonObject& json, std::set<int>& referenced)
@@ -1075,7 +1086,7 @@ private:
         load_basic_check(props);
     }
 
-    void load_shapes(ShapeListProperty& shapes, const QJsonArray& jshapes)
+    void load_shapes(model::ShapeListProperty& shapes, const QJsonArray& jshapes)
     {
         deferred.clear();
 
@@ -1089,7 +1100,7 @@ private:
             load_shape(pair.second, static_cast<model::ShapeElement*>(pair.first));
     }
 
-    void create_shape(const QJsonObject& json, ShapeListProperty& shapes)
+    void create_shape(const QJsonObject& json, model::ShapeListProperty& shapes)
     {
         if ( !json.contains("ty") || !json["ty"].isString() )
         {
@@ -1249,9 +1260,9 @@ private:
                 continue;
             }
 
-            if ( prop->traits().flags & PropertyTraits::Animated )
+            if ( prop->traits().flags & model::PropertyTraits::Animated )
             {
-                load_animated(static_cast<AnimatableBase*>(prop), json_obj[field.lottie], field.transform);
+                load_animated(static_cast<model::AnimatableBase*>(prop), json_obj[field.lottie], field.transform);
             }
             else
             {
@@ -1483,7 +1494,7 @@ private:
     io::lottie::LottieFormat* format;
     QMap<int, model::Layer*> layer_indices;
     std::set<int> invalid_indices;
-    std::vector<std::pair<Object*, QJsonObject>> deferred;
+    std::vector<std::pair<model::Object*, QJsonObject>> deferred;
     model::Composition* composition = nullptr;
     app::log::Log logger{"Lottie Import"};
     QMap<QString, model::Bitmap*> bitmap_ids;
