@@ -9,7 +9,7 @@ add_custom_target(
 
 add_custom_target(
     docs_serve
-    COMMAND mkdocs serve -f "${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml"
+    COMMAND "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/extensions/" mkdocs serve -f "${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml"
 )
 

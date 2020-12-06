@@ -12,6 +12,7 @@ repo_url: https://gitlab.com/mattbas/glaxnimate
 edit_uri: -/edit/master/docs/docs
 markdown_extensions:
     - fontawesome_markdown
+    - md_extensions
 extra_css:
     - style/style.css
 nav:
@@ -29,6 +30,8 @@ nav:
             - manual/ui/dialogs.md
             - manual/ui/menus.md
             - manual/ui/settings.md
+        - "Examples":
+            - examples/dragon_curve.md
         - "ChangeLog": changelog.md
     - "<i class='fa fa-hands-helping'></i> Contributing":
         - "Introduction": contributing/index.md
