@@ -3,7 +3,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.in.yml" "${CMAKE_CURRENT_SOUR
 
 add_custom_target(
     docs
-    COMMAND mkdocs build -f "${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml" -d "${CMAKE_CURRENT_BINARY_DIR}/site"
+    COMMAND "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/extensions/" mkdocs build -f "${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml" -d "${CMAKE_CURRENT_BINARY_DIR}/site"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml"
 )
 
