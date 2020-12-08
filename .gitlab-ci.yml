@@ -96,6 +96,8 @@ linux:aur:
         - PROJECT_VERSION="$(grep -Po "PROJECT_VERSION:STATIC=\K.*" ./CMakeCache.txt)"
         - echo "$PROJECT_VERSION"
         - test -n "$PROJECT_VERSION"
+        - ../deploy/gitlab_upload.py glaxnimate.deb "release/Deb/glaxnimate.deb"
+        - ../deploy/gitlab_upload.py checksum.txt "release/Deb/checksum.txt"
         - cd glaxnimate-bin
         - sed -i -e "s/pkgver=.*/pkgver=$PROJECT_VERSION/" -e "s/sha1sums=.*/sha1sums=('$CHECKSUM')/" PKGBUILD
         - sed -i -e "s/pkgver = .*/pkgver = $PROJECT_VERSION/" -e "s/sha1sums = .*/sha1sums = $CHECKSUM/" .SRCINFO
