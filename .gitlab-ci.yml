@@ -96,8 +96,8 @@ linux:aur:
         - PROJECT_VERSION="$(grep -Po "PROJECT_VERSION:STATIC=\K.*" ./CMakeCache.txt)"
         - echo "$PROJECT_VERSION"
         - test -n "$PROJECT_VERSION"
-        - ../deploy/gitlab_upload.py glaxnimate.deb "release/Deb/glaxnimate.deb"
-        - ../deploy/gitlab_upload.py checksum.txt "release/Deb/checksum.txt"
+        - ../deploy/gitlab_upload.py glaxnimate.deb "$CI_COMMIT_TAG/Deb/glaxnimate.deb"
+        - ../deploy/gitlab_upload.py checksum.txt "$CI_COMMIT_TAG/Deb/checksum.txt"
         - cd glaxnimate-bin
         - sed -i -e "s/pkgver=.*/pkgver=$PROJECT_VERSION/" -e "s/sha1sums=.*/sha1sums=('$CHECKSUM')/" PKGBUILD
         - sed -i -e "s/pkgver = .*/pkgver = $PROJECT_VERSION/" -e "s/sha1sums = .*/sha1sums = $CHECKSUM/" .SRCINFO
@@ -196,7 +196,7 @@ release:
     script:
         - ./deploy/make_release.py
         - ./deploy/gitlab_upload.py --copy release/MacOs/glaxnimate.dmg        $CI_COMMIT_TAG/MacOs/glaxnimate.dmg
-        - ./deploy/gitlab_upload.py --copy release/MacOs/checksum.txt          $CI_COMMIT_TAG/MacOs/glaxnimate.dmg
+        - ./deploy/gitlab_upload.py --copy release/MacOs/checksum.txt          $CI_COMMIT_TAG/MacOs/glaxnimate.txt
         - ./deploy/gitlab_upload.py --copy release/Win/glaxnimate-x86_64.zip   $CI_COMMIT_TAG/Win/glaxnimate-x86_64.zip
         - ./deploy/gitlab_upload.py --copy release/Win/checksum.txt            $CI_COMMIT_TAG/Win/checksum.txt
     dependencies:
