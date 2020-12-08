@@ -12,7 +12,6 @@ jobs:
             - brew list cmake || brew install cmake
             - brew list qt || brew install qt
             - brew upgrade python@3.8 || true
-            - brew list makeicns || brew install makeicns
             - brew list potrace || brew install potrace
             - brew list ffmpeg || brew install ffmpeg
         script:
@@ -20,7 +19,9 @@ jobs:
             - cd build
             - cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt)/lib/cmake/Qt5Designer" -DVERSION_SUFFIX="mac-${TRAVIS_COMMIT::8}"
             - make
-            - makeicns -512 ../data/images/glaxnimate.png -out glaxnimate.icns
+            - mkdir glaxnimate.iconset
+            - cp ../data/images/glaxnimate.png glaxnimate.iconset/icon_512x512.png
+            - iconutil -c icns glaxnimate.iconset -o glaxnimate.icns
             - cpack -G Bundle
         after_success:
             - mv Glaxnimate-*.dmg glaxnimate.dmg
