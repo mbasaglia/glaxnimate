@@ -810,13 +810,24 @@ public:
         }
     }
 
+    void convert_fake_layer(model::DocumentNode* node, model::Layer* parent, QCborMap& json)
+    {
+        json["ddd"_l] = 0;
+        if ( !strip )
+        {
+            json["nm"_l] = node->name.get();
+            json["mn"_l] = node->uuid.get().toString();
+        }
+        convert_fake_layer_parent(parent, json);
+        json["ind"_l] = layer_index(node);
+    }
+
     QCborMap convert_image_layer(model::Image* image, model::Layer* parent)
     {
         QCborMap json;
-        json["ddd"_l] = 0;
+        convert_fake_layer(image, parent, json);
         json["ty"_l] = 2;
         json["st"_l] = 0;
-        convert_fake_layer_parent(parent, json);
         QCborMap transform;
         convert_object_basic(image->transform.get(), transform);
         transform["o"_l] = QCborMap{
@@ -841,10 +852,8 @@ public:
     QCborMap convert_precomp_layer(model::PreCompLayer* layer, model::Layer* parent)
     {
         QCborMap json;
-        json["ddd"_l] = 0;
         json["ty"_l] = 0;
-        convert_fake_layer_parent(parent, json);
-        json["ind"_l] = layer_index(layer);
+        convert_fake_layer(layer, parent, json);
         json["st"_l] = layer->timing->start_time.get();
         json["sr"_l] = layer->timing->stretch.get();
         QCborMap transform;
