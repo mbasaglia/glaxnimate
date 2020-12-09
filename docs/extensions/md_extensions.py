@@ -120,10 +120,9 @@ class DownloadTable(InlineProcessor):
 
     def handleMatch(self, m, data):
         table = etree.Element("table")
-        table.attrib["class"] = "table table-striped table-hover"
 
         thead = etree.SubElement(table, "thead")
-        tr = etree.SubElement(thead, "thead")
+        tr = etree.SubElement(thead, "tr")
         etree.SubElement(tr, "th").text = "Package"
         etree.SubElement(tr, "th").text = "Checksum"
         etree.SubElement(tr, "th").text = "Notes"
