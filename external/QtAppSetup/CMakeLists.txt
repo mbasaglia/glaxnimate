@@ -28,14 +28,14 @@ endif()
 
 
 option(SCRIPTING_PY "Enable Python scripting" OFF)
-find_package(PythonLibs 3 COMPONENTS Interpreter Development QUIET)
-if(PythonLibs_FOUND AND SCRIPTING_PY)
+find_package(Python3 COMPONENTS Interpreter Development QUIET)
+if(Python3_FOUND AND SCRIPTING_PY)
     set(PYTHON_ENABLED ON PARENT_SCOPE)
     message(STATUS "Python3 enabled")
     add_subdirectory(external/pybind11)
     add_subdirectory(src/app/scripting/python)
     target_include_directories (${PROJECT_SLUG} PUBLIC
-        ${PYTHON_INCLUDE_DIRS}
+        ${Python3_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/external/pybind11/include
     )
 else()

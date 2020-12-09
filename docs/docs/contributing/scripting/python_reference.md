@@ -2,9 +2,9 @@
 
 Constants:
 
-| name          | type  | value                 | docs | 
-| ------------- | ----- | --------------------- | ---- | 
-| `__version__` | `str` | `'0.3.1-87-g107428e'` |      | 
+| name          | type  | value     | docs | 
+| ------------- | ----- | --------- | ---- | 
+| `__version__` | `str` | `'0.3.2'` |      | 
 
 # glaxnimate.utils.bezier
 

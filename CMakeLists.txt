@@ -58,10 +58,8 @@ if(NOT PYTHON_PIP)
     find_program(PYTHON_PIP pip)
 endif()
 
-find_program(PYTHON_EXEC python3)
-if(NOT PYTHON_EXEC)
-    find_program(PYTHON_EXEC python)
-endif()
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+message(STATUS ${Python3_EXECUTABLE})
 
 # Qt
 set (QT_SUPPORTED_VERSIONS 5)

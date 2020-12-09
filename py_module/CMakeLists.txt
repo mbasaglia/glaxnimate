@@ -35,6 +35,6 @@ add_custom_target(
 
 add_custom_target(
     glaxnimate_python_upload
-    COMMAND ${PYTHON_EXEC} -m twine upload dist/*.whl
+    COMMAND ${Python3_EXECUTABLE} -m twine upload dist/*.whl
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )

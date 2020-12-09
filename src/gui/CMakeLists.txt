@@ -2,6 +2,7 @@ set(SOURCES
 
 main.cpp
 glaxnimate_app.cpp
+gui_python.cpp
 
 graphics/handle.cpp
 graphics/document_node_graphics_item.cpp
@@ -96,10 +97,6 @@ widgets/shape_style/document_swatch_widget.ui
 widgets/shape_style/gradient_list_widget.cpp
 widgets/shape_style/gradient_list_widget.ui
 )
-
-if(${PYTHON_ENABLED})
-    list(APPEND SOURCES gui_python.cpp)
-endif()
 
 configure_file(resources/glaxnimate.in.qrc resources/glaxnimate.qrc)
 qt5_add_resources(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/resources/glaxnimate.qrc)
