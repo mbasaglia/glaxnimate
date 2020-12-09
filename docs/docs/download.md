@@ -7,34 +7,7 @@ nav_icon: fa fa-download
 
 You can also see the [list of previous releases](https://gitlab.com/mattbas/glaxnimate/-/releases).
 
-<table>
-<tr><th>Package</th><th>Checksum</th><th>Notes</th></tr>
-<tr>
-<td><i class="fab fa-linux"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/release/raw/build/glaxnimate-x86_64.AppImage?job=linux%3Aappimage">Linux AppImage</a></td>
-<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/release/raw/build/checksum.txt?job=linux%3Aappimage">SHA1</a></td>
-<td><a href="#linux-appimage">Notes</a></td>
-</tr>
-<tr>
-<td><i class="fab fa-ubuntu"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/release/raw/build/glaxnimate.deb?job=linux%3Adeb">Deb Package</a></td>
-<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/release/raw/build/checksum.txt?job=linux%3Adeb">SHA1</a></td>
-<td><a href="#deb-package">Notes</a></td>
-</tr>
-<tr>
-<td><i class="fab fa-windows"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/release/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
-<td><a href="https://dl.bintray.com/mattbas/Glaxnimate/release/Win/checksum.txt">SHA1</a></td>
-<td><a href="#windows-zip">Notes</a></td>
-</tr>
-<tr>
-<td><i class="fab fa-apple"></i> <a href="https://dl.bintray.com/mattbas/Glaxnimate/release/MacOs/glaxnimate.dmg">Mac dmg</a></td>
-<td><a href="https://dl.bintray.com/mattbas/Glaxnimate/release/MacOs/checksum.txt">SHA1</a></td>
-<td><a href="#mac-dmg">Notes</a></td>
-</tr>
-<tr>
-<td><i class="fas fa-wrench"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/release/raw/glaxnimate-src.tar.gz?job=tarball">Source Tarball</a></td>
-<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/release/raw/sha256.txt?job=tarball">SHA256</a></td>
-<td><a href="/contributing/read_me/">Notes</a></td>
-</tr>
-</table>
+{download_table:release}
 
 If you enjoy using Glaxnimate consider [donating](donate.md).
 
@@ -66,39 +39,7 @@ They contain all the latest features but might also include bugs and broken feat
 
 All packages provided here are for the x86_64 architecture.
 
-<table>
-<tr><th>Package</th><th>Checksum</th><th>Notes</th></tr>
-<tr>
-<td><i class="fab fa-linux"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/build/glaxnimate-x86_64.AppImage?job=linux%3Aappimage">Linux AppImage</a></td>
-<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/build/checksum.txt?job=linux%3Aappimage">SHA1</a></td>
-<td><a href="#linux-appimage">Notes</a></td>
-</tr>
-<tr>
-<td><i class="fab fa-ubuntu"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/build/glaxnimate.deb?job=linux%3Adeb">Deb Package</a></td>
-<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/build/checksum.txt?job=linux%3Adeb">SHA1</a></td>
-<td><a href="#deb-package">Notes</a></td>
-</tr>
-<tr>
-<td><i class="fab fa-windows"></i> <a href="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/master/master/Win/glaxnimate-x86_64.zip">Windows Zip</a></td>
-<td><a href="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/master/master/Win/checksum.txt">SHA1</a></td>
-<td><a href="#windows-zip">Notes</a></td>
-</tr>
-<tr>
-<td><i class="fab fa-apple"></i> <a href="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/master/master/MacOs/glaxnimate.dmg">Mac dmg</a></td>
-<td><a href="https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/master/master/MacOs/checksum.txt">SHA1</a></td>
-<td><a href="#mac-dmg">Notes</a></td>
-</tr>
-<tr>
-<td><i class="fas fa-wrench"></i> <a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/glaxnimate-src.tar.gz?job=tarball">Source Tarball</a></td>
-<td><a href="https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/master/raw/sha256.txt?job=tarball">SHA256</a></td>
-<td><a href="/contributing/read_me/">Notes</a></td>
-</tr>
-<tr>
-<td><i class="fas fa-code-branch"></i> <a href="https://gitlab.com/mattbas/glaxnimate.git">Git Repo</a></td>
-<td></td>
-<td><a href="/contributing/read_me/">Notes</a></td>
-</tr>
-</table>
+{download_table:master:git}
 
 If you enjoy using Glaxnimate consider [donating](donate.md).
 
