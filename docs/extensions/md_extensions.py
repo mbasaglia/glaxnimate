@@ -86,12 +86,12 @@ class DownloadTable(InlineProcessor):
         self.git = git
 
     class Row:
-        def __init__(self, name, icon_group, icon, filename, job, notes=None, checksum="SHA1", parent="/build"):
+        def __init__(self, name, icon_group, icon, filename, job, notes=None, parent="/build"):
             self.name = name
             self.icon_group = icon_group
             self.icon = icon
             self.filename = filename
-            self.checksum = checksum
+            self.checksum = "SHA1"
             self.notes = notes if notes else "#" + name.lower().replace(" ", "-")
             self.job_path = job
             self.parent = parent
@@ -134,7 +134,7 @@ class DownloadTable(InlineProcessor):
             self.Row("Deb Package",     "fab", "ubuntu",   "glaxnimate.deb",               "linux:deb"),
             self.Row("Windows Zip",     "fab", "windows",  "glaxnimate-x86_64.zip",        "/Win/"),
             self.Row("Mac DMG",         "fab", "apple",    "glaxnimate.dmg",               "/MacOs/"),
-            self.Row("Source Tarball",  "fas", "wrench",   "glaxnimate-src.tar.gz",        "tarball", "/contributing/read_me", "SHA256", ""),
+            self.Row("Source Tarball",  "fas", "wrench",   "glaxnimate-src.tar.gz",        "tarball", "/contributing/read_me", ""),
         ]
 
         for row in rows:
