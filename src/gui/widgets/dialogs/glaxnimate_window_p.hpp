@@ -33,10 +33,12 @@ class ViewTransformWidget;
 class FlowLayout;
 
 namespace tools {
-
 class Tool;
-
 } // namespace tools
+
+namespace model {
+class PreCompLayer;
+} // namespace model
 
 class GlaxnimateWindow::Private
 {
@@ -134,6 +136,7 @@ public:
     void load_backup(const QUuid& uuid);
     QString drop_event_data(QDropEvent* ev);
     void import_image();
+    void import_file();
 
     // ui
     void setupUi(bool restore_state, GlaxnimateWindow* parent);
@@ -164,7 +167,8 @@ public:
     model::ShapeListProperty* current_shape_container();
     std::vector<model::DocumentNode*> cleaned_selection();
     std::vector<model::DocumentNode*> copy();
-    void paste();
+    void paste(bool as_comp);
+    void paste_document(model::Document* document, const QString& macro_name, bool as_comp);
     void cut();
     void duplicate_selection();
     void delete_selected();
@@ -200,6 +204,7 @@ public:
     void layer_delete();
     void layer_duplicate();
     void layer_new_comp(QAction* act);
+    model::PreCompLayer* layer_new_comp(model::Precomposition* comp);
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

@@ -582,3 +582,28 @@ void GlaxnimateWindow::Private::set_brush_reference ( model::BrushStyle* sty, bo
         main_brush = sty;
 }
 
+
+void GlaxnimateWindow::Private::import_file()
+{
+    io::Options options = current_document->io_options();
+
+    ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
+    if ( dialog.import_dialog() )
+    {
+        options = dialog.io_options();
+        model::Document imported(options.filename);
+
+        QFile file(options.filename);
+        dialog_export_status->reset(options.format, options.filename);
+        bool ok = options.format->open(file, options.filename, &imported, options.settings);
+        if ( !ok )
+        {
+            show_warning(tr("Import File"), tr("Could not import %1").arg(options.filename));
+            return;
+        }
+
+        /// \todo ask if comp
+        paste_document(&imported, tr("Import File"), true);
+    }
+
+}

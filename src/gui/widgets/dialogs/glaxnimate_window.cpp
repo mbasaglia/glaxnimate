@@ -292,7 +292,7 @@ void GlaxnimateWindow::copy() const
 
 void GlaxnimateWindow::paste() const
 {
-    d->paste();
+    d->paste(false);
 }
 
 void GlaxnimateWindow::cut() const

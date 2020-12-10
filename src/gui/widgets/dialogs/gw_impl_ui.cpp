@@ -63,6 +63,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_copy->setShortcut(QKeySequence::Copy);
     ui.action_cut->setShortcut(QKeySequence::Cut);
     ui.action_paste->setShortcut(QKeySequence::Paste);
+    ui.action_paste_as_composition->setShortcut(QKeySequence("Ctrl+Shift+V", QKeySequence::PortableText));
     ui.action_select_all->setShortcut(QKeySequence::SelectAll);
     ui.action_undo->setShortcut(QKeySequence::Undo);
     ui.action_redo->setShortcut(QKeySequence::Redo);
@@ -70,6 +71,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.action_ungroup->setShortcut(QKeySequence("Ctrl+Shift+G", QKeySequence::PortableText));
     ui.action_open_last->setShortcut(QKeySequence("Ctrl+Shift+O", QKeySequence::PortableText));
     ui.action_import_image->setShortcut(QKeySequence("Ctrl+I", QKeySequence::PortableText));
+    ui.action_import->setShortcut(QKeySequence("Ctrl+Shift+I", QKeySequence::PortableText));
     ui.action_node_remove->setShortcut(QKeySequence("Del", QKeySequence::PortableText));
     ui.action_delete->setShortcut(QKeySequence("Del", QKeySequence::PortableText));
     ui.action_export->setShortcut(QKeySequence("Ctrl+E", QKeySequence::PortableText));
@@ -81,6 +83,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
     connect(ui.action_paste, &QAction::triggered, parent, &GlaxnimateWindow::paste);
+    connect(ui.action_paste_as_composition, &QAction::triggered, parent, [this]{paste(true);});
     connect(ui.action_cut, &QAction::triggered, parent, &GlaxnimateWindow::cut);
     connect(ui.action_duplicate, &QAction::triggered, parent, &GlaxnimateWindow::duplicate_selection);
     connect(ui.action_reload, &QAction::triggered, parent, &GlaxnimateWindow::document_reload);
@@ -153,6 +156,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     connect(ui.action_align_vert_center,    &QAction::triggered, parent, [this]{align(AlignDirection::Vertical,   AlignPosition::Center, false);});
     connect(ui.action_align_vert_bottom,    &QAction::triggered, parent, [this]{align(AlignDirection::Vertical,   AlignPosition::End,    false);});
     connect(ui.action_align_vert_bottom_out,&QAction::triggered, parent, [this]{align(AlignDirection::Vertical,   AlignPosition::End,    true);});
+    connect(ui.action_import, &QAction::triggered, parent, [this]{import_file();});
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )

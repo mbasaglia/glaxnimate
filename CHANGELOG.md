@@ -1,3 +1,9 @@
+## 0.3.3
+
+* Editing:
+    * Action to paste as a composition
+    * Action to import animations
+
 ## 0.3.2
 
 * Editing:

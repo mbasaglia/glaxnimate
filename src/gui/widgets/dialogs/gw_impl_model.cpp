@@ -209,7 +209,7 @@ static void paste_assets(model::ObjectListProperty<T> (model::Defs::* prop), mod
     }
 }
 
-void GlaxnimateWindow::Private::paste()
+void GlaxnimateWindow::Private::paste(bool as_comp)
 {
     const QMimeData* data = QGuiApplication::clipboard()->mimeData();
     io::mime::DeserializedData raw_pasted;
@@ -228,35 +228,48 @@ void GlaxnimateWindow::Private::paste()
         return;
     }
 
-    command::UndoMacroGuard macro(tr("Paste"), current_document.get());
-    paste_assets(&model::Defs::colors, raw_pasted.document.get(), current_document.get());
-    paste_assets(&model::Defs::images, raw_pasted.document.get(), current_document.get());
-    paste_assets(&model::Defs::gradient_colors, raw_pasted.document.get(), current_document.get());
-    paste_assets(&model::Defs::gradients, raw_pasted.document.get(), current_document.get());
-    paste_assets(&model::Defs::precompositions, raw_pasted.document.get(), current_document.get());
+    paste_document(raw_pasted.document.get(), tr("Paste"), as_comp);
+}
+
+void GlaxnimateWindow::Private::paste_document(model::Document* document, const QString& macro_name, bool as_comp)
+{
+    command::UndoMacroGuard macro(macro_name, current_document.get());
+    paste_assets(&model::Defs::colors, document, current_document.get());
+    paste_assets(&model::Defs::images, document, current_document.get());
+    paste_assets(&model::Defs::gradient_colors, document, current_document.get());
+    paste_assets(&model::Defs::gradients, document, current_document.get());
+    paste_assets(&model::Defs::precompositions, document, current_document.get());
 
     model::ShapeListProperty* shape_cont = current_shape_container();
     std::vector<model::DocumentNode*> select;
-    if ( !raw_pasted.document->main()->shapes.empty() )
+
+    if ( as_comp )
+    {
+        std::unique_ptr<model::Precomposition> comp = std::make_unique<model::Precomposition>(current_document.get());
+        auto comp_ptr = comp.get();
+        current_document->set_best_name(comp.get(), document->main()->name.get());
+        current_document->push_command(new command::AddObject(&current_document->defs()->precompositions, std::move(comp)));
+
+        select.push_back(layer_new_comp(comp_ptr));
+        shape_cont = &comp_ptr->shapes;
+    }
+
+    if ( !document->main()->shapes.empty() )
     {
         int shape_insertion_point = shape_cont->size();
-        for ( auto& shape : raw_pasted.document->main()->shapes.raw() )
+        for ( auto& shape : document->main()->shapes.raw() )
         {
             auto ptr = shape.get();
             shape->refresh_uuid();
-            select.push_back(ptr);
+            if ( !as_comp )
+                select.push_back(ptr);
             shape->transfer(current_document.get());
             current_document->push_command(new command::AddShape(shape_cont, std::move(shape), shape_insertion_point++));
             ptr->recursive_rename();
         }
     }
 
-    QItemSelection item_select;
-    for ( auto node : select )
-    {
-        item_select.push_back(QItemSelectionRange(comp_model.mapFromSource(document_node_model.node_index(node))));
-    }
-    ui.view_document_node->selectionModel()->select(item_select, QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Rows);
+    scene.user_select(select, graphics::DocumentScene::Replace);
 }
 
 void GlaxnimateWindow::Private::duplicate_selection()
@@ -664,13 +677,20 @@ void GlaxnimateWindow::Private::on_remove_precomp(int index)
 
 void GlaxnimateWindow::Private::layer_new_comp(QAction* action)
 {
+    layer_new_comp(action->data().value<model::Precomposition*>());
+}
+
+model::PreCompLayer* GlaxnimateWindow::Private::layer_new_comp(model::Precomposition* comp)
+{
     auto layer = std::make_unique<model::PreCompLayer>(current_document.get());
-    layer->composition.set(action->data().value<model::Precomposition*>());
+    layer->composition.set(comp);
     layer->size.set(current_document->rect().size());
     QPointF pos = current_document->rect().center();
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
+    auto ptr = layer.get();
     layer_new_impl(std::move(layer));
+    return ptr;
 }
 
 void GlaxnimateWindow::Private::composition_close_request(int index)

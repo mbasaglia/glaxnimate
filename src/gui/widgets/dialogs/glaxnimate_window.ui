@@ -62,6 +62,7 @@
     <addaction name="action_new"/>
     <addaction name="action_open"/>
     <addaction name="action_import_image"/>
+    <addaction name="action_import"/>
     <addaction name="action_open_last"/>
     <addaction name="menu_open_recent"/>
     <addaction name="separator"/>
@@ -147,13 +148,14 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="separator"/>
     <addaction name="action_undo"/>
+    <addaction name="separator"/>
     <addaction name="action_redo"/>
     <addaction name="separator"/>
     <addaction name="action_cut"/>
     <addaction name="action_copy"/>
     <addaction name="action_paste"/>
+    <addaction name="action_paste_as_composition"/>
     <addaction name="action_duplicate"/>
     <addaction name="action_select_all"/>
     <addaction name="action_delete"/>
@@ -251,7 +253,8 @@
       <string>&amp;Align and Distribute</string>
      </property>
      <property name="icon">
-      <iconset theme="dialog-align-and-distribute"/>
+      <iconset theme="dialog-align-and-distribute">
+       <normaloff>.</normaloff>.</iconset>
      </property>
      <addaction name="separator_align_relative_to"/>
      <addaction name="action_align_to_selection"/>
@@ -832,7 +835,8 @@
   </widget>
   <widget class="QDockWidget" name="dock_align">
    <property name="windowIcon">
-    <iconset theme="dialog-align-and-distribute"/>
+    <iconset theme="dialog-align-and-distribute">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="windowTitle">
     <string>Align</string>
@@ -1546,7 +1550,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
-    <string>Import Image...</string>
+    <string>Add &amp;Image...</string>
    </property>
   </action>
   <action name="action_delete">
@@ -1755,7 +1759,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="select-rectangular"/>
+    <iconset theme="select-rectangular">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Selection</string>
@@ -1766,7 +1771,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="snap-page"/>
+    <iconset theme="snap-page">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Canvas</string>
@@ -1774,7 +1780,8 @@
   </action>
   <action name="action_align_hor_left">
    <property name="icon">
-    <iconset theme="align-horizontal-left"/>
+    <iconset theme="align-horizontal-left">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Left</string>
@@ -1782,7 +1789,8 @@
   </action>
   <action name="action_align_hor_center">
    <property name="icon">
-    <iconset theme="align-horizontal-center"/>
+    <iconset theme="align-horizontal-center">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Center</string>
@@ -1790,7 +1798,8 @@
   </action>
   <action name="action_align_hor_right">
    <property name="icon">
-    <iconset theme="align-horizontal-right"/>
+    <iconset theme="align-horizontal-right">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Right</string>
@@ -1798,7 +1807,8 @@
   </action>
   <action name="action_align_vert_top">
    <property name="icon">
-    <iconset theme="align-vertical-top"/>
+    <iconset theme="align-vertical-top">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Top</string>
@@ -1806,7 +1816,8 @@
   </action>
   <action name="action_align_vert_center">
    <property name="icon">
-    <iconset theme="align-vertical-center"/>
+    <iconset theme="align-vertical-center">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Center</string>
@@ -1814,7 +1825,8 @@
   </action>
   <action name="action_align_vert_bottom">
    <property name="icon">
-    <iconset theme="align-vertical-bottom"/>
+    <iconset theme="align-vertical-bottom">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Bottom</string>
@@ -1825,7 +1837,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="object-group"/>
+    <iconset theme="object-group">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Canvas (as Group)</string>
@@ -1848,7 +1861,8 @@
   </action>
   <action name="action_align_hor_left_out">
    <property name="icon">
-    <iconset theme="align-horizontal-right-out"/>
+    <iconset theme="align-horizontal-right-out">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Outside Left</string>
@@ -1856,7 +1870,8 @@
   </action>
   <action name="action_align_hor_right_out">
    <property name="icon">
-    <iconset theme="align-horizontal-left-out"/>
+    <iconset theme="align-horizontal-left-out">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Outside Right</string>
@@ -1864,7 +1879,8 @@
   </action>
   <action name="action_align_vert_top_out">
    <property name="icon">
-    <iconset theme="align-vertical-bottom-out"/>
+    <iconset theme="align-vertical-bottom-out">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Outside Top</string>
@@ -1872,10 +1888,27 @@
   </action>
   <action name="action_align_vert_bottom_out">
    <property name="icon">
-    <iconset theme="align-vertical-top-out"/>
+    <iconset theme="align-vertical-top-out">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Outside Bottom</string>
+   </property>
+  </action>
+  <action name="action_import">
+   <property name="icon">
+    <iconset theme="document-import"/>
+   </property>
+   <property name="text">
+    <string>&amp;Import...</string>
+   </property>
+  </action>
+  <action name="action_paste_as_composition">
+   <property name="icon">
+    <iconset theme="special_paste"/>
+   </property>
+   <property name="text">
+    <string>Paste as Composition</string>
    </property>
   </action>
  </widget>
