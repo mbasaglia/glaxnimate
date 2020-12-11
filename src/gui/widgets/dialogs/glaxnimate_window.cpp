@@ -426,3 +426,8 @@ void GlaxnimateWindow::set_current_composition(model::Composition* comp)
     int index = d->current_document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(comp));
     d->ui.tab_bar->setCurrentIndex(index+1);
 }
+
+QMenu * GlaxnimateWindow::create_layer_menu() const
+{
+    return d->ui.menu_new_layer;
+}

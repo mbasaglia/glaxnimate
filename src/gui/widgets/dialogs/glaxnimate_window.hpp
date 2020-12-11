@@ -107,6 +107,8 @@ public:
 
     void shape_to_precomposition(model::ShapeElement* node);
 
+    QMenu* create_layer_menu() const;
+
 public slots:
     void document_save();
     void document_save_as();
