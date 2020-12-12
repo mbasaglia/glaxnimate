@@ -422,7 +422,7 @@
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="QTreeView" name="view_document_node">
+      <widget class="CustomTreeView" name="view_document_node">
        <property name="dragEnabled">
         <bool>true</bool>
        </property>
@@ -1897,7 +1897,8 @@
   </action>
   <action name="action_import">
    <property name="icon">
-    <iconset theme="document-import"/>
+    <iconset theme="document-import">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Import...</string>
@@ -1905,7 +1906,8 @@
   </action>
   <action name="action_paste_as_composition">
    <property name="icon">
-    <iconset theme="special_paste"/>
+    <iconset theme="special_paste">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Paste as Composition</string>
@@ -1988,6 +1990,11 @@
    <extends>QWidget</extends>
    <header>widgets/clickable_tab_bar.hpp</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CustomTreeView</class>
+   <extends>QTreeView</extends>
+   <header>widgets/custom_treeview.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

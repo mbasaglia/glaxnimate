@@ -161,6 +161,15 @@ private:
     model::ShapeListProperty* owner;
 };
 
+void togglable_action(QMenu* menu, model::Property<bool>* prop, const QString& icon, const QString& label)
+{
+    auto action = menu->addAction(QIcon::fromTheme(icon), label, menu, [prop](bool value){
+        prop->set_undoable(value);
+    });
+    action->setCheckable(true);
+    action->setChecked(prop->get());
+}
+
 } // namespace
 
 
@@ -170,6 +179,10 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
 {
     setIcon(node->docnode_icon());
     addSection(node->docnode_icon(), node->object_name());
+
+    togglable_action(this, &node->visible, "view-visible", tr("Visible"));
+    togglable_action(this, &node->locked, "object-locked", tr("Locked"));
+    addSeparator();
 
     if ( auto shape = qobject_cast<model::ShapeElement*>(node) )
     {
