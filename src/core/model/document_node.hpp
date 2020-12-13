@@ -47,6 +47,11 @@ private:
     class ChildIterator
     {
     public:
+        using value_type = DocumentNode*;
+        using reference = value_type*;
+        using pointer = value_type*;
+        using difference_type = int;
+        using iterator_category = std::forward_iterator_tag;
 
         ChildIterator& operator++() noexcept { ++index; return *this; }
         DocumentNode* operator->() const { return (parent->*get_func)(index); }

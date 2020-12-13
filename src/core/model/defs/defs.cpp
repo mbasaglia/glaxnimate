@@ -123,11 +123,13 @@ model::Gradient* model::Defs::add_gradient(int index)
 void model::Defs::on_precomp_added(model::Precomposition* obj, int row)
 {
     obj->attach();
+    document()->comp_graph().add_composition(obj);
     emit precomp_add_end(obj, row);
 }
 
 void model::Defs::on_precomp_removed(model::Precomposition* obj)
 {
     obj->detach();
+    document()->comp_graph().remove_composition(obj);
     emit precomp_remove_end(obj);
 }

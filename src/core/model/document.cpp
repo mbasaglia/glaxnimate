@@ -21,12 +21,10 @@ public:
     QUndoStack undo_stack;
     QVariantMap metadata;
     io::Options io_options;
-    QUuid uuid = QUuid::createUuid();
-    QString uuid_string = uuid.toString();
-    int id = 0;
     FrameTime current_time = 0;
     bool record_to_keyframe = false;
     Defs defs;
+    model::CompGraph comp_graph;
 };
 
 
@@ -34,6 +32,7 @@ model::Document::Document(const QString& filename)
     : d ( std::make_unique<model::Document::Private>(this) )
 {
     d->io_options.filename = filename;
+    d->comp_graph.add_composition(&d->main);
 }
 
 model::Document::~Document() = default;
@@ -242,4 +241,9 @@ QImage model::Document::render_image() const
 void model::Document::set_metadata(const QVariantMap& meta)
 {
     d->metadata = meta;
+}
+
+model::CompGraph & model::Document::comp_graph()
+{
+    return d->comp_graph;
 }

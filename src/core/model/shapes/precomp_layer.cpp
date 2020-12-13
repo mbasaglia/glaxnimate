@@ -12,6 +12,8 @@ model::PreCompLayer::PreCompLayer(Document* document)
     : ShapeElement(document)
 {
     connect(transform.get(), &Object::property_changed, this, &PreCompLayer::on_transform_matrix_changed);
+    connect(this, &Object::added_to_list, this, &PreCompLayer::on_added_to_list);
+    connect(this, &Object::removed_from_list, this, &PreCompLayer::on_removed_from_list);
 }
 
 QIcon model::PreCompLayer::docnode_icon() const
@@ -36,16 +38,16 @@ void model::PreCompLayer::set_time(model::FrameTime t)
 
 std::vector<model::ReferenceTarget *> model::PreCompLayer::valid_precomps() const
 {
-    auto v = document()->defs()->precompositions.valid_reference_values(false);
-    auto it = std::find(v.begin(), v.end(), owner_composition());
-    if ( it != v.end() )
-        v.erase(it);
-    return v;
+    auto comps = document()->comp_graph().possible_descendants(owner_composition_, document());
+    return std::vector<model::ReferenceTarget *>(comps.begin(), comps.end());
 }
 
 bool model::PreCompLayer::is_valid_precomp(model::ReferenceTarget* node) const
 {
-    return document()->defs()->precompositions.is_valid_reference_value(node, false) && owner_composition() != node;
+    auto owncomp = owner_composition_;
+    if ( auto precomp = qobject_cast<model::Precomposition*>(node) )
+        return !document()->comp_graph().is_ancestor_of(precomp, owncomp);
+    return false;
 }
 
 void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, model::DocumentNode::PaintMode mode) const
@@ -83,11 +85,24 @@ void model::PreCompLayer::add_shapes(model::FrameTime, math::bezier::MultiBezier
 {
 }
 
-model::Composition* model::PreCompLayer::owner_composition() const
+void model::PreCompLayer::refresh_owner_composition()
 {
     auto n = docnode_parent();
     while ( n && !n->is_instance<model::Composition>() )
         n = n->docnode_parent();
 
-    return static_cast<model::Composition*>(n);
+    owner_composition_ = static_cast<model::Composition*>(n);
 }
+
+void model::PreCompLayer::on_added_to_list()
+{
+    refresh_owner_composition();
+    document()->comp_graph().add_connection(owner_composition_, this);
+}
+
+void model::PreCompLayer::on_removed_from_list()
+{
+    document()->comp_graph().remove_connection(owner_composition_, this);
+}
+
+

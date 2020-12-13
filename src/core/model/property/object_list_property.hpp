@@ -149,6 +149,7 @@ public:
         on_insert(position);
         callback_insert(this->object(), ptr, position);
         value_changed();
+        ptr->added_to_list();
         return ptr;
     }
 

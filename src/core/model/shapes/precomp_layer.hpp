@@ -40,11 +40,6 @@ public:
 
     void add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez) const override;
 
-    model::Composition* owner_composition() const;
-
-private:
-    std::vector<ReferenceTarget*> valid_precomps() const;
-    bool is_valid_precomp(ReferenceTarget* node) const;
 
 signals:
     void opacity_changed(float op);
@@ -55,6 +50,17 @@ protected:
 
 private slots:
     void on_transform_matrix_changed();
+
+
+private:
+    std::vector<ReferenceTarget*> valid_precomps() const;
+    bool is_valid_precomp(ReferenceTarget* node) const;
+    void on_removed_from_list();
+    void on_added_to_list();
+    void refresh_owner_composition();
+
+    model::Composition* owner_composition_ = nullptr;
+
 };
 
 } // namespace model

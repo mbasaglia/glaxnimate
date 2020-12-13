@@ -535,18 +535,21 @@ void GlaxnimateWindow::Private::switch_composition(int i)
     else
         comp_selections[old_i].current = comp;
 
-    if ( old_i > 0 )
-        ui.menu_new_comp_layer->actions()[old_i-1]->setEnabled(true);
-
     int precomp_index = i - 1;
     if ( precomp_index >= 0 && precomp_index < current_document->defs()->precompositions.size() )
     {
         comp = current_document->defs()->precompositions[precomp_index];
-        ui.menu_new_comp_layer->actions()[precomp_index]->setEnabled(false);
+
+        auto possible = current_document->comp_graph().possible_descendants(comp, current_document.get());
+        std::set<model::Composition*> comps(possible.begin(), possible.end());
+        for ( QAction* action : ui.menu_new_comp_layer->actions() )
+            action->setEnabled(comps.count(action->data().value<model::Precomposition*>()));
     }
     else
     {
         comp = current_document->main();
+        for ( QAction* action : ui.menu_new_comp_layer->actions() )
+            action->setEnabled(true);
     }
 
 

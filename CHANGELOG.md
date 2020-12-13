@@ -3,6 +3,7 @@
 * Editing:
     * Action to paste as a composition
     * Action to import animations
+    * Added checks to avoid cyclical dependencies between compositions
 * UI:
     * Right clicking on the layer view to get a context menu no longer changes the selection
     * Object context menus now have actions to toggle visibility and lock

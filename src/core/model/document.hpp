@@ -6,7 +6,7 @@
 
 #include "main_composition.hpp"
 #include "io/options.hpp"
-// #include "defs/defs.hpp"
+#include "model/comp_graph.hpp"
 
 namespace model {
 
@@ -70,6 +70,8 @@ public:
     Q_INVOKABLE QImage render_image() const;
 
     model::Defs* defs() const;
+
+    model::CompGraph& comp_graph();
 
 signals:
     void filename_changed(const QString& n);
