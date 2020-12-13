@@ -152,6 +152,7 @@ command::AddShape * command::duplicate_shape ( model::ShapeElement* shape )
     std::unique_ptr<model::ShapeElement> new_shape (
         static_cast<model::ShapeElement*>(shape->clone().release())
     );
+    new_shape->refresh_uuid();
     new_shape->recursive_rename();
     new_shape->set_time(shape->docnode_parent()->time());
 

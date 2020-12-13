@@ -98,11 +98,15 @@ void model::PreCompLayer::on_added_to_list()
 {
     refresh_owner_composition();
     document()->comp_graph().add_connection(owner_composition_, this);
+    if ( composition.get() )
+        composition.get()->add_user(&composition);
 }
 
 void model::PreCompLayer::on_removed_from_list()
 {
     document()->comp_graph().remove_connection(owner_composition_, this);
+    if ( composition.get() )
+        composition.get()->remove_user(&composition);
 }
 
 

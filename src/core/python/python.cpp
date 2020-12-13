@@ -261,13 +261,16 @@ void register_py_module(py::module& glaxnimate_module)
     ;
 
     py::module defs = model.def_submodule("defs", "");
-    register_from_meta<model::Asset, model::ReferenceTarget>(defs);
+    py::class_<model::AssetBase>(defs, "AssetBase")
+        .def_property_readonly("users", &model::AssetBase::users)
+    ;
+    register_from_meta<model::Asset, model::ReferenceTarget, model::AssetBase>(defs);
     register_from_meta<model::BrushStyle, model::Asset>(defs);
     register_from_meta<model::NamedColor, model::BrushStyle>(defs);
     register_from_meta<model::GradientColors, model::Asset>(defs);
     register_from_meta<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::GradientType>{});
     register_from_meta<model::Bitmap, model::Asset>(defs);
-    register_from_meta<model::Precomposition, model::Composition>(defs);
+    register_from_meta<model::Precomposition, model::Composition, model::AssetBase>(defs);
     register_from_meta<model::Defs, model::Object>(defs);
 
     py::module shapes = model.def_submodule("shapes", "");

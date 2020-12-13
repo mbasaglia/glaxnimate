@@ -14,6 +14,8 @@ class AssetBase
 public:
     using User = ReferencePropertyBase;
 
+    virtual ~AssetBase() {}
+
     const std::unordered_set<User*>& users() const;
     void add_user(User* user);
     void remove_user(User* user);

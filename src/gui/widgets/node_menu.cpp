@@ -223,7 +223,7 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
         {
             addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), tr("Parent"), this, &lay->parent)->menuAction());
             addAction(QIcon::fromTheme("object-group"), tr("Convert to Group"), this, ConvertGroupType<model::Group>(lay));
-            addAction(QIcon::fromTheme("component"), tr("Convert to Composition"), this, [window, lay]{
+            addAction(QIcon::fromTheme("component"), tr("Precompose"), this, [window, lay]{
                 window->shape_to_precomposition(lay);
             });
         }
@@ -271,7 +271,6 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
                 }
             });
 
-
             addAction(QIcon::fromTheme("bitmap-trace"), tr("Trace Bitmap..."), this, [image, window]{
                 window->trace_dialog(image);
             });
@@ -281,6 +280,27 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
             addAction(QIcon::fromTheme("edit-rename"), tr("Rename from Composition"), this, [lay]{
                 if ( lay->composition.get() )
                     lay->name.set_undoable(lay->composition->object_name());
+            });
+            addAction(QIcon::fromTheme("archive-extract"), tr("Decompose"), this, [lay]{
+                command::UndoMacroGuard guard(tr("Decompose"), lay->document());
+
+                auto comp = lay->composition.get();
+
+                if ( comp )
+                {
+                    int index = lay->owner()->index_of(lay);
+                    for ( const auto& child : comp->shapes )
+                    {
+                        std::unique_ptr<model::ShapeElement> clone(static_cast<model::ShapeElement*>(child->clone().release()));
+                        clone->refresh_uuid();
+                        lay->push_command(new command::AddShape(lay->owner(), std::move(clone), ++index));
+                    }
+                }
+
+                lay->push_command(new command::RemoveShape(lay, lay->owner()));
+
+                if ( comp && comp->users().empty() )
+                    lay->push_command(new command::RemoveObject(comp, &lay->document()->defs()->precompositions));
             });
         }
     }
