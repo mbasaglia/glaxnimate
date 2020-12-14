@@ -306,7 +306,7 @@ void TimelineWidget::set_document(model::Document* document)
 void TimelineWidget::update_timeline_end(model::FrameTime end)
 {
     d->end_time = end;
-    setSceneRect(d->scene_rect());
+    setSceneRect(sceneRect() | d->scene_rect());
     d->adjust_min_scale(viewport()->width());
     d->update_end_time();
 }
@@ -314,7 +314,7 @@ void TimelineWidget::update_timeline_end(model::FrameTime end)
 void TimelineWidget::update_timeline_start(model::FrameTime start)
 {
     d->start_time = start;
-    setSceneRect(d->scene_rect());
+    setSceneRect(sceneRect() | d->scene_rect());
     d->adjust_min_scale(viewport()->width());
     for ( const auto& p : d->object_items )
         p->set_time_start(start);

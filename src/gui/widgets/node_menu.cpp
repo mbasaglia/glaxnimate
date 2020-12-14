@@ -197,11 +197,28 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
         });
 
         addSeparator();
-        if ( auto group = qobject_cast<model::Group*>(shape) )
+        model::Layer* lay = nullptr;
+        auto group = qobject_cast<model::Group*>(shape);
+        if ( group )
         {
             addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
                 ResetTransform{group->document(), group->transform.get()}
             );
+
+            lay = qobject_cast<model::Layer*>(shape);
+            if ( lay )
+            {
+                addSeparator();
+                addAction(QIcon::fromTheme("timeline-use-zone-on"), tr("Expand to All Frames"), this, [lay]{
+                    command::UndoMacroGuard guard(tr("Expand to All Frames"), lay->document());
+                    lay->animation->first_frame.set_undoable(
+                        lay->document()->main()->animation->first_frame.get()
+                    );
+                    lay->animation->last_frame.set_undoable(
+                        lay->animation->last_frame.get()
+                    );
+                });
+            }
         }
 
         addSeparator();
@@ -219,7 +236,7 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
             }
         });
 
-        if ( auto lay = qobject_cast<model::Layer*>(shape) )
+        if ( lay )
         {
             addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), tr("Parent"), this, &lay->parent)->menuAction());
             addAction(QIcon::fromTheme("object-group"), tr("Convert to Group"), this, ConvertGroupType<model::Group>(lay));
@@ -227,9 +244,9 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
                 window->shape_to_precomposition(lay);
             });
         }
-        else if ( auto grp = qobject_cast<model::Group*>(shape) )
+        else if ( group )
         {
-            addAction(QIcon::fromTheme("folder"), tr("Convert to Layer"), this, ConvertGroupType<model::Layer>(grp));
+            addAction(QIcon::fromTheme("folder"), tr("Convert to Layer"), this, ConvertGroupType<model::Layer>(group));
         }
         else if ( auto image = qobject_cast<model::Image*>(shape) )
         {

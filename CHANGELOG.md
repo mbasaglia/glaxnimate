@@ -8,6 +8,8 @@
 * UI:
     * Right clicking on the layer view to get a context menu no longer changes the selection
     * Object context menus now have actions to toggle visibility and lock
+    * Resizing the document duration in the timeline doesn't move the timeline chart
+    * Layer context menu action to update its first/last frame based on the main comp
 * Scripting:
     * Python has now access to the users of an asset
 * Bug Fixes:
