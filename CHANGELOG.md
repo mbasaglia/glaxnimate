@@ -10,6 +10,8 @@
     * Object context menus now have actions to toggle visibility and lock
     * Resizing the document duration in the timeline doesn't move the timeline chart
     * Layer context menu action to update its first/last frame based on the main comp
+* I/O:
+    * Animated SVG now honours layer first/last frames
 * Scripting:
     * Python has now access to the users of an asset
 * Bug Fixes:

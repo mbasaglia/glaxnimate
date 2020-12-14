@@ -209,13 +209,13 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
             if ( lay )
             {
                 addSeparator();
-                addAction(QIcon::fromTheme("timeline-use-zone-on"), tr("Expand to All Frames"), this, [lay]{
-                    command::UndoMacroGuard guard(tr("Expand to All Frames"), lay->document());
+                addAction(QIcon::fromTheme("timeline-use-zone-on"), tr("Span All Frames"), this, [lay]{
+                    command::UndoMacroGuard guard(tr("Span All Frames"), lay->document());
                     lay->animation->first_frame.set_undoable(
                         lay->document()->main()->animation->first_frame.get()
                     );
                     lay->animation->last_frame.set_undoable(
-                        lay->animation->last_frame.get()
+                        lay->document()->main()->animation->last_frame.get()
                     );
                 });
             }

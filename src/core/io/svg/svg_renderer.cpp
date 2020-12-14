@@ -536,6 +536,47 @@ public:
             if ( !layer->render.get() )
                 return;
             g = start_layer(parent, group);
+
+            if ( animated && layer->visible.get() )
+            {
+                auto* lay_range = layer->animation.get();
+                auto* doc_range = layer->document()->main()->animation.get();
+                bool has_start = lay_range->first_frame.get() > doc_range->first_frame.get();
+                bool has_end = lay_range->last_frame.get() < doc_range->last_frame.get();
+
+                if ( has_start || has_end )
+                {
+                    QDomElement animation = element(g, "animate");
+                    animation.setAttribute("begin", clock(ip));
+                    animation.setAttribute("dur", clock(op-ip));
+                    animation.setAttribute("calcMode", "discrete");
+                    animation.setAttribute("attributeName", "display");
+                    animation.setAttribute("repeatCount", "indefinite");
+                    QString times;
+                    QString vals;
+
+                    times += clock(ip) + ";";
+
+                    if ( has_start )
+                    {
+                        vals += "none;inline;";
+                        times += clock(lay_range->first_frame.get()) + ";";
+                    }
+                    else
+                    {
+                        vals += "inline;";
+                    }
+
+                    if ( has_end )
+                    {
+                        vals += "none;";
+                        times += clock(lay_range->last_frame.get()) + ";";
+                    }
+
+                    animation.setAttribute("values", vals);
+                    animation.setAttribute("keyTimes", times);
+                }
+            }
         }
         else
         {
