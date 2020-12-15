@@ -403,6 +403,7 @@ void GlaxnimateWindow::Private::import_image()
     image->transform->position.set(p);
     auto comp = current_composition();
     auto select = image.get();
+    image->name.set(QFileInfo(image_file).baseName());
     current_document->push_command(new command::AddShape(&comp->shapes, std::move(image), comp->shapes.size()));
     set_current_document_node(select);
 }

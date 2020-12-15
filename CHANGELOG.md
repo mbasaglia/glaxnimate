@@ -16,6 +16,7 @@
     * Python has now access to the users of an asset
 * Bug Fixes:
     * Duplicating shapes updates uuids
+    * Importing images sets their name
 
 ## 0.3.2
 
