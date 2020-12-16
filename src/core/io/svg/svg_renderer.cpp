@@ -136,6 +136,9 @@ public:
         void add_keyframe(model::FrameTime time, const std::vector<QString>& vals,
                           const model::KeyframeTransition& trans)
         {
+            if ( time < parent->ip || time > parent->op )
+                return;
+
             if ( key_times.empty() && time > parent->ip )
             {
                 key_times.push_back("0");
