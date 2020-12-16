@@ -528,6 +528,23 @@ public:
         return path;
     }
 
+    QDomElement start_layer_recurse_parents(QDomElement parent, model::Layer* ancestor, model::Layer* descendant)
+    {
+        QDomElement g = element(parent, "g");
+        g.setAttribute("id", id(descendant) + "_" + id(ancestor));
+        g.setAttribute("inkscape:label", QObject::tr("%1 (%2)").arg(descendant->object_name()).arg(ancestor->object_name()));
+        g.setAttribute("inkscape:groupmode", "layer");
+        transform_to_attr(g, ancestor->transform.get());
+        return g;
+    }
+
+    QDomElement recurse_parents(QDomElement& parent, model::Layer* ancestor, model::Layer* descendant)
+    {
+        if ( !ancestor->parent.get() )
+            return start_layer_recurse_parents(parent, ancestor, descendant);
+        return start_layer_recurse_parents(recurse_parents(parent, ancestor->parent.get(), descendant), ancestor, descendant);
+    }
+
     void write_group_shape(QDomElement& parent, model::Group* group)
     {
         QDomElement g;
@@ -535,7 +552,17 @@ public:
         {
             if ( !layer->render.get() )
                 return;
-            g = start_layer(parent, group);
+
+            if ( layer->parent.get() )
+            {
+                QDomElement parent_g = recurse_parents(parent, layer->parent.get(), layer);
+                g = start_layer(parent_g, group);
+            }
+            else
+            {
+                g = start_layer(parent, group);
+            }
+
 
             if ( animated && layer->visible.get() )
             {
@@ -582,6 +609,7 @@ public:
         {
             g = start_group(parent, group);
         }
+
         transform_to_attr(g, group->transform.get());
         set_attribute(g, "opacity", group->opacity.get());
         write_visibility_attributes(g, group);
@@ -661,8 +689,6 @@ public:
     {
         QDomElement g = element(parent, "g");
         g.setAttribute("id", id(node));
-        if ( node->name.get() == "" )
-            g.setAttribute("wtf", node->object_name());
         g.setAttribute("inkscape:label", node->object_name());
         return g;
     }
