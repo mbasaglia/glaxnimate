@@ -435,6 +435,7 @@ public:
 
                 auto e = start_layer(parent, layer);
                 transform_to_attr(e, layer->transform.get());
+                write_property(e, &layer->opacity, "opacity");
                 write_visibility_attributes(parent, shape);
                 write_composition(e, layer->composition.get());
                 timing.pop_back();
@@ -614,7 +615,7 @@ public:
         }
 
         transform_to_attr(g, group->transform.get());
-        set_attribute(g, "opacity", group->opacity.get());
+        write_property(g, &group->opacity, "opacity");
         write_visibility_attributes(g, group);
         write_shapes(g, group->shapes);
     }

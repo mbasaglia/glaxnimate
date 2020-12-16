@@ -14,6 +14,7 @@
     * Animated SVG now honours layer first/last frames
     * SVG keeps track of parent layer transforms
     * Animated SVG now trims excess frames from animated properties
+    * Animated SVG output now properly supports animated opacity for layers and groups
 * Scripting:
     * Python has now access to the users of an asset
 * Bug Fixes:
