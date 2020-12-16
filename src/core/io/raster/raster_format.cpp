@@ -9,7 +9,7 @@ QStringList io::raster::RasterFormat::extensions() const
 {
     QStringList formats;
     for ( const auto& fmt : QImageReader::supportedImageFormats() )
-        if ( fmt != "gif" && fmt != "webp" )
+        if ( fmt != "gif" && fmt != "webp" && fmt != "svg" )
             formats << QString::fromUtf8(fmt);
     return formats;
 }
