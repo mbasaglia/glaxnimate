@@ -1,4 +1,14 @@
 set -xe
+pacman --noconfirm -S \
+    git zip unzip \
+    mingw-w64-x86_64-toolchain \
+    mingw-w64-x86_64-qt5 \
+    mingw-w64-x86_64-zlib \
+    mingw-w64-x86_64-cmake \
+    mingw-w64-x86_64-python \
+    mingw-w64-x86_64-potrace \
+    mingw-w64-x86_64-ffmpeg \
+    mingw-w64-x86_64-libimagequant
 
 git submodule update --init --recursive
 (cd ../data/icons/breeze-icons/ && git config core.symlinks true && git reset --hard)
@@ -41,6 +51,7 @@ cp ../deploy/glaxnimate.vbs glaxnimate
 if [ "$APPVEYOR_REPO_TAG" = true ]
 then
     pacman --noconfirm -S mingw-w64-x86_64-python-pip
+    pip.exe install wheel
     cmake.exe .. -DVERSION_SUFFIX=""
     mingw32-make.exe glaxnimate_python_depends_install
     mingw32-make.exe glaxnimate_python
