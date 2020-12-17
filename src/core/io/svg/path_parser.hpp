@@ -184,7 +184,7 @@ private:
 
         p.setY(p.y() + read_param());
         bez.line_to(p);
-        implicit = 'y';
+        implicit = 'v';
     }
 
     void parse_C()
@@ -436,6 +436,10 @@ private:
             case 'Z':
             case 'z':
                 bez.close();
+                break;
+            default:
+                next_token();
+
         }
     }
 
