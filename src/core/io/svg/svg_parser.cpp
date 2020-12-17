@@ -981,7 +981,7 @@ public:
         if ( parse_star(args) )
             return;
         QString d = args.element.attribute("d");
-        math::bezier::MultiBezier bez = PathDParser(d.splitRef(AnimateParser::separator)).parse();
+        math::bezier::MultiBezier bez = PathDParser(d).parse();
         /// \todo sodipodi:nodetypes
         parse_bezier_impl(args, bez);
     }

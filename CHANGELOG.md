@@ -15,6 +15,7 @@
     * SVG keeps track of parent layer transforms
     * Animated SVG now trims excess frames from animated properties
     * Animated SVG output now properly supports animated opacity for layers and groups
+    * The SVG parsers now parses correctly "d" attributes without spaces
 * Scripting:
     * Python has now access to the users of an asset
 * Bug Fixes:

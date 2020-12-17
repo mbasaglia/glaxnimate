@@ -6,6 +6,7 @@
 #include <QPointF>
 #include <QVector>
 
+#include "utils/regexp.hpp"
 #include "math/bezier/bezier.hpp"
 #include "math/ellipse_solver.hpp"
 
@@ -21,16 +22,9 @@ public:
     };
     using Token = std::variant<ushort, qreal>;
 
-    PathDParser(const QVector<QStringRef>& raw_tokens)
+    PathDParser(const QString& d)
     {
-        tokens.reserve(raw_tokens.size());
-        for ( const auto& t : raw_tokens )
-        {
-            if ( t.size() == 1 && t[0].isLetter() )
-                tokens.emplace_back(t[0].unicode());
-            else
-                tokens.emplace_back(t.toDouble());
-        }
+        tokenize(d);
     }
 
     const math::bezier::MultiBezier& parse()
@@ -57,6 +51,21 @@ private:
     void next_token() { ++index; }
     bool eof() const { return index >= int(tokens.size()); }
     TokenType la_type() const { return TokenType(la().index()); }
+
+    void tokenize(const QString& d)
+    {
+        if ( d.isEmpty() )
+            return;
+
+        static QRegularExpression re(R"(([MmLlHhVvCcSsQqTtAaZz])|([-+]?(?:[0-9]+(?:\.(?:[0-9]+))?(?:[eE][-+]?[0-9]+)?|\.(?:[0-9]+)(?:[eE][-+]?[0-9]+))))");
+        for ( const auto& match : utils::regexp::find_all(re, d) )
+        {
+            if ( !match.capturedView(1).isNull() )
+                tokens.emplace_back(match.capturedView(1)[0].unicode());
+            else
+                tokens.emplace_back(match.captured(2).toDouble());
+        }
+    }
 
     qreal read_param()
     {
