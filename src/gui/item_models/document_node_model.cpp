@@ -108,7 +108,7 @@ QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const Q
         if ( i >= 0 && i < document->defs()->precompositions.size() )
             return createIndex(row, column, document->defs()->precompositions[i]);
         if ( row == 1 )
-            return createIndex(1, column, document->defs()->mattes.get());
+            return createIndex(1, column, document->defs()->masks.get());
         return createIndex(0, column, document->main());
     }
 
@@ -227,7 +227,7 @@ void item_models::DocumentNodeModel::set_document ( model::Document* doc )
     if ( doc )
     {
         connect_node(doc->main());
-        connect_node(doc->defs()->mattes.get());
+        connect_node(doc->defs()->masks.get());
         for ( const auto& comp : doc->defs()->precompositions )
             connect_node(comp.get());
 
@@ -289,7 +289,7 @@ QModelIndex item_models::DocumentNodeModel::node_index ( model::DocumentNode* no
         if ( node == document->main() )
             return createIndex(0, 0, node);
 
-        if ( node == document->defs()->mattes.get() )
+        if ( node == document->defs()->masks.get() )
             return createIndex(1, 0, node);
 
         return createIndex(

@@ -7,7 +7,7 @@ GLAXNIMATE_OBJECT_IMPL(model::Defs)
 model::Defs::Defs(Document* document)
     : Object(document)
 {
-    mattes->name.set(tr("Masks"));
+    masks->name.set(tr("Masks"));
 }
 
 void model::Defs::on_color_added(model::NamedColor* color, int position)

@@ -15,7 +15,7 @@ class Layer : public Group
      * \brief Whether the layer will be rendered / exported in other formats
      */
     GLAXNIMATE_PROPERTY(bool, render, true)
-    GLAXNIMATE_PROPERTY_REFERENCE(model::ShapeElement, matte, &Layer::valid_mattes, &Layer::is_valid_matte)
+    GLAXNIMATE_PROPERTY_REFERENCE(model::ShapeElement, mask, &Layer::valid_masks, &Layer::is_valid_mask)
 
 public:
     class ChildLayerIterator
@@ -94,8 +94,8 @@ private:
     std::vector<ReferenceTarget*> valid_parents() const;
     bool is_valid_parent(ReferenceTarget* node) const;
 
-    std::vector<ReferenceTarget*> valid_mattes() const;
-    bool is_valid_matte(ReferenceTarget* node) const;
+    std::vector<ReferenceTarget*> valid_masks() const;
+    bool is_valid_mask(ReferenceTarget* node) const;
 };
 
 } // namespace model

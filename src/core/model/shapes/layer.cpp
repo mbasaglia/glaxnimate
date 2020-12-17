@@ -113,10 +113,10 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
 
     if ( mode != Render || render.get() )
     {
-        if ( matte.get() )
+        if ( mask.get() )
         {
             painter->save();
-            painter->setClipPath(matte->to_clip(time), Qt::IntersectClip);
+            painter->setClipPath(mask->to_clip(time), Qt::IntersectClip);
             DocumentNode::paint(painter, time, mode);
             painter->restore();
         }
@@ -127,14 +127,14 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
     }
 }
 
-std::vector<model::ReferenceTarget*> model::Layer::valid_mattes() const
+std::vector<model::ReferenceTarget*> model::Layer::valid_masks() const
 {
-    return document()->defs()->mattes->shapes.valid_reference_values(true);
+    return document()->defs()->masks->shapes.valid_reference_values(true);
 }
 
-bool model::Layer::is_valid_matte(model::ReferenceTarget* node) const
+bool model::Layer::is_valid_mask(model::ReferenceTarget* node) const
 {
-    return document()->defs()->mattes->shapes.is_valid_reference_value(node, true);
+    return document()->defs()->masks->shapes.is_valid_reference_value(node, true);
 }
 
 QPainterPath model::Layer::to_local_clip(model::FrameTime time) const

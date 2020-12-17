@@ -34,7 +34,7 @@ class Defs : public Object
         &Defs::precomp_move_begin,
         &Defs::precomp_move_end
     )
-    GLAXNIMATE_SUBOBJECT(model::Precomposition, mattes)
+    GLAXNIMATE_SUBOBJECT(model::Precomposition, masks)
 
 public:
     explicit Defs(Document* document);
