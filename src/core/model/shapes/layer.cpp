@@ -1,5 +1,11 @@
 #include "layer.hpp"
+
+#include <QPainter>
+
 #include "model/composition.hpp"
+#include "model/document.hpp"
+#include "model/defs/defs.hpp"
+#include "model/defs/precomposition.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::Layer)
 
@@ -104,6 +110,38 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
     if ( !animation->time_visible(time) )
         return;
 
+
     if ( mode != Render || render.get() )
-        DocumentNode::paint(painter, time, mode);
+    {
+        if ( matte.get() )
+        {
+            painter->save();
+            painter->setClipPath(matte->to_clip(time), Qt::IntersectClip);
+            DocumentNode::paint(painter, time, mode);
+            painter->restore();
+        }
+        else
+        {
+            DocumentNode::paint(painter, time, mode);
+        }
+    }
+}
+
+std::vector<model::ReferenceTarget*> model::Layer::valid_mattes() const
+{
+    return document()->defs()->mattes->shapes.valid_reference_values(true);
+}
+
+bool model::Layer::is_valid_matte(model::ReferenceTarget* node) const
+{
+    return document()->defs()->mattes->shapes.is_valid_reference_value(node, true);
+}
+
+QPainterPath model::Layer::to_local_clip(model::FrameTime time) const
+{
+    time = relative_time(time);
+    if ( !animation->time_visible(time) )
+        return {};
+
+    return Group::to_local_clip(time);
 }

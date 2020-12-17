@@ -2,6 +2,7 @@
 
 #include "model/object.hpp"
 #include "model/property/object_list_property.hpp"
+#include "model/property/sub_object_property.hpp"
 #include "named_color.hpp"
 #include "bitmap.hpp"
 #include "gradient.hpp"
@@ -33,9 +34,10 @@ class Defs : public Object
         &Defs::precomp_move_begin,
         &Defs::precomp_move_end
     )
+    GLAXNIMATE_SUBOBJECT(model::Precomposition, mattes)
 
 public:
-    using Object::Object;
+    explicit Defs(Document* document);
 
     Q_INVOKABLE model::ReferenceTarget* find_by_uuid(const QUuid& n) const;
     Q_INVOKABLE model::NamedColor* add_color(const QColor& color, const QString& name = {});

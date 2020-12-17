@@ -64,3 +64,24 @@ void model::Image::on_transform_matrix_changed()
     emit local_transform_matrix_changed(transform->transform_matrix(time()));
     emit transform_matrix_changed(transform_matrix(time()));
 }
+
+void model::Image::add_shapes(FrameTime, math::bezier::MultiBezier&) const
+{
+}
+
+QIcon model::Image::docnode_icon() const
+{
+    return QIcon::fromTheme("x-shape-image");
+}
+
+QString model::Image::type_name_human() const
+{
+    return tr("Image");
+}
+
+QPainterPath model::Image::to_local_clip(FrameTime) const
+{
+    QPainterPath p;
+    p.addRect(QRectF(QPointF(0, 0), image.get() ? image->pixmap().size() : QSize(0, 0)));
+    return p;
+}

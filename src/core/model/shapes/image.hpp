@@ -18,18 +18,12 @@ class Image : public ShapeElement
 public:
     Image(model::Document* doc);
 
-    void add_shapes(FrameTime, math::bezier::MultiBezier&) const override { return; }
+    void add_shapes(FrameTime, math::bezier::MultiBezier&) const override;
+    QPainterPath to_local_clip(FrameTime t) const override;
 
-    QIcon docnode_icon() const override { return QIcon::fromTheme("x-shape-image"); }
-
-
-    QString type_name_human() const override
-    {
-        return tr("Image");
-    }
-
+    QIcon docnode_icon() const override;
+    QString type_name_human() const override;
     QRectF local_bounding_rect(FrameTime t) const override;
-
     QTransform local_transform_matrix(model::FrameTime t) const override;
 
 protected:

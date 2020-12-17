@@ -11,3 +11,9 @@ void model::Fill::on_paint(QPainter* p, model::FrameTime t, model::DocumentNode:
     path.setFillRule(Qt::FillRule(fill_rule.get()));
     p->drawPath(path);
 }
+
+QPainterPath model::Fill::to_local_clip(model::FrameTime t) const
+{
+    return collect_shapes(t).painter_path();
+}
+

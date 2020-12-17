@@ -15,6 +15,7 @@ class Layer : public Group
      * \brief Whether the layer will be rendered / exported in other formats
      */
     GLAXNIMATE_PROPERTY(bool, render, true)
+    GLAXNIMATE_PROPERTY_REFERENCE(model::ShapeElement, matte, &Layer::valid_mattes, &Layer::is_valid_matte)
 
 public:
     class ChildLayerIterator
@@ -87,9 +88,14 @@ public:
 
     void paint(QPainter*, FrameTime, PaintMode) const override;
 
+    QPainterPath to_local_clip(model::FrameTime t) const override;
+
 private:
     std::vector<ReferenceTarget*> valid_parents() const;
     bool is_valid_parent(ReferenceTarget* node) const;
+
+    std::vector<ReferenceTarget*> valid_mattes() const;
+    bool is_valid_matte(ReferenceTarget* node) const;
 };
 
 } // namespace model

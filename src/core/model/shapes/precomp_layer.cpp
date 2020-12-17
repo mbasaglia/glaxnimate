@@ -110,3 +110,14 @@ void model::PreCompLayer::on_removed_from_list()
 }
 
 
+QPainterPath model::PreCompLayer::to_local_clip(model::FrameTime time) const
+{
+    QPainterPath p;
+    if ( composition.get() )
+    {
+        time = timing->time_to_local(time);
+        for ( const auto& sh : composition->shapes )
+            p.addPath(sh->to_clip(time));
+    }
+    return p;
+}

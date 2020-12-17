@@ -47,3 +47,8 @@ QTransform model::Group::local_transform_matrix(model::FrameTime t) const
 {
     return transform.get()->transform_matrix(t);
 }
+
+QPainterPath model::Group::to_local_clip(FrameTime t) const
+{
+    return ShapeElement::shapes(t).painter_path();
+}

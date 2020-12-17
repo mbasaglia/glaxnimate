@@ -32,14 +32,12 @@ public:
     }
 
     virtual void add_shapes(FrameTime t, math::bezier::MultiBezier& bez) const = 0;
-    math::bezier::MultiBezier shapes(FrameTime t) const
-    {
-        math::bezier::MultiBezier bez;
-        add_shapes(t, bez);
-        return bez;
-    }
+    math::bezier::MultiBezier shapes(FrameTime t) const;
 
     ShapeListProperty* owner() const { return property_; }
+
+    QPainterPath to_clip(FrameTime t) const;
+    virtual QPainterPath to_local_clip(FrameTime t) const = 0;
 
 signals:
     void position_updated();
@@ -124,6 +122,7 @@ public:
     }
 
     std::unique_ptr<Path> to_path() const;
+    QPainterPath to_local_clip(FrameTime t) const override;
 };
 
 /**

@@ -32,3 +32,12 @@ void model::Stroke::set_pen_style_undoable(const QPen& pen_style)
     miter_limit.set_undoable(pen_style.miterLimit());
 }
 
+QPainterPath model::Stroke::to_local_clip(model::FrameTime t) const
+{
+    QPainterPathStroker s;
+    s.setWidth(width.get());
+    s.setCapStyle(Qt::PenCapStyle(cap.get()));
+    s.setJoinStyle(Qt::PenJoinStyle(join.get()));
+    s.setMiterLimit(miter_limit.get());
+    return s.createStroke(collect_shapes(t).painter_path());
+}
