@@ -161,6 +161,16 @@ private:
     model::ShapeListProperty* owner;
 };
 
+void convert_to_mask(NodeMenu* menu, model::ShapeElement* element)
+{
+    if ( element->docnode_parent() != element->document()->defs()->masks.get() )
+        menu->addAction(QIcon::fromTheme("path-mask-edit"), NodeMenu::tr("Convert to Mask"), menu, [element]{
+            auto shapes = &element->document()->defs()->masks->shapes;
+            command::UndoMacroGuard guard(NodeMenu::tr("Convert %1 to Mask").arg(element->name.get()), element->document());
+            element->push_command(new command::MoveShape(element, element->owner(), shapes, shapes->size()));
+        });
+}
+
 void togglable_action(QMenu* menu, model::Property<bool>* prop, const QString& icon, const QString& label)
 {
     auto action = menu->addAction(QIcon::fromTheme(icon), label, menu, [prop](bool value){
@@ -243,10 +253,12 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
             addAction(QIcon::fromTheme("component"), tr("Precompose"), this, [window, lay]{
                 window->shape_to_precomposition(lay);
             });
+            convert_to_mask(this, lay);
         }
         else if ( group )
         {
             addAction(QIcon::fromTheme("folder"), tr("Convert to Layer"), this, ConvertGroupType<model::Layer>(group));
+            convert_to_mask(this, group);
         }
         else if ( auto image = qobject_cast<model::Image*>(shape) )
         {
