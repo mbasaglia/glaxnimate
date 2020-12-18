@@ -57,6 +57,8 @@ void model::Object::property_value_changed(const BaseProperty* prop, const QVari
 {
     on_property_changed(prop, value);
     emit property_changed(prop, value);
+    if ( prop->traits().flags & PropertyTraits::Visual )
+        d->document->graphics_invalidated();
 }
 
 void model::Object::add_property(model::BaseProperty* prop)

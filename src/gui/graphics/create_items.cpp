@@ -128,9 +128,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
     );
     register_builder<model::Precomposition>(
         [](model::Precomposition* comp){
-            auto item = GraphicsItemFactory::make_graphics_item_default(comp);
-            item->set_selection_mode(MainCompositionItem::None);
-            return item;
+            return new CompositionItem(comp);
         },
         [](model::Precomposition* comp){
             auto v = std::make_unique<GraphicsEditor>(comp);

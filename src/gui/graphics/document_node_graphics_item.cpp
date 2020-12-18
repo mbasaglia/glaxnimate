@@ -9,6 +9,7 @@ graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::DocumentNode
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIsMovable, false);
     setFlag(QGraphicsItem::ItemStacksBehindParent);
+    setFlag(QGraphicsItem::ItemHasNoContents);
 
     /// \todo Setting
     setBoundingRegionGranularity(0);
@@ -31,9 +32,8 @@ QRectF graphics::DocumentNodeGraphicsItem::boundingRect() const
     return node_->local_bounding_rect(node_->time());
 }
 
-void graphics::DocumentNodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
+void graphics::DocumentNodeGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    node_->paint(painter, node_->time(), model::DocumentNode::NoTransform);
 }
 
 void graphics::DocumentNodeGraphicsItem::on_property_changed(const model::BaseProperty* prop)

@@ -5,26 +5,27 @@
 #include <QPixmap>
 #include <QPainter>
 
-#include "model/main_composition.hpp"
-#include "handle.hpp"
-#include "graphics/document_node_graphics_item.hpp"
-#include "command/property_commands.hpp"
-#include "model/document.hpp"
 #include "app/application.hpp"
+
+#include "model/main_composition.hpp"
+#include "model/document.hpp"
+#include "command/property_commands.hpp"
+
+#include "graphics/handle.hpp"
+#include "graphics/document_node_graphics_item.hpp"
 #include "graphics/transform_graphics_item.hpp"
+#include "graphics/composition_item.hpp"
 
 namespace graphics {
 
-class MainCompositionItem : public DocumentNodeGraphicsItem
+class MainCompositionItem : public CompositionItem
 {
 public:
     explicit MainCompositionItem(model::MainComposition* animation)
-        : DocumentNodeGraphicsItem(animation)
+        : CompositionItem(animation)
     {
         connect(animation, &model::MainComposition::width_changed, this, &MainCompositionItem::size_changed);
         connect(animation, &model::MainComposition::height_changed, this, &MainCompositionItem::size_changed);
-        setFlag(QGraphicsItem::ItemIsSelectable, false);
-        set_selection_mode(None);
     }
 
 private slots:

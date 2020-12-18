@@ -96,9 +96,7 @@ private:
 public:
     enum PaintMode
     {
-        Transformed,    ///< Paint only this, apply transform
-        NoTransform,    ///< Paint only this, don't apply transform
-        Recursive,      ///< Paint this and children, apply transform
+        Canvas,         ///< Paint everything
         Render          ///< Recursive, but hide objects maked with render == false
     };
 
