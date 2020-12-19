@@ -233,6 +233,7 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::AnimationContainer, model::Object>(model);
     register_from_meta<model::StretchableTime, model::Object>(model);
     register_from_meta<model::Transform, model::Object>(model);
+    register_from_meta<model::MaskSettings, model::Object>(model);
     register_from_meta<model::Composition, model::DocumentNode>(model)
         .def("add_shape", CreateObject(&model::Composition::shapes), no_own,
             "Adds a shape from its class name",

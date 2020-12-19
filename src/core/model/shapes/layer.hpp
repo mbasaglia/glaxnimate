@@ -3,6 +3,7 @@
 #include "group.hpp"
 #include "model/property/reference_property.hpp"
 #include "model/animation_container.hpp"
+#include "model/mask_settings.hpp"
 
 namespace model {
 
@@ -15,7 +16,7 @@ class Layer : public Group
      * \brief Whether the layer will be rendered / exported in other formats
      */
     GLAXNIMATE_PROPERTY(bool, render, true)
-    GLAXNIMATE_PROPERTY_REFERENCE(model::ShapeElement, mask, &Layer::valid_masks, &Layer::is_valid_mask)
+    GLAXNIMATE_SUBOBJECT(model::MaskSettings, mask)
 
 public:
     class ChildLayerIterator
@@ -93,9 +94,6 @@ public:
 private:
     std::vector<ReferenceTarget*> valid_parents() const;
     bool is_valid_parent(ReferenceTarget* node) const;
-
-    std::vector<ReferenceTarget*> valid_masks() const;
-    bool is_valid_mask(ReferenceTarget* node) const;
 };
 
 } // namespace model

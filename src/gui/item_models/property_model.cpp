@@ -4,10 +4,13 @@
 #include <QFont>
 #include <QPalette>
 
-#include "command/property_commands.hpp"
 #include "app/application.hpp"
-#include "widgets/enum_combo.hpp"
+
+#include "command/property_commands.hpp"
 #include "model/shapes/styler.hpp"
+#include "model/stretchable_time.hpp"
+
+#include "widgets/enum_combo.hpp"
 
 class item_models::PropertyModel::Private
 {
@@ -154,8 +157,16 @@ public:
                 if ( prop->traits().type == model::PropertyTraits::Object )
                 {
                     model::Object* subobj = prop->value().value<model::Object*>();
-                    if ( subobj && !subobj->is_instance<model::AnimationContainer>() )
-                        connect_recursive(subobj, model, this_node);
+                    if ( subobj )
+                    {
+                        auto meta = subobj->metaObject();
+                        if (
+                            !meta->inherits(&model::AnimationContainer::staticMetaObject) &&
+                            !meta->inherits(&model::StretchableTime::staticMetaObject) &&
+                            !meta->inherits(&model::MaskSettings::staticMetaObject)
+                        )
+                            connect_recursive(subobj, model, this_node);
+                    }
                 }
                 else if ( !is_main_comp && prop->traits().flags & model::PropertyTraits::Visual &&
                     prop->traits().type != model::PropertyTraits::ObjectReference )

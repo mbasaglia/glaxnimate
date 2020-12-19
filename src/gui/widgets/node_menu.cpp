@@ -170,6 +170,146 @@ void togglable_action(QMenu* menu, model::Property<bool>* prop, const QString& i
     action->setChecked(prop->get());
 }
 
+void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
+{
+    menu->addAction(QIcon::fromTheme("transform-move"), NodeMenu::tr("Reset Transform"), menu,
+        ResetTransform{group->document(), group->transform.get()}
+    );
+
+    menu->addSeparator();
+
+    model::Layer* lay = qobject_cast<model::Layer*>(group);
+    if ( lay )
+    {
+        menu->addAction(QIcon::fromTheme("timeline-use-zone-on"), NodeMenu::tr("Span All Frames"), menu, [lay]{
+            command::UndoMacroGuard guard(NodeMenu::tr("Span All Frames"), lay->document());
+            lay->animation->first_frame.set_undoable(
+                lay->document()->main()->animation->first_frame.get()
+            );
+            lay->animation->last_frame.set_undoable(
+                lay->document()->main()->animation->last_frame.get()
+            );
+        });
+
+        menu->addSeparator();
+        menu->addAction(menu_ref_property(QIcon::fromTheme("path-mask-edit"), NodeMenu::tr("Mask"), menu, &lay->mask->mask)->menuAction());
+        if ( lay->mask->has_mask() )
+        {
+            QAction* lock_mask = menu->addAction(QIcon::fromTheme("transform-move"), NodeMenu::tr("Lock Mask Transform"), menu, [lay](bool checked){
+                lay->mask->lock_transform.set_undoable(checked);
+            });
+            lock_mask->setCheckable(true);
+            lock_mask->setChecked(lay->mask->lock_transform.get());
+
+            menu->addAction(QIcon::fromTheme("edit-entry"), NodeMenu::tr("Edit Mask"), menu, [window, lay]{
+                window->select({lay->mask->mask.get()});
+            });
+        }
+
+        menu->addSeparator();
+        menu->addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), NodeMenu::tr("Parent"), menu, &lay->parent)->menuAction());
+        menu->addAction(QIcon::fromTheme("object-group"), NodeMenu::tr("Convert to Group"), menu, ConvertGroupType<model::Group>(lay));
+        menu->addAction(QIcon::fromTheme("component"), NodeMenu::tr("Precompose"), menu, [window, lay]{
+            window->shape_to_precomposition(lay);
+        });
+    }
+    else
+    {
+        menu->addAction(QIcon::fromTheme("folder"), NodeMenu::tr("Convert to Layer"), menu, ConvertGroupType<model::Layer>(group));
+    }
+
+    if ( group->docnode_parent() != group->document()->defs()->masks.get() )
+    {
+        menu->addAction(QIcon::fromTheme("path-mask-edit"), NodeMenu::tr("Convert to Mask"), menu, [group]{
+            auto shapes = &group->document()->defs()->masks->shapes;
+            command::UndoMacroGuard guard(NodeMenu::tr("Convert %1 to Mask").arg(group->name.get()), group->document());
+            group->push_command(new command::MoveShape(group, group->owner(), shapes, shapes->size()));
+        });
+    }
+}
+
+void actions_image(QMenu* menu, GlaxnimateWindow* window, model::Image* image)
+{
+    menu->addAction(QIcon::fromTheme("transform-move"), NodeMenu::tr("Reset Transform"), menu,
+        ResetTransform{image->document(), image->transform.get()}
+    );
+
+    menu->addSeparator();
+
+    menu->addAction(menu_ref_property(QIcon::fromTheme("folder-pictures"), NodeMenu::tr("Image"), menu, &image->image)->menuAction());
+
+    menu->addAction(QIcon::fromTheme("mail-attachment-symbolic"), NodeMenu::tr("Embed"), menu, [image]{
+        if ( image->image.get() )
+            image->image->embed(true);
+    })->setEnabled(image->image.get() && !image->image->embedded());
+
+    menu->addAction(QIcon::fromTheme("editimage"), NodeMenu::tr("Open with External Application"), menu, [image, window]{
+        if ( image->image.get() )
+        {
+            if ( !QDesktopServices::openUrl(image->image->to_url()) )
+                window->warning(NodeMenu::tr("Could not find suitable application, check your system settings."));
+        }
+    })->setEnabled(image->image.get());
+
+
+    menu->addAction(QIcon::fromTheme("document-open"), NodeMenu::tr("From File..."), menu, [image, window]{
+        auto bmp = image->image.get();
+        QString filename = window->get_open_image_file(NodeMenu::tr("Update Image"), bmp ? bmp->file_info().absolutePath() : "");
+        if ( filename.isEmpty() )
+            return;
+
+        command::UndoMacroGuard macro(NodeMenu::tr("Update Image"), image->document());
+        if ( bmp )
+        {
+            bmp->data.set_undoable(QByteArray());
+            bmp->filename.set_undoable(filename);
+        }
+        else
+        {
+            auto img = image->document()->defs()->add_image_file(filename, false);
+            if ( img )
+                image->image.set_undoable(QVariant::fromValue(img));
+        }
+    });
+
+    menu->addAction(QIcon::fromTheme("bitmap-trace"), NodeMenu::tr("Trace Bitmap..."), menu, [image, window]{
+        window->trace_dialog(image);
+    });
+}
+
+void actions_precomp(QMenu* menu, GlaxnimateWindow*, model::PreCompLayer* lay)
+{
+    menu->addAction(QIcon::fromTheme("transform-move"), NodeMenu::tr("Reset Transform"), menu,
+        ResetTransform{lay->document(), lay->transform.get()}
+    );
+
+    menu->addAction(QIcon::fromTheme("edit-rename"), NodeMenu::tr("Rename from Composition"), menu, [lay]{
+        if ( lay->composition.get() )
+            lay->name.set_undoable(lay->composition->object_name());
+    });
+    menu->addAction(QIcon::fromTheme("archive-extract"), NodeMenu::tr("Decompose"), menu, [lay]{
+        command::UndoMacroGuard guard(NodeMenu::tr("Decompose"), lay->document());
+
+        auto comp = lay->composition.get();
+
+        if ( comp )
+        {
+            int index = lay->owner()->index_of(lay);
+            for ( const auto& child : comp->shapes )
+            {
+                std::unique_ptr<model::ShapeElement> clone(static_cast<model::ShapeElement*>(child->clone().release()));
+                clone->refresh_uuid();
+                lay->push_command(new command::AddShape(lay->owner(), std::move(clone), ++index));
+            }
+        }
+
+        lay->push_command(new command::RemoveShape(lay, lay->owner()));
+
+        if ( comp && comp->users().empty() )
+            lay->push_command(new command::RemoveObject(comp, &lay->document()->defs()->precompositions));
+    });
+}
+
 } // namespace
 
 
@@ -215,125 +355,15 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
 
         if ( auto group = qobject_cast<model::Group*>(shape) )
         {
-            addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
-                ResetTransform{group->document(), group->transform.get()}
-            );
-
-            addSeparator();
-
-            model::Layer* lay = qobject_cast<model::Layer*>(shape);
-            if ( lay )
-            {
-                addAction(QIcon::fromTheme("timeline-use-zone-on"), tr("Span All Frames"), this, [lay]{
-                    command::UndoMacroGuard guard(tr("Span All Frames"), lay->document());
-                    lay->animation->first_frame.set_undoable(
-                        lay->document()->main()->animation->first_frame.get()
-                    );
-                    lay->animation->last_frame.set_undoable(
-                        lay->document()->main()->animation->last_frame.get()
-                    );
-                });
-
-                addSeparator();
-                addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), tr("Parent"), this, &lay->parent)->menuAction());
-                addAction(QIcon::fromTheme("object-group"), tr("Convert to Group"), this, ConvertGroupType<model::Group>(lay));
-                addAction(QIcon::fromTheme("component"), tr("Precompose"), this, [window, lay]{
-                    window->shape_to_precomposition(lay);
-                });
-            }
-            else
-            {
-                addAction(QIcon::fromTheme("folder"), tr("Convert to Layer"), this, ConvertGroupType<model::Layer>(group));
-            }
-
-            if ( group->docnode_parent() != group->document()->defs()->masks.get() )
-            {
-                addAction(QIcon::fromTheme("path-mask-edit"), tr("Convert to Mask"), this, [group]{
-                    auto shapes = &group->document()->defs()->masks->shapes;
-                    command::UndoMacroGuard guard(NodeMenu::tr("Convert %1 to Mask").arg(group->name.get()), group->document());
-                    group->push_command(new command::MoveShape(group, group->owner(), shapes, shapes->size()));
-                });
-            }
+            actions_group(this, window, group);
         }
         else if ( auto image = qobject_cast<model::Image*>(shape) )
         {
-            addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
-                ResetTransform{image->document(), image->transform.get()}
-            );
-
-            addSeparator();
-
-            addAction(menu_ref_property(QIcon::fromTheme("folder-pictures"), tr("Image"), this, &image->image)->menuAction());
-
-            addAction(QIcon::fromTheme("mail-attachment-symbolic"), tr("Embed"), this, [image]{
-                if ( image->image.get() )
-                    image->image->embed(true);
-            })->setEnabled(image->image.get() && !image->image->embedded());
-
-            addAction(QIcon::fromTheme("editimage"), tr("Open with External Application"), this, [image, window]{
-                if ( image->image.get() )
-                {
-                    if ( !QDesktopServices::openUrl(image->image->to_url()) )
-                        window->warning(tr("Could not find suitable application, check your system settings."));
-                }
-            })->setEnabled(image->image.get());
-
-
-            addAction(QIcon::fromTheme("document-open"), tr("From File..."), this, [image, window]{
-                auto bmp = image->image.get();
-                QString filename = window->get_open_image_file(tr("Update Image"), bmp ? bmp->file_info().absolutePath() : "");
-                if ( filename.isEmpty() )
-                    return;
-
-                command::UndoMacroGuard macro(tr("Update Image"), image->document());
-                if ( bmp )
-                {
-                    bmp->data.set_undoable(QByteArray());
-                    bmp->filename.set_undoable(filename);
-                }
-                else
-                {
-                    auto img = image->document()->defs()->add_image_file(filename, false);
-                    if ( img )
-                        image->image.set_undoable(QVariant::fromValue(img));
-                }
-            });
-
-            addAction(QIcon::fromTheme("bitmap-trace"), tr("Trace Bitmap..."), this, [image, window]{
-                window->trace_dialog(image);
-            });
+            actions_image(this, window, image);
         }
         else if ( auto lay = qobject_cast<model::PreCompLayer*>(shape) )
         {
-            addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
-                ResetTransform{image->document(), image->transform.get()}
-            );
-
-            addAction(QIcon::fromTheme("edit-rename"), tr("Rename from Composition"), this, [lay]{
-                if ( lay->composition.get() )
-                    lay->name.set_undoable(lay->composition->object_name());
-            });
-            addAction(QIcon::fromTheme("archive-extract"), tr("Decompose"), this, [lay]{
-                command::UndoMacroGuard guard(tr("Decompose"), lay->document());
-
-                auto comp = lay->composition.get();
-
-                if ( comp )
-                {
-                    int index = lay->owner()->index_of(lay);
-                    for ( const auto& child : comp->shapes )
-                    {
-                        std::unique_ptr<model::ShapeElement> clone(static_cast<model::ShapeElement*>(child->clone().release()));
-                        clone->refresh_uuid();
-                        lay->push_command(new command::AddShape(lay->owner(), std::move(clone), ++index));
-                    }
-                }
-
-                lay->push_command(new command::RemoveShape(lay, lay->owner()));
-
-                if ( comp && comp->users().empty() )
-                    lay->push_command(new command::RemoveObject(comp, &lay->document()->defs()->precompositions));
-            });
+            actions_precomp(this, window, lay);
         }
     }
     else if ( qobject_cast<model::Composition*>(node) )

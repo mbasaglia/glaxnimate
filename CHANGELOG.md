@@ -5,6 +5,7 @@
     * Action to import animations
     * Added checks to avoid cyclical dependencies between compositions
     * Context menu action to "Decompose" PreComp layers
+    * Support for clipping masks
 * UI:
     * Right clicking on the layer view to get a context menu no longer changes the selection
     * Object context menus now have actions to toggle visibility and lock
@@ -20,6 +21,7 @@
     * The SVG parsers now parses correctly "d" attributes without spaces
 * Scripting:
     * Python has now access to the users of an asset
+    * Python can update the current selection
 * Bug Fixes:
     * Duplicating shapes updates uuids
     * Importing images sets their name

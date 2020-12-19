@@ -431,3 +431,8 @@ QMenu * GlaxnimateWindow::create_layer_menu() const
 {
     return d->ui.menu_new_layer;
 }
+
+void GlaxnimateWindow::select(const std::vector<model::DocumentNode *>& nodes)
+{
+    d->scene.user_select(nodes, graphics::DocumentScene::Replace);
+}

@@ -65,7 +65,7 @@ model::ReferenceTarget* model::Defs::find_by_uuid ( const QUuid& n ) const
             return node;
     }
 
-    return nullptr;
+    return const_cast<model::Precomposition*>(masks.get())->find_by_uuid(n);
 }
 
 model::NamedColor* model::Defs::add_color(const QColor& color, const QString& name)

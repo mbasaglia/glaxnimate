@@ -18,7 +18,6 @@ namespace item_models {
 class DocumentNodeModel;
 } // namespace item_models
 
-
 namespace tools {
 class Tool;
 } // namespace tools
@@ -79,6 +78,10 @@ public:
      * \brief Selected nodes, removing nodes that are descendants of other selected nodes
      */
     std::vector<model::DocumentNode*> cleaned_selection() const;
+    /**
+     * \brief Update the selection
+     */
+    void select(const std::vector<model::DocumentNode*>& nodes);
 
     void delete_selected();
     void group_shapes();

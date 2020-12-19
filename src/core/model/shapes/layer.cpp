@@ -3,9 +3,6 @@
 #include <QPainter>
 
 #include "model/composition.hpp"
-#include "model/document.hpp"
-#include "model/defs/defs.hpp"
-#include "model/defs/precomposition.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::Layer)
 
@@ -113,10 +110,10 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
 
     if ( mode != Render || render.get() )
     {
-        if ( mask.get() )
+        if ( mask->has_mask() )
         {
             painter->save();
-            painter->setClipPath(mask->to_clip(time), Qt::IntersectClip);
+            painter->setClipPath(mask->to_clip(time, transform_matrix(time)), Qt::IntersectClip);
             DocumentNode::paint(painter, time, mode);
             painter->restore();
         }
@@ -125,16 +122,6 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
             DocumentNode::paint(painter, time, mode);
         }
     }
-}
-
-std::vector<model::ReferenceTarget*> model::Layer::valid_masks() const
-{
-    return document()->defs()->masks->shapes.valid_reference_values(true);
-}
-
-bool model::Layer::is_valid_mask(model::ReferenceTarget* node) const
-{
-    return document()->defs()->masks->shapes.is_valid_reference_value(node, true);
 }
 
 QPainterPath model::Layer::to_local_clip(model::FrameTime time) const
