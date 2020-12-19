@@ -161,16 +161,6 @@ private:
     model::ShapeListProperty* owner;
 };
 
-void convert_to_mask(NodeMenu* menu, model::ShapeElement* element)
-{
-    if ( element->docnode_parent() != element->document()->defs()->masks.get() )
-        menu->addAction(QIcon::fromTheme("path-mask-edit"), NodeMenu::tr("Convert to Mask"), menu, [element]{
-            auto shapes = &element->document()->defs()->masks->shapes;
-            command::UndoMacroGuard guard(NodeMenu::tr("Convert %1 to Mask").arg(element->name.get()), element->document());
-            element->push_command(new command::MoveShape(element, element->owner(), shapes, shapes->size()));
-        });
-}
-
 void togglable_action(QMenu* menu, model::Property<bool>* prop, const QString& icon, const QString& label)
 {
     auto action = menu->addAction(QIcon::fromTheme(icon), label, menu, [prop](bool value){
@@ -207,31 +197,6 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
         });
 
         addSeparator();
-        model::Layer* lay = nullptr;
-        auto group = qobject_cast<model::Group*>(shape);
-        if ( group )
-        {
-            addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
-                ResetTransform{group->document(), group->transform.get()}
-            );
-
-            lay = qobject_cast<model::Layer*>(shape);
-            if ( lay )
-            {
-                addSeparator();
-                addAction(QIcon::fromTheme("timeline-use-zone-on"), tr("Span All Frames"), this, [lay]{
-                    command::UndoMacroGuard guard(tr("Span All Frames"), lay->document());
-                    lay->animation->first_frame.set_undoable(
-                        lay->document()->main()->animation->first_frame.get()
-                    );
-                    lay->animation->last_frame.set_undoable(
-                        lay->document()->main()->animation->last_frame.get()
-                    );
-                });
-            }
-        }
-
-        addSeparator();
 
         move_action(this, shape, command::ReorderCommand::MoveTop);
         move_action(this, shape, command::ReorderCommand::MoveUp);
@@ -246,22 +211,56 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
             }
         });
 
-        if ( lay )
+        addSeparator();
+
+        if ( auto group = qobject_cast<model::Group*>(shape) )
         {
-            addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), tr("Parent"), this, &lay->parent)->menuAction());
-            addAction(QIcon::fromTheme("object-group"), tr("Convert to Group"), this, ConvertGroupType<model::Group>(lay));
-            addAction(QIcon::fromTheme("component"), tr("Precompose"), this, [window, lay]{
-                window->shape_to_precomposition(lay);
-            });
-            convert_to_mask(this, lay);
-        }
-        else if ( group )
-        {
-            addAction(QIcon::fromTheme("folder"), tr("Convert to Layer"), this, ConvertGroupType<model::Layer>(group));
-            convert_to_mask(this, group);
+            addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
+                ResetTransform{group->document(), group->transform.get()}
+            );
+
+            addSeparator();
+
+            model::Layer* lay = qobject_cast<model::Layer*>(shape);
+            if ( lay )
+            {
+                addAction(QIcon::fromTheme("timeline-use-zone-on"), tr("Span All Frames"), this, [lay]{
+                    command::UndoMacroGuard guard(tr("Span All Frames"), lay->document());
+                    lay->animation->first_frame.set_undoable(
+                        lay->document()->main()->animation->first_frame.get()
+                    );
+                    lay->animation->last_frame.set_undoable(
+                        lay->document()->main()->animation->last_frame.get()
+                    );
+                });
+
+                addSeparator();
+                addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), tr("Parent"), this, &lay->parent)->menuAction());
+                addAction(QIcon::fromTheme("object-group"), tr("Convert to Group"), this, ConvertGroupType<model::Group>(lay));
+                addAction(QIcon::fromTheme("component"), tr("Precompose"), this, [window, lay]{
+                    window->shape_to_precomposition(lay);
+                });
+            }
+            else
+            {
+                addAction(QIcon::fromTheme("folder"), tr("Convert to Layer"), this, ConvertGroupType<model::Layer>(group));
+            }
+
+            if ( group->docnode_parent() != group->document()->defs()->masks.get() )
+            {
+                addAction(QIcon::fromTheme("path-mask-edit"), tr("Convert to Mask"), this, [group]{
+                    auto shapes = &group->document()->defs()->masks->shapes;
+                    command::UndoMacroGuard guard(NodeMenu::tr("Convert %1 to Mask").arg(group->name.get()), group->document());
+                    group->push_command(new command::MoveShape(group, group->owner(), shapes, shapes->size()));
+                });
+            }
         }
         else if ( auto image = qobject_cast<model::Image*>(shape) )
         {
+            addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
+                ResetTransform{image->document(), image->transform.get()}
+            );
+
             addSeparator();
 
             addAction(menu_ref_property(QIcon::fromTheme("folder-pictures"), tr("Image"), this, &image->image)->menuAction());
@@ -306,6 +305,10 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
         }
         else if ( auto lay = qobject_cast<model::PreCompLayer*>(shape) )
         {
+            addAction(QIcon::fromTheme("transform-move"), tr("Reset Transform"), this,
+                ResetTransform{image->document(), image->transform.get()}
+            );
+
             addAction(QIcon::fromTheme("edit-rename"), tr("Rename from Composition"), this, [lay]{
                 if ( lay->composition.get() )
                     lay->name.set_undoable(lay->composition->object_name());
