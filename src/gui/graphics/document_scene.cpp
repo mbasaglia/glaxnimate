@@ -108,6 +108,8 @@ void graphics::DocumentScene::set_document ( model::Document* document )
 {
     d->document = document;
     set_composition(document ? document->main() : nullptr);
+    if ( document )
+        connect(document, &model::Document::graphics_invalidated, this, [this]{update();});
 }
 
 void graphics::DocumentScene::set_composition(model::Composition* comp)
