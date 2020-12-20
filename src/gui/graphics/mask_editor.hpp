@@ -18,7 +18,7 @@ public:
         connect(layer->mask.get(), &model::MaskSettings::lock_transform_changed, this, &MaskEditor::toggle_transform);
         toggle_transform(layer->mask->lock_transform.get());
         if ( layer->mask->has_mask() )
-            connect_child(layer->mask->mask.get(), this);
+            connect_child(layer->mask->mask.get());
     }
 
     ~MaskEditor()
@@ -38,18 +38,16 @@ private:
             setTransform({});
     }
 
-    void connect_child(model::DocumentNode* node, QGraphicsItem* parent_item)
+    void connect_child(model::DocumentNode* node)
     {
         auto editor = GraphicsItemFactory::instance().make_graphics_editor(node);
         editor->setParentItem(this);
 
         connect(node, &model::DocumentNode::docnode_child_remove_end, this, &MaskEditor::disconnect_child);
-        connect(node, &model::DocumentNode::docnode_child_add_end, this, [editptr=editor.get(), this](model::DocumentNode* node){
-            connect_child(node, editptr);
-        });
+        connect(node, &model::DocumentNode::docnode_child_add_end, this, &MaskEditor::connect_child);
 
         for ( const auto& child : node->docnode_children() )
-            connect_child(child, editor.get());
+            connect_child(child);
 
         children.emplace(node, std::move(editor));
     }
@@ -72,7 +70,7 @@ private:
         children.clear();
 
         if ( new_mask )
-            connect_child(new_mask, this);
+            connect_child(new_mask);
     }
 
     model::Layer* layer;
