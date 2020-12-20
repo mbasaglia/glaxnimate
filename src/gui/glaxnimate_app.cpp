@@ -113,6 +113,7 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("shape_group",      {},         {},                        Setting::Internal,  true),
         Setting("shape_fill",       {},         {},                        Setting::Internal,  true),
         Setting("shape_stroke",     {},         {},                        Setting::Internal,  true),
+        Setting("edit_mask",        {},         {},                        Setting::Internal,  false),
         Setting("color_main",       {},         {},                        Setting::Internal,  "#ffffff"),
         Setting("color_secondary",  {},         {},                        Setting::Internal,  "#000000"),
         Setting("stroke_width",     {},         {},                        Setting::Internal,  1.),

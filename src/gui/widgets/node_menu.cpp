@@ -200,10 +200,6 @@ void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
             });
             lock_mask->setCheckable(true);
             lock_mask->setChecked(lay->mask->lock_transform.get());
-
-            menu->addAction(QIcon::fromTheme("edit-entry"), NodeMenu::tr("Edit Mask"), menu, [window, lay]{
-                window->select({lay->mask->mask.get()});
-            });
         }
 
         menu->addSeparator();

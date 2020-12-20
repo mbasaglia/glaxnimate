@@ -601,8 +601,8 @@ void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
     }
 
     active_tool = tool;
-    ui.graphics_view->set_active_tool(tool);
     scene.set_active_tool(tool);
+    ui.graphics_view->set_active_tool(tool);
     ui.tool_settings_widget->setCurrentWidget(tool->get_settings_widget());
 }
 

@@ -8,7 +8,6 @@ namespace tools { class Tool; }
 
 namespace graphics {
 
-class GraphicsEditor;
 class DocumentNodeGraphicsItem;
 
 class DocumentScene : public QGraphicsScene
@@ -46,9 +45,10 @@ public:
     bool is_selected(model::DocumentNode* node) const;
     bool is_descendant_of_selection(model::DocumentNode* node) const;
     void show_editors(model::DocumentNode* node);
+    void show_custom_editor(model::DocumentNode* node, std::unique_ptr<QGraphicsItem> editor);
     void hide_editors(model::DocumentNode* node, bool recursive, bool if_not_selected);
     bool has_editors(model::DocumentNode* node) const;
-    GraphicsEditor* get_editor(model::DocumentNode* node) const;
+    QGraphicsItem* get_editor(model::DocumentNode* node) const;
 
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const;
 

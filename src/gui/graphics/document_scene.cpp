@@ -7,6 +7,7 @@
 #include "graphics/create_items.hpp"
 #include "graphics/graphics_editor.hpp"
 #include "graphics/item_data.hpp"
+#include "graphics/mask_editor.hpp"
 #include "tools/base.hpp"
 
 class graphics::DocumentScene::Private
@@ -14,7 +15,7 @@ class graphics::DocumentScene::Private
 public:
     static constexpr int editor_z = 1000;
 
-    using EditorMap = std::unordered_map<model::DocumentNode*, std::unique_ptr<graphics::GraphicsEditor>>;
+    using EditorMap = std::unordered_map<model::DocumentNode*, std::unique_ptr<QGraphicsItem>>;
 
     void remove_selection(model::DocumentNode* node)
     {
@@ -84,11 +85,11 @@ public:
     model::Document* document = nullptr;
     std::unordered_map<model::DocumentNode*, DocumentNodeGraphicsItem*> node_to_item;
     EditorMap node_to_editors;
-    GraphicsItemFactory item_factory;
     std::vector<model::DocumentNode*> selection;
     tools::Tool* tool = nullptr;
     QBrush back;
     model::Composition* comp = nullptr;
+    bool show_masks = false;
 };
 
 graphics::DocumentScene::DocumentScene()
@@ -129,7 +130,7 @@ void graphics::DocumentScene::set_composition(model::Composition* comp)
 
 void graphics::DocumentScene::connect_node ( model::DocumentNode* node )
 {
-    DocumentNodeGraphicsItem* child = d->item_factory.make_graphics_item(node);
+    DocumentNodeGraphicsItem* child = GraphicsItemFactory::instance().make_graphics_item(node);
     if ( !child )
         return;
 
@@ -293,14 +294,6 @@ void graphics::DocumentScene::user_select(const std::vector<model::DocumentNode 
             break;
     }
 
-    for ( auto it = d->node_to_editors.begin(); it != d->node_to_editors.end(); )
-    {
-        if ( std::binary_search(deselected->begin(), deselected->end(), it->first) )
-            it = d->node_to_editors.erase(it);
-        else
-            ++it;
-    }
-
     d->selection.erase(
         std::remove_if(d->selection.begin(), d->selection.end(),
             [&deselected](model::DocumentNode* node){
@@ -310,7 +303,10 @@ void graphics::DocumentScene::user_select(const std::vector<model::DocumentNode 
     );
 
     for ( auto old_sel : *deselected )
+    {
+        d->node_to_editors.erase(old_sel);
         d->tool->on_deselected(this, old_sel);
+    }
 
     for ( auto new_sel : *selected )
         add_selection(new_sel);
@@ -395,7 +391,7 @@ void graphics::DocumentScene::show_editors(model::DocumentNode* node)
 {
     if ( !d->node_to_editors.count(node) )
     {
-        if ( auto item = d->item_factory.make_graphics_editor(node) )
+        if ( auto item = GraphicsItemFactory::instance().make_graphics_editor(node) )
         {
             item->setZValue(Private::editor_z);
             addItem(item.get());
@@ -455,11 +451,21 @@ bool graphics::DocumentScene::has_editors(model::DocumentNode* node) const
     return d->node_to_editors.find(node) != d->node_to_editors.end();
 }
 
-graphics::GraphicsEditor * graphics::DocumentScene::get_editor(model::DocumentNode* node) const
+QGraphicsItem* graphics::DocumentScene::get_editor(model::DocumentNode* node) const
 {
     auto it = d->node_to_editors.find(node);
     if ( it == d->node_to_editors.end() )
         return nullptr;
 
     return it->second.get();
+}
+
+void graphics::DocumentScene::show_custom_editor(model::DocumentNode* node, std::unique_ptr<QGraphicsItem> editor)
+{
+    auto it = d->node_to_editors.find(node);
+    addItem(editor.get());
+    if ( it != d->node_to_editors.end() )
+        it->second = std::move(editor);
+    else
+        d->node_to_editors.emplace(node, std::move(editor));
 }

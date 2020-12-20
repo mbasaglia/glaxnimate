@@ -18,7 +18,11 @@ class GraphicsEditor;
 class GraphicsItemFactory
 {
 public:
-    GraphicsItemFactory();
+    static GraphicsItemFactory& instance()
+    {
+        static GraphicsItemFactory instance;
+        return instance;
+    }
 
     DocumentNodeGraphicsItem* make_graphics_item(model::DocumentNode* node) const;
     std::unique_ptr<GraphicsEditor> make_graphics_editor(model::DocumentNode* node) const;
@@ -56,6 +60,11 @@ private:
         FuncItem func_item;
         FuncEdit func_edit;
     };
+
+    GraphicsItemFactory();
+    GraphicsItemFactory(const GraphicsItemFactory&) = delete;
+    GraphicsItemFactory(GraphicsItemFactory&&) = delete;
+    ~GraphicsItemFactory() = default;
 
     template<class DocT, class FuncItem, class FuncEdit>
     void register_builder(FuncItem func_item, FuncEdit func_edit)

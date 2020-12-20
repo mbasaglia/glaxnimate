@@ -26,6 +26,7 @@ class Defs : public Object
         &Defs::gradient_move_end
     )
     GLAXNIMATE_PROPERTY_LIST(model::Gradient, gradients, &Defs::on_added, &Defs::on_removed, {}, {}, {}, {})
+    GLAXNIMATE_SUBOBJECT(model::Precomposition, masks)
     GLAXNIMATE_PROPERTY_LIST(model::Precomposition, precompositions,
         &Defs::on_precomp_added,
         &Defs::on_precomp_removed,
@@ -34,7 +35,6 @@ class Defs : public Object
         &Defs::precomp_move_begin,
         &Defs::precomp_move_end
     )
-    GLAXNIMATE_SUBOBJECT(model::Precomposition, masks)
 
 public:
     explicit Defs(Document* document);

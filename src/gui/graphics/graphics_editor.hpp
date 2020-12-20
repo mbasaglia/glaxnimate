@@ -9,12 +9,14 @@ namespace graphics {
 class GraphicsEditor : public QGraphicsObject
 {
 public:
-    explicit GraphicsEditor(model::DocumentNode* node)
+    explicit GraphicsEditor(model::DocumentNode* node) : node(node)
     {
         connect(node, &model::DocumentNode::transform_matrix_changed,
                 this, &GraphicsEditor::set_transform_matrix);
         setTransform(node->transform_matrix(node->time()));
     }
+
+    ~GraphicsEditor(){}
 
     template<class T, class... Args>
     T* add_child(Args&&... args)
@@ -27,7 +29,7 @@ public:
     QRectF boundingRect() const override { return {}; }
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) override {}
 
-
+model::DocumentNode* node;
 public slots:
     void set_transform_matrix(const QTransform& t)
     {
