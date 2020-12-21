@@ -40,6 +40,7 @@ model/animation_container.cpp
 model/stretchable_time.cpp
 model/comp_graph.cpp
 model/mask_settings.cpp
+model/visitor.cpp
 
 model/animation/keyframe_transition.cpp
 model/animation/animatable.cpp

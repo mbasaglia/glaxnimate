@@ -17,47 +17,30 @@ public:
     TgsVisitor(TgsFormat* fmt) : fmt(fmt) {}
 
 private:
-    enum TreeError
+    void show_error(model::DocumentNode * node, const QString& message, app::log::Severity severity)
     {
-        StarShape,
-        Image,
-        GradientStroke,
-    };
-
-    void show_error(TreeError code)
-    {
-        if ( shown.count(code) )
-            return;
-
-        shown.insert(code);
-        switch ( code )
-        {
-            case StarShape:
-                fmt->information(TgsFormat::tr("Star Shapes are not officially supported"));
-                break;
-            case Image:
-                fmt->error(TgsFormat::tr("Images are not supported"));
-                break;
-            case GradientStroke:
-                fmt->information(TgsFormat::tr("Gradient strokes are not officially supported"));
-                break;
-        }
+        fmt->message(TgsFormat::tr("%1: %2").arg(node->object_name()).arg(message), severity);
     }
 
     void on_visit(model::DocumentNode * node) override
     {
         if ( qobject_cast<model::PolyStar*>(node) )
         {
-            show_error(StarShape);
+            show_error(node, TgsFormat::tr("Star Shapes are not officially supported"), app::log::Info);
         }
         else if ( qobject_cast<model::Image*>(node) )
         {
-            show_error(Image);
+            show_error(node, TgsFormat::tr("Images are not supported"), app::log::Error);
         }
         else if ( auto st = qobject_cast<model::Stroke*>(node) )
         {
             if ( qobject_cast<model::Gradient*>(st->use.get()) )
-                show_error(GradientStroke);
+                show_error(node, TgsFormat::tr("Gradient strokes are not officially supported"), app::log::Info);
+        }
+        else if ( auto layer = qobject_cast<model::Layer*>(node) )
+        {
+            if ( layer->mask->has_mask() )
+                show_error(node, TgsFormat::tr("Masks are not supported"), app::log::Error);
         }
     }
 
@@ -81,7 +64,6 @@ private:
     }
 
     TgsFormat* fmt;
-    std::set<TreeError> shown;
 };
 
 } // namespace io::lottie

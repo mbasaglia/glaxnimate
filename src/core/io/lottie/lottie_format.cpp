@@ -193,6 +193,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"st", Custom},
         FieldInfo("bm"),
         FieldInfo("tt"),
+        FieldInfo("td"),
         FieldInfo("ind", Custom),
         FieldInfo("cl"),
         FieldInfo("ln"),
@@ -406,27 +407,21 @@ public:
         return LayerType::Shape;
     }
 
-    void convert_layer(LayerType type, model::ShapeElement* shape, QCborArray& output, model::Layer* forced_parent = nullptr)
+    QCborMap convert_single_layer(LayerType type, model::ShapeElement* shape, QCborArray& output, model::Layer* forced_parent, bool force_all_shapes)
     {
         switch ( type )
         {
             case LayerType::Shape:
-                output.push_front(wrap_layer_shape(shape));
-                return;
+                return wrap_layer_shape(shape);
             case LayerType::Image:
-                output.push_front(convert_image_layer(static_cast<model::Image*>(shape), forced_parent));
-                return;
+                return convert_image_layer(static_cast<model::Image*>(shape), forced_parent);
             case LayerType::PreComp:
-                output.push_front(convert_precomp_layer(static_cast<model::PreCompLayer*>(shape), forced_parent));
-                return;
+                return convert_precomp_layer(static_cast<model::PreCompLayer*>(shape), forced_parent);
             case LayerType::Layer:
                 break;
         }
 
         auto layer = static_cast<model::Layer*>(shape);
-
-        if ( !layer->render.get() )
-            return;
 
         int parent_index = layer_index(forced_parent ? forced_parent : layer->parent.get());
 
@@ -451,12 +446,16 @@ public:
         {
             std::vector<LayerType> children_types;
             children_types.reserve(layer->shapes.size());
+
             bool all_shapes = true;
-            for ( const auto& shape : layer->shapes )
+            if ( !force_all_shapes )
             {
-                children_types.push_back(layer_type(shape.get()));
-                if ( children_types.back() != LayerType::Shape )
-                    all_shapes = false;
+                for ( const auto& shape : layer->shapes )
+                {
+                    children_types.push_back(layer_type(shape.get()));
+                    if ( children_types.back() != LayerType::Shape )
+                        all_shapes = false;
+                }
             }
 
             if ( all_shapes )
@@ -471,7 +470,38 @@ public:
             }
         }
 
-        output.push_front(json);
+        return json;
+    }
+
+    void convert_layer(LayerType type, model::ShapeElement* shape, QCborArray& output, model::Layer* forced_parent = nullptr)
+    {
+        model::Layer* layer = nullptr;
+        if ( type == LayerType::Layer )
+        {
+            layer = static_cast<model::Layer*>(shape);
+
+            if ( !layer->render.get() )
+                return;
+        }
+
+        auto json = convert_single_layer(type, shape, output, forced_parent, false);
+
+        if ( layer && layer->mask->has_mask() )
+        {
+            auto mask_layer = layer->mask->mask.get();
+            auto mask = convert_single_layer(layer_type(mask_layer), mask_layer, output, nullptr, true);
+            json["tt"_l] = 1;
+            mask["td"_l] = 1;
+            if ( layer->mask->lock_transform.get() )
+                mask["parent"_l] = layer_index(layer);
+
+            output.push_front(json);
+            output.push_front(mask);
+        }
+        else
+        {
+            output.push_front(json);
+        }
     }
 
     void convert_transform(model::Transform* tf, model::AnimatableBase* opacity, QCborMap& json)
@@ -871,7 +901,6 @@ public:
     bool strip;
     QMap<QUuid, int> layer_indices;
     app::log::Log logger{"Lottie Export"};
-
 };
 
 class LottieImporterState

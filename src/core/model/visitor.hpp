@@ -1,33 +1,18 @@
 #pragma once
-
-#include "model/document_node.hpp"
-#include "model/document.hpp"
+#include <QtGlobal>
 
 namespace model {
 
+class Document;
+class DocumentNode;
 
 class Visitor
 {
 public:
     virtual ~Visitor() {}
 
-    void visit(model::Document* doc, bool skip_locked = false)
-    {
-        on_visit(doc);
-        visit(doc->main(), skip_locked);
-        on_visit_end(doc);
-    }
-
-    void visit(model::DocumentNode* node, bool skip_locked = false)
-    {
-        if ( skip_locked && node->locked.get() )
-            return;
-
-        on_visit(node);
-        for ( auto ch : node->docnode_children() )
-            visit(ch, skip_locked);
-        on_visit_end(node);
-    }
+    void visit(model::Document* doc, bool skip_locked = false);
+    void visit(model::DocumentNode* node, bool skip_locked = false);
 
 private:
     virtual void on_visit(model::DocumentNode* node) = 0;
