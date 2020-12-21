@@ -85,10 +85,9 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(const QBy
 
     QJsonArray input_objects = jdoc.array();
 
-    detail::ImportState state(nullptr);
     io::mime::DeserializedData output;
     output.initialize_data();
-    state.document = output.document.get();
+    detail::ImportState state(nullptr, output.document.get());
 
 
     for ( auto json_val : input_objects )
@@ -97,7 +96,7 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(const QBy
             continue;
 
         QJsonObject json_object = json_val.toObject();
-        auto obj = model::Factory::instance().build(json_object["__type__"].toString(), state.document);
+        auto obj = model::Factory::instance().build(json_object["__type__"].toString(), output.document.get());
         if ( !obj )
             continue;
 

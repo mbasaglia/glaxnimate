@@ -31,10 +31,9 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
         return false;
     }
 
-    detail::ImportState state(this);
-    state.document = document;
-    state.document_version = top_level["format"].toObject()["format_version"].toInt(0);
-    if ( state.document_version > format_version )
+    int document_version = top_level["format"].toObject()["format_version"].toInt(0);
+    detail::ImportState state(this, document, document_version);
+    if ( document_version > format_version )
         warning(tr("Opening a file from a newer version of Glaxnimate"));
     state.load_object(document->defs(), top_level["defs"].toObject());
     state.load_object(document->main(), top_level["animation"].toObject());

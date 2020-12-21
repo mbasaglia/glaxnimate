@@ -8,40 +8,100 @@
 
 namespace io::glaxnimate::detail {
 
-
 class ImportState
 {
-public:
-    GlaxnimateFormat* fmt;
-    model::Document* document = nullptr;
-    QMap<QString, model::DocumentNode*> references;
-    QMap<model::BaseProperty*, QUuid> unresolved_references;
-    QMap<model::Object*, QJsonObject> deferred_loads;
-    std::vector<model::Object*> unwanted;
-    int document_version = GlaxnimateFormat::format_version;
+private:
+    struct UnresolvedPath
+    {
+        struct Step
+        {
+            model::Object* object = nullptr;
+            model::BaseProperty* prop = nullptr;
+        };
 
-    ImportState(GlaxnimateFormat* fmt) : fmt(fmt) {}
+        struct Item
+        {
+            QString propname;
+            int index = -1;
+
+            model::Object* step(model::Object* prev) const
+            {
+                auto prop = prev->get_property(propname);
+                if ( !prop || prop->traits().type != model::PropertyTraits::Object )
+                    return nullptr;
+
+                if ( prop->traits().flags & model::PropertyTraits::List )
+                {
+                    if ( index == -1 )
+                        return nullptr;
+
+                    auto val_list = prop->value().toList();
+                    if ( val_list.size() <= index )
+                        return nullptr;
+
+                    return val_list[index].value<model::Object*>();
+                }
+
+                return prop->value().value<model::Object*>();
+            }
+        };
+
+        UnresolvedPath(model::Object* base_object = nullptr) : base_object(base_object)
+        {}
+
+        UnresolvedPath sub(model::BaseProperty* prop) const
+        {
+            auto copy = *this;
+            copy.items.push_back({prop->name()});
+            return copy;
+        }
+
+        UnresolvedPath sub(int index) const
+        {
+            auto copy = *this;
+            copy.items.back().index = index;
+            return copy;
+        }
+
+        model::BaseProperty* prop() const
+        {
+            if ( items.empty() || !base_object )
+                return nullptr;
+
+            model::Object*  object = base_object;
+            for ( int i = 0, e = items.size() - 1; i < e; i++ )
+            {
+                object = items[i].step(object);
+                if ( !object )
+                    return nullptr;
+            }
+
+            return object->get_property(items.back().propname);
+        }
+
+        model::Object* base_object = nullptr;
+        std::vector<Item> items;
+    };
+
+public:
+    ImportState(GlaxnimateFormat* fmt, model::Document* document, int document_version = GlaxnimateFormat::format_version)
+    : fmt(fmt), document(document), document_version(document_version)
+    {}
 
     ~ImportState() {}
 
-    void error(const QString& msg)
-    {
-        if ( fmt )
-            emit fmt->warning(msg);
-    }
-
     void resolve()
     {
-        for ( auto it = unresolved_references.begin(); it != unresolved_references.end(); ++it )
+        for ( const auto& p : unresolved_references )
         {
-            model::BaseProperty* prop = it.key();
-            model::ReferenceTarget* node = document->find_by_uuid(*it);
+            model::BaseProperty* prop = p.first.prop();
+            model::ReferenceTarget* node = document->find_by_uuid(p.second);
             if ( !node )
             {
                 error(GlaxnimateFormat::tr("Property %1 of %2 refers to unexisting object %3")
                     .arg(prop->name())
                     .arg(prop->object()->object_name())
-                    .arg(it->toString())
+                    .arg(p.second.toString())
                 );
             }
             else
@@ -62,6 +122,18 @@ public:
                 delete obj;
             }
         }
+    }
+
+    void load_object ( model::Object* target, QJsonObject object )
+    {
+        do_load_object(target, object, target);
+    }
+
+private:
+    void error(const QString& msg)
+    {
+        if ( fmt )
+            emit fmt->warning(msg);
     }
 
     void version_fixup(model::Object*, QJsonObject& object)
@@ -98,7 +170,7 @@ public:
         }
     }
 
-    void load_object ( model::Object* target, QJsonObject object )
+    void do_load_object ( model::Object* target, QJsonObject object, const UnresolvedPath& path )
     {
         version_fixup(target, object);
 
@@ -109,7 +181,7 @@ public:
 
         for ( model::BaseProperty* prop : target->properties() )
         {
-            if ( !load_prop(prop, object[prop->name()]) )
+            if ( !load_prop(prop, object[prop->name()], path.sub(prop)) )
                 error(GlaxnimateFormat::tr("Could not load %1 for %2")
                     .arg(prop->name())
                     .arg(prop->object()->object_name())
@@ -126,7 +198,7 @@ public:
         }
     }
 
-    bool load_prop ( model::BaseProperty* target, const QJsonValue& val )
+    bool load_prop ( model::BaseProperty* target, const QJsonValue& val, const UnresolvedPath& path )
     {
         if ( target->traits().flags & model::PropertyTraits::List )
         {
@@ -135,7 +207,7 @@ public:
 
             QVariantList list;
             for ( QJsonValue item : val.toArray() )
-                list.push_back(load_prop_value(target, item, false));
+                list.push_back(load_prop_value(target, item, false, {}));
 
             if ( target->traits().type == model::PropertyTraits::Object )
             {
@@ -167,7 +239,7 @@ public:
                         }
                         else
                         {
-                            load_object(inserted, deferred_loads[ptr]);
+                            do_load_object(inserted, deferred_loads[ptr], path.sub(index));
                         }
                         deferred_loads.remove(ptr);
                     }
@@ -186,7 +258,7 @@ public:
             QJsonObject jso = val.toObject();
             if ( jso.contains("value") )
             {
-                return target->set_value(load_prop_value(target, jso["value"], true));
+                return target->set_value(load_prop_value(target, jso["value"], true, path));
             }
             else
             {
@@ -207,7 +279,7 @@ public:
 
                     model::KeyframeBase* kf = anim->set_keyframe(
                         kfobj["time"].toDouble(),
-                        load_prop_value(target, kfobj["value"], false)
+                        load_prop_value(target, kfobj["value"], false, {})
                     );
                     if ( !kf )
                     {
@@ -235,7 +307,7 @@ public:
         {
             QUuid uuid(val.toString());
             if ( !uuid.isNull() )
-                unresolved_references[target] = uuid;
+                unresolved_references.emplace_back(path, uuid);
             return true;
         }
         else if ( target->traits().type == model::PropertyTraits::Uuid )
@@ -246,7 +318,7 @@ public:
             return target->set_value(uuid);
         }
 
-        QVariant loaded_val = load_prop_value(target, val, true);
+        QVariant loaded_val = load_prop_value(target, val, true, path);
         if ( !target->set_value(loaded_val) )
         {
             if ( target->traits().type == model::PropertyTraits::Object )
@@ -271,7 +343,7 @@ public:
     }
 
 
-    QVariant load_prop_value ( model::BaseProperty* target, const QJsonValue& val, bool load_objects )
+    QVariant load_prop_value ( model::BaseProperty* target, const QJsonValue& val, bool load_objects, const UnresolvedPath& path )
     {
         switch ( target->traits().type )
         {
@@ -284,7 +356,7 @@ public:
                 if ( !object )
                     return {};
                 if ( load_objects )
-                    load_object(object, jobj);
+                    do_load_object(object, jobj, path);
                 else
                     deferred_loads.insert(object, jobj);
                 return QVariant::fromValue(object);
@@ -387,6 +459,14 @@ public:
         return new model::Object(document);
     }
 
+
+    GlaxnimateFormat* fmt;
+    model::Document* document = nullptr;
+    QMap<QString, model::DocumentNode*> references;
+    std::vector<std::pair<UnresolvedPath, QUuid>> unresolved_references;
+    QMap<model::Object*, QJsonObject> deferred_loads;
+    std::vector<model::Object*> unwanted;
+    int document_version;
 };
 
 } // namespace io::glaxnimate::detail
