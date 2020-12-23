@@ -72,6 +72,11 @@ private:
             load_layer(pair.second, static_cast<model::Layer*>(pair.first));
     }
 
+    bool has_mask(const QJsonObject& json)
+    {
+        return mask && json["tt"].toInt();
+    }
+
     void create_layer(const QJsonObject& json, std::set<int>& referenced)
     {
         int index = json["ind"].toInt();
@@ -86,13 +91,25 @@ private:
         if ( ty == 0 )
         {
             load_precomp_layer(json, referenced);
+            mask = nullptr;
         }
         else
         {
             auto layer = std::make_unique<model::Layer>(document);
             layer_indices[index] = layer.get();
             deferred.emplace_back(layer.get(), json);
-            composition->shapes.insert(std::move(layer), 0);
+            if ( json["td"].toInt() )
+            {
+                mask = layer.get();
+                document->defs()->masks->shapes.insert(std::move(layer));
+            }
+            else
+            {
+                if ( has_mask(json) )
+                    layer->mask->mask.set(mask);
+                composition->shapes.insert(std::move(layer), 0);
+                mask = nullptr;
+            }
         }
     }
 
@@ -133,11 +150,15 @@ private:
 
         int index = json["ind"].toInt();
         auto op = document->main()->animation->last_frame.get();
-        if ( json.contains("parent") || referenced.count(index) || json["ip"].toDouble() != 0 || json["op"].toDouble(op) != op )
+        if ( json.contains("parent") || referenced.count(index) || json["ip"].toDouble() != 0 ||
+            json["op"].toDouble(op) != op || has_mask(json)
+        )
         {
             auto layer = std::make_unique<model::Layer>(document);
             layer->name.set(precomp->name.get());
             layer->shapes.insert(std::move(precomp), 0);
+            if ( has_mask(json) )
+                layer->mask->mask.set(mask);
             layer_indices[index] = layer.get();
             deferred.emplace_back(layer.get(), json);
             composition->shapes.insert(std::move(layer), 0);
@@ -645,6 +666,7 @@ private:
     app::log::Log logger{"Lottie Import"};
     QMap<QString, model::Bitmap*> bitmap_ids;
     QMap<QString, model::Precomposition*> precomp_ids;
+    model::Layer* mask = nullptr;
 };
 
 

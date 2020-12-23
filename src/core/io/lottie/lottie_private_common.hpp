@@ -217,6 +217,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     {"ShapeElement", {
         FieldInfo{"ty", Custom},
         FieldInfo{"ix"},
+        FieldInfo{"cix"},
         FieldInfo{"bm"},
         FieldInfo{"hd"},
     }},
