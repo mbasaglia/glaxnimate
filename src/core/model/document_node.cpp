@@ -112,6 +112,9 @@ bool model::DocumentNode::docnode_locked_recursive() const
 
 void model::DocumentNode::paint(QPainter* painter, FrameTime time, PaintMode mode) const
 {
+    if ( !visible.get() )
+        return;
+
     painter->save();
     painter->setTransform(group_transform_matrix(time), true);
 

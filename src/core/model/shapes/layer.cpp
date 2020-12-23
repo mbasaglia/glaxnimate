@@ -103,24 +103,23 @@ bool model::Layer::is_top_level() const
 
 void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) const
 {
+    if ( !visible.get() || (mode == Render && !render.get()) )
+        return;
+
     time = relative_time(time);
     if ( !animation->time_visible(time) )
         return;
 
-
-    if ( mode != Render || render.get() )
+    if ( mask->has_mask() )
     {
-        if ( mask->has_mask() )
-        {
-            painter->save();
-            painter->setClipPath(mask->to_clip(time, transform_matrix(time)), Qt::IntersectClip);
-            DocumentNode::paint(painter, time, mode);
-            painter->restore();
-        }
-        else
-        {
-            DocumentNode::paint(painter, time, mode);
-        }
+        painter->save();
+        painter->setClipPath(mask->to_clip(time, transform_matrix(time)), Qt::IntersectClip);
+        DocumentNode::paint(painter, time, mode);
+        painter->restore();
+    }
+    else
+    {
+        DocumentNode::paint(painter, time, mode);
     }
 }
 

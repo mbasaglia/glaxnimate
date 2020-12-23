@@ -28,7 +28,7 @@ public:
     /**
      * \brief Visible setting for this node
      */
-    GLAXNIMATE_PROPERTY(bool, visible, true, &DocumentNode::on_visible_changed)
+    GLAXNIMATE_PROPERTY(bool, visible, true, &DocumentNode::on_visible_changed, {}, PropertyTraits::Visual)
     /**
      * \brief Locked setting for this node
      */

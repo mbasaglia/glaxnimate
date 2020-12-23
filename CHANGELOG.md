@@ -25,6 +25,7 @@
 * Bug Fixes:
     * Duplicating shapes updates uuids
     * Importing images sets their name
+    * Fixed hidden layers
 
 ## 0.3.2
 
