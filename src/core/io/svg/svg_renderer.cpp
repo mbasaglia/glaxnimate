@@ -40,7 +40,7 @@ public:
         view.setAttribute("inkscape:document-units", "px");
     }
 
-    QDomElement element(QDomNode& parent, const char* tag)
+    QDomElement element(QDomNode parent, const char* tag)
     {
         QDomElement e = dom.createElement(tag);
         parent.appendChild(e);
@@ -61,10 +61,17 @@ public:
             parent.setAttribute("sodipodi:insensitive", "true");
     }
 
-    void write_shapes(QDomElement& parent, const model::ShapeListProperty& shapes)
+    void write_shapes(QDomElement& parent, const model::ShapeListProperty& shapes, bool has_mask = false)
     {
-        for ( const auto& shape : shapes )
-            write_shape(parent, shape.get(), false);
+        if ( shapes.empty() )
+            return;
+
+        auto it = shapes.begin();
+        if ( has_mask )
+            ++it;
+
+        for ( ; it != shapes.end(); ++it )
+            write_shape(parent, it->get(), false);
     }
 
 
@@ -424,7 +431,7 @@ public:
             if ( layer->composition.get() )
             {
                 timing.push_back(layer->timing.get());
-                auto clip = element(defs, "clipPath834");
+                auto clip = element(defs, "clipPath");
                 set_attribute(clip, "id", "clip_" + id(shape));
                 set_attribute(clip, "clipPathUnits", "userSpaceOnUse");
                 auto clip_rect = element(clip, "rect");
@@ -552,6 +559,7 @@ public:
     void write_group_shape(QDomElement& parent, model::Group* group)
     {
         QDomElement g;
+        bool has_mask = false;
         if ( auto layer = group->cast<model::Layer>() )
         {
             if ( !layer->render.get() )
@@ -567,6 +575,21 @@ public:
                 g = start_layer(parent, group);
             }
 
+            if ( layer->mask->has_mask() )
+            {
+                QDomElement clip = element(defs, "mask");
+                clip.setAttribute("mask-type", "alpha");
+                if ( layer->shapes.size() > 1 )
+                    write_shape(clip, layer->shapes[0], false);
+                has_mask = true;
+                QString mask_id = "clip_" + id(layer);
+                clip.setAttribute("id", mask_id);
+                QDomElement clip_g = element(g.parentNode(), "g");
+                g.parentNode().removeChild(g);
+                clip_g.appendChild(g);
+                clip_g.setAttribute("inkscape:label", layer->object_name());
+                clip_g.setAttribute("mask", "url(#" + mask_id + ")");
+            }
 
             if ( animated && layer->visible.get() )
             {
@@ -617,7 +640,7 @@ public:
         transform_to_attr(g, group->transform.get());
         write_property(g, &group->opacity, "opacity");
         write_visibility_attributes(g, group);
-        write_shapes(g, group->shapes);
+        write_shapes(g, group->shapes, has_mask);
     }
 
     template<class PropT, class Callback>
