@@ -79,9 +79,10 @@ QString model::Image::type_name_human() const
     return tr("Image");
 }
 
-QPainterPath model::Image::to_local_clip(FrameTime) const
+QPainterPath model::Image::to_clip(FrameTime time) const
 {
+    auto trans = transform.get()->transform_matrix(time);
     QPainterPath p;
-    p.addRect(QRectF(QPointF(0, 0), image.get() ? image->pixmap().size() : QSize(0, 0)));
+    p.addPolygon(trans.map(QRectF(QPointF(0, 0), image.get() ? image->pixmap().size() : QSize(0, 0))));
     return p;
 }

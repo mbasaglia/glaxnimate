@@ -109,8 +109,9 @@ void model::PreCompLayer::on_removed_from_list()
 }
 
 
-QPainterPath model::PreCompLayer::to_local_clip(model::FrameTime time) const
+QPainterPath model::PreCompLayer::to_clip(model::FrameTime time) const
 {
+    auto trans = transform.get()->transform_matrix(time);
     QPainterPath p;
     if ( composition.get() )
     {
@@ -118,5 +119,5 @@ QPainterPath model::PreCompLayer::to_local_clip(model::FrameTime time) const
         for ( const auto& sh : composition->shapes )
             p.addPath(sh->to_clip(time));
     }
-    return p;
+    return trans.map(p);
 }

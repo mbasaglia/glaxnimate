@@ -9,7 +9,6 @@
 void model::Visitor::visit(model::Document* doc, bool skip_locked)
 {
     on_visit(doc);
-    visit(doc->defs()->masks.get(), skip_locked);
     for ( const auto& precomp : doc->defs()->precompositions )
         visit(precomp.get(), skip_locked);
     visit(doc->main(), skip_locked);

@@ -124,14 +124,29 @@ QMenu* menu_ref_property(const QIcon& icon, const QString& text, QWidget* parent
 }
 
 template<class ToType>
+void convert_group_callback(int, ToType*){}
+
+template<class Callback, class ToType>
+void convert_group_callback(const Callback& callback, ToType* layer)
+{
+    callback(layer);
+}
+
+template<class ToType, class Callback = int>
 class ConvertGroupType
 {
 public:
-    ConvertGroupType(model::Group* from)
-        : from(from), owner(static_cast<model::ShapeListProperty*>(from->docnode_parent()->get_property("shapes")))
+    ConvertGroupType(model::Group* from, Callback callback = {})
+        : from(from), owner(static_cast<model::ShapeListProperty*>(from->docnode_parent()->get_property("shapes"))),
+        callback(std::move(callback))
     {}
 
-    void operator()()
+    void operator()() const
+    {
+        convert();
+    }
+
+    void convert() const
     {
         auto to = new ToType(from->document());
         std::unique_ptr<model::ShapeElement> uto(to);
@@ -154,11 +169,13 @@ public:
         for ( std::size_t i = 0; i < shapes.size(); i++ )
             from->push_command(new command::MoveObject(shapes[i], &from->shapes, &to->shapes, i));
         from->push_command(new command::RemoveObject<model::ShapeElement>(from, owner));
+        convert_group_callback(callback, to);
     }
 
 private:
     model::Group* from;
     model::ShapeListProperty* owner;
+    Callback callback;
 };
 
 void togglable_action(QMenu* menu, model::Property<bool>* prop, const QString& icon, const QString& label)
@@ -192,35 +209,33 @@ void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
         });
 
         menu->addSeparator();
-        menu->addAction(menu_ref_property(QIcon::fromTheme("path-mask-edit"), NodeMenu::tr("Mask"), menu, &lay->mask->mask)->menuAction());
-        if ( lay->mask->has_mask() )
-        {
-            QAction* lock_mask = menu->addAction(QIcon::fromTheme("transform-move"), NodeMenu::tr("Lock Mask Transform"), menu, [lay](bool checked){
-                lay->mask->lock_transform.set_undoable(checked);
-            });
-            lock_mask->setCheckable(true);
-            lock_mask->setChecked(lay->mask->lock_transform.get());
-        }
-
-        menu->addSeparator();
         menu->addAction(menu_ref_property(QIcon::fromTheme("go-parent-folder"), NodeMenu::tr("Parent"), menu, &lay->parent)->menuAction());
         menu->addAction(QIcon::fromTheme("object-group"), NodeMenu::tr("Convert to Group"), menu, ConvertGroupType<model::Group>(lay));
         menu->addAction(QIcon::fromTheme("component"), NodeMenu::tr("Precompose"), menu, [window, lay]{
             window->shape_to_precomposition(lay);
         });
+
+        if ( !lay->mask->has_mask() )
+        {
+            menu->addAction(QIcon::fromTheme("path-mask-edit"), NodeMenu::tr("Convert to Mask"), menu, [lay]{
+                lay->mask->mask.set_undoable(true);
+            });
+        }
+        else
+        {
+            menu->addAction(QIcon::fromTheme("path-mask-edit"), NodeMenu::tr("Remove Mask"), menu, [lay]{
+                lay->mask->mask.set_undoable(false);
+            });
+        }
     }
     else
     {
         menu->addAction(QIcon::fromTheme("folder"), NodeMenu::tr("Convert to Layer"), menu, ConvertGroupType<model::Layer>(group));
-    }
-
-    if ( group->docnode_parent() != group->document()->defs()->masks.get() )
-    {
-        menu->addAction(QIcon::fromTheme("path-mask-edit"), NodeMenu::tr("Convert to Mask"), menu, [group]{
-            auto shapes = &group->document()->defs()->masks->shapes;
-            command::UndoMacroGuard guard(NodeMenu::tr("Convert %1 to Mask").arg(group->name.get()), group->document());
-            group->push_command(new command::MoveShape(group, group->owner(), shapes, shapes->size()));
-        });
+        auto callback = [](model::Layer* lay){
+            lay->mask->mask.set_undoable(true);
+        };
+        menu->addAction(QIcon::fromTheme("path-mask-edit"), NodeMenu::tr("Convert to Mask"), menu,
+                        ConvertGroupType<model::Layer, decltype(callback)>(group, callback));
     }
 }
 

@@ -20,9 +20,7 @@
 #include "graphics/item_data.hpp"
 #include "graphics/graphics_editor.hpp"
 #include "graphics/gradient_editor.hpp"
-#include "graphics/mask_editor.hpp"
 #include "handle_menu.hpp"
-#include "widgets/tools/edit_tool_widget.hpp"
 
 tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
 
@@ -458,25 +456,6 @@ public:
         return insert_item && insert_params.distance <= drag_dist / event.view->get_zoom_factor() && insert_params.factor > 0.1 && insert_params.factor < 0.9;
     }
 
-    EditToolWidget* widget(EditTool* tool)
-    {
-        return static_cast<EditToolWidget*>(tool->get_settings_widget());
-    }
-
-    void show_masks()
-    {
-        for ( const auto& node : active_scene->selection() )
-            if ( auto lay = node->cast<model::Layer>() )
-                active_scene->show_custom_editor(lay, std::make_unique<graphics::MaskEditor>(lay));
-    }
-
-    void hide_masks()
-    {
-        for ( const auto& node : active_scene->selection() )
-            if ( auto lay = node->cast<model::Layer>() )
-                active_scene->hide_editors(lay, false, false);
-    }
-
     DragMode drag_mode;
     QPointF rubber_p1;
     QPointF rubber_p2;
@@ -797,8 +776,6 @@ void tools::EditTool::enable_event(const Event& event)
     d->highlight = nullptr;
     exit_add_point_mode();
     d->active_scene = event.scene;
-    if ( d->widget(this)->show_masks() )
-        d->show_masks();
 }
 
 void tools::EditTool::disable_event(const Event&)
@@ -806,23 +783,12 @@ void tools::EditTool::disable_event(const Event&)
     d->highlight = nullptr;
     d->active.clear();
     exit_add_point_mode();
-    d->hide_masks();
     d->active_scene = nullptr;
 }
 
 QWidget* tools::EditTool::on_create_widget()
 {
-    auto widget = new EditToolWidget();
-    connect(widget, &EditToolWidget::show_masks_changed, this, [this](bool show){
-        if ( d->active_scene )
-        {
-            if ( show )
-                d->show_masks();
-            else
-                d->hide_masks();
-        }
-    });
-    return widget;
+    return new QWidget();
 }
 
 void tools::EditTool::selection_set_vertex_type(math::bezier::PointType t)

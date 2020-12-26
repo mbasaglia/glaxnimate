@@ -36,8 +36,7 @@ public:
 
     ShapeListProperty* owner() const { return property_; }
 
-    QPainterPath to_clip(FrameTime t) const;
-    virtual QPainterPath to_local_clip(FrameTime t) const = 0;
+    virtual QPainterPath to_clip(FrameTime t) const = 0;
 
 signals:
     void position_updated();
@@ -122,7 +121,7 @@ public:
     }
 
     std::unique_ptr<Path> to_path() const;
-    QPainterPath to_local_clip(FrameTime t) const override;
+    QPainterPath to_clip(FrameTime t) const override;
 };
 
 /**

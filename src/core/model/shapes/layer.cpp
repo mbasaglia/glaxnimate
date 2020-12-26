@@ -112,9 +112,27 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
 
     if ( mask->has_mask() )
     {
+        auto n_shapes = shapes.size();
+        if ( n_shapes <= 1 )
+            return;
+
         painter->save();
-        painter->setClipPath(mask->to_clip(time, transform_matrix(time)), Qt::IntersectClip);
-        DocumentNode::paint(painter, time, mode);
+
+        if ( shapes[0]->visible.get() )
+        {
+            QPainterPath clip = shapes[0]->to_clip(time);
+            clip.setFillRule(Qt::WindingFill);
+            painter->setClipPath(clip, Qt::IntersectClip);
+        }
+
+        auto transform = group_transform_matrix(time);
+        painter->setTransform(transform, true);
+
+        on_paint(painter, time, mode);
+
+        for ( int i = 1; i < n_shapes; i++ )
+            docnode_child(i)->paint(painter, time, mode);
+
         painter->restore();
     }
     else
@@ -123,11 +141,17 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
     }
 }
 
-QPainterPath model::Layer::to_local_clip(model::FrameTime time) const
+QPainterPath model::Layer::to_clip(model::FrameTime time) const
 {
     time = relative_time(time);
-    if ( !animation->time_visible(time) )
+    if ( !animation->time_visible(time) || !render.get() )
         return {};
 
-    return Group::to_local_clip(time);
+    return Group::to_clip(time);
+}
+
+
+QIcon model::Layer::docnode_icon() const
+{
+    return mask->has_mask() ? QIcon::fromTheme("path-clip-edit") : QIcon::fromTheme("folder");
 }

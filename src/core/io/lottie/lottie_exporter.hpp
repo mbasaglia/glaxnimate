@@ -152,15 +152,26 @@ public:
             }
             else
             {
-                for ( int i = 0; i < layer->shapes.size(); i++ )
-                    convert_layer(children_types[i], layer->shapes[i], output, layer);
+                int i = 0;
+                QCborMap mask;
+                if ( layer->mask->has_mask() && !layer->shapes.empty() )
+                {
+                    mask = convert_single_layer(children_types[0], layer->shapes[0], output, layer, true);
+                    if ( !mask.isEmpty() )
+                        mask["td"_l] = 1;
+                    i = 1;
+                }
+
+                for ( ; i < layer->shapes.size(); i++ )
+                    convert_layer(children_types[i], layer->shapes[i], output, layer, mask);
             }
         }
 
         return json;
     }
 
-    void convert_layer(LayerType type, model::ShapeElement* shape, QCborArray& output, model::Layer* forced_parent = nullptr)
+    QCborMap convert_layer(LayerType type, model::ShapeElement* shape, QCborArray& output,
+                           model::Layer* forced_parent = nullptr, const QCborMap& mask = {})
     {
         model::Layer* layer = nullptr;
         if ( type == LayerType::Layer )
@@ -168,20 +179,14 @@ public:
             layer = static_cast<model::Layer*>(shape);
 
             if ( !layer->render.get() )
-                return;
+                return {};
         }
 
         auto json = convert_single_layer(type, shape, output, forced_parent, false);
 
-        if ( layer && layer->mask->has_mask() )
+        if ( !mask.isEmpty() )
         {
-            auto mask_layer = layer->mask->mask.get();
-            auto mask = convert_single_layer(layer_type(mask_layer), mask_layer, output, nullptr, true);
             json["tt"_l] = 1;
-            mask["td"_l] = 1;
-            if ( layer->mask->lock_transform.get() )
-                mask["parent"_l] = layer_index(layer);
-
             output.push_front(json);
             output.push_front(mask);
         }
@@ -189,6 +194,8 @@ public:
         {
             output.push_front(json);
         }
+
+        return json;
     }
 
     void convert_transform(model::Transform* tf, model::AnimatableBase* opacity, QCborMap& json)
@@ -588,6 +595,7 @@ public:
     bool strip;
     QMap<QUuid, int> layer_indices;
     app::log::Log logger{"Lottie Export"};
+    model::Layer* mask = 0;
 };
 
 

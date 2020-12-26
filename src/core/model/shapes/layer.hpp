@@ -70,7 +70,7 @@ public:
     DocumentNode* docnode_group_parent() const override;
     int docnode_group_child_count() const override;
     DocumentNode* docnode_group_child(int index) const override;
-    QIcon docnode_icon() const override { return QIcon::fromTheme("folder"); }
+    QIcon docnode_icon() const override;
     QString type_name_human() const override { return tr("Layer"); }
     void set_time(FrameTime t) override;
 
@@ -89,7 +89,7 @@ public:
 
     void paint(QPainter*, FrameTime, PaintMode) const override;
 
-    QPainterPath to_local_clip(model::FrameTime t) const override;
+    QPainterPath to_clip(model::FrameTime t) const override;
 
 private:
     std::vector<ReferenceTarget*> valid_parents() const;

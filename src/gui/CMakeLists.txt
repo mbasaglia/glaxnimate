@@ -70,8 +70,6 @@ widgets/tools/color_picker_widget.cpp
 widgets/tools/color_picker_widget.ui
 widgets/tools/fill_tool_widget.cpp
 widgets/tools/fill_tool_widget.ui
-widgets/tools/edit_tool_widget.cpp
-widgets/tools/edit_tool_widget.ui
 
 widgets/glaxnimate_graphics_view.cpp
 widgets/view_transform_widget.cpp

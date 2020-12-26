@@ -6,9 +6,7 @@ GLAXNIMATE_OBJECT_IMPL(model::Defs)
 
 model::Defs::Defs(Document* document)
     : Object(document)
-{
-    masks->name.set(tr("Masks"));
-}
+{}
 
 void model::Defs::on_color_added(model::NamedColor* color, int position)
 {
@@ -65,7 +63,7 @@ model::ReferenceTarget* model::Defs::find_by_uuid ( const QUuid& n ) const
             return node;
     }
 
-    return const_cast<model::Precomposition*>(masks.get())->find_by_uuid(n);
+    return nullptr;
 }
 
 model::NamedColor* model::Defs::add_color(const QColor& color, const QString& name)

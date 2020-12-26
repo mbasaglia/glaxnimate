@@ -7,7 +7,6 @@
 #include "graphics/create_items.hpp"
 #include "graphics/graphics_editor.hpp"
 #include "graphics/item_data.hpp"
-#include "graphics/mask_editor.hpp"
 #include "tools/base.hpp"
 
 class graphics::DocumentScene::Private

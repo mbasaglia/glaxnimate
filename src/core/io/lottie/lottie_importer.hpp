@@ -96,18 +96,25 @@ private:
         else
         {
             auto layer = std::make_unique<model::Layer>(document);
-            layer_indices[index] = layer.get();
-            deferred.emplace_back(layer.get(), json);
             if ( json["td"].toInt() )
             {
                 mask = layer.get();
-                document->defs()->masks->shapes.insert(std::move(layer));
+                layer->mask->mask.set(true);
+                layer->name.set(json["nm"].toString());
+                auto child = std::make_unique<model::Layer>(document);
+                layer_indices[index] = child.get();
+                deferred.emplace_back(child.get(), json);
+                layer->shapes.insert(std::move(child), 0);
+                composition->shapes.insert(std::move(layer), 0);
             }
             else
             {
+                layer_indices[index] = layer.get();
+                deferred.emplace_back(layer.get(), json);
                 if ( has_mask(json) )
-                    layer->mask->mask.set(mask);
-                composition->shapes.insert(std::move(layer), 0);
+                    mask->shapes.insert(std::move(layer), 1);
+                else
+                    composition->shapes.insert(std::move(layer), 0);
                 mask = nullptr;
             }
         }

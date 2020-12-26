@@ -87,7 +87,7 @@ int item_models::DocumentNodeModel::rowCount ( const QModelIndex& parent ) const
         return 0;
 
     if ( !parent.isValid() )
-        return 2 + document->defs()->precompositions.size();
+        return 1 + document->defs()->precompositions.size();
 
     return node(parent)->docnode_child_count();
 }
@@ -104,11 +104,9 @@ QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const Q
 
     if ( !parent.isValid() )
     {
-        int i = row - 2;
+        int i = row - 1;
         if ( i >= 0 && i < document->defs()->precompositions.size() )
             return createIndex(row, column, document->defs()->precompositions[i]);
-        if ( row == 1 )
-            return createIndex(1, column, document->defs()->masks.get());
         return createIndex(0, column, document->main());
     }
 
@@ -212,7 +210,6 @@ bool item_models::DocumentNodeModel::setData(const QModelIndex& index, const QVa
     return false;
 }
 
-
 void item_models::DocumentNodeModel::set_document ( model::Document* doc )
 {
     beginResetModel();
@@ -227,7 +224,7 @@ void item_models::DocumentNodeModel::set_document ( model::Document* doc )
     if ( doc )
     {
         connect_node(doc->main());
-        connect_node(doc->defs()->masks.get());
+
         for ( const auto& comp : doc->defs()->precompositions )
             connect_node(comp.get());
 
@@ -288,9 +285,6 @@ QModelIndex item_models::DocumentNodeModel::node_index ( model::DocumentNode* no
 
         if ( node == document->main() )
             return createIndex(0, 0, node);
-
-        if ( node == document->defs()->masks.get() )
-            return createIndex(1, 0, node);
 
         return createIndex(
             document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(node))+2,

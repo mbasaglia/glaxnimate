@@ -56,12 +56,6 @@ math::bezier::MultiBezier model::ShapeElement::shapes(model::FrameTime t) const
     return bez;
 }
 
-QPainterPath model::ShapeElement::to_clip(FrameTime t) const
-{
-    return transform_matrix(t).map(to_local_clip(t));
-}
-
-
 QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
 {
     QRectF rect;
@@ -120,7 +114,7 @@ std::unique_ptr<model::Path> model::Shape::to_path() const
     return path;
 }
 
-QPainterPath model::Shape::to_local_clip(FrameTime t) const
+QPainterPath model::Shape::to_clip(FrameTime t) const
 {
     QPainterPath p;
     to_bezier(t).add_to_painter_path(p);
