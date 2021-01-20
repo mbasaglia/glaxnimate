@@ -35,7 +35,8 @@ public:
     {
         QCborArray layers;
         for ( const auto& layer : composition->shapes )
-            convert_layer(layer_type(layer.get()), layer.get(), layers);
+            if ( layer->visible.get() )
+                convert_layer(layer_type(layer.get()), layer.get(), layers);
 
         json["layers"_l] = layers;
     }
@@ -163,14 +164,20 @@ public:
                 QCborMap mask;
                 if ( layer->mask->has_mask() && !layer->shapes.empty() )
                 {
-                    mask = convert_single_layer(children_types[0], layer->shapes[0], output, layer, true);
-                    if ( !mask.isEmpty() )
-                        mask["td"_l] = 1;
+                    if ( layer->shapes[0]->visible.get() )
+                    {
+                        mask = convert_single_layer(children_types[0], layer->shapes[0], output, layer, true);
+                        if ( !mask.isEmpty() )
+                            mask["td"_l] = 1;
+                    }
                     i = 1;
                 }
 
                 for ( ; i < layer->shapes.size(); i++ )
-                    convert_layer(children_types[i], layer->shapes[i], output, layer, mask);
+                {
+                    if ( layer->shapes[i]->visible.get() )
+                        convert_layer(children_types[i], layer->shapes[i], output, layer, mask);
+                }
             }
         }
 
@@ -180,6 +187,9 @@ public:
     QCborMap convert_layer(LayerType type, model::ShapeElement* shape, QCborArray& output,
                            model::Layer* forced_parent = nullptr, const QCborMap& mask = {})
     {
+        if ( !shape->visible.get() )
+            return {};
+
         model::Layer* layer = nullptr;
         if ( type == LayerType::Layer )
         {
