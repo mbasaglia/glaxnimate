@@ -117,6 +117,8 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
             return;
 
         painter->save();
+        auto transform = group_transform_matrix(time);
+        painter->setTransform(transform, true);
 
         if ( shapes[0]->visible.get() )
         {
@@ -125,8 +127,6 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
             painter->setClipPath(clip, Qt::IntersectClip);
         }
 
-        auto transform = group_transform_matrix(time);
-        painter->setTransform(transform, true);
 
         on_paint(painter, time, mode);
 

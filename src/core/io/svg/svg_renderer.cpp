@@ -539,7 +539,13 @@ public:
         return path;
     }
 
-    QDomElement start_layer_recurse_parents(QDomElement parent, model::Layer* ancestor, model::Layer* descendant)
+    /**
+     * \brief Creates a <g> element for recurse_parents
+     * \param parent        DOM element to add the <g> into
+     * \param ancestor      Ancestor layer (to create the <g> for)
+     * \param descendant    Descendant layer
+     */
+    QDomElement start_layer_recurse_parents(const QDomElement& parent, model::Layer* ancestor, model::Layer* descendant)
     {
         QDomElement g = element(parent, "g");
         g.setAttribute("id", id(descendant) + "_" + id(ancestor));
@@ -549,7 +555,13 @@ public:
         return g;
     }
 
-    QDomElement recurse_parents(QDomElement& parent, model::Layer* ancestor, model::Layer* descendant)
+    /**
+     * \brief Creates nested <g> elements for each layer parent (using the parent property)
+     * \param parent        DOM element to add the elements into
+     * \param ancestor      Ancestor layer (searched recursively for parents)
+     * \param descendant    Descendant layer
+     */
+    QDomElement recurse_parents(const QDomElement& parent, model::Layer* ancestor, model::Layer* descendant)
     {
         if ( !ancestor->parent.get() )
             return start_layer_recurse_parents(parent, ancestor, descendant);
@@ -577,18 +589,16 @@ public:
 
             if ( layer->mask->has_mask() )
             {
+                has_mask = true;
+
                 QDomElement clip = element(defs, "mask");
+                QString mask_id = "clip_" + id(layer);
+                clip.setAttribute("id", mask_id);
                 clip.setAttribute("mask-type", "alpha");
                 if ( layer->shapes.size() > 1 )
                     write_shape(clip, layer->shapes[0], false);
-                has_mask = true;
-                QString mask_id = "clip_" + id(layer);
-                clip.setAttribute("id", mask_id);
-                QDomElement clip_g = element(g.parentNode(), "g");
-                g.parentNode().removeChild(g);
-                clip_g.appendChild(g);
-                clip_g.setAttribute("inkscape:label", layer->object_name());
-                clip_g.setAttribute("mask", "url(#" + mask_id + ")");
+
+                g.setAttribute("mask", "url(#" + mask_id + ")");
             }
 
             if ( animated && layer->visible.get() )

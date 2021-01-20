@@ -424,11 +424,77 @@ public:
         return style;
     }
 
-    void parse_shape(const ParseFuncArgs& args)
+    bool handle_mask(const ParseFuncArgs& args)
+    {
+        QString mask_ref;
+        if ( args.element.hasAttribute("clip-path") )
+            mask_ref = args.element.attribute("clip-path");
+        else if ( args.element.hasAttribute("mask") )
+            mask_ref = args.element.attribute("mask");
+
+        if ( mask_ref.isEmpty() )
+            return false;
+
+        auto match = url_re.match(mask_ref);
+        if ( !match.hasMatch() )
+            return false;
+
+        QString id = match.captured(1).mid(1);
+        QDomElement mask_element = element_by_id(id);
+        if ( mask_element.isNull() )
+            return false;
+
+
+        Style style = parse_style(args.element, args.parent_style);
+        auto layer = std::make_unique<model::Layer>(document);
+        apply_common_style(layer.get(), args.element, style);
+        set_name(layer.get(), args.element);
+        layer->mask->mask.set(true);
+
+        QDomElement element = args.element;
+
+        QDomElement trans_copy = dom.createElement("g");
+        trans_copy.setAttribute("style", element.attribute("style"));
+        element.removeAttribute("style");
+        trans_copy.setAttribute("transform", element.attribute("transform"));
+        element.removeAttribute("transform");
+
+        for ( const auto& attr : detail::css_atrrs )
+            element.removeAttribute(attr);
+
+        parse_g_to_layer({
+            mask_element,
+            &layer->shapes,
+            style,
+            false
+        });
+
+        parse_shape_impl({
+            element,
+            &layer->shapes,
+            style,
+            false
+        });
+
+        parse_transform(trans_copy, layer.get(), layer->transform.get());
+
+        args.shape_parent->insert(std::move(layer));
+        return true;
+    }
+
+    void parse_shape_impl(const ParseFuncArgs& args)
     {
         auto it = shape_parsers.find(args.element.tagName());
         if ( it != shape_parsers.end() )
             (this->*it->second)(args);
+    }
+
+    void parse_shape(const ParseFuncArgs& args)
+    {
+        if ( handle_mask(args) )
+            return;
+
+        parse_shape_impl(args);
     }
 
     template<class T>
