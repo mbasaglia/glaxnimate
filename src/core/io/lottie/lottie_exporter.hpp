@@ -61,17 +61,24 @@ public:
         return layer_indices[layer->uuid.get()];
     }
 
-    QCborMap wrap_layer_shape(model::ShapeElement* shape)
+    QCborMap wrap_layer_shape(model::ShapeElement* shape, model::Layer* forced_parent)
     {
         QCborMap json;
         json["ddd"_l] = 0;
         json["ty"_l] = 4;
-        convert_animation_container(document->main()->animation.get(), json);
+        convert_fake_layer_parent(forced_parent, json);
         json["st"_l] = 0;
 
-        model::Transform tf(document);
         QCborMap transform;
-        convert_transform(&tf, nullptr, transform);
+        if ( auto grp = shape->cast<model::Group>() )
+        {
+            convert_transform(grp->transform.get(), &grp->opacity, transform);
+        }
+        else
+        {
+            model::Transform tf(document);
+            convert_transform(&tf, nullptr, transform);
+        }
         json["ks"_l] = transform;
 
         QCborArray shapes;
@@ -99,7 +106,7 @@ public:
         switch ( type )
         {
             case LayerType::Shape:
-                return wrap_layer_shape(shape);
+                return wrap_layer_shape(shape, forced_parent);
             case LayerType::Image:
                 return convert_image_layer(static_cast<model::Image*>(shape), forced_parent);
             case LayerType::PreComp:
