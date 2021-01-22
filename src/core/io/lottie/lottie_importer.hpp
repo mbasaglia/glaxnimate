@@ -176,6 +176,31 @@ private:
         }
     }
 
+    void load_mask(const QJsonObject& json, model::Group* group)
+    {
+        auto fill = std::make_unique<model::Fill>(document);
+        fill->color.set(QColor(255, 255, 255));
+        load_animated(&fill->opacity, json["o"], {});
+        document->set_best_name(fill.get());
+        group->shapes.insert(std::move(fill));
+
+        auto j_stroke = json["x"].toObject();
+        if ( j_stroke["a"].toInt() || j_stroke["k"].toDouble() != 0 )
+        {
+            auto stroke = std::make_unique<model::Stroke>(document);
+            stroke->color.set(QColor(255, 255, 255));
+            load_animated(&stroke->opacity, json["o"], {});
+            load_animated(&stroke->width, json["x"], {});
+            document->set_best_name(stroke.get());
+            group->shapes.insert(std::move(stroke));
+        }
+
+        auto path = std::make_unique<model::Path>(document);
+        load_animated(&path->shape, json["pt"], {});
+        document->set_best_name(path.get());
+        group->shapes.insert(std::move(path));
+    }
+
     void load_layer(const QJsonObject& json, model::Layer* layer)
     {
         if ( json.contains("parent") )
@@ -222,6 +247,43 @@ private:
 
         load_transform(json["ks"].toObject(), layer->transform.get(), &layer->opacity);
 
+        model::Layer* target = layer;
+        props.erase("hasMask");
+        props.erase("masksProperties");
+        if ( json.contains("masksProperties") )
+        {
+            auto masks = json["masksProperties"].toArray();
+            if ( !masks.empty() )
+            {
+                layer->mask->mask.set(true);
+
+                auto clip_p = std::make_unique<model::Group>(document);
+                auto clip = clip_p.get();
+                layer->shapes.insert(std::move(clip_p));
+                auto shape_target = std::make_unique<model::Layer>(document);
+                target = shape_target.get();
+                shape_target->name.set(layer->name.get());
+                layer->shapes.insert(std::move(shape_target));
+
+                document->set_best_name(clip, QObject::tr("Clip"));
+                if ( masks.size() == 1 )
+                {
+                    load_mask(masks[0].toObject(), clip);
+                }
+                else
+                {
+                    for ( const auto& mask : masks )
+                    {
+                        auto clip_group_p = std::make_unique<model::Group>(document);
+                        auto clip_group = clip_group_p.get();
+                        clip->shapes.insert(std::move(clip_group_p));
+                        document->set_best_name(clip_group, QObject::tr("Clip"));
+                        load_mask(mask.toObject(), clip_group);
+                    }
+                }
+            }
+        }
+
         switch ( json["ty"].toInt(-1) )
         {
             case 0: // precomp
@@ -236,18 +298,18 @@ private:
                     json["sw"].toDouble(),
                     json["sh"].toDouble()
                 ));
-                layer->shapes.insert(std::move(rect));
+                target->shapes.insert(std::move(rect));
 
                 auto fill = std::make_unique<model::Fill>(document);
                 fill->color.set(QColor(json["sc"].toString()));
-                layer->shapes.insert(std::move(fill));
+                target->shapes.insert(std::move(fill));
                 break;
             }
             case 2: // image layer
             {
                 auto image = std::make_unique<model::Image>(document);
                 image->image.set(bitmap_ids[json["refId"].toString()]);
-                layer->shapes.insert(std::move(image));
+                target->shapes.insert(std::move(image));
                 props.erase("refId");
                 break;
             }
@@ -255,7 +317,7 @@ private:
                 break;
             case 4: // shape
                 props.erase("shapes");
-                load_shapes(layer->shapes, json["shapes"].toArray());
+                load_shapes(target->shapes, json["shapes"].toArray());
                 break;
             default:
                 emit format->warning(QObject::tr("Unsupported layer type %1").arg(json["ty"].toString()));

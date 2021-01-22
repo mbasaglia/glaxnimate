@@ -197,8 +197,8 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("ind", Custom),
         FieldInfo("cl"),
         FieldInfo("ln"),
-        FieldInfo("hasMasks"),
-        FieldInfo("masksProperties"),
+        FieldInfo("hasMasks", Custom),
+        FieldInfo("masksProperties", Custom),
         FieldInfo("ef"),
     }},
     {"Transform", {
