@@ -21,6 +21,7 @@
     * The SVG parsers now parses correctly "d" attributes without spaces
     * Fixed lottie export of layers containing shape groups and other layers
     * Hidden object are hidden on lottie export
+    * All exported lottie layers now have a layer index
 * Scripting:
     * Python has now access to the users of an asset
     * Python can update the current selection

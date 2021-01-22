@@ -68,6 +68,7 @@ public:
         json["ddd"_l] = 0;
         json["ty"_l] = 4;
         convert_fake_layer_parent(forced_parent, json);
+        json["ind"_l] = layer_index(shape);
         json["st"_l] = 0;
 
         QCborMap transform;
@@ -568,6 +569,7 @@ public:
         QCborMap json;
         convert_fake_layer(image, parent, json);
         json["ty"_l] = 2;
+        json["ind"_l] = layer_index(image);
         json["st"_l] = 0;
         QCborMap transform;
         convert_object_basic(image->transform.get(), transform);
@@ -595,6 +597,7 @@ public:
         QCborMap json;
         json["ty"_l] = 0;
         convert_fake_layer(layer, parent, json);
+        json["ind"_l] = layer_index(layer);
         json["st"_l] = layer->timing->start_time.get();
         json["sr"_l] = layer->timing->stretch.get();
         QCborMap transform;
