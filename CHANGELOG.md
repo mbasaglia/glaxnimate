@@ -1,4 +1,4 @@
-## 0.3.3
+## 0.4.0
 
 * Editing:
     * Action to paste as a composition
