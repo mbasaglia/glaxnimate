@@ -102,7 +102,7 @@ private:
                 layer->mask->mask.set(true);
                 layer->name.set(json["nm"].toString());
                 auto child = std::make_unique<model::Layer>(document);
-                layer_indices[index] = child.get();
+                layer_indices[index] = layer.get();
                 deferred.emplace_back(child.get(), json);
                 layer->shapes.insert(std::move(child), 0);
                 composition->shapes.insert(std::move(layer), 0);
@@ -200,7 +200,11 @@ private:
                 }
                 else
                 {
-                    layer->parent.set(*it);
+                    auto parent_layer = layer->docnode_parent()->cast<model::Layer>();
+                    if ( parent_layer && parent_layer->mask->has_mask() )
+                        parent_layer->parent.set(*it);
+                    else
+                        layer->parent.set(*it);
                 }
             }
         }
