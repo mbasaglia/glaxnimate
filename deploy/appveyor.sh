@@ -1,3 +1,23 @@
+# ######################
+# # Appveyor side:
+#
+# # Setup System
+# # Core update (in case any core packages are outdated)
+# C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"
+# # Normal update
+# C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"
+#
+# # Setup Repo
+# $env:CHERE_INVOKING='yes'  # Preserve the current working directory
+# $env:MSYSTEM='MINGW64' # Start a 64 bit Mingw environment
+# mkdir build
+# cd build
+#
+# # Build
+# C:\msys64\usr\bin\bash -lc "../deploy/appveyor.sh 2>&1"
+#
+# ######################
+
 set -xe
 pacman --noconfirm -S \
     git zip unzip \

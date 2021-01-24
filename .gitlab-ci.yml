@@ -8,6 +8,13 @@ variables:
     DEBIAN_FRONTEND: noninteractive
     GIT_SUBMODULE_STRATEGY: recursive
 
+
+.shared_windows_runners:
+    tags:
+        - shared-windows
+        - windows
+        - windows-1809
+
 pages:
     image: ubuntu:latest
     stage: deploy
@@ -274,3 +281,22 @@ linux:pypi:
         - make glaxnimate_python_upload
     only:
         - tags
+
+windows:build:
+    extends:
+        - .shared_windows_runners
+    stage: build
+    before_script:
+        - choco feature enable -n allowGlobalConfirmation
+        - choco install msys2
+        - refreshenv
+    script:
+        - mkdir build
+        - cd build
+        - $env:CHERE_INVOKING='yes'  # Preserve the current working directory
+        - $env:MSYSTEM='MINGW64' # Start a 64 bit Mingw environment
+        - C:\tools\msys64\usr\bin\bash -lc "../deploy/win_build.sh 2>&1"
+    artifacts:
+        paths:
+            - build/glaxnimate-x86_64.zip
+            - build/checksum.txt
