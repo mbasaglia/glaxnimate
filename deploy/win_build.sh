@@ -28,7 +28,7 @@ cmake.exe .. \
     -G 'MSYS Makefiles' \
     -DCMAKE_INSTALL_PREFIX='' \
     -DCMAKE_MAKE_PROGRAM='mingw32-make.exe'
-mingw32-make.exe -j2
+mingw32-make.exe -j4
 
 # Setup package
 mingw32-make.exe translations

@@ -300,3 +300,4 @@ windows:build:
         paths:
             - build/glaxnimate-x86_64.zip
             - build/checksum.txt
+    timeout: 3 hours
