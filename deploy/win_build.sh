@@ -8,7 +8,8 @@ pacman --noconfirm -S \
     mingw-w64-x86_64-python \
     mingw-w64-x86_64-potrace \
     mingw-w64-x86_64-ffmpeg \
-    mingw-w64-x86_64-libimagequant
+    mingw-w64-x86_64-libimagequant \
+    mingw-w64-x86_64-make
 
 (cd ../data/icons/breeze-icons/ && git config core.symlinks true && git reset --hard)
 # find data/icons/breeze-icons/ -name '*@?x' -exec rm -rf {} \;
@@ -25,7 +26,8 @@ cmake.exe .. \
     -DPython3_LIBRARIES=/mingw64/bin/libpython3.8.dll \
     -DPython3_EXECUTABLE=/mingw64/bin/python3 \
     -G 'MSYS Makefiles' \
-    -DCMAKE_INSTALL_PREFIX=''
+    -DCMAKE_INSTALL_PREFIX='' \
+    -DCMAKE_MAKE_PROGRAM='mingw32-make.exe'
 mingw32-make.exe -j2
 
 # Setup package
