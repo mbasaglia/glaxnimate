@@ -37,3 +37,50 @@ Something along these lines:
 10. New release should be ready at <https://gitlab.com/mattbas/glaxnimate/-/releases>
 11. Run `./deploy/release_check.py` or `make release_check` to check the release is ok
 12. Merge `release` / `pre-release` back into master if there have been any new commits
+
+
+## Creating/Editing AUR packages with docker
+
+    # This enables using GUI as well for testing
+    docker run -it --rm --net=host -e DISPLAY -v /tmp/.X11-unix archlinux bash
+
+    # System Setup
+    pacman -Sy
+    # (Add required build packages as needed)
+    pacman -S git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base
+
+    # Set up a user if using docker
+    useradd -m foo
+    su foo
+    cd
+    cat <<HERE >key
+    # (KEY)
+    chmod 600 key
+    AUR_SSH_KEY="$PWD/key"
+
+    # Clone AUR package
+    PACK_NAME=glaxnimate-git
+    GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/$PACK_NAME.git
+    cd $PACK_NAME
+
+    # Edit script see https://wiki.archlinux.org/index.php/Creating_packages
+    vim PKGBUILD
+    makepkg
+
+    # Test
+    pacman -U *.pkg.tar.zst
+    namcap PKGBUILD
+    namcap *.pkg.tar.zst
+
+    # Set up GUI for docker
+    touch ~/.Xauthority
+    # Run `xauth list` on the host and paster the output as argument to the following
+    xauth add
+
+    # Submit to AUR
+    makepkg --printsrcinfo > .SRCINFO
+    git config --global user.name
+    git config --global user.email
+    git add PKGBUILD .SRCINFO
+    git commit
+    GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push origin master
