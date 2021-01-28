@@ -2,6 +2,7 @@
 
 * Bug Fixes:
     * Fix pasting SVG data
+    * Fix window size for smaller screen resolutions
 
 ## 0.4.0
 
