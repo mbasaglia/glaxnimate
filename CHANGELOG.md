@@ -1,3 +1,8 @@
+## 0.4.1
+
+* Bug Fixes:
+    * Fix pasting SVG data
+
 ## 0.4.0
 
 * Editing:

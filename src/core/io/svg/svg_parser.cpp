@@ -1190,7 +1190,7 @@ io::svg::SvgParser::SvgParser(
     : d(std::make_unique<Private>())
 {
     d->document = document;
-    d->animate_parser.fps = document->main()->fps.get();
+    d->animate_parser.fps = d->document ? d->document->main()->fps.get() : 60;
     d->group_mode = group_mode;
     d->animate_parser.on_warning = d->on_warning = on_warning;
 
