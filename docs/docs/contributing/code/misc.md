@@ -84,3 +84,8 @@ Something along these lines:
     git add PKGBUILD .SRCINFO
     git commit
     GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push origin master
+
+## Run a VM from an ISO file to test in a full DE
+
+    # Append the path to the iso file
+    qemu-system-x86_64 -m 4G -boot d -enable-kvm -smp 3 -net nic -net user -cdrom
