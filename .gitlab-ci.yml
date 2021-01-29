@@ -140,6 +140,8 @@ linux:appimage:
         - make -j2
         - make translations
         - make install DESTDIR=AppDir >/dev/null
+        - mkdir AppDir/usr/lib
+        - cp -r /usr/lib/Python* AppDir/usr/lib
         - cp AppDir/usr/share/glaxnimate/glaxnimate/glaxnimate.desktop AppDir
         - cp AppDir/usr/share/glaxnimate/glaxnimate/images/glaxnimate.png AppDir
         - wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
