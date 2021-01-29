@@ -84,6 +84,11 @@ public slots:
      */
     void set_zoom_anchor(qreal factor, const QPointF& anchor);
 
+    /**
+     * \brief Flips the view horizontally
+     */
+    void flip_horizontal();
+
     void zoom_in();
     void zoom_out();
     void reset_zoom() { set_zoom(1); }

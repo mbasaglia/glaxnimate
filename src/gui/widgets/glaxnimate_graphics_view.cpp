@@ -342,6 +342,17 @@ qreal GlaxnimateGraphicsView::get_zoom_factor() const
     return d->zoom_factor;
 }
 
+void GlaxnimateGraphicsView::flip_horizontal()
+{
+    auto anchor = mapToScene(width()/2, height()/2);
+    auto angle = d->rotation * 180 / M_PI;
+    translate(anchor);
+    rotate(-angle);
+    scale(-1, 1);
+    rotate(angle);
+    translate(-anchor);
+}
+
 void GlaxnimateGraphicsView::paintEvent(QPaintEvent *event)
 {
     QGraphicsView::paintEvent(event);

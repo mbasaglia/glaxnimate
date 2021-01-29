@@ -179,6 +179,7 @@
     <addaction name="actionReset_Zoom"/>
     <addaction name="action_view_fit"/>
     <addaction name="action_Reset_Rotation"/>
+    <addaction name="action_flip_view"/>
    </widget>
    <widget class="QMenu" name="menu_help">
     <property name="title">
@@ -1911,6 +1912,14 @@
    </property>
    <property name="text">
     <string>Paste as Composition</string>
+   </property>
+  </action>
+  <action name="action_flip_view">
+   <property name="icon">
+    <iconset theme="object-flip-horizontal"/>
+   </property>
+   <property name="text">
+    <string>F&amp;lip View</string>
    </property>
   </action>
  </widget>

@@ -151,6 +151,19 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QToolButton" name="btn_flip_view">
+     <property name="toolTip">
+      <string>Flip View</string>
+     </property>
+     <property name="text">
+      <string>Flip View</string>
+     </property>
+     <property name="icon">
+      <iconset theme="object-flip-horizontal"/>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>

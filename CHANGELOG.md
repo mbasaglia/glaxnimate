@@ -1,5 +1,7 @@
 ## 0.4.1
 
+* Editing:
+    * Added menu action and button to flip the view
 * Bug Fixes:
     * Fix pasting SVG data
     * Fix window size for smaller screen resolutions

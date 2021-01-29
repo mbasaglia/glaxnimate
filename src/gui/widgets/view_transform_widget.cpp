@@ -19,6 +19,7 @@ ViewTransformWidget::ViewTransformWidget(QWidget* parent)
     connect(d->spin_angle, (func)&QDoubleSpinBox::valueChanged, this, &ViewTransformWidget::fuckyoumoc_on_angle_changed);
     connect(d->spin_zoom, (func)&QDoubleSpinBox::valueChanged, this, &ViewTransformWidget::fuckyoumoc_on_zoom_changed);
     connect(d->btn_view_fit, &QAbstractButton::clicked, this, &ViewTransformWidget::view_fit);
+    connect(d->btn_flip_view, &QAbstractButton::clicked, this, &ViewTransformWidget::flip_view);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
     d->spin_zoom->setStepType(QAbstractSpinBox::AdaptiveDecimalStepType);
@@ -64,4 +65,9 @@ void ViewTransformWidget::fuckyoumoc_on_angle_changed(qreal degrees)
 void ViewTransformWidget::fuckyoumoc_on_zoom_changed(qreal percent)
 {
     emit zoom_changed(percent/100);
+}
+
+void ViewTransformWidget::set_flip(bool flipped)
+{
+    d->btn_flip_view->setChecked(flipped);
 }
