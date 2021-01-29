@@ -172,8 +172,8 @@
      </property>
      <addaction name="separator"/>
     </widget>
-    <addaction name="menu_views"/>
     <addaction name="separator"/>
+    <addaction name="menu_views"/>
     <addaction name="actionZoom_In"/>
     <addaction name="actionZoom_Out"/>
     <addaction name="actionReset_Zoom"/>
@@ -1871,7 +1871,7 @@
   </action>
   <action name="action_align_hor_right_out">
    <property name="icon">
-    <iconset theme="align-horizontal-left-to-anchor">
+    <iconset theme="align-horizontal-left-out">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
