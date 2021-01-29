@@ -1871,7 +1871,7 @@
   </action>
   <action name="action_align_hor_right_out">
    <property name="icon">
-    <iconset theme="align-horizontal-left-out">
+    <iconset theme="align-horizontal-left-to-anchor">
      <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
