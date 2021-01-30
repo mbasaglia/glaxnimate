@@ -142,6 +142,8 @@ linux:appimage:
         - make install DESTDIR=AppDir >/dev/null
         - mkdir AppDir/usr/lib
         - cp -r /usr/lib/python3.* AppDir/usr/lib
+        - sed  "s#__python__#`ls /usr/lib/ | grep python3\.`#" ../deploy/app_run.sh >AppDir/AppRun
+        - chmod a+x AppDir/AppRun
         - cp AppDir/usr/share/glaxnimate/glaxnimate/glaxnimate.desktop AppDir
         - cp AppDir/usr/share/glaxnimate/glaxnimate/images/glaxnimate.png AppDir
         - wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
