@@ -707,7 +707,7 @@ public:
 
     void add_stroke(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
     {
-        QString stroke_color = style.get("stroke", "none");
+        QString stroke_color = style.get("stroke", "transparent");
         if ( stroke_color == "none" )
             return;
 
@@ -782,7 +782,7 @@ public:
 
     void add_fill(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
     {
-        QString fill_color = style.get("fill", "none");
+        QString fill_color = style.get("fill", "transparent");
         if ( fill_color == "none" )
             return;
 
