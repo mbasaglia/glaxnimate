@@ -56,7 +56,8 @@ cmake.exe .. \
     -DPython3_LIBRARIES=/mingw64/bin/libpython3.8.dll \
     -DPython3_EXECUTABLE=/mingw64/bin/python3 \
     -G 'MSYS Makefiles' \
-    -DCMAKE_INSTALL_PREFIX=''
+    -DCMAKE_INSTALL_PREFIX='' \
+    -DCMAKE_BUILD_TYPE=Release
 mingw32-make.exe -j2
 
 # Setup package
