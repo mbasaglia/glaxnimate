@@ -78,3 +78,71 @@ void model::detail::AnimatedPropertyBezier::remove_points(const std::set<int>& i
         object()->push_command(new command::SetMultipleAnimated(this, QVariant::fromValue(bez), true));
     }
 }
+
+static QVariant extend_impl(math::bezier::Bezier subject, const math::bezier::Bezier& target, bool at_end)
+{
+    if ( target.closed() )
+    {
+        subject.set_closed(true);
+
+        if ( !subject.empty() )
+        {
+            if ( at_end )
+                subject[0].type = math::bezier::Corner;
+            else
+                subject[subject.size()-1].type = math::bezier::Corner;
+        }
+    }
+
+    if ( subject.size() < target.size() )
+    {
+        if ( at_end )
+        {
+            if ( !subject.empty() )
+                subject[subject.size()-1].type = math::bezier::Corner;
+
+            subject.points().insert(
+                subject.points().end(),
+                target.points().begin() + subject.size(),
+                target.points().end()
+            );
+        }
+        else
+        {
+            if ( !subject.empty() )
+                subject[0].type = math::bezier::Corner;
+            subject.points().insert(
+                subject.points().begin(),
+                target.points().begin(),
+                target.points().begin() + target.size() - subject.size()
+            );
+        }
+    }
+
+    return QVariant::fromValue(subject);
+}
+
+void model::detail::AnimatedPropertyBezier::extend(const math::bezier::Bezier& target, bool at_end)
+{
+    command::UndoMacroGuard guard(tr("Extend Shape"), object()->document());
+
+    auto bez = value_;
+
+    bool set = true;
+
+    for ( auto& kf : keyframes_ )
+    {
+        if ( !mismatched_ && kf->time() == time() )
+            set = false;
+        object()->push_command(
+            new command::SetKeyframe(this, kf->time(), extend_impl(kf->value_, target, at_end), true)
+        );
+    }
+
+    if ( set )
+    {
+        QVariant before = QVariant::fromValue(bez);
+        QVariant after = extend_impl(bez, target, at_end);
+        object()->push_command(new command::SetMultipleAnimated("", {this}, {before}, {after}, true));
+    }
+}

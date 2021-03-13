@@ -2,6 +2,7 @@
 
 * Editing:
     * Added menu action and button to flip the view
+    * The draw tool can now extend existing paths
 * UI:
     * Improved and expanded the alignment dock view
     * There is now an outline around the canvas draw area
@@ -9,6 +10,7 @@
     * Fix pasting SVG data
     * Fix window size for smaller screen resolutions
     * Fixed loading SVG animated colors
+    * Fixed draw tools marker scaling
 
 ## 0.4.0
 

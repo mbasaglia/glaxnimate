@@ -80,6 +80,13 @@ public:
     Q_INVOKABLE void split_segment(int index, qreal factor);
     Q_INVOKABLE void remove_point(int index);
     void remove_points(const std::set<int>& indices);
+
+    /**
+     * \brief Extends all keyframe values to match \p target
+     *
+     * Each keyframe adds nodes from \p target to have at least \p target.size() nodes
+     */
+    void extend(const math::bezier::Bezier& target, bool at_end);
 };
 
 } // namespace detail

@@ -2,6 +2,8 @@
 
 #include "draw_tool_base.hpp"
 #include "math/bezier/bezier.hpp"
+#include "model/shapes/path.hpp"
+
 
 namespace tools {
 
@@ -9,6 +11,9 @@ namespace tools {
 class DrawTool : public DrawToolBase
 {
 public:
+    DrawTool();
+    ~DrawTool();
+
     QString id() const override { return "draw-bezier"; }
     QIcon icon() const override { return QIcon::fromTheme("draw-bezier-curves"); }
     QString name() const override { return QObject::tr("Draw Bezier"); }
@@ -21,19 +26,14 @@ public:
     void paint(const PaintEvent& event) override;
     void key_press(const KeyEvent& event) override;
     void key_release(const KeyEvent& event) override;
-    void enable_event(const Event& event) override { Q_UNUSED(event); }
-    void disable_event(const Event& event) override { Q_UNUSED(event); }
+    void enable_event(const Event& event) override;
+    void disable_event(const Event& event) override;
+    void on_selected(graphics::DocumentScene * scene, model::DocumentNode * node) override;
+    void on_deselected(graphics::DocumentScene * scene, model::DocumentNode * node) override;
 
 private:
-    void create(const Event& event);
-    void adjust_point_type(Qt::KeyboardModifiers mod);
-    void clear();
-
-    math::bezier::Bezier bezier;
-    bool dragging = false;
-    math::bezier::PointType point_type = math::bezier::Symmetrical;
-    qreal join_radius = 5;
-    bool joining = false;
+    class Private;
+    std::unique_ptr<Private> d;
 
     static Autoreg<DrawTool> autoreg;
 };

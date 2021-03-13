@@ -1,15 +1,53 @@
 #include "draw_tool.hpp"
 #include "model/shapes/path.hpp"
 
+class tools::DrawTool::Private
+{
+public:
+    void create(const Event& event, DrawTool* tool);
+    void adjust_point_type(Qt::KeyboardModifiers mod);
+    void clear(bool hard);
+    void add_extension_points(model::Path* owner);
+    void remove_extension_points(model::AnimatedProperty<math::bezier::Bezier>* property);
+    void recursive_add_selection(graphics::DocumentScene * scene, model::DocumentNode* node);
+    void recursive_remove_selection(graphics::DocumentScene * scene, model::DocumentNode* node);
+    bool within_join_distance(const tools::MouseEvent& event, const QPointF& scene_pos);
+    void prepare_draw(const tools::MouseEvent& event);
+
+    struct ExtendPathData
+    {
+        model::AnimatedProperty<math::bezier::Bezier>* property = nullptr;
+        model::Path* owner = nullptr;
+        bool at_end = true;
+
+        QPointF pos() const
+        {
+            QPointF p = at_end ? property->get().back().pos : property->get()[0].pos;
+            if ( owner )
+                p = owner->transform_matrix(owner->time()).map(p);
+            return p;
+        }
+    };
+
+    math::bezier::Bezier bezier;
+    bool dragging = false;
+    math::bezier::PointType point_type = math::bezier::Symmetrical;
+    qreal join_radius = 5;
+    bool joining = false;
+
+    ExtendPathData extend;
+    std::vector<ExtendPathData> extension_points;
+};
 
 tools::Autoreg<tools::DrawTool> tools::DrawTool::autoreg{tools::Registry::Draw, max_priority};
 
-void tools::DrawTool::create(const tools::Event& event)
+void tools::DrawTool::Private::create(const tools::Event& event, DrawTool* tool)
 {
     if ( !bezier.empty() )
     {
         bezier.points().pop_back();
-        auto shape = std::make_unique<model::Path>(event.window->document());
+
+
         // use symmetrical length while drawing but for editing having smooth nodes is nicer
         // the user can always change them back
         for ( auto & point : bezier )
@@ -17,16 +55,68 @@ void tools::DrawTool::create(const tools::Event& event)
             if ( point.type == math::bezier::PointType::Symmetrical )
                 point.type = math::bezier::PointType::Smooth;
         }
-        shape->shape.set(bezier);
-        if ( bezier.closed() )
-            shape->closed.set(true);
-        clear();
-        create_shape(QObject::tr("Draw Shape"), event, std::move(shape));
-        event.repaint();
+
+        if ( extend.property )
+        {
+            command::UndoMacroGuard guard(tr("Extend Path"), event.window->document());
+
+            if ( !extend.at_end )
+                bezier.reverse();
+
+            extend.property->extend(bezier, extend.at_end);
+
+            if ( bezier.closed() )
+            {
+                if ( extend.owner )
+                    extend.owner->closed.set_undoable(true);
+                remove_extension_points(extend.property);
+            }
+        }
+        else
+        {
+            auto shape = std::make_unique<model::Path>(event.window->document());
+            shape->shape.set(bezier);
+            if ( bezier.closed() )
+                shape->closed.set(true);
+
+            add_extension_points(shape.get());
+
+            tool->create_shape(tr("Draw Shape"), event, std::move(shape));
+        }
+
+    }
+    clear(false);
+    event.repaint();
+}
+
+void tools::DrawTool::Private::add_extension_points(model::Path* owner)
+{
+    if ( !owner->closed.get() )
+    {
+        extension_points.push_back(ExtendPathData{
+            &owner->shape,
+            owner,
+            true
+        });
+        extension_points.push_back(ExtendPathData{
+            &owner->shape,
+            owner,
+            false
+        });
     }
 }
 
-void tools::DrawTool::adjust_point_type(Qt::KeyboardModifiers mod)
+void tools::DrawTool::Private::remove_extension_points(model::AnimatedProperty<math::bezier::Bezier>* property)
+{
+    extension_points.erase(
+        std::remove_if(extension_points.begin(), extension_points.end(), [property](const ExtendPathData& p){
+            return p.property == property;
+        }),
+        extension_points.end()
+    );
+}
+
+void tools::DrawTool::Private::adjust_point_type(Qt::KeyboardModifiers mod)
 {
     if ( mod & Qt::ShiftModifier )
         point_type = math::bezier::Corner;
@@ -44,53 +134,88 @@ void tools::DrawTool::adjust_point_type(Qt::KeyboardModifiers mod)
 
 void tools::DrawTool::key_press(const tools::KeyEvent& event)
 {
-    if ( bezier.empty() )
+    if ( d->bezier.empty() )
         return;
 
     if ( event.key() == Qt::Key_Delete || event.key() == Qt::Key_Backspace )
     {
-        bezier.points().pop_back();
-        if ( bezier.empty() )
-            clear();
+        d->bezier.points().pop_back();
+        if ( d->bezier.empty() )
+            d->clear(false);
         else
-            bezier.points().back().tan_in = bezier.points().back().pos;
+            d->bezier.points().back().tan_in = d->bezier.points().back().pos;
         event.accept();
         event.repaint();
     }
     else if ( event.key() == Qt::Key_Shift || event.key() == Qt::Key_Control )
     {
-        adjust_point_type(event.modifiers());
+        d->adjust_point_type(event.modifiers());
         event.accept();
         event.repaint();
     }
     else if ( event.key() == Qt::Key_Enter || event.key() == Qt::Key_Return )
     {
-        create(event);
+        d->create(event, this);
         event.accept();
     }
     else if ( event.key() == Qt::Key_Escape )
     {
-        clear();
+        d->clear(false);
         event.repaint();
     }
 }
 
-void tools::DrawTool::clear()
+void tools::DrawTool::Private::clear(bool hard)
 {
     dragging = false;
     bezier.clear();
     point_type = math::bezier::Symmetrical;
     joining = false;
+    extend = {};
+    if ( hard )
+        extension_points.clear();
+}
+
+bool tools::DrawTool::Private::within_join_distance(const tools::MouseEvent& event, const QPointF& scene_pos)
+{
+    return math::length(event.pos() - event.view->mapFromScene(scene_pos)) <= join_radius;
+}
+
+void tools::DrawTool::Private::prepare_draw(const tools::MouseEvent& event)
+{
+    for ( const auto& point : extension_points )
+    {
+        if ( within_join_distance(event, point.pos()) )
+        {
+            extend = point;
+            bezier = point.property->get();
+            if ( !point.at_end )
+                bezier.reverse();
+            bezier.points().back().type = math::bezier::Corner;
+            return;
+        }
+    }
+
+    bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, math::bezier::Corner));
+}
+
+tools::DrawTool::DrawTool()
+    : d(std::make_unique<Private>())
+{
+}
+
+tools::DrawTool::~DrawTool()
+{
 }
 
 void tools::DrawTool::key_release(const tools::KeyEvent& event)
 {
-    if ( bezier.empty() )
+    if ( d->bezier.empty() )
         return;
 
     if ( event.key() == Qt::Key_Shift || event.key() == Qt::Key_Control )
     {
-        adjust_point_type(event.modifiers());
+        d->adjust_point_type(event.modifiers());
         event.accept();
         event.repaint();
     }
@@ -101,51 +226,51 @@ void tools::DrawTool::mouse_press(const tools::MouseEvent& event)
     if ( event.button() != Qt::LeftButton )
         return;
 
-    if ( bezier.empty() )
-        bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, math::bezier::Corner));
+    if ( d->bezier.empty() )
+        d->prepare_draw(event);
 
-    dragging = true;
+    d->dragging = true;
 }
 
 void tools::DrawTool::mouse_move(const tools::MouseEvent& event)
 {
-    if ( bezier.empty() )
+    if ( d->bezier.empty() )
         return;
 
-    if ( dragging )
+    if ( d->dragging )
     {
-        bezier.points().back().drag_tan_out(event.scene_pos);
+        d->bezier.points().back().drag_tan_out(event.scene_pos);
     }
-    else if ( bezier.size() > 2 && math::length(event.pos() - event.view->mapFromScene(bezier.points().front().pos)) <= join_radius )
+    else if ( d->bezier.size() > 2 && d->within_join_distance(event, d->bezier.points().front().pos) )
     {
-        joining = true;
-        bezier.points().back().translate_to(bezier.points().front().pos);
+        d->joining = true;
+        d->bezier.points().back().translate_to(d->bezier.points().front().pos);
     }
     else
     {
-        joining = false;
-        bezier.points().back().translate_to(event.scene_pos);
+        d->joining = false;
+        d->bezier.points().back().translate_to(event.scene_pos);
     }
 }
 
 void tools::DrawTool::mouse_release(const tools::MouseEvent& event)
 {
-    if ( !dragging )
+    if ( !d->dragging )
         return;
 
     if ( event.button() == Qt::LeftButton )
     {
-        dragging = false;
+        d->dragging = false;
 
-        if ( joining )
+        if ( d->joining )
         {
-            bezier.points().front().tan_in = bezier.points().back().tan_in;
-            bezier.set_closed(true);
-            create(event);
+            d->bezier.points().front().tan_in = d->bezier.points().back().tan_in;
+            d->bezier.set_closed(true);
+            d->create(event, this);
         }
         else
         {
-            bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, point_type));
+            d->bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, d->point_type));
             event.repaint();
         }
     }
@@ -153,29 +278,30 @@ void tools::DrawTool::mouse_release(const tools::MouseEvent& event)
 
 void tools::DrawTool::mouse_double_click(const tools::MouseEvent& event)
 {
-    create(event);
+    d->create(event, this);
     event.accept();
 }
 
 void tools::DrawTool::paint(const tools::PaintEvent& event)
 {
-    if ( !bezier.empty() )
+    QPen pen(event.palette.highlight(), 1);
+    pen.setCosmetic(true);
+    qreal view_radius = d->join_radius;
+
+    if ( !d->bezier.empty() )
     {
         QPainterPath path;
-        bezier.add_to_painter_path(path);
+        d->bezier.add_to_painter_path(path);
         draw_shape(event, event.view->mapFromScene(path));
 
-        QPen pen(event.palette.highlight(), 1);
-        pen.setCosmetic(true);
         event.painter->setPen(pen);
         event.painter->setBrush(Qt::NoBrush);
 
-        qreal view_radius = join_radius / event.view->get_zoom_factor();
-        if ( bezier.size() > 1 )
+        if ( d->bezier.size() > 1 )
         {
-            QPointF center = event.view->mapFromScene(bezier.points().front().pos);
+            QPointF center = event.view->mapFromScene(d->bezier.points().front().pos);
 
-            if ( joining )
+            if ( d->joining )
             {
                 event.painter->setBrush(event.palette.highlightedText());
                 event.painter->drawEllipse(center, view_radius*1.5, view_radius*1.5);
@@ -187,16 +313,82 @@ void tools::DrawTool::paint(const tools::PaintEvent& event)
             }
         }
 
-        if ( dragging )
+        if ( d->dragging )
         {
             QPolygonF poly;
-            if ( bezier.size() > 1 )
-                poly.push_back(event.view->mapFromScene(bezier.points().back().tan_in));
-            QPointF center = event.view->mapFromScene(bezier.points().back().pos);
+            if ( d->bezier.size() > 1 )
+                poly.push_back(event.view->mapFromScene(d->bezier.points().back().tan_in));
+            QPointF center = event.view->mapFromScene(d->bezier.points().back().pos);
             poly.push_back(center);
-            poly.push_back(event.view->mapFromScene(bezier.points().back().tan_out));
+            poly.push_back(event.view->mapFromScene(d->bezier.points().back().tan_out));
             event.painter->drawPolyline(poly);
             event.painter->drawEllipse(center, view_radius, view_radius);
         }
+    }
+    else
+    {
+        event.painter->setPen(pen);
+        event.painter->setBrush(event.palette.brush(QPalette::Active, QPalette::HighlightedText));
+        bool got_one = false;
+        for ( const auto& point : d->extension_points )
+        {
+            QPointF center = event.view->mapFromScene(point.pos());
+            qreal mult = 1;
+            if ( !got_one && math::length(event.view->mapFromGlobal(QCursor::pos()) - center) <= d->join_radius )
+            {
+                mult = 1.5;
+                got_one = true;
+            }
+            event.painter->drawEllipse(center, view_radius * mult, view_radius * mult);
+        }
+    }
+}
+
+void tools::DrawTool::enable_event(const Event& ev)
+{
+    d->clear(false);
+    ev.repaint();
+}
+
+void tools::DrawTool::disable_event(const Event&)
+{
+    d->clear(true);
+}
+
+void tools::DrawTool::on_selected(graphics::DocumentScene * scene, model::DocumentNode * node)
+{
+    d->recursive_add_selection(scene, node);
+}
+
+void tools::DrawTool::on_deselected(graphics::DocumentScene * scene, model::DocumentNode * node)
+{
+    d->recursive_remove_selection(scene, node);
+}
+
+void tools::DrawTool::Private::recursive_add_selection(graphics::DocumentScene * scene, model::DocumentNode* node)
+{
+    auto meta = node->metaObject();
+    if ( meta->inherits(&model::Path::staticMetaObject) )
+    {
+        add_extension_points(static_cast<model::Path*>(node));
+    }
+    else if ( meta->inherits(&model::Group::staticMetaObject) )
+    {
+        for ( const auto& sub : static_cast<model::Group*>(node)->shapes )
+            recursive_add_selection(scene, sub.get());
+    }
+}
+
+void tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScene * scene, model::DocumentNode* node)
+{
+    auto meta = node->metaObject();
+    if ( meta->inherits(&model::Path::staticMetaObject) )
+    {
+        remove_extension_points(&static_cast<model::Path*>(node)->shape);
+    }
+    else if ( meta->inherits(&model::Group::staticMetaObject) )
+    {
+        for ( const auto& sub : static_cast<model::Group*>(node)->shapes )
+            recursive_remove_selection(scene, sub.get());
     }
 }
