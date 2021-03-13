@@ -438,6 +438,15 @@ void graphics::DocumentScene::drawBackground(QPainter* painter, const QRectF& re
 {
     painter->fillRect(rect, palette().base());
     painter->fillRect(rect.intersected(QRectF(QPointF(0, 0), d->document->size())), d->back);
+}
+
+void graphics::DocumentScene::drawForeground(QPainter* painter, const QRectF& rect)
+{
+    painter->setBrush(Qt::NoBrush);
+    QPen p(palette().mid(), 1);
+    p.setCosmetic(true);
+    painter->setPen(p);
+    painter->drawRect(QRectF(QPointF(0, 0), d->document->size()));
 
 }
 

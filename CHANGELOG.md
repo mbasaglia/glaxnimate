@@ -4,6 +4,7 @@
     * Added menu action and button to flip the view
 * UI:
     * Improved and expanded the alignment dock view
+    * There is now an outline around the canvas draw area
 * Bug Fixes:
     * Fix pasting SVG data
     * Fix window size for smaller screen resolutions

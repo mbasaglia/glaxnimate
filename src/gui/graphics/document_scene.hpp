@@ -61,6 +61,7 @@ signals:
 
 protected:
     void drawBackground(QPainter * painter, const QRectF & rect) override;
+    void drawForeground(QPainter * painter, const QRectF & rect) override;
 
 private slots:
     void connect_node(model::DocumentNode* node);
