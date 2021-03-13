@@ -11,6 +11,7 @@
     * Fix window size for smaller screen resolutions
     * Fixed loading SVG animated colors
     * Fixed draw tools marker scaling
+    * Fixed parenting when grouping objects
 
 ## 0.4.0
 

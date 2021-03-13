@@ -5,11 +5,18 @@
 
 
 namespace {
+
+/**
+ * \returns The parent node for \p shape
+ */
 model::DocumentNode* shape_parent(model::ShapeElement* shape)
 {
     return static_cast<model::DocumentNode*>(shape->owner()->object());
 }
 
+/**
+ * \returns The parent node for \p shape
+ */
 model::DocumentNode* shape_parent(model::DocumentNode* shape)
 {
     if ( auto se = qobject_cast<model::ShapeElement*>(shape) )
@@ -17,17 +24,20 @@ model::DocumentNode* shape_parent(model::DocumentNode* shape)
     return nullptr;
 }
 
+/**
+ * \brief Represents a sequence of nested nodes to reach
+ */
 struct PathToLayer
 {
     PathToLayer() = default;
 
     explicit PathToLayer(model::DocumentNode* node)
     {
-        layer = nullptr;
-        while ( node && !layer )
+        composition = nullptr;
+        while ( node && !composition )
         {
-            layer = qobject_cast<model::Composition*>(node);
-            if ( layer )
+            composition = qobject_cast<model::Composition*>(node);
+            if ( composition )
                 break;
 
             if ( auto group = qobject_cast<model::Group*>(node) )
@@ -43,18 +53,18 @@ struct PathToLayer
     }
 
     std::vector<model::Group*> steps;
-    model::Composition* layer = nullptr;
+    model::Composition* composition = nullptr;
 
     model::ShapeListProperty* lowest() const
     {
         if ( !steps.empty() )
-            return &steps.back()->shapes;
-        return &layer->shapes;
+            return &steps.front()->shapes;
+        return &composition->shapes;
     }
 
     model::ShapeListProperty* combine(const PathToLayer& other)
     {
-        if ( other.layer != layer )
+        if ( other.composition != composition )
             return nullptr;
 
         int i = 0;
@@ -63,12 +73,9 @@ struct PathToLayer
                 break;
 
         if ( i < int(steps.size()) )
-        {
             steps.erase(steps.begin()+i, steps.end());
-            return lowest();
-        }
 
-        return &layer->shapes;
+        return lowest();
     }
 };
 
