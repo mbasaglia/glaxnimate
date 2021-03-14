@@ -12,6 +12,7 @@
     * Fixed loading SVG animated colors
     * Fixed draw tools marker scaling
     * Fixed parenting when grouping objects
+    * Selection area for an object is now more accurate
 
 ## 0.4.0
 

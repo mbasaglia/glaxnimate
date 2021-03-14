@@ -117,7 +117,7 @@ std::unique_ptr<model::Path> model::Shape::to_path() const
 QPainterPath model::Shape::to_clip(FrameTime t) const
 {
     QPainterPath p;
-    to_bezier(t).add_to_painter_path(p);
+//     to_bezier(t).add_to_painter_path(p);
     return p;
 }
 
