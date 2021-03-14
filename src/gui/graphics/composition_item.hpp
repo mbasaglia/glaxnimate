@@ -17,12 +17,17 @@ public:
         setFlag(QGraphicsItem::ItemIsSelectable, false);
         setFlag(QGraphicsItem::ItemHasNoContents, false);
         set_selection_mode(None);
-        connect(animation->document(), &model::Document::graphics_invalidated, this, [this]{update();});
+        connect(animation->document(), &model::Document::graphics_invalidated, this, [this]{refresh();});
     }
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) override
     {
         node()->paint(painter, node()->time(), model::DocumentNode::Canvas);
+    }
+
+    void refresh()
+    {
+        update();
     }
 
 private slots:

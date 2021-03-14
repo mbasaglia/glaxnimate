@@ -25,11 +25,18 @@ graphics::DocumentNodeGraphicsItem::~DocumentNodeGraphicsItem()
 void graphics::DocumentNodeGraphicsItem::shape_changed()
 {
 //     prepareGeometryChange();
+    rect_cache = {};
+    cache_dirty = true;
 }
 
 QRectF graphics::DocumentNodeGraphicsItem::boundingRect() const
 {
-    return node_->local_bounding_rect(node_->time());
+    if ( cache_dirty )
+    {
+        rect_cache = node_->local_bounding_rect(node_->time());
+        cache_dirty = false;
+    }
+    return rect_cache;
 }
 
 void graphics::DocumentNodeGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
@@ -40,7 +47,6 @@ void graphics::DocumentNodeGraphicsItem::on_property_changed(const model::BasePr
 {
     if ( prop->traits().flags & model::PropertyTraits::Visual )
     {
-//         prepareGeometryChange();
-        update();
+        shape_changed();
     }
 }

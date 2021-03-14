@@ -253,8 +253,6 @@ void graphics::PointItem::set_has_tan_out(bool show)
     update();
 }
 
-
-
 graphics::BezierItem::BezierItem(model::Path* node, QGraphicsItem* parent)
 : Ctor(parent), node(node)
 {

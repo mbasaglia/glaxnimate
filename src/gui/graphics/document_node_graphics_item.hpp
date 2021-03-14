@@ -70,6 +70,8 @@ private:
     bool visible_permitted = true;
     bool visible = true;
     SelectionMode selection_mode_ = SelectionMode::Shape;
+    mutable QRectF rect_cache;
+    mutable bool cache_dirty = true;
 };
 
 } // namespace graphics
