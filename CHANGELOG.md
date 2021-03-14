@@ -13,6 +13,7 @@
     * Fixed draw tools marker scaling
     * Fixed parenting when grouping objects
     * Selection area for an object is now more accurate
+    * Improved performance for canvas navigation and editing
 
 ## 0.4.0
 

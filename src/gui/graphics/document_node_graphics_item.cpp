@@ -24,7 +24,7 @@ graphics::DocumentNodeGraphicsItem::~DocumentNodeGraphicsItem()
 
 void graphics::DocumentNodeGraphicsItem::shape_changed()
 {
-    prepareGeometryChange();
+//     prepareGeometryChange();
 }
 
 QRectF graphics::DocumentNodeGraphicsItem::boundingRect() const
@@ -40,7 +40,7 @@ void graphics::DocumentNodeGraphicsItem::on_property_changed(const model::BasePr
 {
     if ( prop->traits().flags & model::PropertyTraits::Visual )
     {
-        prepareGeometryChange();
+//         prepareGeometryChange();
         update();
     }
 }
