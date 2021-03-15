@@ -481,6 +481,7 @@ void CompoundTimelineWidget::set_controller(GlaxnimateWindow* window)
     d->window = window;
 }
 
+
 void CompoundTimelineWidget::copy_keyframe()
 {
     if ( !d->menu_kf_exit || !d->menu_anim )

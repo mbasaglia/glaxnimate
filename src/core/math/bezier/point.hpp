@@ -28,7 +28,7 @@ struct Point
     ) : pos(pos), tan_in(tan_in), tan_out(tan_out), type(type)
     {}
 
-    Point(const QPointF& pos)
+    Point(const QPointF& pos = {0, 0})
         : Point(pos, pos, pos, Corner)
     {}
 

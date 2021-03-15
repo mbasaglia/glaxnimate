@@ -27,6 +27,7 @@ math/bezier/bezier.cpp
 math/bezier/point.cpp
 math/bezier/operations.cpp
 math/bezier/cubic_struts.cpp
+math/bezier/meta.cpp
 
 model/main_composition.cpp
 model/composition.cpp
