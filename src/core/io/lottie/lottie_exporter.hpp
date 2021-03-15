@@ -382,8 +382,8 @@ public:
                     else
                     {
                         jkf["h"_l] =  0;
-                        jkf["i"_l] = keyframe_bezier_handle(kf->transition().before());
-                        jkf["o"_l] = keyframe_bezier_handle(kf->transition().after());
+                        jkf["o"_l] = keyframe_bezier_handle(kf->transition().before());
+                        jkf["i"_l] = keyframe_bezier_handle(kf->transition().after());
                     }
                 }
             }
