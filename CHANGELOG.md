@@ -6,6 +6,7 @@
 * UI:
     * Improved and expanded the alignment dock view
     * There is now an outline around the canvas draw area
+    * Canvas playback now might skip frames to match real time
 * Bug Fixes:
     * Fix pasting SVG data
     * Fix window size for smaller screen resolutions
@@ -14,6 +15,7 @@
     * Fixed parenting when grouping objects
     * Selection area for an object is now more accurate
     * Improved performance for canvas navigation and editing
+    * Easing export to lottie has been fixed
 
 ## 0.4.0
 

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <memory>
+#include <chrono>
 
 namespace Ui {
 class FrameControlsWidget;
@@ -54,6 +55,8 @@ protected:
 private:
     qreal fps = 60;
     int timer = 0;
+    std::chrono::high_resolution_clock::time_point playback_start;
+    std::chrono::milliseconds playback_tick{17};
     std::unique_ptr<Ui::FrameControlsWidget> d;
 };
 

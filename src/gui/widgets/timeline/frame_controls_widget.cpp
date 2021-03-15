@@ -1,5 +1,6 @@
 #include "frame_controls_widget.hpp"
 #include "ui_frame_controls_widget.h"
+#include <cmath>
 
 FrameControlsWidget::FrameControlsWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Ui::FrameControlsWidget>())
@@ -53,26 +54,31 @@ void FrameControlsWidget::set_fps(qreal fps)
 
 void FrameControlsWidget::timerEvent(QTimerEvent*)
 {
-    int i = d->spin_frame->value();
-    if ( i >= d->spin_frame->maximum() )
-    {
-        d->spin_frame->setValue(d->spin_frame->minimum());
+    if ( d->spin_frame->maximum() <= d->spin_frame->minimum() || fps <= 0 )
+        return;
 
-        if ( !d->button_loop->isChecked() )
-            pause();
-    }
-    else
+    auto range_frames = d->spin_frame->maximum() - d->spin_frame->minimum();
+
+    std::chrono::duration<double> offset = std::chrono::high_resolution_clock::now() - playback_start;
+    auto seconds_off = offset.count();
+    qreal frame_off = seconds_off * fps;
+
+    if ( frame_off >= range_frames && !d->button_loop->isChecked() )
     {
-        d->spin_frame->setValue(i+1);
+        pause();
+        d->spin_frame->setValue(d->spin_frame->minimum());
+        return;
     }
+
+    d->spin_frame->setValue(d->spin_frame->minimum() + qRound(std::fmod(frame_off, range_frames)));
 }
 
 void FrameControlsWidget::play()
 {
     if ( !timer )
     {
-        timer = startTimer(1000.0 / fps, Qt::PreciseTimer);
-
+        timer = startTimer(playback_tick, Qt::PreciseTimer);
+        playback_start = std::chrono::high_resolution_clock::now();
         d->button_play->setChecked(true);
         d->button_play->setIcon(QIcon::fromTheme("media-playback-pause"));
         emit play_started();
