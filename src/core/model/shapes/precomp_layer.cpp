@@ -108,10 +108,8 @@ void model::PreCompLayer::on_removed_from_list()
         composition.get()->remove_user(&composition);
 }
 
-
-QPainterPath model::PreCompLayer::to_clip(model::FrameTime time) const
+QPainterPath model::PreCompLayer::to_painter_path(model::FrameTime time) const
 {
-    auto trans = transform.get()->transform_matrix(time);
     QPainterPath p;
     if ( composition.get() )
     {
@@ -119,5 +117,10 @@ QPainterPath model::PreCompLayer::to_clip(model::FrameTime time) const
         for ( const auto& sh : composition->shapes )
             p.addPath(sh->to_clip(time));
     }
-    return trans.map(p);
+    return p;
+}
+
+QPainterPath model::PreCompLayer::to_clip(model::FrameTime time) const
+{
+    return transform.get()->transform_matrix(time).map(to_painter_path(time));
 }

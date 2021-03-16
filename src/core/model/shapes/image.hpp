@@ -19,7 +19,7 @@ public:
     Image(model::Document* doc);
 
     void add_shapes(FrameTime, math::bezier::MultiBezier&) const override;
-    QPainterPath to_clip(FrameTime t) const override;
+    QPainterPath to_painter_path(FrameTime t) const override;
 
     QIcon docnode_icon() const override;
     QString type_name_human() const override;

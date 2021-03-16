@@ -41,6 +41,7 @@ public:
     void add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez) const override;
 
     QPainterPath to_clip(model::FrameTime t) const override;
+    QPainterPath to_painter_path(model::FrameTime t) const override;
 
 signals:
     void opacity_changed(float op);

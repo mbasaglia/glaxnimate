@@ -90,6 +90,7 @@ public:
     void paint(QPainter*, FrameTime, PaintMode) const override;
 
     QPainterPath to_clip(model::FrameTime t) const override;
+    QPainterPath to_painter_path(model::FrameTime t) const override;
 
 private:
     std::vector<ReferenceTarget*> valid_parents() const;

@@ -150,6 +150,16 @@ QPainterPath model::Layer::to_clip(model::FrameTime time) const
     return Group::to_clip(time);
 }
 
+QPainterPath model::Layer::to_painter_path(model::FrameTime time) const
+{
+    time = relative_time(time);
+    if ( !animation->time_visible(time) || !render.get() )
+        return {};
+
+    return Group::to_painter_path(time);
+}
+
+
 
 QIcon model::Layer::docnode_icon() const
 {

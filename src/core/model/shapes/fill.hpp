@@ -41,7 +41,7 @@ public:
         return tr("Fill");
     }
 
-    QPainterPath to_clip(FrameTime t) const override;
+    QPainterPath to_painter_path(FrameTime t) const override;
 
 protected:
     void on_paint(QPainter* p, FrameTime t, PaintMode) const override;

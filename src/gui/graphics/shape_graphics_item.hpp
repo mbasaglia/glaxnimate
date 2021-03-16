@@ -16,7 +16,7 @@ public:
 
     QPainterPath shape() const override
     {
-        return shape_element()->to_clip(shape_element()->time());
+        return shape_element()->to_painter_path(shape_element()->time());
     }
 
     model::ShapeElement* shape_element() const

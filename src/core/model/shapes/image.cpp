@@ -79,7 +79,7 @@ QString model::Image::type_name_human() const
     return tr("Image");
 }
 
-QPainterPath model::Image::to_clip(FrameTime time) const
+QPainterPath model::Image::to_painter_path(FrameTime time) const
 {
     auto trans = transform.get()->transform_matrix(time);
     QPainterPath p;
