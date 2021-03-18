@@ -17,6 +17,7 @@
     * Improved performance for canvas navigation and editing
     * Easing export to lottie has been fixed
     * Fixed copy/pasting shape keyframes
+    * Long file export operations properly show the progress dialog
 
 ## 0.4.0
 

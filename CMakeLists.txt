@@ -64,7 +64,7 @@ message(STATUS ${Python3_EXECUTABLE})
 # Qt
 set (QT_SUPPORTED_VERSIONS 5)
 find_package(Qt5Qml QUIET)
-find_package(Qt5 COMPONENTS Widgets Xml UiTools REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Xml UiTools Concurrent REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)

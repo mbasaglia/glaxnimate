@@ -5,6 +5,9 @@
 #include <QFileDialog>
 #include <QImageWriter>
 #include <QDropEvent>
+#include <QtConcurrent>
+#include <QEventLoop>
+
 
 #include "io/lottie/lottie_html_format.hpp"
 #include "io/svg/svg_renderer.hpp"
@@ -20,6 +23,15 @@
 #include "app_info.hpp"
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/dialogs/io_status_dialog.hpp"
+
+
+static void process_events(const QFuture<bool>& promise)
+{
+    while ( !promise.isFinished() )
+    {
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents|QEventLoop::WaitForMoreEvents, 10);
+    }
+}
 
 void GlaxnimateWindow::Private::setup_document(const QString& filename)
 {
@@ -133,10 +145,14 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
 bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 {
     setup_document(options.filename);
-    QFile file(options.filename);
 
     current_document_has_file = true;
     dialog_import_status->reset(options.format, options.filename);
+
+
+    // Note to use a separate thread here, we need to make use model functions are thread safe as
+    // we emit signals when adding object and access them from the main thread
+    QFile file(options.filename);
     bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
 
     app::settings::set<QString>("open_save", "path", options.path.absolutePath());
@@ -244,7 +260,6 @@ bool GlaxnimateWindow::Private::close_document()
     return true;
 }
 
-
 bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opts)
 {
     io::Options opts = export_opts ? export_options : current_document->io_options();
@@ -262,9 +277,17 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
         opts = dialog.io_options();
     }
 
-    QFile file(opts.filename);
     dialog_export_status->reset(opts.format, opts.filename);
-    if ( !opts.format->save(file, opts.filename, current_document.get(), opts.settings) )
+
+    auto promise = QtConcurrent::run(
+        [opts, current_document=current_document.get()]{
+            QFile file(opts.filename);
+            return opts.format->save(file, opts.filename, current_document, opts.settings);
+        });
+
+    process_events(promise);
+
+    if ( !promise.result() )
         return false;
 
     if ( export_opts )
