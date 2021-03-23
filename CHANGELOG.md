@@ -15,7 +15,7 @@
     * Fixed parenting when grouping objects
     * Selection area for an object is now more accurate
     * Improved performance for canvas navigation and editing
-    * Easing export to lottie has been fixed
+    * Fixed easing import/export for lottie
     * Fixed copy/pasting shape keyframes
     * Long file export operations properly show the progress dialog
 

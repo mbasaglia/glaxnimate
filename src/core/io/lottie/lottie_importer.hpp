@@ -660,8 +660,8 @@ private:
                 if ( kf )
                 {
                     kf->set_transition({
-                        keyframe_bezier_handle(jkf["i"]),
                         keyframe_bezier_handle(jkf["o"]),
+                        keyframe_bezier_handle(jkf["i"]),
                         bool(jkf["h"].toInt())
                     });
                 }
