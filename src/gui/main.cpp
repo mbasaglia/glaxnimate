@@ -1,7 +1,10 @@
 #include <QSplashScreen>
+#include <QtGlobal>
 
+#include "app/env.hpp"
 #include "app/cli.hpp"
 #include "app/scripting/python/python_engine.hpp"
+#include "app/log/log.hpp"
 #include "glaxnimate_app.hpp"
 #include "app_info.hpp"
 
@@ -50,6 +53,16 @@ int main(int argc, char *argv[])
 
     if ( args.return_value )
         return *args.return_value;
+
+#ifdef Q_OS_WIN
+	auto pyhome = app::Environment::Variable("PYTHONHOME");
+	if ( pyhome.empty() )
+	{
+		pyhome = app.data_file("pythonhome");
+		app::log::Log("Python").log("Setting PYTHONHOME to " + pyhome.get(), app::log::Info);
+		app::Environment::Variable("PYTHONPATH").push_back(app.data_file("pythonhome/lib/python"));
+	}
+#endif
 
     QSplashScreen sc;
     sc.setPixmap(QPixmap(":glaxnimate/splash.svg"));

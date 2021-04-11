@@ -18,6 +18,7 @@
     * Fixed easing import/export for lottie
     * Fixed copy/pasting shape keyframes
     * Long file export operations properly show the progress dialog
+	* Scripts should now work on windows without Python installed
 
 ## 0.4.0
 

@@ -18,7 +18,7 @@ public:
     class Variable
     {
     public:
-        Variable(const char* name) : name(name) {}
+        explicit Variable(const char* name) : name(name) {}
 
         operator const QString&() const
         {

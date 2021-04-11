@@ -61,12 +61,15 @@ cmake.exe .. \
 mingw32-make.exe -j2
 
 # Setup package
+PACKDIR=glaxnimate
 mingw32-make.exe translations
-mingw32-make.exe install DESTDIR=glaxnimate
-windeployqt.exe glaxnimate/bin/glaxnimate.exe
-cp /mingw64/bin/*.dll glaxnimate/bin
-cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll glaxnimate/bin
-cp ../deploy/glaxnimate.vbs glaxnimate
+mingw32-make.exe install DESTDIR=$PACKDIR
+windeployqt.exe $PACKDIR/bin/glaxnimate.exe
+cp /mingw64/bin/*.dll $PACKDIR/bin
+cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll $PACKDIR/bin
+cp ../deploy/glaxnimate.vbs $PACKDIR
+mkdir -p $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
+cp /mingw64/lib/python3.8/*.py $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
 
 # PyPI
 if [ "$APPVEYOR_REPO_TAG" = true ]

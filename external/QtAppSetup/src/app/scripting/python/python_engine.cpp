@@ -1,5 +1,3 @@
-#include <QtGlobal>
-
 #include "python_engine.hpp"
 
 #include "app/scripting/python/register_machinery.hpp"
@@ -227,80 +225,6 @@ const app::scripting::ScriptEngine * app::scripting::python::PythonContext::engi
     return d->engine;
 }
 
-#ifdef Q_OS_WIN
-#include <QProcess>
-
-static bool python_setup_env_impl(const char* var, const char* cmd)
-{
-    auto pyhome = app::Environment::Variable(var);
-
-    if ( !pyhome.empty() )
-    {
-        app::log::Log("Python").stream(app::log::Info) << "Using " << var << " from the environment:" << pyhome.get();
-        return true;
-    }
-
-    QProcess process;
-    process.start("python", {}, QProcess::ReadWrite);
-    if ( !process.waitForStarted() )
-    {
-        app::log::Log("Python").log("No system interpreter", app::log::Error);
-        return false;
-    }
-
-    process.write(cmd);
-    process.closeWriteChannel();
-
-    if ( !process.waitForFinished() )
-    {
-        app::log::Log("Python").log("Broken system interpreter", app::log::Error);
-        return false;
-    }
-
-    if ( process.exitStatus() != QProcess::NormalExit || process.exitCode() != 0 )
-    {
-        app::log::Log("Python").log("Could not invoke system interpreter", app::log::Error);
-        return false;
-    }
-
-    pyhome = process.readAllStandardOutput().trimmed();
-    app::log::Log("Python").stream(app::log::Info) << "Using " << var << ":" << pyhome.get();
-    
-    return true;
-}
-
-static bool python_setup_env()
-{
-    static int already_done = -1;
-    if ( already_done >= 0 )
-        return already_done;
-
-    if ( !python_setup_env_impl("PYTHONHOME", "import sys; print(sys.exec_prefix)\n") )
-        return already_done = 0;
-
-
-    if ( !python_setup_env_impl("PYTHONPATH", "import os, re;print(os.path.dirname(re.__file__))\n") )
-        return already_done = 0;
-
-    return already_done = 1;
-}
-
-void app::scripting::python::PythonEngine::add_module_search_paths(const QStringList& paths)
-{
-    python_setup_env();
-    app::Environment::Variable("PYTHONPATH").push_back(paths);
-}
-
-app::scripting::ScriptContext app::scripting::python::PythonEngine::create_context() const
-{
-    if ( !python_setup_env() )
-        app::log::Log("Python").log("Could not determine PYTHONHOME, please set it in your environment", app::log::Error);
-
-    return std::make_unique<PythonContext>(this);
-}
-
-#else
-
 app::scripting::ScriptContext app::scripting::python::PythonEngine::create_context() const
 {
     return std::make_unique<PythonContext>(this);
@@ -310,6 +234,3 @@ void app::scripting::python::PythonEngine::add_module_search_paths(const QString
 {
     app::Environment::Variable("PYTHONPATH").push_back(paths);
 }
-
-#endif
-
