@@ -75,7 +75,7 @@ cp -r /mingw64/lib/python3.8/*.py /mingw64/lib/python3.8/{json,collections,encod
 if [ "$APPVEYOR_REPO_TAG" = true ]
 then
     pacman --noconfirm -S mingw-w64-x86_64-python-pip
-    pip.exe install wheel
+    pip.exe install wheel twine
     cmake.exe .. -DVERSION_SUFFIX=""
     mingw32-make.exe glaxnimate_python_depends_install
     mingw32-make.exe glaxnimate_python
