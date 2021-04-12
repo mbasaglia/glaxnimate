@@ -69,7 +69,7 @@ cp /mingw64/bin/*.dll $PACKDIR/bin
 cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll $PACKDIR/bin
 cp ../deploy/glaxnimate.vbs $PACKDIR
 mkdir -p $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
-cp -r /mingw64/lib/python3.8/*.py /mingw64/lib/python3.8/encodings /mingw64/lib/python3.8/json $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
+cp -r /mingw64/lib/python3.8/*.py /mingw64/lib/python3.8/{json,collections,encodings} $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
 
 # PyPI
 if [ "$APPVEYOR_REPO_TAG" = true ]
