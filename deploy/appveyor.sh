@@ -71,18 +71,6 @@ cp ../deploy/glaxnimate.vbs $PACKDIR
 mkdir -p $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
 cp -r /mingw64/lib/python3.8/*.py /mingw64/lib/python3.8/{json,collections,encodings} $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
 
-# PyPI
-if [ "$APPVEYOR_REPO_TAG" = true ]
-then
-    pacman --noconfirm -S mingw-w64-x86_64-python-pip
-    pip.exe install wheel twine
-    cmake.exe .. -DVERSION_SUFFIX=""
-    mingw32-make.exe glaxnimate_python_depends_install
-    mingw32-make.exe glaxnimate_python
-    (cd py_module && ./setup.py build --compiler=unix bdist_wheel && cd ..)
-    mingw32-make.exe glaxnimate_python_upload
-fi
-
 # Create Artifacts
 zip -r glaxnimate-x86_64.zip glaxnimate
 sha1sum glaxnimate-x86_64.zip >checksum.txt
@@ -96,4 +84,16 @@ then
     fi
     ../deploy/gitlab_upload.py glaxnimate-x86_64.zip "$path/Win/glaxnimate-x86_64.zip"
     ../deploy/gitlab_upload.py checksum.txt "$path/Win/checksum.txt"
+fi
+
+# PyPI
+if [ "$APPVEYOR_REPO_TAG" = true ]
+then
+    pacman --noconfirm -S mingw-w64-x86_64-python-pip
+    pip.exe install wheel twine
+    cmake.exe .. -DVERSION_SUFFIX=""
+    mingw32-make.exe glaxnimate_python_depends_install
+    mingw32-make.exe glaxnimate_python
+    (cd py_module && ./setup.py build --compiler=unix bdist_wheel && cd ..)
+    mingw32-make.exe glaxnimate_python_upload
 fi
