@@ -21,6 +21,8 @@ endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(WHEEL_CMD "--plat-name" "manylinux1_x86_64")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(WHEEL_CMD "--plat-name" "win32")
 else()
     set(WHEEL_CMD)
 endif()
