@@ -20,7 +20,8 @@ setuptools.setup(
     url="https://glaxnimate.mattbas.org/",
     license="GNU General Public License v3 or later (GPLv3+)",
     keywords="telegram stickers tgs lottie svg animation",
-    ext_modules=[Extension("${PROJECT_SLUG}", sources=[])],
+    #ext_modules=[Extension("${PROJECT_SLUG}", sources=[])],
+    py_modules=["glaxnimate"],
     # https://pypi.org/classifiers/
     classifiers=[
         "Programming Language :: Python :: 3",

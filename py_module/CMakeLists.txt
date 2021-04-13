@@ -6,9 +6,17 @@ set_target_properties(
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/lib"
 )
 target_link_libraries(glaxnimate_python PUBLIC ${LIB_NAME_CORE} QtAppSetup)
+add_custom_command(TARGET glaxnimate_python PRE_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/build/lib")
+
+
+get_target_property(pain1 glaxnimate_python PREFIX)
+get_target_property(pain2 glaxnimate_python OUTPUT_NAME)
+get_target_property(pain3 glaxnimate_python SUFFIX)
+set(MODULE_LIB_NAME "${pain1}${pain2}${pain3}")
 
 configure_file(README.md ${CMAKE_CURRENT_BINARY_DIR}/README.md COPYONLY)
 configure_file(setup.in.py ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
+configure_file(MANIFEST.in.in ${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in)
 
 
 if(PYTHON_PIP)
