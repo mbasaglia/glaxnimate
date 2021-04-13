@@ -285,6 +285,7 @@ linux:pypi:
         - make glaxnimate_python_upload
     only:
         - tags
+    allow_failure: true
 
 #windows:build:
     #extends:
