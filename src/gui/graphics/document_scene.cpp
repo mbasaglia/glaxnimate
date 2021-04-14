@@ -479,3 +479,8 @@ void graphics::DocumentScene::show_custom_editor(model::DocumentNode* node, std:
     else
         d->node_to_editors.emplace(node, std::move(editor));
 }
+
+graphics::DocumentNodeGraphicsItem* graphics::DocumentScene::item_from_node(model::DocumentNode* node) const
+{
+    return d->item_from_node(node);
+}

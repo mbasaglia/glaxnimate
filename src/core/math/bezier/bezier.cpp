@@ -155,8 +155,6 @@ void math::bezier::Bezier::transform(const QTransform& t)
 }
 
 
-
-
 QRectF math::bezier::MultiBezier::bounding_box() const
 {
     if ( beziers_.empty() )
@@ -172,4 +170,38 @@ QRectF math::bezier::MultiBezier::bounding_box() const
             box |= bb;
     }
     return box;
+}
+
+void math::bezier::MultiBezier::append(const QPainterPath& path)
+{
+    std::array<QPointF, 3> data;
+    int data_i = 0;
+    for ( int i = 0; i < path.elementCount(); i++ )
+    {
+        auto element = path.elementAt(i);
+        switch ( element.type )
+        {
+            case QPainterPath::MoveToElement:
+                if ( !beziers_.empty() && beziers_.back()[0].pos == beziers_.back().back().pos )
+                    close();
+                move_to(element);
+                break;
+            case QPainterPath::LineToElement:
+                line_to(element);
+                break;
+            case QPainterPath::CurveToElement:
+                data_i = 0;
+                data[0] = element;
+                break;
+            case QPainterPath::CurveToDataElement:
+                ++data_i;
+                data[data_i] = element;
+                if ( data_i == 2 )
+                {
+                    cubic_to(data[0], data[1], data[2]);
+                    data_i = -1;
+                }
+                break;
+        }
+    }
 }

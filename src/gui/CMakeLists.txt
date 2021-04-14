@@ -31,6 +31,7 @@ tools/edit_tool.cpp
 tools/star_tool.cpp
 tools/color_picker.cpp
 tools/fill_tool.cpp
+tools/text_tool.cpp
 
 widgets/dialogs/glaxnimate_window.cpp
 widgets/dialogs/glaxnimate_window.ui

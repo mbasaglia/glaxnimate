@@ -51,6 +51,7 @@ public:
     QGraphicsItem* get_editor(model::DocumentNode* node) const;
 
     model::DocumentNode* item_to_node(const QGraphicsItem* item) const;
+    DocumentNodeGraphicsItem* item_from_node(model::DocumentNode* node) const;
 
     std::vector<DocumentNodeGraphicsItem*> nodes(const QPointF& point,      const QTransform& device_transform) const;
     std::vector<DocumentNodeGraphicsItem*> nodes(const QPainterPath& path,  const QTransform& device_transform, Qt::ItemSelectionMode mode = Qt::IntersectsItemShape) const;

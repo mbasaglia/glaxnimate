@@ -249,6 +249,8 @@ public:
         beziers_.insert(beziers_.end(), other.beziers_.begin(), other.beziers_.end());
     }
 
+    void append(const QPainterPath& path);
+
 private:
     void handle_end()
     {

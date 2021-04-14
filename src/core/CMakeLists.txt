@@ -70,6 +70,7 @@ model/shapes/styler.cpp
 model/shapes/layer.cpp
 model/shapes/image.cpp
 model/shapes/precomp_layer.cpp
+model/shapes/text.cpp
 
 
 plugin/plugin.cpp

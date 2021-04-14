@@ -69,7 +69,7 @@ protected:
     }
 
     void create_shape(const QString& command_name, const Event& event,
-                      std::unique_ptr<model::Shape> shape)
+                      std::unique_ptr<model::ShapeElement> shape)
     {
         auto document = event.window->document();
         command::UndoMacroGuard macro(command_name, document);
