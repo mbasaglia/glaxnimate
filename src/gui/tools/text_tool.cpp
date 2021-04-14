@@ -103,6 +103,7 @@ public:
 
     void close_document_event(const Event& event)
     {
+        Q_UNUSED(event);
         clear();
     }
 
