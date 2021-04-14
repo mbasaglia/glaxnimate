@@ -19,6 +19,8 @@
 #include "command/undo_macro_guard.hpp"
 #include "command/undo_macro_guard.hpp"
 
+#include "tools/base.hpp"
+
 #include "glaxnimate_app.hpp"
 #include "app_info.hpp"
 #include "widgets/dialogs/import_export_dialog.hpp"
@@ -237,6 +239,9 @@ bool GlaxnimateWindow::Private::close_document()
             current_document->undo_stack().clear();
         }
     }
+
+    if ( active_tool )
+        active_tool->close_document_event({ui.graphics_view, &scene, parent});
 
     comp = nullptr;
     ui.stroke_style_widget->set_shape(nullptr);

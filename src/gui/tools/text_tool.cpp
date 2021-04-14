@@ -91,6 +91,7 @@ public:
 
     void enable_event(const Event& event) override
     {
+        Q_UNUSED(event);
         editor.setTextInteractionFlags(Qt::TextEditorInteraction);
         clear();
     }
@@ -98,6 +99,11 @@ public:
     void disable_event(const Event& event) override
     {
         commit(event);
+    }
+
+    void close_document_event(const Event& event)
+    {
+        clear();
     }
 
     void clear()
