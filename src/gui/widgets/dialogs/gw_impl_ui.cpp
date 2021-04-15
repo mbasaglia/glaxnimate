@@ -29,6 +29,7 @@ static QToolButton* action_button(QAction* action, QWidget* parent)
     auto button = new ScalableButton(parent);
     button->setDefaultAction(action);
     button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    button->resize(16, 16);
     return button;
 }
 
@@ -389,6 +390,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     ui.dock_align_grid->addWidget(action_button(ui.action_align_vert_bottom_out, ui.dock_align->widget()),  row, 2);
     row++;
     ui.dock_align_grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding),        row, 0);
+    ui.dock_align->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
@@ -409,12 +411,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     parent->tabifyDockWidget(ui.dock_tool_options, ui.dock_align);
     ui.dock_tool_options->raise();
 
-    parent->resizeDocks(
-        {ui.dock_layers},
-        {1},
-        Qt::Horizontal
-    );
+    parent->resizeDocks({ui.dock_layers}, {1}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_tools}, {200}, Qt::Horizontal);
+    parent->resizeDocks({ui.dock_tool_options, ui.dock_align, ui.dock_tools}, {1, 1, 4000}, Qt::Vertical);
     parent->resizeDocks({ui.dock_timeline}, {parent->height()/3}, Qt::Vertical);
     ui.dock_script_console->setVisible(false);
     ui.dock_logs->setVisible(false);
