@@ -533,18 +533,18 @@ void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemS
 {
     for ( const auto& index : deselected.indexes() )
         if ( index.column() == 0 )
-            if ( auto node = document_node_model.node(comp_model.mapToSource(index)) )
+            if ( auto node = document_node_model.visual_node(comp_model.mapToSource(index)) )
                 scene.remove_selection(node);
 
     for ( const auto& index : selected.indexes() )
         if ( index.column() == 0 )
-            if ( auto node = document_node_model.node(comp_model.mapToSource(index)) )
+            if ( auto node = document_node_model.visual_node(comp_model.mapToSource(index)) )
                 scene.add_selection(node);
 }
 
-void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected)
+void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
 {
-    for ( model::DocumentNode* node : deselected )
+    for ( model::VisualNode* node : deselected )
     {
         ui.view_document_node->selectionModel()->select(
             comp_model.mapFromSource(document_node_model.node_index(node)),
@@ -552,7 +552,7 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
         );
     }
 
-    for ( model::DocumentNode* node : selected )
+    for ( model::VisualNode* node : selected )
     {
         ui.view_document_node->selectionModel()->select(
             comp_model.mapFromSource(document_node_model.node_index(node)),
@@ -625,7 +625,7 @@ void GlaxnimateWindow::Private::status_message(const QString& message, int durat
     ui.status_bar->showMessage(message, duration);
 }
 
-void GlaxnimateWindow::Private::trace_dialog(model::ReferenceTarget* object)
+void GlaxnimateWindow::Private::trace_dialog(model::DocumentNode* object)
 {
     model::Image* bmp = 0;
     if ( object )

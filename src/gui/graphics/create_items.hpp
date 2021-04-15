@@ -7,7 +7,7 @@
 
 
 namespace model {
-    class DocumentNode;
+    class VisualNode;
 } // namespace model
 
 namespace graphics {
@@ -24,8 +24,8 @@ public:
         return instance;
     }
 
-    DocumentNodeGraphicsItem* make_graphics_item(model::DocumentNode* node) const;
-    std::unique_ptr<GraphicsEditor> make_graphics_editor(model::DocumentNode* node) const;
+    DocumentNodeGraphicsItem* make_graphics_item(model::VisualNode* node) const;
+    std::unique_ptr<GraphicsEditor> make_graphics_editor(model::VisualNode* node) const;
 
 
 private:
@@ -33,8 +33,8 @@ private:
     {
     public:
         virtual ~AbstractBuilder() = default;
-        virtual DocumentNodeGraphicsItem* make_graphics_item(model::DocumentNode* node) const = 0;
-        virtual std::unique_ptr<GraphicsEditor> make_graphics_editor(model::DocumentNode* node) const = 0;
+        virtual DocumentNodeGraphicsItem* make_graphics_item(model::VisualNode* node) const = 0;
+        virtual std::unique_ptr<GraphicsEditor> make_graphics_editor(model::VisualNode* node) const = 0;
     };
 
     template<class DocT, class FuncItem, class FuncEdit>
@@ -47,12 +47,12 @@ private:
               func_edit(std::move(func_edit))
         {}
 
-        graphics::DocumentNodeGraphicsItem* make_graphics_item(model::DocumentNode* node) const override
+        graphics::DocumentNodeGraphicsItem* make_graphics_item(model::VisualNode* node) const override
         {
             return func_item(static_cast<DocT*>(node));
         }
 
-        std::unique_ptr<GraphicsEditor> make_graphics_editor(model::DocumentNode* node) const override
+        std::unique_ptr<GraphicsEditor> make_graphics_editor(model::VisualNode* node) const override
         {
             return func_edit(static_cast<DocT*>(node));
         }
@@ -74,10 +74,10 @@ private:
         );
     }
 
-    static graphics::DocumentNodeGraphicsItem* make_graphics_item_default(model::DocumentNode* node);
-    static std::unique_ptr<GraphicsEditor> make_graphics_editor_default(model::DocumentNode* node);
+    static graphics::DocumentNodeGraphicsItem* make_graphics_item_default(model::VisualNode* node);
+    static std::unique_ptr<GraphicsEditor> make_graphics_editor_default(model::VisualNode* node);
 
-    AbstractBuilder* builder_for(model::DocumentNode* node) const;
+    AbstractBuilder* builder_for(model::VisualNode* node) const;
 
     std::map<const QMetaObject*, AbstractBuilder*> builders;
 };

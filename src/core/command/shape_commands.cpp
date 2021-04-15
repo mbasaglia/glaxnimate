@@ -9,15 +9,15 @@ namespace {
 /**
  * \returns The parent node for \p shape
  */
-model::DocumentNode* shape_parent(model::ShapeElement* shape)
+model::VisualNode* shape_parent(model::ShapeElement* shape)
 {
-    return static_cast<model::DocumentNode*>(shape->owner()->object());
+    return static_cast<model::VisualNode*>(shape->owner()->object());
 }
 
 /**
  * \returns The parent node for \p shape
  */
-model::DocumentNode* shape_parent(model::DocumentNode* shape)
+model::VisualNode* shape_parent(model::VisualNode* shape)
 {
     if ( auto se = qobject_cast<model::ShapeElement*>(shape) )
         return shape_parent(se);
@@ -31,7 +31,7 @@ struct PathToLayer
 {
     PathToLayer() = default;
 
-    explicit PathToLayer(model::DocumentNode* node)
+    explicit PathToLayer(model::VisualNode* node)
     {
         composition = nullptr;
         while ( node && !composition )
@@ -81,7 +81,7 @@ struct PathToLayer
 
 } // namespace
 
-command::GroupShapes::Data command::GroupShapes::collect_shapes(const std::vector<model::DocumentNode *>& selection)
+command::GroupShapes::Data command::GroupShapes::collect_shapes(const std::vector<model::VisualNode *>& selection)
 {
     if ( selection.empty() )
         return {};

@@ -170,7 +170,7 @@ public:
         {}
     };
 
-    void extract_editor(graphics::DocumentScene * scene, model::DocumentNode* node)
+    void extract_editor(graphics::DocumentScene * scene, model::VisualNode* node)
     {
         auto editor_parent = scene->get_editor(node);
         if ( !editor_parent )
@@ -185,14 +185,14 @@ public:
                 connect(editor, &QObject::destroyed, editor, [this, editor]{
                     active.erase(editor);
                 });
-                connect(editor->target_object(), &model::DocumentNode::transform_matrix_changed, editor, [this, editor]{
+                connect(editor->target_object(), &model::VisualNode::transform_matrix_changed, editor, [this, editor]{
                     active[editor] = PathCache(editor);
                 });
             }
         }
     }
 
-    void impl_extract_selection_recursive_item(graphics::DocumentScene * scene, model::DocumentNode* node)
+    void impl_extract_selection_recursive_item(graphics::DocumentScene * scene, model::VisualNode* node)
     {
         auto meta = node->metaObject();
         if ( meta->inherits(&model::Shape::staticMetaObject) || meta->inherits(&model::ShapeOperator::staticMetaObject) )
@@ -288,10 +288,10 @@ public:
         QMenu* use_menu = new QMenu(tr("Gradient Colors"), &menu);
         use_menu->setIcon(QIcon::fromTheme("color-gradient"));
 
-        for ( const auto& colors : doc->defs()->gradient_colors )
+        for ( const auto& colors : doc->defs()->gradient_colors->values )
         {
             use_menu->addAction(
-                colors->reftarget_icon(),
+                colors->instance_icon(),
                 colors->name.get()
             )->setData(QVariant::fromValue(colors.get()));
         }
@@ -639,7 +639,7 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
             }
             case Private::Click:
             {
-                std::vector<model::DocumentNode*> selection;
+                std::vector<model::VisualNode*> selection;
 
                 auto nodes = under_mouse(event, true, SelectionMode::Group).nodes;
 
@@ -766,7 +766,7 @@ QCursor tools::EditTool::cursor()
     return d->cursor;
 }
 
-void tools::EditTool::on_selected(graphics::DocumentScene * scene, model::DocumentNode * node)
+void tools::EditTool::on_selected(graphics::DocumentScene * scene, model::VisualNode * node)
 {
     d->impl_extract_selection_recursive_item(scene, node);
 }

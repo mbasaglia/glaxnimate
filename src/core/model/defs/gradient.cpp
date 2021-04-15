@@ -71,7 +71,7 @@ QString model::GradientColors::type_name_human() const
 }
 
 
-QIcon model::GradientColors::reftarget_icon() const
+QIcon model::GradientColors::instance_icon() const
 {
     QPixmap icon(32, 32);
     QPainter p(&icon);
@@ -87,7 +87,7 @@ bool model::GradientColors::remove_if_unused(bool clean_lists)
     {
         document()->push_command(new command::RemoveObject(
             this,
-            &document()->defs()->gradient_colors
+            &document()->defs()->gradient_colors->values
         ));
         return true;
     }
@@ -161,14 +161,19 @@ void model::GradientColors::remove_stop(int index)
     }
 }
 
-std::vector<model::ReferenceTarget *> model::Gradient::valid_refs() const
+model::DocumentNode * model::GradientColors::docnode_parent() const
 {
-    return document()->defs()->gradient_colors.valid_reference_values(false);
+    return document()->defs()->gradient_colors.get();
 }
 
-bool model::Gradient::is_valid_ref ( model::ReferenceTarget* node ) const
+std::vector<model::DocumentNode *> model::Gradient::valid_refs() const
 {
-    return document()->defs()->gradient_colors.is_valid_reference_value(node, true);
+    return document()->defs()->gradient_colors->values.valid_reference_values(false);
+}
+
+bool model::Gradient::is_valid_ref ( model::DocumentNode* node ) const
+{
+    return document()->defs()->gradient_colors->values.is_valid_reference_value(node, true);
 }
 
 void model::Gradient::on_ref_visual_changed()
@@ -269,9 +274,15 @@ bool model::Gradient::remove_if_unused(bool)
         colors.set_undoable(QVariant::fromValue((model::GradientColors*)nullptr));
         document()->push_command(new command::RemoveObject(
             this,
-            &document()->defs()->gradients
+            &document()->defs()->gradients->values
         ));
         return true;
     }
     return false;
+}
+
+
+model::DocumentNode * model::Gradient::docnode_parent() const
+{
+    return document()->defs()->gradients.get();
 }

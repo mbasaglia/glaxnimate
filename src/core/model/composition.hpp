@@ -5,7 +5,7 @@
 
 namespace model {
 
-class Composition : public DocumentNode
+class Composition : public VisualNode
 {
     Q_OBJECT
 
@@ -17,7 +17,7 @@ class Composition : public DocumentNode
     )
 
 public:
-    explicit Composition(Document* document);
+    using VisualNode::VisualNode;
 
     utils::Range<Layer::ChildLayerIterator> top_level() const
     {

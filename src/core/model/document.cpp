@@ -70,7 +70,7 @@ void model::Document::set_io_options(const io::Options& opt)
         emit filename_changed(d->io_options.filename);
 }
 
-model::ReferenceTarget * model::Document::find_by_uuid(const QUuid& n) const
+model::DocumentNode * model::Document::find_by_uuid(const QUuid& n) const
 {
     if ( auto it = d->defs.find_by_uuid(n) )
         return it;
@@ -177,8 +177,7 @@ QString model::Document::get_best_name(const model::DocumentNode* node, const QS
     QString name = base_name;
 
     collect_names(&d->main, base_name, names, node);
-    for ( const auto& comp : d->defs.precompositions )
-        collect_names(comp.get(), base_name, names, node);
+    collect_names(&d->defs, base_name, names, node);
 
     QString name_pattern = "%1 %2";
     while ( names.contains(name) )
@@ -228,7 +227,7 @@ QImage model::Document::render_image(float time, QSize image_size, const QColor&
         image_size.width() / real_size.width(),
         image_size.height() / real_size.height()
     );
-    d->main.paint(&painter, time, DocumentNode::Render);
+    d->main.paint(&painter, time, VisualNode::Render);
 
     return image;
 }

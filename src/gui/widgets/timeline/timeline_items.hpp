@@ -465,12 +465,12 @@ private:
 class TimeRectItem : public QGraphicsObject
 {
 public:
-    TimeRectItem(model::DocumentNode* node, qreal height, QGraphicsItem* parent)
+    TimeRectItem(model::VisualNode* node, qreal height, QGraphicsItem* parent)
     : QGraphicsObject(parent),
       radius(height/2)
     {
         update_color(node->docnode_group_color());
-        connect(node, &model::DocumentNode::docnode_group_color_changed, this, &TimeRectItem::update_color);
+        connect(node, &model::VisualNode::docnode_group_color_changed, this, &TimeRectItem::update_color);
     }
 
     void paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget *) override
@@ -504,7 +504,7 @@ protected:
 class AnimationContainerItem : public TimeRectItem
 {
 public:
-    AnimationContainerItem(model::DocumentNode* node, model::AnimationContainer* animation,
+    AnimationContainerItem(model::VisualNode* node, model::AnimationContainer* animation,
                            qreal height, QGraphicsItem* parent)
     : TimeRectItem(node, height, parent),
       animation(animation)

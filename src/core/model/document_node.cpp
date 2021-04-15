@@ -5,38 +5,57 @@
 #include <QGraphicsItem>
 
 
-model::DocumentNode* model::DocumentNode::docnode_group_parent() const
+model::DocumentNode::DocumentNode(model::Document* document)
+    : Object ( document )
+{
+    uuid.set_value(QUuid::createUuid());
+}
+
+model::VisualNode* model::VisualNode::docnode_group_parent() const
 {
     return nullptr;
 }
-int model::DocumentNode::docnode_group_child_count() const
+int model::VisualNode::docnode_group_child_count() const
 {
     return 0;
 }
-model::DocumentNode* model::DocumentNode::docnode_group_child(int) const
+model::VisualNode* model::VisualNode::docnode_group_child(int) const
 {
     return nullptr;
 }
-model::DocumentNode* model::DocumentNode::docnode_fuzzy_parent() const
+model::VisualNode* model::VisualNode::docnode_fuzzy_parent() const
 {
     if ( auto p = docnode_group_parent() )
         return p;
-    return docnode_parent();
+    return docnode_visual_parent();
 }
 
-QColor model::DocumentNode::docnode_group_color() const
+QColor model::VisualNode::docnode_group_color() const
 {
     if ( !docnode_valid_color() )
     {
         if ( auto parent = docnode_fuzzy_parent() )
             return parent->docnode_group_color();
-        else
-            return QColor(0xf8, 0xf8, 0xf8);
+
+        return QColor(0xf8, 0xf8, 0xf8);
     }
     return group_color.get();
 }
 
-void model::DocumentNode::on_group_color_changed(const QColor&)
+model::VisualNode* model::VisualNode::docnode_visual_child(int index) const
+{
+    return static_cast<model::VisualNode*>(docnode_child(index));
+}
+
+model::VisualNode* model::VisualNode::docnode_visual_parent() const
+{
+    auto p = docnode_parent();
+    if ( p )
+        return p->cast<model::VisualNode>();
+    return nullptr;
+}
+
+void model::VisualNode::on_group_color_changed(const QColor&)
 {
     if ( !group_icon.isNull() )
     {
@@ -62,32 +81,32 @@ bool model::DocumentNode::docnode_is_instance(const QString& type_name) const
     return false;
 }
 
-void model::DocumentNode::docnode_on_update_group(bool)
+void model::VisualNode::docnode_on_update_group(bool)
 {
 //     if ( force || docnode_valid_color() )
     {
         emit docnode_group_color_changed(docnode_group_color());
         for ( auto gc : docnode_group_children() )
             gc->docnode_on_update_group();
-        for ( auto gc : docnode_children() )
+        for ( auto gc : docnode_visual_children() )
             gc->docnode_on_update_group();
     }
 
     emit group_transform_matrix_changed(group_transform_matrix(time()));
 }
 
-bool model::DocumentNode::docnode_valid_color() const
+bool model::VisualNode::docnode_valid_color() const
 {
     QColor col = group_color.get();
     return col.isValid() && col.alpha() > 0;
 }
 
-QIcon model::DocumentNode::reftarget_icon() const
+QIcon model::VisualNode::instance_icon() const
 {
     if ( !docnode_valid_color() )
     {
         if ( auto parent = docnode_fuzzy_parent() )
-            return parent->reftarget_icon();
+            return parent->instance_icon();
     }
 
     if ( group_icon.isNull() )
@@ -99,9 +118,9 @@ QIcon model::DocumentNode::reftarget_icon() const
     return group_icon;
 }
 
-bool model::DocumentNode::docnode_locked_recursive() const
+bool model::VisualNode::docnode_locked_recursive() const
 {
-    for ( const DocumentNode* n = this; n; n = n->docnode_parent() )
+    for ( const VisualNode* n = this; n; n = n->docnode_visual_parent() )
     {
         if ( n->locked.get() )
             return true;
@@ -110,7 +129,7 @@ bool model::DocumentNode::docnode_locked_recursive() const
     return false;
 }
 
-void model::DocumentNode::paint(QPainter* painter, FrameTime time, PaintMode mode) const
+void model::VisualNode::paint(QPainter* painter, FrameTime time, PaintMode mode) const
 {
     if ( !visible.get() )
         return;
@@ -119,32 +138,30 @@ void model::DocumentNode::paint(QPainter* painter, FrameTime time, PaintMode mod
     painter->setTransform(group_transform_matrix(time), true);
 
     on_paint(painter, time, mode);
-    for ( auto c : docnode_children() )
+    for ( auto c : docnode_visual_children() )
         c->paint(painter, time, mode);
     painter->restore();
 }
 
-bool model::DocumentNode::docnode_selectable() const
+bool model::VisualNode::docnode_selectable() const
 {
     if ( !visible.get() || locked.get() )
         return false;
-    auto p = docnode_parent();
-    if ( p )
+    if ( auto p = docnode_visual_parent() )
         return p->docnode_selectable();
     return true;
 }
 
-bool model::DocumentNode::docnode_visible_recursive() const
+bool model::VisualNode::docnode_visible_recursive() const
 {
     if ( !visible.get() )
         return false;
-    auto p = docnode_parent();
-    if ( p )
+    if ( auto p = docnode_visual_parent() )
         return p->docnode_visible_recursive();
     return true;
 }
 
-QTransform model::DocumentNode::transform_matrix(model::FrameTime t) const
+QTransform model::VisualNode::transform_matrix(model::FrameTime t) const
 {
     auto parent = docnode_fuzzy_parent();
     if ( parent )
@@ -152,7 +169,7 @@ QTransform model::DocumentNode::transform_matrix(model::FrameTime t) const
     return local_transform_matrix(t);
 }
 
-QTransform model::DocumentNode::group_transform_matrix(model::FrameTime t) const
+QTransform model::VisualNode::group_transform_matrix(model::FrameTime t) const
 {
     auto parent = docnode_group_parent();
     if ( parent )
@@ -167,25 +184,25 @@ void model::DocumentNode::recursive_rename()
         child->recursive_rename();
 }
 
-void model::DocumentNode::on_visible_changed(bool visible)
+void model::VisualNode::on_visible_changed(bool visible)
 {
     emit docnode_visible_changed(visible);
     emit docnode_visible_recursive_changed(visible);
 
-    for ( auto ch : docnode_children() )
+    for ( auto ch : docnode_visual_children() )
         ch->propagate_visible(visible);
 }
 
-void model::DocumentNode::propagate_visible(bool visible)
+void model::VisualNode::propagate_visible(bool visible)
 {
     if ( !this->visible.get() )
         return;
     emit docnode_visible_recursive_changed(visible);
-    for ( auto ch : docnode_children() )
+    for ( auto ch : docnode_visual_children() )
         ch->propagate_visible(visible && this->visible.get());
 }
 
-void model::DocumentNode::propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group)
+void model::VisualNode::propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group)
 {
     emit transform_matrix_changed(t_global);
     emit group_transform_matrix_changed(t_group);
@@ -196,9 +213,40 @@ void model::DocumentNode::propagate_transform_matrix_changed(const QTransform& t
         ch->propagate_transform_matrix_changed(ltm * t_global, ltm * t_group);
     }
 
-    for ( auto ch : docnode_children() )
+    for ( auto ch : docnode_visual_children() )
     {
         auto ltm = ch->local_transform_matrix(ch->time());
         ch->propagate_transform_matrix_changed(ltm * t_global, ltm);
     }
+}
+
+void model::DocumentNode::refresh_uuid()
+{
+    uuid.set_value(QUuid::createUuid());
+    for ( auto prop : properties() )
+    {
+        if ( prop->traits().type == PropertyTraits::Object )
+        {
+            if ( prop->traits().flags & PropertyTraits::List )
+            {
+                for ( auto v : prop->value().toList() )
+                {
+                    if ( auto obj = v.value<model::DocumentNode*>() )
+                        obj->refresh_uuid();
+                }
+            }
+            else
+            {
+                if ( auto obj = qobject_cast<DocumentNode*>(static_cast<model::SubObjectPropertyBase*>(prop)->sub_object()) )
+                    obj->refresh_uuid();
+            }
+        }
+    }
+}
+
+QString model::DocumentNode::object_name() const
+{
+    if ( name.get().isEmpty() )
+        return type_name_human();
+    return name.get();
 }

@@ -11,12 +11,12 @@ using ShapeListProperty = ObjectListProperty<class ShapeElement>;
 /**
  * \brief Base class for all shape elements
  */
-class ShapeElement : public DocumentNode
+class ShapeElement : public VisualNode
 {
     Q_OBJECT
 
 public:
-    using DocumentNode::DocumentNode;
+    using VisualNode::VisualNode;
 
     DocumentNode* docnode_parent() const override;
     int docnode_child_count() const override { return 0; }

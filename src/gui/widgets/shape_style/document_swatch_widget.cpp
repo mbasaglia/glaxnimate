@@ -40,7 +40,7 @@ public:
             macro = command::UndoMacroGuard(tr("Gather Document Swatch"), doc);
 
             defs = doc->defs();
-            for ( const auto& color : defs->colors )
+            for ( const auto& color : defs->colors->values )
             {
                 if ( !color->color.animated() )
                 {
@@ -96,7 +96,7 @@ public:
 
         ApplyColorVisitor(model::Document * doc)
         {
-            for ( const auto& color : doc->defs()->colors )
+            for ( const auto& color : doc->defs()->colors->values )
             {
                 if ( !color->color.animated() )
                 {
@@ -179,14 +179,14 @@ void DocumentSwatchWidget::set_document(model::Document* document)
         auto l = d->updating_swatch.get_lock();
 
         palette->setColors(QVector<QColor>{});
-        for ( const auto& col : d->document->defs()->colors )
+        for ( const auto& col : d->document->defs()->colors->values )
             palette->appendColor(col->color.get(), col->name.get());
 
         palette->setName("");
 
-        connect(d->document->defs(), &model::Defs::color_added, this, &DocumentSwatchWidget::swatch_doc_color_added);
-        connect(d->document->defs(), &model::Defs::color_removed, this, &DocumentSwatchWidget::swatch_doc_color_removed);
-        connect(d->document->defs(), &model::Defs::color_changed, this, &DocumentSwatchWidget::swatch_doc_color_changed);
+        connect(d->document->defs()->colors.get(), &model::NamedColorList::color_added, this, &DocumentSwatchWidget::swatch_doc_color_added);
+        connect(d->document->defs()->colors.get(), &model::NamedColorList::color_removed, this, &DocumentSwatchWidget::swatch_doc_color_removed);
+        connect(d->document->defs()->colors.get(), &model::NamedColorList::color_changed, this, &DocumentSwatchWidget::swatch_doc_color_changed);
     }
 }
 
@@ -214,8 +214,8 @@ void DocumentSwatchWidget::swatch_palette_color_removed(int index)
     {
         auto defs = d->document->defs();
 
-        if ( defs->colors.valid_index(index) )
-            defs->push_command(new command::RemoveObject<model::NamedColor>(index, &defs->colors));
+        if ( defs->colors->values.valid_index(index) )
+            defs->push_command(new command::RemoveObject<model::NamedColor>(index, &defs->colors->values));
     }
 }
 
@@ -230,11 +230,11 @@ void DocumentSwatchWidget::swatch_palette_color_changed(int index)
         auto defs = d->document->defs();
         auto palette = &d->ui.swatch->palette();
 
-        if ( !defs->colors.valid_index(index) )
+        if ( !defs->colors->values.valid_index(index) )
             return;
 
         command::UndoMacroGuard macro(tr("Modify Palette Color"), d->document);
-        auto color = defs->colors[index];
+        auto color = defs->colors->values[index];
         color->name.set_undoable(palette->nameAt(index));
         color->color.set_undoable(palette->colorAt(index));
     }
@@ -256,7 +256,7 @@ void DocumentSwatchWidget::swatch_link(int index, Qt::KeyboardModifiers mod)
 {
     if ( d->document )
     {
-        auto def = index != -1 ? d->document->defs()->colors[index] : nullptr;
+        auto def = index != -1 ? d->document->defs()->colors->values[index] : nullptr;
 
         if ( mod & Qt::ShiftModifier )
             emit secondary_color_def(def);
@@ -298,7 +298,7 @@ model::NamedColor * DocumentSwatchWidget::current_color() const
     if ( index == -1 )
         return nullptr;
 
-    return d->document->defs()->colors[index];
+    return d->document->defs()->colors->values[index];
 }
 
 void DocumentSwatchWidget::generate()
@@ -360,10 +360,10 @@ void DocumentSwatchWidget::open()
 
     if ( check_clear.isChecked() )
     {
-        while ( d->document->defs()->colors.size() )
+        while ( d->document->defs()->colors->values.size() )
             d->document->push_command(new command::RemoveObject(
-                d->document->defs()->colors.back(),
-                &d->document->defs()->colors
+                d->document->defs()->colors->values.back(),
+                &d->document->defs()->colors->values
             ));
     }
 
@@ -423,7 +423,7 @@ void DocumentSwatchWidget::swatch_menu ( int index )
     }
     else
     {
-        model::NamedColor* item = d->document->defs()->colors[index];
+        model::NamedColor* item = d->document->defs()->colors->values[index];
         menu.addSection(item->object_name());
 
         menu.addAction(
@@ -472,7 +472,7 @@ void DocumentSwatchWidget::swatch_menu ( int index )
             [item, index, this]{
                 auto clone = item->clone_covariant();
                 item->push_command(new command::AddObject(
-                    &d->document->defs()->colors,
+                    &d->document->defs()->colors->values,
                     std::move(clone),
                     index+1
                 ));

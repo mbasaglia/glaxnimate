@@ -5,7 +5,7 @@
 
 GLAXNIMATE_OBJECT_IMPL(model::Precomposition)
 
-QIcon model::Precomposition::docnode_icon() const
+QIcon model::Precomposition::tree_icon() const
 {
     return QIcon::fromTheme("component");
 }
@@ -26,9 +26,14 @@ bool model::Precomposition::remove_if_unused(bool clean_lists)
     {
         document()->push_command(new command::RemoveObject(
             this,
-            &document()->defs()->precompositions
+            &document()->defs()->precompositions->values
         ));
         return true;
     }
     return false;
+}
+
+model::DocumentNode * model::Precomposition::docnode_parent() const
+{
+    return document()->defs()->precompositions.get();
 }

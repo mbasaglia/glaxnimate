@@ -45,14 +45,14 @@ class GlaxnimateWindow::Private
 public:
     struct CompState
     {
-        CompState(model::DocumentNode* single)
+        CompState(model::VisualNode* single)
         : selection(1, single), current(single)
         {}
 
         CompState() : current(nullptr) {}
 
-        std::vector<model::DocumentNode*> selection;
-        model::DocumentNode* current;
+        std::vector<model::VisualNode*> selection;
+        model::VisualNode* current;
     };
 
     enum class AlignPosition
@@ -149,24 +149,24 @@ public:
     void help_about();
     void shutdown();
     void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
-    void scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
+    void scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
     void switch_tool(tools::Tool* tool);
     void switch_tool_action(QAction* action);
     void status_message(const QString& msg, int duration=5000);
     void set_color_def(model::BrushStyle* sty, bool secondary);
     QString get_open_image_file(const QString& title, const QString& dir);
     void set_brush_reference(model::BrushStyle* sty, bool secondary);
-    void trace_dialog(model::ReferenceTarget* object);
+    void trace_dialog(model::DocumentNode* object);
     void init_plugins();
 
     // Model
     model::Composition* current_composition();
-    model::DocumentNode* current_document_node();
-    void set_current_document_node(model::DocumentNode* node);
+    model::VisualNode* current_document_node();
+    void set_current_document_node(model::VisualNode* node);
     model::ShapeElement* current_shape();
     model::ShapeListProperty* current_shape_container();
-    std::vector<model::DocumentNode*> cleaned_selection();
-    std::vector<model::DocumentNode*> copy();
+    std::vector<model::VisualNode*> cleaned_selection();
+    std::vector<model::VisualNode*> copy();
     void paste(bool as_comp);
     void paste_document(model::Document* document, const QString& macro_name, bool as_comp);
     void cut();
@@ -186,7 +186,7 @@ public:
     void add_composition();
     void objects_to_new_composition(
         model::Composition* comp,
-        const std::vector<model::DocumentNode*>& objects,
+        const std::vector<model::VisualNode*>& objects,
         model::ObjectListProperty<model::ShapeElement>* layer_parent,
         int layer_index
     );

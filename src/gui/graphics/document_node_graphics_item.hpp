@@ -4,7 +4,7 @@
 
 namespace model {
 
-class DocumentNode;
+class VisualNode;
 class BaseProperty;
 
 } // namespace model
@@ -23,13 +23,13 @@ public:
         Shape,
     };
 
-    explicit DocumentNodeGraphicsItem(model::DocumentNode* node, QGraphicsItem* parent = nullptr);
+    explicit DocumentNodeGraphicsItem(model::VisualNode* node, QGraphicsItem* parent = nullptr);
     ~DocumentNodeGraphicsItem();
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
-    model::DocumentNode* node() const
+    model::VisualNode* node() const
     {
         return node_;
     }
@@ -66,7 +66,7 @@ private slots:
     void on_property_changed(const model::BaseProperty* prop);
 
 private:
-    model::DocumentNode* node_;
+    model::VisualNode* node_;
     bool visible_permitted = true;
     bool visible = true;
     SelectionMode selection_mode_ = SelectionMode::Shape;

@@ -41,7 +41,7 @@ private:
     void key_press(const KeyEvent& event) override;
     void key_release(const KeyEvent& event) override;
 
-    void on_selected(graphics::DocumentScene * scene, model::DocumentNode * node) override;
+    void on_selected(graphics::DocumentScene * scene, model::VisualNode * node) override;
 
     void enable_event(const Event&) override;
     void disable_event(const Event&) override;

@@ -13,12 +13,12 @@ void item_models::GradientListModel::set_defs(model::Defs* defs)
 
     if ( defs )
     {
-        connect(defs, &model::Defs::gradient_add_begin, this, &GradientListModel::on_add_begin);
-        connect(defs, &model::Defs::gradient_add_end, this, &GradientListModel::on_add_end);
-        connect(defs, &model::Defs::gradient_remove_begin, this, &GradientListModel::on_remove_begin);
-        connect(defs, &model::Defs::gradient_remove_end, this, &GradientListModel::on_remove_end);
-        connect(defs, &model::Defs::gradient_move_begin, this, &GradientListModel::on_move_begin);
-        connect(defs, &model::Defs::gradient_move_end, this, &GradientListModel::on_move_end);
+        connect(defs->gradient_colors.get(), &model::GradientColorsList::docnode_child_add_begin, this, &GradientListModel::on_add_begin);
+        connect(defs->gradient_colors.get(), &model::GradientColorsList::docnode_child_add_end, this, &GradientListModel::on_add_end);
+        connect(defs->gradient_colors.get(), &model::GradientColorsList::docnode_child_remove_begin, this, &GradientListModel::on_remove_begin);
+        connect(defs->gradient_colors.get(), &model::GradientColorsList::docnode_child_remove_end, this, &GradientListModel::on_remove_end);
+        connect(defs->gradient_colors.get(), &model::GradientColorsList::docnode_child_move_begin, this, &GradientListModel::on_move_begin);
+        connect(defs->gradient_colors.get(), &model::GradientColorsList::docnode_child_move_end, this, &GradientListModel::on_move_end);
     }
     endResetModel();
 }
@@ -28,18 +28,19 @@ void item_models::GradientListModel::on_add_begin(int i)
     beginInsertRows({}, i, i);
 }
 
-void item_models::GradientListModel::on_add_end(model::GradientColors* t)
+void item_models::GradientListModel::on_add_end(model::DocumentNode* n)
 {
-    connect(t, &model::ReferenceTarget::name_changed, this, [this, t]{
-        auto i = index(defs->gradient_colors.index_of(t), Columns::Name);
+    auto t = static_cast<model::GradientColors*>(n);
+    connect(t, &model::DocumentNode::name_changed, this, [this, t]{
+        auto i = index(defs->gradient_colors->values.index_of(t), Columns::Name);
         dataChanged(i, i, {Qt::DisplayRole, Qt::EditRole});
     });
     connect(t, &model::GradientColors::colors_changed, this, [this, t]{
-        auto i = index(defs->gradient_colors.index_of(t), Columns::Gradient);
+        auto i = index(defs->gradient_colors->values.index_of(t), Columns::Gradient);
         dataChanged(i, i, {Qt::DisplayRole, Qt::EditRole});
     });
     connect(t, &model::BrushStyle::users_changed, this, [this, t]{
-        auto i = index(defs->gradient_colors.index_of(t), Columns::Users);
+        auto i = index(defs->gradient_colors->values.index_of(t), Columns::Users);
         dataChanged(i, i, {Qt::DisplayRole});
     });
     endInsertRows();
@@ -50,7 +51,7 @@ void item_models::GradientListModel::on_move_begin(int a, int b)
     beginMoveRows({}, a, a, {}, b);
 }
 
-void item_models::GradientListModel::on_move_end(model::GradientColors*, int, int)
+void item_models::GradientListModel::on_move_end(model::DocumentNode*, int, int)
 {
     endMoveRows();
 }
@@ -60,7 +61,7 @@ void item_models::GradientListModel::on_remove_begin(int i)
     beginRemoveRows({}, i, i);
 }
 
-void item_models::GradientListModel::on_remove_end(model::GradientColors* c)
+void item_models::GradientListModel::on_remove_end(model::DocumentNode* c)
 {
     disconnect(c, nullptr, this, nullptr);
     endRemoveRows();
@@ -68,10 +69,10 @@ void item_models::GradientListModel::on_remove_end(model::GradientColors* c)
 
 QVariant item_models::GradientListModel::data(const QModelIndex& index, int role) const
 {
-    if ( !defs || index.row() < 0 || index.row() >= defs->gradient_colors.size() )
+    if ( !defs || index.row() < 0 || index.row() >= defs->gradient_colors->values.size() )
         return {};
 
-    auto item = defs->gradient_colors[index.row()];
+    auto item = defs->gradient_colors->values[index.row()];
 
     switch ( index.column() )
     {
@@ -107,10 +108,10 @@ QVariant item_models::GradientListModel::data(const QModelIndex& index, int role
 
 bool item_models::GradientListModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if ( !defs || role != Qt::EditRole || index.row() < 0 || index.row() >= defs->gradient_colors.size() )
+    if ( !defs || role != Qt::EditRole || index.row() < 0 || index.row() >= defs->gradient_colors->values.size() )
         return false;
 
-    auto item = defs->gradient_colors[index.row()];
+    auto item = defs->gradient_colors->values[index.row()];
 
     switch ( index.column() )
     {
@@ -139,7 +140,7 @@ Qt::ItemFlags item_models::GradientListModel::flags(const QModelIndex& index) co
 
 int item_models::GradientListModel::rowCount(const QModelIndex&) const
 {
-    return defs ? defs->gradient_colors.size() : 0;
+    return defs ? defs->gradient_colors->values.size() : 0;
 }
 
 int item_models::GradientListModel::columnCount(const QModelIndex&) const
@@ -177,8 +178,8 @@ model::GradientColors * item_models::GradientListModel::gradient(const QModelInd
     if ( !index.isValid() || !defs )
         return nullptr;
 
-    if ( index.row() < defs->gradient_colors.size() )
-        return defs->gradient_colors[index.row()];
+    if ( index.row() < defs->gradient_colors->values.size() )
+        return defs->gradient_colors->values[index.row()];
 
     return nullptr;
 }
@@ -187,5 +188,5 @@ QModelIndex item_models::GradientListModel::gradient_to_index(model::GradientCol
 {
     if ( !defs )
         return {};
-    return createIndex(defs->gradient_colors.index_of(gradient), 0);
+    return createIndex(defs->gradient_colors->values.index_of(gradient), 0);
 }

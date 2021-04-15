@@ -46,8 +46,8 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     // Composition
     comp = current_document->main();
     comp_model.set_composition(comp);
-    connect(current_document->defs(), &model::Defs::precomp_remove_begin, parent, [this](int index){on_remove_precomp(index);});
-    connect(current_document->defs(), &model::Defs::precomp_add_end, parent, [this](model::Precomposition* node, int row){setup_composition(node, row+1);});
+    connect(current_document->defs()->precompositions.get(), &model::PrecompositionList::docnode_child_remove_begin, parent, [this](int index){on_remove_precomp(index);});
+    connect(current_document->defs()->precompositions.get(), &model::PrecompositionList::precomp_added, parent, [this](model::Precomposition* node, int row){setup_composition(node, row+1);});
     ui.menu_new_comp_layer->setEnabled(false);
     ui.tab_bar->blockSignals(true);
     setup_composition(current_document->main());

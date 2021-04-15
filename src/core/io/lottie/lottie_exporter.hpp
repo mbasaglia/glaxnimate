@@ -129,7 +129,7 @@ public:
         json["st"_l] = 0;
 
         convert_animation_container(layer->animation.get(), json);
-        convert_object_properties(layer, fields["ReferenceTarget"], json);
+        convert_object_properties(layer, fields["DocumentNode"], json);
         convert_object_properties(layer, fields["__Layer__"], json);
 
         QCborMap transform;
@@ -509,11 +509,11 @@ public:
     {
         QCborArray assets;
 
-        for ( const auto& bmp : document->defs()->images )
+        for ( const auto& bmp : document->defs()->images->values )
             assets.push_back(convert_bitmat(bmp.get()));
 
 
-        for ( const auto& comp : document->defs()->precompositions )
+        for ( const auto& comp : document->defs()->precompositions->values )
             assets.push_back(convert_precomp(comp.get()));
 
         return assets;

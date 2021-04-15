@@ -95,7 +95,7 @@ public:
         for ( const auto& p : unresolved_references )
         {
             model::BaseProperty* prop = p.first.prop();
-            model::ReferenceTarget* node = document->find_by_uuid(p.second);
+            model::DocumentNode* node = document->find_by_uuid(p.second);
             if ( !node )
             {
                 error(GlaxnimateFormat::tr("Property %1 of %2 refers to unexisting object %3")

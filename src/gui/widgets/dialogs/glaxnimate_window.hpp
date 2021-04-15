@@ -35,7 +35,7 @@ class GlaxnimateWindow : public QMainWindow
     Q_OBJECT
 
     Q_PROPERTY(model::Document* document READ document)
-    Q_PROPERTY(model::DocumentNode* current_item READ current_document_node WRITE set_current_document_node)
+    Q_PROPERTY(model::VisualNode* current_item READ current_document_node WRITE set_current_document_node)
     Q_PROPERTY(model::ShapeElement* current_shape READ current_shape)
     Q_PROPERTY(model::Object* current_shape_container READ current_shape_container_script)
     Q_PROPERTY(QColor fill_color READ current_color WRITE set_current_color)
@@ -51,8 +51,8 @@ public:
 
     model::Composition* current_composition() const;
     void set_current_composition(model::Composition* comp);
-    model::DocumentNode* current_document_node() const;
-    void set_current_document_node(model::DocumentNode* node);
+    model::VisualNode* current_document_node() const;
+    void set_current_document_node(model::VisualNode* node);
     model::ShapeElement* current_shape();
     model::ShapeListProperty* current_shape_container();
     model::Object* current_shape_container_script();
@@ -77,11 +77,11 @@ public:
     /**
      * \brief Selected nodes, removing nodes that are descendants of other selected nodes
      */
-    std::vector<model::DocumentNode*> cleaned_selection() const;
+    std::vector<model::VisualNode*> cleaned_selection() const;
     /**
      * \brief Update the selection
      */
-    void select(const std::vector<model::DocumentNode*>& nodes);
+    void select(const std::vector<model::VisualNode*>& nodes);
 
     void delete_selected();
     void group_shapes();
@@ -106,7 +106,7 @@ public:
 
     PluginUiDialog* create_dialog(const QString& ui_file) const;
 
-    void trace_dialog(model::ReferenceTarget* object);
+    void trace_dialog(model::DocumentNode* object);
 
     void shape_to_precomposition(model::ShapeElement* node);
 
@@ -134,7 +134,7 @@ private slots:
     void document_treeview_clicked(const QModelIndex& index);
     void document_treeview_current_changed(const QModelIndex& index);
     void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
-    void scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
+    void scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
 
     void layer_new_menu();
 

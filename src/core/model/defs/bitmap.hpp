@@ -25,7 +25,7 @@ public:
 
     bool embedded() const;
 
-    QIcon reftarget_icon() const override;
+    QIcon instance_icon() const override;
 
     QString type_name_human() const override
     {
@@ -46,6 +46,8 @@ public:
     void set_pixmap(const QImage& qimage, const QString& format);
 
     bool remove_if_unused(bool clean_lists) override;
+
+    DocumentNode* docnode_parent() const override;
 
 public slots:
     void refresh(bool rebuild_embedded);

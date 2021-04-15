@@ -92,7 +92,7 @@ public:
     void set_type(int index, math::bezier::PointType type);
 
     model::AnimatedProperty<math::bezier::Bezier>* target_property() const;
-    model::DocumentNode* target_object() const;
+    model::VisualNode* target_object() const;
 
     const std::set<int>& selected_indices();
     void clear_selected_indices();

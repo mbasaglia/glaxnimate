@@ -42,7 +42,7 @@ public:
 
     void set_io_options(const io::Options& opt);
 
-    Q_INVOKABLE model::ReferenceTarget* find_by_uuid(const QUuid& n) const;
+    Q_INVOKABLE model::DocumentNode* find_by_uuid(const QUuid& n) const;
     Q_INVOKABLE model::DocumentNode* find_by_name(const QString& name) const;
     Q_INVOKABLE QVariantList find_by_type_name(const QString& type_name) const;
 

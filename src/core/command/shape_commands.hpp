@@ -40,7 +40,7 @@ public:
 
     GroupShapes(const Data& data);
 
-    static Data collect_shapes(const std::vector<model::DocumentNode *>& selection);
+    static Data collect_shapes(const std::vector<model::VisualNode *>& selection);
 
 
 private:

@@ -2,69 +2,74 @@
 #include "model/document.hpp"
 #include "command/object_list_commands.hpp"
 
+GLAXNIMATE_OBJECT_IMPL(model::NamedColorList)
+GLAXNIMATE_OBJECT_IMPL(model::GradientColorsList)
+GLAXNIMATE_OBJECT_IMPL(model::GradientList)
+GLAXNIMATE_OBJECT_IMPL(model::BitmapList)
+GLAXNIMATE_OBJECT_IMPL(model::PrecompositionList)
 GLAXNIMATE_OBJECT_IMPL(model::Defs)
 
-model::Defs::Defs(Document* document)
-    : Object(document)
-{}
 
-void model::Defs::on_color_added(model::NamedColor* color, int position)
+void model::NamedColorList::on_added(model::NamedColor* color, int position)
 {
     connect(color, &Object::property_changed, this, [position, color, this]{
         emit color_changed(position, color);
     });
-    color->attach();
+    Ctor::on_added(color, position);
     emit color_added(position, color);
 }
 
-void model::Defs::on_color_removed(model::NamedColor* color, int position)
+void model::NamedColorList::on_removed(model::NamedColor* color, int position)
 {
     disconnect(color, nullptr, this, nullptr);
-    color->detach();
-    emit color_removed(position);
+    Ctor::on_removed(color, position);
+    emit color_removed(position, color);
 }
 
-void model::Defs::on_gradient_colors_added(model::GradientColors* color)
+QIcon model::NamedColorList::tree_icon() const
 {
-    color->attach();
-    emit gradient_add_end(color);
+    return QIcon::fromTheme("paint-swatch");
 }
 
-void model::Defs::on_gradient_colors_removed(model::GradientColors* color)
+
+QIcon model::GradientColorsList::tree_icon() const
 {
-    color->detach();
-    emit gradient_remove_end(color);
+    return QIcon::fromTheme("paint-gradient-linear");
 }
 
-model::ReferenceTarget* model::Defs::find_by_uuid ( const QUuid& n ) const
+QIcon model::GradientList::tree_icon() const
 {
-    for ( const auto& c : gradient_colors )
-        if ( c->uuid.get() == n )
-            return c.get();
-
-    for ( const auto& c : gradients )
-        if ( c->uuid.get() == n )
-            return c.get();
-
-    for ( const auto& c : images )
-        if ( c->uuid.get() == n )
-            return c.get();
-
-    for ( const auto& c : colors )
-        if ( c->uuid.get() == n )
-            return c.get();
-
-    for ( const auto& c : precompositions )
-    {
-        if ( c->uuid.get() == n )
-            return c.get();
-
-        if ( auto node = c->find_by_uuid(n) )
-            return node;
-    }
-
-    return nullptr;
+    return QIcon::fromTheme("gradient");
 }
+
+
+QIcon model::BitmapList::tree_icon() const
+{
+    return QIcon::fromTheme("folder-images");
+}
+
+QIcon model::PrecompositionList::tree_icon() const
+{
+    return QIcon::fromTheme("folder-videos");
+}
+
+void model::PrecompositionList::on_added(model::Precomposition* obj, int position)
+{
+    obj->attach();
+    document()->comp_graph().add_composition(obj);
+    emit docnode_child_add_end(obj);
+    emit precomp_added(obj, position);
+}
+
+
+void model::PrecompositionList::on_removed(model::Precomposition* obj, int position)
+{
+    Q_UNUSED(position);
+    obj->detach();
+    document()->comp_graph().remove_composition(obj);
+    emit docnode_child_remove_end(obj);
+}
+
 
 model::NamedColor* model::Defs::add_color(const QColor& color, const QString& name)
 {
@@ -72,7 +77,7 @@ model::NamedColor* model::Defs::add_color(const QColor& color, const QString& na
     ptr->color.set(color);
     ptr->name.set(name);
     auto raw = ptr.get();
-    push_command(new command::AddObject(&colors, std::move(ptr), colors.size()));
+    push_command(new command::AddObject(&colors->values, std::move(ptr), colors->values.size()));
     return raw;
 }
 
@@ -84,18 +89,8 @@ model::Bitmap * model::Defs::add_image_file(const QString& filename, bool embed)
         return nullptr;
     image->embed(embed);
     auto ptr = image.get();
-    push_command(new command::AddObject(&images, std::move(image), images.size()));
+    push_command(new command::AddObject(&images->values, std::move(image), images->values.size()));
     return ptr;
-}
-
-void model::Defs::on_added(model::AssetBase* def)
-{
-    def->attach();
-}
-
-void model::Defs::on_removed(model::AssetBase* def)
-{
-    def->detach();
 }
 
 model::Bitmap * model::Defs::add_image(const QImage& qimage, const QString& store_as)
@@ -103,7 +98,7 @@ model::Bitmap * model::Defs::add_image(const QImage& qimage, const QString& stor
     auto image = std::make_unique<model::Bitmap>(document());
     image->set_pixmap(qimage, store_as);
     auto ptr = image.get();
-    push_command(new command::AddObject(&images, std::move(image), images.size()));
+    push_command(new command::AddObject(&images->values, std::move(image), images->values.size()));
     return ptr;
 }
 
@@ -111,7 +106,7 @@ model::GradientColors* model::Defs::add_gradient_colors(int index)
 {
     model::GradientColors *ptr = new model::GradientColors(document());
     ptr->name.set(ptr->type_name_human());
-    push_command(new command::AddObject(&gradient_colors, std::unique_ptr<model::GradientColors>(ptr), index));
+    push_command(new command::AddObject(&gradient_colors->values, std::unique_ptr<model::GradientColors>(ptr), index));
     return ptr;
 }
 
@@ -119,21 +114,68 @@ model::Gradient* model::Defs::add_gradient(int index)
 {
     model::Gradient *ptr = new model::Gradient(document());
     ptr->name.set(ptr->type_name_human());
-    push_command(new command::AddObject(&gradients, std::unique_ptr<model::Gradient>(ptr), index));
+    push_command(new command::AddObject(&gradients->values, std::unique_ptr<model::Gradient>(ptr), index));
     return ptr;
 }
 
-
-void model::Defs::on_precomp_added(model::Precomposition* obj, int row)
+QIcon model::Defs::tree_icon() const
 {
-    obj->attach();
-    document()->comp_graph().add_composition(obj);
-    emit precomp_add_end(obj, row);
+    return QIcon::fromTheme("folder-stash");
 }
 
-void model::Defs::on_precomp_removed(model::Precomposition* obj)
+QIcon model::Defs::instance_icon() const
 {
-    obj->detach();
-    document()->comp_graph().remove_composition(obj);
-    emit precomp_remove_end(obj);
+    return tree_icon();
 }
+
+model::DocumentNode* model::detail::defs(model::Document* doc)
+{
+    return doc->defs();
+}
+
+model::DocumentNode * model::Defs::docnode_parent() const
+{
+    return nullptr;
+}
+
+int model::Defs::docnode_child_count() const
+{
+    return 5;
+}
+
+model::DocumentNode * model::Defs::docnode_child(int index) const
+{
+    switch ( index )
+    {
+        case 0:
+            return const_cast<model::DocumentNode*>(static_cast<const model::DocumentNode*>(colors.get()));
+        case 1:
+            return const_cast<model::DocumentNode*>(static_cast<const model::DocumentNode*>(images.get()));
+        case 2:
+            return const_cast<model::DocumentNode*>(static_cast<const model::DocumentNode*>(gradient_colors.get()));
+        case 3:
+            return const_cast<model::DocumentNode*>(static_cast<const model::DocumentNode*>(gradients.get()));
+        case 4:
+            return const_cast<model::DocumentNode*>(static_cast<const model::DocumentNode*>(precompositions.get()));
+        default:
+            return nullptr;
+    }
+}
+
+int model::Defs::docnode_child_index(model::DocumentNode* dn) const
+{
+    if ( dn == colors.get() )
+        return 0;
+    if ( dn == images.get() )
+        return 1;
+    if ( dn == gradient_colors.get() )
+        return 2;
+    if ( dn == gradients.get() )
+        return 3;
+    if ( dn == precompositions.get() )
+        return 4;
+    return -1;
+}
+
+
+

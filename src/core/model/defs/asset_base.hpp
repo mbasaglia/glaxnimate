@@ -7,7 +7,7 @@
 namespace model {
 
 class ReferencePropertyBase;
-class ReferenceTarget;
+class DocumentNode;
 
 class AssetBase
 {
@@ -32,7 +32,7 @@ public:
 
 protected:
     virtual void on_users_changed() {};
-    virtual model::ReferenceTarget* to_reftarget() = 0;
+    virtual model::DocumentNode* to_reftarget() = 0;
 
 private:
     std::unordered_set<User*> users_;

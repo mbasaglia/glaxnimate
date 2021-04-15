@@ -61,8 +61,8 @@ public:
         return val.canConvert<QVariantList>();
     }
 
-    virtual std::vector<model::ReferenceTarget *> valid_reference_values(bool allow_null) const = 0;
-    virtual bool is_valid_reference_value(model::ReferenceTarget *, bool allow_null) const = 0;
+    virtual std::vector<model::DocumentNode *> valid_reference_values(bool allow_null) const = 0;
+    virtual bool is_valid_reference_value(model::DocumentNode *, bool allow_null) const = 0;
 };
 
 namespace detail {
@@ -243,9 +243,9 @@ public:
             obj->transfer(doc);
     }
 
-    std::vector<model::ReferenceTarget *> valid_reference_values(bool allow_null) const override
+    std::vector<model::DocumentNode *> valid_reference_values(bool allow_null) const override
     {
-        std::vector<model::ReferenceTarget *> res;
+        std::vector<model::DocumentNode *> res;
         if ( allow_null )
         {
             res.reserve(objects.size() + 1);
@@ -262,7 +262,7 @@ public:
         return res;
     }
 
-    virtual bool is_valid_reference_value(model::ReferenceTarget * value, bool allow_null) const override
+    virtual bool is_valid_reference_value(model::DocumentNode * value, bool allow_null) const override
     {
         if ( !value )
             return allow_null;

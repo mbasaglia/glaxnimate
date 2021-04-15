@@ -143,7 +143,7 @@ public:
         clear();
 
         if ( !parent )
-            parent = event.scene->item_from_node(item->docnode_parent());
+            parent = event.scene->item_from_node(item->docnode_visual_parent());
 
         editor.setParentItem(parent);
         editor.setPos(item->position.get());

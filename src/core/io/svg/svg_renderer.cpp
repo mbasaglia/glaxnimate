@@ -25,11 +25,11 @@ public:
 
         at_start = false;
         defs = element(svg, "defs");
-        for ( const auto& color : doc->defs()->colors )
+        for ( const auto& color : doc->defs()->colors->values )
             write_named_color(defs, color.get());
-        for ( const auto& color : doc->defs()->gradient_colors )
+        for ( const auto& color : doc->defs()->gradient_colors->values )
             write_gradient_colors(defs, color.get());
-        for ( const auto& gradient : doc->defs()->gradients )
+        for ( const auto& gradient : doc->defs()->gradients->values )
             write_gradient(defs, gradient.get());
 
         auto view = element(svg, "sodipodi:namedview");
@@ -53,7 +53,7 @@ public:
             write_shape(parent, lay.get(), false);
     }
 
-    void write_visibility_attributes(QDomElement& parent, model::DocumentNode* node)
+    void write_visibility_attributes(QDomElement& parent, model::VisualNode* node)
     {
         if ( !node->visible.get() )
             parent.setAttribute("display", "none");
@@ -737,7 +737,7 @@ public:
         return g;
     }
 
-    QString id(model::ReferenceTarget* node)
+    QString id(model::DocumentNode* node)
     {
         return node->type_name() + "_" + node->uuid.get().toString(QUuid::Id128);
     }
@@ -770,7 +770,7 @@ public:
         write_property(stop, &color->color, "stop-color");
     }
 
-    QString pretty_id(const QString& s, model::ReferenceTarget* node)
+    QString pretty_id(const QString& s, model::DocumentNode* node)
     {
         if ( s.isEmpty() )
             return id(node);
@@ -915,7 +915,7 @@ public:
     qreal op = 60;
     bool at_start = true;
     std::set<QString> non_uuid_ids;
-    std::map<model::ReferenceTarget*, QString> non_uuid_ids_map;
+    std::map<model::DocumentNode*, QString> non_uuid_ids_map;
     AnimationType animated;
     QDomElement svg;
     QDomElement defs;

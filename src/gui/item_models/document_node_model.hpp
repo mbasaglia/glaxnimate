@@ -38,6 +38,7 @@ public:
     void clear_document();
     void set_document(model::Document* doc);
     model::DocumentNode* node(const QModelIndex& index) const;
+    model::VisualNode* visual_node(const QModelIndex& index) const;
     QModelIndex node_index(model::DocumentNode* node) const;
 
 private:

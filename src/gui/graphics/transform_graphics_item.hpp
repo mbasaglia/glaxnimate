@@ -12,7 +12,7 @@ class TransformGraphicsItem : public QGraphicsObject
     Q_OBJECT
 
 public:
-    TransformGraphicsItem(model::Transform* transform, model::DocumentNode* target, QGraphicsItem* parent);
+    TransformGraphicsItem(model::Transform* transform, model::VisualNode* target, QGraphicsItem* parent);
     ~TransformGraphicsItem();
 
     QRectF boundingRect() const override;

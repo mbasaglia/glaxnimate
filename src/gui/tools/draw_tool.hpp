@@ -28,8 +28,8 @@ public:
     void key_release(const KeyEvent& event) override;
     void enable_event(const Event& event) override;
     void disable_event(const Event& event) override;
-    void on_selected(graphics::DocumentScene * scene, model::DocumentNode * node) override;
-    void on_deselected(graphics::DocumentScene * scene, model::DocumentNode * node) override;
+    void on_selected(graphics::DocumentScene * scene, model::VisualNode * node) override;
+    void on_deselected(graphics::DocumentScene * scene, model::VisualNode * node) override;
 
 private:
     class Private;

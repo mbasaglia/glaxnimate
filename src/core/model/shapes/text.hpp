@@ -17,7 +17,7 @@ public:
     void add_shapes(FrameTime t, math::bezier::MultiBezier& bez) const override;
     QPainterPath to_painter_path(FrameTime t) const override;
     QRawFont font() const;
-    QIcon docnode_icon() const override;
+    QIcon tree_icon() const override;
     QRectF local_bounding_rect(FrameTime t) const override;
 };
 

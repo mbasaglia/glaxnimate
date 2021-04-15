@@ -157,31 +157,31 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
     );
 }
 
-graphics::DocumentNodeGraphicsItem * graphics::GraphicsItemFactory::make_graphics_item(model::DocumentNode* node) const
+graphics::DocumentNodeGraphicsItem * graphics::GraphicsItemFactory::make_graphics_item(model::VisualNode* node) const
 {
     if ( auto builder = builder_for(node) )
         return builder->make_graphics_item(node);
     return make_graphics_item_default(node);
 }
 
-std::unique_ptr<graphics::GraphicsEditor> graphics::GraphicsItemFactory::make_graphics_editor(model::DocumentNode* node) const
+std::unique_ptr<graphics::GraphicsEditor> graphics::GraphicsItemFactory::make_graphics_editor(model::VisualNode* node) const
 {
     if ( auto builder = builder_for(node) )
         return builder->make_graphics_editor(node);
     return make_graphics_editor_default(node);
 }
 
-graphics::DocumentNodeGraphicsItem * graphics::GraphicsItemFactory::make_graphics_item_default(model::DocumentNode* node)
+graphics::DocumentNodeGraphicsItem * graphics::GraphicsItemFactory::make_graphics_item_default(model::VisualNode* node)
 {
     return new DocumentNodeGraphicsItem(node);
 }
 
-std::unique_ptr<graphics::GraphicsEditor> graphics::GraphicsItemFactory::make_graphics_editor_default(model::DocumentNode*)
+std::unique_ptr<graphics::GraphicsEditor> graphics::GraphicsItemFactory::make_graphics_editor_default(model::VisualNode*)
 {
     return {};
 }
 
-graphics::GraphicsItemFactory::AbstractBuilder * graphics::GraphicsItemFactory::builder_for(model::DocumentNode* node) const
+graphics::GraphicsItemFactory::AbstractBuilder * graphics::GraphicsItemFactory::builder_for(model::VisualNode* node) const
 {
     const QMetaObject* mo = node->metaObject();
      auto it = builders.find(mo);

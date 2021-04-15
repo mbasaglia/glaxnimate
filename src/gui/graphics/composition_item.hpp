@@ -22,7 +22,7 @@ public:
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) override
     {
-        node()->paint(painter, node()->time(), model::DocumentNode::Canvas);
+        node()->paint(painter, node()->time(), model::VisualNode::Canvas);
     }
 
     void refresh()

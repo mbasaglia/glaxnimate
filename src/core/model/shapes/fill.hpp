@@ -31,7 +31,7 @@ public:
     {
         return collect_shapes(t).bounding_box();
     }
-    QIcon docnode_icon() const override
+    QIcon tree_icon() const override
     {
         return QIcon::fromTheme("format-fill-color");
     }

@@ -33,12 +33,12 @@ public:
     model::GradientColors* gradient(const QModelIndex& index) const;
 
 private slots:
-    void on_add_end(model::GradientColors*);
-    void on_remove_end(model::GradientColors*);
+    void on_add_end(model::DocumentNode*);
+    void on_remove_end(model::DocumentNode*);
     void on_add_begin(int);
     void on_remove_begin(int);
     void on_move_begin(int, int);
-    void on_move_end(model::GradientColors*, int, int);
+    void on_move_end(model::DocumentNode*, int, int);
 
 private:
     model::Defs* defs;

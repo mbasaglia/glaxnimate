@@ -30,7 +30,7 @@ public:
     DocumentNode* docnode_child(int index) const override { return shapes[index]; }
     int docnode_child_index(DocumentNode* obj) const override { return shapes.index_of(static_cast<ShapeElement*>(obj)); }
 
-    QIcon docnode_icon() const override
+    QIcon tree_icon() const override
     {
         return QIcon::fromTheme("object-group");
     }

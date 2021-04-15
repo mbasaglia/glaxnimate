@@ -29,7 +29,7 @@ QPainterPath model::TextShape::to_painter_path(model::FrameTime t) const
     return p;
 }
 
-QIcon model::TextShape::docnode_icon() const
+QIcon model::TextShape::tree_icon() const
 {
     return QIcon::fromTheme("font");
 }

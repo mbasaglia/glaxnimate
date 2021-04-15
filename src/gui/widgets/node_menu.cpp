@@ -40,12 +40,12 @@ public:
     model::Transform* trans;
 };
 
-QAction* action_for_node(model::ReferenceTarget* node, model::ReferenceTarget* selected, QMenu* parent, QActionGroup* group)
+QAction* action_for_node(model::DocumentNode* node, model::DocumentNode* selected, QMenu* parent, QActionGroup* group)
 {
     QAction* act = new QAction(parent);
     if ( node )
     {
-        act->setIcon(node->reftarget_icon());
+        act->setIcon(node->instance_icon());
         act->setText(node->object_name());
     }
     else
@@ -105,7 +105,7 @@ QMenu* menu_ref_property(const QIcon& icon, const QString& text, QWidget* parent
     QMenu* menu = new QMenu(text, parent);
     menu->setIcon(icon);
     QActionGroup* group = new QActionGroup(parent);
-    auto value = prop->value().value<model::ReferenceTarget*>();
+    auto value = prop->value().value<model::DocumentNode*>();
     for ( auto other_lay : prop->valid_options() )
         action_for_node(other_lay, value, menu, group);
 
@@ -317,7 +317,7 @@ void actions_precomp(QMenu* menu, GlaxnimateWindow*, model::PreCompLayer* lay)
         lay->push_command(new command::RemoveShape(lay, lay->owner()));
 
         if ( comp && comp->users().empty() )
-            lay->push_command(new command::RemoveObject(comp, &lay->document()->defs()->precompositions));
+            lay->push_command(new command::RemoveObject(comp, &lay->document()->defs()->precompositions->values));
     });
 }
 
@@ -328,12 +328,15 @@ void actions_precomp(QMenu* menu, GlaxnimateWindow*, model::PreCompLayer* lay)
 NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget* parent)
     : QMenu(node->object_name(), parent)
 {
-    setIcon(node->docnode_icon());
-    addSection(node->docnode_icon(), node->object_name());
+    setIcon(node->tree_icon());
+    addSection(node->tree_icon(), node->object_name());
 
-    togglable_action(this, &node->visible, "view-visible", tr("Visible"));
-    togglable_action(this, &node->locked, "object-locked", tr("Locked"));
-    addSeparator();
+    if ( auto visual = qobject_cast<model::VisualNode*>(node) )
+    {
+        togglable_action(this, &visual->visible, "view-visible", tr("Visible"));
+        togglable_action(this, &visual->locked, "object-locked", tr("Locked"));
+        addSeparator();
+    }
 
     if ( auto shape = qobject_cast<model::ShapeElement*>(node) )
     {

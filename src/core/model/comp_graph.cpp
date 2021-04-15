@@ -102,7 +102,7 @@ std::vector<model::Composition *> model::CompGraph::possible_descendants(model::
     std::unordered_map<model::Composition*, bool> cache;
     std::vector<model::Composition*> valid;
 
-    for ( const auto& precomp : document->defs()->precompositions )
+    for ( const auto& precomp : document->defs()->precompositions->values )
     {
         if ( !recursive_is_ancestor_of(precomp.get(), ancestor, cache, layers) )
             valid.push_back(precomp.get());

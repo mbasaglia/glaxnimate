@@ -47,7 +47,7 @@ public:
     };
 
     model::Transform* transform;
-    model::DocumentNode* target;
+    model::VisualNode* target;
     std::array<Handle, Count> handles;
     QRectF cache;
     QTransform transform_matrix;
@@ -82,7 +82,7 @@ public:
         h.handle->setPos((this->*h.get_p)());
     }
 
-    Private(TransformGraphicsItem* parent, model::Transform* transform, model::DocumentNode* target)
+    Private(TransformGraphicsItem* parent, model::Transform* transform, model::VisualNode* target)
     : transform(transform),
         target(target),
         handles{
@@ -214,11 +214,11 @@ public:
 };
 
 graphics::TransformGraphicsItem::TransformGraphicsItem(
-    model::Transform* transform, model::DocumentNode* target, QGraphicsItem* parent
+    model::Transform* transform, model::VisualNode* target, QGraphicsItem* parent
 )
     : QGraphicsObject(parent), d(std::make_unique<Private>(this, transform, target))
 {
-    connect(target, &model::DocumentNode::bounding_rect_changed, this, &TransformGraphicsItem::update_handles);
+    connect(target, &model::VisualNode::bounding_rect_changed, this, &TransformGraphicsItem::update_handles);
     connect(transform, &model::Object::property_changed, this, &TransformGraphicsItem::update_transform);
     update_transform();
     update_handles();

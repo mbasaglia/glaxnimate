@@ -2,7 +2,7 @@
 
 #include "model/document.hpp"
 
-graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::DocumentNode* node, QGraphicsItem* parent)
+graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::VisualNode* node, QGraphicsItem* parent)
     : QGraphicsObject(parent), node_(node)
 {
 //     setFlag(QGraphicsItem::ItemIsFocusable);
@@ -15,7 +15,7 @@ graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::DocumentNode
     setBoundingRegionGranularity(0);
 
     connect(node, &model::Object::property_changed, this, &DocumentNodeGraphicsItem::on_property_changed);
-    connect(node, &model::DocumentNode::docnode_visible_recursive_changed, this, &DocumentNodeGraphicsItem::set_visible);
+    connect(node, &model::VisualNode::docnode_visible_recursive_changed, this, &DocumentNodeGraphicsItem::set_visible);
     set_visible(node->docnode_visible_recursive());
 }
 

@@ -16,7 +16,7 @@ model::PreCompLayer::PreCompLayer(Document* document)
     connect(this, &Object::removed_from_list, this, &PreCompLayer::on_removed_from_list);
 }
 
-QIcon model::PreCompLayer::docnode_icon() const
+QIcon model::PreCompLayer::tree_icon() const
 {
     return QIcon::fromTheme("component");
 }
@@ -36,13 +36,13 @@ void model::PreCompLayer::set_time(model::FrameTime t)
     ShapeElement::set_time(relative_time(t));
 }
 
-std::vector<model::ReferenceTarget *> model::PreCompLayer::valid_precomps() const
+std::vector<model::DocumentNode *> model::PreCompLayer::valid_precomps() const
 {
     auto comps = document()->comp_graph().possible_descendants(owner_composition_, document());
-    return std::vector<model::ReferenceTarget *>(comps.begin(), comps.end());
+    return std::vector<model::DocumentNode *>(comps.begin(), comps.end());
 }
 
-bool model::PreCompLayer::is_valid_precomp(model::ReferenceTarget* node) const
+bool model::PreCompLayer::is_valid_precomp(model::DocumentNode* node) const
 {
     auto owncomp = owner_composition_;
     if ( auto precomp = qobject_cast<model::Precomposition*>(node) )
@@ -50,7 +50,7 @@ bool model::PreCompLayer::is_valid_precomp(model::ReferenceTarget* node) const
     return false;
 }
 
-void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, model::DocumentNode::PaintMode mode) const
+void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, model::VisualNode::PaintMode mode) const
 {
     if ( composition.get() )
     {

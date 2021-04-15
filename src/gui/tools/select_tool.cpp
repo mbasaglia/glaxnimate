@@ -47,13 +47,13 @@ private:
         >;
 
         template<class T>
-        DragObjectData(model::DocumentNode* node, T* property, const QPointF& scene_pos)
+        DragObjectData(model::VisualNode* node, T* property, const QPointF& scene_pos)
         : transform(node->docnode_fuzzy_parent()->transform_matrix(node->time()).inverted()),
           data(PropData<T>{property, property->get()}),
           start_point(transform.map(scene_pos))
         {}
 
-        static void push(model::DocumentNode* node, const QPointF& scene_pos, std::vector<DragObjectData>& out)
+        static void push(model::VisualNode* node, const QPointF& scene_pos, std::vector<DragObjectData>& out)
         {
             if ( auto prop = node->get_property("position") )
                 out.push_back(DragObjectData(node, static_cast<model::AnimatedProperty<QPointF>*>(prop), scene_pos));
@@ -233,7 +233,7 @@ private:
 
         auto selection_mode = event.modifiers() & Qt::ControlModifier ? SelectionMode::Shape : SelectionMode::Group;
 
-        std::vector<model::DocumentNode*> selection;
+        std::vector<model::VisualNode*> selection;
         for ( auto item : items )
         {
             if ( item->node()->docnode_selectable() && item->selection_mode() >= selection_mode )
@@ -274,7 +274,7 @@ private:
                 {
                     replace_selection = nullptr;
 
-                    std::vector<model::DocumentNode*> selection;
+                    std::vector<model::VisualNode*> selection;
 
                     auto selection_mode = event.modifiers() & Qt::ControlModifier ? SelectionMode::Shape : SelectionMode::Group;
                     auto nodes = under_mouse(event, true, selection_mode).nodes;
@@ -446,7 +446,7 @@ private:
         return new QWidget();
     }
 
-    void on_selected(graphics::DocumentScene * scene, model::DocumentNode * node) override
+    void on_selected(graphics::DocumentScene * scene, model::VisualNode * node) override
     {
         if ( node->has("transform") || node->is_instance<model::MainComposition>() )
         {
@@ -463,7 +463,7 @@ private:
         }
     }
 
-    void on_deselected(graphics::DocumentScene * scene, model::DocumentNode * node) override
+    void on_deselected(graphics::DocumentScene * scene, model::VisualNode * node) override
     {
         Tool::on_deselected(scene, node);
 
@@ -483,7 +483,7 @@ private:
     QPointF rubber_p1;
     QPointF rubber_p2;
     std::vector<DragObjectData> drag_data;
-    model::DocumentNode* replace_selection = nullptr;
+    model::VisualNode* replace_selection = nullptr;
     std::vector<model::Shape*> selected_shapes;
 
     static Autoreg<SelectTool> autoreg;

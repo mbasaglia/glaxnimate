@@ -177,7 +177,7 @@ public:
                     QColor::fromRgbF(kf.values[0], kf.values[1], kf.values[2], kf.values[3])
                 )->set_transition(kf.transition);
 
-            document->defs()->colors.insert(std::move(col));
+            document->defs()->colors->values.insert(std::move(col));
             return;
         }
 
@@ -186,7 +186,7 @@ public:
         colors->colors.set(stops);
         gradients["#"+id] = colors.get();
         auto ptr = colors.get();
-        document->defs()->gradient_colors.insert(std::move(colors));
+        document->defs()->gradient_colors->values.insert(std::move(colors));
         parse_gradient(gradient, id, ptr);
     }
 
@@ -272,7 +272,7 @@ public:
         gradient->name.set(id);
         gradient->colors.set(colors);
         brush_styles["#"+id] = gradient.get();
-        document->defs()->gradients.insert(std::move(gradient));
+        document->defs()->gradients->values.insert(std::move(gradient));
     }
 
     model::Layer* parse_objects(const QDomElement& svg)
@@ -530,7 +530,7 @@ public:
 
     void parse_transform(
         const QDomElement& element,
-        model::DocumentNode* node,
+        model::VisualNode* node,
         model::Transform* transform
     )
     {
@@ -656,7 +656,7 @@ public:
         return trans;
     }
 
-    void apply_common_style(model::DocumentNode* node, const QDomElement& element, const Style& style)
+    void apply_common_style(model::VisualNode* node, const QDomElement& element, const Style& style)
     {
         if ( style.get("display") == "none" || style.get("visibility") == "hidden" )
             node->visible.set(false);
@@ -930,7 +930,7 @@ public:
 
     void parse_g_common(
         const ParseFuncArgs& args,
-        model::DocumentNode* g_node,
+        model::VisualNode* g_node,
         model::Transform* transform
     )
     {
@@ -1126,7 +1126,7 @@ public:
                 return;
         }
         auto image = std::make_unique<model::Image>(document);
-        image->image.set(document->defs()->images.insert(std::move(bitmap)));
+        image->image.set(document->defs()->images->values.insert(std::move(bitmap)));
 
         QTransform trans;
         if ( args.element.hasAttribute("transform") )

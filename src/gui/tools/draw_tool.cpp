@@ -9,8 +9,8 @@ public:
     void clear(bool hard);
     void add_extension_points(model::Path* owner);
     void remove_extension_points(model::AnimatedProperty<math::bezier::Bezier>* property);
-    void recursive_add_selection(graphics::DocumentScene * scene, model::DocumentNode* node);
-    void recursive_remove_selection(graphics::DocumentScene * scene, model::DocumentNode* node);
+    void recursive_add_selection(graphics::DocumentScene * scene, model::VisualNode* node);
+    void recursive_remove_selection(graphics::DocumentScene * scene, model::VisualNode* node);
     bool within_join_distance(const tools::MouseEvent& event, const QPointF& scene_pos);
     void prepare_draw(const tools::MouseEvent& event);
 
@@ -355,17 +355,17 @@ void tools::DrawTool::disable_event(const Event&)
     d->clear(true);
 }
 
-void tools::DrawTool::on_selected(graphics::DocumentScene * scene, model::DocumentNode * node)
+void tools::DrawTool::on_selected(graphics::DocumentScene * scene, model::VisualNode * node)
 {
     d->recursive_add_selection(scene, node);
 }
 
-void tools::DrawTool::on_deselected(graphics::DocumentScene * scene, model::DocumentNode * node)
+void tools::DrawTool::on_deselected(graphics::DocumentScene * scene, model::VisualNode* node)
 {
     d->recursive_remove_selection(scene, node);
 }
 
-void tools::DrawTool::Private::recursive_add_selection(graphics::DocumentScene * scene, model::DocumentNode* node)
+void tools::DrawTool::Private::recursive_add_selection(graphics::DocumentScene * scene, model::VisualNode* node)
 {
     auto meta = node->metaObject();
     if ( meta->inherits(&model::Path::staticMetaObject) )
@@ -379,7 +379,7 @@ void tools::DrawTool::Private::recursive_add_selection(graphics::DocumentScene *
     }
 }
 
-void tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScene * scene, model::DocumentNode* node)
+void tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScene * scene, model::VisualNode* node)
 {
     auto meta = node->metaObject();
     if ( meta->inherits(&model::Path::staticMetaObject) )

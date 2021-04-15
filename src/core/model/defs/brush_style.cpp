@@ -1,6 +1,6 @@
 #include "brush_style.hpp"
 
-QIcon model::BrushStyle::reftarget_icon() const
+QIcon model::BrushStyle::instance_icon() const
 {
     if ( icon.isNull() )
     {

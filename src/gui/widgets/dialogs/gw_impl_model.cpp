@@ -59,14 +59,14 @@ model::ShapeListProperty* GlaxnimateWindow::Private::current_shape_container()
     return &current_composition()->shapes;
 }
 
-model::DocumentNode* GlaxnimateWindow::Private::current_document_node()
+model::VisualNode* GlaxnimateWindow::Private::current_document_node()
 {
     if ( auto dn = document_node_model.node(comp_model.mapToSource(ui.view_document_node->currentIndex())) )
-        return dn;
+        return dn->cast<model::VisualNode>();
     return current_document->main();
 }
 
-void GlaxnimateWindow::Private::set_current_document_node(model::DocumentNode* node)
+void GlaxnimateWindow::Private::set_current_document_node(model::VisualNode* node)
 {
     ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(node)));
 }
@@ -137,7 +137,7 @@ void GlaxnimateWindow::Private::layer_duplicate()
     set_current_document_node(cmd->object());
 }
 
-std::vector<model::DocumentNode *> GlaxnimateWindow::Private::cleaned_selection()
+std::vector<model::VisualNode*> GlaxnimateWindow::Private::cleaned_selection()
 {
     return scene.cleaned_selection();
 }
@@ -173,7 +173,7 @@ void GlaxnimateWindow::Private::cut()
     }
 }
 
-std::vector<model::DocumentNode*> GlaxnimateWindow::Private::copy()
+std::vector<model::VisualNode*> GlaxnimateWindow::Private::copy()
 {
     auto selection = cleaned_selection();
 
@@ -183,7 +183,7 @@ std::vector<model::DocumentNode*> GlaxnimateWindow::Private::copy()
         for ( const auto& mime : settings::ClipboardSettings::mime_types() )
         {
             if ( mime.enabled )
-                mime.serializer->to_mime_data(*data, selection);
+                mime.serializer->to_mime_data(*data, std::vector<model::DocumentNode*>(selection.begin(), selection.end()));
         }
 
         QGuiApplication::clipboard()->setMimeData(data);
@@ -193,17 +193,19 @@ std::vector<model::DocumentNode*> GlaxnimateWindow::Private::copy()
 }
 
 template<class T>
-static void paste_assets(model::ObjectListProperty<T> (model::Defs::* prop), model::Document* source, model::Document* current_document)
+static void paste_assets(model::SubObjectProperty<T> (model::Defs::* p), model::Document* source, model::Document* current_document)
 {
-    for ( auto& item : (source->defs()->*prop).raw() )
+    T* subject = (source->defs()->*p).get();
+    auto prop = &T::values;
+    for ( auto& item : (subject->*prop).raw() )
     {
         if ( !current_document->defs()->find_by_uuid(item->uuid.get()) )
         {
             item->transfer(current_document);
             current_document->push_command(new command::AddObject(
-                &(current_document->defs()->*prop),
+                &(subject->*prop),
                 std::move(item),
-                (current_document->defs()->*prop).size()
+                (subject->*prop).size()
             ));
         }
     }
@@ -241,14 +243,14 @@ void GlaxnimateWindow::Private::paste_document(model::Document* document, const 
     paste_assets(&model::Defs::precompositions, document, current_document.get());
 
     model::ShapeListProperty* shape_cont = current_shape_container();
-    std::vector<model::DocumentNode*> select;
+    std::vector<model::VisualNode*> select;
 
     if ( as_comp )
     {
         std::unique_ptr<model::Precomposition> comp = std::make_unique<model::Precomposition>(current_document.get());
         auto comp_ptr = comp.get();
         current_document->set_best_name(comp.get(), document->main()->name.get());
-        current_document->push_command(new command::AddObject(&current_document->defs()->precompositions, std::move(comp)));
+        current_document->push_command(new command::AddObject(&current_document->defs()->precompositions->values, std::move(comp)));
 
         select.push_back(layer_new_comp(comp_ptr));
         shape_cont = &comp_ptr->shapes;
@@ -278,7 +280,7 @@ void GlaxnimateWindow::Private::duplicate_selection()
 
     if ( !selection.empty() )
     {
-        std::vector<model::DocumentNode*> duplicated;
+        std::vector<model::VisualNode*> duplicated;
         duplicated.reserve(selection.size());
 
         for ( const auto& node : selection )
@@ -394,7 +396,7 @@ void GlaxnimateWindow::Private::import_image()
 
     auto defs = current_document->defs();
     auto bmp_ptr = bitmap.get();
-    current_document->push_command(new command::AddObject(&defs->images, std::move(bitmap), defs->images.size()));
+    current_document->push_command(new command::AddObject(&defs->images->values, std::move(bitmap), defs->images->values.size()));
 
     auto image = std::make_unique<model::Image>(current_document.get());
     image->image.set(bmp_ptr);
@@ -488,10 +490,10 @@ void GlaxnimateWindow::Private::cleanup_document()
     command::UndoMacroGuard guard(tr("Cleanup Document"), current_document.get());
     int count = 0;
 
-    remove_assets(current_document->defs()->gradients, count);
-    remove_assets(current_document->defs()->gradient_colors, count);
-    remove_assets(current_document->defs()->colors, count);
-    remove_assets(current_document->defs()->images, count);
+    remove_assets(current_document->defs()->gradients->values, count);
+    remove_assets(current_document->defs()->gradient_colors->values, count);
+    remove_assets(current_document->defs()->colors->values, count);
+    remove_assets(current_document->defs()->images->values, count);
 
     status_message(tr("Removed %1 assets").arg(count), 0);
 }
@@ -529,17 +531,17 @@ void GlaxnimateWindow::Private::to_path()
 
 void GlaxnimateWindow::Private::switch_composition(int i)
 {
-    int old_i = current_document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(comp)) + 1;
+    int old_i = current_document->defs()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp)) + 1;
     comp_selections[old_i].selection = scene.selection();
     if ( ui.view_document_node->currentIndex().isValid() )
-        comp_selections[old_i].current = document_node_model.node(comp_model.mapToSource(ui.view_document_node->currentIndex()));
+        comp_selections[old_i].current = document_node_model.visual_node(comp_model.mapToSource(ui.view_document_node->currentIndex()));
     else
         comp_selections[old_i].current = comp;
 
     int precomp_index = i - 1;
-    if ( precomp_index >= 0 && precomp_index < current_document->defs()->precompositions.size() )
+    if ( precomp_index >= 0 && precomp_index < current_document->defs()->precompositions->values.size() )
     {
-        comp = current_document->defs()->precompositions[precomp_index];
+        comp = current_document->defs()->precompositions->values[precomp_index];
 
         auto possible = current_document->comp_graph().possible_descendants(comp, current_document.get());
         std::set<model::Composition*> comps(possible.begin(), possible.end());
@@ -563,7 +565,7 @@ void GlaxnimateWindow::Private::switch_composition(int i)
 
 void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int index)
 {
-    index = ui.tab_bar->insertTab(index, comp->docnode_icon(), comp->object_name());
+    index = ui.tab_bar->insertTab(index, comp->tree_icon(), comp->object_name());
     CompState state;
     if ( !comp->shapes.empty() )
         state = comp->shapes[0];
@@ -577,7 +579,7 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int 
     if ( comp != current_document->main() )
     {
         ui.menu_new_comp_layer->setEnabled(true);
-        action = new QAction(comp->reftarget_icon(), comp->object_name(), comp);
+        action = new QAction(comp->instance_icon(), comp->object_name(), comp);
         if ( ui.menu_new_comp_layer->actions().empty() || index - 1 >= ui.menu_new_comp_layer->actions().size() )
             ui.menu_new_comp_layer->addAction(action);
         else
@@ -587,15 +589,15 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int 
         TabBarCloseButton::add_button(ui.tab_bar, index);
     }
 
-    connect(comp, &model::ReferenceTarget::name_changed, ui.tab_bar, [this, index, comp, action](){
+    connect(comp, &model::DocumentNode::name_changed, ui.tab_bar, [this, index, comp, action](){
         ui.tab_bar->setTabText(index, comp->object_name());
         if ( action )
             action->setText(comp->object_name());
     });
-    connect(comp, &model::DocumentNode::docnode_group_color_changed, ui.tab_bar, [this, index, comp, action](){
+    connect(comp, &model::VisualNode::docnode_group_color_changed, ui.tab_bar, [this, index, comp, action](){
         update_comp_color(index, comp);
         if ( action )
-            action->setIcon(comp->reftarget_icon());
+            action->setIcon(comp->instance_icon());
     });
 
 }
@@ -612,13 +614,13 @@ void GlaxnimateWindow::Private::add_composition()
     comp->shapes.insert(std::move(lay));
 
     current_document->set_best_name(comp.get());
-    current_document->push_command(new command::AddObject(&current_document->defs()->precompositions, std::move(comp)));
+    current_document->push_command(new command::AddObject(&current_document->defs()->precompositions->values, std::move(comp)));
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
 }
 
 void GlaxnimateWindow::Private::objects_to_new_composition(
     model::Composition* comp,
-    const std::vector<model::DocumentNode*>& objects,
+    const std::vector<model::VisualNode*>& objects,
     model::ObjectListProperty<model::ShapeElement>* layer_parent,
     int layer_index
 )
@@ -631,7 +633,7 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
     std::unique_ptr<model::Precomposition> ucomp = std::make_unique<model::Precomposition>(current_document.get());
     model::Precomposition* new_comp = ucomp.get();
     current_document->set_best_name(new_comp);
-    current_document->push_command(new command::AddObject(&current_document->defs()->precompositions, std::move(ucomp)));
+    current_document->push_command(new command::AddObject(&current_document->defs()->precompositions->values, std::move(ucomp)));
 
 
     for ( auto node : objects )
@@ -654,7 +656,7 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
 
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
 
-    int old_comp_index = current_document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(comp)) + 1;
+    int old_comp_index = current_document->defs()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp)) + 1;
     comp_selections[old_comp_index] = pcl_ptr;
 }
 
@@ -670,7 +672,7 @@ void GlaxnimateWindow::Private::update_comp_color(int index, model::Composition*
 
 void GlaxnimateWindow::Private::on_remove_precomp(int index)
 {
-    model::Precomposition* precomp = current_document->defs()->precompositions[index];
+    model::Precomposition* precomp = current_document->defs()->precompositions->values[index];
     if ( precomp == comp )
         switch_composition(0);
 
@@ -702,7 +704,7 @@ void GlaxnimateWindow::Private::composition_close_request(int index)
     if ( index > 0 )
     {
         current_document->push_command(new command::RemoveObject<model::Precomposition>(
-            index-1, &current_document->defs()->precompositions
+            index-1, &current_document->defs()->precompositions->values
         ));
     }
 }
@@ -769,7 +771,7 @@ namespace {
 
 struct AlignData
 {
-    model::DocumentNode* node;
+    model::VisualNode* node;
     QTransform transform;
     QPointF bounds_point;
 };
@@ -778,7 +780,7 @@ struct AlignData
 
 void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition position, bool outside)
 {
-    std::vector<model::DocumentNode*> selection = cleaned_selection();
+    std::vector<model::VisualNode*> selection = cleaned_selection();
 
     if ( selection.empty() )
         return;
@@ -875,7 +877,7 @@ void GlaxnimateWindow::Private::composition_context_menu(int index)
     if ( index <= 0 )
         return;
 
-    auto precomp = current_document->defs()->precompositions[index-1];
+    auto precomp = current_document->defs()->precompositions->values[index-1];
 
     QMenu menu;
     menu.addSection(precomp->object_name());
@@ -891,7 +893,7 @@ void GlaxnimateWindow::Private::composition_context_menu(int index)
 
         current_document->push_command(
             new command::AddObject(
-                &current_document->defs()->precompositions,
+                &current_document->defs()->precompositions->values,
                 std::move(new_comp),
                 -1,
                 nullptr,

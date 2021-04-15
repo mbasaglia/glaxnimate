@@ -30,7 +30,7 @@ public:
 public:
     using Shape::Shape;
 
-    QIcon docnode_icon() const override
+    QIcon tree_icon() const override
     {
         if ( type.get() == Star )
             return QIcon::fromTheme("draw-star");

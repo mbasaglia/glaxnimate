@@ -16,7 +16,7 @@ public:
 
     using Asset::Asset;
 
-    QIcon reftarget_icon() const override;
+    QIcon instance_icon() const override;
 
     virtual QBrush brush_style(FrameTime t) const = 0;
 

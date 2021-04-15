@@ -2,7 +2,7 @@
 
 GLAXNIMATE_OBJECT_IMPL(model::Fill)
 
-void model::Fill::on_paint(QPainter* p, model::FrameTime t, model::DocumentNode::PaintMode) const
+void model::Fill::on_paint(QPainter* p, model::FrameTime t, model::VisualNode::PaintMode) const
 {
     p->setBrush(brush(t));
     p->setOpacity(p->opacity() * opacity.get_at(t));

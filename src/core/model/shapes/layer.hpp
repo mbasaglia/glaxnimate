@@ -22,7 +22,7 @@ public:
     class ChildLayerIterator
     {
     public:
-        using value_type = DocumentNode;
+        using value_type = VisualNode;
         using reference = value_type&;
         using pointer = value_type*;
         using difference_type = int;
@@ -67,10 +67,10 @@ public:
 
     using Group::Group;
 
-    DocumentNode* docnode_group_parent() const override;
+    VisualNode* docnode_group_parent() const override;
     int docnode_group_child_count() const override;
-    DocumentNode* docnode_group_child(int index) const override;
-    QIcon docnode_icon() const override;
+    VisualNode* docnode_group_child(int index) const override;
+    QIcon tree_icon() const override;
     QString type_name_human() const override { return tr("Layer"); }
     void set_time(FrameTime t) override;
 
@@ -93,8 +93,8 @@ public:
     QPainterPath to_painter_path(model::FrameTime t) const override;
 
 private:
-    std::vector<ReferenceTarget*> valid_parents() const;
-    bool is_valid_parent(ReferenceTarget* node) const;
+    std::vector<DocumentNode*> valid_parents() const;
+    bool is_valid_parent(DocumentNode* node) const;
 };
 
 } // namespace model

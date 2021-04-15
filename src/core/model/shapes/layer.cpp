@@ -12,22 +12,22 @@ void model::Layer::ChildLayerIterator::find_first()
         ++index;
 }
 
-model::DocumentNode * model::Layer::ChildLayerIterator::operator*() const
+model::VisualNode* model::Layer::ChildLayerIterator::operator*() const
 {
     return (*comp)[index];
 }
 
-model::DocumentNode* model::Layer::ChildLayerIterator::operator->() const
+model::VisualNode* model::Layer::ChildLayerIterator::operator->() const
 {
     return (*comp)[index];
 }
 
-model::DocumentNode * model::Layer::docnode_group_parent() const
+model::VisualNode * model::Layer::docnode_group_parent() const
 {
     return parent.get();
 }
 
-model::DocumentNode * model::Layer::docnode_group_child(int index) const
+model::VisualNode * model::Layer::docnode_group_child(int index) const
 {
     ChildLayerIterator iter(owner(), this, 0);
     std::advance(iter, index);
@@ -45,9 +45,9 @@ int model::Layer::docnode_group_child_count() const
     return sz;
 }
 
-std::vector<model::ReferenceTarget*> model::Layer::valid_parents() const
+std::vector<model::DocumentNode*> model::Layer::valid_parents() const
 {
-    std::vector<model::ReferenceTarget*> refs;
+    std::vector<model::DocumentNode*> refs;
     refs.push_back(nullptr);
 
     if ( is_top_level() )
@@ -63,7 +63,7 @@ std::vector<model::ReferenceTarget*> model::Layer::valid_parents() const
     return refs;
 }
 
-bool model::Layer::is_valid_parent(model::ReferenceTarget* node) const
+bool model::Layer::is_valid_parent(model::DocumentNode* node) const
 {
     if ( node == nullptr )
         return true;
@@ -131,13 +131,13 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
         on_paint(painter, time, mode);
 
         for ( int i = 1; i < n_shapes; i++ )
-            docnode_child(i)->paint(painter, time, mode);
+            docnode_visual_child(i)->paint(painter, time, mode);
 
         painter->restore();
     }
     else
     {
-        DocumentNode::paint(painter, time, mode);
+        VisualNode::paint(painter, time, mode);
     }
 }
 
@@ -161,7 +161,7 @@ QPainterPath model::Layer::to_painter_path(model::FrameTime time) const
 
 
 
-QIcon model::Layer::docnode_icon() const
+QIcon model::Layer::tree_icon() const
 {
     return mask->has_mask() ? QIcon::fromTheme("path-clip-edit") : QIcon::fromTheme("folder");
 }

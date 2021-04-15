@@ -74,7 +74,7 @@ protected:
         auto document = event.window->document();
         command::UndoMacroGuard macro(command_name, document);
 
-        model::DocumentNode* select = shape.get();
+        model::VisualNode* select = shape.get();
 
         QString name = document->get_best_name(shape.get(), shape->name.get());
 
@@ -90,7 +90,7 @@ protected:
             auto super_prop = prop;
             prop = &group->shapes;
 
-            model::DocumentNode* owner_node = static_cast<model::DocumentNode*>(super_prop->object());
+            model::VisualNode* owner_node = static_cast<model::VisualNode*>(super_prop->object());
             QTransform parent_t = owner_node->transform_matrix(owner_node->time());
             QTransform parent_t_inv = parent_t.inverted();
             group->transform.get()->set_transform_matrix(parent_t_inv);

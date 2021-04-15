@@ -33,8 +33,8 @@ public:
         }
     }
 
-    std::set<model::ReferenceTarget*> skip;
-    std::map<QString, model::ReferenceTarget*> referenced;
+    std::set<model::DocumentNode*> skip;
+    std::map<QString, model::DocumentNode*> referenced;
 };
 
 } // namespace
@@ -111,11 +111,11 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(const QBy
         }
         else if ( auto color = qobject_cast<model::NamedColor*>(obj) )
         {
-            output.document->defs()->colors.emplace(color);
+            output.document->defs()->colors->values.emplace(color);
         }
         else if ( auto bitmap = qobject_cast<model::Bitmap*>(obj) )
         {
-            output.document->defs()->images.emplace(bitmap);
+            output.document->defs()->images->values.emplace(bitmap);
         }
         else
         {

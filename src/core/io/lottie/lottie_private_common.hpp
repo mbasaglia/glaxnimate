@@ -153,7 +153,7 @@ struct FieldInfo
 
 // static mapping data
 const QMap<QString, QVector<FieldInfo>> fields = {
-    {"ReferenceTarget", {
+    {"DocumentNode", {
         FieldInfo{"nm", "name", {}, false},
         FieldInfo{"mn", "uuid", {}, false},
     }},

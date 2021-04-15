@@ -22,7 +22,7 @@ public:
 public:
     using Shape::Shape;
 
-    QIcon docnode_icon() const override
+    QIcon tree_icon() const override
     {
         return QIcon::fromTheme("draw-bezier-curves");
     }

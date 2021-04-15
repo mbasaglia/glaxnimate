@@ -108,7 +108,7 @@ void tools::Tool::edit_clicked(const tools::MouseEvent& event)
     }
 }
 
-void tools::Tool::on_deselected(graphics::DocumentScene* scene, model::DocumentNode* node)
+void tools::Tool::on_deselected(graphics::DocumentScene* scene, model::VisualNode* node)
 {
     scene->hide_editors(node, true, true);
 }

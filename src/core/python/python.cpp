@@ -196,7 +196,7 @@ void register_py_module(py::module& glaxnimate_module)
 
     // for some reason some classes arent seen without this o_O
     static std::vector<int> foo = {
-        qMetaTypeId<model::ReferenceTarget*>(),
+        qMetaTypeId<model::DocumentNode*>(),
         qMetaTypeId<model::NamedColor*>(),
         qMetaTypeId<model::Bitmap*>(),
         qMetaTypeId<model::Gradient*>(),
@@ -228,13 +228,13 @@ void register_py_module(py::module& glaxnimate_module)
             "Context manager to group changes into a single undo command"
         );
     ;
-    register_from_meta<model::ReferenceTarget, model::Object>(model);
-    register_from_meta<model::DocumentNode, model::ReferenceTarget>(model);
+    register_from_meta<model::DocumentNode, model::Object>(model);
+    register_from_meta<model::VisualNode, model::DocumentNode>(model);
     register_from_meta<model::AnimationContainer, model::Object>(model);
     register_from_meta<model::StretchableTime, model::Object>(model);
     register_from_meta<model::Transform, model::Object>(model);
     register_from_meta<model::MaskSettings, model::Object>(model);
-    register_from_meta<model::Composition, model::DocumentNode>(model)
+    register_from_meta<model::Composition, model::VisualNode>(model)
         .def("add_shape", CreateObject(&model::Composition::shapes), no_own,
             "Adds a shape from its class name",
              py::arg("type_name"),
@@ -265,17 +265,22 @@ void register_py_module(py::module& glaxnimate_module)
     py::class_<model::AssetBase>(defs, "AssetBase")
         .def_property_readonly("users", &model::AssetBase::users)
     ;
-    register_from_meta<model::Asset, model::ReferenceTarget, model::AssetBase>(defs);
+    register_from_meta<model::Asset, model::DocumentNode, model::AssetBase>(defs);
     register_from_meta<model::BrushStyle, model::Asset>(defs);
     register_from_meta<model::NamedColor, model::BrushStyle>(defs);
     register_from_meta<model::GradientColors, model::Asset>(defs);
     register_from_meta<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::GradientType>{});
     register_from_meta<model::Bitmap, model::Asset>(defs);
     register_from_meta<model::Precomposition, model::Composition, model::AssetBase>(defs);
-    register_from_meta<model::Defs, model::Object>(defs);
+    register_from_meta<model::BitmapList, model::DocumentNode>(defs);
+    register_from_meta<model::NamedColorList, model::DocumentNode>(defs);
+    register_from_meta<model::GradientList, model::DocumentNode>(defs);
+    register_from_meta<model::GradientColorsList, model::DocumentNode>(defs);
+    register_from_meta<model::PrecompositionList, model::DocumentNode>(defs);
+    register_from_meta<model::Defs, model::DocumentNode>(defs);
 
     py::module shapes = model.def_submodule("shapes", "");
-    register_from_meta<model::ShapeElement, model::DocumentNode>(shapes);
+    register_from_meta<model::ShapeElement, model::VisualNode>(shapes);
     register_from_meta<model::Shape, model::ShapeElement>(shapes);
     register_from_meta<model::Modifier, model::ShapeElement>(shapes);
     register_from_meta<model::Styler, model::ShapeElement>(shapes);

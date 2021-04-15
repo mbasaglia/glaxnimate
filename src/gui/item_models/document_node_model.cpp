@@ -30,24 +30,27 @@ void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
         endRemoveRows();
         disconnect_node(child);
     });
-    connect(node, &model::DocumentNode::docnode_visible_changed, this, [this, node]() {
-        QModelIndex ind = node_index(node);
-        QModelIndex par = node_index(node->docnode_parent());
-        QModelIndex changed = index(ind.row(), ColumnVisible, par);
-        dataChanged(changed, changed, {Qt::DecorationRole});
-    });
-    connect(node, &model::DocumentNode::docnode_locked_changed, this, [this, node]() {
-        QModelIndex ind = node_index(node);
-        QModelIndex par = node_index(node->docnode_parent());
-        QModelIndex changed = index(ind.row(), ColumnLocked, par);
-        dataChanged(changed, changed, {Qt::DecorationRole});
-    });
-    connect(node, &model::DocumentNode::docnode_group_color_changed, this, [this, node]() {
-        QModelIndex ind = node_index(node);
-        QModelIndex par = node_index(node->docnode_parent());
-        QModelIndex changed = index(ind.row(), ColumnColor, par);
-        dataChanged(changed, changed, {Qt::BackgroundRole, Qt::EditRole, Qt::DisplayRole});
-    });
+    if ( auto visual = node->cast<model::VisualNode>() )
+    {
+        connect(visual, &model::VisualNode::docnode_visible_changed, this, [this, visual]() {
+            QModelIndex ind = node_index(visual);
+            QModelIndex par = node_index(visual->docnode_parent());
+            QModelIndex changed = index(ind.row(), ColumnVisible, par);
+            dataChanged(changed, changed, {Qt::DecorationRole});
+        });
+        connect(visual, &model::VisualNode::docnode_locked_changed, this, [this, visual]() {
+            QModelIndex ind = node_index(visual);
+            QModelIndex par = node_index(visual->docnode_parent());
+            QModelIndex changed = index(ind.row(), ColumnLocked, par);
+            dataChanged(changed, changed, {Qt::DecorationRole});
+        });
+        connect(visual, &model::VisualNode::docnode_group_color_changed, this, [this, visual]() {
+            QModelIndex ind = node_index(visual);
+            QModelIndex par = node_index(visual->docnode_parent());
+            QModelIndex changed = index(ind.row(), ColumnColor, par);
+            dataChanged(changed, changed, {Qt::BackgroundRole, Qt::EditRole, Qt::DisplayRole});
+        });
+    }
     connect(node, &model::DocumentNode::name_changed, this, [this, node]() {
         QModelIndex ind = node_index(node);
         QModelIndex par = node_index(node->docnode_parent());
@@ -87,7 +90,7 @@ int item_models::DocumentNodeModel::rowCount ( const QModelIndex& parent ) const
         return 0;
 
     if ( !parent.isValid() )
-        return 1 + document->defs()->precompositions.size();
+        return 2;
 
     return node(parent)->docnode_child_count();
 }
@@ -104,10 +107,11 @@ QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const Q
 
     if ( !parent.isValid() )
     {
-        int i = row - 1;
-        if ( i >= 0 && i < document->defs()->precompositions.size() )
-            return createIndex(row, column, document->defs()->precompositions[i]);
-        return createIndex(0, column, document->main());
+        if ( row == 0 )
+            return createIndex(0, column, document->main());
+        if ( row == 1 )
+            return createIndex(0, column, document->defs());
+        return {};
     }
 
     auto n = node(parent);
@@ -138,7 +142,7 @@ Qt::ItemFlags item_models::DocumentNodeModel::flags ( const QModelIndex& index )
 //             break;
     }
 
-    auto n = node(index);
+    auto n = qobject_cast<model::VisualNode*>(node(index));
     if ( n && !n->docnode_locked_recursive() )
     {
         if ( n->has("shapes") )
@@ -156,22 +160,26 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
     if ( !document || !index.isValid() || !n )
         return {};
 
+    auto visual = n->cast<model::VisualNode>();
+    if ( !visual && index.column() != ColumnName )
+        return {};
+
     switch ( index.column() )
     {
         case ColumnColor:
             if ( role == Qt::DisplayRole || role == Qt::EditRole || role == Qt::BackgroundRole )
-                return n->docnode_group_color();
+                return visual->docnode_group_color();
             break;
         case ColumnName:
             if ( role == Qt::DisplayRole || role == Qt::EditRole )
                 return n->object_name();
             else if ( role == Qt::DecorationRole )
-                return n->docnode_icon();
+                return n->tree_icon();
             break;
         case ColumnVisible:
             if ( role == Qt::DecorationRole )
             {
-                if ( n->visible.get() )
+                if ( visual->visible.get() )
                     return QIcon::fromTheme("view-visible");
                 return QIcon::fromTheme("view-hidden");
             }
@@ -179,7 +187,7 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
         case ColumnLocked:
             if ( role == Qt::DecorationRole )
             {
-                if ( n->locked.get() )
+                if ( visual->locked.get() )
                     return QIcon::fromTheme("object-locked");
                 return QIcon::fromTheme("object-unlocked");
             }
@@ -200,8 +208,12 @@ bool item_models::DocumentNodeModel::setData(const QModelIndex& index, const QVa
     switch ( index.column() )
     {
         case ColumnColor:
-            document->undo_stack().push(new command::SetPropertyValue(&n->group_color, n->group_color.get(), value));
-            return true;
+            if ( auto visual = n->cast<model::VisualNode>() )
+            {
+                document->undo_stack().push(new command::SetPropertyValue(&visual->group_color, visual->group_color.get(), value));
+                return true;
+            }
+            return false;
         case ColumnName:
             document->undo_stack().push(new command::SetPropertyValue(&n->name, n->name.get(), value));
             return true;
@@ -224,30 +236,7 @@ void item_models::DocumentNodeModel::set_document ( model::Document* doc )
     if ( doc )
     {
         connect_node(doc->main());
-
-        for ( const auto& comp : doc->defs()->precompositions )
-            connect_node(comp.get());
-
-        connect(doc->defs(), &model::Defs::precomp_add_begin, this, [this](int row){
-            beginInsertRows({}, row+1, row+1);
-        });
-        connect(doc->defs(), &model::Defs::precomp_add_end, this, [this](model::Precomposition* precomp){
-            endInsertRows();
-            connect_node(precomp);
-        });
-        connect(doc->defs(), &model::Defs::precomp_remove_begin, this, [this](int row){
-            beginRemoveRows({}, row+1, row+1);
-        });
-        connect(doc->defs(), &model::Defs::precomp_remove_end, this, [this](model::Precomposition* precomp){
-            endRemoveRows();
-            disconnect_node(precomp);
-        });
-        connect(doc->defs(), &model::Defs::precomp_move_begin, this, [this](int from, int to){
-            beginMoveRows({}, from+1, from+1, {}, to+1);
-        });
-        connect(doc->defs(), &model::Defs::precomp_move_end, this, [this](){
-            endMoveRows();
-        });
+        connect_node(doc->defs());
     }
     endResetModel();
 }
@@ -287,7 +276,7 @@ QModelIndex item_models::DocumentNodeModel::node_index ( model::DocumentNode* no
             return createIndex(0, 0, node);
 
         return createIndex(
-            document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(node))+2,
+            document->defs()->precompositions->values.index_of(static_cast<model::Precomposition*>(node))+2,
             0, node
         );
     }
@@ -394,4 +383,9 @@ bool item_models::DocumentNodeModel::dropMimeData(const QMimeData* data, Qt::Dro
         ));
     }
     return true;
+}
+
+model::VisualNode* item_models::DocumentNodeModel::visual_node(const QModelIndex& index) const
+{
+    return qobject_cast<model::VisualNode*>(node(index));
 }

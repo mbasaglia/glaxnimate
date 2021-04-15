@@ -1,6 +1,6 @@
 #pragma once
 #include "model/defs/asset_base.hpp"
-#include "model/reference_target.hpp"
+#include "model/document_node.hpp"
 #include "model/property/property.hpp"
 
 
@@ -27,8 +27,8 @@ public:
     ReferencePropertyBase(
         Object* obj,
         const QString& name,
-        PropertyCallback<std::vector<ReferenceTarget*>> valid_options,
-        PropertyCallback<bool, ReferenceTarget*> is_valid_option,
+        PropertyCallback<std::vector<DocumentNode*>> valid_options,
+        PropertyCallback<bool, DocumentNode*> is_valid_option,
         PropertyTraits::Flags flags = PropertyTraits::Visual)
         : BaseProperty(obj, name, PropertyTraits{PropertyTraits::ObjectReference, flags}),
         valid_options_(std::move(valid_options)),
@@ -38,15 +38,15 @@ public:
 
     bool valid_value(const QVariant & v) const override
     {
-        return is_valid_option_(object(), v.value<ReferenceTarget*>());
+        return is_valid_option_(object(), v.value<DocumentNode*>());
     }
 
-    std::vector<ReferenceTarget*> valid_options() const
+    std::vector<DocumentNode*> valid_options() const
     {
         return valid_options_(object());
     }
 
-    bool is_valid_option(ReferenceTarget* ptr) const
+    bool is_valid_option(DocumentNode* ptr) const
     {
         return is_valid_option_(object(), ptr);
     }
@@ -55,12 +55,12 @@ public:
 
     void transfer(Document*) override;
 
-    virtual bool set_ref(model::ReferenceTarget* t) = 0;
-    virtual model::ReferenceTarget* get_ref() const = 0;
+    virtual bool set_ref(model::DocumentNode* t) = 0;
+    virtual model::DocumentNode* get_ref() const = 0;
 
 private:
-    PropertyCallback<std::vector<ReferenceTarget*>> valid_options_;
-    PropertyCallback<bool, ReferenceTarget*> is_valid_option_;
+    PropertyCallback<std::vector<DocumentNode*>> valid_options_;
+    PropertyCallback<bool, DocumentNode*> is_valid_option_;
 
 protected:
     static void remove_user(ReferencePropertyBase*, void*) {}
@@ -84,8 +84,8 @@ public:
     ReferenceProperty(
         Object* obj,
         const QString& name,
-        PropertyCallback<std::vector<ReferenceTarget*>> valid_options,
-        PropertyCallback<bool, ReferenceTarget*> is_valid_option,
+        PropertyCallback<std::vector<DocumentNode*>> valid_options,
+        PropertyCallback<bool, DocumentNode*> is_valid_option,
         PropertyCallback<void, Type*, Type*> on_changed = {},
         PropertyTraits::Flags flags = PropertyTraits::Visual)
         : ReferencePropertyBase(obj, name, std::move(valid_options), std::move(is_valid_option), flags),
@@ -137,7 +137,7 @@ public:
         return value_;
     }
 
-    bool set_ref(model::ReferenceTarget* t) override
+    bool set_ref(model::DocumentNode* t) override
     {
         if ( !t )
         {
@@ -149,7 +149,7 @@ public:
         return false;
     }
 
-    model::ReferenceTarget* get_ref() const override
+    model::DocumentNode* get_ref() const override
     {
         return value_;
     }

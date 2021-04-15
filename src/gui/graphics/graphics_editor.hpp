@@ -9,9 +9,9 @@ namespace graphics {
 class GraphicsEditor : public QGraphicsObject
 {
 public:
-    explicit GraphicsEditor(model::DocumentNode* node) : node(node)
+    explicit GraphicsEditor(model::VisualNode* node) : node(node)
     {
-        connect(node, &model::DocumentNode::transform_matrix_changed,
+        connect(node, &model::VisualNode::transform_matrix_changed,
                 this, &GraphicsEditor::set_transform_matrix);
         setTransform(node->transform_matrix(node->time()));
     }
@@ -29,7 +29,8 @@ public:
     QRectF boundingRect() const override { return {}; }
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) override {}
 
-model::DocumentNode* node;
+    model::VisualNode* node;
+
 public slots:
     void set_transform_matrix(const QTransform& t)
     {

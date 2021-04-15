@@ -96,7 +96,7 @@ public:
             );
         }
 
-        event.window->set_current_document_node(highlight->docnode_parent());
+        event.window->set_current_document_node(highlight->docnode_visual_parent());
 
         highlight = nullptr;
     }

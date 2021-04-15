@@ -30,35 +30,35 @@ public:
     void clear_document() { set_document(nullptr); }
     void set_active_tool(tools::Tool* tool);
 
-    void add_selection(model::DocumentNode* node);
-    void remove_selection(model::DocumentNode* node);
-    void toggle_selection(model::DocumentNode* node);
+    void add_selection(model::VisualNode* node);
+    void remove_selection(model::VisualNode* node);
+    void toggle_selection(model::VisualNode* node);
     void clear_selection();
-    void user_select(const std::vector<model::DocumentNode*>& selected, SelectMode flags);
+    void user_select(const std::vector<model::VisualNode*>& selected, SelectMode flags);
 
     /// Currently selected nodes
-    const std::vector<model::DocumentNode*>& selection() const;
+    const std::vector<model::VisualNode*>& selection() const;
     /// Top-level items for selected nodes
-    std::vector<model::DocumentNode*> cleaned_selection();
+    std::vector<model::VisualNode*> cleaned_selection();
 
 
-    bool is_selected(model::DocumentNode* node) const;
-    bool is_descendant_of_selection(model::DocumentNode* node) const;
-    void show_editors(model::DocumentNode* node);
-    void show_custom_editor(model::DocumentNode* node, std::unique_ptr<QGraphicsItem> editor);
-    void hide_editors(model::DocumentNode* node, bool recursive, bool if_not_selected);
-    bool has_editors(model::DocumentNode* node) const;
-    QGraphicsItem* get_editor(model::DocumentNode* node) const;
+    bool is_selected(model::VisualNode* node) const;
+    bool is_descendant_of_selection(model::VisualNode* node) const;
+    void show_editors(model::VisualNode* node);
+    void show_custom_editor(model::VisualNode* node, std::unique_ptr<QGraphicsItem> editor);
+    void hide_editors(model::VisualNode* node, bool recursive, bool if_not_selected);
+    bool has_editors(model::VisualNode* node) const;
+    QGraphicsItem* get_editor(model::VisualNode* node) const;
 
-    model::DocumentNode* item_to_node(const QGraphicsItem* item) const;
-    DocumentNodeGraphicsItem* item_from_node(model::DocumentNode* node) const;
+    model::VisualNode* item_to_node(const QGraphicsItem* item) const;
+    DocumentNodeGraphicsItem* item_from_node(model::VisualNode* node) const;
 
     std::vector<DocumentNodeGraphicsItem*> nodes(const QPointF& point,      const QTransform& device_transform) const;
     std::vector<DocumentNodeGraphicsItem*> nodes(const QPainterPath& path,  const QTransform& device_transform, Qt::ItemSelectionMode mode = Qt::IntersectsItemShape) const;
     std::vector<DocumentNodeGraphicsItem*> nodes(const QPolygonF& path,     const QTransform& device_transform, Qt::ItemSelectionMode mode = Qt::IntersectsItemShape) const;
 
 signals:
-    void node_user_selected(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected);
+    void node_user_selected(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
 
 protected:
     void drawBackground(QPainter * painter, const QRectF & rect) override;

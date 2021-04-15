@@ -30,13 +30,15 @@ class GradientColors : public Asset
 public:
     using Asset::Asset;
 
-    QIcon reftarget_icon() const override;
+    QIcon instance_icon() const override;
     QString type_name_human() const override;
 
     bool remove_if_unused(bool clean_lists) override;
 
     Q_INVOKABLE void split_segment(int segment_index, float factor = 0.5, const QColor& new_color = {});
     Q_INVOKABLE void remove_stop(int index);
+
+    DocumentNode* docnode_parent() const override;
 
 signals:
     void colors_changed(const QGradientStops&);
@@ -75,9 +77,11 @@ public:
 
     bool remove_if_unused(bool clean_lists) override;
 
+    DocumentNode* docnode_parent() const override;
+
 private:
-    std::vector<ReferenceTarget*> valid_refs() const;
-    bool is_valid_ref(ReferenceTarget* node) const;
+    std::vector<DocumentNode*> valid_refs() const;
+    bool is_valid_ref(DocumentNode* node) const;
 
     void on_ref_changed(GradientColors* new_ref, GradientColors* old_ref);
     void on_ref_visual_changed();

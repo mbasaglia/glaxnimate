@@ -20,7 +20,7 @@ class MainComposition : public Composition
 public:
     using Composition::Composition;
 
-    QIcon docnode_icon() const override
+    QIcon tree_icon() const override
     {
         return QIcon::fromTheme("video-x-generic");
     }

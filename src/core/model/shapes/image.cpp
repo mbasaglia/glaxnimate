@@ -12,14 +12,14 @@ model::Image::Image(model::Document* doc)
 }
 
 
-bool model::Image::is_valid_image(model::ReferenceTarget* node) const
+bool model::Image::is_valid_image(model::DocumentNode* node) const
 {
-    return document()->defs()->images.is_valid_reference_value(node, false);
+    return document()->defs()->images->values.is_valid_reference_value(node, false);
 }
 
-std::vector<model::ReferenceTarget *> model::Image::valid_images() const
+std::vector<model::DocumentNode *> model::Image::valid_images() const
 {
-    return document()->defs()->images.valid_reference_values(false);
+    return document()->defs()->images->values.valid_reference_values(false);
 }
 
 QRectF model::Image::local_bounding_rect(model::FrameTime) const
@@ -29,7 +29,7 @@ QRectF model::Image::local_bounding_rect(model::FrameTime) const
     return QRectF(0, 0, image->width.get(), image->height.get());
 }
 
-void model::Image::on_paint(QPainter* p, model::FrameTime, model::DocumentNode::PaintMode) const
+void model::Image::on_paint(QPainter* p, model::FrameTime, model::VisualNode::PaintMode) const
 {
     if ( image.get() )
         image->paint(p);
@@ -69,7 +69,7 @@ void model::Image::add_shapes(FrameTime, math::bezier::MultiBezier&) const
 {
 }
 
-QIcon model::Image::docnode_icon() const
+QIcon model::Image::tree_icon() const
 {
     return QIcon::fromTheme("x-shape-image");
 }

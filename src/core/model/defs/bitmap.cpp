@@ -80,7 +80,7 @@ void model::Bitmap::on_refresh()
     refresh(false);
 }
 
-QIcon model::Bitmap::reftarget_icon() const
+QIcon model::Bitmap::instance_icon() const
 {
     return image;
 }
@@ -167,7 +167,7 @@ bool model::Bitmap::remove_if_unused(bool)
     {
         document()->push_command(new command::RemoveObject(
             this,
-            &document()->defs()->images
+            &document()->defs()->images->values
         ));
         return true;
     }
@@ -178,4 +178,9 @@ void model::Bitmap::set_pixmap(const QImage& pix, const QString& format)
 {
     this->format.set(format);
     data.set(build_embedded(pix));
+}
+
+model::DocumentNode * model::Bitmap::docnode_parent() const
+{
+    return document()->defs()->images.get();
 }

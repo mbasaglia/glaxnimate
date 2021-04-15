@@ -76,7 +76,7 @@ void GlaxnimateWindow::document_open_dialog()
 
 void GlaxnimateWindow::document_treeview_clicked ( const QModelIndex& index )
 {
-    auto node = d->document_node_model.node(d->comp_model.mapToSource(index));
+    auto node = d->document_node_model.visual_node(d->comp_model.mapToSource(index));
     if ( !node )
         return;
 
@@ -197,7 +197,7 @@ void GlaxnimateWindow::document_treeview_selection_changed(const QItemSelection 
     d->document_treeview_selection_changed(selected, deselected);
 }
 
-void GlaxnimateWindow::scene_selection_changed(const std::vector<model::DocumentNode*>& selected, const std::vector<model::DocumentNode*>& deselected)
+void GlaxnimateWindow::scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
 {
     d->scene_selection_changed(selected, deselected);
 }
@@ -228,7 +228,7 @@ model::Composition * GlaxnimateWindow::current_composition() const
     return d->current_composition();
 }
 
-model::DocumentNode * GlaxnimateWindow::current_document_node() const
+model::VisualNode * GlaxnimateWindow::current_document_node() const
 {
     return d->current_document_node();
 }
@@ -270,7 +270,7 @@ model::Object * GlaxnimateWindow::current_shape_container_script()
 }
 
 
-void GlaxnimateWindow::set_current_document_node(model::DocumentNode* node)
+void GlaxnimateWindow::set_current_document_node(model::VisualNode* node)
 {
     d->set_current_document_node(node);
 }
@@ -280,7 +280,7 @@ QPen GlaxnimateWindow::current_pen_style() const
     return d->ui.stroke_style_widget->pen_style();
 }
 
-std::vector<model::DocumentNode *> GlaxnimateWindow::cleaned_selection() const
+std::vector<model::VisualNode*> GlaxnimateWindow::cleaned_selection() const
 {
     return d->cleaned_selection();
 }
@@ -411,7 +411,7 @@ PluginUiDialog * GlaxnimateWindow::create_dialog(const QString& ui_file) const
     return d->ui.console->create_dialog(ui_file);
 }
 
-void GlaxnimateWindow::trace_dialog(model::ReferenceTarget* object)
+void GlaxnimateWindow::trace_dialog(model::DocumentNode* object)
 {
     return d->trace_dialog(object);
 }
@@ -423,7 +423,7 @@ void GlaxnimateWindow::shape_to_precomposition(model::ShapeElement* node)
 
 void GlaxnimateWindow::set_current_composition(model::Composition* comp)
 {
-    int index = d->current_document->defs()->precompositions.index_of(static_cast<model::Precomposition*>(comp));
+    int index = d->current_document->defs()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp));
     d->ui.tab_bar->setCurrentIndex(index+1);
 }
 
@@ -432,7 +432,7 @@ QMenu * GlaxnimateWindow::create_layer_menu() const
     return d->ui.menu_new_layer;
 }
 
-void GlaxnimateWindow::select(const std::vector<model::DocumentNode *>& nodes)
+void GlaxnimateWindow::select(const std::vector<model::VisualNode*>& nodes)
 {
     d->scene.user_select(nodes, graphics::DocumentScene::Replace);
 }

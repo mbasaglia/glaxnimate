@@ -42,7 +42,10 @@ public:
         QPainter painter(&image);
         painter.setRenderHint(QPainter::Antialiasing);
         for ( auto node : selection )
-            node->paint(&painter, node->time(), model::DocumentNode::Render);
+        {
+            if ( auto visual = node->cast<model::VisualNode>() )
+                visual->paint(&painter, node->time(), model::VisualNode::Render);
+        }
         return image;
     }
 
@@ -50,7 +53,7 @@ public:
     {
         io::mime::DeserializedData out;
         out.initialize_data();
-        auto bmp = out.document->defs()->images.insert(std::make_unique<model::Bitmap>(out.document.get()));
+        auto bmp = out.document->defs()->images->values.insert(std::make_unique<model::Bitmap>(out.document.get()));
         bmp->data.set(data);
         auto img = std::make_unique<model::Image>(out.document.get());
         img->image.set(bmp);

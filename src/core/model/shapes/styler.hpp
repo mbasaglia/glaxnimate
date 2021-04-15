@@ -27,9 +27,9 @@ protected:
     QBrush brush(FrameTime t) const;
 
 private:
-    std::vector<ReferenceTarget*> valid_uses() const;
+    std::vector<DocumentNode*> valid_uses() const;
 
-    bool is_valid_use(ReferenceTarget* node) const;
+    bool is_valid_use(DocumentNode* node) const;
 
     void on_use_changed(BrushStyle* new_use, BrushStyle* old_use);
 

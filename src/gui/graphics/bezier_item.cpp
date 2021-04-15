@@ -374,7 +374,7 @@ model::AnimatedProperty<math::bezier::Bezier> * graphics::BezierItem::target_pro
     return &node->shape;
 }
 
-model::DocumentNode* graphics::BezierItem::target_object() const
+model::VisualNode* graphics::BezierItem::target_object() const
 {
     return node;
 }

@@ -22,7 +22,7 @@ public:
     PreCompLayer(Document* document);
 
 
-    QIcon docnode_icon() const override;
+    QIcon tree_icon() const override;
     QString type_name_human() const override;
     void set_time(FrameTime t) override;
 
@@ -55,8 +55,8 @@ private slots:
 
 
 private:
-    std::vector<ReferenceTarget*> valid_precomps() const;
-    bool is_valid_precomp(ReferenceTarget* node) const;
+    std::vector<DocumentNode*> valid_precomps() const;
+    bool is_valid_precomp(DocumentNode* node) const;
     void on_removed_from_list();
     void on_added_to_list();
     void refresh_owner_composition();

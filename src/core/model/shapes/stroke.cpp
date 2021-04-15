@@ -2,7 +2,7 @@
 
 GLAXNIMATE_OBJECT_IMPL(model::Stroke)
 
-void model::Stroke::on_paint(QPainter* p, model::FrameTime t, model::DocumentNode::PaintMode) const
+void model::Stroke::on_paint(QPainter* p, model::FrameTime t, model::VisualNode::PaintMode) const
 {
     QPen pen(brush(t), width.get_at(t));
     pen.setCapStyle(Qt::PenCapStyle(cap.get()));

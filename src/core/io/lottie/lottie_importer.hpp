@@ -242,7 +242,7 @@ private:
         auto props = load_basic_setup(json);
         props.erase("ind");
 
-        load_properties(layer, fields["ReferenceTarget"], json, props);
+        load_properties(layer, fields["DocumentNode"], json, props);
         load_properties(layer, fields["__Layer__"], json, props);
 
         load_transform(json["ks"].toObject(), layer->transform.get(), &layer->opacity);
@@ -430,9 +430,9 @@ private:
 
         if ( json_obj["ty"].toString().startsWith('g') )
         {
-            auto gradient = document->defs()->gradients.insert(std::make_unique<model::Gradient>(document));
+            auto gradient = document->defs()->gradients->values.insert(std::make_unique<model::Gradient>(document));
             styler->use.set(gradient);
-            auto colors = document->defs()->gradient_colors.insert(std::make_unique<model::GradientColors>(document));
+            auto colors = document->defs()->gradient_colors->values.insert(std::make_unique<model::GradientColors>(document));
             gradient->colors.set(colors);
             load_properties(gradient, fields["Gradient"], json_obj, props);
 
@@ -699,7 +699,7 @@ private:
 
     void load_asset_bitmap(const QJsonObject& asset)
     {
-        auto bmp = document->defs()->images.insert(std::make_unique<model::Bitmap>(document));
+        auto bmp = document->defs()->images->values.insert(std::make_unique<model::Bitmap>(document));
 
         QString id = asset["id"].toString();
         if ( bitmap_ids.count(id) )
@@ -719,7 +719,7 @@ private:
 
     void load_asset_precomp(QJsonObject asset)
     {
-        auto comp = document->defs()->precompositions.insert(std::make_unique<model::Precomposition>(document));
+        auto comp = document->defs()->precompositions->values.insert(std::make_unique<model::Precomposition>(document));
 
         QString id = asset["id"].toString();
         if ( precomp_ids.count(id) )

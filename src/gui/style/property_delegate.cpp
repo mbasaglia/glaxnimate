@@ -98,10 +98,10 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
             {
                 model::DocumentNode* current = rpb->value().value<model::DocumentNode*>();
                 combo->clear();
-                for ( model::ReferenceTarget* ptr : rpb->valid_options() )
+                for ( model::DocumentNode* ptr : rpb->valid_options() )
                 {
                     if ( ptr )
-                        combo->addItem(QIcon(ptr->reftarget_icon()), ptr->object_name(), QVariant::fromValue(ptr));
+                        combo->addItem(QIcon(ptr->instance_icon()), ptr->object_name(), QVariant::fromValue(ptr));
                     else
                         combo->addItem("", QVariant::fromValue(ptr));
 
