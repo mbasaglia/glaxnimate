@@ -57,19 +57,20 @@ class MetaTestSubject : public DocumentNode
     GLAXNIMATE_PROPERTY_LIST(MetaTestSubject, prop_list, nullptr, nullptr, nullptr, nullptr)
 
 public:
-    QIcon docnode_icon() const override { return {}; }
+    QIcon instance_icon() const override { return {}; }
+    QIcon tree_icon() const override { return {}; }
     DocumentNode* docnode_parent() const override { return {}; }
     int docnode_child_count() const override { return {}; }
     DocumentNode* docnode_child(int) const override { return {}; }
     int docnode_child_index(DocumentNode*) const override { return -1; }
 
-    std::vector<ReferenceTarget*> valid_references() const
+    std::vector<DocumentNode*> valid_references() const
     {
         return {
             const_cast<MetaTestSubject*>(this)
         };
     }
-    bool is_valid_reference(ReferenceTarget* p)
+    bool is_valid_reference(DocumentNode* p)
     {
         return p == this;
     }
@@ -80,8 +81,6 @@ public:
     double foo_val_const(int bar) const { return bar / 2.0; }
     double foo_ref(const int& bar) { return bar / 2.0; }
     double foo_ref_const(const int& bar) const { return bar / 2.0; }
-
-    QRectF local_bounding_rect(FrameTime) const override { return {}; }
 };
 
 
