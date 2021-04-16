@@ -10,7 +10,7 @@
 #include "graphics/document_scene.hpp"
 #include "graphics/document_node_graphics_item.hpp"
 #include "graphics/handle.hpp"
-#include "widgets/glaxnimate_graphics_view.hpp"
+#include "widgets/canvas.hpp"
 #include "widgets/scalable_button.hpp"
 #include "widgets/dialogs/glaxnimate_window.hpp"
 
@@ -18,7 +18,7 @@ namespace tools {
 
 struct Event
 {
-    GlaxnimateGraphicsView* view;
+    Canvas* view;
     graphics::DocumentScene* scene;
     GlaxnimateWindow* window;
 
@@ -193,7 +193,7 @@ private:
     ScalableButton* button = nullptr;
     QWidget* settings_widget = nullptr;
 
-//     friend GlaxnimateGraphicsView;
+//     friend Canvas;
 };
 
 

@@ -72,7 +72,7 @@ widgets/tools/color_picker_widget.ui
 widgets/tools/fill_tool_widget.cpp
 widgets/tools/fill_tool_widget.ui
 
-widgets/glaxnimate_graphics_view.cpp
+widgets/canvas.cpp
 widgets/view_transform_widget.cpp
 widgets/view_transform_widget.ui
 widgets/flow_layout.cpp

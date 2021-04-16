@@ -1,4 +1,4 @@
-#include "glaxnimate_graphics_view.hpp"
+#include "canvas.hpp"
 
 #include <cmath>
 
@@ -10,7 +10,7 @@
 #include "graphics/document_scene.hpp"
 
 
-class GlaxnimateGraphicsView::Private
+class Canvas::Private
 {
 public:
     enum MouseMode
@@ -26,9 +26,9 @@ public:
         Rotate
     };
 
-    Private(GlaxnimateGraphicsView* view) : view(view) {}
+    Private(Canvas* view) : view(view) {}
 
-    GlaxnimateGraphicsView* view;
+    Canvas* view;
 
     qreal zoom_factor = 1;
     qreal rotation = 0;
@@ -127,7 +127,7 @@ public:
 };
 
 
-GlaxnimateGraphicsView::GlaxnimateGraphicsView(QWidget* parent)
+Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), d(std::make_unique<Private>(this))
 {
     setMouseTracking(true);
@@ -138,9 +138,9 @@ GlaxnimateGraphicsView::GlaxnimateGraphicsView(QWidget* parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-GlaxnimateGraphicsView::~GlaxnimateGraphicsView() = default;
+Canvas::~Canvas() = default;
 
-void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
+void Canvas::mousePressEvent(QMouseEvent* event)
 {
 //     QGraphicsView::mousePressEvent(event);
 
@@ -184,7 +184,7 @@ void GlaxnimateGraphicsView::mousePressEvent(QMouseEvent* event)
     }
 }
 
-void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
+void Canvas::mouseMoveEvent(QMouseEvent* event)
 {
 //     QGraphicsView::mouseMoveEvent(event);
 
@@ -234,7 +234,7 @@ void GlaxnimateGraphicsView::mouseMoveEvent(QMouseEvent* event)
 
 
 
-void GlaxnimateGraphicsView::mouseReleaseEvent(QMouseEvent * event)
+void Canvas::mouseReleaseEvent(QMouseEvent * event)
 {
 //     QGraphicsView::mouseReleaseEvent(event);
 //     QPoint mpos = event->pos();
@@ -254,7 +254,7 @@ void GlaxnimateGraphicsView::mouseReleaseEvent(QMouseEvent * event)
     d->update_mouse_cursor();
 }
 
-void GlaxnimateGraphicsView::mouseDoubleClickEvent(QMouseEvent* event)
+void Canvas::mouseDoubleClickEvent(QMouseEvent* event)
 {
     if ( d->tool )
     {
@@ -262,7 +262,7 @@ void GlaxnimateGraphicsView::mouseDoubleClickEvent(QMouseEvent* event)
     }
 }
 
-void GlaxnimateGraphicsView::keyPressEvent(QKeyEvent* event)
+void Canvas::keyPressEvent(QKeyEvent* event)
 {
     if ( d->tool )
     {
@@ -270,7 +270,7 @@ void GlaxnimateGraphicsView::keyPressEvent(QKeyEvent* event)
     }
 }
 
-void GlaxnimateGraphicsView::keyReleaseEvent(QKeyEvent* event)
+void Canvas::keyReleaseEvent(QKeyEvent* event)
 {
     if ( d->tool )
     {
@@ -278,7 +278,7 @@ void GlaxnimateGraphicsView::keyReleaseEvent(QKeyEvent* event)
     }
 }
 
-void GlaxnimateGraphicsView::wheelEvent(QWheelEvent* event)
+void Canvas::wheelEvent(QWheelEvent* event)
 {
     if ( event->angleDelta().y() < 0 )
         zoom_out();
@@ -286,29 +286,29 @@ void GlaxnimateGraphicsView::wheelEvent(QWheelEvent* event)
         zoom_in();
 }
 
-void GlaxnimateGraphicsView::zoom_in()
+void Canvas::zoom_in()
 {
     zoom_view(1.25);
 }
 
-void GlaxnimateGraphicsView::zoom_out()
+void Canvas::zoom_out()
 {
     zoom_view(0.8);
 }
 
-void GlaxnimateGraphicsView::translate_view(const QPointF& delta)
+void Canvas::translate_view(const QPointF& delta)
 {
     translate(delta);
     d->expand_scene_rect(10);
 }
 
-void GlaxnimateGraphicsView::zoom_view(qreal factor)
+void Canvas::zoom_view(qreal factor)
 {
     d->expand_scene_rect(std::max(width(), height()));
     zoom_view_anchor(factor, d->anchor_scene());
 }
 
-void GlaxnimateGraphicsView::zoom_view_anchor(qreal factor, const QPointF& scene_anchor)
+void Canvas::zoom_view_anchor(qreal factor, const QPointF& scene_anchor)
 {
     if ( d->zoom_factor*factor < 0.01 )
         return;
@@ -325,24 +325,24 @@ void GlaxnimateGraphicsView::zoom_view_anchor(qreal factor, const QPointF& scene
     emit zoomed(d->zoom_factor);
 }
 
-void GlaxnimateGraphicsView::set_zoom(qreal factor)
+void Canvas::set_zoom(qreal factor)
 {
     set_zoom_anchor(factor, d->anchor_scene());
 }
 
-void GlaxnimateGraphicsView::set_zoom_anchor(qreal factor, const QPointF& anchor)
+void Canvas::set_zoom_anchor(qreal factor, const QPointF& anchor)
 {
     if ( factor < 0.01 )
         return;
     zoom_view_anchor(factor / d->zoom_factor, anchor);
 }
 
-qreal GlaxnimateGraphicsView::get_zoom_factor() const
+qreal Canvas::get_zoom_factor() const
 {
     return d->zoom_factor;
 }
 
-void GlaxnimateGraphicsView::flip_horizontal()
+void Canvas::flip_horizontal()
 {
     auto anchor = mapToScene(width()/2, height()/2);
     auto angle = d->rotation * 180 / M_PI;
@@ -353,7 +353,7 @@ void GlaxnimateGraphicsView::flip_horizontal()
     translate(-anchor);
 }
 
-void GlaxnimateGraphicsView::paintEvent(QPaintEvent *event)
+void Canvas::paintEvent(QPaintEvent *event)
 {
     QGraphicsView::paintEvent(event);
 
@@ -377,7 +377,7 @@ void GlaxnimateGraphicsView::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
-void GlaxnimateGraphicsView::do_rotate(qreal radians, const QPointF& scene_anchor)
+void Canvas::do_rotate(qreal radians, const QPointF& scene_anchor)
 {
     translate(scene_anchor);
     rotate(qRadiansToDegrees(radians));
@@ -393,12 +393,12 @@ void GlaxnimateGraphicsView::do_rotate(qreal radians, const QPointF& scene_ancho
     emit rotated(d->rotation);
 }
 
-void GlaxnimateGraphicsView::set_rotation(qreal radians)
+void Canvas::set_rotation(qreal radians)
 {
     do_rotate(radians-d->rotation, d->anchor_scene());
 }
 
-void GlaxnimateGraphicsView::view_fit()
+void Canvas::view_fit()
 {
     setTransform(QTransform());
     d->rotation = 0;
@@ -432,7 +432,7 @@ void GlaxnimateGraphicsView::view_fit()
     d->resize_fit = true;
 }
 
-void GlaxnimateGraphicsView::set_active_tool(tools::Tool* tool)
+void Canvas::set_active_tool(tools::Tool* tool)
 {
     if ( d->tool )
     {
@@ -450,25 +450,25 @@ void GlaxnimateGraphicsView::set_active_tool(tools::Tool* tool)
         setCursor(tool->cursor());
 }
 
-void GlaxnimateGraphicsView::set_tool_target(GlaxnimateWindow* window)
+void Canvas::set_tool_target(GlaxnimateWindow* window)
 {
     d->tool_target = window;
 }
 
-void GlaxnimateGraphicsView::translate(const QPointF& p)
+void Canvas::translate(const QPointF& p)
 {
      d->resize_fit = false;
      QGraphicsView::translate(p.x(), p.y());
 }
 
-void GlaxnimateGraphicsView::resizeEvent(QResizeEvent* event)
+void Canvas::resizeEvent(QResizeEvent* event)
 {
     QGraphicsView::resizeEvent(event);
     if ( d->resize_fit )
         view_fit();
 }
 
-void GlaxnimateGraphicsView::changeEvent(QEvent* event)
+void Canvas::changeEvent(QEvent* event)
 {
     QWidget::changeEvent ( event );
 

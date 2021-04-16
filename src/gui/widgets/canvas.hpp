@@ -10,13 +10,13 @@ class Tool;
 
 class GlaxnimateWindow;
 
-class GlaxnimateGraphicsView : public QGraphicsView
+class Canvas : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    GlaxnimateGraphicsView(QWidget* parent = nullptr);
-    ~GlaxnimateGraphicsView();
+    Canvas(QWidget* parent = nullptr);
+    ~Canvas();
 
 public:
     /**

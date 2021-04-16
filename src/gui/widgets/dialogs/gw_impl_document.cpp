@@ -242,7 +242,7 @@ bool GlaxnimateWindow::Private::close_document()
     }
 
     if ( active_tool )
-        active_tool->close_document_event({ui.graphics_view, &scene, parent});
+        active_tool->close_document_event({ui.canvas, &scene, parent});
 
     comp = nullptr;
     ui.stroke_style_widget->set_shape(nullptr);

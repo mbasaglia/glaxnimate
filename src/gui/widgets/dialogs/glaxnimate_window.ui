@@ -28,7 +28,7 @@
      <widget class="ClickableTabBar" name="tab_bar" native="true"/>
     </item>
     <item>
-     <widget class="GlaxnimateGraphicsView" name="graphics_view">
+     <widget class="Canvas" name="canvas">
       <property name="acceptDrops">
        <bool>false</bool>
       </property>
@@ -1969,9 +1969,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GlaxnimateGraphicsView</class>
+   <class>Canvas</class>
    <extends>QGraphicsView</extends>
-   <header>widgets/glaxnimate_graphics_view.hpp</header>
+   <header>widgets/canvas.hpp</header>
    <slots>
     <slot>reset_rotation()</slot>
     <slot>reset_zoom()</slot>
@@ -2151,7 +2151,7 @@
   <connection>
    <sender>actionZoom_In</sender>
    <signal>triggered()</signal>
-   <receiver>graphics_view</receiver>
+   <receiver>canvas</receiver>
    <slot>zoom_in()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2167,7 +2167,7 @@
   <connection>
    <sender>actionReset_Zoom</sender>
    <signal>triggered()</signal>
-   <receiver>graphics_view</receiver>
+   <receiver>canvas</receiver>
    <slot>reset_zoom()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2183,7 +2183,7 @@
   <connection>
    <sender>actionZoom_Out</sender>
    <signal>triggered()</signal>
-   <receiver>graphics_view</receiver>
+   <receiver>canvas</receiver>
    <slot>zoom_out()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2215,7 +2215,7 @@
   <connection>
    <sender>action_Reset_Rotation</sender>
    <signal>triggered()</signal>
-   <receiver>graphics_view</receiver>
+   <receiver>canvas</receiver>
    <slot>reset_rotation()</slot>
    <hints>
     <hint type="sourcelabel">

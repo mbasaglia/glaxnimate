@@ -160,7 +160,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     connect(ui.action_align_vert_bottom,    &QAction::triggered, parent, [this]{align(AlignDirection::Vertical,   AlignPosition::End,    false);});
     connect(ui.action_align_vert_bottom_out,&QAction::triggered, parent, [this]{align(AlignDirection::Vertical,   AlignPosition::End,    true);});
     connect(ui.action_import, &QAction::triggered, parent, [this]{import_file();});
-    connect(ui.action_flip_view, &QAction::triggered, ui.graphics_view, &GlaxnimateGraphicsView::flip_horizontal);
+    connect(ui.action_flip_view, &QAction::triggered, ui.canvas, &Canvas::flip_horizontal);
 
     // Menu Views
     for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
@@ -291,18 +291,18 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     // Transform Widget
     view_trans_widget = new ViewTransformWidget(ui.status_bar);
     ui.status_bar->addPermanentWidget(view_trans_widget);
-    connect(view_trans_widget, &ViewTransformWidget::zoom_changed, ui.graphics_view, &GlaxnimateGraphicsView::set_zoom);
-    connect(ui.graphics_view, &GlaxnimateGraphicsView::zoomed, view_trans_widget, &ViewTransformWidget::set_zoom);
-    connect(view_trans_widget, &ViewTransformWidget::zoom_in, ui.graphics_view, &GlaxnimateGraphicsView::zoom_in);
-    connect(view_trans_widget, &ViewTransformWidget::zoom_out, ui.graphics_view, &GlaxnimateGraphicsView::zoom_out);
-    connect(view_trans_widget, &ViewTransformWidget::angle_changed, ui.graphics_view, &GlaxnimateGraphicsView::set_rotation);
-    connect(ui.graphics_view, &GlaxnimateGraphicsView::rotated, view_trans_widget, &ViewTransformWidget::set_angle);
+    connect(view_trans_widget, &ViewTransformWidget::zoom_changed, ui.canvas, &Canvas::set_zoom);
+    connect(ui.canvas, &Canvas::zoomed, view_trans_widget, &ViewTransformWidget::set_zoom);
+    connect(view_trans_widget, &ViewTransformWidget::zoom_in, ui.canvas, &Canvas::zoom_in);
+    connect(view_trans_widget, &ViewTransformWidget::zoom_out, ui.canvas, &Canvas::zoom_out);
+    connect(view_trans_widget, &ViewTransformWidget::angle_changed, ui.canvas, &Canvas::set_rotation);
+    connect(ui.canvas, &Canvas::rotated, view_trans_widget, &ViewTransformWidget::set_angle);
     connect(view_trans_widget, &ViewTransformWidget::view_fit, parent, &GlaxnimateWindow::view_fit);
     connect(view_trans_widget, &ViewTransformWidget::flip_view, ui.action_flip_view, &QAction::trigger);
 
     // Graphics scene
-    ui.graphics_view->setScene(&scene);
-    ui.graphics_view->set_tool_target(parent);
+    ui.canvas->setScene(&scene);
+    ui.canvas->set_tool_target(parent);
     connect(&scene, &graphics::DocumentScene::node_user_selected, parent, &GlaxnimateWindow::scene_selection_changed);
 
     // Dialogs
@@ -448,7 +448,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     {
         QMenu* menu_debug = new QMenu("Debug", parent);
 
-        auto shortcut = new QShortcut(QKeySequence(Qt::META|Qt::Key_D), ui.graphics_view);
+        auto shortcut = new QShortcut(QKeySequence(Qt::META|Qt::Key_D), ui.canvas);
         connect(shortcut, &QShortcut::activated, parent, [menu_debug]{
                 menu_debug->exec(QCursor::pos());
         });
@@ -506,7 +506,7 @@ void GlaxnimateWindow::Private::retranslateUi(QMainWindow* parent)
 
 void GlaxnimateWindow::Private::view_fit()
 {
-    ui.graphics_view->view_fit();
+    ui.canvas->view_fit();
 }
 
 void GlaxnimateWindow::Private::reload_recent_menu()
@@ -641,7 +641,7 @@ void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
 
     active_tool = tool;
     scene.set_active_tool(tool);
-    ui.graphics_view->set_active_tool(tool);
+    ui.canvas->set_active_tool(tool);
     ui.tool_settings_widget->setCurrentWidget(tool->get_settings_widget());
 }
 
