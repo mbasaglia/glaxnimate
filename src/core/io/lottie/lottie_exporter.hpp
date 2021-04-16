@@ -509,11 +509,11 @@ public:
     {
         QCborArray assets;
 
-        for ( const auto& bmp : document->defs()->images->values )
+        for ( const auto& bmp : document->assets()->images->values )
             assets.push_back(convert_bitmat(bmp.get()));
 
 
-        for ( const auto& comp : document->defs()->precompositions->values )
+        for ( const auto& comp : document->assets()->precompositions->values )
             assets.push_back(convert_precomp(comp.get()));
 
         return assets;

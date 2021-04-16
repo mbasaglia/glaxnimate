@@ -1,11 +1,11 @@
 #include "styler.hpp"
 #include "model/document.hpp"
-#include "model/defs/named_color.hpp"
+#include "model/assets/named_color.hpp"
 
 std::vector<model::DocumentNode*> model::Styler::valid_uses() const
 {
-    auto v = document()->defs()->gradients->values.valid_reference_values(true);
-    auto v2 = document()->defs()->colors->values.valid_reference_values(false);
+    auto v = document()->assets()->gradients->values.valid_reference_values(true);
+    auto v2 = document()->assets()->colors->values.valid_reference_values(false);
     v.insert(v.end(), v2.begin(), v2.end());
     return v;
 }
@@ -13,8 +13,8 @@ std::vector<model::DocumentNode*> model::Styler::valid_uses() const
 bool model::Styler::is_valid_use(DocumentNode* node) const
 {
     return
-        document()->defs()->gradients->values.is_valid_reference_value(node, true) ||
-        document()->defs()->colors->values.is_valid_reference_value(node, false);
+        document()->assets()->gradients->values.is_valid_reference_value(node, true) ||
+        document()->assets()->colors->values.is_valid_reference_value(node, false);
 }
 
 void model::Styler::on_use_changed(model::BrushStyle* new_use, model::BrushStyle* old_use)

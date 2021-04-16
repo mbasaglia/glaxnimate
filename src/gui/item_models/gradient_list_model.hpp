@@ -2,7 +2,7 @@
 
 #include <QAbstractTableModel>
 
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 
 namespace item_models {
 
@@ -20,7 +20,7 @@ public:
         Count
     };
 
-    void set_defs(model::Defs* defs);
+    void set_defs(model::Assets* defs);
 
     int rowCount(const QModelIndex & parent) const override;
     int columnCount(const QModelIndex & parent) const override;
@@ -41,7 +41,7 @@ private slots:
     void on_move_end(model::DocumentNode*, int, int);
 
 private:
-    model::Defs* defs;
+    model::Assets* defs;
 };
 
 } // namespace item_models

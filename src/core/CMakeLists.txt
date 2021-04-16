@@ -48,14 +48,14 @@ model/animation/animatable_path.cpp
 model/property/property.cpp
 model/property/reference_property.cpp
 
-model/defs/defs.cpp
-model/defs/brush_style.cpp
-model/defs/named_color.cpp
-model/defs/bitmap.cpp
-model/defs/gradient.cpp
-model/defs/asset_base.cpp
-model/defs/asset.cpp
-model/defs/precomposition.cpp
+model/assets/assets.cpp
+model/assets/brush_style.cpp
+model/assets/named_color.cpp
+model/assets/bitmap.cpp
+model/assets/gradient.cpp
+model/assets/asset_base.cpp
+model/assets/asset.cpp
+model/assets/precomposition.cpp
 
 model/shapes/shape.cpp
 model/shapes/fill.cpp

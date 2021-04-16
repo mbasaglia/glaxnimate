@@ -1,6 +1,6 @@
 #include "gradient_list_model.hpp"
 
-void item_models::GradientListModel::set_defs(model::Defs* defs)
+void item_models::GradientListModel::set_defs(model::Assets* defs)
 {
     beginResetModel();
 

@@ -13,7 +13,7 @@
 #include <QtColorWidgets/gradient_list_model.hpp>
 
 #include "model/document.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
 
@@ -44,7 +44,7 @@ public:
         auto index = ui.list_view->currentIndex();
         if ( !index.isValid() )
             return nullptr;
-        return document->defs()->gradient_colors->values[index.row()];
+        return document->assets()->gradient_colors->values[index.row()];
     }
 
     struct TypeButtonSlot
@@ -99,10 +99,10 @@ public:
         model::GradientColors* colors = current();
         if ( !colors )
         {
-            if ( document->defs()->gradient_colors->values.empty() )
+            if ( document->assets()->gradient_colors->values.empty() )
                 add_gradient();
             else
-                ui.list_view->setCurrentIndex(model.gradient_to_index(document->defs()->gradient_colors->values.back()));
+                ui.list_view->setCurrentIndex(model.gradient_to_index(document->assets()->gradient_colors->values.back()));
 
             colors = current();
         }
@@ -163,7 +163,7 @@ public:
 
         model::Gradient* gradient = grad.get();
         document->push_command(new command::AddObject<model::Gradient>(
-            &document->defs()->gradients->values,
+            &document->assets()->gradients->values,
             std::move(grad)
         ));
 
@@ -210,7 +210,7 @@ public:
         ptr->colors.set(stops);
         ptr->name.set(name);
         document->push_command(new command::AddObject(
-            &document->defs()->gradient_colors->values,
+            &document->assets()->gradient_colors->values,
             std::move(ptr)
         ));
 
@@ -300,15 +300,15 @@ public:
         model::GradientColors* colors = current();
         if ( !colors )
         {
-            if ( document->defs()->gradient_colors->values.empty() )
+            if ( document->assets()->gradient_colors->values.empty() )
                 return;
 
-            colors = document->defs()->gradient_colors->values.back();
+            colors = document->assets()->gradient_colors->values.back();
         }
 
         document->push_command(new command::RemoveObject(
             colors,
-            &document->defs()->gradient_colors->values
+            &document->assets()->gradient_colors->values
         ));
     }
 
@@ -395,7 +395,7 @@ void GradientListWidget::set_document(model::Document* document)
     if ( !document )
         d->model.set_defs(nullptr);
     else
-        d->model.set_defs(document->defs());
+        d->model.set_defs(document->assets());
 }
 
 void GradientListWidget::set_window(GlaxnimateWindow* window)

@@ -4,7 +4,7 @@
 #include <QFileInfo>
 #include <QUrl>
 
-#include "model/defs/asset.hpp"
+#include "model/assets/asset.hpp"
 
 namespace model {
 

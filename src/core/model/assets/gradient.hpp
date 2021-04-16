@@ -1,5 +1,5 @@
 #pragma once
-#include "model/defs/brush_style.hpp"
+#include "model/assets/brush_style.hpp"
 #include "model/animation/animatable.hpp"
 #include "math/vector.hpp"
 

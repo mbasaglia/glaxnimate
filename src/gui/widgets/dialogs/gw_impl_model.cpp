@@ -193,13 +193,13 @@ std::vector<model::VisualNode*> GlaxnimateWindow::Private::copy()
 }
 
 template<class T>
-static void paste_assets(model::SubObjectProperty<T> (model::Defs::* p), model::Document* source, model::Document* current_document)
+static void paste_assets(model::SubObjectProperty<T> (model::Assets::* p), model::Document* source, model::Document* current_document)
 {
-    T* subject = (source->defs()->*p).get();
+    T* subject = (source->assets()->*p).get();
     auto prop = &T::values;
     for ( auto& item : (subject->*prop).raw() )
     {
-        if ( !current_document->defs()->find_by_uuid(item->uuid.get()) )
+        if ( !current_document->assets()->find_by_uuid(item->uuid.get()) )
         {
             item->transfer(current_document);
             current_document->push_command(new command::AddObject(
@@ -236,11 +236,11 @@ void GlaxnimateWindow::Private::paste(bool as_comp)
 void GlaxnimateWindow::Private::paste_document(model::Document* document, const QString& macro_name, bool as_comp)
 {
     command::UndoMacroGuard macro(macro_name, current_document.get());
-    paste_assets(&model::Defs::colors, document, current_document.get());
-    paste_assets(&model::Defs::images, document, current_document.get());
-    paste_assets(&model::Defs::gradient_colors, document, current_document.get());
-    paste_assets(&model::Defs::gradients, document, current_document.get());
-    paste_assets(&model::Defs::precompositions, document, current_document.get());
+    paste_assets(&model::Assets::colors, document, current_document.get());
+    paste_assets(&model::Assets::images, document, current_document.get());
+    paste_assets(&model::Assets::gradient_colors, document, current_document.get());
+    paste_assets(&model::Assets::gradients, document, current_document.get());
+    paste_assets(&model::Assets::precompositions, document, current_document.get());
 
     model::ShapeListProperty* shape_cont = current_shape_container();
     std::vector<model::VisualNode*> select;
@@ -250,7 +250,7 @@ void GlaxnimateWindow::Private::paste_document(model::Document* document, const 
         std::unique_ptr<model::Precomposition> comp = std::make_unique<model::Precomposition>(current_document.get());
         auto comp_ptr = comp.get();
         current_document->set_best_name(comp.get(), document->main()->name.get());
-        current_document->push_command(new command::AddObject(&current_document->defs()->precompositions->values, std::move(comp)));
+        current_document->push_command(new command::AddObject(&current_document->assets()->precompositions->values, std::move(comp)));
 
         select.push_back(layer_new_comp(comp_ptr));
         shape_cont = &comp_ptr->shapes;
@@ -394,7 +394,7 @@ void GlaxnimateWindow::Private::import_image()
 
     command::UndoMacroGuard macro(tr("Import Image"), current_document.get());
 
-    auto defs = current_document->defs();
+    auto defs = current_document->assets();
     auto bmp_ptr = bitmap.get();
     current_document->push_command(new command::AddObject(&defs->images->values, std::move(bitmap), defs->images->values.size()));
 
@@ -490,10 +490,10 @@ void GlaxnimateWindow::Private::cleanup_document()
     command::UndoMacroGuard guard(tr("Cleanup Document"), current_document.get());
     int count = 0;
 
-    remove_assets(current_document->defs()->gradients->values, count);
-    remove_assets(current_document->defs()->gradient_colors->values, count);
-    remove_assets(current_document->defs()->colors->values, count);
-    remove_assets(current_document->defs()->images->values, count);
+    remove_assets(current_document->assets()->gradients->values, count);
+    remove_assets(current_document->assets()->gradient_colors->values, count);
+    remove_assets(current_document->assets()->colors->values, count);
+    remove_assets(current_document->assets()->images->values, count);
 
     status_message(tr("Removed %1 assets").arg(count), 0);
 }
@@ -531,7 +531,7 @@ void GlaxnimateWindow::Private::to_path()
 
 void GlaxnimateWindow::Private::switch_composition(int i)
 {
-    int old_i = current_document->defs()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp)) + 1;
+    int old_i = current_document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp)) + 1;
     comp_selections[old_i].selection = scene.selection();
     if ( ui.view_document_node->currentIndex().isValid() )
         comp_selections[old_i].current = document_node_model.visual_node(comp_model.mapToSource(ui.view_document_node->currentIndex()));
@@ -539,9 +539,9 @@ void GlaxnimateWindow::Private::switch_composition(int i)
         comp_selections[old_i].current = comp;
 
     int precomp_index = i - 1;
-    if ( precomp_index >= 0 && precomp_index < current_document->defs()->precompositions->values.size() )
+    if ( precomp_index >= 0 && precomp_index < current_document->assets()->precompositions->values.size() )
     {
-        comp = current_document->defs()->precompositions->values[precomp_index];
+        comp = current_document->assets()->precompositions->values[precomp_index];
 
         auto possible = current_document->comp_graph().possible_descendants(comp, current_document.get());
         std::set<model::Composition*> comps(possible.begin(), possible.end());
@@ -613,7 +613,7 @@ void GlaxnimateWindow::Private::add_composition()
     comp->shapes.insert(std::move(lay));
 
     current_document->set_best_name(comp.get());
-    current_document->push_command(new command::AddObject(&current_document->defs()->precompositions->values, std::move(comp)));
+    current_document->push_command(new command::AddObject(&current_document->assets()->precompositions->values, std::move(comp)));
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
 }
 
@@ -632,7 +632,7 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
     std::unique_ptr<model::Precomposition> ucomp = std::make_unique<model::Precomposition>(current_document.get());
     model::Precomposition* new_comp = ucomp.get();
     current_document->set_best_name(new_comp);
-    current_document->push_command(new command::AddObject(&current_document->defs()->precompositions->values, std::move(ucomp)));
+    current_document->push_command(new command::AddObject(&current_document->assets()->precompositions->values, std::move(ucomp)));
 
 
     for ( auto node : objects )
@@ -655,7 +655,7 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
 
     ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
 
-    int old_comp_index = current_document->defs()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp)) + 1;
+    int old_comp_index = current_document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp)) + 1;
     comp_selections[old_comp_index] = pcl_ptr;
 }
 
@@ -671,7 +671,7 @@ void GlaxnimateWindow::Private::update_comp_color(int index, model::Composition*
 
 void GlaxnimateWindow::Private::on_remove_precomp(int index)
 {
-    model::Precomposition* precomp = current_document->defs()->precompositions->values[index];
+    model::Precomposition* precomp = current_document->assets()->precompositions->values[index];
     if ( precomp == comp )
         switch_composition(0);
 
@@ -703,7 +703,7 @@ void GlaxnimateWindow::Private::composition_close_request(int index)
     if ( index > 0 )
     {
         current_document->push_command(new command::RemoveObject<model::Precomposition>(
-            index-1, &current_document->defs()->precompositions->values
+            index-1, &current_document->assets()->precompositions->values
         ));
     }
 }
@@ -876,7 +876,7 @@ void GlaxnimateWindow::Private::composition_context_menu(int index)
     if ( index <= 0 )
         return;
 
-    auto precomp = current_document->defs()->precompositions->values[index-1];
+    auto precomp = current_document->assets()->precompositions->values[index-1];
 
     QMenu menu;
     menu.addSection(precomp->object_name());
@@ -892,7 +892,7 @@ void GlaxnimateWindow::Private::composition_context_menu(int index)
 
         current_document->push_command(
             new command::AddObject(
-                &current_document->defs()->precompositions->values,
+                &current_document->assets()->precompositions->values,
                 std::move(new_comp),
                 -1,
                 nullptr,

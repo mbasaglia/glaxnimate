@@ -3,7 +3,7 @@
 #include <QBrush>
 #include <QPixmap>
 
-#include "model/defs/asset.hpp"
+#include "model/assets/asset.hpp"
 
 namespace model {
 

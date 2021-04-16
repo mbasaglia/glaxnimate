@@ -2,9 +2,9 @@
 
 #include "model/document.hpp"
 #include "model/shapes/shapes.hpp"
-#include "model/defs/defs.hpp"
-#include "model/defs/named_color.hpp"
-#include "model/defs/precomposition.hpp"
+#include "model/assets/assets.hpp"
+#include "model/assets/named_color.hpp"
+#include "model/assets/precomposition.hpp"
 #include "model/visitor.hpp"
 
 #include "command/animation_commands.hpp"
@@ -261,7 +261,7 @@ void register_py_module(py::module& glaxnimate_module)
         .def("on_visit_node", &PyVisitorPublic::on_visit_node)
     ;
 
-    py::module defs = model.def_submodule("defs", "");
+    py::module defs = model.def_submodule("assets", "");
     py::class_<model::AssetBase>(defs, "AssetBase")
         .def_property_readonly("users", &model::AssetBase::users)
     ;
@@ -277,7 +277,7 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::GradientList, model::DocumentNode>(defs);
     register_from_meta<model::GradientColorsList, model::DocumentNode>(defs);
     register_from_meta<model::PrecompositionList, model::DocumentNode>(defs);
-    register_from_meta<model::Defs, model::DocumentNode>(defs);
+    register_from_meta<model::Assets, model::DocumentNode>(defs);
 
     py::module shapes = model.def_submodule("shapes", "");
     register_from_meta<model::ShapeElement, model::VisualNode>(shapes);

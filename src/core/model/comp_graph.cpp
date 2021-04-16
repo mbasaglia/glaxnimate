@@ -5,7 +5,7 @@
 #include <deque>
 
 #include "model/document.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 #include "model/shapes/precomp_layer.hpp"
 
 void model::CompGraph::add_composition(model::Composition* comp)
@@ -102,7 +102,7 @@ std::vector<model::Composition *> model::CompGraph::possible_descendants(model::
     std::unordered_map<model::Composition*, bool> cache;
     std::vector<model::Composition*> valid;
 
-    for ( const auto& precomp : document->defs()->precompositions->values )
+    for ( const auto& precomp : document->assets()->precompositions->values )
     {
         if ( !recursive_is_ancestor_of(precomp.get(), ancestor, cache, layers) )
             valid.push_back(precomp.get());

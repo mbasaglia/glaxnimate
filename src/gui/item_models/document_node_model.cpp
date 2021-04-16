@@ -9,7 +9,7 @@
 #include "command/undo_macro_guard.hpp"
 
 #include "model/shapes/shape.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 
 
 void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
@@ -110,7 +110,7 @@ QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const Q
         if ( row == 0 )
             return createIndex(row, column, document->main());
         if ( row == 1 )
-            return createIndex(row, column, document->defs());
+            return createIndex(row, column, document->assets());
         return {};
     }
 
@@ -262,7 +262,7 @@ void item_models::DocumentNodeModel::set_document ( model::Document* doc )
 
     if ( document )
     {
-        disconnect(document->defs(), nullptr, this, nullptr);
+        disconnect(document->assets(), nullptr, this, nullptr);
     }
 
     document = doc;
@@ -270,7 +270,7 @@ void item_models::DocumentNodeModel::set_document ( model::Document* doc )
     if ( doc )
     {
         connect_node(doc->main());
-        connect_node(doc->defs());
+        connect_node(doc->assets());
     }
     endResetModel();
 }
@@ -310,7 +310,7 @@ QModelIndex item_models::DocumentNodeModel::node_index ( model::DocumentNode* no
             return createIndex(0, 0, node);
 
         return createIndex(
-            document->defs()->precompositions->values.index_of(static_cast<model::Precomposition*>(node))+2,
+            document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(node))+2,
             0, node
         );
     }

@@ -7,7 +7,7 @@
 #include <QUrl>
 
 #include "model/document.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 #include "command/object_list_commands.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::Bitmap)
@@ -167,7 +167,7 @@ bool model::Bitmap::remove_if_unused(bool)
     {
         document()->push_command(new command::RemoveObject(
             this,
-            &document()->defs()->images->values
+            &document()->assets()->images->values
         ));
         return true;
     }
@@ -182,5 +182,5 @@ void model::Bitmap::set_pixmap(const QImage& pix, const QString& format)
 
 model::DocumentNode * model::Bitmap::docnode_parent() const
 {
-    return document()->defs()->images.get();
+    return document()->assets()->images.get();
 }

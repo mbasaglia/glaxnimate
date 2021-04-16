@@ -1,6 +1,6 @@
 #include "image.hpp"
 #include "model/document.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::Image)
 
@@ -14,12 +14,12 @@ model::Image::Image(model::Document* doc)
 
 bool model::Image::is_valid_image(model::DocumentNode* node) const
 {
-    return document()->defs()->images->values.is_valid_reference_value(node, false);
+    return document()->assets()->images->values.is_valid_reference_value(node, false);
 }
 
 std::vector<model::DocumentNode *> model::Image::valid_images() const
 {
-    return document()->defs()->images->values.valid_reference_values(false);
+    return document()->assets()->images->values.valid_reference_values(false);
 }
 
 QRectF model::Image::local_bounding_rect(model::FrameTime) const

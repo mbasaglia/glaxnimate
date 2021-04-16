@@ -4,7 +4,7 @@
 #include <QPainter>
 
 #include "io/glaxnimate/glaxnimate_format.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 
 
 class model::Document::Private
@@ -12,7 +12,7 @@ class model::Document::Private
 public:
     Private(Document* doc)
         : main(doc),
-          defs(doc)
+          assets(doc)
     {
         io_options.format = io::glaxnimate::GlaxnimateFormat::instance();
     }
@@ -23,7 +23,7 @@ public:
     io::Options io_options;
     FrameTime current_time = 0;
     bool record_to_keyframe = false;
-    Defs defs;
+    Assets assets;
     model::CompGraph comp_graph;
 };
 
@@ -72,7 +72,7 @@ void model::Document::set_io_options(const io::Options& opt)
 
 model::DocumentNode * model::Document::find_by_uuid(const QUuid& n) const
 {
-    if ( auto it = d->defs.find_by_uuid(n) )
+    if ( auto it = d->assets.find_by_uuid(n) )
         return it;
     return d->main.docnode_find_by_uuid(n);
 }
@@ -113,7 +113,7 @@ void model::Document::set_current_time(model::FrameTime t)
     if ( t >= 0 && t <= d->main.animation->last_frame.get() )
     {
         d->main.set_time(t);
-        d->defs.set_time(t);
+        d->assets.set_time(t);
         emit current_time_changed(d->current_time = t);
     }
 }
@@ -177,7 +177,7 @@ QString model::Document::get_best_name(const model::DocumentNode* node, const QS
     QString name = base_name;
 
     collect_names(&d->main, base_name, names, node);
-    collect_names(&d->defs, base_name, names, node);
+    collect_names(&d->assets, base_name, names, node);
 
     QString name_pattern = "%1 %2";
     while ( names.contains(name) )
@@ -200,14 +200,14 @@ QRectF model::Document::rect() const
     return QRectF(QPointF(0, 0), size());
 }
 
-model::Defs * model::Document::defs() const
+model::Assets * model::Document::assets() const
 {
-    return &d->defs;
+    return &d->assets;
 }
 
-model::Object * model::Document::defs_obj() const
+model::Object * model::Document::assets_obj() const
 {
-    return defs();
+    return assets();
 }
 
 QImage model::Document::render_image(float time, QSize image_size, const QColor& background) const

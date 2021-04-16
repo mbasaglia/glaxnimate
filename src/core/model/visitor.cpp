@@ -2,14 +2,14 @@
 
 #include "model/document_node.hpp"
 #include "model/document.hpp"
-#include "model/defs/defs.hpp"
-#include "model/defs/precomposition.hpp"
+#include "model/assets/assets.hpp"
+#include "model/assets/precomposition.hpp"
 
 
 void model::Visitor::visit(model::Document* doc, bool skip_locked)
 {
     on_visit(doc);
-    visit(doc->defs(), skip_locked);
+    visit(doc->assets(), skip_locked);
     visit(doc->main(), skip_locked);
     on_visit_end(doc);
 }

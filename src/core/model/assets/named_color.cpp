@@ -1,7 +1,7 @@
 #include "named_color.hpp"
 
 #include "model/document.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 #include "command/object_list_commands.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::NamedColor)
@@ -27,7 +27,7 @@ bool model::NamedColor::remove_if_unused(bool clean_lists)
     {
         document()->push_command(new command::RemoveObject(
             this,
-            &document()->defs()->colors->values
+            &document()->assets()->colors->values
         ));
         return true;
     }
@@ -36,5 +36,5 @@ bool model::NamedColor::remove_if_unused(bool clean_lists)
 
 model::DocumentNode * model::NamedColor::docnode_parent() const
 {
-    return document()->defs()->colors.get();
+    return document()->assets()->colors.get();
 }

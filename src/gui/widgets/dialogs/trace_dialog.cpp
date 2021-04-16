@@ -18,7 +18,7 @@
 #include "app/application.hpp"
 #include "app_info.hpp"
 
-#include "model/defs/bitmap.hpp"
+#include "model/assets/bitmap.hpp"
 #include "model/shapes/group.hpp"
 #include "model/shapes/layer.hpp"
 #include "model/shapes/path.hpp"

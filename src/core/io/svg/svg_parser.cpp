@@ -6,7 +6,7 @@
 #include "utils/sort_gradient.hpp"
 #include "model/shapes/shapes.hpp"
 #include "model/document.hpp"
-#include "model/defs/named_color.hpp"
+#include "model/assets/named_color.hpp"
 
 #include "path_parser.hpp"
 #include "animate_parser.hpp"
@@ -177,7 +177,7 @@ public:
                     QColor::fromRgbF(kf.values[0], kf.values[1], kf.values[2], kf.values[3])
                 )->set_transition(kf.transition);
 
-            document->defs()->colors->values.insert(std::move(col));
+            document->assets()->colors->values.insert(std::move(col));
             return;
         }
 
@@ -186,7 +186,7 @@ public:
         colors->colors.set(stops);
         gradients["#"+id] = colors.get();
         auto ptr = colors.get();
-        document->defs()->gradient_colors->values.insert(std::move(colors));
+        document->assets()->gradient_colors->values.insert(std::move(colors));
         parse_gradient(gradient, id, ptr);
     }
 
@@ -272,7 +272,7 @@ public:
         gradient->name.set(id);
         gradient->colors.set(colors);
         brush_styles["#"+id] = gradient.get();
-        document->defs()->gradients->values.insert(std::move(gradient));
+        document->assets()->gradients->values.insert(std::move(gradient));
     }
 
     model::Layer* parse_objects(const QDomElement& svg)
@@ -1126,7 +1126,7 @@ public:
                 return;
         }
         auto image = std::make_unique<model::Image>(document);
-        image->image.set(document->defs()->images->values.insert(std::move(bitmap)));
+        image->image.set(document->assets()->images->values.insert(std::move(bitmap)));
 
         QTransform trans;
         if ( args.element.hasAttribute("transform") )

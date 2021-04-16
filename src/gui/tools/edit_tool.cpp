@@ -288,7 +288,7 @@ public:
         QMenu* use_menu = new QMenu(tr("Gradient Colors"), &menu);
         use_menu->setIcon(QIcon::fromTheme("color-gradient"));
 
-        for ( const auto& colors : doc->defs()->gradient_colors->values )
+        for ( const auto& colors : doc->assets()->gradient_colors->values )
         {
             use_menu->addAction(
                 colors->instance_icon(),

@@ -10,7 +10,7 @@
 
 namespace model {
 
-class Defs;
+class Assets;
 
 class Document : public QObject
 {
@@ -20,7 +20,7 @@ class Document : public QObject
     Q_PROPERTY(model::MainComposition* main READ main)
     Q_PROPERTY(double current_time READ current_time WRITE set_current_time NOTIFY current_time_changed)
     Q_PROPERTY(bool record_to_keyframe READ record_to_keyframe WRITE set_record_to_keyframe NOTIFY record_to_keyframe_changed)
-    Q_PROPERTY(Object* defs READ defs_obj)
+    Q_PROPERTY(Object* assets READ assets_obj)
     Q_PROPERTY(QSize size READ size)
     Q_PROPERTY(QRectF rect READ rect)
     Q_PROPERTY(QVariantMap metadata READ metadata WRITE set_metadata)
@@ -69,7 +69,7 @@ public:
     Q_INVOKABLE QImage render_image(float time, QSize size = {}, const QColor& background = {}) const;
     Q_INVOKABLE QImage render_image() const;
 
-    model::Defs* defs() const;
+    model::Assets* assets() const;
 
     model::CompGraph& comp_graph();
 
@@ -80,7 +80,7 @@ signals:
     void graphics_invalidated();
 
 private:
-    Object* defs_obj() const;
+    Object* assets_obj() const;
 
 private:
     class Private;

@@ -2,7 +2,7 @@
 
 #include "shape.hpp"
 
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 #include "model/property/reference_property.hpp"
 
 namespace model {

@@ -1,6 +1,6 @@
 #include "precomposition.hpp"
 #include "model/document.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 #include "command/object_list_commands.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::Precomposition)
@@ -26,7 +26,7 @@ bool model::Precomposition::remove_if_unused(bool clean_lists)
     {
         document()->push_command(new command::RemoveObject(
             this,
-            &document()->defs()->precompositions->values
+            &document()->assets()->precompositions->values
         ));
         return true;
     }
@@ -35,5 +35,5 @@ bool model::Precomposition::remove_if_unused(bool clean_lists)
 
 model::DocumentNode * model::Precomposition::docnode_parent() const
 {
-    return document()->defs()->precompositions.get();
+    return document()->assets()->precompositions.get();
 }

@@ -4,8 +4,8 @@
 #include "app/application.hpp"
 #include "app/settings/settings.hpp"
 
-#include "model/defs/named_color.hpp"
-#include "model/defs/gradient.hpp"
+#include "model/assets/named_color.hpp"
+#include "model/assets/gradient.hpp"
 #include "model/shapes/styler.hpp"
 #include "command/animation_commands.hpp"
 

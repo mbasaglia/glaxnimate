@@ -1,7 +1,7 @@
 #include "glaxnimate_format.hpp"
 
 #include "import_state.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 
 bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&, model::Document* document, const QVariantMap& )
 {
@@ -35,7 +35,8 @@ bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&
     detail::ImportState state(this, document, document_version);
     if ( document_version > format_version )
         warning(tr("Opening a file from a newer version of Glaxnimate"));
-    state.load_object(document->defs(), top_level["defs"].toObject());
+
+    state.load_object(document->assets(), top_level[document_version < 3 ? "defs" : "assets"].toObject());
     state.load_object(document->main(), top_level["animation"].toObject());
     state.resolve();
 

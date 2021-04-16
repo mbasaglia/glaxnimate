@@ -25,11 +25,11 @@ public:
 
         at_start = false;
         defs = element(svg, "defs");
-        for ( const auto& color : doc->defs()->colors->values )
+        for ( const auto& color : doc->assets()->colors->values )
             write_named_color(defs, color.get());
-        for ( const auto& color : doc->defs()->gradient_colors->values )
+        for ( const auto& color : doc->assets()->gradient_colors->values )
             write_gradient_colors(defs, color.get());
-        for ( const auto& gradient : doc->defs()->gradients->values )
+        for ( const auto& gradient : doc->assets()->gradients->values )
             write_gradient(defs, gradient.get());
 
         auto view = element(svg, "sodipodi:namedview");

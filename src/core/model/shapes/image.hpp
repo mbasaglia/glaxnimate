@@ -1,6 +1,6 @@
 #pragma once
 
-#include "model/defs/bitmap.hpp"
+#include "model/assets/bitmap.hpp"
 #include "model/shapes/shape.hpp"
 #include "model/transform.hpp"
 #include "model/property/reference_property.hpp"

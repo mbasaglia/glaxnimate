@@ -1,5 +1,5 @@
 #pragma once
-#include "model/defs/asset_base.hpp"
+#include "model/assets/asset_base.hpp"
 #include "model/document_node.hpp"
 #include "model/property/property.hpp"
 

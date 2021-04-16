@@ -1,6 +1,6 @@
 #include "fill_style_widget.hpp"
 
-#include "model/defs/named_color.hpp"
+#include "model/assets/named_color.hpp"
 #include "model/document.hpp"
 #include "command/animation_commands.hpp"
 

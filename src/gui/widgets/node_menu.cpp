@@ -5,7 +5,7 @@
 #include "model/shapes/group.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/precomp_layer.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 
 #include "command/structure_commands.hpp"
 #include "command/animation_commands.hpp"
@@ -277,7 +277,7 @@ void actions_image(QMenu* menu, GlaxnimateWindow* window, model::Image* image)
         }
         else
         {
-            auto img = image->document()->defs()->add_image_file(filename, false);
+            auto img = image->document()->assets()->add_image_file(filename, false);
             if ( img )
                 image->image.set_undoable(QVariant::fromValue(img));
         }
@@ -317,7 +317,7 @@ void actions_precomp(QMenu* menu, GlaxnimateWindow*, model::PreCompLayer* lay)
         lay->push_command(new command::RemoveShape(lay, lay->owner()));
 
         if ( comp && comp->users().empty() )
-            lay->push_command(new command::RemoveObject(comp, &lay->document()->defs()->precompositions->values));
+            lay->push_command(new command::RemoveObject(comp, &lay->document()->assets()->precompositions->values));
     });
 }
 

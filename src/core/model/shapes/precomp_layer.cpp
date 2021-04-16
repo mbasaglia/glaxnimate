@@ -3,8 +3,8 @@
 #include <QPainter>
 
 #include "model/document.hpp"
-#include "model/defs/precomposition.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/precomposition.hpp"
+#include "model/assets/assets.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::PreCompLayer)
 

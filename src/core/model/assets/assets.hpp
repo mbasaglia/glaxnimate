@@ -149,9 +149,9 @@ signals:
 };
 
 
-class Defs : public DocumentNode
+class Assets : public DocumentNode
 {
-    GLAXNIMATE_OBJECT(Defs)
+    GLAXNIMATE_OBJECT(Assets)
 
     GLAXNIMATE_SUBOBJECT(NamedColorList, colors)
     GLAXNIMATE_SUBOBJECT(BitmapList, images)

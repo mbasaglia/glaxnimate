@@ -1,4 +1,4 @@
-#include "defs.hpp"
+#include "assets.hpp"
 #include "model/document.hpp"
 #include "command/object_list_commands.hpp"
 
@@ -7,7 +7,7 @@ GLAXNIMATE_OBJECT_IMPL(model::GradientColorsList)
 GLAXNIMATE_OBJECT_IMPL(model::GradientList)
 GLAXNIMATE_OBJECT_IMPL(model::BitmapList)
 GLAXNIMATE_OBJECT_IMPL(model::PrecompositionList)
-GLAXNIMATE_OBJECT_IMPL(model::Defs)
+GLAXNIMATE_OBJECT_IMPL(model::Assets)
 
 
 void model::NamedColorList::on_added(model::NamedColor* color, int position)
@@ -71,7 +71,7 @@ void model::PrecompositionList::on_removed(model::Precomposition* obj, int posit
 }
 
 
-model::NamedColor* model::Defs::add_color(const QColor& color, const QString& name)
+model::NamedColor* model::Assets::add_color(const QColor& color, const QString& name)
 {
     auto ptr = std::make_unique<model::NamedColor>(document());
     ptr->color.set(color);
@@ -81,7 +81,7 @@ model::NamedColor* model::Defs::add_color(const QColor& color, const QString& na
     return raw;
 }
 
-model::Bitmap * model::Defs::add_image_file(const QString& filename, bool embed)
+model::Bitmap * model::Assets::add_image_file(const QString& filename, bool embed)
 {
     auto image = std::make_unique<model::Bitmap>(document());
     image->filename.set(filename);
@@ -93,7 +93,7 @@ model::Bitmap * model::Defs::add_image_file(const QString& filename, bool embed)
     return ptr;
 }
 
-model::Bitmap * model::Defs::add_image(const QImage& qimage, const QString& store_as)
+model::Bitmap * model::Assets::add_image(const QImage& qimage, const QString& store_as)
 {
     auto image = std::make_unique<model::Bitmap>(document());
     image->set_pixmap(qimage, store_as);
@@ -102,7 +102,7 @@ model::Bitmap * model::Defs::add_image(const QImage& qimage, const QString& stor
     return ptr;
 }
 
-model::GradientColors* model::Defs::add_gradient_colors(int index)
+model::GradientColors* model::Assets::add_gradient_colors(int index)
 {
     model::GradientColors *ptr = new model::GradientColors(document());
     ptr->name.set(ptr->type_name_human());
@@ -110,7 +110,7 @@ model::GradientColors* model::Defs::add_gradient_colors(int index)
     return ptr;
 }
 
-model::Gradient* model::Defs::add_gradient(int index)
+model::Gradient* model::Assets::add_gradient(int index)
 {
     model::Gradient *ptr = new model::Gradient(document());
     ptr->name.set(ptr->type_name_human());
@@ -118,32 +118,32 @@ model::Gradient* model::Defs::add_gradient(int index)
     return ptr;
 }
 
-QIcon model::Defs::tree_icon() const
+QIcon model::Assets::tree_icon() const
 {
     return QIcon::fromTheme("folder-stash");
 }
 
-QIcon model::Defs::instance_icon() const
+QIcon model::Assets::instance_icon() const
 {
     return tree_icon();
 }
 
 model::DocumentNode* model::detail::defs(model::Document* doc)
 {
-    return doc->defs();
+    return doc->assets();
 }
 
-model::DocumentNode * model::Defs::docnode_parent() const
+model::DocumentNode * model::Assets::docnode_parent() const
 {
     return nullptr;
 }
 
-int model::Defs::docnode_child_count() const
+int model::Assets::docnode_child_count() const
 {
     return 5;
 }
 
-model::DocumentNode * model::Defs::docnode_child(int index) const
+model::DocumentNode * model::Assets::docnode_child(int index) const
 {
     switch ( index )
     {
@@ -162,7 +162,7 @@ model::DocumentNode * model::Defs::docnode_child(int index) const
     }
 }
 
-int model::Defs::docnode_child_index(model::DocumentNode* dn) const
+int model::Assets::docnode_child_index(model::DocumentNode* dn) const
 {
     if ( dn == colors.get() )
         return 0;

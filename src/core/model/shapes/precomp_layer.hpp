@@ -3,7 +3,7 @@
 #include "model/property/reference_property.hpp"
 #include "model/stretchable_time.hpp"
 #include "model/shapes/shape.hpp"
-#include "model/defs/precomposition.hpp"
+#include "model/assets/precomposition.hpp"
 
 
 namespace model {

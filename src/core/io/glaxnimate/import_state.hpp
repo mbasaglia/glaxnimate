@@ -192,6 +192,7 @@ private:
             }
 
             object["uuid"] = QUuid::createUuid().toString();
+            object["__type__"] = "Assets";
         }
     }
 

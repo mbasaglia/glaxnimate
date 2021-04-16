@@ -53,7 +53,7 @@ public:
     {
         io::mime::DeserializedData out;
         out.initialize_data();
-        auto bmp = out.document->defs()->images->values.insert(std::make_unique<model::Bitmap>(out.document.get()));
+        auto bmp = out.document->assets()->images->values.insert(std::make_unique<model::Bitmap>(out.document.get()));
         bmp->data.set(data);
         auto img = std::make_unique<model::Image>(out.document.get());
         img->image.set(bmp);

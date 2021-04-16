@@ -4,7 +4,7 @@
 
 #include "import_state.hpp"
 #include "model/shapes/shape.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 #include "model/visitor.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateMime> io::glaxnimate::GlaxnimateMime::autoreg;
@@ -111,11 +111,11 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(const QBy
         }
         else if ( auto color = qobject_cast<model::NamedColor*>(obj) )
         {
-            output.document->defs()->colors->values.emplace(color);
+            output.document->assets()->colors->values.emplace(color);
         }
         else if ( auto bitmap = qobject_cast<model::Bitmap*>(obj) )
         {
-            output.document->defs()->images->values.emplace(bitmap);
+            output.document->assets()->images->values.emplace(bitmap);
         }
         else
         {

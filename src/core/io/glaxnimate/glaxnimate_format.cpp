@@ -5,7 +5,7 @@
 
 #include "app_info.hpp"
 #include "math/bezier/bezier.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 
@@ -30,7 +30,7 @@ QJsonDocument io::glaxnimate::GlaxnimateFormat::to_json ( model::Document* docum
     QJsonObject doc_obj;
     doc_obj["format"] = format_metadata();
     doc_obj["metadata"] = QJsonObject::fromVariantMap(document->metadata());
-    doc_obj["defs"] = to_json(document->defs());
+    doc_obj["assets"] = to_json(document->assets());
     doc_obj["animation"] = to_json(document->main());
     return QJsonDocument(doc_obj);
 }

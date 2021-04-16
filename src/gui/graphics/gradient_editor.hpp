@@ -4,7 +4,7 @@
 #include <list>
 
 #include "model/shapes/styler.hpp"
-#include "model/defs/gradient.hpp"
+#include "model/assets/gradient.hpp"
 
 #include "handle.hpp"
 

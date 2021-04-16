@@ -3,7 +3,7 @@
 #include <QPainter>
 
 #include "model/document.hpp"
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 
 #include "command/object_list_commands.hpp"
 #include "command/animation_commands.hpp"
@@ -87,7 +87,7 @@ bool model::GradientColors::remove_if_unused(bool clean_lists)
     {
         document()->push_command(new command::RemoveObject(
             this,
-            &document()->defs()->gradient_colors->values
+            &document()->assets()->gradient_colors->values
         ));
         return true;
     }
@@ -163,17 +163,17 @@ void model::GradientColors::remove_stop(int index)
 
 model::DocumentNode * model::GradientColors::docnode_parent() const
 {
-    return document()->defs()->gradient_colors.get();
+    return document()->assets()->gradient_colors.get();
 }
 
 std::vector<model::DocumentNode *> model::Gradient::valid_refs() const
 {
-    return document()->defs()->gradient_colors->values.valid_reference_values(false);
+    return document()->assets()->gradient_colors->values.valid_reference_values(false);
 }
 
 bool model::Gradient::is_valid_ref ( model::DocumentNode* node ) const
 {
-    return document()->defs()->gradient_colors->values.is_valid_reference_value(node, true);
+    return document()->assets()->gradient_colors->values.is_valid_reference_value(node, true);
 }
 
 void model::Gradient::on_ref_visual_changed()
@@ -274,7 +274,7 @@ bool model::Gradient::remove_if_unused(bool)
         colors.set_undoable(QVariant::fromValue((model::GradientColors*)nullptr));
         document()->push_command(new command::RemoveObject(
             this,
-            &document()->defs()->gradients->values
+            &document()->assets()->gradients->values
         ));
         return true;
     }
@@ -284,5 +284,5 @@ bool model::Gradient::remove_if_unused(bool)
 
 model::DocumentNode * model::Gradient::docnode_parent() const
 {
-    return document()->defs()->gradients.get();
+    return document()->assets()->gradients.get();
 }

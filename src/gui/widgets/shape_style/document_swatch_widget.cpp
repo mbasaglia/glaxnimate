@@ -12,14 +12,14 @@
 #include <QtColorWidgets/color_palette_model.hpp>
 #include <QtColorWidgets/ColorDialog>
 
-#include "model/defs/defs.hpp"
+#include "model/assets/assets.hpp"
 #include "model/document.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/animation_commands.hpp"
 #include "utils/pseudo_mutex.hpp"
 #include "model/visitor.hpp"
 #include "model/shapes/styler.hpp"
-#include "model/defs/named_color.hpp"
+#include "model/assets/named_color.hpp"
 #include "command/undo_macro_guard.hpp"
 
 class DocumentSwatchWidget::Private
@@ -39,7 +39,7 @@ public:
         {
             macro = command::UndoMacroGuard(tr("Gather Document Swatch"), doc);
 
-            defs = doc->defs();
+            defs = doc->assets();
             for ( const auto& color : defs->colors->values )
             {
                 if ( !color->color.animated() )
@@ -76,7 +76,7 @@ public:
 
         command::UndoMacroGuard macro;
         std::map<QString, model::NamedColor*> colors;
-        model::Defs* defs;
+        model::Assets* defs;
     };
 
     class ApplyColorVisitor : public model::Visitor
@@ -96,7 +96,7 @@ public:
 
         ApplyColorVisitor(model::Document * doc)
         {
-            for ( const auto& color : doc->defs()->colors->values )
+            for ( const auto& color : doc->assets()->colors->values )
             {
                 if ( !color->color.animated() )
                 {
@@ -169,7 +169,7 @@ void DocumentSwatchWidget::set_document(model::Document* document)
 
     if ( d->document )
     {
-        disconnect(d->document->defs(), nullptr, this, nullptr);
+        disconnect(d->document->assets(), nullptr, this, nullptr);
     }
 
     d->document = document;
@@ -179,14 +179,14 @@ void DocumentSwatchWidget::set_document(model::Document* document)
         auto l = d->updating_swatch.get_lock();
 
         palette->setColors(QVector<QColor>{});
-        for ( const auto& col : d->document->defs()->colors->values )
+        for ( const auto& col : d->document->assets()->colors->values )
             palette->appendColor(col->color.get(), col->name.get());
 
         palette->setName("");
 
-        connect(d->document->defs()->colors.get(), &model::NamedColorList::color_added, this, &DocumentSwatchWidget::swatch_doc_color_added);
-        connect(d->document->defs()->colors.get(), &model::NamedColorList::color_removed, this, &DocumentSwatchWidget::swatch_doc_color_removed);
-        connect(d->document->defs()->colors.get(), &model::NamedColorList::color_changed, this, &DocumentSwatchWidget::swatch_doc_color_changed);
+        connect(d->document->assets()->colors.get(), &model::NamedColorList::color_added, this, &DocumentSwatchWidget::swatch_doc_color_added);
+        connect(d->document->assets()->colors.get(), &model::NamedColorList::color_removed, this, &DocumentSwatchWidget::swatch_doc_color_removed);
+        connect(d->document->assets()->colors.get(), &model::NamedColorList::color_changed, this, &DocumentSwatchWidget::swatch_doc_color_changed);
     }
 }
 
@@ -198,7 +198,7 @@ void DocumentSwatchWidget::swatch_palette_color_added(int index)
 
     if ( auto l = d->updating_swatch.get_lock() )
     {
-        auto defs = d->document->defs();
+        auto defs = d->document->assets();
         auto palette = &d->ui.swatch->palette();
 
         defs->add_color(palette->colorAt(index), palette->nameAt(index));
@@ -212,7 +212,7 @@ void DocumentSwatchWidget::swatch_palette_color_removed(int index)
 
     if ( auto l = d->updating_swatch.get_lock() )
     {
-        auto defs = d->document->defs();
+        auto defs = d->document->assets();
 
         if ( defs->colors->values.valid_index(index) )
             defs->push_command(new command::RemoveObject<model::NamedColor>(index, &defs->colors->values));
@@ -227,7 +227,7 @@ void DocumentSwatchWidget::swatch_palette_color_changed(int index)
     if ( auto l = d->updating_swatch.get_lock() )
     {
 
-        auto defs = d->document->defs();
+        auto defs = d->document->assets();
         auto palette = &d->ui.swatch->palette();
 
         if ( !defs->colors->values.valid_index(index) )
@@ -256,7 +256,7 @@ void DocumentSwatchWidget::swatch_link(int index, Qt::KeyboardModifiers mod)
 {
     if ( d->document )
     {
-        auto def = index != -1 ? d->document->defs()->colors->values[index] : nullptr;
+        auto def = index != -1 ? d->document->assets()->colors->values[index] : nullptr;
 
         if ( mod & Qt::ShiftModifier )
             emit secondary_color_def(def);
@@ -298,7 +298,7 @@ model::NamedColor * DocumentSwatchWidget::current_color() const
     if ( index == -1 )
         return nullptr;
 
-    return d->document->defs()->colors->values[index];
+    return d->document->assets()->colors->values[index];
 }
 
 void DocumentSwatchWidget::generate()
@@ -360,15 +360,15 @@ void DocumentSwatchWidget::open()
 
     if ( check_clear.isChecked() )
     {
-        while ( d->document->defs()->colors->values.size() )
+        while ( d->document->assets()->colors->values.size() )
             d->document->push_command(new command::RemoveObject(
-                d->document->defs()->colors->values.back(),
-                &d->document->defs()->colors->values
+                d->document->assets()->colors->values.back(),
+                &d->document->assets()->colors->values
             ));
     }
 
     for ( const auto& p : d->palette_model->palette(combo.currentIndex()).colors() )
-        d->document->defs()->add_color(p.first, p.second);
+        d->document->assets()->add_color(p.first, p.second);
 
     if ( check_link.isChecked() )
         Private::ApplyColorVisitor(d->document).visit(d->document);
@@ -423,7 +423,7 @@ void DocumentSwatchWidget::swatch_menu ( int index )
     }
     else
     {
-        model::NamedColor* item = d->document->defs()->colors->values[index];
+        model::NamedColor* item = d->document->assets()->colors->values[index];
         menu.addSection(item->object_name());
 
         menu.addAction(
@@ -472,7 +472,7 @@ void DocumentSwatchWidget::swatch_menu ( int index )
             [item, index, this]{
                 auto clone = item->clone_covariant();
                 item->push_command(new command::AddObject(
-                    &d->document->defs()->colors->values,
+                    &d->document->assets()->colors->values,
                     std::move(clone),
                     index+1
                 ));
