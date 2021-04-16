@@ -14,7 +14,7 @@ class GlaxnimateFormat : public ImportExport
     Q_OBJECT
 
 public:
-    static constexpr const int format_version = 2;
+    static constexpr const int format_version = 3;
 
     QString slug() const override { return "glaxnimate"; }
     QString name() const override { return tr("Glaxnimate Animation"); }

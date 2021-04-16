@@ -168,6 +168,31 @@ private:
                 object["shapes"] = QJsonArray();
             }
         }
+
+        if ( document_version < 3 && object["__type__"].toString() == "Defs" )
+        {
+            static const std::vector<std::pair<QString, QString>> types = {
+                {"colors", "NamedColorList"},
+                {"gradient_colors", "GradientColorsList"},
+                {"gradients", "GradientList"},
+                {"images", "BitmapList"},
+                {"precompositions", "PrecompositionList"},
+            };
+
+            for ( const auto & pair : types )
+            {
+                if ( object.contains(pair.first) )
+                {
+                    QJsonObject fixed;
+                    fixed["__type__"] = pair.second;
+                    fixed["values"] = object[pair.first];
+                    fixed["uuid"] = QUuid::createUuid().toString();
+                    object[pair.first] = fixed;
+                }
+            }
+
+            object["uuid"] = QUuid::createUuid().toString();
+        }
     }
 
     void do_load_object ( model::Object* target, QJsonObject object, const UnresolvedPath& path )
