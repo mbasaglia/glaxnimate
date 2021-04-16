@@ -7,6 +7,8 @@
 
 namespace item_models {
 
+class CompFilterModel;
+
 class DocumentNodeModel : public QAbstractItemModel
 {
 public:
@@ -46,6 +48,8 @@ private:
     void disconnect_node(model::DocumentNode* node);
 
     model::Document* document = nullptr;
+
+    friend CompFilterModel;
 };
 
 

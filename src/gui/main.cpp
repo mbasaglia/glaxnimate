@@ -36,6 +36,8 @@ auto parse_cli(const QStringList& args)
         QApplication::tr("Print the window id"),
     });
 
+    parser.add_argument({{"--debug"}, QApplication::tr("Enables the debug menu")});
+
     return parser.parse(args);
 }
 
@@ -55,13 +57,13 @@ int main(int argc, char *argv[])
         return *args.return_value;
 
 #ifdef Q_OS_WIN
-	auto pyhome = app::Environment::Variable("PYTHONHOME");
-	if ( pyhome.empty() )
-	{
-		pyhome = app.data_file("pythonhome");
-		app::log::Log("Python").log("Setting PYTHONHOME to " + pyhome.get(), app::log::Info);
-		app::Environment::Variable("PYTHONPATH").push_back(app.data_file("pythonhome/lib/python"));
-	}
+    auto pyhome = app::Environment::Variable("PYTHONHOME");
+    if ( pyhome.empty() )
+    {
+        pyhome = app.data_file("pythonhome");
+        app::log::Log("Python").log("Setting PYTHONHOME to " + pyhome.get(), app::log::Info);
+        app::Environment::Variable("PYTHONPATH").push_back(app.data_file("pythonhome/lib/python"));
+    }
 #endif
 
     QSplashScreen sc;
@@ -71,7 +73,7 @@ int main(int argc, char *argv[])
 
     app.initialize();
 
-    GlaxnimateWindow window(!args.has_flag("default-ui"));
+    GlaxnimateWindow window(!args.has_flag("default-ui"), args.has_flag("debug"));
     sc.finish(&window);
     window.show();
 

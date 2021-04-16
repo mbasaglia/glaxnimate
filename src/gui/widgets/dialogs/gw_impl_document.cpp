@@ -45,7 +45,6 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
 
     // Composition
     comp = current_document->main();
-    comp_model.set_composition(comp);
     connect(current_document->defs()->precompositions.get(), &model::PrecompositionList::docnode_child_remove_begin, parent, [this](int index){on_remove_precomp(index);});
     connect(current_document->defs()->precompositions.get(), &model::PrecompositionList::precomp_added, parent, [this](model::Precomposition* node, int row){setup_composition(node, row+1);});
     ui.menu_new_comp_layer->setEnabled(false);
@@ -72,6 +71,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
 
     // Views
     document_node_model.set_document(current_document.get());
+    comp_model.set_composition(comp);
 
     property_model.set_document(current_document.get());
     property_model.set_object(current_document->main());

@@ -8,10 +8,10 @@
 #include "app/widgets/settings_dialog.hpp"
 #include "app_info.hpp"
 
-GlaxnimateWindow::GlaxnimateWindow(bool restore_state, QWidget *parent, Qt::WindowFlags flags)
+GlaxnimateWindow::GlaxnimateWindow(bool restore_state, bool debug, QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags), d(std::make_unique<Private>())
 {
-    d->setupUi(restore_state, this);
+    d->setupUi(restore_state, debug, this);
     d->setup_document_new(tr("New Animation"));
     d->autosave_timer_start();
 }

@@ -108,9 +108,9 @@ QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const Q
     if ( !parent.isValid() )
     {
         if ( row == 0 )
-            return createIndex(0, column, document->main());
+            return createIndex(row, column, document->main());
         if ( row == 1 )
-            return createIndex(0, column, document->defs());
+            return createIndex(row, column, document->defs());
         return {};
     }
 

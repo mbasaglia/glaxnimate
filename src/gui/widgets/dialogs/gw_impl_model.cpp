@@ -555,7 +555,6 @@ void GlaxnimateWindow::Private::switch_composition(int i)
             action->setEnabled(true);
     }
 
-
     comp_model.set_composition(comp);
     scene.set_composition(comp);
     scene.user_select(comp_selections[i].selection, graphics::DocumentScene::Replace);

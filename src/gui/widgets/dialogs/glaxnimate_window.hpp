@@ -43,7 +43,7 @@ class GlaxnimateWindow : public QMainWindow
 
 public:
 
-    explicit GlaxnimateWindow(bool restore_state = true, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+    explicit GlaxnimateWindow(bool restore_state = true, bool debug = false, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
     ~GlaxnimateWindow();
 

@@ -1,8 +1,10 @@
 #include "glaxnimate_window_p.hpp"
 
 #include <QComboBox>
+#include <QShortcut>
 
 #include "app/settings/keyboard_shortcuts.hpp"
+#include "app/debug/model.hpp"
 
 #include "tools/base.hpp"
 #include "model/shapes/group.hpp"
@@ -46,7 +48,7 @@ static void action_combo(QComboBox* box, QAction* action)
     });
 }
 
-void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* parent)
+void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, GlaxnimateWindow* parent)
 {
     this->parent = parent;
     ui.setupUi(parent);
@@ -432,19 +434,43 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, GlaxnimateWindow* pa
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_render_single_frame);
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_playback);
 
-#if 0
-    // Auto Screenshots for docs
-    QDir("/tmp/").mkpath("menus");
-    for ( auto widget : parent->findChildren<QMenu*>() )
+    if ( debug )
     {
-        widget->show();
-        QString name = "/tmp/menus/" + widget->objectName().mid(5);
-        QPixmap pic(widget->size());
-        widget->render(&pic);
-        name += ".png";
-        pic.save(name);
+        qDebug() << "Debug Enabled";
+        QMenu* menu_debug = new QMenu("Debug", parent);
+
+        auto shortcut = new QShortcut(QKeySequence(Qt::Key_F1), ui.graphics_view);
+        connect(shortcut, &QShortcut::activatedAmbiguously, parent, [menu_debug]{
+            qDebug() << "wut";
+            menu_debug->exec(QCursor::pos());
+        });
+
+        menu_debug->addAction("Print Model", [this]{
+            qDebug() << "SOURCE";
+            app::debug::print_model(&document_node_model, {1}, false);
+            qDebug() << "PROXY";
+            app::debug::print_model(&comp_model, {1}, false);
+            qDebug() << "";
+        });
+        menu_debug->addAction("Screenshot menus", [this, menu_debug]{
+//             ui.menu_help->removeAction(menu_debug->menuAction());
+            QDir("/tmp/").mkpath("menus");
+            for ( auto widget : this->parent->findChildren<QMenu*>() )
+            {
+                widget->show();
+                QString name = "/tmp/menus/" + widget->objectName().mid(5);
+                QPixmap pic(widget->size());
+                widget->render(&pic);
+                name += ".png";
+                pic.save(name);
+            }
+//             ui.menu_help->addAction(menu_debug->menuAction());
+        });
+//         menu_debug->addAction("Hide Debug Menu", [this, menu_debug]{
+            ui.menu_help->removeAction(menu_debug->menuAction());
+//         });
+
     }
-#endif
 
     // Restore state
     // NOTE: keep at the end so we do this once all the widgets are in their default spots

@@ -139,7 +139,7 @@ public:
     void import_file();
 
     // ui
-    void setupUi(bool restore_state, GlaxnimateWindow* parent);
+    void setupUi(bool restore_state, bool debug, GlaxnimateWindow* parent);
     void retranslateUi(QMainWindow* parent);
     void view_fit();
     void document_treeview_current_changed(const QModelIndex& index);

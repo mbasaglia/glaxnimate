@@ -89,6 +89,7 @@ class NamedColorList : public AssetListBase<NamedColor, NamedColorList>
 
 public:
     QIcon tree_icon() const override;
+    QString type_name_human() const override { return tr("Swatch"); }
 
 signals:
     void color_changed(int position, model::NamedColor* color);
@@ -107,6 +108,7 @@ class BitmapList : public AssetListBase<Bitmap, BitmapList>
 
 public:
     QIcon tree_icon() const override;
+    QString type_name_human() const override { return tr("Images"); }
 };
 
 class GradientColorsList : public AssetListBase<GradientColors, GradientColorsList>
@@ -116,6 +118,7 @@ class GradientColorsList : public AssetListBase<GradientColors, GradientColorsLi
 
 public:
     QIcon tree_icon() const override;
+    QString type_name_human() const override { return tr("Gradient Colors"); }
 };
 
 class GradientList : public AssetListBase<Gradient, GradientList>
@@ -125,6 +128,7 @@ class GradientList : public AssetListBase<Gradient, GradientList>
 
 public:
     QIcon tree_icon() const override;
+    QString type_name_human() const override { return tr("Gradients"); }
 };
 
 class PrecompositionList : public AssetListBase<Precomposition, PrecompositionList>
@@ -138,6 +142,7 @@ public:
 protected:
     void on_added(model::Precomposition* obj, int position) override;
     void on_removed(model::Precomposition* obj, int position) override;
+    QString type_name_human() const override { return tr("Precompositions"); }
 
 signals:
     void precomp_added(model::Precomposition* obj, int position);
@@ -169,6 +174,7 @@ public:
     int docnode_child_index(DocumentNode* dn) const override;
     QIcon tree_icon() const override;
     QIcon instance_icon() const override;
+    QString type_name_human() const override { return tr("Assets"); }
 };
 
 } // namespace model
