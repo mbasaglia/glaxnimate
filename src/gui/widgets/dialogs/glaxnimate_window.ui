@@ -849,6 +849,49 @@
     <layout class="QGridLayout" name="dock_align_grid"/>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="dock_assets">
+   <property name="windowIcon">
+    <iconset theme="folder-stash"/>
+   </property>
+   <property name="windowTitle">
+    <string>Assets</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_13">
+    <layout class="QVBoxLayout" name="verticalLayout_13">
+     <item>
+      <widget class="CustomTreeView" name="view_assets">
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragOnly</enum>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SingleSelection</enum>
+       </property>
+       <property name="autoExpandDelay">
+        <number>500</number>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="headerMinimumSectionSize">
+        <number>32</number>
+       </attribute>
+       <attribute name="headerDefaultSectionSize">
+        <number>32</number>
+       </attribute>
+       <attribute name="headerStretchLastSection">
+        <bool>false</bool>
+       </attribute>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="action_new">
    <property name="icon">
     <iconset theme="document-new">
@@ -1916,7 +1959,8 @@
   </action>
   <action name="action_flip_view">
    <property name="icon">
-    <iconset theme="object-flip-horizontal"/>
+    <iconset theme="object-flip-horizontal">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>F&amp;lip View</string>

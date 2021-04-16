@@ -256,6 +256,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnName, QHeaderView::Stretch);
     ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnColor, QHeaderView::ResizeToContents);
     ui.view_document_node->setItemDelegateForColumn(item_models::DocumentNodeModel::ColumnColor, &color_delegate);
+    ui.view_document_node->header()->hideSection(item_models::DocumentNodeModel::ColumnUsers);
     QObject::connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::currentChanged,
                         parent, &GlaxnimateWindow::document_treeview_current_changed);
 
@@ -276,6 +277,13 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::selectionChanged, parent, &GlaxnimateWindow::document_treeview_selection_changed);
 
     ui.timeline_widget->set_controller(parent);
+
+    asset_model.setSourceModel(&document_node_model);
+    ui.view_assets->setModel(&asset_model);
+    ui.view_assets->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnName-1, QHeaderView::Stretch);
+    ui.view_assets->header()->hideSection(item_models::DocumentNodeModel::ColumnVisible-1);
+    ui.view_assets->header()->hideSection(item_models::DocumentNodeModel::ColumnLocked-1);
+    ui.view_assets->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnUsers-1, QHeaderView::ResizeToContents);
 
     // Tool buttons
     ui.btn_layer_add->setMenu(ui.menu_new_layer);
@@ -396,6 +404,8 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
 
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
+    parent->tabifyDockWidget(ui.dock_layers, ui.dock_assets);
+    ui.dock_assets->setVisible(false);
 
     parent->tabifyDockWidget(ui.dock_timeline, ui.dock_properties);
     parent->tabifyDockWidget(ui.dock_properties, ui.dock_script_console);
@@ -436,13 +446,11 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
 
     if ( debug )
     {
-        qDebug() << "Debug Enabled";
         QMenu* menu_debug = new QMenu("Debug", parent);
 
-        auto shortcut = new QShortcut(QKeySequence(Qt::Key_F1), ui.graphics_view);
-        connect(shortcut, &QShortcut::activatedAmbiguously, parent, [menu_debug]{
-            qDebug() << "wut";
-            menu_debug->exec(QCursor::pos());
+        auto shortcut = new QShortcut(QKeySequence(Qt::META|Qt::Key_D), ui.graphics_view);
+        connect(shortcut, &QShortcut::activated, parent, [menu_debug]{
+                menu_debug->exec(QCursor::pos());
         });
 
         menu_debug->addAction("Print Model", [this]{
@@ -450,10 +458,12 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
             app::debug::print_model(&document_node_model, {1}, false);
             qDebug() << "PROXY";
             app::debug::print_model(&comp_model, {1}, false);
+            qDebug() << "ASSET";
+            app::debug::print_model(&asset_model, {}, true);
             qDebug() << "";
         });
-        menu_debug->addAction("Screenshot menus", [this, menu_debug]{
-//             ui.menu_help->removeAction(menu_debug->menuAction());
+
+        menu_debug->addAction("Screenshot menus", [this]{
             QDir("/tmp/").mkpath("menus");
             for ( auto widget : this->parent->findChildren<QMenu*>() )
             {
@@ -464,12 +474,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
                 name += ".png";
                 pic.save(name);
             }
-//             ui.menu_help->addAction(menu_debug->menuAction());
         });
-//         menu_debug->addAction("Hide Debug Menu", [this, menu_debug]{
-            ui.menu_help->removeAction(menu_debug->menuAction());
-//         });
-
     }
 
     // Restore state

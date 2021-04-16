@@ -160,14 +160,13 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
     if ( !document || !index.isValid() || !n )
         return {};
 
-    auto visual = n->cast<model::VisualNode>();
-    if ( !visual && index.column() != ColumnName )
-        return {};
+    model::VisualNode* visual = nullptr;
 
     switch ( index.column() )
     {
         case ColumnColor:
-            if ( role == Qt::DisplayRole || role == Qt::EditRole || role == Qt::BackgroundRole )
+            visual = n->cast<model::VisualNode>();
+            if ( visual && (role == Qt::DisplayRole || role == Qt::EditRole || role == Qt::BackgroundRole) )
                 return visual->docnode_group_color();
             break;
         case ColumnName:
@@ -177,7 +176,8 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
                 return n->tree_icon();
             break;
         case ColumnVisible:
-            if ( role == Qt::DecorationRole )
+            visual = n->cast<model::VisualNode>();
+            if ( visual && role == Qt::DecorationRole )
             {
                 if ( visual->visible.get() )
                     return QIcon::fromTheme("view-visible");
@@ -185,16 +185,50 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
             }
             break;
         case ColumnLocked:
-            if ( role == Qt::DecorationRole )
+            visual = n->cast<model::VisualNode>();
+            if ( visual && role == Qt::DecorationRole )
             {
                 if ( visual->locked.get() )
                     return QIcon::fromTheme("object-locked");
                 return QIcon::fromTheme("object-unlocked");
             }
             break;
+        case ColumnUsers:
+            if ( role == Qt::DisplayRole )
+            {
+                model::AssetBase* ass = n->cast<model::Asset>();
+                if ( !ass )
+                    ass = n->cast<model::Precomposition>();
+
+                if ( ass )
+                    return int(ass->users().size());
+            }
+            break;
     }
     if ( role == Qt::UserRole )
         return n->uuid.get();
+    return {};
+}
+
+QVariant item_models::DocumentNodeModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if ( orientation == Qt::Horizontal && role == Qt::DisplayRole )
+    {
+        switch ( section )
+        {
+            case ColumnColor:
+                return tr("Color");
+            case ColumnName:
+                return tr("Name");
+            case ColumnVisible:
+                return tr("Visible");
+            case ColumnLocked:
+                return tr("Locked");
+            case ColumnUsers:
+                return tr("#");
+        }
+    }
+
     return {};
 }
 

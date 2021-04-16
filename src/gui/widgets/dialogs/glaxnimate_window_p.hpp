@@ -18,6 +18,7 @@
 #include "item_models/document_node_model.hpp"
 #include "item_models/property_model.hpp"
 #include "item_models/comp_filter_model.hpp"
+#include "item_models/asset_proxy_model.hpp"
 
 #include "style/dock_widget_style.hpp"
 #include "style/property_delegate.hpp"
@@ -74,7 +75,8 @@ public:
 
     item_models::PropertyModel property_model;
     item_models::DocumentNodeModel document_node_model;
-    item_models::CompFilterModel comp_model{&document_node_model};
+    item_models::CompFilterModel comp_model;
+    item_models::AssetProxyModel asset_model;
     graphics::DocumentScene scene;
     model::Composition* comp = nullptr;
 

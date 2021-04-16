@@ -7,7 +7,8 @@
 
 namespace item_models {
 
-class CompFilterModel;
+template<class, class>
+class ProxyBase;
 
 class DocumentNodeModel : public QAbstractItemModel
 {
@@ -18,6 +19,7 @@ public:
         ColumnName,
         ColumnVisible,
         ColumnLocked,
+        ColumnUsers,
 
         ColumnCount
     };
@@ -28,6 +30,7 @@ public:
     bool removeRows ( int row, int count, const QModelIndex & parent ) override;
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
     QVariant data ( const QModelIndex & index, int role ) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     Qt::ItemFlags flags ( const QModelIndex & index ) const override;
     QModelIndex parent ( const QModelIndex & child ) const override;
     bool setData ( const QModelIndex & index, const QVariant & value, int role ) override;
@@ -49,7 +52,8 @@ private:
 
     model::Document* document = nullptr;
 
-    friend CompFilterModel;
+    template<class A, class B>
+    friend class ProxyBase;
 };
 
 

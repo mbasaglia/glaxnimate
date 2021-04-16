@@ -435,6 +435,14 @@ To add more palettes, you can do so in the [Palette section of the fill View](#p
   Note that this means all objects will become unlinked.
 
 
+Assets
+------
+
+![Assets View](/img/screenshots/views/assets.png)
+
+This view shows a list of various assets used by the current document.
+
+
 Script Console
 --------------
 

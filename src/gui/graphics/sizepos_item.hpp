@@ -8,7 +8,6 @@
 #include "command/animation_commands.hpp"
 #include "math/geom.hpp"
 
-#include <QDebug>
 namespace graphics {
 
 class SizePosItem : public QGraphicsObject
