@@ -3,6 +3,7 @@
 #include "document_node_graphics_item.hpp"
 #include "main_composition_item.hpp"
 #include "model/shapes/shapes.hpp"
+#include "model/shapes/text.hpp"
 #include "position_item.hpp"
 #include "sizepos_item.hpp"
 #include "bezier_item.hpp"
@@ -152,6 +153,14 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         [](model::PreCompLayer* shape){
             auto v = std::make_unique<GraphicsEditor>(shape);
             v->add_child<graphics::TransformGraphicsItem>(shape->transform.get(), shape, nullptr);
+            return v;
+        }
+    );
+    register_builder<model::TextShape>(
+        &make_graphics_item_shape,
+        [](model::TextShape* txt){
+            auto v = std::make_unique<GraphicsEditor>(txt);
+            v->add_child<graphics::PositionItem>(&txt->position);
             return v;
         }
     );

@@ -4,6 +4,7 @@
 
 #include "graphics/item_data.hpp"
 #include "model/shapes/precomp_layer.hpp"
+#include "model/shapes/text.hpp"
 
 void tools::MouseEvent::forward_to_scene() const
 {
@@ -99,6 +100,11 @@ void tools::Tool::edit_clicked(const tools::MouseEvent& event)
         {
             if ( precomp->composition.get() )
                 event.window->set_current_composition(precomp->composition.get());
+        }
+        else if ( selected->is_instance<model::TextShape>() )
+        {
+            event.scene->user_select({selected}, graphics::DocumentScene::Replace);
+            event.window->switch_tool(Registry::instance().tool("text"));
         }
         else
         {

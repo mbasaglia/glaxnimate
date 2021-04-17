@@ -3,9 +3,7 @@
 #include <variant>
 
 #include "model/shapes/path.hpp"
-#include "model/shapes/rect.hpp"
-#include "model/shapes/ellipse.hpp"
-#include "model/shapes/polystar.hpp"
+#include "model/shapes/text.hpp"
 #include "command/structure_commands.hpp"
 #include "math/geom.hpp"
 
@@ -369,7 +367,7 @@ private:
         }
     }
 
-    void enable_event(const Event& event) override { Q_UNUSED(event); }
+    void enable_event(const Event&) override { selected_shapes.clear(); }
     void disable_event(const Event&) override { selected_shapes.clear(); }
 
     QCursor cursor() override { return Qt::ArrowCursor; }
@@ -448,7 +446,7 @@ private:
 
     void on_selected(graphics::DocumentScene * scene, model::VisualNode * node) override
     {
-        if ( node->has("transform") || node->is_instance<model::MainComposition>() )
+        if ( node->has("transform") || node->is_instance<model::MainComposition>() || node->is_instance<model::TextShape>() )
         {
             scene->show_editors(node);
         }
