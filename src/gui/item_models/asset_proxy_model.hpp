@@ -1,24 +1,25 @@
 #pragma once
 
 #include "proxy_base.hpp"
-
+#include <QDebug>
 namespace item_models {
 
-class AssetProxyModel : public ProxyBase<AssetProxyModel>
+class AssetProxyModel : public ProxyBase
 {
-private:
-    friend Ctor;
-    void source_changed(QAbstractItemModel *)
-    {}
-
 public:
-    using Ctor::Ctor;
+    using ProxyBase::ProxyBase;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override
     {
         return qMax(0, sourceModel()->columnCount(mapToSource(parent))) - 1;
     }
 
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override
+    {
+        if ( is_precomp(parent) )
+            return 0;
+        return sourceModel()->rowCount(mapToSource(parent));
+    }
 
     QModelIndex mapToSource(const QModelIndex &proxyIndex) const override
     {
@@ -40,6 +41,41 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override
     {
         return mapFromSource(sourceModel()->index(row, column+1, mapToSource(parent)));
+    }
+
+    Qt::ItemFlags flags ( const QModelIndex & index ) const override
+    {
+        auto flags = sourceModel()->flags(mapToSource(index));
+        if ( is_precomp(index) )
+            flags |= Qt::ItemNeverHasChildren;
+        return flags;
+    }
+
+protected:
+    bool is_precomp(const QModelIndex & index) const
+    {
+        return qobject_cast<model::Precomposition*>(static_cast<QObject*>(index.internalPointer()));
+    }
+
+    void on_rows_add_begin(const QModelIndex &parent, int first, int last)
+    {
+        if ( !is_precomp(parent) )
+            beginInsertRows(parent, first, last);
+    }
+
+    void on_rows_added(const QModelIndex &parent)
+    {
+        if ( !is_precomp(parent) )
+            endInsertRows();
+    }
+
+    void source_changed(QAbstractItemModel * source_model)
+    {
+        if ( source_model )
+        {
+            reconnect(&QAbstractItemModel::rowsAboutToBeInserted, &AssetProxyModel::on_rows_add_begin);
+            reconnect(&QAbstractItemModel::rowsInserted, &AssetProxyModel::on_rows_added);
+        }
     }
 };
 

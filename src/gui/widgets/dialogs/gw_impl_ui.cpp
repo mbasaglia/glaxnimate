@@ -459,7 +459,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
             qDebug() << "PROXY";
             app::debug::print_model(&comp_model, {1}, false);
             qDebug() << "ASSET";
-            app::debug::print_model(&asset_model, {}, true);
+            app::debug::print_model(&asset_model, {0}, false);
             qDebug() << "";
         });
 

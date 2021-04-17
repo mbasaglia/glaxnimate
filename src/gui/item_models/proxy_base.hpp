@@ -54,27 +54,22 @@ public:
 };
 } // namespace detail
 
-template<class Derived, class Base = QAbstractProxyModel>
-class ProxyBase : public Base
+class ProxyBase : public QAbstractProxyModel
 {
-protected:
-    using Ctor = ProxyBase;
-
 public:
-    using Base::Base;
+    using QAbstractProxyModel::QAbstractProxyModel;
 
     void setSourceModel(QAbstractItemModel *new_model) override
     {
-        this->beginResetModel();
+        beginResetModel();
 
-        if ( this->sourceModel() )
-            QObject::disconnect(this->sourceModel(), nullptr, this, nullptr);
+        if ( sourceModel() )
+            QObject::disconnect(sourceModel(), nullptr, this, nullptr);
 
         QAbstractProxyModel::setSourceModel(new_model);
 
-        derived()->source_changed(new_model);
 
-        if ( this->sourceModel() )
+        if ( sourceModel() )
         {
             forward_signal(&QAbstractItemModel::columnsAboutToBeInserted);
             forward_signal(&QAbstractItemModel::columnsAboutToBeMoved);
@@ -96,7 +91,9 @@ public:
             forward_signal(&QAbstractItemModel::rowsRemoved);
         }
 
-        this->endResetModel();
+        on_source_changed(new_model);
+
+        endResetModel();
     }
 
 
@@ -124,7 +121,7 @@ protected:
     // Qt cheats by befriending the proxy models... so we need to cheat too
     DocumentNodeModel* friendly_model() const
     {
-        return static_cast<DocumentNodeModel*>(this->sourceModel());
+        return static_cast<DocumentNodeModel*>(sourceModel());
     }
 
     QModelIndex create_source_index(int row, int column, quintptr id) const
@@ -132,23 +129,27 @@ protected:
         return friendly_model()->createIndex(row, column, id);
     }
 
-private:
-    Derived* derived()
+    template<class Signal, class Derived, class Ret, class... Args>
+    void reconnect(Signal func, Ret (Derived::*slot)(Args...))
     {
-        return static_cast<Derived*>(this);
+        disconnect(sourceModel(), func, this, nullptr);
+        connect(sourceModel(), func, static_cast<Derived*>(this), slot);
     }
 
+    virtual void on_source_changed(QAbstractItemModel *) {};
+
+private:
     template<class... Args>
     void forward_signal(void (QAbstractItemModel::*signal)(Args...))
     {
-        QObject::connect(this->sourceModel(), signal, this, detail::SignalForwarder(this, signal));
+        QObject::connect(sourceModel(), signal, this, detail::SignalForwarder(this, signal));
 
     }
 
     template<class Ret, class... Args, class... ActualArgs>
     Ret forward_impl(Ret (QAbstractItemModel::*method)(Args...) const, ActualArgs... args) const
     {
-        return detail::forward<Ret>(this, (this->sourceModel()->*method)(detail::reverse<Args>(this, args)...));
+        return detail::forward<Ret>(this, (sourceModel()->*method)(detail::reverse<Args>(this, args)...));
     }
 };
 

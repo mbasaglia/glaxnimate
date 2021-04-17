@@ -7,7 +7,6 @@
 
 namespace item_models {
 
-template<class, class>
 class ProxyBase;
 
 class DocumentNodeModel : public QAbstractItemModel
@@ -52,7 +51,6 @@ private:
 
     model::Document* document = nullptr;
 
-    template<class A, class B>
     friend class ProxyBase;
 };
 

@@ -1,22 +1,13 @@
 #pragma once
 
 #include "proxy_base.hpp"
-#include "document_node_model.hpp"
 
 namespace item_models {
 
-class CompFilterModel : public ProxyBase<CompFilterModel>
+class CompFilterModel : public ProxyBase
 {
-private:
-    friend Ctor;
-    void source_changed(QAbstractItemModel *)
-    {
-        root_id = 0;
-        root = QModelIndex();
-    }
-
 public:
-    using Ctor::Ctor;
+    using ProxyBase::ProxyBase;
 
     void set_composition(model::Composition* comp)
     {
@@ -99,12 +90,54 @@ public:
     }
 
 private:
-    void on_clear()
+    bool has_been_removed()
     {
         if ( root_id && !root.isValid() )
+        {
             set_root({});
+            return true;
+        }
+        return false;
     }
 
+    void on_rows_removed_begin(const QModelIndex& index, int from, int to)
+    {
+        if ( !root_id || root.parent() != index )
+            beginRemoveRows(mapFromSource(index), from ,to);
+    }
+
+    void on_rows_removed()
+    {
+        if ( !has_been_removed() )
+            endRemoveRows();
+    }
+
+    void on_cols_removed_begin(const QModelIndex& index, int from, int to)
+    {
+        if ( !root_id || root.parent() != index )
+            beginRemoveColumns(mapFromSource(index), from ,to);
+    }
+
+    void on_cols_removed()
+    {
+        if ( !has_been_removed() )
+            endRemoveColumns();
+    }
+
+protected:
+    void source_changed(QAbstractItemModel * source_model)
+    {
+        root_id = 0;
+        root = QModelIndex();
+        if ( source_model )
+        {
+            reconnect(&QAbstractItemModel::rowsAboutToBeRemoved, &CompFilterModel::on_rows_removed_begin);
+            reconnect(&QAbstractItemModel::rowsRemoved, &CompFilterModel::on_rows_removed);
+
+            reconnect(&QAbstractItemModel::columnsRemoved, &CompFilterModel::on_cols_removed);
+            reconnect(&QAbstractItemModel::columnsAboutToBeRemoved, &CompFilterModel::on_cols_removed_begin);
+        }
+    }
 
 private:
     quintptr root_id = 0;
