@@ -1,7 +1,8 @@
 #pragma once
 
 #include "proxy_base.hpp"
-#include <QDebug>
+#include <QMimeData>
+
 namespace item_models {
 
 class AssetProxyModel : public ProxyBase
@@ -45,16 +46,32 @@ public:
 
     Qt::ItemFlags flags ( const QModelIndex & index ) const override
     {
-        auto flags = sourceModel()->flags(mapToSource(index));
+        auto flags = sourceModel()->flags(mapToSource(index)) & ~Qt::ItemIsDropEnabled;
         if ( is_precomp(index) )
-            flags |= Qt::ItemNeverHasChildren;
+            flags |= Qt::ItemNeverHasChildren|Qt::ItemIsDragEnabled;
+        else if ( cast_index<model::Bitmap>(index) )
+            flags |= Qt::ItemNeverHasChildren|Qt::ItemIsDragEnabled;
         return flags;
+    }
+
+    QMimeData * mimeData(const QModelIndexList& indexes) const override
+    {
+        auto data = ProxyBase::mimeData(indexes);
+        if ( data )
+            data->setData("application/x.glaxnimate-asset-uuid", data->data("application/x.glaxnimate-node-uuid"));
+        return data;
     }
 
 protected:
     bool is_precomp(const QModelIndex & index) const
     {
-        return qobject_cast<model::Precomposition*>(static_cast<QObject*>(index.internalPointer()));
+        return cast_index<model::Precomposition>(index);
+    }
+
+    template<class T>
+    T* cast_index(const QModelIndex & index) const
+    {
+        return qobject_cast<T*>(static_cast<QObject*>(index.internalPointer()));
     }
 
     void on_rows_add_begin(const QModelIndex &parent, int first, int last)

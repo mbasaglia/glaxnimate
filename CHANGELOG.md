@@ -1,3 +1,10 @@
+## 0.4.2
+
+* UI:
+    * View to manage assets
+* Bug Fixes:
+    * Fixed dragging layers to the top
+
 ## 0.4.1
 
 * Editing:

@@ -30,7 +30,7 @@
     <item>
      <widget class="Canvas" name="canvas">
       <property name="acceptDrops">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -851,7 +851,8 @@
   </widget>
   <widget class="QDockWidget" name="dock_assets">
    <property name="windowIcon">
-    <iconset theme="folder-stash"/>
+    <iconset theme="folder-stash">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="windowTitle">
     <string>Assets</string>

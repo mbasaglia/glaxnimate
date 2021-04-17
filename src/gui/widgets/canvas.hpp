@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QGraphicsView>
+#include <QMimeData>
 
 #include <memory>
 
@@ -111,6 +112,8 @@ signals:
      */
     void rotated(qreal angle);
 
+    void dropped(const QMimeData* data);
+
 protected:
     void mousePressEvent(QMouseEvent * event) override;
     void mouseMoveEvent(QMouseEvent * event) override;
@@ -122,6 +125,9 @@ protected:
     void keyReleaseEvent(QKeyEvent * event) override;
     void resizeEvent(QResizeEvent* event) override;
     void changeEvent(QEvent* event) override;
+    void dragEnterEvent(QDragEnterEvent * event) override;
+    void dragMoveEvent(QDragMoveEvent * event) override;
+    void dropEvent(QDropEvent * event) override;
 
 private:
     void do_rotate(qreal radians, const QPointF& scene_anchor);

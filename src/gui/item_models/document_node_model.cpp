@@ -11,6 +11,8 @@
 #include "model/shapes/shape.hpp"
 #include "model/assets/assets.hpp"
 
+#include "drag_data.hpp"
+
 
 void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
 {
@@ -353,21 +355,11 @@ QMimeData * item_models::DocumentNodeModel::mimeData(const QModelIndexList& inde
         return nullptr;
 
     QMimeData *data = new QMimeData();
-    QByteArray encoded;
-    QDataStream stream(&encoded, QIODevice::WriteOnly);
-    QSet<QUuid> uniq;
+    item_models::DragEncoder encoder;
     for ( const auto& index : indexes )
-    {
-        if ( auto n = node(index) )
-        {
-            if ( !uniq.contains(n->uuid.get()) )
-            {
-                stream << n->uuid.get();
-                uniq.insert(n->uuid.get());
-            }
-        }
-    }
-    data->setData("application/x.glaxnimate-node-uuid", encoded);
+        encoder.add_node(node(index));
+
+    data->setData("application/x.glaxnimate-node-uuid", encoder.data());
     return data;
 }
 
@@ -395,27 +387,22 @@ bool item_models::DocumentNodeModel::dropMimeData(const QMimeData* data, Qt::Dro
     if ( row > max_child || row < 0)
         insert = max_child;
 
+    DragDecoder<model::ShapeElement> decoder(data->data("application/x.glaxnimate-node-uuid"), document);
+    std::vector<model::ShapeElement*> items(decoder.begin(), decoder.end());
 
-    QByteArray encoded = data->data("application/x.glaxnimate-node-uuid");
-    QDataStream stream(&encoded, QIODevice::ReadOnly);
+    if ( items.empty() )
+        return false;
 
     command::UndoMacroGuard guard(tr("Move Layers"), document);
 
-    while ( !stream.atEnd() )
+    for ( auto shape : items )
     {
-        QUuid uuid;
-        stream >> uuid;
-        auto n = document->find_by_uuid(uuid);
-        if ( !n )
-            continue;
-        auto shape = n->cast<model::ShapeElement>();
-        if ( !shape )
-            continue;
 
         document->push_command(new command::MoveObject(
             shape, shape->owner(), dest, insert
         ));
     }
+
     return true;
 }
 

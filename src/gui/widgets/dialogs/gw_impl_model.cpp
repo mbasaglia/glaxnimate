@@ -5,6 +5,7 @@
 #include <QClipboard>
 #include <QImageReader>
 #include <QFileDialog>
+#include <QMimeData>
 
 #include "app/settings/widget_builder.hpp"
 
@@ -22,6 +23,7 @@
 #include "widgets/dialogs/shape_parent_dialog.hpp"
 #include "widgets/tab_bar_close_button.hpp"
 
+#include "item_models/drag_data.hpp"
 
 model::Composition* GlaxnimateWindow::Private::current_composition()
 {
@@ -902,4 +904,50 @@ void GlaxnimateWindow::Private::composition_context_menu(int index)
     });
 
     menu.exec(QCursor::pos());
+}
+
+void GlaxnimateWindow::Private::dropped(const QMimeData* data)
+{
+    if ( data->hasFormat("application/x.glaxnimate-asset-uuid") )
+    {
+        command::UndoMacroGuard guard(tr("Drop"), current_document.get(), false);
+
+        item_models::DragDecoder<> decoder(data->data("application/x.glaxnimate-asset-uuid"), current_document.get());
+
+        std::vector<model::VisualNode*> selection;
+
+        auto cont = current_shape_container();
+        int position = cont->size();
+
+        for ( auto asset : decoder )
+        {
+            std::unique_ptr<model::ShapeElement> element;
+
+            if ( auto precomp = asset->cast<model::Precomposition>() )
+            {
+                auto layer = std::make_unique<model::PreCompLayer>(current_document.get());
+                layer->composition.set(precomp);
+                layer->size.set(current_document->size());
+                element = std::move(layer);
+            }
+            else if ( auto bmp = asset->cast<model::Bitmap>() )
+            {
+                auto image = std::make_unique<model::Image>(current_document.get());
+                image->image.set(bmp);
+                element = std::move(image);
+            }
+
+            if ( element )
+            {
+                selection.push_back(element.get());
+                element->name.set(asset->name.get());
+                guard.start();
+                current_document->push_command(new command::AddShape(cont, std::move(element), position));
+            }
+        }
+
+        if ( !selection.empty() )
+            scene.user_select(selection, graphics::DocumentScene::Replace);
+    }
+
 }

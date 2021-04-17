@@ -54,6 +54,9 @@ public:
     model::VisualNode* current_document_node() const;
     void set_current_document_node(model::VisualNode* node);
     model::ShapeElement* current_shape();
+    /**
+     * @brief Returns the property to add shapes into (never null)
+     */
     model::ShapeListProperty* current_shape_container();
     model::Object* current_shape_container_script();
 

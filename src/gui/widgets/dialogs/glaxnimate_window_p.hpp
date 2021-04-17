@@ -182,6 +182,7 @@ public:
     void to_path();
     void align(AlignDirection direction, AlignPosition position, bool outside);
     QPointF align_point(const QRectF& rect, AlignDirection direction, AlignPosition position);
+    void dropped(const QMimeData* data);
 
     void switch_composition(int index);
     void setup_composition(model::Composition* comp, int index = -1);

@@ -175,6 +175,9 @@ public:
 
     void move(int index_a, int index_b)
     {
+        if ( index_b >= size() )
+            index_b = size() - 1;
+
         if ( !valid_index(index_a) || !valid_index(index_b) || index_a == index_b )
             return;
 

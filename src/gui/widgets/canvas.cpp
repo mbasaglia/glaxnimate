@@ -5,9 +5,10 @@
 #include <QMouseEvent>
 #include <QtMath>
 
-
+#include "command/undo_macro_guard.hpp"
 #include "tools/base.hpp"
 #include "graphics/document_scene.hpp"
+
 
 
 class Canvas::Private
@@ -475,4 +476,24 @@ void Canvas::changeEvent(QEvent* event)
     if ( event->type() == QEvent::PaletteChange ) {
         scene()->setPalette(palette());
     }
+}
+
+void Canvas::dragEnterEvent(QDragEnterEvent* event)
+{
+    if ( event->mimeData()->hasFormat("application/x.glaxnimate-asset-uuid") ) {
+        event->setDropAction(Qt::LinkAction);
+        event->acceptProposedAction();
+    }
+}
+
+void Canvas::dragMoveEvent(QDragMoveEvent* event)
+{
+    event->acceptProposedAction();
+}
+
+
+void Canvas::dropEvent(QDropEvent* event)
+{
+    event->acceptProposedAction();
+    emit dropped(event->mimeData());
 }

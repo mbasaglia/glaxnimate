@@ -304,6 +304,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     ui.canvas->setScene(&scene);
     ui.canvas->set_tool_target(parent);
     connect(&scene, &graphics::DocumentScene::node_user_selected, parent, &GlaxnimateWindow::scene_selection_changed);
+    connect(ui.canvas, &Canvas::dropped, parent, [this](const QMimeData* d){dropped(d);});
 
     // Dialogs
     dialog_import_status = new IoStatusDialog(QIcon::fromTheme("document-open"), tr("Open File"), false, parent);
