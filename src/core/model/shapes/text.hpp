@@ -36,7 +36,7 @@ private:
 class TextShape : public ShapeElement
 {
     GLAXNIMATE_OBJECT(TextShape)
-    GLAXNIMATE_PROPERTY(QString, text, {}, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(QString, text, {}, {}, {}, PropertyTraits::Visual)
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF())
     GLAXNIMATE_SUBOBJECT(Font, font)
 
