@@ -16,7 +16,17 @@ class Font : public Object
     GLAXNIMATE_PROPERTY(QString, style, "", &Font::on_font_changed, {}, PropertyTraits::Visual)
 
 public:
+    struct CharData
+    {
+        quint32 glyph;
+        QPointF advance;
+        QPainterPath path;
+    };
+
+    using CharDataCache = std::unordered_map<quint32, QPainterPath>;
+
     explicit Font(Document* doc);
+    ~Font();
 
     const QRawFont& raw_font() const;
     const QFont& query() const;
@@ -25,16 +35,16 @@ public:
 
     QString type_name_human() const override;
 
+    std::vector<CharData> line_data(const QString& line, CharDataCache& cache) const;
+    qreal line_spacing() const;
+
 private:
     void on_family_changed();
     void on_font_changed();
     bool valid_style(const QString& style);
-    void refresh_styles();
 
-    QStringList styles_;
-    QFont query_;
-    QRawFont raw_;
-    QFontMetricsF metrics_;
+    class Private;
+    std::unique_ptr<Private> d;
 };
 
 class TextShape : public ShapeElement
