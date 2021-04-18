@@ -6,7 +6,8 @@ GLAXNIMATE_OBJECT_IMPL(model::TextShape)
 
 model::Font::Font(model::Document* doc)
     : Object(doc),
-    raw_(QRawFont::fromFont(query_))
+    raw_(QRawFont::fromFont(query_)),
+    metrics_(query_)
 {
     family.set(raw_.familyName());
     style.set(raw_.styleName());
@@ -19,6 +20,7 @@ void model::Font::on_font_changed()
     query_ = QFont(family.get(), size.get());
     query_.setStyleName(style.get());
     raw_ = QRawFont::fromFont(query_);
+    metrics_ = QFontMetricsF(query_);
 }
 
 void model::Font::on_family_changed()
@@ -54,6 +56,12 @@ const QStringList & model::Font::styles() const
     return styles_;
 }
 
+const QFontMetricsF & model::Font::metrics() const
+{
+    return metrics_;
+}
+
+
 QString model::Font::type_name_human() const
 {
     return tr("Font");
@@ -68,16 +76,26 @@ void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier&
 QPainterPath model::TextShape::to_painter_path(model::FrameTime t) const
 {
     QPainterPath p;
-    QRawFont font = this->font->raw_font();
-    auto glyhs = font.glyphIndexesForString(text.get());
-    auto advances = font.advancesForGlyphIndexes(glyhs, QRawFont::KernedAdvances);
-    QPointF start = position.get_at(t);
-    for ( int i = 0; i < glyhs.size(); i++ )
+    const QRawFont& font = this->font->raw_font();
+    const QFontMetricsF& metrics = this->font->metrics();
+
+    auto lines = text.get().split('\n');
+    QPointF baseline = position.get_at(t);
+
+    for ( const auto& line : lines )
     {
-        QPainterPath glyph_path = font.pathForGlyph(glyhs[i]);
-        glyph_path.translate(start);
-        start += advances[i];
-        p += glyph_path;
+        auto glyhs = font.glyphIndexesForString(line);
+        auto advances = font.advancesForGlyphIndexes(glyhs, QRawFont::KernedAdvances);
+        QPointF start = baseline;
+        for ( int i = 0; i < glyhs.size(); i++ )
+        {
+            QPainterPath glyph_path = font.pathForGlyph(glyhs[i]);
+            glyph_path.translate(start);
+            start += advances[i];
+            p += glyph_path;
+        }
+
+        baseline.setY(baseline.y() + metrics.lineSpacing());
     }
     return p;
 }

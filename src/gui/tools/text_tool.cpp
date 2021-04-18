@@ -2,6 +2,7 @@
 #include <QTextDocument>
 #include <QTextFrame>
 #include <QTextFrameLayoutData>
+#include <QAbstractTextDocumentLayout>
 
 #include "draw_tool_base.hpp"
 #include "model/shapes/text.hpp"
@@ -44,7 +45,7 @@ public:
         {
             if ( auto text = shape->node()->cast<model::TextShape>() )
             {
-                select(event.scene, text);
+                select(event, text);
                 return;
             }
         }
@@ -117,31 +118,41 @@ public:
     {
         if ( editor.scene() )
             editor.scene()->removeItem(&editor);
-        editor.setPlainText("");
         target = nullptr;
+        editor.setPlainText("");
         forward_click = false;
+        modified = false;
     }
 
     void commit(const Event& event)
     {
         QString text = editor.toPlainText();
-        if ( !text.isEmpty() )
+
+        if ( target )
         {
-            if ( !target )
-            {
-                auto shape = std::make_unique<model::TextShape>(event.window->document());
-                shape->text.set(text);
-                shape->name.set(text);
-                shape->position.set(editor.pos() - editor_offet());
-                create_shape(QObject::tr("Draw Text"), event, std::move(shape));
-            }
-            else
-            {
-                target->text.set_undoable(text);
-            }
+            if ( modified )
+                target->text.set_undoable(text, true);
+        }
+        else if ( !text.isEmpty() )
+        {
+            auto shape = std::make_unique<model::TextShape>(event.window->document());
+            shape->text.set(text);
+            shape->name.set(text);
+            shape->position.set(editor.pos() - editor_offet());
+            create_shape(QObject::tr("Draw Text"), event, std::move(shape));
         }
 
         clear();
+    }
+
+    void select(const MouseEvent& event, model::TextShape* item)
+    {
+        select(event.scene, item);
+        QPointF pos = editor.mapFromScene(event.scene_pos);
+        QTextCursor cur(editor.document());
+        int curpos = editor.document()->documentLayout()->hitTest(pos, Qt::FuzzyHit);
+        cur.setPosition(curpos);
+        editor.setTextCursor(cur);
     }
 
     void select(graphics::DocumentScene * scene, model::TextShape* item)
@@ -150,7 +161,14 @@ public:
 
         scene->addItem(&editor);
         target = item;
+
+        //         editor.setDefaultTextColor(Qt::transparent);
         editor.setPlainText(item->text.get());
+
+        QPen pen(QColor(128, 0, 0, 100), 1);
+        pen.setCosmetic(true);
+        set_text_format(Qt::transparent, pen);
+
         font = item->font->query();
         editor.setFont(font);
         editor.setFocus(Qt::OtherFocusReason);
@@ -166,6 +184,7 @@ public:
     {
         clear();
 
+        set_text_format(event.window->current_color(), event.window->current_pen_style());
         editor.setTransform(QTransform{});
         editor.setPos(event.scene_pos + editor_offet());
         event.scene->addItem(&editor);
@@ -176,6 +195,18 @@ public:
     }
 
 private:
+    void set_text_format(const QBrush& fill, const QPen& stroke)
+    {
+        QTextCursor cur = editor.textCursor();
+        cur.movePosition(QTextCursor::Start);
+        cur.select(QTextCursor::Document);
+        QTextCharFormat fmt;
+        fmt.setTextOutline(stroke);
+        fmt.setForeground(fill);
+        cur.setCharFormat(fmt);
+        editor.setTextCursor(cur);
+    }
+
     QPointF editor_offet() const
     {
         auto fmt = editor.document()->rootFrame()->frameFormat();
@@ -217,6 +248,20 @@ private:
             editor.setTextInteractionFlags(Qt::TextEditorInteraction);
             editor.setZValue(9001);
             font = QFont("sans", 32);
+            connect(editor.document(), &QTextDocument::contentsChanged, this, &TextTool::apply_changes);
+        }
+    }
+
+    void apply_changes()
+    {
+        if ( target )
+        {
+            QString text = editor.toPlainText();
+            if ( text != target->text.get() )
+            {
+                target->text.set_undoable(text, false);
+                modified = true;
+            }
         }
     }
 
@@ -225,6 +270,7 @@ private:
     model::TextShape* target = nullptr;
     bool forward_click = false;
     QFont font;
+    bool modified = false;
     bool initialized = false;
 };
 

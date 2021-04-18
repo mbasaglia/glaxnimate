@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QRawFont>
+#include <QFontMetricsF>
 
 #include "model/property/sub_object_property.hpp"
 #include "shape.hpp"
@@ -20,6 +21,8 @@ public:
     const QRawFont& raw_font() const;
     const QFont& query() const;
     const QStringList& styles() const;
+    const QFontMetricsF& metrics() const;
+
     QString type_name_human() const override;
 
 private:
@@ -31,6 +34,7 @@ private:
     QStringList styles_;
     QFont query_;
     QRawFont raw_;
+    QFontMetricsF metrics_;
 };
 
 class TextShape : public ShapeElement

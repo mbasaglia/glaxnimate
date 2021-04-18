@@ -157,7 +157,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         }
     );
     register_builder<model::TextShape>(
-        &make_graphics_item_shape,
+        &GraphicsItemFactory::make_graphics_item_default,
         [](model::TextShape* txt){
             auto v = std::make_unique<GraphicsEditor>(txt);
             v->add_child<graphics::PositionItem>(&txt->position);
