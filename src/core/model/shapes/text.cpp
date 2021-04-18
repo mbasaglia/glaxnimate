@@ -12,6 +12,7 @@ public:
     QRawFont raw;
     QRawFont raw_scaled;
     QFontMetricsF metrics;
+    QFontDatabase database;
 
     Private() :
         raw(QRawFont::fromFont(query)),
@@ -29,7 +30,7 @@ public:
 
     void refresh_styles(Font* parent)
     {
-        styles = QFontDatabase().styles(parent->family.get());
+        styles = database.styles(parent->family.get());
         if ( !parent->valid_style(parent->style.get()) && !styles.empty() )
             parent->style.set(styles[0]);
     }
@@ -127,7 +128,7 @@ const QRawFont & model::Font::raw_font() const
     return d->raw;
 }
 
-const QStringList & model::Font::styles() const
+QStringList model::Font::styles() const
 {
     return d->styles;
 }
@@ -136,7 +137,6 @@ const QFontMetricsF & model::Font::metrics() const
 {
     return d->metrics;
 }
-
 
 QString model::Font::type_name_human() const
 {
@@ -179,6 +179,19 @@ qreal model::Font::line_spacing() const
 {
     return d->metrics.lineSpacing();
 }
+
+QStringList model::Font::families() const
+{
+    return d->database.families();
+}
+
+QList<int> model::Font::standard_sizes() const
+{
+    return QFontDatabase::standardSizes();
+}
+
+
+
 
 void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier& bez) const
 {

@@ -9,6 +9,7 @@
 #include "command/property_commands.hpp"
 #include "model/shapes/styler.hpp"
 #include "model/stretchable_time.hpp"
+#include "model/property/option_list_property.hpp"
 
 #include "widgets/enum_combo.hpp"
 
@@ -491,6 +492,12 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
                 return QApplication::palette().color(QPalette::Disabled, QPalette::Text);
         }
 
+        if ( role == Flags )
+            return tree->prop->traits().flags;
+
+        if ( role == ReferenceProperty && tree->prop->traits().flags & model::PropertyTraits::OptionList )
+            return QVariant::fromValue(static_cast<model::OptionListPropertyBase*>(tree->prop));
+
         if ( (traits.flags & model::PropertyTraits::Animated) )
         {
             model::AnimatableBase* anprop = static_cast<model::AnimatableBase*>(prop);
@@ -688,7 +695,6 @@ void item_models::PropertyModel::property_changed(const model::BaseProperty* pro
 
         dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
     }
-
 }
 
 QVariant item_models::PropertyModel::headerData(int section, Qt::Orientation orientation, int role) const

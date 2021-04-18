@@ -15,7 +15,8 @@ public:
     {
         ReferenceProperty = Qt::UserRole,
         MinValue,
-        MaxValue
+        MaxValue,
+        Flags
     };
 
     struct Item

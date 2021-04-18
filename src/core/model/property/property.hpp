@@ -46,11 +46,12 @@ struct PropertyTraits
 
     enum Flags
     {
-        NoFlags = 0,
-        List = 1,
-        ReadOnly = 2,
-        Animated = 4,
-        Visual = 8,
+        NoFlags     = 0x00,
+        List        = 0x01,
+        ReadOnly    = 0x02,
+        Animated    = 0x04,
+        Visual      = 0x08,
+        OptionList  = 0x10,
     };
 
 
@@ -129,9 +130,8 @@ inline constexpr PropertyTraits::Type PropertyTraits::get_type() noexcept
 }
 
 
-#define GLAXNIMATE_PROPERTY(type, name, ...)                \
+#define GLAXNIMATE_PROPERTY_IMPL(type, name)                \
 public:                                                     \
-    Property<type> name{this, #name, __VA_ARGS__};          \
     type get_##name() const { return name.get(); }          \
     bool set_##name(const type& v) {                        \
         return name.set_undoable(QVariant::fromValue(v));   \
@@ -139,6 +139,12 @@ public:                                                     \
 private:                                                    \
     Q_PROPERTY(type name READ get_##name WRITE set_##name)  \
     Q_CLASSINFO(#name, "property " #type)                   \
+    // macro end
+
+#define GLAXNIMATE_PROPERTY(type, name, ...)                \
+public:                                                     \
+    Property<type> name{this, #name, __VA_ARGS__};          \
+    GLAXNIMATE_PROPERTY_IMPL(type, name)                    \
     // macro end
 
 #define GLAXNIMATE_PROPERTY_RO(type, name, default_value)   \
@@ -152,6 +158,8 @@ private:                                                    \
 
 class BaseProperty
 {
+    Q_GADGET
+
 public:
     BaseProperty(Object* object, const QString& name, PropertyTraits traits);
 
@@ -278,23 +286,22 @@ std::optional<Type> variant_cast(const QVariant& val)
     return converted.value<Type>();
 }
 
-} // namespace detail
 
-template<class Type, class Reference = const Type&>
-class Property : public BaseProperty
+template<class Base, class Type>
+class PropertyTemplate : public Base
 {
 public:
     using value_type = Type;
-    using reference = Reference;
+    using reference = const Type&;
 
-    Property(Object* obj,
+    PropertyTemplate(Object* obj,
              const QString& name,
              Type default_value = Type(),
              PropertyCallback<void, Type> emitter = {},
              PropertyCallback<bool, Type> validator = {},
              PropertyTraits::Flags flags = PropertyTraits::NoFlags
     )
-        : BaseProperty(obj, name, PropertyTraits::from_scalar<Type>(flags)),
+        : Base(obj, name, PropertyTraits::from_scalar<Type>(flags)),
           value_(std::move(default_value)),
           emitter(std::move(emitter)),
           validator(std::move(validator))
@@ -303,18 +310,18 @@ public:
     bool valid_value(const QVariant& val) const override
     {
         if ( auto v = detail::variant_cast<Type>(val) )
-            return !validator || validator(object(), *v);
+            return !validator || validator(this->object(), *v);
         return false;
     }
 
     bool set(Type value)
     {
-        if ( validator && !validator(object(), value) )
+        if ( validator && !validator(this->object(), value) )
             return false;
         std::swap(value_, value);
-        value_changed();
+        this->value_changed();
         if ( emitter )
-            emitter(object(), value_);
+            emitter(this->object(), value_);
         return true;
     }
 
@@ -341,6 +348,15 @@ private:
     Type value_;
     PropertyCallback<void, Type> emitter;
     PropertyCallback<bool, Type> validator;
+};
+
+} // namespace detail
+
+template<class Type>
+class Property : public detail::PropertyTemplate<BaseProperty, Type>
+{
+public:
+    using detail::PropertyTemplate<BaseProperty, Type>::PropertyTemplate;
 };
 
 } // namespace model

@@ -47,6 +47,7 @@ model/animation/animatable.cpp
 model/animation/animatable_path.cpp
 model/property/property.cpp
 model/property/reference_property.cpp
+model/property/option_list_property.cpp
 
 model/assets/assets.cpp
 model/assets/brush_style.cpp

@@ -4,6 +4,7 @@
 #include <QFontMetricsF>
 
 #include "model/property/sub_object_property.hpp"
+#include "model/property/option_list_property.hpp"
 #include "shape.hpp"
 
 namespace model {
@@ -11,9 +12,12 @@ namespace model {
 class Font : public Object
 {
     GLAXNIMATE_OBJECT(Font)
-    GLAXNIMATE_PROPERTY(QString, family, "", &Font::on_family_changed, {}, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(float, size, 32, &Font::on_font_changed, {}, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(QString, style, "", &Font::on_font_changed, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY_OPTIONS(QString, family, "", QStringList,
+        &Font::families, &Font::on_family_changed, {}, PropertyTraits::Visual, OptionListPropertyBase::FontCombo)
+    GLAXNIMATE_PROPERTY_OPTIONS(float, size, 32, QList<int>,
+        &Font::standard_sizes, &Font::on_font_changed, {}, PropertyTraits::Visual, OptionListPropertyBase::LaxValues)
+    GLAXNIMATE_PROPERTY_OPTIONS(QString, style, "", QStringList,
+        &Font::styles, &Font::on_font_changed, &Font::valid_style, PropertyTraits::Visual)
 
 public:
     struct CharData
@@ -30,8 +34,11 @@ public:
 
     const QRawFont& raw_font() const;
     const QFont& query() const;
-    const QStringList& styles() const;
     const QFontMetricsF& metrics() const;
+
+    QStringList styles() const;
+    QStringList families() const;
+    QList<int> standard_sizes() const;
 
     QString type_name_human() const override;
 
