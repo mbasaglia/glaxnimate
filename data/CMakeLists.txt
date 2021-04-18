@@ -1,3 +1,5 @@
+set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/breeze-icons/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/breeze-icons/icons-dark DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
 
@@ -88,3 +90,4 @@ plugin(
     HueShift
     hue_shift.py
 )
+
