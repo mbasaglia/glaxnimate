@@ -5,6 +5,7 @@ add_custom_target(
     docs
     COMMAND "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}/extensions/" mkdocs build -f "${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml" -d "${CMAKE_CURRENT_BINARY_DIR}/site"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/mkdocs.yml"
+    DEPENDS docs_build_python
 )
 
 add_custom_target(
