@@ -23,6 +23,7 @@ io/video/video_format.cpp
 io/base.cpp
 
 math/geom.cpp
+math/ellipse_solver.cpp
 math/bezier/bezier.cpp
 math/bezier/point.cpp
 math/bezier/operations.cpp

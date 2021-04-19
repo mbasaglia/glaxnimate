@@ -4,6 +4,7 @@
     * View to manage assets
 * Bug Fixes:
     * Fixed dragging layers to the top
+    * Fixed converting ellipses to paths
 
 ## 0.4.1
 
