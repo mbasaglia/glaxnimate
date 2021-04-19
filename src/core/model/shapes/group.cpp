@@ -28,11 +28,12 @@ void model::Group::on_transform_matrix_changed()
     propagate_transform_matrix_changed(transform_matrix(time()), group_transform_matrix(time()));
 }
 
-void model::Group::add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez) const
+void model::Group::add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez, const QTransform& parent_transform) const
 {
+    QTransform trans = transform.get()->transform_matrix(t) * parent_transform;
     for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
     {
-        ch->add_shapes(t, bez);
+        ch->add_shapes(t, bez, trans);
     }
 }
 

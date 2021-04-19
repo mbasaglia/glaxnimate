@@ -251,6 +251,10 @@ public:
 
     void append(const QPainterPath& path);
 
+    void transform(const QTransform& t);
+
+    static MultiBezier from_painter_path(const QPainterPath& path);
+
 private:
     void handle_end()
     {

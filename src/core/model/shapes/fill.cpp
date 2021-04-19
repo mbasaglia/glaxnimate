@@ -7,7 +7,7 @@ void model::Fill::on_paint(QPainter* p, model::FrameTime t, model::VisualNode::P
     p->setBrush(brush(t));
     p->setOpacity(p->opacity() * opacity.get_at(t));
     p->setPen(Qt::NoPen);
-    QPainterPath path = collect_shapes(t).painter_path();
+    QPainterPath path = collect_shapes(t, {}).painter_path();
 
     path.setFillRule(Qt::FillRule(fill_rule.get()));
     p->drawPath(path);
@@ -15,6 +15,6 @@ void model::Fill::on_paint(QPainter* p, model::FrameTime t, model::VisualNode::P
 
 QPainterPath model::Fill::to_painter_path(model::FrameTime t) const
 {
-    return collect_shapes(t).painter_path();
+    return collect_shapes(t, {}).painter_path();
 }
 

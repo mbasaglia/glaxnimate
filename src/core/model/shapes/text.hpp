@@ -33,6 +33,7 @@ public:
         QRectF bounds;
         QPointF baseline;
         QPointF advance;
+        QString text;
     };
 
     using ParagraphData = std::vector<LineData>;
@@ -52,9 +53,9 @@ public:
 
     QString type_name_human() const override;
 
-    ParagraphData layout(const QString& string, CharDataCache& cache) const;
+    ParagraphData layout(const QString& string, CharDataCache& cache, bool fix_paint) const;
     qreal line_spacing() const;
-    QPainterPath path_for_glyph(quint32 glyph, CharDataCache& cache) const;
+    QPainterPath path_for_glyph(quint32 glyph, CharDataCache& cache, bool fix_paint) const;
 
 private:
     void on_family_changed();
@@ -74,11 +75,13 @@ class TextShape : public ShapeElement
 
 public:
     using ShapeElement::ShapeElement;
-    void add_shapes(FrameTime t, math::bezier::MultiBezier& bez) const override;
+    void add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
     QPainterPath to_painter_path(FrameTime t) const override;
     QIcon tree_icon() const override;
     QRectF local_bounding_rect(FrameTime t) const override;
     QString type_name_human() const override;
+    std::unique_ptr<ShapeElement> to_path() const override;
+
 };
 
 } // namespace model

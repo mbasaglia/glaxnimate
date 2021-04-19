@@ -502,11 +502,11 @@ void GlaxnimateWindow::Private::cleanup_document()
 
 void GlaxnimateWindow::Private::to_path()
 {
-    std::set<model::Shape*> shapes;
+    std::set<model::ShapeElement*> shapes;
 
-    auto callback = [&shapes](model::Shape* shape){ shapes.insert(shape); };
+    auto callback = [&shapes](model::ShapeElement* shape){ shapes.insert(shape); };
     for ( auto selected : scene.selection() )
-        model::simple_visit<model::Shape>(selected, true, callback);
+        model::simple_visit<model::ShapeElement>(selected, true, callback);
 
     if ( shapes.empty() )
         return;
@@ -518,16 +518,20 @@ void GlaxnimateWindow::Private::to_path()
     command::UndoMacroGuard guard(macro_name, current_document.get());
     for ( auto shape : shapes )
     {
-        current_document->push_command(
-            new command::AddObject<model::ShapeElement>(
-                shape->owner(),
-                shape->to_path(),
-                shape->position()
-            )
-        );
-        current_document->push_command(
-            new command::RemoveObject<model::ShapeElement>(shape, shape->owner())
-        );
+        auto path = shape->to_path();
+        if ( path )
+        {
+            current_document->push_command(
+                new command::AddObject<model::ShapeElement>(
+                    shape->owner(),
+                    std::move(path),
+                    shape->position()
+                )
+            );
+            current_document->push_command(
+                new command::RemoveObject<model::ShapeElement>(shape, shape->owner())
+            );
+        }
     }
 }
 

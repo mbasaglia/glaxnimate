@@ -31,13 +31,14 @@ public:
         return position_;
     }
 
-    virtual void add_shapes(FrameTime t, math::bezier::MultiBezier& bez) const = 0;
+    virtual void add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const = 0;
     math::bezier::MultiBezier shapes(FrameTime t) const;
 
     ShapeListProperty* owner() const { return property_; }
 
     virtual QPainterPath to_clip(FrameTime t) const;
     virtual QPainterPath to_painter_path(FrameTime t) const = 0;
+    virtual std::unique_ptr<ShapeElement> to_path() const;
 
 signals:
     void position_updated();
@@ -116,12 +117,9 @@ public:
 
     virtual math::bezier::Bezier to_bezier(FrameTime t) const = 0;
 
-    void add_shapes(FrameTime t, math::bezier::MultiBezier & bez) const override
-    {
-        bez.beziers().push_back(to_bezier(t));
-    }
+    void add_shapes(FrameTime t, math::bezier::MultiBezier & bez, const QTransform& transform) const override;
 
-    std::unique_ptr<Path> to_path() const;
+    std::unique_ptr<ShapeElement> to_path() const override;
     QPainterPath to_painter_path(FrameTime t) const override;
 };
 
@@ -135,17 +133,17 @@ class ShapeOperator : public ShapeElement
 public:
     ShapeOperator(model::Document* doc);
 
-    math::bezier::MultiBezier collect_shapes(FrameTime t) const
+    math::bezier::MultiBezier collect_shapes(FrameTime t, const QTransform& transform) const
     {
         math::bezier::MultiBezier bez;
-        collect_shapes(t, bez);
+        collect_shapes(t, bez, transform);
         return bez;
     }
 
     const std::vector<ShapeElement*>& affected() const { return affected_elements; }
 
 protected:
-    void collect_shapes(FrameTime t, math::bezier::MultiBezier& bez) const;
+    void collect_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const;
 
 private slots:
     void update_affected();
@@ -169,10 +167,7 @@ class Modifier : public ShapeOperator
 public:
     using ShapeOperator::ShapeOperator;
 
-    void add_shapes(FrameTime t, math::bezier::MultiBezier& bez) const override
-    {
-        bez.append(process(collect_shapes(t)));
-    }
+    void add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
 
 protected:
     virtual math::bezier::MultiBezier process(const math::bezier::MultiBezier& mbez) const = 0;

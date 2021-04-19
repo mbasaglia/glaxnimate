@@ -80,7 +80,7 @@ QTransform model::PreCompLayer::local_transform_matrix(model::FrameTime t) const
     return transform.get()->transform_matrix(t);
 }
 
-void model::PreCompLayer::add_shapes(model::FrameTime, math::bezier::MultiBezier&) const
+void model::PreCompLayer::add_shapes(model::FrameTime, math::bezier::MultiBezier&, const QTransform&) const
 {
 }
 

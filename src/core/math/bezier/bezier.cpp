@@ -205,3 +205,17 @@ void math::bezier::MultiBezier::append(const QPainterPath& path)
         }
     }
 }
+
+void math::bezier::MultiBezier::transform(const QTransform& t)
+{
+    for ( auto& bez : beziers_ )
+        bez.transform(t);
+}
+
+math::bezier::MultiBezier math::bezier::MultiBezier::from_painter_path(const QPainterPath& path)
+{
+    math::bezier::MultiBezier bez;
+    bez.append(path);
+    return bez;
+}
+

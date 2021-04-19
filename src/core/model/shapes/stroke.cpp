@@ -11,7 +11,7 @@ void model::Stroke::on_paint(QPainter* p, model::FrameTime t, model::VisualNode:
     p->setBrush(Qt::NoBrush);
     p->setPen(pen);
     p->setOpacity(p->opacity() * opacity.get_at(t));
-    p->drawPath(collect_shapes(t).painter_path());
+    p->drawPath(collect_shapes(t, {}).painter_path());
 }
 
 void model::Stroke::set_pen_style ( const QPen& pen_style )
@@ -39,5 +39,5 @@ QPainterPath model::Stroke::to_painter_path(model::FrameTime t) const
     s.setCapStyle(Qt::PenCapStyle(cap.get()));
     s.setJoinStyle(Qt::PenJoinStyle(join.get()));
     s.setMiterLimit(miter_limit.get());
-    return s.createStroke(collect_shapes(t).painter_path());
+    return s.createStroke(collect_shapes(t, {}).painter_path());
 }

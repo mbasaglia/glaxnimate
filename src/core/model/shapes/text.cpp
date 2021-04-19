@@ -2,6 +2,9 @@
 
 #include <QTextLayout>
 
+#include "group.hpp"
+#include "path.hpp"
+
 GLAXNIMATE_OBJECT_IMPL(model::Font)
 GLAXNIMATE_OBJECT_IMPL(model::TextShape)
 
@@ -48,9 +51,14 @@ public:
         raw_scaled = QRawFont::fromFont(font);
     }
 
-    QPainterPath path_for_glyph(quint32  glyph)
+    QPainterPath path_for_glyph(quint32  glyph, bool fix_paint)
     {
-        QPainterPath path = raw_scaled.pathForGlyph(glyph).simplified();
+
+        QPainterPath path = raw_scaled.pathForGlyph(glyph);
+
+        if ( fix_paint )
+            path = path.simplified();
+
         if ( raw_scaled.pixelSize() == 0 )
             return path;
 
@@ -148,20 +156,20 @@ QString model::Font::type_name_human() const
     return tr("Font");
 }
 
-QPainterPath model::Font::path_for_glyph(quint32 glyph, model::Font::CharDataCache& cache) const
+QPainterPath model::Font::path_for_glyph(quint32 glyph, model::Font::CharDataCache& cache, bool fix_paint) const
 {
     auto it = cache.find(glyph);
 
     if ( it != cache.end() )
         return it->second;
 
-    QPainterPath path = d->path_for_glyph(glyph);
+    QPainterPath path = d->path_for_glyph(glyph, fix_paint);
     cache.emplace(glyph, path);
     return path;
 }
 
 
-model::Font::ParagraphData model::Font::layout(const QString& text, CharDataCache& cache) const
+model::Font::ParagraphData model::Font::layout(const QString& text, CharDataCache& cache, bool fix_paint) const
 {
     model::Font::ParagraphData para_data;
 
@@ -192,6 +200,7 @@ model::Font::ParagraphData model::Font::layout(const QString& text, CharDataCach
         auto& line_data = para_data.emplace_back();
         line_data.baseline = QPointF(0, line_y);
         line_data.bounds = line.rect();
+        line_data.text = lines[ln];
 
         QPointF baseline(0, line_y + yoff);
         for ( const auto& run : line.glyphRuns() )
@@ -204,7 +213,7 @@ model::Font::ParagraphData model::Font::layout(const QString& text, CharDataCach
                 line_data.glyphs.push_back({
                     glyphs[i],
                     positions[i] + baseline,
-                    path_for_glyph(glyphs[i], cache)
+                    path_for_glyph(glyphs[i], cache, fix_paint)
                 });
             }
         }
@@ -224,6 +233,7 @@ model::Font::ParagraphData model::Font::layout(const QString& text, CharDataCach
 
         auto& line_data = para_data.emplace_back();
         line_data.glyphs.reserve(glyphs.size());
+        line_data.text = line;
 
         line_data.baseline = line_data.advance = QPointF(0, line_y);
         for ( int i = 0; i < glyphs.size(); i++ )
@@ -263,9 +273,18 @@ QList<int> model::Font::standard_sizes() const
     return list;
 }
 
-void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier& bez) const
+void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
-    bez.append(to_painter_path(t));
+    if ( !transform.isIdentity() )
+    {
+        auto mb = math::bezier::MultiBezier::from_painter_path(to_painter_path(t));
+        mb.transform(transform);
+        bez.append(mb);
+    }
+    else
+    {
+        bez.append(to_painter_path(t));
+    }
 }
 
 QPainterPath model::TextShape::to_painter_path(model::FrameTime t) const
@@ -273,7 +292,7 @@ QPainterPath model::TextShape::to_painter_path(model::FrameTime t) const
     QPainterPath p;
     Font::CharDataCache cache;
     QPointF pos = position.get_at(t);
-    for ( const auto& line : font->layout(text.get(), cache) )
+    for ( const auto& line : font->layout(text.get(), cache, true) )
         for ( const auto& glyph : line.glyphs )
             p += glyph.path.translated(glyph.position + pos);
     return p;
@@ -292,4 +311,65 @@ QRectF model::TextShape::local_bounding_rect(model::FrameTime t) const
 QString model::TextShape::type_name_human() const
 {
     return tr("Text");
+}
+
+std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
+{
+    auto group = std::make_unique<model::Group>(document());
+    group->name.set(name.get());
+    group->group_color.set(group_color.get());
+    group->visible.set(visible.get());
+
+
+    Font::CharDataCache cache;
+    for ( const auto& line : font->layout(text.get(), cache, false) )
+    {
+        auto line_group = std::make_unique<model::Group>(document());
+        line_group->name.set(line.text);
+
+        for ( const auto& glyph : line.glyphs )
+        {
+            QPainterPath p = glyph.path.translated(glyph.position);
+            math::bezier::MultiBezier bez;
+            bez.append(p);
+
+            QString char_name = QChar::decomposition(glyph.glyph);
+            if ( bez.beziers().size() == 1 )
+            {
+                auto path = std::make_unique<model::Path>(document());
+                path->name.set(char_name);
+                path->shape.set(bez.beziers()[0]);
+                line_group->shapes.insert(std::move(path));
+            }
+            else if ( bez.beziers().size() > 1 )
+            {
+                auto glyph_group = std::make_unique<model::Group>(document());
+                glyph_group->name.set(char_name);
+                for ( const auto& sub : bez.beziers() )
+                {
+                    auto path = std::make_unique<model::Path>(document());
+                    path->shape.set(sub);
+                    glyph_group->shapes.insert(std::move(path));
+                }
+                line_group->shapes.insert(std::move(glyph_group));
+            }
+        }
+
+        group->shapes.insert(std::move(line_group));
+    }
+
+    group->set_time(time());
+    if ( position.animated() )
+    {
+        for ( const auto& kf : position )
+        {
+            group->transform->position.set_keyframe(kf.time(), kf.get())->set_transition(kf.transition());
+//             group->transform->anchor_point.set_keyframe(kf.time(), kf.get())->set_transition(kf.transition());
+        }
+    }
+
+    group->transform->position.set(position.get());
+//     group->transform->anchor_point.set(position.get());
+
+    return group;
 }

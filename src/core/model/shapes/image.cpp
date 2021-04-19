@@ -65,7 +65,7 @@ void model::Image::on_transform_matrix_changed()
     emit transform_matrix_changed(transform_matrix(time()));
 }
 
-void model::Image::add_shapes(FrameTime, math::bezier::MultiBezier&) const
+void model::Image::add_shapes(FrameTime, math::bezier::MultiBezier&, const QTransform&) const
 {
 }
 

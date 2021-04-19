@@ -29,7 +29,7 @@ public:
 
     QRectF local_bounding_rect(FrameTime t) const override
     {
-        return collect_shapes(t).bounding_box();
+        return collect_shapes(t, {}).bounding_box();
     }
     QIcon tree_icon() const override
     {

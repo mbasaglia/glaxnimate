@@ -18,7 +18,7 @@ class Image : public ShapeElement
 public:
     Image(model::Document* doc);
 
-    void add_shapes(FrameTime, math::bezier::MultiBezier&) const override;
+    void add_shapes(FrameTime, math::bezier::MultiBezier&, const QTransform&) const override;
     QPainterPath to_painter_path(FrameTime t) const override;
 
     QIcon tree_icon() const override;

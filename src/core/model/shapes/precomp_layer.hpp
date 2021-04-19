@@ -38,7 +38,7 @@ public:
     QRectF local_bounding_rect(FrameTime t) const override;
     QTransform local_transform_matrix(model::FrameTime t) const override;
 
-    void add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez) const override;
+    void add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez, const QTransform& transform) const override;
 
     QPainterPath to_clip(model::FrameTime t) const override;
     QPainterPath to_painter_path(model::FrameTime t) const override;

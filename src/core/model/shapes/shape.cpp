@@ -52,7 +52,7 @@ void model::ShapeElement::on_property_changed(const model::BaseProperty* prop, c
 math::bezier::MultiBezier model::ShapeElement::shapes(model::FrameTime t) const
 {
     math::bezier::MultiBezier bez;
-    add_shapes(t, bez);
+    add_shapes(t, bez, {});
     return bez;
 }
 
@@ -60,6 +60,12 @@ QPainterPath model::ShapeElement::to_clip(FrameTime t) const
 {
     return to_painter_path(t);
 }
+
+std::unique_ptr<model::ShapeElement> model::ShapeElement::to_path() const
+{
+    return {};
+}
+
 
 QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
 {
@@ -81,7 +87,7 @@ QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
     return rect;
 }
 
-std::unique_ptr<model::Path> model::Shape::to_path() const
+std::unique_ptr<model::ShapeElement> model::Shape::to_path() const
 {
     std::vector<AnimatableBase*> properties;
     auto flags = PropertyTraits::Visual|PropertyTraits::Animated;
@@ -126,6 +132,15 @@ QPainterPath model::Shape::to_painter_path(FrameTime) const
 }
 
 
+void model::Shape::add_shapes(FrameTime t, math::bezier::MultiBezier & bez, const QTransform& transform) const
+{
+    auto shape = to_bezier(t);
+    if ( !transform.isIdentity() )
+        shape.transform(transform);
+    bez.beziers().emplace_back(std::move(shape));
+}
+
+
 model::ShapeOperator::ShapeOperator(model::Document* doc)
     : ShapeElement(doc)
 {
@@ -134,11 +149,11 @@ model::ShapeOperator::ShapeOperator(model::Document* doc)
 }
 
 
-void model::ShapeOperator::collect_shapes(model::FrameTime t, math::bezier::MultiBezier& bez) const
+void model::ShapeOperator::collect_shapes(model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
     for ( auto sib : affected_elements )
     {
-        sib->add_shapes(t, bez);
+        sib->add_shapes(t, bez, transform);
     }
 }
 
@@ -177,4 +192,10 @@ void model::ShapeOperator::sibling_prop_changed(const model::BaseProperty* prop)
 {
     if ( prop->traits().flags & model::PropertyTraits::Visual )
         emit shape_changed();
+}
+
+
+void model::Modifier::add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
+{
+    bez.append(process(collect_shapes(t, transform)));
 }
