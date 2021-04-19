@@ -81,7 +81,7 @@ protected:
         model::ShapeListProperty* prop = get_container(event.window);
 
         ShapeToolWidget* options = widget();
-        int index = prop->index_of(event.window->current_shape()) + 1;
+        int index = prop->size();
         if ( options->create_group() )
         {
             auto group = std::make_unique<model::Group>(document);

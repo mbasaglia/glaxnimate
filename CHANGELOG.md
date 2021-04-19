@@ -5,6 +5,7 @@
 * Bug Fixes:
     * Fixed dragging layers to the top
     * Fixed converting ellipses to paths
+    * Newly drawn shapes are added on top of existing ones
 
 ## 0.4.1
 
