@@ -197,6 +197,7 @@ public:
 private:
     void set_text_format(const QBrush& fill, const QPen& stroke)
     {
+        editor.document()->setUseDesignMetrics(true);
         QTextCursor cur = editor.textCursor();
         cur.movePosition(QTextCursor::Start);
         cur.select(QTextCursor::Document);

@@ -18,11 +18,15 @@ public:
         raw(QRawFont::fromFont(query)),
         metrics(query)
     {
+        query.setKerning(false);
         upscaled_raw();
     }
 
     void update_data()
     {
+        // disable kerning because QRawFont doesn't handle kerning properly
+        query.setKerning(false);
+
         raw = QRawFont::fromFont(query);
         metrics = QFontMetricsF(query);
         upscaled_raw();
@@ -146,7 +150,7 @@ QString model::Font::type_name_human() const
 std::vector<model::Font::CharData> model::Font::line_data(const QString& line, CharDataCache& cache) const
 {
     auto glyphs = d->raw.glyphIndexesForString(line);
-    auto advances = d->raw.advancesForGlyphIndexes(glyphs, QRawFont::KernedAdvances);
+    auto advances = d->raw.advancesForGlyphIndexes(glyphs, QRawFont::UseDesignMetrics|QRawFont::KernedAdvances);
     std::vector<model::Font::CharData> data;
     data.reserve(glyphs.size());
 
