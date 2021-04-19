@@ -100,11 +100,23 @@ QWidget* PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     return color_widgets::ColorDelegate::createEditor(parent, option, index);
 }
 
+static void combo_setup(QComboBox* combo)
+{
+    QTimer* cheeky = new QTimer(combo);
+    QObject::connect(cheeky, &QTimer::timeout, combo, [combo]{
+        combo->setFocus();
+        combo->showPopup();
+    });
+    cheeky->setSingleShot(true);
+    cheeky->start(qApp->doubleClickInterval() / 2);
+}
+
 void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & index ) const
 {
     QVariant data = index.data(Qt::EditRole);
     auto refprop = index.data(item_models::PropertyModel::ReferenceProperty);
 
+    // Object reference combo
     if ( refprop.canConvert<model::ReferencePropertyBase*>() )
     {
         if ( auto rpb = refprop.value<model::ReferencePropertyBase*>() )
@@ -123,47 +135,66 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
                     if ( ptr ==  current )
                         combo->setCurrentIndex(combo->count() - 1);
                 }
-
-                QTimer* cheeky = new QTimer(combo);
-                connect(cheeky, &QTimer::timeout, combo, [combo]{
-                    combo->setFocus();
-                    combo->showPopup();
-                });
-                cheeky->setSingleShot(true);
-                cheeky->start(qApp->doubleClickInterval() / 2);
+                combo_setup(combo);
             }
         }
         return;
     }
+    // Option list reference combo
     else if ( index.data(item_models::PropertyModel::Flags).toInt() & model::PropertyTraits::OptionList )
     {
         if ( auto prop = refprop.value<model::OptionListPropertyBase*>() )
         {
+            // Font combo
             if ( prop->option_list_flags() & model::OptionListPropertyBase::FontCombo )
+            {
+                QFontComboBox* fcombo = static_cast<QFontComboBox*>(editor);
+                fcombo->setCurrentText(prop->value().toString());
                 return;
+            };
 
             QComboBox* combo = static_cast<QComboBox*>(editor);
             combo->setEditable(true);
+
             if ( !(prop->option_list_flags() & model::OptionListPropertyBase::LaxValues) )
                 combo->setInsertPolicy(QComboBox::NoInsert);
+
+            auto current = prop->value();
+            bool found = false;
             for ( const auto& item : prop->value_options() )
+            {
                 combo->addItem(item.toString(), item);
+                if ( item == current )
+                {
+                    found = true;
+                    combo->setCurrentIndex(combo->count() - 1);
+                }
+            }
+
+            if ( !found && (prop->option_list_flags() & model::OptionListPropertyBase::LaxValues) )
+            {
+                combo->addItem(current.toString(), current);
+                combo->setCurrentIndex(combo->count() - 1);
+            }
         }
 
         return;
     }
+    // Enum combo
     else if ( data.userType() >= QMetaType::User && data.canConvert<int>() )
     {
         EnumCombo* combo = static_cast<EnumCombo*>(editor);
         combo->set_data_from_qvariant(data);
         return;
     }
+    // Cradient
     else if ( data.userType() == qMetaTypeId<QGradientStops>() )
     {
         static_cast<color_widgets::GradientEditor*>(editor)->setStops(data.value<QGradientStops>());
         return;
     }
 
+    // Spin boxes
     switch ( data.userType() )
     {
         case QMetaType::QPointF:
@@ -181,6 +212,7 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
             return;
     }
 
+    // Plain editor
     return color_widgets::ColorDelegate::setEditorData(editor, index);
 }
 
@@ -189,6 +221,7 @@ void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * mod
     QVariant data = index.data(Qt::EditRole);
     auto refprop = index.data(item_models::PropertyModel::ReferenceProperty);
 
+    // Object reference combo
     if (
         (data.userType() >= QMetaType::User && data.canConvert<int>()) ||
         refprop.canConvert<model::ReferencePropertyBase*>()
@@ -198,10 +231,12 @@ void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * mod
         model->setData(index, combo->itemData(combo->currentIndex()));
         return;
     }
+    // Option list combo
     else if ( index.data(item_models::PropertyModel::Flags).toInt() & model::PropertyTraits::OptionList )
     {
         if ( auto prop = refprop.value<model::OptionListPropertyBase*>() )
         {
+            // Font list
             if ( prop->option_list_flags() & model::OptionListPropertyBase::FontCombo )
             {
                 QFontComboBox* combo = static_cast<QFontComboBox*>(editor);
@@ -218,12 +253,14 @@ void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * mod
         }
         return;
     }
+    // Gradient
     else if ( data.userType() == qMetaTypeId<QGradientStops>() )
     {
         model->setData(index, QVariant::fromValue(static_cast<color_widgets::GradientEditor*>(editor)->stops()));
         return;
     }
 
+    // Spin boxes
     switch ( data.userType() )
     {
         case QMetaType::QPointF:
@@ -244,6 +281,7 @@ void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * mod
             return;
     }
 
+    // Plain editor
     return color_widgets::ColorDelegate::setModelData(editor, model, index);
 }
 

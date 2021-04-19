@@ -187,7 +187,12 @@ QStringList model::Font::families() const
 
 QList<int> model::Font::standard_sizes() const
 {
-    return QFontDatabase::standardSizes();
+    auto list = QFontDatabase::standardSizes();
+    int actual = d->query.pointSize();
+    auto it = std::upper_bound(list.begin(), list.end(), actual);
+    if ( it == list.begin() || *(it-1) != actual )
+        list.insert(it, actual);
+    return list;
 }
 
 
