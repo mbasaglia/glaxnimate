@@ -1,5 +1,6 @@
 #include "text.hpp"
 
+#include <QTextLayout>
 
 GLAXNIMATE_OBJECT_IMPL(model::Font)
 GLAXNIMATE_OBJECT_IMPL(model::TextShape)
@@ -18,14 +19,14 @@ public:
         raw(QRawFont::fromFont(query)),
         metrics(query)
     {
-        query.setKerning(false);
+//         query.setKerning(false);
         upscaled_raw();
     }
 
     void update_data()
     {
         // disable kerning because QRawFont doesn't handle kerning properly
-        query.setKerning(false);
+//         query.setKerning(false);
 
         raw = QRawFont::fromFont(query);
         metrics = QFontMetricsF(query);
@@ -147,41 +148,104 @@ QString model::Font::type_name_human() const
     return tr("Font");
 }
 
-std::vector<model::Font::CharData> model::Font::line_data(const QString& line, CharDataCache& cache) const
+QPainterPath model::Font::path_for_glyph(quint32 glyph, model::Font::CharDataCache& cache) const
 {
-    auto glyphs = d->raw.glyphIndexesForString(line);
-    auto advances = d->raw.advancesForGlyphIndexes(glyphs, QRawFont::UseDesignMetrics|QRawFont::KernedAdvances);
-    std::vector<model::Font::CharData> data;
-    data.reserve(glyphs.size());
+    auto it = cache.find(glyph);
 
-    for ( int i = 0; i < glyphs.size(); i++ )
+    if ( it != cache.end() )
+        return it->second;
+
+    QPainterPath path = d->path_for_glyph(glyph);
+    cache.emplace(glyph, path);
+    return path;
+}
+
+
+model::Font::ParagraphData model::Font::layout(const QString& text, CharDataCache& cache) const
+{
+    model::Font::ParagraphData para_data;
+
+    auto lines = text.split('\n');
+    QTextLayout layout(text, d->query, nullptr);
+
+    QTextOption option;
+    option.setUseDesignMetrics(true);
+    layout.setTextOption(option);
+    layout.beginLayout();
+    for ( const auto& line_size : lines )
     {
-        auto it = cache.find(glyphs[i]);
-        QPainterPath path;
+        QTextLine line = layout.createLine();
+        if ( !line.isValid() )
+            break;
+        line.setNumColumns(line_size.size());
+        line.setLeadingIncluded(true);
+    }
+    layout.endLayout();
 
-        if ( it == cache.end() )
+    qreal line_y = 0;
+    qreal yoff = -d->metrics.ascent();
+
+    for ( int ln = 0; ln < layout.lineCount(); ln++ )
+    {
+        QTextLine line = layout.lineAt(ln);
+
+        auto& line_data = para_data.emplace_back();
+        line_data.baseline = QPointF(0, line_y);
+        line_data.bounds = line.rect();
+
+        QPointF baseline(0, line_y + yoff);
+        for ( const auto& run : line.glyphRuns() )
         {
-            path = d->path_for_glyph(glyphs[i]);
-            cache.emplace(glyphs[i], path);
-        }
-        else
-        {
-            path = it->second;
+            auto glyphs = run.glyphIndexes();
+            line_data.glyphs.reserve(line_data.glyphs.size() + glyphs.size());
+            auto positions = run.positions();
+            for ( int i = 0; i < glyphs.size(); i++ )
+            {
+                line_data.glyphs.push_back({
+                    glyphs[i],
+                    positions[i] + baseline,
+                    path_for_glyph(glyphs[i], cache)
+                });
+            }
         }
 
-        data.push_back({
-            glyphs[i],
-            advances[i],
-            path
-        });
+        line_data.advance = QPointF(0, line.cursorToX(lines[ln].size()));
+
+        line_y += line_spacing();
     }
 
-    return data;
+    // QRawFont way: for some reason it ignores KernedAdvances
+    /*
+    qreal line_y = 0;
+    for ( const auto& line : text.split('\n') )
+    {
+        auto glyphs = d->raw.glyphIndexesForString(line);
+        auto advances = d->raw.advancesForGlyphIndexes(glyphs, QRawFont::UseDesignMetrics|QRawFont::KernedAdvances);
+
+        auto& line_data = para_data.emplace_back();
+        line_data.glyphs.reserve(glyphs.size());
+
+        line_data.baseline = line_data.advance = QPointF(0, line_y);
+        for ( int i = 0; i < glyphs.size(); i++ )
+        {
+            line_data.glyphs.push_back({
+                glyphs[i],
+                line_data.advance,
+                path_for_glyph(glyphs[i], cache)
+            });
+            line_data.advance += advances[i];
+        }
+
+        line_y += line_spacing();
+    }
+    */
+    return para_data;
 }
 
 qreal model::Font::line_spacing() const
 {
-    return d->metrics.lineSpacing();
+    // for some reason QTextLayout ignores leading()
+    return d->metrics.ascent() + d->metrics.descent();
 }
 
 QStringList model::Font::families() const
@@ -199,9 +263,6 @@ QList<int> model::Font::standard_sizes() const
     return list;
 }
 
-
-
-
 void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier& bez) const
 {
     bez.append(to_painter_path(t));
@@ -210,23 +271,11 @@ void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier&
 QPainterPath model::TextShape::to_painter_path(model::FrameTime t) const
 {
     QPainterPath p;
-
-    auto lines = text.get().split('\n');
-    QPointF baseline = position.get_at(t);
     Font::CharDataCache cache;
-
-    for ( const auto& line : lines )
-    {
-        QPointF start = baseline;
-
-        for ( const auto& data : font->line_data(line, cache) )
-        {
-            p += data.path.translated(start);
-            start += data.advance;
-        }
-
-        baseline.setY(baseline.y() + font->line_spacing());
-    }
+    QPointF pos = position.get_at(t);
+    for ( const auto& line : font->layout(text.get(), cache) )
+        for ( const auto& glyph : line.glyphs )
+            p += glyph.path.translated(glyph.position + pos);
     return p;
 }
 

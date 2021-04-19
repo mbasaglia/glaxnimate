@@ -23,9 +23,19 @@ public:
     struct CharData
     {
         quint32 glyph;
-        QPointF advance;
+        QPointF position;
         QPainterPath path;
     };
+
+    struct LineData
+    {
+        std::vector<CharData> glyphs;
+        QRectF bounds;
+        QPointF baseline;
+        QPointF advance;
+    };
+
+    using ParagraphData = std::vector<LineData>;
 
     using CharDataCache = std::unordered_map<quint32, QPainterPath>;
 
@@ -42,8 +52,9 @@ public:
 
     QString type_name_human() const override;
 
-    std::vector<CharData> line_data(const QString& line, CharDataCache& cache) const;
+    ParagraphData layout(const QString& string, CharDataCache& cache) const;
     qreal line_spacing() const;
+    QPainterPath path_for_glyph(quint32 glyph, CharDataCache& cache) const;
 
 private:
     void on_family_changed();
