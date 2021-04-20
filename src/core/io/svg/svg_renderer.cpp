@@ -2,10 +2,13 @@
 
 #include "model/document.hpp"
 #include "model/shapes/shapes.hpp"
+#include "model/shapes/text.hpp"
 #include "model/animation/join_animatables.hpp"
 #include "math/math.hpp"
 
 #include "detail.hpp"
+
+#include<QDebug>
 
 using namespace io::svg::detail;
 
@@ -270,69 +273,138 @@ public:
         };
     }
 
+    void write_shape_rect(QDomElement& parent, model::Rect* rect, const Style::Map& style)
+    {
+        auto e = element(parent, "rect");
+        write_style(e, style);
+        write_properties(e, {&rect->position, &rect->size}, {"x", "y"},
+            [](const std::vector<QVariant>& values){
+                QPointF c = values[0].toPointF();
+                QSizeF s = values[1].toSizeF();
+                return std::vector<QString>{
+                    QString::number(c.x() - s.width()/2),
+                    QString::number(c.y() - s.height()/2)
+                };
+            }
+        );
+        write_properties(e, {&rect->size}, {"width", "height"},
+            [](const std::vector<QVariant>& values){
+                QSizeF s = values[0].toSizeF();
+                return std::vector<QString>{
+                    QString::number(s.width()),
+                    QString::number(s.height())
+                };
+            }
+        );
+        write_property(e, &rect->rounded, "ry");
+    }
+
+    void write_shape_ellipse(QDomElement& parent, model::Ellipse* ellipse, const Style::Map& style)
+    {
+        auto e = element(parent, "ellipse");
+        write_style(e, style);
+        write_properties(e, {&ellipse->position}, {"cx", "cy"}, &Private::callback_point);
+        write_properties(e, {&ellipse->size}, {"rx", "ry"},
+            [](const std::vector<QVariant>& values){
+                QSizeF s = values[0].toSizeF();
+                return std::vector<QString>{
+                    QString::number(s.width() / 2),
+                    QString::number(s.height() / 2)
+                };
+            }
+        );
+    }
+
+    void write_shape_star(QDomElement& parent, model::PolyStar* star, const Style::Map& style)
+    {
+        model::FrameTime time = star->time();
+
+        auto e = write_bezier(parent, star, style);
+
+        set_attribute(e, "sodipodi:type", "star");
+        set_attribute(e, "inkscape:randomized", "0");
+        set_attribute(e, "inkscape:rounded", "0");
+        int sides = star->points.get_at(time);
+        set_attribute(e, "sodipodi:sides", sides);
+        set_attribute(e, "inkscape:flatsided", star->type.get() == model::PolyStar::Polygon);
+        QPointF c = star->position.get_at(time);
+        set_attribute(e, "sodipodi:cx", c.x());
+        set_attribute(e, "sodipodi:cy", c.y());
+        set_attribute(e, "sodipodi:r1", star->outer_radius.get_at(time));
+        set_attribute(e, "sodipodi:r2", star->inner_radius.get_at(time));
+        qreal angle = math::deg2rad(star->angle.get_at(time) - 90);
+        set_attribute(e, "sodipodi:arg1", angle);
+        set_attribute(e, "sodipodi:arg2", angle + math::pi / sides);
+    }
+
+    void write_shape_text(QDomElement& parent, model::TextShape* text, Style::Map style)
+    {
+        QFontInfo font_info(text->font->query());
+
+        // QFontInfo is broken, so we do something else
+        QFontDatabase db;
+        int weight = db.weight(font_info.family(), font_info.styleName());
+        QFont::Style font_style = db.italic(font_info.family(), font_info.styleName()) ? QFont::StyleItalic : QFont::StyleNormal;
+
+        // Convert weight
+        switch ( weight )
+        {
+            case QFont::Light:
+                weight = 100;
+                break;
+            case QFont::Normal:
+                weight = 400;
+                break;
+            case QFont::Bold:
+                weight = 700;
+                break;
+            default:
+                weight *= 10;
+        }
+
+        style["font-family"] = font_info.family();
+        style["font-size"] = QString("%1px").arg(font_info.pointSizeF());
+        style["font-weight"] = QString::number(weight);
+        switch ( font_style )
+        {
+            case QFont::StyleNormal: style["font-style"] = "normal"; break;
+            case QFont::StyleItalic: style["font-style"] = "italic"; break;
+            case QFont::StyleOblique: style["font-style"] = "oblique"; break;
+        }
+
+        auto e = element(parent, "text");
+        write_style(e, style);
+        write_properties(e, {&text->position}, {"x", "y"}, &Private::callback_point);
+
+        model::Font::CharDataCache cache;
+        for ( const auto& line : text->font->layout(text->text.get(), cache, false) )
+        {
+            auto tspan = element(e, "tspan");
+            tspan.appendChild(dom.createTextNode(line.text));
+            set_attribute(tspan, "sodipodi:role", "line");
+            set_attribute(tspan, "x", line.baseline.x());
+            set_attribute(tspan, "y", line.baseline.y());
+            tspan.setAttribute("xml:space", "preserve");
+        }
+    }
+
     void write_shape_shape(QDomElement& parent, model::ShapeElement* shape, const Style::Map& style)
     {
-        model::FrameTime time = shape->time();
-
         if ( auto rect = qobject_cast<model::Rect*>(shape) )
         {
-            auto e = element(parent, "rect");
-            write_style(e, style);
-            write_properties(e, {&rect->position, &rect->size}, {"x", "y"},
-                [](const std::vector<QVariant>& values){
-                    QPointF c = values[0].toPointF();
-                    QSizeF s = values[1].toSizeF();
-                    return std::vector<QString>{
-                        QString::number(c.x() - s.width()/2),
-                        QString::number(c.y() - s.height()/2)
-                    };
-                }
-            );
-            write_properties(e, {&rect->size}, {"width", "height"},
-                [](const std::vector<QVariant>& values){
-                    QSizeF s = values[0].toSizeF();
-                    return std::vector<QString>{
-                        QString::number(s.width()),
-                        QString::number(s.height())
-                    };
-                }
-            );
-            write_property(e, &rect->rounded, "ry");
-
+            write_shape_rect(parent, rect, style);
         }
         else if ( auto ellipse = qobject_cast<model::Ellipse*>(shape) )
         {
-            auto e = element(parent, "ellipse");
-            write_style(e, style);
-            write_properties(e, {&ellipse->position}, {"cx", "cy"}, &Private::callback_point);
-            write_properties(e, {&ellipse->size}, {"rx", "ry"},
-                [](const std::vector<QVariant>& values){
-                    QSizeF s = values[0].toSizeF();
-                    return std::vector<QString>{
-                        QString::number(s.width() / 2),
-                        QString::number(s.height() / 2)
-                    };
-                }
-            );
+            write_shape_ellipse(parent, ellipse, style);
         }
         else if ( auto star = qobject_cast<model::PolyStar*>(shape) )
         {
-            auto e = write_bezier(parent, shape, style);
-
-            set_attribute(e, "sodipodi:type", "star");
-            set_attribute(e, "inkscape:randomized", "0");
-            set_attribute(e, "inkscape:rounded", "0");
-            int sides = star->points.get_at(time);
-            set_attribute(e, "sodipodi:sides", sides);
-            set_attribute(e, "inkscape:flatsided", star->type.get() == model::PolyStar::Polygon);
-            QPointF c = star->position.get_at(time);
-            set_attribute(e, "sodipodi:cx", c.x());
-            set_attribute(e, "sodipodi:cy", c.y());
-            set_attribute(e, "sodipodi:r1", star->outer_radius.get_at(time));
-            set_attribute(e, "sodipodi:r2", star->inner_radius.get_at(time));
-            qreal angle = math::deg2rad(star->angle.get_at(time) - 90);
-            set_attribute(e, "sodipodi:arg1", angle);
-            set_attribute(e, "sodipodi:arg2", angle + math::pi / sides);
+            write_shape_star(parent, star, style);
+        }
+        else if ( auto text = shape->cast<model::TextShape>() )
+        {
+            write_shape_text(parent, text, style);
         }
         else if ( !qobject_cast<model::Styler*>(shape) )
         {
