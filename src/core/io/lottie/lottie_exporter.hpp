@@ -448,6 +448,12 @@ public:
 
     QCborMap convert_shape(model::ShapeElement* shape)
     {
+        if ( auto text = shape->cast<model::TextShape>() )
+        {
+            auto conv = text->to_path();
+            return convert_shape(conv.get());
+        }
+
         QCborMap jsh;
         jsh["ty"_l] = shape_types[shape->type_name()];
 //         jsh["d"] = 0;
@@ -466,11 +472,6 @@ public:
         else if ( auto styler = shape->cast<model::Styler>() )
         {
             convert_styler(styler, jsh);
-        }
-        else if ( shape->type_name() == "Stroke" )
-        {
-            auto str = static_cast<model::Stroke*>(shape);
-            convert_styler(str, jsh);
         }
         else if ( shape->type_name() == "PolyStar" )
         {

@@ -12,6 +12,7 @@
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/image.hpp"
+#include "model/shapes/text.hpp"
 
 #include "lottie_format.hpp"
 
