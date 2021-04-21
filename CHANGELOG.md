@@ -2,8 +2,12 @@
 
 * Editing:
     * The path used to import images or render frames is preserved
+    * Text shapes
 * UI:
     * View to manage assets
+* I/O:
+    * Exporting text to SVG
+    * Exporting text to Lottie/TGS as shapes
 * Bug Fixes:
     * Fixed dragging layers to the top
     * Fixed converting ellipses to paths
