@@ -156,7 +156,7 @@ public:
     void switch_tool_action(QAction* action);
     void status_message(const QString& msg, int duration=5000);
     void set_color_def(model::BrushStyle* sty, bool secondary);
-    QString get_open_image_file(const QString& title, const QString& dir);
+    QString get_open_image_file(const QString& title, const QString& dir, QString* out_dir = nullptr);
     void set_brush_reference(model::BrushStyle* sty, bool secondary);
     void trace_dialog(model::DocumentNode* object);
     void init_plugins();

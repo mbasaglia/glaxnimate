@@ -1,5 +1,7 @@
 ## 0.4.2
 
+* Editing:
+    * The path used to import images or render frames is preserved
 * UI:
     * View to manage assets
 * Bug Fixes:

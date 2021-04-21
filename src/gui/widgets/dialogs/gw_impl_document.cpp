@@ -416,7 +416,7 @@ void GlaxnimateWindow::Private::save_frame_bmp()
 {
     int frame = current_document->current_time();
     QFileDialog fd(parent, tr("Save Frame Image"));
-    fd.setDirectory(current_document->io_options().path);
+    fd.setDirectory(app::settings::get<QString>("open_save", "render_path"));
     fd.setDefaultSuffix("png");
     fd.selectFile(tr("Frame%1.png").arg(frame));
     fd.setAcceptMode(QFileDialog::AcceptSave);
@@ -430,6 +430,8 @@ void GlaxnimateWindow::Private::save_frame_bmp()
     if ( fd.exec() == QDialog::Rejected )
         return;
 
+    app::settings::set("open_save", "render_path", fd.directory().path());
+
     QImage image = io::raster::RasterMime().to_image({current_document->main()});
     if ( !image.save(fd.selectedFiles()[0]) )
         show_warning(tr("Render Frame"), tr("Could not save image"));
@@ -440,7 +442,7 @@ void GlaxnimateWindow::Private::save_frame_svg()
 {
     int frame = current_document->current_time();
     QFileDialog fd(parent, tr("Save Frame Image"));
-    fd.setDirectory(current_document->io_options().path);
+    fd.setDirectory(app::settings::get<QString>("open_save", "render_path"));
     fd.setDefaultSuffix("svg");
     fd.selectFile(tr("Frame%1.svg").arg(frame));
     fd.setAcceptMode(QFileDialog::AcceptSave);
@@ -449,6 +451,8 @@ void GlaxnimateWindow::Private::save_frame_svg()
 
     if ( fd.exec() == QDialog::Rejected )
         return;
+
+    app::settings::set("open_save", "render_path", fd.directory().path());
 
     QFile file(fd.selectedFiles()[0]);
     if ( !file.open(QFile::WriteOnly) )
@@ -615,11 +619,16 @@ void GlaxnimateWindow::Private::set_brush_reference ( model::BrushStyle* sty, bo
 void GlaxnimateWindow::Private::import_file()
 {
     io::Options options = current_document->io_options();
+    QString path = app::settings::get<QString>("open_save", "import_path");
+    if ( !path.isEmpty() )
+        options.path.setPath(path);
 
     ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
     if ( dialog.import_dialog() )
     {
         options = dialog.io_options();
+        app::settings::set("open_save", "import_path", options.path.path());
+
         model::Document imported(options.filename);
 
         QFile file(options.filename);

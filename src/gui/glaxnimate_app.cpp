@@ -102,6 +102,8 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("path",             {},                     {},                                                 Setting::Internal,  QString{}),
         Setting("recent_files",     {},                     {},                                                 Setting::Internal,  QStringList{}),
         Setting("backup_frequency", tr("Backup Frequency"), tr("How often to save a backup copy (in minutes)"), 5, 0, 60),
+        Setting("render_path",      {},                     {},                                                 Setting::Internal,  QString{}),
+        Setting("import_path",      {},                     {},                                                 Setting::Internal,  QString{}),
     }});
     Settings::instance().add_group(SettingGroup{"scripting", tr("Scripting"), "utilities-terminal", {
         //      slug            Label           Tooltip                    Type                default

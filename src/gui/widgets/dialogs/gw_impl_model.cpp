@@ -363,7 +363,7 @@ void GlaxnimateWindow::Private::move_to()
     }
 }
 
-QString GlaxnimateWindow::Private::get_open_image_file(const QString& title, const QString& dir)
+QString GlaxnimateWindow::Private::get_open_image_file(const QString& title, const QString& dir, QString* out_dir)
 {
     QFileDialog dialog(parent, title, dir);
     QStringList filters;
@@ -377,15 +377,25 @@ QString GlaxnimateWindow::Private::get_open_image_file(const QString& title, con
     if ( dialog.exec() == QDialog::Rejected )
         return {};
 
+    if ( out_dir )
+        *out_dir = dialog.directory().path();
+
     return dialog.selectedFiles()[0];
 }
 
 
 void GlaxnimateWindow::Private::import_image()
 {
-    QString image_file = get_open_image_file(tr("Import Image"), current_document->io_options().path.absolutePath());
+
+    QString path = app::settings::get<QString>("open_save", "import_path");
+    if ( path.isEmpty() )
+        path = current_document->io_options().path.absolutePath();
+
+    QString image_file = get_open_image_file(tr("Import Image"), path, &path);
     if ( image_file.isEmpty() )
         return;
+
+    app::settings::set("open_save", "import_path", path);
 
     auto bitmap = std::make_unique<model::Bitmap>(current_document.get());
     bitmap->filename.set(image_file);
