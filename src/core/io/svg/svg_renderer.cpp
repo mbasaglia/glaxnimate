@@ -363,7 +363,8 @@ public:
         }
 
         style["font-family"] = font_info.family();
-        style["font-size"] = QString("%1px").arg(font_info.pointSizeF());
+        style["font-size"] = QString("%1pt").arg(font_info.pointSizeF());
+        style["line-height"] = QString("%1px").arg(text->font->line_spacing());
         style["font-weight"] = QString::number(weight);
         switch ( font_style )
         {

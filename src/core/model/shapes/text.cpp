@@ -333,29 +333,26 @@ std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
             math::bezier::MultiBezier bez;
             bez.append(p);
 
-            QString char_name = QChar::decomposition(glyph.glyph);
             if ( bez.beziers().size() == 1 )
             {
                 auto path = std::make_unique<model::Path>(document());
-                path->name.set(char_name);
                 path->shape.set(bez.beziers()[0]);
-                line_group->shapes.insert(std::move(path));
+                line_group->shapes.insert(std::move(path), 0);
             }
             else if ( bez.beziers().size() > 1 )
             {
                 auto glyph_group = std::make_unique<model::Group>(document());
-                glyph_group->name.set(char_name);
                 for ( const auto& sub : bez.beziers() )
                 {
                     auto path = std::make_unique<model::Path>(document());
                     path->shape.set(sub);
-                    glyph_group->shapes.insert(std::move(path));
+                    glyph_group->shapes.insert(std::move(path), 0);
                 }
-                line_group->shapes.insert(std::move(glyph_group));
+                line_group->shapes.insert(std::move(glyph_group), 0);
             }
         }
 
-        group->shapes.insert(std::move(line_group));
+        group->shapes.insert(std::move(line_group), 0);
     }
 
     group->set_time(time());

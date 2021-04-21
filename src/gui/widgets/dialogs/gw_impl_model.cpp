@@ -70,7 +70,9 @@ model::VisualNode* GlaxnimateWindow::Private::current_document_node()
 
 void GlaxnimateWindow::Private::set_current_document_node(model::VisualNode* node)
 {
-    ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(node)));
+    QModelIndex index = comp_model.mapFromSource(document_node_model.node_index(node));
+    ui.view_document_node->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+    ui.view_document_node->setCurrentIndex(index);
 }
 
 void GlaxnimateWindow::Private::layer_new_layer()
@@ -515,12 +517,13 @@ void GlaxnimateWindow::Private::to_path()
     if ( shapes.size() == 1 )
         macro_name = tr("Convert %1 to path").arg((*shapes.begin())->name.get());
 
-    command::UndoMacroGuard guard(macro_name, current_document.get());
+    command::UndoMacroGuard guard(macro_name, current_document.get(), false);
     for ( auto shape : shapes )
     {
         auto path = shape->to_path();
         if ( path )
         {
+            guard.start();
             current_document->push_command(
                 new command::AddObject<model::ShapeElement>(
                     shape->owner(),
