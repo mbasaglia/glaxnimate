@@ -7,8 +7,8 @@
 #include "math/math.hpp"
 
 #include "detail.hpp"
+#include "font_weight.hpp"
 
-#include<QDebug>
 
 using namespace io::svg::detail;
 
@@ -82,6 +82,8 @@ public:
     {
         if ( styler->use.get() )
             return "url(#" + non_uuid_ids_map[styler->use.get()] + ")";
+        if ( styler->color.get().alpha() == 0 )
+            return "transparent";
         return styler->color.get().name();
     }
 
@@ -347,20 +349,7 @@ public:
         QFont::Style font_style = db.italic(font_info.family(), font_info.styleName()) ? QFont::StyleItalic : QFont::StyleNormal;
 
         // Convert weight
-        switch ( weight )
-        {
-            case QFont::Light:
-                weight = 100;
-                break;
-            case QFont::Normal:
-                weight = 400;
-                break;
-            case QFont::Bold:
-                weight = 700;
-                break;
-            default:
-                weight *= 10;
-        }
+        weight = detail::WeightConverter::convert(weight, detail::WeightConverter::qt, detail::WeightConverter::css);
 
         style["font-family"] = font_info.family();
         style["font-size"] = QString("%1pt").arg(font_info.pointSizeF());
@@ -378,7 +367,7 @@ public:
         write_properties(e, {&text->position}, {"x", "y"}, &Private::callback_point);
 
         model::Font::CharDataCache cache;
-        for ( const auto& line : text->font->layout(text->text.get(), cache, false) )
+        for ( const auto& line : text->font->layout(text->text.get()) )
         {
             auto tspan = element(e, "tspan");
             tspan.appendChild(dom.createTextNode(line.text));

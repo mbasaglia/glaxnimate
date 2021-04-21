@@ -169,7 +169,7 @@ QPainterPath model::Font::path_for_glyph(quint32 glyph, model::Font::CharDataCac
 }
 
 
-model::Font::ParagraphData model::Font::layout(const QString& text, CharDataCache& cache, bool fix_paint) const
+model::Font::ParagraphData model::Font::layout(const QString& text) const
 {
     model::Font::ParagraphData para_data;
 
@@ -212,13 +212,12 @@ model::Font::ParagraphData model::Font::layout(const QString& text, CharDataCach
             {
                 line_data.glyphs.push_back({
                     glyphs[i],
-                    positions[i] + baseline,
-                    path_for_glyph(glyphs[i], cache, fix_paint)
+                    positions[i] + baseline
                 });
             }
         }
 
-        line_data.advance = QPointF(0, line.cursorToX(lines[ln].size()));
+        line_data.advance = QPointF(line.cursorToX(lines[ln].size()), 0);
 
         line_y += line_spacing();
     }
@@ -292,9 +291,9 @@ QPainterPath model::TextShape::to_painter_path(model::FrameTime t) const
     QPainterPath p;
     Font::CharDataCache cache;
     QPointF pos = position.get_at(t);
-    for ( const auto& line : font->layout(text.get(), cache, true) )
+    for ( const auto& line : font->layout(text.get()) )
         for ( const auto& glyph : line.glyphs )
-            p += glyph.path.translated(glyph.position + pos);
+            p += font->path_for_glyph(glyph.glyph, cache, true).translated(glyph.position + pos);
     return p;
 }
 
@@ -322,14 +321,14 @@ std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
 
 
     Font::CharDataCache cache;
-    for ( const auto& line : font->layout(text.get(), cache, false) )
+    for ( const auto& line : font->layout(text.get()) )
     {
         auto line_group = std::make_unique<model::Group>(document());
         line_group->name.set(line.text);
 
         for ( const auto& glyph : line.glyphs )
         {
-            QPainterPath p = glyph.path.translated(glyph.position);
+            QPainterPath p = font->path_for_glyph(glyph.glyph, cache, false).translated(glyph.position);
             math::bezier::MultiBezier bez;
             bez.append(p);
 
@@ -369,4 +368,13 @@ std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
 //     group->transform->anchor_point.set(position.get());
 
     return group;
+}
+
+QPointF model::TextShape::offset_to_next_character() const
+{
+    Font::CharDataCache cache;
+    auto layout = font->layout(text.get());
+    if ( layout.empty() )
+        return {};
+    return layout.back().advance;
 }

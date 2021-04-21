@@ -5,19 +5,21 @@
 #include "utils/regexp.hpp"
 #include "utils/sort_gradient.hpp"
 #include "model/shapes/shapes.hpp"
+#include "model/shapes/text.hpp"
 #include "model/document.hpp"
 #include "model/assets/named_color.hpp"
 
 #include "path_parser.hpp"
 #include "animate_parser.hpp"
 #include "math/math.hpp"
+#include "font_weight.hpp"
 
 using namespace io::svg::detail;
 
 class io::svg::SvgParser::Private
 {
 public:
-    using ShapeCollection = std::vector<std::unique_ptr<model::Shape>>;
+    using ShapeCollection = std::vector<std::unique_ptr<model::ShapeElement>>;
 
     struct ParseFuncArgs
     {
@@ -318,34 +320,48 @@ public:
         if ( match.hasMatch() )
         {
             qreal value = match.captured(1).toDouble();
-            QString unit = match.captured(2);
-            static const constexpr qreal cmin = 2.54;
-            if ( unit == "px" || unit == "" )
-                return value;
-            else if ( unit == "vw" )
-                return value * size.width() * 0.01;
-            else if ( unit == "vh" )
-                return value * size.height() * 0.01;
-            else if ( unit == "vmin" )
-                return value * std::min(size.width(), size.height()) * 0.01;
-            else if ( unit == "vmax" )
-                return value * std::max(size.width(), size.height()) * 0.01;
-            else if ( unit == "in" )
-                return value * dpi;
-            else if ( unit == "pc" )
-                return value * dpi / 6;
-            else if ( unit == "pt" )
-                return value * dpi / 72;
-            else if ( unit == "cm" )
-                return value * dpi / cmin;
-            else if ( unit == "mm" )
-                return value * dpi / cmin / 10;
-            else if ( unit == "Q" )
-                return value * dpi / cmin / 40;
+            qreal mult = unit_multiplier(match.captured(2));
+            if ( mult != 0 )
+                return value * mult;
         }
 
         warning(QString("Unknown length value %1").arg(svg_value));
         return 0;
+    }
+
+    qreal unit_multiplier(const QString& unit)
+    {
+        static const constexpr qreal cmin = 2.54;
+
+        if ( unit == "px" || unit == "" )
+            return 1;
+        else if ( unit == "vw" )
+            return size.width() * 0.01;
+        else if ( unit == "vh" )
+            return size.height() * 0.01;
+        else if ( unit == "vmin" )
+            return std::min(size.width(), size.height()) * 0.01;
+        else if ( unit == "vmax" )
+            return std::max(size.width(), size.height()) * 0.01;
+        else if ( unit == "in" )
+            return dpi;
+        else if ( unit == "pc" )
+            return dpi / 6;
+        else if ( unit == "pt" )
+            return dpi / 72;
+        else if ( unit == "cm" )
+            return dpi / cmin;
+        else if ( unit == "mm" )
+            return dpi / cmin / 10;
+        else if ( unit == "Q" )
+            return dpi / cmin / 40;
+
+        return 0;
+    }
+
+    qreal unit_convert(qreal val, const QString& from, const QString& to)
+    {
+        return val * unit_multiplier(from) / unit_multiplier(to);
     }
 
     void warning(const QString& msg)
@@ -828,7 +844,6 @@ public:
         qreal rx = len_attr(args.element, "rx", 0);
         qreal ry = len_attr(args.element, "ry", 0);
         rect->rounded.set(qMax(rx, ry));
-        add_shapes(args, std::move(shapes));
 
 
         auto anim = parse_animated(args.element);
@@ -843,6 +858,8 @@ public:
 
         for ( const auto& kf : add_keyframes(anim.joined({"rx", "ry"})) )
             rect->rounded.set_keyframe(kf.time, qMax(kf.values[0][0], kf.values[1][0]))->set_transition(kf.transition);
+
+        add_shapes(args, std::move(shapes));
     }
 
     void parseshape_ellipse(const ParseFuncArgs& args)
@@ -856,13 +873,14 @@ public:
         qreal rx = len_attr(args.element, "rx", 0);
         qreal ry = len_attr(args.element, "ry", 0);
         ellipse->size.set(QSizeF(rx * 2, ry * 2));
-        add_shapes(args, std::move(shapes));
 
         auto anim = parse_animated(args.element);
         for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
             ellipse->position.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
         for ( const auto& kf : add_keyframes(anim.joined({"rx", "ry"})) )
             ellipse->size.set_keyframe(kf.time, {kf.values[0][0]*2, kf.values[1][0]*2})->set_transition(kf.transition);
+
+        add_shapes(args, std::move(shapes));
     }
 
     void parseshape_circle(const ParseFuncArgs& args)
@@ -875,13 +893,14 @@ public:
         ));
         qreal d = len_attr(args.element, "r", 0) * 2;
         ellipse->size.set(QSizeF(d, d));
-        add_shapes(args, std::move(shapes));
 
         auto anim = parse_animated(args.element);
         for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
             ellipse->position.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
         for ( const auto& kf : add_keyframes(anim.single({"r"})) )
             ellipse->size.set_keyframe(kf.time, {kf.values[0]*2, kf.values[0]*2})->set_transition(kf.transition);
+
+        add_shapes(args, std::move(shapes));
     }
 
     void parseshape_g(const ParseFuncArgs& args)
@@ -1140,6 +1159,164 @@ public:
         args.shape_parent->insert(std::move(image));
     }
 
+    struct TextStyle
+    {
+        QString family = "sans-serif";
+        int weight = QFont::Normal;
+        QFont::Style style = QFont::StyleNormal;
+        qreal line_spacing = 0;
+        qreal size = 64;
+        bool keep_space = false;
+        QPointF pos;
+    };
+
+    TextStyle parse_text_style(const ParseFuncArgs& args, const TextStyle& parent)
+    {
+        TextStyle out = parent;
+
+        Style style = parse_style(args.element, args.parent_style);
+
+        if ( style.contains("font-family") )
+            out.family = style["font-family"];
+
+        if ( style.contains("font-style") )
+        {
+            QString slant = style["font-style"];
+            if ( slant == "normal" ) out.style = QFont::StyleNormal;
+            else if ( slant == "italic" ) out.style = QFont::StyleItalic;
+            else if ( slant == "oblique" ) out.style = QFont::StyleOblique;
+        }
+
+        if ( style.contains("font-size") )
+        {
+            QString size = style["font-size"];
+            static const std::map<QString, int> size_names = {
+                {{"xx-small"}, {8}},
+                {{"x-small"}, {16}},
+                {{"small"}, {32}},
+                {{"medium"}, {64}},
+                {{"large"}, {128}},
+                {{"x-large"}, {256}},
+                {{"xx-large"}, {512}},
+            };
+            if ( size == "smaller" )
+                out.size /= 2;
+            else if ( size == "larger" )
+                out.size *= 2;
+            else if ( size_names.count(size) )
+                out.size = size_names.at(size);
+            else
+                out.size = parse_unit(size);
+        }
+
+        if ( style.contains("font-size") )
+        {
+            QString weight = style["font-size"];
+            if ( weight == "bold" )
+                out.weight = 700;
+            else if ( weight == "normal" )
+                out.weight = 400;
+            else if ( weight == "bolder" )
+                out.weight = qMin(1000, out.weight + 100);
+            else if ( weight == "lighter")
+                out.weight = qMax(1, out.weight - 100);
+            else
+                out.weight = weight.toInt();
+        }
+
+        if ( style.contains("line-height") )
+            out.line_spacing = parse_unit(style["line-height"]);
+
+
+        if ( args.element.hasAttribute("xml:space") )
+            out.keep_space = args.element.attribute("xml:space") == "preserve";
+
+        if ( args.element.hasAttribute("x") )
+            out.pos.setX(len_attr(args.element, "x", 0));
+        if ( args.element.hasAttribute("y") )
+            out.pos.setY(len_attr(args.element, "y", 0));
+
+        return out;
+    }
+
+    QString trim_text(const QString& text)
+    {
+        QString trimmed = text.simplified();
+        if ( !text.isEmpty() && text.back().isSpace() )
+            trimmed += ' ';
+        return trimmed;
+    }
+
+    void apply_text_style(model::Font* font, const TextStyle& style)
+    {
+        font->family.set(style.family);
+        font->size.set(unit_convert(style.size, "px", "pt"));
+        QFont qfont;
+        qfont.setFamily(style.family);
+        qfont.setWeight(detail::WeightConverter::convert(style.weight, detail::WeightConverter::css, detail::WeightConverter::qt));
+        qfont.setStyle(style.style);
+        QFontDatabase db;
+        font->style.set(db.styleString(qfont));
+    }
+
+    QPointF parse_text_element(const ParseFuncArgs& args, const TextStyle& parent_style)
+    {
+        TextStyle style = parse_text_style(args, parent_style);
+        Style css_style = parse_style(args.element, args.parent_style);
+
+        auto anim = parse_animated(args.element);
+
+        model::TextShape* last = nullptr;
+
+        QPointF offset;
+        QPointF pos = style.pos;
+        QString text;
+        for ( const auto & child : ItemCountRange(args.element.childNodes()) )
+        {
+            ParseFuncArgs child_args = {child.toElement(), args.shape_parent, css_style, args.in_group};
+            if ( child.isElement() )
+            {
+                last = nullptr;
+                style.pos = pos + offset;
+                offset = parse_text_element(child_args, style);
+            }
+            else if ( child.isText() || child.isCDATASection() )
+            {
+                text += child.toCharacterData().data();
+
+                if ( !last )
+                {
+                    ShapeCollection shapes;
+                    last = push<model::TextShape>(shapes);
+
+                    last->position.set(pos + offset);
+                    apply_text_style(last->font.get(), style);
+
+                    for ( const auto& kf : add_keyframes(anim.joined({"x", "y"})) )
+                    {
+                        last->position.set_keyframe(
+                            kf.time,
+                            offset + QPointF(kf.values[0][0], kf.values[1][0])
+                        )->set_transition(kf.transition);
+                    }
+
+                    add_shapes(child_args, std::move(shapes));
+                }
+
+                last->text.set(style.keep_space ? text : trim_text(text));
+
+                offset = last->offset_to_next_character();
+            }
+        }
+
+        return offset;
+    }
+
+    void parseshape_text(const ParseFuncArgs& args)
+    {
+        parse_text_element(args, {});
+    }
+
     QDomDocument dom;
 
     qreal dpi = 96;
@@ -1173,6 +1350,7 @@ const std::map<QString, void (io::svg::SvgParser::Private::*)(const io::svg::Svg
     {"path",    &io::svg::SvgParser::Private::parseshape_path},
     {"use",     &io::svg::SvgParser::Private::parseshape_use},
     {"image",   &io::svg::SvgParser::Private::parseshape_image},
+    {"text",   &io::svg::SvgParser::Private::parseshape_text},
 };
 const QRegularExpression io::svg::SvgParser::Private::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
 const QRegularExpression io::svg::SvgParser::Private::transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"};

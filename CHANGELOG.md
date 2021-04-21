@@ -8,6 +8,7 @@
 * I/O:
     * Exporting text to SVG
     * Exporting text to Lottie/TGS as shapes
+    * Importing text from SVG
 * Bug Fixes:
     * Fixed dragging layers to the top
     * Fixed converting ellipses to paths

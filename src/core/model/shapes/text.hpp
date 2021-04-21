@@ -24,7 +24,6 @@ public:
     {
         quint32 glyph;
         QPointF position;
-        QPainterPath path;
     };
 
     struct LineData
@@ -53,7 +52,7 @@ public:
 
     QString type_name_human() const override;
 
-    ParagraphData layout(const QString& string, CharDataCache& cache, bool fix_paint) const;
+    ParagraphData layout(const QString& string) const;
     qreal line_spacing() const;
     QPainterPath path_for_glyph(quint32 glyph, CharDataCache& cache, bool fix_paint) const;
 
@@ -82,6 +81,12 @@ public:
     QString type_name_human() const override;
     std::unique_ptr<ShapeElement> to_path() const override;
 
+    /**
+     * \brief Position where the next character would be
+     *
+     * ie: where to add another TextShape to make them flow together
+     */
+    QPointF offset_to_next_character() const;
 };
 
 } // namespace model
