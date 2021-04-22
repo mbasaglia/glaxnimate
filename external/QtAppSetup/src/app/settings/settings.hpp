@@ -66,6 +66,15 @@ T get(const QString& group, const QString& setting)
 }
 
 template<class T>
+T get(const QString& group, const QString& setting, const T& defval)
+{
+    auto var = Settings::instance().get_value(group, setting);
+    if ( var.canConvert<T>() )
+        return var.value<T>();
+    return defval;
+}
+
+template<class T>
 bool set(const QString& group, const QString& setting, const T& value)
 {
     return Settings::instance().set_value(group, setting, QVariant::fromValue(value));

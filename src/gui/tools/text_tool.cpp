@@ -6,6 +6,7 @@
 
 #include "draw_tool_base.hpp"
 #include "model/shapes/text.hpp"
+#include "widgets/tools/text_tool_widget.hpp"
 
 namespace tools {
 
@@ -159,6 +160,8 @@ public:
     {
         clear();
 
+        widget()->set_font(item->font->query());
+
         scene->addItem(&editor);
         target = item;
 
@@ -194,7 +197,17 @@ public:
         editor.setFont(font);
     }
 
+    QWidget* on_create_widget() override
+    {
+        return new TextToolWidget();
+    }
+
 private:
+    TextToolWidget* widget()
+    {
+        return static_cast<TextToolWidget*>(get_settings_widget());
+    }
+
     qreal base_line_spacing()
     {
         QFontMetrics metrics(editor.font());
@@ -258,6 +271,7 @@ private:
             editor.setTextInteractionFlags(Qt::TextEditorInteraction);
             editor.setZValue(9001);
             font = QFont("sans", 32);
+            connect(widget(), &TextToolWidget::font_changed, &editor, &QGraphicsTextItem::setFont);
             connect(editor.document(), &QTextDocument::contentsChanged, this, &TextTool::apply_changes);
         }
     }
