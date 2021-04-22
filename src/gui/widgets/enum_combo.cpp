@@ -5,6 +5,7 @@
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/polystar.hpp"
+#include "model/shapes/text.hpp"
 
 EnumCombo::EnumCombo(const QMetaEnum& meta_enum, int current_value, QWidget* parent)
     : QComboBox(parent), meta_enum(meta_enum)
@@ -89,6 +90,18 @@ std::pair<QString, const char*> EnumCombo::data_for(const QMetaEnum& meta_enum, 
                 return {tr("Linear"), "paint-gradient-linear"};
             case model::Gradient::Radial:
                 return {tr("Radial"), "paint-gradient-radial"};
+        }
+    }
+    else if ( std::strcmp(meta_enum.name(), "Alignment") == 0 )
+    {
+        switch ( model::Font::Alignment(value) )
+        {
+            case model::Font::Left:
+                return {tr("Left"), "format-justify-left"};
+            case model::Font::Right:
+                return {tr("Right"), "format-justify-right"};
+            case model::Font::Center:
+                return {tr("Center"), "format-justify-center"};
         }
     }
 

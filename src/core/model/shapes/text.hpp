@@ -12,6 +12,16 @@ namespace model {
 class Font : public Object
 {
     GLAXNIMATE_OBJECT(Font)
+
+public:
+    enum Alignment
+    {
+        Left = Qt::AlignLeft,
+        Right = Qt::AlignRight,
+        Center = Qt::AlignHCenter,
+    };
+    Q_ENUM(Alignment)
+
     GLAXNIMATE_PROPERTY_OPTIONS(QString, family, "", QStringList,
         &Font::families, &Font::on_family_changed, {}, PropertyTraits::Visual, OptionListPropertyBase::FontCombo)
     GLAXNIMATE_PROPERTY_OPTIONS(float, size, 32, QList<int>,
@@ -19,6 +29,7 @@ class Font : public Object
     GLAXNIMATE_PROPERTY_OPTIONS(QString, style, "", QStringList,
         &Font::styles, &Font::on_font_changed, &Font::valid_style, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(float, line_height, 1, &Font::on_font_changed, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(Alignment, alignment, Left, &Font::font_changed, {}, PropertyTraits::Visual)
 
 public:
     struct CharData

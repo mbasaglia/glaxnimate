@@ -169,7 +169,7 @@ QPainterPath model::Font::path_for_glyph(quint32 glyph, model::Font::CharDataCac
     return path;
 }
 
-
+#include <QDebug>
 model::Font::ParagraphData model::Font::layout(const QString& text) const
 {
     model::Font::ParagraphData para_data;
@@ -203,7 +203,17 @@ model::Font::ParagraphData model::Font::layout(const QString& text) const
         line_data.bounds = line.rect();
         line_data.text = lines[ln];
 
-        QPointF baseline(0, line_y + yoff);
+        qreal x_end = line.cursorToX(line.textStart() + line.textLength());
+        qreal xoff = 0;
+        switch ( alignment.get() )
+        {
+            case Left: break;
+            case Right: xoff = -x_end; break;
+            case Center: xoff = -x_end/2; break;
+
+        }
+
+        QPointF baseline(xoff, line_y + yoff);
         for ( const auto& run : line.glyphRuns() )
         {
             auto glyphs = run.glyphIndexes();
@@ -218,7 +228,7 @@ model::Font::ParagraphData model::Font::layout(const QString& text) const
             }
         }
 
-        line_data.advance = QPointF(line.cursorToX(lines[ln].size()), 0);
+        line_data.advance = QPointF(xoff + x_end, 0);
 
         line_y += line_spacing();
     }
