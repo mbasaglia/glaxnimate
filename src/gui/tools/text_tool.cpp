@@ -165,13 +165,13 @@ public:
         //         editor.setDefaultTextColor(Qt::transparent);
         editor.setPlainText(item->text.get());
 
-        QPen pen(QColor(128, 0, 0, 100), 1);
-        pen.setCosmetic(true);
-        set_text_format(Qt::transparent, pen);
-
         font = item->font->query();
         editor.setFont(font);
         editor.setFocus(Qt::OtherFocusReason);
+
+        QPen pen(QColor(128, 0, 0, 100), 1);
+        pen.setCosmetic(true);
+        set_text_format(Qt::transparent, pen, item->font->line_spacing());
 
         editor.setPos({});
         QTransform trans = item->transform_matrix(item->time());
@@ -184,7 +184,7 @@ public:
     {
         clear();
 
-        set_text_format(event.window->current_color(), event.window->current_pen_style());
+        set_text_format(event.window->current_color(), event.window->current_pen_style(), base_line_spacing());
         editor.setTransform(QTransform{});
         editor.setPos(event.scene_pos + editor_offet());
         event.scene->addItem(&editor);
@@ -195,7 +195,13 @@ public:
     }
 
 private:
-    void set_text_format(const QBrush& fill, const QPen& stroke)
+    qreal base_line_spacing()
+    {
+        QFontMetrics metrics(editor.font());
+        return metrics.ascent() + metrics.descent();
+    }
+
+    void set_text_format(const QBrush& fill, const QPen& stroke, qreal line_height)
     {
         editor.document()->setUseDesignMetrics(true);
         QTextCursor cur = editor.textCursor();
@@ -205,6 +211,9 @@ private:
         fmt.setTextOutline(stroke);
         fmt.setForeground(fill);
         cur.setCharFormat(fmt);
+        QTextBlockFormat bfmt;
+        bfmt.setLineHeight(line_height - base_line_spacing(), QTextBlockFormat::LineDistanceHeight);
+        cur.setBlockFormat(bfmt);
         editor.setTextCursor(cur);
     }
 

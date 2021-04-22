@@ -117,6 +117,7 @@ void model::Font::on_font_changed()
 //     query_.setHintingPreference(QFont::PreferFullHinting);
 //     query_.setStyleStrategy(QFont::StyleStrategy(QFont::ForceOutline|QFont::PreferQuality));
     d->update_data();
+    emit font_changed();
 
 }
 
@@ -254,7 +255,7 @@ model::Font::ParagraphData model::Font::layout(const QString& text) const
 qreal model::Font::line_spacing() const
 {
     // for some reason QTextLayout ignores leading()
-    return d->metrics.ascent() + d->metrics.descent();
+    return (d->metrics.ascent() + d->metrics.descent()) * line_height.get();
 }
 
 QStringList model::Font::families() const

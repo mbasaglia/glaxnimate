@@ -18,6 +18,7 @@ class Font : public Object
         &Font::standard_sizes, &Font::on_font_changed, {}, PropertyTraits::Visual, OptionListPropertyBase::LaxValues)
     GLAXNIMATE_PROPERTY_OPTIONS(QString, style, "", QStringList,
         &Font::styles, &Font::on_font_changed, &Font::valid_style, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(float, line_height, 1, &Font::on_font_changed, {}, PropertyTraits::Visual)
 
 public:
     struct CharData
@@ -55,6 +56,9 @@ public:
     ParagraphData layout(const QString& string) const;
     qreal line_spacing() const;
     QPainterPath path_for_glyph(quint32 glyph, CharDataCache& cache, bool fix_paint) const;
+
+signals:
+    void font_changed();
 
 private:
     void on_family_changed();
