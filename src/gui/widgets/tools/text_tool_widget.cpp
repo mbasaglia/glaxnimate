@@ -1,16 +1,17 @@
 #include "text_tool_widget.hpp"
 
 #include <QLabel>
-#include <QFontComboBox>
 #include <QPushButton>
 #include <QGridLayout>
 #include <QDoubleSpinBox>
-#include <QFontDialog>
 #include <QSpacerItem>
+#include <QAbstractItemView>
 
-#include <QDebug>
 #include "shape_tool_widget_p.hpp"
 #include "widgets/enum_combo.hpp"
+#include "widgets/font/font_model.hpp"
+#include "widgets/font/font_delegate.hpp"
+#include "widgets/font/font_style_dialog.hpp"
 
 class TextToolWidget::Private : public ShapeToolWidget::Private
 {
@@ -26,19 +27,25 @@ public:
         font_.setFamily(info.family());
         font_.setStyleName(info.styleName());
         update_styles(info.family());
-        combo_font->setCurrentText(info.family());
-        font_.setPointSizeF(info.pointSizeF());
-        spin_size->setValue(info.pointSizeF());
+        combo_font->setCurrentIndex(model.index_for_font(info.family()).row());
+        font_.setPointSizeF(font.pointSizeF());
+        spin_size->setValue(font.pointSizeF());
     }
 
-private:
     void on_setup_ui(ShapeToolWidget * p, QVBoxLayout * layout) override
     {
         TextToolWidget* parent = static_cast<TextToolWidget*>(p);
 
-        combo_font = new QFontComboBox(parent);
+        model.set_font_filters(font::FontModel::ScalableFonts);
+
+        combo_font = new QComboBox(parent);
+        combo_font->setItemDelegate(&delegate);
+        combo_font->setModel(&model);
+        combo_font->setInsertPolicy(QComboBox::NoInsert);
+        combo_font->setEditable(true);
+        combo_font->view()->setMinimumWidth(combo_font->view()->sizeHintForColumn(0));
         layout->insertWidget(0, combo_font);
-        connect(combo_font, &QComboBox::currentTextChanged, parent, [this, parent](const QString& family){
+        connect(combo_font, QOverload<const QString&>::of(&QComboBox::activated), parent, [this, parent](const QString& family){
             update_styles(family);
             parent->on_font_changed();
         });
@@ -73,9 +80,11 @@ private:
         button = new QPushButton(parent);
         button->setIcon(QIcon::fromTheme("dialog-text-and-font"));
         connect(button, &QPushButton::clicked, parent, [this, parent]{
-            dialog->setCurrentFont(font_);
+            dialog->set_favourites(app::settings::get<QStringList>("tools", "favourite_font_families"));
+            dialog->set_font(font_);
             if ( dialog->exec() )
-                parent->set_font(dialog->currentFont());
+                parent->set_font(dialog->font());
+            app::settings::set("tools", "favourite_font_families", dialog->favourites());
         });
         layout->insertWidget(2, button);
 
@@ -83,18 +92,20 @@ private:
         layout->insertItem(3, spacer);
 
 
-        dialog = new QFontDialog(parent);
-        dialog->setOptions(QFontDialog::ScalableFonts|QFontDialog::MonospacedFonts|QFontDialog::ProportionalFonts);
+        dialog = new font::FontStyleDialog(parent);
 
-        set_font(QFont("sans", 32));
+        set_font(QFont("sans", 36));
         on_retranslate();
     }
 
     void on_load_settings() override
     {
-        combo_font->setCurrentText(app::settings::get<QString>("tools", "text_family", font_.family()));
-        combo_style->setCurrentText(app::settings::get<QString>("tools", "text_style", font_.styleName()));
-        spin_size->setValue(app::settings::get<qreal>("tools", "text_size", font_.pointSizeF()));
+        QFontInfo info(font_);
+        model.set_favourites(app::settings::get<QStringList>("tools", "favourite_font_families"));
+        combo_font->setCurrentText(app::settings::get<QString>("tools", "text_family", info.family()));
+        combo_font->setEditText(combo_font->currentText());
+        combo_style->setCurrentText(app::settings::get<QString>("tools", "text_style", info.styleName()));
+        spin_size->setValue(app::settings::get<qreal>("tools", "text_size", info.pointSizeF()));
     }
 
     void on_save_settings() override
@@ -119,7 +130,7 @@ private:
         combo_style->setCurrentText(QFontInfo(font_).styleName());
     }
 
-    QFontComboBox* combo_font;
+    QComboBox* combo_font;
 
     QLabel* label_style;
     QComboBox* combo_style;
@@ -129,10 +140,13 @@ private:
     QDoubleSpinBox* spin_size;
 
     QPushButton* button;
-    QFontDialog* dialog;
+    font::FontStyleDialog* dialog;
 
     QFont font_;
     QFontDatabase db;
+
+    font::FontModel model;
+    font::FontDelegate delegate;
 };
 
 
@@ -164,9 +178,7 @@ void TextToolWidget::set_font(const QFont& font)
     emit font_changed(dd()->font());
 }
 
-void TextToolWidget::showEvent(QShowEvent* event)
+void TextToolWidget::set_preview_text(const QString& text)
 {
-    ShapeToolWidget::showEvent(event);
-    // dunno why but some widgets clear their contents when shown
-//     dd()->set_font(dd()->font());
+    dd()->dialog->set_preview_text(text);
 }

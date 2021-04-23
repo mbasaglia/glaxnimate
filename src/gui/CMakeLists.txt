@@ -16,6 +16,7 @@ item_models/document_node_model.cpp
 item_models/property_model.cpp
 item_models/gradient_list_model.cpp
 
+
 settings/clipboard_settings.cpp
 
 style/property_delegate.cpp
@@ -98,6 +99,15 @@ widgets/shape_style/document_swatch_widget.cpp
 widgets/shape_style/document_swatch_widget.ui
 widgets/shape_style/gradient_list_widget.cpp
 widgets/shape_style/gradient_list_widget.ui
+
+widgets/font/font_model.cpp
+widgets/font/font_delegate.cpp
+widgets/font/font_preview_widget.cpp
+widgets/font/font_preview_widget.ui
+widgets/font/font_style_dialog.cpp
+widgets/font/font_style_dialog.ui
+widgets/font/font_style_widget.cpp
+widgets/font/font_style_widget.ui
 )
 
 configure_file(resources/glaxnimate.in.qrc resources/glaxnimate.qrc)

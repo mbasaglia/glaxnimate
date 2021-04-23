@@ -10,7 +10,6 @@
 
 namespace tools {
 
-
 class TextTool : public DrawToolBase
 {
 public:
@@ -177,10 +176,9 @@ public:
         set_text_format(Qt::transparent, pen, item->font->line_spacing());
 
         editor.setPos({});
-        QTransform trans = item->transform_matrix(item->time());
-        QPointF pos = item->position.get() + editor_offet();
-        trans.translate(pos.x(), pos.y());
-        editor.setTransform(trans);
+        update_editor_position();
+
+        widget()->set_preview_text(target->text.get());
     }
 
     void create(const MouseEvent& event)
@@ -195,6 +193,7 @@ public:
         editor.setFocus(Qt::OtherFocusReason);
         editor.setDefaultTextColor(Qt::black);
         editor.setFont(font);
+        widget()->set_preview_text("");
     }
 
     QWidget* on_create_widget() override
@@ -203,6 +202,14 @@ public:
     }
 
 private:
+    void update_editor_position()
+    {
+        QTransform trans = target->transform_matrix(target->time());
+        QPointF pos = target->position.get() + editor_offet();
+        trans.translate(pos.x(), pos.y());
+        editor.setTransform(trans);
+    }
+
     TextToolWidget* widget()
     {
         return static_cast<TextToolWidget*>(get_settings_widget());
@@ -263,6 +270,18 @@ private:
             select(scene, text);
     }
 
+    void on_font_changed(const QFont& f)
+    {
+        font = f;
+        editor.setFont(f);
+
+        if ( target )
+        {
+            target->font->from_qfont(f);
+            update_editor_position();
+        }
+    }
+
     void initialize()
     {
         if ( !initialized )
@@ -271,7 +290,7 @@ private:
             editor.setTextInteractionFlags(Qt::TextEditorInteraction);
             editor.setZValue(9001);
             font = QFont("sans", 32);
-            connect(widget(), &TextToolWidget::font_changed, &editor, &QGraphicsTextItem::setFont);
+            connect(widget(), &TextToolWidget::font_changed, this, &TextTool::on_font_changed);
             connect(editor.document(), &QTextDocument::contentsChanged, this, &TextTool::apply_changes);
         }
     }

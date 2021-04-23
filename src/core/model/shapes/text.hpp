@@ -47,6 +47,8 @@ public:
     const QFont& query() const;
     const QFontMetricsF& metrics() const;
 
+    void from_qfont(const QFont& f);
+
     QStringList styles() const;
     QStringList families() const;
     QList<int> standard_sizes() const;

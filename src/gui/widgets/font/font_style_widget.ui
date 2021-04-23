@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>font::FontStyleWidget</class>
+ <widget class="QWidget" name="font::FontStyleWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>704</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" columnstretch="12,10,10">
+   <item row="0" column="1">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Font Style</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QListView" name="view_size"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" rowspan="2">
+    <widget class="QLineEdit" name="edit_family"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QListView" name="view_family"/>
+   </item>
+   <item row="1" column="2">
+    <widget class="QDoubleSpinBox" name="spin_size">
+     <property name="decimals">
+      <number>0</number>
+     </property>
+     <property name="minimum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1000.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Font</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" rowspan="3">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QListView" name="view_style"/>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Filters</string>
+       </property>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Writing System</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="combo_system">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Monospace</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="check_monospace">
+          <property name="text">
+           <string notr="true"/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Proportional</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QCheckBox" name="check_proportional">
+          <property name="text">
+           <string notr="true"/>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>edit_family</tabstop>
+  <tabstop>view_family</tabstop>
+  <tabstop>view_style</tabstop>
+  <tabstop>spin_size</tabstop>
+  <tabstop>view_size</tabstop>
+  <tabstop>combo_system</tabstop>
+  <tabstop>check_monospace</tabstop>
+  <tabstop>check_proportional</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>edit_family</sender>
+   <signal>textEdited(QString)</signal>
+   <receiver>font::FontStyleWidget</receiver>
+   <slot>family_edited(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>159</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>45</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_size</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>font::FontStyleWidget</receiver>
+   <slot>size_edited(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>697</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>703</x>
+     <y>50</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>combo_system</sender>
+   <signal>activated(int)</signal>
+   <receiver>font::FontStyleWidget</receiver>
+   <slot>system_changed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>470</x>
+     <y>406</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>703</x>
+     <y>479</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>check_monospace</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>font::FontStyleWidget</receiver>
+   <slot>filter_flags_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>390</x>
+     <y>422</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>595</x>
+     <y>479</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>check_proportional</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>font::FontStyleWidget</receiver>
+   <slot>filter_flags_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>387</x>
+     <y>448</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>567</x>
+     <y>479</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>family_edited(QString)</slot>
+  <slot>family_selected(QModelIndex)</slot>
+  <slot>style_selected(QModelIndex)</slot>
+  <slot>size_edited(double)</slot>
+  <slot>size_selected(QModelIndex)</slot>
+  <slot>filter_flags_changed()</slot>
+  <slot>system_changed(int)</slot>
+ </slots>
+</ui>

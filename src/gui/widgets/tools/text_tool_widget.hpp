@@ -14,8 +14,7 @@ public:
     QFont font() const;
     void set_font(const QFont& font);
 
-protected:
-    void showEvent(QShowEvent * event) override;
+    void set_preview_text(const QString& text);
 
 signals:
     void font_changed(const QFont& font);

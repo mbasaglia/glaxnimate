@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>font::FontStyleDialog</class>
+ <widget class="QDialog" name="font::FontStyleDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>753</width>
+    <height>659</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Font Style</string>
+  </property>
+  <property name="windowIcon">
+   <iconset theme="dialog-text-and-font"/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="10,4,0">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_system">
+      <attribute name="title">
+       <string>Font</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="font::FontStyleWidget" name="widget_system" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="font::FontPreviewWidget" name="preview" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>font::FontPreviewWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/font/font_preview_widget.hpp</header>
+   <container>1</container>
+   <slots>
+    <slot>set_font(QFont)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>font::FontStyleWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/font/font_style_widget.hpp</header>
+   <container>1</container>
+   <slots>
+    <signal>font_changed(QFont)</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>font::FontStyleDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>933</x>
+     <y>650</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>977</x>
+     <y>658</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>font::FontStyleDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>706</x>
+     <y>640</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>696</x>
+     <y>658</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget_system</sender>
+   <signal>font_changed(QFont)</signal>
+   <receiver>preview</receiver>
+   <slot>set_font(QFont)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>595</x>
+     <y>391</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>610</x>
+     <y>525</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

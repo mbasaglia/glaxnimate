@@ -1,9 +1,11 @@
 #include "text.hpp"
 
 #include <QTextLayout>
+#include <QFontInfo>
 
 #include "group.hpp"
 #include "path.hpp"
+#include "command/undo_macro_guard.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::Font)
 GLAXNIMATE_OBJECT_IMPL(model::TextShape)
@@ -168,6 +170,16 @@ QPainterPath model::Font::path_for_glyph(quint32 glyph, model::Font::CharDataCac
     cache.emplace(glyph, path);
     return path;
 }
+
+void model::Font::from_qfont(const QFont& f)
+{
+    command::UndoMacroGuard g(tr("Change Font"), document());
+    QFontInfo finfo(f);
+    family.set_undoable(finfo.family());
+    style.set_undoable(finfo.styleName());
+    size.set_undoable(f.pointSizeF());
+}
+
 
 
 model::Font::ParagraphData model::Font::layout(const QString& text) const
