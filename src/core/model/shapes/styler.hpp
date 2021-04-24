@@ -15,7 +15,7 @@ class Styler : public ShapeOperator
     Q_OBJECT
 
     GLAXNIMATE_ANIMATABLE(QColor, color, QColor())
-    GLAXNIMATE_ANIMATABLE(float, opacity, 1, {}, 0, 1)
+    GLAXNIMATE_ANIMATABLE(float, opacity, 1, {}, 0, 1, false, PropertyTraits::Percent)
     GLAXNIMATE_PROPERTY_REFERENCE(model::BrushStyle, use, &Styler::valid_uses, &Styler::is_valid_use, &Styler::on_use_changed)
 
 public:

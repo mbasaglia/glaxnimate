@@ -8,6 +8,7 @@
     * Pressing enter no longer closes the trace bitmap dialog
     * The trace dialog now remembers its settings (and there's a button to reset them to default)
     * Updated dark theme colors
+    * Property lists show opacity, scale and similar as percentages
 * I/O:
     * Exporting text to SVG
     * Exporting text to Lottie/TGS as shapes

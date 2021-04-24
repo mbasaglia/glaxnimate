@@ -427,11 +427,12 @@ public:
         Object* object,
         const QString& name,
         reference default_value,
-        PropertyCallback<void, Type> emitter = {}
+        PropertyCallback<void, Type> emitter = {},
+        int flags = 0
     )
     : AnimatableBase(
         object, name, PropertyTraits::from_scalar<Type>(
-            PropertyTraits::Animated|PropertyTraits::Visual
+            PropertyTraits::Animated|PropertyTraits::Visual|flags
         )),
       value_{default_value},
       emitter(std::move(emitter))
@@ -745,8 +746,9 @@ public:
         PropertyCallback<void, float> emitter = {},
         float min = std::numeric_limits<float>::lowest(),
         float max = std::numeric_limits<float>::max(),
-        bool cycle = false
-    ) : detail::AnimatedProperty<float>(object, name, default_value, std::move(emitter)),
+        bool cycle = false,
+        int flags = 0
+    ) : detail::AnimatedProperty<float>(object, name, default_value, std::move(emitter), flags),
         min_(min),
         max_(max),
         cycle_(cycle)

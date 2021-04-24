@@ -47,11 +47,12 @@ struct PropertyTraits
     enum Flags
     {
         NoFlags     = 0x00,
-        List        = 0x01,
-        ReadOnly    = 0x02,
-        Animated    = 0x04,
-        Visual      = 0x08,
-        OptionList  = 0x10,
+        List        = 0x01, ///< list/array of values
+        ReadOnly    = 0x02, ///< not modifiable by GUI
+        Animated    = 0x04, ///< animated
+        Visual      = 0x08, ///< has visible effects
+        OptionList  = 0x10, ///< has a set of valid values
+        Percent     = 0x20, ///< for Float, show as percentage on the GUI
     };
 
 
@@ -299,7 +300,7 @@ public:
              Type default_value = Type(),
              PropertyCallback<void, Type> emitter = {},
              PropertyCallback<bool, Type> validator = {},
-             PropertyTraits::Flags flags = PropertyTraits::NoFlags
+             int flags = PropertyTraits::NoFlags
     )
         : Base(obj, name, PropertyTraits::from_scalar<Type>(flags)),
           value_(std::move(default_value)),

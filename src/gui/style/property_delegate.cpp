@@ -24,7 +24,17 @@ void PropertyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         case QMetaType::QPointF:
             return paint_xy<QPointF>(painter, option, index);
         case QMetaType::QVector2D:
-            return paint_xy<QVector2D>(painter, option, index);
+        {
+            auto value = index.data().value<QVector2D>();
+            return paint_plaintext(
+                QString("%1% x %2%")
+                .arg(math::get(value, 0) * 100)
+                .arg(math::get(value, 1) * 100),
+                painter,
+                option,
+                index
+            );
+        }
         case QMetaType::QSizeF:
             return paint_xy<QSizeF>(painter, option, index);
     }
@@ -50,7 +60,8 @@ QWidget* PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     if ( refprop.canConvert<model::ReferencePropertyBase*>() )
         return new QComboBox(parent);
 
-    if ( index.data(item_models::PropertyModel::Flags).toInt() & model::PropertyTraits::OptionList )
+    int prop_flags = index.data(item_models::PropertyModel::Flags).toInt();
+    if ( prop_flags & model::PropertyTraits::OptionList )
     {
         if ( auto prop = refprop.value<model::OptionListPropertyBase*>() )
         {
@@ -77,13 +88,21 @@ QWidget* PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
         case QMetaType::Double:
         {
             auto box = new SmallerSpinBox(false, parent);
+            qreal mult = 1;
+            if ( prop_flags & model::PropertyTraits::Percent )
+            {
+                mult = 100;
+                box->setSuffix(tr("%"));
+                box->setDecimals(0);
+            }
+
             QVariant min = index.data(item_models::PropertyModel::MinValue);
             if ( min.isValid() )
-                box->setMinimum(min.toDouble());
+                box->setMinimum(min.toDouble() * mult);
             QVariant max = index.data(item_models::PropertyModel::MaxValue);
             if ( max.isValid() )
             {
-                qreal maxf = max.toDouble();
+                qreal maxf = max.toDouble() * mult;
                 box->setMaximum(maxf);
                 if ( max == 1 )
                     box->setSingleStep(0.1);
@@ -115,6 +134,7 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
 {
     QVariant data = index.data(Qt::EditRole);
     auto refprop = index.data(item_models::PropertyModel::ReferenceProperty);
+    int prop_flags = index.data(item_models::PropertyModel::Flags).toInt();
 
     // Object reference combo
     if ( refprop.canConvert<model::ReferencePropertyBase*>() )
@@ -141,7 +161,7 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
         return;
     }
     // Option list reference combo
-    else if ( index.data(item_models::PropertyModel::Flags).toInt() & model::PropertyTraits::OptionList )
+    else if ( prop_flags & model::PropertyTraits::OptionList )
     {
         if ( auto prop = refprop.value<model::OptionListPropertyBase*>() )
         {
@@ -205,7 +225,7 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
             return static_cast<Spin2D*>(editor)->set_value(data.value<QSizeF>());
         case QMetaType::Float:
         case QMetaType::Double:
-            static_cast<QDoubleSpinBox*>(editor)->setValue(data.toDouble());
+            static_cast<QDoubleSpinBox*>(editor)->setValue(data.toDouble() * ((prop_flags & model::PropertyTraits::Percent) ? 100 : 0));
             return;
         case QMetaType::Int:
             static_cast<QSpinBox*>(editor)->setValue(data.toInt());
@@ -220,6 +240,7 @@ void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * mod
 {
     QVariant data = index.data(Qt::EditRole);
     auto refprop = index.data(item_models::PropertyModel::ReferenceProperty);
+    int prop_flags = index.data(item_models::PropertyModel::Flags).toInt();
 
     // Object reference combo
     if (
@@ -232,7 +253,7 @@ void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * mod
         return;
     }
     // Option list combo
-    else if ( index.data(item_models::PropertyModel::Flags).toInt() & model::PropertyTraits::OptionList )
+    else if ( prop_flags & model::PropertyTraits::OptionList )
     {
         if ( auto prop = refprop.value<model::OptionListPropertyBase*>() )
         {
@@ -274,7 +295,7 @@ void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * mod
             return;
         case QMetaType::Float:
         case QMetaType::Double:
-            model->setData(index, static_cast<QDoubleSpinBox*>(editor)->value());
+            model->setData(index, static_cast<QDoubleSpinBox*>(editor)->value() / ((prop_flags & model::PropertyTraits::Percent) ? 100 : 0));
             return;
         case QMetaType::Int:
             model->setData(index, static_cast<QSpinBox*>(editor)->value());

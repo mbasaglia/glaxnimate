@@ -21,7 +21,7 @@ public:
         &DocumentNode::docnode_child_remove_begin
     )
     GLAXNIMATE_SUBOBJECT(model::Transform, transform)
-    GLAXNIMATE_ANIMATABLE(float, opacity, 1, &Group::opacity_changed, 0, 1)
+    GLAXNIMATE_ANIMATABLE(float, opacity, 1, &Group::opacity_changed, 0, 1, false, PropertyTraits::Percent)
 
 public:
     Group(Document* document);

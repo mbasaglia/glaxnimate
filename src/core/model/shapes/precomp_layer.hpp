@@ -16,7 +16,7 @@ class PreCompLayer : public ShapeElement
     GLAXNIMATE_PROPERTY_REFERENCE(model::Precomposition, composition, &PreCompLayer::valid_precomps, &PreCompLayer::is_valid_precomp, &PreCompLayer::composition_changed)
     GLAXNIMATE_PROPERTY(QSizeF, size, {})
     GLAXNIMATE_SUBOBJECT(model::Transform, transform)
-    GLAXNIMATE_ANIMATABLE(float, opacity, 1, &PreCompLayer::opacity_changed, 0, 1)
+    GLAXNIMATE_ANIMATABLE(float, opacity, 1, &PreCompLayer::opacity_changed, 0, 1, false, PropertyTraits::Percent)
 
 public:
     PreCompLayer(Document* document);

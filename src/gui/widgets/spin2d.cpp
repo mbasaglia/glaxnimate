@@ -104,7 +104,11 @@ void Spin2D::set_value(const QSizeF& v)
 
 void Spin2D::set_value(const QVector2D& v)
 {
-    set_value(v.x(), v.y());
+    spin_x->setSuffix(tr("%"));
+    spin_y->setSuffix(tr("%"));
+    spin_x->setDecimals(0);
+    spin_y->setDecimals(0);
+    set_value(v.x() * 100, v.y() * 100);
 }
 
 void Spin2D::set_value(qreal x, qreal y)
@@ -141,7 +145,7 @@ QSizeF Spin2D::value_size() const
 
 QVector2D Spin2D::value_vector() const
 {
-    return QVector2D(x(), y());
+    return QVector2D(x() / 100, y() / 100);
 }
 
 void Spin2D::x_changed(qreal x)

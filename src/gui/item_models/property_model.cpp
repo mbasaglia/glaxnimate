@@ -597,6 +597,8 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
         }
         else
         {
+            if ( role == Qt::DisplayRole && (prop->traits().flags & model::PropertyTraits::Percent) )
+                return QString(tr("%1%").arg(prop->value().toDouble() * 100));
             if ( role == Qt::DisplayRole || role == Qt::EditRole )
                 return prop->value();
             return {};
