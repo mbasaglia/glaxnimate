@@ -37,7 +37,7 @@ QColor model::VisualNode::docnode_group_color() const
         if ( auto parent = docnode_fuzzy_parent() )
             return parent->docnode_group_color();
 
-        return QColor(0xf8, 0xf8, 0xf8);
+        return Qt::transparent;
     }
     return group_color.get();
 }

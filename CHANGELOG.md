@@ -9,6 +9,7 @@
     * The trace dialog now remembers its settings (and there's a button to reset them to default)
     * Updated dark theme colors
     * Property lists show opacity, scale and similar as percentages
+    * Default layer color changed to transparent
 * I/O:
     * Exporting text to SVG
     * Exporting text to Lottie/TGS as shapes
