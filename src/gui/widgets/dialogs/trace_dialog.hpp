@@ -33,6 +33,7 @@ private slots:
     void zoom_preview(qreal percent);
     void show_help();
     void preview_slide(int percent);
+    void reset_settings();
 
 private:
     class Private;

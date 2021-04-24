@@ -126,6 +126,8 @@ void GlaxnimateApp::load_settings_metadata() const
         Setting("star_ratio",       {},         {},                        Setting::Internal,  0.5),
         Setting("star_points",      {},         {},                        Setting::Internal,  5),
     }});
+    // catch all
+    Settings::instance().add_group(SettingGroup{"internal", "", "", {}});
 }
 
 

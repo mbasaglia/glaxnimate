@@ -446,6 +446,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="text">
+        <string>Revert to Defaults</string>
+       </property>
+       <property name="icon">
+        <iconset theme="kt-restore-defaults"/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="standardButtons">
         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
@@ -630,6 +640,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_4</sender>
+   <signal>clicked()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>reset_settings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>643</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>156</x>
+     <y>763</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>update_preview()</slot>
@@ -641,5 +667,6 @@
   <slot>zoom_preview(double)</slot>
   <slot>show_help()</slot>
   <slot>preview_slide(int)</slot>
+  <slot>reset_settings()</slot>
  </slots>
 </ui>

@@ -16,6 +16,7 @@
 #include <QtColorWidgets/ColorDelegate>
 
 #include "app/application.hpp"
+#include "app/settings/widget.hpp"
 #include "app_info.hpp"
 
 #include "model/assets/bitmap.hpp"
@@ -222,6 +223,30 @@ public:
 
         item_image = new QGraphicsPixmapItem(QPixmap::fromImage(source_image), item_parent_image);
     }
+
+    void init_settings()
+    {
+        app::settings::WidgetSetting(ui.spin_tolerance, "internal", "trace_dialog").define();
+        app::settings::WidgetSetting(ui.spin_outline, "internal", "trace_dialog").define();
+        app::settings::WidgetSetting(ui.spin_smoothness, "internal", "trace_dialog").define();
+        app::settings::WidgetSetting(ui.spin_alpha_threshold, "internal", "trace_dialog").define();
+    }
+
+    void save_settings()
+    {
+        app::settings::WidgetSetting(ui.spin_tolerance, "internal", "trace_dialog").save();
+        app::settings::WidgetSetting(ui.spin_outline, "internal", "trace_dialog").save();
+        app::settings::WidgetSetting(ui.spin_smoothness, "internal", "trace_dialog").save();
+        app::settings::WidgetSetting(ui.spin_alpha_threshold, "internal", "trace_dialog").save();
+    }
+
+    void reset_settings()
+    {
+        app::settings::WidgetSetting(ui.spin_tolerance, "internal", "trace_dialog").reset();
+        app::settings::WidgetSetting(ui.spin_outline, "internal", "trace_dialog").reset();
+        app::settings::WidgetSetting(ui.spin_smoothness, "internal", "trace_dialog").reset();
+        app::settings::WidgetSetting(ui.spin_alpha_threshold, "internal", "trace_dialog").reset();
+    }
 };
 
 TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
@@ -256,6 +281,10 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     d->ui.preview->setBackgroundBrush(QPixmap(app::Application::instance()->data_file("images/widgets/background.png")));
 
     installEventFilter(&d->ncoe);
+
+    d->init_settings();
+    connect(this, &QDialog::accepted, this, [this]{ d->save_settings(); });
+
 }
 
 TraceDialog::~TraceDialog() = default;
@@ -430,4 +459,11 @@ void TraceDialog::preview_slide(int percent)
     qreal splitpoint = d->source_image.width() * percent / 100.0;
     d->item_parent_shape->setRect(0, 0, splitpoint, d->source_image.height());
     d->item_parent_image->setRect(splitpoint, 0, d->source_image.width() - splitpoint, d->source_image.height());
+}
+
+void TraceDialog::reset_settings()
+{
+    d->reset_settings();
+    d->ui.check_inverted->setChecked(false);
+    d->ui.combo_mode->setCurrentIndex(Private::Closest);
 }
