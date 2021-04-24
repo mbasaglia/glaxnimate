@@ -10,7 +10,7 @@ There are also some useful [examples](examples.md) that walk you through a few f
 
 ## Script Console
 
-You can use the [Script Console](/manual/ui/docks.md#script-console) to test some
+You can use the [Script Console](/manual/ui/docks#script-console) to test some
 snippets and modify the current document.
 
 Here you can access the `glaxnimate` module and you have the global objects
@@ -26,7 +26,7 @@ This also affects modules loaded for plugins.
 
 You can write plugins to perform common actions, add support for more file formats, and more.
 
-See [Plugins](/contributing/scripting/plugins.md) for a full description of the structure of a plugin.
+See [Plugins](/contributing/scripting/plugins) for a full description of the structure of a plugin.
 
 If you are developing a plugin, the easiest way to reload the modules when you make changes, is to
 click on *Reload Script Modules* in the script console.
