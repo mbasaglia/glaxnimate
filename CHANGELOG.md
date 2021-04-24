@@ -6,6 +6,7 @@
 * UI:
     * View to manage assets
     * Pressing enter no longer closes the trace bitmap dialog
+    * The trace dialog now remembers its settings (and there's a button to reset them to default)
 * I/O:
     * Exporting text to SVG
     * Exporting text to Lottie/TGS as shapes
