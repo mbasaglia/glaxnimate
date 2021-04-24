@@ -1,6 +1,7 @@
 #include "settings.hpp"
 #include "app/application.hpp"
 
+#include <set>
 #include <QSettings>
 
 
@@ -10,6 +11,10 @@ void app::settings::Settings::load()
 
     if ( groups.empty() )
         load_metadata();
+
+    auto avail_groups = settings.childGroups();
+    std::set<QString> unprocessed(avail_groups.begin(), avail_groups.end());
+    avail_groups.clear();
 
     for ( const SettingGroup& group : groups )
     {
@@ -23,6 +28,17 @@ void app::settings::Settings::load()
         }
         settings.endGroup();
         data[group.slug] = values;
+        unprocessed.erase(group.slug);
+    }
+
+    for ( const QString& slug : unprocessed )
+    {
+        QVariantMap values;
+        settings.beginGroup(slug);
+        for ( const QString&  key : settings.childKeys() )
+            values[key] = settings.value(key);
+        settings.endGroup();
+        data[slug] = values;
     }
 
     for ( const auto& group : custom_groups_ )
@@ -78,6 +94,15 @@ QVariant app::settings::Settings::get_value ( const QString& group, const QStrin
     return groups[order[group]].get_variant(setting, data[group]);
 }
 
+QVariant app::settings::Settings::get_default(const QString& group, const QString& setting) const
+{
+    if ( !order.contains(group) )
+        return {};
+
+    return groups[order[group]].get_default(setting);
+}
+
+
 bool app::settings::Settings::set_value ( const QString& group, const QString& setting, const QVariant& value )
 {
     if ( !order.contains(group) )
@@ -89,4 +114,12 @@ bool app::settings::Settings::set_value ( const QString& group, const QString& s
 void app::settings::Settings::load_metadata()
 {
     app::Application::instance()->load_settings_metadata();
+}
+
+QVariant app::settings::Settings::define(const QString& group, const QString& setting, const QVariant& default_value)
+{
+    if ( !order.contains(group) )
+        return default_value;
+
+    return groups[order[group]].define(setting, data[group], default_value);
 }

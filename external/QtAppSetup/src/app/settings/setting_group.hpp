@@ -51,6 +51,24 @@ public:
         return false;
     }
 
+    QVariant get_default(const QString& setting_slug) const
+    {
+        for ( const Setting& setting : settings )
+            if ( setting.slug == setting_slug )
+                return setting.default_value;
+        return {};
+    }
+
+    QVariant define(const QString& setting_slug, QVariantMap& values, const QVariant& default_value)
+    {
+        for ( const Setting& setting : settings )
+            if ( setting.slug == setting_slug )
+                return setting.get_variant(values);
+
+        settings.push_back(Setting{setting_slug, {}, {}, Setting::Internal, default_value});
+        return default_value;
+    }
+
 
     iterator begin() const { return settings.begin(); }
     iterator end() const  { return settings.end(); }
