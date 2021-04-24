@@ -35,6 +35,7 @@ public:
     void push_back(const Point& p) { points_.push_back(p); }
     void clear() { points_.clear(); closed_ = false; }
     const Point& back() const { return points_.back(); }
+    Point& back() { return points_.back(); }
 
     const Point& operator[](int index) const { return points_[index % points_.size()]; }
     Point& operator[](int index) { return points_[index % points_.size()]; }

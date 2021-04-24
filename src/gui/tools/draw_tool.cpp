@@ -192,6 +192,7 @@ void tools::DrawTool::Private::prepare_draw(const tools::MouseEvent& event)
             if ( !point.at_end )
                 bezier.reverse();
             bezier.points().back().type = math::bezier::Corner;
+            bezier.points()[0].type = math::bezier::Corner;
             return;
         }
     }

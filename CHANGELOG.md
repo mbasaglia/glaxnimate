@@ -16,6 +16,7 @@
     * Fixed dragging layers to the top
     * Fixed converting ellipses to paths
     * Newly drawn shapes are added on top of existing ones
+    * Fixed extending paths with the draw tool
 
 ## 0.4.1
 

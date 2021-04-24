@@ -90,7 +90,13 @@ static QVariant extend_impl(math::bezier::Bezier subject, const math::bezier::Be
             if ( at_end )
                 subject[0].type = math::bezier::Corner;
             else
-                subject[subject.size()-1].type = math::bezier::Corner;
+                subject.back().type = math::bezier::Corner;
+
+            if ( !target.empty() )
+            {
+                subject[0].tan_in = target[0].tan_in;
+                subject.back().tan_out = target.back().tan_out;
+            }
         }
     }
 
@@ -99,7 +105,10 @@ static QVariant extend_impl(math::bezier::Bezier subject, const math::bezier::Be
         if ( at_end )
         {
             if ( !subject.empty() )
-                subject[subject.size()-1].type = math::bezier::Corner;
+            {
+                subject.back().type = math::bezier::Corner;
+                subject.back().tan_out = target.back().tan_out;
+            }
 
             subject.points().insert(
                 subject.points().end(),
@@ -110,7 +119,11 @@ static QVariant extend_impl(math::bezier::Bezier subject, const math::bezier::Be
         else
         {
             if ( !subject.empty() )
+            {
                 subject[0].type = math::bezier::Corner;
+                subject[0].tan_in = target[0].tan_in;
+            }
+
             subject.points().insert(
                 subject.points().begin(),
                 target.points().begin(),
