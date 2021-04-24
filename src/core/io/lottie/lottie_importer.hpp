@@ -11,6 +11,13 @@
 
 namespace io::lottie::detail {
 
+struct FontInfo
+{
+    QString name;
+    QString family;
+    QString style;
+};
+
 class LottieImporterState
 {
 public:
@@ -24,6 +31,7 @@ public:
     {
         load_animation_container(json, document->main()->animation.get());
         load_assets(json["assets"].toArray());
+        load_fonts(json["fonts"]["list"].toArray());
         load_composition(json, document->main());
     }
 
@@ -319,6 +327,10 @@ private:
                 props.erase("shapes");
                 load_shapes(target->shapes, json["shapes"].toArray());
                 break;
+            case 5: // text
+                props.erase("t");
+                load_text_layer(target->shapes, json["t"].toObject());
+                break;
             default:
                 emit format->warning(QObject::tr("Unsupported layer type %1").arg(json["ty"].toString()));
         }
@@ -548,6 +560,23 @@ private:
         }
     }
 
+    bool compound_value_color(const QJsonValue& val, QColor& out)
+    {
+        QJsonArray arr = val.toArray();
+        if ( arr.size() == 3 )
+            out = QColor::fromRgbF(
+                arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble()
+            );
+        else if ( arr.size() == 4 )
+            out = QColor::fromRgbF(
+                arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble(), arr[3].toDouble()
+            );
+        else
+            return false;
+
+        return true;
+    }
+
     std::optional<QVariant> value_to_variant(model::BaseProperty * prop, const QJsonValue& val)
     {
         switch ( prop->traits().type )
@@ -566,17 +595,10 @@ private:
                 return compound_value_2d<QVector2D>(val, 0.01);
             case model::PropertyTraits::Color:
             {
-                QJsonArray arr = val.toArray();
-                if ( arr.size() == 3 )
-                    return QVariant::fromValue(QColor::fromRgbF(
-                        arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble()
-                    ));
-                else if ( arr.size() == 4 )
-                    return QVariant::fromValue(QColor::fromRgbF(
-                        arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble(), arr[3].toDouble()
-                    ));
-                else
-                    return {};
+                QColor col;
+                if ( compound_value_color(val, col) )
+                    return QVariant::fromValue(col);
+                return {};
             }
             case model::PropertyTraits::Bezier:
             {
@@ -730,6 +752,66 @@ private:
         comp->name.set(id);
     }
 
+    void load_fonts(const QJsonArray& fonts_arr)
+    {
+        for ( const auto& fontv : fonts_arr )
+        {
+            QJsonObject font = fontv.toObject();
+            FontInfo info;
+            info.family = font["fFamily"].toString();
+            info.name = font["fName"].toString();
+            info.style = font["fStyle"].toString();
+            fonts[info.name] = info;
+        }
+    }
+
+    FontInfo get_font(const QString& name)
+    {
+        auto it = fonts.find(name);
+        if ( it != fonts.end() )
+            return *it;
+        return {"", name, "Regular"};
+    }
+
+    void load_text_layer(model::ShapeListProperty& shapes, const QJsonObject& text)
+    {
+        // TODO "a" "m" "p"
+
+        model::Group* prev = nullptr;
+        model::KeyframeTransition jump({}, {}, true);
+
+        for ( const auto& v : text["d"].toObject()["k"].toArray() )
+        {
+            auto keyframe = v.toObject();
+            qreal time = keyframe["t"].toDouble();
+            auto text_document = keyframe["s"].toObject();
+
+            auto group = std::make_unique<model::Group>(document);
+            if ( time > 0 )
+                group->opacity.set_keyframe(0, 0)->set_transition(jump);
+            group->opacity.set_keyframe(time, 1)->set_transition(jump);
+            if ( prev )
+                prev->opacity.set_keyframe(time, 0)->set_transition(jump);
+            prev = group.get();
+
+            auto fill = std::make_unique<model::Fill>(document);
+            QColor color;
+            compound_value_color(text_document["fc"], color);
+            fill->color.set(color);
+            group->shapes.insert(std::move(fill));
+
+            auto shape = std::make_unique<model::TextShape>(document);
+            auto font = get_font(text_document["f"].toString());
+            shape->font->family.set(font.family);
+            shape->font->style.set(font.style);
+            shape->font->size.set(text_document["s"].toDouble());
+            shape->text.set(text_document["t"].toString().replace('\r', '\n'));
+            group->shapes.insert(std::move(shape));
+
+            shapes.insert(std::move(group), shapes.size());
+        }
+    }
+
     model::Document* document;
     io::lottie::LottieFormat* format;
     QMap<int, model::Layer*> layer_indices;
@@ -739,6 +821,7 @@ private:
     app::log::Log logger{"Lottie Import"};
     QMap<QString, model::Bitmap*> bitmap_ids;
     QMap<QString, model::Precomposition*> precomp_ids;
+    QMap<QString, FontInfo> fonts;
     model::Layer* mask = nullptr;
 };
 

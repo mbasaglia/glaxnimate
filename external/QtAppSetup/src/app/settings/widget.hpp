@@ -47,6 +47,9 @@ WIDGET_DEF(QCheckBox, isChecked, setChecked);
 
 } // namespace detail
 
+/**
+ * \brief Utility to automatically save/restore widget state using settings
+ */
 template<class WidgetType>
 class WidgetSetting
 {

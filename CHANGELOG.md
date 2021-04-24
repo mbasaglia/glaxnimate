@@ -11,6 +11,7 @@
     * Exporting text to SVG
     * Exporting text to Lottie/TGS as shapes
     * Importing text from SVG
+    * Importing text from Lottie
 * Bug Fixes:
     * Fixed dragging layers to the top
     * Fixed converting ellipses to paths
@@ -36,7 +37,7 @@
     * Fixed easing import/export for lottie
     * Fixed copy/pasting shape keyframes
     * Long file export operations properly show the progress dialog
-	* Scripts should now work on windows without Python installed
+    * Scripts should now work on windows without Python installed
 
 ## 0.4.0
 
