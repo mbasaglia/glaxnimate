@@ -94,8 +94,12 @@ QVariant font::FontModel::data(const QModelIndex& index, int role) const
     if ( index.column() == 1 )
     {
         if ( role == Qt::DecorationRole )
+        {
             if ( d->faves.count(family) )
-                return QIcon::fromTheme("favorite");
+                return QIcon::fromTheme("starred-symbolic");
+            else
+                return QIcon::fromTheme("non-starred-symbolic");
+        }
         return {};
     }
 
@@ -246,7 +250,12 @@ void font::FontModel::set_favourite(const QString& family, bool favourite)
 
             beginRemoveRows({}, index, index);
             d->filtered_faves.removeAt(index);
-            endRemoveColumns();
+            endRemoveRows();
         }
     }
+}
+
+void font::FontModel::toggle_favourite(const QString& family)
+{
+    set_favourite(family, d->faves.count(family) == 0);
 }

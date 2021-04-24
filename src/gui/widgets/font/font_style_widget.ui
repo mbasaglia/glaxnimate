@@ -10,7 +10,7 @@
     <height>480</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="12,10,10">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="17,10,5">
    <item row="0" column="1">
     <widget class="QLabel" name="label_2">
      <property name="text">
@@ -30,9 +30,6 @@
    </item>
    <item row="1" column="0" rowspan="2">
     <widget class="QLineEdit" name="edit_family"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QListView" name="view_family"/>
    </item>
    <item row="1" column="2">
     <widget class="QDoubleSpinBox" name="spin_size">
@@ -120,6 +117,25 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="3" column="0">
+    <widget class="QTableView" name="view_family">
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="showGrid">
+      <bool>false</bool>
+     </property>
+     <attribute name="horizontalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -215,6 +231,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>view_family</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>font::FontStyleWidget</receiver>
+   <slot>family_clicked(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>397</x>
+     <y>605</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>family_edited(QString)</slot>
@@ -224,5 +256,6 @@
   <slot>size_selected(QModelIndex)</slot>
   <slot>filter_flags_changed()</slot>
   <slot>system_changed(int)</slot>
+  <slot>family_clicked(QModelIndex)</slot>
  </slots>
 </ui>

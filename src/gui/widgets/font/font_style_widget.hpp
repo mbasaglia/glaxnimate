@@ -33,6 +33,7 @@ signals:
 private slots:
     void family_edited(const QString& family);
     void family_selected(const QModelIndex& index );
+    void family_clicked(const QModelIndex& index);
     void style_selected(const QModelIndex& index);
     void size_edited(double size);
     void size_selected(const QModelIndex& index);

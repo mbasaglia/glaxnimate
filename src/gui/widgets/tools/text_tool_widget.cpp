@@ -38,34 +38,38 @@ public:
 
         model.set_font_filters(font::FontModel::ScalableFonts);
 
+        group = new QGroupBox(parent);
+        layout->insertWidget(0, group);
+        QGridLayout* grid = new QGridLayout();
+        group->setLayout(grid);
+        int row = 0;
+
+
         combo_font = new QComboBox(parent);
         combo_font->setItemDelegate(&delegate);
         combo_font->setModel(&model);
         combo_font->setInsertPolicy(QComboBox::NoInsert);
         combo_font->setEditable(true);
         combo_font->view()->setMinimumWidth(combo_font->view()->sizeHintForColumn(0));
-        layout->insertWidget(0, combo_font);
         connect(combo_font, QOverload<const QString&>::of(&QComboBox::activated), parent, [this, parent](const QString& family){
             update_styles(family);
             parent->on_font_changed();
         });
-
-
-        QGridLayout* grid = new QGridLayout();
-        layout->insertLayout(1, grid);
+        grid->addWidget(combo_font, row++, 0, 1, 2);
 
         label_style = new QLabel(parent);
-        grid->addWidget(label_style, 0, 0);
+        grid->addWidget(label_style, row, 0);
 
         combo_style = new QComboBox(parent);
         connect(combo_style, QOverload<int>::of(&QComboBox::activated), parent, [this, parent]{
             font_.setStyleName(combo_style->currentText());
             parent->on_font_changed();
         });
-        grid->addWidget(combo_style, 0, 1);
+        grid->addWidget(combo_style, row, 1);
+        row++;
 
         label_size = new QLabel(parent);
-        grid->addWidget(label_size, 1, 0);
+        grid->addWidget(label_size, row, 0);
 
         spin_size = new QDoubleSpinBox(parent);
         spin_size->setMinimum(1);
@@ -75,22 +79,27 @@ public:
             font_.setPointSizeF(spin_size->value());
             parent->on_font_changed();
         });
-        grid->addWidget(spin_size, 1, 1);
+        grid->addWidget(spin_size, row, 1);
+        row++;
 
         button = new QPushButton(parent);
         button->setIcon(QIcon::fromTheme("dialog-text-and-font"));
         connect(button, &QPushButton::clicked, parent, [this, parent]{
             dialog->set_favourites(app::settings::get<QStringList>("tools", "favourite_font_families"));
             dialog->set_font(font_);
-            if ( dialog->exec() )
+            bool ok = dialog->exec();
+
+            auto faves = dialog->favourites();
+            app::settings::set("tools", "favourite_font_families", faves);
+            model.set_favourites(faves);
+
+            if ( ok )
                 parent->set_font(dialog->font());
-            app::settings::set("tools", "favourite_font_families", dialog->favourites());
         });
-        layout->insertWidget(2, button);
+        grid->addWidget(button, row++, 0, 1, 2);
 
-        QSpacerItem* spacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-        layout->insertItem(3, spacer);
-
+//         QSpacerItem* spacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+//         layout->insertItem(3, spacer);
 
         dialog = new font::FontStyleDialog(parent);
 
@@ -120,6 +129,7 @@ public:
         label_style->setText("Style");
         label_size->setText("Size");
         button->setText("Advanced...");
+        group->setTitle("Font");
     }
 
     void update_styles(const QString& family)
@@ -147,6 +157,8 @@ public:
 
     font::FontModel model;
     font::FontDelegate delegate;
+
+    QGroupBox* group;
 };
 
 

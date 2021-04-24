@@ -55,6 +55,9 @@ font::FontStyleWidget::FontStyleWidget(QWidget* parent)
 {
     d->ui.setupUi(this);
     d->ui.view_family->setModel(&d->model);
+    d->ui.view_family->setItemDelegateForColumn(0, &d->delegate);
+    d->ui.view_family->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    d->ui.view_family->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 
     d->standard_sizes = QFontDatabase::standardSizes();
     for ( int s : d->standard_sizes )
@@ -125,7 +128,7 @@ void font::FontStyleWidget::family_edited(const QString& family)
 
 void font::FontStyleWidget::family_selected(const QModelIndex& index)
 {
-    QString family = index.data(Qt::EditRole).toString();
+    QString family = index.siblingAtColumn(0).data(Qt::EditRole).toString();
     d->ui.edit_family->setText(family);
 
     d->font.setFamily(family);
@@ -186,3 +189,8 @@ void font::FontStyleWidget::system_changed(int)
     d->ui.view_family->setCurrentIndex(d->model.index_for_font(d->info.family()));
 }
 
+void font::FontStyleWidget::family_clicked(const QModelIndex& index)
+{
+    if ( index.column() == 1 )
+        d->model.toggle_favourite(index.siblingAtColumn(0).data().toString());
+}

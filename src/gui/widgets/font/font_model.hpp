@@ -47,6 +47,7 @@ public:
     void set_preview_font(bool preview);
 
     void set_favourite(const QString& family, bool favourite);
+    void toggle_favourite(const QString& family);
 
 private:
     void reset();

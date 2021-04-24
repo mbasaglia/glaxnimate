@@ -29,32 +29,37 @@ public:
 protected:
     void on_setup_ui(ShapeToolWidget * parent, QVBoxLayout * layout) override
     {
+        group = new QGroupBox(parent);
+        layout->insertWidget(0, group);
+        QGridLayout* grid = new QGridLayout();
+        group->setLayout(grid);
+        int row = 0;
+
         combo = new EnumCombo(model::PolyStar::Star, parent);
-        layout->insertWidget(0, combo);
+        grid->addWidget(combo, row++, 0, 1, 2);
         connect(combo, QOverload<int>::of(&QComboBox::activated), parent, &StarToolWidget::save_settings);
 
 
-        QGridLayout* grid = new QGridLayout();
-        layout->insertLayout(1, grid);
-
         label_ratio = new QLabel(parent);
-        grid->addWidget(label_ratio, 0, 0);
+        grid->addWidget(label_ratio, row, 0);
 
         spin_ratio = new QDoubleSpinBox(parent);
         spin_ratio->setMinimum(0);
         spin_ratio->setMaximum(1);
         spin_ratio->setSingleStep(0.1);
         connect(spin_ratio, &QDoubleSpinBox::editingFinished, parent, &StarToolWidget::save_settings);
-        grid->addWidget(spin_ratio, 0, 1);
+        grid->addWidget(spin_ratio, row, 1);
+        row++;
 
         label_points = new QLabel(parent);
-        grid->addWidget(label_points, 1, 0);
+        grid->addWidget(label_points, row, 0);
 
         spin_points = new QSpinBox(parent);
         spin_points->setMinimum(3);
         spin_points->setMaximum(16);
         connect(spin_ratio, &QSpinBox::editingFinished, parent, &StarToolWidget::save_settings);
-        grid->addWidget(spin_points, 1, 1);
+        grid->addWidget(spin_points, row, 1);
+        row++;
 
         on_retranslate();
     }
@@ -77,6 +82,7 @@ protected:
     {
         label_ratio->setText("Spoke Ratio");
         label_points->setText("Corners");
+        group->setTitle("Star");
     }
 
     EnumCombo* combo;
@@ -84,6 +90,7 @@ protected:
     QDoubleSpinBox* spin_ratio;
     QLabel* label_points;
     QSpinBox* spin_points;
+    QGroupBox* group;
 };
 
 
