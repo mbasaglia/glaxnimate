@@ -5,6 +5,7 @@
     * Text shapes
 * UI:
     * View to manage assets
+    * Pressing enter no longer closes the trace bitmap dialog
 * I/O:
     * Exporting text to SVG
     * Exporting text to Lottie/TGS as shapes

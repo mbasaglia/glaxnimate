@@ -136,7 +136,7 @@ QStringList font::FontModel::favourites() const
     return QStringList(d->faves.begin(), d->faves.end());
 #else
     QStringList l;
-    for ( const auto& f : faves )
+    for ( const auto& f : d->faves )
         l.push_back(f);
     return l;
 #endif
