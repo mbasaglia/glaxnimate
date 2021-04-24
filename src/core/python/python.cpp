@@ -1,7 +1,16 @@
 #include <pybind11/operators.h>
 
 #include "model/document.hpp"
-#include "model/shapes/shapes.hpp"
+#include "model/shapes/group.hpp"
+#include "model/shapes/layer.hpp"
+#include "model/shapes/precomp_layer.hpp"
+#include "model/shapes/rect.hpp"
+#include "model/shapes/ellipse.hpp"
+#include "model/shapes/path.hpp"
+#include "model/shapes/polystar.hpp"
+#include "model/shapes/fill.hpp"
+#include "model/shapes/stroke.hpp"
+#include "model/shapes/image.hpp"
 #include "model/assets/assets.hpp"
 #include "model/assets/named_color.hpp"
 #include "model/assets/precomposition.hpp"
