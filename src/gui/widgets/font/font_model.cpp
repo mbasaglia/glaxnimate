@@ -128,7 +128,14 @@ int font::FontModel::columnCount(const QModelIndex& parent) const
 
 QStringList font::FontModel::favourites() const
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     return QStringList(d->faves.begin(), d->faves.end());
+#else
+    QStringList l;
+    for ( const auto& f : faves )
+        l.push_back(f);
+    return l;
+#endif
 }
 
 void font::FontModel::set_favourites(const QStringList& faves)
