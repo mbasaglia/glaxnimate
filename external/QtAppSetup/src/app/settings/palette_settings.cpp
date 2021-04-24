@@ -8,7 +8,7 @@
 #include "app/widgets/widget_palette_editor.hpp"
 
 app::settings::PaletteSettings::PaletteSettings()
-    : default_palette(QGuiApplication::palette())
+    : default_palette(QGuiApplication::palette(), true)
 {
 }
 
@@ -33,13 +33,17 @@ void app::settings::PaletteSettings::save ( QSettings& settings )
     settings.setValue("theme", selected);
     settings.setValue("style", style);
 
-    settings.beginWriteArray("themes", palettes.size());
+    settings.beginWriteArray("themes");
 
     int i = 0;
-    for ( auto it = palettes.begin(); it != palettes.end(); ++it, ++i )
+    for ( auto it = palettes.begin(); it != palettes.end(); ++it )
     {
-        settings.setArrayIndex(i);
-        write_palette(settings, it.key(), *it);
+        if ( !it->built_in )
+        {
+            settings.setArrayIndex(i);
+            write_palette(settings, it.key(), *it);
+            ++i;
+        }
 
     }
 
@@ -58,13 +62,18 @@ void app::settings::PaletteSettings::write_palette ( QSettings& settings, const 
 }
 
 
-void app::settings::PaletteSettings::load_palette ( const QSettings& settings )
+void app::settings::PaletteSettings::load_palette ( const QSettings& settings, bool mark_built_in )
 {
     QString name = settings.value("name").toString();
     if ( name.isEmpty() )
         return;
-    QPalette palette;
 
+    auto it = palettes.find(name);
+    if ( it != palettes.end() && it->built_in && !mark_built_in )
+        return;
+
+    Palette palette;
+    palette.built_in = mark_built_in;
 
     for ( const auto& p : roles() )
     {

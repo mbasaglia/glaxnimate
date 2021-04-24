@@ -85,6 +85,11 @@ public:
         return ui.combo_saved->currentIndex() == 0;
     }
 
+    bool use_built_in()
+    {
+        return ui.combo_saved->currentData().toBool();
+    }
+
     void apply_style(QStyle* style)
     {
         ui.preview_widget->setStyle(style);
@@ -107,8 +112,12 @@ WidgetPaletteEditor::WidgetPaletteEditor ( app::settings::PaletteSettings* setti
     d->ui.setupUi ( this );
     d->setup_view();
     d->edited = settings->default_palette;
+
+    d->ui.combo_saved->setItemData(0, true);
     for ( auto name : settings->palettes.keys() )
-        d->ui.combo_saved->addItem(name);
+    {
+        d->ui.combo_saved->addItem(name, settings->palettes[name].built_in);
+    }
 
     if ( settings->palettes.find(settings->selected) != settings->palettes.end() )
         d->ui.combo_saved->setCurrentText(settings->selected);
@@ -161,7 +170,7 @@ void WidgetPaletteEditor::update_color ( int row, int column )
 
     d->ui.preview_widget->setPalette(d->edited);
 
-    if ( d->use_default() )
+    if ( d->use_built_in() )
         d->add_palette({});
 }
 
@@ -216,7 +225,7 @@ void WidgetPaletteEditor::apply_palette()
 
 void WidgetPaletteEditor::remove_palette()
 {
-    if ( !d->use_default() )
+    if ( !d->use_built_in() )
     {
         d->settings->palettes.remove(d->ui.combo_saved->currentText());
         d->ui.combo_saved->removeItem(d->ui.combo_saved->currentIndex());

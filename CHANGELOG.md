@@ -7,6 +7,7 @@
     * View to manage assets
     * Pressing enter no longer closes the trace bitmap dialog
     * The trace dialog now remembers its settings (and there's a button to reset them to default)
+    * Updated dark theme colors
 * I/O:
     * Exporting text to SVG
     * Exporting text to Lottie/TGS as shapes
@@ -17,6 +18,7 @@
     * Fixed converting ellipses to paths
     * Newly drawn shapes are added on top of existing ones
     * Fixed extending paths with the draw tool
+    * Trying to change a built in widget theme color will create a new palette
 
 ## 0.4.1
 

@@ -138,7 +138,7 @@ static void load_themes(GlaxnimateApp* app, app::settings::PaletteSettings* sett
         for ( const auto& theme : themedir.entryList({"*.ini"}, QDir::Files|QDir::Readable, QDir::Name|QDir::IgnoreCase) )
         {
             QSettings ini_parser(themedir.absoluteFilePath(theme), QSettings::IniFormat);
-            settings->load_palette(ini_parser);
+            settings->load_palette(ini_parser, true);
         }
     }
 }
