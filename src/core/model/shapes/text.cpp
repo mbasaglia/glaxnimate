@@ -299,12 +299,16 @@ model::TextShape::TextShape(model::Document* document)
 
 void model::TextShape::on_text_changed()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
     shape_cache.clear();
+#else
+    shape_cache = QPainterPath();
+#endif
 }
 
 void model::TextShape::on_font_changed()
 {
-    shape_cache.clear();
+    on_text_changed();
     cache.clear();
 }
 
