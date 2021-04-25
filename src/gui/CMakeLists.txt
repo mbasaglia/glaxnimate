@@ -54,6 +54,7 @@ widgets/dialogs/document_metadata_dialog.cpp
 widgets/dialogs/document_metadata_dialog.ui
 widgets/dialogs/trace_dialog.cpp
 widgets/dialogs/trace_dialog.ui
+widgets/dialogs/clipboard_inspector.cpp
 
 widgets/timeline/keyframe_transition_widget.cpp
 widgets/timeline/keyframe_editor_widget.cpp

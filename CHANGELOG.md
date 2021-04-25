@@ -10,6 +10,7 @@
     * Updated dark theme colors
     * Property lists show opacity, scale and similar as percentages
     * Default layer color changed to transparent
+    * New "hidden" debug menu
 * I/O:
     * Exporting text to SVG
     * Exporting text to Lottie/TGS as shapes

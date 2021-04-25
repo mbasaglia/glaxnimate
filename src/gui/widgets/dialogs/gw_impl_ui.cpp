@@ -16,6 +16,7 @@
 #include "widgets/dialogs/timing_dialog.hpp"
 #include "widgets/dialogs/document_metadata_dialog.hpp"
 #include "widgets/dialogs/trace_dialog.hpp"
+#include "widgets/dialogs/clipboard_inspector.hpp"
 
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
@@ -454,14 +455,16 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
                 menu_debug->exec(QCursor::pos());
         });
 
-        menu_debug->addAction("Print Model", [this]{
-            qDebug() << "SOURCE";
+        menu_debug->addAction("Print Model (Full)", [this]{
             app::debug::print_model(&document_node_model, {1}, false);
-            qDebug() << "PROXY";
+        });
+
+        menu_debug->addAction("Print Model (Layers)", [this]{
             app::debug::print_model(&comp_model, {1}, false);
-            qDebug() << "ASSET";
+        });
+
+        menu_debug->addAction("Print Model (Assets)", [this]{
             app::debug::print_model(&asset_model, {0}, false);
-            qDebug() << "";
         });
 
         menu_debug->addAction("Screenshot menus", [this]{
@@ -475,6 +478,12 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
                 name += ".png";
                 pic.save(name);
             }
+        });
+
+        menu_debug->addAction("Inspect Clipboard", [this]{
+            auto dialog = new ClipboardInspector();
+            dialog->show();
+            connect(dialog, &QDialog::finished, dialog, &QObject::deleteLater);
         });
     }
 
