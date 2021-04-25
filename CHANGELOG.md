@@ -1,9 +1,9 @@
 ## 0.4.2
 
 * Editing:
-    * The path used to import images or render frames is preserved
     * Text shapes
 * UI:
+    * The path for import images or render frames dialogs is preserved
     * View to manage assets
     * Pressing enter no longer closes the trace bitmap dialog
     * The trace dialog now remembers its settings (and there's a button to reset them to default)

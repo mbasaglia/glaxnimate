@@ -87,7 +87,6 @@ graphics::MoveHandle * tools::Tool::handle_under_mouse(const tools::MouseEvent& 
     return nullptr;
 }
 
-
 void tools::Tool::edit_clicked(const tools::MouseEvent& event)
 {
     auto mode = event.modifiers() & Qt::ControlModifier ? SelectionMode::Shape : SelectionMode::Group;

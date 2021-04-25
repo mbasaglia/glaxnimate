@@ -3,7 +3,6 @@
 #include <variant>
 
 #include "model/shapes/path.hpp"
-#include "model/shapes/text.hpp"
 #include "command/structure_commands.hpp"
 #include "math/geom.hpp"
 
@@ -446,7 +445,7 @@ private:
 
     void on_selected(graphics::DocumentScene * scene, model::VisualNode * node) override
     {
-        if ( node->has("transform") || node->is_instance<model::MainComposition>() || node->is_instance<model::TextShape>() )
+        if ( node->has("transform") || node->is_instance<model::MainComposition>() )
         {
             scene->show_editors(node);
         }

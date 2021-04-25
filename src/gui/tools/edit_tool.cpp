@@ -12,6 +12,7 @@
 #include "math/bezier/operations.hpp"
 #include "math/bezier/cubic_struts.hpp"
 #include "model/shapes/shape.hpp"
+#include "model/shapes/text.hpp"
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -195,7 +196,7 @@ public:
     void impl_extract_selection_recursive_item(graphics::DocumentScene * scene, model::VisualNode* node)
     {
         auto meta = node->metaObject();
-        if ( meta->inherits(&model::Shape::staticMetaObject) || meta->inherits(&model::ShapeOperator::staticMetaObject) )
+        if ( meta->inherits(&model::Shape::staticMetaObject) || meta->inherits(&model::ShapeOperator::staticMetaObject)  || meta->inherits(&model::TextShape::staticMetaObject) )
         {
             scene->show_editors(node);
 
@@ -695,7 +696,10 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
 
 }
 
-void tools::EditTool::mouse_double_click(const MouseEvent& event) { Q_UNUSED(event); }
+void tools::EditTool::mouse_double_click(const MouseEvent& event)
+{
+    edit_clicked(event);
+}
 
 
 void tools::EditTool::paint(const PaintEvent& event)
