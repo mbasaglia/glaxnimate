@@ -12,7 +12,6 @@
 #include "handle.hpp"
 
 
-#include <QDebug>
 namespace graphics {
 
 class TextAttributesEditor : public QGraphicsObject
@@ -95,7 +94,7 @@ private slots:
         shape->font->line_height.set_undoable(shape->font->line_height.value(), true);
     }
 
-    void on_prop_changed(const model::BaseProperty* prop)
+    void on_prop_changed(const model::BaseProperty*)
     {
         reset_handles();
     }
