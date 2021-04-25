@@ -473,12 +473,15 @@ public:
         connect(node, &model::VisualNode::docnode_group_color_changed, this, &TimeRectItem::update_color);
     }
 
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget *) override
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem * opt, QWidget *) override
     {
+        QColor fill = math::lerp(opt->palette.base().color(), color, color.alphaF());
+        fill.setAlpha(255);
+        auto stroke = fill.lightnessF() < 0.4 ? Qt::white : Qt::black;
         QPen p(stroke, 1);
         p.setCosmetic(true);
         painter->setPen(p);
-        painter->setBrush(color);
+        painter->setBrush(fill);
         painter->drawRect(boundingRect());
     }
 
@@ -486,18 +489,11 @@ private:
     void update_color(const QColor& col)
     {
         color = col;
-        color.setAlpha(255);
-        if ( color.lightnessF() < 0.4 )
-            stroke = Qt::white;
-        else
-            stroke = Qt::black;
-
         update();
     }
 
 protected:
     QColor color;
-    QColor stroke;
     qreal radius;
 };
 
