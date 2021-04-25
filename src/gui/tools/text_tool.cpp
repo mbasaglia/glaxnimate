@@ -139,6 +139,9 @@ public:
             shape->text.set(text);
             shape->name.set(text);
             shape->position.set(editor.pos() - editor_offet());
+            shape->font->family.set(font.family());
+            shape->font->style.set(font.styleName());
+            shape->font->size.set(font.pointSizeF());
             create_shape(QObject::tr("Draw Text"), event, std::move(shape));
         }
 
