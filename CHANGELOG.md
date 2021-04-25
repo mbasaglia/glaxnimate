@@ -22,6 +22,7 @@
     * Newly drawn shapes are added on top of existing ones
     * Fixed extending paths with the draw tool
     * Trying to change a built in widget theme color will create a new palette
+    * Fixed pasting gradients
 
 ## 0.4.1
 

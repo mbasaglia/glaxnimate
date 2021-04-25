@@ -6,6 +6,7 @@
 #include "model/shapes/shape.hpp"
 #include "model/assets/assets.hpp"
 #include "model/visitor.hpp"
+#include "app/log/log.hpp"
 
 io::Autoreg<io::glaxnimate::GlaxnimateMime> io::glaxnimate::GlaxnimateMime::autoreg;
 
@@ -28,7 +29,10 @@ public:
                 if ( !ptr || skip.count(ptr))
                     continue;
 
+                skip.insert(ptr);
                 referenced[ptr->uuid.get().toString()] = ptr;
+
+                on_visit(ptr);
             }
         }
     }
@@ -117,8 +121,17 @@ io::mime::DeserializedData io::glaxnimate::GlaxnimateMime::deserialize(const QBy
         {
             output.document->assets()->images->values.emplace(bitmap);
         }
+        else if ( auto gradient = qobject_cast<model::Gradient*>(obj) )
+        {
+            output.document->assets()->gradients->values.emplace(gradient);
+        }
+        else if ( auto gradient_colors = qobject_cast<model::GradientColors*>(obj) )
+        {
+            output.document->assets()->gradient_colors->values.emplace(gradient_colors);
+        }
         else
         {
+            app::log::Log("I/O").stream() << "Could not deserialize " << obj->type_name();
             delete obj;
             continue;
         }

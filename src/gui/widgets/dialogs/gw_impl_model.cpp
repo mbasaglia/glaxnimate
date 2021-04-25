@@ -200,16 +200,17 @@ template<class T>
 static void paste_assets(model::SubObjectProperty<T> (model::Assets::* p), model::Document* source, model::Document* current_document)
 {
     T* subject = (source->assets()->*p).get();
-    auto prop = &T::values;
-    for ( auto& item : (subject->*prop).raw() )
+    T* target = (current_document->assets()->*p).get();
+
+    for ( auto& item : subject->values.raw() )
     {
         if ( !current_document->assets()->find_by_uuid(item->uuid.get()) )
         {
             item->transfer(current_document);
             current_document->push_command(new command::AddObject(
-                &(subject->*prop),
+                &target->values,
                 std::move(item),
-                (subject->*prop).size()
+                target->values.size()
             ));
         }
     }
