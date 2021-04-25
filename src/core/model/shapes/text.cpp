@@ -253,7 +253,6 @@ model::Font::ParagraphData model::Font::layout(const QString& text) const
             line_data.glyphs.push_back({
                 glyphs[i],
                 line_data.advance,
-                path_for_glyph(glyphs[i], cache)
             });
             line_data.advance += advances[i];
         }
@@ -267,8 +266,15 @@ model::Font::ParagraphData model::Font::layout(const QString& text) const
 qreal model::Font::line_spacing() const
 {
     // for some reason QTextLayout ignores leading()
-    return (d->metrics.ascent() + d->metrics.descent()) * line_height.get();
+    return line_spacing_unscaled() * line_height.get();
 }
+
+qreal model::Font::line_spacing_unscaled() const
+{
+    // for some reason QTextLayout ignores leading()
+    return d->metrics.ascent() + d->metrics.descent();
+}
+
 
 QStringList model::Font::families() const
 {
@@ -284,6 +290,36 @@ QList<int> model::Font::standard_sizes() const
         list.insert(it, actual);
     return list;
 }
+
+model::TextShape::TextShape(model::Document* document)
+    : ShapeElement(document)
+{
+    connect(font.get(), &Font::font_changed, this, &TextShape::on_font_changed);
+}
+
+void model::TextShape::on_text_changed()
+{
+    shape_cache.clear();
+}
+
+void model::TextShape::on_font_changed()
+{
+    shape_cache.clear();
+    cache.clear();
+}
+
+const QPainterPath & model::TextShape::untranslated_path() const
+{
+    if ( shape_cache.isEmpty() )
+    {
+        for ( const auto& line : font->layout(text.get()) )
+            for ( const auto& glyph : line.glyphs )
+                shape_cache += font->path_for_glyph(glyph.glyph, cache, true).translated(glyph.position);
+    }
+
+    return shape_cache;
+}
+
 
 void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
@@ -301,13 +337,8 @@ void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier&
 
 QPainterPath model::TextShape::to_painter_path(model::FrameTime t) const
 {
-    QPainterPath p;
-    Font::CharDataCache cache;
     QPointF pos = position.get_at(t);
-    for ( const auto& line : font->layout(text.get()) )
-        for ( const auto& glyph : line.glyphs )
-            p += font->path_for_glyph(glyph.glyph, cache, true).translated(glyph.position + pos);
-    return p;
+    return untranslated_path().translated(pos);
 }
 
 QIcon model::TextShape::tree_icon() const
@@ -332,8 +363,6 @@ std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
     group->group_color.set(group_color.get());
     group->visible.set(visible.get());
 
-
-    Font::CharDataCache cache;
     for ( const auto& line : font->layout(text.get()) )
     {
         auto line_group = std::make_unique<model::Group>(document());
@@ -385,7 +414,6 @@ std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
 
 QPointF model::TextShape::offset_to_next_character() const
 {
-    Font::CharDataCache cache;
     auto layout = font->layout(text.get());
     if ( layout.empty() )
         return {};

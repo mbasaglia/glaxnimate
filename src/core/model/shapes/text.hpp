@@ -56,7 +56,17 @@ public:
     QString type_name_human() const override;
 
     ParagraphData layout(const QString& string) const;
+
+    /**
+     * \brief Distance between two baselines
+     */
     qreal line_spacing() const;
+
+    /**
+     * \brief Distance between two baselines for a line_height of 1
+     */
+    qreal line_spacing_unscaled() const;
+
     QPainterPath path_for_glyph(quint32 glyph, CharDataCache& cache, bool fix_paint) const;
 
 signals:
@@ -74,12 +84,13 @@ private:
 class TextShape : public ShapeElement
 {
     GLAXNIMATE_OBJECT(TextShape)
-    GLAXNIMATE_PROPERTY(QString, text, {}, {}, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(QString, text, {}, &TextShape::on_text_changed, {}, PropertyTraits::Visual)
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF())
     GLAXNIMATE_SUBOBJECT(Font, font)
 
 public:
-    using ShapeElement::ShapeElement;
+    explicit TextShape(model::Document* document);
+
     void add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
     QPainterPath to_painter_path(FrameTime t) const override;
     QIcon tree_icon() const override;
@@ -93,6 +104,14 @@ public:
      * ie: where to add another TextShape to make them flow together
      */
     QPointF offset_to_next_character() const;
+
+private:
+    void on_font_changed();
+    void on_text_changed();
+    const QPainterPath& untranslated_path() const;
+
+    mutable Font::CharDataCache cache;
+    mutable QPainterPath shape_cache;
 };
 
 } // namespace model

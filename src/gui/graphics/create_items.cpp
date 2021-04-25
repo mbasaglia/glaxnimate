@@ -13,6 +13,7 @@
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/text.hpp"
+
 #include "position_item.hpp"
 #include "sizepos_item.hpp"
 #include "bezier_item.hpp"
@@ -21,6 +22,7 @@
 #include "star_radius_item.hpp"
 #include "shape_graphics_item.hpp"
 #include "gradient_editor.hpp"
+#include "text_attributes_editor.hpp"
 
 static graphics::DocumentNodeGraphicsItem * make_graphics_item_shape(model::ShapeElement* node)
 {
@@ -167,9 +169,9 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
     );
     register_builder<model::TextShape>(
         &GraphicsItemFactory::make_graphics_item_default,
-        [](model::TextShape* txt){
-            auto v = std::make_unique<GraphicsEditor>(txt);
-            v->add_child<graphics::PositionItem>(&txt->position);
+        [](model::TextShape* text){
+            auto v = std::make_unique<GraphicsEditor>(text);
+            v->add_child<graphics::TextAttributesEditor>(text);
             return v;
         }
     );

@@ -81,8 +81,22 @@ public:
     HandleRole role() const;
     void set_role(HandleRole role);
 
+    /**
+     * \brief Set associated properties, shown on the context menu
+     * \see set_associated_property(), clear_associated_properties()
+     */
     void set_associated_properties(std::vector<model::AnimatableBase*> props);
+
+    /**
+     * \brief Set associated property, shown on the context menu
+     * \see set_associated_properties(), clear_associated_properties()
+     */
     void set_associated_property(model::AnimatableBase* prop);
+
+    /**
+     * \brief Clears associated properties
+     * \see set_associated_properties(), set_associated_property()
+     */
     void clear_associated_properties();
 
 protected:
