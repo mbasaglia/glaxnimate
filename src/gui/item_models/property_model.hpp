@@ -11,6 +11,18 @@ class PropertyModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
+    enum Columns
+    {
+        ColumnName,
+        ColumnValue,
+        ColumnColor,
+        ColumnVisible,
+        ColumnLocked,
+
+        ColumnCount
+
+    };
+
     enum CustomData
     {
         ReferenceProperty = Qt::UserRole,
@@ -65,6 +77,8 @@ public:
 
     QModelIndex property_index(model::BaseProperty* anim) const;
     QModelIndex object_index(model::Object* obj) const;
+
+    model::VisualNode* visual_node(const QModelIndex& index) const;
 
 private slots:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);

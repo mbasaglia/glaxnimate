@@ -87,7 +87,7 @@
           <enum>QAbstractItemView::SelectRows</enum>
          </property>
          <property name="rootIsDecorated">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="uniformRowHeights">
           <bool>true</bool>
@@ -95,6 +95,12 @@
          <property name="animated">
           <bool>false</bool>
          </property>
+         <attribute name="headerMinimumSectionSize">
+          <number>32</number>
+         </attribute>
+         <attribute name="headerDefaultSectionSize">
+          <number>32</number>
+         </attribute>
         </widget>
         <widget class="QWidget" name="horizontalWidget" native="true">
          <property name="sizePolicy">
@@ -200,11 +206,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>properties</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>CompoundTimelineWidget</receiver>
+   <slot>click_index(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>208</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>253</x>
+     <y>355</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>select_index(QModelIndex)</slot>
   <slot>custom_context_menu(QPoint)</slot>
   <slot>expand_index(QModelIndex)</slot>
   <slot>collapse_index(QModelIndex)</slot>
+  <slot>click_index(QModelIndex)</slot>
  </slots>
 </ui>

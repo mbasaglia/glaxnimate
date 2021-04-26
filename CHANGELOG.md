@@ -4,8 +4,10 @@
     * The shortcut for "Undo" now works also to remove points when drawing paths
 * UI:
     * Preferences dialog no longer closes on Enter
+    * Some layer properties are displayed inline in the timeline tree
 * Bug Fixes:
     * Custom keyboard shortcuts are saved properly
+    * Fixed values blowing up when changed from the property tree
 
 ## 0.4.2
 

@@ -42,11 +42,19 @@ public:
         connect(&property_model, &QAbstractItemModel::dataChanged,
                 ui.properties->viewport(), (void (QWidget::*)())&QWidget::update);
         ui.properties->setItemDelegateForColumn(1, &property_delegate);
-        ui.properties->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-        ui.properties->header()->setSectionResizeMode(1, QHeaderView::Stretch);
+
+        ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnName, QHeaderView::ResizeToContents);
+        ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnValue, QHeaderView::Stretch);
+        ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnColor, QHeaderView::ResizeToContents);
+        ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnLocked, QHeaderView::ResizeToContents);
+        ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnVisible, QHeaderView::ResizeToContents);
+        ui.properties->setItemDelegateForColumn(item_models::PropertyModel::ColumnColor, &color_delegate);
+        ui.properties->header()->moveSection(item_models::PropertyModel::ColumnColor, 0);
+        ui.properties->header()->moveSection(item_models::PropertyModel::ColumnVisible, 1);
+        ui.properties->header()->moveSection(item_models::PropertyModel::ColumnLocked, 2);
+
         ui.properties->header()->setFixedHeight(ui.timeline->header_height());
         property_delegate.set_forced_height(ui.timeline->header_height());
-
 
         ui.properties->verticalScrollBar()->setPageStep(ui.scrollbar->pageStep());
         connect(ui.properties->verticalScrollBar(), &QScrollBar::valueChanged, ui.scrollbar, &QScrollBar::setValue);
@@ -225,6 +233,7 @@ public:
     Ui::CompoundTimelineWidget ui;
     item_models::PropertyModel property_model{true};
     style::PropertyDelegate property_delegate;
+    color_widgets::ColorDelegate color_delegate;
 
     QAction* action_title;
     QMenu menu_property;
@@ -536,3 +545,15 @@ void CompoundTimelineWidget::expand_index(const QModelIndex& index)
         d->ui.timeline->expand(item.object);
 }
 
+
+void CompoundTimelineWidget::click_index ( const QModelIndex& index )
+{
+    auto node = d->property_model.visual_node(index);
+    if ( !node )
+        return;
+
+    if ( index.column() == item_models::PropertyModel::ColumnVisible )
+        node->visible.set(!node->visible.get());
+     else if ( index.column() == item_models::PropertyModel::ColumnLocked )
+        node->locked.set(!node->locked.get());
+}

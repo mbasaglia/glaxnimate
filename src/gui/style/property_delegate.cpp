@@ -295,7 +295,7 @@ void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * mod
             return;
         case QMetaType::Float:
         case QMetaType::Double:
-            model->setData(index, static_cast<QDoubleSpinBox*>(editor)->value() / ((prop_flags & model::PropertyTraits::Percent) ? 100 : 0));
+            model->setData(index, static_cast<QDoubleSpinBox*>(editor)->value() / ((prop_flags & model::PropertyTraits::Percent) ? 100 : 1));
             return;
         case QMetaType::Int:
             model->setData(index, static_cast<QSpinBox*>(editor)->value());

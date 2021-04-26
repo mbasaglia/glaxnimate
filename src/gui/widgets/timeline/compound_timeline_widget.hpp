@@ -38,6 +38,7 @@ private slots:
     void paste_keyframe();
     void collapse_index(const QModelIndex& index);
     void expand_index(const QModelIndex& index);
+    void click_index ( const QModelIndex& index );
     
 private:
     class Private;

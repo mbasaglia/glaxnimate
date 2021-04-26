@@ -21,7 +21,7 @@ public:
     struct Subtree
     {
         Subtree(model::Object* object, id_type parent)
-            : object{object}, parent{parent}
+            : object{object}, parent{parent}, visual_node{object->cast<model::VisualNode>()}
         {}
 
         Subtree(model::BaseProperty* prop, id_type parent)
@@ -43,6 +43,7 @@ public:
         id_type parent = 0;
         std::vector<Subtree*> children;
         id_type id = 0;
+        model::VisualNode* visual_node = nullptr;
     };
 
     void add_extra_objects(model::Object* object, PropertyModel* model, bool insert_row)
@@ -287,6 +288,35 @@ public:
             node(st.parent)->children.push_back(&it->second);
         it->second.id = next_id;
         next_id++;
+
+        if ( auto visual = it->second.visual_node )
+        {
+            connect(visual, &model::VisualNode::docnode_visible_changed, parent, [this, visual]() {
+                QModelIndex ind = node_index(visual);
+                QModelIndex par = node_index(visual->docnode_parent());
+                QModelIndex changed = parent->index(ind.row(), ColumnVisible, par);
+                parent->dataChanged(changed, changed, {Qt::DecorationRole});
+            });
+            connect(visual, &model::VisualNode::docnode_locked_changed, parent, [this, visual]() {
+                QModelIndex ind = node_index(visual);
+                QModelIndex par = node_index(visual->docnode_parent());
+                QModelIndex changed = parent->index(ind.row(), ColumnLocked, par);
+                parent->dataChanged(changed, changed, {Qt::DecorationRole});
+            });
+            connect(visual, &model::VisualNode::docnode_group_color_changed, parent, [this, visual]() {
+                QModelIndex ind = node_index(visual);
+                QModelIndex par = node_index(visual->docnode_parent());
+                QModelIndex changed = parent->index(ind.row(), ColumnColor, par);
+                parent->dataChanged(changed, changed, {Qt::BackgroundRole, Qt::EditRole, Qt::DisplayRole});
+            });
+            connect(visual, &model::VisualNode::name_changed, parent, [this, visual]() {
+                QModelIndex ind = node_index(visual);
+                QModelIndex par = node_index(visual->docnode_parent());
+                QModelIndex changed = parent->index(ind.row(), ColumnName, par);
+                parent->dataChanged(changed, changed, {Qt::EditRole, Qt::DisplayRole});
+            });
+        }
+
         return &it->second;
     }
 
@@ -305,157 +335,7 @@ public:
         return it != nodes.end() ? &it->second : nullptr;
     }
 
-    model::Document* document = nullptr;
-    std::vector<Subtree*> roots;
-    id_type next_id = 1;
-    std::unordered_map<id_type, Subtree> nodes;
-    std::unordered_map<model::Object*, id_type> objects;
-    std::unordered_map<model::BaseProperty*, id_type> properties;
-    bool animation_only;
-};
-
-item_models::PropertyModel::PropertyModel(bool animation_only)
-    : d(std::make_unique<Private>())
-{
-    d->animation_only = animation_only;
-}
-
-item_models::PropertyModel::~PropertyModel() = default;
-
-
-QModelIndex item_models::PropertyModel::index(int row, int column, const QModelIndex& parent) const
-{
-    Private::Subtree* tree = d->node_from_index(parent);
-    if ( !tree )
-    {
-        if ( row >= 0 && row < int(d->roots.size()) )
-            return createIndex(row, column, d->roots[row]->id);
-        return {};
-    }
-
-
-    if ( row >= 0 && row < int(tree->children.size()) )
-        return createIndex(row, column, tree->children[row]->id);
-
-    return {};
-}
-
-QModelIndex item_models::PropertyModel::parent(const QModelIndex& child) const
-{
-    Private::Subtree* tree = d->node_from_index(child);
-
-    if ( !tree || tree->parent == 0 )
-        return {};
-
-    auto it = d->nodes.find(tree->parent);
-    if ( it == d->nodes.end() )
-        return {};
-
-    Private::Subtree* tree_parent = &it->second;
-
-    for ( int i = 0; i < int(tree_parent->children.size()); i++ )
-        if ( tree_parent->children[i] == tree )
-            return createIndex(i, 0, tree->parent);
-
-    return {};
-}
-
-
-void item_models::PropertyModel::clear_objects()
-{
-    beginResetModel();
-    d->clear(this);
-    endResetModel();
-}
-
-void item_models::PropertyModel::set_object(model::Object* object)
-{
-    beginResetModel();
-    d->clear(this);
-    if ( object )
-        d->add_object(object, this, false);
-    endResetModel();
-}
-
-void item_models::PropertyModel::add_object(model::Object* object)
-{
-    d->add_object(object, this, true);
-}
-
-void item_models::PropertyModel::add_object_without_properties(model::Object* object)
-{
-    beginInsertRows({}, d->roots.size(), d->roots.size());
-    d->add_object_without_properties(object, this);
-    endInsertRows();
-}
-
-int item_models::PropertyModel::columnCount(const QModelIndex&) const
-{
-    return 2;
-}
-
-int item_models::PropertyModel::rowCount(const QModelIndex& parent) const
-{
-    if ( d->roots.empty() )
-        return 0;
-
-    Private::Subtree* tree = d->node_from_index(parent);
-    if ( !tree )
-        return d->roots.size();
-
-    return tree->children.size();
-}
-
-Qt::ItemFlags item_models::PropertyModel::flags(const QModelIndex& index) const
-{
-    if ( d->roots.empty() || !index.isValid() )
-        return {};
-
-    Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-
-    if ( index.column() == 0 )
-        return flags;
-
-
-    Private::Subtree* tree = d->node_from_index(index);
-    if ( !tree )
-        return {};
-
-    if ( index.column() == 1 )
-    {
-        if ( tree->prop )
-        {
-            model::PropertyTraits traits = tree->prop->traits();
-
-            if ( (traits.flags & (model::PropertyTraits::List|model::PropertyTraits::ReadOnly))
-                || traits.type == model::PropertyTraits::Object || traits.type == model::PropertyTraits::Unknown )
-                return flags;
-
-            if ( traits.type == model::PropertyTraits::Bool )
-                return flags | Qt::ItemIsUserCheckable;
-
-            return flags | Qt::ItemIsEditable;
-        }
-        else
-        {
-            return flags;
-        }
-    }
-
-    return {};
-}
-
-QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) const
-{
-    if ( d->roots.empty() || !index.isValid() )
-        return {};
-
-
-    Private::Subtree* tree = d->node_from_index(index);
-    if ( !tree )
-        return {};
-
-    if ( index.column() == 0 )
+    QVariant data_name(Subtree* tree, int role)
     {
         if ( role == Qt::DisplayRole )
         {
@@ -472,9 +352,15 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
             font.setBold(true);
             return font;
         }
+        else if ( role == Qt::EditRole && tree->visual_node )
+        {
+            return tree->visual_node->object_name();
+        }
+
         return {};
     }
-    else if ( index.column() == 1 )
+
+    QVariant data_value(Subtree* tree, int role)
     {
         if ( !tree->prop )
         {
@@ -501,7 +387,7 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
         if ( (traits.flags & model::PropertyTraits::Animated) )
         {
             model::AnimatableBase* anprop = static_cast<model::AnimatableBase*>(prop);
-            auto frame_status = anprop->keyframe_status(d->document->current_time());
+            auto frame_status = anprop->keyframe_status(document->current_time());
 
             if ( role == Qt::DecorationRole )
             {
@@ -604,47 +490,300 @@ QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) co
             return {};
         }
     }
+
+    QVariant data_color(Subtree* tree, int role)
+    {
+        if ( tree->visual_node && ( role == Qt::DisplayRole || role == Qt::EditRole ) )
+            return tree->visual_node->docnode_group_color();
+
+        return {};
+    }
+
+    QVariant data_visible(Subtree* tree, int role)
+    {
+        if ( tree->visual_node && ( role == Qt::DecorationRole ) )
+        {
+            if ( tree->visual_node->visible.get() )
+                return QIcon::fromTheme("view-visible");
+            return QIcon::fromTheme("view-hidden");
+        }
+
+        return {};
+    }
+
+    QVariant data_locked(Subtree* tree, int role)
+    {
+        if ( tree->visual_node && ( role == Qt::DecorationRole ) )
+        {
+            if ( tree->visual_node->locked.get() )
+                return QIcon::fromTheme("object-locked");
+            return QIcon::fromTheme("object-unlocked");
+        }
+
+        return {};
+    }
+
+    Subtree* visual_node_parent(Subtree* tree)
+    {
+        while ( tree->parent )
+        {
+            tree = node(tree->parent);
+            if ( !tree )
+                return nullptr;
+
+            if ( tree->visual_node )
+                return tree;
+        }
+
+        return nullptr;
+    }
+
+    QModelIndex node_index(model::DocumentNode* node)
+    {
+        auto it = objects.find(node);
+        if ( it == objects.end() )
+            return {};
+
+        Subtree* tree = this->node(it->second);
+        if ( !tree )
+            return {};
+
+        int row = 0;
+        if ( Subtree* parent = visual_node_parent(tree) )
+        {
+            row = parent->visual_node->docnode_child_index(node);
+            if ( row == -1 )
+                return {};
+        }
+        else
+        {
+            for ( ; row < int(roots.size()); row++ )
+                if ( roots[row]->visual_node == node )
+                    break;
+
+            if ( row == int(roots.size()) )
+                return {};
+        }
+
+        return parent->createIndex(row, 0, tree->id);
+    }
+
+    model::Document* document = nullptr;
+    std::vector<Subtree*> roots;
+    id_type next_id = 1;
+    std::unordered_map<id_type, Subtree> nodes;
+    std::unordered_map<model::Object*, id_type> objects;
+    std::unordered_map<model::BaseProperty*, id_type> properties;
+    bool animation_only;
+    PropertyModel* parent = nullptr;
+};
+
+item_models::PropertyModel::PropertyModel(bool animation_only)
+    : d(std::make_unique<Private>())
+{
+    d->parent = this;
+    d->animation_only = animation_only;
+}
+
+item_models::PropertyModel::~PropertyModel() = default;
+
+
+QModelIndex item_models::PropertyModel::index(int row, int column, const QModelIndex& parent) const
+{
+    Private::Subtree* tree = d->node_from_index(parent);
+    if ( !tree )
+    {
+        if ( row >= 0 && row < int(d->roots.size()) )
+            return createIndex(row, column, d->roots[row]->id);
+        return {};
+    }
+
+
+    if ( row >= 0 && row < int(tree->children.size()) )
+        return createIndex(row, column, tree->children[row]->id);
+
+    return {};
+}
+
+QModelIndex item_models::PropertyModel::parent(const QModelIndex& child) const
+{
+    Private::Subtree* tree = d->node_from_index(child);
+
+    if ( !tree || tree->parent == 0 )
+        return {};
+
+    auto it = d->nodes.find(tree->parent);
+    if ( it == d->nodes.end() )
+        return {};
+
+    Private::Subtree* tree_parent = &it->second;
+
+    for ( int i = 0; i < int(tree_parent->children.size()); i++ )
+        if ( tree_parent->children[i] == tree )
+            return createIndex(i, 0, tree->parent);
+
+    return {};
+}
+
+
+void item_models::PropertyModel::clear_objects()
+{
+    beginResetModel();
+    d->clear(this);
+    endResetModel();
+}
+
+void item_models::PropertyModel::set_object(model::Object* object)
+{
+    beginResetModel();
+    d->clear(this);
+    if ( object )
+        d->add_object(object, this, false);
+    endResetModel();
+}
+
+void item_models::PropertyModel::add_object(model::Object* object)
+{
+    d->add_object(object, this, true);
+}
+
+void item_models::PropertyModel::add_object_without_properties(model::Object* object)
+{
+    beginInsertRows({}, d->roots.size(), d->roots.size());
+    d->add_object_without_properties(object, this);
+    endInsertRows();
+}
+
+int item_models::PropertyModel::columnCount(const QModelIndex&) const
+{
+    return ColumnCount;
+}
+
+int item_models::PropertyModel::rowCount(const QModelIndex& parent) const
+{
+    if ( d->roots.empty() )
+        return 0;
+
+    Private::Subtree* tree = d->node_from_index(parent);
+    if ( !tree )
+        return d->roots.size();
+
+    return tree->children.size();
+}
+
+Qt::ItemFlags item_models::PropertyModel::flags(const QModelIndex& index) const
+{
+    if ( d->roots.empty() || !index.isValid() )
+        return {};
+
+    Private::Subtree* tree = d->node_from_index(index);
+    if ( !tree )
+        return {};
+
+    Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+
+    switch ( index.column() )
+    {
+        case ColumnColor:
+        case ColumnName:
+            if ( tree->visual_node )
+                flags |= Qt::ItemIsEditable;
+            return flags;
+        case ColumnLocked:
+        case ColumnVisible:
+            return flags;
+        case ColumnValue:
+            if ( tree->prop )
+            {
+                model::PropertyTraits traits = tree->prop->traits();
+
+                if ( (traits.flags & (model::PropertyTraits::List|model::PropertyTraits::ReadOnly))
+                    || traits.type == model::PropertyTraits::Object || traits.type == model::PropertyTraits::Unknown )
+                    return flags;
+
+                if ( traits.type == model::PropertyTraits::Bool )
+                    return flags | Qt::ItemIsUserCheckable;
+
+                return flags | Qt::ItemIsEditable;
+            }
+            return flags;
+    }
+
+    return {};
+}
+
+QVariant item_models::PropertyModel::data(const QModelIndex& index, int role) const
+{
+    if ( d->roots.empty() || !index.isValid() )
+        return {};
+
+
+    Private::Subtree* tree = d->node_from_index(index);
+    if ( !tree )
+        return {};
+
+    switch ( index.column() )
+    {
+        case ColumnName: return d->data_name(tree, role);
+        case ColumnValue: return d->data_value(tree, role);
+        case ColumnColor: return d->data_color(tree, role);
+        case ColumnLocked: return d->data_locked(tree, role);
+        case ColumnVisible: return d->data_visible(tree, role);
+    }
     return {};
 }
 
 bool item_models::PropertyModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if ( d->roots.empty() || !index.isValid() || index.column() != 1 )
+    if ( d->roots.empty() || !index.isValid() )
         return false;
 
     Private::Subtree* tree = d->node_from_index(index);
     if ( !tree )
         return false;
 
-    if ( !tree->prop )
-        return false;
-
-    model::BaseProperty* prop = tree->prop;
-    model::PropertyTraits traits = prop->traits();
-
-
-    if ( (traits.flags & (model::PropertyTraits::List|model::PropertyTraits::ReadOnly)) ||
-        traits.type == model::PropertyTraits::Object ||
-        traits.type == model::PropertyTraits::Unknown )
+    if ( index.column() == ColumnValue )
     {
-        return false;
-    }
-    else if ( traits.type == model::PropertyTraits::Bool )
-    {
-        if ( role == Qt::CheckStateRole )
+        if ( !tree->prop )
+            return false;
+
+        model::BaseProperty* prop = tree->prop;
+        model::PropertyTraits traits = prop->traits();
+
+
+        if ( (traits.flags & (model::PropertyTraits::List|model::PropertyTraits::ReadOnly)) ||
+            traits.type == model::PropertyTraits::Object ||
+            traits.type == model::PropertyTraits::Unknown )
         {
-            return prop->set_undoable(value.value<Qt::CheckState>() == Qt::Checked);
+            return false;
         }
-        return false;
-    }
-    else
-    {
-        if ( role == Qt::EditRole )
+        else if ( traits.type == model::PropertyTraits::Bool )
         {
-            return prop->set_undoable(value);
+            if ( role == Qt::CheckStateRole )
+            {
+                return prop->set_undoable(value.value<Qt::CheckState>() == Qt::Checked);
+            }
+            return false;
         }
-        return false;
+        else
+        {
+            if ( role == Qt::EditRole )
+                return prop->set_undoable(value);
+            return false;
+        }
     }
+    else if ( tree->visual_node && role == Qt::EditRole )
+    {
+        switch ( index.column() )
+        {
+            case ColumnName:
+                return tree->visual_node->name.set_undoable(value);
+            case ColumnColor:
+                return tree->visual_node->group_color.set_undoable(value);
+        }
+    }
+
+    return false;
 }
 
 void item_models::PropertyModel::property_changed(const model::BaseProperty* prop, const QVariant& value)
@@ -701,12 +840,31 @@ void item_models::PropertyModel::property_changed(const model::BaseProperty* pro
 
 QVariant item_models::PropertyModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if ( orientation == Qt::Horizontal && role == Qt::DisplayRole )
+    if ( orientation == Qt::Horizontal )
     {
-        if ( section == 0 )
-            return tr("Name");
-        if ( section == 1 )
-            return tr("Value");
+        switch ( section )
+        {
+            case ColumnName:
+                if ( role == Qt::DisplayRole )
+                    return tr("Name");
+                break;
+            case ColumnValue:
+                if ( role == Qt::DisplayRole )
+                    return tr("Value");
+                break;
+            case ColumnColor:
+                if ( role == Qt::ToolTipRole )
+                    return tr("Group Color");
+                break;
+            case ColumnLocked:
+                if ( role == Qt::ToolTipRole )
+                    return tr("Locked");
+                break;
+            case ColumnVisible:
+                if ( role == Qt::ToolTipRole )
+                    return tr("Visible");
+                break;
+        }
     }
     return {};
 }
@@ -771,4 +929,13 @@ QModelIndex item_models::PropertyModel::object_index(model::Object* obj) const
         i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
 
     return createIndex(i, 1, prop_node->id);
+}
+
+model::VisualNode* item_models::PropertyModel::visual_node(const QModelIndex& index) const
+{
+    Private::Subtree* tree = d->node_from_index(index);
+    if ( !tree )
+        return nullptr;
+
+    return tree->visual_node;
 }
