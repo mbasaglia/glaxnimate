@@ -16,7 +16,7 @@ void app::settings::ShortcutSettings::save(QSettings& settings)
     for ( const auto& p : actions )
     {
         if ( p.second.overwritten )
-            settings.setValue(p.first, p.second.shortcut.toString(QKeySequence::PortableText));
+             settings.setValue(p.first, p.second.shortcut.toString(QKeySequence::PortableText));
         else
             settings.remove(p.first);
     }
@@ -27,7 +27,7 @@ void app::settings::ShortcutSettings::add_menu(QMenu* menu, const QString& prefi
     auto group = add_group(menu->menuAction()->iconText());
     for ( QAction* act : menu->actions() )
     {
-        if ( !act->isSeparator() && !act->menu() )
+        if ( !act->isSeparator() && !act->menu() && !act->objectName().isEmpty() )
             group->actions.push_back(
                 add_action(act, prefix)
             );
@@ -84,3 +84,9 @@ const std::unordered_map<QString, app::settings::ShortcutAction> & app::settings
 {
     return actions;
 }
+
+const QKeySequence & app::settings::ShortcutSettings::get_shortcut(const QString& action_name) const
+{
+    return actions.at(action_name).shortcut;
+}
+

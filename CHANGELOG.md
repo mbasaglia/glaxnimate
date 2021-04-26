@@ -1,3 +1,10 @@
+## 0.4.3
+
+* UI:
+    * Preferences dialog no longer closes on Enter
+* Bug Fixes:
+    * Custom keyboard shortcuts are saved properly
+
 ## 0.4.2
 
 * Editing:

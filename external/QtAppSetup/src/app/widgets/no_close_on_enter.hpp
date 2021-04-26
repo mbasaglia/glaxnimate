@@ -2,6 +2,8 @@
 
 #include <QKeyEvent>
 
+namespace app::widgets {
+
 class NoCloseOnEnter : public QObject
 {
 protected:
@@ -18,3 +20,5 @@ protected:
     }
 };
 
+
+} // namespace app::widgets

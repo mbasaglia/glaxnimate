@@ -30,7 +30,7 @@
 #include "utils/trace.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
-#include "style/no_close_on_enter.hpp"
+#include "app/widgets/no_close_on_enter.hpp"
 
 class TraceDialog::Private
 {
@@ -61,7 +61,7 @@ public:
     QGraphicsRectItem *item_parent_shape;
     QGraphicsRectItem *item_parent_image;
     QGraphicsPixmapItem *item_image;
-    NoCloseOnEnter ncoe;
+    app::widgets::NoCloseOnEnter ncoe;
 
     void trace_mono(std::vector<TraceResult>& result)
     {

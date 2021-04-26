@@ -48,6 +48,7 @@ public:
 
     const QList<ShortcutGroup>& get_groups() const;
     const std::unordered_map<QString, ShortcutAction>& get_actions() const;
+    const QKeySequence& get_shortcut(const QString& action_name) const;
 
 private:
     QList<ShortcutGroup> groups;

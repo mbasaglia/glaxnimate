@@ -160,7 +160,7 @@
     <addaction name="action_select_all"/>
     <addaction name="action_delete"/>
     <addaction name="separator"/>
-    <addaction name="actionPr_eferences"/>
+    <addaction name="action_preferences"/>
    </widget>
    <widget class="QMenu" name="menu_view">
     <property name="title">
@@ -174,11 +174,11 @@
     </widget>
     <addaction name="separator"/>
     <addaction name="menu_views"/>
-    <addaction name="actionZoom_In"/>
-    <addaction name="actionZoom_Out"/>
-    <addaction name="actionReset_Zoom"/>
+    <addaction name="action_view_zoom_in"/>
+    <addaction name="action_view_zoom_out"/>
+    <addaction name="action_view_zoom_reset"/>
     <addaction name="action_view_fit"/>
-    <addaction name="action_Reset_Rotation"/>
+    <addaction name="action_view_reset_rotation"/>
     <addaction name="action_flip_view"/>
    </widget>
    <widget class="QMenu" name="menu_help">
@@ -188,7 +188,7 @@
     <addaction name="action_online_manual"/>
     <addaction name="action_donate"/>
     <addaction name="action_report_issue"/>
-    <addaction name="actionAbout"/>
+    <addaction name="action_about"/>
    </widget>
    <widget class="QMenu" name="menu_plugins">
     <property name="title">
@@ -207,8 +207,8 @@
       <iconset theme="image-x-generic">
        <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
      </property>
-     <addaction name="actionRaster"/>
-     <addaction name="actionS_VG"/>
+     <addaction name="action_render_frame_raster"/>
+     <addaction name="action_render_frame_svg"/>
     </widget>
     <widget class="QMenu" name="menu_web_preview">
      <property name="title">
@@ -947,7 +947,7 @@
     <string>&amp;Quit</string>
    </property>
   </action>
-  <action name="action_Select">
+  <action name="action_tool_select">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -965,7 +965,7 @@
     <string>F1</string>
    </property>
   </action>
-  <action name="action_Edit">
+  <action name="action_tool_edit">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -980,7 +980,7 @@
     <string>F2</string>
    </property>
   </action>
-  <action name="action_Draw">
+  <action name="action_tool_draw">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -995,7 +995,7 @@
     <string>F3</string>
    </property>
   </action>
-  <action name="actionDraw_Freehand">
+  <action name="action_tool_draw_freehand">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1010,7 +1010,7 @@
     <string>F6</string>
    </property>
   </action>
-  <action name="action_Rectangle">
+  <action name="action_tool_rectangle">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1025,7 +1025,7 @@
     <string>F4</string>
    </property>
   </action>
-  <action name="action_Ellipse">
+  <action name="action_tool_ellipse">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1040,7 +1040,7 @@
     <string>F5</string>
    </property>
   </action>
-  <action name="actionS_tar">
+  <action name="action_tool_star">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1397,7 +1397,7 @@
     <string>Re&amp;set View</string>
    </property>
   </action>
-  <action name="action_Reset_Rotation">
+  <action name="action_view_reset_rotation">
    <property name="icon">
     <iconset theme="rotation-allowed">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1406,7 +1406,7 @@
     <string>&amp;Reset Rotation</string>
    </property>
   </action>
-  <action name="actionZoom_In">
+  <action name="action_view_zoom_in">
    <property name="icon">
     <iconset theme="zoom-in">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1415,7 +1415,7 @@
     <string>Zoom &amp;In</string>
    </property>
   </action>
-  <action name="actionZoom_Out">
+  <action name="action_view_zoom_out">
    <property name="icon">
     <iconset theme="zoom-out">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1424,7 +1424,7 @@
     <string>Zoom &amp;Out</string>
    </property>
   </action>
-  <action name="actionReset_Zoom">
+  <action name="action_view_zoom_reset">
    <property name="icon">
     <iconset theme="zoom-original">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1433,7 +1433,7 @@
     <string>Reset &amp;Zoom</string>
    </property>
   </action>
-  <action name="actionPr_eferences">
+  <action name="action_preferences">
    <property name="icon">
     <iconset theme="settings-configure">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1442,7 +1442,7 @@
     <string>Pr&amp;eferences...</string>
    </property>
   </action>
-  <action name="actionAbout">
+  <action name="action_about">
    <property name="icon">
     <iconset theme="help-about">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1460,7 +1460,7 @@
     <string>Solid &amp;Color Layer</string>
    </property>
   </action>
-  <action name="actionRaster">
+  <action name="action_render_frame_raster">
    <property name="icon">
     <iconset theme="image-png">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -1469,7 +1469,7 @@
     <string>&amp;Raster...</string>
    </property>
   </action>
-  <action name="actionS_VG">
+  <action name="action_render_frame_svg">
    <property name="icon">
     <iconset theme="image-svg+xml">
      <normaloff>../../../../../../.designer/backup</normaloff>../../../../../../.designer/backup</iconset>
@@ -2150,7 +2150,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionZoom_In</sender>
+   <sender>action_view_zoom_in</sender>
    <signal>triggered()</signal>
    <receiver>canvas</receiver>
    <slot>zoom_in()</slot>
@@ -2166,7 +2166,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionReset_Zoom</sender>
+   <sender>action_view_zoom_reset</sender>
    <signal>triggered()</signal>
    <receiver>canvas</receiver>
    <slot>reset_zoom()</slot>
@@ -2182,7 +2182,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionZoom_Out</sender>
+   <sender>action_view_zoom_out</sender>
    <signal>triggered()</signal>
    <receiver>canvas</receiver>
    <slot>zoom_out()</slot>
@@ -2214,7 +2214,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>action_Reset_Rotation</sender>
+   <sender>action_view_reset_rotation</sender>
    <signal>triggered()</signal>
    <receiver>canvas</receiver>
    <slot>reset_rotation()</slot>
@@ -2230,7 +2230,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionPr_eferences</sender>
+   <sender>action_preferences</sender>
    <signal>triggered()</signal>
    <receiver>GlaxnimateWindow</receiver>
    <slot>preferences()</slot>
@@ -2278,7 +2278,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionAbout</sender>
+   <sender>action_about</sender>
    <signal>triggered()</signal>
    <receiver>GlaxnimateWindow</receiver>
    <slot>help_about()</slot>
@@ -2294,7 +2294,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionRaster</sender>
+   <sender>action_render_frame_raster</sender>
    <signal>triggered()</signal>
    <receiver>GlaxnimateWindow</receiver>
    <slot>save_frame_bmp()</slot>
@@ -2310,7 +2310,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionS_VG</sender>
+   <sender>action_render_frame_svg</sender>
    <signal>triggered()</signal>
    <receiver>GlaxnimateWindow</receiver>
    <slot>save_frame_svg()</slot>

@@ -5,10 +5,7 @@
 #include <QDialog>
 
 
-class QAbstractButton;
-
 namespace app {
-namespace Ui { class SettingsDialog; }
 
 class SettingsDialog : public QDialog
 {
@@ -22,7 +19,8 @@ protected:
     void changeEvent(QEvent *e) override;
 
 private:
-    std::unique_ptr<Ui::SettingsDialog> d;
+    class Private;
+    std::unique_ptr<Private> d;
 };
 
 } // namespace app

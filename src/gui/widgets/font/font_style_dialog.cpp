@@ -3,13 +3,13 @@
 
 #include <QEvent>
 
-#include "style/no_close_on_enter.hpp"
+#include "app/widgets/no_close_on_enter.hpp"
 
 class font::FontStyleDialog::Private
 {
 public:
     Ui::FontStyleDialog ui;
-    NoCloseOnEnter ncoe;
+    app::widgets::NoCloseOnEnter ncoe;
 };
 
 

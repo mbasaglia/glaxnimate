@@ -6,12 +6,20 @@
 #include "app/application.hpp"
 #include "app/settings/settings.hpp"
 #include "app/settings/widget_builder.hpp"
+#include "app/widgets/no_close_on_enter.hpp"
 
+
+class app::SettingsDialog::Private : public app::Ui::SettingsDialog
+{
+public:
+    app::widgets::NoCloseOnEnter ncoe;
+};
 
 app::SettingsDialog::SettingsDialog ( QWidget* parent ) :
-    QDialog(parent), d(std::make_unique<app::Ui::SettingsDialog>())
+    QDialog(parent), d(std::make_unique<Private>())
 {
     d->setupUi(this);
+    installEventFilter(&d->ncoe);
 
     app::settings::WidgetBuilder bob;
     app::settings::Settings::instance().load_metadata();
