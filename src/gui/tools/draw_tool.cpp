@@ -329,6 +329,9 @@ void tools::DrawTool::paint(const tools::PaintEvent& event)
 
         if ( d->dragging )
         {
+            pen.setWidth(2);
+            event.painter->setPen(pen);
+
             QPolygonF poly;
             if ( d->bezier.size() > 1 )
                 poly.push_back(event.view->mapFromScene(d->bezier.points().back().tan_in));

@@ -59,7 +59,7 @@ void graphics::PointItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
     if ( path.size() > 1 )
     {
-        QPen p(option->palette.highlight(), 1);
+        QPen p(option->palette.highlight(), 2);
         p.setCosmetic(true);
         painter->setPen(p);
         painter->drawPolyline(path);
