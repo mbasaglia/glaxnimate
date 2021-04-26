@@ -44,6 +44,9 @@ public:
     std::vector<ExtendPathData> extension_points;
 
     QShortcut* undo = nullptr;
+    // For some reason there's an annoying dialog if a QShortcut has the same
+    // key sequence as a QAction, so we work around it...
+    QAction* why_cant_we_have_nice_things = nullptr;
 };
 
 tools::Autoreg<tools::DrawTool> tools::DrawTool::autoreg{tools::Registry::Draw, max_priority};
@@ -171,6 +174,7 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
 void tools::DrawTool::Private::clear(bool hard)
 {
     undo->setEnabled(false);
+    why_cant_we_have_nice_things->setEnabled(true);
     dragging = false;
     bezier.clear();
     point_type = math::bezier::Symmetrical;
@@ -199,7 +203,8 @@ bool tools::DrawTool::Private::within_join_distance(const tools::MouseEvent& eve
 
 void tools::DrawTool::Private::prepare_draw(const tools::MouseEvent& event)
 {
-//     undo->setEnabled(true);
+    undo->setEnabled(true);
+    why_cant_we_have_nice_things->setEnabled(false);
 
     for ( const auto& point : extension_points )
     {
@@ -420,5 +425,6 @@ void tools::DrawTool::initialize(const Event& event)
     d->undo = new QShortcut(GlaxnimateApp::instance()->shortcuts()->get_shortcut("action_undo"), event.view, nullptr, nullptr, Qt::WidgetShortcut);
     connect(d->undo, &QShortcut::activated, this, &DrawTool::remove_last);
     connect(d->undo, &QShortcut::activated, event.scene, [scene=event.scene]{ scene->update(); });
+    d->why_cant_we_have_nice_things = GlaxnimateApp::instance()->shortcuts()->action("action_undo")->action;
     d->undo->setEnabled(false);
 }
