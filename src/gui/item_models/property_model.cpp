@@ -171,7 +171,7 @@ public:
                     }
                 }
                 else if ( !is_main_comp && prop->traits().flags & model::PropertyTraits::Visual &&
-                    prop->traits().type != model::PropertyTraits::ObjectReference )
+                    prop->traits().type != model::PropertyTraits::ObjectReference && prop->name() != "visible" )
                 {
                     emit model->property_added(prop);
                     properties[prop] = add_node(Subtree{prop, this_node})->id;
