@@ -42,6 +42,8 @@ public:
 
     ExtendPathData extend;
     std::vector<ExtendPathData> extension_points;
+
+    QShortcut* undo = nullptr;
 };
 
 tools::Autoreg<tools::DrawTool> tools::DrawTool::autoreg{tools::Registry::Draw, max_priority};
@@ -168,6 +170,7 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
 
 void tools::DrawTool::Private::clear(bool hard)
 {
+    undo->setEnabled(false);
     dragging = false;
     bezier.clear();
     point_type = math::bezier::Symmetrical;
@@ -196,6 +199,8 @@ bool tools::DrawTool::Private::within_join_distance(const tools::MouseEvent& eve
 
 void tools::DrawTool::Private::prepare_draw(const tools::MouseEvent& event)
 {
+//     undo->setEnabled(true);
+
     for ( const auto& point : extension_points )
     {
         if ( within_join_distance(event, point.pos()) )
@@ -412,7 +417,8 @@ void tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScen
 
 void tools::DrawTool::initialize(const Event& event)
 {
-    auto shortcut = new QShortcut(GlaxnimateApp::instance()->shortcuts()->get_shortcut("action_undo"), event.window);
-    connect(shortcut, &QShortcut::activated, this, &DrawTool::remove_last);
-    connect(shortcut, &QShortcut::activated, event.scene, [scene=event.scene]{ scene->update(); });
+    d->undo = new QShortcut(GlaxnimateApp::instance()->shortcuts()->get_shortcut("action_undo"), event.view, nullptr, nullptr, Qt::WidgetShortcut);
+    connect(d->undo, &QShortcut::activated, this, &DrawTool::remove_last);
+    connect(d->undo, &QShortcut::activated, event.scene, [scene=event.scene]{ scene->update(); });
+    d->undo->setEnabled(false);
 }
