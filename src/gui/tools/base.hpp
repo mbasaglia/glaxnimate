@@ -94,62 +94,19 @@ public:
     virtual QString tooltip() const { return name(); }
     virtual QKeySequence key_sequence() const = 0;
 
-    QAction* get_action()
-    {
-        if ( !action )
-        {
-            action = new QAction();
-            action->setCheckable(true);
-            action->setIcon(icon());
-            action->setData(QVariant::fromValue(this));
-        }
-        return action;
-    }
+    QAction* get_action();
 
     /**
      * \pre get_action() called before calling this
      */
-    ScalableButton* get_button()
-    {
-        if ( !button )
-        {
-            button = new ScalableButton();
+    ScalableButton* get_button();
 
-            button->setIcon(icon());
-            button->setCheckable(true);
-            button->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-
-            QObject::connect(action, &QAction::toggled, button, &QAbstractButton::setChecked);
-            QObject::connect(button, &QAbstractButton::clicked, action, &QAction::trigger);
-        }
-
-        return button;
-    }
-
-    QWidget* get_settings_widget()
-    {
-        if ( !settings_widget )
-        {
-            settings_widget = on_create_widget();
-        }
-
-        return settings_widget;
-    }
+    QWidget* get_settings_widget();
 
     /**
      * \pre get_action and get_button already called
      */
-    void retranslate()
-    {
-        action->setText(name());
-        action->setToolTip(tooltip());
-        action->setShortcut(key_sequence());
-
-        button->setText(name());
-        button->setToolTip(QObject::tr("%1 (%2)").arg(name()).arg(key_sequence().toString()));
-
-        on_translate();
-    }
+    void retranslate();
 
     virtual void mouse_press(const MouseEvent& event) = 0;
     virtual void mouse_move(const MouseEvent& event) = 0;
@@ -165,6 +122,8 @@ public:
 
     virtual void on_selected(graphics::DocumentScene* scene, model::VisualNode* node) { Q_UNUSED(scene); Q_UNUSED(node); }
     virtual void on_deselected(graphics::DocumentScene* scene, model::VisualNode* node);
+    // Brief called once the GUI has been fully initialized
+    virtual void initialize(const Event& event) { Q_UNUSED(event); }
 
 protected:
     struct UnderMouse

@@ -118,3 +118,53 @@ void tools::Tool::on_deselected(graphics::DocumentScene* scene, model::VisualNod
     scene->hide_editors(node, true, true);
 }
 
+QAction* tools::Tool::get_action()
+{
+    if ( !action )
+    {
+        action = new QAction();
+        action->setCheckable(true);
+        action->setIcon(icon());
+        action->setData(QVariant::fromValue(this));
+    }
+    return action;
+}
+
+ScalableButton* tools::Tool::get_button()
+{
+    if ( !button )
+    {
+        button = new ScalableButton();
+
+        button->setIcon(icon());
+        button->setCheckable(true);
+        button->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
+        QObject::connect(action, &QAction::toggled, button, &QAbstractButton::setChecked);
+        QObject::connect(button, &QAbstractButton::clicked, action, &QAction::trigger);
+    }
+
+    return button;
+}
+
+QWidget* tools::Tool::get_settings_widget()
+{
+    if ( !settings_widget )
+    {
+        settings_widget = on_create_widget();
+    }
+
+    return settings_widget;
+}
+
+void tools::Tool::retranslate()
+{
+    action->setText(name());
+    action->setToolTip(tooltip());
+    action->setShortcut(key_sequence());
+
+    button->setText(name());
+    button->setToolTip(QObject::tr("%1 (%2)").arg(name()).arg(key_sequence().toString()));
+
+    on_translate();
+}

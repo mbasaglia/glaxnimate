@@ -1,5 +1,10 @@
 #include "draw_tool.hpp"
+
+#include <QShortcut>
+
 #include "model/shapes/path.hpp"
+#include "app/settings/keyboard_shortcuts.hpp"
+#include "glaxnimate_app.hpp"
 
 class tools::DrawTool::Private
 {
@@ -139,11 +144,7 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
 
     if ( event.key() == Qt::Key_Delete || event.key() == Qt::Key_Backspace )
     {
-        d->bezier.points().pop_back();
-        if ( d->bezier.empty() )
-            d->clear(false);
-        else
-            d->bezier.points().back().tan_in = d->bezier.points().back().pos;
+        remove_last();
         event.accept();
         event.repaint();
     }
@@ -175,6 +176,18 @@ void tools::DrawTool::Private::clear(bool hard)
     if ( hard )
         extension_points.clear();
 }
+
+void tools::DrawTool::remove_last()
+{
+    if ( d->bezier.empty() )
+        return;
+
+    if ( d->bezier.size() <= 2 )
+        d->clear(false);
+    else
+        d->bezier.points().erase(d->bezier.points().end() - 2);
+}
+
 
 bool tools::DrawTool::Private::within_join_distance(const tools::MouseEvent& event, const QPointF& scene_pos)
 {
@@ -392,4 +405,11 @@ void tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScen
         for ( const auto& sub : static_cast<model::Group*>(node)->shapes )
             recursive_remove_selection(scene, sub.get());
     }
+}
+
+void tools::DrawTool::initialize(const Event& event)
+{
+    auto shortcut = new QShortcut(GlaxnimateApp::instance()->shortcuts()->get_shortcut("action_undo"), event.window);
+    connect(shortcut, &QShortcut::activated, this, &DrawTool::remove_last);
+    connect(shortcut, &QShortcut::activated, event.scene, [scene=event.scene]{ scene->update(); });
 }

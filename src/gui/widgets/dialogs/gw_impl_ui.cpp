@@ -56,6 +56,56 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     redo_text = ui.action_redo->text();
     undo_text = ui.action_undo->text();
 
+    init_actions();
+
+    tools::Tool* to_activate = init_tools_ui();
+
+    init_item_views();
+
+    // Tool buttons
+    ui.btn_layer_add->setMenu(ui.menu_new_layer);
+
+    // Transform Widget
+    init_transform_widget();
+
+    // Graphics scene
+    ui.canvas->setScene(&scene);
+    ui.canvas->set_tool_target(parent);
+    connect(&scene, &graphics::DocumentScene::node_user_selected, parent, &GlaxnimateWindow::scene_selection_changed);
+    connect(ui.canvas, &Canvas::dropped, parent, [this](const QMimeData* d){dropped(d);});
+
+    // Dialogs
+    dialog_import_status = new IoStatusDialog(QIcon::fromTheme("document-open"), tr("Open File"), false, parent);
+    dialog_export_status = new IoStatusDialog(QIcon::fromTheme("document-save"), tr("Save File"), false, parent);
+    about_dialog = new AboutDialog(parent);
+
+    // Recent files
+    recent_files = app::settings::get<QStringList>("open_save", "recent_files");
+    ui.action_open_last->setEnabled(!recent_files.isEmpty());
+    reload_recent_menu();
+    connect(ui.menu_open_recent, &QMenu::triggered, parent, &GlaxnimateWindow::document_open_recent);
+
+    // Docks
+    init_docks();
+
+    // Menus
+    init_menus();
+
+    // Debug menu
+    if ( debug )
+        init_debug();
+
+    // Initialize tools
+    init_tools(to_activate);
+
+    // Restore state
+    // NOTE: keep at the end so we do this once all the widgets are in their default spots
+    if ( restore_state )
+        init_restore_state();
+}
+
+void GlaxnimateWindow::Private::init_actions()
+{
     // Standard Shorcuts
     ui.action_new->setShortcut(QKeySequence::New);
     ui.action_open->setShortcut(QKeySequence::Open);
@@ -162,22 +212,17 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     connect(ui.action_align_vert_bottom_out,&QAction::triggered, parent, [this]{align(AlignDirection::Vertical,   AlignPosition::End,    true);});
     connect(ui.action_import, &QAction::triggered, parent, [this]{import_file();});
     connect(ui.action_flip_view, &QAction::triggered, ui.canvas, &Canvas::flip_horizontal);
+}
 
-    // Menu Views
-    for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
-    {
-        QAction* act = wid->toggleViewAction();
-        act->setIcon(wid->windowIcon());
-        ui.menu_views->addAction(act);
-        wid->setStyle(&dock_style);
-    }
-
+tools::Tool* GlaxnimateWindow::Private::init_tools_ui()
+{
     // Tool Actions
     QActionGroup *tool_actions = new QActionGroup(parent);
     tool_actions->setExclusive(true);
 
     dock_tools_layout = new FlowLayout();
     ui.dock_tools_layout_parent->insertLayout(0, dock_tools_layout);
+    tools::Tool* to_activate = nullptr;
     for ( const auto& grp : tools::Registry::instance() )
     {
         for ( const auto& tool : grp.second )
@@ -194,11 +239,9 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
 
             ui.tool_settings_widget->addWidget(tool.second->get_settings_widget());
 
-            tool.second->retranslate();
-
-            if ( !active_tool )
+            if ( !to_activate )
             {
-                switch_tool(tool.second.get());
+                to_activate = tool.second.get();
                 action->setChecked(true);
             }
         }
@@ -250,7 +293,11 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     connect(edit_tool, &tools::EditTool::gradient_stop_changed, ui.fill_style_widget, &FillStyleWidget::set_gradient_stop);
     connect(edit_tool, &tools::EditTool::gradient_stop_changed, ui.stroke_style_widget, &StrokeStyleWidget::set_gradient_stop);
 
+    return to_activate;
+}
 
+void GlaxnimateWindow::Private::init_item_views()
+{
     // Item views
     comp_model.setSourceModel(&document_node_model);
     ui.view_document_node->setModel(&comp_model);
@@ -285,11 +332,10 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     ui.view_assets->header()->hideSection(item_models::DocumentNodeModel::ColumnVisible-1);
     ui.view_assets->header()->hideSection(item_models::DocumentNodeModel::ColumnLocked-1);
     ui.view_assets->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnUsers-1, QHeaderView::ResizeToContents);
+}
 
-    // Tool buttons
-    ui.btn_layer_add->setMenu(ui.menu_new_layer);
-
-    // Transform Widget
+void GlaxnimateWindow::Private::init_transform_widget()
+{
     view_trans_widget = new ViewTransformWidget(ui.status_bar);
     ui.status_bar->addPermanentWidget(view_trans_widget);
     connect(view_trans_widget, &ViewTransformWidget::zoom_changed, ui.canvas, &Canvas::set_zoom);
@@ -300,24 +346,10 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     connect(ui.canvas, &Canvas::rotated, view_trans_widget, &ViewTransformWidget::set_angle);
     connect(view_trans_widget, &ViewTransformWidget::view_fit, parent, &GlaxnimateWindow::view_fit);
     connect(view_trans_widget, &ViewTransformWidget::flip_view, ui.action_flip_view, &QAction::trigger);
+}
 
-    // Graphics scene
-    ui.canvas->setScene(&scene);
-    ui.canvas->set_tool_target(parent);
-    connect(&scene, &graphics::DocumentScene::node_user_selected, parent, &GlaxnimateWindow::scene_selection_changed);
-    connect(ui.canvas, &Canvas::dropped, parent, [this](const QMimeData* d){dropped(d);});
-
-    // Dialogs
-    dialog_import_status = new IoStatusDialog(QIcon::fromTheme("document-open"), tr("Open File"), false, parent);
-    dialog_export_status = new IoStatusDialog(QIcon::fromTheme("document-save"), tr("Save File"), false, parent);
-    about_dialog = new AboutDialog(parent);
-
-    // Recent files
-    recent_files = app::settings::get<QStringList>("open_save", "recent_files");
-    ui.action_open_last->setEnabled(!recent_files.isEmpty());
-    reload_recent_menu();
-    connect(ui.menu_open_recent, &QMenu::triggered, parent, &GlaxnimateWindow::document_open_recent);
-
+void GlaxnimateWindow::Private::init_docks()
+{
     // Scripting
     connect(ui.console, &ScriptConsole::error, parent, [this](const QString& plugin, const QString& message){
         show_warning(plugin, message, app::log::Error);
@@ -330,7 +362,6 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     ui.view_logs->setModel(&log_model);
     ui.view_logs->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui.view_logs->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-//     ui.view_logs->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     ui.view_logs->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
     auto del = new style::BetterElideDelegate(Qt::ElideLeft, ui.view_logs);
     ui.view_logs->setItemDelegateForColumn(2, del);
@@ -431,6 +462,18 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     parent->resizeDocks({ui.dock_timeline}, {parent->height()/3}, Qt::Vertical);
     ui.dock_script_console->setVisible(false);
     ui.dock_logs->setVisible(false);
+}
+
+void GlaxnimateWindow::Private::init_menus()
+{
+    // Menu Views
+    for ( QDockWidget* wid : parent->findChildren<QDockWidget*>() )
+    {
+        QAction* act = wid->toggleViewAction();
+        act->setIcon(wid->windowIcon());
+        ui.menu_views->addAction(act);
+        wid->setStyle(&dock_style);
+    }
 
     // Load keyboard shortcuts
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_file);
@@ -445,56 +488,70 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_view);
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_render_single_frame);
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_playback);
+}
 
-    if ( debug )
+void GlaxnimateWindow::Private::init_debug()
+{
+    QMenu* menu_debug = new QMenu("Debug", parent);
+
+    auto shortcut = new QShortcut(QKeySequence(Qt::META|Qt::Key_D), ui.canvas);
+    connect(shortcut, &QShortcut::activated, parent, [menu_debug]{
+            menu_debug->exec(QCursor::pos());
+    });
+
+    menu_debug->addAction("Print Model (Full)", [this]{
+        app::debug::print_model(&document_node_model, {1}, false);
+    });
+
+    menu_debug->addAction("Print Model (Layers)", [this]{
+        app::debug::print_model(&comp_model, {1}, false);
+    });
+
+    menu_debug->addAction("Print Model (Assets)", [this]{
+        app::debug::print_model(&asset_model, {0}, false);
+    });
+
+    menu_debug->addAction("Screenshot menus", [this]{
+        QDir("/tmp/").mkpath("menus");
+        for ( auto widget : this->parent->findChildren<QMenu*>() )
+        {
+            widget->show();
+            QString name = "/tmp/menus/" + widget->objectName().mid(5);
+            QPixmap pic(widget->size());
+            widget->render(&pic);
+            name += ".png";
+            pic.save(name);
+        }
+    });
+
+    menu_debug->addAction("Inspect Clipboard", [this]{
+        auto dialog = new ClipboardInspector();
+        dialog->show();
+        connect(dialog, &QDialog::finished, dialog, &QObject::deleteLater);
+    });
+}
+
+void GlaxnimateWindow::Private::init_tools(tools::Tool* to_activate)
+{
+    tools::Event event{ui.canvas, &scene, parent};
+    for ( const auto& grp : tools::Registry::instance() )
     {
-        QMenu* menu_debug = new QMenu("Debug", parent);
+        for ( const auto& tool : grp.second )
+        {
+            tool.second->retranslate();
+            tool.second->initialize(event);
 
-        auto shortcut = new QShortcut(QKeySequence(Qt::META|Qt::Key_D), ui.canvas);
-        connect(shortcut, &QShortcut::activated, parent, [menu_debug]{
-                menu_debug->exec(QCursor::pos());
-        });
-
-        menu_debug->addAction("Print Model (Full)", [this]{
-            app::debug::print_model(&document_node_model, {1}, false);
-        });
-
-        menu_debug->addAction("Print Model (Layers)", [this]{
-            app::debug::print_model(&comp_model, {1}, false);
-        });
-
-        menu_debug->addAction("Print Model (Assets)", [this]{
-            app::debug::print_model(&asset_model, {0}, false);
-        });
-
-        menu_debug->addAction("Screenshot menus", [this]{
-            QDir("/tmp/").mkpath("menus");
-            for ( auto widget : this->parent->findChildren<QMenu*>() )
-            {
-                widget->show();
-                QString name = "/tmp/menus/" + widget->objectName().mid(5);
-                QPixmap pic(widget->size());
-                widget->render(&pic);
-                name += ".png";
-                pic.save(name);
-            }
-        });
-
-        menu_debug->addAction("Inspect Clipboard", [this]{
-            auto dialog = new ClipboardInspector();
-            dialog->show();
-            connect(dialog, &QDialog::finished, dialog, &QObject::deleteLater);
-        });
+            if ( to_activate == tool.second.get() )
+                switch_tool(tool.second.get());
+        }
     }
+}
 
-    // Restore state
-    // NOTE: keep at the end so we do this once all the widgets are in their default spots
-    if ( restore_state )
-    {
-        parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
-        parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
-        ui.timeline_widget->load_state(app::settings::get<QByteArray>("ui", "timeline_splitter"));
-    }
+void GlaxnimateWindow::Private::init_restore_state()
+{
+    parent->restoreGeometry(app::settings::get<QByteArray>("ui", "window_geometry"));
+    parent->restoreState(app::settings::get<QByteArray>("ui", "window_state"));
+    ui.timeline_widget->load_state(app::settings::get<QByteArray>("ui", "timeline_splitter"));
 
     // Hide tool widgets, as they might get shown by restoreState
     ui.toolbar_node->setVisible(false);

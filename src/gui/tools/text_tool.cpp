@@ -100,7 +100,6 @@ public:
     void enable_event(const Event& event) override
     {
         Q_UNUSED(event);
-        initialize();
     }
 
     void disable_event(const Event& event) override
@@ -268,7 +267,6 @@ private:
 
     void on_selected(graphics::DocumentScene * scene, model::VisualNode * node) override
     {
-        initialize();
         if ( auto text = impl_extract_selection_recursive_item(scene, node) )
             select(scene, text);
     }
@@ -285,17 +283,13 @@ private:
         }
     }
 
-    void initialize()
+    void initialize(const Event&) override
     {
-        if ( !initialized )
-        {
-            initialized = true;
-            editor.setTextInteractionFlags(Qt::TextEditorInteraction);
-            editor.setZValue(9001);
-            font = QFont("sans", 32);
-            connect(widget(), &TextToolWidget::font_changed, this, &TextTool::on_font_changed);
-            connect(editor.document(), &QTextDocument::contentsChanged, this, &TextTool::apply_changes);
-        }
+        editor.setTextInteractionFlags(Qt::TextEditorInteraction);
+        editor.setZValue(9001);
+        font = QFont("sans", 32);
+        connect(widget(), &TextToolWidget::font_changed, this, &TextTool::on_font_changed);
+        connect(editor.document(), &QTextDocument::contentsChanged, this, &TextTool::apply_changes);
     }
 
     void apply_changes()
@@ -317,7 +311,6 @@ private:
     bool forward_click = false;
     QFont font;
     bool modified = false;
-    bool initialized = false;
 };
 
 } // namespace tools

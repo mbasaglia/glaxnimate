@@ -30,10 +30,12 @@ public:
     void disable_event(const Event& event) override;
     void on_selected(graphics::DocumentScene * scene, model::VisualNode * node) override;
     void on_deselected(graphics::DocumentScene * scene, model::VisualNode * node) override;
+    void initialize(const Event& event) override;
 
 private:
     class Private;
     std::unique_ptr<Private> d;
+    void remove_last();
 
     static Autoreg<DrawTool> autoreg;
 };

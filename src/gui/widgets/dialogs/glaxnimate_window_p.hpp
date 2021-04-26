@@ -159,7 +159,17 @@ public:
     QString get_open_image_file(const QString& title, const QString& dir, QString* out_dir = nullptr);
     void set_brush_reference(model::BrushStyle* sty, bool secondary);
     void trace_dialog(model::DocumentNode* object);
+
+    void init_actions();
     void init_plugins();
+    tools::Tool* init_tools_ui();
+    void init_item_views();
+    void init_transform_widget();
+    void init_docks();
+    void init_menus();
+    void init_debug();
+    void init_tools(tools::Tool* to_activate);
+    void init_restore_state();
 
     // Model
     model::Composition* current_composition();
