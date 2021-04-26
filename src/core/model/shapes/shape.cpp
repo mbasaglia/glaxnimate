@@ -153,7 +153,8 @@ void model::ShapeOperator::collect_shapes(model::FrameTime t, math::bezier::Mult
 {
     for ( auto sib : affected_elements )
     {
-        sib->add_shapes(t, bez, transform);
+        if ( sib->visible.get() )
+            sib->add_shapes(t, bez, transform);
     }
 }
 
