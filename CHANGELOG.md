@@ -1,5 +1,7 @@
 ## 0.4.3
 
+* Editing:
+    * The shortcut for "Undo" now works also to remove points when drawing paths
 * UI:
     * Preferences dialog no longer closes on Enter
 * Bug Fixes:
