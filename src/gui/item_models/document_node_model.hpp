@@ -23,6 +23,9 @@ public:
         ColumnCount
     };
 
+    explicit DocumentNodeModel(QObject *parent = nullptr);
+    ~DocumentNodeModel();
+
     int rowCount ( const QModelIndex & parent ) const override;
     int columnCount ( const QModelIndex & parent ) const override;
     bool moveRows ( const QModelIndex & sourceParent, int sourceRow, int count, const QModelIndex & destinationParent, int destinationChild ) override;
@@ -52,6 +55,8 @@ private:
     model::Document* document = nullptr;
 
     friend class ProxyBase;
+    class Private;
+    std::unique_ptr<Private> d;
 };
 
 

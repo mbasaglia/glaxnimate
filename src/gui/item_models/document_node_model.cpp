@@ -14,8 +14,27 @@
 #include "drag_data.hpp"
 
 
+class item_models::DocumentNodeModel::Private
+{
+public:
+    // Sometimes views send QModelIndex instances after they've been removed...
+    // So we avoid accessing the internal pointer directly
+    std::unordered_set<void*> ptrs;
+};
+
+item_models::DocumentNodeModel::DocumentNodeModel(QObject* parent)
+    : QAbstractItemModel(parent), d(std::make_unique<Private>())
+{
+}
+
+item_models::DocumentNodeModel::~DocumentNodeModel()
+{
+}
+
 void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
 {
+    d->ptrs.insert(node);
+
     connect(node, &model::DocumentNode::docnode_child_add_begin, this, [this, node](int row) {
         int rows = node->docnode_child_count();
         beginInsertRows(node_index(node), rows - row, rows - row);
@@ -76,10 +95,16 @@ void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
 
     for ( model::DocumentNode* child : node->docnode_children() )
         connect_node(child);
+
+    connect(node, &QObject::destroyed, this, [this, node]{
+        d->ptrs.erase(node);
+    });
 }
 
 void item_models::DocumentNodeModel::disconnect_node ( model::DocumentNode* node )
 {
+    d->ptrs.erase(node);
+
     disconnect(node, nullptr, this, nullptr);
 
     for ( model::DocumentNode* child : node->docnode_children() )
@@ -284,7 +309,10 @@ void item_models::DocumentNodeModel::clear_document()
 
 model::DocumentNode * item_models::DocumentNodeModel::node ( const QModelIndex& index ) const
 {
-    return (model::DocumentNode*)index.internalPointer();
+    auto ptr = (model::DocumentNode*)index.internalPointer();
+    if ( d->ptrs.count(ptr) )
+        return ptr;
+    return nullptr;
 }
 
 QModelIndex item_models::DocumentNodeModel::parent ( const QModelIndex& index ) const

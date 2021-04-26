@@ -5,9 +5,11 @@
 * UI:
     * Preferences dialog no longer closes on Enter
     * Some layer properties are displayed inline in the timeline tree
+    * Bezier tangents are shown a bit thicker
 * Bug Fixes:
     * Custom keyboard shortcuts are saved properly
     * Fixed values blowing up when changed from the property tree
+    * Fixed crash caused by stale model indices
 
 ## 0.4.2
 
