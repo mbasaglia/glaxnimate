@@ -503,15 +503,17 @@ void GlaxnimateWindow::Private::init_debug()
             menu_debug->exec(QCursor::pos());
     });
 
-    menu_debug->addAction("Print Model (Full)", [this]{
+    QMenu* menu_print_model = new QMenu("Print Model", menu_debug);
+
+    menu_print_model->addAction("Document Node - Full", [this]{
         app::debug::print_model(&document_node_model, {1}, false);
     });
 
-    menu_debug->addAction("Print Model (Layers)", [this]{
+    menu_print_model->addAction("Document Node - Layers", [this]{
         app::debug::print_model(&comp_model, {1}, false);
     });
 
-    menu_debug->addAction("Print Model (Assets)", [this]{
+    menu_print_model->addAction("Document Node - Assets", [this]{
         app::debug::print_model(&asset_model, {0}, false);
     });
 

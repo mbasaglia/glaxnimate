@@ -121,15 +121,15 @@ public:
         QObject::connect(object, &model::Object::destroyed, model, &PropertyModel::on_delete_object);
     }
 
-    /*void connect_list(Subtree* prop_node)
+    void connect_list(Subtree* prop_node, PropertyModel* model)
     {
         if ( prop_node->prop->traits().is_object() )
         {
             for ( int i = 0; i < prop_node->prop_value.size(); i++ )
             {
                 model::Object* subobj = prop_node->prop_value[i].value<model::Object*>();
-                add_node(Subtree{subobj, i, prop_node->id});
-                // connect_recursive(subobj, model, subobj_id);
+                auto suboj_node = add_node(Subtree{subobj, prop_node->id});
+                connect_recursive(subobj, model, suboj_node->id);
             }
         }
         else
@@ -139,7 +139,7 @@ public:
                 add_node(Subtree{i, prop_node->id});
             }
         }
-    }*/
+    }
 
     void connect_recursive(model::Object* object, PropertyModel* model, id_type this_node)
     {
@@ -152,11 +152,20 @@ public:
         QObject::connect(object, &model::Object::removed_from_list, model, &PropertyModel::on_delete_object);
         bool is_main_comp = object->is_instance<model::MainComposition>();
 
+        std::vector<model::BaseProperty*> object_lists;
+
         for ( model::BaseProperty* prop : object->properties() )
         {
             if ( animation_only )
             {
-                if ( prop->traits().type == model::PropertyTraits::Object )
+                if (
+                    (prop->traits().flags & model::PropertyTraits::List) &&
+                    prop->traits().type == model::PropertyTraits::Object
+                )
+                {
+                    object_lists.push_back(static_cast<model::ObjectListPropertyBase*>(prop));
+                }
+                else if ( prop->traits().type == model::PropertyTraits::Object )
                 {
                     model::Object* subobj = prop->value().value<model::Object*>();
                     if ( subobj )
@@ -183,7 +192,9 @@ public:
                     (prop->traits().flags & model::PropertyTraits::List) &&
                     prop->traits().type == model::PropertyTraits::Object
                 )
+                {
                     continue;
+                }
 
                 Subtree* prop_node = add_node(Subtree{prop, this_node});
                 properties[prop] = prop_node->id;
@@ -201,6 +212,15 @@ public:
                         connect_recursive(subobj, model, prop_node->id);
                 }
             }
+        }
+
+        // Show object lists at the end
+        for ( auto prop : object_lists )
+        {
+            Subtree* prop_node = add_node(Subtree{prop, this_node});
+            prop_node->prop_value = prop->value().toList();
+            properties[prop] = prop_node->id;
+            connect_list(prop_node, model);
         }
     }
 
@@ -356,6 +376,11 @@ public:
         {
             return tree->visual_node->object_name();
         }
+        else if ( role == Qt::DecorationRole && tree->visual_node )
+        {
+            return tree->visual_node->tree_icon();
+        }
+
 
         return {};
     }

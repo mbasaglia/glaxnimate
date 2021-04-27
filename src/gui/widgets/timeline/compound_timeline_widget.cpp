@@ -14,6 +14,7 @@
 #include "glaxnimate_app.hpp"
 
 #include "style/property_delegate.hpp"
+#include "style/fixed_height_delegate.hpp"
 #include "widgets/dialogs/keyframe_editor_dialog.hpp"
 #include "widgets/node_menu.hpp"
 
@@ -41,20 +42,25 @@ public:
         ui.timeline->set_model(&property_model);
         connect(&property_model, &QAbstractItemModel::dataChanged,
                 ui.properties->viewport(), (void (QWidget::*)())&QWidget::update);
-        ui.properties->setItemDelegateForColumn(1, &property_delegate);
+
+        ui.properties->setItemDelegate(&fixed_height_delegate);
+        ui.properties->setItemDelegateForColumn(item_models::PropertyModel::ColumnValue, &property_delegate);
+        ui.properties->setItemDelegateForColumn(item_models::PropertyModel::ColumnColor, &color_delegate);
 
         ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnName, QHeaderView::ResizeToContents);
         ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnValue, QHeaderView::Stretch);
         ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnColor, QHeaderView::ResizeToContents);
         ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnLocked, QHeaderView::ResizeToContents);
         ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnVisible, QHeaderView::ResizeToContents);
-        ui.properties->setItemDelegateForColumn(item_models::PropertyModel::ColumnColor, &color_delegate);
         ui.properties->header()->moveSection(item_models::PropertyModel::ColumnColor, 0);
         ui.properties->header()->moveSection(item_models::PropertyModel::ColumnVisible, 1);
         ui.properties->header()->moveSection(item_models::PropertyModel::ColumnLocked, 2);
 
+        ui.properties->setUniformRowHeights(true);
         ui.properties->header()->setFixedHeight(ui.timeline->header_height());
         property_delegate.set_forced_height(ui.timeline->header_height());
+        fixed_height_delegate.set_height(ui.timeline->row_height());
+        ui.properties->setRootIsDecorated(true);
 
         ui.properties->verticalScrollBar()->setPageStep(ui.scrollbar->pageStep());
         connect(ui.properties->verticalScrollBar(), &QScrollBar::valueChanged, ui.scrollbar, &QScrollBar::setValue);
@@ -229,11 +235,26 @@ public:
     }
 
 
+    void fix_row_height()
+    {
+        qreal tree_h = ui.properties->sizeHintForRow(0);
+
+        if ( tree_h > ui.timeline->row_height() )
+        {
+
+            qDebug() << "[" << tree_h << ui.timeline->row_height();
+            property_delegate.set_forced_height(tree_h);
+            ui.timeline->set_row_height(tree_h);
+            qDebug() << "]" << ui.properties->sizeHintForRow(0) << ui.timeline->row_height();
+        }
+
+    }
 
     Ui::CompoundTimelineWidget ui;
     item_models::PropertyModel property_model{true};
     style::PropertyDelegate property_delegate;
     color_widgets::ColorDelegate color_delegate;
+    style::FixedHeightDelegate fixed_height_delegate;
 
     QAction* action_title;
     QMenu menu_property;
@@ -318,6 +339,8 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
             }
         }
     }
+
+    d->fix_row_height();
 
     d->ui.timeline->reset_view();
     d->ui.properties->expandAll();
