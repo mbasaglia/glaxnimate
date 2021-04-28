@@ -91,3 +91,9 @@ plugin(
     hue_shift.py
 )
 
+
+plugin(
+    FrameByFrame
+    create_frames.py
+    create_frames.ui
+)

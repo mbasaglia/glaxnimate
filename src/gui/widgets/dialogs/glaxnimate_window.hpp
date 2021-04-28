@@ -38,6 +38,7 @@ class GlaxnimateWindow : public QMainWindow
     Q_PROPERTY(model::VisualNode* current_item READ current_document_node WRITE set_current_document_node)
     Q_PROPERTY(model::ShapeElement* current_shape READ current_shape)
     Q_PROPERTY(model::Object* current_shape_container READ current_shape_container_script)
+    Q_PROPERTY(model::Composition* current_composition READ current_composition WRITE set_current_composition)
     Q_PROPERTY(QColor fill_color READ current_color WRITE set_current_color)
     Q_PROPERTY(QColor stroke_color READ secondary_color WRITE set_secondary_color)
 

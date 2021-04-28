@@ -6,6 +6,8 @@
     * Preferences dialog no longer closes on Enter
     * Some layer properties are displayed inline in the timeline tree
     * Bezier tangents are shown a bit thicker
+* Scripting:
+    * New plugin to help with frame-by-frame animation
 * Bug Fixes:
     * Custom keyboard shortcuts are saved properly
     * Fixed values blowing up when changed from the property tree
