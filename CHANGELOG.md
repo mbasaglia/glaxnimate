@@ -8,6 +8,7 @@
     * Bezier tangents are shown a bit thicker
 * Scripting:
     * New plugin to help with frame-by-frame animation
+    * Scripts have access to the current composition
 * Bug Fixes:
     * Custom keyboard shortcuts are saved properly
     * Fixed values blowing up when changed from the property tree
