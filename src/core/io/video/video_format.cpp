@@ -61,7 +61,7 @@ struct OutputStream
         format_context = oc;
 
         // find the encoder
-        codec = avcodec_find_encoder(codec_id);
+        codec = (AVCodec*)avcodec_find_encoder(codec_id);
         if ( !codec )
             throw av::Error(QObject::tr("Could not find encoder for '%1'").arg(avcodec_get_name(codec_id)));
 
