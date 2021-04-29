@@ -51,9 +51,23 @@ with glaxnimate.environment.Headless():
 
     # Load a file
     with open("MyFile.rawr", "rb") as input_file:
-        glaxnimate.io.registry.from_extension("rawr").load(document, input_file)
+        glaxnimate.io.registry.from_extension("rawr").load(document, input_file.read())
 
-    # ...
+
+    # Add a layer
+    layer = document.main.add_shape("Layer")
+
+    # The fill will be applied to all following shapes in the same group / layer
+    fill = layer.add_shape("Fill")
+    fill.color.value = "#ff0000"
+
+    # A simple circle moving left and right
+    ellipse = layer.add_shape("Ellipse")
+    radius = 64
+    ellipse.position.set_keyframe(0, glaxnimate.utils.Point(radius, document.size.height / 2))
+    ellipse.position.set_keyframe(90, glaxnimate.utils.Point(document.size.width-radius, document.size.height / 2))
+    ellipse.position.set_keyframe(180, glaxnimate.utils.Point(radius, document.size.height / 2))
+    ellipse.size.value = glaxnimate.utils.Size(radius, radius)
 
     # Write a file
     with open("MyFile.json", "rb") as output_file:
