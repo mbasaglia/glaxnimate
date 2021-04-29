@@ -9,6 +9,7 @@
 * Scripting:
     * New plugin to help with frame-by-frame animation
     * Scripts have access to the current composition
+    * Improved support for python standard io streams
 * Bug Fixes:
     * Custom keyboard shortcuts are saved properly
     * Fixed values blowing up when changed from the property tree

@@ -34,6 +34,7 @@ public:
         try {
             dest.attr("write") = py::cpp_function([this](const QString& s){ write(s); });
             dest.attr("flush") = py::cpp_function([this](){ flush(); });
+            dest.attr("isatty") = py::cpp_function([](){ return false; });
             stream = dest;
             this->owner = owner;
             this->signal = signal;
@@ -88,6 +89,8 @@ public:
         sys = py::module::import("sys");
         py::object py_stdout = sys.attr("stdout");
         py::object py_stderr = sys.attr("stderr");
+        py_stdin = py::module::import("io").attr("StringIO")();
+        sys.attr("stdin") = py_stdin;
 
         if ( !py_stdout.is(py::none()) )
         {
@@ -104,6 +107,7 @@ public:
     py::module sys;
 
     CaptureStream stderr_cap, stdout_cap;
+    py::object py_stdin;
 
 };
 
