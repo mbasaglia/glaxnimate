@@ -1,5 +1,6 @@
 {
     "name": "Frame by frame",
+    "description": "Creates empty layers for frame by frame animation",
     "author": "Glax",
     "engine": "python",
     "icon": "theme:discrete",

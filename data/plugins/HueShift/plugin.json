@@ -1,5 +1,6 @@
 {
     "name": "Hue Shift",
+    "description": "Adds action to change the hue of all colors (and animate this kind of effect)",
     "author": "Glax",
     "engine": "python",
     "version": 1,

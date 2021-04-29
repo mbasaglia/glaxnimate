@@ -118,6 +118,7 @@ bool plugin::PluginRegistry::load_plugin ( const QString& path, bool user_instal
     data.name = jobj["name"].toString(data.id);
     data.author = jobj["author"].toString();
     data.icon = jobj["icon"].toString();
+    data.description = jobj["description"].toString();
 
     QJsonArray arr = jobj["services"].toArray();
     if ( arr.empty() )

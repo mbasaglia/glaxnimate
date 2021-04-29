@@ -44,6 +44,7 @@ void PluginSettingsWidget::current_changed ( QListWidgetItem* item )
     d->btn_disable->setEnabled(current->can_disable());
     d->btn_enable->setEnabled(current->can_enable());
     d->btn_uninstall->setEnabled(current->user_installed());
+    d->description->setPlainText(current->data().description);
 
     d->list_services->clearContents();
     d->list_services->setRowCount(current->data().services.size());
@@ -134,6 +135,7 @@ void PluginSettingsWidget::update_entries()
         if ( plugin->available() )
             flags |= Qt::ItemIsEnabled;
         item->setFlags(flags);
+        item->setData(Qt::ToolTipRole, plugin->data().description);
 
         d->list_plugins->addItem(item);
 

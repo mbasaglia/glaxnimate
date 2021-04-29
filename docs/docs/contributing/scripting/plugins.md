@@ -13,14 +13,15 @@ This file describes the plugin and its functionality.
 
 It's a JSON file with the following keys:
 
-| Name      | Required  | Type   | Description                          |
-| --------- | --------- | ------ | ------------------------------------ |
-| `name`    |           | string | Name shown in the list of plugins. If omitted it will be the plugin id.  |
-| `version` |           | number | Plugin version number, used to resolve multiple installations of the same plugin |
-| `engine`  | Required  | string | Script engine to use. (Currently must be `python`) |
-| `author`  |           | string | Name of the plugin author.           |
-| `icon`    |           | string | See [Icons](#icons)                  |
-| `services`| Required  | array  | Array of [services](#services).      |
+| Name          | Required  | Type   | Description                          |
+| ------------- | --------- | ------ | ------------------------------------ |
+| `name`        |           | string | Name shown in the list of plugins. If omitted it will be the plugin id.  |
+| `description` |           | string | Longer description of what the plugin does. |
+| `version`     |           | number | Plugin version number, used to resolve multiple installations of the same plugin |
+| `engine`      | Required  | string | Script engine to use. (Currently must be `python`) |
+| `author`      |           | string | Name of the plugin author.           |
+| `icon`        |           | string | See [Icons](#icons)                  |
+| `services`    | Required  | array  | Array of [services](#services).      |
 
 ### Icons
 
@@ -160,6 +161,7 @@ The above plugin will have an ID of `MyPlugin`.
 ```json
 {
     "name": "Hello World Plugin",
+    "description": "Shows a greeting",
     "author": "Glax",
     "engine": "python",
     "services": [

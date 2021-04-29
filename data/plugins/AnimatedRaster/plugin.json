@@ -1,5 +1,6 @@
 {
     "name": "Animated Raster",
+    "description": "Adds support for animated WebP and GIF",
     "author": "Glax",
     "engine": "python",
     "version": 1,

@@ -1,5 +1,6 @@
 {
     "name": "Hello World Plugin",
+    "description": "Shows a greeting",
     "author": "Glax",
     "engine": "python",
     "services": [
