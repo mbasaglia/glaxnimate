@@ -37,6 +37,15 @@ void PluginSettingsWidget::current_changed ( QListWidgetItem* item )
     if ( !current )
         return;
 
+    bool checked = item->checkState() == Qt::Checked;
+    if ( checked != current->enabled() )
+    {
+        if ( checked )
+            current->enable();
+        else
+            current->disable();
+    }
+
     d->widget_plugin->setTitle(current->data().name);
     d->line_plugin_path->setText(current->data().dir.absolutePath());
     d->line_version->setText(QString::number(current->data().version));
@@ -133,7 +142,7 @@ void PluginSettingsWidget::update_entries()
         item->setData(Qt::UserRole, plugin->data().id);
         Qt::ItemFlags flags = Qt::ItemIsSelectable;
         if ( plugin->available() )
-            flags |= Qt::ItemIsEnabled;
+            flags |= Qt::ItemIsEnabled|Qt::ItemIsUserCheckable;
         item->setFlags(flags);
         item->setData(Qt::ToolTipRole, plugin->data().description);
 

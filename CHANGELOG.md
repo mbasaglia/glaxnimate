@@ -14,6 +14,7 @@
     * Fixed values blowing up when changed from the property tree
     * Fixed crash caused by stale model indices
     * Precompositions correctly update whhen the current frame is changed
+    * Clicking on the checkboxes in the pl8ugin settings properly toggles the plugins
 
 ## 0.4.2
 
