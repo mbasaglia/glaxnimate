@@ -178,4 +178,3 @@ int model::Assets::docnode_child_index(model::DocumentNode* dn) const
 }
 
 
-

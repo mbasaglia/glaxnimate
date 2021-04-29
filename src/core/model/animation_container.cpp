@@ -1,5 +1,6 @@
 #include "animation_container.hpp"
 #include "model/factory.hpp"
+#include "model/document.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::AnimationContainer)
 
@@ -19,7 +20,10 @@ void model::AnimationContainer::set_time(model::FrameTime t)
     Object::set_time(t);
     bool new_visible = time_visible();
     if ( old_visible != new_visible )
+    {
         emit time_visible_changed(new_visible);
+        emit document()->graphics_invalidated();
+    }
 }
 
 void model::AnimationContainer::on_first_frame_changed(float x)

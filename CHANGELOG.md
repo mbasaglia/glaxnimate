@@ -13,6 +13,7 @@
     * Custom keyboard shortcuts are saved properly
     * Fixed values blowing up when changed from the property tree
     * Fixed crash caused by stale model indices
+    * Precompositions correctly update whhen the current frame is changed
 
 ## 0.4.2
 

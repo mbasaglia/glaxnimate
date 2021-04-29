@@ -105,13 +105,11 @@ void FrameControlsWidget::commit_time()
 void FrameControlsWidget::go_first()
 {
     d->spin_frame->setValue(d->spin_frame->minimum());
-    commit_time();
 }
 
 void FrameControlsWidget::go_last()
 {
     d->spin_frame->setValue(d->spin_frame->maximum());
-    commit_time();
 }
 
 void FrameControlsWidget::go_next()
@@ -121,7 +119,6 @@ void FrameControlsWidget::go_next()
         d->spin_frame->setValue(d->spin_frame->minimum());
     else
         d->spin_frame->setValue(i+1);
-    commit_time();
 }
 
 void FrameControlsWidget::go_prev()
@@ -131,7 +128,6 @@ void FrameControlsWidget::go_prev()
         d->spin_frame->setValue(d->spin_frame->maximum());
     else
         d->spin_frame->setValue(i-1);
-    commit_time();
 }
 
 void FrameControlsWidget::set_frame(int frame)

@@ -34,6 +34,7 @@ model::FrameTime model::PreCompLayer::relative_time(model::FrameTime time) const
 void model::PreCompLayer::set_time(model::FrameTime t)
 {
     ShapeElement::set_time(relative_time(t));
+    emit document()->graphics_invalidated();
 }
 
 std::vector<model::DocumentNode *> model::PreCompLayer::valid_precomps() const
