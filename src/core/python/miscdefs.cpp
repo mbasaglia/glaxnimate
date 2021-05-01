@@ -14,6 +14,8 @@
 #include "app/log/log.hpp"
 #include "math/bezier/bezier.hpp"
 #include "app_info.hpp"
+#include "utils/trace.hpp"
+#include "utils/quantize.hpp"
 
 
 void define_bezier(py::module& m)
@@ -63,6 +65,35 @@ void define_bezier(py::module& m)
     ;
 
     pybind11::detail::type_caster<QVariant>::add_custom_type<math::bezier::Bezier>();
+}
+
+
+static void define_trace(py::module& m)
+{
+    using namespace utils::trace;
+    py::module trace = m.def_submodule("trace", "Bitmap tracing functionality");
+    py::class_<TraceOptions>(trace, "TraceOptions")
+        .def(py::init<>())
+        .def_property("smoothness", &TraceOptions::smoothness, &TraceOptions::set_smoothness)
+        .def_property("min_area", &TraceOptions::min_area, &TraceOptions::min_area)
+    ;
+    py::class_<Tracer>(trace, "Tracer")
+        .def(py::init<const QImage&, const TraceOptions&>())
+        .def_property_readonly_static("potrace_version", &Tracer::potrace_version)
+        .def("set_target_alpha", &Tracer::set_target_alpha, py::arg("threshold"), py::arg("invert"))
+        .def("set_target_color", &Tracer::set_target_color, py::arg("threshold"), py::arg("invert"))
+        .def("trace", [](Tracer& tracer) {
+            math::bezier::MultiBezier output;
+            tracer.trace(output);
+            return output;
+        })
+    ;
+
+    py::module quantize = m.def_submodule("quantize", "Bitmap color quantization");
+    quantize.def("color_frequencies", &utils::quantize::color_frequencies, py::arg("image"), py::arg("alpha_threshold") = 128,
+                 "Counts pixel values and returns a list of (rgba, count) pairs.");
+    quantize.def("k_modes", &utils::quantize::k_modes, py::arg("image"), py::arg("k"),
+                 "Returns the k colors that appear most frequently in image.");
 }
 
 void define_utils(py::module& m)
@@ -184,6 +215,7 @@ void define_utils(py::module& m)
     ;
 
     define_bezier(utils);
+    define_trace(utils);
 }
 
 py::module define_detail(py::module& parent)

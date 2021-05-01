@@ -1,3 +1,5 @@
+#pragma once
+
 #include "app/scripting/python/register_machinery.hpp"
 
 static constexpr auto no_own = py::return_value_policy::automatic_reference;
