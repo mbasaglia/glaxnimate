@@ -136,8 +136,6 @@ private:
 
         load_stretchable_animation_container(json, precomp->timing.get());
 
-        load_transform(json["ks"].toObject(), precomp->transform.get(), &precomp->opacity);
-
         for ( const FieldInfo& field : fields["__Layer__"] )
             props.erase(field.lottie);
 
@@ -176,10 +174,12 @@ private:
                 layer->mask->mask.set(mask);
             layer_indices[index] = layer.get();
             deferred.emplace_back(layer.get(), json);
+            load_transform(json["ks"].toObject(), layer->transform.get(), &layer->opacity);
             composition->shapes.insert(std::move(layer), 0);
         }
         else
         {
+            load_transform(json["ks"].toObject(), precomp->transform.get(), &precomp->opacity);
             composition->shapes.insert(std::move(precomp), 0);
         }
     }
