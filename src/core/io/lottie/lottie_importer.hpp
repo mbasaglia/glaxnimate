@@ -709,14 +709,19 @@ private:
 
     void load_assets(const QJsonArray& assets)
     {
+        std::vector<std::pair<QJsonObject, model::Precomposition*>> comps;
+
         for ( const auto& assetv : assets )
         {
             QJsonObject asset = assetv.toObject();
             if ( asset.contains("e") && asset.contains("p") && asset.contains("w") )
                 load_asset_bitmap(asset);
             else if ( asset.contains("layers") )
-                load_asset_precomp(asset);
+                comps.emplace_back(asset, load_asset_precomp(asset));
         }
+
+        for ( const auto& p : comps )
+            load_composition(p.first, p.second);
     }
 
     void load_asset_bitmap(const QJsonObject& asset)
@@ -725,7 +730,7 @@ private:
 
         QString id = asset["id"].toString();
         if ( bitmap_ids.count(id) )
-            format->warning(io::lottie::LottieFormat::tr("Duplicate Precomposition ID: %1").arg(id));
+            format->warning(io::lottie::LottieFormat::tr("Duplicate Bitmap ID: %1").arg(id));
         bitmap_ids[id] = bmp;
 
         if ( asset["e"].toInt() )
@@ -739,7 +744,7 @@ private:
         }
     }
 
-    void load_asset_precomp(QJsonObject asset)
+    model::Precomposition* load_asset_precomp(QJsonObject asset)
     {
         auto comp = document->assets()->precompositions->values.insert(std::make_unique<model::Precomposition>(document));
 
@@ -748,8 +753,8 @@ private:
             format->warning(io::lottie::LottieFormat::tr("Duplicate Precomposition ID: %1").arg(id));
         precomp_ids[id] = comp;
 
-        load_composition(asset, comp);
         comp->name.set(id);
+        return comp;
     }
 
     void load_fonts(const QJsonArray& fonts_arr)
