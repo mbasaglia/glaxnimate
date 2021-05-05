@@ -16,6 +16,7 @@ public:
     
     void set_active(model::DocumentNode* node);
     void set_document(model::Document* document);
+    void set_composition(model::Composition* comp);
     void clear_document();
     QByteArray save_state() const;
     void load_state(const QByteArray& state);

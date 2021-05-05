@@ -72,6 +72,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     // Views
     document_node_model.set_document(current_document.get());
     comp_model.set_composition(comp);
+    ui.timeline_widget->set_composition(comp);
     ui.view_assets->setRootIndex(asset_model.mapFromSource(document_node_model.node_index(current_document->assets()).siblingAtColumn(1)));
 
     property_model.set_document(current_document.get());

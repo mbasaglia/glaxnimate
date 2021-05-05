@@ -318,13 +318,9 @@ void GlaxnimateWindow::Private::init_item_views()
     );
 
     ui.view_properties->setModel(&property_model);
-    ui.view_properties->setItemDelegateForColumn(item_models::PropertyModel::ColumnValue, &property_delegate);
-    ui.view_properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnName, QHeaderView::ResizeToContents);
-    ui.view_properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnValue, QHeaderView::Stretch);
-    ui.view_properties->header()->hideSection(item_models::PropertyModel::ColumnColor);
-    ui.view_properties->header()->hideSection(item_models::PropertyModel::ColumnVisible);
-    ui.view_properties->header()->hideSection(item_models::PropertyModel::ColumnLocked);
-
+    ui.view_properties->setItemDelegateForColumn(item_models::PropertyModelSingle::ColumnValue, &property_delegate);
+    ui.view_properties->header()->setSectionResizeMode(item_models::PropertyModelSingle::ColumnName, QHeaderView::ResizeToContents);
+    ui.view_properties->header()->setSectionResizeMode(item_models::PropertyModelSingle::ColumnValue, QHeaderView::Stretch);
 
     connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::selectionChanged, parent, &GlaxnimateWindow::document_treeview_selection_changed);
 

@@ -8,7 +8,7 @@
 
 #include <QtColorWidgets/GradientEditor>
 
-#include "item_models/property_model.hpp"
+#include "item_models/property_model_base.hpp"
 #include "widgets/spin2d.hpp"
 #include "widgets/enum_combo.hpp"
 #include "model/property/option_list_property.hpp"
@@ -55,12 +55,12 @@ void PropertyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 QWidget* PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QVariant data = index.data(Qt::EditRole);
-    auto refprop = index.data(item_models::PropertyModel::ReferenceProperty);
+    auto refprop = index.data(item_models::PropertyModelBase::ReferenceProperty);
 
     if ( refprop.canConvert<model::ReferencePropertyBase*>() )
         return new QComboBox(parent);
 
-    int prop_flags = index.data(item_models::PropertyModel::Flags).toInt();
+    int prop_flags = index.data(item_models::PropertyModelBase::Flags).toInt();
     if ( prop_flags & model::PropertyTraits::OptionList )
     {
         if ( auto prop = refprop.value<model::OptionListPropertyBase*>() )
@@ -96,10 +96,10 @@ QWidget* PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
                 box->setDecimals(0);
             }
 
-            QVariant min = index.data(item_models::PropertyModel::MinValue);
+            QVariant min = index.data(item_models::PropertyModelBase::MinValue);
             if ( min.isValid() )
                 box->setMinimum(min.toDouble() * mult);
-            QVariant max = index.data(item_models::PropertyModel::MaxValue);
+            QVariant max = index.data(item_models::PropertyModelBase::MaxValue);
             if ( max.isValid() )
             {
                 qreal maxf = max.toDouble() * mult;
@@ -133,8 +133,8 @@ static void combo_setup(QComboBox* combo)
 void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & index ) const
 {
     QVariant data = index.data(Qt::EditRole);
-    auto refprop = index.data(item_models::PropertyModel::ReferenceProperty);
-    int prop_flags = index.data(item_models::PropertyModel::Flags).toInt();
+    auto refprop = index.data(item_models::PropertyModelBase::ReferenceProperty);
+    int prop_flags = index.data(item_models::PropertyModelBase::Flags).toInt();
 
     // Object reference combo
     if ( refprop.canConvert<model::ReferencePropertyBase*>() )
@@ -239,8 +239,8 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
 void PropertyDelegate::setModelData ( QWidget * editor, QAbstractItemModel * model, const QModelIndex & index ) const
 {
     QVariant data = index.data(Qt::EditRole);
-    auto refprop = index.data(item_models::PropertyModel::ReferenceProperty);
-    int prop_flags = index.data(item_models::PropertyModel::Flags).toInt();
+    auto refprop = index.data(item_models::PropertyModelBase::ReferenceProperty);
+    int prop_flags = index.data(item_models::PropertyModelBase::Flags).toInt();
 
     // Object reference combo
     if (
@@ -316,7 +316,7 @@ void PropertyDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     // Disable decoration
     auto data = index.data(Qt::EditRole);
     if ( (data.userType() >= QMetaType::User && data.canConvert<int>()) ||
-        index.data(item_models::PropertyModel::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
+        index.data(item_models::PropertyModelBase::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
     {
         opt.icon = QIcon();
         opt.features &= ~QStyleOptionViewItem::HasDecoration;

@@ -13,7 +13,9 @@ graphics/bezier_item.cpp
 graphics/gradient_editor.cpp
 
 item_models/document_node_model.cpp
-item_models/property_model.cpp
+item_models/property_model_base.cpp
+item_models/property_model_single.cpp
+item_models/property_model_full.cpp
 item_models/gradient_list_model.cpp
 
 

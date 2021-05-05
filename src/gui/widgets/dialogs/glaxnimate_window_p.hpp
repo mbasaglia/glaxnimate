@@ -16,7 +16,7 @@
 
 #include "graphics/document_scene.hpp"
 #include "item_models/document_node_model.hpp"
-#include "item_models/property_model.hpp"
+#include "item_models/property_model_single.hpp"
 #include "item_models/comp_filter_model.hpp"
 #include "item_models/asset_proxy_model.hpp"
 
@@ -73,7 +73,7 @@ public:
 
     std::unique_ptr<model::Document> current_document;
 
-    item_models::PropertyModel property_model;
+    item_models::PropertyModelSingle property_model;
     item_models::DocumentNodeModel document_node_model;
     item_models::CompFilterModel comp_model;
     item_models::AssetProxyModel asset_model;

@@ -5,7 +5,7 @@
 #include <QGraphicsView>
 
 #include "model/document.hpp"
-#include "item_models/property_model.hpp"
+#include "item_models/property_model_full.hpp"
 
 
 class TimelineWidget : public QGraphicsView
@@ -16,9 +16,9 @@ public:
     TimelineWidget(QWidget* parent = nullptr);
     ~TimelineWidget();
     
-    void clear();
+//     void clear();
 
-    void set_model(item_models::PropertyModel* model);
+    void set_model(item_models::PropertyModelFull* model);
 
     int row_height() const;
     void set_row_height(int w);
@@ -28,13 +28,14 @@ public:
     void set_highlighted_time(int time);
     void keep_highlight();
     
-    void select(const item_models::PropertyModel::Item& item);
+    void select(const QModelIndex& index);
     
-    item_models::PropertyModel::Item item_at(const QPoint& viewport_pos);
+    item_models::PropertyModelBase::Item item_at(const QPoint& viewport_pos);
     std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframe_at(const QPoint& viewport_pos);
 
-    void expand(model::Object* obj);
-    void collapse(model::Object* obj);
+    void expand(const QModelIndex& obj);
+    void collapse(const QModelIndex& obj);
+    void set_document(model::Document* document);
 
 public slots:
     void update_timeline_start(model::FrameTime start);
@@ -46,11 +47,10 @@ private slots:
     void update_layer_end(model::FrameTime en);
 
 private:
-    void set_anim_container(model::AnimationContainer* cont);
-    void set_document(model::Document* document);
-    void add_object(model::Object* node);
-    void add_property(model::BaseProperty* property);
-    void remove_object(model::Object* node);
+    void model_rows_added(const QModelIndex& parent, int first, int last);
+    void model_rows_removed(const QModelIndex& parent, int first, int last);
+    void model_reset();
+    void on_item_removed(quintptr id);
 
 protected:    
     void mousePressEvent(QMouseEvent * event) override;

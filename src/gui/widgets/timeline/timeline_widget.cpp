@@ -18,7 +18,6 @@ public:
     int end_time = 0;
     int row_height = 24;
     int header_height = 24;
-    int rows = 0;
 
     qreal min_scale = 1;
     int frame_skip = 1;
@@ -31,8 +30,10 @@ public:
     model::AnimationContainer* limit = nullptr;
     bool keep_highlight = false;
 
-    std::vector<ObjectLineItem*> object_items;
-    std::unordered_map<model::BaseProperty*, LineItem*> prop_items;
+    LineItem* root = nullptr;
+    std::unordered_map<quintptr, LineItem*> line_items;
+
+    item_models::PropertyModelFull* model = nullptr;
 
     int rounded_end_time()
     {
@@ -48,35 +49,65 @@ public:
     {
         return QRectF(
             QPointF(start_time, -header_height),
-            QPointF(rounded_end_time(), std::max(row_height*(rows+1), parent->height()))
+            QPointF(rounded_end_time(), std::max(row_height*root->visible_rows(), parent->height()))
         );
     }
 
-    void add_property(model::BaseProperty* prop, ObjectLineItem* parent_item)
+    void add_item(quintptr id, const item_models::PropertyModelFull::Item& item, LineItem* parent_item)
     {
-        PropertyLineItem* item = new PropertyLineItem(parent_item->object(), prop, start_time, rounded_end_time(), row_height);
-        connect(item, &PropertyLineItem::property_clicked, parent, &TimelineWidget::property_clicked);
-        add_line(item, parent_item);
-        prop_items[prop] = item;
+        LineItem* line_item = nullptr;
+
+        if ( item.property )
+            line_item = add_property(id, item.property, parent_item);
+        else if ( item.object )
+            line_item = add_object_without_properties(id, item.object);
+
+        if ( line_item )
+        {
+            line_items[id] = line_item;
+            parent_item->add_row(line_item);
+            connect(line_item, &LineItem::removed, parent, &TimelineWidget::on_item_removed);
+        }
     }
 
-    void add_animatable(model::AnimatableBase* anim, ObjectLineItem* parent_item)
+    LineItem* add_property(quintptr id, model::BaseProperty* prop, LineItem* parent_item)
     {
-        AnimatableItem* item = new AnimatableItem(parent_item->object(), anim, start_time, rounded_end_time(), row_height);
+        LineItem* item;
+
+        if ( prop->traits().flags & model::PropertyTraits::Animated )
+            item = add_animatable(id, static_cast<model::AnimatableBase*>(prop), parent_item);
+        else if ( (prop->traits().flags & model::PropertyTraits::List) && prop->traits().is_object() )
+            item = add_property_list(id, static_cast<model::ObjectListPropertyBase*>(prop), parent_item);
+        else
+            item = add_property_plain(id, prop, parent_item);
+
+        return item;
+    }
+
+    LineItem* add_animatable(quintptr id, model::AnimatableBase* anim, LineItem* parent_item)
+    {
+        AnimatableItem* item = new AnimatableItem(id, parent_item->object(), anim, start_time, rounded_end_time(), row_height);
         connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::property_clicked);
-        add_line(item, parent_item);
-        prop_items[anim] = item;
+        return item;
     }
 
-    void add_line(LineItem* item, ObjectLineItem* parent_item)
+    LineItem* add_property_plain(quintptr id, model::BaseProperty* prop, LineItem* parent_item)
     {
-        parent_item->add_row(item);
-        rows += 1;
+        PropertyLineItem* item = new PropertyLineItem(id, parent_item->object(), prop, start_time, rounded_end_time(), row_height);
+        connect(item, &PropertyLineItem::property_clicked, parent, &TimelineWidget::property_clicked);
+        return item;
     }
 
-    ObjectLineItem* add_object_without_properties(model::Object* obj)
+    LineItem* add_property_list(quintptr id, model::ObjectListPropertyBase* prop, LineItem* parent_item)
     {
-        ObjectLineItem* item = new ObjectLineItem(obj, start_time, rounded_end_time(), row_height);
+        ObjectListLineItem* item = new ObjectListLineItem(id, parent_item->object(), prop, start_time, rounded_end_time(), row_height);
+        connect(item, &ObjectListLineItem::property_clicked, parent, &TimelineWidget::property_clicked);
+        return item;
+    }
+
+    ObjectLineItem* add_object_without_properties(quintptr id, model::Object* obj)
+    {
+        ObjectLineItem* item = new ObjectLineItem(id, obj, start_time, rounded_end_time(), row_height);
         if ( auto layer = obj->cast<model::Layer>() )
         {
             auto anim_item = new AnimationContainerItem(layer, layer->animation.get(), row_height - 8, item);
@@ -95,11 +126,6 @@ public:
 
         connect(item, &ObjectLineItem::object_clicked, parent, &TimelineWidget::object_clicked);
 
-        scene.addItem(item);
-        item->setPos(0, rows * row_height);
-        rows++;
-
-        object_items.push_back(item);
         return item;
     }
 
@@ -120,8 +146,7 @@ public:
     void update_end_time()
     {
         auto et = rounded_end_time();
-        for ( const auto& p : object_items )
-            p->set_time_end(et);
+        root->set_time_end(et);
     }
 
     void paint_highligted_frame(int frame, QPainter& painter, const QBrush& color)
@@ -139,10 +164,8 @@ public:
 
     void clear()
     {
-        scene.clear();
-        rows = 0;
-        object_items.clear();
-        prop_items.clear();
+        line_items.clear();
+        root->raw_clear();
     }
 
     model::AnimationContainer* anim(model::DocumentNode* node)
@@ -181,11 +204,17 @@ public:
         painter.drawText(text_rect, Qt::AlignLeft|Qt::AlignBottom,  QString::number(f));
     }
 
-    std::vector<ObjectLineItem*>::iterator find_object_item(model::Object* obj)
+    LineItem* index_to_line(const QModelIndex& index)
     {
-        return std::find_if(object_items.begin(), object_items.end(), [obj](ObjectLineItem* item){
-            return item->object() == obj;
-        });
+        auto it = line_items.find(index.internalId());
+        if ( it == line_items.end() )
+            return root;
+        return it->second;
+    }
+
+    void insert_index(const QModelIndex& index, LineItem* parent)
+    {
+        add_item(index.internalId(), model->item(index), parent);
     }
 };
 
@@ -193,6 +222,8 @@ TimelineWidget::TimelineWidget(QWidget* parent)
     : QGraphicsView(parent), d(std::make_unique<Private>())
 {
     d->parent = this;
+    d->root = new LineItem(0, nullptr, 0, 0, d->row_height);
+    d->scene.addItem(d->root);
     setMouseTracking(true);
     setInteractive(true);
     setRenderHint(QPainter::Antialiasing);
@@ -205,7 +236,7 @@ TimelineWidget::TimelineWidget(QWidget* parent)
 TimelineWidget::~TimelineWidget()
 {
 }
-
+/*
 void TimelineWidget::add_object(model::Object* node)
 {
     d->add_object_without_properties(node);
@@ -263,7 +294,7 @@ void TimelineWidget::clear()
     setSceneRect(d->scene_rect());
     reset_view();
 }
-
+*/
 int TimelineWidget::row_height() const
 {
     return d->row_height;
@@ -283,7 +314,7 @@ void TimelineWidget::set_document(model::Document* document)
         disconnect(d->document, nullptr, viewport(), nullptr);
     }
 
-    clear();
+//     clear();
 
     if ( document )
     {
@@ -293,11 +324,11 @@ void TimelineWidget::set_document(model::Document* document)
         update_timeline_start(document->main()->animation->first_frame.get());
         connect(this, &TimelineWidget::frame_clicked, document, &model::Document::set_current_time);
         connect(document, &model::Document::current_time_changed, viewport(), (void (QWidget::*)())&QWidget::update);
-        set_anim_container(document->main()->animation.get());
+//         set_anim_container(document->main()->animation.get());
     }
     else
     {
-        set_anim_container(nullptr);
+//         set_anim_container(nullptr);
     }
 
     d->document = document;
@@ -316,8 +347,7 @@ void TimelineWidget::update_timeline_start(model::FrameTime start)
     d->start_time = start;
     setSceneRect(sceneRect() | d->scene_rect());
     d->adjust_min_scale(viewport()->width());
-    for ( const auto& p : d->object_items )
-        p->set_time_start(start);
+    d->root->set_time_start(qFloor(start));
 }
 
 void TimelineWidget::wheelEvent(QWheelEvent* event)
@@ -368,10 +398,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
         palette().base(),
     };
 
-    int n_rows = d->object_items.size();
-    for ( auto objit : d->object_items )
-        if ( objit->is_expanded() )
-            n_rows += objit->row_count();
+    int n_rows = d->root->visible_rows();
 
     for ( int i = 0; i <= n_rows; i++ )
     {
@@ -577,35 +604,25 @@ int TimelineWidget::header_height() const
     return d->header_height;
 }
 
-void TimelineWidget::select(const item_models::PropertyModel::Item& item)
+void TimelineWidget::select(const QModelIndex& index)
 {
     d->scene.clearSelection();
-    if ( item.property )
-    {
-        auto it = d->prop_items.find(item.property);
-        if ( it != d->prop_items.end() )
-            it->second->setSelected(true);
-    }
-    else if ( item.object )
-    {
-        auto it = d->find_object_item(item.object);
-        if ( it != d->object_items.end() )
-            (*it)->setSelected(true);
-    }
+    auto it = d->line_items.find(index.internalId());
+    if ( it != d->line_items.end() )
+        it->second->setSelected(true);
 }
 
-item_models::PropertyModel::Item TimelineWidget::item_at(const QPoint& viewport_pos)
+item_models::PropertyModelFull::Item TimelineWidget::item_at(const QPoint& viewport_pos)
 {
     for ( QGraphicsItem* it : items(viewport_pos) )
     {
         switch ( ItemTypes(it->type()) )
         {
             case ItemTypes::AnimatableItem:
-                return static_cast<AnimatableItem*>(it)->item();
             case ItemTypes::ObjectLineItem:
-                return static_cast<ObjectLineItem*>(it)->object();
             case ItemTypes::PropertyLineItem:
-                return static_cast<PropertyLineItem*>(it)->item();
+            case ItemTypes::ObjectListLineItem:
+                return static_cast<LineItem*>(it)->property_item();
         }
     }
     return {};
@@ -657,6 +674,7 @@ void TimelineWidget::keyPressEvent(QKeyEvent* event)
     QGraphicsView::keyPressEvent(event);
 }
 
+/*
 void TimelineWidget::set_anim_container(model::AnimationContainer* cont)
 {
 
@@ -675,6 +693,7 @@ void TimelineWidget::set_anim_container(model::AnimationContainer* cont)
         update_layer_start(cont->first_frame.get());
     }
 }
+*/
 
 void TimelineWidget::update_layer_end(model::FrameTime end)
 {
@@ -706,43 +725,47 @@ void TimelineWidget::keep_highlight()
     d->keep_highlight = true;
 }
 
-void TimelineWidget::collapse(model::Object* obj)
+void TimelineWidget::collapse(const QModelIndex& index)
 {
-    auto it = d->find_object_item(obj);
-    if ( it == d->object_items.end() || !(*it)->is_expanded() )
-        return;
-
-    auto delta = (*it)->collapse();
-
-    for ( ++it; it != d->object_items.end(); ++it )
-    {
-        auto p = (*it)->pos();
-        p.setY(p.y() + delta);
-        (*it)->setPos(p);
-    }
+    if ( auto line = d->index_to_line(index) )
+        line->collapse();
 }
 
-void TimelineWidget::expand(model::Object* obj)
+void TimelineWidget::expand(const QModelIndex& index)
 {
-    auto it = d->find_object_item(obj);
-    if ( it == d->object_items.end() || (*it)->is_expanded() )
-        return;
-
-    auto delta = (*it)->expand();
-
-    for ( ++it; it != d->object_items.end(); ++it )
-    {
-        auto p = (*it)->pos();
-        p.setY(p.y() + delta);
-        (*it)->setPos(p);
-    }
+    if ( auto line = d->index_to_line(index) )
+        line->expand();
 }
 
-void TimelineWidget::set_model(item_models::PropertyModel* model)
+void TimelineWidget::set_model(item_models::PropertyModelFull* model)
 {
-    connect(model, &item_models::PropertyModel::document_changed, this, &TimelineWidget::set_document);
-    connect(model, &item_models::PropertyModel::root_object_added_begin, this, &TimelineWidget::add_object);
-    connect(model, &item_models::PropertyModel::property_added, this, &TimelineWidget::add_property);
-    connect(model, &item_models::PropertyModel::object_removed, this, &TimelineWidget::remove_object);
-    connect(model, &item_models::PropertyModel::objects_cleared, this, &TimelineWidget::clear);
+    d->model = model;
+    connect(model, &item_models::PropertyModelFull::rowsInserted, this, &TimelineWidget::model_rows_added);
+    connect(model, &item_models::PropertyModelFull::rowsRemoved, this, &TimelineWidget::model_rows_removed);
+    connect(model, &item_models::PropertyModelFull::modelReset, this, &TimelineWidget::model_reset);
 }
+
+void TimelineWidget::model_reset()
+{
+    d->clear();
+}
+
+void TimelineWidget::model_rows_added(const QModelIndex& parent, int first, int last)
+{
+    auto parent_line = d->index_to_line(parent);
+    for ( int i = first; i <= last; i++ )
+        d->insert_index(d->model->index(first, 0, parent), parent_line);
+    setSceneRect(d->scene_rect());
+}
+
+void TimelineWidget::model_rows_removed(const QModelIndex& parent, int first, int last)
+{
+    d->index_to_line(parent)->remove_rows(first, last);
+    setSceneRect(d->scene_rect());
+}
+
+void TimelineWidget::on_item_removed(quintptr id)
+{
+    d->line_items.erase(id);
+}
+

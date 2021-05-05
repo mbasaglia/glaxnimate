@@ -12,7 +12,7 @@
 #include "model/shapes/precomp_layer.hpp"
 
 #include "graphics/handle.hpp"
-#include "item_models/property_model.hpp"
+#include "item_models/property_model_full.hpp"
 
 namespace timeline {
 
@@ -174,6 +174,7 @@ enum class ItemTypes
     ObjectLineItem = QGraphicsItem::UserType + 1,
     AnimatableItem,
     PropertyLineItem,
+    ObjectListLineItem,
 };
 
 class LineItem : public QGraphicsObject
@@ -181,11 +182,12 @@ class LineItem : public QGraphicsObject
     Q_OBJECT
 
 public:
-    LineItem(model::Object* obj, int time_start, int time_end, int height):
+    LineItem(quintptr id, model::Object* obj, int time_start, int time_end, int height):
         time_start(time_start),
         time_end(time_end),
         height_(height),
-        object_(obj)
+        object_(obj),
+        id_(id)
     {
         setFlags(QGraphicsItem::ItemIsSelectable);
     }
@@ -198,6 +200,8 @@ public:
     void set_time_start(int time)
     {
         time_start = time;
+        for ( auto row : rows_ )
+            row->set_time_start(time);
         on_set_time_start(time);
         prepareGeometryChange();
     }
@@ -205,6 +209,8 @@ public:
     void set_time_end(int time)
     {
         time_end = time;
+        for ( auto row : rows_ )
+            row->set_time_end(time);
         on_set_time_end(time);
         prepareGeometryChange();
     }
@@ -223,11 +229,104 @@ public:
 
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
 
-    int height() const
+    int row_height() const
     {
         return height_;
     }
 
+    int row_count() const
+    {
+        return rows_.size();
+    }
+
+    /*int child_rows_height()
+    {
+        return rows_.size() * height();
+    }*/
+
+    int visible_height() const
+    {
+        return visible_rows_ * row_height();
+    }
+
+    void add_row(LineItem* row)
+    {
+        row->setParentItem(this);
+        row->setPos(0, visible_height());
+        rows_.push_back(row);
+        visible_rows_ += row->visible_rows();
+        adjust_row_vis(row->visible_rows(), row);
+    }
+
+    void remove_rows(int first, int last)
+    {
+        int old_vis = visible_rows_;
+        LineItem* row = nullptr;
+        for ( int i = first; i <= last && i < int(rows_.size()); i++ )
+        {
+            row = rows_[i];
+            row->emit_removed();
+            delete row;
+            visible_rows_ -= row->visible_rows();
+        }
+        rows_.erase(rows_.begin() + first, rows_.begin() + last + 1);
+        adjust_row_vis(visible_rows_ - old_vis, row);
+    }
+
+    void expand()
+    {
+        int old_vis = visible_rows_;
+        visible_rows_ = 1;
+
+        for ( auto item : rows_ )
+        {
+            item->setVisible(true);
+            visible_rows_ += item->visible_rows();
+        }
+
+        propagate_row_vis(visible_rows_ - old_vis);
+    }
+
+    void collapse()
+    {
+        int old_vis = visible_rows_;
+        for ( auto item : rows_ )
+            item->setVisible(false);
+
+        visible_rows_ = 1;
+        propagate_row_vis(visible_rows_ - old_vis);
+    }
+
+    bool is_expanded()
+    {
+        return !rows_.empty() && rows_[0]->isVisible();
+    }
+
+    LineItem* parent_line() const
+    {
+        return static_cast<LineItem*>(parentItem());
+    }
+
+    int visible_rows() const
+    {
+        return visible_rows_;
+    }
+
+    void raw_clear()
+    {
+        for ( auto row : rows_ )
+            delete row;
+        rows_.clear();
+        visible_rows_ = 1;
+    }
+
+    virtual item_models::PropertyModelFull::Item property_item() const
+    {
+        return {};
+    }
+
+signals:
+    void removed(quintptr id, QPrivateSignal = {});
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * event) override
@@ -244,12 +343,42 @@ protected:
     virtual void click_selected(){}
 //     virtual void on_height_changed(int){}
 
-
 private:
+    void propagate_row_vis(int delta)
+    {
+        if ( isVisible() && parent_line() && delta )
+            parent_line()->adjust_row_vis(delta, this);
+    }
+
+    void adjust_row_vis(int delta, LineItem* child)
+    {
+        int i;
+        for ( i = 0; i < int(rows_.size()); i++ )
+        {
+            if ( rows_[i] == child )
+                break;
+        }
+
+        for ( i++; i < int(rows_.size()); i++ )
+        {
+            rows_[i]->setPos(0, rows_[i]->pos().y() + row_height() * delta);
+        }
+
+        propagate_row_vis(delta);
+    }
+
+    void emit_removed()
+    {
+        emit removed(id_);
+    }
+
     int time_start;
     int time_end;
     int height_;
     model::Object* object_;
+    std::vector<LineItem*> rows_;
+    int visible_rows_ = 1;
+    quintptr id_ = 0;
 };
 
 class ObjectLineItem : public LineItem
@@ -257,53 +386,15 @@ class ObjectLineItem : public LineItem
     Q_OBJECT
 
 public:
-    ObjectLineItem(model::Object* obj, int time_start, int time_end, int height)
-        : LineItem(obj, time_start, time_end, height)
+    ObjectLineItem(quintptr id, model::Object* obj, int time_start, int time_end, int height)
+        : LineItem(id, obj, time_start, time_end, height)
     {}
 
     int type() const override { return int(ItemTypes::ObjectLineItem); }
 
-    int row_count() const
+    item_models::PropertyModelFull::Item property_item() const override
     {
-        return rows_.size();
-    }
-
-    int child_rows_height()
-    {
-        return rows_.size() * height();
-    }
-
-    int rows_height()
-    {
-        return (rows_.size() + 1) * height();
-    }
-
-    void add_row(LineItem* row)
-    {
-        row->setParentItem(this);
-        row->setPos(0, rows_height());
-        rows_.push_back(row);
-    }
-
-    int expand()
-    {
-        for ( auto item : rows_ )
-            item->setVisible(true);
-
-        return child_rows_height();
-    }
-
-    int collapse()
-    {
-        for ( auto item : rows_ )
-            item->setVisible(false);
-
-        return -child_rows_height();
-    }
-
-    bool is_expanded()
-    {
-        return !rows_.empty() && rows_[0]->isVisible();
+        return {object(), nullptr};
     }
 
 protected:
@@ -312,23 +403,9 @@ protected:
         emit object_clicked(object());
     }
 
-    void on_set_time_start(int time) override
-    {
-        for ( auto row : rows_ )
-            row->set_time_start(time);
-    }
-
-    void on_set_time_end(int time) override
-    {
-        for ( auto row : rows_ )
-            row->set_time_end(time);
-    }
-
 signals:
     void object_clicked(model::Object* object);
 
-private:
-    std::vector<LineItem*> rows_;
 };
 
 
@@ -337,8 +414,8 @@ class AnimatableItem : public LineItem
     Q_OBJECT
 
 public:
-    AnimatableItem(model::Object* obj, model::AnimatableBase* animatable, int time_start, int time_end, int height)
-        : LineItem(obj, time_start, time_end, height),
+    AnimatableItem(quintptr id, model::Object* obj, model::AnimatableBase* animatable, int time_start, int time_end, int height)
+        : LineItem(id, obj, time_start, time_end, height),
         animatable(animatable)
     {
         for ( int i = 0; i < animatable->keyframe_count(); i++ )
@@ -366,7 +443,7 @@ public:
 
     int type() const override { return int(ItemTypes::AnimatableItem); }
 
-    item_models::PropertyModel::Item item() const
+    item_models::PropertyModelFull::Item property_item() const override
     {
         return {object(), animatable};
     }
@@ -386,7 +463,7 @@ public slots:
 
         model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
         auto item = new KeyframeSplitItem(this);
-        item->setPos(kf->time(), height() / 2.0);
+        item->setPos(kf->time(), row_height() / 2.0);
         item->set_exit(kf->transition().before_descriptive());
         item->set_enter(prev ? prev->transition().after_descriptive() : model::KeyframeTransition::Hold);
         kf_split_items.insert(kf_split_items.begin() + index, item);
@@ -447,7 +524,7 @@ private slots:
     void update_keyframe(int index, model::KeyframeBase* kf)
     {
         auto item_start = kf_split_items[index];
-        item_start->setPos(kf->time(), height() / 2.0);
+        item_start->setPos(kf->time(), row_height() / 2.0);
         item_start->set_exit(kf->transition().before_descriptive());
 
         if ( index < int(kf_split_items.size()) - 1 )
@@ -579,8 +656,8 @@ class PropertyLineItem : public LineItem
     Q_OBJECT
 
 public:
-    PropertyLineItem(model::Object* obj, model::BaseProperty* prop, int time_start, int time_end, int height)
-        : LineItem(obj, time_start, time_end, height),
+    PropertyLineItem(quintptr id, model::Object* obj, model::BaseProperty* prop, int time_start, int time_end, int height)
+        : LineItem(id, obj, time_start, time_end, height),
         property_(prop)
     {}
 
@@ -591,7 +668,7 @@ public:
         return property_;
     }
 
-    item_models::PropertyModel::Item item() const
+    item_models::PropertyModelFull::Item property_item() const override
     {
         return {object(), property_};
     }
@@ -692,6 +769,41 @@ private:
     model::AnimationContainer* animation;
     graphics::MoveHandle handle_ip{this, graphics::MoveHandle::Horizontal, graphics::MoveHandle::None, 1, true};
     graphics::MoveHandle handle_op{this, graphics::MoveHandle::Horizontal, graphics::MoveHandle::None, 1, true};
+};
+
+class ObjectListLineItem : public LineItem
+{
+    Q_OBJECT
+
+public:
+    ObjectListLineItem(quintptr id, model::Object* obj, model::ObjectListPropertyBase* prop, int time_start, int time_end, int height)
+        : LineItem(id, obj, time_start, time_end, height),
+        property_(prop)
+    {}
+
+    int type() const override { return int(ItemTypes::ObjectListLineItem); }
+
+    model::BaseProperty* property() const
+    {
+        return property_;
+    }
+
+    item_models::PropertyModelFull::Item property_item() const override
+    {
+        return {object(), property_};
+    }
+
+protected:
+    void click_selected() override
+    {
+        emit property_clicked(property_);
+    }
+
+signals:
+    void property_clicked(model::ObjectListPropertyBase* object);
+
+private:
+    model::ObjectListPropertyBase* property_;
 };
 
 

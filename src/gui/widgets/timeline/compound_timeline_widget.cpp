@@ -10,7 +10,7 @@
 #include "command/animation_commands.hpp"
 #include "command/undo_macro_guard.hpp"
 
-#include "item_models/property_model.hpp"
+#include "item_models/property_model_full.hpp"
 #include "glaxnimate_app.hpp"
 
 #include "style/property_delegate.hpp"
@@ -44,17 +44,17 @@ public:
                 ui.properties->viewport(), (void (QWidget::*)())&QWidget::update);
 
         ui.properties->setItemDelegate(&fixed_height_delegate);
-        ui.properties->setItemDelegateForColumn(item_models::PropertyModel::ColumnValue, &property_delegate);
-        ui.properties->setItemDelegateForColumn(item_models::PropertyModel::ColumnColor, &color_delegate);
+        ui.properties->setItemDelegateForColumn(item_models::PropertyModelFull::ColumnValue, &property_delegate);
+        ui.properties->setItemDelegateForColumn(item_models::PropertyModelFull::ColumnColor, &color_delegate);
 
-        ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnName, QHeaderView::ResizeToContents);
-        ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnValue, QHeaderView::Stretch);
-        ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnColor, QHeaderView::ResizeToContents);
-        ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnLocked, QHeaderView::ResizeToContents);
-        ui.properties->header()->setSectionResizeMode(item_models::PropertyModel::ColumnVisible, QHeaderView::ResizeToContents);
-        ui.properties->header()->moveSection(item_models::PropertyModel::ColumnColor, 0);
-        ui.properties->header()->moveSection(item_models::PropertyModel::ColumnVisible, 1);
-        ui.properties->header()->moveSection(item_models::PropertyModel::ColumnLocked, 2);
+        ui.properties->header()->setSectionResizeMode(item_models::PropertyModelFull::ColumnName, QHeaderView::ResizeToContents);
+        ui.properties->header()->setSectionResizeMode(item_models::PropertyModelFull::ColumnValue, QHeaderView::Stretch);
+        ui.properties->header()->setSectionResizeMode(item_models::PropertyModelFull::ColumnColor, QHeaderView::ResizeToContents);
+        ui.properties->header()->setSectionResizeMode(item_models::PropertyModelFull::ColumnLocked, QHeaderView::ResizeToContents);
+        ui.properties->header()->setSectionResizeMode(item_models::PropertyModelFull::ColumnVisible, QHeaderView::ResizeToContents);
+        ui.properties->header()->moveSection(item_models::PropertyModelFull::ColumnColor, 0);
+        ui.properties->header()->moveSection(item_models::PropertyModelFull::ColumnVisible, 1);
+        ui.properties->header()->moveSection(item_models::PropertyModelFull::ColumnLocked, 2);
 
         ui.properties->setUniformRowHeights(true);
         ui.properties->header()->setFixedHeight(ui.timeline->header_height());
@@ -234,24 +234,8 @@ public:
         action_kf_paste.setEnabled(enabled);
     }
 
-
-    void fix_row_height()
-    {
-        qreal tree_h = ui.properties->sizeHintForRow(0);
-
-        if ( tree_h > ui.timeline->row_height() )
-        {
-
-            qDebug() << "[" << tree_h << ui.timeline->row_height();
-            property_delegate.set_forced_height(tree_h);
-            ui.timeline->set_row_height(tree_h);
-            qDebug() << "]" << ui.properties->sizeHintForRow(0) << ui.timeline->row_height();
-        }
-
-    }
-
     Ui::CompoundTimelineWidget ui;
-    item_models::PropertyModel property_model{true};
+    item_models::PropertyModelFull property_model;
     style::PropertyDelegate property_delegate;
     color_widgets::ColorDelegate color_delegate;
     style::FixedHeightDelegate fixed_height_delegate;
@@ -301,8 +285,14 @@ void CompoundTimelineWidget::changeEvent ( QEvent* e )
     }
 }
 
+void CompoundTimelineWidget::set_composition(model::Composition* comp)
+{
+//     d->property_model.add_object(comp);
+}
+
 void CompoundTimelineWidget::set_active(model::DocumentNode* node)
 {
+    /*
     d->property_model.set_object(node);
     if ( node )
     {
@@ -338,9 +328,7 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
                 }
             }
         }
-    }
-
-    d->fix_row_height();
+    }*/
 
     d->ui.timeline->reset_view();
     d->ui.properties->expandAll();
@@ -361,7 +349,7 @@ void CompoundTimelineWidget::clear_document()
 
 void CompoundTimelineWidget::select_index(const QModelIndex& index)
 {
-    d->ui.timeline->select(d->property_model.item(index));
+    d->ui.timeline->select(index);
     d->ui.properties->viewport()->update();
 }
 
@@ -386,7 +374,7 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
 
     QPoint glob = static_cast<QWidget*>(sender())->mapToGlobal(p);
 
-    item_models::PropertyModel::Item item;
+    item_models::PropertyModelFull::Item item;
     if ( d->ui.properties->rect().contains(p) )
     {
         item = d->property_model.item(
@@ -556,16 +544,12 @@ void CompoundTimelineWidget::paste_keyframe()
 
 void CompoundTimelineWidget::collapse_index(const QModelIndex& index)
 {
-    auto item = d->property_model.item(index);
-    if ( item.object )
-        d->ui.timeline->collapse(item.object);
+    d->ui.timeline->collapse(index);
 }
 
 void CompoundTimelineWidget::expand_index(const QModelIndex& index)
 {
-    auto item = d->property_model.item(index);
-    if ( item.object )
-        d->ui.timeline->expand(item.object);
+    d->ui.timeline->expand(index);
 }
 
 
@@ -575,8 +559,8 @@ void CompoundTimelineWidget::click_index ( const QModelIndex& index )
     if ( !node )
         return;
 
-    if ( index.column() == item_models::PropertyModel::ColumnVisible )
+    if ( index.column() == item_models::PropertyModelFull::ColumnVisible )
         node->visible.set(!node->visible.get());
-     else if ( index.column() == item_models::PropertyModel::ColumnLocked )
+     else if ( index.column() == item_models::PropertyModelFull::ColumnLocked )
         node->locked.set(!node->locked.get());
 }
