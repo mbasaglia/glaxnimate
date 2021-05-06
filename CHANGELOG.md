@@ -19,6 +19,7 @@
     * Clicking on the checkboxes in the pl8ugin settings properly toggles the plugins
     * Lottie precomposition dependencies are correctly resolved on import
     * Fixed parenting transforms for imported lottie precomp layers
+    * Fixed importing SVG path data
 
 ## 0.4.2
 

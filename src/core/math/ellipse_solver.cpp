@@ -51,7 +51,7 @@ math::bezier::Bezier math::EllipseSolver::to_bezier(qreal anglestart, qreal angl
 
     // Then we iterate until the angle has been completed
     qreal tolerance = step / 2;
-    while ( angle_left > tolerance )
+    do
     {
         qreal lstep = qMin(angle_left, step);
         qreal step_sign = lstep * sign;
@@ -65,6 +65,7 @@ math::bezier::Bezier math::EllipseSolver::to_bezier(qreal anglestart, qreal angl
         points.push_back(bezier::Point::from_relative(p2, -q2, q2, math::bezier::Symmetrical));
         angle1 = angle2;
     }
+    while ( angle_left > tolerance );
 
     if ( points.size() > 1 && qFuzzyCompare(angle_delta, math::tau)  )
     {
