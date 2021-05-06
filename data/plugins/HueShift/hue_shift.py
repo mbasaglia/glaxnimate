@@ -49,11 +49,11 @@ class HueShiftVisitor(glaxnimate.model.Visitor):
         if isinstance(node, glaxnimate.model.shapes.Styler):
             self._set_value(node.color)
             if node.use:
-                if isinstance(node.use, glaxnimate.model.defs.NamedColor):
+                if isinstance(node.use, glaxnimate.model.assets.NamedColor):
                     if node.use not in self.named_colors:
                         self._set_value(node.use.color)
                         self.named_colors.add(node.use)
-                elif isinstance(node.use, glaxnimate.model.defs.Gradient) and node.use.colors:
+                elif isinstance(node.use, glaxnimate.model.assets.Gradient) and node.use.colors:
                     if node.use.colors not in self.gradients:
                         self._set_value(node.use.colors.colors)
                         self.gradients.add(node.use.colors)
