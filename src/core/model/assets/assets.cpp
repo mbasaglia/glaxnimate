@@ -57,17 +57,16 @@ void model::PrecompositionList::on_added(model::Precomposition* obj, int positio
 {
     obj->attach();
     document()->comp_graph().add_composition(obj);
-    emit docnode_child_add_end(obj);
+    emit docnode_child_add_end(obj, position);
     emit precomp_added(obj, position);
 }
 
 
 void model::PrecompositionList::on_removed(model::Precomposition* obj, int position)
 {
-    Q_UNUSED(position);
     obj->detach();
     document()->comp_graph().remove_composition(obj);
-    emit docnode_child_remove_end(obj);
+    emit docnode_child_remove_end(obj, position);
 }
 
 

@@ -171,10 +171,10 @@ private:
 
 signals:
     void docnode_child_add_begin(int row);
-    void docnode_child_add_end(DocumentNode* node);
+    void docnode_child_add_end(DocumentNode* node, int row);
 
     void docnode_child_remove_begin(int row);
-    void docnode_child_remove_end(DocumentNode* node);
+    void docnode_child_remove_end(DocumentNode* node, int row);
 
     void docnode_child_move_begin(int from, int to);
     void docnode_child_move_end(DocumentNode* node, int from, int to);

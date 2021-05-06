@@ -15,7 +15,9 @@ public:
 
     void on_connect(model::Object* object, Subtree* tree) override
     {
-        if ( auto visual = object->cast<model::VisualNode>() )
+        auto visual = object->cast<model::VisualNode>();
+
+        if ( visual )
         {
             connect(visual, &model::VisualNode::docnode_visible_changed, model, [this, visual]() {
                 QModelIndex ind = node_index(visual);
@@ -43,7 +45,7 @@ public:
             });
         }
 
-        std::vector<model::BaseProperty*> object_lists;
+        model::ObjectListPropertyBase* object_list = nullptr;
 
         for ( model::BaseProperty* prop : object->properties() )
         {
@@ -52,7 +54,8 @@ public:
                 prop->traits().type == model::PropertyTraits::Object
             )
             {
-                object_lists.push_back(static_cast<model::ObjectListPropertyBase*>(prop));
+                if ( visual )
+                    object_list = static_cast<model::ObjectListPropertyBase*>(prop);
             }
             else if ( prop->traits().type == model::PropertyTraits::Object )
             {
@@ -76,64 +79,65 @@ public:
         }
 
 
-        Subtree* child = nullptr;
-
         // Show object lists at the end
-        for ( auto prop : object_lists )
+        if ( object_list )
         {
-            Subtree* prop_node = add_node(Subtree{prop, tree->id});
-            child = prop_node;
-            prop_node->prop_value = prop->value().toList();
-            properties[prop] = prop_node->id;
+            Subtree* prop_node = add_node(Subtree{object_list, tree->id});
+            properties[object_list] = prop_node->id;
             connect_list(prop_node);
-        }
-
-        if ( child )
-        {
             if ( auto node = tree->object->cast<model::DocumentNode>() )
-                connect_docnode(node, child);
+                connect_docnode(node, prop_node);
         }
     }
 
     void connect_list(Subtree* prop_node)
     {
-        if ( prop_node->prop->traits().is_object() )
+        QVariantList prop_value = prop_node->prop->value().toList();
+        for ( auto it = prop_value.rbegin(); it != prop_value.rend(); ++it )
         {
-            for ( int i = 0; i < prop_node->prop_value.size(); i++ )
-            {
-                model::Object* subobj = prop_node->prop_value[i].value<model::Object*>();
-                auto suboj_node = add_node(Subtree{subobj, prop_node->id});
-                connect_recursive(suboj_node);
-            }
-        }
-        else
-        {
-            for ( int i = 0; i < prop_node->prop_value.size(); i++ )
-            {
-                add_node(Subtree{i, prop_node->id});
-            }
+            model::Object* subobj = it->value<model::Object*>();
+            auto suboj_node = add_node(Subtree{subobj, prop_node->id});
+            connect_recursive(suboj_node);
         }
     }
 
     void connect_docnode(model::DocumentNode* node, Subtree* insert_into)
     {
         auto id = insert_into->id;
-        connect(node, &model::DocumentNode::docnode_child_add_begin, model, [this, node, id](int row) {
-            int rows = node->docnode_child_count();
-            my_model()->beginInsertRows(subtree_index(id), rows - row, rows - row);
+        connect(node, &model::DocumentNode::docnode_child_add_end, model,
+        [this, insert_into, node](model::DocumentNode* child, int row) {
+            int rows = node->docnode_child_count() - 1; // called at the end
+            add_object(child, insert_into, false, rows -  row);
         });
-        connect(node, &model::DocumentNode::docnode_child_add_end, model, [this, insert_into, id](model::DocumentNode* child) {
-            add_object(child, insert_into, false);
-            my_model()->endInsertRows();
-        });
-        connect(node, &model::DocumentNode::docnode_child_remove_begin, model, [this, node](int row) {
-            int rows = node->docnode_child_count();
-            my_model()->beginRemoveRows(node_index(node), rows - row - 1, rows - row - 1);
-        });
-        connect(node, &model::DocumentNode::docnode_child_remove_end, model, [this, node](model::DocumentNode* child) {
+        connect(node, &model::DocumentNode::docnode_child_remove_end, model,
+        [this, node, id](model::DocumentNode* child, int row) {
+            int rows = node->docnode_child_count() + 1;
+            my_model()->beginRemoveRows(subtree_index(id), rows - row - 1, rows - row - 1);
             if ( auto tree = object_tree(child) )
                 disconnect_recursive(tree);
             my_model()->endRemoveRows();
+        });
+        connect(node, &model::DocumentNode::docnode_child_move_begin, model, [this, id, node](int a, int b) {
+            int rows = node->docnode_child_count();
+
+            int src = rows - a - 1;
+            int dest = rows - b - 1;
+            int dest_it = dest;
+            if ( src < dest )
+                dest++;
+
+            auto subtree = this->node(id);
+            if ( !subtree )
+                return;
+
+            QModelIndex parent = subtree_index(subtree);
+            my_model()->beginMoveRows(parent, src, src, parent, dest);
+
+            Subtree* moved = subtree->children[src];
+            subtree->children.erase(subtree->children.begin() + src);
+            subtree->children.insert(subtree->children.begin() + dest_it, moved);
+
+            my_model()->endMoveRows();
         });
     }
 

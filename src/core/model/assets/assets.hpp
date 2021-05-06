@@ -65,14 +65,14 @@ protected:
     {
         Q_UNUSED(row);
         obj->attach();
-        emit docnode_child_add_end(obj);
+        emit docnode_child_add_end(obj, row);
     }
 
     virtual void on_removed(T* obj, int row)
     {
         Q_UNUSED(row);
         obj->detach();
-        emit docnode_child_remove_end(obj);
+        emit docnode_child_remove_end(obj, row);
     }
 };
 
