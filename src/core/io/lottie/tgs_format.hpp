@@ -1,3 +1,4 @@
+#pragma once
 #include "lottie_format.hpp"
 
 namespace io::lottie {

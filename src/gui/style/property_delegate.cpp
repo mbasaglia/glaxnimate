@@ -225,7 +225,7 @@ void PropertyDelegate::setEditorData ( QWidget * editor, const QModelIndex & ind
             return static_cast<Spin2D*>(editor)->set_value(data.value<QSizeF>());
         case QMetaType::Float:
         case QMetaType::Double:
-            static_cast<QDoubleSpinBox*>(editor)->setValue(data.toDouble() * ((prop_flags & model::PropertyTraits::Percent) ? 100 : 0));
+            static_cast<QDoubleSpinBox*>(editor)->setValue(data.toDouble() * ((prop_flags & model::PropertyTraits::Percent) ? 100 : 1));
             return;
         case QMetaType::Int:
             static_cast<QSpinBox*>(editor)->setValue(data.toInt());
