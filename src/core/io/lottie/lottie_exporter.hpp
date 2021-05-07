@@ -276,17 +276,22 @@ public:
         {
             QCborArray weird_ass_representation;
             auto gradient = v.value<QGradientStops>();
+            bool alpha = false;
             for ( const auto& stop : gradient )
             {
                 weird_ass_representation.push_back(stop.first);
                 weird_ass_representation.push_back(stop.second.redF());
                 weird_ass_representation.push_back(stop.second.greenF());
                 weird_ass_representation.push_back(stop.second.blueF());
+                alpha = alpha || stop.second.alpha() != 0;
             }
-            for ( const auto& stop : gradient )
+            if ( alpha )
             {
-                weird_ass_representation.push_back(stop.first);
-                weird_ass_representation.push_back(stop.second.alphaF());
+                for ( const auto& stop : gradient )
+                {
+                    weird_ass_representation.push_back(stop.first);
+                    weird_ass_representation.push_back(stop.second.alphaF());
+                }
             }
             return weird_ass_representation;
         }

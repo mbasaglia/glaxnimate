@@ -179,7 +179,13 @@ public:
             return {};
         }
 
-        auto split = v.splitRef(separator, QString::SkipEmptyParts);
+        auto split = v.splitRef(separator,
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        Qt::SkipEmptyParts
+#else
+        QString::SkipEmptyParts
+#endif
+        );
         std::vector<qreal> values;
         values.reserve(split.size());
         for ( const auto& r : split )
@@ -225,7 +231,13 @@ public:
 
         if ( animate.hasAttribute("values") )
         {
-            auto val_str = animate.attribute("values").split(frame_separator_re, QString::SkipEmptyParts);
+            auto val_str = animate.attribute("values").split(frame_separator_re,
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        Qt::SkipEmptyParts
+#else
+        QString::SkipEmptyParts
+#endif
+            );
             values.reserve(val_str.size());
             for ( const auto& val : val_str )
                 values.push_back(split_values(val));
@@ -329,7 +341,13 @@ public:
 
         if ( animate.hasAttribute("keyTimes") )
         {
-            auto strings = animate.attribute("keyTimes").split(frame_separator_re, QString::SkipEmptyParts);
+            auto strings = animate.attribute("keyTimes").split(frame_separator_re,
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        Qt::SkipEmptyParts
+#else
+        QString::SkipEmptyParts
+#endif
+            );
             if ( strings.size() != int(values.size()) )
             {
                 warning("`keyTimes` and `values` mismatch");
@@ -355,7 +373,13 @@ public:
                 return;
             }
 
-            auto splines = animate.attribute("keySplines").split(frame_separator_re, QString::SkipEmptyParts);
+            auto splines = animate.attribute("keySplines").split(frame_separator_re,
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        Qt::SkipEmptyParts
+#else
+        QString::SkipEmptyParts
+#endif
+            );
             if ( splines.size() != int(values.size()) - 1 )
             {
                 warning("Wrong number of `keySplines` values");

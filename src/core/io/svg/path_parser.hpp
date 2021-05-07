@@ -12,7 +12,7 @@
 
 namespace io::svg::detail {
 
-struct PathDParser
+class PathDParser
 {
 public:
     enum TokenType
@@ -22,6 +22,137 @@ public:
     };
     using Token = std::variant<ushort, qreal>;
 
+private:
+    struct Lexer
+    {
+        Lexer(const QString& d, std::vector<Token>& tokens)
+            : d(d), tokens(tokens)
+        {}
+
+        QString d;
+        int off = 0;
+        std::vector<Token>& tokens;
+        QString lexed;
+        QChar ch;
+
+        bool eof() const
+        {
+            return off >= d.size();
+        }
+
+        bool next()
+        {
+            ++off;
+            if ( !eof() )
+            {
+                ch = d[off];
+                return true;
+            }
+
+            ch = {};
+            return false;
+        }
+
+        void lex()
+        {
+            static QString cmds = "MLHVCSQTAZ";
+
+            ch = d[off];
+
+            while ( off < d.size() )
+            {
+                if ( cmds.contains(ch.toUpper()) )
+                {
+                    tokens.emplace_back(ch.unicode());
+                    next();
+                }
+                else if ( ch.isSpace() || ch == ',')
+                {
+                    next();
+                }
+                else
+                {
+                    lex_value();
+                }
+            }
+        }
+
+        void lex_value()
+        {
+            lexed.clear();
+
+            if ( ch == '+' || ch == '-' )
+            {
+                lexed += ch;
+                if ( !next() )
+                    return;
+            }
+
+            if ( ch.isDigit() )
+                lex_value_int();
+
+            if ( ch == '.' )
+            {
+                lexed += ch;
+                if ( !next() )
+                    return;
+                lex_value_decimal();
+            }
+            else if ( ch.toUpper() == 'E' )
+            {
+                lexed += ch;
+                if ( !next() )
+                    return;
+                lex_value_exponent();
+            }
+
+            if ( lexed.isEmpty() )
+            {
+                next();
+                return;
+            }
+
+            tokens.emplace_back(lexed.toDouble());
+            lexed.clear();
+        }
+
+        void lex_value_int()
+        {
+            while ( off < d.size() && ch.isDigit() )
+            {
+                lexed += ch;
+                next();
+            }
+        }
+
+        void lex_value_decimal()
+        {
+            lex_value_int();
+
+            if ( ch.toUpper() == 'E' )
+            {
+                lexed += ch;
+                if ( !next() )
+                    return;
+                lex_value_exponent();
+            }
+        }
+
+        void lex_value_exponent()
+        {
+            if ( ch == '+' || ch == '-' )
+            {
+                lexed += ch;
+                if ( !next() )
+                    return;
+            }
+
+            lex_value_int();
+        }
+
+    };
+
+public:
     PathDParser(const QString& d)
     {
         tokenize(d);
@@ -57,14 +188,7 @@ private:
         if ( d.isEmpty() )
             return;
 
-        static QRegularExpression re(R"(([MmLlHhVvCcSsQqTtAaZz])|([-+]?(?:[0-9]+(?:\.(?:[0-9]+))?(?:[eE][-+]?[0-9]+)?|\.(?:[0-9]+)(?:[eE][-+]?[0-9]+))))");
-        for ( const auto& match : utils::regexp::find_all(re, d) )
-        {
-            if ( !match.capturedView(1).isNull() )
-                tokens.emplace_back(match.capturedView(1)[0].unicode());
-            else
-                tokens.emplace_back(match.captured(2).toDouble());
-        }
+        Lexer(d, tokens).lex();
     }
 
     qreal read_param()

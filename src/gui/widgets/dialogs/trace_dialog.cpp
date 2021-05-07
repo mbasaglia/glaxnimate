@@ -28,6 +28,7 @@
 #include "model/shapes/image.hpp"
 #include "model/shapes/rect.hpp"
 #include "utils/trace.hpp"
+#include "utils/quantize.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
 #include "app/widgets/no_close_on_enter.hpp"
@@ -408,27 +409,14 @@ void TraceDialog::auto_colors()
 {
     /// \todo k-medoids, octrees, or something like that
 
-    std::unordered_map<QRgb, int> count;
-    const uchar* data = d->source_image.constBits();
-
-    int n_pixels = d->source_image.width() * d->source_image.height();
-    for ( int i = 0; i < n_pixels; i++ )
-        if ( data[i*4+3] > 128 )
-            ++count[qRgb(data[i*4], data[i*4+1], data[i*4+2])];
-
-    using Pair = std::pair<QRgb, int>;
-    std::vector<Pair> sortme(count.begin(), count.end());
-    count.clear();
-    std::sort(sortme.begin(), sortme.end(), [](const Pair& a, const Pair& b){ return a.second > b.second; });
-
     while ( d->ui.list_colors->model()->rowCount() )
         d->ui.list_colors->model()->removeRow(0);
 
     int n_colors = d->ui.spin_color_count->value();
     if ( n_colors )
     {
-        for ( int i = 0; i < qMin<int>(sortme.size(), n_colors); i++ )
-            d->add_color(QColor(sortme[i].first));
+        for ( QRgb rgb : utils::quantize::k_modes(d->source_image, n_colors) )
+            d->add_color(QColor(rgb));
     }
 }
 

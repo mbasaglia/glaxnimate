@@ -1,5 +1,6 @@
 {
     "name": "Hue Shift",
+    "description": "Adds action to change the hue of all colors (and animate this kind of effect)",
     "author": "Glax",
     "engine": "python",
     "version": 1,
@@ -50,7 +51,7 @@
                         "name": "step_count",
                         "type": "int",
                         "label": "Step Count",
-                        "default": 12,
+                        "default": 13,
                         "min": 1,
                         "max": 999
                     },

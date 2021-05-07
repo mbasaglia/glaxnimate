@@ -1,5 +1,6 @@
 {
     "name": "Synfig",
+    "description": "(Experimental) support to save and load Synfig files",
     "author": "Glax",
     "engine": "python",
     "version": 1,

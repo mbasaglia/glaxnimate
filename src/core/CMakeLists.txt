@@ -80,6 +80,7 @@ plugin/io.cpp
 
 utils/gzip.cpp
 utils/trace.cpp
+utils/quantize.cpp
 
 python/python.cpp
 python/miscdefs.cpp

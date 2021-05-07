@@ -1,5 +1,6 @@
 {
     "name": "dotLottie",
+    "description": "Support for opening and saving .lottie files",
     "author": "Glax",
     "engine": "python",
     "version": 1,

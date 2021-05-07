@@ -37,6 +37,15 @@ void PluginSettingsWidget::current_changed ( QListWidgetItem* item )
     if ( !current )
         return;
 
+    bool checked = item->checkState() == Qt::Checked;
+    if ( checked != current->enabled() )
+    {
+        if ( checked )
+            current->enable();
+        else
+            current->disable();
+    }
+
     d->widget_plugin->setTitle(current->data().name);
     d->line_plugin_path->setText(current->data().dir.absolutePath());
     d->line_version->setText(QString::number(current->data().version));
@@ -44,6 +53,7 @@ void PluginSettingsWidget::current_changed ( QListWidgetItem* item )
     d->btn_disable->setEnabled(current->can_disable());
     d->btn_enable->setEnabled(current->can_enable());
     d->btn_uninstall->setEnabled(current->user_installed());
+    d->description->setPlainText(current->data().description);
 
     d->list_services->clearContents();
     d->list_services->setRowCount(current->data().services.size());
@@ -132,8 +142,9 @@ void PluginSettingsWidget::update_entries()
         item->setData(Qt::UserRole, plugin->data().id);
         Qt::ItemFlags flags = Qt::ItemIsSelectable;
         if ( plugin->available() )
-            flags |= Qt::ItemIsEnabled;
+            flags |= Qt::ItemIsEnabled|Qt::ItemIsUserCheckable;
         item->setFlags(flags);
+        item->setData(Qt::ToolTipRole, plugin->data().description);
 
         d->list_plugins->addItem(item);
 

@@ -389,7 +389,13 @@ public:
 
     QStringList split_attr(const QDomElement& e, const QString& name)
     {
-        return e.attribute(name).split(AnimateParser::separator, QString::SkipEmptyParts);
+        return e.attribute(name).split(AnimateParser::separator,
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        Qt::SkipEmptyParts
+#else
+        QString::SkipEmptyParts
+#endif
+        );
     }
 
     void parse_children(const ParseFuncArgs& args)
@@ -595,7 +601,11 @@ public:
 
     std::vector<qreal> double_args(const QString& str)
     {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        auto args_s = str.splitRef(AnimateParser::separator, Qt::SkipEmptyParts);
+#else
         auto args_s = str.splitRef(AnimateParser::separator, QString::SkipEmptyParts);
+#endif
         std::vector<qreal> args;
         args.reserve(args_s.size());
         std::transform(args_s.begin(), args_s.end(), std::back_inserter(args),
@@ -721,7 +731,13 @@ public:
         if ( paint_order == "normal" )
             paint_order = "fill stroke";
 
-        for ( const auto& sr : paint_order.splitRef(' ', QString::SkipEmptyParts) )
+        for ( const auto& sr : paint_order.splitRef(' ',
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        Qt::SkipEmptyParts
+#else
+        QString::SkipEmptyParts
+#endif
+        ) )
         {
             if ( sr == "fill" )
                 add_fill(args, shapes, style);

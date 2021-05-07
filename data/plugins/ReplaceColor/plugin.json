@@ -1,5 +1,6 @@
 {
     "name": "Replace Color",
+    "description": "Shows a dialog to find and replace colors",
     "author": "Glax",
     "engine": "python",
     "version": 1,

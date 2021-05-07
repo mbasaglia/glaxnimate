@@ -16,7 +16,6 @@
 
 #include "lottie_format.hpp"
 
-
 namespace io::lottie::detail {
 
 class ValueTransform
@@ -79,7 +78,8 @@ public:
 
         QGradientStops s;
         s.reserve(count);
-        bool alpha = vlist.size() >= count * 5;
+        bool alpha = vlist.size() >= count * 6;
+
         for ( int i = 0; i < count; i++ )
         {
             s.push_back({
@@ -88,7 +88,7 @@ public:
                     vlist[i*4+1].toDouble(),
                     vlist[i*4+2].toDouble(),
                     vlist[i*4+3].toDouble(),
-                    alpha ? vlist[count*4+i].toDouble() : 1
+                    alpha ? vlist[count*4+i+1].toDouble() : 1
                 )
             });
         }

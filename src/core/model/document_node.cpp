@@ -163,10 +163,17 @@ bool model::VisualNode::docnode_visible_recursive() const
 
 QTransform model::VisualNode::transform_matrix(model::FrameTime t) const
 {
-    auto parent = docnode_fuzzy_parent();
+    auto matrix = local_transform_matrix(t);
+
+    model::VisualNode* parent = docnode_visual_parent();
     if ( parent )
-        return local_transform_matrix(t) * parent->transform_matrix(t);
-    return local_transform_matrix(t);
+        matrix *= parent->transform_matrix(t);
+
+    parent = docnode_group_parent();
+    if ( parent )
+        matrix *= parent->transform_matrix(t);
+
+    return matrix;
 }
 
 QTransform model::VisualNode::group_transform_matrix(model::FrameTime t) const

@@ -8,34 +8,70 @@ import argparse
 import glaxnimate
 
 
+class TocItem:
+    def __init__(self, title="", id=""):
+        self.title = title
+        self.id = id
+        self.children = []
+
+    def to_yaml(self, file, depth=1):
+        indent = "    " * depth
+        pre = "- "
+
+        def yaml_line(name, val):
+            file.write("%s%s%s: %s\n" % (indent, pre, name, val))
+
+        yaml_line("title", self.title)
+        pre = "  "
+        yaml_line("url", repr("#" + self.id))
+        if self.children:
+            yaml_line("children", "")
+            for child in self.children:
+                child.to_yaml(file, depth + 1)
+
+    def sub_item(self, title, id):
+        sub = TocItem(title, id)
+        self.children.append(sub)
+        return sub
+
+    def write_toc(self, file):
+        file.write("---\ntoc:\n")
+        for toc in self.children:
+            toc.to_yaml(file)
+        file.write("---\n\n")
+
+
 class MdWriter:
     def __init__(self, file):
         self.out = file
         self.level = 1
         self._table_data = []
 
+    def write(self, text):
+        self.out.write(text)
+
     def title(self, text, level=0):
-        self.out.write("%s %s\n\n" % ("#"*(level+self.level), text))
+        self.write("%s %s\n\n" % ("#"*(level+self.level), text))
         #self.fancy_title(text, text, level)
 
     def fancy_title(self, text, id, level=0):
-        self.out.write("<h{level} id='{id}'><a href='#{id}'>{text}</a></h{level}>\n\n".format(
+        self.write("<h{level} id='{id}'><a href='#{id}'>{text}</a></h{level}>\n\n".format(
             text=text,
             id=id,
             level=level+self.level
         ))
 
     def p(self, text):
-        self.out.write(text + "\n\n")
+        self.write(text + "\n\n")
 
     def li(self, text):
-        self.out.write("* %s\n" % text)
+        self.write("* %s\n" % text)
 
     def a(self, text, href):
         return "[%s](%s)" % (text, href)
 
     def nl(self):
-        self.out.write("\n")
+        self.write("\n")
 
     def sublevel(self, amount: int = 1):
         return MdLevel(self, amount)
@@ -47,20 +83,20 @@ class MdWriter:
         ]
 
         for row in self._table_data:
-            self.out.write("| ")
+            self.write("| ")
             for cell, length in zip(row[1], lengths):
-                self.out.write(cell.ljust(length))
-                self.out.write(" | ")
-            self.out.write("\n")
+                self.write(cell.ljust(length))
+                self.write(" | ")
+            self.write("\n")
 
             if row[0]:
-                self.out.write("| ")
+                self.write("| ")
                 for length in lengths:
-                    self.out.write("-" * length)
-                    self.out.write(" | ")
-                self.out.write("\n")
+                    self.write("-" * length)
+                    self.write(" | ")
+                self.write("\n")
 
-        self.out.write("\n")
+        self.write("\n")
         self._table_data = []
 
     def table_row(self, *cells):
@@ -101,14 +137,27 @@ class ModuleDocs:
         if self.docs and "Members:" in self.docs:
             self.docs = ""
 
+    def toc(self, writer: TocItem):
+        sub = writer.sub_item(self.toc_title(), self.name())
+
+        if self.classes:
+            for cls in self.classes:
+                cls.toc(sub)
+
     def name(self):
         return self.module.__name__
+
+    def toc_title(self):
+        return self.name()
+
+    def toc_pre_title(self):
+        return ""
 
     def print_intro(self, writer: MdWriter):
         pass
 
     def print(self, writer: MdWriter):
-        writer.title(self.name())
+        writer.fancy_title(self.toc_pre_title() + self.toc_title(), self.name())
 
         if self.docs:
             writer.p(self.docs)
@@ -145,8 +194,8 @@ class ModuleDocs:
                 continue
             elif inspect.ismodule(val):
                 submod = ModuleDocs(val)
-                submod.inspect(modules, submod.classes)
                 modules.append(submod)
+                submod.inspect(modules, submod.classes)
             elif inspect.isfunction(val) or inspect.ismethod(val) or isinstance(val, types.BuiltinMethodType):
                 self.functions.append(FunctionDoc(name, self.child_name(name), val))
             elif inspect.isclass(val):
@@ -267,10 +316,13 @@ class FunctionDoc:
                 self.docs = self.re_sig.sub("```python\n\\1\n```", self.docs)
 
     def print(self, writer: MdWriter):
-        writer.fancy_title(self.name + "()", self.full_name)
+        writer.fancy_title(self.toc_pre_title() + self.name + "()", self.full_name)
 
         if self.docs:
             writer.p(self.docs)
+
+    def toc_pre_title(self):
+        return "<small>%s.</small>" % self.full_name.rsplit(".", 1)[0]
 
 
 class PropertyDoc:
@@ -354,6 +406,12 @@ class ClassDoc(ModuleDocs):
 
     def name(self):
         return self.full_name
+
+    def toc_title(self):
+        return self.module.__name__
+
+    def toc_pre_title(self):
+        return "<small>%s.</small>" % self.module.__module__
 
     def print_intro(self, writer: MdWriter):
         if self.bases:
@@ -447,6 +505,11 @@ class DocBuilder:
         module.inspect(self.modules, None)
 
     def print(self, py_doc_file):
+        toc = TocItem()
+        for module in self.modules:
+            module.toc(toc)
+        toc.write_toc(py_doc_file)
+
         writer = MdWriter(py_doc_file)
         for module in self.modules:
             module.print(writer)

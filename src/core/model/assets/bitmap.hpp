@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QPixmap>
+#include <QImage>
 #include <QFileInfo>
 #include <QUrl>
 
@@ -17,6 +18,7 @@ class Bitmap : public Asset
     GLAXNIMATE_PROPERTY_RO(int, width, -1)
     GLAXNIMATE_PROPERTY_RO(int, height, -1)
     Q_PROPERTY(bool embedded READ embedded WRITE embed)
+    Q_PROPERTY(QImage image READ get_image)
 
 public:
     using Asset::Asset;
@@ -48,6 +50,11 @@ public:
     bool remove_if_unused(bool clean_lists) override;
 
     DocumentNode* docnode_parent() const override;
+
+    QImage get_image() const
+    {
+        return image.toImage();
+    }
 
 public slots:
     void refresh(bool rebuild_embedded);

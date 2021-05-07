@@ -1,0 +1,19 @@
+{
+    "name": "Frame by frame",
+    "description": "Creates empty layers for frame by frame animation",
+    "author": "Glax",
+    "engine": "python",
+    "icon": "theme:discrete",
+    "services": [
+        {
+            "type": "action",
+            "label": "Create frame layers",
+            "tooltip": "Creates empty layers for frame by frame animation",
+            "script": {
+                "module": "create_frames",
+                "function": "main"
+            }
+        }
+    ]
+}
+

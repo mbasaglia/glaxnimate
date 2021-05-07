@@ -26,6 +26,7 @@ struct PluginData
     QString name;
     QString author;
     QString icon;
+    QString description;
     std::vector<std::unique_ptr<PluginService>> services;
 };
 
