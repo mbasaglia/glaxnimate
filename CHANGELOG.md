@@ -6,6 +6,8 @@
     * Preferences dialog no longer closes on Enter
     * Some layer properties are displayed inline in the timeline tree
     * Bezier tangents are shown a bit thicker
+* I/O:
+    * Lottie output is slightly more compact
 * Scripting:
     * New plugin to help with frame-by-frame animation
     * Scripts have access to the current composition
@@ -16,11 +18,12 @@
     * Fixed values blowing up when changed from the property tree
     * Fixed crash caused by stale model indices
     * Precompositions correctly update whhen the current frame is changed
-    * Clicking on the checkboxes in the pl8ugin settings properly toggles the plugins
+    * Clicking on the checkboxes in the plugin settings properly toggles the plugins
     * Lottie precomposition dependencies are correctly resolved on import
     * Fixed parenting transforms for imported lottie precomp layers
     * Fixed importing SVG path data
     * Fixed the HueShift plugin
+    * Fixed loading transparent gradients from lottie
 
 ## 0.4.2
 
