@@ -65,7 +65,7 @@ Something along these lines:
 
     # Edit script see https://wiki.archlinux.org/index.php/Creating_packages
     vim PKGBUILD
-    makepkg
+    makepkg -f
 
     # Test
     pacman -U *.pkg.tar.zst

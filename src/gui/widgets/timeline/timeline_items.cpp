@@ -7,4 +7,7 @@ void timeline::LineItem::paint(QPainter * painter, const QStyleOptionGraphicsIte
         painter->fillRect(option->rect, widget->palette().highlight());
 //     else if ( isUnderMouse() )
 //         painter->fillRect(option->rect, widget->palette().brush(QPalette::Inactive, QPalette::Highlight));
+
+    painter->setBrush(Qt::black);
+    painter->drawText(0, row_height(), metaObject()->className());
 }

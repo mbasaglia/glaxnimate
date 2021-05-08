@@ -254,23 +254,22 @@ public:
         row->setParentItem(this);
         row->setPos(0, visible_height());
         rows_.push_back(row);
-        visible_rows_ += row->visible_rows();
         adjust_row_vis(row->visible_rows(), row);
     }
 
     void remove_rows(int first, int last)
     {
-        int old_vis = visible_rows_;
+        int delta = 0;
         LineItem* row = nullptr;
         for ( int i = first; i <= last && i < int(rows_.size()); i++ )
         {
             row = rows_[i];
             row->emit_removed();
             delete row;
-            visible_rows_ -= row->visible_rows();
+            delta -= row->visible_rows();
         }
         rows_.erase(rows_.begin() + first, rows_.begin() + last + 1);
-        adjust_row_vis(visible_rows_ - old_vis, row);
+        adjust_row_vis(delta, row);
     }
 
     void expand()
@@ -352,6 +351,7 @@ private:
 
     void adjust_row_vis(int delta, LineItem* child)
     {
+        visible_rows_ += delta;
         int i;
         for ( i = 0; i < int(rows_.size()); i++ )
         {

@@ -41,11 +41,11 @@ public slots:
     void update_timeline_start(model::FrameTime start);
     void update_timeline_end(model::FrameTime end);
     void reset_view();
-
+/*
 private slots:
     void update_layer_start(model::FrameTime start);
     void update_layer_end(model::FrameTime en);
-
+*/
 private:
     void model_rows_added(const QModelIndex& parent, int first, int last);
     void model_rows_removed(const QModelIndex& parent, int first, int last);

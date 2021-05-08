@@ -337,12 +337,14 @@ void CompoundTimelineWidget::set_active(model::DocumentNode* node)
 
 void CompoundTimelineWidget::set_document(model::Document* document)
 {
+    d->ui.timeline->set_document(document);
     d->property_model.set_document(document);
     d->clear_menu_data();
 }
 
 void CompoundTimelineWidget::clear_document()
 {
+    d->ui.timeline->set_document(nullptr);
     d->property_model.clear_document();
     d->clear_menu_data();
 }

@@ -25,8 +25,6 @@ public:
     int mouse_frame = -1;
     model::Document* document = nullptr;
     bool dragging_frame = false;
-    int layer_start = 0;
-    int layer_end = 0;
     model::AnimationContainer* limit = nullptr;
     bool keep_highlight = false;
 
@@ -53,7 +51,7 @@ public:
         );
     }
 
-    void add_item(quintptr id, const item_models::PropertyModelFull::Item& item, LineItem* parent_item)
+    LineItem* add_item(quintptr id, const item_models::PropertyModelFull::Item& item, LineItem* parent_item)
     {
         LineItem* line_item = nullptr;
 
@@ -68,6 +66,8 @@ public:
             parent_item->add_row(line_item);
             connect(line_item, &LineItem::removed, parent, &TimelineWidget::on_item_removed);
         }
+
+        return line_item;
     }
 
     LineItem* add_property(quintptr id, model::BaseProperty* prop, LineItem* parent_item)
@@ -214,7 +214,15 @@ public:
 
     void insert_index(const QModelIndex& index, LineItem* parent)
     {
-        add_item(index.internalId(), model->item(index), parent);
+        auto item = add_item(index.internalId(), model->item(index), parent);
+        insert_children(index, item);
+    }
+
+    void insert_children(const QModelIndex& parent_index, LineItem* parent_item)
+    {
+        int row_count = model->rowCount(parent_index);
+        for ( int i = 0; i < row_count; i++ )
+            insert_index(model->index(i, 0, parent_index), parent_item);
     }
 };
 
@@ -223,6 +231,7 @@ TimelineWidget::TimelineWidget(QWidget* parent)
 {
     d->parent = this;
     d->root = new LineItem(0, nullptr, 0, 0, d->row_height);
+    d->root->setPos(0, -d->row_height);
     d->scene.addItem(d->root);
     setMouseTracking(true);
     setInteractive(true);
@@ -315,6 +324,7 @@ void TimelineWidget::set_document(model::Document* document)
     }
 
 //     clear();
+    d->document = document;
 
     if ( document )
     {
@@ -331,7 +341,6 @@ void TimelineWidget::set_document(model::Document* document)
 //         set_anim_container(nullptr);
     }
 
-    d->document = document;
 }
 
 void TimelineWidget::update_timeline_end(model::FrameTime end)
@@ -391,8 +400,8 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     painter.begin(viewport());
 
     // stripy rows
-    auto layer_top_left = mapFromScene(d->layer_start, scene_tl.y());
-    auto layer_top_right = mapFromScene(d->layer_end, scene_tl.y());
+    auto layer_top_left = mapFromScene(d->start_time, scene_tl.y());
+    auto layer_top_right = mapFromScene(d->end_time, scene_tl.y());
     std::array<QBrush, 2> brushes = {
         palette().alternateBase(),
         palette().base(),
@@ -400,7 +409,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
 
     int n_rows = d->root->visible_rows();
 
-    for ( int i = 0; i <= n_rows; i++ )
+    for ( int i = 0; i < n_rows; i++ )
     {
         painter.fillRect(
             QRectF(
@@ -412,7 +421,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     }
 
     // gray out the area after the outside the layer range
-    if ( d->layer_start > d->start_time )
+    if ( layer_top_left.x() > 0 )
     {
         painter.fillRect(
             QRectF(
@@ -452,15 +461,15 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     // Gray out ticks outside layer range
     painter.fillRect(
         QRectF(
-            QPointF(mapFromScene(d->layer_start, 0).x(), 0),
-            QPointF(mapFromScene(d->layer_end+1, 0).x(), small_height)
+            QPointF(mapFromScene(d->start_time, 0).x(), 0),
+            QPointF(mapFromScene(d->end_time+1, 0).x(), small_height)
         ),
         palette().base()
     );
     painter.fillRect(
         QRectF(
-            QPointF(mapFromScene(d->time_round_to_ticks(d->layer_start) - d->frame_skip, 0).x(), small_height),
-            QPointF(mapFromScene(d->time_round_to_ticks(d->layer_end), 0).x(), d->header_height)
+            QPointF(mapFromScene(d->time_round_to_ticks(d->start_time) - d->frame_skip, 0).x(), small_height),
+            QPointF(mapFromScene(d->time_round_to_ticks(d->end_time), 0).x(), d->header_height)
         ),
         palette().base()
     );
@@ -496,7 +505,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
             painter.drawLine(QPoint(p1.x(), 0), QPoint(p1.x(), height));
         }
 
-        d->paint_frame_rect(this, painter, d->layer_start, palette().base(), dark);
+        d->paint_frame_rect(this, painter, d->start_time, palette().base(), dark);
 
         if ( d->document )
         {
@@ -694,7 +703,7 @@ void TimelineWidget::set_anim_container(model::AnimationContainer* cont)
     }
 }
 */
-
+/*
 void TimelineWidget::update_layer_end(model::FrameTime end)
 {
     d->layer_end = end;
@@ -706,6 +715,7 @@ void TimelineWidget::update_layer_start(model::FrameTime start)
     d->layer_start = start;
     viewport()->update();
 }
+*/
 
 qreal TimelineWidget::highlighted_time() const
 {
@@ -748,6 +758,7 @@ void TimelineWidget::set_model(item_models::PropertyModelFull* model)
 void TimelineWidget::model_reset()
 {
     d->clear();
+    d->insert_children(QModelIndex(), d->root);
 }
 
 void TimelineWidget::model_rows_added(const QModelIndex& parent, int first, int last)
@@ -768,4 +779,3 @@ void TimelineWidget::on_item_removed(quintptr id)
 {
     d->line_items.erase(id);
 }
-

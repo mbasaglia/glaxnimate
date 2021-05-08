@@ -107,7 +107,7 @@ public:
         connect(node, &model::DocumentNode::docnode_child_add_end, model,
         [this, insert_into, node](model::DocumentNode* child, int row) {
             int rows = node->docnode_child_count() - 1; // called at the end
-            add_object(child, insert_into, false, rows -  row);
+            add_object(child, insert_into, true, rows -  row);
         });
         connect(node, &model::DocumentNode::docnode_child_remove_end, model,
         [this, node, id](model::DocumentNode* child, int row) {

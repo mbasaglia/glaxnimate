@@ -5,6 +5,7 @@ stages:
 jobs:
     include:
       - name: "Mac"
+        if: tag IS present
         stage: build
         os: osx
         osx_image: xcode11.3
