@@ -110,12 +110,8 @@ public:
             add_object(child, insert_into, true, rows -  row);
         });
         connect(node, &model::DocumentNode::docnode_child_remove_end, model,
-        [this, node, id](model::DocumentNode* child, int row) {
-            int rows = node->docnode_child_count() + 1;
-            my_model()->beginRemoveRows(subtree_index(id), rows - row - 1, rows - row - 1);
-            if ( auto tree = object_tree(child) )
-                disconnect_recursive(tree);
-            my_model()->endRemoveRows();
+        [this](model::DocumentNode* child) {
+            on_delete_object(child);
         });
         connect(node, &model::DocumentNode::docnode_child_move_begin, model, [this, id, node](int a, int b) {
             int rows = node->docnode_child_count();

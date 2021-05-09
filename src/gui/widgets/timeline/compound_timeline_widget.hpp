@@ -6,6 +6,7 @@
 #include "model/document.hpp"
 
 class GlaxnimateWindow;
+class QAbstractItemModel;
 class CompoundTimelineWidget : public QWidget
 {
     Q_OBJECT
@@ -21,6 +22,7 @@ public:
     QByteArray save_state() const;
     void load_state(const QByteArray& state);
     void set_controller(GlaxnimateWindow* window);
+    QAbstractItemModel* model() const;
     
 protected:
     void changeEvent ( QEvent* e ) override;

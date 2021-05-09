@@ -513,6 +513,18 @@ void GlaxnimateWindow::Private::init_debug()
         app::debug::print_model(&asset_model, {0}, false);
     });
 
+    menu_print_model->addSeparator();
+
+    menu_print_model->addAction("Properties - Single", [this]{
+        app::debug::print_model(&property_model, {0}, false);
+    });
+
+    menu_print_model->addAction("Properties - Full", [this]{
+        app::debug::print_model(ui.timeline_widget->model(), {0}, false);
+    });
+
+    menu_debug->addAction(menu_print_model->menuAction());
+
     menu_debug->addAction("Screenshot menus", [this]{
         QDir("/tmp/").mkpath("menus");
         for ( auto widget : this->parent->findChildren<QMenu*>() )

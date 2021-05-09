@@ -529,3 +529,8 @@ void CompoundTimelineWidget::click_index ( const QModelIndex& index )
      else if ( index.column() == item_models::PropertyModelFull::ColumnLocked )
         node->locked.set(!node->locked.get());
 }
+
+QAbstractItemModel * CompoundTimelineWidget::model() const
+{
+    return &d->property_model;
+}
