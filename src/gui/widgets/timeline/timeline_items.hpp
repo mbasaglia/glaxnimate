@@ -182,195 +182,69 @@ class LineItem : public QGraphicsObject
     Q_OBJECT
 
 public:
-    LineItem(quintptr id, model::Object* obj, int time_start, int time_end, int height):
-        time_start(time_start),
-        time_end(time_end),
-        height_(height),
-        object_(obj),
-        id_(id)
-    {
-        setFlags(QGraphicsItem::ItemIsSelectable);
-    }
+    LineItem(quintptr id, model::Object* obj, int time_start, int time_end, int height);
 
-    model::Object* object() const
-    {
-        return object_;
-    }
+    model::Object* object() const;
 
-    void set_time_start(int time)
-    {
-        time_start = time;
-        for ( auto row : rows_ )
-            row->set_time_start(time);
-        on_set_time_start(time);
-        prepareGeometryChange();
-    }
+    void set_time_start(int time);
 
-    void set_time_end(int time)
-    {
-        time_end = time;
-        for ( auto row : rows_ )
-            row->set_time_end(time);
-        on_set_time_end(time);
-        prepareGeometryChange();
-    }
+    void set_time_end(int time);
 
-//     void set_height(int h)
-//     {
-//         height_ = h;
-//         on_height_changed(h);
-//         prepareGeometryChange();
-//     }
-
-    QRectF boundingRect() const override
-    {
-        return QRectF(time_start, 0, time_end, height_);
-    }
+    QRectF boundingRect() const override;
 
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
 
-    int row_height() const
-    {
-        return height_;
-    }
+    int row_height() const;
 
-    int row_count() const
-    {
-        return rows_.size();
-    }
+    int row_count() const;
 
-    /*int child_rows_height()
-    {
-        return rows_.size() * height();
-    }*/
+    int visible_height() const;
 
-    int visible_height() const
-    {
-        return visible_rows_ * row_height();
-    }
+    void add_row(LineItem* row, int index);
 
-    void add_row(LineItem* row)
-    {
-        row->setParentItem(this);
-        row->setPos(0, visible_height());
-        rows_.push_back(row);
-        adjust_row_vis(row->visible_rows(), row);
-    }
+    void remove_rows(int first, int last);
 
-    void remove_rows(int first, int last)
-    {
-        int delta = 0;
-        LineItem* row = nullptr;
-        for ( int i = first; i <= last && i < int(rows_.size()); i++ )
-        {
-            row = rows_[i];
-            row->emit_removed();
-            delete row;
-            delta -= row->visible_rows();
-        }
-        rows_.erase(rows_.begin() + first, rows_.begin() + last + 1);
-        adjust_row_vis(delta, row);
-    }
+    void move_row(int from, int to);
 
-    void expand()
-    {
-        int old_vis = visible_rows_;
-        visible_rows_ = 1;
+    void expand();
 
-        for ( auto item : rows_ )
-        {
-            item->setVisible(true);
-            visible_rows_ += item->visible_rows();
-        }
+    void collapse();
 
-        propagate_row_vis(visible_rows_ - old_vis);
-    }
+    bool is_expanded();
 
-    void collapse()
-    {
-        int old_vis = visible_rows_;
-        for ( auto item : rows_ )
-            item->setVisible(false);
+    LineItem* parent_line() const;
 
-        visible_rows_ = 1;
-        propagate_row_vis(visible_rows_ - old_vis);
-    }
+    int visible_rows() const;
 
-    bool is_expanded()
-    {
-        return !rows_.empty() && rows_[0]->isVisible();
-    }
-
-    LineItem* parent_line() const
-    {
-        return static_cast<LineItem*>(parentItem());
-    }
-
-    int visible_rows() const
-    {
-        return visible_rows_;
-    }
-
-    void raw_clear()
-    {
-        for ( auto row : rows_ )
-            delete row;
-        rows_.clear();
-        visible_rows_ = 1;
-    }
+    void raw_clear();
 
     virtual item_models::PropertyModelFull::Item property_item() const
     {
         return {};
     }
 
+    const std::vector<LineItem*>& rows() const
+    {
+        return rows_;
+    }
+
 signals:
     void removed(quintptr id, QPrivateSignal = {});
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent * event) override
-    {
-        bool sel = isSelected();
-        QGraphicsObject::mousePressEvent(event);
-        if ( !sel && isSelected() )
-            click_selected();
-    }
+    void mousePressEvent(QGraphicsSceneMouseEvent * event) override;
 
     virtual void on_set_time_start(int){}
     virtual void on_set_time_end(int){}
 
     virtual void click_selected(){}
-//     virtual void on_height_changed(int){}
 
 private:
-    void propagate_row_vis(int delta)
-    {
-        if ( isVisible() && parent_line() && delta )
-            parent_line()->adjust_row_vis(delta, this);
-    }
+    void propagate_row_vis(int delta);
 
-    void adjust_row_vis(int delta, LineItem* child)
-    {
-        visible_rows_ += delta;
-        int i;
-        for ( i = 0; i < int(rows_.size()); i++ )
-        {
-            if ( rows_[i] == child )
-                break;
-        }
+    void adjust_row_vis(int delta, LineItem* child, bool adjust_child = false);
 
-        for ( i++; i < int(rows_.size()); i++ )
-        {
-            rows_[i]->setPos(0, rows_[i]->pos().y() + row_height() * delta);
-        }
-
-        propagate_row_vis(delta);
-    }
-
-    void emit_removed()
-    {
-        emit removed(id_);
-    }
+    void emit_removed();
 
     int time_start;
     int time_end;
@@ -379,6 +253,7 @@ private:
     std::vector<LineItem*> rows_;
     int visible_rows_ = 1;
     quintptr id_ = 0;
+    bool expanded_ = false;
 };
 
 class ObjectLineItem : public LineItem

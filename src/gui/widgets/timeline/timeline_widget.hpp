@@ -49,6 +49,7 @@ private slots:
 private:
     void model_rows_added(const QModelIndex& parent, int first, int last);
     void model_rows_removed(const QModelIndex& parent, int first, int last);
+    void model_rows_moved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int row);
     void model_reset();
     void on_item_removed(quintptr id);
 

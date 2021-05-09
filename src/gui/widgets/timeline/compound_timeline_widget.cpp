@@ -292,46 +292,9 @@ void CompoundTimelineWidget::set_composition(model::Composition* comp)
 
 void CompoundTimelineWidget::set_active(model::DocumentNode* node)
 {
-    /*
-    d->property_model.set_object(node);
-    if ( node )
-    {
-        auto mo = node->metaObject();
-        if ( mo->inherits(&model::Layer::staticMetaObject) || mo->inherits(&model::Composition::staticMetaObject) )
-        {
-            for ( int i = node->docnode_child_count() - 1; i >= 0; i-- )
-            {
-                auto child = node->docnode_child(i);
-                auto ch_mo = child->metaObject();
-                if ( ch_mo->inherits(&model::Layer::staticMetaObject) ||
-                    ch_mo->inherits(&model::PreCompLayer::staticMetaObject) )
-                {
-                    d->property_model.add_object_without_properties(child);
-                }
-            }
-        }
-        else if ( mo->inherits(&model::Group::staticMetaObject) )
-        {
-            for ( int i = node->docnode_child_count() - 1; i >= 0; i-- )
-            {
-                auto child = node->docnode_child(i);
-                auto ch_mo = child->metaObject();
-                if ( ch_mo->inherits(&model::Layer::staticMetaObject) ||
-                    ch_mo->inherits(&model::PreCompLayer::staticMetaObject)
-                )
-                {
-                    d->property_model.add_object_without_properties(child);
-                }
-                else if ( !ch_mo->inherits(&model::Group::staticMetaObject) )
-                {
-                    d->property_model.add_object(child);
-                }
-            }
-        }
-    }*/
-
-    d->ui.timeline->reset_view();
-    d->ui.properties->expandAll();
+    QModelIndex index = d->property_model.object_index(node);
+    d->ui.properties->expand(index);
+    d->ui.properties->setCurrentIndex(index);
     d->clear_menu_data();
 }
 

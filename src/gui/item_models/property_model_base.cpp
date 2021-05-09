@@ -1,5 +1,5 @@
 #include "property_model_private.hpp"
-
+#include "model/assets/assets.hpp"
 
 void item_models::PropertyModelBase::Private::add_object(model::Object* object, Subtree* parent, bool insert_row, int index)
 {
@@ -478,20 +478,49 @@ QModelIndex item_models::PropertyModelBase::index(int row, int column, const QMo
 
 QModelIndex item_models::PropertyModelBase::parent(const QModelIndex& child) const
 {
-    Private::Subtree* tree = d->node_from_index(child);
+    // tree_child is the subtree for the child index
+    Private::Subtree* tree_child = d->node_from_index(child);
 
-    if ( !tree || tree->parent == 0 )
+    // child is a root node, so parent is invalid
+    if ( !tree_child || tree_child->parent == 0 )
         return {};
 
-    auto it = d->nodes.find(tree->parent);
+    // no parent? => error
+    auto it = d->nodes.find(tree_child->parent);
     if ( it == d->nodes.end() )
         return {};
 
+    // tree is the subtree we want to return
+    Private::Subtree* tree = &it->second;
+
+    // We have a root node
+    if ( !tree->parent )
+    {
+        // failsafe
+        if ( !d->document )
+            return {};
+
+        // main is 0
+        int index = 0;
+        // assets is 1
+        if ( tree->object == d->document->assets() )
+            index = 1;
+
+        return createIndex(index, 0, tree->id);
+    }
+
+    // no parent? => error
+    it = d->nodes.find(tree->parent);
+    if ( it == d->nodes.end() )
+        return {};
+
+    // tree_parent is the parent of tree, grandparent of the model index
     Private::Subtree* tree_parent = &it->second;
 
+    // We look for the row index for the parent index
     for ( int i = 0; i < int(tree_parent->children.size()); i++ )
         if ( tree_parent->children[i] == tree )
-            return createIndex(i, 0, tree->parent);
+            return createIndex(i, 0, tree->id);
 
     return {};
 }
@@ -558,7 +587,7 @@ QModelIndex item_models::PropertyModelBase::object_index(model::Object* obj) con
     else
         i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
 
-    return createIndex(i, 1, prop_node->id);
+    return createIndex(i, 0, prop_node->id);
 }
 
 model::VisualNode* item_models::PropertyModelBase::visual_node(const QModelIndex& index) const

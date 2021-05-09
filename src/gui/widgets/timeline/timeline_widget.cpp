@@ -51,7 +51,7 @@ public:
         );
     }
 
-    LineItem* add_item(quintptr id, const item_models::PropertyModelFull::Item& item, LineItem* parent_item)
+    LineItem* add_item(quintptr id, const item_models::PropertyModelFull::Item& item, LineItem* parent_item, int index)
     {
         LineItem* line_item = nullptr;
 
@@ -63,7 +63,7 @@ public:
         if ( line_item )
         {
             line_items[id] = line_item;
-            parent_item->add_row(line_item);
+            parent_item->add_row(line_item, index);
             connect(line_item, &LineItem::removed, parent, &TimelineWidget::on_item_removed);
         }
 
@@ -212,17 +212,17 @@ public:
         return it->second;
     }
 
-    void insert_index(const QModelIndex& index, LineItem* parent)
+    void insert_index(const QModelIndex& parent_index, LineItem* parent, int index)
     {
-        auto item = add_item(index.internalId(), model->item(index), parent);
-        insert_children(index, item);
+        auto item = add_item(parent_index.internalId(), model->item(parent_index), parent, index);
+        insert_children(parent_index, item);
     }
 
     void insert_children(const QModelIndex& parent_index, LineItem* parent_item)
     {
         int row_count = model->rowCount(parent_index);
         for ( int i = 0; i < row_count; i++ )
-            insert_index(model->index(i, 0, parent_index), parent_item);
+            insert_index(model->index(i, 0, parent_index), parent_item, i);
     }
 };
 
@@ -232,6 +232,7 @@ TimelineWidget::TimelineWidget(QWidget* parent)
     d->parent = this;
     d->root = new LineItem(0, nullptr, 0, 0, d->row_height);
     d->root->setPos(0, -d->row_height);
+    d->root->expand();
     d->scene.addItem(d->root);
     setMouseTracking(true);
     setInteractive(true);
@@ -323,7 +324,7 @@ void TimelineWidget::set_document(model::Document* document)
         disconnect(d->document, nullptr, viewport(), nullptr);
     }
 
-//     clear();
+    d->clear();
     d->document = document;
 
     if ( document )
@@ -543,6 +544,34 @@ void TimelineWidget::scrollContentsBy(int dx, int dy)
     viewport()->update();
 }
 
+#include <QDebug>
+void debug_line(timeline::LineItem* line_item, QString indent, int index)
+{
+
+    QString item_name = line_item->metaObject()->className();
+    item_name = item_name.mid(item_name.indexOf("::")+2);
+
+    int effective_index = line_item->pos().y() / line_item->row_height();
+
+
+    QString debug_string;
+    auto item = line_item->property_item();
+    if ( item.property )
+        debug_string = item.property->name();
+    else if ( item.object )
+        debug_string = item.object->object_name();
+    else
+        debug_string = "NULL";
+
+    (qDebug().noquote() << indent).maybeQuote()
+        << index << effective_index << line_item->visible_height() /  line_item->row_height()
+        << item_name << debug_string
+        << line_item->is_expanded() << line_item->isVisible();
+
+    for ( uint i = 0; i < line_item->rows().size(); i++ )
+        debug_line(line_item->rows()[i], indent + "    ", i);
+}
+
 void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
     d->mouse_frame = qRound(mapToScene(event->pos()).x());
@@ -560,6 +589,9 @@ void TimelineWidget::mousePressEvent(QMouseEvent* event)
         d->dragging_frame = true;
         emit frame_clicked(d->mouse_frame);
     }
+
+    if ( event->button() == Qt::MiddleButton )
+        debug_line(d->root, "", 0);
 }
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
@@ -739,12 +771,14 @@ void TimelineWidget::collapse(const QModelIndex& index)
 {
     if ( auto line = d->index_to_line(index) )
         line->collapse();
+    setSceneRect(d->scene_rect());
 }
 
 void TimelineWidget::expand(const QModelIndex& index)
 {
     if ( auto line = d->index_to_line(index) )
         line->expand();
+    setSceneRect(d->scene_rect());
 }
 
 void TimelineWidget::set_model(item_models::PropertyModelFull* model)
@@ -752,6 +786,7 @@ void TimelineWidget::set_model(item_models::PropertyModelFull* model)
     d->model = model;
     connect(model, &item_models::PropertyModelFull::rowsInserted, this, &TimelineWidget::model_rows_added);
     connect(model, &item_models::PropertyModelFull::rowsRemoved, this, &TimelineWidget::model_rows_removed);
+    connect(model, &item_models::PropertyModelFull::rowsMoved, this, &TimelineWidget::model_rows_moved);
     connect(model, &item_models::PropertyModelFull::modelReset, this, &TimelineWidget::model_reset);
 }
 
@@ -765,7 +800,7 @@ void TimelineWidget::model_rows_added(const QModelIndex& parent, int first, int 
 {
     auto parent_line = d->index_to_line(parent);
     for ( int i = first; i <= last; i++ )
-        d->insert_index(d->model->index(first, 0, parent), parent_line);
+        d->insert_index(d->model->index(first, 0, parent), parent_line, i);
     setSceneRect(d->scene_rect());
 }
 
@@ -778,4 +813,15 @@ void TimelineWidget::model_rows_removed(const QModelIndex& parent, int first, in
 void TimelineWidget::on_item_removed(quintptr id)
 {
     d->line_items.erase(id);
+}
+
+void TimelineWidget::model_rows_moved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row)
+{
+    // Given how the property model does things, I can assume
+    // start == end && parent == destination && row != start
+
+    if ( LineItem* item = d->index_to_line(parent) )
+        item->move_row(start, row - 1);
+
+    setSceneRect(d->scene_rect());
 }
