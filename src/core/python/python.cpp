@@ -21,6 +21,12 @@
 #include "command/object_list_commands.hpp"
 
 #include "io/glaxnimate/glaxnimate_format.hpp"
+#include "io/raster/raster_format.hpp"
+#include "io/raster/raster_mime.hpp"
+#include "io/svg/svg_format.hpp"
+#include "io/svg/svg_renderer.hpp"
+
+
 #include "plugin/io.hpp"
 #include "app_info.hpp"
 
@@ -37,6 +43,24 @@ void register_animatable(py::module& m)
     py::class_<model::AnimatedProperty<T>, Base>(m, name.c_str());
 }
 
+static QImage doc_to_image(model::Document* doc)
+{
+    return io::raster::RasterMime::to_image({doc->main()});
+}
+
+static QByteArray frame_to_svg(model::Document* doc)
+{
+    QByteArray data;
+    QBuffer file(&data);
+    file.open(QIODevice::WriteOnly);
+
+    io::svg::SvgRenderer rend(io::svg::NotAnimated);
+    rend.write_document(doc);
+    rend.write(&file, true);
+
+    return data;
+}
+
 void define_io(py::module& m)
 {
     py::module io = m.def_submodule("io", "Input/Output utilities");
@@ -46,6 +70,12 @@ void define_io(py::module& m)
         .def_property_readonly("name", &io::mime::MimeSerializer::name)
         .def_property_readonly("mime_types", &io::mime::MimeSerializer::mime_types)
         .def("serialize", &io::mime::MimeSerializer::serialize)
+    ;
+
+    const char* to_image_docstring = "Renders the current frame to an image";
+    py::class_<io::raster::RasterMime, io::mime::MimeSerializer>(io, "RasterMime")
+        .def_static("render_frame", &io::raster::RasterMime::to_image, to_image_docstring)
+        .def_static("render_frame", &doc_to_image, to_image_docstring)
     ;
 
     using Fac = io::IoRegistry;
@@ -69,6 +99,17 @@ void define_io(py::module& m)
     register_from_meta<io::glaxnimate::GlaxnimateFormat, io::ImportExport>(io)
         .attr("instance") = std::unique_ptr<io::glaxnimate::GlaxnimateFormat, py::nodelete>(io::glaxnimate::GlaxnimateFormat::instance())
     ;
+
+    register_from_meta<io::raster::RasterFormat, io::ImportExport>(io)
+        .def_static("render_frame", &io::raster::RasterMime::to_image, to_image_docstring)
+        .def_static("render_frame", &doc_to_image, to_image_docstring)
+    ;
+
+    register_from_meta<io::svg::SvgFormat, io::ImportExport>(io)
+        .def_static("render_frame", &frame_to_svg, "renders the current frame to SVG")
+    ;
+
+
     register_from_meta<plugin::IoFormat, io::ImportExport>(io);
 }
 

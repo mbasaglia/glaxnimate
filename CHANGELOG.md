@@ -13,6 +13,7 @@
     * Scripts have access to the current composition
     * Improved support for python standard io streams
     * Exposed bitmap tracing and color quantization utilities
+    * Exposed single frame rendering capabilities (raster and svg)
 * Bug Fixes:
     * Custom keyboard shortcuts are saved properly
     * Fixed values blowing up when changed from the property tree
