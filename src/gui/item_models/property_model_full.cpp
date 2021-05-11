@@ -2,6 +2,7 @@
 #include "property_model_private.hpp"
 
 #include "model/stretchable_time.hpp"
+#include "model/assets/assets.hpp"
 
 class item_models::PropertyModelFull::Private : public PropertyModelBase::Private
 {
@@ -13,9 +14,18 @@ public:
         return static_cast<PropertyModelFull*>(model);
     }
 
+    void on_connect_object_list(model::ObjectListPropertyBase* object_list, Subtree* tree, model::BaseProperty* proxy, model::DocumentNode* node)
+    {
+        Subtree* prop_node = add_node(Subtree{proxy, tree->id});
+        properties[object_list] = prop_node->id;
+        connect_list(prop_node);
+        connect_docnode(node, prop_node);
+    }
+
     void on_connect(model::Object* object, Subtree* tree) override
     {
-        auto visual = object->cast<model::VisualNode>();
+        model::VisualNode* visual = object->cast<model::VisualNode>();
+        model::DocumentNode* node = nullptr;
 
         if ( visual )
         {
@@ -37,9 +47,19 @@ public:
                 QModelIndex changed = model->index(ind.row(), ColumnColor, par);
                 model->dataChanged(changed, changed, {Qt::BackgroundRole, Qt::EditRole, Qt::DisplayRole});
             });
-            connect(visual, &model::VisualNode::name_changed, model, [this, visual]() {
-                QModelIndex ind = node_index(visual);
-                QModelIndex par = node_index(visual->docnode_parent());
+
+            node = visual;
+        }
+        else
+        {
+            node = object->cast<model::DocumentNode>();
+        }
+
+        if ( node )
+        {
+            connect(node, &model::DocumentNode::name_changed, model, [this, node]() {
+                QModelIndex ind = node_index(node);
+                QModelIndex par = node_index(node->docnode_parent());
                 QModelIndex changed = model->index(ind.row(), ColumnName, par);
                 model->dataChanged(changed, changed, {Qt::EditRole, Qt::DisplayRole});
             });
@@ -54,7 +74,7 @@ public:
                 prop->traits().type == model::PropertyTraits::Object
             )
             {
-                if ( visual )
+                if ( node )
                     object_list = static_cast<model::ObjectListPropertyBase*>(prop);
             }
             else if ( prop->traits().type == model::PropertyTraits::Object )
@@ -62,13 +82,22 @@ public:
                 model::Object* subobj = prop->value().value<model::Object*>();
                 if ( subobj )
                 {
-                    auto meta = subobj->metaObject();
-                    if (
-                        !meta->inherits(&model::AnimationContainer::staticMetaObject) &&
-                        !meta->inherits(&model::StretchableTime::staticMetaObject) &&
-                        !meta->inherits(&model::MaskSettings::staticMetaObject)
-                    )
-                        connect_subobject(subobj, tree);
+                    if ( object == document->assets() )
+                    {
+                        model::DocumentNode* subobj = prop->value().value<model::DocumentNode*>();
+                        model::ObjectListPropertyBase* asset_list = static_cast<model::ObjectListPropertyBase*>(subobj->get_property("values"));
+                        on_connect_object_list(asset_list, tree, prop, subobj);
+                    }
+                    else
+                    {
+                        auto meta = subobj->metaObject();
+                        if (
+                            !meta->inherits(&model::AnimationContainer::staticMetaObject) &&
+                            !meta->inherits(&model::StretchableTime::staticMetaObject) &&
+                            !meta->inherits(&model::MaskSettings::staticMetaObject)
+                        )
+                            connect_subobject(subobj, tree);
+                    }
                 }
             }
             else if ( prop->traits().flags & model::PropertyTraits::Visual &&
@@ -78,16 +107,9 @@ public:
             }
         }
 
-
         // Show object lists at the end
         if ( object_list )
-        {
-            Subtree* prop_node = add_node(Subtree{object_list, tree->id});
-            properties[object_list] = prop_node->id;
-            connect_list(prop_node);
-            if ( auto node = tree->object->cast<model::DocumentNode>() )
-                connect_docnode(node, prop_node);
-        }
+            on_connect_object_list(object_list, tree, object_list, node);
     }
 
     void connect_list(Subtree* prop_node)
@@ -303,7 +325,10 @@ QVariant item_models::PropertyModelFull::headerData(int section, Qt::Orientation
 void item_models::PropertyModelFull::on_document_reset()
 {
     if ( d->document )
+    {
         d->add_object(d->document->main(), nullptr, false);
+        d->add_object(d->document->assets(), nullptr, false);
+    }
 }
 
 int item_models::PropertyModelFull::columnCount(const QModelIndex &) const
