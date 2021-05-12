@@ -17,6 +17,7 @@ item_models/property_model_base.cpp
 item_models/property_model_single.cpp
 item_models/property_model_full.cpp
 item_models/gradient_list_model.cpp
+item_models/document_model_base.cpp
 
 
 settings/clipboard_settings.cpp

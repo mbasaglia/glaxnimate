@@ -1,12 +1,10 @@
 #pragma once
 
-#include <QAbstractItemModel>
-
-#include "model/document.hpp"
+#include "document_model_base.hpp"
 
 namespace item_models {
 
-class PropertyModelBase : public QAbstractItemModel
+class PropertyModelBase : public DocumentModelBase
 {
     Q_OBJECT
 
@@ -54,7 +52,10 @@ public:
     QModelIndex property_index(model::BaseProperty* anim) const;
     QModelIndex object_index(model::Object* obj) const;
 
-    model::VisualNode* visual_node(const QModelIndex& index) const;
+    model::VisualNode* visual_node(const QModelIndex& index) const override;
+    model::DocumentNode* node(const QModelIndex& index) const override;
+    QModelIndex node_index(model::DocumentNode* node) const override;
+    model::Document* document() const override;
 
 private slots:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);

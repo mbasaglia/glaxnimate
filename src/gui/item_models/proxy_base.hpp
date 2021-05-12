@@ -1,6 +1,6 @@
 #pragma once
 #include <QAbstractProxyModel>
-#include "document_node_model.hpp"
+#include "document_model_base.hpp"
 
 namespace item_models {
 
@@ -119,9 +119,9 @@ public:
 
 protected:
     // Qt cheats by befriending the proxy models... so we need to cheat too
-    DocumentNodeModel* friendly_model() const
+    DocumentModelBase* friendly_model() const
     {
-        return static_cast<DocumentNodeModel*>(sourceModel());
+        return static_cast<DocumentModelBase*>(sourceModel());
     }
 
     QModelIndex create_source_index(int row, int column, quintptr id) const

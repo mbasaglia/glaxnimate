@@ -670,3 +670,26 @@ int item_models::PropertyModelBase::rowCount(const QModelIndex& parent) const
     return tree->children.size();
 }
 
+QModelIndex item_models::PropertyModelBase::node_index(model::DocumentNode* node) const
+{
+    return object_index(node);
+}
+
+model::Document * item_models::PropertyModelBase::document() const
+{
+    return d->document;
+}
+
+model::DocumentNode * item_models::PropertyModelBase::node(const QModelIndex& index) const
+{
+    Private::Subtree* tree = d->node_from_index(index);
+    if ( !tree )
+        return nullptr;
+
+    if ( tree->visual_node )
+        return tree->visual_node;
+
+    return qobject_cast<model::DocumentNode*>(tree->object);
+}
+
+

@@ -213,6 +213,14 @@ Qt::ItemFlags item_models::PropertyModelFull::flags(const QModelIndex& index) co
 
     Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 
+    if ( tree->visual_node && !tree->visual_node->docnode_locked_recursive() )
+    {
+        flags |= Qt::ItemIsDragEnabled;
+
+        if ( tree->visual_node->has("shapes") )
+            flags |= Qt::ItemIsDropEnabled;
+    }
+
     switch ( index.column() )
     {
         case ColumnColor:

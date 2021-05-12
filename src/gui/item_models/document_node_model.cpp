@@ -5,25 +5,25 @@
 #include <QSet>
 
 #include "command/property_commands.hpp"
-#include "command/object_list_commands.hpp"
-#include "command/undo_macro_guard.hpp"
 
 #include "model/shapes/shape.hpp"
 #include "model/assets/assets.hpp"
 
-#include "drag_data.hpp"
 
 
 class item_models::DocumentNodeModel::Private
 {
 public:
+    model::Document* document = nullptr;
+
+
     // Sometimes views send QModelIndex instances after they've been removed...
     // So we avoid accessing the internal pointer directly
     std::unordered_set<void*> ptrs;
 };
 
 item_models::DocumentNodeModel::DocumentNodeModel(QObject* parent)
-    : QAbstractItemModel(parent), d(std::make_unique<Private>())
+    : DocumentModelBase(parent), d(std::make_unique<Private>())
 {
 }
 
@@ -39,7 +39,7 @@ void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
         int rows = node->docnode_child_count();
         beginInsertRows(node_index(node), rows - row, rows - row);
     });
-    connect(node, &model::DocumentNode::docnode_child_add_end, this, [this, node](model::DocumentNode* child) {
+    connect(node, &model::DocumentNode::docnode_child_add_end, this, [this](model::DocumentNode* child) {
         endInsertRows();
         connect_node(child);
     });
@@ -47,7 +47,7 @@ void item_models::DocumentNodeModel::connect_node ( model::DocumentNode* node )
         int rows = node->docnode_child_count();
         beginRemoveRows(node_index(node), rows - row - 1, rows - row - 1);
     });
-    connect(node, &model::DocumentNode::docnode_child_remove_end, this, [this, node](model::DocumentNode* child) {
+    connect(node, &model::DocumentNode::docnode_child_remove_end, this, [this](model::DocumentNode* child) {
         endRemoveRows();
         disconnect_node(child);
     });
@@ -113,7 +113,7 @@ void item_models::DocumentNodeModel::disconnect_node ( model::DocumentNode* node
 
 int item_models::DocumentNodeModel::rowCount ( const QModelIndex& parent ) const
 {
-    if ( !document )
+    if ( !d->document )
         return 0;
 
     if ( !parent.isValid() )
@@ -129,15 +129,15 @@ int item_models::DocumentNodeModel::columnCount ( const QModelIndex& ) const
 
 QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const QModelIndex& parent ) const
 {
-    if ( !document )
+    if ( !d->document )
         return {};
 
     if ( !parent.isValid() )
     {
         if ( row == 0 )
-            return createIndex(row, column, document->main());
+            return createIndex(row, column, d->document->main());
         if ( row == 1 )
-            return createIndex(row, column, document->assets());
+            return createIndex(row, column, d->document->assets());
         return {};
     }
 
@@ -151,7 +151,7 @@ QModelIndex item_models::DocumentNodeModel::index ( int row, int column, const Q
 
 Qt::ItemFlags item_models::DocumentNodeModel::flags ( const QModelIndex& index ) const
 {
-    if ( !document )
+    if ( !d->document )
         return Qt::NoItemFlags;
 
 
@@ -184,7 +184,7 @@ Qt::ItemFlags item_models::DocumentNodeModel::flags ( const QModelIndex& index )
 QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role) const
 {
     auto n = node(index);
-    if ( !document || !index.isValid() || !n )
+    if ( !d->document || !index.isValid() || !n )
         return {};
 
     model::VisualNode* visual = nullptr;
@@ -263,7 +263,7 @@ bool item_models::DocumentNodeModel::setData(const QModelIndex& index, const QVa
 {
     Q_UNUSED(role);
     auto n = node(index);
-    if ( !document || !index.isValid() || !n )
+    if ( !d->document || !index.isValid() || !n )
         return false;
 
     switch ( index.column() )
@@ -271,12 +271,12 @@ bool item_models::DocumentNodeModel::setData(const QModelIndex& index, const QVa
         case ColumnColor:
             if ( auto visual = n->cast<model::VisualNode>() )
             {
-                document->undo_stack().push(new command::SetPropertyValue(&visual->group_color, visual->group_color.get(), value));
+                d->document->undo_stack().push(new command::SetPropertyValue(&visual->group_color, visual->group_color.get(), value));
                 return true;
             }
             return false;
         case ColumnName:
-            document->undo_stack().push(new command::SetPropertyValue(&n->name, n->name.get(), value));
+            d->document->undo_stack().push(new command::SetPropertyValue(&n->name, n->name.get(), value));
             return true;
     }
 
@@ -287,12 +287,12 @@ void item_models::DocumentNodeModel::set_document ( model::Document* doc )
 {
     beginResetModel();
 
-    if ( document )
+    if ( d->document )
     {
-        disconnect(document->assets(), nullptr, this, nullptr);
+        disconnect(d->document->assets(), nullptr, this, nullptr);
     }
 
-    document = doc;
+    d->document = doc;
 
     if ( doc )
     {
@@ -318,7 +318,7 @@ model::DocumentNode * item_models::DocumentNodeModel::node ( const QModelIndex& 
 QModelIndex item_models::DocumentNodeModel::parent ( const QModelIndex& index ) const
 {
     auto n = node(index);
-    if ( !document || !index.isValid() || !n )
+    if ( !d->document || !index.isValid() || !n )
         return {};
 
     return node_index(n->docnode_parent());
@@ -333,14 +333,14 @@ QModelIndex item_models::DocumentNodeModel::node_index ( model::DocumentNode* no
 
     if ( !parent )
     {
-        if ( !document )
+        if ( !d->document )
             return {};
 
-        if ( node == document->main() )
+        if ( node == d->document->main() )
             return createIndex(0, 0, node);
 
         return createIndex(
-            document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(node))+2,
+            d->document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(node))+2,
             0, node
         );
     }
@@ -367,74 +367,12 @@ bool item_models::DocumentNodeModel::removeRows ( int row, int count, const QMod
     return false;
 }
 
-Qt::DropActions item_models::DocumentNodeModel::supportedDropActions() const
-{
-    return Qt::MoveAction;
-}
-
-QStringList item_models::DocumentNodeModel::mimeTypes() const
-{
-    return {"application/x.glaxnimate-node-uuid"};
-}
-
-QMimeData * item_models::DocumentNodeModel::mimeData(const QModelIndexList& indexes) const
-{
-    if ( !document )
-        return nullptr;
-
-    QMimeData *data = new QMimeData();
-    item_models::DragEncoder encoder;
-    for ( const auto& index : indexes )
-        encoder.add_node(node(index));
-
-    data->setData("application/x.glaxnimate-node-uuid", encoder.data());
-    return data;
-}
-
-bool item_models::DocumentNodeModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent)
-{
-    Q_UNUSED(column);
-
-    if ( !data || action != Qt::MoveAction || !document )
-        return false;
-
-    if ( !data->hasFormat("application/x.glaxnimate-node-uuid") )
-        return false;
-
-    auto parent_node = node(parent);
-    if ( !parent_node )
-        return false;
-
-    auto dest = static_cast<model::ShapeListProperty*>(parent_node->get_property("shapes"));
-    if ( !dest )
-        return false;
-
-    int max_child = parent_node->docnode_child_count();
-    int insert = max_child - row;
-
-    if ( row > max_child || row < 0)
-        insert = max_child;
-
-    DragDecoder<model::ShapeElement> decoder(data->data("application/x.glaxnimate-node-uuid"), document);
-    std::vector<model::ShapeElement*> items(decoder.begin(), decoder.end());
-
-    if ( items.empty() )
-        return false;
-
-    command::UndoMacroGuard guard(tr("Move Layers"), document);
-
-    for ( auto shape : items )
-    {
-
-        document->push_command(new command::MoveObject(
-            shape, shape->owner(), dest, insert
-        ));
-    }
-
-    return true;
-}
-
 model::VisualNode* item_models::DocumentNodeModel::visual_node(const QModelIndex& index) const
 {
     return qobject_cast<model::VisualNode*>(node(index));
+}
+
+model::Document * item_models::DocumentNodeModel::document() const
+{
+    return d->document;
 }

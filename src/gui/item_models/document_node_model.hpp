@@ -1,15 +1,12 @@
 #pragma once
 
 
-#include <QAbstractItemModel>
-
-#include "model/document.hpp"
+#include "document_model_base.hpp"
 
 namespace item_models {
 
-class ProxyBase;
 
-class DocumentNodeModel : public QAbstractItemModel
+class DocumentNodeModel : public DocumentModelBase
 {
 public:
     enum ColumnTypes
@@ -37,24 +34,17 @@ public:
     QModelIndex parent ( const QModelIndex & child ) const override;
     bool setData ( const QModelIndex & index, const QVariant & value, int role ) override;
 
-    QStringList mimeTypes() const override;
-    QMimeData *mimeData(const QModelIndexList &indexes) const override;
-    Qt::DropActions supportedDropActions() const override;
-    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
-
     void clear_document();
     void set_document(model::Document* doc);
-    model::DocumentNode* node(const QModelIndex& index) const;
-    model::VisualNode* visual_node(const QModelIndex& index) const;
-    QModelIndex node_index(model::DocumentNode* node) const;
+    model::DocumentNode* node(const QModelIndex& index) const override;
+    model::VisualNode* visual_node(const QModelIndex& index) const override;
+    QModelIndex node_index(model::DocumentNode* node) const override;
+    model::Document* document() const override;
 
 private:
     void connect_node(model::DocumentNode* node);
     void disconnect_node(model::DocumentNode* node);
 
-    model::Document* document = nullptr;
-
-    friend class ProxyBase;
     class Private;
     std::unique_ptr<Private> d;
 };
