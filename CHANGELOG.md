@@ -24,6 +24,7 @@
     * Fixed importing SVG path data
     * Fixed the HueShift plugin
     * Fixed loading transparent gradients from lottie
+    * Gradients can be renamed
 
 ## 0.4.2
 

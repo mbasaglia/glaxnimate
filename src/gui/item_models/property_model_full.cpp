@@ -22,11 +22,12 @@ public:
         connect_docnode(node, prop_node);
     }
 
-    void on_connect(model::Object* object, Subtree* tree) override
+    void on_connect(model::Object* object, Subtree* tree, bool insert_row, ReferencedPropertiesMap* referenced) override
     {
         model::VisualNode* visual = object->cast<model::VisualNode>();
         model::DocumentNode* node = nullptr;
 
+        // connect visual node signals
         if ( visual )
         {
             connect(visual, &model::VisualNode::docnode_visible_changed, model, [this, visual]() {
@@ -55,6 +56,7 @@ public:
             node = object->cast<model::DocumentNode>();
         }
 
+        // connect document node signals
         if ( node )
         {
             connect(node, &model::DocumentNode::name_changed, model, [this, node]() {
@@ -74,14 +76,17 @@ public:
                 prop->traits().type == model::PropertyTraits::Object
             )
             {
+                // found "shapes"
                 if ( node )
                     object_list = static_cast<model::ObjectListPropertyBase*>(prop);
             }
+            // sub object
             else if ( prop->traits().type == model::PropertyTraits::Object )
             {
                 model::Object* subobj = prop->value().value<model::Object*>();
                 if ( subobj )
                 {
+                    // For assets, avoid an intermediate node
                     if ( object == document->assets() )
                     {
                         model::DocumentNode* subobj = prop->value().value<model::DocumentNode*>();
@@ -96,14 +101,25 @@ public:
                             !meta->inherits(&model::StretchableTime::staticMetaObject) &&
                             !meta->inherits(&model::MaskSettings::staticMetaObject)
                         )
-                            connect_subobject(subobj, tree);
+                            connect_subobject(subobj, tree, insert_row);
                     }
                 }
             }
-            else if ( prop->traits().flags & model::PropertyTraits::Visual &&
-                prop->traits().type != model::PropertyTraits::ObjectReference && prop->name() != "visible" )
+            // sub object
+            else if ( prop->traits().type == model::PropertyTraits::ObjectReference )
             {
-                properties[prop] = add_node(Subtree{prop, tree->id})->id;
+                if ( prop->name() == "parent" )
+                    continue;
+
+                Subtree* prop_node = add_property(prop, tree->id, insert_row, referenced);
+
+                model::Object* subobj = prop->value().value<model::Object*>();
+                connect_subobject(subobj, prop_node, false);
+            }
+            // scalar
+            else if ( prop->traits().flags & model::PropertyTraits::Visual && prop->name() != "visible" )
+            {
+                add_property(prop, tree->id, insert_row, referenced);
             }
         }
 
@@ -119,7 +135,7 @@ public:
         {
             model::Object* subobj = it->value<model::Object*>();
             auto suboj_node = add_node(Subtree{subobj, prop_node->id});
-            connect_recursive(suboj_node);
+            connect_recursive(suboj_node, false);
         }
     }
 

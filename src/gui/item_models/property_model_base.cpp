@@ -1,6 +1,17 @@
 #include "property_model_private.hpp"
 #include "model/assets/assets.hpp"
 
+
+void item_models::PropertyModelBase::Private::begin_insert_row(item_models::PropertyModelBase::Private::Subtree* row_tree, int index)
+{
+    model->beginInsertRows(subtree_index(row_tree), index, index);
+}
+
+void item_models::PropertyModelBase::Private::end_insert_row()
+{
+    model->endInsertRows();
+}
+
 void item_models::PropertyModelBase::Private::add_object(model::Object* object, Subtree* parent, bool insert_row, int index)
 {
     auto& container = parent ? parent->children : roots;
@@ -11,15 +22,13 @@ void item_models::PropertyModelBase::Private::add_object(model::Object* object, 
         index = container.size();
 
     if ( insert_row )
-        model->beginInsertRows(subtree_index(parent), index, index);
+        begin_insert_row(parent, index);
 
     auto node = do_add_node(Subtree{object, parent ? parent->id : 0}, parent, index);
-    connect_recursive(node);
+    connect_recursive(node, insert_row);
 
     if ( insert_row )
-        model->endInsertRows();
-
-//         add_extra_objects(object, parent, insert_row);
+        end_insert_row();
 }
 
 item_models::PropertyModelBase::Private::Subtree* item_models::PropertyModelBase::Private::do_add_node(Subtree st, Subtree* parent, int index)
@@ -231,7 +240,7 @@ QVariant item_models::PropertyModelBase::Private::data_value(Subtree* tree, int 
     }
 }
 
-void item_models::PropertyModelBase::Private::connect_recursive(Subtree* this_node)
+void item_models::PropertyModelBase::Private::connect_recursive(Subtree* this_node, bool insert_row)
 {
     auto object = this_node->object;
     if ( !object )
@@ -242,16 +251,23 @@ void item_models::PropertyModelBase::Private::connect_recursive(Subtree* this_no
     QObject::connect(object, &model::Object::removed_from_list, model, &PropertyModelBase::on_delete_object);
     QObject::connect(object, &model::Object::property_changed, model, &PropertyModelBase::property_changed);
 
-    on_connect(object, this_node);
+    on_connect(object, this_node, insert_row, nullptr);
 }
 
-void item_models::PropertyModelBase::Private::connect_subobject(model::Object* object, Subtree* this_node)
+void item_models::PropertyModelBase::Private::connect_subobject(model::Object* object, Subtree* this_node, bool insert_row)
 {
+    this_node->expand_referenced = true;
+
     if ( !object )
         return;
 
-    QObject::connect(object, &model::Object::property_changed, model, &PropertyModelBase::property_changed);;
-    on_connect(object, this_node);
+    QObject::connect(object, &model::Object::property_changed, model, &PropertyModelBase::property_changed);
+
+    ReferencedPropertiesMap* referenced = nullptr;
+    if ( this_node->prop && this_node->prop->traits().type == model::PropertyTraits::ObjectReference )
+        referenced = &referenced_properties[object];
+
+    on_connect(object, this_node, insert_row, referenced);
 }
 
 
@@ -604,56 +620,89 @@ void item_models::PropertyModelBase::on_delete_object()
     d->on_delete_object(static_cast<model::Object*>(sender()));
 }
 
-
 void item_models::PropertyModelBase::property_changed(const model::BaseProperty* prop, const QVariant& value)
 {
-    auto it = d->properties.find(const_cast<model::BaseProperty*>(prop));
-    if ( it == d->properties.end() )
+    d->property_changed(prop, value);
+}
+
+void item_models::PropertyModelBase::Private::property_changed(const model::BaseProperty* prop, const QVariant& value)
+{
+    auto it = properties.find(const_cast<model::BaseProperty*>(prop));
+    if ( it != properties.end() )
+        on_property_changed(it->second, prop, value);
+
+    auto itref = referenced_properties.find(prop->object());
+    if ( itref != referenced_properties.end() )
+    {
+        auto itprop = itref->second.find(const_cast<model::BaseProperty*>(prop));
+        if ( itprop != itref->second.end() )
+        {
+            for ( id_type id : itprop->second )
+                on_property_changed(id, prop, value);
+        }
+    }
+}
+
+void item_models::PropertyModelBase::Private::clean_object_references(const QModelIndex& index, Private::Subtree* prop_node)
+{
+    if ( prop_node->children.empty() )
         return;
 
-    Private::Subtree* prop_node = d->node(it->second);
+    model->beginRemoveRows(index, 0, prop_node->children.size());
+
+    prop_node->children.clear();
+
+    auto itref = referenced_properties.find(prop_node->object);
+    if ( itref != referenced_properties.end() )
+    {
+        auto itprop = itref->second.find(prop_node->prop);
+        if ( itprop != itref->second.end() )
+        {
+            itprop->second.erase(
+                std::remove_if(itprop->second.begin(), itprop->second.end(), [prop_node, this](id_type id){
+                    auto n = node(id);
+                    return !n || n->parent == prop_node->id;
+                }),
+                itprop->second.end()
+            );
+        }
+    }
+
+    model->endRemoveRows();
+}
+
+void item_models::PropertyModelBase::Private::on_property_changed(id_type prop_node_id, const model::BaseProperty* prop, const QVariant& value)
+{
+    Private::Subtree* prop_node = node(prop_node_id);
     if ( !prop_node )
         return;
 
-    Private::Subtree* parent = d->node(prop_node->parent);
+    Private::Subtree* parent = node(prop_node->parent);
 
     if ( !parent )
         return;
 
     int i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
-    QModelIndex index = createIndex(i, 1, prop_node->id);
+    QModelIndex index = model->createIndex(i, 1, prop_node->id);
 
-    if ( prop_node->prop->traits().flags & model::PropertyTraits::List )
-    {
-        /*beginRemoveRows(index, 0, prop_node->children.size());
-        d->disconnect_recursive(prop_node, this);
-        endRemoveRows();
-
-
-        beginInsertRows(index, 0, prop_node->prop_value.size());
-        prop_node->prop_value = value.toList();
-        d->connect_list(prop_node);
-        endInsertRows();*/
-    }
-    else
+    if ( !(prop_node->prop->traits().flags & model::PropertyTraits::List) )
     {
         if ( prop_node->prop->traits().type == model::PropertyTraits::ObjectReference )
         {
-            prop_node->object = value.value<model::Object*>();
-        }
-        /*else if ( prop_node->prop->traits().type == model::PropertyTraits::ObjectReference )
-        {
-            beginRemoveRows(index, 0, prop_node->children.size());
-            d->disconnect_recursive(prop_node);
-            endRemoveRows();
-            model::Object* object = value.value<model::Object*>();
-            beginInsertRows(index, 0, prop_node->object->properties().size());
-            prop_node->object = object;
-            d->connect_recursive(object, this, prop_node->id);
-            endInsertRows();
-        }*/
+            model::Object* obj_value = value.value<model::Object*>();
 
-        dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
+            if ( !prop_node->children.empty() )
+                clean_object_references(index, prop_node);
+
+            if ( prop_node->expand_referenced && obj_value )
+            {
+                connect_subobject(obj_value, prop_node, true);
+            }
+
+            prop_node->object = obj_value;
+        }
+
+        emit model->dataChanged(index, index, {});
     }
 }
 
@@ -693,3 +742,17 @@ model::DocumentNode * item_models::PropertyModelBase::node(const QModelIndex& in
 }
 
 
+item_models::PropertyModelBase::Private::Subtree*
+item_models::PropertyModelBase::Private::add_property(
+    model::BaseProperty* prop, id_type parent, bool insert_row, ReferencedPropertiesMap* referenced)
+{
+
+    Subtree* prop_node = add_node(Subtree{prop, parent});
+
+    if ( referenced )
+        (*referenced)[prop].push_back(prop_node->id);
+    else
+        properties[prop] = prop_node->id;
+
+    return prop_node;
+}

@@ -11,91 +11,37 @@ class item_models::PropertyModelSingle::Private : public PropertyModelBase::Priv
 {
 public:
     using PropertyModelBase::Private::Private;
-    /*
-    void add_extra_objects(model::Object* object, PropertyModelSingle* model, bool insert_row)
-    {
-        auto mo = object->metaObject();
-        if ( mo->inherits(&model::Styler::staticMetaObject) )
-        {
-            auto styler = static_cast<model::Styler*>(object);
-            if ( styler->use.get() )
-                model->add_object(styler->use.get());
-            QObject::connect(styler, &model::Styler::use_changed_from, model,
-            [this, model, insert_row](model::BrushStyle* old_use, model::BrushStyle* new_use){
-                if ( old_use )
-                    on_delete_object(old_use, model);
-                if ( new_use )
-                    add_object(new_use, model, insert_row);
-            });
-        }
-        else if ( mo->inherits(&model::Gradient::staticMetaObject) )
-        {
-            auto gradient = static_cast<model::Gradient*>(object);
-            if ( gradient->colors.get() )
-                model->add_object(gradient->colors.get());
-            QObject::connect(gradient, &model::Gradient::colors_changed_from, model,
-            [this, model, insert_row](model::GradientColors* old_use, model::GradientColors* new_use){
-                if ( old_use )
-                    on_delete_object(old_use, model);
-                if ( new_use )
-                    add_object(new_use, model, insert_row);
-            });
-        }
-    }
 
-    void remove_extra_objects(model::Object* object, PropertyModelSingle* model)
-    {
-        auto mo = object->metaObject();
-        if ( mo->inherits(&model::Styler::staticMetaObject) )
-        {
-            auto styler = static_cast<model::Styler*>(object);
-            if ( styler->use.get() )
-                on_delete_object(styler->use.get(), model);
-        }
-        else if ( mo->inherits(&model::Gradient::staticMetaObject) )
-        {
-            auto gradient = static_cast<model::Gradient*>(object);
-            if ( gradient->colors.get() )
-                on_delete_object(gradient->colors.get(), model);
-        }
-    }
-
-    void add_object_without_properties(model::Object* object, PropertyModelSingle* model)
-    {
-        auto node = add_node(Subtree{object, 0});
-        roots.push_back(node);
-        emit model->root_object_added_begin(object);
-        QObject::connect(object, &model::Object::destroyed, model, &PropertyModelSingle::on_delete_object);
-    }*/
-
-
-    void on_connect(model::Object* object, Subtree* this_node) override
+    void on_connect(model::Object* object, Subtree* this_node, bool insert_row, ReferencedPropertiesMap* referenced) override
     {
         for ( model::BaseProperty* prop : object->properties() )
         {
 
+            // skip object lists
             if (
                 (prop->traits().flags & model::PropertyTraits::List) &&
                 prop->traits().type == model::PropertyTraits::Object
             )
-            {
                 continue;
-            }
 
-            Subtree* prop_node = add_node(Subtree{prop, this_node->id});
-            properties[prop] = prop_node->id;
+            // signal
+            if ( insert_row )
+                begin_insert_row(this_node, this_node->children.size());
 
-            /*if ( prop->traits().flags & model::PropertyTraits::List )
-            {
-                prop_node->prop_value = prop->value().toList();
-                connect_list(prop_node);
-            }
-            else*/ if ( prop->traits().is_object() )
+            // add the property node to the internal structures
+            Subtree* prop_node = add_property(prop, this_node->id, insert_row, referenced);
+
+            // signal
+            if ( insert_row )
+                end_insert_row();
+
+            // connect references / sub-objects
+            if ( prop->traits().is_object() )
             {
                 model::Object* subobj = prop->value().value<model::Object*>();
-                prop_node->object = subobj;
-                if ( prop->traits().type == model::PropertyTraits::Object )
-                    connect_subobject(subobj, prop_node);
+
+                if ( prop->name() != "parent" )
+                    connect_subobject(subobj, prop_node, insert_row);
             }
         }
     }
@@ -114,18 +60,6 @@ void item_models::PropertyModelSingle::set_object(model::Object* object)
         d->add_object(object, nullptr, false);
     endResetModel();
 }
-/*
-void item_models::PropertyModelSingle::add_object(model::Object* object)
-{
-    d->add_object(object, this, true);
-}
-
-void item_models::PropertyModelSingle::add_object_without_properties(model::Object* object)
-{
-    beginInsertRows({}, d->roots.size(), d->roots.size());
-    d->add_object_without_properties(object, this);
-    endInsertRows();
-}*/
 
 int item_models::PropertyModelSingle::columnCount(const QModelIndex&) const
 {

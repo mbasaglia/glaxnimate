@@ -51,7 +51,10 @@ public:
         std::vector<Subtree*> children;
         id_type id = 0;
         model::VisualNode* visual_node = nullptr;
+        bool expand_referenced = false;
     };
+
+    using ReferencedPropertiesMap = std::unordered_map<model::BaseProperty*, std::vector<id_type>>;
 
     explicit Private(PropertyModelBase* parent)
         : model(parent)
@@ -77,11 +80,11 @@ public:
 
     QVariant data_value(Subtree* tree, int role);
 
-    virtual void on_connect(model::Object* object, Subtree* tree) = 0;
+    virtual void on_connect(model::Object* object, Subtree* tree, bool insert_row, ReferencedPropertiesMap* referenced) = 0;
 
-    void connect_recursive(Subtree* this_node);
+    void connect_recursive(Subtree* this_node, bool insert_row);
 
-    void connect_subobject(model::Object* object, Subtree* this_node);
+    void connect_subobject(model::Object* object, Subtree* this_node, bool insert_row);
 
     void disconnect_recursive(Subtree* node);
 
@@ -99,6 +102,14 @@ public:
 
     bool set_prop_data(Subtree* tree, const QVariant& value, int role);
 
+    void property_changed(const model::BaseProperty* prop, const QVariant& value);
+    void on_property_changed(id_type prop_node_id, const model::BaseProperty* prop, const QVariant& value);
+    void clean_object_references(const QModelIndex& index, Private::Subtree* prop_node);
+
+    void begin_insert_row(Subtree* row_tree, int index);
+    void end_insert_row();
+    Subtree* add_property(model::BaseProperty* prop, id_type parent, bool insert_row, ReferencedPropertiesMap* referenced);
+
 
     model::Document* document = nullptr;
     std::vector<Subtree*> roots;
@@ -106,6 +117,7 @@ public:
     std::unordered_map<id_type, Subtree> nodes;
     std::unordered_map<model::Object*, id_type> objects;
     std::unordered_map<model::BaseProperty*, id_type> properties;
+    std::unordered_map<model::Object*, ReferencedPropertiesMap> referenced_properties;
     bool animation_only;
     PropertyModelBase* model = nullptr;
 };

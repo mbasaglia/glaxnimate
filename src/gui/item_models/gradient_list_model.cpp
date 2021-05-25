@@ -132,7 +132,7 @@ bool item_models::GradientListModel::setData(const QModelIndex& index, const QVa
 Qt::ItemFlags item_models::GradientListModel::flags(const QModelIndex& index) const
 {
     auto flags = QAbstractTableModel::flags(index);
-    if ( index.column() == 0 )
+    if ( index.column() == 0 || index.column() == 1 )
         flags |= Qt::ItemIsEditable;
 
     return flags;
