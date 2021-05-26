@@ -23,6 +23,9 @@ public:
     void load_state(const QByteArray& state);
     void set_controller(GlaxnimateWindow* window);
     QAbstractItemModel* model() const;
+
+signals:
+    void switch_composition(model::Composition* comp, int index);
     
 protected:
     void changeEvent ( QEvent* e ) override;

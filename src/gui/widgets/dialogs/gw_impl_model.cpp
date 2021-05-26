@@ -550,6 +550,12 @@ void GlaxnimateWindow::Private::to_path()
 
 void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp, int i)
 {
+    if ( i != ui.tab_bar->currentIndex() )
+    {
+        QSignalBlocker g(ui.tab_bar);
+        ui.tab_bar->setCurrentIndex(i);
+    }
+
     int old_i = current_document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(this->comp)) + 1;
     comp_selections[old_i].selection = scene.selection();
     if ( ui.view_document_node->currentIndex().isValid() )

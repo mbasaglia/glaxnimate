@@ -5,6 +5,7 @@
 #include <QScrollBar>
 #include <QClipboard>
 #include <QMimeData>
+#include <QSignalBlocker>
 
 #include "model/shapes/precomp_layer.hpp"
 #include "command/animation_commands.hpp"
@@ -271,6 +272,7 @@ CompoundTimelineWidget::CompoundTimelineWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Private>())
 {
     d->setupUi(this);
+    connect(d->ui.tab_bar, &CompositionTabBar::switch_composition, this, &CompoundTimelineWidget::switch_composition);
 }
 
 
@@ -288,6 +290,8 @@ void CompoundTimelineWidget::changeEvent ( QEvent* e )
 void CompoundTimelineWidget::set_composition(model::Composition* comp)
 {
 //     d->property_model.add_object(comp);
+    QSignalBlocker g(d->ui.tab_bar);
+    d->ui.tab_bar->set_current_composition(comp);
 }
 
 void CompoundTimelineWidget::set_active(model::DocumentNode* node)
@@ -303,13 +307,12 @@ void CompoundTimelineWidget::set_document(model::Document* document)
     d->ui.timeline->set_document(document);
     d->property_model.set_document(document);
     d->clear_menu_data();
+    d->ui.tab_bar->set_document(document);
 }
 
 void CompoundTimelineWidget::clear_document()
 {
-    d->ui.timeline->set_document(nullptr);
-    d->property_model.clear_document();
-    d->clear_menu_data();
+    set_document(nullptr);
 }
 
 void CompoundTimelineWidget::select_index(const QModelIndex& index)

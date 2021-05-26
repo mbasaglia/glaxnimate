@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>718</width>
-    <height>257</height>
+    <height>229</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -30,6 +30,16 @@
     <number>0</number>
    </property>
    <item>
+    <widget class="CompositionTabBar" name="tab_bar" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -37,7 +47,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
       <property name="spacing">
        <number>0</number>
       </property>
@@ -170,6 +180,12 @@
    <class>TimelineWidget</class>
    <extends>QGraphicsView</extends>
    <header>widgets/timeline/timeline_widget.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>CompositionTabBar</class>
+   <extends>QWidget</extends>
+   <header>widgets/composition_tab_bar.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

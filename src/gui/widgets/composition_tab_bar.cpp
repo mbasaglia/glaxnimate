@@ -15,6 +15,9 @@ CompositionTabBar::CompositionTabBar(QWidget* parent)
 {
     setDocumentMode(true);
     setExpanding(false);
+    setAutoHide(true);
+    setDrawBase(false);
+
     connect(this, &QTabBar::currentChanged, this, &CompositionTabBar::fw_switch);
     connect(this, &QTabBar::tabCloseRequested, this, &CompositionTabBar::on_close);
     connect(this, &ClickableTabBar::context_menu_requested, this, &CompositionTabBar::on_menu);

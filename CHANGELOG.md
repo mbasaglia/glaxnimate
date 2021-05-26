@@ -6,6 +6,8 @@
     * Preferences dialog no longer closes on Enter
     * Some layer properties are displayed inline in the timeline tree
     * Bezier tangents are shown a bit thicker
+    * The timeline shows precomposition tabs
+    * The timeline now shows the whole composition contents and more properties are available
 * I/O:
     * Lottie output is slightly more compact
 * Scripting:

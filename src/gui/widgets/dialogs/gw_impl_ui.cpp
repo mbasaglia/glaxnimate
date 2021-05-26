@@ -388,9 +388,8 @@ void GlaxnimateWindow::Private::init_docks()
     ui.widget_gradients->set_window(parent);
 
     // Tab bar
-    ui.tab_bar->setAutoHide(true);
-    ui.tab_bar->setDrawBase(false);
     connect(ui.tab_bar, &CompositionTabBar::switch_composition, parent, &GlaxnimateWindow::switch_composition);
+    connect(ui.timeline_widget, &CompoundTimelineWidget::switch_composition, parent, &GlaxnimateWindow::switch_composition);
 
     // Align
     ui.separator_align_relative_to->setSeparator(true);
