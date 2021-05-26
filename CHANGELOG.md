@@ -25,6 +25,7 @@
     * Fixed importing SVG path data
     * Fixed the HueShift plugin
     * Fixed loading transparent gradients from lottie
+    * Fixed undoing precomp deletion
 
 ## 0.4.2
 
