@@ -44,6 +44,10 @@ bool model::CompGraph::is_ancestor_of(model::Composition* ancestor, model::Compo
             if ( comp == descendant )
                 return true;
 
+            auto it = layers.find(comp);
+            if ( it == layers.end() )
+                continue;
+
             for ( auto layer : layers.at(comp) )
             {
                 auto laycomp = layer->composition.get();

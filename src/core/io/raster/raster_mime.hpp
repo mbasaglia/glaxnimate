@@ -32,7 +32,7 @@ public:
         mime.setImageData(to_image(objects));
     }
 
-    QImage to_image(const std::vector<model::DocumentNode*>& selection) const
+    static QImage to_image(const std::vector<model::DocumentNode*>& selection)
     {
         if ( selection.empty() )
             return {};
