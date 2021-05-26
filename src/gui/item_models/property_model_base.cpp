@@ -744,7 +744,7 @@ model::DocumentNode * item_models::PropertyModelBase::node(const QModelIndex& in
 
 item_models::PropertyModelBase::Private::Subtree*
 item_models::PropertyModelBase::Private::add_property(
-    model::BaseProperty* prop, id_type parent, bool insert_row, ReferencedPropertiesMap* referenced)
+    model::BaseProperty* prop, id_type parent, bool, ReferencedPropertiesMap* referenced)
 {
 
     Subtree* prop_node = add_node(Subtree{prop, parent});
