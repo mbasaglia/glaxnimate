@@ -544,6 +544,7 @@ void TimelineWidget::scrollContentsBy(int dx, int dy)
     viewport()->update();
 }
 
+/*
 #include <QDebug>
 void debug_line(timeline::LineItem* line_item, QString indent, int index)
 {
@@ -571,6 +572,7 @@ void debug_line(timeline::LineItem* line_item, QString indent, int index)
     for ( uint i = 0; i < line_item->rows().size(); i++ )
         debug_line(line_item->rows()[i], indent + "    ", i);
 }
+*/
 
 void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
@@ -590,8 +592,8 @@ void TimelineWidget::mousePressEvent(QMouseEvent* event)
         emit frame_clicked(d->mouse_frame);
     }
 
-    if ( event->button() == Qt::MiddleButton )
-        debug_line(d->root, "", 0);
+    /*if ( event->button() == Qt::MiddleButton )
+        debug_line(d->root, "", 0);*/
 }
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent* event)

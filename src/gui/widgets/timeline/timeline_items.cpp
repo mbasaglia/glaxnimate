@@ -116,14 +116,14 @@ void timeline::LineItem::expand()
 
 void timeline::LineItem::collapse()
 {
-    expanded_ = false;
-
     int old_vis = visible_rows_;
     for ( auto item : rows_ )
         item->setVisible(false);
 
     visible_rows_ = 1;
     propagate_row_vis(visible_rows_ - old_vis);
+
+    expanded_ = false;
 }
 
 bool timeline::LineItem::is_expanded()
@@ -199,7 +199,7 @@ void timeline::LineItem::paint(QPainter * painter, const QStyleOptionGraphicsIte
 //         painter->fillRect(option->rect, widget->palette().brush(QPalette::Inactive, QPalette::Highlight));
 
     // Debugging print, it shows some meta info on the line, useful when tweaking the layout
-
+    /*
     painter->save();
     painter->setBrush(Qt::black);
     painter->scale(0.5, 1);
@@ -220,5 +220,5 @@ void timeline::LineItem::paint(QPainter * painter, const QStyleOptionGraphicsIte
     painter->drawText(time_end, row_height(), debug_string);
 
     painter->restore();
-
+    */
 }
