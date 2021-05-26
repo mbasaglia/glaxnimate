@@ -822,6 +822,9 @@ void TimelineWidget::model_rows_moved(const QModelIndex& parent, int start, int 
     // Given how the property model does things, I can assume
     // start == end && parent == destination && row != start
 
+    Q_UNUSED(end);
+    Q_UNUSED(destination);
+
     if ( LineItem* item = d->index_to_line(parent) )
         item->move_row(start, row - 1);
 
