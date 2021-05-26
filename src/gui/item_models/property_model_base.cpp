@@ -671,7 +671,7 @@ void item_models::PropertyModelBase::Private::clean_object_references(const QMod
     model->endRemoveRows();
 }
 
-void item_models::PropertyModelBase::Private::on_property_changed(id_type prop_node_id, const model::BaseProperty* prop, const QVariant& value)
+void item_models::PropertyModelBase::Private::on_property_changed(id_type prop_node_id, const model::BaseProperty*, const QVariant& value)
 {
     Private::Subtree* prop_node = node(prop_node_id);
     if ( !prop_node )
@@ -746,7 +746,6 @@ item_models::PropertyModelBase::Private::Subtree*
 item_models::PropertyModelBase::Private::add_property(
     model::BaseProperty* prop, id_type parent, bool, ReferencedPropertiesMap* referenced)
 {
-
     Subtree* prop_node = add_node(Subtree{prop, parent});
 
     if ( referenced )
