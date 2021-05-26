@@ -194,7 +194,7 @@ public:
     QPointF align_point(const QRectF& rect, AlignDirection direction, AlignPosition position);
     void dropped(const QMimeData* data);
 
-    void switch_composition(int index);
+    void switch_composition(model::Composition* comp, int i);
     void setup_composition(model::Composition* comp, int index = -1);
     void add_composition();
     void objects_to_new_composition(
@@ -203,11 +203,8 @@ public:
         model::ObjectListProperty<model::ShapeElement>* layer_parent,
         int layer_index
     );
-    void update_comp_color(int index, model::Composition* comp);
     void on_remove_precomp(int index);
-    void composition_close_request(int index);
     void shape_to_precomposition(model::ShapeElement* node);
-    void composition_context_menu(int index);
 
     void layer_new_layer();
     void layer_new_fill();

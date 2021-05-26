@@ -27,6 +27,7 @@
     * Fixed loading transparent gradients from lottie
     * Gradients can be renamed
     * Fixed undoing precomp deletion
+    * Fixed visual glitches when switching compositions
 
 ## 0.4.2
 

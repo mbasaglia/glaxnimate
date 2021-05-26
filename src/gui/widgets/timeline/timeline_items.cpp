@@ -66,6 +66,12 @@ void timeline::LineItem::add_row(LineItem* row, int index)
 
 void timeline::LineItem::remove_rows(int first, int last)
 {
+    /// \todo Figure out why these can occur
+    if ( first >= int(rows_.size()) )
+        return;
+    if ( last >= int(rows_.size()) )
+        last = rows_.size() - 1;
+
     int delta = 0;
     LineItem* row = nullptr;
     for ( int i = first; i <= last && i < int(rows_.size()); i++ )

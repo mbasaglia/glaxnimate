@@ -162,6 +162,8 @@ private slots:
     void tool_triggered(bool checked);
     void validate_tgs();
 
+    void switch_composition(model::Composition* comp, int index);
+
 protected:
     void changeEvent(QEvent *e) override;
     void showEvent(QShowEvent * event) override;

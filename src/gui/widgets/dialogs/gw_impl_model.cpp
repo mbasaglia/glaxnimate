@@ -21,7 +21,6 @@
 
 #include "settings/clipboard_settings.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
-#include "widgets/tab_bar_close_button.hpp"
 
 #include "item_models/drag_data.hpp"
 
@@ -549,30 +548,28 @@ void GlaxnimateWindow::Private::to_path()
     }
 }
 
-void GlaxnimateWindow::Private::switch_composition(int i)
+void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp, int i)
 {
-    int old_i = current_document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp)) + 1;
+    int old_i = current_document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(this->comp)) + 1;
     comp_selections[old_i].selection = scene.selection();
     if ( ui.view_document_node->currentIndex().isValid() )
         comp_selections[old_i].current = document_node_model.visual_node(comp_model.mapToSource(ui.view_document_node->currentIndex()));
     else
         comp_selections[old_i].current = comp;
 
-    int precomp_index = i - 1;
-    if ( precomp_index >= 0 && precomp_index < current_document->assets()->precompositions->values.size() )
-    {
-        comp = current_document->assets()->precompositions->values[precomp_index];
+    comp = new_comp;
 
+    if ( i == 0 )
+    {
+        for ( QAction* action : ui.menu_new_comp_layer->actions() )
+            action->setEnabled(true);
+    }
+    else
+    {
         auto possible = current_document->comp_graph().possible_descendants(comp, current_document.get());
         std::set<model::Composition*> comps(possible.begin(), possible.end());
         for ( QAction* action : ui.menu_new_comp_layer->actions() )
             action->setEnabled(comps.count(action->data().value<model::Precomposition*>()));
-    }
-    else
-    {
-        comp = current_document->main();
-        for ( QAction* action : ui.menu_new_comp_layer->actions() )
-            action->setEnabled(true);
     }
 
     comp_model.set_composition(comp);
@@ -581,19 +578,23 @@ void GlaxnimateWindow::Private::switch_composition(int i)
     scene.user_select(comp_selections[i].selection, graphics::DocumentScene::Replace);
     auto current = comp_selections[i].current;
     ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(current)));
+
+    ui.canvas->viewport()->update();
 }
 
 void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int index)
 {
-    index = ui.tab_bar->insertTab(index, comp->tree_icon(), comp->object_name());
     CompState state;
     if ( !comp->shapes.empty() )
         state = comp->shapes[0];
     else
         state = comp;
 
+    if ( index == -1 )
+        index = comp_selections.size();
+
     comp_selections.insert(comp_selections.begin() + index, std::move(state));
-    update_comp_color(index, comp);
+
     QAction* action = nullptr;
 
     if ( comp != current_document->main() )
@@ -606,19 +607,13 @@ void GlaxnimateWindow::Private::setup_composition(model::Composition* comp, int 
             ui.menu_new_comp_layer->insertAction(ui.menu_new_comp_layer->actions()[index-1], action);
         action->setData(QVariant::fromValue(comp));
 
-        TabBarCloseButton::add_button(ui.tab_bar, index);
-    }
-
-    connect(comp, &model::DocumentNode::name_changed, ui.tab_bar, [this, index, comp, action](){
-        ui.tab_bar->setTabText(index, comp->object_name());
-        if ( action )
+        connect(comp, &model::DocumentNode::name_changed, action, [this, comp, action](){
             action->setText(comp->object_name());
-    });
-    connect(comp, &model::VisualNode::docnode_group_color_changed, ui.tab_bar, [this, index, comp, action](){
-        update_comp_color(index, comp);
-        if ( action )
-            action->setIcon(comp->instance_icon());
-    });
+        });
+        connect(comp, &model::VisualNode::docnode_group_color_changed, action, [this, comp, action](){
+                action->setIcon(comp->instance_icon());
+        });
+    }
 
 }
 
@@ -680,23 +675,13 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
     comp_selections[old_comp_index] = pcl_ptr;
 }
 
-void GlaxnimateWindow::Private::update_comp_color(int index, model::Composition* comp)
-{
-    QColor c = comp->group_color.get();
-    if ( c.alpha() == 0 )
-        c = parent->palette().text().color();
-    else
-        c.setAlpha(255);
-    ui.tab_bar->setTabTextColor(index, c);
-}
 
 void GlaxnimateWindow::Private::on_remove_precomp(int index)
 {
     model::Precomposition* precomp = current_document->assets()->precompositions->values[index];
     if ( precomp == comp )
-        switch_composition(0);
+        switch_composition(current_document->main(), 0);
 
-    ui.tab_bar->removeTab(index+1);
     delete ui.menu_new_comp_layer->actions()[index];
     comp_selections.erase(comp_selections.begin()+index+1);
 }
@@ -717,16 +702,6 @@ model::PreCompLayer* GlaxnimateWindow::Private::layer_new_comp(model::Precomposi
     auto ptr = layer.get();
     layer_new_impl(std::move(layer));
     return ptr;
-}
-
-void GlaxnimateWindow::Private::composition_close_request(int index)
-{
-    if ( index > 0 )
-    {
-        current_document->push_command(new command::RemoveObject<model::Precomposition>(
-            index-1, &current_document->assets()->precompositions->values
-        ));
-    }
 }
 
 void GlaxnimateWindow::Private::shape_to_precomposition(model::ShapeElement* node)
@@ -890,39 +865,6 @@ void GlaxnimateWindow::Private::align(AlignDirection direction, AlignPosition po
             item.node->get_property("position")->set_undoable(point);
         }
     }
-}
-
-void GlaxnimateWindow::Private::composition_context_menu(int index)
-{
-    if ( index <= 0 )
-        return;
-
-    auto precomp = current_document->assets()->precompositions->values[index-1];
-
-    QMenu menu;
-    menu.addSection(precomp->object_name());
-    menu.addAction(QIcon::fromTheme("edit-delete"), tr("Delete"), precomp, [this, index]{
-        composition_close_request(index);
-    });
-    menu.addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), precomp, [this, precomp]{
-        std::unique_ptr<model::Precomposition> new_comp (
-            static_cast<model::Precomposition*>(precomp->clone().release())
-        );
-        new_comp->recursive_rename();
-        new_comp->set_time(current_document->current_time());
-
-        current_document->push_command(
-            new command::AddObject(
-                &current_document->assets()->precompositions->values,
-                std::move(new_comp),
-                -1,
-                nullptr,
-                QObject::tr("Duplicate %1").arg(precomp->object_name())
-            )
-        );
-    });
-
-    menu.exec(QCursor::pos());
 }
 
 void GlaxnimateWindow::Private::dropped(const QMimeData* data)

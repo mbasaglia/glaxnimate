@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QTabBar>
 
 class ClickableTabBar : public QTabBar

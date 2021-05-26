@@ -423,8 +423,7 @@ void GlaxnimateWindow::shape_to_precomposition(model::ShapeElement* node)
 
 void GlaxnimateWindow::set_current_composition(model::Composition* comp)
 {
-    int index = d->current_document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp));
-    d->ui.tab_bar->setCurrentIndex(index+1);
+    d->ui.tab_bar->set_current_composition(comp);
 }
 
 QMenu * GlaxnimateWindow::create_layer_menu() const
@@ -435,4 +434,9 @@ QMenu * GlaxnimateWindow::create_layer_menu() const
 void GlaxnimateWindow::select(const std::vector<model::VisualNode*>& nodes)
 {
     d->scene.user_select(nodes, graphics::DocumentScene::Replace);
+}
+
+void GlaxnimateWindow::switch_composition(model::Composition* comp, int index)
+{
+    d->switch_composition(comp, index);
 }

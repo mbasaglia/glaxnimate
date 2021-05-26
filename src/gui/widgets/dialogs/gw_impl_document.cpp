@@ -48,9 +48,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     connect(current_document->assets()->precompositions.get(), &model::PrecompositionList::docnode_child_remove_begin, parent, [this](int index){on_remove_precomp(index);});
     connect(current_document->assets()->precompositions.get(), &model::PrecompositionList::precomp_added, parent, [this](model::Precomposition* node, int row){setup_composition(node, row+1);});
     ui.menu_new_comp_layer->setEnabled(false);
-    ui.tab_bar->blockSignals(true);
     setup_composition(current_document->main());
-    ui.tab_bar->blockSignals(false);
 
     // Undo Redo
     QObject::connect(ui.action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
@@ -77,6 +75,7 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
 
     property_model.set_document(current_document.get());
     property_model.set_object(current_document->main());
+    ui.tab_bar->set_document(current_document.get());
 
     scene.set_document(current_document.get());
 
@@ -256,11 +255,8 @@ bool GlaxnimateWindow::Private::close_document()
     ui.document_swatch_widget->set_document(nullptr);
     ui.widget_gradients->set_document(nullptr);
     comp_model.set_composition(nullptr);
+    ui.tab_bar->set_document(nullptr);
 
-    ui.tab_bar->blockSignals(true);
-    while ( ui.tab_bar->count() )
-        ui.tab_bar->removeTab(0);
-    ui.tab_bar->blockSignals(false);
     comp_selections.clear();
     ui.menu_new_comp_layer->clear();
 

@@ -389,12 +389,8 @@ void GlaxnimateWindow::Private::init_docks()
 
     // Tab bar
     ui.tab_bar->setAutoHide(true);
-    ui.tab_bar->setDocumentMode(true);
     ui.tab_bar->setDrawBase(false);
-    ui.tab_bar->setExpanding(false);
-    connect(ui.tab_bar, &QTabBar::currentChanged, parent, [this](int i){ switch_composition(i); });
-    connect(ui.tab_bar, &QTabBar::tabCloseRequested, parent, [this](int i){ composition_close_request(i); });
-    connect(ui.tab_bar, &ClickableTabBar::context_menu_requested, parent, [this](int i){ composition_context_menu(i); });
+    connect(ui.tab_bar, &CompositionTabBar::switch_composition, parent, &GlaxnimateWindow::switch_composition);
 
     // Align
     ui.separator_align_relative_to->setSeparator(true);

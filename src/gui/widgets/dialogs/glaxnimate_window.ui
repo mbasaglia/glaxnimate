@@ -25,7 +25,7 @@
      <widget class="WindowMessageWidget" name="message_widget" native="true"/>
     </item>
     <item>
-     <widget class="ClickableTabBar" name="tab_bar" native="true"/>
+     <widget class="CompositionTabBar" name="tab_bar" native="true"/>
     </item>
     <item>
      <widget class="Canvas" name="canvas">
@@ -2040,9 +2040,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ClickableTabBar</class>
-   <extends>QWidget</extends>
-   <header>widgets/clickable_tab_bar.hpp</header>
+   <class>CompositionTabBar</class>
+   <extends>QTabBar</extends>
+   <header>widgets/composition_tab_bar.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
