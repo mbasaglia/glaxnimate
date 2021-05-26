@@ -40,7 +40,7 @@ public:
             {
                 model::Object* subobj = prop->value().value<model::Object*>();
 
-                if ( prop->name() != "parent" )
+                if ( prop->name() != "parent" && prop->name() != "composition" )
                     connect_subobject(subobj, prop_node, insert_row);
             }
         }
