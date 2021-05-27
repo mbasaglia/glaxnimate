@@ -126,7 +126,7 @@ public:
                 if ( prop->name() != "composition" )
                 {
                     model::Object* subobj = prop->value().value<model::Object*>();
-                    connect_subobject(subobj, prop_node, false);
+                    connect_subobject(subobj, prop_node, insert_row);
                 }
             }
             // scalar

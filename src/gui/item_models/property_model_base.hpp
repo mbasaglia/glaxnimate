@@ -51,6 +51,7 @@ public:
 
     QModelIndex property_index(model::BaseProperty* anim) const;
     QModelIndex object_index(model::Object* obj) const;
+    QModelIndex index_by_id(quintptr id, int column = 0) const;
 
     model::VisualNode* visual_node(const QModelIndex& index) const override;
     model::DocumentNode* node(const QModelIndex& index) const override;

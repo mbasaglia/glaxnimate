@@ -573,14 +573,7 @@ QModelIndex item_models::PropertyModelBase::property_index(model::BaseProperty* 
     if ( it == d->properties.end() )
         return {};
 
-    Private::Subtree* prop_node = d->node(it->second);
-    if ( !prop_node )
-        return {};
-
-    Private::Subtree* parent = d->node(prop_node->parent);
-
-    int i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
-    return createIndex(i, 1, prop_node->id);
+    return index_by_id(it->second, 1);
 }
 
 QModelIndex item_models::PropertyModelBase::object_index(model::Object* obj) const
@@ -589,7 +582,12 @@ QModelIndex item_models::PropertyModelBase::object_index(model::Object* obj) con
     if ( it == d->objects.end() )
         return {};
 
-    Private::Subtree* prop_node = d->node(it->second);
+    return index_by_id(it->second);
+}
+
+QModelIndex item_models::PropertyModelBase::index_by_id(quintptr id, int column) const
+{
+    Private::Subtree* prop_node = d->node(id);
     if ( !prop_node )
         return {};
 
@@ -601,8 +599,9 @@ QModelIndex item_models::PropertyModelBase::object_index(model::Object* obj) con
     else
         i = std::find(parent->children.begin(), parent->children.end(), prop_node) - parent->children.begin();
 
-    return createIndex(i, 0, prop_node->id);
+    return createIndex(i, column, prop_node->id);
 }
+
 
 model::VisualNode* item_models::PropertyModelBase::visual_node(const QModelIndex& index) const
 {

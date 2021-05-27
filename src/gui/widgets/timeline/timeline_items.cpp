@@ -11,6 +11,12 @@ timeline::LineItem::LineItem(quintptr id, model::Object* obj, int time_start, in
     setFlags(QGraphicsItem::ItemIsSelectable);
 }
 
+void timeline::LineItem::click_selected()
+{
+    emit clicked(id_);
+}
+
+
 model::Object* timeline::LineItem::object() const
 {
     return object_;

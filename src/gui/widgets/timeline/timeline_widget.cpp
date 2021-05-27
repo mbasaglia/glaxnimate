@@ -7,6 +7,8 @@
 #include "model/shapes/precomp_layer.hpp"
 #include <model/shapes/styler.hpp>
 
+// #define DEBUG_PRINT_ENABLED
+
 using namespace timeline;
 
 class TimelineWidget::Private
@@ -56,7 +58,7 @@ public:
         LineItem* line_item = nullptr;
 
         if ( item.property )
-            line_item = add_property(id, item.property, parent_item);
+            line_item = add_property(id, item.property);
         else if ( item.object )
             line_item = add_object_without_properties(id, item.object);
 
@@ -70,38 +72,38 @@ public:
         return line_item;
     }
 
-    LineItem* add_property(quintptr id, model::BaseProperty* prop, LineItem* parent_item)
+    LineItem* add_property(quintptr id, model::BaseProperty* prop)
     {
         LineItem* item;
 
         if ( prop->traits().flags & model::PropertyTraits::Animated )
-            item = add_animatable(id, static_cast<model::AnimatableBase*>(prop), parent_item);
+            item = add_animatable(id, static_cast<model::AnimatableBase*>(prop));
         else if ( (prop->traits().flags & model::PropertyTraits::List) && prop->traits().is_object() )
-            item = add_property_list(id, static_cast<model::ObjectListPropertyBase*>(prop), parent_item);
+            item = add_property_list(id, static_cast<model::ObjectListPropertyBase*>(prop));
         else
-            item = add_property_plain(id, prop, parent_item);
+            item = add_property_plain(id, prop);
 
         return item;
     }
 
-    LineItem* add_animatable(quintptr id, model::AnimatableBase* anim, LineItem* parent_item)
+    LineItem* add_animatable(quintptr id, model::AnimatableBase* anim)
     {
-        AnimatableItem* item = new AnimatableItem(id, parent_item->object(), anim, start_time, rounded_end_time(), row_height);
-        connect(item, &AnimatableItem::animatable_clicked, parent, &TimelineWidget::property_clicked);
+        AnimatableItem* item = new AnimatableItem(id, anim->object(), anim, start_time, rounded_end_time(), row_height);
+        connect(item, &LineItem::clicked, parent, &TimelineWidget::line_clicked);
         return item;
     }
 
-    LineItem* add_property_plain(quintptr id, model::BaseProperty* prop, LineItem* parent_item)
+    LineItem* add_property_plain(quintptr id, model::BaseProperty* prop)
     {
-        PropertyLineItem* item = new PropertyLineItem(id, parent_item->object(), prop, start_time, rounded_end_time(), row_height);
-        connect(item, &PropertyLineItem::property_clicked, parent, &TimelineWidget::property_clicked);
+        PropertyLineItem* item = new PropertyLineItem(id, prop->object(), prop, start_time, rounded_end_time(), row_height);
+        connect(item, &LineItem::clicked, parent, &TimelineWidget::line_clicked);
         return item;
     }
 
-    LineItem* add_property_list(quintptr id, model::ObjectListPropertyBase* prop, LineItem* parent_item)
+    LineItem* add_property_list(quintptr id, model::ObjectListPropertyBase* prop)
     {
         ObjectListLineItem* item = new ObjectListLineItem(id, prop->object(), prop, start_time, rounded_end_time(), row_height);
-        connect(item, &ObjectListLineItem::property_clicked, parent, &TimelineWidget::property_clicked);
+        connect(item, &LineItem::clicked, parent, &TimelineWidget::line_clicked);
         return item;
     }
 
@@ -124,7 +126,7 @@ public:
             anim_item->setPos(0, row_height/2.0);
         }
 
-        connect(item, &ObjectLineItem::object_clicked, parent, &TimelineWidget::object_clicked);
+        connect(item, &LineItem::clicked, parent, &TimelineWidget::line_clicked);
 
         return item;
     }
@@ -544,7 +546,7 @@ void TimelineWidget::scrollContentsBy(int dx, int dy)
     viewport()->update();
 }
 
-/*
+#ifdef DEBUG_PRINT_ENABLED
 #include <QDebug>
 void debug_line(timeline::LineItem* line_item, QString indent, int index)
 {
@@ -572,7 +574,7 @@ void debug_line(timeline::LineItem* line_item, QString indent, int index)
     for ( uint i = 0; i < line_item->rows().size(); i++ )
         debug_line(line_item->rows()[i], indent + "    ", i);
 }
-*/
+#endif
 
 void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
@@ -592,8 +594,10 @@ void TimelineWidget::mousePressEvent(QMouseEvent* event)
         emit frame_clicked(d->mouse_frame);
     }
 
-    /*if ( event->button() == Qt::MiddleButton )
-        debug_line(d->root, "", 0);*/
+#ifdef DEBUG_PRINT_ENABLED
+    if ( event->button() == Qt::MiddleButton )
+        debug_line(d->root, "", 0);
+#endif
 }
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent* event)

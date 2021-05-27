@@ -230,6 +230,7 @@ public:
 
 signals:
     void removed(quintptr id, QPrivateSignal = {});
+    void clicked(quintptr id);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * event) override;
@@ -237,7 +238,7 @@ protected:
     virtual void on_set_time_start(int){}
     virtual void on_set_time_end(int){}
 
-    virtual void click_selected(){}
+    void click_selected();
 
 private:
     void propagate_row_vis(int delta);
@@ -271,16 +272,6 @@ public:
     {
         return {object(), nullptr};
     }
-
-protected:
-    void click_selected() override
-    {
-        emit object_clicked(object());
-    }
-
-signals:
-    void object_clicked(model::Object* object);
-
 };
 
 
@@ -323,12 +314,6 @@ public:
         return {object(), animatable};
     }
 
-protected:
-    void click_selected() override
-    {
-        emit animatable_clicked(animatable);
-    }
-
 public slots:
     void add_keyframe(int index)
     {
@@ -356,9 +341,6 @@ public slots:
             kf_split_items[index]->set_enter(animatable->keyframe(index-1)->transition().after_descriptive());
         }
     }
-
-signals:
-    void animatable_clicked(model::AnimatableBase* animatable);
 
 private slots:
     void transition_changed(model::KeyframeTransition::Descriptive before, model::KeyframeTransition::Descriptive after)
@@ -548,15 +530,6 @@ public:
         return {object(), property_};
     }
 
-protected:
-    void click_selected() override
-    {
-        emit property_clicked(property_);
-    }
-
-signals:
-    void property_clicked(model::BaseProperty* object);
-
 private:
     model::BaseProperty* property_;
 };
@@ -667,15 +640,6 @@ public:
     {
         return {object(), property_};
     }
-
-protected:
-    void click_selected() override
-    {
-        emit property_clicked(property_);
-    }
-
-signals:
-    void property_clicked(model::ObjectListPropertyBase* object);
 
 private:
     model::ObjectListPropertyBase* property_;

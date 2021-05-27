@@ -67,8 +67,7 @@ protected:
     
 signals:
     void frame_clicked(int frame);
-    void property_clicked(model::BaseProperty* anim);
-    void object_clicked(model::Object* anim);
+    void line_clicked(quintptr id);
     
 private:
     class Private;
