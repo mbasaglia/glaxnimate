@@ -34,6 +34,7 @@ private slots:
     void show_help();
     void preview_slide(int percent);
     void reset_settings();
+    void color_options();
 
 private:
     class Private;

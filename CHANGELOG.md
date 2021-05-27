@@ -2,6 +2,7 @@
 
 * Editing:
     * The shortcut for "Undo" now works also to remove points when drawing paths
+    * The trace dialog is now better at autodetecting colors
 * UI:
     * Preferences dialog no longer closes on Enter
     * Some layer properties are displayed inline in the timeline tree

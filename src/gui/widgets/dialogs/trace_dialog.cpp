@@ -28,10 +28,11 @@
 #include "model/shapes/image.hpp"
 #include "model/shapes/rect.hpp"
 #include "utils/trace.hpp"
-#include "utils/quantize.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
 #include "app/widgets/no_close_on_enter.hpp"
+
+#include "color_quantization_dialog.hpp"
 
 class TraceDialog::Private
 {
@@ -63,6 +64,7 @@ public:
     QGraphicsRectItem *item_parent_image;
     QGraphicsPixmapItem *item_image;
     app::widgets::NoCloseOnEnter ncoe;
+    ColorQuantizationDialog color_options;
 
     void trace_mono(std::vector<TraceResult>& result)
     {
@@ -415,9 +417,11 @@ void TraceDialog::auto_colors()
     int n_colors = d->ui.spin_color_count->value();
     if ( n_colors )
     {
-        for ( QRgb rgb : utils::quantize::k_modes(d->source_image, n_colors) )
+        for ( QRgb rgb : d->color_options.quantize(d->source_image, n_colors) )
             d->add_color(QColor(rgb));
     }
+
+    update_preview();
 }
 
 void TraceDialog::resizeEvent(QResizeEvent* event)
@@ -454,4 +458,9 @@ void TraceDialog::reset_settings()
     d->reset_settings();
     d->ui.check_inverted->setChecked(false);
     d->ui.combo_mode->setCurrentIndex(Private::Closest);
+}
+
+void TraceDialog::color_options()
+{
+    d->color_options.exec();
 }
