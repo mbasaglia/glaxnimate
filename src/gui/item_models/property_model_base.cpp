@@ -25,7 +25,7 @@ void item_models::PropertyModelBase::Private::add_object(model::Object* object, 
         begin_insert_row(parent, index);
 
     auto node = do_add_node(Subtree{object, parent ? parent->id : 0}, parent, index);
-    connect_recursive(node, insert_row);
+    connect_recursive(node, false);
 
     if ( insert_row )
         end_insert_row();
@@ -83,12 +83,10 @@ QVariant item_models::PropertyModelBase::Private::data_name(Subtree* tree, int r
 {
     if ( role == Qt::DisplayRole )
     {
-        if ( tree->prop_index != -1 )
-            return tree->prop_index;
+        if ( tree->object )
+            return tree->object->object_name();
         else if ( tree->prop )
             return tree->prop->name();
-        else if ( tree->object )
-            return tree->object->object_name();
     }
     else if ( role == Qt::FontRole )
     {
@@ -695,11 +693,7 @@ void item_models::PropertyModelBase::Private::on_property_changed(id_type prop_n
                 clean_object_references(index, prop_node);
 
             if ( prop_node->expand_referenced && obj_value )
-            {
                 connect_subobject(obj_value, prop_node, true);
-            }
-
-            prop_node->object = obj_value;
         }
 
         emit model->dataChanged(index, index, {});
@@ -744,14 +738,23 @@ model::DocumentNode * item_models::PropertyModelBase::node(const QModelIndex& in
 
 item_models::PropertyModelBase::Private::Subtree*
 item_models::PropertyModelBase::Private::add_property(
-    model::BaseProperty* prop, id_type parent, bool, ReferencedPropertiesMap* referenced)
+    model::BaseProperty* prop, id_type parent, bool insert_row, ReferencedPropertiesMap* referenced)
 {
+    if ( insert_row )
+    {
+        Subtree* parent_node = node(parent);
+        begin_insert_row(parent_node, parent_node->children.size());
+    }
+
     Subtree* prop_node = add_node(Subtree{prop, parent});
 
     if ( referenced )
         (*referenced)[prop].push_back(prop_node->id);
     else
         properties[prop] = prop_node->id;
+
+    if ( insert_row )
+        end_insert_row();
 
     return prop_node;
 }

@@ -14,11 +14,18 @@ public:
         return static_cast<PropertyModelFull*>(model);
     }
 
-    void on_connect_object_list(model::ObjectListPropertyBase* object_list, Subtree* tree, model::BaseProperty* proxy, model::DocumentNode* node)
+    void on_connect_object_list(Subtree* prop_node, model::DocumentNode* node, model::ObjectListPropertyBase* prop)
     {
-        Subtree* prop_node = add_node(Subtree{proxy, tree->id});
-        properties[object_list] = prop_node->id;
-        connect_list(prop_node);
+        prop_node->merged_children_offset = prop_node->children.size();
+
+        QVariantList prop_value = prop->value().toList();
+        for ( auto it = prop_value.rbegin(); it != prop_value.rend(); ++it )
+        {
+            model::Object* subobj = it->value<model::Object*>();
+            auto suboj_node = add_node(Subtree{subobj, prop_node->id});
+            connect_recursive(suboj_node, false);
+        }
+
         connect_docnode(node, prop_node);
     }
 
@@ -91,7 +98,10 @@ public:
                     {
                         model::DocumentNode* subobj = prop->value().value<model::DocumentNode*>();
                         model::ObjectListPropertyBase* asset_list = static_cast<model::ObjectListPropertyBase*>(subobj->get_property("values"));
-                        on_connect_object_list(asset_list, tree, prop, subobj);
+                        Subtree* prop_node = add_property(prop, tree->id, insert_row, referenced);
+//                         Subtree* prop_node = add_node(Subtree{prop, tree->id});
+//                         properties[asset_list] = prop_node->id;
+                        on_connect_object_list(prop_node, subobj, asset_list);
                     }
                     else
                     {
@@ -128,17 +138,9 @@ public:
 
         // Show object lists at the end
         if ( object_list )
-            on_connect_object_list(object_list, tree, object_list, node);
-    }
-
-    void connect_list(Subtree* prop_node)
-    {
-        QVariantList prop_value = prop_node->prop->value().toList();
-        for ( auto it = prop_value.rbegin(); it != prop_value.rend(); ++it )
         {
-            model::Object* subobj = it->value<model::Object*>();
-            auto suboj_node = add_node(Subtree{subobj, prop_node->id});
-            connect_recursive(suboj_node, false);
+            tree->prop = object_list;
+            on_connect_object_list(tree, node, object_list);
         }
     }
 
@@ -148,17 +150,17 @@ public:
         connect(node, &model::DocumentNode::docnode_child_add_end, model,
         [this, insert_into, node](model::DocumentNode* child, int row) {
             int rows = node->docnode_child_count() - 1; // called at the end
-            add_object(child, insert_into, true, rows -  row);
+            add_object(child, insert_into, true, rows -  row + insert_into->merged_children_offset);
         });
         connect(node, &model::DocumentNode::docnode_child_remove_end, model,
         [this](model::DocumentNode* child) {
             on_delete_object(child);
         });
-        connect(node, &model::DocumentNode::docnode_child_move_begin, model, [this, id, node](int a, int b) {
+        connect(node, &model::DocumentNode::docnode_child_move_begin, model, [this, id, node, insert_into](int a, int b) {
             int rows = node->docnode_child_count();
 
-            int src = rows - a - 1;
-            int dest = rows - b - 1;
+            int src = rows - a - 1 + insert_into->merged_children_offset;
+            int dest = rows - b - 1 + insert_into->merged_children_offset;
             int dest_it = dest;
             if ( src < dest )
                 dest++;

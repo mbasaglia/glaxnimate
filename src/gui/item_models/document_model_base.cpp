@@ -33,6 +33,11 @@ QMimeData * item_models::DocumentModelBase::mimeData(const QModelIndexList& inde
     return data;
 }
 
+std::pair<model::DocumentNode *, int> item_models::DocumentModelBase::drop_position(const QModelIndex& parent, int row) const
+{
+    return {node(parent), row};
+}
+
 bool item_models::DocumentModelBase::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent)
 {
     Q_UNUSED(column);
@@ -43,7 +48,8 @@ bool item_models::DocumentModelBase::dropMimeData(const QMimeData* data, Qt::Dro
     if ( !data->hasFormat("application/x.glaxnimate-node-uuid") )
         return false;
 
-    auto parent_node = node(parent);
+    model::DocumentNode* parent_node;
+    std::tie(parent_node, row) = drop_position(parent, row);
     if ( !parent_node )
         return false;
 

@@ -28,14 +28,6 @@ public:
             : prop{prop}, parent{parent}
         {}
 
-        Subtree(int prop_index, id_type parent)
-            : prop_index(prop_index), parent(parent)
-        {}
-
-        Subtree(model::Object* object, int prop_index, id_type parent)
-            : object{object}, prop_index{prop_index}, parent{parent}
-        {}
-
         int child_index(Subtree* child) const
         {
             for ( int i = 0; i < int(children.size()); i++ )
@@ -46,12 +38,13 @@ public:
 
         model::Object* object = nullptr;
         model::BaseProperty* prop = nullptr;
-        int prop_index = -1;
         id_type parent = 0;
         std::vector<Subtree*> children;
         id_type id = 0;
         model::VisualNode* visual_node = nullptr;
         bool expand_referenced = false;
+        /// When showing children directly, offset by this much
+        int merged_children_offset = 0;
     };
 
     using ReferencedPropertiesMap = std::unordered_map<model::BaseProperty*, std::vector<id_type>>;

@@ -24,6 +24,9 @@ public:
     virtual QModelIndex node_index(model::DocumentNode* node) const = 0;
     virtual model::Document* document() const = 0;
 
+protected:
+    virtual std::pair<model::DocumentNode*, int> drop_position(const QModelIndex &parent, int row) const;
+
 private:
     friend class ProxyBase;
 };

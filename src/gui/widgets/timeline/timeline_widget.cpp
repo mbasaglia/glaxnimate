@@ -100,7 +100,7 @@ public:
 
     LineItem* add_property_list(quintptr id, model::ObjectListPropertyBase* prop, LineItem* parent_item)
     {
-        ObjectListLineItem* item = new ObjectListLineItem(id, parent_item->object(), prop, start_time, rounded_end_time(), row_height);
+        ObjectListLineItem* item = new ObjectListLineItem(id, prop->object(), prop, start_time, rounded_end_time(), row_height);
         connect(item, &ObjectListLineItem::property_clicked, parent, &TimelineWidget::property_clicked);
         return item;
     }
