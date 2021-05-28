@@ -277,6 +277,13 @@ void item_models::PropertyModelBase::Private::disconnect_recursive(Subtree* node
         objects.erase(node->object);
     }
 
+    if ( node->prop )
+    {
+        auto it = properties.find(node->prop);
+        if ( it != properties.end() && it->second == node->id )
+            properties.erase(it);
+    }
+
     for ( Subtree* child : node->children )
     {
         disconnect_recursive(child);
@@ -314,11 +321,7 @@ void item_models::PropertyModelBase::Private::on_delete_object(model::Object* ob
     auto index = model->object_index(obj);
     model->beginRemoveRows(index.parent(), index.row(), index.row());
 
-    for ( Subtree* child : node->children )
-    {
-        disconnect_recursive(child);
-        nodes.erase(child->id);
-    }
+    disconnect_recursive(node);
 
     if ( node->parent )
     {
@@ -337,7 +340,6 @@ void item_models::PropertyModelBase::Private::on_delete_object(model::Object* ob
     if ( it_roots != roots.end() )
         roots.erase(it_roots);
 
-    objects.erase(it);
     nodes.erase(it2);
 
     model->endRemoveRows();

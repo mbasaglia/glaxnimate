@@ -148,7 +148,8 @@ public:
     {
         auto id = insert_into->id;
         connect(node, &model::DocumentNode::docnode_child_add_end, model,
-        [this, insert_into, node](model::DocumentNode* child, int row) {
+        [this, id, node](model::DocumentNode* child, int row) {
+            auto insert_into = this->node(id);
             int rows = node->docnode_child_count() - 1; // called at the end
             add_object(child, insert_into, true, rows -  row + insert_into->merged_children_offset);
         });
@@ -156,9 +157,9 @@ public:
         [this](model::DocumentNode* child) {
             on_delete_object(child);
         });
-        connect(node, &model::DocumentNode::docnode_child_move_begin, model, [this, id, node, insert_into](int a, int b) {
+        connect(node, &model::DocumentNode::docnode_child_move_begin, model, [this, id, node](int a, int b) {
+            auto insert_into = this->node(id);
             int rows = node->docnode_child_count();
-
             int src = rows - a - 1 + insert_into->merged_children_offset;
             int dest = rows - b - 1 + insert_into->merged_children_offset;
             int dest_it = dest;
