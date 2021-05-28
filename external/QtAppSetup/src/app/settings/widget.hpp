@@ -42,6 +42,7 @@ WIDGET_DEF(QSpinBox, value, setValue);
 WIDGET_DEF(QDoubleSpinBox, value, setValue);
 WIDGET_DEF(QLineEdit, text, setText);
 WIDGET_DEF(QCheckBox, isChecked, setChecked);
+WIDGET_DEF(QComboBox, currentIndex, setCurrentIndex);
 
 #undef WIDGET_DEF
 

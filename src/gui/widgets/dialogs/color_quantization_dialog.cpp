@@ -3,8 +3,9 @@
 
 #include <QEvent>
 
-
 #include "utils/quantize.hpp"
+
+#include "app/settings/widget.hpp"
 
 class ColorQuantizationDialog::Private
 {
@@ -41,4 +42,25 @@ std::vector<QRgb> ColorQuantizationDialog::quantize(const QImage& image, int k) 
         d->ui.spin_means_iterations->value(),
         utils::quantize::KMeansMatch(d->ui.combo_means_match->currentIndex())
     );
+}
+
+void ColorQuantizationDialog::init_settings()
+{
+    app::settings::WidgetSetting(d->ui.combo_algo, "internal", "color_quantization_dialog").define();
+    app::settings::WidgetSetting(d->ui.spin_means_iterations, "internal", "color_quantization_dialog").define();
+    app::settings::WidgetSetting(d->ui.combo_means_match, "internal", "color_quantization_dialog").define();
+}
+
+void ColorQuantizationDialog::save_settings()
+{
+    app::settings::WidgetSetting(d->ui.combo_algo, "internal", "color_quantization_dialog").save();
+    app::settings::WidgetSetting(d->ui.spin_means_iterations, "internal", "color_quantization_dialog").save();
+    app::settings::WidgetSetting(d->ui.combo_means_match, "internal", "color_quantization_dialog").save();
+}
+
+void ColorQuantizationDialog::reset_settings()
+{
+    app::settings::WidgetSetting(d->ui.combo_algo, "internal", "color_quantization_dialog").reset();
+    app::settings::WidgetSetting(d->ui.spin_means_iterations, "internal", "color_quantization_dialog").reset();
+    app::settings::WidgetSetting(d->ui.combo_means_match, "internal", "color_quantization_dialog").reset();
 }

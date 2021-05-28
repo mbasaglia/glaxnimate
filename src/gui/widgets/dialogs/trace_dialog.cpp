@@ -233,6 +233,7 @@ public:
         app::settings::WidgetSetting(ui.spin_outline, "internal", "trace_dialog").define();
         app::settings::WidgetSetting(ui.spin_smoothness, "internal", "trace_dialog").define();
         app::settings::WidgetSetting(ui.spin_alpha_threshold, "internal", "trace_dialog").define();
+        color_options.init_settings();
     }
 
     void save_settings()
@@ -241,6 +242,7 @@ public:
         app::settings::WidgetSetting(ui.spin_outline, "internal", "trace_dialog").save();
         app::settings::WidgetSetting(ui.spin_smoothness, "internal", "trace_dialog").save();
         app::settings::WidgetSetting(ui.spin_alpha_threshold, "internal", "trace_dialog").save();
+        color_options.save_settings();
     }
 
     void reset_settings()
@@ -249,6 +251,20 @@ public:
         app::settings::WidgetSetting(ui.spin_outline, "internal", "trace_dialog").reset();
         app::settings::WidgetSetting(ui.spin_smoothness, "internal", "trace_dialog").reset();
         app::settings::WidgetSetting(ui.spin_alpha_threshold, "internal", "trace_dialog").reset();
+        color_options.reset_settings();
+    }
+
+    void auto_colors()
+    {
+        while ( ui.list_colors->model()->rowCount() )
+            ui.list_colors->model()->removeRow(0);
+
+        int n_colors = ui.spin_color_count->value();
+        if ( n_colors )
+        {
+            for ( QRgb rgb : color_options.quantize(source_image, n_colors) )
+                add_color(QColor(rgb));
+        }
     }
 };
 
@@ -271,7 +287,7 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     d->ui.list_colors->setItemDelegate(&d->delegate);
 
     d->ui.spin_color_count->setValue(4);
-    auto_colors();
+    d->auto_colors();
 
     if ( d->source_image.width() > 128 || d->source_image.height() > 128 )
     {
@@ -409,18 +425,7 @@ void TraceDialog::remove_color()
 
 void TraceDialog::auto_colors()
 {
-    /// \todo k-medoids, octrees, or something like that
-
-    while ( d->ui.list_colors->model()->rowCount() )
-        d->ui.list_colors->model()->removeRow(0);
-
-    int n_colors = d->ui.spin_color_count->value();
-    if ( n_colors )
-    {
-        for ( QRgb rgb : d->color_options.quantize(d->source_image, n_colors) )
-            d->add_color(QColor(rgb));
-    }
-
+    d->auto_colors();
     update_preview();
 }
 
@@ -463,4 +468,10 @@ void TraceDialog::reset_settings()
 void TraceDialog::color_options()
 {
     d->color_options.exec();
+}
+
+void TraceDialog::showEvent(QShowEvent* event)
+{
+    QDialog::showEvent(event);
+    update_preview();
 }

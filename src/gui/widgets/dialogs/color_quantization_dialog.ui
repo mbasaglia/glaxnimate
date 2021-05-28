@@ -184,7 +184,7 @@ It's very fast but it does not give accurate colors for complex images</string>
   </connection>
   <connection>
    <sender>combo_algo</sender>
-   <signal>activated(int)</signal>
+   <signal>currentIndexChanged(int)</signal>
    <receiver>stackedWidget</receiver>
    <slot>setCurrentIndex(int)</slot>
    <hints>

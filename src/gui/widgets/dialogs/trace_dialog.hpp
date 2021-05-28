@@ -22,6 +22,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
     void resizeEvent(QResizeEvent * event) override;
+    void showEvent(QShowEvent * event) override;
 
 private slots:
     void update_preview();
