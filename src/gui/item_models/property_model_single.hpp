@@ -33,6 +33,7 @@ public:
 
 protected:
     void on_document_reset() override {}
+    std::pair<model::VisualNode *, int> drop_position(const QModelIndex & parent, int row) const override;
 
 private:
     class Private;

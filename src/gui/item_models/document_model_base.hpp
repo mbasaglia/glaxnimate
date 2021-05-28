@@ -18,6 +18,7 @@ public:
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
     Qt::DropActions supportedDropActions() const override;
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
+    bool canDropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) const override;
 
     virtual model::DocumentNode* node(const QModelIndex& index) const = 0;
     virtual model::VisualNode* visual_node(const QModelIndex& index) const = 0;
@@ -25,7 +26,15 @@ public:
     virtual model::Document* document() const = 0;
 
 protected:
-    virtual std::pair<model::DocumentNode*, int> drop_position(const QModelIndex &parent, int row) const;
+    /**
+     * \brief Returns the document node corresponding to \p parent and the insertion point for drop data
+     */
+    virtual std::pair<model::VisualNode*, int> drop_position(const QModelIndex &parent, int row) const;
+
+    /**
+     * \brief Returns drop_position() if the data is well formed
+     */
+    std::tuple<model::VisualNode *, int, model::ShapeListProperty*> cleaned_drop_position(const QMimeData *data, Qt::DropAction action, const QModelIndex &parent, int row) const;
 
 private:
     friend class ProxyBase;

@@ -365,3 +365,17 @@ int item_models::PropertyModelFull::columnCount(const QModelIndex &) const
 {
     return ColumnCount;
 }
+
+std::pair<model::VisualNode *, int> item_models::PropertyModelFull::drop_position(const QModelIndex& parent, int row) const
+{
+    auto tree = d->node_from_index(parent);
+    if ( !tree || !tree->visual_node )
+        return {};
+
+    row -= tree->merged_children_offset;
+
+    if ( row < 0 )
+        return {};
+
+    return {tree->visual_node, row};
+}

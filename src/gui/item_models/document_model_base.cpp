@@ -33,28 +33,44 @@ QMimeData * item_models::DocumentModelBase::mimeData(const QModelIndexList& inde
     return data;
 }
 
-std::pair<model::DocumentNode *, int> item_models::DocumentModelBase::drop_position(const QModelIndex& parent, int row) const
+std::pair<model::VisualNode *, int> item_models::DocumentModelBase::drop_position(const QModelIndex& parent, int row) const
 {
-    return {node(parent), row};
+    return {visual_node(parent), row};
 }
+
+std::tuple<model::VisualNode *, int, model::ShapeListProperty*> item_models::DocumentModelBase::cleaned_drop_position(const QMimeData* data, Qt::DropAction action, const QModelIndex& parent, int row) const
+{
+    if ( !data || action != Qt::MoveAction || !document() )
+        return {};
+
+    if ( !data->hasFormat("application/x.glaxnimate-node-uuid") )
+        return {};
+
+    auto position = drop_position(parent, row);
+    model::VisualNode* parent_node = position.first;
+
+    if ( !parent_node )
+        return {};
+
+    auto dest = static_cast<model::ShapeListProperty*>(parent_node->get_property("shapes"));
+    if ( !dest )
+        return {};
+
+    if ( !parent_node || parent_node->docnode_locked_recursive() )
+        return {};
+
+    return {position.first, position.second, dest};
+}
+
 
 bool item_models::DocumentModelBase::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent)
 {
     Q_UNUSED(column);
 
-    if ( !data || action != Qt::MoveAction || !document() )
-        return false;
-
-    if ( !data->hasFormat("application/x.glaxnimate-node-uuid") )
-        return false;
-
     model::DocumentNode* parent_node;
-    std::tie(parent_node, row) = drop_position(parent, row);
+    model::ShapeListProperty* dest;
+    std::tie(parent_node, row, dest) = cleaned_drop_position(data, action, parent, row);
     if ( !parent_node )
-        return false;
-
-    auto dest = static_cast<model::ShapeListProperty*>(parent_node->get_property("shapes"));
-    if ( !dest )
         return false;
 
     int max_child = parent_node->docnode_child_count();
@@ -80,4 +96,11 @@ bool item_models::DocumentModelBase::dropMimeData(const QMimeData* data, Qt::Dro
     }
 
     return true;
+}
+
+bool item_models::DocumentModelBase::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) const
+{
+    Q_UNUSED(column);
+
+    return std::get<model::VisualNode*>(cleaned_drop_position(data, action, parent, row));
 }

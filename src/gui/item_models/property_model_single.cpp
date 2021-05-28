@@ -152,3 +152,8 @@ QVariant item_models::PropertyModelSingle::headerData(int section, Qt::Orientati
     }
     return {};
 }
+
+std::pair<model::VisualNode *, int> item_models::PropertyModelSingle::drop_position(const QModelIndex&, int) const
+{
+    return {};
+}
