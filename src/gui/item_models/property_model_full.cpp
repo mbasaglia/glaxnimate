@@ -372,10 +372,17 @@ std::pair<model::VisualNode *, int> item_models::PropertyModelFull::drop_positio
     if ( !tree || !tree->visual_node )
         return {};
 
-    row -= tree->merged_children_offset;
+    if ( row != -1 )
+    {
+        row -= tree->merged_children_offset;
 
-    if ( row < 0 )
-        return {};
+        if ( row < 0 )
+            return {};
+    }
+    else
+    {
+        row = tree->merged_children_offset;
+    }
 
     return {tree->visual_node, row};
 }

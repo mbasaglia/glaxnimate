@@ -38,6 +38,7 @@ std::pair<model::VisualNode *, int> item_models::DocumentModelBase::drop_positio
     return {visual_node(parent), row};
 }
 
+
 std::tuple<model::VisualNode *, int, model::ShapeListProperty*> item_models::DocumentModelBase::cleaned_drop_position(const QMimeData* data, Qt::DropAction action, const QModelIndex& parent, int row) const
 {
     if ( !data || action != Qt::MoveAction || !document() )
