@@ -647,23 +647,7 @@ void item_models::PropertyModelBase::Private::clean_object_references(const QMod
 
     model->beginRemoveRows(index, 0, prop_node->children.size());
 
-    prop_node->children.clear();
-
-    auto itref = referenced_properties.find(prop_node->object);
-    if ( itref != referenced_properties.end() )
-    {
-        auto itprop = itref->second.find(prop_node->prop);
-        if ( itprop != itref->second.end() )
-        {
-            itprop->second.erase(
-                std::remove_if(itprop->second.begin(), itprop->second.end(), [prop_node, this](id_type id){
-                    auto n = node(id);
-                    return !n || n->parent == prop_node->id;
-                }),
-                itprop->second.end()
-            );
-        }
-    }
+    clean_subtree(prop_node);
 
     model->endRemoveRows();
 }
@@ -699,6 +683,32 @@ void item_models::PropertyModelBase::Private::on_property_changed(id_type prop_n
     }
 }
 
+void item_models::PropertyModelBase::Private::clean_subtree(item_models::PropertyModelBase::Private::Subtree* node)
+{
+    for ( auto& child : node->children )
+    {
+        clean_subtree(child);
+        nodes.erase(child->id);
+    }
+
+    node->children.clear();
+
+    auto itref = referenced_properties.find(node->object);
+    if ( itref != referenced_properties.end() )
+    {
+        auto itprop = itref->second.find(node->prop);
+        if ( itprop != itref->second.end() )
+        {
+            itprop->second.erase(
+                std::remove_if(itprop->second.begin(), itprop->second.end(), [node, this](id_type id){
+                    auto n = this->node(id);
+                    return !n || n->parent == node->id;
+                }),
+                itprop->second.end()
+            );
+        }
+    }
+}
 
 int item_models::PropertyModelBase::rowCount(const QModelIndex& parent) const
 {

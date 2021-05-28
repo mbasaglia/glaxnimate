@@ -103,6 +103,7 @@ public:
     void end_insert_row();
     Subtree* add_property(model::BaseProperty* prop, id_type parent, bool insert_row, ReferencedPropertiesMap* referenced);
 
+    void clean_subtree(Subtree* node);
 
     model::Document* document = nullptr;
     std::vector<Subtree*> roots;

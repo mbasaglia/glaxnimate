@@ -812,7 +812,12 @@ void TimelineWidget::model_rows_added(const QModelIndex& parent, int first, int 
 
 void TimelineWidget::model_rows_removed(const QModelIndex& parent, int first, int last)
 {
-    d->index_to_line(parent)->remove_rows(first, last);
+    auto line = d->index_to_line(parent);
+    // Shouldn't happen but fail safe
+    if ( line == d->root )
+        return;
+
+    line->remove_rows(first, last);
     setSceneRect(d->scene_rect());
 }
 

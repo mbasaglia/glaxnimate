@@ -84,8 +84,8 @@ void timeline::LineItem::remove_rows(int first, int last)
     {
         row = rows_[i];
         row->emit_removed();
-        delete row;
         delta -= row->visible_rows();
+        delete row;
     }
     rows_.erase(rows_.begin() + first, rows_.begin() + last + 1);
     adjust_row_vis(delta, rows_[first]);
@@ -102,7 +102,6 @@ void timeline::LineItem::move_row(int from, int to)
     rows_.insert(rows_.begin() + to, row);
     adjust_row_vis(delta, row, true);
 }
-
 
 void timeline::LineItem::expand()
 {
@@ -194,6 +193,8 @@ void timeline::LineItem::adjust_row_vis(int delta, LineItem* child, bool adjust_
 
 void timeline::LineItem::emit_removed()
 {
+    for ( auto row : rows_ )
+        row->emit_removed();
     emit removed(id_);
 }
 
