@@ -97,10 +97,9 @@ struct Cluster
     quint32 total_weight = 0;
     Color sum = {};
 
-    constexpr Cluster(const Point& p) noexcept
-        : centroid(p.color)
-    {
-    }
+    constexpr Cluster(const Color& color) noexcept
+        : centroid(color)
+    {}
 
     bool update()
     {
@@ -124,11 +123,11 @@ struct Cluster
 std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int iterations, KMeansMatch match)
 {
     auto freq = color_frequencies(image);
-    std::sort(freq.begin(), freq.end(), detail::freq_sort_cmp);
 
     // Avoid processing if we don't need to
     if ( int(freq.size()) <= k )
     {
+        std::sort(freq.begin(), freq.end(), detail::freq_sort_cmp);
         std::vector<QRgb> out;
         out.reserve(k);
         for ( const auto& p : freq )
@@ -136,15 +135,74 @@ std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int itera
         return out;
     }
 
+    // Initialize points
     std::vector<detail::k_means::Point> points(freq.begin(), freq.end());
     freq.clear();
 
-    std::vector<detail::k_means::Cluster> clusters(points.begin(), points.begin() + k);
+    // Keep track of the clusters we already used
+    std::vector<detail::k_means::Point> cluster_init;
+    cluster_init.reserve(k);
+
+    std::vector<detail::k_means::Cluster> clusters;
+    clusters.reserve(k);
+
+    // Get the most common color as initial cluster centroid
+    quint32 max_freq = 0;
+    std::vector<detail::k_means::Point>::iterator best_iter;
+    for ( auto it = points.begin(); it != points.end(); ++it )
+    {
+        if ( it->weight > max_freq )
+        {
+            max_freq = it->weight;
+            best_iter = it;
+        }
+    }
+    cluster_init.push_back(*best_iter);
+    clusters.emplace_back(best_iter->color);
+    // remove centroid from points
+    std::swap(*best_iter, points.back());
+    points.pop_back();
+
+    // k-means++-like processing from now on (but deterministic)
+    // ie: always select the centroid the farthest away from the other centroids
+    while ( int(clusters.size()) < k )
+    {
+        detail::k_means::Distance max_dist = 0;
+
+        for ( auto it = points.begin(); it != points.end(); ++it )
+        {
+            detail::k_means::Distance p_max = 0;
+            for ( const auto& cluster : clusters )
+            {
+                auto dist = it->color.distance(cluster.centroid);
+                if ( dist < p_max )
+                    p_max = dist;
+            }
+
+            if ( p_max > max_dist )
+            {
+                max_dist = p_max;
+                best_iter = it;
+            }
+        }
+
+        cluster_init.push_back(*best_iter);
+        clusters.emplace_back(best_iter->color);
+        // remove centroid from points
+        std::swap(*best_iter, points.back());
+        points.pop_back();
+    }
+
+    // add back the removed centroids
+    points.insert(points.end(), cluster_init.begin(), cluster_init.end());
+    cluster_init.clear();
 
 
+    // K-medoids
     bool loop = true;
     for ( int epoch = 0; epoch < iterations && loop; epoch++ )
     {
+        // Assign points to clusters
         for ( int i = 0; i < k; i++ )
         {
             const auto& cluster = clusters[i];
@@ -159,6 +217,7 @@ std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int itera
             }
         }
 
+        // Move centroids
         for ( auto& p : points )
         {
             clusters[p.cluster].total_weight += p.weight;
@@ -168,6 +227,7 @@ std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int itera
             p.min_distance = std::numeric_limits<detail::k_means::Distance>::max();
         }
 
+        // Quit if nothing has changed
         loop = false;
         for ( auto& cluster : clusters )
             loop = cluster.update() || loop;
