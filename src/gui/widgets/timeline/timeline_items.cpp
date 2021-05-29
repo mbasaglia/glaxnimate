@@ -2,6 +2,40 @@
 
 bool timeline::enable_debug = false;
 
+
+void timeline::KeyframeSplitItem::set_enter(model::KeyframeTransition::Descriptive enter)
+{
+    icon_enter = icon_from_kdf(enter, "finish");
+    pix_enter = icon_enter.pixmap(icon_size);
+    update();
+}
+
+void timeline::KeyframeSplitItem::set_exit(model::KeyframeTransition::Descriptive exit)
+{
+    icon_exit = icon_from_kdf(exit, "start");
+    pix_exit = icon_exit.pixmap(icon_size);
+    update();
+}
+
+void timeline::KeyframeSplitItem::paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget * widget)
+{
+    if ( isSelected() )
+    {
+        QColor sel_border = widget->palette().color(QPalette::Highlight);
+        if ( parentItem()->isSelected() )
+            sel_border = widget->palette().color(QPalette::HighlightedText);
+        QColor sel_fill = sel_border;
+        sel_fill.setAlpha(128);
+        painter->setPen(QPen(sel_border, pen));
+        painter->setBrush(sel_fill);
+        painter->drawRect(boundingRect());
+    }
+
+    painter->drawPixmap(-icon_size/2, -icon_size/2, half_icon_size.width(), half_icon_size.height(), pix_enter);
+    painter->drawPixmap(0, -icon_size/2, half_icon_size.width(), half_icon_size.height(), pix_exit);
+}
+
+
 timeline::LineItem::LineItem(quintptr id, model::Object* obj, int time_start, int time_end, int height):
     time_start(time_start),
     time_end(time_end),

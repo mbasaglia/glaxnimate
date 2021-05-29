@@ -23,8 +23,9 @@ class KeyframeSplitItem : public QGraphicsObject
     Q_OBJECT
 
 public:
-    static const int icon_size = 16;
-    static const int pen = 2;
+    static constexpr const int icon_size = 16;
+    static constexpr const int pen = 2;
+    static constexpr const QSize half_icon_size{icon_size/2, icon_size};
 
     KeyframeSplitItem(QGraphicsItem* parent) : QGraphicsObject(parent)
     {
@@ -39,38 +40,12 @@ public:
         return QRectF(-icon_size/2-pen, -icon_size/2-pen, icon_size+2*pen, icon_size+2*pen);
     }
 
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget * widget) override
-    {
-        if ( isSelected() )
-        {
-            QColor sel_border = widget->palette().color(QPalette::Highlight);
-            if ( parentItem()->isSelected() )
-                sel_border = widget->palette().color(QPalette::HighlightedText);
-            QColor sel_fill = sel_border;
-            sel_fill.setAlpha(128);
-            painter->setPen(QPen(sel_border, pen));
-            painter->setBrush(sel_fill);
-            painter->drawRect(boundingRect());
-        }
-
-        painter->drawPixmap(-icon_size/2, -icon_size/2, pix_enter);
-        painter->drawPixmap(0, -icon_size/2, pix_exit);
-    }
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget * widget) override;
 
 
-    void set_enter(model::KeyframeTransition::Descriptive enter)
-    {
-        icon_enter = icon_from_kdf(enter, "finish");
-        pix_enter = icon_enter.pixmap(icon_size);
-        update();
-    }
+    void set_enter(model::KeyframeTransition::Descriptive enter);
 
-    void set_exit(model::KeyframeTransition::Descriptive exit)
-    {
-        icon_exit = icon_from_kdf(exit, "start");
-        pix_exit = icon_exit.pixmap(icon_size);
-        update();
-    }
+    void set_exit(model::KeyframeTransition::Descriptive exit);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * event) override

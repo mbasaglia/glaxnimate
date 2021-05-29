@@ -18,7 +18,7 @@ public:
     
 //     void clear();
 
-    void set_model(item_models::PropertyModelFull* model);
+    void set_model(QAbstractItemModel* model, item_models::PropertyModelFull* base_model);
 
     int row_height() const;
     void set_row_height(int w);

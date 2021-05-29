@@ -12,6 +12,7 @@
 #include "command/undo_macro_guard.hpp"
 
 #include "item_models/property_model_full.hpp"
+#include "item_models/comp_filter_model.hpp"
 #include "glaxnimate_app.hpp"
 
 #include "style/property_delegate.hpp"
@@ -25,6 +26,7 @@ public:
     void setupUi(CompoundTimelineWidget* parent)
     {
         ui.setupUi(parent);
+        comp_model.setSourceModel(&property_model);
 
         QPalette prop_pal = ui.properties->palette();
         prop_pal.setBrush(
@@ -39,8 +41,8 @@ public:
         );
         ui.properties->setPalette(prop_pal);
 
-        ui.properties->setModel(&property_model);
-        ui.timeline->set_model(&property_model);
+        ui.properties->setModel(&comp_model);
+        ui.timeline->set_model(&comp_model, &property_model);
         connect(&property_model, &QAbstractItemModel::dataChanged,
                 ui.properties->viewport(), (void (QWidget::*)())&QWidget::update);
 
@@ -240,7 +242,7 @@ public:
         model::VisualNode* node = nullptr;
         do
         {
-            node = property_model.visual_node(index);
+            node = property_model.visual_node(comp_model.mapToSource(index));
             index = index.parent();
         }
         while ( !node && index.isValid() );
@@ -254,6 +256,7 @@ public:
     style::PropertyDelegate property_delegate;
     color_widgets::ColorDelegate color_delegate;
     style::FixedHeightDelegate fixed_height_delegate;
+    item_models::CompFilterModel comp_model;
 
     QAction* action_title;
     QMenu menu_property;
@@ -306,11 +309,12 @@ void CompoundTimelineWidget::set_composition(model::Composition* comp)
 //     d->property_model.add_object(comp);
     QSignalBlocker g(d->ui.tab_bar);
     d->ui.tab_bar->set_current_composition(comp);
+    d->comp_model.set_composition(comp);
 }
 
 void CompoundTimelineWidget::set_active(model::DocumentNode* node)
 {
-    QModelIndex index = d->property_model.object_index(node);
+    QModelIndex index = d->comp_model.mapFromSource(d->property_model.object_index(node));
     d->ui.properties->expand(index);
     d->ui.properties->setCurrentIndex(index);
     d->clear_menu_data();
@@ -322,6 +326,10 @@ void CompoundTimelineWidget::set_document(model::Document* document)
     d->property_model.set_document(document);
     d->clear_menu_data();
     d->ui.tab_bar->set_document(document);
+    if ( document )
+        d->comp_model.set_composition(document->main());
+    else
+        d->comp_model.set_composition(nullptr);
 }
 
 void CompoundTimelineWidget::clear_document()
@@ -338,7 +346,7 @@ void CompoundTimelineWidget::select_index(const QModelIndex& index)
 
 void CompoundTimelineWidget::select_line(quintptr id)
 {
-    QModelIndex index = d->property_model.index_by_id(id);
+    QModelIndex index = d->comp_model.mapFromSource(d->property_model.index_by_id(id));
     d->ui.properties->setCurrentIndex(index);
     d->ui.properties->viewport()->update();
     d->emit_click(this, index);
@@ -355,11 +363,11 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
     item_models::PropertyModelFull::Item item;
     if ( d->ui.properties->rect().contains(p) )
     {
-        item = d->property_model.item(
+        item = d->property_model.item(d->comp_model.mapToSource(
             d->ui.properties->indexAt(
                 d->ui.properties->viewport()->mapFromGlobal(glob)
             )
-        );
+        ));
     }
     else
     {
@@ -533,7 +541,7 @@ void CompoundTimelineWidget::expand_index(const QModelIndex& index)
 
 void CompoundTimelineWidget::click_index ( const QModelIndex& index )
 {
-    auto node = d->property_model.visual_node(index);
+    auto node = d->property_model.visual_node(d->comp_model.mapToSource(index));
     if ( !node )
         return;
 

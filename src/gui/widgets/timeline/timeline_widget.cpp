@@ -6,7 +6,7 @@
 
 #include "timeline_items.hpp"
 #include "model/shapes/precomp_layer.hpp"
-#include <model/shapes/styler.hpp>
+#include "model/shapes/styler.hpp"
 
 
 using namespace timeline;
@@ -33,7 +33,8 @@ public:
     LineItem* root = nullptr;
     std::unordered_map<quintptr, LineItem*> line_items;
 
-    item_models::PropertyModelFull* model = nullptr;
+    item_models::PropertyModelFull* base_model = nullptr;
+    QAbstractItemModel* model = nullptr;
 
     int rounded_end_time()
     {
@@ -217,7 +218,7 @@ public:
 
     void insert_index(const QModelIndex& parent_index, LineItem* parent, int index)
     {
-        auto item = add_item(parent_index.internalId(), model->item(parent_index), parent, index);
+        auto item = add_item(parent_index.internalId(), base_model->item(parent_index), parent, index);
         insert_children(parent_index, item);
     }
 
@@ -755,13 +756,14 @@ void TimelineWidget::expand(const QModelIndex& index)
     setSceneRect(d->scene_rect());
 }
 
-void TimelineWidget::set_model(item_models::PropertyModelFull* model)
+void TimelineWidget::set_model(QAbstractItemModel* model, item_models::PropertyModelFull* base_model)
 {
     d->model = model;
-    connect(model, &item_models::PropertyModelFull::rowsInserted, this, &TimelineWidget::model_rows_added);
-    connect(model, &item_models::PropertyModelFull::rowsRemoved, this, &TimelineWidget::model_rows_removed);
-    connect(model, &item_models::PropertyModelFull::rowsMoved, this, &TimelineWidget::model_rows_moved);
-    connect(model, &item_models::PropertyModelFull::modelReset, this, &TimelineWidget::model_reset);
+    d->base_model = base_model;
+    connect(model, &QAbstractItemModel::rowsInserted, this, &TimelineWidget::model_rows_added);
+    connect(model, &QAbstractItemModel::rowsRemoved, this, &TimelineWidget::model_rows_removed);
+    connect(model, &QAbstractItemModel::rowsMoved, this, &TimelineWidget::model_rows_moved);
+    connect(model, &QAbstractItemModel::modelReset, this, &TimelineWidget::model_reset);
 }
 
 void TimelineWidget::model_reset()
