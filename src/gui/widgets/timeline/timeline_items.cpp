@@ -89,7 +89,7 @@ void timeline::LineItem::remove_rows(int first, int last)
         delete row;
     }
     rows_.erase(rows_.begin() + first, rows_.begin() + last + 1);
-    adjust_row_vis(delta, rows_[first]);
+    adjust_row_vis(delta, rows_[first], true);
 }
 
 void timeline::LineItem::move_row(int from, int to)
