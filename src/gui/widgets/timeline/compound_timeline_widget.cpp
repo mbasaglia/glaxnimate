@@ -234,6 +234,21 @@ public:
         action_kf_paste.setEnabled(enabled);
     }
 
+
+    void emit_click(CompoundTimelineWidget* parent, QModelIndex index)
+    {
+        model::VisualNode* node = nullptr;
+        do
+        {
+            node = property_model.visual_node(index);
+            index = index.parent();
+        }
+        while ( !node && index.isValid() );
+
+        if ( node )
+            emit parent->object_selected(node);
+    }
+
     Ui::CompoundTimelineWidget ui;
     item_models::PropertyModelFull property_model;
     style::PropertyDelegate property_delegate;
@@ -318,12 +333,15 @@ void CompoundTimelineWidget::select_index(const QModelIndex& index)
 {
     d->ui.timeline->select(index);
     d->ui.properties->viewport()->update();
+    d->emit_click(this, index);
 }
 
 void CompoundTimelineWidget::select_line(quintptr id)
 {
-    d->ui.properties->setCurrentIndex(d->property_model.index_by_id(id));
+    QModelIndex index = d->property_model.index_by_id(id);
+    d->ui.properties->setCurrentIndex(index);
     d->ui.properties->viewport()->update();
+    d->emit_click(this, index);
 }
 
 void CompoundTimelineWidget::custom_context_menu(const QPoint& p)

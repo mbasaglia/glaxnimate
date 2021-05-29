@@ -28,6 +28,7 @@ public:
 
 signals:
     void switch_composition(model::Composition* comp, int index);
+    void object_selected(model::VisualNode* node);
     
 protected:
     void changeEvent ( QEvent* e ) override;

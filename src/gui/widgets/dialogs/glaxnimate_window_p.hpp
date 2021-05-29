@@ -95,6 +95,7 @@ public:
     std::map<QString, std::vector<QAction*>> tool_actions;
 
     std::vector<CompState> comp_selections;
+    bool update_timeline_selection = true;
 
     // "set and forget" kinda variables
     int autosave_timer = 0;
@@ -193,6 +194,7 @@ public:
     void align(AlignDirection direction, AlignPosition position, bool outside);
     QPointF align_point(const QRectF& rect, AlignDirection direction, AlignPosition position);
     void dropped(const QMimeData* data);
+    void timeline_object_selected(model::VisualNode* node);
 
     void switch_composition(model::Composition* comp, int i);
     void setup_composition(model::Composition* comp, int index = -1);

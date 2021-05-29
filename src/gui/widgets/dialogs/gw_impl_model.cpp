@@ -431,7 +431,8 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
     if ( auto node = document_node_model.node(comp_model.mapToSource(index)) )
     {
         property_model.set_object(node);
-        ui.timeline_widget->set_active(node);
+        if ( update_timeline_selection )
+            ui.timeline_widget->set_active(node);
         ui.view_properties->expandAll();
 
         stroke = qobject_cast<model::Stroke*>(node);
@@ -475,7 +476,8 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
     else
     {
         property_model.set_object(nullptr);
-        ui.timeline_widget->set_active(nullptr);
+        if ( update_timeline_selection )
+            ui.timeline_widget->set_active(nullptr);
     }
 
     ui.stroke_style_widget->set_shape(stroke);
@@ -485,6 +487,17 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
         set_brush_reference(fill->use.get(), false);
     if ( stroke )
         set_brush_reference(stroke->use.get(), true);
+}
+
+
+void GlaxnimateWindow::Private::timeline_object_selected(model::VisualNode* node)
+{
+    update_timeline_selection = false;
+    ui.view_document_node->selectionModel()->select(
+        comp_model.mapFromSource(document_node_model.node_index(node)),
+        QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Rows
+    );
+    update_timeline_selection = true;
 }
 
 template<class T>

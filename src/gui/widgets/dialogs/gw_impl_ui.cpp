@@ -333,6 +333,11 @@ void GlaxnimateWindow::Private::init_item_views()
     ui.view_assets->header()->hideSection(item_models::DocumentNodeModel::ColumnVisible-1);
     ui.view_assets->header()->hideSection(item_models::DocumentNodeModel::ColumnLocked-1);
     ui.view_assets->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnUsers-1, QHeaderView::ResizeToContents);
+
+
+    connect(ui.timeline_widget, &CompoundTimelineWidget::object_selected, parent, [this](model::VisualNode* node){
+        timeline_object_selected(node);
+    });
 }
 
 void GlaxnimateWindow::Private::init_transform_widget()
