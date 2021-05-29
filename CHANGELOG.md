@@ -27,6 +27,7 @@
     * Fixed the HueShift plugin
     * Fixed loading transparent gradients from lottie
     * Fixed undoing precomp deletion
+    * Fixed text to shapes
 
 ## 0.4.2
 
