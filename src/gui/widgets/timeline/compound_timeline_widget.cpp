@@ -529,3 +529,8 @@ QAbstractItemModel * CompoundTimelineWidget::model() const
 {
     return &d->property_model;
 }
+
+TimelineWidget * CompoundTimelineWidget::timeline() const
+{
+    return d->ui.timeline;
+}

@@ -7,6 +7,7 @@
 
 class GlaxnimateWindow;
 class QAbstractItemModel;
+class TimelineWidget;
 class CompoundTimelineWidget : public QWidget
 {
     Q_OBJECT
@@ -23,6 +24,7 @@ public:
     void load_state(const QByteArray& state);
     void set_controller(GlaxnimateWindow* window);
     QAbstractItemModel* model() const;
+    TimelineWidget* timeline() const;
 
 signals:
     void switch_composition(model::Composition* comp, int index);

@@ -2,12 +2,12 @@
 
 #include <QScrollBar>
 #include <QWheelEvent>
+#include <QDebug>
 
 #include "timeline_items.hpp"
 #include "model/shapes/precomp_layer.hpp"
 #include <model/shapes/styler.hpp>
 
-// #define DEBUG_PRINT_ENABLED
 
 using namespace timeline;
 
@@ -546,35 +546,6 @@ void TimelineWidget::scrollContentsBy(int dx, int dy)
     viewport()->update();
 }
 
-#ifdef DEBUG_PRINT_ENABLED
-#include <QDebug>
-void debug_line(timeline::LineItem* line_item, QString indent, int index)
-{
-
-    QString item_name = line_item->metaObject()->className();
-    item_name = item_name.mid(item_name.indexOf("::")+2);
-
-    int effective_index = line_item->pos().y() / line_item->row_height();
-
-
-    QString debug_string;
-    auto item = line_item->property_item();
-    if ( item.property )
-        debug_string = item.property->name();
-    else if ( item.object )
-        debug_string = item.object->object_name();
-    else
-        debug_string = "NULL";
-
-    (qDebug().noquote() << indent).maybeQuote()
-        << index << effective_index << line_item->visible_height() /  line_item->row_height()
-        << item_name << debug_string
-        << line_item->is_expanded() << line_item->isVisible();
-
-    for ( uint i = 0; i < line_item->rows().size(); i++ )
-        debug_line(line_item->rows()[i], indent + "    ", i);
-}
-#endif
 
 void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
@@ -594,10 +565,6 @@ void TimelineWidget::mousePressEvent(QMouseEvent* event)
         emit frame_clicked(d->mouse_frame);
     }
 
-#ifdef DEBUG_PRINT_ENABLED
-    if ( event->button() == Qt::MiddleButton )
-        debug_line(d->root, "", 0);
-#endif
 }
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
@@ -839,3 +806,42 @@ void TimelineWidget::model_rows_moved(const QModelIndex& parent, int start, int 
 
     setSceneRect(d->scene_rect());
 }
+
+static void debug_line(timeline::LineItem* line_item, QString indent, int index)
+{
+
+    QString item_name = line_item->metaObject()->className();
+    item_name = item_name.mid(item_name.indexOf("::")+2);
+
+    int effective_index = line_item->pos().y() / line_item->row_height();
+
+
+    QString debug_string;
+    auto item = line_item->property_item();
+    if ( item.property )
+        debug_string = item.property->name();
+    else if ( item.object )
+        debug_string = item.object->object_name();
+    else
+        debug_string = "NULL";
+
+    (qDebug().noquote() << indent).maybeQuote()
+        << index << effective_index << line_item->visible_height() /  line_item->row_height()
+        << item_name << debug_string
+        << line_item->is_expanded() << line_item->isVisible();
+
+    for ( uint i = 0; i < line_item->rows().size(); i++ )
+        debug_line(line_item->rows()[i], indent + "    ", i);
+}
+
+void TimelineWidget::debug_lines() const
+{
+    debug_line(d->root, "", 0);
+}
+
+void TimelineWidget::toggle_debug(bool debug)
+{
+    timeline::enable_debug = debug;
+    viewport()->update();
+}
+

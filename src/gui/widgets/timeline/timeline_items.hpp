@@ -16,6 +16,7 @@
 
 namespace timeline {
 
+extern bool enable_debug;
 
 class KeyframeSplitItem : public QGraphicsObject
 {

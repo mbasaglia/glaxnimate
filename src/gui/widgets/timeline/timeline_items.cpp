@@ -1,5 +1,6 @@
 #include "timeline_items.hpp"
 
+bool timeline::enable_debug = false;
 
 timeline::LineItem::LineItem(quintptr id, model::Object* obj, int time_start, int time_end, int height):
     time_start(time_start),
@@ -206,26 +207,27 @@ void timeline::LineItem::paint(QPainter * painter, const QStyleOptionGraphicsIte
 //         painter->fillRect(option->rect, widget->palette().brush(QPalette::Inactive, QPalette::Highlight));
 
     // Debugging print, it shows some meta info on the line, useful when tweaking the layout
-    /*
-    painter->save();
-    painter->setBrush(Qt::black);
-    painter->scale(0.5, 1);
-    QFont f;
-    painter->setFont(f);
+    if ( enable_debug )
+    {
+        painter->save();
+        painter->setBrush(Qt::black);
+        painter->scale(0.5, 1);
+        QFont f;
+        painter->setFont(f);
 
-    QString debug_string = metaObject()->className();
-    debug_string = debug_string.mid(debug_string.indexOf("::")+2);
-    painter->drawText(0, row_height(), debug_string);
+        QString debug_string = metaObject()->className();
+        debug_string = debug_string.mid(debug_string.indexOf("::")+2);
+        painter->drawText(0, row_height(), debug_string);
 
-    auto item = property_item();
-    if ( item.property )
-        debug_string = item.property->name();
-    else if ( item.object )
-        debug_string = item.object->object_name();
-    else
-        debug_string = "NULL";
-    painter->drawText(time_end, row_height(), debug_string);
+        auto item = property_item();
+        if ( item.property )
+            debug_string = item.property->name();
+        else if ( item.object )
+            debug_string = item.object->object_name();
+        else
+            debug_string = "NULL";
+        painter->drawText(time_end, row_height(), debug_string);
 
-    painter->restore();
-    */
+        painter->restore();
+    }
 }

@@ -37,6 +37,16 @@ public:
     void collapse(const QModelIndex& obj);
     void set_document(model::Document* document);
 
+    /**
+     * \brief Toggles debug prints for the line items
+     */
+    void toggle_debug(bool debug);
+
+    /**
+     * \brief Prints debugging info about the line items
+     */
+    void debug_lines() const;
+
 public slots:
     void update_timeline_start(model::FrameTime start);
     void update_timeline_end(model::FrameTime end);

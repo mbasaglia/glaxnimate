@@ -21,6 +21,7 @@
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
 #include "widgets/node_menu.hpp"
+#include "widgets/timeline/timeline_widget.hpp"
 
 #include "style/better_elide_delegate.hpp"
 #include "tools/edit_tool.hpp"
@@ -538,6 +539,19 @@ void GlaxnimateWindow::Private::init_debug()
         dialog->show();
         connect(dialog, &QDialog::finished, dialog, &QObject::deleteLater);
     });
+
+    QMenu* menu_timeline = new QMenu("Timeline", menu_debug);
+    menu_debug->addAction(menu_timeline->menuAction());
+    menu_timeline->addAction("Print lines", [this]{
+        ui.timeline_widget->timeline()->debug_lines();
+    });
+    QAction* toggle_timeline_debug = menu_timeline->addAction("Debug view");
+    toggle_timeline_debug->setCheckable(true);
+    connect(toggle_timeline_debug, &QAction::toggled, parent, [this](bool on){
+        ui.timeline_widget->timeline()->toggle_debug(on);
+    });
+
+
 }
 
 void GlaxnimateWindow::Private::init_tools(tools::Tool* to_activate)
