@@ -102,14 +102,8 @@ public:
 
     LineItem* add_property_list(quintptr id, model::ObjectListPropertyBase* prop)
     {
-        ObjectListLineItem* item = new ObjectListLineItem(id, prop->object(), prop, start_time, rounded_end_time(), row_height);
-        connect(item, &LineItem::clicked, parent, &TimelineWidget::line_clicked);
-        return item;
-    }
-
-    ObjectLineItem* add_object_without_properties(quintptr id, model::Object* obj)
-    {
-        ObjectLineItem* item = new ObjectLineItem(id, obj, start_time, rounded_end_time(), row_height);
+        auto obj = prop->object();
+        ObjectListLineItem* item = new ObjectListLineItem(id, obj, prop, start_time, rounded_end_time(), row_height);
         if ( auto layer = obj->cast<model::Layer>() )
         {
             auto anim_item = new AnimationContainerItem(layer, layer->animation.get(), row_height - 8, item);
@@ -120,7 +114,14 @@ public:
             auto anim_item = new AnimationContainerItem(comp, comp->animation.get(), row_height - 8, item);
             anim_item->setPos(0, row_height/2.0);
         }
-        else if ( auto layer = obj->cast<model::PreCompLayer>() )
+        connect(item, &LineItem::clicked, parent, &TimelineWidget::line_clicked);
+        return item;
+    }
+
+    ObjectLineItem* add_object_without_properties(quintptr id, model::Object* obj)
+    {
+        ObjectLineItem* item = new ObjectLineItem(id, obj, start_time, rounded_end_time(), row_height);
+        if ( auto layer = obj->cast<model::PreCompLayer>() )
         {
             auto anim_item = new StretchableTimeItem(layer, row_height - 8, item);
             anim_item->setPos(0, row_height/2.0);
@@ -818,17 +819,26 @@ static void debug_line(timeline::LineItem* line_item, QString indent, int index)
 
     QString debug_string;
     auto item = line_item->property_item();
-    if ( item.property )
-        debug_string = item.property->name();
-    else if ( item.object )
+    if ( item.object )
+    {
         debug_string = item.object->object_name();
-    else
+        if ( debug_string.contains(' ') )
+            debug_string = '"' + debug_string + '"';
+    }
+
+    if ( item.property )
+    {
+        if ( !debug_string.isEmpty() )
+            debug_string += "->";
+        debug_string += item.property->name();
+    }
+
+    if ( debug_string.isEmpty() )
         debug_string = "NULL";
 
-    (qDebug().noquote() << indent).maybeQuote()
+    qDebug().noquote() << indent
         << index << effective_index << line_item->visible_height() /  line_item->row_height()
-        << item_name << debug_string
-        << line_item->is_expanded() << line_item->isVisible();
+        << item_name << debug_string << line_item->is_expanded() << line_item->isVisible();
 
     for ( uint i = 0; i < line_item->rows().size(); i++ )
         debug_line(line_item->rows()[i], indent + "    ", i);
@@ -836,6 +846,7 @@ static void debug_line(timeline::LineItem* line_item, QString indent, int index)
 
 void TimelineWidget::debug_lines() const
 {
+    qDebug() << "index" << "effective_index" << "visible_rows" << "item_class" << "object->property" << "expanded" << "visible";
     debug_line(d->root, "", 0);
 }
 
