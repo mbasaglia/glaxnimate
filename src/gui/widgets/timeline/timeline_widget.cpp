@@ -352,7 +352,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
 
     int n_rows = d->root->visible_rows();
 
-    for ( int i = 0; i < n_rows; i++ )
+    for ( int i = 0; i < n_rows - 1; i++ )
     {
         painter.fillRect(
             QRectF(

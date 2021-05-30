@@ -33,13 +33,15 @@ QMimeData * item_models::DocumentModelBase::mimeData(const QModelIndexList& inde
     return data;
 }
 
-std::pair<model::VisualNode *, int> item_models::DocumentModelBase::drop_position(const QModelIndex& parent, int row) const
+std::pair<model::VisualNode *, int> item_models::DocumentModelBase::drop_position(const QModelIndex& parent, int row, int column) const
 {
+    if ( row == -1 && column != 0 )
+        return {};
     return {visual_node(parent), row};
 }
 
 
-std::tuple<model::VisualNode *, int, model::ShapeListProperty*> item_models::DocumentModelBase::cleaned_drop_position(const QMimeData* data, Qt::DropAction action, const QModelIndex& parent, int row) const
+std::tuple<model::VisualNode *, int, model::ShapeListProperty*> item_models::DocumentModelBase::cleaned_drop_position(const QMimeData* data, Qt::DropAction action, const QModelIndex& parent, int row, int column) const
 {
     if ( !data || action != Qt::MoveAction || !document() )
         return {};
@@ -47,7 +49,7 @@ std::tuple<model::VisualNode *, int, model::ShapeListProperty*> item_models::Doc
     if ( !data->hasFormat("application/x.glaxnimate-node-uuid") )
         return {};
 
-    auto position = drop_position(parent, row);
+    auto position = drop_position(parent, row, column);
     model::VisualNode* parent_node = position.first;
 
     if ( !parent_node )
@@ -70,7 +72,7 @@ bool item_models::DocumentModelBase::dropMimeData(const QMimeData* data, Qt::Dro
 
     model::DocumentNode* parent_node;
     model::ShapeListProperty* dest;
-    std::tie(parent_node, row, dest) = cleaned_drop_position(data, action, parent, row);
+    std::tie(parent_node, row, dest) = cleaned_drop_position(data, action, parent, row, column);
     if ( !parent_node )
         return false;
 
@@ -101,7 +103,5 @@ bool item_models::DocumentModelBase::dropMimeData(const QMimeData* data, Qt::Dro
 
 bool item_models::DocumentModelBase::canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) const
 {
-    Q_UNUSED(column);
-
-    return std::get<model::VisualNode*>(cleaned_drop_position(data, action, parent, row));
+    return std::get<model::VisualNode*>(cleaned_drop_position(data, action, parent, row, column));
 }

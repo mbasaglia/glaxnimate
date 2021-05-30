@@ -29,12 +29,13 @@ protected:
     /**
      * \brief Returns the document node corresponding to \p parent and the insertion point for drop data
      */
-    virtual std::pair<model::VisualNode*, int> drop_position(const QModelIndex &parent, int row) const;
+    virtual std::pair<model::VisualNode*, int> drop_position(const QModelIndex &parent, int row, int column) const;
 
     /**
      * \brief Returns drop_position() if the data is well formed
      */
-    std::tuple<model::VisualNode *, int, model::ShapeListProperty*> cleaned_drop_position(const QMimeData *data, Qt::DropAction action, const QModelIndex &parent, int row) const;
+    std::tuple<model::VisualNode *, int, model::ShapeListProperty*>
+        cleaned_drop_position(const QMimeData *data, Qt::DropAction action, const QModelIndex &parent, int row, int column) const;
 
 private:
     friend class ProxyBase;
