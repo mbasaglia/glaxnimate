@@ -82,8 +82,22 @@ then
     then
         path="$APPVEYOR_REPO_TAG_NAME"
     fi
-    ../deploy/gitlab_upload.py glaxnimate-x86_64.zip "$path/Win/glaxnimate-x86_64.zip"
-    ../deploy/gitlab_upload.py checksum.txt "$path/Win/checksum.txt"
+
+    if ! ../deploy/gitlab_upload.py glaxnimate-x86_64.zip "$path/Win/glaxnimate-x86_64.zip"
+    then
+        set +e
+        git clone --depth 1 "https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.com/mattbas/glaxnimate-artifacts.git"
+        rm -f "glaxnimate-artifacts/$path/Win/checksum.txt" "glaxnimate-artifacts/$path/Win/glaxnimate-x86_64.zip"
+        cp checksum.txt glaxnimate-x86_64.zip "glaxnimate-artifacts/$path/Win/"
+        cd glaxnimate-artifacts
+        git config user.name CI
+        git config user.email ci@dragon.best
+        git add "$path/Win/"
+        git commit -m "Windows upload fallback"
+        git push
+    else
+        ../deploy/gitlab_upload.py checksum.txt "$path/Win/checksum.txt"
+    fi
 fi
 
 # PyPI

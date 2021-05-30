@@ -22,6 +22,7 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
     void resizeEvent(QResizeEvent * event) override;
+    void showEvent(QShowEvent * event) override;
 
 private slots:
     void update_preview();
@@ -34,6 +35,7 @@ private slots:
     void show_help();
     void preview_slide(int percent);
     void reset_settings();
+    void color_options();
 
 private:
     class Private;

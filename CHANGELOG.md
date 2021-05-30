@@ -2,6 +2,7 @@
 
 * Editing:
     * The shortcut for "Undo" now works also to remove points when drawing paths
+    * The trace dialog is now better at autodetecting colors
 * UI:
     * Preferences dialog no longer closes on Enter
     * Some layer properties are displayed inline in the timeline tree
@@ -32,6 +33,7 @@
     * Fixed undoing precomp deletion
     * Fixed visual glitches when switching compositions
     * Fixed row stripe misalignment on the timeline
+    * Fixed text to shapes
 
 ## 0.4.2
 

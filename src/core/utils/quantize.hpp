@@ -14,6 +14,16 @@ using ColorFrequency = std::pair<QRgb, int>;
  */
 std::vector<QRgb> k_modes(const QImage& image, int k);
 
+
+enum KMeansMatch
+{
+    None,
+    MostFrequent,
+    Closest,
+};
+
+std::vector<QRgb> k_means(const QImage& image, int k, int iterations, KMeansMatch match);
+
 /**
  * \brief Counts pixel values and returns a list of [rgba, count] pairs
  * \param image             The image to analyze

@@ -367,6 +367,8 @@ std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
     group->group_color.set(group_color.get());
     group->visible.set(visible.get());
 
+    Font::CharDataCache local_cache;
+
     for ( const auto& line : font->layout(text.get()) )
     {
         auto line_group = std::make_unique<model::Group>(document());
@@ -374,7 +376,7 @@ std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
 
         for ( const auto& glyph : line.glyphs )
         {
-            QPainterPath p = font->path_for_glyph(glyph.glyph, cache, false).translated(glyph.position);
+            QPainterPath p = font->path_for_glyph(glyph.glyph, local_cache, false).translated(glyph.position);
             math::bezier::MultiBezier bez;
             bez.append(p);
 

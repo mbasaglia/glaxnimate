@@ -215,14 +215,35 @@
                </item>
                <item>
                 <layout class="QGridLayout" name="gridLayout">
-                 <item row="2" column="0">
-                  <widget class="QPushButton" name="pushButton_2">
-                   <property name="text">
-                    <string>Detect Colors</string>
+                 <item row="3" column="2">
+                  <widget class="QSpinBox" name="spin_color_count">
+                   <property name="maximum">
+                    <number>32</number>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1">
+                 <item row="1" column="2">
+                  <widget class="QDoubleSpinBox" name="spin_outline">
+                   <property name="singleStep">
+                    <double>0.500000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0" colspan="2">
+                  <widget class="QLabel" name="label_tolerance">
+                   <property name="text">
+                    <string>Tolerance</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0" colspan="2">
+                  <widget class="QLabel" name="label_9">
+                   <property name="text">
+                    <string>Outline</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
                   <widget class="QSpinBox" name="spin_tolerance">
                    <property name="minimum">
                     <number>0</number>
@@ -238,38 +259,27 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_tolerance">
+                 <item row="3" column="1">
+                  <widget class="QPushButton" name="pushButton_2">
                    <property name="text">
-                    <string>Tolerance</string>
+                    <string>Detect Colors</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1">
-                  <widget class="QSpinBox" name="spin_color_count">
-                   <property name="maximum">
-                    <number>32</number>
+                 <item row="3" column="0">
+                  <widget class="QToolButton" name="toolButton_3">
+                   <property name="toolTip">
+                    <string>Configure Color Detection</string>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_9">
                    <property name="text">
-                    <string>Outline</string>
+                    <string>Configure...</string>
                    </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QDoubleSpinBox" name="spin_outline">
-                   <property name="singleStep">
-                    <double>0.500000000000000</double>
+                   <property name="icon">
+                    <iconset theme="settings-configure"/>
                    </property>
                   </widget>
                  </item>
                 </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_5"/>
                </item>
               </layout>
              </widget>
@@ -451,7 +461,8 @@
         <string>Revert to Defaults</string>
        </property>
        <property name="icon">
-        <iconset theme="kt-restore-defaults"/>
+        <iconset theme="kt-restore-defaults">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -551,8 +562,8 @@
    <slot>auto_colors()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>112</x>
-     <y>437</y>
+     <x>150</x>
+     <y>445</y>
     </hint>
     <hint type="destinationlabel">
      <x>159</x>
@@ -656,6 +667,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>toolButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>color_options()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>38</x>
+     <y>451</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>108</x>
+     <y>815</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>update_preview()</slot>
@@ -668,5 +695,6 @@
   <slot>show_help()</slot>
   <slot>preview_slide(int)</slot>
   <slot>reset_settings()</slot>
+  <slot>color_options()</slot>
  </slots>
 </ui>
