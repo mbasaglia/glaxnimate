@@ -4,7 +4,6 @@
 #include <set>
 #include <QSettings>
 
-
 void app::settings::Settings::load()
 {
     QSettings settings = app::Application::instance()->qsettings();
@@ -20,15 +19,32 @@ void app::settings::Settings::load()
     {
         QVariantMap values;
         settings.beginGroup(group.slug);
+
+        auto avail_keys = settings.childKeys();
+        std::set<QString> unprocessed_keys(avail_keys.begin(), avail_keys.end());
+
         for ( const Setting& setting : group.settings )
         {
+            unprocessed_keys.erase(setting.slug);
             values[setting.slug] = settings.value(setting.slug, setting.default_value);
             if ( setting.side_effects )
                 setting.side_effects(values[setting.slug]);
         }
+
+        for ( const QString& key : unprocessed_keys )
+            values[key] = settings.value(key);
+
         settings.endGroup();
         data[group.slug] = values;
         unprocessed.erase(group.slug);
+    }
+
+    for ( const auto& group : custom_groups_ )
+    {
+        unprocessed.erase(group->slug());
+        settings.beginGroup(group->slug());
+        group->load(settings);
+        settings.endGroup();
     }
 
     for ( const QString& slug : unprocessed )
@@ -39,13 +55,6 @@ void app::settings::Settings::load()
             values[key] = settings.value(key);
         settings.endGroup();
         data[slug] = values;
-    }
-
-    for ( const auto& group : custom_groups_ )
-    {
-        settings.beginGroup(group->slug());
-        group->load(settings);
-        settings.endGroup();
     }
 }
 

@@ -66,6 +66,11 @@ public:
                 return setting.get_variant(values);
 
         settings.push_back(Setting{setting_slug, {}, {}, Setting::Internal, default_value});
+
+        auto it = values.find(setting_slug);
+        if ( it != values.end() )
+            return *it;
+
         return default_value;
     }
 
