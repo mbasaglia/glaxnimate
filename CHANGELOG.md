@@ -30,6 +30,7 @@
     * Gradients can be renamed
     * Fixed undoing precomp deletion
     * Fixed visual glitches when switching compositions
+    * Fixed row stripe misalignment on the timeline
 
 ## 0.4.2
 

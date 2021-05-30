@@ -500,6 +500,7 @@ void GlaxnimateWindow::Private::init_debug()
             menu_debug->exec(QCursor::pos());
     });
 
+    // Models
     QMenu* menu_print_model = new QMenu("Print Model", menu_debug);
 
     menu_print_model->addAction("Document Node - Full", [this]{
@@ -530,6 +531,7 @@ void GlaxnimateWindow::Private::init_debug()
 
     menu_debug->addAction(menu_print_model->menuAction());
 
+    // Timeline
     QMenu* menu_timeline = new QMenu("Timeline", menu_debug);
     menu_debug->addAction(menu_timeline->menuAction());
     menu_timeline->addAction("Print lines", [this]{
@@ -537,12 +539,13 @@ void GlaxnimateWindow::Private::init_debug()
     });
     QAction* toggle_timeline_debug = menu_timeline->addAction("Debug view");
     toggle_timeline_debug->setCheckable(true);
-    toggle_timeline_debug->setChecked(app::settings::get_default<bool>("internal", "debug_timeline"));
     connect(toggle_timeline_debug, &QAction::toggled, parent, [this](bool on){
         ui.timeline_widget->timeline()->toggle_debug(on);
         app::settings::set("internal", "debug_timeline", on);
     });
+    toggle_timeline_debug->setChecked(app::settings::get_default<bool>("internal", "debug_timeline"));
 
+    // Misc
     menu_debug->addAction("Screenshot menus", [this]{
         QDir("/tmp/").mkpath("menus");
         for ( auto widget : this->parent->findChildren<QMenu*>() )

@@ -342,11 +342,12 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     painter.begin(viewport());
 
     // stripy rows
+    QPointF viewport_scene_tl = mapFromScene(QPointF(0, 0));
     auto layer_top_left = mapFromScene(d->start_time, scene_tl.y());
     auto layer_top_right = mapFromScene(d->end_time, scene_tl.y());
     std::array<QBrush, 2> brushes = {
-        palette().alternateBase(),
         palette().base(),
+        palette().alternateBase(),
     };
 
     int n_rows = d->root->visible_rows();
@@ -355,8 +356,8 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
     {
         painter.fillRect(
             QRectF(
-                QPointF(layer_top_left.x(), i*d->row_height),
-                QPointF(layer_top_right.x(), (i+1)*d->row_height)
+                QPointF(layer_top_left.x(), i*d->row_height + viewport_scene_tl.y()),
+                QPointF(layer_top_right.x(), (i+1)*d->row_height + viewport_scene_tl.y())
             ),
             brushes[i%2]
         );
@@ -650,6 +651,7 @@ void TimelineWidget::collapse(const QModelIndex& index)
     if ( auto line = d->index_to_line(index) )
         line->collapse();
     setSceneRect(d->scene_rect());
+    viewport()->update();
 }
 
 void TimelineWidget::expand(const QModelIndex& index)
@@ -657,6 +659,7 @@ void TimelineWidget::expand(const QModelIndex& index)
     if ( auto line = d->index_to_line(index) )
         line->expand();
     setSceneRect(d->scene_rect());
+    viewport()->update();
 }
 
 void TimelineWidget::set_model(QAbstractItemModel* model, item_models::PropertyModelFull* base_model)
