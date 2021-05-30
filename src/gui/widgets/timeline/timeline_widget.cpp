@@ -572,6 +572,7 @@ item_models::PropertyModelFull::Item TimelineWidget::item_at(const QPoint& viewp
     {
         switch ( ItemTypes(it->type()) )
         {
+            case ItemTypes::LineItem:
             case ItemTypes::AnimatableItem:
             case ItemTypes::ObjectLineItem:
             case ItemTypes::PropertyLineItem:
@@ -685,6 +686,9 @@ void TimelineWidget::model_rows_added(const QModelIndex& parent, int first, int 
         d->insert_index(d->model->index(first, 0, parent), parent_line, i);
 
     setSceneRect(d->scene_rect());
+
+    // We are better at preserving selection than the treeview, so force a click
+    emit_clicked();
 }
 
 void TimelineWidget::model_rows_removed(const QModelIndex& parent, int first, int last)
@@ -696,6 +700,9 @@ void TimelineWidget::model_rows_removed(const QModelIndex& parent, int first, in
 
     line->remove_rows(first, last);
     setSceneRect(d->scene_rect());
+
+    // We are better at preserving selection than the treeview, so force a click
+    emit_clicked();
 }
 
 void TimelineWidget::on_item_removed(quintptr id)
@@ -718,6 +725,9 @@ void TimelineWidget::model_rows_moved(const QModelIndex& parent, int start, int 
         item->move_row(start, row);
 
     setSceneRect(d->scene_rect());
+
+    // We are better at preserving selection than the treeview, so force a click
+    emit_clicked();
 }
 
 static void debug_line(timeline::LineItem* line_item, QString indent, int index)
@@ -768,3 +778,14 @@ void TimelineWidget::toggle_debug(bool debug)
     viewport()->update();
 }
 
+void TimelineWidget::emit_clicked()
+{
+    for ( auto item : d->scene.selectedItems() )
+    {
+        if ( item->type() >= int(ItemTypes::LineItem) )
+        {
+            emit line_clicked(static_cast<LineItem*>(item)->id());
+            return;
+        }
+    }
+}

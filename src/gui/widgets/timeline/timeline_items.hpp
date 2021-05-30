@@ -147,7 +147,8 @@ private:
 
 enum class ItemTypes
 {
-    ObjectLineItem = QGraphicsItem::UserType + 1,
+    LineItem = QGraphicsItem::UserType + 1,
+    ObjectLineItem,
     AnimatableItem,
     PropertyLineItem,
     ObjectListLineItem,
@@ -203,6 +204,10 @@ public:
     {
         return rows_;
     }
+
+    int type() const override { return int(ItemTypes::LineItem); }
+
+    quintptr id() const { return id_; }
 
 signals:
     void removed(quintptr id, QPrivateSignal = {});
