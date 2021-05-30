@@ -254,6 +254,11 @@ Qt::ItemFlags item_models::PropertyModelFull::flags(const QModelIndex& index) co
         case ColumnVisible:
             return flags;
         case ColumnValue:
+
+            if ( auto lay = qobject_cast<model::Layer*>(tree->visual_node) )
+                if ( lay->is_top_level() )
+                    return flags | Qt::ItemIsEditable;
+
             if ( tree->prop )
             {
                 model::PropertyTraits traits = tree->prop->traits();
@@ -267,6 +272,7 @@ Qt::ItemFlags item_models::PropertyModelFull::flags(const QModelIndex& index) co
 
                 return flags | Qt::ItemIsEditable;
             }
+
             return flags;
     }
 
@@ -286,7 +292,27 @@ QVariant item_models::PropertyModelFull::data(const QModelIndex& index, int role
     switch ( index.column() )
     {
         case ColumnName: return d->data_name(tree, role);
-        case ColumnValue: return d->data_value(tree, role);
+        case ColumnValue:
+            if ( auto lay = qobject_cast<model::Layer*>(tree->visual_node) )
+            {
+                if ( lay->is_top_level() )
+                {
+                    if ( role == Qt::ToolTipRole )
+                        return tr("Parent Layer");
+                    if ( !lay->parent.get() )
+                    {
+                        switch ( role )
+                        {
+                            case Qt::DisplayRole:
+                                return tr("(No Parent)");
+                            case Qt::ForegroundRole:
+                                return qApp->palette().brush(QPalette::Disabled, QPalette::Text);
+                        }
+                    }
+                    return d->data_value(&lay->parent, nullptr, role);
+                }
+            }
+            return d->data_value(tree, role);
         case ColumnColor: return dd()->data_color(tree, role);
         case ColumnLocked: return dd()->data_locked(tree, role);
         case ColumnVisible: return dd()->data_visible(tree, role);
@@ -305,6 +331,9 @@ bool item_models::PropertyModelFull::setData(const QModelIndex& index, const QVa
 
     if ( index.column() == ColumnValue )
     {
+        if ( auto lay = qobject_cast<model::Layer*>(tree->visual_node) )
+            if ( lay->is_top_level() )
+                return d->set_prop_data(&lay->parent, value, role);
         return d->set_prop_data(tree, value, role);
     }
     else if ( tree->visual_node && role == Qt::EditRole )

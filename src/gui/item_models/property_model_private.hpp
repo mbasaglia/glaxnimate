@@ -72,6 +72,7 @@ public:
     QVariant data_name(Subtree* tree, int role);
 
     QVariant data_value(Subtree* tree, int role);
+    QVariant data_value(model::BaseProperty* prop, model::Object* object, int role);
 
     virtual void on_connect(model::Object* object, Subtree* tree, bool insert_row, ReferencedPropertiesMap* referenced) = 0;
 
@@ -94,6 +95,7 @@ public:
     QModelIndex subtree_index(Subtree* tree);
 
     bool set_prop_data(Subtree* tree, const QVariant& value, int role);
+    bool set_prop_data(model::BaseProperty* prop, const QVariant& value, int role);
 
     void property_changed(const model::BaseProperty* prop, const QVariant& value);
     void on_property_changed(id_type prop_node_id, const model::BaseProperty* prop, const QVariant& value);

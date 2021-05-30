@@ -109,12 +109,16 @@ QVariant item_models::PropertyModelBase::Private::data_name(Subtree* tree, int r
 
 QVariant item_models::PropertyModelBase::Private::data_value(Subtree* tree, int role)
 {
-    if ( !tree->prop )
+    return data_value(tree->prop, tree->object, role);
+}
+
+QVariant item_models::PropertyModelBase::Private::data_value(model::BaseProperty* prop, model::Object* object, int role)
+{
+    if ( !prop )
     {
         return {};
     }
 
-    model::BaseProperty* prop = tree->prop;
     model::PropertyTraits traits = prop->traits();
 
     if ( role == Qt::ForegroundRole )
@@ -126,10 +130,10 @@ QVariant item_models::PropertyModelBase::Private::data_value(Subtree* tree, int 
     }
 
     if ( role == Flags )
-        return tree->prop->traits().flags;
+        return prop->traits().flags;
 
-    if ( role == ReferenceProperty && tree->prop->traits().flags & model::PropertyTraits::OptionList )
-        return QVariant::fromValue(static_cast<model::OptionListPropertyBase*>(tree->prop));
+    if ( role == ReferenceProperty && prop->traits().flags & model::PropertyTraits::OptionList )
+        return QVariant::fromValue(static_cast<model::OptionListPropertyBase*>(prop));
 
     if ( (traits.flags & model::PropertyTraits::Animated) )
     {
@@ -185,8 +189,8 @@ QVariant item_models::PropertyModelBase::Private::data_value(Subtree* tree, int 
     }
     else if ( traits.type == model::PropertyTraits::Object )
     {
-        if ( tree->object && role == Qt::DisplayRole )
-            return tree->object->object_name();
+        if ( object && role == Qt::DisplayRole )
+            return object->object_name();
         return {};
     }
     else if ( traits.type == model::PropertyTraits::Bool )
@@ -214,7 +218,7 @@ QVariant item_models::PropertyModelBase::Private::data_value(Subtree* tree, int 
         }
 
         if ( role == ReferenceProperty )
-            return QVariant::fromValue(static_cast<model::ReferencePropertyBase*>(tree->prop));
+            return QVariant::fromValue(static_cast<model::ReferencePropertyBase*>(prop));
 
         return {};
     }
@@ -435,10 +439,14 @@ QModelIndex item_models::PropertyModelBase::Private::subtree_index(Subtree* tree
 
 bool item_models::PropertyModelBase::Private::set_prop_data(Subtree* tree, const QVariant& value, int role)
 {
-    if ( !tree->prop )
+    return set_prop_data(tree->prop, value, role);
+}
+
+bool item_models::PropertyModelBase::Private::set_prop_data(model::BaseProperty* prop, const QVariant& value, int role)
+{
+    if ( !prop )
         return false;
 
-    model::BaseProperty* prop = tree->prop;
     model::PropertyTraits traits = prop->traits();
 
 
