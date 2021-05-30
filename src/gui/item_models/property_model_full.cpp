@@ -397,6 +397,8 @@ int item_models::PropertyModelFull::columnCount(const QModelIndex &) const
 
 std::pair<model::VisualNode *, int> item_models::PropertyModelFull::drop_position(const QModelIndex& parent, int row, int column) const
 {
+    Q_UNUSED(column);
+
     auto tree = d->node_from_index(parent);
     if ( !tree || !tree->visual_node )
         return {};
