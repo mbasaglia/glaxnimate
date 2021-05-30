@@ -290,38 +290,36 @@ linux:pypi:
     allow_failure: true
 
 
-linux:pypi_3.8:
-    image: python:3.8
+.pypi:
     stage: build
     script:
+        - python --version
         - mkdir build
         - cd build
         - cmake ..
         - make glaxnimate_python_depends_install
         - make glaxnimate_python_wheel
         - python -m twine upload py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi
+
+
+linux:pypi_3.8:
+    image: ubuntu:20.04
+    extends: .pypi
     only:
         - master
         - release
     environment:
-        name: Gitlab PyPI
+        name: Gitlab PyPI 3.8
 
 
 linux:pypi_3.9:
-    image: python:3.9
-    stage: build
-    script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - make glaxnimate_python_depends_install
-        - make glaxnimate_python_wheel
-        - python -m twine upload py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi
+    image: ubuntu:21.04
+    extends: .pypi
     only:
         - master
         - release
     environment:
-        name: Gitlab PyPI
+        name: Gitlab PyPI 3.9
 
 #windows:build:
     #extends:
