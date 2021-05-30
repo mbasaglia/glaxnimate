@@ -23,7 +23,8 @@ public:
     QByteArray save_state() const;
     void load_state(const QByteArray& state);
     void set_controller(GlaxnimateWindow* window);
-    QAbstractItemModel* model() const;
+    QAbstractItemModel* filtered_model() const;
+    QAbstractItemModel* raw_model() const;
     TimelineWidget* timeline() const;
 
 signals:

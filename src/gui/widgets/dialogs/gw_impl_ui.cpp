@@ -521,7 +521,11 @@ void GlaxnimateWindow::Private::init_debug()
     });
 
     menu_print_model->addAction("Properties - Full", [this]{
-        app::debug::print_model(ui.timeline_widget->model(), {0}, false);
+        app::debug::print_model(ui.timeline_widget->raw_model(), {0}, false);
+    });
+
+    menu_print_model->addAction("Properties - Full (Filtered)", [this]{
+        app::debug::print_model(ui.timeline_widget->filtered_model(), {0}, false);
     });
 
     menu_debug->addAction(menu_print_model->menuAction());

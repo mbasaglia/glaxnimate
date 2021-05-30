@@ -551,9 +551,14 @@ void CompoundTimelineWidget::click_index ( const QModelIndex& index )
         node->locked.set(!node->locked.get());
 }
 
-QAbstractItemModel * CompoundTimelineWidget::model() const
+QAbstractItemModel * CompoundTimelineWidget::raw_model() const
 {
     return &d->property_model;
+}
+
+QAbstractItemModel * CompoundTimelineWidget::filtered_model() const
+{
+    return &d->comp_model;
 }
 
 TimelineWidget * CompoundTimelineWidget::timeline() const

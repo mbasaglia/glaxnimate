@@ -250,65 +250,7 @@ TimelineWidget::TimelineWidget(QWidget* parent)
 TimelineWidget::~TimelineWidget()
 {
 }
-/*
-void TimelineWidget::add_object(model::Object* node)
-{
-    d->add_object_without_properties(node);
-}
 
-void TimelineWidget::add_property(model::BaseProperty* property)
-{
-    if ( !d->object_items.empty() )
-    {
-        if ( property->traits().flags & model::PropertyTraits::Animated )
-            d->add_animatable(static_cast<model::AnimatableBase*>(property), d->object_items.back());
-        else
-            d->add_property(property, d->object_items.back());
-    }
-}
-
-void TimelineWidget::remove_object(model::Object* obj)
-{
-    for ( auto i = d->prop_items.begin(); i != d->prop_items.end(); )
-    {
-        if ( i->second->object() == obj )
-            i = d->prop_items.erase(i);
-        else
-            ++i;
-    }
-
-    auto it = d->find_object_item(obj);
-    if ( it == d->object_items.end() )
-        return;
-
-    qreal delta;
-    if ( (*it)->is_expanded() )
-        delta = (*it)->rows_height();
-    else
-        delta = (*it)->height();
-
-    disconnect(*it, nullptr, this, nullptr);
-    delete *it;
-    it = d->object_items.erase(it);
-    for ( ; it != d->object_items.end(); ++it )
-    {
-        auto p = (*it)->pos();
-        p.setY(p.y() - delta);
-        (*it)->setPos(p);
-    }
-
-    setSceneRect(d->scene_rect());
-}
-
-void TimelineWidget::clear()
-{
-    for ( auto objit : d->object_items )
-        disconnect(objit, nullptr, this, nullptr);
-    d->clear();
-    setSceneRect(d->scene_rect());
-    reset_view();
-}
-*/
 int TimelineWidget::row_height() const
 {
     return d->row_height;
@@ -339,11 +281,6 @@ void TimelineWidget::set_document(model::Document* document)
         update_timeline_start(document->main()->animation->first_frame.get());
         connect(this, &TimelineWidget::frame_clicked, document, &model::Document::set_current_time);
         connect(document, &model::Document::current_time_changed, viewport(), (void (QWidget::*)())&QWidget::update);
-//         set_anim_container(document->main()->animation.get());
-    }
-    else
-    {
-//         set_anim_container(nullptr);
     }
 
 }
@@ -690,40 +627,6 @@ void TimelineWidget::keyPressEvent(QKeyEvent* event)
     QGraphicsView::keyPressEvent(event);
 }
 
-/*
-void TimelineWidget::set_anim_container(model::AnimationContainer* cont)
-{
-
-    if ( d->limit )
-    {
-        disconnect(d->limit, nullptr, this, nullptr);
-    }
-
-    d->limit = cont;
-
-    if ( d->limit )
-    {
-        connect(cont, &model::AnimationContainer::first_frame_changed, this, &TimelineWidget::update_layer_start);
-        connect(cont, &model::AnimationContainer::last_frame_changed, this, &TimelineWidget::update_layer_end);
-        update_layer_end(cont->last_frame.get());
-        update_layer_start(cont->first_frame.get());
-    }
-}
-*/
-/*
-void TimelineWidget::update_layer_end(model::FrameTime end)
-{
-    d->layer_end = end;
-    viewport()->update();
-}
-
-void TimelineWidget::update_layer_start(model::FrameTime start)
-{
-    d->layer_start = start;
-    viewport()->update();
-}
-*/
-
 qreal TimelineWidget::highlighted_time() const
 {
     if ( d->mouse_frame == -1 && d->document )
@@ -777,6 +680,20 @@ void TimelineWidget::model_rows_added(const QModelIndex& parent, int first, int 
     auto parent_line = d->index_to_line(parent);
     for ( int i = first; i <= last; i++ )
         d->insert_index(d->model->index(first, 0, parent), parent_line, i);
+
+    // the treeview does that so we do it too to maintain alignment
+    for ( int i = 0; i < int(parent_line->rows().size()); i++ )
+    {
+        if ( i < first || i > last )
+            parent_line->rows()[i]->collapse();
+    }
+
+    while ( parent_line )
+    {
+        parent_line->expand();
+        parent_line = parent_line->parent_line();
+    }
+
     setSceneRect(d->scene_rect());
 }
 

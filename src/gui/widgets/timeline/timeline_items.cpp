@@ -140,6 +140,9 @@ void timeline::LineItem::move_row(int from, int to)
 
 void timeline::LineItem::expand()
 {
+    if ( expanded_ )
+        return;
+
     expanded_ = true;
 
     int old_vis = visible_rows_;
@@ -156,6 +159,9 @@ void timeline::LineItem::expand()
 
 void timeline::LineItem::collapse()
 {
+    if ( !expanded_ )
+        return;
+
     int old_vis = visible_rows_;
     for ( auto item : rows_ )
         item->setVisible(false);
@@ -252,6 +258,8 @@ void timeline::LineItem::paint(QPainter * painter, const QStyleOptionGraphicsIte
         QString debug_string = metaObject()->className();
         debug_string = debug_string.mid(debug_string.indexOf("::")+2);
         painter->drawText(0, row_height(), debug_string);
+
+        painter->drawText(time_end * 3/4, row_height(), QString::number(id_));
 
         auto item = property_item();
         if ( item.property )
