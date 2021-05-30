@@ -530,6 +530,19 @@ void GlaxnimateWindow::Private::init_debug()
 
     menu_debug->addAction(menu_print_model->menuAction());
 
+    QMenu* menu_timeline = new QMenu("Timeline", menu_debug);
+    menu_debug->addAction(menu_timeline->menuAction());
+    menu_timeline->addAction("Print lines", [this]{
+        ui.timeline_widget->timeline()->debug_lines();
+    });
+    QAction* toggle_timeline_debug = menu_timeline->addAction("Debug view");
+    toggle_timeline_debug->setCheckable(true);
+    toggle_timeline_debug->setChecked(app::settings::get_default<bool>("internal", "debug_timeline"));
+    connect(toggle_timeline_debug, &QAction::toggled, parent, [this](bool on){
+        ui.timeline_widget->timeline()->toggle_debug(on);
+        app::settings::set("internal", "debug_timeline", on);
+    });
+
     menu_debug->addAction("Screenshot menus", [this]{
         QDir("/tmp/").mkpath("menus");
         for ( auto widget : this->parent->findChildren<QMenu*>() )
@@ -548,19 +561,6 @@ void GlaxnimateWindow::Private::init_debug()
         dialog->show();
         connect(dialog, &QDialog::finished, dialog, &QObject::deleteLater);
     });
-
-    QMenu* menu_timeline = new QMenu("Timeline", menu_debug);
-    menu_debug->addAction(menu_timeline->menuAction());
-    menu_timeline->addAction("Print lines", [this]{
-        ui.timeline_widget->timeline()->debug_lines();
-    });
-    QAction* toggle_timeline_debug = menu_timeline->addAction("Debug view");
-    toggle_timeline_debug->setCheckable(true);
-    connect(toggle_timeline_debug, &QAction::toggled, parent, [this](bool on){
-        ui.timeline_widget->timeline()->toggle_debug(on);
-    });
-
-
 }
 
 void GlaxnimateWindow::Private::init_tools(tools::Tool* to_activate)

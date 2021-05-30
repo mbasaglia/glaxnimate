@@ -681,19 +681,6 @@ void TimelineWidget::model_rows_added(const QModelIndex& parent, int first, int 
     for ( int i = first; i <= last; i++ )
         d->insert_index(d->model->index(first, 0, parent), parent_line, i);
 
-    // the treeview does that so we do it too to maintain alignment
-    for ( int i = 0; i < int(parent_line->rows().size()); i++ )
-    {
-        if ( i < first || i > last )
-            parent_line->rows()[i]->collapse();
-    }
-
-    while ( parent_line )
-    {
-        parent_line->expand();
-        parent_line = parent_line->parent_line();
-    }
-
     setSceneRect(d->scene_rect());
 }
 
