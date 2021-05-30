@@ -102,7 +102,7 @@ void timeline::LineItem::add_row(LineItem* row, int index)
     rows_.insert(rows_.begin() + index, row);
     if ( !expanded_ )
         row->setVisible(false);
-    adjust_row_vis(row->visible_rows(), row);
+    adjust_row_vis(row->visible_rows());
 }
 
 void timeline::LineItem::remove_rows(int first, int last)
@@ -114,16 +114,15 @@ void timeline::LineItem::remove_rows(int first, int last)
         last = rows_.size() - 1;
 
     int delta = 0;
-    LineItem* row = nullptr;
     for ( int i = first; i <= last && i < int(rows_.size()); i++ )
     {
-        row = rows_[i];
+        LineItem* row = rows_[i];
         row->emit_removed();
         delta -= row->visible_rows();
         delete row;
     }
     rows_.erase(rows_.begin() + first, rows_.begin() + last + 1);
-    adjust_row_vis(delta, rows_[first], true);
+    adjust_row_vis(delta);
 }
 
 void timeline::LineItem::move_row(int from, int to)
@@ -131,11 +130,10 @@ void timeline::LineItem::move_row(int from, int to)
     LineItem* row = rows_[from];
     int delta = row->visible_rows();
 
-    adjust_row_vis(-delta, row);
     rows_.erase(rows_.begin() + from);
-
     rows_.insert(rows_.begin() + to, row);
-    adjust_row_vis(delta, row, true);
+
+    adjust_row_vis(-delta, false);
 }
 
 void timeline::LineItem::expand()
@@ -206,30 +204,23 @@ void timeline::LineItem::mousePressEvent(QGraphicsSceneMouseEvent * event)
 void timeline::LineItem::propagate_row_vis(int delta)
 {
     if ( isVisible() && parent_line() && delta && expanded_ )
-        parent_line()->adjust_row_vis(delta, this);
+        parent_line()->adjust_row_vis(delta);
 }
 
-void timeline::LineItem::adjust_row_vis(int delta, LineItem* child, bool adjust_child)
+void timeline::LineItem::adjust_row_vis(int delta, bool propagate)
 {
     if ( expanded_ )
         visible_rows_ += delta;
 
-    int i;
-    for ( i = 0; i < int(rows_.size()); i++ )
+    int y = 1;
+    for ( auto row : rows_ )
     {
-        if ( rows_[i] == child )
-            break;
+        row->setPos(0, height_ * y);
+        y += row->visible_rows_;
     }
 
-    if ( !adjust_child )
-        i++;
-
-    for ( ; i < int(rows_.size()); i++ )
-    {
-        rows_[i]->setPos(0, rows_[i]->pos().y() + row_height() * delta);
-    }
-
-    propagate_row_vis(delta);
+    if ( propagate )
+        propagate_row_vis(delta);
 }
 
 void timeline::LineItem::emit_removed()

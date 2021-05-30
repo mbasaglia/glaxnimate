@@ -711,8 +711,11 @@ void TimelineWidget::model_rows_moved(const QModelIndex& parent, int start, int 
     Q_UNUSED(end);
     Q_UNUSED(destination);
 
+    if ( row > start )
+        row -= 1;
+
     if ( LineItem* item = d->index_to_line(parent) )
-        item->move_row(start, row - 1);
+        item->move_row(start, row);
 
     setSceneRect(d->scene_rect());
 }

@@ -219,7 +219,7 @@ protected:
 private:
     void propagate_row_vis(int delta);
 
-    void adjust_row_vis(int delta, LineItem* child, bool adjust_child = false);
+    void adjust_row_vis(int delta, bool propagate = true);
 
     void emit_removed();
 

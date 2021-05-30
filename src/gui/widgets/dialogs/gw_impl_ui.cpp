@@ -543,7 +543,7 @@ void GlaxnimateWindow::Private::init_debug()
         ui.timeline_widget->timeline()->toggle_debug(on);
         app::settings::set("internal", "debug_timeline", on);
     });
-    toggle_timeline_debug->setChecked(app::settings::get_default<bool>("internal", "debug_timeline"));
+    toggle_timeline_debug->setChecked(app::settings::define("internal", "debug_timeline", false));
 
     // Misc
     menu_debug->addAction("Screenshot menus", [this]{

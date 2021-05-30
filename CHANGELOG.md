@@ -8,6 +8,7 @@
     * Bezier tangents are shown a bit thicker
     * The timeline shows precomposition tabs
     * The timeline now shows the whole composition and more properties are available
+    * The timeline now support drag/drop operations
 * I/O:
     * Lottie output is slightly more compact
 * Scripting:
