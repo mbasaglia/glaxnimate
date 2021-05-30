@@ -35,8 +35,6 @@ QMimeData * item_models::DocumentModelBase::mimeData(const QModelIndexList& inde
 
 std::pair<model::VisualNode *, int> item_models::DocumentModelBase::drop_position(const QModelIndex& parent, int row, int column) const
 {
-    if ( row == -1 && column != 0 )
-        return {};
     return {visual_node(parent), row};
 }
 
