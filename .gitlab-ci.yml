@@ -290,7 +290,7 @@ linux:pypi:
     allow_failure: true
 
 
-.pypi:
+.pypi_build:
     stage: build
     script:
         - python3 --version
@@ -298,28 +298,48 @@ linux:pypi:
         - cd build
         - cmake ..
         - make glaxnimate_python_depends_install
-        - make glaxnimate_python_wheel
-        - python3 -m twine upload py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi
-
+        - make glaxnimate_python
+    artifacts:
+        paths:
+            - build/py_module/build/lib/
 
 linux:pypi_3.8:
     image: ubuntu:20.04
-    extends: .pypi
+    extends: .pypi_build
     only:
         - master
         - release
-    environment:
-        name: Gitlab PyPI 3.8
 
 
 linux:pypi_3.9:
     image: ubuntu:21.04
-    extends: .pypi
+    extends: .pypi_build
+    only:
+        - master
+        - release
+
+
+linux:pypi_deploy:
+    image: ubuntu:latest
+    stage: deploy
+    needs: ["linux:pypi_3.8", "linux:pypi_3.9"]
+    dependencies:
+        - linux:pypi_3.8
+        - linux:pypi_3.9
+    script:
+        - python3 --version
+        - mkdir -p build
+        - cd build
+        - cmake ..
+        - make glaxnimate_python_depends_install
+        - ls py_module/build/lib
+        - make glaxnimate_python_wheel
+        - python3 -m twine upload py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi
     only:
         - master
         - release
     environment:
-        name: Gitlab PyPI 3.9
+        name: Gitlab PyPI
 
 #windows:build:
     #extends:
