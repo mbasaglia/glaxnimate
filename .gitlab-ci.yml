@@ -293,13 +293,13 @@ linux:pypi:
 .pypi:
     stage: build
     script:
-        - python --version
+        - python3 --version
         - mkdir build
         - cd build
         - cmake ..
         - make glaxnimate_python_depends_install
         - make glaxnimate_python_wheel
-        - python -m twine upload py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi
+        - python3 -m twine upload py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi
 
 
 linux:pypi_3.8:
