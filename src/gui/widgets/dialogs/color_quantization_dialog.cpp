@@ -33,15 +33,25 @@ void ColorQuantizationDialog::changeEvent ( QEvent* e )
 
 std::vector<QRgb> ColorQuantizationDialog::quantize(const QImage& image, int k) const
 {
-    if ( d->ui.combo_algo->currentIndex() == 1 )
-        return utils::quantize::k_modes(image, k);
-
-    return utils::quantize::k_means(
-        image,
-        k,
-        d->ui.spin_means_iterations->value(),
-        utils::quantize::KMeansMatch(d->ui.combo_means_match->currentIndex())
-    );
+    switch ( d->ui.combo_algo->currentIndex() )
+    {
+        case 0:
+            return utils::quantize::k_means(
+                image,
+                k,
+                d->ui.spin_means_iterations->value(),
+                utils::quantize::KMeansMatch(d->ui.combo_means_match->currentIndex())
+           );
+        case 1:
+            return utils::quantize::k_modes(image, k);
+        case 2:
+            return utils::quantize::octree(
+                image,
+                k,
+                utils::quantize::KMeansMatch(d->ui.combo_octree_match->currentIndex())
+            );
+    }
+    return {};
 }
 
 void ColorQuantizationDialog::init_settings()
