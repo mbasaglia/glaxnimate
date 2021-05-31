@@ -272,24 +272,6 @@ linux:snap_beta:
         - snapcraft login --with "$SNAPCRAFT_LOGIN_FILE"
         - snapcraft upload --release=beta glaxnimate_*.snap
 
-
-linux:pypi:
-    image: ubuntu:latest
-    stage: build
-    script:
-        - mkdir build
-        - cd build
-        - cmake ..
-        - make glaxnimate_python_depends_install
-        - make glaxnimate_python_wheel
-        - make glaxnimate_python_upload
-    environment:
-        name: PyPI
-    only:
-        - tags
-    allow_failure: true
-
-
 .pypi_build:
     stage: build
     script:
@@ -340,6 +322,28 @@ linux:pypi_deploy:
         - release
     environment:
         name: Gitlab PyPI
+
+
+linux:pypi_deploy_tag:
+    image: ubuntu:latest
+    stage: deploy
+    needs: ["linux:pypi_3.8", "linux:pypi_3.9"]
+    dependencies:
+        - linux:pypi_3.8
+        - linux:pypi_3.9
+    script:
+        - python3 --version
+        - mkdir -p build
+        - cd build
+        - cmake ..
+        - make glaxnimate_python_depends_install
+        - ls py_module/build/lib
+        - make glaxnimate_python_wheel
+        - make glaxnimate_python_upload
+    environment:
+        name: PyPI
+    only:
+        - tags
 
 #windows:build:
     #extends:
