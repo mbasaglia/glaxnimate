@@ -47,7 +47,7 @@ add_custom_target(
     glaxnimate_python_wheel
     COMMAND rm -f ./dist/*.whl
     COMMAND ./setup.py build bdist_wheel ${WHEEL_CMD}
-    DEPENDS glaxnimate_python
+    #DEPENDS glaxnimate_python
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 

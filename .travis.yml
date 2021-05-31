@@ -48,5 +48,6 @@ jobs:
             - make glaxnimate_python
             - libpath="$(echo 'from distutils.util import get_platform; import sys; print("lib.%s-%d.%d" % (get_platform(), *sys.version_info[:2]))' | python3)"
             - ln -s lib py_module/build/$libpath
+            - make glaxnimate_python
             - make glaxnimate_python_wheel
             - make glaxnimate_python_upload
