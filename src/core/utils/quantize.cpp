@@ -297,6 +297,7 @@ std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int itera
     return result;
 }
 
+#include <QDebug>
 /**
  * \note Most of the code here is taken from Inkscape (with several changes)
  * \see https://gitlab.com/inkscape/inkscape/-/blob/master/src/trace/quantize.cpp for the original code
@@ -362,6 +363,16 @@ struct Node
     {
         mi = parent ? weight << (2 * parent->width) : 0;
     }
+
+    void debug(const QString& indent)
+    {
+        qDebug().noquote() << indent << "wt" << weight << "wd" << width
+            << "c" << nchild << "l" << nleaf
+            << "rgb" << rgb.r << rgb.g << rgb.b;
+        for ( auto ch : children )
+            if ( ch )
+                ch->debug(indent + "    ");
+    }
 };
 
 
@@ -380,11 +391,10 @@ static void octreeDelete(Node *node)
 
 
 /**
- * builds a single <rgb> color leaf at location <ref>
+ * builds a single <rgb> color leaf
  */
-static void ocnodeLeaf(Node **ref, Color rgb, quint32 weight)
+static Node* ocnodeLeaf(Color rgb, quint32 weight)
 {
-    assert(ref);
     Node *node = new Node;
     node->width = 0;
     node->rgb = rgb;
@@ -392,59 +402,61 @@ static void ocnodeLeaf(Node **ref, Color rgb, quint32 weight)
     node->weight = weight;
     node->nleaf = 1;
     node->mi = 0;
-    *ref = node;
+    return node;
 }
+
 
 /**
  *  merge nodes <node1> and <node2> at location <ref> with parent <parent>
  */
-static int octreeMerge(Node *parent, Node **ref, Node *node1, Node *node2)
+static Node* octreeMerge(Node *parent, Node *ref, Node *node1, Node *node2)
 {
-    assert(ref);
-    if (!node1 && !node2) return 0;
-    assert(node1 != node2);
-    if (parent && !*ref) parent->nchild++;
-    if (!node1)
+    if (parent && !ref)
+        parent->nchild++;
+
+    if ( !node1 )
     {
-        *ref = node2;
         node2->parent = parent;
-        return node2->nleaf;
+        return node2;
     }
-    if (!node2)
+
+    if ( !node2 )
     {
-        *ref = node1;
         node1->parent = parent;
-        return node1->nleaf;
+        return node1;
     }
+
     int dwitdth = node1->width - node2->width;
     if (dwitdth > 0 && node1->rgb == node2->rgb >> dwitdth)
     {
         //place node2 below node1
-        *ref = node1;
         node1->parent = parent;
 
         int i = childIndex(node2->rgb >> (dwitdth - 1));
         node1->sum += node2->sum;
         node1->weight += node2->weight;
         node1->mi = 0;
-        if (node1->children[i]) node1->nleaf -= node1->children[i]->nleaf;
-        node1->nleaf +=
-          octreeMerge(node1, &node1->children[i], node1->children[i], node2);
-        return node1->nleaf;
+        if (node1->children[i])
+            node1->nleaf -= node1->children[i]->nleaf;
+
+        node1->children[i] = octreeMerge(node1, node1->children[i], node1->children[i], node2);
+        node1->nleaf += node1->children[i]->nleaf;
+        return node1;
     }
     else if (dwitdth < 0 && node2->rgb == node1->rgb >> (-dwitdth))
     {
         //place node1 below node2
-        *ref = node2;
         node2->parent = parent;
 
         int i = childIndex(node1->rgb >> (-dwitdth - 1));
         node2->sum += node1->sum;
         node2->weight += node1->weight;
         node2->mi = 0;
-        if (node2->children[i]) node2->nleaf -= node2->children[i]->nleaf;
-        node2->nleaf +=           octreeMerge(node2, &node2->children[i], node2->children[i], node1);
-        return node2->nleaf;
+        if (node2->children[i])
+            node2->nleaf -= node2->children[i]->nleaf;
+        node2->children[i] = octreeMerge(node2, node2->children[i], node2->children[i], node1);
+        node2->nleaf += node2->children[i]->nleaf;
+        return node2;
     }
     else
     {
@@ -455,7 +467,6 @@ static int octreeMerge(Node *parent, Node **ref, Node *node1, Node *node2)
         newnode->sum += node2->sum;
         newnode->weight = node1->weight + node2->weight;
 
-        *ref = newnode;
         newnode->parent = parent;
 
         if (dwitdth == 0 && node1->rgb == node2->rgb)
@@ -466,15 +477,23 @@ static int octreeMerge(Node *parent, Node **ref, Node *node1, Node *node2)
             newnode->nchild = 0;
             newnode->nleaf = 0;
             if (node1->nchild == 0 && node2->nchild == 0)
+            {
                 newnode->nleaf = 1;
+            }
             else
+            {
                 for (int i = 0; i < 8; i++)
-            if (node1->children[i] || node2->children[i])
-                newnode->nleaf += octreeMerge(newnode, &newnode->children[i],
-            node1->children[i], node2->children[i]);
+                {
+                    if (node1->children[i] || node2->children[i])
+                    {
+                        newnode->children[i] = octreeMerge(newnode, newnode->children[i], node1->children[i], node2->children[i]);
+                        newnode->nleaf += newnode->children[i]->nleaf;
+                    }
+                }
+            }
             delete node1;
             delete node2;
-            return newnode->nleaf;
+            return newnode;
         }
         else
         {
@@ -484,8 +503,12 @@ static int octreeMerge(Node *parent, Node **ref, Node *node1, Node *node2)
             Color rgb1 = node1->rgb >> (newwidth - node1->width);
             Color rgb2 = node2->rgb >> (newwidth - node2->width);
             //according to the previous tests <rgb1> != <rgb2> before the loop
-            while (!(rgb1 == rgb2))
-              { rgb1 = rgb1 >> 1; rgb2 = rgb2 >> 1; newwidth++; };
+            while ( !(rgb1 == rgb2) )
+            {
+                rgb1 = rgb1 >> 1;
+                rgb2 = rgb2 >> 1;
+                newwidth++;
+            }
             newnode->width = newwidth;
             newnode->rgb = rgb1;  // == rgb2
             newnode->nchild = 2;
@@ -496,7 +519,7 @@ static int octreeMerge(Node *parent, Node **ref, Node *node1, Node *node2)
             newnode->children[i1] = node1;
             node2->parent = newnode;
             newnode->children[i2] = node2;
-            return newnode->nleaf;
+            return newnode;
         }
     }
 }
@@ -589,20 +612,20 @@ static Node * octreePrune(Node *ref, int ncolor)
 }
 
 
-void add_pixels(Node** ref, ColorFrequency* data, int data_size)
+Node* add_pixels(Node* ref, ColorFrequency* data, int data_size)
 {
     if ( data_size == 1 )
     {
-        ocnodeLeaf(ref, data->first, data->second);
+        return ocnodeLeaf(data->first, data->second);
     }
     else if ( data_size > 1 )
     {
-        Node *ref1 = nullptr;
-        Node *ref2 = nullptr;
-        add_pixels(&ref1, data, data_size/2);
-        add_pixels(&ref2, data + data_size/2, data_size - data_size/2);
-        octreeMerge(nullptr, ref, ref1, ref2);
+        Node *ref1 = add_pixels(nullptr, data, data_size/2);
+        Node *ref2 = add_pixels(nullptr, data + data_size/2, data_size - data_size/2);
+        return octreeMerge(nullptr, ref, ref1, ref2);
     }
+
+    return nullptr;
 }
 
 } // namespace utils::quantize::detail::octree
@@ -629,9 +652,7 @@ std::vector<QRgb> utils::quantize::octree(const QImage& image, int k)
     colors.reserve(k);
 
 
-//     Node *tree = octreeBuild(image, k);
-    Node *tree = nullptr;
-    add_pixels(&tree, freq.data(), freq.size());
+    Node *tree = add_pixels(nullptr, freq.data(), freq.size());
     tree = octreePrune(tree, k);
 
     tree->get_colors(colors);
