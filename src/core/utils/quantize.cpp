@@ -66,6 +66,12 @@ struct Color
         b += oth.b * weight;
     }
 
+    constexpr Color& operator+=(const Color& oth) noexcept
+    {
+        weighted_add(oth, 1);
+        return *this;
+    }
+
     Color mean(qreal total_weight) const noexcept
     {
         return {
@@ -291,471 +297,346 @@ std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int itera
     return result;
 }
 
-#include <memory>
-#include <unordered_set>
-#include <QDebug>
+/**
+ * \note Most of the code here is taken from Inkscape (with several changes)
+ * \see https://gitlab.com/inkscape/inkscape/-/blob/master/src/trace/quantize.cpp for the original code
+ */
 namespace utils::quantize::detail::octree {
 
 
-constexpr const int max_depth = 8;
-
-/**
-* \return The \p nth bit of \p value.
-*/
-int bit(int nth, int value) noexcept
+inline Color operator>>(Color rgb, int s)
 {
-    return (value >> nth) & 1;
+  Color res;
+  res.r = rgb.r >> s; res.g = rgb.g >> s; res.b = rgb.b >> s;
+  return res;
+}
+inline bool operator==(Color rgb1, Color rgb2)
+{
+  return (rgb1.r == rgb2.r && rgb1.g == rgb2.g && rgb1.b == rgb2.b);
 }
 
-struct Node;
-
-struct Data
+inline int childIndex(Color rgb)
 {
-    std::vector<Node*> nodes;
-    int leaves = 0;
-};
+    return (((rgb.r)&1)<<2) | (((rgb.g)&1)<<1) | (((rgb.b)&1));
+}
+
 
 struct Node
 {
-    struct MinChild
-    {
-        int index = -1;
-        qint32 weight = std::numeric_limits<qint32>::max();
-    };
+    Node *parent = nullptr;
+    Node *children[8] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+    // number of children
+    int nchild = 0;
+    // width level of this node
+    int width = 0;
+    // rgb's prefix of that node
+    Color rgb;
+    // number of pixels this node accounts for
+    quint32 weight = 0;
+    // sum of pixels colors this node accounts for
+    Color sum;
+    // number of leaves under this node
+    int nleaf = 0;
+    // minimum impact
+    unsigned long mi = 0;
 
-    Node* parent = nullptr;
-    std::vector<std::unique_ptr<Node>> children;
-    qint32 weight = 0;
-    std::vector<ColorFrequency> colors;
-    int level = -1;
-    MinChild min;
-    MinChild min2;
-    int index;
-    Data* data;
-
-    Node(Node* parent, int depth, Data* data)
-        : parent(parent), level(depth), index(data->nodes.size()), data(data)
-    {
-        data->nodes.push_back(this);
-        data->leaves++;
-    }
-
-    ~Node()
-    {
-        data->nodes[index] = nullptr;
-    }
 
     /**
-     * \brief Whether the node is a leaf
+     * compute the color palette associated to an octree.
      */
-    bool leaf() const
+    void get_colors(std::vector<QRgb> &colors)
     {
-        return children.empty();
-    }
-
-    /**
-     * \brief Returns the child at \p index.
-     * If that child is null, it gets constructed
-     * \pre !leaf()
-     */
-    Node* child(int index)
-    {
-        if ( !children[index] )
-            children[index] = std::make_unique<Node>(this, level+1, data);
-        return children[index].get();
-    }
-
-    /**
-     * \brief Inserts a color into the subtree
-     */
-    void insert(const ColorFrequency& freq)
-    {
-        weight += freq.second;
-
-        if ( leaf() )
+        if (nchild == 0)
         {
-            if ( colors.size() == 0 || level == max_depth )
-            {
-                colors.push_back(freq);
-                return;
-            }
-
-            // We no longer want to be a leaf
-            children.resize(8);
-            data->leaves--;
-            insert_into_child(colors[0]);
-            colors.clear();
-        }
-
-        insert_into_child(freq);
-    }
-
-    /**
-     * \brief Average weighted color
-     * \pre leaf()
-     */
-    Color mean_color() const
-    {
-        Color sum;
-        for ( const auto& c : colors )
-            sum.weighted_add(c.first, c.second);
-
-        return sum.mean(weight);
-    }
-
-    /**
-     * \brief Best color based on the match mode
-     * \pre leaf()
-     */
-    QRgb best_color(KMeansMatch match) const
-    {
-        switch ( match )
-        {
-            case None:
-                return mean_color().rgb();
-            case MostFrequent:
-            {
-                ColorFrequency best{0, 0};
-                for ( const auto& c : colors )
-                {
-                    if ( c.second > best.second )
-                        best = c;
-                }
-
-                return best.first;
-            }
-            case Closest:
-            {
-                Color best;
-                Distance closest = std::numeric_limits<Distance>::max();
-                for ( const auto& c : colors )
-                {
-                    auto dist = best.distance(c.first);
-                    if ( dist < closest )
-                    {
-                        closest = dist;
-                        best = c.first;
-                    }
-                }
-                return best.rgb();
-            }
-        }
-
-        return {};
-    }
-
-    /**
-     * \brief Populates \p out with best_color for every leaf
-     */
-    void get_colors(std::vector<QRgb>& out, KMeansMatch match) const
-    {
-        if ( leaf() )
-        {
-            out.push_back(best_color(match));
+            colors.push_back(sum.mean(weight).rgb());
         }
         else
         {
-            for ( const auto& ch : children )
-                ch->get_colors(out, match);
+            for (auto & i : children)
+                if (i)
+                    i->get_colors(colors);
         }
     }
 
-    /**
-     * \brief Debug print
-     */
-    void debug(QString indent)
+    void update_mi()
     {
-        auto col = mean_color();
-        qDebug().noquote() << indent << level << index << weight << leaf() << col.r << col.g << col.b;
-
-        indent += "    ";
-        for ( const auto& ch : children )
-        {
-            if ( ch )
-                ch->debug(indent);
-        }
-    }
-
-    /**
-     * \brief Reduces leaves by one, merging the two smallest nodes
-     * \pre pre_process() called && leaves > 1
-     */
-    void merge()
-    {
-        do_merge();
-    }
-
-    /**
-     * \brief Perform some pre-processing before reducinbg the tree
-     *
-     * Removes null children and updates min references, ensure there is no node with an only child
-     */
-    void pre_process()
-    {
-        children.erase(std::remove(children.begin(), children.end(), nullptr), children.end());
-
-        for ( const auto& ch : children )
-            ch->pre_process();
-
-        if ( children.size() == 1 )
-        {
-            if ( children[0]->leaf() )
-            {
-                merge_data_from(children[0].get(), false);
-                children.clear();
-            }
-            else
-            {
-                min = children[0]->min;
-                min2 = children[0]->min2;
-                children = std::move(children[0]->children);
-            }
-        }
-        else
-        {
-            update_min();
-        }
-    }
-
-    /**
-     * \brief Returns the sum of the two children with the minimum weight
-     * \pre !leaf()
-     */
-    qint32 min_sum() const noexcept
-    {
-        return min.weight + min2.weight;
-    }
-
-
-private:
-    /**
-     * \brief Inserts \p freq in a child
-     * \pre level < max_depth
-     */
-    void insert_into_child(const ColorFrequency& freq)
-    {
-        int index = child_index(freq.first);
-        child(index)->insert(freq);
-    }
-
-    /**
-     * \brief Propagate a change in the number of leaves
-     */
-    void update_leaves(int delta)
-    {
-        data->leaves += delta;
-    }
-
-    /**
-     * \brief Updates minimum and second-minimum children
-     */
-    void update_min()
-    {
-        min = min2 = {};
-
-        for ( int index = 0; index < int(children.size()); index++ )
-            update_min(index);
-    }
-
-    /**
-     * \brief Updates minimum and second-minimum children for the given child index
-     */
-    void update_min(int index)
-    {
-        auto weight = children[index]->weight;
-
-        if ( min.index == -1 )
-        {
-            min = {index, weight};
-        }
-        else if ( weight < min.weight )
-        {
-            min2 = min;
-            min = {index, weight};
-        }
-        else if ( min2.index == -1 )
-        {
-            min2 = {index, weight};
-        }
-    }
-
-    /**
-     * \brief Child index of \p color.
-     */
-    int child_index(const Color& color) noexcept
-    {
-        return bit(max_depth - level, color.r) * 4 +
-            bit(max_depth - level, color.g) * 2 +
-            bit(max_depth - level, color.b);
-    }
-
-    void do_merge()
-    {
-        // no other nodes => merge all in the current node
-        if ( children.size() == 2 )
-        {
-            make_leaf();
-            return;
-        }
-
-
-        Node* ch1 = children[min.index].get();
-        Node* ch2 = children[min2.index].get();
-
-        // Merge a leaf into another
-        if ( ch1->leaf() && ch2->leaf() )
-        {
-            ch2->merge_data_from(ch1, true);
-            children.erase(children.begin() + min.index);
-            update_leaves(-1);
-            update_min();
-            return;
-
-        }
-
-        // Merge ch1 with the min child of ch2
-        if ( ch1->leaf() )
-        {
-            ch2->merge_cousin(ch1);
-            children.erase(children.begin() + min.index);
-            update_leaves(-1);
-            update_min();
-            return;
-        }
-
-        if ( ch2->leaf() )
-        {
-            ch1->merge_cousin(ch2);
-            children.erase(children.begin() + min2.index);
-            update_leaves(-1);
-            update_min();
-            return;
-        }
-
-        ch2->make_leaf();
-        ch1->merge_all_into(ch2, true);
-        children.erase(children.begin() + min.index);
-        update_leaves(-1);
-        update_min();
-        return;
-    }
-
-    /**
-     * \brief Merge a node that has a common ancestor with this
-     */
-    void merge_cousin(Node* cousin)
-    {
-        Node* ch = children[min.index].get();
-        if ( ch->leaf() )
-            cousin->merge_all_into(ch, true);
-        else
-            ch->merge_cousin(cousin);
-
-        update_min();
-
-    }
-
-    /**
-     * \brief Copies some data from \p other.
-     */
-    void merge_data_from(Node* other, bool merge_weight)
-    {
-        if ( merge_weight )
-            weight += other->weight;
-        colors.insert(colors.end(), other->colors.begin(), other->colors.end());
-        if ( leaf() && colors.empty() )
-            qDebug() << index;
-    }
-
-    /**
-     * \brief Turns a node with 2 children into a leaf \pre !leaf()
-     */
-    void make_leaf()
-    {
-        merge_all_into(this, false);
-        update_leaves(1-sub_leaves());
-        if ( colors.empty() ) {
-            qDebug() << index;
-            merge_all_into(this, false);
-        }
-        children.clear();
-
-    }
-
-    void merge_all_into(Node* other, bool merge_weight)
-    {
-        if ( leaf() )
-            other->merge_data_from(this, merge_weight);
-        for ( const auto& ch : children )
-            ch->merge_all_into(other, merge_weight);
-    }
-
-    int sub_leaves()
-    {
-        int total = 0;
-        for ( const auto& ch : children )
-        {
-            if ( ch->leaf() )
-                total += 1;
-            else
-                total += ch->sub_leaves();
-        }
-        return total;
+        mi = parent ? weight << (2 * parent->width) : 0;
     }
 };
 
 
 
+
+/**
+ * free a full octree
+ */
+static void octreeDelete(Node *node)
+{
+    if (!node) return;
+    for (auto & i : node->children)
+        octreeDelete(i);
+    delete node;
+}
+
+
+/**
+ * builds a single <rgb> color leaf at location <ref>
+ */
+static void ocnodeLeaf(Node **ref, Color rgb, quint32 weight)
+{
+    assert(ref);
+    Node *node = new Node;
+    node->width = 0;
+    node->rgb = rgb;
+    node->sum = Color(rgb.r * weight, rgb.g * weight, rgb.b * weight);
+    node->weight = weight;
+    node->nleaf = 1;
+    node->mi = 0;
+    *ref = node;
+}
+
+/**
+ *  merge nodes <node1> and <node2> at location <ref> with parent <parent>
+ */
+static int octreeMerge(Node *parent, Node **ref, Node *node1, Node *node2)
+{
+    assert(ref);
+    if (!node1 && !node2) return 0;
+    assert(node1 != node2);
+    if (parent && !*ref) parent->nchild++;
+    if (!node1)
+    {
+        *ref = node2;
+        node2->parent = parent;
+        return node2->nleaf;
+    }
+    if (!node2)
+    {
+        *ref = node1;
+        node1->parent = parent;
+        return node1->nleaf;
+    }
+    int dwitdth = node1->width - node2->width;
+    if (dwitdth > 0 && node1->rgb == node2->rgb >> dwitdth)
+    {
+        //place node2 below node1
+        *ref = node1;
+        node1->parent = parent;
+
+        int i = childIndex(node2->rgb >> (dwitdth - 1));
+        node1->sum += node2->sum;
+        node1->weight += node2->weight;
+        node1->mi = 0;
+        if (node1->children[i]) node1->nleaf -= node1->children[i]->nleaf;
+        node1->nleaf +=
+          octreeMerge(node1, &node1->children[i], node1->children[i], node2);
+        return node1->nleaf;
+    }
+    else if (dwitdth < 0 && node2->rgb == node1->rgb >> (-dwitdth))
+    {
+        //place node1 below node2
+        *ref = node2;
+        node2->parent = parent;
+
+        int i = childIndex(node1->rgb >> (-dwitdth - 1));
+        node2->sum += node1->sum;
+        node2->weight += node1->weight;
+        node2->mi = 0;
+        if (node2->children[i]) node2->nleaf -= node2->children[i]->nleaf;
+        node2->nleaf +=           octreeMerge(node2, &node2->children[i], node2->children[i], node1);
+        return node2->nleaf;
+    }
+    else
+    {
+        //nodes have either no intersection or the same root
+        Node *newnode;
+        newnode = new Node;
+        newnode->sum = node1->sum;
+        newnode->sum += node2->sum;
+        newnode->weight = node1->weight + node2->weight;
+
+        *ref = newnode;
+        newnode->parent = parent;
+
+        if (dwitdth == 0 && node1->rgb == node2->rgb)
+        {
+            //merge the nodes in <newnode>
+            newnode->width = node1->width; // == node2->width
+            newnode->rgb = node1->rgb;     // == node2->rgb
+            newnode->nchild = 0;
+            newnode->nleaf = 0;
+            if (node1->nchild == 0 && node2->nchild == 0)
+                newnode->nleaf = 1;
+            else
+                for (int i = 0; i < 8; i++)
+            if (node1->children[i] || node2->children[i])
+                newnode->nleaf += octreeMerge(newnode, &newnode->children[i],
+            node1->children[i], node2->children[i]);
+            delete node1;
+            delete node2;
+            return newnode->nleaf;
+        }
+        else
+        {
+            //use <newnode> as a fork node with children <node1> and <node2>
+            int newwidth =
+              node1->width > node2->width ? node1->width : node2->width;
+            Color rgb1 = node1->rgb >> (newwidth - node1->width);
+            Color rgb2 = node2->rgb >> (newwidth - node2->width);
+            //according to the previous tests <rgb1> != <rgb2> before the loop
+            while (!(rgb1 == rgb2))
+              { rgb1 = rgb1 >> 1; rgb2 = rgb2 >> 1; newwidth++; };
+            newnode->width = newwidth;
+            newnode->rgb = rgb1;  // == rgb2
+            newnode->nchild = 2;
+            newnode->nleaf = node1->nleaf + node2->nleaf;
+            int i1 = childIndex(node1->rgb >> (newwidth - node1->width - 1));
+            int i2 = childIndex(node2->rgb >> (newwidth - node2->width - 1));
+            node1->parent = newnode;
+            newnode->children[i1] = node1;
+            node2->parent = newnode;
+            newnode->children[i2] = node2;
+            return newnode->nleaf;
+        }
+    }
+}
+
+
+/**
+ * remove leaves whose prune impact value is lower than <lvl>. at most
+ * <count> leaves are removed, and <count> is decreased on each removal.
+ * all parameters including minimal impact values are regenerated.
+ */
+static Node* ocnodeStrip(Node *node, int *count, unsigned long lvl)
+{
+    if ( !count || !node )
+        return nullptr;
+
+    if (node->nchild == 0) // leaf node
+    {
+        if (!node->mi)
+            node->update_mi(); //mi generation may be required
+        if (node->mi > lvl)
+            return node; //leaf is above strip level
+        delete node;
+        (*count)--;
+        return nullptr;
+    }
+    else
+    {
+        if (node->mi && node->mi > lvl) //node is above strip level
+            return node;
+        node->nchild = 0;
+        node->nleaf = 0;
+        node->mi = 0;
+        Node **lonelychild = nullptr;
+        for (auto & i : node->children) if (i)
+        {
+            i = ocnodeStrip(i, count, lvl);
+            if (i)
+            {
+                lonelychild = &i;
+                node->nchild++;
+                node->nleaf += i->nleaf;
+                if (!node->mi || node->mi > i->mi)
+                    node->mi = i->mi;
+            }
+        }
+        // tree adjustments
+        if (node->nchild == 0)
+        {
+            (*count)++;
+            node->nleaf = 1;
+            node->update_mi();
+        }
+        else if (node->nchild == 1)
+        {
+            if ((*lonelychild)->nchild == 0)
+            {
+                //remove the <lonelychild> leaf under a 1 child node
+                node->nchild = 0;
+                node->nleaf = 1;
+                node->update_mi();
+                delete *lonelychild;
+                *lonelychild = nullptr;
+            }
+            else
+            {
+                //make a bridge to <lonelychild> over a 1 child node
+                (*lonelychild)->parent = node->parent;
+                delete node;
+                return *lonelychild;
+            }
+        }
+    }
+    return node;
+}
+
+/**
+ * reduce the leaves of an octree to a given number
+ */
+static Node * octreePrune(Node *ref, int ncolor)
+{
+    int n = ref->nleaf - ncolor;
+    if ( n <= 0 )
+        return nullptr;
+
+    //calling strip with global minimum impact of the tree
+    while ( n > 0 )
+        ref = ocnodeStrip(ref, &n, ref->mi);
+
+    return ref;
+}
+
+
+void add_pixels(Node** ref, ColorFrequency* data, int data_size)
+{
+    if ( data_size == 1 )
+    {
+        ocnodeLeaf(ref, data->first, data->second);
+    }
+    else if ( data_size > 1 )
+    {
+        Node *ref1 = nullptr;
+        Node *ref2 = nullptr;
+        add_pixels(&ref1, data, data_size/2);
+        add_pixels(&ref2, data + data_size/2, data_size - data_size/2);
+        octreeMerge(nullptr, ref, ref1, ref2);
+    }
+}
+
 } // namespace utils::quantize::detail::octree
 
-std::vector<QRgb> utils::quantize::octree(const QImage& image, int k, KMeansMatch match)
+
+std::vector<QRgb> utils::quantize::octree(const QImage& image, int k)
 {
+    using namespace utils::quantize::detail::octree;
+
     auto freq = color_frequencies(image);
-    std::vector<QRgb> out;
-    out.reserve(k);
 
     // Avoid processing if we don't need to
-    if ( int(freq.size()) <= k || k <= 1 )
+    if ( int(freq.size()) <= k || k <= 1)
     {
         std::sort(freq.begin(), freq.end(), detail::freq_sort_cmp);
+        std::vector<QRgb> out;
+        out.reserve(k);
         for ( const auto& p : freq )
             out.push_back(p.first);
         return out;
     }
 
-    detail::octree::Data octree_data;
-    octree_data.nodes.reserve(freq.size());
-    detail::octree::Node root{nullptr, 1, &octree_data};
-
-    for ( const auto& cf : freq )
-        root.insert(cf);
-    freq.clear();
+    std::vector<QRgb> colors;
+    colors.reserve(k);
 
 
-    root.pre_process();
+//     Node *tree = octreeBuild(image, k);
+    Node *tree = nullptr;
+    add_pixels(&tree, freq.data(), freq.size());
+    tree = octreePrune(tree, k);
 
-    while ( octree_data.leaves > k )
-    {
-        qint32 best = std::numeric_limits<qint32>::max();
-        detail::octree::Node* merger = nullptr;
-        for ( auto node : octree_data.nodes )
-        {
-            if ( node && !node->leaf() )
-            {
-                auto min = node->min_sum();
-                if ( min < best )
-                {
-                    best = min;
-                    merger = node;
-                    if ( min == 2 )
-                        break;
-                }
-            }
-        }
+    tree->get_colors(colors);
 
-        merger->merge();
-    }
+    octreeDelete(tree);
 
-    root.get_colors(out, match);
-    return out;
+    return colors;
 }

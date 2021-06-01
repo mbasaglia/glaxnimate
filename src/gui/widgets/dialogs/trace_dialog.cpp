@@ -286,6 +286,7 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     d->delegate.setSizeHintForColor({24, 24});
     d->ui.list_colors->setItemDelegate(&d->delegate);
 
+    d->init_settings();
     d->ui.spin_color_count->setValue(4);
     d->auto_colors();
 
@@ -301,7 +302,6 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
 
     installEventFilter(&d->ncoe);
 
-    d->init_settings();
     connect(this, &QDialog::accepted, this, [this]{ d->save_settings(); });
 
 }

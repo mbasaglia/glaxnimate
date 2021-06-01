@@ -25,7 +25,7 @@ enum KMeansMatch
 std::vector<QRgb> k_means(const QImage& image, int k, int iterations, KMeansMatch match);
 
 
-std::vector<QRgb> octree(const QImage& image, int k, KMeansMatch match);
+std::vector<QRgb> octree(const QImage& image, int k);
 
 /**
  * \brief Counts pixel values and returns a list of [rgba, count] pairs

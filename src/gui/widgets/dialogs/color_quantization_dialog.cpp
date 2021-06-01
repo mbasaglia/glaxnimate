@@ -45,11 +45,7 @@ std::vector<QRgb> ColorQuantizationDialog::quantize(const QImage& image, int k) 
         case 1:
             return utils::quantize::k_modes(image, k);
         case 2:
-            return utils::quantize::octree(
-                image,
-                k,
-                utils::quantize::KMeansMatch(d->ui.combo_octree_match->currentIndex())
-            );
+            return utils::quantize::octree(image, k);
     }
     return {};
 }
