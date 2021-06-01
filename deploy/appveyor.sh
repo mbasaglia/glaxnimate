@@ -71,35 +71,6 @@ cp ../deploy/glaxnimate.vbs $PACKDIR
 mkdir -p $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
 cp -r /mingw64/lib/python3.8/*.py /mingw64/lib/python3.8/{json,collections,encodings} $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
 
-# Create Artifacts
-zip -r glaxnimate-x86_64.zip glaxnimate
-sha1sum glaxnimate-x86_64.zip >checksum.txt
-
-if [ \( "$APPVEYOR_REPO_BRANCH" = master -o "$APPVEYOR_REPO_BRANCH" = pre-release -o "$APPVEYOR_REPO_BRANCH" = release -o "$APPVEYOR_REPO_TAG" = true \) -a "$APPVEYOR_PULL_REQUEST_NUMBER" = "" ]
-then
-    path="$APPVEYOR_REPO_BRANCH"
-    if [ "$APPVEYOR_REPO_TAG" = true ]
-    then
-        path="$APPVEYOR_REPO_TAG_NAME"
-    fi
-
-    if ! ../deploy/gitlab_upload.py glaxnimate-x86_64.zip "$path/Win/glaxnimate-x86_64.zip"
-    then
-        set +e
-        git clone --depth 1 "https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.com/mattbas/glaxnimate-artifacts.git"
-        rm -f "glaxnimate-artifacts/$path/Win/checksum.txt" "glaxnimate-artifacts/$path/Win/glaxnimate-x86_64.zip"
-        cp checksum.txt glaxnimate-x86_64.zip "glaxnimate-artifacts/$path/Win/"
-        cd glaxnimate-artifacts
-        git config user.name CI
-        git config user.email ci@dragon.best
-        git add "$path/Win/"
-        git commit -m "Windows upload fallback"
-        git push
-    else
-        ../deploy/gitlab_upload.py checksum.txt "$path/Win/checksum.txt"
-    fi
-fi
-
 # PyPI
 if [ "$APPVEYOR_REPO_TAG" = true ]
 then
@@ -110,4 +81,27 @@ then
     mingw32-make.exe glaxnimate_python
     (cd py_module && ./setup.py build --compiler=unix bdist_wheel && cd ..)
     mingw32-make.exe glaxnimate_python_upload
+fi
+
+# Create Artifacts
+zip -r glaxnimate-x86_64.zip glaxnimate
+sha1sum glaxnimate-x86_64.zip >checksum.txt
+
+if [ \( "$APPVEYOR_REPO_BRANCH" = master -o "$APPVEYOR_REPO_BRANCH" = pre-release -o "$APPVEYOR_REPO_BRANCH" = release -o "$APPVEYOR_REPO_TAG" = true \) -a "$APPVEYOR_PULL_REQUEST_NUMBER" = "" ]
+then
+    channel="windows-beta"
+    if [ "$APPVEYOR_REPO_TAG" = true ]
+    then
+        channel="windows-stable"
+    fi
+	
+	version="$(../deploy/get_version.sh CMakeCache.txt)"
+	
+	mkdir -p artifacts
+	mv glaxnimate-x86_64.zip artifacts
+	mv checksum.txt artifacts
+	
+	wget https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
+	unzip default
+	./butler.exe push artifacts "MattBas/glaxnimate:$channel" --userversion "$version"
 fi
