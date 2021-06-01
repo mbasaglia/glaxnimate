@@ -297,7 +297,6 @@ std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int itera
     return result;
 }
 
-#include <QDebug>
 /**
  * \note Most of the code here is taken from Inkscape (with several changes)
  * \see https://gitlab.com/inkscape/inkscape/-/blob/master/src/trace/quantize.cpp for the original code
@@ -363,19 +362,7 @@ struct Node
     {
         mi = parent ? weight << (2 * parent->width) : 0;
     }
-
-    void debug(const QString& indent)
-    {
-        qDebug().noquote() << indent << "wt" << weight << "wd" << width
-            << "c" << nchild << "l" << nleaf
-            << "rgb" << rgb.r << rgb.g << rgb.b;
-        for ( auto ch : children )
-            if ( ch )
-                ch->debug(indent + "    ");
-    }
 };
-
-
 
 
 /**
