@@ -89,19 +89,33 @@ sha1sum glaxnimate-x86_64.zip >checksum.txt
 
 if [ \( "$APPVEYOR_REPO_BRANCH" = master -o "$APPVEYOR_REPO_BRANCH" = pre-release -o "$APPVEYOR_REPO_BRANCH" = release -o "$APPVEYOR_REPO_TAG" = true \) -a "$APPVEYOR_PULL_REQUEST_NUMBER" = "" ]
 then
-    channel="windows-beta"
+
+
     if [ "$APPVEYOR_REPO_TAG" = true ]
     then
         channel="windows-stable"
+        path="$APPVEYOR_REPO_TAG_NAME"
+    else
+        channel="windows-beta"
+        path="$APPVEYOR_REPO_BRANCH"
     fi
-	
-	version="$(../deploy/get_version.sh CMakeCache.txt)"
-	
-	mkdir -p artifacts
-	mv glaxnimate-x86_64.zip artifacts
-	mv checksum.txt artifacts
-	
-	wget https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
-	unzip default
-	./butler.exe push artifacts "MattBas/glaxnimate:$channel" --userversion "$version"
+
+    version="$(../deploy/get_version.sh CMakeCache.txt)"
+
+    mkdir -p "artifacts/$path/Win"
+    mv glaxnimate-x86_64.zip "artifacts/$path/Win"
+    mv checksum.txt "artifacts/$path/Win"
+    cd artifacts
+
+    wget https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
+    unzip default
+    ./butler.exe push "$path/Win/glaxnimate-x86_64.zip" "MattBas/glaxnimate:$channel" --userversion "$version"
+
+
+    echo "-----BEGIN OPENSSH PRIVATE KEY-----" >privkey
+    echo "$SSH_PRIV_KEY" >>privkey
+    echo "-----END OPENSSH PRIVATE KEY-----" >>privkey
+    chmod 600 privkey
+
+    rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no -i privkey"
 fi
