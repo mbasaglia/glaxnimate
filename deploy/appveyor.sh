@@ -114,7 +114,9 @@ then
 
     pacman --noconfirm -S rsync
     echo "-----BEGIN OPENSSH PRIVATE KEY-----" >privkey
+    set +x
     echo "$SSH_PRIV_KEY" >>privkey
+    set -x
     echo "-----END OPENSSH PRIVATE KEY-----" >>privkey
     chmod 600 privkey
     rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no -i privkey"
