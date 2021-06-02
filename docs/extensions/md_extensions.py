@@ -104,7 +104,7 @@ class DownloadTable(InlineProcessor):
             icon.tail = " "
             pack.append(icon)
             if "/" in self.job_path:
-                url = "https://gitlab.com/mattbas/glaxnimate-artifacts/-/raw/master/{0}{1}{{0}}".format(branch, self.job_path)
+                url = "https://master.dl.sourceforge.net/project/glaxnimate/{0}{1}{{0}}?viasf=1".format(branch, self.job_path)
             else:
                 url = "https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/{0}/raw{2}/{{0}}?job={1}".format(
                     branch, self.job_path.replace(":", "%3A"), self.parent

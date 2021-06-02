@@ -102,13 +102,13 @@ then
         path="$APPVEYOR_REPO_BRANCH"
     fi
 
-    version="$(../deploy/get_version.sh CMakeCache.txt)"
 
     mkdir -p "artifacts/$path/Win"
     mv glaxnimate-x86_64.zip "artifacts/$path/Win"
     mv checksum.txt "artifacts/$path/Win"
     cd artifacts
 
+    version="$(../deploy/get_version.sh CMakeCache.txt)"
     wget https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
     unzip default
     ./butler.exe push "$path/Win/glaxnimate-x86_64.zip" "MattBas/glaxnimate:$channel" --userversion "$version"

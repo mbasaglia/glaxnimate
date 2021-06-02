@@ -119,7 +119,7 @@ linux:appimage:
     stage: build
     before_script:
         - apt-get update -qq
-        - apt-get install -y libpython3-dev python3-pip software-properties-common desktop-file-utils wget zlib1g-dev libpotrace-dev
+        - apt-get install -y libpython3-dev python3-pip software-properties-common desktop-file-utils wget zlib1g-dev libpotrace-dev zip
         - add-apt-repository ppa:beineri/opt-qt-5.15.0-xenial -y
         - add-apt-repository ppa:ubuntu-toolchain-r/test -y
         - apt update -qq
@@ -155,6 +155,10 @@ linux:appimage:
         - PATH="/opt/qt515/bin/:$PATH" LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes,imageformats -appimage
         - mv glaxnimate-dev-x86_64.AppImage glaxnimate-x86_64.AppImage
         - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
+        - version="$(../deploy/get_version.sh CMakeCache.txt)"
+        - wget https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
+        - unzip default
+        - ./butler.exe push "$path/Win/glaxnimate-x86_64.AppImage" "MattBas/glaxnimate:linux-beta" --userversion "$version"
     artifacts:
         paths:
             - build/glaxnimate-x86_64.AppImage
