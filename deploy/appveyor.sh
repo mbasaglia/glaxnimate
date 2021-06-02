@@ -20,18 +20,6 @@
 
 set -xe
 
-
-    pacman --noconfirm -S openssh
-    echo "-----BEGIN OPENSSH PRIVATE KEY-----" >privkey
-    chmod 600 privkey
-    set +x
-    echo "$SSH_PRIV_KEY" >>privkey
-    set -x
-    echo "-----END OPENSSH PRIVATE KEY-----" >>privkey
-    md5sum privkey
-    wc -c privkey
-    ssh-keygen -y -f privkey | head -c 552 | md5sum
-
 pacman --noconfirm -S \
     git zip unzip \
     mingw-w64-x86_64-toolchain \
@@ -133,7 +121,6 @@ then
     echo "$SSH_PRIV_KEY" >>privkey
     set -x
     echo "-----END OPENSSH PRIVATE KEY-----" >>privkey
-    ssh-keygen -y -f privkey | head -c 552 | md5sum
 
     rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no -i privkey"
 fi
