@@ -36,6 +36,7 @@ jobs:
             - shasum -a 1 glaxnimate.dmg >checksum.txt
             - # Upload SF
             - if [ "$TRAVIS_BRANCH" = macbuild ] ; then path=master channel="mac-beta" ; else path="$TRAVIS_BRANCH" channel="mac-stable" ; fi
+            - version="$(../deploy/get_version.sh CMakeCache.txt)"
             - mkdir -p "artifacts/$TRAVIS_BRANCH/MacOs"
             - mv glaxnimate-x86_64.zip "artifacts/$path/MacOs"
             - mv checksum.txt "artifacts/$path/MacOs"
@@ -47,7 +48,6 @@ jobs:
             - rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no -i privkey"
             - # Upload itch.io
             - brew list wget || brew install wget
-            - version="$(../deploy/get_version.sh CMakeCache.txt)"
             - wget https://broth.itch.ovh/butler/darwin-amd64/LATEST/archive/default
             - unzip default
             - ./butler push "$path/MacOs/glaxnimate.dmg" "MattBas/glaxnimate:$channel" --userversion "$version"
