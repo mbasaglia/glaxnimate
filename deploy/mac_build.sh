@@ -33,9 +33,13 @@ case "$ACTION" in
         mkdir -p glaxnimate.iconset
         cp ../data/images/glaxnimate.png glaxnimate.iconset/icon_512x512.png
         iconutil -c icns glaxnimate.iconset -o glaxnimate.icns
-        echo "packing..."
-        cpack -G Bundle --verbose
-        echo "packing done"
+
+        if [ -n "$TRAVIS_BRANCH" ]
+        then
+            travis_wait cpack -G Bundle
+        else
+            wait cpack -G Bundle
+        fi
 
         mv Glaxnimate-*.dmg glaxnimate.dmg
         shasum -a 1 glaxnimate.dmg >checksum.txt
