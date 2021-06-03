@@ -37,6 +37,7 @@ jobs:
             - brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
             - export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
             - ./deploy/mac_build.sh deps
+            - git submodule update --init --recursive
         script:
             - ./deploy/mac_build.sh build
             - # PyPI
