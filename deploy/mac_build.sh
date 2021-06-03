@@ -1,7 +1,5 @@
 #!/bin/bash
 
-ROOT="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
-ACTION="${1:-build}"
 
 if ! (which readlink | grep -q gnu)
 then
@@ -11,6 +9,8 @@ then
     exit 1
 fi
 
+ROOT="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
+ACTION="${1:-build}"
 
 set -x
 
@@ -21,6 +21,7 @@ case "$ACTION" in
         brew upgrade python@3.9 || true
         brew list potrace || brew install potrace
         brew list ffmpeg || brew install ffmpeg
+        brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
         ;;
 
     build)
