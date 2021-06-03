@@ -155,11 +155,14 @@ linux:appimage:
         - PATH="/opt/qt515/bin/:$PATH" LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes,imageformats -appimage
         - mv glaxnimate-dev-x86_64.AppImage glaxnimate-x86_64.AppImage
         - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
-        - version="$(../deploy/get_version.sh CMakeCache.txt)"
-        - wget https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
-        - unzip default
-        - chmod a+x butler
-        - ./butler push "glaxnimate-x86_64.AppImage" "MattBas/glaxnimate:linux-beta" --userversion "$version"
+        - | if [ -n "$BUTLER_API_KEY" ]
+            then
+                version="$(../deploy/get_version.sh CMakeCache.txt)"
+                wget https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+                unzip default
+                chmod a+x butler
+                ./butler push "glaxnimate-x86_64.AppImage" "MattBas/glaxnimate:linux-beta" --userversion "$version" || true
+            endif
     artifacts:
         paths:
             - build/glaxnimate-x86_64.AppImage
