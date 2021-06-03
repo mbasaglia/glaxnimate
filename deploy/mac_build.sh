@@ -36,7 +36,17 @@ case "$ACTION" in
 
         if [ -n "$TRAVIS_BRANCH" ]
         then
-            travis_wait cpack -G Bundle
+            function travis_is_a_pain()
+            {
+                while :
+                do
+                    echo pain
+                    sleep 300
+                done
+            }
+            travis_is_a_pain &
+            cpack -G Bundle
+            kill %%
         else
             wait cpack -G Bundle
         fi
