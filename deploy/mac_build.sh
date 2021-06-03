@@ -21,7 +21,6 @@ case "$ACTION" in
         brew upgrade python@3.9 || true
         brew list potrace || brew install potrace
         brew list ffmpeg || brew install ffmpeg
-        brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
         ;;
 
     build)
@@ -34,7 +33,9 @@ case "$ACTION" in
         mkdir -p glaxnimate.iconset
         cp ../data/images/glaxnimate.png glaxnimate.iconset/icon_512x512.png
         iconutil -c icns glaxnimate.iconset -o glaxnimate.icns
-        cpack -G Bundle
+        echo "packing..."
+        cpack -G Bundle --verbose
+        echo "packing done"
 
         mv Glaxnimate-*.dmg glaxnimate.dmg
         shasum -a 1 glaxnimate.dmg >checksum.txt
