@@ -1,5 +1,6 @@
 #include "quantize.hpp"
 
+#include <unordered_map>
 
 std::vector<utils::quantize::ColorFrequency> utils::quantize::color_frequencies(QImage image, int alpha_threshold)
 {
