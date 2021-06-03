@@ -4,75 +4,41 @@ stages:
     - build
 jobs:
     include:
-      - name: "Mac"
-        if: tag IS present OR branch = macbuild
+      - name: "Mac Tag"
+        if: tag IS present
         stage: build
         os: osx
         osx_image: xcode11.3
         before_install:
-            - brew list cmake || brew install cmake
-            - brew list qt || brew install qt
-            - brew upgrade python@3.9 || true
-            - brew list potrace || brew install potrace
-            - brew list ffmpeg || brew install ffmpeg
+            - ./deploy/mac_build.sh deps
         script:
-            - mkdir build
-            - cd build
-            - cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt)/lib/cmake/Qt5Designer" -DVERSION_SUFFIX="mac-${TRAVIS_COMMIT::8}"
-            - make
-            - mkdir glaxnimate.iconset
-            - cp ../data/images/glaxnimate.png glaxnimate.iconset/icon_512x512.png
-            - iconutil -c icns glaxnimate.iconset -o glaxnimate.icns
-            - cpack -G Bundle
+            - ./deploy/mac_build.sh build
             - # PyPI
-            - cmake .. -DVERSION_SUFFIX=""
-            - make glaxnimate_python_depends_install
-            - make glaxnimate_python
-            - libpath="$(echo 'from distutils.util import get_platform; import sys; print("lib.%s-%d.%d" % (get_platform(), *sys.version_info[:2]))' | python3)"
-            - ln -s lib py_module/build/$libpath
-            - make glaxnimate_python_wheel
+            - if [ "$TRAVIS_BRANCH" != macbuild ] ; then cmake .. -DVERSION_SUFFIX="" ; fi
+            - ./deploy/mac_build.sh pypi
         after_success:
-            - mv Glaxnimate-*.dmg glaxnimate.dmg
-            - shasum -a 1 glaxnimate.dmg >checksum.txt
-            - # Upload SF
-            - if [ "$TRAVIS_BRANCH" = macbuild ] ; then path=master channel="mac-beta" ; else path="$TRAVIS_BRANCH" channel="mac-stable" ; fi
-            - version="$(../deploy/get_version.sh CMakeCache.txt)"
-            - mkdir -p "artifacts/$TRAVIS_BRANCH/MacOs"
-            - mv glaxnimate-x86_64.zip "artifacts/$path/MacOs"
-            - mv checksum.txt "artifacts/$path/MacOs"
-            - cd artifacts
             - echo "-----BEGIN OPENSSH PRIVATE KEY-----" >privkey
             - chmod 600 privkey
             - set +x; echo "$SSH_PRIV_KEY" >>privkey
             - echo "-----END OPENSSH PRIVATE KEY-----" >>privkey
-            - rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no -i privkey"
-            - # Upload itch.io
-            - brew list wget || brew install wget
-            - wget https://broth.itch.ovh/butler/darwin-amd64/LATEST/archive/default
-            - unzip default
-            - ./butler push "$path/MacOs/glaxnimate.dmg" "MattBas/glaxnimate:$channel" --userversion "$version"
+            - ./deploy/mac_build.sh deploy "$TRAVIS_BRANCH" "-i $PWD/privkey"
             - # Upload PyPI
             - cd ..
-            - if [ "$TRAVIS_BRANCH" != macbuild ] ; then make glaxnimate_python_upload ; fi
-      #- name: "Mac PyPI"
-        #if: tag IS present
-        #stage: build
-        #os: osx
-        #osx_image: xcode11.3
-        #before_install:
-            #- brew list cmake || brew install cmake
-            #- brew list qt || brew install qt
-            #- brew upgrade python@3.8 || true
-            #- brew list potrace || brew install potrace
-            #- brew list ffmpeg || brew install ffmpeg
-        #script:
-            #- mkdir build
-            #- cd build
-            #- cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt)/lib/cmake/Qt5Designer" -DVERSION_SUFFIX="mac-${TRAVIS_COMMIT::8}"
-            #- make glaxnimate_python_depends_install
-            #- make glaxnimate_python
-            #- libpath="$(echo 'from distutils.util import get_platform; import sys; print("lib.%s-%d.%d" % (get_platform(), *sys.version_info[:2]))' | python3)"
-            #- ln -s lib py_module/build/$libpath
-            #- make glaxnimate_python
-            #- make glaxnimate_python_wheel
-            #- make glaxnimate_python_upload
+            - make glaxnimate_python_upload
+      - name: "Mac branch"
+        if: branch = macbuild OR branch = release
+        stage: build
+        os: osx
+        osx_image: xcode11.3
+        before_install:
+            - ./deploy/mac_build.sh deps
+        script:
+            - ./deploy/mac_build.sh build
+            - # PyPI
+            - ./deploy/mac_build.sh pypi
+        after_success:
+            - echo "-----BEGIN OPENSSH PRIVATE KEY-----" >privkey
+            - chmod 600 privkey
+            - set +x; echo "$SSH_PRIV_KEY" >>privkey
+            - echo "-----END OPENSSH PRIVATE KEY-----" >>privkey
+            - ./deploy/mac_build.sh deploy "$TRAVIS_BRANCH" "-i $PWD/privkey"
