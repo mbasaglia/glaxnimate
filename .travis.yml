@@ -11,6 +11,7 @@ jobs:
         osx_image: xcode11.3
         before_install:
             - brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
+            - export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
             - ./deploy/mac_build.sh deps
         script:
             - ./deploy/mac_build.sh build
@@ -33,6 +34,7 @@ jobs:
         osx_image: xcode11.3
         before_install:
             - brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
+            - export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
             - ./deploy/mac_build.sh deps
         script:
             - ./deploy/mac_build.sh build
