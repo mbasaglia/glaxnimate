@@ -29,7 +29,7 @@ case "$ACTION" in
         cd "$ROOT/build"
         cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt)/lib/cmake/Qt5Designer" -DVERSION_SUFFIX="$SUFFIX"
         make -j4
-        make translations
+        make translations || make help | sort # Why does this not work on travis?
         mkdir -p glaxnimate.iconset
         cp ../data/images/glaxnimate.png glaxnimate.iconset/icon_512x512.png
         iconutil -c icns glaxnimate.iconset -o glaxnimate.icns
