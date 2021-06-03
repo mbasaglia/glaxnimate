@@ -32,6 +32,7 @@ jobs:
         os: osx
         osx_image: xcode11.3
         before_install:
+            - brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
             - ./deploy/mac_build.sh deps
         script:
             - ./deploy/mac_build.sh build
