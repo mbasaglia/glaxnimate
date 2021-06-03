@@ -12,7 +12,7 @@ fi
 ROOT="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
 ACTION="${1:-build}"
 
-set -x
+set -ex
 
 case "$ACTION" in
     deps)
@@ -70,7 +70,7 @@ case "$ACTION" in
 
         cd "$ROOT/build"
         mkdir -p "artifacts/$path/MacOs"
-        cp glaxnimate-x86_64.zip "artifacts/$path/MacOs"
+        cp glaxnimate.dmg "artifacts/$path/MacOs"
         cp checksum.txt "artifacts/$path/MacOs"
         cd artifacts
 
