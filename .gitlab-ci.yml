@@ -91,18 +91,18 @@ linux:aur:
         - pacman -Sy
         - pacman -S git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools
     script:
-        - # Build
+        # Build
         - mkdir build
         - cd build
         - cmake .. -DCMAKE_INSTALL_PREFIX=/usr
         - make -j4
         - make -j4 translations
         - make install DESTDIR=install
-        - # Settings
+        # Settings
         - PROJECT_VERSION="$(../deploy/get_version.sh CMakeCache.txt)"
         - git config --global user.name "Glaxnimate CI"
         - git config --global user.email "glaxnimate-ci@mattbas.org"
-        - # Update glaxnimate-git
+        # Update glaxnimate-git
         - PACK_NAME=glaxnimate-git
         - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
@@ -112,7 +112,7 @@ linux:aur:
         - git commit -am "Update to version $PROJECT_VERSION"
         - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push
         - cd ..
-        - # Update glaxnimate-bin
+        # Update glaxnimate-bin
         - PACK_NAME=glaxnimate-bin
         - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
