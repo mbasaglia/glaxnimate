@@ -82,36 +82,47 @@ linux:deb:
     when: always
 
 linux:aur:
+    image: archlinux:latest
     stage: deploy
-    needs: ["linux:deb"]
-    dependencies:
-        - linux:deb
     only:
         - tags
+        - release
     before_script:
-        - apt-get update -qq
-        - apt-get install -y git
+        - pacman -Sy
+        - pacman -S git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools
     script:
+        - # Build
+        - mkdir build
         - cd build
-        - test -n "$AUR_SSH_KEY"
-        - test -f "$AUR_SSH_KEY"
-        - chmod 700 $AUR_SSH_KEY
-        - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/glaxnimate-bin.git
-        - CHECKSUM="$(grep -Eo "^[^ ]+" checksum.txt)"
-        - echo "$CHECKSUM"
-        - test -n "$CHECKSUM"
-        - PROJECT_VERSION="$(grep -Po "PROJECT_VERSION:STATIC=\K.*" ./CMakeCache.txt)"
-        - echo "$PROJECT_VERSION"
-        - test -n "$PROJECT_VERSION"
-        - ../deploy/gitlab_upload.py glaxnimate.deb "$CI_COMMIT_TAG/Deb/glaxnimate.deb"
-        - ../deploy/gitlab_upload.py checksum.txt "$CI_COMMIT_TAG/Deb/checksum.txt"
-        - cd glaxnimate-bin
-        - sed -i -e "s/pkgver=.*/pkgver=$PROJECT_VERSION/" -e "s/sha1sums=.*/sha1sums=('$CHECKSUM')/" PKGBUILD
-        - sed -i -e "s/pkgver = .*/pkgver = $PROJECT_VERSION/" -e "s/sha1sums = .*/sha1sums = $CHECKSUM/" .SRCINFO
-        - git config user.name "Glaxnimate CI"
-        - git config user.email "glaxnimate-ci@mattbas.org"
-        - git add PKGBUILD .SRCINFO
-        - git commit -m "Update to version $PACKAGE_VERSION"
+        - cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+        - make -j4
+        - make -j4 translations
+        - make install DESTDIR=install
+        - # Settings
+        - PROJECT_VERSION="$(../deploy/get_version.sh CMakeCache.txt)"
+        - git config --global user.name "Glaxnimate CI"
+        - git config --global user.email "glaxnimate-ci@mattbas.org"
+        - # Update glaxnimate-git
+        - PACK_NAME=glaxnimate-git
+        - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/$PACK_NAME.git
+        - cd $PACK_NAME
+        - sed -i -e "s/pkgver=.*/pkgver=$PROJECT_VERSION/" PKGBUILD
+        - namcap PKGBUILD
+        - makepkg --printsrcinfo > .SRCINFO
+        - git commit -am "Update to version $PROJECT_VERSION"
+        - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push
+        - cd ..
+        - # Update glaxnimate-bin
+        - PACK_NAME=glaxnimate-bin
+        - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/$PACK_NAME.git
+        - cd $PACK_NAME
+        - sed -i -e "s/pkgver=.*/pkgver=$PROJECT_VERSION/" PKGBUILD
+        - rm -rf install
+        - mv ../install .
+        - git add install
+        - namcap PKGBUILD
+        - makepkg --printsrcinfo > .SRCINFO
+        - git commit -am "Update to version $PROJECT_VERSION"
         - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push
 
 linux:appimage:
