@@ -12,6 +12,7 @@
     * The timeline now support drag/drop operations
 * I/O:
     * Lottie output is slightly more compact
+    * Added minimal support for CSS on SVG import
 * Scripting:
     * New plugin to help with frame-by-frame animation
     * Scripts have access to the current composition
@@ -34,6 +35,7 @@
     * Fixed visual glitches when switching compositions
     * Fixed row stripe misalignment on the timeline
     * Fixed text to shapes
+    * Fixed loading SVG opacity specified as a percentage
 
 ## 0.4.2
 

@@ -22,6 +22,7 @@
 #include "animate_parser.hpp"
 #include "math/math.hpp"
 #include "font_weight.hpp"
+#include "css_parser.hpp"
 
 using namespace io::svg::detail;
 
@@ -46,6 +47,7 @@ public:
         size.setWidth(len_attr(svg, "width", size.width()));
         size.setHeight(len_attr(svg, "height", size.height()));
 
+        parse_css();
         parse_defs();
 
         model::Layer* parent_layer = parse_objects(svg);
@@ -74,6 +76,25 @@ public:
             for ( auto lay : layers )
                 lay->animation->last_frame.set(max_time);
         }
+    }
+
+    void parse_css()
+    {
+        CssParser parser(css_blocks);
+
+        for ( const auto& style : ItemCountRange(dom.elementsByTagName("style")) )
+        {
+            QString data;
+            for ( const auto & child : ItemCountRange(style.childNodes()) )
+            {
+                if ( child.isText() || child.isCDATASection() )
+                    data += child.toCharacterData().data();
+            }
+
+            parser.parse(data);
+        }
+
+        std::stable_sort(css_blocks.begin(), css_blocks.end());
     }
 
     void parse_defs()
@@ -414,6 +435,20 @@ public:
     {
         Style style = parent_style;
 
+        auto class_names_list = element.attribute("class").split(" ",
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        Qt::SkipEmptyParts
+#else
+        QString::SkipEmptyParts
+#endif
+        );
+        std::unordered_set<QString> class_names(class_names_list.begin(), class_names_list.end());
+        for ( const auto& rule : css_blocks )
+        {
+            if ( rule.selector.match(element, class_names) )
+                rule.merge_into(style);
+        }
+
         if ( element.hasAttribute("style") )
         {
             for ( const auto& item : element.attribute("style").split(';') )
@@ -691,12 +726,23 @@ public:
         return trans;
     }
 
+    static qreal opacity_value(const QString& v)
+    {
+        if ( v.isEmpty() )
+            return 1;
+
+        if ( v.back() == '%' )
+            return v.mid(0, v.size()-1).toDouble() / 100;
+
+        return v.toDouble();
+    }
+
     void apply_common_style(model::VisualNode* node, const QDomElement& element, const Style& style)
     {
         if ( style.get("display") == "none" || style.get("visibility") == "hidden" )
             node->visible.set(false);
         node->locked.set(attr(element, "sodipodi", "insensitive") == "true");
-        node->set("opacity", style.get("opacity", "1").toDouble());
+        node->set("opacity", opacity_value(style.get("opacity", "1")));
         node->get("transform").value<model::Transform*>();
     }
 
@@ -1357,6 +1403,7 @@ public:
     std::unordered_map<QString, model::BrushStyle*> brush_styles;
     std::unordered_map<QString, model::GradientColors*> gradients;
     std::vector<model::Layer*> layers;
+    std::vector<CssStyleBlock> css_blocks;
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const QRegularExpression unit_re;
@@ -1375,7 +1422,7 @@ const std::map<QString, void (io::svg::SvgParser::Private::*)(const io::svg::Svg
     {"path",    &io::svg::SvgParser::Private::parseshape_path},
     {"use",     &io::svg::SvgParser::Private::parseshape_use},
     {"image",   &io::svg::SvgParser::Private::parseshape_image},
-    {"text",   &io::svg::SvgParser::Private::parseshape_text},
+    {"text",    &io::svg::SvgParser::Private::parseshape_text},
 };
 const QRegularExpression io::svg::SvgParser::Private::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
 const QRegularExpression io::svg::SvgParser::Private::transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"};
