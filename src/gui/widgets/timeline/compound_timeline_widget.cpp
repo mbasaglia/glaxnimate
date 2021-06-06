@@ -290,6 +290,7 @@ CompoundTimelineWidget::CompoundTimelineWidget(QWidget* parent)
 {
     d->setupUi(this);
     connect(d->ui.tab_bar, &CompositionTabBar::switch_composition, this, &CompoundTimelineWidget::switch_composition);
+    connect(&d->property_model, &QAbstractItemModel::rowsRemoved, this, &CompoundTimelineWidget::rows_removed);
 }
 
 
@@ -310,6 +311,8 @@ void CompoundTimelineWidget::set_composition(model::Composition* comp)
     QSignalBlocker g(d->ui.tab_bar);
     d->ui.tab_bar->set_current_composition(comp);
     d->comp_model.set_composition(comp);
+
+    on_scroll(d->ui.scrollbar->value());
 }
 
 void CompoundTimelineWidget::set_active(model::DocumentNode* node)
@@ -564,4 +567,20 @@ QAbstractItemModel * CompoundTimelineWidget::filtered_model() const
 TimelineWidget * CompoundTimelineWidget::timeline() const
 {
     return d->ui.timeline;
+}
+
+void CompoundTimelineWidget::rows_removed(const QModelIndex& index, int first, int last)
+{
+    if ( auto document = d->property_model.document() )
+    {
+        for ( int i = first; i <= last; i++ )
+        {
+            auto id = d->property_model.index(i, 0, index).internalId();
+            if ( id == d->comp_model.get_root_id() )
+            {
+                set_composition(document->main());
+                return;
+            }
+        }
+    }
 }

@@ -17,6 +17,11 @@ public:
         set_root(friendly_model()->node_index(comp));
     }
 
+    quintptr get_root_id() const
+    {
+        return root_id;
+    }
+
     void set_root(QModelIndex root)
     {
         beginResetModel();

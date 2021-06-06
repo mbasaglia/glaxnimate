@@ -212,7 +212,7 @@ public:
     {
         auto it = line_items.find(index.internalId());
         if ( it == line_items.end() )
-            return root;
+            return nullptr;
         return it->second;
     }
 
@@ -473,8 +473,8 @@ void TimelineWidget::reset_view()
 
 void TimelineWidget::resizeEvent(QResizeEvent* event)
 {
-    QGraphicsView::resizeEvent(event);
     setSceneRect(d->scene_rect());
+    QGraphicsView::resizeEvent(event);
     d->adjust_min_scale(viewport()->width());
     if ( transform().m11() < d->min_scale )
         reset_view();
@@ -682,6 +682,9 @@ void TimelineWidget::model_reset()
 void TimelineWidget::model_rows_added(const QModelIndex& parent, int first, int last)
 {
     auto parent_line = d->index_to_line(parent);
+    if ( !parent_line )
+        return;
+
     for ( int i = first; i <= last; i++ )
         d->insert_index(d->model->index(first, 0, parent), parent_line, i);
 
@@ -695,7 +698,7 @@ void TimelineWidget::model_rows_removed(const QModelIndex& parent, int first, in
 {
     auto line = d->index_to_line(parent);
     // Shouldn't happen but fail safe
-    if ( line == d->root )
+    if ( !line || line == d->root )
         return;
 
     line->remove_rows(first, last);
@@ -730,7 +733,7 @@ void TimelineWidget::model_rows_moved(const QModelIndex& parent, int start, int 
     emit_clicked();
 }
 
-static void debug_line(timeline::LineItem* line_item, QString indent, int index)
+static void debug_line(timeline::LineItem* line_item, QString indent, int index, bool recursive)
 {
 
     QString item_name = line_item->metaObject()->className();
@@ -760,16 +763,20 @@ static void debug_line(timeline::LineItem* line_item, QString indent, int index)
 
     qDebug().noquote() << indent
         << index << effective_index << line_item->visible_height() /  line_item->row_height()
-        << item_name << debug_string << line_item->is_expanded() << line_item->isVisible();
+        << line_item->id() << item_name << debug_string << line_item->is_expanded() << line_item->isVisible();
 
-    for ( uint i = 0; i < line_item->rows().size(); i++ )
-        debug_line(line_item->rows()[i], indent + "    ", i);
+    if ( recursive )
+    {
+        for ( uint i = 0; i < line_item->rows().size(); i++ )
+            debug_line(line_item->rows()[i], indent + "    ", i, true);
+    }
 }
 
 void TimelineWidget::debug_lines() const
 {
-    qDebug() << "index" << "effective_index" << "visible_rows" << "item_class" << "object->property" << "expanded" << "visible";
-    debug_line(d->root, "", 0);
+
+    qDebug() << "index" << "effective_index" << "visible_rows" << "id" << "item_class" << "object->property" << "expanded" << "visible";
+    debug_line(d->root, "", 0, true);
 }
 
 void TimelineWidget::toggle_debug(bool debug)

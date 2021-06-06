@@ -272,7 +272,6 @@ void item_models::PropertyModelBase::Private::connect_subobject(model::Object* o
     on_connect(object, this_node, insert_row, referenced);
 }
 
-
 void item_models::PropertyModelBase::Private::disconnect_recursive(Subtree* node)
 {
     if ( node->object )
@@ -347,8 +346,6 @@ void item_models::PropertyModelBase::Private::on_delete_object(model::Object* ob
     nodes.erase(it2);
 
     model->endRemoveRows();
-
-//         remove_extra_objects(obj, model);
 }
 
 item_models::PropertyModelBase::Private::Subtree* item_models::PropertyModelBase::Private::visual_node_parent(Subtree* tree)

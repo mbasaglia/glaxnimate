@@ -48,6 +48,7 @@ private slots:
     void collapse_index(const QModelIndex& index);
     void expand_index(const QModelIndex& index);
     void click_index ( const QModelIndex& index );
+    void rows_removed( const QModelIndex& index, int first, int last );
     
 private:
     class Private;
