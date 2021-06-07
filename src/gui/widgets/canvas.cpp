@@ -509,7 +509,7 @@ void Canvas::resizeEvent(QResizeEvent* event)
     if ( d->resize_fit )
         view_fit();
 
-    d->clip.clear();
+    d->clip = {};
     d->clip.setFillRule(Qt::OddEvenFill);
     d->clip.addRect(QRectF(viewport()->rect()));
     QPainterPath pp;
