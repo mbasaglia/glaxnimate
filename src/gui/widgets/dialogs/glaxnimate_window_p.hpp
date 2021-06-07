@@ -97,6 +97,10 @@ public:
     std::vector<CompState> comp_selections;
     bool update_timeline_selection = true;
 
+    QLabel* label_mouse_pos = nullptr;
+    QLabel* label_recording = nullptr;
+    QWidget* widget_recording = nullptr;
+
     // "set and forget" kinda variables
     int autosave_timer = 0;
     int autosave_timer_mins = 0;
@@ -160,12 +164,13 @@ public:
     QString get_open_image_file(const QString& title, const QString& dir, QString* out_dir = nullptr);
     void set_brush_reference(model::BrushStyle* sty, bool secondary);
     void trace_dialog(model::DocumentNode* object);
+    void mouse_moved(const QPointF& pos);
 
     void init_actions();
     void init_plugins();
     tools::Tool* init_tools_ui();
     void init_item_views();
-    void init_transform_widget();
+    void init_status_bar();
     void init_docks();
     void init_menus();
     void init_debug();

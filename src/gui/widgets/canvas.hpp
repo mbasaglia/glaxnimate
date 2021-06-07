@@ -34,8 +34,6 @@ public:
     void set_active_tool(tools::Tool* tool);
     void set_tool_target(GlaxnimateWindow* window);
 
-
-
 public slots:
     /**
      *  \brief Translate and resize sceneRect
@@ -114,6 +112,8 @@ signals:
 
     void dropped(const QMimeData* data);
 
+    void mouse_moved(const QPointF& p);
+
 protected:
     void mousePressEvent(QMouseEvent * event) override;
     void mouseMoveEvent(QMouseEvent * event) override;
@@ -128,6 +128,8 @@ protected:
     void dragEnterEvent(QDragEnterEvent * event) override;
     void dragMoveEvent(QDragMoveEvent * event) override;
     void dropEvent(QDropEvent * event) override;
+
+    bool event(QEvent* event) override;
 
 private:
     void do_rotate(qreal radians, const QPointF& scene_anchor);

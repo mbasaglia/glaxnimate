@@ -104,12 +104,24 @@ graphics::DocumentScene::~DocumentScene()
     clear_selection();
 }
 
+model::Document* graphics::DocumentScene::document() const
+{
+    return d->document;
+}
+
 void graphics::DocumentScene::set_document ( model::Document* document )
 {
+    auto old = d->document;
+
     d->document = document;
     set_composition(document ? document->main() : nullptr);
     if ( document )
+    {
         connect(document, &model::Document::graphics_invalidated, this, [this]{update();});
+        connect(document, &model::Document::record_to_keyframe_changed, this, [this]{update();});
+    }
+
+    emit document_changed(document, old);
 }
 
 void graphics::DocumentScene::set_composition(model::Composition* comp)

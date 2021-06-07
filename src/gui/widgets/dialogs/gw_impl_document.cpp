@@ -104,6 +104,9 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &FrameControlsWidget::set_record_enabled);
     QObject::connect(ui.play_controls, &FrameControlsWidget::record_toggled, current_document.get(), &model::Document::set_record_to_keyframe);
 
+    widget_recording->setVisible(false);
+    QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, widget_recording, &QWidget::setVisible);
+
     // Export
     export_options = {};
     ui.action_export->setText(tr("Export..."));

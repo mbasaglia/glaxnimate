@@ -51,6 +51,8 @@ public:
     QPointF transform_center_scene;
     qreal scale_start_zoom = 1;
     bool resize_fit = true;
+    QPainterPath clip;
+    QPainterPath in_clip;
 
 
     void expand_scene_rect(float margin)
@@ -90,7 +92,7 @@ public:
     {
         return {
             view,
-            static_cast<graphics::DocumentScene*>(view->scene()),
+            scene(),
             tool_target
         };
     }
@@ -125,6 +127,16 @@ public:
             ev
         };
     }
+
+    graphics::DocumentScene* scene()
+    {
+        return static_cast<graphics::DocumentScene*>(view->scene());
+    }
+
+    model::Document* document()
+    {
+        return scene()->document();
+    }
 };
 
 
@@ -137,6 +149,7 @@ Canvas::Canvas(QWidget* parent)
     setResizeAnchor(NoAnchor);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setFrameStyle(QFrame::NoFrame);
 }
 
 Canvas::~Canvas() = default;
@@ -191,6 +204,7 @@ void Canvas::mouseMoveEvent(QMouseEvent* event)
 
     QPoint mpos = event->pos();
     QPointF scene_pos = mapToScene(mpos);
+    emit mouse_moved(scene_pos);
 
     if ( event->buttons() & Qt::MiddleButton  )
     {
@@ -375,7 +389,34 @@ void Canvas::paintEvent(QPaintEvent *event)
     {
         d->tool->paint(d->paint_event(&painter));
     }
+
+    const QPalette& palette = this->palette();
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(palette.window());
+    painter.drawPath(d->clip);
+
+    painter.setBrush(Qt::NoBrush);
+
+    QPen pen(palette.mid(), 1);
+
+    if ( d->document() && d->document()->record_to_keyframe() )
+    {
+        if ( hasFocus() )
+            pen.setColor(QColor(255, 0, 0));
+        else
+            pen.setColor(math::lerp(pen.color(), QColor(255, 0, 0), 0.25));
+    }
+    else
+    {
+        if ( hasFocus() )
+            pen.setBrush(palette.highlight());
+    }
+
+    painter.setPen(pen);
+    painter.drawPath(d->in_clip);
+
     painter.end();
+
 }
 
 void Canvas::do_rotate(qreal radians, const QPointF& scene_anchor)
@@ -467,6 +508,14 @@ void Canvas::resizeEvent(QResizeEvent* event)
     QGraphicsView::resizeEvent(event);
     if ( d->resize_fit )
         view_fit();
+
+    d->clip.clear();
+    d->clip.setFillRule(Qt::OddEvenFill);
+    d->clip.addRect(QRectF(viewport()->rect()));
+    QPainterPath pp;
+    pp.addRoundedRect(QRectF(viewport()->rect()), 4, 4);
+    d->in_clip = pp.toReversed();
+    d->clip.addPath(d->in_clip);
 }
 
 void Canvas::changeEvent(QEvent* event)
@@ -497,3 +546,16 @@ void Canvas::dropEvent(QDropEvent* event)
     event->acceptProposedAction();
     emit dropped(event->mimeData());
 }
+
+bool Canvas::event(QEvent* event)
+{
+    if ( event->type() == QEvent::FocusIn || event->type() == QEvent::FocusOut )
+        viewport()->update();
+//     if ( event->type() != QEvent::Paint )
+        return QGraphicsView::event(event);
+
+//     paintEvent(static_cast<QPaintEvent*>(event));
+
+//     return true;
+}
+

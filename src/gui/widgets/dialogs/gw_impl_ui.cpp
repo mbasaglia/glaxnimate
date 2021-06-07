@@ -2,6 +2,7 @@
 
 #include <QComboBox>
 #include <QShortcut>
+#include <QLabel>
 
 #include "app/settings/keyboard_shortcuts.hpp"
 #include "app/debug/model.hpp"
@@ -67,7 +68,7 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     ui.btn_layer_add->setMenu(ui.menu_new_layer);
 
     // Transform Widget
-    init_transform_widget();
+    init_status_bar();
 
     // Graphics scene
     ui.canvas->setScene(&scene);
@@ -340,8 +341,42 @@ void GlaxnimateWindow::Private::init_item_views()
     });
 }
 
-void GlaxnimateWindow::Private::init_transform_widget()
+void GlaxnimateWindow::Private::init_status_bar()
 {
+    widget_recording = new QWidget();
+    ui.status_bar->addPermanentWidget(widget_recording);
+    QHBoxLayout* lay = new QHBoxLayout;
+    widget_recording->setLayout(lay);
+    lay->setMargin(0);
+    widget_recording->setVisible(false);
+
+    QLabel* label_recording_icon = new QLabel();
+    label_recording_icon->setPixmap(QIcon::fromTheme("media-record").pixmap(ui.status_bar->height()));
+    lay->addWidget(label_recording_icon);
+
+    label_recording = new QLabel();
+    label_recording->setText(tr("Recording Keyframes"));
+    lay->addWidget(label_recording);
+
+    QFrame *line = new QFrame();
+    line->setFrameShape(QFrame::VLine);
+    line->setFrameShadow(QFrame::Sunken);
+    lay->addWidget(line);
+
+    label_mouse_pos = new QLabel();
+    ui.status_bar->addPermanentWidget(label_mouse_pos);
+    QFont font;
+    font.setFamily("monospace");
+    font.setStyleHint(QFont::Monospace);
+    label_mouse_pos->setFont(font);
+    mouse_moved(QPointF(0, 0));
+    connect(ui.canvas, &Canvas::mouse_moved, parent, [this](const QPointF& p){mouse_moved(p);});
+
+    line = new QFrame();
+    line->setFrameShape(QFrame::VLine);
+    line->setFrameShadow(QFrame::Sunken);
+    ui.status_bar->addPermanentWidget(line);
+
     view_trans_widget = new ViewTransformWidget(ui.status_bar);
     ui.status_bar->addPermanentWidget(view_trans_widget);
     connect(view_trans_widget, &ViewTransformWidget::zoom_changed, ui.canvas, &Canvas::set_zoom);
@@ -618,9 +653,10 @@ void GlaxnimateWindow::Private::init_restore_state()
 void GlaxnimateWindow::Private::retranslateUi(QMainWindow* parent)
 {
     ui.retranslateUi(parent);
+    label_recording->setText(tr("Recording Keyframes"));
+
     redo_text = ui.action_redo->text();
     undo_text = ui.action_undo->text();
-
     ui.action_undo->setText(redo_text.arg(current_document->undo_stack().undoText()));
     ui.action_redo->setText(redo_text.arg(current_document->undo_stack().redoText()));
 
@@ -853,4 +889,9 @@ void GlaxnimateWindow::Private::init_plugins()
     );
 
     plugin::PluginRegistry::instance().set_executor(ui.console);
+}
+
+void GlaxnimateWindow::Private::mouse_moved(const QPointF& pos)
+{
+    label_mouse_pos->setText(tr("X: %1 Y: %2").arg(pos.x(), 8, 'f', 3).arg(pos.y(), 8, 'f', 3));
 }

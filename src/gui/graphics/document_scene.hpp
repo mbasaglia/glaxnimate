@@ -29,6 +29,7 @@ public:
     void set_composition(model::Composition* comp);
     void clear_document() { set_document(nullptr); }
     void set_active_tool(tools::Tool* tool);
+    model::Document* document() const;
 
     void add_selection(model::VisualNode* node);
     void remove_selection(model::VisualNode* node);
@@ -61,6 +62,7 @@ public:
 
 signals:
     void node_user_selected(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
+    void document_changed(model::Document* new_doc, model::Document* old_doc);
 
 protected:
     void drawBackground(QPainter * painter, const QRectF & rect) override;
