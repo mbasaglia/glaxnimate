@@ -545,8 +545,15 @@ void GlaxnimateWindow::Private::init_debug()
     });
     toggle_timeline_debug->setChecked(app::settings::define("internal", "debug_timeline", false));
 
-    // Misc
-    menu_debug->addAction("Screenshot menus", [this]{
+    // Timeline
+    QMenu* menu_canvas = new QMenu("Canvas", menu_debug);
+    menu_debug->addAction(menu_canvas->menuAction());
+    menu_canvas->addAction("Debug Scene", [this]{ scene.debug();});
+
+    // Screenshot
+    QMenu* menu_screenshot = new QMenu("Screenshot", menu_debug);
+    menu_debug->addAction(menu_screenshot->menuAction());
+    menu_debug->addAction("Menus", [this]{
         QDir("/tmp/").mkpath("menus");
         for ( auto widget : this->parent->findChildren<QMenu*>() )
         {
@@ -559,6 +566,7 @@ void GlaxnimateWindow::Private::init_debug()
         }
     });
 
+    // Misc
     menu_debug->addAction("Inspect Clipboard", [this]{
         auto dialog = new ClipboardInspector();
         dialog->show();

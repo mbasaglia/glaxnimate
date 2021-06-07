@@ -57,6 +57,8 @@ public:
     std::vector<DocumentNodeGraphicsItem*> nodes(const QPainterPath& path,  const QTransform& device_transform, Qt::ItemSelectionMode mode = Qt::IntersectsItemShape) const;
     std::vector<DocumentNodeGraphicsItem*> nodes(const QPolygonF& path,     const QTransform& device_transform, Qt::ItemSelectionMode mode = Qt::IntersectsItemShape) const;
 
+    void debug() const;
+
 signals:
     void node_user_selected(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
 

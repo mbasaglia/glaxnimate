@@ -36,6 +36,7 @@
     * Fixed row stripe misalignment on the timeline
     * Fixed text to shapes
     * Fixed loading SVG opacity specified as a percentage
+    * Fixed wrong selection when undoing precompose
 
 ## 0.4.2
 

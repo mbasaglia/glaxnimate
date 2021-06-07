@@ -1,5 +1,6 @@
 #include "document_scene.hpp"
 
+#include <QDebug>
 #include <set>
 
 #include "app/application.hpp"
@@ -187,8 +188,10 @@ void graphics::DocumentScene::disconnect_node ( model::DocumentNode* n )
 void graphics::DocumentScene::add_selection(model::VisualNode* node)
 {
     auto it = d->node_to_item.find(node);
-    if ( it != d->node_to_item.end() )
-        it->second->setSelected(true);
+    if ( it == d->node_to_item.end() )
+        return;
+
+    it->second->setSelected(true);
 
     if ( d->selection_find(node) != d->selection.end() )
         return;
@@ -486,4 +489,27 @@ void graphics::DocumentScene::show_custom_editor(model::VisualNode* node, std::u
 graphics::DocumentNodeGraphicsItem* graphics::DocumentScene::item_from_node(model::VisualNode* node) const
 {
     return d->item_from_node(node);
+}
+
+void graphics::DocumentScene::debug() const
+{
+    qDebug() << "== Scene ==";
+
+    qDebug() << "Selection";
+    for ( auto node : d->selection )
+        qDebug() << node << node->object_name();
+
+    qDebug() << "Node Items";
+    for ( const auto& p : d->node_to_item )
+        qDebug() << p.first << p.first->object_name() << p.second;
+
+    qDebug() << "Editors";
+    for ( const auto& p : d->node_to_editors )
+        qDebug() << p.first << p.first->object_name() << p.second.get();
+
+    qDebug() << "Items";
+    for ( auto it : items() )
+        qDebug() << it << it->parentItem();
+
+    qDebug() << "==";
 }
