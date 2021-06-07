@@ -103,6 +103,11 @@ public:
 //                         properties[asset_list] = prop_node->id;
                         on_connect_object_list(prop_node, subobj, asset_list);
                     }
+                    else if ( prop->name() == "transform" )
+                    {
+                        Subtree* prop_node = add_property(prop, tree->id, insert_row, referenced);
+                        connect_subobject(subobj, prop_node, insert_row);
+                    }
                     else
                     {
                         auto meta = subobj->metaObject();

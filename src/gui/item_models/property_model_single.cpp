@@ -24,16 +24,8 @@ public:
             )
                 continue;
 
-            // signal
-            if ( insert_row )
-                begin_insert_row(this_node, this_node->children.size());
-
             // add the property node to the internal structures
             Subtree* prop_node = add_property(prop, this_node->id, insert_row, referenced);
-
-            // signal
-            if ( insert_row )
-                end_insert_row();
 
             // connect references / sub-objects
             if ( prop->traits().is_object() )
