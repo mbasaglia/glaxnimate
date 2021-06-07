@@ -491,6 +491,16 @@ void GlaxnimateWindow::Private::init_menus()
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_playback);
 }
 
+static void screenshot_widget(const QString& path, QWidget* widget)
+{
+    widget->show();
+    QString name = path + widget->objectName().mid(5);
+    QPixmap pic(widget->size());
+    widget->render(&pic);
+    name += ".png";
+    pic.save(name);
+}
+
 void GlaxnimateWindow::Private::init_debug()
 {
     QMenu* menu_debug = new QMenu("Debug", parent);
@@ -553,17 +563,22 @@ void GlaxnimateWindow::Private::init_debug()
     // Screenshot
     QMenu* menu_screenshot = new QMenu("Screenshot", menu_debug);
     menu_debug->addAction(menu_screenshot->menuAction());
-    menu_debug->addAction("Menus", [this]{
-        QDir("/tmp/").mkpath("menus");
+    menu_screenshot->addAction("Menus", [this]{
+        QDir("/tmp/").mkpath("glaxnimate/menus");
         for ( auto widget : this->parent->findChildren<QMenu*>() )
+            screenshot_widget("/tmp/glaxnimate/menus/", widget);
+    });
+    menu_screenshot->addAction("Docks", [this]{
+        auto state = parent->saveState();
+
+        QDir("/tmp/").mkpath("glaxnimate/docks");
+        for ( auto widget : this->parent->findChildren<QDockWidget*>() )
         {
-            widget->show();
-            QString name = "/tmp/menus/" + widget->objectName().mid(5);
-            QPixmap pic(widget->size());
-            widget->render(&pic);
-            name += ".png";
-            pic.save(name);
+            widget->setFloating(true);
+            screenshot_widget("/tmp/glaxnimate/docks/", widget);
         }
+
+        parent->restoreState(state);
     });
 
     // Misc
