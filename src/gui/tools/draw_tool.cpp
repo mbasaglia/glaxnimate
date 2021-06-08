@@ -49,7 +49,7 @@ public:
     QAction* why_cant_we_have_nice_things = nullptr;
 };
 
-tools::Autoreg<tools::DrawTool> tools::DrawTool::autoreg{tools::Registry::Draw, max_priority};
+tools::Autoreg<tools::DrawTool> tools::DrawTool::autoreg{max_priority};
 
 void tools::DrawTool::Private::create(const tools::Event& event, DrawTool* tool)
 {

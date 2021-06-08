@@ -23,7 +23,7 @@
 #include "graphics/gradient_editor.hpp"
 #include "handle_menu.hpp"
 
-tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{tools::Registry::Core, max_priority + 1};
+tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{max_priority + 1};
 
 class tools::EditTool::Private
 {

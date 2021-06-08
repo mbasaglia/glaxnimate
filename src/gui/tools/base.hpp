@@ -125,6 +125,8 @@ public:
     // Brief called once the GUI has been fully initialized
     virtual void initialize(const Event& event) { Q_UNUSED(event); }
 
+    virtual int group() const noexcept = 0;
+
 protected:
     struct UnderMouse
     {
@@ -194,7 +196,6 @@ public:
         return it->second;
     }
 
-
 private:
     Registry() = default;
     Registry(const Registry&) = delete;
@@ -210,9 +211,9 @@ template<class T>
 class Autoreg
 {
 public:
-    Autoreg(int group, Priority priority)
+    Autoreg(Priority priority)
     {
-        Registry::instance().register_tool(group, priority, std::make_unique<T>());
+        Registry::instance().register_tool(T::static_group(), priority, std::make_unique<T>());
     }
 };
 

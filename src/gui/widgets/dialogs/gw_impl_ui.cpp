@@ -825,6 +825,8 @@ void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
     scene.set_active_tool(tool);
     ui.canvas->set_active_tool(tool);
     ui.tool_settings_widget->setCurrentWidget(tool->get_settings_widget());
+    if ( active_tool->group() == tools::Registry::Draw || active_tool->group() == tools::Registry::Shape )
+        widget_current_style->clear_gradients();
 }
 
 void GlaxnimateWindow::Private::switch_tool_action(QAction* action)

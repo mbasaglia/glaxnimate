@@ -12,6 +12,8 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("draw-polygon-star"); }
     QString name() const override { return QObject::tr("Star"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("*"), QKeySequence::PortableText); }
+    static int static_group() noexcept { return Registry::Shape; }
+    int group() const noexcept override { return static_group(); }
 
 protected:
     void on_drag_start() override
@@ -121,5 +123,5 @@ private:
 
 } // namespace tools
 
-tools::Autoreg<tools::StarTool> tools::StarTool::autoreg{tools::Registry::Shape, max_priority + 2};
+tools::Autoreg<tools::StarTool> tools::StarTool::autoreg{max_priority + 2};
 

@@ -18,6 +18,8 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("fill-color"); }
     QString name() const override { return QObject::tr("Fill"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F8"), QKeySequence::PortableText); }
+    static int static_group() noexcept { return Registry::Style; }
+    int group() const noexcept override { return static_group(); }
 
     void mouse_move(const MouseEvent& event) override
     {
@@ -168,6 +170,6 @@ private:
 } // namespace tools
 
 
-tools::Autoreg<tools::FillTool> tools::FillTool::autoreg{tools::Registry::Style, max_priority+1};
+tools::Autoreg<tools::FillTool> tools::FillTool::autoreg{max_priority+1};
 
 

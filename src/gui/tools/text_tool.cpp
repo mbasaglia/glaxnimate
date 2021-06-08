@@ -18,6 +18,8 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("draw-text"); }
     QString name() const override { return QObject::tr("Draw Text"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F8"), QKeySequence::PortableText); }
+    static int static_group() noexcept { return Registry::Shape; }
+    int group() const noexcept override { return static_group(); }
 
     void mouse_press(const MouseEvent& event) override
     {
@@ -315,4 +317,4 @@ private:
 
 } // namespace tools
 
-tools::Autoreg<tools::TextTool> tools::TextTool::autoreg{tools::Registry::Shape, max_priority + 3};
+tools::Autoreg<tools::TextTool> tools::TextTool::autoreg{max_priority + 3};

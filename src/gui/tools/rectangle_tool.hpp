@@ -13,6 +13,8 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("draw-rectangle"); }
     QString name() const override { return QObject::tr("Rectangle"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F4"), QKeySequence::PortableText); }
+    static int static_group() noexcept { return Registry::Shape; }
+    int group() const noexcept override { return static_group(); }
 
 protected:
     void on_drag_start() override

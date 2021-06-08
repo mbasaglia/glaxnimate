@@ -10,6 +10,8 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("draw-ellipse"); }
     QString name() const override { return QObject::tr("Ellipse"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F5"), QKeySequence::PortableText); }
+    static int static_group() noexcept { return Registry::Shape; }
+    int group() const noexcept override { return static_group(); }
 
     void on_drag_complete(const MouseEvent& event) override
     {
@@ -37,4 +39,4 @@ private:
 
 } // namespace tools
 
-tools::Autoreg<tools::EllipseTool> tools::EllipseTool::autoreg{tools::Registry::Shape, max_priority + 1};
+tools::Autoreg<tools::EllipseTool> tools::EllipseTool::autoreg{max_priority + 1};

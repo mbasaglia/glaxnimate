@@ -18,6 +18,8 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("edit-select"); }
     QString name() const override { return QObject::tr("Select"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F1"), QKeySequence::PortableText); }
+    static int static_group() noexcept { return Registry::Core; }
+    int group() const noexcept override { return static_group(); }
 
 private:
     enum DragMode
@@ -489,4 +491,4 @@ private:
 } // namespace tools
 
 
-tools::Autoreg<tools::SelectTool> tools::SelectTool::autoreg{tools::Registry::Core, max_priority};
+tools::Autoreg<tools::SelectTool> tools::SelectTool::autoreg{max_priority};

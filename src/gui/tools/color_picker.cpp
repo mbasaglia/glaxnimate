@@ -12,6 +12,8 @@ public:
     QIcon icon() const override { return QIcon::fromTheme("color-picker"); }
     QString name() const override { return QObject::tr("Color Picker"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F7"), QKeySequence::PortableText); }
+    static int static_group() noexcept { return Registry::Style;  }
+    int group() const noexcept override { return static_group(); }
 
     void mouse_move(const MouseEvent& event) override
     {
@@ -65,5 +67,5 @@ private:
 } // namespace tools
 
 
-tools::Autoreg<tools::ColorPickerTool> tools::ColorPickerTool::autoreg{tools::Registry::Style, max_priority};
+tools::Autoreg<tools::ColorPickerTool> tools::ColorPickerTool::autoreg{max_priority};
 
