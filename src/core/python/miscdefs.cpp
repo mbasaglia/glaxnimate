@@ -96,6 +96,8 @@ static void define_trace(py::module& m)
                  "Returns the k colors that appear most frequently in image.");
     quantize.def("k_means", &utils::quantize::k_means, py::arg("image"), py::arg("k"), py::arg("max_iterations") = 100, py::arg("match") = 1,
                  "Returns the k colors that are at the center of clusters.");
+    quantize.def("octree", &utils::quantize::octree, py::arg("image"), py::arg("k"),
+                 "Returns the k  best colors.");
 }
 
 void define_utils(py::module& m)

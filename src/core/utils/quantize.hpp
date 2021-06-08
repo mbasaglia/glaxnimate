@@ -22,9 +22,15 @@ enum KMeansMatch
     Closest,
 };
 
+/**
+ * \brief k-means Algorithm
+ */
 std::vector<QRgb> k_means(const QImage& image, int k, int iterations, KMeansMatch match);
 
 
+/**
+ * \brief Octree Algorithm
+ */
 std::vector<QRgb> octree(const QImage& image, int k);
 
 /**
