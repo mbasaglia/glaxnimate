@@ -6,6 +6,7 @@
 #include <QResizeEvent>
 
 #include "model/assets/brush_style.hpp"
+#include "model/assets/gradient.hpp"
 
 class ShapeStylePreviewWidget : public QWidget
 {
@@ -37,6 +38,13 @@ public:
         update();
     }
 
+    void clear_gradients()
+    {
+        clear_gradient(fill_ref);
+        clear_gradient(stroke_ref);
+        update();
+    }
+
 protected:
     void paintEvent(QPaintEvent*) override
     {
@@ -49,6 +57,12 @@ protected:
     }
 
 private:
+    void clear_gradient(QPointer<model::BrushStyle>& item)
+    {
+        if ( item && item->is_instance<model::Gradient>() )
+            item = {};
+    }
+
     void draw_rect(QPainter& painter, const QRectF& rect, const QPointer<model::BrushStyle>& linked, const QColor& plain)
     {
         static QBrush background(QPixmap(QStringLiteral(":/color_widgets/alphaback.png")));

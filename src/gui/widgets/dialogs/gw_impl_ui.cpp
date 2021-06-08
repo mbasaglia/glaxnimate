@@ -445,6 +445,9 @@ void GlaxnimateWindow::Private::init_docks()
 
     // Gradients
     ui.widget_gradients->set_window(parent);
+        connect(ui.widget_gradients, &GradientListWidget::selected, parent, [this](model::BrushStyle* sty, bool secondary){
+            set_brush_reference(sty, secondary);
+    });
 
     // Tab bar
     connect(ui.tab_bar, &CompositionTabBar::switch_composition, parent, &GlaxnimateWindow::switch_composition);

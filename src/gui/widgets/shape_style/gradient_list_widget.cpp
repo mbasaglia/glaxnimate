@@ -91,11 +91,13 @@ public:
 
     void set_gradient(bool secondary, model::Gradient::GradientType gradient_type)
     {
-
         model::Styler* styler = secondary ? (model::Styler*)stroke : (model::Styler*)fill;
+
+        // no valid selection
         if ( !styler )
             return;
 
+        // gather colors
         model::GradientColors* colors = current();
         if ( !colors )
         {
@@ -112,6 +114,7 @@ public:
 
         model::Gradient* old = nullptr;
 
+        // update existing Gradient object
         if ( styler->use.get() )
         {
             old = styler->use->cast<model::Gradient>();
@@ -127,6 +130,8 @@ public:
                     &old->colors,
                     QVariant::fromValue(colors)
                 ));
+
+                emit parent->selected(old, secondary);
 
                 return;
             }
@@ -168,6 +173,7 @@ public:
         ));
 
         styler->use.set_undoable(QVariant::fromValue(gradient));
+        emit parent->selected(gradient, secondary);
 
         remove_old(old);
 
@@ -190,6 +196,7 @@ public:
         auto old = styler->use.get();
 
         styler->use.set_undoable(QVariant::fromValue((model::BrushStyle*)nullptr));
+        emit parent->selected(nullptr, secondary);
 
         if ( old )
             remove_old(old->cast<model::Gradient>());

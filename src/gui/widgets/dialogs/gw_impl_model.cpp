@@ -21,6 +21,7 @@
 
 #include "settings/clipboard_settings.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
+#include "widgets/shape_style/shape_style_preview_widget.hpp"
 
 #include "item_models/drag_data.hpp"
 
@@ -483,6 +484,7 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
     ui.stroke_style_widget->set_shape(stroke);
     ui.fill_style_widget->set_shape(fill);
     ui.widget_gradients->set_targets(fill, stroke);
+    widget_current_style->clear_gradients();
     if ( fill )
         set_brush_reference(fill->use.get(), false);
     if ( stroke )

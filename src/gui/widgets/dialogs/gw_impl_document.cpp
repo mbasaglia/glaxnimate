@@ -606,19 +606,18 @@ void GlaxnimateWindow::Private::set_color_def(model::BrushStyle* def, bool secon
 
 void GlaxnimateWindow::Private::set_brush_reference ( model::BrushStyle* sty, bool secondary )
 {
+    if ( secondary )
+        widget_current_style->set_stroke_ref(sty);
+    else
+        widget_current_style->set_fill_ref(sty);
+
     if ( qobject_cast<model::Gradient*>(sty) )
         sty = nullptr;
 
     if ( secondary )
-    {
         secondary_brush = sty;
-        widget_current_style->set_stroke_ref(sty);
-    }
     else
-    {
         main_brush = sty;
-        widget_current_style->set_fill_ref(sty);
-    }
 }
 
 

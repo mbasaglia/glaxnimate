@@ -106,6 +106,9 @@ public:
      */
     Q_INVOKABLE QString get_open_image_file(const QString& title, const QString& dir = "") const;
 
+    /**
+     * \brief BrushStyle used for fill or strole (stroke is secondary)
+     */
     model::BrushStyle* linked_brush_style(bool secondary) const;
 
     PluginUiDialog* create_dialog(const QString& ui_file) const;

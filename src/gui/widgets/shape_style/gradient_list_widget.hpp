@@ -31,6 +31,9 @@ protected:
 private slots:
     void change_current_gradient();
 
+signals:
+    void selected(model::Gradient* gradient, bool secondary);
+
 private:
     class Private;
     std::unique_ptr<Private> d;
