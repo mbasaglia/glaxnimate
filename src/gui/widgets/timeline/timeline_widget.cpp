@@ -563,7 +563,10 @@ void TimelineWidget::select(const QModelIndex& index)
     d->scene.clearSelection();
     auto it = d->line_items.find(index.internalId());
     if ( it != d->line_items.end() )
+    {
+        it->second->setVisible(true);
         it->second->setSelected(true);
+    }
 }
 
 item_models::PropertyModelFull::Item TimelineWidget::item_at(const QPoint& viewport_pos)
@@ -774,7 +777,6 @@ static void debug_line(timeline::LineItem* line_item, QString indent, int index,
 
 void TimelineWidget::debug_lines() const
 {
-
     qDebug() << "index" << "effective_index" << "visible_rows" << "id" << "item_class" << "object->property" << "expanded" << "visible";
     debug_line(d->root, "", 0, true);
 }
