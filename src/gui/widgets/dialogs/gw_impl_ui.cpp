@@ -23,6 +23,7 @@
 #include "widgets/flow_layout.hpp"
 #include "widgets/node_menu.hpp"
 #include "widgets/timeline/timeline_widget.hpp"
+#include "widgets/shape_style/shape_style_preview_widget.hpp"
 
 #include "style/better_elide_delegate.hpp"
 #include "tools/edit_tool.hpp"
@@ -341,8 +342,17 @@ void GlaxnimateWindow::Private::init_item_views()
     });
 }
 
+static QWidget* status_bar_separator()
+{
+    QFrame *line = new QFrame();
+    line->setFrameShape(QFrame::VLine);
+    line->setFrameShadow(QFrame::Sunken);
+    return line;
+}
+
 void GlaxnimateWindow::Private::init_status_bar()
 {
+    // Recording
     widget_recording = new QWidget();
     ui.status_bar->addPermanentWidget(widget_recording);
     QHBoxLayout* lay = new QHBoxLayout;
@@ -358,11 +368,9 @@ void GlaxnimateWindow::Private::init_status_bar()
     label_recording->setText(tr("Recording Keyframes"));
     lay->addWidget(label_recording);
 
-    QFrame *line = new QFrame();
-    line->setFrameShape(QFrame::VLine);
-    line->setFrameShadow(QFrame::Sunken);
-    lay->addWidget(line);
+    lay->addWidget(status_bar_separator());
 
+    // X: ... Y: ...
     label_mouse_pos = new QLabel();
     ui.status_bar->addPermanentWidget(label_mouse_pos);
     QFont font;
@@ -372,11 +380,21 @@ void GlaxnimateWindow::Private::init_status_bar()
     mouse_moved(QPointF(0, 0));
     connect(ui.canvas, &Canvas::mouse_moved, parent, [this](const QPointF& p){mouse_moved(p);});
 
-    line = new QFrame();
-    line->setFrameShape(QFrame::VLine);
-    line->setFrameShadow(QFrame::Sunken);
-    ui.status_bar->addPermanentWidget(line);
+    ui.status_bar->addPermanentWidget(status_bar_separator());
 
+    // Current Style
+    widget_current_style = new ShapeStylePreviewWidget();
+    ui.status_bar->addPermanentWidget(widget_current_style);
+    widget_current_style->setFixedSize(ui.status_bar->height(), ui.status_bar->height());
+    connect(ui.fill_style_widget, &FillStyleWidget::current_color_changed,
+            widget_current_style, &ShapeStylePreviewWidget::set_fill_color);
+    connect(ui.stroke_style_widget, &StrokeStyleWidget::color_changed,
+            widget_current_style, &ShapeStylePreviewWidget::set_stroke_color);
+    ui.status_bar->addPermanentWidget(status_bar_separator());
+    widget_current_style->set_fill_color(ui.fill_style_widget->current_color());
+    widget_current_style->set_stroke_color(ui.stroke_style_widget->current_color());
+
+    // Transform widget
     view_trans_widget = new ViewTransformWidget(ui.status_bar);
     ui.status_bar->addPermanentWidget(view_trans_widget);
     connect(view_trans_widget, &ViewTransformWidget::zoom_changed, ui.canvas, &Canvas::set_zoom);

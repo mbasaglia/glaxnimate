@@ -25,6 +25,7 @@
 #include "app_info.hpp"
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/dialogs/io_status_dialog.hpp"
+#include "widgets/shape_style/shape_style_preview_widget.hpp"
 
 
 static void process_events(const QFuture<bool>& promise)
@@ -600,7 +601,7 @@ void GlaxnimateWindow::Private::set_color_def(model::BrushStyle* def, bool secon
         }
     }
 
-    set_brush_reference(def, false);
+    set_brush_reference(def, secondary);
 }
 
 void GlaxnimateWindow::Private::set_brush_reference ( model::BrushStyle* sty, bool secondary )
@@ -609,9 +610,15 @@ void GlaxnimateWindow::Private::set_brush_reference ( model::BrushStyle* sty, bo
         sty = nullptr;
 
     if ( secondary )
+    {
         secondary_brush = sty;
+        widget_current_style->set_stroke_ref(sty);
+    }
     else
+    {
         main_brush = sty;
+        widget_current_style->set_fill_ref(sty);
+    }
 }
 
 

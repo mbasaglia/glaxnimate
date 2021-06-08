@@ -28,6 +28,7 @@ public:
     void set_gradient_stop(model::Styler* styler, int index);
 
     QPen pen_style() const;
+    QColor current_color() const;
 
     void set_palette_model(color_widgets::ColorPaletteModel* palette_model);
 

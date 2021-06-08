@@ -9,3 +9,8 @@ QIcon model::BrushStyle::instance_icon() const
     }
     return icon;
 }
+
+QBrush model::BrushStyle::constrained_brush_style(FrameTime t, const QRectF& ) const
+{
+    return brush_style(t);
+}

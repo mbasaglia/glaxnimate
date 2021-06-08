@@ -70,6 +70,7 @@ public:
 
     QString type_name_human() const override;
     QBrush brush_style(FrameTime t) const override;
+    QBrush constrained_brush_style(FrameTime t, const QRectF& bounds) const override;
 
     Q_INVOKABLE qreal radius(FrameTime t) const;
 

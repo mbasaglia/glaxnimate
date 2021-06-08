@@ -223,25 +223,28 @@ QBrush model::Gradient::brush_style ( model::FrameTime t ) const
     }
 }
 
+QBrush model::Gradient::constrained_brush_style(FrameTime t, const QRectF& bounds) const
+{
+    if ( type.get() == Radial )
+    {
+        QRadialGradient g(bounds.center(), bounds.width() / 2);
+        if ( colors.get() )
+            g.setStops(colors->colors.get_at(t));
+        return g;
+    }
+    else
+    {
+        QLinearGradient g(bounds.topLeft(), bounds.topRight());
+        if ( colors.get() )
+            g.setStops(colors->colors.get_at(t));
+        return g;
+    }
+}
 
 void model::Gradient::fill_icon(QPixmap& icon) const
 {
     QPainter p(&icon);
-
-    if ( type.get() == Radial )
-    {
-        QRadialGradient g(icon.width() / 2, icon.height() / 2, icon.width() / 2);
-        if ( colors.get() )
-            g.setStops(colors->colors.get());
-        p.fillRect(icon.rect(), g);
-    }
-    else
-    {
-        QLinearGradient g(0, 0, icon.width(), 0);
-        if ( colors.get() )
-            g.setStops(colors->colors.get());
-        p.fillRect(icon.rect(), g);
-    }
+    p.fillRect(icon.rect(), constrained_brush_style(time(), icon.rect()));
 }
 
 qreal model::Gradient::radius(model::FrameTime t) const

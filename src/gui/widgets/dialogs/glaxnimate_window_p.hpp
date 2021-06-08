@@ -32,6 +32,7 @@ class IoStatusDialog;
 class AboutDialog;
 class ViewTransformWidget;
 class FlowLayout;
+class ShapeStylePreviewWidget;
 
 namespace tools {
 class Tool;
@@ -100,6 +101,7 @@ public:
     QLabel* label_mouse_pos = nullptr;
     QLabel* label_recording = nullptr;
     QWidget* widget_recording = nullptr;
+    ShapeStylePreviewWidget* widget_current_style = nullptr;
 
     // "set and forget" kinda variables
     int autosave_timer = 0;

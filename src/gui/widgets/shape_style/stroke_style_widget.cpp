@@ -229,6 +229,12 @@ QPen StrokeStyleWidget::pen_style() const
     return pen;
 }
 
+QColor StrokeStyleWidget::current_color() const
+{
+    return d->ui.color_selector->current_color();
+}
+
+
 void StrokeStyleWidget::set_color(const QColor& color)
 {
     d->ui.color_selector->set_current_color(color);
@@ -259,7 +265,7 @@ void StrokeStyleWidget::set_shape(model::Stroke* target, int gradient_stop)
     if ( target )
     {
         d->update_from_target();
-        emit color_changed(d->ui.color_selector->current_color());
+//         emit color_changed(d->ui.color_selector->current_color());
         connect(target, &model::Object::property_changed, this, &StrokeStyleWidget::property_changed);
         update();
     }

@@ -19,6 +19,7 @@ public:
     QIcon instance_icon() const override;
 
     virtual QBrush brush_style(FrameTime t) const = 0;
+    virtual QBrush constrained_brush_style(FrameTime t, const QRectF& bounds) const;
 
 signals:
     void style_changed();
