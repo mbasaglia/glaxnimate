@@ -4,11 +4,12 @@
 #include <QPalette>
 
 #include "app/settings/settings.hpp"
-#include "settings/plugin_settings_group.hpp"
 #include "app/settings/palette_settings.hpp"
 #include "app/settings/keyboard_shortcuts.hpp"
 #include "app_info.hpp"
+#include "settings/plugin_settings_group.hpp"
 #include "settings/clipboard_settings.hpp"
+#include "settings/toolbar_settings.hpp"
 
 static QVariantMap avail_icon_themes()
 {
@@ -152,6 +153,7 @@ void GlaxnimateApp::on_initialize()
     search_paths += QIcon::themeSearchPaths();
     QIcon::setThemeSearchPaths(search_paths);
 
+    app::settings::Settings::instance().add_custom_group(std::make_unique<settings::ToolbarSettingsGroup>());
     app::settings::Settings::instance().add_custom_group(std::make_unique<settings::PluginSettingsGroup>(QStringList{
         "AnimatedRaster", "ReplaceColor", "dotLottie", "FrameByFrame"
     }));

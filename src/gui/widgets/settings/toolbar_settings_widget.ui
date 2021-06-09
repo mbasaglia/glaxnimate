@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ToolbarSettingsWidget</class>
+ <widget class="QWidget" name="ToolbarSettingsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="4" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Preview</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QToolButton" name="preview_1">
+        <property name="text">
+         <string>New</string>
+        </property>
+        <property name="icon">
+         <iconset theme="document-new"/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="preview_2">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Save</string>
+        </property>
+        <property name="icon">
+         <iconset theme="document-save"/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="preview_tool_1">
+        <property name="text">
+         <string>Select</string>
+        </property>
+        <property name="icon">
+         <iconset theme="edit-select"/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="preview_tool_2">
+        <property name="text">
+         <string>Edit</string>
+        </property>
+        <property name="icon">
+         <iconset theme="edit-node"/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Icon Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QSpinBox" name="spin_icon_size">
+     <property name="minimum">
+      <number>8</number>
+     </property>
+     <property name="maximum">
+      <number>999</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+     <property name="value">
+      <number>22</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Button Style</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="combo_style">
+     <item>
+      <property name="text">
+       <string>Icon</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Text</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Text beside Icon</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Text under Icon</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Tool Icon Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QSpinBox" name="spin_tool_icon_size">
+     <property name="maximum">
+      <number>999</number>
+     </property>
+     <property name="value">
+      <number>32</number>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>combo_style</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>ToolbarSettingsWidget</receiver>
+   <slot>update_preview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>295</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>595</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_icon_size</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ToolbarSettingsWidget</receiver>
+   <slot>update_preview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>268</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>448</x>
+     <y>131</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spin_tool_icon_size</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>ToolbarSettingsWidget</receiver>
+   <slot>update_preview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>105</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>516</x>
+     <y>208</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>update_preview()</slot>
+ </slots>
+</ui>

@@ -29,6 +29,8 @@
 #include "tools/edit_tool.hpp"
 #include "plugin/action.hpp"
 #include "glaxnimate_app.hpp"
+#include "settings/toolbar_settings.hpp"
+
 
 static QToolButton* action_button(QAction* action, QWidget* parent)
 {
@@ -68,7 +70,6 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     // Tool buttons
     ui.btn_layer_add->setMenu(ui.menu_new_layer);
 
-    // Transform Widget
     init_status_bar();
 
     // Graphics scene
@@ -105,6 +106,12 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     // NOTE: keep at the end so we do this once all the widgets are in their default spots
     if ( restore_state )
         init_restore_state();
+
+
+    // Toolbar settings
+    parent->setToolButtonStyle(settings::ToolbarSettingsGroup::button_style);
+    parent->setIconSize(settings::ToolbarSettingsGroup::icon_size());
+    ui.toolbar_tools->setIconSize(settings::ToolbarSettingsGroup::tool_icon_size());
 }
 
 void GlaxnimateWindow::Private::init_actions()
@@ -237,6 +244,8 @@ tools::Tool* GlaxnimateWindow::Private::init_tools_ui()
             ScalableButton *button = tool.second->get_button();
             connect(action, &QAction::triggered, parent, &GlaxnimateWindow::tool_triggered);
 
+            ui.toolbar_tools->addAction(action);
+
             button->resize(16, 16);
             dock_tools_layout->addWidget(button);
 
@@ -249,7 +258,11 @@ tools::Tool* GlaxnimateWindow::Private::init_tools_ui()
             }
         }
         ui.menu_tools->addSeparator();
+        ui.toolbar_tools->addSeparator();
     }
+
+    ui.toolbar_node->setVisible(false);
+    ui.toolbar_node->setEnabled(false);
 
     /// \todo Have some way of creating/connecting actions from the tools
     this->tool_actions["select"] = {
@@ -494,31 +507,36 @@ void GlaxnimateWindow::Private::init_docks()
 
     // Arrange docks
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
-    parent->tabifyDockWidget(ui.dock_layers, ui.dock_assets);
+    parent->tabifyDockWidget(ui.dock_layers, ui.dock_gradients);
+    parent->tabifyDockWidget(ui.dock_gradients, ui.dock_swatches);
+    parent->tabifyDockWidget(ui.dock_swatches, ui.dock_assets);
+    ui.dock_gradients->raise();
     ui.dock_assets->setVisible(false);
+    ui.dock_swatches->setVisible(false);
 
     parent->tabifyDockWidget(ui.dock_timeline, ui.dock_properties);
     parent->tabifyDockWidget(ui.dock_properties, ui.dock_script_console);
     parent->tabifyDockWidget(ui.dock_script_console, ui.dock_logs);
     ui.dock_timeline->raise();
 
-    parent->splitDockWidget(ui.dock_colors, ui.dock_swatches, Qt::Horizontal);
     parent->tabifyDockWidget(ui.dock_colors, ui.dock_stroke);
     parent->tabifyDockWidget(ui.dock_stroke, ui.dock_undo);
-    parent->tabifyDockWidget(ui.dock_swatches, ui.dock_gradients);
     ui.dock_colors->raise();
-    ui.dock_swatches->setVisible(false);
-    ui.dock_gradients->setVisible(false);
+
 
     parent->tabifyDockWidget(ui.dock_tool_options, ui.dock_align);
     ui.dock_tool_options->raise();
 
     parent->resizeDocks({ui.dock_layers}, {1}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_tools}, {200}, Qt::Horizontal);
-    parent->resizeDocks({ui.dock_tool_options, ui.dock_align, ui.dock_tools}, {1, 1, 4000}, Qt::Vertical);
+//     parent->resizeDocks({ui.dock_tool_options, ui.dock_align, ui.dock_tools}, {1, 1, 4000}, Qt::Vertical);
     parent->resizeDocks({ui.dock_timeline}, {parent->height()/3}, Qt::Vertical);
     ui.dock_script_console->setVisible(false);
     ui.dock_logs->setVisible(false);
+    ui.dock_tools->setVisible(false);
+
+    // Resize parent to have a reasonable default size
+    parent->resize(1920, 1080);
 }
 
 void GlaxnimateWindow::Private::init_menus()
@@ -529,6 +547,14 @@ void GlaxnimateWindow::Private::init_menus()
         QAction* act = wid->toggleViewAction();
         act->setIcon(wid->windowIcon());
         ui.menu_views->addAction(act);
+        wid->setStyle(&dock_style);
+    }
+
+    // Menu Toolbars
+    for ( QToolBar* wid : parent->findChildren<QToolBar*>() )
+    {
+        QAction* act = wid->toggleViewAction();
+        ui.menu_toolbars->addAction(act);
         wid->setStyle(&dock_style);
     }
 
@@ -669,6 +695,7 @@ void GlaxnimateWindow::Private::init_restore_state()
 
     // Hide tool widgets, as they might get shown by restoreState
     ui.toolbar_node->setVisible(false);
+    ui.toolbar_node->setEnabled(false);
 }
 
 void GlaxnimateWindow::Private::retranslateUi(QMainWindow* parent)

@@ -13,6 +13,7 @@
     * Status bar now shows the mouse position
     * When in keyframe recorning mode, the canvas outline turns red and a message appears in the status bar
     * Status bar now shows fill/stroke colors
+    * New toolbar for drawing tools
 * I/O:
     * Lottie output is slightly more compact
     * Added minimal support for CSS on SVG import

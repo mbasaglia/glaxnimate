@@ -21,6 +21,7 @@ item_models/document_model_base.cpp
 
 
 settings/clipboard_settings.cpp
+settings/toolbar_settings.cpp
 
 style/property_delegate.cpp
 style/dock_widget_style.cpp
@@ -89,13 +90,16 @@ widgets/enum_combo.cpp
 widgets/node_menu.cpp
 widgets/window_message_widget.cpp
 widgets/window_message_widget.ui
-widgets/plugin_settings_widget.cpp
-widgets/plugin_settings_widget.ui
 widgets/script_console.cpp
 widgets/script_console.ui
 widgets/tab_bar_close_button.cpp
 widgets/clickable_tab_bar.cpp
 widgets/composition_tab_bar.cpp
+
+widgets/settings/plugin_settings_widget.cpp
+widgets/settings/plugin_settings_widget.ui
+widgets/settings/toolbar_settings_widget.cpp
+widgets/settings/toolbar_settings_widget.ui
 
 widgets/shape_style/color_selector.cpp
 widgets/shape_style/color_selector.ui

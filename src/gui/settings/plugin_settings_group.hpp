@@ -1,7 +1,7 @@
 #pragma once
 
 #include "app/settings/custom_settings_group.hpp"
-#include "widgets/plugin_settings_widget.hpp"
+#include "widgets/settings/plugin_settings_widget.hpp"
 #include "plugin/plugin.hpp"
 
 namespace settings {
