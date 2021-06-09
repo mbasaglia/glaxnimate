@@ -65,6 +65,7 @@ public:
     QGraphicsPixmapItem *item_image;
     app::widgets::NoCloseOnEnter ncoe;
     ColorQuantizationDialog color_options;
+    app::settings::WidgetSettingGroup settings;
 
     void trace_mono(std::vector<TraceResult>& result)
     {
@@ -229,28 +230,24 @@ public:
 
     void init_settings()
     {
-        app::settings::WidgetSetting(ui.spin_tolerance, "internal", "trace_dialog").define();
-        app::settings::WidgetSetting(ui.spin_outline, "internal", "trace_dialog").define();
-        app::settings::WidgetSetting(ui.spin_smoothness, "internal", "trace_dialog").define();
-        app::settings::WidgetSetting(ui.spin_alpha_threshold, "internal", "trace_dialog").define();
+        settings.add(ui.spin_tolerance, "internal", "trace_dialog_");
+        settings.add(ui.spin_outline, "internal", "trace_dialog_");
+        settings.add(ui.spin_smoothness, "internal", "trace_dialog_");
+        settings.add(ui.spin_alpha_threshold, "internal", "trace_dialog_");
+        settings.add(ui.spin_min_area, "internal", "trace_dialog_");
+        settings.define();
         color_options.init_settings();
     }
 
     void save_settings()
     {
-        app::settings::WidgetSetting(ui.spin_tolerance, "internal", "trace_dialog").save();
-        app::settings::WidgetSetting(ui.spin_outline, "internal", "trace_dialog").save();
-        app::settings::WidgetSetting(ui.spin_smoothness, "internal", "trace_dialog").save();
-        app::settings::WidgetSetting(ui.spin_alpha_threshold, "internal", "trace_dialog").save();
+        settings.save();
         color_options.save_settings();
     }
 
     void reset_settings()
     {
-        app::settings::WidgetSetting(ui.spin_tolerance, "internal", "trace_dialog").reset();
-        app::settings::WidgetSetting(ui.spin_outline, "internal", "trace_dialog").reset();
-        app::settings::WidgetSetting(ui.spin_smoothness, "internal", "trace_dialog").reset();
-        app::settings::WidgetSetting(ui.spin_alpha_threshold, "internal", "trace_dialog").reset();
+        settings.reset();
         color_options.reset_settings();
     }
 

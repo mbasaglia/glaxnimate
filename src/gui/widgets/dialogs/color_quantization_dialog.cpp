@@ -11,6 +11,7 @@ class ColorQuantizationDialog::Private
 {
 public:
     Ui::ColorQuantizationDialog ui;
+    app::settings::WidgetSettingGroup settings;
 };
 
 ColorQuantizationDialog::ColorQuantizationDialog(QWidget* parent)
@@ -52,21 +53,18 @@ std::vector<QRgb> ColorQuantizationDialog::quantize(const QImage& image, int k) 
 
 void ColorQuantizationDialog::init_settings()
 {
-    app::settings::WidgetSetting(d->ui.combo_algo, "internal", "color_quantization_dialog").define();
-    app::settings::WidgetSetting(d->ui.spin_means_iterations, "internal", "color_quantization_dialog").define();
-    app::settings::WidgetSetting(d->ui.combo_means_match, "internal", "color_quantization_dialog").define();
+    d->settings.add(d->ui.combo_algo, "internal", "color_quantization_dialog_");
+    d->settings.add(d->ui.spin_means_iterations, "internal", "color_quantization_dialog_");
+    d->settings.add(d->ui.combo_means_match, "internal", "color_quantization_dialog_");
+    d->settings.define();
 }
 
 void ColorQuantizationDialog::save_settings()
 {
-    app::settings::WidgetSetting(d->ui.combo_algo, "internal", "color_quantization_dialog").save();
-    app::settings::WidgetSetting(d->ui.spin_means_iterations, "internal", "color_quantization_dialog").save();
-    app::settings::WidgetSetting(d->ui.combo_means_match, "internal", "color_quantization_dialog").save();
+    d->settings.save();
 }
 
 void ColorQuantizationDialog::reset_settings()
 {
-    app::settings::WidgetSetting(d->ui.combo_algo, "internal", "color_quantization_dialog").reset();
-    app::settings::WidgetSetting(d->ui.spin_means_iterations, "internal", "color_quantization_dialog").reset();
-    app::settings::WidgetSetting(d->ui.combo_means_match, "internal", "color_quantization_dialog").reset();
+    d->settings.reset();
 }
