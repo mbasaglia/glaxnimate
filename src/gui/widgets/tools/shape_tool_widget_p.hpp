@@ -2,7 +2,7 @@
 #include "shape_tool_widget.hpp"
 #include "ui_shape_tool_widget.h"
 
-#include "app/settings/settings.hpp"
+#include "app/settings/widget.hpp"
 
 class ShapeToolWidget::Private
 {
@@ -12,24 +12,20 @@ public:
 
     void load_settings()
     {
-        ui.check_group->setChecked(app::settings::get<bool>("tools", "shape_group"));
-        ui.check_fill->setChecked(app::settings::get<bool>("tools", "shape_fill"));
-        ui.check_stroke->setChecked(app::settings::get<bool>("tools", "shape_stroke"));
+        settings.define();
         check_checks();
         on_load_settings();
     }
 
     void save_settings()
     {
-        app::settings::set("tools", "shape_group", ui.check_group->isChecked());
-        app::settings::set("tools", "shape_fill", ui.check_fill->isChecked());
-        app::settings::set("tools", "shape_stroke", ui.check_stroke->isChecked());
+        settings.save();
         on_save_settings();
     }
 
     void check_checks()
     {
-        if ( !ui.check_group->isChecked() )
+        if ( !ui.check_group->isChecked() && !ui.check_layer->isChecked() )
         {
             if ( ui.check_fill->isEnabled() )
             {
@@ -55,6 +51,11 @@ public:
     void setup_ui(ShapeToolWidget* parent)
     {
         ui.setupUi(parent);
+        settings.add(ui.check_group, "tools", "shape_");
+        settings.add(ui.check_layer, "tools", "shape_");
+        settings.add(ui.check_raw_shape, "tools", "shape_");
+        settings.add(ui.check_fill, "tools", "shape_");
+        settings.add(ui.check_stroke, "tools", "shape_");
         on_setup_ui(parent, ui.layout);
     }
 
@@ -67,6 +68,11 @@ public:
     bool create_fill() const
     {
         return ui.check_fill->isChecked();
+    }
+
+    bool create_layer() const
+    {
+        return ui.check_layer->isChecked();
     }
 
     bool create_group() const
@@ -89,4 +95,5 @@ private:
     Ui::ShapeToolWidget ui;
     bool old_check_fill;
     bool old_check_stroke;
+    app::settings::WidgetSettingGroup settings;
 };

@@ -82,15 +82,31 @@ protected:
 
         ShapeToolWidget* options = widget();
         int index = prop->size();
-        if ( options->create_group() )
-        {
-            auto group = std::make_unique<model::Group>(document);
-            select = group.get();
-            document->set_best_name(group.get(), QObject::tr("%1 Group").arg(name));
-            auto super_prop = prop;
-            prop = &group->shapes;
 
-            model::VisualNode* owner_node = static_cast<model::VisualNode*>(super_prop->object());
+        // Layer
+        if ( options->create_layer() )
+        {
+            std::unique_ptr<model::Group> layer = std::make_unique<model::Layer>(document);
+            document->set_best_name(layer.get(), QObject::tr("%1 Layer").arg(name));
+            model::ShapeListProperty* group_container = &event.window->document()->main()->shapes;
+            select = layer.get();
+            prop = &layer->shapes;
+            document->undo_stack().push(
+                new command::AddShape(group_container, std::move(layer), group_container->size())
+            );
+            index = 0;
+        }
+
+        if ( options->create_layer() || options->create_group() )
+        {
+            // Group
+            std::unique_ptr<model::Group> group = std::make_unique<model::Group>(document);
+            document->set_best_name(group.get(), QObject::tr("%1 Group").arg(name));
+            model::ShapeListProperty* group_container = prop;
+            prop = &group->shapes;
+            if ( !options->create_layer() )
+                select = group.get();
+            model::VisualNode* owner_node = static_cast<model::VisualNode*>(group_container->object());
             QTransform parent_t = owner_node->transform_matrix(owner_node->time());
             QTransform parent_t_inv = parent_t.inverted();
             group->transform.get()->set_transform_matrix(parent_t_inv);
@@ -99,31 +115,29 @@ protected:
             group->transform.get()->anchor_point.set(center);
             group->transform.get()->position.set(parent_t_inv.map(center));
 
-
             document->undo_stack().push(
-                new command::AddShape(super_prop, std::move(group), index)
+                new command::AddShape(group_container, std::move(group), index)
             );
             index = 0;
-        }
 
-        if ( options->create_fill() )
-        {
+            // Fill
             auto fill = std::make_unique<model::Fill>(document);
             document->set_best_name(fill.get(), QObject::tr("Fill"));
             fill->color.set(event.window->current_color());
             fill->use.set(event.window->linked_brush_style(false));
+            fill->visible.set(options->create_fill());
+
             document->undo_stack().push(
                 new command::AddShape(prop, std::move(fill), index)
             );
             index++;
-        }
 
-        if ( options->create_stroke() )
-        {
+            // Stroke
             auto stroke = std::make_unique<model::Stroke>(document);
             document->set_best_name(stroke.get(), QObject::tr("Stroke"));
             stroke->set_pen_style(event.window->current_pen_style());
             stroke->use.set(event.window->linked_brush_style(true));
+            stroke->visible.set(options->create_stroke());
 
             document->undo_stack().push(
                 new command::AddShape(prop, std::move(stroke), index)
@@ -145,6 +159,7 @@ protected:
     }
 
 private:
+
     model::ShapeListProperty* get_container(GlaxnimateWindow* window)
     {
         return window->current_shape_container();

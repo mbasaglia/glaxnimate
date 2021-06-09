@@ -51,7 +51,13 @@ public:
         combo_font->setInsertPolicy(QComboBox::NoInsert);
         combo_font->setEditable(true);
         combo_font->view()->setMinimumWidth(combo_font->view()->sizeHintForColumn(0));
-        connect(combo_font, QOverload<const QString&>::of(&QComboBox::activated), parent, [this, parent](const QString& family){
+        connect(combo_font,
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+                &QComboBox::textActivated,
+#else
+                QOverload<const QString&>::of(&QComboBox::activated),
+#endif
+                parent, [this, parent](const QString& family){
             update_styles(family);
             parent->on_font_changed();
         });

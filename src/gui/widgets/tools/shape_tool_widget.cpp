@@ -37,6 +37,11 @@ bool ShapeToolWidget::create_stroke() const
     return d->create_stroke();
 }
 
+bool ShapeToolWidget::create_layer() const
+{
+    return d->create_layer();
+}
+
 void ShapeToolWidget::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);

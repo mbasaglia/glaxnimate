@@ -135,7 +135,7 @@ public:
                 }
             }
             // scalar
-            else if ( prop->traits().flags & model::PropertyTraits::Visual && prop->name() != "visible" )
+            else if ( prop->traits().flags & model::PropertyTraits::Visual && !(prop->traits().flags & model::PropertyTraits::Hidden) )
             {
                 add_property(prop, tree->id, insert_row, referenced);
             }

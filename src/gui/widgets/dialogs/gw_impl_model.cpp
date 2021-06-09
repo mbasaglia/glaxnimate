@@ -486,9 +486,18 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
     ui.widget_gradients->set_targets(fill, stroke);
     widget_current_style->clear_gradients();
     if ( fill )
+    {
         set_brush_reference(fill->use.get(), false);
+        if ( !fill->visible.get() )
+            widget_current_style->set_fill_color(Qt::transparent);
+    }
+
     if ( stroke )
+    {
         set_brush_reference(stroke->use.get(), true);
+        if ( !stroke->visible.get() )
+            widget_current_style->set_stroke_color(Qt::transparent);
+    }
 }
 
 

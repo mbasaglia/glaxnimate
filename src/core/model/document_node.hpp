@@ -200,7 +200,7 @@ class VisualNode : public DocumentNode
     /**
      * \brief Visible setting for this node
      */
-    GLAXNIMATE_PROPERTY(bool, visible, true, &VisualNode::on_visible_changed, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(bool, visible, true, &VisualNode::on_visible_changed, {}, PropertyTraits::Visual|PropertyTraits::Hidden)
     /**
      * \brief Locked setting for this node
      */

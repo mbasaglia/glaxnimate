@@ -16,6 +16,7 @@ public:
     bool create_group() const;
     bool create_fill() const;
     bool create_stroke() const;
+    bool create_layer() const;
 
 private slots:
     void check_checks();

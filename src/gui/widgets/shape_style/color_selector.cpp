@@ -8,6 +8,7 @@
 #include "model/assets/gradient.hpp"
 #include "model/shapes/styler.hpp"
 #include "command/animation_commands.hpp"
+#include "command/undo_macro_guard.hpp"
 
 namespace {
 
@@ -333,7 +334,10 @@ void ColorSelector::to_styler(const QString& text, model::Styler* styler, int gr
 
     QColor color = d->current_color();
 
-    auto cmd = new command::SetMultipleAnimated(text, commit);
+    auto guard = command::UndoMacroGuard(text, styler->document());
+    styler->visible.set_undoable(true);
+
+    auto cmd = new command::SetMultipleAnimated("", commit);
     cmd->push_property(&styler->color, color);
 
     if ( auto named_color = qobject_cast<model::NamedColor*>(styler->use.get()) )
