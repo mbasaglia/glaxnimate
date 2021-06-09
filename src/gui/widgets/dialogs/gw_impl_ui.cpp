@@ -529,7 +529,7 @@ void GlaxnimateWindow::Private::init_docks()
 
     parent->resizeDocks({ui.dock_layers}, {1}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_tools}, {200}, Qt::Horizontal);
-//     parent->resizeDocks({ui.dock_tool_options, ui.dock_align, ui.dock_tools}, {1, 1, 4000}, Qt::Vertical);
+    parent->resizeDocks({ui.dock_tool_options, ui.dock_align, ui.dock_tools}, {1, 1, 4000}, Qt::Vertical);
     parent->resizeDocks({ui.dock_timeline}, {parent->height()/3}, Qt::Vertical);
     ui.dock_script_console->setVisible(false);
     ui.dock_logs->setVisible(false);
