@@ -9,12 +9,7 @@ class Composition : public VisualNode
 {
     Q_OBJECT
 
-    GLAXNIMATE_PROPERTY_LIST(model::ShapeElement, shapes,
-        &DocumentNode::docnode_child_add_end,
-        &DocumentNode::docnode_child_remove_end,
-        &DocumentNode::docnode_child_add_begin,
-        &DocumentNode::docnode_child_remove_begin
-    )
+    GLAXNIMATE_PROPERTY_LIST(model::ShapeElement, shapes)
 
 public:
     using VisualNode::VisualNode;
@@ -30,11 +25,6 @@ public:
     DocumentNode* docnode_child(int index) const override
     {
         return shapes[index];
-    }
-
-    DocumentNode* docnode_parent() const override
-    {
-        return nullptr;
     }
 
     int docnode_child_count() const override

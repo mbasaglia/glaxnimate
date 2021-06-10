@@ -161,11 +161,6 @@ void model::GradientColors::remove_stop(int index)
     }
 }
 
-model::DocumentNode * model::GradientColors::docnode_parent() const
-{
-    return document()->assets()->gradient_colors.get();
-}
-
 std::vector<model::DocumentNode *> model::Gradient::valid_refs() const
 {
     return document()->assets()->gradient_colors->values.valid_reference_values(false);
@@ -282,10 +277,4 @@ bool model::Gradient::remove_if_unused(bool)
         return true;
     }
     return false;
-}
-
-
-model::DocumentNode * model::Gradient::docnode_parent() const
-{
-    return document()->assets()->gradients.get();
 }

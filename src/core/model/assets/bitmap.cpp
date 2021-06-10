@@ -11,10 +11,11 @@
 #include "command/object_list_commands.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(model::Bitmap)
+GLAXNIMATE_OBJECT_IMPL(model::BitmapSequence)
 
-void model::Bitmap::paint(QPainter* painter) const
+void model::BitmapBase::paint(QPainter* painter, FrameTime time) const
 {
-    painter->drawPixmap(0, 0, image);
+    painter->drawPixmap(0, 0, pixmap(time));
 }
 
 void model::Bitmap::refresh(bool rebuild_embedded)
@@ -42,9 +43,9 @@ void model::Bitmap::refresh(bool rebuild_embedded)
         qimage = reader.read();
     }
 
-    image = QPixmap::fromImage(qimage);
-    width.set(image.width());
-    height.set(image.height());
+    image_ = QPixmap::fromImage(qimage);
+    width.set(image_.width());
+    height.set(image_.height());
 
     emit loaded();
 }
@@ -72,7 +73,7 @@ void model::Bitmap::embed(bool embedded)
     if ( !embedded )
         data.set_undoable({});
     else
-        data.set_undoable(build_embedded(image.toImage()));
+        data.set_undoable(build_embedded(image_.toImage()));
 }
 
 void model::Bitmap::on_refresh()
@@ -82,7 +83,7 @@ void model::Bitmap::on_refresh()
 
 QIcon model::Bitmap::instance_icon() const
 {
-    return image;
+    return image_;
 }
 
 bool model::Bitmap::from_url(const QUrl& url)
@@ -99,7 +100,7 @@ bool model::Bitmap::from_url(const QUrl& url)
 bool model::Bitmap::from_file(const QString& file)
 {
     filename.set(file);
-    return !image.isNull();
+    return !image_.isNull();
 }
 
 bool model::Bitmap::from_base64(const QString& data)
@@ -118,7 +119,7 @@ bool model::Bitmap::from_base64(const QString& data)
     auto decoded = QByteArray::fromBase64(chunks[1].toLatin1());
     format.set(formats[0]);
     this->data.set(decoded);
-    return !image.isNull();
+    return !image_.isNull();
 }
 
 QUrl model::Bitmap::to_url() const
@@ -161,7 +162,7 @@ QFileInfo model::Bitmap::file_info() const
 }
 
 
-bool model::Bitmap::remove_if_unused(bool)
+bool model::BitmapBase::remove_if_unused(bool)
 {
     if ( users().empty() )
     {
@@ -180,7 +181,84 @@ void model::Bitmap::set_pixmap(const QImage& pix, const QString& format)
     data.set(build_embedded(pix));
 }
 
-model::DocumentNode * model::Bitmap::docnode_parent() const
+int model::BitmapSequence::frame_number(model::FrameTime time) const
 {
-    return document()->assets()->images.get();
+    if ( frames.empty() )
+        return -1;
+
+    float doc_fps = document()->main()->fps.get();
+
+    if ( fps.get() <= 0 || doc_fps <= 0 )
+        return 0;
+
+    int frame = qRound(time / doc_fps * fps.get());
+    if ( frame < 0 )
+    {
+        switch ( end_mode.get() )
+        {
+            case End:
+                return -1;
+            case Hold:
+                return 0;
+            case Loop:
+                // I hate how % works for negative numbers...
+                return ((frame % frames.size()) + frames.size()) % frames.size();
+        }
+    }
+
+    if ( frame >= frames.size() )
+    {
+        switch ( end_mode.get() )
+        {
+            case End:
+                return -1;
+            case Hold:
+                return frames.size() - 1;
+            case Loop:
+                return frame % frames.size();
+        }
+    }
+
+    return frame;
+}
+
+
+model::Bitmap * model::BitmapSequence::frame(model::FrameTime time) const
+{
+    int frame = frame_number(time);
+    if ( frame == -1 )
+        return nullptr;
+    return frames[frame];
+}
+
+model::Bitmap * model::BitmapSequence::add_frame()
+{
+    std::unique_ptr<model::Bitmap> bmp = std::make_unique<model::Bitmap>(document());
+    return frames.insert(std::move(bmp));
+}
+
+void model::BitmapSequence::add_frame(std::unique_ptr<Bitmap> frame)
+{
+    frames.insert(std::move(frame));
+}
+
+QPixmap model::BitmapSequence::pixmap(model::FrameTime time) const
+{
+    if ( auto bitmap = frame(time) )
+        return bitmap->pixmap();
+    return {};
+}
+
+QImage model::BitmapSequence::image(model::FrameTime time) const
+{
+    if ( auto bitmap = frame(time) )
+        return bitmap->image();
+    return {};
+}
+
+QIcon model::BitmapSequence::instance_icon() const
+{
+    if ( frames.empty() )
+        return {};
+    return frames[0]->pixmap();
 }

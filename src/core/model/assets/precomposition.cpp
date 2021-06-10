@@ -32,8 +32,3 @@ bool model::Precomposition::remove_if_unused(bool clean_lists)
     }
     return false;
 }
-
-model::DocumentNode * model::Precomposition::docnode_parent() const
-{
-    return document()->assets()->precompositions.get();
-}

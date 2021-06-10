@@ -20,8 +20,6 @@ public:
 
     bool remove_if_unused(bool clean_lists) override;
 
-    DocumentNode* docnode_parent() const override;
-
 protected:
     void fill_icon(QPixmap& icon) const override;
 

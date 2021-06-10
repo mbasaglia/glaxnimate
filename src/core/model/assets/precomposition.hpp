@@ -15,7 +15,6 @@ public:
     QString type_name_human() const override;
     QRectF local_bounding_rect(FrameTime) const override;
     bool remove_if_unused(bool clean_lists) override;
-    DocumentNode* docnode_parent() const override;
 
 protected:
     model::DocumentNode* to_reftarget() override { return this; }

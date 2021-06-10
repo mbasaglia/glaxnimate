@@ -16,7 +16,9 @@ QStringList io::raster::RasterFormat::extensions() const
 
 bool io::raster::RasterFormat::on_open(QIODevice& dev, const QString&, model::Document* document, const QVariantMap&)
 {
-    auto bmp = document->assets()->images->values.insert(std::make_unique<model::Bitmap>(document));
+    auto bmp_ptr = std::make_unique<model::Bitmap>(document);
+    auto bmp = bmp_ptr.get();
+    document->assets()->images->values.insert(std::move(bmp_ptr));
     if ( auto file = qobject_cast<QFile*>(&dev) )
         bmp->filename.set(file->fileName());
     else

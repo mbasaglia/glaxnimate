@@ -101,10 +101,10 @@ protected:
     void on_removed(model::NamedColor* color, int position) override;
 };
 
-class BitmapList : public AssetListBase<Bitmap, BitmapList>
+class BitmapList : public AssetListBase<BitmapBase, BitmapList>
 {
     GLAXNIMATE_OBJECT(BitmapList)
-    ASSET_LIST_CLASS(Bitmap)
+    ASSET_LIST_CLASS(BitmapBase)
 
 public:
     QIcon tree_icon() const override;

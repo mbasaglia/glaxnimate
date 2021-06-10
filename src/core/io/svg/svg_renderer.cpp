@@ -486,15 +486,15 @@ public:
         }
         else if ( auto img = qobject_cast<model::Image*>(shape) )
         {
-            if ( img->image.get() )
+            if ( auto bmp = qobject_cast<model::Bitmap*>(img->image.get()) )
             {
                 auto e = element(parent, "image");
                 set_attribute(e, "x", 0);
                 set_attribute(e, "y", 0);
-                set_attribute(e, "width", img->image->width.get());
-                set_attribute(e, "height", img->image->height.get());
+                set_attribute(e, "width", bmp->width.get());
+                set_attribute(e, "height", bmp->height.get());
                 transform_to_attr(e, img->transform.get());
-                set_attribute(e, "xlink:href", img->image->to_url().toString());
+                set_attribute(e, "xlink:href", bmp->to_url().toString());
             }
         }
         else if ( auto layer = qobject_cast<model::PreCompLayer*>(shape) )

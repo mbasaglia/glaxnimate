@@ -38,8 +38,6 @@ public:
     Q_INVOKABLE void split_segment(int segment_index, float factor = 0.5, const QColor& new_color = {});
     Q_INVOKABLE void remove_stop(int index);
 
-    DocumentNode* docnode_parent() const override;
-
 signals:
     void colors_changed(const QGradientStops&);
 };
@@ -77,8 +75,6 @@ public:
     static QString gradient_type_name(GradientType t);
 
     bool remove_if_unused(bool clean_lists) override;
-
-    DocumentNode* docnode_parent() const override;
 
 private:
     std::vector<DocumentNode*> valid_refs() const;

@@ -34,7 +34,3 @@ bool model::NamedColor::remove_if_unused(bool clean_lists)
     return false;
 }
 
-model::DocumentNode * model::NamedColor::docnode_parent() const
-{
-    return document()->assets()->colors.get();
-}

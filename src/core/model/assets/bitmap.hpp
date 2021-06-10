@@ -6,24 +6,40 @@
 #include <QUrl>
 
 #include "model/assets/asset.hpp"
+#include "model/property/object_list_property.hpp"
 
 namespace model {
 
-class Bitmap : public Asset
+
+class BitmapBase : public Asset
+{
+    Q_OBJECT
+    GLAXNIMATE_PROPERTY_RO(QString, format, {})
+    GLAXNIMATE_PROPERTY_RO(int, width, -1)
+    GLAXNIMATE_PROPERTY_RO(int, height, -1)
+
+public:
+    using Asset::Asset;
+
+    bool remove_if_unused(bool clean_lists) override;
+
+    void paint(QPainter* painter, FrameTime time) const;
+
+    Q_INVOKABLE virtual QPixmap pixmap(FrameTime time) const = 0;
+    Q_INVOKABLE virtual QImage image(FrameTime time) const = 0;
+
+};
+
+class Bitmap : public BitmapBase
 {
     GLAXNIMATE_OBJECT(Bitmap)
     GLAXNIMATE_PROPERTY(QByteArray, data, {}, &Bitmap::on_refresh)
     GLAXNIMATE_PROPERTY(QString, filename, {}, &Bitmap::on_refresh)
     GLAXNIMATE_PROPERTY_RO(QString, format, {})
-    GLAXNIMATE_PROPERTY_RO(int, width, -1)
-    GLAXNIMATE_PROPERTY_RO(int, height, -1)
     Q_PROPERTY(bool embedded READ embedded WRITE embed)
-    Q_PROPERTY(QImage image READ get_image)
 
 public:
-    using Asset::Asset;
-
-    void paint(QPainter* painter) const;
+    using BitmapBase::BitmapBase;
 
     bool embedded() const;
 
@@ -44,16 +60,22 @@ public:
 
     QFileInfo file_info() const;
 
-    const QPixmap& pixmap() const { return image; }
     void set_pixmap(const QImage& qimage, const QString& format);
 
-    bool remove_if_unused(bool clean_lists) override;
-
-    DocumentNode* docnode_parent() const override;
-
-    QImage get_image() const
+    const QPixmap& pixmap() const { return image_; }
+    QImage image() const
     {
-        return image.toImage();
+        return image_.toImage();
+    }
+
+    QPixmap pixmap(FrameTime) const override
+    {
+        return pixmap();
+    }
+
+    QImage image(FrameTime) const override
+    {
+        return image();
     }
 
 public slots:
@@ -71,8 +93,47 @@ signals:
     void loaded();
 
 private:
-    QPixmap image;
-
+    QPixmap image_;
 };
+
+
+
+class BitmapSequence : public BitmapBase
+{
+    GLAXNIMATE_OBJECT(BitmapSequence)
+    GLAXNIMATE_PROPERTY(float, fps, 24)
+    GLAXNIMATE_PROPERTY_LIST(Bitmap, frames)
+
+public:
+    enum EndMode
+    {
+        End = 0,
+        Loop = 1,
+        Hold = 2,
+    };
+
+    Q_ENUM(EndMode)
+    GLAXNIMATE_PROPERTY(EndMode, end_mode, End)
+
+public:
+    using BitmapBase::BitmapBase;
+
+private:
+    QPixmap pixmap(FrameTime time) const override;
+    QImage image(FrameTime time) const override;
+    Q_INVOKABLE Bitmap* frame(FrameTime time) const;
+    Q_INVOKABLE int frame_number(FrameTime time) const;
+
+    QIcon instance_icon() const override;
+
+    QString type_name_human() const override
+    {
+        return tr("Bitmap Sequence");
+    }
+
+    Q_INVOKABLE Bitmap* add_frame();
+    void add_frame(std::unique_ptr<Bitmap> frame);
+};
+
 
 } // namespace model

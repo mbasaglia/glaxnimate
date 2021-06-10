@@ -17,12 +17,19 @@ private:                                                    \
     Q_CLASSINFO(#name, "property list " #type)              \
     // macro end
 
-#define GLAXNIMATE_PROPERTY_LIST(type, name, ...)           \
+#define GLAXNIMATE_PROPERTY_LIST(type, name)                \
+public:                                                     \
+    ObjectListProperty<type> name{this, #name};             \
+    GLAXNIMATE_PROPERTY_LIST_IMPL(type, name)               \
+    // macro end
+
+/*
+#define GLAXNIMATE_PROPERTY_LIST_EX(type, name, ...)        \
 public:                                                     \
     ObjectListProperty<type> name{this, #name, __VA_ARGS__};\
     GLAXNIMATE_PROPERTY_LIST_IMPL(type, name)               \
     // macro end
-
+*/
 
 namespace model {
 
@@ -63,6 +70,17 @@ public:
 
     virtual std::vector<model::DocumentNode *> valid_reference_values(bool allow_null) const = 0;
     virtual bool is_valid_reference_value(model::DocumentNode *, bool allow_null) const = 0;
+
+protected:
+    void set_parent(DocumentNode* item)
+    {
+        item->list_parent = static_cast<DocumentNode*>(object());
+    }
+
+    void clear_parent(DocumentNode* item)
+    {
+        item->list_parent = nullptr;
+    }
 };
 
 namespace detail {
@@ -146,6 +164,7 @@ public:
         auto ptr = p.get();
         objects.insert(objects.begin()+position, std::move(p));
         ptr->set_time(object()->time());
+        set_parent(ptr);
         on_insert(position);
         callback_insert(this->object(), ptr, position);
         value_changed();
@@ -166,6 +185,7 @@ public:
         auto it = objects.begin() + index;
         auto v = std::move(*it);
         objects.erase(it);
+        clear_parent(v.get());
         on_remove(index);
         callback_remove(object(), v.get(), index);
         value_changed();

@@ -726,7 +726,9 @@ private:
 
     void load_asset_bitmap(const QJsonObject& asset)
     {
-        auto bmp = document->assets()->images->values.insert(std::make_unique<model::Bitmap>(document));
+        auto bmp = static_cast<model::Bitmap*>(
+            document->assets()->images->values.insert(std::make_unique<model::Bitmap>(document))
+        );
 
         QString id = asset["id"].toString();
         if ( bitmap_ids.count(id) )
@@ -824,7 +826,7 @@ private:
     std::vector<std::pair<model::Object*, QJsonObject>> deferred;
     model::Composition* composition = nullptr;
     app::log::Log logger{"Lottie Import"};
-    QMap<QString, model::Bitmap*> bitmap_ids;
+    QMap<QString, model::BitmapBase*> bitmap_ids;
     QMap<QString, model::Precomposition*> precomp_ids;
     QMap<QString, FontInfo> fonts;
     model::Layer* mask = nullptr;

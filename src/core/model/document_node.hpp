@@ -87,7 +87,7 @@ public:
 
     virtual QIcon tree_icon() const = 0;
 
-    virtual DocumentNode* docnode_parent() const = 0;
+    virtual DocumentNode* docnode_parent() const { return list_parent; }
     virtual int docnode_child_count() const = 0;
     virtual DocumentNode* docnode_child(int index) const = 0;
     virtual int docnode_child_index(DocumentNode* dn) const = 0;
@@ -181,6 +181,9 @@ signals:
 
     void name_changed(const QString&);
 
+private:
+    friend class ObjectListPropertyBase;
+    DocumentNode* list_parent = nullptr;
 };
 
 /**
