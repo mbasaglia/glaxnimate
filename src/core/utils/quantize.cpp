@@ -653,7 +653,14 @@ std::vector<QRgb> utils::quantize::octree(const QImage& image, int k)
 
 QImage utils::quantize::quantize(const QImage& source, const std::vector<QRgb>& colors)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     QVector<QRgb> vcolors(colors.begin(), colors.end());
+#else
+    QVector<QRgb> vcolors;
+    vcolors.reserve(colors.size()+1);
+    for ( auto color : colors )
+        vcolors.push_back(color);
+#endif
     vcolors.push_back(qRgba(0, 0, 0, 0));
     return source.convertToFormat(QImage::Format_Indexed8, vcolors, Qt::ThresholdDither);
 }
