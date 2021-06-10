@@ -62,7 +62,9 @@ void define_bezier(py::module& m)
         .def("split_segment_point", &math::bezier::Bezier::split_segment_point)
         .def("remove_point", &math::bezier::Bezier::remove_point)
         .def("lerp", &math::bezier::Bezier::lerp)
-        .def("__iter__", [](const math::bezier::Bezier& bez){ return bez.points();})
+        .def("__iter__", [](const math::bezier::Bezier& bez){
+            return py::make_iterator(bez.points().begin(), bez.points().end());
+        })
     ;
 
     pybind11::detail::type_caster<QVariant>::add_custom_type<math::bezier::Bezier>();
