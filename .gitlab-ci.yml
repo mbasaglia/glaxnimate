@@ -331,7 +331,7 @@ linux:pypi_deploy:
         - python3 --version
         - mkdir -p build
         - cd build
-        - cmake .. -DVERSION_SUFFIX="git.$CI_COMMIT_SHORT_SHA.`date +%Y%m%d%H%M%S`"
+        - cmake .. -DVERSION_SUFFIX="git.`date +%Y%m%d%H%M%S`.$CI_COMMIT_SHORT_SHA"
         - make glaxnimate_python_depends_install
         - ls py_module/build/lib
         - make glaxnimate_python_wheel

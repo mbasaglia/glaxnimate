@@ -35,6 +35,16 @@ click on *Reload Script Modules* in the script console.
 
 Glaxnimate is also available as a mode (you can download it from [PyPI](https://pypi.org/project/glaxnimate/)).
 
+```
+pip install glaxnimate
+```
+
+You can also download the development version (This will have newer features but might also have more bugs_
+
+```
+pip install glaxnimate --extra-index-url https://gitlab.com/api/v4/projects/19921167/packages/pypi/simple
+```
+
 It provides a similar functionality as the script console but you can call it from python scripts, without the need
 of a GUI.
 
