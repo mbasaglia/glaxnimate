@@ -152,6 +152,7 @@ void GlaxnimateApp::on_initialize()
     QStringList search_paths = data_paths("icons");
     search_paths += QIcon::themeSearchPaths();
     QIcon::setThemeSearchPaths(search_paths);
+    QIcon::setFallbackSearchPaths(data_paths("images/icons"));
 
     app::settings::Settings::instance().add_custom_group(std::make_unique<settings::ToolbarSettingsGroup>());
     app::settings::Settings::instance().add_custom_group(std::make_unique<settings::PluginSettingsGroup>(QStringList{

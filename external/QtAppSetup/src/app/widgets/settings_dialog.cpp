@@ -15,6 +15,20 @@ public:
     app::widgets::NoCloseOnEnter ncoe;
 };
 
+
+static QIcon best_icon(const QIcon& icon, const QSize& target_size)
+{
+    for ( const auto& size : icon.availableSizes() )
+        if ( size.width() >= target_size.width() )
+            return icon;
+    return icon.pixmap(target_size);;
+}
+
+static QIcon best_icon(const QString& theme_name, const QSize& target_size)
+{
+    return best_icon(QIcon::fromTheme(theme_name), target_size);
+}
+
 app::SettingsDialog::SettingsDialog ( QWidget* parent ) :
     QDialog(parent), d(std::make_unique<Private>())
 {
@@ -28,7 +42,7 @@ app::SettingsDialog::SettingsDialog ( QWidget* parent ) :
         if ( !group.has_visible_settings() )
             continue;
 
-        new QListWidgetItem(QIcon::fromTheme(group.icon), group.label, d->list_widget);
+        new QListWidgetItem(best_icon(group.icon, d->list_widget->iconSize()), group.label, d->list_widget);
         QWidget* page = new QWidget();
         d->stacked_widget->addWidget(page);
         QFormLayout* lay = new QFormLayout(page);
@@ -40,7 +54,7 @@ app::SettingsDialog::SettingsDialog ( QWidget* parent ) :
 
     for ( const auto& group : app::settings::Settings::instance().custom_groups() )
     {
-        new QListWidgetItem(group->icon(), group->label(), d->list_widget);
+        new QListWidgetItem(best_icon(group->icon(), d->list_widget->iconSize()), group->label(), d->list_widget);
         d->stacked_widget->addWidget(group->make_widget(d->stacked_widget));
     }
 
