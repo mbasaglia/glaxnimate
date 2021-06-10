@@ -61,13 +61,8 @@ public:
         return false;
     }
 
-    void console_commit(QString text)
+    void run_snippet(const QString& text)
     {
-        if ( text.isEmpty() )
-            return;
-
-        text = text.replace("\n", " ");
-
         if ( !ensure_script_contexts() )
             return;
 
@@ -82,12 +77,21 @@ public:
         } catch ( const app::scripting::ScriptError& err ) {
             console_error(err);
         }
-        ui.console_input->setText("");
-
 
         c.clearSelection();
         c.movePosition(QTextCursor::End);
         ui.console_output->setTextCursor(c);
+    }
+
+    void console_commit(QString text)
+    {
+        if ( text.isEmpty() )
+            return;
+
+
+        run_snippet(text.replace("\n", " "));
+
+        ui.console_input->setText("");
     }
 
 
@@ -233,4 +237,9 @@ void ScriptConsole::save_settings()
     if ( history.size() > max_history )
         history.erase(history.begin(), history.end() - max_history);
     app::settings::set("scripting", "history", history);
+}
+
+void ScriptConsole::run_snippet(const QString& source)
+{
+    d->run_snippet(source);
 }

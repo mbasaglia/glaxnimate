@@ -95,6 +95,8 @@ widgets/script_console.ui
 widgets/tab_bar_close_button.cpp
 widgets/clickable_tab_bar.cpp
 widgets/composition_tab_bar.cpp
+widgets/snippet_list_widget.cpp
+widgets/snippet_list_widget.ui
 
 widgets/settings/plugin_settings_widget.cpp
 widgets/settings/plugin_settings_widget.ui

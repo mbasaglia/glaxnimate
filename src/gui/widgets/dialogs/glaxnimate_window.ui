@@ -916,6 +916,36 @@
     <bool>false</bool>
    </attribute>
   </widget>
+  <widget class="QDockWidget" name="dock_snippet">
+   <property name="windowIcon">
+    <iconset theme="dialog-scripts"/>
+   </property>
+   <property name="windowTitle">
+    <string>Snippets</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_14">
+    <layout class="QVBoxLayout" name="verticalLayout_14">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="SnippetListWidget" name="widget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="action_new">
    <property name="icon">
     <iconset theme="document-new">
@@ -2066,6 +2096,9 @@
    <extends>QWidget</extends>
    <header>widgets/script_console.hpp</header>
    <container>1</container>
+   <slots>
+    <slot>run_snippet(QString)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>CustomTreeView</class>
@@ -2077,6 +2110,15 @@
    <extends>QWidget</extends>
    <header>widgets/composition_tab_bar.hpp</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SnippetListWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/snippet_list_widget.hpp</header>
+   <container>1</container>
+   <slots>
+    <signal>run_snippet(QString)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -2424,7 +2466,7 @@
    <slot>layer_top()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>249</x>
+     <x>202</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2440,7 +2482,7 @@
    <slot>layer_raise()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>287</x>
+     <x>240</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2456,7 +2498,7 @@
    <slot>layer_lower()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>325</x>
+     <x>278</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2472,7 +2514,7 @@
    <slot>layer_bottom()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>363</x>
+     <x>316</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2488,12 +2530,28 @@
    <slot>layer_duplicate()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>50</x>
-     <y>880</y>
+     <x>100</x>
+     <y>900</y>
     </hint>
     <hint type="destinationlabel">
      <x>68</x>
      <y>958</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>run_snippet(QString)</signal>
+   <receiver>console</receiver>
+   <slot>run_snippet(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1211</x>
+     <y>616</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>859</x>
+     <y>732</y>
     </hint>
    </hints>
   </connection>

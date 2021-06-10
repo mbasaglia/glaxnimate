@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SnippetListWidget</class>
+ <widget class="QWidget" name="SnippetListWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QToolButton" name="toolButton">
+       <property name="toolTip">
+        <string>New Snippet</string>
+       </property>
+       <property name="text">
+        <string>New</string>
+       </property>
+       <property name="icon">
+        <iconset theme="document-new"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_2">
+       <property name="toolTip">
+        <string>Edit the selected snippet</string>
+       </property>
+       <property name="text">
+        <string>Edit...</string>
+       </property>
+       <property name="icon">
+        <iconset theme="document-edit"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_3">
+       <property name="toolTip">
+        <string>Selete selected snippet</string>
+       </property>
+       <property name="text">
+        <string>Delete</string>
+       </property>
+       <property name="icon">
+        <iconset theme="edit-delete"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_4">
+       <property name="toolTip">
+        <string>Run selected snippet</string>
+       </property>
+       <property name="text">
+        <string>Run</string>
+       </property>
+       <property name="icon">
+        <iconset theme="run-build"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QListView" name="list_view"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SnippetListWidget</receiver>
+   <slot>snippet_new()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>11</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>316</x>
+     <y>530</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>SnippetListWidget</receiver>
+   <slot>snippet_edit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>47</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>426</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>SnippetListWidget</receiver>
+   <slot>snippet_delete()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>90</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>161</x>
+     <y>567</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_4</sender>
+   <signal>clicked()</signal>
+   <receiver>SnippetListWidget</receiver>
+   <slot>snippet_run()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>snippet_new()</slot>
+  <slot>snippet_edit()</slot>
+  <slot>snippet_delete()</slot>
+  <slot>snippet_run()</slot>
+ </slots>
+</ui>

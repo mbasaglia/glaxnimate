@@ -1,0 +1,66 @@
+#include "snippet_list_widget.hpp"
+#include "ui_snippet_list_widget.h"
+
+#include <QEvent>
+#include <QDesktopServices>
+#include <QUrl>
+
+#include "item_models/python_snippet_model.hpp"
+
+class SnippetListWidget::Private
+{
+public:
+    Ui::SnippetListWidget ui;
+    item_models::PythonSnippetModel model;
+};
+
+SnippetListWidget::SnippetListWidget(QWidget* parent)
+    : QWidget(parent), d(std::make_unique<Private>())
+{
+    d->ui.setupUi(this);
+    d->model.reload();
+    d->ui.list_view->setModel(&d->model);
+}
+
+SnippetListWidget::~SnippetListWidget() = default;
+
+void SnippetListWidget::changeEvent ( QEvent* e )
+{
+    QWidget::changeEvent(e);
+
+    if ( e->type() == QEvent::LanguageChange)
+    {
+        d->ui.retranslateUi(this);
+    }
+}
+
+void SnippetListWidget::snippet_new()
+{
+    d->ui.list_view->setCurrentIndex(d->model.append());
+}
+
+void SnippetListWidget::snippet_delete()
+{
+    d->model.removeRows(d->ui.list_view->currentIndex().row(), 1, {});
+}
+
+void SnippetListWidget::snippet_edit()
+{
+    auto snippet = d->model.snippet(d->ui.list_view->currentIndex());
+    if ( !snippet.name().isEmpty() )
+    {
+        snippet.ensure_file_exists();
+        QDesktopServices::openUrl(QUrl::fromLocalFile(snippet.filename()));
+    }
+}
+
+void SnippetListWidget::snippet_run()
+{
+    auto snippet = d->model.snippet(d->ui.list_view->currentIndex());
+    if ( !snippet.name().isEmpty() )
+    {
+        QString src = snippet.get_source();
+        if ( !src.isEmpty() )
+            emit run_snippet(src);
+    }
+}

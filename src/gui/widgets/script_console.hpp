@@ -28,6 +28,8 @@ public:
 protected:
     void changeEvent ( QEvent* e ) override;
 
+public slots:
+    void run_snippet(const QString& source);
 
 private slots:
     void console_commit(const QString& command);
