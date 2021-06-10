@@ -649,3 +649,11 @@ std::vector<QRgb> utils::quantize::octree(const QImage& image, int k)
 
     return colors;
 }
+
+
+QImage utils::quantize::quantize(const QImage& source, const std::vector<QRgb>& colors)
+{
+    QVector<QRgb> vcolors(colors.begin(), colors.end());
+    vcolors.push_back(qRgba(0, 0, 0, 0));
+    return source.convertToFormat(QImage::Format_Indexed8, vcolors, Qt::ThresholdDither);
+}

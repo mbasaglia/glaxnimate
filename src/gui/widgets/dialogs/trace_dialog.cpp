@@ -28,6 +28,7 @@
 #include "model/shapes/image.hpp"
 #include "model/shapes/rect.hpp"
 #include "utils/trace.hpp"
+#include "utils/quantize.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
 #include "app/widgets/no_close_on_enter.hpp"
@@ -103,21 +104,20 @@ public:
         result.resize(count);
         ui.progress_bar->setMaximum(100 * count);
 
-        QVector<QRgb> colors;
-        colors.reserve(count+1);
+        std::vector<QRgb> colors;
         for ( int i = 0; i < count; i++ )
         {
             result[i].color = ui.list_colors->item(i)->data(Qt::DisplayRole).value<QColor>();
             colors.push_back(result[i].color.rgb());
         }
-        colors.push_back(qRgba(0, 0, 0, 0));
-        QImage converted = source_image.convertToFormat(QImage::Format_Indexed8, colors, Qt::ThresholdDither);
+
+        QImage converted = utils::quantize::quantize(source_image, colors);
+        utils::trace::Tracer tracer(converted, options);
+        connect(&tracer, &utils::trace::Tracer::progress, ui.progress_bar, &QProgressBar::setValue);
 
         for ( int i = 0; i < count; i++ )
         {
-            utils::trace::Tracer tracer(converted, options);
             tracer.set_target_index(i);
-            connect(&tracer, &utils::trace::Tracer::progress, ui.progress_bar, &QProgressBar::setValue);
             tracer.set_progress_range(100 * i, 100 * (i+1));
             tracer.trace(result[i].bezier);
         }

@@ -62,11 +62,36 @@ void define_bezier(py::module& m)
         .def("split_segment_point", &math::bezier::Bezier::split_segment_point)
         .def("remove_point", &math::bezier::Bezier::remove_point)
         .def("lerp", &math::bezier::Bezier::lerp)
+        .def("__iter__", [](const math::bezier::Bezier& bez){ return bez.points();})
     ;
 
     pybind11::detail::type_caster<QVariant>::add_custom_type<math::bezier::Bezier>();
 }
 
+namespace {
+template<class... Args>
+struct QuantizeWrapper
+{
+    using func_type = std::vector<QRgb> (*) (Args...);
+
+    func_type func;
+
+    std::vector<QColor> operator()(Args... args) const
+    {
+        std::vector<QRgb> data = func(args...);
+        std::vector<QColor> ret(data.begin(), data.end());
+        return ret;
+    }
+};
+
+
+template<class... Args>
+QuantizeWrapper<Args...> quantize_wrapper(std::vector<QRgb> (*func) (Args...))
+{
+    return {func};
+}
+
+} // namespace
 
 static void define_trace(py::module& m)
 {
@@ -85,19 +110,61 @@ static void define_trace(py::module& m)
         .def("trace", [](Tracer& tracer) {
             math::bezier::MultiBezier output;
             tracer.trace(output);
-            return output;
+            return output.beziers();
         })
     ;
+    trace.def("quantize_and_trace", [](const QImage& source_image, const TraceOptions& options, const std::vector<QColor>& qcolors){
+        std::vector<QRgb> colors;
+        colors.reserve(qcolors.size());
+        for ( const QColor& qc : qcolors )
+            colors.push_back(qc.rgba());
+
+        QImage converted = utils::quantize::quantize(source_image, colors);
+        utils::trace::Tracer tracer(converted, options);
+
+        std::vector<std::vector<math::bezier::Bezier>> out;
+        out.reserve(colors.size());
+
+        for ( int i = 0; i < int(colors.size()); i++ )
+        {
+            tracer.set_target_index(i);
+            math::bezier::MultiBezier mb;
+            tracer.trace(mb);
+            out.emplace_back(std::move(mb.beziers()));
+        }
+
+        return out;
+    });
 
     py::module quantize = m.def_submodule("quantize", "Bitmap color quantization");
-    quantize.def("color_frequencies", &utils::quantize::color_frequencies, py::arg("image"), py::arg("alpha_threshold") = 128,
-                 "Counts pixel values and returns a list of (rgba, count) pairs.");
-    quantize.def("k_modes", &utils::quantize::k_modes, py::arg("image"), py::arg("k"),
-                 "Returns the k colors that appear most frequently in image.");
-    quantize.def("k_means", &utils::quantize::k_means, py::arg("image"), py::arg("k"), py::arg("max_iterations") = 100, py::arg("match") = 1,
-                 "Returns the k colors that are at the center of clusters.");
-    quantize.def("octree", &utils::quantize::octree, py::arg("image"), py::arg("k"),
-                 "Returns the k  best colors.");
+    py::enum_<utils::quantize::KMeansMatch>(quantize, "MatchType")
+        .value("Centroid", utils::quantize::KMeansMatch::None)
+        .value("Closest", utils::quantize::KMeansMatch::Closest)
+        .value("MostFrequent", utils::quantize::KMeansMatch::MostFrequent)
+    ;
+    quantize.def(
+        "color_frequencies", &utils::quantize::color_frequencies,
+        py::arg("image"), py::arg("alpha_threshold") = 128,
+        "Counts pixel values and returns a list of (rgba, count) pairs."
+    );
+    quantize.def(
+        "k_modes",
+        quantize_wrapper(&utils::quantize::k_modes),
+        py::arg("image"), py::arg("k"),
+        "Returns the k colors that appear most frequently in image."
+    );
+    quantize.def(
+        "k_means",
+        quantize_wrapper(&utils::quantize::k_means),
+        py::arg("image"), py::arg("k"), py::arg("max_iterations") = 100, py::arg("match") = 1,
+        "Returns the k colors that are at the center of clusters."
+    );
+    quantize.def(
+        "octree",
+        quantize_wrapper(&utils::quantize::octree),
+        py::arg("image"), py::arg("k"),
+        "Returns the k  best colors."
+    );
 }
 
 void define_utils(py::module& m)

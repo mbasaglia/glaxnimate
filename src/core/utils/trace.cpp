@@ -157,7 +157,6 @@ utils::trace::Tracer::~Tracer() = default;
 
 bool utils::trace::Tracer::trace(math::bezier::MultiBezier& mbez)
 {
-
     QImage::Format target_format = d->callback == &Private::get_bit_index ? QImage::Format_Indexed8 : QImage::Format_RGBA8888;
     if ( d->image.format() != target_format )
         d->image = d->image.convertToFormat(target_format);

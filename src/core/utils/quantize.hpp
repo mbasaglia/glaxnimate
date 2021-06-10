@@ -40,4 +40,9 @@ std::vector<QRgb> octree(const QImage& image, int k);
  */
 std::vector<ColorFrequency> color_frequencies(QImage image, int alpha_threshold = 128);
 
+/**
+ * \brief Returns a quantized image with the given colors
+ */
+QImage quantize(const QImage& source, const std::vector<QRgb>& colors);
+
 } // namespace utils::quantize
