@@ -22,7 +22,8 @@
         <string>New</string>
        </property>
        <property name="icon">
-        <iconset theme="document-new"/>
+        <iconset theme="document-new">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -35,7 +36,8 @@
         <string>Edit...</string>
        </property>
        <property name="icon">
-        <iconset theme="document-edit"/>
+        <iconset theme="document-edit">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -48,7 +50,8 @@
         <string>Delete</string>
        </property>
        <property name="icon">
-        <iconset theme="edit-delete"/>
+        <iconset theme="edit-delete">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -61,7 +64,8 @@
         <string>Run</string>
        </property>
        <property name="icon">
-        <iconset theme="run-build"/>
+        <iconset theme="run-build">
+         <normaloff>.</normaloff>.</iconset>
        </property>
       </widget>
      </item>
@@ -77,6 +81,19 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_5">
+       <property name="toolTip">
+        <string>Reload snippets</string>
+       </property>
+       <property name="text">
+        <string>Reload</string>
+       </property>
+       <property name="icon">
+        <iconset theme="view-refresh"/>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -151,11 +168,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>toolButton_5</sender>
+   <signal>clicked()</signal>
+   <receiver>SnippetListWidget</receiver>
+   <slot>snippet_reload()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>383</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>423</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>snippet_new()</slot>
   <slot>snippet_edit()</slot>
   <slot>snippet_delete()</slot>
   <slot>snippet_run()</slot>
+  <slot>snippet_reload()</slot>
  </slots>
 </ui>

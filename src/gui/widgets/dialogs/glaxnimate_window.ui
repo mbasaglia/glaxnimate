@@ -916,15 +916,16 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QDockWidget" name="dock_snippet">
+  <widget class="QDockWidget" name="dock_snippets">
    <property name="windowIcon">
-    <iconset theme="dialog-scripts"/>
+    <iconset theme="dialog-scripts">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="windowTitle">
     <string>Snippets</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>8</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_14">
     <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -2118,6 +2119,7 @@
    <container>1</container>
    <slots>
     <signal>run_snippet(QString)</signal>
+    <signal>warning(QString,QString)</signal>
    </slots>
   </customwidget>
  </customwidgets>
@@ -2178,7 +2180,7 @@
    <slot>document_treeview_clicked(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>314</x>
+     <x>297</x>
      <y>861</y>
     </hint>
     <hint type="destinationlabel">
@@ -2466,7 +2468,7 @@
    <slot>layer_top()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>202</x>
+     <x>182</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2482,7 +2484,7 @@
    <slot>layer_raise()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>240</x>
+     <x>220</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2498,7 +2500,7 @@
    <slot>layer_lower()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>278</x>
+     <x>258</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2514,7 +2516,7 @@
    <slot>layer_bottom()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
+     <x>296</x>
      <y>900</y>
     </hint>
     <hint type="destinationlabel">
@@ -2546,12 +2548,28 @@
    <slot>run_snippet(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1211</x>
-     <y>616</y>
+     <x>1311</x>
+     <y>907</y>
     </hint>
     <hint type="destinationlabel">
-     <x>859</x>
-     <y>732</y>
+     <x>806</x>
+     <y>901</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>warning(QString,QString)</signal>
+   <receiver>GlaxnimateWindow</receiver>
+   <slot>warning(QString,QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1294</x>
+     <y>725</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1463</x>
+     <y>736</y>
     </hint>
    </hints>
   </connection>
@@ -2587,5 +2605,6 @@
   <slot>layer_lower()</slot>
   <slot>layer_bottom()</slot>
   <slot>layer_duplicate()</slot>
+  <slot>warning(QString,QString)</slot>
  </slots>
 </ui>

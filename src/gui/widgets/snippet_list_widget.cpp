@@ -47,11 +47,18 @@ void SnippetListWidget::snippet_delete()
 void SnippetListWidget::snippet_edit()
 {
     auto snippet = d->model.snippet(d->ui.list_view->currentIndex());
-    if ( !snippet.name().isEmpty() )
+    if ( snippet.name().isEmpty() )
     {
-        snippet.ensure_file_exists();
-        QDesktopServices::openUrl(QUrl::fromLocalFile(snippet.filename()));
+        emit warning(tr("Snippets need a name"), tr("Snippets"));
+        return;
     }
+
+    if ( !snippet.ensure_file_exists() )
+    {
+        emit warning(tr("Could not create snippet: `%1`").arg(snippet.filename()), tr("Snippets"));
+    }
+
+    QDesktopServices::openUrl(QUrl::fromLocalFile(snippet.filename()));
 }
 
 void SnippetListWidget::snippet_run()
@@ -63,4 +70,9 @@ void SnippetListWidget::snippet_run()
         if ( !src.isEmpty() )
             emit run_snippet(src);
     }
+}
+
+void SnippetListWidget::snippet_reload()
+{
+    d->model.reload();
 }

@@ -454,6 +454,21 @@ with Python.
 See [Scripting](/contributing/scripting/index.md) for details.
 
 
+Snippets
+--------
+
+![Snippets](/img/screenshots/views/snippets.png)
+
+Here you can see "snippets", small python files you can quickly edit and execute.
+
+Useful for testing new scripts when making plugins and to automate certain tasks
+without having to provide all the metadata required by plugins.
+
+Editing a snippet will open your system text editor.
+
+When you run a snippet, it's equivalent to running that code in the console.
+
+
 Logs
 ----
 

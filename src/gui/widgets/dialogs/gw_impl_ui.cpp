@@ -527,6 +527,7 @@ void GlaxnimateWindow::Private::init_docks()
     parent->tabifyDockWidget(ui.dock_tool_options, ui.dock_align);
     ui.dock_tool_options->raise();
 
+    parent->resizeDocks({ui.dock_snippets}, {1}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_layers}, {1}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_tools}, {200}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_tool_options, ui.dock_align, ui.dock_tools}, {1, 1, 4000}, Qt::Vertical);
@@ -534,6 +535,7 @@ void GlaxnimateWindow::Private::init_docks()
     ui.dock_script_console->setVisible(false);
     ui.dock_logs->setVisible(false);
     ui.dock_tools->setVisible(false);
+    ui.dock_snippets->setVisible(false);
 
     // Resize parent to have a reasonable default size
     parent->resize(1920, 1080);

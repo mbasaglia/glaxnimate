@@ -1,3 +1,4 @@
+#pragma once
 #include "plugin.hpp"
 
 #include "app/application.hpp"
@@ -27,7 +28,7 @@ public:
             {
                 name_ = clean_name;
             }
-            else if ( name_ != clean_name && QFileInfo(filename).exists() )
+            else if ( name_ != clean_name && QFileInfo(filename()).exists() )
             {
                 if ( QFile::rename(filename(), snippet_filename(clean_name)) )
                     name_ = clean_name;
@@ -73,7 +74,11 @@ public:
 
         QDir parent(snippet_path());
         if ( !parent.exists() )
-            parent.mkpath("");
+        {
+            parent.cdUp();
+            if ( !parent.mkpath("snippets") )
+                return false;
+        }
 
         QFile file(filename());
         if ( !file.open(QFile::WriteOnly|QIODevice::Text) )

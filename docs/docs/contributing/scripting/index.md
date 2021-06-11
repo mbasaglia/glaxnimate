@@ -22,6 +22,8 @@ see the up to date modules (instead of the version previously cached by Python).
 
 This also affects modules loaded for plugins.
 
+If you want to run more complex scripts in the console, you can use [Snippets](/manual/ui/docks#snippets).
+
 ## Plugins
 
 You can write plugins to perform common actions, add support for more file formats, and more.

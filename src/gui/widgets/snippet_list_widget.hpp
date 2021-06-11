@@ -21,9 +21,11 @@ private slots:
     void snippet_edit();
     void snippet_delete();
     void snippet_run();
+    void snippet_reload();
 
 signals:
     void run_snippet(const QString& source);
+    void warning(const QString& message, const QString& title);
 
 private:
     class Private;

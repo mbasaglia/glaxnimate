@@ -61,14 +61,16 @@ public:
         return false;
     }
 
-    void run_snippet(const QString& text)
+    void run_snippet(const QString& text, bool echo)
     {
         if ( !ensure_script_contexts() )
             return;
 
         auto c = ui.console_output->textCursor();
 
-        console_stdout("> " + text);
+        if ( echo )
+            console_stdout("> " + text);
+
         auto ctx = script_contexts[ui.console_language->currentIndex()].get();
         try {
             QString out = ctx->eval_to_string(text);
@@ -89,7 +91,7 @@ public:
             return;
 
 
-        run_snippet(text.replace("\n", " "));
+        run_snippet(text.replace("\n", " "), true);
 
         ui.console_input->setText("");
     }
@@ -241,5 +243,5 @@ void ScriptConsole::save_settings()
 
 void ScriptConsole::run_snippet(const QString& source)
 {
-    d->run_snippet(source);
+    d->run_snippet(source, false);
 }
