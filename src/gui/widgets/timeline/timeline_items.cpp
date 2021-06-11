@@ -170,6 +170,18 @@ void timeline::LineItem::collapse()
     expanded_ = false;
 }
 
+void timeline::LineItem::set_expanded(bool expanded)
+{
+    if ( expanded != expanded_ )
+    {
+        if ( expanded )
+            expand();
+        else
+            collapse();
+    }
+}
+
+
 bool timeline::LineItem::is_expanded()
 {
     return expanded_;

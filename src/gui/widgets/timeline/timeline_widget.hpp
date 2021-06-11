@@ -7,6 +7,7 @@
 #include "model/document.hpp"
 #include "item_models/property_model_full.hpp"
 
+class QTreeView;
 
 class TimelineWidget : public QGraphicsView
 {
@@ -18,7 +19,7 @@ public:
     
 //     void clear();
 
-    void set_model(QAbstractItemModel* model, item_models::PropertyModelFull* base_model);
+    void set_model(QAbstractItemModel* model, item_models::PropertyModelFull* base_model, QTreeView* expander);
 
     int row_height() const;
     void set_row_height(int w);

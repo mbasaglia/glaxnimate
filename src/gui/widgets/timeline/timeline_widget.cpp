@@ -3,6 +3,7 @@
 #include <QScrollBar>
 #include <QWheelEvent>
 #include <QDebug>
+#include <QTreeView>
 
 #include "timeline_items.hpp"
 #include "model/shapes/precomp_layer.hpp"
@@ -35,6 +36,7 @@ public:
 
     item_models::PropertyModelFull* base_model = nullptr;
     QAbstractItemModel* model = nullptr;
+    QTreeView* expander = nullptr;
 
     int rounded_end_time()
     {
@@ -227,6 +229,21 @@ public:
         int row_count = model->rowCount(parent_index);
         for ( int i = 0; i < row_count; i++ )
             insert_index(model->index(i, 0, parent_index), parent_item, i);
+    }
+
+    /**
+     * \brief QTreeView isn't reliable with expanded/collapsed signals, so we check every time ;_;
+     */
+    void adjust_expand(const QModelIndex& parent_index, LineItem* parent_item)
+    {
+        int row_count = model->rowCount(parent_index);
+        for ( int i = 0; i < row_count; i++ )
+        {
+            QModelIndex index = model->index(i, 0, parent_index);
+            auto row = parent_item->rows()[i];
+            row->set_expanded(expander->isExpanded(index));
+
+        }
     }
 };
 
@@ -666,10 +683,11 @@ void TimelineWidget::expand(const QModelIndex& index)
     viewport()->update();
 }
 
-void TimelineWidget::set_model(QAbstractItemModel* model, item_models::PropertyModelFull* base_model)
+void TimelineWidget::set_model(QAbstractItemModel* model, item_models::PropertyModelFull* base_model, QTreeView* expander)
 {
     d->model = model;
     d->base_model = base_model;
+    d->expander = expander;
     connect(model, &QAbstractItemModel::rowsInserted, this, &TimelineWidget::model_rows_added);
     connect(model, &QAbstractItemModel::rowsRemoved, this, &TimelineWidget::model_rows_removed);
     connect(model, &QAbstractItemModel::rowsMoved, this, &TimelineWidget::model_rows_moved);
@@ -691,6 +709,9 @@ void TimelineWidget::model_rows_added(const QModelIndex& parent, int first, int 
     for ( int i = first; i <= last; i++ )
         d->insert_index(d->model->index(first, 0, parent), parent_line, i);
 
+
+    d->adjust_expand(parent, parent_line);
+
     setSceneRect(d->scene_rect());
 
     // We are better at preserving selection than the treeview, so force a click
@@ -705,6 +726,9 @@ void TimelineWidget::model_rows_removed(const QModelIndex& parent, int first, in
         return;
 
     line->remove_rows(first, last);
+
+    d->adjust_expand(parent, line);
+
     setSceneRect(d->scene_rect());
 
     // We are better at preserving selection than the treeview, so force a click
@@ -728,7 +752,11 @@ void TimelineWidget::model_rows_moved(const QModelIndex& parent, int start, int 
         row -= 1;
 
     if ( LineItem* item = d->index_to_line(parent) )
+    {
         item->move_row(start, row);
+
+        d->adjust_expand(parent, item);
+    }
 
     setSceneRect(d->scene_rect());
 

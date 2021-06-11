@@ -187,6 +187,8 @@ public:
 
     void collapse();
 
+    void set_expanded(bool expanded);
+
     bool is_expanded();
 
     LineItem* parent_line() const;

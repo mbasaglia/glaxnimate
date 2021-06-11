@@ -42,7 +42,7 @@ public:
         ui.properties->setPalette(prop_pal);
 
         ui.properties->setModel(&comp_model);
-        ui.timeline->set_model(&comp_model, &property_model);
+        ui.timeline->set_model(&comp_model, &property_model, ui.properties);
         connect(&property_model, &QAbstractItemModel::dataChanged,
                 ui.properties->viewport(), (void (QWidget::*)())&QWidget::update);
 
@@ -307,7 +307,6 @@ void CompoundTimelineWidget::changeEvent ( QEvent* e )
 
 void CompoundTimelineWidget::set_composition(model::Composition* comp)
 {
-//     d->property_model.add_object(comp);
     QSignalBlocker g(d->ui.tab_bar);
     d->ui.tab_bar->set_current_composition(comp);
     d->comp_model.set_composition(comp);
