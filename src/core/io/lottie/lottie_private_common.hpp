@@ -185,7 +185,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"op", Custom},
         FieldInfo{"ip", Custom},
         FieldInfo("ddd"),
-        FieldInfo("hd"),
+        FieldInfo("hd", Custom),
         FieldInfo("ty", Custom),
         FieldInfo("parent", Custom),
         FieldInfo("sr"),
@@ -220,7 +220,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"ix"},
         FieldInfo{"cix"},
         FieldInfo{"bm"},
-        FieldInfo{"hd"},
+        FieldInfo{"hd", Custom},
     }},
     {"Shape", {
         FieldInfo{"d"},

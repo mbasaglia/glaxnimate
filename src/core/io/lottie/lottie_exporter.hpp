@@ -35,7 +35,7 @@ public:
     {
         QCborArray layers;
         for ( const auto& layer : composition->shapes )
-            if ( layer->visible.get() )
+            if ( !strip || layer->visible.get() )
                 convert_layer(layer_type(layer.get()), layer.get(), layers);
 
         json["layers"_l] = layers;
@@ -70,6 +70,8 @@ public:
         convert_fake_layer_parent(forced_parent, json);
         json["ind"_l] = layer_index(shape);
         json["st"_l] = 0;
+        if ( !shape->visible.get() )
+            json["hd"_l] = true;
 
         QCborMap transform;
         if ( auto grp = shape->cast<model::Group>() )
@@ -84,7 +86,7 @@ public:
         json["ks"_l] = transform;
 
         QCborArray shapes;
-        shapes.push_back(convert_shape(shape));
+        shapes.push_back(convert_shape(shape, false));
         json["shapes"_l] = shapes;
         return json;
     }
@@ -127,6 +129,8 @@ public:
         int index = layer_index(layer);
         json["ind"_l] = index;
         json["st"_l] = 0;
+        if ( !shape->visible.get() )
+            json["hd"_l] = true;
 
         convert_animation_container(layer->animation.get(), json);
         convert_object_properties(layer, fields["DocumentNode"], json);
@@ -157,7 +161,7 @@ public:
             if ( all_shapes )
             {
                 json["ty"_l] = 4;
-                json["shapes"_l] = convert_shapes(layer->shapes);
+                json["shapes"_l] = convert_shapes(layer->shapes, false);
             }
             else
             {
@@ -176,7 +180,7 @@ public:
 
                 for ( ; i < layer->shapes.size(); i++ )
                 {
-                    if ( layer->shapes[i]->visible.get() )
+                    if ( !strip || layer->shapes[i]->visible.get() )
                         convert_layer(children_types[i], layer->shapes[i], output, layer, mask);
                 }
             }
@@ -451,23 +455,25 @@ public:
         jsh["g"_l] = jcolors;
     }
 
-    QCborMap convert_shape(model::ShapeElement* shape)
+    QCborMap convert_shape(model::ShapeElement* shape, bool force_hidden)
     {
         if ( auto text = shape->cast<model::TextShape>() )
         {
             auto conv = text->to_path();
-            return convert_shape(conv.get());
+            return convert_shape(conv.get(), force_hidden || !shape->visible.get());
         }
 
         QCborMap jsh;
         jsh["ty"_l] = shape_types[shape->type_name()];
 //         jsh["d"] = 0;
+        if ( force_hidden || !shape->visible.get() )
+            jsh["hd"_l] = true;
         convert_object_basic(shape, jsh);
         if ( auto gr = qobject_cast<model::Group*>(shape) )
         {
             if ( qobject_cast<model::Layer*>(gr) )
                 format->information(io::lottie::LottieFormat::tr("Lottie only supports layers in the top level"));
-            auto shapes = convert_shapes(gr->shapes);
+            auto shapes = convert_shapes(gr->shapes, force_hidden || !gr->visible.get());
             QCborMap transform;
             transform["ty"_l] = "tr";
             convert_transform(gr->transform.get(), &gr->opacity, transform);
@@ -496,7 +502,7 @@ public:
         return fake;
     }
 
-    QCborArray convert_shapes(const model::ShapeListProperty& shapes)
+    QCborArray convert_shapes(const model::ShapeListProperty& shapes, bool force_hidden)
     {
         QCborArray jshapes;
         for ( const auto& shape : shapes )
@@ -505,8 +511,8 @@ public:
                 format->warning(io::lottie::LottieFormat::tr("Images cannot be grouped with other shapes"));
             else if ( shape->is_instance<model::PreCompLayer>() )
                 format->warning(io::lottie::LottieFormat::tr("Composition layers cannot be grouped with other shapes"));
-            else
-                jshapes.push_front(convert_shape(shape.get()));
+            else if ( !strip || shape->visible.get() )
+                jshapes.push_front(convert_shape(shape.get(), force_hidden));
         }
         return jshapes;
     }

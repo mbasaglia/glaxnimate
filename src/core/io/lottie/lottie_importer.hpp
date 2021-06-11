@@ -92,6 +92,12 @@ private:
         return mask && json["tt"].toInt();
     }
 
+    void load_visibility(model::VisualNode* node, const QJsonObject& json)
+    {
+        if ( json.contains("hd") && json["hd"].toBool() )
+            node->visible.set(false);
+    }
+
     void create_layer(const QJsonObject& json, std::set<int>& referenced)
     {
         int index = json["ind"].toInt();
@@ -140,6 +146,7 @@ private:
         auto props = load_basic_setup(json);
 
         auto precomp = std::make_unique<model::PreCompLayer>(document);
+        load_visibility(precomp.get(), json);
 
         load_stretchable_animation_container(json, precomp->timing.get());
 
@@ -263,6 +270,7 @@ private:
         load_properties(layer, fields["__Layer__"], json, props);
 
         load_transform(json["ks"].toObject(), layer->transform.get(), &layer->opacity);
+        load_visibility(layer, json);
 
         model::Layer* target = layer;
         props.erase("hasMask");
@@ -485,6 +493,7 @@ private:
             return load_styler(styler, json);
 
         load_basic(json, shape);
+        load_visibility(shape, json);
 
         if ( shape->type_name() == "Group" )
         {
