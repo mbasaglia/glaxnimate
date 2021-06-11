@@ -184,3 +184,15 @@ app::settings::ShortcutSettings * GlaxnimateApp::shortcuts() const
 {
     return shortcut_settings;
 }
+
+QString GlaxnimateApp::temp_path()
+{
+    QDir tempdir = QDir::temp();
+    QString subdir = AppInfo::instance().slug();
+
+    if ( !tempdir.exists(subdir) )
+        if ( !tempdir.mkpath(subdir) )
+            return "";
+
+    return tempdir.filePath(subdir);
+}

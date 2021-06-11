@@ -15,6 +15,7 @@ bool compress(const QByteArray& input, QIODevice& output, const ErrorFunc& on_er
 bool decompress(QIODevice& input, QByteArray& output, const ErrorFunc& on_error);
 bool decompress(const QByteArray& input, QByteArray& output, const ErrorFunc& on_error);
 bool is_compressed(QIODevice& input);
+bool is_compressed(const QByteArray& input);
 
 
 class GzipStream : public QIODevice

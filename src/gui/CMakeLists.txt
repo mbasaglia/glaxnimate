@@ -47,6 +47,7 @@ widgets/dialogs/about_dialog.ui
 widgets/dialogs/gw_impl_document.cpp
 widgets/dialogs/gw_impl_model.cpp
 widgets/dialogs/gw_impl_ui.cpp
+widgets/dialogs/gw_impl_debug.cpp
 widgets/dialogs/shape_parent_dialog.cpp
 widgets/dialogs/shape_parent_dialog.ui
 widgets/dialogs/resize_dialog.cpp

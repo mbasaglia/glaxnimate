@@ -373,15 +373,7 @@ void GlaxnimateWindow::Private::document_reload()
 
 void GlaxnimateWindow::Private::preview(io::ImportExport& exporter, const QVariantMap& options)
 {
-    QDir tempdir = QDir::temp();
-    QString subdir = AppInfo::instance().slug();
-    QString path = tempdir.filePath(subdir);
-
-    if ( !tempdir.exists(subdir) )
-        if ( !tempdir.mkpath(subdir) )
-            path = "";
-
-    QTemporaryFile tempf(path + "/XXXXXX." + exporter.extensions()[0]);
+    QTemporaryFile tempf(GlaxnimateApp::temp_path() + "/XXXXXX." + exporter.extensions()[0]);
     tempf.setAutoRemove(false);
     bool ok = tempf.open() && exporter.save(
         tempf, tempf.fileName(), current_document.get(), options

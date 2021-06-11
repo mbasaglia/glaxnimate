@@ -2,6 +2,7 @@
 
 #include <cstring>
 
+#include <QFile>
 #include <QApplication>
 
 #include <zlib.h>
@@ -169,7 +170,12 @@ bool utils::gzip::is_compressed(QIODevice& input)
     return input.peek(2) == "\x1f\x8b";
 }
 
-#include <QFile>
+bool utils::gzip::is_compressed(const QByteArray& input)
+{
+    return input.size() >= 2 && input[0] == '\x1f' && input[1] == '\x8b';
+}
+
+
 class utils::gzip::GzipStream::Private
 {
 public:

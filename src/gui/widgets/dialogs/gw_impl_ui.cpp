@@ -1,11 +1,9 @@
 #include "glaxnimate_window_p.hpp"
 
 #include <QComboBox>
-#include <QShortcut>
 #include <QLabel>
 
 #include "app/settings/keyboard_shortcuts.hpp"
-#include "app/debug/model.hpp"
 
 #include "tools/base.hpp"
 #include "model/shapes/group.hpp"
@@ -17,12 +15,10 @@
 #include "widgets/dialogs/timing_dialog.hpp"
 #include "widgets/dialogs/document_metadata_dialog.hpp"
 #include "widgets/dialogs/trace_dialog.hpp"
-#include "widgets/dialogs/clipboard_inspector.hpp"
 
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
 #include "widgets/node_menu.hpp"
-#include "widgets/timeline/timeline_widget.hpp"
 #include "widgets/shape_style/shape_style_preview_widget.hpp"
 
 #include "style/better_elide_delegate.hpp"
@@ -575,103 +571,6 @@ void GlaxnimateWindow::Private::init_menus()
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_playback);
 }
 
-static void screenshot_widget(const QString& path, QWidget* widget)
-{
-    widget->show();
-    QString name = path + widget->objectName().mid(5);
-    QPixmap pic(widget->size());
-    widget->render(&pic);
-    name += ".png";
-    pic.save(name);
-}
-
-void GlaxnimateWindow::Private::init_debug()
-{
-    QMenu* menu_debug = new QMenu("Debug", parent);
-
-    auto shortcut = new QShortcut(QKeySequence(Qt::META|Qt::Key_D), ui.canvas);
-    connect(shortcut, &QShortcut::activated, parent, [menu_debug]{
-            menu_debug->exec(QCursor::pos());
-    });
-
-    // Models
-    QMenu* menu_print_model = new QMenu("Print Model", menu_debug);
-
-    menu_print_model->addAction("Document Node - Full", [this]{
-        app::debug::print_model(&document_node_model, {1}, false);
-    });
-
-    menu_print_model->addAction("Document Node - Layers", [this]{
-        app::debug::print_model(&comp_model, {1}, false);
-    });
-
-    menu_print_model->addAction("Document Node - Assets", [this]{
-        app::debug::print_model(&asset_model, {0}, false);
-    });
-
-    menu_print_model->addSeparator();
-
-    menu_print_model->addAction("Properties - Single", [this]{
-        app::debug::print_model(&property_model, {0}, false);
-    });
-
-    menu_print_model->addAction("Properties - Full", [this]{
-        app::debug::print_model(ui.timeline_widget->raw_model(), {0}, false);
-    });
-
-    menu_print_model->addAction("Properties - Full (Filtered)", [this]{
-        app::debug::print_model(ui.timeline_widget->filtered_model(), {0}, false);
-    });
-
-    menu_debug->addAction(menu_print_model->menuAction());
-
-    // Timeline
-    QMenu* menu_timeline = new QMenu("Timeline", menu_debug);
-    menu_debug->addAction(menu_timeline->menuAction());
-    menu_timeline->addAction("Print lines", [this]{
-        ui.timeline_widget->timeline()->debug_lines();
-    });
-    QAction* toggle_timeline_debug = menu_timeline->addAction("Debug view");
-    toggle_timeline_debug->setCheckable(true);
-    connect(toggle_timeline_debug, &QAction::toggled, parent, [this](bool on){
-        ui.timeline_widget->timeline()->toggle_debug(on);
-        app::settings::set("internal", "debug_timeline", on);
-    });
-    toggle_timeline_debug->setChecked(app::settings::define("internal", "debug_timeline", false));
-
-    // Timeline
-    QMenu* menu_canvas = new QMenu("Canvas", menu_debug);
-    menu_debug->addAction(menu_canvas->menuAction());
-    menu_canvas->addAction("Debug Scene", [this]{ scene.debug();});
-
-    // Screenshot
-    QMenu* menu_screenshot = new QMenu("Screenshot", menu_debug);
-    menu_debug->addAction(menu_screenshot->menuAction());
-    menu_screenshot->addAction("Menus", [this]{
-        QDir("/tmp/").mkpath("glaxnimate/menus");
-        for ( auto widget : this->parent->findChildren<QMenu*>() )
-            screenshot_widget("/tmp/glaxnimate/menus/", widget);
-    });
-    menu_screenshot->addAction("Docks", [this]{
-        auto state = parent->saveState();
-
-        QDir("/tmp/").mkpath("glaxnimate/docks");
-        for ( auto widget : this->parent->findChildren<QDockWidget*>() )
-        {
-            widget->setFloating(true);
-            screenshot_widget("/tmp/glaxnimate/docks/", widget);
-        }
-
-        parent->restoreState(state);
-    });
-
-    // Misc
-    menu_debug->addAction("Inspect Clipboard", [this]{
-        auto dialog = new ClipboardInspector();
-        dialog->show();
-        connect(dialog, &QDialog::finished, dialog, &QObject::deleteLater);
-    });
-}
 
 void GlaxnimateWindow::Private::init_tools(tools::Tool* to_activate)
 {

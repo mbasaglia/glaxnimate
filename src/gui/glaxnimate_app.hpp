@@ -29,6 +29,8 @@ public:
 
     app::settings::ShortcutSettings* shortcuts() const;
 
+    static QString temp_path();
+
 protected:
     void on_initialize() override;
 
