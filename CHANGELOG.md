@@ -18,6 +18,7 @@
 * I/O:
     * Lottie output is slightly more compact
     * Added minimal support for CSS on SVG import
+    * Improved error reporting when loading lotttie files
 * Scripting:
     * New plugin to help with frame-by-frame animation
     * Scripts have access to the current composition

@@ -324,4 +324,11 @@ const QMap<QString, QString> shape_types_repeat = {
     {"gs", "Stroke"},
 };
 
+const QMap<int, QString> unsupported_layers = {
+    {6, "Audio"},
+    {7, "Pholder Video"},
+    {8, "Image Sequence"},
+    {9, "Video"},
+};
+
 } // namespace io::lottie::detail

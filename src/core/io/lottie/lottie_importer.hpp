@@ -36,6 +36,13 @@ public:
     }
 
 private:
+    void warning(QString str, const QJsonObject& json)
+    {
+        if ( json.contains("nm") )
+            str = json["nm"].toString() + ": " + str;
+        emit format->warning(str);
+    }
+
     void load_stretchable_animation_container(const QJsonObject& json, model::StretchableTime* animation)
     {
         animation->start_time.set(json["st"].toDouble());
@@ -90,7 +97,7 @@ private:
         int index = json["ind"].toInt();
         if ( !json.contains("ty") || !json["ty"].isDouble() )
         {
-            emit format->warning(QObject::tr("Missing layer type for %1").arg(index));
+            warning(QObject::tr("Missing layer type for %1").arg(index), json);
             invalid_indices.insert(index);
             return;
         }
@@ -216,9 +223,10 @@ private:
             int parent_index = json["parent"].toInt();
             if ( invalid_indices.count(parent_index) )
             {
-                emit format->warning(
+                warning(
                     QObject::tr("Cannot use %1 as parent as it couldn't be loaded")
-                    .arg(parent_index)
+                    .arg(parent_index),
+                    json
                 );
             }
             else
@@ -226,9 +234,10 @@ private:
                 auto it = layer_indices.find(parent_index);
                 if ( it == layer_indices.end() )
                 {
-                    emit format->warning(
+                    warning(
                         QObject::tr("Invalid parent layer %1")
-                        .arg(parent_index)
+                        .arg(parent_index),
+                        json
                     );
                 }
                 else
@@ -332,7 +341,13 @@ private:
                 load_text_layer(target->shapes, json["t"].toObject());
                 break;
             default:
-                emit format->warning(QObject::tr("Unsupported layer type %1").arg(json["ty"].toString()));
+            {
+                QString type = json["ty"].toVariant().toString();
+                auto it = unsupported_layers.find(json["ty"].toInt());
+                if ( it != unsupported_layers.end() )
+                    type = *it;
+                warning(QObject::tr("Unsupported layer of type %1").arg(type), json);
+            }
         }
 
         load_basic_check(props);
@@ -356,17 +371,20 @@ private:
     {
         if ( !json.contains("ty") || !json["ty"].isString() )
         {
-            emit format->warning(QObject::tr("Missing shape type"));
+            warning(QObject::tr("Missing shape type"), json);
             return;
         }
 
-        QString type = shape_types.key(json["ty"].toString());
+        QString base_type = json["ty"].toString();
+        QString type = shape_types.key(base_type);
         if ( type.isEmpty() )
         {
-            type = shape_types_repeat[json["ty"].toString()];
+            type = shape_types_repeat[base_type];
             if ( type.isEmpty() )
             {
-                emit format->warning(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()));
+                // "mm" is marked as unsupported by lottie and it appears in several animations so we ignore the warning
+                if ( base_type != "mm" )
+                    warning(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()), json);
                 return;
             }
         }
@@ -376,7 +394,7 @@ private:
         );
         if ( !shape )
         {
-            emit format->warning(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()));
+            warning(QObject::tr("Unsupported shape type %1").arg(json["ty"].toString()), json);
             return;
         }
 
