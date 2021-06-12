@@ -27,6 +27,8 @@ public:
     QAbstractItemModel* raw_model() const;
     TimelineWidget* timeline() const;
 
+    void reset_view();
+
 signals:
     void switch_composition(model::Composition* comp, int index);
     void object_selected(model::VisualNode* node);

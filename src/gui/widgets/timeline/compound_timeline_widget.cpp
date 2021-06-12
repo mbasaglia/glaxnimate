@@ -334,8 +334,6 @@ void CompoundTimelineWidget::set_document(model::Document* document)
         d->comp_model.set_composition(document->main());
     else
         d->comp_model.set_composition(nullptr);
-
-    d->ui.timeline->reset_view();
 }
 
 void CompoundTimelineWidget::clear_document()
@@ -598,4 +596,9 @@ bool CompoundTimelineWidget::eventFilter(QObject*, QEvent* event)
     }
 
     return false;
+}
+
+void CompoundTimelineWidget::reset_view()
+{
+    d->ui.timeline->reset_view();
 }

@@ -146,6 +146,8 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(ptr)));
     ui.play_controls->set_range(0, out_point);
     view_fit();
+
+    ui.timeline_widget->reset_view();
 }
 
 bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
@@ -203,6 +205,8 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 
     export_options = options;
     export_options.filename = "";
+
+    ui.timeline_widget->reset_view();
 
     return ok;
 }
