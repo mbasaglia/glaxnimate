@@ -119,6 +119,7 @@ std::unique_ptr<model::ShapeElement> model::Shape::to_path() const
         }
 
         path->shape.set(to_bezier(cur_time));
+        path->closed.set(path->shape.get().closed());
     }
 
     return path;

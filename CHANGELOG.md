@@ -46,6 +46,7 @@
     * Fixed text to shapes
     * Fixed loading SVG opacity specified as a percentage
     * Fixed wrong selection when undoing precompose
+    * Fixed converting shapes to path not closing paths properly
 
 ## 0.4.2
 
