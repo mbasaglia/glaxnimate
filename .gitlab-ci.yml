@@ -92,6 +92,8 @@ linux:aur:
         - pacman -Sy
         - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools
     script:
+        # Setup
+        - chmod 600 "$AUR_SSH_KEY"
         - mkdir -p build
         - cd build
         - cmake ..
