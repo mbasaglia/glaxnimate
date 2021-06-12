@@ -92,6 +92,9 @@ linux:aur:
         - pacman -Sy
         - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools
     script:
+        - mkdir build
+        - cd build
+        - cmake ..
         # Settings
         - PROJECT_VERSION="$(../deploy/get_version.sh CMakeCache.txt)"
         - git config --global user.name "Glaxnimate CI"
