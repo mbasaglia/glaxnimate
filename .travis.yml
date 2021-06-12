@@ -28,7 +28,7 @@ jobs:
             - cd ..
             - make glaxnimate_python_upload
       - name: "Mac branch"
-        if: branch = macbuild OR branch = release OR branch = prerelease
+        if: branch = macbuild OR branch = release OR branch = pre-release
         stage: build
         os: osx
         osx_image: xcode11.3
