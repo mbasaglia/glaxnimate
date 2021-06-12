@@ -586,7 +586,7 @@ void CompoundTimelineWidget::rows_removed(const QModelIndex& index, int first, i
     }
 }
 
-bool CompoundTimelineWidget::eventFilter(QObject* sender, QEvent* event)
+bool CompoundTimelineWidget::eventFilter(QObject*, QEvent* event)
 {
     // For some reason scrolling on the tree view doesn't respect step size
     if ( event->type() == QEvent::Wheel )
