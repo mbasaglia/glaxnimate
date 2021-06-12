@@ -76,6 +76,7 @@ protected:
 signals:
     void frame_clicked(int frame);
     void line_clicked(quintptr id);
+    void scrolled(int line);
     
 private:
     class Private;

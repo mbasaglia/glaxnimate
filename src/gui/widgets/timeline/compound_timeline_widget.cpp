@@ -65,6 +65,8 @@ public:
         fixed_height_delegate.set_height(ui.timeline->row_height());
         ui.properties->setRootIsDecorated(true);
 
+        ui.properties->verticalScrollBar()->installEventFilter(parent);
+        ui.properties->verticalScrollBar()->setSingleStep(ui.scrollbar->singleStep());
         ui.properties->verticalScrollBar()->setPageStep(ui.scrollbar->pageStep());
         connect(ui.properties->verticalScrollBar(), &QScrollBar::valueChanged, ui.scrollbar, &QScrollBar::setValue);
         connect(ui.scrollbar, &QScrollBar::valueChanged, ui.properties->verticalScrollBar(), &QScrollBar::setValue);
@@ -582,4 +584,16 @@ void CompoundTimelineWidget::rows_removed(const QModelIndex& index, int first, i
             }
         }
     }
+}
+
+bool CompoundTimelineWidget::eventFilter(QObject* sender, QEvent* event)
+{
+    // For some reason scrolling on the tree view doesn't respect step size
+    if ( event->type() == QEvent::Wheel )
+    {
+        QApplication::sendEvent(d->ui.scrollbar, event);
+        return true;
+    }
+
+    return false;
 }

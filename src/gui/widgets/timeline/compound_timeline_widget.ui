@@ -172,6 +172,9 @@
       </item>
       <item>
        <widget class="QScrollBar" name="scrollbar">
+        <property name="pageStep">
+         <number>1</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -192,6 +195,9 @@
    <class>TimelineWidget</class>
    <extends>QGraphicsView</extends>
    <header>widgets/timeline/timeline_widget.hpp</header>
+   <slots>
+    <signal>scrolled(int)</signal>
+   </slots>
   </customwidget>
   <customwidget>
    <class>CompositionTabBar</class>
@@ -225,8 +231,8 @@
    <slot>collapse_index(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>89</x>
-     <y>227</y>
+     <x>91</x>
+     <y>226</y>
     </hint>
     <hint type="destinationlabel">
      <x>110</x>
@@ -247,6 +253,22 @@
     <hint type="destinationlabel">
      <x>253</x>
      <y>355</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeline</sender>
+   <signal>scrolled(int)</signal>
+   <receiver>scrollbar</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>544</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>712</x>
+     <y>105</y>
     </hint>
    </hints>
   </connection>

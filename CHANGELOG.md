@@ -15,6 +15,7 @@
     * Status bar now shows fill/stroke colors
     * New toolbar for drawing tools
     * New options to configure toolbars
+    * Improved scrolling on the timeline
 * I/O:
     * Lottie output is slightly more compact
     * Added minimal support for CSS on SVG import

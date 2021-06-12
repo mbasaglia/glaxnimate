@@ -33,6 +33,7 @@ signals:
     
 protected:
     void changeEvent ( QEvent* e ) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
     
 private slots:
     void select_index(const QModelIndex& index);
