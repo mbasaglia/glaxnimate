@@ -87,6 +87,7 @@ linux:aur:
     only:
         - tags
         - release
+        - prerelease
     before_script:
         - pacman -Sy
         - pacman -S git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools
@@ -331,7 +332,7 @@ linux:pypi_deploy:
         - python3 --version
         - mkdir -p build
         - cd build
-        - cmake .. -DVERSION_SUFFIX="git.`date +%Y%m%d%H%M%S`.$CI_COMMIT_SHORT_SHA"
+        - cmake .. -DVERSION_SUFFIX="git.`date +%Y%m%d%H%M%S`.$CI_COMMIT_BRANCH.$CI_COMMIT_SHORT_SHA"
         - make glaxnimate_python_depends_install
         - ls py_module/build/lib
         - make glaxnimate_python_wheel
@@ -339,6 +340,7 @@ linux:pypi_deploy:
     only:
         - master
         - release
+        - prerelease
     environment:
         name: Gitlab PyPI
 
