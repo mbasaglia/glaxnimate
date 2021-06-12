@@ -31,6 +31,7 @@ nav:
             - manual/ui/menus.md
             - manual/ui/settings.md
         - "Examples":
+            - examples/bouncy_ball.md
             - examples/dragon_curve.md
         - "ChangeLog": changelog.md
     - "<i class='fa fa-hands-helping'></i> Contributing":
