@@ -91,14 +91,14 @@ public:
 
     LineItem* add_animatable(quintptr id, model::AnimatableBase* anim)
     {
-        AnimatableItem* item = new AnimatableItem(id, anim->object(), anim, start_time, rounded_end_time(), row_height);
+        AnimatableItem* item = new AnimatableItem(id, anim->object(), anim, start_time, end_time, row_height);
         connect(item, &LineItem::clicked, parent, &TimelineWidget::line_clicked);
         return item;
     }
 
     LineItem* add_property_plain(quintptr id, model::BaseProperty* prop)
     {
-        PropertyLineItem* item = new PropertyLineItem(id, prop->object(), prop, start_time, rounded_end_time(), row_height);
+        PropertyLineItem* item = new PropertyLineItem(id, prop->object(), prop, start_time, end_time, row_height);
         connect(item, &LineItem::clicked, parent, &TimelineWidget::line_clicked);
         return item;
     }
@@ -106,7 +106,7 @@ public:
     LineItem* add_property_list(quintptr id, model::ObjectListPropertyBase* prop)
     {
         auto obj = prop->object();
-        ObjectListLineItem* item = new ObjectListLineItem(id, obj, prop, start_time, rounded_end_time(), row_height);
+        ObjectListLineItem* item = new ObjectListLineItem(id, obj, prop, start_time, end_time, row_height);
         if ( auto layer = obj->cast<model::Layer>() )
         {
             auto anim_item = new AnimationContainerItem(layer, layer->animation.get(), row_height - 8, item);
@@ -123,7 +123,7 @@ public:
 
     ObjectLineItem* add_object_without_properties(quintptr id, model::Object* obj)
     {
-        ObjectLineItem* item = new ObjectLineItem(id, obj, start_time, rounded_end_time(), row_height);
+        ObjectLineItem* item = new ObjectLineItem(id, obj, start_time, end_time, row_height);
         if ( auto layer = obj->cast<model::PreCompLayer>() )
         {
             auto anim_item = new StretchableTimeItem(layer, row_height - 8, item);
@@ -151,8 +151,7 @@ public:
 
     void update_end_time()
     {
-        auto et = rounded_end_time();
-        root->set_time_end(et);
+        root->set_time_end(end_time);
     }
 
     void paint_highligted_frame(int frame, QPainter& painter, const QBrush& color)
@@ -492,9 +491,15 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
 
 void TimelineWidget::reset_view()
 {
+    // scene_rect changes min_scale, which changes tranform, which changes frame_skip, which changes scene_rect
     setSceneRect(d->scene_rect());
+    d->adjust_min_scale(viewport()->width());
+
+    d->update_frame_skip(QTransform::fromScale(d->min_scale, 1));
+
+    setSceneRect(d->scene_rect());
+    d->adjust_min_scale(viewport()->width());
     setTransform(QTransform::fromScale(d->min_scale, 1));
-    d->update_frame_skip(transform());
 }
 
 void TimelineWidget::resizeEvent(QResizeEvent* event)
@@ -816,6 +821,8 @@ void TimelineWidget::debug_lines() const
 {
     qDebug() << "index" << "effective_index" << "visible_rows" << "id" << "item_class" << "object->property" << "expanded" << "visible";
     debug_line(d->root, "", 0, true);
+
+    qDebug() << sceneRect() << d->scene_rect() << d->rounded_end_time();
 }
 
 void TimelineWidget::toggle_debug(bool debug)

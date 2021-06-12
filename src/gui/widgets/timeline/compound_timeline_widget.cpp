@@ -334,6 +334,8 @@ void CompoundTimelineWidget::set_document(model::Document* document)
         d->comp_model.set_composition(document->main());
     else
         d->comp_model.set_composition(nullptr);
+
+    d->ui.timeline->reset_view();
 }
 
 void CompoundTimelineWidget::clear_document()

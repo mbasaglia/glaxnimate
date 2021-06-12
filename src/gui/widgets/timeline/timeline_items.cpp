@@ -246,8 +246,6 @@ void timeline::LineItem::paint(QPainter * painter, const QStyleOptionGraphicsIte
 {
     if ( isSelected() )
         painter->fillRect(option->rect, widget->palette().highlight());
-//     else if ( isUnderMouse() )
-//         painter->fillRect(option->rect, widget->palette().brush(QPalette::Inactive, QPalette::Highlight));
 
     // Debugging print, it shows some meta info on the line, useful when tweaking the layout
     if ( enable_debug )

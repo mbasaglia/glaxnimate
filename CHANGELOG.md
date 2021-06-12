@@ -47,6 +47,7 @@
     * Fixed loading SVG opacity specified as a percentage
     * Fixed wrong selection when undoing precompose
     * Fixed converting shapes to path not closing paths properly
+    * Fixed initial zoom for the timeline
 
 ## 0.4.2
 
