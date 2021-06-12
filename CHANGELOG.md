@@ -16,6 +16,7 @@
     * New toolbar for drawing tools
     * New options to configure toolbars
     * Improved scrolling on the timeline
+    * Made alignment buttons a bit smaller
 * I/O:
     * Lottie output is slightly more compact
     * Added minimal support for CSS on SVG import

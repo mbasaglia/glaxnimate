@@ -34,6 +34,7 @@ static QToolButton* action_button(QAction* action, QWidget* parent)
     button->setDefaultAction(action);
     button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     button->resize(16, 16);
+    button->setMaximumSize(64, 64);
     return button;
 }
 
