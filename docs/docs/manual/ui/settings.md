@@ -25,6 +25,12 @@ This select the defaults for when you create a new file.
 * Max Recent Files: How many items to show in the *File* > *Open Recent* menu.
 * Backup Frequency: Number of minutes between automatic backup saves. Set to 0 to diable.
 
+## Toolbars
+
+![settings dialog](/img/screenshots/dialogs/settings/toolbars.png)
+
+Allows the user to change the toolbar appearance.
+
 ## Plugins
 
 ![settings dialog](/img/screenshots/dialogs/settings/plugins.png)

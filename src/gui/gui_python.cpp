@@ -12,5 +12,7 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate_gui, m)
         .def("create_dialog", &GlaxnimateWindow::create_dialog)
         .def_property_readonly("cleaned_selection", &GlaxnimateWindow::cleaned_selection, py::return_value_policy::automatic_reference)
         .def_property_readonly("select", &GlaxnimateWindow::select, py::return_value_policy::automatic_reference)
+        .def_property("size", &GlaxnimateWindow::size, qOverload<const QSize&>(&GlaxnimateWindow::resize))
+        .def("resize", qOverload<int, int>(&GlaxnimateWindow::resize))
     ;
 }

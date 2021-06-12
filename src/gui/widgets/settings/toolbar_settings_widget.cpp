@@ -8,6 +8,18 @@ class ToolbarSettingsWidget::Private
 {
 public:
     Ui::ToolbarSettingsWidget ui;
+
+    void update_preview(QWidget* parent)
+    {
+        for ( auto button : parent->findChildren<QToolButton*>() )
+        {
+            button->setToolButtonStyle(settings::ToolbarSettingsGroup::button_style);
+            if ( button->objectName().contains("tool") )
+                button->setIconSize(settings::ToolbarSettingsGroup::tool_icon_size());
+            else
+                button->setIconSize(settings::ToolbarSettingsGroup::icon_size());
+        }
+    }
 };
 
 ToolbarSettingsWidget::ToolbarSettingsWidget(QWidget* parent)
@@ -17,6 +29,7 @@ ToolbarSettingsWidget::ToolbarSettingsWidget(QWidget* parent)
     d->ui.combo_style->setCurrentIndex(int(settings::ToolbarSettingsGroup::button_style));
     d->ui.spin_icon_size->setValue(settings::ToolbarSettingsGroup::icon_size_extent);
     d->ui.spin_tool_icon_size->setValue(settings::ToolbarSettingsGroup::tool_icon_size_extent);
+    d->update_preview(this);
 }
 
 ToolbarSettingsWidget::~ToolbarSettingsWidget() = default;
@@ -37,13 +50,5 @@ void ToolbarSettingsWidget::update_preview()
     settings::ToolbarSettingsGroup::tool_icon_size_extent = d->ui.spin_tool_icon_size->value();
     settings::ToolbarSettingsGroup::button_style = Qt::ToolButtonStyle(d->ui.combo_style->currentIndex());
     settings::ToolbarSettingsGroup::apply();
-
-    for ( auto button : findChildren<QToolButton*>() )
-    {
-        button->setToolButtonStyle(settings::ToolbarSettingsGroup::button_style);
-        if ( button->objectName().contains("tool") )
-            button->setIconSize(settings::ToolbarSettingsGroup::tool_icon_size());
-        else
-            button->setIconSize(settings::ToolbarSettingsGroup::icon_size());
-    }
+    d->update_preview(this);
 }

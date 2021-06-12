@@ -157,11 +157,30 @@ The frame spin box shows the current frame, and allows jumping to a specific fra
 <img src="/img/ui/icons/go-last.svg" width="32"> Jumps to the last frame<br/>
 <img src="/img/ui/icons/media-record.svg" width="32"> Record keyframes. When enabled, all changes made on the canvas are added as keyframes.<br/>
 
-### Property List
+### Composition Tabs
+
+![Composition Tabs](/img/screenshots/views/timeline/composition_tabs.png)
+
+If you have multiple compositions in the current document, they are shown in a tab bar
+above the property list and timeline.
+
+Clicking on the tabs will switch to a different composition.
+
+### Property and Object List
 
 ![Property List](/img/screenshots/views/timeline/property_list.png)
 
-On its left handside, the the Timeline view has the list of properties: showing their name, current value, and animation status.
+On its left handside, the the Timeline view has the list of objects and properties.
+
+For shapes and other obects, it shows their group color, visibility, lock status, and name.
+All of those can be modified from the timeline itself.
+
+Additionally, top-level layers can also have a parent, which is also shown and edited from the timeline.
+
+Nested inside each object, you can see their children and properties.
+
+Properties show their name, current value, and animation status.
+
 
 The animation statuses are as follow:
 
