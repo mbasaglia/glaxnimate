@@ -118,10 +118,12 @@ parts:
             snapcraftctl stage
             cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* $SNAPCRAFT_STAGE
             cp -r /usr/local/lib/* $SNAPCRAFT_STAGE/lib
+            mkdir -p $SNAPCRAFT_STAGE/lib/x86_64-linux-gnu/
+            cp /usr/lib/x86_64-linux-gnu/libstdc++.so* $SNAPCRAFT_STAGE/lib/x86_64-linux-gnu/
         override-prime: |
             snapcraftctl prime
             cp -r $SNAPCRAFT_PART_INSTALL/usr/local/* $SNAPCRAFT_PRIME
             cp -r /usr/local/lib/* $SNAPCRAFT_PRIME/lib
             cp -fr /opt/qt514/* $SNAPCRAFT_PRIME
-            #rm -rf $SNAPCRAFT_PRIME/kd5/lib
-            #cp -r /opt/lib/qt514/lib $SNAPCRAFT_PRIME/kd5/
+            mkdir -p $SNAPCRAFT_PRIME/lib/x86_64-linux-gnu/
+            cp /usr/lib/x86_64-linux-gnu/libstdc++.so* $SNAPCRAFT_PRIME/lib/x86_64-linux-gnu/
