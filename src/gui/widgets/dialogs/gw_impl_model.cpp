@@ -504,7 +504,7 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
 void GlaxnimateWindow::Private::timeline_object_selected(model::VisualNode* node)
 {
     update_timeline_selection = false;
-    ui.view_document_node->selectionModel()->select(
+    ui.view_document_node->selectionModel()->setCurrentIndex(
         comp_model.mapFromSource(document_node_model.node_index(node)),
         QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Rows
     );
