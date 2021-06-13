@@ -7,6 +7,8 @@ from argparse import ArgumentParser
 from urllib.parse import urljoin, quote_plus
 from pathlib import Path
 import requests
+import shlex
+import json
 
 
 def fail(msg):
@@ -36,6 +38,8 @@ class GitlabApi:
         if "json" in kwargs:
             kwargs["headers"]["Content-Type"] = "application/json"
         can_fail = not kwargs.pop("can_fail", False)
+
+        self.debug_curl(method, url, **kwargs)
         res = requests.request(method, url, **kwargs)
         if can_fail:
             res.raise_for_status()
@@ -43,6 +47,27 @@ class GitlabApi:
 
     def project_request(self, method, url, **kwargs):
         return self.request(method, "/".join([self.api_url] + url), **kwargs)
+
+    def debug_curl(self, method, url, **kwargs):
+        command = "curl -i -X %s %s" % (method, shlex.quote(url))
+
+        if "data" in kwargs:
+            command += " -d " + shlex.quote(kwargs.pop("data"))
+        elif "json" in kwargs:
+            command += " -d " + shlex.quote(json.dumps(kwargs.pop("json")))
+
+        for header, value in kwargs.pop("headers", {}).items():
+            command += " -H \"%s: " % shlex.quote(header)
+            if value == self.api_key:
+                command += "$GITLAB_ACCESS_TOKEN"
+            else:
+                command += shlex.quote(value)
+            command += '"'
+
+        print("CURL:")
+        print(command)
+        if kwargs:
+            print(kwargs)
 
 
 parser = ArgumentParser()
@@ -135,13 +160,18 @@ See the [Documentation](https://glaxnimate.mattbas.org/manual/) page.
 
 
 old_release = api.project_request("get", ["repository", "tags", api.tag])["release"]
-release = api.project_request(
-    "put" if old_release else "post",
-    ["repository", "tags", api.tag, "release"],
-    json={
-        "description": notes
-    }
-)
+
+release = {
+    "description": notes,
+    "tag_name": api.tag,
+}
+
+if old_release:
+    api.project_request("put", ["releases", api.tag], json=release)
+else:
+    api.project_request("post", ["releases"], json=release)
+
+# Milestone might not exist for point releases
 api.project_request("put", ["releases", api.tag], can_fail=True, json={
     "milestones": [api.tag]
 })
