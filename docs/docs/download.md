@@ -15,7 +15,7 @@ If you enjoy using Glaxnimate consider [donating](donate.md).
 <table>
 <tr><th>Package</th><th>Notes</th></tr>
 <tr>
-<td><img src="/img/misc/arch-icon.svg" style="height:1.2rem;" /> <a href="https://aur.archlinux.org/packages/glaxnimate-bin/">AUR</a></td>
+<td><img src="/img/misc/arch-icon.svg" style="height:1.2rem;" /> <a href="https://aur.archlinux.org/packages/glaxnimate-git/">AUR</a></td>
 <td><a href="#aur-package">Notes</a></td>
 </tr>
 <tr>
