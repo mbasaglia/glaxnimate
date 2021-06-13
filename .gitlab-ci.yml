@@ -90,9 +90,12 @@ linux:aur:
         - pre-release
     before_script:
         - pacman -Sy
-        - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools
+        - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools resize sudo
     script:
         # Setup
+        - useradd -m foo
+        - git config --global user.name "Glaxnimate CI"
+        - git config --global user.email "glaxnimate-ci@mattbas.org"
         - chmod 600 "$AUR_SSH_KEY"
         - mkdir -p build
         - cd build
@@ -107,7 +110,7 @@ linux:aur:
         - cd $PACK_NAME
         - sed -i -e "s/pkgver=.*/pkgver=$PROJECT_VERSION/" PKGBUILD
         - namcap PKGBUILD
-        - makepkg --printsrcinfo > .SRCINFO
+        - sudo -u foo makepkg --printsrcinfo > .SRCINFO
         - git commit -am "Update to version $PROJECT_VERSION"
         - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push
         - cd ..
