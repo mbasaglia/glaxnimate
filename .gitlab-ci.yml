@@ -112,9 +112,7 @@ linux:aur:
         - namcap PKGBUILD
         - chown -R foo .
         - sudo -u foo makepkg --printsrcinfo > .SRCINFO
-        - git commit -am "Update to version $PROJECT_VERSION"
-        - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push
-        - cd ..
+        - if ! git diff-index --quiet HEAD -- ; then git commit -am "Update to version $PROJECT_VERSION" ; GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push ; fi
 
 linux:appimage:
     image: ubuntu:16.04
