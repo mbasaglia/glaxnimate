@@ -8,7 +8,7 @@
 
 namespace model {
 
-class Fill : public Styler
+class Fill : public StaticOverrides<Fill, Styler>
 {
     GLAXNIMATE_OBJECT(Fill)
 
@@ -25,18 +25,19 @@ private:
     GLAXNIMATE_PROPERTY(Rule, fill_rule, NonZero, nullptr, nullptr, PropertyTraits::Visual)
 
 public:
-    using Styler::Styler;
+    using Ctor::Ctor;
 
     QRectF local_bounding_rect(FrameTime t) const override
     {
         return collect_shapes(t, {}).bounding_box();
     }
-    QIcon tree_icon() const override
+
+    static QIcon static_tree_icon()
     {
         return QIcon::fromTheme("format-fill-color");
     }
 
-    QString type_name_human() const override
+    static QString static_type_name_human()
     {
         return tr("Fill");
     }

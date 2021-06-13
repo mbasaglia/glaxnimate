@@ -168,6 +168,7 @@ public:
     void set_brush_reference(model::BrushStyle* sty, bool secondary);
     void trace_dialog(model::DocumentNode* object);
     void mouse_moved(const QPointF& pos);
+    template<class T> void add_modifier_menu_action(QMenu* menu);
 
     void init_actions();
     void init_plugins();

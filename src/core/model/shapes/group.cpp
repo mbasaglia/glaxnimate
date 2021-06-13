@@ -8,7 +8,7 @@ GLAXNIMATE_OBJECT_IMPL(model::Group)
 
 
 model::Group::Group(Document* document)
-    : ShapeElement(document)
+    : Ctor(document)
 {
     connect(transform.get(), &Object::property_changed,
             this, &Group::on_transform_matrix_changed);

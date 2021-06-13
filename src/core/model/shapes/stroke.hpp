@@ -10,7 +10,7 @@
 
 namespace model {
 
-class Stroke : public Styler
+class Stroke : public StaticOverrides<Stroke, Styler>
 {
     GLAXNIMATE_OBJECT(Stroke)
 
@@ -40,7 +40,7 @@ private:
     GLAXNIMATE_PROPERTY(float, miter_limit, 0, nullptr, nullptr, PropertyTraits::Visual)
 
 public:
-    using Styler::Styler;
+    using Ctor::Ctor;
 
     QRectF local_bounding_rect(FrameTime t) const override
     {
@@ -50,12 +50,13 @@ public:
         );
     }
 
-    QIcon tree_icon() const override
+
+    static QIcon static_tree_icon()
     {
         return QIcon::fromTheme("format-stroke-color");
     }
 
-    QString type_name_human() const override
+    static QString static_type_name_human()
     {
         return tr("Stroke");
     }

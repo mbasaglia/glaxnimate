@@ -133,17 +133,12 @@ class ShapeOperator : public ShapeElement
 public:
     ShapeOperator(model::Document* doc);
 
-    math::bezier::MultiBezier collect_shapes(FrameTime t, const QTransform& transform) const
-    {
-        math::bezier::MultiBezier bez;
-        collect_shapes(t, bez, transform);
-        return bez;
-    }
+    math::bezier::MultiBezier collect_shapes(FrameTime t, const QTransform& transform) const;
 
     const std::vector<ShapeElement*>& affected() const { return affected_elements; }
 
 protected:
-    void collect_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const;
+    virtual void do_collect_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const;
 
 private slots:
     void update_affected();
@@ -169,8 +164,47 @@ public:
 
     void add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
 
+    QPainterPath to_painter_path(FrameTime t) const override;
+
+    QRectF local_bounding_rect(FrameTime t) const override;
+
 protected:
-    virtual math::bezier::MultiBezier process(const math::bezier::MultiBezier& mbez) const = 0;
+    virtual math::bezier::MultiBezier process(FrameTime t, const math::bezier::MultiBezier& mbez) const = 0;
+
+    /**
+     * \brief Wether to process on the whole thing (or individual objects)
+     */
+    virtual bool process_collected() const = 0;
+
+    void do_collect_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
+
+};
+
+/**
+ * \brief CRTP to override some methods using static functions
+ * (so said methods can be accessed with no object)
+ */
+template<class Derived, class Base>
+class StaticOverrides : public Base
+{
+public:
+    using Ctor = StaticOverrides;
+    using Base::Base;
+
+    QIcon tree_icon() const override
+    {
+        return Derived::static_tree_icon();
+    }
+
+    QString type_name_human() const override
+    {
+        return Derived::static_type_name_human();
+    }
+
+    static QString static_class_name()
+    {
+        return detail::naked_type_name<Derived>();
+    }
 };
 
 

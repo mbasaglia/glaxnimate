@@ -8,6 +8,7 @@
 #include "tools/base.hpp"
 #include "model/shapes/group.hpp"
 #include "model/shapes/image.hpp"
+#include "model/shapes/repeater.hpp"
 
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/dialogs/about_dialog.hpp"
@@ -111,6 +112,15 @@ void GlaxnimateWindow::Private::setupUi(bool restore_state, bool debug, Glaxnima
     ui.toolbar_tools->setIconSize(settings::ToolbarSettingsGroup::tool_icon_size());
 }
 
+template<class T>
+void GlaxnimateWindow::Private::add_modifier_menu_action(QMenu* menu)
+{
+    menu->addAction(T::static_tree_icon(), T::static_type_name_human(), [this]{
+        auto layer = std::make_unique<T>(current_document.get());
+        layer_new_impl(std::move(layer));
+    })->setObjectName("action_new_" + T::static_class_name().toLower());
+}
+
 void GlaxnimateWindow::Private::init_actions()
 {
     // Standard Shorcuts
@@ -167,6 +177,7 @@ void GlaxnimateWindow::Private::init_actions()
         if ( !recent_files.isEmpty() )
             document_open_from_filename(recent_files[0]);
     });
+    add_modifier_menu_action<model::Repeater>(ui.menu_new_layer);
     connect(ui.action_import_image, &QAction::triggered, parent, [this]{import_image();});
     connect(ui.action_delete, &QAction::triggered, parent, &GlaxnimateWindow::delete_selected);
     connect(ui.action_export, &QAction::triggered, parent, &GlaxnimateWindow::document_export);
@@ -219,6 +230,8 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_align_vert_bottom_out,&QAction::triggered, parent, [this]{align(AlignDirection::Vertical,   AlignPosition::End,    true);});
     connect(ui.action_import, &QAction::triggered, parent, [this]{import_file();});
     connect(ui.action_flip_view, &QAction::triggered, ui.canvas, &Canvas::flip_horizontal);
+
+
 }
 
 tools::Tool* GlaxnimateWindow::Private::init_tools_ui()

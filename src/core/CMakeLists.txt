@@ -72,6 +72,7 @@ model/shapes/layer.cpp
 model/shapes/image.cpp
 model/shapes/precomp_layer.cpp
 model/shapes/text.cpp
+model/shapes/repeater.cpp
 
 
 plugin/plugin.cpp

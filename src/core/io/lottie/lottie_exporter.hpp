@@ -490,6 +490,17 @@ public:
             jsh["os"_l] = fake;
             jsh["is"_l] = fake;
         }
+        else if ( auto styler = shape->cast<model::Repeater>() )
+        {
+            QCborMap transform;
+            convert_transform(styler->transform.get(), nullptr, transform);
+            transform.remove("o"_l);
+            transform["so"_l] = convert_animated(&styler->start_opacity, FloatMult(100));
+            transform["eo"_l] = convert_animated(&styler->end_opacity, FloatMult(100));
+            jsh["o"_l] = fake_animated(0);
+            jsh["m"_l] = 1;
+            jsh["tr"_l] = transform;
+        }
 
         return jsh;
     }

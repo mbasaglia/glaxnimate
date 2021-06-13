@@ -7,7 +7,7 @@
 
 namespace model {
 
-class Layer : public Group
+class Layer : public StaticOverrides<Layer, Group>
 {
     GLAXNIMATE_OBJECT(Layer)
     GLAXNIMATE_SUBOBJECT(model::AnimationContainer, animation)
@@ -65,13 +65,14 @@ public:
         int index;
     };
 
-    using Group::Group;
+    using Ctor::Ctor;
 
     VisualNode* docnode_group_parent() const override;
     int docnode_group_child_count() const override;
     VisualNode* docnode_group_child(int index) const override;
     QIcon tree_icon() const override;
-    QString type_name_human() const override { return tr("Layer"); }
+    static QIcon static_tree_icon();
+    static QString static_type_name_human() { return tr("Layer"); }
     void set_time(FrameTime t) override;
 
     /**

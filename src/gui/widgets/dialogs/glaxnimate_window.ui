@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1314</width>
+    <width>1349</width>
     <height>933</height>
    </rect>
   </property>
@@ -41,7 +41,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1314</width>
+     <width>1349</width>
      <height>30</height>
     </rect>
    </property>
@@ -104,11 +104,11 @@
       </property>
       <addaction name="separator"/>
      </widget>
+     <addaction name="menu_new_comp_layer"/>
      <addaction name="action_new_layer"/>
      <addaction name="action_new_group"/>
      <addaction name="action_new_fill"/>
      <addaction name="action_new_stroke"/>
-     <addaction name="menu_new_comp_layer"/>
     </widget>
     <addaction name="menu_new_layer"/>
     <addaction name="action_new_precomp_selection"/>

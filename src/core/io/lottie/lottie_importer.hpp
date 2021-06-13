@@ -451,7 +451,7 @@ private:
     void load_transform(const QJsonObject& transform, model::Transform* tf, model::AnimatableBase* opacity)
     {
         load_basic(transform, tf);
-        if ( transform.contains("o") )
+        if ( transform.contains("o") && opacity )
             load_animated(opacity, transform["o"], FloatMult(100));
     }
 
@@ -495,7 +495,8 @@ private:
         load_basic(json, shape);
         load_visibility(shape, json);
 
-        if ( shape->type_name() == "Group" )
+        QString type_name = shape->type_name();
+        if ( type_name == "Group" )
         {
             auto gr = static_cast<model::Group*>(shape);
             QJsonArray shapes = json["it"].toArray();
@@ -516,6 +517,16 @@ private:
                 load_transform(transform, gr->transform.get(), &gr->opacity);
 
             load_shapes(gr->shapes, shapes);
+        }
+        else if ( type_name == "Repeater" )
+        {
+            auto repeater = static_cast<model::Repeater*>(shape);
+            QJsonObject transform = json["tr"].toObject();
+            load_animated(&repeater->start_opacity, transform["so"], FloatMult(100));
+            load_animated(&repeater->end_opacity, transform["eo"], FloatMult(100));
+            transform.remove("so");
+            transform.remove("eo");
+            load_transform(transform, repeater->transform.get(), nullptr);
         }
     }
 

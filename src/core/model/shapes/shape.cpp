@@ -150,13 +150,20 @@ model::ShapeOperator::ShapeOperator(model::Document* doc)
 }
 
 
-void model::ShapeOperator::collect_shapes(model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
+void model::ShapeOperator::do_collect_shapes(model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
     for ( auto sib : affected_elements )
     {
         if ( sib->visible.get() )
             sib->add_shapes(t, bez, transform);
     }
+}
+
+math::bezier::MultiBezier model::ShapeOperator::collect_shapes(FrameTime t, const QTransform& transform) const
+{
+    math::bezier::MultiBezier bez;
+    do_collect_shapes(t, bez, transform);
+    return bez;
 }
 
 void model::ShapeOperator::update_affected()
@@ -199,5 +206,48 @@ void model::ShapeOperator::sibling_prop_changed(const model::BaseProperty* prop)
 
 void model::Modifier::add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
-    bez.append(process(collect_shapes(t, transform)));
+    bez.append(collect_shapes(t, transform));
 }
+
+void model::Modifier::do_collect_shapes(model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
+{
+    bool post = process_collected();
+
+    if ( post )
+    {
+        math::bezier::MultiBezier temp;
+        for ( auto sib : affected() )
+        {
+            if ( sib->visible.get() )
+                sib->add_shapes(t, temp, transform);
+        }
+
+        bez.append(process(t, temp));
+    }
+    else
+    {
+        for ( auto sib : affected() )
+        {
+            if ( sib->visible.get() )
+            {
+                math::bezier::MultiBezier temp;
+                sib->add_shapes(t, temp, transform);
+                bez.append(process(t, temp));
+            }
+        }
+    }
+}
+
+QPainterPath model::Modifier::to_painter_path(model::FrameTime t) const
+{
+    math::bezier::MultiBezier bez;
+    add_shapes(t, bez, {});
+    return bez.painter_path();
+}
+
+QRectF model::Modifier::local_bounding_rect(model::FrameTime t) const
+{
+    return to_painter_path(t).boundingRect();
+}
+
+

@@ -667,7 +667,13 @@ static void get_formats()
         )
             continue;
 
-        out_ext += QString(format->extensions).split(',', QString::SkipEmptyParts);
+        out_ext += QString(format->extensions).split(',',
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+            Qt::SkipEmptyParts
+#else
+            QString::SkipEmptyParts
+#endif
+        );
     }
 }
 
@@ -678,7 +684,6 @@ QStringList io::video::VideoFormat::extensions() const
     return out_ext;
 }
 
-#include <QDebug>
 bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
 {
     try

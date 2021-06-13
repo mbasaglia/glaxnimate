@@ -5,6 +5,10 @@
 #include "model/shapes/group.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/precomp_layer.hpp"
+#include "model/shapes/fill.hpp"
+#include "model/shapes/stroke.hpp"
+#include "model/shapes/repeater.hpp"
+
 #include "model/assets/assets.hpp"
 
 #include "command/structure_commands.hpp"
@@ -187,13 +191,32 @@ void togglable_action(QMenu* menu, model::Property<bool>* prop, const QString& i
     action->setChecked(prop->get());
 }
 
+template<class T>
+void add_child_action(QMenu* menu, model::Group* group)
+{
+    menu->addAction(T::static_tree_icon(), T::static_type_name_human(), [group]{
+        auto object = std::make_unique<T>(group->document());
+        group->document()->set_best_name(object.get());
+        group->push_command(new command::AddObject<model::ShapeElement>(&group->shapes, std::move(object), 0));
+    });
+}
+
 void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
 {
+    QMenu* menu_add = new QMenu(NodeMenu::tr("Add"), menu);
+    menu_add->setIcon(QIcon::fromTheme("list-add"));
+    menu->addAction(menu_add->menuAction());
+    add_child_action<model::Fill>(menu_add, group);
+    add_child_action<model::Stroke>(menu_add, group);
+    menu_add->addSeparator();
+    add_child_action<model::Repeater>(menu_add, group);
+
+    menu->addSeparator();
+
     menu->addAction(QIcon::fromTheme("transform-move"), NodeMenu::tr("Reset Transform"), menu,
         ResetTransform{group->document(), group->transform.get()}
     );
 
-    menu->addSeparator();
 
     model::Layer* lay = qobject_cast<model::Layer*>(group);
     if ( lay )
@@ -230,6 +253,8 @@ void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
     }
     else
     {
+        menu->addSeparator();
+
         menu->addAction(QIcon::fromTheme("folder"), NodeMenu::tr("Convert to Layer"), menu, ConvertGroupType<model::Layer>(group));
         auto callback = [](model::Layer* lay){
             lay->mask->mask.set_undoable(true);

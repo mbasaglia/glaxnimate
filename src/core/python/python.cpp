@@ -1,6 +1,8 @@
 #include <pybind11/operators.h>
 
 #include "model/document.hpp"
+#include "model/visitor.hpp"
+
 #include "model/shapes/group.hpp"
 #include "model/shapes/layer.hpp"
 #include "model/shapes/precomp_layer.hpp"
@@ -11,10 +13,11 @@
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/image.hpp"
+#include "model/shapes/repeater.hpp"
+
 #include "model/assets/assets.hpp"
 #include "model/assets/named_color.hpp"
 #include "model/assets/precomposition.hpp"
-#include "model/visitor.hpp"
 
 #include "command/animation_commands.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -354,4 +357,6 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::Stroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});
 
     register_from_meta<model::Image, model::ShapeElement>(shapes);
+
+    register_from_meta<model::Repeater, model::Modifier>(shapes);
 }

@@ -165,3 +165,8 @@ QIcon model::Layer::tree_icon() const
 {
     return mask->has_mask() ? QIcon::fromTheme("path-clip-edit") : QIcon::fromTheme("folder");
 }
+
+QIcon model::Layer::static_tree_icon()
+{
+    return QIcon::fromTheme("folder");
+}

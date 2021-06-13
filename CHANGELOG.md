@@ -1,3 +1,8 @@
+## 0.4.4
+
+* Editing
+    * Repeater modifier
+
 ## 0.4.3
 
 * Editing:

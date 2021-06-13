@@ -9,7 +9,7 @@
 namespace model {
 
 
-class Group : public ShapeElement
+class Group : public StaticOverrides<Group, ShapeElement>
 {
     GLAXNIMATE_OBJECT(Group)
 
@@ -30,12 +30,12 @@ public:
     DocumentNode* docnode_child(int index) const override { return shapes[index]; }
     int docnode_child_index(DocumentNode* obj) const override { return shapes.index_of(static_cast<ShapeElement*>(obj)); }
 
-    QIcon tree_icon() const override
+    static QIcon static_tree_icon()
     {
         return QIcon::fromTheme("object-group");
     }
 
-    QString type_name_human() const override
+    static QString static_type_name_human()
     {
         return tr("Group");
     }

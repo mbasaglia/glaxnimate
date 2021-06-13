@@ -13,6 +13,7 @@
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/text.hpp"
+#include "model/shapes/repeater.hpp"
 
 #include "lottie_format.hpp"
 
@@ -299,6 +300,12 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"h", Custom},
         FieldInfo{"tm"},
     }},
+    {"Repeater", {
+        FieldInfo{"c", "copies"},
+        FieldInfo{"o"},
+        FieldInfo{"m"},
+        FieldInfo{"tr", Custom},
+    }},
 };
 const QMap<QString, QString> shape_types = {
     {"Rect", "rc"},
@@ -309,11 +316,11 @@ const QMap<QString, QString> shape_types = {
     {"Layer", "gr"},
     {"Fill", "fl"},
     {"Stroke", "st"},
-//     {"GradientFill", "gf"},
-//     {"GradientStroke", "gs"},
-//     {"TransformShape", "tr"},
+    // "gf" (Gradient Fill) and "gs" (Gradient Stroke) are handled by fill/stroke
+    // "tr" is not a shape but a property of groups
+    // "mm" (Merge) and "tw" (Twist)
 //     {"Trim", "tm"},
-//     {"Repeater", "rp"},
+    {"Repeater", "rp"},
 //     {"EoundedCorners", "rd"},
 //     {"Merge", "mm"},
 //     {"Twist", "tw"},
