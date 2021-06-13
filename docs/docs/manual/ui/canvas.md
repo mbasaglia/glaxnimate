@@ -4,7 +4,7 @@ Authors: Mattia Basaglia
 
 The canvas is the main drawing area in Glaxnimate.
 
-![The canvas](/img/screenshots/canvas.png)
+![The canvas](/img/screenshots/main_window/canvas.png)
 
 ## Tools
 
@@ -31,7 +31,7 @@ If you hold Shift while dragging with the middle mouse button, you can rotate th
 
 ### Finer control
 
-![Transform Widget](/img/screenshots/transform_widget.py)
+![Transform Widget](/img/screenshots/main_window/transform_widget.png)
 
 At the bottom of the window, you have finer controls for the view, they are described as follows:
 

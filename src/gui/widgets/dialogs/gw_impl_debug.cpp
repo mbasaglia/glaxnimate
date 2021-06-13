@@ -20,7 +20,8 @@
 static void screenshot_widget(const QString& path, QWidget* widget)
 {
     widget->show();
-    QString name = path + widget->objectName().mid(5);
+    QString base = widget->objectName();
+    QString name = path + base.mid(base.indexOf("_")+1);
     QPixmap pic(widget->size());
     widget->render(&pic);
     name += ".png";
@@ -113,6 +114,11 @@ void GlaxnimateWindow::Private::init_debug()
         QDir("/tmp/").mkpath("glaxnimate/menus");
         for ( auto widget : this->parent->findChildren<QMenu*>() )
             screenshot_widget("/tmp/glaxnimate/menus/", widget);
+    });
+    menu_screenshot->addAction("Toolbars", [this]{
+        QDir("/tmp/").mkpath("glaxnimate/toolbars");
+        for ( auto widget : this->parent->findChildren<QToolBar*>() )
+            screenshot_widget("/tmp/glaxnimate/toolbars/", widget);
     });
     menu_screenshot->addAction("Docks", [this]{
         auto state = parent->saveState();

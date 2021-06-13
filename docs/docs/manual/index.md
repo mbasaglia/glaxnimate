@@ -4,7 +4,7 @@ Authors: Mattia Basaglia
 
 ## User Interface
 
-![Main Window](/img/screenshots/main_window.png)
+![Main Window](/img/screenshots/main_window/main_window.png)
 
 Glaxnimate user interface has the following components:
 
