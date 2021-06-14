@@ -210,6 +210,7 @@ void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
     add_child_action<model::Fill>(menu_add, group);
     add_child_action<model::Stroke>(menu_add, group);
     menu_add->addSeparator();
+    add_child_action<model::Trim>(menu_add, group);
     add_child_action<model::Repeater>(menu_add, group);
 
     menu->addSeparator();
