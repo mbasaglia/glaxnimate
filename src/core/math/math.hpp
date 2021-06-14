@@ -43,7 +43,10 @@ constexpr qreal deg2rad(qreal rad) noexcept
 template<class Numeric>
 Numeric fmod(Numeric x, Numeric y)
 {
-    return x < 0 ? std::fmod(x, y) + y : std::fmod(x, y);
+    return x < 0 ?
+        std::fmod(std::fmod(x, y) + y, y) :
+        std::fmod(x, y)
+    ;
 }
 
 

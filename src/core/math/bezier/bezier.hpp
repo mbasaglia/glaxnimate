@@ -8,6 +8,46 @@
 
 namespace math::bezier {
 
+class LengthData
+{
+public:
+    using SplitInfo = std::pair<int, qreal>;
+
+    LengthData() = default;
+    explicit LengthData(qreal length) : length_(length) {}
+    explicit LengthData(const math::bezier::CubicBezierSolver<QPointF>& segment, int steps);
+
+    template<class... Args>
+    void add_child(Args&&... args)
+    {
+        children_.emplace_back(std::forward<Args>(args)...);
+        length_ += children_.back().length_;
+    }
+
+    const std::vector<LengthData>& children() const
+    {
+        return children_;
+    }
+
+    qreal length() const
+    {
+        return length_;
+    }
+
+    void reserve(int size)
+    {
+        children_.reserve(size);
+    }
+
+    SplitInfo at_ratio(qreal ratio) const;
+    SplitInfo at_length(qreal length) const;
+    SplitInfo child_split(const SplitInfo& info) const;
+
+private:
+    qreal length_ = 0;
+    std::vector<LengthData> children_;
+};
+
 class Bezier
 {
 public:
@@ -25,6 +65,7 @@ public:
     std::vector<Point>& points() { return points_; }
 
     int size() const { return points_.size(); }
+    int closed_size() const { return points_.size() + (closed_ ? 1 : 0); }
     bool empty() const { return points_.empty(); }
     auto begin() { return points_.begin(); }
     auto begin() const { return points_.begin(); }
@@ -179,6 +220,11 @@ public:
     Bezier transformed(const QTransform& t) const;
     void transform(const QTransform& t);
 
+    /**
+     * \brief Pre-computation for length-related operations
+     */
+    LengthData length_data(int steps) const;
+
 private:
     /**
      * \brief Solver for the point \p p to the point \p p + 1
@@ -255,6 +301,11 @@ public:
     void transform(const QTransform& t);
 
     static MultiBezier from_painter_path(const QPainterPath& path);
+
+    LengthData length_data(int steps) const;
+
+    int size() const { return beziers_.size(); }
+    bool empty() const { return beziers_.empty(); }
 
 private:
     void handle_end()

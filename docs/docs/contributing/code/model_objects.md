@@ -189,6 +189,9 @@ SVG rendering is done mostly manually so you'd need to add the appropriate code.
 ### New Shape / Layer Checklist
 
 * Define the class, having `ShapeElement` (or the appropriate class) as parent
+    * Add GLAXNIMATE_OBJECT
+    * Add properties
+    * Define metadata with GLAXNIMATE_OBJECT_IMPL
 * If you want to add menus, inherit from the CRTP Class `StaticOverrides`
 * Override the relevant methods
     * (`static_`) `tree_icon`

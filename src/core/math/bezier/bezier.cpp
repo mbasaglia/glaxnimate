@@ -78,8 +78,6 @@ math::bezier::Point math::bezier::Bezier::split_segment_point(int index, qreal f
     );
 }
 
-
-
 void math::bezier::Bezier::add_to_painter_path(QPainterPath& out) const
 {
     if ( size() < 2 )
@@ -154,6 +152,73 @@ void math::bezier::Bezier::transform(const QTransform& t)
         p.transform(t);
 }
 
+math::bezier::LengthData::LengthData(const math::bezier::CubicBezierSolver<QPointF>& segment, int steps)
+{
+    if ( steps == 0 )
+        return;
+
+    children_.reserve(steps);
+
+    QPointF p = segment.points()[0];
+
+    for ( int i = 1; i <= steps; i++ )
+    {
+        qreal t = qreal(i) / steps;
+        QPointF q = segment.solve(t);
+        auto l = math::length_squared(p - q);
+        children_.emplace_back(l);
+        length_ += l;
+        p = q;
+    }
+}
+
+math::bezier::LengthData::SplitInfo math::bezier::LengthData::child_split(const math::bezier::LengthData::SplitInfo& info) const
+{
+    return children_[info.first].at_ratio(info.second);
+}
+
+
+std::pair<int, qreal> math::bezier::LengthData::at_ratio(qreal ratio) const
+{
+    return at_length(ratio * length_);
+}
+
+std::pair<int, qreal> math::bezier::LengthData::at_length(qreal length) const
+{
+    if ( length <= 0 )
+        return {0, 0.};
+
+    if ( length >= 1 )
+        return {children_.size(), 1.};
+
+    for ( int i = 0; i < int(children_.size()); i++ )
+    {
+        if ( children_[i].length_ > length )
+            return {i, length / children_[i].length_};
+
+        length -= children_[i].length_;
+    }
+
+    return {children_.size(), 1.};
+}
+
+
+
+math::bezier::LengthData math::bezier::Bezier::length_data(int steps) const
+{
+    LengthData out;
+
+    if ( !points_.empty() )
+    {
+        int sz = closed_size() -1;
+        out.reserve(sz);
+        for ( int i = 0; i < sz; i++ )
+            out.add_child(solver_for_point(i), steps);
+    }
+
+    return out;
+}
+
 
 QRectF math::bezier::MultiBezier::bounding_box() const
 {
@@ -219,3 +284,13 @@ math::bezier::MultiBezier math::bezier::MultiBezier::from_painter_path(const QPa
     return bez;
 }
 
+
+math::bezier::LengthData math::bezier::MultiBezier::length_data(int steps) const
+{
+    math::bezier::LengthData data;
+    data.reserve(beziers_.size());
+    for ( const auto& bez : beziers_ )
+        data.add_child(bez.length_data(steps));
+
+    return data;
+}

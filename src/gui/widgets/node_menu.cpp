@@ -8,6 +8,7 @@
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/repeater.hpp"
+#include "model/shapes/trim.hpp"
 
 #include "model/assets/assets.hpp"
 

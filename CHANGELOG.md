@@ -2,6 +2,7 @@
 
 * Editing:
     * Repeater modifier
+    * Trim path modifier
     * Improved shape to path conversion
     * Can convert shapes to path from the context menu
 * Scripting:
