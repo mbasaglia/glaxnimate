@@ -63,7 +63,7 @@ QPainterPath model::ShapeElement::to_clip(FrameTime t) const
 
 std::unique_ptr<model::ShapeElement> model::ShapeElement::to_path() const
 {
-    return {};
+    return std::unique_ptr<model::ShapeElement>(static_cast<model::ShapeElement*>(clone().release()));
 }
 
 
@@ -89,7 +89,7 @@ QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
 
 std::unique_ptr<model::ShapeElement> model::Shape::to_path() const
 {
-    std::vector<AnimatableBase*> properties;
+    std::vector<const AnimatableBase*> properties;
     auto flags = PropertyTraits::Visual|PropertyTraits::Animated;
     for ( auto prop : this->properties() )
     {

@@ -200,6 +200,7 @@ public:
     void move_to();
     void cleanup_document();
     void to_path();
+    void convert_to_path(const std::vector<model::ShapeElement*>& shapes, std::vector<model::ShapeElement*>* out);
     void align(AlignDirection direction, AlignPosition position, bool outside);
     QPointF align_point(const QRectF& rect, AlignDirection direction, AlignPosition position);
     void dropped(const QMimeData* data);

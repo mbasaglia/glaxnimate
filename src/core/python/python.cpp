@@ -333,7 +333,9 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::Assets, model::DocumentNode>(defs);
 
     py::module shapes = model.def_submodule("shapes", "");
-    register_from_meta<model::ShapeElement, model::VisualNode>(shapes);
+    register_from_meta<model::ShapeElement, model::VisualNode>(shapes)
+        .def("to_path", &model::ShapeElement::to_path)
+    ;
     register_from_meta<model::Shape, model::ShapeElement>(shapes);
     register_from_meta<model::Modifier, model::ShapeElement>(shapes);
     register_from_meta<model::Styler, model::ShapeElement>(shapes);

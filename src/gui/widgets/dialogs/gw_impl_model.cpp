@@ -536,14 +536,8 @@ void GlaxnimateWindow::Private::cleanup_document()
     status_message(tr("Removed %1 assets").arg(count), 0);
 }
 
-void GlaxnimateWindow::Private::to_path()
+void GlaxnimateWindow::Private::convert_to_path(const std::vector<model::ShapeElement*>& shapes, std::vector<model::ShapeElement*>* out)
 {
-    std::set<model::ShapeElement*> shapes;
-
-    auto callback = [&shapes](model::ShapeElement* shape){ shapes.insert(shape); };
-    for ( auto selected : scene.selection() )
-        model::simple_visit<model::ShapeElement>(selected, true, callback);
-
     if ( shapes.empty() )
         return;
 
@@ -551,12 +545,21 @@ void GlaxnimateWindow::Private::to_path()
     if ( shapes.size() == 1 )
         macro_name = tr("Convert %1 to path").arg((*shapes.begin())->name.get());
 
+    std::unordered_map<model::Layer*, model::Layer*> converted_layers;
+
     command::UndoMacroGuard guard(macro_name, current_document.get(), false);
     for ( auto shape : shapes )
     {
         auto path = shape->to_path();
+
+        if ( out )
+            out->push_back(path.get());
+
         if ( path )
         {
+            if ( auto lay = shape->cast<model::Layer>() )
+                converted_layers[lay] = static_cast<model::Layer*>(path.get());
+
             guard.start();
             current_document->push_command(
                 new command::AddObject<model::ShapeElement>(
@@ -570,6 +573,36 @@ void GlaxnimateWindow::Private::to_path()
             );
         }
     }
+
+    // Maintain parenting of layers that have been converted
+    for ( const auto& p : converted_layers )
+    {
+        if ( auto src_parent = p.first->parent.get() )
+        {
+            auto it = converted_layers.find(src_parent);
+            if ( it != converted_layers.end() )
+                p.second->parent.set(it->second);
+        }
+    }
+}
+
+void GlaxnimateWindow::Private::to_path()
+{
+    std::vector<model::ShapeElement*> shapes;
+
+    for ( auto selected : scene.cleaned_selection() )
+    {
+        if ( selected->docnode_locked_recursive() )
+            continue;
+
+        if ( auto shape = selected->cast<model::ShapeElement>() )
+        {
+            if ( !shape->cast<model::Styler>() )
+                shapes.push_back(shape);
+        }
+    }
+
+    convert_to_path(shapes, nullptr);
 }
 
 void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp, int i)

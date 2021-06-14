@@ -1,7 +1,11 @@
 ## 0.4.4
 
-* Editing
+* Editing:
     * Repeater modifier
+    * Improved shape to path conversion
+    * Can convert shapes to path from the context menu
+* Scripting:
+    * Python can now convert objects to path
 
 ## 0.4.3
 

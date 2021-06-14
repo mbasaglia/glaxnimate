@@ -64,3 +64,23 @@ QPainterPath model::Group::to_clip(FrameTime t) const
 {
     return transform.get()->transform_matrix(t).map(to_painter_path(t));
 }
+
+std::unique_ptr<model::ShapeElement> model::Group::to_path() const
+{
+    auto clone = std::make_unique<model::Group>(document());
+
+    for ( BaseProperty* prop : properties() )
+    {
+        if ( prop != &shapes )
+            clone->get_property(prop->name())->assign_from(prop);
+    }
+
+    for ( const auto& shape : shapes )
+    {
+        clone->shapes.insert(shape->to_path());
+        if ( shape->is_instance<model::Modifier>() )
+            break;
+    }
+
+    return clone;
+}

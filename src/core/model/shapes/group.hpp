@@ -49,6 +49,8 @@ public:
     QPainterPath to_clip(model::FrameTime t) const override;
     QPainterPath to_painter_path(model::FrameTime t) const override;
 
+    std::unique_ptr<ShapeElement> to_path() const override;
+
 signals:
     void opacity_changed(float op);
 

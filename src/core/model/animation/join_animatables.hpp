@@ -7,6 +7,9 @@
 
 namespace model {
 
+/**
+ * \brief Utility to join keyframes from multiple animatables
+ */
 class JoinAnimatables
 {
 private:
@@ -62,28 +65,40 @@ public:
 
     using iterator = typename std::vector<Keyframe>::const_iterator;
 
-    JoinAnimatables(std::vector<model::AnimatableBase*> properties, int flags = Normal)
+    JoinAnimatables(std::vector<const model::AnimatableBase*> properties, int flags = Normal)
     : properties_(std::move(properties))
     {
         if ( !(flags & NoKeyframes) )
             load_keyframes(flags);
     }
 
+    /**
+     * \brief Whether the result has more than one keyframe
+     */
     bool animated() const
     {
         return keyframes_.size() > 1;
     }
 
+    /**
+     * \brief Keyframe range begin
+     */
     auto begin() const
     {
         return keyframes_.begin();
     }
 
+    /**
+     * \brief Keyframe range end
+     */
     auto end() const
     {
         return keyframes_.end();
     }
 
+    /**
+     * \brief Current value as a vector of variants
+     */
     std::vector<QVariant> current_value() const
     {
         std::vector<QVariant> values;
@@ -93,7 +108,10 @@ public:
         return values;
     }
 
-    std::vector<QVariant> value_at(qreal time) const
+    /**
+     * \brief Value at time as a vector of variants
+     */
+    std::vector<QVariant> value_at(FrameTime time) const
     {
         std::vector<QVariant> values;
         values.reserve(properties_.size());
@@ -102,7 +120,7 @@ public:
         return values;
     }
 
-    const std::vector<model::AnimatableBase*>& properties() const
+    const std::vector<const model::AnimatableBase*>& properties() const
     {
         return properties_;
     }
@@ -112,8 +130,45 @@ public:
         return keyframes_;
     }
 
+    /**
+     * \brief Current value combined by a callback
+     * \pre each property can be converted to the corresponding \p AnimatedProperty<Args>.
+     */
+    template<class... Args, class Func>
+    auto combine_current_value(const Func& func)
+    {
+        return invoke_combine_get<Args...>(func, std::index_sequence_for<Args...>());
+    }
+
+    /**
+     * \brief Value at a given time combined by a callback
+     * \pre each property can be converted to the corresponding \p AnimatedProperty<Args>.
+     */
+    template<class... Args, class Func>
+    auto combine_value_at(FrameTime time, const Func& func)
+    {
+        return invoke_combine_get_at<Args...>(time, func, std::index_sequence_for<Args...>());
+    }
+
+    /**
+     * \brief Fills \p target with the combined values
+     * \pre Each property can be converted to the corresponding \p AnimatedProperty<Args>.
+     * \pre \p target values can be initialized by what \p func returns
+     */
+    template<class... Args, class Target, class Func>
+    void apply_to(Target* target, const Func& func, const model::AnimatedProperty<Args>*...)
+    {
+        target->clear_keyframes();
+        target->set(combine_current_value<Args...>(func));
+        for ( const auto& keyframe : keyframes_ )
+        {
+            auto real_kf = target->set_keyframe(keyframe.time, combine_value_at<Args...>(keyframe.time, func));
+            real_kf->set_transition(keyframe.transition());
+        }
+    }
+
 private:
-    std::vector<model::AnimatableBase*> properties_;
+    std::vector<const model::AnimatableBase*> properties_;
     std::vector<Keyframe> keyframes_;
 
     void load_keyframes(int flags)
@@ -151,6 +206,18 @@ private:
                 }
             }
         }
+    }
+
+    template<class... Args, class Func, std::size_t... Indices>
+    auto invoke_combine_get(const Func& func, std::integer_sequence<std::size_t, Indices...>)
+    {
+        return func(static_cast<const model::AnimatedProperty<Args>*>(properties_[Indices])->get()...);
+    }
+
+    template<class... Args, class Func, std::size_t... Indices>
+    auto invoke_combine_get_at(FrameTime t, const Func& func, std::integer_sequence<std::size_t, Indices...>)
+    {
+        return func(static_cast<const model::AnimatedProperty<Args>*>(properties_[Indices])->get_at(t)...);
     }
 
 };

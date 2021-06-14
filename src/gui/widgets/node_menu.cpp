@@ -261,7 +261,10 @@ void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
         };
         menu->addAction(QIcon::fromTheme("path-mask-edit"), NodeMenu::tr("Convert to Mask"), menu,
                         ConvertGroupType<model::Layer, decltype(callback)>(group, callback));
+
     }
+
+    menu->addAction(QIcon::fromTheme("object-to-path"), NodeMenu::tr("Convert to Path"), menu, [window, group]{ window->convert_to_path(group);});
 }
 
 void actions_image(QMenu* menu, GlaxnimateWindow* window, model::Image* image)
@@ -403,6 +406,11 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
         else if ( auto lay = qobject_cast<model::PreCompLayer*>(shape) )
         {
             actions_precomp(this, window, lay);
+        }
+        else
+        {
+            addSeparator();
+            addAction(QIcon::fromTheme("object-to-path"), tr("Convert to Path"), this, [window, shape]{ window->convert_to_path(shape);});
         }
     }
     else if ( qobject_cast<model::Composition*>(node) )

@@ -93,6 +93,8 @@ public:
     QPainterPath to_clip(model::FrameTime t) const override;
     QPainterPath to_painter_path(model::FrameTime t) const override;
 
+    std::unique_ptr<ShapeElement> to_path() const override;
+
 private:
     std::vector<DocumentNode*> valid_parents() const;
     bool is_valid_parent(DocumentNode* node) const;

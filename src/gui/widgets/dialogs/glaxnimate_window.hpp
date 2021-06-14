@@ -119,6 +119,18 @@ public:
 
     QMenu* create_layer_menu() const;
 
+    /**
+     * \brief Converts \p shape to path
+     * \returns The converted shape
+     */
+    Q_INVOKABLE model::ShapeElement* convert_to_path(model::ShapeElement* shape);
+
+    /**
+     * \brief Converts \p shapes to path
+     * \returns The converted shapes
+     */
+    std::vector<model::ShapeElement*> convert_to_path(const std::vector<model::ShapeElement*>& shapes);
+
 public slots:
     void document_save();
     void document_save_as();

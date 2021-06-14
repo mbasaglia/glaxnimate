@@ -440,3 +440,16 @@ void GlaxnimateWindow::switch_composition(model::Composition* comp, int index)
 {
     d->switch_composition(comp, index);
 }
+
+std::vector<model::ShapeElement *> GlaxnimateWindow::convert_to_path(const std::vector<model::ShapeElement *>& shapes)
+{
+    std::vector<model::ShapeElement *> out;
+    d->convert_to_path(shapes, &out);
+    return out;
+}
+
+model::ShapeElement * GlaxnimateWindow::convert_to_path(model::ShapeElement* shape)
+{
+    return convert_to_path(std::vector<model::ShapeElement *>{shape})[0];
+}
+

@@ -250,7 +250,7 @@ public:
     template<class Callback>
     void write_properties(
         QDomElement& element,
-        std::vector<model::AnimatableBase*> properties,
+        std::vector<const model::AnimatableBase*> properties,
         const std::vector<QString>& attrs,
         const Callback& callback
     )
@@ -588,7 +588,7 @@ public:
 
         if ( animated )
         {
-            std::vector<model::AnimatableBase*> props;
+            std::vector<const model::AnimatableBase*> props;
             for ( auto prop : shape->properties() )
             {
                 if ( prop->traits().flags & model::PropertyTraits::Animated )

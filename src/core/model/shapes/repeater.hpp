@@ -21,6 +21,8 @@ public:
     static QIcon static_tree_icon();
     static QString static_type_name_human();
 
+    std::unique_ptr<ShapeElement> to_path() const override;
+
 protected:
     math::bezier::MultiBezier process(FrameTime t, const math::bezier::MultiBezier& mbez) const override;
     void on_paint(QPainter* p, FrameTime t, PaintMode) const override;
