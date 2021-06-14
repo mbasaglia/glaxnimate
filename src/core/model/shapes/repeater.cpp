@@ -97,7 +97,7 @@ std::unique_ptr<model::ShapeElement> model::Repeater::to_path() const
     for ( auto sib : affected() )
         child->shapes.insert(sib->to_path());
 
-    JoinAnimatables anim({&start_opacity, &end_opacity});
+    JoinAnimatables anim({&start_opacity, &end_opacity}, JoinAnimatables::NoValues);
 
     int n_copies = copies.get();
     float alpha_lerp = 1;
@@ -121,4 +121,16 @@ std::unique_ptr<model::ShapeElement> model::Repeater::to_path() const
     group->set_time(time());
 
     return group;
+}
+
+int model::Repeater::max_copies() const
+{
+    int max = copies.get();
+    for ( int i = 0, e = copies.keyframe_count(); i < e; ++i )
+    {
+        int val = copies.keyframe(i)->get();
+        if ( val > max )
+            max = val;
+    }
+    return max;
 }

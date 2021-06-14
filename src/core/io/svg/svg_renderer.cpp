@@ -12,6 +12,7 @@
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/text.hpp"
+#include "model/shapes/repeater.hpp"
 #include "model/animation/join_animatables.hpp"
 #include "math/math.hpp"
 
@@ -422,6 +423,169 @@ public:
         write_property(element, &styler->color, attr);
         write_property(element, &styler->opacity, attr+"-opacity");
     }
+    void write_image(model::Image* img, QDomElement& parent)
+    {
+        if ( img->image.get() )
+        {
+            auto e = element(parent, "image");
+            set_attribute(e, "x", 0);
+            set_attribute(e, "y", 0);
+            set_attribute(e, "width", img->image->width.get());
+            set_attribute(e, "height", img->image->height.get());
+            transform_to_attr(e, img->transform.get());
+            set_attribute(e, "xlink:href", img->image->to_url().toString());
+        }
+    }
+
+    void write_stroke(model::Stroke* stroke, QDomElement& parent)
+    {
+        Style::Map style;
+        style["fill"] = "none";
+        if ( !animated )
+        {
+            style["stroke"] = styler_to_css(stroke);
+            style["stroke-opacity"] = QString::number(stroke->opacity.get());
+            style["stroke-width"] = QString::number(stroke->width.get());
+        }
+        switch ( stroke->cap.get() )
+        {
+            case model::Stroke::Cap::ButtCap:
+                style["stroke-linecap"] = "butt";
+                break;
+            case model::Stroke::Cap::RoundCap:
+                style["stroke-linecap"] = "round";
+                break;
+            case model::Stroke::Cap::SquareCap:
+                style["stroke-linecap"] = "square";
+                break;
+
+        }
+        switch ( stroke->join.get() )
+        {
+            case model::Stroke::Join::BevelJoin:
+                style["stroke-linejoin"] = "bevel";
+                break;
+            case model::Stroke::Join::RoundJoin:
+                style["stroke-linejoin"] = "round";
+                break;
+            case model::Stroke::Join::MiterJoin:
+                style["stroke-linejoin"] = "miter";
+                break;
+        }
+        style["stroke-dasharray"] = "none";
+        QDomElement g = write_styler_shapes(parent, stroke, style);
+        if ( animated )
+        {
+            write_styler_attrs(g, stroke, "stroke");
+            write_property(g, &stroke->width, "stroke-width");
+        }
+    }
+
+    void write_fill(model::Fill* fill, QDomElement& parent)
+    {
+        Style::Map style;
+        if ( !animated )
+        {
+            style["fill"] = styler_to_css(fill);
+            style["fill-opacity"] = QString::number(fill->opacity.get());
+        }
+        QDomElement g = write_styler_shapes(parent, fill, style);
+        if ( animated )
+            write_styler_attrs(g, fill, "fill");
+    }
+
+    void write_precomp_layer(model::PreCompLayer* layer, QDomElement& parent)
+    {
+        if ( layer->composition.get() )
+        {
+            timing.push_back(layer->timing.get());
+            auto clip = element(defs, "clipPath");
+            set_attribute(clip, "id", "clip_" + id(layer));
+            set_attribute(clip, "clipPathUnits", "userSpaceOnUse");
+            auto clip_rect = element(clip, "rect");
+            set_attribute(clip_rect, "x", "0");
+            set_attribute(clip_rect, "y", "0");
+            set_attribute(clip_rect, "width", layer->size.get().width());
+            set_attribute(clip_rect, "height", layer->size.get().height());
+
+            auto e = start_layer(parent, layer);
+            transform_to_attr(e, layer->transform.get());
+            write_property(e, &layer->opacity, "opacity");
+            write_visibility_attributes(parent, layer);
+            write_composition(e, layer->composition.get());
+            timing.pop_back();
+        }
+    }
+
+    void write_repeater_vis(QDomElement& element, model::Repeater* repeater, int index, int n_copies)
+    {
+        element.setAttribute("display", index < repeater->copies.get() ? "block" : "none");
+
+        float alpha_lerp = float(index) / (n_copies == 1 ? 1 : n_copies - 1);
+        model::JoinAnimatables opacity({&repeater->start_opacity, &repeater->end_opacity}, model::JoinAnimatables::NoValues);
+        auto opacity_func = [&alpha_lerp](float a, float b){
+            return math::lerp(a, b, alpha_lerp);
+        };
+        set_attribute(element, "opacity", opacity.combine_current_value<float, float>(opacity_func));
+
+        if ( animated )
+        {
+            int kf_count = repeater->copies.keyframe_count();
+            if ( kf_count >= 2 )
+            {
+                AnimationData anim_display(this, {"display"}, kf_count);
+
+                for ( int i = 0; i < kf_count; i++ )
+                {
+                    auto kf = repeater->copies.keyframe(i);
+                    anim_display.add_keyframe(time_to_global(kf->time()), {index < kf->get() ? "block" : "none"}, kf->transition());
+                }
+
+                anim_display.add_dom(element);
+            }
+
+            if ( opacity.animated() )
+            {
+                AnimationData anim_opacity(this, {"opacity"}, opacity.keyframes().size());
+                for ( const auto& keyframe : opacity.keyframes() )
+                {
+                    anim_opacity.add_keyframe(
+                        time_to_global(keyframe.time),
+                        {QString::number(opacity.combine_value_at<float, float>(keyframe.time, opacity_func))},
+                        keyframe.transition()
+                    );
+                }
+            }
+        }
+    }
+
+    void write_repeater(model::Repeater* repeater, QDomElement& parent, bool force_draw)
+    {
+        int n_copies = repeater->max_copies();
+        if ( n_copies < 1 )
+            return;
+
+        QDomElement container = start_group(parent, repeater);
+        QString base_id = id(repeater);
+        QString prev_clone_id = base_id + "_0";
+        QDomElement og = element(container, "g");
+        og.setAttribute("id", prev_clone_id);
+        for ( const auto& sib : repeater->affected() )
+            write_shape(og, sib, force_draw);
+
+        write_repeater_vis(og, repeater, 0, n_copies);
+
+        for ( int i = 1; i < n_copies; i++ )
+        {
+            QString clone_id = base_id + "_" + QString::number(i);;
+            QDomElement use = element(container, "use");
+            use.setAttribute("xlink:href", "#" + prev_clone_id);
+            use.setAttribute("id", clone_id);
+            write_repeater_vis(use, repeater, i, n_copies);
+            transform_to_attr(use, repeater->transform.get());
+            prev_clone_id = clone_id;
+        }
+    }
 
     void write_shape(QDomElement& parent, model::ShapeElement* shape, bool force_draw)
     {
@@ -431,93 +595,23 @@ public:
         }
         else if ( auto stroke = qobject_cast<model::Stroke*>(shape) )
         {
-            Style::Map style;
-            style["fill"] = "none";
-            if ( !animated )
-            {
-                style["stroke"] = styler_to_css(stroke);
-                style["stroke-opacity"] = QString::number(stroke->opacity.get());
-                style["stroke-width"] = QString::number(stroke->width.get());
-            }
-            switch ( stroke->cap.get() )
-            {
-                case model::Stroke::Cap::ButtCap:
-                    style["stroke-linecap"] = "butt";
-                    break;
-                case model::Stroke::Cap::RoundCap:
-                    style["stroke-linecap"] = "round";
-                    break;
-                case model::Stroke::Cap::SquareCap:
-                    style["stroke-linecap"] = "square";
-                    break;
-
-            }
-            switch ( stroke->join.get() )
-            {
-                case model::Stroke::Join::BevelJoin:
-                    style["stroke-linejoin"] = "bevel";
-                    break;
-                case model::Stroke::Join::RoundJoin:
-                    style["stroke-linejoin"] = "round";
-                    break;
-                case model::Stroke::Join::MiterJoin:
-                    style["stroke-linejoin"] = "miter";
-                    break;
-            }
-            style["stroke-dasharray"] = "none";
-            QDomElement g = write_styler_shapes(parent, stroke, style);
-            if ( animated )
-            {
-                write_styler_attrs(g, stroke, "stroke");
-                write_property(g, &stroke->width, "stroke-width");
-            }
+            write_stroke(stroke, parent);
         }
         else if ( auto fill = qobject_cast<model::Fill*>(shape) )
         {
-            Style::Map style;
-            if ( !animated )
-            {
-                style["fill"] = styler_to_css(fill);
-                style["fill-opacity"] = QString::number(fill->opacity.get());
-            }
-            QDomElement g = write_styler_shapes(parent, fill, style);
-            if ( animated )
-                write_styler_attrs(g, fill, "fill");
+            write_fill(fill, parent);
         }
         else if ( auto img = qobject_cast<model::Image*>(shape) )
         {
-            if ( img->image.get() )
-            {
-                auto e = element(parent, "image");
-                set_attribute(e, "x", 0);
-                set_attribute(e, "y", 0);
-                set_attribute(e, "width", img->image->width.get());
-                set_attribute(e, "height", img->image->height.get());
-                transform_to_attr(e, img->transform.get());
-                set_attribute(e, "xlink:href", img->image->to_url().toString());
-            }
+            write_image(img, parent);
         }
         else if ( auto layer = qobject_cast<model::PreCompLayer*>(shape) )
         {
-            if ( layer->composition.get() )
-            {
-                timing.push_back(layer->timing.get());
-                auto clip = element(defs, "clipPath");
-                set_attribute(clip, "id", "clip_" + id(shape));
-                set_attribute(clip, "clipPathUnits", "userSpaceOnUse");
-                auto clip_rect = element(clip, "rect");
-                set_attribute(clip_rect, "x", "0");
-                set_attribute(clip_rect, "y", "0");
-                set_attribute(clip_rect, "width", layer->size.get().width());
-                set_attribute(clip_rect, "height", layer->size.get().height());
-
-                auto e = start_layer(parent, layer);
-                transform_to_attr(e, layer->transform.get());
-                write_property(e, &layer->opacity, "opacity");
-                write_visibility_attributes(parent, shape);
-                write_composition(e, layer->composition.get());
-                timing.pop_back();
-            }
+            write_precomp_layer(layer, parent);
+        }
+        else if ( auto repeater = qobject_cast<model::Repeater*>(shape) )
+        {
+            write_repeater(repeater, parent, force_draw);
         }
         else if ( force_draw )
         {

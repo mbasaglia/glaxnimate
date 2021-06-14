@@ -8,7 +8,13 @@ and these objects.
 
 ## Document Nodes
 
-"Document Nodes" are Model Objects that correspond to a visual element of the
+"Document Nodes" are stand alone Model Objects that are part of the document structure.
+
+This includes Assets, Visual Nodes, Containers, etc.
+
+## Visual Nodes
+
+"Visual Nodes" are Document Nodes that correspond to a visual element of the
 animation. These are listed in the [Layers View](../../manual/ui/docks.md#layers).
 
 # How to define a new class
@@ -132,7 +138,7 @@ PYBIND11_EMBEDDED_MODULE(glaxnimate, glaxnimate_module)
 ### Lottie Import/Export
 
 Lottie serialization is semi-automatic, you need to add your class in
-`src/io/lottie_format.cpp`.
+`core/io/lottie/lottie_private_common.hpp`.
 
 The variable `fields` defines metadata on how to interpret the lottie json fields
 and you should add your class and relevant properties in there.
@@ -179,3 +185,26 @@ corresponding to the right object.
 ### SVG Import/Export
 
 SVG rendering is done mostly manually so you'd need to add the appropriate code.
+
+### New Shape / Layer Checklist
+
+* Define the class, having `ShapeElement` (or the appropriate class) as parent
+* If you want to add menus, inherit from the CRTP Class `StaticOverrides`
+* Override the relevant methods
+    * (`static_`) `tree_icon`
+    * (`static_`) `type_name_human`
+    * `to_path`
+* Expose the class to Python
+* Add editors (if needed) to `gui/graphics/create_items.cpp`.
+* Implement Lottie I/O
+    * Populate `io::lottie::detail::fields` in `core/io/lottie/lottie_private_common.hpp`
+    * Add entry to `io::lottie::detail::shape_types` in `core/io/lottie/lottie_private_common.hpp`
+    * If it has custom fields, add the relevant code to `lottie_importer.hpp` and `lottie_exporter.hpp`
+* Implement SVG Export (`core/io/svg/svg_renderer.cpp`)
+    * Write a conversion function
+    * If it's a `Shape`, add the condition in `write_shape_shape`
+    * Otherwise, add the condition in `write_shape`
+* Implement SVG Import, if there is a standard SVG or Inkscape SVG analogue (`core/io/svg/svg_parser.cpp`)
+    * Write a conversion function
+    * If adding support for a new element, map the element name to conversion function in `io::svg::SvgParser::Private::shape_parsers`.
+    * Otherwise add the relevant condition in the existing `parseshape_*` function.

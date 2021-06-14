@@ -23,6 +23,8 @@ public:
 
     std::unique_ptr<ShapeElement> to_path() const override;
 
+    int max_copies() const;
+
 protected:
     math::bezier::MultiBezier process(FrameTime t, const math::bezier::MultiBezier& mbez) const override;
     void on_paint(QPainter* p, FrameTime t, PaintMode) const override;
