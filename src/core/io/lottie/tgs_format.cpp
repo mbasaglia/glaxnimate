@@ -7,6 +7,7 @@
 #include "model/shapes/polystar.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/stroke.hpp"
+#include "model/shapes/repeater.hpp"
 #include "model/visitor.hpp"
 
 namespace io::lottie {
@@ -41,6 +42,10 @@ private:
         {
             if ( layer->mask->has_mask() )
                 show_error(node, TgsFormat::tr("Masks are not supported"), app::log::Error);
+        }
+        else if ( qobject_cast<model::Repeater*>(node) )
+        {
+            show_error(node, TgsFormat::tr("Repeaters are not officially supported"), app::log::Info);
         }
     }
 

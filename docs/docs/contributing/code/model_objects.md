@@ -203,6 +203,7 @@ SVG rendering is done mostly manually so you'd need to add the appropriate code.
     * Populate `io::lottie::detail::fields` in `core/io/lottie/lottie_private_common.hpp`
     * Add entry to `io::lottie::detail::shape_types` in `core/io/lottie/lottie_private_common.hpp`
     * If it has custom fields, add the relevant code to `lottie_importer.hpp` and `lottie_exporter.hpp`
+    * If it isn't supported by TGS, add the required warnings in
 * Implement SVG Export (`core/io/svg/svg_renderer.cpp`)
     * Write a conversion function
     * If it's a `Shape`, add the condition in `write_shape_shape`
