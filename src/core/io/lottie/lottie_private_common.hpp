@@ -306,6 +306,12 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"m"},
         FieldInfo{"tr", Custom},
     }},
+    {"Trim", {
+        FieldInfo{"s", "start", FloatMult(100)},
+        FieldInfo{"e", "end", FloatMult(100)},
+        FieldInfo{"o", "offset", FloatMult(360)},
+        FieldInfo{"m", "multiple"},
+    }},
 };
 const QMap<QString, QString> shape_types = {
     {"Rect", "rc"},
@@ -318,12 +324,10 @@ const QMap<QString, QString> shape_types = {
     {"Stroke", "st"},
     // "gf" (Gradient Fill) and "gs" (Gradient Stroke) are handled by fill/stroke
     // "tr" is not a shape but a property of groups
-    // "mm" (Merge) and "tw" (Twist)
-//     {"Trim", "tm"},
+    // "mm" (Merge) and "tw" (Twist) are not supported by lottie
+    {"Trim", "tm"},
     {"Repeater", "rp"},
-//     {"EoundedCorners", "rd"},
-//     {"Merge", "mm"},
-//     {"Twist", "tw"},
+//     {"RoundedCorners", "rd"},
 };
 
 const QMap<QString, QString> shape_types_repeat = {

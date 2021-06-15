@@ -27,8 +27,8 @@ static void chunk_start(const math::bezier::Bezier& in, math::bezier::Bezier& ou
     if ( max == -1 )
         max = in.closed_size();
     out.push_back(in.split_segment_point(split.first, split.second));
-    out.push_back(in[split.first + 1]);
-    for ( int i = split.first; i < max; i++ )
+
+    for ( int i = split.first + 1; i < max; i++ )
         out.push_back(in[i]);
 
 }
@@ -46,12 +46,20 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
 {
     auto offset = this->offset.get_at(t);
     auto start = math::fmod(this->start.get_at(t) + offset, 1.f);
-    auto end = math::fmod(this->start.get_at(t) + offset, 1.f);
+    auto end = math::fmod(this->end.get_at(t) + offset, 1.f);
+    if ( end == 0 )
+        end = 1;
+
+    if ( mbez.empty() )
+        return {};
+
+    if ( start == 0 && end == 1 )
+        return mbez;
 
     const int length_steps = 5;
-    auto length_data = mbez.length_data(length_steps);
 
     math::bezier::MultiBezier out;
+    auto length_data = mbez.length_data(length_steps);
     auto start_data = length_data.at_ratio(start);
     auto end_data = length_data.at_ratio(end);
 
@@ -71,7 +79,7 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
             auto single_end_data = length_data.child_split(end_data);
             math::bezier::Bezier b;
             chunk_start(mbez.beziers()[start_data.first], b, single_start_data, single_end_data.first);
-            chunk_end(mbez.beziers()[start_data.first], b, single_start_data, single_start_data.first);
+            chunk_end(mbez.beziers()[start_data.first], b, single_end_data, single_end_data.first + 1);
             out.beziers().push_back(b);
             return out;
         }
@@ -155,6 +163,27 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
     return out;
 }
 
+static void to_path_value(
+    const math::bezier::MultiBezier& mbez,
+    std::vector<model::Path*>& paths,
+    model::Group* group,
+    model::Document* document
+)
+{
+    for ( int i = 0; i < mbez.size(); i++ )
+    {
+        if ( i >= int(paths.size()) )
+        {
+            auto new_path = std::make_unique<model::Path>(document);
+            paths.push_back(new_path.get());
+            group->shapes.insert(std::move(new_path));
+        }
+
+        auto path = paths[i];
+        path->shape.set(mbez.beziers()[i]);
+    }
+}
+
 static void to_path_frame(
     const math::bezier::MultiBezier& mbez,
     std::vector<model::Path*>& paths,
@@ -166,7 +195,7 @@ static void to_path_frame(
 {
     for ( int i = 0; i < mbez.size(); i++ )
     {
-        if ( i > int(paths.size()) )
+        if ( i >= int(paths.size()) )
         {
             auto new_path = std::make_unique<model::Path>(document);
             if ( t > 0 )
@@ -212,6 +241,11 @@ std::unique_ptr<model::ShapeElement> model::Trim::to_path() const
             auto bez = collect_shapes(kf.time, {});
             to_path_frame(bez, paths, kf.time, kf.transition(), group.get(), document());
         }
+    }
+    else
+    {
+        auto bez = collect_shapes(time(), {});
+        to_path_value(bez, paths, group.get(), document());
     }
 
     group->set_time(cur_time);

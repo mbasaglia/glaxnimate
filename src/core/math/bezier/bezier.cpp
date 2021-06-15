@@ -165,7 +165,7 @@ math::bezier::LengthData::LengthData(const math::bezier::CubicBezierSolver<QPoin
     {
         qreal t = qreal(i) / steps;
         QPointF q = segment.solve(t);
-        auto l = math::length_squared(p - q);
+        auto l = math::length(p - q);
         children_.emplace_back(l);
         length_ += l;
         p = q;
@@ -188,8 +188,8 @@ std::pair<int, qreal> math::bezier::LengthData::at_length(qreal length) const
     if ( length <= 0 )
         return {0, 0.};
 
-    if ( length >= 1 )
-        return {children_.size(), 1.};
+    if ( length >= length_ )
+        return {children_.size() - 1, 1.};
 
     for ( int i = 0; i < int(children_.size()); i++ )
     {
@@ -199,10 +199,8 @@ std::pair<int, qreal> math::bezier::LengthData::at_length(qreal length) const
         length -= children_[i].length_;
     }
 
-    return {children_.size(), 1.};
+    return {children_.size() - 1, 1.};
 }
-
-
 
 math::bezier::LengthData math::bezier::Bezier::length_data(int steps) const
 {

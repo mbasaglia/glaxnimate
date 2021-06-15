@@ -7,8 +7,8 @@ namespace model {
 class Trim : public StaticOverrides<Trim, Modifier>
 {
     GLAXNIMATE_OBJECT(Trim)
-    GLAXNIMATE_ANIMATABLE(float, start, 0, {}, 0, 1, true, PropertyTraits::Percent)
-    GLAXNIMATE_ANIMATABLE(float, end, 1, {}, 0, 1, true, PropertyTraits::Percent)
+    GLAXNIMATE_ANIMATABLE(float, start, 0, {}, 0, 1, false, PropertyTraits::Percent)
+    GLAXNIMATE_ANIMATABLE(float, end, 1, {}, 0, 1, false, PropertyTraits::Percent)
     GLAXNIMATE_ANIMATABLE(float, offset, 0, {}, std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max(), false, PropertyTraits::Percent)
 
 public:

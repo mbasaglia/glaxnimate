@@ -14,6 +14,7 @@
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/repeater.hpp"
+#include "model/shapes/trim.hpp"
 
 #include "model/assets/assets.hpp"
 #include "model/assets/named_color.hpp"
@@ -361,4 +362,5 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::Image, model::ShapeElement>(shapes);
 
     register_from_meta<model::Repeater, model::Modifier>(shapes);
+    register_from_meta<model::Trim, model::Modifier>(shapes);
 }

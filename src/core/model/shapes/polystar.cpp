@@ -14,7 +14,7 @@ math::bezier::Bezier model::PolyStar::draw(model::PolyStar::StarType type, const
     math::bezier::Bezier bezier;
     bezier.close();
 
-    qreal halfd = - math::pi / p;
+    qreal halfd = math::pi / p;
 
 
     for ( int i = 0; i < p; i++ )
