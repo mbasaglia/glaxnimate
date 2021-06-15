@@ -2,6 +2,7 @@
 
 #include <QComboBox>
 #include <QLabel>
+#include <QScrollBar>
 
 #include "app/settings/keyboard_shortcuts.hpp"
 
@@ -261,7 +262,8 @@ tools::Tool* GlaxnimateWindow::Private::init_tools_ui()
             button->resize(16, 16);
             dock_tools_layout->addWidget(button);
 
-            ui.tool_settings_widget->addWidget(tool.second->get_settings_widget());
+            QWidget* widget = tool.second->get_settings_widget();
+            ui.tool_settings_widget->addWidget(widget);
 
             if ( !to_activate )
             {

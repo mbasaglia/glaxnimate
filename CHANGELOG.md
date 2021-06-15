@@ -5,6 +5,8 @@
     * Trim path modifier
     * Improved shape to path conversion
     * Can convert shapes to path from the context menu
+* UI:
+    * Made the "Tool Options" view more compact
 * Scripting:
     * Python can now convert objects to path
 

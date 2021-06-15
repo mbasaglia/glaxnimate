@@ -41,7 +41,14 @@ public:
         group = new QGroupBox(parent);
         layout->insertWidget(0, group);
         QGridLayout* grid = new QGridLayout();
-        group->setLayout(grid);
+
+        // For some reason doing this makes it smaller than adding the grid directly o_O
+        QVBoxLayout* l = new QVBoxLayout();
+        l->setSpacing(0);
+        l->setMargin(0);
+        group->setLayout(l);
+        l->addLayout(grid);
+
         int row = 0;
 
 
@@ -61,6 +68,7 @@ public:
             update_styles(family);
             parent->on_font_changed();
         });
+        combo_font->setMinimumContentsLength(5);
         grid->addWidget(combo_font, row++, 0, 1, 2);
 
         label_style = new QLabel(parent);
