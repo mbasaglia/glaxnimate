@@ -51,7 +51,7 @@ bool model::PreCompLayer::is_valid_precomp(model::DocumentNode* node) const
     return false;
 }
 
-void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, model::VisualNode::PaintMode mode) const
+void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, model::VisualNode::PaintMode mode, model::Modifier*) const
 {
     if ( composition.get() )
     {

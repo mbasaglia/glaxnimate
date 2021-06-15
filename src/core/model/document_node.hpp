@@ -183,6 +183,8 @@ signals:
 
 };
 
+class Modifier;
+
 /**
  * \brief A document node that has a physical size and shape in the document
  */
@@ -267,7 +269,7 @@ public:
     virtual QTransform local_transform_matrix(FrameTime) const { return QTransform(); }
 
 
-    virtual void paint(QPainter* painter, FrameTime time, PaintMode mode) const;
+    virtual void paint(QPainter* painter, FrameTime time, PaintMode mode, model::Modifier* modifier = nullptr) const;
 
     QIcon instance_icon() const override;
 
@@ -291,7 +293,7 @@ protected:
     void docnode_on_update_group(bool force = false);
     bool docnode_valid_color() const;
     void propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group);
-    virtual void on_paint(QPainter*, FrameTime, PaintMode) const {}
+    virtual void on_paint(QPainter*, FrameTime, PaintMode, model::Modifier*) const {}
 
 private:
     void on_visible_changed(bool visible);

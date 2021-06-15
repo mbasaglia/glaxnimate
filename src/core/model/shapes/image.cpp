@@ -29,7 +29,7 @@ QRectF model::Image::local_bounding_rect(model::FrameTime) const
     return QRectF(0, 0, image->width.get(), image->height.get());
 }
 
-void model::Image::on_paint(QPainter* p, model::FrameTime, model::VisualNode::PaintMode) const
+void model::Image::on_paint(QPainter* p, model::FrameTime, model::VisualNode::PaintMode, model::Modifier*) const
 {
     if ( image.get() )
         image->paint(p);

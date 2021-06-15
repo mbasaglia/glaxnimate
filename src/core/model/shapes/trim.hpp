@@ -20,7 +20,7 @@ public:
 
     Q_ENUM(MultipleShapes)
 
-    GLAXNIMATE_PROPERTY(MultipleShapes, multiple, Simultaneously, {}, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(MultipleShapes, multiple, Individually, {}, {}, PropertyTraits::Visual)
 
 
 public:
@@ -34,6 +34,7 @@ public:
 protected:
     math::bezier::MultiBezier process(FrameTime t, const math::bezier::MultiBezier& mbez) const override;
     bool process_collected() const override;
+    void on_paint(QPainter* painter, FrameTime t, PaintMode mode, model::Modifier* modifier) const override;
 
 };
 

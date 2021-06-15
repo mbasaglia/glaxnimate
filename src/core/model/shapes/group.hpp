@@ -55,7 +55,7 @@ signals:
     void opacity_changed(float op);
 
 protected:
-    void on_paint(QPainter*, FrameTime, PaintMode) const override;
+    void on_paint(QPainter*, FrameTime, PaintMode, model::Modifier*) const override;
 
 private slots:
     void on_transform_matrix_changed();

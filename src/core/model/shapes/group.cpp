@@ -14,7 +14,7 @@ model::Group::Group(Document* document)
             this, &Group::on_transform_matrix_changed);
 }
 
-void model::Group::on_paint(QPainter* painter, model::FrameTime time, model::VisualNode::PaintMode) const
+void model::Group::on_paint(QPainter* painter, model::FrameTime time, model::VisualNode::PaintMode, model::Modifier*) const
 {
     painter->setOpacity(
         painter->opacity() * opacity.get_at(time)

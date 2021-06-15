@@ -134,11 +134,12 @@ public:
     ShapeOperator(model::Document* doc);
 
     math::bezier::MultiBezier collect_shapes(FrameTime t, const QTransform& transform) const;
+    math::bezier::MultiBezier collect_shapes_from(const std::vector<ShapeElement*>& shapes, FrameTime t, const QTransform& transform) const;
 
     const std::vector<ShapeElement*>& affected() const { return affected_elements; }
 
 protected:
-    virtual void do_collect_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const;
+    virtual void do_collect_shapes(const std::vector<ShapeElement*>& shapes, FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const;
 
 private slots:
     void update_affected();
@@ -176,7 +177,7 @@ protected:
      */
     virtual bool process_collected() const = 0;
 
-    void do_collect_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
+    void do_collect_shapes(const std::vector<ShapeElement*>& shapes, FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
 
 };
 

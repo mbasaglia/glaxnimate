@@ -101,7 +101,7 @@ bool model::Layer::is_top_level() const
     return qobject_cast<Composition*>(docnode_parent());
 }
 
-void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) const
+void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode, model::Modifier* modifier) const
 {
     if ( !visible.get() || (mode == Render && !render.get()) )
         return;
@@ -128,7 +128,7 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode) cons
         }
 
 
-        on_paint(painter, time, mode);
+        on_paint(painter, time, mode, modifier);
 
         for ( int i = 1; i < n_shapes; i++ )
             docnode_visual_child(i)->paint(painter, time, mode);

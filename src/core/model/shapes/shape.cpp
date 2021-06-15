@@ -150,20 +150,26 @@ model::ShapeOperator::ShapeOperator(model::Document* doc)
 }
 
 
-void model::ShapeOperator::do_collect_shapes(model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
+void model::ShapeOperator::do_collect_shapes(const std::vector<ShapeElement*>& shapes, model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
-    for ( auto sib : affected_elements )
+    for ( auto sib : shapes )
     {
         if ( sib->visible.get() )
             sib->add_shapes(t, bez, transform);
     }
 }
 
-math::bezier::MultiBezier model::ShapeOperator::collect_shapes(FrameTime t, const QTransform& transform) const
+math::bezier::MultiBezier model::ShapeOperator::collect_shapes_from(const std::vector<ShapeElement *>& shapes, model::FrameTime t, const QTransform& transform) const
 {
     math::bezier::MultiBezier bez;
-    do_collect_shapes(t, bez, transform);
+    do_collect_shapes(shapes, t, bez, transform);
     return bez;
+}
+
+
+math::bezier::MultiBezier model::ShapeOperator::collect_shapes(FrameTime t, const QTransform& transform) const
+{
+    return collect_shapes_from(affected_elements, t, transform);
 }
 
 void model::ShapeOperator::update_affected()
@@ -209,14 +215,14 @@ void model::Modifier::add_shapes(FrameTime t, math::bezier::MultiBezier& bez, co
     bez.append(collect_shapes(t, transform));
 }
 
-void model::Modifier::do_collect_shapes(model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
+void model::Modifier::do_collect_shapes(const std::vector<ShapeElement*>& shapes, model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
     bool post = process_collected();
 
     if ( post )
     {
         math::bezier::MultiBezier temp;
-        for ( auto sib : affected() )
+        for ( auto sib : shapes )
         {
             if ( sib->visible.get() )
                 sib->add_shapes(t, temp, transform);
@@ -226,7 +232,7 @@ void model::Modifier::do_collect_shapes(model::FrameTime t, math::bezier::MultiB
     }
     else
     {
-        for ( auto sib : affected() )
+        for ( auto sib : shapes )
         {
             if ( sib->visible.get() )
             {

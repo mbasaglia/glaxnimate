@@ -252,3 +252,9 @@ std::unique_ptr<model::ShapeElement> model::Trim::to_path() const
     return group;
 
 }
+
+void model::Trim::on_paint(QPainter* painter, model::FrameTime t, model::VisualNode::PaintMode mode, model::Modifier*) const
+{
+    for ( auto sib : affected() )
+        sib->paint(painter, t, mode, const_cast<model::Trim*>(this));
+}

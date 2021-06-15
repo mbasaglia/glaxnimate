@@ -27,7 +27,7 @@ public:
     QTransform local_transform_matrix(model::FrameTime t) const override;
 
 protected:
-    void on_paint(QPainter* p, FrameTime t, PaintMode) const override;
+    void on_paint(QPainter* p, FrameTime t, PaintMode, model::Modifier*) const override;
 
 private slots:
     void on_transform_matrix_changed();

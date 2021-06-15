@@ -37,7 +37,7 @@ bool model::Repeater::process_collected() const
     return true;
 }
 
-void model::Repeater::on_paint(QPainter* painter, model::FrameTime t, model::VisualNode::PaintMode mode) const
+void model::Repeater::on_paint(QPainter* painter, model::FrameTime t, model::VisualNode::PaintMode mode, model::Modifier*) const
 {
     QTransform matrix = transform->transform_matrix(t);
     auto alpha_s = start_opacity.get_at(t);

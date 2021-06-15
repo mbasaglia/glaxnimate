@@ -2,7 +2,7 @@
 
 GLAXNIMATE_OBJECT_IMPL(model::Stroke)
 
-void model::Stroke::on_paint(QPainter* p, model::FrameTime t, model::VisualNode::PaintMode) const
+void model::Stroke::on_paint(QPainter* p, model::FrameTime t, model::VisualNode::PaintMode, model::Modifier* modifier) const
 {
     QPen pen(brush(t), width.get_at(t));
     pen.setCapStyle(Qt::PenCapStyle(cap.get()));
@@ -11,7 +11,14 @@ void model::Stroke::on_paint(QPainter* p, model::FrameTime t, model::VisualNode:
     p->setBrush(Qt::NoBrush);
     p->setPen(pen);
     p->setOpacity(p->opacity() * opacity.get_at(t));
-    p->drawPath(collect_shapes(t, {}).painter_path());
+
+    math::bezier::MultiBezier bez;
+    if ( modifier )
+        bez = modifier->collect_shapes_from(affected(), t, {});
+    else
+        bez = collect_shapes(t, {});
+
+    p->drawPath(bez.painter_path());
 }
 
 void model::Stroke::set_pen_style ( const QPen& pen_style )

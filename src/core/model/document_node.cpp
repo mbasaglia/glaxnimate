@@ -4,6 +4,8 @@
 #include <QPainter>
 #include <QGraphicsItem>
 
+#include "model/shapes/shape.hpp"
+
 
 model::DocumentNode::DocumentNode(model::Document* document)
     : Object ( document )
@@ -129,7 +131,7 @@ bool model::VisualNode::docnode_locked_recursive() const
     return false;
 }
 
-void model::VisualNode::paint(QPainter* painter, FrameTime time, PaintMode mode) const
+void model::VisualNode::paint(QPainter* painter, FrameTime time, PaintMode mode, model::Modifier* modifier) const
 {
     if ( !visible.get() )
         return;
@@ -137,9 +139,13 @@ void model::VisualNode::paint(QPainter* painter, FrameTime time, PaintMode mode)
     painter->save();
     painter->setTransform(group_transform_matrix(time), true);
 
-    on_paint(painter, time, mode);
+    on_paint(painter, time, mode, modifier);
     for ( auto c : docnode_visual_children() )
-        c->paint(painter, time, mode);
+    {
+        c->paint(painter, time, mode, modifier);
+        if ( c->is_instance<model::Modifier>() )
+            break;
+    }
     painter->restore();
 }
 

@@ -67,7 +67,7 @@ public:
     QPainterPath to_painter_path(FrameTime t) const override;
 
 protected:
-    void on_paint(QPainter* p, FrameTime t, PaintMode) const override;
+    void on_paint(QPainter* p, FrameTime t, PaintMode, model::Modifier* modifier) const override;
 };
 
 } // namespace model

@@ -88,7 +88,7 @@ public:
 
     bool is_top_level() const;
 
-    void paint(QPainter*, FrameTime, PaintMode) const override;
+    void paint(QPainter*, FrameTime, PaintMode, model::Modifier* modifier) const override;
 
     QPainterPath to_clip(model::FrameTime t) const override;
     QPainterPath to_painter_path(model::FrameTime t) const override;
