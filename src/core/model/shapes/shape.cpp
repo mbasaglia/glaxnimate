@@ -179,9 +179,10 @@ void model::ShapeOperator::update_affected()
 
     std::vector<ShapeElement*> curr_siblings;
     curr_siblings.reserve(owner()->size() - position());
+    bool skip = skip_stylers();
     for ( auto it = owner()->begin() + position() + 1; it < owner()->end(); ++it )
     {
-        if ( qobject_cast<Styler*>(it->get()) )
+        if ( skip && qobject_cast<Styler*>(it->get()) )
             continue;
 
         curr_siblings.push_back(it->get());

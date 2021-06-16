@@ -67,7 +67,7 @@ Build with `cmake`, specifying the Qt installation path:
 
     mkdir build
     cd build
-    cmake .. -DQt5_DIR="$(brew --prefix qt)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt)/lib/cmake/Qt5Designer"
+    cmake .. -DQt5_DIR="$(brew --prefix qt@5)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt)/lib/cmake/Qt5Designer"
     make
 
 

@@ -140,6 +140,7 @@ public:
 
 protected:
     virtual void do_collect_shapes(const std::vector<ShapeElement*>& shapes, FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const;
+    virtual bool skip_stylers() const { return true; }
 
 private slots:
     void update_affected();
@@ -178,6 +179,8 @@ protected:
     virtual bool process_collected() const = 0;
 
     void do_collect_shapes(const std::vector<ShapeElement*>& shapes, FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
+
+    virtual bool skip_stylers() const { return false; }
 
 };
 
