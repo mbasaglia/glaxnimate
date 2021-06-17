@@ -22,36 +22,37 @@ bool model::Trim::process_collected() const
     return multiple.get() == Simultaneously;
 }
 
-static void chunk_start(const math::bezier::Bezier& in, math::bezier::Bezier& out, std::pair<int, qreal> split, int max = -1)
+static void chunk_start(const math::bezier::Bezier& in, math::bezier::Bezier& out, const math::bezier::LengthData::SplitInfo& split, int max = -1)
 {
     if ( max == -1 )
         max = in.closed_size();
-    out.push_back(in.split_segment_point(split.first, split.second));
 
-    for ( int i = split.first + 1; i < max; i++ )
+    out.push_back(in.split_segment_point(split.index, split.ratio));
+
+    for ( int i = split.index + 1; i < max; i++ )
         out.push_back(in[i]);
-
 }
 
-static void chunk_end(const math::bezier::Bezier& in, math::bezier::Bezier& out, std::pair<int, qreal> split, int min = 0)
+static void chunk_end(const math::bezier::Bezier& in, math::bezier::Bezier& out, const math::bezier::LengthData::SplitInfo& split, int min = 0)
 {
-    for ( int i = min; i < split.first; i++ )
+    for ( int i = min; i < split.index; i++ )
         out.push_back(in[i]);
-    out.push_back(in[split.first]);
-    out.push_back(in.split_segment_point(split.first, split.second));
+    if ( min <= split.index )
+        out.push_back(in[split.index]);
+    out.push_back(in.split_segment_point(split.index, split.ratio));
 
 }
 
 math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::bezier::MultiBezier& mbez) const
 {
+    if ( mbez.empty() )
+        return {};
+
     auto offset = this->offset.get_at(t);
     auto start = math::fmod(this->start.get_at(t) + offset, 1.f);
     auto end = math::fmod(this->end.get_at(t) + offset, 1.f);
     if ( end == 0 )
         end = 1;
-
-    if ( mbez.empty() )
-        return {};
 
     if ( start == 0 && end == 1 )
         return mbez;
@@ -73,13 +74,13 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
          * [ seg[0] ... seg[single_start] ... seg[single_end]  ... seg[m] ]
          *              aaaaa|BBBBBBBBBBB|CCC|DDDDDDDD|eeeeee
          */
-        if ( start_data.first == end_data.first )
+        if ( start_data.index == end_data.index )
         {
-            auto single_start_data = length_data.child_split(start_data);
-            auto single_end_data = length_data.child_split(end_data);
+            auto single_start_data = start_data.child_split();
+            auto single_end_data = end_data.child_split();
             math::bezier::Bezier b;
-            chunk_start(mbez.beziers()[start_data.first], b, single_start_data, single_end_data.first);
-            chunk_end(mbez.beziers()[start_data.first], b, single_end_data, single_end_data.first + 1);
+            chunk_start(mbez.beziers()[start_data.index], b, single_start_data, single_end_data.index);
+            chunk_end(mbez.beziers()[start_data.index], b, single_end_data, single_end_data.index + 1);
             out.beziers().push_back(b);
             return out;
         }
@@ -89,7 +90,7 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
          * [ bez[0] ... bez[start] ... bez[end] ... bez[n] ]
          *              aa|BBBBBBB|CCC|DDDDD|ee
          */
-        out.beziers().reserve(end_data.first - start_data.first);
+        out.beziers().reserve(end_data.index - start_data.index);
 
 
         /* we skip the "a" part and get the "B" part
@@ -98,13 +99,13 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
          */
         {
             math::bezier::Bezier b;
-            auto single_start_data = length_data.child_split(start_data);
-            chunk_start(mbez.beziers()[start_data.first], b, single_start_data);
+            auto single_start_data = start_data.child_split();
+            chunk_start(mbez.beziers()[start_data.index], b, single_start_data);
             out.beziers().push_back(b);
         }
 
         // We get the segment between start and end ("C" part)
-        for ( int i = start_data.first + 1; i < end_data.first - 1; i++ )
+        for ( int i = start_data.index + 1; i < end_data.index - 1; i++ )
         {
             out.beziers().push_back(mbez.beziers()[i]);
         }
@@ -115,8 +116,8 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
          */
         {
             math::bezier::Bezier b;
-            auto single_end_data = length_data.child_split(end_data);
-            chunk_end(mbez.beziers()[end_data.first], b, single_end_data);
+            auto single_end_data = end_data.child_split();
+            chunk_end(mbez.beziers()[end_data.index], b, single_end_data);
             out.beziers().push_back(b);
         }
     }
@@ -135,17 +136,17 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
          */
         {
             math::bezier::Bezier b;
-            auto single_start_data = length_data.child_split(start_data);
-            chunk_start(mbez.beziers()[start_data.first], b, single_start_data);
+            auto single_start_data = start_data.child_split();
+            chunk_start(mbez.beziers()[start_data.index], b, single_start_data);
             out.beziers().push_back(b);
         }
 
         // Get everything until the end ("G" part)
-        for ( int i = start_data.first + 1; i < mbez.size(); i++ )
+        for ( int i = start_data.index + 1; i < mbez.size(); i++ )
             out.beziers().push_back(mbez.beziers()[i]);
 
         // Get everything until end_data ("A" part)
-        for ( int i = 0; i < end_data.first; i++ )
+        for ( int i = 0; i < end_data.index; i++ )
             out.beziers().push_back(mbez.beziers()[i]);
 
         /* we get the "B" part and skip the "c" part
@@ -154,8 +155,8 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
          */
         {
             math::bezier::Bezier b;
-            auto single_end_data = length_data.child_split(end_data);
-            chunk_end(mbez.beziers()[end_data.first], b, single_end_data);
+            auto single_end_data = end_data.child_split();
+            chunk_end(mbez.beziers()[end_data.index], b, single_end_data);
             out.beziers().push_back(b);
         }
     }

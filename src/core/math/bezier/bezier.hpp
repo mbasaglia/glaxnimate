@@ -11,7 +11,14 @@ namespace math::bezier {
 class LengthData
 {
 public:
-    using SplitInfo = std::pair<int, qreal>;
+    struct SplitInfo
+    {
+        int index = 0;
+        qreal ratio = 0;
+        const LengthData* child = nullptr;
+
+        SplitInfo child_split() const;
+    };
 
     LengthData() = default;
     explicit LengthData(qreal length) : length_(length) {}
@@ -41,7 +48,6 @@ public:
 
     SplitInfo at_ratio(qreal ratio) const;
     SplitInfo at_length(qreal length) const;
-    SplitInfo child_split(const SplitInfo& info) const;
 
 private:
     qreal length_ = 0;

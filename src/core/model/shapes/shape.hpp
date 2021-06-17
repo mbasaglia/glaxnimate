@@ -170,9 +170,9 @@ public:
 
     QRectF local_bounding_rect(FrameTime t) const override;
 
-protected:
     virtual math::bezier::MultiBezier process(FrameTime t, const math::bezier::MultiBezier& mbez) const = 0;
 
+protected:
     /**
      * \brief Wether to process on the whole thing (or individual objects)
      */
@@ -180,7 +180,7 @@ protected:
 
     void do_collect_shapes(const std::vector<ShapeElement*>& shapes, FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
 
-    virtual bool skip_stylers() const { return false; }
+    virtual bool skip_stylers() const override { return false; }
 
 };
 

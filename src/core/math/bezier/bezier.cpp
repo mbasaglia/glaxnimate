@@ -172,34 +172,34 @@ math::bezier::LengthData::LengthData(const math::bezier::CubicBezierSolver<QPoin
     }
 }
 
-math::bezier::LengthData::SplitInfo math::bezier::LengthData::child_split(const math::bezier::LengthData::SplitInfo& info) const
+math::bezier::LengthData::SplitInfo math::bezier::LengthData::SplitInfo::child_split() const
 {
-    return children_[info.first].at_ratio(info.second);
+    return child->at_ratio(ratio);
 }
 
 
-std::pair<int, qreal> math::bezier::LengthData::at_ratio(qreal ratio) const
+math::bezier::LengthData::SplitInfo math::bezier::LengthData::at_ratio(qreal ratio) const
 {
     return at_length(ratio * length_);
 }
 
-std::pair<int, qreal> math::bezier::LengthData::at_length(qreal length) const
+math::bezier::LengthData::SplitInfo math::bezier::LengthData::at_length(qreal length) const
 {
     if ( length <= 0 )
-        return {0, 0.};
+        return {0, 0., &children_.front()};
 
     if ( length >= length_ )
-        return {children_.size() - 1, 1.};
+        return {int(children_.size() - 1), 1., &children_.back()};
 
     for ( int i = 0; i < int(children_.size()); i++ )
     {
         if ( children_[i].length_ > length )
-            return {i, length / children_[i].length_};
+            return {i, length / children_[i].length_, &children_[i]};
 
         length -= children_[i].length_;
     }
 
-    return {children_.size() - 1, 1.};
+    return {int(children_.size() - 1), 1., &children_.back()};
 }
 
 math::bezier::LengthData math::bezier::Bezier::length_data(int steps) const

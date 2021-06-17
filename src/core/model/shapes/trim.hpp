@@ -31,8 +31,9 @@ public:
 
     std::unique_ptr<ShapeElement> to_path() const override;
 
-protected:
     math::bezier::MultiBezier process(FrameTime t, const math::bezier::MultiBezier& mbez) const override;
+
+protected:
     bool process_collected() const override;
     void on_paint(QPainter* painter, FrameTime t, PaintMode mode, model::Modifier* modifier) const override;
 
