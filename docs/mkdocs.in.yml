@@ -14,7 +14,7 @@ markdown_extensions:
     - fontawesome_markdown
     - md_extensions
 extra_css:
-    - style/style.css
+    - /style/style.css
 nav:
     - index.md
     - "Download": download.md
