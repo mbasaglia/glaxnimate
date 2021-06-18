@@ -77,6 +77,16 @@ public:
      */
     std::pair<std::array<Vec, 4>, std::array<Vec, 4>> split(scalar factor) const
     {
+        // linear
+        if ( points_[0] == points_[1] && points_[2] == points_[3] )
+        {
+            Vec mid = lerp(points_[0], points_[3], factor);
+            return {
+                {points_[0], points_[0], mid, mid},
+                {mid, mid, points_[3], points_[3]},
+            };
+        }
+
         Vec p01 = lerp(points_[0], points_[1], factor);
         Vec p12 = lerp(points_[1], points_[2], factor);
         Vec p23 = lerp(points_[2], points_[3], factor);

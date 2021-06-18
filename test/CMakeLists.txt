@@ -28,3 +28,6 @@ test_case(test_bezier_solver)
 test_case(test_keyframe_transition
 ../src/core/model/animation/keyframe_transition.cpp
 )
+
+test_case(test_trim_path)
+target_link_libraries(test_trim_path PRIVATE ${LIB_NAME_CORE})

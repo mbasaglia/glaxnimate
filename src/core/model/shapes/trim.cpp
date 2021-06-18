@@ -27,7 +27,8 @@ static void chunk_start(const math::bezier::Bezier& in, math::bezier::Bezier& ou
     if ( max == -1 )
         max = in.closed_size();
 
-    out.push_back(in.split_segment_point(split.index, split.ratio));
+    if ( split.ratio < 1 )
+        out.push_back(in.split_segment_point(split.index, split.ratio));
 
     for ( int i = split.index + 1; i < max; i++ )
         out.push_back(in[i]);
@@ -35,12 +36,11 @@ static void chunk_start(const math::bezier::Bezier& in, math::bezier::Bezier& ou
 
 static void chunk_end(const math::bezier::Bezier& in, math::bezier::Bezier& out, const math::bezier::LengthData::SplitInfo& split, int min = 0)
 {
-    for ( int i = min; i < split.index; i++ )
+    for ( int i = min; i <= split.index; i++ )
         out.push_back(in[i]);
-    if ( min <= split.index )
-        out.push_back(in[split.index]);
-    out.push_back(in.split_segment_point(split.index, split.ratio));
 
+    if ( split.ratio > 0 )
+        out.push_back(in.split_segment_point(split.index, split.ratio));
 }
 
 math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::bezier::MultiBezier& mbez) const
@@ -80,7 +80,8 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
             auto single_end_data = end_data.child_split();
             math::bezier::Bezier b;
             chunk_start(mbez.beziers()[start_data.index], b, single_start_data, single_end_data.index);
-            chunk_end(mbez.beziers()[start_data.index], b, single_end_data, single_end_data.index + 1);
+            int end_min = qMax(single_end_data.index, single_start_data.index + 1);
+            chunk_end(mbez.beziers()[start_data.index], b, single_end_data, end_min);
             out.beziers().push_back(b);
             return out;
         }
@@ -129,6 +130,20 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
          *
          * Nothe that in this case even if start == end, we don't need to do anything special
          */
+
+        /* Special case to keep just 1 bezier for closed paths
+         * It simply combines the start/end chunks
+         */
+        if ( mbez.size() == 1 && mbez.beziers()[0].closed() )
+        {
+            math::bezier::Bezier b;
+            auto single_start_data = start_data.child_split();
+            auto single_end_data = end_data.child_split();
+            chunk_start(mbez.beziers()[start_data.index], b, single_start_data);
+            chunk_end(mbez.beziers()[end_data.index], b, single_end_data, 1);
+            out.beziers().push_back(b);
+            return out;
+        }
 
         /* we skip the "e" part and get the "F" part
          * [ seg[0] ... seg[single_start] ... seg[m] ]
