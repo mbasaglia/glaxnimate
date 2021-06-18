@@ -14,6 +14,11 @@ set(URL_DOCS "https://glaxnimate.mattbas.org/")
 set(URL_ISSUES "https://gitlab.com/mattbas/glaxnimate/-/issues")
 set(URL_DONATE "https://glaxnimate.mattbas.org/donate/")
 
+# You can use it to change the url used by `make docs`
+set(DOCS_SITE_URL ${URL_DOCS} CACHE STRING "")
+set(DOCS_REPO_URL "https://gitlab.com/mattbas/glaxnimate")
+set(DOCS_CHAT_URL "https://t.me/Glaxnimate")
+
 set(PROJECT_DESCRIPTION "Simple vector animation program")
 set(PROJECT_MANINTAINER_NAME "Mattia Basaglia")
 set(PROJECT_MANINTAINER_EMAIL "glanimate@mattbas.org")
