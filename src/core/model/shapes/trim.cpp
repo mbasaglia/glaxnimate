@@ -27,6 +27,12 @@ static void chunk_start(const math::bezier::Bezier& in, math::bezier::Bezier& ou
     if ( max == -1 )
         max = in.closed_size();
 
+    if ( split.ratio == 0 && split.index == 0 && max == in.closed_size() )
+    {
+        out = in;
+        return;
+    }
+
     if ( split.ratio < 1 )
         out.push_back(in.split_segment_point(split.index, split.ratio));
 
@@ -36,6 +42,13 @@ static void chunk_start(const math::bezier::Bezier& in, math::bezier::Bezier& ou
 
 static void chunk_end(const math::bezier::Bezier& in, math::bezier::Bezier& out, const math::bezier::LengthData::SplitInfo& split, int min = 0)
 {
+
+    if ( split.ratio == 1 && min == 0 )
+    {
+        out = in;
+        return;
+    }
+
     for ( int i = min; i <= split.index; i++ )
         out.push_back(in[i]);
 
@@ -106,7 +119,7 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
         }
 
         // We get the segment between start and end ("C" part)
-        for ( int i = start_data.index + 1; i < end_data.index - 1; i++ )
+        for ( int i = start_data.index + 1; i < end_data.index; i++ )
         {
             out.beziers().push_back(mbez.beziers()[i]);
         }
@@ -115,6 +128,7 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
          * [ seg[0] ... seg[single_start] ... seg[m] ]
          *   DDDDDDDDDDDDDDDDDDDDDDD|eeeeeeeeeeeeeee
          */
+        if ( end_data.ratio > 0 )
         {
             math::bezier::Bezier b;
             auto single_end_data = end_data.child_split();
@@ -168,6 +182,7 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
          * [ seg[0] ... seg[single_start] ... seg[m] ]
          *   BBBBBBBBBBBBBBBBBBBBBBB|ccccccccccccccc
          */
+        if ( end_data.ratio > 0 )
         {
             math::bezier::Bezier b;
             auto single_end_data = end_data.child_split();

@@ -46,7 +46,7 @@ linux:test:
         - pip3 install gcovr
         - mkdir build
         - cd build
-        - cmake ..
+        - cmake .. -DCMAKE_CXX_FLAGS=--coverage
         - make tests_coverage
     artifacts:
         paths:
