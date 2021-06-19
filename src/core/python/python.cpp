@@ -38,6 +38,8 @@
 
 using namespace app::scripting::python;
 
+namespace {
+
 template<class T, class Base=model::AnimatableBase>
 void register_animatable(py::module& m)
 {
@@ -197,20 +199,14 @@ public:
 };
 
 template<class Owner, class PropT, class ItemT = typename PropT::value_type>
-class CreateObject
+class AddShapeBase
 {
 public:
     using PtrMem = PropT Owner::*;
 
-    CreateObject(PtrMem p) noexcept : ptr(p) {}
+    AddShapeBase(PtrMem p) noexcept : ptr(p) {}
 
-    ItemT* operator() (Owner* owner, const QString& clsname, int index = -1) const
-    {
-        return create(owner->document(), owner->*ptr, clsname, index);
-    }
-
-
-private:
+protected:
     ItemT* create(model::Document* doc, PropT& prop, const QString& clsname, int index) const
     {
         auto obj = model::Factory::static_build(clsname, doc);
@@ -237,6 +233,109 @@ private:
 
     PtrMem ptr;
 };
+
+template<class Owner, class PropT, class ItemT = typename PropT::value_type>
+class AddShapeName : public AddShapeBase<Owner, PropT, ItemT>
+{
+public:
+    using AddShapeBase<Owner, PropT, ItemT>::AddShapeBase;
+
+    ItemT* operator() (Owner* owner, const QString& clsname, int index = -1) const
+    {
+        return this->create(owner->document(), owner->*(this->ptr), clsname, index);
+    }
+};
+
+template<class Owner, class PropT, class ItemT = typename PropT::value_type>
+class AddShapeClass : public AddShapeBase<Owner, PropT, ItemT>
+{
+public:
+    using AddShapeBase<Owner, PropT, ItemT>::AddShapeBase;
+
+    ItemT* operator() (Owner* owner, const py::object& cls, int index = -1) const
+    {
+        pybind11::detail::type_caster<QString> cast;
+        cast.load(cls.attr("__name__"), true);
+        return this->create(owner->document(), owner->*(this->ptr), cast, index);
+    }
+};
+
+template<class Owner, class PropT, class ItemT = typename PropT::value_type>
+class AddShapeClone
+{
+public:
+    using PtrMem = PropT Owner::*;
+
+    AddShapeClone(PtrMem p) noexcept : ptr(p) {}
+
+    ItemT* operator() (Owner* owner, ItemT* object, int index = -1) const
+    {
+        if ( !object )
+            return nullptr;
+
+        std::unique_ptr<ItemT> clone(static_cast<ItemT*>(object->clone().release()));
+        if ( clone->document() != owner->document() )
+            clone->transfer(owner->document());
+
+        auto ptr = clone.get();
+
+        owner->push_command(new command::AddObject<ItemT, PropT>(&(owner->*(this->ptr)), std::move(clone), index));
+
+        return ptr;
+    }
+
+private:
+
+    PtrMem ptr;
+};
+
+template<
+    class PyClass,
+    class PropT = model::ObjectListProperty<model::ShapeElement>,
+    class Owner = typename PyClass::type,
+    class ItemT = typename PropT::value_type
+>
+void define_add_shape(PyClass& cls, PropT Owner::* prop = &Owner::shapes, const std::string& name = "add_shape")
+{
+    cls.def(
+            name.c_str(),
+            AddShapeName<Owner, PropT, ItemT>(prop),
+            no_own,
+            "Adds a shape from its class name",
+            py::arg("type_name"),
+            py::arg("index") = -1
+        )
+        .def(
+            name.c_str(),
+            AddShapeClone<Owner, PropT, ItemT>(prop),
+            no_own,
+            "Adds a shape, note that the input object is cloned, and the clone is returned. The document will have ownership over the clone.",
+            py::arg("object"),
+            py::arg("index") = -1
+        )
+        .def(
+            name.c_str(),
+            AddShapeClass<Owner, PropT, ItemT>(prop),
+            no_own,
+            "Adds a shape from its class",
+            py::arg("cls"),
+            py::arg("index") = -1
+        )
+    ;
+}
+
+template<class Cls, class... Args, class... FwArgs>
+auto register_constructible(py::module& module, FwArgs&&... args)
+{
+    return register_from_meta<Cls, Args...>(module, std::forward<FwArgs>(args)...)
+        .def(py::init([](model::Document* doc) -> std::unique_ptr<Cls> {
+            if ( !doc )
+                return {};
+            return std::make_unique<Cls>(doc);
+        }));
+}
+
+} // namespace
 
 
 void register_py_module(py::module& glaxnimate_module)
@@ -288,14 +387,15 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::StretchableTime, model::Object>(model);
     register_from_meta<model::Transform, model::Object>(model);
     register_from_meta<model::MaskSettings, model::Object>(model);
-    register_from_meta<model::Composition, model::VisualNode>(model)
-        .def("add_shape", CreateObject(&model::Composition::shapes), no_own,
-            "Adds a shape from its class name",
-             py::arg("type_name"),
-             py::arg("index") = -1
-        )
+
+    py::module shapes = model.def_submodule("shapes", "");
+    register_from_meta<model::ShapeElement, model::VisualNode>(shapes)
+        .def("to_path", &model::ShapeElement::to_path)
     ;
-    register_from_meta<model::MainComposition, model::Composition>(model);
+
+    auto cls_comp = register_from_meta<model::Composition, model::VisualNode>(model);
+    define_add_shape(cls_comp);
+    register_constructible<model::MainComposition, model::Composition>(model);
 
     define_animatable(model);
     register_animatable<QPointF>(detail);
@@ -321,11 +421,11 @@ void register_py_module(py::module& glaxnimate_module)
     ;
     register_from_meta<model::Asset, model::DocumentNode, model::AssetBase>(defs);
     register_from_meta<model::BrushStyle, model::Asset>(defs);
-    register_from_meta<model::NamedColor, model::BrushStyle>(defs);
-    register_from_meta<model::GradientColors, model::Asset>(defs);
-    register_from_meta<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::GradientType>{});
-    register_from_meta<model::Bitmap, model::Asset>(defs);
-    register_from_meta<model::Precomposition, model::Composition, model::AssetBase>(defs);
+    register_constructible<model::NamedColor, model::BrushStyle>(defs);
+    register_constructible<model::GradientColors, model::Asset>(defs);
+    register_constructible<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::GradientType>{});
+    register_constructible<model::Bitmap, model::Asset>(defs);
+    register_constructible<model::Precomposition, model::Composition, model::AssetBase>(defs);
     register_from_meta<model::BitmapList, model::DocumentNode>(defs);
     register_from_meta<model::NamedColorList, model::DocumentNode>(defs);
     register_from_meta<model::GradientList, model::DocumentNode>(defs);
@@ -333,34 +433,24 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::PrecompositionList, model::DocumentNode>(defs);
     register_from_meta<model::Assets, model::DocumentNode>(defs);
 
-    py::module shapes = model.def_submodule("shapes", "");
-    register_from_meta<model::ShapeElement, model::VisualNode>(shapes)
-        .def("to_path", &model::ShapeElement::to_path)
-    ;
     register_from_meta<model::Shape, model::ShapeElement>(shapes);
     register_from_meta<model::Modifier, model::ShapeElement>(shapes);
     register_from_meta<model::Styler, model::ShapeElement>(shapes);
 
-    register_from_meta<model::Rect, model::Shape>(shapes);
-    register_from_meta<model::Ellipse, model::Shape>(shapes);
-    register_from_meta<model::PolyStar, model::Shape>(shapes, enums<model::PolyStar::StarType>{});
-    register_from_meta<model::Path, model::Shape>(shapes);
+    register_constructible<model::Rect, model::Shape>(shapes);
+    register_constructible<model::Ellipse, model::Shape>(shapes);
+    register_constructible<model::PolyStar, model::Shape>(shapes, enums<model::PolyStar::StarType>{});
+    register_constructible<model::Path, model::Shape>(shapes);
 
-    register_from_meta<model::Group, model::ShapeElement>(shapes)
-        .def("add_shape", CreateObject(&model::Group::shapes), no_own,
-            "Adds a shape from its class name",
-             py::arg("type_name"),
-             py::arg("index") = -1
-        )
-    ;
-    register_from_meta<model::Layer, model::Group>(shapes);
-    register_from_meta<model::PreCompLayer, model::ShapeElement>(shapes);
+    auto cls_group = register_constructible<model::Group, model::ShapeElement>(shapes);
+    define_add_shape(cls_group);
 
-    register_from_meta<model::Fill, model::Styler>(shapes, enums<model::Fill::Rule>{});
-    register_from_meta<model::Stroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});
+    register_constructible<model::Layer, model::Group>(shapes);
+    register_constructible<model::PreCompLayer, model::ShapeElement>(shapes);
+    register_constructible<model::Image, model::ShapeElement>(shapes);
 
-    register_from_meta<model::Image, model::ShapeElement>(shapes);
-
-    register_from_meta<model::Repeater, model::Modifier>(shapes);
-    register_from_meta<model::Trim, model::Modifier>(shapes);
+    register_constructible<model::Fill, model::Styler>(shapes, enums<model::Fill::Rule>{});
+    register_constructible<model::Stroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});
+    register_constructible<model::Repeater, model::Modifier>(shapes);
+    register_constructible<model::Trim, model::Modifier>(shapes);
 }

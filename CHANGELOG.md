@@ -9,6 +9,7 @@
     * Made the "Tool Options" view more compact
 * Scripting:
     * Python can now convert objects to path
+    * More intuitive construction of C++ classes from python
 
 ## 0.4.3
 
