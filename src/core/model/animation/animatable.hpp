@@ -621,13 +621,24 @@ public:
                 break;
         }
 
-        keyframes_[keyframe_index]->set_time(time);
-
         if ( new_index > keyframe_index )
             new_index--;
 
+        keyframes_[keyframe_index]->set_time(time);
+
         if ( keyframe_index != new_index )
         {
+
+            QPointF incoming(-1, -1);
+            if ( keyframe_index > 0 )
+            {
+                auto trans_before_src = keyframes_[keyframe_index - 1]->transition();
+                incoming = trans_before_src.after();
+                trans_before_src.set_after(keyframes_[keyframe_index]->transition().after());
+                keyframes_[keyframe_index - 1]->set_transition(trans_before_src);
+            }
+
+
             auto move = std::move(keyframes_[keyframe_index]);
             keyframes_.erase(keyframes_.begin() + keyframe_index);
             keyframes_.insert(keyframes_.begin() + new_index, std::move(move));
@@ -636,6 +647,23 @@ public:
             int ib = new_index;
             if ( ia > ib )
                 std::swap(ia, ib);
+
+            if ( new_index > 0 )
+            {
+                auto trans_before_dst = keyframes_[new_index - 1]->transition();
+                QPointF outgoing = trans_before_dst.after();
+
+                if ( incoming.x() != -1 )
+                {
+                    trans_before_dst.set_after(incoming);
+                    keyframes_[new_index - 1]->set_transition(trans_before_dst);
+                }
+
+                auto trans_moved = keyframes_[new_index]->transition();
+                trans_moved.set_after(outgoing);
+                keyframes_[new_index]->set_transition(trans_moved);
+            }
+
             for ( ; ia <= ib; ia++ )
                 emit this->keyframe_updated(ia, keyframes_[ia].get());
         }
