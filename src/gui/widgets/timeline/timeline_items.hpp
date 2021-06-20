@@ -18,89 +18,6 @@ namespace timeline {
 
 extern bool enable_debug;
 
-class KeyframeSplitItem : public QGraphicsObject
-{
-    Q_OBJECT
-
-public:
-    static constexpr const int icon_size = 16;
-    static constexpr const int pen = 2;
-    static constexpr const QSize half_icon_size{icon_size/2, icon_size};
-
-    KeyframeSplitItem(QGraphicsItem* parent, model::Object* node);
-
-    QRectF boundingRect() const override
-    {
-        return QRectF(-icon_size/2-pen, -icon_size/2-pen, icon_size+2*pen, icon_size+2*pen);
-    }
-
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget * widget) override;
-
-
-    void set_enter(model::KeyframeTransition::Descriptive enter);
-
-    void set_exit(model::KeyframeTransition::Descriptive exit);
-
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent * event) override;
-
-    void mouseMoveEvent(QGraphicsSceneMouseEvent * event) override;
-
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
-
-signals:
-    void dragged(model::FrameTime t);
-
-private:
-    QIcon icon_from_kdf(model::KeyframeTransition::Descriptive desc, const char* ba)
-    {
-        QString icon_name = QString("images/keyframe/%1/%2.svg");
-        QString which;
-        switch ( desc )
-        {
-            case model::KeyframeTransition::Hold: which = "hold"; break;
-            case model::KeyframeTransition::Linear: which = "linear"; break;
-            case model::KeyframeTransition::Ease: which = "ease"; break;
-            case model::KeyframeTransition::Custom: which = "custom"; break;
-        }
-        return QIcon(app::Application::instance()->data_file(icon_name.arg(ba).arg(which)));
-    }
-
-    bool drag_allowed() const
-    {
-        /// \todo Handle for stuff like transform attributes :/
-        return !visual_node || !visual_node->docnode_locked_recursive();
-    }
-
-    void drag_init()
-    {
-        drag_start = x();
-        dragging = drag_allowed();
-    }
-
-    void drag_move(qreal delta)
-    {
-        if ( dragging )
-            setX(drag_start+delta);
-    }
-
-    void drag_end()
-    {
-        if ( drag_allowed() )
-            emit dragged(x());
-        dragging = false;
-    }
-
-    QPixmap pix_enter;
-    QPixmap pix_exit;
-    QIcon icon_enter;
-    QIcon icon_exit;
-    model::FrameTime drag_start;
-    bool dragging = false;
-    model::Object* object;
-    model::VisualNode* visual_node = nullptr;
-};
-
 enum class ItemTypes
 {
     LineItem = QGraphicsItem::UserType + 1,
@@ -213,10 +130,100 @@ public:
     }
 };
 
+class AnimatableItem;
+
+class KeyframeSplitItem : public QGraphicsObject
+{
+    Q_OBJECT
+
+public:
+    static constexpr const int icon_size = 16;
+    static constexpr const int pen = 2;
+    static constexpr const QSize half_icon_size{icon_size/2, icon_size};
+
+    KeyframeSplitItem(AnimatableItem* parent);
+
+    QRectF boundingRect() const override
+    {
+        return QRectF(-icon_size/2-pen, -icon_size/2-pen, icon_size+2*pen, icon_size+2*pen);
+    }
+
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem *, QWidget * widget) override;
+
+
+    void set_enter(model::KeyframeTransition::Descriptive enter);
+
+    void set_exit(model::KeyframeTransition::Descriptive exit);
+
+    model::FrameTime time() const { return x(); }
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent * event) override;
+
+    void mouseMoveEvent(QGraphicsSceneMouseEvent * event) override;
+
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
+
+private:
+    QIcon icon_from_kdf(model::KeyframeTransition::Descriptive desc, const char* ba)
+    {
+        QString icon_name = QString("images/keyframe/%1/%2.svg");
+        QString which;
+        switch ( desc )
+        {
+            case model::KeyframeTransition::Hold: which = "hold"; break;
+            case model::KeyframeTransition::Linear: which = "linear"; break;
+            case model::KeyframeTransition::Ease: which = "ease"; break;
+            case model::KeyframeTransition::Custom: which = "custom"; break;
+        }
+        return QIcon(app::Application::instance()->data_file(icon_name.arg(ba).arg(which)));
+    }
+
+    bool drag_allowed() const
+    {
+        /// \todo Handle for stuff like transform attributes :/
+        return !visual_node || !visual_node->docnode_locked_recursive();
+    }
+
+    void drag_init()
+    {
+        drag_start = x();
+        dragging = drag_allowed();
+    }
+
+    void drag_move(qreal delta)
+    {
+        if ( dragging )
+            setX(drag_start+delta);
+    }
+
+    void drag_end()
+    {
+        dragging = false;
+    }
+
+    AnimatableItem* line() const;
+
+    QPixmap pix_enter;
+    QPixmap pix_exit;
+    QIcon icon_enter;
+    QIcon icon_exit;
+    model::FrameTime drag_start;
+    bool dragging = false;
+    model::VisualNode* visual_node = nullptr;
+};
 
 class AnimatableItem : public LineItem
 {
     Q_OBJECT
+
+private:
+    struct DragData
+    {
+        KeyframeSplitItem* item;
+        model::FrameTime from;
+        model::FrameTime to;
+    };
 
 public:
     AnimatableItem(quintptr id, model::Object* obj, model::AnimatableBase* animatable, int time_start, int time_end, int height);
@@ -235,13 +242,15 @@ public slots:
 private slots:
     void transition_changed(model::KeyframeTransition::Descriptive before, model::KeyframeTransition::Descriptive after);
 
-    void keyframe_dragged(model::FrameTime t);
 
     void update_keyframe(int index, model::KeyframeBase* kf);
 
 private:
+    void keyframes_dragged(const std::vector<DragData>& keyframe_items);
+
     model::AnimatableBase* animatable;
     std::vector<KeyframeSplitItem*> kf_split_items;
+    friend KeyframeSplitItem;
 };
 
 class TimeRectItem : public QGraphicsObject

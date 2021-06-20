@@ -4,10 +4,9 @@
 
 bool timeline::enable_debug = false;
 
-timeline::KeyframeSplitItem::KeyframeSplitItem(QGraphicsItem* parent, model::Object* object)
+    timeline::KeyframeSplitItem::KeyframeSplitItem(AnimatableItem* parent)
     : QGraphicsObject(parent),
-      object(object),
-    visual_node(object->cast<model::VisualNode>())
+    visual_node(parent->object()->cast<model::VisualNode>())
 {
     setFlags(
         QGraphicsItem::ItemIsSelectable|
@@ -53,6 +52,13 @@ void timeline::KeyframeSplitItem::mousePressEvent(QGraphicsSceneMouseEvent * eve
     {
         event->accept();
         bool multi_select = (event->modifiers() & (Qt::ControlModifier|Qt::ShiftModifier)) != 0;
+
+        if ( multi_select && isSelected() )
+        {
+            setSelected(false);
+            return;
+        }
+
         if ( !multi_select && !isSelected() )
             scene()->clearSelection();
 
@@ -87,31 +93,40 @@ void timeline::KeyframeSplitItem::mouseMoveEvent(QGraphicsSceneMouseEvent * even
     }
 }
 
+timeline::AnimatableItem* timeline::KeyframeSplitItem::line() const
+{
+    return static_cast<timeline::AnimatableItem*>(parentItem());
+}
+
 void timeline::KeyframeSplitItem::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 {
     if ( event->button() == Qt::LeftButton && isSelected() )
     {
         event->accept();
 
-        int draggable = 0;
+        if ( drag_start == x() )
+            return;
 
-        std::vector<KeyframeSplitItem*> items;
+        std::map<AnimatableItem*, std::vector<AnimatableItem::DragData>> items;
         for ( auto item : scene()->selectedItems() )
         {
             if ( auto kf = dynamic_cast<KeyframeSplitItem*>(item) )
             {
-                items.push_back(kf);
+
                 if ( kf->drag_allowed() )
-                    draggable++;
+                    items[kf->line()].push_back({kf, kf->drag_start, kf->time()});
+
+                kf->drag_end();
             }
         }
 
-        command::UndoMacroGuard guard(tr("Drag Keyframes"), object->document(), false);
-        if ( draggable > 1 )
-            guard.start();
+        if ( !items.empty() )
+        {
+            command::UndoMacroGuard guard(tr("Drag Keyframes"), line()->object()->document());
 
-        for ( auto kf : items )
-            kf->drag_end();
+            for ( const auto& p : items )
+                p.first->keyframes_dragged(p.second);
+        }
     }
     else
     {
@@ -402,14 +417,13 @@ void timeline::AnimatableItem::add_keyframe(int index)
         kf_split_items[0]->set_enter(kf->transition().after_descriptive());
 
     model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
-    auto item = new KeyframeSplitItem(this, animatable->object());
+    auto item = new KeyframeSplitItem(this);
     item->setPos(kf->time(), row_height() / 2.0);
     item->set_exit(kf->transition().before_descriptive());
     item->set_enter(prev ? prev->transition().after_descriptive() : model::KeyframeTransition::Hold);
     kf_split_items.insert(kf_split_items.begin() + index, item);
 
     connect(kf, &model::KeyframeBase::transition_changed, this, &AnimatableItem::transition_changed);
-    connect(item, &KeyframeSplitItem::dragged, this, &AnimatableItem::keyframe_dragged);
 }
 
 void timeline::AnimatableItem::remove_keyframe(int index)
@@ -438,22 +452,25 @@ void timeline::AnimatableItem::transition_changed(model::KeyframeTransition::Des
     kf_split_items[index]->set_enter(after);
 }
 
-void timeline::AnimatableItem::keyframe_dragged(model::FrameTime t)
+void timeline::AnimatableItem::keyframes_dragged(const std::vector<DragData>& keyframe_items)
 {
-    auto it = std::find(kf_split_items.begin(), kf_split_items.end(), static_cast<KeyframeSplitItem*>(sender()));
-    if ( it != kf_split_items.end() )
+    std::vector<command::MoveKeyframe*> commands;
+    commands.reserve(keyframe_items.size());
+
+    for ( auto kf : keyframe_items )
     {
-        int index = it - kf_split_items.begin();
-        if ( animatable->keyframe(index)->time() != t )
-        {
-            auto cmd = new command::MoveKeyframe(animatable, index, t);
-            animatable->object()->push_command(cmd);
-            if ( cmd->redo_index() != index )
-            {
-                kf_split_items[index]->setSelected(false);
-                kf_split_items[cmd->redo_index()]->setSelected(true);
-            }
-        }
+        int index = animatable->keyframe_index(kf.from);
+        auto cmd = new command::MoveKeyframe(animatable, index, kf.to);
+        kf.item->setSelected(false);
+        commands.push_back(cmd);
+        animatable->object()->push_command(cmd);
+    }
+
+
+    for ( auto kf : keyframe_items )
+    {
+        int index = animatable->keyframe_index(kf.to);
+        kf_split_items[index]->setSelected(true);
     }
 }
 

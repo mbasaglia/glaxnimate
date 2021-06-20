@@ -5,6 +5,7 @@
     * Trim path modifier
     * Improved shape to path conversion
     * Can convert shapes to path from the context menu
+    * You can now drag multiple keyframes on the timeline
 * UI:
     * Made the "Tool Options" view more compact
 * Scripting:
