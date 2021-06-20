@@ -9,6 +9,7 @@
 #include "app/debug/model.hpp"
 
 #include "io/base.hpp"
+#include "io/glaxnimate/glaxnimate_format.hpp"
 #include "utils/gzip.hpp"
 
 #include "widgets/timeline/timeline_widget.hpp"
@@ -176,6 +177,16 @@ void GlaxnimateWindow::Private::init_debug()
         {
             app::desktop::open_file(filename);
         }
+    });
+    menu_source->addAction("Current", [this]{
+
+        QTemporaryFile tempf(GlaxnimateApp::temp_path() + "/XXXXXX.json");
+        tempf.setAutoRemove(false);
+        tempf.open();
+        QJsonDocument json = io::glaxnimate::GlaxnimateFormat().to_json(current_document.get());
+        tempf.write(json.toJson(QJsonDocument::Indented));
+        tempf.close();
+        app::desktop::open_file(tempf.fileName());
     });
 
     // Misc

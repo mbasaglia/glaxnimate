@@ -84,7 +84,7 @@
      <item>
       <widget class="QPushButton" name="pushButton">
        <property name="text">
-        <string>Hide</string>
+        <string>Ignore</string>
        </property>
        <property name="icon">
         <iconset theme="dialog-close">

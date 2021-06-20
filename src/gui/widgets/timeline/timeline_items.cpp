@@ -1,7 +1,19 @@
 #include "timeline_items.hpp"
 
+#include "command/undo_macro_guard.hpp"
+
 bool timeline::enable_debug = false;
 
+timeline::KeyframeSplitItem::KeyframeSplitItem(QGraphicsItem* parent, model::Object* object)
+    : QGraphicsObject(parent),
+      object(object),
+    visual_node(object->cast<model::VisualNode>())
+{
+    setFlags(
+        QGraphicsItem::ItemIsSelectable|
+        QGraphicsItem::ItemIgnoresTransformations
+    );
+}
 
 void timeline::KeyframeSplitItem::set_enter(model::KeyframeTransition::Descriptive enter)
 {
@@ -35,6 +47,77 @@ void timeline::KeyframeSplitItem::paint(QPainter * painter, const QStyleOptionGr
     painter->drawPixmap(0, -icon_size/2, half_icon_size.width(), half_icon_size.height(), pix_exit);
 }
 
+void timeline::KeyframeSplitItem::mousePressEvent(QGraphicsSceneMouseEvent * event)
+{
+    if ( event->button() == Qt::LeftButton )
+    {
+        event->accept();
+        bool multi_select = (event->modifiers() & (Qt::ControlModifier|Qt::ShiftModifier)) != 0;
+        if ( !multi_select && !isSelected() )
+            scene()->clearSelection();
+
+        setSelected(true);
+        for ( auto item : scene()->selectedItems() )
+        {
+            if ( auto kf = dynamic_cast<KeyframeSplitItem*>(item) )
+                kf->drag_init();
+        }
+    }
+    else
+    {
+        QGraphicsObject::mousePressEvent(event);
+    }
+}
+
+void timeline::KeyframeSplitItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
+{
+    if ( (event->buttons() & Qt::LeftButton) && isSelected() )
+    {
+        event->accept();
+        qreal delta = qRound(event->scenePos().x()) - drag_start;
+        for ( auto item : scene()->selectedItems() )
+        {
+            if ( auto kf = dynamic_cast<KeyframeSplitItem*>(item) )
+                kf->drag_move(delta);
+        }
+    }
+    else
+    {
+        QGraphicsObject::mouseMoveEvent(event);
+    }
+}
+
+void timeline::KeyframeSplitItem::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
+{
+    if ( event->button() == Qt::LeftButton && isSelected() )
+    {
+        event->accept();
+
+        int draggable = 0;
+
+        std::vector<KeyframeSplitItem*> items;
+        for ( auto item : scene()->selectedItems() )
+        {
+            if ( auto kf = dynamic_cast<KeyframeSplitItem*>(item) )
+            {
+                items.push_back(kf);
+                if ( kf->drag_allowed() )
+                    draggable++;
+            }
+        }
+
+        command::UndoMacroGuard guard(tr("Drag Keyframes"), object->document(), false);
+        if ( draggable > 1 )
+            guard.start();
+
+        for ( auto kf : items )
+            kf->drag_end();
+    }
+    else
+    {
+        QGraphicsObject::mouseReleaseEvent(event);
+    }
+}
 
 timeline::LineItem::LineItem(quintptr id, model::Object* obj, int time_start, int time_end, int height):
     time_start(time_start),
@@ -272,5 +355,120 @@ void timeline::LineItem::paint(QPainter * painter, const QStyleOptionGraphicsIte
         painter->drawText(time_end, row_height(), debug_string);
 
         painter->restore();
+    }
+}
+
+timeline::AnimatableItem::AnimatableItem(quintptr id, model::Object* obj, model::AnimatableBase* animatable, int time_start, int time_end, int height)
+    : LineItem(id, obj, time_start, time_end, height),
+    animatable(animatable)
+{
+    for ( int i = 0; i < animatable->keyframe_count(); i++ )
+        add_keyframe(i);
+
+    connect(animatable, &model::AnimatableBase::keyframe_added, this, &AnimatableItem::add_keyframe);
+    connect(animatable, &model::AnimatableBase::keyframe_removed, this, &AnimatableItem::remove_keyframe);
+    connect(animatable, &model::AnimatableBase::keyframe_updated, this, &AnimatableItem::update_keyframe);
+}
+
+std::pair<model::KeyframeBase*, model::KeyframeBase*> timeline::AnimatableItem::keyframes(KeyframeSplitItem* item)
+{
+    for ( int i = 0; i < int(kf_split_items.size()); i++ )
+    {
+        if ( kf_split_items[i] == item )
+        {
+            if ( i == 0 )
+                return {nullptr, animatable->keyframe(i)};
+            return {animatable->keyframe(i-1), animatable->keyframe(i)};
+        }
+    }
+
+    return {nullptr, nullptr};
+}
+
+int timeline::AnimatableItem::type() const
+{
+    return int(ItemTypes::AnimatableItem);
+}
+
+item_models::PropertyModelFull::Item timeline::AnimatableItem::property_item() const
+{
+    return {object(), animatable};
+}
+
+void timeline::AnimatableItem::add_keyframe(int index)
+{
+    model::KeyframeBase* kf = animatable->keyframe(index);
+    if ( index == 0 && !kf_split_items.empty() )
+        kf_split_items[0]->set_enter(kf->transition().after_descriptive());
+
+    model::KeyframeBase* prev = index > 0 ? animatable->keyframe(index-1) : nullptr;
+    auto item = new KeyframeSplitItem(this, animatable->object());
+    item->setPos(kf->time(), row_height() / 2.0);
+    item->set_exit(kf->transition().before_descriptive());
+    item->set_enter(prev ? prev->transition().after_descriptive() : model::KeyframeTransition::Hold);
+    kf_split_items.insert(kf_split_items.begin() + index, item);
+
+    connect(kf, &model::KeyframeBase::transition_changed, this, &AnimatableItem::transition_changed);
+    connect(item, &KeyframeSplitItem::dragged, this, &AnimatableItem::keyframe_dragged);
+}
+
+void timeline::AnimatableItem::remove_keyframe(int index)
+{
+    delete kf_split_items[index];
+    kf_split_items.erase(kf_split_items.begin() + index);
+    if ( index < int(kf_split_items.size()) && index > 0 )
+    {
+        kf_split_items[index]->set_enter(animatable->keyframe(index-1)->transition().after_descriptive());
+    }
+}
+
+void timeline::AnimatableItem::transition_changed(model::KeyframeTransition::Descriptive before, model::KeyframeTransition::Descriptive after)
+{
+    int index = animatable->keyframe_index(static_cast<model::KeyframeBase*>(sender()));
+    if ( index == -1 )
+        return;
+
+    kf_split_items[index]->set_exit(before);
+
+
+    index += 1;
+    if ( index >= int(kf_split_items.size()) )
+        return;
+
+    kf_split_items[index]->set_enter(after);
+}
+
+void timeline::AnimatableItem::keyframe_dragged(model::FrameTime t)
+{
+    auto it = std::find(kf_split_items.begin(), kf_split_items.end(), static_cast<KeyframeSplitItem*>(sender()));
+    if ( it != kf_split_items.end() )
+    {
+        int index = it - kf_split_items.begin();
+        if ( animatable->keyframe(index)->time() != t )
+        {
+            auto cmd = new command::MoveKeyframe(animatable, index, t);
+            animatable->object()->push_command(cmd);
+            if ( cmd->redo_index() != index )
+            {
+                kf_split_items[index]->setSelected(false);
+                kf_split_items[cmd->redo_index()]->setSelected(true);
+            }
+        }
+    }
+}
+
+void timeline::AnimatableItem::update_keyframe(int index, model::KeyframeBase* kf)
+{
+    auto item_start = kf_split_items[index];
+    item_start->setPos(kf->time(), row_height() / 2.0);
+    item_start->set_exit(kf->transition().before_descriptive());
+
+    if ( index == 0 )
+        item_start->set_enter(model::KeyframeTransition::Hold);
+
+    if ( index < int(kf_split_items.size()) - 1 )
+    {
+        auto item_end = kf_split_items[index+1];
+        item_end->set_enter(kf->transition().after_descriptive());
     }
 }
