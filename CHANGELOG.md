@@ -188,7 +188,7 @@
     * Fixed loading transparent gradients
     * The "record" button is unchecked when loading a new animation
     * Transparent gradients are correctly exported to lottie
-    * `choices` options are correctly loaded fro plugins
+    * `choices` options are correctly loaded for plugins
     * Items in the Plugins menu are now kept always in a sensible order
     * Dragging keframes keeps the correct selection
     * Image shapes that are children of layers are correctly exported to Lottie

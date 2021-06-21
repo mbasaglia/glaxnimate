@@ -124,6 +124,7 @@ public:
 
     // document
     void setup_document(const QString& filename);
+    void do_setup_document();
     void setup_document_new(const QString& filename);
     bool setup_document_open(const io::Options& options);
     void refresh_title();
@@ -180,6 +181,7 @@ public:
     void init_debug();
     void init_tools(tools::Tool* to_activate);
     void init_restore_state();
+    void init_template_menu();
 
     // Model
     model::Composition* current_composition();

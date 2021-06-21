@@ -1,0 +1,115 @@
+{
+    "animation": {
+        "__type__": "MainComposition",
+        "animation": {
+            "__type__": "AnimationContainer",
+            "first_frame": 0,
+            "last_frame": 90
+        },
+        "fps": 30,
+        "group_color": "#00000000",
+        "height": 512,
+        "locked": false,
+        "name": "Telegram Sticker",
+        "shapes": [
+            {
+                "__type__": "Layer",
+                "animation": {
+                    "__type__": "AnimationContainer",
+                    "first_frame": 0,
+                    "last_frame": 90
+                },
+                "group_color": "#00000000",
+                "locked": false,
+                "mask": {
+                    "__type__": "MaskSettings",
+                    "mask": false
+                },
+                "name": "Layer",
+                "opacity": {
+                    "value": 1
+                },
+                "parent": null,
+                "render": true,
+                "shapes": [
+                ],
+                "transform": {
+                    "__type__": "Transform",
+                    "anchor_point": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "position": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "rotation": {
+                        "value": 0
+                    },
+                    "scale": {
+                        "value": {
+                            "x": 1,
+                            "y": 1
+                        }
+                    }
+                },
+                "uuid": "7317526d-ac58-4fb0-be5c-423d3cd839de",
+                "visible": true
+            }
+        ],
+        "uuid": "73031ee4-742b-4ba8-a560-c87c7d2ac645",
+        "visible": true,
+        "width": 512
+    },
+    "assets": {
+        "__type__": "Assets",
+        "colors": {
+            "__type__": "NamedColorList",
+            "name": "",
+            "uuid": "409164be-81fa-45f8-bca7-4e5e3f5bc29f",
+            "values": [
+            ]
+        },
+        "gradient_colors": {
+            "__type__": "GradientColorsList",
+            "name": "",
+            "uuid": "c5f1fd55-aa03-4737-88a5-facaec1d7846",
+            "values": [
+            ]
+        },
+        "gradients": {
+            "__type__": "GradientList",
+            "name": "",
+            "uuid": "76818e1d-271d-4335-bfe5-71f862a3b7fd",
+            "values": [
+            ]
+        },
+        "images": {
+            "__type__": "BitmapList",
+            "name": "",
+            "uuid": "ea5dec89-2538-4ed8-b5b6-99f9e6018d0e",
+            "values": [
+            ]
+        },
+        "name": "",
+        "precompositions": {
+            "__type__": "PrecompositionList",
+            "name": "",
+            "uuid": "acd39b5c-807d-4815-9382-fe67e1ca3ec9",
+            "values": [
+            ]
+        },
+        "uuid": "cfde5a68-f6bc-4eda-a86b-9f75322d5571"
+    },
+    "format": {
+        "format_version": 3,
+        "generator": "Glaxnimate",
+        "generator_version": "0.4.3-23-g6234cd9"
+    },
+    "metadata": {
+    }
+}

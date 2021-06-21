@@ -59,7 +59,16 @@
      </property>
      <addaction name="separator"/>
     </widget>
+    <widget class="QMenu" name="menu_new_from_template">
+     <property name="title">
+      <string>New from Template</string>
+     </property>
+     <property name="icon">
+      <iconset theme="document-new-from-template"/>
+     </property>
+    </widget>
     <addaction name="action_new"/>
+    <addaction name="menu_new_from_template"/>
     <addaction name="action_open"/>
     <addaction name="action_import_image"/>
     <addaction name="action_import"/>
@@ -69,6 +78,7 @@
     <addaction name="action_reload"/>
     <addaction name="action_save"/>
     <addaction name="action_save_as"/>
+    <addaction name="action_save_as_template"/>
     <addaction name="separator"/>
     <addaction name="action_export"/>
     <addaction name="action_export_as"/>
@@ -430,7 +440,7 @@
           <x>0</x>
           <y>0</y>
           <width>92</width>
-          <height>179</height>
+          <height>267</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -2079,6 +2089,19 @@
   <action name="actionl">
    <property name="text">
     <string>l</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>;</string>
+   </property>
+  </action>
+  <action name="action_save_as_template">
+   <property name="icon">
+    <iconset theme="document-save-as-template"/>
+   </property>
+   <property name="text">
+    <string>Save as Template</string>
    </property>
   </action>
  </widget>

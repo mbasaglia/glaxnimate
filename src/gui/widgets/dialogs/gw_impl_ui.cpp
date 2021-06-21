@@ -3,6 +3,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QScrollBar>
+#include <QInputDialog>
 
 #include "app/settings/keyboard_shortcuts.hpp"
 
@@ -29,6 +30,7 @@
 #include "plugin/action.hpp"
 #include "glaxnimate_app.hpp"
 #include "settings/toolbar_settings.hpp"
+#include "settings/document_templates.hpp"
 
 
 static QToolButton* action_button(QAction* action, QWidget* parent)
@@ -555,6 +557,14 @@ void GlaxnimateWindow::Private::init_docks()
     parent->resize(1920, 1080);
 }
 
+void GlaxnimateWindow::Private::init_template_menu()
+{
+    ui.menu_new_from_template->clear();
+
+    for ( const auto& templ : settings::DocumentTemplates::instance().templates() )
+        ui.menu_new_from_template->addAction(settings::DocumentTemplates::instance().create_action(templ, ui.menu_new_from_template));
+}
+
 void GlaxnimateWindow::Private::init_menus()
 {
     // Menu Views
@@ -587,6 +597,41 @@ void GlaxnimateWindow::Private::init_menus()
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_view);
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_render_single_frame);
     GlaxnimateApp::instance()->shortcuts()->add_menu(ui.menu_playback);
+
+
+    // Menu Templates
+    init_template_menu();
+
+    connect(&settings::DocumentTemplates::instance(), &settings::DocumentTemplates::loaded, parent, [this]{
+        init_template_menu();
+    });
+
+    connect(&settings::DocumentTemplates::instance(), &settings::DocumentTemplates::create_from, parent,
+        [this](const settings::DocumentTemplate& templ){
+            if ( !close_document() )
+                return;
+
+            bool ok = false;
+            current_document = templ.create(&ok);
+            do_setup_document();
+            if ( !ok )
+                show_warning(tr("New from Template"), tr("Could not load template"));
+        }
+    );
+
+    connect(ui.action_save_as_template, &QAction::triggered, parent, [this]{
+        bool ok = true;
+
+        QString old_name = current_document->main()->name.get();
+        QString name = QInputDialog::getText(parent, tr("Save as Template"), tr("Name"), QLineEdit::Normal, old_name, &ok);
+        if ( !ok )
+            return;
+
+        current_document->main()->name.set(name);
+        if ( !settings::DocumentTemplates::instance().save_as_template(current_document.get()) )
+            show_warning(tr("Save as Template"), tr("Could not save template"));
+        current_document->main()->name.set(old_name);
+    });
 }
 
 

@@ -41,8 +41,14 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     if ( !close_document() )
         return;
 
-    current_document_has_file = false;
     current_document = std::make_unique<model::Document>(filename);
+
+    do_setup_document();
+}
+
+void GlaxnimateWindow::Private::do_setup_document()
+{
+    current_document_has_file = false;
 
     // Composition
     comp = current_document->main();

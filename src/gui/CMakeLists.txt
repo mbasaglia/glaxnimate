@@ -22,6 +22,7 @@ item_models/document_model_base.cpp
 
 settings/clipboard_settings.cpp
 settings/toolbar_settings.cpp
+settings/document_templates.cpp
 
 style/property_delegate.cpp
 style/dock_widget_style.cpp
