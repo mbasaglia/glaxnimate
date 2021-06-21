@@ -8,6 +8,7 @@
     * You can now drag multiple keyframes on the timeline
 * UI:
     * Made the "Tool Options" view more compact
+    * Template system for new files
 * Scripting:
     * Python can now convert objects to path
     * More intuitive construction of C++ classes from python

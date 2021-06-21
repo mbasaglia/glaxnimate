@@ -1,5 +1,7 @@
 #include "document_templates.hpp"
 
+#include <numeric>
+
 #include <QAction>
 
 #include "app/application.hpp"
@@ -50,17 +52,37 @@ std::unique_ptr<model::Document> settings::DocumentTemplate::load(bool* ok) cons
     return document;
 }
 
-bool settings::DocumentTemplate::operator<(const settings::DocumentTemplate& oth) const
+bool settings::DocumentTemplate::operator<(const settings::DocumentTemplate& other) const
 {
-    return name() < oth.name();
+    QString n1 = document->main()->name.get();
+    QString n2 = other.document->main()->name.get();
+    if ( n1 == n2 )
+    {
+        if ( size().width() == other.size().width() )
+            return fps() > other.fps();
+        return size().width() > other.size().width();
+    }
+    return n1 < n2;
 }
 
 QString settings::DocumentTemplate::name_template(model::Document* document)
 {
-    //: %4 is the file name, %1x%2 is the size, %3 is the frame rate
-    return DocumentTemplates::tr("%4 (%1x%2 %3 fps)")
-        .arg(document->main()->width.get())
-        .arg(document->main()->height.get())
+    QString aspect;
+    auto w = document->main()->width.get();
+    auto h = document->main()->height.get();
+    int iw = w;
+    int ih = h;
+    if ( w > 0 && h > 0 && iw == w && ih == h )
+    {
+        int gcd = std::gcd(iw, ih);
+        aspect = QString(" %1:%2").arg(iw/gcd).arg(ih/gcd);
+    }
+
+    //: %5 is the file name, %1x%2 is the size, %3 is the aspect ratio, %4 is the frame rate
+    return DocumentTemplates::tr("%5 - %1x%2%3 %4fps")
+        .arg(w)
+        .arg(h)
+        .arg(aspect)
         .arg(document->main()->fps.get())
     ;
 }

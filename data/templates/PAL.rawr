@@ -1,0 +1,115 @@
+{
+    "animation": {
+        "__type__": "MainComposition",
+        "animation": {
+            "__type__": "AnimationContainer",
+            "first_frame": 0,
+            "last_frame": 75
+        },
+        "fps": 25,
+        "group_color": "#00000000",
+        "height": 576,
+        "locked": false,
+        "name": "PAL",
+        "shapes": [
+            {
+                "__type__": "Layer",
+                "animation": {
+                    "__type__": "AnimationContainer",
+                    "first_frame": 0,
+                    "last_frame": 75
+                },
+                "group_color": "#00000000",
+                "locked": false,
+                "mask": {
+                    "__type__": "MaskSettings",
+                    "mask": false
+                },
+                "name": "Layer",
+                "opacity": {
+                    "value": 1
+                },
+                "parent": null,
+                "render": true,
+                "shapes": [
+                ],
+                "transform": {
+                    "__type__": "Transform",
+                    "anchor_point": {
+                        "value": {
+                            "x": 384,
+                            "y": 288
+                        }
+                    },
+                    "position": {
+                        "value": {
+                            "x": 384,
+                            "y": 288
+                        }
+                    },
+                    "rotation": {
+                        "value": 0
+                    },
+                    "scale": {
+                        "value": {
+                            "x": 1,
+                            "y": 1
+                        }
+                    }
+                },
+                "uuid": "5af76f8b-8a2c-4835-9b3f-0a6179ccb988",
+                "visible": true
+            }
+        ],
+        "uuid": "e6b5d608-2e7a-4cc3-ab02-76072c921562",
+        "visible": true,
+        "width": 768
+    },
+    "assets": {
+        "__type__": "Assets",
+        "colors": {
+            "__type__": "NamedColorList",
+            "name": "",
+            "uuid": "eea2967a-af83-4e13-8650-d1bbaf8b871f",
+            "values": [
+            ]
+        },
+        "gradient_colors": {
+            "__type__": "GradientColorsList",
+            "name": "",
+            "uuid": "99ead45b-4bd8-406e-a3f8-583dae7268a1",
+            "values": [
+            ]
+        },
+        "gradients": {
+            "__type__": "GradientList",
+            "name": "",
+            "uuid": "ed49d9ac-bef1-444f-84ca-28845edfc1b9",
+            "values": [
+            ]
+        },
+        "images": {
+            "__type__": "BitmapList",
+            "name": "",
+            "uuid": "093122ee-6502-4e13-a817-610a832402a0",
+            "values": [
+            ]
+        },
+        "name": "",
+        "precompositions": {
+            "__type__": "PrecompositionList",
+            "name": "",
+            "uuid": "422821d4-fe15-49f7-acf0-6d75c539ebf6",
+            "values": [
+            ]
+        },
+        "uuid": "da588553-fcda-40d9-a692-f90919c80e96"
+    },
+    "format": {
+        "format_version": 3,
+        "generator": "Glaxnimate",
+        "generator_version": "0.4.3-24-ga6c28b2"
+    },
+    "metadata": {
+    }
+}
