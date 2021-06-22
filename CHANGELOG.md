@@ -14,6 +14,7 @@
     * More intuitive construction of C++ classes from python
 * Bug Fixes:
     * Dragging keyframes properly preserves keyframe transitions
+    * Fixed mask export for lottie
 
 ## 0.4.3
 

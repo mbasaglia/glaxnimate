@@ -158,7 +158,7 @@ public:
                 }
             }
 
-            if ( all_shapes )
+            if ( all_shapes && !layer->mask->has_mask() )
             {
                 json["ty"_l] = 4;
                 json["shapes"_l] = convert_shapes(layer->shapes, false);
