@@ -83,7 +83,7 @@ class BezierItem : public TypedItem<Types::BezierItem>
     Q_OBJECT
 
 public:
-    BezierItem(model::Path* node, QGraphicsItem* parent=nullptr);
+    BezierItem(model::AnimatedProperty<math::bezier::Bezier>* property, QGraphicsItem* parent=nullptr);
 
     QRectF boundingRect() const override;
 
@@ -116,7 +116,7 @@ private:
 
     math::bezier::Bezier bezier_;
     std::vector<std::unique_ptr<PointItem>> items;
-    model::Path* node;
+    model::AnimatedProperty<math::bezier::Bezier>* property;
     utils::PseudoMutex updating;
     std::set<int> selected_indices_;
 };

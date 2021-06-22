@@ -253,11 +253,10 @@ void graphics::PointItem::set_has_tan_out(bool show)
     update();
 }
 
-graphics::BezierItem::BezierItem(model::Path* node, QGraphicsItem* parent)
-: Ctor(parent), node(node)
+graphics::BezierItem::BezierItem(model::AnimatedProperty<math::bezier::Bezier>* property, QGraphicsItem* parent)
+: Ctor(parent), property(property)
 {
-    set_bezier(node->shape.get());
-    connect(node, &model::Path::shape_changed, this, &BezierItem::set_bezier);
+    set_bezier(property->get());
 }
 
 QRectF graphics::BezierItem::boundingRect() const
@@ -345,10 +344,10 @@ void graphics::BezierItem::do_update(bool commit, const QString& name)
 {
     auto lock = updating.get_lock();
 
-    node->push_command(new command::SetMultipleAnimated(
+    property->object()->push_command(new command::SetMultipleAnimated(
         name,
         commit,
-        {&node->shape},
+        {property},
         QVariant::fromValue(bezier_)
     ));
 
@@ -371,12 +370,12 @@ void graphics::BezierItem::do_add_point(int index)
 
 model::AnimatedProperty<math::bezier::Bezier> * graphics::BezierItem::target_property() const
 {
-    return &node->shape;
+    return property;
 }
 
 model::VisualNode* graphics::BezierItem::target_object() const
 {
-    return node;
+    return property->object()->cast<model::VisualNode>();
 }
 
 const std::set<int> & graphics::BezierItem::selected_indices()

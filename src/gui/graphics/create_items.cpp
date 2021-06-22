@@ -82,7 +82,8 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         &make_graphics_item_shape,
         [](model::Path* shape){
             auto v = std::make_unique<GraphicsEditor>(shape);
-            v->add_child<graphics::BezierItem>(shape);
+            auto editor = v->add_child<graphics::BezierItem>(&shape->shape);
+            QObject::connect(shape, &model::Path::shape_changed, editor, &graphics::BezierItem::set_bezier);
             return v;
         }
     );
