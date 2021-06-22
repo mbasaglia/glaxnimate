@@ -104,6 +104,6 @@ include_directories(${Libav_INCLUDE_DIRS})
 
 
 add_library(${LIB_NAME_CORE} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt5::Xml ${Potrace_LIBRARIES} ${Libav_LIBRARIES})
+target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt::Xml ${Potrace_LIBRARIES} ${Libav_LIBRARIES})
 set_property(TARGET ${LIB_NAME_CORE} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 target_include_directories(${LIB_NAME_CORE} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

@@ -387,7 +387,6 @@ QString GlaxnimateWindow::Private::get_open_image_file(const QString& title, con
 
 void GlaxnimateWindow::Private::import_image()
 {
-
     QString path = app::settings::get<QString>("open_save", "import_path");
     if ( path.isEmpty() )
         path = current_document->io_options().path.absolutePath();
