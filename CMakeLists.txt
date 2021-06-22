@@ -67,9 +67,12 @@ find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 message(STATUS ${Python3_EXECUTABLE})
 
 # Qt
-set (QT_SUPPORTED_VERSIONS 5)
 find_package(Qt5Qml QUIET)
-find_package(Qt5 5.12 COMPONENTS Widgets Xml UiTools Concurrent REQUIRED)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Xml UiTools Concurrent REQUIRED)
+
+
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
