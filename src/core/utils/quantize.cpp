@@ -1,6 +1,7 @@
 #include "quantize.hpp"
 
 #include <unordered_map>
+#include <memory>
 
 std::vector<utils::quantize::ColorFrequency> utils::quantize::color_frequencies(QImage image, int alpha_threshold)
 {
@@ -325,7 +326,7 @@ inline int childIndex(Color rgb)
 struct Node
 {
     Node *parent = nullptr;
-    Node *children[8] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+    std::unique_ptr<Node> children[8];
     // number of children
     int nchild = 0;
     // width level of this node
@@ -366,24 +367,13 @@ struct Node
 };
 
 
-/**
- * free a full octree
- */
-static void octreeDelete(Node *node)
-{
-    if (!node) return;
-    for (auto & i : node->children)
-        octreeDelete(i);
-    delete node;
-}
-
 
 /**
  * builds a single <rgb> color leaf
  */
-static Node* ocnodeLeaf(Color rgb, quint32 weight)
+static std::unique_ptr<Node> ocnodeLeaf(Color rgb, quint32 weight)
 {
-    Node *node = new Node;
+    auto node = std::make_unique<Node>();
     node->width = 0;
     node->rgb = rgb;
     node->sum = Color(rgb.r * weight, rgb.g * weight, rgb.b * weight);
@@ -397,7 +387,7 @@ static Node* ocnodeLeaf(Color rgb, quint32 weight)
 /**
  *  merge nodes <node1> and <node2> at location <ref> with parent <parent>
  */
-static Node* octreeMerge(Node *parent, Node *ref, Node *node1, Node *node2)
+static std::unique_ptr<Node> octreeMerge(Node *parent, Node *ref, std::unique_ptr<Node> node1, std::unique_ptr<Node> node2)
 {
     if (parent && !ref)
         parent->nchild++;
@@ -427,7 +417,7 @@ static Node* octreeMerge(Node *parent, Node *ref, Node *node1, Node *node2)
         if (node1->children[i])
             node1->nleaf -= node1->children[i]->nleaf;
 
-        node1->children[i] = octreeMerge(node1, node1->children[i], node1->children[i], node2);
+        node1->children[i] = octreeMerge(node1.get(), node1->children[i].get(), std::move(node1->children[i]), std::move(node2));
         node1->nleaf += node1->children[i]->nleaf;
         return node1;
     }
@@ -442,15 +432,14 @@ static Node* octreeMerge(Node *parent, Node *ref, Node *node1, Node *node2)
         node2->mi = 0;
         if (node2->children[i])
             node2->nleaf -= node2->children[i]->nleaf;
-        node2->children[i] = octreeMerge(node2, node2->children[i], node2->children[i], node1);
+        node2->children[i] = octreeMerge(node2.get(), node2->children[i].get(), std::move(node2->children[i]), std::move(node1));
         node2->nleaf += node2->children[i]->nleaf;
         return node2;
     }
     else
     {
         //nodes have either no intersection or the same root
-        Node *newnode;
-        newnode = new Node;
+        auto newnode = std::make_unique<Node>();
         newnode->sum = node1->sum;
         newnode->sum += node2->sum;
         newnode->weight = node1->weight + node2->weight;
@@ -474,13 +463,12 @@ static Node* octreeMerge(Node *parent, Node *ref, Node *node1, Node *node2)
                 {
                     if (node1->children[i] || node2->children[i])
                     {
-                        newnode->children[i] = octreeMerge(newnode, newnode->children[i], node1->children[i], node2->children[i]);
+                        newnode->children[i] = octreeMerge(newnode.get(), newnode->children[i].get(), std::move(node1->children[i]), std::move(node2->children[i]));
                         newnode->nleaf += newnode->children[i]->nleaf;
                     }
                 }
             }
-            delete node1;
-            delete node2;
+
             return newnode;
         }
         else
@@ -503,10 +491,10 @@ static Node* octreeMerge(Node *parent, Node *ref, Node *node1, Node *node2)
             newnode->nleaf = node1->nleaf + node2->nleaf;
             int i1 = childIndex(node1->rgb >> (newwidth - node1->width - 1));
             int i2 = childIndex(node2->rgb >> (newwidth - node2->width - 1));
-            node1->parent = newnode;
-            newnode->children[i1] = node1;
-            node2->parent = newnode;
-            newnode->children[i2] = node2;
+            node1->parent = newnode.get();
+            newnode->children[i1] = std::move(node1);
+            node2->parent = newnode.get();
+            newnode->children[i2] = std::move(node2);
             return newnode;
         }
     }
@@ -518,10 +506,10 @@ static Node* octreeMerge(Node *parent, Node *ref, Node *node1, Node *node2)
  * <count> leaves are removed, and <count> is decreased on each removal.
  * all parameters including minimal impact values are regenerated.
  */
-static Node* ocnodeStrip(Node *node, int *count, unsigned long lvl)
+static std::unique_ptr<Node> ocnodeStrip(std::unique_ptr<Node> node, int *count, unsigned long lvl)
 {
     if ( !count || !node )
-        return nullptr;
+        return {};
 
     if (node->nchild == 0) // leaf node
     {
@@ -529,9 +517,9 @@ static Node* ocnodeStrip(Node *node, int *count, unsigned long lvl)
             node->update_mi(); //mi generation may be required
         if (node->mi > lvl)
             return node; //leaf is above strip level
-        delete node;
+
         (*count)--;
-        return nullptr;
+        return {};
     }
     else
     {
@@ -540,17 +528,20 @@ static Node* ocnodeStrip(Node *node, int *count, unsigned long lvl)
         node->nchild = 0;
         node->nleaf = 0;
         node->mi = 0;
-        Node **lonelychild = nullptr;
-        for (auto & i : node->children) if (i)
+        std::unique_ptr<Node> *lonelychild = nullptr;
+        for (auto & child : node->children)
         {
-            i = ocnodeStrip(i, count, lvl);
-            if (i)
+            if ( child )
             {
-                lonelychild = &i;
-                node->nchild++;
-                node->nleaf += i->nleaf;
-                if (!node->mi || node->mi > i->mi)
-                    node->mi = i->mi;
+                child = ocnodeStrip(std::move(child), count, lvl);
+                if ( child )
+                {
+                    lonelychild = &child;
+                    node->nchild++;
+                    node->nleaf += child->nleaf;
+                    if (!node->mi || node->mi > child->mi)
+                        node->mi = child->mi;
+                }
             }
         }
         // tree adjustments
@@ -568,15 +559,13 @@ static Node* ocnodeStrip(Node *node, int *count, unsigned long lvl)
                 node->nchild = 0;
                 node->nleaf = 1;
                 node->update_mi();
-                delete *lonelychild;
-                *lonelychild = nullptr;
+                lonelychild->reset();
             }
             else
             {
                 //make a bridge to <lonelychild> over a 1 child node
                 (*lonelychild)->parent = node->parent;
-                delete node;
-                return *lonelychild;
+                return std::move(*lonelychild);
             }
         }
     }
@@ -586,21 +575,27 @@ static Node* ocnodeStrip(Node *node, int *count, unsigned long lvl)
 /**
  * reduce the leaves of an octree to a given number
  */
-static Node * octreePrune(Node *ref, int ncolor)
+static std::unique_ptr<Node> octreePrune(std::unique_ptr<Node> ref, int ncolor)
 {
     int n = ref->nleaf - ncolor;
     if ( n <= 0 )
-        return nullptr;
+        return {};
 
     //calling strip with global minimum impact of the tree
-    while ( n > 0 )
-        ref = ocnodeStrip(ref, &n, ref->mi);
+    while ( n > 0 && ref )
+    {
+        auto mi = ref->mi;
+        int n1 = n;
+        ref = ocnodeStrip(std::move(ref), &n, mi);
+        if ( !ref )
+            qDebug() << n1 << n;
+    }
 
     return ref;
 }
 
 
-Node* add_pixels(Node* ref, ColorFrequency* data, int data_size)
+std::unique_ptr<Node> add_pixels(Node* ref, ColorFrequency* data, int data_size)
 {
     if ( data_size == 1 )
     {
@@ -608,12 +603,12 @@ Node* add_pixels(Node* ref, ColorFrequency* data, int data_size)
     }
     else if ( data_size > 1 )
     {
-        Node *ref1 = add_pixels(nullptr, data, data_size/2);
-        Node *ref2 = add_pixels(nullptr, data + data_size/2, data_size - data_size/2);
-        return octreeMerge(nullptr, ref, ref1, ref2);
+        std::unique_ptr<Node> ref1 = add_pixels(nullptr, data, data_size/2);
+        std::unique_ptr<Node> ref2 = add_pixels(nullptr, data + data_size/2, data_size - data_size/2);
+        return octreeMerge(nullptr, ref, std::move(ref1), std::move(ref2));
     }
 
-    return nullptr;
+    return {};
 }
 
 } // namespace utils::quantize::detail::octree
@@ -640,12 +635,10 @@ std::vector<QRgb> utils::quantize::octree(const QImage& image, int k)
     colors.reserve(k);
 
 
-    Node *tree = add_pixels(nullptr, freq.data(), freq.size());
-    tree = octreePrune(tree, k);
+    std::unique_ptr<Node> tree = add_pixels(nullptr, freq.data(), freq.size());
+    tree = octreePrune(std::move(tree), k);
 
     tree->get_colors(colors);
-
-    octreeDelete(tree);
 
     return colors;
 }
