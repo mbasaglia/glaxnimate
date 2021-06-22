@@ -585,10 +585,7 @@ static std::unique_ptr<Node> octreePrune(std::unique_ptr<Node> ref, int ncolor)
     while ( n > 0 && ref )
     {
         auto mi = ref->mi;
-        int n1 = n;
         ref = ocnodeStrip(std::move(ref), &n, mi);
-        if ( !ref )
-            qDebug() << n1 << n;
     }
 
     return ref;
