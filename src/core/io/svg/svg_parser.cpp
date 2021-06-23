@@ -894,11 +894,10 @@ public:
 
     QColor parse_color(const QString& color_str, const QColor& current_color)
     {
-        if ( color_str == "currentColor"  )
+        if ( color_str == "currentColor" )
             return current_color;
 
-        /// \todo test with rgba() etc
-        return QColor(color_str);
+        return io::svg::parse_color(color_str);
     }
 
     void parseshape_rect(const ParseFuncArgs& args)
@@ -1466,4 +1465,59 @@ io::mime::DeserializedData io::svg::SvgParser::parse_to_objects()
 void io::svg::SvgParser::parse_to_document()
 {
     d->parse();
+}
+
+QColor io::svg::parse_color(const QString& string)
+{
+    if ( string.isEmpty() )
+        return {};
+
+    // #fff #112233
+    if ( string[0] == '#' )
+        return QColor(string);
+
+    // transparent
+    if ( string == "transparent" || string == "none" )
+        return QColor(0, 0, 0, 0);
+
+    QRegularExpressionMatch match;
+
+    // rgba(123, 123, 123, 0.7)
+    static QRegularExpression rgba{R"(^rgba\s*\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9.eE]+)\s*\)$)"};
+    match = rgba.match(string);
+    if ( match.hasMatch() )
+        return QColor(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt(), match.captured(4).toDouble() * 255);
+
+    // rgb(123, 123, 123)
+    static QRegularExpression rgb{R"(^rgb\s*\(\s*([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\s*\)$)"};
+    match = rgb.match(string);
+    if ( match.hasMatch() )
+        return QColor(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt());
+
+    // rgba(60%, 30%, 20%, 0.7)
+    static QRegularExpression rgba_pc{R"(^rgba\s*\(\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)\s*\)$)"};
+    match = rgba_pc.match(string);
+    if ( match.hasMatch() )
+        return QColor::fromRgbF(match.captured(1).toDouble() / 100, match.captured(2).toDouble() / 100, match.captured(3).toDouble() / 100, match.captured(4).toDouble());
+
+    // rgb(60%, 30%, 20%)
+    static QRegularExpression rgb_pc{R"(^rgb\s*\(\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*\)$)"};
+    match = rgb_pc.match(string);
+    if ( match.hasMatch() )
+        return QColor::fromRgbF(match.captured(1).toDouble() / 100, match.captured(2).toDouble() / 100, match.captured(3).toDouble() / 100);
+
+    // hsl(60, 30%, 20%)
+    static QRegularExpression hsl{R"(^hsl\s*\(\s*([0-9.eE]+)\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*\)$)"};
+    match = rgb_pc.match(string);
+    if ( match.hasMatch() )
+        return QColor::fromHslF(match.captured(1).toDouble() / 360, match.captured(2).toDouble() / 100, match.captured(3).toDouble() / 100);
+
+    // hsla(60, 30%, 20%, 0.7)
+    static QRegularExpression hsla{R"(^hsla\s*\(\s*([0-9.eE]+)\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)%\s*,\s*([0-9.eE]+)\s*\)$)"};
+    match = rgb_pc.match(string);
+    if ( match.hasMatch() )
+        return QColor::fromHslF(match.captured(1).toDouble() / 360, match.captured(2).toDouble() / 100, match.captured(3).toDouble() / 100, match.captured(4).toDouble());
+
+    // red
+    return QColor(string);
 }

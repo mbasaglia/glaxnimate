@@ -65,4 +65,10 @@ private:
     std::unique_ptr<Private> d;
 };
 
+/**
+ * \brief Parses a CSS color string
+ * \see https://www.w3.org/wiki/CSS/Properties/color
+ */
+QColor parse_color(const QString& color_str);
+
 } // namespace io::svg
