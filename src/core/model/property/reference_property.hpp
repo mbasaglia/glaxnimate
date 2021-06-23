@@ -1,5 +1,4 @@
 #pragma once
-#include "model/assets/asset_base.hpp"
 #include "model/document_node.hpp"
 #include "model/property/property.hpp"
 
@@ -63,13 +62,13 @@ private:
     PropertyCallback<bool, DocumentNode*> is_valid_option_;
 
 protected:
-    static void remove_user(ReferencePropertyBase*, void*) {}
-    static void add_user(ReferencePropertyBase*, void*) {}
-    static void remove_user(ReferencePropertyBase* prop, model::AssetBase* obj)
+//     static void remove_user(ReferencePropertyBase*, void*) {}
+//     static void add_user(ReferencePropertyBase*, void*) {}
+    static void remove_user(ReferencePropertyBase* prop, model::DocumentNode* obj)
     {
         obj->remove_user(prop);
     }
-    static void add_user(ReferencePropertyBase* prop, model::AssetBase* obj)
+    static void add_user(ReferencePropertyBase* prop, model::DocumentNode* obj)
     {
         obj->add_user(prop);
     }

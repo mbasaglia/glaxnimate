@@ -5,13 +5,23 @@
 #include <QGraphicsItem>
 
 #include "model/shapes/shape.hpp"
+#include "model/property/reference_property.hpp"
+#include "utils/pseudo_mutex.hpp"
 
+class model::DocumentNode::Private
+{
+public:
+    std::unordered_set<User*> users;
+    utils::PseudoMutex detaching;
+};
 
 model::DocumentNode::DocumentNode(model::Document* document)
-    : Object ( document )
+    : Object ( document ), d(std::make_unique<Private>())
 {
     uuid.set_value(QUuid::createUuid());
 }
+
+model::DocumentNode::~DocumentNode() = default;
 
 model::VisualNode* model::VisualNode::docnode_group_parent() const
 {
@@ -263,3 +273,45 @@ QString model::DocumentNode::object_name() const
         return type_name_human();
     return name.get();
 }
+
+void model::DocumentNode::add_user(model::DocumentNode::User* user)
+{
+    if ( !d->detaching )
+    {
+        d->users.insert(user);
+        emit users_changed();
+    }
+}
+
+void model::DocumentNode::remove_user(model::DocumentNode::User* user)
+{
+    if ( !d->detaching )
+    {
+        d->users.erase(user);
+        emit users_changed();
+    }
+}
+
+const std::unordered_set<model::DocumentNode::User*> & model::DocumentNode::users() const
+{
+    return d->users;
+}
+
+void model::DocumentNode::attach()
+{
+    if ( auto lock = d->detaching.get_lock() )
+    {
+        for ( auto user : d->users )
+            user->set_ref(this);
+    }
+}
+
+void model::DocumentNode::detach()
+{
+    if ( auto lock = d->detaching.get_lock() )
+    {
+        for ( auto user : d->users )
+            user->set_ref(nullptr);
+    }
+}
+

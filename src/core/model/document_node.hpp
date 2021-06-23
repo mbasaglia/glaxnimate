@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_set>
+
 #include <QList>
 #include <QUuid>
 #include <QIcon>
@@ -83,7 +85,10 @@ protected:
     };
 
 public:
+    using User = ReferencePropertyBase;
+
     explicit DocumentNode(model::Document* document);
+    ~DocumentNode();
 
     virtual QIcon tree_icon() const = 0;
 
@@ -156,6 +161,32 @@ public:
 
     QString object_name() const override;
 
+
+    /**
+     * \brief List of properties referencing this node
+     */
+    const std::unordered_set<User*>& users() const;
+
+    /**
+     * \brief Mark \p user as referencing this object
+     */
+    void add_user(User* user);
+
+    /**
+     * \brief Remove a user
+     */
+    void remove_user(User* user);
+
+    /**
+     * \brief Signals all users that the item has been reinstated
+     */
+    void attach();
+
+    /**
+     * \brief Signals all users that the item has been removed
+     */
+    void detach();
+
 private:
     template<class T=DocumentNode>
     void docnode_find_impl(const QString& type_name, std::vector<T*>& matches)
@@ -167,7 +198,6 @@ private:
         for ( DocumentNode* child : docnode_children() )
             child->docnode_find_impl<T>(type_name, matches);
     }
-
 
 signals:
     void docnode_child_add_begin(int row);
@@ -181,6 +211,12 @@ signals:
 
     void name_changed(const QString&);
 
+signals:
+    void users_changed();
+
+private:
+    class Private;
+    std::unique_ptr<Private> d;
 };
 
 class Modifier;

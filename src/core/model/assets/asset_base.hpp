@@ -16,27 +16,12 @@ public:
 
     virtual ~AssetBase() {}
 
-    const std::unordered_set<User*>& users() const;
-    void add_user(User* user);
-    void remove_user(User* user);
-
-    void attach();
-    void detach();
-
     /**
      * \brief Removes the asset if it isn't needed
      * \param clean_lists when \b true, remove even if the asset is in a useful list
      * \return Whether it has been removed
      */
     virtual bool remove_if_unused(bool clean_lists) = 0;
-
-protected:
-    virtual void on_users_changed() {};
-    virtual model::DocumentNode* to_reftarget() = 0;
-
-private:
-    std::unordered_set<User*> users_;
-    utils::PseudoMutex detaching;
 };
 
 

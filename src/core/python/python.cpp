@@ -381,7 +381,9 @@ void register_py_module(py::module& glaxnimate_module)
             "Context manager to group changes into a single undo command"
         );
     ;
-    register_from_meta<model::DocumentNode, model::Object>(model);
+    register_from_meta<model::DocumentNode, model::Object>(model)
+        .def_property_readonly("users", &model::DocumentNode::users, "List of properties pointing to this object")
+    ;
     register_from_meta<model::VisualNode, model::DocumentNode>(model);
     register_from_meta<model::AnimationContainer, model::Object>(model);
     register_from_meta<model::StretchableTime, model::Object>(model);
@@ -416,9 +418,7 @@ void register_py_module(py::module& glaxnimate_module)
     ;
 
     py::module defs = model.def_submodule("assets", "");
-    py::class_<model::AssetBase>(defs, "AssetBase")
-        .def_property_readonly("users", &model::AssetBase::users)
-    ;
+    py::class_<model::AssetBase>(defs, "AssetBase");
     register_from_meta<model::Asset, model::DocumentNode, model::AssetBase>(defs);
     register_from_meta<model::BrushStyle, model::Asset>(defs);
     register_constructible<model::NamedColor, model::BrushStyle>(defs);

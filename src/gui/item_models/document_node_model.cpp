@@ -222,14 +222,7 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
             break;
         case ColumnUsers:
             if ( role == Qt::DisplayRole )
-            {
-                model::AssetBase* ass = n->cast<model::Asset>();
-                if ( !ass )
-                    ass = n->cast<model::Precomposition>();
-
-                if ( ass )
-                    return int(ass->users().size());
-            }
+                return int(n->users().size());
             break;
     }
     if ( role == Qt::UserRole )
