@@ -128,7 +128,7 @@ public:
 
                 Subtree* prop_node = add_property(prop, tree->id, insert_row, referenced);
 
-                if ( prop->name() != "composition" )
+                if ( prop->name() != "composition" && prop->name() != "path" )
                 {
                     model::Object* subobj = prop->value().value<model::Object*>();
                     connect_subobject(subobj, prop_node, insert_row);

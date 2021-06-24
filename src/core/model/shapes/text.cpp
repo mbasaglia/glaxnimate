@@ -327,17 +327,18 @@ const QPainterPath & model::TextShape::untranslated_path(FrameTime t) const
             {
                 for ( const auto& glyph : line.glyphs )
                 {
-                    if ( glyph.position.x() > length_data.length() || glyph.position.x() < 0 )
+                    qreal x = path_offset.get_at(t) + glyph.position.x();
+                    if ( x > length_data.length() || x < 0 )
                         continue;
 
                     auto glyph_shape = font->path_for_glyph(glyph.glyph, cache, true);
                     auto glyph_rect = glyph_shape.boundingRect();
 
-                    auto start1 = length_data.at_length(glyph.position.x());
+                    auto start1 = length_data.at_length(x);
                     auto start2 = start1.child_split();
                     auto start_p = bezier.beziers()[start1.index].split_segment_point(start2.index, start2.ratio);
 
-                    auto end1 = length_data.at_length(glyph.position.x() + glyph_rect.width());
+                    auto end1 = length_data.at_length(x + glyph_rect.width());
                     auto end2 = end1.child_split();
                     auto end_p = bezier.beziers()[end1.index].split_segment_point(end2.index, end2.ratio);
 
