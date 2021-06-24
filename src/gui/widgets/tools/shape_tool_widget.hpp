@@ -24,6 +24,9 @@ private slots:
 protected slots:
     void save_settings();
 
+signals:
+    void checks_changed();
+
 protected:
     class Private;
     ShapeToolWidget(std::unique_ptr<Private> d, QWidget* parent);

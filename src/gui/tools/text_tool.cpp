@@ -101,12 +101,13 @@ public:
 
     void enable_event(const Event& event) override
     {
-        Q_UNUSED(event);
+        window = event.window;
     }
 
     void disable_event(const Event& event) override
     {
         commit(event);
+        window = nullptr;
     }
 
     void close_document_event(const Event& event) override
@@ -202,7 +203,9 @@ public:
 
     QWidget* on_create_widget() override
     {
-        return new TextToolWidget();
+        auto widget = new TextToolWidget();
+        connect(widget, &TextToolWidget::checks_changed, this, &TextTool::update_format);
+        return widget;
     }
 
 private:
@@ -232,7 +235,9 @@ private:
         cur.movePosition(QTextCursor::Start);
         cur.select(QTextCursor::Document);
         QTextCharFormat fmt;
-        fmt.setTextOutline(stroke);
+        if ( widget()->create_stroke() )
+            fmt.setTextOutline(stroke);
+        if ( widget()->create_fill() )
         fmt.setForeground(fill);
         cur.setCharFormat(fmt);
         QTextBlockFormat bfmt;
@@ -307,12 +312,19 @@ private:
         }
     }
 
+    void update_format()
+    {
+        if ( !target )
+            set_text_format(window->current_color(), window->current_pen_style(), base_line_spacing());
+    }
+
     static Autoreg<TextTool> autoreg;
     QGraphicsTextItem editor;
     model::TextShape* target = nullptr;
     bool forward_click = false;
     QFont font;
     bool modified = false;
+    GlaxnimateWindow* window = nullptr;
 };
 
 } // namespace tools

@@ -20,6 +20,7 @@
     * Fixed mask export for lottie
     * Fixed crash on with color quantization on Mac ARM
     * Fixed some canvas selection inconsistencies
+    * When creating text shapes, it honours fill/stroke checkboxes
 
 ## 0.4.3
 
