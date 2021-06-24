@@ -6,6 +6,7 @@
     * Improved shape to path conversion
     * Can convert shapes to path from the context menu
     * You can now drag multiple keyframes on the timeline
+    * Text can now follow a path
 * UI:
     * Made the "Tool Options" view more compact
     * Template system for new files

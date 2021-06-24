@@ -5,6 +5,7 @@
 
 #include "model/property/sub_object_property.hpp"
 #include "model/property/option_list_property.hpp"
+#include "model/property/reference_property.hpp"
 #include "shape.hpp"
 
 namespace model {
@@ -87,6 +88,7 @@ class TextShape : public ShapeElement
     GLAXNIMATE_PROPERTY(QString, text, {}, &TextShape::on_text_changed, {}, PropertyTraits::Visual)
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF())
     GLAXNIMATE_SUBOBJECT(Font, font)
+    GLAXNIMATE_PROPERTY_REFERENCE(model::ShapeElement, path, &TextShape::valid_paths, &TextShape::is_valid_path, &TextShape::path_changed)
 
 public:
     explicit TextShape(model::Document* document);
@@ -108,7 +110,11 @@ public:
 private:
     void on_font_changed();
     void on_text_changed();
-    const QPainterPath& untranslated_path() const;
+    const QPainterPath& untranslated_path(FrameTime t) const;
+
+    std::vector<DocumentNode*> valid_paths() const;
+    bool is_valid_path(DocumentNode* node) const;
+    void path_changed(model::ShapeElement* new_path, model::ShapeElement* old_path);
 
     mutable Font::CharDataCache cache;
     mutable QPainterPath shape_cache;

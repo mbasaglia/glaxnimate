@@ -95,6 +95,7 @@ public:
 
 signals:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);
+    void visual_property_changed(const model::BaseProperty* prop, const QVariant& value);
     void removed_from_list();
     void added_to_list();
 

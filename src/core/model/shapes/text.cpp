@@ -312,13 +312,48 @@ void model::TextShape::on_font_changed()
     cache.clear();
 }
 
-const QPainterPath & model::TextShape::untranslated_path() const
+const QPainterPath & model::TextShape::untranslated_path(FrameTime t) const
 {
     if ( shape_cache.isEmpty() )
     {
-        for ( const auto& line : font->layout(text.get()) )
-            for ( const auto& glyph : line.glyphs )
-                shape_cache += font->path_for_glyph(glyph.glyph, cache, true).translated(glyph.position);
+        if ( path.get() )
+        {
+            QString txt = text.get();
+            txt.replace('\n', ' ');
+            auto bezier = path->shapes(t);
+            const int length_steps = 5;
+            auto length_data = bezier.length_data(length_steps);
+            for ( const auto& line : font->layout(txt) )
+            {
+                for ( const auto& glyph : line.glyphs )
+                {
+                    if ( glyph.position.x() > length_data.length() || glyph.position.x() < 0 )
+                        continue;
+
+                    auto glyph_shape = font->path_for_glyph(glyph.glyph, cache, true);
+                    auto glyph_rect = glyph_shape.boundingRect();
+
+                    auto start1 = length_data.at_length(glyph.position.x());
+                    auto start2 = start1.child_split();
+                    auto start_p = bezier.beziers()[start1.index].split_segment_point(start2.index, start2.ratio);
+
+                    auto end1 = length_data.at_length(glyph.position.x() + glyph_rect.width());
+                    auto end2 = end1.child_split();
+                    auto end_p = bezier.beziers()[end1.index].split_segment_point(end2.index, end2.ratio);
+
+                    QTransform mat;
+                    mat.translate(start_p.pos.x(), start_p.pos.y());
+                    mat.rotate(qRadiansToDegrees(math::atan2(end_p.pos.y() - start_p.pos.y(), end_p.pos.x() - start_p.pos.x())));
+                    shape_cache += mat.map(glyph_shape);
+                }
+            }
+        }
+        else
+        {
+            for ( const auto& line : font->layout(text.get()) )
+                for ( const auto& glyph : line.glyphs )
+                    shape_cache += font->path_for_glyph(glyph.glyph, cache, true).translated(glyph.position);
+        }
     }
 
     return shape_cache;
@@ -342,7 +377,7 @@ void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier&
 QPainterPath model::TextShape::to_painter_path(model::FrameTime t) const
 {
     QPointF pos = position.get_at(t);
-    return untranslated_path().translated(pos);
+    return untranslated_path(t).translated(pos);
 }
 
 QIcon model::TextShape::tree_icon() const
@@ -424,4 +459,40 @@ QPointF model::TextShape::offset_to_next_character() const
     if ( layout.empty() )
         return {};
     return layout.back().advance;
+}
+
+std::vector<model::DocumentNode *> model::TextShape::valid_paths() const
+{
+    std::vector<model::DocumentNode *> shapes;
+    shapes.push_back(nullptr);
+
+    for ( const auto& sib : *owner() )
+        if ( sib.get() != this )
+            shapes.push_back(sib.get());
+
+    return shapes;
+}
+
+bool model::TextShape::is_valid_path(model::DocumentNode* node) const
+{
+    if ( node == nullptr )
+        return true;
+
+    if ( node == this )
+        return false;
+
+    for ( const auto& sib : *owner() )
+        if ( sib.get() == node )
+            return true;
+
+    return false;
+}
+
+void model::TextShape::path_changed(model::ShapeElement* new_path, model::ShapeElement* old_path)
+{
+    on_text_changed();
+    if ( new_path )
+        connect(new_path, &Object::visual_property_changed, this, &TextShape::on_text_changed);
+    if ( old_path )
+        disconnect(old_path, &Object::visual_property_changed, this, &TextShape::on_text_changed);
 }
