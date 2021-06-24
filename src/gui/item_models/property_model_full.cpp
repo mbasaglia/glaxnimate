@@ -128,10 +128,11 @@ public:
 
                 Subtree* prop_node = add_property(prop, tree->id, insert_row, referenced);
 
-                if ( prop->name() != "composition" && prop->name() != "path" )
+                if ( prop->name() != "composition" )
                 {
                     model::Object* subobj = prop->value().value<model::Object*>();
-                    connect_subobject(subobj, prop_node, insert_row);
+                    if ( subobj && subobj->is_instance<model::Asset>() )
+                        connect_subobject(subobj, prop_node, insert_row);
                 }
             }
             // scalar
