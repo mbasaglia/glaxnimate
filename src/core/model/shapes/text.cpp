@@ -481,9 +481,8 @@ bool model::TextShape::is_valid_path(model::DocumentNode* node) const
     if ( node == this )
         return false;
 
-    for ( const auto& sib : *owner() )
-        if ( sib.get() == node )
-            return true;
+    if ( auto shape = node->cast<model::ShapeElement>() )
+        return shape->owner_composition() == owner_composition();
 
     return false;
 }

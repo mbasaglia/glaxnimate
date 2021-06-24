@@ -45,6 +45,7 @@ public:                                                                 \
 
 namespace model {
 
+class ObjectListPropertyBase;
 class BaseProperty;
 class Document;
 
@@ -96,8 +97,7 @@ public:
 signals:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);
     void visual_property_changed(const model::BaseProperty* prop, const QVariant& value);
-    void removed_from_list();
-    void added_to_list();
+    void removed();
 
 protected:
     virtual void on_property_changed(const BaseProperty* prop, const QVariant& value)
@@ -106,6 +106,9 @@ protected:
         Q_UNUSED(value);
     }
     void clone_into(Object* dest) const;
+
+    virtual void removed_from_list() {};
+    virtual void added_to_list() {};
 
     class Autoreg
     {
@@ -125,6 +128,7 @@ private:
     void property_value_changed(const BaseProperty* prop, const QVariant& value);
 
     friend BaseProperty;
+    friend ObjectListPropertyBase;
     class Private;
     std::unique_ptr<Private> d;
 };

@@ -7,6 +7,7 @@
 namespace model {
 
 using ShapeListProperty = ObjectListProperty<class ShapeElement>;
+class Composition;
 
 /**
  * \brief Base class for all shape elements
@@ -16,7 +17,8 @@ class ShapeElement : public VisualNode
     Q_OBJECT
 
 public:
-    using VisualNode::VisualNode;
+    explicit ShapeElement(model::Document* document);
+    ~ShapeElement();
 
     DocumentNode* docnode_parent() const override;
     int docnode_child_count() const override { return 0; }
@@ -26,15 +28,13 @@ public:
     /**
      * \brief Index within its parent
      */
-    int position() const
-    {
-        return position_;
-    }
+    int position() const;
 
     virtual void add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const = 0;
     math::bezier::MultiBezier shapes(FrameTime t) const;
 
-    ShapeListProperty* owner() const { return property_; }
+    ShapeListProperty* owner() const;
+    Composition* owner_composition() const;
 
     virtual QPainterPath to_clip(FrameTime t) const;
     virtual QPainterPath to_painter_path(FrameTime t) const = 0;
@@ -47,13 +47,14 @@ signals:
 protected:
     const ShapeListProperty& siblings() const;
     void on_property_changed(const BaseProperty* prop, const QVariant& value) override;
+    void removed_from_list() override;
+    void added_to_list() override;
 
 private:
     void set_position(ShapeListProperty* property, int pos);
 
-    ShapeListProperty* property_ = nullptr;
-    int position_ = -1;
-
+    class Private;
+    std::unique_ptr<Private> d;
     friend ShapeListProperty;
 };
 

@@ -49,6 +49,8 @@ signals:
 
 protected:
     void on_paint(QPainter*, FrameTime, PaintMode, model::Modifier*) const override;
+    void removed_from_list() override;
+    void added_to_list() override;
 
 private slots:
     void on_transform_matrix_changed();
@@ -57,11 +59,7 @@ private slots:
 private:
     std::vector<DocumentNode*> valid_precomps() const;
     bool is_valid_precomp(DocumentNode* node) const;
-    void on_removed_from_list();
-    void on_added_to_list();
     void refresh_owner_composition();
-
-    model::Composition* owner_composition_ = nullptr;
 
 };
 

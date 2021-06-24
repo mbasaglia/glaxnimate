@@ -250,7 +250,7 @@ void item_models::PropertyModelBase::Private::connect_recursive(Subtree* this_no
 
     objects[object] = this_node->id;
     QObject::connect(object, &model::Object::destroyed, model, &PropertyModelBase::on_delete_object);
-    QObject::connect(object, &model::Object::removed_from_list, model, &PropertyModelBase::on_delete_object);
+    QObject::connect(object, &model::Object::removed, model, &PropertyModelBase::on_delete_object);
     QObject::connect(object, &model::Object::property_changed, model, &PropertyModelBase::property_changed);
 
     on_connect(object, this_node, insert_row, nullptr);

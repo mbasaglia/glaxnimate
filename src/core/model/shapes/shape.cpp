@@ -4,14 +4,44 @@
 #include "path.hpp"
 #include "model/animation/join_animatables.hpp"
 
+class model::ShapeElement::Private
+{
+public:
+    ShapeListProperty* property = nullptr;
+    int position = -1;
+    model::Composition* owner_composition = nullptr;
+};
+
+model::ShapeElement::ShapeElement(model::Document* document)
+    : VisualNode(document), d(std::make_unique<Private>())
+{
+}
+
+model::ShapeElement::~ShapeElement() = default;
+
+model::ShapeListProperty * model::ShapeElement::owner() const
+{
+    return d->property;
+}
+
+model::Composition * model::ShapeElement::owner_composition() const
+{
+    return d->owner_composition;
+}
+
+int model::ShapeElement::position() const
+{
+    return d->position;
+}
+
 const model::ShapeListProperty& model::ShapeElement::siblings() const
 {
-    return *property_;
+    return *d->property;
 }
 
 model::DocumentNode * model::ShapeElement::docnode_parent() const
 {
-    return property_ ? static_cast<DocumentNode*>(property_->object()) : nullptr;
+    return d->property ? static_cast<DocumentNode*>(d->property->object()) : nullptr;
 }
 
 model::ObjectListProperty<model::ShapeElement>::iterator model::ShapeListProperty::past_first_modifier() const
@@ -28,8 +58,8 @@ void model::ShapeElement::set_position(ShapeListProperty* property, int pos)
 {
     model::VisualNode* old_parent = docnode_visual_parent();
 
-    property_ = property;
-    position_ = pos;
+    d->property = property;
+    d->position = pos;
     position_updated();
 
     model::VisualNode* new_parent = docnode_visual_parent();
@@ -40,6 +70,17 @@ void model::ShapeElement::set_position(ShapeListProperty* property, int pos)
 
         if ( new_parent )
             connect(this, &VisualNode::bounding_rect_changed, new_parent, &VisualNode::bounding_rect_changed);
+    }
+
+    if ( property )
+    {
+        auto parent = d->property->object();
+        if ( !parent )
+            d->owner_composition = nullptr;
+        else if ( auto comp = parent->cast<model::Composition>() )
+            d->owner_composition = comp;
+        else if ( auto sh = parent->cast<model::ShapeElement>() )
+            d->owner_composition = sh->d->owner_composition;
     }
 }
 
@@ -65,6 +106,16 @@ std::unique_ptr<model::ShapeElement> model::ShapeElement::to_path() const
 {
     return std::unique_ptr<model::ShapeElement>(static_cast<model::ShapeElement*>(clone().release()));
 }
+
+void model::ShapeElement::added_to_list()
+{
+}
+
+void model::ShapeElement::removed_from_list()
+{
+    d->owner_composition = nullptr;
+}
+
 
 
 QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const

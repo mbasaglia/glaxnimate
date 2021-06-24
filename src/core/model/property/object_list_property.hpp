@@ -63,6 +63,18 @@ public:
 
     virtual std::vector<model::DocumentNode *> valid_reference_values(bool allow_null) const = 0;
     virtual bool is_valid_reference_value(model::DocumentNode *, bool allow_null) const = 0;
+
+protected:
+    static void notify_inserted(model::DocumentNode* ptr)
+    {
+        ptr->added_to_list();
+    }
+
+    static void notify_removed(model::DocumentNode* ptr)
+    {
+        ptr->removed_from_list();
+        emit ptr->removed();
+    }
 };
 
 namespace detail {
@@ -149,7 +161,7 @@ public:
         on_insert(position);
         callback_insert(this->object(), ptr, position);
         value_changed();
-        ptr->added_to_list();
+        notify_inserted(ptr);
         return ptr;
     }
 
@@ -169,7 +181,7 @@ public:
         on_remove(index);
         callback_remove(object(), v.get(), index);
         value_changed();
-        v->removed_from_list();
+        notify_removed(v.get());
         return v;
     }
 

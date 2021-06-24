@@ -12,8 +12,6 @@ model::PreCompLayer::PreCompLayer(Document* document)
     : ShapeElement(document)
 {
     connect(transform.get(), &Object::property_changed, this, &PreCompLayer::on_transform_matrix_changed);
-    connect(this, &Object::added_to_list, this, &PreCompLayer::on_added_to_list);
-    connect(this, &Object::removed_from_list, this, &PreCompLayer::on_removed_from_list);
 }
 
 QIcon model::PreCompLayer::tree_icon() const
@@ -39,13 +37,13 @@ void model::PreCompLayer::set_time(model::FrameTime t)
 
 std::vector<model::DocumentNode *> model::PreCompLayer::valid_precomps() const
 {
-    auto comps = document()->comp_graph().possible_descendants(owner_composition_, document());
+    auto comps = document()->comp_graph().possible_descendants(owner_composition(), document());
     return std::vector<model::DocumentNode *>(comps.begin(), comps.end());
 }
 
 bool model::PreCompLayer::is_valid_precomp(model::DocumentNode* node) const
 {
-    auto owncomp = owner_composition_;
+    auto owncomp = owner_composition();
     if ( auto precomp = qobject_cast<model::Precomposition*>(node) )
         return !document()->comp_graph().is_ancestor_of(precomp, owncomp);
     return false;
@@ -85,26 +83,18 @@ void model::PreCompLayer::add_shapes(model::FrameTime, math::bezier::MultiBezier
 {
 }
 
-void model::PreCompLayer::refresh_owner_composition()
+void model::PreCompLayer::added_to_list()
 {
-    auto n = docnode_parent();
-    while ( n && !n->is_instance<model::Composition>() )
-        n = n->docnode_parent();
-
-    owner_composition_ = static_cast<model::Composition*>(n);
-}
-
-void model::PreCompLayer::on_added_to_list()
-{
-    refresh_owner_composition();
-    document()->comp_graph().add_connection(owner_composition_, this);
+    ShapeElement::added_to_list();
+    document()->comp_graph().add_connection(owner_composition(), this);
     if ( composition.get() )
         composition.get()->add_user(&composition);
 }
 
-void model::PreCompLayer::on_removed_from_list()
+void model::PreCompLayer::removed_from_list()
 {
-    document()->comp_graph().remove_connection(owner_composition_, this);
+    ShapeElement::removed_from_list();
+    document()->comp_graph().remove_connection(owner_composition(), this);
     if ( composition.get() )
         composition.get()->remove_user(&composition);
 }
