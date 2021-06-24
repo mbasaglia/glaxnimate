@@ -64,7 +64,8 @@
       <string>New from Template</string>
      </property>
      <property name="icon">
-      <iconset theme="document-new-from-template"/>
+      <iconset theme="document-new-from-template">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
     <addaction name="action_new"/>
@@ -301,6 +302,13 @@
     <addaction name="separator"/>
     <addaction name="menu_align"/>
    </widget>
+   <widget class="QMenu" name="menu_text">
+    <property name="title">
+     <string>&amp;Text</string>
+    </property>
+    <addaction name="action_text_put_on_path"/>
+    <addaction name="action_text_remove_from_path"/>
+   </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_edit"/>
    <addaction name="menu_tools"/>
@@ -310,6 +318,7 @@
    <addaction name="menu_layers"/>
    <addaction name="menu_object"/>
    <addaction name="menu_path"/>
+   <addaction name="menu_text"/>
    <addaction name="menu_plugins"/>
    <addaction name="menu_help"/>
   </widget>
@@ -2098,10 +2107,27 @@
   </action>
   <action name="action_save_as_template">
    <property name="icon">
-    <iconset theme="document-save-as-template"/>
+    <iconset theme="document-save-as-template">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Save as Template</string>
+   </property>
+  </action>
+  <action name="action_text_put_on_path">
+   <property name="icon">
+    <iconset theme="text-put-on-path"/>
+   </property>
+   <property name="text">
+    <string>&amp;Put on Path</string>
+   </property>
+  </action>
+  <action name="action_text_remove_from_path">
+   <property name="icon">
+    <iconset theme="text-remove-from-path"/>
+   </property>
+   <property name="text">
+    <string>&amp;Remove from Path</string>
    </property>
   </action>
  </widget>

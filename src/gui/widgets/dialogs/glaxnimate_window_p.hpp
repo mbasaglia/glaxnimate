@@ -229,6 +229,9 @@ public:
     void layer_duplicate();
     void layer_new_comp(QAction* act);
     model::PreCompLayer* layer_new_comp(model::Precomposition* comp);
+
+    void text_put_on_path();
+    void text_remove_from_path();
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

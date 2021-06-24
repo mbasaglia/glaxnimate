@@ -19,6 +19,7 @@
     * Dragging keyframes properly preserves keyframe transitions
     * Fixed mask export for lottie
     * Fixed crash on with color quantization on Mac ARM
+    * Fixed some canvas selection inconsistencies
 
 ## 0.4.3
 

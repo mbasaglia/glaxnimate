@@ -376,6 +376,9 @@ void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier&
 
 QPainterPath model::TextShape::to_painter_path(model::FrameTime t) const
 {
+    // Ignore position if we have a path, it can still be moved from the group
+    if ( path.get() )
+        return untranslated_path(t);
     QPointF pos = position.get_at(t);
     return untranslated_path(t).translated(pos);
 }

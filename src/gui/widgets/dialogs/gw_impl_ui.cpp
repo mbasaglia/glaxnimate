@@ -235,8 +235,8 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_align_vert_bottom_out,&QAction::triggered, parent, [this]{align(AlignDirection::Vertical,   AlignPosition::End,    true);});
     connect(ui.action_import, &QAction::triggered, parent, [this]{import_file();});
     connect(ui.action_flip_view, &QAction::triggered, ui.canvas, &Canvas::flip_horizontal);
-
-
+    connect(ui.action_text_put_on_path, &QAction::triggered, parent, [this]{text_put_on_path();});
+    connect(ui.action_text_remove_from_path, &QAction::triggered, parent, [this]{text_remove_from_path();});
 }
 
 tools::Tool* GlaxnimateWindow::Private::init_tools_ui()
@@ -774,7 +774,10 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
     {
         auto current = ui.view_document_node->currentIndex();
         if ( current.isValid() && ! ui.view_document_node->selectionModel()->isSelected(current) )
-            ui.view_document_node->setCurrentIndex(QModelIndex{});
+            ui.view_document_node->selectionModel()->setCurrentIndex(
+                QModelIndex{},
+                QItemSelectionModel::NoUpdate
+            );
     }
 }
 

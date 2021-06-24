@@ -18,6 +18,7 @@
 #include "model/shapes/path.hpp"
 #include "model/shapes/precomp_layer.hpp"
 #include "model/simple_visitor.hpp"
+#include "model/shapes/text.hpp"
 
 #include "settings/clipboard_settings.hpp"
 #include "widgets/dialogs/shape_parent_dialog.hpp"
@@ -426,6 +427,7 @@ void GlaxnimateWindow::Private::import_image()
 
 void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIndex& index)
 {
+    QSignalBlocker block(ui.timeline_widget);
     model::Stroke* stroke = nullptr;
     model::Fill* fill = nullptr;
     if ( auto node = document_node_model.node(comp_model.mapToSource(index)) )
@@ -973,4 +975,85 @@ void GlaxnimateWindow::Private::dropped(const QMimeData* data)
             scene.user_select(selection, graphics::DocumentScene::Replace);
     }
 
+}
+
+static bool get_text(model::Group* group, std::vector<model::TextShape*>& shapes)
+{
+    bool found = false;
+
+    for ( const auto& node : group->shapes )
+    {
+        auto mo = node->metaObject();
+
+        if ( mo->inherits(&model::TextShape::staticMetaObject) )
+        {
+            shapes.push_back(static_cast<model::TextShape*>(node.get()));
+            found = true;
+        }
+        else if ( mo->inherits(&model::Group::staticMetaObject) )
+        {
+            found = get_text(static_cast<model::Group*>(node.get()), shapes) && found;
+        }
+    }
+
+    return found;
+}
+
+void GlaxnimateWindow::Private::text_put_on_path()
+{
+    std::vector<model::TextShape*> shapes;
+    model::ShapeElement* path = nullptr;
+
+    for ( const auto& node : scene.selection() )
+    {
+        auto mo = node->metaObject();
+
+        if ( mo->inherits(&model::TextShape::staticMetaObject) )
+        {
+            shapes.push_back(static_cast<model::TextShape*>(node));
+        }
+        else if ( mo->inherits(&model::Group::staticMetaObject) )
+        {
+            if ( !get_text(static_cast<model::Group*>(node), shapes) )
+                path = static_cast<model::ShapeElement*>(node);
+        }
+        else if (
+            mo->inherits(&model::ShapeElement::staticMetaObject) &&
+            !mo->inherits(&model::Image::staticMetaObject) &&
+            !mo->inherits(&model::PreCompLayer::staticMetaObject) &&
+            !mo->inherits(&model::Styler::staticMetaObject)
+        )
+        {
+            path = static_cast<model::ShapeElement*>(node);
+        }
+    }
+
+    if ( shapes.empty() || !path )
+        return;
+
+    command::UndoMacroGuard guard(tr("Put text on path"), current_document.get());
+    for ( auto shape : shapes )
+        shape->path.set_undoable(QVariant::fromValue(path));
+}
+
+void GlaxnimateWindow::Private::text_remove_from_path()
+{
+    std::vector<model::TextShape*> shapes;
+
+    for ( const auto& node : scene.selection() )
+    {
+        auto mo = node->metaObject();
+
+        if ( mo->inherits(&model::TextShape::staticMetaObject) )
+            shapes.push_back(static_cast<model::TextShape*>(node));
+        else if ( mo->inherits(&model::Group::staticMetaObject) )
+            get_text(static_cast<model::Group*>(node), shapes);
+    }
+
+    if ( shapes.empty() )
+        return;
+
+    command::UndoMacroGuard guard(tr("Remove text from path"), current_document.get());
+    for ( auto shape : shapes )
+        shape->path.set_undoable({});
 }

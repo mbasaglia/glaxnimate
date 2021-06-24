@@ -169,7 +169,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         }
     );
     register_builder<model::TextShape>(
-        &GraphicsItemFactory::make_graphics_item_default,
+        &make_graphics_item_shape,
         [](model::TextShape* text){
             auto v = std::make_unique<GraphicsEditor>(text);
             v->add_child<graphics::TextAttributesEditor>(text);
