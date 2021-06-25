@@ -495,8 +495,13 @@ bool model::TextShape::is_valid_path(model::DocumentNode* node) const
 void model::TextShape::path_changed(model::ShapeElement* new_path, model::ShapeElement* old_path)
 {
     on_text_changed();
-    if ( new_path )
-        connect(new_path, &Object::visual_property_changed, this, &TextShape::on_text_changed);
+
     if ( old_path )
-        disconnect(old_path, &Object::visual_property_changed, this, &TextShape::on_text_changed);
+        disconnect(old_path, nullptr, this, nullptr);
+
+    if ( new_path )
+    {
+        connect(new_path, &Object::visual_property_changed, this, &TextShape::on_text_changed);
+        connect(new_path, &VisualNode::bounding_rect_changed, this, &TextShape::on_text_changed);
+    }
 }
