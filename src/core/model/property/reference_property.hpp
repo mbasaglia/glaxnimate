@@ -126,6 +126,8 @@ public:
 
     bool set_value(const QVariant& val) override
     {
+        if ( val.isNull() )
+            return set(nullptr);
         if ( auto v = detail::variant_cast<Type*>(val) )
             return set(*v);
         return true;

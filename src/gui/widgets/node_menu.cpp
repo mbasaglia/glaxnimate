@@ -9,6 +9,7 @@
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/repeater.hpp"
 #include "model/shapes/trim.hpp"
+#include "model/shapes/text.hpp"
 
 #include "model/assets/assets.hpp"
 
@@ -351,6 +352,13 @@ void actions_precomp(QMenu* menu, GlaxnimateWindow*, model::PreCompLayer* lay)
     });
 }
 
+void actions_text(QMenu* menu, model::TextShape* text)
+{
+    menu->addAction(QIcon::fromTheme("text-remove-from-path"), NodeMenu::tr("Remove from Path"), text, [text]{
+        text->path.set_undoable(QVariant());
+    })->setEnabled(text->path.get());
+}
+
 } // namespace
 
 
@@ -411,6 +419,9 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
         }
         else
         {
+            if ( auto text = shape->cast<model::TextShape>() )
+                actions_text(this, text);
+
             addSeparator();
             addAction(QIcon::fromTheme("object-to-path"), tr("Convert to Path"), this, [window, shape]{ window->convert_to_path(shape);});
         }
