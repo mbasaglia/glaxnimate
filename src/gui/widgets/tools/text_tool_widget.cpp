@@ -30,6 +30,7 @@ public:
         combo_font->setCurrentIndex(model.index_for_font(info.family()).row());
         font_.setPointSizeF(font.pointSizeF());
         spin_size->setValue(font.pointSizeF());
+//         combo_style->setCurrentText(info.styleName());
     }
 
     void on_setup_ui(ShapeToolWidget * p, QVBoxLayout * layout) override
@@ -124,11 +125,14 @@ public:
     void on_load_settings() override
     {
         QFontInfo info(font_);
-        model.set_favourites(app::settings::get<QStringList>("tools", "favourite_font_families"));
-        combo_font->setCurrentText(app::settings::get<QString>("tools", "text_family", info.family()));
+        model.set_favourites(app::settings::define("tools", "favourite_font_families", QStringList()));
+        combo_font->setCurrentText(app::settings::define("tools", "text_family", info.family()));
         combo_font->setEditText(combo_font->currentText());
-        combo_style->setCurrentText(app::settings::get<QString>("tools", "text_style", info.styleName()));
-        spin_size->setValue(app::settings::get<qreal>("tools", "text_size", info.pointSizeF()));
+        font_.setFamily(combo_font->currentText());
+        combo_style->setCurrentText(app::settings::define("tools", "text_style", info.styleName()));
+        font_.setStyleName(combo_style->currentText());
+        spin_size->setValue(app::settings::define("tools", "text_size", info.pointSizeF()));
+        font_.setPointSizeF(spin_size->value());
     }
 
     void on_save_settings() override

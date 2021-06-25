@@ -294,7 +294,7 @@ private:
     {
         editor.setTextInteractionFlags(Qt::TextEditorInteraction);
         editor.setZValue(9001);
-        font = QFont("sans", 32);
+        font = widget()->font();
         connect(widget(), &TextToolWidget::font_changed, this, &TextTool::on_font_changed);
         connect(editor.document(), &QTextDocument::contentsChanged, this, &TextTool::apply_changes);
     }

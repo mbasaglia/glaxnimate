@@ -21,6 +21,7 @@
     * Fixed crash on with color quantization on Mac ARM
     * Fixed some canvas selection inconsistencies
     * When creating text shapes, it honours fill/stroke checkboxes
+    * Fixed initial font style when creating new text shapes
 
 ## 0.4.3
 
