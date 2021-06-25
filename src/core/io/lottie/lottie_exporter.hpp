@@ -73,21 +73,26 @@ public:
         if ( !shape->visible.get() )
             json["hd"_l] = true;
 
-        QCborMap transform;
         if ( auto grp = shape->cast<model::Group>() )
         {
+            QCborMap transform;
             convert_transform(grp->transform.get(), &grp->opacity, transform);
+            json["ks"_l] = transform;
+
+            json["shapes"_l] = convert_shapes(grp->shapes, false);
         }
         else
         {
+            QCborMap transform;
             model::Transform tf(document);
             convert_transform(&tf, nullptr, transform);
-        }
-        json["ks"_l] = transform;
+            json["ks"_l] = transform;
 
-        QCborArray shapes;
-        shapes.push_back(convert_shape(shape, false));
-        json["shapes"_l] = shapes;
+            QCborArray shapes;
+            shapes.push_back(convert_shape(shape, false));
+            json["shapes"_l] = shapes;
+        }
+
         return json;
     }
 
