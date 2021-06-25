@@ -117,7 +117,6 @@ void model::ShapeElement::removed_from_list()
 }
 
 
-
 QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
 {
     QRectF rect;
@@ -213,7 +212,8 @@ void model::ShapeOperator::do_collect_shapes(const std::vector<ShapeElement*>& s
 math::bezier::MultiBezier model::ShapeOperator::collect_shapes_from(const std::vector<ShapeElement *>& shapes, model::FrameTime t, const QTransform& transform) const
 {
     math::bezier::MultiBezier bez;
-    do_collect_shapes(shapes, t, bez, transform);
+    if ( visible.get() )
+        do_collect_shapes(shapes, t, bez, transform);
     return bez;
 }
 

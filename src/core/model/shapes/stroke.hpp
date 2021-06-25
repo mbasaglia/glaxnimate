@@ -44,6 +44,8 @@ public:
 
     QRectF local_bounding_rect(FrameTime t) const override
     {
+        if ( !visible.get() )
+            return {};
         qreal half_width = width.get_at(t) / 2;
         return collect_shapes(t, {}).bounding_box().adjusted(
             -half_width, -half_width, half_width, half_width
