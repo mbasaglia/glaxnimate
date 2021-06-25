@@ -62,9 +62,6 @@ public slots:
         setOpacity(op);
     }
 
-private slots:
-    void on_property_changed(const model::BaseProperty* prop);
-
 private:
     model::VisualNode* node_;
     bool visible_permitted = true;

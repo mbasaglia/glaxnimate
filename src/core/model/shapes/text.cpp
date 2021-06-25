@@ -304,12 +304,13 @@ void model::TextShape::on_text_changed()
 #else
     shape_cache = QPainterPath();
 #endif
+    emit bounding_rect_changed();
 }
 
 void model::TextShape::on_font_changed()
 {
-    on_text_changed();
     cache.clear();
+    on_text_changed();
 }
 
 const QPainterPath & model::TextShape::untranslated_path(FrameTime t) const

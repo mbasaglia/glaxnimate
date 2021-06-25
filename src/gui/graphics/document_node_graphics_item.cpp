@@ -14,7 +14,7 @@ graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::VisualNode* 
     /// \todo Setting
     setBoundingRegionGranularity(0);
 
-    connect(node, &model::Object::property_changed, this, &DocumentNodeGraphicsItem::on_property_changed);
+    connect(node, &model::Object::visual_property_changed, this, &DocumentNodeGraphicsItem::shape_changed);
     connect(node, &model::VisualNode::docnode_visible_recursive_changed, this, &DocumentNodeGraphicsItem::set_visible);
     set_visible(node->docnode_visible_recursive());
 }
@@ -41,12 +41,4 @@ QRectF graphics::DocumentNodeGraphicsItem::boundingRect() const
 
 void graphics::DocumentNodeGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
 {
-}
-
-void graphics::DocumentNodeGraphicsItem::on_property_changed(const model::BaseProperty* prop)
-{
-    if ( prop->traits().flags & model::PropertyTraits::Visual )
-    {
-        shape_changed();
-    }
 }
