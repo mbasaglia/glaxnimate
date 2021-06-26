@@ -5,13 +5,11 @@
 graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::VisualNode* node, QGraphicsItem* parent)
     : QGraphicsObject(parent), node_(node)
 {
-//     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIsMovable, false);
     setFlag(QGraphicsItem::ItemStacksBehindParent);
-//     setFlag(QGraphicsItem::ItemHasNoContents);
+    setFlag(QGraphicsItem::ItemHasNoContents);
 
-    /// \todo Setting
     setBoundingRegionGranularity(0);
 
     connect(node, &model::Object::visual_property_changed, this, &DocumentNodeGraphicsItem::shape_changed);
