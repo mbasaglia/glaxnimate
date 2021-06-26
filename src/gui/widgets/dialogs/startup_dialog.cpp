@@ -114,10 +114,22 @@ void StartupDialog::reload_presets()
         d->ui.view_presets->insertRow(row);
         int col = 0;
         d->ui.view_presets->setItem(row, col++, new QTableWidgetItem(QIcon::fromTheme("document-new-from-template"), templ.name()));
-        d->ui.view_presets->setItem(row, col++, new QTableWidgetItem(QString("%1x%2").arg(templ.size().width()).arg(templ.size().height())));
-        d->ui.view_presets->setItem(row, col++, new QTableWidgetItem(QString("%1 fps").arg(templ.fps())));
-        d->ui.view_presets->setItem(row, col++, new QTableWidgetItem(templ.aspect_ratio()));
-        d->ui.view_presets->setItem(row, col++, new QTableWidgetItem(d->format_duration(templ)));
+
+        auto item = new QTableWidgetItem(QString("%1x%2").arg(templ.size().width()).arg(templ.size().height()));
+        item->setTextAlignment(Qt::AlignCenter);
+        d->ui.view_presets->setItem(row, col++, item);
+
+        item = new QTableWidgetItem(QString("%1 fps").arg(templ.fps()));
+        item->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
+        d->ui.view_presets->setItem(row, col++, item);
+
+        item = new QTableWidgetItem(templ.aspect_ratio());
+        item->setTextAlignment(Qt::AlignCenter);
+        d->ui.view_presets->setItem(row, col++, item);
+
+        item = new QTableWidgetItem(d->format_duration(templ));
+        item->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
+        d->ui.view_presets->setItem(row, col++, item);
         row++;
     }
 }
