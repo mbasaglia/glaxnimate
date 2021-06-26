@@ -48,8 +48,8 @@ public:
 
     void apply_to_document(model::Document* doc)
     {
-        doc->main()->width.set(ui.spin_width->value());
-        doc->main()->height.set(ui.spin_height->value());
+        doc->main()->width.set(ui.spin_size->x());
+        doc->main()->height.set(ui.spin_size->y());
         doc->main()->fps.set(ui.spin_fps->value());
         doc->main()->animation->last_frame.set(duration_frames());
     }
@@ -63,13 +63,16 @@ StartupDialog::StartupDialog(QWidget* parent)
     connect(&settings::DocumentTemplates::instance(), &settings::DocumentTemplates::loaded, this, &StartupDialog::reload_presets);
     connect(d->ui.button_open_browse, &QPushButton::clicked, this, &StartupDialog::open_browse);
 
-    d->ui.spin_width->setValue(app::settings::get<int>("defaults", "width"));
-    d->ui.spin_height->setValue(app::settings::get<int>("defaults", "height"));
+    d->ui.spin_size->enable_ratio_lock();
+    d->ui.spin_size->set_decimals(0);
+    d->ui.spin_size->set_value(
+        app::settings::get<int>("defaults", "width"),
+        app::settings::get<int>("defaults", "height")
+    );
     float fps = app::settings::get<float>("defaults", "fps");
     d->ui.spin_fps->setValue(fps);
     d->adjust_duration_spin();
-    float duration = app::settings::get<float>("defaults", "duration");
-    d->ui.spin_duration->setValue(d->duration(duration, fps));
+    d->ui.spin_duration->setValue(app::settings::get<float>("defaults", "duration"));
 
     for ( const auto& recent : app::settings::get<QStringList>("open_save", "recent_files") )
     {
@@ -122,8 +125,7 @@ void StartupDialog::reload_presets()
 void StartupDialog::select_preset(const QModelIndex& index)
 {
     const auto& templ = settings::DocumentTemplates::instance().templates()[index.row()];
-    d->ui.spin_width->setValue(templ.size().width());
-    d->ui.spin_height->setValue(templ.size().height());
+    d->ui.spin_size->set_value(templ.size());
     d->ui.spin_fps->setValue(templ.fps());
     d->ui.spin_duration->setValue(d->duration(templ.duration(), templ.fps()));
 }

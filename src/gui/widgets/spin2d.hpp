@@ -10,15 +10,20 @@ class Spin2D : public QWidget
     
 public:
     Spin2D(bool ratio_lock, QWidget* parent = nullptr);
+    Spin2D(QWidget* parent = nullptr);
     
     QVector2D value_vector() const;
     QPointF value_point() const;
     QSizeF value_size() const;
+
+    void enable_ratio_lock();
     
     void set_value(const QVector2D& v);
     void set_value(const QPointF& v);
     void set_value(const QSizeF& v);
     void set_value(qreal x, qreal y);
+
+    void set_decimals(int decimals);
     
     qreal x() const;
     qreal y() const;

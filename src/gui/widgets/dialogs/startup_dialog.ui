@@ -69,13 +69,6 @@
            <string>Settings</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="1">
-            <widget class="QSpinBox" name="spin_width">
-             <property name="maximum">
-              <number>9999</number>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="0">
             <widget class="QLabel" name="label_3">
              <property name="text">
@@ -97,31 +90,30 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="QSpinBox" name="spin_height">
+           <item row="2" column="1">
+            <widget class="QDoubleSpinBox" name="spin_duration">
              <property name="maximum">
-              <number>9999</number>
+              <double>9999.989999999999782</double>
              </property>
             </widget>
            </item>
-           <item row="0" column="3">
-            <widget class="QToolButton" name="check_size_aspect">
-             <property name="toolTip">
-              <string>Lock Aspect Ratio</string>
+           <item row="0" column="1" colspan="2">
+            <widget class="Spin2D" name="spin_size" native="true"/>
+           </item>
+           <item row="1" column="1" colspan="2">
+            <widget class="QDoubleSpinBox" name="spin_fps">
+             <property name="suffix">
+              <string> fps</string>
              </property>
-             <property name="text">
-              <string>Lock Aspect Ratio</string>
+             <property name="minimum">
+              <double>1.000000000000000</double>
              </property>
-             <property name="icon">
-              <iconset theme="object-unlocked">
-               <normaloff>.</normaloff>.</iconset>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
+             <property name="maximum">
+              <double>999.990000000000009</double>
              </property>
             </widget>
            </item>
-           <item row="2" column="2" colspan="2">
+           <item row="2" column="2">
             <widget class="QComboBox" name="combo_time_units">
              <property name="currentIndex">
               <number>1</number>
@@ -136,26 +128,6 @@
                <string>Seconds</string>
               </property>
              </item>
-            </widget>
-           </item>
-           <item row="1" column="1" colspan="3">
-            <widget class="QDoubleSpinBox" name="spin_fps">
-             <property name="suffix">
-              <string> fps</string>
-             </property>
-             <property name="minimum">
-              <double>1.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>999.990000000000009</double>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QDoubleSpinBox" name="spin_duration">
-             <property name="maximum">
-              <double>9999.989999999999782</double>
-             </property>
             </widget>
            </item>
           </layout>
@@ -212,6 +184,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Spin2D</class>
+   <extends>QWidget</extends>
+   <header>widgets/spin2d.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

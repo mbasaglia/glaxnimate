@@ -5,7 +5,7 @@
 #include <QApplication>
 
 
-Spin2D::Spin2D(bool ratio_lock, QWidget* parent)
+Spin2D::Spin2D(QWidget* parent)
     : QWidget(parent)
 {
     QHBoxLayout* lay = new QHBoxLayout(this);
@@ -19,15 +19,25 @@ Spin2D::Spin2D(bool ratio_lock, QWidget* parent)
     lay->addWidget(spin_y);
     lay->setContentsMargins(0, 0, 0, 0);
 
-    if ( ratio_lock )
-    {
-        lock = new QToolButton(this);
-        lock->setCheckable(true);
-        lock_toggled(false);
-        connect(lock, &QToolButton::clicked, this, &Spin2D::lock_toggled);
-        lay->addWidget(lock);
-    }
+}
 
+Spin2D::Spin2D(bool ratio_lock, QWidget* parent)
+    : Spin2D(parent)
+{
+    if ( ratio_lock )
+        enable_ratio_lock();
+}
+
+void Spin2D::enable_ratio_lock()
+{
+    if ( lock )
+        return;
+
+    lock = new QToolButton(this);
+    lock->setCheckable(true);
+    lock_toggled(false);
+    connect(lock, &QToolButton::clicked, this, &Spin2D::lock_toggled);
+    static_cast<QHBoxLayout*>(layout())->addWidget(lock);
     retranslate();
 }
 
@@ -166,4 +176,10 @@ void Spin2D::y_changed(qreal y)
         spin_x->setValue(y * ratio);
         spin_x->blockSignals(b);
     }
+}
+
+void Spin2D::set_decimals(int decimals)
+{
+    spin_x->setDecimals(decimals);
+    spin_y->setDecimals(decimals);
 }
