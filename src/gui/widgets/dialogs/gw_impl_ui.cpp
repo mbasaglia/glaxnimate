@@ -19,6 +19,7 @@
 #include "widgets/dialogs/timing_dialog.hpp"
 #include "widgets/dialogs/document_metadata_dialog.hpp"
 #include "widgets/dialogs/trace_dialog.hpp"
+#include "widgets/dialogs/startup_dialog.hpp"
 
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
@@ -612,8 +613,7 @@ void GlaxnimateWindow::Private::init_menus()
                 return;
 
             bool ok = false;
-            current_document = templ.create(&ok);
-            do_setup_document();
+            setup_document_ptr(templ.create(&ok));
             if ( !ok )
                 show_warning(tr("New from Template"), tr("Could not load template"));
         }
@@ -912,4 +912,16 @@ void GlaxnimateWindow::Private::init_plugins()
 void GlaxnimateWindow::Private::mouse_moved(const QPointF& pos)
 {
     label_mouse_pos->setText(tr("X: %1 Y: %2").arg(pos.x(), 8, 'f', 3).arg(pos.y(), 8, 'f', 3));
+}
+
+void GlaxnimateWindow::Private::show_startup_dialog()
+{
+    if ( !app::settings::get<bool>("ui", "startup_dialog") )
+        return;
+
+    StartupDialog dialog(parent);
+    connect(&dialog, &StartupDialog::open_recent, parent, &GlaxnimateWindow::document_open);
+    connect(&dialog, &StartupDialog::open_browse, parent, &GlaxnimateWindow::document_open_dialog);
+    if ( dialog.exec() )
+        setup_document_ptr(dialog.create());
 }

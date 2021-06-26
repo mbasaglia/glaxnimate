@@ -77,8 +77,6 @@ int main(int argc, char *argv[])
     sc.finish(&window);
     window.show();
 
-    if ( args.is_defined("file") )
-        window.document_open(args.value("file").toString());
 
     if ( args.is_defined("window-size") )
         window.resize(args.value("window-size").toSize());
@@ -86,6 +84,11 @@ int main(int argc, char *argv[])
 
     if ( args.has_flag("window-id") )
         args.show_message(QString::number(window.winId(), 16), false);
+
+    if ( args.is_defined("file") )
+        window.document_open(args.value("file").toString());
+    else
+        window.show_startup_dialog();
 
     int ret = app.exec();
 

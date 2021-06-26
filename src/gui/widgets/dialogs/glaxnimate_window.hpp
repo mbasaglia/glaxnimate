@@ -131,6 +131,8 @@ public:
      */
     std::vector<model::ShapeElement*> convert_to_path(const std::vector<model::ShapeElement*>& shapes);
 
+    void show_startup_dialog();
+
 public slots:
     void document_save();
     void document_save_as();

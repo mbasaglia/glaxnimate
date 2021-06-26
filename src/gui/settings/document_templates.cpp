@@ -26,7 +26,12 @@ model::FrameTime settings::DocumentTemplate::duration() const
 
 QString settings::DocumentTemplate::name() const
 {
-    return name_template(document.get()).arg(document->main()->name.get());
+    return document->main()->name.get();
+}
+
+QString settings::DocumentTemplate::long_name() const
+{
+    return name_template(document.get()).arg(name());
 }
 
 float settings::DocumentTemplate::fps() const
@@ -65,31 +70,40 @@ bool settings::DocumentTemplate::operator<(const settings::DocumentTemplate& oth
     return n1 < n2;
 }
 
+QString settings::DocumentTemplate::aspect_ratio() const
+{
+    return aspect_ratio(size());
+}
+
+QString settings::DocumentTemplate::aspect_ratio(const QSize& size)
+{
+    if ( size.width() > 0 && size.height() > 0 )
+    {
+        int gcd = std::gcd(size.width(), size.height());
+        return QString("%1:%2").arg(size.width()/gcd).arg(size.height()/gcd);
+    }
+
+    return {};
+}
+
 QString settings::DocumentTemplate::name_template(model::Document* document)
 {
     QString aspect;
     auto w = document->main()->width.get();
     auto h = document->main()->height.get();
-    int iw = w;
-    int ih = h;
-    if ( w > 0 && h > 0 && iw == w && ih == h )
-    {
-        int gcd = std::gcd(iw, ih);
-        aspect = QString(" %1:%2").arg(iw/gcd).arg(ih/gcd);
-    }
 
     //: %5 is the file name, %1x%2 is the size, %3 is the aspect ratio, %4 is the frame rate
-    return DocumentTemplates::tr("%5 - %1x%2%3 %4fps")
+    return DocumentTemplates::tr("%5 - %1x%2 %3 %4fps")
         .arg(w)
         .arg(h)
-        .arg(aspect)
+        .arg(aspect_ratio(QSize(w, h)))
         .arg(document->main()->fps.get())
     ;
 }
 
 QAction* settings::DocumentTemplates::create_action(const DocumentTemplate& templ, QObject *parent)
 {
-    QAction* action = new QAction(QIcon::fromTheme("document-new-from-template"), templ.name(), parent);
+    QAction* action = new QAction(QIcon::fromTheme("document-new-from-template"), templ.long_name(), parent);
     connect(action, &QAction::triggered, this, [&templ, this]{
         emit create_from(templ);
     });
@@ -107,9 +121,9 @@ void settings::DocumentTemplates::load()
         {
             bool ok = false;
             DocumentTemplate templ(dir.absoluteFilePath(filename), &ok);
-            if ( ok && !names.count(templ.name()) )
+            if ( ok && !names.count(templ.long_name()) )
             {
-                names.insert(templ.name());
+                names.insert(templ.long_name());
                 templates_.push_back(std::move(templ));
             }
         }

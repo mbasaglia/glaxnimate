@@ -46,6 +46,31 @@ void GlaxnimateWindow::Private::setup_document(const QString& filename)
     do_setup_document();
 }
 
+void GlaxnimateWindow::Private::setup_document_ptr(std::unique_ptr<model::Document> doc)
+{
+    if ( !close_document() )
+        return;
+
+    current_document = std::move(doc);
+
+    do_setup_document();
+
+    QDir path = app::settings::get<QString>("open_save", "path");
+    auto opts = current_document->io_options();
+    opts.path = path;
+    current_document->set_io_options(opts);
+
+    view_fit();
+    if ( !current_document->main()->shapes.empty() )
+        ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(
+            document_node_model.node_index(current_document->main()->shapes[0])
+        ));
+
+    ui.timeline_widget->reset_view();
+    ui.play_controls->set_range(current_document->main()->animation->first_frame.get(), current_document->main()->animation->last_frame.get());
+
+}
+
 void GlaxnimateWindow::Private::do_setup_document()
 {
     current_document_has_file = false;
@@ -126,7 +151,7 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     current_document->main()->name.set(current_document->main()->type_name_human());
     current_document->main()->width.set(app::settings::get<int>("defaults", "width"));
     current_document->main()->height.set(app::settings::get<int>("defaults", "height"));
-    current_document->main()->fps.set(app::settings::get<int>("defaults", "fps"));
+    current_document->main()->fps.set(app::settings::get<float>("defaults", "fps"));
     float duration = app::settings::get<float>("defaults", "duration");
     int out_point = current_document->main()->fps.get() * duration;
     current_document->main()->animation->last_frame.set(out_point);

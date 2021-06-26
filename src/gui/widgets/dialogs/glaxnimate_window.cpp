@@ -453,3 +453,7 @@ model::ShapeElement * GlaxnimateWindow::convert_to_path(model::ShapeElement* sha
     return convert_to_path(std::vector<model::ShapeElement *>{shape})[0];
 }
 
+void GlaxnimateWindow::show_startup_dialog()
+{
+    d->show_startup_dialog();
+}

@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>StartupDialog</class>
+ <widget class="QDialog" name="StartupDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>774</width>
+    <height>564</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Startup</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,1">
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Create New</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QTableWidget" name="view_presets">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="showGrid">
+           <bool>false</bool>
+          </property>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Size</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Framerate</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Aspect</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Duration</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+           <string>Settings</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="spin_width">
+             <property name="maximum">
+              <number>9999</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Duration</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Size</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Framerate</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QSpinBox" name="spin_height">
+             <property name="maximum">
+              <number>9999</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QToolButton" name="check_size_aspect">
+             <property name="toolTip">
+              <string>Lock Aspect Ratio</string>
+             </property>
+             <property name="text">
+              <string>Lock Aspect Ratio</string>
+             </property>
+             <property name="icon">
+              <iconset theme="object-unlocked">
+               <normaloff>.</normaloff>.</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2" colspan="2">
+            <widget class="QComboBox" name="combo_time_units">
+             <property name="currentIndex">
+              <number>1</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>Frames</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Seconds</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="1" column="1" colspan="3">
+            <widget class="QDoubleSpinBox" name="spin_fps">
+             <property name="suffix">
+              <string> fps</string>
+             </property>
+             <property name="minimum">
+              <double>1.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>999.990000000000009</double>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QDoubleSpinBox" name="spin_duration">
+             <property name="maximum">
+              <double>9999.989999999999782</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="title">
+        <string>Open</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QListWidget" name="view_recent"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="button_open_browse">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+          <property name="icon">
+           <iconset theme="document-open">
+            <normaloff>.</normaloff>.</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="check_show_at_startup">
+       <property name="text">
+        <string>Show at startup</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>StartupDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>516</x>
+     <y>556</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>663</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>StartupDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>624</x>
+     <y>556</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>591</x>
+     <y>680</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>view_recent</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>StartupDialog</receiver>
+   <slot>click_recent(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>706</x>
+     <y>302</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>939</x>
+     <y>407</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_open_browse</sender>
+   <signal>clicked()</signal>
+   <receiver>StartupDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>710</x>
+     <y>482</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>770</x>
+     <y>799</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>combo_time_units</sender>
+   <signal>activated(int)</signal>
+   <receiver>StartupDialog</receiver>
+   <slot>update_time_units()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>394</x>
+     <y>476</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>463</x>
+     <y>640</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>check_show_at_startup</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>StartupDialog</receiver>
+   <slot>update_startup_enabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>42</x>
+     <y>540</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>79</x>
+     <y>639</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>view_presets</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>StartupDialog</receiver>
+   <slot>select_preset(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>167</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>360</x>
+     <y>705</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>view_presets</sender>
+   <signal>activated(QModelIndex)</signal>
+   <receiver>StartupDialog</receiver>
+   <slot>select_preset(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>108</x>
+     <y>183</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>317</x>
+     <y>681</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>select_preset(QModelIndex)</slot>
+  <slot>click_recent(QModelIndex)</slot>
+  <slot>update_time_units()</slot>
+  <slot>update_startup_enabled(bool)</slot>
+ </slots>
+</ui>

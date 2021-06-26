@@ -21,6 +21,8 @@ public:
 
     QString name() const;
 
+    QString long_name() const;
+
     float fps() const;
 
     std::unique_ptr<model::Document> create(bool* ok) const;
@@ -28,6 +30,9 @@ public:
     bool operator<(const DocumentTemplate& oth) const;
 
     static QString name_template(model::Document* document);
+
+    QString aspect_ratio() const;
+    static QString aspect_ratio(const QSize& size);
 
 private:
     QString filename;

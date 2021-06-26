@@ -127,6 +127,7 @@ public:
     void do_setup_document();
     void setup_document_new(const QString& filename);
     bool setup_document_open(const io::Options& options);
+    void setup_document_ptr(std::unique_ptr<model::Document> doc);
     void refresh_title();
     bool close_document();
     bool save_document(bool force_dialog, bool export_opts);
@@ -170,6 +171,7 @@ public:
     void trace_dialog(model::DocumentNode* object);
     void mouse_moved(const QPointF& pos);
     template<class T> void add_modifier_menu_action(QMenu* menu);
+    void show_startup_dialog();
 
     void init_actions();
     void init_plugins();

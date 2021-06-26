@@ -87,16 +87,17 @@ void GlaxnimateApp::load_settings_metadata() const
         //      slug            Label              Tooltip                    Type                default     choices             side effects
         Setting("language",     tr("Language"),    tr("Interface Language"),  Setting::String,    curr_lang,  avail_languages(),  set_language),
         Setting("icon_theme",   tr("Icon Theme"),  "",                        Setting::String,    "",         avail_icon_themes(), ::set_icon_theme),
+        Setting("startup_dialog",tr("Show startup dialog"), {},               Setting::Bool,      true),
         Setting("window_state", {},                {},                        Setting::Internal,  QByteArray{}),
         Setting("window_geometry", {},             {},                        Setting::Internal,  QByteArray{}),
         Setting("timeline_splitter", {},           {},                        Setting::Internal,  QByteArray{}),
     }});
     Settings::instance().add_group(SettingGroup{"defaults", tr("New Animation Defaults"), "video-webm", {
-        //      slug            Label           Tooltip                  default min max
-        Setting("width",        tr("Width"),    "",                         512, 0, 1000000),
-        Setting("height",       tr("Height"),   "",                         512, 0, 1000000),
-        Setting("fps",          tr("FPS"),      tr("Frames per second"),     60, 0, 1000),
-        Setting("duration",     tr("Duration"), tr("Duration in seconds"),    3, 0, 90000),
+        //      slug            Label           Tooltip                  default  min  max
+        Setting("width",        tr("Width"),    "",                          512,   0, 1000000),
+        Setting("height",       tr("Height"),   "",                          512,   0, 1000000),
+        Setting("fps",          tr("FPS"),      tr("Frames per second"),    60.f, 0.f, 1000.f),
+        Setting("duration",     tr("Duration"), tr("Duration in seconds"),   3.f, 0.f, 90000.f),
     }});
     Settings::instance().add_group(SettingGroup{"open_save", tr("Open / Save"), "kfloppy", {
         Setting("max_recent_files", tr("Max Recent Files"), {},                                                 5, 0, 16),
