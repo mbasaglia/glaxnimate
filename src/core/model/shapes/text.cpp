@@ -366,17 +366,22 @@ void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier&
 {
     if ( !transform.isIdentity() )
     {
-        auto mb = math::bezier::MultiBezier::from_painter_path(to_painter_path(t));
+        auto mb = math::bezier::MultiBezier::from_painter_path(shape_data(t));
         mb.transform(transform);
         bez.append(mb);
     }
     else
     {
-        bez.append(to_painter_path(t));
+        bez.append(shape_data(t));
     }
 }
 
-QPainterPath model::TextShape::to_painter_path(model::FrameTime t) const
+QPainterPath model::TextShape::to_painter_path(model::FrameTime) const
+{
+    return {};
+}
+
+QPainterPath model::TextShape::shape_data(FrameTime t) const
 {
     // Ignore position if we have a path, it can still be moved from the group
     if ( path.get() )
@@ -392,7 +397,7 @@ QIcon model::TextShape::tree_icon() const
 
 QRectF model::TextShape::local_bounding_rect(model::FrameTime t) const
 {
-    return to_painter_path(t).boundingRect();
+    return shape_data(t).boundingRect();
 }
 
 QString model::TextShape::type_name_human() const

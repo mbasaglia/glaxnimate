@@ -69,6 +69,12 @@ tools::Tool::UnderMouse tools::Tool::under_mouse(const tools::MouseEvent& event,
         }
     }
 
+//     std::stable_sort(ret.nodes.begin(), ret.nodes.end(),
+//         [](graphics::DocumentNodeGraphicsItem* a, graphics::DocumentNodeGraphicsItem* b){
+//             return a->selection_mode() < b->selection_mode();
+//         }
+//     );
+
     return ret;
 }
 

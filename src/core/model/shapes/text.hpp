@@ -95,6 +95,9 @@ public:
     explicit TextShape(model::Document* document);
 
     void add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
+
+    QPainterPath shape_data(FrameTime t) const;
+
     QPainterPath to_painter_path(FrameTime t) const override;
     QIcon tree_icon() const override;
     QRectF local_bounding_rect(FrameTime t) const override;

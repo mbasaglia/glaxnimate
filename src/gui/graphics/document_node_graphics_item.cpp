@@ -9,7 +9,7 @@ graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::VisualNode* 
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIsMovable, false);
     setFlag(QGraphicsItem::ItemStacksBehindParent);
-    setFlag(QGraphicsItem::ItemHasNoContents);
+//     setFlag(QGraphicsItem::ItemHasNoContents);
 
     /// \todo Setting
     setBoundingRegionGranularity(0);

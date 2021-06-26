@@ -23,6 +23,7 @@
     * Fixed some canvas selection inconsistencies
     * When creating text shapes, it honours fill/stroke checkboxes
     * Fixed initial font style when creating new text shapes
+    * Fixed clicking on text shapes
 
 ## 0.4.3
 
