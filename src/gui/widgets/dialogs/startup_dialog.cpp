@@ -104,7 +104,7 @@ void StartupDialog::changeEvent ( QEvent* e )
 
 void StartupDialog::reload_presets()
 {
-    d->ui.view_presets->clear();
+    d->ui.view_presets->clearContents();
     int row = 0;
     for ( const auto& templ : settings::DocumentTemplates::instance().templates() )
     {
