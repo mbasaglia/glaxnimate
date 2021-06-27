@@ -367,8 +367,8 @@ void GlaxnimateWindow::Private::init_item_views()
     ui.view_assets->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnUsers-1, QHeaderView::ResizeToContents);
 
 
-    connect(ui.timeline_widget, &CompoundTimelineWidget::object_selected, parent, [this](model::VisualNode* node){
-        timeline_object_selected(node);
+    connect(ui.timeline_widget, &CompoundTimelineWidget::current_node_changed, parent, [this](model::VisualNode* node){
+        timeline_current_node_changed(node);
     });
 }
 
@@ -732,54 +732,6 @@ void GlaxnimateWindow::Private::shutdown()
     ui.console->clear_contexts();
 }
 
-void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
-{
-    for ( const auto& index : deselected.indexes() )
-        if ( index.column() == 0 )
-            if ( auto node = document_node_model.visual_node(comp_model.mapToSource(index)) )
-                scene.remove_selection(node);
-
-    for ( const auto& index : selected.indexes() )
-        if ( index.column() == 0 )
-            if ( auto node = document_node_model.visual_node(comp_model.mapToSource(index)) )
-                scene.add_selection(node);
-}
-
-void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
-{
-    for ( model::VisualNode* node : deselected )
-    {
-        ui.view_document_node->selectionModel()->select(
-            comp_model.mapFromSource(document_node_model.node_index(node)),
-            QItemSelectionModel::Deselect|QItemSelectionModel::Rows
-        );
-    }
-
-    for ( model::VisualNode* node : selected )
-    {
-        ui.view_document_node->selectionModel()->select(
-            comp_model.mapFromSource(document_node_model.node_index(node)),
-            QItemSelectionModel::Select|QItemSelectionModel::Rows
-        );
-    }
-
-    if ( !selected.empty() )
-    {
-        ui.view_document_node->selectionModel()->setCurrentIndex(
-            comp_model.mapFromSource(document_node_model.node_index(selected.back())),
-            QItemSelectionModel::NoUpdate
-        );
-    }
-    else
-    {
-        auto current = ui.view_document_node->currentIndex();
-        if ( current.isValid() && ! ui.view_document_node->selectionModel()->isSelected(current) )
-            ui.view_document_node->selectionModel()->setCurrentIndex(
-                QModelIndex{},
-                QItemSelectionModel::NoUpdate
-            );
-    }
-}
 
 void GlaxnimateWindow::Private::switch_tool(tools::Tool* tool)
 {

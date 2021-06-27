@@ -16,7 +16,7 @@ public:
     CompoundTimelineWidget(QWidget* parent = nullptr);
     ~CompoundTimelineWidget();
     
-    void set_active(model::DocumentNode* node);
+    void set_current_node(model::DocumentNode* node);
     void set_document(model::Document* document);
     void set_composition(model::Composition* comp);
     void clear_document();
@@ -31,7 +31,7 @@ public:
 
 signals:
     void switch_composition(model::Composition* comp, int index);
-    void object_selected(model::VisualNode* node);
+    void current_node_changed(model::VisualNode* node);
     
 protected:
     void changeEvent ( QEvent* e ) override;

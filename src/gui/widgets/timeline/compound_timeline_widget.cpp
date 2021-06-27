@@ -250,7 +250,7 @@ public:
         while ( !node && index.isValid() );
 
         if ( node )
-            emit parent->object_selected(node);
+            emit parent->current_node_changed(node);
     }
 
     Ui::CompoundTimelineWidget ui;
@@ -316,7 +316,7 @@ void CompoundTimelineWidget::set_composition(model::Composition* comp)
     on_scroll(d->ui.scrollbar->value());
 }
 
-void CompoundTimelineWidget::set_active(model::DocumentNode* node)
+void CompoundTimelineWidget::set_current_node(model::DocumentNode* node)
 {
     QModelIndex index = d->comp_model.mapFromSource(d->property_model.object_index(node));
     d->ui.properties->expand(index);

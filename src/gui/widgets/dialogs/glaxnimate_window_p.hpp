@@ -28,6 +28,7 @@
 #include "app/log/log_model.hpp"
 
 #include "plugin/plugin.hpp"
+#include "utils/pseudo_mutex.hpp"
 
 class IoStatusDialog;
 class AboutDialog;
@@ -97,12 +98,13 @@ public:
     std::map<QString, std::vector<QAction*>> tool_actions;
 
     std::vector<CompState> comp_selections;
-    bool update_timeline_selection = true;
 
     QLabel* label_mouse_pos = nullptr;
     QLabel* label_recording = nullptr;
     QWidget* widget_recording = nullptr;
     ShapeStylePreviewWidget* widget_current_style = nullptr;
+
+    utils::PseudoMutex update_current;
 
     // "set and forget" kinda variables
     int autosave_timer = 0;
@@ -154,14 +156,11 @@ public:
     void setupUi(bool restore_state, bool debug, GlaxnimateWindow* parent);
     void retranslateUi(QMainWindow* parent);
     void view_fit();
-    void document_treeview_current_changed(const QModelIndex& index);
     void reload_recent_menu();
     void most_recent_file(const QString& s);
     void show_warning(const QString& title, const QString& message, app::log::Severity icon = app::log::Warning);
     void help_about();
     void shutdown();
-    void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
-    void scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
     void switch_tool(tools::Tool* tool);
     void switch_tool_action(QAction* action);
     void status_message(const QString& msg, int duration=5000);
@@ -208,7 +207,6 @@ public:
     void align(AlignDirection direction, AlignPosition position, bool outside);
     QPointF align_point(const QRectF& rect, AlignDirection direction, AlignPosition position);
     void dropped(const QMimeData* data);
-    void timeline_object_selected(model::VisualNode* node);
 
     void switch_composition(model::Composition* comp, int i);
     void setup_composition(model::Composition* comp, int index = -1);
@@ -234,6 +232,16 @@ public:
 
     void text_put_on_path();
     void text_remove_from_path();
+
+    // Selection
+    void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
+    void document_treeview_current_changed(const QModelIndex& index);
+    void scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
+    void timeline_current_node_changed(model::VisualNode* node);
+    /**
+     * \brief makes \p node the current object in all views
+     */
+    void set_current_object(model::DocumentNode* node);
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

@@ -26,3 +26,4 @@ struct LogLine
 } // namespace app::log
 
 Q_DECLARE_METATYPE(app::log::LogLine)
+Q_DECLARE_METATYPE(app::log::Severity)
