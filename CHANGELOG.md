@@ -11,6 +11,7 @@
     * Made the "Tool Options" view more compact
     * Template system for new files
     * Startup dialog
+    * The timeline now allows selecting multiple rows at once
 * I/O:
     * More color formats are supported for the SVG importer
 * Scripting:

@@ -8,6 +8,7 @@
 #include "item_models/property_model_full.hpp"
 
 class QTreeView;
+class QItemSelection;
 
 class TimelineWidget : public QGraphicsView
 {
@@ -29,7 +30,7 @@ public:
     void set_highlighted_time(int time);
     void keep_highlight();
     
-    void select(const QModelIndex& index);
+    void select(const QItemSelection &selected, const QItemSelection &deselected);
     
     item_models::PropertyModelBase::Item item_at(const QPoint& viewport_pos);
     std::pair<model::KeyframeBase*, model::KeyframeBase*> keyframe_at(const QPoint& viewport_pos);
@@ -75,7 +76,7 @@ protected:
     
 signals:
     void frame_clicked(int frame);
-    void line_clicked(quintptr id);
+    void line_clicked(quintptr id, bool selected, bool replace_selection);
     void scrolled(int line);
     
 private:

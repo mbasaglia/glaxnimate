@@ -8,6 +8,7 @@
 class GlaxnimateWindow;
 class QAbstractItemModel;
 class TimelineWidget;
+class QItemSelection;
 class CompoundTimelineWidget : public QWidget
 {
     Q_OBJECT
@@ -29,9 +30,12 @@ public:
 
     void reset_view();
 
+    void select(const std::vector<model::VisualNode*>& selected,  const std::vector<model::VisualNode*>& deselected);
+
 signals:
     void switch_composition(model::Composition* comp, int index);
     void current_node_changed(model::VisualNode* node);
+    void selection_changed(const std::vector<model::VisualNode*>& selected,  const std::vector<model::VisualNode*>& deselected);
     
 protected:
     void changeEvent ( QEvent* e ) override;
@@ -39,7 +43,8 @@ protected:
     
 private slots:
     void select_index(const QModelIndex& index);
-    void select_line(quintptr id);
+    void _on_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
+    void select_line(quintptr id, bool selected, bool replace_selection);
     void custom_context_menu(const QPoint& p);
     void add_keyframe();
     void remove_keyframe();

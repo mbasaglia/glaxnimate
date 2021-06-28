@@ -105,6 +105,7 @@ public:
     ShapeStylePreviewWidget* widget_current_style = nullptr;
 
     utils::PseudoMutex update_current;
+    utils::PseudoMutex update_selection;
 
     // "set and forget" kinda variables
     int autosave_timer = 0;
@@ -242,6 +243,10 @@ public:
      * \brief makes \p node the current object in all views
      */
     void set_current_object(model::DocumentNode* node);
+    /**
+     * \brief Forwards the selection to all models
+     */
+    void selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
 };
 
 #endif // GLAXNIMATEWINDOW_P_H

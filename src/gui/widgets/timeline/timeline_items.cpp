@@ -144,9 +144,9 @@ timeline::LineItem::LineItem(quintptr id, model::Object* obj, int time_start, in
     setFlags(QGraphicsItem::ItemIsSelectable);
 }
 
-void timeline::LineItem::click_selected()
+void timeline::LineItem::click_selected(bool selected, bool replace_selection)
 {
-    emit clicked(id_);
+    emit clicked(id_, selected, replace_selection);
 }
 
 
@@ -303,12 +303,27 @@ void timeline::LineItem::raw_clear()
     visible_rows_ = 1;
 }
 
+void timeline::LineItem::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
+{
+    event->accept();
+}
+
 void timeline::LineItem::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
-    bool sel = isSelected();
-    QGraphicsObject::mousePressEvent(event);
-    if ( !sel && isSelected() )
-        click_selected();
+    if ( event->button() == Qt::LeftButton )
+    {
+        bool selected = true;
+        bool multiple = event->modifiers() & Qt::ControlModifier;
+        if ( !multiple )
+            scene()->clearSelection();
+        else
+            selected = !isSelected();
+
+        setSelected(selected);
+        click_selected(selected, !multiple);
+
+        event->accept();
+    }
 }
 
 void timeline::LineItem::propagate_row_vis(int delta)

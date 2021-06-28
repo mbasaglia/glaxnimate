@@ -589,16 +589,24 @@ int TimelineWidget::header_height() const
     return d->header_height;
 }
 
-void TimelineWidget::select(const QModelIndex& index)
+void TimelineWidget::select(const QItemSelection& selected, const QItemSelection& deselected)
 {
-    d->scene.clearSelection();
-    auto it = d->line_items.find(index.internalId());
-    if ( it != d->line_items.end() )
+    for ( const auto& index : selected.indexes() )
     {
-        it->second->setVisible(true);
-        it->second->setSelected(true);
+        if ( auto item = d->index_to_line(index) )
+        {
+            item->setVisible(true);
+            item->setSelected(true);
+        }
+    }
+
+    for ( const auto& index : deselected.indexes() )
+    {
+        if ( auto item = d->index_to_line(index) )
+            item->setSelected(false);
     }
 }
+
 
 item_models::PropertyModelFull::Item TimelineWidget::item_at(const QPoint& viewport_pos)
 {
@@ -837,7 +845,7 @@ void TimelineWidget::emit_clicked()
     {
         if ( item->type() >= int(ItemTypes::LineItem) )
         {
-            emit line_clicked(static_cast<LineItem*>(item)->id());
+            emit line_clicked(static_cast<LineItem*>(item)->id(), true, true);
             return;
         }
     }

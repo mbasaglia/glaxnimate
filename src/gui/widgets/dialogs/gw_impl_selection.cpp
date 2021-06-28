@@ -4,34 +4,25 @@
 
 void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
 {
+    std::vector<model::VisualNode*> selected_nodes;
+    std::vector<model::VisualNode*> deselected_nodes;
+
     for ( const auto& index : deselected.indexes() )
         if ( index.column() == 0 )
             if ( auto node = document_node_model.visual_node(comp_model.mapToSource(index)) )
-                scene.remove_selection(node);
+                deselected_nodes.push_back(node);
 
     for ( const auto& index : selected.indexes() )
         if ( index.column() == 0 )
             if ( auto node = document_node_model.visual_node(comp_model.mapToSource(index)) )
-                scene.add_selection(node);
+                selected_nodes.push_back(node);
+
+    selection_changed(selected_nodes, deselected_nodes);
 }
 
 void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
 {
-    for ( model::VisualNode* node : deselected )
-    {
-        ui.view_document_node->selectionModel()->select(
-            comp_model.mapFromSource(document_node_model.node_index(node)),
-            QItemSelectionModel::Deselect|QItemSelectionModel::Rows
-        );
-    }
-
-    for ( model::VisualNode* node : selected )
-    {
-        ui.view_document_node->selectionModel()->select(
-            comp_model.mapFromSource(document_node_model.node_index(node)),
-            QItemSelectionModel::Select|QItemSelectionModel::Rows
-        );
-    }
+    selection_changed(selected, deselected);
 
     if ( !selected.empty() )
     {
@@ -58,7 +49,7 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
 
 void GlaxnimateWindow::Private::set_current_object(model::DocumentNode* node)
 {
-    if ( update_current )
+    if ( update_current || update_selection )
         return;
 
     auto lock = update_current.get_lock();
@@ -112,7 +103,8 @@ void GlaxnimateWindow::Private::set_current_object(model::DocumentNode* node)
     ui.view_properties->expandAll();
 
     // Timeline Widget
-    ui.timeline_widget->set_current_node(node);
+    if ( parent->sender() != ui.timeline_widget )
+        ui.timeline_widget->set_current_node(node);
 
     // Document tree view
     ui.view_document_node->setCurrentIndex(
@@ -141,4 +133,42 @@ void GlaxnimateWindow::Private::set_current_object(model::DocumentNode* node)
         if ( !stroke->visible.get() )
             widget_current_style->set_stroke_color(Qt::transparent);
     }
+}
+
+
+void GlaxnimateWindow::Private::selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
+{
+    if ( update_selection )
+        return;
+
+    auto lock = update_selection.get_lock();
+
+    if ( parent->sender() != ui.view_document_node && parent->sender() != ui.view_document_node->selectionModel() )
+    {
+        for ( model::VisualNode* node : deselected )
+        {
+            ui.view_document_node->selectionModel()->select(
+                comp_model.mapFromSource(document_node_model.node_index(node)),
+                QItemSelectionModel::Deselect|QItemSelectionModel::Rows
+            );
+        }
+
+        for ( model::VisualNode* node : selected )
+        {
+            ui.view_document_node->selectionModel()->select(
+                comp_model.mapFromSource(document_node_model.node_index(node)),
+                QItemSelectionModel::Select|QItemSelectionModel::Rows
+            );
+        }
+    }
+
+    if ( parent->sender() != &scene )
+    {
+        scene.user_select(deselected, graphics::DocumentScene::Remove);
+        scene.user_select(selected, graphics::DocumentScene::Append);
+    }
+
+    if ( parent->sender() != ui.timeline_widget )
+        ui.timeline_widget->select(selected, deselected);
+
 }

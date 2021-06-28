@@ -75,6 +75,7 @@ public:
 
         connect(ui.timeline, &TimelineWidget::line_clicked, parent, &CompoundTimelineWidget::select_line);
         connect(ui.properties->selectionModel(), &QItemSelectionModel::currentChanged, parent, &CompoundTimelineWidget::select_index);
+        connect(ui.properties->selectionModel(), &QItemSelectionModel::selectionChanged, parent, &CompoundTimelineWidget::_on_selection_changed);
 
         ui.action_add_keyframe->setIcon(
             QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/status/key.svg"))
@@ -343,15 +344,29 @@ void CompoundTimelineWidget::clear_document()
 
 void CompoundTimelineWidget::select_index(const QModelIndex& index)
 {
-    d->ui.timeline->select(index);
-    d->ui.properties->viewport()->update();
+//     d->ui.timeline->select(index);
+//     d->ui.properties->viewport()->update();
     d->emit_click(this, index);
 }
 
-void CompoundTimelineWidget::select_line(quintptr id)
+void CompoundTimelineWidget::select_line(quintptr id, bool selected, bool replace_selection)
 {
     QModelIndex index = d->comp_model.mapFromSource(d->property_model.index_by_id(id));
-    d->ui.properties->setCurrentIndex(index);
+    if ( selected )
+    {
+        d->ui.properties->selectionModel()->setCurrentIndex(
+            index,
+            QItemSelectionModel::Rows | QItemSelectionModel::Select |
+            ( replace_selection ? QItemSelectionModel::Clear : QItemSelectionModel::NoUpdate )
+        );
+    }
+    else
+    {
+        d->ui.properties->selectionModel()->select(
+            index,
+            QItemSelectionModel::Rows | QItemSelectionModel::Deselect
+        );
+    }
     d->ui.properties->viewport()->update();
     d->emit_click(this, index);
 }
@@ -555,6 +570,29 @@ void CompoundTimelineWidget::click_index ( const QModelIndex& index )
         node->locked.set(!node->locked.get());
 }
 
+void CompoundTimelineWidget::_on_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    std::vector<model::VisualNode*> selected_nodes;
+    std::vector<model::VisualNode*> deselected_nodes;
+
+    for ( const auto& index : selected.indexes() )
+    {
+        if ( auto node = d->property_model.visual_node(d->comp_model.mapToSource(index)) )
+            selected_nodes.push_back(node);
+    }
+
+    for ( const auto& index : deselected.indexes() )
+    {
+        if ( auto node = d->property_model.visual_node(d->comp_model.mapToSource(index)) )
+            deselected_nodes.push_back(node);
+    }
+
+
+    d->ui.timeline->select(selected, deselected);
+
+    emit selection_changed(selected_nodes, deselected_nodes);
+}
+
 QAbstractItemModel * CompoundTimelineWidget::raw_model() const
 {
     return &d->property_model;
@@ -601,4 +639,37 @@ bool CompoundTimelineWidget::eventFilter(QObject*, QEvent* event)
 void CompoundTimelineWidget::reset_view()
 {
     d->ui.timeline->reset_view();
+}
+
+void CompoundTimelineWidget::select(const std::vector<model::VisualNode *>& selected, const std::vector<model::VisualNode *>& deselected)
+{
+    QItemSelection selected_indices;
+    QItemSelection deselected_indices;
+
+    for ( const auto& node : selected )
+    {
+        auto index = d->comp_model.mapFromSource(d->property_model.node_index(node));
+        if ( index.isValid() )
+            selected_indices.push_back(QItemSelectionRange(index));
+    }
+
+    for ( const auto& node : deselected )
+    {
+        auto index = d->comp_model.mapFromSource(d->property_model.node_index(node));
+        if ( index.isValid() )
+            deselected_indices.push_back(QItemSelectionRange(index));
+    }
+
+    d->ui.timeline->select(selected_indices, deselected_indices);
+
+
+    d->ui.properties->selectionModel()->select(
+        selected_indices,
+        QItemSelectionModel::Rows | QItemSelectionModel::Select
+    );
+
+    d->ui.properties->selectionModel()->select(
+        deselected_indices,
+        QItemSelectionModel::Rows | QItemSelectionModel::Deselect
+    );
 }

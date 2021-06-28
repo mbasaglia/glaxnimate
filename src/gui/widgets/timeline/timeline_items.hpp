@@ -86,15 +86,16 @@ public:
 
 signals:
     void removed(quintptr id, QPrivateSignal = {});
-    void clicked(quintptr id);
+    void clicked(quintptr id, bool selected, bool replace_selection);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) override;
 
     virtual void on_set_time_start(int){}
     virtual void on_set_time_end(int){}
 
-    void click_selected();
+    void click_selected(bool selected, bool replace_selection);
 
 private:
     void propagate_row_vis(int delta);
