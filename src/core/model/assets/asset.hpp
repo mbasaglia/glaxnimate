@@ -1,4 +1,7 @@
 #pragma once
+#ifdef _HAX_FUCKING_QMAKE_I_HATE_YOU_
+    Q_OBJECT
+#endif
 
 #include <unordered_set>
 

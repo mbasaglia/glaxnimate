@@ -58,17 +58,21 @@ if ( SNAP_IS_SUCH_A_PAIN  )
 endif()
 
 # Python
-find_program(PYTHON_PIP pip3)
-if(NOT PYTHON_PIP)
-    find_program(PYTHON_PIP pip)
+if ( NOT ANDROID )
+    find_program(PYTHON_PIP pip3)
+    if(NOT PYTHON_PIP)
+        find_program(PYTHON_PIP pip)
+    endif()
+
+    find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+    message(STATUS ${Python3_EXECUTABLE})
+    set(SCRIPTING_PY ON)
 endif()
 
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-message(STATUS ${Python3_EXECUTABLE})
-
 # Qt
-find_package(Qt5Qml QUIET)
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+#find_package(Qt5Qml QUIET)
+set(QT_VERSION_MAJOR 5)
+find_package(QT NAMES Qt5 Qt6 COMPONENTS Core QUIET)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Xml UiTools Concurrent REQUIRED)
 
 
@@ -79,7 +83,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Potrace
-find_package(Potrace REQUIRED)
+if ( NOT ANDROID )
+    find_package(Potrace REQUIRED)
+endif()
 
 # Debug flags
 if(CMAKE_BUILD_TYPE STREQUAL "")
@@ -89,7 +95,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -pedantic -Wextra")
 message(STATUS "${CMAKE_BUILD_TYPE} build")
 
 # sub projects and stuff
-set(SCRIPTING_PY ON)
 
 if ( WIN32 )
     SET(BUILD_STATIC_LIBS OFF CACHE BOOL "")
@@ -108,7 +113,9 @@ add_subdirectory(src bin)
 set(QTCOLORWIDGETS_DESIGNER_PLUGIN ON)
 add_subdirectory(external/Qt-Color-Widgets EXCLUDE_FROM_ALL)
 
-add_subdirectory(py_module EXCLUDE_FROM_ALL)
+if ( NOT ANDROID )
+    add_subdirectory(py_module EXCLUDE_FROM_ALL)
+endif()
 
 set(ALL_SOURCE_DIRECTORIES src)
 find_sources(ALL_SOURCES *.cpp *.hpp)

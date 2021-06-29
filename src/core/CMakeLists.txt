@@ -19,7 +19,6 @@ io/svg/detail.cpp
 io/svg/svg_format.cpp
 io/mime/mime_serializer.cpp
 io/raster/raster_format.cpp
-io/video/video_format.cpp
 io/base.cpp
 
 math/geom.cpp
@@ -81,12 +80,23 @@ plugin/action.cpp
 plugin/io.cpp
 
 utils/gzip.cpp
-utils/trace.cpp
 utils/quantize.cpp
-
-python/python.cpp
-python/miscdefs.cpp
 )
+
+if ( NOT ANDROID )
+    list(APPEND SOURCES
+        utils/trace.cpp
+        python/python.cpp
+        python/miscdefs.cpp
+        io/video/video_format.cpp
+    )
+    find_package(Libav COMPONENTS codec util format swscale REQUIRED)
+    include_directories(${Potrace_INCLUDE_DIRS})
+    include_directories(${Libav_INCLUDE_DIRS})
+else()
+    set(Potrace_LIBRARIES)
+    set(Libav_LIBRARIES)
+endif()
 
 find_package(ZLIB REQUIRED)
 
@@ -97,10 +107,6 @@ configure_file(
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
-include_directories(${Potrace_INCLUDE_DIRS})
-
-find_package(Libav COMPONENTS codec util format swscale REQUIRED)
-include_directories(${Libav_INCLUDE_DIRS})
 
 
 add_library(${LIB_NAME_CORE} OBJECT ${SOURCES})
