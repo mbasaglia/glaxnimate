@@ -131,6 +131,7 @@ protected:
     void dropEvent(QDropEvent * event) override;
 
     bool event(QEvent* event) override;
+    bool viewportEvent(QEvent *event) override;
 
 private:
     void do_rotate(qreal radians, const QPointF& scene_anchor);

@@ -7,6 +7,7 @@
 #include <QStyleOptionFrame>
 #include <QPointer>
 
+#include "glaxnimate_app.hpp"
 #include "app/settings/settings.hpp"
 #include "model/document.hpp"
 #include "command/animation_commands.hpp"
@@ -114,6 +115,15 @@ StrokeStyleWidget::StrokeStyleWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Private>())
 {
     d->ui.setupUi(this);
+
+#ifdef Q_OS_ANDROID
+    d->ui.button_cap_butt->setIcon(GlaxnimateApp::theme_icon("stroke-cap-butt"));
+    d->ui.button_cap_round->setIcon(GlaxnimateApp::theme_icon("stroke-cap-round"));
+    d->ui.button_cap_square->setIcon(GlaxnimateApp::theme_icon("stroke-cap-square"));
+    d->ui.button_join_bevel->setIcon(GlaxnimateApp::theme_icon("stroke-join-bevel"));
+    d->ui.button_join_miter->setIcon(GlaxnimateApp::theme_icon("stroke-join-miter"));
+    d->ui.button_join_round->setIcon(GlaxnimateApp::theme_icon("stroke-join-round"));
+#endif
 
     d->group_cap.addButton(d->ui.button_cap_butt);
     d->group_cap.addButton(d->ui.button_cap_round);

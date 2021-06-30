@@ -32,5 +32,11 @@
         <file>images/icons/document-save.svg</file>
         <file>images/icons/document-send.svg</file>
         <file>images/icons/document-export.svg</file>
+        <file>images/icons/stroke-cap-butt.svg</file>
+        <file>images/icons/stroke-cap-round.svg</file>
+        <file>images/icons/stroke-cap-square.svg</file>
+        <file>images/icons/stroke-join-bevel.svg</file>
+        <file>images/icons/stroke-join-miter.svg</file>
+        <file>images/icons/stroke-join-round.svg</file>
     </qresource>
 </RCC>

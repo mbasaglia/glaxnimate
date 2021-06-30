@@ -4,6 +4,7 @@
 
 #include <QMouseEvent>
 #include <QtMath>
+#include <QTouchEvent>
 
 #include "command/undo_macro_guard.hpp"
 #include "tools/base.hpp"
@@ -51,7 +52,7 @@ public:
     bool resize_fit = true;
     QPainterPath clip;
     QPainterPath in_clip;
-
+    qreal pinch_zoom = 1;
 
     void expand_scene_rect(float margin)
     {
@@ -547,11 +548,53 @@ bool Canvas::event(QEvent* event)
 {
     if ( event->type() == QEvent::FocusIn || event->type() == QEvent::FocusOut )
         viewport()->update();
-//     if ( event->type() != QEvent::Paint )
-        return QGraphicsView::event(event);
 
-//     paintEvent(static_cast<QPaintEvent*>(event));
-
-//     return true;
+    return QGraphicsView::event(event);
 }
 
+bool Canvas::viewportEvent(QEvent *event)
+{
+    switch ( event->type() )
+    {
+        case QEvent::TouchBegin:
+        case QEvent::TouchUpdate:
+        case QEvent::TouchEnd:
+        {
+            QTouchEvent *touch_event = static_cast<QTouchEvent *>(event);
+
+            QList<QTouchEvent::TouchPoint> touch_points = touch_event->touchPoints();
+
+            if (touch_points.count() == 2)
+            {
+                // determine scale factor
+                const QTouchEvent::TouchPoint &p0 = touch_points.first();
+                const QTouchEvent::TouchPoint &p1 = touch_points.last();
+
+                qreal initial_distance = math::length(p0.startPos() - p1.startPos());
+
+                if ( initial_distance > 0 )
+                {
+                    QPointF center = (p0.startScenePos() + p1.startScenePos()) / 2;
+                    qreal scale_by = math::length(p0.pos() - p1.pos()) / initial_distance;
+
+                    if ( touch_event->touchPointStates() & Qt::TouchPointReleased )
+                    {
+                        // if one of the fingers is released, remember the current scale
+                        // factor so that adding another finger later will continue zooming
+                        // by adding new scale factor to the existing remembered value.
+                        d->pinch_zoom *= scale_by;
+                        scale_by = 1;
+                    }
+
+                    set_zoom_anchor(d->pinch_zoom * scale_by, center);
+                }
+
+                return true;
+            }
+        }
+        default:
+            break;
+    }
+
+    return QGraphicsView::viewportEvent(event);
+}
