@@ -189,8 +189,6 @@ public:
     model::Composition* current_composition();
     model::VisualNode* current_document_node();
     void set_current_document_node(model::VisualNode* node);
-    model::ShapeElement* current_shape();
-    model::ShapeListProperty* current_shape_container();
     std::vector<model::VisualNode*> cleaned_selection();
     std::vector<model::VisualNode*> copy();
     void paste(bool as_comp);

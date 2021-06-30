@@ -39,7 +39,7 @@ public:
 
     static QIcon theme_icon(const QString& name)
     {
-        retur QIcon::fromTheme(name);
+        return QIcon::fromTheme(name);
     }
 
 protected:

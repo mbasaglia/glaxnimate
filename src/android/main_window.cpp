@@ -27,6 +27,11 @@ public:
     QPointer<model::BrushStyle> secondary_brush;
     model::Composition* comp = nullptr;
     QPointer<model::VisualNode> current_node;
+    QPointer<model::Fill> current_fill;
+    QPointer<model::Stroke> current_stroke;
+
+    QAction* action_undo = nullptr;
+    QAction* action_redo = nullptr;
 
     void setup_document_new()
     {
@@ -48,7 +53,6 @@ public:
         );
         layer->transform.get()->anchor_point.set(pos);
         layer->transform.get()->position.set(pos);
-        current_node = layer.get();
 
         current_document->main()->shapes.insert(std::move(layer), 0);
 
@@ -57,9 +61,12 @@ public:
 
     void clear_document()
     {
+        current_document.reset();
         comp = nullptr;
         scene.set_document(nullptr);
         ui.timeline_widget->set_document(nullptr);
+        action_redo->setEnabled(false);
+        action_undo->setEnabled(false);
     }
 
     void setup_document()
@@ -68,6 +75,11 @@ public:
         comp = current_document->main();
         current_document->set_record_to_keyframe(true);
 
+        // Undo Redo
+        connect(action_undo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::undo);
+        connect(&current_document->undo_stack(), &QUndoStack::canUndoChanged, action_undo, &QAction::setEnabled);
+        connect(action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
+        connect(&current_document->undo_stack(), &QUndoStack::canRedoChanged, action_redo, &QAction::setEnabled);
 
         // play controls
         auto first_frame = current_document->main()->animation->first_frame.get();
@@ -162,14 +174,75 @@ public:
                 }
             }
         }
+
+        // Views
+        QActionGroup *view_actions = new QActionGroup(parent);
+        view_actions->setExclusive(true);
+
         ui.toolbar_tools->addSeparator();
 
+        view_action(
+            GlaxnimateApp::theme_icon("player-time"), tr("Timeline"),
+            view_actions, ui.time_container, true
+        );
 
-        QAction* action_timeline = new QAction(GlaxnimateApp::theme_icon("player-time"), tr("Timeline"), parent);
-        action_timeline->setCheckable(true);
-        action_timeline->setChecked(true);
-        connect(action_timeline, &QAction::toggled, ui.time_container, &QWidget::setVisible);
-        ui.toolbar_tools->addAction(action_timeline);
+        view_action(
+            GlaxnimateApp::theme_icon("fill-color"), tr("Fill Style"),
+            view_actions, ui.fill_style_widget
+        );
+
+        view_action(
+            GlaxnimateApp::theme_icon("object-stroke-style"), tr("Stroke Style"),
+            view_actions, ui.stroke_style_widget
+        );
+
+        // Undo-redo
+        ui.toolbar_tools->addSeparator();
+
+        action_undo = new QAction(GlaxnimateApp::theme_icon("edit-undo"), tr("Undo"), parent);
+        ui.toolbar_tools->addAction(action_undo);
+        action_redo = new QAction(GlaxnimateApp::theme_icon("edit-redo"), tr("Redo"), parent);
+        ui.toolbar_tools->addAction(action_redo);
+    }
+
+    QAction* view_action(const QIcon& icon, const QString& text, QActionGroup* group,
+                         QWidget* target, bool checked = false)
+    {
+        QAction* action = new QAction(icon, text, parent);
+        action->setCheckable(true);
+        action->setChecked(checked);
+        target->setVisible(checked);
+        action->setActionGroup(group);
+        connect(action, &QAction::toggled, target, &QWidget::setVisible);
+        ui.toolbar_tools->addAction(action);
+        return action;
+    }
+
+    void adjust_size()
+    {
+        int mins;
+
+        if ( parent->width() > parent->height() )
+        {
+            ui.toolbar_tools->setAllowedAreas(Qt::LeftToolBarArea);
+            ui.toolbar_tools->setOrientation(Qt::Vertical);
+            parent->addToolBar(Qt::LeftToolBarArea, ui.toolbar_tools);
+            mins = parent->height();
+        }
+        else
+        {
+            ui.toolbar_tools->setAllowedAreas(Qt::BottomToolBarArea);
+            ui.toolbar_tools->setOrientation(Qt::Horizontal);
+            parent->addToolBar(Qt::BottomToolBarArea, ui.toolbar_tools);
+            mins = parent->width();
+        }
+
+        int button_w = qRound(mins * 0.075);
+        QSize button_size(button_w, button_w);
+        for ( QToolButton* btn : parent->findChildren<QToolButton*>() )
+            btn->setIconSize(button_size);
+        for ( QToolBar* bar : parent->findChildren<QToolBar*>() )
+            bar->setIconSize(button_size);
     }
 };
 
@@ -180,7 +253,7 @@ MainWindow::MainWindow(QWidget *parent) :
     d->parent = this;
     d->ui.setupUi(this);
 
-    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+//    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
     d->init_tools_ui();
     d->ui.canvas->set_tool_target(this);
@@ -190,18 +263,12 @@ MainWindow::MainWindow(QWidget *parent) :
     d->ui.button_expand_timeline->setChecked(false);
     d->ui.button_expand_timeline->setIcon(GlaxnimateApp::theme_icon("expand-all"));
 
-    for ( QToolButton* btn : findChildren<QToolButton*>() )
-    {
-        btn->setIconSize(QSize(40, 40));
-    }
-
     connect(
         QGuiApplication::primaryScreen(),
         &QScreen::orientationChanged,
         this,
-        &MainWindow::orientation_changed
+        [this]{d->adjust_size();}
     );
-    orientation_changed(QGuiApplication::primaryScreen()->orientation());
 
     d->setup_document_new();
 }
@@ -228,39 +295,39 @@ model::Document* MainWindow::document() const
 }
 
 
-model::Composition* MainWindow::current_composition()
+model::Composition* MainWindow::current_composition() const
 {
     return d->comp;
 }
 
-model::VisualNode* MainWindow::current_document_node()
+model::VisualNode* MainWindow::current_document_node() const
 {
     return d->current_node;
 }
 
 QColor MainWindow::current_color() const
 {
-    return {};
+    return d->ui.fill_style_widget->current_color();
 }
 
 void MainWindow::set_current_color(const QColor& c)
 {
-
+    d->ui.fill_style_widget->set_current_color(c);
 }
 
 QColor MainWindow::secondary_color() const
 {
-    return {};
+    return d->ui.stroke_style_widget->current_color();
 }
 
 void MainWindow::set_secondary_color(const QColor& c)
 {
-
+    d->ui.stroke_style_widget->set_color(c);
 }
 
 QPen MainWindow::current_pen_style() const
 {
-    return {};
+    return d->ui.stroke_style_widget->pen_style();
 }
 
 qreal MainWindow::current_zoom() const
@@ -278,6 +345,33 @@ model::BrushStyle* MainWindow::linked_brush_style(bool secondary) const
 void MainWindow::set_current_document_node(model::VisualNode* node)
 {
     d->current_node = node;
+    d->current_fill = nullptr;
+    d->current_stroke = nullptr;
+    d->main_brush = nullptr;
+    d->secondary_brush = nullptr;
+
+    if ( node )
+    {
+        d->scene.user_select({node}, graphics::DocumentScene::Replace);
+        auto grp = node->cast<model::Group>();
+        if ( !grp )
+            grp = node->docnode_parent()->cast<model::Group>();
+        if ( grp )
+        {
+            for ( const auto& sh : grp->shapes )
+            {
+                if ( auto fill = sh->cast<model::Fill>() )
+                    d->current_fill = fill;
+                else if ( auto stroke = sh->cast<model::Stroke>() )
+                    d->current_stroke = stroke;
+            }
+        }
+
+        if ( d->current_fill )
+            d->main_brush = d->current_fill->use.get();
+        if ( d->current_stroke )
+            d->secondary_brush = d->current_stroke->use.get();
+    }
 }
 
 void MainWindow::set_current_composition(model::Composition* comp)
@@ -303,40 +397,11 @@ void MainWindow::tool_triggered(bool checked)
         d->switch_tool(static_cast<QAction*>(sender())->data().value<tools::Tool*>());
 }
 
-void MainWindow::orientation_changed(Qt::ScreenOrientation orientation)
+void MainWindow::resizeEvent(QResizeEvent* e)
 {
-    if ( QGuiApplication::primaryScreen()->isLandscape(orientation) )
-    {
-        d->ui.toolbar_tools->setAllowedAreas(Qt::LeftToolBarArea);
-        d->ui.toolbar_tools->setOrientation(Qt::Horizontal);
-    }
-    else
-    {
-        d->ui.toolbar_tools->setOrientation(Qt::Vertical);
-        d->ui.toolbar_tools->setAllowedAreas(Qt::BottomToolBarArea);
-    }
+    QMainWindow::resizeEvent(e);
+    d->adjust_size();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

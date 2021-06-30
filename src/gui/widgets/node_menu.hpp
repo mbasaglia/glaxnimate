@@ -11,5 +11,3 @@ class NodeMenu : public QMenu
 public:
     NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget* parent);
 };
-
-sss wwwq    qw

@@ -85,8 +85,8 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::ShapeEleme
 
     model::ShapeElement* ptr = layer.get();
 
-    auto cont = current_shape_container();
-    int position = cont->index_of(current_shape());
+    auto cont = parent->current_shape_container();
+    int position = cont->index_of(parent->current_shape());
     current_document->push_command(new command::AddShape(cont, std::move(layer), position));
 
     ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(ptr)));
@@ -94,7 +94,7 @@ void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::ShapeEleme
 
 void GlaxnimateWindow::Private::layer_delete()
 {
-    auto current = current_shape();
+    auto current = parent->current_shape();
     if ( !current || current->locked.get() )
         return;
     current->push_command(new command::RemoveShape(current, current->owner()));
@@ -102,7 +102,7 @@ void GlaxnimateWindow::Private::layer_delete()
 
 void GlaxnimateWindow::Private::layer_duplicate()
 {
-    auto current = current_shape();
+    auto current = parent->current_shape();
     if ( !current )
         return;
 
@@ -217,7 +217,7 @@ void GlaxnimateWindow::Private::paste_document(model::Document* document, const 
     paste_assets(&model::Assets::gradients, document, current_document.get());
     paste_assets(&model::Assets::precompositions, document, current_document.get());
 
-    model::ShapeListProperty* shape_cont = current_shape_container();
+    model::ShapeListProperty* shape_cont = parent->current_shape_container();
     std::vector<model::VisualNode*> select;
 
     if ( as_comp )
@@ -275,7 +275,7 @@ void GlaxnimateWindow::Private::duplicate_selection()
 
 void GlaxnimateWindow::Private::move_current(command::ReorderCommand::SpecialPosition pos)
 {
-    auto current = current_shape();
+    auto current = parent->current_shape();
     if ( !current )
         return;
     auto cmd = std::make_unique<command::ReorderCommand>(current, pos);
@@ -299,7 +299,7 @@ void GlaxnimateWindow::Private::ungroup_shapes()
 
     if ( !group )
     {
-        auto sp = current_shape_container();
+        auto sp = parent->current_shape_container();
         if ( !sp )
             return;
         group = qobject_cast<model::Group*>(sp->object());
@@ -823,7 +823,7 @@ void GlaxnimateWindow::Private::dropped(const QMimeData* data)
 
         std::vector<model::VisualNode*> selection;
 
-        auto cont = current_shape_container();
+        auto cont = parent->current_shape_container();
         int position = cont->size();
 
         for ( auto asset : decoder )

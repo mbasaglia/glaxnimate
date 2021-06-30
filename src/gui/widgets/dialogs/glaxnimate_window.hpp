@@ -48,7 +48,11 @@ public:
 
     model::Document* document() const override;
 
+    model::VisualNode* current_document_node() const override;
     void set_current_document_node(model::VisualNode* node) override;
+
+    void set_current_composition(model::Composition* comp) override;
+    model::Composition* current_composition() const override;
 
     model::Object* current_shape_container_script();
 

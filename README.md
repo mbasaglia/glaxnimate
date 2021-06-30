@@ -129,11 +129,11 @@ For some reson Qt wants you to have an account even if you install
 the open source version so you might have to set that up;
 
 Install Qt Creator and Qt 5 Android. 
-Any Qt version above 5.12 should work, it hasn't been tested with Qt 6 
-so stick with 5 for now. 
+Qt versions in the 5.12.* line should work, some newer Qt versions have issues with the
+android build tools so it's better to stick with 5.12.
 
 Select "Custom Installation", then on the following page check
-Qt > Qt 5.15.2 (or whatever version you prefer) > Android.
+Qt > Qt 5.12.11 (or whatever version you prefer) > Android.
 You can also install additional components such as Qt for Desktop and such.
 
 Accept the licenses and proceed to install.
@@ -161,15 +161,15 @@ From Qt Creator:
 #### Building
 
 * Open `glaxnimate-android.pro` as a project in Qt Creator (Welcome > Projects > Open).
-* Enable "Android Qt Clang".
+* Enable "Android Qt Clang" corresponding to the ABI you want to build for.
+    For the emulator you should use x86, 
+    otherwise use the ABI compatible with your phone (usually arm).
+    Avoid the "Multi ABI" kits if possible as those don't work too well.
 * Click "Configure Project"
 * If multiple toolkits were enabled, ensure you have the android one active,
     you can click the icon above the run button on the bottom-left and
     select the "Android Qt" option.
-    The icon on this button should look like a phone (rather than a computer screen).
-* If using a "Multi ABI" toolkit enable the ABIs you need: 
-    Projects > Qt Android > Build > Build Steps > qmake > Details > ABIs
-    Usually x86 is what you can use on emulators
+    The icon on this button should look like a phone (rather than a computer screen).    
 * Click Run
 * "Create Virtual Device" if needed or select an existing device 
     (your physical phone would show up here if connected to the computer and USB debugging is enabled).
@@ -193,6 +193,17 @@ directory created by Qt Creator and rebuild.
 Depending on which version of the Android SDK you have, you might have to select 
 a different value in `src/android/android/AndroidManifest.xml`.
 
+
+**libc++.so not found**
+
+The Android toolkit stuff has some wrong paths, it can be fixed like this:
+
+    sudo mkdir /opt/android 
+    sudo ln -s $HOME/Android/Sdk/ndk/21.1.6352462/ /opt/android/android-ndk-r19c
+    
+Where `$HOME/Android/Sdk/ndk/21.1.6352462/` is the directory that Qt creator 
+used to install the Android NDK, and `/opt/android/android-ndk-r19c` is the 
+directory mentioned in the error message.
 
 Contacts
 ---------------------------------------

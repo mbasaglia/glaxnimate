@@ -23,5 +23,7 @@
         <file>images/icons/media-playback-start.svg</file>
         <file>images/icons/media-record.svg</file>
         <file>images/icons/media-playlist-repeat.svg</file>
+        <file>images/icons/edit-redo.svg</file>
+        <file>images/icons/edit-undo.svg</file>
     </qresource>
 </RCC>

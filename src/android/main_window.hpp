@@ -23,10 +23,10 @@ public:
     qreal current_zoom() const override;
     model::BrushStyle* linked_brush_style(bool secondary) const override;
 
-    model::Composition* current_composition() override;
+    model::Composition* current_composition() const override;
     void set_current_composition(model::Composition* comp) override;
 
-    model::VisualNode* current_document_node() override;
+    model::VisualNode* current_document_node() const override;
     void set_current_document_node(model::VisualNode* node) override;
 
     void switch_tool(tools::Tool* tool) override;
@@ -37,10 +37,10 @@ public:
 
 protected:
     void changeEvent(QEvent *e) override;
+    void resizeEvent(QResizeEvent* e) override;
 
 private slots:
     void tool_triggered(bool checked);
-    void orientation_changed(Qt::ScreenOrientation orientation);
 
 private:
     class Private;

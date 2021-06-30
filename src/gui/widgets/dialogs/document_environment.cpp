@@ -4,7 +4,7 @@
 #include "command/structure_commands.hpp"
 #include "command/undo_macro_guard.hpp"
 
-model::ShapeElement* glaxnimate::gui::DocumentEnvironment::current_shape()
+model::ShapeElement* glaxnimate::gui::DocumentEnvironment::current_shape() const
 {
     model::DocumentNode* curr = current_document_node();
     if ( curr )
@@ -15,9 +15,13 @@ model::ShapeElement* glaxnimate::gui::DocumentEnvironment::current_shape()
     return nullptr;
 }
 
-model::ShapeListProperty* glaxnimate::gui::DocumentEnvironment::current_shape_container()
+model::ShapeListProperty* glaxnimate::gui::DocumentEnvironment::current_shape_container() const
 {
     model::DocumentNode* sh = current_document_node();
+
+    if ( !sh )
+        return &current_composition()->shapes;
+
     if ( auto lay = qobject_cast<model::Composition*>(sh) )
         return &lay->shapes;
 
@@ -32,6 +36,7 @@ model::ShapeListProperty* glaxnimate::gui::DocumentEnvironment::current_shape_co
             return &lay->shapes;
         sh = sh->docnode_parent();
     }
+
     return &current_composition()->shapes;
 }
 

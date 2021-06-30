@@ -45,6 +45,7 @@ widgets/dialogs/io_status_dialog.cpp
 widgets/dialogs/io_status_dialog.ui
 widgets/dialogs/about_dialog.cpp
 widgets/dialogs/about_dialog.ui
+widgets/dialogs/document_environment.cpp
 widgets/dialogs/gw_impl_document.cpp
 widgets/dialogs/gw_impl_model.cpp
 widgets/dialogs/gw_impl_ui.cpp

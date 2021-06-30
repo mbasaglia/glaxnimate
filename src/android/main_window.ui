@@ -14,10 +14,7 @@
    <string>Glaxnimate</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_3">
-    <property name="spacing">
-     <number>0</number>
-    </property>
+   <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
      <number>0</number>
     </property>
@@ -30,10 +27,13 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
-    <item>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
      <widget class="Canvas" name="canvas"/>
     </item>
-    <item>
+    <item row="1" column="0">
      <widget class="QWidget" name="time_container" native="true">
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
@@ -91,6 +91,12 @@
       </layout>
      </widget>
     </item>
+    <item row="0" column="2" rowspan="2">
+     <widget class="FillStyleWidget" name="fill_style_widget" native="true"/>
+    </item>
+    <item row="0" column="1" rowspan="2">
+     <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
+    </item>
    </layout>
   </widget>
   <widget class="QToolBar" name="toolbar_tools">
@@ -111,6 +117,9 @@
      <width>40</width>
      <height>40</height>
     </size>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
@@ -143,6 +152,26 @@
    <extends>QWidget</extends>
    <header>widgets/timeline/compound_timeline_widget.hpp</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FillStyleWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/shape_style/fill_style_widget.hpp</header>
+   <container>1</container>
+   <slots>
+    <signal>secondary_color_changed(QColor)</signal>
+    <slot>set_secondary_color(QColor)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>StrokeStyleWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/shape_style/stroke_style_widget.hpp</header>
+   <container>1</container>
+   <slots>
+    <signal>color_changed(QColor)</signal>
+    <slot>set_color(QColor)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>

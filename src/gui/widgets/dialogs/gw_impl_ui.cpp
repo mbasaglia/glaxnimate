@@ -213,7 +213,7 @@ void GlaxnimateWindow::Private::init_actions()
         DocumentMetadataDialog(current_document.get(), this->parent).exec();
     });
     connect(ui.action_trace_bitmap, &QAction::triggered, parent, [this]{
-        trace_dialog(current_shape());
+        trace_dialog(parent->current_shape());
     });
     connect(ui.action_object_to_path, &QAction::triggered, parent, [this]{to_path();});
     connect(ui.action_lottie_preview, &QAction::triggered, parent, [this]{preview_lottie("svg");});

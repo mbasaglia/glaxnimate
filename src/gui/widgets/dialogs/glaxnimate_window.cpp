@@ -253,22 +253,11 @@ void GlaxnimateWindow::set_secondary_color(const QColor& c)
     d->ui.stroke_style_widget->set_color(c);
 }
 
-model::ShapeElement * GlaxnimateWindow::current_shape()
-{
-    return d->current_shape();
-}
-
-model::ShapeListProperty * GlaxnimateWindow::current_shape_container()
-{
-    return d->current_shape_container();
-}
-
 model::Object * GlaxnimateWindow::current_shape_container_script()
 {
-    auto prop = d->current_shape_container();
+    auto prop = current_shape_container();
     return prop ? prop->object() : nullptr;
 }
-
 
 void GlaxnimateWindow::set_current_document_node(model::VisualNode* node)
 {

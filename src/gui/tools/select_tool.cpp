@@ -379,10 +379,12 @@ private:
     void context_menu(const MouseEvent& event)
     {
 #ifndef Q_OS_ANDROID
+        auto window = static_cast<GlaxnimateWindow*>(event.window);
+
         auto targets = under_mouse(event, true, graphics::DocumentNodeGraphicsItem::None);
 
         QMenu menu;
-        auto undo_stack = &event.window->document()->undo_stack();
+        auto undo_stack = &window->document()->undo_stack();
         menu.addAction(
             GlaxnimateApp::theme_icon("edit-undo"),
             GlaxnimateWindow::tr("Undo %1").arg(undo_stack->undoText()),
@@ -396,36 +398,36 @@ private:
 
         menu.addSeparator();
         menu.addAction(GlaxnimateApp::theme_icon("edit-cut"), GlaxnimateWindow::tr("Cut"),
-                       event.window, &GlaxnimateWindow::cut);
+                       window, &GlaxnimateWindow::cut);
         menu.addAction(GlaxnimateApp::theme_icon("edit-copy"), GlaxnimateWindow::tr("Copy"),
-                       event.window, &GlaxnimateWindow::copy);
+                       window, &GlaxnimateWindow::copy);
         menu.addAction(GlaxnimateApp::theme_icon("edit-paste"), GlaxnimateWindow::tr("Paste"),
-                       event.window, &GlaxnimateWindow::paste);
+                       window, &GlaxnimateWindow::paste);
 
         menu.addSeparator();
         menu.addAction(GlaxnimateApp::theme_icon("edit-delete-remove"), GlaxnimateWindow::tr("Delete"),
-                       event.window, &GlaxnimateWindow::delete_selected);
+                       window, &GlaxnimateWindow::delete_selected);
 
 
         menu.addSeparator();
         menu.addAction(GlaxnimateApp::theme_icon("object-group"), GlaxnimateWindow::tr("Group Shapes"),
-                       event.window, &GlaxnimateWindow::group_shapes);
+                       window, &GlaxnimateWindow::group_shapes);
 
         menu.addAction(GlaxnimateApp::theme_icon("object-ungroup"), GlaxnimateWindow::tr("Ungroup Shapes"),
-                       event.window, &GlaxnimateWindow::ungroup_shapes);
+                       window, &GlaxnimateWindow::ungroup_shapes);
 
         menu.addSeparator();
         menu.addAction(GlaxnimateApp::theme_icon("selection-move-to-layer-above"), GlaxnimateWindow::tr("Move to..."),
-                       event.window, &GlaxnimateWindow::move_to);
+                       window, &GlaxnimateWindow::move_to);
 
 
         menu.addSeparator();
 
-        model::DocumentNode* preferred = event.window->current_shape();
+        model::DocumentNode* preferred = window->current_shape();
 
         for ( auto item : targets.nodes )
         {
-            auto obj_menu = new NodeMenu(item->node(), event.window, &menu);
+            auto obj_menu = new NodeMenu(item->node(), window, &menu);
             if ( item->node() == preferred )
                 preferred = nullptr;
             if ( obj_menu->actions().size() > 1 )
@@ -435,7 +437,7 @@ private:
         }
 
         if ( preferred )
-            menu.addAction((new NodeMenu(preferred, event.window, &menu))->menuAction());
+            menu.addAction((new NodeMenu(preferred, window, &menu))->menuAction());
 
         if ( targets.handle )
             add_property_menu_actions(this, &menu, targets.handle);
