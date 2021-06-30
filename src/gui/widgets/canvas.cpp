@@ -566,7 +566,6 @@ bool Canvas::viewportEvent(QEvent *event)
 
             if (touch_points.count() == 2)
             {
-                // determine scale factor
                 const QTouchEvent::TouchPoint &p0 = touch_points.first();
                 const QTouchEvent::TouchPoint &p1 = touch_points.last();
 
@@ -574,19 +573,30 @@ bool Canvas::viewportEvent(QEvent *event)
 
                 if ( initial_distance > 0 )
                 {
-                    QPointF center = (p0.startScenePos() + p1.startScenePos()) / 2;
-                    qreal scale_by = math::length(p0.pos() - p1.pos()) / initial_distance;
+                    qreal distance = math::length(p0.pos() - p1.pos());
+                    QPointF travel = (p0.pos() - p0.startPos() + p1.pos() - p1.startPos()) / 2;
+                    qreal travel_distance = math::length(travel);
 
-                    if ( touch_event->touchPointStates() & Qt::TouchPointReleased )
+                    // pinch
+                    if ( math::abs(distance - initial_distance) > travel_distance )
                     {
-                        // if one of the fingers is released, remember the current scale
-                        // factor so that adding another finger later will continue zooming
-                        // by adding new scale factor to the existing remembered value.
-                        d->pinch_zoom *= scale_by;
-                        scale_by = 1;
-                    }
+                        QPointF center = (p0.startScenePos() + p1.startScenePos()) / 2;
+                        qreal scale_by = distance / initial_distance;
 
-                    set_zoom_anchor(d->pinch_zoom * scale_by, center);
+                        if ( touch_event->touchPointStates() & Qt::TouchPointReleased )
+                        {
+                            d->pinch_zoom *= scale_by;
+                            scale_by = 1;
+                        }
+
+                        set_zoom_anchor(d->pinch_zoom * scale_by, center);
+                    }
+                    // pan
+                    else
+                    {
+                        QPointF scene_travel = (p0.scenePos() - p0.lastScenePos() + p1.scenePos() - p1.lastScenePos()) / 2;
+                        translate_view(scene_travel);
+                    }
                 }
 
                 return true;
