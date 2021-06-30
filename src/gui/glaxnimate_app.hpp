@@ -3,6 +3,8 @@
 #include <QtGlobal>
 #ifndef Q_OS_ANDROID
 
+#include <QIcon>
+
 #include "app/application.hpp"
 #include "app/log/listener_stderr.hpp"
 #include "app/log/listener_store.hpp"
@@ -34,6 +36,11 @@ public:
     app::settings::ShortcutSettings* shortcuts() const;
 
     static QString temp_path();
+
+    static QIcon theme_icon(const QString& name)
+    {
+        retur QIcon::fromTheme(name);
+    }
 
 protected:
     void on_initialize() override;

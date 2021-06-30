@@ -7,6 +7,7 @@
 #include <QKeyEvent>
 #include <QAction>
 
+#include "glaxnimate_app.hpp"
 #include "graphics/document_scene.hpp"
 #include "graphics/document_node_graphics_item.hpp"
 #include "graphics/handle.hpp"

@@ -432,5 +432,7 @@ void tools::DrawTool::initialize(const Event& event)
     connect(d->undo, &QShortcut::activated, event.scene, [scene=event.scene]{ scene->update(); });
     d->why_cant_we_have_nice_things = GlaxnimateApp::instance()->shortcuts()->action("action_undo")->action;
     d->undo->setEnabled(false);
+#else
+    Q_UNUSED(event);
 #endif
 }

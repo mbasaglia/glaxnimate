@@ -454,12 +454,12 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
         d->toggle_paste();
         d->menu_property.exec(glob);
     }
+#ifndef Q_OS_ANDROID
     else if ( auto dn = qobject_cast<model::DocumentNode*>(item.object) )
     {
-#ifndef Q_OS_ANDROID
         NodeMenu(dn, d->window, this).exec(glob);
-#endif
     }
+#endif
 }
 
 void CompoundTimelineWidget::add_keyframe()

@@ -1,5 +1,18 @@
 <RCC>
     <qresource prefix="/glaxnimate">
         <file>images/splash.svg</file>
+        <file>images/icons/color-management.svg</file>
+        <file>images/icons/color-picker.svg</file>
+        <file>images/icons/draw-bezier-curves.svg</file>
+        <file>images/icons/draw-ellipse.svg</file>
+        <file>images/icons/draw-freehand.svg</file>
+        <file>images/icons/draw-polygon-star.svg</file>
+        <file>images/icons/draw-rectangle.svg</file>
+        <file>images/icons/draw-text.svg</file>
+        <file>images/icons/edit-select.svg</file>
+        <file>images/icons/fill-color.svg</file>
+        <file>images/icons/object-stroke-style.svg</file>
+        <file>images/icons/player-time.svg</file>
+        <file>images/icons/edit-node.svg</file>
     </qresource>
 </RCC>

@@ -217,15 +217,15 @@ public:
         switch ( type )
         {
             case math::bezier::PointType::Corner:
-                icon = QIcon::fromTheme("node-type-cusp");
+                icon = GlaxnimateApp::theme_icon("node-type-cusp");
                 label = QObject::tr("Cusp");
                 break;
             case math::bezier::PointType::Smooth:
-                icon = QIcon::fromTheme("node-type-smooth");
+                icon = GlaxnimateApp::theme_icon("node-type-smooth");
                 label = QObject::tr("Smooth");
                 break;
             case math::bezier::PointType::Symmetrical:
-                icon = QIcon::fromTheme("node-type-auto-smooth");
+                icon = GlaxnimateApp::theme_icon("node-type-auto-smooth");
                 label = QObject::tr("Symmetrical");
                 break;
         }
@@ -257,18 +257,18 @@ public:
 
         if ( role == graphics::MoveHandle::Vertex )
         {
-            menu.addAction(QIcon::fromTheme("format-remove-node"), QObject::tr("Remove Node"), item, [item]{
+            menu.addAction(GlaxnimateApp::theme_icon("format-remove-node"), QObject::tr("Remove Node"), item, [item]{
                 item->parent_editor()->remove_point(item->index());
             });
 
-            menu.addAction(QIcon::fromTheme("show-node-handles"), QObject::tr("Show Tangents"), item, [item]{
+            menu.addAction(GlaxnimateApp::theme_icon("show-node-handles"), QObject::tr("Show Tangents"), item, [item]{
                 item->show_tan_in(true);
                 item->show_tan_out(true);
             });
         }
         else
         {
-            menu.addAction(QIcon::fromTheme("show-node-handles"), QObject::tr("Remove Tangent"), item, [item, handle]{
+            menu.addAction(GlaxnimateApp::theme_icon("show-node-handles"), QObject::tr("Remove Tangent"), item, [item, handle]{
                 item->remove_tangent(handle);
             });
         }
@@ -287,7 +287,7 @@ public:
         auto doc = gradient->document();
 
         QMenu* use_menu = new QMenu(tr("Gradient Colors"), &menu);
-        use_menu->setIcon(QIcon::fromTheme("color-gradient"));
+        use_menu->setIcon(GlaxnimateApp::theme_icon("color-gradient"));
 
         for ( const auto& colors : doc->assets()->gradient_colors->values )
         {
@@ -303,7 +303,7 @@ public:
 
         menu.addAction(use_menu->menuAction());
 
-        menu.addAction(QIcon::fromTheme("color-management"), tr("Stop Color..."), gradient_colors, [gradient_colors, index, dialog_parent]{
+        menu.addAction(GlaxnimateApp::theme_icon("color-management"), tr("Stop Color..."), gradient_colors, [gradient_colors, index, dialog_parent]{
             color_widgets::ColorDialog dialog(dialog_parent);
             auto colors = gradient_colors->colors.get();
             dialog.setColor(colors[index].second);
@@ -315,11 +315,11 @@ public:
         });
 
 
-        menu.addAction(QIcon::fromTheme("list-add"), tr("Add Stop"), gradient_colors, [gradient_colors, index]{
+        menu.addAction(GlaxnimateApp::theme_icon("list-add"), tr("Add Stop"), gradient_colors, [gradient_colors, index]{
             gradient_colors->split_segment(index);
         });
 
-        menu.addAction(QIcon::fromTheme("list-remove"), tr("Remove Stop"), gradient_colors, [gradient_colors, index]{
+        menu.addAction(GlaxnimateApp::theme_icon("list-remove"), tr("Remove Stop"), gradient_colors, [gradient_colors, index]{
             gradient_colors->remove_stop(index);
         });
 

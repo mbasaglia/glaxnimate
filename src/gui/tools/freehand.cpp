@@ -8,7 +8,7 @@ class FreehandTool : public DrawToolBase
 {
 public:
     QString id() const override { return "draw-freehand"; }
-    QIcon icon() const override { return QIcon::fromTheme("draw-freehand"); }
+    QIcon icon() const override { return GlaxnimateApp::theme_icon("draw-freehand"); }
     QString name() const override { return QObject::tr("Draw Freehand"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F6"), QKeySequence::PortableText); }
     static int static_group() noexcept { return Registry::Draw; }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QApplication>
+#include <QIcon>
 
 class GlaxnimateApp : public QApplication
 {
@@ -16,6 +17,11 @@ public:
 
     QString data_file(const QString& name) const
     {
-        return ":/" + name;
+        return ":" + name;
+    }
+
+    static QIcon theme_icon(const QString& name)
+    {
+        return QIcon(QString() + ":glaxnimate/images/icons/" + name + ".svg");
     }
 };

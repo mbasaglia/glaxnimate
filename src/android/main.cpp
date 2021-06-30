@@ -6,18 +6,16 @@
 
 #include "main_window.hpp"
 #include "glaxnimate_app_android.hpp"
+#include "app_info.hpp"
 
 int main(int argc, char *argv[])
 {
     GlaxnimateApp app(argc, argv);
 
-    QSplashScreen sc;
-    sc.setPixmap(QPixmap(":glaxnimate/splash.svg"));
-    sc.show();
-    app.processEvents();
+    QIcon::setFallbackSearchPaths({":glaxnimate/images/icons/"});
+    AppInfo::instance().init_qapplication();
 
     MainWindow window;
-    sc.finish(&window);
     window.show();
 
     int ret = app.exec();

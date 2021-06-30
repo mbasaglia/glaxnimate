@@ -17,7 +17,7 @@ public:
     ~EditTool();
 
     QString id() const override { return "edit"; }
-    QIcon icon() const override { return QIcon::fromTheme("edit-node"); }
+    QIcon icon() const override { return GlaxnimateApp::theme_icon("edit-node"); }
     QString name() const override { return QObject::tr("Edit"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F2"), QKeySequence::PortableText); }
     static int static_group() noexcept { return Registry::Core; }

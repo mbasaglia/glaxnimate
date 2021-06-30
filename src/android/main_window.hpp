@@ -40,6 +40,7 @@ protected:
 
 private slots:
     void tool_triggered(bool checked);
+    void orientation_changed(Qt::ScreenOrientation orientation);
 
 private:
     class Private;

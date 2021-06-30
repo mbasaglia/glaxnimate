@@ -2,6 +2,8 @@
 #include "ui_main_window.h"
 
 #include <QPointer>
+#include <QScreen>
+#include "glaxnimate_app_android.hpp"
 
 #include "model/document.hpp"
 #include "model/shapes/fill.hpp"
@@ -129,6 +131,9 @@ public:
             ui.menu_tools->addSeparator();
             ui.toolbar_tools->addSeparator();
         }
+
+        ui.menubar->setVisible(false);
+        ui.statusbar->setVisible(false);
     }
 };
 
@@ -138,10 +143,21 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     d->parent = this;
     d->ui.setupUi(this);
+
+    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+
     d->init_tools_ui();
     d->ui.canvas->set_tool_target(this);
     d->ui.canvas->setScene(&d->scene);
     d->setup_document_new();
+
+    connect(
+        QGuiApplication::primaryScreen(),
+        &QScreen::orientationChanged,
+        this,
+        &MainWindow::orientation_changed
+    );
+    orientation_changed(QGuiApplication::primaryScreen()->orientation());
 }
 
 MainWindow::~MainWindow()
@@ -241,7 +257,19 @@ void MainWindow::tool_triggered(bool checked)
         d->switch_tool(static_cast<QAction*>(sender())->data().value<tools::Tool*>());
 }
 
-
+void MainWindow::orientation_changed(Qt::ScreenOrientation orientation)
+{
+    if ( QGuiApplication::primaryScreen()->isLandscape(orientation) )
+    {
+        d->ui.toolbar_tools->setAllowedAreas(Qt::LeftToolBarArea);
+        d->ui.toolbar_tools->setOrientation(Qt::Horizontal);
+    }
+    else
+    {
+        d->ui.toolbar_tools->setOrientation(Qt::Vertical);
+        d->ui.toolbar_tools->setAllowedAreas(Qt::BottomToolBarArea);
+    }
+}
 
 
 

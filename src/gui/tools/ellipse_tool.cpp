@@ -7,7 +7,7 @@ class EllipseTool : public RectangleTool
 {
 public:
     QString id() const override { return "draw-ellipse"; }
-    QIcon icon() const override { return QIcon::fromTheme("draw-ellipse"); }
+    QIcon icon() const override { return GlaxnimateApp::theme_icon("draw-ellipse"); }
     QString name() const override { return QObject::tr("Ellipse"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F5"), QKeySequence::PortableText); }
     static int static_group() noexcept { return Registry::Shape; }

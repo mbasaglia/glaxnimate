@@ -28,13 +28,13 @@ inline void add_property_menu_actions(QObject* thus, QMenu* menu, QGraphicsItem*
         }
 
         QMenu* sub = new QMenu(prop->name(), menu);
-        sub->setIcon(QIcon::fromTheme("label"));
+        sub->setIcon(GlaxnimateApp::theme_icon("label"));
         menu->addAction(sub->menuAction());
 
         if ( prop->has_keyframe(prop->time()) )
         {
             sub->addAction(
-                QIcon::fromTheme("list-remove"),
+                GlaxnimateApp::theme_icon("list-remove"),
                 QMenu::tr("Remove Keyframe"),
                 thus,
                 [prop]{

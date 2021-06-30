@@ -10,7 +10,7 @@ class RectangleTool : public DrawToolDrag
 {
 public:
     QString id() const override { return "draw-rect"; }
-    QIcon icon() const override { return QIcon::fromTheme("draw-rectangle"); }
+    QIcon icon() const override { return GlaxnimateApp::theme_icon("draw-rectangle"); }
     QString name() const override { return QObject::tr("Rectangle"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F4"), QKeySequence::PortableText); }
     static int static_group() noexcept { return Registry::Shape; }
