@@ -9,6 +9,8 @@
 
 #include "plugin/executor.hpp"
 
+#include "document_environment.hpp"
+
 namespace plugin {
 class Plugin;
 class PluginScript;
@@ -18,10 +20,6 @@ namespace item_models {
 class DocumentNodeModel;
 } // namespace item_models
 
-namespace tools {
-class Tool;
-} // namespace tools
-
 namespace model {
 class BrushStyle;
 } // namespace model
@@ -30,7 +28,7 @@ class QItemSelection;
 
 class PluginUiDialog;
 
-class GlaxnimateWindow : public QMainWindow
+class GlaxnimateWindow : public QMainWindow, public glaxnimate::gui::DocumentEnvironment
 {
     Q_OBJECT
 
@@ -48,25 +46,18 @@ public:
 
     ~GlaxnimateWindow();
 
-    model::Document* document() const;
+    model::Document* document() const override;
 
-    model::Composition* current_composition() const;
-    void set_current_composition(model::Composition* comp);
-    model::VisualNode* current_document_node() const;
-    void set_current_document_node(model::VisualNode* node);
-    model::ShapeElement* current_shape();
-    /**
-     * @brief Returns the property to add shapes into (never null)
-     */
-    model::ShapeListProperty* current_shape_container();
+    void set_current_document_node(model::VisualNode* node) override;
+
     model::Object* current_shape_container_script();
 
-    QColor current_color() const;
-    void set_current_color(const QColor& c);
-    QColor secondary_color() const;
-    void set_secondary_color(const QColor& c);
+    QColor current_color() const override;
+    void set_current_color(const QColor& c) override;
+    QColor secondary_color() const override;
+    void set_secondary_color(const QColor& c) override;
 
-    QPen current_pen_style() const;
+    QPen current_pen_style() const override;
 
     /**
      * @brief Shows a warning popup
@@ -81,7 +72,7 @@ public:
     /**
      * \brief Selected nodes, removing nodes that are descendants of other selected nodes
      */
-    std::vector<model::VisualNode*> cleaned_selection() const;
+    std::vector<model::VisualNode*> cleaned_selection() const override;
     /**
      * \brief Update the selection
      */
@@ -94,11 +85,11 @@ public:
 
     item_models::DocumentNodeModel* model() const;
 
-    qreal current_zoom() const;
+    qreal current_zoom() const override;
 
     void document_open(const QString& filename);
 
-    void switch_tool(tools::Tool* tool);
+    void switch_tool(tools::Tool* tool) override;
 
     /**
      * \brief Shows a file dialog to open an image file
@@ -109,7 +100,7 @@ public:
     /**
      * \brief BrushStyle used for fill or strole (stroke is secondary)
      */
-    model::BrushStyle* linked_brush_style(bool secondary) const;
+    model::BrushStyle* linked_brush_style(bool secondary) const override;
 
     PluginUiDialog* create_dialog(const QString& ui_file) const;
 
@@ -132,6 +123,8 @@ public:
     std::vector<model::ShapeElement*> convert_to_path(const std::vector<model::ShapeElement*>& shapes);
 
     void show_startup_dialog();
+
+    QWidget* as_widget() override { return this; }
 
 public slots:
     void document_save();

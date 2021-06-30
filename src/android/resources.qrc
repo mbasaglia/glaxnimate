@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/glaxnimate">
+        <file>images/splash.svg</file>
+    </qresource>
+</RCC>

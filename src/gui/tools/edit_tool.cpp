@@ -327,6 +327,7 @@ public:
 
     static void context_menu(EditTool* thus, const MouseEvent& event)
     {
+#ifndef Q_OS_ANDROID
         auto handle = thus->under_mouse(event, true, SelectionMode::Shape).handle;
         if ( !handle )
             return;
@@ -337,13 +338,16 @@ public:
         if ( role == graphics::MoveHandle::Vertex || role == graphics::MoveHandle::Tangent )
             vertex_menu(menu, static_cast<graphics::PointItem*>(handle->parentItem()), role, handle);
         else if ( role == graphics::MoveHandle::GradientStop )
-            gradient_menu(menu, handle, event.window);
+            gradient_menu(menu, handle, event.window->as_widget());
 
         add_property_menu_actions(thus, &menu, handle);
 
         if ( !menu.actions().empty() )
             menu.exec(QCursor::pos());
-
+#else
+        Q_UNUSED(thus);
+        Q_UNUSED(event);
+#endif
     }
 
     void mold_bezier(const QPointF& scene_pos, bool commit)

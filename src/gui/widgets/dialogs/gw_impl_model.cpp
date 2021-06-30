@@ -31,37 +31,6 @@ model::Composition* GlaxnimateWindow::Private::current_composition()
     return comp;
 }
 
-model::ShapeElement* GlaxnimateWindow::Private::current_shape()
-{
-    model::DocumentNode* curr = current_document_node();
-    if ( curr )
-    {
-        if ( auto curr_shape = qobject_cast<model::ShapeElement*>(curr) )
-            return curr_shape;
-    }
-    return nullptr;
-}
-
-model::ShapeListProperty* GlaxnimateWindow::Private::current_shape_container()
-{
-    model::DocumentNode* sh = current_document_node();
-    if ( auto lay = qobject_cast<model::Composition*>(sh) )
-        return &lay->shapes;
-
-    if ( !qobject_cast<model::Layer*>(sh) )
-        sh = sh->docnode_parent();
-
-    while ( sh )
-    {
-        if ( auto grp = qobject_cast<model::Group*>(sh) )
-            return &grp->shapes;
-        if ( auto lay = qobject_cast<model::Composition*>(sh) )
-            return &lay->shapes;
-        sh = sh->docnode_parent();
-    }
-    return &current_composition()->shapes;
-}
-
 model::VisualNode* GlaxnimateWindow::Private::current_document_node()
 {
     if ( auto dn = document_node_model.node(comp_model.mapToSource(ui.view_document_node->currentIndex())) )

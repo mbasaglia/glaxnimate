@@ -33,10 +33,8 @@ public:
 
     qreal zoom_factor = 1;
     qreal rotation = 0;
-
     tools::Tool* tool = nullptr;
-    GlaxnimateWindow* tool_target = nullptr;
-
+    glaxnimate::gui::DocumentEnvironment* tool_target = nullptr;
 //     MouseMode mouse_mode = None;
 
     MouseViewMode mouse_view_mode = NoDrag;
@@ -87,7 +85,6 @@ public:
             anchor = vp.center();
         return view->mapToScene(anchor);
     }
-
     tools::Event event()
     {
         return {
@@ -238,7 +235,6 @@ void Canvas::mouseMoveEvent(QMouseEvent* event)
     {
         d->tool->mouse_move(d->mouse_event(event));
     }
-
 
     d->move_last = mpos;
     d->move_last_scene = scene_pos;
@@ -492,7 +488,7 @@ void Canvas::set_active_tool(tools::Tool* tool)
         setCursor(tool->cursor());
 }
 
-void Canvas::set_tool_target(GlaxnimateWindow* window)
+void Canvas::set_tool_target(glaxnimate::gui::DocumentEnvironment* window)
 {
     d->tool_target = window;
 }

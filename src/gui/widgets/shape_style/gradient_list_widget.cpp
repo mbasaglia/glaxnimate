@@ -22,7 +22,6 @@
 #include "command/property_commands.hpp"
 
 #include "item_models/gradient_list_model.hpp"
-#include "widgets/dialogs/glaxnimate_window.hpp"
 
 class GradientListWidget::Private
 {
@@ -30,7 +29,7 @@ public:
     Ui::GradientListWidget ui;
     item_models::GradientListModel model;
     model::Document* document = nullptr;
-    GlaxnimateWindow* window = nullptr;
+    glaxnimate::gui::DocumentEnvironment* window = nullptr;
     model::Fill* fill = nullptr;
     model::Stroke* stroke = nullptr;
     color_widgets::GradientDelegate delegate;
@@ -337,7 +336,7 @@ public:
 
     void from_preset()
     {
-        QDialog dialog(window);
+        QDialog dialog(window->as_widget());
         dialog.setWindowTitle(tr("Gradient Presets"));
         dialog.setWindowIcon(QIcon::fromTheme("color-gradient"));
         QVBoxLayout lay;
@@ -405,7 +404,7 @@ void GradientListWidget::set_document(model::Document* document)
         d->model.set_defs(document->assets());
 }
 
-void GradientListWidget::set_window(GlaxnimateWindow* window)
+void GradientListWidget::set_window(glaxnimate::gui::DocumentEnvironment* window)
 {
     d->window = window;
 }

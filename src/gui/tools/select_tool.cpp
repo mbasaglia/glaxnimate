@@ -4,10 +4,13 @@
 
 #include "model/shapes/path.hpp"
 #include "command/structure_commands.hpp"
+#include "command/animation_commands.hpp"
 #include "math/geom.hpp"
 
-#include "widgets/node_menu.hpp"
-#include "handle_menu.hpp"
+#ifndef Q_OS_ANDROID
+    #include "widgets/node_menu.hpp"
+    #include "handle_menu.hpp"
+#endif
 
 namespace tools {
 
@@ -375,6 +378,7 @@ private:
 
     void context_menu(const MouseEvent& event)
     {
+#ifndef Q_OS_ANDROID
         auto targets = under_mouse(event, true, graphics::DocumentNodeGraphicsItem::None);
 
         QMenu menu;
@@ -438,6 +442,9 @@ private:
 
 
         menu.exec(QCursor::pos());
+#else
+        Q_UNUSED(event);
+#endif
     }
 
     QWidget* on_create_widget() override

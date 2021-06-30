@@ -1,4 +1,8 @@
 #pragma once
+
+#include <QtGlobal>
+#ifndef Q_OS_ANDROID
+
 #include "app/application.hpp"
 #include "app/log/listener_stderr.hpp"
 #include "app/log/listener_store.hpp"
@@ -39,3 +43,7 @@ private:
     app::settings::ShortcutSettings* shortcut_settings;
 
 };
+
+#else
+#include "../android/glaxnimate_app_android.hpp"
+#endif

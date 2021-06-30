@@ -12,7 +12,7 @@
 #include "graphics/handle.hpp"
 #include "widgets/canvas.hpp"
 #include "widgets/scalable_button.hpp"
-#include "widgets/dialogs/glaxnimate_window.hpp"
+#include "widgets/dialogs/document_environment.hpp"
 
 namespace tools {
 
@@ -20,7 +20,7 @@ struct Event
 {
     Canvas* view;
     graphics::DocumentScene* scene;
-    GlaxnimateWindow* window;
+    glaxnimate::gui::DocumentEnvironment* window;
 
     void repaint() const
     {

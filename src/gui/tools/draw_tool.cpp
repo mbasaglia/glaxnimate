@@ -422,9 +422,11 @@ void tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScen
 
 void tools::DrawTool::initialize(const Event& event)
 {
+#ifndef Q_OS_ANDROID
     d->undo = new QShortcut(GlaxnimateApp::instance()->shortcuts()->get_shortcut("action_undo"), event.view, nullptr, nullptr, Qt::WidgetShortcut);
     connect(d->undo, &QShortcut::activated, this, &DrawTool::remove_last);
     connect(d->undo, &QShortcut::activated, event.scene, [scene=event.scene]{ scene->update(); });
     d->why_cant_we_have_nice_things = GlaxnimateApp::instance()->shortcuts()->action("action_undo")->action;
     d->undo->setEnabled(false);
+#endif
 }

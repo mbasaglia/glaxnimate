@@ -4,6 +4,8 @@
 #include <memory>
 #include <QWidget>
 
+#include "widgets/dialogs/document_environment.hpp"
+
 namespace model {
     class Document;
     class Fill;
@@ -11,7 +13,6 @@ namespace model {
     class BrushStyle;
     class Gradient;
 } // namespace model
-class GlaxnimateWindow;
 
 class GradientListWidget : public QWidget
 {
@@ -23,7 +24,7 @@ public:
 
     void set_document(model::Document* doc);
     void set_targets(model::Fill* fill, model::Stroke* stroke);
-    void set_window(GlaxnimateWindow* window);
+    void set_window(glaxnimate::gui::DocumentEnvironment* window);
 
 protected:
     void changeEvent ( QEvent* e ) override;

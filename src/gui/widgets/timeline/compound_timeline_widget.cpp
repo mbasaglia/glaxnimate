@@ -13,12 +13,17 @@
 
 #include "item_models/property_model_full.hpp"
 #include "item_models/comp_filter_model.hpp"
-#include "glaxnimate_app.hpp"
+
+#ifndef Q_OS_ANDROID
+    #include "glaxnimate_app.hpp"
+    #include "widgets/node_menu.hpp"
+#else
+    #include "../../../android/glaxnimate_app_android.hpp"
+#endif
 
 #include "style/property_delegate.hpp"
 #include "style/fixed_height_delegate.hpp"
 #include "widgets/dialogs/keyframe_editor_dialog.hpp"
-#include "widgets/node_menu.hpp"
 
 class CompoundTimelineWidget::Private
 {
@@ -451,7 +456,9 @@ void CompoundTimelineWidget::custom_context_menu(const QPoint& p)
     }
     else if ( auto dn = qobject_cast<model::DocumentNode*>(item.object) )
     {
+#ifndef Q_OS_ANDROID
         NodeMenu(dn, d->window, this).exec(glob);
+#endif
     }
 }
 

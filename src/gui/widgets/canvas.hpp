@@ -5,11 +5,12 @@
 
 #include <memory>
 
+#include "widgets/dialogs/document_environment.hpp"
+
 namespace tools {
 class Tool;
 } // namespace tools
 
-class GlaxnimateWindow;
 
 class Canvas : public QGraphicsView
 {
@@ -32,7 +33,7 @@ public:
     void translate(const QPointF& d);
 
     void set_active_tool(tools::Tool* tool);
-    void set_tool_target(GlaxnimateWindow* window);
+    void set_tool_target(glaxnimate::gui::DocumentEnvironment* window);
 
 public slots:
     /**
