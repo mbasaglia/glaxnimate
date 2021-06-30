@@ -105,6 +105,19 @@ Install [MSYS2](https://www.msys2.org/), select "Mingw-w64 64 bit" when asked, a
     windeployqt.exe bin/glaxnimate.exe
     cp /mingw64/bin/*.dll bin
     cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll bin
+    
+
+### Android
+
+The Android build uses a mix of CMake and QMake.
+
+You need to configure with CMake:
+
+    mkdir build
+    cd build
+    cmake ..
+    
+Then Use qmake / Qt Creator to compile for Android.
 
 
 Contacts

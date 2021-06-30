@@ -7,14 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>576</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Glaxnimate</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <property name="leftMargin">
      <number>0</number>
     </property>
@@ -30,34 +33,84 @@
     <item>
      <widget class="Canvas" name="canvas"/>
     </item>
+    <item>
+     <widget class="QWidget" name="time_container" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="FrameControlsWidget" name="play_controls" native="true"/>
+         </item>
+         <item>
+          <widget class="QToolButton" name="button_expand_timeline">
+           <property name="text">
+            <string>Expand Timeline</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QSlider" name="slider_frame">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="CompoundTimelineWidget" name="timeline_widget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu_tools">
-    <property name="title">
-     <string>Tools</string>
-    </property>
-   </widget>
-   <addaction name="menu_tools"/>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolbar_tools">
    <property name="windowTitle">
     <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftToolBarArea</set>
    </property>
    <property name="orientation">
     <enum>Qt::Vertical</enum>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>40</width>
+     <height>40</height>
+    </size>
    </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
@@ -72,8 +125,43 @@
    <class>Canvas</class>
    <extends>QGraphicsView</extends>
    <header>widgets/canvas.hpp</header>
+   <slots>
+    <slot>reset_rotation()</slot>
+    <slot>reset_zoom()</slot>
+    <slot>zoom_in()</slot>
+    <slot>zoom_out()</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>FrameControlsWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/timeline/frame_controls_widget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CompoundTimelineWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/timeline/compound_timeline_widget.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>button_expand_timeline</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>timeline_widget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>768</x>
+     <y>502</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>741</x>
+     <y>542</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

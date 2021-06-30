@@ -30,8 +30,7 @@ public:
 
     void setup_document_new()
     {
-        comp = nullptr;
-        scene.set_document(nullptr);
+        clear_document();
 
         current_document = std::make_unique<model::Document>("");
         current_document->main()->width.set(512);
@@ -53,9 +52,47 @@ public:
 
         current_document->main()->shapes.insert(std::move(layer), 0);
 
-        scene.set_document(current_document.get());
+        setup_document();
+    }
 
+    void clear_document()
+    {
+        comp = nullptr;
+        scene.set_document(nullptr);
+        ui.timeline_widget->set_document(nullptr);
+    }
+
+    void setup_document()
+    {
+        scene.set_document(current_document.get());
         comp = current_document->main();
+        current_document->set_record_to_keyframe(true);
+
+
+        // play controls
+        auto first_frame = current_document->main()->animation->first_frame.get();
+        auto last_frame = current_document->main()->animation->last_frame.get();
+        ui.play_controls->set_range(first_frame, last_frame);
+        ui.play_controls->set_record_enabled(current_document->record_to_keyframe());
+        QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
+        QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
+        QObject::connect(current_document->main(), &model::MainComposition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
+        QObject::connect(ui.play_controls, &FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
+        QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &FrameControlsWidget::set_frame);
+        QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &FrameControlsWidget::set_record_enabled);
+        QObject::connect(ui.play_controls, &FrameControlsWidget::record_toggled, current_document.get(), &model::Document::set_record_to_keyframe);
+
+        // slider
+        ui.slider_frame->setMinimum(first_frame);
+        ui.slider_frame->setMaximum(last_frame);
+        ui.slider_frame->setValue(first_frame);
+        QObject::connect(ui.slider_frame, &QSlider::valueChanged, current_document.get(), &model::Document::set_current_time);
+        QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.slider_frame, &QSlider::setValue);
+
+        // timeline
+        ui.timeline_widget->reset_view();
+        ui.timeline_widget->set_document(current_document.get());
+        ui.timeline_widget->set_composition(comp);
     }
 
     void switch_tool(tools::Tool* tool)
@@ -113,14 +150,10 @@ public:
             {
                 QAction* action = tool.second->get_action();
                 action->setParent(parent);
-                ui.menu_tools->addAction(action);
                 action->setActionGroup(tool_actions);
                 connect(action, &QAction::triggered, parent, &MainWindow::tool_triggered);
 
                 ui.toolbar_tools->addAction(action);
-
-//                QWidget* widget = tool.second->get_settings_widget();
-//                ui.tool_settings_widget->addWidget(widget);
 
                 if ( !active_tool )
                 {
@@ -128,12 +161,15 @@ public:
                     action->setChecked(true);
                 }
             }
-            ui.menu_tools->addSeparator();
-            ui.toolbar_tools->addSeparator();
         }
+        ui.toolbar_tools->addSeparator();
 
-        ui.menubar->setVisible(false);
-        ui.statusbar->setVisible(false);
+
+        QAction* action_timeline = new QAction(GlaxnimateApp::theme_icon("player-time"), tr("Timeline"), parent);
+        action_timeline->setCheckable(true);
+        action_timeline->setChecked(true);
+        connect(action_timeline, &QAction::toggled, ui.time_container, &QWidget::setVisible);
+        ui.toolbar_tools->addAction(action_timeline);
     }
 };
 
@@ -149,7 +185,15 @@ MainWindow::MainWindow(QWidget *parent) :
     d->init_tools_ui();
     d->ui.canvas->set_tool_target(this);
     d->ui.canvas->setScene(&d->scene);
-    d->setup_document_new();
+
+    d->ui.button_expand_timeline->setVisible(false); // timeline is a bit weird atm
+    d->ui.button_expand_timeline->setChecked(false);
+    d->ui.button_expand_timeline->setIcon(GlaxnimateApp::theme_icon("expand-all"));
+
+    for ( QToolButton* btn : findChildren<QToolButton*>() )
+    {
+        btn->setIconSize(QSize(40, 40));
+    }
 
     connect(
         QGuiApplication::primaryScreen(),
@@ -158,6 +202,8 @@ MainWindow::MainWindow(QWidget *parent) :
         &MainWindow::orientation_changed
     );
     orientation_changed(QGuiApplication::primaryScreen()->orientation());
+
+    d->setup_document_new();
 }
 
 MainWindow::~MainWindow()

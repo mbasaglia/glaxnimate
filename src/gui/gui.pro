@@ -75,7 +75,7 @@ widgets/clickable_tab_bar.cpp \
 widgets/enum_combo.cpp \
 widgets/view_transform_widget.cpp \
 #widgets/tools/text_tool_widget.cpp \
-widgets/tools/color_picker_widget.cpp \
+#widgets/tools/color_picker_widget.cpp \
 widgets/tools/star_tool_widget.cpp \
 widgets/tools/fill_tool_widget.cpp \
 widgets/tools/shape_tool_widget.cpp \
@@ -93,8 +93,8 @@ tools/ellipse_tool.cpp \
 tools/draw_tool.cpp \
 tools/star_tool.cpp \
 tools/edit_tool.cpp \
-tools/fill_tool.cpp \
-tools/color_picker.cpp \
+#tools/fill_tool.cpp \
+#tools/color_picker.cpp \
 tools/rectangle_tool.cpp \
 #tools/text_tool.cpp \
 tools/base.cpp \
@@ -166,7 +166,7 @@ widgets/view_transform_widget.hpp \
 widgets/spin2d.hpp \
 #widgets/window_message_widget.hpp \
 widgets/clickable_tab_bar.hpp \
-widgets/tools/color_picker_widget.hpp \
+#widgets/tools/color_picker_widget.hpp \
 widgets/tools/fill_tool_widget.hpp \
 #widgets/tools/text_tool_widget.hpp \
 widgets/tools/star_tool_widget.hpp \
@@ -231,7 +231,7 @@ widgets/timeline/compound_timeline_widget.ui \
 #widgets/font/font_preview_widget.ui \
 #widgets/script_console.ui \
 widgets/view_transform_widget.ui \
-widgets/tools/color_picker_widget.ui \
+#widgets/tools/color_picker_widget.ui \
 widgets/tools/fill_tool_widget.ui \
 widgets/tools/shape_tool_widget.ui \
 #widgets/window_message_widget.ui

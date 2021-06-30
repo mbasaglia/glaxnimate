@@ -14,5 +14,14 @@
         <file>images/icons/object-stroke-style.svg</file>
         <file>images/icons/player-time.svg</file>
         <file>images/icons/edit-node.svg</file>
+        <file>images/icons/expand-all.svg</file>
+        <file>images/icons/go-first.svg</file>
+        <file>images/icons/go-last.svg</file>
+        <file>images/icons/go-next.svg</file>
+        <file>images/icons/go-previous.svg</file>
+        <file>images/icons/media-playback-pause.svg</file>
+        <file>images/icons/media-playback-start.svg</file>
+        <file>images/icons/media-record.svg</file>
+        <file>images/icons/media-playlist-repeat.svg</file>
     </qresource>
 </RCC>

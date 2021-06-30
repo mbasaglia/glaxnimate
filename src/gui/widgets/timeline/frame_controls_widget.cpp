@@ -1,11 +1,25 @@
 #include "frame_controls_widget.hpp"
 #include "ui_frame_controls_widget.h"
+
 #include <cmath>
+
+#include "glaxnimate_app.hpp"
 
 FrameControlsWidget::FrameControlsWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Ui::FrameControlsWidget>())
 {
     d->setupUi(this);
+
+#ifdef Q_OS_ANDROID
+    d->button_first->setIcon(GlaxnimateApp::theme_icon("go-first"));
+    d->button_last->setIcon(GlaxnimateApp::theme_icon("go-last"));
+    d->button_next->setIcon(GlaxnimateApp::theme_icon("go-next"));
+    d->button_prev->setIcon(GlaxnimateApp::theme_icon("go-previous"));
+    d->button_play->setIcon(GlaxnimateApp::theme_icon("media-playback-start"));
+    d->button_record->setIcon(GlaxnimateApp::theme_icon("media-record"));
+    d->button_loop->setIcon(GlaxnimateApp::theme_icon("media-playlist-repeat"));
+#endif
+
     d->button_next_kf->setVisible(false);
     d->button_prev_kf->setVisible(false);
     connect(d->button_record, &QAbstractButton::clicked, this, &FrameControlsWidget::record_toggled);
@@ -80,7 +94,7 @@ void FrameControlsWidget::play()
         timer = startTimer(playback_tick, Qt::PreciseTimer);
         playback_start = std::chrono::high_resolution_clock::now();
         d->button_play->setChecked(true);
-        d->button_play->setIcon(QIcon::fromTheme("media-playback-pause"));
+        d->button_play->setIcon(GlaxnimateApp::theme_icon("media-playback-pause"));
         emit play_started();
     }
 }
@@ -92,7 +106,7 @@ void FrameControlsWidget::pause()
         killTimer(timer);
         timer = 0;
         d->button_play->setChecked(false);
-        d->button_play->setIcon(QIcon::fromTheme("media-playback-start"));
+        d->button_play->setIcon(GlaxnimateApp::theme_icon("media-playback-start"));
         emit play_stopped();
     }
 }

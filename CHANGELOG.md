@@ -17,6 +17,8 @@
 * Scripting:
     * Python can now convert objects to path
     * More intuitive construction of C++ classes from python
+* Mobile:
+    * Adroid version of Glaxnimate
 * Bug Fixes:
     * Dragging keyframes properly preserves keyframe transitions
     * Fixed mask export for lottie

@@ -8,6 +8,7 @@
 namespace Ui {
 class FrameControlsWidget;
 }
+
 class FrameControlsWidget : public QWidget
 {
     Q_OBJECT
