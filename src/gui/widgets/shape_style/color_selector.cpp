@@ -55,6 +55,13 @@ public:
             connect(spin, &QSpinBox::editingFinished, parent, &ColorSelector::commit_current_color);
         for ( auto wheel : parent->findChildren<color_widgets::ColorWheel*>() )
             connect(wheel, &color_widgets::ColorWheel::editingFinished, parent, &ColorSelector::commit_current_color);
+
+#ifdef Q_OS_ANDROD
+        ui.color_hsv->setMaximumHeight(4000);
+        ui.color_hsv->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        ui.color_hsl->setMaximumHeight(4000);
+        ui.color_hsl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+#endif
     }
 
     void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,

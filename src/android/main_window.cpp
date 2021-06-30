@@ -3,6 +3,7 @@
 
 #include <QPointer>
 #include <QScreen>
+#include <QMenu>
 #include "glaxnimate_app_android.hpp"
 
 #include "model/document.hpp"
@@ -32,6 +33,7 @@ public:
 
     QAction* action_undo = nullptr;
     QAction* action_redo = nullptr;
+    QAction* action_toolbar = nullptr;
 
     void setup_document_new()
     {
@@ -175,27 +177,6 @@ public:
             }
         }
 
-        // Views
-        QActionGroup *view_actions = new QActionGroup(parent);
-        view_actions->setExclusive(true);
-
-        ui.toolbar_tools->addSeparator();
-
-        view_action(
-            GlaxnimateApp::theme_icon("player-time"), tr("Timeline"),
-            view_actions, ui.time_container, true
-        );
-
-        view_action(
-            GlaxnimateApp::theme_icon("fill-color"), tr("Fill Style"),
-            view_actions, ui.fill_style_widget
-        );
-
-        view_action(
-            GlaxnimateApp::theme_icon("object-stroke-style"), tr("Stroke Style"),
-            view_actions, ui.stroke_style_widget
-        );
-
         // Undo-redo
         ui.toolbar_tools->addSeparator();
 
@@ -203,10 +184,44 @@ public:
         ui.toolbar_tools->addAction(action_undo);
         action_redo = new QAction(GlaxnimateApp::theme_icon("edit-redo"), tr("Redo"), parent);
         ui.toolbar_tools->addAction(action_redo);
+
+        // Document actions
+        document_action(GlaxnimateApp::theme_icon("document-new"), tr("New"), &Private::document_new);
+        document_action(GlaxnimateApp::theme_icon("document-open"), tr("Open"), &Private::document_open);
+        document_action(GlaxnimateApp::theme_icon("document-save"), tr("Save"), &Private::document_save);
+        document_action(GlaxnimateApp::theme_icon("document-export"), tr("Export"), &Private::document_export);
+        document_action(GlaxnimateApp::theme_icon("document-send"), tr("Send to Telegram"), &Private::document_export_telegram);
+
+        // Views
+        ui.toolbar_tools->addSeparator();
+        ui.toolbar_actions->addSeparator();
+
+        QActionGroup *view_actions = new QActionGroup(parent);
+        view_actions->setExclusive(true);
+
+        action_toolbar = view_action(
+            GlaxnimateApp::theme_icon("overflow-menu"), tr("Views"),
+            nullptr, ui.toolbar_actions, ui.toolbar_tools
+        );
+
+        view_action(
+            GlaxnimateApp::theme_icon("player-time"), tr("Timeline"),
+            view_actions, ui.time_container, ui.toolbar_actions, true
+        );
+
+        view_action(
+            GlaxnimateApp::theme_icon("fill-color"), tr("Fill Style"),
+            view_actions, ui.fill_style_widget, ui.toolbar_actions
+        );
+
+        view_action(
+            GlaxnimateApp::theme_icon("object-stroke-style"), tr("Stroke Style"),
+            view_actions, ui.stroke_style_widget, ui.toolbar_actions
+        );
     }
 
     QAction* view_action(const QIcon& icon, const QString& text, QActionGroup* group,
-                         QWidget* target, bool checked = false)
+                         QWidget* target, QWidget* add_to, bool checked = false)
     {
         QAction* action = new QAction(icon, text, parent);
         action->setCheckable(true);
@@ -214,35 +229,76 @@ public:
         target->setVisible(checked);
         action->setActionGroup(group);
         connect(action, &QAction::toggled, target, &QWidget::setVisible);
-        ui.toolbar_tools->addAction(action);
+        add_to->addAction(action);
         return action;
+    }
+
+    void document_new()
+    {
+    }
+
+    void document_open()
+    {
+    }
+
+    void document_save()
+    {
+    }
+
+    void document_export()
+    {
+    }
+
+    void document_export_telegram()
+    {
+    }
+
+    void document_action(const QIcon& icon, const QString& text, void (Private::* func)())
+    {
+        QAction* action = new QAction(icon, text, parent);
+        ui.toolbar_actions->addAction(action);
+        connect(action, &QAction::triggered, parent, [this, func]{
+            (this->*func)();
+        });
     }
 
     void adjust_size()
     {
         int mins;
 
+        Qt::ToolBarArea toolbar_area;
+        Qt::Orientation toolbar_orientation;
+
         if ( parent->width() > parent->height() )
         {
-            ui.toolbar_tools->setAllowedAreas(Qt::LeftToolBarArea);
-            ui.toolbar_tools->setOrientation(Qt::Vertical);
-            parent->addToolBar(Qt::LeftToolBarArea, ui.toolbar_tools);
+            toolbar_area = Qt::LeftToolBarArea;
+            toolbar_orientation = Qt::Vertical;
             mins = parent->height();
         }
         else
         {
-            ui.toolbar_tools->setAllowedAreas(Qt::BottomToolBarArea);
-            ui.toolbar_tools->setOrientation(Qt::Horizontal);
-            parent->addToolBar(Qt::BottomToolBarArea, ui.toolbar_tools);
+            toolbar_area = Qt::BottomToolBarArea;
+            toolbar_orientation = Qt::Horizontal;
             mins = parent->width();
         }
 
-        int button_w = qRound(mins * 0.075);
+
+        parent->addToolBar(toolbar_area, ui.toolbar_tools);
+        parent->addToolBarBreak(toolbar_area);
+        parent->addToolBar(toolbar_area, ui.toolbar_actions);
+        ui.toolbar_actions->setVisible(action_toolbar->isChecked());
+
+        int button_w = qRound(mins * 0.08);
         QSize button_size(button_w, button_w);
+
         for ( QToolButton* btn : parent->findChildren<QToolButton*>() )
             btn->setIconSize(button_size);
+
         for ( QToolBar* bar : parent->findChildren<QToolBar*>() )
+        {
             bar->setIconSize(button_size);
+            bar->setOrientation(toolbar_orientation);
+        }
     }
 };
 

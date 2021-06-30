@@ -25,5 +25,12 @@
         <file>images/icons/media-playlist-repeat.svg</file>
         <file>images/icons/edit-redo.svg</file>
         <file>images/icons/edit-undo.svg</file>
+        <file>images/icons/overflow-menu.svg</file>
+        <file>images/icons/document-new.svg</file>
+        <file>images/icons/document-open.svg</file>
+        <file>images/icons/document-save-as.svg</file>
+        <file>images/icons/document-save.svg</file>
+        <file>images/icons/document-send.svg</file>
+        <file>images/icons/document-export.svg</file>
     </qresource>
 </RCC>
