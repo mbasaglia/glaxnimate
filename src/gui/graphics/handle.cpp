@@ -48,6 +48,10 @@ graphics::MoveHandle::MoveHandle(
     d(std::make_unique<Private>(Private{direction, shape, radius,
         dont_move, color_rest, color_highlighted, color_selected, color_border}))
 {
+#ifdef Q_OS_ANDROID
+    d->radius *= 3;
+#endif
+
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);

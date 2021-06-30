@@ -74,7 +74,12 @@ public:
     }
     qreal rot_top() const
     {
-        return -32 / transform->scale.get().y();
+#ifndef Q_OS_ANDROID
+        constexpr int delta = 32;
+#else
+        constexpr int delta = 32 * 3;
+#endif
+        return -delta / transform->scale.get().y();
     }
 
     void set_pos(const Handle& h) const

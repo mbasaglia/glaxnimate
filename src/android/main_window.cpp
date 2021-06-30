@@ -178,7 +178,6 @@ public:
         }
 
         // Undo-redo
-        ui.toolbar_tools->addSeparator();
 
         action_undo = new QAction(GlaxnimateApp::theme_icon("edit-undo"), tr("Undo"), parent);
         ui.toolbar_tools->addAction(action_undo);
@@ -193,7 +192,6 @@ public:
         document_action(GlaxnimateApp::theme_icon("document-send"), tr("Send to Telegram"), &Private::document_export_telegram);
 
         // Views
-        ui.toolbar_tools->addSeparator();
         ui.toolbar_actions->addSeparator();
 
         QActionGroup *view_actions = new QActionGroup(parent);
@@ -318,6 +316,10 @@ MainWindow::MainWindow(QWidget *parent) :
     d->ui.button_expand_timeline->setVisible(false); // timeline is a bit weird atm
     d->ui.button_expand_timeline->setChecked(false);
     d->ui.button_expand_timeline->setIcon(GlaxnimateApp::theme_icon("expand-all"));
+
+    d->ui.fill_style_widget->set_current_color(QColor("#3250b0"));
+    d->ui.stroke_style_widget->set_color(QColor("#1d2848"));
+    d->ui.stroke_style_widget->set_stroke_width(6);
 
     connect(
         QGuiApplication::primaryScreen(),

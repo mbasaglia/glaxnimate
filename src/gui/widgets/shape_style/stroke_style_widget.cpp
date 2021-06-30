@@ -320,3 +320,8 @@ void StrokeStyleWidget::set_gradient_stop(model::Styler* styler, int index)
     if ( auto stroke = styler->cast<model::Stroke>() )
         set_shape(stroke, index);
 }
+
+void StrokeStyleWidget::set_stroke_width(qreal w)
+{
+    d->ui.spin_stroke_width->setValue(w);
+}
