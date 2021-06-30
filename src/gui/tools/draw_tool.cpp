@@ -173,8 +173,10 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
 
 void tools::DrawTool::Private::clear(bool hard)
 {
+#ifndef Q_OS_ANDROID
     undo->setEnabled(false);
     why_cant_we_have_nice_things->setEnabled(true);
+#endif
     dragging = false;
     bezier.clear();
     point_type = math::bezier::Symmetrical;
@@ -203,8 +205,10 @@ bool tools::DrawTool::Private::within_join_distance(const tools::MouseEvent& eve
 
 void tools::DrawTool::Private::prepare_draw(const tools::MouseEvent& event)
 {
+#ifndef Q_OS_ANDROID
     undo->setEnabled(true);
     why_cant_we_have_nice_things->setEnabled(false);
+#endif
 
     for ( const auto& point : extension_points )
     {

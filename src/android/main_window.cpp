@@ -49,15 +49,6 @@ public:
         layer->transform.get()->position.set(pos);
         current_node = layer.get();
 
-        auto circle = std::make_unique<model::Ellipse>(current_document.get());
-        circle->size.set(QSizeF(200, 200));
-        circle->position.set(QPointF(512, 512));
-        layer->shapes.insert(std::move(circle));
-
-        auto fill = std::make_unique<model::Fill>(current_document.get());
-        fill->color.set(Qt::red);
-        layer->shapes.insert(std::move(fill), 0);
-
         current_document->main()->shapes.insert(std::move(layer), 0);
 
         scene.set_document(current_document.get());
