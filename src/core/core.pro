@@ -1,9 +1,24 @@
+
+OBJECTS_DIR = out/obj
+MOC_DIR = out/generated
+UI_DIR = out/generated
+RCC_DIR = out/generated
+
+android {
+    OBJECTS_DIR = $$ANDROID_TARGET_ARCH/out/obj
+    MOC_DIR = $$ANDROID_TARGET_ARCH/out/generated
+    UI_DIR = $$ANDROID_TARGET_ARCH/out/generated
+    RCC_DIR = $$ANDROID_TARGET_ARCH/out/generated
+}
+
+
 QT += widgets xml uitools concurrent
 # requires(qtConfig(listview))
 
 CONFIG += c++17
 
 INCLUDEPATH += $$PWD/src $$PWD/../../build/bin/core $$PWD/../../external/QtAppSetup/src $$PWD/../../external/Qt-Color-Widgets/include
+
 
 LIBS += -lz -L../../external/QtAppSetup -lQtAppSetup -L../../external/Qt-Color-Widgets -lQtColorWidgets
 

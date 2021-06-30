@@ -1,5 +1,17 @@
 #include "app_info.hpp"
-#include "application_info_generated.hpp"
+
+#include <QtGlobal>
+#ifndef Q_OS_ANDROID
+    #include "application_info_generated.hpp"
+#else
+/// @todo remove once we fix the build system for android
+#define PROJECT_SLUG "glaxnimate"
+#define PROJECT_VERSION "0.4+android"
+#define URL_DOCS ""
+#define URL_ISSUES ""
+#define PROJECT_DESCRIPTION ""
+#define URL_DONATE ""
+#endif
 
 #include <QGuiApplication>
 
