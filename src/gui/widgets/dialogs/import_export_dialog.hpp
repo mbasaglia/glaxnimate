@@ -1,8 +1,10 @@
 #pragma once
 
 #include <QFileDialog>
+#include <QDesktopWidget>
 #include <QDialogButtonBox>
 #include <QMessageBox>
+#include <QApplication>
 
 #include "io/io_registry.hpp"
 #include "model/document.hpp"
@@ -94,6 +96,13 @@ private:
     {
         io_options_.format = nullptr;
 
+#ifdef Q_OS_ANDROID
+        dialog.setWindowFlags(Qt::Window);
+        dialog.setOption(QFileDialog::DontUseNativeDialog, false);
+        dialog.setFixedSize(dialog.parentWidget()->size());
+        dialog.setWindowState(dialog.windowState() | Qt::WindowFullScreen);
+#endif
+
         if ( dialog.exec() == QDialog::Rejected )
             return false;
 
@@ -135,19 +144,20 @@ private:
             filters << reg->name_filter();
         }
 
+        dialog.setNameFilters(filters);
+
         if ( add_all )
         {
             all.resize(all.size() - 1);
             QString all_filter = QObject::tr("All files (%1)").arg(all);
             filters << all_filter;
+            dialog.setNameFilters(filters);
             dialog.selectNameFilter(all_filter);
         }
         else if ( selected )
         {
             dialog.selectNameFilter(selected->name_filter());
         }
-
-        dialog.setNameFilters(filters);
 
     }
 

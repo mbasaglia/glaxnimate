@@ -6,7 +6,8 @@
     * Improved shape to path conversion
     * Can convert shapes to path from the context menu
     * You can now drag multiple keyframes on the timeline
-    * Text can now follow a path
+    * Text can now follow a path    
+    * Touch gestures for the canvas (pinch and pan)
 * UI:
     * Made the "Tool Options" view more compact
     * Template system for new files

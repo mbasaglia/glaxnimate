@@ -270,9 +270,14 @@ bool GlaxnimateWindow::Private::close_document()
             int result = warning.exec();
 
             if ( result == QMessageBox::Save )
-                save_document(false, false);
+            {
+                if ( !save_document(false, false) )
+                    return false;
+            }
             else if ( result == QMessageBox::Cancel )
+            {
                 return false;
+            }
 
             // Prevent signals on the destructor
             current_document->undo_stack().clear();
@@ -310,7 +315,7 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
 
     if ( force_dialog )
     {
-        ImportExportDialog dialog(current_document->io_options(), ui.centralwidget->parentWidget());
+        ImportExportDialog dialog(opts, parent);
 
         if ( !dialog.export_dialog() )
             return false;

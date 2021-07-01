@@ -205,6 +205,10 @@ Where `$HOME/Android/Sdk/ndk/21.1.6352462/` is the directory that Qt creator
 used to install the Android NDK, and `/opt/android/android-ndk-r19c` is the 
 directory mentioned in the error message.
 
+**Cannot set up Android, not building an APK**
+
+Sometimes it does that, building again will fix it.
+
 Contacts
 ---------------------------------------
 

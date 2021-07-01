@@ -1,19 +1,22 @@
 #include "main_window.hpp"
 #include "ui_main_window.h"
 
+#include <QMessageBox>
 #include <QPointer>
 #include <QScreen>
 #include <QMenu>
-#include "glaxnimate_app_android.hpp"
 
 #include "model/document.hpp"
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
 
+#include "io/glaxnimate/glaxnimate_format.hpp"
+
 #include "graphics/document_scene.hpp"
 
-#include "model/shapes/ellipse.hpp"
+#include "widgets/dialogs/import_export_dialog.hpp"
 #include "tools/base.hpp"
+#include "glaxnimate_app_android.hpp"
 
 class MainWindow::Private
 {
@@ -31,6 +34,9 @@ public:
     QPointer<model::Fill> current_fill;
     QPointer<model::Stroke> current_stroke;
 
+    io::Options export_options;
+    bool current_document_has_file = false;
+
     QAction* action_undo = nullptr;
     QAction* action_redo = nullptr;
     QAction* action_toolbar = nullptr;
@@ -45,6 +51,9 @@ public:
         current_document->main()->animation->last_frame.set(180);
         current_document->main()->fps.set(60);
 
+        auto opts = current_document->io_options();
+        opts.format = io::glaxnimate::GlaxnimateFormat::instance();
+        current_document->set_io_options(opts);
 
         auto layer = std::make_unique<model::Layer>(current_document.get());
         layer->animation->last_frame.set(180);
@@ -63,12 +72,13 @@ public:
 
     void clear_document()
     {
-        current_document.reset();
         comp = nullptr;
         scene.set_document(nullptr);
         ui.timeline_widget->set_document(nullptr);
         action_redo->setEnabled(false);
         action_undo->setEnabled(false);
+        current_document.reset();
+        current_document_has_file = false;
     }
 
     void setup_document()
@@ -231,24 +241,128 @@ public:
         return action;
     }
 
+    bool save_document(bool force_dialog, bool export_opts)
+    {
+        io::Options opts = export_opts ? export_options : current_document->io_options();
+
+        if ( !opts.format || !opts.format->can_save() || !current_document_has_file || opts.filename.isEmpty() )
+            force_dialog = true;
+
+        if ( force_dialog )
+        {
+            ImportExportDialog dialog(opts, parent);
+
+            if ( !dialog.export_dialog() )
+                return false;
+
+            opts = dialog.io_options();
+        }
+
+        QFile file(opts.filename);
+        if ( !opts.format->save(file, opts.filename, current_document.get(), opts.settings) )
+            return false;
+
+        if ( export_opts )
+        {
+            export_options = opts;
+        }
+        else
+        {
+            current_document->set_io_options(opts);
+            current_document->undo_stack().setClean();
+            current_document_has_file = true;
+        }
+
+        return true;
+    }
+
+    bool close_document()
+    {
+        if ( current_document )
+        {
+            if ( !current_document->undo_stack().isClean() )
+            {
+                QMessageBox warning(parent);
+                warning.setWindowTitle(QObject::tr("Closing Animation"));
+                warning.setText(QObject::tr("The animation has unsaved changes.\nDo you want to save your changes?"));
+                warning.setInformativeText(current_document->filename());
+                warning.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+                warning.setDefaultButton(QMessageBox::Save);
+                warning.setIcon(QMessageBox::Warning);
+                int result = warning.exec();
+
+                if ( result == QMessageBox::Save )
+                {
+                    if ( !save_document(false, false) )
+                        return false;
+                }
+                else if ( result == QMessageBox::Cancel )
+                {
+                    return false;
+                }
+
+                // Prevent signals on the destructor
+                current_document->undo_stack().clear();
+            }
+        }
+
+        if ( active_tool )
+            active_tool->close_document_event({ui.canvas, &scene, parent});
+
+        clear_document();
+
+        return true;
+    }
+
     void document_new()
     {
+        if ( close_document() )
+            setup_document_new();
     }
 
     void document_open()
     {
+        io::Options options = current_document->io_options();
+
+        if ( close_document() )
+        {
+            ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
+            if ( dialog.import_dialog() )
+                setup_document_open(dialog.io_options());
+        }
+    }
+
+    bool setup_document_open(const io::Options& options)
+    {
+        current_document_has_file = true;
+
+        current_document = std::make_unique<model::Document>(options.filename);
+
+        QFile file(options.filename);
+        bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
+
+        current_document->set_io_options(options);
+        export_options = options;
+        export_options.filename = "";
+
+        setup_document();
+
+        return ok;
     }
 
     void document_save()
     {
+        save_document(false, false);
     }
 
     void document_export()
     {
+        save_document(false, true);
     }
 
     void document_export_telegram()
     {
+        save_document(false, false);
     }
 
     void document_action(const QIcon& icon, const QString& text, void (Private::* func)())
