@@ -91,7 +91,9 @@ public:
         QString title = QObject::tr("%1 Options").arg(io_options_.format->name());
         return widget_builder.show_dialog(settings, io_options_.settings, title, parent);
     }
+
 private:
+
     bool show_file_dialog(QFileDialog& dialog, const std::vector<io::ImportExport*>& formats)
     {
         io_options_.format = nullptr;

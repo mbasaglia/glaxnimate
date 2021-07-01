@@ -5,18 +5,22 @@
 #include <QPointer>
 #include <QScreen>
 #include <QMenu>
+#include <QStandardPaths>
+#include <QtAndroid>
 
 #include "model/document.hpp"
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
 
 #include "io/glaxnimate/glaxnimate_format.hpp"
+#include "io/lottie/tgs_format.hpp"
 
 #include "graphics/document_scene.hpp"
 
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "tools/base.hpp"
 #include "glaxnimate_app_android.hpp"
+#include "telegram_intent.hpp"
 
 class MainWindow::Private
 {
@@ -53,6 +57,7 @@ public:
 
         auto opts = current_document->io_options();
         opts.format = io::glaxnimate::GlaxnimateFormat::instance();
+        opts.path = default_save_path();
         current_document->set_io_options(opts);
 
         auto layer = std::make_unique<model::Layer>(current_document.get());
@@ -250,6 +255,7 @@ public:
 
         if ( force_dialog )
         {
+            ask_perms();
             ImportExportDialog dialog(opts, parent);
 
             if ( !dialog.export_dialog() )
@@ -278,32 +284,29 @@ public:
 
     bool close_document()
     {
-        if ( current_document )
+        if ( current_document && !current_document->undo_stack().isClean() )
         {
-            if ( !current_document->undo_stack().isClean() )
+            QMessageBox warning(parent);
+            warning.setWindowTitle(QObject::tr("Closing Animation"));
+            warning.setText(QObject::tr("The animation has unsaved changes.\nDo you want to save your changes?"));
+            warning.setInformativeText(current_document->filename());
+            warning.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+            warning.setDefaultButton(QMessageBox::Save);
+            warning.setIcon(QMessageBox::Warning);
+            int result = warning.exec();
+
+            if ( result == QMessageBox::Save )
             {
-                QMessageBox warning(parent);
-                warning.setWindowTitle(QObject::tr("Closing Animation"));
-                warning.setText(QObject::tr("The animation has unsaved changes.\nDo you want to save your changes?"));
-                warning.setInformativeText(current_document->filename());
-                warning.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-                warning.setDefaultButton(QMessageBox::Save);
-                warning.setIcon(QMessageBox::Warning);
-                int result = warning.exec();
-
-                if ( result == QMessageBox::Save )
-                {
-                    if ( !save_document(false, false) )
-                        return false;
-                }
-                else if ( result == QMessageBox::Cancel )
-                {
+                if ( !save_document(false, false) )
                     return false;
-                }
-
-                // Prevent signals on the destructor
-                current_document->undo_stack().clear();
             }
+            else if ( result == QMessageBox::Cancel )
+            {
+                return false;
+            }
+
+            // Prevent signals on the destructor
+            current_document->undo_stack().clear();
         }
 
         if ( active_tool )
@@ -326,6 +329,7 @@ public:
 
         if ( close_document() )
         {
+            ask_perms();
             ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
             if ( dialog.import_dialog() )
                 setup_document_open(dialog.io_options());
@@ -362,9 +366,60 @@ public:
         save_document(false, true);
     }
 
+
+    bool ask_perms()
+    {
+        const std::vector<QString> permissions{
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.READ_EXTERNAL_STORAGE"
+        };
+
+        for ( const QString &permission : permissions )
+        {
+            auto result = QtAndroid::checkPermission(permission);
+            if ( result == QtAndroid::PermissionResult::Denied )
+            {
+                auto resultHash = QtAndroid::requestPermissionsSync(QStringList({permission}));
+                if ( resultHash[permission] == QtAndroid::PermissionResult::Denied )
+                    return false;
+            }
+        }
+
+        return true;
+
+    }
+
+    QDir default_save_path()
+    {
+        if ( ask_perms() )
+            return QDir("/storage/emulated/0/Movies");
+
+        return QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
+    }
+
     void document_export_telegram()
     {
-        save_document(false, false);
+        if ( !current_document->undo_stack().isClean() )
+            save_document(false, false);
+
+        QStringList filenames;
+        QStringList emoji;
+
+        QString parent_path = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
+        if ( ask_perms() )
+            parent_path = "/storage/emulated/0/Movies";
+
+        QString filename = default_save_path().filePath("test123.tgs");
+        QFile file(filename);
+        if ( !io::lottie::TgsFormat().save(file, filename, current_document.get(), {}) )
+            QMessageBox::warning(parent, tr("Export Stickers"), tr("Cannot save as TGS"));
+        filenames << filename;
+        emoji << "😀";
+
+        auto result = TelegramIntent().send_stickers(filenames, emoji);
+        if ( !result )
+            QMessageBox::warning(parent, tr("Export Stickers"), result.message());
+
     }
 
     void document_action(const QIcon& icon, const QString& text, void (Private::* func)())
@@ -396,7 +451,6 @@ public:
             mins = parent->width();
         }
 
-
         parent->addToolBar(toolbar_area, ui.toolbar_tools);
         parent->addToolBarBreak(toolbar_area);
         parent->addToolBar(toolbar_area, ui.toolbar_actions);
@@ -424,8 +478,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     d->parent = this;
     d->ui.setupUi(this);
-
-//    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
     d->init_tools_ui();
     d->ui.canvas->set_tool_target(this);
