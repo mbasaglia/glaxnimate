@@ -45,14 +45,22 @@ public:
         : receiver(parent)
     {}
 
+//    static jstring string(const QString& str)
+//    {
+//        return QAndroidJniObject::fromString(str).object<jstring>();
+//    }
+
     bool select_open()
     {
-        QAndroidJniObject ACTION_GET_CONTENT = QAndroidJniObject::fromString("android.intent.action.GET_CONTENT");
+        QAndroidJniObject ACTION_OPEN_DOCUMENT = QAndroidJniObject::fromString("android.intent.action.OPEN_DOCUMENT");
         QAndroidJniObject intent("android/content/Intent");
-        if ( !ACTION_GET_CONTENT.isValid() || !intent.isValid())
+        if ( !ACTION_OPEN_DOCUMENT.isValid() || !intent.isValid())
             return false;
 
-        intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;", ACTION_GET_CONTENT.object<jstring>());
+        QAndroidJniObject CATEGORY_OPENABLE = QAndroidJniObject::getStaticObjectField("android/content/Intent", "CATEGORY_OPENABLE", "Ljava/lang/String;");
+        intent.callObjectMethod("addCategory", "(Ljava/lang/String;)Landroid/content/Intent;", CATEGORY_OPENABLE.object<jstring>());
+
+        intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;", ACTION_OPEN_DOCUMENT.object<jstring>());
         intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", QAndroidJniObject::fromString("*/*").object<jstring>());
         QtAndroid::startActivity(intent.object<jobject>(), ResultReceiver::RequestOpen, &receiver);
 
