@@ -33,6 +33,7 @@ LIBS += -L../../external/Qt-Color-Widgets -L../core -L../gui -L../../external/Qt
 }
 
 SOURCES = \
+    android_file_picker.cpp \
     emoji_widget.cpp \
     main.cpp \
     main_window.cpp \
@@ -44,6 +45,7 @@ FORMS += \
     main_window.ui
 
 HEADERS += \
+    android_file_picker.hpp \
     android_style.hpp \
     emoji_data.hpp \
     emoji_widget.hpp \

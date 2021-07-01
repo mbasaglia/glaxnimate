@@ -24,6 +24,7 @@
 #include "tools/base.hpp"
 #include "glaxnimate_app_android.hpp"
 #include "telegram_intent.hpp"
+#include "android_file_picker.hpp"
 
 class MainWindow::Private
 {
@@ -43,6 +44,7 @@ public:
 
     io::Options export_options;
     bool current_document_has_file = false;
+    glaxnimate::android::AndroidFilePicker file_picker;
 
     QAction* action_undo = nullptr;
     QAction* action_redo = nullptr;
@@ -258,7 +260,7 @@ public:
 
         if ( force_dialog )
         {
-            ask_perms();
+            file_picker.get_permissions();
             ImportExportDialog dialog(opts, parent);
 
             if ( !dialog.export_dialog() )
@@ -332,22 +334,33 @@ public:
 
         if ( close_document() )
         {
-            ask_perms();
-            ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
-            if ( dialog.import_dialog() )
-                setup_document_open(dialog.io_options());
-            else
-                setup_document_new();
+            setup_document_new();
+
+            if ( !file_picker.select_open() )
+            {
+                // Ugly widget as fallback
+                ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
+                if ( dialog.import_dialog() )
+                {
+                    QFile file(dialog.io_options().filename);
+                    setup_document_open(dialog.io_options(), file);
+                }
+                else
+                {
+                    setup_document_new();
+                }
+            }
         }
     }
 
-    bool setup_document_open(const io::Options& options)
+    bool setup_document_open(const io::Options& options, QIODevice& file)
     {
+        clear_document();
+
         current_document_has_file = true;
 
         current_document = std::make_unique<model::Document>(options.filename);
 
-        QFile file(options.filename);
         bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
 
         current_document->set_io_options(options);
@@ -366,38 +379,13 @@ public:
 
     void document_export()
     {
-        save_document(false, true);
+        save_document(true, true);
     }
 
-
-    bool ask_perms()
-    {
-#ifndef Q_OS_ANDROID_FAKE
-        const std::vector<QString> permissions{
-            "android.permission.WRITE_EXTERNAL_STORAGE",
-            "android.permission.READ_EXTERNAL_STORAGE"
-        };
-
-        for ( const QString &permission : permissions )
-        {
-            auto result = QtAndroid::checkPermission(permission);
-            if ( result == QtAndroid::PermissionResult::Denied )
-            {
-                auto resultHash = QtAndroid::requestPermissionsSync(QStringList({permission}));
-                if ( resultHash[permission] == QtAndroid::PermissionResult::Denied )
-                    return false;
-            }
-        }
-
-        return true;
-#else
-        return false;
-#endif
-    }
 
     QDir default_save_path()
     {
-        if ( ask_perms() )
+        if ( file_picker.get_permissions() )
             return QDir("/storage/emulated/0/Movies");
 
         return QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
@@ -472,6 +460,38 @@ public:
 
         ui.slider_frame->setFixedHeight(button_w);
     }
+
+    void open_url(const QUrl& url)
+    {
+        if ( !url.isValid() )
+            return;
+        QString path = url.path();
+        QFileInfo finfo(path);
+        QString extension = finfo.suffix();
+        io::Options options;
+        options.format = io::IoRegistry::instance().from_extension(extension);
+        if ( !options.format )
+        {
+            QMessageBox::warning(parent, tr("Open File"),
+                                 tr("Cannot open %1").arg(finfo.fileName()));
+        }
+
+        if ( url.isLocalFile() )
+        {
+            current_document_has_file = true;
+            options.filename = path;
+            options.path = finfo.absoluteDir();
+            QFile file(options.filename);
+            setup_document_open(options, file);
+        }
+        else
+        {
+            options.filename = url.toString();
+            QByteArray data = file_picker.read_content_uri(url);
+            QBuffer buf(&data);
+            setup_document_open(options, buf);
+        }
+    }
 };
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -501,6 +521,12 @@ MainWindow::MainWindow(QWidget *parent) :
     );
 
     d->setup_document_new();
+
+    d->export_options.path = d->default_save_path();
+
+    connect(&d->file_picker, &glaxnimate::android::AndroidFilePicker::open_selected, this, [this](const QUrl& url){
+        d->open_url(url);
+    });
 }
 
 MainWindow::~MainWindow()
@@ -632,22 +658,3 @@ void MainWindow::resizeEvent(QResizeEvent* e)
     QMainWindow::resizeEvent(e);
     d->adjust_size();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
