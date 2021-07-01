@@ -758,7 +758,7 @@ void tools::EditTool::key_press(const KeyEvent& event)
 
 void tools::EditTool::key_release(const KeyEvent& event)
 {
-    if ( event.key() == Qt::Key_Escape )
+    if ( event.key() == Qt::Key_Escape || event.key() == Qt::Key_Back )
     {
         if ( d->drag_mode == Private::VertexAdd )
         {

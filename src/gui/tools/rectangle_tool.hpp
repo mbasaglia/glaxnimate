@@ -40,7 +40,7 @@ protected:
 
     void key_press(const KeyEvent& event) override
     {
-        if ( event.key() == Qt::Key_Escape )
+        if ( event.key() == Qt::Key_Escape || event.key() == Qt::Key_Back )
         {
             dragging = false;
             event.repaint();

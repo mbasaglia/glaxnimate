@@ -411,6 +411,8 @@ public:
             bar->setIconSize(button_size);
             bar->setOrientation(toolbar_orientation);
         }
+
+        ui.slider_frame->setFixedHeight(button_w);
     }
 };
 

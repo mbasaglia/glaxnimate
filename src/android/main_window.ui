@@ -72,7 +72,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QSlider" name="slider_frame">
+        <widget class="QScrollBar" name="slider_frame">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>

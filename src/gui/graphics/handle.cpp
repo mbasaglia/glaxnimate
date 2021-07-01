@@ -187,6 +187,9 @@ void graphics::MoveHandle::set_radius(qreal radius)
 {
     if ( radius > 0 && radius != d->radius )
     {
+#ifdef Q_OS_ANDROID
+        radius *= 3;
+#endif
         d->radius = radius;
         prepareGeometryChange();
     }

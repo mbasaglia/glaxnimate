@@ -37,7 +37,11 @@ public:
     math::bezier::Bezier bezier;
     bool dragging = false;
     math::bezier::PointType point_type = math::bezier::Symmetrical;
+#ifdef Q_OS_ANDROID
+    qreal join_radius = 15;
+#else
     qreal join_radius = 5;
+#endif
     bool joining = false;
 
     ExtendPathData extend;
@@ -147,7 +151,7 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
     if ( d->bezier.empty() )
         return;
 
-    if ( event.key() == Qt::Key_Delete || event.key() == Qt::Key_Backspace )
+    if ( event.key() == Qt::Key_Delete || event.key() == Qt::Key_Backspace || event.key() == Qt::Key_Back )
     {
         remove_last();
         event.accept();
@@ -255,9 +259,19 @@ void tools::DrawTool::mouse_press(const tools::MouseEvent& event)
         return;
 
     if ( d->bezier.empty() )
+    {
         d->prepare_draw(event);
+    }
+#ifdef Q_OS_ANDROID
+    else
+    {
+        d->bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, d->point_type));
+        event.repaint();
+    }
+#endif
 
     d->dragging = true;
+
 }
 
 void tools::DrawTool::mouse_move(const tools::MouseEvent& event)
@@ -272,12 +286,16 @@ void tools::DrawTool::mouse_move(const tools::MouseEvent& event)
     else if ( d->bezier.size() > 2 && d->within_join_distance(event, d->bezier.points().front().pos) )
     {
         d->joining = true;
+#ifndef Q_OS_ANDROID
         d->bezier.points().back().translate_to(d->bezier.points().front().pos);
+#endif
     }
     else
     {
         d->joining = false;
+#ifndef Q_OS_ANDROID
         d->bezier.points().back().translate_to(event.scene_pos);
+#endif
     }
 }
 
@@ -296,11 +314,13 @@ void tools::DrawTool::mouse_release(const tools::MouseEvent& event)
             d->bezier.set_closed(true);
             d->create(event, this);
         }
+#ifndef Q_OS_ANDROID
         else
         {
             d->bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, d->point_type));
             event.repaint();
         }
+#endif
     }
 }
 
