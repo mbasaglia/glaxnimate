@@ -1,5 +1,6 @@
 #include "telegram_intent.hpp"
 
+#ifndef Q_OS_ANDROID_FAKE
 
 #include <QAndroidIntent>
 #include <QtAndroid>
@@ -38,3 +39,10 @@ TelegramIntent::Result TelegramIntent::send_stickers(const QStringList& filename
     }
     return {};
 }
+
+#else
+TelegramIntent::Result TelegramIntent::send_stickers(const QStringList& filenames, const QStringList& emoji)
+{
+    return {};
+}
+#endif

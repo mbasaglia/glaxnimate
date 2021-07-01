@@ -6,7 +6,10 @@
 #include <QScreen>
 #include <QMenu>
 #include <QStandardPaths>
+
+#ifndef Q_OS_ANDROID_FAKE
 #include <QtAndroid>
+#endif
 
 #include "model/document.hpp"
 #include "model/shapes/fill.hpp"
@@ -369,6 +372,7 @@ public:
 
     bool ask_perms()
     {
+#ifndef Q_OS_ANDROID_FAKE
         const std::vector<QString> permissions{
             "android.permission.WRITE_EXTERNAL_STORAGE",
             "android.permission.READ_EXTERNAL_STORAGE"
@@ -386,7 +390,9 @@ public:
         }
 
         return true;
-
+#else
+        return false;
+#endif
     }
 
     QDir default_save_path()
@@ -404,10 +410,6 @@ public:
 
         QStringList filenames;
         QStringList emoji;
-
-        QString parent_path = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
-        if ( ask_perms() )
-            parent_path = "/storage/emulated/0/Movies";
 
         QString filename = default_save_path().filePath("test123.tgs");
         QFile file(filename);

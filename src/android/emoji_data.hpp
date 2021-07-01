@@ -1,0 +1,33 @@
+#ifndef EMOJI_DATA_HPP
+#define EMOJI_DATA_HPP
+
+#include <vector>
+#include <QString>
+
+namespace glaxnimate::android {
+
+struct Emoji
+{
+    QString name;
+    QString unicode;
+};
+
+struct EmojiSubGroup
+{
+    QString name;
+    std::vector<Emoji> emoji;
+};
+
+struct EmojiGroup
+{
+    QString name;
+    std::vector<EmojiSubGroup> children;
+
+    static const std::vector<EmojiGroup> table;
+};
+
+} // glaxnimate::android
+
+
+
+#endif // EMOJI_DATA_HPP

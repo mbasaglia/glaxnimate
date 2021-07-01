@@ -4,7 +4,7 @@ MOC_DIR = out/generated
 UI_DIR = out/generated
 RCC_DIR = out/generated
 
-QT += widgets xml uitools concurrent svg androidextras
+QT += widgets xml uitools concurrent svg
 
 android {
     QT += androidextras
@@ -14,6 +14,12 @@ android {
     RCC_DIR = $$ANDROID_TARGET_ARCH/out/generated
 }
 
+
+!android {
+    DEFINES += Q_OS_ANDROID_FAKE
+}
+
+TARGET = glaxnimate_android
 
 
 CONFIG += c++17
@@ -27,16 +33,20 @@ LIBS += -L../../external/Qt-Color-Widgets -L../core -L../gui -L../../external/Qt
 }
 
 SOURCES = \
+    emoji_widget.cpp \
     main.cpp \
     main_window.cpp \
     glaxnimate_app_android.cpp \
-    telegram_intent.cpp
+    telegram_intent.cpp \
+    emoji_data.cpp
 
 FORMS += \
     main_window.ui
 
 HEADERS += \
     android_style.hpp \
+    emoji_data.hpp \
+    emoji_widget.hpp \
     glaxnimate_app_android.hpp \
     main_window.hpp \
     telegram_intent.hpp
@@ -53,7 +63,7 @@ DISTFILES += \
     android/gradlew \
     android/gradlew.bat \
     android/res/values/libs.xml \
-    android/src/org/mattbas/glaxnimate/jnimessenger/JniMessenger.java \
+    android/src/org/mattbas/glaxnimate/jnimessenger/JniMessenger.java
 
 ANDROID_PACKAGE_SOURCE_DIR = \
     $$PWD/android
