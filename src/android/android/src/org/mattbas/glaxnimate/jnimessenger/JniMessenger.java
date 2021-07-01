@@ -1,3 +1,5 @@
+// TODO convert to JNI calls
+
 package org.mattbas.glaxnimate.jnimessenger;
 
 import java.util.ArrayList;

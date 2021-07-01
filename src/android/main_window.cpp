@@ -7,10 +7,6 @@
 #include <QMenu>
 #include <QStandardPaths>
 
-#ifndef Q_OS_ANDROID_FAKE
-#include <QtAndroid>
-#endif
-
 #include "model/document.hpp"
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
@@ -260,16 +256,36 @@ public:
 
         if ( force_dialog )
         {
-            file_picker.get_permissions();
-            ImportExportDialog dialog(opts, parent);
+            QString suggestion;
+            if ( !opts.filename.isEmpty() )
+                suggestion = opts.filename;
+            else
+                suggestion = tr("Animation.%1").arg(opts.format ? opts.format->extensions()[0] : "rawr");
 
-            if ( !dialog.export_dialog() )
-                return false;
+            if ( !file_picker.select_save(suggestion, export_opts) )
+            {
+                ImportExportDialog dialog(opts, parent);
 
-            opts = dialog.io_options();
+                if ( !dialog.export_dialog() )
+                    return false;
+
+                opts = dialog.io_options();
+            }
         }
 
-        QFile file(opts.filename);
+        if ( opts.filename.startsWith("content:/") )
+        {
+            return save_url(opts.filename, export_opts);
+        }
+        else
+        {
+            QFile file(opts.filename);
+            return do_save_document(opts, export_opts, file);
+        }
+    }
+
+    bool do_save_document(const io::Options& opts, bool export_opts, QIODevice& file)
+    {
         if ( !opts.format->save(file, opts.filename, current_document.get(), opts.settings) )
             return false;
 
@@ -465,6 +481,7 @@ public:
     {
         if ( !url.isValid() )
             return;
+
         QString path = url.path();
         QFileInfo finfo(path);
         QString extension = finfo.suffix();
@@ -472,13 +489,12 @@ public:
         options.format = io::IoRegistry::instance().from_extension(extension);
         if ( !options.format )
         {
-            QMessageBox::warning(parent, tr("Open File"),
-                                 tr("Cannot open %1").arg(finfo.fileName()));
+            QMessageBox::warning(parent, tr("Open File"), tr("Unknown file type"));
+            return;
         }
 
         if ( url.isLocalFile() )
         {
-            current_document_has_file = true;
             options.filename = path;
             options.path = finfo.absoluteDir();
             QFile file(options.filename);
@@ -491,6 +507,46 @@ public:
             QBuffer buf(&data);
             setup_document_open(options, buf);
         }
+    }
+
+    bool save_url(const QUrl& url, bool export_opts)
+    {
+        if ( !url.isValid() )
+            return false;
+
+        QString path = url.path();
+        QFileInfo finfo(path);
+        QString extension = finfo.suffix();
+        io::Options options;
+        options.format = io::IoRegistry::instance().from_extension(extension);
+        if ( !options.format )
+        {
+            QMessageBox::warning(parent, tr("Save File"), tr("Unknown file type"));
+            return false;
+        }
+
+        if ( url.isLocalFile() )
+        {
+            options.filename = path;
+            options.path = finfo.absoluteDir();
+
+            QFile file(options.filename);
+            return do_save_document(options, export_opts, file);
+        }
+        else
+        {
+            options.filename = url.toString();
+            QByteArray data;
+            QBuffer buf(&data);
+            bool ok = do_save_document(options, export_opts, buf);
+            if ( !ok || !file_picker.write_content_uri(url, data) )
+            {
+                QMessageBox::warning(parent, tr("Save File"), tr("Could not save the file"));
+                return false;
+            }
+            return true;
+        }
+
     }
 };
 
@@ -526,6 +582,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&d->file_picker, &glaxnimate::android::AndroidFilePicker::open_selected, this, [this](const QUrl& url){
         d->open_url(url);
+    });
+    connect(&d->file_picker, &glaxnimate::android::AndroidFilePicker::save_selected, this,
+        [this](const QUrl& url, bool is_export){
+        d->save_url(url, is_export);
     });
 }
 
