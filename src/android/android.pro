@@ -34,6 +34,7 @@ FORMS += \
     main_window.ui
 
 HEADERS += \
+    android_style.hpp \
     glaxnimate_app_android.hpp \
     main_window.hpp
 
