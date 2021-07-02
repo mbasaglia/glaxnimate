@@ -20,11 +20,11 @@
 #include "widgets/flow_layout.hpp"
 
 #include "glaxnimate_app_android.hpp"
-#include "telegram_intent.hpp"
 #include "android_file_picker.hpp"
 #include "format_selection_dialog.hpp"
 #include "document_opener.hpp"
 #include "android_mime.hpp"
+#include "sticker_pack_builder_dialog.hpp"
 
 using namespace glaxnimate::android;
 
@@ -56,6 +56,7 @@ public:
     QAction* action_redo = nullptr;
     QAction* action_toggle_widget_actions = nullptr;
     AndroidMime mime;
+    StickerPackBuilderDialog* telegram_export_dialog = nullptr;
 
     Private(MainWindow* parent)
         : parent(parent),
@@ -500,23 +501,11 @@ public:
 
     void document_export_telegram()
     {
-        if ( !current_document->undo_stack().isClean() )
-            save_document(false, false);
+        if ( !telegram_export_dialog )
+            telegram_export_dialog = new StickerPackBuilderDialog(parent);
 
-        QStringList filenames;
-        QStringList emoji;
-
-        QString filename = default_save_path().filePath("test123.tgs");
-        QFile file(filename);
-        if ( !io::lottie::TgsFormat().save(file, filename, current_document.get(), {}) )
-            QMessageBox::warning(parent, tr("Export Stickers"), tr("Cannot save as TGS"));
-        filenames << filename;
-        emoji << "😀";
-
-        auto result = TelegramIntent().send_stickers(filenames, emoji);
-        if ( !result )
-            QMessageBox::warning(parent, tr("Export Stickers"), result.message());
-
+        telegram_export_dialog->set_current_file(current_document.get());
+        telegram_export_dialog->exec();
     }
 
     void adjust_size()

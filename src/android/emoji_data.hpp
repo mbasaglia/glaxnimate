@@ -24,6 +24,11 @@ struct EmojiGroup
     std::vector<EmojiSubGroup> children;
 
     static const std::vector<EmojiGroup> table;
+
+    const Emoji& first() const
+    {
+        return children[0].emoji[0];
+    }
 };
 
 } // glaxnimate::android

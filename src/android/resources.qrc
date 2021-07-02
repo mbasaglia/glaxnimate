@@ -42,5 +42,7 @@
         <file>images/icons/edit-cut.svg</file>
         <file>images/icons/edit-delete.svg</file>
         <file>images/icons/edit-paste.svg</file>
+        <file>images/icons/edit-clear-all.svg</file>
+        <file>images/icons/list-add.svg</file>
     </qresource>
 </RCC>

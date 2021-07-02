@@ -12,7 +12,9 @@ glaxnimate::android::BaseDialog::BaseDialog(QWidget *parent)
     //    setWindowFlags(Qt::Window);
     //    setAttribute(Qt::WA_TranslucentBackground, false);
     //    setWindowState(windowState() | Qt::WindowFullScreen);
+#ifndef Q_OS_ANDROID_FAKE
         showMaximized();
+#endif
         setVisible(false);
 }
 
@@ -39,7 +41,6 @@ void glaxnimate::android::BaseDialog::keyPressEvent(QKeyEvent * ev)
         ev->accept();
     }
 
-    qDebug() << ev->key() << Qt::Key_Back;
     QDialog::keyPressEvent(ev);
 }
 
@@ -48,7 +49,6 @@ bool glaxnimate::android::BaseDialog::eventFilter(QObject *object, QEvent *event
     if ( event->type() == QEvent::KeyPress )
     {
         auto key_event = static_cast<QKeyEvent*>(event);
-        qDebug() << "filter" << key_event->key();
         if ( key_event->key() == Qt::Key_Back )
         {
             reject();

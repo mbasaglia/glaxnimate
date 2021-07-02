@@ -41,11 +41,14 @@ SOURCES = \
     main.cpp \
     main_window.cpp \
     glaxnimate_app_android.cpp \
+    scroll_area_event_filter.cpp \
+    sticker_pack_builder_dialog.cpp \
     telegram_intent.cpp \
     emoji_data.cpp
 
 FORMS += \
-    main_window.ui
+    main_window.ui \
+    sticker_pack_builder_dialog.ui
 
 HEADERS += \
     android_file_picker.hpp \
@@ -58,6 +61,8 @@ HEADERS += \
     format_selection_dialog.hpp \
     glaxnimate_app_android.hpp \
     main_window.hpp \
+    scroll_area_event_filter.hpp \
+    sticker_pack_builder_dialog.hpp \
     telegram_intent.hpp
 
 RESOURCES += \

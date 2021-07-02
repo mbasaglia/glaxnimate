@@ -2,6 +2,7 @@
 #define GLAXNIMATE_ANDROID_EMOJIWIDGET_HPP
 
 #include <QDialog>
+#include "scroll_area_event_filter.hpp"
 
 class QAbstractScrollArea;
 
@@ -16,13 +17,9 @@ public:
 
     QString selected() const;
 
-protected:
-    bool eventFilter(QObject * object, QEvent * event) override;
-
 private:
     QString emoji;
-    int scroll_start;
-    QAbstractScrollArea* table_area;
+    ScrollAreaEventFilter scroller;
 };
 
 } // namespace glaxnimate::android

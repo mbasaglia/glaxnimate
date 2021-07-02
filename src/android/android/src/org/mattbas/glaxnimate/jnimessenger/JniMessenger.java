@@ -27,6 +27,7 @@ public class JniMessenger // extends Activity
         intent.putExtra(CREATE_STICKER_PACK_IMPORTER_EXTRA, generator);
         intent.putExtra(CREATE_STICKER_PACK_EMOJIS_EXTRA, emojis);
         intent.setType("image/*");
+
         return intent;
     }
 

@@ -19,9 +19,12 @@ glaxnimate::android::TelegramIntent::Result glaxnimate::android::TelegramIntent:
         generator_name.object<jstring>()
     );
 
-    QAndroidJniObject sticker_file = QAndroidJniObject::fromString(filenames[0]);
-    QAndroidJniObject sticker_emoji = QAndroidJniObject::fromString(emoji[0]);
-    messenger.callMethod<void>("add_sticker", "(Ljava/lang/String;Ljava/lang/String;)V", sticker_file.object<jstring>(), sticker_emoji.object<jstring>());
+    for ( int i = 0; i < filenames.size(); i++ )
+    {
+        QAndroidJniObject sticker_file = QAndroidJniObject::fromString(filenames[i]);
+        QAndroidJniObject sticker_emoji = QAndroidJniObject::fromString(emoji[i]);
+        messenger.callMethod<void>("add_sticker", "(Ljava/lang/String;Ljava/lang/String;)V", sticker_file.object<jstring>(), sticker_emoji.object<jstring>());
+    }
 
 
     QAndroidJniObject intent = messenger.callObjectMethod("import_stickers", "()Landroid/content/Intent;");

@@ -43,7 +43,6 @@ glaxnimate::android::EmojiWidget::EmojiWidget(QWidget *parent)
     table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     lay->addWidget(table);
-    table_area = table;
     table->viewport()->installEventFilter(this);
     table->setWidgetResizable(true);
     auto table_inner = new QWidget();
@@ -51,6 +50,16 @@ glaxnimate::android::EmojiWidget::EmojiWidget(QWidget *parent)
     table_inner->setLayout(table_layout);
 
     table->setWidget(table_inner);
+
+
+    scroller.set_target(table);
+    connect(&scroller, &ScrollAreaEventFilter::clicked, this, [this, table](const QPoint& pos){
+        if ( QLabel* label = qobject_cast<QLabel*>(table->childAt(pos)) )
+        {
+            emoji = label->text();
+            accept();
+        }
+    });
 
     for ( const auto& grp : EmojiGroup::table )
     {
@@ -97,43 +106,4 @@ glaxnimate::android::EmojiWidget::EmojiWidget(QWidget *parent)
 QString glaxnimate::android::EmojiWidget::selected() const
 {
     return emoji;
-}
-
-bool glaxnimate::android::EmojiWidget::eventFilter(QObject *object, QEvent *event)
-{
-    switch ( event->type() )
-    {
-        case QEvent::MouseButtonPress:
-        {
-            scroll_start = -1;
-            return true;
-        }
-        case QEvent::MouseMove:
-        {
-            auto mouse_event = static_cast<QMouseEvent*>(event);
-            if ( scroll_start != -1 )
-            {
-                table_area->verticalScrollBar()->setValue(
-                        table_area->verticalScrollBar()->value() - mouse_event->pos().y() + scroll_start
-                );
-            }
-            scroll_start = mouse_event->pos().y();
-            return true;
-        }
-        case QEvent::MouseButtonRelease:
-        {
-            auto mouse_event = static_cast<QMouseEvent*>(event);
-            QLabel* label = qobject_cast<QLabel*>(table_area->childAt(mouse_event->pos()));
-            if ( label )
-            {
-                emoji = label->text();
-                accept();
-            }
-            return true;
-        }
-        default:
-            break;
-    }
-
-    return QDialog::eventFilter(object, event);
 }
