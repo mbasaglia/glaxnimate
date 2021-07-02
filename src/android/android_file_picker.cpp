@@ -136,7 +136,7 @@ public:
         }
         env->DeleteLocalRef(jdata);
 
-        qDebug() << "read:" << qdata;
+        qDebug() << "read:" << qdata.size();
         return qdata;
     }
 
@@ -169,23 +169,22 @@ public:
 
         QAndroidJniEnvironment env;
         int chunk_size = 1024 * 10;
-        if ( data.size() < chunk_size )
-            chunk_size = data.size();
         jbyteArray jdata = env->NewByteArray(chunk_size);
-        for ( int i = 0; i < data.size(); i+= chunk_size )
+
+        int written;
+        for ( written = 0; written < data.size(); written+= chunk_size )
         {
-            if ( i + chunk_size >= data.size() )
-                chunk_size = data.size() - i;
-            env->SetByteArrayRegion(jdata, 0, chunk_size, (jbyte*)data.data());
-            env->SetByteArrayRegion(jdata, 0, chunk_size, (jbyte*)data.data());
-            env->SetByteArrayRegion(jdata, 0, chunk_size, (jbyte*)data.data());
+            if ( written + chunk_size >= data.size() )
+                chunk_size = data.size() - written;
+            env->SetByteArrayRegion(jdata, 0, chunk_size, (jbyte*)data.data() + written);
             output.callMethod<void>("write", "([BII)V", jdata, jint(0), jint(chunk_size));
         }
+
         env->DeleteLocalRef(jdata);
 
         output.callMethod<void>("close", "()V");
 
-        qDebug() << "written:" << data;
+        qDebug() << "written:" << data.size() << written;
 
         return true;
    }

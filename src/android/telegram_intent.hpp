@@ -3,6 +3,8 @@
 
 #include <QString>
 
+namespace glaxnimate::android {
+
 class TelegramIntent
 {
 public:
@@ -27,5 +29,7 @@ public:
 
     Result send_stickers(const QStringList& filenames, const QStringList& emoji);
 };
+
+} // namespace glaxnimate::android
 
 #endif // TELEGRAMINTENT_HPP

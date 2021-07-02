@@ -4,6 +4,8 @@
 #include <QProxyStyle>
 #include <QStyleOptionSlider>
 
+namespace glaxnimate::android {
+
 class AndroidStyle : public QProxyStyle
 {
 public:
@@ -80,4 +82,5 @@ public:
     }
 };
 
+} // namespace glaxnimate::android
 #endif // ANDROID_STYLE_HPP

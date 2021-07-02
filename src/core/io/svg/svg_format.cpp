@@ -40,12 +40,12 @@ io::SettingList io::svg::SvgFormat::save_settings() const
     return {};
 }
 
-bool io::svg::SvgFormat::on_save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap&)
+bool io::svg::SvgFormat::on_save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& options)
 {
     auto on_error = [this](const QString& s){warning(s);};
     SvgRenderer rend(SMIL);
     rend.write_document(document);
-    if ( filename.endsWith(".svgz") )
+    if ( filename.endsWith(".svgz") || options.value("compressed", false).toBool() )
     {
         utils::gzip::GzipStream compressed(&file, on_error);
         compressed.open(QIODevice::WriteOnly);

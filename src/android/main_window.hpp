@@ -6,6 +6,8 @@
 
 #include "widgets/dialogs/document_environment.hpp"
 
+namespace glaxnimate::android {
+
 class MainWindow : public QMainWindow, public glaxnimate::gui::DocumentEnvironment
 {
     Q_OBJECT
@@ -47,4 +49,5 @@ private:
     std::unique_ptr<Private> d;
 };
 
+} // namespace glaxnimate::android
 #endif // MAIN_WINDOW_HPP

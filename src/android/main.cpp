@@ -11,6 +11,8 @@
 
 int main(int argc, char *argv[])
 {
+    using namespace glaxnimate::android;
+
     GlaxnimateApp app(argc, argv);
 
     AppInfo::instance().init_qapplication();

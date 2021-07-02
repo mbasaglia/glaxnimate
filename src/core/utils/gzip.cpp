@@ -77,7 +77,8 @@ public:
 
     void log_error(const QString& msg)
     {
-        on_error(msg);
+        if ( on_error )
+            on_error(msg);
     }
 
 private:

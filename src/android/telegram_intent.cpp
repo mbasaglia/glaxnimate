@@ -10,7 +10,7 @@
 
 
 
-TelegramIntent::Result TelegramIntent::send_stickers(const QStringList& filenames, const QStringList& emoji)
+glaxnimate::android::TelegramIntent::Result glaxnimate::android::TelegramIntent::send_stickers(const QStringList& filenames, const QStringList& emoji)
 {
     QAndroidJniObject generator_name = QAndroidJniObject::fromString(qApp->applicationName());
     QAndroidJniObject messenger(
@@ -41,7 +41,7 @@ TelegramIntent::Result TelegramIntent::send_stickers(const QStringList& filename
 }
 
 #else
-TelegramIntent::Result TelegramIntent::send_stickers(const QStringList& filenames, const QStringList& emoji)
+glaxnimate::android::TelegramIntent::Result glaxnimate::android::TelegramIntent::send_stickers(const QStringList& filenames, const QStringList& emoji)
 {
     return {};
 }

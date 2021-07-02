@@ -34,7 +34,9 @@ LIBS += -L../../external/Qt-Color-Widgets -L../core -L../gui -L../../external/Qt
 
 SOURCES = \
     android_file_picker.cpp \
+    base_dialog.cpp \
     emoji_widget.cpp \
+    format_selection_dialog.cpp \
     main.cpp \
     main_window.cpp \
     glaxnimate_app_android.cpp \
@@ -47,8 +49,10 @@ FORMS += \
 HEADERS += \
     android_file_picker.hpp \
     android_style.hpp \
+    base_dialog.hpp \
     emoji_data.hpp \
     emoji_widget.hpp \
+    format_selection_dialog.hpp \
     glaxnimate_app_android.hpp \
     main_window.hpp \
     telegram_intent.hpp
