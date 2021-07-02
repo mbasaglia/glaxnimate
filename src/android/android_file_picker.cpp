@@ -1,10 +1,48 @@
 #include "android_file_picker.hpp"
 
+#include <QtGlobal>
+
+#ifdef Q_OS_ANDROID_FAKE
+
+class glaxnimate::android::AndroidFilePicker::Private
+{
+public:
+    Private(AndroidFilePicker*)
+    {}
+
+    bool select_open()
+    {
+        return false;
+    }
+
+
+    bool select_save(const QString &, bool)
+    {
+        return false;
+    }
+
+    static QByteArray read_content_uri(const QString &)
+    {
+        return {};
+    }
+
+    static bool write_content_uri(const QString&, const QByteArray&)
+    {
+        return false;
+    }
+
+    static bool get_permissions(const QStringList& permissions)
+    {
+        return false;
+    }
+};
+#else
+
 #include <QAndroidJniObject>
 #include <QtAndroid>
 #include <QAndroidActivityResultReceiver>
 #include <QAndroidJniEnvironment>
-#include <QDebug>
+
 class glaxnimate::android::AndroidFilePicker::Private
 {
 public:
@@ -22,7 +60,6 @@ public:
 
         void handleActivityResult(int receiverRequestCode, int resultCode, const QAndroidJniObject &data)
         {
-            qDebug() << "handle result" << receiverRequestCode << resultCode;
             switch ( receiverRequestCode )
             {
                 case RequestOpen:
@@ -184,8 +221,25 @@ public:
         return true;
    }
 
+    static bool get_permissions(const QStringList& permissions)
+    {
+        for ( const QString &permission : permissions )
+        {
+            auto result = QtAndroid::checkPermission(permission);
+            if ( result == QtAndroid::PermissionResult::Denied )
+            {
+                auto resultHash = QtAndroid::requestPermissionsSync(QStringList({permission}));
+                if ( resultHash[permission] == QtAndroid::PermissionResult::Denied )
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
     ResultReceiver receiver;
 };
+#endif
 
 
 glaxnimate::android::AndroidFilePicker::AndroidFilePicker(QObject *parent)
@@ -213,18 +267,8 @@ bool glaxnimate::android::AndroidFilePicker::write_content_uri(const QUrl &url, 
 
 bool glaxnimate::android::AndroidFilePicker::get_permissions(const QStringList& permissions)
 {
-    for ( const QString &permission : permissions )
-    {
-        auto result = QtAndroid::checkPermission(permission);
-        if ( result == QtAndroid::PermissionResult::Denied )
-        {
-            auto resultHash = QtAndroid::requestPermissionsSync(QStringList({permission}));
-            if ( resultHash[permission] == QtAndroid::PermissionResult::Denied )
-                return false;
-        }
-    }
 
-    return true;
+    return Private::get_permissions(permissions);
 }
 
 bool glaxnimate::android::AndroidFilePicker::select_save(const QString &suggested_name, bool is_export)

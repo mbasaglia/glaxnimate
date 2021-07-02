@@ -38,13 +38,6 @@ model::VisualNode* GlaxnimateWindow::Private::current_document_node()
     return current_document->main();
 }
 
-void GlaxnimateWindow::Private::set_current_document_node(model::VisualNode* node)
-{
-    QModelIndex index = comp_model.mapFromSource(document_node_model.node_index(node));
-    ui.view_document_node->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-    ui.view_document_node->setCurrentIndex(index);
-}
-
 void GlaxnimateWindow::Private::layer_new_layer()
 {
     auto layer = std::make_unique<model::Layer>(current_document.get());
@@ -52,21 +45,21 @@ void GlaxnimateWindow::Private::layer_new_layer()
     QPointF pos = current_document->rect().center();
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
-    layer_new_impl(std::move(layer));
+    parent->layer_new_impl(std::move(layer));
 }
 
 void GlaxnimateWindow::Private::layer_new_fill()
 {
     auto layer = std::make_unique<model::Fill>(current_document.get());
     layer->color.set(ui.fill_style_widget->current_color());
-    layer_new_impl(std::move(layer));
+    parent->layer_new_impl(std::move(layer));
 }
 
 void GlaxnimateWindow::Private::layer_new_stroke()
 {
     auto layer = std::make_unique<model::Stroke>(current_document.get());
     layer->set_pen_style(ui.stroke_style_widget->pen_style());
-    layer_new_impl(std::move(layer));
+    parent->layer_new_impl(std::move(layer));
 }
 
 void GlaxnimateWindow::Private::layer_new_group()
@@ -75,21 +68,7 @@ void GlaxnimateWindow::Private::layer_new_group()
     QPointF pos = current_document->rect().center();
     layer->transform.get()->anchor_point.set(pos);
     layer->transform.get()->position.set(pos);
-    layer_new_impl(std::move(layer));
-}
-
-void GlaxnimateWindow::Private::layer_new_impl(std::unique_ptr<model::ShapeElement> layer)
-{
-    current_document->set_best_name(layer.get(), {});
-    layer->set_time(current_document_node()->time());
-
-    model::ShapeElement* ptr = layer.get();
-
-    auto cont = parent->current_shape_container();
-    int position = cont->index_of(parent->current_shape());
-    current_document->push_command(new command::AddShape(cont, std::move(layer), position));
-
-    ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(ptr)));
+    parent->layer_new_impl(std::move(layer));
 }
 
 void GlaxnimateWindow::Private::layer_delete()
@@ -130,123 +109,6 @@ void GlaxnimateWindow::Private::delete_selected()
             if ( !shape->locked.get() )
                 current_document->push_command(new command::RemoveShape(shape, shape->owner()));
     }
-}
-
-void GlaxnimateWindow::Private::cut()
-{
-    auto selection = copy();
-    if ( selection.empty() )
-        return;
-
-    command::UndoMacroGuard macro(tr("Cut"), current_document.get());
-    for ( auto item : selection )
-    {
-        if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
-            if ( !shape->locked.get() )
-                current_document->push_command(new command::RemoveShape(shape, shape->owner()));
-    }
-}
-
-std::vector<model::VisualNode*> GlaxnimateWindow::Private::copy()
-{
-    auto selection = cleaned_selection();
-
-    if ( !selection.empty() )
-    {
-        QMimeData* data = new QMimeData;
-        for ( const auto& mime : settings::ClipboardSettings::mime_types() )
-        {
-            if ( mime.enabled )
-                mime.serializer->to_mime_data(*data, std::vector<model::DocumentNode*>(selection.begin(), selection.end()));
-        }
-
-        QGuiApplication::clipboard()->setMimeData(data);
-    }
-
-    return selection;
-}
-
-template<class T>
-static void paste_assets(model::SubObjectProperty<T> (model::Assets::* p), model::Document* source, model::Document* current_document)
-{
-    T* subject = (source->assets()->*p).get();
-    T* target = (current_document->assets()->*p).get();
-
-    for ( auto& item : subject->values.raw() )
-    {
-        if ( !current_document->assets()->find_by_uuid(item->uuid.get()) )
-        {
-            item->transfer(current_document);
-            current_document->push_command(new command::AddObject(
-                &target->values,
-                std::move(item),
-                target->values.size()
-            ));
-        }
-    }
-}
-
-void GlaxnimateWindow::Private::paste(bool as_comp)
-{
-    const QMimeData* data = QGuiApplication::clipboard()->mimeData();
-    io::mime::DeserializedData raw_pasted;
-    for ( const auto& mime : settings::ClipboardSettings::mime_types() )
-    {
-        if ( mime.enabled )
-        {
-            raw_pasted = mime.serializer->from_mime_data(*data);
-            if ( !raw_pasted.empty() )
-                break;
-        }
-    }
-    if ( raw_pasted.empty() )
-    {
-        status_message(tr("Nothing to paste"));
-        return;
-    }
-
-    paste_document(raw_pasted.document.get(), tr("Paste"), as_comp);
-}
-
-void GlaxnimateWindow::Private::paste_document(model::Document* document, const QString& macro_name, bool as_comp)
-{
-    command::UndoMacroGuard macro(macro_name, current_document.get());
-    paste_assets(&model::Assets::colors, document, current_document.get());
-    paste_assets(&model::Assets::images, document, current_document.get());
-    paste_assets(&model::Assets::gradient_colors, document, current_document.get());
-    paste_assets(&model::Assets::gradients, document, current_document.get());
-    paste_assets(&model::Assets::precompositions, document, current_document.get());
-
-    model::ShapeListProperty* shape_cont = parent->current_shape_container();
-    std::vector<model::VisualNode*> select;
-
-    if ( as_comp )
-    {
-        std::unique_ptr<model::Precomposition> comp = std::make_unique<model::Precomposition>(current_document.get());
-        auto comp_ptr = comp.get();
-        current_document->set_best_name(comp.get(), document->main()->name.get());
-        current_document->push_command(new command::AddObject(&current_document->assets()->precompositions->values, std::move(comp)));
-
-        select.push_back(layer_new_comp(comp_ptr));
-        shape_cont = &comp_ptr->shapes;
-    }
-
-    if ( !document->main()->shapes.empty() )
-    {
-        int shape_insertion_point = shape_cont->size();
-        for ( auto& shape : document->main()->shapes.raw() )
-        {
-            auto ptr = shape.get();
-            shape->refresh_uuid();
-            if ( !as_comp )
-                select.push_back(ptr);
-            shape->transfer(current_document.get());
-            current_document->push_command(new command::AddShape(shape_cont, std::move(shape), shape_insertion_point++));
-            ptr->recursive_rename();
-        }
-    }
-
-    scene.user_select(select, graphics::DocumentScene::Replace);
 }
 
 void GlaxnimateWindow::Private::duplicate_selection()
@@ -632,22 +494,9 @@ void GlaxnimateWindow::Private::on_remove_precomp(int index)
     comp_selections.erase(comp_selections.begin()+index+1);
 }
 
-void GlaxnimateWindow::Private::layer_new_comp(QAction* action)
+void GlaxnimateWindow::Private::layer_new_comp_action(QAction* action)
 {
-    layer_new_comp(action->data().value<model::Precomposition*>());
-}
-
-model::PreCompLayer* GlaxnimateWindow::Private::layer_new_comp(model::Precomposition* comp)
-{
-    auto layer = std::make_unique<model::PreCompLayer>(current_document.get());
-    layer->composition.set(comp);
-    layer->size.set(current_document->rect().size());
-    QPointF pos = current_document->rect().center();
-    layer->transform.get()->anchor_point.set(pos);
-    layer->transform.get()->position.set(pos);
-    auto ptr = layer.get();
-    layer_new_impl(std::move(layer));
-    return ptr;
+    parent->layer_new_comp(action->data().value<model::Precomposition*>());
 }
 
 void GlaxnimateWindow::Private::shape_to_precomposition(model::ShapeElement* node)

@@ -6,6 +6,9 @@
 #include "model/document.hpp"
 #include "model/shapes/shape.hpp"
 #include "model/assets/brush_style.hpp"
+#include "model/assets/precomposition.hpp"
+
+#include "io/mime/mime_serializer.hpp"
 
 class QWidget;
 
@@ -49,6 +52,22 @@ public:
     virtual std::vector<model::VisualNode*> cleaned_selection() const = 0;
 
     void delete_selected();
+
+    std::vector<model::VisualNode*> copy() const;
+    void cut();
+    void paste();
+    void paste_as_composition();
+    void paste_document(model::Document* document, const QString& macro_name, bool as_comp);
+
+    virtual void set_selection(const std::vector<model::VisualNode*>& selected) = 0;
+
+protected:
+    virtual std::vector<io::mime::MimeSerializer*> supported_mimes() const = 0;
+    void layer_new_impl(std::unique_ptr<model::ShapeElement> layer);
+    model::PreCompLayer *layer_new_comp(model::Precomposition *comp);
+
+private:
+    void paste_impl(bool as_comp);
 };
 
 

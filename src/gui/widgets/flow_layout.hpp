@@ -4,6 +4,7 @@
 
 #include <QLayout>
 #include <QStyle>
+#include <QBoxLayout>
 
 
 class FlowLayout : public QLayout
@@ -21,13 +22,19 @@ public:
     void setGeometry(const QRect &rect) override;
     QSize sizeHint() const override;
     QLayoutItem *takeAt(int index) override;
+    Qt::Orientations expandingDirections() const override;
+    void set_fixed_item_size(const QSize& size);
+    void set_orientation(Qt::Orientation orientation);
 
 private:
-    int do_layout(const QRect &rect, bool test_only) const;
+    QSize do_layout(const QRect &rect, bool test_only) const;
     bool valid_index(int index) const;
 
     std::vector<QLayoutItem *> items;
     int min_w;
     int max_w;
     int items_per_row;
+    QSize fixed_size;
+    Qt::Orientation orient = Qt::Horizontal;
+    mutable QSize contents;
 };

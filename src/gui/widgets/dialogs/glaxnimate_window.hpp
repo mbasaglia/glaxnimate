@@ -129,7 +129,9 @@ public:
     void show_startup_dialog();
 
     QWidget* as_widget() override { return this; }
+    std::vector<io::mime::MimeSerializer*> supported_mimes() const override;
 
+    void set_selection(const std::vector<model::VisualNode*>& selected) override;
 public slots:
     void document_save();
     void document_save_as();
@@ -140,8 +142,8 @@ public slots:
      * \brief Copies the current selection to the clipboard
      */
     void copy() const;
-    void paste() const;
-    void cut() const;
+    void paste();
+    void cut();
     void duplicate_selection() const;
 
 private slots:

@@ -37,6 +37,8 @@ public:
 
     std::vector<model::VisualNode*> cleaned_selection() const override;
 
+    std::vector<io::mime::MimeSerializer*> supported_mimes() const override;
+    void set_selection(const std::vector<model::VisualNode*>& selected) override;
 protected:
     void changeEvent(QEvent *e) override;
     void resizeEvent(QResizeEvent* e) override;

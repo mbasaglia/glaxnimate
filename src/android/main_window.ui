@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
+ <class>glaxnimate::android::MainWindow</class>
  <widget class="QMainWindow" name="glaxnimate::android::MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>718</width>
-    <height>1139</height>
+    <height>881</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Glaxnimate</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -30,11 +33,26 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <item row="0" column="0">
+    <item row="0" column="2" rowspan="2">
+     <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
+    </item>
+    <item row="0" column="3" rowspan="2">
+     <widget class="FillStyleWidget" name="fill_style_widget" native="true"/>
+    </item>
+    <item row="0" column="1">
      <widget class="Canvas" name="canvas"/>
     </item>
-    <item row="1" column="0">
+    <item row="0" column="0">
+     <widget class="QWidget" name="widget_tools_container_side" native="true"/>
+    </item>
+    <item row="1" column="0" colspan="2">
      <widget class="QWidget" name="time_container" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
         <number>0</number>
@@ -86,64 +104,42 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>0</height>
+          </size>
+         </property>
         </widget>
        </item>
       </layout>
      </widget>
     </item>
-    <item row="0" column="2" rowspan="2">
-     <widget class="FillStyleWidget" name="fill_style_widget" native="true"/>
-    </item>
-    <item row="0" column="1" rowspan="2">
-     <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
+    <item row="2" column="0" colspan="4">
+     <widget class="QWidget" name="widget_tools_container_bottom" native="true">
+      <layout class="QVBoxLayout" name="layout_tools_container">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QWidget" name="widget_actions" native="true"/>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QToolBar" name="toolbar_tools">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <property name="movable">
-    <bool>false</bool>
-   </property>
-   <property name="allowedAreas">
-    <set>Qt::LeftToolBarArea</set>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Vertical</enum>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>40</width>
-     <height>40</height>
-    </size>
-   </property>
-   <property name="floatable">
-    <bool>false</bool>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QToolBar" name="toolbar_actions">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <property name="movable">
-    <bool>false</bool>
-   </property>
-   <property name="floatable">
-    <bool>false</bool>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
   </widget>
  </widget>
  <customwidgets>
@@ -191,6 +187,10 @@
    </slots>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>canvas</tabstop>
+  <tabstop>button_expand_timeline</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

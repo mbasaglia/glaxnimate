@@ -7,6 +7,8 @@
 
 #include "app/widgets/settings_dialog.hpp"
 #include "app_info.hpp"
+#include "settings/clipboard_settings.hpp"
+
 
 GlaxnimateWindow::GlaxnimateWindow(bool restore_state, bool debug, QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags), d(std::make_unique<Private>())
@@ -276,17 +278,17 @@ std::vector<model::VisualNode*> GlaxnimateWindow::cleaned_selection() const
 
 void GlaxnimateWindow::copy() const
 {
-    d->copy();
+    DocumentEnvironment::copy();
 }
 
-void GlaxnimateWindow::paste() const
+void GlaxnimateWindow::paste()
 {
-    d->paste(false);
+    DocumentEnvironment::paste();
 }
 
-void GlaxnimateWindow::cut() const
+void GlaxnimateWindow::cut()
 {
-    d->cut();
+    DocumentEnvironment::cut();
 }
 
 void GlaxnimateWindow::duplicate_selection() const
@@ -445,4 +447,20 @@ model::ShapeElement * GlaxnimateWindow::convert_to_path(model::ShapeElement* sha
 void GlaxnimateWindow::show_startup_dialog()
 {
     d->show_startup_dialog();
+}
+
+std::vector<io::mime::MimeSerializer*> GlaxnimateWindow::supported_mimes() const
+{
+    std::vector<io::mime::MimeSerializer*> mimes;
+    for ( const auto& mime : settings::ClipboardSettings::mime_types() )
+    {
+        if ( mime.enabled )
+            mimes.push_back(mime.serializer);
+    }
+    return mimes;
+}
+
+void GlaxnimateWindow::set_selection(const std::vector<model::VisualNode*>& selected)
+{
+    d->scene.user_select(selected, graphics::DocumentScene::Replace);
 }

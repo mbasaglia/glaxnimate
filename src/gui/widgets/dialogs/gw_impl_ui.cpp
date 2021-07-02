@@ -122,7 +122,7 @@ void GlaxnimateWindow::Private::add_modifier_menu_action(QMenu* menu)
 {
     menu->addAction(T::static_tree_icon(), T::static_type_name_human(), [this]{
         auto layer = std::make_unique<T>(current_document.get());
-        layer_new_impl(std::move(layer));
+        parent->layer_new_impl(std::move(layer));
     })->setObjectName("action_new_" + T::static_class_name().toLower());
 }
 
@@ -159,7 +159,7 @@ void GlaxnimateWindow::Private::init_actions()
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
     connect(ui.action_paste, &QAction::triggered, parent, &GlaxnimateWindow::paste);
-    connect(ui.action_paste_as_composition, &QAction::triggered, parent, [this]{paste(true);});
+    connect(ui.action_paste_as_composition, &QAction::triggered, parent, [this]{parent->paste_as_composition();});
     connect(ui.action_cut, &QAction::triggered, parent, &GlaxnimateWindow::cut);
     connect(ui.action_duplicate, &QAction::triggered, parent, &GlaxnimateWindow::duplicate_selection);
     connect(ui.action_reload, &QAction::triggered, parent, &GlaxnimateWindow::document_reload);
@@ -223,7 +223,7 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_new_precomp_selection, &QAction::triggered, parent, [this]{
         objects_to_new_composition(comp, cleaned_selection(), &comp->shapes, -1);
     });
-    connect(ui.menu_new_comp_layer, &QMenu::triggered, parent, [this](QAction* act){layer_new_comp(act);});
+    connect(ui.menu_new_comp_layer, &QMenu::triggered, parent, [this](QAction* act){layer_new_comp_action(act);});
     connect(ui.action_align_hor_left_out,   &QAction::triggered, parent, [this]{align(AlignDirection::Horizontal, AlignPosition::Begin,  true);});
     connect(ui.action_align_hor_left,       &QAction::triggered, parent, [this]{align(AlignDirection::Horizontal, AlignPosition::Begin,  false);});
     connect(ui.action_align_hor_center,     &QAction::triggered, parent, [this]{align(AlignDirection::Horizontal, AlignPosition::Center, false);});

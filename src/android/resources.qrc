@@ -38,5 +38,9 @@
         <file>images/icons/stroke-join-bevel.svg</file>
         <file>images/icons/stroke-join-miter.svg</file>
         <file>images/icons/stroke-join-round.svg</file>
+        <file>images/icons/edit-copy.svg</file>
+        <file>images/icons/edit-cut.svg</file>
+        <file>images/icons/edit-delete.svg</file>
+        <file>images/icons/edit-paste.svg</file>
     </qresource>
 </RCC>

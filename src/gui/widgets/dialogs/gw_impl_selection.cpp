@@ -46,6 +46,12 @@ void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIn
     set_current_object(document_node_model.node(comp_model.mapToSource(index)));
 }
 
+void GlaxnimateWindow::Private::set_current_document_node(model::VisualNode* node)
+{
+    QModelIndex index = comp_model.mapFromSource(document_node_model.node_index(node));
+    ui.view_document_node->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+    ui.view_document_node->setCurrentIndex(index);
+}
 
 void GlaxnimateWindow::Private::set_current_object(model::DocumentNode* node)
 {

@@ -678,7 +678,7 @@ void GlaxnimateWindow::Private::import_file()
         }
 
         /// \todo ask if comp
-        paste_document(&imported, tr("Import File"), true);
+        parent->paste_document(&imported, tr("Import File"), true);
     }
 
 }

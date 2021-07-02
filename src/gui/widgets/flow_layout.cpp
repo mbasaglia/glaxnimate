@@ -47,60 +47,99 @@ QLayoutItem * FlowLayout::takeAt(int index)
     return nullptr;
 }
 
+Qt::Orientations FlowLayout::expandingDirections() const
+{
+#ifdef Q_OS_ANDROID
+    return orient;
+#else
+    return QLayout::expandingDirections();
+#endif
+}
+
+
 bool FlowLayout::hasHeightForWidth() const
 {
-    return true;
+    return orient == Qt::Horizontal;
 }
 
 int FlowLayout::heightForWidth(int width) const
 {
-    return do_layout(QRect(0, 0, width, 0), true);
+    return do_layout(QRect(0, 0, width, 0), true).height();
 }
 
-int FlowLayout::do_layout(const QRect& rect, bool test_only) const
+QSize FlowLayout::do_layout(const QRect& rect, bool test_only) const
 {
     if ( items.size() == 0 )
-        return 0;
+        return QSize(0, 0);
 
     int left, top, right, bottom;
     getContentsMargins(&left, &top, &right, &bottom);
     QRect effective_rect = rect.adjusted(+left, +top, -right, -bottom);
 
-    int vertical_spacing = 6;
-    int horizontal_spacing = 6;
+    int vertical_spacing = spacing();
+    int horizontal_spacing = spacing();
 
     int ipr = items_per_row;
     int iw = (effective_rect.width() - horizontal_spacing * (ipr - 1)) / ipr;
+    int nrows;
+    int ih;
 
-    if ( iw < min_w )
+    if ( fixed_size.isValid() )
     {
-        iw = min_w;
-        ipr = (effective_rect.width() + horizontal_spacing) / (min_w + horizontal_spacing);
+        iw = fixed_size.width();
+        ih = fixed_size.height();
+        if ( orient == Qt::Horizontal )
+        {
+            ipr =  qMax(1, (effective_rect.width() + horizontal_spacing) / (iw + horizontal_spacing));
+            nrows = (items.size() + ipr - 1) / ipr;
+        }
+        else
+        {
+            nrows = qMax(1, (effective_rect.height() + vertical_spacing) / (ih + vertical_spacing));;
+            ipr =  (items.size() + nrows - 1) / nrows;
+        }
     }
-    else if ( iw > max_w )
+    else
     {
-        ipr = qMin<int>(
-            items.size(),
-            qCeil(qreal(effective_rect.width() + horizontal_spacing) / (max_w + horizontal_spacing))
-        );
-        iw = qMin(max_w, (effective_rect.width() - horizontal_spacing * (ipr - 1)) / ipr);
+        if ( iw < min_w )
+        {
+            iw = min_w;
+            ipr = (effective_rect.width() + horizontal_spacing) / (min_w + horizontal_spacing);
+        }
+        else if ( iw > max_w )
+        {
+            ipr = qMin<int>(
+                items.size(),
+                qCeil(qreal(effective_rect.width() + horizontal_spacing) / (max_w + horizontal_spacing))
+            );
+            iw = qMin(max_w, (effective_rect.width() - horizontal_spacing * (ipr - 1)) / ipr);
+        }
+
+        if ( ipr == 0 )
+        {
+            ipr = items_per_row;
+            iw = (effective_rect.width() - horizontal_spacing * (ipr - 1)) / ipr;
+        }
+
+        nrows = (items.size() + ipr - 1) / ipr;
+        ih = (effective_rect.height() - vertical_spacing * (nrows - 1)) / nrows;
+        if ( !test_only && ih < iw )
+        {
+            iw = qMax(ih, min_w);
+            ipr = (effective_rect.width() + horizontal_spacing) / (iw + horizontal_spacing);
+        }
     }
 
-    if ( ipr == 0 )
-    {
-        ipr = items_per_row;
-        iw = (effective_rect.width() - horizontal_spacing * (ipr - 1)) / ipr;
-    }
+    QSize new_contents(
+        ipr * iw + (ipr-1) * horizontal_spacing,
+        nrows * ih + (nrows-1) * vertical_spacing
+    );
+    if ( test_only )
+        return new_contents;
 
-    int nrows = (items.size() + ipr - 1) / ipr;
-    int ih = (effective_rect.height() - vertical_spacing * (nrows - 1)) / nrows;
-    if ( !test_only && ih < iw )
-    {
-        iw = qMax(ih, min_w);
-        ipr = (effective_rect.width() + horizontal_spacing) / (iw + horizontal_spacing);
-    }
+    contents = new_contents;
 
-    QSize item_size(iw, iw);
+    QSize item_size(iw, ih);
 
     int x = 0;
     int y = 0;
@@ -111,18 +150,33 @@ int FlowLayout::do_layout(const QRect& rect, bool test_only) const
         if ( !test_only )
             item->setGeometry(QRect(effective_rect.topLeft() + QPoint(x, y), item_size));
 
-        if ( i % ipr == ipr-1 )
+        if ( orient == Qt::Horizontal )
         {
-            x = 0;
-            y += item_size.height() + vertical_spacing;
+            if ( i % ipr == ipr-1 )
+            {
+                x = 0;
+                y += item_size.height() + vertical_spacing;
+            }
+            else
+            {
+                x += item_size.width() + horizontal_spacing;
+            }
         }
         else
         {
-            x += item_size.width() + horizontal_spacing;
+            if ( i % nrows == nrows-1 )
+            {
+                y = 0;
+                x += item_size.width() + vertical_spacing;
+            }
+            else
+            {
+                y += item_size.height() + horizontal_spacing;
+            }
         }
     }
 
-    return y;
+    return contents;
 }
 
 void FlowLayout::setGeometry(const QRect& rect)
@@ -133,6 +187,11 @@ void FlowLayout::setGeometry(const QRect& rect)
 
 QSize FlowLayout::sizeHint() const
 {
+    if ( contents.isValid() )
+    {
+        const QMargins margins = contentsMargins();
+        return contents + QSize(margins.left() + margins.right(), margins.top() + margins.bottom());
+    }
     return minimumSize();
 }
 
@@ -144,14 +203,18 @@ QSize FlowLayout::minimumSize() const
 
     const QMargins margins = contentsMargins();
     size += QSize(margins.left() + margins.right(), margins.top() + margins.bottom());
+
     return size;
 }
 
+void FlowLayout::set_fixed_item_size(const QSize& size)
+{
+    fixed_size = size;
+    invalidate();
+}
 
-
-
-
-
-
-
-
+void FlowLayout::set_orientation(Qt::Orientation orientation)
+{
+    orient = orientation;
+    invalidate();
+}

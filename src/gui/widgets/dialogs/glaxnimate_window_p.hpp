@@ -190,10 +190,6 @@ public:
     model::VisualNode* current_document_node();
     void set_current_document_node(model::VisualNode* node);
     std::vector<model::VisualNode*> cleaned_selection();
-    std::vector<model::VisualNode*> copy();
-    void paste(bool as_comp);
-    void paste_document(model::Document* document, const QString& macro_name, bool as_comp);
-    void cut();
     void duplicate_selection();
     void delete_selected();
     void move_current(command::ReorderCommand::SpecialPosition pos);
@@ -223,11 +219,9 @@ public:
     void layer_new_fill();
     void layer_new_stroke();
     void layer_new_group();
-    void layer_new_impl(std::unique_ptr<model::ShapeElement> layer);
     void layer_delete();
     void layer_duplicate();
-    void layer_new_comp(QAction* act);
-    model::PreCompLayer* layer_new_comp(model::Precomposition* comp);
+    void layer_new_comp_action(QAction* act);
 
     void text_put_on_path();
     void text_remove_from_path();

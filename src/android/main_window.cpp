@@ -15,14 +15,16 @@
 #include "io/lottie/tgs_format.hpp"
 
 #include "graphics/document_scene.hpp"
-
-#include "widgets/dialogs/import_export_dialog.hpp"
 #include "tools/base.hpp"
+#include "widgets/dialogs/import_export_dialog.hpp"
+#include "widgets/flow_layout.hpp"
+
 #include "glaxnimate_app_android.hpp"
 #include "telegram_intent.hpp"
 #include "android_file_picker.hpp"
 #include "format_selection_dialog.hpp"
 #include "document_opener.hpp"
+#include "android_mime.hpp"
 
 using namespace glaxnimate::android;
 
@@ -48,10 +50,29 @@ public:
     FormatSelectionDialog format_selector;
     DocumentOpener document_opener;
 
+    FlowLayout* layout_tools = nullptr;
+    FlowLayout* layout_actions = nullptr;
+    QAction* action_undo = nullptr;
+    QAction* action_redo = nullptr;
+    QAction* action_toggle_widget_actions = nullptr;
+    AndroidMime mime;
+
     Private(MainWindow* parent)
-        : parent(parent), file_picker(parent), document_opener(parent)
+        : parent(parent),
+          file_picker(parent),
+          document_opener(parent)
     {
         ui.setupUi(parent);
+
+        layout_actions = new FlowLayout(8, 32, 96);
+        layout_actions->setSpacing(0);
+        layout_actions->setMargin(0);
+        ui.widget_actions->setLayout(layout_actions);
+
+        layout_tools = new FlowLayout(8, 32, 96);
+        layout_tools->setSpacing(0);
+        layout_tools->setMargin(0);
+        ui.layout_tools_container->addLayout(layout_tools);
 
         init_tools_ui();
         ui.canvas->set_tool_target(parent);
@@ -84,10 +105,6 @@ public:
             save_url(url, is_export);
         });
     }
-
-    QAction* action_undo = nullptr;
-    QAction* action_redo = nullptr;
-    QAction* action_toolbar = nullptr;
 
     void setup_document_new()
     {
@@ -211,6 +228,13 @@ public:
             widget_current_style->clear_gradients();*/
     }
 
+    QToolButton* action_button(QAction* action)
+    {
+        auto btn = new QToolButton;
+        btn->setDefaultAction(action);
+        return btn;
+    }
+
     void init_tools_ui()
     {
         // Tool Actions
@@ -222,11 +246,10 @@ public:
             for ( const auto& tool : grp.second )
             {
                 QAction* action = tool.second->get_action();
+                layout_tools->addWidget(action_button(action));
                 action->setParent(parent);
                 action->setActionGroup(tool_actions);
                 connect(action, &QAction::triggered, parent, &MainWindow::tool_triggered);
-
-                ui.toolbar_tools->addAction(action);
 
                 if ( !active_tool )
                 {
@@ -235,50 +258,72 @@ public:
                 }
             }
         }
+        action_toggle_widget_actions = view_action(
+            GlaxnimateApp::theme_icon("overflow-menu"), tr("Views"),
+            nullptr, ui.widget_actions, layout_tools, true
+        );
 
-        // Undo-redo
-
-        action_undo = new QAction(GlaxnimateApp::theme_icon("edit-undo"), tr("Undo"), parent);
-        ui.toolbar_tools->addAction(action_undo);
-        action_redo = new QAction(GlaxnimateApp::theme_icon("edit-redo"), tr("Redo"), parent);
-        ui.toolbar_tools->addAction(action_redo);
 
         // Document actions
         document_action(GlaxnimateApp::theme_icon("document-new"), tr("New"), &Private::document_new);
         document_action(GlaxnimateApp::theme_icon("document-open"), tr("Open"), &Private::document_open);
         document_action(GlaxnimateApp::theme_icon("document-save"), tr("Save"), &Private::document_save);
+        document_action(GlaxnimateApp::theme_icon("document-save-as"), tr("Save As"), &Private::document_save_as);
         document_action(GlaxnimateApp::theme_icon("document-export"), tr("Export"), &Private::document_export);
         document_action(GlaxnimateApp::theme_icon("document-send"), tr("Send to Telegram"), &Private::document_export_telegram);
 
-        // Views
-        ui.toolbar_actions->addSeparator();
+        document_action_public(GlaxnimateApp::theme_icon("edit-cut"), tr("Cut"), &MainWindow::cut);
+        document_action_public(GlaxnimateApp::theme_icon("edit-copy"), tr("Copy"), &MainWindow::copy);
+        document_action_public(GlaxnimateApp::theme_icon("edit-paste"), tr("Paste"), &MainWindow::paste);
 
+        // Undo-redo
+        action_undo = new QAction(GlaxnimateApp::theme_icon("edit-undo"), tr("Undo"), parent);
+        layout_actions->addWidget(action_button(action_undo));
+        action_redo = new QAction(GlaxnimateApp::theme_icon("edit-redo"), tr("Redo"), parent);
+        layout_actions->addWidget(action_button(action_redo));
+
+        // Views
         QActionGroup *view_actions = new QActionGroup(parent);
         view_actions->setExclusive(true);
 
-        action_toolbar = view_action(
-            GlaxnimateApp::theme_icon("overflow-menu"), tr("Views"),
-            nullptr, ui.toolbar_actions, ui.toolbar_tools
-        );
-
         view_action(
             GlaxnimateApp::theme_icon("player-time"), tr("Timeline"),
-            view_actions, ui.time_container, ui.toolbar_actions, true
+            view_actions, ui.time_container, layout_actions, true
         );
 
         view_action(
             GlaxnimateApp::theme_icon("fill-color"), tr("Fill Style"),
-            view_actions, ui.fill_style_widget, ui.toolbar_actions
+            view_actions, ui.fill_style_widget, layout_actions
         );
 
         view_action(
             GlaxnimateApp::theme_icon("object-stroke-style"), tr("Stroke Style"),
-            view_actions, ui.stroke_style_widget, ui.toolbar_actions
+            view_actions, ui.stroke_style_widget, layout_actions
         );
+
+    }
+
+    void document_action(const QIcon& icon, const QString& text, void (Private::* func)())
+    {
+        QAction* action = new QAction(icon, text, parent);
+        layout_actions->addWidget(action_button(action));
+        connect(action, &QAction::triggered, parent, [this, func]{
+            (this->*func)();
+        });
+    }
+
+    template<class Callback>
+    void document_action_public(const QIcon& icon, const QString& text, Callback func)
+    {
+        QAction* action = new QAction(icon, text, parent);
+        layout_actions->addWidget(action_button(action));
+        connect(action, &QAction::triggered, parent, [this, func]{
+            (parent->*func)();
+        });
     }
 
     QAction* view_action(const QIcon& icon, const QString& text, QActionGroup* group,
-                         QWidget* target, QWidget* add_to, bool checked = false)
+                         QWidget* target, FlowLayout* container, bool checked = false)
     {
         QAction* action = new QAction(icon, text, parent);
         action->setCheckable(true);
@@ -286,7 +331,7 @@ public:
         target->setVisible(checked);
         action->setActionGroup(group);
         connect(action, &QAction::toggled, target, &QWidget::setVisible);
-        add_to->addAction(action);
+        container->addWidget(action_button(action));
         return action;
     }
 
@@ -434,6 +479,11 @@ public:
         save_document(false, false);
     }
 
+    void document_save_as()
+    {
+        save_document(true, false);
+    }
+
     void document_export()
     {
         save_document(true, true);
@@ -469,39 +519,23 @@ public:
 
     }
 
-    void document_action(const QIcon& icon, const QString& text, void (Private::* func)())
-    {
-        QAction* action = new QAction(icon, text, parent);
-        ui.toolbar_actions->addAction(action);
-        connect(action, &QAction::triggered, parent, [this, func]{
-            (this->*func)();
-        });
-    }
-
     void adjust_size()
     {
         int mins;
+        qreal tool_layout_extent;
 
-        Qt::ToolBarArea toolbar_area;
         Qt::Orientation toolbar_orientation;
 
         if ( parent->width() > parent->height() )
         {
-            toolbar_area = Qt::LeftToolBarArea;
             toolbar_orientation = Qt::Vertical;
             mins = parent->height();
         }
         else
         {
-            toolbar_area = Qt::BottomToolBarArea;
             toolbar_orientation = Qt::Horizontal;
             mins = parent->width();
         }
-
-        parent->addToolBar(toolbar_area, ui.toolbar_tools);
-        parent->addToolBarBreak(toolbar_area);
-        parent->addToolBar(toolbar_area, ui.toolbar_actions);
-        ui.toolbar_actions->setVisible(action_toolbar->isChecked());
 
         int button_w = qRound(mins * 0.08);
         QSize button_size(button_w, button_w);
@@ -509,13 +543,34 @@ public:
         for ( QToolButton* btn : parent->findChildren<QToolButton*>() )
             btn->setIconSize(button_size);
 
-        for ( QToolBar* bar : parent->findChildren<QToolBar*>() )
-        {
-            bar->setIconSize(button_size);
-            bar->setOrientation(toolbar_orientation);
-        }
-
         ui.slider_frame->setFixedHeight(button_w);
+
+        ui.widget_tools_container_side->setVisible(false);
+        ui.widget_tools_container_bottom->setVisible(false);
+
+        tool_layout_extent = mins;
+        if ( toolbar_orientation == Qt::Vertical )
+            tool_layout_extent *= 0.8;
+        tool_layout_extent = qRound(tool_layout_extent/9.);
+
+        layout_actions->set_orientation(toolbar_orientation);
+        layout_tools->set_orientation(toolbar_orientation);
+        QSize tool_layout_size(tool_layout_extent, tool_layout_extent);
+        layout_tools->set_fixed_item_size(tool_layout_size);
+        layout_actions->set_fixed_item_size(tool_layout_size);
+
+        if ( toolbar_orientation == Qt::Horizontal )
+        {
+            ui.widget_tools_container_bottom->setLayout(ui.layout_tools_container);
+            ui.layout_tools_container->setDirection(QBoxLayout::TopToBottom);
+            ui.widget_tools_container_bottom->setVisible(true);
+        }
+        else
+        {
+            ui.layout_tools_container->setDirection(QBoxLayout::RightToLeft);
+            ui.widget_tools_container_side->setLayout(ui.layout_tools_container);
+            ui.widget_tools_container_side->setVisible(true);
+        }
     }
 
     void open_url(const QUrl& url)
@@ -670,6 +725,12 @@ std::vector<model::VisualNode*> MainWindow::cleaned_selection() const
     return d->scene.cleaned_selection();
 }
 
+std::vector<io::mime::MimeSerializer *> MainWindow::supported_mimes() const
+{
+    return {
+        &d->mime
+    };
+}
 
 void MainWindow::tool_triggered(bool checked)
 {
@@ -681,4 +742,9 @@ void MainWindow::resizeEvent(QResizeEvent* e)
 {
     QMainWindow::resizeEvent(e);
     d->adjust_size();
+}
+
+void MainWindow::set_selection(const std::vector<model::VisualNode*>& selected)
+{
+    d->scene.user_select(selected, graphics::DocumentScene::Replace);
 }
