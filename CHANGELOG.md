@@ -28,6 +28,7 @@
     * When creating text shapes, it honours fill/stroke checkboxes
     * Fixed initial font style when creating new text shapes
     * Fixed clicking on text shapes
+    * Switching away from the draw tool no longer removes the path
 
 ## 0.4.3
 

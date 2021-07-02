@@ -59,6 +59,9 @@ void tools::DrawTool::Private::create(const tools::Event& event, DrawTool* tool)
 {
     if ( !bezier.empty() )
     {
+#ifdef Q_OS_ANDROID
+        if ( bezier.closed() )
+#endif
         bezier.points().pop_back();
 
 
@@ -401,8 +404,9 @@ void tools::DrawTool::enable_event(const Event& ev)
     ev.repaint();
 }
 
-void tools::DrawTool::disable_event(const Event&)
+void tools::DrawTool::disable_event(const Event& event)
 {
+    d->create(event, this);
     d->clear(true);
 }
 
