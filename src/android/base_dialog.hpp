@@ -14,7 +14,7 @@ public:
 
 protected:
     void paintEvent(QPaintEvent* ev) override;
-    void keyPressEvent(QKeyEvent *) override;
+    void keyReleaseEvent(QKeyEvent *) override;
     bool eventFilter(QObject * object, QEvent * event) override;
 };
 

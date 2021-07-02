@@ -33,15 +33,15 @@ void glaxnimate::android::BaseDialog::paintEvent(QPaintEvent *ev)
 
 }
 
-void glaxnimate::android::BaseDialog::keyPressEvent(QKeyEvent * ev)
+void glaxnimate::android::BaseDialog::keyReleaseEvent(QKeyEvent * ev)
 {
+    QDialog::keyReleaseEvent(ev);
+
     if ( ev->key() == Qt::Key_Back )
     {
         reject();
         ev->accept();
     }
-
-    QDialog::keyPressEvent(ev);
 }
 
 bool glaxnimate::android::BaseDialog::eventFilter(QObject *object, QEvent *event)

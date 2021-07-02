@@ -56,7 +56,7 @@ public:
     QAction* action_redo = nullptr;
     QAction* action_toggle_widget_actions = nullptr;
     AndroidMime mime;
-    StickerPackBuilderDialog* telegram_export_dialog = nullptr;
+    StickerPackBuilderDialog telegram_export_dialog;
 
     Private(MainWindow* parent)
         : parent(parent),
@@ -501,11 +501,8 @@ public:
 
     void document_export_telegram()
     {
-        if ( !telegram_export_dialog )
-            telegram_export_dialog = new StickerPackBuilderDialog(parent);
-
-        telegram_export_dialog->set_current_file(current_document.get());
-        telegram_export_dialog->exec();
+        telegram_export_dialog.set_current_file(current_document.get());
+        telegram_export_dialog.exec();
     }
 
     void adjust_size()
