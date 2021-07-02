@@ -14,8 +14,6 @@
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "io/lottie/tgs_format.hpp"
 
-#include "utils/gzip.hpp"
-
 #include "graphics/document_scene.hpp"
 
 #include "widgets/dialogs/import_export_dialog.hpp"
@@ -24,6 +22,7 @@
 #include "telegram_intent.hpp"
 #include "android_file_picker.hpp"
 #include "format_selection_dialog.hpp"
+#include "document_opener.hpp"
 
 using namespace glaxnimate::android;
 
@@ -47,6 +46,44 @@ public:
     bool current_document_has_file = false;
     AndroidFilePicker file_picker;
     FormatSelectionDialog format_selector;
+    DocumentOpener document_opener;
+
+    Private(MainWindow* parent)
+        : parent(parent), file_picker(parent), document_opener(parent)
+    {
+        ui.setupUi(parent);
+
+        init_tools_ui();
+        ui.canvas->set_tool_target(parent);
+        ui.canvas->setScene(&scene);
+
+        ui.button_expand_timeline->setVisible(false); // timeline is a bit weird atm
+        ui.button_expand_timeline->setChecked(false);
+        ui.button_expand_timeline->setIcon(GlaxnimateApp::theme_icon("expand-all"));
+
+        ui.fill_style_widget->set_current_color(QColor("#3250b0"));
+        ui.stroke_style_widget->set_color(QColor("#1d2848"));
+        ui.stroke_style_widget->set_stroke_width(6);
+
+        connect(
+            QGuiApplication::primaryScreen(),
+            &QScreen::orientationChanged,
+            parent,
+            [this]{adjust_size();}
+        );
+
+        setup_document_new();
+
+        export_options.path = default_save_path();
+
+        connect(&file_picker, &glaxnimate::android::AndroidFilePicker::open_selected, parent, [this](const QUrl& url){
+            open_url(url);
+        });
+        connect(&file_picker, &glaxnimate::android::AndroidFilePicker::save_selected, parent,
+            [this](const QUrl& url, bool is_export){
+            save_url(url, is_export);
+        });
+    }
 
     QAction* action_undo = nullptr;
     QAction* action_redo = nullptr;
@@ -294,22 +331,11 @@ public:
             opts = dialog.io_options();
         }
 
-        if ( opts.filename.startsWith("content:/") )
-        {
-            return save_url(opts.filename, export_opts);
-        }
-        else
-        {
-            QFile file(opts.filename);
-            return do_save_document(opts, export_opts, file);
-        }
+        return save_url(opts.filename, export_opts);
     }
 
-    bool do_save_document(const io::Options& opts, bool export_opts, QIODevice& file)
+    void save_document_set_opts(const io::Options& opts, bool export_opts)
     {
-        if ( !opts.format->save(file, opts.filename, current_document.get(), opts.settings) )
-            return false;
-
         if ( export_opts )
         {
             export_options = opts;
@@ -320,8 +346,6 @@ public:
             current_document->undo_stack().setClean();
             current_document_has_file = true;
         }
-
-        return true;
     }
 
     bool close_document()
@@ -379,8 +403,14 @@ public:
                 ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
                 if ( dialog.import_dialog() )
                 {
-                    QFile file(dialog.io_options().filename);
-                    setup_document_open(dialog.io_options(), file);
+                    options = dialog.io_options();
+                    clear_document();
+                    QFile file(options.filename);
+                    current_document = std::make_unique<model::Document>(options.filename);
+                    options.format->open(file, options.filename, current_document.get(), options.settings);
+                    current_document->set_io_options(options);
+                    setup_document_open();
+
                 }
                 else
                 {
@@ -390,23 +420,13 @@ public:
         }
     }
 
-    bool setup_document_open(const io::Options& options, QIODevice& file)
+    void setup_document_open()
     {
-        clear_document();
-
         current_document_has_file = true;
 
-        current_document = std::make_unique<model::Document>(options.filename);
-
-        bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
-
-        current_document->set_io_options(options);
-        export_options = options;
+        export_options = current_document->io_options();
         export_options.filename = "";
-
         setup_document();
-
-        return ok;
     }
 
     void document_save()
@@ -503,72 +523,12 @@ public:
         if ( !url.isValid() )
             return;
 
-        QString path = url.path();
-        QFileInfo finfo(path);
-        QString extension = finfo.suffix();
-        io::Options options;
-        options.format = io::IoRegistry::instance().from_extension(extension);
-
-        if ( url.isLocalFile() )
-        {
-            if ( !options.format )
-            {
-                QMessageBox::warning(parent, tr("Open File"), tr("Unknown file type"));
-                return;
-            }
-            options.filename = path;
-            options.path = finfo.absoluteDir();
-            QFile file(options.filename);
-            setup_document_open(options, file);
-        }
+        clear_document();
+        current_document = document_opener.open(url);
+        if ( current_document )
+            setup_document_open();
         else
-        {
-            options.filename = url.toString();
-            QByteArray data = file_picker.read_content_uri(url);
-            QBuffer buf(&data);
-            bool zipped = false;
-            if ( !options.format )
-            {
-                zipped = utils::gzip::is_compressed(data);
-                if ( zipped )
-                {
-                    QByteArray out;
-                    if ( !utils::gzip::decompress(data, out, {}) )
-                    {
-                        QMessageBox::warning(parent, tr("Open File"), tr("Could not unzip the file"));
-                        return;
-                    }
-                    data = std::move(out);
-                }
-
-                // json
-                if ( data.startsWith('{') )
-                {
-                    if ( data.contains("\"__type__\"") )
-                        options.format = io::glaxnimate::GlaxnimateFormat::instance();
-                    else
-                        options.format = io::IoRegistry::instance().from_slug("lottie");
-                }
-                else if ( data.contains("<svg>") )
-                {
-                    options.format = io::IoRegistry::instance().from_slug("lottie");
-                    options.settings["compressed"] = true;
-                }
-            }
-            if ( !options.format )
-            {
-                QMessageBox::warning(parent, tr("Open File"), tr("Unknown file type"));
-                return;
-            }
-
-            setup_document_open(options, buf);
-
-            if ( zipped && options.format->slug() == "lottie" )
-            {
-                options.format = export_options.format = io::IoRegistry::instance().from_slug("tgs");
-                current_document->set_io_options(options);
-            }
-        }
+            setup_document_new();
     }
 
     bool save_url(const QUrl& url, bool export_opts)
@@ -576,77 +536,21 @@ public:
         if ( !url.isValid() )
             return false;
 
-        QString path = url.path();
-        QFileInfo finfo(path);
         io::Options options = export_opts ? export_options : current_document->io_options();
-        if ( !options.format )
-            options.format = io::glaxnimate::GlaxnimateFormat::instance();
-
-        qDebug() << "save with" << options.format;
-
-        if ( url.isLocalFile() )
+        if ( document_opener.save(url, current_document.get(), options) )
         {
-            options.filename = path;
-            options.path = finfo.absoluteDir();
-
-            QFile file(options.filename);
-            return do_save_document(options, export_opts, file);
-        }
-        else
-        {
-            options.filename = url.toString();
-            QByteArray data;
-            QBuffer buf(&data);
-            bool ok = do_save_document(options, export_opts, buf);
-            if ( !ok || !file_picker.write_content_uri(url, data) )
-            {
-                QMessageBox::warning(parent, tr("Save File"), tr("Could not save the file"));
-                return false;
-            }
+            save_document_set_opts(options, export_opts);
             return true;
         }
 
+        return false;
     }
 };
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    d(std::make_unique<Private>())
+    d(std::make_unique<Private>(this))
 {
-    d->parent = this;
-    d->ui.setupUi(this);
-    d->format_selector.setParent(this);
-
-    d->init_tools_ui();
-    d->ui.canvas->set_tool_target(this);
-    d->ui.canvas->setScene(&d->scene);
-
-    d->ui.button_expand_timeline->setVisible(false); // timeline is a bit weird atm
-    d->ui.button_expand_timeline->setChecked(false);
-    d->ui.button_expand_timeline->setIcon(GlaxnimateApp::theme_icon("expand-all"));
-
-    d->ui.fill_style_widget->set_current_color(QColor("#3250b0"));
-    d->ui.stroke_style_widget->set_color(QColor("#1d2848"));
-    d->ui.stroke_style_widget->set_stroke_width(6);
-
-    connect(
-        QGuiApplication::primaryScreen(),
-        &QScreen::orientationChanged,
-        this,
-        [this]{d->adjust_size();}
-    );
-
-    d->setup_document_new();
-
-    d->export_options.path = d->default_save_path();
-
-    connect(&d->file_picker, &glaxnimate::android::AndroidFilePicker::open_selected, this, [this](const QUrl& url){
-        d->open_url(url);
-    });
-    connect(&d->file_picker, &glaxnimate::android::AndroidFilePicker::save_selected, this,
-        [this](const QUrl& url, bool is_export){
-        d->save_url(url, is_export);
-    });
 }
 
 MainWindow::~MainWindow()

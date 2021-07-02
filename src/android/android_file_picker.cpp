@@ -103,7 +103,7 @@ public:
         return true;
     }
 
-    QByteArray read_content_uri(const QString &cppuri)
+    static QByteArray read_content_uri(const QString &cppuri)
     {
         QAndroidJniObject uri = QAndroidJniObject::callStaticObjectMethod(
             "android/net/Uri",
@@ -136,11 +136,10 @@ public:
         }
         env->DeleteLocalRef(jdata);
 
-        qDebug() << "read:" << qdata.size();
         return qdata;
     }
 
-    bool write_content_uri(const QString& cppuri, const QByteArray& data)
+    static bool write_content_uri(const QString& cppuri, const QByteArray& data)
     {
         QAndroidJniObject uri = QAndroidJniObject::callStaticObjectMethod(
             "android/net/Uri",
@@ -162,10 +161,8 @@ public:
             uri.object<jobject>()
         );
 
-
         if ( !output.isValid() )
             return false;
-
 
         QAndroidJniEnvironment env;
         int chunk_size = 1024 * 10;
@@ -183,8 +180,6 @@ public:
         env->DeleteLocalRef(jdata);
 
         output.callMethod<void>("close", "()V");
-
-        qDebug() << "written:" << data.size() << written;
 
         return true;
    }
@@ -208,12 +203,12 @@ bool glaxnimate::android::AndroidFilePicker::select_open()
 
 QByteArray glaxnimate::android::AndroidFilePicker::read_content_uri(const QUrl &url)
 {
-    return d->read_content_uri(url.toString());
+    return Private::read_content_uri(url.toString());
 }
 
 bool glaxnimate::android::AndroidFilePicker::write_content_uri(const QUrl &url, const QByteArray &data)
 {
-    return d->write_content_uri(url.toString(), data);
+    return Private::write_content_uri(url.toString(), data);
 }
 
 bool glaxnimate::android::AndroidFilePicker::get_permissions(const QStringList& permissions)

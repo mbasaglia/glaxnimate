@@ -35,6 +35,7 @@ LIBS += -L../../external/Qt-Color-Widgets -L../core -L../gui -L../../external/Qt
 SOURCES = \
     android_file_picker.cpp \
     base_dialog.cpp \
+    document_opener.cpp \
     emoji_widget.cpp \
     format_selection_dialog.cpp \
     main.cpp \
@@ -50,6 +51,7 @@ HEADERS += \
     android_file_picker.hpp \
     android_style.hpp \
     base_dialog.hpp \
+    document_opener.hpp \
     emoji_data.hpp \
     emoji_widget.hpp \
     format_selection_dialog.hpp \
