@@ -105,6 +105,15 @@ public:
             [this](const QUrl& url, bool is_export){
             save_url(url, is_export);
         });
+
+        connect(&scene, &graphics::DocumentScene::node_user_selected, parent,
+            [this](const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected){
+                Q_UNUSED(deselected);
+                if ( !selected.empty() )
+                    this->parent->set_current_document_node(selected.back());
+                else
+                    this->parent->set_current_document_node(nullptr);
+        });
     }
 
     void setup_document_new()
@@ -693,6 +702,9 @@ void MainWindow::set_current_document_node(model::VisualNode* node)
         if ( d->current_stroke )
             d->secondary_brush = d->current_stroke->use.get();
     }
+
+    d->ui.stroke_style_widget->set_shape(d->current_stroke);
+    d->ui.fill_style_widget->set_shape(d->current_fill);
 }
 
 void MainWindow::set_current_composition(model::Composition* comp)
