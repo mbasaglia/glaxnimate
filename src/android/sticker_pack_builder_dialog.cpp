@@ -251,8 +251,11 @@ public:
 
     void clear()
     {
-        items.clear();
-        ui.button_export->setEnabled(false);
+        if ( QMessageBox::question(parent, parent->windowTitle(), tr("Are you sure you want to remove all stickers from the pack?")) == QMessageBox::Yes )
+        {
+            items.clear();
+            ui.button_export->setEnabled(false);
+        }
     }
 
     qreal extent;
