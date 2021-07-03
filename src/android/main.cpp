@@ -34,6 +34,27 @@ QToolButton:pressed, QToolButton:checked, QPushButton:pressed, QPushButton:check
     border: 1px solid #8f8f8f;
     background-color: #dedede;
 }
+
+QMenu {
+    overflow: hidden;
+    border: 1px solid #8f8f8f;
+    margin: 0;
+    padding: -1px;
+    border-radius: 6px;
+    background-color: #f3f3f3;
+    color: #000;
+}
+
+QMenu::item {
+    padding: 2px 25px 2px 20px;
+    border: 1px solid transparent;
+}
+
+QMenu::item:selected, QMenu::item:checked {
+    border-color: #8f8f8f;
+    background: #dedede;
+}
+
 )");
 
     MainWindow window;

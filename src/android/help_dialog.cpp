@@ -177,6 +177,14 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
             "database-change-key",
             tr("When enabled (which is the default) whenever you change an object property, a new keyframe is added for that property.")
         },
+        {
+            "layer-lower",
+            tr("Push the selection further back.")
+        },
+        {
+            "layer-raise",
+            tr("Brings the selection further to the front.")
+        },
     };
 
     QSize pix_size(128, 128);

@@ -14,6 +14,10 @@
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "io/lottie/tgs_format.hpp"
 
+#include "command/undo_macro_guard.hpp"
+#include "command/structure_commands.hpp"
+
+
 #include "graphics/document_scene.hpp"
 #include "tools/base.hpp"
 #include "widgets/dialogs/import_export_dialog.hpp"
@@ -28,6 +32,7 @@
 #include "sticker_pack_builder_dialog.hpp"
 #include "scroll_area_event_filter.hpp"
 #include "help_dialog.hpp"
+
 
 using namespace glaxnimate::android;
 
@@ -55,12 +60,13 @@ public:
 
     FlowLayout* layout_tools = nullptr;
     FlowLayout* layout_actions = nullptr;
+    QHBoxLayout* layout_edit_actions = nullptr;
     QAction* action_undo = nullptr;
     QAction* action_redo = nullptr;
-    QAction* action_toggle_widget_actions = nullptr;
     AndroidMime mime;
     StickerPackBuilderDialog telegram_export_dialog;
     style::PropertyDelegate property_delegate;
+    QActionGroup *view_actions = nullptr;
 
     Private(MainWindow* parent)
         : parent(parent),
@@ -69,17 +75,16 @@ public:
     {
         ui.setupUi(parent);
 
-        layout_actions = new FlowLayout(8, 32, 96);
-        layout_actions->setSpacing(0);
-        layout_actions->setMargin(0);
+        layout_actions = init_toolbar_layout();
         ui.widget_actions->setLayout(layout_actions);
 
-        layout_tools = new FlowLayout(8, 32, 96);
-        layout_tools->setSpacing(0);
-        layout_tools->setMargin(0);
+        layout_tools = init_toolbar_layout();
         ui.layout_tools_container->addLayout(layout_tools);
 
-        init_tools_ui();
+        init_toolbar_tools();
+        init_toolbar_actions();
+        init_toolbar_edit();
+
         ui.canvas->set_tool_target(parent);
         ui.canvas->setScene(&scene);
 
@@ -124,6 +129,14 @@ public:
         int side_width = ui.fill_style_widget->sizeHint().width();
         ui.stroke_style_widget->setMinimumWidth(side_width);
         ui.property_widget->setMinimumWidth(side_width);
+    }
+
+    FlowLayout* init_toolbar_layout()
+    {
+        auto lay = new FlowLayout(8, 32, 96);
+        lay->setSpacing(0);
+        lay->setMargin(0);
+        return lay;
     }
 
     void setup_document_new()
@@ -256,111 +269,244 @@ public:
         return btn;
     }
 
-    void init_tools_ui()
+    QMenu* action_menu(const QIcon& icon, const QString& label, FlowLayout* container)
+    {
+        QMenu *menu = new QMenu(parent);
+        menu->setTitle(label);
+        menu->setIcon(icon);
+
+        QToolButton* button = new QToolButton;
+        button->setMenu(menu);
+        button->setIcon(icon);
+        button->setText(label);
+        button->setPopupMode(QToolButton::InstantPopup);
+        container->addWidget(button);
+
+        return menu;
+    }
+
+    std::vector<QAction*> tool_actions(const tools::Registry::mapped_type& group, QActionGroup *tool_actions, tools::Tool*& to_activate, const tools::Event& event)
+    {
+        std::vector<QAction*> ret;
+
+        for ( const auto& tool : group )
+        {
+            QAction* action = tool.second->get_action();
+            ret.push_back(action);
+            action->setParent(parent);
+            action->setActionGroup(tool_actions);
+            connect(action, &QAction::triggered, parent, &MainWindow::tool_triggered);
+
+            if ( !to_activate )
+            {
+                to_activate = tool.second.get();
+                action->setChecked(true);
+            }
+            tool.second->retranslate();
+            tool.second->initialize(event);
+        }
+
+        return ret;
+    }
+
+    void init_toolbar_tools()
     {
         // Tool Actions
-        QActionGroup *tool_actions = new QActionGroup(parent);
-        tool_actions->setExclusive(true);
+        QActionGroup *tool_actions_grp = new QActionGroup(parent);
+        tool_actions_grp->setExclusive(true);
 
         tools::Event event{ui.canvas, &scene, parent};
         tools::Tool* to_activate = nullptr;
+
+        for ( auto action: tool_actions(tools::Registry::instance()[tools::Registry::Core], tool_actions_grp, to_activate, event) )
+            layout_tools->addWidget(action_button(action));
+
+        std::map<int, const char*> icons = {
+            {tools::Registry::Draw, "draw-brush"},
+            {tools::Registry::Shape, "shapes"},
+        };
+
         for ( const auto& grp : tools::Registry::instance() )
         {
-            for ( const auto& tool : grp.second )
-            {
-                QAction* action = tool.second->get_action();
-                layout_tools->addWidget(action_button(action));
-                action->setParent(parent);
-                action->setActionGroup(tool_actions);
-                connect(action, &QAction::triggered, parent, &MainWindow::tool_triggered);
+            if ( grp.first == tools::Registry::Core )
+                continue;
 
-                if ( !to_activate )
-                {
-                    to_activate = tool.second.get();
-                    action->setChecked(true);
-                }
-                tool.second->initialize(event);
-            }
+            auto actions = tool_actions(grp.second, tool_actions_grp, to_activate, event);
+            QIcon icon = GlaxnimateApp::theme_icon(icons[grp.first]);
+            QMenu* menu = action_menu(icon, "", layout_tools);
+            for ( auto action: actions )
+                menu->addAction(action);
         }
         switch_tool(to_activate);
-        action_toggle_widget_actions = view_action(
-            GlaxnimateApp::theme_icon("overflow-menu"), tr("Views"),
-            nullptr, ui.widget_actions, layout_tools, true
+
+
+        // Views
+        view_actions = new QActionGroup(parent);
+        view_actions->setExclusive(true);
+
+        layout_tools->addWidget(action_button(view_action(
+            GlaxnimateApp::theme_icon("player-time"), tr("Timeline"),
+            view_actions, ui.time_container, true
+        )));
+
+        layout_tools->addWidget(action_button(view_action(
+            GlaxnimateApp::theme_icon("fill-color"), tr("Fill Style"),
+            view_actions, ui.fill_style_widget
+        )));
+
+        layout_tools->addWidget(action_button(view_action(
+            GlaxnimateApp::theme_icon("object-stroke-style"), tr("Stroke Style"),
+            view_actions, ui.stroke_style_widget
+        )));
+    }
+
+    void selection_move(command::ReorderCommand::SpecialPosition pos, const QString& msg)
+    {
+        auto sel = scene.cleaned_selection();
+        if ( sel.empty() )
+            return;
+
+        command::UndoMacroGuard guard(msg, current_document.get(), false);
+
+        for ( const auto& node : sel )
+        {
+            auto shape = node->cast<model::ShapeElement>();
+            if ( !shape )
+                continue;
+
+            int position = pos;
+            if ( !command::ReorderCommand::resolve_position(shape, position) )
+                continue;
+
+            guard.start();
+            node->push_command(new command::ReorderCommand(shape, pos));
+        }
+    }
+
+    void selection_raise()
+    {
+        selection_move(command::ReorderCommand::MoveUp, tr("Raise"));
+    }
+
+    void selection_lower()
+    {
+        selection_move(command::ReorderCommand::MoveDown, tr("Lower"));
+    }
+
+    void init_toolbar_actions()
+    {
+        // Document actions
+        layout_actions->addWidget(action_button(
+            document_action(GlaxnimateApp::theme_icon("document-new"), tr("New"), &Private::document_new)
+        ));
+
+        QMenu* menu_open = action_menu(GlaxnimateApp::theme_icon("document-open"), tr("Open..."), layout_actions);
+        menu_open->addAction(
+            document_action(GlaxnimateApp::theme_icon("document-open"), tr("Open"), &Private::document_open)
+        );
+        menu_open->addAction(
+            document_action(GlaxnimateApp::theme_icon("document-import"), tr("Import as Composition"), &Private::document_import)
         );
 
-        // Document actions
-        document_action(GlaxnimateApp::theme_icon("document-new"), tr("New"), &Private::document_new);
-        document_action(GlaxnimateApp::theme_icon("document-open"), tr("Open"), &Private::document_open);
-        document_action(GlaxnimateApp::theme_icon("document-import"), tr("Import"), &Private::document_import);
-        document_action(GlaxnimateApp::theme_icon("document-save"), tr("Save"), &Private::document_save);
-        document_action(GlaxnimateApp::theme_icon("document-save-as"), tr("Save As"), &Private::document_save_as);
-        document_action(GlaxnimateApp::theme_icon("document-export"), tr("Export"), &Private::document_export);
-        document_action(GlaxnimateApp::theme_icon("document-send"), tr("Send to Telegram"), &Private::document_export_telegram);
+        QMenu* menu_save = action_menu(GlaxnimateApp::theme_icon("document-save"), tr("Save..."), layout_actions);
+        menu_save->addAction(
+            document_action(GlaxnimateApp::theme_icon("document-save"), tr("Save"), &Private::document_save)
+        );
+        menu_save->addAction(
+            document_action(GlaxnimateApp::theme_icon("document-save-as"), tr("Save As"), &Private::document_save_as)
+        );
+        menu_save->addAction(
+            document_action(GlaxnimateApp::theme_icon("document-export"), tr("Export"), &Private::document_export)
+        );
 
-        document_action_public(GlaxnimateApp::theme_icon("edit-cut"), tr("Cut"), &MainWindow::cut);
-        document_action_public(GlaxnimateApp::theme_icon("edit-copy"), tr("Copy"), &MainWindow::copy);
-        document_action_public(GlaxnimateApp::theme_icon("edit-paste"), tr("Paste"), &MainWindow::paste);
-        document_action_public(GlaxnimateApp::theme_icon("edit-delete"), tr("Delete"), &MainWindow::delete_shapes);
+        layout_actions->addWidget(action_button(
+            document_action(GlaxnimateApp::theme_icon("document-send"), tr("Send to Telegram"), &Private::document_export_telegram)
+        ));
+
+
+        // Layer
+        layout_actions->addWidget(action_button(
+            document_action_public(GlaxnimateApp::theme_icon("edit-delete"), tr("Delete Selected"), &MainWindow::delete_shapes)
+        ));
+
+        layout_actions->addWidget(action_button(
+            document_action(GlaxnimateApp::theme_icon("layer-raise"), tr("Raise Above"), &Private::selection_raise)
+        ));
+
+        layout_actions->addWidget(action_button(
+            document_action(GlaxnimateApp::theme_icon("layer-lower"), tr("Lower Below"), &Private::selection_lower)
+        ));
 
         // Undo-redo
         action_undo = new QAction(GlaxnimateApp::theme_icon("edit-undo"), tr("Undo"), parent);
         layout_actions->addWidget(action_button(action_undo));
         action_redo = new QAction(GlaxnimateApp::theme_icon("edit-redo"), tr("Redo"), parent);
         layout_actions->addWidget(action_button(action_redo));
+    }
+
+    void init_toolbar_edit()
+    {
+        layout_edit_actions = new QHBoxLayout();
+        layout_edit_actions->setMargin(0);
+        layout_edit_actions->setSpacing(0);
+        ui.widget_edit_actions->setLayout(layout_edit_actions);
+
+        // Clipboard
+        layout_edit_actions->addWidget(action_button(
+            document_action_public(GlaxnimateApp::theme_icon("edit-cut"), tr("Cut"), &MainWindow::cut)
+        ));
+        layout_edit_actions->addWidget(action_button(
+            document_action_public(GlaxnimateApp::theme_icon("edit-copy"), tr("Copy"), &MainWindow::copy)
+        ));
+        layout_edit_actions->addWidget(action_button(
+            document_action_public(GlaxnimateApp::theme_icon("edit-paste"), tr("Paste"), &MainWindow::paste)
+        ));
+
+        // Spacer
+        layout_edit_actions->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
         // Views
-        QActionGroup *view_actions = new QActionGroup(parent);
-        view_actions->setExclusive(true);
-
-        view_action(
-            GlaxnimateApp::theme_icon("document-properties"), tr("Object Properties"),
-            view_actions, ui.property_widget, layout_actions
-        );
-
-        view_action(
-            GlaxnimateApp::theme_icon("player-time"), tr("Timeline"),
-            view_actions, ui.time_container, layout_actions, true
-        );
-
-        view_action(
-            GlaxnimateApp::theme_icon("fill-color"), tr("Fill Style"),
-            view_actions, ui.fill_style_widget, layout_actions
-        );
-
-        view_action(
-            GlaxnimateApp::theme_icon("object-stroke-style"), tr("Stroke Style"),
-            view_actions, ui.stroke_style_widget, layout_actions
-        );
+        layout_edit_actions->addWidget(action_button(view_action(
+            GlaxnimateApp::theme_icon("document-properties"), tr("Advanced Properties"),
+            view_actions, ui.property_widget
+        )));
 
         auto help = new QAction(GlaxnimateApp::theme_icon("question"), tr("Help"), parent);
-        layout_actions->addWidget(action_button(help));
+        layout_edit_actions->addWidget(action_button(help));
         connect(help, &QAction::triggered, parent, [this]{
             HelpDialog(parent).exec();
         });
 
+        /*
+        // Toggler
+        layout_tools->addWidget(action_button(view_action(
+            GlaxnimateApp::theme_icon("overflow-menu"), tr("More Tools"),
+            nullptr, ui.widget_actions, true
+        )));
+        */
     }
 
-    void document_action(const QIcon& icon, const QString& text, void (Private::* func)())
+    QAction* document_action(const QIcon& icon, const QString& text, void (Private::* func)())
     {
         QAction* action = new QAction(icon, text, parent);
-        layout_actions->addWidget(action_button(action));
         connect(action, &QAction::triggered, parent, [this, func]{
             (this->*func)();
         });
+        return action;
     }
 
     template<class Callback>
-    void document_action_public(const QIcon& icon, const QString& text, Callback func)
+    QAction* document_action_public(const QIcon& icon, const QString& text, Callback func)
     {
         QAction* action = new QAction(icon, text, parent);
-        layout_actions->addWidget(action_button(action));
         connect(action, &QAction::triggered, parent, [this, func]{
             (parent->*func)();
         });
+        return action;
     }
 
     QAction* view_action(const QIcon& icon, const QString& text, QActionGroup* group,
-                         QWidget* target, FlowLayout* container, bool checked = false)
+                         QWidget* target, bool checked = false)
     {
         QAction* action = new QAction(icon, text, parent);
         action->setCheckable(true);
@@ -368,7 +514,6 @@ public:
         target->setVisible(checked);
         action->setActionGroup(group);
         connect(action, &QAction::toggled, target, &QWidget::setVisible);
-        container->addWidget(action_button(action));
         return action;
     }
 
@@ -753,6 +898,14 @@ void MainWindow::changeEvent(QEvent *e)
     switch (e->type()) {
         case QEvent::LanguageChange:
             d->ui.retranslateUi(this);
+
+            for ( const auto& grp : tools::Registry::instance() )
+            {
+                for ( const auto& tool : grp.second )
+                {
+                    tool.second->retranslate();
+                }
+            }
             break;
         default:
             break;

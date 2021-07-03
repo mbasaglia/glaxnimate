@@ -52,5 +52,10 @@
         <file>images/icons/question.svg</file>
         <file>images/icons/document-import.svg</file>
         <file>images/icons/database-change-key.svg</file>
+        <file>images/icons/shapes.svg</file>
+        <file>images/icons/view-form.svg</file>
+        <file>images/icons/draw-brush.svg</file>
+        <file>images/icons/layer-lower.svg</file>
+        <file>images/icons/layer-raise.svg</file>
     </qresource>
 </RCC>

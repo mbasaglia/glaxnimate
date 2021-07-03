@@ -33,7 +33,37 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <item row="1" column="0" colspan="2">
+    <item row="3" column="0" colspan="5">
+     <widget class="QWidget" name="widget_tools_container_bottom" native="true">
+      <layout class="QVBoxLayout" name="layout_tools_container">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QWidget" name="widget_actions" native="true"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="3" rowspan="2">
+     <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
+    </item>
+    <item row="1" column="1">
+     <widget class="Canvas" name="canvas"/>
+    </item>
+    <item row="2" column="0" colspan="2">
      <widget class="QWidget" name="time_container" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -103,37 +133,10 @@
       </layout>
      </widget>
     </item>
-    <item row="0" column="4" rowspan="2">
+    <item row="1" column="4" rowspan="2">
      <widget class="FillStyleWidget" name="fill_style_widget" native="true"/>
     </item>
-    <item row="2" column="0" colspan="5">
-     <widget class="QWidget" name="widget_tools_container_bottom" native="true">
-      <layout class="QVBoxLayout" name="layout_tools_container">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QWidget" name="widget_actions" native="true"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QWidget" name="widget_tools_container_side" native="true"/>
-    </item>
-    <item row="0" column="2" rowspan="2">
+    <item row="1" column="2" rowspan="2">
      <widget class="QScrollArea" name="property_widget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -159,7 +162,7 @@
          <x>0</x>
          <y>0</y>
          <width>68</width>
-         <height>871</height>
+         <height>861</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -198,11 +201,11 @@
       </widget>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="Canvas" name="canvas"/>
+    <item row="0" column="1" colspan="4">
+     <widget class="QWidget" name="widget_edit_actions" native="true"/>
     </item>
-    <item row="0" column="3" rowspan="2">
-     <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
+    <item row="0" column="0" rowspan="2">
+     <widget class="QWidget" name="widget_tools_container_side" native="true"/>
     </item>
    </layout>
   </widget>

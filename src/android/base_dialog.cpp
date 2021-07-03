@@ -20,7 +20,9 @@ glaxnimate::android::BaseDialog::BaseDialog(QWidget *parent)
 
 int glaxnimate::android::BaseDialog::exec()
 {
+#ifndef Q_OS_ANDROID_FAKE
     showMaximized();
+#endif
     setFocus();
     return QDialog::exec();
 }

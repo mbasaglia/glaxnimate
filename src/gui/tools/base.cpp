@@ -165,12 +165,20 @@ QWidget* tools::Tool::get_settings_widget()
 
 void tools::Tool::retranslate()
 {
-    action->setText(name());
-    action->setToolTip(tooltip());
-    action->setShortcut(key_sequence());
+    if ( action )
+    {
+        action->setText(name());
+        action->setToolTip(tooltip());
+#ifndef Q_OS_ANDROID
+        action->setShortcut(key_sequence());
+#endif
+    }
 
-    button->setText(name());
-    button->setToolTip(QObject::tr("%1 (%2)").arg(name()).arg(key_sequence().toString()));
+    if ( button )
+    {
+        button->setText(name());
+        button->setToolTip(QObject::tr("%1 (%2)").arg(name()).arg(key_sequence().toString()));
+    }
 
     on_translate();
 }

@@ -11,6 +11,13 @@ class AndroidStyle : public QProxyStyle
 public:
     using QProxyStyle::QProxyStyle;
 
+    int pixelMetric(PixelMetric metric, const QStyleOption *option = nullptr, const QWidget *widget = nullptr) const override
+    {
+        if ( metric == PM_SmallIconSize )
+            return 80;
+        return QProxyStyle::pixelMetric(metric, option, widget);
+    }
+
     QRect subControlRect(ComplexControl cc, const QStyleOptionComplex *opt, SubControl sc, const QWidget *widget) const override
     {
         auto rect = QProxyStyle::subControlRect(cc, opt, sc, widget);

@@ -173,6 +173,7 @@ public:
 
     using container = std::map<int, std::multimap<Priority, std::unique_ptr<Tool>>>;
     using iterator = container::const_iterator;
+    using mapped_type = container::mapped_type;
 
     static Registry& instance()
     {
@@ -195,6 +196,11 @@ public:
         if ( it == by_id.end() )
             return nullptr;
         return it->second;
+    }
+
+    const mapped_type& operator[](Group g) const
+    {
+        return tools.at(g);
     }
 
 private:
