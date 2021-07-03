@@ -71,7 +71,7 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="time_container_layout">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -106,13 +106,6 @@
           </widget>
          </item>
         </layout>
-       </item>
-       <item>
-        <widget class="QScrollBar" name="slider_frame">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
        </item>
        <item>
         <widget class="CompoundTimelineWidget" name="timeline_widget" native="true">

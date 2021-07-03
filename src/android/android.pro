@@ -45,7 +45,8 @@ SOURCES = \
     scroll_area_event_filter.cpp \
     sticker_pack_builder_dialog.cpp \
     telegram_intent.cpp \
-    emoji_data.cpp
+    emoji_data.cpp \
+    timeline_slider.cpp
 
 FORMS += \
     main_window.ui \
@@ -65,7 +66,8 @@ HEADERS += \
     main_window.hpp \
     scroll_area_event_filter.hpp \
     sticker_pack_builder_dialog.hpp \
-    telegram_intent.hpp
+    telegram_intent.hpp \
+    timeline_slider.hpp
 
 RESOURCES += \
     resources.qrc

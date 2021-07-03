@@ -32,6 +32,7 @@
 #include "sticker_pack_builder_dialog.hpp"
 #include "scroll_area_event_filter.hpp"
 #include "help_dialog.hpp"
+#include "timeline_slider.hpp"
 
 
 using namespace glaxnimate::android;
@@ -67,6 +68,7 @@ public:
     StickerPackBuilderDialog telegram_export_dialog;
     style::PropertyDelegate property_delegate;
     QActionGroup *view_actions = nullptr;
+    TimelineSlider* timeline_slider;
 
     Private(MainWindow* parent)
         : parent(parent),
@@ -207,11 +209,13 @@ public:
         QObject::connect(ui.play_controls, &FrameControlsWidget::record_toggled, current_document.get(), &model::Document::set_record_to_keyframe);
 
         // slider
-        ui.slider_frame->setMinimum(first_frame);
-        ui.slider_frame->setMaximum(last_frame);
-        ui.slider_frame->setValue(first_frame);
-        QObject::connect(ui.slider_frame, &QSlider::valueChanged, current_document.get(), &model::Document::set_current_time);
-        QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.slider_frame, &QSlider::setValue);
+        timeline_slider = new TimelineSlider(ui.time_container);
+        ui.time_container_layout->insertWidget(1, timeline_slider);
+        timeline_slider->setMinimum(first_frame);
+        timeline_slider->setMaximum(last_frame);
+        timeline_slider->setValue(first_frame);
+        QObject::connect(timeline_slider, &QAbstractSlider::valueChanged, current_document.get(), &model::Document::set_current_time);
+        QObject::connect(current_document.get(), &model::Document::current_time_changed, timeline_slider, &QAbstractSlider::setValue);
 
         // timeline
         ui.timeline_widget->reset_view();
@@ -738,7 +742,8 @@ public:
         for ( QToolButton* btn : parent->findChildren<QToolButton*>() )
             btn->setIconSize(button_size);
 
-        ui.slider_frame->setFixedHeight(button_w);
+        timeline_slider->setFixedHeight(button_w);
+        timeline_slider->set_slider_size(parent->width() / 10);
 
         ui.widget_tools_container_side->setVisible(false);
         ui.widget_tools_container_bottom->setVisible(false);
