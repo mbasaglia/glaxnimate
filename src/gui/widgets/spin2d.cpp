@@ -2,7 +2,7 @@
 
 #include <QHBoxLayout>
 #include <QStyleOptionSpinBox>
-#include <QApplication>
+#include "glaxnimate_app.hpp"
 
 
 Spin2D::Spin2D(QWidget* parent)
@@ -35,6 +35,9 @@ void Spin2D::enable_ratio_lock()
 
     lock = new QToolButton(this);
     lock->setCheckable(true);
+#ifdef Q_OS_ANDROID
+    lock->setIconSize(QSize(50, 50));
+#endif
     lock_toggled(false);
     connect(lock, &QToolButton::clicked, this, &Spin2D::lock_toggled);
     static_cast<QHBoxLayout*>(layout())->addWidget(lock);
@@ -87,11 +90,11 @@ void Spin2D::lock_toggled(bool on)
     {
         if ( y() != 0 )
             ratio = x() / y();
-        lock->setIcon(QIcon::fromTheme("object-locked"));
+        lock->setIcon(GlaxnimateApp::theme_icon("object-locked"));
     }
     else
     {
-        lock->setIcon(QIcon::fromTheme("object-unlocked"));
+        lock->setIcon(GlaxnimateApp::theme_icon("object-unlocked"));
     }
 }
 
@@ -166,6 +169,7 @@ void Spin2D::x_changed(qreal x)
         spin_y->setValue(x / ratio);
         spin_y->blockSignals(b);
     }
+    emit value_changed();
 }
 
 void Spin2D::y_changed(qreal y)
@@ -176,6 +180,7 @@ void Spin2D::y_changed(qreal y)
         spin_x->setValue(y * ratio);
         spin_x->blockSignals(b);
     }
+    emit value_changed();
 }
 
 void Spin2D::set_decimals(int decimals)

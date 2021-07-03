@@ -3,6 +3,7 @@
 #include <QtColorWidgets/ColorDelegate>
 
 #include "math/vector.hpp"
+#include "model/property/property.hpp"
 
 namespace style {
 
@@ -10,6 +11,10 @@ class PropertyDelegate : public color_widgets::ColorDelegate
 {
 public:
     void set_forced_height(int height) { force_height = height; }
+
+    QWidget* editor_from_property(model::BaseProperty* prop, QWidget* parent) const;
+    void set_editor_data(QWidget* editor, model::BaseProperty* prop) const;
+    bool set_property_data(QWidget* editor, model::BaseProperty* prop) const;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
@@ -40,6 +45,11 @@ private:
     }
 
     void paint_plaintext(const QString& text, QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+    QVariant refprop(model::BaseProperty *prop, const model::PropertyTraits& traits) const;
+    QWidget* create_editor_from_variant(const QVariant &data, int prop_flags, QWidget *parent, const QVariant& refprop, const QVariant& min, const QVariant& max) const;
+    bool set_editor_data(QWidget *editor, const QVariant &data, int prop_flags, const QVariant &refprop) const;
+    QVariant get_editor_data(QWidget *editor, const QVariant &data, int prop_flags, const QVariant &refprop, int& status) const;
 
     int force_height = 0;
 };

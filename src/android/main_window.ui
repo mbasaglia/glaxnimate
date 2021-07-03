@@ -33,18 +33,6 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <item row="0" column="2" rowspan="2">
-     <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
-    </item>
-    <item row="0" column="3" rowspan="2">
-     <widget class="FillStyleWidget" name="fill_style_widget" native="true"/>
-    </item>
-    <item row="0" column="1">
-     <widget class="Canvas" name="canvas"/>
-    </item>
-    <item row="0" column="0">
-     <widget class="QWidget" name="widget_tools_container_side" native="true"/>
-    </item>
     <item row="1" column="0" colspan="2">
      <widget class="QWidget" name="time_container" native="true">
       <property name="sizePolicy">
@@ -115,7 +103,10 @@
       </layout>
      </widget>
     </item>
-    <item row="2" column="0" colspan="4">
+    <item row="0" column="4" rowspan="2">
+     <widget class="FillStyleWidget" name="fill_style_widget" native="true"/>
+    </item>
+    <item row="2" column="0" colspan="5">
      <widget class="QWidget" name="widget_tools_container_bottom" native="true">
       <layout class="QVBoxLayout" name="layout_tools_container">
        <property name="spacing">
@@ -138,6 +129,80 @@
        </item>
       </layout>
      </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QWidget" name="widget_tools_container_side" native="true"/>
+    </item>
+    <item row="0" column="2" rowspan="2">
+     <widget class="QScrollArea" name="property_widget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="property_widgets_inner">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>68</width>
+         <height>871</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>6</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="property_widget_layout"/>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="Canvas" name="canvas"/>
+    </item>
+    <item row="0" column="3" rowspan="2">
+     <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
     </item>
    </layout>
   </widget>
@@ -200,12 +265,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>768</x>
-     <y>502</y>
+     <x>628</x>
+     <y>845</y>
     </hint>
     <hint type="destinationlabel">
-     <x>741</x>
-     <y>542</y>
+     <x>629</x>
+     <y>865</y>
     </hint>
    </hints>
   </connection>

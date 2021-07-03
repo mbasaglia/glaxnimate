@@ -18,6 +18,7 @@
 #include "tools/base.hpp"
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/flow_layout.hpp"
+#include "style/property_delegate.hpp"
 
 #include "glaxnimate_app_android.hpp"
 #include "android_file_picker.hpp"
@@ -25,6 +26,7 @@
 #include "document_opener.hpp"
 #include "android_mime.hpp"
 #include "sticker_pack_builder_dialog.hpp"
+#include "scroll_area_event_filter.hpp"
 
 using namespace glaxnimate::android;
 
@@ -57,6 +59,7 @@ public:
     QAction* action_toggle_widget_actions = nullptr;
     AndroidMime mime;
     StickerPackBuilderDialog telegram_export_dialog;
+    style::PropertyDelegate property_delegate;
 
     Private(MainWindow* parent)
         : parent(parent),
@@ -114,6 +117,12 @@ public:
                 else
                     this->parent->set_current_document_node(nullptr);
         });
+
+        (new ScrollAreaEventFilter(ui.property_widget))->setParent(ui.property_widget);
+
+        int side_width = ui.fill_style_widget->sizeHint().width();
+        ui.stroke_style_widget->setMinimumWidth(side_width);
+        ui.property_widget->setMinimumWidth(side_width);
     }
 
     void setup_document_new()
@@ -153,6 +162,7 @@ public:
         ui.timeline_widget->set_document(nullptr);
         action_redo->setEnabled(false);
         action_undo->setEnabled(false);
+        clear_property_widgets();
         current_document.reset();
         current_document_has_file = false;
     }
@@ -273,7 +283,6 @@ public:
             nullptr, ui.widget_actions, layout_tools, true
         );
 
-
         // Document actions
         document_action(GlaxnimateApp::theme_icon("document-new"), tr("New"), &Private::document_new);
         document_action(GlaxnimateApp::theme_icon("document-open"), tr("Open"), &Private::document_open);
@@ -309,6 +318,11 @@ public:
         view_action(
             GlaxnimateApp::theme_icon("object-stroke-style"), tr("Stroke Style"),
             view_actions, ui.stroke_style_widget, layout_actions
+        );
+
+        view_action(
+            GlaxnimateApp::theme_icon("document-properties"), tr("Object Properties"),
+            view_actions, ui.property_widget, layout_actions
         );
 
     }
@@ -595,6 +609,82 @@ public:
 
         return false;
     }
+
+    void clear_property_widgets()
+    {
+        while ( QLayoutItem *child = ui.property_widget_layout->takeAt(0) )
+        {
+            delete child->widget();
+            delete child;
+        }
+    }
+
+    void add_property_widgets_object(model::Object* node)
+    {
+        using Traits = model::PropertyTraits;
+        std::vector<std::pair<QWidget*, model::BaseProperty*>> props;
+
+        for ( const auto& prop : node->properties() )
+        {
+            auto traits = prop->traits();
+            if ( traits.type == Traits::ObjectReference || (traits.flags & Traits::List) )
+            {
+                continue;
+            }
+            else if ( traits.type == Traits::Object )
+            {
+                add_property_widgets_object(prop->value().value<model::Object*>());
+            }
+            else if ( !(traits.flags & Traits::Visual)  )
+            {
+                continue;
+            }
+            else if ( auto wid = property_delegate.editor_from_property(prop, nullptr) )
+            {
+                props.emplace_back(wid, prop);
+                auto lab = new QLabel(prop->name());
+                lab->setBuddy(wid);
+                ui.property_widget_layout->addWidget(lab);
+                property_delegate.set_editor_data(wid, prop);
+                ui.property_widget_layout->addWidget(wid);
+            }
+        }
+
+        connect(node, &model::Object::visual_property_changed, props[0].first, [props, this]{
+            for ( const auto& p : props )
+                property_delegate.set_editor_data(p.first, p.second);
+        });
+
+    }
+
+    void add_property_widgets(model::VisualNode* node)
+    {
+        QLabel* label = new QLabel(node->object_name());
+        ui.property_widget_layout->addWidget(label);
+        connect(node, &model::DocumentNode::name_changed, label, &QLabel::setText);
+
+        add_property_widgets_object(node);
+
+        if ( auto grp = node->cast<model::Group>() )
+        {
+            for ( const auto& child : grp->shapes )
+            {
+                if ( !child->is_instance<model::Group>() && !child->is_instance<model::Styler>() )
+                    add_property_widgets(child.get());
+            }
+        }
+    }
+
+
+    void set_property_widgets(model::VisualNode* node)
+    {
+        clear_property_widgets();
+        if ( node )
+        {
+            add_property_widgets(node);
+            ui.property_widget->setMinimumWidth(ui.property_widgets_inner->sizeHint().width() + 6);
+        }
+    }
 };
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -674,6 +764,9 @@ model::BrushStyle* MainWindow::linked_brush_style(bool secondary) const
 
 void MainWindow::set_current_document_node(model::VisualNode* node)
 {
+    if ( node == d->current_node )
+        return;
+
     d->current_node = node;
     d->current_fill = nullptr;
     d->current_stroke = nullptr;
@@ -705,6 +798,9 @@ void MainWindow::set_current_document_node(model::VisualNode* node)
 
     d->ui.stroke_style_widget->set_shape(d->current_stroke);
     d->ui.fill_style_widget->set_shape(d->current_fill);
+
+
+    d->set_property_widgets(node);
 }
 
 void MainWindow::set_current_composition(model::Composition* comp)

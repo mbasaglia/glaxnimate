@@ -35,6 +35,9 @@ private slots:
     void lock_toggled(bool on);
     void x_changed(qreal x);
     void y_changed(qreal y);
+
+signals:
+    void value_changed();
     
 private:
     bool ratio_lock() const;
