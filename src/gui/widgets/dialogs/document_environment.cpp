@@ -65,7 +65,6 @@ void glaxnimate::gui::DocumentEnvironment::delete_selected()
     }
 }
 
-#include <QDebug>
 std::vector<model::VisualNode *> glaxnimate::gui::DocumentEnvironment::copy() const
 {
     auto selection = cleaned_selection();
@@ -87,11 +86,22 @@ std::vector<model::VisualNode *> glaxnimate::gui::DocumentEnvironment::copy() co
 void glaxnimate::gui::DocumentEnvironment::cut()
 {
     auto selection = copy();
+
+    delete_shapes_impl(QObject::tr("Cut"), selection);
+}
+
+void glaxnimate::gui::DocumentEnvironment::delete_shapes()
+{
+    delete_shapes_impl(QObject::tr("Delete"), cleaned_selection());
+}
+
+void glaxnimate::gui::DocumentEnvironment::delete_shapes_impl(const QString &undo_string, const std::vector<model::VisualNode *>& selection)
+{
     if ( selection.empty() )
         return;
 
     auto doc = document();
-    command::UndoMacroGuard macro(QObject::tr("Cut"), doc);
+    command::UndoMacroGuard macro(undo_string, doc);
     for ( auto item : selection )
     {
         if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
@@ -149,7 +159,6 @@ void glaxnimate::gui::DocumentEnvironment::paste_impl(bool as_comp)
 
     paste_document(raw_pasted.document.get(), QObject::tr("Paste"), as_comp);
 }
-
 
 void glaxnimate::gui::DocumentEnvironment::paste_document(model::Document* document, const QString& macro_name, bool as_comp)
 {

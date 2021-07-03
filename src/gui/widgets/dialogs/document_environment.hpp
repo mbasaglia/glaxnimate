@@ -58,6 +58,7 @@ public:
     void paste();
     void paste_as_composition();
     void paste_document(model::Document* document, const QString& macro_name, bool as_comp);
+    void delete_shapes();
 
     virtual void set_selection(const std::vector<model::VisualNode*>& selected) = 0;
 
@@ -68,6 +69,7 @@ protected:
 
 private:
     void paste_impl(bool as_comp);
+    void delete_shapes_impl(const QString& undo_string, const std::vector<model::VisualNode *> &selection);
 };
 
 

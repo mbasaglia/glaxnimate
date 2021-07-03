@@ -296,6 +296,7 @@ public:
         document_action_public(GlaxnimateApp::theme_icon("edit-cut"), tr("Cut"), &MainWindow::cut);
         document_action_public(GlaxnimateApp::theme_icon("edit-copy"), tr("Copy"), &MainWindow::copy);
         document_action_public(GlaxnimateApp::theme_icon("edit-paste"), tr("Paste"), &MainWindow::paste);
+        document_action_public(GlaxnimateApp::theme_icon("edit-delete"), tr("Delete"), &MainWindow::delete_shapes);
 
         // Undo-redo
         action_undo = new QAction(GlaxnimateApp::theme_icon("edit-undo"), tr("Undo"), parent);
@@ -537,15 +538,17 @@ public:
 
         Qt::Orientation toolbar_orientation;
 
-        if ( parent->width() > parent->height() )
+        QSize screen_size = parent->size();
+
+        if ( screen_size.width() > screen_size.height() )
         {
             toolbar_orientation = Qt::Vertical;
-            mins = parent->height();
+            mins = screen_size.height();
         }
         else
         {
             toolbar_orientation = Qt::Horizontal;
-            mins = parent->width();
+            mins = screen_size.width();
         }
 
         int button_w = qRound(mins * 0.08);
@@ -561,7 +564,7 @@ public:
 
         tool_layout_extent = mins;
         if ( toolbar_orientation == Qt::Vertical )
-            tool_layout_extent *= 0.8;
+            tool_layout_extent *= 0.7;
         tool_layout_extent = qRound(tool_layout_extent/9.);
 
         layout_actions->set_orientation(toolbar_orientation);
