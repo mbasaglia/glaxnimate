@@ -261,6 +261,7 @@ public:
         QActionGroup *tool_actions = new QActionGroup(parent);
         tool_actions->setExclusive(true);
 
+        tools::Event event{ui.canvas, &scene, parent};
         for ( const auto& grp : tools::Registry::instance() )
         {
             for ( const auto& tool : grp.second )
@@ -276,6 +277,7 @@ public:
                     active_tool = tool.second.get();
                     action->setChecked(true);
                 }
+                tool.second->initialize(event);
             }
         }
         action_toggle_widget_actions = view_action(
@@ -663,8 +665,6 @@ public:
         ui.property_widget_layout->addWidget(label);
         connect(node, &model::DocumentNode::name_changed, label, &QLabel::setText);
 
-        add_property_widgets_object(node);
-
         if ( auto grp = node->cast<model::Group>() )
         {
             for ( const auto& child : grp->shapes )
@@ -673,6 +673,8 @@ public:
                     add_property_widgets(child.get());
             }
         }
+
+        add_property_widgets_object(node);
     }
 
 

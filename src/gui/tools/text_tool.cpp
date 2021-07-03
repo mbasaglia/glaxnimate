@@ -3,10 +3,13 @@
 #include <QTextFrame>
 #include <QTextFrameLayoutData>
 #include <QAbstractTextDocumentLayout>
+#include <QInputDialog>
 
 #include "draw_tool_base.hpp"
 #include "model/shapes/text.hpp"
 #include "widgets/tools/text_tool_widget.hpp"
+#include "glaxnimate_app.hpp"
+
 
 namespace tools {
 
@@ -15,7 +18,7 @@ class TextTool : public DrawToolBase
 public:
     QCursor cursor() override { return Qt::IBeamCursor; }
     QString id() const override { return "text"; }
-    QIcon icon() const override { return QIcon::fromTheme("draw-text"); }
+    QIcon icon() const override { return GlaxnimateApp::theme_icon("draw-text"); }
     QString name() const override { return QObject::tr("Draw Text"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F8"), QKeySequence::PortableText); }
     static int static_group() noexcept { return Registry::Shape; }
@@ -184,6 +187,7 @@ public:
         update_editor_position();
 
         widget()->set_preview_text(target->text.get());
+        show_keyboard();
     }
 
     void create(const MouseEvent& event)
@@ -199,6 +203,14 @@ public:
         editor.setDefaultTextColor(Qt::black);
         editor.setFont(font);
         widget()->set_preview_text("");
+        show_keyboard();
+    }
+
+    void show_keyboard()
+    {
+#ifdef Q_OS_ANDROID
+        QGuiApplication::inputMethod()->show();
+#endif
     }
 
     QWidget* on_create_widget() override

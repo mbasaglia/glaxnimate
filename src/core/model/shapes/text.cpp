@@ -24,6 +24,9 @@ public:
         raw(QRawFont::fromFont(query)),
         metrics(query)
     {
+#ifdef Q_OS_ANDROID
+        query.setPointSizeF(32);
+#endif
 //         query.setKerning(false);
         upscaled_raw();
     }
@@ -49,13 +52,14 @@ public:
     void upscaled_raw()
     {
         QFont font =  query;
+#ifndef Q_OS_ANDROID
         font.setPointSizeF(font.pointSizeF() * 1000);
+#endif
         raw_scaled = QRawFont::fromFont(font);
     }
 
     QPainterPath path_for_glyph(quint32  glyph, bool fix_paint)
     {
-
         QPainterPath path = raw_scaled.pathForGlyph(glyph);
 
         if ( fix_paint )

@@ -13,6 +13,7 @@
 #include "widgets/font/font_delegate.hpp"
 #include "widgets/font/font_style_dialog.hpp"
 
+#include <QDebug>
 class TextToolWidget::Private : public ShapeToolWidget::Private
 {
 public:

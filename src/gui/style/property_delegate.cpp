@@ -186,7 +186,7 @@ QWidget *PropertyDelegate::editor_from_property(model::BaseProperty *prop, QWidg
 
     QVariant min;
     QVariant max;
-    if ( traits.type == model::PropertyTraits::Float )
+    if ( traits.type == model::PropertyTraits::Float && (traits.flags & model::PropertyTraits::Animated) )
     {
         auto float_prop = static_cast<model::AnimatedProperty<float>*>(prop);
         min = float_prop->min();
@@ -297,11 +297,18 @@ QWidget *PropertyDelegate::create_editor_from_variant(const QVariant &data, int 
             }
 
             if ( min.isValid() )
-                box->setMinimum(min.toDouble() * mult);
+            {
+                double mind = min.toDouble();
+                if ( mind != std::numeric_limits<double>::lowest() )
+                    mind *= mult;
+                box->setMinimum(mind);
+            }
 
             if ( max.isValid() )
             {
-                qreal maxf = max.toDouble() * mult;
+                qreal maxf = max.toDouble();
+                if ( maxf != std::numeric_limits<double>::max() )
+                    maxf *= mult;
                 box->setMaximum(maxf);
                 if ( max == 1 )
                     box->setSingleStep(0.1);
