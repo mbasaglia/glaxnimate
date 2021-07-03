@@ -206,7 +206,8 @@ void glaxnimate::gui::DocumentEnvironment::layer_new_impl(std::unique_ptr<model:
 {
     auto doc = document();
     doc->set_best_name(layer.get(), {});
-    layer->set_time(current_document_node()->time());
+    auto curr_dn = current_document_node();
+    layer->set_time(curr_dn ? curr_dn->time() : doc->current_time());
 
     model::ShapeElement* ptr = layer.get();
 

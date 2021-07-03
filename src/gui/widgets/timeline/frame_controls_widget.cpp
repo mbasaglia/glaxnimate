@@ -16,7 +16,7 @@ FrameControlsWidget::FrameControlsWidget(QWidget* parent)
     d->button_next->setIcon(GlaxnimateApp::theme_icon("go-next"));
     d->button_prev->setIcon(GlaxnimateApp::theme_icon("go-previous"));
     d->button_play->setIcon(GlaxnimateApp::theme_icon("media-playback-start"));
-    d->button_record->setIcon(GlaxnimateApp::theme_icon("media-record"));
+    d->button_record->setIcon(GlaxnimateApp::theme_icon("database-change-key"));
     d->button_loop->setIcon(GlaxnimateApp::theme_icon("media-playlist-repeat"));
 #endif
 

@@ -51,5 +51,6 @@
         <file>images/icons/object-unlocked.svg</file>
         <file>images/icons/question.svg</file>
         <file>images/icons/document-import.svg</file>
+        <file>images/icons/database-change-key.svg</file>
     </qresource>
 </RCC>

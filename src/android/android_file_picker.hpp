@@ -14,7 +14,7 @@ public:
     AndroidFilePicker(QObject *parent = nullptr);
     ~AndroidFilePicker();
 
-    bool select_open();
+    bool select_open(bool is_import);
     bool select_save(const QString& suggested_name, bool is_export);
     bool open_external(const QUrl& uri, const QString& mime);
 
@@ -27,7 +27,7 @@ public:
     });
 
 signals:
-    void open_selected(const QUrl& path);
+    void open_selected(const QUrl& path, bool is_import);
     void save_selected(const QUrl& path, bool is_export);
 
 private:

@@ -174,7 +174,7 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
             tr("Jumps to the last frame.")
         },
         {
-            "media-record",
+            "database-change-key",
             tr("When enabled (which is the default) whenever you change an object property, a new keyframe is added for that property.")
         },
     };

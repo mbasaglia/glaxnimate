@@ -102,8 +102,8 @@ public:
 
         export_options.path = default_save_path();
 
-        connect(&file_picker, &glaxnimate::android::AndroidFilePicker::open_selected, parent, [this](const QUrl& url){
-            open_url(url);
+        connect(&file_picker, &glaxnimate::android::AndroidFilePicker::open_selected, parent, [this](const QUrl& url, bool is_import){
+            open_url(url, is_import);
         });
         connect(&file_picker, &glaxnimate::android::AndroidFilePicker::save_selected, parent,
             [this](const QUrl& url, bool is_export){
@@ -263,6 +263,7 @@ public:
         tool_actions->setExclusive(true);
 
         tools::Event event{ui.canvas, &scene, parent};
+        tools::Tool* to_activate = nullptr;
         for ( const auto& grp : tools::Registry::instance() )
         {
             for ( const auto& tool : grp.second )
@@ -273,14 +274,15 @@ public:
                 action->setActionGroup(tool_actions);
                 connect(action, &QAction::triggered, parent, &MainWindow::tool_triggered);
 
-                if ( !active_tool )
+                if ( !to_activate )
                 {
-                    active_tool = tool.second.get();
+                    to_activate = tool.second.get();
                     action->setChecked(true);
                 }
                 tool.second->initialize(event);
             }
         }
+        switch_tool(to_activate);
         action_toggle_widget_actions = view_action(
             GlaxnimateApp::theme_icon("overflow-menu"), tr("Views"),
             nullptr, ui.widget_actions, layout_tools, true
@@ -289,6 +291,7 @@ public:
         // Document actions
         document_action(GlaxnimateApp::theme_icon("document-new"), tr("New"), &Private::document_new);
         document_action(GlaxnimateApp::theme_icon("document-open"), tr("Open"), &Private::document_open);
+        document_action(GlaxnimateApp::theme_icon("document-import"), tr("Import"), &Private::document_import);
         document_action(GlaxnimateApp::theme_icon("document-save"), tr("Save"), &Private::document_save);
         document_action(GlaxnimateApp::theme_icon("document-save-as"), tr("Save As"), &Private::document_save_as);
         document_action(GlaxnimateApp::theme_icon("document-export"), tr("Export"), &Private::document_export);
@@ -476,7 +479,7 @@ public:
         {
             setup_document_new();
 
-            if ( !file_picker.select_open() )
+            if ( !file_picker.select_open(false) )
             {
                 // Ugly widget as fallback
                 ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
@@ -495,6 +498,33 @@ public:
                 {
                     setup_document_new();
                 }
+            }
+        }
+    }
+
+    void document_import()
+    {
+        if ( !file_picker.select_open(true) )
+        {
+            // Ugly widget as fallback
+            ImportExportDialog dialog(current_document->io_options(), ui.centralwidget->parentWidget());
+            if ( dialog.import_dialog() )
+            {
+                io::Options options = dialog.io_options();
+
+
+                model::Document imported(options.filename);
+                QFile file(options.filename);
+                bool ok = options.format->open(file, options.filename, &imported, options.settings);
+
+                if ( !ok )
+                {
+                    QMessageBox::warning(parent, tr("Import File"), tr("Could not import file"));
+                    return;
+                }
+
+                parent->paste_document(&imported, tr("Import File"), true);
+
             }
         }
     }
@@ -522,7 +552,6 @@ public:
     {
         save_document(true, true);
     }
-
 
     QDir default_save_path()
     {
@@ -594,10 +623,19 @@ public:
         }
     }
 
-    void open_url(const QUrl& url)
+    void open_url(const QUrl& url, bool is_import)
     {
+        qDebug() << "open_url" << url << is_import;
         if ( !url.isValid() )
             return;
+
+        if ( is_import )
+        {
+            auto imported = document_opener.open(url);
+            if ( imported )
+                parent->paste_document(imported.get(), tr("Import File"), true);
+            return;
+        }
 
         clear_document();
         current_document = document_opener.open(url);

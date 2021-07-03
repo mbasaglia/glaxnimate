@@ -10,7 +10,7 @@ public:
     Private(AndroidFilePicker*)
     {}
 
-    bool select_open()
+    bool select_open(bool)
     {
         return false;
     }
@@ -31,7 +31,12 @@ public:
         return false;
     }
 
-    static bool get_permissions(const QStringList& permissions)
+    static bool get_permissions(const QStringList&)
+    {
+        return false;
+    }
+
+    bool open_external(const QUrl &, const QString &)
     {
         return false;
     }
@@ -50,10 +55,14 @@ public:
     {
 
     public:
-        static constexpr int RequestOpen = 1;
-        static constexpr int RequestSave = 2;
-        static constexpr int RequestExport = 3;
-        static constexpr int RequestView = 4;
+        enum
+        {
+            RequestOpen,
+            RequestSave,
+            RequestExport,
+            RequestView,
+            RequestImport,
+        };
 
         ResultReceiver(AndroidFilePicker *parent)
             : parent(parent)
@@ -64,7 +73,10 @@ public:
             switch ( receiverRequestCode )
             {
                 case RequestOpen:
-                    emit parent->open_selected(result_to_url(resultCode, data));
+                    emit parent->open_selected(result_to_url(resultCode, data), false);
+                    break;
+                case RequestImport:
+                    emit parent->open_selected(result_to_url(resultCode, data), true);
                     break;
                 case RequestSave:
                     emit parent->save_selected(result_to_url(resultCode, data), false);
@@ -93,7 +105,7 @@ public:
         : receiver(parent)
     {}
 
-    bool select_open()
+    bool select_open(bool is_import)
     {
         QAndroidJniObject ACTION_OPEN_DOCUMENT = QAndroidJniObject::fromString("android.intent.action.OPEN_DOCUMENT");
         QAndroidJniObject intent("android/content/Intent");
@@ -105,7 +117,7 @@ public:
 
         intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;", ACTION_OPEN_DOCUMENT.object<jstring>());
         intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", QAndroidJniObject::fromString("*/*").object<jstring>());
-        QtAndroid::startActivity(intent.object<jobject>(), ResultReceiver::RequestOpen, &receiver);
+        QtAndroid::startActivity(intent.object<jobject>(), is_import ? ResultReceiver::RequestImport : ResultReceiver::RequestOpen , &receiver);
 
         return true;
     }
@@ -280,10 +292,10 @@ glaxnimate::android::AndroidFilePicker::AndroidFilePicker(QObject *parent)
 
 glaxnimate::android::AndroidFilePicker::~AndroidFilePicker() = default;
 
-bool glaxnimate::android::AndroidFilePicker::select_open()
+bool glaxnimate::android::AndroidFilePicker::select_open(bool is_import)
 {
     get_permissions();
-    return d->select_open();
+    return d->select_open(is_import);
 }
 
 QByteArray glaxnimate::android::AndroidFilePicker::read_content_uri(const QUrl &url)

@@ -148,7 +148,7 @@ public:
             return;
         }
 
-        if ( !file_picker.select_open() )
+        if ( !file_picker.select_open(false) )
         {
             QMessageBox::warning(parent, parent->windowTitle(), tr("Could not open file"));
         }
