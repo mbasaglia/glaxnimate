@@ -11,7 +11,6 @@
 #include "graphics/document_scene.hpp"
 
 
-
 class Canvas::Private
 {
 public:
@@ -53,6 +52,12 @@ public:
     QPainterPath clip;
     QPainterPath in_clip;
     qreal pinch_zoom = 1;
+
+
+    QPointF map_to_scene(QPointF p)
+    {
+        return view->transform().inverted().map(p);
+    }
 
     void expand_scene_rect(float margin)
     {
@@ -569,6 +574,7 @@ bool Canvas::viewportEvent(QEvent *event)
                 const QTouchEvent::TouchPoint &p0 = touch_points.first();
                 const QTouchEvent::TouchPoint &p1 = touch_points.last();
 
+
                 qreal initial_distance = math::length(p0.startPos() - p1.startPos());
 
                 if ( initial_distance > 0 )
@@ -580,7 +586,8 @@ bool Canvas::viewportEvent(QEvent *event)
                     // pinch
                     if ( math::abs(distance - initial_distance) > travel_distance )
                     {
-                        QPointF center = (p0.startScenePos() + p1.startScenePos()) / 2;
+                        // scenePos() lies...
+                        QPointF center = (d->map_to_scene(p0.pos()) + d->map_to_scene(p1.pos())) / 2;
                         qreal scale_by = distance / initial_distance;
 
                         if ( touch_event->touchPointStates() & Qt::TouchPointReleased )
@@ -594,7 +601,7 @@ bool Canvas::viewportEvent(QEvent *event)
                     // pan
                     else
                     {
-                        QPointF scene_travel = (p0.scenePos() - p0.lastScenePos() + p1.scenePos() - p1.lastScenePos()) / 2;
+                        QPointF scene_travel = (p0.scenePos() - p0.lastScenePos() + p1.scenePos() - p1.lastScenePos()) / 2 / d->zoom_factor;
                         translate_view(scene_travel);
                     }
                 }
