@@ -120,10 +120,10 @@ std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::open(const
             else
                 options.format = io::IoRegistry::instance().from_slug("lottie");
         }
-        else if ( data.contains("<svg>") )
+        else if ( data.contains("<svg") || data.contains("http://www.w3.org/2000/svg") )
         {
-            options.format = io::IoRegistry::instance().from_slug("lottie");
-            options.settings["compressed"] = true;
+            options.format = io::IoRegistry::instance().from_slug("svg");
+            options.settings["compressed"] = zipped;
         }
     }
 
@@ -136,7 +136,10 @@ std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::open(const
     QBuffer file(&data);
     auto current_document = std::make_unique<model::Document>(options.filename);
     if ( !options.format->open(file, options.filename, current_document.get(), options.settings) )
+    {
+        QMessageBox::warning(d->widget_parent, QObject::tr("Open File"), QObject::tr("Error loading %1 file").arg(options.format->slug()));
         return {};
+    }
 
     if ( zipped && options.format->slug() == "lottie" )
         options.format = io::IoRegistry::instance().from_slug("tgs");
