@@ -49,5 +49,7 @@
         <file>images/icons/draw-star.svg</file>
         <file>images/icons/object-locked.svg</file>
         <file>images/icons/object-unlocked.svg</file>
+        <file>images/icons/question.svg</file>
+        <file>images/icons/document-import.svg</file>
     </qresource>
 </RCC>

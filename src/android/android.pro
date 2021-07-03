@@ -38,6 +38,7 @@ SOURCES = \
     document_opener.cpp \
     emoji_widget.cpp \
     format_selection_dialog.cpp \
+    help_dialog.cpp \
     main.cpp \
     main_window.cpp \
     glaxnimate_app_android.cpp \
@@ -60,6 +61,7 @@ HEADERS += \
     emoji_widget.hpp \
     format_selection_dialog.hpp \
     glaxnimate_app_android.hpp \
+    help_dialog.hpp \
     main_window.hpp \
     scroll_area_event_filter.hpp \
     sticker_pack_builder_dialog.hpp \

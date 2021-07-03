@@ -16,6 +16,7 @@ public:
 
     bool select_open();
     bool select_save(const QString& suggested_name, bool is_export);
+    bool open_external(const QUrl& uri, const QString& mime);
 
     static QByteArray read_content_uri(const QUrl& url);
     static bool write_content_uri(const QUrl& url, const QByteArray& data);

@@ -53,6 +53,7 @@ public:
         static constexpr int RequestOpen = 1;
         static constexpr int RequestSave = 2;
         static constexpr int RequestExport = 3;
+        static constexpr int RequestView = 4;
 
         ResultReceiver(AndroidFilePicker *parent)
             : parent(parent)
@@ -237,6 +238,36 @@ public:
         return true;
     }
 
+
+    bool open_external(const QUrl &cppuri, const QString &mime)
+    {
+
+        QAndroidJniObject ACTION_VIEW = QAndroidJniObject::fromString("android.intent.action.VIEW");
+        QAndroidJniObject intent("android/content/Intent");
+        if ( !ACTION_VIEW.isValid() || !intent.isValid())
+            return false;
+
+        auto uri_str = QAndroidJniObject::fromString(cppuri.toString());
+        QAndroidJniObject uri = QAndroidJniObject::callStaticObjectMethod(
+            "android/net/Uri",
+            "parse",
+            "(Ljava/lang/String;)Landroid/net/Uri;",
+            uri_str.object<jstring>()
+        );
+        auto jmime = QAndroidJniObject::fromString(mime);
+        intent.callObjectMethod(
+            "setDataAndType",
+            "(Landroid/net/Uri;Ljava/lang/String;)Landroid/content/Intent;",
+            uri_str.object<jobject>(),
+            jmime.object<jstring>()
+        );
+        QtAndroid::startActivity(intent.object<jobject>(), ResultReceiver::RequestView, &receiver);
+
+
+        return true;
+    }
+
+
     ResultReceiver receiver;
 };
 #endif
@@ -275,4 +306,9 @@ bool glaxnimate::android::AndroidFilePicker::select_save(const QString &suggeste
 {
     get_permissions();
     return d->select_save(suggested_name, is_export);
+}
+
+bool glaxnimate::android::AndroidFilePicker::open_external(const QUrl &cppuri, const QString &mime)
+{
+    return d->open_external(cppuri, mime);
 }

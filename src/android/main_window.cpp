@@ -27,6 +27,7 @@
 #include "android_mime.hpp"
 #include "sticker_pack_builder_dialog.hpp"
 #include "scroll_area_event_filter.hpp"
+#include "help_dialog.hpp"
 
 using namespace glaxnimate::android;
 
@@ -309,6 +310,11 @@ public:
         view_actions->setExclusive(true);
 
         view_action(
+            GlaxnimateApp::theme_icon("document-properties"), tr("Object Properties"),
+            view_actions, ui.property_widget, layout_actions
+        );
+
+        view_action(
             GlaxnimateApp::theme_icon("player-time"), tr("Timeline"),
             view_actions, ui.time_container, layout_actions, true
         );
@@ -323,10 +329,11 @@ public:
             view_actions, ui.stroke_style_widget, layout_actions
         );
 
-        view_action(
-            GlaxnimateApp::theme_icon("document-properties"), tr("Object Properties"),
-            view_actions, ui.property_widget, layout_actions
-        );
+        auto help = new QAction(GlaxnimateApp::theme_icon("question"), tr("Help"), parent);
+        layout_actions->addWidget(action_button(help));
+        connect(help, &QAction::triggered, parent, [this]{
+            HelpDialog(parent).exec();
+        });
 
     }
 

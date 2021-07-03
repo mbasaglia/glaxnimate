@@ -17,7 +17,7 @@ public:
 
     QString data_file(const QString& name) const
     {
-        return ":" + name;
+        return ":" + applicationName() + "/" + name;
     }
 
     static QIcon theme_icon(const QString& name)
