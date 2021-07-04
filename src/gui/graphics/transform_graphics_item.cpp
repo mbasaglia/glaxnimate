@@ -237,6 +237,10 @@ graphics::TransformGraphicsItem::TransformGraphicsItem(
         else
             connect(h.handle, &MoveHandle::drag_finished, this, &TransformGraphicsItem::commit_scale);
     }
+
+#ifdef Q_OS_ANDROID
+    d->handles[Private::Anchor].handle->setVisible(false);
+#endif
 }
 
 graphics::TransformGraphicsItem::~TransformGraphicsItem() = default;

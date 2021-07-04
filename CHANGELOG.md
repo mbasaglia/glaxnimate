@@ -13,6 +13,7 @@
     * Template system for new files
     * Startup dialog
     * The timeline now allows selecting multiple rows at once
+    * In recording mode, a keyframe at time 0 is added automatically for non animated properties
 * I/O:
     * More color formats are supported for the SVG importer
 * Scripting:

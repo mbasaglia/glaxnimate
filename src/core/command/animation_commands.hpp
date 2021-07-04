@@ -108,6 +108,7 @@ private:
     std::vector<int> keyframe_before;
     bool keyframe_after;
     model::FrameTime time;
+    std::vector<bool> add_0;
 };
 
 

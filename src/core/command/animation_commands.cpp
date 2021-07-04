@@ -135,6 +135,7 @@ command::SetMultipleAnimated::SetMultipleAnimated(
     {
         if ( add_before )
             this->before.push_back(prop->value());
+        add_0.push_back(!prop->animated() && prop->object()->document()->record_to_keyframe());
         keyframe_before.push_back(prop->has_keyframe(time));
     }
 }
@@ -153,6 +154,7 @@ void command::SetMultipleAnimated::push_property(model::AnimatableBase* prop, co
     before.push_back(prop->value());
     after.push_back(after_val);
     keyframe_before.push_back(prop->has_keyframe(time));
+    add_0.push_back(!prop->animated() && prop->object()->document()->record_to_keyframe());
 }
 
 void command::SetMultipleAnimated::undo()
@@ -174,6 +176,10 @@ void command::SetMultipleAnimated::undo()
             else if ( !prop->animated() || prop->time() == time )
                 prop->set_value(before[i]);
         }
+
+        if ( add_0[i] )
+            prop->remove_keyframe_at_time(0);
+
     }
 }
 
@@ -182,6 +188,10 @@ void command::SetMultipleAnimated::redo()
     for ( int i = 0; i < int(props.size()); i++ )
     {
         auto prop = props[i];
+
+        if ( add_0[i] )
+            prop->set_keyframe(0, before[i]);
+
         if ( keyframe_after )
             prop->set_keyframe(time, after[i]);
         else if ( !prop->animated() || prop->time() == time )
