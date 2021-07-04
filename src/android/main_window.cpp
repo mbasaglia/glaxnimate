@@ -59,8 +59,8 @@ public:
     FormatSelectionDialog format_selector;
     DocumentOpener document_opener;
 
-    FlowLayout* layout_tools = nullptr;
-    FlowLayout* layout_actions = nullptr;
+    QHBoxLayout* layout_tools = nullptr;
+    QHBoxLayout* layout_actions = nullptr;
     QHBoxLayout* layout_edit_actions = nullptr;
     QAction* action_undo = nullptr;
     QAction* action_redo = nullptr;
@@ -136,9 +136,9 @@ public:
         ui.property_widget->setMinimumWidth(side_width);
     }
 
-    FlowLayout* init_toolbar_layout()
+    QHBoxLayout* init_toolbar_layout()
     {
-        auto lay = new FlowLayout(8, 32, 96);
+        auto lay = new QHBoxLayout();
         lay->setSpacing(0);
         lay->setMargin(0);
         return lay;
@@ -296,7 +296,7 @@ public:
 #endif
     }
 
-    QMenu* action_menu(const QIcon& icon, const QString& label, FlowLayout* container)
+    QMenu* action_menu(const QIcon& icon, const QString& label, QHBoxLayout* container)
     {
         QMenu *menu = new QMenu(parent);
         menu->setTitle(label);
@@ -370,8 +370,9 @@ public:
         // Views
         view_actions = new QActionGroup(parent);
         view_actions->setExclusive(true);
+
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-        view_actions->setExclusionPolicy(QActionGroup::ExclusiveOptional);
+        view_actions->setExclusionPolicy(QActionGroup::ExclusionPolicy::ExclusiveOptional);
 #endif
 
         layout_tools->addWidget(action_button_exclusive_opt(view_action(
@@ -425,37 +426,16 @@ public:
 
     void init_toolbar_actions()
     {
-        // Document actions
+        // Clipboard
         layout_actions->addWidget(action_button(
-            document_action(GlaxnimateApp::theme_icon("document-new"), tr("New"), &Private::document_new)
+            document_action_public(GlaxnimateApp::theme_icon("edit-cut"), tr("Cut"), &MainWindow::cut)
         ));
-
-        QMenu* menu_open = action_menu(GlaxnimateApp::theme_icon("document-open"), tr("Open..."), layout_actions);
-        menu_open->addAction(
-            document_action(GlaxnimateApp::theme_icon("document-open"), tr("Open"), &Private::document_open)
-        );
-        menu_open->addAction(
-            document_action(GlaxnimateApp::theme_icon("document-import"), tr("Import as Composition"), &Private::document_import)
-        );
-
-        QMenu* menu_save = action_menu(GlaxnimateApp::theme_icon("document-save"), tr("Save..."), layout_actions);
-        menu_save->addAction(
-            document_action(GlaxnimateApp::theme_icon("document-save"), tr("Save"), &Private::document_save)
-        );
-        menu_save->addAction(
-            document_action(GlaxnimateApp::theme_icon("document-save-as"), tr("Save As"), &Private::document_save_as)
-        );
-        menu_save->addAction(
-            document_action(GlaxnimateApp::theme_icon("document-export"), tr("Export"), &Private::document_export)
-        );
-        menu_save->addAction(
-            document_action(GlaxnimateApp::theme_icon("view-preview"), tr("Save Frame as PNG"), &Private::document_frame_to_png)
-        );
-
         layout_actions->addWidget(action_button(
-            document_action(GlaxnimateApp::theme_icon("document-send"), tr("Send to Telegram"), &Private::document_export_telegram)
+            document_action_public(GlaxnimateApp::theme_icon("edit-copy"), tr("Copy"), &MainWindow::copy)
         ));
-
+        layout_actions->addWidget(action_button(
+            document_action_public(GlaxnimateApp::theme_icon("edit-paste"), tr("Paste"), &MainWindow::paste)
+        ));
 
         // Layer
         layout_actions->addWidget(action_button(
@@ -484,15 +464,36 @@ public:
         layout_edit_actions->setSpacing(0);
         ui.widget_edit_actions->setLayout(layout_edit_actions);
 
-        // Clipboard
+
+        // Document actions
         layout_edit_actions->addWidget(action_button(
-            document_action_public(GlaxnimateApp::theme_icon("edit-cut"), tr("Cut"), &MainWindow::cut)
+            document_action(GlaxnimateApp::theme_icon("document-new"), tr("New"), &Private::document_new)
         ));
+
+        QMenu* menu_open = action_menu(GlaxnimateApp::theme_icon("document-open"), tr("Open..."), layout_edit_actions);
+        menu_open->addAction(
+            document_action(GlaxnimateApp::theme_icon("document-open"), tr("Open"), &Private::document_open)
+        );
+        menu_open->addAction(
+            document_action(GlaxnimateApp::theme_icon("document-import"), tr("Import as Composition"), &Private::document_import)
+        );
+
+        QMenu* menu_save = action_menu(GlaxnimateApp::theme_icon("document-save"), tr("Save..."), layout_edit_actions);
+        menu_save->addAction(
+            document_action(GlaxnimateApp::theme_icon("document-save"), tr("Save"), &Private::document_save)
+        );
+        menu_save->addAction(
+            document_action(GlaxnimateApp::theme_icon("document-save-as"), tr("Save As"), &Private::document_save_as)
+        );
+        menu_save->addAction(
+            document_action(GlaxnimateApp::theme_icon("document-export"), tr("Export"), &Private::document_export)
+        );
+        menu_save->addAction(
+            document_action(GlaxnimateApp::theme_icon("view-preview"), tr("Save Frame as PNG"), &Private::document_frame_to_png)
+        );
+
         layout_edit_actions->addWidget(action_button(
-            document_action_public(GlaxnimateApp::theme_icon("edit-copy"), tr("Copy"), &MainWindow::copy)
-        ));
-        layout_edit_actions->addWidget(action_button(
-            document_action_public(GlaxnimateApp::theme_icon("edit-paste"), tr("Paste"), &MainWindow::paste)
+            document_action(GlaxnimateApp::theme_icon("document-send"), tr("Send to Telegram"), &Private::document_export_telegram)
         ));
 
         // Spacer
@@ -769,17 +770,20 @@ public:
         qreal tool_layout_extent;
 
         Qt::Orientation toolbar_orientation;
+        QBoxLayout::Direction toolbar_direction;
 
         QSize screen_size = parent->size();
 
         if ( screen_size.width() > screen_size.height() )
         {
             toolbar_orientation = Qt::Vertical;
+            toolbar_direction = QBoxLayout::TopToBottom;
             mins = screen_size.height();
         }
         else
         {
             toolbar_orientation = Qt::Horizontal;
+            toolbar_direction = QBoxLayout::LeftToRight;
             mins = screen_size.width();
         }
 
@@ -800,11 +804,11 @@ public:
             tool_layout_extent *= 0.7;
         tool_layout_extent = qRound(tool_layout_extent/9.);
 
-        layout_actions->set_orientation(toolbar_orientation);
-        layout_tools->set_orientation(toolbar_orientation);
+        layout_actions->setDirection(toolbar_direction);
+        layout_tools->setDirection(toolbar_direction);
         QSize tool_layout_size(tool_layout_extent, tool_layout_extent);
-        layout_tools->set_fixed_item_size(tool_layout_size);
-        layout_actions->set_fixed_item_size(tool_layout_size);
+//        layout_tools->set_fixed_item_size(tool_layout_size);
+//        layout_actions->set_fixed_item_size(tool_layout_size);
 
         if ( toolbar_orientation == Qt::Horizontal )
         {
