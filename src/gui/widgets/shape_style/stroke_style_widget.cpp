@@ -123,6 +123,7 @@ StrokeStyleWidget::StrokeStyleWidget(QWidget* parent)
     d->ui.button_join_bevel->setIcon(GlaxnimateApp::theme_icon("stroke-join-bevel"));
     d->ui.button_join_miter->setIcon(GlaxnimateApp::theme_icon("stroke-join-miter"));
     d->ui.button_join_round->setIcon(GlaxnimateApp::theme_icon("stroke-join-round"));
+    d->ui.main_layout->setMargin(0);
 #endif
 
     d->group_cap.addButton(d->ui.button_cap_butt);
@@ -138,7 +139,8 @@ StrokeStyleWidget::StrokeStyleWidget(QWidget* parent)
     d->set_cap_style(app::settings::get<model::Stroke::Cap>("tools", "stroke_cap"));
     d->set_join_style(app::settings::get<model::Stroke::Join>("tools", "stroke_join"));
 
-    d->ui.tab_widget->setTabEnabled(2, false);
+//    d->ui.tab_widget->setTabEnabled(2, false);
+    d->ui.tab_widget->removeTab(2);
 
     d->ui.color_selector->set_current_color(app::settings::get<QColor>("tools", "color_secondary"));
     d->ui.color_selector->hide_secondary();

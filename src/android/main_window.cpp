@@ -77,6 +77,9 @@ public:
     {
         ui.setupUi(parent);
 
+        timeline_slider = new TimelineSlider(ui.time_container);
+        ui.time_container_layout->insertWidget(1, timeline_slider);
+
         layout_actions = init_toolbar_layout();
         ui.widget_actions->setLayout(layout_actions);
 
@@ -209,8 +212,6 @@ public:
         QObject::connect(ui.play_controls, &FrameControlsWidget::record_toggled, current_document.get(), &model::Document::set_record_to_keyframe);
 
         // slider
-        timeline_slider = new TimelineSlider(ui.time_container);
-        ui.time_container_layout->insertWidget(1, timeline_slider);
         timeline_slider->setMinimum(first_frame);
         timeline_slider->setMaximum(last_frame);
         timeline_slider->setValue(first_frame);
@@ -271,6 +272,28 @@ public:
         auto btn = new QToolButton;
         btn->setDefaultAction(action);
         return btn;
+    }
+
+
+    QToolButton* action_button_exclusive_opt(QAction* action)
+    {
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+        auto btn = new QToolButton;
+        btn->setIcon(action->icon());
+        btn->setText(action->text());
+        btn->setCheckable(action->isCheckable());
+        connect(action, &QAction::toggled, btn, &QAbstractButton::setChecked);
+
+        connect(btn, &QAbstractButton::clicked, action, [action](bool b){
+            if ( b )
+                action->trigger();
+            else
+                action->setChecked(false);
+        });
+        return btn;
+#else
+        return action_button(action);
+#endif
     }
 
     QMenu* action_menu(const QIcon& icon, const QString& label, FlowLayout* container)
@@ -347,18 +370,21 @@ public:
         // Views
         view_actions = new QActionGroup(parent);
         view_actions->setExclusive(true);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        view_actions->setExclusionPolicy(QActionGroup::ExclusiveOptional);
+#endif
 
-        layout_tools->addWidget(action_button(view_action(
+        layout_tools->addWidget(action_button_exclusive_opt(view_action(
             GlaxnimateApp::theme_icon("player-time"), tr("Timeline"),
             view_actions, ui.time_container, true
         )));
 
-        layout_tools->addWidget(action_button(view_action(
+        layout_tools->addWidget(action_button_exclusive_opt(view_action(
             GlaxnimateApp::theme_icon("fill-color"), tr("Fill Style"),
             view_actions, ui.fill_style_widget
         )));
 
-        layout_tools->addWidget(action_button(view_action(
+        layout_tools->addWidget(action_button_exclusive_opt(view_action(
             GlaxnimateApp::theme_icon("object-stroke-style"), tr("Stroke Style"),
             view_actions, ui.stroke_style_widget
         )));
@@ -473,7 +499,7 @@ public:
         layout_edit_actions->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
         // Views
-        layout_edit_actions->addWidget(action_button(view_action(
+        layout_edit_actions->addWidget(action_button_exclusive_opt(view_action(
             GlaxnimateApp::theme_icon("document-properties"), tr("Advanced Properties"),
             view_actions, ui.property_widget
         )));
@@ -521,6 +547,7 @@ public:
         target->setVisible(checked);
         action->setActionGroup(group);
         connect(action, &QAction::toggled, target, &QWidget::setVisible);
+
         return action;
     }
 

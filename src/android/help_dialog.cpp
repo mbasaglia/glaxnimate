@@ -30,16 +30,17 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
     lay->setMargin(0);
     wid->setLayout(lay);
 
-    QString supported_formats;
+    QString supported_formats_import;
     for ( const auto& fmt : io::IoRegistry::instance().importers() )
     {
         if ( fmt->slug() == "raster" )
             continue;
-        if ( !supported_formats.isEmpty() )
-            supported_formats += "\n";
-        supported_formats += " - " + fmt->name();
+        if ( !supported_formats_import.isEmpty() )
+            supported_formats_import += "\n";
+        supported_formats_import += " - " + fmt->name();
     }
-    supported_formats += "\n - PNG";
+    QString supported_formats_export = supported_formats_import;
+    supported_formats_import += "\n - PNG (Needs to be traced into vector)";
 
     const std::vector<std::pair<QString, QString>> buttons = {
         {
@@ -48,7 +49,7 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
         },
         {
             "document-open",
-            tr("Prompts the user to select a document to open.\nCurrently the following formats are supported:\n%1").arg(supported_formats)
+            tr("Prompts the user to select a document to open.\nCurrently the following formats are supported:\n%1").arg(supported_formats_import)
         },
         {
             "document-import",
@@ -64,7 +65,11 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
         },
         {
             "document-export",
-            tr("Save a copy of current document, prompting to select a format and a file.\nCurrently the following formats are supported:\n%1").arg(supported_formats)
+            tr("Save a copy of current document, prompting to select a format and a file.\nCurrently the following formats are supported:\n%1").arg(supported_formats_export)
+        },
+        {
+            "view-preview",
+            tr("Saves the current frame as a still image")
         },
         {
             "document-send",

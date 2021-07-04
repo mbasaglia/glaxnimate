@@ -21,7 +21,7 @@
    <item>
     <layout class="QHBoxLayout" name="layout_main">
      <item>
-      <widget class="QWidget" name="widget" native="true">
+      <widget class="QWidget" name="widget_controls" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -351,11 +351,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="group_preview">
        <property name="title">
         <string>Preview</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="group_preview_layout">
         <item>
          <widget class="QGraphicsView" name="preview">
           <property name="renderHints">
@@ -386,7 +386,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="button_update_preview">
             <property name="text">
              <string>Update</string>
             </property>
@@ -404,13 +404,13 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>
-              <height>20</height>
+              <height>0</height>
              </size>
             </property>
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="label_preview_zoom">
             <property name="text">
              <string>Zoom</string>
             </property>
@@ -446,7 +446,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="layout_buttons">
      <item>
       <widget class="QPushButton" name="button_help">
        <property name="text">
@@ -485,17 +485,19 @@
    <class>color_widgets::ColorPreview</class>
    <extends>QWidget</extends>
    <header>QtColorWidgets/color_preview.hpp</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>color_widgets::ColorSelector</class>
    <extends>color_widgets::ColorPreview</extends>
    <header>QtColorWidgets/color_selector.hpp</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton</sender>
+   <sender>button_update_preview</sender>
    <signal>clicked()</signal>
    <receiver>TraceDialog</receiver>
    <slot>update_preview()</slot>

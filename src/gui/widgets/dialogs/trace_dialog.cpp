@@ -272,22 +272,46 @@ public:
         ui.mode_container->hide();
         ui.button_help->hide();
         ui.button_defaults->hide();
+        ui.preview_slider->hide();
+        ui.spin_preview_zoom->hide();
+        ui.label_preview_zoom->hide();
+        ui.group_preview_layout->setMargin(0);
         ui.button_detect_colors->setText("Auto colors");
         ui.gridLayout->addWidget(ui.button_detect_colors, 3, 0, 1, 2);
+        ui.layout_buttons->insertWidget(0, ui.button_update_preview);
+
+        for ( auto w : parent->findChildren<QSpinBox*>() )
+            w->setMaximumHeight(40);
+        for ( auto w : parent->findChildren<QDoubleSpinBox*>() )
+            w->setMaximumHeight(40);
+
+        for ( auto w : parent->findChildren<QLayout*>() )
+            w->setMargin(0);
+
+        zoom = 1.05;
 
         connect(
             QGuiApplication::primaryScreen(),
-            &QScreen::orientationChanged,
+            &QScreen::primaryOrientationChanged,
             parent,
             [this]{screen_rotation();}
         );
+        screen_rotation();
     }
 
     void screen_rotation()
     {
         auto scr = QApplication::primaryScreen();
         if ( scr->size().height() > scr->size().width() )
+        {
             ui.layout_main->setDirection(QBoxLayout::TopToBottom);
+            ui.widget_controls->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        }
+        else
+        {
+            ui.layout_main->setDirection(QBoxLayout::LeftToRight);
+            ui.widget_controls->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        }
     }
 #endif
 };
