@@ -422,6 +422,9 @@ public:
         menu_save->addAction(
             document_action(GlaxnimateApp::theme_icon("document-export"), tr("Export"), &Private::document_export)
         );
+        menu_save->addAction(
+            document_action(GlaxnimateApp::theme_icon("view-preview"), tr("Save Frame as PNG"), &Private::document_frame_to_png)
+        );
 
         layout_actions->addWidget(action_button(
             document_action(GlaxnimateApp::theme_icon("document-send"), tr("Send to Telegram"), &Private::document_export_telegram)
@@ -699,7 +702,18 @@ public:
 
     void document_export()
     {
+        exporting_png = false;
         save_document(true, true);
+    }
+
+    bool exporting_png = false;
+    void document_frame_to_png()
+    {
+        exporting_png = true;
+        if ( !file_picker.select_save(tr("Frame %1.png").arg(current_document->current_time()), true, "image/png") )
+        {
+            exporting_png = false;
+        }
     }
 
     QDir default_save_path()
@@ -799,6 +813,24 @@ public:
     {
         if ( !url.isValid() )
             return false;
+
+        if ( export_opts && exporting_png )
+        {
+            QImage pix(current_document->size(), QImage::Format_RGBA8888);
+            pix.fill(Qt::transparent);
+            QPainter painter(&pix);
+            painter.setRenderHint(QPainter::Antialiasing);
+            current_document->main()->paint(&painter, current_document->current_time(), model::VisualNode::Render);
+            painter.end();
+            QByteArray data;
+            QBuffer buf(&data);
+            buf.open(QIODevice::WriteOnly);
+            pix.save(&buf, "PNG");
+            buf.close();
+            AndroidFilePicker::write_content_uri(url, data);
+            exporting_png = false;
+            return false;
+        }
 
         io::Options options = export_opts ? export_options : current_document->io_options();
         if ( document_opener.save(url, current_document.get(), options) )

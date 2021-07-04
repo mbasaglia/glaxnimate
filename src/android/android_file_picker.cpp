@@ -16,7 +16,7 @@ public:
     }
 
 
-    bool select_save(const QString &, bool)
+    bool select_save(const QString &, bool, const QString&)
     {
         return false;
     }
@@ -123,7 +123,7 @@ public:
     }
 
 
-    bool select_save(const QString &suggested_name, bool is_export)
+    bool select_save(const QString &suggested_name, bool is_export, const QString& mime)
     {
         QAndroidJniObject ACTION_SAVE_DOCUMENT = QAndroidJniObject::fromString("android.intent.action.CREATE_DOCUMENT");
         QAndroidJniObject intent("android/content/Intent");
@@ -134,7 +134,7 @@ public:
         intent.callObjectMethod("addCategory", "(Ljava/lang/String;)Landroid/content/Intent;", CATEGORY_OPENABLE.object<jstring>());
 
         intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;", ACTION_SAVE_DOCUMENT.object<jstring>());
-        intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", QAndroidJniObject::fromString("*/*").object<jstring>());
+        intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", QAndroidJniObject::fromString(mime).object<jstring>());
 
         if ( !suggested_name.isEmpty() )
         {
@@ -314,10 +314,10 @@ bool glaxnimate::android::AndroidFilePicker::get_permissions(const QStringList& 
     return Private::get_permissions(permissions);
 }
 
-bool glaxnimate::android::AndroidFilePicker::select_save(const QString &suggested_name, bool is_export)
+bool glaxnimate::android::AndroidFilePicker::select_save(const QString &suggested_name, bool is_export, const QString& mime)
 {
     get_permissions();
-    return d->select_save(suggested_name, is_export);
+    return d->select_save(suggested_name, is_export, mime);
 }
 
 bool glaxnimate::android::AndroidFilePicker::open_external(const QUrl &cppuri, const QString &mime)

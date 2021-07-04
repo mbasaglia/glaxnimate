@@ -122,12 +122,20 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
             tr("Edit tool, used to edit existing items (eg: moving, bezier nodes, setting rounded corners on a rectangle, etc.)")
         },
         {
+            "draw-brush",
+            tr("Shows a tray with the curve drawing tools.")
+        },
+        {
             "draw-bezier-curves",
             tr("Create Bezier curves using nodes and handles.")
         },
         {
             "draw-freehand",
             tr("Draw curves freehand.")
+        },
+        {
+            "shapes",
+            tr("Shows a tray with the shape drawing tools.")
         },
         {
             "draw-rectangle",

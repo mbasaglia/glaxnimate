@@ -15,7 +15,7 @@ public:
     ~AndroidFilePicker();
 
     bool select_open(bool is_import);
-    bool select_save(const QString& suggested_name, bool is_export);
+    bool select_save(const QString& suggested_name, bool is_export, const QString &mime = "*/*");
     bool open_external(const QUrl& uri, const QString& mime);
 
     static QByteArray read_content_uri(const QUrl& url);

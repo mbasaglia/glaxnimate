@@ -125,11 +125,27 @@ std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::open(const
             options.format = io::IoRegistry::instance().from_slug("svg");
             options.settings["compressed"] = zipped;
         }
+        else if ( data.startsWith("\x89PNG") )
+        {
+            QMessageBox::warning(d->widget_parent, QObject::tr("Open File"), "PNG");
+            return {};
+        }
     }
 
     if ( !options.format )
     {
-        QMessageBox::warning(d->widget_parent, QObject::tr("Open File"), QObject::tr("Unknown file type"));
+
+        QString supported_formats;
+        for ( const auto& fmt : io::IoRegistry::instance().importers() )
+        {
+            if ( fmt->slug() == "raster" )
+                continue;
+            if ( !supported_formats.isEmpty() )
+                supported_formats += ",\n";
+            supported_formats += fmt->name();
+        }
+
+        QMessageBox::warning(d->widget_parent, QObject::tr("Open File"), QObject::tr("Unknown file type. Supported files:\n%1").arg(supported_formats));
         return {};
     }
 

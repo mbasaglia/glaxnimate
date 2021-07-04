@@ -57,5 +57,6 @@
         <file>images/icons/draw-brush.svg</file>
         <file>images/icons/layer-lower.svg</file>
         <file>images/icons/layer-raise.svg</file>
+        <file>images/icons/view-preview.svg</file>
     </qresource>
 </RCC>
