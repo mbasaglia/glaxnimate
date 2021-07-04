@@ -194,10 +194,17 @@ void tools::DrawTool::remove_last()
     if ( d->bezier.empty() )
         return;
 
-    if ( d->bezier.size() <= 2 )
+#ifndef Q_OS_ANDROID
+    int back = 2;
+#else
+    int back = 1;
+#endif
+
+    if ( d->bezier.size() <= back )
         d->clear(false);
     else
-        d->bezier.points().erase(d->bezier.points().end() - 2);
+        d->bezier.points().erase(d->bezier.points().end() - back);
+
 }
 
 
@@ -344,7 +351,11 @@ void tools::DrawTool::paint(const tools::PaintEvent& event)
         event.painter->setPen(pen);
         event.painter->setBrush(Qt::NoBrush);
 
+#ifdef Q_OS_ANDROID
+        if ( d->bezier.size() >= 1 )
+#else
         if ( d->bezier.size() > 1 )
+#endif
         {
             QPointF center = event.view->mapFromScene(d->bezier.points().front().pos);
 
@@ -360,7 +371,9 @@ void tools::DrawTool::paint(const tools::PaintEvent& event)
             }
         }
 
+#ifndef Q_OS_ANDROID
         if ( d->dragging )
+#endif
         {
             pen.setWidth(2);
             event.painter->setPen(pen);
