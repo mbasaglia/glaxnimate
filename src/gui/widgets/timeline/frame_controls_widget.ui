@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>383</width>
-    <height>44</height>
+    <height>45</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="layout">
    <item>
     <widget class="QSpinBox" name="spin_frame">
      <property name="sizePolicy">
@@ -166,7 +166,8 @@
       <string>Record</string>
      </property>
      <property name="icon">
-      <iconset theme="media-record"/>
+      <iconset theme="media-record">
+       <normaloff>.</normaloff>.</iconset>
      </property>
      <property name="checkable">
       <bool>true</bool>

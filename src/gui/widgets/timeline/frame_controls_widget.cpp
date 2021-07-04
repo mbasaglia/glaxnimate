@@ -18,6 +18,8 @@ FrameControlsWidget::FrameControlsWidget(QWidget* parent)
     d->button_play->setIcon(GlaxnimateApp::theme_icon("media-playback-start"));
     d->button_record->setIcon(GlaxnimateApp::theme_icon("database-change-key"));
     d->button_loop->setIcon(GlaxnimateApp::theme_icon("media-playlist-repeat"));
+    d->layout->setMargin(0);
+    d->layout->setSpacing(0);
 #endif
 
     d->button_next_kf->setVisible(false);

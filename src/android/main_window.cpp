@@ -69,6 +69,7 @@ public:
     style::PropertyDelegate property_delegate;
     QActionGroup *view_actions = nullptr;
     TimelineSlider* timeline_slider;
+    std::vector<QSpacerItem*> toolbar_spacers;
 
     Private(MainWindow* parent)
         : parent(parent),
@@ -103,7 +104,7 @@ public:
 
         connect(
             QGuiApplication::primaryScreen(),
-            &QScreen::orientationChanged,
+            &QScreen::primaryOrientationChanged,
             parent,
             [this]{adjust_size();}
         );
@@ -134,6 +135,8 @@ public:
         int side_width = ui.fill_style_widget->sizeHint().width();
         ui.stroke_style_widget->setMinimumWidth(side_width);
         ui.property_widget->setMinimumWidth(side_width);
+
+        adjust_size();
     }
 
     QHBoxLayout* init_toolbar_layout()
@@ -375,6 +378,9 @@ public:
         view_actions->setExclusionPolicy(QActionGroup::ExclusionPolicy::ExclusiveOptional);
 #endif
 
+        toolbar_spacers.push_back(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+        layout_tools->addItem(toolbar_spacers.back());
+
         layout_tools->addWidget(action_button_exclusive_opt(view_action(
             GlaxnimateApp::theme_icon("player-time"), tr("Timeline"),
             view_actions, ui.time_container, true
@@ -437,11 +443,14 @@ public:
             document_action_public(GlaxnimateApp::theme_icon("edit-paste"), tr("Paste"), &MainWindow::paste)
         ));
 
-        // Layer
         layout_actions->addWidget(action_button(
             document_action_public(GlaxnimateApp::theme_icon("edit-delete"), tr("Delete Selected"), &MainWindow::delete_shapes)
         ));
 
+        toolbar_spacers.push_back(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+        layout_actions->addItem(toolbar_spacers.back());
+
+        // Layer
         layout_actions->addWidget(action_button(
             document_action(GlaxnimateApp::theme_icon("layer-raise"), tr("Raise Above"), &Private::selection_raise)
         ));
@@ -772,22 +781,31 @@ public:
         Qt::Orientation toolbar_orientation;
         QBoxLayout::Direction toolbar_direction;
 
-        QSize screen_size = parent->size();
+        QSize screen_size = QApplication::primaryScreen()->size();
+
+
+        std::pair<QSizePolicy::Policy, QSizePolicy::Policy> spacer_policy;
 
         if ( screen_size.width() > screen_size.height() )
         {
             toolbar_orientation = Qt::Vertical;
             toolbar_direction = QBoxLayout::TopToBottom;
             mins = screen_size.height();
+            spacer_policy = {QSizePolicy::Minimum, QSizePolicy::Expanding};
         }
         else
         {
+            spacer_policy = {QSizePolicy::Expanding, QSizePolicy::Minimum};
             toolbar_orientation = Qt::Horizontal;
             toolbar_direction = QBoxLayout::LeftToRight;
             mins = screen_size.width();
         }
 
-        int button_w = qRound(mins * 0.08);
+        for ( const auto& spacer : toolbar_spacers )
+            spacer->changeSize(0, 0, spacer_policy.first, spacer_policy.second);
+
+
+        int button_w = qFloor(mins / 9.);
         QSize button_size(button_w, button_w);
 
         for ( QToolButton* btn : parent->findChildren<QToolButton*>() )
@@ -1112,7 +1130,7 @@ void MainWindow::tool_triggered(bool checked)
 void MainWindow::resizeEvent(QResizeEvent* e)
 {
     QMainWindow::resizeEvent(e);
-    d->adjust_size();
+//    d->adjust_size();
 }
 
 void MainWindow::set_selection(const std::vector<model::VisualNode*>& selected)
