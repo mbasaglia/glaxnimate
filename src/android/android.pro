@@ -41,7 +41,6 @@ SOURCES = \
     help_dialog.cpp \
     main.cpp \
     main_window.cpp \
-    glaxnimate_app_android.cpp \
     scroll_area_event_filter.cpp \
     sticker_pack_builder_dialog.cpp \
     telegram_intent.cpp \

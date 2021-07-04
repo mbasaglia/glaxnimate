@@ -179,12 +179,17 @@ public:
 
     void clear_document()
     {
-        comp = nullptr;
+        if ( active_tool )
+            active_tool->close_document_event({ui.canvas, &scene, parent});
+        ui.play_controls->pause();
         scene.set_document(nullptr);
         ui.timeline_widget->set_document(nullptr);
         action_redo->setEnabled(false);
-        action_undo->setEnabled(false);
+        action_undo->setEnabled(false);        
         clear_property_widgets();
+        ui.stroke_style_widget->set_shape(nullptr);
+        ui.fill_style_widget->set_shape(nullptr);
+        comp = nullptr;
         current_document.reset();
         current_document_has_file = false;
     }
@@ -783,6 +788,9 @@ public:
 
         QSize screen_size = QApplication::primaryScreen()->size();
 
+#ifdef Q_OS_ANDROID_FAKE
+        screen_size = parent->size();
+#endif
 
         std::pair<QSizePolicy::Policy, QSizePolicy::Policy> spacer_policy;
 
@@ -790,7 +798,7 @@ public:
         {
             toolbar_orientation = Qt::Vertical;
             toolbar_direction = QBoxLayout::TopToBottom;
-            mins = screen_size.height();
+            mins = screen_size.height() * 0.7;
             spacer_policy = {QSizePolicy::Minimum, QSizePolicy::Expanding};
         }
         else
@@ -817,10 +825,7 @@ public:
         ui.widget_tools_container_side->setVisible(false);
         ui.widget_tools_container_bottom->setVisible(false);
 
-        tool_layout_extent = mins;
-        if ( toolbar_orientation == Qt::Vertical )
-            tool_layout_extent *= 0.7;
-        tool_layout_extent = qRound(tool_layout_extent/9.);
+        tool_layout_extent = button_w;
 
         layout_actions->setDirection(toolbar_direction);
         layout_tools->setDirection(toolbar_direction);
@@ -844,7 +849,6 @@ public:
 
     void open_url(const QUrl& url, bool is_import)
     {
-        qDebug() << "open_url" << url << is_import;
         if ( !url.isValid() )
             return;
 
@@ -1130,7 +1134,10 @@ void MainWindow::tool_triggered(bool checked)
 void MainWindow::resizeEvent(QResizeEvent* e)
 {
     QMainWindow::resizeEvent(e);
-//    d->adjust_size();
+
+#ifdef Q_OS_ANDROID_FAKE
+    d->adjust_size();
+#endif
 }
 
 void MainWindow::set_selection(const std::vector<model::VisualNode*>& selected)

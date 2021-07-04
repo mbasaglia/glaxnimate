@@ -24,4 +24,7 @@ public:
     {
         return QIcon(QString() + ":glaxnimate/images/icons/" + name + ".svg");
     }
+
+    static qreal handle_size_multiplier();
+    static qreal handle_distance_multiplier();
 };

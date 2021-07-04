@@ -250,5 +250,13 @@ widgets/tools/fill_tool_widget.ui \
 widgets/tools/shape_tool_widget.ui \
 #widgets/window_message_widget.ui
 
+SOURCES += ../android/glaxnimate_app_android.cpp
+HEADERS += ../android/glaxnimate_app_android.hpp
+
 #RESOURCES = \
 #build/bin/gui/resources/glaxnimate.qrc
+
+
+!android {
+    DEFINES += Q_OS_ANDROID_FAKE
+}

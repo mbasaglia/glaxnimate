@@ -33,10 +33,13 @@ private slots:
     void drag_r(const QPointF& p, Qt::KeyboardModifiers modifiers);
     void drag_a(const QPointF& p, Qt::KeyboardModifiers modifiers);
     void drag_rot(const QPointF& p, Qt::KeyboardModifiers modifiers);
+    void drag_pos(const QPointF& p, Qt::KeyboardModifiers modifiers);
+    void drag_pos_start(const QPointF& p);
 
     void commit_scale();
     void commit_anchor();
     void commit_rot();
+    void commit_pos();
 
     void update_handles();
     void update_transform();

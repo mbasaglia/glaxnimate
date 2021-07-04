@@ -42,6 +42,9 @@ public:
         return QIcon::fromTheme(name);
     }
 
+    static qreal handle_size_multiplier() { return 1; }
+    static qreal handle_distance_multiplier() { return 1; }
+
 protected:
     void on_initialize() override;
 

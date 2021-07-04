@@ -37,11 +37,7 @@ public:
     math::bezier::Bezier bezier;
     bool dragging = false;
     math::bezier::PointType point_type = math::bezier::Symmetrical;
-#ifdef Q_OS_ANDROID
-    qreal join_radius = 15;
-#else
     qreal join_radius = 5;
-#endif
     bool joining = false;
 
     ExtendPathData extend;
@@ -450,6 +446,7 @@ void tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScen
 
 void tools::DrawTool::initialize(const Event& event)
 {
+    d->join_radius = 5 * GlaxnimateApp::handle_size_multiplier();
 #ifndef Q_OS_ANDROID
     d->undo = new QShortcut(GlaxnimateApp::instance()->shortcuts()->get_shortcut("action_undo"), event.view, nullptr, nullptr, Qt::WidgetShortcut);
     connect(d->undo, &QShortcut::activated, this, &DrawTool::remove_last);

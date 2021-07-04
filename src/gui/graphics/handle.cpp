@@ -5,6 +5,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "model/animation/animatable.hpp"
+#include "glaxnimate_app.hpp"
 
 class graphics::MoveHandle::Private
 {
@@ -48,9 +49,7 @@ graphics::MoveHandle::MoveHandle(
     d(std::make_unique<Private>(Private{direction, shape, radius,
         dont_move, color_rest, color_highlighted, color_selected, color_border}))
 {
-#ifdef Q_OS_ANDROID
-    d->radius *= 3;
-#endif
+    d->radius *= GlaxnimateApp::handle_size_multiplier();
 
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -187,10 +186,7 @@ void graphics::MoveHandle::set_radius(qreal radius)
 {
     if ( radius > 0 && radius != d->radius )
     {
-#ifdef Q_OS_ANDROID
-        radius *= 3;
-#endif
-        d->radius = radius;
+        d->radius = radius * GlaxnimateApp::handle_size_multiplier();
         prepareGeometryChange();
     }
     update();

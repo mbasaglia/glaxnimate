@@ -5,6 +5,7 @@
 #include "model/document.hpp"
 #include "command/animation_commands.hpp"
 #include "math/math.hpp"
+#include "glaxnimate_app.hpp"
 
 class graphics::TransformGraphicsItem::Private
 {
@@ -22,6 +23,7 @@ public:
 
         Anchor,
         Rot,
+        Position,
 
         Count
     };
@@ -53,6 +55,10 @@ public:
     QTransform transform_matrix;
     QTransform transform_matrix_inv;
 
+    QPointF pos_drag_start;
+    QTransform pos_trans;
+    QPointF pos_start_value;
+
     QPointF get_tl() const { return cache.topLeft(); }
     QPointF get_tr() const { return cache.topRight(); }
     QPointF get_br() const { return cache.bottomRight(); }
@@ -74,12 +80,20 @@ public:
     }
     qreal rot_top() const
     {
-#ifndef Q_OS_ANDROID
-        constexpr int delta = 32;
-#else
-        constexpr int delta = 32 * 3;
-#endif
+        qreal delta = 32 * GlaxnimateApp::handle_distance_multiplier();
         return -delta / transform->scale.get().y();
+    }
+    qreal pos_side() const
+    {
+        qreal delta = 32 * GlaxnimateApp::handle_distance_multiplier();
+        return -delta / transform->scale.get().x();
+    }
+    QPointF get_pos() const
+    {
+        return {
+            cache.left() + pos_side(),
+            cache.center().y()
+        };
     }
 
     void set_pos(const Handle& h) const
@@ -150,6 +164,12 @@ public:
                 &TransformGraphicsItem::Private::get_rot,
                 &TransformGraphicsItem::drag_rot,
                 {&transform->rotation}
+            },
+            Handle{
+                new MoveHandle(parent, MoveHandle::Any, MoveHandle::Cross, 6, true),
+                &TransformGraphicsItem::Private::get_pos,
+                &TransformGraphicsItem::drag_pos,
+                {&transform->position}
             },
         }
     {
@@ -234,12 +254,19 @@ graphics::TransformGraphicsItem::TransformGraphicsItem(
             connect(h.handle, &MoveHandle::drag_finished, this, &TransformGraphicsItem::commit_anchor);
         else if ( &h == &d->handles[Private::Rot] )
             connect(h.handle, &MoveHandle::drag_finished, this, &TransformGraphicsItem::commit_rot);
+        else if ( &h == &d->handles[Private::Position] )
+        {
+            connect(h.handle, &MoveHandle::drag_starting, this, &TransformGraphicsItem::drag_pos_start);
+            connect(h.handle, &MoveHandle::drag_finished, this, &TransformGraphicsItem::commit_pos);
+        }
         else
             connect(h.handle, &MoveHandle::drag_finished, this, &TransformGraphicsItem::commit_scale);
     }
 
 #ifdef Q_OS_ANDROID
     d->handles[Private::Anchor].handle->setVisible(false);
+#else
+    d->handles[Private::Position].handle->setVisible(false);
 #endif
 }
 
@@ -395,12 +422,15 @@ void graphics::TransformGraphicsItem::paint(QPainter* painter, const QStyleOptio
     painter->setPen(pen);
     painter->drawRect(d->cache);
     painter->drawLine(d->handles[Private::Top].handle->pos(), d->handles[Private::Rot].handle->pos());
+    if ( d->handles[Private::Position].handle->isVisible() )
+        painter->drawLine(d->handles[Private::Left].handle->pos(), d->handles[Private::Position].handle->pos());
     painter->restore();
 }
 
 QRectF graphics::TransformGraphicsItem::boundingRect() const
 {
-    return d->cache.adjusted(0, d->rot_top(), 0, 0);
+    qreal margin_left = d->handles[Private::Position].handle->isVisible() ? d->pos_side() : 0;
+    return d->cache.adjusted(margin_left, d->rot_top(), 0, 0);
 }
 
 void graphics::TransformGraphicsItem::commit_anchor()
@@ -428,4 +458,22 @@ void graphics::TransformGraphicsItem::commit_scale()
 void graphics::TransformGraphicsItem::set_transform_matrix(const QTransform& t)
 {
     setTransform(t);
+}
+
+
+void graphics::TransformGraphicsItem::drag_pos_start(const QPointF &p)
+{
+    d->pos_trans = d->target->docnode_fuzzy_parent()->transform_matrix(d->target->time()).inverted();
+    d->pos_drag_start = d->pos_trans.map(mapToScene(p));
+    d->pos_start_value = d->transform->position.get();
+}
+void graphics::TransformGraphicsItem::drag_pos(const QPointF &p, Qt::KeyboardModifiers)
+{
+    auto sp = mapToScene(p);
+    QPointF delta = d->pos_trans.map(sp) - d->pos_drag_start;
+    d->push_command(d->transform->position, d->pos_start_value + delta, false);
+}
+void graphics::TransformGraphicsItem::commit_pos()
+{
+    d->push_command(d->transform->position, d->transform->position.value(), true);
 }
