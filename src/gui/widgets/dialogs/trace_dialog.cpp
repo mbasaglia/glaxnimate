@@ -12,6 +12,7 @@
 #include <QGraphicsPixmapItem>
 #include <QStandardItemModel>
 #include <QDesktopServices>
+#include <QScreen>
 
 #include <QtColorWidgets/ColorDelegate>
 
@@ -263,6 +264,32 @@ public:
                 add_color(QColor(rgb));
         }
     }
+
+#ifdef Q_OS_ANDROID
+    void android_ui(TraceDialog* parent)
+    {
+        ui.button_quantize_options->hide();
+        ui.mode_container->hide();
+        ui.button_help->hide();
+        ui.button_defaults->hide();
+        ui.button_detect_colors->setText("Auto colors");
+        ui.gridLayout->addWidget(ui.button_detect_colors, 3, 0, 1, 2);
+
+        connect(
+            QGuiApplication::primaryScreen(),
+            &QScreen::orientationChanged,
+            parent,
+            [this]{screen_rotation();}
+        );
+    }
+
+    void screen_rotation()
+    {
+        auto scr = QApplication::primaryScreen();
+        if ( scr->size().height() > scr->size().width() )
+            ui.layout_main->setDirection(QBoxLayout::TopToBottom);
+    }
+#endif
 };
 
 TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
@@ -300,6 +327,10 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     installEventFilter(&d->ncoe);
 
     connect(this, &QDialog::accepted, this, [this]{ d->save_settings(); });
+
+#ifdef Q_OS_ANDROID
+    d->android_ui(this);
+#endif
 
 }
 

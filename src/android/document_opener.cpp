@@ -4,10 +4,15 @@
 
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "utils/gzip.hpp"
+#include "model/assets/assets.hpp"
+#include "model/shapes/image.hpp"
+
+#include "widgets/dialogs/trace_dialog.hpp"
 
 #include "android_file_picker.hpp"
+#include "base_dialog.hpp"
 
-
+#include <QDebug>
 class glaxnimate::android::DocumentOpener::Private
 {
 public:
@@ -17,6 +22,41 @@ public:
     {
         return opts.format->save(file, opts.filename, document, opts.settings);
     }
+
+    std::unique_ptr<model::Document> from_raster(const QByteArray& data)
+    {
+        auto btn = QMessageBox::information(
+            widget_parent,
+            QObject::tr("Open File"),
+            QObject::tr("Raster images need to be traced into vectors"),
+            QMessageBox::Ok|QMessageBox::Cancel
+        );
+        if ( btn == QMessageBox::Cancel )
+            return {};
+
+        auto doc = std::make_unique<model::Document>("");
+        auto asset = doc->assets()->add_image(QImage::fromData(data));
+        auto imageu = std::make_unique<model::Image>(doc.get());
+        auto image = imageu.get();
+        doc->main()->shapes.insert(std::move(imageu));
+        doc->main()->width.set(asset->width.get());
+        doc->main()->height.set(asset->height.get());
+        QPointF pos(asset->width.get()/2., asset->height.get()/2.);
+        image->transform->anchor_point.set(pos);
+        image->transform->position.set(pos);
+        image->image.set(asset);
+
+        TraceDialog dialog(image, widget_parent);
+        DialogFixerFilter fixer(&dialog);
+        if ( !dialog.exec() )
+            return {};
+
+        doc->assets()->images->values.remove(0);
+        doc->main()->shapes.remove(doc->main()->shapes.index_of(image));
+
+        return doc;
+    }
+
 };
 
 glaxnimate::android::DocumentOpener::DocumentOpener(QWidget *widget_parent)
@@ -62,7 +102,6 @@ bool glaxnimate::android::DocumentOpener::save(const QUrl &url, model::Document 
         }
         return true;
     }
-
 }
 
 std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::open(const QUrl &url) const
@@ -127,8 +166,7 @@ std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::open(const
         }
         else if ( data.startsWith("\x89PNG") )
         {
-            QMessageBox::warning(d->widget_parent, QObject::tr("Open File"), "PNG");
-            return {};
+            return d->from_raster(data);
         }
     }
 
@@ -144,6 +182,7 @@ std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::open(const
                 supported_formats += ",\n";
             supported_formats += fmt->name();
         }
+        supported_formats += ",\nPNG";
 
         QMessageBox::warning(d->widget_parent, QObject::tr("Open File"), QObject::tr("Unknown file type. Supported files:\n%1").arg(supported_formats));
         return {};
@@ -162,4 +201,9 @@ std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::open(const
 
     current_document->set_io_options(options);
     return current_document;
+}
+
+std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::from_raster(const QByteArray &data)
+{
+    return d->from_raster(data);
 }

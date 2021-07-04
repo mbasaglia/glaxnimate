@@ -54,8 +54,8 @@ widgets/composition_tab_bar.cpp \
 #widgets/dialogs/gw_impl_ui.cpp \
 #widgets/dialogs/timing_dialog.cpp \
 #widgets/dialogs/gw_impl_document.cpp \
-#widgets/dialogs/trace_dialog.cpp \
-#widgets/dialogs/color_quantization_dialog.cpp \
+widgets/dialogs/trace_dialog.cpp \
+widgets/dialogs/color_quantization_dialog.cpp \
 #widgets/dialogs/about_dialog.cpp \
 #widgets/dialogs/resize_dialog.cpp \
 #widgets/dialogs/clipboard_inspector.cpp \
@@ -141,7 +141,7 @@ widgets/shape_style/color_selector.hpp \
 widgets/canvas.hpp \
 widgets/smaller_spinbox.hpp \
 #widgets/dialogs/glaxnimate_window.hpp \
-#widgets/dialogs/trace_dialog.hpp \
+widgets/dialogs/trace_dialog.hpp \
 widgets/dialogs/keyframe_editor_dialog.hpp \
 widgets/dialogs/document_environment.hpp \
 #widgets/dialogs/document_metadata_dialog.hpp \
@@ -155,7 +155,7 @@ widgets/dialogs/shape_parent_dialog.hpp \
 #widgets/dialogs/clipboard_inspector.hpp \
 #widgets/dialogs/import_export_dialog.hpp \
 #widgets/dialogs/resize_dialog.hpp \
-#widgets/dialogs/color_quantization_dialog.hpp \
+widgets/dialogs/color_quantization_dialog.hpp \
 #widgets/settings/plugin_settings_widget.hpp \
 #widgets/settings/toolbar_settings_widget.hpp \
 #widgets/node_menu.hpp \
@@ -226,14 +226,14 @@ widgets/shape_style/stroke_style_widget.ui \
 widgets/shape_style/gradient_list_widget.ui \
 #widgets/snippet_list_widget.ui \
 #widgets/dialogs/document_metadata_dialog.ui \
-#widgets/dialogs/color_quantization_dialog.ui \
+widgets/dialogs/color_quantization_dialog.ui \
 #widgets/dialogs/timing_dialog.ui \
 #widgets/dialogs/io_status_dialog.ui \
 #widgets/dialogs/resize_dialog.ui \
 #widgets/dialogs/about_dialog.ui \
 #widgets/dialogs/startup_dialog.ui \
 #widgets/dialogs/glaxnimate_window.ui \
-#widgets/dialogs/trace_dialog.ui \
+widgets/dialogs/trace_dialog.ui \
 widgets/dialogs/shape_parent_dialog.ui \
 #widgets/settings/plugin_settings_widget.ui \
 #widgets/settings/toolbar_settings_widget.ui \

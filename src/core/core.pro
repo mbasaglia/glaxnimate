@@ -17,10 +17,10 @@ QT += widgets xml uitools concurrent
 
 CONFIG += c++17
 
-INCLUDEPATH += $$PWD/src $$PWD/../../build/bin/core $$PWD/../../external/QtAppSetup/src $$PWD/../../external/Qt-Color-Widgets/include
+INCLUDEPATH += $$PWD/src $$PWD/../../build/bin/core $$PWD/../../external/QtAppSetup/src $$PWD/../../external/QtAppSetup/potrace $$PWD/../../external/Qt-Color-Widgets/include $$PWD/../../external/potrace/src
 
 
-LIBS += -lz -L../../external/QtAppSetup -lQtAppSetup -L../../external/Qt-Color-Widgets -lQtColorWidgets
+LIBS += -lz -L../../external/QtAppSetup -lQtAppSetup -L../../external/Qt-Color-Widgets -lQtColorWidgets -L../../external/potrace/ -lpotrace
 
 TEMPLATE=lib
 
@@ -100,7 +100,7 @@ model/shapes/text.cpp \
 model/shapes/repeater.cpp \
 model/shapes/trim.cpp \
 utils/gzip.cpp \
-#utils/trace.cpp \
+utils/trace.cpp \
 utils/quantize.cpp \
 plugin/plugin.cpp \
 plugin/action.cpp \
@@ -118,7 +118,7 @@ utils/gzip.hpp \
 utils/sort_gradient.hpp \
 utils/pseudo_mutex.hpp \
 utils/regexp.hpp \
-#utils/trace.hpp \
+utils/trace.hpp \
 utils/range.hpp \
 utils/qstring_hash.hpp \
 command/structure_commands.hpp \

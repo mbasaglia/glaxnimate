@@ -36,9 +36,10 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
         if ( fmt->slug() == "raster" )
             continue;
         if ( !supported_formats.isEmpty() )
-            supported_formats += ",\n";
-        supported_formats += fmt->name();
+            supported_formats += "\n";
+        supported_formats += " - " + fmt->name();
     }
+    supported_formats += "\n - PNG";
 
     const std::vector<std::pair<QString, QString>> buttons = {
         {

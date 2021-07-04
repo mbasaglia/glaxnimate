@@ -19,7 +19,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="layout_main">
      <item>
       <widget class="QWidget" name="widget" native="true">
        <property name="sizePolicy">
@@ -30,39 +30,41 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Mode</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="combo_mode">
-            <item>
+         <widget class="QWidget" name="mode_container" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="label">
              <property name="text">
-              <string>Transparency</string>
+              <string>Mode</string>
              </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Closest Color</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Extract Colors</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pixel</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="combo_mode">
+             <item>
+              <property name="text">
+               <string>Transparency</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Closest Color</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Extract Colors</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Pixel</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox_2">
@@ -260,14 +262,14 @@
                   </widget>
                  </item>
                  <item row="3" column="1">
-                  <widget class="QPushButton" name="pushButton_2">
+                  <widget class="QPushButton" name="button_detect_colors">
                    <property name="text">
                     <string>Detect Colors</string>
                    </property>
                   </widget>
                  </item>
                  <item row="3" column="0">
-                  <widget class="QToolButton" name="toolButton_3">
+                  <widget class="QToolButton" name="button_quantize_options">
                    <property name="toolTip">
                     <string>Configure Color Detection</string>
                    </property>
@@ -275,7 +277,8 @@
                     <string>Configure...</string>
                    </property>
                    <property name="icon">
-                    <iconset theme="settings-configure"/>
+                    <iconset theme="settings-configure">
+                     <normaloff>.</normaloff>.</iconset>
                    </property>
                   </widget>
                  </item>
@@ -445,7 +448,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="button_help">
        <property name="text">
         <string>Help...</string>
        </property>
@@ -456,7 +459,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_4">
+      <widget class="QPushButton" name="button_defaults">
        <property name="text">
         <string>Revert to Defaults</string>
        </property>
@@ -508,22 +511,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>combo_mode</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>change_mode(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>185</x>
-     <y>14</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>140</x>
-     <y>584</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>toolButton</sender>
    <signal>clicked()</signal>
    <receiver>TraceDialog</receiver>
@@ -556,7 +543,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_2</sender>
+   <sender>button_detect_colors</sender>
    <signal>clicked()</signal>
    <receiver>TraceDialog</receiver>
    <slot>auto_colors()</slot>
@@ -588,7 +575,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_3</sender>
+   <sender>button_help</sender>
    <signal>clicked()</signal>
    <receiver>TraceDialog</receiver>
    <slot>show_help()</slot>
@@ -652,7 +639,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_4</sender>
+   <sender>button_defaults</sender>
    <signal>clicked()</signal>
    <receiver>TraceDialog</receiver>
    <slot>reset_settings()</slot>
@@ -668,7 +655,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>toolButton_3</sender>
+   <sender>button_quantize_options</sender>
    <signal>clicked()</signal>
    <receiver>TraceDialog</receiver>
    <slot>color_options()</slot>

@@ -19,6 +19,8 @@ public:
 
     std::unique_ptr<model::Document> open(const QUrl& url) const;
 
+    std::unique_ptr<model::Document> from_raster(const QByteArray& data);
+
 private:
     class Private;
     std::unique_ptr<Private> d;

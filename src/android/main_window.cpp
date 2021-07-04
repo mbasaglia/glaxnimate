@@ -643,6 +643,12 @@ public:
                     current_document = std::make_unique<model::Document>(options.filename);
                     options.format->open(file, options.filename, current_document.get(), options.settings);
                     current_document->set_io_options(options);
+
+//                    QByteArray ba;
+//                    QFile f("/home/melano/Pictures/Dragons/Glax/stickers/durgenground.png");
+//                    f.open(QFile::ReadOnly);
+//                    current_document = document_opener.from_raster(f.readAll());
+
                     setup_document_open();
 
                 }

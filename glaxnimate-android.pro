@@ -12,6 +12,7 @@ TEMPLATE = subdirs
 SUBDIRS = \
     color_widgets \
     external/QtAppSetup \
+    external/potrace \
     src/core \
     src/gui \
     src/android \
@@ -20,7 +21,7 @@ SUBDIRS = \
 color_widgets.file = external/Qt-Color-Widgets/color_widgets.pro
 
 external/QtAppSetup.depends = color_widgets
-src/core.depends = external/QtAppSetup
+src/core.depends = external/QtAppSetup external/potrace
 src/gui.depends = src/core
 src/android.depends = src/gui
 

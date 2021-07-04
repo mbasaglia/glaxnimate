@@ -60,3 +60,35 @@ bool glaxnimate::android::BaseDialog::eventFilter(QObject *object, QEvent *event
 
     return QDialog::eventFilter(object, event);
 }
+
+glaxnimate::android::DialogFixerFilter::DialogFixerFilter(QDialog *target)
+{
+    set_target(target);
+}
+
+void glaxnimate::android::DialogFixerFilter::set_target(QDialog *target)
+{
+    if ( target )
+    {
+        target->installEventFilter(this);
+        bool visible = target->isVisible();
+        target->showMaximized();
+        if ( !visible )
+            target->hide();
+    }
+}
+
+bool glaxnimate::android::DialogFixerFilter::eventFilter(QObject *object, QEvent *event)
+{
+    if ( target )
+    {
+        if ( event->type() == QEvent::KeyRelease )
+        {
+            auto key_event = static_cast<QKeyEvent*>(event);
+            if ( key_event->key() == Qt::Key_Back )
+                target->reject();
+        }
+    }
+
+    return QObject::eventFilter(object, event);
+}
