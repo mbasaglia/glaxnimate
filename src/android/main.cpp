@@ -5,10 +5,11 @@
 #include <QLabel>
 
 #include "main_window.hpp"
-#include "glaxnimate_app_android.hpp"
+#include "glaxnimate_app.hpp"
 #include "app_info.hpp"
 #include "android_style.hpp"
 
+#include <QDebug>
 int main(int argc, char *argv[])
 {
     using namespace glaxnimate::android;
@@ -57,9 +58,15 @@ QMenu::item:selected, QMenu::item:checked {
 
 )");
 
+    app.initialize();
+
     MainWindow window;
     window.show();
 
     int ret = app.exec();
+
+    app.finalize();
+
+    qDebug() << "finalized";
     return ret;
 }

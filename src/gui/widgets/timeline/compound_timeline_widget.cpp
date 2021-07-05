@@ -14,16 +14,15 @@
 #include "item_models/property_model_full.hpp"
 #include "item_models/comp_filter_model.hpp"
 
-#ifndef Q_OS_ANDROID
-    #include "glaxnimate_app.hpp"
-    #include "widgets/node_menu.hpp"
-#else
-    #include "../../../android/glaxnimate_app_android.hpp"
-#endif
+#include "glaxnimate_app.hpp"
 
 #include "style/property_delegate.hpp"
 #include "style/fixed_height_delegate.hpp"
 #include "widgets/dialogs/keyframe_editor_dialog.hpp"
+
+#ifndef Q_OS_ANDROID
+    #include "widgets/node_menu.hpp"
+#endif
 
 class CompoundTimelineWidget::Private
 {

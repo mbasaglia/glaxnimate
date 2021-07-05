@@ -30,7 +30,7 @@ TARGET = glaxnimate_gui
 }
 
 SOURCES = \
-#glaxnimate_app.cpp \
+glaxnimate_app.cpp \
 #settings/clipboard_settings.cpp \
 #settings/document_templates.cpp \
 #settings/toolbar_settings.cpp \
@@ -210,7 +210,7 @@ graphics/gradient_editor.hpp \
 graphics/composition_item.hpp \
 graphics/handle.hpp \
 graphics/document_node_graphics_item.hpp \
-#glaxnimate_app.hpp \
+glaxnimate_app.hpp \
 tools/handle_menu.hpp \
 tools/edit_tool.hpp \
 tools/draw_tool.hpp \
@@ -250,8 +250,6 @@ widgets/tools/fill_tool_widget.ui \
 widgets/tools/shape_tool_widget.ui \
 #widgets/window_message_widget.ui
 
-SOURCES += ../android/glaxnimate_app_android.cpp
-HEADERS += ../android/glaxnimate_app_android.hpp
 
 #RESOURCES = \
 #build/bin/gui/resources/glaxnimate.qrc

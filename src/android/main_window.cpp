@@ -24,7 +24,6 @@
 #include "widgets/flow_layout.hpp"
 #include "style/property_delegate.hpp"
 
-#include "glaxnimate_app_android.hpp"
 #include "android_file_picker.hpp"
 #include "format_selection_dialog.hpp"
 #include "document_opener.hpp"

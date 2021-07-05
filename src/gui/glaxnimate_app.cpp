@@ -1,5 +1,32 @@
 #include "glaxnimate_app.hpp"
 
+#ifdef Q_OS_ANDROID
+
+#include <QScreen>
+
+static qreal get_mult()
+{
+#ifdef Q_OS_ANDROID_FAKE
+    return 1;
+#else
+    auto sz = QApplication::primaryScreen()->size();
+    return qMin(sz.width(), sz.height()) / 240.;
+#endif
+}
+
+qreal GlaxnimateApp::handle_size_multiplier()
+{
+    static qreal mult = get_mult();
+    return mult;
+}
+
+qreal GlaxnimateApp::handle_distance_multiplier()
+{
+    return handle_size_multiplier() / 2.;
+}
+
+#else
+
 #include <QDir>
 #include <QPalette>
 
@@ -197,3 +224,5 @@ QString GlaxnimateApp::temp_path()
 
     return tempdir.filePath(subdir);
 }
+
+#endif

@@ -1,33 +1,33 @@
+export QT_VERSION=5.12.11
+export ANDROID_ABI=x86_64
+export ANDROID_ABI_QT=x86
+export ANDROID_HOME="$HOME/Android/Sdk"
+export QT_HOME="$HOME/Qt/$QT_VERSION"
 
 
 
 export JAVA_HOME=/usr/lib/jvm/default-java
-export ANDROID_HOME="$HOME/Android/Sdk"
 export ANDROID_SDK="$ANDROID_HOME"
 export ANDROID_NDK="$(echo "$ANDROID_SDK/ndk/"*)"
 export ANDROID_NDK_TOOLCHAIN_ROOT="$ANDROID_NDK/toolchains"
-export ANDROID_PLATFORM=10
+
 
 export Qt5_host=/usr
-export Qt5_android="$(echo "$HOME/Qt/"5.*)/android_armv7"
-# export Qt5_android="$(echo "$HOME/Qt/"5.*)/android_x86"
+export Qt5_android="$QT_HOME/android_$ANDROID_ABI_QT"
 
 CMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake"
-Qt5_DIR="$Qt5_android/lib/cmake/Qt5"
 
 export PATH="$ANDROID_SDK/tools/bin:$Qt5_android/bin:$PATH"
 
 function cmake_android()
 {
+    set -x
     cmake \
         -DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE \
-        -DQt5_DIR="$Qt5_android/lib/cmake/Qt5/" \
-        -DQt5Core_DIR="$Qt5_android/lib/cmake/Qt5Core" \
-        -DQt5Widgets_DIR="$Qt5_android/lib/cmake/Qt5Widgets" \
-        -DQt5Xml_DIR="$Qt5_android/lib/cmake/Qt5Xml" \
-        -DQt5Concurrent_DIR="$Qt5_android/lib/cmake/Qt5Concurrent" \
-        -DQt5UiTools_DIR="$Qt5_android/lib/cmake/Qt5UiTools" \
-        -DQt5Gui_DIR="$Qt5_android/lib/cmake/Qt5Gui" \
+        -DCMAKE_PREFIX_PATH="$Qt5_android/lib/cmake" \
+        -DCMAKE_FIND_ROOT_PATH="$Qt5_android" \
         -DANDROID_STL=c++_shared \
+        -DANDROID_ABI="$ANDROID_ABI" \
         "$@"
+    set +x
 }

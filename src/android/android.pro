@@ -60,7 +60,6 @@ HEADERS += \
     emoji_data.hpp \
     emoji_widget.hpp \
     format_selection_dialog.hpp \
-    glaxnimate_app_android.hpp \
     help_dialog.hpp \
     main_window.hpp \
     scroll_area_event_filter.hpp \
