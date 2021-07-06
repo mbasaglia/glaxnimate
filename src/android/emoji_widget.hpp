@@ -21,6 +21,7 @@ public:
 
 protected:
     void timerEvent(QTimerEvent *event) override;
+    void showEvent(QShowEvent* e) override;
 
 private:
     class Private;

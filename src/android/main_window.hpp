@@ -43,6 +43,7 @@ public:
 protected:
     void changeEvent(QEvent *e) override;
     void resizeEvent(QResizeEvent* e) override;
+    void showEvent(QShowEvent* e) override;
 
 private slots:
     void tool_triggered(bool checked);

@@ -1137,6 +1137,12 @@ void MainWindow::resizeEvent(QResizeEvent* e)
 #endif
 }
 
+void MainWindow::showEvent(QShowEvent *e)
+{
+    QMainWindow::showEvent(e);
+    d->adjust_size();
+}
+
 void MainWindow::set_selection(const std::vector<model::VisualNode*>& selected)
 {
     d->scene.user_select(selected, graphics::DocumentScene::Replace);

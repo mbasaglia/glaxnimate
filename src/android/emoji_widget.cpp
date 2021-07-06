@@ -1,15 +1,15 @@
 #include "emoji_widget.hpp"
 
-#include <QTableWidget>
 #include <QToolButton>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QHeaderView>
 #include <QMouseEvent>
-#include <QScrollArea>
-#include <QGridLayout>
 #include <QLabel>
 #include <QScrollBar>
+#include <QGraphicsView>
+#include <QGuiApplication>
+#include <QScreen>
+
+#include <QGraphicsSimpleTextItem>
 
 #include "emoji_data.hpp"
 
@@ -24,33 +24,32 @@ public:
         title = new QHBoxLayout;
         lay->addLayout(title);
 
-        int size = 64;
-        font.setPixelSize(size);
+        font.setPixelSize(font_size);
         int pad = 10;
-        size_hint = QSize(size, size+pad);
+
+        scene_width = columns * font_size + pad;
 
 
         section_font.setBold(true);
 
-        table = new QScrollArea(parent);
+        table = new QGraphicsView(parent);
         table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         lay->addWidget(table);
-        table->viewport()->installEventFilter(parent);
-        table->setWidgetResizable(true);
-        table_inner = new QWidget();
-        table_layout = new QGridLayout(table_inner);
-        table_inner->setLayout(table_layout);
-
-        table->setWidget(table_inner);
+        table->setScene(&scene);
 
 
         scroller.set_target(table);
+        table->viewport()->installEventFilter(&scroller);
         connect(&scroller, &ScrollAreaEventFilter::clicked, parent,
             [parent, this](const QPoint& pos){
-                if ( QLabel* label = qobject_cast<QLabel*>(table->childAt(pos)) )
+                if ( auto item = scene.itemAt(table->mapToScene(pos), table->viewportTransform()) )
                 {
-                    emoji = label->text();
+                    for ( auto lab : section_headers )
+                        if ( lab == item )
+                            return;
+
+                    emoji = static_cast<QGraphicsSimpleTextItem*>(item)->text();
                     parent->accept();
                 }
         });
@@ -58,41 +57,65 @@ public:
         for ( const auto& grp : EmojiGroup::table )
         {
             auto first = grp.children[0].emoji[0];
-            QLabel* group_label = new QLabel();
-            group_label->setText(grp.name);
-            group_label->setFont(section_font);
-            table_layout->addWidget(group_label, row, 0, 1, columns);
-            row++;
+            auto group_label = scene.addSimpleText(grp.name);
             section_headers.push_back(group_label);
-
+            group_label->setVisible(false);
+            group_label->setFont(font);
+            if ( group_label->boundingRect().width() > scene_width )
+                group_label->setScale(scene_width / group_label->boundingRect().width());
             QToolButton* btn = new QToolButton(parent);
             btn->setText(first.unicode);
             connect(btn, &QAbstractButton::clicked, parent, [this, group_label]{
-                QPoint p = group_label->mapTo(table, QPoint(0,0));
+                QPoint p = table->mapFromScene(group_label->pos());
                 table->verticalScrollBar()->setValue(p.y() + table->verticalScrollBar()->value());
             });
             title->addWidget(btn);
         }
 
-        row = 1;
 
-        load_step();
+        connect(
+            QGuiApplication::primaryScreen(),
+            &QScreen::primaryOrientationChanged,
+            parent,
+            [this]{on_rotate();}
+        );
+
+    }
+
+    void on_rotate()
+    {
+        qreal factor = 1;
+        factor = table->viewport()->width() / scene_width;
+        table->scale(factor, factor);
     }
 
     void load_step()
     {
         const auto& grp = EmojiGroup::table[curr_group];
+
+
+        if ( curr_subgroup == 0 )
+        {
+            section_headers[curr_group]->setVisible(true);
+            section_headers[curr_group]->setPos(0, row*font_size);
+            row++;
+        }
+
         const auto& sub = grp.children[curr_subgroup];
 
         for ( const auto& emoji : sub.emoji )
         {
-            auto label = new QLabel(table_inner);
-            label->setText(emoji.unicode);
-            label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-            label->setMinimumSize(size_hint);
+            auto label = scene.addSimpleText(emoji.unicode);
+            auto rect = label->boundingRect();
+
+            if ( rect.width() > font.pixelSize() * 1.25 )
+            {
+                delete label;
+                continue;
+            }
+
+            label->setPos(QPointF(column*font_size, row*font_size) - rect.topLeft());
             label->setFont(font);
-            label->setAlignment(Qt::AlignCenter);
-            table_layout->addWidget(label, row, column, Qt::AlignCenter);
 
             column++;
             if ( column == columns )
@@ -110,11 +133,6 @@ public:
             curr_group++;
 
             row++;
-
-            if ( curr_group < int(EmojiGroup::table.size()) )
-                table_layout->addWidget(section_headers[curr_group], row, 0, 1, columns);
-
-            row++;
             column = 0;
         }
     }
@@ -124,26 +142,28 @@ public:
     EmojiWidget* parent;
 
     QFont font;
-    QSize size_hint;
+//    QSize size_hint;
     QFont section_font;
 
     QHBoxLayout* title;
-    QGridLayout* table_layout;
-    QWidget* table_inner;
-    QScrollArea* table;
-    std::vector<QLabel*> section_headers;
+    QGraphicsView* table;
+    std::vector<QGraphicsSimpleTextItem*> section_headers;
+    QGraphicsScene scene;
 
     int row = 0;
     int column = 0;
     int columns = 8;
-    int curr_group = 0;
-    int curr_subgroup = 0;
+    int curr_group = 1;
+    int curr_subgroup = 9;
+    qreal scene_width;
+    qreal font_size = 80;
 };
 
 glaxnimate::android::EmojiWidget::EmojiWidget(QWidget *parent)
     : BaseDialog(parent), d(std::make_unique<Private>(this))
 {
-    startTimer(100);
+    d->load_step();
+    startTimer(20);
 }
 
 glaxnimate::android::EmojiWidget::~EmojiWidget()
@@ -161,4 +181,10 @@ void glaxnimate::android::EmojiWidget::timerEvent(QTimerEvent *event)
     d->load_step();
     if ( d->curr_group >= int(EmojiGroup::table.size()) )
         killTimer(event->timerId());
+}
+
+void glaxnimate::android::EmojiWidget::showEvent(QShowEvent *e)
+{
+    BaseDialog::showEvent(e);
+    d->on_rotate();
 }
