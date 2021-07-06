@@ -11,6 +11,8 @@
 #include "command/structure_commands.hpp"
 #include "command/undo_macro_guard.hpp"
 
+#include "glaxnimate_app.hpp"
+
 
 model::ShapeElement* glaxnimate::gui::DocumentEnvironment::current_shape() const
 {
@@ -77,7 +79,7 @@ std::vector<model::VisualNode *> glaxnimate::gui::DocumentEnvironment::copy() co
             serializer->to_mime_data(*data, std::vector<model::DocumentNode*>(selection.begin(), selection.end()));
         }
 
-        QGuiApplication::clipboard()->setMimeData(data);
+        GlaxnimateApp::instance()->set_clipboard_data(data);
     }
 
     return selection;
@@ -142,7 +144,7 @@ static void paste_assets(model::SubObjectProperty<T> (model::Assets::* p), model
 
 void glaxnimate::gui::DocumentEnvironment::paste_impl(bool as_comp)
 {
-    const QMimeData* data = QGuiApplication::clipboard()->mimeData();
+    const QMimeData* data = GlaxnimateApp::instance()->get_clipboard_data();
 
     io::mime::DeserializedData raw_pasted;
     for ( const auto& serializer : supported_mimes() )

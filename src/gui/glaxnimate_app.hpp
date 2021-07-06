@@ -1,12 +1,14 @@
 #pragma once
 
+#include <memory>
+
 #include <QtGlobal>
 #include <QIcon>
+#include <QMimeData>
+
 #include "app/application.hpp"
 
 #ifdef Q_OS_ANDROID
-#include <QIcon>
-
 class GlaxnimateApp : public app::Application
 {
     Q_OBJECT
@@ -31,6 +33,12 @@ public:
 
     static qreal handle_size_multiplier();
     static qreal handle_distance_multiplier();
+
+    void set_clipboard_data(QMimeData* data);
+    const QMimeData* get_clipboard_data();
+
+private:
+    std::unique_ptr<QMimeData> clipboard = std::make_unique<QMimeData>();
 };
 
 #else
@@ -73,6 +81,10 @@ public:
 
     static qreal handle_size_multiplier() { return 1; }
     static qreal handle_distance_multiplier() { return 1; }
+
+
+    void set_clipboard_data(QMimeData* data);
+    const QMimeData* get_clipboard_data();
 
 protected:
     void on_initialize() override;

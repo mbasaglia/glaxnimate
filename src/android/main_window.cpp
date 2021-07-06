@@ -27,7 +27,6 @@
 #include "android_file_picker.hpp"
 #include "format_selection_dialog.hpp"
 #include "document_opener.hpp"
-#include "android_mime.hpp"
 #include "sticker_pack_builder_dialog.hpp"
 #include "scroll_area_event_filter.hpp"
 #include "help_dialog.hpp"
@@ -63,7 +62,6 @@ public:
     QHBoxLayout* layout_edit_actions = nullptr;
     QAction* action_undo = nullptr;
     QAction* action_redo = nullptr;
-    AndroidMime mime;
     StickerPackBuilderDialog telegram_export_dialog;
     style::PropertyDelegate property_delegate;
     QActionGroup *view_actions = nullptr;
@@ -1120,7 +1118,7 @@ std::vector<model::VisualNode*> MainWindow::cleaned_selection() const
 std::vector<io::mime::MimeSerializer *> MainWindow::supported_mimes() const
 {
     return {
-        &d->mime
+        io::IoRegistry::instance().serializer_from_slug("glaxnimate")
     };
 }
 

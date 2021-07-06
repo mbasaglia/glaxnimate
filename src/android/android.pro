@@ -53,7 +53,6 @@ FORMS += \
 
 HEADERS += \
     android_file_picker.hpp \
-    android_mime.hpp \
     android_style.hpp \
     base_dialog.hpp \
     document_opener.hpp \

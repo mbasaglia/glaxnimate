@@ -25,10 +25,21 @@ qreal GlaxnimateApp::handle_distance_multiplier()
     return handle_size_multiplier() / 2.;
 }
 
+void GlaxnimateApp::set_clipboard_data(QMimeData *data)
+{
+    clipboard.reset(data);
+}
+
+const QMimeData *GlaxnimateApp::get_clipboard_data()
+{
+    return clipboard.get();
+}
+
 #else
 
 #include <QDir>
 #include <QPalette>
+#include <QClipboard>
 
 #include "app/settings/settings.hpp"
 #include "app/settings/palette_settings.hpp"
@@ -223,6 +234,16 @@ QString GlaxnimateApp::temp_path()
             return "";
 
     return tempdir.filePath(subdir);
+}
+
+void GlaxnimateApp::set_clipboard_data(QMimeData *data)
+{
+    return QGuiApplication::clipboard()->setMimeData(data);
+}
+
+const QMimeData *GlaxnimateApp::get_clipboard_data()
+{
+    return QGuiApplication::clipboard()->mimeData();
 }
 
 #endif
