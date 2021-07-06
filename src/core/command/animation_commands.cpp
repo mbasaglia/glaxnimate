@@ -157,6 +157,13 @@ void command::SetMultipleAnimated::push_property(model::AnimatableBase* prop, co
     add_0.push_back(!prop->animated() && prop->object()->document()->record_to_keyframe());
 }
 
+void command::SetMultipleAnimated::push_property_not_animated(model::BaseProperty* prop, const QVariant& after_val)
+{
+    props_not_animated.push_back(prop);
+    before.push_back(prop->value());
+    after.push_back(after_val);
+}
+
 void command::SetMultipleAnimated::undo()
 {
     for ( int i = 0; i < int(props.size()); i++ )
@@ -181,6 +188,11 @@ void command::SetMultipleAnimated::undo()
             prop->remove_keyframe_at_time(0);
 
     }
+
+    for ( int i = 0; i < int(props_not_animated.size()); i++ )
+    {
+        props_not_animated[i]->set_value(before[i+props.size()]);
+    }
 }
 
 void command::SetMultipleAnimated::redo()
@@ -197,16 +209,26 @@ void command::SetMultipleAnimated::redo()
         else if ( !prop->animated() || prop->time() == time )
             prop->set_value(after[i]);
     }
+
+    for ( int i = 0; i < int(props_not_animated.size()); i++ )
+    {
+        props_not_animated[i]->set_value(after[i+props.size()]);
+    }
 }
 
 
 bool command::SetMultipleAnimated::merge_with(const SetMultipleAnimated& other)
 {
-    if ( other.props.size() != props.size() || keyframe_after != other.keyframe_after || time != other.time )
+    if ( other.props.size() != props.size() || keyframe_after != other.keyframe_after ||
+        time != other.time || other.props_not_animated.size() != props_not_animated.size())
         return false;
 
     for ( int i = 0; i < int(props.size()); i++ )
         if ( props[i] != other.props[i] )
+            return false;
+
+    for ( int i = 0; i < int(props_not_animated.size()); i++ )
+        if ( props_not_animated[i] != other.props_not_animated[i] )
             return false;
 
     after = other.after;
@@ -226,8 +248,6 @@ QString command::SetMultipleAnimated::auto_name(model::AnimatableBase* prop)
 
     return QObject::tr("Update %1").arg(prop->name());
 }
-
-
 
 command::SetKeyframeTransition::SetKeyframeTransition(
         model::AnimatableBase* prop,

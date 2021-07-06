@@ -350,11 +350,9 @@ void ColorSelector::to_styler(const QString& text, model::Styler* styler, int gr
 
     QColor color = d->current_color();
 
-    auto guard = command::UndoMacroGuard(text, styler->document());
-    styler->visible.set_undoable(true);
-
-    auto cmd = new command::SetMultipleAnimated("", commit);
+    auto cmd = new command::SetMultipleAnimated(text, commit);
     cmd->push_property(&styler->color, color);
+    cmd->push_property_not_animated(&styler->visible, true);
 
     if ( auto named_color = qobject_cast<model::NamedColor*>(styler->use.get()) )
     {

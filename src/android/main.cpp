@@ -67,6 +67,5 @@ QMenu::item:selected, QMenu::item:checked {
 
     app.finalize();
 
-    qDebug() << "finalized";
     return ret;
 }

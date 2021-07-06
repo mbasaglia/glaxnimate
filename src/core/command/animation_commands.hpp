@@ -92,6 +92,7 @@ public:
     SetMultipleAnimated(const QString& name, bool commit);
 
     void push_property(model::AnimatableBase* prop, const QVariant& after);
+    void push_property_not_animated(model::BaseProperty* prop, const QVariant& after);
 
     void undo() override;
 
@@ -109,6 +110,7 @@ private:
     bool keyframe_after;
     model::FrameTime time;
     std::vector<bool> add_0;
+    std::vector<model::BaseProperty*> props_not_animated;
 };
 
 
