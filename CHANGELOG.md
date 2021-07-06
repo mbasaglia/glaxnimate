@@ -30,7 +30,8 @@
     * Fixed initial font style when creating new text shapes
     * Fixed clicking on text shapes
     * Switching away from the draw tool no longer removes the path  
-    * Fixed Editing colors not merging in a single undo command
+    * Fixed Editing colors not merging in a single undo command     
+    * 
 
 ## 0.4.3
 
