@@ -142,7 +142,6 @@ public:
     EmojiWidget* parent;
 
     QFont font;
-//    QSize size_hint;
     QFont section_font;
 
     QHBoxLayout* title;
@@ -153,8 +152,8 @@ public:
     int row = 0;
     int column = 0;
     int columns = 8;
-    int curr_group = 1;
-    int curr_subgroup = 9;
+    int curr_group = 0;
+    int curr_subgroup = 0;
     qreal scene_width;
     qreal font_size = 80;
 };
