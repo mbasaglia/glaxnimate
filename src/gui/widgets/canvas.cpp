@@ -34,7 +34,7 @@ public:
     qreal zoom_factor = 1;
     qreal rotation = 0;
     tools::Tool* tool = nullptr;
-    glaxnimate::gui::DocumentEnvironment* tool_target = nullptr;
+    glaxnimate::gui::SelectionManager* tool_target = nullptr;
 //     MouseMode mouse_mode = None;
 
     MouseViewMode mouse_view_mode = NoDrag;
@@ -494,7 +494,7 @@ void Canvas::set_active_tool(tools::Tool* tool)
         setCursor(tool->cursor());
 }
 
-void Canvas::set_tool_target(glaxnimate::gui::DocumentEnvironment* window)
+void Canvas::set_tool_target(glaxnimate::gui::SelectionManager* window)
 {
     d->tool_target = window;
 }

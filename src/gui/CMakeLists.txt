@@ -45,7 +45,7 @@ widgets/dialogs/io_status_dialog.cpp
 widgets/dialogs/io_status_dialog.ui
 widgets/dialogs/about_dialog.cpp
 widgets/dialogs/about_dialog.ui
-widgets/dialogs/document_environment.cpp
+widgets/dialogs/selection_manager.cpp
 widgets/dialogs/gw_impl_document.cpp
 widgets/dialogs/gw_impl_model.cpp
 widgets/dialogs/gw_impl_ui.cpp
@@ -103,6 +103,7 @@ widgets/clickable_tab_bar.cpp
 widgets/composition_tab_bar.cpp
 widgets/snippet_list_widget.cpp
 widgets/snippet_list_widget.ui
+widgets/layer_view.cpp
 
 widgets/settings/plugin_settings_widget.cpp
 widgets/settings/plugin_settings_widget.ui

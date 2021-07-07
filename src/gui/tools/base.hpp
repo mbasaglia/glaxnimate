@@ -13,7 +13,7 @@
 #include "graphics/handle.hpp"
 #include "widgets/canvas.hpp"
 #include "widgets/scalable_button.hpp"
-#include "widgets/dialogs/document_environment.hpp"
+#include "widgets/dialogs/selection_manager.hpp"
 
 namespace tools {
 
@@ -21,7 +21,7 @@ struct Event
 {
     Canvas* view;
     graphics::DocumentScene* scene;
-    glaxnimate::gui::DocumentEnvironment* window;
+    glaxnimate::gui::SelectionManager* window;
 
     void repaint() const
     {

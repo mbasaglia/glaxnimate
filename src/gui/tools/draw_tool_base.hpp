@@ -160,7 +160,7 @@ protected:
 
 private:
 
-    model::ShapeListProperty* get_container(glaxnimate::gui::DocumentEnvironment* window)
+    model::ShapeListProperty* get_container(glaxnimate::gui::SelectionManager* window)
     {
         return window->current_shape_container();
     }

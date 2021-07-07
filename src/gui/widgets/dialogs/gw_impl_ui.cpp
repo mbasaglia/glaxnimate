@@ -33,6 +33,8 @@
 #include "settings/toolbar_settings.hpp"
 #include "settings/document_templates.hpp"
 
+using namespace glaxnimate::gui;
+
 
 static QToolButton* action_button(QAction* action, QWidget* parent)
 {
@@ -333,12 +335,8 @@ void GlaxnimateWindow::Private::init_item_views()
 {
     // Item views
     comp_model.setSourceModel(&document_node_model);
-    ui.view_document_node->setModel(&comp_model);
-    ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnName, QHeaderView::Stretch);
-    ui.view_document_node->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnColor, QHeaderView::ResizeToContents);
-    ui.view_document_node->setItemDelegateForColumn(item_models::DocumentNodeModel::ColumnColor, &color_delegate);
-    ui.view_document_node->header()->hideSection(item_models::DocumentNodeModel::ColumnUsers);
-    QObject::connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::currentChanged,
+    ui.view_document_node->set_models(&document_node_model, &comp_model);
+    QObject::connect(ui.view_document_node, &LayerView::current_node_changed,
                         parent, &GlaxnimateWindow::document_treeview_current_changed);
 
     ui.view_document_node->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -355,7 +353,7 @@ void GlaxnimateWindow::Private::init_item_views()
     ui.view_properties->header()->setSectionResizeMode(item_models::PropertyModelSingle::ColumnName, QHeaderView::ResizeToContents);
     ui.view_properties->header()->setSectionResizeMode(item_models::PropertyModelSingle::ColumnValue, QHeaderView::Stretch);
 
-    connect(ui.view_document_node->selectionModel(), &QItemSelectionModel::selectionChanged, parent, &GlaxnimateWindow::document_treeview_selection_changed);
+    connect(ui.view_document_node, &LayerView::selection_changed, parent, &GlaxnimateWindow::document_treeview_selection_changed);
 
     ui.timeline_widget->set_controller(parent);
 

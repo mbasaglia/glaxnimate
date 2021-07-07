@@ -88,9 +88,9 @@ void GlaxnimateWindow::document_treeview_clicked ( const QModelIndex& index )
         node->locked.set(!node->locked.get());
 }
 
-void GlaxnimateWindow::document_treeview_current_changed(const QModelIndex& index)
+void GlaxnimateWindow::document_treeview_current_changed(model::VisualNode* index)
 {
-    d->document_treeview_current_changed(index);
+    d->set_current_object(index);
 }
 
 
@@ -194,9 +194,9 @@ void GlaxnimateWindow::save_frame_svg()
     d->save_frame_svg();
 }
 
-void GlaxnimateWindow::document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
+void GlaxnimateWindow::document_treeview_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
 {
-    d->document_treeview_selection_changed(selected, deselected);
+    d->selection_changed(selected, deselected);
 }
 
 void GlaxnimateWindow::scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
@@ -278,17 +278,17 @@ std::vector<model::VisualNode*> GlaxnimateWindow::cleaned_selection() const
 
 void GlaxnimateWindow::copy() const
 {
-    DocumentEnvironment::copy();
+    SelectionManager::copy();
 }
 
 void GlaxnimateWindow::paste()
 {
-    DocumentEnvironment::paste();
+    SelectionManager::paste();
 }
 
 void GlaxnimateWindow::cut()
 {
-    DocumentEnvironment::cut();
+    SelectionManager::cut();
 }
 
 void GlaxnimateWindow::duplicate_selection() const
@@ -463,4 +463,9 @@ std::vector<io::mime::MimeSerializer*> GlaxnimateWindow::supported_mimes() const
 void GlaxnimateWindow::set_selection(const std::vector<model::VisualNode*>& selected)
 {
     d->scene.user_select(selected, graphics::DocumentScene::Replace);
+}
+
+void GlaxnimateWindow::update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
+{
+    return d->selection_changed(selected, deselected);
 }

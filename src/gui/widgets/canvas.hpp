@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "widgets/dialogs/document_environment.hpp"
+#include "widgets/dialogs/selection_manager.hpp"
 
 namespace tools {
 class Tool;
@@ -33,7 +33,7 @@ public:
     void translate(const QPointF& d);
 
     void set_active_tool(tools::Tool* tool);
-    void set_tool_target(glaxnimate::gui::DocumentEnvironment* window);
+    void set_tool_target(glaxnimate::gui::SelectionManager* window);
 
 public slots:
     /**

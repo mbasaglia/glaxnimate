@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include <QObject>
+
 #include "model/document.hpp"
 #include "model/shapes/shape.hpp"
 #include "model/assets/brush_style.hpp"
@@ -18,11 +20,11 @@ class Tool;
 
 namespace glaxnimate::gui {
 
-class DocumentEnvironment
+class SelectionManager
 {
 public:
-//    DocumentEnvironment();
-    virtual ~DocumentEnvironment() = default;
+//    SelectionManager();
+    virtual ~SelectionManager() = default;
 
     virtual model::Document* document() const = 0;
 
@@ -61,6 +63,7 @@ public:
     void delete_shapes();
 
     virtual void set_selection(const std::vector<model::VisualNode*>& selected) = 0;
+    virtual void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) = 0;
 
 protected:
     virtual std::vector<io::mime::MimeSerializer*> supported_mimes() const = 0;

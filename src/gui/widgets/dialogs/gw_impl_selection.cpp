@@ -2,23 +2,6 @@
 #include "widgets/shape_style/shape_style_preview_widget.hpp"
 
 
-void GlaxnimateWindow::Private::document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected)
-{
-    std::vector<model::VisualNode*> selected_nodes;
-    std::vector<model::VisualNode*> deselected_nodes;
-
-    for ( const auto& index : deselected.indexes() )
-        if ( index.column() == 0 )
-            if ( auto node = document_node_model.visual_node(comp_model.mapToSource(index)) )
-                deselected_nodes.push_back(node);
-
-    for ( const auto& index : selected.indexes() )
-        if ( index.column() == 0 )
-            if ( auto node = document_node_model.visual_node(comp_model.mapToSource(index)) )
-                selected_nodes.push_back(node);
-
-    selection_changed(selected_nodes, deselected_nodes);
-}
 
 void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
 {
@@ -39,11 +22,6 @@ void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model:
 void GlaxnimateWindow::Private::timeline_current_node_changed(model::VisualNode* node)
 {
     set_current_object(node);
-}
-
-void GlaxnimateWindow::Private::document_treeview_current_changed(const QModelIndex& index)
-{
-    set_current_object(document_node_model.node(comp_model.mapToSource(index)));
 }
 
 void GlaxnimateWindow::Private::set_current_document_node(model::VisualNode* node)

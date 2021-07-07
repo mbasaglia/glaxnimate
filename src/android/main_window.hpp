@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <memory>
 
-#include "widgets/dialogs/document_environment.hpp"
+#include "widgets/dialogs/selection_manager.hpp"
 
 namespace glaxnimate::android {
 

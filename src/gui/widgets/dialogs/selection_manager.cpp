@@ -1,4 +1,4 @@
-#include "document_environment.hpp"
+#include "selection_manager.hpp"
 
 #include <QGuiApplication>
 #include <QMimeData>
@@ -14,7 +14,7 @@
 #include "glaxnimate_app.hpp"
 
 
-model::ShapeElement* glaxnimate::gui::DocumentEnvironment::current_shape() const
+model::ShapeElement* glaxnimate::gui::SelectionManager::current_shape() const
 {
     model::DocumentNode* curr = current_document_node();
     if ( curr )
@@ -25,7 +25,7 @@ model::ShapeElement* glaxnimate::gui::DocumentEnvironment::current_shape() const
     return nullptr;
 }
 
-model::ShapeListProperty* glaxnimate::gui::DocumentEnvironment::current_shape_container() const
+model::ShapeListProperty* glaxnimate::gui::SelectionManager::current_shape_container() const
 {
     model::DocumentNode* sh = current_document_node();
 
@@ -50,7 +50,7 @@ model::ShapeListProperty* glaxnimate::gui::DocumentEnvironment::current_shape_co
     return &current_composition()->shapes;
 }
 
-void glaxnimate::gui::DocumentEnvironment::delete_selected()
+void glaxnimate::gui::SelectionManager::delete_selected()
 {
     auto selection = cleaned_selection();
     if ( selection.empty() )
@@ -67,7 +67,7 @@ void glaxnimate::gui::DocumentEnvironment::delete_selected()
     }
 }
 
-std::vector<model::VisualNode *> glaxnimate::gui::DocumentEnvironment::copy() const
+std::vector<model::VisualNode *> glaxnimate::gui::SelectionManager::copy() const
 {
     auto selection = cleaned_selection();
 
@@ -85,19 +85,19 @@ std::vector<model::VisualNode *> glaxnimate::gui::DocumentEnvironment::copy() co
     return selection;
 }
 
-void glaxnimate::gui::DocumentEnvironment::cut()
+void glaxnimate::gui::SelectionManager::cut()
 {
     auto selection = copy();
 
     delete_shapes_impl(QObject::tr("Cut"), selection);
 }
 
-void glaxnimate::gui::DocumentEnvironment::delete_shapes()
+void glaxnimate::gui::SelectionManager::delete_shapes()
 {
     delete_shapes_impl(QObject::tr("Delete"), cleaned_selection());
 }
 
-void glaxnimate::gui::DocumentEnvironment::delete_shapes_impl(const QString &undo_string, const std::vector<model::VisualNode *>& selection)
+void glaxnimate::gui::SelectionManager::delete_shapes_impl(const QString &undo_string, const std::vector<model::VisualNode *>& selection)
 {
     if ( selection.empty() )
         return;
@@ -112,12 +112,12 @@ void glaxnimate::gui::DocumentEnvironment::delete_shapes_impl(const QString &und
     }
 }
 
-void glaxnimate::gui::DocumentEnvironment::paste()
+void glaxnimate::gui::SelectionManager::paste()
 {
     paste_impl(false);
 }
 
-void glaxnimate::gui::DocumentEnvironment::paste_as_composition()
+void glaxnimate::gui::SelectionManager::paste_as_composition()
 {
     paste_impl(true);
 }
@@ -142,7 +142,7 @@ static void paste_assets(model::SubObjectProperty<T> (model::Assets::* p), model
     }
 }
 
-void glaxnimate::gui::DocumentEnvironment::paste_impl(bool as_comp)
+void glaxnimate::gui::SelectionManager::paste_impl(bool as_comp)
 {
     const QMimeData* data = GlaxnimateApp::instance()->get_clipboard_data();
 
@@ -162,7 +162,7 @@ void glaxnimate::gui::DocumentEnvironment::paste_impl(bool as_comp)
     paste_document(raw_pasted.document.get(), QObject::tr("Paste"), as_comp);
 }
 
-void glaxnimate::gui::DocumentEnvironment::paste_document(model::Document* document, const QString& macro_name, bool as_comp)
+void glaxnimate::gui::SelectionManager::paste_document(model::Document* document, const QString& macro_name, bool as_comp)
 {
     auto doc = this->document();
     command::UndoMacroGuard macro(macro_name, doc);
@@ -204,7 +204,7 @@ void glaxnimate::gui::DocumentEnvironment::paste_document(model::Document* docum
     set_selection(select);
 }
 
-void glaxnimate::gui::DocumentEnvironment::layer_new_impl(std::unique_ptr<model::ShapeElement> layer)
+void glaxnimate::gui::SelectionManager::layer_new_impl(std::unique_ptr<model::ShapeElement> layer)
 {
     auto doc = document();
     doc->set_best_name(layer.get(), {});
@@ -221,7 +221,7 @@ void glaxnimate::gui::DocumentEnvironment::layer_new_impl(std::unique_ptr<model:
 }
 
 
-model::PreCompLayer* glaxnimate::gui::DocumentEnvironment::layer_new_comp(model::Precomposition* comp)
+model::PreCompLayer* glaxnimate::gui::SelectionManager::layer_new_comp(model::Precomposition* comp)
 {
     auto doc = document();
     auto layer = std::make_unique<model::PreCompLayer>(doc);

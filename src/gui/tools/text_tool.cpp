@@ -336,7 +336,7 @@ private:
     bool forward_click = false;
     QFont font;
     bool modified = false;
-    glaxnimate::gui::DocumentEnvironment* window = nullptr;
+    glaxnimate::gui::SelectionManager* window = nullptr;
 };
 
 } // namespace tools

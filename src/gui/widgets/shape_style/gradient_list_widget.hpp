@@ -4,7 +4,7 @@
 #include <memory>
 #include <QWidget>
 
-#include "widgets/dialogs/document_environment.hpp"
+#include "widgets/dialogs/selection_manager.hpp"
 
 namespace model {
     class Document;
@@ -24,7 +24,7 @@ public:
 
     void set_document(model::Document* doc);
     void set_targets(model::Fill* fill, model::Stroke* stroke);
-    void set_window(glaxnimate::gui::DocumentEnvironment* window);
+    void set_window(glaxnimate::gui::SelectionManager* window);
 
 protected:
     void changeEvent ( QEvent* e ) override;

@@ -9,7 +9,7 @@
 
 #include "plugin/executor.hpp"
 
-#include "document_environment.hpp"
+#include "selection_manager.hpp"
 
 namespace plugin {
 class Plugin;
@@ -28,7 +28,7 @@ class QItemSelection;
 
 class PluginUiDialog;
 
-class GlaxnimateWindow : public QMainWindow, public glaxnimate::gui::DocumentEnvironment
+class GlaxnimateWindow : public QMainWindow, public glaxnimate::gui::SelectionManager
 {
     Q_OBJECT
 
@@ -132,6 +132,7 @@ public:
     std::vector<io::mime::MimeSerializer*> supported_mimes() const override;
 
     void set_selection(const std::vector<model::VisualNode*>& selected) override;
+    void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) override;
 public slots:
     void document_save();
     void document_save_as();
@@ -152,8 +153,8 @@ private slots:
     void document_reload();
 
     void document_treeview_clicked(const QModelIndex& index);
-    void document_treeview_current_changed(const QModelIndex& index);
-    void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
+    void document_treeview_current_changed(model::VisualNode* node);
+    void document_treeview_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
     void scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
 
     void layer_new_menu();

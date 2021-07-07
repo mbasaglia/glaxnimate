@@ -29,7 +29,7 @@ public:
     Ui::GradientListWidget ui;
     item_models::GradientListModel model;
     model::Document* document = nullptr;
-    glaxnimate::gui::DocumentEnvironment* window = nullptr;
+    glaxnimate::gui::SelectionManager* window = nullptr;
     model::Fill* fill = nullptr;
     model::Stroke* stroke = nullptr;
     color_widgets::GradientDelegate delegate;
@@ -404,7 +404,7 @@ void GradientListWidget::set_document(model::Document* document)
         d->model.set_defs(document->assets());
 }
 
-void GradientListWidget::set_window(glaxnimate::gui::DocumentEnvironment* window)
+void GradientListWidget::set_window(glaxnimate::gui::SelectionManager* window)
 {
     d->window = window;
 }

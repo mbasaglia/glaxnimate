@@ -113,7 +113,6 @@ public:
     bool autosave_load = false;
     QString undo_text;
     QString redo_text;
-    color_widgets::ColorDelegate color_delegate;
     style::PropertyDelegate property_delegate;
     style::DockWidgetStyle dock_style;
     ViewTransformWidget* view_trans_widget;
@@ -227,8 +226,6 @@ public:
     void text_remove_from_path();
 
     // Selection
-    void document_treeview_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
-    void document_treeview_current_changed(const QModelIndex& index);
     void scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
     void timeline_current_node_changed(model::VisualNode* node);
     /**

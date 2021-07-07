@@ -41,7 +41,7 @@ item_models/property_model_base.cpp \
 item_models/document_node_model.cpp \
 item_models/property_model_single.cpp \
 item_models/gradient_list_model.cpp \
-    widgets/dialogs/document_environment.cpp \
+    widgets/dialogs/selection_manager.cpp \
 widgets/shape_style/document_swatch_widget.cpp \
 widgets/shape_style/gradient_list_widget.cpp \
 widgets/shape_style/color_selector.cpp \
@@ -143,7 +143,7 @@ widgets/smaller_spinbox.hpp \
 #widgets/dialogs/glaxnimate_window.hpp \
 widgets/dialogs/trace_dialog.hpp \
 widgets/dialogs/keyframe_editor_dialog.hpp \
-widgets/dialogs/document_environment.hpp \
+widgets/dialogs/selection_manager.hpp \
 #widgets/dialogs/document_metadata_dialog.hpp \
 #widgets/dialogs/timing_dialog.hpp \
 #widgets/dialogs/glaxnimate_window_p.hpp \

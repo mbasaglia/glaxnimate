@@ -503,7 +503,7 @@
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="CustomTreeView" name="view_document_node">
+      <widget class="glaxnimate::gui::LayerView" name="view_document_node">
        <property name="dragEnabled">
         <bool>true</bool>
        </property>
@@ -2116,7 +2116,8 @@
   </action>
   <action name="action_text_put_on_path">
    <property name="icon">
-    <iconset theme="text-put-on-path"/>
+    <iconset theme="text-put-on-path">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Put on Path</string>
@@ -2124,7 +2125,8 @@
   </action>
   <action name="action_text_remove_from_path">
    <property name="icon">
-    <iconset theme="text-remove-from-path"/>
+    <iconset theme="text-remove-from-path">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Remove from Path</string>
@@ -2225,6 +2227,11 @@
     <signal>run_snippet(QString)</signal>
     <signal>warning(QString,QString)</signal>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>glaxnimate::gui::LayerView</class>
+   <extends>QTreeView</extends>
+   <header>widgets/layer_view.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>
