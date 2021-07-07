@@ -8,7 +8,7 @@
 #include <QGraphicsView>
 #include <QGuiApplication>
 #include <QScreen>
-
+#include <QScroller>
 #include <QGraphicsSimpleTextItem>
 
 #include "emoji_data.hpp"
@@ -66,8 +66,7 @@ public:
             QToolButton* btn = new QToolButton(parent);
             btn->setText(first.unicode);
             connect(btn, &QAbstractButton::clicked, parent, [this, group_label]{
-                QPoint p = table->mapFromScene(group_label->pos());
-                table->verticalScrollBar()->setValue(p.y() + table->verticalScrollBar()->value());
+                scroller.scroll_to(group_label->pos() * table->transform().m11());
             });
             title->addWidget(btn);
         }

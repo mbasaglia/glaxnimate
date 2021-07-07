@@ -18,6 +18,8 @@ public:
 
     void set_target(QAbstractScrollArea* target);
 
+    void scroll_to(const QPointF& p);
+
 signals:
     void clicked(QPoint p);
 

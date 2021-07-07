@@ -14,6 +14,7 @@ public:
     QAbstractScrollArea *target;
     Qt::Orientations direction;
     QPointF scroll_start;
+    QScroller* scroller = nullptr;
 };
 
 glaxnimate::android::ScrollAreaEventFilter::ScrollAreaEventFilter(QAbstractScrollArea *target, Qt::Orientations direction)
@@ -37,13 +38,13 @@ void glaxnimate::android::ScrollAreaEventFilter::set_target(QAbstractScrollArea 
 
         target->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
         QScroller::grabGesture(target->viewport(), QScroller::TouchGesture);
-        QScroller* scroller = QScroller::scroller(target);
+        d->scroller = QScroller::scroller(target);
         if ( !(d->direction & Qt::Horizontal) )
-            scroller->setSnapPositionsX({0});
+            d->scroller->setSnapPositionsX({0});
         if ( !(d->direction & Qt::Vertical) )
-            scroller->setSnapPositionsY({0});
+            d->scroller->setSnapPositionsY({0});
 
-        QScrollerProperties prop = scroller->scrollerProperties();
+        QScrollerProperties prop = d->scroller->scrollerProperties();
         prop.setScrollMetric(QScrollerProperties::AxisLockThreshold, 0.66);
         prop.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve(QEasingCurve::OutExpo));
         prop.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.05);
@@ -52,8 +53,13 @@ void glaxnimate::android::ScrollAreaEventFilter::set_target(QAbstractScrollArea 
         prop.setScrollMetric(QScrollerProperties::OvershootScrollDistanceFactor, 0.33);
         prop.setScrollMetric(QScrollerProperties::SnapPositionRatio, 0.93);
         prop.setScrollMetric(QScrollerProperties::DragStartDistance, 0.001);
-        scroller->setScrollerProperties(prop);
+        d->scroller->setScrollerProperties(prop);
     }
+}
+
+void glaxnimate::android::ScrollAreaEventFilter::scroll_to(const QPointF &p)
+{
+    d->scroller->scrollTo(p);
 }
 
 bool glaxnimate::android::ScrollAreaEventFilter::eventFilter(QObject *object, QEvent *event)
