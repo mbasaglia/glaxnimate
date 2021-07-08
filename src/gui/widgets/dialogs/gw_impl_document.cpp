@@ -62,9 +62,7 @@ void GlaxnimateWindow::Private::setup_document_ptr(std::unique_ptr<model::Docume
 
     view_fit();
     if ( !current_document->main()->shapes.empty() )
-        ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(
-            document_node_model.node_index(current_document->main()->shapes[0])
-        ));
+        ui.view_document_node->set_current_node(current_document->main()->shapes[0]);
 
     ui.timeline_widget->reset_view();
     ui.play_controls->set_range(current_document->main()->animation->first_frame.get(), current_document->main()->animation->last_frame.get());
@@ -101,7 +99,7 @@ void GlaxnimateWindow::Private::do_setup_document()
 
     // Views
     document_node_model.set_document(current_document.get());
-    comp_model.set_composition(comp);
+    ui.view_document_node->set_composition(comp);
     ui.timeline_widget->set_document(current_document.get());
     ui.timeline_widget->set_composition(comp);
     ui.view_assets->setRootIndex(asset_model.mapFromSource(document_node_model.node_index(current_document->assets()).siblingAtColumn(1)));
@@ -174,7 +172,7 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     opts.path = path;
     current_document->set_io_options(opts);
 
-    ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(ptr)));
+    ui.view_document_node->set_current_node(ptr);
     ui.play_controls->set_range(0, out_point);
     view_fit();
 
@@ -201,9 +199,7 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 
     view_fit();
     if ( !current_document->main()->shapes.empty() )
-        ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(
-            document_node_model.node_index(current_document->main()->shapes[0])
-        ));
+        ui.view_document_node->set_current_node(current_document->main()->shapes[0]);
 
     current_document->set_io_options(options);
     auto first_frame = current_document->main()->animation->first_frame.get();
@@ -297,7 +293,7 @@ bool GlaxnimateWindow::Private::close_document()
     ui.view_undo->setStack(nullptr);
     ui.document_swatch_widget->set_document(nullptr);
     ui.widget_gradients->set_document(nullptr);
-    comp_model.set_composition(nullptr);
+    ui.view_document_node->set_composition(nullptr);
     ui.tab_bar->set_document(nullptr);
 
     comp_selections.clear();

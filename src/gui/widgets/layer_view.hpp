@@ -17,7 +17,16 @@ public:
     LayerView(QWidget* parent);
     ~LayerView();
 
-    void set_models(item_models::DocumentModelBase* base_model, QAbstractProxyModel* proxy_model);
+    void set_base_model(item_models::DocumentModelBase* base_model);
+    item_models::DocumentModelBase* base_model() const;
+    void set_current_node(model::DocumentNode* node);
+    model::VisualNode* node(const QModelIndex& index) const;
+    model::VisualNode* current_node() const;
+
+    void set_composition(model::Composition* comp);
+
+    void replace_selection(model::VisualNode* node);
+    void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
 
 signals:
     void selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);

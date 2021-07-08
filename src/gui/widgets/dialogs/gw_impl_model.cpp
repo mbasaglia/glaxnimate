@@ -33,8 +33,8 @@ model::Composition* GlaxnimateWindow::Private::current_composition()
 
 model::VisualNode* GlaxnimateWindow::Private::current_document_node()
 {
-    if ( auto dn = document_node_model.node(comp_model.mapToSource(ui.view_document_node->currentIndex())) )
-        return dn->cast<model::VisualNode>();
+    if ( auto dn = ui.view_document_node->current_node() )
+        return dn;
     return current_document->main();
 }
 
@@ -361,7 +361,7 @@ void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp,
     int old_i = current_document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(this->comp)) + 1;
     comp_selections[old_i].selection = scene.selection();
     if ( ui.view_document_node->currentIndex().isValid() )
-        comp_selections[old_i].current = document_node_model.visual_node(comp_model.mapToSource(ui.view_document_node->currentIndex()));
+        comp_selections[old_i].current = ui.view_document_node->current_node();
     else
         comp_selections[old_i].current = comp;
 
@@ -380,12 +380,12 @@ void GlaxnimateWindow::Private::switch_composition(model::Composition* new_comp,
             action->setEnabled(comps.count(action->data().value<model::Precomposition*>()));
     }
 
-    comp_model.set_composition(comp);
+    ui.view_document_node->set_composition(comp);
     ui.timeline_widget->set_composition(comp);
     scene.set_composition(comp);
     scene.user_select(comp_selections[i].selection, graphics::DocumentScene::Replace);
     auto current = comp_selections[i].current;
-    ui.view_document_node->setCurrentIndex(comp_model.mapFromSource(document_node_model.node_index(current)));
+    ui.view_document_node->set_current_node(current);
 
     ui.canvas->viewport()->update();
 }

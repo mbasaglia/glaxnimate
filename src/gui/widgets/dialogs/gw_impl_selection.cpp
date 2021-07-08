@@ -26,9 +26,8 @@ void GlaxnimateWindow::Private::timeline_current_node_changed(model::VisualNode*
 
 void GlaxnimateWindow::Private::set_current_document_node(model::VisualNode* node)
 {
-    QModelIndex index = comp_model.mapFromSource(document_node_model.node_index(node));
-    ui.view_document_node->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-    ui.view_document_node->setCurrentIndex(index);
+    ui.view_document_node->replace_selection(node);
+    ui.view_document_node->set_current_node(node);
 }
 
 void GlaxnimateWindow::Private::set_current_object(model::DocumentNode* node)
@@ -91,11 +90,7 @@ void GlaxnimateWindow::Private::set_current_object(model::DocumentNode* node)
         ui.timeline_widget->set_current_node(node);
 
     // Document tree view
-    ui.view_document_node->setCurrentIndex(
-        node ?
-        comp_model.mapFromSource(document_node_model.node_index(node)) :
-        QModelIndex{}
-    );
+    ui.view_document_node->set_current_node(node);
     ui.view_document_node->repaint();
 
     // Styles
@@ -128,23 +123,7 @@ void GlaxnimateWindow::Private::selection_changed(const std::vector<model::Visua
     auto lock = update_selection.get_lock();
 
     if ( parent->sender() != ui.view_document_node && parent->sender() != ui.view_document_node->selectionModel() )
-    {
-        for ( model::VisualNode* node : deselected )
-        {
-            ui.view_document_node->selectionModel()->select(
-                comp_model.mapFromSource(document_node_model.node_index(node)),
-                QItemSelectionModel::Deselect|QItemSelectionModel::Rows
-            );
-        }
-
-        for ( model::VisualNode* node : selected )
-        {
-            ui.view_document_node->selectionModel()->select(
-                comp_model.mapFromSource(document_node_model.node_index(node)),
-                QItemSelectionModel::Select|QItemSelectionModel::Rows
-            );
-        }
-    }
+        ui.view_document_node->update_selection(selected, deselected);
 
     if ( parent->sender() != &scene )
     {

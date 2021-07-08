@@ -31,6 +31,7 @@
 #include "scroll_area_event_filter.hpp"
 #include "help_dialog.hpp"
 #include "timeline_slider.hpp"
+#include "widgets/layer_view.hpp"
 
 
 using namespace glaxnimate::android;

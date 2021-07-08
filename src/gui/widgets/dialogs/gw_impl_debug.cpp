@@ -66,7 +66,7 @@ void GlaxnimateWindow::Private::init_debug()
     });
 
     menu_print_model->addAction("Document Node - Layers", [this]{
-        app::debug::print_model(&comp_model, {1}, false);
+        app::debug::print_model(ui.view_document_node->model(), {1}, false);
     });
 
     menu_print_model->addAction("Document Node - Assets", [this]{

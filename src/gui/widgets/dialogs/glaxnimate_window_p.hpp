@@ -78,7 +78,6 @@ public:
 
     item_models::PropertyModelSingle property_model;
     item_models::DocumentNodeModel document_node_model;
-    item_models::CompFilterModel comp_model;
     item_models::AssetProxyModel asset_model;
     graphics::DocumentScene scene;
     model::Composition* comp = nullptr;

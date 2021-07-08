@@ -8,7 +8,7 @@
 
 namespace glaxnimate::android {
 
-class MainWindow : public QMainWindow, public glaxnimate::gui::DocumentEnvironment
+class MainWindow : public QMainWindow, public glaxnimate::gui::SelectionManager
 {
     Q_OBJECT
 

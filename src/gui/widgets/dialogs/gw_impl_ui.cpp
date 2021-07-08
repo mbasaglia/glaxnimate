@@ -334,8 +334,7 @@ tools::Tool* GlaxnimateWindow::Private::init_tools_ui()
 void GlaxnimateWindow::Private::init_item_views()
 {
     // Item views
-    comp_model.setSourceModel(&document_node_model);
-    ui.view_document_node->set_models(&document_node_model, &comp_model);
+    ui.view_document_node->set_base_model(&document_node_model);
     QObject::connect(ui.view_document_node, &LayerView::current_node_changed,
                         parent, &GlaxnimateWindow::document_treeview_current_changed);
 
@@ -343,7 +342,7 @@ void GlaxnimateWindow::Private::init_item_views()
     QObject::connect(ui.view_document_node, &QWidget::customContextMenuRequested, parent,
         [this](const QPoint& pos){
             auto index = ui.view_document_node->indexAt(pos);
-            if ( auto node = document_node_model.node(comp_model.mapToSource(index)) )
+            if ( auto node = ui.view_document_node->node(index) )
                 NodeMenu(node, this->parent, this->parent).exec(ui.view_document_node->mapToGlobal(pos));
         }
     );
@@ -822,9 +821,7 @@ void GlaxnimateWindow::Private::trace_dialog(model::DocumentNode* object)
     TraceDialog dialog(bmp, parent);
     dialog.exec();
     if ( auto created = dialog.created() )
-        ui.view_document_node->setCurrentIndex(
-            comp_model.mapFromSource(document_node_model.node_index(created))
-        );
+        ui.view_document_node->set_current_node(created);
 }
 
 
