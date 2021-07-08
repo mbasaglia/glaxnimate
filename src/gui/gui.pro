@@ -41,7 +41,7 @@ item_models/property_model_base.cpp \
 item_models/document_node_model.cpp \
 item_models/property_model_single.cpp \
 item_models/gradient_list_model.cpp \
-    widgets/dialogs/selection_manager.cpp \
+widgets/dialogs/selection_manager.cpp \
 widgets/shape_style/document_swatch_widget.cpp \
 widgets/shape_style/gradient_list_widget.cpp \
 widgets/shape_style/color_selector.cpp \
@@ -70,6 +70,7 @@ widgets/dialogs/shape_parent_dialog.cpp \
 widgets/tab_bar_close_button.cpp \
 widgets/flow_layout.cpp \
 widgets/spin2d.cpp \
+widgets/layer_view.cpp \
 widgets/timeline/frame_controls_widget.cpp \
 widgets/timeline/timeline_widget.cpp \
 widgets/timeline/keyframe_editor_widget.cpp \
@@ -140,6 +141,7 @@ widgets/shape_style/gradient_list_widget.hpp \
 widgets/shape_style/color_selector.hpp \
 widgets/canvas.hpp \
 widgets/smaller_spinbox.hpp \
+widgets/layer_view.hpp \
 #widgets/dialogs/glaxnimate_window.hpp \
 widgets/dialogs/trace_dialog.hpp \
 widgets/dialogs/keyframe_editor_dialog.hpp \

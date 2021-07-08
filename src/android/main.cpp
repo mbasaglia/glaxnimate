@@ -9,7 +9,6 @@
 #include "app_info.hpp"
 #include "android_style.hpp"
 
-#include <QDebug>
 int main(int argc, char *argv[])
 {
     using namespace glaxnimate::android;
@@ -59,6 +58,10 @@ QMenu::item:selected, QMenu::item:checked {
 )");
 
     app.initialize();
+
+    QIcon::setThemeSearchPaths({"assets:/icons"});
+    QIcon::setThemeName("icons");
+//    QIcon::setFallbackSearchPaths({"assets:/icons/icons"});
 
     MainWindow window;
     window.show();

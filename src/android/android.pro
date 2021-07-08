@@ -66,8 +66,6 @@ HEADERS += \
     telegram_intent.hpp \
     timeline_slider.hpp
 
-RESOURCES += \
-    resources.qrc
 
 DISTFILES += \
     android/AndroidManifest.xml \

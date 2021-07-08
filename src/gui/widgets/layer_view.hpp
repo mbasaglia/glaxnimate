@@ -14,7 +14,7 @@ class LayerView : public CustomTreeView
     Q_OBJECT
 
 public:
-    LayerView(QWidget* parent);
+    LayerView(QWidget* parent = nullptr);
     ~LayerView();
 
     void set_base_model(item_models::DocumentModelBase* base_model);

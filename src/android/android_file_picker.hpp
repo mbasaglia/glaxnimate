@@ -20,6 +20,7 @@ public:
 
     static QByteArray read_content_uri(const QUrl& url);
     static bool write_content_uri(const QUrl& url, const QByteArray& data);
+    static std::vector<QString> list_assets(const QString& path = "");
 
     bool get_permissions(const QStringList & perms = {
         "android.permission.WRITE_EXTERNAL_STORAGE",

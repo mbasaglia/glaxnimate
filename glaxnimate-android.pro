@@ -26,3 +26,11 @@ src/gui.depends = src/core
 src/android.depends = src/gui
 
 CONFIG += ordered
+
+android {
+#    assets.files = data/icons/breeze-icons/icons/actions/22/document-open.svg
+#    assets.path = /assets/icons
+    assets.files = data/icons/breeze-icons/icons/
+    assets.path = /assets/icons/
+    INSTALLS += assets
+}

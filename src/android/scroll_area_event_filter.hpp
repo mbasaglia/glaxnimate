@@ -6,6 +6,8 @@
 
 #include <memory>
 
+class QScroller;
+
 namespace glaxnimate::android {
 
 class ScrollAreaEventFilter : public QObject
@@ -19,6 +21,8 @@ public:
     void set_target(QAbstractScrollArea* target);
 
     void scroll_to(const QPointF& p);
+
+    static QScroller* setup_scroller(QAbstractScrollArea* target);
 
 signals:
     void clicked(QPoint p);

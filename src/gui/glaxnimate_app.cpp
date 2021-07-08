@@ -14,6 +14,13 @@ static qreal get_mult()
 #endif
 }
 
+QIcon GlaxnimateApp::theme_icon(const QString &name)
+{
+    return QIcon::fromTheme(name);
+//    return QIcon(QString("assets:/icons/icons/actions/22/") + name + ".svg");
+//    return QIcon(QString() + ":glaxnimate/images/icons/" + name + ".svg");
+}
+
 qreal GlaxnimateApp::handle_size_multiplier()
 {
     static qreal mult = get_mult();

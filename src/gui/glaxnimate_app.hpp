@@ -26,10 +26,7 @@ public:
         return ":" + applicationName() + "/" + name;
     }
 
-    static QIcon theme_icon(const QString& name)
-    {
-        return QIcon(QString() + ":glaxnimate/images/icons/" + name + ".svg");
-    }
+    static QIcon theme_icon(const QString& name);
 
     static qreal handle_size_multiplier();
     static qreal handle_distance_multiplier();

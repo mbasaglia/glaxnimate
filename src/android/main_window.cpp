@@ -20,8 +20,10 @@
 
 #include "graphics/document_scene.hpp"
 #include "tools/base.hpp"
+#include "item_models/document_node_model.hpp"
 #include "widgets/dialogs/import_export_dialog.hpp"
 #include "widgets/flow_layout.hpp"
+#include "widgets/layer_view.hpp"
 #include "style/property_delegate.hpp"
 
 #include "android_file_picker.hpp"
@@ -31,7 +33,6 @@
 #include "scroll_area_event_filter.hpp"
 #include "help_dialog.hpp"
 #include "timeline_slider.hpp"
-#include "widgets/layer_view.hpp"
 
 
 using namespace glaxnimate::android;
@@ -68,6 +69,8 @@ public:
     QActionGroup *view_actions = nullptr;
     TimelineSlider* timeline_slider;
     std::vector<QSpacerItem*> toolbar_spacers;
+    gui::LayerView* layer_view = nullptr;
+    item_models::DocumentNodeModel document_node_model;
 
     Private(MainWindow* parent)
         : parent(parent),
@@ -119,13 +122,18 @@ public:
             save_url(url, is_export);
         });
 
-        connect(&scene, &graphics::DocumentScene::node_user_selected, parent,
-            [this](const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected){
-                Q_UNUSED(deselected);
-                if ( !selected.empty() )
-                    this->parent->set_current_document_node(selected.back());
-                else
-                    this->parent->set_current_document_node(nullptr);
+        connect(&scene, &graphics::DocumentScene::node_user_selected, parent, [this](const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected){
+            this->parent->update_selection(selected, deselected);
+            if ( !selected.empty() )
+                this->parent->set_current_document_node(selected.back());
+            else
+                this->parent->set_current_document_node(nullptr);
+        });
+        connect(layer_view, &gui::LayerView::selection_changed, parent, [this](const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected){
+            this->parent->update_selection(selected, deselected);
+        });
+        connect(layer_view, &gui::LayerView::current_node_changed, parent, [this](model::VisualNode* selected){
+            this->parent->set_current_document_node(selected);
         });
 
         (new ScrollAreaEventFilter(ui.property_widget))->setParent(ui.property_widget);
@@ -195,6 +203,7 @@ public:
     void setup_document()
     {
         scene.set_document(current_document.get());
+        document_node_model.set_document(current_document.get());
         comp = current_document->main();
         current_document->set_record_to_keyframe(true);
 
@@ -228,6 +237,9 @@ public:
         ui.timeline_widget->reset_view();
         ui.timeline_widget->set_document(current_document.get());
         ui.timeline_widget->set_composition(comp);
+
+        // Views
+        layer_view->set_composition(comp);
     }
 
     void switch_tool(tools::Tool* tool)
@@ -512,6 +524,16 @@ public:
         layout_edit_actions->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
         // Views
+        layer_view = new gui::LayerView(parent);
+        ui.gridLayout->addWidget(layer_view, 1, 2, 2, 1);
+        layer_view->set_base_model(&document_node_model);
+        layout_edit_actions->addWidget(action_button_exclusive_opt(view_action(
+            GlaxnimateApp::theme_icon("dialog-layers"), tr("Layers"),
+            view_actions, layer_view
+        )));
+        ScrollAreaEventFilter::setup_scroller(layer_view);
+        layer_view->setHeaderHidden(true);
+
         layout_edit_actions->addWidget(action_button_exclusive_opt(view_action(
             GlaxnimateApp::theme_icon("document-properties"), tr("Advanced Properties"),
             view_actions, ui.property_widget
@@ -1098,12 +1120,15 @@ void MainWindow::set_current_document_node(model::VisualNode* node)
 
 
     d->set_property_widgets(node);
+
+    d->layer_view->set_current_node(node);
 }
 
 void MainWindow::set_current_composition(model::Composition* comp)
 {
     d->comp = comp ? comp : d->current_document->main();
     d->scene.set_composition(comp);
+    d->layer_view->set_composition(comp);
 }
 
 void MainWindow::switch_tool(tools::Tool* tool)
@@ -1147,4 +1172,16 @@ void MainWindow::showEvent(QShowEvent *e)
 void MainWindow::set_selection(const std::vector<model::VisualNode*>& selected)
 {
     d->scene.user_select(selected, graphics::DocumentScene::Replace);
+}
+
+void MainWindow::update_selection(const std::vector<model::VisualNode *> &selected, const std::vector<model::VisualNode *> &deselected)
+{
+    if ( sender() != &d->scene )
+    {
+        d->scene.user_select(deselected, graphics::DocumentScene::Remove);
+        d->scene.user_select(selected, graphics::DocumentScene::Append);
+    }
+
+    if ( sender() != d->layer_view )
+        d->layer_view->update_selection(selected, deselected);
 }

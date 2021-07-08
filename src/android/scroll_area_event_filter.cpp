@@ -35,31 +35,37 @@ void glaxnimate::android::ScrollAreaEventFilter::set_target(QAbstractScrollArea 
     if ( target )
     {
         target->viewport()->installEventFilter(this);
-
-        target->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
-        QScroller::grabGesture(target->viewport(), QScroller::TouchGesture);
-        d->scroller = QScroller::scroller(target);
+        d->scroller = setup_scroller(target);
         if ( !(d->direction & Qt::Horizontal) )
             d->scroller->setSnapPositionsX({0});
         if ( !(d->direction & Qt::Vertical) )
             d->scroller->setSnapPositionsY({0});
-
-        QScrollerProperties prop = d->scroller->scrollerProperties();
-        prop.setScrollMetric(QScrollerProperties::AxisLockThreshold, 0.66);
-        prop.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve(QEasingCurve::OutExpo));
-        prop.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.05);
-        prop.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.635);
-        prop.setScrollMetric(QScrollerProperties::OvershootDragResistanceFactor, 0.33);
-        prop.setScrollMetric(QScrollerProperties::OvershootScrollDistanceFactor, 0.33);
-        prop.setScrollMetric(QScrollerProperties::SnapPositionRatio, 0.93);
-        prop.setScrollMetric(QScrollerProperties::DragStartDistance, 0.001);
-        d->scroller->setScrollerProperties(prop);
     }
 }
 
 void glaxnimate::android::ScrollAreaEventFilter::scroll_to(const QPointF &p)
 {
     d->scroller->scrollTo(p);
+}
+
+QScroller *glaxnimate::android::ScrollAreaEventFilter::setup_scroller(QAbstractScrollArea *target)
+{
+    target->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
+    QScroller::grabGesture(target->viewport(), QScroller::TouchGesture);
+    auto scroller = QScroller::scroller(target);
+
+    QScrollerProperties prop = scroller->scrollerProperties();
+    prop.setScrollMetric(QScrollerProperties::AxisLockThreshold, 0.66);
+    prop.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve(QEasingCurve::OutExpo));
+    prop.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.05);
+    prop.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.635);
+    prop.setScrollMetric(QScrollerProperties::OvershootDragResistanceFactor, 0.33);
+    prop.setScrollMetric(QScrollerProperties::OvershootScrollDistanceFactor, 0.33);
+    prop.setScrollMetric(QScrollerProperties::SnapPositionRatio, 0.93);
+    prop.setScrollMetric(QScrollerProperties::DragStartDistance, 0.001);
+    scroller->setScrollerProperties(prop);
+
+    return scroller;
 }
 
 bool glaxnimate::android::ScrollAreaEventFilter::eventFilter(QObject *object, QEvent *event)

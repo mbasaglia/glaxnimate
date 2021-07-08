@@ -40,6 +40,11 @@ public:
     {
         return false;
     }
+
+    std::vector<QString> list_assets(const QString&)
+    {
+        return {};
+    }
 };
 #else
 
@@ -279,6 +284,42 @@ public:
         return true;
     }
 
+    static std::vector<QString> list_assets(const QString& path)
+    {
+        std::vector<QString> paths;
+
+        QAndroidJniObject asset_manager = QtAndroid::androidActivity().callObjectMethod(
+            "getAssets", "()Landroid/content/res/AssetManager;"
+        );
+        QAndroidJniObject objs = asset_manager.callObjectMethod(
+            "list",
+            "(Ljava/lang/String;)[Ljava/lang/String;",
+            QAndroidJniObject::fromString(path).object<jstring>()
+        );
+
+        jobjectArray files = objs.object<jobjectArray>();
+        QAndroidJniEnvironment env;
+        jsize len = env->GetArrayLength(files);
+        QString prefix = path;
+        if ( !prefix.isEmpty() )
+        {
+            if ( !prefix.endsWith('/') )
+                prefix.push_back('/');
+            else if ( prefix.startsWith('/') )
+                prefix.remove(0, 1);
+        }
+        for ( jsize i = 0; i < len; i++ )
+        {
+            jstring file = (jstring)env->GetObjectArrayElement(files, i);
+            const char * cxx_file = env->GetStringUTFChars(file, nullptr);
+            paths.push_back(prefix + cxx_file);
+            env->ReleaseStringUTFChars(file, cxx_file);
+        }
+
+        return paths;
+    }
+
+
 
     ResultReceiver receiver;
 };
@@ -306,6 +347,11 @@ QByteArray glaxnimate::android::AndroidFilePicker::read_content_uri(const QUrl &
 bool glaxnimate::android::AndroidFilePicker::write_content_uri(const QUrl &url, const QByteArray &data)
 {
     return Private::write_content_uri(url.toString(), data);
+}
+
+std::vector<QString> glaxnimate::android::AndroidFilePicker::list_assets(const QString &path)
+{
+    return Private::list_assets(path);
 }
 
 bool glaxnimate::android::AndroidFilePicker::get_permissions(const QStringList& permissions)
