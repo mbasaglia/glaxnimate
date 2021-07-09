@@ -36,6 +36,9 @@ private:
     void on_selection_changed(const QItemSelection &selected, const QItemSelection &deselected);
     void on_current_node_changed(const QModelIndex& index);
 
+protected:
+    void mouseReleaseEvent(QMouseEvent * event) override;
+
 private:
     class Private;
     std::unique_ptr<Private> d;

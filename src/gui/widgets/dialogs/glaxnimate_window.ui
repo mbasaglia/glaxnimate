@@ -2285,22 +2285,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>view_document_node</sender>
-   <signal>clicked(QModelIndex)</signal>
-   <receiver>GlaxnimateWindow</receiver>
-   <slot>document_treeview_clicked(QModelIndex)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>297</x>
-     <y>861</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1435</x>
-     <y>801</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>btn_layer_add</sender>
    <signal>clicked()</signal>
    <receiver>GlaxnimateWindow</receiver>

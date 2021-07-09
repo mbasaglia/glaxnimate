@@ -151,22 +151,6 @@
          </item>
         </layout>
        </item>
-       <item>
-        <widget class="CompoundTimelineWidget" name="timeline_widget" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>
@@ -222,12 +206,6 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>CompoundTimelineWidget</class>
-   <extends>QWidget</extends>
-   <header>widgets/timeline/compound_timeline_widget.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>FillStyleWidget</class>
    <extends>QWidget</extends>
    <header>widgets/shape_style/fill_style_widget.hpp</header>
@@ -253,22 +231,5 @@
   <tabstop>button_expand_timeline</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>button_expand_timeline</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>timeline_widget</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>628</x>
-     <y>845</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>629</x>
-     <y>865</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

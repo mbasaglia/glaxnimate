@@ -152,7 +152,6 @@ private slots:
     void document_open_dialog();
     void document_reload();
 
-    void document_treeview_clicked(const QModelIndex& index);
     void document_treeview_current_changed(model::VisualNode* node);
     void document_treeview_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
     void scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);

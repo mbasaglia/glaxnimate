@@ -189,6 +189,12 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
 
     model::VisualNode* visual = nullptr;
 
+// Can't figure how to force this from the style
+#ifdef Q_OS_ANDROID
+    if ( role == Qt::SizeHintRole && index.column() == ColumnVisible )
+        return QSize(80, 80);
+#endif
+
     switch ( index.column() )
     {
         case ColumnColor:
@@ -199,8 +205,10 @@ QVariant item_models::DocumentNodeModel::data(const QModelIndex& index, int role
         case ColumnName:
             if ( role == Qt::DisplayRole || role == Qt::EditRole )
                 return n->object_name();
+#ifndef Q_OS_ANDROID
             else if ( role == Qt::DecorationRole )
                 return n->tree_icon();
+#endif
             break;
         case ColumnVisible:
             visual = n->cast<model::VisualNode>();

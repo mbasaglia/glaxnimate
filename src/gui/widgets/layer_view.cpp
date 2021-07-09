@@ -7,6 +7,8 @@
 #include "item_models/document_node_model.hpp"
 #include "item_models/comp_filter_model.hpp"
 
+
+
 class glaxnimate::gui::LayerView::Private
 {
 public:
@@ -19,6 +21,10 @@ public:
 glaxnimate::gui::LayerView::LayerView(QWidget*parent)
     : CustomTreeView(parent), d(std::make_unique<Private>())
 {
+    header()->setStretchLastSection(false);
+    setHeaderHidden(true);
+    setDragDropMode(InternalMove);
+    setDragEnabled(true);
 }
 
 glaxnimate::gui::LayerView::~LayerView() = default;
@@ -40,6 +46,11 @@ void glaxnimate::gui::LayerView::set_base_model(item_models::DocumentModelBase* 
     header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnColor, QHeaderView::ResizeToContents);
     setItemDelegateForColumn(item_models::DocumentNodeModel::ColumnColor, &d->color_delegate);
     header()->hideSection(item_models::DocumentNodeModel::ColumnUsers);
+
+#ifdef Q_OS_ANDROID
+    int icon_size = style()->pixelMetric(QStyle::PM_SmallIconSize, nullptr, nullptr);
+    header()->setDefaultSectionSize(icon_size);
+#endif
 
     connect(selectionModel(), &QItemSelectionModel::currentChanged,
             this, &LayerView::on_current_node_changed);
@@ -109,19 +120,38 @@ void glaxnimate::gui::LayerView::replace_selection(model::VisualNode* node)
 
 void glaxnimate::gui::LayerView::update_selection(const std::vector<model::VisualNode *>& selected, const std::vector<model::VisualNode *>& deselected)
 {
-        for ( model::VisualNode* node : deselected )
-        {
-            selectionModel()->select(
-                d->proxy_model.mapFromSource(d->base_model->node_index(node)),
-                QItemSelectionModel::Deselect|QItemSelectionModel::Rows
-            );
-        }
+    for ( model::VisualNode* node : deselected )
+    {
+        selectionModel()->select(
+            d->proxy_model.mapFromSource(d->base_model->node_index(node)),
+            QItemSelectionModel::Deselect|QItemSelectionModel::Rows
+        );
+    }
 
-        for ( model::VisualNode* node : selected )
-        {
-            selectionModel()->select(
-                d->proxy_model.mapFromSource(d->base_model->node_index(node)),
-                QItemSelectionModel::Select|QItemSelectionModel::Rows
-            );
-        }
+    for ( model::VisualNode* node : selected )
+    {
+        selectionModel()->select(
+            d->proxy_model.mapFromSource(d->base_model->node_index(node)),
+            QItemSelectionModel::Select|QItemSelectionModel::Rows
+        );
+    }
+}
+
+
+void glaxnimate::gui::LayerView::mouseReleaseEvent(QMouseEvent * event)
+{
+    CustomTreeView::mouseReleaseEvent(event);
+
+    if ( event->button() == Qt::LeftButton )
+    {
+        auto index = indexAt(event->pos());
+        auto node = this->node(index);
+        if ( !node )
+            return;
+
+        if ( index.column() == item_models::DocumentNodeModel::ColumnVisible )
+            node->visible.set(!node->visible.get());
+        else if ( index.column() == item_models::DocumentNodeModel::ColumnLocked )
+            node->locked.set(!node->locked.get());
+    }
 }

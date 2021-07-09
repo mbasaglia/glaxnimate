@@ -76,18 +76,6 @@ void GlaxnimateWindow::document_open_dialog()
     d->document_open();
 }
 
-void GlaxnimateWindow::document_treeview_clicked ( const QModelIndex& index )
-{
-    auto node = d->ui.view_document_node->node(index);
-    if ( !node )
-        return;
-
-    if ( index.column() == item_models::DocumentNodeModel::ColumnVisible )
-        node->visible.set(!node->visible.get());
-     else if ( index.column() == item_models::DocumentNodeModel::ColumnLocked )
-        node->locked.set(!node->locked.get());
-}
-
 void GlaxnimateWindow::document_treeview_current_changed(model::VisualNode* index)
 {
     d->set_current_object(index);

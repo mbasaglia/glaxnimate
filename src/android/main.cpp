@@ -59,7 +59,12 @@ QMenu::item:selected, QMenu::item:checked {
 
     app.initialize();
 
+#ifdef Q_OS_ANDROID_FAKE
+    QDir d(__FILE__); d.cdUp(); d.cdUp(); d.cdUp();
+    QIcon::setThemeSearchPaths({d.filePath("data/icons/breeze-icons/")});
+#else
     QIcon::setThemeSearchPaths({"assets:/icons"});
+#endif
     QIcon::setThemeName("icons");
 //    QIcon::setFallbackSearchPaths({"assets:/icons/icons"});
 

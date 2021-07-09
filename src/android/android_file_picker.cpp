@@ -41,7 +41,7 @@ public:
         return false;
     }
 
-    std::vector<QString> list_assets(const QString&)
+    static std::vector<QString> list_assets(const QString&)
     {
         return {};
     }

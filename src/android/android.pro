@@ -34,6 +34,7 @@ LIBS += -L../../external/Qt-Color-Widgets -L../core -L../gui -L../../external/Qt
 
 SOURCES = \
     android_file_picker.cpp \
+    android_style.cpp \
     base_dialog.cpp \
     document_opener.cpp \
     emoji_widget.cpp \

@@ -25,6 +25,7 @@
 #include "widgets/flow_layout.hpp"
 #include "widgets/layer_view.hpp"
 #include "style/property_delegate.hpp"
+#include "utils/pseudo_mutex.hpp"
 
 #include "android_file_picker.hpp"
 #include "format_selection_dialog.hpp"
@@ -71,6 +72,7 @@ public:
     std::vector<QSpacerItem*> toolbar_spacers;
     gui::LayerView* layer_view = nullptr;
     item_models::DocumentNodeModel document_node_model;
+    utils::PseudoMutex updating_selection;
 
     Private(MainWindow* parent)
         : parent(parent),
@@ -189,7 +191,6 @@ public:
             active_tool->close_document_event({ui.canvas, &scene, parent});
         ui.play_controls->pause();
         scene.set_document(nullptr);
-        ui.timeline_widget->set_document(nullptr);
         action_redo->setEnabled(false);
         action_undo->setEnabled(false);        
         clear_property_widgets();
@@ -232,11 +233,6 @@ public:
         timeline_slider->setValue(first_frame);
         QObject::connect(timeline_slider, &QAbstractSlider::valueChanged, current_document.get(), &model::Document::set_current_time);
         QObject::connect(current_document.get(), &model::Document::current_time_changed, timeline_slider, &QAbstractSlider::setValue);
-
-        // timeline
-        ui.timeline_widget->reset_view();
-        ui.timeline_widget->set_document(current_document.get());
-        ui.timeline_widget->set_composition(comp);
 
         // Views
         layer_view->set_composition(comp);
@@ -525,6 +521,7 @@ public:
 
         // Views
         layer_view = new gui::LayerView(parent);
+        layer_view->setIconSize({80, 80});
         ui.gridLayout->addWidget(layer_view, 1, 2, 2, 1);
         layer_view->set_base_model(&document_node_model);
         layout_edit_actions->addWidget(action_button_exclusive_opt(view_action(
@@ -532,12 +529,12 @@ public:
             view_actions, layer_view
         )));
         ScrollAreaEventFilter::setup_scroller(layer_view);
-        layer_view->setHeaderHidden(true);
 
         layout_edit_actions->addWidget(action_button_exclusive_opt(view_action(
             GlaxnimateApp::theme_icon("document-properties"), tr("Advanced Properties"),
             view_actions, ui.property_widget
         )));
+        layer_view->setMinimumWidth(512);
 
         auto help = new QAction(GlaxnimateApp::theme_icon("question"), tr("Help"), parent);
         layout_edit_actions->addWidget(action_button(help));
@@ -1094,7 +1091,6 @@ void MainWindow::set_current_document_node(model::VisualNode* node)
 
     if ( node )
     {
-        d->scene.user_select({node}, graphics::DocumentScene::Replace);
         auto grp = node->cast<model::Group>();
         if ( !grp )
             grp = node->docnode_parent()->cast<model::Group>();
@@ -1121,7 +1117,8 @@ void MainWindow::set_current_document_node(model::VisualNode* node)
 
     d->set_property_widgets(node);
 
-    d->layer_view->set_current_node(node);
+    if ( sender() != d->layer_view )
+        d->layer_view->set_current_node(node);
 }
 
 void MainWindow::set_current_composition(model::Composition* comp)
@@ -1176,6 +1173,11 @@ void MainWindow::set_selection(const std::vector<model::VisualNode*>& selected)
 
 void MainWindow::update_selection(const std::vector<model::VisualNode *> &selected, const std::vector<model::VisualNode *> &deselected)
 {
+    if ( d->updating_selection )
+        return;
+
+    std::unique_lock lock(d->updating_selection);
+
     if ( sender() != &d->scene )
     {
         d->scene.user_select(deselected, graphics::DocumentScene::Remove);
