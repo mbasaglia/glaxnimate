@@ -186,6 +186,7 @@ public:
         if ( active_tool )
             active_tool->close_document_event({ui.canvas, &scene, parent});
         ui.play_controls->pause();
+        document_node_model.set_document(nullptr);
         scene.set_document(nullptr);
         action_redo->setEnabled(false);
         action_undo->setEnabled(false);        
@@ -232,6 +233,7 @@ public:
 
         // Views
         layer_view->set_composition(comp);
+
     }
 
     void switch_tool(tools::Tool* tool)
@@ -1182,4 +1184,12 @@ void MainWindow::update_selection(const std::vector<model::VisualNode *> &select
 
     if ( sender() != d->layer_view )
         d->layer_view->update_selection(selected, deselected);
+}
+
+void MainWindow::open_intent(const QUrl &uri)
+{
+    if ( d->close_document() )
+    {
+        d->open_url(uri, false);
+    }
 }

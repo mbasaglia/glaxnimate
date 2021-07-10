@@ -41,6 +41,9 @@ public:
     void set_selection(const std::vector<model::VisualNode*>& selected) override;
     void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) override;
 
+public slots:
+    void open_intent(const QUrl& uri);
+
 protected:
     void changeEvent(QEvent *e) override;
     void resizeEvent(QResizeEvent* e) override;

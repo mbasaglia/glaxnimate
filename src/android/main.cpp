@@ -8,6 +8,7 @@
 #include "glaxnimate_app.hpp"
 #include "app_info.hpp"
 #include "android_style.hpp"
+#include "android_intent_handler.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -70,6 +71,16 @@ QMenu::item:selected, QMenu::item:checked {
 
     MainWindow window;
     window.show();
+
+    QUrl intent = AndroidIntentHandler::instance()->view_uri();
+    if ( !intent.isEmpty() )
+        window.open_intent(intent);
+
+    QObject::connect(
+        AndroidIntentHandler::instance(), &AndroidIntentHandler::view_uri_changed,
+        &window, &MainWindow::open_intent,
+        Qt::QueuedConnection
+    );
 
     int ret = app.exec();
 

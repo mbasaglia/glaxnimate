@@ -34,6 +34,7 @@ LIBS += -L../../external/Qt-Color-Widgets -L../core -L../gui -L../../external/Qt
 
 SOURCES = \
     android_file_picker.cpp \
+    android_intent_handler.cpp \
     android_style.cpp \
     base_dialog.cpp \
     document_opener.cpp \
@@ -54,6 +55,7 @@ FORMS += \
 
 HEADERS += \
     android_file_picker.hpp \
+    android_intent_handler.hpp \
     android_style.hpp \
     base_dialog.hpp \
     document_opener.hpp \
@@ -77,6 +79,7 @@ DISTFILES += \
     android/gradlew \
     android/gradlew.bat \
     android/res/values/libs.xml \
+    android/src/org/mattbas/glaxnimate/GlaxnimateActivity.java \
     android/src/org/mattbas/glaxnimate/jnimessenger/JniMessenger.java
 
 ANDROID_PACKAGE_SOURCE_DIR = \
