@@ -97,10 +97,6 @@ public:
         ui.canvas->set_tool_target(parent);
         ui.canvas->setScene(&scene);
 
-        ui.button_expand_timeline->setVisible(false); // timeline is a bit weird atm
-        ui.button_expand_timeline->setChecked(false);
-        ui.button_expand_timeline->setIcon(GlaxnimateApp::theme_icon("expand-all"));
-
         ui.fill_style_widget->set_current_color(QColor("#3250b0"));
         ui.stroke_style_widget->set_color(QColor("#1d2848"));
         ui.stroke_style_widget->set_stroke_width(6);

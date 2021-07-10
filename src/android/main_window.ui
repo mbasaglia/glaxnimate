@@ -136,19 +136,6 @@
          <item>
           <widget class="FrameControlsWidget" name="play_controls" native="true"/>
          </item>
-         <item>
-          <widget class="QToolButton" name="button_expand_timeline">
-           <property name="text">
-            <string>Expand Timeline</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
       </layout>
@@ -228,7 +215,6 @@
  </customwidgets>
  <tabstops>
   <tabstop>canvas</tabstop>
-  <tabstop>button_expand_timeline</tabstop>
  </tabstops>
  <resources/>
  <connections/>

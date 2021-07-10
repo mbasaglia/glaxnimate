@@ -3,12 +3,12 @@ export ANDROID_ABI=x86_64
 export ANDROID_ABI_QT=x86
 export ANDROID_HOME="$HOME/Android/Sdk"
 export QT_HOME="$HOME/Qt/$QT_VERSION"
-
+export ANDROID_NDK="$HOME/Android/Ndk"
 
 
 export JAVA_HOME=/usr/lib/jvm/default-java
 export ANDROID_SDK="$ANDROID_HOME"
-export ANDROID_NDK="$(echo "$ANDROID_SDK/ndk/"*)"
+# export ANDROID_NDK="$(echo "$ANDROID_SDK/ndk/"*)"
 export ANDROID_NDK_TOOLCHAIN_ROOT="$ANDROID_NDK/toolchains"
 
 
@@ -28,6 +28,7 @@ function cmake_android()
         -DCMAKE_FIND_ROOT_PATH="$Qt5_android" \
         -DANDROID_STL=c++_shared \
         -DANDROID_ABI="$ANDROID_ABI" \
+        -DANDROID_NDK="$ANDROID_NDK" \
         "$@"
     set +x
 }

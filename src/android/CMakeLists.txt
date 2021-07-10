@@ -1,31 +1,36 @@
 set(SOURCES
-main.cpp
-android_file_picker.cpp
-base_dialog.cpp
-document_opener.cpp
-emoji_data.cpp
-emoji_widget.cpp
-format_selection_dialog.cpp
-glaxnimate_app_android.cpp
-scroll_area_event_filter.cpp
-sticker_pack_builder_dialog.cpp
-sticker_pack_builder_dialog.ui
-telegram_intent.cpp
-timeline_slider.cpp
+    android_file_picker.cpp
+    android_style.cpp
+    base_dialog.cpp
+    document_opener.cpp
+    emoji_widget.cpp
+    format_selection_dialog.cpp
+    help_dialog.cpp
+    main.cpp
+    main_window.cpp
+    scroll_area_event_filter.cpp
+    sticker_pack_builder_dialog.cpp
+    telegram_intent.cpp
+    emoji_data.cpp
+    timeline_slider.cpp
+    main_window.ui
+    sticker_pack_builder_dialog.ui
 )
 
 
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/core)
 include_directories(${CMAKE_SOURCE_DIR}/src/gui)
+include_directories(${CMAKE_SOURCE_DIR}/external/QtColorWidgets/include)
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras REQUIRED)
 
 add_library(${PROJECT_SLUG} SHARED ${SOURCES})
 target_link_libraries(${PROJECT_SLUG} PUBLIC
-    #QtAppSetup
-    #${LIB_NAME_CORE}
-    #QtColorWidgets
+    QtAppSetup
+    ${LIB_NAME_CORE}
+    ${LIB_NAME_GUI}
+    QtColorWidgets
     #QtHistoryLineEdit
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
@@ -54,3 +59,7 @@ add_qt_android_apk(
         #Qt${QT_VERSION_MAJOR}::Concurrent
     #INSTALL
 )
+
+
+message(STATUS "+++++++")
+message(STATUS ${ANDROID_TOOLCHAIN_ROOT})
