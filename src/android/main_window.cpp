@@ -836,7 +836,7 @@ public:
             btn->setIconSize(button_size);
 
         timeline_slider->setFixedHeight(button_w);
-        timeline_slider->set_slider_size(parent->width() / 10);
+        timeline_slider->set_slider_size(screen_size.width() / 10);
 
         ui.widget_tools_container_side->setVisible(false);
         ui.widget_tools_container_bottom->setVisible(false);

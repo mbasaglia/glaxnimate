@@ -49,13 +49,13 @@ QMenu {
 QMenu::item {
     padding: 2px 25px 2px 20px;
     border: 1px solid transparent;
+    min-width: 400px;
 }
 
 QMenu::item:selected, QMenu::item:checked {
     border-color: #8f8f8f;
     background: #dedede;
 }
-
 )");
 
     app.initialize();
