@@ -39,8 +39,8 @@ public:
     SmallerSpinBoxInt(QWidget* parent = nullptr)
         : QSpinBox(parent)
     {
-        setMinimum(-999'999);
-        setMaximum(+999'999);
+        setMinimum(-999'999); // '); lupdate is sometimes weird
+        setMaximum(+999'999); // '); lupdate is sometimes weird
         setValue(0);
         
         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
