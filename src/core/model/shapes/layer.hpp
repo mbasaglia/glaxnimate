@@ -1,6 +1,6 @@
 #pragma once
 #ifdef _HAX_FUCKING_QMAKE_I_HATE_YOU_
-    Q_OBJECT
+    class IAlsoHateLupdate{Q_OBJECT};
 #endif
 
 #include "group.hpp"

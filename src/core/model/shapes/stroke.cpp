@@ -1,5 +1,4 @@
 #include "stroke.hpp"
-
 GLAXNIMATE_OBJECT_IMPL(model::Stroke)
 
 void model::Stroke::on_paint(QPainter* p, model::FrameTime t, model::VisualNode::PaintMode, model::Modifier* modifier) const
