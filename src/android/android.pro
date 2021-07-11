@@ -37,6 +37,7 @@ SOURCES = \
     android_intent_handler.cpp \
     android_style.cpp \
     base_dialog.cpp \
+    better_toolbox_widget.cpp \
     document_opener.cpp \
     emoji_widget.cpp \
     format_selection_dialog.cpp \
@@ -58,6 +59,7 @@ HEADERS += \
     android_intent_handler.hpp \
     android_style.hpp \
     base_dialog.hpp \
+    better_toolbox_widget.hpp \
     document_opener.hpp \
     emoji_data.hpp \
     emoji_widget.hpp \

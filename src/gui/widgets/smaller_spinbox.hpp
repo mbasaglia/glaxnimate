@@ -8,8 +8,8 @@ public:
     SmallerSpinBox(bool adaptive, QWidget* parent = nullptr)
         : QDoubleSpinBox(parent)
     {
-        setMinimum(-999'999.99);
-        setMaximum(+999'999.99);
+        setMinimum(-999'999.99); // '); lupdate is sometimes weird
+        setMaximum(+999'999.99); // '); lupdate is sometimes weird
         setValue(0);
         setDecimals(2);
         

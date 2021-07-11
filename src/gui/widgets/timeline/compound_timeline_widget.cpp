@@ -82,7 +82,7 @@ public:
         connect(ui.properties->selectionModel(), &QItemSelectionModel::selectionChanged, parent, &CompoundTimelineWidget::_on_selection_changed);
 
         ui.action_add_keyframe->setIcon(
-            QIcon(GlaxnimateApp::instance()->data_file("images/keyframe/status/key.svg"))
+            QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-add.svg"))
         );
         connect(ui.action_add_keyframe, &QAction::triggered, parent, &CompoundTimelineWidget::add_keyframe);
         action_title = menu_property.addSeparator();
@@ -126,7 +126,7 @@ public:
         action_exit_ease.setData(QVariant::fromValue(model::KeyframeTransition::Ease));
 
         menu_keyframe.addAction(&action_kf_remove);
-        action_kf_remove.setIcon(QIcon::fromTheme("edit-delete-remove"));
+        action_kf_remove.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg")));
         connect(&action_kf_remove, &QAction::triggered, parent, &CompoundTimelineWidget::remove_keyframe);
 
         menu_keyframe.addAction(&action_kf_copy);

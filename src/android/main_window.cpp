@@ -16,7 +16,7 @@
 
 #include "command/undo_macro_guard.hpp"
 #include "command/structure_commands.hpp"
-
+#include "command/animation_commands.hpp"
 
 #include "graphics/document_scene.hpp"
 #include "tools/base.hpp"
@@ -34,6 +34,7 @@
 #include "scroll_area_event_filter.hpp"
 #include "help_dialog.hpp"
 #include "timeline_slider.hpp"
+#include "better_toolbox_widget.hpp"
 
 
 using namespace glaxnimate::android;
@@ -138,7 +139,7 @@ public:
 
         int side_width = ui.fill_style_widget->sizeHint().width();
         ui.stroke_style_widget->setMinimumWidth(side_width);
-        ui.property_widget->setMinimumWidth(side_width);
+        ui.property_widget->setMinimumWidth(400);
 
         adjust_size();
     }
@@ -925,7 +926,7 @@ public:
         }
     }
 
-    void add_property_widgets_object(model::Object* node)
+    void add_property_widgets_object(model::Object* node, BetterToolboxWidget* toolbox)
     {
         using Traits = model::PropertyTraits;
         std::vector<std::pair<QWidget*, model::BaseProperty*>> props;
@@ -933,13 +934,13 @@ public:
         for ( const auto& prop : node->properties() )
         {
             auto traits = prop->traits();
-            if ( traits.type == Traits::ObjectReference || (traits.flags & Traits::List) )
+            if ( traits.type == Traits::ObjectReference || (traits.flags & (Traits::List|Traits::Hidden)) )
             {
                 continue;
             }
             else if ( traits.type == Traits::Object )
             {
-                add_property_widgets_object(prop->value().value<model::Object*>());
+                add_property_widgets_object(prop->value().value<model::Object*>(), toolbox);
             }
             else if ( !(traits.flags & Traits::Visual)  )
             {
@@ -947,15 +948,56 @@ public:
             }
             else if ( auto wid = property_delegate.editor_from_property(prop, nullptr) )
             {
+                QWidget* prop_widget = new QWidget();
+                QVBoxLayout* lay = new QVBoxLayout();
+                prop_widget->setLayout(lay);
+                lay->addWidget(wid);
+                lay->setMargin(0);
+                lay->setSpacing(0);
+                wid->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+                if ( traits.flags & Traits::Animated )
+                {
+                    auto anim = static_cast<model::AnimatableBase*>(prop);
+                    QHBoxLayout* btnlay = new QHBoxLayout();
+
+                    auto btn_add_kf = new QToolButton();
+                    btn_add_kf->setIcon(
+                        QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-add.svg"))
+                    );
+                    btn_add_kf->setText(tr("Add keyframe"));
+                    connect(btn_add_kf, &QToolButton::clicked, node, [anim]{
+                        anim->object()->push_command(
+                            new command::SetKeyframe(anim, anim->time(), anim->value(), true)
+                        );
+                    });
+                    btn_add_kf->setIconSize(QSize(80, 80));
+                    btnlay->addWidget(btn_add_kf);
+
+                    auto btn_rm_kf = new QToolButton();
+                    btn_rm_kf->setIcon(
+                        QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg"))
+                    );
+                    btn_rm_kf->setText(tr("Remove keyframe"));
+                    connect(btn_rm_kf, &QToolButton::clicked, node, [anim]{
+                        if ( anim->has_keyframe(anim->time()) )
+                        {
+                            anim->object()->push_command(
+                                new command::RemoveKeyframeTime(anim, anim->time())
+                            );
+                        }
+                    });
+                    btn_rm_kf->setIconSize(QSize(80, 80));
+                    btnlay->addWidget(btn_rm_kf);
+
+                    lay->addLayout(btnlay);
+                }
+
                 props.emplace_back(wid, prop);
-                auto lab = new QLabel(prop->name());
-                lab->setBuddy(wid);
-                ui.property_widget_layout->addWidget(lab);
                 property_delegate.set_editor_data(wid, prop);
-                ui.property_widget_layout->addWidget(wid);
+                toolbox->addItem(prop_widget, prop->name());
             }
         }
-
         connect(node, &model::Object::visual_property_changed, props[0].first, [props, this]{
             for ( const auto& p : props )
                 property_delegate.set_editor_data(p.first, p.second);
@@ -963,22 +1005,27 @@ public:
 
     }
 
-    void add_property_widgets(model::VisualNode* node)
+    void add_property_widgets(model::VisualNode* node, BetterToolboxWidget* toolbox)
     {
-        QLabel* label = new QLabel(node->object_name());
-        ui.property_widget_layout->addWidget(label);
-        connect(node, &model::DocumentNode::name_changed, label, &QLabel::setText);
+        BetterToolboxWidget* sub_toolbox = new BetterToolboxWidget();
+        int index  = toolbox->count();
+        toolbox->addItem(sub_toolbox, node->tree_icon(), node->object_name());
+
+        connect(node, &model::DocumentNode::name_changed, sub_toolbox,
+            [toolbox, index](const QString& name){
+                toolbox->setItemText(index, name);
+            }
+        );
+        add_property_widgets_object(node, sub_toolbox);
 
         if ( auto grp = node->cast<model::Group>() )
         {
             for ( const auto& child : grp->shapes )
             {
-                if ( !child->is_instance<model::Group>() && !child->is_instance<model::Styler>() )
-                    add_property_widgets(child.get());
+                if ( !child->is_instance<model::Group>() )
+                    add_property_widgets(child.get(), toolbox);
             }
         }
-
-        add_property_widgets_object(node);
     }
 
 
@@ -987,8 +1034,12 @@ public:
         clear_property_widgets();
         if ( node )
         {
-            add_property_widgets(node);
-            ui.property_widget->setMinimumWidth(ui.property_widgets_inner->sizeHint().width() + 6);
+            BetterToolboxWidget* toolbox = new BetterToolboxWidget();
+            toolbox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            ui.property_widget_layout->addWidget(toolbox);
+            add_property_widgets(node, toolbox);
+            qDebug() << toolbox->sizeHint().width();
+            ui.property_widget->setMinimumWidth(toolbox->sizeHint().width() + 6);
         }
     }
 };

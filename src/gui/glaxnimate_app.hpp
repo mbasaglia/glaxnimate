@@ -21,12 +21,10 @@ public:
         return static_cast<GlaxnimateApp *>(QCoreApplication::instance());
     }
 
-    QString data_file(const QString& name) const
-    {
-        return ":" + applicationName() + "/" + name;
-    }
-
+    /// \todo remove, no longer needed
     static QIcon theme_icon(const QString& name);
+
+    QString data_file(const QString& name) const override;
 
     static qreal handle_size_multiplier();
     static qreal handle_distance_multiplier();

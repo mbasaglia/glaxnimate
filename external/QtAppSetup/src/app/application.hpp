@@ -48,7 +48,7 @@ public:
      * \brief Path to get the file from
      * \param name Name of the data files
      */
-    QString data_file(const QString& name) const;
+    virtual QString data_file(const QString& name) const;
 
     /**
      * \brief Get all available directories to search data from

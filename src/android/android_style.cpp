@@ -12,6 +12,10 @@ int glaxnimate::android::AndroidStyle::pixelMetric(PixelMetric metric, const QSt
         case PM_LargeIconSize:
         case PM_IconViewIconSize:
         case PM_ListViewIconSize:
+        case PM_IndicatorWidth:
+        case PM_IndicatorHeight:
+        case PM_ExclusiveIndicatorWidth:
+        case PM_ExclusiveIndicatorHeight:
             return 80;
         default:
             return QProxyStyle::pixelMetric(metric, option, widget);

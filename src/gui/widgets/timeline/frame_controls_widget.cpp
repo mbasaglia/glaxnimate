@@ -11,16 +11,11 @@ FrameControlsWidget::FrameControlsWidget(QWidget* parent)
     d->setupUi(this);
 
 #ifdef Q_OS_ANDROID
-    d->button_first->setIcon(GlaxnimateApp::theme_icon("go-first"));
-    d->button_last->setIcon(GlaxnimateApp::theme_icon("go-last"));
-    d->button_next->setIcon(GlaxnimateApp::theme_icon("go-next"));
-    d->button_prev->setIcon(GlaxnimateApp::theme_icon("go-previous"));
-    d->button_play->setIcon(GlaxnimateApp::theme_icon("media-playback-start"));
-    d->button_record->setIcon(GlaxnimateApp::theme_icon("database-change-key"));
-    d->button_loop->setIcon(GlaxnimateApp::theme_icon("media-playlist-repeat"));
     d->layout->setMargin(0);
     d->layout->setSpacing(0);
 #endif
+
+    d->button_record->setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-record.svg")));
 
     d->button_next_kf->setVisible(false);
     d->button_prev_kf->setVisible(false);
@@ -96,7 +91,7 @@ void FrameControlsWidget::play()
         timer = startTimer(playback_tick, Qt::PreciseTimer);
         playback_start = std::chrono::high_resolution_clock::now();
         d->button_play->setChecked(true);
-        d->button_play->setIcon(GlaxnimateApp::theme_icon("media-playback-pause"));
+        d->button_play->setIcon(QIcon::fromTheme("media-playback-pause"));
         emit play_started();
     }
 }
@@ -108,7 +103,7 @@ void FrameControlsWidget::pause()
         killTimer(timer);
         timer = 0;
         d->button_play->setChecked(false);
-        d->button_play->setIcon(GlaxnimateApp::theme_icon("media-playback-start"));
+        d->button_play->setIcon(QIcon::fromTheme("media-playback-start"));
         emit play_stopped();
     }
 }
