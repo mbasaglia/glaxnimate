@@ -7,6 +7,7 @@
     * Can convert shapes to path from the context menu
     * You can now drag multiple keyframes on the timeline
     * Text can now follow a path
+    * Dropping a file onto the main window now gives options to import or open the file
 * UI:
     * Made the "Tool Options" view more compact
     * Template system for new files

@@ -136,6 +136,8 @@ public:
     bool save_document(bool force_dialog, bool export_opts);
     void document_open();
     void document_open_from_filename(const QString& filename);
+    io::Options options_from_filename(const QString& filename);
+    void drop_document(const QString& filename, bool as_comp);
     void document_reload();
     void preview_lottie(const QString& renderer);
     void preview_svg();
@@ -172,6 +174,7 @@ public:
     void mouse_moved(const QPointF& pos);
     template<class T> void add_modifier_menu_action(QMenu* menu);
     void show_startup_dialog();
+    void drop_file(const QString& file);
 
     void init_actions();
     void init_plugins();
