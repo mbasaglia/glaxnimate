@@ -12,6 +12,7 @@
     * Template system for new files
     * Startup dialog
     * The timeline now allows selecting multiple rows at once
+    * Button to clear fill/stroke colors
 * I/O:
     * More color formats are supported for the SVG importer
 * Scripting:

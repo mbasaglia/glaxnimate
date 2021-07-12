@@ -320,3 +320,9 @@ void StrokeStyleWidget::set_gradient_stop(model::Styler* styler, int index)
     if ( auto stroke = styler->cast<model::Stroke>() )
         set_shape(stroke, index);
 }
+
+void StrokeStyleWidget::clear_color()
+{
+    if ( d->can_update_target() )
+        d->target->visible.set_undoable(false);
+}

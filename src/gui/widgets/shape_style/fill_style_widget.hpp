@@ -25,6 +25,8 @@ private slots:
 
     void property_changed(const model::BaseProperty* prop);
 
+    void clear_target_color();
+
 private:
     model::Fill* target = nullptr;
     utils::PseudoMutex updating;

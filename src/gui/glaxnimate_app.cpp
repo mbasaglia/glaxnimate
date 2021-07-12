@@ -174,6 +174,7 @@ void GlaxnimateApp::on_initialize()
 
     app::log::Logger::instance().add_listener<app::log::ListenerStderr>();
     store_logger = app::log::Logger::instance().add_listener<app::log::ListenerStore>();
+
 }
 
 QString GlaxnimateApp::backup_path(const QString& file) const

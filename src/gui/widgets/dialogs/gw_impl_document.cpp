@@ -616,6 +616,7 @@ void GlaxnimateWindow::Private::set_color_def(model::BrushStyle* def, bool secon
             if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
                 target->color.set_undoable(col->color.get());
             target->use.set_undoable(QVariant::fromValue(def));
+            target->visible.set_undoable(false);
             if ( old )
                 old->remove_if_unused(false);
         }
@@ -623,6 +624,7 @@ void GlaxnimateWindow::Private::set_color_def(model::BrushStyle* def, bool secon
         {
             command::UndoMacroGuard macro(tr("Link %1 Color").arg(what), current_document.get());
             target->use.set_undoable(QVariant::fromValue(def));
+            target->visible.set_undoable(true);
             if ( old )
                 old->remove_if_unused(false);
         }
