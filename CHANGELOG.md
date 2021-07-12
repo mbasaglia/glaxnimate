@@ -27,6 +27,9 @@
     * When creating text shapes, it honours fill/stroke checkboxes
     * Fixed initial font style when creating new text shapes
     * Fixed clicking on text shapes
+    * Fixed precomposing layer already in precomps
+    * Fixed switching to the newly created comp when precomposing
+    * Better naming for compositions created from a single object
 
 ## 0.4.3
 

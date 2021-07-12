@@ -620,11 +620,15 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
     if ( objects.empty() )
         return;
 
+    int new_comp_index = current_document->assets()->precompositions->values.size() + 1;
     command::UndoMacroGuard guard(tr("New Composition from Selection"), current_document.get());
 
     std::unique_ptr<model::Precomposition> ucomp = std::make_unique<model::Precomposition>(current_document.get());
     model::Precomposition* new_comp = ucomp.get();
-    current_document->set_best_name(new_comp);
+    if ( objects.size() > 1 || objects[0]->name.get().isEmpty() )
+        current_document->set_best_name(new_comp);
+    else
+        new_comp->name.set(objects[0]->name.get());
     current_document->push_command(new command::AddObject(&current_document->assets()->precompositions->values, std::move(ucomp)));
 
 
@@ -646,7 +650,7 @@ void GlaxnimateWindow::Private::objects_to_new_composition(
     auto pcl_ptr = pcl.get();
     current_document->push_command(new command::AddShape(layer_parent, std::move(pcl), layer_index));
 
-    ui.tab_bar->setCurrentIndex(ui.tab_bar->count()-1);
+    switch_composition(new_comp, new_comp_index);
 
     int old_comp_index = current_document->assets()->precompositions->values.index_of(static_cast<model::Precomposition*>(comp)) + 1;
     comp_selections[old_comp_index] = pcl_ptr;
@@ -672,6 +676,7 @@ model::PreCompLayer* GlaxnimateWindow::Private::layer_new_comp(model::Precomposi
 {
     auto layer = std::make_unique<model::PreCompLayer>(current_document.get());
     layer->composition.set(comp);
+    layer->name.set(comp->name.get());
     layer->size.set(current_document->rect().size());
     QPointF pos = current_document->rect().center();
     layer->transform.get()->anchor_point.set(pos);
@@ -692,7 +697,7 @@ void GlaxnimateWindow::Private::shape_to_precomposition(model::ShapeElement* nod
 
     auto ancestor = parent;
     auto grand_ancestor = ancestor->docnode_parent();
-    while ( grand_ancestor )
+    while ( grand_ancestor && !ancestor->is_instance<model::Composition>() )
     {
         ancestor = grand_ancestor;
         grand_ancestor = ancestor->docnode_parent();
