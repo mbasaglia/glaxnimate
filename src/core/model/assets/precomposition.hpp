@@ -1,7 +1,5 @@
 #pragma once
-#ifdef _HAX_FUCKING_QMAKE_I_HATE_YOU_
-    class IAlsoHateLupdate{Q_OBJECT};
-#endif
+
 #include "asset.hpp"
 #include "model/composition.hpp"
 

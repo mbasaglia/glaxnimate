@@ -1,23 +1,29 @@
 set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/breeze-icons/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/breeze-icons/icons-dark DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
+if ( ANDROID )
+    get_target_property(ASSETS_PATH ${PROJECT_SLUG}_apk assets)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/breeze-icons/icons DESTINATION ${ASSETS_PATH}/icons/)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images DESTINATION ${ASSETS_PATH})
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/templates DESTINATION ${ASSETS_PATH})
+else()
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/breeze-icons/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons/breeze-icons/icons-dark DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/icons/)
 
-install(DIRECTORY icons/breeze-icons/icons DESTINATION ${DATA_INSTALL}/icons PATTERN *@* EXCLUDE)
-install(DIRECTORY icons/breeze-icons/icons-dark DESTINATION ${DATA_INSTALL}/icons PATTERN *@* EXCLUDE)
+    install(DIRECTORY icons/breeze-icons/icons DESTINATION ${DATA_INSTALL}/icons PATTERN *@* EXCLUDE)
+    install(DIRECTORY icons/breeze-icons/icons-dark DESTINATION ${DATA_INSTALL}/icons PATTERN *@* EXCLUDE)
 
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    install(DIRECTORY images DESTINATION ${DATA_INSTALL})
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-install(DIRECTORY images DESTINATION ${DATA_INSTALL})
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/themes DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    install(DIRECTORY themes DESTINATION ${DATA_INSTALL})
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/themes DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-install(DIRECTORY themes DESTINATION ${DATA_INSTALL})
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/templates DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    install(DIRECTORY templates DESTINATION ${DATA_INSTALL})
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/templates DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-install(DIRECTORY templates DESTINATION ${DATA_INSTALL})
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/lib/python-lottie/lib/lottie DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/lib/)
-install(DIRECTORY lib/python-lottie/lib/lottie DESTINATION ${DATA_INSTALL}/lib/)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/lib/python-lottie/lib/lottie DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/lib/)
+    install(DIRECTORY lib/python-lottie/lib/lottie DESTINATION ${DATA_INSTALL}/lib/)
+endif()
 
 # Translation
 include(../cmake/qt.cmake)

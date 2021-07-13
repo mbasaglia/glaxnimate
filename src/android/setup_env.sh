@@ -3,6 +3,7 @@ export ANDROID_ABI=x86
 export ANDROID_ABI_QT=x86
 export ANDROID_HOME="$HOME/Android/Sdk"
 export QT_HOME="$HOME/Qt/$QT_VERSION"
+export ANDROID_PLATFORM=29
 # export ANDROID_NDK="$HOME/Android/Ndk"
 
 
@@ -30,6 +31,7 @@ function cmake_android()
         -DANDROID_ABI="$ANDROID_ABI" \
         -DANDROID_NDK="$ANDROID_NDK" \
         -DANDROID_SDK="$ANDROID_SDK" \
+        -DANDROID_PLATFORM="$ANDROID_PLATFORM"
         "$@"
     set +x
 }
