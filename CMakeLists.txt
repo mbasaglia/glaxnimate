@@ -83,7 +83,12 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Potrace
-if ( NOT ANDROID )
+if ( ANDROID )
+    set(CMAKE_C_COMPILE_OBJECT ${CMAKE_CXX_COMPILE_OBJECT})
+    add_subdirectory(external/potrace/)
+    set(Potrace_LIBRARIES potrace)
+    include_directories(external/potrace/src/)
+else()
     find_package(Potrace REQUIRED)
 endif()
 

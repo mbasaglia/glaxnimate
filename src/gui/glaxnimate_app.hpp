@@ -32,6 +32,11 @@ public:
     void set_clipboard_data(QMimeData* data);
     const QMimeData* get_clipboard_data();
 
+
+    QString backup_path(const QString& file = {}) const;
+
+    static QString temp_path();
+
 private:
     std::unique_ptr<QMimeData> clipboard = std::make_unique<QMimeData>();
 };

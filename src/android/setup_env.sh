@@ -1,14 +1,14 @@
 export QT_VERSION=5.12.11
-export ANDROID_ABI=x86_64
+export ANDROID_ABI=x86
 export ANDROID_ABI_QT=x86
 export ANDROID_HOME="$HOME/Android/Sdk"
 export QT_HOME="$HOME/Qt/$QT_VERSION"
-export ANDROID_NDK="$HOME/Android/Ndk"
+# export ANDROID_NDK="$HOME/Android/Ndk"
 
 
 export JAVA_HOME=/usr/lib/jvm/default-java
 export ANDROID_SDK="$ANDROID_HOME"
-# export ANDROID_NDK="$(echo "$ANDROID_SDK/ndk/"*)"
+export ANDROID_NDK="$(echo "$ANDROID_SDK/ndk/"*)"
 export ANDROID_NDK_TOOLCHAIN_ROOT="$ANDROID_NDK/toolchains"
 
 

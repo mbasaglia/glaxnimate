@@ -81,11 +81,11 @@ plugin/io.cpp
 
 utils/gzip.cpp
 utils/quantize.cpp
+utils/trace.cpp
 )
 
 if ( NOT ANDROID )
     list(APPEND SOURCES
-        utils/trace.cpp
         python/python.cpp
         python/miscdefs.cpp
         io/video/video_format.cpp
@@ -94,7 +94,6 @@ if ( NOT ANDROID )
     include_directories(${Potrace_INCLUDE_DIRS})
     include_directories(${Libav_INCLUDE_DIRS})
 else()
-    set(Potrace_LIBRARIES)
     set(Libav_LIBRARIES)
 endif()
 

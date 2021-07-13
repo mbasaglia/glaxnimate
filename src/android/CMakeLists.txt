@@ -1,20 +1,22 @@
 set(SOURCES
     android_file_picker.cpp
+    android_intent_handler.cpp
     android_style.cpp
     base_dialog.cpp
+    better_toolbox_widget.cpp
     document_opener.cpp
+    emoji_data.cpp
     emoji_widget.cpp
     format_selection_dialog.cpp
     help_dialog.cpp
     main.cpp
     main_window.cpp
+    main_window.ui
     scroll_area_event_filter.cpp
     sticker_pack_builder_dialog.cpp
-    telegram_intent.cpp
-    emoji_data.cpp
-    timeline_slider.cpp
-    main_window.ui
     sticker_pack_builder_dialog.ui
+    telegram_intent.cpp
+    timeline_slider.cpp
 )
 
 

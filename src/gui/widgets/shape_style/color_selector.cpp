@@ -71,7 +71,7 @@ public:
         for ( auto spin : parent->findChildren<QSpinBox*>() )
             spin->hide();
         ui.color_line_edit->hide();
-        ui.comboBox->removeItem(ui.comboBox->count() - 1);
+        ui.combo_box->removeItem(ui.combo_box->count() - 1);
 #endif
 
         connect(ui.combo_box, qOverload<int>(&QComboBox::activated), parent, [this, parent](int i){

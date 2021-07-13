@@ -1,5 +1,7 @@
 #include "glaxnimate_app.hpp"
 
+#include "app_info.hpp"
+
 #ifdef Q_OS_ANDROID
 
 #include <QScreen>
@@ -54,7 +56,6 @@ const QMimeData *GlaxnimateApp::get_clipboard_data()
 #include "app/settings/settings.hpp"
 #include "app/settings/palette_settings.hpp"
 #include "app/settings/keyboard_shortcuts.hpp"
-#include "app_info.hpp"
 #include "settings/plugin_settings_group.hpp"
 #include "settings/clipboard_settings.hpp"
 #include "settings/toolbar_settings.hpp"
@@ -225,26 +226,9 @@ void GlaxnimateApp::on_initialize()
 
 }
 
-QString GlaxnimateApp::backup_path(const QString& file) const
-{
-    return writable_data_path("backup/"+file);
-}
-
 app::settings::ShortcutSettings * GlaxnimateApp::shortcuts() const
 {
     return shortcut_settings;
-}
-
-QString GlaxnimateApp::temp_path()
-{
-    QDir tempdir = QDir::temp();
-    QString subdir = AppInfo::instance().slug();
-
-    if ( !tempdir.exists(subdir) )
-        if ( !tempdir.mkpath(subdir) )
-            return "";
-
-    return tempdir.filePath(subdir);
 }
 
 void GlaxnimateApp::set_clipboard_data(QMimeData *data)
@@ -258,3 +242,22 @@ const QMimeData *GlaxnimateApp::get_clipboard_data()
 }
 
 #endif
+
+
+
+QString GlaxnimateApp::temp_path()
+{
+    QDir tempdir = QDir::temp();
+    QString subdir = AppInfo::instance().slug();
+
+    if ( !tempdir.exists(subdir) )
+        if ( !tempdir.mkpath(subdir) )
+            return "";
+
+    return tempdir.filePath(subdir);
+}
+
+QString GlaxnimateApp::backup_path(const QString& file) const
+{
+    return writable_data_path("backup/"+file);
+}

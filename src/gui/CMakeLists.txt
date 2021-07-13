@@ -1,8 +1,6 @@
 set(SOURCES
 
-main.cpp
 glaxnimate_app.cpp
-gui_python.cpp
 
 graphics/handle.cpp
 graphics/document_node_graphics_item.cpp
@@ -39,18 +37,9 @@ tools/color_picker.cpp
 tools/fill_tool.cpp
 tools/text_tool.cpp
 
-widgets/dialogs/glaxnimate_window.cpp
-widgets/dialogs/glaxnimate_window.ui
 widgets/dialogs/io_status_dialog.cpp
 widgets/dialogs/io_status_dialog.ui
-widgets/dialogs/about_dialog.cpp
-widgets/dialogs/about_dialog.ui
 widgets/dialogs/selection_manager.cpp
-widgets/dialogs/gw_impl_document.cpp
-widgets/dialogs/gw_impl_model.cpp
-widgets/dialogs/gw_impl_ui.cpp
-widgets/dialogs/gw_impl_debug.cpp
-widgets/dialogs/gw_impl_selection.cpp
 widgets/dialogs/shape_parent_dialog.cpp
 widgets/dialogs/shape_parent_dialog.ui
 widgets/dialogs/resize_dialog.cpp
@@ -93,16 +82,11 @@ widgets/view_transform_widget.ui
 widgets/flow_layout.cpp
 widgets/spin2d.cpp
 widgets/enum_combo.cpp
-widgets/node_menu.cpp
 widgets/window_message_widget.cpp
 widgets/window_message_widget.ui
-widgets/script_console.cpp
-widgets/script_console.ui
 widgets/tab_bar_close_button.cpp
 widgets/clickable_tab_bar.cpp
 widgets/composition_tab_bar.cpp
-widgets/snippet_list_widget.cpp
-widgets/snippet_list_widget.ui
 widgets/layer_view.cpp
 
 widgets/settings/plugin_settings_widget.cpp
@@ -130,6 +114,29 @@ widgets/font/font_style_widget.cpp
 widgets/font/font_style_widget.ui
 )
 
+if ( NOT ANDROID )
+    list(APPEND SOURCES
+        main.cpp
+        gui_python.cpp
+
+        widgets/dialogs/about_dialog.cpp
+        widgets/dialogs/about_dialog.ui
+        widgets/dialogs/glaxnimate_window.cpp
+        widgets/dialogs/glaxnimate_window.ui
+        widgets/dialogs/gw_impl_document.cpp
+        widgets/dialogs/gw_impl_model.cpp
+        widgets/dialogs/gw_impl_ui.cpp
+        widgets/dialogs/gw_impl_debug.cpp
+        widgets/dialogs/gw_impl_selection.cpp
+
+        widgets/script_console.cpp
+        widgets/script_console.ui
+        widgets/snippet_list_widget.cpp
+        widgets/snippet_list_widget.ui
+        widgets/node_menu.cpp
+    )
+endif()
+
 configure_file(resources/glaxnimate.in.qrc resources/glaxnimate.qrc)
 qt5_add_resources(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/resources/glaxnimate.qrc)
 
@@ -137,4 +144,17 @@ qt5_add_resources(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/resources/glaxnimate.qrc)
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/core)
 add_library(${LIB_NAME_GUI} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME_GUI} PUBLIC Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::UiTools QtColorWidgets QtHistoryLineEdit ${LIB_NAME_CORE} Qt${QT_VERSION_MAJOR}::Concurrent)
+target_link_libraries(
+    ${LIB_NAME_GUI} PUBLIC
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::UiTools
+    QtColorWidgets
+    ${LIB_NAME_CORE}
+    Qt${QT_VERSION_MAJOR}::Concurrent
+)
+
+
+
+if ( NOT ANDROID )
+    target_link_libraries(${LIB_NAME_GUI} PUBLIC QtHistoryLineEdit )
+endif()
