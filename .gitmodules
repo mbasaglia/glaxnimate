@@ -19,3 +19,6 @@
 [submodule "data/lib/python-lottie"]
 	path = data/lib/python-lottie
 	url = https://gitlab.com/mattbas/python-lottie.git
+[submodule "src/android/qt-android-cmake"]
+	path = src/android/qt-android-cmake
+	url = https://github.com/mbasaglia/QtAndroidCmake

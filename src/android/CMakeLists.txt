@@ -27,8 +27,8 @@ include_directories(${CMAKE_SOURCE_DIR}/external/QtColorWidgets/include)
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras REQUIRED)
 
-add_library(${PROJECT_SLUG} SHARED ${SOURCES})
-target_link_libraries(${PROJECT_SLUG} PUBLIC
+add_library(${PROJECT_SLUG}_android SHARED ${SOURCES})
+target_link_libraries(${PROJECT_SLUG}_android PUBLIC
     QtAppSetup
     ${LIB_NAME_CORE}
     ${LIB_NAME_GUI}
@@ -44,12 +44,18 @@ target_link_libraries(${PROJECT_SLUG} PUBLIC
 
 include(qt-android-cmake/AddQtAndroidApk.cmake)
 
+set(ANDROID_PLATFORM 29)
+set(ANDROID_PLATFORM_LEVEL ${ANDROID_PLATFORM})
+set(ANDROID_SDK "$ENV{HOME}/Android/Sdk" CACHE STRING "")
+set(PACKAGE_NAME "org.mattbas.glaxnimate")
+string(TIMESTAMP VERSION_CODE "%s" UTC)
+
 add_qt_android_apk(
-    "${PROJECT_SLUG}_apk"
-    ${PROJECT_SLUG}
+    ${PROJECT_SLUG}_apk
+    ${PROJECT_SLUG}_android
     NAME ${PROJECT_NAME}
-    VERSION_CODE 1
-    PACKAGE_NAME "org.mattbas.glaxnimate"
+    VERSION_CODE ${VERSION_CODE}
+    PACKAGE_NAME ${PACKAGE_NAME}
     PACKAGE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/android
     #DEPENDS
         #QtColorWidgets
@@ -62,6 +68,20 @@ add_qt_android_apk(
     #INSTALL
 )
 
+add_custom_target(
+    android_avd_list
+    COMMAND "${ANDROID_SDK}/emulator/emulator" -list-avds
+)
 
-message(STATUS "+++++++")
-message(STATUS ${ANDROID_TOOLCHAIN_ROOT})
+add_custom_target(
+    android_avd_start
+    COMMAND "${ANDROID_SDK}/emulator/emulator" -avd "$$DEVICE"
+)
+
+add_custom_target(
+    android_install
+    COMMAND adb install -r $<TARGET_PROPERTY:${PROJECT_SLUG}_apk,apk>
+    COMMAND adb shell am force-stop ${PACKAGE_NAME}
+    COMMAND adb shell am start -n ${PACKAGE_NAME}/.GlaxnimateActivity
+    DEPENDS ${PROJECT_SLUG}_apk
+)

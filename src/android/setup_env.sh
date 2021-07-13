@@ -29,6 +29,7 @@ function cmake_android()
         -DANDROID_STL=c++_shared \
         -DANDROID_ABI="$ANDROID_ABI" \
         -DANDROID_NDK="$ANDROID_NDK" \
+        -DANDROID_SDK="$ANDROID_SDK" \
         "$@"
     set +x
 }
