@@ -365,7 +365,9 @@ void GlaxnimateWindow::dropEvent(QDropEvent* event)
 {
     auto str = d->drop_event_data(event);
     if ( !str.isEmpty() )
-        document_open(str);
+    {
+        d->drop_file(str);
+    }
 }
 
 void GlaxnimateWindow::switch_tool(tools::Tool* tool)

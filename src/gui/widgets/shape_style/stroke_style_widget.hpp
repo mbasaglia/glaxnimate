@@ -53,6 +53,7 @@ private slots:
     void check_width(double w);
     void check_miter(double w);
     void commit_width();
+    void clear_color();
 
 private:
     class Private;

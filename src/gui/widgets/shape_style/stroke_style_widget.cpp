@@ -337,3 +337,9 @@ void StrokeStyleWidget::set_stroke_width(qreal w)
 {
     d->ui.spin_stroke_width->setValue(w);
 }
+
+void StrokeStyleWidget::clear_color()
+{
+    if ( d->can_update_target() )
+        d->target->visible.set_undoable(false);
+}

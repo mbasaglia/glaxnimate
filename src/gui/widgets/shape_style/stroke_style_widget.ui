@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>262</width>
-    <height>282</height>
+    <height>284</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -373,6 +373,7 @@
     <signal>secondary_color_changed(QColor)</signal>
     <signal>current_color_changed(QColor)</signal>
     <signal>current_color_committed(QColor)</signal>
+    <signal>current_color_cleared()</signal>
     <slot>set_secondary_color(QColor)</slot>
    </slots>
   </customwidget>
@@ -402,8 +403,8 @@
    <slot>check_cap()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>69</x>
-     <y>101</y>
+     <x>91</x>
+     <y>113</y>
     </hint>
     <hint type="destinationlabel">
      <x>91</x>
@@ -466,8 +467,8 @@
    <slot>check_join()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>84</x>
-     <y>138</y>
+     <x>91</x>
+     <y>153</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -498,8 +499,8 @@
    <slot>check_width(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>176</x>
-     <y>59</y>
+     <x>140</x>
+     <y>45</y>
     </hint>
     <hint type="destinationlabel">
      <x>239</x>
@@ -514,8 +515,8 @@
    <slot>check_miter(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>176</x>
-     <y>171</y>
+     <x>244</x>
+     <y>193</y>
     </hint>
     <hint type="destinationlabel">
      <x>257</x>
@@ -534,7 +535,7 @@
      <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>464</x>
+     <x>261</x>
      <y>203</y>
     </hint>
    </hints>
@@ -550,7 +551,7 @@
      <y>111</y>
     </hint>
     <hint type="destinationlabel">
-     <x>314</x>
+     <x>261</x>
      <y>121</y>
     </hint>
    </hints>
@@ -562,12 +563,28 @@
    <slot>commit_width()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>223</x>
-     <y>47</y>
+     <x>140</x>
+     <y>45</y>
     </hint>
     <hint type="destinationlabel">
-     <x>324</x>
+     <x>261</x>
      <y>35</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>color_selector</sender>
+   <signal>current_color_cleared()</signal>
+   <receiver>StrokeStyleWidget</receiver>
+   <slot>clear_color()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>171</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>447</x>
+     <y>168</y>
     </hint>
    </hints>
   </connection>
@@ -580,5 +597,6 @@
   <slot>check_miter(double)</slot>
   <slot>color_committed(QColor)</slot>
   <slot>commit_width()</slot>
+  <slot>clear_color()</slot>
  </slots>
 </ui>

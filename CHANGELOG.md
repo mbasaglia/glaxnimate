@@ -6,14 +6,17 @@
     * Improved shape to path conversion
     * Can convert shapes to path from the context menu
     * You can now drag multiple keyframes on the timeline
-    * Text can now follow a path    
+    * Text can now follow a path
     * Touch gestures for the canvas (pinch and pan)
+    * Text can now follow a path
+    * Dropping a file onto the main window now gives options to import or open the file
 * UI:
     * Made the "Tool Options" view more compact
     * Template system for new files
     * Startup dialog
     * The timeline now allows selecting multiple rows at once
     * In recording mode, a keyframe at time 0 is added automatically for non animated properties
+    * Button to clear fill/stroke colors
 * I/O:
     * More color formats are supported for the SVG importer
 * Scripting:
@@ -29,9 +32,11 @@
     * When creating text shapes, it honours fill/stroke checkboxes
     * Fixed initial font style when creating new text shapes
     * Fixed clicking on text shapes
-    * Switching away from the draw tool no longer removes the path  
-    * Fixed Editing colors not merging in a single undo command     
-    * 
+    * Switching away from the draw tool no longer removes the path
+    * Fixed Editing colors not merging in a single undo command
+    * Fixed precomposing layer already in precomps
+    * Fixed switching to the newly created comp when precomposing
+    * Better naming for compositions created from a single object
 
 ## 0.4.3
 

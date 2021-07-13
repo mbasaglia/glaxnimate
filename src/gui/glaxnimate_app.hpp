@@ -41,7 +41,6 @@ private:
 #include "app/log/listener_stderr.hpp"
 #include "app/log/listener_store.hpp"
 
-
 namespace app::settings { class ShortcutSettings; }
 
 class GlaxnimateApp : public app::Application

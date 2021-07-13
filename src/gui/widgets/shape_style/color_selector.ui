@@ -18,7 +18,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="combo_box">
      <property name="toolTip">
       <string>Color Mode</string>
      </property>
@@ -45,6 +45,11 @@
      <item>
       <property name="text">
        <string>Palette</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>None</string>
       </property>
      </item>
     </widget>
@@ -550,6 +555,7 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="page"/>
     </widget>
    </item>
    <item>
@@ -675,6 +681,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="btn_clear">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+       <property name="icon">
+        <iconset theme="paint-none"/>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="color_widgets::ColorLineEdit" name="color_line_edit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -750,7 +766,7 @@
   <tabstop>spinBox_4</tabstop>
   <tabstop>color_swap</tabstop>
   <tabstop>color_line_edit</tabstop>
-  <tabstop>comboBox</tabstop>
+  <tabstop>combo_box</tabstop>
   <tabstop>slider_hsl_hue</tabstop>
   <tabstop>spinBox_5</tabstop>
   <tabstop>slider_hsl_sat</tabstop>
@@ -786,7 +802,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>337</x>
-     <y>399</y>
+     <y>397</y>
     </hint>
    </hints>
   </connection>
@@ -798,7 +814,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>337</x>
-     <y>399</y>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
      <x>169</x>
@@ -814,11 +830,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>166</x>
-     <y>278</y>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
-     <y>284</y>
+     <y>282</y>
     </hint>
    </hints>
   </connection>
@@ -830,11 +846,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>338</x>
-     <y>284</y>
+     <y>282</y>
     </hint>
     <hint type="destinationlabel">
      <x>166</x>
-     <y>278</y>
+     <y>276</y>
     </hint>
    </hints>
   </connection>
@@ -846,11 +862,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>166</x>
-     <y>316</y>
+     <y>314</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
-     <y>322</y>
+     <y>320</y>
     </hint>
    </hints>
   </connection>
@@ -862,11 +878,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>338</x>
-     <y>322</y>
+     <y>320</y>
     </hint>
     <hint type="destinationlabel">
      <x>166</x>
-     <y>316</y>
+     <y>314</y>
     </hint>
    </hints>
   </connection>
@@ -878,11 +894,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>166</x>
-     <y>354</y>
+     <y>352</y>
     </hint>
     <hint type="destinationlabel">
      <x>338</x>
-     <y>360</y>
+     <y>358</y>
     </hint>
    </hints>
   </connection>
@@ -894,11 +910,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>338</x>
-     <y>360</y>
+     <y>358</y>
     </hint>
     <hint type="destinationlabel">
      <x>166</x>
-     <y>354</y>
+     <y>352</y>
     </hint>
    </hints>
   </connection>
@@ -1038,7 +1054,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>166</x>
-     <y>278</y>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1054,7 +1070,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>166</x>
-     <y>316</y>
+     <y>314</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1070,7 +1086,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>166</x>
-     <y>354</y>
+     <y>352</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1517,8 +1533,8 @@
    <slot>color_swap()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>251</x>
-     <y>439</y>
+     <x>212</x>
+     <y>438</y>
     </hint>
     <hint type="destinationlabel">
      <x>242</x>
@@ -1543,7 +1559,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>comboBox</sender>
+   <sender>combo_box</sender>
    <signal>activated(int)</signal>
    <receiver>tab_6</receiver>
    <slot>setCurrentIndex(int)</slot>

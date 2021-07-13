@@ -360,7 +360,7 @@ void GlaxnimateWindow::Private::document_open()
 }
 
 
-void GlaxnimateWindow::Private::document_open_from_filename(const QString& filename)
+io::Options GlaxnimateWindow::Private::options_from_filename(const QString& filename)
 {
     QFileInfo finfo(filename);
     if ( finfo.isFile() )
@@ -374,9 +374,9 @@ void GlaxnimateWindow::Private::document_open_from_filename(const QString& filen
         {
             ImportExportDialog dialog(opts, ui.centralwidget->parentWidget());
             if ( dialog.options_dialog(opts.format->open_settings()) )
-                setup_document_open(dialog.io_options());
+                return dialog.io_options();
 
-            return;
+            return {};
         }
         else
         {
@@ -388,11 +388,37 @@ void GlaxnimateWindow::Private::document_open_from_filename(const QString& filen
         show_warning(tr("Open File"), tr("The file might have been moved or deleted\n%1").arg(filename));
     }
 
+    return {};
+}
+
+
+void GlaxnimateWindow::Private::document_open_from_filename(const QString& filename)
+{
+    io::Options opts = options_from_filename(filename);
+    if ( opts.format )
+        setup_document_open(opts);
 
     recent_files.removeAll(filename);
     reload_recent_menu();
 }
 
+void GlaxnimateWindow::Private::drop_document(const QString& filename, bool as_comp)
+{
+    auto options = options_from_filename(filename);
+    if ( !options.format )
+        return;
+
+    model::Document imported(options.filename);
+    QFile file(options.filename);
+    bool ok = options.format->open(file, options.filename, &imported, options.settings);
+    if ( !ok )
+    {
+        show_warning(tr("Import File"), tr("Could not import %1").arg(options.filename));
+        return;
+    }
+
+    paste_document(&imported, tr("Import File"), as_comp);
+}
 
 void GlaxnimateWindow::Private::document_reload()
 {
@@ -617,6 +643,7 @@ void GlaxnimateWindow::Private::set_color_def(model::BrushStyle* def, bool secon
             if ( auto col = qobject_cast<model::NamedColor*>(target->use.get()) )
                 target->color.set_undoable(col->color.get());
             target->use.set_undoable(QVariant::fromValue(def));
+            target->visible.set_undoable(false);
             if ( old )
                 old->remove_if_unused(false);
         }
@@ -624,6 +651,7 @@ void GlaxnimateWindow::Private::set_color_def(model::BrushStyle* def, bool secon
         {
             command::UndoMacroGuard macro(tr("Link %1 Color").arg(what), current_document.get());
             target->use.set_undoable(QVariant::fromValue(def));
+            target->visible.set_undoable(true);
             if ( old )
                 old->remove_if_unused(false);
         }

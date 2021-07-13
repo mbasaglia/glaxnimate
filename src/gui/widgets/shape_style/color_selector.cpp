@@ -9,6 +9,7 @@
 #include "model/shapes/styler.hpp"
 #include "command/animation_commands.hpp"
 #include "command/undo_macro_guard.hpp"
+#include "utils/pseudo_mutex.hpp"
 
 namespace {
 
@@ -36,9 +37,10 @@ void color_k(QColor& c, int v) { c.setCmyk(c.cyan(), c.magenta(), c.yellow(), v,
 class ColorSelector::Private
 {
 public:
-    bool updating_color = false;
+    utils::PseudoMutex updating_color;
     Ui::ColorSelector ui;
     ColorSelector* parent;
+    bool cleared = false;
 
     void setup_ui(ColorSelector* parent)
     {
@@ -71,6 +73,27 @@ public:
         ui.color_line_edit->hide();
         ui.comboBox->removeItem(ui.comboBox->count() - 1);
 #endif
+
+        connect(ui.combo_box, qOverload<int>(&QComboBox::activated), parent, [this, parent](int i){
+            bool next_cleared = i == ui.combo_box->count() - 1;
+
+            if ( next_cleared != cleared )
+            {
+                cleared = next_cleared;
+                if ( cleared )
+                    emit parent->current_color_cleared();
+                else
+                    emit parent->current_color_committed(current_color());
+            }
+        });
+
+        connect(ui.btn_clear, &QAbstractButton::clicked, parent, [this, parent]{
+            if ( !cleared )
+            {
+                cleared = true;
+                emit parent->current_color_cleared();
+            }
+        });
     }
 
     void update_color_slider(color_widgets::GradientSlider* slider, const QColor& c,
@@ -131,7 +154,7 @@ void ColorSelector::Private::update_color(const QColor& c, bool alpha, QObject* 
 {
     if ( updating_color )
         return;
-    updating_color = true;
+    std::unique_lock<utils::PseudoMutex> lock(updating_color);
 
     QColor col = c;
     if ( !alpha )
@@ -180,7 +203,7 @@ void ColorSelector::Private::update_color(const QColor& c, bool alpha, QObject* 
         ui.palette_widget->setCurrentColor(col);
     ui.palette_widget->setDefaultColor(col);
 
-    updating_color = false;
+    lock.unlock();
     emit parent->current_color_changed(col);
 }
 

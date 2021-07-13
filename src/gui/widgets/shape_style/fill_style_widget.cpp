@@ -12,6 +12,8 @@ FillStyleWidget::FillStyleWidget(QWidget* parent )
             this, &FillStyleWidget::set_target_color);
     connect(this, &ColorSelector::current_color_committed,
             this, &FillStyleWidget::commit_target_color);
+    connect(this, &ColorSelector::current_color_cleared,
+            this, &FillStyleWidget::clear_target_color);
 }
 
 
@@ -79,4 +81,10 @@ void FillStyleWidget::set_gradient_stop(model::Styler* styler, int index)
 {
     if ( auto fill = styler->cast<model::Fill>() )
         set_shape(fill, index);
+}
+
+void FillStyleWidget::clear_target_color()
+{
+    if ( target && target->visible.get() )
+        target->visible.set_undoable(false);
 }

@@ -226,6 +226,7 @@ model::PreCompLayer* glaxnimate::gui::SelectionManager::layer_new_comp(model::Pr
     auto doc = document();
     auto layer = std::make_unique<model::PreCompLayer>(doc);
     layer->composition.set(comp);
+    layer->name.set(comp->name.get());
     layer->size.set(doc->rect().size());
     QPointF pos = doc->rect().center();
     layer->transform.get()->anchor_point.set(pos);

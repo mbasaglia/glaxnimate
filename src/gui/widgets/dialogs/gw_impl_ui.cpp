@@ -4,6 +4,8 @@
 #include <QLabel>
 #include <QScrollBar>
 #include <QInputDialog>
+#include <QLabel>
+#include <QPushButton>
 
 #include "app/settings/keyboard_shortcuts.hpp"
 
@@ -871,4 +873,48 @@ void GlaxnimateWindow::Private::show_startup_dialog()
     connect(&dialog, &StartupDialog::open_browse, parent, &GlaxnimateWindow::document_open_dialog);
     if ( dialog.exec() )
         setup_document_ptr(dialog.create());
+}
+
+
+void GlaxnimateWindow::Private::drop_file(const QString& file)
+{
+    QDialog dialog(parent);
+    dialog.setWindowTitle(tr("Drop File"));
+    QIcon icon = QIcon::fromTheme("dialog-question");
+    dialog.setWindowIcon(icon);
+    QVBoxLayout lay;
+    dialog.setLayout(&lay);
+
+    QHBoxLayout lay1;
+    QLabel label_icon;
+    label_icon.setPixmap(icon.pixmap(64));
+    lay1.addWidget(&label_icon);
+    QLabel label_text;
+    label_text.setText(tr("Add to current file?"));
+    label_text.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    lay1.addWidget(&label_text);
+    lay.addLayout(&lay1);
+
+    QHBoxLayout lay2;
+    QPushButton btn1(tr("Add as Object"));
+    lay2.addWidget(&btn1);
+    connect(&btn1, &QPushButton::clicked, &dialog, [&dialog, this, &file]{
+        drop_document(file, false);
+        dialog.accept();
+    });
+    QPushButton btn2(tr("Add as Composition"));
+    lay2.addWidget(&btn2);
+    connect(&btn2, &QPushButton::clicked, &dialog, [&dialog, this, &file]{
+        drop_document(file, true);
+        dialog.accept();
+    });
+    QPushButton btn3(tr("Open"));
+    lay2.addWidget(&btn3);
+    connect(&btn3, &QPushButton::clicked, &dialog, [&dialog, this, &file]{
+        document_open_from_filename(file);
+        dialog.accept();
+    });
+    lay.addLayout(&lay2);
+
+    dialog.exec();
 }

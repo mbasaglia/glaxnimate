@@ -49,6 +49,7 @@ signals:
     void current_color_changed(const QColor& c);
     void secondary_color_changed(const QColor& c);
     void current_color_committed(const QColor& c);
+    void current_color_cleared();
 
 protected:
     void changeEvent ( QEvent* e ) override;
