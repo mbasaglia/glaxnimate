@@ -417,7 +417,7 @@ void GlaxnimateWindow::Private::drop_document(const QString& filename, bool as_c
         return;
     }
 
-    paste_document(&imported, tr("Import File"), as_comp);
+    parent->paste_document(&imported, tr("Import File"), as_comp);
 }
 
 void GlaxnimateWindow::Private::document_reload()
