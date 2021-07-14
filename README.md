@@ -160,20 +160,59 @@ From Qt Creator:
 
 #### Building
 
-* Open `glaxnimate-android.pro` as a project in Qt Creator (Welcome > Projects > Open).
-* Enable "Android Qt Clang" corresponding to the ABI you want to build for.
-    For the emulator you should use x86, 
-    otherwise use the ABI compatible with your phone (usually arm).
-    Avoid the "Multi ABI" kits if possible as those don't work too well.
-* Click "Configure Project"
-* If multiple toolkits were enabled, ensure you have the android one active,
-    you can click the icon above the run button on the bottom-left and
-    select the "Android Qt" option.
-    The icon on this button should look like a phone (rather than a computer screen).    
-* Click Run
-* "Create Virtual Device" if needed or select an existing device 
-    (your physical phone would show up here if connected to the computer and USB debugging is enabled).
+TODO CMake
 
+You need to know the paths for Qt and Android stuff
+
+    mkdir build
+    cd build
+
+    QT_VERSION=5.12.11
+    ANDROID_ABI=x86
+    ANDROID_ABI_QT=x86
+    ANDROID_HOME="$HOME/Android/Sdk"
+    QT_HOME="$HOME/Qt/$QT_VERSION"
+    ANDROID_PLATFORM=29
+    Qt5_android="$QT_HOME/android_$ANDROID_ABI_QT"
+
+    JAVA_HOME=/usr/lib/jvm/default-java
+    ANDROID_SDK="$ANDROID_HOME"
+    ANDROID_NDK="$(echo "$ANDROID_SDK/ndk/"*)"
+    CMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake"
+
+    cmake \
+        -DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE \
+        -DCMAKE_PREFIX_PATH="$Qt5_android/lib/cmake" \
+        -DCMAKE_FIND_ROOT_PATH="$Qt5_android" \
+        -DANDROID_STL=c++_shared \
+        -DANDROID_ABI="$ANDROID_ABI" \
+        -DANDROID_NDK="$ANDROID_NDK" \
+        -DANDROID_SDK="$ANDROID_SDK" \
+        -DANDROID_PLATFORM="$ANDROID_PLATFORM" \
+        -DJAVA_HOME="$JAVA_HOME" \
+        ..
+
+    make -j8
+
+#### Running
+
+There are some utility `make` targets to run the apk
+
+    # List available virtual devices (you need to create them separately)
+    make android_avd_list
+    # Start virtual device ("device" is from `make android_avd_list`)
+    make android_avd_start DEVICE="device"
+
+    # Build the APK
+    make glaxnimate_apk -j8
+    # Install and run the APK on the running AVD
+    make android_install
+    # Attach to the output
+    make android_log
+
+Once you have an AVD running (or a debug phone connected) you can run a single line:
+
+    make glaxnimate_apk -j8 && make android_install && make android_log
 
 #### Troubleshooting
 
@@ -208,6 +247,7 @@ directory mentioned in the error message.
 **Cannot set up Android, not building an APK / Application binary is not in output directory**
 
 Sometimes it does that, building again usually fixes it.
+
 
 Contacts
 ---------------------------------------

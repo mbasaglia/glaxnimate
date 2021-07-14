@@ -1,24 +1,18 @@
-export QT_VERSION=5.12.11
-export ANDROID_ABI=x86
-export ANDROID_ABI_QT=x86
-export ANDROID_HOME="$HOME/Android/Sdk"
-export QT_HOME="$HOME/Qt/$QT_VERSION"
-export ANDROID_PLATFORM=29
-# export ANDROID_NDK="$HOME/Android/Ndk"
+QT_VERSION=5.12.11
+ANDROID_ABI=x86
+ANDROID_ABI_QT=x86
+ANDROID_HOME="$HOME/Android/Sdk"
+QT_HOME="$HOME/Qt/$QT_VERSION"
+ANDROID_PLATFORM=29
+Qt5_android="$QT_HOME/android_$ANDROID_ABI_QT"
 
 
-export JAVA_HOME=/usr/lib/jvm/default-java
-export ANDROID_SDK="$ANDROID_HOME"
-export ANDROID_NDK="$(echo "$ANDROID_SDK/ndk/"*)"
-export ANDROID_NDK_TOOLCHAIN_ROOT="$ANDROID_NDK/toolchains"
+JAVA_HOME=/usr/lib/jvm/default-java
+ANDROID_SDK="$ANDROID_HOME"
+ANDROID_NDK="$(echo "$ANDROID_SDK/ndk/"*)"
 
-
-export Qt5_host=/usr
-export Qt5_android="$QT_HOME/android_$ANDROID_ABI_QT"
 
 CMAKE_TOOLCHAIN_FILE="$ANDROID_NDK/build/cmake/android.toolchain.cmake"
-
-export PATH="$ANDROID_SDK/tools/bin:$Qt5_android/bin:$PATH"
 
 function cmake_android()
 {
@@ -31,7 +25,8 @@ function cmake_android()
         -DANDROID_ABI="$ANDROID_ABI" \
         -DANDROID_NDK="$ANDROID_NDK" \
         -DANDROID_SDK="$ANDROID_SDK" \
-        -DANDROID_PLATFORM="$ANDROID_PLATFORM"
+        -DANDROID_PLATFORM="$ANDROID_PLATFORM" \
+        -DJAVA_HOME="$JAVA_HOME" \
         "$@"
     set +x
 }

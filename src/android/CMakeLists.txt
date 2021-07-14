@@ -25,7 +25,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src/core)
 include_directories(${CMAKE_SOURCE_DIR}/src/gui)
 include_directories(${CMAKE_SOURCE_DIR}/external/QtColorWidgets/include)
 
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras Svg REQUIRED)
 
 add_library(${PROJECT_SLUG}_android SHARED ${SOURCES})
 target_link_libraries(${PROJECT_SLUG}_android PUBLIC
@@ -40,6 +40,7 @@ target_link_libraries(${PROJECT_SLUG}_android PUBLIC
     Qt${QT_VERSION_MAJOR}::UiTools
     Qt${QT_VERSION_MAJOR}::Concurrent
     Qt${QT_VERSION_MAJOR}::AndroidExtras
+    Qt${QT_VERSION_MAJOR}::Svg
 )
 
 
@@ -80,7 +81,7 @@ add_custom_target(
 # where "device" is from `android_avd_list`
 add_custom_target(
     android_avd_start
-    COMMAND "${ANDROID_SDK}/emulator/emulator" -avd "$$DEVICE"
+    COMMAND "${ANDROID_SDK}/emulator/emulator" -avd "$$DEVICE" &
 )
 
 # Installs (and runs the apk)

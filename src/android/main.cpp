@@ -10,6 +10,9 @@
 #include "android_style.hpp"
 #include "android_intent_handler.hpp"
 
+#include "android_file_picker.hpp"
+#include <QDebug>
+
 int main(int argc, char *argv[])
 {
     using namespace glaxnimate::android;
@@ -17,6 +20,7 @@ int main(int argc, char *argv[])
     GlaxnimateApp app(argc, argv);
 
     AppInfo::instance().init_qapplication();
+
     app.setStyle(new AndroidStyle);
     app.setStyleSheet(R"(
 QPushButton {
@@ -68,6 +72,16 @@ QMenu::item:selected, QMenu::item:checked {
 #endif
     QIcon::setThemeName("icons");
 //    QIcon::setFallbackSearchPaths({"assets:/icons/icons"});
+
+
+
+    qDebug() << "\n\n\x1b[31m================================\x1b[m";
+    qDebug() << AndroidFilePicker::list_assets("icons/icons");
+    qDebug() << AndroidFilePicker::list_assets("images/icons");
+    qDebug() << GlaxnimateApp::instance()->data_file("images/icons/keyframe-record.svg");
+    QIcon icon("assets:/images/icons/keyframe-record.svg");
+    qDebug() << icon.isNull() << icon.pixmap(24).isNull();
+    qDebug() << "\x1b[31m================================\x1b[m\n\n";
 
     MainWindow window;
     window.show();
