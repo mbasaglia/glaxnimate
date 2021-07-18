@@ -37,6 +37,7 @@
     * Fixed precomposing layer already in precomps
     * Fixed switching to the newly created comp when precomposing
     * Better naming for compositions created from a single object
+    * Dragging no longer moves objects that don't need to be moved
 
 ## 0.4.3
 

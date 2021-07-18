@@ -136,6 +136,8 @@ private:
     {
         if ( event.press_button == Qt::LeftButton )
         {
+            drag_data.clear();
+
             if ( event.modifiers() & Qt::AltModifier )
             {
                 drag_mode = DrawSelect;
@@ -157,7 +159,6 @@ private:
             else if ( !clicked_on.nodes.empty() )
             {
                 rubber_p1 = event.scene_pos;
-                drag_data.clear();
                 replace_selection = nullptr;
 
                 bool drag_selection = false;
@@ -292,11 +293,11 @@ private:
                 break;
                 case DragObject:
                     do_drag(event.scene_pos, event.modifiers(), true);
-                    drag_data.clear();
-                    replace_selection = nullptr;
                     break;
             }
 
+            replace_selection = nullptr;
+            drag_data.clear();
             drag_mode = None;
         }
         else if ( event.press_button == Qt::RightButton )
