@@ -96,5 +96,5 @@ add_custom_target(
 # Attaches to the logs of the running app
 add_custom_target(
     android_log
-    COMMAND adb logcat --pid `adb shell ps -o PID,ARGS | grep -F ${PACKAGE_NAME} | cut -f 1 -d ' '`
+    COMMAND adb logcat --pid `adb shell ps -o PID,ARGS | grep -F ${PACKAGE_NAME} | sed -r "'s/^\\s*([0-9]+).*/\\1/'" `
 )
