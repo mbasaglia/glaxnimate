@@ -48,6 +48,8 @@ then
     mv /c/Python38-x64 /c/gtfo8
 fi
 
+PY_VERSION=3.9
+
 # Build
 cmake.exe .. \
     -DQt5_DIR=/mingw64/lib/cmake/Qt5 \
@@ -55,7 +57,7 @@ cmake.exe .. \
     -DCMAKE_PREFIX_PATH='/mingw64/lib/' \
     -DZLIB_INCLUDE_DIR=/mingw64/include \
     -DPython3_PREFIX=/mingw64/ \
-    -DPython3_LIBRARIES=/mingw64/bin/libpython3.8.dll \
+    -DPython3_LIBRARIES=/mingw64/bin/libpython$PY_VERSION.dll \
     -DPython3_EXECUTABLE=/mingw64/bin/python3 \
     -G 'MSYS Makefiles' \
     -DCMAKE_INSTALL_PREFIX='' \
@@ -71,7 +73,7 @@ cp /mingw64/bin/*.dll $PACKDIR/bin
 cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll $PACKDIR/bin
 cp ../deploy/glaxnimate.vbs $PACKDIR
 mkdir -p $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
-cp -r /mingw64/lib/python3.8/*.py /mingw64/lib/python3.8/{json,collections,encodings} $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
+cp -r /mingw64/lib/python$PY_VERSION/*.py /mingw64/lib/python$PY_VERSION/{json,collections,encodings} $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
 
 # PyPI
 if [ "$APPVEYOR_REPO_TAG" = true ]
