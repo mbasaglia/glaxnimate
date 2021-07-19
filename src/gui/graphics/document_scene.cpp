@@ -242,6 +242,9 @@ model::VisualNode* graphics::DocumentScene::item_to_node(const QGraphicsItem* it
 
 void graphics::DocumentScene::user_select(const std::vector<model::VisualNode*>& nodes, SelectMode flags)
 {
+    if ( nodes.empty() && flags != Replace )
+        return;
+
     // Sorted ranges so we can use set operations
     std::vector<model::VisualNode*> old_selection = d->selection;
     std::sort(old_selection.begin(), old_selection.end());
@@ -330,7 +333,8 @@ void graphics::DocumentScene::user_select(const std::vector<model::VisualNode*>&
     for ( auto new_sel : *selected )
         add_selection(new_sel);
 
-    emit node_user_selected(*selected, *deselected);
+    if ( !selected->empty() || !deselected->empty() )
+        emit node_user_selected(*selected, *deselected);
 
 }
 

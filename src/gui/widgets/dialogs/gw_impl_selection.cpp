@@ -2,9 +2,11 @@
 #include "widgets/shape_style/shape_style_preview_widget.hpp"
 
 
-
 void GlaxnimateWindow::Private::scene_selection_changed(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected)
 {
+    if ( update_selection )
+        return;
+
     selection_changed(selected, deselected);
 
     if ( !selected.empty() )
@@ -32,10 +34,12 @@ void GlaxnimateWindow::Private::set_current_document_node(model::VisualNode* nod
 
 void GlaxnimateWindow::Private::set_current_object(model::DocumentNode* node)
 {
-    if ( update_current || update_selection )
+    if ( update_selection )
         return;
 
-    auto lock = update_current.get_lock();
+    auto lock = update_selection.get_lock();
+
+    current_node = node;
 
     model::Stroke* stroke = nullptr;
     model::Fill* fill = nullptr;
@@ -90,8 +94,11 @@ void GlaxnimateWindow::Private::set_current_object(model::DocumentNode* node)
         ui.timeline_widget->set_current_node(node);
 
     // Document tree view
-    ui.view_document_node->set_current_node(node);
-    ui.view_document_node->repaint();
+    if ( parent->sender() != ui.view_document_node )
+    {
+        ui.view_document_node->set_current_node(node);
+        ui.view_document_node->repaint();
+    }
 
     // Styles
     ui.stroke_style_widget->set_shape(stroke);
@@ -134,4 +141,10 @@ void GlaxnimateWindow::Private::selection_changed(const std::vector<model::Visua
     if ( parent->sender() != ui.timeline_widget )
         ui.timeline_widget->select(selected, deselected);
 
+    if ( std::find(deselected.begin(), deselected.end(), current_node) != deselected.end() )
+    {
+        lock.unlock();
+        const auto& available = scene.selection();
+        set_current_object(available.empty() ? nullptr : available[0]);
+    }
 }

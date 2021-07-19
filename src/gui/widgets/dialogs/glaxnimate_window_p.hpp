@@ -103,8 +103,8 @@ public:
     QWidget* widget_recording = nullptr;
     ShapeStylePreviewWidget* widget_current_style = nullptr;
 
-    utils::PseudoMutex update_current;
     utils::PseudoMutex update_selection;
+    model::DocumentNode* current_node = nullptr;
 
     // "set and forget" kinda variables
     int autosave_timer = 0;
