@@ -200,6 +200,7 @@ QTransform model::VisualNode::group_transform_matrix(model::FrameTime t) const
     return local_transform_matrix(t);
 }
 
+/// \todo This is very inefficient, it should cache the list of available names
 void model::DocumentNode::recursive_rename()
 {
     document()->set_best_name(this, name.get());

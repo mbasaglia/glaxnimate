@@ -47,6 +47,13 @@ public:
         size.setWidth(len_attr(svg, "width", size.width()));
         size.setHeight(len_attr(svg, "height", size.height()));
 
+        for ( const auto& p : shape_parsers )
+            to_process += dom.elementsByTagName(p.first).count();
+
+        if ( io )
+            io->progress_max_changed(to_process);
+
+
         parse_css();
         parse_defs();
 
@@ -64,7 +71,8 @@ public:
         document->main()->width.set(size.width());
         document->main()->height.set(size.height());
 
-        document->main()->recursive_rename();
+        if ( to_process < 1000 )
+            document->main()->recursive_rename();
 
         document->main()->name.set(
             attr(svg, "sodipodi", "docname", document->main()->type_name_human())
@@ -552,7 +560,10 @@ public:
     {
         auto it = shape_parsers.find(args.element.tagName());
         if ( it != shape_parsers.end() )
+        {
+            mark_progress();
             (this->*it->second)(args);
+        }
     }
 
     void parse_shape(const ParseFuncArgs& args)
@@ -1387,6 +1398,13 @@ public:
         parse_text_element(args, {});
     }
 
+    void mark_progress()
+    {
+        processed++;
+        if ( io && processed % 10 == 0 )
+            io->progress(processed);
+    }
+
     QDomDocument dom;
 
     qreal dpi = 96;
@@ -1403,6 +1421,10 @@ public:
     std::unordered_map<QString, model::GradientColors*> gradients;
     std::vector<model::Layer*> layers;
     std::vector<CssStyleBlock> css_blocks;
+
+    int to_process = 0;
+    int processed = 0;
+    ImportExport* io = nullptr;
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const QRegularExpression unit_re;
@@ -1434,7 +1456,8 @@ io::svg::SvgParser::SvgParser(
     QIODevice* device,
     GroupMode group_mode,
     model::Document* document,
-    const std::function<void(const QString&)>& on_warning
+    const std::function<void(const QString&)>& on_warning,
+    ImportExport* io
 )
     : d(std::make_unique<Private>())
 {
@@ -1442,6 +1465,7 @@ io::svg::SvgParser::SvgParser(
     d->animate_parser.fps = d->document ? d->document->main()->fps.get() : 60;
     d->group_mode = group_mode;
     d->animate_parser.on_warning = d->on_warning = on_warning;
+    d->io = io;
 
     SvgParseError err;
     if ( !d->dom.setContent(device, true, &err.message, &err.line, &err.column) )

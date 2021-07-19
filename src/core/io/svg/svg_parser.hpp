@@ -6,6 +6,7 @@
 #include <QIODevice>
 
 #include "io/mime/mime_serializer.hpp"
+#include "io/base.hpp"
 
 namespace model {
     class Composition;
@@ -53,7 +54,8 @@ public:
         QIODevice* device,
         GroupMode group_mode,
         model::Document* document,
-        const std::function<void(const QString&)>& on_warning = {}
+        const std::function<void(const QString&)>& on_warning = {},
+        ImportExport* io = nullptr
     );
     ~SvgParser();
 

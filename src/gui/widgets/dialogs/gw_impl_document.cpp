@@ -181,16 +181,25 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
 
 bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 {
-    setup_document(options.filename);
+    if ( !close_document() )
+        return false;
+
+    current_document = std::make_unique<model::Document>(options.filename);
+
+    dialog_import_status->reset(options.format, options.filename);
+    auto promise = QtConcurrent::run(
+        [options, current_document=current_document.get()]{
+            QFile file(options.filename);
+            return options.format->open(file, options.filename, current_document, options.settings);
+        });
+
+    process_events(promise);
+
+    bool ok = promise.result();
+
+    do_setup_document();
 
     current_document_has_file = true;
-    dialog_import_status->reset(options.format, options.filename);
-
-
-    // Note to use a separate thread here, we need to make use model functions are thread safe as
-    // we emit signals when adding object and access them from the main thread
-    QFile file(options.filename);
-    bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
 
     app::settings::set<QString>("open_save", "path", options.path.absolutePath());
 

@@ -63,6 +63,7 @@
     * Added minimal support for CSS on SVG import
     * Improved error reporting when loading lotttie files
     * Improved loading / saving hidden objects for lottie
+    * Improved performance when loading large SVG files
 * Scripting:
     * New plugin to help with frame-by-frame animation
     * Scripts have access to the current composition
