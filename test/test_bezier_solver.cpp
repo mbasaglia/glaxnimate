@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "math/bezier/solver.hpp"
-#include "print_vec.hpp"
 
 using namespace glaxnimate;
 
@@ -14,49 +13,49 @@ private slots:
 #if 0
     void test_order()
     {
-        math::BezierSolver<math::Vec2> bs{
-            math::Vec2{1, 2},
-            math::Vec2{3, 4}
+        math::BezierSolver<QVector2D> bs{
+            QVector2D{1, 2},
+            QVector2D{3, 4}
         };
         QCOMPARE(bs.order(), 1);
 
-        bs = math::BezierSolver<math::Vec2> {
-            math::Vec2{1, 2},
-            math::Vec2{3, 4},
-            math::Vec2{5, 6}
+        bs = math::BezierSolver<QVector2D> {
+            QVector2D{1, 2},
+            QVector2D{3, 4},
+            QVector2D{5, 6}
         };
         QCOMPARE(bs.order(), 2);
 
-        bs = math::BezierSolver<math::Vec2> {
-            math::Vec2{1, 2},
-            math::Vec2{3, 4},
-            math::Vec2{5, 6},
-            math::Vec2{7, 8}
+        bs = math::BezierSolver<QVector2D> {
+            QVector2D{1, 2},
+            QVector2D{3, 4},
+            QVector2D{5, 6},
+            QVector2D{7, 8}
         };
         QCOMPARE(bs.order(), 3);
     }
 
     void test_solve_linear()
     {
-        math::BezierSolver<math::Vec2> bs{
-            math::Vec2{20, 100},
-            math::Vec2{40, 0}
+        math::BezierSolver<QVector2D> bs{
+            QVector2D{20, 100},
+            QVector2D{40, 0}
         };
 
-        QCOMPARE(bs.solve(0.0), math::Vec2(20, 100));
-        QCOMPARE(bs.solve(.25), math::Vec2(25, 75));
-        QCOMPARE(bs.solve(.50), math::Vec2(30, 50));
-        QCOMPARE(bs.solve(.75), math::Vec2(35, 25));
-        QCOMPARE(bs.solve(1.0), math::Vec2(40, 0));
+        QCOMPARE(bs.solve(0.0), QVector2D(20, 100));
+        QCOMPARE(bs.solve(.25), QVector2D(25, 75));
+        QCOMPARE(bs.solve(.50), QVector2D(30, 50));
+        QCOMPARE(bs.solve(.75), QVector2D(35, 25));
+        QCOMPARE(bs.solve(1.0), QVector2D(40, 0));
     }
 
     void test_solve_quadratic()
     {
-        math::Vec2 a{20, 100};
-        math::Vec2 b{35, 50};
-        math::Vec2 c{40, 0};
+        QVector2D a{20, 100};
+        QVector2D b{35, 50};
+        QVector2D c{40, 0};
 
-        math::BezierSolver<math::Vec2> bs{a, b, c};
+        math::BezierSolver<QVector2D> bs{a, b, c};
 
         auto explicit_solve = [a,b,c](double t) {
             auto p1 = math::lerp(a, b, t);
@@ -76,12 +75,12 @@ private slots:
 
     void test_solve_cubic()
     {
-        math::Vec2 a{20, 100};
-        math::Vec2 b{35, 50};
-        math::Vec2 c{50, -20};
-        math::Vec2 d{40, 0};
+        QVector2D a{20, 100};
+        QVector2D b{35, 50};
+        QVector2D c{50, -20};
+        QVector2D d{40, 0};
 
-        math::bezier::CubicBezierSolver<math::Vec2> bs{a, b, c, d};
+        math::bezier::CubicBezierSolver<QVector2D> bs{a, b, c, d};
 
         auto explicit_solve = [a,b,c,d](double t) {
             auto p1 = math::lerp(a, b, t);
@@ -102,11 +101,11 @@ private slots:
 #if 0
     void test_angle_linear()
     {
-        math::scalar_type<math::Vec2> angle = 1;
-        math::Vec2 a{20, 30};
-        math::Vec2 b = a + math::from_polar(10, angle);
+        math::scalar_type<QVector2D> angle = 1;
+        QVector2D a{20, 30};
+        QVector2D b = a + math::from_polar(10, angle);
 
-        math::BezierSolver<math::Vec2> bs{a, b};
+        math::BezierSolver<QVector2D> bs{a, b};
         QCOMPARE(bs.tangent_angle(0.00), angle);
         QCOMPARE(bs.tangent_angle(0.25), angle);
         QCOMPARE(bs.tangent_angle(0.50), angle);
@@ -116,7 +115,7 @@ private slots:
         b = a + math::from_polar(10, 2 * M_PI -1);
         angle = - 1;
 
-        bs = math::BezierSolver<math::Vec2>{a, b};
+        bs = math::BezierSolver<QVector2D>{a, b};
         QCOMPARE(bs.tangent_angle(0.00), angle);
         QCOMPARE(bs.tangent_angle(0.25), angle);
         QCOMPARE(bs.tangent_angle(0.50), angle);
@@ -126,11 +125,11 @@ private slots:
 
     void test_angle_quadratic()
     {
-        math::Vec2 sp{20, 30};
-        math::Vec2 h{30, 40};
-        math::Vec2 ep{40, 30};
+        QVector2D sp{20, 30};
+        QVector2D h{30, 40};
+        QVector2D ep{40, 30};
 
-        math::BezierSolver<math::Vec2> bs{sp, h, ep};
+        math::BezierSolver<QVector2D> bs{sp, h, ep};
         QCOMPARE(bs.tangent_angle(0.00), M_PI/4);
         QVERIFY(bs.tangent_angle(0.1) > 0);
         QCOMPARE(bs.tangent_angle(0.50), 0);
@@ -141,12 +140,12 @@ private slots:
 
     void test_angle_cubic()
     {
-        math::Vec2 sp{20, 30};
-        math::Vec2 h1{20, 40};
-        math::Vec2 h2{40, 20};
-        math::Vec2 ep{40, 30};
+        QPointF sp{20, 30};
+        QPointF h1{20, 40};
+        QPointF h2{40, 20};
+        QPointF ep{40, 30};
 
-        math::bezier::CubicBezierSolver<math::Vec2> bs{sp, h1, h2, ep};
+        math::bezier::CubicBezierSolver<QPointF> bs{sp, h1, h2, ep};
         QCOMPARE(bs.tangent_angle(0.00), M_PI/2);
         QVERIFY(bs.tangent_angle(0.1) > 0);
         QVERIFY(bs.tangent_angle(0.50) < 0);
@@ -157,12 +156,12 @@ private slots:
 #if 0
     void test_solve_step()
     {
-        math::Vec2 a{20, 30};
-        math::Vec2 b{15, 40};
-        math::Vec2 c{30, 10};
-        math::Vec2 d{40, 15};
+        QVector2D a{20, 30};
+        QVector2D b{15, 40};
+        QVector2D c{30, 10};
+        QVector2D d{40, 15};
 
-        math::BezierSolver<math::Vec2> bs{a, b, c, d};
+        math::BezierSolver<QVector2D> bs{a, b, c, d};
         double fac = 0.33;
         auto quad = bs.solve_step(fac);
         QCOMPARE(quad.size(), 3);
@@ -173,7 +172,7 @@ private slots:
         auto q2 = math::lerp(c, d, fac);
         FUZZY_COMPARE(quad[2], q2);
 
-        bs = math::BezierSolver<math::Vec2>{q0, q1, q2};
+        bs = math::BezierSolver<QVector2D>{q0, q1, q2};
         auto lin = bs.solve_step(fac);
         QCOMPARE(lin.size(), 2);
         auto l0 = math::lerp(q0, q1, fac);
@@ -181,23 +180,23 @@ private slots:
         FUZZY_COMPARE(lin[0], l0);
         FUZZY_COMPARE(lin[1], l1);
 
-        bs = math::BezierSolver<math::Vec2>{l0, l1};
+        bs = math::BezierSolver<QVector2D>{l0, l1};
         auto res = bs.solve_step(fac);
         QCOMPARE(res.size(), 1);
         FUZZY_COMPARE(res[0], math::lerp(l0, l1, fac));
-        FUZZY_COMPARE(res[0], (math::BezierSolver<math::Vec2>{a, b, c, d}.solve(fac)));
+        FUZZY_COMPARE(res[0], (math::BezierSolver<QVector2D>{a, b, c, d}.solve(fac)));
     }
 #endif
 
     void test_split_cubic()
     {
-        math::Vec2 sp{20, 30};
-        math::Vec2 ep{80, 30};
-        math::Vec2 h1 = sp + math::Vec2{10, 20};
-        math::Vec2 h2 = ep + math::Vec2{-10, 20};
+        QVector2D sp{20, 30};
+        QVector2D ep{80, 30};
+        QVector2D h1 = sp + QVector2D{10, 20};
+        QVector2D h2 = ep + QVector2D{-10, 20};
         double mid_x = 50;
 
-        math::bezier::CubicBezierSolver<math::Vec2> bs{sp, h1, h2, ep};
+        math::bezier::CubicBezierSolver<QVector2D> bs{sp, h1, h2, ep};
         auto split = bs.split(0.5);
 
         // Fisrt split
@@ -233,12 +232,12 @@ private slots:
 #if 0
     void test_split_quadratic()
     {
-        math::Vec2 sp{20, 30};
-        math::Vec2 ep{80, 30};
+        QVector2D sp{20, 30};
+        QVector2D ep{80, 30};
         double mid_x = 50;
-        math::Vec2 h{mid_x, 50};
+        QVector2D h{mid_x, 50};
 
-        math::BezierSolver<math::Vec2> bs{sp, h, ep};
+        math::BezierSolver<QVector2D> bs{sp, h, ep};
         auto split = bs.split_cubic(0.5);
 
         // Fisrt split
@@ -268,11 +267,11 @@ private slots:
 
     void test_split_linear()
     {
-        math::Vec2 sp{20, 30};
-        math::Vec2 ep{80, 130};
+        QVector2D sp{20, 30};
+        QVector2D ep{80, 130};
         auto midp = (sp+ep)/2;
 
-        math::BezierSolver<math::Vec2> bs{sp, ep};
+        math::BezierSolver<QVector2D> bs{sp, ep};
         auto split = bs.split_cubic(0.5);
 
         // Fisrt split
@@ -294,7 +293,7 @@ private slots:
 
     void benchmark_solve()
     {
-        using VecT = math::Vec2;
+        using VecT = QVector2D;
         VecT a{20, 30};
         VecT b{15, 40};
         VecT c{30, 10};
@@ -345,7 +344,7 @@ private slots:
 #if 0
     void benchmark_solve_quadratic()
     {
-        using VecT = math::Vec2;
+        using VecT = QVector2D;
         VecT a{20, 30};
         VecT b{15, 40};
         VecT c{30, 10};
