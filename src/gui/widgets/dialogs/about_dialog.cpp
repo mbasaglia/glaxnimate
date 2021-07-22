@@ -14,6 +14,9 @@
 #include "io/video/video_format.hpp"
 #include "io/io_registry.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 static void populate_io(QTableWidget* widget, const std::vector<io::ImportExport*>& data)
 {
     widget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);

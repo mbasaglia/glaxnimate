@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IoStatusDialog</class>
+ <class>glaxnimate::gui::IoStatusDialog</class>
  <widget class="QDialog" name="IoStatusDialog">
   <property name="geometry">
    <rect>

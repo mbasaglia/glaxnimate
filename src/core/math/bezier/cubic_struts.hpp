@@ -2,7 +2,7 @@
 
 #include "segment.hpp"
 
-namespace math::bezier {
+namespace glaxnimate::math::bezier {
 
 
 struct BezierStruts
@@ -31,4 +31,4 @@ BezierStruts cubic_struts_projection(
     const math::bezier::ProjectResult& projection
 );
 
-} // namespace math::bezier
+} // namespace glaxnimate::math::bezier

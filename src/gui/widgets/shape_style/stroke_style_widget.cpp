@@ -13,6 +13,9 @@
 #include "command/animation_commands.hpp"
 #include "utils/pseudo_mutex.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class StrokeStyleWidget::Private
 {
 public:

@@ -2,7 +2,7 @@
 
 #include <QtGlobal>
 
-void style::DockWidgetStyle::drawControl(
+void glaxnimate::gui::style::DockWidgetStyle::drawControl(
     ControlElement element, const QStyleOption* option,
     QPainter* painter, const QWidget* widget) const
 {

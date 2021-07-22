@@ -1,6 +1,6 @@
 #include "base.hpp"
 
-QString io::ImportExport::name_filter() const
+QString glaxnimate::io::ImportExport::name_filter() const
 {
     QString ext_str;
     for ( const QString& ext : extensions() )
@@ -17,7 +17,7 @@ QString io::ImportExport::name_filter() const
 }
 
 
-QByteArray io::ImportExport::save(model::Document* document, const QVariantMap& setting_values, const QString& filename)
+QByteArray glaxnimate::io::ImportExport::save(model::Document* document, const QVariantMap& setting_values, const QString& filename)
 {
     QByteArray data;
     QBuffer file(&data);
@@ -34,7 +34,7 @@ QByteArray io::ImportExport::save(model::Document* document, const QVariantMap& 
 }
 
 
-bool io::ImportExport::open(QIODevice& file, const QString& filename,
+bool glaxnimate::io::ImportExport::open(QIODevice& file, const QString& filename,
                     model::Document* document, const QVariantMap& setting_values)
 {
     if ( !file.isOpen() && auto_open() )
@@ -46,7 +46,7 @@ bool io::ImportExport::open(QIODevice& file, const QString& filename,
     return ok;
 }
 
-bool io::ImportExport::save(QIODevice& file, const QString& filename,
+bool glaxnimate::io::ImportExport::save(QIODevice& file, const QString& filename,
                     model::Document* document, const QVariantMap& setting_values)
 {
     if ( !file.isOpen() && auto_open() )
@@ -58,7 +58,7 @@ bool io::ImportExport::save(QIODevice& file, const QString& filename,
     return ok;
 }
 
-bool io::ImportExport::load(model::Document* document, const QByteArray& data,
+bool glaxnimate::io::ImportExport::load(model::Document* document, const QByteArray& data,
                             const QVariantMap& setting_values, const QString& filename)
 {
     if ( !document )

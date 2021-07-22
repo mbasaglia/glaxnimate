@@ -4,6 +4,9 @@
 
 #include "command/animation_commands.hpp"
 
+using namespace glaxnimate;
+using namespace glaxnimate::gui;
+
 graphics::PointItem::PointItem(int index, const math::bezier::Point& point, QGraphicsItem* parent, model::AnimatedProperty<math::bezier::Bezier>* property)
 : QGraphicsObject(parent), index_(index), point_(point)
 {

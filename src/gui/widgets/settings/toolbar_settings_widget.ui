@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ToolbarSettingsWidget</class>
+ <class>glaxnimate::gui::ToolbarSettingsWidget</class>
  <widget class="QWidget" name="ToolbarSettingsWidget">
   <property name="geometry">
    <rect>

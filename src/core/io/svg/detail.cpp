@@ -1,7 +1,7 @@
 #include "detail.hpp"
 
 
-const std::map<QString, QString> io::svg::detail::xmlns = {
+const std::map<QString, QString> glaxnimate::io::svg::detail::xmlns = {
     {"osb", "http://www.openswatchbook.org/uri/2009/osb"},
     {"dc", "http://purl.org/dc/elements/1.1/"},
     {"cc", "http://creativecommons.org/ns#"},
@@ -12,7 +12,7 @@ const std::map<QString, QString> io::svg::detail::xmlns = {
     {"xlink", "http://www.w3.org/1999/xlink"},
 };
 
-const std::unordered_set<QString> io::svg::detail::css_atrrs = {
+const std::unordered_set<QString> glaxnimate::io::svg::detail::css_atrrs = {
     "fill",
     "alignment-baseline",
     "baseline-shift",

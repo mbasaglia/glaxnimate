@@ -1,7 +1,7 @@
 #pragma once
 
-namespace model {
+namespace glaxnimate::model {
     
 using FrameTime = double;
 
-} // namespace model
+} // namespace glaxnimate::model

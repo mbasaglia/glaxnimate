@@ -12,7 +12,7 @@
 #include "handle.hpp"
 
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class TextAttributesEditor : public QGraphicsObject
 {
@@ -114,4 +114,4 @@ private:
     MoveHandle handle_line_gap;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

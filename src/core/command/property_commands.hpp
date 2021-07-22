@@ -5,7 +5,7 @@
 #include "command/base.hpp"
 #include "model/property/property.hpp"
 
-namespace command {
+namespace glaxnimate::command {
 
 class SetPropertyValue : public MergeableCommand<Id::SetPropertyValue, SetPropertyValue>
 {
@@ -110,4 +110,4 @@ private:
     QVariantList after;
 };
 
-} // namespace command
+} // namespace glaxnimate::command

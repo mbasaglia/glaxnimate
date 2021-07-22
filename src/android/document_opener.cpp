@@ -46,7 +46,7 @@ public:
         image->transform->position.set(pos);
         image->image.set(asset);
 
-        TraceDialog dialog(image, widget_parent);
+        gui::TraceDialog dialog(image, widget_parent);
         DialogFixerFilter fixer(&dialog);
         if ( !dialog.exec() )
             return {};
@@ -104,7 +104,7 @@ bool glaxnimate::android::DocumentOpener::save(const QUrl &url, model::Document 
     }
 }
 
-std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::open(const QUrl &url) const
+std::unique_ptr<glaxnimate::model::Document> glaxnimate::android::DocumentOpener::open(const QUrl &url) const
 {
     if ( !url.isValid() )
         return {};
@@ -203,7 +203,7 @@ std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::open(const
     return current_document;
 }
 
-std::unique_ptr<model::Document> glaxnimate::android::DocumentOpener::from_raster(const QByteArray &data)
+std::unique_ptr<glaxnimate::model::Document> glaxnimate::android::DocumentOpener::from_raster(const QByteArray &data)
 {
     return d->from_raster(data);
 }

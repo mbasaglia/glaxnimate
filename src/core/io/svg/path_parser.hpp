@@ -10,7 +10,7 @@
 #include "math/bezier/bezier.hpp"
 #include "math/ellipse_solver.hpp"
 
-namespace io::svg::detail {
+namespace glaxnimate::io::svg::detail {
 
 class PathDParser
 {
@@ -574,4 +574,4 @@ private:
     math::bezier::MultiBezier bez;
 };
 
-} // namespace io::svg::detail
+} // namespace glaxnimate::io::svg::detail

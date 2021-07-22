@@ -4,7 +4,7 @@
 #include "io/base.hpp"
 #include "io/io_registry.hpp"
 
-namespace io::video {
+namespace glaxnimate::io::video {
 
 class VideoFormat : public ImportExport
 {
@@ -27,4 +27,4 @@ private:
     static Autoreg<VideoFormat> autoreg;
 };
 
-} // namespace io::video
+} // namespace glaxnimate::io::video

@@ -1,7 +1,7 @@
 #pragma once
 #include "lottie_format.hpp"
 
-namespace io::lottie {
+namespace glaxnimate::io::lottie {
 
 
 class TgsFormat : public LottieFormat
@@ -29,4 +29,4 @@ private:
     static Autoreg<TgsFormat> autoreg;
 };
 
-} // namespace io::lottie
+} // namespace glaxnimate::io::lottie

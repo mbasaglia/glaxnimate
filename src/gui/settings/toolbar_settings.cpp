@@ -7,6 +7,8 @@
 #include <QMainWindow>
 #include <QToolBar>
 
+using namespace glaxnimate::gui;
+
 Qt::ToolButtonStyle settings::ToolbarSettingsGroup::button_style = Qt::ToolButtonIconOnly;
 int settings::ToolbarSettingsGroup::icon_size_extent = 22;
 int settings::ToolbarSettingsGroup::tool_icon_size_extent = 32;

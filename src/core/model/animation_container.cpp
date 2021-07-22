@@ -2,19 +2,19 @@
 #include "model/factory.hpp"
 #include "model/document.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::AnimationContainer)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::AnimationContainer)
 
-bool model::AnimationContainer::time_visible(model::FrameTime time) const
+bool glaxnimate::model::AnimationContainer::time_visible(glaxnimate::model::FrameTime time) const
 {
     return first_frame.get() <= time && time <= last_frame.get();
 }
 
-bool model::AnimationContainer::time_visible() const
+bool glaxnimate::model::AnimationContainer::time_visible() const
 {
     return time_visible(time());
 }
 
-void model::AnimationContainer::set_time(model::FrameTime t)
+void glaxnimate::model::AnimationContainer::set_time(glaxnimate::model::FrameTime t)
 {
     bool old_visible = time_visible();
     Object::set_time(t);
@@ -26,24 +26,24 @@ void model::AnimationContainer::set_time(model::FrameTime t)
     }
 }
 
-void model::AnimationContainer::on_first_frame_changed(float x)
+void glaxnimate::model::AnimationContainer::on_first_frame_changed(float x)
 {
     emit time_visible_changed(time_visible());
     emit first_frame_changed(x);
 }
 
-void model::AnimationContainer::on_last_frame_changed(float x)
+void glaxnimate::model::AnimationContainer::on_last_frame_changed(float x)
 {
     emit time_visible_changed(time_visible());
     emit last_frame_changed(x);
 }
 
-float model::AnimationContainer::duration() const
+float glaxnimate::model::AnimationContainer::duration() const
 {
     return last_frame.get() - first_frame.get();
 }
 
-QString model::AnimationContainer::type_name_human() const
+QString glaxnimate::model::AnimationContainer::type_name_human() const
 {
     return tr("Animation Timing");
 }

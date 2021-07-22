@@ -3,7 +3,7 @@
 
 #include "app/application.hpp"
 
-namespace plugin {
+namespace glaxnimate::plugin {
 
 class Snippet
 {
@@ -98,4 +98,4 @@ private:
     QString name_;
 };
 
-} // namespace plugin
+} // namespace glaxnimate::plugin

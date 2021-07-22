@@ -6,7 +6,7 @@
 #include "asset_base.hpp"
 #include "model/property/reference_property.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Asset : public DocumentNode, public AssetBase
 {
@@ -27,4 +27,4 @@ protected:
 
 
 
-} // namespace model
+} // namespace glaxnimate::model

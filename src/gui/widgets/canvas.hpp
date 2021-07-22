@@ -7,9 +7,11 @@
 
 #include "widgets/dialogs/selection_manager.hpp"
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 class Tool;
-} // namespace tools
+} // namespace glaxnimate::gui::tools
+
+namespace glaxnimate::gui {
 
 
 class Canvas : public QGraphicsView
@@ -139,3 +141,6 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+
+} // namespace glaxnimate::gui

@@ -12,11 +12,14 @@
 #include "utils/sort_gradient.hpp"
 
 
-GLAXNIMATE_OBJECT_IMPL(model::GradientColors)
-GLAXNIMATE_OBJECT_IMPL(model::Gradient)
+using namespace glaxnimate;
+
+
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::GradientColors)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Gradient)
 
 template<>
-std::optional<QGradientStops> model::detail::variant_cast<QGradientStops>(const QVariant& val)
+std::optional<QGradientStops> glaxnimate::model::detail::variant_cast<QGradientStops>(const QVariant& val)
 {
     if ( !val.canConvert(qMetaTypeId<QGradientStops>()) )
     {
@@ -65,13 +68,13 @@ QGradientStops math::lerp<QGradientStops>(const QGradientStops& a, const QGradie
     return mix;
 }
 
-QString model::GradientColors::type_name_human() const
+QString glaxnimate::model::GradientColors::type_name_human() const
 {
     return tr("Gradient");
 }
 
 
-QIcon model::GradientColors::instance_icon() const
+QIcon glaxnimate::model::GradientColors::instance_icon() const
 {
     QPixmap icon(32, 32);
     QPainter p(&icon);
@@ -81,7 +84,7 @@ QIcon model::GradientColors::instance_icon() const
     return icon;
 }
 
-bool model::GradientColors::remove_if_unused(bool clean_lists)
+bool glaxnimate::model::GradientColors::remove_if_unused(bool clean_lists)
 {
     if ( clean_lists && users().empty() )
     {
@@ -115,7 +118,7 @@ static QVariant split_gradient(QGradientStops colors, int index, float factor, c
     return QVariant::fromValue(colors);
 }
 
-void model::GradientColors::split_segment(int segment_index, float factor, const QColor& new_color)
+void glaxnimate::model::GradientColors::split_segment(int segment_index, float factor, const QColor& new_color)
 {
     command::UndoMacroGuard guard(tr("Add color to %1").arg(name.get()), document());
     if ( segment_index < 0 )
@@ -134,7 +137,7 @@ void model::GradientColors::split_segment(int segment_index, float factor, const
     }
 }
 
-void model::GradientColors::remove_stop(int index)
+void glaxnimate::model::GradientColors::remove_stop(int index)
 {
     command::UndoMacroGuard guard(tr("Remove color from %1").arg(name.get()), document());
 
@@ -161,27 +164,27 @@ void model::GradientColors::remove_stop(int index)
     }
 }
 
-model::DocumentNode * model::GradientColors::docnode_parent() const
+glaxnimate::model::DocumentNode * glaxnimate::model::GradientColors::docnode_parent() const
 {
     return document()->assets()->gradient_colors.get();
 }
 
-std::vector<model::DocumentNode *> model::Gradient::valid_refs() const
+std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::Gradient::valid_refs() const
 {
     return document()->assets()->gradient_colors->values.valid_reference_values(false);
 }
 
-bool model::Gradient::is_valid_ref ( model::DocumentNode* node ) const
+bool glaxnimate::model::Gradient::is_valid_ref ( glaxnimate::model::DocumentNode* node ) const
 {
     return document()->assets()->gradient_colors->values.is_valid_reference_value(node, true);
 }
 
-void model::Gradient::on_ref_visual_changed()
+void glaxnimate::model::Gradient::on_ref_visual_changed()
 {
     emit style_changed();
 }
 
-void model::Gradient::on_ref_changed ( model::GradientColors* new_ref, model::GradientColors* old_ref )
+void glaxnimate::model::Gradient::on_ref_changed ( glaxnimate::model::GradientColors* new_ref, glaxnimate::model::GradientColors* old_ref )
 {
     if ( old_ref )
         disconnect(old_ref, &GradientColors::colors_changed, this, &Gradient::on_ref_visual_changed);
@@ -198,12 +201,12 @@ void model::Gradient::on_ref_changed ( model::GradientColors* new_ref, model::Gr
     colors_changed_from(old_ref, new_ref);
 }
 
-QString model::Gradient::type_name_human() const
+QString glaxnimate::model::Gradient::type_name_human() const
 {
     return tr("%1 Gradient").arg(gradient_type_name(type.get()));
 }
 
-QBrush model::Gradient::brush_style ( model::FrameTime t ) const
+QBrush glaxnimate::model::Gradient::brush_style ( glaxnimate::model::FrameTime t ) const
 {
     if ( type.get() == Radial )
     {
@@ -223,7 +226,7 @@ QBrush model::Gradient::brush_style ( model::FrameTime t ) const
     }
 }
 
-QBrush model::Gradient::constrained_brush_style(FrameTime t, const QRectF& bounds) const
+QBrush glaxnimate::model::Gradient::constrained_brush_style(FrameTime t, const QRectF& bounds) const
 {
     if ( type.get() == Radial )
     {
@@ -241,18 +244,18 @@ QBrush model::Gradient::constrained_brush_style(FrameTime t, const QRectF& bound
     }
 }
 
-void model::Gradient::fill_icon(QPixmap& icon) const
+void glaxnimate::model::Gradient::fill_icon(QPixmap& icon) const
 {
     QPainter p(&icon);
     p.fillRect(icon.rect(), constrained_brush_style(time(), icon.rect()));
 }
 
-qreal model::Gradient::radius(model::FrameTime t) const
+qreal glaxnimate::model::Gradient::radius(glaxnimate::model::FrameTime t) const
 {
     return math::length(start_point.get_at(t) - end_point.get_at(t));
 }
 
-QString model::Gradient::gradient_type_name(GradientType t)
+QString glaxnimate::model::Gradient::gradient_type_name(GradientType t)
 {
     switch ( t )
     {
@@ -265,16 +268,16 @@ QString model::Gradient::gradient_type_name(GradientType t)
     return {};
 }
 
-void model::Gradient::on_property_changed(const model::BaseProperty*, const QVariant&)
+void glaxnimate::model::Gradient::on_property_changed(const glaxnimate::model::BaseProperty*, const QVariant&)
 {
     emit style_changed();
 }
 
-bool model::Gradient::remove_if_unused(bool)
+bool glaxnimate::model::Gradient::remove_if_unused(bool)
 {
     if ( users().empty() )
     {
-        colors.set_undoable(QVariant::fromValue((model::GradientColors*)nullptr));
+        colors.set_undoable(QVariant::fromValue((glaxnimate::model::GradientColors*)nullptr));
         document()->push_command(new command::RemoveObject(
             this,
             &document()->assets()->gradients->values
@@ -285,7 +288,7 @@ bool model::Gradient::remove_if_unused(bool)
 }
 
 
-model::DocumentNode * model::Gradient::docnode_parent() const
+glaxnimate::model::DocumentNode * glaxnimate::model::Gradient::docnode_parent() const
 {
     return document()->assets()->gradients.get();
 }

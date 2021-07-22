@@ -3,6 +3,9 @@
 #include <QtColorWidgets/ColorDelegate>
 #include "model/shapes/group.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class ShapeParentDialog::Private
 {
 public:

@@ -1,23 +1,23 @@
 #include "stretchable_time.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::StretchableTime)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::StretchableTime)
 
-bool model::StretchableTime::validate_stretch(float stretch)
+bool glaxnimate::model::StretchableTime::validate_stretch(float stretch)
 {
     return stretch > 0;
 }
 
-float model::StretchableTime::time_to_local(float global) const
+float glaxnimate::model::StretchableTime::time_to_local(float global) const
 {
     return (global - start_time.get()) / stretch.get();
 }
 
-float model::StretchableTime::time_from_local(float local) const
+float glaxnimate::model::StretchableTime::time_from_local(float local) const
 {
     return local * stretch.get() + start_time.get();
 }
 
-QString model::StretchableTime::type_name_human() const
+QString glaxnimate::model::StretchableTime::type_name_human() const
 {
     return tr("Timing");
 }

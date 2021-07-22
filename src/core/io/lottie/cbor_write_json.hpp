@@ -3,9 +3,9 @@
 #include <QCborMap>
 #include <QCborArray>
 
-namespace io::lottie {
+namespace glaxnimate::io::lottie {
 
 
 QByteArray cbor_write_json(const QCborMap& obj, bool compact);
 
-} // namespace io::lottie
+} // namespace glaxnimate::io::lottie

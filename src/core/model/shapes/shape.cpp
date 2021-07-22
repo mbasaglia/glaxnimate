@@ -4,47 +4,49 @@
 #include "path.hpp"
 #include "model/animation/join_animatables.hpp"
 
-class model::ShapeElement::Private
+using namespace glaxnimate;
+
+class glaxnimate::model::ShapeElement::Private
 {
 public:
     ShapeListProperty* property = nullptr;
     int position = -1;
-    model::Composition* owner_composition = nullptr;
+    glaxnimate::model::Composition* owner_composition = nullptr;
 };
 
-model::ShapeElement::ShapeElement(model::Document* document)
+glaxnimate::model::ShapeElement::ShapeElement(glaxnimate::model::Document* document)
     : VisualNode(document), d(std::make_unique<Private>())
 {
 }
 
-model::ShapeElement::~ShapeElement() = default;
+glaxnimate::model::ShapeElement::~ShapeElement() = default;
 
-model::ShapeListProperty * model::ShapeElement::owner() const
+glaxnimate::model::ShapeListProperty * glaxnimate::model::ShapeElement::owner() const
 {
     return d->property;
 }
 
-model::Composition * model::ShapeElement::owner_composition() const
+glaxnimate::model::Composition * glaxnimate::model::ShapeElement::owner_composition() const
 {
     return d->owner_composition;
 }
 
-int model::ShapeElement::position() const
+int glaxnimate::model::ShapeElement::position() const
 {
     return d->position;
 }
 
-const model::ShapeListProperty& model::ShapeElement::siblings() const
+const glaxnimate::model::ShapeListProperty& glaxnimate::model::ShapeElement::siblings() const
 {
     return *d->property;
 }
 
-model::DocumentNode * model::ShapeElement::docnode_parent() const
+glaxnimate::model::DocumentNode * glaxnimate::model::ShapeElement::docnode_parent() const
 {
     return d->property ? static_cast<DocumentNode*>(d->property->object()) : nullptr;
 }
 
-model::ObjectListProperty<model::ShapeElement>::iterator model::ShapeListProperty::past_first_modifier() const
+glaxnimate::model::ObjectListProperty<glaxnimate::model::ShapeElement>::iterator glaxnimate::model::ShapeListProperty::past_first_modifier() const
 {
     auto it = std::find_if(begin(), end(), [](const pointer& p){
         return qobject_cast<Modifier*>(p.get());
@@ -54,15 +56,15 @@ model::ObjectListProperty<model::ShapeElement>::iterator model::ShapeListPropert
     return it;
 }
 
-void model::ShapeElement::set_position(ShapeListProperty* property, int pos)
+void glaxnimate::model::ShapeElement::set_position(ShapeListProperty* property, int pos)
 {
-    model::VisualNode* old_parent = docnode_visual_parent();
+    glaxnimate::model::VisualNode* old_parent = docnode_visual_parent();
 
     d->property = property;
     d->position = pos;
     position_updated();
 
-    model::VisualNode* new_parent = docnode_visual_parent();
+    glaxnimate::model::VisualNode* new_parent = docnode_visual_parent();
     if ( old_parent != new_parent )
     {
         if ( old_parent )
@@ -77,47 +79,47 @@ void model::ShapeElement::set_position(ShapeListProperty* property, int pos)
         auto parent = d->property->object();
         if ( !parent )
             d->owner_composition = nullptr;
-        else if ( auto comp = parent->cast<model::Composition>() )
+        else if ( auto comp = parent->cast<glaxnimate::model::Composition>() )
             d->owner_composition = comp;
-        else if ( auto sh = parent->cast<model::ShapeElement>() )
+        else if ( auto sh = parent->cast<glaxnimate::model::ShapeElement>() )
             d->owner_composition = sh->d->owner_composition;
     }
 }
 
-void model::ShapeElement::on_property_changed(const model::BaseProperty* prop, const QVariant&)
+void glaxnimate::model::ShapeElement::on_property_changed(const glaxnimate::model::BaseProperty* prop, const QVariant&)
 {
     if ( prop->traits().flags & PropertyTraits::Visual )
         emit bounding_rect_changed();
 }
 
-math::bezier::MultiBezier model::ShapeElement::shapes(model::FrameTime t) const
+math::bezier::MultiBezier glaxnimate::model::ShapeElement::shapes(glaxnimate::model::FrameTime t) const
 {
     math::bezier::MultiBezier bez;
     add_shapes(t, bez, {});
     return bez;
 }
 
-QPainterPath model::ShapeElement::to_clip(FrameTime t) const
+QPainterPath glaxnimate::model::ShapeElement::to_clip(FrameTime t) const
 {
     return to_painter_path(t);
 }
 
-std::unique_ptr<model::ShapeElement> model::ShapeElement::to_path() const
+std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::ShapeElement::to_path() const
 {
-    return std::unique_ptr<model::ShapeElement>(static_cast<model::ShapeElement*>(clone().release()));
+    return std::unique_ptr<glaxnimate::model::ShapeElement>(static_cast<glaxnimate::model::ShapeElement*>(clone().release()));
 }
 
-void model::ShapeElement::added_to_list()
+void glaxnimate::model::ShapeElement::added_to_list()
 {
 }
 
-void model::ShapeElement::removed_from_list()
+void glaxnimate::model::ShapeElement::removed_from_list()
 {
     d->owner_composition = nullptr;
 }
 
 
-QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
+QRectF glaxnimate::model::ShapeListProperty::bounding_rect(FrameTime t) const
 {
     QRectF rect;
     for ( const auto& ch : utils::Range(begin(), past_first_modifier()) )
@@ -137,7 +139,7 @@ QRectF model::ShapeListProperty::bounding_rect(FrameTime t) const
     return rect;
 }
 
-std::unique_ptr<model::ShapeElement> model::Shape::to_path() const
+std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Shape::to_path() const
 {
     std::vector<const AnimatableBase*> properties;
     auto flags = PropertyTraits::Visual|PropertyTraits::Animated;
@@ -147,7 +149,7 @@ std::unique_ptr<model::ShapeElement> model::Shape::to_path() const
             properties.push_back(static_cast<AnimatableBase*>(prop));
     }
 
-    auto path = std::make_unique<model::Path>(document());
+    auto path = std::make_unique<glaxnimate::model::Path>(document());
     path->name.set(name.get());
     path->group_color.set(group_color.get());
     path->visible.set(visible.get());
@@ -175,7 +177,7 @@ std::unique_ptr<model::ShapeElement> model::Shape::to_path() const
     return path;
 }
 
-QPainterPath model::Shape::to_painter_path(FrameTime) const
+QPainterPath glaxnimate::model::Shape::to_painter_path(FrameTime) const
 {
     QPainterPath p;
 //     to_bezier(t).add_to_painter_path(p);
@@ -183,7 +185,7 @@ QPainterPath model::Shape::to_painter_path(FrameTime) const
 }
 
 
-void model::Shape::add_shapes(FrameTime t, math::bezier::MultiBezier & bez, const QTransform& transform) const
+void glaxnimate::model::Shape::add_shapes(FrameTime t, math::bezier::MultiBezier & bez, const QTransform& transform) const
 {
     auto shape = to_bezier(t);
     if ( !transform.isIdentity() )
@@ -192,7 +194,7 @@ void model::Shape::add_shapes(FrameTime t, math::bezier::MultiBezier & bez, cons
 }
 
 
-model::ShapeOperator::ShapeOperator(model::Document* doc)
+glaxnimate::model::ShapeOperator::ShapeOperator(glaxnimate::model::Document* doc)
     : ShapeElement(doc)
 {
     connect(this, &ShapeElement::position_updated, this, &ShapeOperator::update_affected);
@@ -200,7 +202,7 @@ model::ShapeOperator::ShapeOperator(model::Document* doc)
 }
 
 
-void model::ShapeOperator::do_collect_shapes(const std::vector<ShapeElement*>& shapes, model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
+void glaxnimate::model::ShapeOperator::do_collect_shapes(const std::vector<ShapeElement*>& shapes, glaxnimate::model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
     for ( auto sib : shapes )
     {
@@ -209,7 +211,7 @@ void model::ShapeOperator::do_collect_shapes(const std::vector<ShapeElement*>& s
     }
 }
 
-math::bezier::MultiBezier model::ShapeOperator::collect_shapes_from(const std::vector<ShapeElement *>& shapes, model::FrameTime t, const QTransform& transform) const
+math::bezier::MultiBezier glaxnimate::model::ShapeOperator::collect_shapes_from(const std::vector<ShapeElement *>& shapes, glaxnimate::model::FrameTime t, const QTransform& transform) const
 {
     math::bezier::MultiBezier bez;
     if ( visible.get() )
@@ -218,12 +220,12 @@ math::bezier::MultiBezier model::ShapeOperator::collect_shapes_from(const std::v
 }
 
 
-math::bezier::MultiBezier model::ShapeOperator::collect_shapes(FrameTime t, const QTransform& transform) const
+math::bezier::MultiBezier glaxnimate::model::ShapeOperator::collect_shapes(FrameTime t, const QTransform& transform) const
 {
     return collect_shapes_from(affected_elements, t, transform);
 }
 
-void model::ShapeOperator::update_affected()
+void glaxnimate::model::ShapeOperator::update_affected()
 {
     if ( !owner() )
         return;
@@ -255,19 +257,19 @@ void model::ShapeOperator::update_affected()
     affected_elements = curr_siblings;
 }
 
-void model::ShapeOperator::sibling_prop_changed(const model::BaseProperty* prop)
+void glaxnimate::model::ShapeOperator::sibling_prop_changed(const glaxnimate::model::BaseProperty* prop)
 {
-    if ( prop->traits().flags & model::PropertyTraits::Visual )
+    if ( prop->traits().flags & glaxnimate::model::PropertyTraits::Visual )
         emit shape_changed();
 }
 
 
-void model::Modifier::add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
+void glaxnimate::model::Modifier::add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
     bez.append(collect_shapes(t, transform));
 }
 
-void model::Modifier::do_collect_shapes(const std::vector<ShapeElement*>& shapes, model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
+void glaxnimate::model::Modifier::do_collect_shapes(const std::vector<ShapeElement*>& shapes, glaxnimate::model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
     bool post = process_collected();
 
@@ -296,14 +298,14 @@ void model::Modifier::do_collect_shapes(const std::vector<ShapeElement*>& shapes
     }
 }
 
-QPainterPath model::Modifier::to_painter_path(model::FrameTime t) const
+QPainterPath glaxnimate::model::Modifier::to_painter_path(glaxnimate::model::FrameTime t) const
 {
     math::bezier::MultiBezier bez;
     add_shapes(t, bez, {});
     return bez.painter_path();
 }
 
-QRectF model::Modifier::local_bounding_rect(model::FrameTime t) const
+QRectF glaxnimate::model::Modifier::local_bounding_rect(glaxnimate::model::FrameTime t) const
 {
     return to_painter_path(t).boundingRect();
 }

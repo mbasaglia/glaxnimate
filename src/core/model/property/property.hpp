@@ -15,9 +15,9 @@
 
 #include "model/animation/frame_time.hpp"
 
-namespace math::bezier { class Bezier; }
+namespace glaxnimate::math::bezier { class Bezier; }
 
-namespace model {
+namespace glaxnimate::model {
 
 class Object;
 class Document;
@@ -361,4 +361,4 @@ public:
     using detail::PropertyTemplate<BaseProperty, Type>::PropertyTemplate;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

@@ -6,7 +6,7 @@
 #include "model/document_node.hpp"
 #include "model/shapes/shape.hpp"
 
-namespace command {
+namespace glaxnimate::command {
 
 class DeferredCommandBase : public QUndoCommand
 {
@@ -45,4 +45,4 @@ private:
     static QString name(model::DocumentNode* node);
 };
 
-} // namespace command
+} // namespace glaxnimate::command

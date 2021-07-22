@@ -2,7 +2,7 @@
 
 #include "model/document.hpp"
 
-command::SetKeyframe::SetKeyframe(
+glaxnimate::command::SetKeyframe::SetKeyframe(
     model::AnimatableBase* prop,
     model::FrameTime time,
     const QVariant& value,
@@ -15,7 +15,7 @@ command::SetKeyframe::SetKeyframe(
     had_before(prop->has_keyframe(time))
 {}
 
-void command::SetKeyframe::undo()
+void glaxnimate::command::SetKeyframe::undo()
 {
     if ( had_before )
         prop->set_keyframe(time, before);
@@ -26,7 +26,7 @@ void command::SetKeyframe::undo()
         prop->keyframe(insert_index-1)->set_transition(trans_before);
 }
 
-void command::SetKeyframe::redo()
+void glaxnimate::command::SetKeyframe::redo()
 {
     if ( !calculated )
     {
@@ -64,7 +64,7 @@ void command::SetKeyframe::redo()
 
 }
 
-bool command::SetKeyframe::merge_with(const SetKeyframe& other)
+bool glaxnimate::command::SetKeyframe::merge_with(const SetKeyframe& other)
 {
     if ( other.prop != prop )
         return false;
@@ -72,7 +72,7 @@ bool command::SetKeyframe::merge_with(const SetKeyframe& other)
     return true;
 }
 
-command::RemoveKeyframeTime::RemoveKeyframeTime(
+glaxnimate::command::RemoveKeyframeTime::RemoveKeyframeTime(
     model::AnimatableBase* prop,
     model::FrameTime time
 ) : QUndoCommand(QObject::tr("Remove %1 keyframe at %2").arg(prop->name()).arg(time)),
@@ -89,7 +89,7 @@ command::RemoveKeyframeTime::RemoveKeyframeTime(
     }
 }
 
-void command::RemoveKeyframeTime::undo()
+void glaxnimate::command::RemoveKeyframeTime::undo()
 {
     prop->set_keyframe(time, before);
     if ( index > 0 )
@@ -97,7 +97,7 @@ void command::RemoveKeyframeTime::undo()
 
 }
 
-void command::RemoveKeyframeTime::redo()
+void glaxnimate::command::RemoveKeyframeTime::redo()
 {
     if ( index > 0 )
         prop->keyframe(index-1)->set_transition(prev_transition_after);
@@ -105,7 +105,7 @@ void command::RemoveKeyframeTime::redo()
 }
 
 
-command::SetMultipleAnimated::SetMultipleAnimated(model::AnimatableBase* prop, QVariant after, bool commit)
+glaxnimate::command::SetMultipleAnimated::SetMultipleAnimated(model::AnimatableBase* prop, QVariant after, bool commit)
     : SetMultipleAnimated(
         auto_name(prop),
         {prop},
@@ -115,7 +115,7 @@ command::SetMultipleAnimated::SetMultipleAnimated(model::AnimatableBase* prop, Q
     )
 {}
 
-command::SetMultipleAnimated::SetMultipleAnimated(
+glaxnimate::command::SetMultipleAnimated::SetMultipleAnimated(
     const QString& name,
     const std::vector<model::AnimatableBase*>& props,
     const QVariantList& before,
@@ -141,12 +141,12 @@ command::SetMultipleAnimated::SetMultipleAnimated(
 }
 
 
-command::SetMultipleAnimated::SetMultipleAnimated(const QString& name, bool commit)
+glaxnimate::command::SetMultipleAnimated::SetMultipleAnimated(const QString& name, bool commit)
     : Parent(name, commit)
 {
 }
 
-void command::SetMultipleAnimated::push_property(model::AnimatableBase* prop, const QVariant& after_val)
+void glaxnimate::command::SetMultipleAnimated::push_property(model::AnimatableBase* prop, const QVariant& after_val)
 {
     keyframe_after = prop->object()->document()->record_to_keyframe();
     time = prop->time();
@@ -157,14 +157,14 @@ void command::SetMultipleAnimated::push_property(model::AnimatableBase* prop, co
     add_0.push_back(!prop->animated() && prop->object()->document()->record_to_keyframe());
 }
 
-void command::SetMultipleAnimated::push_property_not_animated(model::BaseProperty* prop, const QVariant& after_val)
+void glaxnimate::command::SetMultipleAnimated::push_property_not_animated(model::BaseProperty* prop, const QVariant& after_val)
 {
     props_not_animated.push_back(prop);
     before.push_back(prop->value());
     after.push_back(after_val);
 }
 
-void command::SetMultipleAnimated::undo()
+void glaxnimate::command::SetMultipleAnimated::undo()
 {
     for ( int i = 0; i < int(props.size()); i++ )
     {
@@ -201,7 +201,7 @@ void command::SetMultipleAnimated::undo()
     }
 }
 
-void command::SetMultipleAnimated::redo()
+void glaxnimate::command::SetMultipleAnimated::redo()
 {
     for ( int i = 0; i < int(props.size()); i++ )
     {
@@ -223,7 +223,7 @@ void command::SetMultipleAnimated::redo()
 }
 
 
-bool command::SetMultipleAnimated::merge_with(const SetMultipleAnimated& other)
+bool glaxnimate::command::SetMultipleAnimated::merge_with(const SetMultipleAnimated& other)
 {
     if ( other.props.size() != props.size() || keyframe_after != other.keyframe_after ||
         time != other.time || other.props_not_animated.size() != props_not_animated.size())
@@ -241,7 +241,7 @@ bool command::SetMultipleAnimated::merge_with(const SetMultipleAnimated& other)
     return true;
 }
 
-QString command::SetMultipleAnimated::auto_name(model::AnimatableBase* prop)
+QString glaxnimate::command::SetMultipleAnimated::auto_name(model::AnimatableBase* prop)
 {
     bool key_before = prop->has_keyframe(prop->time());
     bool key_after = prop->object()->document()->record_to_keyframe();
@@ -255,7 +255,7 @@ QString command::SetMultipleAnimated::auto_name(model::AnimatableBase* prop)
     return QObject::tr("Update %1").arg(prop->name());
 }
 
-command::SetKeyframeTransition::SetKeyframeTransition(
+glaxnimate::command::SetKeyframeTransition::SetKeyframeTransition(
         model::AnimatableBase* prop,
         int keyframe_index,
         const model::KeyframeTransition& transition
@@ -268,7 +268,7 @@ command::SetKeyframeTransition::SetKeyframeTransition(
 {
 }
 
-command::SetKeyframeTransition::SetKeyframeTransition(
+glaxnimate::command::SetKeyframeTransition::SetKeyframeTransition(
     model::AnimatableBase* prop,
     int keyframe_index,
     model::KeyframeTransition::Descriptive desc,
@@ -292,22 +292,22 @@ command::SetKeyframeTransition::SetKeyframeTransition(
     }
 }
 
-void command::SetKeyframeTransition::undo()
+void glaxnimate::command::SetKeyframeTransition::undo()
 {
     keyframe()->set_transition(undo_value);
 }
 
-void command::SetKeyframeTransition::redo()
+void glaxnimate::command::SetKeyframeTransition::redo()
 {
     keyframe()->set_transition(redo_value);
 }
 
-model::KeyframeBase* command::SetKeyframeTransition::keyframe() const
+glaxnimate::model::KeyframeBase* glaxnimate::command::SetKeyframeTransition::keyframe() const
 {
     return prop->keyframe(keyframe_index);
 }
 
-command::MoveKeyframe::MoveKeyframe(
+glaxnimate::command::MoveKeyframe::MoveKeyframe(
     model::AnimatableBase* prop,
     int keyframe_index,
     model::FrameTime time_after
@@ -318,17 +318,17 @@ command::MoveKeyframe::MoveKeyframe(
     time_after(time_after)
 {}
 
-void command::MoveKeyframe::undo()
+void glaxnimate::command::MoveKeyframe::undo()
 {
     prop->move_keyframe(keyframe_index_after, time_before);
 }
 
-void command::MoveKeyframe::redo()
+void glaxnimate::command::MoveKeyframe::redo()
 {
     keyframe_index_after = prop->move_keyframe(keyframe_index_before, time_after);
 }
 
-int command::MoveKeyframe::redo_index() const
+int glaxnimate::command::MoveKeyframe::redo_index() const
 {
     return keyframe_index_after;
 }

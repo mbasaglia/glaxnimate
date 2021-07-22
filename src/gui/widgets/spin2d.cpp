@@ -4,6 +4,8 @@
 #include <QStyleOptionSpinBox>
 #include "glaxnimate_app.hpp"
 
+using namespace glaxnimate::gui;
+
 
 Spin2D::Spin2D(QWidget* parent)
     : QWidget(parent)

@@ -13,7 +13,7 @@ class ScriptEngine;
 
 } // namespace app::scripting
 
-namespace plugin {
+namespace glaxnimate::plugin {
 
 struct PluginData
 {
@@ -175,4 +175,4 @@ private:
     app::log::Log logger{"Plugins"};
 };
 
-} // namespace plugin
+} // namespace glaxnimate::plugin

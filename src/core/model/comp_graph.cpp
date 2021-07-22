@@ -8,38 +8,38 @@
 #include "model/assets/assets.hpp"
 #include "model/shapes/precomp_layer.hpp"
 
-void model::CompGraph::add_composition(model::Composition* comp)
+void glaxnimate::model::CompGraph::add_composition(glaxnimate::model::Composition* comp)
 {
-    std::vector<model::PreCompLayer*>& comp_layers = layers[comp];
-    std::deque<model::DocumentNode*> nodes(comp->docnode_children().begin(), comp->docnode_children().end());
+    std::vector<glaxnimate::model::PreCompLayer*>& comp_layers = layers[comp];
+    std::deque<glaxnimate::model::DocumentNode*> nodes(comp->docnode_children().begin(), comp->docnode_children().end());
 
     while ( !nodes.empty() )
     {
         auto front = nodes.front();
         nodes.pop_front();
-        if ( auto layer = front->cast<model::PreCompLayer>() )
+        if ( auto layer = front->cast<glaxnimate::model::PreCompLayer>() )
             comp_layers.push_back(layer);
         else
             nodes.insert(nodes.end(), front->docnode_children().begin(), front->docnode_children().end());
     }
 }
 
-void model::CompGraph::remove_composition(model::Composition* comp)
+void glaxnimate::model::CompGraph::remove_composition(glaxnimate::model::Composition* comp)
 {
     layers.erase(comp);
 }
 
-bool model::CompGraph::is_ancestor_of(model::Composition* ancestor, model::Composition* descendant) const
+bool glaxnimate::model::CompGraph::is_ancestor_of(glaxnimate::model::Composition* ancestor, glaxnimate::model::Composition* descendant) const
 {
-    std::unordered_set<model::Composition*> checked;
-    std::unordered_set<model::Composition*> not_checked;
+    std::unordered_set<glaxnimate::model::Composition*> checked;
+    std::unordered_set<glaxnimate::model::Composition*> not_checked;
     not_checked.insert(ancestor);
 
     while ( !not_checked.empty() )
     {
-        std::unordered_set<model::Composition*> next;
+        std::unordered_set<glaxnimate::model::Composition*> next;
 
-        for ( model::Composition* comp : not_checked )
+        for ( glaxnimate::model::Composition* comp : not_checked )
         {
             if ( comp == descendant )
                 return true;
@@ -64,23 +64,23 @@ bool model::CompGraph::is_ancestor_of(model::Composition* ancestor, model::Compo
     return false;
 }
 
-std::vector<model::Composition *> model::CompGraph::children(model::Composition* comp) const
+std::vector<glaxnimate::model::Composition *> glaxnimate::model::CompGraph::children(glaxnimate::model::Composition* comp) const
 {
-    std::unordered_set<model::Composition*> vals;
+    std::unordered_set<glaxnimate::model::Composition*> vals;
     for ( auto layer : layers.at(comp) )
     {
         if ( auto laycomp = layer->composition.get() )
             vals.insert(laycomp);
     }
 
-    return std::vector<model::Composition *>(vals.begin(), vals.end());
+    return std::vector<glaxnimate::model::Composition *>(vals.begin(), vals.end());
 }
 
 static bool recursive_is_ancestor_of(
-    model::Composition* ancestor,
-    model::Composition* descendant,
-    std::unordered_map<model::Composition*, bool>& cache,
-    const std::unordered_map<model::Composition*, std::vector<model::PreCompLayer*>>& layers
+    glaxnimate::model::Composition* ancestor,
+    glaxnimate::model::Composition* descendant,
+    std::unordered_map<glaxnimate::model::Composition*, bool>& cache,
+    const std::unordered_map<glaxnimate::model::Composition*, std::vector<glaxnimate::model::PreCompLayer*>>& layers
 )
 {
     if ( ancestor == descendant )
@@ -101,10 +101,10 @@ static bool recursive_is_ancestor_of(
     return cache[ancestor] = is_ancestor;
 }
 
-std::vector<model::Composition *> model::CompGraph::possible_descendants(model::Composition* ancestor, model::Document* document) const
+std::vector<glaxnimate::model::Composition *> glaxnimate::model::CompGraph::possible_descendants(glaxnimate::model::Composition* ancestor, glaxnimate::model::Document* document) const
 {
-    std::unordered_map<model::Composition*, bool> cache;
-    std::vector<model::Composition*> valid;
+    std::unordered_map<glaxnimate::model::Composition*, bool> cache;
+    std::vector<glaxnimate::model::Composition*> valid;
 
     for ( const auto& precomp : document->assets()->precompositions->values )
     {
@@ -115,14 +115,14 @@ std::vector<model::Composition *> model::CompGraph::possible_descendants(model::
     return valid;
 }
 
-void model::CompGraph::add_connection(model::Composition* comp, model::PreCompLayer* layer)
+void glaxnimate::model::CompGraph::add_connection(glaxnimate::model::Composition* comp, glaxnimate::model::PreCompLayer* layer)
 {
     auto it = layers.find(comp);
     if ( it != layers.end() )
         it->second.push_back(layer);
 }
 
-void model::CompGraph::remove_connection(model::Composition* comp, model::PreCompLayer* layer)
+void glaxnimate::model::CompGraph::remove_connection(glaxnimate::model::Composition* comp, glaxnimate::model::PreCompLayer* layer)
 {
     auto it_map = layers.find(comp);
     if ( it_map != layers.end() )

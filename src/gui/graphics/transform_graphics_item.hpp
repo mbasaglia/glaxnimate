@@ -5,14 +5,14 @@
 #include "model/document_node.hpp"
 
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class TransformGraphicsItem : public QGraphicsObject
 {
     Q_OBJECT
 
 public:
-    TransformGraphicsItem(model::Transform* transform, model::VisualNode* target, QGraphicsItem* parent);
+    TransformGraphicsItem(glaxnimate::model::Transform* transform, glaxnimate::model::VisualNode* target, QGraphicsItem* parent);
     ~TransformGraphicsItem();
 
     QRectF boundingRect() const override;
@@ -50,4 +50,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

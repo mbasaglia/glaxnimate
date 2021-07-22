@@ -1,6 +1,8 @@
 #include "io.hpp"
 #include "plugin.hpp"
 
+using namespace glaxnimate;
+
 void plugin::IoService::enable()
 {
     if ( registered )

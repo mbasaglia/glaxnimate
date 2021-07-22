@@ -6,6 +6,8 @@
 
 #include "widgets/timeline/keyframe_editor_widget.hpp"
 
+namespace glaxnimate::gui {
+
 class KeyframeEditorDialog : public QDialog
 {
 public:
@@ -40,3 +42,5 @@ private:
     QDialogButtonBox* box;
     model::KeyframeTransition trans;
 };
+
+} // namespace glaxnimate::gui

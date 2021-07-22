@@ -3,6 +3,8 @@
 #include <QEvent>
 #include <QtMath>
 
+using namespace glaxnimate::gui;
+
 ViewTransformWidget::ViewTransformWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Ui::ViewTransformWidget>())
 {

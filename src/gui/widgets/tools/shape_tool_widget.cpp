@@ -1,5 +1,8 @@
 #include "shape_tool_widget_p.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 
 ShapeToolWidget::ShapeToolWidget(QWidget* parent)
     : ShapeToolWidget(std::make_unique<Private>(), parent)

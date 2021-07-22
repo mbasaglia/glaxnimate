@@ -6,6 +6,9 @@
 #include "app/settings/settings.hpp"
 #include "settings/document_templates.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class StartupDialog::Private
 {
 public:

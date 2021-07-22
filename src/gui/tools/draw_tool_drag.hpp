@@ -1,6 +1,6 @@
 #include "draw_tool_base.hpp"
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 /**
  * \brief Base class for drawing tools where you click and drag to draw the shape
@@ -70,4 +70,4 @@ protected:
 };
 
 
-} // namespace tools
+} // namespace glaxnimate::gui::tools

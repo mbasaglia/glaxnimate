@@ -10,7 +10,7 @@
 #include "utils/pseudo_mutex.hpp"
 #include "typed_item.hpp"
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class PointItem : public QGraphicsObject
 {
@@ -122,4 +122,4 @@ private:
 };
 
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

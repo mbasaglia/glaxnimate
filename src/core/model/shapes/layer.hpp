@@ -5,7 +5,7 @@
 #include "model/animation_container.hpp"
 #include "model/mask_settings.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Layer : public StaticOverrides<Layer, Group>
 {
@@ -100,4 +100,4 @@ private:
     bool is_valid_parent(DocumentNode* node) const;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

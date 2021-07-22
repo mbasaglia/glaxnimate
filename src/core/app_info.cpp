@@ -4,47 +4,47 @@
 
 #include "application_info_generated.hpp"
 
-QString AppInfo::name() const
+QString glaxnimate::AppInfo::name() const
 {
     return QObject::tr("Glaxnimate");
 }
 
-QString AppInfo::slug() const
+QString glaxnimate::AppInfo::slug() const
 {
     return PROJECT_SLUG;
 }
 
-QString AppInfo::version() const
+QString glaxnimate::AppInfo::version() const
 {
     return PROJECT_VERSION;
 }
 
-QString AppInfo::organization() const
+QString glaxnimate::AppInfo::organization() const
 {
     return PROJECT_SLUG;
 }
 
-QUrl AppInfo::url_docs() const
+QUrl glaxnimate::AppInfo::url_docs() const
 {
     return QUrl(URL_DOCS);
 }
 
-QUrl AppInfo::url_issues() const
+QUrl glaxnimate::AppInfo::url_issues() const
 {
     return QUrl(URL_ISSUES);
 }
 
-QString AppInfo::description() const
+QString glaxnimate::AppInfo::description() const
 {
     return PROJECT_DESCRIPTION;
 }
 
-QUrl AppInfo::url_donate() const
+QUrl glaxnimate::AppInfo::url_donate() const
 {
     return QUrl(URL_DONATE);
 }
 
-void AppInfo::init_qapplication() const
+void glaxnimate::AppInfo::init_qapplication() const
 {
     qApp->setApplicationName(slug());
     qApp->setApplicationVersion(version());

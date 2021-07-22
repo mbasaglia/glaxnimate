@@ -1,7 +1,7 @@
 #pragma once
 #include <QtGlobal>
 
-namespace model {
+namespace glaxnimate::model {
 
 class Document;
 class DocumentNode;
@@ -21,4 +21,4 @@ private:
     virtual void on_visit_end(model::Document* document) { Q_UNUSED(document) }
 };
 
-} // namespace model
+} // namespace glaxnimate::model

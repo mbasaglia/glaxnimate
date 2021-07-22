@@ -12,7 +12,7 @@ public:                                                                         
     // macro end
 
 
-namespace model {
+namespace glaxnimate::model {
 
 class OptionListPropertyBase : public BaseProperty
 {
@@ -80,4 +80,4 @@ private:
     PropertyCallback<Container> option_list;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

@@ -5,6 +5,8 @@
 #include <QPainter>
 #include <QStyleOptionTab>
 
+using namespace glaxnimate::gui;
+
 
 static void initStyleOption(QTabBar* q, QStyleOptionTab *option, int tabIndex)
 {

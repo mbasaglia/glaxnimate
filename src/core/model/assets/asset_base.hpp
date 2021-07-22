@@ -4,7 +4,7 @@
 
 #include "utils/pseudo_mutex.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class ReferencePropertyBase;
 class DocumentNode;
@@ -26,5 +26,5 @@ public:
 
 
 
-} // namespace model
+} // namespace glaxnimate::model
 

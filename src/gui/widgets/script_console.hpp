@@ -6,6 +6,8 @@
 
 #include "plugin/executor.hpp"
 
+namespace glaxnimate::gui {
+
 class PluginUiDialog;
 
 class ScriptConsole : public QWidget, public plugin::Executor
@@ -42,5 +44,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // SCRIPTCONSOLE_H

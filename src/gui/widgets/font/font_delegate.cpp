@@ -2,6 +2,9 @@
 
 #include <QPainter>
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 static QFontDatabase::WritingSystem writingSystemFromScript(QLocale::Script script)
 {
     switch (script) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>WindowMessageWidget</class>
+ <class>glaxnimate::gui::WindowMessageWidget</class>
  <widget class="QWidget" name="WindowMessageWidget">
   <property name="geometry">
    <rect>

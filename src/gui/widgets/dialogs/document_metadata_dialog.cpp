@@ -2,6 +2,10 @@
 #include "ui_document_metadata_dialog.h"
 #include <QEvent>
 
+
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class DocumentMetadataDialog::Private
 {
 public:

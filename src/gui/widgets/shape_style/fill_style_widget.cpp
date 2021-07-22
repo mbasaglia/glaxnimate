@@ -4,6 +4,9 @@
 #include "model/document.hpp"
 #include "command/animation_commands.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 
 FillStyleWidget::FillStyleWidget(QWidget* parent )
 : ColorSelector(parent)

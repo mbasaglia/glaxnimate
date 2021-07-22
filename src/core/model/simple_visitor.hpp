@@ -2,7 +2,7 @@
 
 #include "visitor.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 template<class NodeType, class Callback>
 class SimpleVisitor : public Visitor
@@ -26,4 +26,4 @@ void simple_visit(model::DocumentNode* node, bool skip_locked, Callback callback
     SimpleVisitor<NodeType, Callback>(std::move(callback)).visit(node, skip_locked);
 }
 
-} // namespace model
+} // namespace glaxnimate::model

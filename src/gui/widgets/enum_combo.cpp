@@ -8,6 +8,9 @@
 
 #include "glaxnimate_app.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 EnumCombo::EnumCombo(const QMetaEnum& meta_enum, int current_value, QWidget* parent)
     : QComboBox(parent), meta_enum(meta_enum)
 {

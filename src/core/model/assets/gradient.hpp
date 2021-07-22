@@ -4,14 +4,14 @@
 #include "model/animation/animatable.hpp"
 #include "math/vector.hpp"
 
-namespace math {
+namespace glaxnimate::math {
 
 template<>
 QGradientStops lerp<QGradientStops>(const QGradientStops& a, const QGradientStops& b, double factor);
 
-} // namespace math
+} // namespace glaxnimate::math
 
-namespace model {
+namespace glaxnimate::model {
 
 
 namespace detail {
@@ -97,4 +97,4 @@ signals:
     void colors_changed_from(GradientColors* old_use, GradientColors* new_use);
 };
 
-} // namespace model
+} // namespace glaxnimate::model

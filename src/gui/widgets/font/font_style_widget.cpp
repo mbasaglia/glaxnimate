@@ -8,6 +8,9 @@
 #include "font_model.hpp"
 #include "font_delegate.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class font::FontStyleWidget::Private
 {
 public:

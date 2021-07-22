@@ -1,8 +1,8 @@
 #include "rect.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::Rect)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Rect)
 
-math::bezier::Bezier model::Rect::to_bezier(model::FrameTime t) const
+glaxnimate::math::bezier::Bezier glaxnimate::model::Rect::to_bezier(model::FrameTime t) const
 {
     math::bezier::Bezier bezier;
     QRectF bb = local_bounding_rect(t);

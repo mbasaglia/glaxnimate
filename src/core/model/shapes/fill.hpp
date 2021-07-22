@@ -6,7 +6,7 @@
 #include "styler.hpp"
 #include "model/animation/animatable.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Fill : public StaticOverrides<Fill, Styler>
 {
@@ -49,4 +49,4 @@ protected:
 };
 
 
-} // namespace model
+} // namespace glaxnimate::model

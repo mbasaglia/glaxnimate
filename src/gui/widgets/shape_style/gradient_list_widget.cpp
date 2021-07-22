@@ -23,6 +23,9 @@
 
 #include "item_models/gradient_list_model.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class GradientListWidget::Private
 {
 public:

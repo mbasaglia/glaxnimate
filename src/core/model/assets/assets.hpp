@@ -9,7 +9,7 @@
 #include "precomposition.hpp"
 
 
-namespace model {
+namespace glaxnimate::model {
 
 
 namespace detail {
@@ -177,4 +177,4 @@ public:
     QString type_name_human() const override { return tr("Assets"); }
 };
 
-} // namespace model
+} // namespace glaxnimate::model

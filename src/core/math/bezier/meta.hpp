@@ -2,14 +2,13 @@
 
 #include "bezier.hpp"
 
-QDataStream& operator<<(QDataStream& ds, const math::bezier::Point& p);
-QDataStream& operator<<(QDataStream& ds, const math::bezier::Bezier& bez);
-QDataStream& operator>>(QDataStream& ds, math::bezier::Point& p);
-QDataStream& operator>>(QDataStream& ds, math::bezier::Bezier& bez);
+QDataStream& operator<<(QDataStream& ds, const glaxnimate::math::bezier::Point& p);
+QDataStream& operator<<(QDataStream& ds, const glaxnimate::math::bezier::Bezier& bez);
+QDataStream& operator>>(QDataStream& ds, glaxnimate::math::bezier::Point& p);
+QDataStream& operator>>(QDataStream& ds, glaxnimate::math::bezier::Bezier& bez);
 
-namespace math::bezier {
-
+namespace glaxnimate::math::bezier {
 
 void register_meta();
 
-} // namespace math::bezier
+} // namespace glaxnimate::math::bezier

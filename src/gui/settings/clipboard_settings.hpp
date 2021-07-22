@@ -2,7 +2,7 @@
 #include "app/settings/custom_settings_group.hpp"
 #include "io/mime/mime_serializer.hpp"
 
-namespace settings {
+namespace glaxnimate::gui::settings {
 
 class ClipboardSettings : public app::settings::CustomSettingsGroupBase
 {
@@ -25,4 +25,4 @@ public:
 
 };
 
-} // namespace settings
+} // namespace glaxnimate::gui::settings

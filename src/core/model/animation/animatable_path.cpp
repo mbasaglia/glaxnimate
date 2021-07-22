@@ -3,8 +3,9 @@
 #include "command/undo_macro_guard.hpp"
 #include "command/animation_commands.hpp"
 
+using namespace glaxnimate;
 
-void model::detail::AnimatedPropertyBezier::set_closed(bool closed)
+void glaxnimate::model::detail::AnimatedPropertyBezier::set_closed(bool closed)
 {
     value_.set_closed(closed);
     for ( auto& keyframe : keyframes_ )
@@ -14,7 +15,7 @@ void model::detail::AnimatedPropertyBezier::set_closed(bool closed)
 }
 
 
-void model::detail::AnimatedPropertyBezier::split_segment(int index, qreal factor)
+void glaxnimate::model::detail::AnimatedPropertyBezier::split_segment(int index, qreal factor)
 {
     command::UndoMacroGuard guard(tr("Split Segment"), object()->document());
 
@@ -39,7 +40,7 @@ void model::detail::AnimatedPropertyBezier::split_segment(int index, qreal facto
     }
 }
 
-void model::detail::AnimatedPropertyBezier::remove_point(int index)
+void glaxnimate::model::detail::AnimatedPropertyBezier::remove_point(int index)
 {
     remove_points({index});
 }
@@ -56,7 +57,7 @@ static math::bezier::Bezier remove_points(const math::bezier::Bezier& bez, const
     return new_bez;
 }
 
-void model::detail::AnimatedPropertyBezier::remove_points(const std::set<int>& indices)
+void glaxnimate::model::detail::AnimatedPropertyBezier::remove_points(const std::set<int>& indices)
 {
     command::UndoMacroGuard guard(tr("Remove Nodes"), object()->document());
 
@@ -135,7 +136,7 @@ static QVariant extend_impl(math::bezier::Bezier subject, const math::bezier::Be
     return QVariant::fromValue(subject);
 }
 
-void model::detail::AnimatedPropertyBezier::extend(const math::bezier::Bezier& target, bool at_end)
+void glaxnimate::model::detail::AnimatedPropertyBezier::extend(const math::bezier::Bezier& target, bool at_end)
 {
     command::UndoMacroGuard guard(tr("Extend Shape"), object()->document());
 

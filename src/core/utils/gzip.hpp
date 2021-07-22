@@ -6,7 +6,7 @@
 #include <QIODevice>
 #include <QByteArray>
 
-namespace utils::gzip {
+namespace glaxnimate::utils::gzip {
 
 using ErrorFunc = std::function<void (const QString&)>;
 
@@ -41,4 +41,4 @@ private:
 
 QString zlib_version();
 
-} // namespace utils::gzip
+} // namespace glaxnimate::utils::gzip

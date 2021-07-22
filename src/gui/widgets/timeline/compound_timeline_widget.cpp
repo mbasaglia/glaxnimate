@@ -24,6 +24,9 @@
     #include "widgets/node_menu.hpp"
 #endif
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class CompoundTimelineWidget::Private
 {
 public:

@@ -23,6 +23,9 @@
 #include "graphics/gradient_editor.hpp"
 #include "handle_menu.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 tools::Autoreg<tools::EditTool> tools::EditTool::autoreg{max_priority + 1};
 
 class tools::EditTool::Private
@@ -352,7 +355,7 @@ public:
 
     void mold_bezier(const QPointF& scene_pos, bool commit)
     {
-        using namespace math::bezier;
+        using namespace glaxnimate::math::bezier;
         if ( !insert_item )
             return;
 

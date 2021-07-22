@@ -6,7 +6,7 @@
 #include "io/base.hpp"
 #include "io/io_registry.hpp"
 
-namespace io::glaxnimate {
+namespace glaxnimate::io::glaxnimate {
 
 
 class GlaxnimateFormat : public ImportExport
@@ -40,4 +40,4 @@ private:
 };
 
 
-} // namespace io::glaxnimate
+} // namespace glaxnimate::io::glaxnimate

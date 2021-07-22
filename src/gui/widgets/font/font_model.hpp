@@ -6,7 +6,7 @@
 #include <QFontDatabase>
 
 
-namespace font {
+namespace glaxnimate::gui::font {
 
 class FontModel : public QAbstractListModel
 {
@@ -56,4 +56,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace font
+} // namespace glaxnimate::gui::font

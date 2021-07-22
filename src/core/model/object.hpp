@@ -30,20 +30,20 @@ public:                                                                 \
  * with model::Factory
  */
 #define GLAXNIMATE_OBJECT_IMPL(cls)                                     \
-    bool cls::_reg{model::Factory::instance().register_type<cls>()};    \
+    bool cls::_reg{glaxnimate::model::Factory::instance().register_type<cls>()}; \
     std::unique_ptr<cls> cls::clone_covariant() const                   \
     {                                                                   \
         auto object = std::make_unique<cls>(this->document());          \
         this->clone_into(object.get());                                 \
         return object;                                                  \
     }                                                                   \
-    std::unique_ptr<model::Object> cls::clone_impl() const              \
+    std::unique_ptr<glaxnimate::model::Object> cls::clone_impl() const  \
     {                                                                   \
         return clone_covariant();                                       \
     }                                                                   \
     // macro end
 
-namespace model {
+namespace glaxnimate::model {
 
 class ObjectListPropertyBase;
 class BaseProperty;
@@ -133,4 +133,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

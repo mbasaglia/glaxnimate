@@ -10,14 +10,14 @@
 #include "model/assets/assets.hpp"
 #include "command/object_list_commands.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::Bitmap)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Bitmap)
 
-void model::Bitmap::paint(QPainter* painter) const
+void glaxnimate::model::Bitmap::paint(QPainter* painter) const
 {
     painter->drawPixmap(0, 0, image);
 }
 
-void model::Bitmap::refresh(bool rebuild_embedded)
+void glaxnimate::model::Bitmap::refresh(bool rebuild_embedded)
 {
     QImageReader reader;
     QImage qimage;
@@ -49,7 +49,7 @@ void model::Bitmap::refresh(bool rebuild_embedded)
     emit loaded();
 }
 
-QByteArray model::Bitmap::build_embedded(const QImage& img)
+QByteArray glaxnimate::model::Bitmap::build_embedded(const QImage& img)
 {
     QByteArray new_data;
     QBuffer buf(&new_data);
@@ -59,12 +59,12 @@ QByteArray model::Bitmap::build_embedded(const QImage& img)
     return new_data;
 }
 
-bool model::Bitmap::embedded() const
+bool glaxnimate::model::Bitmap::embedded() const
 {
     return !data.get().isEmpty();
 }
 
-void model::Bitmap::embed(bool embedded)
+void glaxnimate::model::Bitmap::embed(bool embedded)
 {
     if ( embedded == this->embedded() )
         return;
@@ -75,17 +75,17 @@ void model::Bitmap::embed(bool embedded)
         data.set_undoable(build_embedded(image.toImage()));
 }
 
-void model::Bitmap::on_refresh()
+void glaxnimate::model::Bitmap::on_refresh()
 {
     refresh(false);
 }
 
-QIcon model::Bitmap::instance_icon() const
+QIcon glaxnimate::model::Bitmap::instance_icon() const
 {
     return image;
 }
 
-bool model::Bitmap::from_url(const QUrl& url)
+bool glaxnimate::model::Bitmap::from_url(const QUrl& url)
 {
     if ( url.scheme().isEmpty() || url.scheme() == "file" )
         return from_file(url.path());
@@ -96,13 +96,13 @@ bool model::Bitmap::from_url(const QUrl& url)
     return false;
 }
 
-bool model::Bitmap::from_file(const QString& file)
+bool glaxnimate::model::Bitmap::from_file(const QString& file)
 {
     filename.set(file);
     return !image.isNull();
 }
 
-bool model::Bitmap::from_base64(const QString& data)
+bool glaxnimate::model::Bitmap::from_base64(const QString& data)
 {
     auto chunks = data.splitRef(',');
     if ( chunks.size() != 2 )
@@ -121,7 +121,7 @@ bool model::Bitmap::from_base64(const QString& data)
     return !image.isNull();
 }
 
-QUrl model::Bitmap::to_url() const
+QUrl glaxnimate::model::Bitmap::to_url() const
 {
     if ( !embedded() )
     {
@@ -147,7 +147,7 @@ QUrl model::Bitmap::to_url() const
     return QUrl(data_url);
 }
 
-QString model::Bitmap::object_name() const
+QString glaxnimate::model::Bitmap::object_name() const
 {
     if ( embedded() )
         return tr("Embedded image");
@@ -155,13 +155,13 @@ QString model::Bitmap::object_name() const
 }
 
 
-QFileInfo model::Bitmap::file_info() const
+QFileInfo glaxnimate::model::Bitmap::file_info() const
 {
     return QFileInfo(document()->io_options().path, filename.get());
 }
 
 
-bool model::Bitmap::remove_if_unused(bool)
+bool glaxnimate::model::Bitmap::remove_if_unused(bool)
 {
     if ( users().empty() )
     {
@@ -174,13 +174,13 @@ bool model::Bitmap::remove_if_unused(bool)
     return false;
 }
 
-void model::Bitmap::set_pixmap(const QImage& pix, const QString& format)
+void glaxnimate::model::Bitmap::set_pixmap(const QImage& pix, const QString& format)
 {
     this->format.set(format);
     data.set(build_embedded(pix));
 }
 
-model::DocumentNode * model::Bitmap::docnode_parent() const
+glaxnimate::model::DocumentNode * glaxnimate::model::Bitmap::docnode_parent() const
 {
     return document()->assets()->images.get();
 }

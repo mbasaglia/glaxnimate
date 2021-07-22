@@ -3,7 +3,7 @@
 #include "io/base.hpp"
 #include "io/io_registry.hpp"
 
-namespace io::svg {
+namespace glaxnimate::io::svg {
 
 
 class SvgFormat : public ImportExport
@@ -27,5 +27,5 @@ private:
 };
 
 
-} // namespace io::svg
+} // namespace glaxnimate::io::svg
 

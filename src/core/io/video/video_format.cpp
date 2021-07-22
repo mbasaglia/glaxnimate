@@ -15,7 +15,7 @@ extern "C" {
 #include "app/qstring_exception.hpp"
 #include "app/log/log.hpp"
 
-namespace av {
+namespace glaxnimate::av {
 
 template<int max_size, class Callback, class... Args>
 QString to_str(Callback callback, Args... args)
@@ -643,9 +643,9 @@ private:
     unsigned char * buffer;
 };
 
-} // namespace av
+} // namespace glaxnimate::av
 
-io::Autoreg<io::video::VideoFormat> io::video::VideoFormat::autoreg;
+glaxnimate::io::Autoreg<glaxnimate::io::video::VideoFormat> glaxnimate::io::video::VideoFormat::autoreg;
 
 
 static QStringList out_ext;
@@ -677,14 +677,14 @@ static void get_formats()
     }
 }
 
-QStringList io::video::VideoFormat::extensions() const
+QStringList glaxnimate::io::video::VideoFormat::extensions() const
 {
     if ( out_ext.empty() )
         get_formats();
     return out_ext;
 }
 
-bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
+bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model::Document* document, const QVariantMap& settings)
 {
     try
     {
@@ -800,7 +800,7 @@ bool io::video::VideoFormat::on_save(QIODevice& dev, const QString& name, model:
     }
 }
 
-io::SettingList io::video::VideoFormat::save_settings() const
+glaxnimate::io::SettingList glaxnimate::io::video::VideoFormat::save_settings() const
 {
     return {
         io::Setting{"bit_rate",     "Bitrate",      "Video bit rate",                               5000,   0, 10000},
@@ -811,7 +811,7 @@ io::SettingList io::video::VideoFormat::save_settings() const
     };
 }
 
-QString io::video::VideoFormat::library_version()
+QString glaxnimate::io::video::VideoFormat::library_version()
 {
     return QStringList{
         LIBAVUTIL_IDENT,

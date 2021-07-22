@@ -6,7 +6,7 @@
 #include "model/property/reference_property.hpp"
 #include "model/property/sub_object_property.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Image : public ShapeElement
 {
@@ -39,4 +39,4 @@ private:
     void on_update_image();
 };
 
-} // namespace model
+} // namespace glaxnimate::model

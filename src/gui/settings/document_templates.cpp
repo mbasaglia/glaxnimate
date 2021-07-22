@@ -9,6 +9,9 @@
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "model/assets/assets.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 
 settings::DocumentTemplate::DocumentTemplate(const QString& filename, bool* loaded)
 : filename(filename), document(load(loaded))

@@ -5,24 +5,24 @@
 
 #include "model/animation/join_animatables.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::Trim)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Trim)
 
-QIcon model::Trim::static_tree_icon()
+QIcon glaxnimate::model::Trim::static_tree_icon()
 {
     return QIcon::fromTheme("edit-cut");
 }
 
-QString model::Trim::static_type_name_human()
+QString glaxnimate::model::Trim::static_type_name_human()
 {
     return tr("Trim Path");
 }
 
-bool model::Trim::process_collected() const
+bool glaxnimate::model::Trim::process_collected() const
 {
     return multiple.get() == Simultaneously;
 }
 
-static void chunk_start(const math::bezier::Bezier& in, math::bezier::Bezier& out, const math::bezier::LengthData::SplitInfo& split, int max = -1)
+static void chunk_start(const glaxnimate::math::bezier::Bezier& in, glaxnimate::math::bezier::Bezier& out, const glaxnimate::math::bezier::LengthData::SplitInfo& split, int max = -1)
 {
     if ( max == -1 )
         max = in.closed_size();
@@ -40,7 +40,7 @@ static void chunk_start(const math::bezier::Bezier& in, math::bezier::Bezier& ou
         out.push_back(in[i]);
 }
 
-static void chunk_end(const math::bezier::Bezier& in, math::bezier::Bezier& out, const math::bezier::LengthData::SplitInfo& split, int min = 0)
+static void chunk_end(const glaxnimate::math::bezier::Bezier& in, glaxnimate::math::bezier::Bezier& out, const glaxnimate::math::bezier::LengthData::SplitInfo& split, int min = 0)
 {
 
     if ( split.ratio == 1 && min == 0 )
@@ -56,7 +56,7 @@ static void chunk_end(const math::bezier::Bezier& in, math::bezier::Bezier& out,
         out.push_back(in.split_segment_point(split.index, split.ratio));
 }
 
-math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::bezier::MultiBezier& mbez) const
+glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(glaxnimate::model::FrameTime t, const math::bezier::MultiBezier& mbez) const
 {
     if ( mbez.empty() )
         return {};
@@ -195,17 +195,17 @@ math::bezier::MultiBezier model::Trim::process(model::FrameTime t, const math::b
 }
 
 static void to_path_value(
-    const math::bezier::MultiBezier& mbez,
-    std::vector<model::Path*>& paths,
-    model::Group* group,
-    model::Document* document
+    const glaxnimate::math::bezier::MultiBezier& mbez,
+    std::vector<glaxnimate::model::Path*>& paths,
+    glaxnimate::model::Group* group,
+    glaxnimate::model::Document* document
 )
 {
     for ( int i = 0; i < mbez.size(); i++ )
     {
         if ( i >= int(paths.size()) )
         {
-            auto new_path = std::make_unique<model::Path>(document);
+            auto new_path = std::make_unique<glaxnimate::model::Path>(document);
             paths.push_back(new_path.get());
             group->shapes.insert(std::move(new_path));
         }
@@ -216,24 +216,24 @@ static void to_path_value(
 }
 
 static void to_path_frame(
-    const math::bezier::MultiBezier& mbez,
-    std::vector<model::Path*>& paths,
-    model::FrameTime t,
-    const model::KeyframeTransition& transition,
-    model::Group* group,
-    model::Document* document
+    const glaxnimate::math::bezier::MultiBezier& mbez,
+    std::vector<glaxnimate::model::Path*>& paths,
+    glaxnimate::model::FrameTime t,
+    const glaxnimate::model::KeyframeTransition& transition,
+    glaxnimate::model::Group* group,
+    glaxnimate::model::Document* document
 )
 {
     for ( int i = 0; i < mbez.size(); i++ )
     {
         if ( i >= int(paths.size()) )
         {
-            auto new_path = std::make_unique<model::Path>(document);
+            auto new_path = std::make_unique<glaxnimate::model::Path>(document);
             if ( t > 0 )
             {
-                model::KeyframeTransition trans;
+                glaxnimate::model::KeyframeTransition trans;
                 trans.set_hold(true);
-                new_path->shape.set_keyframe(0, math::bezier::Bezier{})->set_transition({trans});
+                new_path->shape.set_keyframe(0, glaxnimate::math::bezier::Bezier{})->set_transition({trans});
             }
             paths.push_back(new_path.get());
             group->shapes.insert(std::move(new_path));
@@ -244,9 +244,9 @@ static void to_path_frame(
     }
 }
 
-std::unique_ptr<model::ShapeElement> model::Trim::to_path() const
+std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Trim::to_path() const
 {
-    auto group = std::make_unique<model::Group>(document());
+    auto group = std::make_unique<glaxnimate::model::Group>(document());
     group->name.set(name.get());
     group->group_color.set(group_color.get());
     group->visible.set(visible.get());
@@ -263,7 +263,7 @@ std::unique_ptr<model::ShapeElement> model::Trim::to_path() const
     JoinAnimatables ja(std::move(properties), JoinAnimatables::NoValues);
     FrameTime cur_time = ja.properties()[0]->time();
 
-    std::vector<model::Path*> paths;
+    std::vector<glaxnimate::model::Path*> paths;
 
     if ( ja.animated() )
     {
@@ -284,8 +284,8 @@ std::unique_ptr<model::ShapeElement> model::Trim::to_path() const
 
 }
 
-void model::Trim::on_paint(QPainter* painter, model::FrameTime t, model::VisualNode::PaintMode mode, model::Modifier*) const
+void glaxnimate::model::Trim::on_paint(QPainter* painter, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode mode, glaxnimate::model::Modifier*) const
 {
     for ( auto sib : affected() )
-        sib->paint(painter, t, mode, const_cast<model::Trim*>(this));
+        sib->paint(painter, t, mode, const_cast<glaxnimate::model::Trim*>(this));
 }

@@ -4,37 +4,37 @@
 
 #include "model/composition.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::Layer)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Layer)
 
-void model::Layer::ChildLayerIterator::find_first()
+void glaxnimate::model::Layer::ChildLayerIterator::find_first()
 {
     while ( index < comp->size() && (*comp)[index]->docnode_group_parent() != parent )
         ++index;
 }
 
-model::VisualNode* model::Layer::ChildLayerIterator::operator*() const
+glaxnimate::model::VisualNode* glaxnimate::model::Layer::ChildLayerIterator::operator*() const
 {
     return (*comp)[index];
 }
 
-model::VisualNode* model::Layer::ChildLayerIterator::operator->() const
+glaxnimate::model::VisualNode* glaxnimate::model::Layer::ChildLayerIterator::operator->() const
 {
     return (*comp)[index];
 }
 
-model::VisualNode * model::Layer::docnode_group_parent() const
+glaxnimate::model::VisualNode * glaxnimate::model::Layer::docnode_group_parent() const
 {
     return parent.get();
 }
 
-model::VisualNode * model::Layer::docnode_group_child(int index) const
+glaxnimate::model::VisualNode * glaxnimate::model::Layer::docnode_group_child(int index) const
 {
     ChildLayerIterator iter(owner(), this, 0);
     std::advance(iter, index);
     return *iter;
 }
 
-int model::Layer::docnode_group_child_count() const
+int glaxnimate::model::Layer::docnode_group_child_count() const
 {
     if ( !owner() )
         return 0;
@@ -45,16 +45,16 @@ int model::Layer::docnode_group_child_count() const
     return sz;
 }
 
-std::vector<model::DocumentNode*> model::Layer::valid_parents() const
+std::vector<glaxnimate::model::DocumentNode*> glaxnimate::model::Layer::valid_parents() const
 {
-    std::vector<model::DocumentNode*> refs;
+    std::vector<glaxnimate::model::DocumentNode*> refs;
     refs.push_back(nullptr);
 
     if ( is_top_level() )
     {
         for ( const auto& sh : *owner() )
         {
-            if ( auto lay = qobject_cast<model::Layer*>(sh.get()) )
+            if ( auto lay = qobject_cast<glaxnimate::model::Layer*>(sh.get()) )
                 if ( !is_ancestor_of(lay) )
                     refs.push_back(lay);
         }
@@ -63,7 +63,7 @@ std::vector<model::DocumentNode*> model::Layer::valid_parents() const
     return refs;
 }
 
-bool model::Layer::is_valid_parent(model::DocumentNode* node) const
+bool glaxnimate::model::Layer::is_valid_parent(glaxnimate::model::DocumentNode* node) const
 {
     if ( node == nullptr )
         return true;
@@ -77,7 +77,7 @@ bool model::Layer::is_valid_parent(model::DocumentNode* node) const
     return false;
 }
 
-bool model::Layer::is_ancestor_of ( const model::Layer* other ) const
+bool glaxnimate::model::Layer::is_ancestor_of ( const glaxnimate::model::Layer* other ) const
 {
     while ( other )
     {
@@ -90,18 +90,18 @@ bool model::Layer::is_ancestor_of ( const model::Layer* other ) const
     return false;
 }
 
-void model::Layer::set_time(model::FrameTime t)
+void glaxnimate::model::Layer::set_time(glaxnimate::model::FrameTime t)
 {
     Object::set_time(relative_time(t));
 }
 
 
-bool model::Layer::is_top_level() const
+bool glaxnimate::model::Layer::is_top_level() const
 {
     return qobject_cast<Composition*>(docnode_parent());
 }
 
-void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode, model::Modifier* modifier) const
+void glaxnimate::model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode, glaxnimate::model::Modifier* modifier) const
 {
     if ( !visible.get() || (mode == Render && !render.get()) )
         return;
@@ -141,7 +141,7 @@ void model::Layer::paint(QPainter* painter, FrameTime time, PaintMode mode, mode
     }
 }
 
-QPainterPath model::Layer::to_clip(model::FrameTime time) const
+QPainterPath glaxnimate::model::Layer::to_clip(glaxnimate::model::FrameTime time) const
 {
     time = relative_time(time);
     if ( !animation->time_visible(time) || !render.get() )
@@ -150,7 +150,7 @@ QPainterPath model::Layer::to_clip(model::FrameTime time) const
     return Group::to_clip(time);
 }
 
-QPainterPath model::Layer::to_painter_path(model::FrameTime time) const
+QPainterPath glaxnimate::model::Layer::to_painter_path(glaxnimate::model::FrameTime time) const
 {
     time = relative_time(time);
     if ( !animation->time_visible(time) || !render.get() )
@@ -161,19 +161,19 @@ QPainterPath model::Layer::to_painter_path(model::FrameTime time) const
 
 
 
-QIcon model::Layer::tree_icon() const
+QIcon glaxnimate::model::Layer::tree_icon() const
 {
     return mask->has_mask() ? QIcon::fromTheme("path-clip-edit") : QIcon::fromTheme("folder");
 }
 
-QIcon model::Layer::static_tree_icon()
+QIcon glaxnimate::model::Layer::static_tree_icon()
 {
     return QIcon::fromTheme("folder");
 }
 
-std::unique_ptr<model::ShapeElement> model::Layer::to_path() const
+std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Layer::to_path() const
 {
-    auto clone = std::make_unique<model::Layer>(document());
+    auto clone = std::make_unique<glaxnimate::model::Layer>(document());
 
     for ( BaseProperty* prop : properties() )
     {
@@ -184,7 +184,7 @@ std::unique_ptr<model::ShapeElement> model::Layer::to_path() const
     for ( const auto& shape : shapes )
     {
         clone->shapes.insert(shape->to_path());
-        if ( shape->is_instance<model::Modifier>() )
+        if ( shape->is_instance<glaxnimate::model::Modifier>() )
             break;
     }
 

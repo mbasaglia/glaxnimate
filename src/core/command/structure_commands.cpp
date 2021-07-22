@@ -1,6 +1,7 @@
 #include "structure_commands.hpp"
 #include "shape_commands.hpp"
 
+using namespace glaxnimate;
 
 command::DeferredCommandBase::~DeferredCommandBase() = default;
 

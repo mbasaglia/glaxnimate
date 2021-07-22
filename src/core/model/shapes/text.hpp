@@ -8,7 +8,7 @@
 #include "model/property/reference_property.hpp"
 #include "shape.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Font : public Object
 {
@@ -124,4 +124,4 @@ private:
     mutable QPainterPath shape_cache;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

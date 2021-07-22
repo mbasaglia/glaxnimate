@@ -2,7 +2,7 @@
 #include <utility>
 #include "bezier.hpp"
 
-namespace math::bezier {
+namespace glaxnimate::math::bezier {
 
 /**
  * \brief Turns all points in the curve to smooth, sutomatically setting tangents
@@ -33,4 +33,4 @@ ProjectResult project(const Bezier& curve, const QPointF& p);
 
 ProjectResult project(const BezierSegment& segment, const QPointF& p);
 
-} // namespace math
+} // namespace glaxnimate::math

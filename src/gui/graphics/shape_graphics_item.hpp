@@ -3,7 +3,7 @@
 
 #include "model/shapes/shape.hpp"
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class ShapeGraphicsItem : public DocumentNodeGraphicsItem
 {
@@ -25,4 +25,4 @@ public:
     }
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

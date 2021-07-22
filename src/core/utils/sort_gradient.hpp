@@ -4,7 +4,7 @@
 
 #include <QGradient>
 
-namespace utils {
+namespace glaxnimate::utils {
 
 inline bool gradient_stop_comparator(const QGradientStop& a, const QGradientStop& b) noexcept
 {
@@ -16,4 +16,4 @@ inline void sort_gradient(QGradientStops& stops)
     std::sort(stops.begin(), stops.end(), &gradient_stop_comparator);
 }
 
-} // namespace utils
+} // namespace glaxnimate::utils

@@ -2,7 +2,7 @@
 
 #include <tuple>
 
-namespace model::detail {
+namespace glaxnimate::model::detail {
 
 
 template<class FuncT, class... Args, std::size_t... I>
@@ -17,4 +17,4 @@ auto invoke(const FuncT& fun, const Args&... t)
   return invoke_impl(fun, std::make_index_sequence<ArgCount>(), std::make_tuple(t...));
 }
 
-} // namespace model::detail
+} // namespace glaxnimate::model::detail

@@ -31,7 +31,7 @@ public:
     model::VisualNode* current_document_node() const override;
     void set_current_document_node(model::VisualNode* node) override;
 
-    void switch_tool(tools::Tool* tool) override;
+    void switch_tool(gui::tools::Tool* tool) override;
 
     QWidget* as_widget() override { return this; }
 

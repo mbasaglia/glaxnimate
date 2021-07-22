@@ -3,12 +3,16 @@
 #include <QAbstractButton>
 
 
+class QTabBar;
+
+namespace glaxnimate::gui {
+
 class TabBarCloseButton : public QAbstractButton
 {
     Q_OBJECT
 
 public:
-    static void add_button(class QTabBar* bar, int index);
+    static void add_button(QTabBar* bar, int index);
 
     explicit TabBarCloseButton(QWidget *parent = nullptr);
 
@@ -19,3 +23,4 @@ public:
     void paintEvent(QPaintEvent *event) override;
 };
 
+} // namespace glaxnimate::gui

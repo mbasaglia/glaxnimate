@@ -2,7 +2,7 @@
 
 #include <QGraphicsObject>
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 namespace Types{enum Types
 {
@@ -21,4 +21,4 @@ public:
     int type() const override { return TypeV; }
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

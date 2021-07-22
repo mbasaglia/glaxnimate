@@ -1,5 +1,10 @@
 #include "gradient_list_model.hpp"
 
+
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
+
 void item_models::GradientListModel::set_defs(model::Assets* defs)
 {
     beginResetModel();

@@ -5,6 +5,8 @@
 
 #include "operations.hpp"
 
+using namespace glaxnimate;
+
 // see https://pomax.github.io/bezierinfo/#abc (this returns A given B)
 QPointF math::bezier::get_quadratic_handle(const math::bezier::BezierSegment& segment, const QPointF& B, qreal t)
 {

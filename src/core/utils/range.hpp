@@ -2,7 +2,7 @@
 
 #include <iterator>
 
-namespace utils {
+namespace glaxnimate::utils {
 
 
 template<class Iterator, class Traits=Iterator>
@@ -26,4 +26,4 @@ private:
     iterator end_;
 };
 
-} // namespace utils
+} // namespace glaxnimate::utils

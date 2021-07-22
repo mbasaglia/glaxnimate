@@ -3,6 +3,7 @@
 #include "model/composition.hpp"
 #include "model/document.hpp"
 
+using namespace glaxnimate;
 
 namespace {
 

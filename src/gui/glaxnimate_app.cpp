@@ -2,6 +2,10 @@
 
 #include "app_info.hpp"
 
+
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 #ifdef Q_OS_ANDROID
 
 #include <QScreen>

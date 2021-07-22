@@ -5,20 +5,22 @@
 #include "model/shapes/group.hpp"
 #include "model/animation/join_animatables.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::Repeater)
+using namespace glaxnimate;
 
-QIcon model::Repeater::static_tree_icon()
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Repeater)
+
+QIcon glaxnimate::model::Repeater::static_tree_icon()
 {
     return QIcon::fromTheme("table");
 }
 
-QString model::Repeater::static_type_name_human()
+QString glaxnimate::model::Repeater::static_type_name_human()
 {
     return tr("Repeater");
 }
 
 
-math::bezier::MultiBezier model::Repeater::process(FrameTime t, const math::bezier::MultiBezier& mbez) const
+math::bezier::MultiBezier glaxnimate::model::Repeater::process(FrameTime t, const math::bezier::MultiBezier& mbez) const
 {
     QTransform matrix = transform->transform_matrix(t);
     math::bezier::MultiBezier out;
@@ -32,12 +34,12 @@ math::bezier::MultiBezier model::Repeater::process(FrameTime t, const math::bezi
 
 }
 
-bool model::Repeater::process_collected() const
+bool glaxnimate::model::Repeater::process_collected() const
 {
     return true;
 }
 
-void model::Repeater::on_paint(QPainter* painter, model::FrameTime t, model::VisualNode::PaintMode mode, model::Modifier*) const
+void glaxnimate::model::Repeater::on_paint(QPainter* painter, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode mode, glaxnimate::model::Modifier*) const
 {
     QTransform matrix = transform->transform_matrix(t);
     auto alpha_s = start_opacity.get_at(t);
@@ -62,9 +64,9 @@ void model::Repeater::on_paint(QPainter* painter, model::FrameTime t, model::Vis
 
 
 template<class T, class Func = std::plus<T>>
-static void increase_transform(model::AnimatedProperty<T>& into, const model::AnimatedProperty<T>& from, Func func = {})
+static void increase_transform(glaxnimate::model::AnimatedProperty<T>& into, const glaxnimate::model::AnimatedProperty<T>& from, Func func = {})
 {
-    using Keyframe = model::Keyframe<T>;
+    using Keyframe = glaxnimate::model::Keyframe<T>;
 
     for ( int i = 0, e = from.keyframe_count(); i < e; i++ )
     {
@@ -76,7 +78,7 @@ static void increase_transform(model::AnimatedProperty<T>& into, const model::An
     into.set(func(into.get(), from.get()));
 }
 
-static void increase_transform(model::Transform* into, const model::Transform* from)
+static void increase_transform(glaxnimate::model::Transform* into, const glaxnimate::model::Transform* from)
 {
     increase_transform(into->position, from->position);
     increase_transform(into->anchor_point, from->anchor_point);
@@ -86,14 +88,14 @@ static void increase_transform(model::Transform* into, const model::Transform* f
     });
 }
 
-std::unique_ptr<model::ShapeElement> model::Repeater::to_path() const
+std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Repeater::to_path() const
 {
-    auto group = std::make_unique<model::Group>(document());
+    auto group = std::make_unique<glaxnimate::model::Group>(document());
     group->name.set(name.get());
     group->visible.set(visible.get());
     group->locked.set(locked.get());
 
-    auto child = std::make_unique<model::Group>(document());
+    auto child = std::make_unique<glaxnimate::model::Group>(document());
     for ( auto sib : affected() )
         child->shapes.insert(sib->to_path());
 
@@ -107,7 +109,7 @@ std::unique_ptr<model::ShapeElement> model::Repeater::to_path() const
     for ( int i = 0; i < n_copies; i++ )
     {
         alpha_lerp = float(i) / (n_copies == 1 ? 1 : n_copies - 1);
-        auto cloned = static_cast<model::Group*>(group->shapes.insert_clone(child.get()));
+        auto cloned = static_cast<glaxnimate::model::Group*>(group->shapes.insert_clone(child.get()));
         anim.apply_to(&cloned->opacity, func, &start_opacity, &end_opacity);
 
 
@@ -123,7 +125,7 @@ std::unique_ptr<model::ShapeElement> model::Repeater::to_path() const
     return group;
 }
 
-int model::Repeater::max_copies() const
+int glaxnimate::model::Repeater::max_copies() const
 {
     int max = copies.get();
     for ( int i = 0, e = copies.keyframe_count(); i < e; ++i )

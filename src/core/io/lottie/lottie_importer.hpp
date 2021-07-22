@@ -9,7 +9,7 @@
 
 #include "lottie_private_common.hpp"
 
-namespace io::lottie::detail {
+namespace glaxnimate::io::lottie::detail {
 
 struct FontInfo
 {
@@ -869,4 +869,4 @@ private:
 };
 
 
-} // namespace io::lottie::detail
+} // namespace glaxnimate::io::lottie::detail

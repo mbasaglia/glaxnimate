@@ -5,6 +5,8 @@
 #include "model/document.hpp"
 #include "model/assets/precomposition.hpp"
 
+namespace glaxnimate::gui {
+
 class CompositionTabBar : public ClickableTabBar
 {
     Q_OBJECT
@@ -36,3 +38,6 @@ signals:
 private:
     model::Document* document = nullptr;
 };
+
+
+} // namespace glaxnimate::gui

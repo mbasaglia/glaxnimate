@@ -4,7 +4,7 @@
 #include <memory>
 #include <qdialog.h>
 
-namespace font {
+namespace glaxnimate::gui::font {
 
 class FontStyleDialog : public QDialog
 {

@@ -11,6 +11,9 @@
 #include "command/undo_macro_guard.hpp"
 #include "utils/pseudo_mutex.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 namespace {
 
 

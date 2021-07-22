@@ -6,6 +6,7 @@
 #include <QStyle>
 #include <QBoxLayout>
 
+namespace glaxnimate::gui {
 
 class FlowLayout : public QLayout
 {
@@ -38,3 +39,5 @@ private:
     Qt::Orientation orient = Qt::Horizontal;
     mutable QSize contents;
 };
+
+} // namespace glaxnimate::gui

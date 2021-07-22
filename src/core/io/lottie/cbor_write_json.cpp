@@ -357,7 +357,7 @@ static void objectContentToJson(const QCborMap& o, QByteArray &json, int indent,
     }
 }
 
-QByteArray io::lottie::cbor_write_json(const QCborMap &o, bool compact)
+QByteArray glaxnimate::io::lottie::cbor_write_json(const QCborMap &o, bool compact)
 {
     QByteArray json;
     json += compact ? "{" : "{\n";

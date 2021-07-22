@@ -16,7 +16,9 @@
 #include "widgets/enum_combo.hpp"
 #include "model/property/option_list_property.hpp"
 
-using namespace style;
+using namespace glaxnimate::gui::style;
+using namespace glaxnimate::gui;
+
 
 void PropertyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {

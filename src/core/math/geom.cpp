@@ -1,5 +1,7 @@
 #include "geom.hpp"
 
+using namespace glaxnimate;
+
 
 QPointF math::line_closest_point(const QPointF& line_a, const QPointF& line_b, const QPointF& p)
 {

@@ -9,6 +9,9 @@
 
 #include "widgets/tab_bar_close_button.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 
 CompositionTabBar::CompositionTabBar(QWidget* parent)
     : ClickableTabBar(parent)

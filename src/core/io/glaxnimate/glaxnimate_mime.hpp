@@ -5,7 +5,7 @@
 #include "io/mime/mime_serializer.hpp"
 #include "glaxnimate_format.hpp"
 
-namespace io::glaxnimate {
+namespace glaxnimate::io::glaxnimate {
 
 
 class GlaxnimateMime : public io::mime::MimeSerializer
@@ -25,4 +25,4 @@ private:
 };
 
 
-} // namespace io::glaxnimate
+} // namespace glaxnimate::io::glaxnimate

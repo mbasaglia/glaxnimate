@@ -1,7 +1,7 @@
 #include "reference_property.hpp"
 #include "model/document.hpp"
 
-void model::ReferencePropertyBase::transfer(model::Document* doc)
+void glaxnimate::model::ReferencePropertyBase::transfer(model::Document* doc)
 {
     auto ref = get_ref();
 

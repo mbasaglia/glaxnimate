@@ -1,6 +1,9 @@
 #include "property_model_private.hpp"
 #include "model/assets/assets.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 
 void item_models::PropertyModelBase::Private::begin_insert_row(item_models::PropertyModelBase::Private::Subtree* row_tree, int index)
 {

@@ -10,6 +10,7 @@
 #include "model/document.hpp"
 #include "app/settings/widget_builder.hpp"
 
+namespace glaxnimate::gui {
 
 class ImportExportDialog
 {
@@ -168,3 +169,4 @@ private:
     io::Options io_options_;
 };
 
+} // namespace glaxnimate::gui

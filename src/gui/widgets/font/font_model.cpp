@@ -4,6 +4,9 @@
 
 #include <QIcon>
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class font::FontModel::Private
 {
 public:

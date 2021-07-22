@@ -2,7 +2,7 @@
 #include "lottie_format.hpp"
 #include "cbor_write_json.hpp"
 
-QByteArray io::lottie::LottieHtmlFormat::html_head(ImportExport* ie, model::Document* document, const QString& extra)
+QByteArray glaxnimate::io::lottie::LottieHtmlFormat::html_head(ImportExport* ie, model::Document* document, const QString& extra)
 {
     return QString(
 R"(<!DOCTYPE html>
@@ -35,7 +35,7 @@ R"(<!DOCTYPE html>
     ;
 }
 
-bool io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QString&,
+bool glaxnimate::io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QString&,
                                            model::Document* document, const QVariantMap& settings)
 {
     file.write(html_head(this, document, "<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.3/lottie.js'></script>"));

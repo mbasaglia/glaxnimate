@@ -22,6 +22,9 @@
 #include "model/assets/named_color.hpp"
 #include "command/undo_macro_guard.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class DocumentSwatchWidget::Private
 {
 public:

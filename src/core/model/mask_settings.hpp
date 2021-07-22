@@ -5,7 +5,7 @@
 #include "model/animation/frame_time.hpp"
 #include "model/shapes/shape.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class MaskSettings : public Object
 {
@@ -22,4 +22,4 @@ public:
     bool has_mask() const { return mask.get(); }
 };
 
-} // namespace model
+} // namespace glaxnimate::model

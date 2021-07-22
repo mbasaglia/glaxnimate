@@ -4,7 +4,7 @@
 #include <QtMath>
 #include <QtGlobal>
 
-namespace math {
+namespace glaxnimate::math {
 
 constexpr const qreal pi = M_PI;
 constexpr const qreal tau = M_PI*2;
@@ -73,4 +73,4 @@ template<class T> constexpr qreal unlerp(const T& a, const T& b, const T& c)
     return qreal(c-a) / qreal(b-a);
 }
 
-} // namespace math
+} // namespace glaxnimate::math

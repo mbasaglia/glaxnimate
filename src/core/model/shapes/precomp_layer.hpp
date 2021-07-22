@@ -6,7 +6,7 @@
 #include "model/assets/precomposition.hpp"
 
 
-namespace model {
+namespace glaxnimate::model {
 
 class PreCompLayer : public ShapeElement
 {
@@ -63,4 +63,4 @@ private:
 
 };
 
-} // namespace model
+} // namespace glaxnimate::model

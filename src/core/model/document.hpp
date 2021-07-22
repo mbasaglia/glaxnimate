@@ -8,7 +8,7 @@
 #include "io/options.hpp"
 #include "model/comp_graph.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Assets;
 
@@ -87,4 +87,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

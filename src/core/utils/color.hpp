@@ -2,7 +2,7 @@
 #include <QColor>
 
 
-namespace utils::color {
+namespace glaxnimate::utils::color {
 
 inline constexpr qint32 rgba_distance_squared(QRgb c1, qint32 r, qint32 g, qint32 b, qint32 a) noexcept
 {
@@ -13,4 +13,4 @@ inline constexpr qint32 rgba_distance_squared(QRgb c1, qint32 r, qint32 g, qint3
     return r*r + g*g + b*b + a*a;
 }
 
-} // namespace utils::color
+} // namespace glaxnimate::utils::color

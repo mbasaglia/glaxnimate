@@ -6,6 +6,7 @@
 
 #include "io/base.hpp"
 
+namespace glaxnimate::gui {
 
 class IoStatusDialog : public QDialog
 {
@@ -33,3 +34,5 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui

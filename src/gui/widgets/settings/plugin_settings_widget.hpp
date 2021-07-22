@@ -6,10 +6,12 @@
 
 class QListWidgetItem;
 
-namespace plugin
+namespace glaxnimate::plugin
 {
 class Plugin;
 }
+
+namespace glaxnimate::gui {
 
 namespace Ui
 {
@@ -45,5 +47,5 @@ private:
     plugin::Plugin* current = nullptr;
 };
 
-
+} // namespace glaxnimate::gui
 #endif // SCRIPTING_PLUGINSETTINGSWIDGET_H

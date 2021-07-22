@@ -8,7 +8,7 @@
 #include "model/shapes/polystar.hpp"
 #include "math/math.hpp"
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class StarRadiusItem : public QGraphicsObject
 {
@@ -140,5 +140,5 @@ private:
     MoveHandle handle_inner;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics
 

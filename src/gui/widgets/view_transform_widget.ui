@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ViewTransformWidget</class>
+ <class>glaxnimate::gui::ViewTransformWidget</class>
  <widget class="QWidget" name="ViewTransformWidget">
   <property name="geometry">
    <rect>

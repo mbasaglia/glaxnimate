@@ -206,7 +206,7 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
     int row = 0;
 
     QLabel* logo = new QLabel(wid);
-    logo->setPixmap(QIcon(GlaxnimateApp::instance()->data_file("images/splash.svg")).pixmap(pix_size * 2));
+    logo->setPixmap(QIcon(gui::GlaxnimateApp::instance()->data_file("images/splash.svg")).pixmap(pix_size * 2));
     logo->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     lay->addWidget(logo, row++, 0, 1, 2, Qt::AlignCenter);
 
@@ -227,7 +227,7 @@ Follows a guide of the main icons and what they do.
         lay->addWidget(line, row++, 0, 1, 2);
 
         QLabel* preview = new QLabel(wid);
-        preview->setPixmap(GlaxnimateApp::theme_icon(p.first).pixmap(pix_size));
+        preview->setPixmap(QIcon::fromTheme(p.first).pixmap(pix_size));
         preview->setMinimumSize(pix_size);
         preview->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         lay->addWidget(preview, row, 0, Qt::AlignTop|Qt::AlignHCenter);

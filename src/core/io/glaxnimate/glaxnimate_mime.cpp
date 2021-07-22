@@ -8,6 +8,8 @@
 #include "model/visitor.hpp"
 #include "app/log/log.hpp"
 
+using namespace glaxnimate;
+
 io::Autoreg<io::glaxnimate::GlaxnimateMime> io::glaxnimate::GlaxnimateMime::autoreg;
 
 namespace {

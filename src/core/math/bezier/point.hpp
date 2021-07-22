@@ -4,7 +4,7 @@
 #include <QTransform>
 #include "math/vector.hpp"
 
-namespace math::bezier {
+namespace glaxnimate::math::bezier {
 
 enum PointType
 {
@@ -115,4 +115,4 @@ struct Point
 
 };
 
-} // namespace math::bezier
+} // namespace glaxnimate::math::bezier

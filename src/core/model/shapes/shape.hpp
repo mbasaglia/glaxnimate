@@ -4,7 +4,7 @@
 #include "math/bezier/bezier.hpp"
 #include "model/property/object_list_property.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 using ShapeListProperty = ObjectListProperty<class ShapeElement>;
 class Composition;
@@ -213,4 +213,4 @@ public:
 };
 
 
-} // namespace model
+} // namespace glaxnimate::model

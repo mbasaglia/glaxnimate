@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ShapeToolWidget</class>
+ <class>glaxnimate::gui::ShapeToolWidget</class>
  <widget class="QWidget" name="ShapeToolWidget">
   <property name="geometry">
    <rect>

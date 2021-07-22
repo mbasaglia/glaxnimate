@@ -5,7 +5,7 @@
 #include "model/transform.hpp"
 #include "model/property/sub_object_property.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Repeater : public StaticOverrides<Repeater, Modifier>
 {
@@ -32,4 +32,4 @@ protected:
 
 };
 
-} // namespace model
+} // namespace glaxnimate::model

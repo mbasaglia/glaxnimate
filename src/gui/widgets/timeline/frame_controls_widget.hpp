@@ -5,6 +5,9 @@
 #include <memory>
 #include <chrono>
 
+
+namespace glaxnimate::gui {
+
 namespace Ui {
 class FrameControlsWidget;
 }
@@ -60,5 +63,7 @@ private:
     std::chrono::milliseconds playback_tick{17};
     std::unique_ptr<Ui::FrameControlsWidget> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // FRAMECONTROLSWIDGET_H

@@ -4,7 +4,7 @@
 #include "model/animation_container.hpp"
 
 
-namespace model {
+namespace glaxnimate::model {
 
 class MainComposition : public Composition
 {
@@ -54,4 +54,4 @@ private:
     }
 };
 
-} // namespace model
+} // namespace glaxnimate::model

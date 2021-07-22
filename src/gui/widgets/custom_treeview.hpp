@@ -3,6 +3,7 @@
 #include <QTreeView>
 #include <QMouseEvent>
 
+namespace glaxnimate::gui {
 
 /**
  * \brief QTreeView but slighlty different mouse actions
@@ -28,3 +29,5 @@ protected:
             QTreeView::mouseReleaseEvent(event);
     }
 };
+
+} // namespace glaxnimate::gui

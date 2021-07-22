@@ -14,7 +14,7 @@
 #include "graphics/handle.hpp"
 #include "item_models/property_model_full.hpp"
 
-namespace timeline {
+namespace glaxnimate::gui::timeline {
 
 extern bool enable_debug;
 
@@ -504,4 +504,4 @@ private:
 };
 
 
-} // namespace timeline
+} // namespace glaxnimate::gui::timeline

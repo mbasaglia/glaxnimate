@@ -2,11 +2,11 @@
 #include "base.hpp"
 #include "math/bezier/point.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 class Styler;
-} // namespace model
+} // namespace glaxnimate::model
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 class EditTool : public Tool
 {
@@ -64,5 +64,5 @@ private:
     static Autoreg<EditTool> autoreg;
 };
 
-} // namespace tools
+} // namespace glaxnimate::gui::tools
 

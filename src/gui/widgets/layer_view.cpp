@@ -8,6 +8,8 @@
 #include "item_models/comp_filter_model.hpp"
 
 
+using namespace glaxnimate::gui;
+
 
 class glaxnimate::gui::LayerView::Private
 {
@@ -96,7 +98,7 @@ void glaxnimate::gui::LayerView::set_current_node(model::DocumentNode* node)
     }
 }
 
-model::VisualNode* glaxnimate::gui::LayerView::node(const QModelIndex& index) const
+glaxnimate::model::VisualNode* glaxnimate::gui::LayerView::node(const QModelIndex& index) const
 {
     return d->base_model->visual_node(d->proxy_model.mapToSource(index));
 }
@@ -106,7 +108,7 @@ void glaxnimate::gui::LayerView::set_composition(model::Composition* comp)
     d->proxy_model.set_composition(comp);
 }
 
-model::VisualNode * glaxnimate::gui::LayerView::current_node() const
+glaxnimate::model::VisualNode * glaxnimate::gui::LayerView::current_node() const
 {
     return node(currentIndex());
 }

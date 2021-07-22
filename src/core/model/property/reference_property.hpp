@@ -17,7 +17,7 @@ private:                                                    \
     // macro end
 
 
-namespace model {
+namespace glaxnimate::model {
 
 class ReferencePropertyBase : public BaseProperty
 {
@@ -160,4 +160,4 @@ private:
     PropertyCallback<void, Type*, Type*> on_changed;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

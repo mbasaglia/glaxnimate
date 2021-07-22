@@ -7,7 +7,7 @@
 
 #include "model/assets/asset.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Bitmap : public Asset
 {
@@ -75,4 +75,4 @@ private:
 
 };
 
-} // namespace model
+} // namespace glaxnimate::model

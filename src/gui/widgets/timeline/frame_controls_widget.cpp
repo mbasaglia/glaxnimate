@@ -5,6 +5,9 @@
 
 #include "glaxnimate_app.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 FrameControlsWidget::FrameControlsWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Ui::FrameControlsWidget>())
 {

@@ -3,7 +3,7 @@
 #include "math/math.hpp"
 #include "widgets/tools/star_tool_widget.hpp"
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 class StarTool : public DrawToolDrag
 {
@@ -121,7 +121,6 @@ private:
 };
 
 
-} // namespace tools
-
 tools::Autoreg<tools::StarTool> tools::StarTool::autoreg{max_priority + 2};
 
+} // namespace glaxnimate::gui::tools

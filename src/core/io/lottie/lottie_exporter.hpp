@@ -7,7 +7,7 @@
 #include "cbor_write_json.hpp"
 #include "lottie_private_common.hpp"
 
-namespace io::lottie::detail {
+namespace glaxnimate::io::lottie::detail {
 
 QLatin1String operator "" _l(const char* c, std::size_t sz)
 {
@@ -648,4 +648,4 @@ public:
 
 
 
-} // namespace io::lottie::detail
+} // namespace glaxnimate::io::lottie::detail

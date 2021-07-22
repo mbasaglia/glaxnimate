@@ -2,7 +2,7 @@
 
 #include "shape.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 
 class Rect : public Shape
@@ -34,4 +34,4 @@ public:
     }
 };
 
-} // namespace model
+} // namespace glaxnimate::model

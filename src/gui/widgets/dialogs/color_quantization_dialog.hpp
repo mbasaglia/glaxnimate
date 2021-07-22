@@ -4,6 +4,8 @@
 #include <memory>
 #include <QDialog>
 
+namespace glaxnimate::gui {
+
 class ColorQuantizationDialog : public QDialog
 {
     Q_OBJECT
@@ -27,5 +29,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // COLORQUANTIZATIONDIALOG_H

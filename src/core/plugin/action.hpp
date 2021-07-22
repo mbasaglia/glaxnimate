@@ -2,7 +2,7 @@
 
 #include "service.hpp"
 
-namespace plugin {
+namespace glaxnimate::plugin {
 
 
 class ActionService;
@@ -66,4 +66,4 @@ signals:
 };
 
 
-} // namespace plugin
+} // namespace glaxnimate::plugin

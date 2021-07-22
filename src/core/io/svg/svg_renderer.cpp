@@ -20,7 +20,8 @@
 #include "font_weight.hpp"
 
 
-using namespace io::svg::detail;
+using namespace glaxnimate::io::svg::detail;
+using namespace glaxnimate;
 
 class io::svg::SvgRenderer::Private
 {

@@ -30,19 +30,25 @@
 #include "plugin/plugin.hpp"
 #include "utils/pseudo_mutex.hpp"
 
-class IoStatusDialog;
-class AboutDialog;
-class ViewTransformWidget;
-class FlowLayout;
-class ShapeStylePreviewWidget;
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
 
-namespace tools {
-class Tool;
-} // namespace tools
-
-namespace model {
+namespace glaxnimate::model {
 class PreCompLayer;
-} // namespace model
+} // namespace glaxnimate::model
+
+namespace glaxnimate::gui {
+    namespace tools {
+    class Tool;
+    } // namespace tools
+
+
+    class IoStatusDialog;
+    class AboutDialog;
+    class ViewTransformWidget;
+    class FlowLayout;
+    class ShapeStylePreviewWidget;
+} // namespace glaxnimate::gui
 
 class GlaxnimateWindow::Private
 {

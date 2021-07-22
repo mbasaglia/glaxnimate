@@ -10,6 +10,8 @@
 #include "graphics/item_data.hpp"
 #include "tools/base.hpp"
 
+using namespace glaxnimate::gui;
+
 class graphics::DocumentScene::Private
 {
 public:
@@ -104,7 +106,7 @@ graphics::DocumentScene::~DocumentScene()
     clear_selection();
 }
 
-model::Document* graphics::DocumentScene::document() const
+glaxnimate::model::Document* graphics::DocumentScene::document() const
 {
     return d->document;
 }
@@ -235,7 +237,7 @@ void graphics::DocumentScene::clear_selection()
     d->selection.clear();
 }
 
-model::VisualNode* graphics::DocumentScene::item_to_node(const QGraphicsItem* item) const
+glaxnimate::model::VisualNode* graphics::DocumentScene::item_to_node(const QGraphicsItem* item) const
 {
     return d->item_to_node(item);
 }
@@ -371,12 +373,12 @@ namespace {
 
 struct SelectionFetcher
 {
-    std::set<model::VisualNode*> to_search;
+    std::set<glaxnimate::model::VisualNode*> to_search;
     int draw_order = 0;
     std::vector<int> indices;
-    std::vector<model::VisualNode*> selection;
+    std::vector<glaxnimate::model::VisualNode*> selection;
 
-    void gather(model::VisualNode* node)
+    void gather(glaxnimate::model::VisualNode* node)
     {
         if ( to_search.count(node) )
         {
@@ -395,7 +397,7 @@ struct SelectionFetcher
 
 } // namespace
 
-std::vector<model::VisualNode *> graphics::DocumentScene::cleaned_selection()
+std::vector<glaxnimate::model::VisualNode *> graphics::DocumentScene::cleaned_selection()
 {
     SelectionFetcher fetcher;
     fetcher.to_search.insert(d->selection.begin(), d->selection.end());
@@ -405,7 +407,7 @@ std::vector<model::VisualNode *> graphics::DocumentScene::cleaned_selection()
     return fetcher.selection;
 }
 
-const std::vector<model::VisualNode *> & graphics::DocumentScene::selection() const
+const std::vector<glaxnimate::model::VisualNode *> & graphics::DocumentScene::selection() const
 {
     return d->selection;
 }

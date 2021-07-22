@@ -4,6 +4,8 @@
 #include <QVector2D>
 #include "smaller_spinbox.hpp"
 
+namespace glaxnimate::gui {
+
 class Spin2D : public QWidget
 {
     Q_OBJECT
@@ -48,3 +50,5 @@ private:
     SmallerSpinBox* spin_y;
     QToolButton* lock = nullptr;
 };
+
+} // namespace glaxnimate::gui

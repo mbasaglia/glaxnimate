@@ -8,6 +8,9 @@
 #include "app/application.hpp"
 #include "io/io_registry.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 static std::vector<settings::ClipboardSettings::MimeSettings>& mutable_mime_types()
 {
     static std::vector<settings::ClipboardSettings::MimeSettings> settings {

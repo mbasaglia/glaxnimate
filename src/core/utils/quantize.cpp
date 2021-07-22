@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <memory>
 
+using namespace glaxnimate;
+
 std::vector<utils::quantize::ColorFrequency> utils::quantize::color_frequencies(QImage image, int alpha_threshold)
 {
     if ( image.format() != QImage::Format_RGBA8888 )
@@ -19,7 +21,7 @@ std::vector<utils::quantize::ColorFrequency> utils::quantize::color_frequencies(
     return std::vector<ColorFrequency>(count.begin(), count.end());
 }
 
-namespace utils::quantize::detail {
+namespace glaxnimate::utils::quantize::detail {
 
 static bool freq_sort_cmp(const ColorFrequency& a, const ColorFrequency& b) noexcept
 {
@@ -103,7 +105,7 @@ std::vector<QRgb> utils::quantize::k_modes(const QImage& image, int k)
 
 
 
-namespace utils::quantize::detail::k_means {
+namespace glaxnimate::utils::quantize::detail::k_means {
 
 struct Point
 {
@@ -303,7 +305,7 @@ std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int itera
  * \note Most of the code here is taken from Inkscape (with several changes)
  * \see https://gitlab.com/inkscape/inkscape/-/blob/master/src/trace/quantize.cpp for the original code
  */
-namespace utils::quantize::detail::octree {
+namespace glaxnimate::utils::quantize::detail::octree {
 
 
 inline Color operator>>(Color rgb, int s)
@@ -608,12 +610,12 @@ std::unique_ptr<Node> add_pixels(Node* ref, ColorFrequency* data, int data_size)
     return {};
 }
 
-} // namespace utils::quantize::detail::octree
+} // namespace glaxnimate::utils::quantize::detail::octree
 
 
 std::vector<QRgb> utils::quantize::octree(const QImage& image, int k)
 {
-    using namespace utils::quantize::detail::octree;
+    using namespace glaxnimate::utils::quantize::detail::octree;
 
     auto freq = color_frequencies(image);
 

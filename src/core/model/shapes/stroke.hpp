@@ -8,7 +8,7 @@
 #include "styler.hpp"
 #include "model/animation/animatable.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Stroke : public StaticOverrides<Stroke, Styler>
 {
@@ -72,5 +72,5 @@ protected:
     void on_paint(QPainter* p, FrameTime t, PaintMode, model::Modifier* modifier) const override;
 };
 
-} // namespace model
+} // namespace glaxnimate::model
 

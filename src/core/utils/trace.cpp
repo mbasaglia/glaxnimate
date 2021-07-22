@@ -4,6 +4,8 @@
 
 #include "utils/color.hpp"
 
+using namespace glaxnimate;
+
 
 class utils::trace::TraceOptions::Private
 {

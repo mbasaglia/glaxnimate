@@ -9,7 +9,7 @@
 #include "command/shape_commands.hpp"
 
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 class FillTool : public Tool
 {
@@ -167,9 +167,7 @@ private:
 };
 
 
-} // namespace tools
-
-
 tools::Autoreg<tools::FillTool> tools::FillTool::autoreg{max_priority+1};
 
+} // namespace glaxnimate::gui::tools
 

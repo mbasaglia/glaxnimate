@@ -5,7 +5,9 @@
 #include <QDialog>
 #include <QAbstractButton>
 
-namespace model { class Document; }
+namespace glaxnimate::model { class Document; }
+
+namespace glaxnimate::gui {
 
 class TimingDialog : public QDialog
 {
@@ -28,5 +30,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // ANIMATIONPROPERTIESDIALOG_H

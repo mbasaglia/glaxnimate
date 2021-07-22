@@ -7,7 +7,7 @@
 #include "model/assets/assets.hpp"
 
 
-class model::Document::Private
+class glaxnimate::model::Document::Private
 {
 public:
     Private(Document* doc)
@@ -24,45 +24,45 @@ public:
     FrameTime current_time = 0;
     bool record_to_keyframe = false;
     Assets assets;
-    model::CompGraph comp_graph;
+    glaxnimate::model::CompGraph comp_graph;
 };
 
 
-model::Document::Document(const QString& filename)
-    : d ( std::make_unique<model::Document::Private>(this) )
+glaxnimate::model::Document::Document(const QString& filename)
+    : d ( std::make_unique<glaxnimate::model::Document::Private>(this) )
 {
     d->io_options.filename = filename;
     d->comp_graph.add_composition(&d->main);
 }
 
-model::Document::~Document() = default;
+glaxnimate::model::Document::~Document() = default;
 
-QString model::Document::filename() const
+QString glaxnimate::model::Document::filename() const
 {
     return d->io_options.filename;
 }
 
-model::MainComposition * model::Document::main()
+glaxnimate::model::MainComposition * glaxnimate::model::Document::main()
 {
     return &d->main;
 }
 
-QVariantMap & model::Document::metadata()
+QVariantMap & glaxnimate::model::Document::metadata()
 {
     return d->metadata;
 }
 
-QUndoStack & model::Document::undo_stack()
+QUndoStack & glaxnimate::model::Document::undo_stack()
 {
     return d->undo_stack;
 }
 
-const io::Options & model::Document::io_options() const
+const glaxnimate::io::Options & glaxnimate::model::Document::io_options() const
 {
     return d->io_options;
 }
 
-void model::Document::set_io_options(const io::Options& opt)
+void glaxnimate::model::Document::set_io_options(const io::Options& opt)
 {
     bool em = opt.filename != d->io_options.filename;
     d->io_options = opt;
@@ -70,24 +70,24 @@ void model::Document::set_io_options(const io::Options& opt)
         emit filename_changed(d->io_options.filename);
 }
 
-model::DocumentNode * model::Document::find_by_uuid(const QUuid& n) const
+glaxnimate::model::DocumentNode * glaxnimate::model::Document::find_by_uuid(const QUuid& n) const
 {
     if ( auto it = d->assets.find_by_uuid(n) )
         return it;
     return d->main.docnode_find_by_uuid(n);
 }
 
-model::DocumentNode * model::Document::find_by_name(const QString& name) const
+glaxnimate::model::DocumentNode * glaxnimate::model::Document::find_by_name(const QString& name) const
 {
     return d->main.docnode_find_by_name(name);
 }
 
-QVariantList model::Document::find_by_type_name(const QString& type_name) const
+QVariantList glaxnimate::model::Document::find_by_type_name(const QString& type_name) const
 {
     return d->main.find_by_type_name(type_name);
 }
 
-bool model::Document::redo()
+bool glaxnimate::model::Document::redo()
 {
     if ( ! d->undo_stack.canRedo() )
         return false;
@@ -95,7 +95,7 @@ bool model::Document::redo()
     return true;
 }
 
-bool model::Document::undo()
+bool glaxnimate::model::Document::undo()
 {
     if ( ! d->undo_stack.canUndo() )
         return false;
@@ -103,12 +103,12 @@ bool model::Document::undo()
     return true;
 }
 
-model::FrameTime model::Document::current_time() const
+glaxnimate::model::FrameTime glaxnimate::model::Document::current_time() const
 {
     return d->current_time;
 }
 
-void model::Document::set_current_time(model::FrameTime t)
+void glaxnimate::model::Document::set_current_time(glaxnimate::model::FrameTime t)
 {
     if ( t >= 0 && t <= d->main.animation->last_frame.get() )
     {
@@ -118,7 +118,7 @@ void model::Document::set_current_time(model::FrameTime t)
     }
 }
 
-QSize model::Document::size() const
+QSize glaxnimate::model::Document::size() const
 {
     return {
         d->main.width.get(),
@@ -126,23 +126,23 @@ QSize model::Document::size() const
     };
 }
 
-bool model::Document::record_to_keyframe() const
+bool glaxnimate::model::Document::record_to_keyframe() const
 {
     return d->record_to_keyframe;
 }
 
-void model::Document::set_record_to_keyframe(bool r)
+void glaxnimate::model::Document::set_record_to_keyframe(bool r)
 {
     emit(record_to_keyframe_changed(d->record_to_keyframe = r));
 }
 
-void model::Document::push_command(QUndoCommand* cmd)
+void glaxnimate::model::Document::push_command(QUndoCommand* cmd)
 {
     d->undo_stack.push(cmd);
 }
 
 
-static void collect_names(const model::DocumentNode* node, const QString& prefix, QVector<QString>& out, const model::DocumentNode* target)
+static void collect_names(const glaxnimate::model::DocumentNode* node, const QString& prefix, QVector<QString>& out, const glaxnimate::model::DocumentNode* target)
 {
     if ( node != target && node->name.get().startsWith(prefix) )
         out.push_back(node->name.get());
@@ -150,7 +150,7 @@ static void collect_names(const model::DocumentNode* node, const QString& prefix
         collect_names(node->docnode_child(i), prefix, out, target);
 }
 
-QString model::Document::get_best_name(const model::DocumentNode* node, const QString& suggestion) const
+QString glaxnimate::model::Document::get_best_name(const glaxnimate::model::DocumentNode* node, const QString& suggestion) const
 {
     if ( !node )
         return {};
@@ -189,28 +189,28 @@ QString model::Document::get_best_name(const model::DocumentNode* node, const QS
     return name;
 }
 
-void model::Document::set_best_name(model::DocumentNode* node, const QString& suggestion) const
+void glaxnimate::model::Document::set_best_name(glaxnimate::model::DocumentNode* node, const QString& suggestion) const
 {
     if ( node )
         node->name.set(get_best_name(node, suggestion));
 }
 
-QRectF model::Document::rect() const
+QRectF glaxnimate::model::Document::rect() const
 {
     return QRectF(QPointF(0, 0), size());
 }
 
-model::Assets * model::Document::assets() const
+glaxnimate::model::Assets * glaxnimate::model::Document::assets() const
 {
     return &d->assets;
 }
 
-model::Object * model::Document::assets_obj() const
+glaxnimate::model::Object * glaxnimate::model::Document::assets_obj() const
 {
     return assets();
 }
 
-QImage model::Document::render_image(float time, QSize image_size, const QColor& background) const
+QImage glaxnimate::model::Document::render_image(float time, QSize image_size, const QColor& background) const
 {
     QSizeF real_size = size();
     if ( !image_size.isValid() )
@@ -232,17 +232,17 @@ QImage model::Document::render_image(float time, QSize image_size, const QColor&
     return image;
 }
 
-QImage model::Document::render_image() const
+QImage glaxnimate::model::Document::render_image() const
 {
     return render_image(d->current_time, size());
 }
 
-void model::Document::set_metadata(const QVariantMap& meta)
+void glaxnimate::model::Document::set_metadata(const QVariantMap& meta)
 {
     d->metadata = meta;
 }
 
-model::CompGraph & model::Document::comp_graph()
+glaxnimate::model::CompGraph & glaxnimate::model::Document::comp_graph()
 {
     return d->comp_graph;
 }

@@ -9,7 +9,7 @@
 #include "model/animation/animatable.hpp"
 #include "model/object.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Document;
 class ReferencePropertyBase;
@@ -337,6 +337,6 @@ private:
     mutable QPixmap group_icon;
 };
 
-} // namespace model
+} // namespace glaxnimate::model
 
-Q_DECLARE_METATYPE(std::vector<model::DocumentNode*>)
+Q_DECLARE_METATYPE(std::vector<glaxnimate::model::DocumentNode*>)

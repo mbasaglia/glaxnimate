@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FillToolWidget</class>
+ <class>glaxnimate::gui::FillToolWidget</class>
  <widget class="QWidget" name="FillToolWidget">
   <property name="geometry">
    <rect>

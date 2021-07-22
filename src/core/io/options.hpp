@@ -3,7 +3,7 @@
 #include <QDir>
 #include <QVariant>
 
-namespace io {
+namespace glaxnimate::io {
 
 
 class ImportExport;
@@ -22,4 +22,4 @@ struct Options
 };
 
 
-} // namespace io
+} // namespace glaxnimate::io

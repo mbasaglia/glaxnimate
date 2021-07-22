@@ -7,6 +7,9 @@
 #include "command/shape_commands.hpp"
 #include "command/undo_macro_guard.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class ResizeDialog::Private
 {
 public:

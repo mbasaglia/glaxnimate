@@ -24,6 +24,9 @@
 #include "gradient_editor.hpp"
 #include "text_attributes_editor.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 static graphics::DocumentNodeGraphicsItem * make_graphics_item_shape(model::ShapeElement* node)
 {
     return new graphics::ShapeGraphicsItem(node);

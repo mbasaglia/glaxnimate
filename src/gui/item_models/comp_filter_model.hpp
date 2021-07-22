@@ -2,7 +2,7 @@
 
 #include "proxy_base.hpp"
 
-namespace item_models {
+namespace glaxnimate::gui::item_models {
 
 class CompFilterModel : public ProxyBase
 {
@@ -149,4 +149,4 @@ private:
     QPersistentModelIndex root;
 };
 
-} // namespace item_models
+} // namespace glaxnimate::gui::item_models

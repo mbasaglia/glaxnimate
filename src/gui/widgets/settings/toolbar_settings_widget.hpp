@@ -4,6 +4,8 @@
 #include <memory>
 #include <QWidget>
 
+namespace glaxnimate::gui {
+
 class ToolbarSettingsWidget : public QWidget
 {
     Q_OBJECT
@@ -22,5 +24,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // TOOLBARSETTINGSWIDGET_H

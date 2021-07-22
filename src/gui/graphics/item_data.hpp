@@ -1,6 +1,6 @@
 #pragma once
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 enum ItemData
 {
@@ -10,4 +10,4 @@ enum ItemData
     AssociatedProperty
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

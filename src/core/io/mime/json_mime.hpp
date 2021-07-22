@@ -3,7 +3,7 @@
 
 #include "io/glaxnimate/glaxnimate_mime.hpp"
 
-namespace io::mime {
+namespace glaxnimate::io::mime {
 
 class JsonMime : public io::mime::MimeSerializer
 {
@@ -24,4 +24,4 @@ private:
     static Autoreg<JsonMime> autoreg;
 };
 
-} // namespace io::mime
+} // namespace glaxnimate::io::mime

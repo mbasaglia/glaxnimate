@@ -4,6 +4,9 @@
 
 #include "settings/toolbar_settings.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class ToolbarSettingsWidget::Private
 {
 public:

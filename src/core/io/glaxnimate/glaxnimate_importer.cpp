@@ -3,6 +3,8 @@
 #include "import_state.hpp"
 #include "model/assets/assets.hpp"
 
+using namespace glaxnimate;
+
 bool io::glaxnimate::GlaxnimateFormat::on_open ( QIODevice& file, const QString&, model::Document* document, const QVariantMap& )
 {
     QJsonDocument jdoc;

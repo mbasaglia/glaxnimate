@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>font::FontPreviewWidget</class>
+ <class>glaxnimate::gui::font::FontPreviewWidget</class>
  <widget class="QWidget" name="font::FontPreviewWidget">
   <property name="geometry">
    <rect>

@@ -7,7 +7,7 @@
 
 #include "app/settings/setting.hpp"
 
-namespace plugin {
+namespace glaxnimate::plugin {
 
 class PluginScript
 {
@@ -50,4 +50,4 @@ private:
     Plugin* owner = nullptr;
 };
 
-} // namespace plugin
+} // namespace glaxnimate::plugin

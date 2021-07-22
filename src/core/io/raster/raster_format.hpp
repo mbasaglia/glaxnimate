@@ -7,7 +7,7 @@
 #include "model/shapes/image.hpp"
 #include "model/assets/assets.hpp"
 
-namespace io::raster {
+namespace glaxnimate::io::raster {
 
 
 class RasterFormat : public ImportExport
@@ -29,5 +29,5 @@ private:
 };
 
 
-} // namespace io::raster
+} // namespace glaxnimate::io::raster
 

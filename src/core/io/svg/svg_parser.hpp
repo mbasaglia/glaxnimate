@@ -8,15 +8,15 @@
 #include "io/mime/mime_serializer.hpp"
 #include "io/base.hpp"
 
-namespace model {
+namespace glaxnimate::model {
     class Composition;
     class Document;
     class DocumentNode;
     class Object;
-} // namespace model
+} // namespace glaxnimate::model
 
 
-namespace io::svg {
+namespace glaxnimate::io::svg {
 
 class SvgParseError : public std::exception
 {
@@ -73,4 +73,4 @@ private:
  */
 QColor parse_color(const QString& color_str);
 
-} // namespace io::svg
+} // namespace glaxnimate::io::svg

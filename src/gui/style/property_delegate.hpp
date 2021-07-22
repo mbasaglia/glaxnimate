@@ -5,7 +5,7 @@
 #include "math/vector.hpp"
 #include "model/property/property.hpp"
 
-namespace style {
+namespace glaxnimate::gui::style {
 
 class PropertyDelegate : public color_widgets::ColorDelegate
 {
@@ -54,4 +54,4 @@ private:
     int force_height = 0;
 };
 
-} // namespace style
+} // namespace glaxnimate::gui::style

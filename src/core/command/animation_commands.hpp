@@ -5,7 +5,7 @@
 #include "command/base.hpp"
 #include "model/animation/animatable.hpp"
 
-namespace command {
+namespace glaxnimate::command {
 
 class SetKeyframe : public MergeableCommand<Id::SetKeyframe, SetKeyframe>
 {
@@ -172,4 +172,4 @@ private:
 };
 
 
-} // namespace command
+} // namespace glaxnimate::command

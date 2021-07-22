@@ -7,6 +7,8 @@
 #include "math/bezier/bezier.hpp"
 #include "model/assets/assets.hpp"
 
+using namespace glaxnimate;
+
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 
 

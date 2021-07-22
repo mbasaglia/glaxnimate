@@ -20,9 +20,9 @@ QTransform make_transform(
 
 } // namespace
 
-GLAXNIMATE_OBJECT_IMPL(model::Transform)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Transform)
 
-QTransform model::Transform::transform_matrix(FrameTime f) const
+QTransform glaxnimate::model::Transform::transform_matrix(FrameTime f) const
 {
     return make_transform(
         anchor_point.get_at(f),
@@ -32,7 +32,7 @@ QTransform model::Transform::transform_matrix(FrameTime f) const
     );
 }
 
-void model::Transform::set_transform_matrix(const QTransform& t)
+void glaxnimate::model::Transform::set_transform_matrix(const QTransform& t)
 {
     qreal a = t.m11();
     qreal b = t.m12();
@@ -63,7 +63,7 @@ void model::Transform::set_transform_matrix(const QTransform& t)
     scale.set(QVector2D(sx, sy));
 }
 
-void model::Transform::copy(model::Transform* other)
+void glaxnimate::model::Transform::copy(glaxnimate::model::Transform* other)
 {
     other->clone_into(this);
 }

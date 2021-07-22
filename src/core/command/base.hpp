@@ -2,7 +2,7 @@
 
 #include <QUndoCommand>
 
-namespace command {
+namespace glaxnimate::command {
 
 
 enum class Id {
@@ -44,4 +44,4 @@ protected:
     bool commit;
 };
 
-} // namespace command
+} // namespace glaxnimate::command

@@ -3,7 +3,7 @@
 #include "base.hpp"
 #include "mime/mime_serializer.hpp"
 
-namespace io {
+namespace glaxnimate::io {
 
 class IoRegistry
 {
@@ -119,4 +119,4 @@ public:
     Derived* const registered;
 };
 
-} // namespace io
+} // namespace glaxnimate::io

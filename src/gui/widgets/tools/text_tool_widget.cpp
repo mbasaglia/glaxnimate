@@ -13,7 +13,10 @@
 #include "widgets/font/font_delegate.hpp"
 #include "widgets/font/font_style_dialog.hpp"
 
-#include <QDebug>
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
+
 class TextToolWidget::Private : public ShapeToolWidget::Private
 {
 public:

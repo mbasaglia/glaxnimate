@@ -3,7 +3,7 @@
 #include <QAbstractItemDelegate>
 #include <QFontDatabase>
 
-namespace font {
+namespace glaxnimate::gui::font {
 
 
 class FontDelegate : public QAbstractItemDelegate
@@ -24,4 +24,4 @@ public:
     QFontDatabase::WritingSystem writingSystem;
 };
 
-} // namespace font
+} // namespace glaxnimate::gui::font

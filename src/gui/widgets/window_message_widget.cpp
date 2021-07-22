@@ -5,22 +5,24 @@
 
 #include <QPushButton>
 
-class WindowMessageWidget::Private
+using namespace glaxnimate::gui;
+
+class glaxnimate::gui::WindowMessageWidget::Private
 {
 public:
     Ui::WindowMessageWidget ui;
     std::queue<Message> messages;
 };
 
-WindowMessageWidget::WindowMessageWidget(QWidget* parent)
+glaxnimate::gui::WindowMessageWidget::WindowMessageWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<WindowMessageWidget::Private>())
 {
     d->ui.setupUi(this);
     hide();
 }
-WindowMessageWidget::~WindowMessageWidget() = default;
+glaxnimate::gui::WindowMessageWidget::~WindowMessageWidget() = default;
 
-void WindowMessageWidget::changeEvent ( QEvent* e )
+void glaxnimate::gui::WindowMessageWidget::changeEvent ( QEvent* e )
 {
     QWidget::changeEvent(e);
     if ( e->type() == QEvent::LanguageChange)
@@ -29,7 +31,7 @@ void WindowMessageWidget::changeEvent ( QEvent* e )
     }
 }
 
-void WindowMessageWidget::queue_message(WindowMessageWidget::Message msg)
+void glaxnimate::gui::WindowMessageWidget::queue_message(WindowMessageWidget::Message msg)
 {
     d->messages.emplace(std::move(msg));
     if ( d->messages.size() == 1 )
@@ -39,7 +41,7 @@ void WindowMessageWidget::queue_message(WindowMessageWidget::Message msg)
     }
 }
 
-void WindowMessageWidget::next_message()
+void glaxnimate::gui::WindowMessageWidget::next_message()
 {
     d->messages.pop();
     if ( d->messages.empty() )
@@ -48,7 +50,7 @@ void WindowMessageWidget::next_message()
         show_message(d->messages.front());
 }
 
-void WindowMessageWidget::show_message(const WindowMessageWidget::Message& msg)
+void glaxnimate::gui::WindowMessageWidget::show_message(const WindowMessageWidget::Message& msg)
 {
     d->ui.label_message->setText(msg.message);
 

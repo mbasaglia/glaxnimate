@@ -2,7 +2,7 @@
 #include <QAbstractProxyModel>
 #include "document_model_base.hpp"
 
-namespace item_models {
+namespace glaxnimate::gui::item_models {
 
 namespace detail {
 
@@ -153,4 +153,4 @@ private:
     }
 };
 
-} // namespace item_models
+} // namespace glaxnimate::gui::item_models

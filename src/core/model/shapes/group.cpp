@@ -4,31 +4,31 @@
 
 #include "model/document.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::Group)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Group)
 
 
-model::Group::Group(Document* document)
+glaxnimate::model::Group::Group(Document* document)
     : Ctor(document)
 {
     connect(transform.get(), &Object::property_changed,
             this, &Group::on_transform_matrix_changed);
 }
 
-void model::Group::on_paint(QPainter* painter, model::FrameTime time, model::VisualNode::PaintMode, model::Modifier*) const
+void glaxnimate::model::Group::on_paint(QPainter* painter, glaxnimate::model::FrameTime time, glaxnimate::model::VisualNode::PaintMode, glaxnimate::model::Modifier*) const
 {
     painter->setOpacity(
         painter->opacity() * opacity.get_at(time)
     );
 }
 
-void model::Group::on_transform_matrix_changed()
+void glaxnimate::model::Group::on_transform_matrix_changed()
 {
     emit bounding_rect_changed();
     emit local_transform_matrix_changed(local_transform_matrix(time()));
     propagate_transform_matrix_changed(transform_matrix(time()), group_transform_matrix(time()));
 }
 
-void model::Group::add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez, const QTransform& parent_transform) const
+void glaxnimate::model::Group::add_shapes(glaxnimate::model::FrameTime t, math::bezier::MultiBezier & bez, const QTransform& parent_transform) const
 {
     QTransform trans = transform.get()->transform_matrix(t) * parent_transform;
     for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
@@ -37,19 +37,19 @@ void model::Group::add_shapes(model::FrameTime t, math::bezier::MultiBezier & be
     }
 }
 
-QRectF model::Group::local_bounding_rect(FrameTime t) const
+QRectF glaxnimate::model::Group::local_bounding_rect(FrameTime t) const
 {
     if ( shapes.empty() )
         return QRectF(QPointF(0, 0), document()->size());
     return shapes.bounding_rect(t);
 }
 
-QTransform model::Group::local_transform_matrix(model::FrameTime t) const
+QTransform glaxnimate::model::Group::local_transform_matrix(glaxnimate::model::FrameTime t) const
 {
     return transform.get()->transform_matrix(t);
 }
 
-QPainterPath model::Group::to_painter_path(model::FrameTime t) const
+QPainterPath glaxnimate::model::Group::to_painter_path(glaxnimate::model::FrameTime t) const
 {
     QPainterPath path;
     for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
@@ -60,14 +60,14 @@ QPainterPath model::Group::to_painter_path(model::FrameTime t) const
 }
 
 
-QPainterPath model::Group::to_clip(FrameTime t) const
+QPainterPath glaxnimate::model::Group::to_clip(FrameTime t) const
 {
     return transform.get()->transform_matrix(t).map(to_painter_path(t));
 }
 
-std::unique_ptr<model::ShapeElement> model::Group::to_path() const
+std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Group::to_path() const
 {
-    auto clone = std::make_unique<model::Group>(document());
+    auto clone = std::make_unique<glaxnimate::model::Group>(document());
 
     for ( BaseProperty* prop : properties() )
     {
@@ -78,7 +78,7 @@ std::unique_ptr<model::ShapeElement> model::Group::to_path() const
     for ( const auto& shape : shapes )
     {
         clone->shapes.insert(shape->to_path());
-        if ( shape->is_instance<model::Modifier>() )
+        if ( shape->is_instance<glaxnimate::model::Modifier>() )
             break;
     }
 

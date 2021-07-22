@@ -3,7 +3,7 @@
 #include <QAbstractListModel>
 #include "plugin/snippet.hpp"
 
-namespace item_models {
+namespace glaxnimate::gui::item_models {
 
 class PythonSnippetModel : public QAbstractListModel
 {
@@ -108,4 +108,4 @@ private:
     std::vector<plugin::Snippet> snippets;
 };
 
-} // namespace item_models
+} // namespace glaxnimate::gui::item_models

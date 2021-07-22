@@ -4,7 +4,7 @@
 #include "draw_tool_drag.hpp"
 #include "model/shapes/rect.hpp"
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 class RectangleTool : public DrawToolDrag
 {
@@ -96,4 +96,4 @@ protected:
     static Autoreg<RectangleTool> autoreg;
 };
 
-} // namespace tools
+} // namespace glaxnimate::gui::tools

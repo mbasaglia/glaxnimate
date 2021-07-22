@@ -2,7 +2,7 @@
 #include <QString>
 #include <QVariant>
 
-namespace plugin {
+namespace glaxnimate::plugin {
 class Plugin;
 class PluginScript;
 
@@ -13,4 +13,4 @@ public:
     virtual QVariant get_global(const QString& name) = 0;
 };
 
-} // namespace plugin
+} // namespace glaxnimate::plugin

@@ -3,10 +3,10 @@
 #include <array>
 #include <QPointF>
 
-namespace math::bezier {
+namespace glaxnimate::math::bezier {
 
 
 using BezierSegment = std::array<QPointF, 4>;
 
 
-} // namespace math::bezier
+} // namespace glaxnimate::math::bezier

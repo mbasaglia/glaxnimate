@@ -5,6 +5,9 @@
 
 #include <QEvent>
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 PluginSettingsWidget::PluginSettingsWidget(QWidget* parent)
     : QWidget(parent), d ( std::make_unique<Ui::PluginSettingsWidget>() )
 {

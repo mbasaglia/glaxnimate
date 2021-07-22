@@ -5,6 +5,9 @@
 
 #include "app/widgets/no_close_on_enter.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class font::FontStyleDialog::Private
 {
 public:

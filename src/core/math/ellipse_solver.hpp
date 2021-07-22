@@ -4,7 +4,7 @@
 
 #include "bezier/bezier.hpp"
 
-namespace math {
+namespace glaxnimate::math {
 
 class EllipseSolver
 {
@@ -39,5 +39,5 @@ private:
     qreal xrot;
 };
 
-} // namespace math
+} // namespace glaxnimate::math
 

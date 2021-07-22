@@ -7,6 +7,8 @@
 
 #include "item_models/python_snippet_model.hpp"
 
+using namespace glaxnimate::gui;
+
 class SnippetListWidget::Private
 {
 public:

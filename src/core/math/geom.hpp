@@ -3,7 +3,7 @@
 #include <QPointF>
 #include "vector.hpp"
 
-namespace math {
+namespace glaxnimate::math {
 
 /**
  * \brief Finds the closest point to a line
@@ -19,4 +19,4 @@ QPointF line_closest_point(const QPointF& line_a, const QPointF& line_b, const Q
  */
 QPointF circle_center(const QPointF& p1, const QPointF& p2, const QPointF& p3);
 
-} // namespace math
+} // namespace glaxnimate::math

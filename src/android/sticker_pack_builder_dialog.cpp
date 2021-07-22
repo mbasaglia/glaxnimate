@@ -43,7 +43,7 @@ public:
 
             d->ui.layout_items->addItem(&spacer, row, 2);
 
-            button_delete.setIcon(GlaxnimateApp::theme_icon("edit-delete"));
+            button_delete.setIcon(QIcon::fromTheme("edit-delete"));
             connect(&button_delete, &QAbstractButton::clicked, d->parent, [d, this]{
                 d->remove(this);
             });
@@ -115,10 +115,10 @@ public:
         : parent(parent), opener(parent)
     {
         ui.setupUi(parent);
-        ui.button_add->setIcon(GlaxnimateApp::theme_icon("document-open"));
-        ui.button_export->setIcon(GlaxnimateApp::theme_icon("document-send"));
-        ui.button_clear->setIcon(GlaxnimateApp::theme_icon("edit-clear-all"));
-        ui.button_add_current->setIcon(GlaxnimateApp::theme_icon("list-add"));
+        ui.button_add->setIcon(QIcon::fromTheme("document-open"));
+        ui.button_export->setIcon(QIcon::fromTheme("document-send"));
+        ui.button_clear->setIcon(QIcon::fromTheme("edit-clear-all"));
+        ui.button_add_current->setIcon(QIcon::fromTheme("list-add"));
         ui.button_export->setEnabled(false);
 
         connect(&file_picker, &AndroidFilePicker::open_selected, parent, [this](const QUrl& url){

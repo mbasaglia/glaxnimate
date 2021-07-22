@@ -7,6 +7,8 @@
 #include "model/animation/animatable.hpp"
 #include "glaxnimate_app.hpp"
 
+using namespace glaxnimate::gui;
+
 class graphics::MoveHandle::Private
 {
 public:

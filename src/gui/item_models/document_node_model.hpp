@@ -3,7 +3,7 @@
 
 #include "document_model_base.hpp"
 
-namespace item_models {
+namespace glaxnimate::gui::item_models {
 
 
 class DocumentNodeModel : public DocumentModelBase
@@ -50,4 +50,4 @@ private:
 };
 
 
-} // namespace item_models
+} // namespace glaxnimate::gui::item_models

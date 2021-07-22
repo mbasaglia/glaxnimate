@@ -17,7 +17,7 @@
 
 #include "lottie_format.hpp"
 
-namespace io::lottie::detail {
+namespace glaxnimate::io::lottie::detail {
 
 class ValueTransform
 {
@@ -342,4 +342,4 @@ const QMap<int, QString> unsupported_layers = {
     {9, "Video"},
 };
 
-} // namespace io::lottie::detail
+} // namespace glaxnimate::io::lottie::detail

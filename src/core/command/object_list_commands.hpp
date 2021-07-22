@@ -4,7 +4,7 @@
 
 #include "model/property/object_list_property.hpp"
 
-namespace command {
+namespace glaxnimate::command {
 
 template<class ItemT, class PropT = model::ObjectListProperty<ItemT>>
 class AddObject : public QUndoCommand
@@ -123,4 +123,4 @@ private:
 };
 
 
-} // namespace command
+} // namespace glaxnimate::command

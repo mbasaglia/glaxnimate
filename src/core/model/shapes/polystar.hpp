@@ -2,7 +2,7 @@
 
 #include "shape.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 
 class PolyStar : public Shape
@@ -53,5 +53,5 @@ public:
     static math::bezier::Bezier draw(StarType type, const QPointF& pos, float r1, float r2, float angle_radians, int p);
 };
 
-} // namespace model
+} // namespace glaxnimate::model
 

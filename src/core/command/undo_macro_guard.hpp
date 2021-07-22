@@ -2,7 +2,7 @@
 
 #include "model/document.hpp"
 
-namespace command {
+namespace glaxnimate::command {
 
 
 class UndoMacroGuard
@@ -70,4 +70,4 @@ private:
 };
 
 
-} // namespace command
+} // namespace glaxnimate::command

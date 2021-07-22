@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CompoundTimelineWidget</class>
+ <class>glaxnimate::gui::CompoundTimelineWidget</class>
  <widget class="QWidget" name="CompoundTimelineWidget">
   <property name="geometry">
    <rect>
@@ -30,7 +30,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="CompositionTabBar" name="tab_bar" native="true">
+    <widget class="glaxnimate::gui::CompositionTabBar" name="tab_bar" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -148,7 +148,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="TimelineWidget" name="timeline">
+           <widget class="glaxnimate::gui::TimelineWidget" name="timeline">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>1</horstretch>
@@ -192,7 +192,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TimelineWidget</class>
+   <class>glaxnimate::gui::TimelineWidget</class>
    <extends>QGraphicsView</extends>
    <header>widgets/timeline/timeline_widget.hpp</header>
    <slots>
@@ -200,7 +200,7 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>CompositionTabBar</class>
+   <class>glaxnimate::gui::CompositionTabBar</class>
    <extends>QWidget</extends>
    <header>widgets/composition_tab_bar.hpp</header>
    <container>1</container>

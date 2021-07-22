@@ -11,6 +11,8 @@
 #include "plugin/io.hpp"
 #include "plugin/executor.hpp"
 
+using namespace glaxnimate;
+
 bool plugin::Plugin::run_script ( const plugin::PluginScript& script, const QVariantList& args ) const
 {
      if ( !data_.engine )

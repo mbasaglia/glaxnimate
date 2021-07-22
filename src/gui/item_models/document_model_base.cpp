@@ -9,6 +9,9 @@
 
 #include "drag_data.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 Qt::DropActions item_models::DocumentModelBase::supportedDropActions() const
 {
     return Qt::MoveAction;

@@ -44,9 +44,9 @@ class MainWindow::Private
 public:
     MainWindow* parent;
     Ui::MainWindow ui;
-    graphics::DocumentScene scene;
+    gui::graphics::DocumentScene scene;
     std::unique_ptr<model::Document> current_document;
-    tools::Tool* active_tool = nullptr;
+    gui::tools::Tool* active_tool = nullptr;
 
     QPointer<model::BrushStyle> main_brush;
     QPointer<model::BrushStyle> secondary_brush;
@@ -67,12 +67,12 @@ public:
     QAction* action_undo = nullptr;
     QAction* action_redo = nullptr;
     StickerPackBuilderDialog telegram_export_dialog;
-    style::PropertyDelegate property_delegate;
+    gui::style::PropertyDelegate property_delegate;
     QActionGroup *view_actions = nullptr;
     TimelineSlider* timeline_slider;
     std::vector<QSpacerItem*> toolbar_spacers;
     gui::LayerView* layer_view = nullptr;
-    item_models::DocumentNodeModel document_node_model;
+    gui::item_models::DocumentNodeModel document_node_model;
     utils::PseudoMutex updating_selection;
 
     Private(MainWindow* parent)
@@ -121,7 +121,7 @@ public:
             save_url(url, is_export);
         });
 
-        connect(&scene, &graphics::DocumentScene::node_user_selected, parent, [this](const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected){
+        connect(&scene, &gui::graphics::DocumentScene::node_user_selected, parent, [this](const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected){
             this->parent->update_selection(selected, deselected);
             if ( !selected.empty() )
                 this->parent->set_current_document_node(selected.back());
@@ -217,13 +217,13 @@ public:
         auto last_frame = current_document->main()->animation->last_frame.get();
         ui.play_controls->set_range(first_frame, last_frame);
         ui.play_controls->set_record_enabled(current_document->record_to_keyframe());
-        QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
-        QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
-        QObject::connect(current_document->main(), &model::MainComposition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
-        QObject::connect(ui.play_controls, &FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
-        QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &FrameControlsWidget::set_frame);
-        QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &FrameControlsWidget::set_record_enabled);
-        QObject::connect(ui.play_controls, &FrameControlsWidget::record_toggled, current_document.get(), &model::Document::set_record_to_keyframe);
+        QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &gui::FrameControlsWidget::set_min);
+        QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &gui::FrameControlsWidget::set_max);;
+        QObject::connect(current_document->main(), &model::MainComposition::fps_changed, ui.play_controls, &gui::FrameControlsWidget::set_fps);
+        QObject::connect(ui.play_controls, &gui::FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
+        QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &gui::FrameControlsWidget::set_frame);
+        QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &gui::FrameControlsWidget::set_record_enabled);
+        QObject::connect(ui.play_controls, &gui::FrameControlsWidget::record_toggled, current_document.get(), &model::Document::set_record_to_keyframe);
 
         // slider
         timeline_slider->setMinimum(first_frame);
@@ -237,7 +237,7 @@ public:
 
     }
 
-    void switch_tool(tools::Tool* tool)
+    void switch_tool(gui::tools::Tool* tool)
     {
         if ( !tool || tool == active_tool )
             return;
@@ -325,7 +325,7 @@ public:
         return menu;
     }
 
-    std::vector<QAction*> tool_actions(const tools::Registry::mapped_type& group, QActionGroup *tool_actions, tools::Tool*& to_activate, const tools::Event& event)
+    std::vector<QAction*> tool_actions(const gui::tools::Registry::mapped_type& group, QActionGroup *tool_actions, gui::tools::Tool*& to_activate, const gui::tools::Event& event)
     {
         std::vector<QAction*> ret;
 
@@ -355,24 +355,24 @@ public:
         QActionGroup *tool_actions_grp = new QActionGroup(parent);
         tool_actions_grp->setExclusive(true);
 
-        tools::Event event{ui.canvas, &scene, parent};
-        tools::Tool* to_activate = nullptr;
+        gui::tools::Event event{ui.canvas, &scene, parent};
+        gui::tools::Tool* to_activate = nullptr;
 
-        for ( auto action: tool_actions(tools::Registry::instance()[tools::Registry::Core], tool_actions_grp, to_activate, event) )
+        for ( auto action: tool_actions(gui::tools::Registry::instance()[gui::tools::Registry::Core], tool_actions_grp, to_activate, event) )
             layout_tools->addWidget(action_button(action));
 
         std::map<int, const char*> icons = {
-            {tools::Registry::Draw, "draw-brush"},
-            {tools::Registry::Shape, "shapes"},
+            {gui::tools::Registry::Draw, "draw-brush"},
+            {gui::tools::Registry::Shape, "shapes"},
         };
 
-        for ( const auto& grp : tools::Registry::instance() )
+        for ( const auto& grp : gui::tools::Registry::instance() )
         {
-            if ( grp.first == tools::Registry::Core )
+            if ( grp.first == gui::tools::Registry::Core )
                 continue;
 
             auto actions = tool_actions(grp.second, tool_actions_grp, to_activate, event);
-            QIcon icon = GlaxnimateApp::theme_icon(icons[grp.first]);
+            QIcon icon = QIcon::fromTheme(icons[grp.first]);
             QMenu* menu = action_menu(icon, "", layout_tools);
             for ( auto action: actions )
                 menu->addAction(action);
@@ -392,17 +392,17 @@ public:
         layout_tools->addItem(toolbar_spacers.back());
 
         layout_tools->addWidget(action_button_exclusive_opt(view_action(
-            GlaxnimateApp::theme_icon("player-time"), tr("Timeline"),
+            QIcon::fromTheme("player-time"), tr("Timeline"),
             view_actions, ui.time_container, true
         )));
 
         layout_tools->addWidget(action_button_exclusive_opt(view_action(
-            GlaxnimateApp::theme_icon("fill-color"), tr("Fill Style"),
+            QIcon::fromTheme("fill-color"), tr("Fill Style"),
             view_actions, ui.fill_style_widget
         )));
 
         layout_tools->addWidget(action_button_exclusive_opt(view_action(
-            GlaxnimateApp::theme_icon("object-stroke-style"), tr("Stroke Style"),
+            QIcon::fromTheme("object-stroke-style"), tr("Stroke Style"),
             view_actions, ui.stroke_style_widget
         )));
     }
@@ -444,17 +444,17 @@ public:
     {
         // Clipboard
         layout_actions->addWidget(action_button(
-            document_action_public(GlaxnimateApp::theme_icon("edit-cut"), tr("Cut"), &MainWindow::cut)
+            document_action_public(QIcon::fromTheme("edit-cut"), tr("Cut"), &MainWindow::cut)
         ));
         layout_actions->addWidget(action_button(
-            document_action_public(GlaxnimateApp::theme_icon("edit-copy"), tr("Copy"), &MainWindow::copy)
+            document_action_public(QIcon::fromTheme("edit-copy"), tr("Copy"), &MainWindow::copy)
         ));
         layout_actions->addWidget(action_button(
-            document_action_public(GlaxnimateApp::theme_icon("edit-paste"), tr("Paste"), &MainWindow::paste)
+            document_action_public(QIcon::fromTheme("edit-paste"), tr("Paste"), &MainWindow::paste)
         ));
 
         layout_actions->addWidget(action_button(
-            document_action_public(GlaxnimateApp::theme_icon("edit-delete"), tr("Delete Selected"), &MainWindow::delete_shapes)
+            document_action_public(QIcon::fromTheme("edit-delete"), tr("Delete Selected"), &MainWindow::delete_shapes)
         ));
 
         toolbar_spacers.push_back(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
@@ -462,17 +462,17 @@ public:
 
         // Layer
         layout_actions->addWidget(action_button(
-            document_action(GlaxnimateApp::theme_icon("layer-raise"), tr("Raise Above"), &Private::selection_raise)
+            document_action(QIcon::fromTheme("layer-raise"), tr("Raise Above"), &Private::selection_raise)
         ));
 
         layout_actions->addWidget(action_button(
-            document_action(GlaxnimateApp::theme_icon("layer-lower"), tr("Lower Below"), &Private::selection_lower)
+            document_action(QIcon::fromTheme("layer-lower"), tr("Lower Below"), &Private::selection_lower)
         ));
 
         // Undo-redo
-        action_undo = new QAction(GlaxnimateApp::theme_icon("edit-undo"), tr("Undo"), parent);
+        action_undo = new QAction(QIcon::fromTheme("edit-undo"), tr("Undo"), parent);
         layout_actions->addWidget(action_button(action_undo));
-        action_redo = new QAction(GlaxnimateApp::theme_icon("edit-redo"), tr("Redo"), parent);
+        action_redo = new QAction(QIcon::fromTheme("edit-redo"), tr("Redo"), parent);
         layout_actions->addWidget(action_button(action_redo));
     }
 
@@ -486,33 +486,33 @@ public:
 
         // Document actions
         layout_edit_actions->addWidget(action_button(
-            document_action(GlaxnimateApp::theme_icon("document-new"), tr("New"), &Private::document_new)
+            document_action(QIcon::fromTheme("document-new"), tr("New"), &Private::document_new)
         ));
 
-        QMenu* menu_open = action_menu(GlaxnimateApp::theme_icon("document-open"), tr("Open..."), layout_edit_actions);
+        QMenu* menu_open = action_menu(QIcon::fromTheme("document-open"), tr("Open..."), layout_edit_actions);
         menu_open->addAction(
-            document_action(GlaxnimateApp::theme_icon("document-open"), tr("Open"), &Private::document_open)
+            document_action(QIcon::fromTheme("document-open"), tr("Open"), &Private::document_open)
         );
         menu_open->addAction(
-            document_action(GlaxnimateApp::theme_icon("document-import"), tr("Import as Composition"), &Private::document_import)
+            document_action(QIcon::fromTheme("document-import"), tr("Import as Composition"), &Private::document_import)
         );
 
-        QMenu* menu_save = action_menu(GlaxnimateApp::theme_icon("document-save"), tr("Save..."), layout_edit_actions);
+        QMenu* menu_save = action_menu(QIcon::fromTheme("document-save"), tr("Save..."), layout_edit_actions);
         menu_save->addAction(
-            document_action(GlaxnimateApp::theme_icon("document-save"), tr("Save"), &Private::document_save)
+            document_action(QIcon::fromTheme("document-save"), tr("Save"), &Private::document_save)
         );
         menu_save->addAction(
-            document_action(GlaxnimateApp::theme_icon("document-save-as"), tr("Save As"), &Private::document_save_as)
+            document_action(QIcon::fromTheme("document-save-as"), tr("Save As"), &Private::document_save_as)
         );
         menu_save->addAction(
-            document_action(GlaxnimateApp::theme_icon("document-export"), tr("Export"), &Private::document_export)
+            document_action(QIcon::fromTheme("document-export"), tr("Export"), &Private::document_export)
         );
         menu_save->addAction(
-            document_action(GlaxnimateApp::theme_icon("view-preview"), tr("Save Frame as PNG"), &Private::document_frame_to_png)
+            document_action(QIcon::fromTheme("view-preview"), tr("Save Frame as PNG"), &Private::document_frame_to_png)
         );
 
         layout_edit_actions->addWidget(action_button(
-            document_action(GlaxnimateApp::theme_icon("document-send"), tr("Send to Telegram"), &Private::document_export_telegram)
+            document_action(QIcon::fromTheme("document-send"), tr("Send to Telegram"), &Private::document_export_telegram)
         ));
 
         // Spacer
@@ -524,18 +524,18 @@ public:
         ui.gridLayout->addWidget(layer_view, 1, 2, 2, 1);
         layer_view->set_base_model(&document_node_model);
         layout_edit_actions->addWidget(action_button_exclusive_opt(view_action(
-            GlaxnimateApp::theme_icon("dialog-layers"), tr("Layers"),
+            QIcon::fromTheme("dialog-layers"), tr("Layers"),
             view_actions, layer_view
         )));
         ScrollAreaEventFilter::setup_scroller(layer_view);
 
         layout_edit_actions->addWidget(action_button_exclusive_opt(view_action(
-            GlaxnimateApp::theme_icon("document-properties"), tr("Advanced Properties"),
+            QIcon::fromTheme("document-properties"), tr("Advanced Properties"),
             view_actions, ui.property_widget
         )));
         layer_view->setMinimumWidth(512);
 
-        auto help = new QAction(GlaxnimateApp::theme_icon("question"), tr("Help"), parent);
+        auto help = new QAction(QIcon::fromTheme("question"), tr("Help"), parent);
         layout_edit_actions->addWidget(action_button(help));
         connect(help, &QAction::triggered, parent, [this]{
             HelpDialog(parent).exec();
@@ -544,7 +544,7 @@ public:
         /*
         // Toggler
         layout_tools->addWidget(action_button(view_action(
-            GlaxnimateApp::theme_icon("overflow-menu"), tr("More Tools"),
+            QIcon::fromTheme("overflow-menu"), tr("More Tools"),
             nullptr, ui.widget_actions, true
         )));
         */
@@ -615,7 +615,7 @@ public:
                 return true;
             }
 
-            ImportExportDialog dialog(opts, parent);
+            gui::ImportExportDialog dialog(opts, parent);
 
             if ( !dialog.export_dialog() )
                 return false;
@@ -692,7 +692,7 @@ public:
             if ( !file_picker.select_open(false) )
             {
                 // Ugly widget as fallback
-                ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
+                gui::ImportExportDialog dialog(options, ui.centralwidget->parentWidget());
                 if ( dialog.import_dialog() )
                 {
                     options = dialog.io_options();
@@ -701,11 +701,6 @@ public:
                     current_document = std::make_unique<model::Document>(options.filename);
                     options.format->open(file, options.filename, current_document.get(), options.settings);
                     current_document->set_io_options(options);
-
-//                    QByteArray ba;
-//                    QFile f("/home/melano/Pictures/Dragons/Glax/stickers/durgenground.png");
-//                    f.open(QFile::ReadOnly);
-//                    current_document = document_opener.from_raster(f.readAll());
 
                     setup_document_open();
 
@@ -723,7 +718,7 @@ public:
         if ( !file_picker.select_open(true) )
         {
             // Ugly widget as fallback
-            ImportExportDialog dialog(current_document->io_options(), ui.centralwidget->parentWidget());
+            gui::ImportExportDialog dialog(current_document->io_options(), ui.centralwidget->parentWidget());
             if ( dialog.import_dialog() )
             {
                 io::Options options = dialog.io_options();
@@ -963,7 +958,7 @@ public:
 
                     auto btn_add_kf = new QToolButton();
                     btn_add_kf->setIcon(
-                        QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-add.svg"))
+                        QIcon(gui::GlaxnimateApp::instance()->data_file("images/icons/keyframe-add.svg"))
                     );
                     btn_add_kf->setText(tr("Add keyframe"));
                     connect(btn_add_kf, &QToolButton::clicked, node, [anim]{
@@ -976,7 +971,7 @@ public:
 
                     auto btn_rm_kf = new QToolButton();
                     btn_rm_kf->setIcon(
-                        QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg"))
+                        QIcon(gui::GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg"))
                     );
                     btn_rm_kf->setText(tr("Remove keyframe"));
                     connect(btn_rm_kf, &QToolButton::clicked, node, [anim]{
@@ -1061,7 +1056,7 @@ void MainWindow::changeEvent(QEvent *e)
         case QEvent::LanguageChange:
             d->ui.retranslateUi(this);
 
-            for ( const auto& grp : tools::Registry::instance() )
+            for ( const auto& grp : gui::tools::Registry::instance() )
             {
                 for ( const auto& tool : grp.second )
                 {
@@ -1074,18 +1069,18 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-model::Document* MainWindow::document() const
+glaxnimate::model::Document* MainWindow::document() const
 {
     return d->current_document.get();
 }
 
 
-model::Composition* MainWindow::current_composition() const
+glaxnimate::model::Composition* MainWindow::current_composition() const
 {
     return d->comp;
 }
 
-model::VisualNode* MainWindow::current_document_node() const
+glaxnimate::model::VisualNode* MainWindow::current_document_node() const
 {
     return d->current_node;
 }
@@ -1120,7 +1115,7 @@ qreal MainWindow::current_zoom() const
     return d->ui.canvas->get_zoom_factor();
 }
 
-model::BrushStyle* MainWindow::linked_brush_style(bool secondary) const
+glaxnimate::model::BrushStyle* MainWindow::linked_brush_style(bool secondary) const
 {
     if ( secondary )
         return d->secondary_brush;
@@ -1177,17 +1172,17 @@ void MainWindow::set_current_composition(model::Composition* comp)
     d->layer_view->set_composition(comp);
 }
 
-void MainWindow::switch_tool(tools::Tool* tool)
+void MainWindow::switch_tool(gui::tools::Tool* tool)
 {
     d->switch_tool(tool);
 }
 
-std::vector<model::VisualNode*> MainWindow::cleaned_selection() const
+std::vector<glaxnimate::model::VisualNode*> MainWindow::cleaned_selection() const
 {
     return d->scene.cleaned_selection();
 }
 
-std::vector<io::mime::MimeSerializer *> MainWindow::supported_mimes() const
+std::vector<glaxnimate::io::mime::MimeSerializer *> MainWindow::supported_mimes() const
 {
     return {
         io::IoRegistry::instance().serializer_from_slug("glaxnimate")
@@ -1197,7 +1192,7 @@ std::vector<io::mime::MimeSerializer *> MainWindow::supported_mimes() const
 void MainWindow::tool_triggered(bool checked)
 {
     if ( checked )
-        d->switch_tool(static_cast<QAction*>(sender())->data().value<tools::Tool*>());
+        d->switch_tool(static_cast<QAction*>(sender())->data().value<gui::tools::Tool*>());
 }
 
 void MainWindow::resizeEvent(QResizeEvent* e)
@@ -1217,7 +1212,7 @@ void MainWindow::showEvent(QShowEvent *e)
 
 void MainWindow::set_selection(const std::vector<model::VisualNode*>& selected)
 {
-    d->scene.user_select(selected, graphics::DocumentScene::Replace);
+    d->scene.user_select(selected, gui::graphics::DocumentScene::Replace);
 }
 
 void MainWindow::update_selection(const std::vector<model::VisualNode *> &selected, const std::vector<model::VisualNode *> &deselected)
@@ -1229,8 +1224,8 @@ void MainWindow::update_selection(const std::vector<model::VisualNode *> &select
 
     if ( sender() != &d->scene )
     {
-        d->scene.user_select(deselected, graphics::DocumentScene::Remove);
-        d->scene.user_select(selected, graphics::DocumentScene::Append);
+        d->scene.user_select(deselected, gui::graphics::DocumentScene::Remove);
+        d->scene.user_select(selected, gui::graphics::DocumentScene::Append);
     }
 
     if ( sender() != d->layer_view )

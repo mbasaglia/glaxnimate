@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "model/animation/keyframe_transition.hpp"
 
+namespace glaxnimate::gui {
+
 class KeyframeTransitionWidget : public QWidget
 {
     Q_OBJECT
@@ -34,3 +36,5 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui

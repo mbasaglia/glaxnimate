@@ -20,7 +20,7 @@ private:                                                        \
     // macro end
 
 
-namespace model {
+namespace glaxnimate::model {
 
 class KeyframeBase : public QObject
 {
@@ -813,4 +813,4 @@ private:
 };
 
 
-} // namespace model
+} // namespace glaxnimate::model

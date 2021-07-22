@@ -2,14 +2,14 @@
 
 #include <QGraphicsObject>
 
-namespace model {
+namespace glaxnimate::model {
 
 class VisualNode;
 class BaseProperty;
 
-} // namespace model
+} // namespace glaxnimate::model
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class DocumentNodeGraphicsItem : public QGraphicsObject
 {
@@ -71,4 +71,4 @@ private:
     mutable bool cache_dirty = true;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

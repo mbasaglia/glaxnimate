@@ -5,6 +5,8 @@
 
 #include "plugin/plugin.hpp"
 
+namespace glaxnimate::gui {
+
 class PluginUiDialog : public QDialog
 {
     Q_OBJECT
@@ -15,3 +17,5 @@ public:
     Q_INVOKABLE QVariant get_value(const QString& widget, const QString& property);
     Q_INVOKABLE bool set_value(const QString& widget, const QString& property, const QVariant& value);
 };
+
+} // namespace glaxnimate::gui

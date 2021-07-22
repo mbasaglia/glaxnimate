@@ -5,11 +5,11 @@
 
 #include "model/shapes/shape.hpp"
 
-namespace model {
+namespace glaxnimate::model {
     class MainComposition;
-} // namespace model
+} // namespace glaxnimate::model
 
-namespace io::svg {
+namespace glaxnimate::io::svg {
 
 enum AnimationType
 {
@@ -38,4 +38,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace io::svg
+} // namespace glaxnimate::io::svg

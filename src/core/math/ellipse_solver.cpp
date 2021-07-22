@@ -4,6 +4,8 @@
 #include "vector.hpp"
 #include "math.hpp"
 
+using namespace glaxnimate;
+
 
 math::EllipseSolver::EllipseSolver(const QPointF& center, const QPointF& radii, qreal xrot)
 : center(center),

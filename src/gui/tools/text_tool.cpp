@@ -11,7 +11,7 @@
 #include "glaxnimate_app.hpp"
 
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 class TextTool : public DrawToolBase
 {
@@ -339,6 +339,6 @@ private:
     glaxnimate::gui::SelectionManager* window = nullptr;
 };
 
-} // namespace tools
-
 tools::Autoreg<tools::TextTool> tools::TextTool::autoreg{max_priority + 3};
+
+} // namespace glaxnimate::gui::tools

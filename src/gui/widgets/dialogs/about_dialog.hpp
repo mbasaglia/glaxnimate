@@ -4,12 +4,14 @@
 #include <memory>
 #include <QDialog>
 
-namespace Ui
+namespace glaxnimate::gui::Ui
 {
 class AboutDialog;
 }
 
 class QListWidget;
+
+namespace glaxnimate::gui {
 
 class AboutDialog : public QDialog
 {
@@ -35,5 +37,7 @@ private slots:
 private:
     std::unique_ptr<Ui::AboutDialog> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // ABOUTDIALOG_H

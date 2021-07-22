@@ -6,7 +6,7 @@
 #include "math/bezier/point.hpp"
 #include "math/bezier/segment.hpp"
 
-namespace math::bezier {
+namespace glaxnimate::math::bezier {
 
 class LengthData
 {
@@ -329,6 +329,6 @@ private:
     bool at_end = true;
 };
 
-} // namespace math
+} // namespace glaxnimate::math
 
-Q_DECLARE_METATYPE(math::bezier::Bezier)
+Q_DECLARE_METATYPE(glaxnimate::math::bezier::Bezier)

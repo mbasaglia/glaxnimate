@@ -10,6 +10,8 @@
 
 #include "widgets/dialogs/glaxnimate_window.hpp"
 
+using namespace glaxnimate;
+
 auto parse_cli(const QStringList& args)
 {
     app::cli::Parser parser(AppInfo::instance().description());
@@ -45,7 +47,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    GlaxnimateApp app(argc, argv);
+    gui::GlaxnimateApp app(argc, argv);
 
     AppInfo::instance().init_qapplication();
 
@@ -73,7 +75,7 @@ int main(int argc, char *argv[])
 
     app.initialize();
 
-    GlaxnimateWindow window(!args.has_flag("default-ui"), args.has_flag("debug"));
+    gui::GlaxnimateWindow window(!args.has_flag("default-ui"), args.has_flag("debug"));
     sc.finish(&window);
     window.show();
 

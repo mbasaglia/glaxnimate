@@ -6,7 +6,7 @@
 
 class QAction;
 
-namespace settings {
+namespace glaxnimate::gui::settings {
 
 class DocumentTemplate
 {
@@ -68,5 +68,5 @@ private:
 
 };
 
-} // namespace settings
+} // namespace glaxnimate::gui::settings
 

@@ -9,8 +9,11 @@
 #include "model/shapes/precomp_layer.hpp"
 #include "model/shapes/styler.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
 
-using namespace timeline;
+
+using namespace glaxnimate::gui::timeline;
 
 class TimelineWidget::Private
 {

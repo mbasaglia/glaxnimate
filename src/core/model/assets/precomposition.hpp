@@ -3,7 +3,7 @@
 #include "asset.hpp"
 #include "model/composition.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Precomposition : public Composition, public AssetBase
 {
@@ -20,5 +20,5 @@ public:
 
 };
 
-} // namespace model
+} // namespace glaxnimate::model
 

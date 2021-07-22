@@ -5,9 +5,12 @@
 #include <memory>
 #include "model/animation/keyframe_transition.hpp"
 
+namespace glaxnimate::gui {
+
 namespace Ui {
 class KeyframeEditorWidget;
 }
+
 class KeyframeEditorWidget : public QWidget
 {
     Q_OBJECT
@@ -30,5 +33,7 @@ private slots:
 private:
     std::unique_ptr<Ui::KeyframeEditorWidget> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // KEYFRAMEEDITORWIDGET_H

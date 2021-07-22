@@ -6,6 +6,9 @@
 #include "model/shapes/precomp_layer.hpp"
 #include "model/shapes/text.hpp"
 
+
+using namespace glaxnimate::gui;
+
 void tools::MouseEvent::forward_to_scene() const
 {
     QEvent::Type type;

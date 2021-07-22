@@ -2,7 +2,7 @@
 
 #include "property_model_base.hpp"
 
-namespace item_models {
+namespace glaxnimate::gui::item_models {
 
 class PropertyModelFull : public PropertyModelBase
 {
@@ -39,5 +39,5 @@ private:
     Private* dd() const;
 };
 
-} // namespace item_models
+} // namespace glaxnimate::gui::item_models
 

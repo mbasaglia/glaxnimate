@@ -1,3 +1,3 @@
 #include "ellipse.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::Ellipse)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Ellipse)

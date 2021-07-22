@@ -3,6 +3,9 @@
 
 #include <QEvent>
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class ColorPickerWidget::Private
 {
 public:

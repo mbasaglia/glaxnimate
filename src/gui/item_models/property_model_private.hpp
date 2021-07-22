@@ -13,7 +13,7 @@
 #include "widgets/enum_combo.hpp"
 
 
-class item_models::PropertyModelBase::Private
+class glaxnimate::gui::item_models::PropertyModelBase::Private
 {
 public:
     using id_type = quintptr;

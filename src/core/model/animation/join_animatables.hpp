@@ -5,7 +5,7 @@
 #include "model/animation/animatable.hpp"
 
 
-namespace model {
+namespace glaxnimate::model {
 
 /**
  * \brief Utility to join keyframes from multiple animatables
@@ -222,4 +222,4 @@ private:
 
 };
 
-} // namespace model
+} // namespace glaxnimate::model

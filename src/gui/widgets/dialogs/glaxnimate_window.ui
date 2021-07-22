@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GlaxnimateWindow</class>
+ <class>glaxnimate::gui::GlaxnimateWindow</class>
  <widget class="QMainWindow" name="GlaxnimateWindow">
   <property name="geometry">
    <rect>
@@ -22,13 +22,13 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="WindowMessageWidget" name="message_widget" native="true"/>
+     <widget class="glaxnimate::gui::WindowMessageWidget" name="message_widget" native="true"/>
     </item>
     <item>
-     <widget class="CompositionTabBar" name="tab_bar" native="true"/>
+     <widget class="glaxnimate::gui::CompositionTabBar" name="tab_bar" native="true"/>
     </item>
     <item>
-     <widget class="Canvas" name="canvas">
+     <widget class="glaxnimate::gui::Canvas" name="canvas">
       <property name="acceptDrops">
        <bool>true</bool>
       </property>
@@ -384,7 +384,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="FillStyleWidget" name="fill_style_widget" native="true"/>
+      <widget class="glaxnimate::gui::FillStyleWidget" name="fill_style_widget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -709,7 +709,7 @@
    <widget class="QWidget" name="dockWidgetContents_6">
     <layout class="QVBoxLayout" name="verticalLayout_6">
      <item>
-      <widget class="FrameControlsWidget" name="play_controls" native="true">
+      <widget class="glaxnimate::gui::FrameControlsWidget" name="play_controls" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -719,7 +719,7 @@
       </widget>
      </item>
      <item>
-      <widget class="CompoundTimelineWidget" name="timeline_widget" native="true">
+      <widget class="glaxnimate::gui::CompoundTimelineWidget" name="timeline_widget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -748,7 +748,7 @@
    <widget class="QWidget" name="dockWidgetContents_2">
     <layout class="QVBoxLayout" name="verticalLayout_7">
      <item>
-      <widget class="ScriptConsole" name="console" native="true"/>
+      <widget class="glaxnimate::gui::ScriptConsole" name="console" native="true"/>
      </item>
     </layout>
    </widget>
@@ -814,7 +814,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
+      <widget class="glaxnimate::gui::StrokeStyleWidget" name="stroke_style_widget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -857,7 +857,7 @@
    <widget class="QWidget" name="dockWidgetContents_10">
     <layout class="QVBoxLayout" name="verticalLayout_11">
      <item>
-      <widget class="DocumentSwatchWidget" name="document_swatch_widget" native="true"/>
+      <widget class="glaxnimate::gui::DocumentSwatchWidget" name="document_swatch_widget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -909,7 +909,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="GradientListWidget" name="widget_gradients" native="true"/>
+      <widget class="glaxnimate::gui::GradientListWidget" name="widget_gradients" native="true"/>
      </item>
     </layout>
    </widget>
@@ -943,7 +943,7 @@
    <widget class="QWidget" name="dockWidgetContents_13">
     <layout class="QVBoxLayout" name="verticalLayout_13">
      <item>
-      <widget class="CustomTreeView" name="view_assets">
+      <widget class="glaxnimate::gui::CustomTreeView" name="view_assets">
        <property name="dragEnabled">
         <bool>true</bool>
        </property>
@@ -1016,7 +1016,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="SnippetListWidget" name="widget" native="true"/>
+      <widget class="glaxnimate::gui::SnippetListWidget" name="widget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -2135,7 +2135,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Canvas</class>
+   <class>glaxnimate::gui::Canvas</class>
    <extends>QGraphicsView</extends>
    <header>widgets/canvas.hpp</header>
    <slots>
@@ -2146,19 +2146,19 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>FrameControlsWidget</class>
+   <class>glaxnimate::gui::FrameControlsWidget</class>
    <extends>QWidget</extends>
    <header>widgets/timeline/frame_controls_widget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>CompoundTimelineWidget</class>
+   <class>glaxnimate::gui::CompoundTimelineWidget</class>
    <extends>QWidget</extends>
    <header>widgets/timeline/compound_timeline_widget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>FillStyleWidget</class>
+   <class>glaxnimate::gui::FillStyleWidget</class>
    <extends>QWidget</extends>
    <header>widgets/shape_style/fill_style_widget.hpp</header>
    <container>1</container>
@@ -2168,7 +2168,7 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>StrokeStyleWidget</class>
+   <class>glaxnimate::gui::StrokeStyleWidget</class>
    <extends>QWidget</extends>
    <header>widgets/shape_style/stroke_style_widget.hpp</header>
    <container>1</container>
@@ -2178,13 +2178,13 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>WindowMessageWidget</class>
+   <class>glaxnimate::gui::WindowMessageWidget</class>
    <extends>QWidget</extends>
    <header>widgets/window_message_widget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>DocumentSwatchWidget</class>
+   <class>glaxnimate::gui::DocumentSwatchWidget</class>
    <extends>QWidget</extends>
    <header>widgets/shape_style/document_swatch_widget.hpp</header>
    <container>1</container>
@@ -2193,13 +2193,13 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>GradientListWidget</class>
+   <class>glaxnimate::gui::GradientListWidget</class>
    <extends>QWidget</extends>
    <header>widgets/shape_style/gradient_list_widget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ScriptConsole</class>
+   <class>glaxnimate::gui::ScriptConsole</class>
    <extends>QWidget</extends>
    <header>widgets/script_console.hpp</header>
    <container>1</container>
@@ -2208,18 +2208,18 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>CustomTreeView</class>
+   <class>glaxnimate::gui::CustomTreeView</class>
    <extends>QTreeView</extends>
    <header>widgets/custom_treeview.hpp</header>
   </customwidget>
   <customwidget>
-   <class>CompositionTabBar</class>
+   <class>glaxnimate::gui::CompositionTabBar</class>
    <extends>QWidget</extends>
    <header>widgets/composition_tab_bar.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SnippetListWidget</class>
+   <class>glaxnimate::gui::SnippetListWidget</class>
    <extends>QWidget</extends>
    <header>widgets/snippet_list_widget.hpp</header>
    <container>1</container>

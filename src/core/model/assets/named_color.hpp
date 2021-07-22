@@ -3,7 +3,7 @@
 #include "brush_style.hpp"
 #include "model/animation/animatable.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class NamedColor : public BrushStyle
 {
@@ -27,4 +27,4 @@ protected:
 
 };
 
-} // namespace model
+} // namespace glaxnimate::model

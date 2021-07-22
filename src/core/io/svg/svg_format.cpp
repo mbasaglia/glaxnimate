@@ -6,9 +6,9 @@
 #include "svg_parser.hpp"
 #include "svg_renderer.hpp"
 
-io::Autoreg<io::svg::SvgFormat> io::svg::SvgFormat::autoreg;
+glaxnimate::io::Autoreg<glaxnimate::io::svg::SvgFormat> glaxnimate::io::svg::SvgFormat::autoreg;
 
-bool io::svg::SvgFormat::on_open(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& )
+bool glaxnimate::io::svg::SvgFormat::on_open(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& )
 {
     /// \todo layer mode setting
     SvgParser::GroupMode mode = SvgParser::Inkscape;
@@ -35,12 +35,12 @@ bool io::svg::SvgFormat::on_open(QIODevice& file, const QString& filename, model
     }
 }
 
-io::SettingList io::svg::SvgFormat::save_settings() const
+glaxnimate::io::SettingList glaxnimate::io::svg::SvgFormat::save_settings() const
 {
     return {};
 }
 
-bool io::svg::SvgFormat::on_save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& options)
+bool glaxnimate::io::svg::SvgFormat::on_save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& options)
 {
     auto on_error = [this](const QString& s){warning(s);};
     SvgRenderer rend(SMIL);

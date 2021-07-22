@@ -4,24 +4,24 @@
 #include "model/assets/assets.hpp"
 #include "command/object_list_commands.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::NamedColor)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::NamedColor)
 
-QString model::NamedColor::type_name_human() const
+QString glaxnimate::model::NamedColor::type_name_human() const
 {
     return tr("Unnamed Color");
 }
 
-QBrush model::NamedColor::brush_style(FrameTime t) const
+QBrush glaxnimate::model::NamedColor::brush_style(FrameTime t) const
 {
     return color.get_at(t);
 }
 
-void model::NamedColor::fill_icon(QPixmap& icon) const
+void glaxnimate::model::NamedColor::fill_icon(QPixmap& icon) const
 {
     icon.fill(color.get_at(0));
 }
 
-bool model::NamedColor::remove_if_unused(bool clean_lists)
+bool glaxnimate::model::NamedColor::remove_if_unused(bool clean_lists)
 {
     if ( clean_lists && users().empty() )
     {
@@ -34,7 +34,7 @@ bool model::NamedColor::remove_if_unused(bool clean_lists)
     return false;
 }
 
-model::DocumentNode * model::NamedColor::docnode_parent() const
+glaxnimate::model::DocumentNode * glaxnimate::model::NamedColor::docnode_parent() const
 {
     return document()->assets()->colors.get();
 }

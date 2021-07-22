@@ -10,7 +10,7 @@
 #include "model/shapes/repeater.hpp"
 #include "model/visitor.hpp"
 
-namespace io::lottie {
+namespace glaxnimate::io::lottie {
 
 class TgsVisitor : public model::Visitor
 {
@@ -71,9 +71,9 @@ private:
     TgsFormat* fmt;
 };
 
-} // namespace io::lottie
+} // namespace glaxnimate::io::lottie
 
-bool io::lottie::TgsFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
+bool glaxnimate::io::lottie::TgsFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
 {
     QByteArray json;
     if ( !utils::gzip::decompress(file, json, [this](const QString& s){ error(s); }) )
@@ -81,7 +81,7 @@ bool io::lottie::TgsFormat::on_open(QIODevice& file, const QString&, model::Docu
     return load_json(json, document);
 }
 
-bool io::lottie::TgsFormat::on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
+bool glaxnimate::io::lottie::TgsFormat::on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
 {
     validate(document);
 
@@ -101,10 +101,10 @@ bool io::lottie::TgsFormat::on_save(QIODevice& file, const QString&, model::Docu
 }
 
 
-void io::lottie::TgsFormat::validate(model::Document* document)
+void glaxnimate::io::lottie::TgsFormat::validate(model::Document* document)
 {
     TgsVisitor(this).visit(document);
 }
 
 
-io::Autoreg<io::lottie::TgsFormat> io::lottie::TgsFormat::autoreg = {};
+glaxnimate::io::Autoreg<glaxnimate::io::lottie::TgsFormat> glaxnimate::io::lottie::TgsFormat::autoreg = {};

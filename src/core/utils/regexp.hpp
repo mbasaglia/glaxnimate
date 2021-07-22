@@ -2,7 +2,7 @@
 #include <QRegularExpression>
 
 
-namespace utils::regexp {
+namespace glaxnimate::utils::regexp {
 
 namespace detail {
     class EndIterator {};
@@ -56,4 +56,4 @@ inline MatchRange find_all(const QRegularExpression& pattern, const QString& sub
     return MatchRange{ detail::NotDumbIterator(pattern.globalMatch(subject)) };
 }
 
-} // namespace utils::regexp
+} // namespace glaxnimate::utils::regexp

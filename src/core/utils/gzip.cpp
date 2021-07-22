@@ -7,6 +7,8 @@
 
 #include <zlib.h>
 
+using namespace glaxnimate;
+
 namespace {
 
 class Gzipper

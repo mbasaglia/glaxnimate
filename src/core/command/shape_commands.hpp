@@ -4,9 +4,9 @@
 #include "model/shapes/shape.hpp"
 #include "object_list_commands.hpp"
 
-namespace model { class Group; }
+namespace glaxnimate::model { class Group; }
 
-namespace command {
+namespace glaxnimate::command {
 
 using AddShape = AddObject<model::ShapeElement, model::ShapeListProperty>;
 using RemoveShape = RemoveObject<model::ShapeElement, model::ShapeListProperty>;
@@ -56,4 +56,4 @@ public:
 
 AddShape* duplicate_shape(model::ShapeElement* shape);
 
-} // namespace command
+} // namespace glaxnimate::command

@@ -5,7 +5,7 @@
 #include "model/assets/assets.hpp"
 #include "model/property/reference_property.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 /**
  * \brief Base class for elements that add a style
@@ -40,4 +40,4 @@ signals:
     void use_changed_from(BrushStyle* old_use, BrushStyle* new_use);
 };
 
-} // namespace model
+} // namespace glaxnimate::model

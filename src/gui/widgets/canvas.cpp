@@ -10,6 +10,9 @@
 #include "tools/base.hpp"
 #include "graphics/document_scene.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 
 class Canvas::Private
 {

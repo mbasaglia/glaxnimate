@@ -2,6 +2,8 @@
 
 #include <QMouseEvent>
 
+using namespace glaxnimate::gui;
+
 
 void ClickableTabBar::mouseReleaseEvent(QMouseEvent* event)
 {

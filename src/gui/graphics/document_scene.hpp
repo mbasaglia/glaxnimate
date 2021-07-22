@@ -4,9 +4,9 @@
 
 #include "model/document.hpp"
 
-namespace tools { class Tool; }
+namespace glaxnimate::gui::tools { class Tool; }
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class DocumentNodeGraphicsItem;
 
@@ -79,4 +79,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

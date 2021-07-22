@@ -2,7 +2,7 @@
 #include <array>
 #include "math/vector.hpp"
 #include "math/math.hpp"
-namespace io::svg::detail {
+namespace glaxnimate::io::svg::detail {
 
 /**
  * Compare:
@@ -54,4 +54,4 @@ struct WeightConverter
 
 };
 
-} // namespace io::svg::detail
+} // namespace glaxnimate::io::svg::detail

@@ -6,7 +6,7 @@
 #include "model/assets/precomposition.hpp"
 
 
-void model::Visitor::visit(model::Document* doc, bool skip_locked)
+void glaxnimate::model::Visitor::visit(glaxnimate::model::Document* doc, bool skip_locked)
 {
     on_visit(doc);
     visit(doc->assets(), skip_locked);
@@ -14,7 +14,7 @@ void model::Visitor::visit(model::Document* doc, bool skip_locked)
     on_visit_end(doc);
 }
 
-void model::Visitor::visit(model::DocumentNode* node, bool skip_locked)
+void glaxnimate::model::Visitor::visit(glaxnimate::model::DocumentNode* node, bool skip_locked)
 {
     if ( skip_locked )
     {

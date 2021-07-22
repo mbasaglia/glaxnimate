@@ -5,7 +5,7 @@
 
 #include "model/assets/asset.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class BrushStyle : public Asset
 {
@@ -37,4 +37,4 @@ private:
     mutable QPixmap icon;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

@@ -4,6 +4,8 @@
 #include <memory>
 #include <QWidget>
 
+namespace glaxnimate::gui {
+
 class FillToolWidget : public QWidget
 {
     Q_OBJECT
@@ -24,5 +26,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // FILLTOOLWIDGET_H

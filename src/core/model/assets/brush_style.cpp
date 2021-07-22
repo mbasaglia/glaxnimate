@@ -1,6 +1,6 @@
 #include "brush_style.hpp"
 
-QIcon model::BrushStyle::instance_icon() const
+QIcon glaxnimate::model::BrushStyle::instance_icon() const
 {
     if ( icon.isNull() )
     {
@@ -10,7 +10,7 @@ QIcon model::BrushStyle::instance_icon() const
     return icon;
 }
 
-QBrush model::BrushStyle::constrained_brush_style(FrameTime t, const QRectF& ) const
+QBrush glaxnimate::model::BrushStyle::constrained_brush_style(FrameTime t, const QRectF& ) const
 {
     return brush_style(t);
 }

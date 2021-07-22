@@ -5,6 +5,9 @@
 #include <QStylePainter>
 #include <QStyleOptionToolButton>
 
+namespace glaxnimate::gui {
+
+
 class ScalableButton : public QToolButton
 {
 public:
@@ -33,3 +36,5 @@ protected:
         p.drawComplexControl(QStyle::CC_ToolButton, opt);
     }
 };
+
+} // namespace glaxnimate::gui

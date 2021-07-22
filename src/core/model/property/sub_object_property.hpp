@@ -10,7 +10,7 @@ private:                                                    \
     Q_PROPERTY(type* name READ get_##name)                  \
     // macro end
 
-namespace model {
+namespace glaxnimate::model {
 
 class SubObjectPropertyBase : public BaseProperty
 {
@@ -93,4 +93,4 @@ private:
     Type sub_obj;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

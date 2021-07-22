@@ -5,7 +5,7 @@
 #include "model/shapes/path.hpp"
 
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 
 class DrawTool : public DrawToolBase
@@ -42,4 +42,4 @@ private:
     static Autoreg<DrawTool> autoreg;
 };
 
-} // namespace tools
+} // namespace glaxnimate::gui::tools

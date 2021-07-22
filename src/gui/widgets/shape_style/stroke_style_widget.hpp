@@ -9,7 +9,9 @@
 
 namespace color_widgets {
 class ColorPaletteModel;
-} // namespace color_
+} // namespace color_widgets
+
+namespace glaxnimate::gui {
 
 class StrokeStyleWidget : public QWidget
 {
@@ -60,4 +62,5 @@ private:
     std::unique_ptr<Private> d;
 };
 
+} // namespace glaxnimate::gui
 #endif // STROKESTYLEWIDGET_H

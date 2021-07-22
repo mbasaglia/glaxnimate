@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>StrokeStyleWidget</class>
+ <class>glaxnimate::gui::StrokeStyleWidget</class>
  <widget class="QWidget" name="StrokeStyleWidget">
   <property name="geometry">
    <rect>
@@ -315,7 +315,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="ColorSelector" name="color_selector" native="true"/>
+            <widget class="glaxnimate::gui::ColorSelector" name="color_selector" native="true"/>
            </item>
           </layout>
          </widget>
@@ -365,7 +365,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ColorSelector</class>
+   <class>glaxnimate::gui::ColorSelector</class>
    <extends>QWidget</extends>
    <header>widgets/shape_style/color_selector.hpp</header>
    <container>1</container>

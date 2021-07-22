@@ -11,7 +11,7 @@
 
 #include "detail.hpp"
 
-namespace io::svg::detail {
+namespace glaxnimate::io::svg::detail {
 
 class AnimateParser
 {
@@ -469,4 +469,4 @@ public:
     static const QRegularExpression frame_separator_re;
 };
 
-} // namespace io::svg::detail
+} // namespace glaxnimate::io::svg::detail

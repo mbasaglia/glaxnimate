@@ -8,6 +8,8 @@
 #include "item_data.hpp"
 #include "utils/sort_gradient.hpp"
 
+using namespace glaxnimate::gui;
+
 graphics::GradientEditor::GradientEditor(model::Styler* styler)
     : styler_(styler)
 {
@@ -368,12 +370,12 @@ void graphics::GradientEditor::update_stops_from_gradient()
         update_stop_pos();
 }
 
-model::Styler * graphics::GradientEditor::styler() const
+glaxnimate::model::Styler * graphics::GradientEditor::styler() const
 {
     return styler_;
 }
 
-model::Gradient * graphics::GradientEditor::gradient() const
+glaxnimate::model::Gradient * graphics::GradientEditor::gradient() const
 {
     return gradient_;
 }

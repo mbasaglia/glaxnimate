@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ColorSelector</class>
+ <class>glaxnimate::gui::ColorSelector</class>
  <widget class="QWidget" name="ColorSelector">
   <property name="geometry">
    <rect>

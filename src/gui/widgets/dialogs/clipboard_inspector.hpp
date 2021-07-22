@@ -4,6 +4,10 @@
 #include <QDialog>
 
 class QTabWidget;
+
+namespace glaxnimate::gui {
+
+
 class ClipboardInspector : public QDialog
 {
     Q_OBJECT
@@ -15,5 +19,8 @@ private:
     void load(QTabWidget* tab);
 
 };
+
+
+} // namespace glaxnimate::gui
 
 #endif // CLIPBOARDINSPECTOR_H

@@ -8,6 +8,9 @@
 #include "shape_tool_widget_p.hpp"
 #include "widgets/enum_combo.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class StarToolWidget::Private : public ShapeToolWidget::Private
 {
 public:

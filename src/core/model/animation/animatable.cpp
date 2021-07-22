@@ -4,7 +4,7 @@
 #include "model/object.hpp"
 #include "math/bezier/segment.hpp"
 
-bool model::AnimatableBase::assign_from(const model::BaseProperty* prop)
+bool glaxnimate::model::AnimatableBase::assign_from(const model::BaseProperty* prop)
 {
     if ( prop->traits().flags != traits().flags || prop->traits().type != traits().type )
         return false;
@@ -27,7 +27,7 @@ bool model::AnimatableBase::assign_from(const model::BaseProperty* prop)
     return true;
 }
 
-bool model::AnimatableBase::set_undoable(const QVariant& val, bool commit)
+bool glaxnimate::model::AnimatableBase::set_undoable(const QVariant& val, bool commit)
 {
     if ( !valid_value(val) )
         return false;
@@ -42,7 +42,7 @@ bool model::AnimatableBase::set_undoable(const QVariant& val, bool commit)
     return true;
 }
 
-model::AnimatableBase::MidTransition model::AnimatableBase::mid_transition(model::FrameTime time) const
+glaxnimate::model::AnimatableBase::MidTransition glaxnimate::model::AnimatableBase::mid_transition(model::FrameTime time) const
 {
     int keyframe_index = this->keyframe_index(time);
     const KeyframeBase* kf_before = this->keyframe(keyframe_index);
@@ -75,7 +75,7 @@ model::AnimatableBase::MidTransition model::AnimatableBase::mid_transition(model
 }
 
 
-model::AnimatableBase::MidTransition model::AnimatableBase::do_mid_transition(
+glaxnimate::model::AnimatableBase::MidTransition glaxnimate::model::AnimatableBase::do_mid_transition(
     const model::KeyframeBase* kf_before,
     const model::KeyframeBase* kf_after,
     qreal x,

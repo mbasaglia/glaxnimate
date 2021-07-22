@@ -4,7 +4,7 @@
 #include "widgets/settings/plugin_settings_widget.hpp"
 #include "plugin/plugin.hpp"
 
-namespace settings {
+namespace glaxnimate::gui::settings {
 
 class PluginSettingsGroup : public app::settings::CustomSettingsGroupBase
 {
@@ -43,4 +43,4 @@ private:
     QStringList enabled;
 };
 
-} // namespace settings
+} // namespace glaxnimate::gui::settings

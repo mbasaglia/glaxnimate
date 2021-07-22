@@ -5,7 +5,7 @@
 #include "shape.hpp"
 #include "model/animation/animatable_path.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 
 class Path : public Shape
@@ -52,5 +52,5 @@ signals:
     void shape_changed(const math::bezier::Bezier& bez);
 };
 
-} // namespace model
+} // namespace glaxnimate::model
 

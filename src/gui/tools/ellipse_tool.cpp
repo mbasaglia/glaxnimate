@@ -1,7 +1,7 @@
 #include "rectangle_tool.hpp"
 #include "model/shapes/ellipse.hpp"
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 class EllipseTool : public RectangleTool
 {
@@ -37,6 +37,7 @@ private:
     static Autoreg<EllipseTool> autoreg;
 };
 
-} // namespace tools
-
 tools::Autoreg<tools::EllipseTool> tools::EllipseTool::autoreg{max_priority + 1};
+
+} // namespace glaxnimate::gui::tools
+

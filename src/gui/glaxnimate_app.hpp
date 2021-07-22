@@ -8,7 +8,11 @@
 
 #include "app/application.hpp"
 
+
 #ifdef Q_OS_ANDROID
+
+namespace glaxnimate::gui {
+
 class GlaxnimateApp : public app::Application
 {
     Q_OBJECT
@@ -41,12 +45,16 @@ private:
     std::unique_ptr<QMimeData> clipboard = std::make_unique<QMimeData>();
 };
 
+} // namespace glaxnimate::gui
+
 #else
 
 #include "app/log/listener_stderr.hpp"
 #include "app/log/listener_store.hpp"
 
 namespace app::settings { class ShortcutSettings; }
+
+namespace glaxnimate::gui {
 
 class GlaxnimateApp : public app::Application
 {
@@ -94,4 +102,5 @@ private:
 
 };
 
+} // namespace glaxnimate::gui
 #endif

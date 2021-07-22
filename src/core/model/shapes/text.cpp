@@ -7,10 +7,10 @@
 #include "path.hpp"
 #include "command/undo_macro_guard.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::Font)
-GLAXNIMATE_OBJECT_IMPL(model::TextShape)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Font)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::TextShape)
 
-class model::Font::Private
+class glaxnimate::model::Font::Private
 {
 public:
     QStringList styles;
@@ -105,7 +105,7 @@ public:
     }
 };
 
-model::Font::Font(model::Document* doc)
+glaxnimate::model::Font::Font(glaxnimate::model::Document* doc)
     : Object(doc), d(std::make_unique<Private>())
 {
     family.set(d->raw.familyName());
@@ -114,9 +114,9 @@ model::Font::Font(model::Document* doc)
     d->refresh_styles(this);
 }
 
-model::Font::~Font() = default;
+glaxnimate::model::Font::~Font() = default;
 
-void model::Font::on_font_changed()
+void glaxnimate::model::Font::on_font_changed()
 {
     d->query = QFont(family.get(), size.get());
     d->query.setStyleName(style.get());
@@ -127,43 +127,43 @@ void model::Font::on_font_changed()
 
 }
 
-void model::Font::on_family_changed()
+void glaxnimate::model::Font::on_family_changed()
 {
     d->refresh_styles(this);
     on_font_changed();
 }
 
-bool model::Font::valid_style(const QString& style)
+bool glaxnimate::model::Font::valid_style(const QString& style)
 {
     return d->styles.contains(style);
 }
 
-const QFont & model::Font::query() const
+const QFont & glaxnimate::model::Font::query() const
 {
     return d->query;
 }
 
-const QRawFont & model::Font::raw_font() const
+const QRawFont & glaxnimate::model::Font::raw_font() const
 {
     return d->raw;
 }
 
-QStringList model::Font::styles() const
+QStringList glaxnimate::model::Font::styles() const
 {
     return d->styles;
 }
 
-const QFontMetricsF & model::Font::metrics() const
+const QFontMetricsF & glaxnimate::model::Font::metrics() const
 {
     return d->metrics;
 }
 
-QString model::Font::type_name_human() const
+QString glaxnimate::model::Font::type_name_human() const
 {
     return tr("Font");
 }
 
-QPainterPath model::Font::path_for_glyph(quint32 glyph, model::Font::CharDataCache& cache, bool fix_paint) const
+QPainterPath glaxnimate::model::Font::path_for_glyph(quint32 glyph, glaxnimate::model::Font::CharDataCache& cache, bool fix_paint) const
 {
     auto it = cache.find(glyph);
 
@@ -175,7 +175,7 @@ QPainterPath model::Font::path_for_glyph(quint32 glyph, model::Font::CharDataCac
     return path;
 }
 
-void model::Font::from_qfont(const QFont& f)
+void glaxnimate::model::Font::from_qfont(const QFont& f)
 {
     command::UndoMacroGuard g(tr("Change Font"), document());
     QFontInfo finfo(f);
@@ -186,9 +186,9 @@ void model::Font::from_qfont(const QFont& f)
 
 
 
-model::Font::ParagraphData model::Font::layout(const QString& text) const
+glaxnimate::model::Font::ParagraphData glaxnimate::model::Font::layout(const QString& text) const
 {
-    model::Font::ParagraphData para_data;
+    glaxnimate::model::Font::ParagraphData para_data;
 
     auto lines = text.split('\n');
     QTextLayout layout(text, d->query, nullptr);
@@ -267,25 +267,25 @@ model::Font::ParagraphData model::Font::layout(const QString& text) const
     return para_data;
 }
 
-qreal model::Font::line_spacing() const
+qreal glaxnimate::model::Font::line_spacing() const
 {
     // for some reason QTextLayout ignores leading()
     return line_spacing_unscaled() * line_height.get();
 }
 
-qreal model::Font::line_spacing_unscaled() const
+qreal glaxnimate::model::Font::line_spacing_unscaled() const
 {
     // for some reason QTextLayout ignores leading()
     return d->metrics.ascent() + d->metrics.descent();
 }
 
 
-QStringList model::Font::families() const
+QStringList glaxnimate::model::Font::families() const
 {
     return d->database.families();
 }
 
-QList<int> model::Font::standard_sizes() const
+QList<int> glaxnimate::model::Font::standard_sizes() const
 {
     auto list = QFontDatabase::standardSizes();
     int actual = d->query.pointSize();
@@ -295,13 +295,13 @@ QList<int> model::Font::standard_sizes() const
     return list;
 }
 
-model::TextShape::TextShape(model::Document* document)
+glaxnimate::model::TextShape::TextShape(glaxnimate::model::Document* document)
     : ShapeElement(document)
 {
     connect(font.get(), &Font::font_changed, this, &TextShape::on_font_changed);
 }
 
-void model::TextShape::on_text_changed()
+void glaxnimate::model::TextShape::on_text_changed()
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
     shape_cache.clear();
@@ -311,13 +311,13 @@ void model::TextShape::on_text_changed()
     emit bounding_rect_changed();
 }
 
-void model::TextShape::on_font_changed()
+void glaxnimate::model::TextShape::on_font_changed()
 {
     cache.clear();
     on_text_changed();
 }
 
-const QPainterPath & model::TextShape::untranslated_path(FrameTime t) const
+const QPainterPath & glaxnimate::model::TextShape::untranslated_path(FrameTime t) const
 {
     if ( shape_cache.isEmpty() )
     {
@@ -366,7 +366,7 @@ const QPainterPath & model::TextShape::untranslated_path(FrameTime t) const
 }
 
 
-void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
+void glaxnimate::model::TextShape::add_shapes(glaxnimate::model::FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {
     if ( !transform.isIdentity() )
     {
@@ -380,12 +380,12 @@ void model::TextShape::add_shapes(model::FrameTime t, math::bezier::MultiBezier&
     }
 }
 
-QPainterPath model::TextShape::to_painter_path(model::FrameTime) const
+QPainterPath glaxnimate::model::TextShape::to_painter_path(glaxnimate::model::FrameTime) const
 {
     return {};
 }
 
-QPainterPath model::TextShape::shape_data(FrameTime t) const
+QPainterPath glaxnimate::model::TextShape::shape_data(FrameTime t) const
 {
     // Ignore position if we have a path, it can still be moved from the group
     if ( path.get() )
@@ -394,24 +394,24 @@ QPainterPath model::TextShape::shape_data(FrameTime t) const
     return untranslated_path(t).translated(pos);
 }
 
-QIcon model::TextShape::tree_icon() const
+QIcon glaxnimate::model::TextShape::tree_icon() const
 {
     return QIcon::fromTheme("font");
 }
 
-QRectF model::TextShape::local_bounding_rect(model::FrameTime t) const
+QRectF glaxnimate::model::TextShape::local_bounding_rect(glaxnimate::model::FrameTime t) const
 {
     return shape_data(t).boundingRect();
 }
 
-QString model::TextShape::type_name_human() const
+QString glaxnimate::model::TextShape::type_name_human() const
 {
     return tr("Text");
 }
 
-std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
+std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::TextShape::to_path() const
 {
-    auto group = std::make_unique<model::Group>(document());
+    auto group = std::make_unique<glaxnimate::model::Group>(document());
     group->name.set(name.get());
     group->group_color.set(group_color.get());
     group->visible.set(visible.get());
@@ -420,7 +420,7 @@ std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
 
     for ( const auto& line : font->layout(text.get()) )
     {
-        auto line_group = std::make_unique<model::Group>(document());
+        auto line_group = std::make_unique<glaxnimate::model::Group>(document());
         line_group->name.set(line.text);
 
         for ( const auto& glyph : line.glyphs )
@@ -431,16 +431,16 @@ std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
 
             if ( bez.beziers().size() == 1 )
             {
-                auto path = std::make_unique<model::Path>(document());
+                auto path = std::make_unique<glaxnimate::model::Path>(document());
                 path->shape.set(bez.beziers()[0]);
                 line_group->shapes.insert(std::move(path), 0);
             }
             else if ( bez.beziers().size() > 1 )
             {
-                auto glyph_group = std::make_unique<model::Group>(document());
+                auto glyph_group = std::make_unique<glaxnimate::model::Group>(document());
                 for ( const auto& sub : bez.beziers() )
                 {
-                    auto path = std::make_unique<model::Path>(document());
+                    auto path = std::make_unique<glaxnimate::model::Path>(document());
                     path->shape.set(sub);
                     glyph_group->shapes.insert(std::move(path), 0);
                 }
@@ -467,7 +467,7 @@ std::unique_ptr<model::ShapeElement> model::TextShape::to_path() const
     return group;
 }
 
-QPointF model::TextShape::offset_to_next_character() const
+QPointF glaxnimate::model::TextShape::offset_to_next_character() const
 {
     auto layout = font->layout(text.get());
     if ( layout.empty() )
@@ -475,9 +475,9 @@ QPointF model::TextShape::offset_to_next_character() const
     return layout.back().advance;
 }
 
-std::vector<model::DocumentNode *> model::TextShape::valid_paths() const
+std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::TextShape::valid_paths() const
 {
-    std::vector<model::DocumentNode *> shapes;
+    std::vector<glaxnimate::model::DocumentNode *> shapes;
     shapes.push_back(nullptr);
 
     for ( const auto& sib : *owner() )
@@ -487,7 +487,7 @@ std::vector<model::DocumentNode *> model::TextShape::valid_paths() const
     return shapes;
 }
 
-bool model::TextShape::is_valid_path(model::DocumentNode* node) const
+bool glaxnimate::model::TextShape::is_valid_path(glaxnimate::model::DocumentNode* node) const
 {
     if ( node == nullptr )
         return true;
@@ -495,13 +495,13 @@ bool model::TextShape::is_valid_path(model::DocumentNode* node) const
     if ( node == this )
         return false;
 
-    if ( auto shape = node->cast<model::ShapeElement>() )
+    if ( auto shape = node->cast<glaxnimate::model::ShapeElement>() )
         return shape->owner_composition() == owner_composition();
 
     return false;
 }
 
-void model::TextShape::path_changed(model::ShapeElement* new_path, model::ShapeElement* old_path)
+void glaxnimate::model::TextShape::path_changed(glaxnimate::model::ShapeElement* new_path, glaxnimate::model::ShapeElement* old_path)
 {
     on_text_changed();
 

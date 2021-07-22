@@ -3,6 +3,8 @@
 
 #include "app/settings/widget_builder.hpp"
 
+using namespace glaxnimate;
+
 const std::vector<plugin::ActionService *> & plugin::PluginActionRegistry::enabled() const
 {
     return enabled_actions;

@@ -9,6 +9,8 @@
 #include <QPushButton>
 
 
+using namespace glaxnimate::gui;
+
 ClipboardInspector::ClipboardInspector(QWidget* parent)
     : QDialog(parent)
 {

@@ -4,6 +4,9 @@
 #include "model/stretchable_time.hpp"
 #include "model/assets/assets.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class item_models::PropertyModelFull::Private : public PropertyModelBase::Private
 {
 public:

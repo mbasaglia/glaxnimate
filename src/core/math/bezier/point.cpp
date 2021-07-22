@@ -1,5 +1,7 @@
 #include "point.hpp"
 
+using namespace glaxnimate;
+
 
 void math::bezier::Point::adjust_handles_from_type()
 {

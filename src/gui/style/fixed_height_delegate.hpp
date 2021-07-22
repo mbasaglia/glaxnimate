@@ -1,6 +1,6 @@
 #include <QStyledItemDelegate>
 
-namespace style {
+namespace glaxnimate::gui::style {
 
 class FixedHeightDelegate : public QStyledItemDelegate
 {
@@ -23,4 +23,4 @@ private:
     qreal height;
 };
 
-} // namespace style
+} // namespace glaxnimate::gui::style

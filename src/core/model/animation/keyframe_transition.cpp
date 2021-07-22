@@ -6,14 +6,14 @@ namespace {
 constexpr QPointF bound_vec(const QPointF& v)
 {
     return {
-        qBound(math::scalar_type<QPointF>(0), v.x(), math::scalar_type<QPointF>(1)),
-        qBound(math::scalar_type<QPointF>(0), v.y(), math::scalar_type<QPointF>(1))
+        qBound(glaxnimate::math::scalar_type<QPointF>(0), v.x(), glaxnimate::math::scalar_type<QPointF>(1)),
+        qBound(glaxnimate::math::scalar_type<QPointF>(0), v.y(), glaxnimate::math::scalar_type<QPointF>(1))
     };
 }
 
 } // namespace
 
-model::KeyframeTransition::Descriptive model::KeyframeTransition::before_descriptive() const
+glaxnimate::model::KeyframeTransition::Descriptive glaxnimate::model::KeyframeTransition::before_descriptive() const
 {
     if ( hold_ )
         return Hold;
@@ -27,7 +27,7 @@ model::KeyframeTransition::Descriptive model::KeyframeTransition::before_descrip
     return Custom;
 }
 
-model::KeyframeTransition::Descriptive model::KeyframeTransition::after_descriptive() const
+glaxnimate::model::KeyframeTransition::Descriptive glaxnimate::model::KeyframeTransition::after_descriptive() const
 {
     if ( hold_ )
         return Hold;
@@ -41,7 +41,7 @@ model::KeyframeTransition::Descriptive model::KeyframeTransition::after_descript
     return Custom;
 }
 
-void model::KeyframeTransition::set_before_descriptive(model::KeyframeTransition::Descriptive d)
+void glaxnimate::model::KeyframeTransition::set_before_descriptive(model::KeyframeTransition::Descriptive d)
 {
     switch ( d )
     {
@@ -62,7 +62,7 @@ void model::KeyframeTransition::set_before_descriptive(model::KeyframeTransition
     }
 }
 
-void model::KeyframeTransition::set_after_descriptive(model::KeyframeTransition::Descriptive d)
+void glaxnimate::model::KeyframeTransition::set_after_descriptive(model::KeyframeTransition::Descriptive d)
 {
     switch ( d )
     {
@@ -83,25 +83,25 @@ void model::KeyframeTransition::set_after_descriptive(model::KeyframeTransition:
     }
 }
 
-void model::KeyframeTransition::set_after(const QPointF& after)
+void glaxnimate::model::KeyframeTransition::set_after(const QPointF& after)
 {
     sample_cache_.clear();
     bezier_.points()[2] = bound_vec(after);
 }
 
-void model::KeyframeTransition::set_before(const QPointF& before)
+void glaxnimate::model::KeyframeTransition::set_before(const QPointF& before)
 {
     sample_cache_.clear();
     bezier_.points()[1] = bound_vec(before);
 }
 
-void model::KeyframeTransition::set_handles(const QPointF& before, const QPointF& after)
+void glaxnimate::model::KeyframeTransition::set_handles(const QPointF& before, const QPointF& after)
 {
     set_before(before);
     set_after(after);
 }
 
-void model::KeyframeTransition::set_hold(bool hold)
+void glaxnimate::model::KeyframeTransition::set_hold(bool hold)
 {
     hold_ = hold;
 }
@@ -115,7 +115,7 @@ static constexpr const int SUBDIVISION_MAX_ITERATIONS = 10;
 static constexpr const int SPLINE_TABLE_SIZE = 11;
 static constexpr const double SAMPLE_STEP_SIZE = 1.0 / (SPLINE_TABLE_SIZE - 1.0);
 
-using Bez = math::bezier::CubicBezierSolver<QPointF>;
+using Bez = glaxnimate::math::bezier::CubicBezierSolver<QPointF>;
 
 double _binary_subdivide(double x, double interval_start, double interval_end, const Bez& bez)
 {
@@ -149,7 +149,7 @@ double _newton_raphson(double x, double t_guess, const Bez& bez)
     return t_guess;
 }
 
-void _get_sample_values(const Bez& bez, model::detail::SampleCache& sample_cache)
+void _get_sample_values(const Bez& bez, glaxnimate::model::detail::SampleCache& sample_cache)
 {
     if ( sample_cache.empty() )
     {
@@ -159,7 +159,7 @@ void _get_sample_values(const Bez& bez, model::detail::SampleCache& sample_cache
     }
 }
 
-double t_for_x(double x, const Bez& bez, model::detail::SampleCache& sample_cache)
+double t_for_x(double x, const Bez& bez, glaxnimate::model::detail::SampleCache& sample_cache)
 {
     _get_sample_values(bez, sample_cache);
     double interval_start = 0;
@@ -185,7 +185,7 @@ double t_for_x(double x, const Bez& bez, model::detail::SampleCache& sample_cach
 
 } // namespace
 
-double model::KeyframeTransition::lerp_factor(double ratio) const
+double glaxnimate::model::KeyframeTransition::lerp_factor(double ratio) const
 {
     if ( ratio <= 0 || hold_ )
         return 0;
@@ -195,7 +195,7 @@ double model::KeyframeTransition::lerp_factor(double ratio) const
     return bezier_.solve_component(t, 1);
 }
 
-double model::KeyframeTransition::bezier_parameter(double ratio) const
+double glaxnimate::model::KeyframeTransition::bezier_parameter(double ratio) const
 {
     if ( ratio <= 0 || hold_ )
         return 0;
@@ -204,12 +204,12 @@ double model::KeyframeTransition::bezier_parameter(double ratio) const
     return t_for_x(ratio, bezier_, sample_cache_);
 }
 
-model::KeyframeTransition::KeyframeTransition(const QPointF& before_handle, const QPointF& after_handle, bool hold)
+glaxnimate::model::KeyframeTransition::KeyframeTransition(const QPointF& before_handle, const QPointF& after_handle, bool hold)
     : bezier_({0, 0}, before_handle, after_handle, {1,1}),
     hold_(hold)
 {}
 
-std::pair<model::KeyframeTransition, model::KeyframeTransition> model::KeyframeTransition::split(double x) const
+std::pair<glaxnimate::model::KeyframeTransition, glaxnimate::model::KeyframeTransition> glaxnimate::model::KeyframeTransition::split(double x) const
 {
     if ( hold_ )
         return { {{0, 0}, {1, 1}, true}, {{0, 0}, {1, 1}, true} };

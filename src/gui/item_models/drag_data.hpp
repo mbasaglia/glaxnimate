@@ -8,7 +8,7 @@
 
 #include "model/document.hpp"
 
-namespace item_models {
+namespace glaxnimate::gui::item_models {
 
 class DragEncoder
 {
@@ -134,4 +134,4 @@ private:
     model::Document* document;
 };
 
-} // namespace item_models
+} // namespace glaxnimate::gui::item_models

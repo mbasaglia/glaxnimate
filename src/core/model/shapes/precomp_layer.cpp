@@ -6,50 +6,50 @@
 #include "model/assets/precomposition.hpp"
 #include "model/assets/assets.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::PreCompLayer)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::PreCompLayer)
 
-model::PreCompLayer::PreCompLayer(Document* document)
+glaxnimate::model::PreCompLayer::PreCompLayer(Document* document)
     : ShapeElement(document)
 {
     connect(transform.get(), &Object::property_changed, this, &PreCompLayer::on_transform_matrix_changed);
 }
 
-QIcon model::PreCompLayer::tree_icon() const
+QIcon glaxnimate::model::PreCompLayer::tree_icon() const
 {
     return QIcon::fromTheme("component");
 }
 
-QString model::PreCompLayer::type_name_human() const
+QString glaxnimate::model::PreCompLayer::type_name_human() const
 {
     return tr("Composition Layer");
 }
 
-model::FrameTime model::PreCompLayer::relative_time(model::FrameTime time) const
+glaxnimate::model::FrameTime glaxnimate::model::PreCompLayer::relative_time(glaxnimate::model::FrameTime time) const
 {
     return timing->time_to_local(time);
 }
 
-void model::PreCompLayer::set_time(model::FrameTime t)
+void glaxnimate::model::PreCompLayer::set_time(glaxnimate::model::FrameTime t)
 {
     ShapeElement::set_time(relative_time(t));
     emit document()->graphics_invalidated();
 }
 
-std::vector<model::DocumentNode *> model::PreCompLayer::valid_precomps() const
+std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::PreCompLayer::valid_precomps() const
 {
     auto comps = document()->comp_graph().possible_descendants(owner_composition(), document());
-    return std::vector<model::DocumentNode *>(comps.begin(), comps.end());
+    return std::vector<glaxnimate::model::DocumentNode *>(comps.begin(), comps.end());
 }
 
-bool model::PreCompLayer::is_valid_precomp(model::DocumentNode* node) const
+bool glaxnimate::model::PreCompLayer::is_valid_precomp(glaxnimate::model::DocumentNode* node) const
 {
     auto owncomp = owner_composition();
-    if ( auto precomp = qobject_cast<model::Precomposition*>(node) )
+    if ( auto precomp = qobject_cast<glaxnimate::model::Precomposition*>(node) )
         return !document()->comp_graph().is_ancestor_of(precomp, owncomp);
     return false;
 }
 
-void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, model::VisualNode::PaintMode mode, model::Modifier*) const
+void glaxnimate::model::PreCompLayer::on_paint(QPainter* painter, glaxnimate::model::FrameTime time, glaxnimate::model::VisualNode::PaintMode mode, glaxnimate::model::Modifier*) const
 {
     if ( composition.get() )
     {
@@ -62,28 +62,28 @@ void model::PreCompLayer::on_paint(QPainter* painter, model::FrameTime time, mod
     }
 }
 
-void model::PreCompLayer::on_transform_matrix_changed()
+void glaxnimate::model::PreCompLayer::on_transform_matrix_changed()
 {
     emit bounding_rect_changed();
     emit local_transform_matrix_changed(local_transform_matrix(time()));
     propagate_transform_matrix_changed(transform_matrix(time()), group_transform_matrix(time()));
 }
 
-QRectF model::PreCompLayer::local_bounding_rect(FrameTime) const
+QRectF glaxnimate::model::PreCompLayer::local_bounding_rect(FrameTime) const
 {
     return QRectF(QPointF(0, 0), size.get());
 }
 
-QTransform model::PreCompLayer::local_transform_matrix(model::FrameTime t) const
+QTransform glaxnimate::model::PreCompLayer::local_transform_matrix(glaxnimate::model::FrameTime t) const
 {
     return transform.get()->transform_matrix(t);
 }
 
-void model::PreCompLayer::add_shapes(model::FrameTime, math::bezier::MultiBezier&, const QTransform&) const
+void glaxnimate::model::PreCompLayer::add_shapes(glaxnimate::model::FrameTime, math::bezier::MultiBezier&, const QTransform&) const
 {
 }
 
-void model::PreCompLayer::added_to_list()
+void glaxnimate::model::PreCompLayer::added_to_list()
 {
     ShapeElement::added_to_list();
     document()->comp_graph().add_connection(owner_composition(), this);
@@ -91,7 +91,7 @@ void model::PreCompLayer::added_to_list()
         composition.get()->add_user(&composition);
 }
 
-void model::PreCompLayer::removed_from_list()
+void glaxnimate::model::PreCompLayer::removed_from_list()
 {
     ShapeElement::removed_from_list();
     document()->comp_graph().remove_connection(owner_composition(), this);
@@ -99,7 +99,7 @@ void model::PreCompLayer::removed_from_list()
         composition.get()->remove_user(&composition);
 }
 
-QPainterPath model::PreCompLayer::to_painter_path(model::FrameTime time) const
+QPainterPath glaxnimate::model::PreCompLayer::to_painter_path(glaxnimate::model::FrameTime time) const
 {
     QPainterPath p;
     if ( composition.get() )
@@ -111,7 +111,7 @@ QPainterPath model::PreCompLayer::to_painter_path(model::FrameTime time) const
     return p;
 }
 
-QPainterPath model::PreCompLayer::to_clip(model::FrameTime time) const
+QPainterPath glaxnimate::model::PreCompLayer::to_clip(glaxnimate::model::FrameTime time) const
 {
     return transform.get()->transform_matrix(time).map(to_painter_path(time));
 }

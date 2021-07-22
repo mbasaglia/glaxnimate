@@ -8,10 +8,12 @@ namespace color_widgets {
 class ColorPaletteModel;
 } // namespace color_widgets
 
-namespace model {
+namespace glaxnimate::model {
 class Document;
 class Styler;
 } // namespace model
+
+namespace glaxnimate::gui {
 
 class ColorSelector : public QWidget
 {
@@ -59,4 +61,5 @@ private:
     std::unique_ptr<Private> d;
 };
 
+} // namespace glaxnimate::gui
 #endif // COLORSELECTOR_H

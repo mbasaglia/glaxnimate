@@ -1,6 +1,8 @@
 #include "flow_layout.hpp"
 #include <QtMath>
 
+using namespace glaxnimate::gui;
+
 
 FlowLayout::FlowLayout(int items_per_row, int min_w, int max_w, QWidget* parent)
     : QLayout(parent), min_w(min_w), max_w(max_w), items_per_row(items_per_row)

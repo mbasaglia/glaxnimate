@@ -3,6 +3,8 @@
 #include "model/shapes/fill.hpp"
 #include "utils/pseudo_mutex.hpp"
 
+namespace glaxnimate::gui {
+
 class FillStyleWidget : public ColorSelector
 {
 public:
@@ -33,3 +35,4 @@ private:
     int stop = 0;
 };
 
+} // namespace glaxnimate::gui

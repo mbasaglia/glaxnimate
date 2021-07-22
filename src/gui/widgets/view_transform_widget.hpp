@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <memory>
 
+namespace glaxnimate::gui {
+
 namespace Ui
 {
 class ViewTransformWidget;
@@ -42,5 +44,8 @@ protected:
 private:
     std::unique_ptr<Ui::ViewTransformWidget> d;
 };
+
+
+} // namespace glaxnimate::gui
 
 #endif // VIEWTRANSFORMWIDGET_H

@@ -4,6 +4,7 @@
 #include <memory>
 #include <QWidget>
 
+namespace glaxnimate::gui {
 
 class SnippetListWidget : public QWidget
 {
@@ -31,5 +32,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // SNIPPETLISTWIDGET_H

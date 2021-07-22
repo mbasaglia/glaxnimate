@@ -24,7 +24,7 @@ public:                                                     \
     // macro end
 
 
-namespace model {
+namespace glaxnimate::model {
 
 class ObjectListPropertyBase : public BaseProperty
 {
@@ -311,4 +311,4 @@ public:
     using detail::ObjectListProperty<Type>::ObjectListProperty;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

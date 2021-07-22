@@ -4,7 +4,7 @@
 
 #include "math/vector.hpp"
 
-namespace math::bezier {
+namespace glaxnimate::math::bezier {
 
 template<class Vec>
 class CubicBezierSolver
@@ -199,4 +199,4 @@ private:
     std::array<Vec, 4> points_;
 };
 
-} // namespace math::bezier
+} // namespace glaxnimate::math::bezier

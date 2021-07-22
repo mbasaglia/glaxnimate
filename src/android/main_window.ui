@@ -34,13 +34,13 @@
      <number>0</number>
     </property>
     <item row="1" column="3" rowspan="2">
-     <widget class="StrokeStyleWidget" name="stroke_style_widget" native="true"/>
+     <widget class="glaxnimate::gui::StrokeStyleWidget" name="stroke_style_widget" native="true"/>
     </item>
     <item row="1" column="4" rowspan="2">
-     <widget class="FillStyleWidget" name="fill_style_widget" native="true"/>
+     <widget class="glaxnimate::gui::FillStyleWidget" name="fill_style_widget" native="true"/>
     </item>
     <item row="1" column="1">
-     <widget class="Canvas" name="canvas"/>
+     <widget class="glaxnimate::gui::Canvas" name="canvas"/>
     </item>
     <item row="1" column="2" rowspan="2">
      <widget class="QScrollArea" name="property_widget">
@@ -135,7 +135,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="FrameControlsWidget" name="play_controls" native="true"/>
+          <widget class="glaxnimate::gui::FrameControlsWidget" name="play_controls" native="true"/>
          </item>
         </layout>
        </item>
@@ -177,7 +177,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Canvas</class>
+   <class>glaxnimate::gui::Canvas</class>
    <extends>QGraphicsView</extends>
    <header>widgets/canvas.hpp</header>
    <slots>
@@ -188,13 +188,13 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>FrameControlsWidget</class>
+   <class>glaxnimate::gui::FrameControlsWidget</class>
    <extends>QWidget</extends>
    <header>widgets/timeline/frame_controls_widget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>FillStyleWidget</class>
+   <class>glaxnimate::gui::FillStyleWidget</class>
    <extends>QWidget</extends>
    <header>widgets/shape_style/fill_style_widget.hpp</header>
    <container>1</container>
@@ -204,7 +204,7 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>StrokeStyleWidget</class>
+   <class>glaxnimate::gui::StrokeStyleWidget</class>
    <extends>QWidget</extends>
    <header>widgets/shape_style/stroke_style_widget.hpp</header>
    <container>1</container>

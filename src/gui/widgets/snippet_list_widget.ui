@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SnippetListWidget</class>
+ <class>glaxnimate::gui::SnippetListWidget</class>
  <widget class="QWidget" name="SnippetListWidget">
   <property name="geometry">
    <rect>

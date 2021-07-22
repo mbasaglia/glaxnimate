@@ -24,9 +24,9 @@
 #include "font_weight.hpp"
 #include "css_parser.hpp"
 
-using namespace io::svg::detail;
+using namespace glaxnimate::io::svg::detail;
 
-class io::svg::SvgParser::Private
+class glaxnimate::io::svg::SvgParser::Private
 {
 public:
     using ShapeCollection = std::vector<std::unique_ptr<model::ShapeElement>>;
@@ -908,7 +908,7 @@ public:
         if ( color_str == "currentColor" )
             return current_color;
 
-        return io::svg::parse_color(color_str);
+        return glaxnimate::io::svg::parse_color(color_str);
     }
 
     void parseshape_rect(const ParseFuncArgs& args)
@@ -1432,27 +1432,27 @@ public:
     static const QRegularExpression url_re;
 };
 
-const std::map<QString, void (io::svg::SvgParser::Private::*)(const io::svg::SvgParser::Private::ParseFuncArgs&)> io::svg::SvgParser::Private::shape_parsers = {
-    {"g",       &io::svg::SvgParser::Private::parseshape_g},
-    {"rect",    &io::svg::SvgParser::Private::parseshape_rect},
-    {"ellipse", &io::svg::SvgParser::Private::parseshape_ellipse},
-    {"circle",  &io::svg::SvgParser::Private::parseshape_circle},
-    {"line",    &io::svg::SvgParser::Private::parseshape_line},
-    {"polyline",&io::svg::SvgParser::Private::parseshape_polyline},
-    {"polygon", &io::svg::SvgParser::Private::parseshape_polygon},
-    {"path",    &io::svg::SvgParser::Private::parseshape_path},
-    {"use",     &io::svg::SvgParser::Private::parseshape_use},
-    {"image",   &io::svg::SvgParser::Private::parseshape_image},
-    {"text",    &io::svg::SvgParser::Private::parseshape_text},
+const std::map<QString, void (glaxnimate::io::svg::SvgParser::Private::*)(const glaxnimate::io::svg::SvgParser::Private::ParseFuncArgs&)> glaxnimate::io::svg::SvgParser::Private::shape_parsers = {
+    {"g",       &glaxnimate::io::svg::SvgParser::Private::parseshape_g},
+    {"rect",    &glaxnimate::io::svg::SvgParser::Private::parseshape_rect},
+    {"ellipse", &glaxnimate::io::svg::SvgParser::Private::parseshape_ellipse},
+    {"circle",  &glaxnimate::io::svg::SvgParser::Private::parseshape_circle},
+    {"line",    &glaxnimate::io::svg::SvgParser::Private::parseshape_line},
+    {"polyline",&glaxnimate::io::svg::SvgParser::Private::parseshape_polyline},
+    {"polygon", &glaxnimate::io::svg::SvgParser::Private::parseshape_polygon},
+    {"path",    &glaxnimate::io::svg::SvgParser::Private::parseshape_path},
+    {"use",     &glaxnimate::io::svg::SvgParser::Private::parseshape_use},
+    {"image",   &glaxnimate::io::svg::SvgParser::Private::parseshape_image},
+    {"text",    &glaxnimate::io::svg::SvgParser::Private::parseshape_text},
 };
-const QRegularExpression io::svg::SvgParser::Private::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
-const QRegularExpression io::svg::SvgParser::Private::transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"};
-const QRegularExpression io::svg::SvgParser::Private::url_re{R"(url\s*\(\s*(#[-a-zA-Z0-9_]+)\s*\)\s*)"};
-const QRegularExpression io::svg::detail::AnimateParser::separator{"\\s*,\\s*|\\s+"};
-const QRegularExpression io::svg::detail::AnimateParser::clock_re{R"((?:(?:(?<hours>[0-9]+):)?(?:(?<minutes>[0-9]{2}):)?(?<seconds>[0-9]+(?:\.[0-9]+)?))|(?:(?<timecount>[0-9]+(?:\.[0-9]+)?)(?<unit>h|min|s|ms)))"};
-const QRegularExpression io::svg::detail::AnimateParser::frame_separator_re{"\\s*;\\s*"};
+const QRegularExpression glaxnimate::io::svg::SvgParser::Private::unit_re{R"(([-+]?(?:[0-9]*\.[0-9]+|[0-9]+)([eE][-+]?[0-9]+)?)([a-z]*))"};
+const QRegularExpression glaxnimate::io::svg::SvgParser::Private::transform_re{R"(([a-zA-Z]+)\s*\(([^\)]*)\))"};
+const QRegularExpression glaxnimate::io::svg::SvgParser::Private::url_re{R"(url\s*\(\s*(#[-a-zA-Z0-9_]+)\s*\)\s*)"};
+const QRegularExpression glaxnimate::io::svg::detail::AnimateParser::separator{"\\s*,\\s*|\\s+"};
+const QRegularExpression glaxnimate::io::svg::detail::AnimateParser::clock_re{R"((?:(?:(?<hours>[0-9]+):)?(?:(?<minutes>[0-9]{2}):)?(?<seconds>[0-9]+(?:\.[0-9]+)?))|(?:(?<timecount>[0-9]+(?:\.[0-9]+)?)(?<unit>h|min|s|ms)))"};
+const QRegularExpression glaxnimate::io::svg::detail::AnimateParser::frame_separator_re{"\\s*;\\s*"};
 
-io::svg::SvgParser::SvgParser(
+glaxnimate::io::svg::SvgParser::SvgParser(
     QIODevice* device,
     GroupMode group_mode,
     model::Document* document,
@@ -1472,26 +1472,26 @@ io::svg::SvgParser::SvgParser(
         throw err;
 }
 
-io::svg::SvgParser::~SvgParser()
+glaxnimate::io::svg::SvgParser::~SvgParser()
 {
 }
 
 
-io::mime::DeserializedData io::svg::SvgParser::parse_to_objects()
+glaxnimate::io::mime::DeserializedData glaxnimate::io::svg::SvgParser::parse_to_objects()
 {
-    io::mime::DeserializedData data;
+    glaxnimate::io::mime::DeserializedData data;
     data.initialize_data();
     d->document = data.document.get();
     d->parse();
     return data;
 }
 
-void io::svg::SvgParser::parse_to_document()
+void glaxnimate::io::svg::SvgParser::parse_to_document()
 {
     d->parse();
 }
 
-QColor io::svg::parse_color(const QString& string)
+QColor glaxnimate::io::svg::parse_color(const QString& string)
 {
     if ( string.isEmpty() )
         return {};

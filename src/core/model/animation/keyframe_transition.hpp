@@ -6,7 +6,7 @@
 #include <QPointF>
 
 
-namespace model {
+namespace glaxnimate::model {
 
 namespace detail {
     using SampleCache = std::vector<double>;
@@ -78,4 +78,4 @@ private:
     mutable detail::SampleCache sample_cache_;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

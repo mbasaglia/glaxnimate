@@ -3,7 +3,7 @@
 #include "proxy_base.hpp"
 #include <QMimeData>
 
-namespace item_models {
+namespace glaxnimate::gui::item_models {
 
 class AssetProxyModel : public ProxyBase
 {
@@ -96,4 +96,4 @@ protected:
     }
 };
 
-} // namespace item_models
+} // namespace glaxnimate::gui::item_models

@@ -2,7 +2,7 @@
 
 #include "app/settings/custom_settings_group.hpp"
 
-namespace settings {
+namespace glaxnimate::gui::settings {
 
 class ToolbarSettingsGroup : public app::settings::CustomSettingsGroupBase
 {
@@ -25,5 +25,5 @@ public:
     static void apply();
 };
 
-} // namespace settings
+} // namespace glaxnimate::gui::settings
 

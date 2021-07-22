@@ -7,7 +7,7 @@
 #include <QDomDocument>
 
 
-namespace io::svg::detail {
+namespace glaxnimate::io::svg::detail {
 
 class CssSelector
 {
@@ -464,4 +464,4 @@ private:
     Style::Map rules;
 };
 
-} // namespace io::svg::detail
+} // namespace glaxnimate::io::svg::detail

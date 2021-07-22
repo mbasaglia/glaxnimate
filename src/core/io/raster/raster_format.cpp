@@ -1,11 +1,11 @@
 #include "raster_format.hpp"
 #include "io/raster/raster_mime.hpp"
 
-io::Autoreg<io::raster::RasterMime> io::raster::RasterMime::autoreg;
-io::Autoreg<io::raster::RasterFormat> io::raster::RasterFormat::autoreg;
+glaxnimate::io::Autoreg<glaxnimate::io::raster::RasterMime> glaxnimate::io::raster::RasterMime::autoreg;
+glaxnimate::io::Autoreg<glaxnimate::io::raster::RasterFormat> glaxnimate::io::raster::RasterFormat::autoreg;
 
 
-QStringList io::raster::RasterFormat::extensions() const
+QStringList glaxnimate::io::raster::RasterFormat::extensions() const
 {
     QStringList formats;
     for ( const auto& fmt : QImageReader::supportedImageFormats() )
@@ -14,7 +14,7 @@ QStringList io::raster::RasterFormat::extensions() const
     return formats;
 }
 
-bool io::raster::RasterFormat::on_open(QIODevice& dev, const QString&, model::Document* document, const QVariantMap&)
+bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString&, model::Document* document, const QVariantMap&)
 {
     auto bmp = document->assets()->images->values.insert(std::make_unique<model::Bitmap>(document));
     if ( auto file = qobject_cast<QFile*>(&dev) )

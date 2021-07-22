@@ -4,7 +4,7 @@
 #include <memory>
 #include <QWidget>
 
-namespace font {
+namespace glaxnimate::gui::font {
 
 class FontPreviewWidget : public QWidget
 {

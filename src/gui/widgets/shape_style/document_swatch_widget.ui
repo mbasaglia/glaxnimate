@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DocumentSwatchWidget</class>
+ <class>glaxnimate::gui::DocumentSwatchWidget</class>
  <widget class="QWidget" name="DocumentSwatchWidget">
   <property name="geometry">
    <rect>

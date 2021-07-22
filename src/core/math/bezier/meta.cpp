@@ -1,5 +1,6 @@
-
 #include "meta.hpp"
+
+using namespace glaxnimate;
 
 QDataStream& operator<<(QDataStream& ds, const math::bezier::Point& p)
 {
@@ -41,10 +42,10 @@ QDataStream& operator>>(QDataStream& ds, math::bezier::Bezier& bez)
 
 void math::bezier::register_meta()
 {
-    qRegisterMetaType<Bezier>("math::bezier::Bezier");
-    qRegisterMetaTypeStreamOperators<Bezier>("math::bezier::Bezier");
-    qRegisterMetaType<Point>("math::bezier::Point");
-    qRegisterMetaTypeStreamOperators<Point>("math::bezier::Point");
+    qRegisterMetaType<Bezier>("glaxnimate::math::bezier::Bezier");
+    qRegisterMetaTypeStreamOperators<Bezier>("glaxnimate::math::bezier::Bezier");
+    qRegisterMetaType<Point>("glaxnimate::math::bezier::Point");
+    qRegisterMetaTypeStreamOperators<Point>("glaxnimate::math::bezier::Point");
 }
 
 

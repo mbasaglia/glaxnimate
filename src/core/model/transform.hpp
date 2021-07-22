@@ -6,7 +6,7 @@
 #include <QTransform>
 
 
-namespace model {
+namespace glaxnimate::model {
 
 
 class Transform : public Object
@@ -29,4 +29,4 @@ public:
 
 
 
-} // namespace model
+} // namespace glaxnimate::model

@@ -2,6 +2,8 @@
 
 #include <QDoubleSpinBox>
 
+namespace glaxnimate::gui {
+
 class SmallerSpinBox : public QDoubleSpinBox
 {
 public:
@@ -54,3 +56,5 @@ public:
         return sh;
     }
 };
+
+} // namespace glaxnimate::gui

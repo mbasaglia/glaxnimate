@@ -10,7 +10,7 @@
 #include "app/application.hpp"
 
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 inline void add_property_menu_actions(QObject* thus, QMenu* menu, QGraphicsItem* item)
 {
@@ -61,4 +61,4 @@ inline void add_property_menu_actions(QObject* thus, QMenu* menu, QGraphicsItem*
     }
 }
 
-} // namespace tools
+} // namespace glaxnimate::gui::tools

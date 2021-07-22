@@ -11,21 +11,24 @@
 
 #include "selection_manager.hpp"
 
-namespace plugin {
+
+namespace glaxnimate::plugin {
 class Plugin;
 class PluginScript;
 } // namespace plugin
 
-namespace item_models {
+namespace glaxnimate::gui::item_models {
 class DocumentNodeModel;
 } // namespace item_models
 
-namespace model {
+namespace glaxnimate::model {
 class BrushStyle;
 } // namespace model
 
 class QItemSelection;
 
+
+namespace glaxnimate::gui {
 class PluginUiDialog;
 
 class GlaxnimateWindow : public QMainWindow, public glaxnimate::gui::SelectionManager
@@ -195,5 +198,8 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+
+} // namespace glaxnimate::gui
 
 #endif // GLAXNIMATEWINDOW_H

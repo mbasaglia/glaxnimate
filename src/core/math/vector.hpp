@@ -9,7 +9,7 @@
 
 class QVector2D; class QVector3D; class QVector4D; class QPointF;
 
-namespace math {
+namespace glaxnimate::math {
 
 
 namespace detail {
@@ -510,4 +510,4 @@ struct PolarVector
     }
 };
 
-} // namespace math
+} // namespace glaxnimate::math

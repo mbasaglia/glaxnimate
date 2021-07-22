@@ -2,7 +2,7 @@
 
 #include <mutex>
 
-namespace utils {
+namespace glaxnimate::utils {
 
 class PseudoMutex
 {
@@ -40,4 +40,4 @@ private:
     bool locked = false;
 };
 
-} // namespace utils
+} // namespace glaxnimate::utils

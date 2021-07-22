@@ -17,6 +17,7 @@
 #include "utils/trace.hpp"
 #include "utils/quantize.hpp"
 
+using namespace glaxnimate;
 
 void define_bezier(py::module& m)
 {
@@ -97,7 +98,7 @@ QuantizeWrapper<Args...> quantize_wrapper(std::vector<QRgb> (*func) (Args...))
 
 static void define_trace(py::module& m)
 {
-    using namespace utils::trace;
+    using namespace glaxnimate::utils::trace;
     py::module trace = m.def_submodule("trace", "Bitmap tracing functionality");
     py::class_<TraceOptions>(trace, "TraceOptions")
         .def(py::init<>())

@@ -37,6 +37,7 @@
 #include "miscdefs.hpp"
 
 using namespace app::scripting::python;
+using namespace glaxnimate;
 
 namespace {
 

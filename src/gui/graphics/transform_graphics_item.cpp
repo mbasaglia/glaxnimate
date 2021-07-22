@@ -7,6 +7,8 @@
 #include "math/math.hpp"
 #include "glaxnimate_app.hpp"
 
+using namespace glaxnimate::gui;
+
 class graphics::TransformGraphicsItem::Private
 {
 public:

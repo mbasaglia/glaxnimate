@@ -4,7 +4,7 @@
 #include "io/svg/svg_renderer.hpp"
 #include "io/mime/mime_serializer.hpp"
 
-namespace io::svg {
+namespace glaxnimate::io::svg {
 
 class SvgMime : public io::mime::MimeSerializer
 {
@@ -45,4 +45,4 @@ private:
     static Autoreg<SvgMime> autoreg;
 };
 
-} // namespace io::svg
+} // namespace glaxnimate::io::svg

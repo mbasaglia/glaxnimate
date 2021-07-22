@@ -2,7 +2,7 @@
 #include "model/shapes/path.hpp"
 #include "math/bezier/operations.hpp"
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 class FreehandTool : public DrawToolBase
 {
@@ -83,7 +83,6 @@ private:
 };
 
 
-} // namespace tools
-
-
 tools::Autoreg<tools::FreehandTool> tools::FreehandTool::autoreg{max_priority + 1};
+
+} // namespace glaxnimate::gui::tools

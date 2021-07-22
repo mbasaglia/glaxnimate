@@ -3,7 +3,7 @@
 #include <vector>
 #include <unordered_map>
 
-namespace model {
+namespace glaxnimate::model {
 
 class Composition;
 class PreCompLayer;
@@ -63,4 +63,4 @@ private:
     std::unordered_map<model::Composition*, std::vector<model::PreCompLayer*>> layers;
 };
 
-} // namespace model
+} // namespace glaxnimate::model

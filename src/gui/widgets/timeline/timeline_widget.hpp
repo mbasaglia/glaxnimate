@@ -10,6 +10,8 @@
 class QTreeView;
 class QItemSelection;
 
+namespace glaxnimate::gui {
+
 class TimelineWidget : public QGraphicsView
 {
     Q_OBJECT
@@ -84,3 +86,5 @@ private:
     
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui

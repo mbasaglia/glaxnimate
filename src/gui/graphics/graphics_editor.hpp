@@ -4,7 +4,7 @@
 
 #include "model/document_node.hpp"
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class GraphicsEditor : public QGraphicsObject
 {
@@ -38,5 +38,5 @@ public slots:
     }
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics
 

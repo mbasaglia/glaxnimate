@@ -6,13 +6,15 @@
 
 #include "widgets/dialogs/selection_manager.hpp"
 
-namespace model {
+namespace glaxnimate::model {
     class Document;
     class Fill;
     class Stroke;
     class BrushStyle;
     class Gradient;
-} // namespace model
+} // namespace glaxnimate::model
+
+namespace glaxnimate::gui {
 
 class GradientListWidget : public QWidget
 {
@@ -39,5 +41,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // GRADIENTLISTWIDGET_H

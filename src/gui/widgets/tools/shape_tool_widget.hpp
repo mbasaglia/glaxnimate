@@ -5,6 +5,8 @@
 
 #include <QWidget>
 
+namespace glaxnimate::gui {
+
 class ShapeToolWidget : public QWidget
 {
     Q_OBJECT
@@ -36,5 +38,7 @@ protected:
 
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // SHAPETOOLWIDGET_H

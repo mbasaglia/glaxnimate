@@ -1,8 +1,8 @@
 #include "fill.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(model::Fill)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Fill)
 
-void model::Fill::on_paint(QPainter* p, model::FrameTime t, model::VisualNode::PaintMode, model::Modifier* modifier) const
+void glaxnimate::model::Fill::on_paint(QPainter* p, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode, glaxnimate::model::Modifier* modifier) const
 {
     p->setBrush(brush(t));
     p->setOpacity(p->opacity() * opacity.get_at(t));
@@ -20,7 +20,7 @@ void model::Fill::on_paint(QPainter* p, model::FrameTime t, model::VisualNode::P
     p->drawPath(path);
 }
 
-QPainterPath model::Fill::to_painter_path(model::FrameTime t) const
+QPainterPath glaxnimate::model::Fill::to_painter_path(glaxnimate::model::FrameTime t) const
 {
     return collect_shapes(t, {}).painter_path();
 }

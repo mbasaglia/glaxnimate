@@ -6,7 +6,7 @@
 #include "math/bezier/bezier.hpp"
 #include "glaxnimate_format.hpp"
 
-namespace io::glaxnimate::detail {
+namespace glaxnimate::io::glaxnimate::detail {
 
 class ImportState
 {
@@ -495,4 +495,4 @@ private:
     int document_version;
 };
 
-} // namespace io::glaxnimate::detail
+} // namespace glaxnimate::io::glaxnimate::detail

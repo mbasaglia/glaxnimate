@@ -2,6 +2,9 @@
 #include "ui_keyframe_editor_widget.h"
 #include "app/application.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 
 namespace  {
 

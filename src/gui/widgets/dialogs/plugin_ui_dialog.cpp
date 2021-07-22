@@ -21,6 +21,9 @@
 #include <QtColorWidgets/swatch.hpp>
 #include <QtColorWidgets/HarmonyColorWheel>
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 /**
  * On mac widgets created from the plugin don't work right, so we fake it...
  */

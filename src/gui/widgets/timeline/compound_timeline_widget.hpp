@@ -5,10 +5,14 @@
 
 #include "model/document.hpp"
 
-class GlaxnimateWindow;
 class QAbstractItemModel;
-class TimelineWidget;
 class QItemSelection;
+
+namespace glaxnimate::gui {
+
+class GlaxnimateWindow;
+class TimelineWidget;
+
 class CompoundTimelineWidget : public QWidget
 {
     Q_OBJECT
@@ -62,3 +66,5 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui

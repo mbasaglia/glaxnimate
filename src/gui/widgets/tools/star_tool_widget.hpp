@@ -4,6 +4,8 @@
 
 #include "shape_tool_widget.hpp"
 
+namespace glaxnimate::gui {
+
 class StarToolWidget : public ShapeToolWidget
 {
 public:
@@ -18,3 +20,5 @@ public:
 private:
     class Private;
 };
+
+} // namespace glaxnimate::gui

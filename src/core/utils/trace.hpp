@@ -5,7 +5,7 @@
 
 #include "math/bezier/bezier.hpp"
 
-namespace utils::trace {
+namespace glaxnimate::utils::trace {
 
 class TraceOptions
 {
@@ -52,4 +52,4 @@ private:
 
 std::map<QRgb, std::vector<QRectF>> trace_pixels(QImage image);
 
-} // namespace utils::trace
+} // namespace glaxnimate::utils::trace

@@ -9,12 +9,13 @@ namespace color_widgets {
 class ColorPaletteModel;
 } // namespace color_widgets
 
-namespace model {
+namespace glaxnimate::model {
 class Document;
 class BrushStyle;
 class NamedColor;
-} // namespace model
+} // namespace glaxnimate::model
 
+namespace glaxnimate::gui {
 
 class DocumentSwatchWidget : public QWidget
 {
@@ -58,5 +59,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // DOCUMENTSWATCHWIDGET_H

@@ -7,6 +7,9 @@
 
 #include "app/settings/widget.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class ColorQuantizationDialog::Private
 {
 public:

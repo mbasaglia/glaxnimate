@@ -16,7 +16,7 @@
 #include "graphics/transform_graphics_item.hpp"
 #include "graphics/composition_item.hpp"
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class MainCompositionItem : public CompositionItem
 {
@@ -118,4 +118,4 @@ private:
 };
 
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

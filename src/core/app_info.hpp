@@ -5,6 +5,7 @@
 #include <QList>
 #include <QUrl>
 
+namespace glaxnimate {
 
 class AppInfo
 {
@@ -62,3 +63,5 @@ private:
     ~AppInfo() = default;
 
 };
+
+} // namespace glaxnimate

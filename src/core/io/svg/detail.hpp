@@ -7,7 +7,7 @@
 
 #include "utils/qstring_hash.hpp"
 
-namespace io::svg::detail {
+namespace glaxnimate::io::svg::detail {
 
 extern const std::map<QString, QString> xmlns;
 

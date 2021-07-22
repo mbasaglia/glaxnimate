@@ -6,6 +6,8 @@
 
 #include "model/document.hpp"
 
+namespace glaxnimate::gui {
+
 class StartupDialog : public QDialog
 {
     Q_OBJECT
@@ -34,5 +36,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // STARTUPDIALOG_H

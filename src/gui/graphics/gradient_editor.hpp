@@ -8,7 +8,7 @@
 
 #include "handle.hpp"
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class GradientEditor : public QGraphicsObject
 {
@@ -53,4 +53,4 @@ private:
     model::Gradient* gradient_ = nullptr;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

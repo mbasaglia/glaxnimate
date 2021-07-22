@@ -3,6 +3,9 @@
 #include <QComboBox>
 #include <QMetaEnum>
 
+namespace glaxnimate::gui {
+
+
 class EnumCombo : public QComboBox
 {
     Q_OBJECT
@@ -34,3 +37,5 @@ private:
 
     QMetaEnum meta_enum;
 };
+
+} // namespace glaxnimate::gui

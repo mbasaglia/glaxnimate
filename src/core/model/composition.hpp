@@ -3,7 +3,7 @@
 #include "model/property/object_list_property.hpp"
 #include "model/shapes/layer.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Composition : public VisualNode
 {
@@ -45,5 +45,5 @@ public:
     int docnode_child_index(DocumentNode* dn) const override;
 };
 
-} // namespace model
+} // namespace glaxnimate::model
 

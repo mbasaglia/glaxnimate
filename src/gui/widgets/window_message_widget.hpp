@@ -7,6 +7,7 @@
 
 #include "app/log/log_line.hpp"
 
+namespace glaxnimate::gui {
 
 class WindowMessageWidget : public QWidget
 {
@@ -47,4 +48,5 @@ private:
     std::unique_ptr<Private> d;
 };
 
+} // namespace glaxnimate::gui
 #endif // WINDOWMESSAGEWIDGET_H

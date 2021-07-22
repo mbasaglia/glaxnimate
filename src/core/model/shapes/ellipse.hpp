@@ -3,7 +3,7 @@
 #include "shape.hpp"
 #include "math/ellipse_solver.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 
 class Ellipse : public Shape
@@ -38,5 +38,5 @@ public:
     }
 };
 
-} // namespace model
+} // namespace glaxnimate::model
 

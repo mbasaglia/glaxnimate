@@ -5,6 +5,8 @@
 PYBIND11_EMBEDDED_MODULE(glaxnimate_gui, m)
 {
     using namespace app::scripting::python;
+    using namespace glaxnimate::gui;
+
     register_from_meta<PluginUiDialog, QObject>(m)
         .def("exec", &QDialog::exec)
     ;

@@ -14,9 +14,9 @@
 
 class QWidget;
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 class Tool;
-} // namespace tools
+} // namespace glaxnimate::gui::tools
 
 namespace glaxnimate::gui {
 

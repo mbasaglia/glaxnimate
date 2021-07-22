@@ -7,6 +7,8 @@
 #include "model/shapes/shape.hpp"
 #include "item_models/document_node_model.hpp"
 
+namespace glaxnimate::gui {
+
 class ShapeParentDialog : public QDialog
 {
     Q_OBJECT
@@ -30,5 +32,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+} // namespace glaxnimate::gui
 
 #endif // SHAPEPARENTDIALOG_H

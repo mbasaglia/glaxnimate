@@ -8,7 +8,7 @@
 #include "model/document.hpp"
 #include "model/shapes/image.hpp"
 
-namespace io::raster {
+namespace glaxnimate::io::raster {
 
 class RasterMime : public io::mime::MimeSerializer
 {
@@ -68,5 +68,5 @@ private:
     static Autoreg<RasterMime> autoreg;
 };
 
-} // namespace io::mime
+} // namespace glaxnimate::io::mime
 

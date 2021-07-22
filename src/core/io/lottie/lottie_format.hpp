@@ -4,7 +4,7 @@
 #include "io/base.hpp"
 #include "io/io_registry.hpp"
 
-namespace io::lottie {
+namespace glaxnimate::io::lottie {
 
 
 class LottieFormat : public ImportExport
@@ -38,4 +38,4 @@ private:
 };
 
 
-} // namespace io::lottie
+} // namespace glaxnimate::io::lottie

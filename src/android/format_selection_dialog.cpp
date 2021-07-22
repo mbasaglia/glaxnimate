@@ -36,7 +36,7 @@ glaxnimate::android::FormatSelectionDialog::FormatSelectionDialog(QWidget *paren
 glaxnimate::android::FormatSelectionDialog::~FormatSelectionDialog()
 {}
 
-io::ImportExport *glaxnimate::android::FormatSelectionDialog::format() const
+glaxnimate::io::ImportExport *glaxnimate::android::FormatSelectionDialog::format() const
 {
     return d->format;
 }

@@ -2,6 +2,9 @@
 #include "ui_fill_tool_widget.h"
 #include <QEvent>
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class FillToolWidget::Private
 {
 public:

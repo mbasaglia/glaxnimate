@@ -2,6 +2,8 @@
 
 #include <QTabBar>
 
+namespace glaxnimate::gui {
+
 class ClickableTabBar : public QTabBar
 {
     Q_OBJECT
@@ -15,3 +17,5 @@ protected:
 signals:
     void context_menu_requested(int index);
 };
+
+} // namespace glaxnimate::gui

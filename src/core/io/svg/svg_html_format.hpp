@@ -3,7 +3,7 @@
 #include "io/lottie/lottie_html_format.hpp"
 #include "io/svg/svg_format.hpp"
 
-namespace io::svg {
+namespace glaxnimate::io::svg {
 
 class SvgHtmlFormat : public SvgFormat
 {
@@ -26,4 +26,4 @@ private:
     }
 };
 
-} // namespace io::svg
+} // namespace glaxnimate::io::svg

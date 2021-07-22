@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QStyleOption>
 
-namespace style {
+namespace glaxnimate::gui::style {
 
 class DockWidgetStyle: public QProxyStyle
 {
@@ -15,4 +15,4 @@ public:
         QPainter* painter, const QWidget* widget) const override;
 };
 
-} // namespace style
+} // namespace glaxnimate::gui::style

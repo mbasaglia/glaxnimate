@@ -6,6 +6,9 @@
 #include "app/settings/keyboard_shortcuts.hpp"
 #include "glaxnimate_app.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class tools::DrawTool::Private
 {
 public:

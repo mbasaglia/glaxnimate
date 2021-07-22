@@ -2,6 +2,9 @@
 #include "ui_io_status_dialog.h"
 
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class IoStatusDialog::Private : public Ui::IoStatusDialog
 {
 public:

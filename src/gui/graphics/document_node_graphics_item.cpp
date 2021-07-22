@@ -2,6 +2,8 @@
 
 #include "model/document.hpp"
 
+using namespace glaxnimate::gui;
+
 graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::VisualNode* node, QGraphicsItem* parent)
     : QGraphicsObject(parent), node_(node)
 {

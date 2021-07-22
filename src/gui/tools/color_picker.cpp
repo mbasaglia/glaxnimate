@@ -3,7 +3,7 @@
 #include <QtColorWidgets/color_utils.hpp>
 #include "widgets/tools/color_picker_widget.hpp"
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 class ColorPickerTool : public Tool
 {
@@ -64,8 +64,9 @@ private:
 };
 
 
-} // namespace tools
+Autoreg<ColorPickerTool> ColorPickerTool::autoreg{max_priority};
+
+} // namespace glaxnimate::gui::tools
 
 
-tools::Autoreg<tools::ColorPickerTool> tools::ColorPickerTool::autoreg{max_priority};
 

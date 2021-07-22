@@ -4,7 +4,7 @@
 #include "model/document.hpp"
 #include "command/animation_commands.hpp"
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class PositionItem : public QGraphicsObject
 {
@@ -53,4 +53,4 @@ private:
     MoveHandle handle;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

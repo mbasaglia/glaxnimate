@@ -5,7 +5,7 @@
 
 #include "model/document.hpp"
 
-namespace item_models {
+namespace glaxnimate::gui::item_models {
 
 class ProxyBase;
 
@@ -42,5 +42,5 @@ private:
 };
 
 
-} // namespace item_models
+} // namespace glaxnimate::gui::item_models
 

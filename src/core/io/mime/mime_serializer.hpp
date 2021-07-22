@@ -9,12 +9,12 @@
 
 #include "app/log/log_line.hpp"
 
-namespace model {
+namespace glaxnimate::model {
     class Document;
     class DocumentNode;
-} // namespace model
+} // namespace glaxnimate::model
 
-namespace io::mime {
+namespace glaxnimate::io::mime {
 
 struct DeserializedData
 {
@@ -60,4 +60,4 @@ protected:
 
 };
 
-} // namespace io::mime
+} // namespace glaxnimate::io::mime

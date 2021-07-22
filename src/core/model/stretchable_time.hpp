@@ -3,7 +3,7 @@
 #include "model/object.hpp"
 #include "model/property/property.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 
 class StretchableTime : public Object

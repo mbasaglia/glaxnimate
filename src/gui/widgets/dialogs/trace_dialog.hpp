@@ -4,10 +4,14 @@
 #include <memory>
 #include <QDialog>
 
+namespace glaxnimate {
+
 namespace model {
 class Image;
 class DocumentNode;
 } // namespace model
+
+namespace gui {
 
 class TraceDialog : public QDialog
 {
@@ -41,5 +45,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 };
+
+}} // namespace glaxnimate::gui
 
 #endif // TRACEDIALOG_H

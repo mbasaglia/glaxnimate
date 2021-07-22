@@ -5,11 +5,11 @@
 #include "animatable.hpp"
 #include "math/bezier/bezier.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 namespace detail {
 class AnimatedPropertyBezier;
-} // namespace name
+} // namespace glaxnimate::name
 
 
 
@@ -99,4 +99,4 @@ public:
 };
 
 
-} // namespace model
+} // namespace glaxnimate::model

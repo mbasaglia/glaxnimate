@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>font::FontStyleDialog</class>
+ <class>glaxnimate::gui::font::FontStyleDialog</class>
  <widget class="QDialog" name="font::FontStyleDialog">
   <property name="geometry">
    <rect>
@@ -28,7 +28,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="font::FontStyleWidget" name="widget_system" native="true">
+        <widget class="glaxnimate::gui::font::FontStyleWidget" name="widget_system" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -42,7 +42,7 @@
     </widget>
    </item>
    <item>
-    <widget class="font::FontPreviewWidget" name="preview" native="true">
+    <widget class="glaxnimate::gui::font::FontPreviewWidget" name="preview" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -62,7 +62,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>font::FontPreviewWidget</class>
+   <class>glaxnimate::gui::font::FontPreviewWidget</class>
    <extends>QWidget</extends>
    <header>widgets/font/font_preview_widget.hpp</header>
    <container>1</container>
@@ -71,7 +71,7 @@
    </slots>
   </customwidget>
   <customwidget>
-   <class>font::FontStyleWidget</class>
+   <class>glaxnimate::gui::font::FontStyleWidget</class>
    <extends>QWidget</extends>
    <header>widgets/font/font_style_widget.hpp</header>
    <container>1</container>

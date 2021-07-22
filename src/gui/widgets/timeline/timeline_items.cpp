@@ -2,6 +2,9 @@
 
 #include "command/undo_macro_guard.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 bool timeline::enable_debug = false;
 
     timeline::KeyframeSplitItem::KeyframeSplitItem(AnimatableItem* parent)

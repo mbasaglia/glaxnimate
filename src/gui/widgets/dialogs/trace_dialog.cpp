@@ -36,6 +36,9 @@
 
 #include "color_quantization_dialog.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class TraceDialog::Private
 {
 public:

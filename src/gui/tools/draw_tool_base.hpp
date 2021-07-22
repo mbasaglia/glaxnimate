@@ -11,7 +11,7 @@
 #include "command/undo_macro_guard.hpp"
 
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 class DrawToolBase : public Tool
 {
@@ -167,4 +167,4 @@ private:
 
 };
 
-} // namespace tools
+} // namespace glaxnimate::gui::tools

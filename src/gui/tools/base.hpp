@@ -15,7 +15,7 @@
 #include "widgets/scalable_button.hpp"
 #include "widgets/dialogs/selection_manager.hpp"
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 struct Event
 {
@@ -225,4 +225,4 @@ public:
 };
 
 
-} // namespace tools
+} // namespace glaxnimate::gui::tools

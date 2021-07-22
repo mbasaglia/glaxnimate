@@ -13,6 +13,9 @@
 
 #include "glaxnimate_app.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 
 model::ShapeElement* glaxnimate::gui::SelectionManager::current_shape() const
 {

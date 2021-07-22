@@ -6,7 +6,7 @@
 
 #include "font_model.hpp"
 
-namespace font {
+namespace glaxnimate::gui::font {
 
 
 class FontStyleWidget : public QWidget
@@ -45,6 +45,6 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace font
+} // namespace glaxnimate::gui::font
 
 #endif // FONTSTYLEWIDGET_H

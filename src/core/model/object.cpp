@@ -7,7 +7,7 @@
 #include "app/log/log.hpp"
 
 
-class model::Object::Private
+class glaxnimate::model::Object::Private
 {
 public:
     std::unordered_map<QString, BaseProperty*> props;
@@ -17,20 +17,20 @@ public:
 };
 
 
-model::Object::Object(Document* document)
-    : d(std::make_unique<model::Object::Private>())
+glaxnimate::model::Object::Object(Document* document)
+    : d(std::make_unique<glaxnimate::model::Object::Private>())
 {
     d->document = document;
 }
 
-model::Object::~Object() = default;
+glaxnimate::model::Object::~Object() = default;
 
-void model::Object::assign_from(const model::Object* other)
+void glaxnimate::model::Object::assign_from(const glaxnimate::model::Object* other)
 {
     other->clone_into(this);
 }
 
-void model::Object::transfer(model::Document* document)
+void glaxnimate::model::Object::transfer(glaxnimate::model::Document* document)
 {
     d->document = document;
     for ( auto prop: d->prop_order )
@@ -38,7 +38,7 @@ void model::Object::transfer(model::Document* document)
 }
 
 
-void model::Object::clone_into(model::Object* dest) const
+void glaxnimate::model::Object::clone_into(glaxnimate::model::Object* dest) const
 {
     if ( dest->metaObject() != metaObject() )
     {
@@ -53,7 +53,7 @@ void model::Object::clone_into(model::Object* dest) const
 }
 
 
-void model::Object::property_value_changed(const BaseProperty* prop, const QVariant& value)
+void glaxnimate::model::Object::property_value_changed(const BaseProperty* prop, const QVariant& value)
 {
     on_property_changed(prop, value);
     emit property_changed(prop, value);
@@ -64,13 +64,13 @@ void model::Object::property_value_changed(const BaseProperty* prop, const QVari
     }
 }
 
-void model::Object::add_property(model::BaseProperty* prop)
+void glaxnimate::model::Object::add_property(glaxnimate::model::BaseProperty* prop)
 {
     d->props[prop->name()] = prop;
     d->prop_order.push_back(prop);
 }
 
-QVariant model::Object::get(const QString& property) const
+QVariant glaxnimate::model::Object::get(const QString& property) const
 {
     auto it = d->props.find(property);
     if ( it == d->props.end() )
@@ -78,7 +78,7 @@ QVariant model::Object::get(const QString& property) const
     return it->second->value();
 }
 
-model::BaseProperty * model::Object::get_property ( const QString& property )
+glaxnimate::model::BaseProperty * glaxnimate::model::Object::get_property ( const QString& property )
 {
     auto it = d->props.find(property);
     if ( it == d->props.end() )
@@ -86,7 +86,7 @@ model::BaseProperty * model::Object::get_property ( const QString& property )
     return it->second;
 }
 
-bool model::Object::set(const QString& property, const QVariant& value)
+bool glaxnimate::model::Object::set(const QString& property, const QVariant& value)
 {
     auto it = d->props.find(property);
     if ( it == d->props.end() )
@@ -95,23 +95,23 @@ bool model::Object::set(const QString& property, const QVariant& value)
     return it->second->set_value(value);
 }
 
-bool model::Object::has ( const QString& property ) const
+bool glaxnimate::model::Object::has ( const QString& property ) const
 {
     return d->props.find(property) != d->props.end();
 }
 
 
-const std::vector<model::BaseProperty*>& model::Object::properties() const
+const std::vector<glaxnimate::model::BaseProperty*>& glaxnimate::model::Object::properties() const
 {
     return d->prop_order;
 }
 
-QString model::Object::type_name() const
+QString glaxnimate::model::Object::type_name() const
 {
     return detail::naked_type_name(metaObject()->className());
 }
 
-QString model::detail::naked_type_name(QString class_name)
+QString glaxnimate::model::detail::naked_type_name(QString class_name)
 {
     int ns = class_name.lastIndexOf(":");
     if ( ns != -1 )
@@ -119,18 +119,18 @@ QString model::detail::naked_type_name(QString class_name)
     return class_name;
 }
 
-model::Document * model::Object::document() const
+glaxnimate::model::Document * glaxnimate::model::Object::document() const
 {
     return d->document;
 }
 
-void model::Object::push_command(QUndoCommand* cmd)
+void glaxnimate::model::Object::push_command(QUndoCommand* cmd)
 {
     d->document->push_command(cmd);
 }
 
 
-bool model::Object::set_undoable ( const QString& property, const QVariant& value )
+bool glaxnimate::model::Object::set_undoable ( const QString& property, const QVariant& value )
 {
 
     auto it = d->props.find(property);
@@ -139,14 +139,14 @@ bool model::Object::set_undoable ( const QString& property, const QVariant& valu
     return false;
 }
 
-void model::Object::set_time(model::FrameTime t)
+void glaxnimate::model::Object::set_time(glaxnimate::model::FrameTime t)
 {
     d->current_time = t;
     for ( auto prop: d->prop_order )
         prop->set_time(t);
 }
 
-model::FrameTime model::Object::time() const
+glaxnimate::model::FrameTime glaxnimate::model::Object::time() const
 {
     return d->current_time;
 }

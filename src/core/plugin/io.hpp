@@ -4,7 +4,7 @@
 
 #include "service.hpp"
 
-namespace plugin {
+namespace glaxnimate::plugin {
 
 class IoService : public PluginService
 {
@@ -52,4 +52,4 @@ private:
 
 
 
-} // namespace plugin
+} // namespace glaxnimate::plugin

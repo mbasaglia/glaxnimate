@@ -8,6 +8,8 @@
 #include "model/assets/brush_style.hpp"
 #include "model/assets/gradient.hpp"
 
+namespace glaxnimate::gui {
+
 class ShapeStylePreviewWidget : public QWidget
 {
 public:
@@ -78,3 +80,5 @@ private:
     QPointer<model::BrushStyle> stroke_ref;
     QSize hecking_size;
 };
+
+} // namespace glaxnimate::gui

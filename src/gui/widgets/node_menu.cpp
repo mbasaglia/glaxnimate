@@ -21,6 +21,9 @@
 
 #include "widgets/dialogs/shape_parent_dialog.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 namespace {
 
 class ResetTransform

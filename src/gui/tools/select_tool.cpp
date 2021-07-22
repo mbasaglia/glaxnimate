@@ -12,7 +12,7 @@
     #include "handle_menu.hpp"
 #endif
 
-namespace tools {
+namespace glaxnimate::gui::tools {
 
 class SelectTool : public Tool
 {
@@ -498,7 +498,7 @@ private:
     static Autoreg<SelectTool> autoreg;
 };
 
-} // namespace tools
-
 
 tools::Autoreg<tools::SelectTool> tools::SelectTool::autoreg{max_priority};
+
+} // namespace glaxnimate::gui::tools

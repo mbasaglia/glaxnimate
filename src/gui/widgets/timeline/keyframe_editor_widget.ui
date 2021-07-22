@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>KeyframeEditorWidget</class>
+ <class>glaxnimate::gui::KeyframeEditorWidget</class>
  <widget class="QWidget" name="KeyframeEditorWidget">
   <property name="geometry">
    <rect>
@@ -12,7 +12,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="KeyframeTransitionWidget" name="bezier_editor" native="true">
+    <widget class="glaxnimate::gui::KeyframeTransitionWidget" name="bezier_editor" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -112,7 +112,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KeyframeTransitionWidget</class>
+   <class>glaxnimate::gui::KeyframeTransitionWidget</class>
    <extends>QWidget</extends>
    <header>widgets/timeline/keyframe_transition_widget.hpp</header>
    <container>1</container>

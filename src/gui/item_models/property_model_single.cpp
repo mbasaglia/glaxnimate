@@ -6,6 +6,9 @@
 #include "model/shapes/styler.hpp"
 #include "model/stretchable_time.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 
 class item_models::PropertyModelSingle::Private : public PropertyModelBase::Private
 {

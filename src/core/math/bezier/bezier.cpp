@@ -1,5 +1,6 @@
 #include "bezier.hpp"
 
+using namespace glaxnimate;
 
 QRectF math::bezier::Bezier::bounding_box() const
 {

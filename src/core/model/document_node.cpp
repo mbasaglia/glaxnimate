@@ -8,41 +8,41 @@
 #include "model/property/reference_property.hpp"
 #include "utils/pseudo_mutex.hpp"
 
-class model::DocumentNode::Private
+class glaxnimate::model::DocumentNode::Private
 {
 public:
     std::unordered_set<User*> users;
     utils::PseudoMutex detaching;
 };
 
-model::DocumentNode::DocumentNode(model::Document* document)
+glaxnimate::model::DocumentNode::DocumentNode(glaxnimate::model::Document* document)
     : Object ( document ), d(std::make_unique<Private>())
 {
     uuid.set_value(QUuid::createUuid());
 }
 
-model::DocumentNode::~DocumentNode() = default;
+glaxnimate::model::DocumentNode::~DocumentNode() = default;
 
-model::VisualNode* model::VisualNode::docnode_group_parent() const
+glaxnimate::model::VisualNode* glaxnimate::model::VisualNode::docnode_group_parent() const
 {
     return nullptr;
 }
-int model::VisualNode::docnode_group_child_count() const
+int glaxnimate::model::VisualNode::docnode_group_child_count() const
 {
     return 0;
 }
-model::VisualNode* model::VisualNode::docnode_group_child(int) const
+glaxnimate::model::VisualNode* glaxnimate::model::VisualNode::docnode_group_child(int) const
 {
     return nullptr;
 }
-model::VisualNode* model::VisualNode::docnode_fuzzy_parent() const
+glaxnimate::model::VisualNode* glaxnimate::model::VisualNode::docnode_fuzzy_parent() const
 {
     if ( auto p = docnode_group_parent() )
         return p;
     return docnode_visual_parent();
 }
 
-QColor model::VisualNode::docnode_group_color() const
+QColor glaxnimate::model::VisualNode::docnode_group_color() const
 {
     if ( !docnode_valid_color() )
     {
@@ -54,20 +54,20 @@ QColor model::VisualNode::docnode_group_color() const
     return group_color.get();
 }
 
-model::VisualNode* model::VisualNode::docnode_visual_child(int index) const
+glaxnimate::model::VisualNode* glaxnimate::model::VisualNode::docnode_visual_child(int index) const
 {
-    return static_cast<model::VisualNode*>(docnode_child(index));
+    return static_cast<glaxnimate::model::VisualNode*>(docnode_child(index));
 }
 
-model::VisualNode* model::VisualNode::docnode_visual_parent() const
+glaxnimate::model::VisualNode* glaxnimate::model::VisualNode::docnode_visual_parent() const
 {
     auto p = docnode_parent();
     if ( p )
-        return p->cast<model::VisualNode>();
+        return p->cast<glaxnimate::model::VisualNode>();
     return nullptr;
 }
 
-void model::VisualNode::on_group_color_changed(const QColor&)
+void glaxnimate::model::VisualNode::on_group_color_changed(const QColor&)
 {
     if ( !group_icon.isNull() )
     {
@@ -79,7 +79,7 @@ void model::VisualNode::on_group_color_changed(const QColor&)
     docnode_on_update_group(true);
 }
 
-bool model::DocumentNode::docnode_is_instance(const QString& type_name) const
+bool glaxnimate::model::DocumentNode::docnode_is_instance(const QString& type_name) const
 {
     if ( type_name.isEmpty() )
         return true;
@@ -93,7 +93,7 @@ bool model::DocumentNode::docnode_is_instance(const QString& type_name) const
     return false;
 }
 
-void model::VisualNode::docnode_on_update_group(bool)
+void glaxnimate::model::VisualNode::docnode_on_update_group(bool)
 {
 //     if ( force || docnode_valid_color() )
     {
@@ -107,13 +107,13 @@ void model::VisualNode::docnode_on_update_group(bool)
     emit group_transform_matrix_changed(group_transform_matrix(time()));
 }
 
-bool model::VisualNode::docnode_valid_color() const
+bool glaxnimate::model::VisualNode::docnode_valid_color() const
 {
     QColor col = group_color.get();
     return col.isValid() && col.alpha() > 0;
 }
 
-QIcon model::VisualNode::instance_icon() const
+QIcon glaxnimate::model::VisualNode::instance_icon() const
 {
     if ( !docnode_valid_color() )
     {
@@ -130,7 +130,7 @@ QIcon model::VisualNode::instance_icon() const
     return group_icon;
 }
 
-bool model::VisualNode::docnode_locked_recursive() const
+bool glaxnimate::model::VisualNode::docnode_locked_recursive() const
 {
     for ( const VisualNode* n = this; n; n = n->docnode_visual_parent() )
     {
@@ -141,7 +141,7 @@ bool model::VisualNode::docnode_locked_recursive() const
     return false;
 }
 
-void model::VisualNode::paint(QPainter* painter, FrameTime time, PaintMode mode, model::Modifier* modifier) const
+void glaxnimate::model::VisualNode::paint(QPainter* painter, FrameTime time, PaintMode mode, glaxnimate::model::Modifier* modifier) const
 {
     if ( !visible.get() )
         return;
@@ -153,13 +153,13 @@ void model::VisualNode::paint(QPainter* painter, FrameTime time, PaintMode mode,
     for ( auto c : docnode_visual_children() )
     {
         c->paint(painter, time, mode, modifier);
-        if ( c->is_instance<model::Modifier>() )
+        if ( c->is_instance<glaxnimate::model::Modifier>() )
             break;
     }
     painter->restore();
 }
 
-bool model::VisualNode::docnode_selectable() const
+bool glaxnimate::model::VisualNode::docnode_selectable() const
 {
     if ( !visible.get() || locked.get() )
         return false;
@@ -168,7 +168,7 @@ bool model::VisualNode::docnode_selectable() const
     return true;
 }
 
-bool model::VisualNode::docnode_visible_recursive() const
+bool glaxnimate::model::VisualNode::docnode_visible_recursive() const
 {
     if ( !visible.get() )
         return false;
@@ -177,11 +177,11 @@ bool model::VisualNode::docnode_visible_recursive() const
     return true;
 }
 
-QTransform model::VisualNode::transform_matrix(model::FrameTime t) const
+QTransform glaxnimate::model::VisualNode::transform_matrix(glaxnimate::model::FrameTime t) const
 {
     auto matrix = local_transform_matrix(t);
 
-    model::VisualNode* parent = docnode_visual_parent();
+    glaxnimate::model::VisualNode* parent = docnode_visual_parent();
     if ( parent )
         matrix *= parent->transform_matrix(t);
 
@@ -192,7 +192,7 @@ QTransform model::VisualNode::transform_matrix(model::FrameTime t) const
     return matrix;
 }
 
-QTransform model::VisualNode::group_transform_matrix(model::FrameTime t) const
+QTransform glaxnimate::model::VisualNode::group_transform_matrix(glaxnimate::model::FrameTime t) const
 {
     auto parent = docnode_group_parent();
     if ( parent )
@@ -201,14 +201,14 @@ QTransform model::VisualNode::group_transform_matrix(model::FrameTime t) const
 }
 
 /// \todo This is very inefficient, it should cache the list of available names
-void model::DocumentNode::recursive_rename()
+void glaxnimate::model::DocumentNode::recursive_rename()
 {
     document()->set_best_name(this, name.get());
     for ( auto child : docnode_children() )
         child->recursive_rename();
 }
 
-void model::VisualNode::on_visible_changed(bool visible)
+void glaxnimate::model::VisualNode::on_visible_changed(bool visible)
 {
     emit docnode_visible_changed(visible);
     emit docnode_visible_recursive_changed(visible);
@@ -217,7 +217,7 @@ void model::VisualNode::on_visible_changed(bool visible)
         ch->propagate_visible(visible);
 }
 
-void model::VisualNode::propagate_visible(bool visible)
+void glaxnimate::model::VisualNode::propagate_visible(bool visible)
 {
     if ( !this->visible.get() )
         return;
@@ -226,7 +226,7 @@ void model::VisualNode::propagate_visible(bool visible)
         ch->propagate_visible(visible && this->visible.get());
 }
 
-void model::VisualNode::propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group)
+void glaxnimate::model::VisualNode::propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group)
 {
     emit transform_matrix_changed(t_global);
     emit group_transform_matrix_changed(t_group);
@@ -244,7 +244,7 @@ void model::VisualNode::propagate_transform_matrix_changed(const QTransform& t_g
     }
 }
 
-void model::DocumentNode::refresh_uuid()
+void glaxnimate::model::DocumentNode::refresh_uuid()
 {
     uuid.set_value(QUuid::createUuid());
     for ( auto prop : properties() )
@@ -255,27 +255,27 @@ void model::DocumentNode::refresh_uuid()
             {
                 for ( auto v : prop->value().toList() )
                 {
-                    if ( auto obj = v.value<model::DocumentNode*>() )
+                    if ( auto obj = v.value<glaxnimate::model::DocumentNode*>() )
                         obj->refresh_uuid();
                 }
             }
             else
             {
-                if ( auto obj = qobject_cast<DocumentNode*>(static_cast<model::SubObjectPropertyBase*>(prop)->sub_object()) )
+                if ( auto obj = qobject_cast<DocumentNode*>(static_cast<glaxnimate::model::SubObjectPropertyBase*>(prop)->sub_object()) )
                     obj->refresh_uuid();
             }
         }
     }
 }
 
-QString model::DocumentNode::object_name() const
+QString glaxnimate::model::DocumentNode::object_name() const
 {
     if ( name.get().isEmpty() )
         return type_name_human();
     return name.get();
 }
 
-void model::DocumentNode::add_user(model::DocumentNode::User* user)
+void glaxnimate::model::DocumentNode::add_user(glaxnimate::model::DocumentNode::User* user)
 {
     if ( !d->detaching )
     {
@@ -284,7 +284,7 @@ void model::DocumentNode::add_user(model::DocumentNode::User* user)
     }
 }
 
-void model::DocumentNode::remove_user(model::DocumentNode::User* user)
+void glaxnimate::model::DocumentNode::remove_user(glaxnimate::model::DocumentNode::User* user)
 {
     if ( !d->detaching )
     {
@@ -293,12 +293,12 @@ void model::DocumentNode::remove_user(model::DocumentNode::User* user)
     }
 }
 
-const std::unordered_set<model::DocumentNode::User*> & model::DocumentNode::users() const
+const std::unordered_set<glaxnimate::model::DocumentNode::User*> & glaxnimate::model::DocumentNode::users() const
 {
     return d->users;
 }
 
-void model::DocumentNode::attach()
+void glaxnimate::model::DocumentNode::attach()
 {
     if ( auto lock = d->detaching.get_lock() )
     {
@@ -307,7 +307,7 @@ void model::DocumentNode::attach()
     }
 }
 
-void model::DocumentNode::detach()
+void glaxnimate::model::DocumentNode::detach()
 {
     if ( auto lock = d->detaching.get_lock() )
     {

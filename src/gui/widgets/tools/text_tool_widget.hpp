@@ -4,6 +4,8 @@
 
 #include "shape_tool_widget.hpp"
 
+namespace glaxnimate::gui {
+
 class TextToolWidget : public ShapeToolWidget
 {
     Q_OBJECT
@@ -25,3 +27,4 @@ private:
     Private* dd() const;
 };
 
+} // namespace glaxnimate::gui

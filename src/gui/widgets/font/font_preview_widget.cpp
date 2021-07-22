@@ -5,6 +5,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class font::FontPreviewWidget::Private
 {
 public:

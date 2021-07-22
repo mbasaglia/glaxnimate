@@ -4,6 +4,9 @@
 #include <QMouseEvent>
 #include <QPainterPath>
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
+
 class KeyframeTransitionWidget::Private
 {
 public:

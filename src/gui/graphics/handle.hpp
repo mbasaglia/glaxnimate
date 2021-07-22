@@ -7,13 +7,13 @@
 
 #include "item_data.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class AnimatableBase;
 
-} // namespace model
+} // namespace glaxnimate::model
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class MoveHandle : public QGraphicsObject
 {
@@ -119,4 +119,4 @@ private:
     std::unique_ptr<Private> d;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

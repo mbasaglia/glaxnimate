@@ -6,7 +6,7 @@
 #include "model/document.hpp"
 #include "graphics/document_node_graphics_item.hpp"
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class CompositionItem : public DocumentNodeGraphicsItem
 {
@@ -37,6 +37,6 @@ private slots:
     }
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics
 
 

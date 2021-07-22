@@ -4,7 +4,7 @@
 
 #include "model/assets/assets.hpp"
 
-namespace item_models {
+namespace glaxnimate::gui::item_models {
 
 class GradientListModel : public QAbstractTableModel
 {
@@ -44,4 +44,4 @@ private:
     model::Assets* defs;
 };
 
-} // namespace item_models
+} // namespace glaxnimate::gui::item_models

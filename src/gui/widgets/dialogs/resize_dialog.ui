@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ResizeDialog</class>
+ <class>glaxnimate::gui::ResizeDialog</class>
  <widget class="QDialog" name="ResizeDialog">
   <property name="geometry">
    <rect>

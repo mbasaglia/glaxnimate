@@ -6,11 +6,11 @@
 #include <QGraphicsItem>
 
 
-namespace model {
+namespace glaxnimate::model {
     class VisualNode;
-} // namespace model
+} // namespace glaxnimate::model
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class DocumentNodeGraphicsItem;
 class GraphicsEditor;
@@ -82,4 +82,4 @@ private:
     std::map<const QMetaObject*, AbstractBuilder*> builders;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

@@ -9,7 +9,7 @@
 
 #include "model/document.hpp"
 
-namespace io {
+namespace glaxnimate::io {
 
 using Setting = app::settings::Setting;
 using SettingList = app::settings::SettingList;
@@ -111,5 +111,5 @@ signals:
     void completed(bool success);
 };
 
-} // namespace io
+} // namespace glaxnimate::io
 

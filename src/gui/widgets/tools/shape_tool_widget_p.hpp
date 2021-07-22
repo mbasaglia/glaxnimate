@@ -4,7 +4,7 @@
 
 #include "app/settings/widget.hpp"
 
-class ShapeToolWidget::Private
+class glaxnimate::gui::ShapeToolWidget::Private
 {
 public:
 

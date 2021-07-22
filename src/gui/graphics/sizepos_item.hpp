@@ -8,7 +8,7 @@
 #include "command/animation_commands.hpp"
 #include "math/geom.hpp"
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class SizePosItem : public QGraphicsObject
 {
@@ -181,4 +181,4 @@ private:
     MoveHandle handle_br;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

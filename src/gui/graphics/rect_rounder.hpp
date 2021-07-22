@@ -5,7 +5,7 @@
 #include "command/animation_commands.hpp"
 #include "handle.hpp"
 
-namespace graphics {
+namespace glaxnimate::gui::graphics {
 
 class RectRounder : public QGraphicsObject
 {
@@ -75,4 +75,4 @@ private:
     MoveHandle handle;
 };
 
-} // namespace graphics
+} // namespace glaxnimate::gui::graphics

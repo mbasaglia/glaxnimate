@@ -2,7 +2,7 @@
 
 #include "shape.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 class Trim : public StaticOverrides<Trim, Modifier>
 {
@@ -39,5 +39,5 @@ protected:
 
 };
 
-} // namespace model
+} // namespace glaxnimate::model
 

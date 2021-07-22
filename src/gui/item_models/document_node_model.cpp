@@ -9,6 +9,8 @@
 #include "model/shapes/shape.hpp"
 #include "model/assets/assets.hpp"
 
+using namespace glaxnimate::gui;
+using namespace glaxnimate;
 
 
 class item_models::DocumentNodeModel::Private

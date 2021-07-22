@@ -6,7 +6,7 @@
 #include "model/property/sub_object_property.hpp"
 #include "utils/range.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 
 class Group : public StaticOverrides<Group, ShapeElement>
@@ -61,5 +61,5 @@ private slots:
     void on_transform_matrix_changed();
 };
 
-} // namespace model
+} // namespace glaxnimate::model
 

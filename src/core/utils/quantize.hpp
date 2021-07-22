@@ -4,7 +4,7 @@
 #include <QImage>
 #include <vector>
 
-namespace utils::quantize {
+namespace glaxnimate::utils::quantize {
 
 
 using ColorFrequency = std::pair<QRgb, int>;
@@ -45,4 +45,4 @@ std::vector<ColorFrequency> color_frequencies(QImage image, int alpha_threshold 
  */
 QImage quantize(const QImage& source, const std::vector<QRgb>& colors);
 
-} // namespace utils::quantize
+} // namespace glaxnimate::utils::quantize

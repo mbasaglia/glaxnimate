@@ -8,7 +8,7 @@
 
 #include "utils/qstring_hash.hpp"
 
-namespace model {
+namespace glaxnimate::model {
 
 
 class Object;
@@ -116,4 +116,4 @@ private:
 
 };
 
-} // namespace model
+} // namespace glaxnimate::model
