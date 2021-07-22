@@ -20,11 +20,6 @@ static qreal get_mult()
 #endif
 }
 
-QIcon GlaxnimateApp::theme_icon(const QString &name)
-{
-    return QIcon::fromTheme(name);
-}
-
 QString GlaxnimateApp::data_file(const QString &name) const
 {
     return "assets:/" + name;

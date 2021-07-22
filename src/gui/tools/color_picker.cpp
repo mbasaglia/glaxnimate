@@ -9,7 +9,7 @@ class ColorPickerTool : public Tool
 {
 public:
     QString id() const override { return "color-picker"; }
-    QIcon icon() const override { return GlaxnimateApp::theme_icon("color-picker"); }
+    QIcon icon() const override { return QIcon::fromTheme("color-picker"); }
     QString name() const override { return QObject::tr("Color Picker"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F7"), QKeySequence::PortableText); }
     static int static_group() noexcept { return Registry::Style;  }

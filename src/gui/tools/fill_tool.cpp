@@ -15,7 +15,7 @@ class FillTool : public Tool
 {
 public:
     QString id() const override { return "fill"; }
-    QIcon icon() const override { return GlaxnimateApp::theme_icon("fill-color"); }
+    QIcon icon() const override { return QIcon::fromTheme("fill-color"); }
     QString name() const override { return QObject::tr("Fill"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F8"), QKeySequence::PortableText); }
     static int static_group() noexcept { return Registry::Style; }

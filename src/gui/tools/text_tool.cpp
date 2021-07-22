@@ -18,7 +18,7 @@ class TextTool : public DrawToolBase
 public:
     QCursor cursor() override { return Qt::IBeamCursor; }
     QString id() const override { return "text"; }
-    QIcon icon() const override { return GlaxnimateApp::theme_icon("draw-text"); }
+    QIcon icon() const override { return QIcon::fromTheme("draw-text"); }
     QString name() const override { return QObject::tr("Draw Text"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F8"), QKeySequence::PortableText); }
     static int static_group() noexcept { return Registry::Shape; }

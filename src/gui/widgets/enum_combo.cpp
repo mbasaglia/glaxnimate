@@ -34,7 +34,7 @@ void EnumCombo::populate(int current_value)
     for ( int i = 0; i < meta_enum.keyCount(); i++ )
     {
         auto data = data_for(meta_enum, meta_enum.value(i));
-        addItem(GlaxnimateApp::theme_icon(data.second), data.first, meta_enum.value(i));
+        addItem(QIcon::fromTheme(data.second), data.first, meta_enum.value(i));
         if ( meta_enum.value(i) == current_value )
             setCurrentIndex(count() - 1);
     }

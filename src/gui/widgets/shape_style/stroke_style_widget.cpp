@@ -120,12 +120,12 @@ StrokeStyleWidget::StrokeStyleWidget(QWidget* parent)
     d->ui.setupUi(this);
 
 #ifdef Q_OS_ANDROID
-    d->ui.button_cap_butt->setIcon(GlaxnimateApp::theme_icon("stroke-cap-butt"));
-    d->ui.button_cap_round->setIcon(GlaxnimateApp::theme_icon("stroke-cap-round"));
-    d->ui.button_cap_square->setIcon(GlaxnimateApp::theme_icon("stroke-cap-square"));
-    d->ui.button_join_bevel->setIcon(GlaxnimateApp::theme_icon("stroke-join-bevel"));
-    d->ui.button_join_miter->setIcon(GlaxnimateApp::theme_icon("stroke-join-miter"));
-    d->ui.button_join_round->setIcon(GlaxnimateApp::theme_icon("stroke-join-round"));
+    d->ui.button_cap_butt->setIcon(QIcon::fromTheme("stroke-cap-butt"));
+    d->ui.button_cap_round->setIcon(QIcon::fromTheme("stroke-cap-round"));
+    d->ui.button_cap_square->setIcon(QIcon::fromTheme("stroke-cap-square"));
+    d->ui.button_join_bevel->setIcon(QIcon::fromTheme("stroke-join-bevel"));
+    d->ui.button_join_miter->setIcon(QIcon::fromTheme("stroke-join-miter"));
+    d->ui.button_join_round->setIcon(QIcon::fromTheme("stroke-join-round"));
     d->ui.main_layout->setMargin(0);
 #endif
 

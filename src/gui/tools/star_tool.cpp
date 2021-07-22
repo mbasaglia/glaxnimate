@@ -9,7 +9,7 @@ class StarTool : public DrawToolDrag
 {
 public:
     QString id() const override { return "draw-star"; }
-    QIcon icon() const override { return GlaxnimateApp::theme_icon("draw-polygon-star"); }
+    QIcon icon() const override { return QIcon::fromTheme("draw-polygon-star"); }
     QString name() const override { return QObject::tr("Star"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("*"), QKeySequence::PortableText); }
     static int static_group() noexcept { return Registry::Shape; }

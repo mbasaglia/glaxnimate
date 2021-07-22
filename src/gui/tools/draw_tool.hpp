@@ -15,7 +15,7 @@ public:
     ~DrawTool();
 
     QString id() const override { return "draw-bezier"; }
-    QIcon icon() const override { return GlaxnimateApp::theme_icon("draw-bezier-curves"); }
+    QIcon icon() const override { return QIcon::fromTheme("draw-bezier-curves"); }
     QString name() const override { return QObject::tr("Draw Bezier"); }
     QKeySequence key_sequence() const override { return QKeySequence(QObject::tr("F3"), QKeySequence::PortableText); }
     static int static_group() noexcept { return Registry::Draw;  }

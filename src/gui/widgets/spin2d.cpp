@@ -92,11 +92,11 @@ void Spin2D::lock_toggled(bool on)
     {
         if ( y() != 0 )
             ratio = x() / y();
-        lock->setIcon(GlaxnimateApp::theme_icon("object-locked"));
+        lock->setIcon(QIcon::fromTheme("object-locked"));
     }
     else
     {
-        lock->setIcon(GlaxnimateApp::theme_icon("object-unlocked"));
+        lock->setIcon(QIcon::fromTheme("object-unlocked"));
     }
 }
 

@@ -25,9 +25,6 @@ public:
         return static_cast<GlaxnimateApp *>(QCoreApplication::instance());
     }
 
-    /// \todo remove, no longer needed
-    static QIcon theme_icon(const QString& name);
-
     QString data_file(const QString& name) const override;
 
     static qreal handle_size_multiplier();
@@ -80,11 +77,6 @@ public:
     app::settings::ShortcutSettings* shortcuts() const;
 
     static QString temp_path();
-
-    static QIcon theme_icon(const QString& name)
-    {
-        return QIcon::fromTheme(name);
-    }
 
     static qreal handle_size_multiplier() { return 1; }
     static qreal handle_distance_multiplier() { return 1; }
