@@ -7,6 +7,8 @@
 #define COMPARE_MULTIBEZIER(actual, expected) \
     compare_multibez(actual, expected, #actual, #expected, __FILE__, __LINE__)
 
+using namespace glaxnimate;
+
 /*
  * Note:
  * This test class defines a lot of machinery to ensure we can properly compare

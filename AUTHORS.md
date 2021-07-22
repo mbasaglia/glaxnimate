@@ -28,3 +28,4 @@ External Code / Library Credits
 * [pybind11](https://pybind11.readthedocs.io/en/stable/) BSD-style
 * [CPython](https://python.org/) PSFL
 * [zlib](https://www.zlib.net/) zLib License
+* [libav](https://libav.org/) LGPL

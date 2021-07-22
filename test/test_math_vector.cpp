@@ -3,6 +3,8 @@
 #include <vector>
 #include "math/vector.hpp"
 
+using namespace glaxnimate;
+
 
 class TestCase: public QObject
 {

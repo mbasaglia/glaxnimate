@@ -3,6 +3,7 @@
 #include "model/animation/keyframe_transition.hpp"
 #include "print_vec.hpp"
 
+using namespace glaxnimate;
 
 class TestCase: public QObject
 {

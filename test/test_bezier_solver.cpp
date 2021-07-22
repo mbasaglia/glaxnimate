@@ -4,6 +4,8 @@
 #include "math/bezier/solver.hpp"
 #include "print_vec.hpp"
 
+using namespace glaxnimate;
+
 class TestCase: public QObject
 {
     Q_OBJECT

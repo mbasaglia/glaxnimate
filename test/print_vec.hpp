@@ -6,7 +6,7 @@
 
 namespace QTest {
     template<>
-    char* toString(const math::Vec2& v)
+    char* toString(const glaxnimate::math::Vec2& v)
     {
         return QTest::toString(
             "Vec2(" +
@@ -16,7 +16,7 @@ namespace QTest {
     }
 }
 
-QDebug operator<<(QDebug debug, const math::Vec2 &c)
+QDebug operator<<(QDebug debug, const glaxnimate::math::Vec2 &c)
 {
     QDebugStateSaver saver(debug);
     debug.nospace() << "Vec2(" << c.x() << ", " << c.y() << ')';
