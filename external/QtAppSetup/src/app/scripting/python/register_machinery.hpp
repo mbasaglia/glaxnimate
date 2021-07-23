@@ -32,8 +32,8 @@ struct PY_HIDDEN PyEnumInfo
     py::handle enum_handle;
 };
 
-PyPropertyInfo register_property(const QMetaProperty& prop);
-PyMethodInfo register_method(const QMetaMethod& meth, py::handle& handle);
+PyPropertyInfo register_property(const QMetaProperty& prop, const QMetaObject& cls);
+PyMethodInfo register_method(const QMetaMethod& meth, py::handle& handle, const QMetaObject& cls);
 
 template<class EnumT>
 PyEnumInfo register_enum(const QMetaEnum& meta, py::handle& scope)
@@ -66,8 +66,9 @@ struct enums<>
     void process(py::handle&, std::vector<PyEnumInfo>&) {}
 };
 
+
 template<class CppClass, class... Args, class... Enums>
-py::class_<CppClass, Args...> register_from_meta(py::handle scope, enums<Enums...> reg_enums = {})
+py::class_<CppClass, Args...> declare_from_meta(py::handle scope)
 {
     const QMetaObject& meta = CppClass::staticMetaObject;
     const char* name = meta.className();
@@ -77,18 +78,32 @@ py::class_<CppClass, Args...> register_from_meta(py::handle scope, enums<Enums..
     else
         clean_name++;
 
-    py::class_<CppClass, Args...> reg(scope, clean_name);
+    return py::class_<CppClass, Args...> (scope, clean_name);
+}
+
+template<class CppClass, class... Args, class... Enums>
+py::class_<CppClass, Args...> register_from_meta(py::handle scope, enums<Enums...> reg_enums = {})
+{
+    py::class_<CppClass, Args...> reg = declare_from_meta<CppClass, Args...>(scope);
+    register_from_meta(reg, reg_enums);
+    return reg;
+}
+
+template<class CppClass, class... Args, class... Enums>
+py::class_<CppClass, Args...>& register_from_meta(py::class_<CppClass, Args...>& reg, enums<Enums...> reg_enums = {})
+{
+    const QMetaObject& meta = CppClass::staticMetaObject;
 
     for ( int i = meta.propertyOffset(); i < meta.propertyCount(); i++ )
     {
-        PyPropertyInfo pyprop = register_property(meta.property(i));
+        PyPropertyInfo pyprop = register_property(meta.property(i), meta);
         if ( pyprop.name )
             reg.def_property(pyprop.name, pyprop.get, pyprop.set, "");
     }
 
     for ( int i = meta.methodOffset(); i < meta.methodCount(); i++ )
     {
-        PyMethodInfo pymeth = register_method(meta.method(i), reg);
+        PyMethodInfo pymeth = register_method(meta.method(i), reg, meta);
         if ( pymeth.name )
             reg.attr(pymeth.name) = pymeth.method;
     }

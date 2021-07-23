@@ -49,8 +49,8 @@ public:
     bool save(QIODevice& file, const QString& filename,
         model::Document* document, const QVariantMap& setting_values);
 
-    Q_INVOKABLE QByteArray save(model::Document* document, const QVariantMap& setting_values={}, const QString& filename = "data");
-    Q_INVOKABLE bool load(model::Document* document, const QByteArray& data, const QVariantMap& setting_values={}, const QString& filename = "data");
+    Q_INVOKABLE QByteArray save(glaxnimate::model::Document* document, const QVariantMap& setting_values={}, const QString& filename = "data");
+    Q_INVOKABLE bool load(glaxnimate::model::Document* document, const QByteArray& data, const QVariantMap& setting_values={}, const QString& filename = "data");
 
 
     virtual QString name() const = 0;

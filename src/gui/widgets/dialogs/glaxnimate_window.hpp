@@ -35,11 +35,11 @@ class GlaxnimateWindow : public QMainWindow, public glaxnimate::gui::SelectionMa
 {
     Q_OBJECT
 
-    Q_PROPERTY(model::Document* document READ document)
-    Q_PROPERTY(model::VisualNode* current_item READ current_document_node WRITE set_current_document_node)
-    Q_PROPERTY(model::ShapeElement* current_shape READ current_shape)
-    Q_PROPERTY(model::Object* current_shape_container READ current_shape_container_script)
-    Q_PROPERTY(model::Composition* current_composition READ current_composition WRITE set_current_composition)
+    Q_PROPERTY(glaxnimate::model::Document* document READ document)
+    Q_PROPERTY(glaxnimate::model::VisualNode* current_item READ current_document_node WRITE set_current_document_node)
+    Q_PROPERTY(glaxnimate::model::ShapeElement* current_shape READ current_shape)
+    Q_PROPERTY(glaxnimate::model::Object* current_shape_container READ current_shape_container_script)
+    Q_PROPERTY(glaxnimate::model::Composition* current_composition READ current_composition WRITE set_current_composition)
     Q_PROPERTY(QColor fill_color READ current_color WRITE set_current_color)
     Q_PROPERTY(QColor stroke_color READ secondary_color WRITE set_secondary_color)
 
@@ -121,7 +121,7 @@ public:
      * \brief Converts \p shape to path
      * \returns The converted shape
      */
-    Q_INVOKABLE model::ShapeElement* convert_to_path(model::ShapeElement* shape);
+    Q_INVOKABLE glaxnimate::model::ShapeElement* convert_to_path(glaxnimate::model::ShapeElement* shape);
 
     /**
      * \brief Converts \p shapes to path

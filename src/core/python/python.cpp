@@ -371,6 +371,10 @@ void register_py_module(py::module& glaxnimate_module)
         .attr("__doc__") = "Context manager that creates undo macros"
     ;
 
+    register_from_meta<model::DocumentNode, model::Object>(model)
+        .def_property_readonly("users", &model::DocumentNode::users, "List of properties pointing to this object")
+    ;
+
     register_from_meta<model::Document, QObject>(model)
         .def(py::init<QString>())
         .def(
@@ -382,9 +386,7 @@ void register_py_module(py::module& glaxnimate_module)
             "Context manager to group changes into a single undo command"
         );
     ;
-    register_from_meta<model::DocumentNode, model::Object>(model)
-        .def_property_readonly("users", &model::DocumentNode::users, "List of properties pointing to this object")
-    ;
+
     register_from_meta<model::VisualNode, model::DocumentNode>(model);
     register_from_meta<model::AnimationContainer, model::Object>(model);
     register_from_meta<model::StretchableTime, model::Object>(model);

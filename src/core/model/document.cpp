@@ -150,7 +150,7 @@ static void collect_names(const glaxnimate::model::DocumentNode* node, const QSt
         collect_names(node->docnode_child(i), prefix, out, target);
 }
 
-QString glaxnimate::model::Document::get_best_name(const glaxnimate::model::DocumentNode* node, const QString& suggestion) const
+QString glaxnimate::model::Document::get_best_name(glaxnimate::model::DocumentNode* node, const QString& suggestion) const
 {
     if ( !node )
         return {};

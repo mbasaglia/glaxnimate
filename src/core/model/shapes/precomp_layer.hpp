@@ -12,10 +12,10 @@ class PreCompLayer : public ShapeElement
 {
     GLAXNIMATE_OBJECT(PreCompLayer)
 
-    GLAXNIMATE_SUBOBJECT(model::StretchableTime, timing)
-    GLAXNIMATE_PROPERTY_REFERENCE(model::Precomposition, composition, &PreCompLayer::valid_precomps, &PreCompLayer::is_valid_precomp, &PreCompLayer::composition_changed)
+    GLAXNIMATE_SUBOBJECT(StretchableTime, timing)
+    GLAXNIMATE_PROPERTY_REFERENCE(Precomposition, composition, &PreCompLayer::valid_precomps, &PreCompLayer::is_valid_precomp, &PreCompLayer::composition_changed)
     GLAXNIMATE_PROPERTY(QSizeF, size, {})
-    GLAXNIMATE_SUBOBJECT(model::Transform, transform)
+    GLAXNIMATE_SUBOBJECT(Transform, transform)
     GLAXNIMATE_ANIMATABLE(float, opacity, 1, &PreCompLayer::opacity_changed, 0, 1, false, PropertyTraits::Percent)
 
 public:

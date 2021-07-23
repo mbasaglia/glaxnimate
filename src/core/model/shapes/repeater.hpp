@@ -10,7 +10,7 @@ namespace glaxnimate::model {
 class Repeater : public StaticOverrides<Repeater, Modifier>
 {
     GLAXNIMATE_OBJECT(Repeater)
-    GLAXNIMATE_SUBOBJECT(model::Transform, transform)
+    GLAXNIMATE_SUBOBJECT(Transform, transform)
     GLAXNIMATE_ANIMATABLE(int, copies, 1)
     GLAXNIMATE_ANIMATABLE(float, start_opacity, 1, {}, 0, 1, false, PropertyTraits::Percent)
     GLAXNIMATE_ANIMATABLE(float, end_opacity, 1, {}, 0, 1, false, PropertyTraits::Percent)

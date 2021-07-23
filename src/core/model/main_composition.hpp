@@ -10,7 +10,7 @@ class MainComposition : public Composition
 {
     GLAXNIMATE_OBJECT(MainComposition)
 
-    GLAXNIMATE_SUBOBJECT(model::AnimationContainer, animation)
+    GLAXNIMATE_SUBOBJECT(AnimationContainer, animation)
 
     //                  type    name    default  notify                       validate
     GLAXNIMATE_PROPERTY(float,  fps,         60, &MainComposition::fps_changed,     &MainComposition::validate_fps)

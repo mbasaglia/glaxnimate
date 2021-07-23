@@ -17,7 +17,7 @@ class Document : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString filename READ filename)
-    Q_PROPERTY(model::MainComposition* main READ main)
+    Q_PROPERTY(MainComposition* main READ main)
     Q_PROPERTY(double current_time READ current_time WRITE set_current_time NOTIFY current_time_changed)
     Q_PROPERTY(bool record_to_keyframe READ record_to_keyframe WRITE set_record_to_keyframe NOTIFY record_to_keyframe_changed)
     Q_PROPERTY(Object* assets READ assets_obj)
@@ -42,8 +42,8 @@ public:
 
     void set_io_options(const io::Options& opt);
 
-    Q_INVOKABLE model::DocumentNode* find_by_uuid(const QUuid& n) const;
-    Q_INVOKABLE model::DocumentNode* find_by_name(const QString& name) const;
+    Q_INVOKABLE glaxnimate::model::DocumentNode* find_by_uuid(const QUuid& n) const;
+    Q_INVOKABLE glaxnimate::model::DocumentNode* find_by_name(const QString& name) const;
     Q_INVOKABLE QVariantList find_by_type_name(const QString& type_name) const;
 
     Q_INVOKABLE bool undo();
@@ -63,8 +63,8 @@ public:
     bool record_to_keyframe() const;
     void set_record_to_keyframe(bool r);
 
-    Q_INVOKABLE QString get_best_name(const model::DocumentNode* node, const QString& suggestion={}) const;
-    Q_INVOKABLE void set_best_name(model::DocumentNode* node, const QString& suggestion={}) const;
+    Q_INVOKABLE QString get_best_name(glaxnimate::model::DocumentNode* node, const QString& suggestion={}) const;
+    Q_INVOKABLE void set_best_name(glaxnimate::model::DocumentNode* node, const QString& suggestion={}) const;
 
     Q_INVOKABLE QImage render_image(float time, QSize size = {}, const QColor& background = {}) const;
     Q_INVOKABLE QImage render_image() const;

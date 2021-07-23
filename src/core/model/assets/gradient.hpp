@@ -58,7 +58,7 @@ public:
 
     Q_ENUM(GradientType)
 
-    GLAXNIMATE_PROPERTY_REFERENCE(model::GradientColors, colors, &Gradient::valid_refs, &Gradient::is_valid_ref, &Gradient::on_ref_changed)
+    GLAXNIMATE_PROPERTY_REFERENCE(GradientColors, colors, &Gradient::valid_refs, &Gradient::is_valid_ref, &Gradient::on_ref_changed)
     GLAXNIMATE_PROPERTY(GradientType, type, Linear, {}, {}, PropertyTraits::Visual)
 
     GLAXNIMATE_ANIMATABLE(QPointF, start_point, {})
@@ -73,7 +73,7 @@ public:
     QBrush brush_style(FrameTime t) const override;
     QBrush constrained_brush_style(FrameTime t, const QRectF& bounds) const override;
 
-    Q_INVOKABLE qreal radius(FrameTime t) const;
+    Q_INVOKABLE qreal radius(double t) const;
 
     static QString gradient_type_name(GradientType t);
 

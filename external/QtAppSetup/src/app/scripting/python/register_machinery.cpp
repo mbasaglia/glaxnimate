@@ -216,14 +216,14 @@ template<class CppType>
         }
     };
 
-PyPropertyInfo register_property(const QMetaProperty& prop)
+PyPropertyInfo register_property(const QMetaProperty& prop, const QMetaObject& meta)
 {
     if ( !prop.isScriptable() )
         return {};
 
     PyPropertyInfo pyprop = type_dispatch<RegisterProperty, PyPropertyInfo>(prop.userType(), prop);
     if ( !pyprop.name )
-        log::LogStream("Python", "", log::Error) << "Invalid property" << prop.name() << "of type" << prop.userType() << prop.typeName();
+        log::LogStream("Python", "", log::Error) << "Invalid property" << meta.className() << "::" << prop.name() << "of type" << prop.userType() << prop.typeName();
     return pyprop;
 }
 
@@ -397,6 +397,16 @@ struct RegisterMethod
             signature += names[i].toStdString();
             signature += ": ";
             signature += fix_type(types[i]);
+
+            if ( meth.parameterType(i) == QMetaType::UnknownType )
+            {
+                auto cls = py::str(handle.attr("__name__"));
+                log::LogStream("Python", "", log::Error)
+                    << "Invalid parameter" << QString::fromStdString(cls) << "::" << meth.name()
+                    << i << names[i]
+                    << "of type" << meth.parameterType(i) << types[i];
+                return {};
+            }
         }
         signature += ") -> ";
         signature += fix_type(meth.typeName());
@@ -450,7 +460,7 @@ struct RegisterMethod
     }
 };
 
-PyMethodInfo register_method(const QMetaMethod& meth, py::handle& handle)
+PyMethodInfo register_method(const QMetaMethod& meth, py::handle& handle, const QMetaObject& cls)
 {
     if ( meth.access() != QMetaMethod::Public )
         return {};
@@ -459,13 +469,13 @@ PyMethodInfo register_method(const QMetaMethod& meth, py::handle& handle)
 
     if ( meth.parameterCount() > 9 )
     {
-        log::LogStream("Python", "", log::Error) << "Too many arguments for method " << meth.name() << ": " << meth.parameterCount();
+        log::LogStream("Python", "", log::Error) << "Too many arguments for method " << cls.className() << "::" << meth.name() << ": " << meth.parameterCount();
         return {};
     }
 
     PyMethodInfo pymeth = type_dispatch_maybe_void<RegisterMethod, PyMethodInfo>(meth.returnType(), meth, handle);
     if ( !pymeth.name )
-        log::LogStream("Python", "", log::Error) << "Invalid method" << meth.name() << "return type" << meth.returnType() << meth.typeName();
+        log::LogStream("Python", "", log::Error) << "Invalid method" << cls.className() << "::" << meth.name() << "return type" << meth.returnType() << meth.typeName();
     return pymeth;
 
 }

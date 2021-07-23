@@ -10,13 +10,13 @@
 #include "model/property/property.hpp"
 #include "math/math.hpp"
 
-#define GLAXNIMATE_ANIMATABLE(type, name, ...)                  \
-public:                                                         \
-    AnimatedProperty<type> name{this, #name, __VA_ARGS__};      \
-    AnimatableBase* get_##name() { return &name; }              \
-private:                                                        \
-    Q_PROPERTY(model::AnimatableBase* name READ get_##name)     \
-    Q_CLASSINFO(#name, "property animated " #type)              \
+#define GLAXNIMATE_ANIMATABLE(type, name, ...)                                  \
+public:                                                                         \
+    glaxnimate::model::AnimatedProperty<type> name{this, #name, __VA_ARGS__};   \
+    glaxnimate::model::AnimatableBase* get_##name() { return &name; }           \
+private:                                                                        \
+    Q_PROPERTY(glaxnimate::model::AnimatableBase* name READ get_##name)         \
+    Q_CLASSINFO(#name, "property animated " #type)                              \
     // macro end
 
 
@@ -206,7 +206,7 @@ public:
      * If all keyframes are after \p time, returns 0
      * This means keyframe(keyframe_index(t)) is always valid when animated
      */
-    Q_INVOKABLE int keyframe_index(FrameTime time) const
+    Q_INVOKABLE int keyframe_index(double time) const
     {
         auto kfcount = keyframe_count();
 

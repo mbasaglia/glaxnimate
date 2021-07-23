@@ -136,8 +136,8 @@ public:
 
     bool docnode_is_instance(const QString& type_name) const;
 
-    Q_INVOKABLE model::DocumentNode* find_by_name(const QString& name) { return docnode_find_by_name(name); }
-    Q_INVOKABLE model::DocumentNode* find_by_uuid(const QUuid& uuid) { return docnode_find_by_uuid(uuid); }
+    Q_INVOKABLE glaxnimate::model::DocumentNode* find_by_name(const QString& name) { return docnode_find_by_name(name); }
+    Q_INVOKABLE glaxnimate::model::DocumentNode* find_by_uuid(const QUuid& uuid) { return docnode_find_by_uuid(uuid); }
     Q_INVOKABLE QVariantList find_by_type_name(const QString& type_name)
     {
         auto ob = docnode_find_by_type_name(type_name);
