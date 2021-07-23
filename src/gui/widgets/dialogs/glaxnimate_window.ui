@@ -242,6 +242,7 @@
     <addaction name="menu_render_single_frame"/>
     <addaction name="menu_web_preview"/>
     <addaction name="action_validate_tgs"/>
+    <addaction name="action_validate_discord"/>
     <addaction name="separator"/>
     <addaction name="action_resize"/>
     <addaction name="action_timing"/>
@@ -2130,6 +2131,14 @@
    </property>
    <property name="text">
     <string>&amp;Remove from Path</string>
+   </property>
+  </action>
+  <action name="action_validate_discord">
+   <property name="icon">
+    <iconset theme="discord"/>
+   </property>
+   <property name="text">
+    <string>Validate Discord Sticker</string>
    </property>
   </action>
  </widget>

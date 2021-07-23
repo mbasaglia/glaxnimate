@@ -10,6 +10,7 @@
     * Touch gestures for the canvas (pinch and pan)
     * Text can now follow a path
     * Dropping a file onto the main window now gives options to import or open the file
+    * Preset and validation of Discord stickers
 * UI:
     * Made the "Tool Options" view more compact
     * Template system for new files

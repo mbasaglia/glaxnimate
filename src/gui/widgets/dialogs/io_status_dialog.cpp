@@ -22,6 +22,7 @@ IoStatusDialog::IoStatusDialog(const QIcon& icon, const QString& title, bool del
     d->icon = icon;
     d->setupUi(this);
     setWindowTitle(title);
+    setWindowIcon(icon);
 }
 
 IoStatusDialog::~IoStatusDialog() = default;

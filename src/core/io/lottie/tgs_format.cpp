@@ -8,20 +8,29 @@
 #include "model/shapes/image.hpp"
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/repeater.hpp"
-#include "model/visitor.hpp"
+#include "validation.hpp"
 
-namespace glaxnimate::io::lottie {
 
-class TgsVisitor : public model::Visitor
+using namespace glaxnimate;
+using namespace glaxnimate::io::lottie;
+
+namespace {
+
+class TgsVisitor : public ValidationVisitor
 {
+
 public:
-    TgsVisitor(TgsFormat* fmt) : fmt(fmt) {}
+    explicit TgsVisitor(LottieFormat* fmt)
+        : ValidationVisitor(fmt)
+    {
+        allowed_fps.push_back(30);
+        allowed_fps.push_back(60);
+        fixed_size = QSize(512, 512);
+        max_frames = 180;
+    }
 
 private:
-    void show_error(model::DocumentNode * node, const QString& message, app::log::Severity severity)
-    {
-        fmt->message(TgsFormat::tr("%1: %2").arg(node->object_name()).arg(message), severity);
-    }
+    using ValidationVisitor::on_visit;
 
     void on_visit(model::DocumentNode * node) override
     {
@@ -48,30 +57,9 @@ private:
             show_error(node, TgsFormat::tr("Repeaters are not officially supported"), app::log::Info);
         }
     }
-
-    void on_visit(model::Document * document) override
-    {
-        qreal width = document->main()->height.get();
-        if ( width != 512 )
-            fmt->error(TgsFormat::tr("Invalid width: %1, should be 512").arg(width));
-
-        qreal height = document->main()->height.get();
-        if ( height != 512 )
-            fmt->error(TgsFormat::tr("Invalid height: %1, should be 512").arg(height));
-
-        qreal fps = document->main()->fps.get();
-        if ( fps != 30 && fps != 60 )
-            fmt->error(TgsFormat::tr("Invalid fps: %1, should be 30 or 60").arg(fps));
-
-        auto duration = document->main()->animation->duration();
-        if ( duration > 180 )
-            fmt->error(TgsFormat::tr("Too many frames: %1, should be less than 180"));
-    }
-
-    TgsFormat* fmt;
 };
 
-} // namespace glaxnimate::io::lottie
+} // namespace
 
 bool glaxnimate::io::lottie::TgsFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
 {

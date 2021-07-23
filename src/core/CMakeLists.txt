@@ -10,6 +10,7 @@ io/lottie/lottie_format.cpp
 io/lottie/lottie_html_format.cpp
 io/lottie/tgs_format.cpp
 io/lottie/cbor_write_json.cpp
+io/lottie/validation.cpp
 io/glaxnimate/glaxnimate_format.cpp
 io/glaxnimate/glaxnimate_importer.cpp
 io/glaxnimate/glaxnimate_mime.cpp

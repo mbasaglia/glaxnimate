@@ -15,6 +15,7 @@
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "io/raster/raster_mime.hpp"
 #include "io/lottie/tgs_format.hpp"
+#include "io/lottie/validation.hpp"
 
 #include "command/undo_macro_guard.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -527,6 +528,16 @@ void GlaxnimateWindow::Private::save_frame_svg()
     io::svg::SvgRenderer rend(io::svg::NotAnimated);
     rend.write_document(current_document.get());
     rend.write(&file, true);
+}
+
+void GlaxnimateWindow::Private::validate_discord()
+{
+    IoStatusDialog dialog(QIcon::fromTheme("discord"), "", false, parent);
+    io::lottie::LottieFormat fmt;
+    dialog.reset(&fmt, tr("Validate Discord Sticker"));
+    io::lottie::validate_discord(current_document.get(), &fmt);
+    dialog.show_errors(tr("No issues found"), tr("Some issues detected"));
+    dialog.exec();
 }
 
 void GlaxnimateWindow::Private::validate_tgs()

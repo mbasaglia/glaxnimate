@@ -149,6 +149,7 @@ public:
     void save_frame_bmp();
     void save_frame_svg();
     void validate_tgs();
+    void validate_discord();
     void autosave_timer_load_settings();
     void autosave_timer_start(int mins = -1);
     void autosave_timer_tick();
