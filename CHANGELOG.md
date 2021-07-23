@@ -20,6 +20,7 @@
     * Button to clear fill/stroke colors
 * I/O:
     * More color formats are supported for the SVG importer
+    * Automatically removes embedded images when exporting to TGS
 * Scripting:
     * Python can now convert objects to path
     * More intuitive construction of C++ classes from python

@@ -24,7 +24,7 @@ public:
         };
     }
 
-    QCborMap to_json(model::Document* document, bool strip = false);
+    QCborMap to_json(model::Document* document, bool strip = false, bool strip_raster = false);
     bool load_json(const QByteArray& data, model::Document* document);
 
 private:

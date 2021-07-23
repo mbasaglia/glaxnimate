@@ -17,8 +17,8 @@ QLatin1String operator "" _l(const char* c, std::size_t sz)
 class LottieExporterState
 {
 public:
-    explicit LottieExporterState(io::lottie::LottieFormat* format, model::Document* document, bool strip)
-        : format(format), document(document), strip(strip) {}
+    explicit LottieExporterState(io::lottie::LottieFormat* format, model::Document* document, bool strip, bool strip_raster )
+        : format(format), document(document), strip(strip), strip_raster( strip_raster ) {}
 
     QCborMap to_json()
     {
@@ -537,9 +537,11 @@ public:
     {
         QCborArray assets;
 
-        for ( const auto& bmp : document->assets()->images->values )
-            assets.push_back(convert_bitmat(bmp.get()));
-
+        if ( !strip_raster )
+        {
+            for ( const auto& bmp : document->assets()->images->values )
+                assets.push_back(convert_bitmat(bmp.get()));
+        }
 
         for ( const auto& comp : document->assets()->precompositions->values )
             assets.push_back(convert_precomp(comp.get()));
@@ -596,7 +598,8 @@ public:
     {
         QCborMap json;
         convert_fake_layer(image, parent, json);
-        json["ty"_l] = 2;
+        if ( !strip_raster )
+            json["ty"_l] = 2;
         json["ind"_l] = layer_index(image);
         json["st"_l] = 0;
         QCborMap transform;
@@ -606,7 +609,7 @@ public:
             {"k"_l, 100},
         };
         json["ks"_l] = transform;
-        if ( image->image.get() )
+        if ( !strip_raster && image->image.get() )
             json["refId"_l] = image->image->uuid.get().toString();
         return json;
     }
@@ -644,6 +647,7 @@ public:
     QMap<QUuid, int> layer_indices;
     app::log::Log logger{"Lottie Export"};
     model::Layer* mask = 0;
+    bool strip_raster;
 };
 
 

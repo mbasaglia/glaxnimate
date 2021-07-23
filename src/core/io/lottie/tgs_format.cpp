@@ -38,7 +38,7 @@ private:
         {
             show_error(node, TgsFormat::tr("Star Shapes are not officially supported"), app::log::Info);
         }
-        else if ( qobject_cast<model::Image*>(node) )
+        else if ( qobject_cast<model::Image*>(node) || qobject_cast<model::Bitmap*>(node) )
         {
             show_error(node, TgsFormat::tr("Images are not supported"), app::log::Error);
         }
@@ -73,7 +73,7 @@ bool glaxnimate::io::lottie::TgsFormat::on_save(QIODevice& file, const QString&,
 {
     validate(document);
 
-    QCborMap json = LottieFormat::to_json(document, true);
+    QCborMap json = LottieFormat::to_json(document, true, true);
     json[QLatin1String("tgs")] = 1;
     QByteArray data = cbor_write_json(json, true);
 

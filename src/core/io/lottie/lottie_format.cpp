@@ -12,9 +12,9 @@ bool glaxnimate::io::lottie::LottieFormat::on_save(QIODevice& file, const QStrin
     return true;
 }
 
-QCborMap glaxnimate::io::lottie::LottieFormat::to_json(model::Document* document, bool strip)
+QCborMap glaxnimate::io::lottie::LottieFormat::to_json(model::Document* document, bool strip, bool strip_raster)
 {
-    detail::LottieExporterState exp(this, document, strip);
+    detail::LottieExporterState exp(this, document, strip, strip_raster);
     return exp.to_json();
 }
 
