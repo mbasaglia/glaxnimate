@@ -68,6 +68,8 @@ int main(int argc, char *argv[])
     }
 #endif
 
+    qRegisterMetaType<app::log::Severity>();
+
     QSplashScreen sc;
     sc.setPixmap(QPixmap(":glaxnimate/splash.svg"));
     sc.show();
@@ -78,7 +80,6 @@ int main(int argc, char *argv[])
     gui::GlaxnimateWindow window(!args.has_flag("default-ui"), args.has_flag("debug"));
     sc.finish(&window);
     window.show();
-
 
     if ( args.is_defined("window-size") )
         window.resize(args.value("window-size").toSize());
