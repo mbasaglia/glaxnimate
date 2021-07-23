@@ -104,8 +104,8 @@ public:
     void update_color_hue_slider(color_widgets::HueSlider* slider, const QColor& c, int hue);
     QColor current_color();
     QColor current_color_secondary();
-    void set_current_color(const QColor c);
-    void set_current_color_secondary(const QColor c);
+    void set_current_color(const QColor& c);
+    void set_current_color_secondary(const QColor& c);
     void update_color(const QColor& c, bool alpha, QObject* source);
     void update_color_component(int val, QObject* sender);
     void color_swap();
@@ -143,12 +143,12 @@ QColor ColorSelector::Private::current_color_secondary()
     return ui.color_preview_secondary->color();
 }
 
-void ColorSelector::Private::set_current_color(const QColor c)
+void ColorSelector::Private::set_current_color(const QColor& c)
 {
     update_color(c, true, nullptr);
 }
 
-void ColorSelector::Private::set_current_color_secondary(const QColor c)
+void ColorSelector::Private::set_current_color_secondary(const QColor& c)
 {
     ui.color_preview_secondary->setColor(c);
 }
@@ -377,7 +377,6 @@ void ColorSelector::to_styler(const QString& text, model::Styler* styler, int gr
     QColor color = d->current_color();
 
     auto cmd = new command::SetMultipleAnimated(text, commit);
-    cmd->push_property(&styler->color, color);
     cmd->push_property_not_animated(&styler->visible, true);
 
     if ( auto named_color = qobject_cast<model::NamedColor*>(styler->use.get()) )
@@ -396,5 +395,8 @@ void ColorSelector::to_styler(const QString& text, model::Styler* styler, int gr
         }
     }
 
+    cmd->push_property(&styler->color, color);
+
+//     std::unique_lock<utils::PseudoMutex> lock(d->updating_color);
     styler->push_command(cmd);
 }

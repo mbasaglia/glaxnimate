@@ -150,9 +150,10 @@ void glaxnimate::command::SetMultipleAnimated::push_property(model::AnimatableBa
 {
     keyframe_after = prop->object()->document()->record_to_keyframe();
     time = prop->time();
+    int insert = props.size();
     props.push_back(prop);
-    before.push_back(prop->value());
-    after.push_back(after_val);
+    before.insert(before.begin() + insert, prop->value());
+    after.insert(after.begin() + insert, after_val);
     keyframe_before.push_back(prop->has_keyframe(time));
     add_0.push_back(!prop->animated() && prop->object()->document()->record_to_keyframe());
 }

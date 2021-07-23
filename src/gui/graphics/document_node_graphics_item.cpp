@@ -39,6 +39,10 @@ QRectF graphics::DocumentNodeGraphicsItem::boundingRect() const
     return rect_cache;
 }
 
-void graphics::DocumentNodeGraphicsItem::paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*)
+// #include <QPainter>
+
+void graphics::DocumentNodeGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
+    Q_UNUSED(painter);
+//     painter->fillRect(boundingRect(), QColor(0, 0, 255, 120));
 }
