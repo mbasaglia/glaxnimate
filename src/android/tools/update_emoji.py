@@ -190,6 +190,7 @@ def _group_to_cxx_model(grp, indent):
     elif isinstance(grp, Emoji):
         write_line(json.dumps(grp.name))
         write_line('"%s"' % "".join("\\x%02x" % c for c in grp.emoji.encode("utf8")))
+        write_line(json.dumps(grp.slug))
 
     sys.stdout.write(indent * ' ')
     sys.stdout.write('},\n')

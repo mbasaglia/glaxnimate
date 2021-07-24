@@ -10,6 +10,7 @@ struct Emoji
 {
     QString name;
     QString unicode;
+    QString hex_slug;
 };
 
 struct EmojiSubGroup

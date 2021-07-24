@@ -14,54 +14,67 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "grinning face",
                         "\xf0\x9f\x98\x80",
+                        "1f600",
                     },
                     {
                         "grinning face with big eyes",
                         "\xf0\x9f\x98\x83",
+                        "1f603",
                     },
                     {
                         "grinning face with smiling eyes",
                         "\xf0\x9f\x98\x84",
+                        "1f604",
                     },
                     {
                         "beaming face with smiling eyes",
                         "\xf0\x9f\x98\x81",
+                        "1f601",
                     },
                     {
                         "grinning squinting face",
                         "\xf0\x9f\x98\x86",
+                        "1f606",
                     },
                     {
                         "grinning face with sweat",
                         "\xf0\x9f\x98\x85",
+                        "1f605",
                     },
                     {
                         "rolling on the floor laughing",
                         "\xf0\x9f\xa4\xa3",
+                        "1f923",
                     },
                     {
                         "face with tears of joy",
                         "\xf0\x9f\x98\x82",
+                        "1f602",
                     },
                     {
                         "slightly smiling face",
                         "\xf0\x9f\x99\x82",
+                        "1f642",
                     },
                     {
                         "upside-down face",
                         "\xf0\x9f\x99\x83",
+                        "1f643",
                     },
                     {
                         "winking face",
                         "\xf0\x9f\x98\x89",
+                        "1f609",
                     },
                     {
                         "smiling face with smiling eyes",
                         "\xf0\x9f\x98\x8a",
+                        "1f60a",
                     },
                     {
                         "smiling face with halo",
                         "\xf0\x9f\x98\x87",
+                        "1f607",
                     },
                 }
             },
@@ -71,38 +84,47 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "smiling face with hearts",
                         "\xf0\x9f\xa5\xb0",
+                        "1f970",
                     },
                     {
                         "smiling face with heart-eyes",
                         "\xf0\x9f\x98\x8d",
+                        "1f60d",
                     },
                     {
                         "star-struck",
                         "\xf0\x9f\xa4\xa9",
+                        "1f929",
                     },
                     {
                         "face blowing a kiss",
                         "\xf0\x9f\x98\x98",
+                        "1f618",
                     },
                     {
                         "kissing face",
                         "\xf0\x9f\x98\x97",
+                        "1f617",
                     },
                     {
                         "smiling face",
                         "\xe2\x98\xba\xef\xb8\x8f",
+                        "263a-fe0f",
                     },
                     {
                         "kissing face with closed eyes",
                         "\xf0\x9f\x98\x9a",
+                        "1f61a",
                     },
                     {
                         "kissing face with smiling eyes",
                         "\xf0\x9f\x98\x99",
+                        "1f619",
                     },
                     {
                         "smiling face with tear",
                         "\xf0\x9f\xa5\xb2",
+                        "1f972",
                     },
                 }
             },
@@ -112,26 +134,32 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "face savoring food",
                         "\xf0\x9f\x98\x8b",
+                        "1f60b",
                     },
                     {
                         "face with tongue",
                         "\xf0\x9f\x98\x9b",
+                        "1f61b",
                     },
                     {
                         "winking face with tongue",
                         "\xf0\x9f\x98\x9c",
+                        "1f61c",
                     },
                     {
                         "zany face",
                         "\xf0\x9f\xa4\xaa",
+                        "1f92a",
                     },
                     {
                         "squinting face with tongue",
                         "\xf0\x9f\x98\x9d",
+                        "1f61d",
                     },
                     {
                         "money-mouth face",
                         "\xf0\x9f\xa4\x91",
+                        "1f911",
                     },
                 }
             },
@@ -141,18 +169,22 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "hugging face",
                         "\xf0\x9f\xa4\x97",
+                        "1f917",
                     },
                     {
                         "face with hand over mouth",
                         "\xf0\x9f\xa4\xad",
+                        "1f92d",
                     },
                     {
                         "shushing face",
                         "\xf0\x9f\xa4\xab",
+                        "1f92b",
                     },
                     {
                         "thinking face",
                         "\xf0\x9f\xa4\x94",
+                        "1f914",
                     },
                 }
             },
@@ -162,50 +194,62 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "zipper-mouth face",
                         "\xf0\x9f\xa4\x90",
+                        "1f910",
                     },
                     {
                         "face with raised eyebrow",
                         "\xf0\x9f\xa4\xa8",
+                        "1f928",
                     },
                     {
                         "neutral face",
                         "\xf0\x9f\x98\x90",
+                        "1f610",
                     },
                     {
                         "expressionless face",
                         "\xf0\x9f\x98\x91",
+                        "1f611",
                     },
                     {
                         "face without mouth",
                         "\xf0\x9f\x98\xb6",
+                        "1f636",
                     },
                     {
                         "face in clouds",
                         "\xf0\x9f\x98\xb6\xe2\x80\x8d\xf0\x9f\x8c\xab\xef\xb8\x8f",
+                        "1f636-200d-1f32b-fe0f",
                     },
                     {
                         "smirking face",
                         "\xf0\x9f\x98\x8f",
+                        "1f60f",
                     },
                     {
                         "unamused face",
                         "\xf0\x9f\x98\x92",
+                        "1f612",
                     },
                     {
                         "face with rolling eyes",
                         "\xf0\x9f\x99\x84",
+                        "1f644",
                     },
                     {
                         "grimacing face",
                         "\xf0\x9f\x98\xac",
+                        "1f62c",
                     },
                     {
                         "face exhaling",
                         "\xf0\x9f\x98\xae\xe2\x80\x8d\xf0\x9f\x92\xa8",
+                        "1f62e-200d-1f4a8",
                     },
                     {
                         "lying face",
                         "\xf0\x9f\xa4\xa5",
+                        "1f925",
                     },
                 }
             },
@@ -215,22 +259,27 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "relieved face",
                         "\xf0\x9f\x98\x8c",
+                        "1f60c",
                     },
                     {
                         "pensive face",
                         "\xf0\x9f\x98\x94",
+                        "1f614",
                     },
                     {
                         "sleepy face",
                         "\xf0\x9f\x98\xaa",
+                        "1f62a",
                     },
                     {
                         "drooling face",
                         "\xf0\x9f\xa4\xa4",
+                        "1f924",
                     },
                     {
                         "sleeping face",
                         "\xf0\x9f\x98\xb4",
+                        "1f634",
                     },
                 }
             },
@@ -240,50 +289,62 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "face with medical mask",
                         "\xf0\x9f\x98\xb7",
+                        "1f637",
                     },
                     {
                         "face with thermometer",
                         "\xf0\x9f\xa4\x92",
+                        "1f912",
                     },
                     {
                         "face with head-bandage",
                         "\xf0\x9f\xa4\x95",
+                        "1f915",
                     },
                     {
                         "nauseated face",
                         "\xf0\x9f\xa4\xa2",
+                        "1f922",
                     },
                     {
                         "face vomiting",
                         "\xf0\x9f\xa4\xae",
+                        "1f92e",
                     },
                     {
                         "sneezing face",
                         "\xf0\x9f\xa4\xa7",
+                        "1f927",
                     },
                     {
                         "hot face",
                         "\xf0\x9f\xa5\xb5",
+                        "1f975",
                     },
                     {
                         "cold face",
                         "\xf0\x9f\xa5\xb6",
+                        "1f976",
                     },
                     {
                         "woozy face",
                         "\xf0\x9f\xa5\xb4",
+                        "1f974",
                     },
                     {
                         "knocked-out face",
                         "\xf0\x9f\x98\xb5",
+                        "1f635",
                     },
                     {
                         "face with spiral eyes",
                         "\xf0\x9f\x98\xb5\xe2\x80\x8d\xf0\x9f\x92\xab",
+                        "1f635-200d-1f4ab",
                     },
                     {
                         "exploding head",
                         "\xf0\x9f\xa4\xaf",
+                        "1f92f",
                     },
                 }
             },
@@ -293,14 +354,17 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "cowboy hat face",
                         "\xf0\x9f\xa4\xa0",
+                        "1f920",
                     },
                     {
                         "partying face",
                         "\xf0\x9f\xa5\xb3",
+                        "1f973",
                     },
                     {
                         "disguised face",
                         "\xf0\x9f\xa5\xb8",
+                        "1f978",
                     },
                 }
             },
@@ -310,14 +374,17 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "smiling face with sunglasses",
                         "\xf0\x9f\x98\x8e",
+                        "1f60e",
                     },
                     {
                         "nerd face",
                         "\xf0\x9f\xa4\x93",
+                        "1f913",
                     },
                     {
                         "face with monocle",
                         "\xf0\x9f\xa7\x90",
+                        "1f9d0",
                     },
                 }
             },
@@ -327,98 +394,122 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "confused face",
                         "\xf0\x9f\x98\x95",
+                        "1f615",
                     },
                     {
                         "worried face",
                         "\xf0\x9f\x98\x9f",
+                        "1f61f",
                     },
                     {
                         "slightly frowning face",
                         "\xf0\x9f\x99\x81",
+                        "1f641",
                     },
                     {
                         "frowning face",
                         "\xe2\x98\xb9\xef\xb8\x8f",
+                        "2639-fe0f",
                     },
                     {
                         "face with open mouth",
                         "\xf0\x9f\x98\xae",
+                        "1f62e",
                     },
                     {
                         "hushed face",
                         "\xf0\x9f\x98\xaf",
+                        "1f62f",
                     },
                     {
                         "astonished face",
                         "\xf0\x9f\x98\xb2",
+                        "1f632",
                     },
                     {
                         "flushed face",
                         "\xf0\x9f\x98\xb3",
+                        "1f633",
                     },
                     {
                         "pleading face",
                         "\xf0\x9f\xa5\xba",
+                        "1f97a",
                     },
                     {
                         "frowning face with open mouth",
                         "\xf0\x9f\x98\xa6",
+                        "1f626",
                     },
                     {
                         "anguished face",
                         "\xf0\x9f\x98\xa7",
+                        "1f627",
                     },
                     {
                         "fearful face",
                         "\xf0\x9f\x98\xa8",
+                        "1f628",
                     },
                     {
                         "anxious face with sweat",
                         "\xf0\x9f\x98\xb0",
+                        "1f630",
                     },
                     {
                         "sad but relieved face",
                         "\xf0\x9f\x98\xa5",
+                        "1f625",
                     },
                     {
                         "crying face",
                         "\xf0\x9f\x98\xa2",
+                        "1f622",
                     },
                     {
                         "loudly crying face",
                         "\xf0\x9f\x98\xad",
+                        "1f62d",
                     },
                     {
                         "face screaming in fear",
                         "\xf0\x9f\x98\xb1",
+                        "1f631",
                     },
                     {
                         "confounded face",
                         "\xf0\x9f\x98\x96",
+                        "1f616",
                     },
                     {
                         "persevering face",
                         "\xf0\x9f\x98\xa3",
+                        "1f623",
                     },
                     {
                         "disappointed face",
                         "\xf0\x9f\x98\x9e",
+                        "1f61e",
                     },
                     {
                         "downcast face with sweat",
                         "\xf0\x9f\x98\x93",
+                        "1f613",
                     },
                     {
                         "weary face",
                         "\xf0\x9f\x98\xa9",
+                        "1f629",
                     },
                     {
                         "tired face",
                         "\xf0\x9f\x98\xab",
+                        "1f62b",
                     },
                     {
                         "yawning face",
                         "\xf0\x9f\xa5\xb1",
+                        "1f971",
                     },
                 }
             },
@@ -428,34 +519,42 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "face with steam from nose",
                         "\xf0\x9f\x98\xa4",
+                        "1f624",
                     },
                     {
                         "pouting face",
                         "\xf0\x9f\x98\xa1",
+                        "1f621",
                     },
                     {
                         "angry face",
                         "\xf0\x9f\x98\xa0",
+                        "1f620",
                     },
                     {
                         "face with symbols on mouth",
                         "\xf0\x9f\xa4\xac",
+                        "1f92c",
                     },
                     {
                         "smiling face with horns",
                         "\xf0\x9f\x98\x88",
+                        "1f608",
                     },
                     {
                         "angry face with horns",
                         "\xf0\x9f\x91\xbf",
+                        "1f47f",
                     },
                     {
                         "skull",
                         "\xf0\x9f\x92\x80",
+                        "1f480",
                     },
                     {
                         "skull and crossbones",
                         "\xe2\x98\xa0\xef\xb8\x8f",
+                        "2620-fe0f",
                     },
                 }
             },
@@ -465,34 +564,42 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "pile of poo",
                         "\xf0\x9f\x92\xa9",
+                        "1f4a9",
                     },
                     {
                         "clown face",
                         "\xf0\x9f\xa4\xa1",
+                        "1f921",
                     },
                     {
                         "ogre",
                         "\xf0\x9f\x91\xb9",
+                        "1f479",
                     },
                     {
                         "goblin",
                         "\xf0\x9f\x91\xba",
+                        "1f47a",
                     },
                     {
                         "ghost",
                         "\xf0\x9f\x91\xbb",
+                        "1f47b",
                     },
                     {
                         "alien",
                         "\xf0\x9f\x91\xbd",
+                        "1f47d",
                     },
                     {
                         "alien monster",
                         "\xf0\x9f\x91\xbe",
+                        "1f47e",
                     },
                     {
                         "robot",
                         "\xf0\x9f\xa4\x96",
+                        "1f916",
                     },
                 }
             },
@@ -502,38 +609,47 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "grinning cat",
                         "\xf0\x9f\x98\xba",
+                        "1f63a",
                     },
                     {
                         "grinning cat with smiling eyes",
                         "\xf0\x9f\x98\xb8",
+                        "1f638",
                     },
                     {
                         "cat with tears of joy",
                         "\xf0\x9f\x98\xb9",
+                        "1f639",
                     },
                     {
                         "smiling cat with heart-eyes",
                         "\xf0\x9f\x98\xbb",
+                        "1f63b",
                     },
                     {
                         "cat with wry smile",
                         "\xf0\x9f\x98\xbc",
+                        "1f63c",
                     },
                     {
                         "kissing cat",
                         "\xf0\x9f\x98\xbd",
+                        "1f63d",
                     },
                     {
                         "weary cat",
                         "\xf0\x9f\x99\x80",
+                        "1f640",
                     },
                     {
                         "crying cat",
                         "\xf0\x9f\x98\xbf",
+                        "1f63f",
                     },
                     {
                         "pouting cat",
                         "\xf0\x9f\x98\xbe",
+                        "1f63e",
                     },
                 }
             },
@@ -543,14 +659,17 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "see-no-evil monkey",
                         "\xf0\x9f\x99\x88",
+                        "1f648",
                     },
                     {
                         "hear-no-evil monkey",
                         "\xf0\x9f\x99\x89",
+                        "1f649",
                     },
                     {
                         "speak-no-evil monkey",
                         "\xf0\x9f\x99\x8a",
+                        "1f64a",
                     },
                 }
             },
@@ -560,150 +679,187 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "kiss mark",
                         "\xf0\x9f\x92\x8b",
+                        "1f48b",
                     },
                     {
                         "love letter",
                         "\xf0\x9f\x92\x8c",
+                        "1f48c",
                     },
                     {
                         "heart with arrow",
                         "\xf0\x9f\x92\x98",
+                        "1f498",
                     },
                     {
                         "heart with ribbon",
                         "\xf0\x9f\x92\x9d",
+                        "1f49d",
                     },
                     {
                         "sparkling heart",
                         "\xf0\x9f\x92\x96",
+                        "1f496",
                     },
                     {
                         "growing heart",
                         "\xf0\x9f\x92\x97",
+                        "1f497",
                     },
                     {
                         "beating heart",
                         "\xf0\x9f\x92\x93",
+                        "1f493",
                     },
                     {
                         "revolving hearts",
                         "\xf0\x9f\x92\x9e",
+                        "1f49e",
                     },
                     {
                         "two hearts",
                         "\xf0\x9f\x92\x95",
+                        "1f495",
                     },
                     {
                         "heart decoration",
                         "\xf0\x9f\x92\x9f",
+                        "1f49f",
                     },
                     {
                         "heart exclamation",
                         "\xe2\x9d\xa3\xef\xb8\x8f",
+                        "2763-fe0f",
                     },
                     {
                         "broken heart",
                         "\xf0\x9f\x92\x94",
+                        "1f494",
                     },
                     {
                         "heart on fire",
                         "\xe2\x9d\xa4\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x94\xa5",
+                        "2764-fe0f-200d-1f525",
                     },
                     {
                         "mending heart",
                         "\xe2\x9d\xa4\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\xa9\xb9",
+                        "2764-fe0f-200d-1fa79",
                     },
                     {
                         "red heart",
                         "\xe2\x9d\xa4\xef\xb8\x8f",
+                        "2764-fe0f",
                     },
                     {
                         "orange heart",
                         "\xf0\x9f\xa7\xa1",
+                        "1f9e1",
                     },
                     {
                         "yellow heart",
                         "\xf0\x9f\x92\x9b",
+                        "1f49b",
                     },
                     {
                         "green heart",
                         "\xf0\x9f\x92\x9a",
+                        "1f49a",
                     },
                     {
                         "blue heart",
                         "\xf0\x9f\x92\x99",
+                        "1f499",
                     },
                     {
                         "purple heart",
                         "\xf0\x9f\x92\x9c",
+                        "1f49c",
                     },
                     {
                         "brown heart",
                         "\xf0\x9f\xa4\x8e",
+                        "1f90e",
                     },
                     {
                         "black heart",
                         "\xf0\x9f\x96\xa4",
+                        "1f5a4",
                     },
                     {
                         "white heart",
                         "\xf0\x9f\xa4\x8d",
+                        "1f90d",
                     },
                     {
                         "hundred points",
                         "\xf0\x9f\x92\xaf",
+                        "1f4af",
                     },
                     {
                         "anger symbol",
                         "\xf0\x9f\x92\xa2",
+                        "1f4a2",
                     },
                     {
                         "collision",
                         "\xf0\x9f\x92\xa5",
+                        "1f4a5",
                     },
                     {
                         "dizzy",
                         "\xf0\x9f\x92\xab",
+                        "1f4ab",
                     },
                     {
                         "sweat droplets",
                         "\xf0\x9f\x92\xa6",
+                        "1f4a6",
                     },
                     {
                         "dashing away",
                         "\xf0\x9f\x92\xa8",
+                        "1f4a8",
                     },
                     {
                         "hole",
                         "\xf0\x9f\x95\xb3\xef\xb8\x8f",
+                        "1f573-fe0f",
                     },
                     {
                         "bomb",
                         "\xf0\x9f\x92\xa3",
+                        "1f4a3",
                     },
                     {
                         "speech balloon",
                         "\xf0\x9f\x92\xac",
+                        "1f4ac",
                     },
                     {
                         "eye in speech bubble",
                         "\xf0\x9f\x91\x81\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x97\xa8\xef\xb8\x8f",
+                        "1f441-fe0f-200d-1f5e8-fe0f",
                     },
                     {
                         "left speech bubble",
                         "\xf0\x9f\x97\xa8\xef\xb8\x8f",
+                        "1f5e8-fe0f",
                     },
                     {
                         "right anger bubble",
                         "\xf0\x9f\x97\xaf\xef\xb8\x8f",
+                        "1f5ef-fe0f",
                     },
                     {
                         "thought balloon",
                         "\xf0\x9f\x92\xad",
+                        "1f4ad",
                     },
                     {
                         "zzz",
                         "\xf0\x9f\x92\xa4",
+                        "1f4a4",
                     },
                 }
             },
@@ -718,22 +874,27 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "waving hand",
                         "\xf0\x9f\x91\x8b",
+                        "1f44b",
                     },
                     {
                         "raised back of hand",
                         "\xf0\x9f\xa4\x9a",
+                        "1f91a",
                     },
                     {
                         "hand with fingers splayed",
                         "\xf0\x9f\x96\x90\xef\xb8\x8f",
+                        "1f590-fe0f",
                     },
                     {
                         "raised hand",
                         "\xe2\x9c\x8b",
+                        "270b",
                     },
                     {
                         "vulcan salute",
                         "\xf0\x9f\x96\x96",
+                        "1f596",
                     },
                 }
             },
@@ -743,34 +904,42 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "OK hand",
                         "\xf0\x9f\x91\x8c",
+                        "1f44c",
                     },
                     {
                         "pinched fingers",
                         "\xf0\x9f\xa4\x8c",
+                        "1f90c",
                     },
                     {
                         "pinching hand",
                         "\xf0\x9f\xa4\x8f",
+                        "1f90f",
                     },
                     {
                         "victory hand",
                         "\xe2\x9c\x8c\xef\xb8\x8f",
+                        "270c-fe0f",
                     },
                     {
                         "crossed fingers",
                         "\xf0\x9f\xa4\x9e",
+                        "1f91e",
                     },
                     {
                         "love-you gesture",
                         "\xf0\x9f\xa4\x9f",
+                        "1f91f",
                     },
                     {
                         "sign of the horns",
                         "\xf0\x9f\xa4\x98",
+                        "1f918",
                     },
                     {
                         "call me hand",
                         "\xf0\x9f\xa4\x99",
+                        "1f919",
                     },
                 }
             },
@@ -780,26 +949,32 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "backhand index pointing left",
                         "\xf0\x9f\x91\x88",
+                        "1f448",
                     },
                     {
                         "backhand index pointing right",
                         "\xf0\x9f\x91\x89",
+                        "1f449",
                     },
                     {
                         "backhand index pointing up",
                         "\xf0\x9f\x91\x86",
+                        "1f446",
                     },
                     {
                         "middle finger",
                         "\xf0\x9f\x96\x95",
+                        "1f595",
                     },
                     {
                         "backhand index pointing down",
                         "\xf0\x9f\x91\x87",
+                        "1f447",
                     },
                     {
                         "index pointing up",
                         "\xe2\x98\x9d\xef\xb8\x8f",
+                        "261d-fe0f",
                     },
                 }
             },
@@ -809,26 +984,32 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "thumbs up",
                         "\xf0\x9f\x91\x8d",
+                        "1f44d",
                     },
                     {
                         "thumbs down",
                         "\xf0\x9f\x91\x8e",
+                        "1f44e",
                     },
                     {
                         "raised fist",
                         "\xe2\x9c\x8a",
+                        "270a",
                     },
                     {
                         "oncoming fist",
                         "\xf0\x9f\x91\x8a",
+                        "1f44a",
                     },
                     {
                         "left-facing fist",
                         "\xf0\x9f\xa4\x9b",
+                        "1f91b",
                     },
                     {
                         "right-facing fist",
                         "\xf0\x9f\xa4\x9c",
+                        "1f91c",
                     },
                 }
             },
@@ -838,26 +1019,32 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "clapping hands",
                         "\xf0\x9f\x91\x8f",
+                        "1f44f",
                     },
                     {
                         "raising hands",
                         "\xf0\x9f\x99\x8c",
+                        "1f64c",
                     },
                     {
                         "open hands",
                         "\xf0\x9f\x91\x90",
+                        "1f450",
                     },
                     {
                         "palms up together",
                         "\xf0\x9f\xa4\xb2",
+                        "1f932",
                     },
                     {
                         "handshake",
                         "\xf0\x9f\xa4\x9d",
+                        "1f91d",
                     },
                     {
                         "folded hands",
                         "\xf0\x9f\x99\x8f",
+                        "1f64f",
                     },
                 }
             },
@@ -867,14 +1054,17 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "writing hand",
                         "\xe2\x9c\x8d\xef\xb8\x8f",
+                        "270d-fe0f",
                     },
                     {
                         "nail polish",
                         "\xf0\x9f\x92\x85",
+                        "1f485",
                     },
                     {
                         "selfie",
                         "\xf0\x9f\xa4\xb3",
+                        "1f933",
                     },
                 }
             },
@@ -884,70 +1074,87 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "flexed biceps",
                         "\xf0\x9f\x92\xaa",
+                        "1f4aa",
                     },
                     {
                         "mechanical arm",
                         "\xf0\x9f\xa6\xbe",
+                        "1f9be",
                     },
                     {
                         "mechanical leg",
                         "\xf0\x9f\xa6\xbf",
+                        "1f9bf",
                     },
                     {
                         "leg",
                         "\xf0\x9f\xa6\xb5",
+                        "1f9b5",
                     },
                     {
                         "foot",
                         "\xf0\x9f\xa6\xb6",
+                        "1f9b6",
                     },
                     {
                         "ear",
                         "\xf0\x9f\x91\x82",
+                        "1f442",
                     },
                     {
                         "ear with hearing aid",
                         "\xf0\x9f\xa6\xbb",
+                        "1f9bb",
                     },
                     {
                         "nose",
                         "\xf0\x9f\x91\x83",
+                        "1f443",
                     },
                     {
                         "brain",
                         "\xf0\x9f\xa7\xa0",
+                        "1f9e0",
                     },
                     {
                         "anatomical heart",
                         "\xf0\x9f\xab\x80",
+                        "1fac0",
                     },
                     {
                         "lungs",
                         "\xf0\x9f\xab\x81",
+                        "1fac1",
                     },
                     {
                         "tooth",
                         "\xf0\x9f\xa6\xb7",
+                        "1f9b7",
                     },
                     {
                         "bone",
                         "\xf0\x9f\xa6\xb4",
+                        "1f9b4",
                     },
                     {
                         "eyes",
                         "\xf0\x9f\x91\x80",
+                        "1f440",
                     },
                     {
                         "eye",
                         "\xf0\x9f\x91\x81\xef\xb8\x8f",
+                        "1f441-fe0f",
                     },
                     {
                         "tongue",
                         "\xf0\x9f\x91\x85",
+                        "1f445",
                     },
                     {
                         "mouth",
                         "\xf0\x9f\x91\x84",
+                        "1f444",
                     },
                 }
             },
@@ -957,74 +1164,92 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "baby",
                         "\xf0\x9f\x91\xb6",
+                        "1f476",
                     },
                     {
                         "child",
                         "\xf0\x9f\xa7\x92",
+                        "1f9d2",
                     },
                     {
                         "boy",
                         "\xf0\x9f\x91\xa6",
+                        "1f466",
                     },
                     {
                         "girl",
                         "\xf0\x9f\x91\xa7",
+                        "1f467",
                     },
                     {
                         "person",
                         "\xf0\x9f\xa7\x91",
+                        "1f9d1",
                     },
                     {
                         "person: blond hair",
                         "\xf0\x9f\x91\xb1",
+                        "1f471",
                     },
                     {
                         "man",
                         "\xf0\x9f\x91\xa8",
+                        "1f468",
                     },
                     {
                         "person: beard",
                         "\xf0\x9f\xa7\x94",
+                        "1f9d4",
                     },
                     {
                         "man: curly hair",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\xa6\xb1",
+                        "1f468-200d-1f9b1",
                     },
                     {
                         "man: white hair",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\xa6\xb3",
+                        "1f468-200d-1f9b3",
                     },
                     {
                         "woman",
                         "\xf0\x9f\x91\xa9",
+                        "1f469",
                     },
                     {
                         "woman: curly hair",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\xa6\xb1",
+                        "1f469-200d-1f9b1",
                     },
                     {
                         "person: curly hair",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\xa6\xb1",
+                        "1f9d1-200d-1f9b1",
                     },
                     {
                         "woman: white hair",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\xa6\xb3",
+                        "1f469-200d-1f9b3",
                     },
                     {
                         "person: white hair",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\xa6\xb3",
+                        "1f9d1-200d-1f9b3",
                     },
                     {
                         "older person",
                         "\xf0\x9f\xa7\x93",
+                        "1f9d3",
                     },
                     {
                         "old man",
                         "\xf0\x9f\x91\xb4",
+                        "1f474",
                     },
                     {
                         "old woman",
                         "\xf0\x9f\x91\xb5",
+                        "1f475",
                     },
                 }
             },
@@ -1034,42 +1259,52 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "person frowning",
                         "\xf0\x9f\x99\x8d",
+                        "1f64d",
                     },
                     {
                         "person pouting",
                         "\xf0\x9f\x99\x8e",
+                        "1f64e",
                     },
                     {
                         "person gesturing NO",
                         "\xf0\x9f\x99\x85",
+                        "1f645",
                     },
                     {
                         "person gesturing OK",
                         "\xf0\x9f\x99\x86",
+                        "1f646",
                     },
                     {
                         "person tipping hand",
                         "\xf0\x9f\x92\x81",
+                        "1f481",
                     },
                     {
                         "person raising hand",
                         "\xf0\x9f\x99\x8b",
+                        "1f64b",
                     },
                     {
                         "deaf person",
                         "\xf0\x9f\xa7\x8f",
+                        "1f9cf",
                     },
                     {
                         "person bowing",
                         "\xf0\x9f\x99\x87",
+                        "1f647",
                     },
                     {
                         "person facepalming",
                         "\xf0\x9f\xa4\xa6",
+                        "1f926",
                     },
                     {
                         "person shrugging",
                         "\xf0\x9f\xa4\xb7",
+                        "1f937",
                     },
                 }
             },
@@ -1079,262 +1314,327 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "health worker",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xe2\x9a\x95\xef\xb8\x8f",
+                        "1f9d1-200d-2695-fe0f",
                     },
                     {
                         "man health worker",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xe2\x9a\x95\xef\xb8\x8f",
+                        "1f468-200d-2695-fe0f",
                     },
                     {
                         "woman health worker",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xe2\x9a\x95\xef\xb8\x8f",
+                        "1f469-200d-2695-fe0f",
                     },
                     {
                         "student",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x8e\x93",
+                        "1f9d1-200d-1f393",
                     },
                     {
                         "man student",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x8e\x93",
+                        "1f468-200d-1f393",
                     },
                     {
                         "woman student",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x8e\x93",
+                        "1f469-200d-1f393",
                     },
                     {
                         "teacher",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x8f\xab",
+                        "1f9d1-200d-1f3eb",
                     },
                     {
                         "man teacher",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x8f\xab",
+                        "1f468-200d-1f3eb",
                     },
                     {
                         "woman teacher",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x8f\xab",
+                        "1f469-200d-1f3eb",
                     },
                     {
                         "judge",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xe2\x9a\x96\xef\xb8\x8f",
+                        "1f9d1-200d-2696-fe0f",
                     },
                     {
                         "man judge",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xe2\x9a\x96\xef\xb8\x8f",
+                        "1f468-200d-2696-fe0f",
                     },
                     {
                         "woman judge",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xe2\x9a\x96\xef\xb8\x8f",
+                        "1f469-200d-2696-fe0f",
                     },
                     {
                         "farmer",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x8c\xbe",
+                        "1f9d1-200d-1f33e",
                     },
                     {
                         "man farmer",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x8c\xbe",
+                        "1f468-200d-1f33e",
                     },
                     {
                         "woman farmer",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x8c\xbe",
+                        "1f469-200d-1f33e",
                     },
                     {
                         "cook",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x8d\xb3",
+                        "1f9d1-200d-1f373",
                     },
                     {
                         "man cook",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x8d\xb3",
+                        "1f468-200d-1f373",
                     },
                     {
                         "woman cook",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x8d\xb3",
+                        "1f469-200d-1f373",
                     },
                     {
                         "mechanic",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x94\xa7",
+                        "1f9d1-200d-1f527",
                     },
                     {
                         "man mechanic",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x94\xa7",
+                        "1f468-200d-1f527",
                     },
                     {
                         "woman mechanic",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x94\xa7",
+                        "1f469-200d-1f527",
                     },
                     {
                         "factory worker",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x8f\xad",
+                        "1f9d1-200d-1f3ed",
                     },
                     {
                         "man factory worker",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x8f\xad",
+                        "1f468-200d-1f3ed",
                     },
                     {
                         "woman factory worker",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x8f\xad",
+                        "1f469-200d-1f3ed",
                     },
                     {
                         "office worker",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x92\xbc",
+                        "1f9d1-200d-1f4bc",
                     },
                     {
                         "man office worker",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x92\xbc",
+                        "1f468-200d-1f4bc",
                     },
                     {
                         "woman office worker",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x92\xbc",
+                        "1f469-200d-1f4bc",
                     },
                     {
                         "scientist",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x94\xac",
+                        "1f9d1-200d-1f52c",
                     },
                     {
                         "man scientist",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x94\xac",
+                        "1f468-200d-1f52c",
                     },
                     {
                         "woman scientist",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x94\xac",
+                        "1f469-200d-1f52c",
                     },
                     {
                         "technologist",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x92\xbb",
+                        "1f9d1-200d-1f4bb",
                     },
                     {
                         "man technologist",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x92\xbb",
+                        "1f468-200d-1f4bb",
                     },
                     {
                         "woman technologist",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x92\xbb",
+                        "1f469-200d-1f4bb",
                     },
                     {
                         "singer",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x8e\xa4",
+                        "1f9d1-200d-1f3a4",
                     },
                     {
                         "man singer",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x8e\xa4",
+                        "1f468-200d-1f3a4",
                     },
                     {
                         "woman singer",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x8e\xa4",
+                        "1f469-200d-1f3a4",
                     },
                     {
                         "artist",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x8e\xa8",
+                        "1f9d1-200d-1f3a8",
                     },
                     {
                         "man artist",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x8e\xa8",
+                        "1f468-200d-1f3a8",
                     },
                     {
                         "woman artist",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x8e\xa8",
+                        "1f469-200d-1f3a8",
                     },
                     {
                         "pilot",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xe2\x9c\x88\xef\xb8\x8f",
+                        "1f9d1-200d-2708-fe0f",
                     },
                     {
                         "man pilot",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xe2\x9c\x88\xef\xb8\x8f",
+                        "1f468-200d-2708-fe0f",
                     },
                     {
                         "woman pilot",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xe2\x9c\x88\xef\xb8\x8f",
+                        "1f469-200d-2708-fe0f",
                     },
                     {
                         "astronaut",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x9a\x80",
+                        "1f9d1-200d-1f680",
                     },
                     {
                         "man astronaut",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x9a\x80",
+                        "1f468-200d-1f680",
                     },
                     {
                         "woman astronaut",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x9a\x80",
+                        "1f469-200d-1f680",
                     },
                     {
                         "firefighter",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x9a\x92",
+                        "1f9d1-200d-1f692",
                     },
                     {
                         "man firefighter",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x9a\x92",
+                        "1f468-200d-1f692",
                     },
                     {
                         "woman firefighter",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x9a\x92",
+                        "1f469-200d-1f692",
                     },
                     {
                         "police officer",
                         "\xf0\x9f\x91\xae",
+                        "1f46e",
                     },
                     {
                         "detective",
                         "\xf0\x9f\x95\xb5\xef\xb8\x8f",
+                        "1f575-fe0f",
                     },
                     {
                         "guard",
                         "\xf0\x9f\x92\x82",
+                        "1f482",
                     },
                     {
                         "ninja",
                         "\xf0\x9f\xa5\xb7",
+                        "1f977",
                     },
                     {
                         "construction worker",
                         "\xf0\x9f\x91\xb7",
+                        "1f477",
                     },
                     {
                         "prince",
                         "\xf0\x9f\xa4\xb4",
+                        "1f934",
                     },
                     {
                         "princess",
                         "\xf0\x9f\x91\xb8",
+                        "1f478",
                     },
                     {
                         "person wearing turban",
                         "\xf0\x9f\x91\xb3",
+                        "1f473",
                     },
                     {
                         "person with skullcap",
                         "\xf0\x9f\x91\xb2",
+                        "1f472",
                     },
                     {
                         "woman with headscarf",
                         "\xf0\x9f\xa7\x95",
+                        "1f9d5",
                     },
                     {
                         "person in tuxedo",
                         "\xf0\x9f\xa4\xb5",
+                        "1f935",
                     },
                     {
                         "person with veil",
                         "\xf0\x9f\x91\xb0",
+                        "1f470",
                     },
                     {
                         "pregnant woman",
                         "\xf0\x9f\xa4\xb0",
+                        "1f930",
                     },
                     {
                         "breast-feeding",
                         "\xf0\x9f\xa4\xb1",
+                        "1f931",
                     },
                     {
                         "woman feeding baby",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x8d\xbc",
+                        "1f469-200d-1f37c",
                     },
                     {
                         "man feeding baby",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x8d\xbc",
+                        "1f468-200d-1f37c",
                     },
                     {
                         "person feeding baby",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x8d\xbc",
+                        "1f9d1-200d-1f37c",
                     },
                 }
             },
@@ -1344,54 +1644,67 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "baby angel",
                         "\xf0\x9f\x91\xbc",
+                        "1f47c",
                     },
                     {
                         "Santa Claus",
                         "\xf0\x9f\x8e\x85",
+                        "1f385",
                     },
                     {
                         "Mrs. Claus",
                         "\xf0\x9f\xa4\xb6",
+                        "1f936",
                     },
                     {
                         "mx claus",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\x8e\x84",
+                        "1f9d1-200d-1f384",
                     },
                     {
                         "superhero",
                         "\xf0\x9f\xa6\xb8",
+                        "1f9b8",
                     },
                     {
                         "supervillain",
                         "\xf0\x9f\xa6\xb9",
+                        "1f9b9",
                     },
                     {
                         "mage",
                         "\xf0\x9f\xa7\x99",
+                        "1f9d9",
                     },
                     {
                         "fairy",
                         "\xf0\x9f\xa7\x9a",
+                        "1f9da",
                     },
                     {
                         "vampire",
                         "\xf0\x9f\xa7\x9b",
+                        "1f9db",
                     },
                     {
                         "merperson",
                         "\xf0\x9f\xa7\x9c",
+                        "1f9dc",
                     },
                     {
                         "elf",
                         "\xf0\x9f\xa7\x9d",
+                        "1f9dd",
                     },
                     {
                         "genie",
                         "\xf0\x9f\xa7\x9e",
+                        "1f9de",
                     },
                     {
                         "zombie",
                         "\xf0\x9f\xa7\x9f",
+                        "1f9df",
                     },
                 }
             },
@@ -1401,86 +1714,107 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "person getting massage",
                         "\xf0\x9f\x92\x86",
+                        "1f486",
                     },
                     {
                         "person getting haircut",
                         "\xf0\x9f\x92\x87",
+                        "1f487",
                     },
                     {
                         "person walking",
                         "\xf0\x9f\x9a\xb6",
+                        "1f6b6",
                     },
                     {
                         "person standing",
                         "\xf0\x9f\xa7\x8d",
+                        "1f9cd",
                     },
                     {
                         "person kneeling",
                         "\xf0\x9f\xa7\x8e",
+                        "1f9ce",
                     },
                     {
                         "person with white cane",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\xa6\xaf",
+                        "1f9d1-200d-1f9af",
                     },
                     {
                         "man with white cane",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\xa6\xaf",
+                        "1f468-200d-1f9af",
                     },
                     {
                         "woman with white cane",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\xa6\xaf",
+                        "1f469-200d-1f9af",
                     },
                     {
                         "person in motorized wheelchair",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\xa6\xbc",
+                        "1f9d1-200d-1f9bc",
                     },
                     {
                         "man in motorized wheelchair",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\xa6\xbc",
+                        "1f468-200d-1f9bc",
                     },
                     {
                         "woman in motorized wheelchair",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\xa6\xbc",
+                        "1f469-200d-1f9bc",
                     },
                     {
                         "person in manual wheelchair",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\xa6\xbd",
+                        "1f9d1-200d-1f9bd",
                     },
                     {
                         "man in manual wheelchair",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\xa6\xbd",
+                        "1f468-200d-1f9bd",
                     },
                     {
                         "woman in manual wheelchair",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\xa6\xbd",
+                        "1f469-200d-1f9bd",
                     },
                     {
                         "person running",
                         "\xf0\x9f\x8f\x83",
+                        "1f3c3",
                     },
                     {
                         "woman dancing",
                         "\xf0\x9f\x92\x83",
+                        "1f483",
                     },
                     {
                         "man dancing",
                         "\xf0\x9f\x95\xba",
+                        "1f57a",
                     },
                     {
                         "person in suit levitating",
                         "\xf0\x9f\x95\xb4\xef\xb8\x8f",
+                        "1f574-fe0f",
                     },
                     {
                         "people with bunny ears",
                         "\xf0\x9f\x91\xaf",
+                        "1f46f",
                     },
                     {
                         "person in steamy room",
                         "\xf0\x9f\xa7\x96",
+                        "1f9d6",
                     },
                     {
                         "person climbing",
                         "\xf0\x9f\xa7\x97",
+                        "1f9d7",
                     },
                 }
             },
@@ -1490,70 +1824,87 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "person fencing",
                         "\xf0\x9f\xa4\xba",
+                        "1f93a",
                     },
                     {
                         "horse racing",
                         "\xf0\x9f\x8f\x87",
+                        "1f3c7",
                     },
                     {
                         "skier",
                         "\xe2\x9b\xb7\xef\xb8\x8f",
+                        "26f7-fe0f",
                     },
                     {
                         "snowboarder",
                         "\xf0\x9f\x8f\x82",
+                        "1f3c2",
                     },
                     {
                         "person golfing",
                         "\xf0\x9f\x8f\x8c\xef\xb8\x8f",
+                        "1f3cc-fe0f",
                     },
                     {
                         "person surfing",
                         "\xf0\x9f\x8f\x84",
+                        "1f3c4",
                     },
                     {
                         "person rowing boat",
                         "\xf0\x9f\x9a\xa3",
+                        "1f6a3",
                     },
                     {
                         "person swimming",
                         "\xf0\x9f\x8f\x8a",
+                        "1f3ca",
                     },
                     {
                         "person bouncing ball",
                         "\xe2\x9b\xb9\xef\xb8\x8f",
+                        "26f9-fe0f",
                     },
                     {
                         "person lifting weights",
                         "\xf0\x9f\x8f\x8b\xef\xb8\x8f",
+                        "1f3cb-fe0f",
                     },
                     {
                         "person biking",
                         "\xf0\x9f\x9a\xb4",
+                        "1f6b4",
                     },
                     {
                         "person mountain biking",
                         "\xf0\x9f\x9a\xb5",
+                        "1f6b5",
                     },
                     {
                         "person cartwheeling",
                         "\xf0\x9f\xa4\xb8",
+                        "1f938",
                     },
                     {
                         "people wrestling",
                         "\xf0\x9f\xa4\xbc",
+                        "1f93c",
                     },
                     {
                         "person playing water polo",
                         "\xf0\x9f\xa4\xbd",
+                        "1f93d",
                     },
                     {
                         "person playing handball",
                         "\xf0\x9f\xa4\xbe",
+                        "1f93e",
                     },
                     {
                         "person juggling",
                         "\xf0\x9f\xa4\xb9",
+                        "1f939",
                     },
                 }
             },
@@ -1563,14 +1914,17 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "person in lotus position",
                         "\xf0\x9f\xa7\x98",
+                        "1f9d8",
                     },
                     {
                         "person taking bath",
                         "\xf0\x9f\x9b\x80",
+                        "1f6c0",
                     },
                     {
                         "person in bed",
                         "\xf0\x9f\x9b\x8c",
+                        "1f6cc",
                     },
                 }
             },
@@ -1580,154 +1934,192 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "people holding hands",
                         "\xf0\x9f\xa7\x91\xe2\x80\x8d\xf0\x9f\xa4\x9d\xe2\x80\x8d\xf0\x9f\xa7\x91",
+                        "1f9d1-200d-1f91d-200d-1f9d1",
                     },
                     {
                         "women holding hands",
                         "\xf0\x9f\x91\xad",
+                        "1f46d",
                     },
                     {
                         "woman and man holding hands",
                         "\xf0\x9f\x91\xab",
+                        "1f46b",
                     },
                     {
                         "men holding hands",
                         "\xf0\x9f\x91\xac",
+                        "1f46c",
                     },
                     {
                         "kiss",
                         "\xf0\x9f\x92\x8f",
+                        "1f48f",
                     },
                     {
                         "kiss: woman, man",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xe2\x9d\xa4\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x92\x8b\xe2\x80\x8d\xf0\x9f\x91\xa8",
+                        "1f469-200d-2764-fe0f-200d-1f48b-200d-1f468",
                     },
                     {
                         "kiss: man, man",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xe2\x9d\xa4\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x92\x8b\xe2\x80\x8d\xf0\x9f\x91\xa8",
+                        "1f468-200d-2764-fe0f-200d-1f48b-200d-1f468",
                     },
                     {
                         "kiss: woman, woman",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xe2\x9d\xa4\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x92\x8b\xe2\x80\x8d\xf0\x9f\x91\xa9",
+                        "1f469-200d-2764-fe0f-200d-1f48b-200d-1f469",
                     },
                     {
                         "couple with heart",
                         "\xf0\x9f\x92\x91",
+                        "1f491",
                     },
                     {
                         "couple with heart: woman, man",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xe2\x9d\xa4\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x91\xa8",
+                        "1f469-200d-2764-fe0f-200d-1f468",
                     },
                     {
                         "couple with heart: man, man",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xe2\x9d\xa4\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x91\xa8",
+                        "1f468-200d-2764-fe0f-200d-1f468",
                     },
                     {
                         "couple with heart: woman, woman",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xe2\x9d\xa4\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x91\xa9",
+                        "1f469-200d-2764-fe0f-200d-1f469",
                     },
                     {
                         "family",
                         "\xf0\x9f\x91\xaa",
+                        "1f46a",
                     },
                     {
                         "family: man, woman, boy",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f468-200d-1f469-200d-1f466",
                     },
                     {
                         "family: man, woman, girl",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa7",
+                        "1f468-200d-1f469-200d-1f467",
                     },
                     {
                         "family: man, woman, girl, boy",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa7\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f468-200d-1f469-200d-1f467-200d-1f466",
                     },
                     {
                         "family: man, woman, boy, boy",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa6\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f468-200d-1f469-200d-1f466-200d-1f466",
                     },
                     {
                         "family: man, woman, girl, girl",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa7\xe2\x80\x8d\xf0\x9f\x91\xa7",
+                        "1f468-200d-1f469-200d-1f467-200d-1f467",
                     },
                     {
                         "family: man, man, boy",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f468-200d-1f468-200d-1f466",
                     },
                     {
                         "family: man, man, girl",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa7",
+                        "1f468-200d-1f468-200d-1f467",
                     },
                     {
                         "family: man, man, girl, boy",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa7\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f468-200d-1f468-200d-1f467-200d-1f466",
                     },
                     {
                         "family: man, man, boy, boy",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa6\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f468-200d-1f468-200d-1f466-200d-1f466",
                     },
                     {
                         "family: man, man, girl, girl",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa7\xe2\x80\x8d\xf0\x9f\x91\xa7",
+                        "1f468-200d-1f468-200d-1f467-200d-1f467",
                     },
                     {
                         "family: woman, woman, boy",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f469-200d-1f469-200d-1f466",
                     },
                     {
                         "family: woman, woman, girl",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa7",
+                        "1f469-200d-1f469-200d-1f467",
                     },
                     {
                         "family: woman, woman, girl, boy",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa7\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f469-200d-1f469-200d-1f467-200d-1f466",
                     },
                     {
                         "family: woman, woman, boy, boy",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa6\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f469-200d-1f469-200d-1f466-200d-1f466",
                     },
                     {
                         "family: woman, woman, girl, girl",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa7\xe2\x80\x8d\xf0\x9f\x91\xa7",
+                        "1f469-200d-1f469-200d-1f467-200d-1f467",
                     },
                     {
                         "family: man, boy",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f468-200d-1f466",
                     },
                     {
                         "family: man, boy, boy",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa6\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f468-200d-1f466-200d-1f466",
                     },
                     {
                         "family: man, girl",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa7",
+                        "1f468-200d-1f467",
                     },
                     {
                         "family: man, girl, boy",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa7\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f468-200d-1f467-200d-1f466",
                     },
                     {
                         "family: man, girl, girl",
                         "\xf0\x9f\x91\xa8\xe2\x80\x8d\xf0\x9f\x91\xa7\xe2\x80\x8d\xf0\x9f\x91\xa7",
+                        "1f468-200d-1f467-200d-1f467",
                     },
                     {
                         "family: woman, boy",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f469-200d-1f466",
                     },
                     {
                         "family: woman, boy, boy",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa6\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f469-200d-1f466-200d-1f466",
                     },
                     {
                         "family: woman, girl",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa7",
+                        "1f469-200d-1f467",
                     },
                     {
                         "family: woman, girl, boy",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa7\xe2\x80\x8d\xf0\x9f\x91\xa6",
+                        "1f469-200d-1f467-200d-1f466",
                     },
                     {
                         "family: woman, girl, girl",
                         "\xf0\x9f\x91\xa9\xe2\x80\x8d\xf0\x9f\x91\xa7\xe2\x80\x8d\xf0\x9f\x91\xa7",
+                        "1f469-200d-1f467-200d-1f467",
                     },
                 }
             },
@@ -1737,22 +2129,27 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "speaking head",
                         "\xf0\x9f\x97\xa3\xef\xb8\x8f",
+                        "1f5e3-fe0f",
                     },
                     {
                         "bust in silhouette",
                         "\xf0\x9f\x91\xa4",
+                        "1f464",
                     },
                     {
                         "busts in silhouette",
                         "\xf0\x9f\x91\xa5",
+                        "1f465",
                     },
                     {
                         "people hugging",
                         "\xf0\x9f\xab\x82",
+                        "1fac2",
                     },
                     {
                         "footprints",
                         "\xf0\x9f\x91\xa3",
+                        "1f463",
                     },
                 }
             },
@@ -1767,258 +2164,322 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "monkey face",
                         "\xf0\x9f\x90\xb5",
+                        "1f435",
                     },
                     {
                         "monkey",
                         "\xf0\x9f\x90\x92",
+                        "1f412",
                     },
                     {
                         "gorilla",
                         "\xf0\x9f\xa6\x8d",
+                        "1f98d",
                     },
                     {
                         "orangutan",
                         "\xf0\x9f\xa6\xa7",
+                        "1f9a7",
                     },
                     {
                         "dog face",
                         "\xf0\x9f\x90\xb6",
+                        "1f436",
                     },
                     {
                         "dog",
                         "\xf0\x9f\x90\x95",
+                        "1f415",
                     },
                     {
                         "guide dog",
                         "\xf0\x9f\xa6\xae",
+                        "1f9ae",
                     },
                     {
                         "service dog",
                         "\xf0\x9f\x90\x95\xe2\x80\x8d\xf0\x9f\xa6\xba",
+                        "1f415-200d-1f9ba",
                     },
                     {
                         "poodle",
                         "\xf0\x9f\x90\xa9",
+                        "1f429",
                     },
                     {
                         "wolf",
                         "\xf0\x9f\x90\xba",
+                        "1f43a",
                     },
                     {
                         "fox",
                         "\xf0\x9f\xa6\x8a",
+                        "1f98a",
                     },
                     {
                         "raccoon",
                         "\xf0\x9f\xa6\x9d",
+                        "1f99d",
                     },
                     {
                         "cat face",
                         "\xf0\x9f\x90\xb1",
+                        "1f431",
                     },
                     {
                         "cat",
                         "\xf0\x9f\x90\x88",
+                        "1f408",
                     },
                     {
                         "black cat",
                         "\xf0\x9f\x90\x88\xe2\x80\x8d\xe2\xac\x9b",
+                        "1f408-200d-2b1b",
                     },
                     {
                         "lion",
                         "\xf0\x9f\xa6\x81",
+                        "1f981",
                     },
                     {
                         "tiger face",
                         "\xf0\x9f\x90\xaf",
+                        "1f42f",
                     },
                     {
                         "tiger",
                         "\xf0\x9f\x90\x85",
+                        "1f405",
                     },
                     {
                         "leopard",
                         "\xf0\x9f\x90\x86",
+                        "1f406",
                     },
                     {
                         "horse face",
                         "\xf0\x9f\x90\xb4",
+                        "1f434",
                     },
                     {
                         "horse",
                         "\xf0\x9f\x90\x8e",
+                        "1f40e",
                     },
                     {
                         "unicorn",
                         "\xf0\x9f\xa6\x84",
+                        "1f984",
                     },
                     {
                         "zebra",
                         "\xf0\x9f\xa6\x93",
+                        "1f993",
                     },
                     {
                         "deer",
                         "\xf0\x9f\xa6\x8c",
+                        "1f98c",
                     },
                     {
                         "bison",
                         "\xf0\x9f\xa6\xac",
+                        "1f9ac",
                     },
                     {
                         "cow face",
                         "\xf0\x9f\x90\xae",
+                        "1f42e",
                     },
                     {
                         "ox",
                         "\xf0\x9f\x90\x82",
+                        "1f402",
                     },
                     {
                         "water buffalo",
                         "\xf0\x9f\x90\x83",
+                        "1f403",
                     },
                     {
                         "cow",
                         "\xf0\x9f\x90\x84",
+                        "1f404",
                     },
                     {
                         "pig face",
                         "\xf0\x9f\x90\xb7",
+                        "1f437",
                     },
                     {
                         "pig",
                         "\xf0\x9f\x90\x96",
+                        "1f416",
                     },
                     {
                         "boar",
                         "\xf0\x9f\x90\x97",
+                        "1f417",
                     },
                     {
                         "pig nose",
                         "\xf0\x9f\x90\xbd",
+                        "1f43d",
                     },
                     {
                         "ram",
                         "\xf0\x9f\x90\x8f",
+                        "1f40f",
                     },
                     {
                         "ewe",
                         "\xf0\x9f\x90\x91",
+                        "1f411",
                     },
                     {
                         "goat",
                         "\xf0\x9f\x90\x90",
+                        "1f410",
                     },
                     {
                         "camel",
                         "\xf0\x9f\x90\xaa",
+                        "1f42a",
                     },
                     {
                         "two-hump camel",
                         "\xf0\x9f\x90\xab",
+                        "1f42b",
                     },
                     {
                         "llama",
                         "\xf0\x9f\xa6\x99",
+                        "1f999",
                     },
                     {
                         "giraffe",
                         "\xf0\x9f\xa6\x92",
+                        "1f992",
                     },
                     {
                         "elephant",
                         "\xf0\x9f\x90\x98",
+                        "1f418",
                     },
                     {
                         "mammoth",
                         "\xf0\x9f\xa6\xa3",
+                        "1f9a3",
                     },
                     {
                         "rhinoceros",
                         "\xf0\x9f\xa6\x8f",
+                        "1f98f",
                     },
                     {
                         "hippopotamus",
                         "\xf0\x9f\xa6\x9b",
+                        "1f99b",
                     },
                     {
                         "mouse face",
                         "\xf0\x9f\x90\xad",
+                        "1f42d",
                     },
                     {
                         "mouse",
                         "\xf0\x9f\x90\x81",
+                        "1f401",
                     },
                     {
                         "rat",
                         "\xf0\x9f\x90\x80",
+                        "1f400",
                     },
                     {
                         "hamster",
                         "\xf0\x9f\x90\xb9",
+                        "1f439",
                     },
                     {
                         "rabbit face",
                         "\xf0\x9f\x90\xb0",
+                        "1f430",
                     },
                     {
                         "rabbit",
                         "\xf0\x9f\x90\x87",
+                        "1f407",
                     },
                     {
                         "chipmunk",
                         "\xf0\x9f\x90\xbf\xef\xb8\x8f",
+                        "1f43f-fe0f",
                     },
                     {
                         "beaver",
                         "\xf0\x9f\xa6\xab",
+                        "1f9ab",
                     },
                     {
                         "hedgehog",
                         "\xf0\x9f\xa6\x94",
+                        "1f994",
                     },
                     {
                         "bat",
                         "\xf0\x9f\xa6\x87",
+                        "1f987",
                     },
                     {
                         "bear",
                         "\xf0\x9f\x90\xbb",
+                        "1f43b",
                     },
                     {
                         "polar bear",
                         "\xf0\x9f\x90\xbb\xe2\x80\x8d\xe2\x9d\x84\xef\xb8\x8f",
+                        "1f43b-200d-2744-fe0f",
                     },
                     {
                         "koala",
                         "\xf0\x9f\x90\xa8",
+                        "1f428",
                     },
                     {
                         "panda",
                         "\xf0\x9f\x90\xbc",
+                        "1f43c",
                     },
                     {
                         "sloth",
                         "\xf0\x9f\xa6\xa5",
+                        "1f9a5",
                     },
                     {
                         "otter",
                         "\xf0\x9f\xa6\xa6",
+                        "1f9a6",
                     },
                     {
                         "skunk",
                         "\xf0\x9f\xa6\xa8",
+                        "1f9a8",
                     },
                     {
                         "kangaroo",
                         "\xf0\x9f\xa6\x98",
+                        "1f998",
                     },
                     {
                         "badger",
                         "\xf0\x9f\xa6\xa1",
+                        "1f9a1",
                     },
                     {
                         "paw prints",
                         "\xf0\x9f\x90\xbe",
+                        "1f43e",
                     },
                 }
             },
@@ -2028,74 +2489,92 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "turkey",
                         "\xf0\x9f\xa6\x83",
+                        "1f983",
                     },
                     {
                         "chicken",
                         "\xf0\x9f\x90\x94",
+                        "1f414",
                     },
                     {
                         "rooster",
                         "\xf0\x9f\x90\x93",
+                        "1f413",
                     },
                     {
                         "hatching chick",
                         "\xf0\x9f\x90\xa3",
+                        "1f423",
                     },
                     {
                         "baby chick",
                         "\xf0\x9f\x90\xa4",
+                        "1f424",
                     },
                     {
                         "front-facing baby chick",
                         "\xf0\x9f\x90\xa5",
+                        "1f425",
                     },
                     {
                         "bird",
                         "\xf0\x9f\x90\xa6",
+                        "1f426",
                     },
                     {
                         "penguin",
                         "\xf0\x9f\x90\xa7",
+                        "1f427",
                     },
                     {
                         "dove",
                         "\xf0\x9f\x95\x8a\xef\xb8\x8f",
+                        "1f54a-fe0f",
                     },
                     {
                         "eagle",
                         "\xf0\x9f\xa6\x85",
+                        "1f985",
                     },
                     {
                         "duck",
                         "\xf0\x9f\xa6\x86",
+                        "1f986",
                     },
                     {
                         "swan",
                         "\xf0\x9f\xa6\xa2",
+                        "1f9a2",
                     },
                     {
                         "owl",
                         "\xf0\x9f\xa6\x89",
+                        "1f989",
                     },
                     {
                         "dodo",
                         "\xf0\x9f\xa6\xa4",
+                        "1f9a4",
                     },
                     {
                         "feather",
                         "\xf0\x9f\xaa\xb6",
+                        "1fab6",
                     },
                     {
                         "flamingo",
                         "\xf0\x9f\xa6\xa9",
+                        "1f9a9",
                     },
                     {
                         "peacock",
                         "\xf0\x9f\xa6\x9a",
+                        "1f99a",
                     },
                     {
                         "parrot",
                         "\xf0\x9f\xa6\x9c",
+                        "1f99c",
                     },
                 }
             },
@@ -2105,6 +2584,7 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "frog",
                         "\xf0\x9f\x90\xb8",
+                        "1f438",
                     },
                 }
             },
@@ -2114,34 +2594,42 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "crocodile",
                         "\xf0\x9f\x90\x8a",
+                        "1f40a",
                     },
                     {
                         "turtle",
                         "\xf0\x9f\x90\xa2",
+                        "1f422",
                     },
                     {
                         "lizard",
                         "\xf0\x9f\xa6\x8e",
+                        "1f98e",
                     },
                     {
                         "snake",
                         "\xf0\x9f\x90\x8d",
+                        "1f40d",
                     },
                     {
                         "dragon face",
                         "\xf0\x9f\x90\xb2",
+                        "1f432",
                     },
                     {
                         "dragon",
                         "\xf0\x9f\x90\x89",
+                        "1f409",
                     },
                     {
                         "sauropod",
                         "\xf0\x9f\xa6\x95",
+                        "1f995",
                     },
                     {
                         "T-Rex",
                         "\xf0\x9f\xa6\x96",
+                        "1f996",
                     },
                 }
             },
@@ -2151,42 +2639,52 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "spouting whale",
                         "\xf0\x9f\x90\xb3",
+                        "1f433",
                     },
                     {
                         "whale",
                         "\xf0\x9f\x90\x8b",
+                        "1f40b",
                     },
                     {
                         "dolphin",
                         "\xf0\x9f\x90\xac",
+                        "1f42c",
                     },
                     {
                         "seal",
                         "\xf0\x9f\xa6\xad",
+                        "1f9ad",
                     },
                     {
                         "fish",
                         "\xf0\x9f\x90\x9f",
+                        "1f41f",
                     },
                     {
                         "tropical fish",
                         "\xf0\x9f\x90\xa0",
+                        "1f420",
                     },
                     {
                         "blowfish",
                         "\xf0\x9f\x90\xa1",
+                        "1f421",
                     },
                     {
                         "shark",
                         "\xf0\x9f\xa6\x88",
+                        "1f988",
                     },
                     {
                         "octopus",
                         "\xf0\x9f\x90\x99",
+                        "1f419",
                     },
                     {
                         "spiral shell",
                         "\xf0\x9f\x90\x9a",
+                        "1f41a",
                     },
                 }
             },
@@ -2196,66 +2694,82 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "snail",
                         "\xf0\x9f\x90\x8c",
+                        "1f40c",
                     },
                     {
                         "butterfly",
                         "\xf0\x9f\xa6\x8b",
+                        "1f98b",
                     },
                     {
                         "bug",
                         "\xf0\x9f\x90\x9b",
+                        "1f41b",
                     },
                     {
                         "ant",
                         "\xf0\x9f\x90\x9c",
+                        "1f41c",
                     },
                     {
                         "honeybee",
                         "\xf0\x9f\x90\x9d",
+                        "1f41d",
                     },
                     {
                         "beetle",
                         "\xf0\x9f\xaa\xb2",
+                        "1fab2",
                     },
                     {
                         "lady beetle",
                         "\xf0\x9f\x90\x9e",
+                        "1f41e",
                     },
                     {
                         "cricket",
                         "\xf0\x9f\xa6\x97",
+                        "1f997",
                     },
                     {
                         "cockroach",
                         "\xf0\x9f\xaa\xb3",
+                        "1fab3",
                     },
                     {
                         "spider",
                         "\xf0\x9f\x95\xb7\xef\xb8\x8f",
+                        "1f577-fe0f",
                     },
                     {
                         "spider web",
                         "\xf0\x9f\x95\xb8\xef\xb8\x8f",
+                        "1f578-fe0f",
                     },
                     {
                         "scorpion",
                         "\xf0\x9f\xa6\x82",
+                        "1f982",
                     },
                     {
                         "mosquito",
                         "\xf0\x9f\xa6\x9f",
+                        "1f99f",
                     },
                     {
                         "fly",
                         "\xf0\x9f\xaa\xb0",
+                        "1fab0",
                     },
                     {
                         "worm",
                         "\xf0\x9f\xaa\xb1",
+                        "1fab1",
                     },
                     {
                         "microbe",
                         "\xf0\x9f\xa6\xa0",
+                        "1f9a0",
                     },
                 }
             },
@@ -2265,42 +2779,52 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "bouquet",
                         "\xf0\x9f\x92\x90",
+                        "1f490",
                     },
                     {
                         "cherry blossom",
                         "\xf0\x9f\x8c\xb8",
+                        "1f338",
                     },
                     {
                         "white flower",
                         "\xf0\x9f\x92\xae",
+                        "1f4ae",
                     },
                     {
                         "rosette",
                         "\xf0\x9f\x8f\xb5\xef\xb8\x8f",
+                        "1f3f5-fe0f",
                     },
                     {
                         "rose",
                         "\xf0\x9f\x8c\xb9",
+                        "1f339",
                     },
                     {
                         "wilted flower",
                         "\xf0\x9f\xa5\x80",
+                        "1f940",
                     },
                     {
                         "hibiscus",
                         "\xf0\x9f\x8c\xba",
+                        "1f33a",
                     },
                     {
                         "sunflower",
                         "\xf0\x9f\x8c\xbb",
+                        "1f33b",
                     },
                     {
                         "blossom",
                         "\xf0\x9f\x8c\xbc",
+                        "1f33c",
                     },
                     {
                         "tulip",
                         "\xf0\x9f\x8c\xb7",
+                        "1f337",
                     },
                 }
             },
@@ -2310,54 +2834,67 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "seedling",
                         "\xf0\x9f\x8c\xb1",
+                        "1f331",
                     },
                     {
                         "potted plant",
                         "\xf0\x9f\xaa\xb4",
+                        "1fab4",
                     },
                     {
                         "evergreen tree",
                         "\xf0\x9f\x8c\xb2",
+                        "1f332",
                     },
                     {
                         "deciduous tree",
                         "\xf0\x9f\x8c\xb3",
+                        "1f333",
                     },
                     {
                         "palm tree",
                         "\xf0\x9f\x8c\xb4",
+                        "1f334",
                     },
                     {
                         "cactus",
                         "\xf0\x9f\x8c\xb5",
+                        "1f335",
                     },
                     {
                         "sheaf of rice",
                         "\xf0\x9f\x8c\xbe",
+                        "1f33e",
                     },
                     {
                         "herb",
                         "\xf0\x9f\x8c\xbf",
+                        "1f33f",
                     },
                     {
                         "shamrock",
                         "\xe2\x98\x98\xef\xb8\x8f",
+                        "2618-fe0f",
                     },
                     {
                         "four leaf clover",
                         "\xf0\x9f\x8d\x80",
+                        "1f340",
                     },
                     {
                         "maple leaf",
                         "\xf0\x9f\x8d\x81",
+                        "1f341",
                     },
                     {
                         "fallen leaf",
                         "\xf0\x9f\x8d\x82",
+                        "1f342",
                     },
                     {
                         "leaf fluttering in wind",
                         "\xf0\x9f\x8d\x83",
+                        "1f343",
                     },
                 }
             },
@@ -2372,78 +2909,97 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "grapes",
                         "\xf0\x9f\x8d\x87",
+                        "1f347",
                     },
                     {
                         "melon",
                         "\xf0\x9f\x8d\x88",
+                        "1f348",
                     },
                     {
                         "watermelon",
                         "\xf0\x9f\x8d\x89",
+                        "1f349",
                     },
                     {
                         "tangerine",
                         "\xf0\x9f\x8d\x8a",
+                        "1f34a",
                     },
                     {
                         "lemon",
                         "\xf0\x9f\x8d\x8b",
+                        "1f34b",
                     },
                     {
                         "banana",
                         "\xf0\x9f\x8d\x8c",
+                        "1f34c",
                     },
                     {
                         "pineapple",
                         "\xf0\x9f\x8d\x8d",
+                        "1f34d",
                     },
                     {
                         "mango",
                         "\xf0\x9f\xa5\xad",
+                        "1f96d",
                     },
                     {
                         "red apple",
                         "\xf0\x9f\x8d\x8e",
+                        "1f34e",
                     },
                     {
                         "green apple",
                         "\xf0\x9f\x8d\x8f",
+                        "1f34f",
                     },
                     {
                         "pear",
                         "\xf0\x9f\x8d\x90",
+                        "1f350",
                     },
                     {
                         "peach",
                         "\xf0\x9f\x8d\x91",
+                        "1f351",
                     },
                     {
                         "cherries",
                         "\xf0\x9f\x8d\x92",
+                        "1f352",
                     },
                     {
                         "strawberry",
                         "\xf0\x9f\x8d\x93",
+                        "1f353",
                     },
                     {
                         "blueberries",
                         "\xf0\x9f\xab\x90",
+                        "1fad0",
                     },
                     {
                         "kiwi fruit",
                         "\xf0\x9f\xa5\x9d",
+                        "1f95d",
                     },
                     {
                         "tomato",
                         "\xf0\x9f\x8d\x85",
+                        "1f345",
                     },
                     {
                         "olive",
                         "\xf0\x9f\xab\x92",
+                        "1fad2",
                     },
                     {
                         "coconut",
                         "\xf0\x9f\xa5\xa5",
+                        "1f965",
                     },
                 }
             },
@@ -2453,62 +3009,77 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "avocado",
                         "\xf0\x9f\xa5\x91",
+                        "1f951",
                     },
                     {
                         "eggplant",
                         "\xf0\x9f\x8d\x86",
+                        "1f346",
                     },
                     {
                         "potato",
                         "\xf0\x9f\xa5\x94",
+                        "1f954",
                     },
                     {
                         "carrot",
                         "\xf0\x9f\xa5\x95",
+                        "1f955",
                     },
                     {
                         "ear of corn",
                         "\xf0\x9f\x8c\xbd",
+                        "1f33d",
                     },
                     {
                         "hot pepper",
                         "\xf0\x9f\x8c\xb6\xef\xb8\x8f",
+                        "1f336-fe0f",
                     },
                     {
                         "bell pepper",
                         "\xf0\x9f\xab\x91",
+                        "1fad1",
                     },
                     {
                         "cucumber",
                         "\xf0\x9f\xa5\x92",
+                        "1f952",
                     },
                     {
                         "leafy green",
                         "\xf0\x9f\xa5\xac",
+                        "1f96c",
                     },
                     {
                         "broccoli",
                         "\xf0\x9f\xa5\xa6",
+                        "1f966",
                     },
                     {
                         "garlic",
                         "\xf0\x9f\xa7\x84",
+                        "1f9c4",
                     },
                     {
                         "onion",
                         "\xf0\x9f\xa7\x85",
+                        "1f9c5",
                     },
                     {
                         "mushroom",
                         "\xf0\x9f\x8d\x84",
+                        "1f344",
                     },
                     {
                         "peanuts",
                         "\xf0\x9f\xa5\x9c",
+                        "1f95c",
                     },
                     {
                         "chestnut",
                         "\xf0\x9f\x8c\xb0",
+                        "1f330",
                     },
                 }
             },
@@ -2518,138 +3089,172 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "bread",
                         "\xf0\x9f\x8d\x9e",
+                        "1f35e",
                     },
                     {
                         "croissant",
                         "\xf0\x9f\xa5\x90",
+                        "1f950",
                     },
                     {
                         "baguette bread",
                         "\xf0\x9f\xa5\x96",
+                        "1f956",
                     },
                     {
                         "flatbread",
                         "\xf0\x9f\xab\x93",
+                        "1fad3",
                     },
                     {
                         "pretzel",
                         "\xf0\x9f\xa5\xa8",
+                        "1f968",
                     },
                     {
                         "bagel",
                         "\xf0\x9f\xa5\xaf",
+                        "1f96f",
                     },
                     {
                         "pancakes",
                         "\xf0\x9f\xa5\x9e",
+                        "1f95e",
                     },
                     {
                         "waffle",
                         "\xf0\x9f\xa7\x87",
+                        "1f9c7",
                     },
                     {
                         "cheese wedge",
                         "\xf0\x9f\xa7\x80",
+                        "1f9c0",
                     },
                     {
                         "meat on bone",
                         "\xf0\x9f\x8d\x96",
+                        "1f356",
                     },
                     {
                         "poultry leg",
                         "\xf0\x9f\x8d\x97",
+                        "1f357",
                     },
                     {
                         "cut of meat",
                         "\xf0\x9f\xa5\xa9",
+                        "1f969",
                     },
                     {
                         "bacon",
                         "\xf0\x9f\xa5\x93",
+                        "1f953",
                     },
                     {
                         "hamburger",
                         "\xf0\x9f\x8d\x94",
+                        "1f354",
                     },
                     {
                         "french fries",
                         "\xf0\x9f\x8d\x9f",
+                        "1f35f",
                     },
                     {
                         "pizza",
                         "\xf0\x9f\x8d\x95",
+                        "1f355",
                     },
                     {
                         "hot dog",
                         "\xf0\x9f\x8c\xad",
+                        "1f32d",
                     },
                     {
                         "sandwich",
                         "\xf0\x9f\xa5\xaa",
+                        "1f96a",
                     },
                     {
                         "taco",
                         "\xf0\x9f\x8c\xae",
+                        "1f32e",
                     },
                     {
                         "burrito",
                         "\xf0\x9f\x8c\xaf",
+                        "1f32f",
                     },
                     {
                         "tamale",
                         "\xf0\x9f\xab\x94",
+                        "1fad4",
                     },
                     {
                         "stuffed flatbread",
                         "\xf0\x9f\xa5\x99",
+                        "1f959",
                     },
                     {
                         "falafel",
                         "\xf0\x9f\xa7\x86",
+                        "1f9c6",
                     },
                     {
                         "egg",
                         "\xf0\x9f\xa5\x9a",
+                        "1f95a",
                     },
                     {
                         "cooking",
                         "\xf0\x9f\x8d\xb3",
+                        "1f373",
                     },
                     {
                         "shallow pan of food",
                         "\xf0\x9f\xa5\x98",
+                        "1f958",
                     },
                     {
                         "pot of food",
                         "\xf0\x9f\x8d\xb2",
+                        "1f372",
                     },
                     {
                         "fondue",
                         "\xf0\x9f\xab\x95",
+                        "1fad5",
                     },
                     {
                         "bowl with spoon",
                         "\xf0\x9f\xa5\xa3",
+                        "1f963",
                     },
                     {
                         "green salad",
                         "\xf0\x9f\xa5\x97",
+                        "1f957",
                     },
                     {
                         "popcorn",
                         "\xf0\x9f\x8d\xbf",
+                        "1f37f",
                     },
                     {
                         "butter",
                         "\xf0\x9f\xa7\x88",
+                        "1f9c8",
                     },
                     {
                         "salt",
                         "\xf0\x9f\xa7\x82",
+                        "1f9c2",
                     },
                     {
                         "canned food",
                         "\xf0\x9f\xa5\xab",
+                        "1f96b",
                     },
                 }
             },
@@ -2659,70 +3264,87 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "bento box",
                         "\xf0\x9f\x8d\xb1",
+                        "1f371",
                     },
                     {
                         "rice cracker",
                         "\xf0\x9f\x8d\x98",
+                        "1f358",
                     },
                     {
                         "rice ball",
                         "\xf0\x9f\x8d\x99",
+                        "1f359",
                     },
                     {
                         "cooked rice",
                         "\xf0\x9f\x8d\x9a",
+                        "1f35a",
                     },
                     {
                         "curry rice",
                         "\xf0\x9f\x8d\x9b",
+                        "1f35b",
                     },
                     {
                         "steaming bowl",
                         "\xf0\x9f\x8d\x9c",
+                        "1f35c",
                     },
                     {
                         "spaghetti",
                         "\xf0\x9f\x8d\x9d",
+                        "1f35d",
                     },
                     {
                         "roasted sweet potato",
                         "\xf0\x9f\x8d\xa0",
+                        "1f360",
                     },
                     {
                         "oden",
                         "\xf0\x9f\x8d\xa2",
+                        "1f362",
                     },
                     {
                         "sushi",
                         "\xf0\x9f\x8d\xa3",
+                        "1f363",
                     },
                     {
                         "fried shrimp",
                         "\xf0\x9f\x8d\xa4",
+                        "1f364",
                     },
                     {
                         "fish cake with swirl",
                         "\xf0\x9f\x8d\xa5",
+                        "1f365",
                     },
                     {
                         "moon cake",
                         "\xf0\x9f\xa5\xae",
+                        "1f96e",
                     },
                     {
                         "dango",
                         "\xf0\x9f\x8d\xa1",
+                        "1f361",
                     },
                     {
                         "dumpling",
                         "\xf0\x9f\xa5\x9f",
+                        "1f95f",
                     },
                     {
                         "fortune cookie",
                         "\xf0\x9f\xa5\xa0",
+                        "1f960",
                     },
                     {
                         "takeout box",
                         "\xf0\x9f\xa5\xa1",
+                        "1f961",
                     },
                 }
             },
@@ -2732,22 +3354,27 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "crab",
                         "\xf0\x9f\xa6\x80",
+                        "1f980",
                     },
                     {
                         "lobster",
                         "\xf0\x9f\xa6\x9e",
+                        "1f99e",
                     },
                     {
                         "shrimp",
                         "\xf0\x9f\xa6\x90",
+                        "1f990",
                     },
                     {
                         "squid",
                         "\xf0\x9f\xa6\x91",
+                        "1f991",
                     },
                     {
                         "oyster",
                         "\xf0\x9f\xa6\xaa",
+                        "1f9aa",
                     },
                 }
             },
@@ -2757,58 +3384,72 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "soft ice cream",
                         "\xf0\x9f\x8d\xa6",
+                        "1f366",
                     },
                     {
                         "shaved ice",
                         "\xf0\x9f\x8d\xa7",
+                        "1f367",
                     },
                     {
                         "ice cream",
                         "\xf0\x9f\x8d\xa8",
+                        "1f368",
                     },
                     {
                         "doughnut",
                         "\xf0\x9f\x8d\xa9",
+                        "1f369",
                     },
                     {
                         "cookie",
                         "\xf0\x9f\x8d\xaa",
+                        "1f36a",
                     },
                     {
                         "birthday cake",
                         "\xf0\x9f\x8e\x82",
+                        "1f382",
                     },
                     {
                         "shortcake",
                         "\xf0\x9f\x8d\xb0",
+                        "1f370",
                     },
                     {
                         "cupcake",
                         "\xf0\x9f\xa7\x81",
+                        "1f9c1",
                     },
                     {
                         "pie",
                         "\xf0\x9f\xa5\xa7",
+                        "1f967",
                     },
                     {
                         "chocolate bar",
                         "\xf0\x9f\x8d\xab",
+                        "1f36b",
                     },
                     {
                         "candy",
                         "\xf0\x9f\x8d\xac",
+                        "1f36c",
                     },
                     {
                         "lollipop",
                         "\xf0\x9f\x8d\xad",
+                        "1f36d",
                     },
                     {
                         "custard",
                         "\xf0\x9f\x8d\xae",
+                        "1f36e",
                     },
                     {
                         "honey pot",
                         "\xf0\x9f\x8d\xaf",
+                        "1f36f",
                     },
                 }
             },
@@ -2818,78 +3459,97 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "baby bottle",
                         "\xf0\x9f\x8d\xbc",
+                        "1f37c",
                     },
                     {
                         "glass of milk",
                         "\xf0\x9f\xa5\x9b",
+                        "1f95b",
                     },
                     {
                         "hot beverage",
                         "\xe2\x98\x95",
+                        "2615",
                     },
                     {
                         "teapot",
                         "\xf0\x9f\xab\x96",
+                        "1fad6",
                     },
                     {
                         "teacup without handle",
                         "\xf0\x9f\x8d\xb5",
+                        "1f375",
                     },
                     {
                         "sake",
                         "\xf0\x9f\x8d\xb6",
+                        "1f376",
                     },
                     {
                         "bottle with popping cork",
                         "\xf0\x9f\x8d\xbe",
+                        "1f37e",
                     },
                     {
                         "wine glass",
                         "\xf0\x9f\x8d\xb7",
+                        "1f377",
                     },
                     {
                         "cocktail glass",
                         "\xf0\x9f\x8d\xb8",
+                        "1f378",
                     },
                     {
                         "tropical drink",
                         "\xf0\x9f\x8d\xb9",
+                        "1f379",
                     },
                     {
                         "beer mug",
                         "\xf0\x9f\x8d\xba",
+                        "1f37a",
                     },
                     {
                         "clinking beer mugs",
                         "\xf0\x9f\x8d\xbb",
+                        "1f37b",
                     },
                     {
                         "clinking glasses",
                         "\xf0\x9f\xa5\x82",
+                        "1f942",
                     },
                     {
                         "tumbler glass",
                         "\xf0\x9f\xa5\x83",
+                        "1f943",
                     },
                     {
                         "cup with straw",
                         "\xf0\x9f\xa5\xa4",
+                        "1f964",
                     },
                     {
                         "bubble tea",
                         "\xf0\x9f\xa7\x8b",
+                        "1f9cb",
                     },
                     {
                         "beverage box",
                         "\xf0\x9f\xa7\x83",
+                        "1f9c3",
                     },
                     {
                         "mate",
                         "\xf0\x9f\xa7\x89",
+                        "1f9c9",
                     },
                     {
                         "ice",
                         "\xf0\x9f\xa7\x8a",
+                        "1f9ca",
                     },
                 }
             },
@@ -2899,26 +3559,32 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "chopsticks",
                         "\xf0\x9f\xa5\xa2",
+                        "1f962",
                     },
                     {
                         "fork and knife with plate",
                         "\xf0\x9f\x8d\xbd\xef\xb8\x8f",
+                        "1f37d-fe0f",
                     },
                     {
                         "fork and knife",
                         "\xf0\x9f\x8d\xb4",
+                        "1f374",
                     },
                     {
                         "spoon",
                         "\xf0\x9f\xa5\x84",
+                        "1f944",
                     },
                     {
                         "kitchen knife",
                         "\xf0\x9f\x94\xaa",
+                        "1f52a",
                     },
                     {
                         "amphora",
                         "\xf0\x9f\x8f\xba",
+                        "1f3fa",
                     },
                 }
             },
@@ -2933,30 +3599,37 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "globe showing Europe-Africa",
                         "\xf0\x9f\x8c\x8d",
+                        "1f30d",
                     },
                     {
                         "globe showing Americas",
                         "\xf0\x9f\x8c\x8e",
+                        "1f30e",
                     },
                     {
                         "globe showing Asia-Australia",
                         "\xf0\x9f\x8c\x8f",
+                        "1f30f",
                     },
                     {
                         "globe with meridians",
                         "\xf0\x9f\x8c\x90",
+                        "1f310",
                     },
                     {
                         "world map",
                         "\xf0\x9f\x97\xba\xef\xb8\x8f",
+                        "1f5fa-fe0f",
                     },
                     {
                         "map of Japan",
                         "\xf0\x9f\x97\xbe",
+                        "1f5fe",
                     },
                     {
                         "compass",
                         "\xf0\x9f\xa7\xad",
+                        "1f9ed",
                     },
                 }
             },
@@ -2966,38 +3639,47 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "snow-capped mountain",
                         "\xf0\x9f\x8f\x94\xef\xb8\x8f",
+                        "1f3d4-fe0f",
                     },
                     {
                         "mountain",
                         "\xe2\x9b\xb0\xef\xb8\x8f",
+                        "26f0-fe0f",
                     },
                     {
                         "volcano",
                         "\xf0\x9f\x8c\x8b",
+                        "1f30b",
                     },
                     {
                         "mount fuji",
                         "\xf0\x9f\x97\xbb",
+                        "1f5fb",
                     },
                     {
                         "camping",
                         "\xf0\x9f\x8f\x95\xef\xb8\x8f",
+                        "1f3d5-fe0f",
                     },
                     {
                         "beach with umbrella",
                         "\xf0\x9f\x8f\x96\xef\xb8\x8f",
+                        "1f3d6-fe0f",
                     },
                     {
                         "desert",
                         "\xf0\x9f\x8f\x9c\xef\xb8\x8f",
+                        "1f3dc-fe0f",
                     },
                     {
                         "desert island",
                         "\xf0\x9f\x8f\x9d\xef\xb8\x8f",
+                        "1f3dd-fe0f",
                     },
                     {
                         "national park",
                         "\xf0\x9f\x8f\x9e\xef\xb8\x8f",
+                        "1f3de-fe0f",
                     },
                 }
             },
@@ -3007,110 +3689,137 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "stadium",
                         "\xf0\x9f\x8f\x9f\xef\xb8\x8f",
+                        "1f3df-fe0f",
                     },
                     {
                         "classical building",
                         "\xf0\x9f\x8f\x9b\xef\xb8\x8f",
+                        "1f3db-fe0f",
                     },
                     {
                         "building construction",
                         "\xf0\x9f\x8f\x97\xef\xb8\x8f",
+                        "1f3d7-fe0f",
                     },
                     {
                         "brick",
                         "\xf0\x9f\xa7\xb1",
+                        "1f9f1",
                     },
                     {
                         "rock",
                         "\xf0\x9f\xaa\xa8",
+                        "1faa8",
                     },
                     {
                         "wood",
                         "\xf0\x9f\xaa\xb5",
+                        "1fab5",
                     },
                     {
                         "hut",
                         "\xf0\x9f\x9b\x96",
+                        "1f6d6",
                     },
                     {
                         "houses",
                         "\xf0\x9f\x8f\x98\xef\xb8\x8f",
+                        "1f3d8-fe0f",
                     },
                     {
                         "derelict house",
                         "\xf0\x9f\x8f\x9a\xef\xb8\x8f",
+                        "1f3da-fe0f",
                     },
                     {
                         "house",
                         "\xf0\x9f\x8f\xa0",
+                        "1f3e0",
                     },
                     {
                         "house with garden",
                         "\xf0\x9f\x8f\xa1",
+                        "1f3e1",
                     },
                     {
                         "office building",
                         "\xf0\x9f\x8f\xa2",
+                        "1f3e2",
                     },
                     {
                         "Japanese post office",
                         "\xf0\x9f\x8f\xa3",
+                        "1f3e3",
                     },
                     {
                         "post office",
                         "\xf0\x9f\x8f\xa4",
+                        "1f3e4",
                     },
                     {
                         "hospital",
                         "\xf0\x9f\x8f\xa5",
+                        "1f3e5",
                     },
                     {
                         "bank",
                         "\xf0\x9f\x8f\xa6",
+                        "1f3e6",
                     },
                     {
                         "hotel",
                         "\xf0\x9f\x8f\xa8",
+                        "1f3e8",
                     },
                     {
                         "love hotel",
                         "\xf0\x9f\x8f\xa9",
+                        "1f3e9",
                     },
                     {
                         "convenience store",
                         "\xf0\x9f\x8f\xaa",
+                        "1f3ea",
                     },
                     {
                         "school",
                         "\xf0\x9f\x8f\xab",
+                        "1f3eb",
                     },
                     {
                         "department store",
                         "\xf0\x9f\x8f\xac",
+                        "1f3ec",
                     },
                     {
                         "factory",
                         "\xf0\x9f\x8f\xad",
+                        "1f3ed",
                     },
                     {
                         "Japanese castle",
                         "\xf0\x9f\x8f\xaf",
+                        "1f3ef",
                     },
                     {
                         "castle",
                         "\xf0\x9f\x8f\xb0",
+                        "1f3f0",
                     },
                     {
                         "wedding",
                         "\xf0\x9f\x92\x92",
+                        "1f492",
                     },
                     {
                         "Tokyo tower",
                         "\xf0\x9f\x97\xbc",
+                        "1f5fc",
                     },
                     {
                         "Statue of Liberty",
                         "\xf0\x9f\x97\xbd",
+                        "1f5fd",
                     },
                 }
             },
@@ -3120,26 +3829,32 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "church",
                         "\xe2\x9b\xaa",
+                        "26ea",
                     },
                     {
                         "mosque",
                         "\xf0\x9f\x95\x8c",
+                        "1f54c",
                     },
                     {
                         "hindu temple",
                         "\xf0\x9f\x9b\x95",
+                        "1f6d5",
                     },
                     {
                         "synagogue",
                         "\xf0\x9f\x95\x8d",
+                        "1f54d",
                     },
                     {
                         "shinto shrine",
                         "\xe2\x9b\xa9\xef\xb8\x8f",
+                        "26e9-fe0f",
                     },
                     {
                         "kaaba",
                         "\xf0\x9f\x95\x8b",
+                        "1f54b",
                     },
                 }
             },
@@ -3149,66 +3864,82 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "fountain",
                         "\xe2\x9b\xb2",
+                        "26f2",
                     },
                     {
                         "tent",
                         "\xe2\x9b\xba",
+                        "26fa",
                     },
                     {
                         "foggy",
                         "\xf0\x9f\x8c\x81",
+                        "1f301",
                     },
                     {
                         "night with stars",
                         "\xf0\x9f\x8c\x83",
+                        "1f303",
                     },
                     {
                         "cityscape",
                         "\xf0\x9f\x8f\x99\xef\xb8\x8f",
+                        "1f3d9-fe0f",
                     },
                     {
                         "sunrise over mountains",
                         "\xf0\x9f\x8c\x84",
+                        "1f304",
                     },
                     {
                         "sunrise",
                         "\xf0\x9f\x8c\x85",
+                        "1f305",
                     },
                     {
                         "cityscape at dusk",
                         "\xf0\x9f\x8c\x86",
+                        "1f306",
                     },
                     {
                         "sunset",
                         "\xf0\x9f\x8c\x87",
+                        "1f307",
                     },
                     {
                         "bridge at night",
                         "\xf0\x9f\x8c\x89",
+                        "1f309",
                     },
                     {
                         "hot springs",
                         "\xe2\x99\xa8\xef\xb8\x8f",
+                        "2668-fe0f",
                     },
                     {
                         "carousel horse",
                         "\xf0\x9f\x8e\xa0",
+                        "1f3a0",
                     },
                     {
                         "ferris wheel",
                         "\xf0\x9f\x8e\xa1",
+                        "1f3a1",
                     },
                     {
                         "roller coaster",
                         "\xf0\x9f\x8e\xa2",
+                        "1f3a2",
                     },
                     {
                         "barber pole",
                         "\xf0\x9f\x92\x88",
+                        "1f488",
                     },
                     {
                         "circus tent",
                         "\xf0\x9f\x8e\xaa",
+                        "1f3aa",
                     },
                 }
             },
@@ -3218,198 +3949,247 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "locomotive",
                         "\xf0\x9f\x9a\x82",
+                        "1f682",
                     },
                     {
                         "railway car",
                         "\xf0\x9f\x9a\x83",
+                        "1f683",
                     },
                     {
                         "high-speed train",
                         "\xf0\x9f\x9a\x84",
+                        "1f684",
                     },
                     {
                         "bullet train",
                         "\xf0\x9f\x9a\x85",
+                        "1f685",
                     },
                     {
                         "train",
                         "\xf0\x9f\x9a\x86",
+                        "1f686",
                     },
                     {
                         "metro",
                         "\xf0\x9f\x9a\x87",
+                        "1f687",
                     },
                     {
                         "light rail",
                         "\xf0\x9f\x9a\x88",
+                        "1f688",
                     },
                     {
                         "station",
                         "\xf0\x9f\x9a\x89",
+                        "1f689",
                     },
                     {
                         "tram",
                         "\xf0\x9f\x9a\x8a",
+                        "1f68a",
                     },
                     {
                         "monorail",
                         "\xf0\x9f\x9a\x9d",
+                        "1f69d",
                     },
                     {
                         "mountain railway",
                         "\xf0\x9f\x9a\x9e",
+                        "1f69e",
                     },
                     {
                         "tram car",
                         "\xf0\x9f\x9a\x8b",
+                        "1f68b",
                     },
                     {
                         "bus",
                         "\xf0\x9f\x9a\x8c",
+                        "1f68c",
                     },
                     {
                         "oncoming bus",
                         "\xf0\x9f\x9a\x8d",
+                        "1f68d",
                     },
                     {
                         "trolleybus",
                         "\xf0\x9f\x9a\x8e",
+                        "1f68e",
                     },
                     {
                         "minibus",
                         "\xf0\x9f\x9a\x90",
+                        "1f690",
                     },
                     {
                         "ambulance",
                         "\xf0\x9f\x9a\x91",
+                        "1f691",
                     },
                     {
                         "fire engine",
                         "\xf0\x9f\x9a\x92",
+                        "1f692",
                     },
                     {
                         "police car",
                         "\xf0\x9f\x9a\x93",
+                        "1f693",
                     },
                     {
                         "oncoming police car",
                         "\xf0\x9f\x9a\x94",
+                        "1f694",
                     },
                     {
                         "taxi",
                         "\xf0\x9f\x9a\x95",
+                        "1f695",
                     },
                     {
                         "oncoming taxi",
                         "\xf0\x9f\x9a\x96",
+                        "1f696",
                     },
                     {
                         "automobile",
                         "\xf0\x9f\x9a\x97",
+                        "1f697",
                     },
                     {
                         "oncoming automobile",
                         "\xf0\x9f\x9a\x98",
+                        "1f698",
                     },
                     {
                         "sport utility vehicle",
                         "\xf0\x9f\x9a\x99",
+                        "1f699",
                     },
                     {
                         "pickup truck",
                         "\xf0\x9f\x9b\xbb",
+                        "1f6fb",
                     },
                     {
                         "delivery truck",
                         "\xf0\x9f\x9a\x9a",
+                        "1f69a",
                     },
                     {
                         "articulated lorry",
                         "\xf0\x9f\x9a\x9b",
+                        "1f69b",
                     },
                     {
                         "tractor",
                         "\xf0\x9f\x9a\x9c",
+                        "1f69c",
                     },
                     {
                         "racing car",
                         "\xf0\x9f\x8f\x8e\xef\xb8\x8f",
+                        "1f3ce-fe0f",
                     },
                     {
                         "motorcycle",
                         "\xf0\x9f\x8f\x8d\xef\xb8\x8f",
+                        "1f3cd-fe0f",
                     },
                     {
                         "motor scooter",
                         "\xf0\x9f\x9b\xb5",
+                        "1f6f5",
                     },
                     {
                         "manual wheelchair",
                         "\xf0\x9f\xa6\xbd",
+                        "1f9bd",
                     },
                     {
                         "motorized wheelchair",
                         "\xf0\x9f\xa6\xbc",
+                        "1f9bc",
                     },
                     {
                         "auto rickshaw",
                         "\xf0\x9f\x9b\xba",
+                        "1f6fa",
                     },
                     {
                         "bicycle",
                         "\xf0\x9f\x9a\xb2",
+                        "1f6b2",
                     },
                     {
                         "kick scooter",
                         "\xf0\x9f\x9b\xb4",
+                        "1f6f4",
                     },
                     {
                         "skateboard",
                         "\xf0\x9f\x9b\xb9",
+                        "1f6f9",
                     },
                     {
                         "roller skate",
                         "\xf0\x9f\x9b\xbc",
+                        "1f6fc",
                     },
                     {
                         "bus stop",
                         "\xf0\x9f\x9a\x8f",
+                        "1f68f",
                     },
                     {
                         "motorway",
                         "\xf0\x9f\x9b\xa3\xef\xb8\x8f",
+                        "1f6e3-fe0f",
                     },
                     {
                         "railway track",
                         "\xf0\x9f\x9b\xa4\xef\xb8\x8f",
+                        "1f6e4-fe0f",
                     },
                     {
                         "oil drum",
                         "\xf0\x9f\x9b\xa2\xef\xb8\x8f",
+                        "1f6e2-fe0f",
                     },
                     {
                         "fuel pump",
                         "\xe2\x9b\xbd",
+                        "26fd",
                     },
                     {
                         "police car light",
                         "\xf0\x9f\x9a\xa8",
+                        "1f6a8",
                     },
                     {
                         "horizontal traffic light",
                         "\xf0\x9f\x9a\xa5",
+                        "1f6a5",
                     },
                     {
                         "vertical traffic light",
                         "\xf0\x9f\x9a\xa6",
+                        "1f6a6",
                     },
                     {
                         "stop sign",
                         "\xf0\x9f\x9b\x91",
+                        "1f6d1",
                     },
                     {
                         "construction",
                         "\xf0\x9f\x9a\xa7",
+                        "1f6a7",
                     },
                 }
             },
@@ -3419,34 +4199,42 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "anchor",
                         "\xe2\x9a\x93",
+                        "2693",
                     },
                     {
                         "sailboat",
                         "\xe2\x9b\xb5",
+                        "26f5",
                     },
                     {
                         "canoe",
                         "\xf0\x9f\x9b\xb6",
+                        "1f6f6",
                     },
                     {
                         "speedboat",
                         "\xf0\x9f\x9a\xa4",
+                        "1f6a4",
                     },
                     {
                         "passenger ship",
                         "\xf0\x9f\x9b\xb3\xef\xb8\x8f",
+                        "1f6f3-fe0f",
                     },
                     {
                         "ferry",
                         "\xe2\x9b\xb4\xef\xb8\x8f",
+                        "26f4-fe0f",
                     },
                     {
                         "motor boat",
                         "\xf0\x9f\x9b\xa5\xef\xb8\x8f",
+                        "1f6e5-fe0f",
                     },
                     {
                         "ship",
                         "\xf0\x9f\x9a\xa2",
+                        "1f6a2",
                     },
                 }
             },
@@ -3456,54 +4244,67 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "airplane",
                         "\xe2\x9c\x88\xef\xb8\x8f",
+                        "2708-fe0f",
                     },
                     {
                         "small airplane",
                         "\xf0\x9f\x9b\xa9\xef\xb8\x8f",
+                        "1f6e9-fe0f",
                     },
                     {
                         "airplane departure",
                         "\xf0\x9f\x9b\xab",
+                        "1f6eb",
                     },
                     {
                         "airplane arrival",
                         "\xf0\x9f\x9b\xac",
+                        "1f6ec",
                     },
                     {
                         "parachute",
                         "\xf0\x9f\xaa\x82",
+                        "1fa82",
                     },
                     {
                         "seat",
                         "\xf0\x9f\x92\xba",
+                        "1f4ba",
                     },
                     {
                         "helicopter",
                         "\xf0\x9f\x9a\x81",
+                        "1f681",
                     },
                     {
                         "suspension railway",
                         "\xf0\x9f\x9a\x9f",
+                        "1f69f",
                     },
                     {
                         "mountain cableway",
                         "\xf0\x9f\x9a\xa0",
+                        "1f6a0",
                     },
                     {
                         "aerial tramway",
                         "\xf0\x9f\x9a\xa1",
+                        "1f6a1",
                     },
                     {
                         "satellite",
                         "\xf0\x9f\x9b\xb0\xef\xb8\x8f",
+                        "1f6f0-fe0f",
                     },
                     {
                         "rocket",
                         "\xf0\x9f\x9a\x80",
+                        "1f680",
                     },
                     {
                         "flying saucer",
                         "\xf0\x9f\x9b\xb8",
+                        "1f6f8",
                     },
                 }
             },
@@ -3513,10 +4314,12 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "bellhop bell",
                         "\xf0\x9f\x9b\x8e\xef\xb8\x8f",
+                        "1f6ce-fe0f",
                     },
                     {
                         "luggage",
                         "\xf0\x9f\xa7\xb3",
+                        "1f9f3",
                     },
                 }
             },
@@ -3526,126 +4329,157 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "hourglass done",
                         "\xe2\x8c\x9b",
+                        "231b",
                     },
                     {
                         "hourglass not done",
                         "\xe2\x8f\xb3",
+                        "23f3",
                     },
                     {
                         "watch",
                         "\xe2\x8c\x9a",
+                        "231a",
                     },
                     {
                         "alarm clock",
                         "\xe2\x8f\xb0",
+                        "23f0",
                     },
                     {
                         "stopwatch",
                         "\xe2\x8f\xb1\xef\xb8\x8f",
+                        "23f1-fe0f",
                     },
                     {
                         "timer clock",
                         "\xe2\x8f\xb2\xef\xb8\x8f",
+                        "23f2-fe0f",
                     },
                     {
                         "mantelpiece clock",
                         "\xf0\x9f\x95\xb0\xef\xb8\x8f",
+                        "1f570-fe0f",
                     },
                     {
                         "twelve o\u2019clock",
                         "\xf0\x9f\x95\x9b",
+                        "1f55b",
                     },
                     {
                         "twelve-thirty",
                         "\xf0\x9f\x95\xa7",
+                        "1f567",
                     },
                     {
                         "one o\u2019clock",
                         "\xf0\x9f\x95\x90",
+                        "1f550",
                     },
                     {
                         "one-thirty",
                         "\xf0\x9f\x95\x9c",
+                        "1f55c",
                     },
                     {
                         "two o\u2019clock",
                         "\xf0\x9f\x95\x91",
+                        "1f551",
                     },
                     {
                         "two-thirty",
                         "\xf0\x9f\x95\x9d",
+                        "1f55d",
                     },
                     {
                         "three o\u2019clock",
                         "\xf0\x9f\x95\x92",
+                        "1f552",
                     },
                     {
                         "three-thirty",
                         "\xf0\x9f\x95\x9e",
+                        "1f55e",
                     },
                     {
                         "four o\u2019clock",
                         "\xf0\x9f\x95\x93",
+                        "1f553",
                     },
                     {
                         "four-thirty",
                         "\xf0\x9f\x95\x9f",
+                        "1f55f",
                     },
                     {
                         "five o\u2019clock",
                         "\xf0\x9f\x95\x94",
+                        "1f554",
                     },
                     {
                         "five-thirty",
                         "\xf0\x9f\x95\xa0",
+                        "1f560",
                     },
                     {
                         "six o\u2019clock",
                         "\xf0\x9f\x95\x95",
+                        "1f555",
                     },
                     {
                         "six-thirty",
                         "\xf0\x9f\x95\xa1",
+                        "1f561",
                     },
                     {
                         "seven o\u2019clock",
                         "\xf0\x9f\x95\x96",
+                        "1f556",
                     },
                     {
                         "seven-thirty",
                         "\xf0\x9f\x95\xa2",
+                        "1f562",
                     },
                     {
                         "eight o\u2019clock",
                         "\xf0\x9f\x95\x97",
+                        "1f557",
                     },
                     {
                         "eight-thirty",
                         "\xf0\x9f\x95\xa3",
+                        "1f563",
                     },
                     {
                         "nine o\u2019clock",
                         "\xf0\x9f\x95\x98",
+                        "1f558",
                     },
                     {
                         "nine-thirty",
                         "\xf0\x9f\x95\xa4",
+                        "1f564",
                     },
                     {
                         "ten o\u2019clock",
                         "\xf0\x9f\x95\x99",
+                        "1f559",
                     },
                     {
                         "ten-thirty",
                         "\xf0\x9f\x95\xa5",
+                        "1f565",
                     },
                     {
                         "eleven o\u2019clock",
                         "\xf0\x9f\x95\x9a",
+                        "1f55a",
                     },
                     {
                         "eleven-thirty",
                         "\xf0\x9f\x95\xa6",
+                        "1f566",
                     },
                 }
             },
@@ -3655,190 +4489,237 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "new moon",
                         "\xf0\x9f\x8c\x91",
+                        "1f311",
                     },
                     {
                         "waxing crescent moon",
                         "\xf0\x9f\x8c\x92",
+                        "1f312",
                     },
                     {
                         "first quarter moon",
                         "\xf0\x9f\x8c\x93",
+                        "1f313",
                     },
                     {
                         "waxing gibbous moon",
                         "\xf0\x9f\x8c\x94",
+                        "1f314",
                     },
                     {
                         "full moon",
                         "\xf0\x9f\x8c\x95",
+                        "1f315",
                     },
                     {
                         "waning gibbous moon",
                         "\xf0\x9f\x8c\x96",
+                        "1f316",
                     },
                     {
                         "last quarter moon",
                         "\xf0\x9f\x8c\x97",
+                        "1f317",
                     },
                     {
                         "waning crescent moon",
                         "\xf0\x9f\x8c\x98",
+                        "1f318",
                     },
                     {
                         "crescent moon",
                         "\xf0\x9f\x8c\x99",
+                        "1f319",
                     },
                     {
                         "new moon face",
                         "\xf0\x9f\x8c\x9a",
+                        "1f31a",
                     },
                     {
                         "first quarter moon face",
                         "\xf0\x9f\x8c\x9b",
+                        "1f31b",
                     },
                     {
                         "last quarter moon face",
                         "\xf0\x9f\x8c\x9c",
+                        "1f31c",
                     },
                     {
                         "thermometer",
                         "\xf0\x9f\x8c\xa1\xef\xb8\x8f",
+                        "1f321-fe0f",
                     },
                     {
                         "sun",
                         "\xe2\x98\x80\xef\xb8\x8f",
+                        "2600-fe0f",
                     },
                     {
                         "full moon face",
                         "\xf0\x9f\x8c\x9d",
+                        "1f31d",
                     },
                     {
                         "sun with face",
                         "\xf0\x9f\x8c\x9e",
+                        "1f31e",
                     },
                     {
                         "ringed planet",
                         "\xf0\x9f\xaa\x90",
+                        "1fa90",
                     },
                     {
                         "star",
                         "\xe2\xad\x90",
+                        "2b50",
                     },
                     {
                         "glowing star",
                         "\xf0\x9f\x8c\x9f",
+                        "1f31f",
                     },
                     {
                         "shooting star",
                         "\xf0\x9f\x8c\xa0",
+                        "1f320",
                     },
                     {
                         "milky way",
                         "\xf0\x9f\x8c\x8c",
+                        "1f30c",
                     },
                     {
                         "cloud",
                         "\xe2\x98\x81\xef\xb8\x8f",
+                        "2601-fe0f",
                     },
                     {
                         "sun behind cloud",
                         "\xe2\x9b\x85",
+                        "26c5",
                     },
                     {
                         "cloud with lightning and rain",
                         "\xe2\x9b\x88\xef\xb8\x8f",
+                        "26c8-fe0f",
                     },
                     {
                         "sun behind small cloud",
                         "\xf0\x9f\x8c\xa4\xef\xb8\x8f",
+                        "1f324-fe0f",
                     },
                     {
                         "sun behind large cloud",
                         "\xf0\x9f\x8c\xa5\xef\xb8\x8f",
+                        "1f325-fe0f",
                     },
                     {
                         "sun behind rain cloud",
                         "\xf0\x9f\x8c\xa6\xef\xb8\x8f",
+                        "1f326-fe0f",
                     },
                     {
                         "cloud with rain",
                         "\xf0\x9f\x8c\xa7\xef\xb8\x8f",
+                        "1f327-fe0f",
                     },
                     {
                         "cloud with snow",
                         "\xf0\x9f\x8c\xa8\xef\xb8\x8f",
+                        "1f328-fe0f",
                     },
                     {
                         "cloud with lightning",
                         "\xf0\x9f\x8c\xa9\xef\xb8\x8f",
+                        "1f329-fe0f",
                     },
                     {
                         "tornado",
                         "\xf0\x9f\x8c\xaa\xef\xb8\x8f",
+                        "1f32a-fe0f",
                     },
                     {
                         "fog",
                         "\xf0\x9f\x8c\xab\xef\xb8\x8f",
+                        "1f32b-fe0f",
                     },
                     {
                         "wind face",
                         "\xf0\x9f\x8c\xac\xef\xb8\x8f",
+                        "1f32c-fe0f",
                     },
                     {
                         "cyclone",
                         "\xf0\x9f\x8c\x80",
+                        "1f300",
                     },
                     {
                         "rainbow",
                         "\xf0\x9f\x8c\x88",
+                        "1f308",
                     },
                     {
                         "closed umbrella",
                         "\xf0\x9f\x8c\x82",
+                        "1f302",
                     },
                     {
                         "umbrella",
                         "\xe2\x98\x82\xef\xb8\x8f",
+                        "2602-fe0f",
                     },
                     {
                         "umbrella with rain drops",
                         "\xe2\x98\x94",
+                        "2614",
                     },
                     {
                         "umbrella on ground",
                         "\xe2\x9b\xb1\xef\xb8\x8f",
+                        "26f1-fe0f",
                     },
                     {
                         "high voltage",
                         "\xe2\x9a\xa1",
+                        "26a1",
                     },
                     {
                         "snowflake",
                         "\xe2\x9d\x84\xef\xb8\x8f",
+                        "2744-fe0f",
                     },
                     {
                         "snowman",
                         "\xe2\x98\x83\xef\xb8\x8f",
+                        "2603-fe0f",
                     },
                     {
                         "snowman without snow",
                         "\xe2\x9b\x84",
+                        "26c4",
                     },
                     {
                         "comet",
                         "\xe2\x98\x84\xef\xb8\x8f",
+                        "2604-fe0f",
                     },
                     {
                         "fire",
                         "\xf0\x9f\x94\xa5",
+                        "1f525",
                     },
                     {
                         "droplet",
                         "\xf0\x9f\x92\xa7",
+                        "1f4a7",
                     },
                     {
                         "water wave",
                         "\xf0\x9f\x8c\x8a",
+                        "1f30a",
                     },
                 }
             },
@@ -3853,86 +4734,107 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "jack-o-lantern",
                         "\xf0\x9f\x8e\x83",
+                        "1f383",
                     },
                     {
                         "Christmas tree",
                         "\xf0\x9f\x8e\x84",
+                        "1f384",
                     },
                     {
                         "fireworks",
                         "\xf0\x9f\x8e\x86",
+                        "1f386",
                     },
                     {
                         "sparkler",
                         "\xf0\x9f\x8e\x87",
+                        "1f387",
                     },
                     {
                         "firecracker",
                         "\xf0\x9f\xa7\xa8",
+                        "1f9e8",
                     },
                     {
                         "sparkles",
                         "\xe2\x9c\xa8",
+                        "2728",
                     },
                     {
                         "balloon",
                         "\xf0\x9f\x8e\x88",
+                        "1f388",
                     },
                     {
                         "party popper",
                         "\xf0\x9f\x8e\x89",
+                        "1f389",
                     },
                     {
                         "confetti ball",
                         "\xf0\x9f\x8e\x8a",
+                        "1f38a",
                     },
                     {
                         "tanabata tree",
                         "\xf0\x9f\x8e\x8b",
+                        "1f38b",
                     },
                     {
                         "pine decoration",
                         "\xf0\x9f\x8e\x8d",
+                        "1f38d",
                     },
                     {
                         "Japanese dolls",
                         "\xf0\x9f\x8e\x8e",
+                        "1f38e",
                     },
                     {
                         "carp streamer",
                         "\xf0\x9f\x8e\x8f",
+                        "1f38f",
                     },
                     {
                         "wind chime",
                         "\xf0\x9f\x8e\x90",
+                        "1f390",
                     },
                     {
                         "moon viewing ceremony",
                         "\xf0\x9f\x8e\x91",
+                        "1f391",
                     },
                     {
                         "red envelope",
                         "\xf0\x9f\xa7\xa7",
+                        "1f9e7",
                     },
                     {
                         "ribbon",
                         "\xf0\x9f\x8e\x80",
+                        "1f380",
                     },
                     {
                         "wrapped gift",
                         "\xf0\x9f\x8e\x81",
+                        "1f381",
                     },
                     {
                         "reminder ribbon",
                         "\xf0\x9f\x8e\x97\xef\xb8\x8f",
+                        "1f397-fe0f",
                     },
                     {
                         "admission tickets",
                         "\xf0\x9f\x8e\x9f\xef\xb8\x8f",
+                        "1f39f-fe0f",
                     },
                     {
                         "ticket",
                         "\xf0\x9f\x8e\xab",
+                        "1f3ab",
                     },
                 }
             },
@@ -3942,26 +4844,32 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "military medal",
                         "\xf0\x9f\x8e\x96\xef\xb8\x8f",
+                        "1f396-fe0f",
                     },
                     {
                         "trophy",
                         "\xf0\x9f\x8f\x86",
+                        "1f3c6",
                     },
                     {
                         "sports medal",
                         "\xf0\x9f\x8f\x85",
+                        "1f3c5",
                     },
                     {
                         "1st place medal",
                         "\xf0\x9f\xa5\x87",
+                        "1f947",
                     },
                     {
                         "2nd place medal",
                         "\xf0\x9f\xa5\x88",
+                        "1f948",
                     },
                     {
                         "3rd place medal",
                         "\xf0\x9f\xa5\x89",
+                        "1f949",
                     },
                 }
             },
@@ -3971,110 +4879,137 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "soccer ball",
                         "\xe2\x9a\xbd",
+                        "26bd",
                     },
                     {
                         "baseball",
                         "\xe2\x9a\xbe",
+                        "26be",
                     },
                     {
                         "softball",
                         "\xf0\x9f\xa5\x8e",
+                        "1f94e",
                     },
                     {
                         "basketball",
                         "\xf0\x9f\x8f\x80",
+                        "1f3c0",
                     },
                     {
                         "volleyball",
                         "\xf0\x9f\x8f\x90",
+                        "1f3d0",
                     },
                     {
                         "american football",
                         "\xf0\x9f\x8f\x88",
+                        "1f3c8",
                     },
                     {
                         "rugby football",
                         "\xf0\x9f\x8f\x89",
+                        "1f3c9",
                     },
                     {
                         "tennis",
                         "\xf0\x9f\x8e\xbe",
+                        "1f3be",
                     },
                     {
                         "flying disc",
                         "\xf0\x9f\xa5\x8f",
+                        "1f94f",
                     },
                     {
                         "bowling",
                         "\xf0\x9f\x8e\xb3",
+                        "1f3b3",
                     },
                     {
                         "cricket game",
                         "\xf0\x9f\x8f\x8f",
+                        "1f3cf",
                     },
                     {
                         "field hockey",
                         "\xf0\x9f\x8f\x91",
+                        "1f3d1",
                     },
                     {
                         "ice hockey",
                         "\xf0\x9f\x8f\x92",
+                        "1f3d2",
                     },
                     {
                         "lacrosse",
                         "\xf0\x9f\xa5\x8d",
+                        "1f94d",
                     },
                     {
                         "ping pong",
                         "\xf0\x9f\x8f\x93",
+                        "1f3d3",
                     },
                     {
                         "badminton",
                         "\xf0\x9f\x8f\xb8",
+                        "1f3f8",
                     },
                     {
                         "boxing glove",
                         "\xf0\x9f\xa5\x8a",
+                        "1f94a",
                     },
                     {
                         "martial arts uniform",
                         "\xf0\x9f\xa5\x8b",
+                        "1f94b",
                     },
                     {
                         "goal net",
                         "\xf0\x9f\xa5\x85",
+                        "1f945",
                     },
                     {
                         "flag in hole",
                         "\xe2\x9b\xb3",
+                        "26f3",
                     },
                     {
                         "ice skate",
                         "\xe2\x9b\xb8\xef\xb8\x8f",
+                        "26f8-fe0f",
                     },
                     {
                         "fishing pole",
                         "\xf0\x9f\x8e\xa3",
+                        "1f3a3",
                     },
                     {
                         "diving mask",
                         "\xf0\x9f\xa4\xbf",
+                        "1f93f",
                     },
                     {
                         "running shirt",
                         "\xf0\x9f\x8e\xbd",
+                        "1f3bd",
                     },
                     {
                         "skis",
                         "\xf0\x9f\x8e\xbf",
+                        "1f3bf",
                     },
                     {
                         "sled",
                         "\xf0\x9f\x9b\xb7",
+                        "1f6f7",
                     },
                     {
                         "curling stone",
                         "\xf0\x9f\xa5\x8c",
+                        "1f94c",
                     },
                 }
             },
@@ -4084,94 +5019,117 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "bullseye",
                         "\xf0\x9f\x8e\xaf",
+                        "1f3af",
                     },
                     {
                         "yo-yo",
                         "\xf0\x9f\xaa\x80",
+                        "1fa80",
                     },
                     {
                         "kite",
                         "\xf0\x9f\xaa\x81",
+                        "1fa81",
                     },
                     {
                         "pool 8 ball",
                         "\xf0\x9f\x8e\xb1",
+                        "1f3b1",
                     },
                     {
                         "crystal ball",
                         "\xf0\x9f\x94\xae",
+                        "1f52e",
                     },
                     {
                         "magic wand",
                         "\xf0\x9f\xaa\x84",
+                        "1fa84",
                     },
                     {
                         "nazar amulet",
                         "\xf0\x9f\xa7\xbf",
+                        "1f9ff",
                     },
                     {
                         "video game",
                         "\xf0\x9f\x8e\xae",
+                        "1f3ae",
                     },
                     {
                         "joystick",
                         "\xf0\x9f\x95\xb9\xef\xb8\x8f",
+                        "1f579-fe0f",
                     },
                     {
                         "slot machine",
                         "\xf0\x9f\x8e\xb0",
+                        "1f3b0",
                     },
                     {
                         "game die",
                         "\xf0\x9f\x8e\xb2",
+                        "1f3b2",
                     },
                     {
                         "puzzle piece",
                         "\xf0\x9f\xa7\xa9",
+                        "1f9e9",
                     },
                     {
                         "teddy bear",
                         "\xf0\x9f\xa7\xb8",
+                        "1f9f8",
                     },
                     {
                         "pi\u00f1ata",
                         "\xf0\x9f\xaa\x85",
+                        "1fa85",
                     },
                     {
                         "nesting dolls",
                         "\xf0\x9f\xaa\x86",
+                        "1fa86",
                     },
                     {
                         "spade suit",
                         "\xe2\x99\xa0\xef\xb8\x8f",
+                        "2660-fe0f",
                     },
                     {
                         "heart suit",
                         "\xe2\x99\xa5\xef\xb8\x8f",
+                        "2665-fe0f",
                     },
                     {
                         "diamond suit",
                         "\xe2\x99\xa6\xef\xb8\x8f",
+                        "2666-fe0f",
                     },
                     {
                         "club suit",
                         "\xe2\x99\xa3\xef\xb8\x8f",
+                        "2663-fe0f",
                     },
                     {
                         "chess pawn",
                         "\xe2\x99\x9f\xef\xb8\x8f",
+                        "265f-fe0f",
                     },
                     {
                         "joker",
                         "\xf0\x9f\x83\x8f",
+                        "1f0cf",
                     },
                     {
                         "mahjong red dragon",
                         "\xf0\x9f\x80\x84",
+                        "1f004",
                     },
                     {
                         "flower playing cards",
                         "\xf0\x9f\x8e\xb4",
+                        "1f3b4",
                     },
                 }
             },
@@ -4181,30 +5139,37 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "performing arts",
                         "\xf0\x9f\x8e\xad",
+                        "1f3ad",
                     },
                     {
                         "framed picture",
                         "\xf0\x9f\x96\xbc\xef\xb8\x8f",
+                        "1f5bc-fe0f",
                     },
                     {
                         "artist palette",
                         "\xf0\x9f\x8e\xa8",
+                        "1f3a8",
                     },
                     {
                         "thread",
                         "\xf0\x9f\xa7\xb5",
+                        "1f9f5",
                     },
                     {
                         "sewing needle",
                         "\xf0\x9f\xaa\xa1",
+                        "1faa1",
                     },
                     {
                         "yarn",
                         "\xf0\x9f\xa7\xb6",
+                        "1f9f6",
                     },
                     {
                         "knot",
                         "\xf0\x9f\xaa\xa2",
+                        "1faa2",
                     },
                 }
             },
@@ -4219,182 +5184,227 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "glasses",
                         "\xf0\x9f\x91\x93",
+                        "1f453",
                     },
                     {
                         "sunglasses",
                         "\xf0\x9f\x95\xb6\xef\xb8\x8f",
+                        "1f576-fe0f",
                     },
                     {
                         "goggles",
                         "\xf0\x9f\xa5\xbd",
+                        "1f97d",
                     },
                     {
                         "lab coat",
                         "\xf0\x9f\xa5\xbc",
+                        "1f97c",
                     },
                     {
                         "safety vest",
                         "\xf0\x9f\xa6\xba",
+                        "1f9ba",
                     },
                     {
                         "necktie",
                         "\xf0\x9f\x91\x94",
+                        "1f454",
                     },
                     {
                         "t-shirt",
                         "\xf0\x9f\x91\x95",
+                        "1f455",
                     },
                     {
                         "jeans",
                         "\xf0\x9f\x91\x96",
+                        "1f456",
                     },
                     {
                         "scarf",
                         "\xf0\x9f\xa7\xa3",
+                        "1f9e3",
                     },
                     {
                         "gloves",
                         "\xf0\x9f\xa7\xa4",
+                        "1f9e4",
                     },
                     {
                         "coat",
                         "\xf0\x9f\xa7\xa5",
+                        "1f9e5",
                     },
                     {
                         "socks",
                         "\xf0\x9f\xa7\xa6",
+                        "1f9e6",
                     },
                     {
                         "dress",
                         "\xf0\x9f\x91\x97",
+                        "1f457",
                     },
                     {
                         "kimono",
                         "\xf0\x9f\x91\x98",
+                        "1f458",
                     },
                     {
                         "sari",
                         "\xf0\x9f\xa5\xbb",
+                        "1f97b",
                     },
                     {
                         "one-piece swimsuit",
                         "\xf0\x9f\xa9\xb1",
+                        "1fa71",
                     },
                     {
                         "briefs",
                         "\xf0\x9f\xa9\xb2",
+                        "1fa72",
                     },
                     {
                         "shorts",
                         "\xf0\x9f\xa9\xb3",
+                        "1fa73",
                     },
                     {
                         "bikini",
                         "\xf0\x9f\x91\x99",
+                        "1f459",
                     },
                     {
                         "woman\u2019s clothes",
                         "\xf0\x9f\x91\x9a",
+                        "1f45a",
                     },
                     {
                         "purse",
                         "\xf0\x9f\x91\x9b",
+                        "1f45b",
                     },
                     {
                         "handbag",
                         "\xf0\x9f\x91\x9c",
+                        "1f45c",
                     },
                     {
                         "clutch bag",
                         "\xf0\x9f\x91\x9d",
+                        "1f45d",
                     },
                     {
                         "shopping bags",
                         "\xf0\x9f\x9b\x8d\xef\xb8\x8f",
+                        "1f6cd-fe0f",
                     },
                     {
                         "backpack",
                         "\xf0\x9f\x8e\x92",
+                        "1f392",
                     },
                     {
                         "thong sandal",
                         "\xf0\x9f\xa9\xb4",
+                        "1fa74",
                     },
                     {
                         "man\u2019s shoe",
                         "\xf0\x9f\x91\x9e",
+                        "1f45e",
                     },
                     {
                         "running shoe",
                         "\xf0\x9f\x91\x9f",
+                        "1f45f",
                     },
                     {
                         "hiking boot",
                         "\xf0\x9f\xa5\xbe",
+                        "1f97e",
                     },
                     {
                         "flat shoe",
                         "\xf0\x9f\xa5\xbf",
+                        "1f97f",
                     },
                     {
                         "high-heeled shoe",
                         "\xf0\x9f\x91\xa0",
+                        "1f460",
                     },
                     {
                         "woman\u2019s sandal",
                         "\xf0\x9f\x91\xa1",
+                        "1f461",
                     },
                     {
                         "ballet shoes",
                         "\xf0\x9f\xa9\xb0",
+                        "1fa70",
                     },
                     {
                         "woman\u2019s boot",
                         "\xf0\x9f\x91\xa2",
+                        "1f462",
                     },
                     {
                         "crown",
                         "\xf0\x9f\x91\x91",
+                        "1f451",
                     },
                     {
                         "woman\u2019s hat",
                         "\xf0\x9f\x91\x92",
+                        "1f452",
                     },
                     {
                         "top hat",
                         "\xf0\x9f\x8e\xa9",
+                        "1f3a9",
                     },
                     {
                         "graduation cap",
                         "\xf0\x9f\x8e\x93",
+                        "1f393",
                     },
                     {
                         "billed cap",
                         "\xf0\x9f\xa7\xa2",
+                        "1f9e2",
                     },
                     {
                         "military helmet",
                         "\xf0\x9f\xaa\x96",
+                        "1fa96",
                     },
                     {
                         "rescue worker\u2019s helmet",
                         "\xe2\x9b\x91\xef\xb8\x8f",
+                        "26d1-fe0f",
                     },
                     {
                         "prayer beads",
                         "\xf0\x9f\x93\xbf",
+                        "1f4ff",
                     },
                     {
                         "lipstick",
                         "\xf0\x9f\x92\x84",
+                        "1f484",
                     },
                     {
                         "ring",
                         "\xf0\x9f\x92\x8d",
+                        "1f48d",
                     },
                     {
                         "gem stone",
                         "\xf0\x9f\x92\x8e",
+                        "1f48e",
                     },
                 }
             },
@@ -4404,38 +5414,47 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "muted speaker",
                         "\xf0\x9f\x94\x87",
+                        "1f507",
                     },
                     {
                         "speaker low volume",
                         "\xf0\x9f\x94\x88",
+                        "1f508",
                     },
                     {
                         "speaker medium volume",
                         "\xf0\x9f\x94\x89",
+                        "1f509",
                     },
                     {
                         "speaker high volume",
                         "\xf0\x9f\x94\x8a",
+                        "1f50a",
                     },
                     {
                         "loudspeaker",
                         "\xf0\x9f\x93\xa2",
+                        "1f4e2",
                     },
                     {
                         "megaphone",
                         "\xf0\x9f\x93\xa3",
+                        "1f4e3",
                     },
                     {
                         "postal horn",
                         "\xf0\x9f\x93\xaf",
+                        "1f4ef",
                     },
                     {
                         "bell",
                         "\xf0\x9f\x94\x94",
+                        "1f514",
                     },
                     {
                         "bell with slash",
                         "\xf0\x9f\x94\x95",
+                        "1f515",
                     },
                 }
             },
@@ -4445,38 +5464,47 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "musical score",
                         "\xf0\x9f\x8e\xbc",
+                        "1f3bc",
                     },
                     {
                         "musical note",
                         "\xf0\x9f\x8e\xb5",
+                        "1f3b5",
                     },
                     {
                         "musical notes",
                         "\xf0\x9f\x8e\xb6",
+                        "1f3b6",
                     },
                     {
                         "studio microphone",
                         "\xf0\x9f\x8e\x99\xef\xb8\x8f",
+                        "1f399-fe0f",
                     },
                     {
                         "level slider",
                         "\xf0\x9f\x8e\x9a\xef\xb8\x8f",
+                        "1f39a-fe0f",
                     },
                     {
                         "control knobs",
                         "\xf0\x9f\x8e\x9b\xef\xb8\x8f",
+                        "1f39b-fe0f",
                     },
                     {
                         "microphone",
                         "\xf0\x9f\x8e\xa4",
+                        "1f3a4",
                     },
                     {
                         "headphone",
                         "\xf0\x9f\x8e\xa7",
+                        "1f3a7",
                     },
                     {
                         "radio",
                         "\xf0\x9f\x93\xbb",
+                        "1f4fb",
                     },
                 }
             },
@@ -4486,38 +5514,47 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "saxophone",
                         "\xf0\x9f\x8e\xb7",
+                        "1f3b7",
                     },
                     {
                         "accordion",
                         "\xf0\x9f\xaa\x97",
+                        "1fa97",
                     },
                     {
                         "guitar",
                         "\xf0\x9f\x8e\xb8",
+                        "1f3b8",
                     },
                     {
                         "musical keyboard",
                         "\xf0\x9f\x8e\xb9",
+                        "1f3b9",
                     },
                     {
                         "trumpet",
                         "\xf0\x9f\x8e\xba",
+                        "1f3ba",
                     },
                     {
                         "violin",
                         "\xf0\x9f\x8e\xbb",
+                        "1f3bb",
                     },
                     {
                         "banjo",
                         "\xf0\x9f\xaa\x95",
+                        "1fa95",
                     },
                     {
                         "drum",
                         "\xf0\x9f\xa5\x81",
+                        "1f941",
                     },
                     {
                         "long drum",
                         "\xf0\x9f\xaa\x98",
+                        "1fa98",
                     },
                 }
             },
@@ -4527,26 +5564,32 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "mobile phone",
                         "\xf0\x9f\x93\xb1",
+                        "1f4f1",
                     },
                     {
                         "mobile phone with arrow",
                         "\xf0\x9f\x93\xb2",
+                        "1f4f2",
                     },
                     {
                         "telephone",
                         "\xe2\x98\x8e\xef\xb8\x8f",
+                        "260e-fe0f",
                     },
                     {
                         "telephone receiver",
                         "\xf0\x9f\x93\x9e",
+                        "1f4de",
                     },
                     {
                         "pager",
                         "\xf0\x9f\x93\x9f",
+                        "1f4df",
                     },
                     {
                         "fax machine",
                         "\xf0\x9f\x93\xa0",
+                        "1f4e0",
                     },
                 }
             },
@@ -4556,54 +5599,67 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "battery",
                         "\xf0\x9f\x94\x8b",
+                        "1f50b",
                     },
                     {
                         "electric plug",
                         "\xf0\x9f\x94\x8c",
+                        "1f50c",
                     },
                     {
                         "laptop",
                         "\xf0\x9f\x92\xbb",
+                        "1f4bb",
                     },
                     {
                         "desktop computer",
                         "\xf0\x9f\x96\xa5\xef\xb8\x8f",
+                        "1f5a5-fe0f",
                     },
                     {
                         "printer",
                         "\xf0\x9f\x96\xa8\xef\xb8\x8f",
+                        "1f5a8-fe0f",
                     },
                     {
                         "keyboard",
                         "\xe2\x8c\xa8\xef\xb8\x8f",
+                        "2328-fe0f",
                     },
                     {
                         "computer mouse",
                         "\xf0\x9f\x96\xb1\xef\xb8\x8f",
+                        "1f5b1-fe0f",
                     },
                     {
                         "trackball",
                         "\xf0\x9f\x96\xb2\xef\xb8\x8f",
+                        "1f5b2-fe0f",
                     },
                     {
                         "computer disk",
                         "\xf0\x9f\x92\xbd",
+                        "1f4bd",
                     },
                     {
                         "floppy disk",
                         "\xf0\x9f\x92\xbe",
+                        "1f4be",
                     },
                     {
                         "optical disk",
                         "\xf0\x9f\x92\xbf",
+                        "1f4bf",
                     },
                     {
                         "dvd",
                         "\xf0\x9f\x93\x80",
+                        "1f4c0",
                     },
                     {
                         "abacus",
                         "\xf0\x9f\xa7\xae",
+                        "1f9ee",
                     },
                 }
             },
@@ -4613,66 +5669,82 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "movie camera",
                         "\xf0\x9f\x8e\xa5",
+                        "1f3a5",
                     },
                     {
                         "film frames",
                         "\xf0\x9f\x8e\x9e\xef\xb8\x8f",
+                        "1f39e-fe0f",
                     },
                     {
                         "film projector",
                         "\xf0\x9f\x93\xbd\xef\xb8\x8f",
+                        "1f4fd-fe0f",
                     },
                     {
                         "clapper board",
                         "\xf0\x9f\x8e\xac",
+                        "1f3ac",
                     },
                     {
                         "television",
                         "\xf0\x9f\x93\xba",
+                        "1f4fa",
                     },
                     {
                         "camera",
                         "\xf0\x9f\x93\xb7",
+                        "1f4f7",
                     },
                     {
                         "camera with flash",
                         "\xf0\x9f\x93\xb8",
+                        "1f4f8",
                     },
                     {
                         "video camera",
                         "\xf0\x9f\x93\xb9",
+                        "1f4f9",
                     },
                     {
                         "videocassette",
                         "\xf0\x9f\x93\xbc",
+                        "1f4fc",
                     },
                     {
                         "magnifying glass tilted left",
                         "\xf0\x9f\x94\x8d",
+                        "1f50d",
                     },
                     {
                         "magnifying glass tilted right",
                         "\xf0\x9f\x94\x8e",
+                        "1f50e",
                     },
                     {
                         "candle",
                         "\xf0\x9f\x95\xaf\xef\xb8\x8f",
+                        "1f56f-fe0f",
                     },
                     {
                         "light bulb",
                         "\xf0\x9f\x92\xa1",
+                        "1f4a1",
                     },
                     {
                         "flashlight",
                         "\xf0\x9f\x94\xa6",
+                        "1f526",
                     },
                     {
                         "red paper lantern",
                         "\xf0\x9f\x8f\xae",
+                        "1f3ee",
                     },
                     {
                         "diya lamp",
                         "\xf0\x9f\xaa\x94",
+                        "1fa94",
                     },
                 }
             },
@@ -4682,70 +5754,87 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "notebook with decorative cover",
                         "\xf0\x9f\x93\x94",
+                        "1f4d4",
                     },
                     {
                         "closed book",
                         "\xf0\x9f\x93\x95",
+                        "1f4d5",
                     },
                     {
                         "open book",
                         "\xf0\x9f\x93\x96",
+                        "1f4d6",
                     },
                     {
                         "green book",
                         "\xf0\x9f\x93\x97",
+                        "1f4d7",
                     },
                     {
                         "blue book",
                         "\xf0\x9f\x93\x98",
+                        "1f4d8",
                     },
                     {
                         "orange book",
                         "\xf0\x9f\x93\x99",
+                        "1f4d9",
                     },
                     {
                         "books",
                         "\xf0\x9f\x93\x9a",
+                        "1f4da",
                     },
                     {
                         "notebook",
                         "\xf0\x9f\x93\x93",
+                        "1f4d3",
                     },
                     {
                         "ledger",
                         "\xf0\x9f\x93\x92",
+                        "1f4d2",
                     },
                     {
                         "page with curl",
                         "\xf0\x9f\x93\x83",
+                        "1f4c3",
                     },
                     {
                         "scroll",
                         "\xf0\x9f\x93\x9c",
+                        "1f4dc",
                     },
                     {
                         "page facing up",
                         "\xf0\x9f\x93\x84",
+                        "1f4c4",
                     },
                     {
                         "newspaper",
                         "\xf0\x9f\x93\xb0",
+                        "1f4f0",
                     },
                     {
                         "rolled-up newspaper",
                         "\xf0\x9f\x97\x9e\xef\xb8\x8f",
+                        "1f5de-fe0f",
                     },
                     {
                         "bookmark tabs",
                         "\xf0\x9f\x93\x91",
+                        "1f4d1",
                     },
                     {
                         "bookmark",
                         "\xf0\x9f\x94\x96",
+                        "1f516",
                     },
                     {
                         "label",
                         "\xf0\x9f\x8f\xb7\xef\xb8\x8f",
+                        "1f3f7-fe0f",
                     },
                 }
             },
@@ -4755,42 +5844,52 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "money bag",
                         "\xf0\x9f\x92\xb0",
+                        "1f4b0",
                     },
                     {
                         "coin",
                         "\xf0\x9f\xaa\x99",
+                        "1fa99",
                     },
                     {
                         "yen banknote",
                         "\xf0\x9f\x92\xb4",
+                        "1f4b4",
                     },
                     {
                         "dollar banknote",
                         "\xf0\x9f\x92\xb5",
+                        "1f4b5",
                     },
                     {
                         "euro banknote",
                         "\xf0\x9f\x92\xb6",
+                        "1f4b6",
                     },
                     {
                         "pound banknote",
                         "\xf0\x9f\x92\xb7",
+                        "1f4b7",
                     },
                     {
                         "money with wings",
                         "\xf0\x9f\x92\xb8",
+                        "1f4b8",
                     },
                     {
                         "credit card",
                         "\xf0\x9f\x92\xb3",
+                        "1f4b3",
                     },
                     {
                         "receipt",
                         "\xf0\x9f\xa7\xbe",
+                        "1f9fe",
                     },
                     {
                         "chart increasing with yen",
                         "\xf0\x9f\x92\xb9",
+                        "1f4b9",
                     },
                 }
             },
@@ -4800,54 +5899,67 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "envelope",
                         "\xe2\x9c\x89\xef\xb8\x8f",
+                        "2709-fe0f",
                     },
                     {
                         "e-mail",
                         "\xf0\x9f\x93\xa7",
+                        "1f4e7",
                     },
                     {
                         "incoming envelope",
                         "\xf0\x9f\x93\xa8",
+                        "1f4e8",
                     },
                     {
                         "envelope with arrow",
                         "\xf0\x9f\x93\xa9",
+                        "1f4e9",
                     },
                     {
                         "outbox tray",
                         "\xf0\x9f\x93\xa4",
+                        "1f4e4",
                     },
                     {
                         "inbox tray",
                         "\xf0\x9f\x93\xa5",
+                        "1f4e5",
                     },
                     {
                         "package",
                         "\xf0\x9f\x93\xa6",
+                        "1f4e6",
                     },
                     {
                         "closed mailbox with raised flag",
                         "\xf0\x9f\x93\xab",
+                        "1f4eb",
                     },
                     {
                         "closed mailbox with lowered flag",
                         "\xf0\x9f\x93\xaa",
+                        "1f4ea",
                     },
                     {
                         "open mailbox with raised flag",
                         "\xf0\x9f\x93\xac",
+                        "1f4ec",
                     },
                     {
                         "open mailbox with lowered flag",
                         "\xf0\x9f\x93\xad",
+                        "1f4ed",
                     },
                     {
                         "postbox",
                         "\xf0\x9f\x93\xae",
+                        "1f4ee",
                     },
                     {
                         "ballot box with ballot",
                         "\xf0\x9f\x97\xb3\xef\xb8\x8f",
+                        "1f5f3-fe0f",
                     },
                 }
             },
@@ -4857,30 +5969,37 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "pencil",
                         "\xe2\x9c\x8f\xef\xb8\x8f",
+                        "270f-fe0f",
                     },
                     {
                         "black nib",
                         "\xe2\x9c\x92\xef\xb8\x8f",
+                        "2712-fe0f",
                     },
                     {
                         "fountain pen",
                         "\xf0\x9f\x96\x8b\xef\xb8\x8f",
+                        "1f58b-fe0f",
                     },
                     {
                         "pen",
                         "\xf0\x9f\x96\x8a\xef\xb8\x8f",
+                        "1f58a-fe0f",
                     },
                     {
                         "paintbrush",
                         "\xf0\x9f\x96\x8c\xef\xb8\x8f",
+                        "1f58c-fe0f",
                     },
                     {
                         "crayon",
                         "\xf0\x9f\x96\x8d\xef\xb8\x8f",
+                        "1f58d-fe0f",
                     },
                     {
                         "memo",
                         "\xf0\x9f\x93\x9d",
+                        "1f4dd",
                     },
                 }
             },
@@ -4890,94 +6009,117 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "briefcase",
                         "\xf0\x9f\x92\xbc",
+                        "1f4bc",
                     },
                     {
                         "file folder",
                         "\xf0\x9f\x93\x81",
+                        "1f4c1",
                     },
                     {
                         "open file folder",
                         "\xf0\x9f\x93\x82",
+                        "1f4c2",
                     },
                     {
                         "card index dividers",
                         "\xf0\x9f\x97\x82\xef\xb8\x8f",
+                        "1f5c2-fe0f",
                     },
                     {
                         "calendar",
                         "\xf0\x9f\x93\x85",
+                        "1f4c5",
                     },
                     {
                         "tear-off calendar",
                         "\xf0\x9f\x93\x86",
+                        "1f4c6",
                     },
                     {
                         "spiral notepad",
                         "\xf0\x9f\x97\x92\xef\xb8\x8f",
+                        "1f5d2-fe0f",
                     },
                     {
                         "spiral calendar",
                         "\xf0\x9f\x97\x93\xef\xb8\x8f",
+                        "1f5d3-fe0f",
                     },
                     {
                         "card index",
                         "\xf0\x9f\x93\x87",
+                        "1f4c7",
                     },
                     {
                         "chart increasing",
                         "\xf0\x9f\x93\x88",
+                        "1f4c8",
                     },
                     {
                         "chart decreasing",
                         "\xf0\x9f\x93\x89",
+                        "1f4c9",
                     },
                     {
                         "bar chart",
                         "\xf0\x9f\x93\x8a",
+                        "1f4ca",
                     },
                     {
                         "clipboard",
                         "\xf0\x9f\x93\x8b",
+                        "1f4cb",
                     },
                     {
                         "pushpin",
                         "\xf0\x9f\x93\x8c",
+                        "1f4cc",
                     },
                     {
                         "round pushpin",
                         "\xf0\x9f\x93\x8d",
+                        "1f4cd",
                     },
                     {
                         "paperclip",
                         "\xf0\x9f\x93\x8e",
+                        "1f4ce",
                     },
                     {
                         "linked paperclips",
                         "\xf0\x9f\x96\x87\xef\xb8\x8f",
+                        "1f587-fe0f",
                     },
                     {
                         "straight ruler",
                         "\xf0\x9f\x93\x8f",
+                        "1f4cf",
                     },
                     {
                         "triangular ruler",
                         "\xf0\x9f\x93\x90",
+                        "1f4d0",
                     },
                     {
                         "scissors",
                         "\xe2\x9c\x82\xef\xb8\x8f",
+                        "2702-fe0f",
                     },
                     {
                         "card file box",
                         "\xf0\x9f\x97\x83\xef\xb8\x8f",
+                        "1f5c3-fe0f",
                     },
                     {
                         "file cabinet",
                         "\xf0\x9f\x97\x84\xef\xb8\x8f",
+                        "1f5c4-fe0f",
                     },
                     {
                         "wastebasket",
                         "\xf0\x9f\x97\x91\xef\xb8\x8f",
+                        "1f5d1-fe0f",
                     },
                 }
             },
@@ -4987,26 +6129,32 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "locked",
                         "\xf0\x9f\x94\x92",
+                        "1f512",
                     },
                     {
                         "unlocked",
                         "\xf0\x9f\x94\x93",
+                        "1f513",
                     },
                     {
                         "locked with pen",
                         "\xf0\x9f\x94\x8f",
+                        "1f50f",
                     },
                     {
                         "locked with key",
                         "\xf0\x9f\x94\x90",
+                        "1f510",
                     },
                     {
                         "key",
                         "\xf0\x9f\x94\x91",
+                        "1f511",
                     },
                     {
                         "old key",
                         "\xf0\x9f\x97\x9d\xef\xb8\x8f",
+                        "1f5dd-fe0f",
                     },
                 }
             },
@@ -5016,102 +6164,127 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "hammer",
                         "\xf0\x9f\x94\xa8",
+                        "1f528",
                     },
                     {
                         "axe",
                         "\xf0\x9f\xaa\x93",
+                        "1fa93",
                     },
                     {
                         "pick",
                         "\xe2\x9b\x8f\xef\xb8\x8f",
+                        "26cf-fe0f",
                     },
                     {
                         "hammer and pick",
                         "\xe2\x9a\x92\xef\xb8\x8f",
+                        "2692-fe0f",
                     },
                     {
                         "hammer and wrench",
                         "\xf0\x9f\x9b\xa0\xef\xb8\x8f",
+                        "1f6e0-fe0f",
                     },
                     {
                         "dagger",
                         "\xf0\x9f\x97\xa1\xef\xb8\x8f",
+                        "1f5e1-fe0f",
                     },
                     {
                         "crossed swords",
                         "\xe2\x9a\x94\xef\xb8\x8f",
+                        "2694-fe0f",
                     },
                     {
                         "water pistol",
                         "\xf0\x9f\x94\xab",
+                        "1f52b",
                     },
                     {
                         "boomerang",
                         "\xf0\x9f\xaa\x83",
+                        "1fa83",
                     },
                     {
                         "bow and arrow",
                         "\xf0\x9f\x8f\xb9",
+                        "1f3f9",
                     },
                     {
                         "shield",
                         "\xf0\x9f\x9b\xa1\xef\xb8\x8f",
+                        "1f6e1-fe0f",
                     },
                     {
                         "carpentry saw",
                         "\xf0\x9f\xaa\x9a",
+                        "1fa9a",
                     },
                     {
                         "wrench",
                         "\xf0\x9f\x94\xa7",
+                        "1f527",
                     },
                     {
                         "screwdriver",
                         "\xf0\x9f\xaa\x9b",
+                        "1fa9b",
                     },
                     {
                         "nut and bolt",
                         "\xf0\x9f\x94\xa9",
+                        "1f529",
                     },
                     {
                         "gear",
                         "\xe2\x9a\x99\xef\xb8\x8f",
+                        "2699-fe0f",
                     },
                     {
                         "clamp",
                         "\xf0\x9f\x97\x9c\xef\xb8\x8f",
+                        "1f5dc-fe0f",
                     },
                     {
                         "balance scale",
                         "\xe2\x9a\x96\xef\xb8\x8f",
+                        "2696-fe0f",
                     },
                     {
                         "white cane",
                         "\xf0\x9f\xa6\xaf",
+                        "1f9af",
                     },
                     {
                         "link",
                         "\xf0\x9f\x94\x97",
+                        "1f517",
                     },
                     {
                         "chains",
                         "\xe2\x9b\x93\xef\xb8\x8f",
+                        "26d3-fe0f",
                     },
                     {
                         "hook",
                         "\xf0\x9f\xaa\x9d",
+                        "1fa9d",
                     },
                     {
                         "toolbox",
                         "\xf0\x9f\xa7\xb0",
+                        "1f9f0",
                     },
                     {
                         "magnet",
                         "\xf0\x9f\xa7\xb2",
+                        "1f9f2",
                     },
                     {
                         "ladder",
                         "\xf0\x9f\xaa\x9c",
+                        "1fa9c",
                     },
                 }
             },
@@ -5121,30 +6294,37 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "alembic",
                         "\xe2\x9a\x97\xef\xb8\x8f",
+                        "2697-fe0f",
                     },
                     {
                         "test tube",
                         "\xf0\x9f\xa7\xaa",
+                        "1f9ea",
                     },
                     {
                         "petri dish",
                         "\xf0\x9f\xa7\xab",
+                        "1f9eb",
                     },
                     {
                         "dna",
                         "\xf0\x9f\xa7\xac",
+                        "1f9ec",
                     },
                     {
                         "microscope",
                         "\xf0\x9f\x94\xac",
+                        "1f52c",
                     },
                     {
                         "telescope",
                         "\xf0\x9f\x94\xad",
+                        "1f52d",
                     },
                     {
                         "satellite antenna",
                         "\xf0\x9f\x93\xa1",
+                        "1f4e1",
                     },
                 }
             },
@@ -5154,22 +6334,27 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "syringe",
                         "\xf0\x9f\x92\x89",
+                        "1f489",
                     },
                     {
                         "drop of blood",
                         "\xf0\x9f\xa9\xb8",
+                        "1fa78",
                     },
                     {
                         "pill",
                         "\xf0\x9f\x92\x8a",
+                        "1f48a",
                     },
                     {
                         "adhesive bandage",
                         "\xf0\x9f\xa9\xb9",
+                        "1fa79",
                     },
                     {
                         "stethoscope",
                         "\xf0\x9f\xa9\xba",
+                        "1fa7a",
                     },
                 }
             },
@@ -5179,98 +6364,122 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "door",
                         "\xf0\x9f\x9a\xaa",
+                        "1f6aa",
                     },
                     {
                         "elevator",
                         "\xf0\x9f\x9b\x97",
+                        "1f6d7",
                     },
                     {
                         "mirror",
                         "\xf0\x9f\xaa\x9e",
+                        "1fa9e",
                     },
                     {
                         "window",
                         "\xf0\x9f\xaa\x9f",
+                        "1fa9f",
                     },
                     {
                         "bed",
                         "\xf0\x9f\x9b\x8f\xef\xb8\x8f",
+                        "1f6cf-fe0f",
                     },
                     {
                         "couch and lamp",
                         "\xf0\x9f\x9b\x8b\xef\xb8\x8f",
+                        "1f6cb-fe0f",
                     },
                     {
                         "chair",
                         "\xf0\x9f\xaa\x91",
+                        "1fa91",
                     },
                     {
                         "toilet",
                         "\xf0\x9f\x9a\xbd",
+                        "1f6bd",
                     },
                     {
                         "plunger",
                         "\xf0\x9f\xaa\xa0",
+                        "1faa0",
                     },
                     {
                         "shower",
                         "\xf0\x9f\x9a\xbf",
+                        "1f6bf",
                     },
                     {
                         "bathtub",
                         "\xf0\x9f\x9b\x81",
+                        "1f6c1",
                     },
                     {
                         "mouse trap",
                         "\xf0\x9f\xaa\xa4",
+                        "1faa4",
                     },
                     {
                         "razor",
                         "\xf0\x9f\xaa\x92",
+                        "1fa92",
                     },
                     {
                         "lotion bottle",
                         "\xf0\x9f\xa7\xb4",
+                        "1f9f4",
                     },
                     {
                         "safety pin",
                         "\xf0\x9f\xa7\xb7",
+                        "1f9f7",
                     },
                     {
                         "broom",
                         "\xf0\x9f\xa7\xb9",
+                        "1f9f9",
                     },
                     {
                         "basket",
                         "\xf0\x9f\xa7\xba",
+                        "1f9fa",
                     },
                     {
                         "roll of paper",
                         "\xf0\x9f\xa7\xbb",
+                        "1f9fb",
                     },
                     {
                         "bucket",
                         "\xf0\x9f\xaa\xa3",
+                        "1faa3",
                     },
                     {
                         "soap",
                         "\xf0\x9f\xa7\xbc",
+                        "1f9fc",
                     },
                     {
                         "toothbrush",
                         "\xf0\x9f\xaa\xa5",
+                        "1faa5",
                     },
                     {
                         "sponge",
                         "\xf0\x9f\xa7\xbd",
+                        "1f9fd",
                     },
                     {
                         "fire extinguisher",
                         "\xf0\x9f\xa7\xaf",
+                        "1f9ef",
                     },
                     {
                         "shopping cart",
                         "\xf0\x9f\x9b\x92",
+                        "1f6d2",
                     },
                 }
             },
@@ -5280,26 +6489,32 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "cigarette",
                         "\xf0\x9f\x9a\xac",
+                        "1f6ac",
                     },
                     {
                         "coffin",
                         "\xe2\x9a\xb0\xef\xb8\x8f",
+                        "26b0-fe0f",
                     },
                     {
                         "headstone",
                         "\xf0\x9f\xaa\xa6",
+                        "1faa6",
                     },
                     {
                         "funeral urn",
                         "\xe2\x9a\xb1\xef\xb8\x8f",
+                        "26b1-fe0f",
                     },
                     {
                         "moai",
                         "\xf0\x9f\x97\xbf",
+                        "1f5ff",
                     },
                     {
                         "placard",
                         "\xf0\x9f\xaa\xa7",
+                        "1faa7",
                     },
                 }
             },
@@ -5314,54 +6529,67 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "ATM sign",
                         "\xf0\x9f\x8f\xa7",
+                        "1f3e7",
                     },
                     {
                         "litter in bin sign",
                         "\xf0\x9f\x9a\xae",
+                        "1f6ae",
                     },
                     {
                         "potable water",
                         "\xf0\x9f\x9a\xb0",
+                        "1f6b0",
                     },
                     {
                         "wheelchair symbol",
                         "\xe2\x99\xbf",
+                        "267f",
                     },
                     {
                         "men\u2019s room",
                         "\xf0\x9f\x9a\xb9",
+                        "1f6b9",
                     },
                     {
                         "women\u2019s room",
                         "\xf0\x9f\x9a\xba",
+                        "1f6ba",
                     },
                     {
                         "restroom",
                         "\xf0\x9f\x9a\xbb",
+                        "1f6bb",
                     },
                     {
                         "baby symbol",
                         "\xf0\x9f\x9a\xbc",
+                        "1f6bc",
                     },
                     {
                         "water closet",
                         "\xf0\x9f\x9a\xbe",
+                        "1f6be",
                     },
                     {
                         "passport control",
                         "\xf0\x9f\x9b\x82",
+                        "1f6c2",
                     },
                     {
                         "customs",
                         "\xf0\x9f\x9b\x83",
+                        "1f6c3",
                     },
                     {
                         "baggage claim",
                         "\xf0\x9f\x9b\x84",
+                        "1f6c4",
                     },
                     {
                         "left luggage",
                         "\xf0\x9f\x9b\x85",
+                        "1f6c5",
                     },
                 }
             },
@@ -5371,54 +6599,67 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "warning",
                         "\xe2\x9a\xa0\xef\xb8\x8f",
+                        "26a0-fe0f",
                     },
                     {
                         "children crossing",
                         "\xf0\x9f\x9a\xb8",
+                        "1f6b8",
                     },
                     {
                         "no entry",
                         "\xe2\x9b\x94",
+                        "26d4",
                     },
                     {
                         "prohibited",
                         "\xf0\x9f\x9a\xab",
+                        "1f6ab",
                     },
                     {
                         "no bicycles",
                         "\xf0\x9f\x9a\xb3",
+                        "1f6b3",
                     },
                     {
                         "no smoking",
                         "\xf0\x9f\x9a\xad",
+                        "1f6ad",
                     },
                     {
                         "no littering",
                         "\xf0\x9f\x9a\xaf",
+                        "1f6af",
                     },
                     {
                         "non-potable water",
                         "\xf0\x9f\x9a\xb1",
+                        "1f6b1",
                     },
                     {
                         "no pedestrians",
                         "\xf0\x9f\x9a\xb7",
+                        "1f6b7",
                     },
                     {
                         "no mobile phones",
                         "\xf0\x9f\x93\xb5",
+                        "1f4f5",
                     },
                     {
                         "no one under eighteen",
                         "\xf0\x9f\x94\x9e",
+                        "1f51e",
                     },
                     {
                         "radioactive",
                         "\xe2\x98\xa2\xef\xb8\x8f",
+                        "2622-fe0f",
                     },
                     {
                         "biohazard",
                         "\xe2\x98\xa3\xef\xb8\x8f",
+                        "2623-fe0f",
                     },
                 }
             },
@@ -5428,86 +6669,107 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "up arrow",
                         "\xe2\xac\x86\xef\xb8\x8f",
+                        "2b06-fe0f",
                     },
                     {
                         "up-right arrow",
                         "\xe2\x86\x97\xef\xb8\x8f",
+                        "2197-fe0f",
                     },
                     {
                         "right arrow",
                         "\xe2\x9e\xa1\xef\xb8\x8f",
+                        "27a1-fe0f",
                     },
                     {
                         "down-right arrow",
                         "\xe2\x86\x98\xef\xb8\x8f",
+                        "2198-fe0f",
                     },
                     {
                         "down arrow",
                         "\xe2\xac\x87\xef\xb8\x8f",
+                        "2b07-fe0f",
                     },
                     {
                         "down-left arrow",
                         "\xe2\x86\x99\xef\xb8\x8f",
+                        "2199-fe0f",
                     },
                     {
                         "left arrow",
                         "\xe2\xac\x85\xef\xb8\x8f",
+                        "2b05-fe0f",
                     },
                     {
                         "up-left arrow",
                         "\xe2\x86\x96\xef\xb8\x8f",
+                        "2196-fe0f",
                     },
                     {
                         "up-down arrow",
                         "\xe2\x86\x95\xef\xb8\x8f",
+                        "2195-fe0f",
                     },
                     {
                         "left-right arrow",
                         "\xe2\x86\x94\xef\xb8\x8f",
+                        "2194-fe0f",
                     },
                     {
                         "right arrow curving left",
                         "\xe2\x86\xa9\xef\xb8\x8f",
+                        "21a9-fe0f",
                     },
                     {
                         "left arrow curving right",
                         "\xe2\x86\xaa\xef\xb8\x8f",
+                        "21aa-fe0f",
                     },
                     {
                         "right arrow curving up",
                         "\xe2\xa4\xb4\xef\xb8\x8f",
+                        "2934-fe0f",
                     },
                     {
                         "right arrow curving down",
                         "\xe2\xa4\xb5\xef\xb8\x8f",
+                        "2935-fe0f",
                     },
                     {
                         "clockwise vertical arrows",
                         "\xf0\x9f\x94\x83",
+                        "1f503",
                     },
                     {
                         "counterclockwise arrows button",
                         "\xf0\x9f\x94\x84",
+                        "1f504",
                     },
                     {
                         "BACK arrow",
                         "\xf0\x9f\x94\x99",
+                        "1f519",
                     },
                     {
                         "END arrow",
                         "\xf0\x9f\x94\x9a",
+                        "1f51a",
                     },
                     {
                         "ON! arrow",
                         "\xf0\x9f\x94\x9b",
+                        "1f51b",
                     },
                     {
                         "SOON arrow",
                         "\xf0\x9f\x94\x9c",
+                        "1f51c",
                     },
                     {
                         "TOP arrow",
                         "\xf0\x9f\x94\x9d",
+                        "1f51d",
                     },
                 }
             },
@@ -5517,50 +6779,62 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "place of worship",
                         "\xf0\x9f\x9b\x90",
+                        "1f6d0",
                     },
                     {
                         "atom symbol",
                         "\xe2\x9a\x9b\xef\xb8\x8f",
+                        "269b-fe0f",
                     },
                     {
                         "om",
                         "\xf0\x9f\x95\x89\xef\xb8\x8f",
+                        "1f549-fe0f",
                     },
                     {
                         "star of David",
                         "\xe2\x9c\xa1\xef\xb8\x8f",
+                        "2721-fe0f",
                     },
                     {
                         "wheel of dharma",
                         "\xe2\x98\xb8\xef\xb8\x8f",
+                        "2638-fe0f",
                     },
                     {
                         "yin yang",
                         "\xe2\x98\xaf\xef\xb8\x8f",
+                        "262f-fe0f",
                     },
                     {
                         "latin cross",
                         "\xe2\x9c\x9d\xef\xb8\x8f",
+                        "271d-fe0f",
                     },
                     {
                         "orthodox cross",
                         "\xe2\x98\xa6\xef\xb8\x8f",
+                        "2626-fe0f",
                     },
                     {
                         "star and crescent",
                         "\xe2\x98\xaa\xef\xb8\x8f",
+                        "262a-fe0f",
                     },
                     {
                         "peace symbol",
                         "\xe2\x98\xae\xef\xb8\x8f",
+                        "262e-fe0f",
                     },
                     {
                         "menorah",
                         "\xf0\x9f\x95\x8e",
+                        "1f54e",
                     },
                     {
                         "dotted six-pointed star",
                         "\xf0\x9f\x94\xaf",
+                        "1f52f",
                     },
                 }
             },
@@ -5570,54 +6844,67 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "Aries",
                         "\xe2\x99\x88",
+                        "2648",
                     },
                     {
                         "Taurus",
                         "\xe2\x99\x89",
+                        "2649",
                     },
                     {
                         "Gemini",
                         "\xe2\x99\x8a",
+                        "264a",
                     },
                     {
                         "Cancer",
                         "\xe2\x99\x8b",
+                        "264b",
                     },
                     {
                         "Leo",
                         "\xe2\x99\x8c",
+                        "264c",
                     },
                     {
                         "Virgo",
                         "\xe2\x99\x8d",
+                        "264d",
                     },
                     {
                         "Libra",
                         "\xe2\x99\x8e",
+                        "264e",
                     },
                     {
                         "Scorpio",
                         "\xe2\x99\x8f",
+                        "264f",
                     },
                     {
                         "Sagittarius",
                         "\xe2\x99\x90",
+                        "2650",
                     },
                     {
                         "Capricorn",
                         "\xe2\x99\x91",
+                        "2651",
                     },
                     {
                         "Aquarius",
                         "\xe2\x99\x92",
+                        "2652",
                     },
                     {
                         "Pisces",
                         "\xe2\x99\x93",
+                        "2653",
                     },
                     {
                         "Ophiuchus",
                         "\xe2\x9b\x8e",
+                        "26ce",
                     },
                 }
             },
@@ -5627,98 +6914,122 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "shuffle tracks button",
                         "\xf0\x9f\x94\x80",
+                        "1f500",
                     },
                     {
                         "repeat button",
                         "\xf0\x9f\x94\x81",
+                        "1f501",
                     },
                     {
                         "repeat single button",
                         "\xf0\x9f\x94\x82",
+                        "1f502",
                     },
                     {
                         "play button",
                         "\xe2\x96\xb6\xef\xb8\x8f",
+                        "25b6-fe0f",
                     },
                     {
                         "fast-forward button",
                         "\xe2\x8f\xa9",
+                        "23e9",
                     },
                     {
                         "next track button",
                         "\xe2\x8f\xad\xef\xb8\x8f",
+                        "23ed-fe0f",
                     },
                     {
                         "play or pause button",
                         "\xe2\x8f\xaf\xef\xb8\x8f",
+                        "23ef-fe0f",
                     },
                     {
                         "reverse button",
                         "\xe2\x97\x80\xef\xb8\x8f",
+                        "25c0-fe0f",
                     },
                     {
                         "fast reverse button",
                         "\xe2\x8f\xaa",
+                        "23ea",
                     },
                     {
                         "last track button",
                         "\xe2\x8f\xae\xef\xb8\x8f",
+                        "23ee-fe0f",
                     },
                     {
                         "upwards button",
                         "\xf0\x9f\x94\xbc",
+                        "1f53c",
                     },
                     {
                         "fast up button",
                         "\xe2\x8f\xab",
+                        "23eb",
                     },
                     {
                         "downwards button",
                         "\xf0\x9f\x94\xbd",
+                        "1f53d",
                     },
                     {
                         "fast down button",
                         "\xe2\x8f\xac",
+                        "23ec",
                     },
                     {
                         "pause button",
                         "\xe2\x8f\xb8\xef\xb8\x8f",
+                        "23f8-fe0f",
                     },
                     {
                         "stop button",
                         "\xe2\x8f\xb9\xef\xb8\x8f",
+                        "23f9-fe0f",
                     },
                     {
                         "record button",
                         "\xe2\x8f\xba\xef\xb8\x8f",
+                        "23fa-fe0f",
                     },
                     {
                         "eject button",
                         "\xe2\x8f\x8f\xef\xb8\x8f",
+                        "23cf-fe0f",
                     },
                     {
                         "cinema",
                         "\xf0\x9f\x8e\xa6",
+                        "1f3a6",
                     },
                     {
                         "dim button",
                         "\xf0\x9f\x94\x85",
+                        "1f505",
                     },
                     {
                         "bright button",
                         "\xf0\x9f\x94\x86",
+                        "1f506",
                     },
                     {
                         "antenna bars",
                         "\xf0\x9f\x93\xb6",
+                        "1f4f6",
                     },
                     {
                         "vibration mode",
                         "\xf0\x9f\x93\xb3",
+                        "1f4f3",
                     },
                     {
                         "mobile phone off",
                         "\xf0\x9f\x93\xb4",
+                        "1f4f4",
                     },
                 }
             },
@@ -5728,14 +7039,17 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "female sign",
                         "\xe2\x99\x80\xef\xb8\x8f",
+                        "2640-fe0f",
                     },
                     {
                         "male sign",
                         "\xe2\x99\x82\xef\xb8\x8f",
+                        "2642-fe0f",
                     },
                     {
                         "transgender symbol",
                         "\xe2\x9a\xa7\xef\xb8\x8f",
+                        "26a7-fe0f",
                     },
                 }
             },
@@ -5745,22 +7059,27 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "multiply",
                         "\xe2\x9c\x96\xef\xb8\x8f",
+                        "2716-fe0f",
                     },
                     {
                         "plus",
                         "\xe2\x9e\x95",
+                        "2795",
                     },
                     {
                         "minus",
                         "\xe2\x9e\x96",
+                        "2796",
                     },
                     {
                         "divide",
                         "\xe2\x9e\x97",
+                        "2797",
                     },
                     {
                         "infinity",
                         "\xe2\x99\xbe\xef\xb8\x8f",
+                        "267e-fe0f",
                     },
                 }
             },
@@ -5770,30 +7089,37 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "double exclamation mark",
                         "\xe2\x80\xbc\xef\xb8\x8f",
+                        "203c-fe0f",
                     },
                     {
                         "exclamation question mark",
                         "\xe2\x81\x89\xef\xb8\x8f",
+                        "2049-fe0f",
                     },
                     {
                         "red question mark",
                         "\xe2\x9d\x93",
+                        "2753",
                     },
                     {
                         "white question mark",
                         "\xe2\x9d\x94",
+                        "2754",
                     },
                     {
                         "white exclamation mark",
                         "\xe2\x9d\x95",
+                        "2755",
                     },
                     {
                         "red exclamation mark",
                         "\xe2\x9d\x97",
+                        "2757",
                     },
                     {
                         "wavy dash",
                         "\xe3\x80\xb0\xef\xb8\x8f",
+                        "3030-fe0f",
                     },
                 }
             },
@@ -5803,10 +7129,12 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "currency exchange",
                         "\xf0\x9f\x92\xb1",
+                        "1f4b1",
                     },
                     {
                         "heavy dollar sign",
                         "\xf0\x9f\x92\xb2",
+                        "1f4b2",
                     },
                 }
             },
@@ -5816,86 +7144,107 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "medical symbol",
                         "\xe2\x9a\x95\xef\xb8\x8f",
+                        "2695-fe0f",
                     },
                     {
                         "recycling symbol",
                         "\xe2\x99\xbb\xef\xb8\x8f",
+                        "267b-fe0f",
                     },
                     {
                         "fleur-de-lis",
                         "\xe2\x9a\x9c\xef\xb8\x8f",
+                        "269c-fe0f",
                     },
                     {
                         "trident emblem",
                         "\xf0\x9f\x94\xb1",
+                        "1f531",
                     },
                     {
                         "name badge",
                         "\xf0\x9f\x93\x9b",
+                        "1f4db",
                     },
                     {
                         "Japanese symbol for beginner",
                         "\xf0\x9f\x94\xb0",
+                        "1f530",
                     },
                     {
                         "hollow red circle",
                         "\xe2\xad\x95",
+                        "2b55",
                     },
                     {
                         "check mark button",
                         "\xe2\x9c\x85",
+                        "2705",
                     },
                     {
                         "check box with check",
                         "\xe2\x98\x91\xef\xb8\x8f",
+                        "2611-fe0f",
                     },
                     {
                         "check mark",
                         "\xe2\x9c\x94\xef\xb8\x8f",
+                        "2714-fe0f",
                     },
                     {
                         "cross mark",
                         "\xe2\x9d\x8c",
+                        "274c",
                     },
                     {
                         "cross mark button",
                         "\xe2\x9d\x8e",
+                        "274e",
                     },
                     {
                         "curly loop",
                         "\xe2\x9e\xb0",
+                        "27b0",
                     },
                     {
                         "double curly loop",
                         "\xe2\x9e\xbf",
+                        "27bf",
                     },
                     {
                         "part alternation mark",
                         "\xe3\x80\xbd\xef\xb8\x8f",
+                        "303d-fe0f",
                     },
                     {
                         "eight-spoked asterisk",
                         "\xe2\x9c\xb3\xef\xb8\x8f",
+                        "2733-fe0f",
                     },
                     {
                         "eight-pointed star",
                         "\xe2\x9c\xb4\xef\xb8\x8f",
+                        "2734-fe0f",
                     },
                     {
                         "sparkle",
                         "\xe2\x9d\x87\xef\xb8\x8f",
+                        "2747-fe0f",
                     },
                     {
                         "copyright",
                         "\xc2\xa9\xef\xb8\x8f",
+                        "a9-fe0f",
                     },
                     {
                         "registered",
                         "\xc2\xae\xef\xb8\x8f",
+                        "ae-fe0f",
                     },
                     {
                         "trade mark",
                         "\xe2\x84\xa2\xef\xb8\x8f",
+                        "2122-fe0f",
                     },
                 }
             },
@@ -5905,54 +7254,67 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "keycap: #",
                         "\x23\xef\xb8\x8f\xe2\x83\xa3",
+                        "23-fe0f-20e3",
                     },
                     {
                         "keycap: *",
                         "\x2a\xef\xb8\x8f\xe2\x83\xa3",
+                        "2a-fe0f-20e3",
                     },
                     {
                         "keycap: 0",
                         "\x30\xef\xb8\x8f\xe2\x83\xa3",
+                        "30-fe0f-20e3",
                     },
                     {
                         "keycap: 1",
                         "\x31\xef\xb8\x8f\xe2\x83\xa3",
+                        "31-fe0f-20e3",
                     },
                     {
                         "keycap: 2",
                         "\x32\xef\xb8\x8f\xe2\x83\xa3",
+                        "32-fe0f-20e3",
                     },
                     {
                         "keycap: 3",
                         "\x33\xef\xb8\x8f\xe2\x83\xa3",
+                        "33-fe0f-20e3",
                     },
                     {
                         "keycap: 4",
                         "\x34\xef\xb8\x8f\xe2\x83\xa3",
+                        "34-fe0f-20e3",
                     },
                     {
                         "keycap: 5",
                         "\x35\xef\xb8\x8f\xe2\x83\xa3",
+                        "35-fe0f-20e3",
                     },
                     {
                         "keycap: 6",
                         "\x36\xef\xb8\x8f\xe2\x83\xa3",
+                        "36-fe0f-20e3",
                     },
                     {
                         "keycap: 7",
                         "\x37\xef\xb8\x8f\xe2\x83\xa3",
+                        "37-fe0f-20e3",
                     },
                     {
                         "keycap: 8",
                         "\x38\xef\xb8\x8f\xe2\x83\xa3",
+                        "38-fe0f-20e3",
                     },
                     {
                         "keycap: 9",
                         "\x39\xef\xb8\x8f\xe2\x83\xa3",
+                        "39-fe0f-20e3",
                     },
                     {
                         "keycap: 10",
                         "\xf0\x9f\x94\x9f",
+                        "1f51f",
                     },
                 }
             },
@@ -5962,158 +7324,197 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "input latin uppercase",
                         "\xf0\x9f\x94\xa0",
+                        "1f520",
                     },
                     {
                         "input latin lowercase",
                         "\xf0\x9f\x94\xa1",
+                        "1f521",
                     },
                     {
                         "input numbers",
                         "\xf0\x9f\x94\xa2",
+                        "1f522",
                     },
                     {
                         "input symbols",
                         "\xf0\x9f\x94\xa3",
+                        "1f523",
                     },
                     {
                         "input latin letters",
                         "\xf0\x9f\x94\xa4",
+                        "1f524",
                     },
                     {
                         "A button (blood type)",
                         "\xf0\x9f\x85\xb0\xef\xb8\x8f",
+                        "1f170-fe0f",
                     },
                     {
                         "AB button (blood type)",
                         "\xf0\x9f\x86\x8e",
+                        "1f18e",
                     },
                     {
                         "B button (blood type)",
                         "\xf0\x9f\x85\xb1\xef\xb8\x8f",
+                        "1f171-fe0f",
                     },
                     {
                         "CL button",
                         "\xf0\x9f\x86\x91",
+                        "1f191",
                     },
                     {
                         "COOL button",
                         "\xf0\x9f\x86\x92",
+                        "1f192",
                     },
                     {
                         "FREE button",
                         "\xf0\x9f\x86\x93",
+                        "1f193",
                     },
                     {
                         "information",
                         "\xe2\x84\xb9\xef\xb8\x8f",
+                        "2139-fe0f",
                     },
                     {
                         "ID button",
                         "\xf0\x9f\x86\x94",
+                        "1f194",
                     },
                     {
                         "circled M",
                         "\xe2\x93\x82\xef\xb8\x8f",
+                        "24c2-fe0f",
                     },
                     {
                         "NEW button",
                         "\xf0\x9f\x86\x95",
+                        "1f195",
                     },
                     {
                         "NG button",
                         "\xf0\x9f\x86\x96",
+                        "1f196",
                     },
                     {
                         "O button (blood type)",
                         "\xf0\x9f\x85\xbe\xef\xb8\x8f",
+                        "1f17e-fe0f",
                     },
                     {
                         "OK button",
                         "\xf0\x9f\x86\x97",
+                        "1f197",
                     },
                     {
                         "P button",
                         "\xf0\x9f\x85\xbf\xef\xb8\x8f",
+                        "1f17f-fe0f",
                     },
                     {
                         "SOS button",
                         "\xf0\x9f\x86\x98",
+                        "1f198",
                     },
                     {
                         "UP! button",
                         "\xf0\x9f\x86\x99",
+                        "1f199",
                     },
                     {
                         "VS button",
                         "\xf0\x9f\x86\x9a",
+                        "1f19a",
                     },
                     {
                         "Japanese \u201chere\u201d button",
                         "\xf0\x9f\x88\x81",
+                        "1f201",
                     },
                     {
                         "Japanese \u201cservice charge\u201d button",
                         "\xf0\x9f\x88\x82\xef\xb8\x8f",
+                        "1f202-fe0f",
                     },
                     {
                         "Japanese \u201cmonthly amount\u201d button",
                         "\xf0\x9f\x88\xb7\xef\xb8\x8f",
+                        "1f237-fe0f",
                     },
                     {
                         "Japanese \u201cnot free of charge\u201d button",
                         "\xf0\x9f\x88\xb6",
+                        "1f236",
                     },
                     {
                         "Japanese \u201creserved\u201d button",
                         "\xf0\x9f\x88\xaf",
+                        "1f22f",
                     },
                     {
                         "Japanese \u201cbargain\u201d button",
                         "\xf0\x9f\x89\x90",
+                        "1f250",
                     },
                     {
                         "Japanese \u201cdiscount\u201d button",
                         "\xf0\x9f\x88\xb9",
+                        "1f239",
                     },
                     {
                         "Japanese \u201cfree of charge\u201d button",
                         "\xf0\x9f\x88\x9a",
+                        "1f21a",
                     },
                     {
                         "Japanese \u201cprohibited\u201d button",
                         "\xf0\x9f\x88\xb2",
+                        "1f232",
                     },
                     {
                         "Japanese \u201cacceptable\u201d button",
                         "\xf0\x9f\x89\x91",
+                        "1f251",
                     },
                     {
                         "Japanese \u201capplication\u201d button",
                         "\xf0\x9f\x88\xb8",
+                        "1f238",
                     },
                     {
                         "Japanese \u201cpassing grade\u201d button",
                         "\xf0\x9f\x88\xb4",
+                        "1f234",
                     },
                     {
                         "Japanese \u201cvacancy\u201d button",
                         "\xf0\x9f\x88\xb3",
+                        "1f233",
                     },
                     {
                         "Japanese \u201ccongratulations\u201d button",
                         "\xe3\x8a\x97\xef\xb8\x8f",
+                        "3297-fe0f",
                     },
                     {
                         "Japanese \u201csecret\u201d button",
                         "\xe3\x8a\x99\xef\xb8\x8f",
+                        "3299-fe0f",
                     },
                     {
                         "Japanese \u201copen for business\u201d button",
                         "\xf0\x9f\x88\xba",
+                        "1f23a",
                     },
                     {
                         "Japanese \u201cno vacancy\u201d button",
                         "\xf0\x9f\x88\xb5",
+                        "1f235",
                     },
                 }
             },
@@ -6123,138 +7524,172 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "red circle",
                         "\xf0\x9f\x94\xb4",
+                        "1f534",
                     },
                     {
                         "orange circle",
                         "\xf0\x9f\x9f\xa0",
+                        "1f7e0",
                     },
                     {
                         "yellow circle",
                         "\xf0\x9f\x9f\xa1",
+                        "1f7e1",
                     },
                     {
                         "green circle",
                         "\xf0\x9f\x9f\xa2",
+                        "1f7e2",
                     },
                     {
                         "blue circle",
                         "\xf0\x9f\x94\xb5",
+                        "1f535",
                     },
                     {
                         "purple circle",
                         "\xf0\x9f\x9f\xa3",
+                        "1f7e3",
                     },
                     {
                         "brown circle",
                         "\xf0\x9f\x9f\xa4",
+                        "1f7e4",
                     },
                     {
                         "black circle",
                         "\xe2\x9a\xab",
+                        "26ab",
                     },
                     {
                         "white circle",
                         "\xe2\x9a\xaa",
+                        "26aa",
                     },
                     {
                         "red square",
                         "\xf0\x9f\x9f\xa5",
+                        "1f7e5",
                     },
                     {
                         "orange square",
                         "\xf0\x9f\x9f\xa7",
+                        "1f7e7",
                     },
                     {
                         "yellow square",
                         "\xf0\x9f\x9f\xa8",
+                        "1f7e8",
                     },
                     {
                         "green square",
                         "\xf0\x9f\x9f\xa9",
+                        "1f7e9",
                     },
                     {
                         "blue square",
                         "\xf0\x9f\x9f\xa6",
+                        "1f7e6",
                     },
                     {
                         "purple square",
                         "\xf0\x9f\x9f\xaa",
+                        "1f7ea",
                     },
                     {
                         "brown square",
                         "\xf0\x9f\x9f\xab",
+                        "1f7eb",
                     },
                     {
                         "black large square",
                         "\xe2\xac\x9b",
+                        "2b1b",
                     },
                     {
                         "white large square",
                         "\xe2\xac\x9c",
+                        "2b1c",
                     },
                     {
                         "black medium square",
                         "\xe2\x97\xbc\xef\xb8\x8f",
+                        "25fc-fe0f",
                     },
                     {
                         "white medium square",
                         "\xe2\x97\xbb\xef\xb8\x8f",
+                        "25fb-fe0f",
                     },
                     {
                         "black medium-small square",
                         "\xe2\x97\xbe",
+                        "25fe",
                     },
                     {
                         "white medium-small square",
                         "\xe2\x97\xbd",
+                        "25fd",
                     },
                     {
                         "black small square",
                         "\xe2\x96\xaa\xef\xb8\x8f",
+                        "25aa-fe0f",
                     },
                     {
                         "white small square",
                         "\xe2\x96\xab\xef\xb8\x8f",
+                        "25ab-fe0f",
                     },
                     {
                         "large orange diamond",
                         "\xf0\x9f\x94\xb6",
+                        "1f536",
                     },
                     {
                         "large blue diamond",
                         "\xf0\x9f\x94\xb7",
+                        "1f537",
                     },
                     {
                         "small orange diamond",
                         "\xf0\x9f\x94\xb8",
+                        "1f538",
                     },
                     {
                         "small blue diamond",
                         "\xf0\x9f\x94\xb9",
+                        "1f539",
                     },
                     {
                         "red triangle pointed up",
                         "\xf0\x9f\x94\xba",
+                        "1f53a",
                     },
                     {
                         "red triangle pointed down",
                         "\xf0\x9f\x94\xbb",
+                        "1f53b",
                     },
                     {
                         "diamond with a dot",
                         "\xf0\x9f\x92\xa0",
+                        "1f4a0",
                     },
                     {
                         "radio button",
                         "\xf0\x9f\x94\x98",
+                        "1f518",
                     },
                     {
                         "white square button",
                         "\xf0\x9f\x94\xb3",
+                        "1f533",
                     },
                     {
                         "black square button",
                         "\xf0\x9f\x94\xb2",
+                        "1f532",
                     },
                 }
             },
@@ -6269,34 +7704,42 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "chequered flag",
                         "\xf0\x9f\x8f\x81",
+                        "1f3c1",
                     },
                     {
                         "triangular flag",
                         "\xf0\x9f\x9a\xa9",
+                        "1f6a9",
                     },
                     {
                         "crossed flags",
                         "\xf0\x9f\x8e\x8c",
+                        "1f38c",
                     },
                     {
                         "black flag",
                         "\xf0\x9f\x8f\xb4",
+                        "1f3f4",
                     },
                     {
                         "white flag",
                         "\xf0\x9f\x8f\xb3\xef\xb8\x8f",
+                        "1f3f3-fe0f",
                     },
                     {
                         "rainbow flag",
                         "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xf0\x9f\x8c\x88",
+                        "1f3f3-fe0f-200d-1f308",
                     },
                     {
                         "transgender flag",
                         "\xf0\x9f\x8f\xb3\xef\xb8\x8f\xe2\x80\x8d\xe2\x9a\xa7\xef\xb8\x8f",
+                        "1f3f3-fe0f-200d-26a7-fe0f",
                     },
                     {
                         "pirate flag",
                         "\xf0\x9f\x8f\xb4\xe2\x80\x8d\xe2\x98\xa0\xef\xb8\x8f",
+                        "1f3f4-200d-2620-fe0f",
                     },
                 }
             },
@@ -6306,1034 +7749,1292 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "flag: Ascension Island",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xa8",
+                        "1f1e6-1f1e8",
                     },
                     {
                         "flag: Andorra",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xa9",
+                        "1f1e6-1f1e9",
                     },
                     {
                         "flag: United Arab Emirates",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xaa",
+                        "1f1e6-1f1ea",
                     },
                     {
                         "flag: Afghanistan",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xab",
+                        "1f1e6-1f1eb",
                     },
                     {
                         "flag: Antigua & Barbuda",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xac",
+                        "1f1e6-1f1ec",
                     },
                     {
                         "flag: Anguilla",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xae",
+                        "1f1e6-1f1ee",
                     },
                     {
                         "flag: Albania",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xb1",
+                        "1f1e6-1f1f1",
                     },
                     {
                         "flag: Armenia",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xb2",
+                        "1f1e6-1f1f2",
                     },
                     {
                         "flag: Angola",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xb4",
+                        "1f1e6-1f1f4",
                     },
                     {
                         "flag: Antarctica",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xb6",
+                        "1f1e6-1f1f6",
                     },
                     {
                         "flag: Argentina",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xb7",
+                        "1f1e6-1f1f7",
                     },
                     {
                         "flag: American Samoa",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xb8",
+                        "1f1e6-1f1f8",
                     },
                     {
                         "flag: Austria",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xb9",
+                        "1f1e6-1f1f9",
                     },
                     {
                         "flag: Australia",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xba",
+                        "1f1e6-1f1fa",
                     },
                     {
                         "flag: Aruba",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xbc",
+                        "1f1e6-1f1fc",
                     },
                     {
                         "flag: \u00c5land Islands",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xbd",
+                        "1f1e6-1f1fd",
                     },
                     {
                         "flag: Azerbaijan",
                         "\xf0\x9f\x87\xa6\xf0\x9f\x87\xbf",
+                        "1f1e6-1f1ff",
                     },
                     {
                         "flag: Bosnia & Herzegovina",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xa6",
+                        "1f1e7-1f1e6",
                     },
                     {
                         "flag: Barbados",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xa7",
+                        "1f1e7-1f1e7",
                     },
                     {
                         "flag: Bangladesh",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xa9",
+                        "1f1e7-1f1e9",
                     },
                     {
                         "flag: Belgium",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xaa",
+                        "1f1e7-1f1ea",
                     },
                     {
                         "flag: Burkina Faso",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xab",
+                        "1f1e7-1f1eb",
                     },
                     {
                         "flag: Bulgaria",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xac",
+                        "1f1e7-1f1ec",
                     },
                     {
                         "flag: Bahrain",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xad",
+                        "1f1e7-1f1ed",
                     },
                     {
                         "flag: Burundi",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xae",
+                        "1f1e7-1f1ee",
                     },
                     {
                         "flag: Benin",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xaf",
+                        "1f1e7-1f1ef",
                     },
                     {
                         "flag: St. Barth\u00e9lemy",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xb1",
+                        "1f1e7-1f1f1",
                     },
                     {
                         "flag: Bermuda",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xb2",
+                        "1f1e7-1f1f2",
                     },
                     {
                         "flag: Brunei",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xb3",
+                        "1f1e7-1f1f3",
                     },
                     {
                         "flag: Bolivia",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xb4",
+                        "1f1e7-1f1f4",
                     },
                     {
                         "flag: Caribbean Netherlands",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xb6",
+                        "1f1e7-1f1f6",
                     },
                     {
                         "flag: Brazil",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xb7",
+                        "1f1e7-1f1f7",
                     },
                     {
                         "flag: Bahamas",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xb8",
+                        "1f1e7-1f1f8",
                     },
                     {
                         "flag: Bhutan",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xb9",
+                        "1f1e7-1f1f9",
                     },
                     {
                         "flag: Bouvet Island",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xbb",
+                        "1f1e7-1f1fb",
                     },
                     {
                         "flag: Botswana",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xbc",
+                        "1f1e7-1f1fc",
                     },
                     {
                         "flag: Belarus",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xbe",
+                        "1f1e7-1f1fe",
                     },
                     {
                         "flag: Belize",
                         "\xf0\x9f\x87\xa7\xf0\x9f\x87\xbf",
+                        "1f1e7-1f1ff",
                     },
                     {
                         "flag: Canada",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xa6",
+                        "1f1e8-1f1e6",
                     },
                     {
                         "flag: Cocos (Keeling) Islands",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xa8",
+                        "1f1e8-1f1e8",
                     },
                     {
                         "flag: Congo - Kinshasa",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xa9",
+                        "1f1e8-1f1e9",
                     },
                     {
                         "flag: Central African Republic",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xab",
+                        "1f1e8-1f1eb",
                     },
                     {
                         "flag: Congo - Brazzaville",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xac",
+                        "1f1e8-1f1ec",
                     },
                     {
                         "flag: Switzerland",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xad",
+                        "1f1e8-1f1ed",
                     },
                     {
                         "flag: C\u00f4te d\u2019Ivoire",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xae",
+                        "1f1e8-1f1ee",
                     },
                     {
                         "flag: Cook Islands",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xb0",
+                        "1f1e8-1f1f0",
                     },
                     {
                         "flag: Chile",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xb1",
+                        "1f1e8-1f1f1",
                     },
                     {
                         "flag: Cameroon",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xb2",
+                        "1f1e8-1f1f2",
                     },
                     {
                         "flag: China",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xb3",
+                        "1f1e8-1f1f3",
                     },
                     {
                         "flag: Colombia",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xb4",
+                        "1f1e8-1f1f4",
                     },
                     {
                         "flag: Clipperton Island",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xb5",
+                        "1f1e8-1f1f5",
                     },
                     {
                         "flag: Costa Rica",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xb7",
+                        "1f1e8-1f1f7",
                     },
                     {
                         "flag: Cuba",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xba",
+                        "1f1e8-1f1fa",
                     },
                     {
                         "flag: Cape Verde",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xbb",
+                        "1f1e8-1f1fb",
                     },
                     {
                         "flag: Cura\u00e7ao",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xbc",
+                        "1f1e8-1f1fc",
                     },
                     {
                         "flag: Christmas Island",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xbd",
+                        "1f1e8-1f1fd",
                     },
                     {
                         "flag: Cyprus",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xbe",
+                        "1f1e8-1f1fe",
                     },
                     {
                         "flag: Czechia",
                         "\xf0\x9f\x87\xa8\xf0\x9f\x87\xbf",
+                        "1f1e8-1f1ff",
                     },
                     {
                         "flag: Germany",
                         "\xf0\x9f\x87\xa9\xf0\x9f\x87\xaa",
+                        "1f1e9-1f1ea",
                     },
                     {
                         "flag: Diego Garcia",
                         "\xf0\x9f\x87\xa9\xf0\x9f\x87\xac",
+                        "1f1e9-1f1ec",
                     },
                     {
                         "flag: Djibouti",
                         "\xf0\x9f\x87\xa9\xf0\x9f\x87\xaf",
+                        "1f1e9-1f1ef",
                     },
                     {
                         "flag: Denmark",
                         "\xf0\x9f\x87\xa9\xf0\x9f\x87\xb0",
+                        "1f1e9-1f1f0",
                     },
                     {
                         "flag: Dominica",
                         "\xf0\x9f\x87\xa9\xf0\x9f\x87\xb2",
+                        "1f1e9-1f1f2",
                     },
                     {
                         "flag: Dominican Republic",
                         "\xf0\x9f\x87\xa9\xf0\x9f\x87\xb4",
+                        "1f1e9-1f1f4",
                     },
                     {
                         "flag: Algeria",
                         "\xf0\x9f\x87\xa9\xf0\x9f\x87\xbf",
+                        "1f1e9-1f1ff",
                     },
                     {
                         "flag: Ceuta & Melilla",
                         "\xf0\x9f\x87\xaa\xf0\x9f\x87\xa6",
+                        "1f1ea-1f1e6",
                     },
                     {
                         "flag: Ecuador",
                         "\xf0\x9f\x87\xaa\xf0\x9f\x87\xa8",
+                        "1f1ea-1f1e8",
                     },
                     {
                         "flag: Estonia",
                         "\xf0\x9f\x87\xaa\xf0\x9f\x87\xaa",
+                        "1f1ea-1f1ea",
                     },
                     {
                         "flag: Egypt",
                         "\xf0\x9f\x87\xaa\xf0\x9f\x87\xac",
+                        "1f1ea-1f1ec",
                     },
                     {
                         "flag: Western Sahara",
                         "\xf0\x9f\x87\xaa\xf0\x9f\x87\xad",
+                        "1f1ea-1f1ed",
                     },
                     {
                         "flag: Eritrea",
                         "\xf0\x9f\x87\xaa\xf0\x9f\x87\xb7",
+                        "1f1ea-1f1f7",
                     },
                     {
                         "flag: Spain",
                         "\xf0\x9f\x87\xaa\xf0\x9f\x87\xb8",
+                        "1f1ea-1f1f8",
                     },
                     {
                         "flag: Ethiopia",
                         "\xf0\x9f\x87\xaa\xf0\x9f\x87\xb9",
+                        "1f1ea-1f1f9",
                     },
                     {
                         "flag: European Union",
                         "\xf0\x9f\x87\xaa\xf0\x9f\x87\xba",
+                        "1f1ea-1f1fa",
                     },
                     {
                         "flag: Finland",
                         "\xf0\x9f\x87\xab\xf0\x9f\x87\xae",
+                        "1f1eb-1f1ee",
                     },
                     {
                         "flag: Fiji",
                         "\xf0\x9f\x87\xab\xf0\x9f\x87\xaf",
+                        "1f1eb-1f1ef",
                     },
                     {
                         "flag: Falkland Islands",
                         "\xf0\x9f\x87\xab\xf0\x9f\x87\xb0",
+                        "1f1eb-1f1f0",
                     },
                     {
                         "flag: Micronesia",
                         "\xf0\x9f\x87\xab\xf0\x9f\x87\xb2",
+                        "1f1eb-1f1f2",
                     },
                     {
                         "flag: Faroe Islands",
                         "\xf0\x9f\x87\xab\xf0\x9f\x87\xb4",
+                        "1f1eb-1f1f4",
                     },
                     {
                         "flag: France",
                         "\xf0\x9f\x87\xab\xf0\x9f\x87\xb7",
+                        "1f1eb-1f1f7",
                     },
                     {
                         "flag: Gabon",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xa6",
+                        "1f1ec-1f1e6",
                     },
                     {
                         "flag: United Kingdom",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xa7",
+                        "1f1ec-1f1e7",
                     },
                     {
                         "flag: Grenada",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xa9",
+                        "1f1ec-1f1e9",
                     },
                     {
                         "flag: Georgia",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xaa",
+                        "1f1ec-1f1ea",
                     },
                     {
                         "flag: French Guiana",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xab",
+                        "1f1ec-1f1eb",
                     },
                     {
                         "flag: Guernsey",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xac",
+                        "1f1ec-1f1ec",
                     },
                     {
                         "flag: Ghana",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xad",
+                        "1f1ec-1f1ed",
                     },
                     {
                         "flag: Gibraltar",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xae",
+                        "1f1ec-1f1ee",
                     },
                     {
                         "flag: Greenland",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xb1",
+                        "1f1ec-1f1f1",
                     },
                     {
                         "flag: Gambia",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xb2",
+                        "1f1ec-1f1f2",
                     },
                     {
                         "flag: Guinea",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xb3",
+                        "1f1ec-1f1f3",
                     },
                     {
                         "flag: Guadeloupe",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xb5",
+                        "1f1ec-1f1f5",
                     },
                     {
                         "flag: Equatorial Guinea",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xb6",
+                        "1f1ec-1f1f6",
                     },
                     {
                         "flag: Greece",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xb7",
+                        "1f1ec-1f1f7",
                     },
                     {
                         "flag: South Georgia & South Sandwich Islands",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xb8",
+                        "1f1ec-1f1f8",
                     },
                     {
                         "flag: Guatemala",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xb9",
+                        "1f1ec-1f1f9",
                     },
                     {
                         "flag: Guam",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xba",
+                        "1f1ec-1f1fa",
                     },
                     {
                         "flag: Guinea-Bissau",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xbc",
+                        "1f1ec-1f1fc",
                     },
                     {
                         "flag: Guyana",
                         "\xf0\x9f\x87\xac\xf0\x9f\x87\xbe",
+                        "1f1ec-1f1fe",
                     },
                     {
                         "flag: Hong Kong SAR China",
                         "\xf0\x9f\x87\xad\xf0\x9f\x87\xb0",
+                        "1f1ed-1f1f0",
                     },
                     {
                         "flag: Heard & McDonald Islands",
                         "\xf0\x9f\x87\xad\xf0\x9f\x87\xb2",
+                        "1f1ed-1f1f2",
                     },
                     {
                         "flag: Honduras",
                         "\xf0\x9f\x87\xad\xf0\x9f\x87\xb3",
+                        "1f1ed-1f1f3",
                     },
                     {
                         "flag: Croatia",
                         "\xf0\x9f\x87\xad\xf0\x9f\x87\xb7",
+                        "1f1ed-1f1f7",
                     },
                     {
                         "flag: Haiti",
                         "\xf0\x9f\x87\xad\xf0\x9f\x87\xb9",
+                        "1f1ed-1f1f9",
                     },
                     {
                         "flag: Hungary",
                         "\xf0\x9f\x87\xad\xf0\x9f\x87\xba",
+                        "1f1ed-1f1fa",
                     },
                     {
                         "flag: Canary Islands",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xa8",
+                        "1f1ee-1f1e8",
                     },
                     {
                         "flag: Indonesia",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xa9",
+                        "1f1ee-1f1e9",
                     },
                     {
                         "flag: Ireland",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xaa",
+                        "1f1ee-1f1ea",
                     },
                     {
                         "flag: Israel",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xb1",
+                        "1f1ee-1f1f1",
                     },
                     {
                         "flag: Isle of Man",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xb2",
+                        "1f1ee-1f1f2",
                     },
                     {
                         "flag: India",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xb3",
+                        "1f1ee-1f1f3",
                     },
                     {
                         "flag: British Indian Ocean Territory",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xb4",
+                        "1f1ee-1f1f4",
                     },
                     {
                         "flag: Iraq",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xb6",
+                        "1f1ee-1f1f6",
                     },
                     {
                         "flag: Iran",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xb7",
+                        "1f1ee-1f1f7",
                     },
                     {
                         "flag: Iceland",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xb8",
+                        "1f1ee-1f1f8",
                     },
                     {
                         "flag: Italy",
                         "\xf0\x9f\x87\xae\xf0\x9f\x87\xb9",
+                        "1f1ee-1f1f9",
                     },
                     {
                         "flag: Jersey",
                         "\xf0\x9f\x87\xaf\xf0\x9f\x87\xaa",
+                        "1f1ef-1f1ea",
                     },
                     {
                         "flag: Jamaica",
                         "\xf0\x9f\x87\xaf\xf0\x9f\x87\xb2",
+                        "1f1ef-1f1f2",
                     },
                     {
                         "flag: Jordan",
                         "\xf0\x9f\x87\xaf\xf0\x9f\x87\xb4",
+                        "1f1ef-1f1f4",
                     },
                     {
                         "flag: Japan",
                         "\xf0\x9f\x87\xaf\xf0\x9f\x87\xb5",
+                        "1f1ef-1f1f5",
                     },
                     {
                         "flag: Kenya",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xaa",
+                        "1f1f0-1f1ea",
                     },
                     {
                         "flag: Kyrgyzstan",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xac",
+                        "1f1f0-1f1ec",
                     },
                     {
                         "flag: Cambodia",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xad",
+                        "1f1f0-1f1ed",
                     },
                     {
                         "flag: Kiribati",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xae",
+                        "1f1f0-1f1ee",
                     },
                     {
                         "flag: Comoros",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xb2",
+                        "1f1f0-1f1f2",
                     },
                     {
                         "flag: St. Kitts & Nevis",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xb3",
+                        "1f1f0-1f1f3",
                     },
                     {
                         "flag: North Korea",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xb5",
+                        "1f1f0-1f1f5",
                     },
                     {
                         "flag: South Korea",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xb7",
+                        "1f1f0-1f1f7",
                     },
                     {
                         "flag: Kuwait",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xbc",
+                        "1f1f0-1f1fc",
                     },
                     {
                         "flag: Cayman Islands",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xbe",
+                        "1f1f0-1f1fe",
                     },
                     {
                         "flag: Kazakhstan",
                         "\xf0\x9f\x87\xb0\xf0\x9f\x87\xbf",
+                        "1f1f0-1f1ff",
                     },
                     {
                         "flag: Laos",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xa6",
+                        "1f1f1-1f1e6",
                     },
                     {
                         "flag: Lebanon",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xa7",
+                        "1f1f1-1f1e7",
                     },
                     {
                         "flag: St. Lucia",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xa8",
+                        "1f1f1-1f1e8",
                     },
                     {
                         "flag: Liechtenstein",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xae",
+                        "1f1f1-1f1ee",
                     },
                     {
                         "flag: Sri Lanka",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xb0",
+                        "1f1f1-1f1f0",
                     },
                     {
                         "flag: Liberia",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xb7",
+                        "1f1f1-1f1f7",
                     },
                     {
                         "flag: Lesotho",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xb8",
+                        "1f1f1-1f1f8",
                     },
                     {
                         "flag: Lithuania",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xb9",
+                        "1f1f1-1f1f9",
                     },
                     {
                         "flag: Luxembourg",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xba",
+                        "1f1f1-1f1fa",
                     },
                     {
                         "flag: Latvia",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xbb",
+                        "1f1f1-1f1fb",
                     },
                     {
                         "flag: Libya",
                         "\xf0\x9f\x87\xb1\xf0\x9f\x87\xbe",
+                        "1f1f1-1f1fe",
                     },
                     {
                         "flag: Morocco",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xa6",
+                        "1f1f2-1f1e6",
                     },
                     {
                         "flag: Monaco",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xa8",
+                        "1f1f2-1f1e8",
                     },
                     {
                         "flag: Moldova",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xa9",
+                        "1f1f2-1f1e9",
                     },
                     {
                         "flag: Montenegro",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xaa",
+                        "1f1f2-1f1ea",
                     },
                     {
                         "flag: St. Martin",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xab",
+                        "1f1f2-1f1eb",
                     },
                     {
                         "flag: Madagascar",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xac",
+                        "1f1f2-1f1ec",
                     },
                     {
                         "flag: Marshall Islands",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xad",
+                        "1f1f2-1f1ed",
                     },
                     {
                         "flag: North Macedonia",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xb0",
+                        "1f1f2-1f1f0",
                     },
                     {
                         "flag: Mali",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xb1",
+                        "1f1f2-1f1f1",
                     },
                     {
                         "flag: Myanmar (Burma)",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xb2",
+                        "1f1f2-1f1f2",
                     },
                     {
                         "flag: Mongolia",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xb3",
+                        "1f1f2-1f1f3",
                     },
                     {
                         "flag: Macao SAR China",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xb4",
+                        "1f1f2-1f1f4",
                     },
                     {
                         "flag: Northern Mariana Islands",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xb5",
+                        "1f1f2-1f1f5",
                     },
                     {
                         "flag: Martinique",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xb6",
+                        "1f1f2-1f1f6",
                     },
                     {
                         "flag: Mauritania",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xb7",
+                        "1f1f2-1f1f7",
                     },
                     {
                         "flag: Montserrat",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xb8",
+                        "1f1f2-1f1f8",
                     },
                     {
                         "flag: Malta",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xb9",
+                        "1f1f2-1f1f9",
                     },
                     {
                         "flag: Mauritius",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xba",
+                        "1f1f2-1f1fa",
                     },
                     {
                         "flag: Maldives",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xbb",
+                        "1f1f2-1f1fb",
                     },
                     {
                         "flag: Malawi",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xbc",
+                        "1f1f2-1f1fc",
                     },
                     {
                         "flag: Mexico",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xbd",
+                        "1f1f2-1f1fd",
                     },
                     {
                         "flag: Malaysia",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xbe",
+                        "1f1f2-1f1fe",
                     },
                     {
                         "flag: Mozambique",
                         "\xf0\x9f\x87\xb2\xf0\x9f\x87\xbf",
+                        "1f1f2-1f1ff",
                     },
                     {
                         "flag: Namibia",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xa6",
+                        "1f1f3-1f1e6",
                     },
                     {
                         "flag: New Caledonia",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xa8",
+                        "1f1f3-1f1e8",
                     },
                     {
                         "flag: Niger",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xaa",
+                        "1f1f3-1f1ea",
                     },
                     {
                         "flag: Norfolk Island",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xab",
+                        "1f1f3-1f1eb",
                     },
                     {
                         "flag: Nigeria",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xac",
+                        "1f1f3-1f1ec",
                     },
                     {
                         "flag: Nicaragua",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xae",
+                        "1f1f3-1f1ee",
                     },
                     {
                         "flag: Netherlands",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xb1",
+                        "1f1f3-1f1f1",
                     },
                     {
                         "flag: Norway",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xb4",
+                        "1f1f3-1f1f4",
                     },
                     {
                         "flag: Nepal",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xb5",
+                        "1f1f3-1f1f5",
                     },
                     {
                         "flag: Nauru",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xb7",
+                        "1f1f3-1f1f7",
                     },
                     {
                         "flag: Niue",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xba",
+                        "1f1f3-1f1fa",
                     },
                     {
                         "flag: New Zealand",
                         "\xf0\x9f\x87\xb3\xf0\x9f\x87\xbf",
+                        "1f1f3-1f1ff",
                     },
                     {
                         "flag: Oman",
                         "\xf0\x9f\x87\xb4\xf0\x9f\x87\xb2",
+                        "1f1f4-1f1f2",
                     },
                     {
                         "flag: Panama",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xa6",
+                        "1f1f5-1f1e6",
                     },
                     {
                         "flag: Peru",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xaa",
+                        "1f1f5-1f1ea",
                     },
                     {
                         "flag: French Polynesia",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xab",
+                        "1f1f5-1f1eb",
                     },
                     {
                         "flag: Papua New Guinea",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xac",
+                        "1f1f5-1f1ec",
                     },
                     {
                         "flag: Philippines",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xad",
+                        "1f1f5-1f1ed",
                     },
                     {
                         "flag: Pakistan",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xb0",
+                        "1f1f5-1f1f0",
                     },
                     {
                         "flag: Poland",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xb1",
+                        "1f1f5-1f1f1",
                     },
                     {
                         "flag: St. Pierre & Miquelon",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xb2",
+                        "1f1f5-1f1f2",
                     },
                     {
                         "flag: Pitcairn Islands",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xb3",
+                        "1f1f5-1f1f3",
                     },
                     {
                         "flag: Puerto Rico",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xb7",
+                        "1f1f5-1f1f7",
                     },
                     {
                         "flag: Palestinian Territories",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xb8",
+                        "1f1f5-1f1f8",
                     },
                     {
                         "flag: Portugal",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xb9",
+                        "1f1f5-1f1f9",
                     },
                     {
                         "flag: Palau",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xbc",
+                        "1f1f5-1f1fc",
                     },
                     {
                         "flag: Paraguay",
                         "\xf0\x9f\x87\xb5\xf0\x9f\x87\xbe",
+                        "1f1f5-1f1fe",
                     },
                     {
                         "flag: Qatar",
                         "\xf0\x9f\x87\xb6\xf0\x9f\x87\xa6",
+                        "1f1f6-1f1e6",
                     },
                     {
                         "flag: R\u00e9union",
                         "\xf0\x9f\x87\xb7\xf0\x9f\x87\xaa",
+                        "1f1f7-1f1ea",
                     },
                     {
                         "flag: Romania",
                         "\xf0\x9f\x87\xb7\xf0\x9f\x87\xb4",
+                        "1f1f7-1f1f4",
                     },
                     {
                         "flag: Serbia",
                         "\xf0\x9f\x87\xb7\xf0\x9f\x87\xb8",
+                        "1f1f7-1f1f8",
                     },
                     {
                         "flag: Russia",
                         "\xf0\x9f\x87\xb7\xf0\x9f\x87\xba",
+                        "1f1f7-1f1fa",
                     },
                     {
                         "flag: Rwanda",
                         "\xf0\x9f\x87\xb7\xf0\x9f\x87\xbc",
+                        "1f1f7-1f1fc",
                     },
                     {
                         "flag: Saudi Arabia",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xa6",
+                        "1f1f8-1f1e6",
                     },
                     {
                         "flag: Solomon Islands",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xa7",
+                        "1f1f8-1f1e7",
                     },
                     {
                         "flag: Seychelles",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xa8",
+                        "1f1f8-1f1e8",
                     },
                     {
                         "flag: Sudan",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xa9",
+                        "1f1f8-1f1e9",
                     },
                     {
                         "flag: Sweden",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xaa",
+                        "1f1f8-1f1ea",
                     },
                     {
                         "flag: Singapore",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xac",
+                        "1f1f8-1f1ec",
                     },
                     {
                         "flag: St. Helena",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xad",
+                        "1f1f8-1f1ed",
                     },
                     {
                         "flag: Slovenia",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xae",
+                        "1f1f8-1f1ee",
                     },
                     {
                         "flag: Svalbard & Jan Mayen",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xaf",
+                        "1f1f8-1f1ef",
                     },
                     {
                         "flag: Slovakia",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xb0",
+                        "1f1f8-1f1f0",
                     },
                     {
                         "flag: Sierra Leone",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xb1",
+                        "1f1f8-1f1f1",
                     },
                     {
                         "flag: San Marino",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xb2",
+                        "1f1f8-1f1f2",
                     },
                     {
                         "flag: Senegal",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xb3",
+                        "1f1f8-1f1f3",
                     },
                     {
                         "flag: Somalia",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xb4",
+                        "1f1f8-1f1f4",
                     },
                     {
                         "flag: Suriname",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xb7",
+                        "1f1f8-1f1f7",
                     },
                     {
                         "flag: South Sudan",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xb8",
+                        "1f1f8-1f1f8",
                     },
                     {
                         "flag: S\u00e3o Tom\u00e9 & Pr\u00edncipe",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xb9",
+                        "1f1f8-1f1f9",
                     },
                     {
                         "flag: El Salvador",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xbb",
+                        "1f1f8-1f1fb",
                     },
                     {
                         "flag: Sint Maarten",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xbd",
+                        "1f1f8-1f1fd",
                     },
                     {
                         "flag: Syria",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xbe",
+                        "1f1f8-1f1fe",
                     },
                     {
                         "flag: Eswatini",
                         "\xf0\x9f\x87\xb8\xf0\x9f\x87\xbf",
+                        "1f1f8-1f1ff",
                     },
                     {
                         "flag: Tristan da Cunha",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xa6",
+                        "1f1f9-1f1e6",
                     },
                     {
                         "flag: Turks & Caicos Islands",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xa8",
+                        "1f1f9-1f1e8",
                     },
                     {
                         "flag: Chad",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xa9",
+                        "1f1f9-1f1e9",
                     },
                     {
                         "flag: French Southern Territories",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xab",
+                        "1f1f9-1f1eb",
                     },
                     {
                         "flag: Togo",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xac",
+                        "1f1f9-1f1ec",
                     },
                     {
                         "flag: Thailand",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xad",
+                        "1f1f9-1f1ed",
                     },
                     {
                         "flag: Tajikistan",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xaf",
+                        "1f1f9-1f1ef",
                     },
                     {
                         "flag: Tokelau",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xb0",
+                        "1f1f9-1f1f0",
                     },
                     {
                         "flag: Timor-Leste",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xb1",
+                        "1f1f9-1f1f1",
                     },
                     {
                         "flag: Turkmenistan",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xb2",
+                        "1f1f9-1f1f2",
                     },
                     {
                         "flag: Tunisia",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xb3",
+                        "1f1f9-1f1f3",
                     },
                     {
                         "flag: Tonga",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xb4",
+                        "1f1f9-1f1f4",
                     },
                     {
                         "flag: Turkey",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xb7",
+                        "1f1f9-1f1f7",
                     },
                     {
                         "flag: Trinidad & Tobago",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xb9",
+                        "1f1f9-1f1f9",
                     },
                     {
                         "flag: Tuvalu",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xbb",
+                        "1f1f9-1f1fb",
                     },
                     {
                         "flag: Taiwan",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xbc",
+                        "1f1f9-1f1fc",
                     },
                     {
                         "flag: Tanzania",
                         "\xf0\x9f\x87\xb9\xf0\x9f\x87\xbf",
+                        "1f1f9-1f1ff",
                     },
                     {
                         "flag: Ukraine",
                         "\xf0\x9f\x87\xba\xf0\x9f\x87\xa6",
+                        "1f1fa-1f1e6",
                     },
                     {
                         "flag: Uganda",
                         "\xf0\x9f\x87\xba\xf0\x9f\x87\xac",
+                        "1f1fa-1f1ec",
                     },
                     {
                         "flag: U.S. Outlying Islands",
                         "\xf0\x9f\x87\xba\xf0\x9f\x87\xb2",
+                        "1f1fa-1f1f2",
                     },
                     {
                         "flag: United Nations",
                         "\xf0\x9f\x87\xba\xf0\x9f\x87\xb3",
+                        "1f1fa-1f1f3",
                     },
                     {
                         "flag: United States",
                         "\xf0\x9f\x87\xba\xf0\x9f\x87\xb8",
+                        "1f1fa-1f1f8",
                     },
                     {
                         "flag: Uruguay",
                         "\xf0\x9f\x87\xba\xf0\x9f\x87\xbe",
+                        "1f1fa-1f1fe",
                     },
                     {
                         "flag: Uzbekistan",
                         "\xf0\x9f\x87\xba\xf0\x9f\x87\xbf",
+                        "1f1fa-1f1ff",
                     },
                     {
                         "flag: Vatican City",
                         "\xf0\x9f\x87\xbb\xf0\x9f\x87\xa6",
+                        "1f1fb-1f1e6",
                     },
                     {
                         "flag: St. Vincent & Grenadines",
                         "\xf0\x9f\x87\xbb\xf0\x9f\x87\xa8",
+                        "1f1fb-1f1e8",
                     },
                     {
                         "flag: Venezuela",
                         "\xf0\x9f\x87\xbb\xf0\x9f\x87\xaa",
+                        "1f1fb-1f1ea",
                     },
                     {
                         "flag: British Virgin Islands",
                         "\xf0\x9f\x87\xbb\xf0\x9f\x87\xac",
+                        "1f1fb-1f1ec",
                     },
                     {
                         "flag: U.S. Virgin Islands",
                         "\xf0\x9f\x87\xbb\xf0\x9f\x87\xae",
+                        "1f1fb-1f1ee",
                     },
                     {
                         "flag: Vietnam",
                         "\xf0\x9f\x87\xbb\xf0\x9f\x87\xb3",
+                        "1f1fb-1f1f3",
                     },
                     {
                         "flag: Vanuatu",
                         "\xf0\x9f\x87\xbb\xf0\x9f\x87\xba",
+                        "1f1fb-1f1fa",
                     },
                     {
                         "flag: Wallis & Futuna",
                         "\xf0\x9f\x87\xbc\xf0\x9f\x87\xab",
+                        "1f1fc-1f1eb",
                     },
                     {
                         "flag: Samoa",
                         "\xf0\x9f\x87\xbc\xf0\x9f\x87\xb8",
+                        "1f1fc-1f1f8",
                     },
                     {
                         "flag: Kosovo",
                         "\xf0\x9f\x87\xbd\xf0\x9f\x87\xb0",
+                        "1f1fd-1f1f0",
                     },
                     {
                         "flag: Yemen",
                         "\xf0\x9f\x87\xbe\xf0\x9f\x87\xaa",
+                        "1f1fe-1f1ea",
                     },
                     {
                         "flag: Mayotte",
                         "\xf0\x9f\x87\xbe\xf0\x9f\x87\xb9",
+                        "1f1fe-1f1f9",
                     },
                     {
                         "flag: South Africa",
                         "\xf0\x9f\x87\xbf\xf0\x9f\x87\xa6",
+                        "1f1ff-1f1e6",
                     },
                     {
                         "flag: Zambia",
                         "\xf0\x9f\x87\xbf\xf0\x9f\x87\xb2",
+                        "1f1ff-1f1f2",
                     },
                     {
                         "flag: Zimbabwe",
                         "\xf0\x9f\x87\xbf\xf0\x9f\x87\xbc",
+                        "1f1ff-1f1fc",
                     },
                 }
             },
@@ -7343,14 +9044,17 @@ const std::vector<glaxnimate::android::EmojiGroup> glaxnimate::android::EmojiGro
                     {
                         "flag: England",
                         "\xf0\x9f\x8f\xb4\xf3\xa0\x81\xa7\xf3\xa0\x81\xa2\xf3\xa0\x81\xa5\xf3\xa0\x81\xae\xf3\xa0\x81\xa7\xf3\xa0\x81\xbf",
+                        "1f3f4-e0067-e0062-e0065-e006e-e0067-e007f",
                     },
                     {
                         "flag: Scotland",
                         "\xf0\x9f\x8f\xb4\xf3\xa0\x81\xa7\xf3\xa0\x81\xa2\xf3\xa0\x81\xb3\xf3\xa0\x81\xa3\xf3\xa0\x81\xb4\xf3\xa0\x81\xbf",
+                        "1f3f4-e0067-e0062-e0073-e0063-e0074-e007f",
                     },
                     {
                         "flag: Wales",
                         "\xf0\x9f\x8f\xb4\xf3\xa0\x81\xa7\xf3\xa0\x81\xa2\xf3\xa0\x81\xb7\xf3\xa0\x81\xac\xf3\xa0\x81\xb3\xf3\xa0\x81\xbf",
+                        "1f3f4-e0067-e0062-e0077-e006c-e0073-e007f",
                     },
                 }
             },
