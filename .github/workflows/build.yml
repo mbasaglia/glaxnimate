@@ -27,3 +27,10 @@ jobs:
                 path: |
                     build/glaxnimate.dmg
                     checksum.txt
+            - name: Upload Artifacts
+              env:
+                SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
+              run: |
+                echo "$SSH_PRIV_KEY" >>privkey
+                chmod 600 privkey
+                ./deploy/mac_build.sh deploy "$GITHUB_REF" "-i $PWD/privkey"
