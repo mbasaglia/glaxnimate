@@ -48,7 +48,7 @@ case "$ACTION" in
             cpack -G Bundle
             kill %%
         else
-            wait cpack -G Bundle
+            cpack -G Bundle
         fi
 
         mv Glaxnimate-*.dmg glaxnimate.dmg
