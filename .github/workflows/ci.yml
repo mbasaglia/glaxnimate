@@ -1,0 +1,20 @@
+name: CI
+on: push
+jobs:
+    macos:
+        runs-on: macOS-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v1
+            - name: Install Deps
+              run: |
+                brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
+                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
+                ./deploy/mac_build.sh deps
+            - name: Build
+              run: |
+                ./deploy/mac_build.sh build
+            - name: Build Python
+              run: |
+                ./deploy/mac_build.sh pypi
+
