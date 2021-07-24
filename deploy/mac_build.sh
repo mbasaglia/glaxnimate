@@ -78,7 +78,7 @@ case "$ACTION" in
         rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no $SSH_ARGS"
 
         # Upload itch.io
-        brew list wget || brew install wget
+        brew list wget &>/dev/null || brew install wget
         wget -nv https://broth.itch.ovh/butler/darwin-amd64/LATEST/archive/default
         unzip default
         version="$("$ROOT/deploy/get_version.sh" "$ROOT/build/CMakeCache.txt")"

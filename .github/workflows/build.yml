@@ -36,7 +36,8 @@ jobs:
                 echo "$SSH_PRIV_KEY" >>privkey
                 chmod 600 privkey
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
-                ./deploy/mac_build.sh deploy "$GITHUB_REF" "-i $PWD/privkey"
+                branch="${GITHUB_REF#refs/*/}"
+                ./deploy/mac_build.sh deploy "$branch" "-i $PWD/privkey"
 #        windows:
 #            runs-on: windows-latest
 #            defaults:
@@ -81,7 +82,7 @@ jobs:
 #                # variables
 #                version="$(../deploy/get_version.sh CMakeCache.txt)"
 #                channel="windows-beta"
-#                path="$GITHUB_REF"
+#                path="${GITHUB_REF#refs/*/}"
 #                # paths
 #                mkdir -p "artifacts/$path/Win"
 #                mv glaxnimate-x86_64.zip "artifacts/$path/Win"
