@@ -28,6 +28,7 @@ jobs:
                     build/glaxnimate.dmg
                     checksum.txt
             - name: Upload Artifacts
+              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' }}
               env:
                 SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
                 BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
@@ -36,3 +37,64 @@ jobs:
                 chmod 600 privkey
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh deploy "$GITHUB_REF" "-i $PWD/privkey"
+#        windows:
+#            runs-on: windows-latest
+#            defaults:
+#                run:
+#                shell: msys2 {0}
+#            steps:
+#                - name: Setup msys2
+#                  uses: msys2/setup-msys2@v2
+#                  with:
+#                    path-type: strict
+#                    update: true
+#                    install: >-
+#                        git
+#                        zip
+#                        unzip
+#                        mingw-w64-x86_64-toolchain
+#                        mingw-w64-x86_64-qt5
+#                        mingw-w64-x86_64-zlib
+#                        mingw-w64-x86_64-cmake
+#                        mingw-w64-x86_64-python
+#                        mingw-w64-x86_64-potrace
+#                        mingw-w64-x86_64-ffmpeg
+#                        mingw-w64-x86_64-libimagequant
+#                - name: Checkout
+#                  uses: actions/checkout@v2
+#                  with:
+#                    submodules: recursive
+#                - name: Build
+#            - uses: actions/upload-artifact@v2
+#              with:
+#                name: glaxnimate-win
+#                path: |
+#                    build/glaxnimate-x86_64.zip
+#                    checksum.txt
+#            - name: Upload Artifacts
+#              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' }}
+#              env:
+#                SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
+#                BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+#              run: |
+#                cd build
+#                # variables
+#                version="$(../deploy/get_version.sh CMakeCache.txt)"
+#                channel="windows-beta"
+#                path="$GITHUB_REF"
+#                # paths
+#                mkdir -p "artifacts/$path/Win"
+#                mv glaxnimate-x86_64.zip "artifacts/$path/Win"
+#                mv checksum.txt "artifacts/$path/Win"
+#                cd artifacts
+#                # itch.io
+#                wget https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
+#                unzip default
+#                ./butler.exe push "$path/Win/glaxnimate-x86_64.zip" "MattBas/glaxnimate:$channel" --userversion "$version"
+#                # Sourceforce
+#                pacman --noconfirm -S rsync
+#                echo "$SSH_PRIV_KEY" >>privkey
+#                chmod 600 privkey
+#                rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no -i privkey"
+#
+#

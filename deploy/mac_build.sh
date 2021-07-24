@@ -59,12 +59,12 @@ case "$ACTION" in
         BRANCH="${2:-master}"
         SSH_ARGS="$3"
 
-        if [ "$BRANCH" = macbuild -o "$BRANCH" = master ]
+        if [ "$BRANCH" = macbuild -o "$BRANCH" = master -o "$BRANCH" = github ]
         then
             path=master
             channel="mac-beta"
         else
-            path="$TRAVIS_BRANCH"
+            path="$BRANCH"
             channel="mac-stable"
         fi
 
@@ -79,7 +79,7 @@ case "$ACTION" in
 
         # Upload itch.io
         brew list wget || brew install wget
-        wget https://broth.itch.ovh/butler/darwin-amd64/LATEST/archive/default
+        wget -nv https://broth.itch.ovh/butler/darwin-amd64/LATEST/archive/default
         unzip default
         version="$("$ROOT/deploy/get_version.sh" "$ROOT/build/CMakeCache.txt")"
         ./butler push "$path/MacOs/glaxnimate.dmg" "MattBas/glaxnimate:$channel" --userversion "$version"
