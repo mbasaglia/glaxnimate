@@ -33,4 +33,5 @@ jobs:
               run: |
                 echo "$SSH_PRIV_KEY" >>privkey
                 chmod 600 privkey
+                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh deploy "$GITHUB_REF" "-i $PWD/privkey"
