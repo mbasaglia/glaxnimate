@@ -21,4 +21,9 @@ jobs:
               run: |
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh pypi
-
+            - uses: actions/upload-artifact@v2
+              with:
+                name: glaxnimate-mac
+                path: |
+                    build/glaxnimate.dmg
+                    checksum.txt
