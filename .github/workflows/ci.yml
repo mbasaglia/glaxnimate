@@ -13,8 +13,10 @@ jobs:
                 ./deploy/mac_build.sh deps
             - name: Build
               run: |
+                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh build
             - name: Build Python
               run: |
+                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh pypi
 
