@@ -23,10 +23,14 @@ jobs:
                 ./deploy/mac_build.sh pypi
             - uses: actions/upload-artifact@v2
               with:
-                name: glaxnimate-mac
+                name: checksum.txt
+                path: |
+                    build/checksum.txt
+            - uses: actions/upload-artifact@v2
+              with:
+                name: glaxnimate.dmg
                 path: |
                     build/glaxnimate.dmg
-                    checksum.txt
             - name: Upload Artifacts
               if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' }}
               env:
