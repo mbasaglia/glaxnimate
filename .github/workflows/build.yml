@@ -30,6 +30,7 @@ jobs:
             - name: Upload Artifacts
               env:
                 SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
+                BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
               run: |
                 echo "$SSH_PRIV_KEY" >>privkey
                 chmod 600 privkey
