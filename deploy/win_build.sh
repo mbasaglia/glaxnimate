@@ -81,6 +81,8 @@ case "$ACTION" in
         fi
 
         cd "$ROOT/build"
+        version="$(../deploy/get_version.sh CMakeCache.txt)"
+
         mkdir -p "artifacts/$path/Win"
         mv glaxnimate-x86_64.zip "artifacts/$path/Win"
         mv checksum.txt "artifacts/$path/Win"
@@ -91,7 +93,6 @@ case "$ACTION" in
         rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no $SSH_ARGS"
 
         # Upload itch.io
-        version="$(../deploy/get_version.sh CMakeCache.txt)"
         wget https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
         unzip default
         ./butler.exe push "$path/Win/glaxnimate-x86_64.zip" "MattBas/glaxnimate:$channel" --userversion "$version"
