@@ -59,6 +59,10 @@ case "$ACTION" in
         mkdir -p $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
         cp -r /mingw64/lib/python$PY_VERSION/*.py /mingw64/lib/python$PY_VERSION/{json,collections,encodings} $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
 
+        # Create Artifacts
+        zip -r glaxnimate-x86_64.zip glaxnimate
+        sha1sum glaxnimate-x86_64.zip >checksum.txt
+
         ;;
 
     deploy)
