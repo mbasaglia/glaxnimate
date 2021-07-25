@@ -10,14 +10,15 @@ set -ex
 case "$ACTION" in
     deps)
         pacman --noconfirm -S \
-            git zip unzip \
-            mingw-w64-x86_64-toolchain \
+            git zip base-devel \
+            unzip               \
             mingw-w64-x86_64-qt5 \
             mingw-w64-x86_64-zlib \
             mingw-w64-x86_64-cmake \
             mingw-w64-x86_64-python \
             mingw-w64-x86_64-potrace \
-            mingw-w64-x86_64-ffmpeg \
+            mingw-w64-x86_64-ffmpeg   \
+            mingw-w64-x86_64-toolchain \
             mingw-w64-x86_64-libimagequant
         ;;
 
