@@ -93,6 +93,7 @@ case "$ACTION" in
         ;;
 
     pypi)
+        cd "$ROOT/build"
         pacman --noconfirm -S mingw-w64-x86_64-python-pip
         pip.exe install wheel twine
         cmake.exe .. -DVERSION_SUFFIX=""
