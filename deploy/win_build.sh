@@ -53,7 +53,12 @@ case "$ACTION" in
         mingw32-make.exe translations
         mingw32-make.exe install DESTDIR=$PACKDIR
         windeployqt.exe $PACKDIR/bin/glaxnimate.exe
-        cp /mingw64/bin/*.dll $PACKDIR/bin
+        # Copy dependencies, needs to run a couple times to pick everything up *shrugs*
+        for i in {0..3}
+        do
+            ldd.exe test_install/bin/glaxnimate.exe | sed -rn 's/.* => (.*\/mingw64\/bin\/\S+).*/\1/p' | xargs -i cp {} test_install/bin
+        done
+#         cp /mingw64/bin/*.dll $PACKDIR/bin
         cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll $PACKDIR/bin
         cp ../deploy/glaxnimate.vbs $PACKDIR
         mkdir -p $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
