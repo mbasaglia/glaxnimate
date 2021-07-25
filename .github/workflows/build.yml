@@ -22,7 +22,7 @@ jobs:
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh pypi
             # Artifacts are always zipped, even if you only have 1 file... Just adding them so it's easier to verify them
-            - name: Artifact checksum.txt
+            - name: Job Artifacts
               uses: actions/upload-artifact@v2
               with:
                 name: glaxnimate-mac
@@ -31,7 +31,7 @@ jobs:
                     build/glaxnimate.dmg
                     build/py_module/dist/
             - name: Upload Artifacts
-              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' }}
+              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
               env:
                 SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
                 BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
@@ -66,7 +66,7 @@ jobs:
               run: |
                 ./deploy/win_build.sh pypi
             # Artifacts are always zipped, even if you only have 1 file... Just adding them so it's easier to verify them
-            - name: Artifact checksum.txt
+            - name: Job Artifacts
               uses: actions/upload-artifact@v2
               with:
                 name: glaxnimate-win
@@ -75,7 +75,7 @@ jobs:
                     build/glaxnimate-x86_64.zip
                     build/py_module/dist/
             - name: Upload Artifacts
-              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' }}
+              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
               env:
                 SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
                 BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}

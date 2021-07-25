@@ -93,7 +93,7 @@ case "$ACTION" in
         rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no $SSH_ARGS"
 
         # Upload itch.io
-        wget https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
+        wget -nv https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
         unzip default
         ./butler.exe push "$path/Win/glaxnimate-x86_64.zip" "MattBas/glaxnimate:$channel" --userversion "$version"
 
