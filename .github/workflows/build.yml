@@ -12,26 +12,24 @@ jobs:
               run: |
                 brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
-                echo "export PATH='$PATH'" >> $GITHUB_ENV
                 ./deploy/mac_build.sh deps
             - name: Build
               run: |
-                ./deploy/mac_build.sh build
+                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
+                ./deploy/mac_build.sh build "mac-${GITHUB_SHA:0:8}"
             - name: Build Python
               run: |
+                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh pypi
+            # Artifacts are always zipped, even if you only have 1 file... Just adding them so it's easier to verify them
             - name: Artifact checksum.txt
               uses: actions/upload-artifact@v2
               with:
-                name: checksum.txt
+                name: glaxnimate-mac
                 path: |
                     build/checksum.txt
-            - name: Artifact glaxnimate.dmg
-              uses: actions/upload-artifact@v2
-              with:
-                name: glaxnimate.dmg
-                path: |
                     build/glaxnimate.dmg
+                    build/py_module/dist/
             - name: Upload Artifacts
               if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' }}
               env:
@@ -41,65 +39,49 @@ jobs:
                 echo "$SSH_PRIV_KEY" >>privkey
                 chmod 600 privkey
                 branch="${GITHUB_REF#refs/*/}"
+                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh deploy "$branch" "-i $PWD/privkey"
-#        windows:
-#            runs-on: windows-latest
-#            defaults:
-#                run:
-#                shell: msys2 {0}
-#            steps:
-#                - name: Setup msys2
-#                  uses: msys2/setup-msys2@v2
-#                  with:
-#                    path-type: strict
-#                    update: true
-#                    install: >-
-#                        git
-#                        zip
-#                        unzip
-#                        mingw-w64-x86_64-toolchain
-#                        mingw-w64-x86_64-qt5
-#                        mingw-w64-x86_64-zlib
-#                        mingw-w64-x86_64-cmake
-#                        mingw-w64-x86_64-python
-#                        mingw-w64-x86_64-potrace
-#                        mingw-w64-x86_64-ffmpeg
-#                        mingw-w64-x86_64-libimagequant
-#                - name: Checkout
-#                  uses: actions/checkout@v2
-#                  with:
-#                    submodules: recursive
-#                - name: Build
-#            - uses: actions/upload-artifact@v2
-#              with:
-#                name: glaxnimate-win
-#                path: |
-#                    build/glaxnimate-x86_64.zip
-#                    checksum.txt
-#            - name: Upload Artifacts
-#              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' }}
-#              env:
-#                SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
-#                BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-#              run: |
-#                cd build
-#                # variables
-#                version="$(../deploy/get_version.sh CMakeCache.txt)"
-#                channel="windows-beta"
-#                path="${GITHUB_REF#refs/*/}"
-#                # paths
-#                mkdir -p "artifacts/$path/Win"
-#                mv glaxnimate-x86_64.zip "artifacts/$path/Win"
-#                mv checksum.txt "artifacts/$path/Win"
-#                cd artifacts
-#                # itch.io
-#                wget https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
-#                unzip default
-#                ./butler.exe push "$path/Win/glaxnimate-x86_64.zip" "MattBas/glaxnimate:$channel" --userversion "$version"
-#                # Sourceforce
-#                pacman --noconfirm -S rsync
-#                echo "$SSH_PRIV_KEY" >>privkey
-#                chmod 600 privkey
-#                rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no -i privkey"
-#
-#
+    windows:
+        runs-on: windows-latest
+        defaults:
+            run:
+            shell: msys2 {0}
+        steps:
+            - name: Setup msys2
+              uses: msys2/setup-msys2@v2
+              with:
+                path-type: strict
+                update: true
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                submodules: recursive
+            - name: Install Deps
+              run: |
+                ./deploy/win_build.sh deps
+            - name: Build
+              run: |
+                 ./deploy/win_build.sh build "win-${GITHUB_SHA:0:8}"
+            - name: Build Python
+              run: |
+                ./deploy/win_build.sh pypi
+            # Artifacts are always zipped, even if you only have 1 file... Just adding them so it's easier to verify them
+            - name: Artifact checksum.txt
+              uses: actions/upload-artifact@v2
+              with:
+                name: glaxnimate-win
+                path: |
+                    build/checksum.txt
+                    build/glaxnimate-x86_64.zip
+                    build/py_module/dist/
+            - name: Upload Artifacts
+              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' }}
+              env:
+                SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
+                BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+              run: |
+                echo "$SSH_PRIV_KEY" >>privkey
+                chmod 600 privkey
+                branch="${GITHUB_REF#refs/*/}"
+                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
+                ./deploy/mac_build.sh deploy "$branch" "-i $PWD/privkey"

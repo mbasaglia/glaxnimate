@@ -104,7 +104,7 @@ case "$ACTION" in
         echo " # Add package to artifacts"
         echo "mac_build.sh deploy [BRANCH=master [SSH_ARGS]]"
         echo
-        echo " # Build and upload python package"
+        echo " # Build python package"
         echo "mac_build.sh pypi"
         ;;
 esac
