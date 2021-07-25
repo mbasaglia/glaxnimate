@@ -46,7 +46,7 @@ jobs:
                 TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_GITLAB }}
                 TWINE_USERNAME: __token__
               run: |
-                python3 -m twine upload py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi --verbose
+                python3 -m twine upload build/py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi --verbose
     windows:
         runs-on: windows-latest
         defaults:
@@ -96,4 +96,4 @@ jobs:
                 TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_GITLAB }}
                 TWINE_USERNAME: __token__
               run: |
-                python3 -m twine upload py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi --verbose
+                python3 -m twine upload build/py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi --verbose
