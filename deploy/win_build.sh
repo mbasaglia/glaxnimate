@@ -69,6 +69,8 @@ case "$ACTION" in
         BRANCH="${2:-master}"
         SSH_ARGS="$3"
 
+        pacman --noconfirm -S rsync
+
         if [ "$BRANCH" = master -o "$BRANCH" = github ]
         then
             path=master
