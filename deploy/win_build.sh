@@ -22,17 +22,13 @@ case "$ACTION" in
             mingw-w64-x86_64-libimagequant
         ;;
 
-    build)
+    configure)
         SUFFIX="$2"
         mkdir -p "$ROOT/build"
         cd "$ROOT/build"
 
         (cd ../data/icons/breeze-icons/ && git config core.symlinks true && git reset --hard &>/dev/null)
 
-        mingw32-make.exe --help
-        mingw32-make.exe --version
-
-        # Build
         cmake.exe .. \
             -DQt5_DIR=/mingw64/lib/cmake/Qt5 \
             -DZLIB_LIBRARY=/mingw64/lib/libz.a \
@@ -45,8 +41,11 @@ case "$ACTION" in
             -DCMAKE_INSTALL_PREFIX='' \
             -DCMAKE_BUILD_TYPE=Release \
             -DVERSION_SUFFIX="$SUFFIX"
+        ;;
 
-        mingw32-make.exe -j2
+    build)
+        JOBS="${2:-4}"
+        mingw32-make.exe -j$JOBS
 
         # Setup package
         PACKDIR=glaxnimate
@@ -108,18 +107,20 @@ case "$ACTION" in
         cd "$ROOT/build"
         pacman --noconfirm -S mingw-w64-x86_64-python-pip
         pip.exe install wheel twine
-        cmake.exe .. -DVERSION_SUFFIX=""
         mingw32-make.exe glaxnimate_python_depends_install
         mingw32-make.exe glaxnimate_python
-        (cd py_module && ./setup.py build --compiler=unix bdist_wheel && cd ..)
+        mingw32-make.exe glaxnimate_python_wheel
         ;;
 
     *)
         echo " # Install dependencies"
         echo "win_build.sh deps"
         echo
+        echo " # Configure CMake"
+        echo "win_build.sh configure [VERSION_SUFFIX]"
+        echo
         echo " # Compile / package"
-        echo "win_build.sh build [VERSION_SUFFIX]"
+        echo "win_build.sh build [JOBS=4]"
         echo
         echo " # Add package to artifacts"
         echo "win_build.sh deploy [BRANCH=master [SSH_ARGS]]"

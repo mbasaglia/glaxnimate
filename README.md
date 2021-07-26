@@ -67,8 +67,14 @@ Build with `cmake`, specifying the Qt installation path:
 
     mkdir build
     cd build
-    cmake .. -DQt5_DIR="$(brew --prefix qt@5)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt)/lib/cmake/Qt5Designer"
+    cmake .. -DQt5_DIR="$(brew --prefix qt@5)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt@5)/lib/cmake/Qt5Designer"
     make
+
+To simplify the build process, you can also use the provided scrips:
+
+    ./deploy/mac_build.sh deps
+    ./deploy/mac_build.sh configure
+    ./deploy/mac_build.sh build
 
 
 ### Windows
@@ -105,6 +111,13 @@ Install [MSYS2](https://www.msys2.org/), select "Mingw-w64 64 bit" when asked, a
     windeployqt.exe bin/glaxnimate.exe
     cp /mingw64/bin/*.dll bin
     cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll bin
+
+
+To simplify the build process, you can also use the provided scrips:
+
+    ./deploy/win_build.sh deps
+    ./deploy/win_build.sh configure
+    ./deploy/win_build.sh build
     
 
 ### Android

@@ -23,12 +23,17 @@ case "$ACTION" in
         brew list ffmpeg || brew install ffmpeg
         ;;
 
-    build)
+    configure)
         SUFFIX="$2"
         mkdir -p "$ROOT/build"
         cd "$ROOT/build"
         cmake .. -DQt5_DIR="$(brew --prefix qt@5)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt@5)/lib/cmake/Qt5Designer" -DVERSION_SUFFIX="$SUFFIX"
-        make -j4
+        ;;
+
+    build)
+        cd "$ROOT/build"
+        JOBS="${2:-4}"
+        make -j$JOBS
         make translations || make help | sort # Why does this not work on travis?
         mkdir -p glaxnimate.iconset
         cp ../data/images/glaxnimate.png glaxnimate.iconset/icon_512x512.png
@@ -98,8 +103,11 @@ case "$ACTION" in
         echo " # Install dependencies"
         echo "mac_build.sh deps"
         echo
+        echo " # Configure CMake"
+        echo "mac_build.sh configure [VERSION_SUFFIX]"
+        echo
         echo " # Compile / package"
-        echo "mac_build.sh build [VERSION_SUFFIX]"
+        echo "mac_build.sh build [JOBS=4]"
         echo
         echo " # Add package to artifacts"
         echo "mac_build.sh deploy [BRANCH=master [SSH_ARGS]]"

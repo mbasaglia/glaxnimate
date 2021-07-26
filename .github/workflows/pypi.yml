@@ -1,4 +1,4 @@
-name: PyPI
+name: PyPI Release
 on:
     push:
         tags:
@@ -19,6 +19,7 @@ jobs:
             - name: Build Python
               run: |
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
+                ./deploy/win_build.sh configure ""
                 ./deploy/mac_build.sh pypi
             - name: Upload Pypi
               env:
@@ -47,6 +48,7 @@ jobs:
                 ./deploy/win_build.sh deps
             - name: Build Python
               run: |
+                ./deploy/win_build.sh configure ""
                 ./deploy/win_build.sh pypi
             - name: Upload Pypi
               env:

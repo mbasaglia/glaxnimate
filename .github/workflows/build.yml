@@ -16,7 +16,8 @@ jobs:
             - name: Build
               run: |
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
-                ./deploy/mac_build.sh build "mac-${GITHUB_SHA:0:8}"
+                ./deploy/mac_build.sh configure "mac-${GITHUB_SHA:0:8}"
+                ./deploy/mac_build.sh build
             - name: Build Python
               run: |
                 cd build
@@ -72,7 +73,8 @@ jobs:
                 ./deploy/win_build.sh deps
             - name: Build
               run: |
-                 ./deploy/win_build.sh build "win-${GITHUB_SHA:0:8}"
+                 ./deploy/win_build.sh configure "win-${GITHUB_SHA:0:8}"
+                 ./deploy/win_build.sh build
             - name: Build Python
               run: |
                 cd build
