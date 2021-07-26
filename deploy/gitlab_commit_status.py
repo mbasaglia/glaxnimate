@@ -25,8 +25,8 @@ if ns.fake_env:
     ref = "refs/heads/" + git("branch", "--show-current")
 else:
     commit = environ("GITHUB_SHA")
-    name = "[GitHub] %s: %s" % (environ("GITHUB_WORKFLOW"), environ("GITHUB_JOB"))
-    url = environ("GITHUB_SERVER_URL") + "/" + environ("GITHUB_REPOSITORY") + "/runs/" + environ("GITHUB_RUN_ID")
+    name = "%s: %s" % (environ("GITHUB_WORKFLOW"), environ("GITHUB_JOB"))
+    url = environ("GITHUB_SERVER_URL") + "/" + environ("GITHUB_REPOSITORY") + "/actions/runs/" + environ("GITHUB_RUN_ID")
     ref = environ("GITHUB_REF")
 
 
