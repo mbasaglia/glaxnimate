@@ -19,6 +19,7 @@ case "$ACTION" in
             mingw-w64-x86_64-potrace \
             mingw-w64-x86_64-ffmpeg   \
             mingw-w64-x86_64-toolchain \
+            mingw-w64-x86_64-python-pip \
             mingw-w64-x86_64-libimagequant
         ;;
 
@@ -106,7 +107,6 @@ case "$ACTION" in
 
     pypi)
         cd "$ROOT/build"
-        pacman --noconfirm -S mingw-w64-x86_64-python-pip
         pip.exe install wheel twine
         mingw32-make.exe glaxnimate_python_depends_install
         mingw32-make.exe glaxnimate_python
