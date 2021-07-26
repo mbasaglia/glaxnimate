@@ -85,7 +85,7 @@ jobs:
               env:
                 GITLAB_ACCESS_TOKEN: ${{ secrets.GITLAB_ACCESS_TOKEN }}
               run: |
-                mingw-w64-x86_64-python-pip
+                pacman --noconfirm -S mingw-w64-x86_64-python-pip
                 pip install requests
                 ./deploy/gitlab_commit_status.py running
             - name: Install Deps
