@@ -19,6 +19,11 @@ jobs:
                 ./deploy/mac_build.sh build "mac-${GITHUB_SHA:0:8}"
             - name: Build Python
               run: |
+                cd build
+                CI_COMMIT_BRANCH="${GITHUB_REF#refs/*/}"
+                CI_COMMIT_SHORT_SHA="${GITHUB_SHA:0:8}"
+                cmake .. -DVERSION_SUFFIX="git.`date +%Y%m%d%H%M%S`.$CI_COMMIT_BRANCH.$CI_COMMIT_SHORT_SHA"
+                cd ..
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh pypi
             # Artifacts are always zipped, even if you only have 1 file... Just adding them so it's easier to verify them
@@ -70,6 +75,11 @@ jobs:
                  ./deploy/win_build.sh build "win-${GITHUB_SHA:0:8}"
             - name: Build Python
               run: |
+                cd build
+                CI_COMMIT_BRANCH="${GITHUB_REF#refs/*/}"
+                CI_COMMIT_SHORT_SHA="${GITHUB_SHA:0:8}"
+                cmake .. -DVERSION_SUFFIX="git.`date +%Y%m%d%H%M%S`.$CI_COMMIT_BRANCH.$CI_COMMIT_SHORT_SHA"
+                cd ..
                 ./deploy/win_build.sh pypi
             # Artifacts are always zipped, even if you only have 1 file... Just adding them so it's easier to verify them
             - name: Job Artifacts
