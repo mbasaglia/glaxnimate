@@ -57,8 +57,12 @@ case "$ACTION" in
         # Copy dependencies, needs to run a couple times to pick everything up *shrugs*
         for i in {0..3}
         do
+            echo "Adding"
+            ldd.exe $PACKDIR/bin/glaxnimate.exe | sed -rn 's/.* => (.*\/mingw64\/bin\/\S+).*/\1/p'
             ldd.exe $PACKDIR/bin/glaxnimate.exe | sed -rn 's/.* => (.*\/mingw64\/bin\/\S+).*/\1/p' | xargs -i cp {} $PACKDIR/bin
         done
+        echo "."
+
 #         cp /mingw64/bin/*.dll $PACKDIR/bin
         cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll $PACKDIR/bin
         cp ../deploy/glaxnimate.vbs $PACKDIR
