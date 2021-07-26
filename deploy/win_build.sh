@@ -40,7 +40,6 @@ case "$ACTION" in
             -DPython3_EXECUTABLE=/mingw64/bin/python3 \
             -G 'MSYS Makefiles' \
             -DCMAKE_INSTALL_PREFIX='' \
-            -DCMAKE_BUILD_TYPE=Release \
             -DVERSION_SUFFIX="$SUFFIX"
         ;;
 
@@ -52,10 +51,12 @@ case "$ACTION" in
         # Setup package
         PACKDIR=glaxnimate
         mingw32-make.exe translations
-        mingw32-make.exe install DESTDIR=$PACKDIR
+        mingw32-make.exe install DESTDIR=$PACKDIR >/dev/null
         windeployqt.exe $PACKDIR/bin/glaxnimate.exe
 
         # Copy dependencies, needs to run a couple times to pick everything up *shrugs*
+        echo =====
+        ldd.exe --version
         ldd.exe $PACKDIR/bin/glaxnimate.exe
         for i in {0..3}
         do
@@ -72,7 +73,7 @@ case "$ACTION" in
         cp -r /mingw64/lib/python$PY_VERSION/*.py /mingw64/lib/python$PY_VERSION/{json,collections,encodings} $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
 
         # Create Artifacts
-        zip -r glaxnimate-x86_64.zip glaxnimate
+        zip -r glaxnimate-x86_64.zip glaxnimate >/dev/null
         sha1sum glaxnimate-x86_64.zip >checksum.txt
 
         ;;
