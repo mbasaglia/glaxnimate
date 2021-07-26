@@ -8,6 +8,11 @@ jobs:
               uses: actions/checkout@v2
               with:
                 submodules: recursive
+            - name: Notify Gitlab Start
+              env:
+                GITLAB_ACCESS_TOKEN: ${{ secrets.GITLAB_ACCESS_TOKEN }}
+              run: |
+                ./deploy/gitlab_commit_status.py running
             - name: Install Deps
               run: |
                 brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
@@ -53,6 +58,13 @@ jobs:
                 TWINE_USERNAME: __token__
               run: |
                 python3 -m twine upload build/py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi --verbose
+            - name: Notify Gitlab Finish
+              if: ${{ always() }}
+              env:
+                GITLAB_ACCESS_TOKEN: ${{ secrets.GITLAB_ACCESS_TOKEN }}
+                RESULT: ${{ job.status }}
+              run: |
+                ./deploy/gitlab_commit_status.py $RESULT
     windows:
         runs-on: windows-latest
         defaults:
