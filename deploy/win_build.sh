@@ -45,6 +45,7 @@ case "$ACTION" in
 
     build)
         JOBS="${2:-4}"
+        cd "$ROOT/build"
         mingw32-make.exe -j$JOBS
 
         # Setup package
