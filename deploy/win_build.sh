@@ -39,6 +39,7 @@ case "$ACTION" in
             -DPython3_LIBRARIES=/mingw64/bin/libpython$PY_VERSION.dll \
             -DPython3_EXECUTABLE=/mingw64/bin/python3 \
             -G 'MSYS Makefiles' \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX='' \
             -DVERSION_SUFFIX="$SUFFIX"
         ;;
@@ -55,18 +56,19 @@ case "$ACTION" in
         windeployqt.exe $PACKDIR/bin/glaxnimate.exe
 
         # Copy dependencies, needs to run a couple times to pick everything up *shrugs*
-        echo =====
-        ldd.exe --version
-        ldd.exe $PACKDIR/bin/glaxnimate.exe
-        for i in {0..3}
-        do
-            echo "Adding"
-            ldd.exe $PACKDIR/bin/glaxnimate.exe | sed -rn 's/.* => (.*\/mingw64\/bin\/\S+).*/\1/p'
-            ldd.exe $PACKDIR/bin/glaxnimate.exe | sed -rn 's/.* => (.*\/mingw64\/bin\/\S+).*/\1/p' | xargs -i cp {} $PACKDIR/bin
-        done
-        echo "."
+#         echo =====
+#         ldd.exe --version
+#         ldd.exe $PACKDIR/bin/glaxnimate.exe
+#         for i in {0..3}
+#         do
+#             echo "Adding"
+#             ldd.exe $PACKDIR/bin/glaxnimate.exe | sed -rn 's/.* => (.*\/mingw64\/bin\/\S+).*/\1/p'
+#             ldd.exe $PACKDIR/bin/glaxnimate.exe | sed -rn 's/.* => (.*\/mingw64\/bin\/\S+).*/\1/p' | xargs -i cp {} $PACKDIR/bin
+#         done
+#         echo "."
+        # Dunno why but the above doesn't work on CI (it does work locally *shrugs*)
+        cp /mingw64/bin/*.dll $PACKDIR/bin
 
-#         cp /mingw64/bin/*.dll $PACKDIR/bin
         cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll $PACKDIR/bin
         cp ../deploy/glaxnimate.vbs $PACKDIR
         mkdir -p $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
