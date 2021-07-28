@@ -25,7 +25,7 @@ QStringList app::Application::data_paths(const QString& name) const
 
     for ( const QDir& d: data_roots() )
     {
-        if ( d.exists() )
+        if ( d.exists(name) )
             found << QDir::cleanPath(d.absoluteFilePath(name));
     }
     found.removeDuplicates();

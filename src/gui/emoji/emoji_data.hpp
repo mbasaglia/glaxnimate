@@ -4,7 +4,7 @@
 #include <vector>
 #include <QString>
 
-namespace glaxnimate::android {
+namespace glaxnimate::emoji {
 
 struct Emoji
 {
@@ -32,7 +32,7 @@ struct EmojiGroup
     }
 };
 
-} // glaxnimate::android
+} // glaxnimate::emoji
 
 
 

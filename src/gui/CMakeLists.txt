@@ -2,6 +2,11 @@ set(SOURCES
 
 glaxnimate_app.cpp
 
+emoji/emoji_data.cpp
+emoji/emoji_dialog.cpp
+emoji/emoji_set_dialog.cpp
+emoji/emoji_set_dialog.ui
+
 graphics/handle.cpp
 graphics/document_node_graphics_item.cpp
 graphics/document_scene.cpp
@@ -24,6 +29,7 @@ settings/document_templates.cpp
 
 style/property_delegate.cpp
 style/dock_widget_style.cpp
+style/scroll_area_event_filter.cpp
 
 tools/base.cpp
 tools/freehand.cpp
@@ -146,11 +152,13 @@ include_directories(${CMAKE_SOURCE_DIR}/src/core)
 add_library(${LIB_NAME_GUI} OBJECT ${SOURCES})
 target_link_libraries(
     ${LIB_NAME_GUI} PUBLIC
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::UiTools
     QtColorWidgets
     ${LIB_NAME_CORE}
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::UiTools
     Qt${QT_VERSION_MAJOR}::Concurrent
+    Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::Svg
 )
 
 

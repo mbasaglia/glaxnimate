@@ -120,6 +120,7 @@
      <addaction name="action_new_group"/>
      <addaction name="action_new_fill"/>
      <addaction name="action_new_stroke"/>
+     <addaction name="action_insert_emoji"/>
     </widget>
     <addaction name="menu_new_layer"/>
     <addaction name="action_new_precomp_selection"/>
@@ -2135,10 +2136,19 @@
   </action>
   <action name="action_validate_discord">
    <property name="icon">
-    <iconset theme="discord"/>
+    <iconset theme="discord">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Validate Discord Sticker</string>
+   </property>
+  </action>
+  <action name="action_insert_emoji">
+   <property name="icon">
+    <iconset theme="smiley-shape"/>
+   </property>
+   <property name="text">
+    <string>Emo&amp;ji...</string>
    </property>
   </action>
  </widget>

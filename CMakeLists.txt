@@ -73,7 +73,7 @@ endif()
 #find_package(Qt5Qml QUIET)
 set(QT_VERSION_MAJOR 5)
 find_package(QT NAMES Qt5 Qt6 COMPONENTS Core QUIET)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Xml UiTools Concurrent REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Xml UiTools Concurrent Network Svg REQUIRED)
 
 
 

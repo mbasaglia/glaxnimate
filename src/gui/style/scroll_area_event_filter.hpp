@@ -8,8 +8,11 @@
 
 class QScroller;
 
-namespace glaxnimate::android {
+namespace glaxnimate::gui {
 
+/**
+ * \brief Adds touch scroll support to scroll areas
+ */
 class ScrollAreaEventFilter : public QObject
 {
     Q_OBJECT
@@ -36,6 +39,6 @@ private:
 
 };
 
-} // namespace glaxnimate::android
+} // namespace glaxnimate::gui
 
 #endif // SCROLL_AREA_EVENT_FILTER_HPP

@@ -23,6 +23,9 @@ else()
 
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/lib/python-lottie/lib/lottie DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/lib/)
     install(DIRECTORY lib/python-lottie/lib/lottie DESTINATION ${DATA_INSTALL}/lib/)
+
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/emoji DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    install(DIRECTORY emoji DESTINATION ${DATA_INSTALL})
 endif()
 
 # Translation

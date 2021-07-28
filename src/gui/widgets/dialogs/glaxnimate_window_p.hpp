@@ -180,6 +180,7 @@ public:
     template<class T> void add_modifier_menu_action(QMenu* menu);
     void show_startup_dialog();
     void drop_file(const QString& file);
+    void insert_emoji();
 
     void init_actions();
     void init_plugins();

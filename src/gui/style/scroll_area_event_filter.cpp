@@ -8,7 +8,7 @@
 #include <QScroller>
 #include <QEasingCurve>
 
-class glaxnimate::android::ScrollAreaEventFilter::Private
+class glaxnimate::gui::ScrollAreaEventFilter::Private
 {
 public:
     QAbstractScrollArea *target;
@@ -17,19 +17,19 @@ public:
     QScroller* scroller = nullptr;
 };
 
-glaxnimate::android::ScrollAreaEventFilter::ScrollAreaEventFilter(QAbstractScrollArea *target, Qt::Orientations direction)
+glaxnimate::gui::ScrollAreaEventFilter::ScrollAreaEventFilter(QAbstractScrollArea *target, Qt::Orientations direction)
     : d(std::make_unique<Private>())
 {
     set_target(target);
     d->direction = direction;
 }
 
-glaxnimate::android::ScrollAreaEventFilter::~ScrollAreaEventFilter()
+glaxnimate::gui::ScrollAreaEventFilter::~ScrollAreaEventFilter()
 {
 
 }
 
-void glaxnimate::android::ScrollAreaEventFilter::set_target(QAbstractScrollArea *target)
+void glaxnimate::gui::ScrollAreaEventFilter::set_target(QAbstractScrollArea *target)
 {
     d->target = target;
     if ( target )
@@ -43,12 +43,12 @@ void glaxnimate::android::ScrollAreaEventFilter::set_target(QAbstractScrollArea 
     }
 }
 
-void glaxnimate::android::ScrollAreaEventFilter::scroll_to(const QPointF &p)
+void glaxnimate::gui::ScrollAreaEventFilter::scroll_to(const QPointF &p)
 {
     d->scroller->scrollTo(p);
 }
 
-QScroller *glaxnimate::android::ScrollAreaEventFilter::setup_scroller(QAbstractScrollArea *target)
+QScroller *glaxnimate::gui::ScrollAreaEventFilter::setup_scroller(QAbstractScrollArea *target)
 {
     target->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
     QScroller::grabGesture(target->viewport(), QScroller::TouchGesture);
@@ -68,7 +68,7 @@ QScroller *glaxnimate::android::ScrollAreaEventFilter::setup_scroller(QAbstractS
     return scroller;
 }
 
-bool glaxnimate::android::ScrollAreaEventFilter::eventFilter(QObject *object, QEvent *event)
+bool glaxnimate::gui::ScrollAreaEventFilter::eventFilter(QObject *object, QEvent *event)
 {
 
     switch ( event->type() )

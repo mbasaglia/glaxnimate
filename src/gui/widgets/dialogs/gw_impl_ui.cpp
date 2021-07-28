@@ -34,6 +34,7 @@
 #include "glaxnimate_app.hpp"
 #include "settings/toolbar_settings.hpp"
 #include "settings/document_templates.hpp"
+#include "emoji/emoji_set_dialog.hpp"
 
 using namespace glaxnimate::gui;
 
@@ -247,6 +248,7 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_flip_view, &QAction::triggered, ui.canvas, &Canvas::flip_horizontal);
     connect(ui.action_text_put_on_path, &QAction::triggered, parent, [this]{text_put_on_path();});
     connect(ui.action_text_remove_from_path, &QAction::triggered, parent, [this]{text_remove_from_path();});
+    connect(ui.action_insert_emoji, &QAction::triggered, parent, [this]{insert_emoji();});
 }
 
 tools::Tool* GlaxnimateWindow::Private::init_tools_ui()
@@ -921,5 +923,11 @@ void GlaxnimateWindow::Private::drop_file(const QString& file)
     });
     lay.addLayout(&lay2);
 
+    dialog.exec();
+}
+
+void GlaxnimateWindow::Private::insert_emoji()
+{
+    emoji::EmojiSetDialog dialog;
     dialog.exec();
 }
