@@ -40,6 +40,7 @@
     * Fixed switching to the newly created comp when precomposing
     * Better naming for compositions created from a single object
     * Dragging no longer moves objects that don't need to be moved
+    * Fixed tab bars not showing when loading documents containing precomps
 
 ## 0.4.3
 

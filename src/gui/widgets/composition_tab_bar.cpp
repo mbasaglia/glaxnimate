@@ -115,6 +115,8 @@ void CompositionTabBar::set_document(model::Document* document)
     if ( document )
     {
         setup_composition(document->main(), 0);
+        for ( int i = 0; i < document->assets()->precompositions->values.size(); i++ )
+            setup_composition(document->assets()->precompositions->values[i], i+1);
 
         connect(document->assets()->precompositions.get(), &model::PrecompositionList::docnode_child_remove_begin, this, &CompositionTabBar::on_precomp_removed);
         connect(document->assets()->precompositions.get(), &model::PrecompositionList::precomp_added, this, [this](model::Precomposition* node, int row){setup_composition(node, row+1);});
