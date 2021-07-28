@@ -185,7 +185,11 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_new_stroke, &QAction::triggered, parent, [this]{layer_new_stroke();});
     connect(ui.action_open_last, &QAction::triggered, parent, [this]{
         if ( !recent_files.isEmpty() )
-            document_open_from_filename(recent_files[0]);
+        {
+            // Avoid references to recent_files
+            QString filename = recent_files[0];
+            document_open_from_filename(filename);
+        }
     });
     add_modifier_menu_action<model::Repeater>(ui.menu_new_layer);
     add_modifier_menu_action<model::Trim>(ui.menu_new_layer);

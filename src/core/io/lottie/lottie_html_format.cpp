@@ -1,5 +1,5 @@
 #include "lottie_html_format.hpp"
-#include "lottie_format.hpp"
+#include "lottie_exporter.hpp"
 #include "cbor_write_json.hpp"
 
 QByteArray glaxnimate::io::lottie::LottieHtmlFormat::html_head(ImportExport* ie, model::Document* document, const QString& extra)
@@ -45,7 +45,8 @@ bool glaxnimate::io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QS
 
 <script>
     var lottie_json = )");
-    file.write(cbor_write_json(LottieFormat().to_json(document), false));
+    detail::LottieExporterState exp(this, document, false, false);
+    file.write(cbor_write_json(exp.to_json(), false));
 
 file.write(QString(R"(
     ;

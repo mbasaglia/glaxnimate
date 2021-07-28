@@ -9,7 +9,7 @@
 
 namespace glaxnimate::io::lottie::detail {
 
-QLatin1String operator "" _l(const char* c, std::size_t sz)
+inline QLatin1String operator "" _l(const char* c, std::size_t sz)
 {
     return QLatin1String(c, sz);
 }
@@ -17,7 +17,7 @@ QLatin1String operator "" _l(const char* c, std::size_t sz)
 class LottieExporterState
 {
 public:
-    explicit LottieExporterState(io::lottie::LottieFormat* format, model::Document* document, bool strip, bool strip_raster )
+    explicit LottieExporterState(ImportExport* format, model::Document* document, bool strip, bool strip_raster )
         : format(format), document(document), strip(strip), strip_raster( strip_raster ) {}
 
     QCborMap to_json()
@@ -524,9 +524,9 @@ public:
         for ( const auto& shape : shapes )
         {
             if ( shape->is_instance<model::Image>() )
-                format->warning(io::lottie::LottieFormat::tr("Images cannot be grouped with other shapes"));
+                format->warning(io::lottie::LottieFormat::tr("Images cannot be grouped with other shapes, they must be inside a layer"));
             else if ( shape->is_instance<model::PreCompLayer>() )
-                format->warning(io::lottie::LottieFormat::tr("Composition layers cannot be grouped with other shapes"));
+                format->warning(io::lottie::LottieFormat::tr("Composition layers cannot be grouped with other shapes, they must be inside a layer"));
             else if ( !strip || shape->visible.get() )
                 jshapes.push_front(convert_shape(shape.get(), force_hidden));
         }
@@ -641,7 +641,7 @@ public:
         return json;
     }
 
-    io::lottie::LottieFormat* format;
+    ImportExport* format;
     model::Document* document;
     bool strip;
     QMap<QUuid, int> layer_indices;

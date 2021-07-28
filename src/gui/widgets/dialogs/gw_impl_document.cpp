@@ -28,8 +28,8 @@
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/shape_style/shape_style_preview_widget.hpp"
 
-
-static void process_events(const QFuture<bool>& promise)
+template<class T>
+static void process_events(const QFuture<T>& promise)
 {
     while ( !promise.isFinished() )
     {
@@ -445,20 +445,31 @@ void GlaxnimateWindow::Private::document_reload()
 
 void GlaxnimateWindow::Private::preview(io::ImportExport& exporter, const QVariantMap& options)
 {
-    QTemporaryFile tempf(GlaxnimateApp::temp_path() + "/XXXXXX." + exporter.extensions()[0]);
-    tempf.setAutoRemove(false);
-    bool ok = tempf.open() && exporter.save(
-        tempf, tempf.fileName(), current_document.get(), options
-    );
+    dialog_export_status->reset(&exporter, tr("Web Preview"));
 
-    if ( !ok )
+    auto promise = QtConcurrent::run(
+        [&exporter, current_document=current_document.get(), options]() -> QString {
+            QTemporaryFile tempf(GlaxnimateApp::temp_path() + "/XXXXXX." + exporter.extensions()[0]);
+            tempf.setAutoRemove(false);
+            bool ok = tempf.open() && exporter.save(
+                tempf, tempf.fileName(), current_document, options
+            );
+            if ( !ok )
+                return "";
+            return tempf.fileName();
+        });
+
+    process_events(promise);
+
+    QString path = promise.result();
+
+    if ( path.isEmpty() )
     {
         show_warning(tr("Web Preview"), tr("Could not create file"));
         return;
     }
 
-    tempf.close();
-    if ( !QDesktopServices::openUrl(QUrl::fromLocalFile(tempf.fileName())) )
+    if ( !QDesktopServices::openUrl(QUrl::fromLocalFile(path)) )
     {
         show_warning(tr("Web Preview"), tr("Could not open browser"));
     }

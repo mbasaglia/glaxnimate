@@ -21,6 +21,7 @@
 * I/O:
     * More color formats are supported for the SVG importer
     * Automatically removes embedded images when exporting to TGS
+    * Preview exports now show the warnings you'd get when saving to that format
 * Scripting:
     * Python can now convert objects to path
     * More intuitive construction of C++ classes from python
@@ -41,6 +42,7 @@
     * Better naming for compositions created from a single object
     * Dragging no longer moves objects that don't need to be moved
     * Fixed tab bars not showing when loading documents containing precomps
+    * Fixed crash when opening the most recent file
 
 ## 0.4.3
 
