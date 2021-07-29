@@ -17,6 +17,7 @@ Dependencies
 * ZLib
 * Potrace
 * libav (libavformat, libswscale, libavcodec, libavutil) >= 59
+* libarchive
 
 
 Getting the Latest Code
@@ -52,7 +53,7 @@ It will produce the executable `bin/glaxnimate` relative to the build directory
 
 Install the dependencies:
 
-    apt-get install -y g++ cmake qtbase5-dev qttools5-dev libpython3-dev zlib1g-dev libpotrace-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev
+    apt-get install -y g++ cmake qtbase5-dev qttools5-dev libpython3-dev zlib1g-dev libpotrace-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev libarchive-dev
 
 The generic `cmake` commands listed above should work.
 
@@ -61,7 +62,7 @@ The generic `cmake` commands listed above should work.
 
 Install the dependencies with homebrew:
 
-    brew install cmake qt python potrace ffmpeg
+    brew install cmake qt python potrace ffmpeg libarchive
 
 Build with `cmake`, specifying the Qt installation path:
 
@@ -85,15 +86,19 @@ Install [MSYS2](https://www.msys2.org/), select "Mingw-w64 64 bit" when asked, a
     pacman --noconfirm -Sy
     pacman --noconfirm -Su
     # Restart msys2 before continuing
-    pacman  --noconfirm  -S \
+    pacman --noconfirm -S \
+        git zip base-devel \
+        unzip               \
         mingw-w64-x86_64-qt5 \
         mingw-w64-x86_64-zlib \
         mingw-w64-x86_64-cmake \
         mingw-w64-x86_64-python \
-        mingw-w64-x86_64-ffmpeg  \
-        mingw-w64-x86_64-potrace  \
+        mingw-w64-x86_64-potrace \
+        mingw-w64-x86_64-ffmpeg   \
         mingw-w64-x86_64-toolchain \
-        make
+        mingw-w64-x86_64-python-pip \
+        mingw-w64-x86_64-libarchive  \
+        mingw-w64-x86_64-libimagequant
 
     # Build
     # cd to where the code is

@@ -20,6 +20,7 @@ case "$ACTION" in
             mingw-w64-x86_64-ffmpeg   \
             mingw-w64-x86_64-toolchain \
             mingw-w64-x86_64-python-pip \
+            mingw-w64-x86_64-libarchive  \
             mingw-w64-x86_64-libimagequant
         ;;
 

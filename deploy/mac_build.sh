@@ -21,6 +21,7 @@ case "$ACTION" in
         brew upgrade python@3.9 || true
         brew list potrace || brew install potrace
         brew list ffmpeg || brew install ffmpeg
+        brew list libarchive || brew install libarchive
         ;;
 
     configure)

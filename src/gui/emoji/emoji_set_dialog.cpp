@@ -11,6 +11,7 @@
 #include <QNetworkRequest>
 #include <QDesktopServices>
 
+#include "utils/tar.hpp"
 #include "emoji/emoji_set.hpp"
 #include "glaxnimate_app.hpp"
 
@@ -160,21 +161,41 @@ void glaxnimate::emoji::EmojiSetDialog::download_selected()
         d->ui.progress_bar->setMaximum(total);
     });
     connect(reply, &QNetworkReply::finished, this, [this, row, reply]{
-        d->ui.progress_bar->setVisible(false);
+
         if ( reply->error() || reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() != 200 )
         {
+            d->ui.progress_bar->setVisible(false);
             auto reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
             d->set_download_status(row, "package-broken", tr("Could not download: %1").arg(reason));
             return;
         }
 
+        QString prefix;
+        for ( const auto& path : d->sets[row].download.paths )
+        {
+            if ( path.size == EmojiSetDirectory::Scalable )
+            {
+                prefix = path.archive_path;
+                break;
+            }
+        }
+
         QByteArray data = reply->readAll();
         reply->close();
+        QDir output = d->sets[row].path;
+        glaxnimate::utils::tar::TapeArchive tar(data);
+        for ( const auto& entry : tar )
+        {
+            if ( entry.path().startsWith(prefix) )
+                tar.extract(entry, output);
+        }
+        if ( !tar.error().isEmpty() )
+            d->set_download_status(row, "package-broken", tar.error());
+        else
+            d->set_download_status(row, "package-installed-updated", tr("Installed"));
 
-        QFile debug("/tmp/" + d->sets[row].name + ".tar.gz");
-        debug.open(QFile::WriteOnly);
-        debug.write(data);
-        d->set_download_status(row, "package-installed-updated", tr("Installed"));
+        d->ui.button_add_emoji->setEnabled(d->sets[row].path.exists());
+        d->ui.progress_bar->setVisible(false);
     });
 }
 
@@ -182,9 +203,9 @@ void glaxnimate::emoji::EmojiSetDialog::download_selected()
 void glaxnimate::emoji::EmojiSetDialog::set_selected(int row)
 {
     bool enabled = row >= 0 && row < int(d->sets.size());
-    d->ui.button_add_emoji->setEnabled(enabled);
     d->ui.button_download->setEnabled(enabled);
     d->ui.button_view_website->setEnabled(enabled);
+    d->ui.button_add_emoji->setEnabled(enabled && d->sets[row].path.exists());
 }
 
 void glaxnimate::emoji::EmojiSetDialog::view_website()

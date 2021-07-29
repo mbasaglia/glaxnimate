@@ -83,6 +83,7 @@ plugin/io.cpp
 utils/gzip.cpp
 utils/quantize.cpp
 utils/trace.cpp
+utils/tar.cpp
 )
 
 if ( NOT ANDROID )
@@ -99,6 +100,7 @@ else()
 endif()
 
 find_package(ZLIB REQUIRED)
+find_package(LibArchive REQUIRED)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/application_info_generated.in.hpp
@@ -110,6 +112,6 @@ include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 
 
 add_library(${LIB_NAME_CORE} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt${QT_VERSION_MAJOR}::Xml ${Potrace_LIBRARIES} ${Libav_LIBRARIES})
+target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt${QT_VERSION_MAJOR}::Xml ${Potrace_LIBRARIES} ${Libav_LIBRARIES} LibArchive::LibArchive)
 set_property(TARGET ${LIB_NAME_CORE} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 target_include_directories(${LIB_NAME_CORE} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
