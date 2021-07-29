@@ -720,20 +720,36 @@ void GlaxnimateWindow::Private::import_file()
     {
         options = dialog.io_options();
         app::settings::set("open_save", "import_path", options.path.path());
-
-        model::Document imported(options.filename);
-
-        QFile file(options.filename);
-        dialog_export_status->reset(options.format, options.filename);
-        bool ok = options.format->open(file, options.filename, &imported, options.settings);
-        if ( !ok )
-        {
-            show_warning(tr("Import File"), tr("Could not import %1").arg(options.filename));
-            return;
-        }
-
-        /// \todo ask if comp
-        parent->paste_document(&imported, tr("Import File"), true);
+        import_file(options);
     }
 
+}
+
+void GlaxnimateWindow::Private::import_file(const io::Options& options)
+{
+    model::Document imported(options.filename);
+
+    QFile file(options.filename);
+    dialog_export_status->reset(options.format, options.filename);
+    bool ok = options.format->open(file, options.filename, &imported, options.settings);
+    if ( !ok )
+    {
+        show_warning(tr("Import File"), tr("Could not import %1").arg(options.filename));
+        return;
+    }
+
+    /// \todo ask if comp
+    parent->paste_document(&imported, tr("Import File"), true);
+}
+
+void GlaxnimateWindow::Private::import_file(const QString& filename)
+{
+    QFileInfo finfo(filename);
+    io::Options opts;
+    opts.format = io::IoRegistry::instance().from_extension(finfo.suffix());
+    if ( !opts.format )
+        show_warning(tr("Import File"), tr("Could not import %1").arg(filename));
+    opts.filename = filename;
+    opts.path = finfo.dir();
+    import_file(opts);
 }

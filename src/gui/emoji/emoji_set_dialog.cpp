@@ -229,3 +229,8 @@ void glaxnimate::emoji::EmojiSetDialog::add_emoji()
        accept();
     }
 }
+
+const QString & glaxnimate::emoji::EmojiSetDialog::selected_svg() const
+{
+    return d->selected;
+}

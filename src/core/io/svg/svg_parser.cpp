@@ -75,7 +75,7 @@ public:
             document->main()->recursive_rename();
 
         document->main()->name.set(
-            attr(svg, "sodipodi", "docname", document->main()->type_name_human())
+            attr(svg, "sodipodi", "docname", "")
         );
 
         if ( max_time > 0 )

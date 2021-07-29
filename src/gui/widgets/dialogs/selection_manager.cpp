@@ -182,7 +182,10 @@ void glaxnimate::gui::SelectionManager::paste_document(model::Document* document
     {
         std::unique_ptr<model::Precomposition> comp = std::make_unique<model::Precomposition>(doc);
         auto comp_ptr = comp.get();
-        doc->set_best_name(comp.get(), document->main()->name.get());
+        QString name = document->main()->name.get();
+        if ( name.isEmpty() )
+            name = QFileInfo(document->filename()).baseName();
+        doc->set_best_name(comp.get(), name);
         doc->push_command(new command::AddObject(&doc->assets()->precompositions->values, std::move(comp)));
 
         select.push_back(layer_new_comp(comp_ptr));
@@ -210,7 +213,8 @@ void glaxnimate::gui::SelectionManager::paste_document(model::Document* document
 void glaxnimate::gui::SelectionManager::layer_new_impl(std::unique_ptr<model::ShapeElement> layer)
 {
     auto doc = document();
-    doc->set_best_name(layer.get(), {});
+    if ( layer->name.get().isEmpty() )
+        doc->set_best_name(layer.get(), {});
     auto curr_dn = current_document_node();
     layer->set_time(curr_dn ? curr_dn->time() : doc->current_time());
 

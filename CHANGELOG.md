@@ -11,6 +11,7 @@
     * Text can now follow a path
     * Dropping a file onto the main window now gives options to import or open the file
     * Preset and validation of Discord stickers
+    * Ability to import SVG from popular emoji sets
 * UI:
     * Made the "Tool Options" view more compact
     * Template system for new files
@@ -43,6 +44,7 @@
     * Dragging no longer moves objects that don't need to be moved
     * Fixed tab bars not showing when loading documents containing precomps
     * Fixed crash when opening the most recent file
+    * Imported files show their name in the created layer
 
 ## 0.4.3
 

@@ -150,6 +150,8 @@ public:
             if ( !item )
                 continue;
 
+            item->setData(0, emoji.unicode);
+            item->setData(1, emoji.hex_slug);
             auto rect = item->boundingRect();
             item->setPos(QPointF(column*(cell_size+cell_margin), y) - rect.topLeft());
 

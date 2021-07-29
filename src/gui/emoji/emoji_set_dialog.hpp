@@ -14,6 +14,8 @@ public:
     EmojiSetDialog(QWidget* parent = nullptr);
     ~EmojiSetDialog();
 
+    const QString& selected_svg() const;
+
 protected:
     void changeEvent ( QEvent* e ) override;
 

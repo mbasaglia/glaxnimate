@@ -929,5 +929,7 @@ void GlaxnimateWindow::Private::drop_file(const QString& file)
 void GlaxnimateWindow::Private::insert_emoji()
 {
     emoji::EmojiSetDialog dialog;
-    dialog.exec();
+    if ( !dialog.exec() || dialog.selected_svg().isEmpty() )
+        return;
+    import_file(dialog.selected_svg());
 }
