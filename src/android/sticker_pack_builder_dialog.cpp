@@ -312,3 +312,8 @@ void glaxnimate::android::StickerPackBuilderDialog::resizeEvent(QResizeEvent *e)
     for ( const auto& item : d->items )
         item->adjust_size();
 }
+
+glaxnimate::emoji::EmojiDialog & glaxnimate::android::StickerPackBuilderDialog::emoji_dialog()
+{
+    return d->emoji_selector;
+}

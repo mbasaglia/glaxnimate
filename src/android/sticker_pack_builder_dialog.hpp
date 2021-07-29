@@ -6,6 +6,8 @@
 #include "base_dialog.hpp"
 #include "model/document.hpp"
 
+#include "emoji/emoji_dialog.hpp"
+
 namespace glaxnimate::android {
 
 class StickerPackBuilderDialog : public BaseDialog
@@ -16,6 +18,7 @@ public:
     explicit StickerPackBuilderDialog(QWidget *parent = nullptr);
     ~StickerPackBuilderDialog();
     void set_current_file(model::Document* current);
+    emoji::EmojiDialog& emoji_dialog();
 
 protected:
     void changeEvent(QEvent *e) override;

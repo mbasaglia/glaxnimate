@@ -26,12 +26,14 @@
 #include "widgets/layer_view.hpp"
 #include "style/property_delegate.hpp"
 #include "utils/pseudo_mutex.hpp"
+#include "style/scroll_area_event_filter.hpp"
+#include "emoji/emoji_set.hpp"
+
 
 #include "android_file_picker.hpp"
 #include "format_selection_dialog.hpp"
 #include "document_opener.hpp"
 #include "sticker_pack_builder_dialog.hpp"
-#include "style/scroll_area_event_filter.hpp"
 #include "help_dialog.hpp"
 #include "timeline_slider.hpp"
 #include "better_toolbox_widget.hpp"
@@ -372,6 +374,10 @@ public:
                 continue;
 
             auto actions = tool_actions(grp.second, tool_actions_grp, to_activate, event);
+
+            if ( grp.first == gui::tools::Registry::Shape )
+                actions.push_back(emoji_tool_action());
+
             QIcon icon = QIcon::fromTheme(icons[grp.first]);
             QMenu* menu = action_menu(icon, "", layout_tools);
             for ( auto action: actions )
@@ -1033,9 +1039,44 @@ public:
             toolbox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             ui.property_widget_layout->addWidget(toolbox);
             add_property_widgets(node, toolbox);
-            qDebug() << toolbox->sizeHint().width();
             ui.property_widget->setMinimumWidth(toolbox->sizeHint().width() + 6);
         }
+    }
+
+    QAction* emoji_tool_action()
+    {
+        QAction* action = new QAction(QIcon::fromTheme("smiley-shape"), tr("Emoji"));
+        connect(action, &QAction::triggered, parent, [this]{ import_emoji(); });
+        return action;
+    }
+
+    void import_emoji()
+    {
+        qDebug() << "foo";
+        emoji::EmojiDialog& dialog = telegram_export_dialog.emoji_dialog();
+        dialog.show();
+        qDebug() << dialog.isVisible() << dialog.parentWidget();
+        if ( !dialog.exec() )
+            return;
+
+        QString filename = "assets:/emoji/svg/" + dialog.image_slug_format().slug(dialog.current_slug()) + ".svg";
+
+        QFileInfo finfo(filename);
+        io::Options options;
+        options.format = io::IoRegistry::instance().from_extension(finfo.suffix());
+        if ( !options.format )
+            return;
+
+        options.filename = filename;
+        options.path = finfo.dir();
+
+        model::Document imported(options.filename);
+        QFile file(options.filename);
+
+        if ( !options.format->open(file, options.filename, &imported, options.settings) )
+            return;
+
+        parent->paste_document(&imported, tr("Import Emoji"), true);
     }
 };
 
