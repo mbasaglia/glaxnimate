@@ -42,6 +42,22 @@ public:
         item_loaded->setToolTip(msg);
         ui.emoji_set_view->setItem(row, Private::Downloaded, item_loaded);
     }
+
+    void show_preview(QIODevice* file, int row, int i)
+    {
+        QPixmap pix(icon_size, icon_size);
+        pix.fill(Qt::transparent);
+        QPainter painter(&pix);
+        QSvgRenderer renderer(file->readAll());
+        renderer.render(&painter);
+        if ( !pix.isNull() )
+        {
+            auto item = new QTableWidgetItem;
+            item->setData(Qt::DecorationRole, pix);
+            item->setSizeHint(pix.size() + QSize(5, 5));
+            ui.emoji_set_view->setItem(row, Private::Preview0 + i, item);
+        }
+    }
 };
 
 glaxnimate::emoji::EmojiSetDialog::EmojiSetDialog(QWidget* parent)
@@ -116,23 +132,22 @@ void glaxnimate::emoji::EmojiSetDialog::reload_sets()
 
         for ( int i = 0; i < Private::preview_count; i++ )
         {
-            auto reply = d->downloader.get(QNetworkRequest(p.preview_url(preview_emoji[i])));
-            connect(reply, &QNetworkReply::finished, this, [this, row, i, reply]{
-                if ( reply->error() )
-                    return;
-                QPixmap pix(Private::icon_size, Private::icon_size);
-                pix.fill(Qt::transparent);
-                QPainter painter(&pix);
-                QSvgRenderer renderer(reply->readAll());
-                renderer.render(&painter);
-                if ( !pix.isNull() )
-                {
-                    auto item = new QTableWidgetItem;
-                    item->setData(Qt::DecorationRole, pix);
-                    item->setSizeHint(pix.size() + QSize(5, 5));
-                    d->ui.emoji_set_view->setItem(row, Private::Preview0 + i, item);
-                }
-            });
+            QString path = p.image_path(EmojiSetDirectory::Scalable, preview_emoji[i]);
+            if ( p.path.exists(path) )
+            {
+                QFile file(path);
+                file.open(QIODevice::ReadOnly);
+                d->show_preview(&file, row, i);
+            }
+            else
+            {
+                auto reply = d->downloader.get(QNetworkRequest(p.preview_url(preview_emoji[i])));
+                connect(reply, &QNetworkReply::finished, this, [this, row, i, reply]{
+                    if ( reply->error() )
+                        return;
+                    d->show_preview(reply, row, i);
+                });
+            }
         }
 
         if ( p.path.exists() )

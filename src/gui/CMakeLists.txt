@@ -4,6 +4,7 @@ glaxnimate_app.cpp
 
 emoji/emoji_data.cpp
 emoji/emoji_dialog.cpp
+emoji/emoji_set.cpp
 emoji/emoji_set_dialog.cpp
 emoji/emoji_set_dialog.ui
 

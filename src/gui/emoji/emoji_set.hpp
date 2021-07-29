@@ -72,6 +72,17 @@ struct EmojiSetSlugFormat
     }
 };
 
+struct GitHubTemplate
+{
+    QString repo;
+    QString org;
+    QString branch;
+
+    static GitHubTemplate load(const QJsonObject& json);
+
+    void apply(struct EmojiSet& set) const;
+};
+
 struct EmojiSet
 {
     QString name;
@@ -82,22 +93,7 @@ struct EmojiSet
     EmojiSetDownload download;
     QDir path;
 
-    static EmojiSet load(const QJsonObject& json)
-    {
-        EmojiSet obj;
-        obj.name = json["name"].toString();
-        obj.url = json["url"].toString();
-        obj.license = json["license"].toString();
-        obj.preview_template = json["preview"].toString();
-        QString slug_format = json["slug_format"].toString();
-        obj.slug.upper = slug_format[0].isUpper();
-        obj.slug.separator = slug_format.back();
-        obj.slug.prefix = json["slug_prefix"].toString();
-
-        obj.download = EmojiSetDownload::load(json["download"].toObject());
-
-        return obj;
-    }
+    static EmojiSet load(const QJsonObject& json);
 
     QString image_path(int size, const Emoji& emoji) const
     {

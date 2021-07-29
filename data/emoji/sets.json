@@ -1,20 +1,23 @@
 [
     {
         "name" : "Twemoji",
-        "url": "https://github.com/twitter/twemoji",
+        "template": {
+            "type": "github",
+            "org": "twitter",
+            "repo": "twemoji",
+            "branch": "master"
+        },
         "license": "CC BY-SA 4.0",
-        "preview": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/%1.svg",
         "slug_format": "low-",
         "download": {
-            "url": "https://github.com/twitter/twemoji/archive/refs/heads/master.tar.gz",
             "paths": [
                 {
-                    "path": "twemoji-master/assets/svg/",
+                    "path": "assets/svg/",
                     "format": "svg",
                     "size": "scalable"
                 },
                 {
-                    "path": "twemoji-master/assets/72x72/",
+                    "path": "assets/72x72/",
                     "format": "png",
                     "size": 72
                 }
@@ -23,36 +26,39 @@
     },
     {
         "name" : "Noto Emoji",
-        "url": "https://github.com/googlefonts/noto-emoji/",
+        "template": {
+            "type": "github",
+            "org": "googlefonts",
+            "repo": "noto-emoji",
+            "branch": "main"
+        },
         "license": "Apache 2.0",
-        "preview": "https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/%1.svg",
         "slug_format": "low_",
         "slug_prefix": "emoji_u",
         "download": {
-            "url": "https://github.com/googlefonts/noto-emoji/archive/refs/heads/main.tar.gz",
             "paths": [
                 {
-                    "path": "noto-emoji-main/svg/",
+                    "path": "svg/",
                     "format": "svg",
                     "size": "scalable"
                 },
                 {
-                    "path": "noto-emoji-main/png/32/",
+                    "path": "png/32/",
                     "format": "png",
                     "size": 32
                 },
                 {
-                    "path": "noto-emoji-main/png/72/",
+                    "path": "png/72/",
                     "format": "png",
                     "size": 72
                 },
                 {
-                    "path": "noto-emoji-main/png/128/",
+                    "path": "png/128/",
                     "format": "png",
                     "size": 128
                 },
                 {
-                    "path": "noto-emoji-main/png/512/",
+                    "path": "png/512/",
                     "format": "png",
                     "size": 512
                 }
@@ -61,25 +67,28 @@
     },
     {
         "name" : "OpenMoji",
-        "url": "https://github.com/hfg-gmuend/openmoji",
+        "template": {
+            "type": "github",
+            "org": "hfg-gmuend",
+            "repo": "openmoji",
+            "branch": "master"
+        },
         "license": "CC BY-SA 4.0",
-        "preview": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/%1.svg",
         "slug_format": "HIGH-",
         "download": {
-            "url": "https://github.com/hfg-gmuend/openmoji/archive/refs/heads/master.tar.gz",
             "paths": [
                 {
-                    "path": "openmoji-master/color/svg/",
+                    "path": "color/svg/",
                     "format": "svg",
                     "size": "scalable"
                 },
                 {
-                    "path": "openmoji-master/color/618x618/",
+                    "path": "color/618x618/",
                     "format": "png",
                     "size": "618"
                 },
                 {
-                    "path": "openmoji-master/color/72x72/",
+                    "path": "color/72x72/",
                     "format": "png",
                     "size": 72
                 }
