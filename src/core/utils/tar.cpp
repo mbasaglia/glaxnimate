@@ -93,7 +93,7 @@ public:
         input = archive_read_new();
         archive_read_support_format_all(input);
         archive_read_support_filter_all(input);
-        int result = archive_read_open_memory(input, data.data(), data.size());
+        int result = archive_read_open_memory(input, (void*)data.data(), data.size());
         if ( result < 0 )
         {
             handle_message(result, input);
@@ -110,7 +110,7 @@ public:
         int result;
         const void *buff;
         size_t size;
-        la_int64_t offset;
+        int64_t offset;
 
         while ( true )
         {
