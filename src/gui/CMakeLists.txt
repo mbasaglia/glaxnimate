@@ -5,8 +5,6 @@ glaxnimate_app.cpp
 emoji/emoji_data.cpp
 emoji/emoji_dialog.cpp
 emoji/emoji_set.cpp
-emoji/emoji_set_dialog.cpp
-emoji/emoji_set_dialog.ui
 
 graphics/handle.cpp
 graphics/document_node_graphics_item.cpp
@@ -40,8 +38,6 @@ tools/rectangle_tool.cpp
 tools/draw_tool.cpp
 tools/edit_tool.cpp
 tools/star_tool.cpp
-tools/color_picker.cpp
-tools/fill_tool.cpp
 tools/text_tool.cpp
 
 widgets/dialogs/io_status_dialog.cpp
@@ -125,6 +121,12 @@ if ( NOT ANDROID )
     list(APPEND SOURCES
         main.cpp
         gui_python.cpp
+
+        emoji/emoji_set_dialog.cpp
+        emoji/emoji_set_dialog.ui
+
+        tools/color_picker.cpp
+        tools/fill_tool.cpp
 
         widgets/dialogs/about_dialog.cpp
         widgets/dialogs/about_dialog.ui

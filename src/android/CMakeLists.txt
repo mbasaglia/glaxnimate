@@ -5,14 +5,11 @@ set(SOURCES
     base_dialog.cpp
     better_toolbox_widget.cpp
     document_opener.cpp
-    emoji_data.cpp
-    emoji_widget.cpp
     format_selection_dialog.cpp
     help_dialog.cpp
     main.cpp
     main_window.cpp
     main_window.ui
-    scroll_area_event_filter.cpp
     sticker_pack_builder_dialog.cpp
     sticker_pack_builder_dialog.ui
     telegram_intent.cpp
@@ -43,7 +40,6 @@ target_link_libraries(${PROJECT_SLUG}_android PUBLIC
     Qt${QT_VERSION_MAJOR}::Svg
 )
 
-
 set(ANDROID_PLATFORM_LEVEL ${ANDROID_PLATFORM})
 set(ANDROID_SDK "$ENV{HOME}/Android/Sdk" CACHE STRING "")
 set(PACKAGE_NAME "org.mattbas.glaxnimate")
@@ -69,6 +65,24 @@ add_qt_android_apk(
     #INSTALL
 )
 
+# Download Twemoji
+get_target_property(ASSETS_PATH ${PROJECT_SLUG}_apk assets)
+add_custom_command(
+    OUTPUT ${ASSETS_PATH}/emoji
+    COMMAND wget "https://github.com/googlefonts/noto-emoji/archive/refs/heads/main.tar.gz" -O /tmp/noto-emoji.tar.gz
+    COMMAND tar -xaf /tmp/noto-emoji.tar.gz -C /tmp noto-emoji-main/svg noto-emoji-main/png/72 noto-emoji-main/third_party/region-flags
+    COMMAND mkdir ${ASSETS_PATH}/emoji
+    COMMAND mv -T /tmp/noto-emoji-main/svg ${ASSETS_PATH}/emoji/svg
+    COMMAND mv -T /tmp/noto-emoji-main/png/72 ${ASSETS_PATH}/emoji/png
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tools/copy_emoji_flags.py /tmp/noto-emoji-main/third_party/region-flags/svg/ ${ASSETS_PATH}/emoji/svg
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tools/copy_emoji_flags.py /tmp/noto-emoji-main/third_party/region-flags/png/ ${ASSETS_PATH}/emoji/png
+)
+add_custom_target(emoji_images
+    DEPENDS ${ASSETS_PATH}/emoji
+)
+add_dependencies(${PROJECT_SLUG}_apk emoji_images)
+message(STATUS ${ASSETS_PATH}/emoji)
+
 # Lists virtual devices
 add_custom_target(
     android_avd_list
@@ -83,6 +97,13 @@ add_custom_target(
     android_avd_start
     COMMAND "${ANDROID_SDK}/emulator/emulator" -avd "$$DEVICE" &
 )
+
+# Same as android_avd_start but starts from a clean state
+add_custom_target(
+    android_avd_clean_start
+    COMMAND "${ANDROID_SDK}/emulator/emulator" -avd "$$DEVICE" -no-snapshot &
+)
+
 
 # Installs (and runs the apk)
 add_custom_target(

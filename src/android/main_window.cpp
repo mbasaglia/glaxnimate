@@ -31,7 +31,7 @@
 #include "format_selection_dialog.hpp"
 #include "document_opener.hpp"
 #include "sticker_pack_builder_dialog.hpp"
-#include "scroll_area_event_filter.hpp"
+#include "style/scroll_area_event_filter.hpp"
 #include "help_dialog.hpp"
 #include "timeline_slider.hpp"
 #include "better_toolbox_widget.hpp"
@@ -135,7 +135,7 @@ public:
             this->parent->set_current_document_node(selected);
         });
 
-        (new ScrollAreaEventFilter(ui.property_widget))->setParent(ui.property_widget);
+        (new gui::ScrollAreaEventFilter(ui.property_widget))->setParent(ui.property_widget);
 
         int side_width = ui.fill_style_widget->sizeHint().width();
         ui.stroke_style_widget->setMinimumWidth(side_width);
@@ -527,7 +527,7 @@ public:
             QIcon::fromTheme("dialog-layers"), tr("Layers"),
             view_actions, layer_view
         )));
-        ScrollAreaEventFilter::setup_scroller(layer_view);
+        gui::ScrollAreaEventFilter::setup_scroller(layer_view);
 
         layout_edit_actions->addWidget(action_button_exclusive_opt(view_action(
             QIcon::fromTheme("document-properties"), tr("Advanced Properties"),

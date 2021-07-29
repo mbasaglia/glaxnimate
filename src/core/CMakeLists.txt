@@ -83,7 +83,6 @@ plugin/io.cpp
 utils/gzip.cpp
 utils/quantize.cpp
 utils/trace.cpp
-utils/tar.cpp
 )
 
 if ( NOT ANDROID )
@@ -91,16 +90,16 @@ if ( NOT ANDROID )
         python/python.cpp
         python/miscdefs.cpp
         io/video/video_format.cpp
+        utils/tar.cpp
     )
     find_package(Libav COMPONENTS codec util format swscale REQUIRED)
     include_directories(${Potrace_INCLUDE_DIRS})
     include_directories(${Libav_INCLUDE_DIRS})
-else()
-    set(Libav_LIBRARIES)
+
+    find_package(LibArchive REQUIRED)
 endif()
 
 find_package(ZLIB REQUIRED)
-find_package(LibArchive REQUIRED)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/application_info_generated.in.hpp
@@ -112,6 +111,10 @@ include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 
 
 add_library(${LIB_NAME_CORE} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt${QT_VERSION_MAJOR}::Xml ${Potrace_LIBRARIES} ${Libav_LIBRARIES} LibArchive::LibArchive)
+target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt${QT_VERSION_MAJOR}::Xml ${Potrace_LIBRARIES})
 set_property(TARGET ${LIB_NAME_CORE} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 target_include_directories(${LIB_NAME_CORE} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+
+if ( NOT ANDROID )
+    target_link_libraries(${LIB_NAME_CORE} PUBLIC ${Libav_LIBRARIES} LibArchive::LibArchive )
+endif()

@@ -6,7 +6,7 @@
 #include <QFrame>
 
 #include "io/io_registry.hpp"
-#include "scroll_area_event_filter.hpp"
+#include "style/scroll_area_event_filter.hpp"
 #include "glaxnimate_app.hpp"
 
 glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
@@ -18,7 +18,7 @@ glaxnimate::android::HelpDialog::HelpDialog(QWidget *parent)
 
     QScrollArea* area = new QScrollArea(this);
     ml->addWidget(area, 0, 0);
-    (new ScrollAreaEventFilter(area))->setParent(area);
+    (new gui::ScrollAreaEventFilter(area))->setParent(area);
     area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     area->setWidgetResizable(true);

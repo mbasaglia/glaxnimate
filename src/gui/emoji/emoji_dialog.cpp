@@ -10,6 +10,7 @@
 #include <QScreen>
 #include <QScroller>
 #include <QGraphicsSimpleTextItem>
+#include <QtGlobal>
 
 #include "emoji_data.hpp"
 #include "style/scroll_area_event_filter.hpp"
@@ -37,7 +38,7 @@ public:
         table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         table->setRenderHint(QPainter::Antialiasing);
         table->setRenderHint(QPainter::SmoothPixmapTransform);
-#ifdef O_OS_ANDROID
+#ifdef Q_OS_ANDROID
         table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 #else
         table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -242,9 +243,7 @@ glaxnimate::emoji::EmojiDialog::EmojiDialog(QWidget *parent)
 }
 
 glaxnimate::emoji::EmojiDialog::~EmojiDialog()
-{
-
-}
+{}
 
 QString glaxnimate::emoji::EmojiDialog::current_unicode() const
 {
@@ -262,6 +261,9 @@ void glaxnimate::emoji::EmojiDialog::showEvent(QShowEvent *e)
 {
     QDialog::showEvent(e);
     d->on_rotate();
+#ifdef Q_OS_ANDROID
+    d->table->verticalScrollBar()->setValue(0);
+#endif
 }
 
 QString glaxnimate::emoji::EmojiDialog::current_slug() const

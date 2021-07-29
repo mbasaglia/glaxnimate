@@ -12,14 +12,14 @@
 #include "io/lottie/tgs_format.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
 
+#include "emoji/emoji_set.hpp"
+#include "emoji/emoji_dialog.hpp"
 #include "android_file_picker.hpp"
 #include "document_opener.hpp"
-#include "emoji_data.hpp"
 #include "glaxnimate_app.hpp"
-#include "emoji_widget.hpp"
 #include "telegram_intent.hpp"
+#include "style/scroll_area_event_filter.hpp"
 
-#include <QDebug>
 
 class glaxnimate::android::StickerPackBuilderDialog::Private
 {
@@ -28,7 +28,7 @@ public:
     {
         Item(std::unique_ptr<model::Document> doc, Private* d)
             : document(std::move(doc)),
-              emoji(EmojiGroup::table[0].first().unicode),
+              emoji(emoji::EmojiGroup::table[0].first().unicode),
               d(d)
         {
             int row = d->ui.layout_items->rowCount();
@@ -187,7 +187,7 @@ public:
             if ( it->get() == item )
             {
                 if ( emoji_selector.exec() )
-                    item->set_emoji(emoji_selector.selected());
+                    item->set_emoji(emoji_selector.current_unicode());
                 return;
             }
         }
@@ -266,15 +266,22 @@ public:
     io::lottie::TgsFormat exporter;
     std::vector<std::unique_ptr<Item>> items;
     QFont font;
-    EmojiWidget emoji_selector;
+    emoji::EmojiDialog emoji_selector;
     QPointer<model::Document> current_file;
-    ScrollAreaEventFilter scroller;
+    gui::ScrollAreaEventFilter scroller;
+    DialogFixerFilter fixer{&emoji_selector};
 };
 
 glaxnimate::android::StickerPackBuilderDialog::StickerPackBuilderDialog(QWidget *parent) :
     BaseDialog(parent),
     d(std::make_unique<Private>(this))
 {
+    d->emoji_selector.set_image_path(QDir("assets:/emoji/png"));
+    emoji::EmojiSetSlugFormat slug;
+    slug.prefix = "emoji_u";
+    d->emoji_selector.set_image_suffix(".png");
+    d->emoji_selector.set_image_slug_format(slug);
+    d->emoji_selector.load_emoji(emoji::EmojiDialog::Image);
 }
 
 glaxnimate::android::StickerPackBuilderDialog::~StickerPackBuilderDialog()
