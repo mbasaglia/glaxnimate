@@ -97,6 +97,7 @@ if ( NOT ANDROID )
     include_directories(${Libav_INCLUDE_DIRS})
 
     find_package(LibArchive REQUIRED)
+    include_directories(${LibArchive_INCLUDE_DIRS})
 endif()
 
 find_package(ZLIB REQUIRED)
