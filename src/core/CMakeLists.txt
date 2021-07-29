@@ -116,5 +116,5 @@ set_property(TARGET ${LIB_NAME_CORE} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNI
 target_include_directories(${LIB_NAME_CORE} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 if ( NOT ANDROID )
-    target_link_libraries(${LIB_NAME_CORE} PUBLIC ${Libav_LIBRARIES} LibArchive::LibArchive )
+    target_link_libraries(${LIB_NAME_CORE} PUBLIC ${Libav_LIBRARIES} ${LibArchive_LIBRARIES} )
 endif()
