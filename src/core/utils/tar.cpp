@@ -10,7 +10,11 @@ class glaxnimate::utils::tar::ArchiveEntry::Private
 public:
     Private(archive_entry *entry)
         : entry(entry),
+#if ARCHIVE_VERSION_NUMBER > 3001002
           path(QString::fromUtf8(archive_entry_pathname_utf8(entry)))
+#else
+          path(archive_entry_pathname(entry))
+#endif
     {}
 
     archive_entry *entry;
@@ -172,7 +176,12 @@ public:
     bool extract(const glaxnimate::utils::tar::ArchiveEntry& entry, const QDir& destination)
     {
         QString output_file_path = destination.absoluteFilePath(entry.d->path);
+
+#if ARCHIVE_VERSION_NUMBER > 3001002
+        archive_entry_set_pathname_utf8(entry.d->entry, output_file_path.toStdString().c_str());
+#else
         archive_entry_set_pathname(entry.d->entry, output_file_path.toStdString().c_str());
+#endif
 
         int result = archive_write_header(output, entry.d->entry);
         if ( result < ARCHIVE_OK )
@@ -309,4 +318,15 @@ glaxnimate::utils::tar::TapeArchive::iterator glaxnimate::utils::tar::TapeArchiv
 glaxnimate::utils::tar::TapeArchive::iterator glaxnimate::utils::tar::TapeArchive::end()
 {
     return iterator(this, ArchiveEntry({}));
+}
+
+QString glaxnimate::utils::tar::libarchive_version()
+{
+    int vint = ARCHIVE_VERSION_NUMBER;
+    int patch = vint % 1000;
+    vint /= 1000;
+    int minor = vint % 1000;
+    vint /= 1000;
+
+    return QString("%1.%2.%3").arg(vint).arg(minor).arg(patch);
 }

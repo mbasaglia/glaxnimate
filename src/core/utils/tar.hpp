@@ -86,4 +86,7 @@ private:
     friend class ArchiveEntry;
 };
 
+
+QString libarchive_version();
+
 } // namespace glaxnimate::utils::tar

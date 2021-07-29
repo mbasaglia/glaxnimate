@@ -11,6 +11,7 @@
 #include "glaxnimate_app.hpp"
 #include "utils/trace.hpp"
 #include "utils/gzip.hpp"
+#include "utils/tar.hpp"
 #include "io/video/video_format.hpp"
 #include "io/io_registry.hpp"
 
@@ -69,6 +70,7 @@ AboutDialog::AboutDialog(QWidget* parent)
     d->view_system->setItem(row++, 0, new QTableWidgetItem(utils::gzip::zlib_version()));
     d->view_system->setItem(row++, 0, new QTableWidgetItem(utils::trace::Tracer::potrace_version()));
     d->view_system->setItem(row++, 0, new QTableWidgetItem(io::video::VideoFormat::library_version()));
+    d->view_system->setItem(row++, 0, new QTableWidgetItem(utils::tar::libarchive_version()));
 
     populate_io(d->table_formats_input, io::IoRegistry::instance().importers());
     populate_io(d->table_formats_output, io::IoRegistry::instance().exporters());

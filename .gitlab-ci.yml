@@ -126,9 +126,9 @@ linux:aur_build:
         - mkdir -p build
         - cd build
         - cmake ..
-        # Update glaxnimate-git
+        # Build
         - PACK_NAME=glaxnimate-git
-        - git clone https://aur.archlinux.org/glaxnimate-git.git
+        - git clone https://aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
         - chown -R foo .
         - sudo -u foo makepkg -f
