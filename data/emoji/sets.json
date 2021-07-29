@@ -25,8 +25,9 @@
         "name" : "Noto Emoji",
         "url": "https://github.com/googlefonts/noto-emoji/",
         "license": "Apache 2.0",
-        "preview": "https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/emoji_u%1.svg",
+        "preview": "https://raw.githubusercontent.com/googlefonts/noto-emoji/main/svg/%1.svg",
         "slug_format": "low_",
+        "slug_prefix": "emoji_u",
         "download": {
             "url": "https://github.com/googlefonts/noto-emoji/archive/refs/heads/main.tar.gz",
             "paths": [

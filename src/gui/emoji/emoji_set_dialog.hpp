@@ -22,6 +22,7 @@ private slots:
     void download_selected();
     void set_selected(int row);
     void view_website();
+    void add_emoji();
 
 private:
     class Private;

@@ -4,8 +4,10 @@
 #include <QDir>
 
 
-
 namespace glaxnimate::emoji {
+
+struct EmojiSetSlugFormat;
+struct EmojiSet;
 
 class EmojiDialog : public QDialog
 {
@@ -30,8 +32,12 @@ public:
     void set_image_suffix(const QString& suffix);
     const QString& image_suffix() const;
 
-    void load_emoji(DisplayMode mode);
+    void set_image_slug_format(const EmojiSetSlugFormat& slug);
+    const EmojiSetSlugFormat& image_slug_format() const;
 
+    void from_emoji_set(const EmojiSet& set, int size);
+
+    void load_emoji(DisplayMode mode);
 
     QString current_unicode() const;
     QString current_slug() const;
@@ -43,6 +49,7 @@ signals:
 protected:
     void timerEvent(QTimerEvent *event) override;
     void showEvent(QShowEvent* e) override;
+    void resizeEvent(QResizeEvent * event) override;
 
 private:
     class Private;

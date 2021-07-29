@@ -14,6 +14,7 @@
 #include "utils/tar.hpp"
 #include "emoji/emoji_set.hpp"
 #include "glaxnimate_app.hpp"
+#include "emoji_dialog.hpp"
 
 class glaxnimate::emoji::EmojiSetDialog::Private
 {
@@ -21,6 +22,7 @@ public:
     Ui::EmojiSetDialog ui;
     std::vector<EmojiSet> sets;
     QNetworkAccessManager downloader;
+    QString selected;
 
     static const int preview_count = 6;
     static const int icon_size = 72;
@@ -170,15 +172,8 @@ void glaxnimate::emoji::EmojiSetDialog::download_selected()
             return;
         }
 
-        QString prefix;
-        for ( const auto& path : d->sets[row].download.paths )
-        {
-            if ( path.size == EmojiSetDirectory::Scalable )
-            {
-                prefix = path.archive_path;
-                break;
-            }
-        }
+        QString prefix_scalable = d->sets[row].download.paths[EmojiSetDirectory::Scalable].path;
+        QString prefix_raster = d->sets[row].download.paths[72].path;
 
         QByteArray data = reply->readAll();
         reply->close();
@@ -186,7 +181,7 @@ void glaxnimate::emoji::EmojiSetDialog::download_selected()
         glaxnimate::utils::tar::TapeArchive tar(data);
         for ( const auto& entry : tar )
         {
-            if ( entry.path().startsWith(prefix) )
+            if ( entry.path().startsWith(prefix_scalable) || entry.path().startsWith(prefix_raster) )
                 tar.extract(entry, output);
         }
         if ( !tar.error().isEmpty() )
@@ -214,4 +209,23 @@ void glaxnimate::emoji::EmojiSetDialog::view_website()
     if ( row < 0 || row >= int(d->sets.size()) )
         return;
     QDesktopServices::openUrl(d->sets[row].url);
+}
+
+
+void glaxnimate::emoji::EmojiSetDialog::add_emoji()
+{
+    int row = d->ui.emoji_set_view->currentRow();
+    if ( row < 0 || row >= int(d->sets.size()) )
+        return;
+
+    d->selected.clear();
+    const auto& set = d->sets[row];
+    EmojiDialog dialog;
+    dialog.from_emoji_set(set, 72);
+    dialog.load_emoji(EmojiDialog::Image);
+    if ( dialog.exec() )
+    {
+       d->selected = set.image_path(EmojiSetDirectory::Scalable, dialog.current_slug());
+       accept();
+    }
 }
