@@ -123,13 +123,12 @@ linux:aur_build:
     script:
         # Setup
         - useradd -m foo
-        - chmod 600 "$AUR_SSH_KEY"
         - mkdir -p build
         - cd build
         - cmake ..
         # Update glaxnimate-git
         - PACK_NAME=glaxnimate-git
-        - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/$PACK_NAME.git
+        - git clone https://aur.archlinux.org/glaxnimate-git.git
         - cd $PACK_NAME
         - chown -R foo .
         - sudo -u foo makepkg -f
