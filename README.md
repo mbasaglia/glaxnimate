@@ -11,7 +11,7 @@ Dependencies
 ---------------------------------------
 
 * C++17 compliant compiler
-* Qt5 (qtbase) >= 5.12
+* Qt5 >= 5.12
 * CMake >= 3.5
 * Python3
 * ZLib
@@ -53,7 +53,9 @@ It will produce the executable `bin/glaxnimate` relative to the build directory
 
 Install the dependencies:
 
-    apt-get install -y g++ cmake qtbase5-dev qttools5-dev libpython3-dev zlib1g-dev libpotrace-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev libarchive-dev
+    apt-get install -y g++ cmake qtbase5-dev qttools5-dev libqt5svg5-dev \
+    libpython3-dev zlib1g-dev libpotrace-dev libarchive-dev \
+    libavformat-dev libswscale-dev libavcodec-dev libavutil-dev
 
 The generic `cmake` commands listed above should work.
 

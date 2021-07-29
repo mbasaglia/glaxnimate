@@ -84,11 +84,13 @@ parts:
            - zlib1g-dev
            - make
            - libpotrace-dev
+           - libarchive-dev
         stage-packages:
            - libpython3.6
            - zlib1g
            - libgtk3-nocsd0
            - libpotrace0
+           - libarchive
         override-build: |
             # base
             apt-get update -qq
