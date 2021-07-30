@@ -46,6 +46,7 @@
     * Fixed crash when opening the most recent file
     * Imported files show their name in the created layer
     * Fixed Lottie export of transparent color
+    * Fixed most recent file being forgotten sometimes
 
 ## 0.4.3
 

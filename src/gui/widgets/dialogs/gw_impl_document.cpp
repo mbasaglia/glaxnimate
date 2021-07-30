@@ -408,8 +408,7 @@ void GlaxnimateWindow::Private::document_open_from_filename(const QString& filen
     if ( opts.format )
         setup_document_open(opts);
 
-    recent_files.removeAll(filename);
-    reload_recent_menu();
+    most_recent_file(filename);
 }
 
 void GlaxnimateWindow::Private::drop_document(const QString& filename, bool as_comp)
