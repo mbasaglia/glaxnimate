@@ -90,7 +90,7 @@ parts:
            - zlib1g
            - libgtk3-nocsd0
            - libpotrace0
-           - libarchive
+           - libarchive-dev
         override-build: |
             # base
             apt-get update -qq
