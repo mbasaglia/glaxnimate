@@ -934,5 +934,5 @@ void GlaxnimateWindow::Private::insert_emoji()
     emoji::EmojiSetDialog dialog;
     if ( !dialog.exec() || dialog.selected_svg().isEmpty() )
         return;
-    import_file(dialog.selected_svg());
+    import_file(dialog.selected_svg(), {{"forced_size", current_document->size()}});
 }

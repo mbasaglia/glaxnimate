@@ -8,7 +8,7 @@
 
 glaxnimate::io::Autoreg<glaxnimate::io::svg::SvgFormat> glaxnimate::io::svg::SvgFormat::autoreg;
 
-bool glaxnimate::io::svg::SvgFormat::on_open(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& )
+bool glaxnimate::io::svg::SvgFormat::on_open(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& options)
 {
     /// \todo layer mode setting
     SvgParser::GroupMode mode = SvgParser::Inkscape;
@@ -16,15 +16,17 @@ bool glaxnimate::io::svg::SvgFormat::on_open(QIODevice& file, const QString& fil
     auto on_error = [this](const QString& s){warning(s);};
     try
     {
+        QSize forced_size = options["forced_size"].toSize();
+
         if ( utils::gzip::is_compressed(file) )
         {
             utils::gzip::GzipStream decompressed(&file, on_error);
             decompressed.open(QIODevice::ReadOnly);
-            SvgParser(&decompressed, mode, document, on_error, this).parse_to_document();
+            SvgParser(&decompressed, mode, document, on_error, this, forced_size).parse_to_document();
             return true;
         }
 
-        SvgParser(&file, mode, document, on_error, this).parse_to_document();
+        SvgParser(&file, mode, document, on_error, this, forced_size).parse_to_document();
         return true;
 
     }

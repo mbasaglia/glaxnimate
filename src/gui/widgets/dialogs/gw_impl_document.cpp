@@ -743,10 +743,11 @@ void GlaxnimateWindow::Private::import_file(const io::Options& options)
     parent->paste_document(&imported, tr("Import File"), true);
 }
 
-void GlaxnimateWindow::Private::import_file(const QString& filename)
+void GlaxnimateWindow::Private::import_file(const QString& filename, const QVariantMap& settings)
 {
     QFileInfo finfo(filename);
     io::Options opts;
+    opts.settings = settings;
     opts.format = io::IoRegistry::instance().from_extension(finfo.suffix());
     if ( !opts.format )
         show_warning(tr("Import File"), tr("Could not import %1").arg(filename));

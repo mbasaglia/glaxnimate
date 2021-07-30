@@ -47,6 +47,8 @@
     * Imported files show their name in the created layer
     * Fixed Lottie export of transparent color
     * Fixed most recent file being forgotten sometimes
+    * Fixed anchor points not being loaded properly from SVG
+    * SVG import now sets the correct size from the viewBox if width/height aren't specified
 
 ## 0.4.3
 

@@ -24,7 +24,7 @@
 #include "font_weight.hpp"
 #include "css_parser.hpp"
 
-#include <QDebug>
+
 using namespace glaxnimate::io::svg::detail;
 
 class glaxnimate::io::svg::SvgParser::Private
@@ -45,8 +45,16 @@ public:
         size = document->size();
         auto svg = dom.documentElement();
         dpi = attr(svg, "inkscape", "export-xdpi", "96").toDouble();
-        size.setWidth(len_attr(svg, "width", size.width()));
-        size.setHeight(len_attr(svg, "height", size.height()));
+
+        if ( forced_size.isValid() )
+        {
+            size = forced_size;
+        }
+        else
+        {
+            size.setWidth(len_attr(svg, "width", size.width()));
+            size.setHeight(len_attr(svg, "height", size.height()));
+        }
 
         for ( const auto& p : shape_parsers )
             to_process += dom.elementsByTagName(p.first).count();
@@ -54,11 +62,46 @@ public:
         if ( io )
             io->progress_max_changed(to_process);
 
+        QPointF pos;
+        QVector2D scale{1, 1};
+        if ( svg.hasAttribute("viewBox") )
+        {
+            auto vb = split_attr(svg, "viewBox");
+            if ( vb.size() == 4 )
+            {
+                qreal vbx = vb[0].toDouble();
+                qreal vby = vb[1].toDouble();
+                qreal vbw = vb[2].toDouble();
+                qreal vbh = vb[3].toDouble();
+
+                if ( !forced_size.isValid() )
+                {
+                    if ( !svg.hasAttribute("width") )
+                        size.setWidth(vbw);
+                    if ( !svg.hasAttribute("height") )
+                        size.setHeight(vbh);
+                }
+
+                pos = -QPointF(vbx, vby);
+                if ( vbw != 0 && vbh != 0 )
+                {
+                    scale = QVector2D(size.width() / vbw, size.height() / vbh);
+
+                    if ( forced_size.isValid() )
+                    {
+                        auto single = qMin(scale.x(), scale.y());
+                        scale = QVector2D(single, single);
+                    }
+                }
+            }
+        }
 
         parse_css();
         parse_defs();
 
         model::Layer* parent_layer = parse_objects(svg);
+        parent_layer->transform.get()->position.set(-pos);
+        parent_layer->transform.get()->scale.set(scale);
 
         parent_layer->name.set(
             attr(svg, "sodipodi", "docname", svg.attribute("id", parent_layer->type_name_human()))
@@ -320,20 +363,6 @@ public:
     {
         model::Layer* parent_layer = add_layer(&document->main()->shapes);
         parent_layer->name.set(parent_layer->type_name_human());
-        if ( svg.hasAttribute("viewBox") )
-        {
-            auto vb = split_attr(svg, "viewBox");
-            if ( vb.size() == 4 )
-            {
-                qreal vbx = vb[0].toDouble();
-                qreal vby = vb[1].toDouble();
-                qreal vbw = vb[2].toDouble();
-                qreal vbh = vb[3].toDouble();
-                parent_layer->transform.get()->position.set(-QPointF(vbx, vby));
-                parent_layer->transform.get()->scale.set(QVector2D(size.width() / vbw, size.height() / vbh));
-            }
-        }
-
         parse_children({svg, &parent_layer->shapes, parse_style(svg, {}), false});
 
         return parent_layer;
@@ -1463,6 +1492,7 @@ public:
     int to_process = 0;
     int processed = 0;
     ImportExport* io = nullptr;
+    QSize forced_size;
 
     static const std::map<QString, void (Private::*)(const ParseFuncArgs&)> shape_parsers;
     static const QRegularExpression unit_re;
@@ -1495,7 +1525,8 @@ glaxnimate::io::svg::SvgParser::SvgParser(
     GroupMode group_mode,
     model::Document* document,
     const std::function<void(const QString&)>& on_warning,
-    ImportExport* io
+    ImportExport* io,
+    QSize forced_size
 )
     : d(std::make_unique<Private>())
 {
@@ -1504,6 +1535,7 @@ glaxnimate::io::svg::SvgParser::SvgParser(
     d->group_mode = group_mode;
     d->animate_parser.on_warning = d->on_warning = on_warning;
     d->io = io;
+    d->forced_size = forced_size;
 
     SvgParseError err;
     if ( !d->dom.setContent(device, true, &err.message, &err.line, &err.column) )

@@ -159,7 +159,7 @@ public:
     QString drop_event_data(QDropEvent* ev);
     void import_image();
     void import_file();
-    void import_file(const QString& name);
+    void import_file(const QString& name, const QVariantMap& settings);
     void import_file(const io::Options& options);
 
     // ui

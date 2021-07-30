@@ -55,7 +55,8 @@ public:
         GroupMode group_mode,
         model::Document* document,
         const std::function<void(const QString&)>& on_warning = {},
-        ImportExport* io = nullptr
+        ImportExport* io = nullptr,
+        QSize forced_size = {}
     );
     ~SvgParser();
 
