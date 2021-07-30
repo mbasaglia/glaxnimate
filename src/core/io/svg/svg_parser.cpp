@@ -24,6 +24,7 @@
 #include "font_weight.hpp"
 #include "css_parser.hpp"
 
+#include <QDebug>
 using namespace glaxnimate::io::svg::detail;
 
 class glaxnimate::io::svg::SvgParser::Private
@@ -236,7 +237,7 @@ public:
         QTransform gradient_transform;
 
         if ( element.hasAttribute("gradientTransform") )
-            gradient_transform = svg_transform(element.attribute("gradientTransform"), {});
+            gradient_transform = svg_transform(element.attribute("gradientTransform"), {}).transform;
 
         if ( element.tagName() == "linearGradient" )
         {
@@ -616,23 +617,51 @@ public:
         if ( element.hasAttributeNS(detail::xmlns.at("inkscape"), "transform-center-x") )
         {
             qreal ix = element.attributeNS(detail::xmlns.at("inkscape"), "transform-center-x").toDouble();
-            qreal iy = element.attributeNS(detail::xmlns.at("inkscape"), "transform-center-y").toDouble();
+            qreal iy = -element.attributeNS(detail::xmlns.at("inkscape"), "transform-center-y").toDouble();
             center += QPointF(ix, iy);
         }
 
+        bool anchor_from_rotate = false;
+
         if ( element.hasAttribute("transform") )
-            transform->set_transform_matrix(svg_transform(
+        {
+            auto trans = svg_transform(
                 element.attribute("transform"),
                 transform->transform_matrix(transform->time())
-            ));
+            );
+            transform->set_transform_matrix(trans.transform);
+            anchor_from_rotate = trans.anchor_set;
+            if ( trans.anchor_set )
+                center = trans.anchor;
 
-        /// \todo adjust anchor point
+        }
+
+        /// Adjust anchor point
+        QPointF delta_pos;
+        if ( anchor_from_rotate )
+        {
+            transform->anchor_point.set(center);
+            delta_pos = center;
+        }
+        else
+        {
+            auto matrix = transform->transform_matrix(transform->time());
+            QPointF p1 = matrix.map(QPointF(0, 0));
+            transform->anchor_point.set(center);
+            matrix = transform->transform_matrix(transform->time());
+            QPointF p2 = matrix.map(QPointF(0, 0));
+            delta_pos = p1 - p2;
+        }
+        transform->position.set(transform->position.get() + delta_pos);
 
         auto anim = animate_parser.parse_animated_transform(element);
+
         for ( const auto& kf : add_keyframes(anim.single("translate")) )
-            transform->position.set_keyframe(kf.time, {kf.values[0], kf.values[1]})->set_transition(kf.transition);
+            transform->position.set_keyframe(kf.time, QPointF{kf.values[0], kf.values[1]} + delta_pos)->set_transition(kf.transition);
+
         for ( const auto& kf : add_keyframes(anim.single("scale")) )
             transform->scale.set_keyframe(kf.time, QVector2D(kf.values[0], kf.values[1]))->set_transition(kf.transition);
+
         for ( const auto& kf : add_keyframes(anim.single("rotate")) )
         {
             transform->rotation.set_keyframe(kf.time, kf.values[0])->set_transition(kf.transition);
@@ -659,8 +688,16 @@ public:
         return args;
     }
 
-    QTransform svg_transform(const QString& attr, QTransform trans)
+    struct ParsedTransformInfo
     {
+        QTransform transform;
+        QPointF anchor = {};
+        bool anchor_set = false;
+    };
+
+    ParsedTransformInfo svg_transform(const QString& attr, const QTransform& trans)
+    {
+        ParsedTransformInfo info{trans};
         for ( const QRegularExpressionMatch& match : utils::regexp::find_all(transform_re, attr) )
         {
             auto args = double_args(match.captured(2));
@@ -674,32 +711,33 @@ public:
 
             if ( name == "translate" )
             {
-                trans.translate(args[0], args.size() > 1 ? args[1] : 0);
+                info.transform.translate(args[0], args.size() > 1 ? args[1] : 0);
             }
             else if ( name == "scale" )
             {
-                trans.scale(args[0], (args.size() > 1 ? args[1] : args[0]));
+                info.transform.scale(args[0], (args.size() > 1 ? args[1] : args[0]));
             }
             else if ( name == "rotate" )
             {
                 qreal ang = args[0];
                 if ( args.size() > 2 )
                 {
-                    /// \todo Set anchor point if not specified
                     qreal x = args[1];
                     qreal y = args[2];
-                    trans.translate(-x, -y);
-                    trans.rotate(ang);
-                    trans.translate(x, y);
+                    info.anchor = {x, y};
+                    info.anchor_set = true;
+//                     info.transform.translate(-x, -y);
+                    info.transform.rotate(ang);
+//                     info.transform.translate(x, y);
                 }
                 else
                 {
-                    trans.rotate(ang);
+                    info.transform.rotate(ang);
                 }
             }
             else if ( name == "skewX" )
             {
-                trans *= QTransform(
+                info.transform *= QTransform(
                     1, 0, 0,
                     qTan(args[0]), 1, 0,
                     0, 0, 1
@@ -707,7 +745,7 @@ public:
             }
             else if ( name == "skewY" )
             {
-                trans *= QTransform(
+                info.transform *= QTransform(
                     1, qTan(args[0]), 0,
                     0, 1, 0,
                     0, 0, 1
@@ -717,7 +755,7 @@ public:
             {
                 if ( args.size() == 6 )
                 {
-                    trans *= QTransform(
+                    info.transform *= QTransform(
                         args[0], args[1], 0,
                         args[2], args[3], 0,
                         args[4], args[5], 1
@@ -734,7 +772,7 @@ public:
             }
 
         }
-        return trans;
+        return info;
     }
 
     static qreal opacity_value(const QString& v)
@@ -1230,7 +1268,7 @@ public:
 
         QTransform trans;
         if ( args.element.hasAttribute("transform") )
-            trans = svg_transform(args.element.attribute("transform"), trans);
+            trans = svg_transform(args.element.attribute("transform"), trans).transform;
         trans.translate(
             len_attr(args.element, "x", 0),
             len_attr(args.element, "y", 0)

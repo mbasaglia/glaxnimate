@@ -11,9 +11,9 @@ ns = parser.parse_args()
 
 ascii_A = 0x41
 emoji_A = 0x1F1E6
-emoji_flag = 0x1F3F4;
-emoji_tag_A = 0xE0061;
-emoji_tag_cancel = 0xE007F;
+emoji_flag = 0x1F3F4
+emoji_tag_A = 0xE0061
+emoji_tag_cancel = 0xE007F
 
 source = pathlib.Path(ns.source)
 dest = pathlib.Path(ns.dest)
