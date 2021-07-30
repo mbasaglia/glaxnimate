@@ -376,6 +376,9 @@ void GlaxnimateWindow::Private::init_item_views()
     connect(ui.timeline_widget, &CompoundTimelineWidget::current_node_changed, parent, [this](model::VisualNode* node){
         timeline_current_node_changed(node);
     });
+    connect(ui.timeline_widget, &CompoundTimelineWidget::selection_changed, parent, [this](const std::vector<model::VisualNode*>& selected,  const std::vector<model::VisualNode*>& deselected){
+        selection_changed(selected, deselected);
+    });
 }
 
 static QWidget* status_bar_separator()
