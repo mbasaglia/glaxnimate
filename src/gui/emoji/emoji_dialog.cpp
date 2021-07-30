@@ -21,6 +21,8 @@ class glaxnimate::emoji::EmojiDialog::Private
 public:
     Private(EmojiDialog* parent) : parent(parent)
     {
+        parent->setWindowTitle(tr("Select Emoji"));
+
         QVBoxLayout* lay = new QVBoxLayout(parent);
         parent->setLayout(lay);
 

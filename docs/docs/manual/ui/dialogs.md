@@ -134,3 +134,46 @@ Since tracing might be slow, you need to press *Update* for the preview to be up
 The slider below the preview area shows the tracing result side by side with the original image.
 The area to the left of the slider marker shows the trace result, while the area to the right
 shows the original image. By default the slider is all the way to the right, only revealing the trace result.
+
+
+## Emoji Selection
+
+Glaxnimate support downloading and importing emoji as a form of vector assets.
+
+All the supported sets have a free and open source license so you can use them
+in you animations as long as you respect their licensing terms.
+
+### Emoji Sets
+
+![Emoji Set Dialog](/img/screenshots/dialogs/emoji/emoji_set_dialog.png)
+
+Here you can manage the installed sets.
+
+By default no emoji set is installed. To install them, you can select one and
+click download. The ones you already downloaded show a checkmark at the end.
+
+On the list of available sets you see their name, license, a preview of some
+emoji, and the download status.
+
+Note that not all sets support all emoji, and this is reflected on the previews.
+
+Clicking "Reload" will update the list of available emoji based on the [emoji data file](/contributing/assets/#emoji-sets).
+
+When you have a set selected, you can click on one of the following buttons:
+
+* **View Website** Will open the browser to the website of the selected set
+* **Download** Will download the set
+* **Add Emoji..** Will show the emoji selection dialog to import emoji in your animation
+
+
+### Emoji Select Dialog
+
+![Emoji Select Dialog](/img/screenshots/dialogs/emoji/emoji_select_dialog.png)
+
+This dialog shows you all the emoji for the set you have selected.
+
+At the top you have buttons to jump to a specific emoji category.
+
+Clicking on an emoji will import it in you animation as a precomposition:
+
+![Imported emoji](/img/screenshots/dialogs/emoji/result.png)
