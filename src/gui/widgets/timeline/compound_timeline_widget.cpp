@@ -246,7 +246,6 @@ public:
         action_kf_paste.setEnabled(enabled);
     }
 
-
     void emit_click(CompoundTimelineWidget* parent, QModelIndex index)
     {
         model::VisualNode* node = nullptr;
@@ -260,6 +259,32 @@ public:
         if ( node )
             emit parent->current_node_changed(node);
     }
+
+    model::VisualNode* index_node_or_parent(QModelIndex property_index)
+    {
+        while ( property_index.isValid() )
+        {
+            auto item = property_model.item(property_index);
+            model::Object* obj = item.object;
+            if ( !obj && item.property )
+            {
+                obj = item.property->object();
+                if ( !obj )
+                    return nullptr;
+            }
+
+            if ( auto visual = obj->cast<model::VisualNode>() )
+                return visual;
+
+            if ( obj->is_instance<model::Asset>() )
+                return nullptr;
+
+            property_index = property_index.parent();
+        }
+
+        return nullptr;
+    }
+
 
     Ui::CompoundTimelineWidget ui;
     item_models::PropertyModelFull property_model;
@@ -586,16 +611,15 @@ void CompoundTimelineWidget::_on_selection_changed(const QItemSelection &selecte
 
     for ( const auto& index : selected.indexes() )
     {
-        if ( auto node = d->property_model.visual_node(d->comp_model.mapToSource(index)) )
+        if ( auto node = d->index_node_or_parent(d->comp_model.mapToSource(index)) )
             selected_nodes.push_back(node);
     }
 
     for ( const auto& index : deselected.indexes() )
     {
-        if ( auto node = d->property_model.visual_node(d->comp_model.mapToSource(index)) )
+        if ( auto node = d->index_node_or_parent(d->comp_model.mapToSource(index)) )
             deselected_nodes.push_back(node);
     }
-
 
     d->ui.timeline->select(selected, deselected);
 

@@ -264,6 +264,7 @@ TimelineWidget::TimelineWidget(QWidget* parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setTransformationAnchor(AnchorUnderMouse);
+    setCursor(Qt::ArrowCursor);
 }
 
 TimelineWidget::~TimelineWidget()
