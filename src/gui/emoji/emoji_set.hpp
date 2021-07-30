@@ -74,9 +74,15 @@ struct EmojiSetSlugFormat
 
 struct GitHubTemplate
 {
+    enum RefType
+    {
+        Branch,
+        Tag
+    };
     QString repo;
     QString org;
-    QString branch;
+    QString ref;
+    RefType ref_type = Branch;
 
     static GitHubTemplate load(const QJsonObject& json);
 

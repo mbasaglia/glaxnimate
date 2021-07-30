@@ -66,6 +66,31 @@
         }
     },
     {
+        "name" : "EmojiTwo",
+        "template": {
+            "type": "github",
+            "org": "EmojiTwo",
+            "repo": "emojitwo",
+            "branch": "master"
+        },
+        "license": "CC BY 4.0",
+        "slug_format": "low-",
+        "download": {
+            "paths": [
+                {
+                    "path": "svg/",
+                    "format": "svg",
+                    "size": "scalable"
+                },
+                {
+                    "path": "png/",
+                    "format": "png",
+                    "size": 72
+                }
+            ]
+        }
+    },
+    {
         "name" : "OpenMoji",
         "template": {
             "type": "github",
@@ -85,12 +110,63 @@
                 {
                     "path": "color/618x618/",
                     "format": "png",
-                    "size": "618"
+                    "size": 618
                 },
                 {
                     "path": "color/72x72/",
                     "format": "png",
                     "size": 72
+                }
+            ]
+        }
+    },
+    {
+        "name" : "EmojiOne Legacy",
+        "template": {
+            "type": "github",
+            "org": "joypixels",
+            "repo": "emojione-legacy",
+            "branch": "master"
+        },
+        "license": "CC BY-SA 4.0",
+        "slug_format": "HIGH-",
+        "download": {
+            "paths": [
+                {
+                    "path": "svg/",
+                    "format": "svg",
+                    "size": "scalable"
+                },
+                {
+                    "path": "png/",
+                    "format": "png",
+                    "size": 72
+                }
+            ]
+        }
+    },
+    {
+        "name" : "Noto Emoji Blob",
+        "template": {
+            "type": "github",
+            "org": "googlefonts",
+            "repo": "noto-emoji",
+            "tag": "v2017-05-18-cook-color-fix"
+        },
+        "license": "Apache 2.0",
+        "slug_format": "low_",
+        "slug_prefix": "emoji_u",
+        "download": {
+            "paths": [
+                {
+                    "path": "svg/",
+                    "format": "svg",
+                    "size": "scalable"
+                },
+                {
+                    "path": "png/128/",
+                    "format": "png",
+                    "size": 128
                 }
             ]
         }

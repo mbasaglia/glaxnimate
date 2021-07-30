@@ -176,12 +176,7 @@ public:
     bool extract(const glaxnimate::utils::tar::ArchiveEntry& entry, const QDir& destination)
     {
         QString output_file_path = destination.absoluteFilePath(entry.d->path);
-
-#if ARCHIVE_VERSION_NUMBER > 3001002
-        archive_entry_set_pathname_utf8(entry.d->entry, output_file_path.toStdString().c_str());
-#else
         archive_entry_set_pathname(entry.d->entry, output_file_path.toStdString().c_str());
-#endif
 
         int result = archive_write_header(output, entry.d->entry);
         if ( result < ARCHIVE_OK )

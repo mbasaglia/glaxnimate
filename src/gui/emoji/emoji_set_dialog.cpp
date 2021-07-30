@@ -201,6 +201,8 @@ void glaxnimate::emoji::EmojiSetDialog::download_selected()
         }
         if ( !tar.error().isEmpty() )
             d->set_download_status(row, "package-broken", tar.error());
+        else if ( !output.exists() )
+            d->set_download_status(row, "package-broken", tr("Didn't download any files"));
         else
             d->set_download_status(row, "package-installed-updated", tr("Installed"));
 
@@ -236,7 +238,10 @@ void glaxnimate::emoji::EmojiSetDialog::add_emoji()
     d->selected.clear();
     const auto& set = d->sets[row];
     EmojiDialog dialog;
-    dialog.from_emoji_set(set, 72);
+    int size = 72;
+    if ( !set.download.paths.count(72) )
+        size = set.download.paths.rbegin()->first;
+    dialog.from_emoji_set(set, size);
     dialog.load_emoji(EmojiDialog::Image);
     if ( dialog.exec() )
     {

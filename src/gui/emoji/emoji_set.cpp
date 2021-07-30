@@ -5,19 +5,40 @@ glaxnimate::emoji::GitHubTemplate glaxnimate::emoji::GitHubTemplate::load(const 
     GitHubTemplate obj;
     obj.repo = json["repo"].toString();
     obj.org = json["org"].toString();
-    obj.branch = json["branch"].toString();
+    if ( json.contains("tag") )
+    {
+        obj.ref_type = Tag;
+        obj.ref = json["tag"].toString();
+    }
+    else
+    {
+        obj.ref_type = Branch;
+        obj.ref = json["branch"].toString();
+    }
     return obj;
 }
 
 void glaxnimate::emoji::GitHubTemplate::apply(EmojiSet& set) const
 {
     set.url = "https://github.com/" + org + "/" + repo;
-    set.download.url = "https://github.com/" + org + "/" + repo + "/archive/refs/heads/" + branch + ".tar.gz";
+    QString ref_url;
+    QString ref_path = ref;
+    if ( ref_type == Branch )
+    {
+        ref_url = "heads/";
+    }
+    else
+    {
+        ref_url = "tags/";
+        if ( ref.size() && ref[0] == 'v' )
+            ref_path.remove(0, 1);
+    }
+    set.download.url = "https://github.com/" + org + "/" + repo + "/archive/refs/" + ref_url + ref + ".tar.gz";
     for ( auto& path : set.download.paths )
     {
         if ( path.second.size == EmojiSetDirectory::Scalable )
-            set.preview_template = "https://raw.githubusercontent.com/" + org + "/" + repo + "/" + branch + "/" + path.second.path + "%1.svg";
-        path.second.path = repo + "-" + branch + "/" + path.second.path;
+            set.preview_template = "https://raw.githubusercontent.com/" + org + "/" + repo + "/" + ref + "/" + path.second.path + "%1.svg";
+        path.second.path = repo + "-" + ref_path + "/" + path.second.path;
     }
 }
 
