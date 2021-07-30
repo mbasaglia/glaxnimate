@@ -6,6 +6,7 @@
 
 #include "cbor_write_json.hpp"
 #include "lottie_private_common.hpp"
+#include "model/animation/join_animatables.hpp"
 
 namespace glaxnimate::io::lottie::detail {
 
@@ -258,7 +259,7 @@ public:
             case QMetaType::QColor:
             {
                 auto vv = v.value<QColor>().toRgb();
-                return QCborArray{vv.redF(), vv.greenF(), vv.blueF(), vv.alphaF()};
+                return QCborArray{vv.redF(), vv.greenF(), vv.blueF()};
             }
             case QMetaType::QUuid:
                 return v.toString();
@@ -428,18 +429,25 @@ public:
     void convert_styler(model::Styler* shape, QCborMap& jsh)
     {
         auto used = shape->use.get();
-        if ( !used )
-            return ;
+
+        auto color_prop = &shape->color;
 
         if ( auto color = qobject_cast<model::NamedColor*>(used) )
         {
-            jsh["c"_l] = convert_animated(&color->color, {});
-            return;
+            jsh["c"_l] = convert_animated(color_prop, {});
+            color_prop = &color->color;
         }
 
         auto gradient = qobject_cast<model::Gradient*>(used);
         if ( !gradient || !gradient->colors.get() )
+        {
+            auto join_func = [](const std::vector<QVariant>& args) -> QVariant {
+                return args[0].value<QColor>().alphaF() * args[1].toFloat() * 100;
+            };
+            model::JoinedAnimatable join({color_prop, &shape->opacity}, join_func);
+            jsh["o"_l] = convert_animated(&join, {});
             return;
+        }
 
         jsh.remove("c"_l);
         convert_object_basic(gradient, jsh);
@@ -473,7 +481,9 @@ public:
 //         jsh["d"] = 0;
         if ( force_hidden || !shape->visible.get() )
             jsh["hd"_l] = true;
+
         convert_object_basic(shape, jsh);
+
         if ( auto gr = qobject_cast<model::Group*>(shape) )
         {
             if ( qobject_cast<model::Layer*>(gr) )

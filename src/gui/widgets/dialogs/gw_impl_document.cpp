@@ -463,6 +463,8 @@ void GlaxnimateWindow::Private::preview(io::ImportExport& exporter, const QVaria
 
     QString path = promise.result();
 
+    dialog_export_status->disconnect_import_export();
+
     if ( path.isEmpty() )
     {
         show_warning(tr("Web Preview"), tr("Could not create file"));

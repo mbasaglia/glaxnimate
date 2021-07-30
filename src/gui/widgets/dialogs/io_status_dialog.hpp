@@ -17,6 +17,7 @@ public:
     ~IoStatusDialog();
 
     void reset(io::ImportExport* ie, const QString& label);
+    void disconnect_import_export();
 
     bool has_errors() const;
     void show_errors(const QString& success, const QString& failure);

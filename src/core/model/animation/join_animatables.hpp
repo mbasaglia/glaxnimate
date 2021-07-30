@@ -219,7 +219,103 @@ private:
     {
         return func(static_cast<const model::AnimatedProperty<Args>*>(properties_[Indices])->get_at(t)...);
     }
+};
 
+/**
+ * \brief JoinAnimatables implementing AnimatableBase
+ */
+class JoinedAnimatable : public AnimatableBase, public JoinAnimatables
+{
+public:
+    using ConversionFunction = std::function<QVariant (const std::vector<QVariant> args)>;
+
+    class Keyframe : public KeyframeBase
+    {
+    public:
+        Keyframe(JoinedAnimatable* parent, const JoinAnimatables::Keyframe* subkf)
+            : KeyframeBase(subkf->time),
+              parent(parent),
+              subkf(subkf)
+        {
+            set_transition(subkf->transition());
+        }
+
+        QVariant value() const override
+        {
+            return parent->converter(subkf->values);
+        }
+
+        // read only
+        bool set_value(const QVariant&) override { return false; }
+
+    private:
+        JoinedAnimatable* parent;
+        const JoinAnimatables::Keyframe* subkf;
+    };
+
+    JoinedAnimatable(std::vector<const model::AnimatableBase*> properties, ConversionFunction converter, int flags = Normal)
+        : AnimatableBase(nullptr, "", {}),
+          JoinAnimatables(std::move(properties), flags),
+          converter(std::move(converter))
+
+    {
+        wrapped_keyframes.reserve(keyframes().size());
+        for ( auto& kf : keyframes() )
+            wrapped_keyframes.push_back(std::make_unique<Keyframe>(this, &kf));
+    }
+
+    int keyframe_count() const override
+    {
+        return wrapped_keyframes.size();
+    }
+
+    using JoinAnimatables::animated;
+
+    const KeyframeBase* keyframe(int i) const override
+    {
+        return wrapped_keyframes[i].get();
+    }
+
+    KeyframeBase* keyframe(int i) override
+    {
+        return wrapped_keyframes[i].get();
+    }
+
+    QVariant value(FrameTime time) const override
+    {
+        return converter(value_at(time));
+    }
+
+    QVariant value() const override
+    {
+        return converter(current_value());
+    }
+
+
+    // read only
+    bool set_value(const QVariant&) override { return false; }
+    bool valid_value(const QVariant&) const override { return false; }
+    bool set_undoable(const QVariant&, bool) override { return false; }
+    int move_keyframe(int, FrameTime) override { return -1; }
+    bool value_mismatch() const override { return false; }
+    KeyframeBase* set_keyframe(FrameTime , const QVariant& , SetKeyframeInfo* ) override { return nullptr; }
+    void remove_keyframe(int) override {};
+    void clear_keyframes() override {};
+    bool remove_keyframe_at_time(FrameTime) override { return false; }
+
+protected:
+    void on_set_time(FrameTime) override {}
+
+    // Shouldn't be needed
+    QVariant do_mid_transition_value(const KeyframeBase*, const KeyframeBase*, qreal) const override
+    {
+        return {};
+    }
+
+
+private:
+    ConversionFunction converter;
+    std::vector<std::unique_ptr<Keyframe>> wrapped_keyframes;
 };
 
 } // namespace glaxnimate::model

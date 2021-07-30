@@ -5,7 +5,8 @@
 glaxnimate::model::BaseProperty::BaseProperty(Object* object, const QString& name, PropertyTraits traits)
     : object_(object), name_(name), traits_(traits)
 {
-    object_->add_property(this);
+    if ( object )
+        object_->add_property(this);
 }
 
 void glaxnimate::model::BaseProperty::value_changed()

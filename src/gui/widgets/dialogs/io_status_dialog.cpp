@@ -44,7 +44,6 @@ void IoStatusDialog::show_errors(const QString& success, const QString& failure)
         d->icon_label->setPixmap(QIcon::fromTheme("dialog-positive").pixmap(64));
         d->label->setText(success);
     }
-
 }
 
 void IoStatusDialog::_on_completed(bool success)
@@ -73,8 +72,7 @@ void IoStatusDialog::_on_completed(bool success)
     if ( d->delete_on_close && !isVisible() )
         deleteLater();
 
-    disconnect(d->ie, nullptr, this, nullptr);
-    d->ie = nullptr;
+    disconnect_import_export();
 }
 
 void IoStatusDialog::_on_error(const QString& message, app::log::Severity severity)
@@ -129,6 +127,16 @@ void IoStatusDialog::reset(io::ImportExport* ie, const QString& label)
     connect(ie, &io::ImportExport::progress_max_changed, this, &IoStatusDialog::_on_progress_max_changed);
     connect(ie, &io::ImportExport::completed, this, &IoStatusDialog::_on_completed);
 }
+
+void glaxnimate::gui::IoStatusDialog::disconnect_import_export()
+{
+    if ( d->ie )
+    {
+        disconnect(d->ie, nullptr, this, nullptr);
+        d->ie = nullptr;
+    }
+}
+
 
 void IoStatusDialog::closeEvent(QCloseEvent* ev)
 {
