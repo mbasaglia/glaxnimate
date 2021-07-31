@@ -106,7 +106,9 @@ linux:aur:
         - PACK_NAME=glaxnimate-git
         - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
+        - echo "Setting version $PROJECT_VERSION"
         - sed -i -e "s/pkgver=.*/pkgver=$PROJECT_VERSION/" PKGBUILD
+        - cat PKGBUILD
         - chown -R foo .
         - sudo -u foo makepkg -f
         - namcap PKGBUILD
