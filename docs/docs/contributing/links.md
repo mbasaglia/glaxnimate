@@ -17,6 +17,7 @@ Listings
 Reviews and Articles
 --------------------
 
+* [0.4.3 Video comparing various animation programs](https://www.youtube.com/watch?v=26V3T9QqYWw) (Russian)
 * [0.3.1 Dev.to](https://dev.to/mbasaglia/glaxnimate-create-2d-vector-animations-for-the-web-2ein)
 * [0.3.0 Softpedia](https://www.softpedia.com/get/Multimedia/Graphic/Graphic-Others/Glaxnimate.shtml)
 * [0.3.0 Apps for my PC](http://www.appsformypc.com/2020/11/glaxnimate/)

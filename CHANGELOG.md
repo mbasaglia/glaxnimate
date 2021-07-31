@@ -1,3 +1,9 @@
+## 0.4.5
+
+* Bug Fixes:
+    * Fixed loading lottie animations with missing "a" attributes
+
+
 ## 0.4.4
 
 * Editing:
@@ -8,7 +14,6 @@
     * You can now drag multiple keyframes on the timeline
     * Text can now follow a path
     * Touch gestures for the canvas (pinch and pan)
-    * Text can now follow a path
     * Dropping a file onto the main window now gives options to import or open the file
     * Preset and validation of Discord stickers
     * Ability to import SVG from popular emoji sets

@@ -36,6 +36,14 @@ public:
     }
 
 private:
+    template<class T>
+    auto make_node(model::Document* document)
+    {
+        auto ptr = std::make_unique<T>(document);
+        current_node = ptr.get();
+        return ptr;
+    }
+
     void warning(QString str, const QJsonObject& json)
     {
         if ( json.contains("nm") )
@@ -145,7 +153,7 @@ private:
     {
         auto props = load_basic_setup(json);
 
-        auto precomp = std::make_unique<model::PreCompLayer>(document);
+        auto precomp = make_node<model::PreCompLayer>(document);
         load_visibility(precomp.get(), json);
 
         load_stretchable_animation_container(json, precomp->timing.get());
@@ -181,7 +189,7 @@ private:
             json["op"].toDouble(op) != op || has_mask(json)
         )
         {
-            auto layer = std::make_unique<model::Layer>(document);
+            auto layer = make_node<model::Layer>(document);
             layer->name.set(precomp->name.get());
             layer->shapes.insert(std::move(precomp), 0);
             if ( has_mask(json) )
@@ -200,31 +208,33 @@ private:
 
     void load_mask(const QJsonObject& json, model::Group* group)
     {
-        auto fill = std::make_unique<model::Fill>(document);
+        auto fill = make_node<model::Fill>(document);
         fill->color.set(QColor(255, 255, 255));
-        load_animated(&fill->opacity, json["o"], {});
         document->set_best_name(fill.get());
+        load_animated(&fill->opacity, json["o"], {});
         group->shapes.insert(std::move(fill));
 
         auto j_stroke = json["x"].toObject();
         if ( j_stroke["a"].toInt() || j_stroke["k"].toDouble() != 0 )
         {
-            auto stroke = std::make_unique<model::Stroke>(document);
+            auto stroke = make_node<model::Stroke>(document);
             stroke->color.set(QColor(255, 255, 255));
             load_animated(&stroke->opacity, json["o"], {});
-            load_animated(&stroke->width, json["x"], {});
             document->set_best_name(stroke.get());
+            load_animated(&stroke->width, json["x"], {});
             group->shapes.insert(std::move(stroke));
         }
 
-        auto path = std::make_unique<model::Path>(document);
-        load_animated(&path->shape, json["pt"], {});
+        auto path = make_node<model::Path>(document);
         document->set_best_name(path.get());
+        load_animated(&path->shape, json["pt"], {});
         group->shapes.insert(std::move(path));
     }
 
     void load_layer(const QJsonObject& json, model::Layer* layer)
     {
+        current_node = current_layer = layer;
+
         if ( json.contains("parent") )
         {
             int parent_index = json["parent"].toInt();
@@ -282,7 +292,7 @@ private:
             {
                 layer->mask->mask.set(true);
 
-                auto clip_p = std::make_unique<model::Group>(document);
+                auto clip_p = make_node<model::Group>(document);
                 auto clip = clip_p.get();
                 layer->shapes.insert(std::move(clip_p));
                 auto shape_target = std::make_unique<model::Layer>(document);
@@ -299,7 +309,7 @@ private:
                 {
                     for ( const auto& mask : masks )
                     {
-                        auto clip_group_p = std::make_unique<model::Group>(document);
+                        auto clip_group_p = make_node<model::Group>(document);
                         auto clip_group = clip_group_p.get();
                         clip->shapes.insert(std::move(clip_group_p));
                         document->set_best_name(clip_group, QObject::tr("Clip"));
@@ -332,7 +342,7 @@ private:
             }
             case 2: // image layer
             {
-                auto image = std::make_unique<model::Image>(document);
+                auto image = make_node<model::Image>(document);
                 image->image.set(bitmap_ids[json["refId"].toString()]);
                 target->shapes.insert(std::move(image));
                 props.erase("refId");
@@ -423,7 +433,13 @@ private:
     void load_basic_check(const std::set<QString>& props)
     {
         for ( const auto& not_found : props )
-            emit format->information(QObject::tr("Unknown field %1").arg(not_found));
+        {
+            emit format->information(
+                QObject::tr("Unknown field %2%1")
+                .arg(not_found)
+                .arg(object_error_string(nullptr))
+            );
+        }
     }
 
     void load_basic(const QJsonObject& json_obj, model::Object* obj)
@@ -489,6 +505,8 @@ private:
 
     void load_shape(const QJsonObject& json, model::ShapeElement* shape)
     {
+        current_node = shape;
+
         if ( auto styler = shape->cast<model::Styler>() )
             return load_styler(styler, json);
 
@@ -526,6 +544,7 @@ private:
             load_animated(&repeater->end_opacity, transform["eo"], FloatMult(100));
             transform.remove("so");
             transform.remove("eo");
+            transform.remove("ty");
             load_transform(transform, repeater->transform.get(), nullptr);
         }
     }
@@ -653,8 +672,9 @@ private:
                     if ( !compound_value_2d_raw(pos[i], p) )
                     {
                         emit format->warning(
-                            QObject::tr("Invalid bezier point %1")
+                            QObject::tr("Invalid bezier point %1 in %2")
                             .arg(i)
+                            .arg(property_error_string(prop))
                         );
                         continue;
                     }
@@ -669,9 +689,30 @@ private:
             case model::PropertyTraits::Gradient:
                 return val.toArray().toVariantList();
             default:
-                logger.stream(app::log::Error) << "Unsupported type" << prop->traits().type << "for" << prop->name();
+                logger.stream(app::log::Error) << "Unsupported type" << prop->traits().type << "for" << property_error_string(prop);
                 return {};
         }
+    }
+
+    QString object_error_string(model::Object* ignore)
+    {
+        QString str;
+        if ( current_layer && current_node != current_layer )
+            str = "(" + current_layer->object_name() + ") ";
+
+        if ( current_node && current_node != ignore )
+            str += current_node->object_name() + ".";
+
+        return str;
+
+    }
+
+    QString property_error_string(model::BaseProperty * prop)
+    {
+        QString str = object_error_string(prop->object());
+        str += prop->object()->object_name() + "." + prop->name();
+
+        return str;
     }
 
     void load_value(model::BaseProperty * prop, const QJsonValue& val, const TransformFunc& trans)
@@ -685,22 +726,41 @@ private:
     {
         if ( !val.isObject() )
         {
-            emit format->warning(QObject::tr("Invalid value for %1").arg(prop->name()));
+            emit format->warning(QObject::tr("Invalid value for %1").arg(property_error_string(prop)));
             return;
         }
 
         QJsonObject obj = val.toObject();
-        if ( !obj.contains("a") || !obj.contains("k") )
+        if ( !obj.contains("k") )
         {
-            emit format->warning(QObject::tr("Invalid value for %1").arg(prop->name()));
+            emit format->warning(QObject::tr("Invalid value for %1").arg(property_error_string(prop)));
             return;
         }
 
-        if ( obj["a"].toInt() )
+        int animated = 0;
+        if ( !obj.contains("a") )
         {
             if ( !obj["k"].isArray() )
             {
-                emit format->warning(QObject::tr("Invalid keyframes for %1").arg(prop->name()));
+                animated = 0;
+            }
+            else
+            {
+                auto karr = obj["k"].toArray();
+                if ( karr.size() > 0 && karr[0].isObject() )
+                    animated = 1;
+            }
+        }
+        else
+        {
+            animated = obj["a"].toInt();
+        }
+
+        if ( animated )
+        {
+            if ( !obj["k"].isArray() )
+            {
+                emit format->warning(QObject::tr("Invalid keyframes for %1").arg(property_error_string(prop)));
                 return;
             }
 
@@ -728,7 +788,7 @@ private:
                 else
                 {
                     emit format->warning(QObject::tr("Cannot load keyframe at %1 for %2")
-                        .arg(time).arg(prop->name())
+                        .arg(time).arg(property_error_string(prop))
                     );
                 }
             }
@@ -843,7 +903,7 @@ private:
             fill->color.set(color);
             group->shapes.insert(std::move(fill));
 
-            auto shape = std::make_unique<model::TextShape>(document);
+            auto shape = make_node<model::TextShape>(document);
             auto font = get_font(text_document["f"].toString());
             shape->font->family.set(font.family);
             shape->font->style.set(font.style);
@@ -866,6 +926,8 @@ private:
     QMap<QString, model::Precomposition*> precomp_ids;
     QMap<QString, FontInfo> fonts;
     model::Layer* mask = nullptr;
+    model::DocumentNode* current_node = nullptr;
+    model::Layer* current_layer = nullptr;
 };
 
 
