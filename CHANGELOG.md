@@ -19,6 +19,7 @@
     * The timeline now allows selecting multiple rows at once
     * In recording mode, a keyframe at time 0 is added automatically for non animated properties
     * Button to clear fill/stroke colors
+    * The context menu you get on the composition tabs now allows you to rename precompositions
 * I/O:
     * More color formats are supported for the SVG importer
     * Automatically removes embedded images when exporting to TGS

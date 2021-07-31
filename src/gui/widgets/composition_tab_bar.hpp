@@ -33,7 +33,6 @@ private:
 
 signals:
     void switch_composition(model::Composition* comp, int index);
-    void precomposition_context_menu(model::Precomposition* comp);
 
 private:
     model::Document* document = nullptr;

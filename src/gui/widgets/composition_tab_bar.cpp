@@ -3,6 +3,7 @@
 #include <QMenu>
 #include <QIcon>
 #include <QSignalBlocker>
+#include <QInputDialog>
 
 #include "model/assets/assets.hpp"
 #include "command/object_list_commands.hpp"
@@ -92,6 +93,15 @@ void CompositionTabBar::on_menu(int index)
                     QObject::tr("Duplicate %1").arg(precomp->object_name())
                 )
             );
+        });
+        menu.addAction(QIcon::fromTheme("edit-rename"), tr("Rename"), precomp, [this, precomp]{
+            bool ok = false;
+            QString str = QInputDialog::getText(
+                this, tr("Rename Composition"), tr("Name"), QLineEdit::Normal,
+                precomp->object_name(), &ok
+            );
+            if ( ok )
+                precomp->name.set_undoable(str);
         });
 
         menu.exec(QCursor::pos());
