@@ -75,7 +75,7 @@ case "$ACTION" in
         mkdir -p $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
         cp -r \
             /mingw64/lib/python$PY_VERSION/*.py \
-            /mingw64/lib/python$PY_VERSION/lib-dynload/*.dll \
+            /mingw64/lib/python$PY_VERSION/lib-dynload/* \
             /mingw64/lib/python$PY_VERSION/{json,collections,encodings,logging,urllib} \
             $PACKDIR/share/glaxnimate/glaxnimate/pythonhome/lib/python
         mkdir /tmp/PyInstall
