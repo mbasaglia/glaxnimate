@@ -3,6 +3,7 @@ on:
     push:
         tags:
             - '*'
+    workflow_dispatch:
 jobs:
     macos:
         runs-on: macOS-latest
@@ -25,7 +26,7 @@ jobs:
             - name: Build Python
               run: |
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
-                ./deploy/win_build.sh configure ""
+                ./deploy/mac_build.sh configure ""
                 ./deploy/mac_build.sh pypi
             - name: Upload Pypi
               env:

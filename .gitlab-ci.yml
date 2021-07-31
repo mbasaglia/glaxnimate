@@ -86,8 +86,8 @@ linux:aur:
     stage: deploy
     dependencies:
     needs: []
+    # Build on release instead of tag so we can trigger it again
     only:
-        - tags
         - release
     before_script:
         - pacman -Sy
