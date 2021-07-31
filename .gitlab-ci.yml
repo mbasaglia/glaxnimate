@@ -84,6 +84,8 @@ linux:deb:
 linux:aur:
     image: archlinux:latest
     stage: deploy
+    dependencies:
+    needs: []
     only:
         - tags
         - release
