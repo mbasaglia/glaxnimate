@@ -96,7 +96,7 @@ def open_image(window, document, file, name, import_export, settings):
             time += 1
         layer.animation.last_frame = time
 
-        asset = document.defs.add_image(raster)
+        asset = document.assets.add_image(raster)
 
         shape = layer.add_shape("Image")
         shape.image = asset

@@ -306,6 +306,9 @@ bool GlaxnimateWindow::Private::close_document()
     ui.view_document_node->set_composition(nullptr);
     ui.tab_bar->set_document(nullptr);
 
+    ui.console->clear_contexts();
+    ui.console->set_global("document", QVariant{});
+
     comp_selections.clear();
     ui.menu_new_comp_layer->clear();
 
