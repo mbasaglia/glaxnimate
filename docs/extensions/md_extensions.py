@@ -133,10 +133,7 @@ class DownloadTable(InlineProcessor):
             self.Row("Linux Appimage",  "fab", "linux",    "glaxnimate-x86_64.AppImage",   "linux:appimage"),
             self.Row("Deb Package",     "fab", "ubuntu",   "glaxnimate.deb",               "linux:deb"),
             self.Row("Windows Zip",     "fab", "windows",  "glaxnimate-x86_64.zip",        "/Win/"),
-        ]
-        if branch != "master":
-            rows += [self.Row("Mac DMG",         "fab", "apple",    "glaxnimate.dmg",               "/MacOs/")]
-        rows += [
+            self.Row("Mac DMG",         "fab", "apple",    "glaxnimate.dmg",               "/MacOs/"),
             self.Row("Source Tarball",  "fas", "wrench",   "glaxnimate-src.tar.gz",        "tarball", "/contributing/read_me", ""),
         ]
 
