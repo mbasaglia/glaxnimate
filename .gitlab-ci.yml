@@ -89,7 +89,6 @@ linux:aur:
     only:
         - tags
         - release
-        - pre-release
     before_script:
         - pacman -Sy
         - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg
