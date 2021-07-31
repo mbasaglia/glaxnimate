@@ -1,5 +1,7 @@
 ## 0.4.5
 
+* I/O:
+    * Made error messages from the lottie importer easier to understand
 * Bug Fixes:
     * Fixed loading lottie animations with missing "a" attributes
 
