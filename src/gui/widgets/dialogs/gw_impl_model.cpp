@@ -6,6 +6,8 @@
 #include <QImageReader>
 #include <QFileDialog>
 #include <QMimeData>
+#include <QMimeType>
+#include <QMimeDatabase>
 
 #include "app/settings/widget_builder.hpp"
 
@@ -200,9 +202,21 @@ QString GlaxnimateWindow::Private::get_open_image_file(const QString& title, con
 {
     QFileDialog dialog(parent, title, dir);
     QStringList filters;
+    QStringList all_ext;
+
+    QMimeDatabase db;
     for ( const auto& baf : QImageReader::supportedMimeTypes() )
-        filters.push_back(QString(baf));
-    dialog.setMimeTypeFilters(filters);
+    {
+        QMimeType mime(db.mimeTypeForName(baf));
+        if ( mime.isValid() )
+        {
+            const QString patterns = mime.globPatterns().join(QLatin1Char(' '));
+            all_ext += patterns;
+            filters.push_back(mime.comment() + QLatin1String(" (") + patterns + QLatin1Char(')'));
+        }
+    }
+    filters.push_front(tr("All Supported files (%1)").arg(all_ext.join(' ')));
+    dialog.setNameFilters(filters);
 
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
     dialog.setFileMode(QFileDialog::ExistingFile);
