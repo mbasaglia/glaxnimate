@@ -43,7 +43,10 @@ private slots:
 
     void update_handles();
     void update_transform();
+    void update_offshoots();
 
+protected:
+    QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override;
 
 private:
     class Private;

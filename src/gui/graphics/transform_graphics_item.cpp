@@ -60,6 +60,7 @@ public:
     QPointF pos_drag_start;
     QTransform pos_trans;
     QPointF pos_start_value;
+    TransformGraphicsItem* parent;
 
     QPointF get_tl() const { return cache.topLeft(); }
     QPointF get_tr() const { return cache.topRight(); }
@@ -75,27 +76,25 @@ public:
     }
     QPointF get_rot() const
     {
-        return {
-            cache.center().x(),
-            cache.top() + rot_top()
-        };
+        auto l = QLineF(
+            parent->mapToScene(QPointF(0, 0)),
+            parent->mapToScene(QPointF(0, -1))
+        );
+        l.setLength(offshoot_size());
+        return get_t() + parent->mapFromScene(l.p2());
     }
-    qreal rot_top() const
+    qreal offshoot_size() const
     {
-        qreal delta = 32 * GlaxnimateApp::handle_distance_multiplier();
-        return -delta / transform->scale.get().y();
-    }
-    qreal pos_side() const
-    {
-        qreal delta = 32 * GlaxnimateApp::handle_distance_multiplier();
-        return -delta / transform->scale.get().x();
+        return 48 * GlaxnimateApp::handle_distance_multiplier();
     }
     QPointF get_pos() const
     {
-        return {
-            cache.left() + pos_side(),
-            cache.center().y()
-        };
+        auto l = QLineF(
+            parent->mapToScene(QPointF(0, 0)),
+            parent->mapToScene(QPointF(-1, 0))
+        );
+        l.setLength(offshoot_size());
+        return get_l() + parent->mapFromScene(l.p2());
     }
 
     void set_pos(const Handle& h) const
@@ -173,7 +172,8 @@ public:
                 &TransformGraphicsItem::drag_pos,
                 {&transform->position}
             },
-        }
+        },
+        parent(parent)
     {
     }
 
@@ -246,6 +246,7 @@ graphics::TransformGraphicsItem::TransformGraphicsItem(
     : QGraphicsObject(parent), d(std::make_unique<Private>(this, transform, target))
 {
     connect(target, &model::VisualNode::bounding_rect_changed, this, &TransformGraphicsItem::update_handles);
+    connect(target, &model::VisualNode::transform_matrix_changed, this, &TransformGraphicsItem::update_offshoots);
     connect(transform, &model::Object::property_changed, this, &TransformGraphicsItem::update_transform);
     update_transform();
     update_handles();
@@ -267,12 +268,19 @@ graphics::TransformGraphicsItem::TransformGraphicsItem(
 
 #ifdef Q_OS_ANDROID
     d->handles[Private::Anchor].handle->setVisible(false);
-#else
-    d->handles[Private::Position].handle->setVisible(false);
 #endif
 }
 
 graphics::TransformGraphicsItem::~TransformGraphicsItem() = default;
+
+void glaxnimate::gui::graphics::TransformGraphicsItem::update_offshoots()
+{
+    prepareGeometryChange();
+    d->set_pos(d->handles[Private::Rot]);
+    d->set_pos(d->handles[Private::Position]);
+    d->set_pos(d->handles[Private::Anchor]);
+}
+
 
 void graphics::TransformGraphicsItem::update_handles()
 {
@@ -288,8 +296,6 @@ void graphics::TransformGraphicsItem::update_transform()
 {
     d->transform_matrix = d->transform->transform_matrix(d->transform->time());
     d->transform_matrix_inv = d->transform_matrix.inverted();
-    d->set_pos(d->handles[Private::Rot]);
-    d->set_pos(d->handles[Private::Anchor]);
 }
 
 
@@ -431,8 +437,8 @@ void graphics::TransformGraphicsItem::paint(QPainter* painter, const QStyleOptio
 
 QRectF graphics::TransformGraphicsItem::boundingRect() const
 {
-    qreal margin_left = d->handles[Private::Position].handle->isVisible() ? d->pos_side() : 0;
-    return d->cache.adjusted(margin_left, d->rot_top(), 0, 0);
+    qreal margin_left = d->handles[Private::Position].handle->isVisible() ? -d->offshoot_size() : 0;
+    return d->cache.adjusted(margin_left, -d->offshoot_size(), 0, 0);
 }
 
 void graphics::TransformGraphicsItem::commit_anchor()
@@ -462,7 +468,6 @@ void graphics::TransformGraphicsItem::set_transform_matrix(const QTransform& t)
     setTransform(t);
 }
 
-
 void graphics::TransformGraphicsItem::drag_pos_start(const QPointF &p)
 {
     d->pos_trans = d->target->docnode_fuzzy_parent()->transform_matrix(d->target->time()).inverted();
@@ -478,4 +483,13 @@ void graphics::TransformGraphicsItem::drag_pos(const QPointF &p, Qt::KeyboardMod
 void graphics::TransformGraphicsItem::commit_pos()
 {
     d->push_command(d->transform->position, d->transform->position.value(), true);
+}
+
+QVariant graphics::TransformGraphicsItem::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+{
+    if ( change == ItemSceneHasChanged )
+        update_offshoots();
+
+    return QGraphicsItem::itemChange(change, value);
+
 }

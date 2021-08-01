@@ -1,9 +1,12 @@
 ## 0.4.5
 
+* UI:
+    * New handle for translating layers, groups etc without having to drag on the object
 * I/O:
     * Made error messages from the lottie importer easier to understand
 * Bug Fixes:
     * Fixed loading lottie animations with missing "a" attributes
+    * The rotation handle no longer changes position based on scale
 
 
 ## 0.4.4
