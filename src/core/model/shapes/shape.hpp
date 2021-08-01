@@ -20,7 +20,6 @@ public:
     explicit ShapeElement(model::Document* document);
     ~ShapeElement();
 
-    DocumentNode* docnode_parent() const override;
     int docnode_child_count() const override { return 0; }
     DocumentNode* docnode_child(int) const override { return nullptr; }
     int docnode_child_index(DocumentNode*) const override { return -1; }
@@ -47,8 +46,12 @@ signals:
 protected:
     const ShapeListProperty& siblings() const;
     void on_property_changed(const BaseProperty* prop, const QVariant& value) override;
-    void removed_from_list() override;
-    void added_to_list() override;
+    void on_parent_changed(model::DocumentNode* old_parent, model::DocumentNode* new_parent) override;
+    virtual void on_composition_changed(model::Composition* old_comp, model::Composition* new_comp)
+    {
+        Q_UNUSED(old_comp);
+        Q_UNUSED(new_comp);
+    }
 
 private:
     void set_position(ShapeListProperty* property, int pos);

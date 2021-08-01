@@ -179,8 +179,3 @@ void glaxnimate::model::Bitmap::set_pixmap(const QImage& pix, const QString& for
     this->format.set(format);
     data.set(build_embedded(pix));
 }
-
-glaxnimate::model::DocumentNode * glaxnimate::model::Bitmap::docnode_parent() const
-{
-    return document()->assets()->images.get();
-}

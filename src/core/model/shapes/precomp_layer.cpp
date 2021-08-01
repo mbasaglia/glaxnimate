@@ -83,20 +83,21 @@ void glaxnimate::model::PreCompLayer::add_shapes(glaxnimate::model::FrameTime, m
 {
 }
 
-void glaxnimate::model::PreCompLayer::added_to_list()
+void glaxnimate::model::PreCompLayer::on_composition_changed(model::Composition* old_comp, model::Composition* new_comp)
 {
-    ShapeElement::added_to_list();
-    document()->comp_graph().add_connection(owner_composition(), this);
-    if ( composition.get() )
-        composition.get()->add_user(&composition);
-}
+    if ( old_comp )
+        document()->comp_graph().remove_connection(old_comp, this);
 
-void glaxnimate::model::PreCompLayer::removed_from_list()
-{
-    ShapeElement::removed_from_list();
-    document()->comp_graph().remove_connection(owner_composition(), this);
+    if ( new_comp )
+        document()->comp_graph().add_connection(new_comp, this);
+
     if ( composition.get() )
-        composition.get()->remove_user(&composition);
+    {
+        if ( !new_comp )
+            composition->remove_user(&composition);
+        else if ( !old_comp )
+            composition->add_user(&composition);
+    }
 }
 
 QPainterPath glaxnimate::model::PreCompLayer::to_painter_path(glaxnimate::model::FrameTime time) const

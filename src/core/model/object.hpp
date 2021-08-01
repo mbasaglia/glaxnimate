@@ -107,9 +107,6 @@ protected:
     }
     void clone_into(Object* dest) const;
 
-    virtual void removed_from_list() {};
-    virtual void added_to_list() {};
-
     class Autoreg
     {
     public:
@@ -128,7 +125,6 @@ private:
     void property_value_changed(const BaseProperty* prop, const QVariant& value);
 
     friend BaseProperty;
-    friend ObjectListPropertyBase;
     class Private;
     std::unique_ptr<Private> d;
 };

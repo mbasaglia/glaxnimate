@@ -164,11 +164,6 @@ void glaxnimate::model::GradientColors::remove_stop(int index)
     }
 }
 
-glaxnimate::model::DocumentNode * glaxnimate::model::GradientColors::docnode_parent() const
-{
-    return document()->assets()->gradient_colors.get();
-}
-
 std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::Gradient::valid_refs() const
 {
     return document()->assets()->gradient_colors->values.valid_reference_values(false);
@@ -285,10 +280,4 @@ bool glaxnimate::model::Gradient::remove_if_unused(bool)
         return true;
     }
     return false;
-}
-
-
-glaxnimate::model::DocumentNode * glaxnimate::model::Gradient::docnode_parent() const
-{
-    return document()->assets()->gradients.get();
 }

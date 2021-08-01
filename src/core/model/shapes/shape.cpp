@@ -12,6 +12,15 @@ public:
     ShapeListProperty* property = nullptr;
     int position = -1;
     glaxnimate::model::Composition* owner_composition = nullptr;
+    void update_comp(glaxnimate::model::Composition* comp, ShapeElement* parent)
+    {
+        if ( comp != owner_composition )
+        {
+            auto old = owner_composition;
+            owner_composition = comp;
+            parent->on_composition_changed(old, comp);
+        }
+    }
 };
 
 glaxnimate::model::ShapeElement::ShapeElement(glaxnimate::model::Document* document)
@@ -41,11 +50,6 @@ const glaxnimate::model::ShapeListProperty& glaxnimate::model::ShapeElement::sib
     return *d->property;
 }
 
-glaxnimate::model::DocumentNode * glaxnimate::model::ShapeElement::docnode_parent() const
-{
-    return d->property ? static_cast<DocumentNode*>(d->property->object()) : nullptr;
-}
-
 glaxnimate::model::ObjectListProperty<glaxnimate::model::ShapeElement>::iterator glaxnimate::model::ShapeListProperty::past_first_modifier() const
 {
     auto it = std::find_if(begin(), end(), [](const pointer& p){
@@ -58,32 +62,32 @@ glaxnimate::model::ObjectListProperty<glaxnimate::model::ShapeElement>::iterator
 
 void glaxnimate::model::ShapeElement::set_position(ShapeListProperty* property, int pos)
 {
-    glaxnimate::model::VisualNode* old_parent = docnode_visual_parent();
-
     d->property = property;
     d->position = pos;
     position_updated();
-
-    glaxnimate::model::VisualNode* new_parent = docnode_visual_parent();
-    if ( old_parent != new_parent )
-    {
-        if ( old_parent )
-            disconnect(this, &VisualNode::bounding_rect_changed, old_parent, &VisualNode::bounding_rect_changed);
-
-        if ( new_parent )
-            connect(this, &VisualNode::bounding_rect_changed, new_parent, &VisualNode::bounding_rect_changed);
-    }
 
     if ( property )
     {
         auto parent = d->property->object();
         if ( !parent )
-            d->owner_composition = nullptr;
+            d->update_comp(nullptr, this);
         else if ( auto comp = parent->cast<glaxnimate::model::Composition>() )
-            d->owner_composition = comp;
+            d->update_comp(comp, this);
         else if ( auto sh = parent->cast<glaxnimate::model::ShapeElement>() )
-            d->owner_composition = sh->d->owner_composition;
+            d->update_comp(sh->d->owner_composition, this);
     }
+}
+
+void glaxnimate::model::ShapeElement::on_parent_changed(model::DocumentNode* old_parent, model::DocumentNode* new_parent)
+{
+    if ( auto old_visual = qobject_cast<model::VisualNode*>(old_parent) )
+        disconnect(this, &VisualNode::bounding_rect_changed, old_visual, &VisualNode::bounding_rect_changed);
+
+    if ( auto new_visual = qobject_cast<model::VisualNode*>(new_parent) )
+        connect(this, &VisualNode::bounding_rect_changed, new_visual, &VisualNode::bounding_rect_changed);
+
+    if ( !new_parent )
+        d->update_comp(nullptr, this);
 }
 
 void glaxnimate::model::ShapeElement::on_property_changed(const glaxnimate::model::BaseProperty* prop, const QVariant&)
@@ -108,16 +112,6 @@ std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::ShapeElement
 {
     return std::unique_ptr<glaxnimate::model::ShapeElement>(static_cast<glaxnimate::model::ShapeElement*>(clone().release()));
 }
-
-void glaxnimate::model::ShapeElement::added_to_list()
-{
-}
-
-void glaxnimate::model::ShapeElement::removed_from_list()
-{
-    d->owner_composition = nullptr;
-}
-
 
 QRectF glaxnimate::model::ShapeListProperty::bounding_rect(FrameTime t) const
 {

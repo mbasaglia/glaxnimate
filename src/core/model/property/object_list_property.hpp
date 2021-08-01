@@ -17,9 +17,9 @@ private:                                                    \
     Q_CLASSINFO(#name, "property list " #type)              \
     // macro end
 
-#define GLAXNIMATE_PROPERTY_LIST(type, name, ...)           \
+#define GLAXNIMATE_PROPERTY_LIST(type, name)                \
 public:                                                     \
-    ObjectListProperty<type> name{this, #name, __VA_ARGS__};\
+    ObjectListProperty<type> name{this, #name};             \
     GLAXNIMATE_PROPERTY_LIST_IMPL(type, name)               \
     // macro end
 
@@ -38,7 +38,6 @@ public:
      * \return The internal object or \b nullptr in case of failure
      */
     virtual Object* insert_clone(Object* object, int index = -1) = 0;
-
 
     bool set_value(const QVariant& val) override
     {
@@ -65,15 +64,14 @@ public:
     virtual bool is_valid_reference_value(model::DocumentNode *, bool allow_null) const = 0;
 
 protected:
-    static void notify_inserted(model::DocumentNode* ptr)
-    {
-        ptr->added_to_list();
-    }
-
-    static void notify_removed(model::DocumentNode* ptr)
+    void object_removed(model::DocumentNode* ptr)
     {
         ptr->removed_from_list();
-        emit ptr->removed();
+    }
+
+    void object_added(model::DocumentNode* ptr)
+    {
+        ptr->added_to_list(static_cast<DocumentNode*>(object()));
     }
 };
 
@@ -158,10 +156,10 @@ public:
         auto ptr = p.get();
         objects.insert(objects.begin()+position, std::move(p));
         ptr->set_time(object()->time());
+        object_added(ptr);
         on_insert(position);
         callback_insert(this->object(), ptr, position);
         value_changed();
-        notify_inserted(ptr);
         return ptr;
     }
 
@@ -178,10 +176,10 @@ public:
         auto it = objects.begin() + index;
         auto v = std::move(*it);
         objects.erase(it);
+        object_removed(v.get());
         on_remove(index);
         callback_remove(object(), v.get(), index);
         value_changed();
-        notify_removed(v.get());
         return v;
     }
 

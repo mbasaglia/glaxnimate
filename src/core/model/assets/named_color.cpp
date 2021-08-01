@@ -33,8 +33,3 @@ bool glaxnimate::model::NamedColor::remove_if_unused(bool clean_lists)
     }
     return false;
 }
-
-glaxnimate::model::DocumentNode * glaxnimate::model::NamedColor::docnode_parent() const
-{
-    return document()->assets()->colors.get();
-}

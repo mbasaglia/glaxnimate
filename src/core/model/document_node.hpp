@@ -92,7 +92,7 @@ public:
 
     virtual QIcon tree_icon() const = 0;
 
-    virtual DocumentNode* docnode_parent() const = 0;
+    virtual DocumentNode* docnode_parent() const;
     virtual int docnode_child_count() const = 0;
     virtual DocumentNode* docnode_child(int index) const = 0;
     virtual int docnode_child_index(DocumentNode* dn) const = 0;
@@ -187,6 +187,13 @@ public:
      */
     void detach();
 
+protected:
+    virtual void on_parent_changed(model::DocumentNode* old_parent, model::DocumentNode* new_parent)
+    {
+        Q_UNUSED(old_parent);
+        Q_UNUSED(new_parent);
+    }
+
 private:
     template<class T=DocumentNode>
     void docnode_find_impl(const QString& type_name, std::vector<T*>& matches)
@@ -198,6 +205,9 @@ private:
         for ( DocumentNode* child : docnode_children() )
             child->docnode_find_impl<T>(type_name, matches);
     }
+
+    void removed_from_list();
+    void added_to_list(DocumentNode* new_parent);
 
 signals:
     void docnode_child_add_begin(int row);
@@ -217,6 +227,7 @@ signals:
 private:
     class Private;
     std::unique_ptr<Private> d;
+    friend ObjectListPropertyBase;
 };
 
 class Modifier;
@@ -322,7 +333,6 @@ signals:
 
 private:
     void propagate_visible(bool visible);
-
     void on_group_color_changed(const QColor& color);
 
 protected:

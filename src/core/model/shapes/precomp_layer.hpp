@@ -49,8 +49,7 @@ signals:
 
 protected:
     void on_paint(QPainter*, FrameTime, PaintMode, model::Modifier*) const override;
-    void removed_from_list() override;
-    void added_to_list() override;
+    void on_composition_changed(model::Composition* old_comp, model::Composition* new_comp) override;
 
 private slots:
     void on_transform_matrix_changed();

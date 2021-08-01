@@ -13,6 +13,7 @@ class glaxnimate::model::DocumentNode::Private
 public:
     std::unordered_set<User*> users;
     utils::PseudoMutex detaching;
+    DocumentNode* list_parent = nullptr;
 };
 
 glaxnimate::model::DocumentNode::DocumentNode(glaxnimate::model::Document* document)
@@ -22,6 +23,27 @@ glaxnimate::model::DocumentNode::DocumentNode(glaxnimate::model::Document* docum
 }
 
 glaxnimate::model::DocumentNode::~DocumentNode() = default;
+
+void glaxnimate::model::DocumentNode::removed_from_list()
+{
+    auto old = d->list_parent;
+    d->list_parent = nullptr;
+    on_parent_changed(old, d->list_parent);
+    emit removed();
+}
+
+void glaxnimate::model::DocumentNode::added_to_list ( glaxnimate::model::DocumentNode* new_parent )
+{
+    auto old = d->list_parent;
+    d->list_parent = new_parent;
+    on_parent_changed(old, d->list_parent);
+}
+
+glaxnimate::model::DocumentNode * glaxnimate::model::DocumentNode::docnode_parent() const
+{
+    return d->list_parent;
+}
+
 
 glaxnimate::model::VisualNode* glaxnimate::model::VisualNode::docnode_group_parent() const
 {
