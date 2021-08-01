@@ -244,7 +244,6 @@ release:
         - rsync -a mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/release . -e "ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY"
         - mv release $CI_COMMIT_TAG
         - rsync -a $CI_COMMIT_TAG mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY"
-        - mv $CI_COMMIT_TAG release
     only:
         - tags
     when: manual
@@ -254,6 +253,20 @@ release:
             - artifacts/release/MacOs/checksum.txt
             - artifacts/release/Win/glaxnimate-x86_64.zip
             - artifacts/release/Win/checksum.txt
+
+
+release:check:
+    stage: deploy
+    when: manual
+    only:
+        - tags
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y python3-pip
+        - pip3 install requests
+    script:
+        - ./deploy/release_check.py $CI_COMMIT_TAG
+
 
 linux:snap_tag:
     #image: snapcore/snapcraft:stable
