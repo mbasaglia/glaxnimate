@@ -121,6 +121,12 @@ scalar_type<VecT> angle(const VecT& cartesian)
 }
 
 template<class VecT>
+VecT from_polar(scalar_type<VecT> length, scalar_type<VecT> angle)
+{
+    return {std::cos(angle) * length, std::sin(angle) * length};
+}
+
+template<class VecT>
 struct PolarVector
 {
     using scalar = scalar_type<VecT>;
