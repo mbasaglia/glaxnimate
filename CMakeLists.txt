@@ -62,7 +62,7 @@ if ( SNAP_IS_SUCH_A_PAIN  )
 endif()
 
 # Fucking Windows being shit
-if ( WINDOWS )
+if ( WIN32 )
     message(STATUS "Shit is shit")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-lto")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-lto")
@@ -70,6 +70,8 @@ if ( WINDOWS )
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION FALSE)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
     set(CMAKE_ENABLE_EXPORTS TRUE)
+    set(CMAKE_CXX_VISIBILITY_PRESET default)
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN FALSE)
 endif()
 
 
