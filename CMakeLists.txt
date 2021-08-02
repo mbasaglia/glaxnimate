@@ -1,7 +1,6 @@
 cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 # cmake_policy(SET CMP0076 NEW)
 cmake_policy(SET CMP0077 NEW)
-#cmake_policy(SET CMP0063 NEW)
 
 
 project(Glaxnimate VERSION 0.4.4 LANGUAGES CXX)
@@ -72,8 +71,6 @@ if ( WIN32 )
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION FALSE)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
     set(CMAKE_ENABLE_EXPORTS TRUE)
-    #set(CMAKE_CXX_VISIBILITY_PRESET default)
-    #set(CMAKE_VISIBILITY_INLINES_HIDDEN FALSE)
 endif()
 
 
