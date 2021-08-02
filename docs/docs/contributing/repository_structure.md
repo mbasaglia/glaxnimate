@@ -40,6 +40,10 @@ Contains code for libraries not strictly part of Glaxnimate itself.
 
 Main codebase for Glaxnimate.
 
+### src/android
+
+All the code specific to the Android port.
+
 ### src/core
 
 Contains the internal logic for handling documents, animations, saving etc.
@@ -95,6 +99,10 @@ All classes derived from QWidget.
 
 Code for dialogs and windows.
 All widgets that are displayed on their own (ie: not as part of some other widget).
+
+### src/android
+
+Code for python bindings and building the python module.
 
 ## test
 
