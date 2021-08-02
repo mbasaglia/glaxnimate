@@ -387,7 +387,8 @@ linux:pypi_deploy_tag:
         - python3 --version
         - mkdir -p build
         - cd build
-        - cmake ..
+        - if [ -z "$CI_COMMIT_TAG" ] ; then version="$(../deploy/pypi_version_tail.sh)"; else version=""; fi
+        - cmake .. -DVERSION_SUFFIX="$version"
         - make glaxnimate_python_depends_install
         - ls py_module/build/lib
         - make glaxnimate_python_wheel
@@ -396,6 +397,7 @@ linux:pypi_deploy_tag:
         name: PyPI
     only:
         - tags
+        - pypi
 
 #windows:build:
     #extends:

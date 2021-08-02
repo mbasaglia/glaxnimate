@@ -43,7 +43,7 @@ jobs:
                     build/glaxnimate.dmg
                     build/py_module/dist/
             - name: Upload Artifacts
-              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
+              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
               env:
                 SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
                 BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
@@ -113,7 +113,7 @@ jobs:
                     build/glaxnimate-x86_64.zip
                     build/py_module/dist/
             - name: Upload Artifacts
-              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/github' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
+              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
               env:
                 SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
                 BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
