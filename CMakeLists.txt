@@ -7,6 +7,8 @@ project(Glaxnimate VERSION 0.4.4 LANGUAGES CXX)
 set(PROJECT_SLUG "glaxnimate")
 set(LIB_NAME_CORE "${PROJECT_SLUG}_core")
 set(LIB_NAME_GUI "${PROJECT_SLUG}_gui")
+set(LIB_NAME_PYTHON "${PROJECT_SLUG}_python_lib")
+set(LIB_NAME_DESKTOP "${PROJECT_SLUG}_desktop")
 set(DATA_INSTALL "share/${PROJECT_SLUG}/${PROJECT_SLUG}")
 
 set(PROJECT_HOMEPAGE_URL "https://glaxnimate.mattbas.org/")
@@ -119,10 +121,6 @@ add_subdirectory(src bin)
 
 set(QTCOLORWIDGETS_DESIGNER_PLUGIN ON)
 add_subdirectory(external/Qt-Color-Widgets EXCLUDE_FROM_ALL)
-
-if ( NOT ANDROID )
-    add_subdirectory(py_module EXCLUDE_FROM_ALL)
-endif()
 
 set(ALL_SOURCE_DIRECTORIES src)
 find_sources(ALL_SOURCES *.cpp *.hpp)

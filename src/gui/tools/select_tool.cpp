@@ -8,6 +8,7 @@
 #include "math/geom.hpp"
 
 #ifndef Q_OS_ANDROID
+    #include "widgets/dialogs/glaxnimate_window.hpp"
     #include "widgets/node_menu.hpp"
     #include "handle_menu.hpp"
 #endif

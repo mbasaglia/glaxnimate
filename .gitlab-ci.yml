@@ -334,7 +334,7 @@ linux:snap_beta:
         - make glaxnimate_python
     artifacts:
         paths:
-            - build/py_module/build/lib/
+            - build/bin/python/build/lib/
 
 linux:pypi_3.8:
     image: ubuntu:20.04
@@ -367,9 +367,9 @@ linux:pypi_deploy:
         - cd build
         - cmake .. -DVERSION_SUFFIX="git.`date +%Y%m%d%H%M%S`.$CI_COMMIT_BRANCH.$CI_COMMIT_SHORT_SHA"
         - make glaxnimate_python_depends_install
-        - ls py_module/build/lib
+        - ls bin/python/build/lib
         - make glaxnimate_python_wheel
-        - python3 -m twine upload py_module/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi --verbose
+        - python3 -m twine upload bin/python/dist/*.whl --repository-url https://gitlab.com/api/v4/projects/19921167/packages/pypi --verbose
     only:
         - master
         - release
@@ -392,7 +392,7 @@ linux:pypi_deploy_tag:
         - if [ -z "$CI_COMMIT_TAG" ] ; then version="$(../deploy/pypi_version_tail.sh)"; else version=""; fi
         - cmake .. -DVERSION_SUFFIX="$version"
         - make glaxnimate_python_depends_install
-        - ls py_module/build/lib
+        - ls bin/python/build/lib
         - make glaxnimate_python_wheel
         - make glaxnimate_python_upload
     environment:

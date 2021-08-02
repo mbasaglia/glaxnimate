@@ -1,5 +1,15 @@
-include_directories(${CMAKE_BUILD_DIR}/src/core)
-pybind11_add_module(glaxnimate_python module.cpp)
+set(SOURCES
+    python.cpp
+    miscdefs.cpp
+)
+add_library(${LIB_NAME_PYTHON} OBJECT ${SOURCES} embed.cpp)
+#target_include_directories (${LIB_NAME_PYTHON} PUBLIC
+        #${Python3_INCLUDE_DIRS}
+        #${CMAKE_SOURCE_DIR}/external/QtAppSetup/external/pybind11/include
+#)
+target_link_libraries(${LIB_NAME_PYTHON} PUBLIC ${LIB_NAME_CORE} QtAppSetup)
+
+pybind11_add_module(glaxnimate_python EXCLUDE_FROM_ALL ${SOURCES} module.cpp)
 set_target_properties(
     glaxnimate_python PROPERTIES
     OUTPUT_NAME ${PROJECT_SLUG}

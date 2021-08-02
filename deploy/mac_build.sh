@@ -100,7 +100,7 @@ case "$ACTION" in
         make glaxnimate_python_depends_install
         make glaxnimate_python
         libpath="$(echo 'from distutils.util import get_platform; import sys; print("lib.%s-%d.%d" % (get_platform(), *sys.version_info[:2]))' | python3)"
-        ln -sf lib py_module/build/$libpath
+        ln -sf lib bin/python/build/$libpath
         make glaxnimate_python_wheel
         ;;
 

@@ -87,8 +87,6 @@ utils/trace.cpp
 
 if ( NOT ANDROID )
     list(APPEND SOURCES
-        python/python.cpp
-        python/miscdefs.cpp
         io/video/video_format.cpp
         utils/tar.cpp
     )

@@ -1,4 +1,4 @@
-#include "python/python_module.hpp"
+#include "python_module.hpp"
 
 PYBIND11_MODULE(glaxnimate, glaxnimate_module)
 {
