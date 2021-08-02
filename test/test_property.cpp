@@ -55,7 +55,7 @@ class MetaTestSubject : public DocumentNode
 
     GLAXNIMATE_PROPERTY(int, prop_scalar, 123)
     GLAXNIMATE_PROPERTY_REFERENCE(MetaTestSubject, prop_ref, &MetaTestSubject::valid_references, &MetaTestSubject::is_valid_reference)
-    GLAXNIMATE_PROPERTY_LIST(MetaTestSubject, prop_list, nullptr, nullptr, nullptr, nullptr)
+    GLAXNIMATE_PROPERTY_LIST(MetaTestSubject, prop_list)
 
 public:
     QIcon instance_icon() const override { return {}; }
