@@ -343,6 +343,7 @@ linux:pypi_3.8:
         - master
         - release
         - tags
+        - pypi
 
 linux:pypi_3.9:
     image: ubuntu:21.04
@@ -351,6 +352,7 @@ linux:pypi_3.9:
         - master
         - release
         - tags
+        - pypi
 
 linux:pypi_deploy:
     image: ubuntu:latest
