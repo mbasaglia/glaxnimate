@@ -48,7 +48,7 @@ case "$ACTION" in
     build)
         JOBS="${2:-4}"
         cd "$ROOT/build"
-        mingw32-make.exe -j$JOBS
+        mingw32-make.exe -j$JOBS || mingw32-make.exe VERBOSE=1
 
         # Setup package
         PACKDIR=glaxnimate

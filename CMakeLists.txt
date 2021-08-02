@@ -61,6 +61,18 @@ if ( SNAP_IS_SUCH_A_PAIN  )
     return()
 endif()
 
+# Fucking Windows being shit
+if ( WINDOWS )
+    message(STATUS "Shit is shit")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-lto")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-lto")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-lto")
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION FALSE)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+    set(CMAKE_ENABLE_EXPORTS TRUE)
+endif()
+
+
 # Python
 if ( NOT ANDROID )
     find_program(PYTHON_PIP pip3)
