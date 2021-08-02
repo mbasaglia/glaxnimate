@@ -126,7 +126,7 @@ case "$ACTION" in
         cd "$ROOT/build"
         pip.exe install wheel twine
         mingw32-make.exe glaxnimate_python_depends_install
-        mingw32-make.exe glaxnimate_python
+        mingw32-make.exe glaxnimate_python VERBOSE=1
         mingw32-make.exe glaxnimate_python_wheel
         ;;
 
