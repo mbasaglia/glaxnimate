@@ -26,13 +26,13 @@ jobs:
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh deps
             - name: Build Python
-              if: ${{ contains(github.ref, '/tags/' }}
+              if: ${{ contains(github.ref, '/tags/') }}
               run: |
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh configure ""
                 ./deploy/mac_build.sh pypi
             - name: Build Python
-              if: ${{ !contains(github.ref, '/tags/' }}
+              if: ${{ !contains(github.ref, '/tags/') }}
               run: |
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh configure "$(./deploy/pypi_version_tail.sh)"
@@ -77,12 +77,12 @@ jobs:
               run: |
                 ./deploy/win_build.sh deps
             - name: Build Python
-              if: ${{ contains(github.ref, '/tags/' }}
+              if: ${{ contains(github.ref, '/tags/') }}
               run: |
                 ./deploy/win_build.sh configure ""
                 ./deploy/win_build.sh pypi
             - name: Build Python
-              if: ${{ !contains(github.ref, '/tags/' }}
+              if: ${{ !contains(github.ref, '/tags/') }}
               run: |
                 ./deploy/win_build.sh configure "$(./deploy/pypi_version_tail.sh)"
                 ./deploy/win_build.sh pypi
