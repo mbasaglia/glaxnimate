@@ -59,7 +59,7 @@ public:
     ImportExport* from_extension(const QString& extension) const
     {
         for ( const auto& p : object_list )
-            if ( p->can_handle_extension(extension) )
+            if ( !p->ignore_extension() && p->can_handle_extension(extension) )
                 return p.get();
 
         return nullptr;
@@ -68,7 +68,7 @@ public:
     ImportExport* from_filename(const QString& filename) const
     {
         for ( const auto& p : object_list )
-            if ( p->can_handle_filename(filename) )
+            if ( !p->ignore_extension() && p->can_handle_filename(filename) )
                 return p.get();
 
         return nullptr;

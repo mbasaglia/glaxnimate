@@ -327,7 +327,7 @@ public:
         {
             const auto& ch = *it;
             QRectF local_rect = ch->local_bounding_rect(t);
-            if ( local_rect.isNull() )
+            if ( local_rect.isNull() && local_rect.topLeft() == QPointF{0, 0} )
                 continue;
 
             QRectF child_rect = ch->local_transform_matrix(t).map(local_rect).boundingRect();

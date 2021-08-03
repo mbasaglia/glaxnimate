@@ -40,19 +40,51 @@ public:
     using BoneItem::BoneItem;
 };
 */
+
+class StaticTransform : public Object
+{
+    GLAXNIMATE_OBJECT(StaticTransform)
+    GLAXNIMATE_PROPERTY(QPointF, position, QPointF(0, 0))
+    GLAXNIMATE_PROPERTY(QVector2D, scale, QVector2D(1, 1))
+    GLAXNIMATE_PROPERTY(float, rotation, 0, {})
+
+public:
+    using Object::Object;
+
+    virtual QString type_name_human() const override { return tr("Static Transform"); }
+
+    QTransform transform_matrix() const;
+};
+
+class BoneDisplay : public Object
+{
+    GLAXNIMATE_OBJECT(BoneDisplay)
+    GLAXNIMATE_PROPERTY(float, length, 0, {}, &BoneDisplay::valid_length, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(QColor, color, QColor(200, 120, 0), {}, {}, PropertyTraits::Visual)
+
+public:
+    using Object::Object;
+
+    virtual QString type_name_human() const override { return tr("Bone Display"); }
+
+private:
+    bool valid_length(float length) const
+    {
+        return length >= 0;
+    }
+};
+
 class Bone : public BoneItem
 {
     GLAXNIMATE_OBJECT(Bone)
-    GLAXNIMATE_PROPERTY(QPointF, position, {0, 0}, {}, {}, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(float, length, 0, {}, &Bone::valid_length, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(float, angle, 0, {}, {}, PropertyTraits::Visual)
-    GLAXNIMATE_PROPERTY(QColor, color, QColor(200, 120, 0), {}, {}, PropertyTraits::Visual)
+    GLAXNIMATE_SUBOBJECT(BoneDisplay, display)
+    GLAXNIMATE_SUBOBJECT(StaticTransform, initial)
     GLAXNIMATE_SUBOBJECT(Transform, transform)
     GLAXNIMATE_PROPERTY_LIST(BoneItem, children)
     Q_PROPERTY(QPointF tip WRITE set_tip READ tip)
 
 public:
-    using BoneItem::BoneItem;
+    explicit Bone(Document* document);
 
     QPointF tip() const;
     void set_tip(const QPointF& p, bool commit = true);
@@ -72,10 +104,7 @@ protected:
     void on_paint(QPainter* painter, FrameTime t, PaintMode mode, model::Modifier*) const override;
 
 private:
-    bool valid_length(float length) const
-    {
-        return length >= 0;
-    }
+    void on_transform_matrix_changed();
 };
 
 } // namespace glaxnimate::model

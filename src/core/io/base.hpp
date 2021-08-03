@@ -60,6 +60,10 @@ public:
     virtual SettingList save_settings() const { return {}; }
     virtual bool can_open() const = 0;
     virtual bool can_save() const = 0;
+    /**
+     * \brief Whether the format should be ignored when looking at file extensions
+     */
+    virtual bool ignore_extension() const { return false; }
 
     /**
      * \brief File dialog name filter

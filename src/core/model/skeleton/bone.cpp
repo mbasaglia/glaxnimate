@@ -8,6 +8,17 @@
 
 // GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::SkinItem)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Bone)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::BoneDisplay)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::StaticTransform)
+
+QTransform glaxnimate::model::StaticTransform::transform_matrix() const
+{
+    QTransform trans;
+    trans.translate(position.get().x(), position.get().y());
+    trans.rotate(rotation.get());
+    trans.scale(scale.get().x(), scale.get().y());
+    return trans;
+}
 
 
 glaxnimate::model::Skeleton * glaxnimate::model::BoneItem::skeleton() const
@@ -31,19 +42,33 @@ glaxnimate::model::Bone * glaxnimate::model::BoneItem::parent_bone() const
     return qobject_cast<Bone*>(docnode_parent());
 }
 
+glaxnimate::model::Bone::Bone(glaxnimate::model::Document* document)
+    : BoneItem(document)
+{
+    connect(transform.get(), &Object::visual_property_changed,
+            this, &Bone::on_transform_matrix_changed);
+    connect(initial.get(), &Object::visual_property_changed,
+            this, &Bone::on_transform_matrix_changed);
+}
 
+void glaxnimate::model::Bone::on_transform_matrix_changed()
+{
+    emit bounding_rect_changed();
+    emit local_transform_matrix_changed(bone_transform(time()));
+    propagate_transform_matrix_changed(transform_matrix(time()), group_transform_matrix(time()));
+}
 
 QPointF glaxnimate::model::Bone::tip() const
 {
-    return position.get() + math::from_polar<QPointF>(length.get(), math::deg2rad(angle.get()));
+    return initial->position.get() + math::from_polar<QPointF>(display->length.get(), math::deg2rad(initial->rotation.get()));
 }
 
 void glaxnimate::model::Bone::set_tip ( const QPointF& p, bool commit )
 {
-    math::PolarVector v(p - position.get());
+    math::PolarVector v(p - initial->position.get());
     command::SetMultipleAnimated* sma = new command::SetMultipleAnimated(tr("Set bone tip"), document(), commit);
-    sma->push_property_not_animated(&length, v.length);
-    sma->push_property_not_animated(&angle, math::deg2rad(v.angle));
+    sma->push_property_not_animated(&display->length, v.length);
+    sma->push_property_not_animated(&initial->rotation, math::deg2rad(v.angle));
     push_command(sma);
 }
 
@@ -54,7 +79,7 @@ QTransform glaxnimate::model::Bone::local_transform_matrix ( glaxnimate::model::
 
 QTransform glaxnimate::model::Bone::bone_transform ( glaxnimate::model::FrameTime t ) const
 {
-    return transform->transform_matrix(t);
+    return transform->transform_matrix(t) * initial->transform_matrix();
 }
 
 void glaxnimate::model::Bone::on_paint(QPainter* painter, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode mode, model::Modifier* ) const
@@ -62,22 +87,23 @@ void glaxnimate::model::Bone::on_paint(QPainter* painter, glaxnimate::model::Fra
     if  ( mode == Render )
         return;
 
-    QPen pen(color.get(), 2);
+    QPen pen(display->color.get(), 2);
     pen.setCosmetic(true);
     painter->setPen(pen);
 
-    QPointF pos = position.get();
-    QPointF start = bone_transform(t).map(pos);
+    QPointF start;
+    QPointF pos = start;
+    QPointF start_scene = bone_transform(t).map(pos);
     pos.setX(pos.x() + 8);
-    auto radius = math::length(start - bone_transform(t).map(pos));
+    auto radius = math::length(start_scene - bone_transform(t).map(pos));
 
-    if ( length.get() == 0 )
+    if ( display->length.get() == 0 )
     {
         painter->drawEllipse(start, radius, radius);
     }
     else
     {
-        QPointF finish = bone_transform(t).map(tip());
+        QPointF finish = QPointF(display->length.get(), 0);
         auto angle = math::angle(finish - start);
         auto angle_delta = math::pi / 6;
         QPolygonF polygon{QVector<QPointF>{
@@ -108,7 +134,7 @@ int glaxnimate::model::Bone::docnode_child_index(glaxnimate::model::DocumentNode
 
 QRectF glaxnimate::model::Bone::local_bounding_rect(FrameTime t) const
 {
-    return range_bounding_rect(t, children.begin(), children.end(), QRectF(position.get(), tip()).normalized());
+    return range_bounding_rect(t, children.begin(), children.end(), QRectF(QPointF(0, 0), QPointF(display->length.get(), 0)).normalized());
 }
 
 QIcon glaxnimate::model::Bone::tree_icon() const
