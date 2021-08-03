@@ -3,6 +3,7 @@
 
 #include "model/stretchable_time.hpp"
 #include "model/assets/assets.hpp"
+#include "model/skeleton/bone.hpp"
 
 using namespace glaxnimate::gui;
 using namespace glaxnimate;
@@ -106,7 +107,7 @@ public:
 //                         properties[asset_list] = prop_node->id;
                         on_connect_object_list(prop_node, subobj, asset_list);
                     }
-                    else if ( prop->name() == "transform" || prop->name() == "initial" || prop->name() == "display" )
+                    else if ( prop->name() == "transform" || prop->object()->is_instance<model::Bone>() )
                     {
                         Subtree* prop_node = add_property(prop, tree->id, insert_row, referenced);
                         connect_subobject(subobj, prop_node, insert_row);

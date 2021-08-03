@@ -45,7 +45,7 @@ glaxnimate::model::Bone * glaxnimate::model::BoneItem::parent_bone() const
 glaxnimate::model::Bone::Bone(glaxnimate::model::Document* document)
     : BoneItem(document)
 {
-    connect(transform.get(), &Object::visual_property_changed,
+    connect(pose.get(), &Object::visual_property_changed,
             this, &Bone::on_transform_matrix_changed);
     connect(initial.get(), &Object::visual_property_changed,
             this, &Bone::on_transform_matrix_changed);
@@ -79,7 +79,7 @@ QTransform glaxnimate::model::Bone::local_transform_matrix ( glaxnimate::model::
 
 QTransform glaxnimate::model::Bone::bone_transform ( glaxnimate::model::FrameTime t ) const
 {
-    return transform->transform_matrix(t) * initial->transform_matrix();
+    return pose->transform_matrix(t) * initial->transform_matrix();
 }
 
 void glaxnimate::model::Bone::on_paint(QPainter* painter, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode mode, model::Modifier* ) const
@@ -131,10 +131,14 @@ int glaxnimate::model::Bone::docnode_child_index(glaxnimate::model::DocumentNode
     return children.index_of(static_cast<model::Bone*>(child));
 }
 
-
 QRectF glaxnimate::model::Bone::local_bounding_rect(FrameTime t) const
 {
-    return range_bounding_rect(t, children.begin(), children.end(), QRectF(QPointF(0, 0), QPointF(display->length.get(), 0)).normalized());
+    QRectF rect = range_bounding_rect(t, children.begin(), children.end());
+    if ( display->length.get() == 0 )
+        rect |= QRectF(QPointF(0, 0), rect.center()).normalized();
+    else
+        rect |= QRectF(QPointF(0, 0), QPointF(display->length.get(), 0));
+    return rect;
 }
 
 QIcon glaxnimate::model::Bone::tree_icon() const

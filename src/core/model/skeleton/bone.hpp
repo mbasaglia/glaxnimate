@@ -44,9 +44,9 @@ public:
 class StaticTransform : public Object
 {
     GLAXNIMATE_OBJECT(StaticTransform)
-    GLAXNIMATE_PROPERTY(QPointF, position, QPointF(0, 0))
-    GLAXNIMATE_PROPERTY(QVector2D, scale, QVector2D(1, 1))
-    GLAXNIMATE_PROPERTY(float, rotation, 0, {})
+    GLAXNIMATE_PROPERTY(QPointF, position, QPointF(0, 0), {}, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(QVector2D, scale, QVector2D(1, 1), {}, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(float, rotation, 0, {}, {}, PropertyTraits::Visual)
 
 public:
     using Object::Object;
@@ -79,7 +79,7 @@ class Bone : public BoneItem
     GLAXNIMATE_OBJECT(Bone)
     GLAXNIMATE_SUBOBJECT(BoneDisplay, display)
     GLAXNIMATE_SUBOBJECT(StaticTransform, initial)
-    GLAXNIMATE_SUBOBJECT(Transform, transform)
+    GLAXNIMATE_SUBOBJECT(Transform, pose)
     GLAXNIMATE_PROPERTY_LIST(BoneItem, children)
     Q_PROPERTY(QPointF tip WRITE set_tip READ tip)
 
