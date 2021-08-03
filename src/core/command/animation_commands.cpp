@@ -115,6 +115,14 @@ glaxnimate::command::SetMultipleAnimated::SetMultipleAnimated(model::AnimatableB
     )
 {}
 
+glaxnimate::command::SetMultipleAnimated::SetMultipleAnimated(const QString& name, model::Document* document, bool commit)
+    : Parent(name, commit),
+    keyframe_after(document->record_to_keyframe()),
+    time(document->current_time())
+{
+}
+
+
 glaxnimate::command::SetMultipleAnimated::SetMultipleAnimated(
     const QString& name,
     const std::vector<model::AnimatableBase*>& props,

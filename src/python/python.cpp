@@ -20,6 +20,8 @@
 #include "model/assets/named_color.hpp"
 #include "model/assets/precomposition.hpp"
 
+#include "model/skeleton/skeleton.hpp"
+
 #include "command/animation_commands.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
@@ -354,6 +356,8 @@ void register_py_module(py::module& glaxnimate_module)
         qMetaTypeId<model::NamedColor*>(),
         qMetaTypeId<model::Bitmap*>(),
         qMetaTypeId<model::Gradient*>(),
+        qMetaTypeId<model::Bone*>(),
+        qMetaTypeId<model::Skeleton*>(),
     };
 
     define_io(glaxnimate_module);
@@ -456,4 +460,9 @@ void register_py_module(py::module& glaxnimate_module)
     register_constructible<model::Stroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});
     register_constructible<model::Repeater, model::Modifier>(shapes);
     register_constructible<model::Trim, model::Modifier>(shapes);
+
+    py::module skel = model.def_submodule("skeleton", "");
+    register_constructible<model::Skeleton, model::ShapeElement>(skel);
+    register_from_meta<model::BoneItem, model::VisualNode>(skel);
+    register_constructible<model::Bone, model::BoneItem>(skel);
 }

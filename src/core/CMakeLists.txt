@@ -75,6 +75,8 @@ model/shapes/text.cpp
 model/shapes/repeater.cpp
 model/shapes/trim.cpp
 
+model/skeleton/skeleton.cpp
+model/skeleton/bone.cpp
 
 plugin/plugin.cpp
 plugin/action.cpp

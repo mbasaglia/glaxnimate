@@ -66,7 +66,11 @@ class SetMultipleAnimated : public MergeableCommand<Id::SetMultipleAnimated, Set
 {
 public:
     SetMultipleAnimated(model::AnimatableBase* prop, QVariant after, bool commit);
+    SetMultipleAnimated(const QString& name, model::Document* doc, bool commit);
 
+    /**
+     * \pre !props.empty()
+     */
     template<class... Args>
     SetMultipleAnimated(
         const QString& name,

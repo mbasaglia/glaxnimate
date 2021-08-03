@@ -320,6 +320,25 @@ public:
 
     QIcon instance_icon() const override;
 
+    template<class Iterator>
+    static QRectF range_bounding_rect(FrameTime t, const Iterator& begin, const Iterator& end, QRectF rect = {})
+    {
+        for ( auto it = begin; it != end; ++it )
+        {
+            const auto& ch = *it;
+            QRectF local_rect = ch->local_bounding_rect(t);
+            if ( local_rect.isNull() )
+                continue;
+
+            QRectF child_rect = ch->local_transform_matrix(t).map(local_rect).boundingRect();
+
+            if ( rect.isNull() )
+                rect = child_rect;
+            else
+                rect |= child_rect;
+        }
+        return rect;
+    }
 signals:
     void docnode_visible_changed(bool);
     void docnode_locked_changed(bool);

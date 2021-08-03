@@ -1,5 +1,4 @@
 #include "shape.hpp"
-#include "utils/range.hpp"
 #include "styler.hpp"
 #include "path.hpp"
 #include "model/animation/join_animatables.hpp"
@@ -115,22 +114,7 @@ std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::ShapeElement
 
 QRectF glaxnimate::model::ShapeListProperty::bounding_rect(FrameTime t) const
 {
-    QRectF rect;
-    for ( const auto& ch : utils::Range(begin(), past_first_modifier()) )
-    {
-        QRectF local_rect = ch->local_bounding_rect(t);
-        if ( local_rect.isNull() )
-            continue;
-
-        QRectF child_rect = ch->local_transform_matrix(t).map(local_rect).boundingRect();
-
-        if ( rect.isNull() )
-            rect = child_rect;
-        else
-            rect |= child_rect;
-    }
-
-    return rect;
+    return VisualNode::range_bounding_rect(t, begin(), past_first_modifier());
 }
 
 std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Shape::to_path() const
