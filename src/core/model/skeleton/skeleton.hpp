@@ -10,21 +10,22 @@ class Skeleton;
 
 
 template<class T, class Derived>
-class SkeletonListBase : public AssetListBase<T, Derived>
+class SkeletonListBase : public AssetList<T, Derived>
 {
 protected:
     using Ctor = SkeletonListBase;
 
 public:
-    using AssetListBase<T, Derived>::AssetListBase;
+    using AssetList<T, Derived>::AssetList;
 
+    Skeleton* skeleton() const { return skeleton_; }
 
 private:
-    Skeleton* parent = nullptr;
+    Skeleton* skeleton_ = nullptr;
     friend Skeleton;
 };
 
-class BoneList : public AssetListBase<BoneItem, BoneList>
+class BoneList : public SkeletonListBase<BoneItem, BoneList>
 {
     GLAXNIMATE_OBJECT(BoneList)
     ASSET_LIST_CLASS(Bone)
@@ -41,7 +42,8 @@ class Skeleton : public model::ShapeElement
     GLAXNIMATE_SUBOBJECT(BoneList, bones)
 
 public:
-    using ShapeElement::ShapeElement;
+    Skeleton(model::Document* document);
+    ~Skeleton();
 
     QIcon tree_icon() const override;
     QString type_name_human() const override { return tr("Skeleton"); }
@@ -58,6 +60,11 @@ public:
 
 protected:
     void on_paint(QPainter* painter, FrameTime t, PaintMode mode, model::Modifier*) const override;
+    class Private;
+    std::unique_ptr<Private> d;
+    friend Bone;
+    friend SkinSlot;
+
 };
 
 } // namespace glaxnimate::model

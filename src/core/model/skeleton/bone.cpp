@@ -2,11 +2,11 @@
 
 #include <QPainter>
 
-#include "skeleton.hpp"
+#include "skeleton_p.hpp"
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
 
-// GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::SkinItem)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::SkinSlot)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Bone)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::BoneDisplay)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::StaticTransform)
@@ -26,15 +26,21 @@ glaxnimate::model::Skeleton * glaxnimate::model::BoneItem::skeleton() const
     return skeleton_;
 }
 
-
-void glaxnimate::model::BoneItem::on_parent_changed ( model::DocumentNode*, model::DocumentNode* new_parent )
+glaxnimate::model::Skeleton* glaxnimate::model::BoneItem::skeleton_from_parent(model::DocumentNode* parent) const
 {
-    if ( !new_parent )
-        skeleton_ = nullptr;
-    else if ( auto skel = new_parent->cast<Skeleton>() )
-        skeleton_ = skel;
+    if ( !parent )
+        return nullptr;
+    else if ( auto blist = parent->cast<BoneList>() )
+        return blist->skeleton();
     else
-        skeleton_ = static_cast<BoneItem*>(new_parent)->skeleton_;
+        return static_cast<BoneItem*>(parent)->skeleton_;
+}
+
+void glaxnimate::model::BoneItem::on_parent_changed(model::DocumentNode*, model::DocumentNode* new_parent )
+{
+    auto old_skeleton = skeleton_;
+    skeleton_ = skeleton_from_parent(new_parent);
+    on_skeleton_changed(old_skeleton, skeleton_);
 }
 
 glaxnimate::model::Bone * glaxnimate::model::BoneItem::parent_bone() const
@@ -153,3 +159,25 @@ glaxnimate::model::Bone * glaxnimate::model::Bone::add_bone()
     push_command(new command::AddObject<BoneItem>(&children, std::move(child), children.size()));
     return raw;
 }
+
+void glaxnimate::model::Bone::on_skeleton_changed(model::Skeleton* old_skel, model::Skeleton* new_skel)
+{
+    if ( old_skel )
+        old_skel->d->bones.erase(this);
+    if ( new_skel )
+        new_skel->d->bones.insert(this);
+}
+
+QIcon glaxnimate::model::SkinSlot::tree_icon() const
+{
+    return QIcon::fromTheme("link");
+}
+
+void glaxnimate::model::SkinSlot::on_skeleton_changed(model::Skeleton* old_skel, model::Skeleton* new_skel)
+{
+    if ( old_skel )
+        old_skel->d->skin_slots.erase(this);
+    if ( new_skel )
+        new_skel->d->skin_slots.insert(this);
+}
+

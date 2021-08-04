@@ -1,4 +1,4 @@
-#include "skeleton.hpp"
+#include "skeleton_p.hpp"
 #include "command/object_list_commands.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Skeleton)
@@ -7,6 +7,16 @@ GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::BoneList)
 QIcon glaxnimate::model::BoneList::tree_icon() const
 {
     return QIcon::fromTheme("bone");
+}
+
+glaxnimate::model::Skeleton::Skeleton(model::Document* document)
+    : ShapeElement(document), d(std::make_unique<Private>())
+{
+    bones->skeleton_ = this;
+}
+
+glaxnimate::model::Skeleton::~Skeleton()
+{
 }
 
 QRectF glaxnimate::model::Skeleton::local_bounding_rect(glaxnimate::model::FrameTime t) const

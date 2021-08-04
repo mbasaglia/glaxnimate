@@ -16,24 +16,31 @@ namespace detail {
     DocumentNode* defs(model::Document* doc);
 } // detail
 
-template<class T, class Derived>
 class AssetListBase : public DocumentNode
 {
+public:
+    using DocumentNode::DocumentNode;
+
+};
+
+template<class T, class Derived>
+class AssetList : public AssetListBase
+{
 protected:
-    using Ctor = AssetListBase;
+    using Ctor = AssetList;
 
 public:
     ObjectListProperty<T> values{this, "values",
-        &AssetListBase::on_added,
-        &AssetListBase::on_removed,
-        &AssetListBase::docnode_child_add_begin,
-        &AssetListBase::docnode_child_remove_begin,
-        &AssetListBase::docnode_child_move_begin,
-        &AssetListBase::docnode_child_move_end
+        &AssetList::on_added,
+        &AssetList::on_removed,
+        &AssetList::docnode_child_add_begin,
+        &AssetList::docnode_child_remove_begin,
+        &AssetList::docnode_child_move_begin,
+        &AssetList::docnode_child_move_end
     };
 
 public:
-    using DocumentNode::DocumentNode;
+    using AssetListBase::AssetListBase;
 
     DocumentNode* docnode_parent() const override
     {
@@ -82,7 +89,7 @@ public:                                         \
     using Ctor::Ctor;                           \
 // END
 
-class NamedColorList : public AssetListBase<NamedColor, NamedColorList>
+class NamedColorList : public AssetList<NamedColor, NamedColorList>
 {
     GLAXNIMATE_OBJECT(NamedColorList)
     ASSET_LIST_CLASS(NamedColor)
@@ -101,7 +108,7 @@ protected:
     void on_removed(model::NamedColor* color, int position) override;
 };
 
-class BitmapList : public AssetListBase<Bitmap, BitmapList>
+class BitmapList : public AssetList<Bitmap, BitmapList>
 {
     GLAXNIMATE_OBJECT(BitmapList)
     ASSET_LIST_CLASS(Bitmap)
@@ -111,7 +118,7 @@ public:
     QString type_name_human() const override { return tr("Images"); }
 };
 
-class GradientColorsList : public AssetListBase<GradientColors, GradientColorsList>
+class GradientColorsList : public AssetList<GradientColors, GradientColorsList>
 {
     GLAXNIMATE_OBJECT(GradientColorsList)
     ASSET_LIST_CLASS(GradientColors)
@@ -121,7 +128,7 @@ public:
     QString type_name_human() const override { return tr("Gradient Colors"); }
 };
 
-class GradientList : public AssetListBase<Gradient, GradientList>
+class GradientList : public AssetList<Gradient, GradientList>
 {
     GLAXNIMATE_OBJECT(GradientList)
     ASSET_LIST_CLASS(Gradient)
@@ -131,7 +138,7 @@ public:
     QString type_name_human() const override { return tr("Gradients"); }
 };
 
-class PrecompositionList : public AssetListBase<Precomposition, PrecompositionList>
+class PrecompositionList : public AssetList<Precomposition, PrecompositionList>
 {
     GLAXNIMATE_OBJECT(PrecompositionList)
     ASSET_LIST_CLASS(Precomposition)

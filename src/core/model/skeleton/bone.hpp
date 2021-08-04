@@ -12,34 +12,6 @@ namespace glaxnimate::model {
 class Skeleton;
 class Bone;
 
-class BoneItem : public VisualNode
-{
-    Q_OBJECT
-    Q_PROPERTY(glaxnimate::model::Skeleton* skeleton READ skeleton)
-
-public:
-    using VisualNode::VisualNode;
-
-    Skeleton* skeleton() const;
-    Bone* parent_bone() const;
-
-protected:
-    void on_parent_changed(model::DocumentNode* old_parent, model::DocumentNode* new_parent) override;
-
-private:
-    Skeleton* skeleton_ = nullptr;
-};
-/*
-class SkinItem : public BoneItem
-{
-    GLAXNIMATE_OBJECT(SkinItem)
-    GLAXNIMATE_PROPERTY_LIST(ShapeElement, shapes)
-    GLAXNIMATE_SUBOBJECT(Transform, transform)
-
-public:
-    using BoneItem::BoneItem;
-};
-*/
 
 class StaticTransform : public Object
 {
@@ -54,6 +26,46 @@ public:
     virtual QString type_name_human() const override { return tr("Static Transform"); }
 
     QTransform transform_matrix() const;
+};
+
+class BoneItem : public VisualNode
+{
+    Q_OBJECT
+    Q_PROPERTY(glaxnimate::model::Skeleton* skeleton READ skeleton)
+
+public:
+    using VisualNode::VisualNode;
+
+    Skeleton* skeleton() const;
+    Bone* parent_bone() const;
+
+protected:
+    void on_parent_changed(model::DocumentNode* old_parent, model::DocumentNode* new_parent) override;
+    Skeleton* skeleton_from_parent(model::DocumentNode* parent) const;
+    virtual void on_skeleton_changed(model::Skeleton* old_skel, model::Skeleton* new_skel) = 0;
+
+private:
+    Skeleton* skeleton_ = nullptr;
+};
+
+class SkinSlot : public BoneItem
+{
+    GLAXNIMATE_OBJECT(SkinSlot)
+    GLAXNIMATE_SUBOBJECT(StaticTransform, initial)
+
+public:
+    using BoneItem::BoneItem;
+
+    QIcon tree_icon() const override;
+    QString type_name_human() const override { return tr("Slot"); }
+
+    int docnode_child_count() const override { return 0; }
+    DocumentNode* docnode_child(int) const override { return nullptr; }
+    int docnode_child_index(DocumentNode*) const override { return -1; }
+    QRectF local_bounding_rect(FrameTime) const override { return {}; }
+
+protected:
+    void on_skeleton_changed(model::Skeleton* old_skel, model::Skeleton* new_skel) override;
 };
 
 class BoneDisplay : public Object
@@ -102,6 +114,7 @@ public:
 
 protected:
     void on_paint(QPainter* painter, FrameTime t, PaintMode mode, model::Modifier*) const override;
+    void on_skeleton_changed(model::Skeleton* old_skel, model::Skeleton* new_skel) override;
 
 private:
     void on_transform_matrix_changed();

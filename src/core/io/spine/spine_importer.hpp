@@ -21,32 +21,39 @@ public:
     void load_document(const QJsonObject& json)
     {
         QJsonObject skeleton = json["skeleton"].toObject();
-        document->main()->width.set(get(skeleton, "width", document->main()->width.get()));
-        document->main()->height.set(get(skeleton, "height", document->main()->height.get()));
         document->main()->fps.set(get(skeleton, "fps", 30));
         auto layer = std::make_unique<model::Layer>(document);
+        // width/height from the file for some reason don't match
+        /*
+        document->main()->width.set(get(skeleton, "width", document->main()->width.get()));
+        document->main()->height.set(get(skeleton, "height", document->main()->height.get()));
         layer->transform->position.set(QPointF(
             -get(skeleton, "x", 0),
             get(skeleton, "y", 0)
         ));
+        */
         layer->shapes.insert(load_skeleton(json));
+        auto rect = layer->local_bounding_rect(0);
+        document->main()->width.set(get(skeleton, "width", rect.width()));
+        document->main()->height.set(get(skeleton, "height", rect.height()));
+        layer->transform->position.set(-rect.topLeft());
         document->main()->shapes.insert(std::move(layer));
     }
 
     std::unique_ptr<model::Skeleton> load_skeleton(const QJsonObject& json)
     {
         skeleton = std::make_unique<model::Skeleton>(document);
-        load_bones(json["bones"].toArray());
+
+        for ( const auto& b : json["bones"].toArray() )
+            load_bone(b.toObject());
+
+        for ( const auto& b : json["slots"].toArray() )
+            load_slot(b.toObject());
+
         return std::move(skeleton);
     }
 
 private:
-    void load_bones(const QJsonArray& arr)
-    {
-        for ( const auto& b : arr )
-            load_bone(b.toObject());
-    }
-
     void load_bone(const QJsonObject& json)
     {
         auto bone = std::make_unique<model::Bone>(document);
@@ -65,20 +72,39 @@ private:
         bone->initial->rotation.set(-get(json, "rotation", 0));
         bone->display->color.set(color(get(json, "color", "989898ff")));
 
-        QString parent_name = json["parent"].toString();
-        model::Bone* parent = nullptr;
-        if ( !parent_name.isEmpty() )
+        bone_parent(json["parent"].toString(), name)->insert(std::move(bone));
+    }
+
+    model::Bone* get_bone(const QString& name, const QString& error_name)
+    {
+        if ( name.isEmpty() )
+            return nullptr;
+
+        auto it = bones.find(name);
+        if ( it == bones.end() )
         {
-            auto it = bones.find(parent_name);
-            if ( it == bones.end() )
-                warning(SpineFormat::tr("Missing parent %1").arg(parent_name), name);
-            else
-                parent = it->second;
+            warning(SpineFormat::tr("Reference to unexisting bone %1").arg(name), error_name);
+            return nullptr;
         }
-        if ( parent )
-            parent->children.insert(std::move(bone));
-        else
-            skeleton->bones->values.insert(std::move(bone));
+
+        return it->second;
+    }
+
+    model::ObjectListProperty<model::BoneItem>* bone_parent(const QString& name, const QString& error_name)
+    {
+        if ( auto bone = get_bone(name, error_name) )
+            return &bone->children;
+        return &skeleton->bones->values;
+    }
+
+    void load_slot(const QJsonObject& json)
+    {
+        auto slot = std::make_unique<model::SkinSlot>(document);
+        QString name = json["name"].toString();
+        skin_slots[name] = slot.get();
+        slot->name.set(name);
+        slot->group_color.set(color(get(json, "color", "ffffff00")));
+        bone_parent(json["bone"].toString(), name)->insert(std::move(slot));
     }
 
     double get(const QJsonObject& json, const QString& key, double def)
@@ -114,6 +140,7 @@ private:
     model::Document* document;
     std::unique_ptr<model::Skeleton> skeleton;
     std::map<QString, model::Bone*> bones;
+    std::map<QString, model::SkinSlot*> skin_slots;
     io::ImportExport* ie;
 
 };

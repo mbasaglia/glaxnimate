@@ -98,7 +98,7 @@ public:
                 if ( subobj )
                 {
                     // For assets, avoid an intermediate node
-                    if ( object == document->assets() )
+                    if ( subobj->is_instance<model::AssetListBase>() )
                     {
                         model::DocumentNode* subobj = prop->value().value<model::DocumentNode*>();
                         model::ObjectListPropertyBase* asset_list = static_cast<model::ObjectListPropertyBase*>(subobj->get_property("values"));
