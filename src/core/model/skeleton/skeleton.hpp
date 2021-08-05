@@ -51,6 +51,7 @@ class Skeleton : public model::ShapeElement
     GLAXNIMATE_OBJECT(Skeleton)
     GLAXNIMATE_SUBOBJECT(BoneList, bones)
     GLAXNIMATE_SUBOBJECT(SkinList, skins)
+    GLAXNIMATE_PROPERTY_REFERENCE(Skin, skin, &Skeleton::valid_skins, &Skeleton::is_valid_skin, &Skeleton::on_skin_changed)
 
 public:
     Skeleton(model::Document* document);
@@ -72,6 +73,12 @@ public:
 
 protected:
     void on_paint(QPainter* painter, FrameTime t, PaintMode mode, model::Modifier*) const override;
+
+private:
+    std::vector<DocumentNode*> valid_skins() const;
+    bool is_valid_skin(DocumentNode* node) const;
+    void on_skin_changed(Skin*, Skin*);
+
     class Private;
     std::unique_ptr<Private> d;
     friend Bone;

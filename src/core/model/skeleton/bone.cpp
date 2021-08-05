@@ -11,13 +11,9 @@ GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Bone)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::BoneDisplay)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::StaticTransform)
 
-QTransform glaxnimate::model::StaticTransform::transform_matrix() const
+QTransform glaxnimate::model::StaticTransform::transform_matrix(const QPointF& anchor_point) const
 {
-    QTransform trans;
-    trans.translate(position.get().x(), position.get().y());
-    trans.rotate(rotation.get());
-    trans.scale(scale.get().x(), scale.get().y());
-    return trans;
+    return Transform::make_transform(anchor_point, position.get(), rotation.get(), scale.get());
 }
 
 

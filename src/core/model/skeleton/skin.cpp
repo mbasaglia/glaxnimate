@@ -149,9 +149,9 @@ void glaxnimate::model::ImageSkin::on_update_image()
     emit property_changed(&image, {});
 }
 
-QTransform glaxnimate::model::ImageSkin::local_transform_matrix(model::FrameTime) const
+QTransform glaxnimate::model::ImageSkin::local_transform_matrix(model::FrameTime t) const
 {
-    return transform->transform_matrix();
+    return transform->transform_matrix(local_bounding_rect(t).center());
 }
 
 QIcon glaxnimate::model::ImageSkin::tree_icon() const

@@ -51,6 +51,18 @@ void glaxnimate::model::Skeleton::add_shapes(FrameTime, math::bezier::MultiBezie
 
 void glaxnimate::model::Skeleton::on_paint(QPainter* painter, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode mode, model::Modifier* modifier) const
 {
+    if ( skin.get() )
+    {
+        std::map<SkinSlot*, std::vector<SkinItemBase*>> items;
+        for ( const auto& item : skin->items )
+            items[item->slot.get()].push_back(item.get());
+
+        /// \todo draw order instead of `d->skin_slots`
+        for ( const auto& slot : d->skin_slots )
+            for ( const auto& item : items[slot] )
+                item->paint(painter, t, mode, modifier);
+    }
+
     for ( const auto& ch : bones->values )
         ch->paint(painter, t, mode, modifier);
 }
@@ -62,3 +74,27 @@ glaxnimate::model::Skin * glaxnimate::model::Skeleton::add_skin()
     push_command(new command::AddObject(&skins->values, std::move(child), skins->values.size()));
     return raw;
 }
+
+std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::Skeleton::valid_skins() const
+{
+    std::vector<DocumentNode *> valid;
+    for ( const auto& skin : skins->values )
+        valid.push_back(skin.get());
+    return valid;
+}
+
+bool glaxnimate::model::Skeleton::is_valid_skin(glaxnimate::model::DocumentNode* node) const
+{
+    if ( !node )
+        return true;
+    return skins->values.index_of(node) != -1;
+}
+
+void glaxnimate::model::Skeleton::on_skin_changed(glaxnimate::model::Skin*, glaxnimate::model::Skin*)
+{
+    emit bounding_rect_changed();
+}
+
+
+
+

@@ -25,7 +25,7 @@ public:
 
     virtual QString type_name_human() const override { return tr("Static Transform"); }
 
-    QTransform transform_matrix() const;
+    QTransform transform_matrix(const QPointF& anchor_point = {}) const;
 };
 
 class BoneItem : public VisualNode

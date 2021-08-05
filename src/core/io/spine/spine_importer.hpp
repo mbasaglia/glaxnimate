@@ -61,6 +61,8 @@ private:
         for ( const auto& b : json["skins"].toArray() )
             load_skin(b.toObject());
 
+        if ( skeleton->skins->values.size() )
+            skeleton->skin.set(skeleton->skins->values[0]);
         return std::move(skeleton);
     }
 

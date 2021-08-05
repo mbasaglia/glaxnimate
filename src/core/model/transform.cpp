@@ -1,9 +1,7 @@
 #include "transform.hpp"
 #include "math/math.hpp"
 
-namespace {
-
-QTransform make_transform(
+QTransform glaxnimate::model::Transform::make_transform(
     const QPointF& anchor_point,
     const QPointF& position,
     double rotation,
@@ -18,7 +16,6 @@ QTransform make_transform(
     return trans;
 }
 
-} // namespace
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Transform)
 
