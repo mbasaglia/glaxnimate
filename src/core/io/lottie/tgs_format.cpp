@@ -66,7 +66,7 @@ bool glaxnimate::io::lottie::TgsFormat::on_open(QIODevice& file, const QString&,
     QByteArray json;
     if ( !utils::gzip::decompress(file, json, [this](const QString& s){ error(s); }) )
         return false;
-    return load_json(json, document);
+    return load_json_data(json, document);
 }
 
 bool glaxnimate::io::lottie::TgsFormat::on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)

@@ -3,16 +3,14 @@
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Skeleton)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::BoneList)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::SkinList)
 
-QIcon glaxnimate::model::BoneList::tree_icon() const
-{
-    return QIcon::fromTheme("bone");
-}
 
 glaxnimate::model::Skeleton::Skeleton(model::Document* document)
     : ShapeElement(document), d(std::make_unique<Private>())
 {
     bones->skeleton_ = this;
+    skins->skeleton_ = this;
 }
 
 glaxnimate::model::Skeleton::~Skeleton()
@@ -55,4 +53,12 @@ void glaxnimate::model::Skeleton::on_paint(QPainter* painter, glaxnimate::model:
 {
     for ( const auto& ch : bones->values )
         ch->paint(painter, t, mode, modifier);
+}
+
+glaxnimate::model::Skin * glaxnimate::model::Skeleton::add_skin()
+{
+    auto child = std::make_unique<Skin>(document());
+    auto raw = child.get();
+    push_command(new command::AddObject(&skins->values, std::move(child), skins->values.size()));
+    return raw;
 }

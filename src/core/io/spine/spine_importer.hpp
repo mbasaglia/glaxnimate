@@ -2,6 +2,7 @@
 
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QImageReader>
 
 #include "model/shapes/layer.hpp"
 #include "model/skeleton/skeleton.hpp"
@@ -13,15 +14,21 @@ namespace glaxnimate::io::spine {
 class SpineImporter
 {
 public:
-    SpineImporter(model::Document* document, io::ImportExport* ie)
+    SpineImporter(model::Document* document, const QDir& search_path, io::ImportExport* ie)
         : document(document),
-        ie(ie)
-    {}
+        ie(ie),
+        search_path(search_path),
+        search_path_images(search_path)
+    {
+    }
 
     void load_document(const QJsonObject& json)
     {
         QJsonObject skeleton = json["skeleton"].toObject();
         document->main()->fps.set(get(skeleton, "fps", 30));
+        if ( skeleton.contains("images") )
+            search_path_images.setPath(search_path.absoluteFilePath(skeleton["images"].toString()));
+
         auto layer = std::make_unique<model::Layer>(document);
         // width/height from the file for some reason don't match
         /*
@@ -40,6 +47,7 @@ public:
         document->main()->shapes.insert(std::move(layer));
     }
 
+private:
     std::unique_ptr<model::Skeleton> load_skeleton(const QJsonObject& json)
     {
         skeleton = std::make_unique<model::Skeleton>(document);
@@ -50,10 +58,25 @@ public:
         for ( const auto& b : json["slots"].toArray() )
             load_slot(b.toObject());
 
+        for ( const auto& b : json["skins"].toArray() )
+            load_skin(b.toObject());
+
         return std::move(skeleton);
     }
 
-private:
+    void load_static_transform(model::StaticTransform* transform, const QJsonObject& json)
+    {
+        transform->position.set(QPointF(
+            get(json, "x", 0),
+            -get(json, "y", 0)
+        ));
+        transform->scale.set(QVector2D(
+            get(json, "scaleX", 1),
+            get(json, "scaleY", 1)
+        ));
+        transform->rotation.set(-get(json, "rotation", 0));
+    }
+
     void load_bone(const QJsonObject& json)
     {
         auto bone = std::make_unique<model::Bone>(document);
@@ -61,15 +84,7 @@ private:
         bones[name] = bone.get();
         bone->name.set(name);
         bone->display->length.set(get(json, "length", 0));
-        bone->initial->position.set(QPointF(
-            get(json, "x", 0),
-            -get(json, "y", 0)
-        ));
-        bone->initial->scale.set(QVector2D(
-            get(json, "scaleX", 1),
-            get(json, "scaleY", 1)
-        ));
-        bone->initial->rotation.set(-get(json, "rotation", 0));
+        load_static_transform(bone->initial.get(), json);
         bone->display->color.set(color(get(json, "color", "989898ff")));
 
         bone_parent(json["parent"].toString(), name)->insert(std::move(bone));
@@ -137,12 +152,102 @@ private:
             ie->warning(where + ": " + msg);
     }
 
+    void load_skin(const QJsonObject& json)
+    {
+        auto skin = std::make_unique<model::Skin>(document);
+        QString name = json["name"].toString();
+        skin->name.set(name);
+        auto ptr = skin.get();
+        skeleton->skins->values.insert(std::move(skin));
+
+        auto att = json["attachments"].toObject();
+        for ( auto it = att.begin(); it != att.end(); ++it  )
+        {
+            load_skin_item(ptr, it.key(), it->toObject());
+        }
+    }
+
+    void load_skin_item(model::Skin* skin, const QString& slot_name, const QJsonObject& attachment_map)
+    {
+        static const std::map<QString, model::SkinItemBase* (SpineImporter::*)(model::Skin*, const QString&, const QJsonObject&)> methods = {
+            {"region", &SpineImporter::load_region}
+        };
+
+        for ( auto mit = attachment_map.begin(); mit != attachment_map.end(); ++mit  )
+        {
+            auto json = mit->toObject();
+            QString name = get(json, "name", mit.key());
+
+            QString type = get(json, "type", "region");
+            auto it = methods.find(type);
+            if ( it == methods.end() )
+            {
+                warning(SpineFormat::tr("Unknown attachment type: %1").arg(type), name);
+                continue;
+            }
+
+            auto item = (this->*it->second)(skin, name, json);
+            if ( !item )
+                continue;
+            item->name.set(name);
+            item->group_color.set(color(get(json, "color", "ffffff00")));
+            auto slot_it = skin_slots.find(slot_name);
+            if ( slot_it == skin_slots.end() )
+                warning(SpineFormat::tr("Slot `%1` not found").arg(slot_name), name);
+            else
+                item->slot.set(slot_it->second);
+        }
+    }
+
+    model::SkinItemBase* load_region(model::Skin* skin, const QString& name, const QJsonObject& json)
+    {
+        auto ptr = std::make_unique<model::ImageSkin>(document);
+        auto item = ptr.get();
+        skin->items.insert(std::move(ptr));
+
+        item->image.set(load_image(name));
+        load_static_transform(item->transform.get(), json);
+        return item;
+    }
+
+    model::Bitmap* load_image(const QString& name)
+    {
+        auto it = images.find(name);
+        if ( it != images.end() )
+            return it->second;
+
+        for ( const auto& entry : search_path_images.entryList({name + ".*"}, QDir::Files|QDir::Readable) )
+        {
+            QString filename = search_path_images.absoluteFilePath(entry);
+            if ( !QImageReader::imageFormat(filename).isEmpty() )
+            {
+                auto image = std::make_unique<glaxnimate::model::Bitmap>(document);
+                image->filename.set(filename);
+                if ( image->pixmap().isNull() )
+                {
+                    warning(SpineFormat::tr("Could not load image"), name);
+                    continue;
+                }
+                auto ptr = image.get();
+                document->assets()->images->values.insert(std::move(image));
+                images[name] = ptr;
+                return ptr;
+            }
+        }
+
+        warning(SpineFormat::tr("Image not found"), name);
+        images[name] = nullptr;
+        return nullptr;
+    }
+
     model::Document* document;
     std::unique_ptr<model::Skeleton> skeleton;
     std::map<QString, model::Bone*> bones;
     std::map<QString, model::SkinSlot*> skin_slots;
+    std::map<QString, model::Bitmap*> images;
     io::ImportExport* ie;
-
+    QDir search_path;
+    QDir search_path_images;
 };
 
 } // namespace glaxnimate::io::spine

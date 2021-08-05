@@ -22,6 +22,7 @@ io/spine/spine_format.cpp
 io/mime/mime_serializer.cpp
 io/raster/raster_format.cpp
 io/base.cpp
+io/json.cpp
 
 math/geom.cpp
 math/ellipse_solver.cpp
@@ -78,6 +79,7 @@ model/shapes/trim.cpp
 
 model/skeleton/skeleton.cpp
 model/skeleton/bone.cpp
+model/skeleton/skin.cpp
 
 plugin/plugin.cpp
 plugin/action.cpp

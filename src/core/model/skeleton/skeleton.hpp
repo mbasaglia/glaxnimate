@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bone.hpp"
+#include "skin.hpp"
 #include "model/assets/assets.hpp"
 #include "model/shapes/shape.hpp"
 
@@ -19,6 +20,7 @@ public:
     using AssetList<T, Derived>::AssetList;
 
     Skeleton* skeleton() const { return skeleton_; }
+    QIcon tree_icon() const override { return {}; }
 
 private:
     Skeleton* skeleton_ = nullptr;
@@ -28,11 +30,19 @@ private:
 class BoneList : public SkeletonListBase<BoneItem, BoneList>
 {
     GLAXNIMATE_OBJECT(BoneList)
-    ASSET_LIST_CLASS(Bone)
+    ASSET_LIST_CLASS(BoneItem)
 
 public:
-    QIcon tree_icon() const override;
     QString type_name_human() const override { return tr("Bones"); }
+};
+
+class SkinList : public SkeletonListBase<Skin, SkinList>
+{
+    GLAXNIMATE_OBJECT(SkinList)
+    ASSET_LIST_CLASS(Skin)
+
+public:
+    QString type_name_human() const override { return tr("Skins"); }
 };
 
 
@@ -40,6 +50,7 @@ class Skeleton : public model::ShapeElement
 {
     GLAXNIMATE_OBJECT(Skeleton)
     GLAXNIMATE_SUBOBJECT(BoneList, bones)
+    GLAXNIMATE_SUBOBJECT(SkinList, skins)
 
 public:
     Skeleton(model::Document* document);
@@ -57,6 +68,7 @@ public:
     void add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
 
     Q_INVOKABLE glaxnimate::model::Bone* add_bone();
+    Q_INVOKABLE glaxnimate::model::Skin* add_skin();
 
 protected:
     void on_paint(QPainter* painter, FrameTime t, PaintMode mode, model::Modifier*) const override;
@@ -64,6 +76,7 @@ protected:
     std::unique_ptr<Private> d;
     friend Bone;
     friend SkinSlot;
+    friend SkinItemBase;
 
 };
 

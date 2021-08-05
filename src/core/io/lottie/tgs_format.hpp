@@ -26,7 +26,7 @@ private:
                  model::Document* document, const QVariantMap&) override;
 
 
-    static Autoreg<TgsFormat> autoreg;
+    static io::Autoreg<TgsFormat> autoreg;
 };
 
 } // namespace glaxnimate::io::lottie

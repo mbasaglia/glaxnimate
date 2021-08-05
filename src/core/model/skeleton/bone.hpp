@@ -64,6 +64,9 @@ public:
     int docnode_child_index(DocumentNode*) const override { return -1; }
     QRectF local_bounding_rect(FrameTime) const override { return {}; }
 
+    int docnode_group_child_count() const override;
+    VisualNode* docnode_group_child(int index) const override;
+
 protected:
     void on_skeleton_changed(model::Skeleton* old_skel, model::Skeleton* new_skel) override;
 };

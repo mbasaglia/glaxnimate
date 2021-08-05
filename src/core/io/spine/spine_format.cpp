@@ -4,30 +4,12 @@
 
 #include "spine_importer.hpp"
 
-glaxnimate::io::Autoreg<glaxnimate::io::spine::SpineFormat> glaxnimate::io::spine::SpineFormat::autoreg;
+glaxnimate::io::JsonImporter::Autoreg<glaxnimate::io::spine::SpineFormat> glaxnimate::io::spine::SpineFormat::autoreg;
 
-bool glaxnimate::io::spine::SpineFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
+bool glaxnimate::io::spine::SpineFormat::on_load_json_object(const QJsonObject& json, model::Document* document, const QVariantMap&, const QString& filename)
 {
-    QJsonDocument jdoc;
-
-    try {
-        jdoc = QJsonDocument::fromJson(file.readAll());
-    } catch ( const QJsonParseError& err ) {
-        error(tr("Could not parse JSON: %1").arg(err.errorString()));
-        return false;
-    }
-
-    if ( !jdoc.isObject() )
-    {
-        error(tr("No JSON object found"));
-        return false;
-    }
-
-    QJsonObject top_level = jdoc.object();
-
-    SpineImporter imp{document, this};
-    imp.load_document(top_level);
-
+    SpineImporter imp{document, QFileInfo(filename).dir(), this};
+    imp.load_document(json);
     return true;
 }
 
@@ -41,4 +23,7 @@ bool glaxnimate::io::spine::SpineFormat::on_save(QIODevice& file, const QString&
     return false;
 }
 
-
+bool glaxnimate::io::spine::SpineFormat::can_load_object(const QJsonObject& json)
+{
+    return json.contains("bones");
+}

@@ -3,7 +3,7 @@
 #include "lottie_importer.hpp"
 #include "lottie_exporter.hpp"
 
-glaxnimate::io::Autoreg<glaxnimate::io::lottie::LottieFormat> glaxnimate::io::lottie::LottieFormat::autoreg;
+glaxnimate::io::JsonImporter::Autoreg<glaxnimate::io::lottie::LottieFormat> glaxnimate::io::lottie::LottieFormat::autoreg;
 
 bool glaxnimate::io::lottie::LottieFormat::on_save(QIODevice& file, const QString&,
                                          model::Document* document, const QVariantMap& setting_values)
@@ -18,31 +18,17 @@ QCborMap glaxnimate::io::lottie::LottieFormat::to_json(model::Document* document
     return exp.to_json();
 }
 
-bool glaxnimate::io::lottie::LottieFormat::load_json(const QByteArray& data, model::Document* document)
+
+bool glaxnimate::io::lottie::LottieFormat::can_load_object(const QJsonObject& jdoc)
 {
-    QJsonDocument jdoc;
+    return jdoc.contains("w");
+}
 
-    try {
-        jdoc = QJsonDocument::fromJson(data);
-    } catch ( const QJsonParseError& err ) {
-        emit error(tr("Could not parse JSON: %1").arg(err.errorString()));
-        return false;
-    }
-
-    if ( !jdoc.isObject() )
-    {
-        emit error(tr("No JSON object found"));
-        return false;
-    }
-
-    QJsonObject top_level = jdoc.object();
+bool glaxnimate::io::lottie::LottieFormat::on_load_json_object(const QJsonObject& json, model::Document* document, const QVariantMap&, const QString& )
+{
 
     detail::LottieImporterState imp{document, this};
-    imp.load(top_level);
+    imp.load(json);
     return true;
 }
 
-bool glaxnimate::io::lottie::LottieFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
-{
-    return load_json(file.readAll(), document);
-}

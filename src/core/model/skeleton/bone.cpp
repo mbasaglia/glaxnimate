@@ -139,7 +139,7 @@ int glaxnimate::model::Bone::docnode_child_index(glaxnimate::model::DocumentNode
 
 QRectF glaxnimate::model::Bone::local_bounding_rect(FrameTime t) const
 {
-    QRectF rect = range_bounding_rect(t, children.begin(), children.end());
+    QRectF rect = range_bounding_rect(t, children.begin(), children.end(), {}, false);
     if ( display->length.get() == 0 )
         rect |= QRectF(QPointF(0, 0), rect.center()).normalized();
     else
@@ -179,5 +179,17 @@ void glaxnimate::model::SkinSlot::on_skeleton_changed(model::Skeleton* old_skel,
         old_skel->d->skin_slots.erase(this);
     if ( new_skel )
         new_skel->d->skin_slots.insert(this);
+}
+
+glaxnimate::model::VisualNode * glaxnimate::model::SkinSlot::docnode_group_child(int index) const
+{
+    auto it = users().begin();
+    std::advance(it, index);
+    return static_cast<VisualNode*>((*it)->object());
+}
+
+int glaxnimate::model::SkinSlot::docnode_group_child_count() const
+{
+    return users().size();
 }
 
