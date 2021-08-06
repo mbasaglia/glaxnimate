@@ -4,7 +4,7 @@
 #include "model/transform.hpp"
 #include "model/property/sub_object_property.hpp"
 #include "model/property/object_list_property.hpp"
-#include "model/property/reference_property.hpp"
+#include "model/animation/animatable_reference.hpp"
 #include "model/shapes/shape.hpp"
 
 namespace glaxnimate::model {
@@ -46,33 +46,6 @@ protected:
 
 private:
     Skeleton* skeleton_ = nullptr;
-};
-
-class SkinSlot : public BoneItem
-{
-    GLAXNIMATE_OBJECT(SkinSlot)
-    GLAXNIMATE_SUBOBJECT(StaticTransform, initial)
-    GLAXNIMATE_ANIMATABLE(int, draw_order, 0)
-    GLAXNIMATE_ANIMATABLE(float, opacity, 1, {}, 0, 1, false, PropertyTraits::Percent)
-
-public:
-    using BoneItem::BoneItem;
-
-    QIcon tree_icon() const override;
-    QString type_name_human() const override { return tr("Slot"); }
-
-    int docnode_child_count() const override { return 0; }
-    DocumentNode* docnode_child(int) const override { return nullptr; }
-    int docnode_child_index(DocumentNode*) const override { return -1; }
-    QRectF local_bounding_rect(FrameTime) const override { return {}; }
-
-    int docnode_group_child_count() const override;
-    VisualNode* docnode_group_child(int index) const override;
-
-    void prepare_painter(QPainter* painter, model::FrameTime t) const;
-
-protected:
-    void on_skeleton_changed(model::Skeleton* old_skel, model::Skeleton* new_skel) override;
 };
 
 class BoneDisplay : public Object

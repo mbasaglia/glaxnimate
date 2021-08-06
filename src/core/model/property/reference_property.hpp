@@ -19,26 +19,22 @@ private:                                                    \
 
 namespace glaxnimate::model {
 
-class ReferencePropertyBase : public BaseProperty
+class ReferenceBase
 {
     Q_GADGET
-public:
-    ReferencePropertyBase(
-        Object* obj,
-        const QString& name,
-        PropertyCallback<std::vector<DocumentNode*>> valid_options,
-        PropertyCallback<bool, DocumentNode*> is_valid_option,
-        PropertyTraits::Flags flags = PropertyTraits::Visual)
-        : BaseProperty(obj, name, PropertyTraits{PropertyTraits::ObjectReference, flags}),
-        valid_options_(std::move(valid_options)),
-        is_valid_option_(std::move(is_valid_option))
-    {
-    }
 
-    bool valid_value(const QVariant & v) const override
-    {
-        return is_valid_option_(object(), v.value<DocumentNode*>());
-    }
+public:
+    ReferenceBase(
+        PropertyCallback<std::vector<DocumentNode*>> valid_options,
+        PropertyCallback<bool, DocumentNode*> is_valid_option
+    ) : valid_options_(std::move(valid_options)),
+        is_valid_option_(std::move(is_valid_option))
+    {}
+
+    virtual ~ReferenceBase() {}
+
+    virtual Object* object() const = 0;
+
 
     std::vector<DocumentNode*> valid_options() const
     {
@@ -50,28 +46,59 @@ public:
         return is_valid_option_(object(), ptr);
     }
 
-    void set_time(FrameTime) override {}
-
-    void transfer(Document*) override;
-
     virtual bool set_ref(model::DocumentNode* t) = 0;
     virtual model::DocumentNode* get_ref() const = 0;
+
+    void transfer(Document* document);
+
+    static ReferenceBase* cast(BaseProperty* property);
 
 private:
     PropertyCallback<std::vector<DocumentNode*>> valid_options_;
     PropertyCallback<bool, DocumentNode*> is_valid_option_;
 
 protected:
-//     static void remove_user(ReferencePropertyBase*, void*) {}
-//     static void add_user(ReferencePropertyBase*, void*) {}
-    static void remove_user(ReferencePropertyBase* prop, model::DocumentNode* obj)
+    static void remove_user(ReferenceBase* prop, model::DocumentNode* obj)
     {
         obj->remove_user(prop);
     }
-    static void add_user(ReferencePropertyBase* prop, model::DocumentNode* obj)
+    static void add_user(ReferenceBase* prop, model::DocumentNode* obj)
     {
         obj->add_user(prop);
     }
+};
+
+class ReferencePropertyBase : public BaseProperty, public ReferenceBase
+{
+public:
+    ReferencePropertyBase(
+        Object* obj,
+        const QString& name,
+        PropertyCallback<std::vector<DocumentNode*>> valid_options,
+        PropertyCallback<bool, DocumentNode*> is_valid_option,
+        PropertyTraits::Flags flags = PropertyTraits::Visual)
+        : BaseProperty(obj, name, PropertyTraits{PropertyTraits::ObjectReference, flags}),
+        ReferenceBase(std::move(valid_options), std::move(is_valid_option))
+    {
+    }
+
+    Object* object() const override
+    {
+        return BaseProperty::object();
+    }
+
+    bool valid_value(const QVariant & v) const override
+    {
+        return this->is_valid_option(v.value<DocumentNode*>());
+    }
+
+    void transfer(Document* document) override
+    {
+        ReferenceBase::transfer(document);
+    }
+
+    void set_time(FrameTime) override {}
+
 };
 
 template<class Type>

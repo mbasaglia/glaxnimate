@@ -1,6 +1,5 @@
 #pragma once
 
-#include "bone.hpp"
 #include "skin.hpp"
 #include "model/assets/assets.hpp"
 #include "model/shapes/shape.hpp"
@@ -84,6 +83,7 @@ private:
     friend Bone;
     friend SkinSlot;
     friend SkinItemBase;
+    friend SkinAttachment;
 
 };
 

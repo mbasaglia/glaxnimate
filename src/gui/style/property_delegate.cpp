@@ -116,7 +116,7 @@ void PropertyDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     // Disable decoration
     auto data = index.data(Qt::EditRole);
     if ( (data.userType() >= QMetaType::User && data.canConvert<int>()) ||
-        index.data(item_models::PropertyModelBase::ReferenceProperty).canConvert<model::ReferencePropertyBase*>() )
+        index.data(item_models::PropertyModelBase::ReferenceProperty).canConvert<model::ReferenceBase*>() )
     {
         opt.icon = QIcon();
         opt.features &= ~QStyleOptionViewItem::HasDecoration;
@@ -164,7 +164,7 @@ QVariant PropertyDelegate::refprop(model::BaseProperty *prop, const model::Prope
     if ( traits.flags & model::PropertyTraits::OptionList )
         return QVariant::fromValue(static_cast<model::OptionListPropertyBase*>(prop));
     else if ( traits.type == model::PropertyTraits::ObjectReference )
-        return QVariant::fromValue(static_cast<model::ReferencePropertyBase*>(prop));
+        return QVariant::fromValue((model::ReferenceBase*)static_cast<model::ReferencePropertyBase*>(prop));
     return {};
 }
 
@@ -250,7 +250,7 @@ bool PropertyDelegate::set_property_data(QWidget *editor, model::BaseProperty *p
 
 QWidget *PropertyDelegate::create_editor_from_variant(const QVariant &data, int prop_flags, QWidget *parent, const QVariant& refprop, const QVariant& min, const QVariant& max) const
 {
-    if ( refprop.canConvert<model::ReferencePropertyBase*>() )
+    if ( refprop.canConvert<model::ReferenceBase*>() )
         return new QComboBox(parent);
 
     if ( prop_flags & model::PropertyTraits::OptionList )
@@ -330,13 +330,13 @@ QWidget *PropertyDelegate::create_editor_from_variant(const QVariant &data, int 
 bool PropertyDelegate::set_editor_data(QWidget *editor, const QVariant &data, int prop_flags, const QVariant &refprop) const
 {
     // Object reference combo
-    if ( refprop.canConvert<model::ReferencePropertyBase*>() )
+    if ( refprop.canConvert<model::ReferenceBase*>() )
     {
-        if ( auto rpb = refprop.value<model::ReferencePropertyBase*>() )
+        if ( auto rpb = refprop.value<model::ReferenceBase*>() )
         {
             if ( QComboBox* combo = qobject_cast<QComboBox*>(editor) )
             {
-                model::DocumentNode* current = rpb->value().value<model::DocumentNode*>();
+                model::DocumentNode* current = rpb->get_ref();
                 combo->clear();
                 for ( model::DocumentNode* ptr : rpb->valid_options() )
                 {
@@ -438,7 +438,7 @@ QVariant PropertyDelegate::get_editor_data(QWidget *editor, const QVariant& data
     // Object reference combo
     if (
         (data.userType() >= QMetaType::User && data.canConvert<int>()) ||
-        refprop.canConvert<model::ReferencePropertyBase*>()
+        refprop.canConvert<model::ReferenceBase*>()
     )
     {
         QComboBox* combo = static_cast<QComboBox*>(editor);

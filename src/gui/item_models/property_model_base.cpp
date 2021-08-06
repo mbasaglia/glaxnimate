@@ -221,7 +221,7 @@ QVariant item_models::PropertyModelBase::Private::data_value(model::BaseProperty
         }
 
         if ( role == ReferenceProperty )
-            return QVariant::fromValue(static_cast<model::ReferencePropertyBase*>(prop));
+            return QVariant::fromValue((model::ReferenceBase*)static_cast<model::ReferencePropertyBase*>(prop));
 
         return {};
     }

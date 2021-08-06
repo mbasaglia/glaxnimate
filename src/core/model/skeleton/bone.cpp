@@ -6,7 +6,6 @@
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
 
-GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::SkinSlot)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Bone)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::BoneDisplay)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::StaticTransform)
@@ -169,35 +168,3 @@ void glaxnimate::model::Bone::on_skeleton_changed(model::Skeleton* old_skel, mod
     if ( new_skel )
         new_skel->d->bones.insert(this);
 }
-
-QIcon glaxnimate::model::SkinSlot::tree_icon() const
-{
-    return QIcon::fromTheme("link");
-}
-
-void glaxnimate::model::SkinSlot::on_skeleton_changed(model::Skeleton* old_skel, model::Skeleton* new_skel)
-{
-    if ( old_skel )
-        old_skel->d->skin_slots.erase(this);
-    if ( new_skel )
-        new_skel->d->skin_slots.insert(this);
-}
-
-void glaxnimate::model::SkinSlot::prepare_painter(QPainter* painter, model::FrameTime t) const
-{
-    painter->setOpacity(painter->opacity() * opacity.get_at(t));
-}
-
-
-glaxnimate::model::VisualNode * glaxnimate::model::SkinSlot::docnode_group_child(int index) const
-{
-    auto it = users().begin();
-    std::advance(it, index);
-    return static_cast<VisualNode*>((*it)->object());
-}
-
-int glaxnimate::model::SkinSlot::docnode_group_child_count() const
-{
-    return users().size();
-}
-

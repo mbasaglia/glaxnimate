@@ -12,7 +12,7 @@
 namespace glaxnimate::model {
 
 class Document;
-class ReferencePropertyBase;
+class ReferenceBase;
 
 /**
  * \brief Base class for elements of the document tree, that need to show in the tree view etc.
@@ -85,7 +85,7 @@ protected:
     };
 
 public:
-    using User = ReferencePropertyBase;
+    using User = ReferenceBase;
 
     explicit DocumentNode(model::Document* document);
     ~DocumentNode();

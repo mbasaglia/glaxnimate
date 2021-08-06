@@ -6,13 +6,13 @@
 
 namespace glaxnimate::model {
 
-class ReferencePropertyBase;
+class ReferenceBase;
 class DocumentNode;
 
 class AssetBase
 {
 public:
-    using User = ReferencePropertyBase;
+    using User = ReferenceBase;
 
     virtual ~AssetBase() {}
 

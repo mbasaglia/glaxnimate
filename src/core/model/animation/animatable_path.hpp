@@ -62,7 +62,9 @@ class AnimatedPropertyBezier : public detail::AnimatedProperty<math::bezier::Bez
 public:
     AnimatedPropertyBezier(Object* object, const QString& name,
                    PropertyCallback<void, math::bezier::Bezier> emitter = {})
-    : detail::AnimatedProperty<math::bezier::Bezier>(object, name, {}, std::move(emitter))
+    : detail::AnimatedProperty<math::bezier::Bezier>(object, name, {}, std::move(emitter),
+        detail::animation_traits<math::bezier::Bezier>(0)
+    )
     {}
 
     int size() const

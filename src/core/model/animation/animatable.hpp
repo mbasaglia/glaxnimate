@@ -10,15 +10,19 @@
 #include "model/property/property.hpp"
 #include "math/math.hpp"
 
-#define GLAXNIMATE_ANIMATABLE(type, name, ...)                                  \
-public:                                                                         \
-    glaxnimate::model::AnimatedProperty<type> name{this, #name, __VA_ARGS__};   \
+
+#define GLAXNIMATE_ANIMATABLE_IMPL(type, name)                                  \
     glaxnimate::model::AnimatableBase* get_##name() { return &name; }           \
 private:                                                                        \
     Q_PROPERTY(glaxnimate::model::AnimatableBase* name READ get_##name)         \
     Q_CLASSINFO(#name, "property animated " #type)                              \
     // macro end
 
+#define GLAXNIMATE_ANIMATABLE(type, name, ...)                                  \
+public:                                                                         \
+    glaxnimate::model::AnimatedProperty<type> name{this, #name, __VA_ARGS__};   \
+    GLAXNIMATE_ANIMATABLE_IMPL(type, name)                                      \
+    // macro end
 
 namespace glaxnimate::model {
 
@@ -269,6 +273,14 @@ private:
 };
 
 template<class Type>
+class Keyframe;
+
+template<class Type>
+class AnimatedProperty;
+
+namespace detail {
+
+template<class Type>
 class Keyframe : public KeyframeBase
 {
 public:
@@ -308,28 +320,19 @@ public:
         return false;
     }
 
-    value_type lerp(reference other, double t) const
-    {
-        return math::lerp(value_, other, this->transition().lerp_factor(t));
-    }
+    virtual value_type lerp(reference other, double t) const = 0;
 
 private:
     Type value_;
 };
 
-
-template<class Type>
-class AnimatedProperty;
-
-namespace detail {
-
-template<class Type>
-class AnimatedProperty : public AnimatableBase
+template<class Type, class Base = AnimatableBase, class KeyframeT = model::Keyframe<Type>>
+class AnimatedProperty : public Base
 {
 public:
-    using keyframe_type = Keyframe<Type>;
-    using value_type = typename Keyframe<Type>::value_type;
-    using reference = typename Keyframe<Type>::reference;
+    using keyframe_type = KeyframeT;
+    using value_type = typename keyframe_type::value_type;
+    using reference = typename keyframe_type::reference;
 
     class iterator
     {
@@ -423,21 +426,22 @@ public:
         int index;
     };
 
+protected:
+    template<class... Args>
     AnimatedProperty(
         Object* object,
         const QString& name,
         reference default_value,
-        PropertyCallback<void, Type> emitter = {},
-        int flags = 0
+        PropertyCallback<void, Type> emitter,
+        const PropertyTraits& traits,
+        Args&&... args
     )
-    : AnimatableBase(
-        object, name, PropertyTraits::from_scalar<Type>(
-            PropertyTraits::Animated|PropertyTraits::Visual|flags
-        )),
+    : Base(object, name, traits, std::forward<Args>(args)...),
       value_{default_value},
       emitter(std::move(emitter))
     {}
 
+public:
     int keyframe_count() const override
     {
         return keyframes_.size();
@@ -467,10 +471,10 @@ public:
         return QVariant::fromValue(get_at(time));
     }
 
-    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr) override
+    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, AnimatableBase::SetKeyframeInfo* info = nullptr) override
     {
         if ( auto v = detail::variant_cast<Type>(val) )
-            return static_cast<model::AnimatedProperty<Type>*>(this)->set_keyframe(time, *v, info);
+            return set_keyframe(time, *v, info);
         return nullptr;
     }
 
@@ -480,7 +484,7 @@ public:
         {
             keyframes_.erase(keyframes_.begin() + i);
             emit this->keyframe_removed(i);
-            value_changed();
+            this->value_changed();
         }
     }
 
@@ -511,7 +515,7 @@ public:
     bool set_value(const QVariant& val) override
     {
         if ( auto v = detail::variant_cast<Type>(val) )
-            return static_cast<model::AnimatedProperty<Type>*>(this)->set(*v);
+            return set(*v);
         return false;
     }
 
@@ -522,17 +526,24 @@ public:
         return false;
     }
 
-    bool set(reference val)
+    bool set(reference in_value)
     {
-        value_ = val;
+        auto value = in_value;
+        if ( !process_value(value) )
+            return false;
+
+        value_ = value;
         mismatched_ = !keyframes_.empty();
         this->value_changed();
         emitter(this->object(), value_);
         return true;
     }
 
-    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
+    keyframe_type* set_keyframe(FrameTime time, reference in_value, AnimatableBase::SetKeyframeInfo* info = nullptr)
     {
+        auto value = in_value;
+        process_value(value);
+
         // First keyframe
         if ( keyframes_.empty() )
         {
@@ -679,6 +690,12 @@ public:
     iterator end() const { return iterator{this, int(keyframes_.size())}; }
 
 protected:
+    virtual bool process_value(value_type& value) const
+    {
+        Q_UNUSED(value);
+        return true;
+    }
+
     void on_set_time(FrameTime time) override
     {
         if ( !keyframes_.empty() )
@@ -693,7 +710,7 @@ protected:
 
     void on_keyframe_updated(FrameTime kf_time, int prev_index, int next_index)
     {
-        auto cur_time = time();
+        auto cur_time = this->time();
         // if no keyframes or the current keyframe is being modified => update value_
         if ( !keyframes_.empty() && cur_time != kf_time )
         {
@@ -752,14 +769,57 @@ protected:
     PropertyCallback<void, Type> emitter;
 };
 
+template<class Type>
+PropertyTraits animation_traits(int flags)
+{
+    return PropertyTraits::from_scalar<Type>(PropertyTraits::Animated|PropertyTraits::Visual|flags);
+}
+
 } // namespace detail
+
+
+template<class Type>
+class Keyframe : public detail::Keyframe<Type>
+{
+public:
+    using detail::Keyframe<Type>::Keyframe;
+
+    typename detail::Keyframe<Type>::value_type lerp(typename detail::Keyframe<Type>::reference other, double t) const override
+    {
+        return math::lerp(this->get(), other, this->transition().lerp_factor(t));
+    }
+};
+
+template<class Type>
+class UnlerpableKeyframe : public detail::Keyframe<Type>
+{
+public:
+    using detail::Keyframe<Type>::Keyframe;
+
+    typename detail::Keyframe<Type>::value_type lerp(typename detail::Keyframe<Type>::reference, double) const override
+    {
+        return this->get();
+    }
+};
 
 
 template<class Type>
 class AnimatedProperty : public detail::AnimatedProperty<Type>
 {
 public:
-    using detail::AnimatedProperty<Type>::AnimatedProperty;
+    template<class... Args>
+    AnimatedProperty(
+        Object* object,
+        const QString& name,
+        typename detail::AnimatedProperty<Type>::reference default_value,
+        PropertyCallback<void, Type> emitter = {},
+        int flags = 0
+    )
+    : detail::AnimatedProperty<Type>(
+        object, name, default_value, std::move(emitter),
+        detail::animation_traits<Type>(flags)
+    )
+    {}
 };
 
 
@@ -776,7 +836,10 @@ public:
         float max = std::numeric_limits<float>::max(),
         bool cycle = false,
         int flags = 0
-    ) : detail::AnimatedProperty<float>(object, name, default_value, std::move(emitter), flags),
+    ) : detail::AnimatedProperty<float>(
+            object, name, default_value, std::move(emitter),
+            detail::animation_traits<float>(flags)
+        ),
         min_(min),
         max_(max),
         cycle_(cycle)
@@ -786,16 +849,13 @@ public:
     float max() const { return max_; }
     float min() const { return min_; }
 
-    bool set(reference val)
-    {
-        return detail::AnimatedProperty<float>::set(bound(val));
-    }
-
     using AnimatableBase::set_keyframe;
 
-    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
+protected:
+    bool process_value(value_type& value) const override
     {
-        return detail::AnimatedProperty<float>::set_keyframe(time, bound(value), info);
+        value = bound(value);
+        return true;
     }
 
 private:
@@ -811,6 +871,5 @@ private:
     float max_;
     bool cycle_;
 };
-
 
 } // namespace glaxnimate::model

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bone.hpp"
+#include "slot.hpp"
 #include "model/assets/bitmap.hpp"
 
 
@@ -29,7 +29,7 @@ public:
     Q_PROPERTY(Type type READ type)
     Q_PROPERTY(Skin* skin READ skin)
     Q_PROPERTY(Skeleton* skeleton READ skeleton)
-    GLAXNIMATE_PROPERTY_REFERENCE(SkinSlot, slot, &SkinItemBase::valid_slots, &SkinItemBase::is_valid_slot, &SkinItemBase::on_slot_changed)
+    GLAXNIMATE_PROPERTY_REFERENCE(SkinAttachment, attachment, &SkinItemBase::valid_slots, &SkinItemBase::is_valid_slot, &SkinItemBase::on_slot_changed)
 
 public:
     using VisualNode::VisualNode;
@@ -43,6 +43,8 @@ public:
     int docnode_child_index(DocumentNode*) const override { return -1; }
     QString object_name() const override;
 
+    SkinSlot* slot() const;
+
 
     virtual VisualNode* docnode_group_parent() const override;
     virtual int docnode_group_child_count() const override { return 0; }
@@ -50,7 +52,7 @@ public:
 
 protected:
     void on_parent_changed(model::DocumentNode* old_parent, model::DocumentNode* new_parent) override;
-    void on_slot_changed(glaxnimate::model::SkinSlot* new_use, glaxnimate::model::SkinSlot* old_use);
+    void on_slot_changed(glaxnimate::model::SkinAttachment* new_use, glaxnimate::model::SkinAttachment* old_use);
 
 private:
     std::vector<DocumentNode*> valid_slots() const;

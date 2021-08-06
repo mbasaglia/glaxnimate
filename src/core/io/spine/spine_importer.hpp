@@ -136,6 +136,20 @@ private:
         return &skeleton->bones->values;
     }
 
+    model::SkinAttachment* attachment(model::SkinSlot* slot, const QString& name)
+    {
+        auto it = attachments.find({slot, name});
+        if ( it != attachments.end() )
+            return it->second;
+
+        auto attach = std::make_unique<model::SkinAttachment>(document);
+        auto attachp = attach.get();
+        attach->name.set(name);
+        attachments[{slot,  name}] = attachp;
+        slot->attachments.insert(std::move(attach));
+        return attachp;
+    }
+
     void load_slot(const QJsonObject& json, int draw_order)
     {
         auto slot = std::make_unique<model::SkinSlot>(document);
@@ -144,6 +158,8 @@ private:
         slot->name.set(name);
         slot->group_color.set(color(get(json, "color", "ffffff00")));
         slot->draw_order.set(draw_order);
+        if ( json.contains("attachment") )
+            slot->attachment.set(attachment(slot.get(), json["attachment"].toString()));
         bone_parent(json["bone"].toString(), name)->insert(std::move(slot));
     }
 
@@ -192,7 +208,7 @@ private:
         }
     }
 
-    model::SkinSlot* slot(const QString& slot_name, const QString& error_name)
+    model::SkinSlot* get_slot(const QString& slot_name, const QString& error_name)
     {
         auto slot_it = skin_slots.find(slot_name);
         if ( slot_it != skin_slots.end() )
@@ -225,7 +241,8 @@ private:
                 continue;
             item->name.set(name);
             item->group_color.set(color(get(json, "color", "ffffff00")));
-            item->slot.set(slot(slot_name, name));
+            auto slot = get_slot(slot_name, name);
+            item->attachment.set(attachment(slot, mit.key()));
         }
     }
 
@@ -282,7 +299,7 @@ private:
         {
             const QString& slot_name = it.key();
             QJsonObject janim = it->toObject();
-            if ( auto slot = this->slot(slot_name, anim_name) )
+            if ( auto slot = get_slot(slot_name, anim_name) )
                 load_animation_slot(slot, janim);
         }
     }
@@ -291,15 +308,28 @@ private:
     {
         for ( auto it = json.begin(); it != json.end(); ++it )
         {
+            auto vals = it->toArray();
             // docs says color but json says rgba
-            if ( it.key() != "color" && it.key() != "rgba" )
+            if ( it.key() == "color" || it.key() == "rgba" )
+            {
+                load_keyframes(vals, slot->opacity, [](const QJsonObject& j){
+                    return float(j["color"].toString().right(2).toInt(nullptr, 16)) / 0xff;
+                });
+            }
+            else if ( it.key() == "attachment" )
+            {
+                load_keyframes(vals, slot->attachment, [this, slot](const QJsonObject& j) -> model::SkinAttachment* {
+                    auto name = j["name"].toString();
+                    if ( name.isEmpty() )
+                        return nullptr;
+                    return attachment(slot, name);
+                });
+            }
+            else
             {
                 warning(SpineFormat::tr("Slot %1 animation not supported").arg(it.key()), slot->object_name());
                 continue;
             }
-            load_keyframes(it->toArray(), slot->opacity, [](const QJsonObject& j){
-                return float(j["color"].toString().right(2).toInt(nullptr, 16)) / 0xff;
-            });
         }
     }
 
@@ -345,8 +375,8 @@ private:
         return -get(js, "value", 0);
     }
 
-    template<class T, class Callback>
-    void load_keyframes(const QJsonArray& json, model::AnimatedProperty<T>& prop, const Callback& callback)
+    template<class T, class Callback, class B, class K>
+    void load_keyframes(const QJsonArray& json, model::detail::AnimatedProperty<T, B, K>& prop, const Callback& callback)
     {
         for ( const auto& kfv : json )
         {
@@ -382,6 +412,7 @@ private:
     std::map<QString, model::Bone*> bones;
     std::map<QString, model::SkinSlot*> skin_slots;
     std::map<QString, model::Bitmap*> images;
+    std::map<std::pair<model::SkinSlot*, QString>, model::SkinAttachment*> attachments;
     io::ImportExport* ie;
     QDir search_path;
     QDir search_path_images;

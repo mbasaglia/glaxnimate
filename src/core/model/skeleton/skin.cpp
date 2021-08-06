@@ -6,6 +6,14 @@
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Skin)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::ImageSkin)
 
+
+glaxnimate::model::SkinSlot * glaxnimate::model::SkinItemBase::slot() const
+{
+    if ( attachment.get() )
+        return attachment->slot();
+    return nullptr;
+}
+
 void glaxnimate::model::SkinItemBase::on_parent_changed(model::DocumentNode*, model::DocumentNode* new_parent)
 {
     skin_ = qobject_cast<Skin*>(new_parent);
@@ -23,7 +31,7 @@ glaxnimate::model::Skeleton * glaxnimate::model::SkinItemBase::skeleton() const
 
 glaxnimate::model::VisualNode * glaxnimate::model::SkinItemBase::docnode_group_parent() const
 {
-    return slot.get();
+    return attachment.get();
 }
 
 std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::SkinItemBase::valid_slots() const
@@ -31,7 +39,7 @@ std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::SkinItemBase::
     auto skel = skeleton();
     if ( !skel )
         return {};
-    return std::vector<DocumentNode*>(skel->d->skin_slots.begin(), skel->d->skin_slots.end());
+    return std::vector<DocumentNode*>(skel->d->attachments.begin(), skel->d->attachments.end());
 }
 
 bool glaxnimate::model::SkinItemBase::is_valid_slot(glaxnimate::model::DocumentNode* node) const
@@ -41,18 +49,17 @@ bool glaxnimate::model::SkinItemBase::is_valid_slot(glaxnimate::model::DocumentN
     auto skel = skeleton();
     if ( !skel )
         return false;
-    return skel->d->skin_slots.count(static_cast<SkinSlot*>(node));
+    return skel->d->attachments.count(static_cast<SkinAttachment*>(node));
 }
 
 QString glaxnimate::model::SkinItemBase::object_name() const
 {
-    QString base = VisualNode::object_name();
-    if ( slot.get() )
-        return slot->object_name() + " / " + base;
-    return base;
+    if ( attachment.get() )
+        return attachment->object_name();
+    return VisualNode::object_name();
 }
 
-void glaxnimate::model::SkinItemBase::on_slot_changed(glaxnimate::model::SkinSlot*, glaxnimate::model::SkinSlot*)
+void glaxnimate::model::SkinItemBase::on_slot_changed(glaxnimate::model::SkinAttachment*, glaxnimate::model::SkinAttachment*)
 {
     emit name_changed(object_name());
 }
@@ -120,8 +127,8 @@ QRectF glaxnimate::model::ImageSkin::local_bounding_rect(glaxnimate::model::Fram
 
 void glaxnimate::model::ImageSkin::on_paint(QPainter* p, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode, glaxnimate::model::Modifier*) const
 {
-    if ( auto slot = this->slot.get() )
-        slot->prepare_painter(p, t);
+    if ( auto attachment = this->attachment.get() )
+        attachment->prepare_painter(p, t);
 
     if ( image.get() )
         image->paint(p);

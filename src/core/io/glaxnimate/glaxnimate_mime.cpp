@@ -21,7 +21,7 @@ public:
         : skip(objects.begin(), objects.end())
     {}
 
-    void on_visit(model::DocumentNode * node) override
+    void on_visit(model::DocumentNode* node) override
     {
         for ( auto property : node->properties() )
         {

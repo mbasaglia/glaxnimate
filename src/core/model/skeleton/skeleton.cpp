@@ -55,7 +55,11 @@ void glaxnimate::model::Skeleton::on_paint(QPainter* painter, glaxnimate::model:
     {
         std::map<SkinSlot*, std::vector<SkinItemBase*>> items;
         for ( const auto& item : skin->items )
-            items[item->slot.get()].push_back(item.get());
+        {
+            auto slot = item->slot();
+            if ( slot && slot->attachment.get() == item->attachment.get() )
+                items[slot].push_back(item.get());
+        }
 
         std::vector<SkinSlot*> skin_slots(d->skin_slots.begin(), d->skin_slots.end());
         std::sort(skin_slots.begin(), skin_slots.end(), [](const SkinSlot* a, const SkinSlot* b){ return a->draw_order.get() < b->draw_order.get(); });

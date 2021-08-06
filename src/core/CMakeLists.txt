@@ -80,6 +80,7 @@ model/shapes/trim.cpp
 model/skeleton/skeleton.cpp
 model/skeleton/bone.cpp
 model/skeleton/skin.cpp
+model/skeleton/slot.cpp
 
 plugin/plugin.cpp
 plugin/action.cpp

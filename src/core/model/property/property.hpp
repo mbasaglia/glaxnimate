@@ -184,7 +184,7 @@ public:
         return name_;
     }
 
-    PropertyTraits traits() const
+    const PropertyTraits& traits() const
     {
         return traits_;
     }
