@@ -57,7 +57,6 @@ void glaxnimate::model::Skeleton::on_paint(QPainter* painter, glaxnimate::model:
         for ( const auto& item : skin->items )
             items[item->slot.get()].push_back(item.get());
 
-        /// \todo draw order instead of `d->skin_slots`
         std::vector<SkinSlot*> skin_slots(d->skin_slots.begin(), d->skin_slots.end());
         std::sort(skin_slots.begin(), skin_slots.end(), [](const SkinSlot* a, const SkinSlot* b){ return a->draw_order.get() < b->draw_order.get(); });
         for ( const auto& slot : skin_slots )
@@ -96,7 +95,3 @@ void glaxnimate::model::Skeleton::on_skin_changed(glaxnimate::model::Skin*, glax
 {
     emit bounding_rect_changed();
 }
-
-
-
-

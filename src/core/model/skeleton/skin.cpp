@@ -118,8 +118,11 @@ QRectF glaxnimate::model::ImageSkin::local_bounding_rect(glaxnimate::model::Fram
     return QRectF(0, 0, image->width.get(), image->height.get());
 }
 
-void glaxnimate::model::ImageSkin::on_paint(QPainter* p, glaxnimate::model::FrameTime, glaxnimate::model::VisualNode::PaintMode, glaxnimate::model::Modifier*) const
+void glaxnimate::model::ImageSkin::on_paint(QPainter* p, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode, glaxnimate::model::Modifier*) const
 {
+    if ( auto slot = this->slot.get() )
+        slot->prepare_painter(p, t);
+
     if ( image.get() )
         image->paint(p);
 }

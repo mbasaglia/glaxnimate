@@ -40,10 +40,18 @@ public:
         ));
         */
         layer->shapes.insert(load_skeleton(json));
+
+        if ( max_ft > 0 )
+        {
+            document->main()->animation->last_frame.set(max_ft);
+            layer->animation->last_frame.set(max_ft);
+        }
+
         auto rect = layer->local_bounding_rect(0);
         document->main()->width.set(get(skeleton, "width", rect.width()));
         document->main()->height.set(get(skeleton, "height", rect.height()));
         layer->transform->position.set(-rect.topLeft());
+
         document->main()->shapes.insert(std::move(layer));
     }
 
@@ -61,6 +69,18 @@ private:
 
         for ( const auto& b : json["skins"].toArray() )
             load_skin(b.toObject());
+
+        if ( json.contains("events") && !json["events"].toArray().empty() )
+            warning(SpineFormat::tr("Events are not supported"), SpineFormat::tr("Skeleton"));
+
+        auto anim = json["animations"].toObject();
+        if ( anim.length() > 0 )
+        {
+            auto anim_name = anim.keys()[0];
+            if ( anim.length() > 1 )
+                warning(SpineFormat::tr("Only one animation will be loaded"), anim_name);
+            load_animation(anim_name, anim[anim_name].toObject());
+        }
 
         if ( skeleton->skins->values.size() )
             skeleton->skin.set(skeleton->skins->values[0]);
@@ -127,7 +147,7 @@ private:
         bone_parent(json["bone"].toString(), name)->insert(std::move(slot));
     }
 
-    double get(const QJsonObject& json, const QString& key, double def)
+    static double get(const QJsonObject& json, const QString& key, double def)
     {
         auto it = json.find(key);
         if ( it == json.end() )
@@ -172,6 +192,15 @@ private:
         }
     }
 
+    model::SkinSlot* slot(const QString& slot_name, const QString& error_name)
+    {
+        auto slot_it = skin_slots.find(slot_name);
+        if ( slot_it != skin_slots.end() )
+            return slot_it->second;
+        warning(SpineFormat::tr("Slot `%1` not found").arg(slot_name), error_name);
+        return nullptr;
+    }
+
     void load_skin_item(model::Skin* skin, const QString& slot_name, const QJsonObject& attachment_map)
     {
         static const std::map<QString, model::SkinItemBase* (SpineImporter::*)(model::Skin*, const QString&, const QJsonObject&)> methods = {
@@ -196,11 +225,7 @@ private:
                 continue;
             item->name.set(name);
             item->group_color.set(color(get(json, "color", "ffffff00")));
-            auto slot_it = skin_slots.find(slot_name);
-            if ( slot_it == skin_slots.end() )
-                warning(SpineFormat::tr("Slot `%1` not found").arg(slot_name), name);
-            else
-                item->slot.set(slot_it->second);
+            item->slot.set(slot(slot_name, name));
         }
     }
 
@@ -245,6 +270,113 @@ private:
         return nullptr;
     }
 
+    void load_animation(const QString& anim_name, const QJsonObject& json)
+    {
+        load_animation_slots(anim_name, json["slots"].toObject());
+        load_animation_bones(anim_name, json["bones"].toObject());
+    }
+
+    void load_animation_slots(const QString& anim_name, const QJsonObject& json)
+    {
+        for ( auto it =  json.begin(); it != json.end(); ++it )
+        {
+            const QString& slot_name = it.key();
+            QJsonObject janim = it->toObject();
+            if ( auto slot = this->slot(slot_name, anim_name) )
+                load_animation_slot(slot, janim);
+        }
+    }
+
+    void load_animation_slot(model::SkinSlot* slot, const QJsonObject& json)
+    {
+        for ( auto it = json.begin(); it != json.end(); ++it )
+        {
+            // docs says color but json says rgba
+            if ( it.key() != "color" && it.key() != "rgba" )
+            {
+                warning(SpineFormat::tr("Slot %1 animation not supported").arg(it.key()), slot->object_name());
+                continue;
+            }
+            load_keyframes(it->toArray(), slot->opacity, [](const QJsonObject& j){
+                return float(j["color"].toString().right(2).toInt(nullptr, 16)) / 0xff;
+            });
+        }
+    }
+
+    void load_animation_bones(const QString& anim_name, const QJsonObject& json)
+    {
+        for ( auto it =  json.begin(); it != json.end(); ++it )
+        {
+            const QString& bone_name = it.key();
+            QJsonObject janim = it->toObject();
+            if ( auto bone = get_bone(bone_name, anim_name) )
+                load_animation_bone(bone, janim);
+        }
+    }
+
+    void load_animation_bone(model::Bone* bone, const QJsonObject& json)
+    {
+        for ( auto it = json.begin(); it != json.end(); ++it )
+        {
+            auto frames = it->toArray();
+            if ( it.key() == "translate" )
+                load_keyframes(frames, bone->pose->position, &SpineImporter::load_value_point);
+            else if ( it.key() == "rotate" )
+                load_keyframes(frames, bone->pose->rotation, &SpineImporter::load_value_angle);
+            else if ( it.key() == "scale" )
+                load_keyframes(frames, bone->pose->scale, &SpineImporter::load_value_scale);
+            else
+                warning(SpineFormat::tr("Bone %1 animation not supported").arg(it.key()), bone->object_name());
+        }
+    }
+
+    static QPointF load_value_point(const QJsonObject& js)
+    {
+        return {get(js, "x", 0), -get(js, "y", 0)};
+    }
+
+    static QVector2D load_value_scale(const QJsonObject& js)
+    {
+        return QVector2D(get(js, "x", 1), get(js, "y", 1));
+    }
+
+    static float load_value_angle(const QJsonObject& js)
+    {
+        return -get(js, "value", 0);
+    }
+
+    template<class T, class Callback>
+    void load_keyframes(const QJsonArray& json, model::AnimatedProperty<T>& prop, const Callback& callback)
+    {
+        for ( const auto& kfv : json )
+        {
+            auto kfj = kfv.toObject();
+            model::FrameTime t = kfj["time"].toDouble() * document->main()->fps.get();
+            if ( t > max_ft )
+                max_ft = t;
+
+            auto kf = prop.set_keyframe(t, callback(kfj));
+            model::KeyframeTransition transition;
+            if ( kfj["curve"].toString() == "stepped" )
+            {
+                transition.set_after_descriptive(model::KeyframeTransition::Hold);
+            }
+            else
+            {
+                transition.set_before(QPointF(
+                    get(kfj, "curve", 0),
+                    get(kfj, "c2", 0)
+                ));
+
+                transition.set_before(QPointF(
+                    get(kfj, "c3", 1),
+                    get(kfj, "c4", 1)
+                ));
+            }
+            kf->set_transition(transition);
+        }
+    }
+
     model::Document* document;
     std::unique_ptr<model::Skeleton> skeleton;
     std::map<QString, model::Bone*> bones;
@@ -253,6 +385,7 @@ private:
     io::ImportExport* ie;
     QDir search_path;
     QDir search_path_images;
+    model::FrameTime max_ft = 0;
 };
 
 } // namespace glaxnimate::io::spine

@@ -52,7 +52,8 @@ class SkinSlot : public BoneItem
 {
     GLAXNIMATE_OBJECT(SkinSlot)
     GLAXNIMATE_SUBOBJECT(StaticTransform, initial)
-    GLAXNIMATE_PROPERTY(int, draw_order, 0, {}, {}, PropertyTraits::Visual)
+    GLAXNIMATE_ANIMATABLE(int, draw_order, 0)
+    GLAXNIMATE_ANIMATABLE(float, opacity, 1, {}, 0, 1, false, PropertyTraits::Percent)
 
 public:
     using BoneItem::BoneItem;
@@ -67,6 +68,8 @@ public:
 
     int docnode_group_child_count() const override;
     VisualNode* docnode_group_child(int index) const override;
+
+    void prepare_painter(QPainter* painter, model::FrameTime t) const;
 
 protected:
     void on_skeleton_changed(model::Skeleton* old_skel, model::Skeleton* new_skel) override;

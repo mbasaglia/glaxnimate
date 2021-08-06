@@ -102,6 +102,12 @@ void glaxnimate::model::Bone::on_paint(QPainter* painter, glaxnimate::model::Fra
     if ( display->length.get() == 0 )
     {
         painter->drawEllipse(start, radius, radius);
+        auto r_out = radius / 4 * 5;
+        auto r_in = radius / 4 * 3;
+        painter->drawLine(QPointF(r_in, 0), QPointF(r_out, 0));
+        painter->drawLine(QPointF(-r_in, 0), QPointF(-r_out, 0));
+        painter->drawLine(QPointF(0, -r_in), QPointF(0, -r_out));
+        painter->drawLine(QPointF(0, r_in), QPointF(0, r_out));
     }
     else
     {
@@ -176,6 +182,12 @@ void glaxnimate::model::SkinSlot::on_skeleton_changed(model::Skeleton* old_skel,
     if ( new_skel )
         new_skel->d->skin_slots.insert(this);
 }
+
+void glaxnimate::model::SkinSlot::prepare_painter(QPainter* painter, model::FrameTime t) const
+{
+    painter->setOpacity(painter->opacity() * opacity.get_at(t));
+}
+
 
 glaxnimate::model::VisualNode * glaxnimate::model::SkinSlot::docnode_group_child(int index) const
 {
