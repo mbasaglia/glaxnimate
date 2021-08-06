@@ -52,6 +52,7 @@ class SkinSlot : public BoneItem
 {
     GLAXNIMATE_OBJECT(SkinSlot)
     GLAXNIMATE_SUBOBJECT(StaticTransform, initial)
+    GLAXNIMATE_PROPERTY(int, draw_order, 0, {}, {}, PropertyTraits::Visual)
 
 public:
     using BoneItem::BoneItem;

@@ -55,8 +55,9 @@ private:
         for ( const auto& b : json["bones"].toArray() )
             load_bone(b.toObject());
 
+        int draw_order = 0;
         for ( const auto& b : json["slots"].toArray() )
-            load_slot(b.toObject());
+            load_slot(b.toObject(), draw_order++);
 
         for ( const auto& b : json["skins"].toArray() )
             load_skin(b.toObject());
@@ -87,7 +88,8 @@ private:
         bone->name.set(name);
         bone->display->length.set(get(json, "length", 0));
         load_static_transform(bone->initial.get(), json);
-        bone->display->color.set(color(get(json, "color", "989898ff")));
+        if ( json.contains("color") )
+            bone->display->color.set(color(json["color"].toString()));
 
         bone_parent(json["parent"].toString(), name)->insert(std::move(bone));
     }
@@ -114,13 +116,14 @@ private:
         return &skeleton->bones->values;
     }
 
-    void load_slot(const QJsonObject& json)
+    void load_slot(const QJsonObject& json, int draw_order)
     {
         auto slot = std::make_unique<model::SkinSlot>(document);
         QString name = json["name"].toString();
         skin_slots[name] = slot.get();
         slot->name.set(name);
         slot->group_color.set(color(get(json, "color", "ffffff00")));
+        slot->draw_order.set(draw_order);
         bone_parent(json["bone"].toString(), name)->insert(std::move(slot));
     }
 
