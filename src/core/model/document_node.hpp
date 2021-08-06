@@ -290,7 +290,7 @@ public:
     /**
      * \brief Bounding rect in local coordinates (current frame)
      */
-    Q_INVOKABLE virtual QRectF local_bounding_rect(FrameTime t) const = 0;
+    Q_INVOKABLE virtual QRectF local_bounding_rect(double t) const = 0;
 
     /**
      * \brief \b true iff this node and all of its ancestors are visible and unlocked
@@ -308,12 +308,12 @@ public:
     /**
      * \brief Transform matrix mapping points from document coordinates to local coordinates
      */
-    Q_INVOKABLE QTransform transform_matrix(FrameTime t) const;
-    Q_INVOKABLE QTransform group_transform_matrix(FrameTime t) const;
+    QTransform transform_matrix(FrameTime t) const;
+    QTransform group_transform_matrix(FrameTime t) const;
     /**
      * \brief Transform matrix mapping points from parent coordinates to local coordinates
      */
-    Q_INVOKABLE virtual QTransform local_transform_matrix(FrameTime) const { return QTransform(); }
+    virtual QTransform local_transform_matrix(FrameTime) const { return QTransform(); }
 
 
     virtual void paint(QPainter* painter, FrameTime time, PaintMode mode, model::Modifier* modifier = nullptr) const;

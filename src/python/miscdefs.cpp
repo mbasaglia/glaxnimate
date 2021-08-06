@@ -286,6 +286,7 @@ void define_utils(py::module& m)
         .def_property("bottom_right", &QRectF::bottomRight, &QRectF::setBottomRight)
         .def_property("bottom_left", &QRectF::bottomLeft, &QRectF::setBottomLeft)
         .def_property("size", &QRectF::size, &QRectF::setSize)
+        .def("__repr__", qdebug_operator_to_string<QRectF>())
     ;
 
     define_bezier(utils);

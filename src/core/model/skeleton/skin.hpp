@@ -27,8 +27,8 @@ public:
     Q_ENUM(Type)
 
     Q_PROPERTY(Type type READ type)
-    Q_PROPERTY(Skin* skin READ skin)
-    Q_PROPERTY(Skeleton* skeleton READ skeleton)
+    Q_PROPERTY(glaxnimate::model::Skin* skin READ skin)
+    Q_PROPERTY(glaxnimate::model::Skeleton* skeleton READ skeleton)
     GLAXNIMATE_PROPERTY_REFERENCE(SkinAttachment, attachment, &SkinItemBase::valid_slots, &SkinItemBase::is_valid_slot, &SkinItemBase::on_slot_changed)
 
 public:
@@ -65,7 +65,7 @@ class Skin : public VisualNode
 {
     GLAXNIMATE_OBJECT(Skin)
     GLAXNIMATE_PROPERTY_LIST(SkinItemBase, items)
-    Q_PROPERTY(Skeleton* skeleton READ skeleton)
+    Q_PROPERTY(glaxnimate::model::Skeleton* skeleton READ skeleton)
 
 public:
     using VisualNode::VisualNode;

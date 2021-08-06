@@ -465,6 +465,8 @@ void register_py_module(py::module& glaxnimate_module)
     register_constructible<model::Skeleton, model::ShapeElement>(skel);
     register_from_meta<model::BoneItem, model::VisualNode>(skel);
     register_constructible<model::Bone, model::BoneItem>(skel);
+    register_constructible<model::SkinSlot, model::BoneItem>(skel);
+    register_constructible<model::SkinAttachment, model::VisualNode>(skel);
     register_from_meta<model::SkinItemBase, model::VisualNode>(skel);
     register_constructible<model::Skin, model::VisualNode>(skel);
     register_constructible<model::ImageSkin, model::SkinItemBase>(skel);

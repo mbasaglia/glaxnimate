@@ -8,6 +8,8 @@
 #include "model/skeleton/skeleton.hpp"
 #include "spine_format.hpp"
 
+#include <QDebug>
+
 namespace glaxnimate::io::spine {
 
 
@@ -48,8 +50,8 @@ public:
         }
 
         auto rect = layer->local_bounding_rect(0);
-        document->main()->width.set(get(skeleton, "width", rect.width()));
-        document->main()->height.set(get(skeleton, "height", rect.height()));
+        document->main()->width.set(rect.width());
+        document->main()->height.set(rect.height());
         layer->transform->position.set(-rect.topLeft());
 
         document->main()->shapes.insert(std::move(layer));
@@ -381,7 +383,7 @@ private:
         for ( const auto& kfv : json )
         {
             auto kfj = kfv.toObject();
-            model::FrameTime t = kfj["time"].toDouble() * document->main()->fps.get();
+            model::FrameTime t = qRound(kfj["time"].toDouble() * document->main()->fps.get());
             if ( t > max_ft )
                 max_ft = t;
 
