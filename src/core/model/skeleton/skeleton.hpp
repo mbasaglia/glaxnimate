@@ -10,16 +10,18 @@ class Skeleton;
 
 
 template<class T, class Derived>
-class SkeletonListBase : public AssetList<T, Derived>
+class SkeletonListBase : public AssetList<T, Derived, VisualNode>
 {
 protected:
     using Ctor = SkeletonListBase;
 
 public:
-    using AssetList<T, Derived>::AssetList;
+    using AssetList<T, Derived, VisualNode>::AssetList;
 
     Skeleton* skeleton() const { return skeleton_; }
     QIcon tree_icon() const override { return {}; }
+    QRectF local_bounding_rect(FrameTime) const override { return {}; }
+
 
 private:
     Skeleton* skeleton_ = nullptr;
@@ -58,9 +60,9 @@ public:
 
     QIcon tree_icon() const override;
     QString type_name_human() const override { return tr("Skeleton"); }
-    int docnode_child_count() const override { return 0; }
-    DocumentNode* docnode_child(int) const override { return nullptr; }
-    int docnode_child_index(DocumentNode*) const override { return -1; }
+    int docnode_child_count() const override;
+    DocumentNode* docnode_child(int) const override;
+    int docnode_child_index(DocumentNode*) const override;
     QRectF local_bounding_rect(FrameTime t) const override;
 
     QPainterPath to_painter_path(FrameTime t) const override;
@@ -70,8 +72,7 @@ public:
     Q_INVOKABLE glaxnimate::model::Bone* add_bone();
     Q_INVOKABLE glaxnimate::model::Skin* add_skin();
 
-protected:
-    void on_paint(QPainter* painter, FrameTime t, PaintMode mode, model::Modifier*) const override;
+    void paint(QPainter* painter, FrameTime time, PaintMode mode, glaxnimate::model::Modifier* modifier) const override;
 
 private:
     std::vector<DocumentNode*> valid_skins() const;

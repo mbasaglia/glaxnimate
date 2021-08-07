@@ -16,15 +16,12 @@ namespace detail {
     DocumentNode* defs(model::Document* doc);
 } // detail
 
-class AssetListBase : public DocumentNode
+class AssetListBase
 {
-public:
-    using DocumentNode::DocumentNode;
-
 };
 
-template<class T, class Derived>
-class AssetList : public AssetListBase
+template<class T, class Derived, class Base = DocumentNode>
+class AssetList : public Base, public AssetListBase
 {
 protected:
     using Ctor = AssetList;
@@ -40,12 +37,7 @@ public:
     };
 
 public:
-    using AssetListBase::AssetListBase;
-
-    DocumentNode* docnode_parent() const override
-    {
-        return detail::defs(document());
-    }
+    using Base::Base;
 
     int docnode_child_count() const override
     {
@@ -64,7 +56,7 @@ public:
 
     QIcon instance_icon() const override
     {
-        return tree_icon();
+        return this->tree_icon();
     }
 
 protected:
@@ -72,14 +64,14 @@ protected:
     {
         Q_UNUSED(row);
         obj->attach();
-        emit docnode_child_add_end(obj, row);
+        emit this->docnode_child_add_end(obj, row);
     }
 
     virtual void on_removed(T* obj, int row)
     {
         Q_UNUSED(row);
         obj->detach();
-        emit docnode_child_remove_end(obj, row);
+        emit this->docnode_child_remove_end(obj, row);
     }
 };
 
@@ -175,7 +167,6 @@ public:
     Q_INVOKABLE glaxnimate::model::GradientColors* add_gradient_colors(int index = -1);
     Q_INVOKABLE glaxnimate::model::Gradient* add_gradient(int index = -1);
 
-    DocumentNode* docnode_parent() const override;
     int docnode_child_count() const override;
     DocumentNode* docnode_child(int index) const override;
     int docnode_child_index(DocumentNode* dn) const override;

@@ -1,10 +1,13 @@
 #include "skin.hpp"
+
+
 #include "skeleton_p.hpp"
 #include "model/document.hpp"
 
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Skin)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::ShapeSkin)
+
 
 glaxnimate::model::Composition * glaxnimate::model::SkinItem::owner_composition() const
 {

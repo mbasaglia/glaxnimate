@@ -34,8 +34,3 @@ bool glaxnimate::model::Precomposition::remove_if_unused(bool clean_lists)
     }
     return false;
 }
-
-glaxnimate::model::DocumentNode * glaxnimate::model::Precomposition::docnode_parent() const
-{
-    return document()->assets()->precompositions.get();
-}

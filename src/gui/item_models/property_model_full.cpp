@@ -95,10 +95,10 @@ public:
             else if ( prop->traits().type == model::PropertyTraits::Object )
             {
                 model::Object* subobj = prop->value().value<model::Object*>();
-                if ( subobj )
+                if ( subobj && !(prop->traits().flags & model::PropertyTraits::Hidden) )
                 {
                     // For assets, avoid an intermediate node
-                    if ( subobj->is_instance<model::AssetListBase>() )
+                    /*if ( subobj->is_instance<model::AssetListBase>() )
                     {
                         model::DocumentNode* subobj = prop->value().value<model::DocumentNode*>();
                         model::ObjectListPropertyBase* asset_list = static_cast<model::ObjectListPropertyBase*>(subobj->get_property("values"));
@@ -107,20 +107,14 @@ public:
 //                         properties[asset_list] = prop_node->id;
                         on_connect_object_list(prop_node, subobj, asset_list);
                     }
-                    else if ( prop->name() == "transform" || prop->object()->is_instance<model::Bone>() )
+                    else*/ if ( prop->traits().flags & model::PropertyTraits::Merge  )
                     {
-                        Subtree* prop_node = add_property(prop, tree->id, insert_row, referenced);
-                        connect_subobject(subobj, prop_node, insert_row);
+                        connect_subobject(subobj, tree, insert_row);
                     }
                     else
                     {
-                        auto meta = subobj->metaObject();
-                        if (
-                            !meta->inherits(&model::AnimationContainer::staticMetaObject) &&
-                            !meta->inherits(&model::StretchableTime::staticMetaObject) &&
-                            !meta->inherits(&model::MaskSettings::staticMetaObject)
-                        )
-                            connect_subobject(subobj, tree, insert_row);
+                        Subtree* prop_node = add_property(prop, tree->id, insert_row, referenced);
+                        connect_subobject(subobj, prop_node, insert_row);
                     }
                 }
             }
@@ -149,6 +143,7 @@ public:
         // Show object lists at the end
         if ( object_list )
         {
+            tree->prop_original = tree->prop;
             tree->prop = object_list;
             on_connect_object_list(tree, node, object_list);
         }

@@ -54,6 +54,7 @@ struct PropertyTraits
         OptionList  = 0x10, ///< has a set of valid values
         Percent     = 0x20, ///< for Float, show as percentage on the GUI
         Hidden      = 0x40, ///< for Visual, not shown prominently
+        Merge       = 0x80, ///< for Object, merge properties of the parent
     };
 
 

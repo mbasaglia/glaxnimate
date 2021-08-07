@@ -10,13 +10,13 @@ namespace glaxnimate::model {
 class Layer : public StaticOverrides<Layer, Group>
 {
     GLAXNIMATE_OBJECT(Layer)
-    GLAXNIMATE_SUBOBJECT(AnimationContainer, animation)
+    GLAXNIMATE_SUBOBJECT_EX(AnimationContainer, animation, PropertyTraits::Hidden)
     GLAXNIMATE_PROPERTY_REFERENCE(Layer, parent, &Layer::valid_parents, &Layer::is_valid_parent, &Layer::docnode_on_update_group)
     /**
      * \brief Whether the layer will be rendered / exported in other formats
      */
     GLAXNIMATE_PROPERTY(bool, render, true)
-    GLAXNIMATE_SUBOBJECT(MaskSettings, mask)
+    GLAXNIMATE_SUBOBJECT_EX(MaskSettings, mask, PropertyTraits::Hidden)
 
 public:
     class ChildLayerIterator

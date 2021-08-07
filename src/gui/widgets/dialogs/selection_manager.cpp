@@ -39,7 +39,7 @@ model::ShapeListProperty* glaxnimate::gui::SelectionManager::current_shape_conta
     if ( auto lay = qobject_cast<model::Composition*>(sh) )
         return &lay->shapes;
 
-    if ( !qobject_cast<model::Layer*>(sh) )
+    if ( qobject_cast<model::Group*>(sh) )
         sh = sh->docnode_parent();
 
     while ( sh )

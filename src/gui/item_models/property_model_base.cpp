@@ -88,6 +88,8 @@ QVariant item_models::PropertyModelBase::Private::data_name(Subtree* tree, int r
     {
         if ( tree->object )
             return tree->object->object_name();
+        else if ( tree->prop_original )
+            return tree->prop_original->name();
         else if ( tree->prop )
             return tree->prop->name();
     }
@@ -777,3 +779,31 @@ item_models::PropertyModelBase::Private::add_property(
 
     return prop_node;
 }
+
+void glaxnimate::gui::item_models::PropertyModelBase::debug_tree() const
+{
+    for ( auto n : d->roots )
+        d->debug_node(n, "");
+}
+
+#include <QDebug>
+void glaxnimate::gui::item_models::PropertyModelBase::Private::debug_node(glaxnimate::gui::item_models::PropertyModelBase::Private::Subtree* node, const QString& indent)
+{
+    {
+        auto db = qDebug();
+        db.noquote() << indent << node << node->id;
+        db.quote();
+
+        db << node->object;
+        if ( node->object )
+            db << node->object->object_name();
+
+        db << node->prop;
+        if ( node->prop )
+            db << node->prop->name();
+    }
+
+    for ( const auto& ch : node->children )
+        debug_node(ch, indent + "    ");
+}
+

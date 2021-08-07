@@ -87,6 +87,10 @@ void GlaxnimateWindow::Private::init_debug()
         app::debug::print_model(ui.timeline_widget->filtered_model(), {0}, false);
     });
 
+    menu_print_model->addAction("Properties - Full [Internals]", [this]{
+        static_cast<item_models::PropertyModelFull*>(ui.timeline_widget->raw_model())->debug_tree();
+    });
+
     menu_debug->addAction(menu_print_model->menuAction());
 
     // Timeline

@@ -58,6 +58,9 @@ public:
     QModelIndex node_index(model::DocumentNode* node) const override;
     model::Document* document() const override;
 
+
+    void debug_tree() const;
+
 private slots:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);
     void on_delete_object();

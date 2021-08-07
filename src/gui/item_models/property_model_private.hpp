@@ -38,6 +38,7 @@ public:
 
         model::Object* object = nullptr;
         model::BaseProperty* prop = nullptr;
+        model::BaseProperty* prop_original = nullptr;
         id_type parent = 0;
         std::vector<Subtree*> children;
         id_type id = 0;
@@ -106,6 +107,8 @@ public:
     Subtree* add_property(model::BaseProperty* prop, id_type parent, bool insert_row, ReferencedPropertiesMap* referenced);
 
     void clean_subtree(Subtree* node);
+
+    void debug_node(Subtree* node, const QString& indent);
 
     model::Document* document = nullptr;
     std::vector<Subtree*> roots;

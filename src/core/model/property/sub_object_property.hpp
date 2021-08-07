@@ -1,13 +1,22 @@
 #pragma once
-#include "model/object.hpp"
+#include "model/document_node.hpp"
 #include "model/property/property.hpp"
+
+#define GLAXNIMATE_SUBOBJECT_IMPL(type, name)               \
+    type* get_##name() { return name.get(); }               \
+private:                                                    \
+    Q_PROPERTY(type* name READ get_##name)                  \
+
+#define GLAXNIMATE_SUBOBJECT_EX(type, name, ...)            \
+public:                                                     \
+    SubObjectProperty<type> name{this, #name, __VA_ARGS__}; \
+    GLAXNIMATE_SUBOBJECT_IMPL(type, name)                   \
+    // macro end
 
 #define GLAXNIMATE_SUBOBJECT(type, name)                    \
 public:                                                     \
     SubObjectProperty<type> name{this, #name};              \
-    type* get_##name() { return name.get(); }               \
-private:                                                    \
-    Q_PROPERTY(type* name READ get_##name)                  \
+    GLAXNIMATE_SUBOBJECT_IMPL(type, name)                   \
     // macro end
 
 namespace glaxnimate::model {
@@ -15,22 +24,31 @@ namespace glaxnimate::model {
 class SubObjectPropertyBase : public BaseProperty
 {
 public:
-    SubObjectPropertyBase(Object* obj, const QString& name)
-        : BaseProperty(obj, name, {PropertyTraits::Object})
+    SubObjectPropertyBase(Object* obj, const QString& name, int flags)
+        : BaseProperty(obj, name, {PropertyTraits::Object, flags})
     {}
 
     virtual const model::Object* sub_object() const = 0;
     virtual model::Object* sub_object() = 0;
+
+protected:
+    void adjust_parent(Object*) const{}
+    void adjust_parent(DocumentNode* ptr) const
+    {
+        ptr->added_to_list(static_cast<DocumentNode*>(object()));
+    }
 };
 
 template<class Type>
 class SubObjectProperty : public SubObjectPropertyBase
 {
 public:
-    SubObjectProperty(Object* obj, const QString& name)
-        : SubObjectPropertyBase(obj, name),
+    SubObjectProperty(Object* obj, const QString& name, int flags = 0)
+        : SubObjectPropertyBase(obj, name, flags),
         sub_obj(obj->document())
-    {}
+    {
+        adjust_parent(&sub_obj);
+    }
 
     const Type* operator->() const
     {

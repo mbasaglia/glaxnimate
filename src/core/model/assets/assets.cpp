@@ -132,10 +132,6 @@ glaxnimate::model::DocumentNode* glaxnimate::model::detail::defs(glaxnimate::mod
     return doc->assets();
 }
 
-glaxnimate::model::DocumentNode * glaxnimate::model::Assets::docnode_parent() const
-{
-    return nullptr;
-}
 
 int glaxnimate::model::Assets::docnode_child_count() const
 {
@@ -175,5 +171,3 @@ int glaxnimate::model::Assets::docnode_child_index(glaxnimate::model::DocumentNo
         return 4;
     return -1;
 }
-
-

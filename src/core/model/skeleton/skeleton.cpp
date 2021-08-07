@@ -1,4 +1,7 @@
 #include "skeleton_p.hpp"
+
+#include <QPainter>
+
 #include "command/object_list_commands.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Skeleton)
@@ -49,10 +52,16 @@ void glaxnimate::model::Skeleton::add_shapes(FrameTime, math::bezier::MultiBezie
 {
 }
 
-void glaxnimate::model::Skeleton::on_paint(QPainter* painter, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode mode, model::Modifier* modifier) const
+void glaxnimate::model::Skeleton::paint(QPainter* painter, FrameTime time, PaintMode mode, glaxnimate::model::Modifier* modifier) const
 {
+    if ( !visible.get() )
+        return;
+
     if ( skin.get() )
     {
+        painter->save();
+        painter->setTransform(transform_matrix(time).inverted(), true);
+
         std::map<SkinSlot*, std::vector<SkinItem*>> items;
         for ( const auto& item : skin->items )
         {
@@ -65,11 +74,18 @@ void glaxnimate::model::Skeleton::on_paint(QPainter* painter, glaxnimate::model:
         std::sort(skin_slots.begin(), skin_slots.end(), [](const SkinSlot* a, const SkinSlot* b){ return a->draw_order.get() < b->draw_order.get(); });
         for ( const auto& slot : skin_slots )
             for ( const auto& item : items[slot] )
-                item->paint(painter, t, mode, modifier);
+                item->paint(painter, time, mode, modifier);
+
+        painter->restore();
     }
 
+    painter->save();
+    painter->setTransform(group_transform_matrix(time), true);
+
     for ( const auto& ch : bones->values )
-        ch->paint(painter, t, mode, modifier);
+        ch->paint(painter, time, mode, modifier);
+
+    painter->restore();
 }
 
 glaxnimate::model::Skin * glaxnimate::model::Skeleton::add_skin()
@@ -99,3 +115,30 @@ void glaxnimate::model::Skeleton::on_skin_changed(glaxnimate::model::Skin*, glax
 {
     emit bounding_rect_changed();
 }
+
+
+glaxnimate::model::DocumentNode * glaxnimate::model::Skeleton::docnode_child(int i) const
+{
+    switch ( i )
+    {
+        case 0: return const_cast<BoneList*>(bones.get());
+        case 1: return const_cast<SkinList*>(skins.get());
+        default: return nullptr;
+    }
+}
+
+int glaxnimate::model::Skeleton::docnode_child_count() const
+{
+    return 2;
+}
+
+int glaxnimate::model::Skeleton::docnode_child_index(glaxnimate::model::DocumentNode* dn) const
+{
+    if ( dn == bones.get() )
+        return 0;
+    if ( dn == skins.get() )
+        return 1;
+    return -1;
+}
+
+

@@ -92,7 +92,7 @@ public:
 
     virtual QIcon tree_icon() const = 0;
 
-    virtual DocumentNode* docnode_parent() const;
+    DocumentNode* docnode_parent() const;
     virtual int docnode_child_count() const = 0;
     virtual DocumentNode* docnode_child(int index) const = 0;
     virtual int docnode_child_index(DocumentNode* dn) const = 0;
@@ -228,6 +228,7 @@ private:
     class Private;
     std::unique_ptr<Private> d;
     friend ObjectListPropertyBase;
+    friend class SubObjectPropertyBase;
 };
 
 class Modifier;

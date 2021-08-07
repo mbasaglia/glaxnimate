@@ -368,7 +368,7 @@ void timeline::LineItem::paint(QPainter * painter, const QStyleOptionGraphicsIte
     {
         painter->save();
         painter->setBrush(Qt::black);
-        painter->scale(0.5, 1);
+        painter->scale(0.1, 1);
         QFont f;
         painter->setFont(f);
 

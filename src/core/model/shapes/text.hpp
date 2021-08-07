@@ -87,7 +87,7 @@ class TextShape : public ShapeElement
     GLAXNIMATE_OBJECT(TextShape)
     GLAXNIMATE_PROPERTY(QString, text, {}, &TextShape::on_text_changed, {}, PropertyTraits::Visual)
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF())
-    GLAXNIMATE_SUBOBJECT(Font, font)
+    GLAXNIMATE_SUBOBJECT_EX(Font, font, PropertyTraits::Merge)
     GLAXNIMATE_PROPERTY_REFERENCE(model::ShapeElement, path, &TextShape::valid_paths, &TextShape::is_valid_path, &TextShape::path_changed)
     GLAXNIMATE_ANIMATABLE(float, path_offset, 0, &TextShape::on_text_changed)
 
