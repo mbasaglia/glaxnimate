@@ -35,9 +35,7 @@ model::Composition* GlaxnimateWindow::Private::current_composition()
 
 model::VisualNode* GlaxnimateWindow::Private::current_document_node()
 {
-    if ( auto dn = ui.view_document_node->current_node() )
-        return dn;
-    return current_document->main();
+    return qobject_cast<model::VisualNode*>(current_node);
 }
 
 void GlaxnimateWindow::Private::layer_new_layer()

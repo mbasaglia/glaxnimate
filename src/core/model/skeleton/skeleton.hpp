@@ -82,7 +82,7 @@ private:
     std::unique_ptr<Private> d;
     friend Bone;
     friend SkinSlot;
-    friend SkinItemBase;
+    friend SkinItem;
     friend SkinAttachment;
 
 };

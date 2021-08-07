@@ -4,37 +4,43 @@
 
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Skin)
-GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::ImageSkin)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::ShapeSkin)
 
+glaxnimate::model::Composition * glaxnimate::model::SkinItem::owner_composition() const
+{
+    if ( auto skel = skeleton() )
+        return skel->owner_composition();
+    return nullptr;
+}
 
-glaxnimate::model::SkinSlot * glaxnimate::model::SkinItemBase::slot() const
+glaxnimate::model::SkinSlot * glaxnimate::model::SkinItem::slot() const
 {
     if ( attachment.get() )
         return attachment->slot();
     return nullptr;
 }
 
-void glaxnimate::model::SkinItemBase::on_parent_changed(model::DocumentNode*, model::DocumentNode* new_parent)
+void glaxnimate::model::SkinItem::on_parent_changed(model::DocumentNode*, model::DocumentNode* new_parent)
 {
     skin_ = qobject_cast<Skin*>(new_parent);
 }
 
-glaxnimate::model::Skin * glaxnimate::model::SkinItemBase::skin() const
+glaxnimate::model::Skin * glaxnimate::model::SkinItem::skin() const
 {
     return skin_;
 }
 
-glaxnimate::model::Skeleton * glaxnimate::model::SkinItemBase::skeleton() const
+glaxnimate::model::Skeleton * glaxnimate::model::SkinItem::skeleton() const
 {
     return skin_ ? skin_->skeleton() : nullptr;
 }
 
-glaxnimate::model::VisualNode * glaxnimate::model::SkinItemBase::docnode_group_parent() const
+glaxnimate::model::VisualNode * glaxnimate::model::SkinItem::docnode_group_parent() const
 {
     return attachment.get();
 }
 
-std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::SkinItemBase::valid_slots() const
+std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::SkinItem::valid_slots() const
 {
     auto skel = skeleton();
     if ( !skel )
@@ -42,7 +48,7 @@ std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::SkinItemBase::
     return std::vector<DocumentNode*>(skel->d->attachments.begin(), skel->d->attachments.end());
 }
 
-bool glaxnimate::model::SkinItemBase::is_valid_slot(glaxnimate::model::DocumentNode* node) const
+bool glaxnimate::model::SkinItem::is_valid_slot(glaxnimate::model::DocumentNode* node) const
 {
     if ( !node )
         return true;
@@ -52,14 +58,14 @@ bool glaxnimate::model::SkinItemBase::is_valid_slot(glaxnimate::model::DocumentN
     return skel->d->attachments.count(static_cast<SkinAttachment*>(node));
 }
 
-QString glaxnimate::model::SkinItemBase::object_name() const
+QString glaxnimate::model::SkinItem::object_name() const
 {
     if ( attachment.get() )
-        return attachment->object_name();
+        return attachment->slot()->object_name() + " > " + attachment->object_name();
     return VisualNode::object_name();
 }
 
-void glaxnimate::model::SkinItemBase::on_slot_changed(glaxnimate::model::SkinAttachment*, glaxnimate::model::SkinAttachment*)
+void glaxnimate::model::SkinItem::on_slot_changed(glaxnimate::model::SkinAttachment*, glaxnimate::model::SkinAttachment*)
 {
     emit name_changed(object_name());
 }
@@ -101,77 +107,38 @@ void glaxnimate::model::Skin::on_parent_changed(model::DocumentNode*, model::Doc
 }
 
 
-glaxnimate::model::ImageSkin::ImageSkin(glaxnimate::model::Document* doc)
-    : Ctor(doc)
+glaxnimate::model::ShapeSkin::ShapeSkin(glaxnimate::model::Document* doc)
+    : SkinItem(doc)
 {
-    connect(transform.get(), &Object::property_changed, this, &ImageSkin::on_transform_matrix_changed);
+    connect(transform.get(), &Object::property_changed, this, &ShapeSkin::on_transform_matrix_changed);
 }
 
-
-bool glaxnimate::model::ImageSkin::is_valid_image(glaxnimate::model::DocumentNode* node) const
-{
-    return document()->assets()->images->values.is_valid_reference_value(node, false);
-}
-
-std::vector<glaxnimate::model::DocumentNode *> glaxnimate::model::ImageSkin::valid_images() const
-{
-    return document()->assets()->images->values.valid_reference_values(false);
-}
-
-QRectF glaxnimate::model::ImageSkin::local_bounding_rect(glaxnimate::model::FrameTime) const
-{
-    if ( !image.get() )
-        return {};
-    return QRectF(0, 0, image->width.get(), image->height.get());
-}
-
-void glaxnimate::model::ImageSkin::on_paint(QPainter* p, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode, glaxnimate::model::Modifier*) const
+void glaxnimate::model::ShapeSkin::on_paint(QPainter* p, glaxnimate::model::FrameTime t, glaxnimate::model::VisualNode::PaintMode, glaxnimate::model::Modifier*) const
 {
     if ( auto attachment = this->attachment.get() )
         attachment->prepare_painter(p, t);
-
-    if ( image.get() )
-        image->paint(p);
 }
 
-void glaxnimate::model::ImageSkin::on_transform_matrix_changed()
+void glaxnimate::model::ShapeSkin::on_transform_matrix_changed()
 {
     emit bounding_rect_changed();
     emit local_transform_matrix_changed(transform->transform_matrix());
     emit transform_matrix_changed(transform_matrix(time()));
 }
 
-void glaxnimate::model::ImageSkin::on_image_changed(glaxnimate::model::Bitmap* new_use, glaxnimate::model::Bitmap* old_use)
-{
-    if ( old_use )
-    {
-        disconnect(old_use, &Bitmap::loaded, this, &ImageSkin::on_update_image);
-    }
-
-    if ( new_use )
-    {
-        connect(new_use, &Bitmap::loaded, this, &ImageSkin::on_update_image);
-    }
-}
-
-void glaxnimate::model::ImageSkin::on_update_image()
-{
-    emit property_changed(&image, {});
-}
-
-QTransform glaxnimate::model::ImageSkin::local_transform_matrix(model::FrameTime t) const
+QTransform glaxnimate::model::ShapeSkin::local_transform_matrix(model::FrameTime t) const
 {
     return transform->transform_matrix(local_bounding_rect(t).center());
 }
 
-QIcon glaxnimate::model::ImageSkin::tree_icon() const
+QIcon glaxnimate::model::ShapeSkin::tree_icon() const
 {
-    return QIcon::fromTheme("x-shape-image");
+    return QIcon::fromTheme("folder");
 }
 
-QString glaxnimate::model::ImageSkin::type_name_human() const
+QString glaxnimate::model::ShapeSkin::type_name_human() const
 {
-    return tr("Image");
+    return tr("Shape");
 }
 
 

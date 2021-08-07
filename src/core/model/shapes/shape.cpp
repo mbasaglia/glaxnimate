@@ -2,6 +2,7 @@
 #include "styler.hpp"
 #include "path.hpp"
 #include "model/animation/join_animatables.hpp"
+#include "model/skeleton/skin.hpp"
 
 using namespace glaxnimate;
 
@@ -74,6 +75,8 @@ void glaxnimate::model::ShapeElement::set_position(ShapeListProperty* property, 
             d->update_comp(comp, this);
         else if ( auto sh = parent->cast<glaxnimate::model::ShapeElement>() )
             d->update_comp(sh->d->owner_composition, this);
+        else if ( auto sk = parent->cast<glaxnimate::model::SkinItem>() )
+            d->update_comp(sk->owner_composition(), this);
     }
 }
 

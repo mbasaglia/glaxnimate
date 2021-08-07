@@ -611,12 +611,20 @@ void CompoundTimelineWidget::_on_selection_changed(const QItemSelection &selecte
 
     for ( const auto& index : selected.indexes() )
     {
+        // we select the whole row so we only care about one
+        if ( index.column() != 0 )
+            continue;
+
         if ( auto node = d->index_node_or_parent(d->comp_model.mapToSource(index)) )
             selected_nodes.push_back(node);
     }
 
     for ( const auto& index : deselected.indexes() )
     {
+        // we select the whole row so we only care about one
+        if ( index.column() != 0 )
+            continue;
+
         if ( auto node = d->index_node_or_parent(d->comp_model.mapToSource(index)) )
             deselected_nodes.push_back(node);
     }

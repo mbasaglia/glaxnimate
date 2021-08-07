@@ -6,6 +6,7 @@
 
 #include "model/assets/assets.hpp"
 #include "model/shapes/precomp_layer.hpp"
+#include "model/skeleton/skin.hpp"
 
 #include "command/shape_commands.hpp"
 #include "command/structure_commands.hpp"
@@ -46,6 +47,8 @@ model::ShapeListProperty* glaxnimate::gui::SelectionManager::current_shape_conta
         if ( auto grp = qobject_cast<model::Group*>(sh) )
             return &grp->shapes;
         if ( auto lay = qobject_cast<model::Composition*>(sh) )
+            return &lay->shapes;
+        if ( auto lay = qobject_cast<model::ShapeSkin*>(sh) )
             return &lay->shapes;
         sh = sh->docnode_parent();
     }

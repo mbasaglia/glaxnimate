@@ -5,10 +5,9 @@
 #include <QImageReader>
 
 #include "model/shapes/layer.hpp"
+#include "model/shapes/image.hpp"
 #include "model/skeleton/skeleton.hpp"
 #include "spine_format.hpp"
-
-#include <QDebug>
 
 namespace glaxnimate::io::spine {
 
@@ -221,7 +220,7 @@ private:
 
     void load_skin_item(model::Skin* skin, const QString& slot_name, const QJsonObject& attachment_map)
     {
-        static const std::map<QString, model::SkinItemBase* (SpineImporter::*)(model::Skin*, const QString&, const QJsonObject&)> methods = {
+        static const std::map<QString, model::SkinItem* (SpineImporter::*)(model::Skin*, const QString&, const QJsonObject&)> methods = {
             {"region", &SpineImporter::load_region}
         };
 
@@ -248,13 +247,16 @@ private:
         }
     }
 
-    model::SkinItemBase* load_region(model::Skin* skin, const QString& name, const QJsonObject& json)
+    model::SkinItem* load_region(model::Skin* skin, const QString& name, const QJsonObject& json)
     {
-        auto ptr = std::make_unique<model::ImageSkin>(document);
+        auto ptr = std::make_unique<model::ShapeSkin>(document);
         auto item = ptr.get();
         skin->items.insert(std::move(ptr));
 
-        item->image.set(load_image(name));
+        auto image = std::make_unique<model::Image>(document);
+        image->image.set(load_image(name));
+
+        item->shapes.insert(std::move(image));
         load_static_transform(item->transform.get(), json);
         return item;
     }

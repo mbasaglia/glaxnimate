@@ -9,32 +9,17 @@ namespace glaxnimate::model {
 
 class Skin;
 
-class SkinItemBase : public VisualNode
+class SkinItem : public VisualNode
 {
 public:
-    enum Type
-    {
-        Image,
-        Mesh,
-        LinkedMesh,
-        BoundingBox,
-        Path,
-        Point,
-        Clipping
-    };
     Q_OBJECT
-
-    Q_ENUM(Type)
-
-    Q_PROPERTY(Type type READ type)
     Q_PROPERTY(glaxnimate::model::Skin* skin READ skin)
     Q_PROPERTY(glaxnimate::model::Skeleton* skeleton READ skeleton)
-    GLAXNIMATE_PROPERTY_REFERENCE(SkinAttachment, attachment, &SkinItemBase::valid_slots, &SkinItemBase::is_valid_slot, &SkinItemBase::on_slot_changed)
+    GLAXNIMATE_PROPERTY_REFERENCE(SkinAttachment, attachment, &SkinItem::valid_slots, &SkinItem::is_valid_slot, &SkinItem::on_slot_changed)
 
 public:
     using VisualNode::VisualNode;
 
-    virtual Type type() const = 0;
     Skin* skin() const;
     Skeleton* skeleton() const;
 
@@ -50,6 +35,8 @@ public:
     virtual int docnode_group_child_count() const override { return 0; }
     virtual VisualNode* docnode_group_child(int) const override { return nullptr; }
 
+    model::Composition* owner_composition() const;
+
 protected:
     void on_parent_changed(model::DocumentNode* old_parent, model::DocumentNode* new_parent) override;
     void on_slot_changed(glaxnimate::model::SkinAttachment* new_use, glaxnimate::model::SkinAttachment* old_use);
@@ -64,7 +51,7 @@ private:
 class Skin : public VisualNode
 {
     GLAXNIMATE_OBJECT(Skin)
-    GLAXNIMATE_PROPERTY_LIST(SkinItemBase, items)
+    GLAXNIMATE_PROPERTY_LIST(SkinItem, items)
     Q_PROPERTY(glaxnimate::model::Skeleton* skeleton READ skeleton)
 
 public:
@@ -87,43 +74,43 @@ private:
     Skeleton* skeleton_ = nullptr;
 };
 
-template<SkinItemBase::Type item_type>
-class SkinItem : public SkinItemBase
+class ShapeSkin : public SkinItem
 {
-public:
-    using SkinItemBase::SkinItemBase;
-
-    Type type() const override
-    {
-        return item_type;
-    }
-
-protected:
-    using Ctor = SkinItem;
-};
-
-class ImageSkin : public SkinItem<SkinItemBase::Image>
-{
-    GLAXNIMATE_OBJECT(ImageSkin)
+    GLAXNIMATE_OBJECT(ShapeSkin)
     GLAXNIMATE_SUBOBJECT(StaticTransform, transform)
-    GLAXNIMATE_PROPERTY_REFERENCE(Bitmap, image, &ImageSkin::valid_images, &ImageSkin::is_valid_image, &ImageSkin::on_image_changed)
+    GLAXNIMATE_PROPERTY_LIST(ShapeElement, shapes)
 
 public:
-    ImageSkin(Document* document);
+    ShapeSkin(Document* document);
 
     QIcon tree_icon() const override;
     QString type_name_human() const override;
-    QRectF local_bounding_rect(FrameTime t) const override;
     QTransform local_transform_matrix(model::FrameTime t) const override;
+
+    QRectF local_bounding_rect(FrameTime t) const override
+    {
+        return shapes.bounding_rect(t);
+    }
+
+    DocumentNode* docnode_child(int index) const override
+    {
+        return shapes[index];
+    }
+
+    int docnode_child_count() const override
+    {
+        return shapes.size();
+    }
+
+    int docnode_child_index(DocumentNode* dn) const override
+    {
+        return shapes.index_of(dn);
+    }
 
 protected:
     void on_paint(QPainter* p, FrameTime t, PaintMode, model::Modifier*) const override;
 
 private:
-    std::vector<DocumentNode*> valid_images() const;
-    bool is_valid_image(DocumentNode* node) const;
-    void on_image_changed(Bitmap* new_use, Bitmap* old_use);
-    void on_update_image();
     void on_transform_matrix_changed();
 };
 

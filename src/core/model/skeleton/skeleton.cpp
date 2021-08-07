@@ -53,7 +53,7 @@ void glaxnimate::model::Skeleton::on_paint(QPainter* painter, glaxnimate::model:
 {
     if ( skin.get() )
     {
-        std::map<SkinSlot*, std::vector<SkinItemBase*>> items;
+        std::map<SkinSlot*, std::vector<SkinItem*>> items;
         for ( const auto& item : skin->items )
         {
             auto slot = item->slot();
