@@ -273,6 +273,38 @@ void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
     menu->addAction(QIcon::fromTheme("object-to-path"), NodeMenu::tr("Convert to Path"), menu, [window, group]{ window->convert_to_path(group);});
 }
 
+void actions_bitmap(QMenu* menu, GlaxnimateWindow* window, model::Bitmap* bmp, model::Image* shape)
+{
+    menu->addAction(QIcon::fromTheme("mail-attachment-symbolic"), NodeMenu::tr("Embed"), menu, [bmp]{
+            bmp->embed(true);
+    })->setEnabled(bmp && !bmp->embedded());
+
+    menu->addAction(QIcon::fromTheme("editimage"), NodeMenu::tr("Open with External Application"), menu, [bmp, window]{
+        if ( !QDesktopServices::openUrl(bmp->to_url()) )
+            window->warning(NodeMenu::tr("Could not find suitable application, check your system settings."));
+    })->setEnabled(bmp);
+
+
+    menu->addAction(QIcon::fromTheme("document-open"), NodeMenu::tr("From File..."), menu, [bmp, window, shape]{
+        QString filename = window->get_open_image_file(NodeMenu::tr("Update Image"), bmp ? bmp->file_info().absolutePath() : "");
+        if ( filename.isEmpty() )
+            return;
+
+        command::UndoMacroGuard macro(NodeMenu::tr("Update Image"), window->document());
+        if ( bmp )
+        {
+            bmp->data.set_undoable(QByteArray());
+            bmp->filename.set_undoable(filename);
+        }
+        else if ( shape )
+        {
+            auto img = window->document()->assets()->add_image_file(filename, false);
+            if ( img )
+                shape->image.set_undoable(QVariant::fromValue(img));
+        }
+    });
+}
+
 void actions_image(QMenu* menu, GlaxnimateWindow* window, model::Image* image)
 {
     menu->addAction(QIcon::fromTheme("transform-move"), NodeMenu::tr("Reset Transform"), menu,
@@ -283,39 +315,7 @@ void actions_image(QMenu* menu, GlaxnimateWindow* window, model::Image* image)
 
     menu->addAction(menu_ref_property(QIcon::fromTheme("folder-pictures"), NodeMenu::tr("Image"), menu, &image->image)->menuAction());
 
-    menu->addAction(QIcon::fromTheme("mail-attachment-symbolic"), NodeMenu::tr("Embed"), menu, [image]{
-        if ( image->image.get() )
-            image->image->embed(true);
-    })->setEnabled(image->image.get() && !image->image->embedded());
-
-    menu->addAction(QIcon::fromTheme("editimage"), NodeMenu::tr("Open with External Application"), menu, [image, window]{
-        if ( image->image.get() )
-        {
-            if ( !QDesktopServices::openUrl(image->image->to_url()) )
-                window->warning(NodeMenu::tr("Could not find suitable application, check your system settings."));
-        }
-    })->setEnabled(image->image.get());
-
-
-    menu->addAction(QIcon::fromTheme("document-open"), NodeMenu::tr("From File..."), menu, [image, window]{
-        auto bmp = image->image.get();
-        QString filename = window->get_open_image_file(NodeMenu::tr("Update Image"), bmp ? bmp->file_info().absolutePath() : "");
-        if ( filename.isEmpty() )
-            return;
-
-        command::UndoMacroGuard macro(NodeMenu::tr("Update Image"), image->document());
-        if ( bmp )
-        {
-            bmp->data.set_undoable(QByteArray());
-            bmp->filename.set_undoable(filename);
-        }
-        else
-        {
-            auto img = image->document()->assets()->add_image_file(filename, false);
-            if ( img )
-                image->image.set_undoable(QVariant::fromValue(img));
-        }
-    });
+    actions_bitmap(menu, window, image->image.get(), image);
 
     menu->addAction(QIcon::fromTheme("bitmap-trace"), NodeMenu::tr("Trace Bitmap..."), menu, [image, window]{
         window->trace_dialog(image);
@@ -377,62 +377,67 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
         togglable_action(this, &visual->visible, "view-visible", tr("Visible"));
         togglable_action(this, &visual->locked, "object-locked", tr("Locked"));
         addSeparator();
-    }
 
-    if ( auto shape = qobject_cast<model::ShapeElement*>(node) )
-    {
-        addAction(QIcon::fromTheme("edit-delete-remove"), tr("Delete"), this, [shape]{
-            shape->push_command(new command::RemoveShape(shape, shape->owner()));
-        });
-
-        addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), this, [shape, window]{
-            auto cmd = command::duplicate_shape(shape);
-            shape->push_command(cmd);
-            window->set_current_document_node(cmd->object());
-        });
-
-        addSeparator();
-
-        move_action(this, shape, command::ReorderCommand::MoveTop);
-        move_action(this, shape, command::ReorderCommand::MoveUp);
-        move_action(this, shape, command::ReorderCommand::MoveDown);
-        move_action(this, shape, command::ReorderCommand::MoveBottom);
-
-        addAction(QIcon::fromTheme("selection-move-to-layer-above"), tr("Move to..."), this, [shape, window]{
-            if ( auto parent = ShapeParentDialog(window->model(), window).get_shape_parent() )
-            {
-                if ( shape->owner() != parent )
-                    shape->push_command(new command::MoveShape(shape, shape->owner(), parent, parent->size()));
-            }
-        });
-
-        addSeparator();
-
-        if ( auto group = qobject_cast<model::Group*>(shape) )
+        if ( auto shape = qobject_cast<model::ShapeElement*>(node) )
         {
-            actions_group(this, window, group);
-        }
-        else if ( auto image = qobject_cast<model::Image*>(shape) )
-        {
-            actions_image(this, window, image);
-        }
-        else if ( auto lay = qobject_cast<model::PreCompLayer*>(shape) )
-        {
-            actions_precomp(this, window, lay);
-        }
-        else
-        {
-            if ( auto text = shape->cast<model::TextShape>() )
-                actions_text(this, text);
+            addAction(QIcon::fromTheme("edit-delete-remove"), tr("Delete"), this, [shape]{
+                shape->push_command(new command::RemoveShape(shape, shape->owner()));
+            });
+
+            addAction(QIcon::fromTheme("edit-duplicate"), tr("Duplicate"), this, [shape, window]{
+                auto cmd = command::duplicate_shape(shape);
+                shape->push_command(cmd);
+                window->set_current_document_node(cmd->object());
+            });
 
             addSeparator();
-            addAction(QIcon::fromTheme("object-to-path"), tr("Convert to Path"), this, [window, shape]{ window->convert_to_path(shape);});
+
+            move_action(this, shape, command::ReorderCommand::MoveTop);
+            move_action(this, shape, command::ReorderCommand::MoveUp);
+            move_action(this, shape, command::ReorderCommand::MoveDown);
+            move_action(this, shape, command::ReorderCommand::MoveBottom);
+
+            addAction(QIcon::fromTheme("selection-move-to-layer-above"), tr("Move to..."), this, [shape, window]{
+                if ( auto parent = ShapeParentDialog(window->model(), window).get_shape_parent() )
+                {
+                    if ( shape->owner() != parent )
+                        shape->push_command(new command::MoveShape(shape, shape->owner(), parent, parent->size()));
+                }
+            });
+
+            addSeparator();
+
+            if ( auto group = qobject_cast<model::Group*>(shape) )
+            {
+                actions_group(this, window, group);
+            }
+            else if ( auto image = qobject_cast<model::Image*>(shape) )
+            {
+                actions_image(this, window, image);
+            }
+            else if ( auto lay = qobject_cast<model::PreCompLayer*>(shape) )
+            {
+                actions_precomp(this, window, lay);
+            }
+            else
+            {
+                if ( auto text = shape->cast<model::TextShape>() )
+                    actions_text(this, text);
+
+                addSeparator();
+                addAction(QIcon::fromTheme("object-to-path"), tr("Convert to Path"), this, [window, shape]{ window->convert_to_path(shape);});
+            }
+        }
+        else if ( qobject_cast<model::Composition*>(node) )
+        {
+            addAction(
+                window->create_layer_menu()->menuAction()
+            );
         }
     }
-    else if ( qobject_cast<model::Composition*>(node) )
+    else if ( auto image = qobject_cast<model::Bitmap*>(node) )
     {
-        addAction(
-            window->create_layer_menu()->menuAction()
-        );
+        actions_bitmap(this, window, image, nullptr);
     }
+
 }

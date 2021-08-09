@@ -2,6 +2,7 @@
 
 * UI:
     * New handle for translating layers, groups etc without having to drag on the object
+    * Menu items for images in the asset view
 * I/O:
     * Made error messages from the lottie importer easier to understand
 * Bug Fixes:

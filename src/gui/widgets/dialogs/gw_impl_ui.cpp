@@ -371,6 +371,11 @@ void GlaxnimateWindow::Private::init_item_views()
     ui.view_assets->header()->hideSection(item_models::DocumentNodeModel::ColumnVisible-1);
     ui.view_assets->header()->hideSection(item_models::DocumentNodeModel::ColumnLocked-1);
     ui.view_assets->header()->setSectionResizeMode(item_models::DocumentNodeModel::ColumnUsers-1, QHeaderView::ResizeToContents);
+    connect(ui.view_assets, &CustomTreeView::customContextMenuRequested, parent, [this](const QPoint& pos){
+        auto node = document_node_model.node(asset_model.mapToSource(ui.view_assets->indexAt(pos)));
+        if ( node )
+            NodeMenu(node, this->parent, this->parent).exec(ui.view_assets->mapToGlobal(pos));
+    });
 
 
     connect(ui.timeline_widget, &CompoundTimelineWidget::current_node_changed, parent, [this](model::VisualNode* node){
