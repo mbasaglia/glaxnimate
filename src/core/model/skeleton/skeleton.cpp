@@ -52,6 +52,31 @@ void glaxnimate::model::Skeleton::add_shapes(FrameTime, math::bezier::MultiBezie
 {
 }
 
+std::vector<glaxnimate::model::SkinItem*> glaxnimate::model::Skeleton::draw_items() const
+{
+    if ( !skin.get() )
+        return {};
+
+    std::map<SkinSlot*, std::vector<SkinItem*>> items;
+    for ( const auto& item : skin->items )
+    {
+        auto slot = item->slot();
+        if ( slot && slot->attachment.get() == item->attachment.get() )
+            items[slot].push_back(item.get());
+    }
+
+    std::vector<SkinSlot*> skin_slots(d->skin_slots.begin(), d->skin_slots.end());
+    std::sort(skin_slots.begin(), skin_slots.end(), [](const SkinSlot* a, const SkinSlot* b){ return a->draw_order.get() < b->draw_order.get(); });
+
+    std::vector<glaxnimate::model::SkinItem*> output;
+    output.reserve(skin_slots.size());
+    for ( const auto& slot : skin_slots )
+        for ( const auto& item : items[slot] )
+            output.push_back(item);
+
+    return output;
+}
+
 void glaxnimate::model::Skeleton::paint(QPainter* painter, FrameTime time, PaintMode mode, glaxnimate::model::Modifier* modifier) const
 {
     if ( !visible.get() )
@@ -62,19 +87,8 @@ void glaxnimate::model::Skeleton::paint(QPainter* painter, FrameTime time, Paint
         painter->save();
         painter->setTransform(transform_matrix(time).inverted(), true);
 
-        std::map<SkinSlot*, std::vector<SkinItem*>> items;
-        for ( const auto& item : skin->items )
-        {
-            auto slot = item->slot();
-            if ( slot && slot->attachment.get() == item->attachment.get() )
-                items[slot].push_back(item.get());
-        }
-
-        std::vector<SkinSlot*> skin_slots(d->skin_slots.begin(), d->skin_slots.end());
-        std::sort(skin_slots.begin(), skin_slots.end(), [](const SkinSlot* a, const SkinSlot* b){ return a->draw_order.get() < b->draw_order.get(); });
-        for ( const auto& slot : skin_slots )
-            for ( const auto& item : items[slot] )
-                item->paint(painter, time, mode, modifier);
+        for ( const auto& item : draw_items() )
+            item->paint(painter, time, mode, modifier);
 
         painter->restore();
     }

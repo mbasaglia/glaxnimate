@@ -113,13 +113,16 @@ private:
         io_options_.path = dialog.directory();
 
         int filter = filters.indexOf(dialog.selectedNameFilter());
-        if ( filter < int(formats.size()) )
+        if ( filter >= 0 && filter < int(formats.size()) )
         {
             io_options_.format = formats[filter];
         }
         else
         {
-            io_options_.format = io::IoRegistry::instance().from_filename(io_options_.filename);
+            if ( QFileInfo(io_options_.filename).suffix() == "json" )
+                io_options_.format = io::IoRegistry::instance().from_slug("lottie");
+            else
+                io_options_.format = io::IoRegistry::instance().from_filename(io_options_.filename);
         }
 
         if ( !io_options_.format )

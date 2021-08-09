@@ -7,6 +7,7 @@
 #include "cbor_write_json.hpp"
 #include "lottie_private_common.hpp"
 #include "model/animation/join_animatables.hpp"
+#include "model/skeleton/skeleton.hpp"
 
 namespace glaxnimate::io::lottie::detail {
 
@@ -54,6 +55,13 @@ public:
         return json;
     }
 
+    int fake_new_index()
+    {
+        int id = layer_indices.size();
+        layer_indices[QUuid::createUuid()] = id;
+        return id;
+    }
+
     int layer_index(model::DocumentNode* layer)
     {
         if ( !layer )
@@ -63,7 +71,15 @@ public:
         return layer_indices[layer->uuid.get()];
     }
 
-    QCborMap wrap_layer_shape(model::ShapeElement* shape, model::Layer* forced_parent)
+    QCborMap fake_transform()
+    {
+        QCborMap transform;
+        model::Transform tf(document);
+        convert_transform(&tf, nullptr, transform);
+        return transform;
+    }
+
+    QCborMap wrap_layer_shape(model::ShapeElement* shape, model::DocumentNode* forced_parent)
     {
         QCborMap json;
         json["ddd"_l] = 0;
@@ -84,11 +100,7 @@ public:
         }
         else
         {
-            QCborMap transform;
-            model::Transform tf(document);
-            convert_transform(&tf, nullptr, transform);
-            json["ks"_l] = transform;
-
+            json["ks"_l] = fake_transform();
             QCborArray shapes;
             shapes.push_back(convert_shape(shape, false));
             json["shapes"_l] = shapes;
@@ -97,7 +109,7 @@ public:
         return json;
     }
 
-    enum class LayerType { Shape, Layer, Image, PreComp };
+    enum class LayerType { Shape, Layer, Image, PreComp, Skeleton };
 
     LayerType layer_type(model::ShapeElement* shape)
     {
@@ -108,10 +120,12 @@ public:
             return LayerType::Image;
         if ( meta->inherits(&model::PreCompLayer::staticMetaObject) )
             return LayerType::PreComp;
+        if ( meta->inherits(&model::Skeleton::staticMetaObject) )
+            return LayerType::Skeleton;
         return LayerType::Shape;
     }
 
-    QCborMap convert_single_layer(LayerType type, model::ShapeElement* shape, QCborArray& output, model::Layer* forced_parent, bool force_all_shapes)
+    QCborMap convert_single_layer(LayerType type, model::ShapeElement* shape, QCborArray& output, model::DocumentNode* forced_parent, bool force_all_shapes)
     {
         switch ( type )
         {
@@ -121,6 +135,8 @@ public:
                 return convert_image_layer(static_cast<model::Image*>(shape), forced_parent);
             case LayerType::PreComp:
                 return convert_precomp_layer(static_cast<model::PreCompLayer*>(shape), forced_parent);
+            case LayerType::Skeleton:
+                return convert_skeleton_layer(static_cast<model::Skeleton*>(shape), forced_parent, output);
             case LayerType::Layer:
                 break;
         }
@@ -196,7 +212,7 @@ public:
     }
 
     QCborMap convert_layer(LayerType type, model::ShapeElement* shape, QCborArray& output,
-                           model::Layer* forced_parent = nullptr, const QCborMap& mask = {})
+                           model::DocumentNode* forced_parent = nullptr, const QCborMap& mask = {})
     {
         if ( !shape->visible.get() )
             return {};
@@ -537,6 +553,8 @@ public:
                 format->warning(io::lottie::LottieFormat::tr("Images cannot be grouped with other shapes, they must be inside a layer"));
             else if ( shape->is_instance<model::PreCompLayer>() )
                 format->warning(io::lottie::LottieFormat::tr("Composition layers cannot be grouped with other shapes, they must be inside a layer"));
+            else if ( shape->is_instance<model::Skeleton>() )
+                format->warning(io::lottie::LottieFormat::tr("Skeletons cannot be grouped with other shapes, they must be inside a layer"));
             else if ( !strip || shape->visible.get() )
                 jshapes.push_front(convert_shape(shape.get(), force_hidden));
         }
@@ -579,20 +597,23 @@ public:
         return out;
     }
 
-    void convert_fake_layer_parent(model::Layer* parent, QCborMap& json)
+    void convert_fake_layer_parent(model::DocumentNode* parent, QCborMap& json)
     {
         if ( parent )
         {
-            convert_animation_container(parent->animation.get(), json);
             json["parent"_l] = layer_index(parent);
+
+            if ( auto layer = parent->cast<model::Layer>() )
+            {
+                convert_animation_container(layer->animation.get(), json);
+                return;
+            }
         }
-        else
-        {
-            convert_animation_container(document->main()->animation.get(), json);
-        }
+
+        convert_animation_container(document->main()->animation.get(), json);
     }
 
-    void convert_fake_layer(model::DocumentNode* node, model::Layer* parent, QCborMap& json)
+    void convert_fake_layer(model::DocumentNode* node, model::DocumentNode* parent, QCborMap& json)
     {
         json["ddd"_l] = 0;
         if ( !strip )
@@ -604,7 +625,7 @@ public:
         json["ind"_l] = layer_index(node);
     }
 
-    QCborMap convert_image_layer(model::Image* image, model::Layer* parent)
+    QCborMap convert_image_layer(model::Image* image, model::DocumentNode* parent)
     {
         QCborMap json;
         convert_fake_layer(image, parent, json);
@@ -633,7 +654,7 @@ public:
         return out;
     }
 
-    QCborMap convert_precomp_layer(model::PreCompLayer* layer, model::Layer* parent)
+    QCborMap convert_precomp_layer(model::PreCompLayer* layer, model::DocumentNode* parent)
     {
         QCborMap json;
         json["ty"_l] = 0;
@@ -650,6 +671,132 @@ public:
         json["h"_l] = layer->size.get().height();
         return json;
     }
+
+    QCborMap convert_skeleton_layer(model::Skeleton* layer, model::DocumentNode* parent, QCborArray& output)
+    {
+        QCborMap json;
+        json["ty"_l] = 3;
+        convert_fake_layer(layer, parent, json);
+        json["ind"_l] = layer_index(layer);
+        json["ks"_l] = fake_transform();
+        for ( const auto & bone : layer->bones->values )
+            convert_bone_layer(bone.get(), layer, output);
+
+        for ( const auto & item : layer->draw_items() )
+            convert_skin_layer(item, output);
+
+        return json;
+    }
+
+    void convert_bone_layer(model::BoneItem* layer, model::DocumentNode* parent, QCborArray& output)
+    {
+        QCborMap json;
+        json["ty"_l] = 3;
+        convert_fake_layer(layer, parent, json);
+
+        if ( auto bone = layer->cast<model::Bone>() )
+        {
+            int fake_id = fake_new_index();
+            json["ind"_l] = fake_id;
+            json["ks"_l] = convert_static_transform(bone->initial.get());
+            output.push_back(json);
+
+            QCborMap child;
+            child["ty"_l] = 3;
+            convert_fake_layer(layer, nullptr, json);
+            child["ind"_l] = layer_index(layer);
+            child["parent"_l] = fake_id;
+            QCborMap transform;
+            convert_transform(bone->pose.get(), nullptr, transform);
+            child["ks"_l] = transform;
+            output.push_back(child);
+
+            for ( const auto& ch : bone->children  )
+                convert_bone_layer(ch.get(), layer, output);
+        }
+        else if ( auto slot = layer->cast<model::SkinSlot>() )
+        {
+            json["ind"_l] = layer_index(slot);
+            json["ks"_l] = fake_transform();
+            json["ks"_l]["o"_l] = convert_animated(&slot->opacity, FloatMult(100));
+            output.push_back(json);
+        }
+    }
+
+
+    QCborMap convert_static_transform(model::StaticTransform* tf)
+    {
+        QCborMap json;
+        json["a"_l] = fake_animated(value_from_variant(tf->anchor_point.get()));
+        json["p"_l] = fake_animated(value_from_variant(tf->position.get()));
+        json["s"_l] = fake_animated(value_from_variant(tf->scale.get()));
+        json["r"_l] = fake_animated(value_from_variant(tf->rotation.get()));
+        json["o"_l] = fake_animated(100);
+        return json;
+    }
+
+    void convert_skin_layer(model::SkinItem* item, QCborArray& output)
+    {
+        auto attach = item->attachment.get();
+        if ( !attach )
+            return;
+
+        auto attach_prop = &item->slot()->attachment;
+
+        bool animate_visibility = attach_prop->animated();
+        if ( !animate_visibility && attach_prop->get() != attach )
+            return;
+
+        QCborMap json;
+        json["ty"_l] = 3;
+        convert_fake_layer(item, item->slot(), json);
+
+        if ( auto shape = item->cast<model::ShapeSkin>() )
+        {
+            json["ks"_l] = convert_static_transform(shape->transform.get());
+            for ( const auto& layer : shape->shapes )
+                if ( !strip || layer->visible.get() )
+                    convert_layer(layer_type(layer.get()), layer.get(), output, item);
+        }
+
+        if ( animate_visibility )
+        {
+            QCborArray keyframes;
+            int last = attach_prop->keyframe(0)->get() == attach ? 0 : 100;
+            QCborMap jkf;
+
+            for ( int i = 0, e = attach_prop->keyframe_count(); i < e; i++ )
+            {
+                auto kf = attach_prop->keyframe(i);
+                int value = kf->get() == attach ? 100 : 0;
+                if ( value == last )
+                    continue;
+
+                if ( !jkf.isEmpty() )
+                {
+                    jkf["e"_l] = last;
+                    keyframes.push_back(jkf);
+                }
+
+                last = value;
+
+                jkf.clear();
+                jkf["t"_l] = kf->time();
+                jkf["s"_l] = value;
+                jkf["h"_l] =  1;
+            }
+            keyframes.push_back(jkf);
+
+            QCborMap opacity;
+            opacity["a"_l] = 1;
+            opacity["k"_l] = keyframes;
+            json["ks"_l]["o"_l] = opacity;
+
+        }
+
+        output.push_back(json);
+    }
+
 
     ImportExport* format;
     model::Document* document;

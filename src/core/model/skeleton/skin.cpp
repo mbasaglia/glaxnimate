@@ -129,9 +129,9 @@ void glaxnimate::model::ShapeSkin::on_transform_matrix_changed()
     emit transform_matrix_changed(transform_matrix(time()));
 }
 
-QTransform glaxnimate::model::ShapeSkin::local_transform_matrix(model::FrameTime t) const
+QTransform glaxnimate::model::ShapeSkin::local_transform_matrix(model::FrameTime) const
 {
-    return transform->transform_matrix(local_bounding_rect(t).center());
+    return transform->transform_matrix();
 }
 
 QIcon glaxnimate::model::ShapeSkin::tree_icon() const

@@ -42,7 +42,6 @@ protected:
 class SkinSlot : public BoneItem
 {
     GLAXNIMATE_OBJECT(SkinSlot)
-    GLAXNIMATE_SUBOBJECT(StaticTransform, initial)
     GLAXNIMATE_ANIMATABLE(int, draw_order, 0)
     GLAXNIMATE_ANIMATABLE(float, opacity, 1, {}, 0, 1, false, PropertyTraits::Percent)
     GLAXNIMATE_PROPERTY_LIST(SkinAttachment, attachments)

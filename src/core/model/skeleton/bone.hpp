@@ -16,6 +16,7 @@ class Bone;
 class StaticTransform : public Object
 {
     GLAXNIMATE_OBJECT(StaticTransform)
+    GLAXNIMATE_PROPERTY(QPointF, anchor_point, QPointF(0, 0), {}, {}, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(QPointF, position, QPointF(0, 0), {}, {}, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(QVector2D, scale, QVector2D(1, 1), {}, {}, PropertyTraits::Visual)
     GLAXNIMATE_PROPERTY(float, rotation, 0, {}, {}, PropertyTraits::Visual)
@@ -25,7 +26,7 @@ public:
 
     virtual QString type_name_human() const override { return tr("Static Transform"); }
 
-    QTransform transform_matrix(const QPointF& anchor_point = {}) const;
+    QTransform transform_matrix() const;
 };
 
 class BoneItem : public VisualNode

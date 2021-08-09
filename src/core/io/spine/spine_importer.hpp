@@ -31,6 +31,7 @@ public:
             search_path_images.setPath(search_path.absoluteFilePath(skeleton["images"].toString()));
 
         auto layer = std::make_unique<model::Layer>(document);
+        document->set_best_name(layer.get());
         // width/height from the file for some reason don't match
         /*
         document->main()->width.set(get(skeleton, "width", document->main()->width.get()));
@@ -60,6 +61,7 @@ private:
     std::unique_ptr<model::Skeleton> load_skeleton(const QJsonObject& json)
     {
         skeleton = std::make_unique<model::Skeleton>(document);
+        document->set_best_name(skeleton.get());
 
         for ( const auto& b : json["bones"].toArray() )
             load_bone(b.toObject());
@@ -258,6 +260,7 @@ private:
 
         item->shapes.insert(std::move(image));
         load_static_transform(item->transform.get(), json);
+        item->transform->anchor_point.set(item->local_bounding_rect(0).center());
         return item;
     }
 

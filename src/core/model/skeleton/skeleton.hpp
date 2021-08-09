@@ -74,6 +74,11 @@ public:
 
     void paint(QPainter* painter, FrameTime time, PaintMode mode, glaxnimate::model::Modifier* modifier) const override;
 
+    /**
+     * \brief Returns all the skin items in draw order
+     */
+    std::vector<SkinItem*> draw_items() const;
+
 private:
     std::vector<DocumentNode*> valid_skins() const;
     bool is_valid_skin(DocumentNode* node) const;
