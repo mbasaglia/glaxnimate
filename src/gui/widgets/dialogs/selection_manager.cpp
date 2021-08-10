@@ -222,6 +222,8 @@ void glaxnimate::gui::SelectionManager::layer_new_impl(std::unique_ptr<model::Sh
 
     auto cont = current_shape_container();
     int position = cont->index_of(current_shape());
+    if ( position >= 0 )
+        position += 1;
     doc->push_command(new command::AddShape(cont, std::move(layer), position));
 
     set_current_document_node(ptr);

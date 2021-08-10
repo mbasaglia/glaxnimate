@@ -8,6 +8,7 @@
 * Bug Fixes:
     * Fixed loading lottie animations with missing "a" attributes
     * The rotation handle no longer changes position based on scale
+    * Adding new layers inserts them on top of the selection
 
 
 ## 0.4.4
