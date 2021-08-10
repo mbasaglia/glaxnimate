@@ -78,6 +78,8 @@ widgets/tools/color_picker_widget.ui
 widgets/tools/fill_tool_widget.cpp
 widgets/tools/fill_tool_widget.ui
 widgets/tools/text_tool_widget.cpp
+widgets/tools/skeleton_tool_widget.cpp
+widgets/tools/skeleton_tool_widget.ui
 
 widgets/canvas.cpp
 widgets/view_transform_widget.cpp
