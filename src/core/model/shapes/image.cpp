@@ -60,7 +60,7 @@ QTransform glaxnimate::model::Image::local_transform_matrix(glaxnimate::model::F
 
 void glaxnimate::model::Image::on_transform_matrix_changed()
 {
-    emit bounding_rect_changed();
+    propagate_bounding_rect_changed();
     emit local_transform_matrix_changed(transform->transform_matrix(time()));
     emit transform_matrix_changed(transform_matrix(time()));
 }

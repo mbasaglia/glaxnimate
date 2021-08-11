@@ -64,7 +64,7 @@ void glaxnimate::model::PreCompLayer::on_paint(QPainter* painter, glaxnimate::mo
 
 void glaxnimate::model::PreCompLayer::on_transform_matrix_changed()
 {
-    emit bounding_rect_changed();
+    propagate_bounding_rect_changed();
     emit local_transform_matrix_changed(local_transform_matrix(time()));
     propagate_transform_matrix_changed(transform_matrix(time()), group_transform_matrix(time()));
 }

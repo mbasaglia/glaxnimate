@@ -16,6 +16,7 @@ graphics::DocumentNodeGraphicsItem::DocumentNodeGraphicsItem(model::VisualNode* 
 
     connect(node, &model::Object::visual_property_changed, this, &DocumentNodeGraphicsItem::shape_changed);
     connect(node, &model::VisualNode::docnode_visible_recursive_changed, this, &DocumentNodeGraphicsItem::set_visible);
+    connect(node, &model::VisualNode::bounding_rect_changed, this, &DocumentNodeGraphicsItem::shape_changed);
     set_visible(node->docnode_visible_recursive());
 }
 

@@ -326,6 +326,9 @@ signals:
     void docnode_visible_recursive_changed(bool);
     void docnode_group_color_changed(const QColor&);
 
+    /**
+     * \note Do not emit directly, call propagate_bounding_rect_changed instead
+     */
     void bounding_rect_changed();
     void transform_matrix_changed(const QTransform& t);
     void group_transform_matrix_changed(const QTransform& t);
@@ -339,6 +342,7 @@ protected:
     void docnode_on_update_group(bool force = false);
     bool docnode_valid_color() const;
     void propagate_transform_matrix_changed(const QTransform& t_global, const QTransform& t_group);
+    void propagate_bounding_rect_changed();
     virtual void on_paint(QPainter*, FrameTime, PaintMode, model::Modifier*) const {}
 
 private:

@@ -17,11 +17,6 @@ QString glaxnimate::model::Precomposition::type_name_human() const
     return tr("Composition");
 }
 
-QRectF glaxnimate::model::Precomposition::local_bounding_rect(FrameTime) const
-{
-    return document()->rect();
-}
-
 bool glaxnimate::model::Precomposition::remove_if_unused(bool clean_lists)
 {
     if ( clean_lists && users().empty() )

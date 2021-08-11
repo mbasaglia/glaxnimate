@@ -62,7 +62,7 @@ public slots:
         setOpacity(op);
     }
 
-private:
+protected:
     model::VisualNode* node_;
     bool visible_permitted = true;
     bool visible = true;

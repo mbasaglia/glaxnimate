@@ -308,7 +308,7 @@ void glaxnimate::model::TextShape::on_text_changed()
 #else
     shape_cache = QPainterPath();
 #endif
-    emit bounding_rect_changed();
+    propagate_bounding_rect_changed();
 }
 
 void glaxnimate::model::TextShape::on_font_changed()

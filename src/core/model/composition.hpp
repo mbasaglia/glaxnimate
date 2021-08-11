@@ -33,6 +33,8 @@ public:
     }
 
     int docnode_child_index(DocumentNode* dn) const override;
+
+    QRectF local_bounding_rect(FrameTime t) const override;
 };
 
 } // namespace glaxnimate::model

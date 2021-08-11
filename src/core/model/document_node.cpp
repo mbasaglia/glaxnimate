@@ -338,3 +338,10 @@ void glaxnimate::model::DocumentNode::detach()
     }
 }
 
+void glaxnimate::model::VisualNode::propagate_bounding_rect_changed()
+{
+    emit bounding_rect_changed();
+    if ( auto parent = docnode_visual_parent() )
+        parent->propagate_bounding_rect_changed();
+
+}

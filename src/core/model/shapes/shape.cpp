@@ -93,7 +93,7 @@ void glaxnimate::model::ShapeElement::on_parent_changed(model::DocumentNode* old
 void glaxnimate::model::ShapeElement::on_property_changed(const glaxnimate::model::BaseProperty* prop, const QVariant&)
 {
     if ( prop->traits().flags & PropertyTraits::Visual )
-        emit bounding_rect_changed();
+        propagate_bounding_rect_changed();
 }
 
 math::bezier::MultiBezier glaxnimate::model::ShapeElement::shapes(glaxnimate::model::FrameTime t) const
