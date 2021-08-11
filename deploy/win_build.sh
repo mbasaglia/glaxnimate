@@ -4,6 +4,7 @@
 ROOT="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
 ACTION="${1:-build}"
 PY_VERSION=3.9
+BUILD_DIR="$ROOT/build"
 
 set -ex
 
@@ -26,10 +27,8 @@ case "$ACTION" in
 
     configure)
         SUFFIX="$2"
-        mkdir -p "$ROOT/build"
-        cd "$ROOT/build"
-
-        (cd ../data/icons/breeze-icons/ && git config core.symlinks true && git reset --hard &>/dev/null)
+        mkdir -p "$BUILD_DIR"
+        cd "$BUILD_DIR"
 
         cmake.exe .. \
             -DQt5_DIR=/mingw64/lib/cmake/Qt5 \
@@ -47,7 +46,7 @@ case "$ACTION" in
 
     build)
         JOBS="${2:-4}"
-        cd "$ROOT/build"
+        cd "$BUILD_DIR"
         mingw32-make.exe -j$JOBS || mingw32-make.exe VERBOSE=1
 
         # Setup package
@@ -103,7 +102,7 @@ case "$ACTION" in
             channel="windows-stable"
         fi
 
-        cd "$ROOT/build"
+        cd "$BUILD_DIR"
         version="$(../deploy/get_version.sh CMakeCache.txt)"
 
         mkdir -p "artifacts/$path/Win"
@@ -123,7 +122,7 @@ case "$ACTION" in
         ;;
 
     pypi)
-        cd "$ROOT/build"
+        cd "$BUILD_DIR"
         pip.exe install wheel twine
         mingw32-make.exe glaxnimate_python_depends_install
         mingw32-make.exe glaxnimate_python VERBOSE=1

@@ -93,8 +93,9 @@ jobs:
                 ./deploy/win_build.sh deps
             - name: Build
               run: |
-                 ./deploy/win_build.sh configure "win-${GITHUB_SHA:0:8}"
-                 ./deploy/win_build.sh build
+                (cd ./data/icons/breeze-icons/ && git config core.symlinks true && git reset --hard &>/dev/null)
+                ./deploy/win_build.sh configure "win-${GITHUB_SHA:0:8}"
+                ./deploy/win_build.sh build
             - name: Build Python
               run: |
                 cd build
