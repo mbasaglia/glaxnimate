@@ -284,20 +284,6 @@ release:check_deb:
         - apt install glaxnimate.deb
         - ./deploy/check_package_version.sh glaxnimate
 
-release:check_snap:
-    image: mattbas/snapcraft:latest
-    stage: deploy
-    only:
-        - tags
-        - master
-    dependencies:
-        - release:check
-    needs:
-        - release:check
-    script:
-        - snap install glaxnimate
-        - ./deploy/check_package_version.sh glaxnimate
-
 release:check_appimage:
     image: ubuntu:latest
     stage: deploy
