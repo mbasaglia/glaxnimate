@@ -176,7 +176,7 @@ linux:appimage:
         - ls -l /usr/local/lib/
         - ldd AppDir/usr/bin/glaxnimate
         - LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH" ldd AppDir/usr/bin/glaxnimate
-        - PATH="/opt/qt515/bin/:$PATH" LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes,imageformats -appimage
+        - PATH="/opt/qt515/bin/:$PATH" LD_LIBRARY_PATH="/usr/local/lib/:$LD_LIBRARY_PATH" VERSION=dev ./squashfs-root/AppRun AppDir/glaxnimate.desktop -extra-plugins=iconengines,platformthemes,imageformats -appimage -show-exclude-libs -bundle-non-qt-libs
         - mv glaxnimate-dev-x86_64.AppImage glaxnimate-x86_64.AppImage
         - sha1sum glaxnimate-x86_64.AppImage >checksum.txt
         - if [ -n "$BUTLER_API_KEY" ] ;
@@ -192,28 +192,6 @@ linux:appimage:
             - build/glaxnimate-x86_64.AppImage
             - build/checksum.txt
     when: always
-
-#mxe:build:
-    #image: mattbas/mxe-qt5:latest
-    #stage: build
-    #before_script:
-    #script:
-        #- mkdir build
-        #- cd build
-        #- x86_64-w64-mingw32.shared.posix-cmake .. -DCMAKE_INSTALL_PREFIX=/ -DVERSION_SUFFIX="win-$CI_COMMIT_SHORT_SHA"
-        #- make
-        #- make translations
-        #- make install DESTDIR=glaxnimate >/dev/null
-        #- /mxedeployqt/mxedeployqt --mxepath "/mxe" --mxetarget x86_64-w64-mingw32.shared.posix glaxnimate/bin/
-        #- cp external/Qt-Color-Widgets/libQtColorWidgets.dll glaxnimate/bin/
-        #- cp ../deploy/glaxnimate.bat glaxnimate
-        #- zip -r glaxnimate-x86_64.zip glaxnimate >/dev/null
-        #- sha1sum glaxnimate-x86_64.zip >checksum.txt
-    #artifacts:
-        #paths:
-            #- build/glaxnimate-x86_64.zip
-            #- build/checksum.txt
-    #when: always
 
 tarball:
     stage: build
@@ -283,7 +261,7 @@ release:check_deb:
     script:
         - ./deploy/release_check.py --package "Deb Package" --action check_hash
         - ./deploy/release_check.py --package "Deb Package" --action download
-        - apt install glaxnimate.deb
+        - apt install ./glaxnimate.deb
         - ./deploy/check_package_version.sh glaxnimate
 
 release:check_appimage:
@@ -296,10 +274,14 @@ release:check_appimage:
         - release:check
     needs:
         - release:check
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y libfuse2 libgl1-mesa-dev libglib2.0-0
     script:
         - ./deploy/release_check.py --package "Linux Appimage" --action check_hash
         - ./deploy/release_check.py --package "Linux Appimage" --action download
         - chmod a+x glaxnimate-x86_64.AppImage
+        - glaxnimate-x86_64.AppImage --appimage-extract
         - ./deploy/check_package_version.sh ./glaxnimate-x86_64.AppImage
 
 linux:snap_tag:

@@ -35,7 +35,9 @@ Something along these lines:
 8. In the tag pipeline, manually run the `release` job
 9. Wait for CI to complete
 10. New release should be ready at <https://gitlab.com/mattbas/glaxnimate/-/releases>
-11. Run `./deploy/release_check.py` or `make release_check` to check the release is ok
+11. Run the release validation jobs
+    * https://gitlab.com/mattbas/glaxnimate/-/pipelines `release:check`
+    * https://github.com/mbasaglia/glaxnimate/actions/workflows/verify_release.yml
 12. Merge `release` / `pre-release` back into master if there have been any new commits
 
 
