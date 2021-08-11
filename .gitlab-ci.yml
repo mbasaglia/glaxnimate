@@ -278,6 +278,8 @@ release:check_deb:
         - master
     dependencies:
         - release:check
+    needs:
+        - release:check
     script:
         - ./deploy/release_check.py --package "Deb Package" --action check_hash
         - ./deploy/release_check.py --package "Deb Package" --action download
@@ -297,6 +299,7 @@ release:check_appimage:
     script:
         - ./deploy/release_check.py --package "Linux Appimage" --action check_hash
         - ./deploy/release_check.py --package "Linux Appimage" --action download
+        - chmod a+x glaxnimate-x86_64.AppImage
         - ./deploy/check_package_version.sh ./glaxnimate-x86_64.AppImage
 
 linux:snap_tag:
