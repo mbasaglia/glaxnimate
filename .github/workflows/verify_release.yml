@@ -1,4 +1,4 @@
-name: Verify Release
+name: Verify
 on:
     workflow_dispatch:
 jobs:
@@ -28,6 +28,7 @@ jobs:
                 ./deploy/release_check.py --package "Mac DMG" --action download --download-path .
                 mkdir mounted
                 hdiutil attach glaxnimate.dmg -mountpoint mounted
+                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/check_package_version.sh ./mounted/Glaxnimate.app/Contents/Resources/bin/glaxnimate
             - name: Verify PyPi
               run: |
@@ -68,8 +69,10 @@ jobs:
                 ./deploy/release_check.py --package "Windows Zip" --action check_hash
             - name: Verify Package
               run: |
+                set -x
                 pacman --noconfirm -S unzip
                 ./deploy/release_check.py --package "Windows Zip" --action download --download-path .
+                ls
                 unzip glaxnimate-x84_64.zip
                 ./deploy/check_package_version.sh ./glaxnimate/bin/glaxnimate.exe
             - name: Verify PyPi

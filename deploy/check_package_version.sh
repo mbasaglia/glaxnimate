@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ex
 ROOT="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
 CMAKE_FILE="$ROOT/CMakeLists.txt"
 VERSION_EXPECTED="$(sed -rn 's/.*project\(.* VERSION (\S+).*/\1/p' "$CMAKE_FILE")"

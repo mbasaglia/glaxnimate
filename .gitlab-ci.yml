@@ -258,6 +258,8 @@ release:
 release:check:
     stage: deploy
     when: manual
+    dependencies:
+    needs: []
     only:
         - tags
         - master
