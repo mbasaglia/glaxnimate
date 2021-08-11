@@ -217,7 +217,7 @@ retcode = 0
 parser = argparse.ArgumentParser()
 #parser.add_argument("version")
 parser.add_argument("--action", default="check_hash", choices=["check_hash", "list", "download"])
-parser.add_argument("--download-path", default="/tmp")
+parser.add_argument("--download-path", default=".")
 parser.add_argument("--package", default=None, nargs="+")
 
 ns = parser.parse_args()

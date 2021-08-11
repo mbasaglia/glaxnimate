@@ -292,6 +292,8 @@ release:check_snap:
         - master
     dependencies:
         - release:check
+    needs:
+        - release:check
     script:
         - snap install glaxnimate
         - ./deploy/check_package_version.sh glaxnimate
@@ -303,6 +305,8 @@ release:check_appimage:
         - tags
         - master
     dependencies:
+        - release:check
+    needs:
         - release:check
     script:
         - ./deploy/release_check.py --package "Linux Appimage" --action check_hash

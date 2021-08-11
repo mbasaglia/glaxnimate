@@ -2,12 +2,16 @@
 import sys
 import glaxnimate
 
-version = sys.argv[1]
-if version.count(".") == 3:
-    version = version.rsplit(".", 1)[0]
+expected_version = sys.argv[1]
+if expected_version.count(".") == 3:
+    expected_version = expected_version.rsplit(".", 1)[0]
+
+glaxnimate_version = glaxnimate.__version__
+if glaxnimate_version.count(".") == 3:
+    glaxnimate_version = glaxnimate_version.rsplit(".", 1)[0]
 
 print("Expected version")
-print(version)
+print(expected_version)
 print("Glaxnimate version")
-print(glaxnimate.__version__)
-sys.exit(glaxnimate.__version__ != version)
+print(glaxnimate_version)
+sys.exit(glaxnimate_version != expected_version)
