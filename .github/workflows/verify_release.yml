@@ -1,0 +1,88 @@
+name: Verify Release
+on:
+    workflow_dispatch:
+jobs:
+    macos:
+        runs-on: macOS-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                submodules: recursive
+            - name: Notify Gitlab Start
+              env:
+                GITLAB_ACCESS_TOKEN: ${{ secrets.GITLAB_ACCESS_TOKEN }}
+              run: |
+                pip3 install requests
+                ./deploy/gitlab_commit_status.py running
+            - name: Install Deps
+              run: |
+                brew install coreutils ed findutils gawk gnu-sed gnu-tar grep make
+                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
+                ./deploy/mac_build.sh deps
+            - name: Verify Package Hash
+              run: |
+                ./deploy/release_check.py --package "Mac DMG" --action check_hash
+            - name: Verify Package
+              run: |
+                ./deploy/release_check.py --package "Mac DMG" --action download --download-path .
+                mkdir mounted
+                hdiutil attach glaxnimate.dmg -mountpoint mounted
+                ./deploy/check_package_version.sh ./mounted/Glaxnimate.app/Contents/Resources/bin/glaxnimate
+            - name: Verify PyPi
+              run: |
+                PYPI_VERSION="`./deploy/pypi_version_latest.sh`"
+                pip3 install glaxnimate==$PYPI_VERSION
+                ./deploy/pypi_version_check.py $PYPI_VERSION
+            - name: Notify Gitlab Finish
+              if: ${{ always() }}
+              env:
+                GITLAB_ACCESS_TOKEN: ${{ secrets.GITLAB_ACCESS_TOKEN }}
+                RESULT: ${{ job.status }}
+              run: |
+                ./deploy/gitlab_commit_status.py $RESULT
+    windows:
+        runs-on: windows-latest
+        defaults:
+            run:
+                shell: msys2 {0}
+        steps:
+            - name: Setup msys2
+              uses: msys2/setup-msys2@v2
+              with:
+                path-type: strict
+                update: true
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                submodules: recursive
+            - name: Notify Gitlab Start
+              env:
+                GITLAB_ACCESS_TOKEN: ${{ secrets.GITLAB_ACCESS_TOKEN }}
+              run: |
+                pacman --noconfirm -S mingw-w64-x86_64-python-pip
+                pip install requests
+                ./deploy/gitlab_commit_status.py running
+            - name: Verify Package Hash
+              run: |
+                ./deploy/release_check.py --package "Windows Zip" --action check_hash
+            - name: Verify Package
+              run: |
+                pacman --noconfirm -S unzip
+                ./deploy/release_check.py --package "Windows Zip" --action download --download-path .
+                unzip glaxnimate-x84_64.zip
+                ./deploy/check_package_version.sh ./glaxnimate/bin/glaxnimate.exe
+            - name: Verify PyPi
+              run: |
+                PYPI_VERSION="`./deploy/pypi_version_latest.sh`"
+                pip3 install glaxnimate==$PYPI_VERSION
+                ./deploy/pypi_version_check.py $PYPI_VERSION
+            - name: Notify Gitlab Finish
+              if: ${{ always() }}
+              env:
+                GITLAB_ACCESS_TOKEN: ${{ secrets.GITLAB_ACCESS_TOKEN }}
+                RESULT: ${{ job.status }}
+              run: |
+                ./deploy/gitlab_commit_status.py $RESULT
+
+
