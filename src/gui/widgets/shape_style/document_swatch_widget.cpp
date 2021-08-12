@@ -380,7 +380,13 @@ void DocumentSwatchWidget::open()
 void DocumentSwatchWidget::save()
 {
     if ( d->ui.swatch->palette().name().isEmpty() )
-        d->ui.swatch->palette().setName(d->document->main()->name.get());
+    {
+        QString name = QInputDialog::getText(this, tr("Save Palette"), tr("Name"), QLineEdit::Normal, d->document->main()->name.get());
+        if ( name.isEmpty() )
+            return;
+
+        d->ui.swatch->palette().setName(name);
+    }
 
     if ( !d->palette_index.isValid() )
     {

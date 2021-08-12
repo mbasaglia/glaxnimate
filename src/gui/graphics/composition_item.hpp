@@ -38,5 +38,3 @@ private slots:
 };
 
 } // namespace glaxnimate::gui::graphics
-
-
