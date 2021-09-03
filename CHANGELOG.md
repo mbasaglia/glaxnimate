@@ -34,7 +34,7 @@
     * Button to clear fill/stroke colors
     * The context menu you get on the composition tabs now allows you to rename precompositions
 * I/O:
-    * More color formats are supported for the SVG importer
+    * More color formats are supported for the SVG importe
     * Automatically removes embedded images when exporting to TGS
     * Preview exports now show the warnings you'd get when saving to that format
 * Scripting:

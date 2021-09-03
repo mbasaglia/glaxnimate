@@ -140,7 +140,8 @@ static void project_impl(const math::bezier::CubicBezierSolver<QPointF>& solver,
         else
             right = middle;
 
-        if ( math::length_squared(left.point - right.point) <= min_dist )
+        auto len = math::length_squared(left.point - right.point);
+        if ( len <= min_dist || !std::isfinite(len) )
             break;
     }
 
