@@ -18,6 +18,11 @@ German
 
 * Sythelux
 
+French
+------
+
+* Popolon
+
 
 External Code / Library Credits
 ===============================
