@@ -91,6 +91,13 @@ public:
         action_title = menu_property.addSeparator();
         menu_property.addAction(ui.action_add_keyframe);
 
+
+        ui.action_remove_all_keyframes->setIcon(
+            QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg"))
+        );
+        connect(ui.action_remove_all_keyframes, &QAction::triggered, parent, &CompoundTimelineWidget::remove_all_keyframes);
+        menu_property.addAction(ui.action_remove_all_keyframes);
+
         menu_property.addAction(&action_kf_paste);
         action_kf_paste.setIcon(QIcon::fromTheme("edit-paste"));
         connect(&action_kf_paste, &QAction::triggered, parent, &CompoundTimelineWidget::paste_keyframe);
@@ -131,6 +138,10 @@ public:
         menu_keyframe.addAction(&action_kf_remove);
         action_kf_remove.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg")));
         connect(&action_kf_remove, &QAction::triggered, parent, &CompoundTimelineWidget::remove_keyframe);
+
+        menu_keyframe.addAction(&action_kf_remove_all);
+        action_kf_remove_all.setIcon(QIcon(GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg")));
+        connect(&action_kf_remove_all, &QAction::triggered, parent, &CompoundTimelineWidget::remove_all_keyframes);
 
         menu_keyframe.addAction(&action_kf_copy);
         action_kf_copy.setIcon(QIcon::fromTheme("edit-copy"));
@@ -175,6 +186,7 @@ public:
         action_exit_custom.setText(action_enter_custom.text());
 
         action_kf_remove.setText(tr("Remove Keyframe"));
+        action_kf_remove_all.setText(tr("Clear Animations"));
 
         action_kf_copy.setText(tr("Copy Keyframe"));
         action_kf_paste.setText(tr("Paste Keyframe"));
@@ -286,7 +298,7 @@ public:
     }
 
 
-    Ui::CompoundTimelineWidget ui;
+    Ui_CompoundTimelineWidget ui;
     item_models::PropertyModelFull property_model;
     style::PropertyDelegate property_delegate;
     color_widgets::ColorDelegate color_delegate;
@@ -299,6 +311,7 @@ public:
     QAction* action_enter;
     QAction* action_exit;
     QAction action_kf_remove;
+    QAction action_kf_remove_all;
     QAction action_enter_hold;
     QAction action_enter_linear;
     QAction action_enter_ease;
@@ -522,6 +535,16 @@ void CompoundTimelineWidget::remove_keyframe()
 
     d->menu_anim->object()->document()->undo_stack().push(
         new command::RemoveKeyframeTime(d->menu_anim, d->menu_kf_exit->time())
+    );
+}
+
+void CompoundTimelineWidget::remove_all_keyframes()
+{
+    if ( !d->menu_anim )
+        return;
+
+    d->menu_anim->object()->document()->undo_stack().push(
+        new command::RemoveAllKeyframes(d->menu_anim)
     );
 }
 

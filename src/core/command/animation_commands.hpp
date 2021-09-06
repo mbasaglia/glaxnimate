@@ -58,6 +58,28 @@ private:
 };
 
 
+class RemoveAllKeyframes : public QUndoCommand
+{
+public:
+    RemoveAllKeyframes(model::AnimatableBase* prop);
+
+    void undo() override;
+
+    void redo() override;
+
+private:
+    struct Keframe
+    {
+        model::FrameTime time;
+        QVariant value;
+        model::KeyframeTransition transition;
+    };
+    model::AnimatableBase* prop;
+    std::vector<Keframe> keyframes;
+    QVariant value;
+};
+
+
 /**
  * \brief Command that sets multiple animated properties at once,
  * setting keyframes based on the document record_to_keyframe

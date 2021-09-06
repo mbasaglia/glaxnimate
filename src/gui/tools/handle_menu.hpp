@@ -34,7 +34,7 @@ inline void add_property_menu_actions(QObject* thus, QMenu* menu, QGraphicsItem*
         if ( prop->has_keyframe(prop->time()) )
         {
             sub->addAction(
-                QIcon::fromTheme("list-remove"),
+                QIcon(app::Application::instance()->data_file("images/keyframe/status/keyframe-remove.svg")),
                 QMenu::tr("Remove Keyframe"),
                 thus,
                 [prop]{
@@ -47,12 +47,27 @@ inline void add_property_menu_actions(QObject* thus, QMenu* menu, QGraphicsItem*
         else
         {
             sub->addAction(
-                QIcon(app::Application::instance()->data_file("images/keyframe/status/key.svg")),
+                QIcon(app::Application::instance()->data_file("images/keyframe/status/keyframe-add.svg")),
                 QMenu::tr("Add Keyframe"),
                 thus,
                 [prop]{
                     prop->object()->push_command(
                         new command::SetKeyframe(prop, prop->time(), prop->value(), true)
+                    );
+                }
+            );
+        }
+
+
+        if ( prop->animated() )
+        {
+            sub->addAction(
+                QIcon(app::Application::instance()->data_file("images/keyframe/status/keyframe-remove.svg")),
+                QMenu::tr("Clear Animations"),
+                thus,
+                [prop]{
+                    prop->object()->push_command(
+                        new command::RemoveAllKeyframes(prop)
                     );
                 }
             );

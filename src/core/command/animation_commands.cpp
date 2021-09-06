@@ -333,3 +333,38 @@ int glaxnimate::command::MoveKeyframe::redo_index() const
 {
     return keyframe_index_after;
 }
+
+glaxnimate::command::RemoveAllKeyframes::RemoveAllKeyframes(model::AnimatableBase* prop)
+    : QUndoCommand(QObject::tr("Remove animations from %1").arg(prop->name())),
+      prop(prop),
+      value(prop->value())
+{
+    int count = prop->keyframe_count();
+    keyframes.reserve(count);
+    for ( int i = 0; i < count; i++ )
+    {
+        auto kf = prop->keyframe(i);
+        keyframes.push_back({
+            kf->time(),
+            kf->value(),
+            kf->transition()
+        });
+    }
+}
+
+void glaxnimate::command::RemoveAllKeyframes::redo()
+{
+    prop->clear_keyframes();
+    prop->set_value(value);
+}
+
+void glaxnimate::command::RemoveAllKeyframes::undo()
+{
+    for ( const auto& kf : keyframes )
+    {
+        prop->set_keyframe(kf.time, kf.value)->set_transition(kf.transition);
+    }
+    prop->set_time(prop->time());
+}
+
+

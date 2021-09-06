@@ -991,6 +991,24 @@ public:
                     btn_rm_kf->setIconSize(QSize(80, 80));
                     btnlay->addWidget(btn_rm_kf);
 
+
+                    auto btn_rm_kf_all = new QToolButton();
+                    btn_rm_kf_all->setIcon(
+                        QIcon(gui::GlaxnimateApp::instance()->data_file("images/icons/keyframe-remove.svg"))
+                    );
+                    btn_rm_kf_all->setText(tr("Clear Animations"));
+                    connect(btn_rm_kf, &QToolButton::clicked, node, [anim]{
+                        if ( anim->animated() )
+                        {
+                            anim->object()->push_command(
+                                new command::RemoveAllKeyframes(anim)
+                            );
+                        }
+                    });
+                    btn_rm_kf_all->setIconSize(QSize(80, 80));
+                    btnlay->addWidget(btn_rm_kf_all);
+
+
                     lay->addLayout(btnlay);
                 }
 

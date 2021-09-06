@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>glaxnimate::gui::CompoundTimelineWidget</class>
+ <class>CompoundTimelineWidget</class>
  <widget class="QWidget" name="CompoundTimelineWidget">
   <property name="geometry">
    <rect>
@@ -187,6 +187,11 @@
   <action name="action_add_keyframe">
    <property name="text">
     <string>Add Keyframe</string>
+   </property>
+  </action>
+  <action name="action_remove_all_keyframes">
+   <property name="text">
+    <string>&amp;Clear Animations</string>
    </property>
   </action>
  </widget>

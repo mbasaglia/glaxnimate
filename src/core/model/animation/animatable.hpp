@@ -488,7 +488,7 @@ public:
     {
         int n = keyframes_.size();
         keyframes_.clear();
-        for ( int i = 0; i < n; i++ )
+        for ( int i = n - 1; i >= 0; i-- )
             emit this->keyframe_removed(i);
     }
 

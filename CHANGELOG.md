@@ -1,5 +1,7 @@
 ## 0.4.5
 
+* Editing:
+    * Action to remove all animations from a property
 * UI:
     * New handle for translating layers, groups etc without having to drag on the object
     * Menu items for images in the asset view

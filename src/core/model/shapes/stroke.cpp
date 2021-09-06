@@ -41,7 +41,7 @@ void glaxnimate::model::Stroke::set_pen_style_undoable(const QPen& pen_style)
 QPainterPath glaxnimate::model::Stroke::to_painter_path(glaxnimate::model::FrameTime t) const
 {
     QPainterPathStroker s;
-    s.setWidth(width.get());
+    s.setWidth(width.get_at(t));
     s.setCapStyle(Qt::PenCapStyle(cap.get()));
     s.setJoinStyle(Qt::PenJoinStyle(join.get()));
     s.setMiterLimit(miter_limit.get());
