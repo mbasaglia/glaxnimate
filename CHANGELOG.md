@@ -6,6 +6,7 @@
     * New handle for translating layers, groups etc without having to drag on the object
     * Menu items for images in the asset view
     * Saving the document swatch will ask for a name
+    * Transform handles for rotation/translation now keep a constant distance, regardless of zoom
 * I/O:
     * Made error messages from the lottie importer easier to understand
     * SVG export now supports hold frames

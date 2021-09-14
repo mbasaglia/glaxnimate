@@ -3,6 +3,7 @@
 #include <QtMath>
 #include <QCursor>
 #include <QGraphicsSceneMouseEvent>
+#include <QStyleOptionGraphicsItem>
 
 #include "model/animation/animatable.hpp"
 #include "glaxnimate_app.hpp"
@@ -21,6 +22,8 @@ public:
     QColor color_selected;
     QColor color_border;
     bool dragged = false;
+    QPointF offset = {};
+    QPointF drag_scene_pos = {};
 
     qreal external_radius()
     {
@@ -76,12 +79,20 @@ graphics::MoveHandle::~MoveHandle() = default;
 
 QRectF graphics::MoveHandle::boundingRect() const
 {
-    return {-d->external_radius(), -d->external_radius(), d->external_radius()*2, d->external_radius()*2};
+    return {-d->external_radius() + d->offset.x(), -d->external_radius() + d->offset.y(), d->external_radius()*2, d->external_radius()*2};
 }
 
-void graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*)
+void graphics::MoveHandle::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt, QWidget*)
 {
     painter->save();
+
+    if ( d->offset.x() != 0 || d->offset.y() != 0 )
+    {
+        QPen pen(opt->palette.color(QPalette::Highlight), 1);
+        painter->setPen(pen);
+        painter->drawLine(d->offset, {0, 0});
+        painter->translate(d->offset);
+    }
 
     qreal radius = hasFocus() || ( isSelected() && isUnderMouse() ) ? d->external_radius() : d->radius;
 
@@ -146,6 +157,7 @@ void graphics::MoveHandle::mousePressEvent(QGraphicsSceneMouseEvent* event)
     setFocus(Qt::MouseFocusReason);
     event->accept();
     d->dragged = false;
+    d->drag_scene_pos = event->scenePos();
 }
 
 void graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -157,8 +169,12 @@ void graphics::MoveHandle::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
 
     QTransform scene_to_parent = parentItem()->sceneTransform().inverted();
+    QPointF parent_drag_from = scene_to_parent.map(d->drag_scene_pos);
+    d->drag_scene_pos =  event->scenePos();
+    QPointF parent_drag_to = scene_to_parent.map(d->drag_scene_pos);
+    QPointF delta = parent_drag_to - parent_drag_from;
     QPointF oldp = scene_to_parent.map(scenePos());
-    QPointF p = scene_to_parent.map(event->scenePos());
+    QPointF p = oldp + delta;
     d->apply_constraints(oldp, p);
     if ( !d->dont_move )
         setPos(p);
@@ -236,4 +252,10 @@ void graphics::MoveHandle::set_colors(const QColor& color_rest, const QColor& co
     d->color_highlighted = color_highlighted;
     d->color_selected = color_selected;
     d->color_border = color_border;
+}
+
+void glaxnimate::gui::graphics::MoveHandle::set_offset(const QPointF& offset)
+{
+    d->offset = offset;
+    prepareGeometryChange();
 }

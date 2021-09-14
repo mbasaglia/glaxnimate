@@ -14,6 +14,10 @@ class graphics::TransformGraphicsItem::Private
 public:
     enum Index
     {
+        Anchor,
+        Rot,
+        Position,
+
         TL,
         TR,
         BR,
@@ -22,10 +26,6 @@ public:
         Bottom,
         Left,
         Right,
-
-        Anchor,
-        Rot,
-        Position,
 
         Count
     };
@@ -76,12 +76,7 @@ public:
     }
     QPointF get_rot() const
     {
-        auto l = QLineF(
-            parent->mapToScene(QPointF(0, 0)),
-            parent->mapToScene(QPointF(0, -1))
-        );
-        l.setLength(offshoot_size());
-        return get_t() + parent->mapFromScene(l.p2());
+        return get_t();
     }
     qreal offshoot_size() const
     {
@@ -89,12 +84,7 @@ public:
     }
     QPointF get_pos() const
     {
-        auto l = QLineF(
-            parent->mapToScene(QPointF(0, 0)),
-            parent->mapToScene(QPointF(-1, 0))
-        );
-        l.setLength(offshoot_size());
-        return get_l() + parent->mapFromScene(l.p2());
+        return get_l();
     }
 
     void set_pos(const Handle& h) const
@@ -106,6 +96,24 @@ public:
     : transform(transform),
         target(target),
         handles{
+            Handle{
+                new MoveHandle(parent, MoveHandle::Any, MoveHandle::Saltire, 12, true),
+                &TransformGraphicsItem::Private::get_a,
+                &TransformGraphicsItem::drag_a,
+                {&transform->anchor_point, &transform->position}
+            },
+            Handle{
+                new MoveHandle(parent, MoveHandle::Rotate, MoveHandle::Circle, 6, true),
+                &TransformGraphicsItem::Private::get_rot,
+                &TransformGraphicsItem::drag_rot,
+                {&transform->rotation}
+            },
+            Handle{
+                new MoveHandle(parent, MoveHandle::Any, MoveHandle::Cross, 6, true),
+                &TransformGraphicsItem::Private::get_pos,
+                &TransformGraphicsItem::drag_pos,
+                {&transform->position}
+            },
             Handle{
                 new MoveHandle(parent, MoveHandle::DiagonalDown, MoveHandle::Square, 6, true),
                 &TransformGraphicsItem::Private::get_tl,
@@ -154,27 +162,12 @@ public:
                 &TransformGraphicsItem::drag_r,
                 {&transform->position, &transform->scale}
             },
-            Handle{
-                new MoveHandle(parent, MoveHandle::Any, MoveHandle::Saltire, 12, true),
-                &TransformGraphicsItem::Private::get_a,
-                &TransformGraphicsItem::drag_a,
-                {&transform->anchor_point, &transform->position}
-            },
-            Handle{
-                new MoveHandle(parent, MoveHandle::Rotate, MoveHandle::Circle, 6, true),
-                &TransformGraphicsItem::Private::get_rot,
-                &TransformGraphicsItem::drag_rot,
-                {&transform->rotation}
-            },
-            Handle{
-                new MoveHandle(parent, MoveHandle::Any, MoveHandle::Cross, 6, true),
-                &TransformGraphicsItem::Private::get_pos,
-                &TransformGraphicsItem::drag_pos,
-                {&transform->position}
-            },
         },
         parent(parent)
     {
+
+        handles[Position].handle->set_offset({-offshoot_size(), 0});
+        handles[Rot].handle->set_offset({0, -offshoot_size()});
     }
 
     qreal find_scale(QPointF target_local, qreal size_to_anchor, qreal anchor_lin, qreal target_local_lin, qreal old_scale)
@@ -276,9 +269,13 @@ graphics::TransformGraphicsItem::~TransformGraphicsItem() = default;
 void glaxnimate::gui::graphics::TransformGraphicsItem::update_offshoots()
 {
     prepareGeometryChange();
-    d->set_pos(d->handles[Private::Rot]);
-    d->set_pos(d->handles[Private::Position]);
     d->set_pos(d->handles[Private::Anchor]);
+
+
+    auto length = d->offshoot_size();
+    auto angle = math::deg2rad(d->transform->rotation.get());
+    d->handles[Private::Position].handle->set_offset({length * math::cos(angle - math::pi), length * math::sin(angle - math::pi)});
+    d->handles[Private::Rot].handle->set_offset({length * math::cos(angle - math::pi / 2), length * math::sin(angle - math::pi / 2)});
 }
 
 
@@ -290,12 +287,14 @@ void graphics::TransformGraphicsItem::update_handles()
     {
         d->set_pos(h);
     }
+    update_offshoots();
 }
 
 void graphics::TransformGraphicsItem::update_transform()
 {
     d->transform_matrix = d->transform->transform_matrix(d->transform->time());
     d->transform_matrix_inv = d->transform_matrix.inverted();
+    update_offshoots();
 }
 
 
@@ -429,9 +428,6 @@ void graphics::TransformGraphicsItem::paint(QPainter* painter, const QStyleOptio
     pen.setCosmetic(true);
     painter->setPen(pen);
     painter->drawRect(d->cache);
-    painter->drawLine(d->handles[Private::Top].handle->pos(), d->handles[Private::Rot].handle->pos());
-    if ( d->handles[Private::Position].handle->isVisible() )
-        painter->drawLine(d->handles[Private::Left].handle->pos(), d->handles[Private::Position].handle->pos());
     painter->restore();
 }
 
