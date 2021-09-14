@@ -363,7 +363,10 @@ public:
     {
         model::Layer* parent_layer = add_layer(&document->main()->shapes);
         parent_layer->name.set(parent_layer->type_name_human());
-        parse_children({svg, &parent_layer->shapes, parse_style(svg, {}), false});
+        Style default_style(Style::Map{
+            {"fill", "black"},
+        });
+        parse_children({svg, &parent_layer->shapes, parse_style(svg, default_style), false});
 
         return parent_layer;
     }
@@ -524,7 +527,10 @@ public:
             ++it;
         }
 
-        style.color = parse_color(style.get("color", "none"), parent_style.color);
+        if ( !style.contains("fill") )
+            style.set("fill", parent_style["fill"]);
+
+        style.color = parse_color(style.get("color", ""), parent_style.color);
         return style;
     }
 
@@ -947,9 +953,7 @@ public:
 
     void add_fill(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
     {
-        QString fill_color = style.get("fill", "transparent");
-        if ( fill_color == "none" )
-            return;
+        QString fill_color = style.get("fill", "");
 
         auto fill = std::make_unique<model::Fill>(document);
         set_styler_style(fill.get(), fill_color, style.color);
@@ -967,12 +971,15 @@ public:
         for ( const auto& kf : add_keyframes(anim.single("fill-opacity")) )
             fill->opacity.set_keyframe(kf.time, kf.values[0])->set_transition(kf.transition);
 
+        if ( fill_color == "none" )
+            fill->visible.set(false);
+
         shapes->insert(std::move(fill));
     }
 
     QColor parse_color(const QString& color_str, const QColor& current_color)
     {
-        if ( color_str == "currentColor" )
+        if ( color_str.isEmpty() || color_str == "currentColor" )
             return current_color;
 
         return glaxnimate::io::svg::parse_color(color_str);

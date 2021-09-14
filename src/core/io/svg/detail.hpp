@@ -28,6 +28,10 @@ public:
             return def;
         return it->second;
     }
+    void set(const QString& k, const QString& v)
+    {
+        map[k] = v;
+    }
 
     bool contains(const QString& k) const { return map.count(k); }
 
