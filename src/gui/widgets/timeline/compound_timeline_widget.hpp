@@ -31,6 +31,9 @@ public:
     QAbstractItemModel* filtered_model() const;
     QAbstractItemModel* raw_model() const;
     TimelineWidget* timeline() const;
+    model::DocumentNode* current_node() const;
+    QModelIndex current_index_raw() const;
+    QModelIndex current_index_filtered() const;
 
     void reset_view();
 

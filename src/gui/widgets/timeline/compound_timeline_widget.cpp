@@ -729,3 +729,18 @@ void CompoundTimelineWidget::select(const std::vector<model::VisualNode *>& sele
         QItemSelectionModel::Rows | QItemSelectionModel::Deselect
     );
 }
+
+model::DocumentNode * glaxnimate::gui::CompoundTimelineWidget::current_node() const
+{
+    return d->index_node_or_parent(d->comp_model.mapToSource(d->ui.properties->currentIndex()));
+}
+
+QModelIndex glaxnimate::gui::CompoundTimelineWidget::current_index_raw() const
+{
+    return d->comp_model.mapToSource(d->ui.properties->currentIndex());
+}
+
+QModelIndex glaxnimate::gui::CompoundTimelineWidget::current_index_filtered() const
+{
+    return d->ui.properties->currentIndex();
+}

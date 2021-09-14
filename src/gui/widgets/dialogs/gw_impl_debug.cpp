@@ -17,8 +17,10 @@
 
 #include "glaxnimate_app.hpp"
 
+namespace  {
 
-static void screenshot_widget(const QString& path, QWidget* widget)
+
+void screenshot_widget(const QString& path, QWidget* widget)
 {
     widget->show();
     QString base = widget->objectName();
@@ -29,7 +31,7 @@ static void screenshot_widget(const QString& path, QWidget* widget)
     pic.save(name);
 }
 
-static QString pretty_json(const QByteArray& input)
+QString pretty_json(const QByteArray& input)
 {
     QTemporaryFile tempf(GlaxnimateApp::temp_path() + "/XXXXXX.json");
     tempf.setAutoRemove(false);
@@ -38,7 +40,7 @@ static QString pretty_json(const QByteArray& input)
     return tempf.fileName();
 }
 
-static QString pretty_xml(const QByteArray& xml)
+QString pretty_xml(const QByteArray& xml)
 {
     QTemporaryFile tempf(GlaxnimateApp::temp_path() + "/XXXXXX.json");
     tempf.setAutoRemove(false);
@@ -48,6 +50,8 @@ static QString pretty_xml(const QByteArray& xml)
     tempf.write(doc.toByteArray(4));
     return tempf.fileName();
 }
+
+} // namespace
 
 void GlaxnimateWindow::Private::init_debug()
 {
@@ -60,6 +64,7 @@ void GlaxnimateWindow::Private::init_debug()
 
     // Models
     QMenu* menu_print_model = new QMenu("Print Model", menu_debug);
+    menu_debug->addAction(menu_print_model->menuAction());
 
     menu_print_model->addAction("Document Node - Full", [this]{
         app::debug::print_model(&document_node_model, {1}, false);
@@ -87,7 +92,23 @@ void GlaxnimateWindow::Private::init_debug()
         app::debug::print_model(ui.timeline_widget->filtered_model(), {0}, false);
     });
 
-    menu_debug->addAction(menu_print_model->menuAction());
+    QMenu* menu_model_signals = new QMenu("Show Model Signals", menu_debug);
+    menu_debug->addAction(menu_model_signals->menuAction());
+    menu_model_signals->addAction("Document Node - Full", [this]{
+        app::debug::connect_debug(&document_node_model, "Document Node - Full");
+    });
+    menu_model_signals->addAction("Document Node - Layers", [this]{
+        app::debug::connect_debug(ui.view_document_node->model(), "Document Node - Layers");
+    });
+
+    menu_debug->addAction("Current index", [this]{
+
+        auto layers_index = ui.view_document_node->currentIndex();
+        qDebug() << "Layers" << layers_index << ui.view_document_node->current_node() << ui.view_document_node->node(layers_index);
+
+
+        qDebug() << "Timeline" << ui.timeline_widget->current_index_raw() << ui.timeline_widget->current_index_filtered() << ui.timeline_widget->current_node();
+    });
 
     // Timeline
     QMenu* menu_timeline = new QMenu("Timeline", menu_debug);
