@@ -85,7 +85,9 @@ bool item_models::DocumentModelBase::dropMimeData(const QMimeData* data, Qt::Dro
         insert = max_child;
 
     DragDecoder<model::ShapeElement> decoder(data->data("application/x.glaxnimate-node-uuid"), document());
-    std::vector<model::ShapeElement*> items(decoder.begin(), decoder.end());
+    std::vector<model::ShapeElement*> items;
+    for ( const auto& it : decoder )
+        items.push_back(it);
 
     if ( items.empty() )
         return false;
