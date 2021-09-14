@@ -8,6 +8,7 @@
     * Saving the document swatch will ask for a name
 * I/O:
     * Made error messages from the lottie importer easier to understand
+    * SVG export now supports hold frames
 * Bug Fixes:
     * Fixed loading lottie animations with missing "a" attributes
     * The rotation handle no longer changes position based on scale

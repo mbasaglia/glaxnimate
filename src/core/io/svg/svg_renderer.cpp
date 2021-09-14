@@ -156,6 +156,11 @@ public:
                 attributes[i].values.push_back(vals[i]);
         }
 
+        QString unlerp_time(model::FrameTime time) const
+        {
+            return QString::number(math::unlerp(parent->ip, parent->op, time), 'f');
+        }
+
         void add_keyframe(model::FrameTime time, const std::vector<QString>& vals,
                           const model::KeyframeTransition& trans)
         {
@@ -168,14 +173,24 @@ public:
                 key_splines.push_back("0 0 1 1");
                 add_values(vals);
             }
+            else if ( hold && last + 1 < time )
+            {
 
-            key_times.push_back(QString::number(math::unlerp(parent->ip, parent->op, time), 'f'));
+                key_times.push_back(unlerp_time(time - 1));
+                key_splines.push_back("0 0 1 1");
+                for ( std::size_t i = 0; i != attributes.size(); i++ )
+                    attributes[i].values.push_back(attributes[i].values.back());
+
+            }
+
+            key_times.push_back(unlerp_time(time));
             key_splines.push_back(key_spline(trans));
 
             for ( std::size_t i = 0; i != attributes.size(); i++ )
                 attributes[i].values.push_back(vals[i]);
 
             last = time;
+            hold = trans.hold();
         }
 
         void add_dom(QDomElement& element, const char* tag = "animate", const QString& type = {})
@@ -214,6 +229,7 @@ public:
         QStringList key_times = {};
         QStringList key_splines = {};
         model::FrameTime last = 0;
+        bool hold = false;
     };
 
     void write_property(
