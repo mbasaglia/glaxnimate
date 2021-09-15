@@ -6,9 +6,14 @@
 
 app::settings::SettingsGroup::SettingsGroup(QString slug, utils::TranslatedString label, const QString& icon, SettingList settings)
     : slug_(std::move(slug)),
-        label_(std::move(label)),
-        icon_(std::move(icon)),
-        settings_(std::move(settings))
+    label_(std::move(label)),
+    icon_(std::move(icon)),
+    settings_(std::move(settings))
+{
+}
+
+app::settings::SettingsGroup::SettingsGroup(SettingList settings)
+    : settings_(std::move(settings))
 {
 }
 

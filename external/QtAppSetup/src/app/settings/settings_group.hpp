@@ -16,6 +16,7 @@ public:
     using iterator = SettingList::const_iterator;
 
     SettingsGroup(QString slug, utils::TranslatedString label, const QString& icon, SettingList settings);
+    SettingsGroup(SettingList settings);
 
     QString slug() const override;
 
