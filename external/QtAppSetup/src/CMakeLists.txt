@@ -1,6 +1,7 @@
 set(SOURCES
 
 app/application.cpp
+app/settings/settings_group.cpp
 app/settings/settings.cpp
 app/settings/palette_settings.cpp
 app/settings/keyboard_shortcuts.cpp

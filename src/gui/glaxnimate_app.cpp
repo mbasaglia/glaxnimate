@@ -126,61 +126,6 @@ static void icon_theme_fixup()
 }
 
 
-void GlaxnimateApp::load_settings_metadata() const
-{
-    using namespace app::settings;
-    QString curr_lang = app::TranslationService::instance().current_language_code();
-
-    Settings::instance().add_group(SettingGroup{"ui", tr("User Interface"), "preferences-desktop-theme", {
-        //      slug            Label              Tooltip                    Type                default     choices             side effects
-        Setting("language",     tr("Language"),    tr("Interface Language"),  Setting::String,    curr_lang,  avail_languages(),  set_language),
-        Setting("icon_theme",   tr("Icon Theme"),  "",                        Setting::String,    "",         avail_icon_themes(), ::set_icon_theme),
-        Setting("startup_dialog",tr("Show startup dialog"), {},               Setting::Bool,      true),
-        Setting("window_state", {},                {},                        Setting::Internal,  QByteArray{}),
-        Setting("window_geometry", {},             {},                        Setting::Internal,  QByteArray{}),
-        Setting("timeline_splitter", {},           {},                        Setting::Internal,  QByteArray{}),
-    }});
-    Settings::instance().add_group(SettingGroup{"defaults", tr("New Animation Defaults"), "video-webm", {
-        //      slug            Label           Tooltip                  default  min  max
-        Setting("width",        tr("Width"),    "",                          512,   0, 1000000),
-        Setting("height",       tr("Height"),   "",                          512,   0, 1000000),
-        Setting("fps",          tr("FPS"),      tr("Frames per second"),    60.f, 0.f, 1000.f),
-        Setting("duration",     tr("Duration"), tr("Duration in seconds"),   3.f, 0.f, 90000.f),
-    }});
-    Settings::instance().add_group(SettingGroup{"open_save", tr("Open / Save"), "kfloppy", {
-        Setting("max_recent_files", tr("Max Recent Files"), {},                                                 5, 0, 16),
-        Setting("path",             {},                     {},                                                 Setting::Internal,  QString{}),
-        Setting("recent_files",     {},                     {},                                                 Setting::Internal,  QStringList{}),
-        Setting("backup_frequency", tr("Backup Frequency"), tr("How often to save a backup copy (in minutes)"), 5, 0, 60),
-        Setting("render_path",      {},                     {},                                                 Setting::Internal,  QString{}),
-        Setting("import_path",      {},                     {},                                                 Setting::Internal,  QString{}),
-    }});
-    Settings::instance().add_group(SettingGroup{"scripting", tr("Scripting"), "utilities-terminal", {
-        //      slug            Label           Tooltip                    Type                default
-        Setting("history",      {},             {},                        Setting::Internal,  QStringList{}),
-        Setting("max_history",  {},             {},                        Setting::Internal,  100),
-    }});
-    Settings::instance().add_group(SettingGroup{"tools", tr("Tools"), "tools", {
-        //      slug                Label       Tooltip                    Type                default
-        Setting("shape_group",      {},         {},                        Setting::Internal,  true),
-        Setting("shape_fill",       {},         {},                        Setting::Internal,  true),
-        Setting("shape_stroke",     {},         {},                        Setting::Internal,  true),
-        Setting("edit_mask",        {},         {},                        Setting::Internal,  false),
-        Setting("color_main",       {},         {},                        Setting::Internal,  "#ffffff"),
-        Setting("color_secondary",  {},         {},                        Setting::Internal,  "#000000"),
-        Setting("stroke_width",     {},         {},                        Setting::Internal,  1.),
-        Setting("stroke_cap",       {},         {},                        Setting::Internal,  int(Qt::RoundCap)),
-        Setting("stroke_join",      {},         {},                        Setting::Internal,  int(Qt::RoundJoin)),
-        Setting("stroke_miter",     {},         {},                        Setting::Internal,  4.),
-        Setting("star_type",        {},         {},                        Setting::Internal,  1),
-        Setting("star_ratio",       {},         {},                        Setting::Internal,  0.5),
-        Setting("star_points",      {},         {},                        Setting::Internal,  5),
-    }});
-    // catch all
-    Settings::instance().add_group(SettingGroup{"internal", "", "", {}});
-}
-
-
 static void load_themes(GlaxnimateApp* app, app::settings::PaletteSettings* settings)
 {
     for ( QDir themedir : app->data_paths("themes") )
@@ -203,20 +148,84 @@ void GlaxnimateApp::on_initialize()
     QIcon::setThemeSearchPaths(search_paths);
     QIcon::setFallbackSearchPaths(data_paths("images/icons"));
 
-    app::settings::Settings::instance().add_custom_group(std::make_unique<settings::ToolbarSettingsGroup>());
-    app::settings::Settings::instance().add_custom_group(std::make_unique<settings::PluginSettingsGroup>(QStringList{
+    using namespace app::settings;
+    QString curr_lang = app::TranslationService::instance().current_language_code();
+
+    Settings::instance().add_group("ui", QT_TRANSLATE_NOOP("Settings", "User Interface"), "preferences-desktop-theme", {
+        //      slug            Label/Tooltip                                               Type                default     choices             side effects
+        Setting("language",
+                QT_TRANSLATE_NOOP("Settings", "Language"),
+                QT_TRANSLATE_NOOP("Settings", "Interface Language"),                        Setting::String,    curr_lang,  avail_languages(),  set_language),
+        Setting("icon_theme", QT_TRANSLATE_NOOP("Settings", "Icon Theme"),  {},             Setting::String,    "",         avail_icon_themes(), ::set_icon_theme),
+        Setting("startup_dialog",QT_TRANSLATE_NOOP("Settings", "Show startup dialog"), {},  Setting::Bool,      true),
+        Setting("window_state",      {}, {},                                                Setting::Internal,  QByteArray{}),
+        Setting("window_geometry",   {}, {},                                                Setting::Internal,  QByteArray{}),
+        Setting("timeline_splitter", {}, {},                                                Setting::Internal,  QByteArray{}),
+    });
+    Settings::instance().add_group("defaults", QT_TRANSLATE_NOOP("Settings", "New Animation Defaults"), "video-webm", {
+        Setting("width",
+            QT_TRANSLATE_NOOP("Settings", "Width"),    "",
+            512,   0, 1000000),
+        Setting("height",
+            QT_TRANSLATE_NOOP("Settings", "Height"),   "",
+            512,   0, 1000000),
+        Setting("fps",
+            QT_TRANSLATE_NOOP("Settings", "FPS"),
+            QT_TRANSLATE_NOOP("Settings", "Frames per second"),
+            60.f, 0.f, 1000.f),
+        Setting("duration",
+            QT_TRANSLATE_NOOP("Settings", "Duration"),
+            QT_TRANSLATE_NOOP("Settings", "Duration in seconds"),
+            3.f, 0.f, 90000.f),
+    });
+    Settings::instance().add_group("open_save", tr("Open / Save"), "kfloppy", {
+        Setting("max_recent_files", QT_TRANSLATE_NOOP("Settings", "Max Recent Files"), {},      5, 0, 16),
+        Setting("path",             {},         {},                        Setting::Internal,  QString{}),
+        Setting("recent_files",     {},         {},                        Setting::Internal,  QStringList{}),
+        Setting("backup_frequency",
+                QT_TRANSLATE_NOOP("Settings", "Backup Frequency"),
+                QT_TRANSLATE_NOOP("Settings", "How often to save a backup copy (in minutes)"),  5, 0, 60),
+        Setting("render_path",      {},         {},                        Setting::Internal,  QString{}),
+        Setting("import_path",      {},         {},                        Setting::Internal,  QString{}),
+    });
+    Settings::instance().add_group("scripting", QT_TRANSLATE_NOOP("Settings", "Scripting"), "utilities-terminal", {
+        //      slug                Label       Tooltip                    Type                default
+        Setting("history",          {},         {},                        Setting::Internal,  QStringList{}),
+        Setting("max_history",      {},         {},                        Setting::Internal,  100),
+    });
+    Settings::instance().add_group("tools", QT_TRANSLATE_NOOP("Settings", "Tools"), "tools", {
+        //      slug                Label       Tooltip                    Type                default
+        Setting("shape_group",      {},         {},                        Setting::Internal,  true),
+        Setting("shape_fill",       {},         {},                        Setting::Internal,  true),
+        Setting("shape_stroke",     {},         {},                        Setting::Internal,  true),
+        Setting("edit_mask",        {},         {},                        Setting::Internal,  false),
+        Setting("color_main",       {},         {},                        Setting::Internal,  "#ffffff"),
+        Setting("color_secondary",  {},         {},                        Setting::Internal,  "#000000"),
+        Setting("stroke_width",     {},         {},                        Setting::Internal,  1.),
+        Setting("stroke_cap",       {},         {},                        Setting::Internal,  int(Qt::RoundCap)),
+        Setting("stroke_join",      {},         {},                        Setting::Internal,  int(Qt::RoundJoin)),
+        Setting("stroke_miter",     {},         {},                        Setting::Internal,  4.),
+        Setting("star_type",        {},         {},                        Setting::Internal,  1),
+        Setting("star_ratio",       {},         {},                        Setting::Internal,  0.5),
+        Setting("star_points",      {},         {},                        Setting::Internal,  5),
+    });
+    // catch all
+    Settings::instance().add_group("internal", "", "", {});
+
+    app::settings::Settings::instance().add_group(std::make_unique<settings::ToolbarSettingsGroup>());
+    app::settings::Settings::instance().add_group(std::make_unique<settings::PluginSettingsGroup>(QStringList{
         "AnimatedRaster", "ReplaceColor", "dotLottie", "FrameByFrame"
     }));
-    app::settings::Settings::instance().add_custom_group(std::make_unique<settings::ClipboardSettings>());
+    app::settings::Settings::instance().add_group(std::make_unique<settings::ClipboardSettings>());
 
     connect(this, &QGuiApplication::paletteChanged, this, &icon_theme_fixup);
     auto palette_settings = std::make_unique<app::settings::PaletteSettings>();
     load_themes(this, palette_settings.get());
-    app::settings::Settings::instance().add_custom_group(std::move(palette_settings));
+    app::settings::Settings::instance().add_group(std::move(palette_settings));
 
     auto sc_settings = std::make_unique<app::settings::ShortcutSettings>();
     shortcut_settings = sc_settings.get();
-    app::settings::Settings::instance().add_custom_group(std::move(sc_settings));
+    app::settings::Settings::instance().add_group(std::move(sc_settings));
 
     QDir().mkpath(backup_path());
 

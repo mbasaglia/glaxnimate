@@ -4,8 +4,7 @@
 #include <QList>
 #include <QCoreApplication>
 
-#include "app/settings/setting_group.hpp"
-#include "app/settings/custom_settings_group.hpp"
+#include "app/settings/settings_group.hpp"
 
 
 namespace app::settings {
@@ -18,7 +17,7 @@ class Settings
     Q_DECLARE_TR_FUNCTIONS(Settings)
 
 public:
-    using iterator = QList<SettingGroup>::const_iterator;
+    using iterator = std::vector<CustomSettingsGroup>::const_iterator;
 
     static Settings& instance()
     {
@@ -56,30 +55,20 @@ public:
      */
     void save();
 
-    void load_metadata();
+    iterator begin() const { return groups_.begin(); }
+    iterator end() const  { return groups_.end(); }
 
-    iterator begin() const { return groups.begin(); }
-    iterator end() const  { return groups.end(); }
-
-    QVariantMap& group_values(const QString& group)
-    {
-        return data[group];
-    }
-
-    void add_group(SettingGroup group);
-
-    const std::vector<CustomSettingsGroup>& custom_groups() const { return custom_groups_; }
-    void add_custom_group(CustomSettingsGroup group) { custom_groups_.push_back(std::move(group)); }
+    std::vector<CustomSettingsGroup>& groups() { return groups_; }
+    void add_group(QString slug, utils::TranslatedString label, const QString& icon, SettingList settings);
+    void add_group(CustomSettingsGroup group);
 
 private:
     Settings() = default;
     Settings(const Settings&) = delete;
     ~Settings() = default;
 
-    QList<SettingGroup> groups;
     QHash<QString, int> order;
-    QHash<QString, QVariantMap> data;
-    std::vector<CustomSettingsGroup> custom_groups_;
+    std::vector<CustomSettingsGroup> groups_;
 };
 
 

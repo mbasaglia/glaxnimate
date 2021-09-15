@@ -60,8 +60,6 @@ class GlaxnimateApp : public app::Application
 public:
     using app::Application::Application;
 
-    void load_settings_metadata() const override;
-
     const std::vector<app::log::LogLine>& log_lines() const
     {
         return store_logger->lines();

@@ -14,6 +14,9 @@
 
 #include "app/settings/setting.hpp"
 
+#include <QEvent>
+#include "app/settings/settings_group.hpp"
+
 namespace app::settings {
 
 
@@ -196,6 +199,33 @@ private:
             (*options)[slug] = QVariant(v);
         }
     };
+};
+
+class SettingsGroupWidget : public QWidget
+{
+public:
+    SettingsGroupWidget(SettingsGroup* group, QWidget* parent = nullptr)
+    : QWidget(parent),
+      group(group)
+    {
+        QFormLayout* lay = new QFormLayout(this);
+        this->setLayout(lay);
+        bob.add_widgets(group->settings(), this, lay, group->values(), group->slug() + "__");
+    }
+
+    void changeEvent(QEvent *e)
+    {
+        QWidget::changeEvent(e);
+
+        if ( e->type() == QEvent::LanguageChange)
+        {
+            bob.translate_widgets(group->settings(), this, group->slug() + "__");
+        }
+    }
+
+private:
+    app::settings::WidgetBuilder bob;
+    SettingsGroup* group;
 };
 
 } // namespace app::settings

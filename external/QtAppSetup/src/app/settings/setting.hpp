@@ -6,6 +6,8 @@
 #include <QVariant>
 #include <QString>
 
+#include "app/utils/translated_string.hpp"
+
 namespace app::settings {
 
 struct Setting
@@ -21,14 +23,14 @@ struct Setting
         Color,
     };
 
-    Setting(QString slug, QString label, QString description)
+    Setting(QString slug, utils::TranslatedString label, utils::TranslatedString description)
         : type(Info),
         slug(std::move(slug)),
         label(std::move(label)),
         description(std::move(description))
     {}
 
-    Setting(QString slug, QString label, QString description, bool default_value)
+    Setting(QString slug, utils::TranslatedString label, utils::TranslatedString description, bool default_value)
         : type(Bool),
         slug(std::move(slug)),
         label(std::move(label)),
@@ -36,7 +38,7 @@ struct Setting
         default_value(default_value)
     {}
 
-    Setting(QString slug, QString label, QString description, int default_value, int min, int max)
+    Setting(QString slug, utils::TranslatedString label, utils::TranslatedString description, int default_value, int min, int max)
         : type(Int),
         slug(std::move(slug)),
         label(std::move(label)),
@@ -46,7 +48,7 @@ struct Setting
         max(max)
     {}
 
-    Setting(QString slug, QString label, QString description, float default_value, float min, float max)
+    Setting(QString slug, utils::TranslatedString label, utils::TranslatedString description, float default_value, float min, float max)
         : type(Float),
         slug(std::move(slug)),
         label(std::move(label)),
@@ -56,12 +58,12 @@ struct Setting
         max(max)
     {}
 
-    Setting(QString slug, QString label, QString description, const QString& default_value)
+    Setting(QString slug, utils::TranslatedString label, utils::TranslatedString description, const QString& default_value)
         : type(String), slug(std::move(slug)), label(std::move(label)),
         description(std::move(description)), default_value(default_value)
     {}
 
-    Setting(QString slug, QString label, QString description, Type type,
+    Setting(QString slug, utils::TranslatedString label, utils::TranslatedString description, Type type,
             QVariant default_value, QVariantMap choices = {},
             std::function<void(const QVariant&)> side_effects = {}
            )
@@ -74,7 +76,7 @@ struct Setting
         side_effects(std::move(side_effects))
     {}
 
-    Setting(QString slug, QString label, QString description, const QColor& default_value)
+    Setting(QString slug, utils::TranslatedString label, utils::TranslatedString description, const QColor& default_value)
         : type(Color),
         slug(std::move(slug)),
         label(std::move(label)),
@@ -120,8 +122,8 @@ struct Setting
 
     Type type;
     QString slug;
-    QString label;
-    QString description;
+    utils::TranslatedString label;
+    utils::TranslatedString description;
     QVariant default_value;
     float min = -1;
     float max = -1;

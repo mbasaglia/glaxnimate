@@ -18,8 +18,6 @@ public:
 
     virtual QSettings qsettings() const;
 
-    virtual void load_settings_metadata() const {}
-
     void initialize()
     {
         on_initialize();
