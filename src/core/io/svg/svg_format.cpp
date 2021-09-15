@@ -37,7 +37,7 @@ bool glaxnimate::io::svg::SvgFormat::on_open(QIODevice& file, const QString& fil
     }
 }
 
-glaxnimate::io::SettingList glaxnimate::io::svg::SvgFormat::save_settings() const
+std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::svg::SvgFormat::save_settings(model::Document*) const
 {
     return {};
 }

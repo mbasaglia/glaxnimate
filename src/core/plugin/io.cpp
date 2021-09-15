@@ -43,3 +43,13 @@ bool plugin::IoFormat::on_save(QIODevice& file, const QString& name, model::Docu
 
 
 
+std::unique_ptr<app::settings::SettingsGroup> glaxnimate::plugin::IoFormat::open_settings() const
+{
+    return std::make_unique<app::settings::SettingsGroup>(service->open.settings);
+}
+
+std::unique_ptr<app::settings::SettingsGroup> glaxnimate::plugin::IoFormat::save_settings(model::Document*) const
+{
+    return std::make_unique<app::settings::SettingsGroup>(service->save.settings);
+}
+

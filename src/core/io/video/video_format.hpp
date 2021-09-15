@@ -16,7 +16,7 @@ public:
     QStringList extensions() const override;
     bool can_save() const override { return true; }
     bool can_open() const override { return false; }
-    io::SettingList save_settings() const override;
+    std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document*) const override;
 
     static QString library_version();
 

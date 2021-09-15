@@ -14,7 +14,7 @@ public:
     QStringList extensions() const override { return {"tgs"}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return true; }
-    SettingList save_settings() const override { return {}; }
+    std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document*) const override { return {}; }
 
     void validate(model::Document* document);
 

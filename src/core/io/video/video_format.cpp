@@ -800,15 +800,15 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
     }
 }
 
-glaxnimate::io::SettingList glaxnimate::io::video::VideoFormat::save_settings() const
+std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat::save_settings(model::Document*) const
 {
-    return {
-        io::Setting{"bit_rate",     "Bitrate",      "Video bit rate",                               5000,   0, 10000},
-        io::Setting{"background",   "Background",   "Background color",                             QColor{}},
-        io::Setting{"width",        "Width",        "If not 0, it will overwrite the size",         0,      0, 10000},
-        io::Setting{"height",       "Height",       "If not 0, it will overwrite the size",         0,      0, 10000},
-        io::Setting{"verbose",      "Verbose",      "Show verbose information on the conversion",   false},
-    };
+    return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
+        app::settings::Setting{"bit_rate",     "Bitrate",      "Video bit rate",                               5000,   0, 10000},
+        app::settings::Setting{"background",   "Background",   "Background color",                             QColor{}},
+        app::settings::Setting{"width",        "Width",        "If not 0, it will overwrite the size",         0,      0, 10000},
+        app::settings::Setting{"height",       "Height",       "If not 0, it will overwrite the size",         0,      0, 10000},
+        app::settings::Setting{"verbose",      "Verbose",      "Show verbose information on the conversion",   false},
+    });
 }
 
 QString glaxnimate::io::video::VideoFormat::library_version()

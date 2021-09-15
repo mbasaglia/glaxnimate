@@ -38,8 +38,9 @@ public:
     QStringList extensions() const override { return service->extensions; }
     bool can_save() const override { return service->save.valid(); }
     bool can_open() const override { return service->open.valid(); }
-    io::SettingList open_settings() const override { return service->open.settings; }
-    io::SettingList save_settings() const override { return service->save.settings; }
+
+    std::unique_ptr<app::settings::SettingsGroup> open_settings() const override;
+    std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document*) const override;
 
 protected:
     bool auto_open() const override { return service->auto_open; }

@@ -16,7 +16,7 @@ public:
     QStringList extensions() const override { return {"svg", "svgz"}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return true; }
-    SettingList save_settings() const override;
+    std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document*) const override;
 
 protected:
     bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;

@@ -24,8 +24,12 @@ QByteArray glaxnimate::io::ImportExport::save(model::Document* document, const Q
     file.open(QIODevice::WriteOnly);
 
     QVariantMap clean_setting_values = setting_values;
-    for ( const auto& setting : save_settings() )
-        clean_setting_values[setting.slug] = setting.get_variant(clean_setting_values);
+
+    if ( auto settings = save_settings(document) )
+    {
+        for ( const auto& setting : *settings )
+            clean_setting_values[setting.slug] = setting.get_variant(clean_setting_values);
+    }
 
     if ( !save(file, filename, document, clean_setting_values) )
         return {};
@@ -68,8 +72,12 @@ bool glaxnimate::io::ImportExport::load(model::Document* document, const QByteAr
     file.open(QIODevice::ReadOnly);
 
     QVariantMap clean_setting_values = setting_values;
-    for ( const auto& setting : open_settings() )
-        clean_setting_values[setting.slug] = setting.get_variant(clean_setting_values);
+
+    if ( auto settings = save_settings(document) )
+    {
+        for ( const auto& setting : *settings )
+            clean_setting_values[setting.slug] = setting.get_variant(clean_setting_values);
+    }
 
     return open(file, filename, document, clean_setting_values);
 }

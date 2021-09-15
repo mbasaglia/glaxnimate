@@ -326,7 +326,7 @@ bool GlaxnimateWindow::Private::save_document(bool force_dialog, bool export_opt
     {
         ImportExportDialog dialog(opts, parent);
 
-        if ( !dialog.export_dialog() )
+        if ( !dialog.export_dialog(current_document.get()) )
             return false;
 
         opts = dialog.io_options();

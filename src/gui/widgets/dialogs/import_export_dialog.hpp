@@ -28,7 +28,7 @@ public:
         return io_options_;
     }
 
-    bool export_dialog()
+    bool export_dialog(model::Document* doc)
     {
         QFileDialog dialog(parent);
         dialog.setWindowTitle(QObject::tr("Save file"));
@@ -65,7 +65,7 @@ public:
             break;
         }
 
-        return options_dialog(io_options_.format->save_settings());
+        return options_dialog(io_options_.format->save_settings(doc));
     }
 
     bool import_dialog()
@@ -80,17 +80,17 @@ public:
         return false;
     }
 
-    bool options_dialog(const io::SettingList& settings)
+    bool options_dialog(std::unique_ptr<app::settings::SettingsGroup> settings)
     {
         if ( !io_options_.format )
             return false;
 
-        if ( settings.empty() )
+        if ( !settings || settings->settings().empty() )
             return true;
 
         app::settings::WidgetBuilder widget_builder;
         QString title = QObject::tr("%1 Options").arg(io_options_.format->name());
-        return widget_builder.show_dialog(settings, io_options_.settings, title, parent);
+        return widget_builder.show_dialog(settings->settings(), io_options_.settings, title, parent);
     }
 
 private:

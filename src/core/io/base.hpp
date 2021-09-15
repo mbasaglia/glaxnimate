@@ -4,15 +4,12 @@
 #include <QObject>
 #include <QBuffer>
 
-#include "app/settings/setting.hpp"
+#include "app/settings/settings_group.hpp"
 #include "app/log/log_line.hpp"
 
 #include "model/document.hpp"
 
 namespace glaxnimate::io {
-
-using Setting = app::settings::Setting;
-using SettingList = app::settings::SettingList;
 
 class ImportExport : public QObject
 {
@@ -72,8 +69,8 @@ public:
     virtual QString name() const = 0;
     virtual QString slug() const = 0;
     virtual QStringList extensions() const = 0;
-    virtual SettingList open_settings() const { return {}; }
-    virtual SettingList save_settings() const { return {}; }
+    virtual std::unique_ptr<app::settings::SettingsGroup> open_settings() const { return {}; }
+    virtual std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document* ) const { return {}; }
     virtual bool can_open() const = 0;
     virtual bool can_save() const = 0;
 
