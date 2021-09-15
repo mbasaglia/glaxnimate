@@ -99,10 +99,12 @@ void define_io(py::module& m)
 
     io.attr("registry") = std::unique_ptr<Fac, py::nodelete>(&io::IoRegistry::instance());
 
-    register_from_meta<io::ImportExport, QObject>(io)
+    auto import_export = register_from_meta<io::ImportExport, QObject>(io, enums<io::ImportExport::Direction>{})
         .def("progress_max_changed", &io::ImportExport::progress_max_changed)
         .def("progress", &io::ImportExport::progress)
     ;
+    io.attr("Direction") = import_export.attr("Direction");
+
     register_from_meta<io::glaxnimate::GlaxnimateFormat, io::ImportExport>(io)
         .attr("instance") = std::unique_ptr<io::glaxnimate::GlaxnimateFormat, py::nodelete>(io::glaxnimate::GlaxnimateFormat::instance())
     ;
@@ -115,7 +117,6 @@ void define_io(py::module& m)
     register_from_meta<io::svg::SvgFormat, io::ImportExport>(io)
         .def_static("render_frame", &frame_to_svg, "renders the current frame to SVG")
     ;
-
 
     register_from_meta<plugin::IoFormat, io::ImportExport>(io);
 }
@@ -354,6 +355,7 @@ void register_py_module(py::module& glaxnimate_module)
         qMetaTypeId<model::NamedColor*>(),
         qMetaTypeId<model::Bitmap*>(),
         qMetaTypeId<model::Gradient*>(),
+        qMetaTypeId<io::ImportExport::Direction>(),
     };
 
     define_io(glaxnimate_module);

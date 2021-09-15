@@ -56,19 +56,19 @@ public:
         return object_list;
     }
 
-    ImportExport* from_extension(const QString& extension) const
+    ImportExport* from_extension(const QString& extension, ImportExport::Direction direction) const
     {
         for ( const auto& p : object_list )
-            if ( p->can_handle_extension(extension) )
+            if ( p->can_handle_extension(extension, direction) )
                 return p.get();
 
         return nullptr;
     }
 
-    ImportExport* from_filename(const QString& filename) const
+    ImportExport* from_filename(const QString& filename, ImportExport::Direction direction) const
     {
         for ( const auto& p : object_list )
-            if ( p->can_handle_filename(filename) )
+            if ( p->can_handle_filename(filename, direction) )
                 return p.get();
 
         return nullptr;

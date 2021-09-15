@@ -37,7 +37,7 @@ public:
         setup_file_dialog(dialog, io::IoRegistry::instance().exporters(), io_options_.format, false);
         while ( true )
         {
-            if ( !show_file_dialog(dialog, io::IoRegistry::instance().exporters()) )
+            if ( !show_file_dialog(dialog, io::IoRegistry::instance().exporters(), io::ImportExport::Export) )
                 return false;
 
             // For some reason the file dialog shows the option to do this automatically but it's disabled
@@ -75,7 +75,7 @@ public:
         dialog.setAcceptMode(QFileDialog::AcceptOpen);
         dialog.setFileMode(QFileDialog::ExistingFile);
         setup_file_dialog(dialog, io::IoRegistry::instance().importers(), io_options_.format, true);
-        if ( show_file_dialog(dialog, io::IoRegistry::instance().importers()) )
+        if ( show_file_dialog(dialog, io::IoRegistry::instance().importers(), io::ImportExport::Import) )
             return options_dialog(io_options_.format->open_settings());
         return false;
     }
@@ -95,7 +95,7 @@ public:
 
 private:
 
-    bool show_file_dialog(QFileDialog& dialog, const std::vector<io::ImportExport*>& formats)
+    bool show_file_dialog(QFileDialog& dialog, const std::vector<io::ImportExport*>& formats, io::ImportExport::Direction direction)
     {
         io_options_.format = nullptr;
 
@@ -119,7 +119,7 @@ private:
         }
         else
         {
-            io_options_.format = io::IoRegistry::instance().from_filename(io_options_.filename);
+            io_options_.format = io::IoRegistry::instance().from_filename(io_options_.filename, direction);
         }
 
         if ( !io_options_.format )

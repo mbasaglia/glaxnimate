@@ -379,11 +379,11 @@ io::Options GlaxnimateWindow::Private::options_from_filename(const QString& file
     if ( finfo.isFile() )
     {
         io::Options opts;
-        opts.format = io::IoRegistry::instance().from_filename(filename);
+        opts.format = io::IoRegistry::instance().from_filename(filename, io::ImportExport::Import);
         opts.path = finfo.dir();
         opts.filename = filename;
 
-        if ( opts.format && opts.format->can_open() )
+        if ( opts.format )
         {
             ImportExportDialog dialog(opts, ui.centralwidget->parentWidget());
             if ( dialog.options_dialog(opts.format->open_settings()) )
@@ -644,9 +644,8 @@ QString GlaxnimateWindow::Private::drop_event_data(QDropEvent* event)
         {
             QString filename = url.toLocalFile();
             QString extension = QFileInfo(filename).completeSuffix();
-            if ( auto impex = io::IoRegistry::instance().from_extension(extension) )
-                if ( impex->can_open() )
-                    return filename;
+            if ( io::IoRegistry::instance().from_extension(extension, io::ImportExport::Import) )
+                return filename;
         }
     }
 
@@ -751,7 +750,7 @@ void GlaxnimateWindow::Private::import_file(const QString& filename, const QVari
     QFileInfo finfo(filename);
     io::Options opts;
     opts.settings = settings;
-    opts.format = io::IoRegistry::instance().from_extension(finfo.suffix());
+    opts.format = io::IoRegistry::instance().from_extension(finfo.suffix(), io::ImportExport::Import);
     if ( !opts.format )
         show_warning(tr("Import File"), tr("Could not import %1").arg(filename));
     opts.filename = filename;

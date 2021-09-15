@@ -25,16 +25,32 @@ class ImportExport : public QObject
     Q_PROPERTY(bool can_save READ can_save)
 
 public:
+    enum Direction
+    {
+        Import,
+        Export,
+    };
+    Q_ENUM(Direction)
+
     virtual ~ImportExport() = default;
 
-    Q_INVOKABLE bool can_handle_extension(const QString& extension) const
+    Q_INVOKABLE bool can_handle(glaxnimate::io::ImportExport::Direction direction) const
     {
-        return extensions().contains(extension);
+        if ( direction == Import )
+            return can_open();
+        else if ( direction == Export )
+            return can_save();
+        return false;
     }
 
-    Q_INVOKABLE bool can_handle_filename(const QString& filename) const
+    Q_INVOKABLE bool can_handle_extension(const QString& extension, glaxnimate::io::ImportExport::Direction direction) const
     {
-        return can_handle_extension(QFileInfo(filename).completeSuffix());
+        return can_handle(direction) && extensions().contains(extension);
+    }
+
+    Q_INVOKABLE bool can_handle_filename(const QString& filename, glaxnimate::io::ImportExport::Direction direction) const
+    {
+        return can_handle_extension(QFileInfo(filename).completeSuffix(), direction);
     }
 
     /**
