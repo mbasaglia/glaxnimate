@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fr_FR">
 <context>
+    <name>CompoundTimelineWidget</name>
+    <message>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.ui" line="189"/>
+        <source>Add Keyframe</source>
+        <translation type="unfinished">Ajouter une image clé</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.ui" line="194"/>
+        <source>&amp;Clear Animations</source>
+        <translation>&amp;Nettoyer les animations</translation>
+    </message>
+</context>
+<context>
     <name>EmojiSetDialog</name>
     <message>
         <location filename="../../src/gui/emoji/emoji_set_dialog.ui" line="14"/>
@@ -52,47 +65,47 @@
 <context>
     <name>GlaxnimateWindow</name>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="391"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="392"/>
         <source>Undo %1</source>
         <translation>Défaire %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="396"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="397"/>
         <source>Redo %1</source>
         <translation>Refaire %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="401"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="402"/>
         <source>Cut</source>
         <translation>Couper</translation>
     </message>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="403"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="404"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="405"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="406"/>
         <source>Paste</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="409"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="410"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="414"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="415"/>
         <source>Group Shapes</source>
         <translation>Grouper les formes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="417"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="418"/>
         <source>Ungroup Shapes</source>
         <translation>Dégrouper les formes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="421"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="422"/>
         <source>Move to...</source>
         <translation>Déplaver vers...</translation>
     </message>
@@ -187,6 +200,11 @@
         <location filename="../../src/gui/tools/handle_menu.hpp" line="51"/>
         <source>Add Keyframe</source>
         <translation>Ajouter une image clé</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/tools/handle_menu.hpp" line="66"/>
+        <source>Clear Animations</source>
+        <translation>Nettoyer les animations</translation>
     </message>
 </context>
 <context>
@@ -318,66 +336,74 @@
         <translation>JSON</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="106"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="114"/>
         <source>Missing layer type for %1</source>
         <translation>Type de calque manquant pour %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="234"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="244"/>
         <source>Cannot use %1 as parent as it couldn&apos;t be loaded</source>
         <translation>Ne peut pas utiliser %1 comme parent, comme il ne peut pas être chargé</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="245"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="255"/>
         <source>Invalid parent layer %1</source>
         <translation>Calque parent invalide %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="293"/>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="305"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="303"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="315"/>
         <source>Clip</source>
         <translation>Clip</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="357"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="367"/>
         <source>Unsupported layer of type %1</source>
         <translation>Calque non supporté de type %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="382"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="392"/>
         <source>Missing shape type</source>
         <translation>Type de forme manquant</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="395"/>
         <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="405"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="415"/>
         <source>Unsupported shape type %1</source>
         <translation>Forme non supportée de type %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="426"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="438"/>
+        <source>Unknown field %2%1</source>
+        <translation type="unfinished">Champs %2%1 inconnu</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="675"/>
+        <source>Invalid bezier point %1 in %2</source>
+        <translation>Nœud de Bézier invalide %1 parmi %2</translation>
+    </message>
+    <message>
         <source>Unknown field %1</source>
-        <translation>Champs %1 inconnu</translation>
+        <translation type="vanished">Champs %1 inconnu</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="656"/>
         <source>Invalid bezier point %1</source>
-        <translation>Point de Bézier invalide %1</translation>
+        <translation type="vanished">Point de Bézier invalide %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="681"/>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="688"/>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="695"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="722"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="729"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="736"/>
         <source>Invalid value for %1</source>
         <translation>Valeur invalide pour %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="703"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="763"/>
         <source>Invalid keyframes for %1</source>
         <translation>Images-clé invalides pour %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="730"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="790"/>
         <source>Cannot load keyframe at %1 for %2</source>
         <translation>Ne peut pas charger l&apos;image clé à %1 pour %2</translation>
     </message>
@@ -459,7 +485,7 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
     <message>
         <location filename="../../src/gui/tools/star_tool.cpp" line="14"/>
         <source>*</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">*</translation>
     </message>
     <message>
         <location filename="../../src/gui/tools/star_tool.cpp" line="41"/>
@@ -467,12 +493,12 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
         <translation>Tracer une étoile</translation>
     </message>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="22"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="23"/>
         <source>Select</source>
         <translation>Sélectionner</translation>
     </message>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="23"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="24"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
@@ -594,7 +620,7 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
     </message>
     <message>
         <location filename="../../src/gui/tools/base.cpp" line="183"/>
-        <location filename="../../src/core/io/svg/svg_renderer.cpp" line="718"/>
+        <location filename="../../src/core/io/svg/svg_renderer.cpp" line="734"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
@@ -707,7 +733,7 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
     <message>
         <location filename="../../src/core/command/shape_commands.cpp" line="147"/>
         <source>Ungroup Shapes</source>
-        <translation>Dégroupés les formes</translation>
+        <translation>Dégrouper les formes</translation>
     </message>
     <message>
         <location filename="../../src/core/command/animation_commands.cpp" line="10"/>
@@ -738,6 +764,11 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
         <location filename="../../src/core/command/animation_commands.cpp" line="315"/>
         <source>Move keyframe</source>
         <translation>Déplacer une image clé</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/command/animation_commands.cpp" line="338"/>
+        <source>Remove animations from %1</source>
+        <translation>Supprimer les animations depuis %1</translation>
     </message>
     <message>
         <location filename="../../src/core/app_info.cpp" line="9"/>
@@ -836,7 +867,7 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
     <message>
         <location filename="../../src/gui/glaxnimate_app.cpp" line="65"/>
         <source>Glaxnimate Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Thème par défaut de Glaxnimate</translation>
     </message>
 </context>
 <context>
@@ -1232,12 +1263,17 @@ Suivre un guide sur les icônes principaux et leurs fonctions.
         <translation>Supprimer l&apos;image clé</translation>
     </message>
     <message>
-        <location filename="../../src/android/main_window.cpp" line="1048"/>
+        <location filename="../../src/android/main_window.cpp" line="999"/>
+        <source>Clear Animations</source>
+        <translation>Nettoyer les animations</translation>
+    </message>
+    <message>
+        <location filename="../../src/android/main_window.cpp" line="1066"/>
         <source>Emoji</source>
         <translation>Émoji</translation>
     </message>
     <message>
-        <location filename="../../src/android/main_window.cpp" line="1079"/>
+        <location filename="../../src/android/main_window.cpp" line="1097"/>
         <source>Import Emoji</source>
         <translation>Importer un Émoji</translation>
     </message>
@@ -1382,7 +1418,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="314"/>
         <source>Icon Theme Paths:</source>
-        <translation>Chemins du tthème d&apos;icônes</translation>
+        <translation>Chemins des icônes du thème&#xa0;:</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="339"/>
@@ -1448,7 +1484,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="450"/>
         <source>Formats</source>
-        <translation>Dormats</translation>
+        <translation>Formats</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="486"/>
@@ -1836,52 +1872,56 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::CompoundTimelineWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.ui" line="189"/>
         <source>Add Keyframe</source>
-        <translation>Ajouter une image clé</translation>
+        <translation type="vanished">Ajouter une image clé</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="162"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="173"/>
         <source>Transition From Previous</source>
         <translation>Tradition depuis la précédente</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="163"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="174"/>
         <source>Transition To Next</source>
         <translation>Transition vers la suivante</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="165"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="176"/>
         <source>Hold</source>
         <translation>Maintenir</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="168"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="179"/>
         <source>Linear</source>
         <translation>Linéaire</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="171"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="182"/>
         <source>Ease</source>
         <translation>Adoucissement</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="174"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="185"/>
         <source>Custom...</source>
         <translation>Personnaliser...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="177"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="188"/>
         <source>Remove Keyframe</source>
         <translation>Supprimer l&apos;image clé</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="179"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="189"/>
+        <source>Clear Animations</source>
+        <translation>Nettoyer les animations</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="191"/>
         <source>Copy Keyframe</source>
         <translation>Copier une image clé</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="180"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="192"/>
         <source>Paste Keyframe</source>
         <translation>Coller l&apos;image clé</translation>
     </message>
@@ -1924,7 +1964,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.ui" line="79"/>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="464"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="470"/>
         <source>Remove</source>
         <translation>Supprimer</translation>
     </message>
@@ -1940,6 +1980,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.ui" line="108"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="384"/>
         <source>Save Palette</source>
         <translation>Sauvegarder la palette</translation>
     </message>
@@ -1985,7 +2026,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="338"/>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="509"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="515"/>
         <source>Link shapes with matching colors</source>
         <translation>Lier les formes aux couleurs correspondantes</translation>
     </message>
@@ -2000,52 +2041,53 @@ p, li { white-space: pre-wrap; }
         <translation>Charger la palette</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="407"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="413"/>
         <source>Unlink Color</source>
         <translation>Déconnecter la couleur</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="411"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="417"/>
         <source>Unlink fill</source>
         <translation>Déconnecter le remplissage</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="420"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="426"/>
         <source>Unlink stroke</source>
         <translation>Déconnecter le contour</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="434"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="440"/>
         <source>Rename...</source>
         <translation>Renommer...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="438"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="444"/>
         <source>Rename Swatch Color</source>
         <translation>Renomer la couleur du godet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="438"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="384"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="444"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="446"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="452"/>
         <source>Edit Color...</source>
         <translation>Éditer la couleur...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="473"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="479"/>
         <source>Duplicate</source>
         <translation>Dupliquer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="489"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="495"/>
         <source>Set as fill</source>
         <translation>Définir comme remplissage</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="498"/>
+        <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="504"/>
         <source>Set as stroke</source>
         <translation>Définir comme contour</translation>
     </message>
@@ -2145,7 +2187,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/timeline/frame_controls_widget.ui" line="32"/>
         <source> f</source>
-        <translation>&#xa0;f</translation>
+        <translation>&#xa0;i</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/timeline/frame_controls_widget.ui" line="39"/>
@@ -2160,7 +2202,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/timeline/frame_controls_widget.ui" line="56"/>
         <source>Loop</source>
-        <translation>Boucle</translation>
+        <translation>Boucler</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/timeline/frame_controls_widget.ui" line="73"/>
@@ -2184,7 +2226,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/timeline/frame_controls_widget.ui" line="118"/>
         <location filename="../../src/gui/widgets/timeline/frame_controls_widget.ui" line="121"/>
         <source>Go To Next Frame</source>
-        <translation>Aller àl&apos;image suivante</translation>
+        <translation>Aller à l&apos;image suivante</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/timeline/frame_controls_widget.ui" line="135"/>
@@ -2312,7 +2354,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="64"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="627"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="632"/>
         <source>New from Template</source>
         <translation>Nouveau depuis le modèle</translation>
     </message>
@@ -2688,7 +2730,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1314"/>
         <source>Add &amp;Node...</source>
-        <translation>Ajouter &amp;Nœud...</translation>
+        <translation>Ajouter un &amp;nœud...</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1326"/>
@@ -2708,7 +2750,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1353"/>
         <source>S&amp;plit Nodes</source>
-        <translation>&amp;Couper les nœuds</translation>
+        <translation>&amp;Séparer les nœuds</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1365"/>
@@ -2878,7 +2920,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1662"/>
         <source>Validate &amp;Telegram Sticker</source>
-        <translation>Valde l&apos;autocollant &amp;Telegram</translation>
+        <translation>Valide l&apos;autocollant &amp;Telegram</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1671"/>
@@ -2973,7 +3015,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1848"/>
         <source>&amp;Record Keyframes</source>
-        <translation>&amp;Enregistre les images clés</translation>
+        <translation type="unfinished">&amp;Enregistrers les images clés</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1857"/>
@@ -3114,7 +3156,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2102"/>
         <source>l</source>
-        <translation type="unfinished"></translation>
+        <translation>l</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2107"/>
@@ -3123,8 +3165,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2116"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="635"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="641"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="640"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="646"/>
         <source>Save as Template</source>
         <translation>Sauvegarder comme modèle</translation>
     </message>
@@ -3142,7 +3184,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2143"/>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="552"/>
         <source>Validate Discord Sticker</source>
-        <translation>Valde l&apos;autocollant Discord</translation>
+        <translation>Valide l&apos;autocollant Discord</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2151"/>
@@ -3172,75 +3214,75 @@ p, li { white-space: pre-wrap; }
         <translation>Lire</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="407"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="677"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="412"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="682"/>
         <source>Recording Keyframes</source>
         <translation>Enregistrer les images clés</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="627"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="632"/>
         <source>Could not load template</source>
         <translation>Ne peut charger le modèle</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="635"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="640"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="641"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="646"/>
         <source>Could not save template</source>
         <translation>Ne peut sauvegarder le modèle</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="813"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="822"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="829"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="818"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="827"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="834"/>
         <source>Trace Bitmap</source>
         <translation>Tracer une image matricielle</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="813"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="818"/>
         <source>Only select one image</source>
         <translation>Ne sélectionne qu&apos;une image</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="822"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="827"/>
         <source>You need to select an image to trace</source>
         <translation>Vous devez délectionner une image à tracer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="829"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="834"/>
         <source>You selected an image with no data</source>
         <translation>Vous avez sélectionné une image sans données</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="873"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="878"/>
         <source>X: %1 Y: %2</source>
         <translation>X&#xa0;: %1 Y&#xa0;: %2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="892"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="897"/>
         <source>Drop File</source>
         <translation>Déposer un fichier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="903"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="908"/>
         <source>Add to current file?</source>
         <translation>Ajouter au fichier actuel&#xa0;?</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="909"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="914"/>
         <source>Add as Object</source>
         <translation>Ajouter comme objet</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="915"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="920"/>
         <source>Add as Composition</source>
         <translation>Ajouter comme composition</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="921"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="926"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
@@ -3689,7 +3731,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="222"/>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="278"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="310"/>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="327"/>
         <source>Reset Transform</source>
         <translation>Remise à zéro de la transformation</translation>
@@ -3698,7 +3740,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/node_menu.cpp" line="230"/>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="231"/>
         <source>Span All Frames</source>
-        <translation type="unfinished">Span toutes les images</translation>
+        <translation>S&apos;adapter à l&apos;ensemble des images</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="241"/>
@@ -3733,38 +3775,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="273"/>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="429"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="428"/>
         <source>Convert to Path</source>
         <translation>Convertir en chemin</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="284"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="316"/>
         <source>Image</source>
         <translation>Image</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="286"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="278"/>
         <source>Embed</source>
         <translation>Embarqué</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="291"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="282"/>
         <source>Open with External Application</source>
         <translation>Ouvrir avec une application externe</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="295"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="284"/>
         <source>Could not find suitable application, check your system settings.</source>
         <translation>Ne peut pas trouver d&apos;application adaptée, veuillez vérifier les réglages de votre système</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="300"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="288"/>
         <source>From File...</source>
         <translation>Depuis le fichier...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="302"/>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="306"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="289"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="293"/>
         <source>Update Image</source>
         <translation>Mettre à jour l&apos;image</translation>
     </message>
@@ -3800,17 +3842,17 @@ p, li { white-space: pre-wrap; }
         <translation>Vérouiller</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="384"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="383"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="388"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="387"/>
         <source>Duplicate</source>
         <translation>Dupliquer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="401"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="400"/>
         <source>Move to...</source>
         <translation>Déplacer vers...</translation>
     </message>
@@ -4732,8 +4774,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::graphics::TransformGraphicsItem</name>
     <message>
-        <location filename="../../src/gui/graphics/transform_graphics_item.cpp" line="393"/>
-        <location filename="../../src/gui/graphics/transform_graphics_item.cpp" line="441"/>
+        <location filename="../../src/gui/graphics/transform_graphics_item.cpp" line="398"/>
+        <location filename="../../src/gui/graphics/transform_graphics_item.cpp" line="443"/>
         <source>Drag anchor point</source>
         <translation>Déplacer un autre point</translation>
     </message>
@@ -4741,7 +4783,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::item_models::DocumentModelBase</name>
     <message>
-        <location filename="../../src/gui/item_models/document_model_base.cpp" line="93"/>
+        <location filename="../../src/gui/item_models/document_model_base.cpp" line="95"/>
         <source>Move Layers</source>
         <translation>Déplacer les calques</translation>
     </message>
@@ -4938,7 +4980,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::tools::SelectTool</name>
     <message>
-        <location filename="../../src/gui/tools/select_tool.cpp" line="126"/>
+        <location filename="../../src/gui/tools/select_tool.cpp" line="127"/>
         <source>Drag</source>
         <translation>Déplacer</translation>
     </message>
@@ -5056,12 +5098,12 @@ p, li { white-space: pre-wrap; }
         <translation>%1&#xa0;: %2</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="771"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="831"/>
         <source>Duplicate Bitmap ID: %1</source>
         <translation>ID d&apos;image matricielle dupliqué&#xa0;: %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="791"/>
+        <location filename="../../src/core/io/lottie/lottie_importer.hpp" line="851"/>
         <source>Duplicate Precomposition ID: %1</source>
         <translation>ID de précomposition dupliquée&#xa0;: %1</translation>
     </message>
@@ -5303,17 +5345,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::model::Gradient</name>
     <message>
-        <location filename="../../src/core/model/assets/gradient.cpp" line="206"/>
+        <location filename="../../src/core/model/assets/gradient.cpp" line="201"/>
         <source>%1 Gradient</source>
         <translation>Gradiant %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/model/assets/gradient.cpp" line="263"/>
+        <location filename="../../src/core/model/assets/gradient.cpp" line="258"/>
         <source>Linear</source>
         <translation>Linéaire</translation>
     </message>
     <message>
-        <location filename="../../src/core/model/assets/gradient.cpp" line="265"/>
+        <location filename="../../src/core/model/assets/gradient.cpp" line="260"/>
         <source>Radial</source>
         <translation>Radial</translation>
     </message>
@@ -5355,7 +5397,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::model::Group</name>
     <message>
-        <location filename="../../src/core/model/shapes/group.hpp" line="40"/>
+        <location filename="../../src/core/model/shapes/group.hpp" line="35"/>
         <source>Group</source>
         <translation>Groupe</translation>
     </message>
