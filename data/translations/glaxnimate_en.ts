@@ -2,6 +2,17 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>CompoundTimelineWidget</name>
+    <message>
+        <source>Add Keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Clear Animations</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>EmojiSetDialog</name>
     <message>
         <source>Emoji Set</source>
@@ -150,6 +161,10 @@
     </message>
     <message>
         <source>Add Keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Animations</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -621,6 +636,81 @@ Do you want to save your changes?</source>
         <source>Error loading %1 file</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Remove animations from %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Settings</name>
+    <message>
+        <source>User Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Interface Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show startup dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Animation Defaults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FPS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frames per second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duration in seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max Recent Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup Frequency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>How often to save a backup copy (in minutes)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scripting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StickerPackBuilderDialog</name>
@@ -972,6 +1062,10 @@ Follows a guide of the main icons and what they do.
     </message>
     <message>
         <source>Import Emoji</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Animations</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1416,10 +1510,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::CompoundTimelineWidget</name>
     <message>
-        <source>Add Keyframe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Transition From Previous</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1453,6 +1543,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste Keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Animations</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1709,75 +1803,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::GlaxnimateApp</name>
     <message>
-        <source>User Interface</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Interface Language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Icon Theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show startup dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Animation Defaults</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Width</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Height</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FPS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Frames per second</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Duration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Duration in seconds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open / Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Max Recent Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Backup Frequency</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>How often to save a backup copy (in minutes)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scripting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tools</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4047,6 +4073,45 @@ p, li { white-space: pre-wrap; }
     <name>glaxnimate::io::raster::RasterFormat</name>
     <message>
         <source>Raster Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::io::raster::SpritesheetFormat</name>
+    <message>
+        <source>Sprite Sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Width of each frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Height of each frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NUmber of columns in the sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>By how much each rendered frame should increase time (in frames)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

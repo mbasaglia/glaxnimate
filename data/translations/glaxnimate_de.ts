@@ -120,6 +120,19 @@
     </message>
 </context>
 <context>
+    <name>CompoundTimelineWidget</name>
+    <message>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.ui" line="189"/>
+        <source>Add Keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.ui" line="194"/>
+        <source>&amp;Clear Animations</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DocumentMetadataDialog</name>
     <message>
         <source>Value</source>
@@ -798,6 +811,11 @@
         <source>Add Keyframe</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../src/gui/tools/handle_menu.hpp" line="66"/>
+        <source>Clear Animations</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -828,7 +846,7 @@
     </message>
     <message>
         <location filename="../../src/gui/tools/base.cpp" line="183"/>
-        <location filename="../../src/core/io/svg/svg_renderer.cpp" line="718"/>
+        <location filename="../../src/core/io/svg/svg_renderer.cpp" line="734"/>
         <source>%1 (%2)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -956,6 +974,11 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../../src/core/command/animation_commands.cpp" line="315"/>
         <source>Move keyframe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/command/animation_commands.cpp" line="338"/>
+        <source>Remove animations from %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1402,6 +1425,94 @@ Do you want to save your changes?</source>
         <location filename="../../src/android/document_opener.cpp" line="195"/>
         <source>Error loading %1 file</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Settings</name>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="154"/>
+        <source>User Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="157"/>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="158"/>
+        <source>Interface Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="159"/>
+        <source>Icon Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="160"/>
+        <source>Show startup dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="165"/>
+        <source>New Animation Defaults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="167"/>
+        <source>Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="170"/>
+        <source>Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="173"/>
+        <source>FPS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="174"/>
+        <source>Frames per second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="177"/>
+        <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="178"/>
+        <source>Duration in seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="182"/>
+        <source>Max Recent Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="186"/>
+        <source>Backup Frequency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="187"/>
+        <source>How often to save a backup copy (in minutes)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="191"/>
+        <source>Scripting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="196"/>
+        <source>Tools</source>
+        <translation type="unfinished">Werkzeuge</translation>
     </message>
 </context>
 <context>
@@ -1928,12 +2039,17 @@ Follows a guide of the main icons and what they do.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/android/main_window.cpp" line="1048"/>
+        <location filename="../../src/android/main_window.cpp" line="999"/>
+        <source>Clear Animations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/android/main_window.cpp" line="1066"/>
         <source>Emoji</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/android/main_window.cpp" line="1079"/>
+        <location filename="../../src/android/main_window.cpp" line="1097"/>
         <source>Import Emoji</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2510,52 +2626,52 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::CompoundTimelineWidget</name>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.ui" line="189"/>
-        <source>Add Keyframe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="162"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="173"/>
         <source>Transition From Previous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="163"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="174"/>
         <source>Transition To Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="165"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="176"/>
         <source>Hold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="168"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="179"/>
         <source>Linear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="171"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="182"/>
         <source>Ease</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="174"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="185"/>
         <source>Custom...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="177"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="188"/>
         <source>Remove Keyframe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="179"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="189"/>
+        <source>Clear Animations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="191"/>
         <source>Copy Keyframe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="180"/>
+        <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="192"/>
         <source>Paste Keyframe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2884,94 +3000,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::GlaxnimateApp</name>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="134"/>
-        <source>User Interface</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="136"/>
-        <source>Language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="136"/>
-        <source>Interface Language</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="137"/>
-        <source>Icon Theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="138"/>
-        <source>Show startup dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="143"/>
-        <source>New Animation Defaults</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="145"/>
-        <source>Width</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="146"/>
-        <source>Height</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="147"/>
-        <source>FPS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="147"/>
-        <source>Frames per second</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="148"/>
-        <source>Duration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="148"/>
-        <source>Duration in seconds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="150"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="181"/>
         <source>Open / Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="151"/>
-        <source>Max Recent Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="154"/>
-        <source>Backup Frequency</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="154"/>
-        <source>How often to save a backup copy (in minutes)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="158"/>
-        <source>Scripting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="163"/>
         <source>Tools</source>
-        <translation type="unfinished">Werkzeuge</translation>
+        <translation type="obsolete">Werkzeuge</translation>
     </message>
 </context>
 <context>
@@ -3091,7 +3126,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="366"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="663"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="662"/>
         <source>Fill</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3176,7 +3211,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="796"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="668"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="667"/>
         <source>Stroke</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4031,16 +4066,16 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="428"/>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="432"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="741"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="746"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="756"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="740"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="745"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="755"/>
         <source>Import File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="428"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="741"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="756"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="740"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="755"/>
         <source>Could not import %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4132,12 +4167,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="677"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="676"/>
         <source>Unlink %1 Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="687"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="686"/>
         <source>Link %1 Color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5408,8 +5443,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::graphics::TransformGraphicsItem</name>
     <message>
-        <location filename="../../src/gui/graphics/transform_graphics_item.cpp" line="399"/>
-        <location filename="../../src/gui/graphics/transform_graphics_item.cpp" line="447"/>
+        <location filename="../../src/gui/graphics/transform_graphics_item.cpp" line="398"/>
+        <location filename="../../src/gui/graphics/transform_graphics_item.cpp" line="443"/>
         <source>Drag anchor point</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5417,7 +5452,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::item_models::DocumentModelBase</name>
     <message>
-        <location filename="../../src/gui/item_models/document_model_base.cpp" line="93"/>
+        <location filename="../../src/gui/item_models/document_model_base.cpp" line="95"/>
         <source>Move Layers</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5858,6 +5893,54 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/raster/raster_format.hpp" line="19"/>
         <source>Raster Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::io::raster::SpritesheetFormat</name>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.hpp" line="17"/>
+        <source>Sprite Sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="25"/>
+        <source>Frame Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="25"/>
+        <source>Width of each frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="26"/>
+        <source>Frame Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="26"/>
+        <source>Height of each frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="27"/>
+        <source>Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="27"/>
+        <source>NUmber of columns in the sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="28"/>
+        <source>Time Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="28"/>
+        <source>By how much each rendered frame should increase time (in frames)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
