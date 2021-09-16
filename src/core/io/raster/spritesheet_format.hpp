@@ -21,6 +21,7 @@ public:
 
     bool can_save() const override { return true; }
     bool can_open() const override { return false; }
+    int priority() const override { return -2; }
 
 protected:
     bool on_save(QIODevice & file, const QString & filename, model::Document * document, const QVariantMap & setting_values) override;

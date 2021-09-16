@@ -5,6 +5,20 @@
 
 namespace glaxnimate::io {
 
+namespace detail {
+
+inline bool compare_ie_ptr(const ImportExport* ptr_a, const ImportExport* ptr_b) noexcept
+{
+    return ptr_a->priority() > ptr_b->priority();
+}
+
+inline bool compare_ie_unique_ptr(const std::unique_ptr<ImportExport>& ptr_a, const std::unique_ptr<ImportExport>& ptr_b) noexcept
+{
+    return compare_ie_ptr(ptr_a.get(), ptr_b.get());
+}
+
+} // namespace detail
+
 class IoRegistry
 {
 public:
@@ -16,12 +30,14 @@ public:
 
     ImportExport* register_object(std::unique_ptr<ImportExport> ie)
     {
-        object_list.push_back(std::move(ie));
-        ImportExport* format = object_list.back().get();
+        using namespace detail;
+        auto iter = std::upper_bound(object_list.begin(), object_list.end(), ie, &compare_ie_unique_ptr);
+        ImportExport* format = ie.get();
+        object_list.insert(iter, std::move(ie));
         if ( format->can_save() )
-            exporters_.push_back(format);
+            exporters_.insert(std::upper_bound(exporters_.begin(), exporters_.end(), format, &compare_ie_ptr), format);
         if ( format->can_open() )
-            importers_.push_back(format);
+            importers_.insert(std::upper_bound(importers_.begin(), importers_.end(), format, &compare_ie_ptr), format);
         return format;
     }
 
@@ -58,20 +74,35 @@ public:
 
     ImportExport* from_extension(const QString& extension, ImportExport::Direction direction) const
     {
+        int top_priority = std::numeric_limits<int>::min();
+        ImportExport* best = nullptr;
         for ( const auto& p : object_list )
-            if ( p->can_handle_extension(extension, direction) )
-                return p.get();
+        {
+            if ( p->can_handle_extension(extension, direction) && p->priority() > top_priority )
+            {
+                best = p.get();
+                top_priority = p->priority();
+            }
+        }
 
-        return nullptr;
+        return best;
     }
 
     ImportExport* from_filename(const QString& filename, ImportExport::Direction direction) const
     {
-        for ( const auto& p : object_list )
-            if ( p->can_handle_filename(filename, direction) )
-                return p.get();
+        int top_priority = std::numeric_limits<int>::min();
+        ImportExport* best = nullptr;
 
-        return nullptr;
+        for ( const auto& p : object_list )
+        {
+            if ( p->can_handle_filename(filename, direction) && p->priority() > top_priority )
+            {
+                best = p.get();
+                top_priority = p->priority();
+            }
+        }
+
+        return best;
     }
 
     ImportExport* from_slug(const QString& slug) const

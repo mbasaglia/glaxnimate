@@ -73,6 +73,10 @@ public:
     virtual std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document* ) const { return {}; }
     virtual bool can_open() const = 0;
     virtual bool can_save() const = 0;
+    /**
+     * \brief Priority when multiple classes support the same file types
+     */
+    virtual int priority() const { return 0; }
 
     /**
      * \brief File dialog name filter

@@ -20,6 +20,7 @@ public:
     QStringList extensions() const override;
     bool can_save() const override { return false; }
     bool can_open() const override { return true; }
+    int priority() const override { return -1; }
 
 protected:
     bool on_open(QIODevice& dev, const QString&, model::Document* document, const QVariantMap&) override;

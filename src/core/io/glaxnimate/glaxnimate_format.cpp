@@ -91,9 +91,9 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
     return to_json(property->value(), property->traits());
 }
 
-namespace detail {
+namespace  {
 
-QJsonValue to_json(const QPointF& v)
+QJsonValue point_to_json(const QPointF& v)
 {
     QJsonObject o;
     o["x"] = v.x();
@@ -101,7 +101,7 @@ QJsonValue to_json(const QPointF& v)
     return o;
 }
 
-} // namespace detail
+} // namespace
 
 QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, model::PropertyTraits traits )
 {
@@ -126,9 +126,9 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, mo
             for ( const auto& p : bezier )
             {
                 QJsonObject jsp;
-                jsp["pos"] = detail::to_json(p.pos);
-                jsp["tan_in"] = detail::to_json(p.tan_in);
-                jsp["tan_out"] = detail::to_json(p.tan_out);
+                jsp["pos"] = point_to_json(p.pos);
+                jsp["tan_in"] = point_to_json(p.tan_in);
+                jsp["tan_out"] = point_to_json(p.tan_out);
                 jsp["type"] = p.type;
                 points.push_back(jsp);
             }
@@ -219,7 +219,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             return o;
         }
         case QVariant::PointF:
-            return detail::to_json(value.toPointF());
+            return point_to_json(value.toPointF());
         case QVariant::Color:
         {
             auto v = value.value<QColor>();
