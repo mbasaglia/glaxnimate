@@ -129,10 +129,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>If present, doen&apos;t restore the main window state</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Use a specific size for the main window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -146,6 +142,10 @@
     </message>
     <message>
         <source>ZLib %1%2 returned %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If present, doesn&apos;t restore the main window state</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -516,10 +516,6 @@ Do you want to save your changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Could not copy dict: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Could not copy dict `%1`: %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -638,6 +634,10 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Remove animations from %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not copy dict: %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

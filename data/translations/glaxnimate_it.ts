@@ -156,8 +156,12 @@
     </message>
     <message>
         <location filename="../../src/gui/main.cpp" line="27"/>
-        <source>If present, doen&apos;t restore the main window state</source>
+        <source>If present, doesn&apos;t restore the main window state</source>
         <translation>Se presente non ricarica lo stato della finestra</translation>
+    </message>
+    <message>
+        <source>If present, doen&apos;t restore the main window state</source>
+        <translation type="vanished">Se presente non ricarica lo stato della finestra</translation>
     </message>
     <message>
         <location filename="../../src/gui/main.cpp" line="30"/>
@@ -719,9 +723,13 @@ Vuoi salvare le tuo modifiche?</translation>
         <translation>Impossibile rimuovere chiave dizionario `%1`: %2</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/video/video_format.cpp" line="260"/>
         <source>Could not copy dict: %2</source>
-        <translation>Impossibile copiare dizionario %2</translation>
+        <translation type="vanished">Impossibile copiare dizionario %2</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="260"/>
+        <source>Could not copy dict: %1</source>
+        <translation>Impossibile copiare dizionario %1</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="273"/>
@@ -928,12 +936,12 @@ Vuoi salvare le tuo modifiche?</translation>
     <message>
         <location filename="../../src/android/sticker_pack_builder_dialog.ui" line="128"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Pulisci</translation>
     </message>
     <message>
         <location filename="../../src/android/sticker_pack_builder_dialog.ui" line="147"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta</translation>
     </message>
     <message>
         <location filename="../../src/android/sticker_pack_builder_dialog.ui" line="166"/>
@@ -1175,7 +1183,7 @@ Follows a guide of the main icons and what they do.
     <message>
         <location filename="../../src/android/main_window.ui" line="14"/>
         <source>Glaxnimate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Glaxnimate</translation>
     </message>
     <message>
         <location filename="../../src/android/main_window.cpp" line="401"/>
@@ -1205,17 +1213,17 @@ Follows a guide of the main icons and what they do.
     <message>
         <location filename="../../src/android/main_window.cpp" line="453"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Taglia</translation>
     </message>
     <message>
         <location filename="../../src/android/main_window.cpp" line="456"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Copia</translation>
     </message>
     <message>
         <location filename="../../src/android/main_window.cpp" line="459"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Incolla</translation>
     </message>
     <message>
         <location filename="../../src/android/main_window.cpp" line="463"/>
@@ -1255,7 +1263,7 @@ Follows a guide of the main icons and what they do.
     <message>
         <location filename="../../src/android/main_window.cpp" line="500"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Apri</translation>
     </message>
     <message>
         <location filename="../../src/android/main_window.cpp" line="503"/>
@@ -1295,7 +1303,7 @@ Follows a guide of the main icons and what they do.
     <message>
         <location filename="../../src/android/main_window.cpp" line="533"/>
         <source>Layers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Livelli</translation>
     </message>
     <message>
         <location filename="../../src/android/main_window.cpp" line="539"/>
@@ -1342,7 +1350,7 @@ Follows a guide of the main icons and what they do.
     <message>
         <location filename="../../src/android/main_window.cpp" line="999"/>
         <source>Clear Animations</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rimuovi Animazioni</translation>
     </message>
     <message>
         <location filename="../../src/android/main_window.cpp" line="1066"/>
@@ -1475,7 +1483,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="278"/>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="281"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="230"/>
@@ -1556,7 +1564,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="436"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="450"/>
@@ -1572,7 +1580,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="509"/>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="550"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="514"/>
@@ -1645,7 +1653,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="95"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuno</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="100"/>
@@ -2498,7 +2506,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="706"/>
         <source>Timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>Timeline</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="745"/>
@@ -3544,12 +3552,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.ui" line="78"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.ui" line="93"/>
         <source>Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Riempimento</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.ui" line="106"/>
@@ -3557,7 +3565,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.ui" line="176"/>
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.ui" line="179"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>Lineare</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.ui" line="126"/>
@@ -3565,12 +3573,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.ui" line="156"/>
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.ui" line="159"/>
         <source>Radial</source>
-        <translation type="unfinished"></translation>
+        <translation>Radiale</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.ui" line="143"/>
         <source>Stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Bordo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.cpp" line="115"/>
@@ -3580,7 +3588,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.cpp" line="209"/>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Sfumatura</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/gradient_list_widget.cpp" line="343"/>
@@ -3627,13 +3635,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/timeline/keyframe_editor_widget.ui" line="44"/>
         <location filename="../../src/gui/widgets/timeline/keyframe_editor_widget.ui" line="88"/>
         <source>Hold</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferma</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/timeline/keyframe_editor_widget.ui" line="49"/>
         <location filename="../../src/gui/widgets/timeline/keyframe_editor_widget.ui" line="93"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>Lineare</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/timeline/keyframe_editor_widget.ui" line="54"/>
@@ -3667,7 +3675,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="63"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuno</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="87"/>
@@ -3697,7 +3705,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="211"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="222"/>
@@ -3778,12 +3786,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="316"/>
         <source>Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Immagine</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="320"/>
         <source>Trace Bitmap...</source>
-        <translation type="unfinished"></translation>
+        <translation>Traccia Immagine...</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="331"/>
@@ -3804,27 +3812,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="377"/>
         <source>Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Visibile</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="378"/>
         <source>Locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiuso</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="383"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="387"/>
         <source>Duplicate</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplica</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="400"/>
         <source>Move to...</source>
-        <translation type="unfinished"></translation>
+        <translation>Muovi...</translation>
     </message>
 </context>
 <context>
@@ -3877,12 +3885,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/settings/plugin_settings_widget.ui" line="161"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/settings/plugin_settings_widget.ui" line="169"/>
         <source>Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Percorso</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/settings/plugin_settings_widget.ui" line="193"/>
@@ -3932,12 +3940,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/resize_dialog.ui" line="26"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Altezza</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/resize_dialog.ui" line="49"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Larghezza</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/resize_dialog.ui" line="64"/>
@@ -3970,7 +3978,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/script_console.ui" line="61"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Pulisci</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/script_console.ui" line="72"/>
@@ -3990,7 +3998,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/script_console.ui" line="91"/>
         <source>Reload</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricarica</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/script_console.cpp" line="52"/>
@@ -4013,17 +4021,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/shape_parent_dialog.ui" line="14"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Destinazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/shape_parent_dialog.ui" line="41"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/shape_parent_dialog.ui" line="52"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Muovi</translation>
     </message>
 </context>
 <context>
@@ -4031,32 +4039,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/tools/shape_tool_widget.ui" line="17"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tools/shape_tool_widget.ui" line="23"/>
         <source>Raw Shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma da sola</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tools/shape_tool_widget.ui" line="34"/>
         <source>Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tools/shape_tool_widget.ui" line="48"/>
         <source>Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Livello</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tools/shape_tool_widget.ui" line="59"/>
         <source>Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Riempimento</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/tools/shape_tool_widget.ui" line="73"/>
         <source>Stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Bordo</translation>
     </message>
 </context>
 <context>
@@ -4064,12 +4072,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="19"/>
         <source>New Snippet</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuovo Frammento</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="22"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuovo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="33"/>
@@ -4079,7 +4087,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="36"/>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica...</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="47"/>
@@ -4089,7 +4097,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="50"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="61"/>
@@ -4099,17 +4107,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="64"/>
         <source>Run</source>
-        <translation type="unfinished"></translation>
+        <translation>Esegui</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="88"/>
         <source>Reload snippets</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricarica frammento</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="91"/>
         <source>Reload</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricarica</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.cpp" line="54"/>
@@ -4120,7 +4128,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/snippet_list_widget.cpp" line="54"/>
         <location filename="../../src/gui/widgets/snippet_list_widget.cpp" line="60"/>
         <source>Snippets</source>
-        <translation type="unfinished"></translation>
+        <translation>Snippet</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.cpp" line="60"/>
@@ -4139,7 +4147,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/spin2d.cpp" line="122"/>
         <location filename="../../src/gui/widgets/spin2d.cpp" line="123"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -4147,75 +4155,75 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="14"/>
         <source>Startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Avvio</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="22"/>
         <source>Create New</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea Nuovo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="41"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="46"/>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="82"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensione</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="51"/>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="89"/>
         <source>Framerate</source>
-        <translation type="unfinished"></translation>
+        <translation>Framerate</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="56"/>
         <source>Aspect</source>
-        <translation type="unfinished"></translation>
+        <translation>Proporzioni</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="61"/>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="75"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="69"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="106"/>
         <source> fps</source>
-        <translation type="unfinished"></translation>
+        <translation> fps</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="123"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotogrammi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="128"/>
         <source>Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Secondi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="142"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="151"/>
         <source>Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>Naviga...</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/startup_dialog.ui" line="169"/>
         <source>Show at startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra all&apos;avvio</translation>
     </message>
 </context>
 <context>
@@ -4223,28 +4231,28 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="33"/>
         <source>Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Stile</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="39"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Larghezza</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="52"/>
         <source>Stroke Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Spessore Bordo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="62"/>
         <source>Cap</source>
-        <translation type="unfinished"></translation>
+        <translation>Fine</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="71"/>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="74"/>
         <source>Butt</source>
-        <translation type="unfinished"></translation>
+        <translation>Mozzicone</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="101"/>
@@ -4252,40 +4260,40 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="189"/>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="192"/>
         <source>Round</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotondo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="131"/>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="134"/>
         <source>Square</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadrato</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="150"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>Giuntura</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="159"/>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="162"/>
         <source>Bevel</source>
-        <translation type="unfinished"></translation>
+        <translation>Smussato</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="219"/>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="222"/>
         <source>Miter</source>
-        <translation type="unfinished"></translation>
+        <translation>Mitra</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="256"/>
         <source>Miter Limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite Mitra</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="272"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Colore</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/stroke_style_widget.ui" line="331"/>
@@ -4311,52 +4319,52 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.ui" line="14"/>
         <source>Timing</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempistica</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.ui" line="22"/>
         <source>FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>FPS</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.ui" line="45"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Durata</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.ui" line="58"/>
         <source>&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.ui" line="65"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Frame</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.ui" line="84"/>
         <source>Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Livelli</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.ui" line="90"/>
         <source>Keep Initial Timing</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantieni tempistica iniziale</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.ui" line="97"/>
         <source>Trim Extra Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Ritaglia fotogrammi extra</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.ui" line="110"/>
         <source>Scale Timing</source>
-        <translation type="unfinished"></translation>
+        <translation>Scala tempistica</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.cpp" line="73"/>
         <source>Change Animation Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica proprietà animazione</translation>
     </message>
 </context>
 <context>
@@ -4364,12 +4372,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/settings/toolbar_settings_widget.ui" line="44"/>
         <source>Icon</source>
-        <translation type="unfinished"></translation>
+        <translation>Icona</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/settings/toolbar_settings_widget.ui" line="49"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Testo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/settings/toolbar_settings_widget.ui" line="54"/>
@@ -4404,22 +4412,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/settings/toolbar_settings_widget.ui" line="107"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuovo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/settings/toolbar_settings_widget.ui" line="121"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Salva</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/settings/toolbar_settings_widget.ui" line="139"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/settings/toolbar_settings_widget.ui" line="150"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica</translation>
     </message>
 </context>
 <context>
@@ -4427,7 +4435,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="14"/>
         <source>Trace Bitmap</source>
-        <translation type="unfinished"></translation>
+        <translation>Traccia Immagine</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="38"/>
@@ -4477,7 +4485,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="156"/>
         <source>Colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Colori</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="178"/>
@@ -4487,7 +4495,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="181"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="205"/>
@@ -4497,7 +4505,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="208"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="237"/>
@@ -4538,7 +4546,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="317"/>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="422"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="343"/>
@@ -4558,12 +4566,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="415"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="453"/>
         <source>Help...</source>
-        <translation type="unfinished"></translation>
+        <translation>Aiuto...</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="464"/>
@@ -4587,52 +4595,52 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="43"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="53"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="72"/>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="75"/>
         <source>Zoom In</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingrandisci</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="86"/>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="89"/>
         <source>Zoom Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimpicciolisci</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="100"/>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="103"/>
         <source>Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta Zoom</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="114"/>
         <source>Angle</source>
-        <translation type="unfinished"></translation>
+        <translation>Angolo</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="124"/>
         <source>°</source>
-        <translation type="unfinished"></translation>
+        <translation>°</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="143"/>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="146"/>
         <source>Reset Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Reimposta Rotazione</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="157"/>
         <location filename="../../src/gui/widgets/view_transform_widget.ui" line="160"/>
         <source>Flip View</source>
-        <translation type="unfinished"></translation>
+        <translation>Capovolgi Vista</translation>
     </message>
 </context>
 <context>
@@ -4640,7 +4648,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/window_message_widget.ui" line="87"/>
         <source>Ignore</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignora</translation>
     </message>
 </context>
 <context>
@@ -4653,12 +4661,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/font/font_preview_widget.ui" line="38"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/font/font_preview_widget.cpp" line="21"/>
         <source>The quick brown fox jumps over the lazy dog</source>
-        <translation type="unfinished"></translation>
+        <translation>Quel fez sghembo copre davanti</translation>
     </message>
 </context>
 <context>
@@ -4666,12 +4674,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/font/font_style_dialog.ui" line="14"/>
         <source>Font Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Stile Font</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/font/font_style_dialog.ui" line="27"/>
         <source>Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Font</translation>
     </message>
 </context>
 <context>
@@ -4679,37 +4687,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/font/font_style_widget.ui" line="17"/>
         <source>Font Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Stile Font</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/font/font_style_widget.ui" line="27"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensione</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/font/font_style_widget.ui" line="50"/>
         <source>Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Font</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/font/font_style_widget.ui" line="62"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtri</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/font/font_style_widget.ui" line="68"/>
         <source>Writing System</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrittura</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/font/font_style_widget.ui" line="85"/>
         <source>Monospace</source>
-        <translation type="unfinished"></translation>
+        <translation>Monospazio</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/font/font_style_widget.ui" line="102"/>
         <source>Proportional</source>
-        <translation type="unfinished"></translation>
+        <translation>Proporzionale</translation>
     </message>
 </context>
 <context>
@@ -4874,17 +4882,17 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/settings/document_templates.cpp" line="99"/>
         <source>%5 - %1x%2 %3 %4fps</source>
         <extracomment>%5 is the file name, %1x%2 is the size, %3 is the aspect ratio, %4 is the frame rate</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%5 - %1x%2 %3 %4fps</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/document_templates.cpp" line="149"/>
         <source>Template</source>
-        <translation type="unfinished"></translation>
+        <translation>Modello</translation>
     </message>
     <message>
         <location filename="../../src/gui/settings/document_templates.cpp" line="153"/>
         <source>%1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 %2</translation>
     </message>
 </context>
 <context>
@@ -5156,7 +5164,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/lottie/tgs_format.hpp" line="13"/>
         <source>Telegram Animated Sticker</source>
-        <translation type="unfinished"></translation>
+        <translation>Sticker Animato per Telegram</translation>
     </message>
     <message>
         <location filename="../../src/core/io/lottie/tgs_format.cpp" line="39"/>
@@ -5194,7 +5202,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/raster/raster_format.hpp" line="19"/>
         <source>Raster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Immagine Raster</translation>
     </message>
 </context>
 <context>
@@ -5250,7 +5258,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/svg/svg_format.hpp" line="15"/>
         <source>SVG</source>
-        <translation type="unfinished"></translation>
+        <translation>SVG</translation>
     </message>
 </context>
 <context>
@@ -5258,12 +5266,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/video/video_format.hpp" line="15"/>
         <source>Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Video</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="713"/>
         <source>Format not supported: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato non supportato: %1</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="723"/>
@@ -5278,7 +5286,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="745"/>
         <source>No video codec</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun codec video</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="772"/>

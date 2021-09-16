@@ -257,7 +257,7 @@ public:
     {
         int ret = av_dict_copy(&local_dict, other.local_dict, 0);
         if ( ret < 0 )
-            throw Error(QObject::tr("Could not copy dict: %2").arg(err2str(ret)));
+            throw Error(QObject::tr("Could not copy dict: %1").arg(err2str(ret)));
     }
 
     Dict& operator=(Dict&& other)

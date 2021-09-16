@@ -760,7 +760,7 @@
     </message>
     <message>
         <location filename="../../src/gui/main.cpp" line="27"/>
-        <source>If present, doen&apos;t restore the main window state</source>
+        <source>If present, doesn&apos;t restore the main window state</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1323,7 +1323,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="260"/>
-        <source>Could not copy dict: %2</source>
+        <source>Could not copy dict: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

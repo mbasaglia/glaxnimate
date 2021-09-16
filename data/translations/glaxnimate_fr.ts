@@ -160,8 +160,12 @@
     </message>
     <message>
         <location filename="../../src/gui/main.cpp" line="27"/>
+        <source>If present, doesn&apos;t restore the main window state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>If present, doen&apos;t restore the main window state</source>
-        <translation>Si présent, ne restaure pas létat de la fenêtre principale</translation>
+        <translation type="vanished">Si présent, ne restaure pas létat de la fenêtre principale</translation>
     </message>
     <message>
         <location filename="../../src/gui/main.cpp" line="30"/>
@@ -666,9 +670,13 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
         <translation>Ne peut effacer la clé de dictionnaire `%1`&#xa0;: %2</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/video/video_format.cpp" line="260"/>
         <source>Could not copy dict: %2</source>
-        <translation>Ne peut copier le dictionnaire&#xa0;: %2</translation>
+        <translation type="vanished">Ne peut copier le dictionnaire&#xa0;: %2</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="260"/>
+        <source>Could not copy dict: %1</source>
+        <translation type="unfinished">Ne peut copier le dictionnaire&#xa0;: %1</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="273"/>
@@ -824,6 +832,94 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
         <location filename="../../src/android/document_opener.cpp" line="195"/>
         <source>Error loading %1 file</source>
         <translation>Erreur de chargement du fichier %1</translation>
+    </message>
+</context>
+<context>
+    <name>Settings</name>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="154"/>
+        <source>User Interface</source>
+        <translation type="unfinished">Interface utilisateur</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="157"/>
+        <source>Language</source>
+        <translation type="unfinished">Langues</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="158"/>
+        <source>Interface Language</source>
+        <translation type="unfinished">Langue de l&apos;interface</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="159"/>
+        <source>Icon Theme</source>
+        <translation type="unfinished">Thème d&apos;icône</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="160"/>
+        <source>Show startup dialog</source>
+        <translation type="unfinished">Montrer le dialogue de démarrage</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="165"/>
+        <source>New Animation Defaults</source>
+        <translation type="unfinished">Paramètres par défaut des nouvelles animations</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="167"/>
+        <source>Width</source>
+        <translation type="unfinished">Largeur</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="170"/>
+        <source>Height</source>
+        <translation type="unfinished">Hauteur</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="173"/>
+        <source>FPS</source>
+        <translation type="unfinished">FPS</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="174"/>
+        <source>Frames per second</source>
+        <translation type="unfinished">Images par seconde(FPS)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="177"/>
+        <source>Duration</source>
+        <translation type="unfinished">Durée</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="178"/>
+        <source>Duration in seconds</source>
+        <translation type="unfinished">Durée en secondes</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="182"/>
+        <source>Max Recent Files</source>
+        <translation type="unfinished">Nombre max de fichiers récents</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="186"/>
+        <source>Backup Frequency</source>
+        <translation type="unfinished">Fréquence des copies de sauvegarde</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="187"/>
+        <source>How often to save a backup copy (in minutes)</source>
+        <translation type="unfinished">À quelle fréquence effectuer des copies de sauvegarde (en minutes)</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="191"/>
+        <source>Scripting</source>
+        <translation type="unfinished">Scripter</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="196"/>
+        <source>Tools</source>
+        <translation type="unfinished">Outils</translation>
     </message>
 </context>
 <context>
@@ -2250,94 +2346,77 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::GlaxnimateApp</name>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="134"/>
         <source>User Interface</source>
-        <translation>Interface utilisateur</translation>
+        <translation type="vanished">Interface utilisateur</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="136"/>
         <source>Language</source>
-        <translation>Langues</translation>
+        <translation type="vanished">Langues</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="136"/>
         <source>Interface Language</source>
-        <translation>Langue de l&apos;interface</translation>
+        <translation type="vanished">Langue de l&apos;interface</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="137"/>
         <source>Icon Theme</source>
-        <translation>Thème d&apos;icône</translation>
+        <translation type="vanished">Thème d&apos;icône</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="138"/>
         <source>Show startup dialog</source>
-        <translation>Montrer le dialogue de démarrage</translation>
+        <translation type="vanished">Montrer le dialogue de démarrage</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="143"/>
         <source>New Animation Defaults</source>
-        <translation>Paramètres par défaut des nouvelles animations</translation>
+        <translation type="vanished">Paramètres par défaut des nouvelles animations</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="145"/>
         <source>Width</source>
-        <translation>Largeur</translation>
+        <translation type="vanished">Largeur</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="146"/>
         <source>Height</source>
-        <translation>Hauteur</translation>
+        <translation type="vanished">Hauteur</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="147"/>
         <source>FPS</source>
-        <translation>FPS</translation>
+        <translation type="vanished">FPS</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="147"/>
         <source>Frames per second</source>
-        <translation>Images par seconde(FPS)</translation>
+        <translation type="vanished">Images par seconde(FPS)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="148"/>
         <source>Duration</source>
-        <translation>Durée</translation>
+        <translation type="vanished">Durée</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="148"/>
         <source>Duration in seconds</source>
-        <translation>Durée en secondes</translation>
+        <translation type="vanished">Durée en secondes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="150"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="181"/>
         <source>Open / Save</source>
         <translation>Ouvrir / sauvegarder</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="151"/>
         <source>Max Recent Files</source>
-        <translation>Nombre max de fichiers récents</translation>
+        <translation type="vanished">Nombre max de fichiers récents</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="154"/>
         <source>Backup Frequency</source>
-        <translation>Fréquence des copies de sauvegarde</translation>
+        <translation type="vanished">Fréquence des copies de sauvegarde</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="154"/>
         <source>How often to save a backup copy (in minutes)</source>
-        <translation>À quelle fréquence effectuer des copies de sauvegarde (en minutes)</translation>
+        <translation type="vanished">À quelle fréquence effectuer des copies de sauvegarde (en minutes)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="158"/>
         <source>Scripting</source>
-        <translation>Scripter</translation>
+        <translation type="vanished">Scripter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="163"/>
         <source>Tools</source>
-        <translation>Outils</translation>
+        <translation type="vanished">Outils</translation>
     </message>
 </context>
 <context>
@@ -2457,7 +2536,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="366"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="663"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="662"/>
         <source>Fill</source>
         <translation>Remplir</translation>
     </message>
@@ -2542,7 +2621,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="796"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="668"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="667"/>
         <source>Stroke</source>
         <translation>Contour</translation>
     </message>
@@ -3397,16 +3476,16 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="428"/>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="432"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="741"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="746"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="756"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="740"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="745"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="755"/>
         <source>Import File</source>
         <translation>Importer un fichier</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="428"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="741"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="756"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="740"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="755"/>
         <source>Could not import %1</source>
         <translation>Ne peut importer %1</translation>
     </message>
@@ -3498,12 +3577,12 @@ p, li { white-space: pre-wrap; }
         <translation>Ne peut pas charger la sauvegarde de secours d&apos;un fichier fermer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="677"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="676"/>
         <source>Unlink %1 Color</source>
         <translation>Détacher la couleur %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="687"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="686"/>
         <source>Link %1 Color</source>
         <translation>Lier la couleur %1</translation>
     </message>
@@ -5225,6 +5304,54 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/core/io/raster/raster_format.hpp" line="19"/>
         <source>Raster Image</source>
         <translation>Image matricielle</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::io::raster::SpritesheetFormat</name>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.hpp" line="17"/>
+        <source>Sprite Sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="25"/>
+        <source>Frame Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="25"/>
+        <source>Width of each frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="26"/>
+        <source>Frame Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="26"/>
+        <source>Height of each frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="27"/>
+        <source>Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="27"/>
+        <source>NUmber of columns in the sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="28"/>
+        <source>Time Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="28"/>
+        <source>By how much each rendered frame should increase time (in frames)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

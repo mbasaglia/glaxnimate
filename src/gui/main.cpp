@@ -24,7 +24,7 @@ auto parse_cli(const QStringList& args)
     parser.add_argument({{"file"}, QApplication::tr("File to open")});
 
     parser.add_group(QApplication::tr("GUI Options"));
-    parser.add_argument({{"--default-ui"}, QApplication::tr("If present, doen't restore the main window state")});
+    parser.add_argument({{"--default-ui"}, QApplication::tr("If present, doesn't restore the main window state")});
     parser.add_argument({
         {"--window-size"},
         QApplication::tr("Use a specific size for the main window"),
