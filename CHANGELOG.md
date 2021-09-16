@@ -18,6 +18,7 @@
     * Adding new layers inserts them on top of the selection
     * Fixed the canvas not rendering anything when the document area isn't in view
     * Dragging multiple objects in the layer list properly moves all of them
+    * Fixed current selection not being displayed correctly in the layer view
 
 ## 0.4.4
 

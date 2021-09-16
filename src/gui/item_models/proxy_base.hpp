@@ -1,5 +1,5 @@
 #pragma once
-#include <QAbstractProxyModel>
+#include <QIdentityProxyModel>
 #include "document_model_base.hpp"
 
 namespace glaxnimate::gui::item_models {
@@ -35,67 +35,12 @@ reverse(const QAbstractProxyModel* proxy, T v)
     return proxy->mapToSource(v);
 }
 
-template<class... Args>
-class SignalForwarder
-{
-public:
-    using Functor = void (QAbstractItemModel::*)(Args...);
-    QAbstractProxyModel* proxy;
-    Functor signal;
-
-    SignalForwarder(QAbstractProxyModel* proxy, Functor signal)
-        : proxy(proxy), signal(signal)
-    {}
-
-    inline void operator()(Args... args) const
-    {
-        (proxy->*signal)(forward<Args>(proxy, args)...);
-    }
-};
 } // namespace detail
 
-class ProxyBase : public QAbstractProxyModel
+class ProxyBase : public QIdentityProxyModel
 {
 public:
-    using QAbstractProxyModel::QAbstractProxyModel;
-
-    void setSourceModel(QAbstractItemModel *new_model) override
-    {
-        beginResetModel();
-
-        if ( sourceModel() )
-            QObject::disconnect(sourceModel(), nullptr, this, nullptr);
-
-        QAbstractProxyModel::setSourceModel(new_model);
-
-
-        if ( sourceModel() )
-        {
-            forward_signal(&QAbstractItemModel::columnsAboutToBeInserted);
-            forward_signal(&QAbstractItemModel::columnsAboutToBeMoved);
-            forward_signal(&QAbstractItemModel::columnsAboutToBeRemoved);
-            forward_signal(&QAbstractItemModel::columnsInserted);
-            forward_signal(&QAbstractItemModel::columnsMoved);
-            forward_signal(&QAbstractItemModel::columnsRemoved);
-            forward_signal(&QAbstractItemModel::dataChanged);
-            forward_signal(&QAbstractItemModel::headerDataChanged);
-            forward_signal(&QAbstractItemModel::layoutAboutToBeChanged);
-            forward_signal(&QAbstractItemModel::layoutChanged);
-            forward_signal(&QAbstractItemModel::modelAboutToBeReset);
-            forward_signal(&QAbstractItemModel::modelReset);
-            forward_signal(&QAbstractItemModel::rowsAboutToBeInserted);
-            forward_signal(&QAbstractItemModel::rowsAboutToBeMoved);
-            forward_signal(&QAbstractItemModel::rowsAboutToBeRemoved);
-            forward_signal(&QAbstractItemModel::rowsInserted);
-            forward_signal(&QAbstractItemModel::rowsMoved);
-            forward_signal(&QAbstractItemModel::rowsRemoved);
-        }
-
-        on_source_changed(new_model);
-
-        endResetModel();
-    }
-
+    using QIdentityProxyModel::QIdentityProxyModel;
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override
     {
@@ -136,16 +81,7 @@ protected:
         connect(sourceModel(), func, static_cast<Derived*>(this), slot);
     }
 
-    virtual void on_source_changed(QAbstractItemModel *) {};
-
 private:
-    template<class... Args>
-    void forward_signal(void (QAbstractItemModel::*signal)(Args...))
-    {
-        QObject::connect(sourceModel(), signal, this, detail::SignalForwarder(this, signal));
-
-    }
-
     template<class Ret, class... Args, class... ActualArgs>
     Ret forward_impl(Ret (QAbstractItemModel::*method)(Args...) const, ActualArgs... args) const
     {
