@@ -7,6 +7,8 @@
     * Menu items for images in the asset view
     * Saving the document swatch will ask for a name
     * Transform handles for rotation/translation now keep a constant distance, regardless of zoom
+    * Added French translation
+    * Improved Italian translation
 * I/O:
     * Made error messages from the lottie importer easier to understand
     * SVG export now supports hold frames
