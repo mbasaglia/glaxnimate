@@ -1,11 +1,14 @@
 #include "transform_graphics_item.hpp"
 #include <QPainter>
+#include <QGraphicsView>
+#include <QGraphicsScene>
 #include <QStyleOptionGraphicsItem>
 
 #include "model/document.hpp"
 #include "command/animation_commands.hpp"
 #include "math/math.hpp"
 #include "glaxnimate_app.hpp"
+#include "widgets/canvas.hpp"
 
 using namespace glaxnimate::gui;
 
@@ -61,6 +64,7 @@ public:
     QTransform pos_trans;
     QPointF pos_start_value;
     TransformGraphicsItem* parent;
+    Canvas* canvas = nullptr;
 
     QPointF get_tl() const { return cache.topLeft(); }
     QPointF get_tr() const { return cache.topRight(); }
@@ -241,6 +245,7 @@ graphics::TransformGraphicsItem::TransformGraphicsItem(
     connect(target, &model::VisualNode::bounding_rect_changed, this, &TransformGraphicsItem::update_handles);
     connect(target, &model::VisualNode::transform_matrix_changed, this, &TransformGraphicsItem::update_offshoots);
     connect(transform, &model::Object::property_changed, this, &TransformGraphicsItem::update_transform);
+
     update_transform();
     update_handles();
     for ( const auto& h : d->handles )
@@ -273,7 +278,18 @@ void glaxnimate::gui::graphics::TransformGraphicsItem::update_offshoots()
 
 
     auto length = d->offshoot_size();
-    auto angle = math::deg2rad(d->transform->rotation.get());
+
+    // Evaluate effective rotation
+    auto transform = sceneTransform();
+
+    // Hack but idk how else to do this...
+    if ( d->canvas )
+        transform = transform * d->canvas->transform();
+
+    QPointF p1 = transform.map(QPointF(0, 0));
+    QPointF p2 = transform.map(QPointF(10, 0));
+    qreal angle = math::atan2(p2.y() - p1.y(), p2.x() - p1.x());
+
     d->handles[Private::Position].handle->set_offset({length * math::cos(angle - math::pi), length * math::sin(angle - math::pi)});
     d->handles[Private::Rot].handle->set_offset({length * math::cos(angle - math::pi / 2), length * math::sin(angle - math::pi / 2)});
 }
@@ -423,6 +439,19 @@ void graphics::TransformGraphicsItem::drag_rot(const QPointF& p, Qt::KeyboardMod
 
 void graphics::TransformGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt, QWidget*)
 {
+    // Hack needed to keep offshoots straight
+    if ( !d->canvas )
+    {
+        auto views = scene()->views();
+        if ( !views.empty() )
+        {
+            d->canvas = qobject_cast<Canvas*>(views[0]);
+            connect(d->canvas, &Canvas::rotated, this, &TransformGraphicsItem::update_offshoots);
+            update_offshoots();
+        }
+    }
+
+
     painter->save();
     QPen pen(opt->palette.color(QPalette::Highlight), 1);
     pen.setCosmetic(true);
