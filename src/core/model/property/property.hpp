@@ -299,7 +299,7 @@ public:
     PropertyTemplate(Object* obj,
              const QString& name,
              Type default_value = Type(),
-             PropertyCallback<void, Type> emitter = {},
+             PropertyCallback<void, Type, Type> emitter = {},
              PropertyCallback<bool, Type> validator = {},
              int flags = PropertyTraits::NoFlags
     )
@@ -323,7 +323,7 @@ public:
         std::swap(value_, value);
         this->value_changed();
         if ( emitter )
-            emitter(this->object(), value_);
+            emitter(this->object(), value_, value);
         return true;
     }
 
@@ -348,7 +348,7 @@ public:
 
 private:
     Type value_;
-    PropertyCallback<void, Type> emitter;
+    PropertyCallback<void, Type, Type> emitter;
     PropertyCallback<bool, Type> validator;
 };
 

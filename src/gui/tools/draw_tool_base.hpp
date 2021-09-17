@@ -87,7 +87,7 @@ protected:
         if ( options->create_layer() )
         {
             std::unique_ptr<model::Group> layer = std::make_unique<model::Layer>(document);
-            document->set_best_name(layer.get(), QObject::tr("%1 Layer").arg(name));
+            layer->name.set(name);
             model::ShapeListProperty* group_container = &event.window->document()->main()->shapes;
             select = layer.get();
             prop = &layer->shapes;
@@ -101,7 +101,7 @@ protected:
         {
             // Group
             std::unique_ptr<model::Group> group = std::make_unique<model::Group>(document);
-            document->set_best_name(group.get(), QObject::tr("%1 Group").arg(name));
+            group->name.set(name);
             model::ShapeListProperty* group_container = prop;
             prop = &group->shapes;
             if ( !options->create_layer() )
@@ -122,7 +122,7 @@ protected:
 
             // Fill
             auto fill = std::make_unique<model::Fill>(document);
-            document->set_best_name(fill.get(), QObject::tr("Fill"));
+            fill->name.set(QObject::tr("Fill"));
             fill->color.set(event.window->current_color());
             fill->use.set(event.window->linked_brush_style(false));
             fill->visible.set(options->create_fill());
@@ -134,7 +134,7 @@ protected:
 
             // Stroke
             auto stroke = std::make_unique<model::Stroke>(document);
-            document->set_best_name(stroke.get(), QObject::tr("Stroke"));
+            stroke->name.set(QObject::tr("Stroke"));
             stroke->set_pen_style(event.window->current_pen_style());
             stroke->use.set(event.window->linked_brush_style(true));
             stroke->visible.set(options->create_stroke());

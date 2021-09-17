@@ -49,7 +49,7 @@ public:
         const QString& name,
         Type default_value,
         PropertyCallback<Container> option_list,
-        PropertyCallback<void, Type> emitter = {},
+        PropertyCallback<void, Type, Type> emitter = {},
         PropertyCallback<bool, Type> validator = {},
         PropertyTraits::Flags flags = PropertyTraits::Visual,
         int option_flags = 0

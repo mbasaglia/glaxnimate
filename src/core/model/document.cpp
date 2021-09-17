@@ -10,11 +10,64 @@
 class glaxnimate::model::Document::Private
 {
 public:
+    using NameIndex = unsigned long long;
+
     Private(Document* doc)
         : main(doc),
           assets(doc)
     {
         io_options.format = io::glaxnimate::GlaxnimateFormat::instance();
+    }
+
+    std::pair<QString, NameIndex> name_index(const QString& name) const
+    {
+        static QRegularExpression detect_numbers("^(.*) ([0-9]+)$");
+        QRegularExpressionMatch match = detect_numbers.match(name);
+        if ( match.hasMatch() )
+        {
+            return {match.captured(1), match.captured(2).toULongLong()};
+        }
+
+        return {name, 0};
+    }
+
+    void increase(std::pair<QString, NameIndex> pair)
+    {
+        auto iter = name_indices.find(pair.first);
+
+        if ( iter != name_indices.end() )
+        {
+            if ( iter->second < pair.second )
+                iter->second = pair.second;
+        }
+        else
+        {
+            name_indices.emplace(std::move(pair));
+        }
+    }
+
+    void decrease(const std::pair<QString, NameIndex>& pair)
+    {
+        if ( pair.second == 0 )
+            return;
+
+        auto iter = name_indices.find(pair.first);
+
+        if ( iter != name_indices.end() )
+        {
+            if ( iter->second == pair.second )
+                iter->second -= 1;
+        }
+    }
+
+    QString name_suggestion(const QString& base_name)
+    {
+        auto index_pair = name_index(base_name);
+        auto iter = name_indices.find(index_pair.first);
+        if ( iter == name_indices.end() )
+            return base_name;
+
+        return QString("%1 %2").arg(iter->first).arg(iter->second + 1);
     }
 
     MainComposition main;
@@ -25,6 +78,7 @@ public:
     bool record_to_keyframe = false;
     Assets assets;
     glaxnimate::model::CompGraph comp_graph;
+    std::unordered_map<QString, NameIndex> name_indices;
 };
 
 
@@ -141,52 +195,16 @@ void glaxnimate::model::Document::push_command(QUndoCommand* cmd)
     d->undo_stack.push(cmd);
 }
 
-
-static void collect_names(const glaxnimate::model::DocumentNode* node, const QString& prefix, QVector<QString>& out, const glaxnimate::model::DocumentNode* target)
-{
-    if ( node != target && node->name.get().startsWith(prefix) )
-        out.push_back(node->name.get());
-    for ( int i = 0, e = node->docnode_child_count(); i < e; i++ )
-        collect_names(node->docnode_child(i), prefix, out, target);
-}
-
 QString glaxnimate::model::Document::get_best_name(glaxnimate::model::DocumentNode* node, const QString& suggestion) const
 {
     if ( !node )
         return {};
 
-    QVector<QString> names;
+    if ( suggestion.isEmpty() )
+        return d->name_suggestion(node->type_name_human());
 
-    int n = 0;
-    QString base_name = suggestion;
-    if ( base_name.isEmpty() )
-    {
-        base_name = node->type_name_human();
-    }
-    else
-    {
-        static QRegularExpression detect_numbers("^(.*) ([0-9]+)$");
-        QRegularExpressionMatch match = detect_numbers.match(base_name);
-        if ( match.hasMatch() )
-        {
-            base_name = match.captured(1);
-            n = match.captured(2).toInt();
-        }
-    }
+    return d->name_suggestion(suggestion);
 
-    QString name = base_name;
-
-    collect_names(&d->main, base_name, names, node);
-    collect_names(&d->assets, base_name, names, node);
-
-    QString name_pattern = "%1 %2";
-    while ( names.contains(name) )
-    {
-        n += 1;
-        name = name_pattern.arg(base_name).arg(n);
-    }
-
-    return name;
 }
 
 void glaxnimate::model::Document::set_best_name(glaxnimate::model::DocumentNode* node, const QString& suggestion) const
@@ -246,3 +264,16 @@ glaxnimate::model::CompGraph & glaxnimate::model::Document::comp_graph()
 {
     return d->comp_graph;
 }
+
+void glaxnimate::model::Document::decrease_node_name(const QString& old_name)
+{
+    if ( !old_name.isEmpty() )
+        d->decrease(d->name_index(old_name));
+}
+
+void glaxnimate::model::Document::increase_node_name(const QString& new_name)
+{
+    if ( !new_name.isEmpty() )
+        d->increase(d->name_index(new_name));
+}
+

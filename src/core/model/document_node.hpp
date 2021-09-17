@@ -29,7 +29,7 @@ public:
     /**
      * @brief Name of the node, used to display it in the UI
      */
-    GLAXNIMATE_PROPERTY(QString, name, "", &DocumentNode::name_changed)
+    GLAXNIMATE_PROPERTY(QString, name, "", &DocumentNode::on_name_changed)
 
 protected:
     template<class Base>
@@ -208,6 +208,8 @@ private:
 
     void removed_from_list();
     void added_to_list(DocumentNode* new_parent);
+
+    void on_name_changed(const QString& name, const QString& old_name);
 
 signals:
     void docnode_child_add_begin(int row);

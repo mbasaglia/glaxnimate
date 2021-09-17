@@ -81,9 +81,12 @@ signals:
 
 private:
     Object* assets_obj() const;
+    void decrease_node_name(const QString& old_name);
+    void increase_node_name(const QString& new_name);
 
 private:
     class Private;
+    friend DocumentNode;
     std::unique_ptr<Private> d;
 };
 

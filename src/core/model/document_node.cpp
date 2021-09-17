@@ -28,6 +28,7 @@ void glaxnimate::model::DocumentNode::removed_from_list()
 {
     auto old = d->list_parent;
     d->list_parent = nullptr;
+    document()->decrease_node_name(name.get());
     on_parent_changed(old, d->list_parent);
     emit removed();
 }
@@ -36,14 +37,24 @@ void glaxnimate::model::DocumentNode::added_to_list ( glaxnimate::model::Documen
 {
     auto old = d->list_parent;
     d->list_parent = new_parent;
+    document()->increase_node_name(name.get());
     on_parent_changed(old, d->list_parent);
+}
+
+void glaxnimate::model::DocumentNode::on_name_changed(const QString& name, const QString& old_name)
+{
+    if ( old_name != name )
+    {
+        document()->decrease_node_name(old_name);
+        document()->increase_node_name(name);
+        emit name_changed(name);
+    }
 }
 
 glaxnimate::model::DocumentNode * glaxnimate::model::DocumentNode::docnode_parent() const
 {
     return d->list_parent;
 }
-
 
 glaxnimate::model::VisualNode* glaxnimate::model::VisualNode::docnode_group_parent() const
 {
