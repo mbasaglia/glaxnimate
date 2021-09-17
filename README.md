@@ -54,8 +54,19 @@ It will produce the executable `bin/glaxnimate` relative to the build directory
 Install the dependencies:
 
     apt-get install -y g++ cmake qtbase5-dev qttools5-dev libqt5svg5-dev \
-    libpython3-dev zlib1g-dev libpotrace-dev libarchive-dev \
-    libavformat-dev libswscale-dev libavcodec-dev libavutil-dev
+    qt5-image-formats-plugins libpython3-dev zlib1g-dev libpotrace-dev \
+    libarchive-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev
+
+
+The generic `cmake` commands listed above should work.
+
+
+### Arch-based systems
+
+Install the dependencies:
+
+    pacman -S git base-devel cmake python zlib hicolor-icon-theme \
+    potrace ffmpeg qt5-base qt5-tools qt5-imageformats qt5-svg
 
 The generic `cmake` commands listed above should work.
 

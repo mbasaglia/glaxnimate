@@ -51,7 +51,7 @@ Something along these lines:
     # You might need to install upgrades too
     pacman -Su --noconfirm
     # (Add required build packages as needed)
-    pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base
+    pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth
 
     # Set up a user if using docker
     useradd -m foo
