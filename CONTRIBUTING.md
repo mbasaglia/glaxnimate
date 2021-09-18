@@ -28,6 +28,38 @@ Go to *Help > About... > System* and click *Copy*,
 then you can paste on the issue the system information.
 
 
+Packaging
+---------------------------------------
+
+You can create packages to port Glaxnimate to a specific system,
+setting up an automatable process to create said package so it can be
+integrated with continuous integration.
+
+
+### Packages that need help
+
+* Android: Needs setting up a build pipeline and be ported to a modern version of Qt
+* Mac DMG: Needs to include dependencies as framework
+* Windows: Needs reducing the shipped zip size and fixing platform-specific issues
+
+### Existing Packages
+
+* AppImage
+* Snap
+* Deb
+* AUR
+* PyPI
+* Itch.io
+
+### More packages
+
+If you want to port Glaxnimate to a different system of package manager,
+feel free to do so!
+
+If the process can be automated the script can be added to continuous integration
+so it gets built automatically.
+
+
 Documentation
 ---------------------------------------
 
@@ -75,11 +107,6 @@ to get your changes merged into Glaxnimate.
 
 Glaxnimate is licensed under the [GNU GPLv3+](http://www.gnu.org/licenses/gpl-3.0.html),
 so your contributions must be under the same license.
-
-### Cross Compiling
-
-See [Cross Compiling](https://glaxnimate.mattbas.org/contributing/cross_compiling/)
-for intructions of how to build Glaxnimate using MXE.
 
 
 Credits and Licensing
