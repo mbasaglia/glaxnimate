@@ -15,7 +15,7 @@ If you enjoy using Glaxnimate consider [donating](donate.md).
 <table>
 <tr><th>Package</th><th>Notes</th></tr>
 <tr>
-<td><img src="/img/misc/arch-icon.svg" style="height:1.2rem;" /> <a href="https://aur.archlinux.org/packages/glaxnimate-git/">AUR</a></td>
+<td><img src="/img/misc/arch-icon.svg" style="height:1.2rem;" /> <a href="https://aur.archlinux.org/packages/glaxnimate/">AUR</a></td>
 <td><a href="#aur-package">Notes</a></td>
 </tr>
 <tr>
@@ -119,8 +119,17 @@ upgrade some of the dependencies:
 
 ## Aur Package
 
-    git clone https://aur.archlinux.org/glaxnimate-bin.git
-    cd glaxnimate-bin
+
+For the stable package:
+
+    git clone https://aur.archlinux.org/glaxnimate.git
+    cd glaxnimate
+    makepkg -rsi
+
+For the development snapshot package
+
+    git clone https://aur.archlinux.org/glaxnimate-git.git
+    cd glaxnimate-git
     makepkg -rsi
 
 ## Snap
