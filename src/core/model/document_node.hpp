@@ -187,6 +187,11 @@ public:
      */
     void detach();
 
+    /**
+     * \brief Whether this node is a descendant of \p other
+     */
+    bool is_descendant_of(const model::DocumentNode* other) const;
+
 protected:
     virtual void on_parent_changed(model::DocumentNode* old_parent, model::DocumentNode* new_parent)
     {

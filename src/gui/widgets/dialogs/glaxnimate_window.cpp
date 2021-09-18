@@ -279,14 +279,14 @@ void GlaxnimateWindow::cut()
     SelectionManager::cut();
 }
 
+void GlaxnimateWindow::delete_selected()
+{
+    SelectionManager::delete_selected();
+}
+
 void GlaxnimateWindow::duplicate_selection() const
 {
     d->duplicate_selection();
-}
-
-void GlaxnimateWindow::delete_selected()
-{
-    d->delete_selected();
 }
 
 void GlaxnimateWindow::layer_top()

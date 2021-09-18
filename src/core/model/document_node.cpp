@@ -356,3 +356,18 @@ void glaxnimate::model::VisualNode::propagate_bounding_rect_changed()
         parent->propagate_bounding_rect_changed();
 
 }
+
+bool glaxnimate::model::DocumentNode::is_descendant_of(const model::DocumentNode* other) const
+{
+    if ( !other )
+        return false;
+
+    if ( other == this )
+        return true;
+
+    auto parent = docnode_parent();
+    if ( parent )
+        return parent->is_descendant_of(other);
+
+    return false;
+}

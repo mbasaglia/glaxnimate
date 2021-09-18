@@ -2,6 +2,7 @@
 
 * Editing:
     * Action to remove all animations from a property
+    * When deleting the currently active object, its parent will be selected intead
 * UI:
     * New handle for translating layers, groups etc without having to drag on the object
     * Menu items for images in the asset view
@@ -21,6 +22,7 @@
     * Fixed the canvas not rendering anything when the document area isn't in view
     * Dragging multiple objects in the layer list properly moves all of them
     * Fixed current selection not being displayed correctly in the layer view
+    * You can no longer delete an object if its parent is locked
 
 ## 0.4.4
 

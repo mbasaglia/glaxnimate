@@ -53,23 +53,6 @@ model::ShapeListProperty* glaxnimate::gui::SelectionManager::current_shape_conta
     return &current_composition()->shapes;
 }
 
-void glaxnimate::gui::SelectionManager::delete_selected()
-{
-    auto selection = cleaned_selection();
-    if ( selection.empty() )
-        return;
-
-    auto doc = document();
-
-    command::UndoMacroGuard macro(QObject::tr("Delete"), doc);
-    for ( auto item : selection )
-    {
-        if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
-            if ( !shape->locked.get() )
-                doc->push_command(new command::RemoveShape(shape, shape->owner()));
-    }
-}
-
 std::vector<model::VisualNode *> glaxnimate::gui::SelectionManager::copy() const
 {
     auto selection = cleaned_selection();
@@ -95,7 +78,7 @@ void glaxnimate::gui::SelectionManager::cut()
     delete_shapes_impl(QObject::tr("Cut"), selection);
 }
 
-void glaxnimate::gui::SelectionManager::delete_shapes()
+void glaxnimate::gui::SelectionManager::delete_selected()
 {
     delete_shapes_impl(QObject::tr("Delete"), cleaned_selection());
 }
@@ -107,12 +90,23 @@ void glaxnimate::gui::SelectionManager::delete_shapes_impl(const QString &undo_s
 
     auto doc = document();
     command::UndoMacroGuard macro(undo_string, doc);
+    auto current = this->current_document_node();
+
     for ( auto item : selection )
     {
         if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
-            if ( !shape->locked.get() )
+        {
+            if ( !shape->docnode_locked_recursive() )
+            {
+                if ( current->is_descendant_of(shape) )
+                    current = shape->docnode_visual_parent();
                 doc->push_command(new command::RemoveShape(shape, shape->owner()));
+            }
+        }
     }
+
+    if ( current )
+        set_current_document_node(current);
 }
 
 void glaxnimate::gui::SelectionManager::paste()

@@ -76,9 +76,9 @@ void GlaxnimateWindow::Private::layer_new_group()
 void GlaxnimateWindow::Private::layer_delete()
 {
     auto current = parent->current_shape();
-    if ( !current || current->locked.get() )
+    if ( !current )
         return;
-    current->push_command(new command::RemoveShape(current, current->owner()));
+    parent->delete_shapes_impl(tr("Delete %1").arg(current->object_name()), {current});
 }
 
 void GlaxnimateWindow::Private::layer_duplicate()
@@ -97,21 +97,6 @@ std::vector<model::VisualNode*> GlaxnimateWindow::Private::cleaned_selection()
     return scene.cleaned_selection();
 }
 
-
-void GlaxnimateWindow::Private::delete_selected()
-{
-    auto selection = cleaned_selection();
-    if ( selection.empty() )
-        return;
-
-    command::UndoMacroGuard macro(tr("Delete"), current_document.get());
-    for ( auto item : selection )
-    {
-        if ( auto shape = qobject_cast<model::ShapeElement*>(item) )
-            if ( !shape->locked.get() )
-                current_document->push_command(new command::RemoveShape(shape, shape->owner()));
-    }
-}
 
 void GlaxnimateWindow::Private::duplicate_selection()
 {

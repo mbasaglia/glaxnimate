@@ -60,7 +60,6 @@ public:
     void paste();
     void paste_as_composition();
     void paste_document(model::Document* document, const QString& macro_name, bool as_comp);
-    void delete_shapes();
 
     virtual void set_selection(const std::vector<model::VisualNode*>& selected) = 0;
     virtual void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) = 0;
@@ -69,10 +68,10 @@ protected:
     virtual std::vector<io::mime::MimeSerializer*> supported_mimes() const = 0;
     void layer_new_impl(std::unique_ptr<model::ShapeElement> layer);
     model::PreCompLayer *layer_new_comp(model::Precomposition *comp);
+    void delete_shapes_impl(const QString& undo_string, const std::vector<model::VisualNode *> &selection);
 
 private:
     void paste_impl(bool as_comp);
-    void delete_shapes_impl(const QString& undo_string, const std::vector<model::VisualNode *> &selection);
 };
 
 

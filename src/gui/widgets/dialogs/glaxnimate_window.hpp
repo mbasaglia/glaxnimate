@@ -85,7 +85,6 @@ public:
      */
     void select(const std::vector<model::VisualNode*>& nodes);
 
-    void delete_selected();
     void group_shapes();
     void ungroup_shapes();
     void move_to();
@@ -136,6 +135,7 @@ public:
 
     void set_selection(const std::vector<model::VisualNode*>& selected) override;
     void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) override;
+
 public slots:
     void document_save();
     void document_save_as();
@@ -149,6 +149,7 @@ public slots:
     void paste();
     void cut();
     void duplicate_selection() const;
+    void delete_selected();
 
 private slots:
     void document_new();

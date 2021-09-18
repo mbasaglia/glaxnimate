@@ -202,7 +202,6 @@ public:
     void set_current_document_node(model::VisualNode* node);
     std::vector<model::VisualNode*> cleaned_selection();
     void duplicate_selection();
-    void delete_selected();
     void move_current(command::ReorderCommand::SpecialPosition pos);
     void group_shapes();
     void ungroup_shapes();
