@@ -231,8 +231,9 @@ signals:
 signals:
     void users_changed();
 
-private:
+protected:
     class Private;
+    DocumentNode(model::Document* document, std::unique_ptr<Private> d);
     std::unique_ptr<Private> d;
     friend ObjectListPropertyBase;
 };
@@ -273,7 +274,7 @@ public:
         Render          ///< Recursive, but hide objects maked with render == false
     };
 
-    using DocumentNode::DocumentNode;
+    explicit VisualNode(model::Document* document);
 
     QColor docnode_group_color() const;
 
@@ -355,7 +356,8 @@ protected:
 private:
     void on_visible_changed(bool visible);
 
-    mutable QPixmap group_icon;
+    class Private;
+    Private* dd() const;
 };
 
 } // namespace glaxnimate::model

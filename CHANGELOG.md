@@ -15,6 +15,8 @@
     * SVG export now supports hold frames
     * SVG import now assumes back for unspecified fill
     * Ability to export as a spritesheet
+* Scripting:
+    * The Headless environment context manager is no longer required when using glaxnimate as a module
 * Bug Fixes:
     * Fixed loading lottie animations with missing "a" attributes
     * The rotation handle no longer changes position based on scale

@@ -26,7 +26,7 @@ class Document : public QObject
     Q_PROPERTY(QVariantMap metadata READ metadata WRITE set_metadata)
 
 public:
-    explicit Document(const QString& filename);
+    explicit Document(const QString& filename = {});
     ~Document();
 
     QString filename() const;

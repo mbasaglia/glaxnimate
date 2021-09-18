@@ -379,6 +379,7 @@ void register_py_module(py::module& glaxnimate_module)
 
     register_from_meta<model::Document, QObject>(model)
         .def(py::init<QString>())
+        .def(py::init<>())
         .def(
             "macro",
              [](model::Document* document, const QString& str){

@@ -50,38 +50,34 @@ pip install glaxnimate --extra-index-url https://gitlab.com/api/v4/projects/1992
 It provides a similar functionality as the script console but you can call it from python scripts, without the need
 of a GUI.
 
-Some functionality needs a Glaxnimate environment to run but that's easy to set up:
-
 ```python
 
 import glaxnimate
 
-# Set up environment
-with glaxnimate.environment.Headless():
-    # Create a document object
-    document = glaxnimate.model.Document("")
+# Create a document object
+document = glaxnimate.model.Document()
 
-    # Load a file
-    with open("MyFile.rawr", "rb") as input_file:
-        glaxnimate.io.registry.from_extension("rawr").load(document, input_file.read())
+# Load a file
+with open("MyFile.rawr", "rb") as input_file:
+    glaxnimate.io.registry.from_slug("glaxnimate").load(document, input_file.read())
 
 
-    # Add a layer
-    layer = document.main.add_shape("Layer")
+# Add a layer
+layer = document.main.add_shape("Layer")
 
-    # The fill will be applied to all following shapes in the same group / layer
-    fill = layer.add_shape("Fill")
-    fill.color.value = "#ff0000"
+# The fill will be applied to all following shapes in the same group / layer
+fill = layer.add_shape("Fill")
+fill.color.value = "#ff0000"
 
-    # A simple circle moving left and right
-    ellipse = layer.add_shape("Ellipse")
-    radius = 64
-    ellipse.position.set_keyframe(0, glaxnimate.utils.Point(radius, document.size.height / 2))
-    ellipse.position.set_keyframe(90, glaxnimate.utils.Point(document.size.width-radius, document.size.height / 2))
-    ellipse.position.set_keyframe(180, glaxnimate.utils.Point(radius, document.size.height / 2))
-    ellipse.size.value = glaxnimate.utils.Size(radius, radius)
+# A simple circle moving left and right
+ellipse = layer.add_shape("Ellipse")
+radius = 64
+ellipse.position.set_keyframe(0, glaxnimate.utils.Point(radius, document.size.height / 2))
+ellipse.position.set_keyframe(90, glaxnimate.utils.Point(document.size.width-radius, document.size.height / 2))
+ellipse.position.set_keyframe(180, glaxnimate.utils.Point(radius, document.size.height / 2))
+ellipse.size.value = glaxnimate.utils.Size(radius, radius)
 
-    # Write a file
-    with open("MyFile.json", "rb") as output_file:
-        output_file.write(glaxnimate.io.registry.from_extension("json").save(document))
+# Write a file
+with open("MyFile.json", "wb") as output_file:
+    output_file.write(glaxnimate.io.registry.from_slug("lottie").save(document))
 ```
