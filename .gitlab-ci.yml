@@ -219,6 +219,7 @@ release:
         # Copy release files into the release tag directory
         - mkdir artifacts
         - cd artifacts
+        - chmod 600 "$AUR_SSH_KEY"
         - rsync -a mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/release . -e "ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY"
         - mv release $CI_COMMIT_TAG
         - rsync -a $CI_COMMIT_TAG mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY"
@@ -258,6 +259,10 @@ release:check_deb:
         - release:check
     needs:
         - release:check
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y python3-pip
+        - pip3 install requests
     script:
         - ./deploy/release_check.py --package "Deb Package" --action check_hash
         - ./deploy/release_check.py --package "Deb Package" --action download
@@ -276,13 +281,32 @@ release:check_appimage:
         - release:check
     before_script:
         - apt-get update -qq
-        - apt-get install -y libfuse2 libgl1-mesa-dev libglib2.0-0
+        - apt-get install -y libfuse2 libgl1-mesa-dev libglib2.0-0 python3-pip
+        - pip3 install requests
     script:
         - ./deploy/release_check.py --package "Linux Appimage" --action check_hash
         - ./deploy/release_check.py --package "Linux Appimage" --action download
         - chmod a+x glaxnimate-x86_64.AppImage
         - glaxnimate-x86_64.AppImage --appimage-extract
         - ./deploy/check_package_version.sh ./glaxnimate-x86_64.AppImage
+
+release:check_pypi:
+    image: ubuntu:latest
+    stage: deploy
+    only:
+        - tags
+        - master
+    dependencies:
+        - release:check
+    needs:
+        - release:check
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y python3-pip
+    script:
+        - PYPI_VERSION="`./deploy/pypi_version_latest.sh`"
+        - pip3 install glaxnimate==$PYPI_VERSION
+        - ./deploy/pypi_version_check.py $PYPI_VERSION
 
 linux:snap_tag:
     #image: snapcore/snapcraft:stable
