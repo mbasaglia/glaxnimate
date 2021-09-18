@@ -107,12 +107,12 @@ parts:
             git clone https://github.com/FFmpeg/FFmpeg.git
             cd FFmpeg/
             ./configure --disable-static --enable-shared
-            make -j2
+            make -j4
             make install
             cd ..
             # build
             cmake $SNAPCRAFT_PART_SRC -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DQt5_DIR=/opt/qt514/lib/cmake/Qt5 -DCMAKE_PREFIX_PATH=/opt/qt514/lib/cmake/Qt5LinguistTools/
-            make -j2
+            make -j4
             make translations
             make install DESTDIR=$SNAPCRAFT_PART_INSTALL
         # I think there's a better way of doing this? but documentation isn't clear
