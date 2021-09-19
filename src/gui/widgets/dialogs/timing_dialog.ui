@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>glaxnimate::gui::TimingDialog</class>
+ <class>TimingDialog</class>
  <widget class="QDialog" name="TimingDialog">
   <property name="geometry">
    <rect>
@@ -103,9 +103,6 @@
       </item>
       <item>
        <widget class="QRadioButton" name="check_layer_scale">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="text">
          <string>Scale Timing</string>
         </property>

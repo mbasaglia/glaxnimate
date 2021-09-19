@@ -47,3 +47,10 @@ QString glaxnimate::model::AnimationContainer::type_name_human() const
 {
     return tr("Animation Timing");
 }
+
+void glaxnimate::model::AnimationContainer::stretch_time(qreal multiplier)
+{
+    Object::stretch_time(multiplier);
+    first_frame.set(first_frame.get() * multiplier);
+    last_frame.set(last_frame.get() * multiplier);
+}

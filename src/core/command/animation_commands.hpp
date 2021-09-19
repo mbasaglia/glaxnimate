@@ -4,6 +4,8 @@
 
 #include "command/base.hpp"
 #include "model/animation/animatable.hpp"
+#include "model/document.hpp"
+#include "model/object.hpp"
 
 namespace glaxnimate::command {
 
@@ -191,6 +193,34 @@ private:
     int keyframe_index_after = -1;
     model::FrameTime time_before;
     model::FrameTime time_after;
+};
+
+template<class T>
+class StretchTimeCommand: public QUndoCommand
+{
+public:
+    /**
+     * \pre multiplier > 0
+     */
+    StretchTimeCommand(T* target, qreal multiplier)
+        : QUndoCommand(QObject::tr("Stretch Time")),
+          target(target),
+          multiplier(multiplier)
+    {}
+
+    void undo() override
+    {
+        target->stretch_time(1/multiplier);
+    }
+
+    void redo() override
+    {
+        target->stretch_time(multiplier);
+    }
+
+private:
+    T* target;
+    qreal multiplier;
 };
 
 

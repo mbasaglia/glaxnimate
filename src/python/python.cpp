@@ -361,7 +361,17 @@ void register_py_module(py::module& glaxnimate_module)
     define_io(glaxnimate_module);
 
     py::module model = glaxnimate_module.def_submodule("model", "");
-    py::class_<model::Object, QObject>(model, "Object");
+    py::class_<model::Object, QObject>(model, "Object")
+        .def(
+            "stretch_time",
+            [](model::Object* object, double multiplier){
+                if ( multiplier > 0 )
+                    object->push_command(new command::StretchTimeCommand(object, multiplier));
+            },
+            py::arg("multiplier"),
+            "Stretches animation timings by the given factor"
+        )
+    ;
 
     py::class_<command::UndoMacroGuard>(model, "UndoMacroGuard")
         .def("__enter__", &command::UndoMacroGuard::start)
@@ -387,7 +397,16 @@ void register_py_module(py::module& glaxnimate_module)
             },
             py::return_value_policy::take_ownership,
             "Context manager to group changes into a single undo command"
-        );
+        )
+        .def(
+            "stretch_time",
+            [](model::Document* document, double multiplier){
+                if ( multiplier > 0 )
+                    document->push_command(new command::StretchTimeCommand(document, multiplier));
+            },
+            py::arg("multiplier"),
+            "Stretches animation timings by the given factor"
+        )
     ;
 
     register_from_meta<model::VisualNode, model::DocumentNode>(model);

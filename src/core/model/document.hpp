@@ -73,6 +73,8 @@ public:
 
     model::CompGraph& comp_graph();
 
+    void stretch_time(qreal multiplier);
+
 signals:
     void filename_changed(const QString& n);
     void current_time_changed(FrameTime t);

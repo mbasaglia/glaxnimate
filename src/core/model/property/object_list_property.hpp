@@ -76,6 +76,7 @@ protected:
 };
 
 namespace detail {
+
 template<class Type>
 class ObjectListProperty : public ObjectListPropertyBase
 {
@@ -275,7 +276,7 @@ public:
         return res;
     }
 
-    virtual bool is_valid_reference_value(model::DocumentNode * value, bool allow_null) const override
+    bool is_valid_reference_value(model::DocumentNode * value, bool allow_null) const override
     {
         if ( !value )
             return allow_null;
@@ -284,6 +285,12 @@ public:
             if ( c.get() == value )
                 return true;
         return false;
+    }
+
+    void stretch_time(qreal multiplier) override
+    {
+        for ( const auto& object : objects )
+            object->stretch_time(multiplier);
     }
 
 protected:

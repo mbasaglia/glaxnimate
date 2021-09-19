@@ -179,6 +179,11 @@ public:
         return set_value(prop->value());
     }
 
+    /**
+     * \brief Stretches animations by the given amount
+     */
+    virtual void stretch_time(qreal multiplier) { Q_UNUSED(multiplier); }
+
     const QString& name() const
     {
         return name_;

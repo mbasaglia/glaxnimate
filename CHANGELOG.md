@@ -1,3 +1,12 @@
+## 0.4.6
+
+* Editing
+    * Added support for stretching time on the timing dialog
+* Scripting:
+    * Ability to stretch time for documents and individual objects
+* Bug Fixes:
+    * The timing dialog honours "Keep initial timing"
+
 ## 0.4.5
 
 * Editing:

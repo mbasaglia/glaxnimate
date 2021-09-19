@@ -277,3 +277,11 @@ void glaxnimate::model::Document::increase_node_name(const QString& new_name)
         d->increase(d->name_index(new_name));
 }
 
+
+void glaxnimate::model::Document::stretch_time(qreal multiplier)
+{
+    qreal time = d->current_time;
+    d->main.stretch_time(multiplier);
+    d->assets.stretch_time(multiplier);
+    set_current_time(qRound(time * multiplier));
+}

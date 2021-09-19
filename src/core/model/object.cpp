@@ -150,3 +150,11 @@ glaxnimate::model::FrameTime glaxnimate::model::Object::time() const
 {
     return d->current_time;
 }
+
+void glaxnimate::model::Object::stretch_time(qreal multiplier)
+{
+    for ( const auto& prop : d->prop_order )
+        prop->stretch_time(multiplier);
+
+    d->current_time *= multiplier;
+}

@@ -94,6 +94,8 @@ public:
     template<class T> const T* cast() const { return qobject_cast<const T*>(this); }
     template<class T> bool is_instance() const { return metaObject()->inherits(&T::staticMetaObject); }
 
+    virtual void stretch_time(qreal multiplier);
+
 signals:
     void property_changed(const model::BaseProperty* prop, const QVariant& value);
     void visual_property_changed(const model::BaseProperty* prop, const QVariant& value);

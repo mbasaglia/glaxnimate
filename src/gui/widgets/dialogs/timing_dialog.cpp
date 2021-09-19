@@ -6,6 +6,7 @@
 #include <QEvent>
 
 #include "command/undo_macro_guard.hpp"
+#include "command/animation_commands.hpp"
 #include "model/simple_visitor.hpp"
 
 using namespace glaxnimate::gui;
@@ -70,15 +71,31 @@ void TimingDialog::btn_clicked(QAbstractButton* button)
 
     if ( d->changed )
     {
-        command::UndoMacroGuard guard(tr("Change Animation Properties"), d->document);
 
         qreal last_frame = d->document->main()->animation->first_frame.get() + d->ui.spin_frames->value();
-        d->document->main()->animation->last_frame.set_undoable(last_frame);
+        command::UndoMacroGuard guard(tr("Change Animation Properties"), d->document);
 
-        model::simple_visit<model::Layer>(d->document->main(), true, [last_frame](model::Layer* layer){
-            if ( layer->animation->last_frame.get() > last_frame )
-                layer->animation->last_frame.set(last_frame);
-        });
+        if ( d->ui.check_layer_scale->isChecked() )
+        {
+            if ( last_frame != 0 )
+            {
+                qreal multiplier = last_frame / d->document->main()->animation->last_frame.get();
+                d->document->push_command(new command::StretchTimeCommand(d->document, multiplier));
+            }
+        }
+        else
+        {
+
+            d->document->main()->animation->last_frame.set_undoable(last_frame);
+
+            if ( d->ui.check_layer_trim->isChecked() )
+            {
+                model::simple_visit<model::Layer>(d->document->main(), true, [last_frame](model::Layer* layer){
+                    if ( layer->animation->last_frame.get() > last_frame )
+                        layer->animation->last_frame.set(last_frame);
+                });
+            }
+        }
 
         d->document->main()->fps.set(d->ui.spin_fps->value());
     }

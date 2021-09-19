@@ -33,6 +33,8 @@ public:
 
     QString type_name_human() const override;
 
+    void stretch_time(qreal multiplier) override;
+
 signals:
     void first_frame_changed(float);
     void last_frame_changed(float);

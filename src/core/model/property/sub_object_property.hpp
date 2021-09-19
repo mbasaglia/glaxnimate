@@ -89,6 +89,11 @@ public:
         sub_obj.transfer(doc);
     }
 
+    void stretch_time(qreal multiplier) override
+    {
+        sub_obj.stretch_time(multiplier);
+    }
+
 private:
     Type sub_obj;
 };

@@ -49,6 +49,11 @@ public:
         emit transition_changed(transition_.before_descriptive(), transition_.after_descriptive());
     }
 
+    void stretch_time(qreal multiplier)
+    {
+        time_ *= multiplier;
+    }
+
 signals:
     void transition_changed(KeyframeTransition::Descriptive before, KeyframeTransition::Descriptive after);
 
@@ -264,7 +269,6 @@ protected:
     MidTransition do_mid_transition(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio, int index) const;
     virtual QVariant do_mid_transition_value(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio) const = 0;
 
-private:
     FrameTime current_time = 0;
 };
 
@@ -677,6 +681,17 @@ public:
 
     iterator begin() const { return iterator{this, 0}; }
     iterator end() const { return iterator{this, int(keyframes_.size())}; }
+
+    void stretch_time(qreal multiplier) override
+    {
+        for ( std::size_t i = 0; i < keyframes_.size(); i++ )
+        {
+            keyframes_[i]->stretch_time(multiplier);
+            emit keyframe_updated(i, keyframes_[i].get());
+        }
+
+        current_time *= multiplier;
+    }
 
 protected:
     void on_set_time(FrameTime time) override
