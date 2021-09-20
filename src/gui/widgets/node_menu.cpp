@@ -1,6 +1,7 @@
 #include "node_menu.hpp"
 
 #include <QDesktopServices>
+#include <QInputDialog>
 
 #include "model/shapes/group.hpp"
 #include "model/shapes/image.hpp"
@@ -362,6 +363,21 @@ void actions_text(QMenu* menu, model::TextShape* text)
     })->setEnabled(text->path.get());
 }
 
+
+void time_stretch_dialog(model::Object* object, QWidget* parent)
+{
+    QInputDialog dialog(parent);
+    dialog.setInputMode(QInputDialog::DoubleInput);
+    dialog.setDoubleMinimum(0.001);
+    dialog.setDoubleMaximum(999);
+    dialog.setDoubleValue(1);
+    dialog.setDoubleDecimals(3);
+    dialog.setWindowTitle(NodeMenu::tr("Stretch time"));
+    dialog.setLabelText(NodeMenu::tr("Speed Multiplier"));
+    if ( dialog.exec() )
+        object->push_command(new command::StretchTimeCommand(object, 1/dialog.doubleValue()));
+}
+
 } // namespace
 
 
@@ -440,4 +456,7 @@ NodeMenu::NodeMenu(model::DocumentNode* node, GlaxnimateWindow* window, QWidget*
         actions_bitmap(this, window, image, nullptr);
     }
 
+
+    addSeparator();
+    addAction(QIcon::fromTheme("speedometer"), tr("Change speed"), this, [node, parent]{ time_stretch_dialog(node, parent); });
 }
