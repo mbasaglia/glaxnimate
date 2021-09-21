@@ -23,6 +23,7 @@ public:
 
 protected:
     void changeEvent ( QEvent* e ) override;
+    void showEvent(QShowEvent* e) override;
 
 private:
     class Private;

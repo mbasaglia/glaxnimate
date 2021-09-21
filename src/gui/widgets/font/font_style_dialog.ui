@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>glaxnimate::gui::font::FontStyleDialog</class>
- <widget class="QDialog" name="font::FontStyleDialog">
+ <widget class="QDialog" name="glaxnimate::gui::font::FontStyleDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,7 +14,8 @@
    <string>Font Style</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="dialog-text-and-font"/>
+   <iconset theme="dialog-text-and-font">
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="10,4,0">
    <item>
@@ -24,7 +25,7 @@
      </property>
      <widget class="QWidget" name="tab_system">
       <attribute name="title">
-       <string>Font</string>
+       <string>System</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -36,6 +37,31 @@
           </sizepolicy>
          </property>
         </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_google">
+      <attribute name="title">
+       <string>Google Fonts</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="glaxnimate::gui::font::GoogleFontsWidget" name="google_fonts_widget" native="true"/>
        </item>
       </layout>
      </widget>
@@ -79,13 +105,19 @@
     <signal>font_changed(QFont)</signal>
    </slots>
   </customwidget>
+  <customwidget>
+   <class>glaxnimate::gui::font::GoogleFontsWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/font/google_fonts_widget.hpp</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>font::FontStyleDialog</receiver>
+   <receiver>glaxnimate::gui::font::FontStyleDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -101,7 +133,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>font::FontStyleDialog</receiver>
+   <receiver>glaxnimate::gui::font::FontStyleDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

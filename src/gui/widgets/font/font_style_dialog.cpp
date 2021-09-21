@@ -2,13 +2,9 @@
 #include "ui_font_style_dialog.h"
 
 #include <QEvent>
-
 #include "app/widgets/no_close_on_enter.hpp"
 
-using namespace glaxnimate::gui;
-using namespace glaxnimate;
-
-class font::FontStyleDialog::Private
+class glaxnimate::gui::font::FontStyleDialog::Private
 {
 public:
     Ui::FontStyleDialog ui;
@@ -16,16 +12,16 @@ public:
 };
 
 
-font::FontStyleDialog::FontStyleDialog(QWidget* parent)
+glaxnimate::gui::font::FontStyleDialog::FontStyleDialog(QWidget* parent)
     : QDialog(parent), d(std::make_unique<Private>())
 {
     d->ui.setupUi(this);
     installEventFilter(&d->ncoe);
 }
 
-font::FontStyleDialog::~FontStyleDialog() = default;
+glaxnimate::gui::font::FontStyleDialog::~FontStyleDialog() = default;
 
-void font::FontStyleDialog::changeEvent ( QEvent* e )
+void glaxnimate::gui::font::FontStyleDialog::changeEvent ( QEvent* e )
 {
     QDialog::changeEvent(e);
 
@@ -35,28 +31,33 @@ void font::FontStyleDialog::changeEvent ( QEvent* e )
     }
 }
 
-const QFont& font::FontStyleDialog::font() const
+const QFont& glaxnimate::gui::font::FontStyleDialog::font() const
 {
     return d->ui.widget_system->font();
 }
 
-void font::FontStyleDialog::set_font(const QFont& font)
+void glaxnimate::gui::font::FontStyleDialog::set_font(const QFont& font)
 {
     d->ui.widget_system->set_font(font);
 }
 
-void font::FontStyleDialog::set_preview_text(const QString& text)
+void glaxnimate::gui::font::FontStyleDialog::set_preview_text(const QString& text)
 {
     d->ui.preview->set_text(text);
 }
 
-QStringList font::FontStyleDialog::favourites() const
+QStringList glaxnimate::gui::font::FontStyleDialog::favourites() const
 {
     return d->ui.widget_system->model().favourites();
 }
 
-void font::FontStyleDialog::set_favourites(const QStringList& fav)
+void glaxnimate::gui::font::FontStyleDialog::set_favourites(const QStringList& fav)
 {
     d->ui.widget_system->model().set_favourites(fav);
 }
 
+void glaxnimate::gui::font::FontStyleDialog::showEvent(QShowEvent* e)
+{
+    QDialog::showEvent(e);
+    d->ui.tab_google->setEnabled(d->ui.google_fonts_widget->model().has_token());
+}

@@ -25,6 +25,7 @@ item_models/document_model_base.cpp
 settings/clipboard_settings.cpp
 settings/toolbar_settings.cpp
 settings/document_templates.cpp
+settings/api_credentials.cpp
 
 style/property_delegate.cpp
 style/dock_widget_style.cpp
@@ -115,6 +116,9 @@ widgets/font/font_style_dialog.cpp
 widgets/font/font_style_dialog.ui
 widgets/font/font_style_widget.cpp
 widgets/font/font_style_widget.ui
+widgets/font/google_fonts_model.cpp
+widgets/font/google_fonts_widget.cpp
+widgets/font/google_fonts_widget.ui
 )
 
 if ( NOT ANDROID )
