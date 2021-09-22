@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <QUrl>
 
-#include "utils/qstring_hash.hpp"
+#include "app/utils/qstring_hash.hpp"
 #include "app/settings/custom_settings_group.hpp"
 
 

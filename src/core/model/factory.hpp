@@ -6,7 +6,7 @@
 
 #include <QMetaObject>
 
-#include "utils/qstring_hash.hpp"
+#include "app/utils/qstring_hash.hpp"
 
 namespace glaxnimate::model {
 

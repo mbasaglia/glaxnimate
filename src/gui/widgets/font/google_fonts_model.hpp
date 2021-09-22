@@ -1,10 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 
 #include <QAbstractTableModel>
 #include <QUrl>
 #include <QRawFont>
+
+#include "app/utils/qstring_hash.hpp"
 
 
 namespace glaxnimate::gui::font {
