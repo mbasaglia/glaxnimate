@@ -376,7 +376,7 @@ public:
         QFont::Style font_style = db.italic(font_info.family(), font_info.styleName()) ? QFont::StyleItalic : QFont::StyleNormal;
 
         // Convert weight
-        weight = detail::WeightConverter::convert(weight, detail::WeightConverter::qt, detail::WeightConverter::css);
+        weight = WeightConverter::convert(weight, WeightConverter::qt, WeightConverter::css);
 
         style["font-family"] = font_info.family();
         style["font-size"] = QString("%1pt").arg(font_info.pointSizeF());

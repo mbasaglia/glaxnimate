@@ -1364,9 +1364,9 @@ public:
                 out.size = parse_unit(size);
         }
 
-        if ( style.contains("font-size") )
+        if ( style.contains("font-weight") )
         {
-            QString weight = style["font-size"];
+            QString weight = style["font-weight"];
             if ( weight == "bold" )
                 out.weight = 700;
             else if ( weight == "normal" )
@@ -1408,7 +1408,7 @@ public:
         font->size.set(unit_convert(style.size, "px", "pt"));
         QFont qfont;
         qfont.setFamily(style.family);
-        qfont.setWeight(detail::WeightConverter::convert(style.weight, detail::WeightConverter::css, detail::WeightConverter::qt));
+        qfont.setWeight(WeightConverter::convert(style.weight, WeightConverter::css, WeightConverter::qt));
         qfont.setStyle(style.style);
         QFontDatabase db;
         font->style.set(db.styleString(qfont));

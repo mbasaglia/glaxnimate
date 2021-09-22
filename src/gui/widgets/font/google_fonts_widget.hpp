@@ -18,6 +18,9 @@ public:
 
     const GoogleFontsModel& model() const;
 
+signals:
+    void font_changed(const QFont& font);
+
 protected:
     void changeEvent ( QEvent* e ) override;
     void showEvent(QShowEvent* e) override;

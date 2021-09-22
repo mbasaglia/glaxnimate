@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>753</width>
+    <width>834</width>
     <height>659</height>
    </rect>
   </property>
@@ -21,7 +21,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_system">
       <attribute name="title">
@@ -110,6 +110,9 @@
    <extends>QWidget</extends>
    <header>widgets/font/google_fonts_widget.hpp</header>
    <container>1</container>
+   <slots>
+    <signal>font_changed(QFont)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -121,11 +124,11 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>933</x>
-     <y>650</y>
+     <x>746</x>
+     <y>652</y>
     </hint>
     <hint type="destinationlabel">
-     <x>977</x>
+     <x>833</x>
      <y>658</y>
     </hint>
    </hints>
@@ -159,6 +162,22 @@
     <hint type="destinationlabel">
      <x>610</x>
      <y>525</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>google_fonts_widget</sender>
+   <signal>font_changed(QFont)</signal>
+   <receiver>preview</receiver>
+   <slot>set_font(QFont)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>173</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>206</x>
+     <y>494</y>
     </hint>
    </hints>
   </connection>

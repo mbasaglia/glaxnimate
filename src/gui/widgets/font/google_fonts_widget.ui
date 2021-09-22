@@ -6,12 +6,123 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>736</width>
+    <height>566</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout" columnstretch="20,5,5">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Font</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Font Style</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLineEdit" name="edit_family"/>
+   </item>
+   <item row="1" column="1" rowspan="2">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QListWidget" name="view_style"/>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Filters</string>
+       </property>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Writing System</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="combo_system">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Category</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="combo_category">
+          <item>
+           <property name="text">
+            <string>Any</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Display</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Handwriting</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Monospace</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sans Serif</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Serif</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="2">
+    <widget class="QDoubleSpinBox" name="spin_size">
+     <property name="decimals">
+      <number>0</number>
+     </property>
+     <property name="minimum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1000.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
     <widget class="QTableView" name="view_google_fonts">
      <property name="alternatingRowColors">
       <bool>true</bool>
@@ -30,7 +141,10 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="2" column="2">
+    <widget class="QListView" name="view_size"/>
+   </item>
+   <item row="3" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="label_google_error">
