@@ -182,6 +182,7 @@ public:
     Q_INVOKABLE glaxnimate::model::GradientColors* add_gradient_colors(int index = -1);
     Q_INVOKABLE glaxnimate::model::Gradient* add_gradient(int index = -1);
     Q_INVOKABLE glaxnimate::model::EmbeddedFont* add_font(const QByteArray& ttf_data);
+    Q_INVOKABLE glaxnimate::model::EmbeddedFont* font_by_index(int database_index) const;
 
     DocumentNode* docnode_parent() const override;
     int docnode_child_count() const override;

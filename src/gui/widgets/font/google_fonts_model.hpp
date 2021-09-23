@@ -79,8 +79,6 @@ public:
     GoogleFontsModel();
     ~GoogleFontsModel();
 
-    QString style_name(const GoogleFont::Style& slug) const;
-
     void refresh();
     bool has_token() const;
 

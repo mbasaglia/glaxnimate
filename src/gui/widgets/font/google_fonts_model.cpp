@@ -342,26 +342,6 @@ void glaxnimate::gui::font::GoogleFontsModel::download_font(int row)
     d->download_font(d->fonts[row], row);
 }
 
-/*
-void glaxnimate::gui::font::GoogleFontsModel::download_font(const QString& family)
-{
-    auto it = d->font_names.find(family);
-    if ( it == d->font_names.end() )
-        return;
-
-    auto& font = d->fonts[it->second];
-    d->download_font(font, it->second);
-}
-
-const glaxnimate::gui::font::GoogleFontsModel::GoogleFont* glaxnimate::gui::font::GoogleFontsModel::font(const QString& family) const
-{
-    auto it = d->font_names.find(family);
-    if ( it == d->font_names.end() )
-        return nullptr;
-
-    return &d->fonts[it->second];
-}
-*/
 const glaxnimate::gui::font::GoogleFontsModel::GoogleFont* glaxnimate::gui::font::GoogleFontsModel::font(int row) const
 {
     if ( row < 0 || row >= int(d->fonts.size()) )
@@ -370,28 +350,3 @@ const glaxnimate::gui::font::GoogleFontsModel::GoogleFont* glaxnimate::gui::font
     return &d->fonts[row];
 }
 
-
-QString glaxnimate::gui::font::GoogleFontsModel::style_name(const GoogleFont::Style& style) const
-{
-    QString italic = style.italic ? tr("Italic") : "";
-
-    if ( style.weight == 0 && style.italic )
-        return italic;
-
-    QString weight_name;
-    switch ( style.weight )
-    {
-        case 100: weight_name = tr("Thin"); break;
-        case 200: weight_name = tr("Extra-Light"); break;
-        case 300: weight_name = tr("Light"); break;
-        case 400: weight_name = tr("Regular"); break;
-        case 500: weight_name = tr("Medium"); break;
-        case 600: weight_name = tr("Semi-Bold"); break;
-        case 700: weight_name = tr("Bold"); break;
-        case 800: weight_name = tr("Extra-Bold"); break;
-        case 900: weight_name = tr("Black"); break;
-    }
-
-    //: %1 is the weight (Bold), %2 is "Italic" when needed
-    return tr("%1 %2").arg(weight_name).arg(italic).trimmed();
-}

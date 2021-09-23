@@ -113,7 +113,12 @@ public:
             model.set_favourites(faves);
 
             if ( ok )
+            {
+                auto custom = dialog->custom_font();
+                if ( custom.is_valid() )
+                    emit parent->custom_font_selected(custom.database_index());
                 parent->set_font(dialog->font());
+            }
         });
         grid->addWidget(button, row++, 0, 1, 2);
 

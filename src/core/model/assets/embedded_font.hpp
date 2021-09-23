@@ -43,6 +43,7 @@ public:
     QString style_name() const;
     int database_index() const;
     QFont font(int size) const;
+    QByteArray data() const;
 
 private:
     CustomFontDatabase::DataPtr d;

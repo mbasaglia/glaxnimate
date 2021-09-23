@@ -39,6 +39,7 @@ const QFont& glaxnimate::gui::font::FontStyleDialog::font() const
 void glaxnimate::gui::font::FontStyleDialog::set_font(const QFont& font)
 {
     d->ui.widget_system->set_font(font);
+    d->ui.google_fonts_widget->set_font_size(font.pointSizeF());
 }
 
 void glaxnimate::gui::font::FontStyleDialog::set_preview_text(const QString& text)
@@ -60,4 +61,12 @@ void glaxnimate::gui::font::FontStyleDialog::showEvent(QShowEvent* e)
 {
     QDialog::showEvent(e);
     d->ui.tab_google->setEnabled(d->ui.google_fonts_widget->model().has_token());
+}
+
+glaxnimate::model::CustomFont glaxnimate::gui::font::FontStyleDialog::custom_font() const
+{
+    if ( d->ui.tab_widget->currentWidget() == d->ui.tab_google )
+        return d->ui.google_fonts_widget->custom_font();
+
+    return {};
 }

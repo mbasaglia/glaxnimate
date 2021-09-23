@@ -3,6 +3,7 @@
 
 #include <QEvent>
 #include <QSortFilterProxyModel>
+
 #include "io/svg/font_weight.hpp"
 
 
@@ -27,9 +28,9 @@ public:
 
         for ( const auto& style : font->styles )
         {
-            auto item = new QListWidgetItem(model.style_name(style));
-            item->setData(Qt::UserRole, style.weight);
-            item->setData(Qt::UserRole+1, style.italic);
+            auto item = new QListWidgetItem(style.font.style_name());
+//             item->setData(Qt::UserRole, style.weight);
+//             item->setData(Qt::UserRole+1, style.italic);
             ui.view_style->addItem(item);
             int score = style.score(current_weight, current_italic);
 
@@ -103,6 +104,8 @@ glaxnimate::gui::font::GoogleFontsWidget::GoogleFontsWidget(QWidget* parent)
         else
             d->set_active_font(font);
     });
+
+    connect(d->ui.view_style->selectionModel(), &QItemSelectionModel::currentChanged, this, &GoogleFontsWidget::change_style);
 }
 
 glaxnimate::gui::font::GoogleFontsWidget::~GoogleFontsWidget() = default;
@@ -127,4 +130,32 @@ void glaxnimate::gui::font::GoogleFontsWidget::showEvent(QShowEvent* e)
 const glaxnimate::gui::font::GoogleFontsModel & glaxnimate::gui::font::GoogleFontsWidget::model() const
 {
     return d->model;
+}
+
+void glaxnimate::gui::font::GoogleFontsWidget::change_style(const QModelIndex& index)
+{
+    if ( index.isValid() )
+    {
+        d->current_font.setStyleName(index.data(Qt::DisplayRole).toString());
+        emit font_changed(d->current_font);
+    }
+}
+
+void glaxnimate::gui::font::GoogleFontsWidget::set_font_size(double size)
+{
+    d->ui.size_widget->set_font_size(size);
+}
+
+glaxnimate::model::CustomFont glaxnimate::gui::font::GoogleFontsWidget::custom_font() const
+{
+    int font_row = d->proxy_model.mapToSource(d->ui.view_google_fonts->currentIndex()).row();
+    auto font = d->model.font(font_row);
+    if ( !font )
+        return {};
+
+    auto style_row = d->ui.view_style->currentRow();
+    if ( style_row < 0 || style_row >= int(font->styles.size()) )
+        return {};
+
+    return font->styles[style_row].font;
 }

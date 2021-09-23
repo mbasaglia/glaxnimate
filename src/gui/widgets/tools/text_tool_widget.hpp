@@ -20,6 +20,7 @@ public:
 
 signals:
     void font_changed(const QFont& font);
+    void custom_font_selected(int database_index);
 
 private:
     void on_font_changed();

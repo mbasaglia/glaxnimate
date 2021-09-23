@@ -18,12 +18,19 @@ public:
 
     const GoogleFontsModel& model() const;
 
+    void set_font_size(double size);
+
+    model::CustomFont custom_font() const;
+
 signals:
     void font_changed(const QFont& font);
 
 protected:
     void changeEvent ( QEvent* e ) override;
     void showEvent(QShowEvent* e) override;
+
+private slots:
+    void change_style(const QModelIndex& index);
 
 private:
     class Private;

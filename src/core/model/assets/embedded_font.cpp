@@ -13,16 +13,18 @@ class glaxnimate::model::CustomFontDatabase::CustomFontData
 public:
     CustomFontData() = default;
 
-    CustomFontData(const QRawFont& font, int database_index, const QByteArray& data_hash)
+    CustomFontData(const QRawFont& font, int database_index, const QByteArray& data_hash, const QByteArray& data)
         : font(font),
         database_index(database_index),
-        data_hash(data_hash)
+        data_hash(data_hash),
+        data(data)
     {}
 
 
     QRawFont font;
     int database_index = -1;
     QByteArray data_hash;
+    QByteArray data;
 };
 
 class glaxnimate::model::CustomFontDatabase::Private
@@ -67,7 +69,7 @@ public:
 
         hashes[hash] = index;
 
-        auto ptr = std::make_shared<CustomFontData>(raw, index, hash);
+        auto ptr = std::make_shared<CustomFontData>(raw, index, hash, data);
         fonts.emplace(index, ptr);
         return ptr;
     }
@@ -163,6 +165,12 @@ QFont glaxnimate::model::CustomFont::font(int size) const
     return font;
 }
 
+QByteArray glaxnimate::model::CustomFont::data() const
+{
+    return d->data;
+}
+
+
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::EmbeddedFont)
 
 
@@ -212,3 +220,4 @@ void glaxnimate::model::EmbeddedFont::on_data_changed()
 {
     custom_font_ = CustomFontDatabase::instance().add_font(data.get());
 }
+

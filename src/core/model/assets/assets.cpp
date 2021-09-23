@@ -185,9 +185,18 @@ glaxnimate::model::EmbeddedFont* glaxnimate::model::Assets::add_font(const QByte
 {
     auto font = std::make_unique<glaxnimate::model::EmbeddedFont>(document());
     font->data.set(ttf_data);
+    if ( auto old = font_by_index(font->database_index()) )
+        return old;
     auto ptr = font.get();
     push_command(new command::AddObject(&fonts->values, std::move(font), fonts->values.size()));
     return ptr;
 }
 
 
+glaxnimate::model::EmbeddedFont * glaxnimate::model::Assets::font_by_index(int database_index) const
+{
+    for ( const auto& font : fonts->values )
+        if ( font->database_index() == database_index )
+            return font.get();
+    return nullptr;
+}
