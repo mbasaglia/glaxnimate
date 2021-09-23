@@ -59,6 +59,7 @@ model/assets/gradient.cpp
 model/assets/asset_base.cpp
 model/assets/asset.cpp
 model/assets/precomposition.cpp
+model/assets/embedded_font.cpp
 
 model/shapes/shape.cpp
 model/shapes/fill.cpp

@@ -109,19 +109,6 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="2">
-    <widget class="QDoubleSpinBox" name="spin_size">
-     <property name="decimals">
-      <number>0</number>
-     </property>
-     <property name="minimum">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>1000.000000000000000</double>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0">
     <widget class="QTableView" name="view_google_fonts">
      <property name="alternatingRowColors">
@@ -140,9 +127,6 @@
       <bool>true</bool>
      </property>
     </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QListView" name="view_size"/>
    </item>
    <item row="3" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -169,8 +153,19 @@
      </item>
     </layout>
    </item>
+   <item row="1" column="2" rowspan="2">
+    <widget class="glaxnimate::gui::font::FontSizeWidget" name="widget" native="true"/>
+   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>glaxnimate::gui::font::FontSizeWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/font/font_size_widget.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

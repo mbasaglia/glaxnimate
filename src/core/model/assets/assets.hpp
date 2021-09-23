@@ -7,6 +7,7 @@
 #include "bitmap.hpp"
 #include "gradient.hpp"
 #include "precomposition.hpp"
+#include "embedded_font.hpp"
 
 
 namespace glaxnimate::model {
@@ -148,6 +149,18 @@ signals:
     void precomp_added(model::Precomposition* obj, int position);
 };
 
+class FontList : public AssetListBase<EmbeddedFont, FontList>
+{
+    GLAXNIMATE_OBJECT(FontList)
+    ASSET_LIST_CLASS(EmbeddedFont)
+
+public:
+    QIcon tree_icon() const override { return QIcon::fromTheme("font"); }
+
+protected:
+    QString type_name_human() const override { return tr("Fonts"); }
+};
+
 
 class Assets : public DocumentNode
 {
@@ -158,6 +171,7 @@ class Assets : public DocumentNode
     GLAXNIMATE_SUBOBJECT(GradientColorsList, gradient_colors)
     GLAXNIMATE_SUBOBJECT(GradientList, gradients)
     GLAXNIMATE_SUBOBJECT(PrecompositionList, precompositions)
+    GLAXNIMATE_SUBOBJECT(FontList, fonts)
 
 public:
     using DocumentNode::DocumentNode;
@@ -167,6 +181,7 @@ public:
     Q_INVOKABLE glaxnimate::model::Bitmap* add_image(const QImage& image, const QString& store_as = "png");
     Q_INVOKABLE glaxnimate::model::GradientColors* add_gradient_colors(int index = -1);
     Q_INVOKABLE glaxnimate::model::Gradient* add_gradient(int index = -1);
+    Q_INVOKABLE glaxnimate::model::EmbeddedFont* add_font(const QByteArray& ttf_data);
 
     DocumentNode* docnode_parent() const override;
     int docnode_child_count() const override;

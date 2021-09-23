@@ -451,11 +451,13 @@ void register_py_module(py::module& glaxnimate_module)
     register_constructible<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::GradientType>{});
     register_constructible<model::Bitmap, model::Asset>(defs);
     register_constructible<model::Precomposition, model::Composition, model::AssetBase>(defs);
+    register_from_meta<model::EmbeddedFont, model::Asset>(defs);
     register_from_meta<model::BitmapList, model::DocumentNode>(defs);
     register_from_meta<model::NamedColorList, model::DocumentNode>(defs);
     register_from_meta<model::GradientList, model::DocumentNode>(defs);
     register_from_meta<model::GradientColorsList, model::DocumentNode>(defs);
     register_from_meta<model::PrecompositionList, model::DocumentNode>(defs);
+    register_from_meta<model::FontList, model::DocumentNode>(defs);
     register_from_meta<model::Assets, model::DocumentNode>(defs);
 
     register_from_meta<model::Shape, model::ShapeElement>(shapes);

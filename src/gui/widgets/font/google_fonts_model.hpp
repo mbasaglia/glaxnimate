@@ -8,6 +8,7 @@
 #include <QRawFont>
 
 #include "app/utils/qstring_hash.hpp"
+#include "model/assets/embedded_font.hpp"
 
 
 namespace glaxnimate::gui::font {
@@ -43,8 +44,7 @@ public:
             QUrl url;
             int weight = 400;
             bool italic = false;
-            int font_database_index = -1;
-            QString font_database_family = {};
+            model::CustomFont font;
 
             int score(int weight, bool italic) const
             {

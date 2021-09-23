@@ -20,7 +20,7 @@ public:
     std::vector<GoogleFont> fonts;
 //     std::unordered_map<QString, std::size_t> font_names;
     QNetworkAccessManager downloader;
-    std::unordered_map<QString, std::map<std::pair<int, bool>, int>> downloaded;
+    std::unordered_map<QString, std::map<std::pair<int, bool>, model::CustomFont>> downloaded;
 
     bool response_has_error(QNetworkReply* reply)
     {
@@ -58,7 +58,7 @@ public:
             font.family = font_json["family"].toString();
             font.popularity_index = ++pop;
 
-            std::map<std::pair<int, bool>, int>* downloaded_font = nullptr;
+            std::map<std::pair<int, bool>, model::CustomFont>* downloaded_font = nullptr;
             auto downloaded_font_iter = downloaded.find(font.family);
             if ( downloaded_font_iter != downloaded.end() )
                 downloaded_font = &downloaded_font_iter->second;
@@ -86,11 +86,7 @@ public:
                 {
                     auto downloaded_style_iter = downloaded_font->find({style.weight, style.italic});
                     if ( downloaded_style_iter != downloaded_font->end() )
-                    {
-                        int db_index = downloaded_style_iter->second;
-                        style.font_database_index = db_index;
-                        style.font_database_family = QFontDatabase::applicationFontFamilies(db_index)[0];
-                    }
+                        style.font = downloaded_style_iter->second;
                 }
             }
 
@@ -154,9 +150,8 @@ public:
             {
                 auto data = reply->readAll();
                 reply->close();
-                int db_index = QFontDatabase::addApplicationFontFromData(data);
-                style->font_database_index = db_index;
-                if ( db_index == -1 )
+                style->font = model::CustomFontDatabase::instance().add_font(data);
+                if ( !style->font.is_valid() )
                 {
                     font->status = GoogleFont::Broken;
                     font_changed(font_index);
@@ -164,8 +159,7 @@ public:
                 }
                 else
                 {
-                    downloaded[font->family][{style->weight, style->italic}] = db_index;
-                    style->font_database_family = QFontDatabase::applicationFontFamilies(db_index)[0];
+                    downloaded[font->family][{style->weight, style->italic}] = style->font;
                 }
             }
 

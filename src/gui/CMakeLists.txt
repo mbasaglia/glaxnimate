@@ -119,6 +119,8 @@ widgets/font/font_style_widget.ui
 widgets/font/google_fonts_model.cpp
 widgets/font/google_fonts_widget.cpp
 widgets/font/google_fonts_widget.ui
+widgets/font/font_size_widget.cpp
+widgets/font/font_size_widget.ui
 )
 
 if ( NOT ANDROID )
