@@ -1,33 +1,40 @@
 #include "embedded_font.hpp"
 
 #include <QFontDatabase>
+#include <QCryptographicHash>
 
+#include "app/utils/qbytearray_hash.hpp"
 #include "model/document.hpp"
 #include "command/object_list_commands.hpp"
-#include "assets.hpp"
+#include "model/assets/assets.hpp"
 
 class glaxnimate::model::CustomFontDatabase::CustomFontData
 {
 public:
     CustomFontData() = default;
 
-    CustomFontData(const QRawFont& font, int database_index)
+    CustomFontData(const QRawFont& font, int database_index, const QByteArray& data_hash)
         : font(font),
-        database_index(database_index)
+        database_index(database_index),
+        data_hash(data_hash)
     {}
 
 
     QRawFont font;
     int database_index = -1;
+    QByteArray data_hash;
 };
 
 class glaxnimate::model::CustomFontDatabase::Private
 {
 public:
     std::unordered_map<int, DataPtr> fonts;
+    // we keep track of hashes to avoid registering the exact same file twice
+    std::unordered_map<QByteArray, int> hashes;
 
     void uninstall(std::unordered_map<int, DataPtr>::iterator iterator)
     {
+        hashes.erase(iterator->second->data_hash);
         QFontDatabase::removeApplicationFont(iterator->first);
         fonts.erase(iterator);
     }
@@ -44,19 +51,23 @@ public:
 
     DataPtr install(const QByteArray& data)
     {
+        auto hash = QCryptographicHash::hash(data, QCryptographicHash::Sha1);
+        auto hashit = hashes.find(hash);
+        if ( hashit != hashes.end() )
+            return fonts.at(hashit->second);
+
+
         QRawFont raw(data, 16);
         if ( !raw.isValid() )
             return {};
 
-        int index = QFontDatabase::addApplicationFont(data);
+        int index = QFontDatabase::addApplicationFontFromData(data);
         if ( index == -1 )
             return {};
 
-        auto it = fonts.find(index);
-        if ( it != fonts.end() )
-            return it->second;
+        hashes[hash] = index;
 
-        auto ptr = std::make_shared<CustomFontData>(raw, index);
+        auto ptr = std::make_shared<CustomFontData>(raw, index, hash);
         fonts.emplace(index, ptr);
         return ptr;
     }
@@ -93,8 +104,8 @@ glaxnimate::model::CustomFont glaxnimate::model::CustomFontDatabase::get_font(in
 glaxnimate::model::CustomFont::CustomFont(CustomFontDatabase::DataPtr d)
     : d(std::move(d))
 {
-    if ( !d )
-        d = std::make_shared<CustomFontDatabase::CustomFontData>();
+    if ( !this->d )
+        this->d = std::make_shared<CustomFontDatabase::CustomFontData>();
 }
 
 glaxnimate::model::CustomFont::CustomFont()
@@ -114,11 +125,14 @@ glaxnimate::model::CustomFont::CustomFont(const QByteArray& data)
 
 glaxnimate::model::CustomFont::~CustomFont()
 {
-    int index = d->database_index;
-    if ( index != -1 )
+    if ( d )
     {
-        d = {};
-        CustomFontDatabase::instance().d->remove_reference(index);
+        int index = d->database_index;
+        if ( index != -1 )
+        {
+            d = {};
+            CustomFontDatabase::instance().d->remove_reference(index);
+        }
     }
 }
 

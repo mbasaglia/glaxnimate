@@ -355,6 +355,7 @@ void register_py_module(py::module& glaxnimate_module)
         qMetaTypeId<model::NamedColor*>(),
         qMetaTypeId<model::Bitmap*>(),
         qMetaTypeId<model::Gradient*>(),
+        qMetaTypeId<model::EmbeddedFont*>(),
         qMetaTypeId<io::ImportExport::Direction>(),
     };
 

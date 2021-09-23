@@ -43,6 +43,7 @@ void glaxnimate::gui::font::FontSizeWidget::changeEvent ( QEvent* e )
 void glaxnimate::gui::font::FontSizeWidget::set_font_size(qreal size)
 {
     d->ui.spin_size->setValue(size);
+    size_edited(size);
 }
 
 
