@@ -6,6 +6,68 @@
 
 #include "io/svg/font_weight.hpp"
 
+namespace  {
+
+class SortFilterGoogleFont : public QSortFilterProxyModel
+{
+public:
+
+    void set_search(const QString& query)
+    {
+        search = query.toLower();
+        invalidateFilter();
+    }
+
+    void set_subset(const QString& subset)
+    {
+        this->subset = subset;
+        invalidateFilter();
+    }
+
+    void set_category(glaxnimate::gui::font::GoogleFontsModel::GoogleFont::Category category)
+    {
+        this->category = category;
+        invalidateFilter();
+    }
+
+
+    bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
+    {
+        if ( source_row < 0 || source_row >= sourceModel()->rowCount(source_parent) )
+            return false;
+
+        auto source = static_cast<glaxnimate::gui::font::GoogleFontsModel*>(sourceModel());
+
+        QModelIndex index = source->index(source_row, 0, source_parent);
+
+        if ( !search.isEmpty() )
+        {
+            if ( !source->data(index, Qt::DisplayRole).toString().toLower().contains(search) )
+                return false;
+        }
+
+        if ( !subset.isEmpty() )
+        {
+            if ( !source->has_subset(index, subset) )
+                return false;
+        }
+
+        if ( category != glaxnimate::gui::font::GoogleFontsModel::GoogleFont::Any )
+        {
+            if ( !source->has_category(index, category) )
+                return false;
+        }
+
+        return true;
+
+    }
+private:
+    QString search;
+    QString subset;
+    glaxnimate::gui::font::GoogleFontsModel::GoogleFont::Category category = glaxnimate::gui::font::GoogleFontsModel::GoogleFont::Any;
+};
+
+} // namespace
 
 class glaxnimate::gui::font::GoogleFontsWidget::Private
 {
@@ -13,7 +75,7 @@ public:
     GoogleFontsWidget* parent;
     Ui::GoogleFontsWidget ui;
     GoogleFontsModel model;
-    QSortFilterProxyModel proxy_model;
+    SortFilterGoogleFont proxy_model;
     QFont current_font;
     int current_weight = 400;
     bool current_italic = false;
@@ -53,6 +115,31 @@ public:
 
         emit parent->font_changed(current_font);
     }
+
+    void update_writing_systems()
+    {
+        auto current = ui.combo_system->currentText();
+        ui.combo_system->clear();
+        ui.combo_system->addItem("");
+        for ( const auto& subset : model.subsets() )
+            ui.combo_system->addItem(subset);
+        ui.combo_system->setCurrentText(current);
+    }
+
+    void add_category(GoogleFontsModel::GoogleFont::Category cat)
+    {
+        ui.combo_category->addItem(model.category_name(cat), int(cat));
+    }
+
+    void add_categories()
+    {
+        add_category(GoogleFontsModel::GoogleFont::Any);
+        add_category(GoogleFontsModel::GoogleFont::Serif);
+        add_category(GoogleFontsModel::GoogleFont::SansSerif);
+        add_category(GoogleFontsModel::GoogleFont::Monospace);
+        add_category(GoogleFontsModel::GoogleFont::Display);
+        add_category(GoogleFontsModel::GoogleFont::Handwriting);
+    }
 };
 
 glaxnimate::gui::font::GoogleFontsWidget::GoogleFontsWidget(QWidget* parent)
@@ -76,6 +163,7 @@ glaxnimate::gui::font::GoogleFontsWidget::GoogleFontsWidget(QWidget* parent)
     connect(&d->model, &GoogleFontsModel::max_progress_changed, this, [this](int max){
         d->ui.google_fonts_progress->setMaximum(max);
         d->ui.google_fonts_progress->setVisible(max);
+        d->ui.button_google_refresh->setEnabled(max == 0);
         if ( max == 0 )
             d->ui.label_google_error->setText("");
     });
@@ -106,6 +194,18 @@ glaxnimate::gui::font::GoogleFontsWidget::GoogleFontsWidget(QWidget* parent)
     });
 
     connect(d->ui.view_style->selectionModel(), &QItemSelectionModel::currentChanged, this, &GoogleFontsWidget::change_style);
+
+    connect(&d->model, &GoogleFontsModel::refresh_finished, this, [this](){
+        d->update_writing_systems();
+    });
+    connect(d->ui.combo_system, &QComboBox::currentTextChanged, &d->proxy_model, &SortFilterGoogleFont::set_subset);
+    connect(d->ui.edit_family, &QLineEdit::textChanged, &d->proxy_model, &SortFilterGoogleFont::set_search);
+
+    d->add_categories();
+    connect(d->ui.combo_category, qOverload<int>(&QComboBox::currentIndexChanged), this, [this](){
+        d->proxy_model.set_category(GoogleFontsModel::GoogleFont::Category(d->ui.combo_category->currentData().toInt()));
+    });
+
 }
 
 glaxnimate::gui::font::GoogleFontsWidget::~GoogleFontsWidget() = default;

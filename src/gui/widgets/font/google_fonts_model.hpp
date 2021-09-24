@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <memory>
 #include <unordered_map>
 
@@ -24,6 +25,7 @@ public:
     {
         enum Category
         {
+            Any,
             Display,
             Handwriting,
             Monospace,
@@ -64,6 +66,7 @@ public:
         Category category;
         int popularity_index = 0;
         DownloadStatus status = Available;
+        std::set<QString> subsets;
     };
 
     enum Column
@@ -88,17 +91,21 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     Qt::ItemFlags flags(const QModelIndex & index) const override;
 
-//     void download_font(const QString& family);
+    static QString category_name(GoogleFontsModel::GoogleFont::Category category);
 
-//     const GoogleFont* font(const QString& family) const;
     const GoogleFont* font(int row) const;
     void download_font(int row);
+
+    const std::set<QString>& subsets() const;
+    bool has_subset(const QModelIndex& index, const QString& subset) const;
+    bool has_category(const QModelIndex& index, GoogleFont::Category cat) const;
 
 signals:
     void max_progress_changed(int progess);
     void progress_changed(int progess);
     void error(const QString& message);
     void download_finished(int row);
+    void refresh_finished();
 
 private:
     void response_progress(qint64 received, qint64 total);

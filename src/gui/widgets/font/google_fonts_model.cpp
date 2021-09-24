@@ -21,6 +21,7 @@ public:
 //     std::unordered_map<QString, std::size_t> font_names;
     QNetworkAccessManager downloader;
     std::unordered_map<QString, std::map<std::pair<int, bool>, model::CustomFont>> downloaded;
+    std::set<QString> subsets;
 
     bool response_has_error(QNetworkReply* reply)
     {
@@ -63,18 +64,6 @@ public:
             if ( downloaded_font_iter != downloaded.end() )
                 downloaded_font = &downloaded_font_iter->second;
 
-            QString cat = font_json["category"].toString();
-            if ( cat == "sans-serif" )
-                font.category = GoogleFont::SansSerif;
-            else if ( cat == "serif" )
-                font.category = GoogleFont::Serif;
-            else if ( cat == "display" )
-                font.category = GoogleFont::Display;
-            else if ( cat == "handwriting" )
-                font.category = GoogleFont::Handwriting;
-            else if ( cat == "monospace" )
-                font.category = GoogleFont::Monospace;
-
             auto items = font_json["files"].toObject();
             for ( auto it = items.begin(); it != items.end(); ++it )
             {
@@ -94,12 +83,31 @@ public:
 
             if ( !font.styles.empty() )
             {
-//                 font_names[font.family] = fonts.size();
+                for ( const auto& val : font_json["subsets"].toArray() )
+                {
+                    auto subset = val.toString();
+                    font.subsets.insert(subset);
+                    subsets.insert(subset);
+                }
+
+                QString cat = font_json["category"].toString();
+                if ( cat == "sans-serif" )
+                    font.category = GoogleFont::SansSerif;
+                else if ( cat == "serif" )
+                    font.category = GoogleFont::Serif;
+                else if ( cat == "display" )
+                    font.category = GoogleFont::Display;
+                else if ( cat == "handwriting" )
+                    font.category = GoogleFont::Handwriting;
+                else if ( cat == "monospace" )
+                    font.category = GoogleFont::Monospace;
+
                 fonts.push_back(font);
             }
         }
 
         emit parent->endResetModel();
+        emit parent->refresh_finished();
     }
 
     void update_settings()
@@ -281,21 +289,7 @@ QVariant glaxnimate::gui::font::GoogleFontsModel::data(const QModelIndex& index,
 
         case Column::Category:
             if ( role == Qt::DisplayRole )
-            {
-                switch ( font.category )
-                {
-                    case GoogleFont::SansSerif:
-                        return tr("Sans-Serif");
-                    case GoogleFont::Serif:
-                        return tr("Serif");
-                    case GoogleFont::Monospace:
-                        return tr("Monospace");
-                    case GoogleFont::Display:
-                        return tr("Display");
-                    case GoogleFont::Handwriting:
-                        return tr("Handwriting");
-                }
-            }
+                return category_name(font.category);
             break;
 
         case Column::Popularity:
@@ -350,3 +344,50 @@ const glaxnimate::gui::font::GoogleFontsModel::GoogleFont* glaxnimate::gui::font
     return &d->fonts[row];
 }
 
+bool glaxnimate::gui::font::GoogleFontsModel::has_subset(const QModelIndex& index, const QString& subset) const
+{
+    if ( !index.isValid() )
+        return false;
+
+    int row = index.row();
+    if ( row < 0 || row >= int(d->fonts.size()) )
+        return false;
+
+    return d->fonts[row].subsets.count(subset);
+}
+
+bool glaxnimate::gui::font::GoogleFontsModel::has_category(const QModelIndex& index, GoogleFont::Category cat) const
+{
+    if ( !index.isValid() )
+        return false;
+
+    int row = index.row();
+    if ( row < 0 || row >= int(d->fonts.size()) )
+        return false;
+
+    return d->fonts[row].category == cat;
+}
+
+QString glaxnimate::gui::font::GoogleFontsModel::category_name(GoogleFont::Category category)
+{
+    switch ( category )
+    {
+        default:
+            return tr("Any");
+        case GoogleFont::SansSerif:
+            return tr("Sans-Serif");
+        case GoogleFont::Serif:
+            return tr("Serif");
+        case GoogleFont::Monospace:
+            return tr("Monospace");
+        case GoogleFont::Display:
+            return tr("Display");
+        case GoogleFont::Handwriting:
+            return tr("Handwriting");
+    }
+}
+
+const std::set<QString> & glaxnimate::gui::font::GoogleFontsModel::subsets() const
+{
+    return d->subsets;
+}
