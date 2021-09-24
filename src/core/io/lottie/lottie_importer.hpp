@@ -626,7 +626,7 @@ private:
             );
         else if ( arr.size() == 4 )
             out = QColor::fromRgbF(
-                arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble(), arr[3].toDouble()
+                arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble(), qMin(1., arr[3].toDouble())
             );
         else
             return false;
