@@ -17,6 +17,8 @@
 #include "io/lottie/tgs_format.hpp"
 #include "io/lottie/validation.hpp"
 
+#include "model/visitor.hpp"
+
 #include "command/undo_macro_guard.hpp"
 #include "command/undo_macro_guard.hpp"
 
@@ -80,6 +82,8 @@ void GlaxnimateWindow::Private::do_setup_document()
     connect(current_document->assets()->precompositions.get(), &model::PrecompositionList::precomp_added, parent, [this](model::Precomposition* node, int row){setup_composition(node, row+1);});
     ui.menu_new_comp_layer->setEnabled(false);
     setup_composition(current_document->main());
+    for ( const auto& precomp : current_document->assets()->precompositions->values )
+        setup_composition(precomp.get());
 
     // Undo Redo
     QObject::connect(ui.action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
@@ -180,6 +184,21 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     ui.timeline_widget->reset_view();
 }
 
+namespace  {
+
+class ThreadFixer : public model::Visitor
+{
+    void on_visit(model::DocumentNode* node) override
+    {
+        if ( node->thread() != target_thread )
+            node->moveToThread(target_thread);
+    }
+
+    QThread* target_thread = QApplication::instance()->thread();
+};
+
+} // namespace
+
 bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 {
     if ( !close_document() )
@@ -191,7 +210,10 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     auto promise = QtConcurrent::run(
         [options, current_document=current_document.get()]{
             QFile file(options.filename);
-            return options.format->open(file, options.filename, current_document, options.settings);
+            bool open = options.format->open(file, options.filename, current_document, options.settings);
+            ThreadFixer().visit(current_document);
+            return open;
+
         });
 
     process_events(promise);

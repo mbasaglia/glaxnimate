@@ -7,6 +7,7 @@
     * Ability to stretch time for documents and individual objects
 * Bug Fixes:
     * The timing dialog honours "Keep initial timing"
+    * Fixed crash when switching between compositions
 
 ## 0.4.5
 
