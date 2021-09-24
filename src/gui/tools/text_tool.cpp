@@ -104,6 +104,7 @@ public:
 
     void enable_event(const Event& event) override
     {
+        widget()->set_document(event.window->document());
         window = event.window;
     }
 
@@ -115,7 +116,7 @@ public:
 
     void close_document_event(const Event& event) override
     {
-        Q_UNUSED(event);
+        widget()->set_document(event.window->document());
         clear();
     }
 

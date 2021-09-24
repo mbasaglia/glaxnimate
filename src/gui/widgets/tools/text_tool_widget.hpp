@@ -15,6 +15,7 @@ public:
 
     QFont font() const;
     void set_font(const QFont& font);
+    void set_document(model::Document* document);
 
     void set_preview_text(const QString& text);
 

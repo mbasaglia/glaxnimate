@@ -8,8 +8,10 @@ namespace glaxnimate::model {
 
 class CustomFont;
 
-class CustomFontDatabase
+class CustomFontDatabase : public QObject
 {
+    Q_OBJECT
+
 public:
     static CustomFontDatabase& instance();
 

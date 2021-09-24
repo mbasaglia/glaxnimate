@@ -13,11 +13,8 @@
 #include "widgets/font/font_delegate.hpp"
 #include "widgets/font/font_style_dialog.hpp"
 
-using namespace glaxnimate::gui;
-using namespace glaxnimate;
 
-
-class TextToolWidget::Private : public ShapeToolWidget::Private
+class glaxnimate::gui::TextToolWidget::Private : public ShapeToolWidget::Private
 {
 public:
     const QFont& font() const
@@ -189,35 +186,40 @@ public:
 };
 
 
-TextToolWidget::TextToolWidget(QWidget* parent)
+glaxnimate::gui::TextToolWidget::TextToolWidget(QWidget* parent)
     : ShapeToolWidget(std::make_unique<Private>(), parent)
 {
 }
 
-TextToolWidget::Private * TextToolWidget::dd() const
+glaxnimate::gui::TextToolWidget::Private * glaxnimate::gui::TextToolWidget::dd() const
 {
     return static_cast<Private*>(d.get());
 }
 
 
-QFont TextToolWidget::font() const
+QFont glaxnimate::gui::TextToolWidget::font() const
 {
     return dd()->font();
 }
 
-void TextToolWidget::on_font_changed()
+void glaxnimate::gui::TextToolWidget::on_font_changed()
 {
     save_settings();
     emit font_changed(dd()->font());
 }
 
-void TextToolWidget::set_font(const QFont& font)
+void glaxnimate::gui::TextToolWidget::set_font(const QFont& font)
 {
     dd()->set_font(font);
     emit font_changed(dd()->font());
 }
 
-void TextToolWidget::set_preview_text(const QString& text)
+void glaxnimate::gui::TextToolWidget::set_preview_text(const QString& text)
 {
     dd()->dialog->set_preview_text(text);
+}
+
+void glaxnimate::gui::TextToolWidget::set_document(model::Document* document)
+{
+    dd()->model.set_document(document);
 }

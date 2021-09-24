@@ -203,9 +203,10 @@ QString glaxnimate::model::EmbeddedFont::type_name_human() const
     return tr("Font");
 }
 
-bool glaxnimate::model::EmbeddedFont::remove_if_unused(bool)
+bool glaxnimate::model::EmbeddedFont::remove_if_unused(bool clean_lists)
 {
-    if ( users().empty() )
+    /// \todo Needs a way to keep track users...
+    if ( clean_lists && users().empty() )
     {
         document()->push_command(new command::RemoveObject(
             this,
