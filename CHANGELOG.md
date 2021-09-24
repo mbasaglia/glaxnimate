@@ -3,6 +3,7 @@
 * Editing
     * Added support for stretching time on the timing dialog
     * The object context menu now can show a dilaog to change animation timing on the object
+    * Ability to add fonts from Google Fonts
 * Scripting:
     * Ability to stretch time for documents and individual objects
 * Bug Fixes:
