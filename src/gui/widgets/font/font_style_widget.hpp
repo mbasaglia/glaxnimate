@@ -19,7 +19,7 @@ public:
 
 
     void set_font(const QFont& font);
-    const QFont& font() const;
+    const QFont& selected_font() const;
 
     FontModel& model();
 

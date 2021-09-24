@@ -17,7 +17,7 @@ public:
     ~FontStyleDialog();
 
     void set_font(const QFont& font);
-    const QFont& font() const;
+    QFont selected_font() const;
     QStringList favourites() const;
     void set_favourites(const QStringList& fav);
 

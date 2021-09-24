@@ -9,6 +9,18 @@ class glaxnimate::gui::font::FontStyleDialog::Private
 public:
     Ui::FontStyleDialog ui;
     app::widgets::NoCloseOnEnter ncoe;
+
+    void set_preview_font()
+    {
+        QFont font;
+
+        if ( ui.tab_widget->currentWidget() == ui.tab_google )
+            font = ui.google_fonts_widget->selected_font();
+        else
+            font = ui.widget_system->selected_font();
+
+        ui.preview->set_font(font);
+    }
 };
 
 
@@ -17,6 +29,9 @@ glaxnimate::gui::font::FontStyleDialog::FontStyleDialog(QWidget* parent)
 {
     d->ui.setupUi(this);
     installEventFilter(&d->ncoe);
+    connect(d->ui.tab_widget, &QTabWidget::currentChanged, this, [this]{
+        d->set_preview_font();
+    });
 }
 
 glaxnimate::gui::font::FontStyleDialog::~FontStyleDialog() = default;
@@ -31,9 +46,9 @@ void glaxnimate::gui::font::FontStyleDialog::changeEvent ( QEvent* e )
     }
 }
 
-const QFont& glaxnimate::gui::font::FontStyleDialog::font() const
+QFont glaxnimate::gui::font::FontStyleDialog::selected_font() const
 {
-    return d->ui.widget_system->font();
+    return d->ui.preview->selected_font();
 }
 
 void glaxnimate::gui::font::FontStyleDialog::set_font(const QFont& font)
@@ -60,7 +75,11 @@ void glaxnimate::gui::font::FontStyleDialog::set_favourites(const QStringList& f
 void glaxnimate::gui::font::FontStyleDialog::showEvent(QShowEvent* e)
 {
     QDialog::showEvent(e);
-    d->ui.tab_google->setEnabled(d->ui.google_fonts_widget->model().has_token());
+    bool google_enabled = d->ui.google_fonts_widget->model().has_token();
+    d->ui.tab_google->setEnabled(google_enabled);
+    if ( !google_enabled && d->ui.tab_widget->currentWidget() == d->ui.tab_google )
+        d->ui.tab_widget->setCurrentIndex(0);
+    d->set_preview_font();
 }
 
 glaxnimate::model::CustomFont glaxnimate::gui::font::FontStyleDialog::custom_font() const

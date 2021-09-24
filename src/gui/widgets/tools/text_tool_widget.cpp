@@ -117,7 +117,7 @@ public:
                 auto custom = dialog->custom_font();
                 if ( custom.is_valid() )
                     emit parent->custom_font_selected(custom.database_index());
-                parent->set_font(dialog->font());
+                parent->set_font(dialog->selected_font());
             }
         });
         grid->addWidget(button, row++, 0, 1, 2);

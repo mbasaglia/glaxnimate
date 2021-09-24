@@ -159,3 +159,8 @@ glaxnimate::model::CustomFont glaxnimate::gui::font::GoogleFontsWidget::custom_f
 
     return font->styles[style_row].font;
 }
+
+const QFont & glaxnimate::gui::font::GoogleFontsWidget::selected_font() const
+{
+    return d->current_font;
+}

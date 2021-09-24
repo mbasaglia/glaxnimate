@@ -21,6 +21,7 @@ public:
     void set_font_size(double size);
 
     model::CustomFont custom_font() const;
+    const QFont& selected_font() const;
 
 signals:
     void font_changed(const QFont& font);

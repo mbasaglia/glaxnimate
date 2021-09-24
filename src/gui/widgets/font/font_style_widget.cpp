@@ -100,7 +100,7 @@ glaxnimate::gui::font::FontModel & glaxnimate::gui::font::FontStyleWidget::model
     return d->model;
 }
 
-const QFont & glaxnimate::gui::font::FontStyleWidget::font() const
+const QFont & glaxnimate::gui::font::FontStyleWidget::selected_font() const
 {
     return d->font;
 }
