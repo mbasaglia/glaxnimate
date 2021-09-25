@@ -15,7 +15,7 @@ public:
 
     QByteArray serialize(const std::vector<model::DocumentNode*>& selection) const override
     {
-        io::svg::SvgRenderer svg_rend(io::svg::NotAnimated);
+        io::svg::SvgRenderer svg_rend(io::svg::NotAnimated, io::svg::CssFontType::FontFace);
         for ( auto node : selection )
             svg_rend.write_node(node);
         return svg_rend.dom().toByteArray(0);

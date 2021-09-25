@@ -52,6 +52,67 @@ public:
         view.setAttribute("bordercolor", "#666666");
         view.setAttribute("pagecolor", "#ffffff");
         view.setAttribute("inkscape:document-units", "px");
+
+        add_fonts(doc);
+    }
+
+    void add_fonts(model::Document* document)
+    {
+        if ( font_type == CssFontType::None )
+            return;
+
+        QString css;
+        static QString font_face = R"(
+@font-face {
+    font-family: '%1';
+    font-style: %2;
+    font-weight: %3;
+    src: url(%4);
+}
+)";
+
+        for ( const auto & font : document->assets()->fonts->values )
+        {
+            auto custom = font->custom_font();
+            if ( !custom.is_valid() )
+                continue;
+
+            QRawFont raw = custom.raw_font();
+            auto type = qMin(suggested_type(font.get()), font_type);
+
+            if ( type == CssFontType::Link )
+            {
+                auto link = element(svg, "link");
+                link.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+                link.setAttribute("rel", "stylesheet");
+                link.setAttribute("href", font->css_url.get());
+                link.setAttribute("type", "text/css");
+            }
+            else if ( type == CssFontType::FontFace )
+            {
+                css += font_face
+                    .arg(custom.family())
+                    .arg(WeightConverter::convert(raw.weight(), WeightConverter::qt, WeightConverter::css))
+                    .arg(raw.style() == QFont::StyleNormal ? 0 : 1)
+                    .arg(font->source_url.get())
+                ;
+            }
+            else if ( type == CssFontType::Embedded )
+            {
+                QString base64_encoded = font->data.get().toBase64(QByteArray::Base64UrlEncoding);
+                QString format = font->data.get().left(4) == "OTTO" ? "opentype" : "ttf";
+
+                css += font_face
+                    .arg(custom.family())
+                    .arg(WeightConverter::convert(raw.weight(), WeightConverter::qt, WeightConverter::css))
+                    .arg(raw.style() == QFont::StyleNormal ? 0 : 1)
+                    .arg("data:application/x-font-" + format + ";charset=utf-8;base64," + base64_encoded)
+                ;
+            }
+        }
+
+        if ( !css.isEmpty() )
+            element(svg, "style").appendChild(dom.createTextNode(css));
     }
 
     QDomElement element(QDomNode parent, const char* tag)
@@ -295,7 +356,11 @@ public:
 
     static std::vector<QString> callback_point(const std::vector<QVariant>& values)
     {
-        QPointF c = values[0].toPointF();
+        return callback_point_result(values[0].toPointF());
+    }
+
+    static std::vector<QString> callback_point_result(const QPointF& c)
+    {
         return std::vector<QString>{
             QString::number(c.x()),
             QString::number(c.y())
@@ -399,8 +464,10 @@ public:
             auto tspan = element(e, "tspan");
             tspan.appendChild(dom.createTextNode(line.text));
             set_attribute(tspan, "sodipodi:role", "line");
-            set_attribute(tspan, "x", line.baseline.x());
-            set_attribute(tspan, "y", line.baseline.y());
+
+            write_properties(tspan, {&text->position}, {"x", "y"}, [base=line.baseline](const std::vector<QVariant>& values){
+                return callback_point_result(values[0].toPointF() + base);
+            });
             tspan.setAttribute("xml:space", "preserve");
         }
     }
@@ -612,11 +679,13 @@ public:
         }
         else if ( auto stroke = qobject_cast<model::Stroke*>(shape) )
         {
-            write_stroke(stroke, parent);
+            if ( stroke->visible.get() )
+                write_stroke(stroke, parent);
         }
         else if ( auto fill = qobject_cast<model::Fill*>(shape) )
         {
-            write_fill(fill, parent);
+            if ( fill->visible.get() )
+                write_fill(fill, parent);
         }
         else if ( auto img = qobject_cast<model::Image*>(shape) )
         {
@@ -1101,13 +1170,15 @@ public:
     AnimationType animated;
     QDomElement svg;
     QDomElement defs;
+    CssFontType font_type;
 };
 
 
-io::svg::SvgRenderer::SvgRenderer(AnimationType animated)
+io::svg::SvgRenderer::SvgRenderer(AnimationType animated, CssFontType font_type)
     : d(std::make_unique<Private>())
 {
     d->animated = animated;
+    d->font_type = font_type;
     d->svg = d->dom.createElement("svg");
     d->dom.appendChild(d->svg);
     d->svg.setAttribute("xmlns", detail::xmlns.at("svg"));
@@ -1183,4 +1254,15 @@ QDomDocument io::svg::SvgRenderer::dom() const
 void io::svg::SvgRenderer::write(QIODevice* device, bool indent)
 {
     device->write(d->dom.toByteArray(indent ? 4 : -1));
+}
+
+glaxnimate::io::svg::CssFontType glaxnimate::io::svg::SvgRenderer::suggested_type(model::EmbeddedFont* font)
+{
+    if ( !font->css_url.get().isEmpty() )
+        return CssFontType::Link;
+    if ( !font->source_url.get().isEmpty() )
+        return CssFontType::FontFace;
+    if ( !font->data.get().isEmpty() )
+        return CssFontType::Embedded;
+    return CssFontType::None;
 }

@@ -167,6 +167,12 @@ QFont glaxnimate::model::CustomFont::font(int size) const
     return font;
 }
 
+const QRawFont & glaxnimate::model::CustomFont::raw_font() const
+{
+    return d->font;
+}
+
+
 QByteArray glaxnimate::model::CustomFont::data() const
 {
     return d->data;

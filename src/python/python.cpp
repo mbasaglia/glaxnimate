@@ -61,7 +61,7 @@ static QByteArray frame_to_svg(model::Document* doc)
     QBuffer file(&data);
     file.open(QIODevice::WriteOnly);
 
-    io::svg::SvgRenderer rend(io::svg::NotAnimated);
+    io::svg::SvgRenderer rend(io::svg::NotAnimated, io::svg::CssFontType::FontFace);
     rend.write_document(doc);
     rend.write(&file, true);
 

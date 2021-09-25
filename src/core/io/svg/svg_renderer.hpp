@@ -7,6 +7,7 @@
 
 namespace glaxnimate::model {
     class MainComposition;
+    class EmbeddedFont;
 } // namespace glaxnimate::model
 
 namespace glaxnimate::io::svg {
@@ -17,10 +18,18 @@ enum AnimationType
     SMIL
 };
 
+enum class CssFontType
+{
+    None,
+    Embedded,
+    FontFace,
+    Link,
+};
+
 class SvgRenderer
 {
 public:
-    SvgRenderer(AnimationType animated);
+    SvgRenderer(AnimationType animated, CssFontType font_type);
     ~SvgRenderer();
 
     void write_document(model::Document* document);
@@ -33,6 +42,7 @@ public:
 
     void write(QIODevice* device, bool indent);
 
+    static CssFontType suggested_type(model::EmbeddedFont* font);
 private:
     class Private;
     std::unique_ptr<Private> d;

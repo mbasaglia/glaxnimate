@@ -45,6 +45,7 @@ public:
     QString style_name() const;
     int database_index() const;
     QFont font(int size) const;
+    const QRawFont& raw_font() const;
     QByteArray data() const;
 
     const QString& source_url() const;
@@ -83,6 +84,7 @@ public:
     QString family() const { return custom_font_.family(); }
     QString style_name() const { return custom_font_.style_name(); }
     int database_index() const { return custom_font_.database_index(); }
+    const CustomFont& custom_font() const { return custom_font_; }
 
 private:
     void on_data_changed();

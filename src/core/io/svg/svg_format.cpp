@@ -5,6 +5,7 @@
 #include "utils/gzip.hpp"
 #include "svg_parser.hpp"
 #include "svg_renderer.hpp"
+#include "model/assets/assets.hpp"
 
 glaxnimate::io::Autoreg<glaxnimate::io::svg::SvgFormat> glaxnimate::io::svg::SvgFormat::autoreg;
 
@@ -37,15 +38,38 @@ bool glaxnimate::io::svg::SvgFormat::on_open(QIODevice& file, const QString& fil
     }
 }
 
-std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::svg::SvgFormat::save_settings(model::Document*) const
+std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::svg::SvgFormat::save_settings(model::Document* document) const
 {
-    return {};
+    CssFontType max = CssFontType::None;
+    for ( const auto & font : document->assets()->fonts->values )
+    {
+        auto type = SvgRenderer::suggested_type(font.get());
+        if ( type > max )
+            max = type;
+    }
+
+    if ( max == CssFontType::None )
+        return {};
+
+    QVariantMap choices;
+    if ( max >= CssFontType::Link )
+        choices[tr("External Stylesheet")] = int(CssFontType::Link);
+    if ( max >= CssFontType::FontFace )
+        choices[tr("Font face with external url")] = int(CssFontType::FontFace);
+    if ( max >= CssFontType::Embedded )
+        choices[tr("Embedded data")] = int(CssFontType::Embedded);
+    choices[tr("Ignore")] = int(CssFontType::None);
+
+    return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
+        app::settings::Setting("font_type", tr("External Fonts"), tr("How to include external font"),
+                               app::settings::Setting::Int, int(max), choices)
+    });
 }
 
 bool glaxnimate::io::svg::SvgFormat::on_save(QIODevice& file, const QString& filename, model::Document* document, const QVariantMap& options)
 {
     auto on_error = [this](const QString& s){warning(s);};
-    SvgRenderer rend(SMIL);
+    SvgRenderer rend(SMIL, CssFontType(options["font_type"].toInt()));
     rend.write_document(document);
     if ( filename.endsWith(".svgz") || options.value("compressed", false).toBool() )
     {

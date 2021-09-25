@@ -562,7 +562,7 @@ void GlaxnimateWindow::Private::save_frame_svg()
         return;
     }
 
-    io::svg::SvgRenderer rend(io::svg::NotAnimated);
+    io::svg::SvgRenderer rend(io::svg::NotAnimated, io::svg::CssFontType::FontFace);
     rend.write_document(current_document.get());
     rend.write(&file, true);
 }
