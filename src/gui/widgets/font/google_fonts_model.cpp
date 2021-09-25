@@ -11,6 +11,14 @@
 #include "app/settings/settings.hpp"
 
 
+QString glaxnimate::gui::font::GoogleFontsModel::GoogleFont::css_url(const Style& style) const
+{
+    QString fam = QUrl::toPercentEncoding(family);
+    static QString base("https://fonts.googleapis.com/css2?family=%1:ital,wght@%2,%3&display=swap");
+    return  base.arg(fam).arg(style.italic ? "1" : "0").arg(style.weight);
+}
+
+
 class glaxnimate::gui::font::GoogleFontsModel::Private
 {
 public:
@@ -150,7 +158,6 @@ public:
 
             if ( response_has_error(reply) )
             {
-
                 font->status = GoogleFont::Broken;
                 font_changed(font_index);
             }
@@ -168,12 +175,12 @@ public:
                 else
                 {
                     downloaded[font->family][{style->weight, style->italic}] = style->font;
+                    style->font.set_source_url(style->url.toString());
+                    style->font.set_css_url(font->css_url(*style));
                 }
             }
 
-            auto next = style;
-            ++next;
-            download_style(font, font_index, style_index+1, next);
+            download_style(font, font_index, style_index+1, style+1);
         });
     }
 

@@ -25,6 +25,8 @@ public:
     int database_index = -1;
     QByteArray data_hash;
     QByteArray data;
+    QString source_url;
+    QString css_url;
 };
 
 class glaxnimate::model::CustomFontDatabase::Private
@@ -170,6 +172,25 @@ QByteArray glaxnimate::model::CustomFont::data() const
     return d->data;
 }
 
+void glaxnimate::model::CustomFont::set_css_url(const QString& url)
+{
+    d->css_url = url;
+}
+
+void glaxnimate::model::CustomFont::set_source_url(const QString& url)
+{
+    d->source_url = url;
+}
+
+const QString & glaxnimate::model::CustomFont::css_url() const
+{
+    return d->css_url;
+}
+
+const QString & glaxnimate::model::CustomFont::source_url() const
+{
+    return d->source_url;
+}
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::EmbeddedFont)
 
@@ -179,12 +200,12 @@ glaxnimate::model::EmbeddedFont::EmbeddedFont(model::Document* document)
 {
 }
 
-glaxnimate::model::EmbeddedFont::EmbeddedFont(model::Document* document, const QByteArray& data, const QString& source_url, const QString& css_url, CustomFont custom_font)
+glaxnimate::model::EmbeddedFont::EmbeddedFont(model::Document* document, CustomFont custom_font)
     : Asset(document), custom_font_(std::move(custom_font))
 {
-    this->data.set(data);
-    this->source_url.set(source_url);
-    this->css_url.set(css_url);
+    this->data.set(this->custom_font_.data());
+    this->source_url.set(this->custom_font_.source_url());
+    this->css_url.set(this->custom_font_.css_url());
 }
 
 

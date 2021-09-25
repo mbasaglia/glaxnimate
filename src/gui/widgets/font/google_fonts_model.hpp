@@ -59,6 +59,8 @@ public:
             }
         };
 
+        QString css_url(const Style& style) const;
+
         using StyleList = std::vector<Style>;
 
         QString family;

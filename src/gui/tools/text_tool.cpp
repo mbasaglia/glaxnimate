@@ -308,7 +308,7 @@ private:
         if ( !window )
             return;
 
-        window->document()->assets()->add_font(model::CustomFontDatabase::instance().get_font(database_index).data());
+        window->document()->assets()->add_font(model::CustomFontDatabase::instance().get_font(database_index));
     }
 
     void initialize(const Event&) override

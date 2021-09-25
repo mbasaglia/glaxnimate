@@ -47,6 +47,12 @@ public:
     QFont font(int size) const;
     QByteArray data() const;
 
+    const QString& source_url() const;
+    const QString& css_url() const;
+
+    void set_source_url(const QString& url);
+    void set_css_url(const QString& url);
+
 private:
     CustomFontDatabase::DataPtr d;
 };
@@ -66,7 +72,7 @@ class EmbeddedFont : public Asset
 
 public:
     EmbeddedFont(model::Document* document);
-    EmbeddedFont(model::Document* document, const QByteArray& data, const QString& source_url, const QString& css_url, CustomFont custom_font);
+    EmbeddedFont(model::Document* document, CustomFont custom_font);
 
     QIcon instance_icon() const override;
     QString type_name_human() const override;
