@@ -172,3 +172,8 @@ const QFont & glaxnimate::gui::font::ExternalFontWidget::selected_font() const
 }
 
 
+void glaxnimate::gui::font::ExternalFontWidget::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
+    d->ui.progress_bar->setVisible(d->loader.loading());
+}

@@ -12,6 +12,7 @@
 * Bug Fixes:
     * The timing dialog honours "Keep initial timing"
     * Fixed crash when switching between compositions
+    * Fixed some CSS parsing issues
 
 ## 0.4.5
 

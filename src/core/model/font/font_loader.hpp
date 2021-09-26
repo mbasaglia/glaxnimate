@@ -62,6 +62,11 @@ public:
      */
     void cancel();
 
+    /**
+     * \brief Whether loading is in progress
+     */
+    bool loading() const;
+
 signals:
     /**
      * \brief All queued loads have been completed

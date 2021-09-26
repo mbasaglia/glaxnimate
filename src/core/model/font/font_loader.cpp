@@ -243,3 +243,8 @@ void glaxnimate::model::FontLoader::cancel()
         clear();
     }
 }
+
+bool glaxnimate::model::FontLoader::loading() const
+{
+    return d->loading;
+}

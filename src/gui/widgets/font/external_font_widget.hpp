@@ -23,6 +23,7 @@ public:
 
 protected:
     void changeEvent ( QEvent* e ) override;
+    void showEvent(QShowEvent * event) override;
 
 private slots:
     void url_from_file();

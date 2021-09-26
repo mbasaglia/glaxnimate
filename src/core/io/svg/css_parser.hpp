@@ -54,7 +54,7 @@ public:
 
     bool empty() const
     {
-        return tag.isEmpty() && id.isEmpty() && classes.empty();
+        return tag.isEmpty() && id.isEmpty() && classes.empty() && rule.isEmpty();
     }
 
     void set_at_rule(const QString& rule)
@@ -237,7 +237,7 @@ private:
 
         back();
 
-        return id;
+        return id.trimmed();
     }
 
     Token lex_selector()
@@ -408,8 +408,35 @@ private:
         return token;
     }
 
+    void lex_quoted_string(QString& value, QChar terminator)
+    {
+        while ( true )
+        {
+            QChar ch = next_ch();
+
+            if ( eof() )
+                break;
+
+            value += ch;
+
+            if ( ch == terminator )
+                break;
+
+            if ( ch == '\\' )
+            {
+                ch = next_ch();
+                if ( eof() )
+                    break;
+                value += ch;
+            }
+        }
+    }
+
     Token lex_rule_value(QString& value)
     {
+        if ( value == "\"" || value == "'" )
+            lex_quoted_string(value, value[0]);
+
         while ( true )
         {
             QChar ch = next_ch();
@@ -423,27 +450,7 @@ private:
             value += ch;
             if ( ch == '"' || ch == '\'' )
             {
-                QChar terminator = ch;
-                while ( true )
-                {
-                    ch = next_ch();
-
-                    if ( eof() )
-                        break;
-
-                    value += ch;
-
-                    if ( ch == terminator )
-                        break;
-
-                    if ( ch == '\\' )
-                    {
-                        ch = next_ch();
-                        if ( eof() )
-                            break;
-                        value += ch;
-                    }
-                }
+                lex_quoted_string(value, ch);
             }
         }
     }
