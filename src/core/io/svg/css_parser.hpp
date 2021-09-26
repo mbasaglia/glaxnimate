@@ -46,6 +46,9 @@ public:
                 return false;
         }
 
+        if ( !rule.isEmpty() )
+            return false;
+
         return true;
     }
 
@@ -54,11 +57,22 @@ public:
         return tag.isEmpty() && id.isEmpty() && classes.empty();
     }
 
+    void set_at_rule(const QString& rule)
+    {
+        this->rule = rule;
+    }
+
+    const QString& at_rule() const
+    {
+        return this->rule;
+    }
+
 private:
     int specificity = 0;
     QString tag;
     QString id;
     QStringList classes;
+    QString rule;
     friend struct CssStyleBlock;
 };
 
@@ -105,6 +119,7 @@ private:
         SelectorId,
         SelectorOther,
         SelectorComma,
+        SelectorAt,
 
         BlockBegin,
         BlockEnd,
@@ -206,6 +221,25 @@ private:
         return id;
     }
 
+    QString lex_at_selector()
+    {
+        QString id = "@";
+        QChar ch;
+
+        while ( true )
+        {
+            ch = next_ch();
+            if ( ch == '{' || ch == ',' )
+                break;
+            else
+                id += ch;
+        }
+
+        back();
+
+        return id;
+    }
+
     Token lex_selector()
     {
         QChar ch = next_ch();
@@ -224,6 +258,8 @@ private:
             return {TokenType::BlockBegin, {}};
         else if ( ch == '*' )
             return {TokenType::SelectorTag, ch};
+        else if ( ch == '@' )
+            return {TokenType::SelectorAt, lex_at_selector()};
 
         if ( ch.isSpace() )
         {
@@ -285,6 +321,8 @@ private:
             selectors.back().set_id(token.second);
         else if ( token.first == TokenType::SelectorTag )
             selectors.back().set_tag(token.second);
+        else if ( token.first == TokenType::SelectorAt )
+            selectors.back().set_at_rule(token.second);
         else
             return false;
 

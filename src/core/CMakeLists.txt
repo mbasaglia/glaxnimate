@@ -61,6 +61,9 @@ model/assets/asset.cpp
 model/assets/precomposition.cpp
 model/assets/embedded_font.cpp
 
+model/font/custom_font.cpp
+model/font/font_loader.cpp
+
 model/shapes/shape.cpp
 model/shapes/fill.cpp
 model/shapes/rect.cpp
@@ -112,7 +115,7 @@ include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 
 
 add_library(${LIB_NAME_CORE} OBJECT ${SOURCES})
-target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt${QT_VERSION_MAJOR}::Xml ${Potrace_LIBRARIES})
+target_link_libraries(${LIB_NAME_CORE} PUBLIC QtAppSetup ZLIB::ZLIB Qt${QT_VERSION_MAJOR}::Xml Qt${QT_VERSION_MAJOR}::Network ${Potrace_LIBRARIES})
 set_property(TARGET ${LIB_NAME_CORE} APPEND PROPERTY AUTOMOC_MACRO_NAMES "GLAXNIMATE_OBJECT")
 target_include_directories(${LIB_NAME_CORE} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 

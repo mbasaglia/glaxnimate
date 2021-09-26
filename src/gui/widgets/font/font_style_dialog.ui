@@ -65,6 +65,28 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_custom">
+      <attribute name="title">
+       <string>Custom</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="glaxnimate::gui::font::ExternalFontWidget" name="custom_font_widget" native="true"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -109,6 +131,15 @@
    <class>glaxnimate::gui::font::GoogleFontsWidget</class>
    <extends>QWidget</extends>
    <header>widgets/font/google_fonts_widget.hpp</header>
+   <container>1</container>
+   <slots>
+    <signal>font_changed(QFont)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>glaxnimate::gui::font::ExternalFontWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/font/external_font_widget.hpp</header>
    <container>1</container>
    <slots>
     <signal>font_changed(QFont)</signal>
@@ -178,6 +209,22 @@
     <hint type="destinationlabel">
      <x>206</x>
      <y>494</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>custom_font_widget</sender>
+   <signal>font_changed(QFont)</signal>
+   <receiver>preview</receiver>
+   <slot>set_font(QFont)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>300</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>328</x>
+     <y>520</y>
     </hint>
    </hints>
   </connection>

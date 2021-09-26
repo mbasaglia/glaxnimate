@@ -16,6 +16,8 @@ public:
 
         if ( ui.tab_widget->currentWidget() == ui.tab_google )
             font = ui.google_fonts_widget->selected_font();
+        else if ( ui.tab_widget->currentWidget() == ui.tab_custom )
+            font = ui.custom_font_widget->selected_font();
         else
             font = ui.widget_system->selected_font();
 
@@ -55,6 +57,7 @@ void glaxnimate::gui::font::FontStyleDialog::set_font(const QFont& font)
 {
     d->ui.widget_system->set_font(font);
     d->ui.google_fonts_widget->set_font_size(font.pointSizeF());
+    d->ui.custom_font_widget->set_font_size(font.pointSizeF());
 }
 
 void glaxnimate::gui::font::FontStyleDialog::set_preview_text(const QString& text)
@@ -86,6 +89,8 @@ glaxnimate::model::CustomFont glaxnimate::gui::font::FontStyleDialog::custom_fon
 {
     if ( d->ui.tab_widget->currentWidget() == d->ui.tab_google )
         return d->ui.google_fonts_widget->custom_font();
+    else if ( d->ui.tab_widget->currentWidget() == d->ui.tab_custom )
+        return d->ui.custom_font_widget->custom_font();
 
     return {};
 }

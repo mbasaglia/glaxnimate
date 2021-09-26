@@ -206,6 +206,11 @@ glaxnimate::gui::font::GoogleFontsWidget::GoogleFontsWidget(QWidget* parent)
         d->proxy_model.set_category(GoogleFontsModel::GoogleFont::Category(d->ui.combo_category->currentData().toInt()));
     });
 
+    connect(d->ui.size_widget, &FontSizeWidget::font_size_changed, this, [this](double size){
+        d->current_font.setPointSizeF(size);
+        emit font_changed(d->current_font);
+    });
+
 }
 
 glaxnimate::gui::font::GoogleFontsWidget::~GoogleFontsWidget() = default;
