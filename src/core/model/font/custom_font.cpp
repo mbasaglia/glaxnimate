@@ -1,5 +1,6 @@
 #include "custom_font.hpp"
 
+#include <unordered_map>
 #include <QFontDatabase>
 #include <QCryptographicHash>
 
