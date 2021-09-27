@@ -62,7 +62,7 @@ std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::svg::SvgFormat::sa
 
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
         app::settings::Setting("font_type", tr("External Fonts"), tr("How to include external font"),
-                               app::settings::Setting::Int, int(max), choices)
+                               app::settings::Setting::Int, int(qMin(max, CssFontType::FontFace)), choices)
     });
 }
 

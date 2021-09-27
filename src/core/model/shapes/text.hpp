@@ -73,9 +73,13 @@ public:
 signals:
     void font_changed();
 
+protected:
+    void on_transfer(model::Document* doc) override;
+
 private:
     void on_family_changed();
     void on_font_changed();
+    void refresh_data(bool update_styles);
     bool valid_style(const QString& style);
 
     class Private;

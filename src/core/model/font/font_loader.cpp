@@ -8,8 +8,11 @@
 #include <QNetworkAccessManager>
 #include <QRegularExpression>
 
-
 #include "io/svg/css_parser.hpp"
+#include "model/document.hpp"
+#include "model/assets/pending_asset.hpp"
+
+
 
 glaxnimate::model::FontFileFormat glaxnimate::model::font_data_format(const QByteArray& data)
 {
@@ -32,6 +35,7 @@ class glaxnimate::model::FontLoader::Private
 public:
     struct QueueItem
     {
+        int id = -2;
         QUrl url;
         QUrl parent_url = {};
     };
@@ -48,9 +52,9 @@ public:
     {
         QFile file(item.url.toLocalFile());
         if ( !file.open(QFile::ReadOnly) )
-            parent->error(tr("Could not open file %1").arg(file.fileName()));
+            parent->error(tr("Could not open file %1").arg(file.fileName()), item.id);
         else
-            parse(file.readAll(), item.parent_url, item.url);
+            parse(item.id, file.readAll(), item.parent_url, item.url);
 
         mark_resolved();
     }
@@ -59,9 +63,9 @@ public:
     {
         auto info = item.url.path().split(";");
         if ( info.empty() || !info.back().startsWith("base64,") )
-            parent->error(tr("Invalid data URL"));
+            parent->error(tr("Invalid data URL"), item.id);
         else
-            parse(QByteArray::fromBase64(info.back().mid(7).toLatin1(), QByteArray::Base64UrlEncoding), item.parent_url, item.url);
+            parse(item.id, QByteArray::fromBase64(info.back().mid(7).toLatin1(), QByteArray::Base64UrlEncoding), item.parent_url, item.url);
         mark_resolved();
     }
 
@@ -84,6 +88,7 @@ public:
 
         QNetworkReply* response = downloader.get(request);
         response->setProperty("css_url", item.parent_url);
+        response->setProperty("id", item.id);
         active_replies.insert(response);
     }
 
@@ -100,11 +105,11 @@ public:
         if ( reply->error() || reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() != 200 )
         {
             auto reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
-            emit parent->error(reason);
+            emit parent->error(reason, reply->property("id").toInt());
         }
         else
         {
-            parse(reply->readAll(), reply->property("css").toUrl(), reply->url());
+            parse(reply->property("id").toInt(), reply->readAll(), reply->property("css").toUrl(), reply->url());
             reply->close();
         }
 
@@ -112,7 +117,7 @@ public:
         mark_resolved();
     }
 
-    void parse(const QByteArray& data, const QUrl& css_url, const QUrl& reply_url)
+    void parse(int id, const QByteArray& data, const QUrl& css_url, const QUrl& reply_url)
     {
         switch ( font_data_format(data) )
         {
@@ -123,16 +128,19 @@ public:
                 font.set_source_url(reply_url.toString());
                 font.set_css_url(css_url.toString());
                 fonts.push_back(font);
+                if ( id != -1 )
+                    emit parent->success(id);
                 break;
             }
             case FontFileFormat::Unknown:
-                return parse_css(data, reply_url);
+                parse_css(id, data, reply_url);
+                break;
             default:
-                parent->error(tr("Font format not supported for %1").arg(reply_url.toString()));
+                parent->error(tr("Font format not supported for %1").arg(reply_url.toString()), id);
         }
     }
 
-    void parse_css(const QByteArray& data, const QUrl& css_url)
+    void parse_css(int id, const QByteArray& data, const QUrl& css_url)
     {
         if ( !data.contains("@font-face") )
             return;
@@ -154,9 +162,12 @@ public:
         }
 
         for ( const auto& url : urls )
-            queue(QueueItem{url, css_url});
+            queue(QueueItem{-1, url, css_url});
 
         emit parent->fonts_queued(queued.size());
+
+        if ( id != -1 )
+            emit parent->success(id);
     }
 
     void queue(const QueueItem& item)
@@ -179,6 +190,7 @@ glaxnimate::model::FontLoader::FontLoader()
     : d(std::make_unique<Private>())
 {
     d->parent = this;
+    d->downloader.setParent(this);
     connect(&d->downloader, &QNetworkAccessManager::finished, this, [this](QNetworkReply *reply){
         d->handle_response(reply);
     });
@@ -213,9 +225,9 @@ void glaxnimate::model::FontLoader::load_queue()
     emit fonts_loaded(0);
 }
 
-void glaxnimate::model::FontLoader::queue(const QUrl& url)
+void glaxnimate::model::FontLoader::queue(const QUrl& url, int id)
 {
-    d->queue({url});
+    d->queue({id, url});
 }
 
 int glaxnimate::model::FontLoader::queued_total() const
@@ -228,9 +240,9 @@ const std::vector<glaxnimate::model::CustomFont> & glaxnimate::model::FontLoader
     return d->fonts;
 }
 
-void glaxnimate::model::FontLoader::queue_data(const QByteArray& data)
+void glaxnimate::model::FontLoader::queue_data(const QByteArray& data, int id)
 {
-    d->parse(data, {}, {});
+    d->parse(id, data, {}, {});
 }
 
 
@@ -247,4 +259,20 @@ void glaxnimate::model::FontLoader::cancel()
 bool glaxnimate::model::FontLoader::loading() const
 {
     return d->loading;
+}
+
+void glaxnimate::model::FontLoader::queue_pending(model::Document* document, bool reload_loaded)
+{
+    connect(this, &FontLoader::success, document, &Document::mark_asset_loaded);
+
+    for ( const auto& pending : document->pending_assets() )
+    {
+        if ( reload_loaded || !pending.loaded )
+        {
+            if ( pending.url.isValid() )
+                queue(pending.url, pending.id);
+            else if ( !pending.data.isEmpty() )
+                queue_data(pending.data, pending.id);
+        }
+    }
 }

@@ -70,6 +70,13 @@ void glaxnimate::model::PrecompositionList::on_removed(glaxnimate::model::Precom
     emit docnode_child_remove_end(obj, position);
 }
 
+void glaxnimate::model::FontList::on_added ( model::EmbeddedFont* obj, int position )
+{
+    obj->attach();
+    emit docnode_child_add_end(obj, position);
+    emit font_added(obj);
+}
+
 
 glaxnimate::model::NamedColor* glaxnimate::model::Assets::add_color(const QColor& color, const QString& name)
 {

@@ -18,6 +18,7 @@
 #include "io/lottie/validation.hpp"
 
 #include "model/visitor.hpp"
+#include "model/font/font_loader.hpp"
 
 #include "command/undo_macro_guard.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -184,21 +185,6 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     ui.timeline_widget->reset_view();
 }
 
-namespace  {
-
-class ThreadFixer : public model::Visitor
-{
-    void on_visit(model::DocumentNode* node) override
-    {
-        if ( node->thread() != target_thread )
-            node->moveToThread(target_thread);
-    }
-
-    QThread* target_thread = QApplication::instance()->thread();
-};
-
-} // namespace
-
 bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 {
     if ( !close_document() )
@@ -210,10 +196,7 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     auto promise = QtConcurrent::run(
         [options, current_document=current_document.get()]{
             QFile file(options.filename);
-            bool open = options.format->open(file, options.filename, current_document, options.settings);
-            ThreadFixer().visit(current_document);
-            return open;
-
+            return options.format->open(file, options.filename, current_document, options.settings);
         });
 
     process_events(promise);
@@ -266,6 +249,8 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     export_options.filename = "";
 
     ui.timeline_widget->reset_view();
+
+    load_pending();
 
     return ok;
 }
@@ -765,6 +750,8 @@ void GlaxnimateWindow::Private::import_file(const io::Options& options)
 
     /// \todo ask if comp
     parent->paste_document(&imported, tr("Import File"), true);
+
+    load_pending();
 }
 
 void GlaxnimateWindow::Private::import_file(const QString& filename, const QVariantMap& settings)
@@ -778,4 +765,32 @@ void GlaxnimateWindow::Private::import_file(const QString& filename, const QVari
     opts.filename = filename;
     opts.path = finfo.dir();
     import_file(opts);
+}
+
+static void on_font_loader_finished(glaxnimate::model::FontLoader* loader)
+{
+    if ( !loader->fonts().empty() )
+    {
+        auto document = static_cast<glaxnimate::model::Document*>(loader->parent());
+        glaxnimate::command::UndoMacroGuard guard(QObject::tr("Download fonts"), document);
+        for ( const auto& font : loader->fonts() )
+            document->assets()->add_font(font);
+    }
+    loader->deleteLater();
+}
+
+void glaxnimate::gui::GlaxnimateWindow::Private::load_pending()
+{
+    auto font_loader = new glaxnimate::model::FontLoader();
+    font_loader->setParent(current_document.get());
+    connect(
+        font_loader, &model::FontLoader::error, parent,
+        [this](const QString& msg){ app::log::Log("Font Loader").log(msg); }
+    );
+    font_loader->queue_pending(current_document.get());
+    connect(
+        font_loader, &model::FontLoader::finished, current_document.get(),
+        [font_loader]{on_font_loader_finished(font_loader);}
+    );
+    font_loader->load_queue();
 }

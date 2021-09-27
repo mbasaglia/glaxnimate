@@ -5,6 +5,8 @@
 
 namespace glaxnimate::model {
 
+class Document;
+
 enum class FontFileFormat
 {
     Unknown,
@@ -33,8 +35,9 @@ public:
     /**
      * \brief Queue \p url for download
      * \param url Should point to a css, ttf, or otf file
+     * \param id Custom identifier to recognize when loading has finished
      */
-    void queue(const QUrl& url);
+    void queue(const QUrl& url, int id = -1);
 
     /**
      * \brief Load fonts from the queue
@@ -54,8 +57,9 @@ public:
     /**
      * \brief Load from data
      * \param data Should be css, ttf, or otf
+     * \param id Custom identifier to recognize when loading has finished
      */
-    void queue_data(const QByteArray& data);
+    void queue_data(const QByteArray& data, int id = -1);
 
     /**
      * \brief Cancels all loads and clears all data
@@ -66,6 +70,11 @@ public:
      * \brief Whether loading is in progress
      */
     bool loading() const;
+
+    /**
+     * \brief Queues all pending assets from the document
+     */
+    void queue_pending(model::Document* document, bool reload_loaded = false);
 
 signals:
     /**
@@ -87,7 +96,12 @@ signals:
     /**
      * \brief Error message
      */
-    void error(const QString& message);
+    void error(const QString& message, int id);
+
+    /**
+     * \brief Success for resource with the given ID
+     */
+    void success(int id);
 
 private:
     class Private;

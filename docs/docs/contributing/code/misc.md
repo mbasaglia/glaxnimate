@@ -7,9 +7,9 @@ Authors: Mattia Basaglia
 To click on the window to record and start recording straight away:
 
     # No sound
-    recordmydesktop --no-sound -o /tmp/out.ogv --windowid `xwininfo -display :0 | grep 'id: 0x' | grep -oE "0x\w+"`
+    recordmydesktop --overwrite --no-sound -o /tmp/out.ogv --windowid `xwininfo -display :0 | grep 'id: 0x' | grep -oE "0x\w+"`
     # Yes sound
-    recordmydesktop -o /tmp/out.ogv --windowid `xwininfo -display :0 | grep 'id: 0x' | grep -oE "0x\w+"`
+    recordmydesktop --overwrite -o /tmp/out.ogv --windowid `xwininfo -display :0 | grep 'id: 0x' | grep -oE "0x\w+"`
     # Convert
     ffmpeg -i /tmp/out.ogv /tmp/out.mp4
 

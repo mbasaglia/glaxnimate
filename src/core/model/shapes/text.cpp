@@ -2,13 +2,16 @@
 
 #include <QTextLayout>
 #include <QFontInfo>
+#include <QMetaEnum>
 
 #include "group.hpp"
 #include "path.hpp"
 #include "command/undo_macro_guard.hpp"
+#include "model/assets/assets.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Font)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::TextShape)
+
 
 class glaxnimate::model::Font::Private
 {
@@ -35,17 +38,57 @@ public:
     {
         // disable kerning because QRawFont doesn't handle kerning properly
 //         query.setKerning(false);
-
         raw = QRawFont::fromFont(query);
+
+        // Dynamic fonts might have weird names
+        if ( !raw.familyName().startsWith(query.family()) )
+        {
+            QString family = query.family();
+            QFont new_query = query;
+            new_query.setFamily(family + ' ' + query.styleName());
+            auto new_raw = QRawFont::fromFont(new_query);
+            if ( new_raw.familyName().startsWith(family) )
+            {
+                query = new_query;
+                raw = new_raw;
+            }
+        }
+
         metrics = QFontMetricsF(query);
         upscaled_raw();
     }
 
+    static const QStringList& default_styles()
+    {
+        static QStringList styles;
+        if ( styles.empty() )
+        {
+            auto meta = QMetaEnum::fromType<QFont::Weight>();
+            for ( int i = 0; i < meta.keyCount(); i++ )
+            {
+                QString key = meta.key(i);
+                for ( const char* style : {"", " Italic", " Oblique"} )
+                {
+                    styles.push_back(key + style);
+                }
+            }
+        }
+
+        return styles;
+    }
+
     void refresh_styles(Font* parent)
     {
-        styles = database.styles(parent->family.get());
-        if ( !parent->valid_style(parent->style.get()) && !styles.empty() )
-            parent->style.set(styles[0]);
+        if ( !raw.familyName().startsWith(query.family()) )
+        {
+            styles = default_styles();
+        }
+        else
+        {
+            styles = database.styles(parent->family.get());
+            if ( !parent->valid_style(parent->style.get()) && !styles.empty() )
+                parent->style.set(styles[0]);
+        }
     }
 
     // QRawFont::pathForGlyph doesn't work well, so we work around it
@@ -112,25 +155,44 @@ glaxnimate::model::Font::Font(glaxnimate::model::Document* doc)
     style.set(d->raw.styleName());
     size.set(d->query.pointSize());
     d->refresh_styles(this);
+    on_transfer(doc);
 }
 
 glaxnimate::model::Font::~Font() = default;
 
-void glaxnimate::model::Font::on_font_changed()
+void glaxnimate::model::Font::refresh_data ( bool update_styles )
 {
     d->query = QFont(family.get(), size.get());
     d->query.setStyleName(style.get());
-//     query_.setHintingPreference(QFont::PreferFullHinting);
-//     query_.setStyleStrategy(QFont::StyleStrategy(QFont::ForceOutline|QFont::PreferQuality));
     d->update_data();
+    if ( update_styles )
+        d->refresh_styles(this);
     emit font_changed();
-
 }
+
+void glaxnimate::model::Font::on_font_changed()
+{
+    refresh_data(false);
+}
+
+void glaxnimate::model::Font::on_transfer ( model::Document* doc )
+{
+    if ( document() )
+        disconnect(document()->assets()->fonts.get(), nullptr, this, nullptr);
+
+    if ( doc )
+    {
+        connect(doc->assets()->fonts.get(), &FontList::font_added, this, [this]{
+            refresh_data(true);
+            document()->graphics_invalidated();
+        });
+    }
+}
+
 
 void glaxnimate::model::Font::on_family_changed()
 {
-    d->refresh_styles(this);
-    on_font_changed();
+    refresh_data(true);
 }
 
 bool glaxnimate::model::Font::valid_style(const QString& style)
@@ -514,3 +576,4 @@ void glaxnimate::model::TextShape::path_changed(glaxnimate::model::ShapeElement*
         connect(new_path, &VisualNode::bounding_rect_changed, this, &TextShape::on_text_changed);
     }
 }
+

@@ -140,7 +140,7 @@ void glaxnimate::gui::font::FontModel::set_document(model::Document* document)
     {
         auto fonts = document->assets()->fonts.get();
 
-        connect(fonts, nullptr, this, nullptr);
+        disconnect(fonts, nullptr, this, nullptr);
 
         for ( const auto& font : fonts->values )
             d->maybe_remove_family(font->family(), this);
@@ -152,8 +152,11 @@ void glaxnimate::gui::font::FontModel::set_document(model::Document* document)
     {
         auto fonts = document->assets()->fonts.get();
 
-        connect(fonts, &model::DocumentNode::docnode_child_add_end, this, [this](model::DocumentNode* node){
-            auto font = static_cast<model::EmbeddedFont*>(node);
+        for ( const auto& font : fonts->values )
+            d->maybe_add_family(font->family(), this);
+
+
+        connect(fonts, &model::FontList::font_added, this, [this](model::EmbeddedFont* font){
             if ( font->database_index() != -1 )
                 d->maybe_add_family(font->family(), this);
         });

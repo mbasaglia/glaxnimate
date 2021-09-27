@@ -7,6 +7,7 @@
 * I/O:
     * Fixed position of tspan on SVG output
     * Shapes not showing on SVG output
+    * Fonts defined in CSS @font-face are now loaded from SVG
 * Scripting:
     * Ability to stretch time for documents and individual objects
 * Bug Fixes:

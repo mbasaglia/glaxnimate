@@ -64,14 +64,12 @@ public:
 protected:
     virtual void on_added(T* obj, int row)
     {
-        Q_UNUSED(row);
         obj->attach();
         emit docnode_child_add_end(obj, row);
     }
 
     virtual void on_removed(T* obj, int row)
     {
-        Q_UNUSED(row);
         obj->detach();
         emit docnode_child_remove_end(obj, row);
     }
@@ -156,6 +154,13 @@ class FontList : public AssetListBase<EmbeddedFont, FontList>
 
 public:
     QIcon tree_icon() const override { return QIcon::fromTheme("font"); }
+
+
+protected:
+    void on_added(model::EmbeddedFont* obj, int position) override;
+
+signals:
+    void font_added(model::EmbeddedFont* font);
 
 protected:
     QString type_name_human() const override { return tr("Fonts"); }
