@@ -21,7 +21,7 @@ glaxnimate::model::Object::Object(Document* document)
     : d(std::make_unique<glaxnimate::model::Object::Private>())
 {
     d->document = document;
-    if ( thread() != document->thread() )
+    if ( document && thread() != document->thread() )
         moveToThread(document->thread());
 }
 
