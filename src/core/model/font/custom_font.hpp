@@ -19,6 +19,7 @@ public:
 
     CustomFont add_font(const QByteArray& ttf_data);
     CustomFont get_font(int database_index);
+    std::vector<CustomFont> fonts() const;
 
 private:
     CustomFontDatabase();

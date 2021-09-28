@@ -90,6 +90,15 @@ glaxnimate::model::CustomFontDatabase & glaxnimate::model::CustomFontDatabase::i
     return instance;
 }
 
+std::vector<glaxnimate::model::CustomFont> glaxnimate::model::CustomFontDatabase::fonts() const
+{
+    std::vector<CustomFont> fonts;
+    fonts.reserve(d->fonts.size());
+    for ( const auto& font : d->fonts )
+        fonts.emplace_back(font.second);
+    return fonts;
+}
+
 glaxnimate::model::CustomFont glaxnimate::model::CustomFontDatabase::add_font(const QByteArray& ttf_data)
 {
     return d->install(ttf_data);
@@ -103,11 +112,11 @@ glaxnimate::model::CustomFont glaxnimate::model::CustomFontDatabase::get_font(in
     return it->second;
 }
 
-glaxnimate::model::CustomFont::CustomFont(CustomFontDatabase::DataPtr d)
-    : d(std::move(d))
+glaxnimate::model::CustomFont::CustomFont(CustomFontDatabase::DataPtr dd)
+    : d(std::move(dd))
 {
-    if ( !this->d )
-        this->d = std::make_shared<CustomFontDatabase::CustomFontData>();
+    if ( !d )
+        d = std::make_shared<CustomFontDatabase::CustomFontData>();
 }
 
 glaxnimate::model::CustomFont::CustomFont()
@@ -116,7 +125,7 @@ glaxnimate::model::CustomFont::CustomFont()
 }
 
 glaxnimate::model::CustomFont::CustomFont(int database_index)
-    : CustomFont(std::move(CustomFontDatabase::instance().get_font(database_index)))
+    : CustomFont(CustomFontDatabase::instance().get_font(database_index))
 {
 }
 

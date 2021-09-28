@@ -14,6 +14,7 @@
     * The timing dialog honours "Keep initial timing"
     * Fixed crash when switching between compositions
     * Fixed some CSS parsing issues
+    * Fixed memory leak on file load
 
 ## 0.4.5
 

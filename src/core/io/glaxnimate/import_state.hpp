@@ -479,10 +479,14 @@ private:
         }
 
         if ( auto obj = model::Factory::instance().build(type, document) )
+        {
+            temporaries.emplace_back(obj);
             return obj;
+        }
 
         error(GlaxnimateFormat::tr("Unknow object of type '%1'").arg(type));
-        return new model::Object(document);
+        temporaries.emplace_back(new model::Object(document));
+        return temporaries.back().get();
     }
 
 
@@ -492,6 +496,7 @@ private:
     std::vector<std::pair<UnresolvedPath, QUuid>> unresolved_references;
     QMap<model::Object*, QJsonObject> deferred_loads;
     std::vector<model::Object*> unwanted;
+    std::vector<std::unique_ptr<model::Object>> temporaries;
     int document_version;
 };
 

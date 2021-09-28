@@ -4,6 +4,7 @@
 #include <QJsonDocument>
 #include <QTemporaryFile>
 #include <QDomDocument>
+#include <QFontDatabase>
 
 #include "app/utils/desktop.hpp"
 #include "app/debug/model.hpp"
@@ -11,6 +12,7 @@
 #include "io/base.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "utils/gzip.hpp"
+#include "model/font/custom_font.hpp"
 
 #include "widgets/timeline/timeline_widget.hpp"
 #include "widgets/dialogs/clipboard_inspector.hpp"
@@ -215,5 +217,15 @@ void GlaxnimateWindow::Private::init_debug()
         auto dialog = new ClipboardInspector();
         dialog->show();
         connect(dialog, &QDialog::finished, dialog, &QObject::deleteLater);
+    });
+    menu_debug->addAction("Fonts", []{
+        qDebug() << "---- Fonts ----";
+        QFontDatabase db;
+        for ( const auto& family : db.families() )
+            qDebug() << family;
+        qDebug() << "---- Custom ----";
+        for ( const auto& font : model::CustomFontDatabase::instance().fonts() )
+            qDebug() << font.family() << ":" << font.style_name();
+        qDebug() << "----";
     });
 }
