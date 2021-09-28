@@ -71,11 +71,11 @@ public:
         return QString("%1 %2").arg(iter->first).arg(iter->second + 1);
     }
 
-    int add_pending_asset(QUrl url, QByteArray data)
+    int add_pending_asset(QUrl url, QByteArray data, const QString& name_alias)
     {
         int id = max_pending_id;
         ++max_pending_id;
-        pending_assets[id] = {id, std::move(url), std::move(data)};
+        pending_assets[id] = {id, std::move(url), std::move(data), name_alias};
         return id;
     }
 
@@ -297,19 +297,19 @@ void glaxnimate::model::Document::stretch_time(qreal multiplier)
     set_current_time(qRound(time * multiplier));
 }
 
-int glaxnimate::model::Document::add_pending_asset(const QByteArray& data)
+int glaxnimate::model::Document::add_pending_asset(const QString& name, const QByteArray& data)
 {
-    return d->add_pending_asset({}, data);
+    return d->add_pending_asset({}, data, name);
 }
 
-int glaxnimate::model::Document::add_pending_asset(const QUrl& url)
+int glaxnimate::model::Document::add_pending_asset(const QString& name, const QUrl& url)
 {
-    return d->add_pending_asset(url, {});
+    return d->add_pending_asset(url, {}, name);
 }
 
 int glaxnimate::model::Document::add_pending_asset(const PendingAsset& ass)
 {
-    return d->add_pending_asset(ass.url, ass.data);
+    return d->add_pending_asset(ass.url, ass.data, ass.name_alias);
 }
 
 void glaxnimate::model::Document::mark_asset_loaded(int id)

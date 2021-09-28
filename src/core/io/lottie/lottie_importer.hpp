@@ -855,6 +855,15 @@ private:
         return comp;
     }
 
+    enum class FontOrigin
+    {
+        System = -1,
+        Unknown = 0,
+        CssUrl = 1,
+        ScriptUrl = 2,
+        FontUrl = 3,
+    };
+
     void load_fonts(const QJsonArray& fonts_arr)
     {
         for ( const auto& fontv : fonts_arr )
@@ -865,6 +874,38 @@ private:
             info.name = font["fName"].toString();
             info.style = font["fStyle"].toString();
             fonts[info.name] = info;
+
+            FontOrigin font_origin = FontOrigin::System;
+            if ( font.contains("origin") )
+            {
+                font_origin = FontOrigin(font["origin"].toInt());
+            }
+            else if ( font.contains("fOrigin") )
+            {
+                switch ( (font["fOrigin"].toString() + " ")[0].toLatin1() )
+                {
+                    case 'n': font_origin = FontOrigin::Unknown; break;
+                    case 'g': font_origin = FontOrigin::CssUrl; break;
+                    case 't': font_origin = FontOrigin::ScriptUrl; break;
+                    case 'p': font_origin = FontOrigin::FontUrl; break;
+                }
+            }
+
+            switch ( font_origin )
+            {
+                case FontOrigin::System:
+                    // nothing to do
+                    break;
+                case FontOrigin::CssUrl:
+                case FontOrigin::FontUrl:
+                    // Queue dynamic font loading
+                    document->add_pending_asset(info.family, font["fPath"].toString());
+                    break;
+                case FontOrigin::Unknown:
+                case FontOrigin::ScriptUrl:
+                    // idk how these work
+                    break;
+            }
         }
     }
 

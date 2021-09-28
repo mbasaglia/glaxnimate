@@ -29,6 +29,7 @@ public:
         font_.setStyleName(info.styleName());
         update_styles(info.family());
         combo_font->setCurrentIndex(model.index_for_font(info.family()).row());
+        combo_font->setEditText(info.family());
         font_.setPointSizeF(font.pointSizeF());
         spin_size->setValue(font.pointSizeF());
 //         combo_style->setCurrentText(info.styleName());

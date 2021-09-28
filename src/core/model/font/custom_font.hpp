@@ -1,10 +1,12 @@
 #pragma once
 
-
+#include <set>
 #include <memory>
 
 #include <QRawFont>
 #include <QObject>
+
+#include "app/utils/qstring_hash.hpp"
 
 namespace glaxnimate::model {
 
@@ -17,9 +19,12 @@ class CustomFontDatabase : public QObject
 public:
     static CustomFontDatabase& instance();
 
-    CustomFont add_font(const QByteArray& ttf_data);
+    CustomFont add_font(const QString& name_alias, const QByteArray& ttf_data);
     CustomFont get_font(int database_index);
     std::vector<CustomFont> fonts() const;
+
+    QFont font(const QString& family, const QString& style_name, qreal size) const;
+    std::unordered_map<QString, std::set<QString>> aliases() const;
 
 private:
     CustomFontDatabase();
@@ -38,7 +43,6 @@ class CustomFont
 {
 public:
     explicit CustomFont(int database_index);
-    explicit CustomFont(const QByteArray& data);
     CustomFont(CustomFontDatabase::DataPtr d);
     CustomFont();
     ~CustomFont();

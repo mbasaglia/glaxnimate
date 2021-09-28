@@ -8,6 +8,7 @@
 #include "path.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "model/assets/assets.hpp"
+#include "model/font/custom_font.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Font)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::TextShape)
@@ -162,8 +163,7 @@ glaxnimate::model::Font::~Font() = default;
 
 void glaxnimate::model::Font::refresh_data ( bool update_styles )
 {
-    d->query = QFont(family.get(), size.get());
-    d->query.setStyleName(style.get());
+    d->query = CustomFontDatabase::instance().font(family.get(), style.get(), size.get());
     d->update_data();
     if ( update_styles )
         d->refresh_styles(this);

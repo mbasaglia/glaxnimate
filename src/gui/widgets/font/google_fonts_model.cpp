@@ -165,7 +165,8 @@ public:
             {
                 auto data = reply->readAll();
                 reply->close();
-                style->font = model::CustomFontDatabase::instance().add_font(data);
+                /// \todo Should we pass the font name?
+                style->font = model::CustomFontDatabase::instance().add_font("", data);
                 if ( !style->font.is_valid() )
                 {
                     font->status = GoogleFont::Broken;

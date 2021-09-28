@@ -223,9 +223,19 @@ void GlaxnimateWindow::Private::init_debug()
         QFontDatabase db;
         for ( const auto& family : db.families() )
             qDebug() << family;
+
         qDebug() << "---- Custom ----";
         for ( const auto& font : model::CustomFontDatabase::instance().fonts() )
             qDebug() << font.family() << ":" << font.style_name();
+
+        qDebug() << "---- Aliases ----";
+        for ( const auto& p : model::CustomFontDatabase::instance().aliases() )
+        {
+            auto db = qDebug();
+            db << p.first << "->";
+            for ( const auto& n : p.second )
+                db << n;
+        }
         qDebug() << "----";
     });
 }

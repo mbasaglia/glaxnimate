@@ -116,7 +116,7 @@ void glaxnimate::gui::font::ExternalFontWidget::load_url()
 
     d->loader.cancel();
 
-    d->loader.queue(d->url);
+    d->loader.queue("", d->url);
     d->ui.progress_bar->setVisible(true);
     d->font_model.clear();
     d->ui.widget_data->setEnabled(false);

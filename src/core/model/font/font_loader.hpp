@@ -34,10 +34,11 @@ public:
 
     /**
      * \brief Queue \p url for download
+     * \param name_alias Name of the font family (if any)
      * \param url Should point to a css, ttf, or otf file
      * \param id Custom identifier to recognize when loading has finished
      */
-    void queue(const QUrl& url, int id = -1);
+    void queue(const QString& name_alias, const QUrl& url, int id = -1);
 
     /**
      * \brief Load fonts from the queue
@@ -56,10 +57,11 @@ public:
 
     /**
      * \brief Load from data
+     * \param name_alias Name of the font family (if any)
      * \param data Should be css, ttf, or otf
      * \param id Custom identifier to recognize when loading has finished
      */
-    void queue_data(const QByteArray& data, int id = -1);
+    void queue_data(const QString& name_alias, const QByteArray& data, int id = -1);
 
     /**
      * \brief Cancels all loads and clears all data

@@ -103,7 +103,7 @@ public:
             {
                 QString url = link.attribute("href");
                 if ( !url.isEmpty() )
-                    document->add_pending_asset(url);
+                    document->add_pending_asset("", url);
             }
         }
 
@@ -155,7 +155,7 @@ public:
             }
 
             if ( data.contains("@font-face") )
-                document->add_pending_asset(data.toUtf8());
+                document->add_pending_asset("", data.toUtf8());
 
             parser.parse(data);
         }

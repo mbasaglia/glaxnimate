@@ -52,6 +52,6 @@ bool glaxnimate::model::EmbeddedFont::remove_if_unused(bool clean_lists)
 
 void glaxnimate::model::EmbeddedFont::on_data_changed()
 {
-    custom_font_ = CustomFontDatabase::instance().add_font(data.get());
+    custom_font_ = CustomFontDatabase::instance().add_font("", data.get());
 }
 

@@ -8,6 +8,7 @@
     * Fixed position of tspan on SVG output
     * Shapes not showing on SVG output
     * Fonts defined in CSS @font-face are now loaded from SVG
+    * External fonts are now loaded from lottie
 * Scripting:
     * Ability to stretch time for documents and individual objects
 * Bug Fixes:
@@ -15,6 +16,7 @@
     * Fixed crash when switching between compositions
     * Fixed some CSS parsing issues
     * Fixed memory leak on file load
+    * The text tool options shows the right font family when selecting an object
 
 ## 0.4.5
 

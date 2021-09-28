@@ -36,6 +36,7 @@ public:
     struct QueueItem
     {
         int id = -2;
+        QString name_alias;
         QUrl url;
         QUrl parent_url = {};
     };
@@ -54,7 +55,7 @@ public:
         if ( !file.open(QFile::ReadOnly) )
             parent->error(tr("Could not open file %1").arg(file.fileName()), item.id);
         else
-            parse(item.id, file.readAll(), item.parent_url, item.url);
+            parse(item.name_alias, item.id, file.readAll(), item.parent_url, item.url);
 
         mark_resolved();
     }
@@ -65,7 +66,7 @@ public:
         if ( info.empty() || !info.back().startsWith("base64,") )
             parent->error(tr("Invalid data URL"), item.id);
         else
-            parse(item.id, QByteArray::fromBase64(info.back().mid(7).toLatin1(), QByteArray::Base64UrlEncoding), item.parent_url, item.url);
+            parse(item.name_alias, item.id, QByteArray::fromBase64(info.back().mid(7).toLatin1(), QByteArray::Base64UrlEncoding), item.parent_url, item.url);
         mark_resolved();
     }
 
@@ -89,6 +90,7 @@ public:
         QNetworkReply* response = downloader.get(request);
         response->setProperty("css_url", item.parent_url);
         response->setProperty("id", item.id);
+        response->setProperty("name_alias", item.name_alias);
         active_replies.insert(response);
     }
 
@@ -109,7 +111,13 @@ public:
         }
         else
         {
-            parse(reply->property("id").toInt(), reply->readAll(), reply->property("css").toUrl(), reply->url());
+            parse(
+                reply->property("name_alias").toString(),
+                reply->property("id").toInt(),
+                reply->readAll(),
+                reply->property("css").toUrl(),
+                reply->url()
+            );
             reply->close();
         }
 
@@ -117,14 +125,14 @@ public:
         mark_resolved();
     }
 
-    void parse(int id, const QByteArray& data, const QUrl& css_url, const QUrl& reply_url)
+    void parse(const QString& name_alias, int id, const QByteArray& data, const QUrl& css_url, const QUrl& reply_url)
     {
         switch ( font_data_format(data) )
         {
             case FontFileFormat::TrueType:
             case FontFileFormat::OpenType:
             {
-                CustomFont font(data);
+                CustomFont font = CustomFontDatabase::instance().add_font(name_alias, data);
                 font.set_source_url(reply_url.toString());
                 font.set_css_url(css_url.toString());
                 fonts.push_back(font);
@@ -157,12 +165,19 @@ public:
             {
                 auto match = url.match(block.style["src"]);
                 if ( match.hasMatch() )
-                    urls.insert(match.captured(2));
+                {
+                    QString url = match.captured(2);
+                    if ( urls.insert(url).second )
+                    {
+                        QString fam = block.style["font-family"];
+                        if ( fam.size() > 1 && (fam[0] == '"' || fam[0] == '\'') )
+                            fam = fam.mid(1, fam.size() - 2);
+                        queue(QueueItem{-1, fam, url, css_url});
+                    }
+                }
             }
         }
 
-        for ( const auto& url : urls )
-            queue(QueueItem{-1, url, css_url});
 
         emit parent->fonts_queued(queued.size());
 
@@ -225,9 +240,9 @@ void glaxnimate::model::FontLoader::load_queue()
     emit fonts_loaded(0);
 }
 
-void glaxnimate::model::FontLoader::queue(const QUrl& url, int id)
+void glaxnimate::model::FontLoader::queue(const QString& name_alias, const QUrl& url, int id)
 {
-    d->queue({id, url});
+    d->queue({id, name_alias, url});
 }
 
 int glaxnimate::model::FontLoader::queued_total() const
@@ -240,9 +255,9 @@ const std::vector<glaxnimate::model::CustomFont> & glaxnimate::model::FontLoader
     return d->fonts;
 }
 
-void glaxnimate::model::FontLoader::queue_data(const QByteArray& data, int id)
+void glaxnimate::model::FontLoader::queue_data(const QString& name_alias, const QByteArray& data, int id)
 {
-    d->parse(id, data, {}, {});
+    d->parse(name_alias, id, data, {}, {});
 }
 
 
@@ -270,9 +285,9 @@ void glaxnimate::model::FontLoader::queue_pending(model::Document* document, boo
         if ( reload_loaded || !pending.loaded )
         {
             if ( pending.url.isValid() )
-                queue(pending.url, pending.id);
+                queue(pending.name_alias, pending.url, pending.id);
             else if ( !pending.data.isEmpty() )
-                queue_data(pending.data, pending.id);
+                queue_data(pending.name_alias, pending.data, pending.id);
         }
     }
 }

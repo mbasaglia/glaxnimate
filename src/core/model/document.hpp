@@ -76,8 +76,8 @@ public:
 
     void stretch_time(qreal multiplier);
 
-    int add_pending_asset(const QUrl& url);
-    int add_pending_asset(const QByteArray& data);
+    int add_pending_asset(const QString& name, const QUrl& url);
+    int add_pending_asset(const QString& name, const QByteArray& data);
     int add_pending_asset(const model::PendingAsset& asset);
     std::vector<model::PendingAsset> pending_assets();
     void mark_asset_loaded(int pending_id);
