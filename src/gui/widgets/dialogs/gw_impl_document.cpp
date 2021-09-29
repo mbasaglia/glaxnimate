@@ -772,9 +772,15 @@ static void on_font_loader_finished(glaxnimate::model::FontLoader* loader)
     if ( !loader->fonts().empty() )
     {
         auto document = static_cast<glaxnimate::model::Document*>(loader->parent());
+        bool clear = document->undo_stack().count() == 0;
+
         glaxnimate::command::UndoMacroGuard guard(QObject::tr("Download fonts"), document);
         for ( const auto& font : loader->fonts() )
             document->assets()->add_font(font);
+        guard.finish();
+
+        if ( clear )
+            document->undo_stack().clear();
     }
     loader->deleteLater();
 }

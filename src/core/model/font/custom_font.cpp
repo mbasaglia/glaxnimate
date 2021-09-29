@@ -45,7 +45,7 @@ public:
 
     void tag_alias(const DataPtr& data, const QString& name)
     {
-        if ( !name.isEmpty() && data->name_aliases.insert(name).second )
+        if ( !name.isEmpty() && name != data->family_name() && data->name_aliases.insert(name).second )
             name_aliases[name].push_back(data->database_index);
     }
 
