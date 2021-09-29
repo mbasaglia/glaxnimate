@@ -2,6 +2,7 @@
 
 #include <set>
 #include <memory>
+#include <unordered_map>
 
 #include <QRawFont>
 #include <QObject>
