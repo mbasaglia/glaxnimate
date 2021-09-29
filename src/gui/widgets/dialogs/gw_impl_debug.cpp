@@ -12,7 +12,7 @@
 #include "io/base.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "utils/gzip.hpp"
-#include "model/font/custom_font.hpp"
+#include "model/custom_font.hpp"
 
 #include "widgets/timeline/timeline_widget.hpp"
 #include "widgets/dialogs/clipboard_inspector.hpp"
@@ -238,4 +238,5 @@ void GlaxnimateWindow::Private::init_debug()
         }
         qDebug() << "----";
     });
+
 }

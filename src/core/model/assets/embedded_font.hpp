@@ -1,7 +1,7 @@
 #pragma once
 
 #include "asset.hpp"
-#include "model/font/custom_font.hpp"
+#include "model/custom_font.hpp"
 
 namespace glaxnimate::model {
 

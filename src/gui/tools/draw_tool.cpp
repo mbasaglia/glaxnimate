@@ -12,15 +12,92 @@ using namespace glaxnimate;
 class tools::DrawTool::Private
 {
 public:
+    class ToolUndoStack
+    {
+    public:
+
+        void push(QUndoCommand* command, SelectionManager* window)
+        {
+            if ( !undo_stack )
+            {
+                undo_stack = std::make_unique<QUndoStack>();
+                window->undo_group().addStack(undo_stack.get());
+                window->undo_group().setActiveStack(undo_stack.get());
+            }
+
+            undo_stack->push(command);
+        }
+
+        void undo(SelectionManager* window)
+        {
+            if ( undo_stack )
+            {
+                if ( undo_stack->index() == 0 )
+                    clear(window);
+                else
+                    undo_stack->undo();
+            }
+        }
+
+        void redo(SelectionManager*)
+        {
+            if ( undo_stack )
+                undo_stack->redo();
+        }
+
+        void clear(SelectionManager* window)
+        {
+            if ( undo_stack )
+            {
+                window->undo_group().removeStack(undo_stack.get());
+                window->undo_group().setActiveStack(&window->document()->undo_stack());
+                undo_stack.reset();
+            }
+        }
+
+    private:
+        std::unique_ptr<QUndoStack> undo_stack;
+    };
+
+    class BezierUndoCommand : public QUndoCommand
+    {
+    public:
+        BezierUndoCommand(const QString& name, math::bezier::Bezier* target, math::bezier::Bezier&& after )
+            : QUndoCommand(name),
+              target(target),
+              before(*target),
+              after(std::move(after))
+        {}
+
+        void undo() override
+        {
+            *target = before;
+        }
+
+        void redo() override
+        {
+            *target = after;
+        }
+
+        math::bezier::Bezier* target;
+        math::bezier::Bezier before;
+        math::bezier::Bezier after;
+    };
+
     void create(const Event& event, DrawTool* tool);
     void adjust_point_type(Qt::KeyboardModifiers mod);
-    void clear(bool hard);
+    void clear(bool hard, SelectionManager* window);
     void add_extension_points(model::Path* owner);
     void remove_extension_points(model::AnimatedProperty<math::bezier::Bezier>* property);
     void recursive_add_selection(graphics::DocumentScene * scene, model::VisualNode* node);
     void recursive_remove_selection(graphics::DocumentScene * scene, model::VisualNode* node);
     bool within_join_distance(const tools::MouseEvent& event, const QPointF& scene_pos);
     void prepare_draw(const tools::MouseEvent& event);
+
+    void push_command(const QString& name, SelectionManager* window, math::bezier::Bezier&& after)
+    {
+        undo_stack.push(new BezierUndoCommand(name, &bezier, std::move(after)), window);
+    }
 
     struct ExtendPathData
     {
@@ -37,6 +114,7 @@ public:
         }
     };
 
+
     math::bezier::Bezier bezier;
     bool dragging = false;
     math::bezier::PointType point_type = math::bezier::Symmetrical;
@@ -46,10 +124,7 @@ public:
     ExtendPathData extend;
     std::vector<ExtendPathData> extension_points;
 
-    QShortcut* undo = nullptr;
-    // For some reason there's an annoying dialog if a QShortcut has the same
-    // key sequence as a QAction, so we work around it...
-    QAction* why_cant_we_have_nice_things = nullptr;
+    ToolUndoStack undo_stack;
 };
 
 tools::Autoreg<tools::DrawTool> tools::DrawTool::autoreg{max_priority};
@@ -101,7 +176,7 @@ void tools::DrawTool::Private::create(const tools::Event& event, DrawTool* tool)
         }
 
     }
-    clear(false);
+    clear(false, event.window);
     event.repaint();
 }
 
@@ -144,7 +219,7 @@ void tools::DrawTool::Private::adjust_point_type(Qt::KeyboardModifiers mod)
     if ( !bezier.empty() )
     {
         bezier.points().back().type = point_type;
-        bezier.points().back().drag_tan_out(bezier.points().back().tan_out);
+//         bezier.points().back().drag_tan_out(bezier.points().back().tan_out);
     }
 }
 
@@ -155,7 +230,7 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
 
     if ( event.key() == Qt::Key_Delete || event.key() == Qt::Key_Backspace || event.key() == Qt::Key_Back )
     {
-        remove_last();
+        remove_last(event.window);
         event.accept();
         event.repaint();
     }
@@ -172,17 +247,14 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
     }
     else if ( event.key() == Qt::Key_Escape )
     {
-        d->clear(false);
+        d->clear(false, event.window);
         event.repaint();
     }
 }
 
-void tools::DrawTool::Private::clear(bool hard)
+void tools::DrawTool::Private::clear(bool hard, SelectionManager* window)
 {
-#ifndef Q_OS_ANDROID
-    undo->setEnabled(false);
-    why_cant_we_have_nice_things->setEnabled(true);
-#endif
+    undo_stack.clear(window);
     dragging = false;
     bezier.clear();
     point_type = math::bezier::Symmetrical;
@@ -192,7 +264,7 @@ void tools::DrawTool::Private::clear(bool hard)
         extension_points.clear();
 }
 
-void tools::DrawTool::remove_last()
+void tools::DrawTool::remove_last(SelectionManager* window)
 {
     if ( d->bezier.empty() )
         return;
@@ -204,9 +276,15 @@ void tools::DrawTool::remove_last()
 #endif
 
     if ( d->bezier.size() <= back )
-        d->clear(false);
+    {
+        d->clear(false, window);
+    }
     else
-        d->bezier.points().erase(d->bezier.points().end() - back);
+    {
+        auto bezier = d->bezier;
+        bezier.points().erase(bezier.points().end() - back);
+        d->push_command(tr("Delete curve point"), window, std::move(bezier));
+    }
 
 }
 
@@ -218,11 +296,6 @@ bool tools::DrawTool::Private::within_join_distance(const tools::MouseEvent& eve
 
 void tools::DrawTool::Private::prepare_draw(const tools::MouseEvent& event)
 {
-#ifndef Q_OS_ANDROID
-    undo->setEnabled(true);
-    why_cant_we_have_nice_things->setEnabled(false);
-#endif
-
     for ( const auto& point : extension_points )
     {
         if ( within_join_distance(event, point.pos()) )
@@ -326,7 +399,9 @@ void tools::DrawTool::mouse_release(const tools::MouseEvent& event)
 #ifndef Q_OS_ANDROID
         else
         {
-            d->bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, d->point_type));
+            auto bezier = d->bezier;
+            bezier.points().push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, d->point_type));
+            d->push_command(tr("Add curve point"), event.window, std::move(bezier));
             event.repaint();
         }
 #endif
@@ -412,14 +487,14 @@ void tools::DrawTool::paint(const tools::PaintEvent& event)
 
 void tools::DrawTool::enable_event(const Event& ev)
 {
-    d->clear(false);
+    d->clear(false, ev.window);
     ev.repaint();
 }
 
 void tools::DrawTool::disable_event(const Event& event)
 {
     d->create(event, this);
-    d->clear(true);
+    d->clear(true, event.window);
 }
 
 void tools::DrawTool::on_selected(graphics::DocumentScene * scene, model::VisualNode * node)
@@ -463,13 +538,5 @@ void tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScen
 void tools::DrawTool::initialize(const Event& event)
 {
     d->join_radius = 5 * GlaxnimateApp::handle_size_multiplier();
-#ifndef Q_OS_ANDROID
-    d->undo = new QShortcut(GlaxnimateApp::instance()->shortcuts()->get_shortcut("action_undo"), event.view, nullptr, nullptr, Qt::WidgetShortcut);
-    connect(d->undo, &QShortcut::activated, this, &DrawTool::remove_last);
-    connect(d->undo, &QShortcut::activated, event.scene, [scene=event.scene]{ scene->update(); });
-    d->why_cant_we_have_nice_things = GlaxnimateApp::instance()->shortcuts()->action("action_undo")->action;
-    d->undo->setEnabled(false);
-#else
     Q_UNUSED(event);
-#endif
 }

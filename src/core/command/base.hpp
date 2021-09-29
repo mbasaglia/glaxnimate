@@ -10,6 +10,9 @@ enum class Id {
     SetMultipleProperties,
     SetKeyframe,
     SetMultipleAnimated,
+
+    // For additional commands, use values increadising from here
+    CustomCommand,
 };
 
 template<Id id_enum, class Derived>

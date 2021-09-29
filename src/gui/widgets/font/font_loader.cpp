@@ -14,23 +14,8 @@
 
 
 
-glaxnimate::model::FontFileFormat glaxnimate::model::font_data_format(const QByteArray& data)
-{
-    QByteArray head = data.left(4);
 
-    if ( head == "OTTO" )
-        return FontFileFormat::OpenType;
-    if ( head == QByteArray("\0\1\0\0", 4) )
-        return FontFileFormat::TrueType;
-    if ( head == "wOF2" )
-        return FontFileFormat::Woff2;
-    if ( head == "wOFF" )
-        return FontFileFormat::Woff;
-
-    return FontFileFormat::Unknown;
-}
-
-class glaxnimate::model::FontLoader::Private
+class glaxnimate::gui::font::FontLoader::Private
 {
 public:
     struct QueueItem
@@ -42,7 +27,7 @@ public:
     };
 
     QNetworkAccessManager downloader;
-    std::vector<CustomFont> fonts;
+    std::vector<model::CustomFont> fonts;
     int resolved = 0;
     std::vector<QueueItem> queued;
     std::set<QNetworkReply*> active_replies;
@@ -127,12 +112,12 @@ public:
 
     void parse(const QString& name_alias, int id, const QByteArray& data, const QUrl& css_url, const QUrl& reply_url)
     {
-        switch ( font_data_format(data) )
+        switch ( model::CustomFontDatabase::font_data_format(data) )
         {
-            case FontFileFormat::TrueType:
-            case FontFileFormat::OpenType:
+            case model::FontFileFormat::TrueType:
+            case model::FontFileFormat::OpenType:
             {
-                CustomFont font = CustomFontDatabase::instance().add_font(name_alias, data);
+                model::CustomFont font = model::CustomFontDatabase::instance().add_font(name_alias, data);
                 font.set_source_url(reply_url.toString());
                 font.set_css_url(css_url.toString());
                 fonts.push_back(font);
@@ -140,7 +125,7 @@ public:
                     emit parent->success(id);
                 break;
             }
-            case FontFileFormat::Unknown:
+            case model::FontFileFormat::Unknown:
                 parse_css(id, data, reply_url);
                 break;
             default:
@@ -201,7 +186,7 @@ public:
     }
 };
 
-glaxnimate::model::FontLoader::FontLoader()
+glaxnimate::gui::font::FontLoader::FontLoader()
     : d(std::make_unique<Private>())
 {
     d->parent = this;
@@ -211,11 +196,11 @@ glaxnimate::model::FontLoader::FontLoader()
     });
 }
 
-glaxnimate::model::FontLoader::~FontLoader()
+glaxnimate::gui::font::FontLoader::~FontLoader()
 {
 }
 
-void glaxnimate::model::FontLoader::clear()
+void glaxnimate::gui::font::FontLoader::clear()
 {
     for ( auto reply : d->active_replies )
         reply->abort();
@@ -230,7 +215,7 @@ void glaxnimate::model::FontLoader::clear()
     emit fonts_loaded(0);
 }
 
-void glaxnimate::model::FontLoader::load_queue()
+void glaxnimate::gui::font::FontLoader::load_queue()
 {
     d->loading = true;
     for ( const auto& url : d->queued )
@@ -240,28 +225,28 @@ void glaxnimate::model::FontLoader::load_queue()
     emit fonts_loaded(0);
 }
 
-void glaxnimate::model::FontLoader::queue(const QString& name_alias, const QUrl& url, int id)
+void glaxnimate::gui::font::FontLoader::queue(const QString& name_alias, const QUrl& url, int id)
 {
     d->queue({id, name_alias, url});
 }
 
-int glaxnimate::model::FontLoader::queued_total() const
+int glaxnimate::gui::font::FontLoader::queued_total() const
 {
     return d->queued.size();
 }
 
-const std::vector<glaxnimate::model::CustomFont> & glaxnimate::model::FontLoader::fonts() const
+const std::vector<glaxnimate::model::CustomFont> & glaxnimate::gui::font::FontLoader::fonts() const
 {
     return d->fonts;
 }
 
-void glaxnimate::model::FontLoader::queue_data(const QString& name_alias, const QByteArray& data, int id)
+void glaxnimate::gui::font::FontLoader::queue_data(const QString& name_alias, const QByteArray& data, int id)
 {
     d->parse(name_alias, id, data, {}, {});
 }
 
 
-void glaxnimate::model::FontLoader::cancel()
+void glaxnimate::gui::font::FontLoader::cancel()
 {
     if ( d->loading )
     {
@@ -271,14 +256,14 @@ void glaxnimate::model::FontLoader::cancel()
     }
 }
 
-bool glaxnimate::model::FontLoader::loading() const
+bool glaxnimate::gui::font::FontLoader::loading() const
 {
     return d->loading;
 }
 
-void glaxnimate::model::FontLoader::queue_pending(model::Document* document, bool reload_loaded)
+void glaxnimate::gui::font::FontLoader::queue_pending(model::Document* document, bool reload_loaded)
 {
-    connect(this, &FontLoader::success, document, &Document::mark_asset_loaded);
+    connect(this, &FontLoader::success, document, &model::Document::mark_asset_loaded);
 
     for ( const auto& pending : document->pending_assets() )
     {

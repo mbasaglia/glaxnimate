@@ -1,8 +1,10 @@
 #ifndef GLAXNIMATEWINDOW_H
 #define GLAXNIMATEWINDOW_H
 
-#include <QMainWindow>
 #include <memory>
+
+#include <QMainWindow>
+#include <QUndoGroup>
 
 #include "model/document.hpp"
 #include "model/shapes/shape.hpp"

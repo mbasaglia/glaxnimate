@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <QObject>
+#include <QUndoGroup>
 
 #include "model/document.hpp"
 #include "model/shapes/shape.hpp"
@@ -64,6 +65,8 @@ public:
     virtual void set_selection(const std::vector<model::VisualNode*>& selected) = 0;
     virtual void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) = 0;
 
+    QUndoGroup& undo_group() { return undo_group_; }
+
 protected:
     virtual std::vector<io::mime::MimeSerializer*> supported_mimes() const = 0;
     void layer_new_impl(std::unique_ptr<model::ShapeElement> layer);
@@ -72,6 +75,8 @@ protected:
 
 private:
     void paste_impl(bool as_comp);
+
+    QUndoGroup undo_group_;
 };
 
 

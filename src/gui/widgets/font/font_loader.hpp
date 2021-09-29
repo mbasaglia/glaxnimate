@@ -1,24 +1,11 @@
 #pragma once
 
 #include <QByteArray>
-#include "custom_font.hpp"
+#include "model/custom_font.hpp"
+#include "model/document.hpp"
 
-namespace glaxnimate::model {
+namespace glaxnimate::gui::font {
 
-class Document;
-
-enum class FontFileFormat
-{
-    Unknown,
-    TrueType,
-    OpenType,
-    Woff2,
-    Woff
-};
-
-FontFileFormat font_data_format(const QByteArray& data);
-
-/// \todo move to gui and remove Qt::Networking from core cmake
 class FontLoader : public QObject
 {
     Q_OBJECT
@@ -30,7 +17,7 @@ public:
     /**
      * \brief Vector of loaded fonts
      */
-    const std::vector<CustomFont>& fonts() const;
+    const std::vector<model::CustomFont>& fonts() const;
 
     /**
      * \brief Queue \p url for download

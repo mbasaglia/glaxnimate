@@ -7,6 +7,23 @@
 
 #include "app/utils/qbytearray_hash.hpp"
 
+
+glaxnimate::model::FontFileFormat glaxnimate::model::CustomFontDatabase::font_data_format(const QByteArray& data)
+{
+    QByteArray head = data.left(4);
+
+    if ( head == "OTTO" )
+        return FontFileFormat::OpenType;
+    if ( head == QByteArray("\0\1\0\0", 4) )
+        return FontFileFormat::TrueType;
+    if ( head == "wOF2" )
+        return FontFileFormat::Woff2;
+    if ( head == "wOFF" )
+        return FontFileFormat::Woff;
+
+    return FontFileFormat::Unknown;
+}
+
 class glaxnimate::model::CustomFontDatabase::CustomFontData
 {
 public:

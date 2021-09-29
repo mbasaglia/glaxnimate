@@ -249,6 +249,20 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_text_put_on_path, &QAction::triggered, parent, [this]{text_put_on_path();});
     connect(ui.action_text_remove_from_path, &QAction::triggered, parent, [this]{text_remove_from_path();});
     connect(ui.action_insert_emoji, &QAction::triggered, parent, [this]{insert_emoji();});
+
+
+    // Undo Redo
+    QObject::connect(ui.action_redo, &QAction::triggered, &parent->undo_group(), &QUndoGroup::redo);
+    QObject::connect(&parent->undo_group(), &QUndoGroup::canRedoChanged, ui.action_redo, &QAction::setEnabled);
+    QObject::connect(&parent->undo_group(), &QUndoGroup::redoTextChanged, ui.action_redo, [this](const QString& s){
+        ui.action_redo->setText(redo_text.arg(s));
+    });
+    QObject::connect(ui.action_undo, &QAction::triggered, &parent->undo_group(), &QUndoGroup::undo);
+    QObject::connect(&parent->undo_group(), &QUndoGroup::canUndoChanged, ui.action_undo, &QAction::setEnabled);
+    QObject::connect(&parent->undo_group(), &QUndoGroup::undoTextChanged, ui.action_undo, [this](const QString& s){
+        ui.action_undo->setText(undo_text.arg(s));
+    });
+    ui.view_undo->setGroup(&parent->undo_group());
 }
 
 tools::Tool* GlaxnimateWindow::Private::init_tools_ui()

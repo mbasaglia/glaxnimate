@@ -18,7 +18,7 @@
 #include "io/lottie/validation.hpp"
 
 #include "model/visitor.hpp"
-#include "model/font/font_loader.hpp"
+#include "widgets/font/font_loader.hpp"
 
 #include "command/undo_macro_guard.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -87,21 +87,8 @@ void GlaxnimateWindow::Private::do_setup_document()
         setup_composition(precomp.get());
 
     // Undo Redo
-    QObject::connect(ui.action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
-    QObject::connect(&current_document->undo_stack(), &QUndoStack::canRedoChanged, ui.action_redo, &QAction::setEnabled);
-    QObject::connect(&current_document->undo_stack(), &QUndoStack::redoTextChanged, ui.action_redo, [this](const QString& s){
-        ui.action_redo->setText(redo_text.arg(s));
-    });
-    ui.action_redo->setEnabled(current_document->undo_stack().canRedo());
-    ui.action_redo->setText(redo_text.arg(current_document->undo_stack().redoText()));
-
-    QObject::connect(ui.action_undo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::undo);
-    QObject::connect(&current_document->undo_stack(), &QUndoStack::canUndoChanged, ui.action_undo, &QAction::setEnabled);
-    QObject::connect(&current_document->undo_stack(), &QUndoStack::undoTextChanged, ui.action_undo, [this](const QString& s){
-        ui.action_undo->setText(undo_text.arg(s));
-    });
-    ui.action_undo->setEnabled(current_document->undo_stack().canUndo());
-    ui.action_undo->setText(redo_text.arg(current_document->undo_stack().undoText()));
+    parent->undo_group().addStack(&current_document->undo_stack());
+    parent->undo_group().setActiveStack(&current_document->undo_stack());
 
     // Views
     document_node_model.set_document(current_document.get());
@@ -116,7 +103,6 @@ void GlaxnimateWindow::Private::do_setup_document()
 
     scene.set_document(current_document.get());
 
-    ui.view_undo->setStack(&current_document->undo_stack());
 
     ui.document_swatch_widget->set_document(current_document.get());
     ui.widget_gradients->set_document(current_document.get());
@@ -307,11 +293,13 @@ bool GlaxnimateWindow::Private::close_document()
     property_model.clear_document();
     scene.clear_document();
     ui.timeline_widget->clear_document();
-    ui.view_undo->setStack(nullptr);
     ui.document_swatch_widget->set_document(nullptr);
     ui.widget_gradients->set_document(nullptr);
     ui.view_document_node->set_composition(nullptr);
     ui.tab_bar->set_document(nullptr);
+
+    for ( const auto& stack : parent->undo_group().stacks() )
+        parent->undo_group().removeStack(stack);
 
     ui.console->clear_contexts();
     ui.console->set_global("document", QVariant{});
@@ -767,7 +755,7 @@ void GlaxnimateWindow::Private::import_file(const QString& filename, const QVari
     import_file(opts);
 }
 
-static void on_font_loader_finished(glaxnimate::model::FontLoader* loader)
+static void on_font_loader_finished(glaxnimate::gui::font::FontLoader* loader)
 {
     if ( !loader->fonts().empty() )
     {
@@ -787,15 +775,15 @@ static void on_font_loader_finished(glaxnimate::model::FontLoader* loader)
 
 void glaxnimate::gui::GlaxnimateWindow::Private::load_pending()
 {
-    auto font_loader = new glaxnimate::model::FontLoader();
+    auto font_loader = new glaxnimate::gui::font::FontLoader();
     font_loader->setParent(current_document.get());
     connect(
-        font_loader, &model::FontLoader::error, parent,
+        font_loader, &gui::font::FontLoader::error, parent,
         [this](const QString& msg){ app::log::Log("Font Loader").log(msg); }
     );
     font_loader->queue_pending(current_document.get());
     connect(
-        font_loader, &model::FontLoader::finished, current_document.get(),
+        font_loader, &gui::font::FontLoader::finished, current_document.get(),
         [font_loader]{on_font_loader_finished(font_loader);}
     );
     font_loader->load_queue();

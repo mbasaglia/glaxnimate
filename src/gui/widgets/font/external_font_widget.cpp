@@ -5,14 +5,14 @@
 #include <QStandardItemModel>
 #include <QFileDialog>
 
-#include "model/font/font_loader.hpp"
+#include "widgets/font/font_loader.hpp"
 #include "font_delegate.hpp"
 
 class glaxnimate::gui::font::ExternalFontWidget::Private
 {
 public:
     Ui::ExternalFontWidget ui;
-    model::FontLoader loader;
+    FontLoader loader;
     std::map<QString, std::vector<model::CustomFont>> fonts;
     QStandardItemModel font_model;
     QUrl url;
@@ -78,9 +78,9 @@ glaxnimate::gui::font::ExternalFontWidget::ExternalFontWidget(QWidget* parent)
     d->ui.setupUi(this);
     d->ui.view_fonts->setModel(&d->font_model);
     d->ui.view_fonts->setItemDelegateForColumn(0, &d->delegate);
-    connect(&d->loader, &model::FontLoader::finished, this, [this]{d->loader_finished();});
-    connect(&d->loader, &model::FontLoader::fonts_queued, d->ui.progress_bar, &QProgressBar::setMaximum);
-    connect(&d->loader, &model::FontLoader::fonts_loaded, d->ui.progress_bar, &QProgressBar::setValue);
+    connect(&d->loader, &FontLoader::finished, this, [this]{d->loader_finished();});
+    connect(&d->loader, &FontLoader::fonts_queued, d->ui.progress_bar, &QProgressBar::setMaximum);
+    connect(&d->loader, &FontLoader::fonts_loaded, d->ui.progress_bar, &QProgressBar::setValue);
     /// \todo handle FontLoader::error
     connect(d->ui.view_style->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex& index){
         d->style_selected(index.data().toString());

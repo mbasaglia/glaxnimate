@@ -12,12 +12,23 @@ namespace glaxnimate::model {
 
 class CustomFont;
 
+enum class FontFileFormat
+{
+    Unknown,
+    TrueType,
+    OpenType,
+    Woff2,
+    Woff
+};
+
+
 class CustomFontDatabase : public QObject
 {
     Q_OBJECT
 
 public:
     static CustomFontDatabase& instance();
+    static FontFileFormat font_data_format(const QByteArray& data);
 
     CustomFont add_font(const QString& name_alias, const QByteArray& ttf_data);
     CustomFont get_font(int database_index);

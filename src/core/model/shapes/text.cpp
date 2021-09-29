@@ -8,7 +8,7 @@
 #include "path.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "model/assets/assets.hpp"
-#include "model/font/custom_font.hpp"
+#include "model/custom_font.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Font)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::TextShape)

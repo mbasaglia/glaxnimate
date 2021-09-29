@@ -93,7 +93,7 @@ private:
         int h = std::max(1, qRound(y));
         if ( w != animation->width.get() || h != animation->height.get() )
         {
-            animation->document()->undo_stack().push(new command::SetMultipleProperties(
+            animation->push_command(new command::SetMultipleProperties(
                 QObject::tr("Resize Canvas"),
                 commit,
                 {&animation->width, &animation->height},

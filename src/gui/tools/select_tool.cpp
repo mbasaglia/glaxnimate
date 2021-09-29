@@ -386,16 +386,16 @@ private:
         auto targets = under_mouse(event, true, graphics::DocumentNodeGraphicsItem::None);
 
         QMenu menu;
-        auto undo_stack = &window->document()->undo_stack();
+        auto undo_stack = &window->undo_group();
         menu.addAction(
             QIcon::fromTheme("edit-undo"),
             GlaxnimateWindow::tr("Undo %1").arg(undo_stack->undoText()),
-            undo_stack, &QUndoStack::undo
+            undo_stack, &QUndoGroup::undo
         )->setEnabled(undo_stack->canUndo());
         menu.addAction(
             QIcon::fromTheme("edit-redo"),
             GlaxnimateWindow::tr("Redo %1").arg(undo_stack->redoText()),
-            undo_stack, &QUndoStack::redo
+            undo_stack, &QUndoGroup::redo
         )->setEnabled(undo_stack->canRedo());
 
         menu.addSeparator();

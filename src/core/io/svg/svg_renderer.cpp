@@ -14,7 +14,7 @@
 #include "model/shapes/text.hpp"
 #include "model/shapes/repeater.hpp"
 #include "model/animation/join_animatables.hpp"
-#include "model/font/font_loader.hpp"
+#include "model/custom_font.hpp"
 #include "math/math.hpp"
 
 #include "detail.hpp"
@@ -101,7 +101,7 @@ public:
             else if ( type == CssFontType::Embedded )
             {
                 QString base64_encoded = font->data.get().toBase64(QByteArray::Base64UrlEncoding);
-                QString format = model::font_data_format(font->data.get()) == model::FontFileFormat::OpenType ? "opentype" : "ttf";
+                QString format = model::CustomFontDatabase::font_data_format(font->data.get()) == model::FontFileFormat::OpenType ? "opentype" : "ttf";
 
                 css += font_face
                     .arg(custom.family())
