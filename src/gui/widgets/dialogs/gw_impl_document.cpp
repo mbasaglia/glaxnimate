@@ -18,6 +18,7 @@
 #include "io/lottie/validation.hpp"
 
 #include "model/visitor.hpp"
+#include "widgets/font/font_loader.hpp"
 
 #include "command/undo_macro_guard.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -86,21 +87,8 @@ void GlaxnimateWindow::Private::do_setup_document()
         setup_composition(precomp.get());
 
     // Undo Redo
-    QObject::connect(ui.action_redo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::redo);
-    QObject::connect(&current_document->undo_stack(), &QUndoStack::canRedoChanged, ui.action_redo, &QAction::setEnabled);
-    QObject::connect(&current_document->undo_stack(), &QUndoStack::redoTextChanged, ui.action_redo, [this](const QString& s){
-        ui.action_redo->setText(redo_text.arg(s));
-    });
-    ui.action_redo->setEnabled(current_document->undo_stack().canRedo());
-    ui.action_redo->setText(redo_text.arg(current_document->undo_stack().redoText()));
-
-    QObject::connect(ui.action_undo, &QAction::triggered, &current_document->undo_stack(), &QUndoStack::undo);
-    QObject::connect(&current_document->undo_stack(), &QUndoStack::canUndoChanged, ui.action_undo, &QAction::setEnabled);
-    QObject::connect(&current_document->undo_stack(), &QUndoStack::undoTextChanged, ui.action_undo, [this](const QString& s){
-        ui.action_undo->setText(undo_text.arg(s));
-    });
-    ui.action_undo->setEnabled(current_document->undo_stack().canUndo());
-    ui.action_undo->setText(redo_text.arg(current_document->undo_stack().undoText()));
+    parent->undo_group().addStack(&current_document->undo_stack());
+    parent->undo_group().setActiveStack(&current_document->undo_stack());
 
     // Views
     document_node_model.set_document(current_document.get());
@@ -115,7 +103,6 @@ void GlaxnimateWindow::Private::do_setup_document()
 
     scene.set_document(current_document.get());
 
-    ui.view_undo->setStack(&current_document->undo_stack());
 
     ui.document_swatch_widget->set_document(current_document.get());
     ui.widget_gradients->set_document(current_document.get());
@@ -184,21 +171,6 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     ui.timeline_widget->reset_view();
 }
 
-namespace  {
-
-class ThreadFixer : public model::Visitor
-{
-    void on_visit(model::DocumentNode* node) override
-    {
-        if ( node->thread() != target_thread )
-            node->moveToThread(target_thread);
-    }
-
-    QThread* target_thread = QApplication::instance()->thread();
-};
-
-} // namespace
-
 bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 {
     if ( !close_document() )
@@ -210,10 +182,7 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     auto promise = QtConcurrent::run(
         [options, current_document=current_document.get()]{
             QFile file(options.filename);
-            bool open = options.format->open(file, options.filename, current_document, options.settings);
-            ThreadFixer().visit(current_document);
-            return open;
-
+            return options.format->open(file, options.filename, current_document, options.settings);
         });
 
     process_events(promise);
@@ -266,6 +235,8 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     export_options.filename = "";
 
     ui.timeline_widget->reset_view();
+
+    load_pending();
 
     return ok;
 }
@@ -322,11 +293,13 @@ bool GlaxnimateWindow::Private::close_document()
     property_model.clear_document();
     scene.clear_document();
     ui.timeline_widget->clear_document();
-    ui.view_undo->setStack(nullptr);
     ui.document_swatch_widget->set_document(nullptr);
     ui.widget_gradients->set_document(nullptr);
     ui.view_document_node->set_composition(nullptr);
     ui.tab_bar->set_document(nullptr);
+
+    for ( const auto& stack : parent->undo_group().stacks() )
+        parent->undo_group().removeStack(stack);
 
     ui.console->clear_contexts();
     ui.console->set_global("document", QVariant{});
@@ -562,7 +535,7 @@ void GlaxnimateWindow::Private::save_frame_svg()
         return;
     }
 
-    io::svg::SvgRenderer rend(io::svg::NotAnimated);
+    io::svg::SvgRenderer rend(io::svg::NotAnimated, io::svg::CssFontType::FontFace);
     rend.write_document(current_document.get());
     rend.write(&file, true);
 }
@@ -765,6 +738,8 @@ void GlaxnimateWindow::Private::import_file(const io::Options& options)
 
     /// \todo ask if comp
     parent->paste_document(&imported, tr("Import File"), true);
+
+    load_pending();
 }
 
 void GlaxnimateWindow::Private::import_file(const QString& filename, const QVariantMap& settings)
@@ -778,4 +753,38 @@ void GlaxnimateWindow::Private::import_file(const QString& filename, const QVari
     opts.filename = filename;
     opts.path = finfo.dir();
     import_file(opts);
+}
+
+static void on_font_loader_finished(glaxnimate::gui::font::FontLoader* loader)
+{
+    if ( !loader->fonts().empty() )
+    {
+        auto document = static_cast<glaxnimate::model::Document*>(loader->parent());
+        bool clear = document->undo_stack().count() == 0;
+
+        glaxnimate::command::UndoMacroGuard guard(QObject::tr("Download fonts"), document);
+        for ( const auto& font : loader->fonts() )
+            document->assets()->add_font(font);
+        guard.finish();
+
+        if ( clear )
+            document->undo_stack().clear();
+    }
+    loader->deleteLater();
+}
+
+void glaxnimate::gui::GlaxnimateWindow::Private::load_pending()
+{
+    auto font_loader = new glaxnimate::gui::font::FontLoader();
+    font_loader->setParent(current_document.get());
+    connect(
+        font_loader, &gui::font::FontLoader::error, parent,
+        [this](const QString& msg){ app::log::Log("Font Loader").log(msg); }
+    );
+    font_loader->queue_pending(current_document.get());
+    connect(
+        font_loader, &gui::font::FontLoader::finished, current_document.get(),
+        [font_loader]{on_font_loader_finished(font_loader);}
+    );
+    font_loader->load_queue();
 }

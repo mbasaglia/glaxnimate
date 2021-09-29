@@ -161,6 +161,7 @@ public:
     void import_file();
     void import_file(const QString& name, const QVariantMap& settings);
     void import_file(const io::Options& options);
+    void load_pending();
 
     // ui
     void setupUi(bool restore_state, bool debug, GlaxnimateWindow* parent);

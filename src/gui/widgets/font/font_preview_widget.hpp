@@ -16,6 +16,8 @@ public:
 
     void set_text(const QString& text, bool fallback_to_default = true);
 
+    QFont selected_font() const;
+
 public slots:
     void set_font(const QFont& font);
 

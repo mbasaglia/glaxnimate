@@ -7,6 +7,7 @@ GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::GradientColorsList)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::GradientList)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::BitmapList)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::PrecompositionList)
+GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::FontList)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Assets)
 
 
@@ -67,6 +68,13 @@ void glaxnimate::model::PrecompositionList::on_removed(glaxnimate::model::Precom
     obj->detach();
     document()->comp_graph().remove_composition(obj);
     emit docnode_child_remove_end(obj, position);
+}
+
+void glaxnimate::model::FontList::on_added ( model::EmbeddedFont* obj, int position )
+{
+    obj->attach();
+    emit docnode_child_add_end(obj, position);
+    emit font_added(obj);
 }
 
 
@@ -139,7 +147,7 @@ glaxnimate::model::DocumentNode * glaxnimate::model::Assets::docnode_parent() co
 
 int glaxnimate::model::Assets::docnode_child_count() const
 {
-    return 5;
+    return 6;
 }
 
 glaxnimate::model::DocumentNode * glaxnimate::model::Assets::docnode_child(int index) const
@@ -156,6 +164,8 @@ glaxnimate::model::DocumentNode * glaxnimate::model::Assets::docnode_child(int i
             return const_cast<glaxnimate::model::DocumentNode*>(static_cast<const glaxnimate::model::DocumentNode*>(gradients.get()));
         case 4:
             return const_cast<glaxnimate::model::DocumentNode*>(static_cast<const glaxnimate::model::DocumentNode*>(precompositions.get()));
+        case 5:
+            return const_cast<glaxnimate::model::DocumentNode*>(static_cast<const glaxnimate::model::DocumentNode*>(fonts.get()));
         default:
             return nullptr;
     }
@@ -173,7 +183,38 @@ int glaxnimate::model::Assets::docnode_child_index(glaxnimate::model::DocumentNo
         return 3;
     if ( dn == precompositions.get() )
         return 4;
+    if ( dn == fonts.get() )
+        return 5;
     return -1;
 }
 
+glaxnimate::model::EmbeddedFont* glaxnimate::model::Assets::add_font(const QByteArray& ttf_data)
+{
+    auto font = std::make_unique<glaxnimate::model::EmbeddedFont>(document());
+    font->data.set(ttf_data);
+    if ( auto old = font_by_index(font->database_index()) )
+        return old;
+    auto ptr = font.get();
+    push_command(new command::AddObject(&fonts->values, std::move(font), fonts->values.size()));
+    return ptr;
+}
 
+glaxnimate::model::EmbeddedFont* glaxnimate::model::Assets::add_font(const CustomFont& custom_font)
+{
+    if ( auto old = font_by_index(custom_font.database_index()) )
+        return old;
+
+    auto font = std::make_unique<glaxnimate::model::EmbeddedFont>(document(), custom_font);
+    auto ptr = font.get();
+    push_command(new command::AddObject(&fonts->values, std::move(font), fonts->values.size()));
+    return ptr;
+}
+
+
+glaxnimate::model::EmbeddedFont * glaxnimate::model::Assets::font_by_index(int database_index) const
+{
+    for ( const auto& font : fonts->values )
+        if ( font->database_index() == database_index )
+            return font.get();
+    return nullptr;
+}

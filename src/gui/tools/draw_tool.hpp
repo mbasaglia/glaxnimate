@@ -37,7 +37,7 @@ public:
 private:
     class Private;
     std::unique_ptr<Private> d;
-    void remove_last();
+    void remove_last(SelectionManager* window);
 
     static Autoreg<DrawTool> autoreg;
 };

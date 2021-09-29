@@ -3,11 +3,21 @@
 * Editing
     * Added support for stretching time on the timing dialog
     * The object context menu now can show a dilaog to change animation timing on the object
+    * Ability to add fonts from Google Fonts
+    * The edit tool now has its own undo history
+* I/O:
+    * Fixed position of tspan on SVG output
+    * Shapes not showing on SVG output
+    * Fonts defined in CSS @font-face are now loaded from SVG
+    * External fonts are now loaded from lottie
 * Scripting:
     * Ability to stretch time for documents and individual objects
 * Bug Fixes:
     * The timing dialog honours "Keep initial timing"
     * Fixed crash when switching between compositions
+    * Fixed some CSS parsing issues
+    * Fixed memory leak on file load
+    * The text tool options shows the right font family when selecting an object
 
 ## 0.4.5
 

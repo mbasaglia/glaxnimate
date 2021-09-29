@@ -58,6 +58,7 @@ const QMimeData *GlaxnimateApp::get_clipboard_data()
 #include "settings/plugin_settings_group.hpp"
 #include "settings/clipboard_settings.hpp"
 #include "settings/toolbar_settings.hpp"
+#include "settings/api_credentials.hpp"
 
 static QVariantMap avail_icon_themes()
 {
@@ -226,6 +227,8 @@ void GlaxnimateApp::on_initialize()
     auto sc_settings = std::make_unique<app::settings::ShortcutSettings>();
     shortcut_settings = sc_settings.get();
     app::settings::Settings::instance().add_group(std::move(sc_settings));
+
+    app::settings::Settings::instance().add_group(std::make_unique<settings::ApiCredentials>());
 
     QDir().mkpath(backup_path());
 

@@ -43,6 +43,7 @@ model/stretchable_time.cpp
 model/comp_graph.cpp
 model/mask_settings.cpp
 model/visitor.cpp
+model/custom_font.cpp
 
 model/animation/keyframe_transition.cpp
 model/animation/animatable.cpp
@@ -59,6 +60,7 @@ model/assets/gradient.cpp
 model/assets/asset_base.cpp
 model/assets/asset.cpp
 model/assets/precomposition.cpp
+model/assets/embedded_font.cpp
 
 model/shapes/shape.cpp
 model/shapes/fill.cpp

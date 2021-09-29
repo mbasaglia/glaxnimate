@@ -104,6 +104,7 @@ public:
 
     void enable_event(const Event& event) override
     {
+        widget()->set_document(event.window->document());
         window = event.window;
     }
 
@@ -115,7 +116,7 @@ public:
 
     void close_document_event(const Event& event) override
     {
-        Q_UNUSED(event);
+        widget()->set_document(event.window->document());
         clear();
     }
 
@@ -302,6 +303,14 @@ private:
         }
     }
 
+    void custom_font_selected(int database_index)
+    {
+        if ( !window )
+            return;
+
+        window->document()->assets()->add_font(model::CustomFontDatabase::instance().get_font(database_index));
+    }
+
     void initialize(const Event&) override
     {
         editor.setTextInteractionFlags(Qt::TextEditorInteraction);
@@ -309,6 +318,7 @@ private:
         font = widget()->font();
         connect(widget(), &TextToolWidget::font_changed, this, &TextTool::on_font_changed);
         connect(editor.document(), &QTextDocument::contentsChanged, this, &TextTool::apply_changes);
+        connect(widget(), &TextToolWidget::custom_font_selected, this, &TextTool::custom_font_selected);
     }
 
     void apply_changes()

@@ -15,11 +15,13 @@ public:
 
     QFont font() const;
     void set_font(const QFont& font);
+    void set_document(model::Document* document);
 
     void set_preview_text(const QString& text);
 
 signals:
     void font_changed(const QFont& font);
+    void custom_font_selected(int database_index);
 
 private:
     void on_font_changed();

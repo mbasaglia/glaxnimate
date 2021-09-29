@@ -6,6 +6,7 @@
 
 #include "model/assets/assets.hpp"
 #include "model/shapes/precomp_layer.hpp"
+#include "model/assets/pending_asset.hpp"
 
 #include "command/shape_commands.hpp"
 #include "command/structure_commands.hpp"
@@ -200,6 +201,9 @@ void glaxnimate::gui::SelectionManager::paste_document(model::Document* document
             ptr->recursive_rename();
         }
     }
+
+    for ( const auto& pending : document->pending_assets() )
+        doc->add_pending_asset(pending);
 
     set_selection(select);
 }

@@ -108,6 +108,7 @@ protected:
         Q_UNUSED(value);
     }
     void clone_into(Object* dest) const;
+    virtual void on_transfer(model::Document* doc) {Q_UNUSED(doc)};
 
     class Autoreg
     {

@@ -5,6 +5,7 @@
 
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "model/assets/assets.hpp"
+#include "model/assets/pending_asset.hpp"
 
 
 class glaxnimate::model::Document::Private
@@ -70,6 +71,14 @@ public:
         return QString("%1 %2").arg(iter->first).arg(iter->second + 1);
     }
 
+    int add_pending_asset(QUrl url, QByteArray data, const QString& name_alias)
+    {
+        int id = max_pending_id;
+        ++max_pending_id;
+        pending_assets[id] = {id, std::move(url), std::move(data), name_alias};
+        return id;
+    }
+
     MainComposition main;
     QUndoStack undo_stack;
     QVariantMap metadata;
@@ -79,6 +88,8 @@ public:
     Assets assets;
     glaxnimate::model::CompGraph comp_graph;
     std::unordered_map<QString, NameIndex> name_indices;
+    std::map<int, PendingAsset> pending_assets;
+    int max_pending_id = 0;
 };
 
 
@@ -285,3 +296,43 @@ void glaxnimate::model::Document::stretch_time(qreal multiplier)
     d->assets.stretch_time(multiplier);
     set_current_time(qRound(time * multiplier));
 }
+
+int glaxnimate::model::Document::add_pending_asset(const QString& name, const QByteArray& data)
+{
+    return d->add_pending_asset({}, data, name);
+}
+
+int glaxnimate::model::Document::add_pending_asset(const QString& name, const QUrl& url)
+{
+    return d->add_pending_asset(url, {}, name);
+}
+
+int glaxnimate::model::Document::add_pending_asset(const PendingAsset& ass)
+{
+    return d->add_pending_asset(ass.url, ass.data, ass.name_alias);
+}
+
+void glaxnimate::model::Document::mark_asset_loaded(int id)
+{
+    auto it = d->pending_assets.find(id);
+    if ( it != d->pending_assets.end() )
+        it->second.loaded = true;
+}
+
+std::vector<glaxnimate::model::PendingAsset> glaxnimate::model::Document::pending_assets()
+{
+    std::vector<PendingAsset> assets;
+    assets.reserve(d->pending_assets.size());
+    for ( const auto& ass : d->pending_assets )
+        assets.push_back(ass.second);
+
+    return assets;
+}
+
+void glaxnimate::model::Document::clear_pending_assets()
+{
+    for ( auto& ass : d->pending_assets )
+        ass.second.loaded = true;
+}
+
+

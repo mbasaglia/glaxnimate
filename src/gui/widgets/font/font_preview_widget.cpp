@@ -5,10 +5,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
 
-using namespace glaxnimate::gui;
-using namespace glaxnimate;
 
-class font::FontPreviewWidget::Private
+class glaxnimate::gui::font::FontPreviewWidget::Private
 {
 public:
     Ui::FontPreviewWidget ui;
@@ -30,7 +28,7 @@ public:
 };
 
 
-font::FontPreviewWidget::FontPreviewWidget(QWidget* parent)
+glaxnimate::gui::font::FontPreviewWidget::FontPreviewWidget(QWidget* parent)
     : QWidget(parent), d(std::make_unique<Private>())
 {
     d->ui.setupUi(this);
@@ -41,12 +39,12 @@ font::FontPreviewWidget::FontPreviewWidget(QWidget* parent)
     d->item.setFocus();
 }
 
-font::FontPreviewWidget::~FontPreviewWidget()
+glaxnimate::gui::font::FontPreviewWidget::~FontPreviewWidget()
 {
     d->scene.removeItem(&d->item);
 }
 
-void font::FontPreviewWidget::changeEvent ( QEvent* e )
+void glaxnimate::gui::font::FontPreviewWidget::changeEvent ( QEvent* e )
 {
     QWidget::changeEvent(e);
 
@@ -56,13 +54,19 @@ void font::FontPreviewWidget::changeEvent ( QEvent* e )
     }
 }
 
-void font::FontPreviewWidget::set_font(const QFont& font)
+void glaxnimate::gui::font::FontPreviewWidget::set_font(const QFont& font)
 {
     d->item.setFont(font);
     d->fit();
 }
 
-void font::FontPreviewWidget::set_text(const QString& text, bool fallback_to_default)
+QFont glaxnimate::gui::font::FontPreviewWidget::selected_font() const
+{
+    return d->item.font();
+}
+
+
+void glaxnimate::gui::font::FontPreviewWidget::set_text(const QString& text, bool fallback_to_default)
 {
     if ( fallback_to_default && text.isEmpty() )
         d->item.setPlainText(d->default_text());
@@ -70,7 +74,7 @@ void font::FontPreviewWidget::set_text(const QString& text, bool fallback_to_def
         d->item.setPlainText(text);
 }
 
-void font::FontPreviewWidget::zoom_changed(double zoom)
+void glaxnimate::gui::font::FontPreviewWidget::zoom_changed(double zoom)
 {
     double factor = zoom / 100 / d->scale;
     d->ui.view->scale(factor, factor);
@@ -78,13 +82,13 @@ void font::FontPreviewWidget::zoom_changed(double zoom)
     d->ui.view->centerOn(&d->item);
 }
 
-void font::FontPreviewWidget::resizeEvent(QResizeEvent* event)
+void glaxnimate::gui::font::FontPreviewWidget::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
     d->fit();
 }
 
-void font::FontPreviewWidget::showEvent(QShowEvent* event)
+void glaxnimate::gui::font::FontPreviewWidget::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
     d->fit();

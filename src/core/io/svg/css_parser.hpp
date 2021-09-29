@@ -46,12 +46,25 @@ public:
                 return false;
         }
 
+        if ( !rule.isEmpty() )
+            return false;
+
         return true;
     }
 
     bool empty() const
     {
-        return tag.isEmpty() && id.isEmpty() && classes.empty();
+        return tag.isEmpty() && id.isEmpty() && classes.empty() && rule.isEmpty();
+    }
+
+    void set_at_rule(const QString& rule)
+    {
+        this->rule = rule;
+    }
+
+    const QString& at_rule() const
+    {
+        return this->rule;
     }
 
 private:
@@ -59,6 +72,7 @@ private:
     QString tag;
     QString id;
     QStringList classes;
+    QString rule;
     friend struct CssStyleBlock;
 };
 
@@ -105,6 +119,7 @@ private:
         SelectorId,
         SelectorOther,
         SelectorComma,
+        SelectorAt,
 
         BlockBegin,
         BlockEnd,
@@ -206,6 +221,25 @@ private:
         return id;
     }
 
+    QString lex_at_selector()
+    {
+        QString id = "@";
+        QChar ch;
+
+        while ( true )
+        {
+            ch = next_ch();
+            if ( ch == '{' || ch == ',' )
+                break;
+            else
+                id += ch;
+        }
+
+        back();
+
+        return id.trimmed();
+    }
+
     Token lex_selector()
     {
         QChar ch = next_ch();
@@ -224,6 +258,8 @@ private:
             return {TokenType::BlockBegin, {}};
         else if ( ch == '*' )
             return {TokenType::SelectorTag, ch};
+        else if ( ch == '@' )
+            return {TokenType::SelectorAt, lex_at_selector()};
 
         if ( ch.isSpace() )
         {
@@ -285,6 +321,8 @@ private:
             selectors.back().set_id(token.second);
         else if ( token.first == TokenType::SelectorTag )
             selectors.back().set_tag(token.second);
+        else if ( token.first == TokenType::SelectorAt )
+            selectors.back().set_at_rule(token.second);
         else
             return false;
 
@@ -370,8 +408,35 @@ private:
         return token;
     }
 
+    void lex_quoted_string(QString& value, QChar terminator)
+    {
+        while ( true )
+        {
+            QChar ch = next_ch();
+
+            if ( eof() )
+                break;
+
+            value += ch;
+
+            if ( ch == terminator )
+                break;
+
+            if ( ch == '\\' )
+            {
+                ch = next_ch();
+                if ( eof() )
+                    break;
+                value += ch;
+            }
+        }
+    }
+
     Token lex_rule_value(QString& value)
     {
+        if ( value == "\"" || value == "'" )
+            lex_quoted_string(value, value[0]);
+
         while ( true )
         {
             QChar ch = next_ch();
@@ -385,27 +450,7 @@ private:
             value += ch;
             if ( ch == '"' || ch == '\'' )
             {
-                QChar terminator = ch;
-                while ( true )
-                {
-                    ch = next_ch();
-
-                    if ( eof() )
-                        break;
-
-                    value += ch;
-
-                    if ( ch == terminator )
-                        break;
-
-                    if ( ch == '\\' )
-                    {
-                        ch = next_ch();
-                        if ( eof() )
-                            break;
-                        value += ch;
-                    }
-                }
+                lex_quoted_string(value, ch);
             }
         }
     }

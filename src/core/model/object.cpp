@@ -21,6 +21,8 @@ glaxnimate::model::Object::Object(Document* document)
     : d(std::make_unique<glaxnimate::model::Object::Private>())
 {
     d->document = document;
+    if ( document && thread() != document->thread() )
+        moveToThread(document->thread());
 }
 
 glaxnimate::model::Object::~Object() = default;
@@ -32,6 +34,10 @@ void glaxnimate::model::Object::assign_from(const glaxnimate::model::Object* oth
 
 void glaxnimate::model::Object::transfer(glaxnimate::model::Document* document)
 {
+    if ( thread() != document->thread() )
+        moveToThread(document->thread());
+
+    on_transfer(document);
     d->document = document;
     for ( auto prop: d->prop_order )
         prop->transfer(document);

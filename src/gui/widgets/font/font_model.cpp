@@ -4,10 +4,9 @@
 
 #include <QIcon>
 
-using namespace glaxnimate::gui;
-using namespace glaxnimate;
+#include "model/assets/assets.hpp"
 
-class font::FontModel::Private
+class glaxnimate::gui::font::FontModel::Private
 {
 public:
     QString family(int index)
@@ -60,11 +59,55 @@ public:
 
         fonts.clear();
 
+        std::set<QString> font_set;
         for ( const auto& fam : database.families(system) )
         {
             if ( valid(fam) )
-                fonts.push_back(fam);
+                font_set.insert(fam);
         }
+
+        if ( document )
+        {
+            for ( const auto& font : document->assets()->fonts->values )
+                font_set.insert(font->family());
+
+        }
+
+        fonts.reserve(font_set.size());
+        for ( const auto& family : font_set )
+            fonts.push_back(family);
+    }
+
+    void maybe_remove_family(const QString& family, FontModel* parent)
+    {
+        if ( database.families(system).contains(family) )
+            return;
+
+        int row = fonts.indexOf(family);
+        if ( row == -1 )
+            return;
+
+        parent->beginRemoveRows({}, row, row);
+
+        fonts.erase(fonts.begin() + row);
+
+        auto it = std::find(filtered_faves.begin(), filtered_faves.end(), family);
+        if ( it != filtered_faves.end() )
+            filtered_faves.erase(it);
+
+        parent->endRemoveRows();
+    }
+
+    void maybe_add_family(const QString& family, FontModel* parent)
+    {
+        if ( fonts.contains(family) )
+            return;
+
+        auto iter = std::upper_bound(fonts.begin(), fonts.end(), family);
+        int row = iter - fonts.begin();
+        parent->beginInsertRows({}, row, row);
+        fonts.insert(iter, family);
+        parent->endInsertRows();
     }
 
     QFontDatabase database;
@@ -75,20 +118,58 @@ public:
     std::set<QString> faves;
     QStringList filtered_faves;
     QStringList fonts;
+    model::Document* document = nullptr;
 };
 
-font::FontModel::FontModel(QObject* parent)
+glaxnimate::gui::font::FontModel::FontModel(QObject* parent)
     : QAbstractListModel(parent), d(std::make_unique<Private>())
 {
     d->rebuild();
 }
 
-font::FontModel::~FontModel()
+glaxnimate::gui::font::FontModel::~FontModel()
 {
 }
 
+void glaxnimate::gui::font::FontModel::set_document(model::Document* document)
+{
+    if ( d->document == document )
+        return;
 
-QVariant font::FontModel::data(const QModelIndex& index, int role) const
+    if ( d->document )
+    {
+        auto fonts = document->assets()->fonts.get();
+
+        disconnect(fonts, nullptr, this, nullptr);
+
+        for ( const auto& font : fonts->values )
+            d->maybe_remove_family(font->family(), this);
+    }
+
+    d->document = document;
+
+    if ( d->document )
+    {
+        auto fonts = document->assets()->fonts.get();
+
+        for ( const auto& font : fonts->values )
+            d->maybe_add_family(font->family(), this);
+
+
+        connect(fonts, &model::FontList::font_added, this, [this](model::EmbeddedFont* font){
+            if ( font->database_index() != -1 )
+                d->maybe_add_family(font->family(), this);
+        });
+
+        connect(fonts, &model::DocumentNode::docnode_child_remove_end, this, [this](model::DocumentNode* node){
+            auto font = static_cast<model::EmbeddedFont*>(node);
+            d->maybe_remove_family(font->family(), this);
+        });
+    }
+}
+
+
+QVariant glaxnimate::gui::font::FontModel::data(const QModelIndex& index, int role) const
 {
     QString family = d->family(index.row());
     if ( family.isEmpty() )
@@ -126,14 +207,14 @@ QVariant font::FontModel::data(const QModelIndex& index, int role) const
     return {};
 }
 
-int font::FontModel::columnCount(const QModelIndex& parent) const
+int glaxnimate::gui::font::FontModel::columnCount(const QModelIndex& parent) const
 {
     if ( parent.isValid() )
         return 0;
     return 2;
 }
 
-QStringList font::FontModel::favourites() const
+QStringList glaxnimate::gui::font::FontModel::favourites() const
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     return QStringList(d->faves.begin(), d->faves.end());
@@ -145,7 +226,7 @@ QStringList font::FontModel::favourites() const
 #endif
 }
 
-void font::FontModel::set_favourites(const QStringList& faves)
+void glaxnimate::gui::font::FontModel::set_favourites(const QStringList& faves)
 {
     beginRemoveRows({}, 0, d->filtered_faves.size());
     d->faves.clear();
@@ -158,25 +239,25 @@ void font::FontModel::set_favourites(const QStringList& faves)
     endInsertRows();
 }
 
-font::FontModel::FontFilters font::FontModel::font_filters() const
+glaxnimate::gui::font::FontModel::FontFilters glaxnimate::gui::font::FontModel::font_filters() const
 {
     return d->filters;
 }
 
-void font::FontModel::set_font_filters(font::FontModel::FontFilters filters)
+void glaxnimate::gui::font::FontModel::set_font_filters(glaxnimate::gui::font::FontModel::FontFilters filters)
 {
     d->filters = filters;
     reset();
 }
 
-void font::FontModel::reset()
+void glaxnimate::gui::font::FontModel::reset()
 {
     beginResetModel();
     d->rebuild();
     endResetModel();
 }
 
-QModelIndex font::FontModel::index_for_font(const QString& family)
+QModelIndex glaxnimate::gui::font::FontModel::index_for_font(const QString& family)
 {
     int index = d->fonts.indexOf(family);
     if ( index == -1 )
@@ -184,12 +265,12 @@ QModelIndex font::FontModel::index_for_font(const QString& family)
     return createIndex(index + d->filtered_faves.size(), 0, nullptr);
 }
 
-bool font::FontModel::preview_font() const
+bool glaxnimate::gui::font::FontModel::preview_font() const
 {
     return d->preview_font;
 }
 
-void font::FontModel::set_preview_font(bool preview)
+void glaxnimate::gui::font::FontModel::set_preview_font(bool preview)
 {
     d->preview_font = preview;
     emit dataChanged(
@@ -199,25 +280,25 @@ void font::FontModel::set_preview_font(bool preview)
     );
 }
 
-QFontDatabase::WritingSystem font::FontModel::writing_system() const
+QFontDatabase::WritingSystem glaxnimate::gui::font::FontModel::writing_system() const
 {
     return d->system;
 }
 
-void font::FontModel::set_writing_system(QFontDatabase::WritingSystem system)
+void glaxnimate::gui::font::FontModel::set_writing_system(QFontDatabase::WritingSystem system)
 {
     d->system = system;
     reset();
 }
 
-int font::FontModel::rowCount(const QModelIndex& parent) const
+int glaxnimate::gui::font::FontModel::rowCount(const QModelIndex& parent) const
 {
     if ( parent.isValid() )
         return 0;
     return d->fonts.size() + d->filtered_faves.size();
 }
 
-void font::FontModel::set_favourite(const QString& family, bool favourite)
+void glaxnimate::gui::font::FontModel::set_favourite(const QString& family, bool favourite)
 {
     if ( favourite == bool(d->faves.count(family)) )
         return;
@@ -258,7 +339,7 @@ void font::FontModel::set_favourite(const QString& family, bool favourite)
     }
 }
 
-void font::FontModel::toggle_favourite(const QString& family)
+void glaxnimate::gui::font::FontModel::toggle_favourite(const QString& family)
 {
     set_favourite(family, d->faves.count(family) == 0);
 }

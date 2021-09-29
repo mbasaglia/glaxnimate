@@ -61,7 +61,7 @@ static QByteArray frame_to_svg(model::Document* doc)
     QBuffer file(&data);
     file.open(QIODevice::WriteOnly);
 
-    io::svg::SvgRenderer rend(io::svg::NotAnimated);
+    io::svg::SvgRenderer rend(io::svg::NotAnimated, io::svg::CssFontType::FontFace);
     rend.write_document(doc);
     rend.write(&file, true);
 
@@ -355,6 +355,7 @@ void register_py_module(py::module& glaxnimate_module)
         qMetaTypeId<model::NamedColor*>(),
         qMetaTypeId<model::Bitmap*>(),
         qMetaTypeId<model::Gradient*>(),
+        qMetaTypeId<model::EmbeddedFont*>(),
         qMetaTypeId<io::ImportExport::Direction>(),
     };
 
@@ -451,11 +452,13 @@ void register_py_module(py::module& glaxnimate_module)
     register_constructible<model::Gradient, model::BrushStyle>(defs, enums<model::Gradient::GradientType>{});
     register_constructible<model::Bitmap, model::Asset>(defs);
     register_constructible<model::Precomposition, model::Composition, model::AssetBase>(defs);
+    register_from_meta<model::EmbeddedFont, model::Asset>(defs);
     register_from_meta<model::BitmapList, model::DocumentNode>(defs);
     register_from_meta<model::NamedColorList, model::DocumentNode>(defs);
     register_from_meta<model::GradientList, model::DocumentNode>(defs);
     register_from_meta<model::GradientColorsList, model::DocumentNode>(defs);
     register_from_meta<model::PrecompositionList, model::DocumentNode>(defs);
+    register_from_meta<model::FontList, model::DocumentNode>(defs);
     register_from_meta<model::Assets, model::DocumentNode>(defs);
 
     register_from_meta<model::Shape, model::ShapeElement>(shapes);

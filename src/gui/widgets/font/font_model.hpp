@@ -5,6 +5,7 @@
 #include <QAbstractListModel>
 #include <QFontDatabase>
 
+#include "model/document.hpp"
 
 namespace glaxnimate::gui::font {
 
@@ -25,6 +26,8 @@ public:
 
     explicit FontModel(QObject *parent = nullptr);
     ~FontModel();
+
+    void set_document(model::Document* document);
 
     int columnCount(const QModelIndex & parent) const override;
     int rowCount(const QModelIndex & parent) const override;
