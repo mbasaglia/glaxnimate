@@ -142,6 +142,9 @@ static void load_themes(GlaxnimateApp* app, app::settings::PaletteSettings* sett
 
 void GlaxnimateApp::on_initialize()
 {
+    app::log::Logger::instance().add_listener<app::log::ListenerStderr>();
+    store_logger = app::log::Logger::instance().add_listener<app::log::ListenerStore>();
+
     setWindowIcon(QIcon(data_file("images/logo.svg")));
 
     QStringList search_paths = data_paths("icons");
@@ -149,6 +152,12 @@ void GlaxnimateApp::on_initialize()
     QIcon::setThemeSearchPaths(search_paths);
     QIcon::setFallbackSearchPaths(data_paths("images/icons"));
 
+
+    QDir().mkpath(backup_path());
+}
+
+void GlaxnimateApp::on_initialize_settings()
+{
     using namespace app::settings;
     QString curr_lang = app::TranslationService::instance().current_language_code();
 
@@ -229,11 +238,6 @@ void GlaxnimateApp::on_initialize()
     app::settings::Settings::instance().add_group(std::move(sc_settings));
 
     app::settings::Settings::instance().add_group(std::make_unique<settings::ApiCredentials>());
-
-    QDir().mkpath(backup_path());
-
-    app::log::Logger::instance().add_listener<app::log::ListenerStderr>();
-    store_logger = app::log::Logger::instance().add_listener<app::log::ListenerStore>();
 
 }
 

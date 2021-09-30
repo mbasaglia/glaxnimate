@@ -19,6 +19,7 @@
     * Fixed some CSS parsing issues
     * Fixed memory leak on file load
     * The text tool options shows the right font family when selecting an object
+    * The list of available languages shows correctly again in the settings dialog
 
 ## 0.4.5
 

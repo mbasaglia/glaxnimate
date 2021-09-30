@@ -7,6 +7,14 @@
 #include "app/log/log.hpp"
 
 
+void app::Application::initialize()
+{
+    on_initialize();
+    app::TranslationService::instance().initialize();
+    on_initialize_settings();
+    app::settings::Settings::instance().load();
+}
+
 QString app::Application::writable_data_path(const QString& name) const
 {
     QString search = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
