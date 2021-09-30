@@ -96,6 +96,7 @@ linux:aur:
         # Setup
         - useradd -m foo
         - chmod 600 "$AUR_SSH_KEY"
+        - echo 'MAKEFLAGS="-j4"' >>/etc/makepkg.conf
         - mkdir -p build
         - cd build
         - cmake ..
@@ -126,6 +127,7 @@ linux:aur_build:
     script:
         # Setup
         - useradd -m foo
+        - echo 'MAKEFLAGS="-j4"' >>/etc/makepkg.conf
         - mkdir -p build
         - cd build
         - cmake ..

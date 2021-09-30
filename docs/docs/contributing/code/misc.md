@@ -52,6 +52,8 @@ Something along these lines:
     pacman -Su --noconfirm
     # (Add required build packages as needed) check .gitlab-ci.yml for what CI uses
     pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats
+    # Make jobs
+    echo 'MAKEFLAGS="-j4"' >>/etc/makepkg.conf
 
     # Set up a user if using docker
     useradd -m foo
