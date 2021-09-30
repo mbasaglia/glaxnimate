@@ -24,7 +24,7 @@ std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::raster::Spriteshee
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
         app::settings::Setting("frame_width", tr("Frame Width"), tr("Width of each frame"), doc->main()->width.get(), 1, 999'999),
         app::settings::Setting("frame_height", tr("Frame Height"), tr("Height of each frame"), doc->main()->height.get(), 1, 999'999),
-        app::settings::Setting("columns", tr("Columns"), tr("NUmber of columns in the sheet"), std::ceil(math::sqrt(frames)), 1, 64),
+        app::settings::Setting("columns", tr("Columns"), tr("Number of columns in the sheet"), std::ceil(math::sqrt(frames)), 1, 64),
         app::settings::Setting("frame_step", tr("Time Step"), tr("By how much each rendered frame should increase time (in frames)"), 1, 1, 16),
     });
 }
