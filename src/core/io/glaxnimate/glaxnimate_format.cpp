@@ -11,6 +11,9 @@ using namespace glaxnimate;
 
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 
+const int glaxnimate::io::glaxnimate::GlaxnimateFormat::format_version = 4;
+
+
 
 bool io::glaxnimate::GlaxnimateFormat::on_save(QIODevice& file, const QString&,
                 model::Document* document, const QVariantMap&)

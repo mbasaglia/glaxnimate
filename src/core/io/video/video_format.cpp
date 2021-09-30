@@ -800,14 +800,15 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
     }
 }
 
-std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat::save_settings(model::Document*) const
+std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat::save_settings(model::Document* document) const
 {
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
-        app::settings::Setting{"bit_rate",     "Bitrate",      "Video bit rate",                               5000,   0, 10000},
-        app::settings::Setting{"background",   "Background",   "Background color",                             QColor{}},
-        app::settings::Setting{"width",        "Width",        "If not 0, it will overwrite the size",         0,      0, 10000},
-        app::settings::Setting{"height",       "Height",       "If not 0, it will overwrite the size",         0,      0, 10000},
-        app::settings::Setting{"verbose",      "Verbose",      "Show verbose information on the conversion",   false},
+        //                      slug            label           description                                         default min max
+        app::settings::Setting{"bit_rate",   tr("Bitrate"),      tr("Video bit rate"),                               5000,   0, 10000},
+        app::settings::Setting{"background", tr("Background"),   tr("Background color"),                             QColor{}},
+        app::settings::Setting{"width",      tr("Width"),        tr("If not 0, it will overwrite the size"),         document->main()->width.get(), 0, 10000},
+        app::settings::Setting{"height",     tr("Height"),       tr("If not 0, it will overwrite the size"),         document->main()->height.get(),0, 10000},
+        app::settings::Setting{"verbose",    tr("Verbose"),      tr("Show verbose information on the conversion"),   false},
     });
 }
 

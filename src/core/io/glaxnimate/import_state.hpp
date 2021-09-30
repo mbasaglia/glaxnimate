@@ -136,6 +136,15 @@ private:
             emit fmt->warning(msg);
     }
 
+    QJsonObject fixed_asset_list(const QString& type, const QJsonValue& values)
+    {
+        QJsonObject fixed;
+        fixed["__type__"] = type;
+        fixed["values"] = values;
+        fixed["uuid"] = QUuid::createUuid().toString();
+        return fixed;
+    }
+
     void version_fixup(model::Object*, QJsonObject& object)
     {
         if ( document_version == 1 )
@@ -183,16 +192,17 @@ private:
             {
                 if ( object.contains(pair.first) )
                 {
-                    QJsonObject fixed;
-                    fixed["__type__"] = pair.second;
-                    fixed["values"] = object[pair.first];
-                    fixed["uuid"] = QUuid::createUuid().toString();
-                    object[pair.first] = fixed;
+                    object[pair.first] = fixed_asset_list(pair.second, object[pair.first]);
                 }
             }
 
             object["uuid"] = QUuid::createUuid().toString();
             object["__type__"] = "Assets";
+        }
+
+        if ( document_version < 4 && object["__type__"].toString() == "Assets" )
+        {
+            object["fonts"] = fixed_asset_list("FontList", QJsonArray());
         }
     }
 
