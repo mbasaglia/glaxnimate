@@ -120,6 +120,7 @@ public:
     virtual void enable_event(const Event& event) = 0;
     virtual void disable_event(const Event& event) = 0;
     virtual void close_document_event(const Event& event) { Q_UNUSED(event); }
+    virtual void shape_style_change_event(const Event& event) { Q_UNUSED(event); }
 
     virtual void on_selected(graphics::DocumentScene* scene, model::VisualNode* node) { Q_UNUSED(scene); Q_UNUSED(node); }
     virtual void on_deselected(graphics::DocumentScene* scene, model::VisualNode* node);

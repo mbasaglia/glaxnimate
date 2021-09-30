@@ -209,6 +209,7 @@ void StrokeStyleWidget::check_cap()
     if ( d->can_update_target() )
         d->set(d->target->cap, int(d->cap), true);
 
+    emit pen_style_changed();
     update();
 }
 
@@ -224,6 +225,7 @@ void StrokeStyleWidget::check_join()
     if ( d->can_update_target() )
         d->set(d->target->join, int(d->join), true);
 
+    emit pen_style_changed();
     update();
 }
 
@@ -264,6 +266,7 @@ void StrokeStyleWidget::check_color(const QColor& color)
         d->set_color(color, false);
 
     update();
+    emit pen_style_changed();
     emit color_changed(color);
 }
 
@@ -298,6 +301,8 @@ void StrokeStyleWidget::check_miter(double w)
 {
     if ( d->can_update_target() )
         d->set(d->target->miter_limit, w, false);
+
+    emit pen_style_changed();
     update();
 }
 
@@ -305,6 +310,8 @@ void StrokeStyleWidget::check_width(double w)
 {
     if ( d->can_update_target() )
         d->set(d->target->width, w, false);
+
+    emit pen_style_changed();
     update();
 }
 
@@ -312,12 +319,14 @@ void StrokeStyleWidget::color_committed(const QColor& color)
 {
     if ( d->can_update_target() )
         d->set_color(color, true);
+    emit pen_style_changed();
 }
 
 void StrokeStyleWidget::commit_width()
 {
     if ( d->can_update_target() && !qFuzzyCompare(d->target->width.get(), float(d->ui.spin_stroke_width->value())) )
         d->set(d->target->width, d->ui.spin_stroke_width->value(), true);
+    emit pen_style_changed();
 }
 
 model::Stroke * StrokeStyleWidget::shape() const
@@ -345,4 +354,5 @@ void StrokeStyleWidget::clear_color()
 {
     if ( d->can_update_target() )
         d->target->visible.set_undoable(false);
+    emit pen_style_changed();
 }

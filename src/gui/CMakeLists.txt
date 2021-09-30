@@ -40,6 +40,7 @@ tools/draw_tool.cpp
 tools/edit_tool.cpp
 tools/star_tool.cpp
 tools/text_tool.cpp
+tools/draw_tool_base.cpp
 
 widgets/dialogs/io_status_dialog.cpp
 widgets/dialogs/io_status_dialog.ui

@@ -703,6 +703,14 @@ void GlaxnimateWindow::Private::set_brush_reference ( model::BrushStyle* sty, bo
         secondary_brush = sty;
     else
         main_brush = sty;
+
+    style_change_event();
+}
+
+void GlaxnimateWindow::Private::style_change_event()
+{
+    if ( active_tool )
+        active_tool->shape_style_change_event({ui.canvas, &scene, parent});
 }
 
 

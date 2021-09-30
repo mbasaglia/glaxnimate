@@ -6,10 +6,8 @@
 #include "app/settings/keyboard_shortcuts.hpp"
 #include "glaxnimate_app.hpp"
 
-using namespace glaxnimate::gui;
-using namespace glaxnimate;
 
-class tools::DrawTool::Private
+class glaxnimate::gui::tools::DrawTool::Private
 {
 public:
     class ToolUndoStack
@@ -91,8 +89,8 @@ public:
     void remove_extension_points(model::AnimatedProperty<math::bezier::Bezier>* property);
     void recursive_add_selection(graphics::DocumentScene * scene, model::VisualNode* node);
     void recursive_remove_selection(graphics::DocumentScene * scene, model::VisualNode* node);
-    bool within_join_distance(const tools::MouseEvent& event, const QPointF& scene_pos);
-    void prepare_draw(const tools::MouseEvent& event);
+    bool within_join_distance(const glaxnimate::gui::tools::MouseEvent& event, const QPointF& scene_pos);
+    void prepare_draw(const glaxnimate::gui::tools::MouseEvent& event);
 
     void push_command(const QString& name, SelectionManager* window, math::bezier::Bezier&& after)
     {
@@ -127,9 +125,9 @@ public:
     ToolUndoStack undo_stack;
 };
 
-tools::Autoreg<tools::DrawTool> tools::DrawTool::autoreg{max_priority};
+glaxnimate::gui::tools::Autoreg<glaxnimate::gui::tools::DrawTool> glaxnimate::gui::tools::DrawTool::autoreg{max_priority};
 
-void tools::DrawTool::Private::create(const tools::Event& event, DrawTool* tool)
+void glaxnimate::gui::tools::DrawTool::Private::create(const glaxnimate::gui::tools::Event& event, DrawTool* tool)
 {
     if ( !bezier.empty() )
     {
@@ -180,7 +178,7 @@ void tools::DrawTool::Private::create(const tools::Event& event, DrawTool* tool)
     event.repaint();
 }
 
-void tools::DrawTool::Private::add_extension_points(model::Path* owner)
+void glaxnimate::gui::tools::DrawTool::Private::add_extension_points(model::Path* owner)
 {
     if ( !owner->closed.get() )
     {
@@ -197,7 +195,7 @@ void tools::DrawTool::Private::add_extension_points(model::Path* owner)
     }
 }
 
-void tools::DrawTool::Private::remove_extension_points(model::AnimatedProperty<math::bezier::Bezier>* property)
+void glaxnimate::gui::tools::DrawTool::Private::remove_extension_points(model::AnimatedProperty<math::bezier::Bezier>* property)
 {
     extension_points.erase(
         std::remove_if(extension_points.begin(), extension_points.end(), [property](const ExtendPathData& p){
@@ -207,7 +205,7 @@ void tools::DrawTool::Private::remove_extension_points(model::AnimatedProperty<m
     );
 }
 
-void tools::DrawTool::Private::adjust_point_type(Qt::KeyboardModifiers mod)
+void glaxnimate::gui::tools::DrawTool::Private::adjust_point_type(Qt::KeyboardModifiers mod)
 {
     if ( mod & Qt::ShiftModifier )
         point_type = math::bezier::Corner;
@@ -223,7 +221,7 @@ void tools::DrawTool::Private::adjust_point_type(Qt::KeyboardModifiers mod)
     }
 }
 
-void tools::DrawTool::key_press(const tools::KeyEvent& event)
+void glaxnimate::gui::tools::DrawTool::key_press(const glaxnimate::gui::tools::KeyEvent& event)
 {
     if ( d->bezier.empty() )
         return;
@@ -252,7 +250,7 @@ void tools::DrawTool::key_press(const tools::KeyEvent& event)
     }
 }
 
-void tools::DrawTool::Private::clear(bool hard, SelectionManager* window)
+void glaxnimate::gui::tools::DrawTool::Private::clear(bool hard, SelectionManager* window)
 {
     undo_stack.clear(window);
     dragging = false;
@@ -264,7 +262,7 @@ void tools::DrawTool::Private::clear(bool hard, SelectionManager* window)
         extension_points.clear();
 }
 
-void tools::DrawTool::remove_last(SelectionManager* window)
+void glaxnimate::gui::tools::DrawTool::remove_last(SelectionManager* window)
 {
     if ( d->bezier.empty() )
         return;
@@ -289,12 +287,12 @@ void tools::DrawTool::remove_last(SelectionManager* window)
 }
 
 
-bool tools::DrawTool::Private::within_join_distance(const tools::MouseEvent& event, const QPointF& scene_pos)
+bool glaxnimate::gui::tools::DrawTool::Private::within_join_distance(const glaxnimate::gui::tools::MouseEvent& event, const QPointF& scene_pos)
 {
     return math::length(event.pos() - event.view->mapFromScene(scene_pos)) <= join_radius;
 }
 
-void tools::DrawTool::Private::prepare_draw(const tools::MouseEvent& event)
+void glaxnimate::gui::tools::DrawTool::Private::prepare_draw(const glaxnimate::gui::tools::MouseEvent& event)
 {
     for ( const auto& point : extension_points )
     {
@@ -313,16 +311,16 @@ void tools::DrawTool::Private::prepare_draw(const tools::MouseEvent& event)
     bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, math::bezier::Corner));
 }
 
-tools::DrawTool::DrawTool()
+glaxnimate::gui::tools::DrawTool::DrawTool()
     : d(std::make_unique<Private>())
 {
 }
 
-tools::DrawTool::~DrawTool()
+glaxnimate::gui::tools::DrawTool::~DrawTool()
 {
 }
 
-void tools::DrawTool::key_release(const tools::KeyEvent& event)
+void glaxnimate::gui::tools::DrawTool::key_release(const glaxnimate::gui::tools::KeyEvent& event)
 {
     if ( d->bezier.empty() )
         return;
@@ -335,7 +333,7 @@ void tools::DrawTool::key_release(const tools::KeyEvent& event)
     }
 }
 
-void tools::DrawTool::mouse_press(const tools::MouseEvent& event)
+void glaxnimate::gui::tools::DrawTool::mouse_press(const glaxnimate::gui::tools::MouseEvent& event)
 {
     if ( event.button() != Qt::LeftButton )
         return;
@@ -356,7 +354,7 @@ void tools::DrawTool::mouse_press(const tools::MouseEvent& event)
 
 }
 
-void tools::DrawTool::mouse_move(const tools::MouseEvent& event)
+void glaxnimate::gui::tools::DrawTool::mouse_move(const glaxnimate::gui::tools::MouseEvent& event)
 {
     if ( d->bezier.empty() )
         return;
@@ -381,7 +379,7 @@ void tools::DrawTool::mouse_move(const tools::MouseEvent& event)
     }
 }
 
-void tools::DrawTool::mouse_release(const tools::MouseEvent& event)
+void glaxnimate::gui::tools::DrawTool::mouse_release(const glaxnimate::gui::tools::MouseEvent& event)
 {
     if ( !d->dragging )
         return;
@@ -408,13 +406,13 @@ void tools::DrawTool::mouse_release(const tools::MouseEvent& event)
     }
 }
 
-void tools::DrawTool::mouse_double_click(const tools::MouseEvent& event)
+void glaxnimate::gui::tools::DrawTool::mouse_double_click(const glaxnimate::gui::tools::MouseEvent& event)
 {
     d->create(event, this);
     event.accept();
 }
 
-void tools::DrawTool::paint(const tools::PaintEvent& event)
+void glaxnimate::gui::tools::DrawTool::paint(const glaxnimate::gui::tools::PaintEvent& event)
 {
     QPen pen(event.palette.highlight(), 1);
     pen.setCosmetic(true);
@@ -485,29 +483,29 @@ void tools::DrawTool::paint(const tools::PaintEvent& event)
     }
 }
 
-void tools::DrawTool::enable_event(const Event& ev)
+void glaxnimate::gui::tools::DrawTool::enable_event(const Event& ev)
 {
     d->clear(false, ev.window);
     ev.repaint();
 }
 
-void tools::DrawTool::disable_event(const Event& event)
+void glaxnimate::gui::tools::DrawTool::disable_event(const Event& event)
 {
     d->create(event, this);
     d->clear(true, event.window);
 }
 
-void tools::DrawTool::on_selected(graphics::DocumentScene * scene, model::VisualNode * node)
+void glaxnimate::gui::tools::DrawTool::on_selected(graphics::DocumentScene * scene, model::VisualNode * node)
 {
     d->recursive_add_selection(scene, node);
 }
 
-void tools::DrawTool::on_deselected(graphics::DocumentScene * scene, model::VisualNode* node)
+void glaxnimate::gui::tools::DrawTool::on_deselected(graphics::DocumentScene * scene, model::VisualNode* node)
 {
     d->recursive_remove_selection(scene, node);
 }
 
-void tools::DrawTool::Private::recursive_add_selection(graphics::DocumentScene * scene, model::VisualNode* node)
+void glaxnimate::gui::tools::DrawTool::Private::recursive_add_selection(graphics::DocumentScene * scene, model::VisualNode* node)
 {
     auto meta = node->metaObject();
     if ( meta->inherits(&model::Path::staticMetaObject) )
@@ -521,7 +519,7 @@ void tools::DrawTool::Private::recursive_add_selection(graphics::DocumentScene *
     }
 }
 
-void tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScene * scene, model::VisualNode* node)
+void glaxnimate::gui::tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScene * scene, model::VisualNode* node)
 {
     auto meta = node->metaObject();
     if ( meta->inherits(&model::Path::staticMetaObject) )
@@ -535,7 +533,7 @@ void tools::DrawTool::Private::recursive_remove_selection(graphics::DocumentScen
     }
 }
 
-void tools::DrawTool::initialize(const Event& event)
+void glaxnimate::gui::tools::DrawTool::initialize(const Event& event)
 {
     d->join_radius = 5 * GlaxnimateApp::handle_size_multiplier();
     Q_UNUSED(event);

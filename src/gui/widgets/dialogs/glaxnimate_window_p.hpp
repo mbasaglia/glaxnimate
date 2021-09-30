@@ -184,6 +184,7 @@ public:
     void show_startup_dialog();
     void drop_file(const QString& file);
     void insert_emoji();
+    void style_change_event();
 
     void init_actions();
     void init_plugins();

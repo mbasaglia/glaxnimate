@@ -5,6 +5,7 @@
     * The object context menu now can show a dilaog to change animation timing on the object
     * Ability to add fonts from Google Fonts
     * The edit tool now has its own undo history
+    * Changing color/style while creating a shape now properly shows the changes
 * I/O:
     * Fixed position of tspan on SVG output
     * Shapes not showing on SVG output

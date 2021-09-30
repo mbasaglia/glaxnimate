@@ -45,6 +45,7 @@ public slots:
 
 signals:
     void color_changed(const QColor& color);
+    void pen_style_changed();
 
 private slots:
     void check_cap();

@@ -507,6 +507,11 @@ void GlaxnimateWindow::Private::init_docks()
             set_brush_reference(sty, secondary);
     });
 
+    // Fill/Stroke
+    connect(ui.fill_style_widget, &FillStyleWidget::current_color_changed, parent, [this]{style_change_event();});
+    connect(ui.fill_style_widget, &FillStyleWidget::secondary_color_changed, parent, [this]{style_change_event();});
+    connect(ui.stroke_style_widget, &StrokeStyleWidget::pen_style_changed, parent, [this]{style_change_event();});
+
     // Tab bar
     connect(ui.tab_bar, &CompositionTabBar::switch_composition, parent, &GlaxnimateWindow::switch_composition);
     connect(ui.timeline_widget, &CompoundTimelineWidget::switch_composition, parent, &GlaxnimateWindow::switch_composition);
