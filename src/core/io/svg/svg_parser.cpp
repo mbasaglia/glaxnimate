@@ -542,7 +542,7 @@ public:
         }
 
         if ( !style.contains("fill") )
-            style.set("fill", parent_style["fill"]);
+            style.set("fill", parent_style.get("fill"));
 
         style.color = parse_color(style.get("color", ""), parent_style.color);
         return style;

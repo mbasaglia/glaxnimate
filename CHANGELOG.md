@@ -38,6 +38,7 @@
     * SVG export now supports hold frames
     * SVG import now assumes back for unspecified fill
     * Ability to export as a spritesheet
+    * Fixed bug then loading CSS from SVG
 * Scripting:
     * The Headless environment context manager is no longer required when using glaxnimate as a module
 * Bug Fixes:
