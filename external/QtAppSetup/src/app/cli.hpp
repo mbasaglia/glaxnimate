@@ -98,6 +98,8 @@ struct Argument
 
 };
 
+void show_message(const QString& msg, bool error = false);
+
 struct ParsedArguments
 {
     QVariantMap values;
@@ -120,7 +122,6 @@ struct ParsedArguments
         return defined.contains(name);
     }
 
-    void show_message(const QString& msg, bool error) const;
 
     void handle_error(const QString& error);
     void handle_finish(const QString& message);

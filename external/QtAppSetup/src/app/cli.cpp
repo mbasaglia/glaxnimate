@@ -167,7 +167,7 @@ const app::cli::Argument * app::cli::Parser::option_from_arg(const QString& arg)
 
 void app::cli::ParsedArguments::handle_error(const QString& error)
 {
-    show_message(error+'\n', true);
+    show_message(error, true);
     return_value = 1;
 }
 
@@ -248,9 +248,9 @@ QString app::cli::Parser::version_text() const
     return QCoreApplication::applicationName() + " " + QCoreApplication::applicationVersion() + "\n";
 }
 
-void app::cli::ParsedArguments::show_message(const QString& msg, bool error) const
+void app::cli::show_message(const QString& msg, bool error)
 {
-    std::fputs(qUtf8Printable(msg), error ? stderr : stdout);
+    std::fputs(qUtf8Printable(msg + '\n'), error ? stderr : stdout);
 }
 
 

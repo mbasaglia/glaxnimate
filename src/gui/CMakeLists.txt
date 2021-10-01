@@ -130,6 +130,7 @@ widgets/font/font_loader.cpp
 if ( NOT ANDROID )
     list(APPEND SOURCES
         main.cpp
+        cli.cpp
         gui_python.cpp
 
         emoji/emoji_set_dialog.cpp

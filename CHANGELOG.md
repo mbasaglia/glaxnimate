@@ -6,6 +6,7 @@
     * Ability to add fonts from Google Fonts
     * The edit tool now has its own undo history
     * Changing color/style while creating a shape now properly shows the changes
+    * You can now convert/render files with glaxnimate from the command line
 * I/O:
     * Fixed position of tspan on SVG output
     * Shapes not showing on SVG output
