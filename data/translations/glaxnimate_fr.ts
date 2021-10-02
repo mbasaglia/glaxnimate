@@ -4350,7 +4350,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="47"/>
         <source>Delete selected snippet</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la snippet sélectionée</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="50"/>
