@@ -9,7 +9,7 @@
     * You can now convert/render files with glaxnimate from the command line
 * I/O:
     * Fixed position of tspan on SVG output
-    * Shapes not showing on SVG output
+    * Fixed shapes not showing on SVG output
     * Fonts defined in CSS @font-face are now loaded from SVG
     * External fonts are now loaded from lottie
 * Scripting:

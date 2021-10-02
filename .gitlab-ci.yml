@@ -104,8 +104,8 @@ linux:aur:
         - PROJECT_VERSION="$(../deploy/get_version.sh CMakeCache.txt)"
         - git config --global user.name "Glaxnimate CI"
         - git config --global user.email "glaxnimate-ci@mattbas.org"
-        # Update glaxnimate-git
-        - PACK_NAME=glaxnimate-git
+        # Update glaxnimate
+        - PACK_NAME=glaxnimate
         - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
         - echo "Setting version $PROJECT_VERSION"
