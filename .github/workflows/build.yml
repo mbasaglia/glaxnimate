@@ -20,6 +20,8 @@ jobs:
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh deps
             - name: Build
+              env:
+                API_KEY_GOOGLE_FONTS: ${{ secrets.API_KEY_GOOGLE_FONTS }}
               run: |
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh configure "mac-${GITHUB_SHA:0:8}"
@@ -92,6 +94,8 @@ jobs:
               run: |
                 ./deploy/win_build.sh deps
             - name: Build
+              env:
+                API_KEY_GOOGLE_FONTS: ${{ secrets.API_KEY_GOOGLE_FONTS }}
               run: |
                 (cd ./data/icons/breeze-icons/ && git config core.symlinks true && git reset --hard &>/dev/null)
                 ./deploy/win_build.sh configure "win-${GITHUB_SHA:0:8}"

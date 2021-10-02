@@ -160,6 +160,13 @@ endif()
 configure_file(resources/glaxnimate.in.qrc resources/glaxnimate.qrc)
 qt5_add_resources(SOURCES ${CMAKE_CURRENT_BINARY_DIR}/resources/glaxnimate.qrc)
 
+set(API_KEY_GOOGLE_FONTS "$ENV{API_KEY_GOOGLE_FONTS}" CACHE STRING "API key for Google Fonts")
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/settings/api_keys.in.hpp
+    ${CMAKE_CURRENT_BINARY_DIR}/api_keys.hpp
+)
+
+
 
 include_directories(${CMAKE_SOURCE_DIR}/external/QtAppSetup/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/core)

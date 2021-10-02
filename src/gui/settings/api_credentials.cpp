@@ -9,6 +9,8 @@
 #include <QFormLayout>
 #include <QDesktopServices>
 
+#include "api_keys.hpp"
+
 static QString slugify(const QString& str)
 {
     return str.toLower().replace(" ", "_");
@@ -19,7 +21,7 @@ glaxnimate::gui::settings::ApiCredentials::ApiCredentials()
         {"Google Fonts", {
             QUrl("https://console.cloud.google.com/apis/credentials"),
             {
-                {"Token"},
+                {"Token", "", API_KEY_GOOGLE_FONTS},
                 {"URL", "https://www.googleapis.com/webfonts/v1/webfonts"},
             }
         }}
@@ -94,4 +96,18 @@ QVariant glaxnimate::gui::settings::ApiCredentials::get_variant(const QString& s
 {
     auto split = setting.split("/");
     return apis_.at(split[0]).credential(split[1]);
+}
+
+QString glaxnimate::gui::settings::ApiCredentials::Api::credential(const QString& name) const
+{
+    for ( const auto& cred : credentials )
+    {
+        if ( cred.name ==  name )
+        {
+            if ( cred.value.isEmpty() && !cred.hidden_default.isEmpty() )
+                return cred.hidden_default;
+            return cred.value;
+        }
+    }
+    return {};
 }

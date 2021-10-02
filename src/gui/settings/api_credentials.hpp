@@ -16,6 +16,7 @@ public:
     {
         QString name;
         QString value = "";
+        QString hidden_default = "";
     };
 
     struct Api
@@ -23,13 +24,7 @@ public:
         QUrl info_url;
         std::vector<Credential> credentials;
 
-        QString credential(const QString& name) const
-        {
-            for ( const auto& cred : credentials )
-                if ( cred.name ==  name )
-                    return cred.value;
-            return {};
-        }
+        QString credential(const QString& name) const;
     };
 
     ApiCredentials();
