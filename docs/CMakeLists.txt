@@ -17,7 +17,7 @@ add_custom_target(
 if(PYTHON_PIP)
     add_custom_target(
         docs_depends_install
-        COMMAND ${PYTHON_PIP} install mkdocs mkdocs-cinder git+https://github.com/bmcorser/fontawesome-markdown.git@master
+        COMMAND ${PYTHON_PIP} install mkdocs mkdocs-cinder git+https://github.com/bmcorser/fontawesome-markdown.git@master babel
     )
 endif()
 
