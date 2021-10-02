@@ -129,56 +129,121 @@
         <translation># Pour la documentation voir https://glaxnimate.mattbas.org/contributing/scripting/</translation>
     </message>
     <message>
-        <location filename="../../src/gui/main.cpp" line="19"/>
+        <location filename="../../src/gui/cli.cpp" line="15"/>
         <source>Informational Options</source>
         <translation>Options informationelles</translation>
     </message>
     <message>
-        <location filename="../../src/gui/main.cpp" line="20"/>
+        <location filename="../../src/gui/cli.cpp" line="16"/>
         <source>Show this help and exit</source>
         <translation>Montrer cette aide et sortir</translation>
     </message>
     <message>
-        <location filename="../../src/gui/main.cpp" line="21"/>
+        <location filename="../../src/gui/cli.cpp" line="17"/>
         <source>Show version information and exit</source>
         <translation>Montrer les informations de version et sortir</translation>
     </message>
     <message>
-        <location filename="../../src/gui/main.cpp" line="23"/>
+        <location filename="../../src/gui/cli.cpp" line="19"/>
         <source>Options</source>
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="../../src/gui/main.cpp" line="24"/>
+        <location filename="../../src/gui/cli.cpp" line="20"/>
         <source>File to open</source>
         <translation>Fichier à ouvrir</translation>
     </message>
     <message>
-        <location filename="../../src/gui/main.cpp" line="26"/>
+        <location filename="../../src/gui/cli.cpp" line="22"/>
         <source>GUI Options</source>
         <translation>Options de l&apos;interface</translation>
     </message>
     <message>
-        <location filename="../../src/gui/main.cpp" line="27"/>
+        <location filename="../../src/gui/cli.cpp" line="23"/>
         <source>If present, doesn&apos;t restore the main window state</source>
         <translation>Si présent, ne restaure pas l&apos;état de la fenêtre principale</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="40"/>
+        <source>Export Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="43"/>
+        <source>If present, instead of starting the GUI export the input file to the given</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="50"/>
+        <source>Specify the format for --export. If omitted it&apos;s determined based on the file name. See --export-format-list for a list of supported formats.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="57"/>
+        <source>Shows possible values for --export-format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="111"/>
+        <source>Could not run the plugin</source>
+        <translation type="unfinished">Ne peut lancer le plugin</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="120"/>
+        <source>Could not find an interpreter</source>
+        <translation type="unfinished">Ne peut trouver un interpréteur</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="165"/>
+        <source>You need to specify a file to export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="181"/>
+        <source>Unknown exporter. use --export-format-list for a list of available formats</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="190"/>
+        <source>Unknown importer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="197"/>
+        <source>Could not open input file for reading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="208"/>
+        <source>Error loading input file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="216"/>
+        <source>Could not open output file for writing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/cli.cpp" line="222"/>
+        <source>Error converting to the output format</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>If present, doen&apos;t restore the main window state</source>
         <translation type="vanished">Si présent, ne restaure pas létat de la fenêtre principale</translation>
     </message>
     <message>
-        <location filename="../../src/gui/main.cpp" line="30"/>
+        <location filename="../../src/gui/cli.cpp" line="26"/>
         <source>Use a specific size for the main window</source>
         <translation>Utilise une taille spécifique pour la fenêtre principale</translation>
     </message>
     <message>
-        <location filename="../../src/gui/main.cpp" line="38"/>
+        <location filename="../../src/gui/cli.cpp" line="34"/>
         <source>Print the window id</source>
         <translation>Affiche l&apos;id de la fenêtre</translation>
     </message>
     <message>
-        <location filename="../../src/gui/main.cpp" line="41"/>
+        <location filename="../../src/gui/cli.cpp" line="37"/>
         <source>Enables the debug menu</source>
         <translation>Active le menu de débogage</translation>
     </message>
@@ -836,7 +901,7 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
         <translation>Erreur de chargement du fichier %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/api_credentials.hpp" line="39"/>
+        <location filename="../../src/gui/settings/api_credentials.hpp" line="34"/>
         <source>API Credentials</source>
         <translation>Identifiants de l&apos;API</translation>
     </message>
@@ -851,7 +916,7 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
         <translation>Étirer le temps</translation>
     </message>
     <message>
-        <location filename="../../src/gui/settings/api_credentials.cpp" line="78"/>
+        <location filename="../../src/gui/settings/api_credentials.cpp" line="80"/>
         <source>Information</source>
         <translation>Information</translation>
     </message>
@@ -859,87 +924,87 @@ Désirez-vous sauvegarder vos changements&#xa0;?</translation>
 <context>
     <name>Settings</name>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="155"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="164"/>
         <source>User Interface</source>
         <translation>Interface utilisateur</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="158"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="167"/>
         <source>Language</source>
         <translation>Langue</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="159"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="168"/>
         <source>Interface Language</source>
         <translation>Langue de l&apos;interface</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="160"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="169"/>
         <source>Icon Theme</source>
         <translation>Thème d&apos;icône</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="161"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="170"/>
         <source>Show startup dialog</source>
         <translation>Montrer le dialogue de démarrage</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="166"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="175"/>
         <source>New Animation Defaults</source>
         <translation>Paramètres par défaut des nouvelles animations</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="168"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="177"/>
         <source>Width</source>
         <translation>Largeur</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="171"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="180"/>
         <source>Height</source>
         <translation>Hauteur</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="174"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="183"/>
         <source>FPS</source>
         <translation>IPS (FPS)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="175"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="184"/>
         <source>Frames per second</source>
         <translation>Images par seconde (FPS)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="178"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="187"/>
         <source>Duration</source>
         <translation>Durée</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="179"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="188"/>
         <source>Duration in seconds</source>
         <translation>Durée en secondes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="183"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="192"/>
         <source>Max Recent Files</source>
         <translation>Nombre max de fichiers récents</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="187"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="196"/>
         <source>Backup Frequency</source>
         <translation>Fréquence des copies de sauvegarde</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="188"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="197"/>
         <source>How often to save a backup copy (in minutes)</source>
         <translation>À quel intervalle effectuer des copies de sauvegarde (en minutes)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="192"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="201"/>
         <source>Scripting</source>
         <translation>Scripter</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="197"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="206"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
@@ -2463,7 +2528,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Durée en secondes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/glaxnimate_app.cpp" line="182"/>
+        <location filename="../../src/gui/glaxnimate_app.cpp" line="191"/>
         <source>Open / Save</source>
         <translation>Ouvrir / sauvegarder</translation>
     </message>
@@ -5354,52 +5419,52 @@ p, li { white-space: pre-wrap; }
         <translation>L&apos;objet %1 est invalide</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="206"/>
+        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="216"/>
         <source>Wrong object type: expected &apos;%1&apos; but got &apos;%2&apos;</source>
         <translation>Type d&apos;objet erronée&#xa0;: &apos;%1&apos; attendu, mais a obtenu &apos;%2&apos;</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="211"/>
+        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="221"/>
         <source>Could not load %1 for %2</source>
         <translation>Ne peut charger %1 pour %2</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="222"/>
+        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="232"/>
         <source>Could not set property %1</source>
         <translation>Ne peut définir la propriété %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="248"/>
+        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="258"/>
         <source>Item %1 for %2 in %3 isn&apos;t an object</source>
         <translation>L&apos;élément %1 pour %2 dans %3 n&apos;est pas un objet</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="260"/>
+        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="270"/>
         <source>Item %1 for %2 in %3 is not acceptable</source>
         <translation>L&apos;élément %1 pour %2 dans %3 n&apos;est pas acceptable</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="297"/>
+        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="307"/>
         <source>Keyframe must specify a time</source>
         <translation>Une image clé doit spécifier un instant</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="302"/>
+        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="312"/>
         <source>Keyframe must specify a value</source>
         <translation>Une image clé doit spécifier une valeur</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="312"/>
+        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="322"/>
         <source>Could not add keyframe</source>
         <translation>Ne peut ajouter une image clé</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="477"/>
+        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="487"/>
         <source>Objects of type &apos;MainComposition&apos; can only be at the top level of the document</source>
         <translation>Les objets de type &apos;MainComposition&apos; peuvent être qu&apos;au plus haut niveau du document</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="487"/>
+        <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="497"/>
         <source>Unknow object of type &apos;%1&apos;</source>
         <translation>Objet inconnu de type &apos;%1&apos;</translation>
     </message>
@@ -5603,8 +5668,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="27"/>
+        <source>Number of columns in the sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>NUmber of columns in the sheet</source>
-        <translation>Nombre de colonnes dans la feuille</translation>
+        <translation type="vanished">Nombre de colonnes dans la feuille</translation>
     </message>
     <message>
         <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="28"/>
@@ -5686,6 +5755,52 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/core/io/video/video_format.cpp" line="772"/>
         <source>Error occurred when opening output file: %1</source>
         <translation>Une erreur est survenue lors de l&apos;ouverture du fichier de sortie&#xa0;: %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="807"/>
+        <source>Bitrate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="807"/>
+        <source>Video bit rate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="808"/>
+        <source>Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="808"/>
+        <source>Background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="809"/>
+        <source>Width</source>
+        <translation type="unfinished">Largeur</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="809"/>
+        <location filename="../../src/core/io/video/video_format.cpp" line="810"/>
+        <source>If not 0, it will overwrite the size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="810"/>
+        <source>Height</source>
+        <translation type="unfinished">Hauteur</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="811"/>
+        <source>Verbose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/video/video_format.cpp" line="811"/>
+        <source>Show verbose information on the conversion</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

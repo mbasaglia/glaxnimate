@@ -53,6 +53,7 @@ nav:
             - contributing/code/model_objects.md
             - contributing/code/misc.md
         - "Writing Documentation": contributing/documentation.md
+        - "Translations": contributing/translations.md
         - "Assets": contributing/assets.md
         - "Roadmap": contributing/roadmap.md
         - "File Format": contributing/json_reference.md

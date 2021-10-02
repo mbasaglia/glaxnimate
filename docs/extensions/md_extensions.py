@@ -1,8 +1,10 @@
 from markdown.inlinepatterns import InlineProcessor
 from markdown.extensions import Extension
 import os
+from pathlib import Path
 import xml.etree.ElementTree as etree
-
+from xml.etree.ElementTree import parse as parse_xml
+from babel import Locale
 
 def etree_fontawesome(icon, group="fas"):
     el = etree.Element("i")
@@ -154,11 +156,98 @@ class DownloadTable(InlineProcessor):
         return table, m.start(0), m.end(0)
 
 
+class TranslationTable(InlineProcessor):
+    def __init__(self, pattern, md, git):
+        super().__init__(pattern, md)
+        self.data = None
+
+    def fetch_data(self):
+        self.data = []
+
+        source = Path(__file__).parent.parent.parent / "data" / "translations"
+
+        for file in source.glob("*.ts"):
+            locale_name = file.stem.split("_", 1)[1]
+            locale = Locale(*locale_name.split("_"))
+
+            dom = parse_xml(open(file))
+            translated = 0
+            untranslated = 0
+            obsolete = 0
+            for message in dom.findall(".//message"):
+                type = message.find("translation").attrib.get("type")
+                if type == "unfinished":
+                    untranslated += 1
+                elif not type:
+                    translated += 1
+                elif type == "vanished" or type == "obsolete":
+                    obsolete += 1
+
+            total = untranslated + translated
+            self.data.append({
+                "total": total,
+                "translated": translated,
+                "language": locale.display_name,
+                "obsolete": obsolete,
+                "untranslated": untranslated,
+            })
+
+        self.data = sorted(self.data, key=lambda x: (-x["translated"], -x["obsolete"]))
+
+    def _th(self, tr, text):
+        cell = etree.SubElement(tr, "th")
+        cell.attrib["style"] = "text-align:right;"
+        cell.text = text
+
+    def _cell(self, tr, text, style=None):
+        cell = etree.SubElement(tr, "td")
+        if style:
+            cell.attrib["style"] = style
+        cell.text = text
+
+    def handleMatch(self, m, data):
+        if self.data is None:
+            self.fetch_data()
+
+        table = etree.Element("table")
+
+        thead = etree.SubElement(table, "thead")
+        tr = etree.SubElement(thead, "tr")
+        etree.SubElement(tr, "th").text = "Language"
+        self._th(tr, "Completion")
+        self._th(tr, "Tranalated")
+        self._th(tr, "Missing")
+        self._th(tr, "Obsolete")
+
+        tbody = etree.SubElement(table, "tbody")
+
+        for row in self.data:
+            tr = etree.SubElement(tbody, "tr")
+
+            percent = round(row["translated"]/row["total"]*100)
+            if percent > 80:
+                color = "#0a0"
+            elif percent > 50:
+                color = "#b80"
+            else:
+                color = "#c00"
+
+            self._cell(tr, row["language"])
+            data_style = "text-align:right; font-family: monospace;"
+            self._cell(tr, "%s%%" % percent, data_style + "color: %s;" % color)
+            self._cell(tr, str(row["translated"]), data_style)
+            self._cell(tr, str(row["untranslated"]), data_style)
+            self._cell(tr, str(row["obsolete"]), data_style)
+
+        return table, m.start(0), m.end(0)
+
+
 class GlaxnimateExtension(Extension):
     def extendMarkdown(self, md):
         md.inlinePatterns.register(LottieInlineProcessor(md), 'lottie', 175)
         md.inlinePatterns.register(DownloadTable(r'{download_table:([^:]+)}', md, False), 'download_table', 175)
         md.inlinePatterns.register(DownloadTable(r'{download_table:([^:]+):git}', md, True), 'download_table_git', 175)
+        md.inlinePatterns.register(TranslationTable(r'{translation_table}', md, False), 'translation_table', 175)
 
 
 def makeExtension(**kwargs):
