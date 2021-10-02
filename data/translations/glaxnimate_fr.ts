@@ -166,67 +166,67 @@
     <message>
         <location filename="../../src/gui/cli.cpp" line="40"/>
         <source>Export Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Option d&apos;export</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="43"/>
         <source>If present, instead of starting the GUI export the input file to the given</source>
-        <translation type="unfinished"></translation>
+        <translation>Si présent, plutôt que de lancer l&apos;interface graphique, export le fichier d&apos;entrée vers le format donné</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="50"/>
         <source>Specify the format for --export. If omitted it&apos;s determined based on the file name. See --export-format-list for a list of supported formats.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spécifie le format pour --export. Si omit, il sera déterminé en fonction du nom de fichier. Voir --export-fromat-list pour une liste des formats supportés.</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="57"/>
         <source>Shows possible values for --export-format</source>
-        <translation type="unfinished"></translation>
+        <translation>Affiche les valeurs possible pour --export-format</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="111"/>
         <source>Could not run the plugin</source>
-        <translation type="unfinished">Ne peut lancer le plugin</translation>
+        <translation>Ne peut pas lancer le plugin</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="120"/>
         <source>Could not find an interpreter</source>
-        <translation type="unfinished">Ne peut trouver un interpréteur</translation>
+        <translation>Ne peut pas trouver un interpréteur</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="165"/>
         <source>You need to specify a file to export</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous devez spécifier un fichier à exporter</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="181"/>
         <source>Unknown exporter. use --export-format-list for a list of available formats</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporteur inconnu&#xa0;: Utilisez --export-format-list pour une liste des formats disponibles</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="190"/>
         <source>Unknown importer</source>
-        <translation type="unfinished"></translation>
+        <translation>Importeur inconnu</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="197"/>
         <source>Could not open input file for reading</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne peut pas ouvrir le fichier d&apos;entrée en lecture</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="208"/>
         <source>Error loading input file</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur de chargement du fichier d&apos;entrée</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="216"/>
         <source>Could not open output file for writing</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne peut pas ouvrir le fichier de sortie en écriture</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="222"/>
         <source>Error converting to the output format</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur de conversion vers le format de sortie</translation>
     </message>
     <message>
         <source>If present, doen&apos;t restore the main window state</source>
@@ -3907,9 +3907,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::NodeMenu</name>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="36"/>
         <source>ResetTransform</source>
-        <translation>Remise à zéro de la transformation</translation>
+        <translation type="vanished">Remise à zéro de la transformation</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="64"/>
@@ -3947,6 +3946,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ajouter</translation>
     </message>
     <message>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="36"/>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="223"/>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="311"/>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="328"/>
@@ -4344,9 +4344,13 @@ p, li { white-space: pre-wrap; }
         <translation>Éditer...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="47"/>
         <source>Selete selected snippet</source>
-        <translation>Supprimer la snippet sélectionée</translation>
+        <translation type="vanished">Supprimer la snippet sélectionée</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="47"/>
+        <source>Delete selected snippet</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="50"/>
@@ -5669,7 +5673,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/raster/spritesheet_format.cpp" line="27"/>
         <source>Number of columns in the sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de colonnes dans la feuille</translation>
     </message>
     <message>
         <source>NUmber of columns in the sheet</source>
@@ -5759,48 +5763,48 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="807"/>
         <source>Bitrate</source>
-        <translation type="unfinished"></translation>
+        <translation>Débit binaire</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="807"/>
         <source>Video bit rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Débit binaire vidéo</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="808"/>
         <source>Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Fond</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="808"/>
         <source>Background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur de fond</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="809"/>
         <source>Width</source>
-        <translation type="unfinished">Largeur</translation>
+        <translation>Largeur</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="809"/>
         <location filename="../../src/core/io/video/video_format.cpp" line="810"/>
         <source>If not 0, it will overwrite the size</source>
-        <translation type="unfinished"></translation>
+        <translation>Si différent de 0, la taille sera écrasée</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="810"/>
         <source>Height</source>
-        <translation type="unfinished">Hauteur</translation>
+        <translation>Hauteur</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="811"/>
         <source>Verbose</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbeux</translation>
     </message>
     <message>
         <location filename="../../src/core/io/video/video_format.cpp" line="811"/>
         <source>Show verbose information on the conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Affiche des informations verbeuses sur la conversion</translation>
     </message>
 </context>
 <context>

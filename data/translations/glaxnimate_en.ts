@@ -3001,7 +3001,7 @@ p, li { white-space: pre-wrap; }
     <name>glaxnimate::gui::NodeMenu</name>
     <message>
         <source>ResetTransform</source>
-        <translation>ResetTransform</translation>
+        <translation type="vanished">ResetTransform</translation>
     </message>
     <message>
         <source>None</source>
@@ -3347,7 +3347,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Selete selected snippet</source>
-        <translation>Selete selected snippet</translation>
+        <translation type="vanished">Selete selected snippet</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -3380,6 +3380,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Could not create snippet: `%1`</source>
         <translation>Could not create snippet: `%1`</translation>
+    </message>
+    <message>
+        <source>Delete selected snippet</source>
+        <translation>Delete selected snippet</translation>
     </message>
 </context>
 <context>

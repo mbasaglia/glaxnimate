@@ -3766,11 +3766,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::gui::NodeMenu</name>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="36"/>
-        <source>ResetTransform</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="64"/>
         <source>None</source>
         <translation type="unfinished"></translation>
@@ -3806,6 +3801,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="36"/>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="223"/>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="311"/>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="328"/>
@@ -4204,7 +4200,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/snippet_list_widget.ui" line="47"/>
-        <source>Selete selected snippet</source>
+        <source>Delete selected snippet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

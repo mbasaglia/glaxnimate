@@ -44,7 +44,7 @@
      <item>
       <widget class="QToolButton" name="toolButton_3">
        <property name="toolTip">
-        <string>Selete selected snippet</string>
+        <string>Delete selected snippet</string>
        </property>
        <property name="text">
         <string>Delete</string>

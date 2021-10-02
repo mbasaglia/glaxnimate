@@ -33,7 +33,7 @@ public:
     void operator()() const
     {
         doc->push_command(new command::SetMultipleAnimated(
-            NodeMenu::tr("ResetTransform"),
+            NodeMenu::tr("Reset Transform"),
             true,
             {
                 &trans->position,
