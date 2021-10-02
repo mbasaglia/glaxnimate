@@ -269,7 +269,7 @@ release:check_deb:
     script:
         - ./deploy/release_check.py --package "Deb Package" --action check_hash
         - ./deploy/release_check.py --package "Deb Package" --action download
-        - apt install ./glaxnimate.deb
+        - apt install -y ./glaxnimate.deb
         - ./deploy/check_package_version.sh glaxnimate
 
 release:check_appimage:
@@ -290,7 +290,7 @@ release:check_appimage:
         - ./deploy/release_check.py --package "Linux Appimage" --action check_hash
         - ./deploy/release_check.py --package "Linux Appimage" --action download
         - chmod a+x glaxnimate-x86_64.AppImage
-        - glaxnimate-x86_64.AppImage --appimage-extract
+        - ./glaxnimate-x86_64.AppImage --appimage-extract
         - ./deploy/check_package_version.sh ./glaxnimate-x86_64.AppImage
 
 release:check_pypi:
@@ -305,11 +305,11 @@ release:check_pypi:
         - release:check
     before_script:
         - apt-get update -qq
-        - apt-get install -y python3-pip
+        - apt-get install -y python3-pip curl
     script:
         - PYPI_VERSION="`./deploy/pypi_version_latest.sh`"
-        - pip3 install glaxnimate==$PYPI_VERSION
-        - ./deploy/pypi_version_check.py $PYPI_VERSION
+        - pip3 install glaxnimate=="$PYPI_VERSION"
+        - ./deploy/pypi_version_check.py "$PYPI_VERSION"
 
 linux:snap_tag:
     #image: snapcore/snapcraft:stable
