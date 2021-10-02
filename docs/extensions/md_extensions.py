@@ -215,7 +215,7 @@ class TranslationTable(InlineProcessor):
         tr = etree.SubElement(thead, "tr")
         etree.SubElement(tr, "th").text = "Language"
         self._th(tr, "Completion")
-        self._th(tr, "Tranalated")
+        self._th(tr, "Translated")
         self._th(tr, "Missing")
         self._th(tr, "Obsolete")
 
