@@ -288,7 +288,7 @@ release:check_appimage:
         - release:check
     before_script:
         - apt-get update -qq
-        - apt-get install -y libfuse2 libgl1-mesa-dev libglib2.0-0 python3-pip xvfb
+        - apt-get install -y libfuse2 libgl1-mesa-dev libglib2.0-0 python3-pip xvfb libqt5widgets5
         - pip3 install requests
     script:
         - ./deploy/release_check.py --package "Linux Appimage" --action check_hash
@@ -297,7 +297,7 @@ release:check_appimage:
         - ./glaxnimate-x86_64.AppImage --appimage-extract
         - Xvfb :0 -screen 0 1024x768x16 &
         - export DISPLAY=:0
-        - ./deploy/check_package_version.sh ./glaxnimate-x86_64.AppImage
+        - ./deploy/check_package_version.sh ./squashfs-root/AppRun
 
 release:check_pypi:
     image: ubuntu:latest
