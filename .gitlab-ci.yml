@@ -264,8 +264,9 @@ release:check_deb:
         - release:check
     before_script:
         - apt-get update -qq
-        - apt-get install -y python3-pip
+        - apt-get install -y python3-pip xvfb
         - pip3 install requests
+        - Xvfb :0 -screen 0 1024x768x16 &
     script:
         - ./deploy/release_check.py --package "Deb Package" --action check_hash
         - ./deploy/release_check.py --package "Deb Package" --action download
@@ -284,8 +285,9 @@ release:check_appimage:
         - release:check
     before_script:
         - apt-get update -qq
-        - apt-get install -y libfuse2 libgl1-mesa-dev libglib2.0-0 python3-pip
+        - apt-get install -y libfuse2 libgl1-mesa-dev libglib2.0-0 python3-pip xvfb
         - pip3 install requests
+        - Xvfb :0 -screen 0 1024x768x16 &
     script:
         - ./deploy/release_check.py --package "Linux Appimage" --action check_hash
         - ./deploy/release_check.py --package "Linux Appimage" --action download
@@ -305,7 +307,7 @@ release:check_pypi:
         - release:check
     before_script:
         - apt-get update -qq
-        - apt-get install -y python3-pip curl
+        - apt-get install -y python3-pip curl libqt5widgets5 libqt5xml5 potrace ffmpeg libarchive13
     script:
         - PYPI_VERSION="`./deploy/pypi_version_latest.sh`"
         - pip3 install glaxnimate=="$PYPI_VERSION"

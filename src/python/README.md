@@ -117,3 +117,18 @@ with glaxnimate.environment.Headless():
     with open("MyFile.svg", "wb") as output_file:
         output_file.write(glaxnimate.io.registry.from_extension("svg").save(document))
 ```
+
+## Dependencies
+
+This module depends on the following system libraries
+
+* Qt5 (widgets, xml)
+* potrace
+* libav / ffmpeg
+* libarchive
+
+To install them on Ubuntu and similar:
+
+```bash
+apt install libqt5widgets5 libqt5xml5 potrace ffmpeg libarchive13
+```
