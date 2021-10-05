@@ -168,7 +168,7 @@ class TranslationTable(InlineProcessor):
 
         for file in source.glob("*.ts"):
             locale_name = file.stem.split("_", 1)[1]
-            locale = Locale(*locale_name.split("_"))
+            locale = Locale.parse(locale_name)
 
             dom = parse_xml(open(file))
             translated = 0

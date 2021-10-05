@@ -5534,17 +5534,17 @@ p, li { white-space: pre-wrap; }
         <translation>Sort un joli JSON</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="490"/>
+        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="496"/>
         <source>Lottie only supports layers in the top level</source>
         <translation>Lottie ne supporte les calques qu&apos;au niveau le plus haut</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="537"/>
+        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="543"/>
         <source>Images cannot be grouped with other shapes, they must be inside a layer</source>
         <translation>Les images ne peuvent être groupées avec les autres formes, elles doivent être à l&apos;intérieur d&apos;un calque</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="539"/>
+        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="545"/>
         <source>Composition layers cannot be grouped with other shapes, they must be inside a layer</source>
         <translation>Les calques de composition ne peuvent pas être groupés avec les autres formes, elles doivent être à l&apos;intérieure d&apos;un calque</translation>
     </message>

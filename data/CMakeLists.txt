@@ -39,6 +39,7 @@ create_qt_linguist_translations(
     translations/glaxnimate_id.ts
     translations/glaxnimate_ru.ts
     translations/glaxnimate_fr.ts
+    translations/glaxnimate_zh_CN.ts
 )
 install(FILES ${LINGUIST_OUTPUT_FILES} DESTINATION ${DATA_INSTALL}/translations/)
 

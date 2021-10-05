@@ -23,6 +23,16 @@ French
 
 * Popolon
 
+Italian
+-------
+
+* Mattia "Glax" Basaglia
+
+Simplified Chinese
+------------------
+
+* 金馆长
+
 
 External Code / Library Credits
 ===============================
