@@ -1,3 +1,10 @@
+## 0.4.7
+
+* I/O:
+    * Loading Lottie with `meta` no longer show a warning
+* UI:
+    * Added simplified Chinese translation
+
 ## 0.4.6
 
 * Editing
