@@ -276,3 +276,8 @@ QString GlaxnimateApp::backup_path(const QString& file) const
 {
     return writable_data_path("backup/"+file);
 }
+
+void glaxnimate::gui::GlaxnimateApp::on_initialize_translations()
+{
+    app::TranslationService::instance().initialize("en_US");
+}

@@ -2,283 +2,222 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>TimingDialog</name>
+    <name>CompoundTimelineWidget</name>
     <message>
-        <source>&quot;</source>
-        <translation>&quot;</translation>
+        <source>Add Keyframe</source>
+        <translation>添加关键帧</translation>
     </message>
     <message>
-        <source>FPS</source>
-        <translation>FPS</translation>
-    </message>
-    <message>
-        <source>Scale Timing</source>
-        <translation>缩放持续时间</translation>
-    </message>
-    <message>
-        <source>Trim Extra Frames</source>
-        <translation>修剪额外的帧</translation>
-    </message>
-    <message>
-        <source>Keep Initial Timing</source>
-        <translation>保持初始时间</translation>
-    </message>
-    <message>
-        <source>Frames</source>
-        <translation>帧</translation>
-    </message>
-    <message>
-        <source>Layers</source>
-        <translation>图层</translation>
-    </message>
-    <message>
-        <source>Timing</source>
-        <translation>持续时间</translation>
-    </message>
-    <message>
-        <source>Duration</source>
-        <translation>持续时间</translation>
+        <source>&amp;Clear Animations</source>
+        <translation>&amp;清除动画</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::item_models::DocumentNodeModel</name>
-    <message>
-        <source>#</source>
-        <translation>#</translation>
-    </message>
+    <name>EmojiSetDialog</name>
     <message>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <source>Color</source>
-        <translation>颜色</translation>
+        <source>Close</source>
+        <translation>关闭</translation>
     </message>
     <message>
-        <source>Locked</source>
-        <translation>锁定</translation>
+        <source>License</source>
+        <translation>许可证</translation>
     </message>
     <message>
-        <source>Visible</source>
-        <translation>可见性</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::item_models::GradientListModel</name>
-    <message>
-        <source>#</source>
-        <translation>#</translation>
+        <source>Downloaded</source>
+        <translation>下载</translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation>名称</translation>
+        <source>Reload</source>
+        <translation>重新加载</translation>
     </message>
     <message>
-        <source>Gradient</source>
-        <translation>渐变</translation>
+        <source>Emoji Set</source>
+        <translation>Emoji表情集</translation>
     </message>
     <message>
-        <source>Number of users</source>
-        <translation>使用人数</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::Spin2D</name>
-    <message>
-        <source>%</source>
-        <translation>%</translation>
+        <source>Download</source>
+        <translation>下载</translation>
     </message>
     <message>
-        <source>Lock Ratio</source>
-        <translation>锁定分辨率</translation>
+        <source>Add Emoji...</source>
+        <translation>添加Emoji表情...</translation>
+    </message>
+    <message>
+        <source>View Website</source>
+        <translation>查看网站</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::TraceDialog</name>
+    <name>GlaxnimateWindow</name>
     <message>
-        <source>%</source>
-        <translation>%</translation>
+        <source>Cut</source>
+        <translation>剪切</translation>
     </message>
     <message>
-        <source>Add</source>
-        <translation>添加</translation>
+        <source>Copy</source>
+        <translation>复制</translation>
     </message>
     <message>
-        <source>Mode</source>
-        <translation>模式</translation>
+        <source>Paste</source>
+        <translation>粘贴</translation>
     </message>
     <message>
-        <source>Zoom</source>
-        <translation>缩放</translation>
+        <source>Group Shapes</source>
+        <translation>编组形状</translation>
     </message>
     <message>
-        <source>Pixel</source>
-        <translation>像素</translation>
+        <source>Ungroup Shapes</source>
+        <translation>取消组形状</translation>
     </message>
     <message>
-        <source>Trace Bitmap</source>
-        <translation>跟随位图</translation>
-    </message>
-    <message>
-        <source>Remove Color</source>
-        <translation>删除颜色</translation>
-    </message>
-    <message>
-        <source>Tolerance</source>
-        <translation>公差</translation>
-    </message>
-    <message>
-        <source>Output Color</source>
-        <translation>输出颜色</translation>
-    </message>
-    <message>
-        <source>Transparency</source>
-        <translation>透明度</translation>
-    </message>
-    <message>
-        <source>Colors</source>
-        <translation>颜色</translation>
-    </message>
-    <message>
-        <source>Invert</source>
-        <translation>反向</translation>
-    </message>
-    <message>
-        <source>Remove</source>
+        <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <source>Update</source>
-        <translation>更新</translation>
+        <source>Move to...</source>
+        <translation>移动到...</translation>
     </message>
     <message>
-        <source>Add Color</source>
-        <translation>添加颜色</translation>
+        <source>Redo %1</source>
+        <translation>重做%1</translation>
     </message>
     <message>
-        <source>Image Options</source>
-        <translation>图片选择</translation>
-    </message>
-    <message>
-        <source>Smoothness</source>
-        <translation>平滑度</translation>
-    </message>
-    <message>
-        <source>Outline</source>
-        <translation>大纲</translation>
-    </message>
-    <message>
-        <source>Preview</source>
-        <translation>预览</translation>
-    </message>
-    <message>
-        <source>Traced %1</source>
-        <translation>追踪%1</translation>
-    </message>
-    <message>
-        <source>Revert to Defaults</source>
-        <translation>恢复到默认值</translation>
-    </message>
-    <message>
-        <source>Threshold</source>
-        <translation>阈值</translation>
-    </message>
-    <message>
-        <source>Configure...</source>
-        <translation>配置...</translation>
-    </message>
-    <message>
-        <source>Extract Colors</source>
-        <translation>提取颜色</translation>
-    </message>
-    <message>
-        <source>Closest Color</source>
-        <translation>接近颜色</translation>
-    </message>
-    <message>
-        <source>Curve Options</source>
-        <translation>曲线设置</translation>
-    </message>
-    <message>
-        <source>Detect Colors</source>
-        <translation>检测颜色</translation>
-    </message>
-    <message>
-        <source>Minimum Area</source>
-        <translation>最小面积</translation>
-    </message>
-    <message>
-        <source>Help...</source>
-        <translation>帮助……...</translation>
-    </message>
-    <message>
-        <source>Configure Color Detection</source>
-        <translation>配置颜色检测</translation>
+        <source>Undo %1</source>
+        <translation>撤销%1</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::ViewTransformWidget</name>
+    <name>QApplication</name>
     <message>
-        <source>%</source>
-        <translation>%</translation>
+        <source>Unknown importer</source>
+        <translation>未知导入</translation>
     </message>
     <message>
-        <source>°</source>
-        <translation>°</translation>
+        <source>Could not find an interpreter</source>
+        <translation>找不到翻译</translation>
     </message>
     <message>
-        <source>Zoom</source>
-        <translation>缩放</translation>
+        <source>If present, doesn&apos;t restore the main window state</source>
+        <translation>如果存在，不恢复主窗口状态</translation>
     </message>
     <message>
-        <source>Flip View</source>
-        <translation>翻转视图</translation>
+        <source>ZLib %1%2 returned %3</source>
+        <translation>ZLib %1%2返回%3</translation>
     </message>
     <message>
-        <source>Angle</source>
-        <translation>角度</translation>
+        <source># You have access to the `window` and `document` global variables and the `glaxnimate` module</source>
+        <translation># 你可以访问 `window` 和 `document` 全局变量以及 `glaxnimate` 模块</translation>
     </message>
     <message>
-        <source>Fit View</source>
-        <translation>适应工作区</translation>
+        <source>Show version information and exit</source>
+        <translation>显示版本信息并退出</translation>
     </message>
     <message>
-        <source>Zoom In</source>
-        <translation>放大</translation>
+        <source>Informational Options</source>
+        <translation>信息选项</translation>
     </message>
     <message>
-        <source>Zoom Out</source>
-        <translation>缩小</translation>
+        <source>Could not open output file for writing</source>
+        <translation>无法打开输出文件进行写入</translation>
     </message>
     <message>
-        <source>Reset Rotation</source>
-        <translation>重置旋转</translation>
+        <source>Specify the format for --export. If omitted it&apos;s determined based on the file name. See --export-format-list for a list of supported formats.</source>
+        <translation>指定 --export 的格式。 如果省略，则根据文件名确定。 有关支持的格式列表，请参阅 --export-format-list。</translation>
     </message>
     <message>
-        <source>Reset Zoom</source>
-        <translation>重置放大</translation>
+        <source>GUI Options</source>
+        <translation>GUI选项</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>选项</translation>
+    </message>
+    <message>
+        <source># Glaxnimate snippet</source>
+        <translation># Glaxnimate代码段</translation>
+    </message>
+    <message>
+        <source>Could not open input file for reading</source>
+        <translation>无法打开输入文件阅读</translation>
+    </message>
+    <message>
+        <source># For documentation see https://glaxnimate.mattbas.org/contributing/scripting/</source>
+        <translation>#文档参见https://glaxnimate.mattbas.org/contributing/scripting/</translation>
+    </message>
+    <message>
+        <source>Use a specific size for the main window</source>
+        <translation>为主窗口使用特定大小</translation>
+    </message>
+    <message>
+        <source>Export Options</source>
+        <translation>导出选项</translation>
+    </message>
+    <message>
+        <source>If present, instead of starting the GUI export the input file to the given</source>
+        <translation>如果存在，而不是启动 GUI 将输入文件导出到给定的</translation>
+    </message>
+    <message>
+        <source>Print the window id</source>
+        <translation>打印窗口id</translation>
+    </message>
+    <message>
+        <source>Error loading input file</source>
+        <translation>输入文件加载错误</translation>
+    </message>
+    <message>
+        <source>Shows possible values for --export-format</source>
+        <translation>显示可能值,输出格式</translation>
+    </message>
+    <message>
+        <source>Enables the debug menu</source>
+        <translation>启用调试菜单</translation>
+    </message>
+    <message>
+        <source>Show this help and exit</source>
+        <translation>显示帮助和退出</translation>
+    </message>
+    <message>
+        <source>Error converting to the output format</source>
+        <translation>转换为输出格式时出错</translation>
+    </message>
+    <message>
+        <source>Could not run the plugin</source>
+        <translation>不能运行这个插件</translation>
+    </message>
+    <message>
+        <source>Unknown exporter. use --export-format-list for a list of available formats</source>
+        <translation>未知的出口商。 使用 --export-format-list 获取可用格式列表</translation>
+    </message>
+    <message>
+        <source>You need to specify a file to export</source>
+        <translation>您需要指定一个文件导出</translation>
+    </message>
+    <message>
+        <source>File to open</source>
+        <translation>文件打开</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::font::FontPreviewWidget</name>
+    <name>QMenu</name>
     <message>
-        <source>%</source>
-        <translation>%</translation>
+        <source>Properties</source>
+        <translation>属性</translation>
     </message>
     <message>
-        <source>The quick brown fox jumps over the lazy dog</source>
-        <translation>那只敏捷的棕色狐狸跳过了懒惰的狗</translation>
+        <source>Add Keyframe</source>
+        <translation>添加关键帧</translation>
     </message>
     <message>
-        <source>Preview Scale</source>
-        <translation>预览选中部分</translation>
+        <source>Remove Keyframe</source>
+        <translation>删除关键帧</translation>
     </message>
-</context>
-<context>
-    <name>glaxnimate::gui::style::PropertyDelegate</name>
     <message>
-        <source>%</source>
-        <translation>%</translation>
+        <source>Clear Animations</source>
+        <translation>清除动画</translation>
     </message>
 </context>
 <context>
@@ -766,6 +705,1260 @@ Do you want to save your changes?</source>
     <message>
         <source>Could not copy dict: %1</source>
         <translation>不能复制dict: %1</translation>
+    </message>
+</context>
+<context>
+    <name>Settings</name>
+    <message>
+        <source>FPS</source>
+        <translation>FPS</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>工具</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>宽度</translation>
+    </message>
+    <message>
+        <source>Icon Theme</source>
+        <translation>图标主题</translation>
+    </message>
+    <message>
+        <source>User Interface</source>
+        <translation>用户界面</translation>
+    </message>
+    <message>
+        <source>Max Recent Files</source>
+        <translation>最近使用的最大文件数</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>高度</translation>
+    </message>
+    <message>
+        <source>New Animation Defaults</source>
+        <translation>新建动画的默认值</translation>
+    </message>
+    <message>
+        <source>Show startup dialog</source>
+        <translation>显示启动对话框</translation>
+    </message>
+    <message>
+        <source>Duration in seconds</source>
+        <translation>持续时间（以秒为单位）</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>语言</translation>
+    </message>
+    <message>
+        <source>Scripting</source>
+        <translation>编写脚本</translation>
+    </message>
+    <message>
+        <source>Frames per second</source>
+        <translation>每秒帧数</translation>
+    </message>
+    <message>
+        <source>Duration</source>
+        <translation>持续时间</translation>
+    </message>
+    <message>
+        <source>Backup Frequency</source>
+        <translation>备份频率</translation>
+    </message>
+    <message>
+        <source>Interface Language</source>
+        <translation>界面语言</translation>
+    </message>
+    <message>
+        <source>How often to save a backup copy (in minutes)</source>
+        <translation>保存备份副本的频率（以分钟为单位）</translation>
+    </message>
+</context>
+<context>
+    <name>StickerPackBuilderDialog</name>
+    <message>
+        <source>Clear</source>
+        <translation>清除</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>导出</translation>
+    </message>
+    <message>
+        <source>Add Current</source>
+        <translation>添加当前</translation>
+    </message>
+    <message>
+        <source>Export Stickers</source>
+        <translation>导出贴纸</translation>
+    </message>
+    <message>
+        <source>Open Sticker</source>
+        <translation>打开贴纸</translation>
+    </message>
+</context>
+<context>
+    <name>TimingDialog</name>
+    <message>
+        <source>&quot;</source>
+        <translation>&quot;</translation>
+    </message>
+    <message>
+        <source>FPS</source>
+        <translation>FPS</translation>
+    </message>
+    <message>
+        <source>Scale Timing</source>
+        <translation>缩放持续时间</translation>
+    </message>
+    <message>
+        <source>Trim Extra Frames</source>
+        <translation>修剪额外的帧</translation>
+    </message>
+    <message>
+        <source>Keep Initial Timing</source>
+        <translation>保持初始时间</translation>
+    </message>
+    <message>
+        <source>Frames</source>
+        <translation>帧</translation>
+    </message>
+    <message>
+        <source>Layers</source>
+        <translation>图层</translation>
+    </message>
+    <message>
+        <source>Timing</source>
+        <translation>持续时间</translation>
+    </message>
+    <message>
+        <source>Duration</source>
+        <translation>持续时间</translation>
+    </message>
+</context>
+<context>
+    <name>app::settings::Settings</name>
+    <message>
+        <source>Glaxnimate Default</source>
+        <translation>Glaxnimate默认</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::android::HelpDialog</name>
+    <message>
+        <source>Prompts the user to select a document to append as an object to the current one.</source>
+        <translation>提示用户选择要作为对象附加到当前文档的文档</translation>
+    </message>
+    <message>
+        <source>Create and edit text shapes.</source>
+        <translation>创建和编辑文本形状</translation>
+    </message>
+    <message>
+        <source>Redoes the last undone action.</source>
+        <translation>重做上次撤消的操作</translation>
+    </message>
+    <message>
+        <source>Starts playback.</source>
+        <translation>开始播放</translation>
+    </message>
+    <message>
+        <source>Saves the current frame as a still image</source>
+        <translation>保存当前帧作为静态图像</translation>
+    </message>
+    <message>
+        <source>Clears the current document and creates a new empty one</source>
+        <translation>清除当前文档并创建一个新的空文档</translation>
+    </message>
+    <message>
+        <source>Toggles looping for the playback (on by default).</source>
+        <translation>切换播放循环（默认开启）</translation>
+    </message>
+    <message>
+        <source>Save the current document, prompting to select a file for new documents</source>
+        <translation>保存当前文档，提示为新文档选择一个文件</translation>
+    </message>
+    <message>
+        <source>Jumps to the last frame.</source>
+        <translation>转到最后一帧</translation>
+    </message>
+    <message>
+        <source>Draws rectangles.</source>
+        <translation>绘制矩形</translation>
+    </message>
+    <message>
+        <source>Goes to the next frame.</source>
+        <translation>转到下一帧</translation>
+    </message>
+    <message>
+        <source>Copies the selection into the clipboard.</source>
+        <translation>将选择的内容复制到剪贴板</translation>
+    </message>
+    <message>
+        <source>Create Bezier curves using nodes and handles.</source>
+        <translation>使用节点和手柄创建贝塞尔曲线</translation>
+    </message>
+    <message>
+        <source>Save the current document, always prompting to select a file.</source>
+        <translation>保存当前文档，总是提示选择一个文件</translation>
+    </message>
+    <message>
+        <source>Removes the selected item.</source>
+        <translation>删除所选项目</translation>
+    </message>
+    <message>
+        <source>Cuts the selection into the clipboard.</source>
+        <translation>选择削减到剪贴板</translation>
+    </message>
+    <message>
+        <source>Draws a star, after it&apos;s been created you can change it into a regular polygon and change the number of sides from the properties pane.</source>
+        <translation>绘制一个星形，创建后您可以将其更改为正多边形并在属性窗格中更改边数</translation>
+    </message>
+    <message>
+        <source>Push the selection further back.</source>
+        <translation>将选择进一步推回</translation>
+    </message>
+    <message>
+        <source>Prompts the user to select a document to open.
+Currently the following formats are supported:
+%1</source>
+        <translation>提示用户选择要打开的文档
+目前支持以下格式：
+%1</translation>
+    </message>
+    <message>
+        <source>Opens the side pane used to select the fill color.</source>
+        <translation>打开用于选择填充颜色的侧窗格</translation>
+    </message>
+    <message>
+        <source>When enabled (which is the default) whenever you change an object property, a new keyframe is added for that property.</source>
+        <translation>每当您更改对象属性时启用（这是默认设置），都会为该属性添加一个新的关键帧</translation>
+    </message>
+    <message>
+        <source>
+Glaxnimate is a vector animation program.
+You can use it to create and modify Animated SVG, Telegram Animated Stickers, and Lottie animations.
+Follows a guide of the main icons and what they do.
+</source>
+        <translation>
+Glaxnimate 是一个矢量动画程序
+您可以使用它来创建和修改动画 SVG、电报动画贴纸和 Lottie 动画
+遵循主要图标及其功能的指南
+</translation>
+    </message>
+    <message>
+        <source>Brings the selection further to the front.</source>
+        <translation>将选择进一步放在前面</translation>
+    </message>
+    <message>
+        <source>Toggles the menu showing non-drawing buttons.</source>
+        <translation>切换显示非绘图按钮的菜单</translation>
+    </message>
+    <message>
+        <source>Shows this help.</source>
+        <translation>显示这个帮助</translation>
+    </message>
+    <message>
+        <source>Draws ellipses.</source>
+        <translation>绘制椭圆</translation>
+    </message>
+    <message>
+        <source>Pastes from the clipboard into the current document.</source>
+        <translation>将剪贴板内容粘贴到当前文档中</translation>
+    </message>
+    <message>
+        <source>Creates a sticker pack to export to Telegram.
+Note that only recent version of Telegram support this.
+If your Telegram version is too old, you can Export the file to TGS and upload that on Telegram.</source>
+        <translation>创建一个贴纸包以导出到 Telegram
+请注意，只有最新版本的 Telegram 支持此功能
+如果您的 Telegram 版本太旧，您可以将文件导出到 TGS 并上传到 Telegram</translation>
+    </message>
+    <message>
+        <source>Goes to the previous frame.</source>
+        <translation>去前一帧</translation>
+    </message>
+    <message>
+        <source>Undoes the last action.</source>
+        <translation>撤消最后一个动作</translation>
+    </message>
+    <message>
+        <source>Shows a tray with the curve drawing tools.</source>
+        <translation>显示带有曲线绘制工具的托盘</translation>
+    </message>
+    <message>
+        <source>Jumps to the first frame.</source>
+        <translation>跳到第一帧</translation>
+    </message>
+    <message>
+        <source>Save a copy of current document, prompting to select a format and a file.
+Currently the following formats are supported:
+%1</source>
+        <translation>保存当前文档的副本，提示选择格式和文件。
+目前支持以下格式：
+%1</translation>
+    </message>
+    <message>
+        <source>Opens the side pane used to change the advanced properties for the selected object.</source>
+        <translation>打开用于更改所选对象的高级属性的侧窗格。</translation>
+    </message>
+    <message>
+        <source>Edit tool, used to edit existing items (eg: moving, bezier nodes, setting rounded corners on a rectangle, etc.)</source>
+        <translation>编辑工具，用于编辑现有项目（例如：移动、贝塞尔节点、在矩形上设置圆角等）</translation>
+    </message>
+    <message>
+        <source>Shows a tray with the shape drawing tools.</source>
+        <translation>显示带有形状绘制工具的托盘。</translation>
+    </message>
+    <message>
+        <source>Select tool, you can use it to select objects and change their transform.</source>
+        <translation>选择工具，您可以使用它来选择对象并更改其变换。</translation>
+    </message>
+    <message>
+        <source>Shows the timeline and playback controls.</source>
+        <translation>显示时间轴和播放控件</translation>
+    </message>
+    <message>
+        <source>Opens the side pane used to select the stroke color and style.</source>
+        <translation>打开用于选择笔触颜色和样式的侧窗格</translation>
+    </message>
+    <message>
+        <source>Draw curves freehand.</source>
+        <translation>自由绘制曲线</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::android::MainWindow</name>
+    <message>
+        <source>Cut</source>
+        <translation>剪切</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation>新建</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>复制</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>帮助</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>重做</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>保存</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>撤销</translation>
+    </message>
+    <message>
+        <source>Timeline</source>
+        <translation>时间轴</translation>
+    </message>
+    <message>
+        <source>Emoji</source>
+        <translation>Emoji</translation>
+    </message>
+    <message>
+        <source>Lower</source>
+        <translation>Lower</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>粘贴</translation>
+    </message>
+    <message>
+        <source>Raise</source>
+        <translation>Raise</translation>
+    </message>
+    <message>
+        <source>Save Frame as PNG</source>
+        <translation>将帧另存为PNG</translation>
+    </message>
+    <message>
+        <source>Stroke Style</source>
+        <translation>描边属性</translation>
+    </message>
+    <message>
+        <source>Could not import file</source>
+        <translation>不能导入文件</translation>
+    </message>
+    <message>
+        <source>Import Emoji</source>
+        <translation>导入Emoji</translation>
+    </message>
+    <message>
+        <source>Lower Below</source>
+        <translation>移到最底层</translation>
+    </message>
+    <message>
+        <source>Import as Composition</source>
+        <translation>导入为预合成</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>导出</translation>
+    </message>
+    <message>
+        <source>Layers</source>
+        <translation>图层</translation>
+    </message>
+    <message>
+        <source>Frame %1.png</source>
+        <translation>Frame %1.png</translation>
+    </message>
+    <message>
+        <source>Open...</source>
+        <translation>打开...</translation>
+    </message>
+    <message>
+        <source>Raise Above</source>
+        <translation>移到最上层</translation>
+    </message>
+    <message>
+        <source>Add keyframe</source>
+        <translation>添加关键帧</translation>
+    </message>
+    <message>
+        <source>Remove keyframe</source>
+        <translation>删除关键帧</translation>
+    </message>
+    <message>
+        <source>Import File</source>
+        <translation>导入文件</translation>
+    </message>
+    <message>
+        <source>Save As</source>
+        <translation>另存为</translation>
+    </message>
+    <message>
+        <source>Save...</source>
+        <translation>保存...</translation>
+    </message>
+    <message>
+        <source>Advanced Properties</source>
+        <translation>高级属性</translation>
+    </message>
+    <message>
+        <source>Delete Selected</source>
+        <translation>删除所选</translation>
+    </message>
+    <message>
+        <source>Clear Animations</source>
+        <translation>清除动画</translation>
+    </message>
+    <message>
+        <source>Fill Style</source>
+        <translation>填充属性</translation>
+    </message>
+    <message>
+        <source>Animation.%1</source>
+        <translation>动画 %1</translation>
+    </message>
+    <message>
+        <source>Send to Telegram</source>
+        <translation>发送到Telegram</translation>
+    </message>
+    <message>
+        <source>Glaxnimate</source>
+        <translation>Glaxnimate</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::android::StickerPackBuilderDialog</name>
+    <message>
+        <source>Cannot save as TGS</source>
+        <translation>不能另存为TGS</translation>
+    </message>
+    <message>
+        <source>Could not open file</source>
+        <translation>不能打开文件</translation>
+    </message>
+    <message>
+        <source>Too many stickers</source>
+        <translation>贴纸太多</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to remove all stickers from the pack?</source>
+        <translation>您确定要从包中移除所有贴纸吗？</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::emoji::EmojiDialog</name>
+    <message>
+        <source>Select Emoji</source>
+        <translation>选择Emoji</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::emoji::EmojiSetDialog</name>
+    <message>
+        <source>Could not download: %1</source>
+        <translation>不能下载:%1</translation>
+    </message>
+    <message>
+        <source>Didn&apos;t download any files</source>
+        <translation>没有下载任何文件</translation>
+    </message>
+    <message>
+        <source>Downloading</source>
+        <translation>下载</translation>
+    </message>
+    <message>
+        <source>Installed</source>
+        <translation>安装</translation>
+    </message>
+    <message>
+        <source>Not Installed</source>
+        <translation>没有安装</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::AboutDialog</name>
+    <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>CPU</source>
+        <translation>CPU</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>复制</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <source>ZLib</source>
+        <translation>ZLib</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>关于</translation>
+    </message>
+    <message>
+        <source>Libav</source>
+        <translation>Libav</translation>
+    </message>
+    <message>
+        <source>Paths</source>
+        <translation>路径</translation>
+    </message>
+    <message>
+        <source>Icon Theme Paths:</source>
+        <translation>图标主题路径:</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;h1 align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:12pt; font-weight:600;&quot;&gt;Links&lt;/span&gt;&lt;/h1&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://gitlab.com/mattbas/glaxnimate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Code&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://gitlab.com/mattbas/glaxnimate/-/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Issues&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://t.me/Glaxnimate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Chat&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;h1 align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:12pt; font-weight:600;&quot;&gt;License&lt;/span&gt;&lt;/h1&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Copyright (C) 2020  Mattia Basaglia&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Glaxnimate is free software: you can redistribute it and/or modify&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;it under the terms of the GNU General Public License as published by&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;the Free Software Foundation, either version 3 of the License, or&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;(at your option) any later version.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Glaxnimate is distributed in the hope that it will be useful,&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;but WITHOUT ANY WARRANTY; without even the implied warranty of&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;GNU General Public License for more details.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;You should have received a copy of the GNU General Public License&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;along with this program.  If not, see &amp;lt;&lt;/span&gt;&lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; text-decoration: underline; color:#0057ae;&quot;&gt;http://www.gnu.org/licenses/&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&amp;gt;.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;h1 align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:12pt; font-weight:600;&quot;&gt;Links&lt;/span&gt;&lt;/h1&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://gitlab.com/mattbas/glaxnimate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Code&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://gitlab.com/mattbas/glaxnimate/-/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Issues&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://t.me/Glaxnimate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Chat&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;h1 align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:12pt; font-weight:600;&quot;&gt;License&lt;/span&gt;&lt;/h1&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Copyright (C) 2020  Mattia Basaglia&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Glaxnimate is free software: you can redistribute it and/or modify&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;it under the terms of the GNU General Public License as published by&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;the Free Software Foundation, either version 3 of the License, or&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;(at your option) any later version.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Glaxnimate is distributed in the hope that it will be useful,&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;but WITHOUT ANY WARRANTY; without even the implied warranty of&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;GNU General Public License for more details.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;You should have received a copy of the GNU General Public License&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;along with this program.  If not, see &amp;lt;&lt;/span&gt;&lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; text-decoration: underline; color:#0057ae;&quot;&gt;http://www.gnu.org/licenses/&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&amp;gt;.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Kernel</source>
+        <translation>内核</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>系统</translation>
+    </message>
+    <message>
+        <source>Potrace</source>
+        <translation>Potrace</translation>
+    </message>
+    <message>
+        <source>Backup Directory:</source>
+        <translation>备份目录:</translation>
+    </message>
+    <message>
+        <source>User Data Directory:</source>
+        <translation>用户数据目录:</translation>
+    </message>
+    <message>
+        <source>libarchive</source>
+        <translation>libarchive</translation>
+    </message>
+    <message>
+        <source>About Qt</source>
+        <translation>关于Qt</translation>
+    </message>
+    <message>
+        <source>Settings File:</source>
+        <translation>设置文件:</translation>
+    </message>
+    <message>
+        <source>Credits</source>
+        <translation>学分</translation>
+    </message>
+    <message>
+        <source>System Qt</source>
+        <translation>系统Qt</translation>
+    </message>
+    <message>
+        <source>Ouput Formats </source>
+        <translation>输出格式 </translation>
+    </message>
+    <message>
+        <source>Extensions</source>
+        <translation>扩展</translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation>版本</translation>
+    </message>
+    <message>
+        <source>Input Formats</source>
+        <translation>输入格式</translation>
+    </message>
+    <message>
+        <source>Formats</source>
+        <translation>格式</translation>
+    </message>
+    <message>
+        <source>Application Qt</source>
+        <translation>Qt应用</translation>
+    </message>
+    <message>
+        <source>Data Directories:</source>
+        <translation>数据目录:</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::ColorPickerWidget</name>
+    <message>
+        <source>Fill</source>
+        <translation>填充</translation>
+    </message>
+    <message>
+        <source>Stroke</source>
+        <translation>描边</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::ColorQuantizationDialog</name>
+    <message>
+        <source>None</source>
+        <translation>无</translation>
+    </message>
+    <message>
+        <source>Max Iterations</source>
+        <translation>最大迭代次数</translation>
+    </message>
+    <message>
+        <source>Match</source>
+        <translation>Match</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Octree algorithm merges similar colors from the bottom up.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It gives more accurate colors for complex images but it might result into colors that are not present in the source image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Octree algorithm merges similar colors from the bottom up.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It gives more accurate colors for complex images but it might result into colors that are not present in the source image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Octree</source>
+        <translation>八叉树</translation>
+    </message>
+    <message>
+        <source>Closest</source>
+        <translation>最近的</translation>
+    </message>
+    <message>
+        <source>Most Frequent</source>
+        <translation>最频繁</translation>
+    </message>
+    <message>
+        <source>k-Modes gives you the colors that appear most often in the source image.
+
+It&apos;s very fast but it does not give accurate colors for complex images.
+
+This is the best option when tracing images with flat colors.</source>
+        <translation>k-Modes 为您提供源图像中最常出现的颜色
+
+它非常快，但不能为复杂图像提供准确的颜色
+
+这是在使用纯色跟踪图像时的最佳选择</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;k-Means divides the colors into clusters and refines the assignment at every iteration.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is the best option when tracing images with a lot of colors or shading.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For pictures with a lot of colors increasing the number of iterations will yield better results but it might be slower.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The &lt;span style=&quot; font-style:italic;&quot;&gt;Match&lt;/span&gt; option performs some post-processing:&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;None&lt;/span&gt;: Don&apos;t perform any post-processing and return the means (note this might result in colors not present in the original image)&lt;/li&gt;
+&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Closest&lt;/span&gt;: Find the color in the original image the is the closest to the mean&lt;/li&gt;
+&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Most Frequent&lt;/span&gt;: Find the color in the cluster that appears most often in the source image&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;k-Means divides the colors into clusters and refines the assignment at every iteration.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is the best option when tracing images with a lot of colors or shading.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For pictures with a lot of colors increasing the number of iterations will yield better results but it might be slower.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The &lt;span style=&quot; font-style:italic;&quot;&gt;Match&lt;/span&gt; option performs some post-processing:&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;None&lt;/span&gt;: Don&apos;t perform any post-processing and return the means (note this might result in colors not present in the original image)&lt;/li&gt;
+&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Closest&lt;/span&gt;: Find the color in the original image the is the closest to the mean&lt;/li&gt;
+&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Most Frequent&lt;/span&gt;: Find the color in the cluster that appears most often in the source image&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>k-Means</source>
+        <translation>k - means</translation>
+    </message>
+    <message>
+        <source>k-Modes</source>
+        <translation>k-Modes</translation>
+    </message>
+    <message>
+        <source>Algorithm</source>
+        <translation>算法</translation>
+    </message>
+    <message>
+        <source>Configure color detection</source>
+        <translation>配置颜色检测</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::ColorSelector</name>
+    <message>
+        <source>A</source>
+        <translation>A</translation>
+    </message>
+    <message>
+        <source>B</source>
+        <translation>B</translation>
+    </message>
+    <message>
+        <source>C</source>
+        <translation>C</translation>
+    </message>
+    <message>
+        <source>G</source>
+        <translation>G</translation>
+    </message>
+    <message>
+        <source>H</source>
+        <translation>H</translation>
+    </message>
+    <message>
+        <source>K</source>
+        <translation>K</translation>
+    </message>
+    <message>
+        <source>L</source>
+        <translation>L</translation>
+    </message>
+    <message>
+        <source>M</source>
+        <translation>M</translation>
+    </message>
+    <message>
+        <source>R</source>
+        <translation>R</translation>
+    </message>
+    <message>
+        <source>S</source>
+        <translation>S</translation>
+    </message>
+    <message>
+        <source>V</source>
+        <translation>V</translation>
+    </message>
+    <message>
+        <source>Y</source>
+        <translation>Y</translation>
+    </message>
+    <message>
+        <source>HSL</source>
+        <translation>HSL</translation>
+    </message>
+    <message>
+        <source>HSV</source>
+        <translation>HSV</translation>
+    </message>
+    <message>
+        <source>Hue</source>
+        <translation>Hue</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>红色</translation>
+    </message>
+    <message>
+        <source>CYMK</source>
+        <translation>CYMK</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>蓝色</translation>
+    </message>
+    <message>
+        <source>Cyan</source>
+        <translation>青色</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>无</translation>
+    </message>
+    <message>
+        <source>Swap</source>
+        <translation>Swap</translation>
+    </message>
+    <message>
+        <source>Black</source>
+        <translation>黑色</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>清除</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>绿色</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>属性值</translation>
+    </message>
+    <message>
+        <source>Alpha (Transparency)</source>
+        <translation>Alpha (透明度)</translation>
+    </message>
+    <message>
+        <source>Secondary Color</source>
+        <translation>次要颜色</translation>
+    </message>
+    <message>
+        <source>Magenta</source>
+        <translation>品红色</translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translation>黄色</translation>
+    </message>
+    <message>
+        <source>Color Mode</source>
+        <translation>颜色模式</translation>
+    </message>
+    <message>
+        <source>Palette</source>
+        <translation>调色板</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>饱和度</translation>
+    </message>
+    <message>
+        <source>Primary Color</source>
+        <translation>原色</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::CompositionTabBar</name>
+    <message>
+        <source>Name</source>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <source>Rename Composition</source>
+        <translation>重命名预合成</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>重命名</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <translation>复制</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::CompoundTimelineWidget</name>
+    <message>
+        <source>Ease</source>
+        <translation>Ease</translation>
+    </message>
+    <message>
+        <source>Hold</source>
+        <translation>抓住</translation>
+    </message>
+    <message>
+        <source>Transition To Next</source>
+        <translation>过渡到下一个</translation>
+    </message>
+    <message>
+        <source>Transition From Previous</source>
+        <translation>过渡到上一个</translation>
+    </message>
+    <message>
+        <source>Paste Keyframe</source>
+        <translation>粘贴关键帧</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation>线性</translation>
+    </message>
+    <message>
+        <source>Copy Keyframe</source>
+        <translation>复制关键帧</translation>
+    </message>
+    <message>
+        <source>Remove Keyframe</source>
+        <translation>删除关键帧</translation>
+    </message>
+    <message>
+        <source>Custom...</source>
+        <translation>自定义…...</translation>
+    </message>
+    <message>
+        <source>Clear Animations</source>
+        <translation>清除动画</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::DocumentMetadataDialog</name>
+    <message>
+        <source>Name</source>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation>属性值</translation>
+    </message>
+    <message>
+        <source>Document Metadata</source>
+        <translation>文档元数据</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::DocumentSwatchWidget</name>
+    <message>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <source>Remove existing colors</source>
+        <translation>删除现有的颜色</translation>
+    </message>
+    <message>
+        <source>Load from Palette</source>
+        <translation>从调色板加载</translation>
+    </message>
+    <message>
+        <source>Gather Document Swatch</source>
+        <translation>收集文档色板</translation>
+    </message>
+    <message>
+        <source>Load Palette</source>
+        <translation>加载调色板</translation>
+    </message>
+    <message>
+        <source>Save Palette</source>
+        <translation>保存调色板</translation>
+    </message>
+    <message>
+        <source>Rename...</source>
+        <translation>重命名...</translation>
+    </message>
+    <message>
+        <source>Unlink fill</source>
+        <translation>解除填充</translation>
+    </message>
+    <message>
+        <source>Link shapes with matching colors</source>
+        <translation>链接具有匹配颜色的形状</translation>
+    </message>
+    <message>
+        <source>Modify Palette Color</source>
+        <translation>修改调色板颜色</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <source>Swatch</source>
+        <translation>色板</translation>
+    </message>
+    <message>
+        <source>Add color</source>
+        <translation>添加颜色</translation>
+    </message>
+    <message>
+        <source>Rename Swatch Color</source>
+        <translation>重命名色板颜色</translation>
+    </message>
+    <message>
+        <source>Duplicate</source>
+        <translation>复制</translation>
+    </message>
+    <message>
+        <source>Link Shapes to Swatch</source>
+        <translation>将形状链接到色板</translation>
+    </message>
+    <message>
+        <source>Set as fill</source>
+        <translation>设置为填充</translation>
+    </message>
+    <message>
+        <source>Unlink Color</source>
+        <translation>取消链接颜色</translation>
+    </message>
+    <message>
+        <source>From Palette...</source>
+        <translation>从调色板...</translation>
+    </message>
+    <message>
+        <source>Swatch from Palette</source>
+        <translation>来自调色板的色板</translation>
+    </message>
+    <message>
+        <source>No palettes are installed</source>
+        <translation>没有安装调色板</translation>
+    </message>
+    <message>
+        <source>Unlink stroke</source>
+        <translation>拆开描边</translation>
+    </message>
+    <message>
+        <source>Generate</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>Overwrite on save</source>
+        <translation>保存时覆盖</translation>
+    </message>
+    <message>
+        <source>Generate Swatch from the open Document</source>
+        <translation>从打开的文档生成色板</translation>
+    </message>
+    <message>
+        <source>Set as stroke</source>
+        <translation>设置为描边</translation>
+    </message>
+    <message>
+        <source>Edit Color...</source>
+        <translation>编辑颜色…...</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::EnumCombo</name>
+    <message>
+        <source>Butt</source>
+        <translation>平头</translation>
+    </message>
+    <message>
+        <source>Star</source>
+        <translation>星形</translation>
+    </message>
+    <message>
+        <source>Bevel</source>
+        <translation>斜角</translation>
+    </message>
+    <message>
+        <source>Miter</source>
+        <translation>斜面</translation>
+    </message>
+    <message>
+        <source>Round</source>
+        <translation>圆形</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation>线性</translation>
+    </message>
+    <message>
+        <source>NonZero</source>
+        <translation>NonZero</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>径向</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>正方形</translation>
+    </message>
+    <message>
+        <source>Polygon</source>
+        <translation>多边形</translation>
+    </message>
+    <message>
+        <source>Even Odd</source>
+        <translation>Even Odd</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::FillStyleWidget</name>
+    <message>
+        <source>Update Fill Color</source>
+        <translation>更新填充颜色</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::FillToolWidget</name>
+    <message>
+        <source>Fill</source>
+        <translation>填充</translation>
+    </message>
+    <message>
+        <source>Stroke</source>
+        <translation>描边</translation>
+    </message>
+    <message>
+        <source>Fill and Stroke</source>
+        <translation>填充和描边</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::FrameControlsWidget</name>
+    <message>
+        <source> f</source>
+        <translation> f</translation>
+    </message>
+    <message>
+        <source>Loop</source>
+        <translation>循环</translation>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation>播放</translation>
+    </message>
+    <message>
+        <source>Frame number</source>
+        <translation>帧数</translation>
+    </message>
+    <message>
+        <source>Go To Previous Keyframe</source>
+        <translation>转到上一个关键帧</translation>
+    </message>
+    <message>
+        <source>Record</source>
+        <translation>记录</translation>
+    </message>
+    <message>
+        <source>Go To Next Keyframe</source>
+        <translation>转到下一个关键帧</translation>
+    </message>
+    <message>
+        <source>Go To First Frame</source>
+        <translation>转到第一帧</translation>
+    </message>
+    <message>
+        <source>Loop animation</source>
+        <translation>循环播放</translation>
+    </message>
+    <message>
+        <source>Go To Previous Frame</source>
+        <translation>上一帧</translation>
+    </message>
+    <message>
+        <source>Go To Next Frame</source>
+        <translation>下一帧</translation>
+    </message>
+    <message>
+        <source>Go To Last Frame</source>
+        <translation>转到最后一帧</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::GlaxnimateApp</name>
+    <message>
+        <source>Open / Save</source>
+        <translation>打开/保存</translation>
     </message>
 </context>
 <context>
@@ -1698,553 +2891,112 @@ The %1</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::ColorSelector</name>
+    <name>glaxnimate::gui::GradientListWidget</name>
     <message>
-        <source>A</source>
-        <translation>A</translation>
+        <source>New</source>
+        <translation>新建</translation>
     </message>
     <message>
-        <source>B</source>
-        <translation>B</translation>
+        <source>Fill</source>
+        <translation>填充</translation>
     </message>
     <message>
-        <source>C</source>
-        <translation>C</translation>
+        <source>Add from Preset</source>
+        <translation>从预设新建</translation>
     </message>
     <message>
-        <source>G</source>
-        <translation>G</translation>
+        <source>Linear</source>
+        <translation>线性</translation>
     </message>
     <message>
-        <source>H</source>
-        <translation>H</translation>
+        <source>Preset</source>
+        <translation>预设</translation>
     </message>
     <message>
-        <source>K</source>
-        <translation>K</translation>
-    </message>
-    <message>
-        <source>L</source>
-        <translation>L</translation>
-    </message>
-    <message>
-        <source>M</source>
-        <translation>M</translation>
-    </message>
-    <message>
-        <source>R</source>
-        <translation>R</translation>
-    </message>
-    <message>
-        <source>S</source>
-        <translation>S</translation>
-    </message>
-    <message>
-        <source>V</source>
-        <translation>V</translation>
-    </message>
-    <message>
-        <source>Y</source>
-        <translation>Y</translation>
-    </message>
-    <message>
-        <source>HSL</source>
-        <translation>HSL</translation>
-    </message>
-    <message>
-        <source>HSV</source>
-        <translation>HSV</translation>
-    </message>
-    <message>
-        <source>Hue</source>
-        <translation>Hue</translation>
-    </message>
-    <message>
-        <source>RGB</source>
-        <translation>RGB</translation>
-    </message>
-    <message>
-        <source>Red</source>
-        <translation>红色</translation>
-    </message>
-    <message>
-        <source>CYMK</source>
-        <translation>CYMK</translation>
-    </message>
-    <message>
-        <source>Blue</source>
-        <translation>蓝色</translation>
-    </message>
-    <message>
-        <source>Cyan</source>
-        <translation>青色</translation>
-    </message>
-    <message>
-        <source>None</source>
-        <translation>无</translation>
-    </message>
-    <message>
-        <source>Swap</source>
-        <translation>Swap</translation>
-    </message>
-    <message>
-        <source>Black</source>
-        <translation>黑色</translation>
-    </message>
-    <message>
-        <source>Clear</source>
-        <translation>清除</translation>
-    </message>
-    <message>
-        <source>Green</source>
-        <translation>绿色</translation>
-    </message>
-    <message>
-        <source>Value</source>
-        <translation>属性值</translation>
-    </message>
-    <message>
-        <source>Alpha (Transparency)</source>
-        <translation>Alpha (透明度)</translation>
-    </message>
-    <message>
-        <source>Secondary Color</source>
-        <translation>次要颜色</translation>
-    </message>
-    <message>
-        <source>Magenta</source>
-        <translation>品红色</translation>
-    </message>
-    <message>
-        <source>Yellow</source>
-        <translation>黄色</translation>
-    </message>
-    <message>
-        <source>Color Mode</source>
-        <translation>颜色模式</translation>
-    </message>
-    <message>
-        <source>Palette</source>
-        <translation>调色板</translation>
-    </message>
-    <message>
-        <source>Saturation</source>
-        <translation>饱和度</translation>
-    </message>
-    <message>
-        <source>Primary Color</source>
-        <translation>原色</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::FrameControlsWidget</name>
-    <message>
-        <source> f</source>
-        <translation> f</translation>
-    </message>
-    <message>
-        <source>Loop</source>
-        <translation>循环</translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation>播放</translation>
-    </message>
-    <message>
-        <source>Frame number</source>
-        <translation>帧数</translation>
-    </message>
-    <message>
-        <source>Go To Previous Keyframe</source>
-        <translation>转到上一个关键帧</translation>
-    </message>
-    <message>
-        <source>Record</source>
-        <translation>记录</translation>
-    </message>
-    <message>
-        <source>Go To Next Keyframe</source>
-        <translation>转到下一个关键帧</translation>
-    </message>
-    <message>
-        <source>Go To First Frame</source>
-        <translation>转到第一帧</translation>
-    </message>
-    <message>
-        <source>Loop animation</source>
-        <translation>循环播放</translation>
-    </message>
-    <message>
-        <source>Go To Previous Frame</source>
-        <translation>上一帧</translation>
-    </message>
-    <message>
-        <source>Go To Next Frame</source>
-        <translation>下一帧</translation>
-    </message>
-    <message>
-        <source>Go To Last Frame</source>
-        <translation>转到最后一帧</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::AboutDialog</name>
-    <message>
-        <source>ID</source>
-        <translation>ID</translation>
-    </message>
-    <message>
-        <source>CPU</source>
-        <translation>CPU</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>复制</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>名称</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>打开</translation>
-    </message>
-    <message>
-        <source>ZLib</source>
-        <translation>ZLib</translation>
-    </message>
-    <message>
-        <source>About</source>
-        <translation>关于</translation>
-    </message>
-    <message>
-        <source>Libav</source>
-        <translation>Libav</translation>
-    </message>
-    <message>
-        <source>Paths</source>
-        <translation>路径</translation>
-    </message>
-    <message>
-        <source>Icon Theme Paths:</source>
-        <translation>图标主题路径:</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;h1 align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:12pt; font-weight:600;&quot;&gt;Links&lt;/span&gt;&lt;/h1&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://gitlab.com/mattbas/glaxnimate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Code&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://gitlab.com/mattbas/glaxnimate/-/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Issues&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://t.me/Glaxnimate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Chat&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
-&lt;h1 align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:12pt; font-weight:600;&quot;&gt;License&lt;/span&gt;&lt;/h1&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Copyright (C) 2020  Mattia Basaglia&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Glaxnimate is free software: you can redistribute it and/or modify&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;it under the terms of the GNU General Public License as published by&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;the Free Software Foundation, either version 3 of the License, or&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;(at your option) any later version.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Glaxnimate is distributed in the hope that it will be useful,&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;but WITHOUT ANY WARRANTY; without even the implied warranty of&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;GNU General Public License for more details.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;You should have received a copy of the GNU General Public License&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;along with this program.  If not, see &amp;lt;&lt;/span&gt;&lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; text-decoration: underline; color:#0057ae;&quot;&gt;http://www.gnu.org/licenses/&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&amp;gt;.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;h1 align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:12pt; font-weight:600;&quot;&gt;Links&lt;/span&gt;&lt;/h1&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://gitlab.com/mattbas/glaxnimate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Code&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://gitlab.com/mattbas/glaxnimate/-/issues&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Issues&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://t.me/Glaxnimate&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;Chat&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
-&lt;h1 align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:12pt; font-weight:600;&quot;&gt;License&lt;/span&gt;&lt;/h1&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Copyright (C) 2020  Mattia Basaglia&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Glaxnimate is free software: you can redistribute it and/or modify&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;it under the terms of the GNU General Public License as published by&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;the Free Software Foundation, either version 3 of the License, or&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;(at your option) any later version.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Glaxnimate is distributed in the hope that it will be useful,&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;but WITHOUT ANY WARRANTY; without even the implied warranty of&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;GNU General Public License for more details.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;You should have received a copy of the GNU General Public License&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;along with this program.  If not, see &amp;lt;&lt;/span&gt;&lt;a href=&quot;http://www.gnu.org/licenses/&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; text-decoration: underline; color:#0057ae;&quot;&gt;http://www.gnu.org/licenses/&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&amp;gt;.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Kernel</source>
-        <translation>内核</translation>
-    </message>
-    <message>
-        <source>System</source>
-        <translation>系统</translation>
-    </message>
-    <message>
-        <source>Potrace</source>
-        <translation>Potrace</translation>
-    </message>
-    <message>
-        <source>Backup Directory:</source>
-        <translation>备份目录:</translation>
-    </message>
-    <message>
-        <source>User Data Directory:</source>
-        <translation>用户数据目录:</translation>
-    </message>
-    <message>
-        <source>libarchive</source>
-        <translation>libarchive</translation>
-    </message>
-    <message>
-        <source>About Qt</source>
-        <translation>关于Qt</translation>
-    </message>
-    <message>
-        <source>Settings File:</source>
-        <translation>设置文件:</translation>
-    </message>
-    <message>
-        <source>Credits</source>
-        <translation>学分</translation>
-    </message>
-    <message>
-        <source>System Qt</source>
-        <translation>系统Qt</translation>
-    </message>
-    <message>
-        <source>Ouput Formats </source>
-        <translation>输出格式 </translation>
-    </message>
-    <message>
-        <source>Extensions</source>
-        <translation>扩展</translation>
-    </message>
-    <message>
-        <source>Version</source>
-        <translation>版本</translation>
-    </message>
-    <message>
-        <source>Input Formats</source>
-        <translation>输入格式</translation>
-    </message>
-    <message>
-        <source>Formats</source>
-        <translation>格式</translation>
-    </message>
-    <message>
-        <source>Application Qt</source>
-        <translation>Qt应用</translation>
-    </message>
-    <message>
-        <source>Data Directories:</source>
-        <translation>数据目录:</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::item_models::PropertyModelBase</name>
-    <message>
-        <source>%1%</source>
-        <translation>%1%</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::PluginSettingsWidget</name>
-    <message>
-        <source>123</source>
-        <translation>123</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>名称</translation>
-    </message>
-    <message>
-        <source>Path</source>
-        <translation>路径</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>类型</translation>
-    </message>
-    <message>
-        <source>Uninstall</source>
-        <translation>卸载</translation>
-    </message>
-    <message>
-        <source>Menu Action</source>
-        <translation>菜单操作</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>作者</translation>
-    </message>
-    <message>
-        <source>File Format</source>
-        <translation>文件格式</translation>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation>启用</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation>刷新</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>描述</translation>
-    </message>
-    <message>
-        <source>Install...</source>
-        <translation>安装...</translation>
-    </message>
-    <message>
-        <source>Disable</source>
-        <translation>禁用</translation>
-    </message>
-    <message>
-        <source>Reload Plugins</source>
-        <translation>重新加载插件</translation>
-    </message>
-    <message>
-        <source>Unknown</source>
-        <translation>未知</translation>
-    </message>
-    <message>
-        <source>Services</source>
-        <translation>服务</translation>
-    </message>
-    <message>
-        <source>Version</source>
-        <translation>版本</translation>
-    </message>
-    <message>
-        <source>Install from file</source>
-        <translation>从文件安装</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::DocumentSwatchWidget</name>
-    <message>
-        <source>Add</source>
-        <translation>添加</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>名称</translation>
-    </message>
-    <message>
-        <source>Remove existing colors</source>
-        <translation>删除现有的颜色</translation>
-    </message>
-    <message>
-        <source>Load from Palette</source>
-        <translation>从调色板加载</translation>
-    </message>
-    <message>
-        <source>Gather Document Swatch</source>
-        <translation>收集文档色板</translation>
-    </message>
-    <message>
-        <source>Load Palette</source>
-        <translation>加载调色板</translation>
-    </message>
-    <message>
-        <source>Save Palette</source>
-        <translation>保存调色板</translation>
-    </message>
-    <message>
-        <source>Rename...</source>
-        <translation>重命名...</translation>
-    </message>
-    <message>
-        <source>Unlink fill</source>
-        <translation>解除填充</translation>
-    </message>
-    <message>
-        <source>Link shapes with matching colors</source>
-        <translation>链接具有匹配颜色的形状</translation>
-    </message>
-    <message>
-        <source>Modify Palette Color</source>
-        <translation>修改调色板颜色</translation>
+        <source>Radial</source>
+        <translation>径向</translation>
     </message>
     <message>
         <source>Remove</source>
         <translation>删除</translation>
     </message>
     <message>
-        <source>Swatch</source>
-        <translation>色板</translation>
+        <source>Stroke</source>
+        <translation>描边</translation>
     </message>
     <message>
-        <source>Add color</source>
-        <translation>添加颜色</translation>
+        <source>Gradient</source>
+        <translation>渐变</translation>
     </message>
     <message>
-        <source>Rename Swatch Color</source>
-        <translation>重命名色板颜色</translation>
+        <source>Add Gradient</source>
+        <translation>添加渐变</translation>
     </message>
     <message>
-        <source>Duplicate</source>
-        <translation>复制</translation>
+        <source>Remove Gradient</source>
+        <translation>删除渐变</translation>
     </message>
     <message>
-        <source>Link Shapes to Swatch</source>
-        <translation>将形状链接到色板</translation>
+        <source>Gradient Presets</source>
+        <translation>渐变预设</translation>
     </message>
     <message>
-        <source>Set as fill</source>
-        <translation>设置为填充</translation>
+        <source>Set %1 Gradient</source>
+        <translation>设置%1渐变</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::IoStatusDialog</name>
+    <message>
+        <source>IoStatusDialog</source>
+        <translation>IoStatusDialog</translation>
     </message>
     <message>
-        <source>Unlink Color</source>
-        <translation>取消链接颜色</translation>
+        <source>/path/to/your/file/in.here</source>
+        <translation>/path/to/your/file/in.here</translation>
     </message>
     <message>
-        <source>From Palette...</source>
-        <translation>从调色板...</translation>
+        <source>Issues</source>
+        <translation>问题</translation>
     </message>
     <message>
-        <source>Swatch from Palette</source>
-        <translation>来自调色板的色板</translation>
+        <source>Operation Failed</source>
+        <translation>操作失败</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::KeyframeEditorWidget</name>
+    <message>
+        <source>Hold</source>
+        <translation>抓住</translation>
     </message>
     <message>
-        <source>No palettes are installed</source>
-        <translation>没有安装调色板</translation>
+        <source>Start</source>
+        <translation>开始</translation>
     </message>
     <message>
-        <source>Unlink stroke</source>
-        <translation>拆开描边</translation>
+        <source>Custom</source>
+        <translation>自定义</translation>
     </message>
     <message>
-        <source>Generate</source>
-        <translation>生成</translation>
+        <source>Finish</source>
+        <translation>完成</translation>
     </message>
     <message>
-        <source>Overwrite on save</source>
-        <translation>保存时覆盖</translation>
+        <source>Linear</source>
+        <translation>线性</translation>
     </message>
     <message>
-        <source>Generate Swatch from the open Document</source>
-        <translation>从打开的文档生成色板</translation>
+        <source>Presets</source>
+        <translation>预设</translation>
     </message>
     <message>
-        <source>Set as stroke</source>
-        <translation>设置为描边</translation>
+        <source>Ease Out</source>
+        <translation>缓出</translation>
     </message>
     <message>
-        <source>Edit Color...</source>
-        <translation>编辑颜色…...</translation>
+        <source>Ease In</source>
+        <translation>缓入</translation>
     </message>
 </context>
 <context>
@@ -2387,421 +3139,190 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::font::GoogleFontsModel</name>
+    <name>glaxnimate::gui::PluginSettingsWidget</name>
     <message>
-        <source>Any</source>
-        <translation>任何</translation>
+        <source>123</source>
+        <translation>123</translation>
     </message>
     <message>
-        <source>Rank</source>
-        <translation>排名</translation>
+        <source>Name</source>
+        <translation>名称</translation>
     </message>
     <message>
-        <source>Serif</source>
-        <translation>Serif</translation>
+        <source>Path</source>
+        <translation>路径</translation>
     </message>
     <message>
-        <source>Family</source>
-        <translation>Family</translation>
+        <source>Type</source>
+        <translation>类型</translation>
     </message>
     <message>
-        <source>Monospace</source>
-        <translation>等宽字体</translation>
+        <source>Uninstall</source>
+        <translation>卸载</translation>
     </message>
     <message>
-        <source>Status</source>
-        <translation>状态</translation>
+        <source>Menu Action</source>
+        <translation>菜单操作</translation>
     </message>
     <message>
-        <source>Sans-Serif</source>
-        <translation>Sans-Serif</translation>
+        <source>Author</source>
+        <translation>作者</translation>
     </message>
     <message>
-        <source>Category</source>
-        <translation>类别</translation>
+        <source>File Format</source>
+        <translation>文件格式</translation>
     </message>
     <message>
-        <source>Could not add font</source>
-        <translation>不能添加字体</translation>
+        <source>Enable</source>
+        <translation>启用</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>显示</translation>
+        <source>Refresh</source>
+        <translation>刷新</translation>
     </message>
     <message>
-        <source>Handwriting</source>
-        <translation>笔迹</translation>
+        <source>Description</source>
+        <translation>描述</translation>
+    </message>
+    <message>
+        <source>Install...</source>
+        <translation>安装...</translation>
+    </message>
+    <message>
+        <source>Disable</source>
+        <translation>禁用</translation>
+    </message>
+    <message>
+        <source>Reload Plugins</source>
+        <translation>重新加载插件</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>未知</translation>
+    </message>
+    <message>
+        <source>Services</source>
+        <translation>服务</translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation>版本</translation>
+    </message>
+    <message>
+        <source>Install from file</source>
+        <translation>从文件安装</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::StrokeStyleWidget</name>
-    <message>
-        <source>Cap</source>
-        <translation>端点</translation>
-    </message>
-    <message>
-        <source>Butt</source>
-        <translation>平头</translation>
-    </message>
-    <message>
-        <source>Join</source>
-        <translation>边角</translation>
-    </message>
-    <message>
-        <source>Bevel</source>
-        <translation>斜角</translation>
-    </message>
-    <message>
-        <source>Color</source>
-        <translation>颜色</translation>
-    </message>
-    <message>
-        <source>Miter</source>
-        <translation>斜面</translation>
-    </message>
-    <message>
-        <source>Round</source>
-        <translation>圆形</translation>
-    </message>
-    <message>
-        <source>Style</source>
-        <translation>属性</translation>
-    </message>
+    <name>glaxnimate::gui::ResizeDialog</name>
     <message>
         <source>Width</source>
         <translation>宽度</translation>
     </message>
     <message>
-        <source>Stroke Width</source>
-        <translation>描边宽度</translation>
-    </message>
-    <message>
-        <source>Miter Limit</source>
-        <translation>斜接限制</translation>
-    </message>
-    <message>
-        <source>Dashes</source>
-        <translation>破折号</translation>
-    </message>
-    <message>
-        <source>Square</source>
-        <translation>正方形</translation>
-    </message>
-    <message>
-        <source>Update Stroke Color</source>
-        <translation>更新描边颜色</translation>
-    </message>
-</context>
-<context>
-    <name>GlaxnimateWindow</name>
-    <message>
-        <source>Cut</source>
-        <translation>剪切</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>复制</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>粘贴</translation>
-    </message>
-    <message>
-        <source>Group Shapes</source>
-        <translation>编组形状</translation>
-    </message>
-    <message>
-        <source>Ungroup Shapes</source>
-        <translation>取消组形状</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>删除</translation>
-    </message>
-    <message>
-        <source>Move to...</source>
-        <translation>移动到...</translation>
-    </message>
-    <message>
-        <source>Redo %1</source>
-        <translation>重做%1</translation>
-    </message>
-    <message>
-        <source>Undo %1</source>
-        <translation>撤销%1</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::android::MainWindow</name>
-    <message>
-        <source>Cut</source>
-        <translation>剪切</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation>新建</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>复制</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation>帮助</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation>打开</translation>
-    </message>
-    <message>
-        <source>Redo</source>
-        <translation>重做</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>保存</translation>
-    </message>
-    <message>
-        <source>Undo</source>
-        <translation>撤销</translation>
-    </message>
-    <message>
-        <source>Timeline</source>
-        <translation>时间轴</translation>
-    </message>
-    <message>
-        <source>Emoji</source>
-        <translation>Emoji</translation>
-    </message>
-    <message>
-        <source>Lower</source>
-        <translation>Lower</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>粘贴</translation>
-    </message>
-    <message>
-        <source>Raise</source>
-        <translation>Raise</translation>
-    </message>
-    <message>
-        <source>Save Frame as PNG</source>
-        <translation>将帧另存为PNG</translation>
-    </message>
-    <message>
-        <source>Stroke Style</source>
-        <translation>描边属性</translation>
-    </message>
-    <message>
-        <source>Could not import file</source>
-        <translation>不能导入文件</translation>
-    </message>
-    <message>
-        <source>Import Emoji</source>
-        <translation>导入Emoji</translation>
-    </message>
-    <message>
-        <source>Lower Below</source>
-        <translation>移到最底层</translation>
-    </message>
-    <message>
-        <source>Import as Composition</source>
-        <translation>导入为预合成</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation>导出</translation>
-    </message>
-    <message>
-        <source>Layers</source>
-        <translation>图层</translation>
-    </message>
-    <message>
-        <source>Frame %1.png</source>
-        <translation>Frame %1.png</translation>
-    </message>
-    <message>
-        <source>Open...</source>
-        <translation>打开...</translation>
-    </message>
-    <message>
-        <source>Raise Above</source>
-        <translation>移到最上层</translation>
-    </message>
-    <message>
-        <source>Add keyframe</source>
-        <translation>添加关键帧</translation>
-    </message>
-    <message>
-        <source>Remove keyframe</source>
-        <translation>删除关键帧</translation>
-    </message>
-    <message>
-        <source>Import File</source>
-        <translation>导入文件</translation>
-    </message>
-    <message>
-        <source>Save As</source>
-        <translation>另存为</translation>
-    </message>
-    <message>
-        <source>Save...</source>
-        <translation>保存...</translation>
-    </message>
-    <message>
-        <source>Advanced Properties</source>
-        <translation>高级属性</translation>
-    </message>
-    <message>
-        <source>Delete Selected</source>
-        <translation>删除所选</translation>
-    </message>
-    <message>
-        <source>Clear Animations</source>
-        <translation>清除动画</translation>
-    </message>
-    <message>
-        <source>Fill Style</source>
-        <translation>填充属性</translation>
-    </message>
-    <message>
-        <source>Animation.%1</source>
-        <translation>动画 %1</translation>
-    </message>
-    <message>
-        <source>Send to Telegram</source>
-        <translation>发送到Telegram</translation>
-    </message>
-    <message>
-        <source>Glaxnimate</source>
-        <translation>Glaxnimate</translation>
-    </message>
-</context>
-<context>
-    <name>Settings</name>
-    <message>
-        <source>FPS</source>
-        <translation>FPS</translation>
-    </message>
-    <message>
-        <source>Tools</source>
-        <translation>工具</translation>
-    </message>
-    <message>
-        <source>Width</source>
-        <translation>宽度</translation>
-    </message>
-    <message>
-        <source>Icon Theme</source>
-        <translation>图标主题</translation>
-    </message>
-    <message>
-        <source>User Interface</source>
-        <translation>用户界面</translation>
-    </message>
-    <message>
-        <source>Max Recent Files</source>
-        <translation>最近使用的最大文件数</translation>
+        <source>Scale Layers</source>
+        <translation>缩放图层</translation>
     </message>
     <message>
         <source>Height</source>
         <translation>高度</translation>
     </message>
     <message>
-        <source>New Animation Defaults</source>
-        <translation>新建动画的默认值</translation>
+        <source>Resize</source>
+        <translation>调整</translation>
     </message>
     <message>
-        <source>Show startup dialog</source>
-        <translation>显示启动对话框</translation>
+        <source>Lock Apect Ratio</source>
+        <translation>锁定Apect比率</translation>
     </message>
     <message>
-        <source>Duration in seconds</source>
-        <translation>持续时间（以秒为单位）</translation>
+        <source>Preserve Layer Aspect Ratio</source>
+        <translation>保存图层纵横比</translation>
     </message>
     <message>
-        <source>Language</source>
-        <translation>语言</translation>
-    </message>
-    <message>
-        <source>Scripting</source>
-        <translation>编写脚本</translation>
-    </message>
-    <message>
-        <source>Frames per second</source>
-        <translation>每秒帧数</translation>
-    </message>
-    <message>
-        <source>Duration</source>
-        <translation>持续时间</translation>
-    </message>
-    <message>
-        <source>Backup Frequency</source>
-        <translation>备份频率</translation>
-    </message>
-    <message>
-        <source>Interface Language</source>
-        <translation>界面语言</translation>
-    </message>
-    <message>
-        <source>How often to save a backup copy (in minutes)</source>
-        <translation>保存备份副本的频率（以分钟为单位）</translation>
+        <source>Resize Document</source>
+        <translation>调整文档大小</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::GradientListWidget</name>
+    <name>glaxnimate::gui::ScriptConsole</name>
     <message>
-        <source>New</source>
-        <translation>新建</translation>
+        <source>Clear</source>
+        <translation>清除</translation>
     </message>
+    <message>
+        <source>Clear Output</source>
+        <translation>清除输出</translation>
+    </message>
+    <message>
+        <source>Could not find an interpreter</source>
+        <translation>找不到翻译</translation>
+    </message>
+    <message>
+        <source>Plugin raised an exception</source>
+        <translation>插件上移</translation>
+    </message>
+    <message>
+        <source>Reload</source>
+        <translation>重新加载</translation>
+    </message>
+    <message>
+        <source>Persist</source>
+        <translation>Persist</translation>
+    </message>
+    <message>
+        <source>Reload Script Modules</source>
+        <translation>重新加载脚本模块</translation>
+    </message>
+    <message>
+        <source>Could not run the plugin</source>
+        <translation>不能运行这个插件</translation>
+    </message>
+    <message>
+        <source>Persist Logs</source>
+        <translation>保存日志</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::ShapeParentDialog</name>
+    <message>
+        <source>Destination</source>
+        <translation>目标</translation>
+    </message>
+    <message>
+        <source>Move</source>
+        <translation>移动</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::ShapeToolWidget</name>
     <message>
         <source>Fill</source>
         <translation>填充</translation>
     </message>
     <message>
-        <source>Add from Preset</source>
-        <translation>从预设新建</translation>
+        <source>Group</source>
+        <translation>编组</translation>
     </message>
     <message>
-        <source>Linear</source>
-        <translation>线性</translation>
+        <source>Layer</source>
+        <translation>图层</translation>
     </message>
     <message>
-        <source>Preset</source>
-        <translation>预设</translation>
-    </message>
-    <message>
-        <source>Radial</source>
-        <translation>径向</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation>删除</translation>
+        <source>Create</source>
+        <translation>创建</translation>
     </message>
     <message>
         <source>Stroke</source>
         <translation>描边</translation>
     </message>
     <message>
-        <source>Gradient</source>
-        <translation>渐变</translation>
-    </message>
-    <message>
-        <source>Add Gradient</source>
-        <translation>添加渐变</translation>
-    </message>
-    <message>
-        <source>Remove Gradient</source>
-        <translation>删除渐变</translation>
-    </message>
-    <message>
-        <source>Gradient Presets</source>
-        <translation>渐变预设</translation>
-    </message>
-    <message>
-        <source>Set %1 Gradient</source>
-        <translation>设置%1渐变</translation>
+        <source>Raw Shape</source>
+        <translation>原始形状</translation>
     </message>
 </context>
 <context>
@@ -2860,100 +3381,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::ToolbarSettingsWidget</name>
+    <name>glaxnimate::gui::Spin2D</name>
     <message>
-        <source>New</source>
-        <translation>新建</translation>
+        <source>%</source>
+        <translation>%</translation>
     </message>
     <message>
-        <source>Edit</source>
-        <translation>编辑</translation>
-    </message>
-    <message>
-        <source>Icon</source>
-        <translation>图标</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>保存</translation>
-    </message>
-    <message>
-        <source>Text</source>
-        <translation>文本</translation>
-    </message>
-    <message>
-        <source>Text under Icon</source>
-        <translation>图标下的文字</translation>
-    </message>
-    <message>
-        <source>Tool Icon Size</source>
-        <translation>工具图标大小</translation>
-    </message>
-    <message>
-        <source>Button Style</source>
-        <translation>按钮样式</translation>
-    </message>
-    <message>
-        <source>Select</source>
-        <translation>选择</translation>
-    </message>
-    <message>
-        <source>Icon Size</source>
-        <translation>图标大小</translation>
-    </message>
-    <message>
-        <source>Preview</source>
-        <translation>预览</translation>
-    </message>
-    <message>
-        <source>Text beside Icon</source>
-        <translation>图标旁边的文字</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::io::svg::SvgFormat</name>
-    <message>
-        <source>SVG</source>
-        <translation>SVG</translation>
-    </message>
-    <message>
-        <source>Font face with external url</source>
-        <translation>字体与外部url</translation>
-    </message>
-    <message>
-        <source>External Fonts</source>
-        <translation>外部字体</translation>
-    </message>
-    <message>
-        <source>How to include external font</source>
-        <translation>如何引入外部字体</translation>
-    </message>
-    <message>
-        <source>Ignore</source>
-        <translation>忽略</translation>
-    </message>
-    <message>
-        <source>Embedded data</source>
-        <translation>嵌入式数据</translation>
-    </message>
-    <message>
-        <source>External Stylesheet</source>
-        <translation>外部样式表</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::ShapeParentDialog</name>
-    <message>
-        <source>Destination</source>
-        <translation>目标</translation>
-    </message>
-    <message>
-        <source>Move</source>
-        <translation>移动</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>取消</translation>
+        <source>Lock Ratio</source>
+        <translation>锁定分辨率</translation>
     </message>
 </context>
 <context>
@@ -3016,18 +3451,26 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::EnumCombo</name>
+    <name>glaxnimate::gui::StrokeStyleWidget</name>
+    <message>
+        <source>Cap</source>
+        <translation>端点</translation>
+    </message>
     <message>
         <source>Butt</source>
         <translation>平头</translation>
     </message>
     <message>
-        <source>Star</source>
-        <translation>星形</translation>
+        <source>Join</source>
+        <translation>边角</translation>
     </message>
     <message>
         <source>Bevel</source>
         <translation>斜角</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation>颜色</translation>
     </message>
     <message>
         <source>Miter</source>
@@ -3038,138 +3481,270 @@ p, li { white-space: pre-wrap; }
         <translation>圆形</translation>
     </message>
     <message>
-        <source>Linear</source>
-        <translation>线性</translation>
+        <source>Style</source>
+        <translation>属性</translation>
     </message>
     <message>
-        <source>NonZero</source>
-        <translation>NonZero</translation>
+        <source>Width</source>
+        <translation>宽度</translation>
     </message>
     <message>
-        <source>Radial</source>
-        <translation>径向</translation>
+        <source>Stroke Width</source>
+        <translation>描边宽度</translation>
+    </message>
+    <message>
+        <source>Miter Limit</source>
+        <translation>斜接限制</translation>
+    </message>
+    <message>
+        <source>Dashes</source>
+        <translation>破折号</translation>
     </message>
     <message>
         <source>Square</source>
         <translation>正方形</translation>
     </message>
     <message>
-        <source>Polygon</source>
-        <translation>多边形</translation>
-    </message>
-    <message>
-        <source>Even Odd</source>
-        <translation>Even Odd</translation>
+        <source>Update Stroke Color</source>
+        <translation>更新描边颜色</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::tools::SelectTool</name>
+    <name>glaxnimate::gui::TabBarCloseButton</name>
     <message>
-        <source>Drag</source>
-        <translation>拖动</translation>
+        <source>Delete Composition</source>
+        <translation>删除预合成</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::CompoundTimelineWidget</name>
+    <name>glaxnimate::gui::TimingDialog</name>
     <message>
-        <source>Ease</source>
-        <translation>Ease</translation>
-    </message>
-    <message>
-        <source>Hold</source>
-        <translation>抓住</translation>
-    </message>
-    <message>
-        <source>Transition To Next</source>
-        <translation>过渡到下一个</translation>
-    </message>
-    <message>
-        <source>Transition From Previous</source>
-        <translation>过渡到上一个</translation>
-    </message>
-    <message>
-        <source>Paste Keyframe</source>
-        <translation>粘贴关键帧</translation>
-    </message>
-    <message>
-        <source>Linear</source>
-        <translation>线性</translation>
-    </message>
-    <message>
-        <source>Copy Keyframe</source>
-        <translation>复制关键帧</translation>
-    </message>
-    <message>
-        <source>Remove Keyframe</source>
-        <translation>删除关键帧</translation>
-    </message>
-    <message>
-        <source>Custom...</source>
-        <translation>自定义…...</translation>
-    </message>
-    <message>
-        <source>Clear Animations</source>
-        <translation>清除动画</translation>
+        <source>Change Animation Properties</source>
+        <translation>修改动画属性</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::ColorPickerWidget</name>
+    <name>glaxnimate::gui::ToolbarSettingsWidget</name>
     <message>
-        <source>Fill</source>
-        <translation>填充</translation>
+        <source>New</source>
+        <translation>新建</translation>
     </message>
     <message>
-        <source>Stroke</source>
-        <translation>描边</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::FillToolWidget</name>
-    <message>
-        <source>Fill</source>
-        <translation>填充</translation>
+        <source>Edit</source>
+        <translation>编辑</translation>
     </message>
     <message>
-        <source>Stroke</source>
-        <translation>描边</translation>
+        <source>Icon</source>
+        <translation>图标</translation>
     </message>
     <message>
-        <source>Fill and Stroke</source>
-        <translation>填充和描边</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::ShapeToolWidget</name>
-    <message>
-        <source>Fill</source>
-        <translation>填充</translation>
+        <source>Save</source>
+        <translation>保存</translation>
     </message>
     <message>
-        <source>Group</source>
-        <translation>编组</translation>
+        <source>Text</source>
+        <translation>文本</translation>
     </message>
     <message>
-        <source>Layer</source>
-        <translation>图层</translation>
+        <source>Text under Icon</source>
+        <translation>图标下的文字</translation>
     </message>
     <message>
-        <source>Create</source>
-        <translation>创建</translation>
+        <source>Tool Icon Size</source>
+        <translation>工具图标大小</translation>
     </message>
     <message>
-        <source>Stroke</source>
-        <translation>描边</translation>
+        <source>Button Style</source>
+        <translation>按钮样式</translation>
     </message>
     <message>
-        <source>Raw Shape</source>
-        <translation>原始形状</translation>
+        <source>Select</source>
+        <translation>选择</translation>
+    </message>
+    <message>
+        <source>Icon Size</source>
+        <translation>图标大小</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>预览</translation>
+    </message>
+    <message>
+        <source>Text beside Icon</source>
+        <translation>图标旁边的文字</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::Fill</name>
+    <name>glaxnimate::gui::TraceDialog</name>
     <message>
-        <source>Fill</source>
-        <translation>填充</translation>
+        <source>%</source>
+        <translation>%</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>模式</translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation>缩放</translation>
+    </message>
+    <message>
+        <source>Pixel</source>
+        <translation>像素</translation>
+    </message>
+    <message>
+        <source>Trace Bitmap</source>
+        <translation>跟随位图</translation>
+    </message>
+    <message>
+        <source>Remove Color</source>
+        <translation>删除颜色</translation>
+    </message>
+    <message>
+        <source>Tolerance</source>
+        <translation>公差</translation>
+    </message>
+    <message>
+        <source>Output Color</source>
+        <translation>输出颜色</translation>
+    </message>
+    <message>
+        <source>Transparency</source>
+        <translation>透明度</translation>
+    </message>
+    <message>
+        <source>Colors</source>
+        <translation>颜色</translation>
+    </message>
+    <message>
+        <source>Invert</source>
+        <translation>反向</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>Add Color</source>
+        <translation>添加颜色</translation>
+    </message>
+    <message>
+        <source>Image Options</source>
+        <translation>图片选择</translation>
+    </message>
+    <message>
+        <source>Smoothness</source>
+        <translation>平滑度</translation>
+    </message>
+    <message>
+        <source>Outline</source>
+        <translation>大纲</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>预览</translation>
+    </message>
+    <message>
+        <source>Traced %1</source>
+        <translation>追踪%1</translation>
+    </message>
+    <message>
+        <source>Revert to Defaults</source>
+        <translation>恢复到默认值</translation>
+    </message>
+    <message>
+        <source>Threshold</source>
+        <translation>阈值</translation>
+    </message>
+    <message>
+        <source>Configure...</source>
+        <translation>配置...</translation>
+    </message>
+    <message>
+        <source>Extract Colors</source>
+        <translation>提取颜色</translation>
+    </message>
+    <message>
+        <source>Closest Color</source>
+        <translation>接近颜色</translation>
+    </message>
+    <message>
+        <source>Curve Options</source>
+        <translation>曲线设置</translation>
+    </message>
+    <message>
+        <source>Detect Colors</source>
+        <translation>检测颜色</translation>
+    </message>
+    <message>
+        <source>Minimum Area</source>
+        <translation>最小面积</translation>
+    </message>
+    <message>
+        <source>Help...</source>
+        <translation>帮助……...</translation>
+    </message>
+    <message>
+        <source>Configure Color Detection</source>
+        <translation>配置颜色检测</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::ViewTransformWidget</name>
+    <message>
+        <source>%</source>
+        <translation>%</translation>
+    </message>
+    <message>
+        <source>°</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation>缩放</translation>
+    </message>
+    <message>
+        <source>Flip View</source>
+        <translation>翻转视图</translation>
+    </message>
+    <message>
+        <source>Angle</source>
+        <translation>角度</translation>
+    </message>
+    <message>
+        <source>Fit View</source>
+        <translation>适应工作区</translation>
+    </message>
+    <message>
+        <source>Zoom In</source>
+        <translation>放大</translation>
+    </message>
+    <message>
+        <source>Zoom Out</source>
+        <translation>缩小</translation>
+    </message>
+    <message>
+        <source>Reset Rotation</source>
+        <translation>重置旋转</translation>
+    </message>
+    <message>
+        <source>Reset Zoom</source>
+        <translation>重置放大</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::WindowMessageWidget</name>
+    <message>
+        <source>Ignore</source>
+        <translation>忽略</translation>
     </message>
 </context>
 <context>
@@ -3208,6 +3783,55 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>glaxnimate::gui::font::FontLoader</name>
+    <message>
+        <source>Invalid data URL</source>
+        <translation>无效数据的URL</translation>
+    </message>
+    <message>
+        <source>Font format not supported for %1</source>
+        <translation>%1的字体格式不受支持</translation>
+    </message>
+    <message>
+        <source>Could not open file %1</source>
+        <translation>不能打开文件%1</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::font::FontPreviewWidget</name>
+    <message>
+        <source>%</source>
+        <translation>%</translation>
+    </message>
+    <message>
+        <source>The quick brown fox jumps over the lazy dog</source>
+        <translation>那只敏捷的棕色狐狸跳过了懒惰的狗</translation>
+    </message>
+    <message>
+        <source>Preview Scale</source>
+        <translation>预览选中部分</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::font::FontStyleDialog</name>
+    <message>
+        <source>Google Fonts</source>
+        <translation>Google字体</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>自定义</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>系统</translation>
+    </message>
+    <message>
+        <source>Font Style</source>
+        <translation>字体样式</translation>
+    </message>
+</context>
+<context>
     <name>glaxnimate::gui::font::FontStyleWidget</name>
     <message>
         <source>Font</source>
@@ -3236,6 +3860,53 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Filters</source>
         <translation>滤镜</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::font::GoogleFontsModel</name>
+    <message>
+        <source>Any</source>
+        <translation>任何</translation>
+    </message>
+    <message>
+        <source>Rank</source>
+        <translation>排名</translation>
+    </message>
+    <message>
+        <source>Serif</source>
+        <translation>Serif</translation>
+    </message>
+    <message>
+        <source>Family</source>
+        <translation>Family</translation>
+    </message>
+    <message>
+        <source>Monospace</source>
+        <translation>等宽字体</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <source>Sans-Serif</source>
+        <translation>Sans-Serif</translation>
+    </message>
+    <message>
+        <source>Category</source>
+        <translation>类别</translation>
+    </message>
+    <message>
+        <source>Could not add font</source>
+        <translation>不能添加字体</translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation>显示</translation>
+    </message>
+    <message>
+        <source>Handwriting</source>
+        <translation>笔迹</translation>
     </message>
 </context>
 <context>
@@ -3270,140 +3941,91 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::EmbeddedFont</name>
+    <name>glaxnimate::gui::graphics::BezierItem</name>
     <message>
-        <source>Font</source>
-        <translation>字体</translation>
+        <source>Update shape</source>
+        <translation>更新形状</translation>
+    </message>
+    <message>
+        <source>Remove Point</source>
+        <translation>删除点</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::Font</name>
+    <name>glaxnimate::gui::graphics::GradientEditor</name>
     <message>
-        <source>Font</source>
-        <translation>字体</translation>
-    </message>
-    <message>
-        <source>Change Font</source>
-        <translation>更改字体</translation>
+        <source>Drag Gradient</source>
+        <translation>拖动渐变</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::KeyframeEditorWidget</name>
+    <name>glaxnimate::gui::graphics::PointItem</name>
     <message>
-        <source>Hold</source>
-        <translation>抓住</translation>
-    </message>
-    <message>
-        <source>Start</source>
-        <translation>开始</translation>
-    </message>
-    <message>
-        <source>Custom</source>
-        <translation>自定义</translation>
-    </message>
-    <message>
-        <source>Finish</source>
-        <translation>完成</translation>
-    </message>
-    <message>
-        <source>Linear</source>
-        <translation>线性</translation>
-    </message>
-    <message>
-        <source>Presets</source>
-        <translation>预设</translation>
-    </message>
-    <message>
-        <source>Ease Out</source>
-        <translation>缓出</translation>
-    </message>
-    <message>
-        <source>Ease In</source>
-        <translation>缓入</translation>
+        <source>Remove node tangent</source>
+        <translation>Remove node tangent</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::MaskSettings</name>
+    <name>glaxnimate::gui::graphics::TransformGraphicsItem</name>
     <message>
-        <source>Mask</source>
-        <translation>蒙版</translation>
+        <source>Drag anchor point</source>
+        <translation>拖曳锚点</translation>
     </message>
 </context>
 <context>
-    <name>EmojiSetDialog</name>
+    <name>glaxnimate::gui::item_models::DocumentModelBase</name>
+    <message>
+        <source>Move Layers</source>
+        <translation>移动图层</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::item_models::DocumentNodeModel</name>
+    <message>
+        <source>#</source>
+        <translation>#</translation>
+    </message>
     <message>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <source>Close</source>
-        <translation>关闭</translation>
+        <source>Color</source>
+        <translation>颜色</translation>
     </message>
     <message>
-        <source>License</source>
-        <translation>许可证</translation>
+        <source>Locked</source>
+        <translation>锁定</translation>
     </message>
     <message>
-        <source>Downloaded</source>
-        <translation>下载</translation>
-    </message>
-    <message>
-        <source>Reload</source>
-        <translation>重新加载</translation>
-    </message>
-    <message>
-        <source>Emoji Set</source>
-        <translation>Emoji表情集</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation>下载</translation>
-    </message>
-    <message>
-        <source>Add Emoji...</source>
-        <translation>添加Emoji表情...</translation>
-    </message>
-    <message>
-        <source>View Website</source>
-        <translation>查看网站</translation>
+        <source>Visible</source>
+        <translation>可见性</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::CompositionTabBar</name>
+    <name>glaxnimate::gui::item_models::GradientListModel</name>
+    <message>
+        <source>#</source>
+        <translation>#</translation>
+    </message>
     <message>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <source>Rename Composition</source>
-        <translation>重命名预合成</translation>
+        <source>Gradient</source>
+        <translation>渐变</translation>
     </message>
     <message>
-        <source>Delete</source>
-        <translation>删除</translation>
-    </message>
-    <message>
-        <source>Rename</source>
-        <translation>重命名</translation>
-    </message>
-    <message>
-        <source>Duplicate</source>
-        <translation>复制</translation>
+        <source>Number of users</source>
+        <translation>使用人数</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::DocumentMetadataDialog</name>
+    <name>glaxnimate::gui::item_models::PropertyModelBase</name>
     <message>
-        <source>Name</source>
-        <translation>名称</translation>
-    </message>
-    <message>
-        <source>Value</source>
-        <translation>属性值</translation>
-    </message>
-    <message>
-        <source>Document Metadata</source>
-        <translation>文档元数据</translation>
+        <source>%1%</source>
+        <translation>%1%</translation>
     </message>
 </context>
 <context>
@@ -3449,182 +4071,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::ColorQuantizationDialog</name>
-    <message>
-        <source>None</source>
-        <translation>无</translation>
-    </message>
-    <message>
-        <source>Max Iterations</source>
-        <translation>最大迭代次数</translation>
-    </message>
-    <message>
-        <source>Match</source>
-        <translation>Match</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Octree algorithm merges similar colors from the bottom up.&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It gives more accurate colors for complex images but it might result into colors that are not present in the source image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Octree algorithm merges similar colors from the bottom up.&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It gives more accurate colors for complex images but it might result into colors that are not present in the source image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Octree</source>
-        <translation>八叉树</translation>
-    </message>
-    <message>
-        <source>Closest</source>
-        <translation>最近的</translation>
-    </message>
-    <message>
-        <source>Most Frequent</source>
-        <translation>最频繁</translation>
-    </message>
-    <message>
-        <source>k-Modes gives you the colors that appear most often in the source image.
-
-It&apos;s very fast but it does not give accurate colors for complex images.
-
-This is the best option when tracing images with flat colors.</source>
-        <translation>k-Modes 为您提供源图像中最常出现的颜色
-
-它非常快，但不能为复杂图像提供准确的颜色
-
-这是在使用纯色跟踪图像时的最佳选择</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;k-Means divides the colors into clusters and refines the assignment at every iteration.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is the best option when tracing images with a lot of colors or shading.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For pictures with a lot of colors increasing the number of iterations will yield better results but it might be slower.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The &lt;span style=&quot; font-style:italic;&quot;&gt;Match&lt;/span&gt; option performs some post-processing:&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;None&lt;/span&gt;: Don&apos;t perform any post-processing and return the means (note this might result in colors not present in the original image)&lt;/li&gt;
-&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Closest&lt;/span&gt;: Find the color in the original image the is the closest to the mean&lt;/li&gt;
-&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Most Frequent&lt;/span&gt;: Find the color in the cluster that appears most often in the source image&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;k-Means divides the colors into clusters and refines the assignment at every iteration.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is the best option when tracing images with a lot of colors or shading.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For pictures with a lot of colors increasing the number of iterations will yield better results but it might be slower.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The &lt;span style=&quot; font-style:italic;&quot;&gt;Match&lt;/span&gt; option performs some post-processing:&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;None&lt;/span&gt;: Don&apos;t perform any post-processing and return the means (note this might result in colors not present in the original image)&lt;/li&gt;
-&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Closest&lt;/span&gt;: Find the color in the original image the is the closest to the mean&lt;/li&gt;
-&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Most Frequent&lt;/span&gt;: Find the color in the cluster that appears most often in the source image&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>k-Means</source>
-        <translation>k - means</translation>
-    </message>
-    <message>
-        <source>k-Modes</source>
-        <translation>k-Modes</translation>
-    </message>
-    <message>
-        <source>Algorithm</source>
-        <translation>算法</translation>
-    </message>
-    <message>
-        <source>Configure color detection</source>
-        <translation>配置颜色检测</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::Path</name>
-    <message>
-        <source>Path</source>
-        <translation>路径</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::TextShape</name>
-    <message>
-        <source>Text</source>
-        <translation>文本</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::io::video::VideoFormat</name>
-    <message>
-        <source>No video codec</source>
-        <translation>没有视频编解码器</translation>
-    </message>
-    <message>
-        <source>Video</source>
-        <translation>视频</translation>
-    </message>
-    <message>
-        <source>Width</source>
-        <translation>宽度</translation>
-    </message>
-    <message>
-        <source>Background</source>
-        <translation>背景</translation>
-    </message>
-    <message>
-        <source>If not 0, it will overwrite the size</source>
-        <translation>如果不为0,它将覆盖大小</translation>
-    </message>
-    <message>
-        <source>Format not supported: %1</source>
-        <translation>格式不支持:%1</translation>
-    </message>
-    <message>
-        <source>Could not find output format</source>
-        <translation>找不到输出格式</translation>
-    </message>
-    <message>
-        <source>Height</source>
-        <translation>高度</translation>
-    </message>
-    <message>
-        <source>Could not deduce output format from file extension: using MPEG.</source>
-        <translation>无法从文件扩展名推断输出格式：使用 MPEG</translation>
-    </message>
-    <message>
-        <source>Show verbose information on the conversion</source>
-        <translation>显示详细的转换信息</translation>
-    </message>
-    <message>
-        <source>Background color</source>
-        <translation>背景颜色</translation>
-    </message>
-    <message>
-        <source>Bitrate</source>
-        <translation>比特率</translation>
-    </message>
-    <message>
-        <source>Error occurred when opening output file: %1</source>
-        <translation>打开输出文件时出错:%1</translation>
-    </message>
-    <message>
-        <source>Verbose</source>
-        <translation>详细</translation>
-    </message>
-    <message>
-        <source>Video bit rate</source>
-        <translation>视频比特率</translation>
-    </message>
-</context>
-<context>
     <name>glaxnimate::gui::settings::DocumentTemplates</name>
     <message>
         <source>%1 %2</source>
@@ -3632,6 +4078,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%5 - %1x%2 %3 %4fps</source>
+        <extracomment>%5 is the file name, %1x%2 is the size, %3 is the aspect ratio, %4 is the frame rate</extracomment>
         <translation>%5 - %1x%2 %3 %4fps</translation>
     </message>
     <message>
@@ -3640,139 +4087,80 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>glaxnimate::io::raster::SpritesheetFormat</name>
+    <name>glaxnimate::gui::style::PropertyDelegate</name>
     <message>
-        <source>Frame Height</source>
-        <translation>帧高度</translation>
-    </message>
-    <message>
-        <source>Width of each frame</source>
-        <translation>每一帧的宽度</translation>
-    </message>
-    <message>
-        <source>Sprite Sheet</source>
-        <translation>精灵表单</translation>
-    </message>
-    <message>
-        <source>Time Step</source>
-        <translation>时间步长</translation>
-    </message>
-    <message>
-        <source>Height of each frame</source>
-        <translation>每一帧的高度</translation>
-    </message>
-    <message>
-        <source>Number of columns in the sheet</source>
-        <translation>表中的列数</translation>
-    </message>
-    <message>
-        <source>Frame Width</source>
-        <translation>帧宽度</translation>
-    </message>
-    <message>
-        <source>Columns</source>
-        <translation>列</translation>
-    </message>
-    <message>
-        <source>By how much each rendered frame should increase time (in frames)</source>
-        <translation>每个渲染帧应增加多少时间（以帧为单位）</translation>
+        <source>%</source>
+        <translation>%</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::io::lottie::LottieHtmlFormat</name>
+    <name>glaxnimate::gui::timeline::KeyframeSplitItem</name>
     <message>
-        <source>Lottie HTML Preview</source>
-        <translation>LottieHTML预览</translation>
+        <source>Drag Keyframes</source>
+        <translation>拖动关键帧</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::MainComposition</name>
+    <name>glaxnimate::gui::tools::DrawTool</name>
     <message>
-        <source>Animation</source>
-        <translation>动画</translation>
+        <source>Add curve point</source>
+        <translation>添加曲线锚点</translation>
+    </message>
+    <message>
+        <source>Delete curve point</source>
+        <translation>删除曲线锚点</translation>
     </message>
 </context>
 <context>
-    <name>StickerPackBuilderDialog</name>
+    <name>glaxnimate::gui::tools::DrawTool::Private</name>
     <message>
-        <source>Clear</source>
-        <translation>清除</translation>
+        <source>Extend Path</source>
+        <translation>扩展路径</translation>
     </message>
     <message>
-        <source>Export</source>
-        <translation>导出</translation>
-    </message>
-    <message>
-        <source>Add Current</source>
-        <translation>添加当前</translation>
-    </message>
-    <message>
-        <source>Export Stickers</source>
-        <translation>导出贴纸</translation>
-    </message>
-    <message>
-        <source>Open Sticker</source>
-        <translation>打开贴纸</translation>
+        <source>Draw Shape</source>
+        <translation>绘制形状</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::ScriptConsole</name>
+    <name>glaxnimate::gui::tools::EditTool</name>
     <message>
-        <source>Clear</source>
-        <translation>清除</translation>
+        <source>Stop Color...</source>
+        <translation>停止颜色…...</translation>
     </message>
     <message>
-        <source>Clear Output</source>
-        <translation>清除输出</translation>
+        <source>Gradient Colors</source>
+        <translation>渐变颜色</translation>
     </message>
     <message>
-        <source>Could not find an interpreter</source>
-        <translation>找不到翻译</translation>
+        <source>Add Stop</source>
+        <translation>添加停止</translation>
     </message>
     <message>
-        <source>Plugin raised an exception</source>
-        <translation>插件上移</translation>
-    </message>
-    <message>
-        <source>Reload</source>
-        <translation>重新加载</translation>
-    </message>
-    <message>
-        <source>Persist</source>
-        <translation>Persist</translation>
-    </message>
-    <message>
-        <source>Reload Script Modules</source>
-        <translation>重新加载脚本模块</translation>
-    </message>
-    <message>
-        <source>Could not run the plugin</source>
-        <translation>不能运行这个插件</translation>
-    </message>
-    <message>
-        <source>Persist Logs</source>
-        <translation>保存日志</translation>
+        <source>Remove Stop</source>
+        <translation>删除停止</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::FontList</name>
+    <name>glaxnimate::gui::tools::FillTool</name>
     <message>
-        <source>Fonts</source>
-        <translation>字体</translation>
+        <source>Apply Style</source>
+        <translation>应用样式</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::Group</name>
+    <name>glaxnimate::gui::tools::SelectTool</name>
     <message>
-        <source>Group</source>
-        <translation>编组</translation>
+        <source>Drag</source>
+        <translation>拖动</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::Image</name>
+    <name>glaxnimate::io::ImportExport</name>
     <message>
-        <source>Image</source>
-        <translation>图像</translation>
+        <source>%1 (%2)</source>
+        <extracomment>Open/Save file dialog file filter eg: &quot;Text files (.txt)&quot;</extracomment>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -3851,466 +4239,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::Layer</name>
-    <message>
-        <source>Layer</source>
-        <translation>图层</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::ResizeDialog</name>
-    <message>
-        <source>Width</source>
-        <translation>宽度</translation>
-    </message>
-    <message>
-        <source>Scale Layers</source>
-        <translation>缩放图层</translation>
-    </message>
-    <message>
-        <source>Height</source>
-        <translation>高度</translation>
-    </message>
-    <message>
-        <source>Resize</source>
-        <translation>调整</translation>
-    </message>
-    <message>
-        <source>Lock Apect Ratio</source>
-        <translation>锁定Apect比率</translation>
-    </message>
-    <message>
-        <source>Preserve Layer Aspect Ratio</source>
-        <translation>保存图层纵横比</translation>
-    </message>
-    <message>
-        <source>Resize Document</source>
-        <translation>调整文档大小</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::android::HelpDialog</name>
-    <message>
-        <source>Prompts the user to select a document to append as an object to the current one.</source>
-        <translation>提示用户选择要作为对象附加到当前文档的文档</translation>
-    </message>
-    <message>
-        <source>Create and edit text shapes.</source>
-        <translation>创建和编辑文本形状</translation>
-    </message>
-    <message>
-        <source>Redoes the last undone action.</source>
-        <translation>重做上次撤消的操作</translation>
-    </message>
-    <message>
-        <source>Starts playback.</source>
-        <translation>开始播放</translation>
-    </message>
-    <message>
-        <source>Saves the current frame as a still image</source>
-        <translation>保存当前帧作为静态图像</translation>
-    </message>
-    <message>
-        <source>Clears the current document and creates a new empty one</source>
-        <translation>清除当前文档并创建一个新的空文档</translation>
-    </message>
-    <message>
-        <source>Toggles looping for the playback (on by default).</source>
-        <translation>切换播放循环（默认开启）</translation>
-    </message>
-    <message>
-        <source>Save the current document, prompting to select a file for new documents</source>
-        <translation>保存当前文档，提示为新文档选择一个文件</translation>
-    </message>
-    <message>
-        <source>Jumps to the last frame.</source>
-        <translation>转到最后一帧</translation>
-    </message>
-    <message>
-        <source>Draws rectangles.</source>
-        <translation>绘制矩形</translation>
-    </message>
-    <message>
-        <source>Goes to the next frame.</source>
-        <translation>转到下一帧</translation>
-    </message>
-    <message>
-        <source>Copies the selection into the clipboard.</source>
-        <translation>将选择的内容复制到剪贴板</translation>
-    </message>
-    <message>
-        <source>Create Bezier curves using nodes and handles.</source>
-        <translation>使用节点和手柄创建贝塞尔曲线</translation>
-    </message>
-    <message>
-        <source>Save the current document, always prompting to select a file.</source>
-        <translation>保存当前文档，总是提示选择一个文件</translation>
-    </message>
-    <message>
-        <source>Removes the selected item.</source>
-        <translation>删除所选项目</translation>
-    </message>
-    <message>
-        <source>Cuts the selection into the clipboard.</source>
-        <translation>选择削减到剪贴板</translation>
-    </message>
-    <message>
-        <source>Draws a star, after it&apos;s been created you can change it into a regular polygon and change the number of sides from the properties pane.</source>
-        <translation>绘制一个星形，创建后您可以将其更改为正多边形并在属性窗格中更改边数</translation>
-    </message>
-    <message>
-        <source>Push the selection further back.</source>
-        <translation>将选择进一步推回</translation>
-    </message>
-    <message>
-        <source>Prompts the user to select a document to open.
-Currently the following formats are supported:
-%1</source>
-        <translation>提示用户选择要打开的文档
-目前支持以下格式：
-%1</translation>
-    </message>
-    <message>
-        <source>Opens the side pane used to select the fill color.</source>
-        <translation>打开用于选择填充颜色的侧窗格</translation>
-    </message>
-    <message>
-        <source>When enabled (which is the default) whenever you change an object property, a new keyframe is added for that property.</source>
-        <translation>每当您更改对象属性时启用（这是默认设置），都会为该属性添加一个新的关键帧</translation>
-    </message>
-    <message>
-        <source>
-Glaxnimate is a vector animation program.
-You can use it to create and modify Animated SVG, Telegram Animated Stickers, and Lottie animations.
-Follows a guide of the main icons and what they do.
-</source>
-        <translation>
-Glaxnimate 是一个矢量动画程序
-您可以使用它来创建和修改动画 SVG、电报动画贴纸和 Lottie 动画
-遵循主要图标及其功能的指南
-</translation>
-    </message>
-    <message>
-        <source>Brings the selection further to the front.</source>
-        <translation>将选择进一步放在前面</translation>
-    </message>
-    <message>
-        <source>Toggles the menu showing non-drawing buttons.</source>
-        <translation>切换显示非绘图按钮的菜单</translation>
-    </message>
-    <message>
-        <source>Shows this help.</source>
-        <translation>显示这个帮助</translation>
-    </message>
-    <message>
-        <source>Draws ellipses.</source>
-        <translation>绘制椭圆</translation>
-    </message>
-    <message>
-        <source>Pastes from the clipboard into the current document.</source>
-        <translation>将剪贴板内容粘贴到当前文档中</translation>
-    </message>
-    <message>
-        <source>Creates a sticker pack to export to Telegram.
-Note that only recent version of Telegram support this.
-If your Telegram version is too old, you can Export the file to TGS and upload that on Telegram.</source>
-        <translation>创建一个贴纸包以导出到 Telegram
-请注意，只有最新版本的 Telegram 支持此功能
-如果您的 Telegram 版本太旧，您可以将文件导出到 TGS 并上传到 Telegram</translation>
-    </message>
-    <message>
-        <source>Goes to the previous frame.</source>
-        <translation>去前一帧</translation>
-    </message>
-    <message>
-        <source>Undoes the last action.</source>
-        <translation>撤消最后一个动作</translation>
-    </message>
-    <message>
-        <source>Shows a tray with the curve drawing tools.</source>
-        <translation>显示带有曲线绘制工具的托盘</translation>
-    </message>
-    <message>
-        <source>Jumps to the first frame.</source>
-        <translation>跳到第一帧</translation>
-    </message>
-    <message>
-        <source>Save a copy of current document, prompting to select a format and a file.
-Currently the following formats are supported:
-%1</source>
-        <translation>保存当前文档的副本，提示选择格式和文件。
-目前支持以下格式：
-%1</translation>
-    </message>
-    <message>
-        <source>Opens the side pane used to change the advanced properties for the selected object.</source>
-        <translation>打开用于更改所选对象的高级属性的侧窗格。</translation>
-    </message>
-    <message>
-        <source>Edit tool, used to edit existing items (eg: moving, bezier nodes, setting rounded corners on a rectangle, etc.)</source>
-        <translation>编辑工具，用于编辑现有项目（例如：移动、贝塞尔节点、在矩形上设置圆角等）</translation>
-    </message>
-    <message>
-        <source>Shows a tray with the shape drawing tools.</source>
-        <translation>显示带有形状绘制工具的托盘。</translation>
-    </message>
-    <message>
-        <source>Select tool, you can use it to select objects and change their transform.</source>
-        <translation>选择工具，您可以使用它来选择对象并更改其变换。</translation>
-    </message>
-    <message>
-        <source>Shows the timeline and playback controls.</source>
-        <translation>显示时间轴和播放控件</translation>
-    </message>
-    <message>
-        <source>Opens the side pane used to select the stroke color and style.</source>
-        <translation>打开用于选择笔触颜色和样式的侧窗格</translation>
-    </message>
-    <message>
-        <source>Draw curves freehand.</source>
-        <translation>自由绘制曲线</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::font::FontLoader</name>
-    <message>
-        <source>Invalid data URL</source>
-        <translation>无效数据的URL</translation>
-    </message>
-    <message>
-        <source>Font format not supported for %1</source>
-        <translation>%1的字体格式不受支持</translation>
-    </message>
-    <message>
-        <source>Could not open file %1</source>
-        <translation>不能打开文件%1</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::tools::EditTool</name>
-    <message>
-        <source>Stop Color...</source>
-        <translation>停止颜色…...</translation>
-    </message>
-    <message>
-        <source>Gradient Colors</source>
-        <translation>渐变颜色</translation>
-    </message>
-    <message>
-        <source>Add Stop</source>
-        <translation>添加停止</translation>
-    </message>
-    <message>
-        <source>Remove Stop</source>
-        <translation>删除停止</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::tools::DrawTool</name>
-    <message>
-        <source>Add curve point</source>
-        <translation>添加曲线锚点</translation>
-    </message>
-    <message>
-        <source>Delete curve point</source>
-        <translation>删除曲线锚点</translation>
-    </message>
-</context>
-<context>
-    <name>QApplication</name>
-    <message>
-        <source>Unknown importer</source>
-        <translation>未知导入</translation>
-    </message>
-    <message>
-        <source>Could not find an interpreter</source>
-        <translation>找不到翻译</translation>
-    </message>
-    <message>
-        <source>If present, doesn&apos;t restore the main window state</source>
-        <translation>如果存在，不恢复主窗口状态</translation>
-    </message>
-    <message>
-        <source>ZLib %1%2 returned %3</source>
-        <translation>ZLib %1%2返回%3</translation>
-    </message>
-    <message>
-        <source># You have access to the `window` and `document` global variables and the `glaxnimate` module</source>
-        <translation># 你可以访问 `window` 和 `document` 全局变量以及 `glaxnimate` 模块</translation>
-    </message>
-    <message>
-        <source>Show version information and exit</source>
-        <translation>显示版本信息并退出</translation>
-    </message>
-    <message>
-        <source>Informational Options</source>
-        <translation>信息选项</translation>
-    </message>
-    <message>
-        <source>Could not open output file for writing</source>
-        <translation>无法打开输出文件进行写入</translation>
-    </message>
-    <message>
-        <source>Specify the format for --export. If omitted it&apos;s determined based on the file name. See --export-format-list for a list of supported formats.</source>
-        <translation>指定 --export 的格式。 如果省略，则根据文件名确定。 有关支持的格式列表，请参阅 --export-format-list。</translation>
-    </message>
-    <message>
-        <source>GUI Options</source>
-        <translation>GUI选项</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation>选项</translation>
-    </message>
-    <message>
-        <source># Glaxnimate snippet</source>
-        <translation># Glaxnimate代码段</translation>
-    </message>
-    <message>
-        <source>Could not open input file for reading</source>
-        <translation>无法打开输入文件阅读</translation>
-    </message>
-    <message>
-        <source># For documentation see https://glaxnimate.mattbas.org/contributing/scripting/</source>
-        <translation>#文档参见https://glaxnimate.mattbas.org/contributing/scripting/</translation>
-    </message>
-    <message>
-        <source>Use a specific size for the main window</source>
-        <translation>为主窗口使用特定大小</translation>
-    </message>
-    <message>
-        <source>Export Options</source>
-        <translation>导出选项</translation>
-    </message>
-    <message>
-        <source>If present, instead of starting the GUI export the input file to the given</source>
-        <translation>如果存在，而不是启动 GUI 将输入文件导出到给定的</translation>
-    </message>
-    <message>
-        <source>Print the window id</source>
-        <translation>打印窗口id</translation>
-    </message>
-    <message>
-        <source>Error loading input file</source>
-        <translation>输入文件加载错误</translation>
-    </message>
-    <message>
-        <source>Shows possible values for --export-format</source>
-        <translation>显示可能值,输出格式</translation>
-    </message>
-    <message>
-        <source>Enables the debug menu</source>
-        <translation>启用调试菜单</translation>
-    </message>
-    <message>
-        <source>Show this help and exit</source>
-        <translation>显示帮助和退出</translation>
-    </message>
-    <message>
-        <source>Error converting to the output format</source>
-        <translation>转换为输出格式时出错</translation>
-    </message>
-    <message>
-        <source>Could not run the plugin</source>
-        <translation>不能运行这个插件</translation>
-    </message>
-    <message>
-        <source>Unknown exporter. use --export-format-list for a list of available formats</source>
-        <translation>未知的出口商。 使用 --export-format-list 获取可用格式列表</translation>
-    </message>
-    <message>
-        <source>You need to specify a file to export</source>
-        <translation>您需要指定一个文件导出</translation>
-    </message>
-    <message>
-        <source>File to open</source>
-        <translation>文件打开</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::io::lottie::TgsFormat</name>
-    <message>
-        <source>Gradient strokes are not officially supported</source>
-        <translation>渐变描边并非官方支持</translation>
-    </message>
-    <message>
-        <source>Images are not supported</source>
-        <translation>不支持图片</translation>
-    </message>
-    <message>
-        <source>File too large: %1k, should be under 64k</source>
-        <translation>文件太大：%1k，应该小于 64k</translation>
-    </message>
-    <message>
-        <source>Telegram Animated Sticker</source>
-        <translation>Telegram动画贴纸</translation>
-    </message>
-    <message>
-        <source>Masks are not supported</source>
-        <translation>蒙版不支持</translation>
-    </message>
-    <message>
-        <source>Star Shapes are not officially supported</source>
-        <translation>星的形状并非官方支持</translation>
-    </message>
-    <message>
-        <source>Repeaters are not officially supported</source>
-        <translation>中继器并非官方支持</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::emoji::EmojiSetDialog</name>
-    <message>
-        <source>Could not download: %1</source>
-        <translation>不能下载:%1</translation>
-    </message>
-    <message>
-        <source>Didn&apos;t download any files</source>
-        <translation>没有下载任何文件</translation>
-    </message>
-    <message>
-        <source>Downloading</source>
-        <translation>下载</translation>
-    </message>
-    <message>
-        <source>Installed</source>
-        <translation>安装</translation>
-    </message>
-    <message>
-        <source>Not Installed</source>
-        <translation>没有安装</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::io::raster::RasterFormat</name>
-    <message>
-        <source>Raster Image</source>
-        <translation>位图</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::GradientColors</name>
-    <message>
-        <source>Add color to %1</source>
-        <translation>添加颜色%1</translation>
-    </message>
-    <message>
-        <source>Gradient</source>
-        <translation>渐变</translation>
-    </message>
-    <message>
-        <source>Remove color from %1</source>
-        <translation>删除颜色从%1</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::graphics::TransformGraphicsItem</name>
-    <message>
-        <source>Drag anchor point</source>
-        <translation>拖曳锚点</translation>
-    </message>
-</context>
-<context>
     <name>glaxnimate::io::lottie::LottieFormat</name>
     <message>
         <source>Images are not supported</source>
@@ -4378,139 +4306,195 @@ Currently the following formats are supported:
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::detail::AnimatedPropertyBezier</name>
+    <name>glaxnimate::io::lottie::LottieHtmlFormat</name>
     <message>
-        <source>Extend Shape</source>
-        <translation>扩展形状</translation>
-    </message>
-    <message>
-        <source>Remove Nodes</source>
-        <translation>删除锚点</translation>
-    </message>
-    <message>
-        <source>Split Segment</source>
-        <translation>分离线段</translation>
+        <source>Lottie HTML Preview</source>
+        <translation>LottieHTML预览</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::graphics::BezierItem</name>
+    <name>glaxnimate::io::lottie::TgsFormat</name>
     <message>
-        <source>Update shape</source>
-        <translation>更新形状</translation>
+        <source>Gradient strokes are not officially supported</source>
+        <translation>渐变描边并非官方支持</translation>
     </message>
     <message>
-        <source>Remove Point</source>
-        <translation>删除点</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::IoStatusDialog</name>
-    <message>
-        <source>IoStatusDialog</source>
-        <translation>IoStatusDialog</translation>
+        <source>Images are not supported</source>
+        <translation>不支持图片</translation>
     </message>
     <message>
-        <source>/path/to/your/file/in.here</source>
-        <translation>/path/to/your/file/in.here</translation>
+        <source>File too large: %1k, should be under 64k</source>
+        <translation>文件太大：%1k，应该小于 64k</translation>
     </message>
     <message>
-        <source>Issues</source>
-        <translation>问题</translation>
+        <source>Telegram Animated Sticker</source>
+        <translation>Telegram动画贴纸</translation>
     </message>
     <message>
-        <source>Operation Failed</source>
-        <translation>操作失败</translation>
+        <source>Masks are not supported</source>
+        <translation>蒙版不支持</translation>
     </message>
-</context>
-<context>
-    <name>glaxnimate::model::GradientColorsList</name>
     <message>
-        <source>Gradient Colors</source>
-        <translation>渐变颜色</translation>
+        <source>Star Shapes are not officially supported</source>
+        <translation>星的形状并非官方支持</translation>
+    </message>
+    <message>
+        <source>Repeaters are not officially supported</source>
+        <translation>中继器并非官方支持</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::GlaxnimateApp</name>
+    <name>glaxnimate::io::raster::RasterFormat</name>
     <message>
-        <source>Open / Save</source>
-        <translation>打开/保存</translation>
+        <source>Raster Image</source>
+        <translation>位图</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::font::FontStyleDialog</name>
+    <name>glaxnimate::io::raster::SpritesheetFormat</name>
     <message>
-        <source>Google Fonts</source>
-        <translation>Google字体</translation>
+        <source>Frame Height</source>
+        <translation>帧高度</translation>
     </message>
     <message>
-        <source>Custom</source>
-        <translation>自定义</translation>
+        <source>Width of each frame</source>
+        <translation>每一帧的宽度</translation>
     </message>
     <message>
-        <source>System</source>
-        <translation>系统</translation>
+        <source>Sprite Sheet</source>
+        <translation>精灵表单</translation>
     </message>
     <message>
-        <source>Font Style</source>
-        <translation>字体样式</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::PrecompositionList</name>
-    <message>
-        <source>Precompositions</source>
-        <translation>预合成</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::emoji::EmojiDialog</name>
-    <message>
-        <source>Select Emoji</source>
-        <translation>选择Emoji</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::graphics::GradientEditor</name>
-    <message>
-        <source>Drag Gradient</source>
-        <translation>拖动渐变</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::tools::DrawTool::Private</name>
-    <message>
-        <source>Extend Path</source>
-        <translation>扩展路径</translation>
+        <source>Time Step</source>
+        <translation>时间步长</translation>
     </message>
     <message>
-        <source>Draw Shape</source>
-        <translation>绘制形状</translation>
+        <source>Height of each frame</source>
+        <translation>每一帧的高度</translation>
+    </message>
+    <message>
+        <source>Number of columns in the sheet</source>
+        <translation>表中的列数</translation>
+    </message>
+    <message>
+        <source>Frame Width</source>
+        <translation>帧宽度</translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>列</translation>
+    </message>
+    <message>
+        <source>By how much each rendered frame should increase time (in frames)</source>
+        <translation>每个渲染帧应增加多少时间（以帧为单位）</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::FillStyleWidget</name>
+    <name>glaxnimate::io::svg::SvgFormat</name>
     <message>
-        <source>Update Fill Color</source>
-        <translation>更新填充颜色</translation>
+        <source>SVG</source>
+        <translation>SVG</translation>
+    </message>
+    <message>
+        <source>Font face with external url</source>
+        <translation>字体与外部url</translation>
+    </message>
+    <message>
+        <source>External Fonts</source>
+        <translation>外部字体</translation>
+    </message>
+    <message>
+        <source>How to include external font</source>
+        <translation>如何引入外部字体</translation>
+    </message>
+    <message>
+        <source>Ignore</source>
+        <translation>忽略</translation>
+    </message>
+    <message>
+        <source>Embedded data</source>
+        <translation>嵌入式数据</translation>
+    </message>
+    <message>
+        <source>External Stylesheet</source>
+        <translation>外部样式表</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::android::StickerPackBuilderDialog</name>
+    <name>glaxnimate::io::video::VideoFormat</name>
     <message>
-        <source>Cannot save as TGS</source>
-        <translation>不能另存为TGS</translation>
+        <source>No video codec</source>
+        <translation>没有视频编解码器</translation>
     </message>
     <message>
-        <source>Could not open file</source>
-        <translation>不能打开文件</translation>
+        <source>Video</source>
+        <translation>视频</translation>
     </message>
     <message>
-        <source>Too many stickers</source>
-        <translation>贴纸太多</translation>
+        <source>Width</source>
+        <translation>宽度</translation>
     </message>
     <message>
-        <source>Are you sure you want to remove all stickers from the pack?</source>
-        <translation>您确定要从包中移除所有贴纸吗？</translation>
+        <source>Background</source>
+        <translation>背景</translation>
+    </message>
+    <message>
+        <source>If not 0, it will overwrite the size</source>
+        <translation>如果不为0,它将覆盖大小</translation>
+    </message>
+    <message>
+        <source>Format not supported: %1</source>
+        <translation>格式不支持:%1</translation>
+    </message>
+    <message>
+        <source>Could not find output format</source>
+        <translation>找不到输出格式</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>高度</translation>
+    </message>
+    <message>
+        <source>Could not deduce output format from file extension: using MPEG.</source>
+        <translation>无法从文件扩展名推断输出格式：使用 MPEG</translation>
+    </message>
+    <message>
+        <source>Show verbose information on the conversion</source>
+        <translation>显示详细的转换信息</translation>
+    </message>
+    <message>
+        <source>Background color</source>
+        <translation>背景颜色</translation>
+    </message>
+    <message>
+        <source>Bitrate</source>
+        <translation>比特率</translation>
+    </message>
+    <message>
+        <source>Error occurred when opening output file: %1</source>
+        <translation>打开输出文件时出错:%1</translation>
+    </message>
+    <message>
+        <source>Verbose</source>
+        <translation>详细</translation>
+    </message>
+    <message>
+        <source>Video bit rate</source>
+        <translation>视频比特率</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::AnimatableBase</name>
+    <message>
+        <source>Update %1</source>
+        <translation>更新%1</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::AnimationContainer</name>
+    <message>
+        <source>Animation Timing</source>
+        <translation>动画时间</translation>
     </message>
 </context>
 <context>
@@ -4532,17 +4516,49 @@ Currently the following formats are supported:
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::WindowMessageWidget</name>
-    <message>
-        <source>Ignore</source>
-        <translation>忽略</translation>
-    </message>
-</context>
-<context>
     <name>glaxnimate::model::BitmapList</name>
     <message>
         <source>Images</source>
         <translation>图片</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::Ellipse</name>
+    <message>
+        <source>Ellipse</source>
+        <translation>椭圆</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::EmbeddedFont</name>
+    <message>
+        <source>Font</source>
+        <translation>字体</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::Fill</name>
+    <message>
+        <source>Fill</source>
+        <translation>填充</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::Font</name>
+    <message>
+        <source>Font</source>
+        <translation>字体</translation>
+    </message>
+    <message>
+        <source>Change Font</source>
+        <translation>更改字体</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::FontList</name>
+    <message>
+        <source>Fonts</source>
+        <translation>字体</translation>
     </message>
 </context>
 <context>
@@ -4561,106 +4577,25 @@ Currently the following formats are supported:
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::item_models::DocumentModelBase</name>
+    <name>glaxnimate::model::GradientColors</name>
     <message>
-        <source>Move Layers</source>
-        <translation>移动图层</translation>
+        <source>Add color to %1</source>
+        <translation>添加颜色%1</translation>
+    </message>
+    <message>
+        <source>Gradient</source>
+        <translation>渐变</translation>
+    </message>
+    <message>
+        <source>Remove color from %1</source>
+        <translation>删除颜色从%1</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::TabBarCloseButton</name>
+    <name>glaxnimate::model::GradientColorsList</name>
     <message>
-        <source>Delete Composition</source>
-        <translation>删除预合成</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::Stroke</name>
-    <message>
-        <source>Stroke</source>
-        <translation>描边</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::NamedColorList</name>
-    <message>
-        <source>Swatch</source>
-        <translation>色板</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::StretchableTime</name>
-    <message>
-        <source>Timing</source>
-        <translation>持续时间</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::graphics::PointItem</name>
-    <message>
-        <source>Remove node tangent</source>
-        <translation>Remove node tangent</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::AnimationContainer</name>
-    <message>
-        <source>Animation Timing</source>
-        <translation>动画时间</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::PolyStar</name>
-    <message>
-        <source>PolyStar</source>
-        <translation>PolyStar</translation>
-    </message>
-</context>
-<context>
-    <name>app::settings::Settings</name>
-    <message>
-        <source>Glaxnimate Default</source>
-        <translation>Glaxnimate默认</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::PreCompLayer</name>
-    <message>
-        <source>Composition Layer</source>
-        <translation>预合成图层</translation>
-    </message>
-</context>
-<context>
-    <name>QMenu</name>
-    <message>
-        <source>Properties</source>
-        <translation>属性</translation>
-    </message>
-    <message>
-        <source>Add Keyframe</source>
-        <translation>添加关键帧</translation>
-    </message>
-    <message>
-        <source>Remove Keyframe</source>
-        <translation>删除关键帧</translation>
-    </message>
-    <message>
-        <source>Clear Animations</source>
-        <translation>清除动画</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::Precomposition</name>
-    <message>
-        <source>Composition</source>
-        <translation>预合成</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::timeline::KeyframeSplitItem</name>
-    <message>
-        <source>Drag Keyframes</source>
-        <translation>拖动关键帧</translation>
+        <source>Gradient Colors</source>
+        <translation>渐变颜色</translation>
     </message>
 </context>
 <context>
@@ -4671,35 +4606,38 @@ Currently the following formats are supported:
     </message>
 </context>
 <context>
-    <name>glaxnimate::io::ImportExport</name>
+    <name>glaxnimate::model::Group</name>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Group</source>
+        <translation>编组</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::Transform</name>
+    <name>glaxnimate::model::Image</name>
     <message>
-        <source>Transform</source>
-        <translation>变换</translation>
+        <source>Image</source>
+        <translation>图像</translation>
     </message>
 </context>
 <context>
-    <name>CompoundTimelineWidget</name>
+    <name>glaxnimate::model::Layer</name>
     <message>
-        <source>Add Keyframe</source>
-        <translation>添加关键帧</translation>
-    </message>
-    <message>
-        <source>&amp;Clear Animations</source>
-        <translation>&amp;清除动画</translation>
+        <source>Layer</source>
+        <translation>图层</translation>
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::Object</name>
+    <name>glaxnimate::model::MainComposition</name>
     <message>
-        <source>Uknown Object</source>
-        <translation>未知对象</translation>
+        <source>Animation</source>
+        <translation>动画</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::MaskSettings</name>
+    <message>
+        <source>Mask</source>
+        <translation>蒙版</translation>
     </message>
 </context>
 <context>
@@ -4710,10 +4648,52 @@ Currently the following formats are supported:
     </message>
 </context>
 <context>
-    <name>glaxnimate::model::AnimatableBase</name>
+    <name>glaxnimate::model::NamedColorList</name>
     <message>
-        <source>Update %1</source>
-        <translation>更新%1</translation>
+        <source>Swatch</source>
+        <translation>色板</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::Object</name>
+    <message>
+        <source>Uknown Object</source>
+        <translation>未知对象</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::Path</name>
+    <message>
+        <source>Path</source>
+        <translation>路径</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::PolyStar</name>
+    <message>
+        <source>PolyStar</source>
+        <translation>PolyStar</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::PreCompLayer</name>
+    <message>
+        <source>Composition Layer</source>
+        <translation>预合成图层</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::Precomposition</name>
+    <message>
+        <source>Composition</source>
+        <translation>预合成</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::PrecompositionList</name>
+    <message>
+        <source>Precompositions</source>
+        <translation>预合成</translation>
     </message>
 </context>
 <context>
@@ -4724,27 +4704,6 @@ Currently the following formats are supported:
     </message>
 </context>
 <context>
-    <name>glaxnimate::gui::tools::FillTool</name>
-    <message>
-        <source>Apply Style</source>
-        <translation>应用样式</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::gui::TimingDialog</name>
-    <message>
-        <source>Change Animation Properties</source>
-        <translation>修改动画属性</translation>
-    </message>
-</context>
-<context>
-    <name>glaxnimate::model::Ellipse</name>
-    <message>
-        <source>Ellipse</source>
-        <translation>椭圆</translation>
-    </message>
-</context>
-<context>
     <name>glaxnimate::model::Repeater</name>
     <message>
         <source>Repeater</source>
@@ -4752,10 +4711,53 @@ Currently the following formats are supported:
     </message>
 </context>
 <context>
+    <name>glaxnimate::model::StretchableTime</name>
+    <message>
+        <source>Timing</source>
+        <translation>持续时间</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::Stroke</name>
+    <message>
+        <source>Stroke</source>
+        <translation>描边</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::TextShape</name>
+    <message>
+        <source>Text</source>
+        <translation>文本</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::Transform</name>
+    <message>
+        <source>Transform</source>
+        <translation>变换</translation>
+    </message>
+</context>
+<context>
     <name>glaxnimate::model::Trim</name>
     <message>
         <source>Trim Path</source>
         <translation>修剪路径</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::detail::AnimatedPropertyBezier</name>
+    <message>
+        <source>Extend Shape</source>
+        <translation>扩展形状</translation>
+    </message>
+    <message>
+        <source>Remove Nodes</source>
+        <translation>删除锚点</translation>
+    </message>
+    <message>
+        <source>Split Segment</source>
+        <translation>分离线段</translation>
     </message>
 </context>
 </TS>

@@ -77,6 +77,11 @@ protected:
     virtual void on_initialize() {}
 
     /**
+     * \brief Called after on_initialize
+     */
+    virtual void on_initialize_translations();
+
+    /**
      * \brief Called after on_initialize() and after translations are loaded
      */
     virtual void on_initialize_settings() {}

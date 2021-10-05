@@ -33,7 +33,8 @@ include(../cmake/qt.cmake)
 set(ALL_SOURCE_DIRECTORIES ${CMAKE_SOURCE_DIR}/src)
 create_qt_linguist_translations(
     translations
-    translations/glaxnimate_en.ts
+    translations/glaxnimate_en_US.ts
+    translations/glaxnimate_en_GB.ts
     translations/glaxnimate_it.ts
     translations/glaxnimate_de.ts
     translations/glaxnimate_fr.ts

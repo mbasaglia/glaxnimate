@@ -4,6 +4,8 @@
     * Loading Lottie with `meta` no longer show a warning
 * UI:
     * Added simplified Chinese translation
+    * Added British English translation
+    * Avaliable languages are shown in their own language in the settings dialog
 
 ## 0.4.6
 

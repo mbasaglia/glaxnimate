@@ -10,7 +10,7 @@
 void app::Application::initialize()
 {
     on_initialize();
-    app::TranslationService::instance().initialize();
+    on_initialize_translations();
     on_initialize_settings();
     app::settings::Settings::instance().load();
 }
@@ -93,4 +93,9 @@ bool app::Application::notify(QObject* receiver, QEvent* e)
         log::Log("Event", QMetaEnum::fromType<QEvent::Type>().valueToKey(e->type())).stream(log::Error) << "Exception:" << exc.what();
         return false;
     }
+}
+
+void app::Application::on_initialize_translations()
+{
+    app::TranslationService::instance().initialize();
 }

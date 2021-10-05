@@ -86,6 +86,7 @@ public:
 protected:
     void on_initialize() override;
     void on_initialize_settings() override;
+    void on_initialize_translations() override;
 
 private:
     app::log::ListenerStore* store_logger;

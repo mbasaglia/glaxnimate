@@ -5426,17 +5426,17 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="496"/>
+        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="490"/>
         <source>Lottie only supports layers in the top level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="543"/>
+        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="537"/>
         <source>Images cannot be grouped with other shapes, they must be inside a layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="545"/>
+        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="539"/>
         <source>Composition layers cannot be grouped with other shapes, they must be inside a layer</source>
         <translation type="unfinished"></translation>
     </message>

@@ -41,10 +41,28 @@ void app::TranslationService::initialize ( QString default_lang_code )
 QString app::TranslationService::language_name(QString lang_code)
 {
     QLocale lang_loc = QLocale(lang_code);
-    QString name = QLocale::languageToString(lang_loc.language()); // English name
+    QString name = lang_loc.nativeLanguageName();
+    QString specifier;
+
+    if ( lang_code.contains("_") )
+    {
+        if ( lang_loc.script() != QLocale::AnyScript )
+            specifier = QLocale::scriptToString(lang_loc.script());
+
+        if ( lang_loc.country() != QLocale::AnyCountry )
+        {
+            if ( !specifier.isEmpty() )
+                specifier += ", ";
+            specifier = lang_loc.nativeCountryName();
+        }
+    }
 
     if ( !name.isEmpty() )
+    {
         name[0] = name[0].toUpper();
+        if ( !specifier.isEmpty() )
+            name += " (" + specifier + ")";
+    }
 
     return name;
 }
