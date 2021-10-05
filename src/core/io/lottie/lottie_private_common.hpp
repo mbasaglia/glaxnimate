@@ -180,6 +180,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("markers"),
         FieldInfo("motion_blur"),
         FieldInfo("tgs"),
+        FieldInfo("meta", Custom),
     }},
     // Layer is converted explicitly
     {"__Layer__", {
