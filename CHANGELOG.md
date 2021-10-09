@@ -2,6 +2,7 @@
 
 * I/O:
     * Loading Lottie with `meta` no longer show a warning
+    * Fixed UUIDs when loading lottie animations
 * UI:
     * Added simplified Chinese translation
     * Added British English translation

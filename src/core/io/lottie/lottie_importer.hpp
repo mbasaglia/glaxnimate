@@ -642,8 +642,14 @@ private:
             case model::PropertyTraits::Int:
             case model::PropertyTraits::Float:
             case model::PropertyTraits::String:
-            case model::PropertyTraits::Uuid:
                 return val.toVariant();
+            case model::PropertyTraits::Uuid:
+            {
+                QUuid uuid = val.toVariant().toUuid();
+                if ( uuid.isNull() )
+                    uuid = QUuid::createUuid();
+                return QVariant::fromValue(uuid);
+            }
             case model::PropertyTraits::Point:
                 return compound_value_2d<QPointF>(val);
             case model::PropertyTraits::Size:
