@@ -236,15 +236,17 @@ public:
     /**
      * \brief QTreeView isn't reliable with expanded/collapsed signals, so we check every time ;_;
      */
-    void adjust_expand(const QModelIndex& parent_index, LineItem* parent_item)
+    void adjust_expand(const QModelIndex& parent_index, LineItem* parent_item, bool recursive = false)
     {
         int row_count = model->rowCount(parent_index);
         for ( int i = 0; i < row_count; i++ )
         {
             QModelIndex index = model->index(i, 0, parent_index);
             auto row = parent_item->rows()[i];
-            row->set_expanded(expander->isExpanded(index));
-
+            bool expanded = expander->isExpanded(index);
+            row->set_expanded(expanded);
+            if ( recursive && expanded )
+                adjust_expand(index, row, true);
         }
     }
 };
@@ -609,6 +611,13 @@ void TimelineWidget::select(const QItemSelection& selected, const QItemSelection
         if ( auto item = d->index_to_line(index) )
             item->setSelected(false);
     }
+
+
+    // Sometimes the expand/collapse status gets out of sync, so we force it when selecting a row
+    auto root_index = d->model->index(0, 0);
+    if ( auto root_line = d->index_to_line(root_index) )
+        d->adjust_expand(root_index, root_line, true);
+
 }
 
 

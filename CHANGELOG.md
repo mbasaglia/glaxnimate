@@ -7,6 +7,8 @@
     * Added simplified Chinese translation
     * Added British English translation
     * Avaliable languages are shown in their own language in the settings dialog
+* Bug Fixes:
+    * Fixed rows breaking up in the timeline
 
 ## 0.4.6
 
