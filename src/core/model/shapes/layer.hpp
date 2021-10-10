@@ -95,9 +95,10 @@ public:
 
     std::unique_ptr<ShapeElement> to_path() const override;
 
+    bool is_valid_parent(DocumentNode* node) const;
+
 private:
     std::vector<DocumentNode*> valid_parents() const;
-    bool is_valid_parent(DocumentNode* node) const;
 };
 
 } // namespace glaxnimate::model

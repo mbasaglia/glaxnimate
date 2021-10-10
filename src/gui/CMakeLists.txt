@@ -71,6 +71,7 @@ widgets/timeline/timeline_widget.cpp
 widgets/timeline/compound_timeline_widget.cpp
 widgets/timeline/compound_timeline_widget.ui
 widgets/timeline/timeline_items.cpp
+widgets/timeline/timeline_treeview.cpp
 
 widgets/tools/shape_tool_widget.cpp
 widgets/tools/shape_tool_widget.ui

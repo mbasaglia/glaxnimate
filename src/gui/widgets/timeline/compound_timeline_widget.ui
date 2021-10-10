@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CompoundTimelineWidget</class>
- <widget class="QWidget" name="CompoundTimelineWidget">
+ <class>glaxnimate::gui::CompoundTimelineWidget</class>
+ <widget class="QWidget" name="glaxnimate::gui::CompoundTimelineWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -71,7 +71,7 @@
         <property name="childrenCollapsible">
          <bool>false</bool>
         </property>
-        <widget class="QTreeView" name="properties">
+        <widget class="glaxnimate::gui::TimelineTreeview" name="properties">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -210,13 +210,18 @@
    <header>widgets/composition_tab_bar.hpp</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>glaxnimate::gui::TimelineTreeview</class>
+   <extends>QTreeView</extends>
+   <header>widgets/timeline/timeline_treeview.hpp</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
    <sender>properties</sender>
    <signal>expanded(QModelIndex)</signal>
-   <receiver>CompoundTimelineWidget</receiver>
+   <receiver>glaxnimate::gui::CompoundTimelineWidget</receiver>
    <slot>expand_index(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -232,7 +237,7 @@
   <connection>
    <sender>properties</sender>
    <signal>collapsed(QModelIndex)</signal>
-   <receiver>CompoundTimelineWidget</receiver>
+   <receiver>glaxnimate::gui::CompoundTimelineWidget</receiver>
    <slot>collapse_index(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -248,7 +253,7 @@
   <connection>
    <sender>properties</sender>
    <signal>clicked(QModelIndex)</signal>
-   <receiver>CompoundTimelineWidget</receiver>
+   <receiver>glaxnimate::gui::CompoundTimelineWidget</receiver>
    <slot>click_index(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">

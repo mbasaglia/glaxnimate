@@ -8,6 +8,7 @@
     * Added simplified Chinese translation
     * Added British English translation
     * Avaliable languages are shown in their own language in the settings dialog
+    * You can drag on the timeline property tree to change a layer's parent link
 * Bug Fixes:
     * Fixed rows breaking up in the timeline
 
