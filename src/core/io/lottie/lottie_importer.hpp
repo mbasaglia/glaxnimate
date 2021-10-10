@@ -131,7 +131,7 @@ private:
                 layer->mask->mask.set(true);
                 layer->name.set(json["nm"].toString());
                 auto child = std::make_unique<model::Layer>(document);
-                layer_indices[index] = layer.get();
+                layer_indices[index] = child.get();
                 deferred.emplace_back(child.get(), json);
                 layer->shapes.insert(std::move(child), 0);
                 composition->shapes.insert(std::move(layer), 0);

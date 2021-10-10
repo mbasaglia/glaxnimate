@@ -3,6 +3,7 @@
 * I/O:
     * Loading Lottie with `meta` no longer show a warning
     * Fixed UUIDs when loading lottie animations
+    * Fixed loading layers with a masked parent from lottie
 * UI:
     * Added simplified Chinese translation
     * Added British English translation
