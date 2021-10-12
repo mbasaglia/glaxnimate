@@ -1,5 +1,7 @@
 ## 0.4.7
 
+* Editing:
+    * Action to make animations loop in the property context menu
 * I/O:
     * Loading Lottie with `meta` no longer show a warning
     * Fixed UUIDs when loading lottie animations
