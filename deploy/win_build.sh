@@ -112,7 +112,7 @@ case "$ACTION" in
 
 
         # Upload SourceForge
-        rsync -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no $SSH_ARGS"
+        rsync -vv -a "$path" mbasaglia@frs.sourceforge.net:/home/frs/project/glaxnimate/ -e "ssh -o StrictHostKeyChecking=no $SSH_ARGS"
 
         # Upload itch.io
         wget -nv https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
