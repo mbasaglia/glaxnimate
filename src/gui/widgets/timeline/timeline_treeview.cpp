@@ -102,7 +102,7 @@ void glaxnimate::gui::TimelineTreeview::mousePressEvent(QMouseEvent* event)
         }
     }
 
-    QTreeView::mouseMoveEvent(event);
+    QTreeView::mousePressEvent(event);
 }
 
 void glaxnimate::gui::TimelineTreeview::mouseMoveEvent(QMouseEvent* event)
