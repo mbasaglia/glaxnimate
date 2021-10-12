@@ -50,7 +50,7 @@ jobs:
                 SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
                 BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
               run: |
-                echo "$SSH_PRIV_KEY" >>privkey
+                echo "$SSH_PRIV_KEY" >privkey
                 chmod 600 privkey
                 branch="${GITHUB_REF#refs/*/}"
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
@@ -123,10 +123,9 @@ jobs:
                 SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
                 BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
               run: |
-                echo "$SSH_PRIV_KEY" >>privkey
+                echo "$SSH_PRIV_KEY" >privkey
                 chmod 600 privkey
                 branch="${GITHUB_REF#refs/*/}"
-                export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/win_build.sh deploy "$branch" "-i $PWD/privkey"
             - name: Upload Pypi
               env:
