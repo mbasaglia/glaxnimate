@@ -108,6 +108,7 @@ jobs:
                 cmake .. -DVERSION_SUFFIX="git.`date +%Y%m%d%H%M%S`.$CI_COMMIT_BRANCH.$CI_COMMIT_SHORT_SHA"
                 cd ..
                 ./deploy/win_build.sh pypi
+                cp build/checksum.txt build/checksum-win.txt
             # Artifacts are always zipped, even if you only have 1 file... Just adding them so it's easier to verify them
             - name: Job Artifacts
               uses: actions/upload-artifact@v2
@@ -117,6 +118,12 @@ jobs:
                     build/checksum.txt
                     build/glaxnimate-x86_64.zip
                     build/bin/python/dist/
+            - name: Update release
+              uses: johnwbyrd/update-release@v1
+              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
+              with:
+                    token: ${{ secrets.GITHUB_TOKEN }}
+                    files: ./build/checksum-win.txt ./build/glaxnimate-x86_64.zip
             - name: Upload Artifacts
               if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
               env:
