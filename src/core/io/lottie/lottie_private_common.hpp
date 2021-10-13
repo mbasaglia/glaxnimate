@@ -313,6 +313,9 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"o", "offset", FloatMult(360)},
         FieldInfo{"m", "multiple"},
     }},
+    {"InflateDeflate", {
+        FieldInfo{"a", "amount", FloatMult(100)},
+    }},
 };
 const QMap<QString, QString> shape_types = {
     {"Rect", "rc"},
@@ -329,6 +332,7 @@ const QMap<QString, QString> shape_types = {
     {"Trim", "tm"},
     {"Repeater", "rp"},
 //     {"RoundedCorners", "rd"},
+    {"InflateDeflate", "pb"},
 };
 
 const QMap<QString, QString> shape_types_repeat = {

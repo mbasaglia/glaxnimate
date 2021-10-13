@@ -38,7 +38,7 @@ R"(<!DOCTYPE html>
 bool glaxnimate::io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QString&,
                                            model::Document* document, const QVariantMap& settings)
 {
-    file.write(html_head(this, document, "<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.3/lottie.js'></script>"));
+    file.write(html_head(this, document, "<script src='https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.1/lottie.js'></script>"));
     file.write(R"(
 <body>
 <div id="animation"></div>

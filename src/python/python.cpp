@@ -15,6 +15,7 @@
 #include "model/shapes/image.hpp"
 #include "model/shapes/repeater.hpp"
 #include "model/shapes/trim.hpp"
+#include "model/shapes/inflate_deflate.hpp"
 
 #include "model/assets/assets.hpp"
 #include "model/assets/named_color.hpp"
@@ -480,5 +481,8 @@ void register_py_module(py::module& glaxnimate_module)
     register_constructible<model::Fill, model::Styler>(shapes, enums<model::Fill::Rule>{});
     register_constructible<model::Stroke, model::Styler>(shapes, enums<model::Stroke::Cap, model::Stroke::Join>{});
     register_constructible<model::Repeater, model::Modifier>(shapes);
-    register_constructible<model::Trim, model::Modifier>(shapes);
+
+    register_from_meta<model::PathModifier, model::Modifier>(shapes);
+    register_constructible<model::Trim, model::PathModifier>(shapes);
+    register_constructible<model::InflateDeflate, model::PathModifier>(shapes);
 }

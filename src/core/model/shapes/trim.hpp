@@ -1,10 +1,10 @@
 #pragma once
 
-#include "shape.hpp"
+#include "path_modifier.hpp"
 
 namespace glaxnimate::model {
 
-class Trim : public StaticOverrides<Trim, Modifier>
+class Trim : public StaticOverrides<Trim, PathModifier>
 {
     GLAXNIMATE_OBJECT(Trim)
     GLAXNIMATE_ANIMATABLE(float, start, 0, {}, 0, 1, false, PropertyTraits::Percent)
@@ -29,13 +29,10 @@ public:
     static QIcon static_tree_icon();
     static QString static_type_name_human();
 
-    std::unique_ptr<ShapeElement> to_path() const override;
-
     math::bezier::MultiBezier process(FrameTime t, const math::bezier::MultiBezier& mbez) const override;
 
 protected:
     bool process_collected() const override;
-    void on_paint(QPainter* painter, FrameTime t, PaintMode mode, model::Modifier* modifier) const override;
 
 };
 

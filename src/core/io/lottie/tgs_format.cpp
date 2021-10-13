@@ -8,6 +8,7 @@
 #include "model/shapes/image.hpp"
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/repeater.hpp"
+#include "model/shapes/inflate_deflate.hpp"
 #include "validation.hpp"
 
 
@@ -55,6 +56,10 @@ private:
         else if ( qobject_cast<model::Repeater*>(node) )
         {
             show_error(node, TgsFormat::tr("Repeaters are not officially supported"), app::log::Info);
+        }
+        else if ( qobject_cast<model::InflateDeflate*>(node) )
+        {
+            show_error(node, TgsFormat::tr("Inflate/Deflate is not supported"), app::log::Warning);
         }
     }
 };

@@ -77,6 +77,8 @@ model/shapes/precomp_layer.cpp
 model/shapes/text.cpp
 model/shapes/repeater.cpp
 model/shapes/trim.cpp
+model/shapes/inflate_deflate.cpp
+model/shapes/path_modifier.cpp
 
 
 plugin/plugin.cpp
