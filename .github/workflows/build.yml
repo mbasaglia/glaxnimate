@@ -118,8 +118,8 @@ jobs:
                     build/checksum.txt
                     build/glaxnimate-x86_64.zip
                     build/bin/python/dist/
-            - name: Update release
-              uses: johnwbyrd/update-release@v1
+            - name: Update Release
+              uses: johnwbyrd/update-release@v1.0.0
               if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
               with:
                     token: ${{ secrets.GITHUB_TOKEN }}
