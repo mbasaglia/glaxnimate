@@ -499,11 +499,17 @@ public:
         {
             convert_styler(styler, jsh);
         }
-        else if ( shape->type_name() == "PolyStar" )
+        else if ( auto polystar = shape->cast<model::PolyStar>() )
         {
             QCborMap fake = fake_animated(0);
             jsh["os"_l] = fake;
             jsh["is"_l] = fake;
+
+            if ( polystar->type.get() == model::PolyStar::Polygon )
+            {
+                jsh.remove("is"_l);
+                jsh.remove("ir"_l);
+            }
         }
         else if ( auto styler = shape->cast<model::Repeater>() )
         {
