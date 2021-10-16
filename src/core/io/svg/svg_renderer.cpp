@@ -55,6 +55,33 @@ public:
         view.setAttribute("inkscape:document-units", "px");
 
         add_fonts(doc);
+
+        write_meta(doc);
+    }
+
+    void write_meta(model::Document* document)
+    {
+        if ( document->info().empty() )
+            return;
+
+        auto rdf = element(element(svg, "metadata"), "rdf:RDF");
+        auto work = element(rdf, "cc:Work");
+        element(work, "dc:format").appendChild(dom.createTextNode("image/svg+xml"));
+        element(work, "dc:type").setAttribute("rdf:resource", "http://purl.org/dc/dcmitype/StillImage");
+        element(work, "dc:title").appendChild(dom.createTextNode(document->main()->name.get()));
+
+        if ( !document->info().author.isEmpty() )
+            element(element(element(work, "dc:creator"), "cc:Agent"), "dc:title").appendChild(dom.createTextNode(document->info().author));
+
+        if ( !document->info().description.isEmpty() )
+            element(work, "dc:description").appendChild(dom.createTextNode(document->info().description));
+
+        if ( !document->info().keywords.empty() )
+        {
+            auto bag = element(element(work, "dc:subject"), "rdf:Bag");
+            for ( const auto& kw: document->info().keywords )
+                element(bag, "rdf:li").appendChild(dom.createTextNode(kw));
+        }
     }
 
     void add_fonts(model::Document* document)

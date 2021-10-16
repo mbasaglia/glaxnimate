@@ -27,6 +27,18 @@ class Document : public QObject
     Q_PROPERTY(QVariantMap metadata READ metadata WRITE set_metadata)
 
 public:
+    struct DocumentInfo
+    {
+        QString author;
+        QString description;
+        QStringList keywords;
+
+        bool empty() const
+        {
+            return author.isEmpty() && description.isEmpty() && keywords.empty();
+        }
+    };
+
     explicit Document(const QString& filename = {});
     ~Document();
 
@@ -34,6 +46,8 @@ public:
 
     QVariantMap& metadata();
     void set_metadata(const QVariantMap& meta);
+
+    DocumentInfo& info();
 
     MainComposition* main();
 

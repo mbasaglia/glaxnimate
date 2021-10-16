@@ -732,7 +732,15 @@ bool glaxnimate::io::video::VideoFormat::on_save(QIODevice& dev, const QString& 
 
         // see https://libav.org/documentation/doxygen/master/group__metadata__api.html
         av::DictWrapper metadata(&oc->metadata);
+
         metadata["title"] = document->main()->name.get();
+
+        if ( !document->info().author.isEmpty() )
+            metadata["artist"] = document->info().author;
+
+        if ( !document->info().description.isEmpty() )
+            metadata["comment"] = document->info().description;
+
         for ( auto it = document->metadata().begin(); it != document->metadata().end(); ++it )
             metadata[it.key()] = it->toString();
 

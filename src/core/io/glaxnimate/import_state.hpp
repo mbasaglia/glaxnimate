@@ -129,6 +129,16 @@ public:
         do_load_object(target, object, target);
     }
 
+    void load_metadata(model::Document* document, const QJsonObject& object)
+    {
+        document->metadata() = object["metadata"].toObject().toVariantMap();
+        auto info = object["info"];
+        document->info().author = info["author"].toString();
+        document->info().description = info["description"].toString();
+        for ( const auto& kw: info["keywords"].toArray() )
+            document->info().keywords.push_back(kw.toString());
+    }
+
 private:
     void error(const QString& msg)
     {

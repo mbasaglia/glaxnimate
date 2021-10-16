@@ -47,6 +47,11 @@ DocumentMetadataDialog::DocumentMetadataDialog(model::Document* document, QWidge
         d->ui.table_widget->setItem(row, 1, value);
     }
 
+    d->ui.edit_author->setText(d->document->info().author);
+    d->ui.edit_description->setText(d->document->info().description);
+    d->ui.edit_keywords->setPlainText(d->document->info().keywords.join("\n"));
+    d->ui.edit_title->setText(d->document->main()->name.get());
+
     d->add_placeholder();
 }
 
@@ -97,7 +102,12 @@ void DocumentMetadataDialog::button_clicked(QAbstractButton* button)
             meta[name] = d->ui.table_widget->item(row, 1)->data(Qt::EditRole);
         }
 
+        /// \todo undo commands (and macro)
         d->document->set_metadata(meta);
+        d->document->info().author = d->ui.edit_author->text();
+        d->document->info().description = d->ui.edit_description->text();
+        d->document->info().keywords = d->ui.edit_keywords->toPlainText().split("\n");
+        d->document->main()->name.set(d->ui.edit_title->text());
         accept();
     }
     else

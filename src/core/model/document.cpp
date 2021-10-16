@@ -90,6 +90,7 @@ public:
     std::unordered_map<QString, NameIndex> name_indices;
     std::map<int, PendingAsset> pending_assets;
     int max_pending_id = 0;
+    DocumentInfo info;
 };
 
 
@@ -336,3 +337,7 @@ void glaxnimate::model::Document::clear_pending_assets()
 }
 
 
+glaxnimate::model::Document::DocumentInfo & glaxnimate::model::Document::info()
+{
+    return d->info;
+}

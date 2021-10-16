@@ -44,7 +44,8 @@ def save_dotlottie(window, document, file, fname, import_export, settings):
             "revision": 1,
             "author": str(document.metadata.get("author", "")),
             "animations": [],
-            "custom": document.metadata
+            "custom": document.metadata,
+            "author": document.info.author,
         }
 
     try:

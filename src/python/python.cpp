@@ -389,7 +389,7 @@ void register_py_module(py::module& glaxnimate_module)
         .def_property_readonly("users", &model::DocumentNode::users, "List of properties pointing to this object")
     ;
 
-    register_from_meta<model::Document, QObject>(model)
+    auto document = register_from_meta<model::Document, QObject>(model)
         .def(py::init<QString>())
         .def(py::init<>())
         .def(
@@ -409,6 +409,13 @@ void register_py_module(py::module& glaxnimate_module)
             py::arg("multiplier"),
             "Stretches animation timings by the given factor"
         )
+        .def_property("metadata", &model::Document::metadata, &model::Document::set_metadata, no_own)
+        .def_property("info", &model::Document::info, [](model::Document* doc, const model::Document::DocumentInfo& info){ doc->info() = info; }, no_own)
+    ;
+    py::class_<model::Document::DocumentInfo>(document, "DocumentInfo")
+        .def_readwrite("description", &model::Document::DocumentInfo::description)
+        .def_readwrite("author", &model::Document::DocumentInfo::author)
+        .def_readwrite("keywords", &model::Document::DocumentInfo::keywords)
     ;
 
     register_from_meta<model::VisualNode, model::DocumentNode>(model);

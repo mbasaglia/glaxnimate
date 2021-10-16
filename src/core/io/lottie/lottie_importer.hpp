@@ -30,6 +30,7 @@ public:
     void load(const QJsonObject& json)
     {
         load_version(json);
+        load_meta(json["meta"]);
         load_animation_container(json, document->main()->animation.get());
         load_assets(json["assets"].toArray());
         load_fonts(json["fonts"]["list"].toArray());
@@ -996,6 +997,17 @@ private:
 
             shapes.insert(std::move(group), shapes.size());
         }
+    }
+
+    void load_meta(const QJsonValue& meta)
+    {
+        if ( !meta.isObject() )
+            return;
+
+        document->info().author = meta["a"].toString();
+        document->info().description = meta["d"].toString();
+        for ( const auto& kw : meta["k"].toArray() )
+            document->info().keywords.push_back(kw.toString());
     }
 
     model::Document* document;

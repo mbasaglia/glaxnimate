@@ -109,6 +109,7 @@ public:
 
         parse_css();
         parse_defs();
+        parse_metadata();
 
         model::Layer* parent_layer = parse_objects(svg);
         parent_layer->transform.get()->position.set(-pos);
@@ -1492,6 +1493,51 @@ public:
         processed++;
         if ( io && processed % 10 == 0 )
             io->progress(processed);
+    }
+
+    void parse_metadata()
+    {
+        auto meta = dom.elementsByTagNameNS(xmlns.at("cc"), "Work");
+        if ( meta.count() == 0 )
+            return;
+
+        auto work = query_element({"metadata", "RDF", "Work"}, dom.documentElement());
+        document->info().author = query({"creator", "Agent", "title"}, work);
+        document->info().description = query({"description"}, work);
+        for ( const auto& domnode : ItemCountRange(query_element({"subject", "Bag"}, work).childNodes()) )
+        {
+            if ( domnode.isElement() )
+            {
+                auto child = domnode.toElement();
+                if ( child.tagName() == "li" )
+                    document->info().keywords.push_back(child.text());
+
+            }
+        }
+    }
+
+    QDomElement query_element(const std::vector<QString>& path, const QDomElement& parent, std::size_t index = 0)
+    {
+        if ( index >= path.size() )
+            return parent;
+
+
+        auto head = path[index];
+        for ( const auto& domnode : ItemCountRange(parent.childNodes()) )
+        {
+            if ( domnode.isElement() )
+            {
+                auto child = domnode.toElement();
+                if ( child.tagName() == head )
+                    return query_element(path, child, index+1);
+            }
+        }
+        return {};
+    }
+
+    QString query(const std::vector<QString>& path, const QDomElement& parent, std::size_t index = 0)
+    {
+        return query_element(path, parent, index).text();
     }
 
     QDomDocument dom;

@@ -7,6 +7,7 @@
 #include "cbor_write_json.hpp"
 #include "lottie_private_common.hpp"
 #include "model/animation/join_animatables.hpp"
+#include "app_info.hpp"
 
 namespace glaxnimate::io::lottie::detail {
 
@@ -17,6 +18,8 @@ inline QLatin1String operator "" _l(const char* c, std::size_t sz)
 
 class LottieExporterState
 {
+    static constexpr const char* version = "5.5.7";
+
 public:
     explicit LottieExporterState(ImportExport* format, model::Document* document, bool strip, bool strip_raster )
         : format(format), document(document), strip(strip), strip_raster( strip_raster ) {}
@@ -46,12 +49,36 @@ public:
     {
         layer_indices.clear();
         QCborMap json;
-        json["v"_l] = "5.5.2";
+        json["v"_l] = version;
         convert_animation_container(animation->animation.get(), json);
         convert_object_basic(animation, json);
         json["assets"_l] = convert_assets();
         convert_composition(animation, json);
+        if ( !strip )
+            convert_meta(json);
         return json;
+    }
+
+    void convert_meta(QCborMap& json)
+    {
+        QCborMap meta;
+        meta["g"_l] = AppInfo::instance().name() + ' ' + AppInfo::instance().version();
+
+        if ( !document->info().description.isEmpty() )
+            meta["d"_l] = document->info().description;
+
+        if ( !document->info().author.isEmpty() )
+            meta["a"_l] = document->info().author;
+
+        if ( !document->info().keywords.isEmpty() )
+        {
+            QCborArray k;
+            for ( const auto& kw : document->info().keywords )
+                k.push_back(kw);
+            meta["k"_l] = k;
+        }
+
+        json["meta"_l] = meta;
     }
 
     int layer_index(model::DocumentNode* layer)

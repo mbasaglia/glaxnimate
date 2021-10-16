@@ -35,6 +35,14 @@ QJsonDocument io::glaxnimate::GlaxnimateFormat::to_json ( model::Document* docum
     QJsonObject doc_obj;
     doc_obj["format"] = format_metadata();
     doc_obj["metadata"] = QJsonObject::fromVariantMap(document->metadata());
+    QJsonObject info;
+    info["author"] = document->info().author;
+    info["description"] = document->info().description;
+    QJsonArray keywords;
+    for ( const auto& kw: document->info().keywords )
+        keywords.push_back(kw);
+    info["keywords"] = keywords;
+    doc_obj["info"] = info;
     doc_obj["assets"] = to_json(document->assets());
     doc_obj["animation"] = to_json(document->main());
     return QJsonDocument(doc_obj);
