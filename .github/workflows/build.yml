@@ -26,6 +26,7 @@ jobs:
                 export PATH="$(echo /usr/local/opt/*/libexec/gnubin | tr ' ' :):$PATH"
                 ./deploy/mac_build.sh configure "mac-${GITHUB_SHA:0:8}"
                 ./deploy/mac_build.sh build
+                cp build/checksum.txt build/checksum-mac.txt
             - name: Build Python
               run: |
                 cd build
@@ -44,8 +45,14 @@ jobs:
                     build/checksum.txt
                     build/glaxnimate.dmg
                     build/bin/python/dist/
-            - name: Upload Artifacts
+            - name: Update Release
+              uses: johnwbyrd/update-release@v1.0.0
               if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
+              with:
+                    token: ${{ secrets.GITHUB_TOKEN }}
+                    files: ./build/checksum-mac.txt ./build/glaxnimate.dmg
+            - name: Upload Artifacts
+              if: false # ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
               env:
                 SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
                 BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
@@ -125,7 +132,7 @@ jobs:
                     token: ${{ secrets.GITHUB_TOKEN }}
                     files: ./build/checksum-win.txt ./build/glaxnimate-x86_64.zip
             - name: Upload Artifacts
-              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
+              if: false # ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' }}
               env:
                 SSH_PRIV_KEY: ${{ secrets.SSH_PRIV_KEY }}
                 BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
