@@ -1,7 +1,7 @@
 #pragma once
 
-
 #include <set>
+#include <array>
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -29,6 +29,7 @@ public:
 
     void load(const QJsonObject& json)
     {
+        load_version(json);
         load_animation_container(json, document->main()->animation.get());
         load_assets(json["assets"].toArray());
         load_fonts(json["fonts"]["list"].toArray());
@@ -36,6 +37,31 @@ public:
     }
 
 private:
+    void load_version(const QJsonObject& json)
+    {
+        if ( json.contains("v") )
+        {
+            auto parts = json["v"].toString().split(".");
+            if ( parts.size() == 3 )
+            {
+                for ( int i = 0; i < 3; i++ )
+                    version[i] = parts[i].toInt();
+            }
+        }
+    }
+
+    bool animated(const QJsonObject& obj)
+    {
+        if ( obj.contains("a") )
+            return obj["a"].toInt();
+
+        if ( !obj["k"].isArray() )
+            return 0;
+
+        auto karr = obj["k"].toArray();
+        return karr.size() > 0 && karr[0].isObject() && karr[0].toObject().contains("s");
+    }
+
     template<class T>
     auto make_node(model::Document* document)
     {
@@ -215,7 +241,7 @@ private:
         group->shapes.insert(std::move(fill));
 
         auto j_stroke = json["x"].toObject();
-        if ( j_stroke["a"].toInt() || j_stroke["k"].toDouble() != 0 )
+        if ( animated(j_stroke) || j_stroke["k"].toDouble() != 0 )
         {
             auto stroke = make_node<model::Stroke>(document);
             stroke->color.set(QColor(255, 255, 255));
@@ -482,6 +508,9 @@ private:
                 props
             );
 
+        if ( json_obj.contains("fillEnabled") )
+            styler->visible.set(json_obj["fillEnabled"].toBool());
+
         if ( json_obj["ty"].toString().startsWith('g') )
         {
             auto gradient = document->assets()->gradients->values.insert(std::make_unique<model::Gradient>(document));
@@ -546,6 +575,11 @@ private:
             transform.remove("eo");
             transform.remove("ty");
             load_transform(transform, repeater->transform.get(), nullptr);
+        }
+        else if ( version[0] < 5 && type_name == "Path" && json.contains("closed") )
+        {
+            auto path = static_cast<model::Path*>(shape);
+            path->shape.set_closed(json["closed"].toBool());
         }
     }
 
@@ -620,6 +654,23 @@ private:
     bool compound_value_color(const QJsonValue& val, QColor& out)
     {
         QJsonArray arr = val.toArray();
+
+        if ( version[0] < 5 )
+        {
+            if ( arr.size() == 3 )
+                out = QColor::fromRgb(
+                    arr[0].toInt(), arr[1].toInt(), arr[2].toInt()
+                );
+            else if ( arr.size() == 4 )
+                out = QColor::fromRgb(
+                    arr[0].toInt(), arr[1].toInt(), arr[2].toInt(), qMin(255, arr[3].toInt())
+                );
+            else
+                return false;
+
+            return true;
+        }
+
         if ( arr.size() == 3 )
             out = QColor::fromRgbF(
                 arr[0].toDouble(), arr[1].toDouble(), arr[2].toDouble()
@@ -743,26 +794,7 @@ private:
             return;
         }
 
-        int animated = 0;
-        if ( !obj.contains("a") )
-        {
-            if ( !obj["k"].isArray() )
-            {
-                animated = 0;
-            }
-            else
-            {
-                auto karr = obj["k"].toArray();
-                if ( karr.size() > 0 && karr[0].isObject() )
-                    animated = 1;
-            }
-        }
-        else
-        {
-            animated = obj["a"].toInt();
-        }
-
-        if ( animated )
+        if ( animated(obj) )
         {
             if ( !obj["k"].isArray() )
             {
@@ -771,10 +803,14 @@ private:
             }
 
             /// @todo for position fields also add spatial bezier handles
-            for ( QJsonValue jkf : obj["k"].toArray() )
+            auto karr = obj["k"].toArray();
+            for ( int i = 0; i < karr.size(); i++ )
             {
+                QJsonValue jkf = karr[i];
                 model::FrameTime time = jkf["t"].toDouble();
                 QJsonValue s = jkf["s"];
+                if ( version[0] < 5 && s.isUndefined() && i == karr.size() - 1 && i > 0 )
+                    s = karr[i-1].toObject()["e"];
                 if ( s.isArray() && is_scalar(prop) )
                     s = s.toArray()[0];
 
@@ -975,6 +1011,7 @@ private:
     model::Layer* mask = nullptr;
     model::DocumentNode* current_node = nullptr;
     model::Layer* current_layer = nullptr;
+    std::array<int, 3> version = {5,5,1};
 };
 
 

@@ -8,6 +8,7 @@
     * Fixed UUIDs when loading lottie animations
     * Fixed loading layers with a masked parent from lottie
     * Fixed exporting polygons to lottie
+    * Added support for loading (old) lottie v 4.0.0
 * UI:
     * Added simplified Chinese translation
     * Added British English translation

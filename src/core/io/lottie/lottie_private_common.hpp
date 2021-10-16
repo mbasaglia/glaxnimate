@@ -203,6 +203,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo("hasMasks", Custom),
         FieldInfo("masksProperties", Custom),
         FieldInfo("ef"),
+        FieldInfo("bounds"), // old, no longer there
     }},
     {"Transform", {
         FieldInfo{"a", "anchor_point"},
@@ -226,6 +227,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     }},
     {"Shape", {
         FieldInfo{"d"},
+        FieldInfo{"closed", Custom}, // Old attribute
     }},
     {"Rect", {
         FieldInfo{"p", "position"},
@@ -257,6 +259,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     {"Styler", {
         FieldInfo{"o", "opacity", FloatMult(100)},
         FieldInfo{"c", "color"},
+        FieldInfo{"fillEnabled", Custom},
     }},
     {"Fill", {
         FieldInfo{"r", "fill_rule", EnumMap{{
