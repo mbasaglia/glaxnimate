@@ -46,6 +46,8 @@ class LottieInlineProcessor(InlineProcessor):
         download_file = m.group(4)
         if download_file is None:
             download_file = clean_link(download_file)
+        elif download_file == "-":
+            download_file = filename
 
         if m.group(2):
             animation.attrib["style"] = "width:%spx;height:%spx" % (m.group(2), m.group(3))
@@ -69,7 +71,8 @@ class LottieInlineProcessor(InlineProcessor):
             download = etree.Element("a")
             el.append(download)
             download.attrib["href"] = download_file
-            download.attrib["download"] = ""
+            if download_file.endswith("rawr"):
+                download.attrib["download"] = ""
             download.attrib["title"] = "Download"
             download_button = etree.Element("button")
             download.append(download_button)

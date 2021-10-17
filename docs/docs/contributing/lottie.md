@@ -14,6 +14,9 @@ which is the reference implementation.
 If you want more details on the JSON attributes you can also check my
 [machine-generated documentation](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#details).
 
+Note that some lottie players require certain JSON keys to be presents before others in the file
+to play properly.
+
 # Structure
 
 ## Animation
@@ -31,6 +34,7 @@ The most notable attributes are:
 |`assets`   |`array` |A list of [assets](#asset)
 |`layers`   |`array` |A list of [layers](#layer) (See: [Lists of layers and shapes](#lists-of-layers-and-shapes))
 |`v`        |`string`|Lottie version, on very old versions some things might be different from what is explained here|
+|`ddd`|[0-1 `int`](#booleans)|Whether the animation has 3D layers. Lottie doesn't actually support 3D stuff so this should always be 0|
 
 Also has attributes from [Visual Object](#visual-object).
 
@@ -56,15 +60,80 @@ There are several layer types, which is specified by the `ty` attribute:
 |`13`|Camera||
 |`14`|Light||
 
-### ShapeLayer
+Each layer type has its own properties but there are several common properties:
 
-### PrecompLayer
+They also have attributes from [Visual Object](#visual-object).
 
-### NullLayer
+|Attribute|Type|Name|Description|
+|---------|----|----|-----------|
+|`ddd`  |[0-1 `int`](#booleans) |Threedimensional   |Whether the layer is 3D. Lottie doesn't actually support 3D stuff so this should always be 0||
+|`hd`   |`boolean`              |Hidden             |Whether the layer is hidden|
+|`ty`   |`integer`              |Type               |One of the values as seen before|
+|`ind`  |`integer`              |Index              |Layer index for [parenting](#parenting)|
+|`parent`|`integer`             |Parent             |Parent index for [parenting](#parenting)|
+|`sr`   |`number`               |Time stretch       | |
+|`ks`   |[Transform](#transform)|Transform          |Layer transform|
+|`ao`   |[0-1 `int`](#booleans) |Auto Orient        |[Auto orient](#auto-orient)|
+|`ip`   |`number`               |In Point           |Frame when the layers becomes visible|
+|`op`   |`number`               |Out Point          |Frame when the layers becomes invisible|
+|`st`   |`number`               |Start time         ||
+|`bm`   |`integer`              |[Blen Mode](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#lottie_BlendMode)||
+|`tt`   |`integer`              |[Matte Mode](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#lottie_MatteMode)|See [mattes](#mattes)|
+|`td`   |`integer`              |Matte Target       |See [mattes](#mattes)|
+|`hasMask`|`boolean`            |Has Mask           |Whether the layer has masks applied|
+|`masksProperties`|`array`      |Masks              |[Masks](#masks) for the layer|
+|`ef`   |`array`                |Effects            |[Effects](#effect) for the layer|
 
-### TextLayer
+The layer is only visible between its `ip` and `op`.
+If they match the corresponding attributes in [Animation](#animation), the layer
+will be visible the whole time, otherwise it will become visible at the frame `ip`
+and disappear at `op`.
 
-### SolidColorLayer
+
+### Parenting
+
+Within a list of layers, the `ind` attribute (if present) must be unique.
+
+Layers having a `parent` attribute matching another layer will inherit their
+parent's transform (except for opacity).
+
+Basically you need multiply the transform matrix by the parent's transform matrix
+to get a child layer's final transform.
+
+### Auto Orient
+
+When true, if the transform position is animated, it rotates the layer along the
+path the position follows.
+
+In the following example there are two arrows animated along the same path,
+with no rotation when the position moves towards the right.
+
+The transparent one keeps its rotation the same (`ao` is 0), while the solid one
+follows the path (`ao` is 1).
+
+{lottie:../../examples/auto_orient.json:512:512:-}
+
+### Mattes
+
+A matte allows using a layer as a mask for another layer.
+
+The way it works is the layer defining the mask has a `tt` attribute with the
+appropriate [value](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#lottie_MatteMode)
+and it affects the layer on top (the layer before it in the layer list).
+
+In this example there's a layer with a rectangle and a star being masked by an ellipse:
+{lottie:../../examples/matte.json:512:512:-}
+
+
+## ShapeLayer
+
+## PrecompLayer
+
+## NullLayer
+
+## TextLayer
+
+## SolidColorLayer
 
 
 ## Shape
@@ -165,7 +234,7 @@ So if you have for example: `[Ellipse, Rectangle]`
 
 The ellipse will show on top of the rectangle:
 
-{lottie:../../examples/layer_order.json:512:512:}
+{lottie:../../examples/layer_order.json:512:512:-}
 
 This means the render order goes from the last element to the first.
 
@@ -238,3 +307,11 @@ similarly to `s` but represents the value at the end of the keyframe.
 
 They also have a final keyframe with only the `t` attribute and you
 need to determine its value based on the `s` value of the previous keyframe.
+
+## Mask
+
+TODO
+
+## Effect
+
+TODO
