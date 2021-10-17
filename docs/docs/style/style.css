@@ -34,3 +34,11 @@
         linear-gradient(to bottom, white 50%, transparent 50%),
         linear-gradient(to right, transparent 50%, rgba(0, 0, 0, .5) 50%);
 }
+
+.table-plain {
+    width: auto;
+}
+.table-plain tr, .table-plain td {
+    border: none !important;
+    background: none !important;
+}

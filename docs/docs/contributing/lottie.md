@@ -31,8 +31,8 @@ The most notable attributes are:
 |`fr`       |`number`|Framerate (frames per second)|
 |`ip`       |`number`|"In Point", which frame the animation starts at (usually 0)|
 |`op`       |`number`|"Out Point", which frame the animation stops/loops at, which makes it the duration in frames|
-|`assets`   |`array` |A list of [assets](#asset)
-|`layers`   |`array` |A list of [layers](#layer) (See: [Lists of layers and shapes](#lists-of-layers-and-shapes))
+|`assets`   |`array` |An array of [assets](#asset)
+|`layers`   |`array` |An array of [layers](#layer) (See: [Lists of layers and shapes](#lists-of-layers-and-shapes))
 |`v`        |`string`|Lottie version, on very old versions some things might be different from what is explained here|
 |`ddd`|[0-1 `int`](#booleans)|Whether the animation has 3D layers. Lottie doesn't actually support 3D stuff so this should always be 0|
 
@@ -47,7 +47,7 @@ There are several layer types, which is specified by the `ty` attribute:
 |`0`|[Precomposition](#precomplayer)|Renders a [Precomposition](#precomposition)|
 |`1`|[Solid Color](#solidcolorlayer)|Static rectangle filling the canvas with a single color|
 |`2`|[Image](#imagelayer)|Renders an [Image](#image)|
-|`3`|[Null (Empty)](#nulllayer)|No contents, only used for parenting|
+|`3`|[Null (Empty)](#nulllayer)|No contents, only used for [parenting](#parenting)|
 |`4`|[Shape](#shapelayer)|Contains a [list](#lists-of-layers-and-shapes) of [shapes](#shape)|
 |`5`|[Text](#textlayer)|Renders text|
 |`6`|Audio||
@@ -127,18 +127,124 @@ In this example there's a layer with a rectangle and a star being masked by an e
 
 ## ShapeLayer
 
-## PrecompLayer
+Renders vector data.
+
+The only special property for this layer is **shapes**, an [array](#lists-of-layers-and-shapes) of [shapes](#shape).
+
+## PreCompLayer
+
+This layer renders a [precomposition](#precomposition).
+
+|Attribute|Type|Name|Description|
+|-----------|----|----|-----------|
+|`refId`    |`string` |Reference ID|ID of the precomp as specified in the assets|
+|`w`        |`number` |Width||
+|`h`        |`number` |Height||
+|`tm`       |Animated `number`|Time Remapping||
+
+### Time remapping
+
+The `tm` property maps the time in seconds of the precomposition to show.
+
+Basically you get the value of `tm` at the current frame, then assume that's
+a time in seconds since the start of the animation, and render the corresponding
+frame of the precomposition.
+
+Follows an example of this, here there are two layers showing the same
+precomposition, the one at the top right keeps the original time while the bottom
+one remaps time as follows:
+
+* frame 0 (0s) maps to 0s (frame 0) in the precomp
+* frame 30 (0.5s) maps to 3s (frame 180) in the precomp
+* frame 60 (1s) maps to 1.5s (frame 90) in the precomp
+* frame 180 (3s) maps to 3s (frame 180) in the precomp
+
+Basically it makes the precomp play in the first half second, then rewind
+to half way for the next half second, and plays back to the end for the remaining
+2 seconds.
+
+{lottie:../../examples/remapping.json:512:512:-}
+
 
 ## NullLayer
 
+This layer doesn't have any special properties.
+
+It's often used by animators as a parent to multiple other layers.
+
 ## TextLayer
 
+TODO
+
+## ImageLayer
+
+This layer renders a static [image](#image).
+
+
+|Attribute|Type|Name|Description|
+|-----------|----|----|-----------|
+|`refId`    |`string` |Reference ID|ID of the image as specified in the assets|
+
 ## SolidColorLayer
+
+This layer represents a rectangle with a single color.
+
+Anything you can do with solid layers, you can do better with a shape layer
+and a rectangle shape since none of this layer's own properties can be animated.
+
+|Attribute|Type|Name|Description|
+|-----------|----|----|-----------|
+|`sc`       |`string` |Solid Color|Color of the layer, unlike most other places, the color is a `#rrggbb` hex string |
+|`sw`       |`number` |Solid Width||
+|`sh`       |`number` |Solid Height||
 
 
 ## Shape
 
-TODO
+Lottie considers everything related to vector data as a "shape" but I think
+it's worth distinguishing across a few categories:
+
+* **Actual Shapes** These provide only the shape information, but no styling
+* **Style** These provide styling info (like fill and stroke)
+* **Group** This is a shape that contains other shape
+* **Modifier** These change other shapes
+* **Transform** Special shape that defines the transforms in a group shape
+
+All shapes have the attributes from [Visual Object](#visual-object) and the following:
+
+
+
+## Actual Shapes
+
+### Rectangle
+
+### Ellipse
+
+### PolyStar
+
+### Path
+
+## Style
+
+### Fill
+
+### Stroke
+
+### Gradient Fill / Stroke
+
+## Group
+
+### Transform Shape
+
+## Modifiers
+
+### Repeater
+
+### Trim
+
+### Rounded Corners
+
+### Pucker / Bloat
 
 ## Asset
 
@@ -271,7 +377,7 @@ If `a` is `1`, `k` will be an array of keyframes.
 |`t`    |`number`|Keyframe time (in frames)|
 |`s`    |Depends on the property|Value, note that sometimes properties for scalar values have the value is wrapped in an array|
 |`i`,`o`|[Easing Handle](#easing-handles)|
-|`h`|[0-1 `int`](#booleans)|Whether it's a hold frame|
+|`h`    |[0-1 `int`](#booleans)|Whether it's a hold frame|
 
 If `h` is present and it's 1, you don't need `i` and `o`, as the property will keep the same value
 until the next keyframe.
@@ -280,6 +386,7 @@ until the next keyframe.
 #### Easing Handles
 
 They are objects with `x` and `y` attributes, which are numbers within 0 and 1.
+You might see these values wrapped around arrays.
 
 They represent a cubic bezier, starting at `[0,0]` and ending at `[1,1]` where
 the value determines the easing function.
@@ -307,6 +414,99 @@ similarly to `s` but represents the value at the end of the keyframe.
 
 They also have a final keyframe with only the `t` attribute and you
 need to determine its value based on the `s` value of the previous keyframe.
+
+## Transform
+
+This represents a layer or shape transform.
+
+It has the properties from [Visual Object](#visual-object) and its own properties are all [animated](#animated-property):
+
+
+|Attribute|Type|Name|Description|
+|---------|----|----|-----------|
+|`a`    |2D Vector|Anchor point |Position (relative to its parent) around which transformations are applied (ie: center for rotation / scale)|
+|`p`    |2D Vector|Position     |Position / Translation|
+|`s`    |2D Vector|Scale        |Scale factor, `100` for no scaling|
+|`r`    |`number` |Rotation     |Rotation in degrees, clockwise|
+|`sk`   |`number` |Skew         |Skew amount as an angle in degrees|
+|`sa`   |`number` |Skew Axis    |Direction at which skew is applied, in degrees (`0` skews along the X axis, `90` along the Y axis)|
+
+Sometimes `p` might be replaced by its individual components (`px` and `py`) animated independently.
+
+### Transforming to a matrix
+
+Assuming the matrix
+
+{matrix}
+a   c   0   0
+b   d   0   0
+0   0   1   0
+tx  ty  0   1
+
+Multiplications are right multiplications (`Next = Previous * StepOperation`).
+
+If your transform is transposed (`tx`, `ty` are on the last column), perform left multiplication instead.
+
+Perform the following operations on a matrix starting from the identity matrix (or the parent object's transform matrix):
+
+Translate by `-a`:
+
+{matrix}
+1       0       0   0
+0       1       0   0
+0       0       1   0
+-a[0]   -a[1]   0   1
+
+Scale by `s/100`:
+
+{matrix}
+s[0]/100    0           0   0
+0           s[1]/100    0   0
+0           0           1   0
+0           0           0   1
+
+
+Rotate by `sa` (can be skipped if not skewing)
+
+{matrix}
+cos(sa)     sin(sa) 0 0
+-sin(sa)    cos(sa) 0 0
+0           0       1 0
+0           0       0 1
+
+Skew by `sk` (can be skipped if not skewing)
+
+{matrix}
+1   tan(sk) 0   0
+0   1       0   0
+0   0       1   0
+0   0       0   1
+
+Rotate by `-sa` (can be skipped if not skewing)
+
+{matrix}
+cos(-sa)   sin(-sa) 0 0
+-sin(-sa)  cos(-sa) 0 0
+0          0        1 0
+0          0        0 1
+
+Rotate by `-r`
+
+{matrix}
+cos(-r)    sin(-r)  0 0
+-sin(-r)   cos(-r)  0 0
+0          0        1 0
+0          0        0 1
+
+If you are handling an [auto orient](auto-orient) layer, evaluate and apply auto-orient rotation
+
+Translate by `p`
+
+{matrix}
+1       0       0   0
+0       1       0   0
+0       0       1   0
+p[0]    p[1]    0   1
 
 ## Mask
 

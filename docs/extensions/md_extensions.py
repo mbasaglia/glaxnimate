@@ -1,4 +1,6 @@
+import re
 from markdown.inlinepatterns import InlineProcessor
+from markdown.blockprocessors import BlockProcessor
 from markdown.extensions import Extension
 import os
 from pathlib import Path
@@ -282,6 +284,26 @@ class LottieColor(InlineProcessor):
         return span, match.start(0), match.end(0)
 
 
+class Matrix(BlockProcessor):
+    RE_FENCE_START = r'^\s*\{matrix\}\s*\n'
+
+    def test(self, parent, block):
+        return re.match(self.RE_FENCE_START, block)
+
+    def run(self, parent, blocks):
+        table = etree.SubElement(parent, "table")
+        table.attrib["style"] = "font-family: monospace; text-align: center; background-color: #fcfdff; border: 1px solid #ccc;"
+        table.attrib["class"] = "table-plain"
+        rows = blocks.pop(0)
+        for row in rows.split("\n")[1:]:
+            tr = etree.SubElement(table, "tr")
+            for cell in row.split():
+                td = etree.SubElement(tr, "td")
+                td.text = cell
+                td.attrib["style"] = "width: 25%;"
+        return True
+
+
 class GlaxnimateExtension(Extension):
     def extendMarkdown(self, md):
         md.inlinePatterns.register(LottieInlineProcessor(md), 'lottie', 175)
@@ -290,6 +312,7 @@ class GlaxnimateExtension(Extension):
         md.inlinePatterns.register(TranslationTable(r'{translation_table}', md), 'translation_table', 175)
         md.inlinePatterns.register(LottieColor(r'{lottie_color:(([^,]+),\s*([^,]+),\s*([^,]+))}', md, 1), 'lottie_color', 175)
         md.inlinePatterns.register(LottieColor(r'{lottie_color_255:(([^,]+),\s*([^,]+),\s*([^,]+))}', md, 255), 'lottie_color_255', 175)
+        md.parser.blockprocessors.register(Matrix(md.parser), 'matrix', 175)
 
 
 def makeExtension(**kwargs):
