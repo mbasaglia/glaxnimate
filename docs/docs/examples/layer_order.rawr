@@ -1,0 +1,367 @@
+{
+    "animation": {
+        "__type__": "MainComposition",
+        "animation": {
+            "__type__": "AnimationContainer",
+            "first_frame": 0,
+            "last_frame": 180
+        },
+        "fps": 60,
+        "group_color": "#00000000",
+        "height": 512,
+        "locked": false,
+        "name": "Animation",
+        "shapes": [
+            {
+                "__type__": "Layer",
+                "animation": {
+                    "__type__": "AnimationContainer",
+                    "first_frame": 0,
+                    "last_frame": 180
+                },
+                "group_color": "#00000000",
+                "locked": false,
+                "mask": {
+                    "__type__": "MaskSettings",
+                    "mask": false
+                },
+                "name": "Rectangle",
+                "opacity": {
+                    "value": 1
+                },
+                "parent": null,
+                "render": true,
+                "shapes": [
+                    {
+                        "__type__": "Group",
+                        "group_color": "#00000000",
+                        "locked": false,
+                        "name": "Rectangle",
+                        "opacity": {
+                            "value": 1
+                        },
+                        "shapes": [
+                            {
+                                "__type__": "Fill",
+                                "color": {
+                                    "value": "#3250b0"
+                                },
+                                "fill_rule": "NonZero",
+                                "group_color": "#00000000",
+                                "locked": false,
+                                "name": "Fill",
+                                "opacity": {
+                                    "value": 1
+                                },
+                                "use": null,
+                                "uuid": "dc302cc0-3912-40b0-81da-03b5c172432c",
+                                "visible": true
+                            },
+                            {
+                                "__type__": "Stroke",
+                                "cap": "RoundCap",
+                                "color": {
+                                    "value": "#0080ff"
+                                },
+                                "group_color": "#00000000",
+                                "join": "RoundJoin",
+                                "locked": false,
+                                "miter_limit": 0,
+                                "name": "Stroke",
+                                "opacity": {
+                                    "value": 1
+                                },
+                                "use": null,
+                                "uuid": "9781440d-fa0d-45e1-b224-8c96fefc1f09",
+                                "visible": false,
+                                "width": {
+                                    "value": 1
+                                }
+                            },
+                            {
+                                "__type__": "Rect",
+                                "group_color": "#00000000",
+                                "locked": false,
+                                "name": "Rectangle",
+                                "position": {
+                                    "value": {
+                                        "x": 185.69552238805971,
+                                        "y": 256.1910447761194
+                                    }
+                                },
+                                "rounded": {
+                                    "value": 0
+                                },
+                                "size": {
+                                    "value": {
+                                        "height": 225.24179104477614,
+                                        "width": 268.2268656716418
+                                    }
+                                },
+                                "uuid": "9e7f37be-ac4b-411e-8e47-3e2a2cad9102",
+                                "visible": true
+                            }
+                        ],
+                        "transform": {
+                            "__type__": "Transform",
+                            "anchor_point": {
+                                "value": {
+                                    "x": 185.69552238805971,
+                                    "y": 256.1910447761194
+                                }
+                            },
+                            "position": {
+                                "value": {
+                                    "x": 212.34626865671646,
+                                    "y": 239.85671641791043
+                                }
+                            },
+                            "rotation": {
+                                "value": 0
+                            },
+                            "scale": {
+                                "value": {
+                                    "x": 1,
+                                    "y": 1
+                                }
+                            }
+                        },
+                        "uuid": "c338119b-6435-437a-a855-0f36a8264c22",
+                        "visible": true
+                    }
+                ],
+                "transform": {
+                    "__type__": "Transform",
+                    "anchor_point": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "position": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "rotation": {
+                        "value": 0
+                    },
+                    "scale": {
+                        "value": {
+                            "x": 1,
+                            "y": 1
+                        }
+                    }
+                },
+                "uuid": "50b511ea-ca42-416e-b630-58eca8fb41d9",
+                "visible": true
+            },
+            {
+                "__type__": "Layer",
+                "animation": {
+                    "__type__": "AnimationContainer",
+                    "first_frame": 0,
+                    "last_frame": 180
+                },
+                "group_color": "#00000000",
+                "locked": false,
+                "mask": {
+                    "__type__": "MaskSettings",
+                    "mask": false
+                },
+                "name": "Ellipse",
+                "opacity": {
+                    "value": 1
+                },
+                "parent": null,
+                "render": true,
+                "shapes": [
+                    {
+                        "__type__": "Group",
+                        "group_color": "#00000000",
+                        "locked": false,
+                        "name": "Ellipse",
+                        "opacity": {
+                            "value": 1
+                        },
+                        "shapes": [
+                            {
+                                "__type__": "Fill",
+                                "color": {
+                                    "value": "#f01d0a"
+                                },
+                                "fill_rule": "NonZero",
+                                "group_color": "#00000000",
+                                "locked": false,
+                                "name": "Fill",
+                                "opacity": {
+                                    "value": 1
+                                },
+                                "use": null,
+                                "uuid": "b1921647-2329-42c2-af2d-5379557b5b54",
+                                "visible": true
+                            },
+                            {
+                                "__type__": "Stroke",
+                                "cap": "RoundCap",
+                                "color": {
+                                    "value": "#0080ff"
+                                },
+                                "group_color": "#00000000",
+                                "join": "RoundJoin",
+                                "locked": false,
+                                "miter_limit": 0,
+                                "name": "Stroke",
+                                "opacity": {
+                                    "value": 1
+                                },
+                                "use": null,
+                                "uuid": "be0ec062-125f-46e3-bb2b-c9abfd75d49f",
+                                "visible": false,
+                                "width": {
+                                    "value": 1
+                                }
+                            },
+                            {
+                                "__type__": "Ellipse",
+                                "group_color": "#00000000",
+                                "locked": false,
+                                "name": "Ellipse",
+                                "position": {
+                                    "value": {
+                                        "x": 303.9044776119403,
+                                        "y": 324.9671641791045
+                                    }
+                                },
+                                "size": {
+                                    "value": {
+                                        "height": 204.6089552238806,
+                                        "width": 205.46865671641788
+                                    }
+                                },
+                                "uuid": "2aabac6e-1dd8-41b0-b60b-baf75ccb6318",
+                                "visible": true
+                            }
+                        ],
+                        "transform": {
+                            "__type__": "Transform",
+                            "anchor_point": {
+                                "value": {
+                                    "x": 303.9044776119403,
+                                    "y": 324.9671641791045
+                                }
+                            },
+                            "position": {
+                                "value": {
+                                    "x": 330.55522388059705,
+                                    "y": 308.63283582089554
+                                }
+                            },
+                            "rotation": {
+                                "value": 0
+                            },
+                            "scale": {
+                                "value": {
+                                    "x": 1,
+                                    "y": 1
+                                }
+                            }
+                        },
+                        "uuid": "f1becc2a-49f0-4f0c-918f-bdffe4c6870f",
+                        "visible": true
+                    }
+                ],
+                "transform": {
+                    "__type__": "Transform",
+                    "anchor_point": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "position": {
+                        "value": {
+                            "x": 256,
+                            "y": 256
+                        }
+                    },
+                    "rotation": {
+                        "value": 0
+                    },
+                    "scale": {
+                        "value": {
+                            "x": 1,
+                            "y": 1
+                        }
+                    }
+                },
+                "uuid": "0a36d01c-18e1-48d3-8e8f-cc093b3f24ba",
+                "visible": true
+            }
+        ],
+        "uuid": "7c55df9e-4c06-4afe-bcb7-a2b4b9d5f7c9",
+        "visible": true,
+        "width": 512
+    },
+    "assets": {
+        "__type__": "Assets",
+        "colors": {
+            "__type__": "NamedColorList",
+            "name": "",
+            "uuid": "bdbb7f96-6d4e-47f7-a2a3-443a9502ac0c",
+            "values": [
+            ]
+        },
+        "fonts": {
+            "__type__": "FontList",
+            "name": "",
+            "uuid": "a54b0f4e-00aa-4692-a2ed-49b9e0bf6e4c",
+            "values": [
+            ]
+        },
+        "gradient_colors": {
+            "__type__": "GradientColorsList",
+            "name": "",
+            "uuid": "a3fcabb2-d096-4aff-a96e-1cfa74ad9f87",
+            "values": [
+            ]
+        },
+        "gradients": {
+            "__type__": "GradientList",
+            "name": "",
+            "uuid": "42a68c4d-fd69-4b26-9246-e24707f6871d",
+            "values": [
+            ]
+        },
+        "images": {
+            "__type__": "BitmapList",
+            "name": "",
+            "uuid": "0dd21869-b86f-4e3e-aae3-b6084b6f83c8",
+            "values": [
+            ]
+        },
+        "name": "",
+        "precompositions": {
+            "__type__": "PrecompositionList",
+            "name": "",
+            "uuid": "6a70508b-d25c-42a3-94f5-bd714744e738",
+            "values": [
+            ]
+        },
+        "uuid": "fd00a1b2-6868-4613-8ef3-abdaad780e3a"
+    },
+    "format": {
+        "format_version": 4,
+        "generator": "Glaxnimate",
+        "generator_version": "0.4.6-26-g7b05e75c"
+    },
+    "info": {
+        "author": "",
+        "description": "",
+        "keywords": [
+        ]
+    },
+    "metadata": {
+    }
+}

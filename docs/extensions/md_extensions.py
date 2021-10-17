@@ -6,6 +6,7 @@ import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import parse as parse_xml
 from babel import Locale
 
+
 def etree_fontawesome(icon, group="fas"):
     el = etree.Element("i")
     el.attrib["class"] = "%s fa-%s" % (group, icon)
@@ -16,6 +17,14 @@ def clean_link(filename):
     if not filename.startswith("/") and not filename.startswith("."):
         filename = "../" + filename
     return filename
+
+
+def css_style(**args):
+    string = ""
+    for k, v in args.items():
+        string += "%s:%s;" % (k.replace("_", "-"), v)
+
+    return string
 
 
 class LottieInlineProcessor(InlineProcessor):
@@ -157,7 +166,7 @@ class DownloadTable(InlineProcessor):
 
 
 class TranslationTable(InlineProcessor):
-    def __init__(self, pattern, md, git):
+    def __init__(self, pattern, md):
         super().__init__(pattern, md)
         self.data = None
 
@@ -242,12 +251,42 @@ class TranslationTable(InlineProcessor):
         return table, m.start(0), m.end(0)
 
 
+class LottieColor(InlineProcessor):
+    def __init__(self, pattern, md, mult):
+        super().__init__(pattern, md)
+        self.mult = mult
+
+    def handleMatch(self, match, data):
+        span = etree.Element("span")
+        span.attrib["style"] = "font-family: right"
+
+        comp = [float(match.group(i)) / self.mult for i in range(2, 5)]
+
+        hex = "#" + "".join("%02x" % round(x * 255) for x in comp)
+        color = etree.SubElement(span, "span")
+        color.attrib["style"] = css_style(
+            width="24px",
+            height="24px",
+            background_color=hex,
+            border="1px solid black",
+            display="inline-block",
+            vertical_align="middle",
+            margin_right="0.5ex"
+        )
+
+        etree.SubElement(span, "code").text = "[%s]" % ", ".join("%.3g" % x for x in comp)
+
+        return span, match.start(0), match.end(0)
+
+
 class GlaxnimateExtension(Extension):
     def extendMarkdown(self, md):
         md.inlinePatterns.register(LottieInlineProcessor(md), 'lottie', 175)
         md.inlinePatterns.register(DownloadTable(r'{download_table:([^:]+)}', md, False), 'download_table', 175)
         md.inlinePatterns.register(DownloadTable(r'{download_table:([^:]+):git}', md, True), 'download_table_git', 175)
-        md.inlinePatterns.register(TranslationTable(r'{translation_table}', md, False), 'translation_table', 175)
+        md.inlinePatterns.register(TranslationTable(r'{translation_table}', md), 'translation_table', 175)
+        md.inlinePatterns.register(LottieColor(r'{lottie_color:(([^,]+),\s*([^,]+),\s*([^,]+))}', md, 1), 'lottie_color', 175)
+        md.inlinePatterns.register(LottieColor(r'{lottie_color_255:(([^,]+),\s*([^,]+),\s*([^,]+))}', md, 255), 'lottie_color_255', 175)
 
 
 def makeExtension(**kwargs):

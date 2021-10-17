@@ -57,6 +57,7 @@ nav:
         - "Assets": contributing/assets.md
         - "Roadmap": contributing/roadmap.md
         - "File Format": contributing/json_reference.md
+        - "Lottie Format": contributing/lottie.md
     - "<i class='fa fa-globe'></i> Links":
         - '<i class="fab fa-telegram"></i> Telegram Chat': ${DOCS_CHAT_URL}
         - '<i class="fab fa-gitlab"></i>   Code Browser': ${DOCS_REPO_URL}

@@ -29,4 +29,4 @@ For more details, you can check the [GitLab Board](https://gitlab.com/mattbas/gl
 * ✔️ Basic Animations
 * 🐍 Preset Animation Effects
 * ✔️ Document-wide palette
-* 🐍 Precompositions
+* ✔️ Precompositions
