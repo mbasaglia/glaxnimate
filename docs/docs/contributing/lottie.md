@@ -42,23 +42,23 @@ Also has attributes from [Visual Object](#visual-object).
 
 There are several layer types, which is specified by the `ty` attribute:
 
-| `ty` | Layer Type | Description |
-|------|------------|-------------|
-|`0`|[Precomposition](#precomplayer)|Renders a [Precomposition](#precomposition)|
-|`1`|[Solid Color](#solidcolorlayer)|Static rectangle filling the canvas with a single color|
-|`2`|[Image](#imagelayer)|Renders an [Image](#image)|
-|`3`|[Null (Empty)](#nulllayer)|No contents, only used for [parenting](#parenting)|
-|`4`|[Shape](#shapelayer)|Contains a [list](#lists-of-layers-and-shapes) of [shapes](#shape)|
-|`5`|[Text](#textlayer)|Renders text|
-|`6`|Audio||
-|`7`|Video Placeholder||
-|`8`|Image Sequence||
-|`9`|Video||
-|`10`|Image Placeholder||
-|`11`|Guide||
-|`12`|Adjustment||
-|`13`|Camera||
-|`14`|Light||
+|`ty`| Layer Type                       | Description                                                       |
+|----|----------------------------------|-------------------------------------------------------------------|
+|`0` |[Precomposition](#precomplayer)   |Renders a [Precomposition](#precomposition)                        |
+|`1` |[Solid Color](#solidcolorlayer)   |Static rectangle filling the canvas with a single color            |
+|`2` |[Image](#imagelayer)              |Renders an [Image](#image)                                         |
+|`3` |[Null (Empty)](#nulllayer)        |No contents, only used for [parenting](#parenting)                 |
+|`4` |[Shape](#shapelayer)              |Contains a [list](#lists-of-layers-and-shapes) of [shapes](#shape) |
+|`5` |[Text](#textlayer)                |Renders text                                                       |
+|`6` |Audio                             |                                                                   |
+|`7` |Video Placeholder                 |                                                                   |
+|`8` |Image Sequence                    |                                                                   |
+|`9` |Video                             |                                                                   |
+|`10`|Image Placeholder                 |                                                                   |
+|`11`|Guide                             |                                                                   |
+|`12`|Adjustment                        |                                                                   |
+|`13`|Camera                            |                                                                   |
+|`14`|Light                             |                                                                   |
 
 Each layer type has its own properties but there are several common properties:
 
@@ -140,7 +140,7 @@ This layer renders a [precomposition](#precomposition).
 |`refId`    |`string` |Reference ID|ID of the precomp as specified in the assets|
 |`w`        |`number` |Width||
 |`h`        |`number` |Height||
-|`tm`       |Animated `number`|Time Remapping||
+|`tm`       |[Animated](#animated-property) `number`|Time Remapping||
 
 ### Time remapping
 
@@ -192,11 +192,11 @@ This layer represents a rectangle with a single color.
 Anything you can do with solid layers, you can do better with a shape layer
 and a rectangle shape since none of this layer's own properties can be animated.
 
-|Attribute|Type|Name|Description|
-|-----------|----|----|-----------|
-|`sc`       |`string` |Solid Color|Color of the layer, unlike most other places, the color is a `#rrggbb` hex string |
-|`sw`       |`number` |Solid Width||
-|`sh`       |`number` |Solid Height||
+|Attribute  |Type     |Name        |Description |
+|-----------|---------|------------|------------|
+|`sc`       |`string` |Solid Color |Color of the layer, unlike most other places, the color is a `#rrggbb` hex string |
+|`sw`       |`number` |Solid Width |            |
+|`sh`       |`number` |Solid Height|            |
 
 
 ## Shape
@@ -212,17 +212,89 @@ it's worth distinguishing across a few categories:
 
 All shapes have the attributes from [Visual Object](#visual-object) and the following:
 
+|Attribute|Type|Name|Description|
+|---------|----|----|-----------|
+|`hd`   |`boolean`|Hidden            |Whether the layer is hidden|
+|`ty`   |`string` |Type             |Shape type (see values below)|
+|`cix`  |`integer`|Property Index   |Used in expressions|
+
+
+### Shape Types
+
+|`ty`|Shape                                 |
+|----|--------------------------------------|
+|`rc`|[Rectangle](#rectangle)               |
+|`el`|[Ellipse](#ellipse)                   |
+|`sr`|[PolyStar](#polystar)                 |
+|`sh`|[Path](#path)                         |
+|`fl`|[Fill](#fill)                         |
+|`st`|[Stroke](#stroke)                     |
+|`gf`|[Gradient Fill](#gradient-fill-stroke)|
+|`gs`|[Gradient Fill](#gradient-fill-stroke)|
+|`tm`|[Trim](#trim-path)                    |
+|`rp`|[Repeater](#repeater)                 |
+|`rd`|[Rounded Corners](#rounded-corners)   |
+|`mm`|Merge                                 |
+|`tw`|Twist                                 |
+|`pb`|[Pucker / Bloat](#pucker-bloat)       |
+|`gr`|[Group](#group)                       |
+|`tr`|[Transform](transform-shape)          |
 
 
 ## Actual Shapes
 
+These shapes only define path data, to actually show something, they must be
+followed by some [style shape](#style).
+
+They have a `d` attribute which specifies the drawing direction, which
+can be seen when using [Trim Path](#trim-path).
+
 ### Rectangle
+
+A rectangle, defined by its center point and size.
+
+|Attribute|Type                               |Description           |
+|----|----------------------------------------|----------------------|
+|`p` |[Animated](#animated-property) 2D Vector|Position              |
+|`s` |[Animated](#animated-property) 2D Vector|Size                  |
+|`r` |[Animated](#animated-property) `number` |Rounded corners radius|
 
 ### Ellipse
 
+|Attribute|Type                               |Description           |
+|----|----------------------------------------|----------------------|
+|`p` |[Animated](#animated-property) 2D Vector|Position              |
+|`s` |[Animated](#animated-property) 2D Vector|Size                  |
+
 ### PolyStar
 
+Regular polygon or star.
+
+
+|Attribute|Type                                 |Description                                |
+|----|------------------------------------------|-------------------------------------------|
+|`p` |[Animated](#animated-property) 2D Vector  |Position                                   |
+|`or`|[Animated](#animated-property) `number`   |Outer Radius                               |
+|`os`|[Animated](#animated-property) `number`   |Outer Roundness                            |
+|`r` |[Animated](#animated-property) `number`   |Rotation, clockwise in degrees             |
+|`pt`|[Animated](#animated-property) `integer`  |Number of points                           |
+|`sy`| `integer`                                |Star type, `1` for Star, `2` for Polygon   |
+
+If `sy` is `1` (star) you also have attributes defining the inner ends of the star:
+
+|Attribute|Type                                 |Description                                |
+|----|------------------------------------------|-------------------------------------------|
+|`ir`|[Animated](#animated-property) `number`   |Outer Radius                               |
+|`is`|[Animated](#animated-property) `number`   |Outer Roundness                            |
+
 ### Path
+
+Bezier path, note that it's a continuous shape, to have multiple shapes like
+when you need holes or gaps you need to create multiple Path shapes and group them together.
+
+|Attribute|Type                                       |Description|
+|----|------------------------------------------------|-----------|
+|`ks`|[Animated](#animated-property) [Bezier](#bezier)|Bezier Path|
 
 ## Style
 
@@ -240,7 +312,7 @@ All shapes have the attributes from [Visual Object](#visual-object) and the foll
 
 ### Repeater
 
-### Trim
+### Trim Path
 
 ### Rounded Corners
 
@@ -507,6 +579,33 @@ Translate by `p`
 0       1       0   0
 0       0       1   0
 p[0]    p[1]    0   1
+
+## Bezier
+
+This represents a cubic bezier path.
+
+Note that for interpolation to work correctly all bezier values in a property's keyframe must have the same number of points.
+
+
+|Attribute|Type|Name|Description|
+|---------|----|----|-----------|
+|`c`    |[0-1 `int`](#booleans)|Closed|Whether the bezier forms a closed loop|
+|`v`    |array of 2D Vector|Vertices|Points along the curve|
+|`i`    |array of 2D Vector|In Tangents|Cubic control points, incoming tangent|
+|`o`    |array of 2D Vector|Out Tangents|Cubic control points, outgoing tangent|
+
+`i` and `o` are relative to `v`.
+
+The <em>n</em>th bezier segment is defined as:
+
+```
+v[n], v[n]+o[n], v[n+1]+i[n+1], v[n+1]
+```
+
+If the bezier is closed, you need an extra segment going from the last point to the first, still following `i` and `o` appropriately.
+
+If you want linear bezier, you can have `i` and `o` for a segment to be `[0, 0]`.
+If you want it quadratic, set them to 2/3rd of what the quadratic control point would be.
 
 ## Mask
 
