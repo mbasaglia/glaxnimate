@@ -18,7 +18,7 @@ inline QLatin1String operator "" _l(const char* c, std::size_t sz)
 
 class LottieExporterState
 {
-    static constexpr const char* version = "5.5.7";
+    static constexpr const char* version = "5.7.1";
 
 public:
     explicit LottieExporterState(ImportExport* format, model::Document* document, bool strip, bool strip_raster )

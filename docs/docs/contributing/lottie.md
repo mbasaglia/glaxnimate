@@ -111,7 +111,7 @@ with no rotation when the position moves towards the right.
 The transparent one keeps its rotation the same (`ao` is 0), while the solid one
 follows the path (`ao` is 1).
 
-{lottie:../../examples/auto_orient.json:512:512:-}
+{lottie:../../examples/auto_orient.json:512:512:../examples/auto_orient.json}
 
 ### Mattes
 
@@ -122,7 +122,7 @@ appropriate [value](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#l
 and it affects the layer on top (the layer before it in the layer list).
 
 In this example there's a layer with a rectangle and a star being masked by an ellipse:
-{lottie:../../examples/matte.json:512:512:-}
+{lottie:../../examples/matte.json:512:512:../examples/matte.json}
 
 
 ## ShapeLayer
@@ -163,7 +163,7 @@ Basically it makes the precomp play in the first half second, then rewind
 to half way for the next half second, and plays back to the end for the remaining
 2 seconds.
 
-{lottie:../../examples/remapping.json:512:512:-}
+{lottie:../../examples/remapping.json:512:512:../examples/remapping.json}
 
 
 ## NullLayer
@@ -221,24 +221,24 @@ All shapes have the attributes from [Visual Object](#visual-object) and the foll
 
 ### Shape Types
 
-|`ty`|Shape                                 |
-|----|--------------------------------------|
-|`rc`|[Rectangle](#rectangle)               |
-|`el`|[Ellipse](#ellipse)                   |
-|`sr`|[PolyStar](#polystar)                 |
-|`sh`|[Path](#path)                         |
-|`fl`|[Fill](#fill)                         |
-|`st`|[Stroke](#stroke)                     |
-|`gf`|[Gradient Fill](#gradient-fill-stroke)|
-|`gs`|[Gradient Fill](#gradient-fill-stroke)|
-|`tm`|[Trim](#trim-path)                    |
-|`rp`|[Repeater](#repeater)                 |
-|`rd`|[Rounded Corners](#rounded-corners)   |
-|`mm`|Merge                                 |
-|`tw`|Twist                                 |
-|`pb`|[Pucker / Bloat](#pucker-bloat)       |
-|`gr`|[Group](#group)                       |
-|`tr`|[Transform](transform-shape)          |
+|`ty`|Shape                                     |
+|----|------------------------------------------|
+|`rc`|[Rectangle](#rectangle)                   |
+|`el`|[Ellipse](#ellipse)                       |
+|`sr`|[PolyStar](#polystar)                     |
+|`sh`|[Path](#path)                             |
+|`fl`|[Fill](#fill)                             |
+|`st`|[Stroke](#stroke)                         |
+|`gf`|[Gradient Fill](#gradient-fill-stroke)    |
+|`gs`|[Gradient Stroke](#gradient-fill-stroke)  |
+|`tm`|[Trim](#trim-path)                        |
+|`rp`|[Repeater](#repeater)                     |
+|`rd`|[Rounded Corners](#rounded-corners)       |
+|`mm`|Merge                                     |
+|`tw`|Twist                                     |
+|`pb`|[Pucker / Bloat](#pucker-bloat)           |
+|`gr`|[Group](#group)                           |
+|`tr`|[Transform](transform-shape)              |
 
 
 ## Actual Shapes
@@ -298,25 +298,192 @@ when you need holes or gaps you need to create multiple Path shapes and group th
 
 ## Style
 
+These apply a style (such as fill stroke) to the paths defined by the [actual shapes](#actual-shapes).
+
+Each style is applied to all preceding shapes in the same group / layer.
+
+In most formats the style is usually defined as a property of a shape, in lottie they
+are separate and allows for more flexibility.
+
+Some examples of the added flexibility would be a shape with multiple strokes,
+or a gradient fading into a solid color.
+
 ### Fill
+
+Defines a single color fill.
+
+|Attribute|Type                                                                                 |Description                    |
+|----|------------------------------------------------------------------------------------------|-------------------------------|
+|`o` |[Animated](#animated-property) `number`                                                   |Opacity, 100 means fully opaque|
+|`c` |[Animated](#animated-property) [Color](#color)                                            |Color                          |
+|`r` |[Fill Rule](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#lottie_FillRule)   |                               |
+
 
 ### Stroke
 
+Define a stroke.
+
+
+|Attribute|Type                                                                                 |Description                    |
+|----|------------------------------------------------------------------------------------------|-------------------------------|
+|`lc`|[Line Cap](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#lottie_LineCap)     |                               |
+|`lj`|[Line Join](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#lottie_LineJoin)   |                               |
+|`ml`|`number`                                                                                  |Miter Limit                    |
+|`o` |[Animated](#animated-property) `number`                                                   |Opacity, 100 means fully opaque|
+|`w` |[Animated](#animated-property) `number`                                                   |Width                          |
+|`d` |Array of [Dashes](#stroke-dashes)                                                         |Dashed line definition         |
+|`c` |[Animated](#animated-property) [Color](#color)                                            |Color                          |
+
+
+#### Stroke Dashes
+
+Defined as a sequence of alternating dashes and gaps.
+
+|Attribute|Type                                                                                 |Description                    |
+|----|------------------------------------------------------------------------------------------|-------------------------------|
+|`n` |[Dash Type](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#lottie_StrokeDashType)|Dash type                   |
+|`v` |[Animated](#animated-property) `number`                                                   |Length of the dash             |
+
 ### Gradient Fill / Stroke
+
+Gradient fill and gradient stroke have the same attributes as [fill](#fill) and [stroke](#stroke)
+but remove color (`c`) and add the following:
+
+|Attribute|Type                                       |Description|
+|----|------------------------------------------------|-----------|
+|`s` |[Animated](#animated-property) 2D Vector|Starting point for the gradient|
+|`e` |[Animated](#animated-property) 2D Vector|End point for the gradient|
+|`t` |`integer`|[Gradient Type](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#lottie_GradientType) |
+|`g` |[Gradient Colors](#gradient-colors)||
+
+If it's a radial gradient, `s` refers to the center of the gradient,
+and the style object may have these additional properties:
+
+|Attribute|Type                              |Description       |
+|----|---------------------------------------|------------------|
+|`h` |[Animated](#animated-property) `number`|Highlight Length  |
+|`a` |[Animated](#animated-property) `number`|Highlight Angle   |
+
+Basically the radial highlight position is defined in polar coordinates relative to `s`.
 
 ## Group
 
+A group is a shape that can contain other shapes (including other groups).
+
+The usual contents of a group are:
+
+* [Shapes](#actual-shapes)
+* [Style](#style)
+* [Transform](#transform)
+
+For example, if you want to have a red rectangle with a black outline, its group will contain
+
+0. A [Rectangle](#rectangle) defining the actual shape of the rectangle
+1. A [Fill](#fill) for the color red
+2. A [Stroke](#stroke) for the black outline
+3. A [Transform](#transform) for the group transform
+
+While the contents may vary, a group must always end with a [Transform shape](#transform).
+
+The attributes of a Group are:
+
+|Attribute|Type                                                 |Description            |
+|----|----------------------------------------------------------|-----------------------|
+|`np`|`number`                                                  |Number of properties   |
+|`it`|[Array](#lists-of-layers-and-shapes) of [shapes](#shape)  |Shapes                 |
+
 ### Transform Shape
+
+Basically the same as [Transform](#transform) but with the `ty` attribute.
 
 ## Modifiers
 
+Modifiers process their siblings and alter the path defined by [shapes](#actual-shapes).
+
 ### Repeater
+
+This is a bit different compared from other modifiers, since it will take into
+account style as well.
+
+The effect of a Repeater is to duplicate the other shapes a number of times applying a transform for each copy.
+
+|Attribute|Type                                 |Description                    |
+|----|------------------------------------------|-------------------------------|
+|`c` |[Animated](#animated-property) `integer`  |Number of copies               |
+|`o` |[Animated](#animated-property) `number`   |Offset (see below)             |
+|`m` |`integer`                                 |[Composite](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#lottie_Composite) (How to stack copies)|
+|`tr`|[Repeater Transform](#repeater-transform) |Transform applied to each copy |
+
+
+The transform is multiplied by `o + 1` (where `o` is the Offset property above).<br/>
+So if `o` is `0`, the first instance shown by the Repeater is at its starting location.<br/>
+If it's `1`, the first instance has the matrix applied to it.
+Other values multiply the initial transform accordingly.
+
+#### Repeater Transform
+
+Same as a regular [Transform](#transform) but instead of a single opacity value (`o`),
+it has two:
+
+|Attribute|Type                                 |Description                    |
+|----|------------------------------------------|-------------------------------|
+|`so`|[Animated](#animated-property) `number`   |Start Opacity                  |
+|`eo`|[Animated](#animated-property) `number`   |End Opacity                    |
+
+The first copy will use `so`, the last `eo`, and copies between them will have an interpolated value.
+
+{lottie:../../examples/repeater.json:512:512:../examples/repeater.json}
 
 ### Trim Path
 
+This is mostly useful for shapes with a stroke and not a fill.
+
+It takes the path defined by [shapes](#actual-shapes) and only shows a segment of the resulting bezier data.
+
+|Attribute|Type                                 |Description                    |
+|----|------------------------------------------|-------------------------------|
+|`s` |[Animated](#animated-property) `number`   |Segment start                  |
+|`e` |[Animated](#animated-property) `number`   |Segment end                    |
+|`o` |[Animated](#animated-property) `number`   |Offset                         |
+|`m` |`integer`                                 |[How to treat multiple shapes](https://mattbas.gitlab.io/python-lottie/group__Lottie.html#lottie_TrimMultipleShapes)
+
+
+`s` and `e` go from `0` to `100`, `0` being at the beginning of the path and `100` at the end.
+The displayed segment is what lays between the two.
+
+`o` is an offset from the start, to allow values to wrap around.
+Its value goes from `0` (start of the path) to `360` (end of the path).
+It looks like an angle but it isn't really, the difference between `o` and `s` is
+that with `o` you can go over `360` or below `0` to shift the whole segment along the path.
+
+
+{lottie:../../examples/trim_path.json:512:512:../examples/trim_path.json}
+
 ### Rounded Corners
 
+Self explanatory
+
+|Attribute|Type                                 |Description                    |
+|----|------------------------------------------|-------------------------------|
+|`r` |[Animated](#animated-property) `number`   |Radius                         |
+
+{lottie:../../examples/rounded_corners.json:512:512:../examples/rounded_corners.json}
+
 ### Pucker / Bloat
+
+|Attribute|Type                                 |Description                    |
+|----|------------------------------------------|-------------------------------|
+|`a` |[Animated](#animated-property) `number`   |Amount as a percentage         |
+
+Interpolates bezier vertices towards the center of the shape, and tangent handles away from it (or vice-versa).
+
+When `a` is `0`, nothing changes.<br/>
+When `a` is positive, the vertices are pulled towards the center, with `100` being at the center. And the tangents are pushed away.<br/>
+When `a` is negative the vertices are pushed away from the center with `100` being twice far away from the center. And the tangents are pulled towards the center.<br/>
+
+
+{lottie:../../examples/pucker_bloat.json:512:512:../examples/pucker_bloat.json}
+
 
 ## Asset
 
@@ -412,7 +579,7 @@ So if you have for example: `[Ellipse, Rectangle]`
 
 The ellipse will show on top of the rectangle:
 
-{lottie:../../examples/layer_order.json:512:512:-}
+{lottie:../../examples/layer_order.json:512:512:../examples/layer_order.json}
 
 This means the render order goes from the last element to the first.
 
