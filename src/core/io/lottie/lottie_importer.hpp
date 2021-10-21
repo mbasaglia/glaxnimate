@@ -842,10 +842,16 @@ private:
         }
     }
 
+    qreal keyframe_bezier_handle_comp(const QJsonValue& comp)
+    {
+        if ( comp.isArray() )
+            return comp[0].toDouble();
+        return comp.toDouble();
+    }
+
     QPointF keyframe_bezier_handle(const QJsonValue& val)
     {
-        QJsonObject jobj = val.toObject();
-        return {jobj["x"].toDouble(), jobj["y"].toDouble()};
+        return {keyframe_bezier_handle_comp(val["x"]), keyframe_bezier_handle_comp(val["y"])};
     }
 
     void load_assets(const QJsonArray& assets)
@@ -900,8 +906,7 @@ private:
 
     enum class FontOrigin
     {
-        System = -1,
-        Unknown = 0,
+        System = 0,
         CssUrl = 1,
         ScriptUrl = 2,
         FontUrl = 3,
@@ -927,7 +932,7 @@ private:
             {
                 switch ( (font["fOrigin"].toString() + " ")[0].toLatin1() )
                 {
-                    case 'n': font_origin = FontOrigin::Unknown; break;
+                    case 'n': font_origin = FontOrigin::System; break;
                     case 'g': font_origin = FontOrigin::CssUrl; break;
                     case 't': font_origin = FontOrigin::ScriptUrl; break;
                     case 'p': font_origin = FontOrigin::FontUrl; break;
@@ -944,7 +949,6 @@ private:
                     // Queue dynamic font loading
                     document->add_pending_asset(info.family, font["fPath"].toString());
                     break;
-                case FontOrigin::Unknown:
                 case FontOrigin::ScriptUrl:
                     // idk how these work
                     break;

@@ -10,6 +10,7 @@
     * Fixed exporting polygons to lottie
     * Added support for loading (old) lottie v 4.0.0
     * Added support for common metadata (author/description) across formats
+    * Fixed loading easing from lottie
 * UI:
     * Added simplified Chinese translation
     * Added British English translation
