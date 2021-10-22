@@ -445,6 +445,7 @@ public:
 
         set_attribute(e, "sodipodi:type", "star");
         set_attribute(e, "inkscape:randomized", "0");
+        // inkscape:rounded Works differently than lottie so we leave it as 0
         set_attribute(e, "inkscape:rounded", "0");
         int sides = star->points.get_at(time);
         set_attribute(e, "sodipodi:sides", sides);

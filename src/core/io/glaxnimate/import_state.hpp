@@ -214,6 +214,18 @@ private:
         {
             object["fonts"] = fixed_asset_list("FontList", QJsonArray());
         }
+
+        if ( document_version < 5 )
+        {
+            if ( object["__type__"].toString() == "Trim" )
+            {
+                // values were swapped
+                if ( object["mutiple"].toString() == "Individually" )
+                    object["mutiple"] = "Simultaneously";
+                else
+                    object["mutiple"] = "Individually";
+            }
+        }
     }
 
     void do_load_object ( model::Object* target, QJsonObject object, const UnresolvedPath& path )

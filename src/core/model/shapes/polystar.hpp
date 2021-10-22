@@ -20,12 +20,12 @@ public:
 
     GLAXNIMATE_PROPERTY(StarType, type, Star, {}, {}, PropertyTraits::Visual)
     GLAXNIMATE_ANIMATABLE(QPointF, position, QPointF())
-//     GLAXNIMATE_ANIMATABLE(float, inner_roundness, 0, {}, 0)
     GLAXNIMATE_ANIMATABLE(float, outer_radius, 0, {}, 0)
     GLAXNIMATE_ANIMATABLE(float, inner_radius, 0, {}, 0)
-//     GLAXNIMATE_ANIMATABLE(float, outner_roundness, 0, {}, 0)
     GLAXNIMATE_ANIMATABLE(float, angle, 0, {}, 0, 360, true)
     GLAXNIMATE_ANIMATABLE(int, points, 5)
+    GLAXNIMATE_ANIMATABLE(float, outer_roundness, 0, {}, 0, 100, false, PropertyTraits::Percent)
+    GLAXNIMATE_ANIMATABLE(float, inner_roundness, 0, {}, 0, 100, false, PropertyTraits::Percent)
 
 public:
     using Shape::Shape;
@@ -50,7 +50,11 @@ public:
         return QRectF(position.get_at(t) - QPointF(radius, radius), QSizeF(radius*2, radius*2));
     }
 
-    static math::bezier::Bezier draw(StarType type, const QPointF& pos, float r1, float r2, float angle_radians, int p);
+    bool is_rounded() const;
+
+    static math::bezier::Bezier draw(
+        StarType type, const QPointF& pos, float r_in, float r_out,
+        float angle_radians, int p, float round_in, float round_out, bool reverse);
 };
 
 } // namespace glaxnimate::model

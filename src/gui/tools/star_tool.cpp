@@ -104,7 +104,10 @@ private:
             widget()->spoke_ratio() * polar.length,
             polar.length,
             polar.angle,
-            widget()->points()
+            widget()->points(),
+            0,
+            0,
+            false
         );
     }
 

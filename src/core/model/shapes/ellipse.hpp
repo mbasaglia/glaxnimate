@@ -15,27 +15,13 @@ class Ellipse : public Shape
 public:
     using Shape::Shape;
 
-    QIcon tree_icon() const override
-    {
-        return QIcon::fromTheme("draw-ellipse");
-    }
+    QIcon tree_icon() const override;
 
-    QString type_name_human() const override
-    {
-        return tr("Ellipse");
-    }
+    QString type_name_human() const override;
 
-    math::bezier::Bezier to_bezier(FrameTime t) const override
-    {
-        QSizeF sz = size.get_at(t);
-        return math::EllipseSolver(position.get_at(t), QPointF(sz.width()/2, sz.height()/2), 0).to_bezier(0, 2*M_PI);
-    }
+    math::bezier::Bezier to_bezier(FrameTime t) const override;
 
-    QRectF local_bounding_rect(FrameTime t) const override
-    {
-        QSizeF sz = size.get_at(t);
-        return QRectF(position.get_at(t) - QPointF(sz.width()/2, sz.height()/2), sz);
-    }
+    QRectF local_bounding_rect(FrameTime t) const override;
 };
 
 } // namespace glaxnimate::model

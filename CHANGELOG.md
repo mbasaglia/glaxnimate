@@ -3,6 +3,7 @@
 * Editing:
     * Action to make animations loop in the property context menu
     * Added Inflate/Deflate modifier (aka Pucker/Bloat)
+    * Added support for rounded polygons / stars
 * I/O:
     * Loading Lottie with `meta` no longer show a warning
     * Fixed UUIDs when loading lottie animations
@@ -11,6 +12,7 @@
     * Added support for loading (old) lottie v 4.0.0
     * Added support for common metadata (author/description) across formats
     * Fixed loading easing from lottie
+    * Added support for reversed lottie shapes
 * UI:
     * Added simplified Chinese translation
     * Added British English translation
@@ -18,6 +20,7 @@
     * You can drag on the timeline property tree to change a layer's parent link
 * Bug Fixes:
     * Fixed rows breaking up in the timeline
+    * Fixed various issues with trim path
 
 ## 0.4.6
 

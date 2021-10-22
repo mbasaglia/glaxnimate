@@ -34,7 +34,12 @@ public:
 
     math::bezier::Bezier to_bezier(FrameTime t) const override
     {
-        return shape.get_at(t);
+        auto bezier = shape.get_at(t);
+
+        if ( reversed.get() )
+            bezier.reverse();
+
+        return bezier;
     }
 
     QRectF local_bounding_rect(FrameTime t) const override

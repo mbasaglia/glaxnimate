@@ -116,6 +116,8 @@ class Shape : public ShapeElement
 {
     Q_OBJECT
 
+    GLAXNIMATE_PROPERTY(bool, reversed, false, {}, {}, PropertyTraits::Visual|PropertyTraits::Hidden)
+
 public:
     using ShapeElement::ShapeElement;
 

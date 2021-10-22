@@ -122,6 +122,22 @@ math::bezier::Bezier math::bezier::Bezier::lerp(const math::bezier::Bezier& othe
     return lerped;
 }
 
+
+void math::bezier::Bezier::reverse()
+{
+    std::reverse(points_.begin(), points_.end());
+
+    if ( closed_ && points_.size() > 1 )
+    {
+        auto back = points_.back();
+        points_.pop_back();
+        points_.insert(points_.begin(), back);
+    }
+
+    for ( auto& p : points_ )
+        std::swap(p.tan_in, p.tan_out);
+}
+
 math::bezier::BezierSegment math::bezier::Bezier::segment(int index) const
 {
     return {

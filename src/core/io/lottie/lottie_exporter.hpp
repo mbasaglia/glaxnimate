@@ -528,10 +528,6 @@ public:
         }
         else if ( auto polystar = shape->cast<model::PolyStar>() )
         {
-            QCborMap fake = fake_animated(0);
-            jsh["os"_l] = fake;
-            jsh["is"_l] = fake;
-
             if ( polystar->type.get() == model::PolyStar::Polygon )
             {
                 jsh.remove("is"_l);

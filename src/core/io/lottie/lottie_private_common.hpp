@@ -226,7 +226,10 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"hd", Custom},
     }},
     {"Shape", {
-        FieldInfo{"d"},
+        FieldInfo{"d", "reversed", EnumMap{{
+            {1, 3},
+            {0, 1},
+        }}},
         FieldInfo{"closed", Custom}, // Old attribute
     }},
     {"Rect", {
@@ -246,8 +249,8 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"p", "position"},
         FieldInfo{"or", "outer_radius"},
         FieldInfo{"ir", "inner_radius"},
-        FieldInfo{"is"},
-        FieldInfo{"os"},
+        FieldInfo{"is", "inner_roundness", FloatMult(100)},
+        FieldInfo{"os", "outer_roundness", FloatMult(100)},
         FieldInfo{"r", "angle"},
         FieldInfo{"pt", "points"},
         FieldInfo{"sy", "type"},

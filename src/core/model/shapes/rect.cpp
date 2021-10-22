@@ -13,10 +13,10 @@ glaxnimate::math::bezier::Bezier glaxnimate::model::Rect::to_bezier(model::Frame
 
     if ( rounded == 0 && !this->rounded.animated() )
     {
-        bezier.add_point(bb.topLeft());
         bezier.add_point(bb.topRight());
         bezier.add_point(bb.bottomRight());
         bezier.add_point(bb.bottomLeft());
+        bezier.add_point(bb.topLeft());
     }
     else
     {
@@ -24,16 +24,20 @@ glaxnimate::math::bezier::Bezier glaxnimate::model::Rect::to_bezier(model::Frame
         QPointF vh(0, rounded/2);
         QPointF hd(rounded, 0);
         QPointF vd(0, rounded);
-        bezier.add_point(bb.topLeft()+vd, {0,0}, -vh);
-        bezier.add_point(bb.topLeft()+hd, -hh);
-        bezier.add_point(bb.topRight()-hd, {0,0}, hh);
         bezier.add_point(bb.topRight()+vd, -vh);
         bezier.add_point(bb.bottomRight()-vd, {0,0}, vh);
         bezier.add_point(bb.bottomRight()-hd, hh);
         bezier.add_point(bb.bottomLeft()+hd, {0,0}, -hh);
         bezier.add_point(bb.bottomLeft()-vd, vh);
+        bezier.add_point(bb.topLeft()+vd, {0,0}, -vh);
+        bezier.add_point(bb.topLeft()+hd, -hh);
+        bezier.add_point(bb.topRight()-hd, {0,0}, hh);
     }
 
     bezier.close();
+
+    if ( reversed.get() )
+        bezier.reverse();
+
     return bezier;
 }

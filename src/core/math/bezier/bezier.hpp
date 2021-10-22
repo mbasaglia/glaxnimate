@@ -182,12 +182,7 @@ public:
     /**
      * \brief Reverses the orders of the points
      */
-    void reverse()
-    {
-        std::reverse(points_.begin(), points_.end());
-        for ( auto& p : points_ )
-            std::swap(p.tan_in, p.tan_out);
-    }
+    void reverse();
 
     QRectF bounding_box() const;
 

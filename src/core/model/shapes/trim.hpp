@@ -14,8 +14,8 @@ class Trim : public StaticOverrides<Trim, PathModifier>
 public:
     enum MultipleShapes
     {
-        Simultaneously = 1,
-        Individually = 2,
+        Individually = 1,
+        Simultaneously = 2,
     };
 
     Q_ENUM(MultipleShapes)
