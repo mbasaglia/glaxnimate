@@ -29,14 +29,14 @@ glaxnimate::math::bezier::Bezier glaxnimate::model::PolyStar::draw(
     math::bezier::Bezier bezier;
     bezier.close();
 
-    qreal halfd = math::pi / p;
     qreal direction = reverse ? -1 : 1;
-    qreal tangent_len_outer = round_outer * (math::tau * radius_outer) / (p * 4);
-    qreal tangent_len_inner = round_inner * (math::tau * radius_inner) / (p * 4);
+    qreal halfd = math::pi / p * direction;
+    qreal tangent_len_outer = round_outer * (math::tau * radius_outer) / (p * 4) * direction;
+    qreal tangent_len_inner = round_inner * (math::tau * radius_inner) / (p * 4) * direction;
 
     for ( int i = 0; i < p; i++ )
     {
-        qreal main_angle = -math::pi / 2 + angle_radians + i * halfd * 2 * direction;
+        qreal main_angle = -math::pi / 2 + angle_radians + i * halfd * 2;
         qreal dx = radius_outer * math::cos(main_angle);
         qreal dy = radius_outer * math::sin(main_angle);
 
