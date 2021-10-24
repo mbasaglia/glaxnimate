@@ -117,13 +117,12 @@ linux:aur:
         - sudo -u foo makepkg --printsrcinfo > .SRCINFO
         - if ! git diff-index --quiet HEAD -- ; then git commit -am "Update to version $PROJECT_VERSION" ; GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push ; fi
 
-# Not working so disabled
-.linux:aur_build:
+linux:aur_build:
     image: archlinux:latest
     stage: build
     before_script:
         - pacman -Sy
-        - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats
+        - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats libffi
     script:
         # Setup
         - useradd -m foo
