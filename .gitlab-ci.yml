@@ -136,6 +136,7 @@ linux:aur_build:
         - git clone https://aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
         - chown -R foo .
+        - sed -i 's/ make / make -j4' PKGBUILD
         - sudo -u foo MAKEFLAGS='-j4' makepkg -f
         - namcap PKGBUILD
 
