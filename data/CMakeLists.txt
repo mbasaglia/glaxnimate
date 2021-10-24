@@ -48,19 +48,21 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop DESTINATION ${DATA_
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop DESTINATION share/applications)
 
 # Icon
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg COPYONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/scalable/ )
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/file-icon.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}-file.svg COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg ${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg COPYONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/logo/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/scalable/apps/ )
 
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
-    COMMAND inkscape ${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg -o ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg
+    COMMAND inkscape ${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg -o ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg
 )
 add_custom_target(
     logo_png
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
 )
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png DESTINATION share/icons/hicolor/512x512/ )
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png DESTINATION share/icons/hicolor/512x512/apps )
 
 # Plugins
 install(DIRECTORY plugins DESTINATION ${DATA_INSTALL})

@@ -1,5 +1,5 @@
 <!DOCTYPE RCC><RCC>
     <qresource prefix="/glaxnimate">
-        <file alias="splash.svg">${CMAKE_SOURCE_DIR}/data/images/logo.svg</file>
+        <file alias="splash.svg">${CMAKE_SOURCE_DIR}/data/logo/splash-screen.svg</file>
     </qresource>
 </RCC>
