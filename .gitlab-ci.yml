@@ -81,7 +81,8 @@ linux:deb:
             - build/CMakeCache.txt
     when: always
 
-linux:aur:
+# Not working so disabled
+.linux:aur:
     image: archlinux:latest
     stage: deploy
     dependencies:
@@ -117,8 +118,8 @@ linux:aur:
         - sudo -u foo makepkg --printsrcinfo > .SRCINFO
         - if ! git diff-index --quiet HEAD -- ; then git commit -am "Update to version $PROJECT_VERSION" ; GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push ; fi
 
-
-linux:aur_build:
+# Not working so disabled
+.linux:aur_build:
     image: archlinux:latest
     stage: build
     before_script:
@@ -136,7 +137,6 @@ linux:aur_build:
         - git clone https://aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
         - chown -R foo .
-        - sed -i 's/ make / make -j4' PKGBUILD
         - sudo -u foo MAKEFLAGS='-j4' makepkg -f
         - namcap PKGBUILD
 
