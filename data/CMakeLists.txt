@@ -51,7 +51,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop DESTINATION share/a
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/file-icon.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}-file.svg COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg ${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg COPYONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/logo/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/scalable/apps/ )
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/scalable/apps/ )
 
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
