@@ -322,6 +322,9 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     {"InflateDeflate", {
         FieldInfo{"a", "amount", FloatMult(100)},
     }},
+    {"RoundCorners", {
+        FieldInfo{"r", "radius"},
+    }},
 };
 const QMap<QString, QString> shape_types = {
     {"Rect", "rc"},
@@ -334,10 +337,10 @@ const QMap<QString, QString> shape_types = {
     {"Stroke", "st"},
     // "gf" (Gradient Fill) and "gs" (Gradient Stroke) are handled by fill/stroke
     // "tr" is not a shape but a property of groups
-    // "mm" (Merge) and "tw" (Twist) are not supported by lottie
+    // "mm" (Merge), "tw" (Twist), "op" (Offset Path) are not supported by lottie
     {"Trim", "tm"},
     {"Repeater", "rp"},
-//     {"RoundedCorners", "rd"},
+    {"RoundCorners", "rd"},
     {"InflateDeflate", "pb"},
 };
 

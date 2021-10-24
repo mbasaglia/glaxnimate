@@ -4,6 +4,7 @@
     * Action to make animations loop in the property context menu
     * Added Inflate/Deflate modifier (aka Pucker/Bloat)
     * Added support for rounded polygons / stars
+    * Added rounded corners modifier
 * I/O:
     * Loading Lottie with `meta` no longer show a warning
     * Fixed UUIDs when loading lottie animations

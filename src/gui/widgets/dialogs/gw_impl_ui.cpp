@@ -15,6 +15,7 @@
 #include "model/shapes/repeater.hpp"
 #include "model/shapes/trim.hpp"
 #include "model/shapes/inflate_deflate.hpp"
+#include "model/shapes/round_corners.hpp"
 
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/dialogs/about_dialog.hpp"
@@ -196,6 +197,7 @@ void GlaxnimateWindow::Private::init_actions()
     add_modifier_menu_action<model::Repeater>(ui.menu_new_layer);
     add_modifier_menu_action<model::Trim>(ui.menu_new_layer);
     add_modifier_menu_action<model::InflateDeflate>(ui.menu_new_layer);
+    add_modifier_menu_action<model::RoundCorners>(ui.menu_new_layer);
     connect(ui.action_import_image, &QAction::triggered, parent, [this]{import_image();});
     connect(ui.action_delete, &QAction::triggered, parent, &GlaxnimateWindow::delete_selected);
     connect(ui.action_export, &QAction::triggered, parent, &GlaxnimateWindow::document_export);

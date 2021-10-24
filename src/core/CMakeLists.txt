@@ -79,7 +79,7 @@ model/shapes/repeater.cpp
 model/shapes/trim.cpp
 model/shapes/inflate_deflate.cpp
 model/shapes/path_modifier.cpp
-
+model/shapes/round_corners.cpp
 
 plugin/plugin.cpp
 plugin/action.cpp

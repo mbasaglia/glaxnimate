@@ -16,6 +16,7 @@
 #include "model/shapes/repeater.hpp"
 #include "model/shapes/trim.hpp"
 #include "model/shapes/inflate_deflate.hpp"
+#include "model/shapes/round_corners.hpp"
 
 #include "model/assets/assets.hpp"
 #include "model/assets/named_color.hpp"
@@ -492,4 +493,5 @@ void register_py_module(py::module& glaxnimate_module)
     register_from_meta<model::PathModifier, model::Modifier>(shapes);
     register_constructible<model::Trim, model::PathModifier>(shapes);
     register_constructible<model::InflateDeflate, model::PathModifier>(shapes);
+    register_constructible<model::RoundCorners, model::PathModifier>(shapes);
 }
