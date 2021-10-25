@@ -90,7 +90,7 @@ linux:aur:
     only:
         - release
     before_script:
-        - pacman -Syu
+        - pacman -Syu --noconfirm
         - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats libffi glib2
     script:
         # Setup
@@ -121,7 +121,7 @@ linux:aur_build:
     image: archlinux:latest
     stage: build
     before_script:
-        - pacman -Syu
+        - pacman -Syu --noconfirm
         - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats libffi glib2
     script:
         # Setup
