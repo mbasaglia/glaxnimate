@@ -92,12 +92,10 @@ linux:aur:
     before_script:
         - pacman -Syu --noconfirm
         - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats libffi glib2
-        - cat /proc/meminfo
     script:
         # Setup
         - useradd -m foo
         - chmod 600 "$AUR_SSH_KEY"
-        #- echo 'MAKEFLAGS="-j2"' >>/etc/makepkg.conf
         - mkdir -p build
         - cd build
         - cmake ..
@@ -124,11 +122,9 @@ linux:aur_build:
     before_script:
         - pacman -Syu --noconfirm
         - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats libffi glib2
-        - cat /proc/meminfo
     script:
         # Setup
         - useradd -m foo
-        #- echo 'MAKEFLAGS="-j4"' >>/etc/makepkg.conf
         - mkdir -p build
         - cd build
         - cmake ..
@@ -157,14 +153,14 @@ linux:appimage:
         - git clone https://github.com/FFmpeg/FFmpeg.git
         - cd FFmpeg/
         - ./configure --disable-static --enable-shared
-        - make -j2
+        - make
         - make install
         - cd ..
     script:
         - mkdir build
         - cd build
         - cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_PREFIX_PATH=/opt/qt515/lib/cmake/Qt5LinguistTools/ -DVERSION_SUFFIX="appimage-$CI_COMMIT_SHORT_SHA"
-        - make -j2
+        - make
         - make translations
         - make install DESTDIR=AppDir >/dev/null
         - mkdir AppDir/usr/lib
