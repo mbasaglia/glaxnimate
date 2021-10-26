@@ -81,8 +81,7 @@ linux:deb:
             - build/CMakeCache.txt
     when: always
 
-# Not working so disabled
-.linux:aur:
+linux:aur:
     image: archlinux:latest
     stage: deploy
     dependencies:
@@ -91,13 +90,12 @@ linux:deb:
     only:
         - release
     before_script:
-        - pacman -Sy
-        - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats
+        - pacman -Syu --noconfirm
+        - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats libffi glib2
     script:
         # Setup
         - useradd -m foo
         - chmod 600 "$AUR_SSH_KEY"
-        - echo 'MAKEFLAGS="-j4"' >>/etc/makepkg.conf
         - mkdir -p build
         - cd build
         - cmake ..
@@ -113,22 +111,20 @@ linux:deb:
         - sed -i -e "s/pkgver=.*/pkgver=$PROJECT_VERSION/" PKGBUILD
         - cat PKGBUILD
         - chown -R foo .
-        - sudo -u foo MAKEFLAGS='-j4' makepkg -f
+        - sudo -u foo makepkg -f
         - namcap PKGBUILD
         - sudo -u foo makepkg --printsrcinfo > .SRCINFO
         - if ! git diff-index --quiet HEAD -- ; then git commit -am "Update to version $PROJECT_VERSION" ; GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push ; fi
 
-# Not working so disabled
-.linux:aur_build:
+linux:aur_build:
     image: archlinux:latest
     stage: build
     before_script:
-        - pacman -Sy
-        - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats
+        - pacman -Syu --noconfirm
+        - pacman -S --noconfirm git base-devel fakeroot vim openssh namcap xorg-xauth cmake qt5-base python zlib hicolor-icon-theme potrace ffmpeg qt5-tools sudo qt5-svg qt5-imageformats libffi glib2
     script:
         # Setup
         - useradd -m foo
-        - echo 'MAKEFLAGS="-j4"' >>/etc/makepkg.conf
         - mkdir -p build
         - cd build
         - cmake ..
@@ -137,7 +133,7 @@ linux:deb:
         - git clone https://aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
         - chown -R foo .
-        - sudo -u foo MAKEFLAGS='-j4' makepkg -f
+        - sudo -u foo makepkg -f
         - namcap PKGBUILD
 
 
@@ -157,14 +153,14 @@ linux:appimage:
         - git clone https://github.com/FFmpeg/FFmpeg.git
         - cd FFmpeg/
         - ./configure --disable-static --enable-shared
-        - make -j2
+        - make
         - make install
         - cd ..
     script:
         - mkdir build
         - cd build
         - cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_PREFIX_PATH=/opt/qt515/lib/cmake/Qt5LinguistTools/ -DVERSION_SUFFIX="appimage-$CI_COMMIT_SHORT_SHA"
-        - make -j2
+        - make
         - make translations
         - make install DESTDIR=AppDir >/dev/null
         - mkdir AppDir/usr/lib
