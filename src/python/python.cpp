@@ -351,7 +351,7 @@ void register_py_module(py::module& glaxnimate_module)
     py::module detail = define_detail(glaxnimate_module);
     define_environment(glaxnimate_module);
 
-    // for some reason some classes arent seen without this o_O
+    // for some reason some classes aren't seen without this o_O
     static std::vector<int> foo = {
         qMetaTypeId<model::DocumentNode*>(),
         qMetaTypeId<model::NamedColor*>(),

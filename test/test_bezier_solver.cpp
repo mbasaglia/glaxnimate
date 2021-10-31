@@ -199,7 +199,7 @@ private slots:
         math::bezier::CubicBezierSolver<QVector2D> bs{sp, h1, h2, ep};
         auto split = bs.split(0.5);
 
-        // Fisrt split
+        // First split
         // Begins with the starting point
         QCOMPARE(split.first[0], sp);
         // First tangent pointing up and right
@@ -240,7 +240,7 @@ private slots:
         math::BezierSolver<QVector2D> bs{sp, h, ep};
         auto split = bs.split_cubic(0.5);
 
-        // Fisrt split
+        // First split
         // Begins with the starting point
         QCOMPARE(split.first[0], sp);
         QCOMPARE(split.first[1], sp);
@@ -274,7 +274,7 @@ private slots:
         math::BezierSolver<QVector2D> bs{sp, ep};
         auto split = bs.split_cubic(0.5);
 
-        // Fisrt split
+        // First split
         // Begins with the starting point
         QCOMPARE(split.first[0], sp);
         QCOMPARE(split.first[1], sp);

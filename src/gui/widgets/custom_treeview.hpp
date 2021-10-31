@@ -6,7 +6,7 @@
 namespace glaxnimate::gui {
 
 /**
- * \brief QTreeView but slighlty different mouse actions
+ * \brief QTreeView but slightly different mouse actions
  */
 class CustomTreeView : public QTreeView
 {

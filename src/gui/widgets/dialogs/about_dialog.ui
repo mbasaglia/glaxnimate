@@ -524,7 +524,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <widget class="QLabel" name="label_8">
              <property name="text">
-              <string>Ouput Formats </string>
+              <string>Output Formats </string>
              </property>
             </widget>
            </item>

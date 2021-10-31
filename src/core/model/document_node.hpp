@@ -271,7 +271,7 @@ public:
     enum PaintMode
     {
         Canvas,         ///< Paint everything
-        Render          ///< Recursive, but hide objects maked with render == false
+        Render          ///< Recursive, but hide objects marked with render == false
     };
 
     explicit VisualNode(model::Document* document);

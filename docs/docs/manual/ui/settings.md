@@ -23,7 +23,7 @@ This select the defaults for when you create a new file.
 ![settings dialog](/img/screenshots/dialogs/settings/open_save.png)
 
 * Max Recent Files: How many items to show in the *File* > *Open Recent* menu.
-* Backup Frequency: Number of minutes between automatic backup saves. Set to 0 to diable.
+* Backup Frequency: Number of minutes between automatic backup saves. Set to 0 to disable.
 
 ## Toolbars
 

@@ -516,7 +516,7 @@ private:
             return obj;
         }
 
-        error(GlaxnimateFormat::tr("Unknow object of type '%1'").arg(type));
+        error(GlaxnimateFormat::tr("Unknown object of type '%1'").arg(type));
         temporaries.emplace_back(new model::Object(document));
         return temporaries.back().get();
     }

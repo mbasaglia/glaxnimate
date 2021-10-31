@@ -24,7 +24,7 @@ public:
 
 public:
     /**
-     *  \brief Get the grobal zoom factor
+     *  \brief Get the global zoom factor
      *
      *  \return A value representing the scaling factor, 1 = 100%
     */

@@ -180,7 +180,7 @@ public:
 
 protected:
     /**
-     * \brief Wether to process on the whole thing (or individual objects)
+     * \brief Whether to process on the whole thing (or individual objects)
      */
     virtual bool process_collected() const = 0;
 

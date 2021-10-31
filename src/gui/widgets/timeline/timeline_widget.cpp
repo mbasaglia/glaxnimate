@@ -497,7 +497,7 @@ void TimelineWidget::paintEvent(QPaintEvent* event)
 
 void TimelineWidget::reset_view()
 {
-    // scene_rect changes min_scale, which changes tranform, which changes frame_skip, which changes scene_rect
+    // scene_rect changes min_scale, which changes transform, which changes frame_skip, which changes scene_rect
     setSceneRect(d->scene_rect());
     d->adjust_min_scale(viewport()->width());
 

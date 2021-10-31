@@ -18,7 +18,7 @@ It's a JSON file with an array of objects with the following structure:
     {
         // Name of the set, as shown in the dialog
         "name" : "Twemoji",
-        // Link to the website fot this set
+        // Link to the website for this set
         "url": "https://github.com/twitter/twemoji",
         // License name, shown on the dialog
         "license": "CC BY-SA 4.0",

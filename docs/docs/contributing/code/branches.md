@@ -25,4 +25,4 @@ This is the main development branch, CI will use it to create the development sn
 ## Feature branches
 
 Most things should be developed in feature branches,
-which can be tested sparately before being merged into `master`.
+which can be tested separately before being merged into `master`.

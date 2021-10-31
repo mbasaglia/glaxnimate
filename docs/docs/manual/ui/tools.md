@@ -25,7 +25,7 @@ when you release the mouse it will select all items intersecting that area.
 Dragging while holding Alt: Draws a path and when you release the mouse,
 it will select all items intersecting that path.
 
-Right click: show a contect menu with actions regarding the current selection
+Right click: show a context menu with actions regarding the current selection
 and the item under the mouse.
 
 Double click: edit the item under the mouse
@@ -103,7 +103,7 @@ Double clicking will add a new point, create the new shape and exit drawing mode
 Dragging will pull on the handles of the last added point. <br/>
 By default the point will be symmetrical, this means the input and output tangent will have the same size and direction.<br/>
 If you hold Ctrl while dragging, the point will become smooth,
-this means the direction of the tangents will stay the same but they can have different lenths.<br/>
+this means the direction of the tangents will stay the same but they can have different lengths.<br/>
 If you hold Shift instead, it will become a corner: the in tangent will not be modified any more
 and you can change the out tangent as you please.
 

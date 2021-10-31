@@ -28,7 +28,7 @@ void myfunc()
 }
 ```
 
-## Definining new settings
+## Defining new settings
 
 To add a new setting, you need to register it in `src/gui/glaxnimate_app.cpp`.
 

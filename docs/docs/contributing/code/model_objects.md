@@ -35,7 +35,7 @@ class MyNewObject : public Object
     GLAXNIMATE_OBJECT(MyNewObject)
 
     // You can define properties like this, they will be editable from the UI
-    // the paramters to the macro are (type, name, default)
+    // the parameters to the macro are (type, name, default)
     GLAXNIMATE_PROPERTY(float, myprop, 0.2)
     // Animated properties are similar but use a different macro
     GLAXNIMATE_ANIMATABLE(float, my_animated, 0.3)

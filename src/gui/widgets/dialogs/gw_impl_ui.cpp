@@ -135,7 +135,7 @@ void GlaxnimateWindow::Private::add_modifier_menu_action(QMenu* menu)
 
 void GlaxnimateWindow::Private::init_actions()
 {
-    // Standard Shorcuts
+    // Standard Shortcuts
     ui.action_new->setShortcut(QKeySequence::New);
     ui.action_open->setShortcut(QKeySequence::Open);
     ui.action_close->setShortcut(QKeySequence::Close);

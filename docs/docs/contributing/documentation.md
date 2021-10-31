@@ -25,7 +25,7 @@ To run a local server that auto-refreshes when you make changes, run
 
 ## Building static site
 
-To genrate the HTML run
+To generate the HTML run
 
     make docs
 

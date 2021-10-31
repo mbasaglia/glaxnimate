@@ -37,7 +37,7 @@ If you enjoy using Glaxnimate consider [donating](donate.md).
 
 [![](https://gitlab.com/mattbas/glaxnimate/badges/master/pipeline.svg)](https://gitlab.com/mattbas/glaxnimate/-/pipelines)
 
-These packages are built continuosly as new changes are made.
+These packages are built continuously as new changes are made.
 They contain all the latest features but might also include bugs and broken features.
 
 

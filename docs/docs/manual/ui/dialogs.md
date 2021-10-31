@@ -28,7 +28,7 @@ Shows the system information. You can click on "Copy" to copy them to the clipbo
 
 ![Move To dialog](/img/screenshots/dialogs/move_to.png)
 
-Aloows you to choose a destination to move the selected shapes.
+Allows you to choose a destination to move the selected shapes.
 
 ## Resize
 

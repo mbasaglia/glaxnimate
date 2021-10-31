@@ -156,7 +156,7 @@ See also <https://doc.qt.io/qt-5/android-getting-started.html>.
 Download the Qt Installer for the open source edition 
 <https://www.qt.io/download-open-source>.
 
-For some reson Qt wants you to have an account even if you install 
+For some reason Qt wants you to have an account even if you install 
 the open source version so you might have to set that up;
 
 Install Qt Creator and Qt 5 Android. 

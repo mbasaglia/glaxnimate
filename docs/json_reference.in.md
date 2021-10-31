@@ -68,7 +68,7 @@ Point Types:
 
 | value | name          | description                                                               |
 | ----- | ------------- | ------------------------------------------------------------------------- |
-| `0`   | Corner        | The two tangents are indipendent                                          |
+| `0`   | Corner        | The two tangents are independent                                          |
 | `1`   | Smooth        | The two tangents are on the same line but their length can be different   |
 | `2`   | Symmetrical   | The two tangents are on the same line and have the same length            |
 

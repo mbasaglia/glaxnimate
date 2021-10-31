@@ -17,7 +17,7 @@
 * UI:
     * Added simplified Chinese translation
     * Added British English translation
-    * Avaliable languages are shown in their own language in the settings dialog
+    * Available languages are shown in their own language in the settings dialog
     * You can drag on the timeline property tree to change a layer's parent link
     * New icon / logo
 * Bug Fixes:
@@ -52,7 +52,7 @@
 
 * Editing:
     * Action to remove all animations from a property
-    * When deleting the currently active object, its parent will be selected intead
+    * When deleting the currently active object, its parent will be selected instead
 * UI:
     * New handle for translating layers, groups etc without having to drag on the object
     * Menu items for images in the asset view
@@ -455,7 +455,7 @@
     * Paste images
     * Open images
 * Bug Fixes:
-    * Star shapes propely imported from lottie files
+    * Star shapes properly imported from lottie files
     * Layers are properly hidden when outside their frame range
     * Editing Path objects registers undo commands and keyframes
     * Changing Path node types now affects the shape correctly
@@ -475,7 +475,7 @@
 * Scripting:
     * Added logging support integration with Python
 * I/O:
-    * SVG ouput now preserve shapes instead of converting everything to path
+    * SVG output now preserve shapes instead of converting everything to path
 * Bug Fixes:
     * Fixed palettes not being saved correctly
     * Undoing commands no longer adds spurious keyframes

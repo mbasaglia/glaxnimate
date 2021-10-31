@@ -26,7 +26,7 @@ Something along these lines:
 2. Ensure `CHANGELOG.md` is up to date and changes are under the heading for the scheduled release
 3. Build the `release_0` target
 4. Wait for CI to complete <https://gitlab.com/mattbas/glaxnimate/-/pipelines>
-5. If there are erros
+5. If there are errors
     * fix the errors
     * `./deploy/tag-branch.sh`
     * go back to 4.

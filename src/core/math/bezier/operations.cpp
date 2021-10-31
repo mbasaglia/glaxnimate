@@ -4,7 +4,7 @@
 using namespace glaxnimate;
 
 
-// Algoritm from https://www.particleincell.com/2012/bezier-splines/
+// Algorithm from https://www.particleincell.com/2012/bezier-splines/
 void math::bezier::auto_smooth(math::bezier::Bezier& curve, int start, int end)
 {
     if ( start < 0 || end > curve.size() || end - start < 2 )
