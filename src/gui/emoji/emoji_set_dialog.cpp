@@ -27,7 +27,7 @@ public:
     static const int preview_count = 6;
     static const int icon_size = 72;
 
-    enum Colums
+    enum Columns
     {
         Name,
         License,

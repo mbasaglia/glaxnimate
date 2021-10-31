@@ -220,10 +220,10 @@ private:
             if ( object["__type__"].toString() == "Trim" )
             {
                 // values were swapped
-                if ( object["mutiple"].toString() == "Individually" )
-                    object["mutiple"] = "Simultaneously";
+                if ( object["multiple"].toString() == "Individually" )
+                    object["multiple"] = "Simultaneously";
                 else
-                    object["mutiple"] = "Individually";
+                    object["multiple"] = "Individually";
             }
         }
     }
