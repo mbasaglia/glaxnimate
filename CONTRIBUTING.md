@@ -49,7 +49,6 @@ integrated with continuous integration.
 * Deb
 * AUR
 * PyPI
-* Itch.io
 
 ### More packages
 

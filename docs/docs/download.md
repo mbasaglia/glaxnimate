@@ -26,10 +26,6 @@ If you enjoy using Glaxnimate consider [donating](donate.md).
 <td><i class="fab fa-python"></i> <a href="https://pypi.org/project/glaxnimate/">PyPI</a></td>
 <td><a href="#pypi">Notes</a></td>
 </tr>
-<tr>
-<td><i class="fab fa-itch-io"></i> <a href="https://mattbas.itch.io/glaxnimate">itch.io</a></td>
-<td></td>
-</tr>
 </table>
 
 
