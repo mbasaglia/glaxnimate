@@ -331,7 +331,7 @@ linux:snap_tag:
         - cp build/snapcraft.yaml snap
         - snapcraft
         - snapcraft login --with "$SNAPCRAFT_LOGIN_FILE"
-        - snapcraft upload --release=stable glaxnimate_*.snap |& tee snap_out
+        - snapcraft upload --release=stable glaxnimate_*.snap |& tee snap_out || true
         - grep -Eq "Revision [0-9]+ of 'glaxnimate' created." snap_out
 
 linux:snap_beta:
@@ -360,7 +360,7 @@ linux:snap_beta:
         - cp build/snapcraft.yaml snap
         - snapcraft
         - snapcraft login --with "$SNAPCRAFT_LOGIN_FILE"
-        - snapcraft upload --release=beta glaxnimate_*.snap |& tee snap_out
+        - snapcraft upload --release=beta glaxnimate_*.snap |& tee snap_out || true
         - grep -Eq "Revision [0-9]+ of 'glaxnimate' created." snap_out
 
 .pypi_build:
