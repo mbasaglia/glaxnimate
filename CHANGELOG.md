@@ -14,6 +14,7 @@
     * Added support for common metadata (author/description) across formats
     * Fixed loading easing from lottie
     * Added support for reversed lottie shapes
+    * Fixed parsing SVG paths
 * UI:
     * Added simplified Chinese translation
     * Added British English translation

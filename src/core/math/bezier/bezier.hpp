@@ -308,6 +308,16 @@ public:
     int size() const { return beziers_.size(); }
     bool empty() const { return beziers_.empty(); }
 
+    const Bezier& operator[](int index) const
+    {
+        return beziers_[index];
+    }
+
+    Bezier& operator[](int index)
+    {
+        return beziers_[index];
+    }
+
 private:
     void handle_end()
     {
