@@ -273,7 +273,7 @@ public:
 
             for ( const auto& kf : add_keyframes(anim.single("stop-color")) )
                 col->color.set_keyframe(kf.time,
-                    QColor::fromRgbF(kf.values[0], kf.values[1], kf.values[2], kf.values[3])
+                    QColor::fromRgbF(kf.values.vector()[0], kf.values.vector()[1], kf.values.vector()[2], kf.values.vector()[3])
                 )->set_transition(kf.transition);
 
             document->assets()->colors->values.insert(std::move(col));
@@ -316,9 +316,9 @@ public:
 
             auto anim = parse_animated(element);
             for ( const auto& kf : add_keyframes(anim.joined({"x1", "y1"})) )
-                gradient->start_point.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+                gradient->start_point.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
             for ( const auto& kf : add_keyframes(anim.joined({"x2", "y2"})) )
-                gradient->end_point.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+                gradient->end_point.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
         }
         else if ( element.tagName() == "radialGradient" )
         {
@@ -349,17 +349,17 @@ public:
             auto anim = parse_animated(element);
             for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
                 gradient->start_point.set_keyframe(kf.time,
-                    gradient_transform.map(QPointF{kf.values[0][0], kf.values[1][0]})
+                    gradient_transform.map(QPointF{kf.values[0].vector()[0], kf.values[1].vector()[0]})
                 )->set_transition(kf.transition);
 
             for ( const auto& kf : add_keyframes(anim.joined({"fx", "fy"})) )
                 gradient->highlight.set_keyframe(kf.time,
-                    gradient_transform.map(QPointF{kf.values[0][0], kf.values[1][0]})
+                    gradient_transform.map(QPointF{kf.values[0].vector()[0], kf.values[1].vector()[0]})
                 )->set_transition(kf.transition);
 
             for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy", "r"})) )
                 gradient->end_point.set_keyframe(kf.time,
-                    gradient_transform.map(QPointF{kf.values[0][0] + kf.values[2][0], kf.values[1][0]})
+                    gradient_transform.map(QPointF{kf.values[0].vector()[0] + kf.values[2].vector()[0], kf.values[1].vector()[0]})
                 )->set_transition(kf.transition);
 
         }
@@ -707,17 +707,17 @@ public:
         auto anim = animate_parser.parse_animated_transform(element);
 
         for ( const auto& kf : add_keyframes(anim.single("translate")) )
-            transform->position.set_keyframe(kf.time, QPointF{kf.values[0], kf.values[1]} + delta_pos)->set_transition(kf.transition);
+            transform->position.set_keyframe(kf.time, QPointF{kf.values.vector()[0], kf.values.vector()[1]} + delta_pos)->set_transition(kf.transition);
 
         for ( const auto& kf : add_keyframes(anim.single("scale")) )
-            transform->scale.set_keyframe(kf.time, QVector2D(kf.values[0], kf.values[1]))->set_transition(kf.transition);
+            transform->scale.set_keyframe(kf.time, QVector2D(kf.values.vector()[0], kf.values.vector()[1]))->set_transition(kf.transition);
 
         for ( const auto& kf : add_keyframes(anim.single("rotate")) )
         {
-            transform->rotation.set_keyframe(kf.time, kf.values[0])->set_transition(kf.transition);
-            if ( kf.values.size() == 3 )
+            transform->rotation.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
+            if ( kf.values.vector().size() == 3 )
             {
-                QPointF p = {kf.values[1], kf.values[2]};
+                QPointF p = {kf.values.vector()[1], kf.values.vector()[2]};
                 transform->anchor_point.set_keyframe(kf.time, p)->set_transition(kf.transition);
                 transform->position.set_keyframe(kf.time, p)->set_transition(kf.transition);
             }
@@ -923,14 +923,14 @@ public:
         auto anim = parse_animated(args.element);
         for ( const auto& kf : add_keyframes(anim.single("stroke")) )
             stroke->color.set_keyframe(kf.time,
-                QColor::fromRgbF(kf.values[0], kf.values[1], kf.values[2], kf.values[3])
+                QColor::fromRgbF(kf.values.vector()[0], kf.values.vector()[1], kf.values.vector()[2], kf.values.vector()[3])
             )->set_transition(kf.transition);
 
         for ( const auto& kf : add_keyframes(anim.single("stroke-opacity")) )
-            stroke->opacity.set_keyframe(kf.time, kf.values[0])->set_transition(kf.transition);
+            stroke->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
         for ( const auto& kf : add_keyframes(anim.single("stroke-width")) )
-            stroke->width.set_keyframe(kf.time, kf.values[0])->set_transition(kf.transition);
+            stroke->width.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
         shapes->insert(std::move(stroke));
     }
@@ -980,11 +980,11 @@ public:
         auto anim = parse_animated(args.element);
         for ( const auto& kf : add_keyframes(anim.single("fill")) )
             fill->color.set_keyframe(kf.time,
-                QColor::fromRgbF(kf.values[0], kf.values[1], kf.values[2], kf.values[3])
+                QColor::fromRgbF(kf.values.vector()[0], kf.values.vector()[1], kf.values.vector()[2], kf.values.vector()[3])
             )->set_transition(kf.transition);
 
         for ( const auto& kf : add_keyframes(anim.single("fill-opacity")) )
-            fill->opacity.set_keyframe(kf.time, kf.values[0])->set_transition(kf.transition);
+            fill->opacity.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
 
         if ( fill_color == "none" )
             fill->visible.set(false);
@@ -1019,15 +1019,15 @@ public:
         auto anim = parse_animated(args.element);
         for ( const auto& kf : add_keyframes(anim.joined({"x", "y", "width", "height"})) )
             rect->position.set_keyframe(kf.time, {
-                kf.values[0][0] + kf.values[2][0] / 2,
-                kf.values[1][0] + kf.values[3][0] / 2
+                kf.values[0].vector()[0] + kf.values[2].vector()[0] / 2,
+                kf.values[1].vector()[0] + kf.values[3].vector()[0] / 2
             })->set_transition(kf.transition);
 
         for ( const auto& kf : add_keyframes(anim.joined({"width", "height"})) )
-            rect->size.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+            rect->size.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
 
         for ( const auto& kf : add_keyframes(anim.joined({"rx", "ry"})) )
-            rect->rounded.set_keyframe(kf.time, qMax(kf.values[0][0], kf.values[1][0]))->set_transition(kf.transition);
+            rect->rounded.set_keyframe(kf.time, qMax(kf.values[0].vector()[0], kf.values[1].vector()[0]))->set_transition(kf.transition);
 
         add_shapes(args, std::move(shapes));
     }
@@ -1046,9 +1046,9 @@ public:
 
         auto anim = parse_animated(args.element);
         for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
-            ellipse->position.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+            ellipse->position.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
         for ( const auto& kf : add_keyframes(anim.joined({"rx", "ry"})) )
-            ellipse->size.set_keyframe(kf.time, {kf.values[0][0]*2, kf.values[1][0]*2})->set_transition(kf.transition);
+            ellipse->size.set_keyframe(kf.time, {kf.values[0].vector()[0]*2, kf.values[1].vector()[0]*2})->set_transition(kf.transition);
 
         add_shapes(args, std::move(shapes));
     }
@@ -1066,9 +1066,9 @@ public:
 
         auto anim = parse_animated(args.element);
         for ( const auto& kf : add_keyframes(anim.joined({"cx", "cy"})) )
-            ellipse->position.set_keyframe(kf.time, {kf.values[0][0], kf.values[1][0]})->set_transition(kf.transition);
+            ellipse->position.set_keyframe(kf.time, {kf.values[0].vector()[0], kf.values[1].vector()[0]})->set_transition(kf.transition);
         for ( const auto& kf : add_keyframes(anim.single({"r"})) )
-            ellipse->size.set_keyframe(kf.time, {kf.values[0]*2, kf.values[0]*2})->set_transition(kf.transition);
+            ellipse->size.set_keyframe(kf.time, {kf.values.vector()[0]*2, kf.values.vector()[0]*2})->set_transition(kf.transition);
 
         add_shapes(args, std::move(shapes));
     }
@@ -1129,18 +1129,20 @@ public:
         parse_transform(args.element, g_node, transform);
     }
 
-    void parse_bezier_impl(const ParseFuncArgs& args, const math::bezier::MultiBezier& bez)
+    model::Path* parse_bezier_impl(const ParseFuncArgs& args, const math::bezier::MultiBezier& bez)
     {
         if ( bez.beziers().empty() )
-            return;
+            return {};
 
         ShapeCollection shapes;
+        model::Path* shape = nullptr;
         for ( const auto& bezier : bez.beziers() )
         {
-            auto shape = push<model::Path>(shapes);
+            shape = push<model::Path>(shapes);
             shape->shape.set(bezier);
         }
         add_shapes(args, std::move(shapes));
+        return shape;
     }
 
 
@@ -1182,8 +1184,8 @@ public:
         for ( const auto& kf : add_keyframes(parse_animated(args.element).joined({"x1", "y1", "x2", "y2"})) )
         {
             math::bezier::Bezier bez;
-            bez.add_point({kf.values[0][0], kf.values[1][0]});
-            bez.add_point({kf.values[2][0], kf.values[3][0]});
+            bez.add_point({kf.values[0].vector()[0], kf.values[1].vector()[0]});
+            bez.add_point({kf.values[2].vector()[0], kf.values[3].vector()[0]});
             path->shape.set_keyframe(kf.time, bez)->set_transition(kf.transition);
         }
     }
@@ -1217,7 +1219,7 @@ public:
             return;
 
         for ( const auto& kf : add_keyframes(parse_animated(args.element).single("points")) )
-            path->shape.set_keyframe(kf.time, build_poly(kf.values, close))->set_transition(kf.transition);
+            path->shape.set_keyframe(kf.time, build_poly(kf.values.vector(), close))->set_transition(kf.transition);
 
     }
 
@@ -1238,7 +1240,13 @@ public:
         QString d = args.element.attribute("d");
         math::bezier::MultiBezier bez = PathDParser(d).parse();
         /// \todo sodipodi:nodetypes
-        parse_bezier_impl(args, bez);
+        auto path = parse_bezier_impl(args, bez);
+
+        if ( bez.size() == 1 && path )
+        {
+            for ( const auto& kf : add_keyframes(parse_animated(args.element).single("d")) )
+                path->shape.set_keyframe(kf.time, kf.values.bezier()[0])->set_transition(kf.transition);
+        }
     }
 
     bool parse_star(const ParseFuncArgs& args)
@@ -1467,7 +1475,7 @@ public:
                     {
                         last->position.set_keyframe(
                             kf.time,
-                            offset + QPointF(kf.values[0][0], kf.values[1][0])
+                            offset + QPointF(kf.values[0].vector()[0], kf.values[1].vector()[0])
                         )->set_transition(kf.transition);
                     }
 

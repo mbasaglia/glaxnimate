@@ -8,7 +8,9 @@
 #include "model/animation/keyframe_transition.hpp"
 #include "model/animation/frame_time.hpp"
 #include "model/animation/join_animatables.hpp"
+#include "math/bezier/bezier.hpp"
 
+#include "path_parser.hpp"
 #include "detail.hpp"
 
 namespace glaxnimate::io::svg::detail {
@@ -16,17 +18,82 @@ namespace glaxnimate::io::svg::detail {
 class AnimateParser
 {
 public:
+    struct ValueVariant
+    {
+    public:
+        enum Type
+        {
+            Vector, Bezier
+        };
+
+        ValueVariant(std::vector<qreal> v = {})
+            : value_(std::move(v))
+        {}
+
+        ValueVariant(math::bezier::MultiBezier v )
+            : value_(std::move(v))
+        {}
+
+        Type type() const { return Type(value_.index()); }
+
+        const std::vector<qreal>& vector() const
+        {
+            return std::get<int(Type::Vector)>(value_);
+        }
+
+        const math::bezier::MultiBezier& bezier() const
+        {
+            return std::get<int(Type::Bezier)>(value_);
+        }
+
+        ValueVariant lerp(const ValueVariant& other, qreal t) const
+        {
+            if ( type() != other.type() )
+                return *this;
+
+            switch ( type() )
+            {
+                case Type::Vector:
+                    return math::lerp(vector(), other.vector(), t);
+                case Type::Bezier:
+                    if ( bezier().size() == 1 && other.bezier().size() == 1 )
+                    {
+                        math::bezier::MultiBezier mb;
+                        mb.beziers().push_back(bezier()[0].lerp(other.bezier()[0], t));
+                        return mb;
+                    }
+                    return *this;
+            }
+
+            return {};
+        }
+
+        bool compatible(const ValueVariant& other) const
+        {
+            if ( type() != other.type() )
+                return false;
+
+            if ( type() == Vector )
+                return vector().size() == other.vector().size();
+
+            return true;
+        }
+
+    private:
+        std::variant<std::vector<qreal>, math::bezier::MultiBezier> value_;
+    };
+
     struct PropertyKeyframe
     {
         model::FrameTime time;
-        std::vector<qreal> values;
+        ValueVariant values;
         model::KeyframeTransition transition;
     };
 
     struct JoinedPropertyKeyframe
     {
         model::FrameTime time;
-        std::vector<std::vector<qreal>> values;
+        std::vector<ValueVariant> values;
         model::KeyframeTransition transition;
     };
 
@@ -37,7 +104,7 @@ public:
 
     struct JoinedProperty
     {
-        std::variant<const AnimatedProperty*, const QString*, std::vector<qreal>> prop;
+        std::variant<const AnimatedProperty*, const QString*, ValueVariant> prop;
         int index = 0;
 
         bool at_end() const
@@ -118,7 +185,7 @@ public:
                         time = p.keyframe()->time;
                 }
 
-                std::vector<std::vector<qreal>> values;
+                std::vector<ValueVariant> values;
                 values.reserve(props.size());
 
                 std::vector<model::KeyframeTransition> transitions;
@@ -145,7 +212,7 @@ public:
                             auto kf1 = p.keyframe(-1);
                             qreal x = math::unlerp(kf1->time, kf->time, time);
                             qreal t = kf1->transition.lerp_factor(x);
-                            values.push_back(math::lerp(kf1->values, kf->values, t));
+                            values.push_back(kf1->values.lerp(kf->values, t));
                             transitions.push_back(kf1->transition.split(x).first);
                             cont = true;
                         }
@@ -218,16 +285,27 @@ public:
         ) * fps;
     }
 
-    std::vector<std::vector<qreal>> get_values(const QDomElement& animate)
+    ValueVariant parse_value(const QString& str, ValueVariant::Type type) const
     {
-        std::vector<std::vector<qreal>> values;
-
-        QString attr = animate.attribute("attributeName");
-        if ( attr == "d" )
+        switch ( type )
         {
-            warning("Loading animated `d` is not yet implemented");
-            return {};
+            case ValueVariant::Vector:
+                return split_values(str);
+            case ValueVariant::Bezier:
+                return PathDParser(str).parse();
         }
+
+        return {};
+    }
+
+    std::vector<ValueVariant> get_values(const QDomElement& animate)
+    {
+        QString attr = animate.attribute("attributeName");
+        ValueVariant::Type type = ValueVariant::Vector;
+        if ( attr == "d" )
+            type = ValueVariant::Bezier;
+
+        std::vector<ValueVariant> values;
 
         if ( animate.hasAttribute("values") )
         {
@@ -240,7 +318,7 @@ public:
             );
             values.reserve(val_str.size());
             for ( const auto& val : val_str )
-                values.push_back(split_values(val));
+                values.push_back(parse_value(val, type));
 
             if ( values.size() < 2 )
             {
@@ -250,7 +328,7 @@ public:
 
             for ( uint i = 1; i < values.size(); i++ )
             {
-                if ( values[i].size() != values[0].size() )
+                if ( !values[i].compatible(values[0]) )
                 {
                     warning("Mismatching `values` in `animate`");
                     return {};
@@ -261,7 +339,7 @@ public:
         {
             if ( animate.hasAttribute("from") )
             {
-                values.push_back(split_values(animate.attribute("from")));
+                values.push_back(parse_value(animate.attribute("from"), type));
             }
             else
             {
@@ -276,24 +354,24 @@ public:
                     return {};
                 }
 
-                values.push_back(split_values(animate.attribute(attr)));
+                values.push_back(parse_value(animate.attribute(attr), type));
             }
 
             if ( animate.hasAttribute("to") )
             {
-                values.push_back(split_values(animate.attribute("to")));
+                values.push_back(parse_value(animate.attribute("to"), type));
             }
-            else if ( animate.hasAttribute("by") )
+            else if ( type == ValueVariant::Vector && animate.hasAttribute("by") )
             {
                 auto by = split_values(animate.attribute("to"));
-                if ( by.size() != values[0].size() )
+                if ( by.size() != values[0].vector().size() )
                 {
                     warning("Mismatching `by` and `from` in `animate`");
                     return {};
                 }
 
                 for ( uint i = 0; i < by.size(); i++ )
-                    by[i] += values[0][i];
+                    by[i] += values[0].vector()[i];
 
                 values.push_back(std::move(by));
             }
@@ -301,6 +379,18 @@ public:
             {
                 warning("Missing `to` or `by` in `animate`");
                 return {};
+            }
+        }
+
+        if ( type == ValueVariant::Bezier )
+        {
+            for ( const auto& v : values )
+            {
+                if ( v.bezier().size() != 1 )
+                {
+                    warning("Can only load animated `d` if each keyframe has exactly 1 path");
+                    return {};
+                }
             }
         }
 
@@ -332,7 +422,7 @@ public:
             return;
         }
 
-        std::vector<std::vector<qreal>> values = get_values(animate);
+        std::vector<ValueVariant> values = get_values(animate);
         if ( values.empty() )
             return;
 
