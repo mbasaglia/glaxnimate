@@ -193,12 +193,14 @@ void glaxnimate::gui::SelectionManager::paste_document(model::Document* document
         for ( auto& shape : document->main()->shapes.raw() )
         {
             auto ptr = shape.get();
+            shape->clear_owner();
             shape->refresh_uuid();
             if ( !as_comp )
                 select.push_back(ptr);
             shape->transfer(doc);
             doc->push_command(new command::AddShape(shape_cont, std::move(shape), shape_insertion_point++));
-            ptr->recursive_rename();
+            if ( !as_comp )
+                ptr->recursive_rename();
         }
     }
 

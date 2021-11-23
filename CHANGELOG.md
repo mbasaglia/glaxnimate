@@ -25,6 +25,7 @@
 * Bug Fixes:
     * Fixed rows breaking up in the timeline
     * Fixed various issues with trim path
+    * Fixed importing lottie files
 
 ## 0.4.6
 

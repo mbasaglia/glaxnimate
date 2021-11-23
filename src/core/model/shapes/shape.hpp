@@ -34,6 +34,7 @@ public:
 
     ShapeListProperty* owner() const;
     Composition* owner_composition() const;
+    void clear_owner();
 
     virtual QPainterPath to_clip(FrameTime t) const;
     virtual QPainterPath to_painter_path(FrameTime t) const = 0;

@@ -30,9 +30,17 @@ glaxnimate::model::ShapeElement::ShapeElement(glaxnimate::model::Document* docum
 
 glaxnimate::model::ShapeElement::~ShapeElement() = default;
 
+
 glaxnimate::model::ShapeListProperty * glaxnimate::model::ShapeElement::owner() const
 {
     return d->property;
+}
+
+void glaxnimate::model::ShapeElement::clear_owner()
+{
+    d->property = nullptr;
+    d->position = -1;
+    d->owner_composition = nullptr;
 }
 
 glaxnimate::model::Composition * glaxnimate::model::ShapeElement::owner_composition() const
