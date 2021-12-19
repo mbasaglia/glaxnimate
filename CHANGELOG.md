@@ -16,6 +16,7 @@
     * Added support for reversed lottie shapes
     * Fixed parsing SVG paths
     * Added support for loading basic animated SVG paths
+    * Fixed importing solid layers from lottie
 * UI:
     * Added simplified Chinese translation
     * Added British English translation
