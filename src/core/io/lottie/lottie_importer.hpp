@@ -8,6 +8,7 @@
 #include <QJsonArray>
 
 #include "lottie_private_common.hpp"
+#include "io/svg/svg_parser.hpp"
 
 namespace glaxnimate::io::lottie::detail {
 
@@ -355,16 +356,19 @@ private:
                 props.erase("sw");
                 props.erase("sh");
                 props.erase("sc");
+
+                auto color_name = json["sc"].toString();
+                auto fill = std::make_unique<model::Fill>(document);
+                fill->color.set(svg::parse_color(color_name));
+                target->shapes.insert(std::move(fill));
+
                 auto rect = std::make_unique<model::Rect>(document);
-                rect->size.set(QSizeF(
-                    json["sw"].toDouble(),
-                    json["sh"].toDouble()
-                ));
+                auto w = json["sw"].toDouble();
+                auto h = json["sh"].toDouble();
+                rect->size.set(QSizeF(w, h));
+                rect->position.set(QPointF(w/2, h/2));
                 target->shapes.insert(std::move(rect));
 
-                auto fill = std::make_unique<model::Fill>(document);
-                fill->color.set(QColor(json["sc"].toString()));
-                target->shapes.insert(std::move(fill));
                 break;
             }
             case 2: // image layer

@@ -1637,6 +1637,11 @@ void glaxnimate::io::svg::SvgParser::parse_to_document()
     d->parse();
 }
 
+static qreal hex(const QString& s, int start, int size)
+{
+    return s.midRef(start, size).toInt(nullptr, 16) / (size == 2 ? 255.0 : 15.0);
+}
+
 QColor glaxnimate::io::svg::parse_color(const QString& string)
 {
     if ( string.isEmpty() )
@@ -1644,7 +1649,19 @@ QColor glaxnimate::io::svg::parse_color(const QString& string)
 
     // #fff #112233
     if ( string[0] == '#' )
-        return QColor(string);
+    {
+        if ( string.size() == 4 || string.size() == 5 )
+        {
+            qreal alpha = string.size() == 4 ? 1. : hex(string, 4, 1);
+            return QColor::fromRgbF(hex(string, 1, 1), hex(string, 2, 1), hex(string, 3, 1), alpha);
+        }
+        else if ( string.size() == 7 || string.size() == 9 )
+        {
+            qreal alpha = string.size() == 7 ? 1. : hex(string, 7, 2);
+            return QColor::fromRgbF(hex(string, 1, 2), hex(string, 3, 2), hex(string, 5, 2), alpha);
+        }
+        return QColor();
+    }
 
     // transparent
     if ( string == "transparent" || string == "none" )
