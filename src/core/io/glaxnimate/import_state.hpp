@@ -239,11 +239,13 @@ private:
 
         for ( model::BaseProperty* prop : target->properties() )
         {
-            if ( !load_prop(prop, object[prop->name()], path.sub(prop)) )
+            if ( object.contains(prop->name()) && !load_prop(prop, object[prop->name()], path.sub(prop)) )
+            {
                 error(GlaxnimateFormat::tr("Could not load %1 for %2")
                     .arg(prop->name())
                     .arg(prop->object()->object_name())
                 );
+            }
         }
 
         for ( auto it = object.begin(); it != object.end(); ++it )
