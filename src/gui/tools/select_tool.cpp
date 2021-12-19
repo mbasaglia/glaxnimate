@@ -488,6 +488,13 @@ private:
         }
     }
 
+    void close_document_event(const glaxnimate::gui::tools::Event &) override
+    {
+        drag_data.clear();
+        replace_selection = nullptr;
+        selected_shapes.clear();
+    }
+
     DragMode drag_mode;
     QPainterPath draw_path;
     QPointF rubber_p1;
