@@ -392,7 +392,10 @@ public:
         if ( ost.codec->pix_fmts == nullptr )
             throw av::Error(QObject::tr("Could not determine pixel format"));
         // get_format() for some reason returns an invalid value
-        ost.codec_context->pix_fmt = ost.codec->pix_fmts[0];
+        if (ost.codec->id == AV_CODEC_ID_VP9 || ost.codec->id == AV_CODEC_ID_VP8)
+            ost.codec_context->pix_fmt = AV_PIX_FMT_YUVA420P;
+        else
+            ost.codec_context->pix_fmt = ost.codec->pix_fmts[0];
 
         // just for testing, we also add B-frames
         if ( ost.codec_context->codec_id == AV_CODEC_ID_MPEG2VIDEO )
@@ -813,7 +816,7 @@ std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
         //                      slug            label           description                                         default min max
         app::settings::Setting{"bit_rate",   tr("Bitrate"),      tr("Video bit rate"),                               5000,   0, 10000},
-        app::settings::Setting{"background", tr("Background"),   tr("Background color"),                             QColor{}},
+        app::settings::Setting{"background", tr("Background"),   tr("Background color"),                             QColorConstants::Transparent},
         app::settings::Setting{"width",      tr("Width"),        tr("If not 0, it will overwrite the size"),         document->main()->width.get(), 0, 10000},
         app::settings::Setting{"height",     tr("Height"),       tr("If not 0, it will overwrite the size"),         document->main()->height.get(),0, 10000},
         app::settings::Setting{"verbose",    tr("Verbose"),      tr("Show verbose information on the conversion"),   false},
