@@ -816,7 +816,7 @@ std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::video::VideoFormat
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
         //                      slug            label           description                                         default min max
         app::settings::Setting{"bit_rate",   tr("Bitrate"),      tr("Video bit rate"),                               5000,   0, 10000},
-        app::settings::Setting{"background", tr("Background"),   tr("Background color"),                             QColor(0, 0, 0, 0))},
+        app::settings::Setting{"background", tr("Background"),   tr("Background color"),                             QColor(0, 0, 0, 0)},
         app::settings::Setting{"width",      tr("Width"),        tr("If not 0, it will overwrite the size"),         document->main()->width.get(), 0, 10000},
         app::settings::Setting{"height",     tr("Height"),       tr("If not 0, it will overwrite the size"),         document->main()->height.get(),0, 10000},
         app::settings::Setting{"verbose",    tr("Verbose"),      tr("Show verbose information on the conversion"),   false},
