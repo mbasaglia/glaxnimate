@@ -16,8 +16,6 @@ public:
 
     std::vector<QRgb> quantize(const QImage& image, int k) const;
 
-
-
     void init_settings();
     void save_settings();
     void reset_settings();

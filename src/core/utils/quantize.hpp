@@ -45,4 +45,14 @@ std::vector<ColorFrequency> color_frequencies(QImage image, int alpha_threshold 
  */
 QImage quantize(const QImage& source, const std::vector<QRgb>& colors);
 
+/**
+ * \brief Modified median cut quantization (MMCQ)
+ * \see http://www.leptonica.org/color-quantization.html
+ */
+std::vector<QRgb> modified_median_cut(
+    const QImage& image, int k,
+    float fract_by_population = 0.85, // try .75 too
+    int max_iterations = 5000
+);
+
 } // namespace glaxnimate::utils::quantize

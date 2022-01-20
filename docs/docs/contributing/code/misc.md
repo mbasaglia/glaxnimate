@@ -17,7 +17,7 @@ To click on the window to record and start recording straight away:
 
 Something along these lines:
 
-    docker run -it -v $PWD:/glaxnimate ubuntu:16.04 bash
+    docker run --rm -it -v $PWD:/glaxnimate ubuntu:16.04 bash
 
 
 ## Release Checklist
@@ -44,7 +44,7 @@ Something along these lines:
 ## Creating/Editing AUR packages with docker
 
     # This enables using GUI as well for testing
-    docker run -it --rm --net=host -e DISPLAY -v /tmp/.X11-unix archlinux bash
+    docker run --rm -it --rm --net=host -e DISPLAY -v /tmp/.X11-unix archlinux bash
 
     # System Setup
     pacman -Sy

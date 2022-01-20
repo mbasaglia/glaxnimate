@@ -5,6 +5,7 @@
     * Added Inflate/Deflate modifier (aka Pucker/Bloat)
     * Added support for rounded polygons / stars
     * Added rounded corners modifier
+    * Added new quantization algorithm for tracing (MMCQ)
 * I/O:
     * Loading Lottie with `meta` no longer show a warning
     * Fixed UUIDs when loading lottie animations

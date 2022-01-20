@@ -166,7 +166,15 @@ static void define_trace(py::module& m)
         "octree",
         quantize_wrapper(&utils::quantize::octree),
         py::arg("image"), py::arg("k"),
-        "Returns the k  best colors."
+        "Returns the k best colors."
+    );
+    quantize.def(
+        "octree",
+        quantize_wrapper(&utils::quantize::modified_median_cut),
+        py::arg("image"), py::arg("k"),
+        py::arg("fract_by_population") = 0.85,
+        py::arg("max_iterations") = 5000,
+        "Returns the k best colors."
     );
 }
 
