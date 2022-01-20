@@ -9,6 +9,8 @@ namespace glaxnimate::utils::quantize {
 
 using ColorFrequency = std::pair<QRgb, int>;
 
+using Histogram = std::vector<ColorFrequency>;
+
 /**
  * \brief Returns the \p k colors that appear most frequently in \p image.
  */
@@ -38,7 +40,7 @@ std::vector<QRgb> octree(const QImage& image, int k);
  * \param image             The image to analyze
  * \param alpha_threshold   Minimum alpha value [0-255] for a color to be included
  */
-std::vector<ColorFrequency> color_frequencies(QImage image, int alpha_threshold = 128);
+Histogram color_frequencies(QImage image, int alpha_threshold = 128);
 
 /**
  * \brief Returns a quantized image with the given colors

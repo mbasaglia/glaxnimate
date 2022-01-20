@@ -4,9 +4,11 @@
 #include <memory>
 #include <queue>
 
+#include <QDebug>
+
 using namespace glaxnimate;
 
-std::vector<utils::quantize::ColorFrequency> utils::quantize::color_frequencies(QImage image, int alpha_threshold)
+glaxnimate::utils::quantize::Histogram utils::quantize::color_frequencies(QImage image, int alpha_threshold)
 {
     if ( image.format() != QImage::Format_RGBA8888 )
         image = image.convertToFormat(QImage::Format_RGBA8888);
@@ -29,7 +31,7 @@ static bool freq_sort_cmp(const ColorFrequency& a, const ColorFrequency& b) noex
     return a.second > b.second;
 }
 
-std::vector<QRgb> color_frequencies_to_palette(std::vector<utils::quantize::ColorFrequency>& freq, int max)
+std::vector<QRgb> color_frequencies_to_palette(Histogram& freq, int max)
 {
     std::sort(freq.begin(), freq.end(), detail::freq_sort_cmp);
 
@@ -655,9 +657,11 @@ namespace glaxnimate::utils::quantize::detail::mmcq {
 
 static const constexpr int sig_bits = 5;
 static const constexpr int rshift = 8 - sig_bits;
-static const constexpr int histo_size = 1 << (3 * sig_bits);
+// static const constexpr int histo_size = 1 << (3 * sig_bits);
 static const constexpr int bit_mask = (1 << sig_bits) - 1;
+static const constexpr int bit_pad = (1 << rshift) - 1;
 
+/*
 struct Histogram
 {
     Histogram(const std::vector<utils::quantize::ColorFrequency>& freq)
@@ -689,7 +693,7 @@ struct Histogram
 
 //     std::array<qint32, histo_size> data;
     std::unordered_map<qint32, qint32> data;
-};
+};*/
 
 struct VBox
 {
@@ -714,10 +718,14 @@ struct VBox
     void refresh_count()
     {
         count = 0;
-        for ( int r = min.r; r <= max.r; r++ )
-            for ( int g = min.g; g <= max.g; g++ )
-                for ( int b = min.b; b <= max.b; b++ )
-                    count += histogram->color_count(r, g, b);
+        for ( const auto& freq : *histogram )
+        {
+            int r = qRed(freq.first);
+            int g = qRed(freq.first);
+            int b = qRed(freq.first);
+            if ( r >= min.r && r <= max.r && g >= min.g && g <= max.g && b >= min.b && b <= min.b )
+                count += freq.second;
+        }
     }
 
     bool operator<(const VBox& other) const
@@ -725,15 +733,15 @@ struct VBox
         return volume * count < other.volume * other.count;
     }
 
-    static VBox from_histogram(const std::vector<utils::quantize::ColorFrequency>& freq, Histogram* histogram)
+    static VBox from_histogram(Histogram* histogram)
     {
         Color min(bit_mask, bit_mask, bit_mask);
         Color max(0, 0, 0);
-        for ( const auto& f : freq )
+        for ( const auto& f : *histogram )
         {
-            auto r = qRed(f.first)   >> rshift;
-            auto g = qGreen(f.first) >> rshift;
-            auto b = qBlue(f.first)  >> rshift;
+            auto r = qRed(f.first);
+            auto g = qGreen(f.first);
+            auto b = qBlue(f.first);
 
             if ( r > max.r ) max.r = r;
             else if ( r < min.r ) min.r = r;
@@ -751,28 +759,30 @@ struct VBox
     QRgb average() const
     {
         qint32 total = 0;
-        qint32 mult = 1 << rshift;
         qint32 rsum = 0;
         qint32 gsum = 0;
         qint32 bsum = 0;
 
-        for ( int r = min.r; r <= max.r; r++ )
-            for ( int g = min.g; g <= max.g; g++ )
-                for ( int b = min.b; b <= max.b; b++ )
-                {
-                    auto count = histogram->color_count(r, g, b);
-                    total += count;
-                    rsum += count * (r + 0.5) * mult;
-                    gsum += count * (g + 0.5) * mult;
-                    bsum += count * (b + 0.5) * mult;
-                }
+        for ( const auto& freq : *histogram )
+        {
+            int r = qRed(freq.first);
+            int g = qRed(freq.first);
+            int b = qRed(freq.first);
+            if ( r >= min.r && r <= max.r && g >= min.g && g <= max.g && b >= min.b && b <= min.b )
+            {
+                total += freq.second;
+                rsum += freq.second * r;
+                gsum += freq.second * g;
+                bsum += freq.second * b;
+            }
+        }
 
         if ( total == 0 )
         {
             return qRgb(
-                mult * (min.r + max.r + 1) / 2,
-                mult * (min.g + max.g + 1) / 2,
-                mult * (min.b + max.b + 1) / 2
+                (min.r + max.r + 1) / 2,
+                (min.g + max.g + 1) / 2,
+                (min.b + max.b + 1) / 2
             );
         } else {
             return qRgb(
@@ -809,57 +819,32 @@ std::vector<VBox> median_cut_apply(Histogram* histogram, const VBox& vbox)
 
     auto max_width = std::max(width.r, std::max(width.g, width.b));
     std::vector<qint32> partial_sum;
-    partial_sum.reserve(max_width);
+    partial_sum.resize(max_width);
     qint32 Color::* comp;
 
     qint32 total = 0;
 
     if ( max_width == width.r )
-    {
         comp = &Color::r;
-        for ( int r = vbox.min.r; r <= vbox.max.r; r++ )
-        {
-            for ( int g = vbox.min.g; g <= vbox.max.g; g++ )
-            {
-                for ( int b = vbox.min.b; b <= vbox.max.b; b++ )
-                {
-                    total += histogram->color_count(r, g, b);
-                }
-            }
-            partial_sum.push_back(total);
-        }
-    }
     else if ( max_width == width.g )
-    {
         comp = &Color::g;
-        for ( int g = vbox.min.g; g <= vbox.max.g; g++ )
-        {
-            for ( int r = vbox.min.r; r <= vbox.max.r; r++ )
-            {
-                for ( int b = vbox.min.b; b <= vbox.max.b; b++ )
-                {
-                    total += histogram->color_count(r, g, b);
-                }
-            }
-            partial_sum.push_back(total);
-        }
-    }
-    else if ( max_width == width.b )
-    {
+    else
         comp = &Color::b;
-        for ( int b = vbox.min.b; b <= vbox.max.b; b++ )
+
+    for ( const auto& freq : *histogram )
+    {
+        Color col(freq.first);
+        if ( col.r >= vbox.min.r && col.r <= vbox.max.r &&
+                col.g >= vbox.min.g && col.g <= vbox.max.g &&
+                col.b >= vbox.min.b && col.b <= vbox.min.b )
         {
-            for ( int g = vbox.min.g; g <= vbox.max.g; g++ )
-            {
-                for ( int r = vbox.min.r; r <= vbox.max.r; r++ )
-                {
-                    total += histogram->color_count(r, g, b);
-                }
-            }
-            partial_sum.push_back(total);
+            total += freq.second;
+            partial_sum[col.*comp] += freq.second;
         }
     }
 
+    for ( std::size_t i = 1; i < partial_sum.size(); i++ )
+        partial_sum[i] += partial_sum[i-1];
 
     for ( int i = vbox.min.*comp; i <= vbox.max.*comp; i++)
     {
@@ -869,18 +854,22 @@ std::vector<VBox> median_cut_apply(Histogram* histogram, const VBox& vbox)
             VBox vbox2 = vbox;
             int left = i - vbox.min.*comp;
             int right = vbox.max.*comp - i;
+            int split;
 
             if (left <= right)
-                vbox1.max.*comp = std::min(vbox.max.*comp - 1, i + right / 2);
+                split = std::min(vbox.max.*comp - 1, i + right / 2);
             else
-                vbox1.max.*comp = std::min(vbox.min.*comp, i - 1 - left / 2);
+                split = std::min(vbox.min.*comp, i - 1 - left / 2);
 
-            vbox2.min.*comp = vbox1.max.*comp + 1;
+            vbox1.max.*comp = split;
+            vbox2.min.*comp = split + 1;
 
-            vbox1.refresh_count();
+            vbox1.count = partial_sum[split];
             vbox1.refresh_volume();
-            vbox2.refresh_count();
+
+            vbox2.count = total - partial_sum[split];
             vbox2.refresh_volume();
+
             return {vbox1, vbox2};
         }
     }
@@ -903,6 +892,8 @@ void iterate(std::priority_queue<VBox, std::vector<VBox>, Comp>& queue, Histogra
         queue.pop();
 
         auto boxes = median_cut_apply(histogram, vbox);
+        if ( boxes.empty() )
+            continue;
 
         queue.push(boxes[0]);
 
@@ -927,19 +918,18 @@ std::vector<QRgb> glaxnimate::utils::quantize::modified_median_cut(
 
     using namespace glaxnimate::utils::quantize::detail::mmcq;
 
-    auto freq = color_frequencies(image);
+    auto histogram = color_frequencies(image);
 
     // Avoid processing if we don't need to
-    if ( int(freq.size()) <= k || k <= 2)
+    if ( int(histogram.size()) <= k || k <= 2)
     {
-        return detail::color_frequencies_to_palette(freq, k);
+        return detail::color_frequencies_to_palette(histogram, k);
     }
 
     if ( k > 256 )
         k = 256;
 
-    Histogram histogram(freq);
-    auto vbox = VBox::from_histogram(freq, &histogram);
+    auto vbox = VBox::from_histogram(&histogram);
     std::priority_queue<VBox, std::vector<VBox>, VBoxCompareCount> queue;
     queue.push(vbox);
     iterate(queue, &histogram, fract_by_population * k, max_iterations);
