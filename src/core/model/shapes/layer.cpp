@@ -3,6 +3,7 @@
 #include <QPainter>
 
 #include "model/composition.hpp"
+#include "model/document.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Layer)
 
@@ -124,6 +125,14 @@ void glaxnimate::model::Layer::paint(QPainter* painter, FrameTime time, PaintMod
         {
             QPainterPath clip = shapes[0]->to_clip(time);
             clip.setFillRule(Qt::WindingFill);
+            if ( mask->inverted.get() )
+            {
+                QPainterPath outer_clip;
+                outer_clip.addPolygon(
+                    transform.inverted().map(QRectF(QPointF(0, 0), document()->size()))
+                );
+                clip = outer_clip.subtracted(clip);
+            }
             painter->setClipPath(clip, Qt::IntersectClip);
         }
 

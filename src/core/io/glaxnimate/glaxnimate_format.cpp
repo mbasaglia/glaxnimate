@@ -11,7 +11,7 @@ using namespace glaxnimate;
 
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 
-const int glaxnimate::io::glaxnimate::GlaxnimateFormat::format_version = 5;
+const int glaxnimate::io::glaxnimate::GlaxnimateFormat::format_version = 6;
 
 
 

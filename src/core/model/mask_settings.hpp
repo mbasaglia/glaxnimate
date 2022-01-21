@@ -11,8 +11,16 @@ class MaskSettings : public Object
 {
     GLAXNIMATE_OBJECT(MaskSettings)
 
-    GLAXNIMATE_PROPERTY(bool, mask, false, {}, {}, PropertyTraits::Visual)
-//     GLAXNIMATE_PROPERTY(bool, invert, false, {}, {}, PropertyTraits::Visual)
+public:
+    enum MaskMode
+    {
+        NoMask = 0,
+        Alpha = 1,
+    };
+    Q_ENUM(MaskMode)
+
+    GLAXNIMATE_PROPERTY(MaskMode, mask, NoMask, {}, {}, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(bool, inverted, false, {}, {}, PropertyTraits::Visual)
 
 public:
     using Object::Object;

@@ -5,6 +5,7 @@
     * Added Inflate/Deflate modifier (aka Pucker/Bloat)
     * Added support for rounded polygons / stars
     * Added rounded corners modifier
+    * Added support for inverted masks
 * I/O:
     * Loading Lottie with `meta` no longer show a warning
     * Fixed UUIDs when loading lottie animations
@@ -17,6 +18,7 @@
     * Fixed parsing SVG paths
     * Added support for loading basic animated SVG paths
     * Fixed importing solid layers from lottie
+    * Fixed importing mattes affecting precomps
 * UI:
     * Added simplified Chinese translation
     * Added British English translation

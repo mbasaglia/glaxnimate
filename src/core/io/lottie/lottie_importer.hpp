@@ -10,6 +10,8 @@
 #include "lottie_private_common.hpp"
 #include "io/svg/svg_parser.hpp"
 
+#include <QDebug>
+
 namespace glaxnimate::io::lottie::detail {
 
 struct FontInfo
@@ -123,11 +125,6 @@ private:
             load_layer(pair.second, static_cast<model::Layer*>(pair.first));
     }
 
-    bool has_mask(const QJsonObject& json)
-    {
-        return mask && json["tt"].toInt();
-    }
-
     void load_visibility(model::VisualNode* node, const QJsonObject& json)
     {
         if ( json.contains("hd") && json["hd"].toBool() )
@@ -145,39 +142,63 @@ private:
         }
 
         int ty = json["ty"].toInt();
+
+        std::unique_ptr<model::ShapeElement> inner_shape;
+        bool start_mask = json["td"].toInt();
+
         if ( ty == 0 )
         {
-            load_precomp_layer(json, referenced);
-            mask = nullptr;
+            inner_shape = load_precomp_layer(json);
+
+            auto op = document->main()->animation->last_frame.get();
+            if ( json.contains("parent") || referenced.count(index) || json["ip"].toDouble() != 0 ||
+                json["op"].toDouble(op) != op || start_mask
+            )
+            {
+                auto layer = make_node<model::Layer>(document);
+                layer->name.set(inner_shape->name.get());
+                layer->shapes.insert(std::move(inner_shape), 0);
+                layer_indices[index] = layer.get();
+                deferred.emplace_back(layer.get(), json);
+                inner_shape = std::move(layer);
+            }
         }
         else
         {
             auto layer = std::make_unique<model::Layer>(document);
-            if ( json["td"].toInt() )
+            layer_indices[index] = layer.get();
+            deferred.emplace_back(layer.get(), json);
+            inner_shape = std::move(layer);
+        }
+
+        if ( start_mask )
+        {
+            auto layer = std::make_unique<model::Layer>(document);
+            mask = layer.get();
+            layer->name.set(json["nm"].toString());
+            layer->shapes.insert(std::move(inner_shape), 0);
+            composition->shapes.insert(std::move(layer), 0);
+        }
+        else
+        {
+            auto tt = json["tt"].toInt();
+
+            if ( mask && tt )
             {
-                mask = layer.get();
-                layer->mask->mask.set(true);
-                layer->name.set(json["nm"].toString());
-                auto child = std::make_unique<model::Layer>(document);
-                layer_indices[index] = child.get();
-                deferred.emplace_back(child.get(), json);
-                layer->shapes.insert(std::move(child), 0);
-                composition->shapes.insert(std::move(layer), 0);
+                mask->shapes.insert(std::move(inner_shape), 1);
+                auto mode = model::MaskSettings::MaskMode((tt + 1) / 2);
+                mask->mask->mask.set(mode);
+                mask->mask->inverted.set(tt > 0 && tt % 2 == 0);
             }
             else
             {
-                layer_indices[index] = layer.get();
-                deferred.emplace_back(layer.get(), json);
-                if ( has_mask(json) )
-                    mask->shapes.insert(std::move(layer), 1);
-                else
-                    composition->shapes.insert(std::move(layer), 0);
-                mask = nullptr;
+                composition->shapes.insert(std::move(inner_shape), 0);
             }
+            mask = nullptr;
         }
     }
 
-    void load_precomp_layer(const QJsonObject& json, std::set<int>& referenced)
+    std::unique_ptr<model::PreCompLayer> load_precomp_layer(const QJsonObject& json)
     {
         auto props = load_basic_setup(json);
 
@@ -211,27 +232,9 @@ private:
             json["h"].toInt()
         ));
 
-        int index = json["ind"].toInt();
-        auto op = document->main()->animation->last_frame.get();
-        if ( json.contains("parent") || referenced.count(index) || json["ip"].toDouble() != 0 ||
-            json["op"].toDouble(op) != op || has_mask(json)
-        )
-        {
-            auto layer = make_node<model::Layer>(document);
-            layer->name.set(precomp->name.get());
-            layer->shapes.insert(std::move(precomp), 0);
-            if ( has_mask(json) )
-                layer->mask->mask.set(mask);
-            layer_indices[index] = layer.get();
-            deferred.emplace_back(layer.get(), json);
-            load_transform(json["ks"].toObject(), layer->transform.get(), &layer->opacity);
-            composition->shapes.insert(std::move(layer), 0);
-        }
-        else
-        {
-            load_transform(json["ks"].toObject(), precomp->transform.get(), &precomp->opacity);
-            composition->shapes.insert(std::move(precomp), 0);
-        }
+        load_transform(json["ks"].toObject(), precomp->transform.get(), &precomp->opacity);
+
+        return precomp;
     }
 
     void load_mask(const QJsonObject& json, model::Group* group)
@@ -318,7 +321,7 @@ private:
             auto masks = json["masksProperties"].toArray();
             if ( !masks.empty() )
             {
-                layer->mask->mask.set(true);
+                layer->mask->mask.set(model::MaskSettings::Alpha);
 
                 auto clip_p = make_node<model::Group>(document);
                 auto clip = clip_p.get();

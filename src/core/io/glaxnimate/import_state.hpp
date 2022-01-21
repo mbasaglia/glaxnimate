@@ -226,6 +226,12 @@ private:
                     object["multiple"] = "Individually";
             }
         }
+
+        if ( document_version < 6 )
+        {
+            if ( object["__type__"].toString() == "MaskSettings" )
+                object["mask"] = int(object["mask"].toBool());
+        }
     }
 
     void do_load_object ( model::Object* target, QJsonObject object, const UnresolvedPath& path )

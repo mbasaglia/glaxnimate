@@ -103,7 +103,7 @@ static void define_trace(py::module& m)
     py::class_<TraceOptions>(trace, "TraceOptions")
         .def(py::init<>())
         .def_property("smoothness", &TraceOptions::smoothness, &TraceOptions::set_smoothness)
-        .def_property("min_area", &TraceOptions::min_area, &TraceOptions::min_area)
+        .def_property("min_area", &TraceOptions::min_area, &TraceOptions::set_min_area)
     ;
     py::class_<Tracer>(trace, "Tracer")
         .def(py::init<const QImage&, const TraceOptions&>())

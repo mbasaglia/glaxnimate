@@ -574,7 +574,7 @@ public:
         auto layer = std::make_unique<model::Layer>(document);
         apply_common_style(layer.get(), args.element, style);
         set_name(layer.get(), args.element);
-        layer->mask->mask.set(true);
+        layer->mask->mask.set(model::MaskSettings::Alpha);
 
         QDomElement element = args.element;
 
