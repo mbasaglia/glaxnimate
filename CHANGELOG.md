@@ -1,4 +1,4 @@
-## 0.4.7
+## 0.5.0
 
 * Editing:
     * Action to make animations loop in the property context menu
