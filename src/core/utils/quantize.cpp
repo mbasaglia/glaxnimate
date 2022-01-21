@@ -160,7 +160,7 @@ struct Cluster
 
 } // utils::quantize::detail
 
-std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int iterations, KMeansMatch match)
+std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int iterations, MatchType match)
 {
     auto freq = color_frequencies(image);
 
@@ -652,48 +652,7 @@ QImage utils::quantize::quantize(const QImage& source, const std::vector<QRgb>& 
     return source.convertToFormat(QImage::Format_Indexed8, vcolors, Qt::ThresholdDither);
 }
 
-
 namespace glaxnimate::utils::quantize::detail::mmcq {
-
-static const constexpr int sig_bits = 5;
-static const constexpr int rshift = 8 - sig_bits;
-// static const constexpr int histo_size = 1 << (3 * sig_bits);
-static const constexpr int bit_mask = (1 << sig_bits) - 1;
-static const constexpr int bit_pad = (1 << rshift) - 1;
-
-/*
-struct Histogram
-{
-    Histogram(const std::vector<utils::quantize::ColorFrequency>& freq)
-//         : data{0}
-    {
-        for ( const auto& col: freq )
-        {
-            data[index(
-                qRed(col.first)   >> rshift,
-                qGreen(col.first) >> rshift,
-                qBlue(col.first)  >> rshift
-            )] = col.second;
-        }
-    }
-
-    constexpr std::size_t index(qint32 r, qint32 g, qint32 b) const noexcept
-    {
-        return (r << (2 * sig_bits)) | (g << sig_bits) | b;
-    }
-
-    qint32 color_count(qint32 r, qint32 g, qint32 b) const
-    {
-        auto it = data.find(index(r, g, b));
-        if ( it == data.end() )
-            return 0;
-        return it->second;
-//         return data[index(r, g, b)];
-    }
-
-//     std::array<qint32, histo_size> data;
-    std::unordered_map<qint32, qint32> data;
-};*/
 
 struct VBox
 {
@@ -735,7 +694,7 @@ struct VBox
 
     static VBox from_histogram(Histogram* histogram)
     {
-        Color min(bit_mask, bit_mask, bit_mask);
+        Color min(255, 255, 255);
         Color max(0, 0, 0);
         for ( const auto& f : *histogram )
         {
@@ -756,42 +715,70 @@ struct VBox
         return VBox{min, max, histogram};
     }
 
-    QRgb average() const
+    QRgb average(MatchType match) const
     {
         qint32 total = 0;
         qint32 rsum = 0;
         qint32 gsum = 0;
         qint32 bsum = 0;
+        qint32 most = 0;
+        Color selected;
 
         for ( const auto& freq : *histogram )
         {
             int r = qRed(freq.first);
-            int g = qRed(freq.first);
-            int b = qRed(freq.first);
+            int g = qGreen(freq.first);
+            int b = qBlue(freq.first);
             if ( r >= min.r && r <= max.r && g >= min.g && g <= max.g && b >= min.b && b <= min.b )
             {
                 total += freq.second;
                 rsum += freq.second * r;
                 gsum += freq.second * g;
                 bsum += freq.second * b;
+                if ( freq.second > most )
+                {
+                    selected = freq.first;
+                    most = freq.second;
+                }
             }
         }
 
+        if ( match == MostFrequent )
+            return selected.rgb();
+
+        Color median;
         if ( total == 0 )
         {
-            return qRgb(
+            median = Color(
                 (min.r + max.r + 1) / 2,
                 (min.g + max.g + 1) / 2,
                 (min.b + max.b + 1) / 2
             );
         } else {
-            return qRgb(
+            median = Color(
                 rsum / total,
                 gsum / total,
                 bsum / total
             );
         }
 
+        if ( match == Centroid )
+            return median.rgb();
+
+
+        auto closest = std::numeric_limits<quint32>::max();
+        for ( const auto& freq : *histogram )
+        {
+            Color col(freq.first);
+            auto dist = col.distance(median);
+            if ( dist < closest )
+            {
+                closest = dist;
+                selected = col;
+            }
+        }
+
+        return selected.rgb();
     }
 };
 
@@ -913,6 +900,7 @@ void iterate(std::priority_queue<VBox, std::vector<VBox>, Comp>& queue, Histogra
 std::vector<QRgb> glaxnimate::utils::quantize::modified_median_cut(
     const QImage& image, int k,
     float fract_by_population,
+    MatchType match,
     int max_iterations)
 {
 
@@ -930,10 +918,10 @@ std::vector<QRgb> glaxnimate::utils::quantize::modified_median_cut(
         k = 256;
 
     auto vbox = VBox::from_histogram(&histogram);
+
     std::priority_queue<VBox, std::vector<VBox>, VBoxCompareCount> queue;
     queue.push(vbox);
     iterate(queue, &histogram, fract_by_population * k, max_iterations);
-
 
     std::priority_queue<VBox> queue2;
     while ( !queue.empty() )
@@ -948,7 +936,7 @@ std::vector<QRgb> glaxnimate::utils::quantize::modified_median_cut(
     result.reserve(queue2.size());
     while ( !queue2.empty() )
     {
-        result.push_back(queue2.top().average());
+        result.push_back(queue2.top().average(match));
         queue2.pop();
     }
 

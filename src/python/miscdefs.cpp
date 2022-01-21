@@ -140,10 +140,10 @@ static void define_trace(py::module& m)
     });
 
     py::module quantize = m.def_submodule("quantize", "Bitmap color quantization");
-    py::enum_<utils::quantize::KMeansMatch>(quantize, "MatchType")
-        .value("Centroid", utils::quantize::KMeansMatch::None)
-        .value("Closest", utils::quantize::KMeansMatch::Closest)
-        .value("MostFrequent", utils::quantize::KMeansMatch::MostFrequent)
+    py::enum_<utils::quantize::MatchType>(quantize, "MatchType")
+        .value("Centroid", utils::quantize::MatchType::Centroid)
+        .value("Closest", utils::quantize::MatchType::Closest)
+        .value("MostFrequent", utils::quantize::MatchType::MostFrequent)
     ;
     quantize.def(
         "color_frequencies", &utils::quantize::color_frequencies,
@@ -173,6 +173,7 @@ static void define_trace(py::module& m)
         quantize_wrapper(&utils::quantize::modified_median_cut),
         py::arg("image"), py::arg("k"),
         py::arg("fract_by_population") = 0.85,
+        py::arg("match") = 0,
         py::arg("max_iterations") = 5000,
         "Returns the k best colors."
     );

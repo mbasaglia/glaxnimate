@@ -59,7 +59,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QGridLayout" name="gridLayout">
@@ -93,11 +93,11 @@
        <item row="0" column="1">
         <widget class="QComboBox" name="combo_means_match">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <item>
           <property name="text">
-           <string>None</string>
+           <string>Centroid</string>
           </property>
          </item>
          <item>
@@ -177,13 +177,27 @@ p, li { white-space: pre-wrap; }
      <widget class="QWidget" name="page_4">
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Color Selection</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Population Fraction</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Max Iterations</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
         <widget class="QSpinBox" name="spin_mmcq_fract">
          <property name="suffix">
           <string>%</string>
@@ -199,14 +213,29 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Max Iterations</string>
+       <item row="0" column="1" rowspan="2">
+        <widget class="QComboBox" name="combo_mmcq_match">
+         <property name="currentIndex">
+          <number>0</number>
          </property>
+         <item>
+          <property name="text">
+           <string>Median</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Most Frequent</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Closest</string>
+          </property>
+         </item>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="3" column="1">
         <widget class="QSpinBox" name="spin_mmcq_iterations">
          <property name="minimum">
           <number>1</number>
@@ -219,7 +248,7 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
+       <item row="4" column="0" colspan="2">
         <widget class="QTextEdit" name="textEdit_3">
          <property name="readOnly">
           <bool>true</bool>

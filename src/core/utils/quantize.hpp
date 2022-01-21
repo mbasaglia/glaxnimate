@@ -17,9 +17,9 @@ using Histogram = std::vector<ColorFrequency>;
 std::vector<QRgb> k_modes(const QImage& image, int k);
 
 
-enum KMeansMatch
+enum MatchType
 {
-    None,
+    Centroid,
     MostFrequent,
     Closest,
 };
@@ -27,7 +27,7 @@ enum KMeansMatch
 /**
  * \brief k-means Algorithm
  */
-std::vector<QRgb> k_means(const QImage& image, int k, int iterations, KMeansMatch match);
+std::vector<QRgb> k_means(const QImage& image, int k, int iterations, MatchType match);
 
 
 /**
@@ -54,6 +54,7 @@ QImage quantize(const QImage& source, const std::vector<QRgb>& colors);
 std::vector<QRgb> modified_median_cut(
     const QImage& image, int k,
     float fract_by_population = 0.85, // try .75 too
+    MatchType match = MatchType::Closest,
     int max_iterations = 5000
 );
 
