@@ -18,7 +18,8 @@
     * Fixed parsing SVG paths
     * Added support for loading basic animated SVG paths
     * Fixed importing solid layers from lottie
-    * Fixed importing mattes affecting precomps
+    * Fixed importing mattes affecting precomp
+    * Added transparency support when exporting to WebM
 * UI:
     * Added simplified Chinese translation
     * Added British English translation
