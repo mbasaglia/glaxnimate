@@ -233,6 +233,7 @@ release:check:
     only:
         - tags
         - master
+        - release
     before_script:
         - apt-get update -qq
         - apt-get install -y python3-pip
