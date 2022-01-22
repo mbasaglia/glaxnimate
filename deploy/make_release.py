@@ -63,13 +63,13 @@ notes = """
 <td><a href="{install_notes_url}#deb-package">Installation Instructions</a></td>
 </tr>
 <tr>
-<td><a href="{extra_artifacts}/Win/glaxnimate-x86_64.zip{extra_tail}">Windows Zip</a></td>
-<td><a href="{extra_artifacts}/Win/checksum.txt{extra_tail}">SHA1</a></td>
+<td><a href="{extra_artifacts}/glaxnimate-x86_64.zip">Windows Zip</a></td>
+<td><a href="{extra_artifacts}/checksum-win.txt">SHA1</a></td>
 <td><a href="{install_notes_url}#windows-zip">Installation Instructions</a></td>
 </tr>
 <tr>
-<td><a href="{extra_artifacts}/MacOs/glaxnimate.dmg">Mac dmg</a></td>
-<td><a href="{extra_artifacts}/MacOs/checksum.txt{extra_tail}">SHA1</a></td>
+<td><a href="{extra_artifacts}/glaxnimate.dmg">Mac dmg</a></td>
+<td><a href="{extra_artifacts}/checksum-mac.txt">SHA1</a></td>
 <td><a href="{install_notes_url}#mac-dmg">Installation Instructions</a></td>
 </tr>
 <tr>
@@ -92,7 +92,7 @@ See the [Documentation](https://glaxnimate.mattbas.org/manual/) page.
     project_url=api.project_url,
     artifacts_url=api.project_url+"/-/jobs/artifacts/" + download_tag + "/raw",
     install_notes_url="https://glaxnimate.mattbas.org/download/",
-    extra_artifacts="https://master.dl.sourceforge.net/project/glaxnimate/%s" % download_tag,
+    extra_artifacts="https://github.com/mbasaglia/glaxnimate/releases/download/%s/" % download_tag,
     extra_tail="?viasf=1",
 )
 

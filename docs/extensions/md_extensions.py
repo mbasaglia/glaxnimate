@@ -119,8 +119,12 @@ class DownloadTable(InlineProcessor):
             icon = etree_fontawesome(self.icon, self.icon_group)
             icon.tail = " "
             pack.append(icon)
-            if "/" in self.job_path:
-                url = "https://master.dl.sourceforge.net/project/glaxnimate/{0}{1}{{0}}?viasf=1".format(branch, self.job_path)
+
+            checksum_filename = "checksum.txt"
+
+            if self.job_path.startswith("-"):
+                url = "https://github.com/mbasaglia/glaxnimate/releases/download/{0}/{{0}}".format(branch)
+                checksum_filename = "checksum%s.txt" % self.job_path
             else:
                 url = "https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/{0}/raw{2}/{{0}}?job={1}".format(
                     branch, self.job_path.replace(":", "%3A"), self.parent
@@ -129,7 +133,7 @@ class DownloadTable(InlineProcessor):
             etree.SubElement(pack, "a", {"href": url.format(self.filename)}).text = self.name
 
             check = etree.SubElement(tr, "td")
-            etree.SubElement(check, "a", {"href": url.format("checksum.txt")}).text = self.checksum
+            etree.SubElement(check, "a", {"href": url.format(checksum_filename)}).text = self.checksum
 
             notes = etree.SubElement(tr, "td")
             etree.SubElement(notes, "a", {"href": self.notes}).text = "Notes"
@@ -148,8 +152,8 @@ class DownloadTable(InlineProcessor):
         rows = [
             self.Row("Linux Appimage",  "fab", "linux",    "glaxnimate-x86_64.AppImage",   "linux:appimage"),
             self.Row("Deb Package",     "fab", "ubuntu",   "glaxnimate.deb",               "linux:deb"),
-            self.Row("Windows Zip",     "fab", "windows",  "glaxnimate-x86_64.zip",        "/Win/"),
-            self.Row("Mac DMG",         "fab", "apple",    "glaxnimate.dmg",               "/MacOs/"),
+            self.Row("Windows Zip",     "fab", "windows",  "glaxnimate-x86_64.zip",        "-win"),
+            self.Row("Mac DMG",         "fab", "apple",    "glaxnimate.dmg",               "-mac"),
             self.Row("Source Tarball",  "fas", "wrench",   "glaxnimate-src.tar.gz",        "tarball", "/contributing/read_me", ""),
         ]
 
