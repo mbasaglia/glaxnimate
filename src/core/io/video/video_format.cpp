@@ -389,13 +389,17 @@ public:
 
         // emit one intra frame every twelve frames at most
         ost.codec_context->gop_size = 12;
-        if ( ost.codec->pix_fmts == nullptr )
-            throw av::Error(QObject::tr("Could not determine pixel format"));
         // get_format() for some reason returns an invalid value
         if (ost.codec->id == AV_CODEC_ID_VP9 || ost.codec->id == AV_CODEC_ID_VP8)
+        {
             ost.codec_context->pix_fmt = AV_PIX_FMT_YUVA420P;
+        }
         else
+        {
+            if ( ost.codec->pix_fmts == nullptr )
+                throw av::Error(QObject::tr("Could not determine pixel format"));
             ost.codec_context->pix_fmt = ost.codec->pix_fmts[0];
+        }
 
         // just for testing, we also add B-frames
         if ( ost.codec_context->codec_id == AV_CODEC_ID_MPEG2VIDEO )
