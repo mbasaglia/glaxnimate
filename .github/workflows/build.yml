@@ -47,7 +47,7 @@ jobs:
                     build/bin/python/dist/
             - name: Update Release
               uses: johnwbyrd/update-release@v1.0.0
-              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' || startsWith(github.ref, 'refs/tags/' }}
+              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' || startsWith(github.ref, 'refs/tags/') }}
               with:
                     token: ${{ secrets.GITHUB_TOKEN }}
                     files: ./build/checksum-mac.txt ./build/glaxnimate.dmg
@@ -127,7 +127,7 @@ jobs:
                     build/bin/python/dist/
             - name: Update Release
               uses: johnwbyrd/update-release@v1.0.0
-              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' || startsWith(github.ref, 'refs/tags/' }}
+              if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pre-release' || github.ref == 'refs/heads/release' || startsWith(github.ref, 'refs/tags/') }}
               with:
                     token: ${{ secrets.GITHUB_TOKEN }}
                     files: ./build/checksum-win.txt ./build/glaxnimate-x86_64.zip
