@@ -104,7 +104,7 @@ parts:
             export LD_LIBRARY_PATH=/opt/qt514/lib/
             # ffmpeg
             apt-get install -y git build-essential nasm pkg-config
-            git clone https://github.com/FFmpeg/FFmpeg.git
+            git clone https://github.com/FFmpeg/FFmpeg.git --branch release/4.4
             cd FFmpeg/
             ./configure --disable-static --enable-shared
             make -j4
