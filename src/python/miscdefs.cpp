@@ -166,7 +166,13 @@ static void define_trace(py::module& m)
         "octree",
         quantize_wrapper(&utils::quantize::octree),
         py::arg("image"), py::arg("k"),
-        "Returns the k  best colors."
+        "Returns the k best colors."
+    );
+    quantize.def(
+        "edge_exclusion_modes",
+        quantize_wrapper(&utils::quantize::edge_exclusion_modes),
+        py::arg("image"), py::arg("max_colors"), py::arg("min_frequency") = 0.001,
+        "Returns up to max_colors, has the best results for flat-colored images."
     );
 }
 
