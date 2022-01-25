@@ -5,22 +5,6 @@
 
 using namespace glaxnimate;
 
-std::vector<utils::quantize::ColorFrequency> utils::quantize::color_frequencies(QImage image, int alpha_threshold)
-{
-    if ( image.format() != QImage::Format_RGBA8888 )
-        image = image.convertToFormat(QImage::Format_RGBA8888);
-
-    std::unordered_map<QRgb, int> count;
-    const uchar* data = image.constBits();
-
-    int n_pixels = image.width() * image.height();
-    for ( int i = 0; i < n_pixels; i++ )
-        if ( data[i*4+3] >= alpha_threshold )
-            ++count[qRgb(data[i*4], data[i*4+1], data[i*4+2])];
-
-    return std::vector<ColorFrequency>(count.begin(), count.end());
-}
-
 namespace glaxnimate::utils::quantize::detail {
 
 static bool freq_sort_cmp(const ColorFrequency& a, const ColorFrequency& b) noexcept
@@ -28,6 +12,19 @@ static bool freq_sort_cmp(const ColorFrequency& a, const ColorFrequency& b) noex
     return a.second > b.second;
 }
 
+std::vector<QRgb> color_frequencies_to_palette(std::vector<utils::quantize::ColorFrequency>& freq, int max)
+{
+    std::sort(freq.begin(), freq.end(), detail::freq_sort_cmp);
+
+    int count = qMin<int>(max, freq.size());
+    std::vector<QRgb> out;
+    out.reserve(count);
+
+    for ( int i = 0; i < count; i++ )
+        out.push_back(freq[i].first);
+
+    return out;
+}
 
 using Distance = quint32;
 
@@ -86,21 +83,38 @@ struct Color
     }
 };
 
+using HistogramMap = std::unordered_map<ColorFrequency::first_type, ColorFrequency::second_type>;
+
+HistogramMap color_frequency_map(QImage image, int alpha_threshold)
+{
+    if ( image.format() != QImage::Format_RGBA8888 )
+        image = image.convertToFormat(QImage::Format_RGBA8888);
+
+    HistogramMap count;
+    const uchar* data = image.constBits();
+
+    int n_pixels = image.width() * image.height();
+    for ( int i = 0; i < n_pixels; i++ )
+        if ( data[i*4+3] >= alpha_threshold )
+            ++count[qRgb(data[i*4], data[i*4+1], data[i*4+2])];
+
+    return count;
+}
+
+
 } // utils::quantize::detail
+
+std::vector<utils::quantize::ColorFrequency> utils::quantize::color_frequencies(const QImage& image, int alpha_threshold)
+{
+    auto count = detail::color_frequency_map(image, alpha_threshold);
+    return std::vector<ColorFrequency>(count.begin(), count.end());
+}
+
 
 std::vector<QRgb> utils::quantize::k_modes(const QImage& image, int k)
 {
-    auto sortme = color_frequencies(image);
-    std::sort(sortme.begin(), sortme.end(), detail::freq_sort_cmp);
-
-    std::vector<QRgb> out;
-    if ( int(sortme.size()) < k )
-        k = sortme.size();
-    out.reserve(k);
-    for ( int i = 0; i < qMin<int>(k, sortme.size()); i++ )
-        out.push_back(sortme[i].first);
-
-    return out;
+    auto freq = color_frequencies(image);
+    return detail::color_frequencies_to_palette(freq, k);
 }
 
 
@@ -159,14 +173,7 @@ std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int itera
 
     // Avoid processing if we don't need to
     if ( int(freq.size()) <= k )
-    {
-        std::sort(freq.begin(), freq.end(), detail::freq_sort_cmp);
-        std::vector<QRgb> out;
-        out.reserve(k);
-        for ( const auto& p : freq )
-            out.push_back(p.first);
-        return out;
-    }
+        return detail::color_frequencies_to_palette(freq, k);
 
     // Initialize points
     std::vector<detail::k_means::Point> points(freq.begin(), freq.end());
@@ -621,14 +628,7 @@ std::vector<QRgb> utils::quantize::octree(const QImage& image, int k)
 
     // Avoid processing if we don't need to
     if ( int(freq.size()) <= k || k <= 1)
-    {
-        std::sort(freq.begin(), freq.end(), detail::freq_sort_cmp);
-        std::vector<QRgb> out;
-        out.reserve(k);
-        for ( const auto& p : freq )
-            out.push_back(p.first);
-        return out;
-    }
+        return detail::color_frequencies_to_palette(freq, k);
 
     std::vector<QRgb> colors;
     colors.reserve(k);
@@ -655,4 +655,69 @@ QImage utils::quantize::quantize(const QImage& source, const std::vector<QRgb>& 
 #endif
     vcolors.push_back(qRgba(0, 0, 0, 0));
     return source.convertToFormat(QImage::Format_Indexed8, vcolors, Qt::ThresholdDither);
+}
+
+namespace glaxnimate::utils::quantize::detail::auto_colors {
+
+void decrease(QRgb color, HistogramMap& map)
+{
+    auto it = map.find(color | 0xff000000u);
+    if ( it != map.end() )
+        it->second -= 1;
+}
+
+} // namespace glaxnimate::utils::quantize::detail::auto_colors
+
+
+std::vector<QRgb> utils::quantize::edge_exclusion_modes(const QImage& image_in, int max_colors, qreal min_frequency)
+{
+    int alpha_threshold = 128;
+    QImage image = image_in;
+    if ( image.format() != QImage::Format_RGBA8888 )
+        image = image.convertToFormat(QImage::Format_RGBA8888);
+
+    detail::HistogramMap colors = detail::color_frequency_map(image, alpha_threshold);
+
+    if ( int(colors.size()) <= max_colors )
+    {
+        auto freq = std::vector<ColorFrequency>(colors.begin(), colors.end());
+        return detail::color_frequencies_to_palette(freq, max_colors);
+    }
+
+    std::vector<QRgb> output;
+    int min_amount = min_frequency * image.width() * image.height();
+
+    while ( int(output.size()) < max_colors && !colors.empty() )
+    {
+        auto best = colors.begin();
+        for ( auto it = best; it != colors.end(); ++it )
+        {
+            if ( it->second > best->second )
+                best = it;
+        }
+
+        if ( best->second <= min_amount )
+            break;
+
+        auto color = best->first;
+        output.push_back(color);
+        colors.erase(best);
+
+        for ( int y = 1; y < image.height() - 1; y++ )
+        {
+            for ( int x = 1; x < image.width() - 1; x++ )
+            {
+                auto pix = image.pixel(x, y);
+                if ( pix == color )
+                {
+                    detail::auto_colors::decrease(image.pixel(x, y-1), colors);
+                    detail::auto_colors::decrease(image.pixel(x, y+1), colors);
+                    detail::auto_colors::decrease(image.pixel(x-1, y), colors);
+                    detail::auto_colors::decrease(image.pixel(x+1, y), colors);
+                }
+            }
+        }
+    }
+
+    return output;
 }

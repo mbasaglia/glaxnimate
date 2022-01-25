@@ -255,6 +255,23 @@ public:
         color_options.reset_settings();
     }
 
+    void init_colors()
+    {
+        if ( source_image.width() < 1024 && source_image.height() < 1024 )
+        {
+            auto colors = utils::quantize::edge_exclusion_modes(source_image, 256);
+            for ( QRgb rgb : colors )
+                add_color(QColor(rgb));
+            ui.spin_color_count->setValue(colors.size());
+        }
+        else
+        {
+            ui.spin_color_count->setValue(4);
+            auto_colors();
+        }
+
+    }
+
     void auto_colors()
     {
         while ( ui.list_colors->model()->rowCount() )
@@ -338,8 +355,7 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     d->ui.list_colors->setItemDelegate(&d->delegate);
 
     d->init_settings();
-    d->ui.spin_color_count->setValue(4);
-    d->auto_colors();
+    d->init_colors();
 
     if ( d->source_image.width() > 128 || d->source_image.height() > 128 )
     {

@@ -1,3 +1,8 @@
+## 0.5.1
+
+* Editing:
+    * New quantization algorithm available (Edge Exclusion Modes)
+
 ## 0.5.0
 
 * Editing:
