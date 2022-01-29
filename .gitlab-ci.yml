@@ -395,13 +395,31 @@ linux:pypi_3.9:
         - tags
         - pypi
 
+
+linux:pypi_3.10:
+    image: ubuntu:21.04
+    extends: .pypi_build
+    only:
+        - master
+        - release
+        - tags
+        - pypi
+    before_script:
+        - apt-get update -qq
+        - apt-get install -y libpython3.10-dev cmake qtbase5-dev python3-pip zlib1g-dev qttools5-dev-tools qttools5-dev libpotrace-dev libavformat-dev libswscale-dev libavcodec-dev libavutil-dev libarchive-dev libqt5svg5-dev
+
+
 linux:pypi_deploy:
     image: ubuntu:latest
     stage: deploy
-    needs: ["linux:pypi_3.8", "linux:pypi_3.9"]
+    needs:
+        - linux:pypi_3.8
+        - linux:pypi_3.9
+        - linux:pypi_3.10
     dependencies:
         - linux:pypi_3.8
         - linux:pypi_3.9
+        - linux:pypi_3.10
     script:
         - python3 --version
         - mkdir -p build
@@ -414,7 +432,6 @@ linux:pypi_deploy:
     only:
         - master
         - release
-        - prerelease
     environment:
         name: Gitlab PyPI
 
@@ -422,10 +439,14 @@ linux:pypi_deploy:
 linux:pypi_deploy_tag:
     image: ubuntu:latest
     stage: deploy
-    needs: ["linux:pypi_3.8", "linux:pypi_3.9"]
+    needs:
+        - linux:pypi_3.8
+        - linux:pypi_3.9
+        - linux:pypi_3.10
     dependencies:
         - linux:pypi_3.8
         - linux:pypi_3.9
+        - linux:pypi_3.10
     script:
         - python3 --version
         - mkdir -p build
