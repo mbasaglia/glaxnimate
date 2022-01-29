@@ -21,333 +21,543 @@
    <item>
     <layout class="QHBoxLayout" name="layout_main">
      <item>
-      <widget class="QWidget" name="widget_controls" native="true">
+      <widget class="QStackedWidget" name="stacked_preset_advanced">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QWidget" name="mode_container" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="widget_presets">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QListWidget" name="list_presets">
+           <property name="minimumSize">
+            <size>
+             <width>140</width>
+             <height>550</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>140</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>128</width>
+             <height>128</height>
+            </size>
+           </property>
+           <property name="flow">
+            <enum>QListView::TopToBottom</enum>
+           </property>
+           <property name="viewMode">
+            <enum>QListView::IconMode</enum>
+           </property>
+           <property name="currentRow">
+            <number>-1</number>
+           </property>
            <item>
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Mode</string>
-             </property>
-            </widget>
+            <property name="text">
+             <string>Detailed</string>
+            </property>
            </item>
            <item>
-            <widget class="QComboBox" name="combo_mode">
-             <item>
-              <property name="text">
-               <string>Transparency</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Closest Color</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Extract Colors</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Pixel</string>
-              </property>
-             </item>
-            </widget>
+            <property name="text">
+             <string>Flat</string>
+            </property>
            </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Image Options</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QStackedWidget" name="stacked_widget">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="currentIndex">
-              <number>1</number>
-             </property>
-             <widget class="QWidget" name="page">
-              <layout class="QFormLayout" name="formLayout_2">
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_4">
-                 <property name="text">
-                  <string>Output Color</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="color_widgets::ColorSelector" name="color_mono" native="true">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="color" stdset="0">
-                  <color>
-                   <red>0</red>
-                   <green>0</green>
-                   <blue>0</blue>
-                  </color>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_5">
-                 <property name="text">
-                  <string>Invert</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QCheckBox" name="check_inverted">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>Threshold</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QSpinBox" name="spin_alpha_threshold">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximum">
-                  <number>255</number>
-                 </property>
-                 <property name="value">
-                  <number>128</number>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="page_2">
-              <layout class="QVBoxLayout" name="verticalLayout_5">
-               <item>
-                <widget class="QLabel" name="label_7">
-                 <property name="text">
-                  <string>Colors</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QListWidget" name="list_colors">
-                 <property name="dragEnabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="dragDropMode">
-                  <enum>QAbstractItemView::InternalMove</enum>
-                 </property>
-                 <property name="defaultDropAction">
-                  <enum>Qt::MoveAction</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_4">
-                 <item>
-                  <widget class="QToolButton" name="toolButton">
-                   <property name="toolTip">
-                    <string>Add Color</string>
-                   </property>
-                   <property name="text">
-                    <string>Add</string>
-                   </property>
-                   <property name="icon">
-                    <iconset theme="list-add">
-                     <normaloff>.</normaloff>.</iconset>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QToolButton" name="toolButton_2">
-                   <property name="toolTip">
-                    <string>Remove Color</string>
-                   </property>
-                   <property name="text">
-                    <string>Remove</string>
-                   </property>
-                   <property name="icon">
-                    <iconset theme="list-remove">
-                     <normaloff>.</normaloff>.</iconset>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QGridLayout" name="gridLayout">
-                 <item row="3" column="2">
-                  <widget class="QSpinBox" name="spin_color_count">
-                   <property name="maximum">
-                    <number>32</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="2">
-                  <widget class="QDoubleSpinBox" name="spin_outline">
-                   <property name="singleStep">
-                    <double>0.500000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="0" colspan="2">
-                  <widget class="QLabel" name="label_tolerance">
-                   <property name="text">
-                    <string>Tolerance</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0" colspan="2">
-                  <widget class="QLabel" name="label_9">
-                   <property name="text">
-                    <string>Outline</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="2">
-                  <widget class="QSpinBox" name="spin_tolerance">
-                   <property name="minimum">
-                    <number>0</number>
-                   </property>
-                   <property name="maximum">
-                    <number>512</number>
-                   </property>
-                   <property name="singleStep">
-                    <number>10</number>
-                   </property>
-                   <property name="value">
-                    <number>10</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="1">
-                  <widget class="QPushButton" name="button_detect_colors">
-                   <property name="text">
-                    <string>Detect Colors</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
-                  <widget class="QToolButton" name="button_quantize_options">
-                   <property name="toolTip">
-                    <string>Configure Color Detection</string>
-                   </property>
-                   <property name="text">
-                    <string>Configure...</string>
-                   </property>
-                   <property name="icon">
-                    <iconset theme="settings-configure">
-                     <normaloff>.</normaloff>.</iconset>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="page_3"/>
-            </widget>
+            <property name="text">
+             <string>Pixel Art</string>
+            </property>
            </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="group_potrace">
-          <property name="title">
-           <string>Curve Options</string>
-          </property>
-          <layout class="QFormLayout" name="formLayout">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Smoothness</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QDoubleSpinBox" name="spin_smoothness">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="suffix">
-              <string>%</string>
-             </property>
-             <property name="decimals">
+          </widget>
+         </item>
+         <item>
+          <widget class="QStackedWidget" name="stacked_preset">
+           <property name="currentIndex">
+            <number>1</number>
+           </property>
+           <widget class="QWidget" name="page_7">
+            <layout class="QGridLayout" name="gridLayout_2">
+             <property name="leftMargin">
               <number>0</number>
              </property>
-             <property name="maximum">
-              <double>100.000000000000000</double>
+             <property name="topMargin">
+              <number>0</number>
              </property>
-             <property name="singleStep">
-              <double>5.000000000000000</double>
+             <property name="rightMargin">
+              <number>0</number>
              </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QSpinBox" name="spin_min_area">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+             <property name="bottomMargin">
+              <number>0</number>
              </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Minimum Area</string>
+             <item row="1" column="1">
+              <widget class="QSpinBox" name="spin_posterize">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>999</number>
+               </property>
+               <property name="value">
+                <number>16</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0" colspan="2">
+              <widget class="QTextBrowser" name="textBrowser">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+               <property name="html">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This option is best suited for photos, paintings and detailed illustrations.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The number of colors is reduced based on &lt;span style=&quot; font-weight:600;&quot;&gt;Posterization Level&lt;/span&gt; below.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note that there is a significant reduction in image quality when converting this kind of images to vector graphics.&lt;/p&gt;
+&lt;p style=&quot; margin-top:37px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(Image by &lt;a href=&quot;https://linktr.ee/FellFallow&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;FellFallow&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+               <property name="openExternalLinks">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_8">
+               <property name="text">
+                <string>Posterization Level</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_8">
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <property name="leftMargin">
+              <number>0</number>
              </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QTextEdit" name="textEdit_2">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+               <property name="html">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This option is best suited for flat-shaded digital images, stickers, and cartoons.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The number of colors will be reduced automatically, picking the most common colors in the source image.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Very small details might get lost in the process.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_9">
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QTextEdit" name="textEdit_3">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+               <property name="html">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is suited for pixel art. The traced vector will retain all colors in the original image as well the pixelated edges.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is only suitable for fairly small images with a low number of colors.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="widget_advanced">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QWidget" name="mode_container" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Mode</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="combo_mode">
+              <item>
+               <property name="text">
+                <string>Transparency</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Closest Color</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Extract Colors</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Pixel</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>Image Options</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QStackedWidget" name="stacked_widget">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="currentIndex">
+               <number>1</number>
+              </property>
+              <widget class="QWidget" name="page">
+               <layout class="QFormLayout" name="formLayout_2">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_4">
+                  <property name="text">
+                   <string>Output Color</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="color_widgets::ColorSelector" name="color_mono">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="color">
+                   <color>
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                   </color>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_5">
+                  <property name="text">
+                   <string>Invert</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QCheckBox" name="check_inverted">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_6">
+                  <property name="text">
+                   <string>Threshold</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QSpinBox" name="spin_alpha_threshold">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximum">
+                   <number>255</number>
+                  </property>
+                  <property name="value">
+                   <number>128</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="page_2">
+               <layout class="QVBoxLayout" name="verticalLayout_5">
+                <item>
+                 <widget class="QLabel" name="label_7">
+                  <property name="text">
+                   <string>Colors</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QListWidget" name="list_colors">
+                  <property name="dragEnabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="dragDropMode">
+                   <enum>QAbstractItemView::InternalMove</enum>
+                  </property>
+                  <property name="defaultDropAction">
+                   <enum>Qt::MoveAction</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_4">
+                  <item>
+                   <widget class="QToolButton" name="toolButton">
+                    <property name="toolTip">
+                     <string>Add Color</string>
+                    </property>
+                    <property name="text">
+                     <string>Add</string>
+                    </property>
+                    <property name="icon">
+                     <iconset theme="list-add">
+                      <normaloff>.</normaloff>.</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QToolButton" name="toolButton_2">
+                    <property name="toolTip">
+                     <string>Remove Color</string>
+                    </property>
+                    <property name="text">
+                     <string>Remove</string>
+                    </property>
+                    <property name="icon">
+                     <iconset theme="list-remove">
+                      <normaloff>.</normaloff>.</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QGridLayout" name="gridLayout">
+                  <item row="3" column="2">
+                   <widget class="QSpinBox" name="spin_color_count">
+                    <property name="maximum">
+                     <number>32</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="2">
+                   <widget class="QDoubleSpinBox" name="spin_outline">
+                    <property name="singleStep">
+                     <double>0.500000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0" colspan="2">
+                   <widget class="QLabel" name="label_tolerance">
+                    <property name="text">
+                     <string>Tolerance</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0" colspan="2">
+                   <widget class="QLabel" name="label_9">
+                    <property name="text">
+                     <string>Outline</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="2">
+                   <widget class="QSpinBox" name="spin_tolerance">
+                    <property name="minimum">
+                     <number>0</number>
+                    </property>
+                    <property name="maximum">
+                     <number>512</number>
+                    </property>
+                    <property name="singleStep">
+                     <number>10</number>
+                    </property>
+                    <property name="value">
+                     <number>10</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="1">
+                   <widget class="QPushButton" name="button_detect_colors">
+                    <property name="text">
+                     <string>Detect Colors</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QToolButton" name="button_quantize_options">
+                    <property name="toolTip">
+                     <string>Configure Color Detection</string>
+                    </property>
+                    <property name="text">
+                     <string>Configure...</string>
+                    </property>
+                    <property name="icon">
+                     <iconset theme="settings-configure">
+                      <normaloff>.</normaloff>.</iconset>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="page_3"/>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="group_potrace">
+           <property name="title">
+            <string>Curve Options</string>
+           </property>
+           <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Smoothness</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="spin_smoothness">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="suffix">
+               <string>%</string>
+              </property>
+              <property name="decimals">
+               <number>0</number>
+              </property>
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>5.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="spin_min_area">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Minimum Area</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
      <item>
@@ -470,6 +680,19 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="button_advanced">
+       <property name="text">
+        <string>Advanced</string>
+       </property>
+       <property name="icon">
+           <iconset theme="preferences-system"></iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QDialogButtonBox" name="buttonBox">
        <property name="standardButtons">
         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
@@ -503,60 +726,12 @@
    <slot>update_preview()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>396</x>
-     <y>572</y>
+     <x>507</x>
+     <y>601</y>
     </hint>
     <hint type="destinationlabel">
      <x>99</x>
      <y>534</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>toolButton</sender>
-   <signal>clicked()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>add_color()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>59</x>
-     <y>345</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>179</x>
-     <y>625</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>toolButton_2</sender>
-   <signal>clicked()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>remove_color()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>281</x>
-     <y>345</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>339</x>
-     <y>625</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button_detect_colors</sender>
-   <signal>clicked()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>auto_colors()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>150</x>
-     <y>445</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>159</x>
-     <y>625</y>
     </hint>
    </hints>
   </connection>
@@ -593,38 +768,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>594</x>
-     <y>643</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>616</x>
-     <y>779</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>apply()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>513</x>
-     <y>633</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>513</x>
-     <y>798</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>preview_slider</sender>
    <signal>sliderMoved(int)</signal>
    <receiver>TraceDialog</receiver>
@@ -657,18 +800,82 @@
    </hints>
   </connection>
   <connection>
-   <sender>button_quantize_options</sender>
-   <signal>clicked()</signal>
-   <receiver>TraceDialog</receiver>
-   <slot>color_options()</slot>
+   <sender>list_presets</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>stacked_preset</receiver>
+   <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>38</x>
-     <y>451</y>
+     <x>58</x>
+     <y>260</y>
     </hint>
     <hint type="destinationlabel">
-     <x>108</x>
-     <y>815</y>
+     <x>266</x>
+     <y>572</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_advanced</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>toggle_advanced(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>298</x>
+     <y>645</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>347</x>
+     <y>715</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>702</x>
+     <y>633</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>726</x>
+     <y>732</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>apply()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>618</x>
+     <y>632</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>638</x>
+     <y>761</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>list_presets</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>TraceDialog</receiver>
+   <slot>update_preview()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>82</x>
+     <y>485</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>260</x>
+     <y>831</y>
     </hint>
    </hints>
   </connection>
@@ -685,5 +892,7 @@
   <slot>preview_slide(int)</slot>
   <slot>reset_settings()</slot>
   <slot>color_options()</slot>
+  <slot>toggle_advanced(bool)</slot>
+  <slot>preset_changed(int)</slot>
  </slots>
 </ui>

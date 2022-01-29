@@ -9,6 +9,7 @@
 #include <QSpinBox>
 #include <QComboBox>
 #include <QRadioButton>
+#include <QPushButton>
 
 #include "settings.hpp"
 
@@ -45,6 +46,7 @@ WIDGET_DEF(QLineEdit, text, setText);
 WIDGET_DEF(QCheckBox, isChecked, setChecked);
 WIDGET_DEF(QRadioButton, isChecked, setChecked);
 WIDGET_DEF(QComboBox, currentIndex, setCurrentIndex);
+WIDGET_DEF(QPushButton, isChecked, setChecked);
 
 #undef WIDGET_DEF
 

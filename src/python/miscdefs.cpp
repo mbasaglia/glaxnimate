@@ -171,7 +171,7 @@ static void define_trace(py::module& m)
     quantize.def(
         "edge_exclusion_modes",
         quantize_wrapper(&utils::quantize::edge_exclusion_modes),
-        py::arg("image"), py::arg("max_colors"), py::arg("min_frequency") = 0.001,
+        py::arg("image"), py::arg("max_colors"), py::arg("min_frequency") = 0.0005,
         "Returns up to max_colors, has the best results for flat-colored images."
     );
 }

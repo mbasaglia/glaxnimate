@@ -44,7 +44,7 @@ std::vector<QRgb> octree(const QImage& image, int k);
  * \param max_colors Maximum number of colors
  * \param min_frequency A color must have at least min_frequency * image.width * image.height pixels to be selected
  */
-std::vector<QRgb> edge_exclusion_modes(const QImage& image, int max_colors, qreal min_frequency = 0.001);
+std::vector<QRgb> edge_exclusion_modes(const QImage& image, int max_colors, qreal min_frequency = 0.0005);
 
 /**
  * \brief Counts pixel values and returns a list of [rgba, count] pairs

@@ -22,7 +22,6 @@ public:
     ~TraceDialog();
 
     model::DocumentNode* created() const;
-
 protected:
     void changeEvent ( QEvent* e ) override;
     void resizeEvent(QResizeEvent * event) override;
@@ -40,6 +39,7 @@ private slots:
     void preview_slide(int percent);
     void reset_settings();
     void color_options();
+    void toggle_advanced(bool advanced);
 
 private:
     class Private;

@@ -30,25 +30,18 @@
 #include "model/shapes/rect.hpp"
 #include "utils/trace.hpp"
 #include "utils/quantize.hpp"
+#include "utils/trace_wrapper.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
 #include "app/widgets/no_close_on_enter.hpp"
+#include "glaxnimate_app.hpp"
 
 #include "color_quantization_dialog.hpp"
 
-using namespace glaxnimate::gui;
-using namespace glaxnimate;
 
-class TraceDialog::Private
+class glaxnimate::gui::TraceDialog::Private
 {
 public:
-    struct TraceResult
-    {
-        QColor color;
-        math::bezier::MultiBezier bezier;
-        std::vector<QRectF> rects;
-    };
-
     enum Mode
     {
         Alpha,
@@ -57,12 +50,19 @@ public:
         Pixel
     };
 
-    model::Image* image;
+    enum Preset
+    {
+        ComplexPreset,
+        FlatPreset,
+        PixelPreset,
+    };
+
+    using TraceResult = glaxnimate::utils::trace::TraceWrapper::TraceResult;
+
+    utils::trace::TraceWrapper trace_wrapper;
     model::Group* created = nullptr;
-    QImage source_image;
     Ui::TraceDialog ui;
     QGraphicsScene scene;
-    utils::trace::TraceOptions options;
     color_widgets::ColorDelegate delegate;
     qreal zoom = 1;
     QGraphicsRectItem *item_parent_shape;
@@ -71,127 +71,107 @@ public:
     app::widgets::NoCloseOnEnter ncoe;
     ColorQuantizationDialog color_options;
     app::settings::WidgetSettingGroup settings;
+    QSize image_size;
+    std::vector<QRgb> eem_colors;
+    bool initialized = false;
 
-    void trace_mono(std::vector<TraceResult>& result)
-    {
-        result.resize(1);
-        ui.progress_bar->setMaximum(100);
+    explicit Private(model::Image* image)
+        : trace_wrapper(image), image_size(trace_wrapper.size())
+    {}
 
-        result[0].color = ui.color_mono->color();
-        utils::trace::Tracer tracer(source_image, options);
-        tracer.set_target_alpha(ui.spin_alpha_threshold->value(), ui.check_inverted->isChecked());
-        connect(&tracer, &utils::trace::Tracer::progress, ui.progress_bar, &QProgressBar::setValue);
-        tracer.set_progress_range(0, 100);
-        tracer.trace(result[0].bezier);
-    }
-
-    void trace_exact(std::vector<TraceResult>& result)
+    std::vector<QRgb> colors()
     {
         int count = ui.list_colors->model()->rowCount();
-        result.resize(count);
-        ui.progress_bar->setMaximum(100 * count);
-
-        for ( int i = 0; i < count; i++ )
-        {
-            result[i].color = ui.list_colors->item(i)->data(Qt::DisplayRole).value<QColor>();
-            utils::trace::Tracer tracer(source_image, options);
-            tracer.set_target_color(result[i].color, ui.spin_tolerance->value() * ui.spin_tolerance->value());
-            connect(&tracer, &utils::trace::Tracer::progress, ui.progress_bar, &QProgressBar::setValue);
-            tracer.set_progress_range(100 * i, 100 * (i+1));
-            tracer.trace(result[i].bezier);
-        }
-    }
-
-    void trace_closest(std::vector<TraceResult>& result)
-    {
-        int count = ui.list_colors->model()->rowCount();
-        result.resize(count);
-        ui.progress_bar->setMaximum(100 * count);
-
         std::vector<QRgb> colors;
+        colors.reserve(count);
         for ( int i = 0; i < count; i++ )
         {
-            result[i].color = ui.list_colors->item(i)->data(Qt::DisplayRole).value<QColor>();
-            colors.push_back(result[i].color.rgb());
+            colors.push_back(ui.list_colors->item(i)->data(Qt::DisplayRole).value<QColor>().rgb());
         }
 
-        QImage converted = utils::quantize::quantize(source_image, colors);
-        utils::trace::Tracer tracer(converted, options);
-        connect(&tracer, &utils::trace::Tracer::progress, ui.progress_bar, &QProgressBar::setValue);
-
-        for ( int i = 0; i < count; i++ )
-        {
-            tracer.set_target_index(i);
-            tracer.set_progress_range(100 * i, 100 * (i+1));
-            tracer.trace(result[i].bezier);
-        }
+        return colors;
     }
 
-    void trace_pixel(std::vector<TraceResult>& result)
+    const std::vector<QRgb>& get_eem_colors()
     {
-        auto pixdata = utils::trace::trace_pixels(source_image);
-        result.reserve(pixdata.size());
-        for ( const auto& p : pixdata )
-            result.push_back({p.first, {}, p.second});
+        if ( eem_colors.empty() )
+            eem_colors = utils::quantize::edge_exclusion_modes(trace_wrapper.image(), 256);
+        return eem_colors;
     }
-    
+
     std::vector<TraceResult> trace()
     {
-        options.set_min_area(ui.spin_min_area->value());
-        options.set_smoothness(ui.spin_smoothness->value() / 100.0);
-
         std::vector<TraceResult> result;
 
         ui.progress_bar->show();
         ui.progress_bar->setValue(0);
 
-        switch ( ui.combo_mode->currentIndex() )
+        if ( !ui.button_advanced->isChecked() )
         {
-            case Mode::Alpha: trace_mono(result); break;
-            case Mode::Closest: trace_closest(result); break;
-            case Mode::Exact: trace_exact(result); break;
-            case Mode::Pixel: trace_pixel(result); break;
+            trace_wrapper.options().set_min_area(16);
+            trace_wrapper.options().set_smoothness(0.75);
+            std::vector<QRgb> colors;
+            switch ( ui.list_presets->currentRow() )
+            {
+                case Preset::ComplexPreset:
+                    colors = utils::quantize::octree(trace_wrapper.image(), ui.spin_posterize->value());
+                    set_colors(colors);
+                    trace_wrapper.trace_closest(colors, result);
+                    break;
+                case Preset::FlatPreset:
+                    colors = get_eem_colors();
+                    set_colors(colors);
+                    trace_wrapper.trace_closest(colors, result);
+                    break;
+                case Preset::PixelPreset:
+                    trace_wrapper.trace_pixel(result);
+                    break;
+            }
         }
+        else
+        {
 
+            trace_wrapper.options().set_min_area(ui.spin_min_area->value());
+            trace_wrapper.options().set_smoothness(ui.spin_smoothness->value() / 100.0);
+
+            switch ( ui.combo_mode->currentIndex() )
+            {
+                case Mode::Alpha:
+                    trace_wrapper.trace_mono(
+                        ui.color_mono->color(),
+                        ui.check_inverted->isChecked(),
+                        ui.spin_alpha_threshold->value(),
+                        result
+                    );
+                    break;
+                case Mode::Closest:
+                    trace_wrapper.trace_closest(colors(), result);
+                    break;
+                case Mode::Exact:
+                    trace_wrapper.trace_exact(
+                        colors(),
+                        ui.spin_tolerance->value(),
+                        result
+                    );
+                    break;
+                case Mode::Pixel:
+                    trace_wrapper.trace_pixel(result);
+                    break;
+            }
+        }
 
         std::reverse(result.begin(), result.end());
         ui.progress_bar->hide();
         return result;
     }
 
-    bool has_outline()
+    qreal outline()
     {
-        return ui.spin_outline->value() > 0 && (ui.combo_mode->currentIndex() == Mode::Closest || ui.combo_mode->currentIndex() == Mode::Exact);
-    }
-
-    void result_to_shapes(model::ShapeListProperty& prop, const TraceResult& result)
-    {
-        auto fill = std::make_unique<model::Fill>(image->document());
-        fill->color.set(result.color);
-        prop.insert(std::move(fill));
-
-        if ( has_outline() )
-        {
-            auto stroke = std::make_unique<model::Stroke>(image->document());
-            stroke->color.set(result.color);
-            stroke->width.set(ui.spin_outline->value());
-            prop.insert(std::move(stroke));
-        }
-
-        for ( const auto& bez : result.bezier.beziers() )
-        {
-            auto path = std::make_unique<model::Path>(image->document());
-            path->shape.set(bez);
-            prop.insert(std::move(path));
-        }
-
-        for ( const auto& rect : result.rects )
-        {
-            auto shape = std::make_unique<model::Rect>(image->document());
-            shape->position.set(rect.center());
-            shape->size.set(rect.size());
-            prop.insert(std::move(shape));
-        }
+        if ( !ui.button_advanced->isChecked() )
+            return ui.list_presets->currentRow() != Preset::PixelPreset ? 1 : 0;
+        if ( ui.combo_mode->currentIndex() == Mode::Closest || ui.combo_mode->currentIndex() == Mode::Exact )
+            return ui.spin_outline->value();
+        return 0;
     }
 
     void add_color(const QColor& c = Qt::black)
@@ -219,17 +199,17 @@ public:
 
     void init_scene()
     {
-        item_parent_shape = scene.addRect(QRectF(0, 0, source_image.width(), source_image.height()));
+        item_parent_shape = scene.addRect(QRectF(0, 0, image_size.width(), image_size.height()));
         item_parent_shape->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
         item_parent_shape->setBrush(Qt::NoBrush);
         item_parent_shape->setPen(Qt::NoPen);
 
-        item_parent_image = scene.addRect(QRectF(source_image.width(), 0, 0, source_image.height()));
+        item_parent_image = scene.addRect(QRectF(image_size.width(), 0, 0, image_size.height()));
         item_parent_image->setFlag(QGraphicsItem::ItemClipsChildrenToShape);
         item_parent_image->setBrush(Qt::NoBrush);
         item_parent_image->setPen(Qt::NoPen);
 
-        item_image = new QGraphicsPixmapItem(QPixmap::fromImage(source_image), item_parent_image);
+        item_image = new QGraphicsPixmapItem(QPixmap::fromImage(trace_wrapper.image()), item_parent_image);
     }
 
     void init_settings()
@@ -239,6 +219,8 @@ public:
         settings.add(ui.spin_smoothness, "internal", "trace_dialog_");
         settings.add(ui.spin_alpha_threshold, "internal", "trace_dialog_");
         settings.add(ui.spin_min_area, "internal", "trace_dialog_");
+        settings.add(ui.spin_posterize, "internal", "trace_dialog_");
+        settings.add(ui.button_advanced, "internal", "trace_dialog_");
         settings.define();
         color_options.init_settings();
     }
@@ -257,9 +239,9 @@ public:
 
     void init_colors()
     {
-        if ( source_image.width() < 1024 && source_image.height() < 1024 )
+        if ( image_size.width() < 1024 && image_size.height() < 1024 )
         {
-            auto colors = utils::quantize::edge_exclusion_modes(source_image, 256);
+            auto colors = get_eem_colors();
             for ( QRgb rgb : colors )
                 add_color(QColor(rgb));
             ui.spin_color_count->setValue(colors.size());
@@ -272,17 +254,47 @@ public:
 
     }
 
-    void auto_colors()
+    void set_colors(const std::vector<QRgb>& colors)
     {
         while ( ui.list_colors->model()->rowCount() )
             ui.list_colors->model()->removeRow(0);
 
+        for ( QRgb rgb : colors )
+            add_color(QColor(rgb));
+    }
+
+    void auto_colors()
+    {
         int n_colors = ui.spin_color_count->value();
         if ( n_colors )
+            set_colors(color_options.quantize(trace_wrapper.image(), n_colors));
+        else
+            set_colors({});
+    }
+
+    void auto_preset()
+    {
+        int w = image_size.width();
+        int h = image_size.height();
+        if ( w > 1024 || h > 1024 )
         {
-            for ( QRgb rgb : color_options.quantize(source_image, n_colors) )
-                add_color(QColor(rgb));
+            ui.list_presets->setCurrentRow(Preset::ComplexPreset);
+            return;
         }
+
+        auto color_count = utils::quantize::color_frequencies(trace_wrapper.image()).size();
+        if ( w < 128 && h < 128 && color_count < 128 )
+        {
+            ui.list_presets->setCurrentRow(Preset::PixelPreset);
+            return;
+        }
+
+        color_count = get_eem_colors().size();
+
+        if ( w < 1024 && h < 1024 && color_count < 32 )
+            ui.list_presets->setCurrentRow(Preset::FlatPreset);
+        else
+            ui.list_presets->setCurrentRow(Preset::ComplexPreset);
     }
 
 #ifdef Q_OS_ANDROID
@@ -336,34 +348,46 @@ public:
 #endif
 };
 
-TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
-    : QDialog(parent), d(std::make_unique<Private>())
+glaxnimate::gui::TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
+    : QDialog(parent), d(std::make_unique<Private>(image))
 {
     d->ui.setupUi(this);
-    d->image = image;
-    d->source_image = image->image->pixmap().toImage();
-    if ( d->source_image.format() != QImage::Format_RGBA8888 )
-        d->source_image = d->source_image.convertToFormat(QImage::Format_RGBA8888);
     d->init_scene();
+    connect(&d->trace_wrapper, &utils::trace::TraceWrapper::progress_max_changed, d->ui.progress_bar, &QProgressBar::setMaximum);
+    connect(&d->trace_wrapper, &utils::trace::TraceWrapper::progress_changed, d->ui.progress_bar, &QProgressBar::setValue);
 
     d->ui.preview->setScene(&d->scene);
-    d->ui.spin_min_area->setValue(qMax(d->options.min_area(), d->source_image.width() / 32));
-    d->ui.spin_smoothness->setValue(d->options.smoothness() * 100);
+    d->ui.spin_min_area->setValue(qMax(d->trace_wrapper.options().min_area(), d->image_size.width() / 32));
+    d->ui.spin_smoothness->setValue(d->trace_wrapper.options().smoothness() * 100);
     d->ui.progress_bar->hide();
 
     d->delegate.setSizeHintForColor({24, 24});
     d->ui.list_colors->setItemDelegate(&d->delegate);
 
+    d->ui.combo_mode->setCurrentIndex(Private::Closest);
+    d->ui.button_defaults->setVisible(false);
     d->init_settings();
-    d->init_colors();
 
-    if ( d->source_image.width() > 128 || d->source_image.height() > 128 )
+    d->ui.list_presets->item(Private::ComplexPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/complex.jpg")));
+    d->ui.list_presets->item(Private::FlatPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/flat.png")));
+    d->ui.list_presets->item(Private::PixelPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/pixel.png")));
+
+    if ( d->image_size.width() > 128 || d->image_size.height() > 128 )
     {
         auto item = static_cast<QStandardItemModel*>(d->ui.combo_mode->model())->item(Private::Pixel);
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+
+        auto preset_item = d->ui.list_presets->item(Private::PixelPreset);
+        preset_item->setFlags(preset_item->flags() & ~Qt::ItemIsEnabled);
     }
 
-    d->ui.combo_mode->setCurrentIndex(Private::Closest);
+    if ( d->ui.button_advanced->isChecked() )
+        d->init_colors();
+    else
+        d->auto_preset();
+
+    d->initialized = true;
+    update_preview();
 
     d->ui.preview->setBackgroundBrush(QPixmap(app::Application::instance()->data_file("images/widgets/background.png")));
 
@@ -377,9 +401,9 @@ TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
 
 }
 
-TraceDialog::~TraceDialog() = default;
+glaxnimate::gui::TraceDialog::~TraceDialog() = default;
 
-void TraceDialog::changeEvent ( QEvent* e )
+void glaxnimate::gui::TraceDialog::changeEvent ( QEvent* e )
 {
     QDialog::changeEvent(e);
 
@@ -389,8 +413,11 @@ void TraceDialog::changeEvent ( QEvent* e )
     }
 }
 
-void TraceDialog::update_preview()
+void glaxnimate::gui::TraceDialog::update_preview()
 {
+    if ( !d->initialized )
+        return;
+
     for ( auto ch : d->item_parent_shape->childItems() )
         delete ch;
 
@@ -399,8 +426,9 @@ void TraceDialog::update_preview()
         if ( !result.bezier.beziers().empty() )
         {
             QPen pen = Qt::NoPen;
-            if ( d->has_outline() )
-                pen = QPen(result.color, d->ui.spin_outline->value());
+            qreal pen_width = d->outline();
+            if ( pen_width > 0 )
+                pen = QPen(result.color, pen_width);
 
             auto path = new QGraphicsPathItem(result.bezier.painter_path(), d->item_parent_shape);
             path->setPen(pen);
@@ -421,46 +449,19 @@ void TraceDialog::update_preview()
     d->fit_view();
 }
 
-void TraceDialog::apply()
+void glaxnimate::gui::TraceDialog::apply()
 {
     auto trace = d->trace();
-
-    auto layer = std::make_unique<model::Group>(d->image->document());
-    d->created = layer.get();
-    layer->name.set(tr("Traced %1").arg(d->image->object_name()));
-    layer->transform->copy(d->image->transform.get());
-
-    if ( trace.size() == 1 )
-    {
-        d->result_to_shapes(layer->shapes, trace[0]);
-    }
-    else
-    {
-        for ( const auto& result : trace )
-        {
-            auto group = std::make_unique<model::Group>(d->image->document());
-            group->name.set(result.color.name());
-            group->group_color.set(result.color);
-            d->result_to_shapes(group->shapes, result);
-            layer->shapes.insert(std::move(group));
-        }
-    }
-
-    d->image->push_command(new command::AddObject<model::ShapeElement>(
-        d->image->owner(), std::move(layer), d->image->position()+1
-    ));
-
-    d->created->recursive_rename();
-
+    d->created = d->trace_wrapper.apply(trace, d->outline());
     accept();
 }
 
-model::DocumentNode * TraceDialog::created() const
+glaxnimate::model::DocumentNode * glaxnimate::gui::TraceDialog::created() const
 {
     return d->created;
 }
 
-void TraceDialog::change_mode(int mode)
+void glaxnimate::gui::TraceDialog::change_mode(int mode)
 {
     if ( mode == Private::Alpha )
         d->ui.stacked_widget->setCurrentIndex(0);
@@ -475,13 +476,13 @@ void TraceDialog::change_mode(int mode)
 }
 
 
-void TraceDialog::add_color()
+void glaxnimate::gui::TraceDialog::add_color()
 {
     d->add_color();
     d->ui.spin_color_count->setValue(d->ui.list_colors->model()->rowCount());
 }
 
-void TraceDialog::remove_color()
+void glaxnimate::gui::TraceDialog::remove_color()
 {
     int curr = d->ui.list_colors->currentRow();
     if ( curr == -1 )
@@ -494,19 +495,19 @@ void TraceDialog::remove_color()
     d->ui.spin_color_count->setValue(d->ui.list_colors->model()->rowCount());
 }
 
-void TraceDialog::auto_colors()
+void glaxnimate::gui::TraceDialog::auto_colors()
 {
     d->auto_colors();
     update_preview();
 }
 
-void TraceDialog::resizeEvent(QResizeEvent* event)
+void glaxnimate::gui::TraceDialog::resizeEvent(QResizeEvent* event)
 {
     QDialog::resizeEvent(event);
     d->fit_view();
 }
 
-void TraceDialog::zoom_preview(qreal percent)
+void glaxnimate::gui::TraceDialog::zoom_preview(qreal percent)
 {
     qreal scale = percent / 100 / d->zoom;
     d->ui.preview->scale(scale, scale);
@@ -514,7 +515,7 @@ void TraceDialog::zoom_preview(qreal percent)
     d->rescale_preview_background();
 }
 
-void TraceDialog::show_help()
+void glaxnimate::gui::TraceDialog::show_help()
 {
     QUrl docs = AppInfo::instance().url_docs();
     docs.setPath("/manual/ui/dialogs/");
@@ -522,27 +523,54 @@ void TraceDialog::show_help()
     QDesktopServices::openUrl(docs);
 }
 
-void TraceDialog::preview_slide(int percent)
+void glaxnimate::gui::TraceDialog::preview_slide(int percent)
 {
-    qreal splitpoint = d->source_image.width() * percent / 100.0;
-    d->item_parent_shape->setRect(0, 0, splitpoint, d->source_image.height());
-    d->item_parent_image->setRect(splitpoint, 0, d->source_image.width() - splitpoint, d->source_image.height());
+    qreal splitpoint = d->image_size.width() * percent / 100.0;
+    d->item_parent_shape->setRect(0, 0, splitpoint, d->image_size.height());
+    d->item_parent_image->setRect(splitpoint, 0, d->image_size.width() - splitpoint, d->image_size.height());
 }
 
-void TraceDialog::reset_settings()
+void glaxnimate::gui::TraceDialog::reset_settings()
 {
     d->reset_settings();
     d->ui.check_inverted->setChecked(false);
     d->ui.combo_mode->setCurrentIndex(Private::Closest);
 }
 
-void TraceDialog::color_options()
+void glaxnimate::gui::TraceDialog::color_options()
 {
     d->color_options.exec();
 }
 
-void TraceDialog::showEvent(QShowEvent* event)
+void glaxnimate::gui::TraceDialog::showEvent(QShowEvent* event)
 {
     QDialog::showEvent(event);
     update_preview();
+}
+
+void glaxnimate::gui::TraceDialog::toggle_advanced(bool advanced)
+{
+    d->ui.stacked_preset_advanced->setCurrentIndex(int(advanced));
+    d->ui.button_defaults->setVisible(advanced);
+    if ( !advanced )
+    {
+        d->auto_preset();
+        update_preview();
+    }
+    else
+    {
+        d->ui.spin_min_area->setValue(16);
+        d->ui.spin_smoothness->setValue(75);
+        d->ui.spin_color_count->setValue(d->ui.list_colors->count());
+        switch ( d->ui.list_presets->currentRow() )
+        {
+            case Private::ComplexPreset:
+            case Private::FlatPreset:
+                d->ui.combo_mode->setCurrentIndex(Private::Closest);
+                break;
+            case Private::PixelPreset:
+                d->ui.combo_mode->setCurrentIndex(Private::Pixel);
+                break;
+        }
+    }
 }
