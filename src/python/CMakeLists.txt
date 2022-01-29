@@ -42,13 +42,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(WHEEL_CMD "--plat-name" "win32")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    execute_process(
-        COMMAND echo "from distutils.util import get_platform; print(get_platform().replace('.', '_').replace('-', '_'))"
-        COMMAND python3
-        OUTPUT_VARIABLE MAC_PY_PLATFORM_TAG
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    set(WHEEL_CMD "--plat-name" ${MAC_PY_PLATFORM_TAG})
+    set(WHEEL_CMD "--plat-name" "macosx_x86_64")
 else()
     set(WHEEL_CMD)
 endif()
