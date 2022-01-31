@@ -109,7 +109,7 @@ static void define_trace(py::module& m)
         .def(py::init<const QImage&, const TraceOptions&>())
         .def_property_readonly_static("potrace_version", &Tracer::potrace_version)
         .def("set_target_alpha", &Tracer::set_target_alpha, py::arg("threshold"), py::arg("invert"))
-        .def("set_target_color", &Tracer::set_target_color, py::arg("threshold"), py::arg("invert"))
+        .def("set_target_color", &Tracer::set_target_color, py::arg("color"), py::arg("tolerance"))
         .def("trace", [](Tracer& tracer) {
             math::bezier::MultiBezier output;
             tracer.trace(output);
