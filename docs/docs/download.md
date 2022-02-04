@@ -27,8 +27,8 @@ If you enjoy using Glaxnimate consider [donating](donate.md).
 <td><a href="#pypi">Notes</a></td>
 </tr>
 <tr>
-<td><i class="fab fa-freebsd"></i> <a href="https://www.freshports.org/graphics/glaxnimate/">FRESH ports</a></td>
-<td></td>
+<td><i class="fab fa-freebsd"></i> <a href="https://www.freshports.org/graphics/glaxnimate/">FreeBSD</a></td>
+<td><a href="#freebsd">Notes</a></td>
 </tr>
 </table>
 
@@ -145,3 +145,7 @@ For the testing version:
 ## PyPI
 
 This package is for the [python module](contributing/scripting/index.md) only, not for the full program.
+
+## FreeBSD
+
+    pkg install glaxnimate
