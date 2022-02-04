@@ -51,6 +51,7 @@ public:
     };
 
     using TraceResult = glaxnimate::utils::trace::TraceWrapper::TraceResult;
+    using Preset = glaxnimate::utils::trace::TraceWrapper::Preset;
 
     utils::trace::TraceWrapper trace_wrapper;
     model::Group* created = nullptr;
@@ -94,7 +95,7 @@ public:
         if ( !ui.button_advanced->isChecked() )
         {
             std::vector<QRgb> colors;
-            trace_wrapper.trace_preset(ui.list_presets->currentRow(), ui.spin_posterize->value(), colors, result);
+            trace_wrapper.trace_preset(Preset(ui.list_presets->currentRow()), ui.spin_posterize->value(), colors, result);
             if ( !colors.empty() )
                 set_colors(colors);
         }
@@ -514,11 +515,11 @@ void glaxnimate::gui::TraceDialog::toggle_advanced(bool advanced)
         d->ui.spin_color_count->setValue(d->ui.list_colors->count());
         switch ( d->ui.list_presets->currentRow() )
         {
-            case Private::ComplexPreset:
-            case Private::FlatPreset:
+            case Private::Preset::ComplexPreset:
+            case Private::Preset::FlatPreset:
                 d->ui.combo_mode->setCurrentIndex(Private::Closest);
                 break;
-            case Private::PixelPreset:
+            case Private::Preset::PixelPreset:
                 d->ui.combo_mode->setCurrentIndex(Private::Pixel);
                 break;
         }
