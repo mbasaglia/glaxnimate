@@ -1,5 +1,6 @@
 #include "raster_format.hpp"
 #include "io/raster/raster_mime.hpp"
+#include "utils/trace_wrapper.hpp"
 
 glaxnimate::io::Autoreg<glaxnimate::io::raster::RasterMime> glaxnimate::io::raster::RasterMime::autoreg;
 glaxnimate::io::Autoreg<glaxnimate::io::raster::RasterFormat> glaxnimate::io::raster::RasterFormat::autoreg;
@@ -14,8 +15,29 @@ QStringList glaxnimate::io::raster::RasterFormat::extensions() const
     return formats;
 }
 
-bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString&, model::Document* document, const QVariantMap&)
+bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString&, model::Document* document, const QVariantMap& settings)
 {
+    if ( settings.value("trace", {}).toBool() )
+    {
+        QImageReader reader;
+        reader.setDevice(&dev);
+        QImage image = reader.read();
+        if ( image.isNull() )
+            return false;
+
+        QString name = "";
+        if ( auto file = qobject_cast<QFile*>(&dev) )
+            name = file->fileName();
+        utils::trace::TraceWrapper trace(document, image, name);
+        std::vector<QRgb> colors;
+        std::vector<utils::trace::TraceWrapper::TraceResult> result;
+        auto preset = trace.preset_suggestion();
+        trace.trace_preset(preset, 16, colors, result);
+        trace.apply(result, preset == utils::trace::TraceWrapper::PixelPreset ? 0 : 1);
+
+        return false;
+    }
+
     auto bmp = document->assets()->images->values.insert(std::make_unique<model::Bitmap>(document));
     if ( auto file = qobject_cast<QFile*>(&dev) )
         bmp->filename.set(file->fileName());

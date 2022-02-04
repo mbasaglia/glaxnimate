@@ -26,6 +26,10 @@ If you enjoy using Glaxnimate consider [donating](donate.md).
 <td><i class="fab fa-python"></i> <a href="https://pypi.org/project/glaxnimate/">PyPI</a></td>
 <td><a href="#pypi">Notes</a></td>
 </tr>
+<tr>
+<td><i class="fab fa-freebsd"></i> <a href="https://www.freshports.org/graphics/glaxnimate/">FRESH ports</a></td>
+<td></td>
+</tr>
 </table>
 
 

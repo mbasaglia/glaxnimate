@@ -50,13 +50,6 @@ public:
         Pixel
     };
 
-    enum Preset
-    {
-        ComplexPreset,
-        FlatPreset,
-        PixelPreset,
-    };
-
     using TraceResult = glaxnimate::utils::trace::TraceWrapper::TraceResult;
 
     utils::trace::TraceWrapper trace_wrapper;
@@ -72,7 +65,6 @@ public:
     ColorQuantizationDialog color_options;
     app::settings::WidgetSettingGroup settings;
     QSize image_size;
-    std::vector<QRgb> eem_colors;
     bool initialized = false;
 
     explicit Private(model::Image* image)
@@ -92,13 +84,6 @@ public:
         return colors;
     }
 
-    const std::vector<QRgb>& get_eem_colors()
-    {
-        if ( eem_colors.empty() )
-            eem_colors = utils::quantize::edge_exclusion_modes(trace_wrapper.image(), 256);
-        return eem_colors;
-    }
-
     std::vector<TraceResult> trace()
     {
         std::vector<TraceResult> result;
@@ -108,25 +93,10 @@ public:
 
         if ( !ui.button_advanced->isChecked() )
         {
-            trace_wrapper.options().set_min_area(16);
-            trace_wrapper.options().set_smoothness(0.75);
             std::vector<QRgb> colors;
-            switch ( ui.list_presets->currentRow() )
-            {
-                case Preset::ComplexPreset:
-                    colors = utils::quantize::octree(trace_wrapper.image(), ui.spin_posterize->value());
-                    set_colors(colors);
-                    trace_wrapper.trace_closest(colors, result);
-                    break;
-                case Preset::FlatPreset:
-                    colors = get_eem_colors();
-                    set_colors(colors);
-                    trace_wrapper.trace_closest(colors, result);
-                    break;
-                case Preset::PixelPreset:
-                    trace_wrapper.trace_pixel(result);
-                    break;
-            }
+            trace_wrapper.trace_preset(ui.list_presets->currentRow(), ui.spin_posterize->value(), colors, result);
+            if ( !colors.empty() )
+                set_colors(colors);
         }
         else
         {
@@ -168,7 +138,7 @@ public:
     qreal outline()
     {
         if ( !ui.button_advanced->isChecked() )
-            return ui.list_presets->currentRow() != Preset::PixelPreset ? 1 : 0;
+            return ui.list_presets->currentRow() != utils::trace::TraceWrapper::PixelPreset ? 1 : 0;
         if ( ui.combo_mode->currentIndex() == Mode::Closest || ui.combo_mode->currentIndex() == Mode::Exact )
             return ui.spin_outline->value();
         return 0;
@@ -241,7 +211,7 @@ public:
     {
         if ( image_size.width() < 1024 && image_size.height() < 1024 )
         {
-            auto colors = get_eem_colors();
+            auto colors = trace_wrapper.eem_colors();
             for ( QRgb rgb : colors )
                 add_color(QColor(rgb));
             ui.spin_color_count->setValue(colors.size());
@@ -274,27 +244,7 @@ public:
 
     void auto_preset()
     {
-        int w = image_size.width();
-        int h = image_size.height();
-        if ( w > 1024 || h > 1024 )
-        {
-            ui.list_presets->setCurrentRow(Preset::ComplexPreset);
-            return;
-        }
-
-        auto color_count = utils::quantize::color_frequencies(trace_wrapper.image()).size();
-        if ( w < 128 && h < 128 && color_count < 128 )
-        {
-            ui.list_presets->setCurrentRow(Preset::PixelPreset);
-            return;
-        }
-
-        color_count = get_eem_colors().size();
-
-        if ( w < 1024 && h < 1024 && color_count < 32 )
-            ui.list_presets->setCurrentRow(Preset::FlatPreset);
-        else
-            ui.list_presets->setCurrentRow(Preset::ComplexPreset);
+        ui.list_presets->setCurrentRow(trace_wrapper.preset_suggestion());
     }
 
 #ifdef Q_OS_ANDROID
@@ -368,16 +318,16 @@ glaxnimate::gui::TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     d->ui.button_defaults->setVisible(false);
     d->init_settings();
 
-    d->ui.list_presets->item(Private::ComplexPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/complex.jpg")));
-    d->ui.list_presets->item(Private::FlatPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/flat.png")));
-    d->ui.list_presets->item(Private::PixelPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/pixel.png")));
+    d->ui.list_presets->item(utils::trace::TraceWrapper::ComplexPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/complex.jpg")));
+    d->ui.list_presets->item(utils::trace::TraceWrapper::FlatPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/flat.png")));
+    d->ui.list_presets->item(utils::trace::TraceWrapper::PixelPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/pixel.png")));
 
     if ( d->image_size.width() > 128 || d->image_size.height() > 128 )
     {
         auto item = static_cast<QStandardItemModel*>(d->ui.combo_mode->model())->item(Private::Pixel);
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 
-        auto preset_item = d->ui.list_presets->item(Private::PixelPreset);
+        auto preset_item = d->ui.list_presets->item(utils::trace::TraceWrapper::PixelPreset);
         preset_item->setFlags(preset_item->flags() & ~Qt::ItemIsEnabled);
     }
 

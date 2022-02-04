@@ -1,5 +1,6 @@
 #include "trace_wrapper.hpp"
 #include "utils/quantize.hpp"
+#include "model/document.hpp"
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/fill.hpp"
 #include "model/shapes/path.hpp"
@@ -9,20 +10,30 @@
 class glaxnimate::utils::trace::TraceWrapper::Private
 {
 public:
-    model::Image* image;
     QImage source_image;
     utils::trace::TraceOptions options;
+    std::vector<QRgb> eem_colors;
+    model::Image* image = nullptr;
+    model::Document* document;
+    QString name;
 
+    void set_image(const QImage& image)
+    {
+        if ( image.format() != QImage::Format_RGBA8888 )
+            source_image = image.convertToFormat(QImage::Format_RGBA8888);
+        else
+            source_image = image;
+    }
 
     void result_to_shapes(model::ShapeListProperty& prop, const TraceResult& result, qreal stroke_width)
     {
-        auto fill = std::make_unique<model::Fill>(image->document());
+        auto fill = std::make_unique<model::Fill>(document);
         fill->color.set(result.color);
         prop.insert(std::move(fill));
 
         if ( stroke_width > 0 )
         {
-            auto stroke = std::make_unique<model::Stroke>(image->document());
+            auto stroke = std::make_unique<model::Stroke>(document);
             stroke->color.set(result.color);
             stroke->width.set(stroke_width);
             prop.insert(std::move(stroke));
@@ -30,14 +41,14 @@ public:
 
         for ( const auto& bez : result.bezier.beziers() )
         {
-            auto path = std::make_unique<model::Path>(image->document());
+            auto path = std::make_unique<model::Path>(document);
             path->shape.set(bez);
             prop.insert(std::move(path));
         }
 
         for ( const auto& rect : result.rects )
         {
-            auto shape = std::make_unique<model::Rect>(image->document());
+            auto shape = std::make_unique<model::Rect>(document);
             shape->position.set(rect.center());
             shape->size.set(rect.size());
             prop.insert(std::move(shape));
@@ -47,13 +58,20 @@ public:
 };
 
 glaxnimate::utils::trace::TraceWrapper::TraceWrapper(model::Image* image)
-    : d(std::make_unique<Private>())
+    : TraceWrapper(image->document(), image->image->pixmap().toImage(), image->object_name())
 {
     d->image = image;
-    d->source_image = image->image->pixmap().toImage();
-    if ( d->source_image.format() != QImage::Format_RGBA8888 )
-        d->source_image = d->source_image.convertToFormat(QImage::Format_RGBA8888);
+
 }
+
+glaxnimate::utils::trace::TraceWrapper::TraceWrapper(model::Document* document, const QImage& image, const QString& name)
+    : d(std::make_unique<Private>())
+{
+    d->document = document;
+    d->name = name;
+    d->set_image(image);
+}
+
 
 glaxnimate::utils::trace::TraceWrapper::~TraceWrapper() = default;
 
@@ -129,9 +147,9 @@ glaxnimate::model::Group* glaxnimate::utils::trace::TraceWrapper::apply(
     std::vector<TraceResult>& trace, qreal stroke_width
 )
 {
-    auto layer = std::make_unique<model::Group>(d->image->document());
+    auto layer = std::make_unique<model::Group>(d->document);
     auto created = layer.get();
-    layer->name.set(tr("Traced %1").arg(d->image->object_name()));
+    layer->name.set(tr("Traced %1").arg(d->name));
     layer->transform->copy(d->image->transform.get());
 
     if ( trace.size() == 1 )
@@ -142,7 +160,7 @@ glaxnimate::model::Group* glaxnimate::utils::trace::TraceWrapper::apply(
     {
         for ( const auto& result : trace )
         {
-            auto group = std::make_unique<model::Group>(d->image->document());
+            auto group = std::make_unique<model::Group>(d->document);
             group->name.set(result.color.name());
             group->group_color.set(result.color);
             d->result_to_shapes(group->shapes, result, stroke_width);
@@ -150,9 +168,14 @@ glaxnimate::model::Group* glaxnimate::utils::trace::TraceWrapper::apply(
         }
     }
 
-    d->image->push_command(new command::AddObject<model::ShapeElement>(
-        d->image->owner(), std::move(layer), d->image->position()+1
-    ));
+    if ( d->image )
+        d->document->push_command(new command::AddObject<model::ShapeElement>(
+            d->image->owner(), std::move(layer), d->image->position()+1
+        ));
+    else
+        d->document->push_command(new command::AddObject<model::ShapeElement>(
+            &d->document->main()->shapes, std::move(layer)
+        ));
 
 //     created->recursive_rename();
     return created;
@@ -161,4 +184,56 @@ glaxnimate::model::Group* glaxnimate::utils::trace::TraceWrapper::apply(
 const QImage & glaxnimate::utils::trace::TraceWrapper::image() const
 {
     return d->source_image;
+}
+
+const std::vector<QRgb>& glaxnimate::utils::trace::TraceWrapper::eem_colors() const
+{
+    if ( d->eem_colors.empty() )
+        d->eem_colors = utils::quantize::edge_exclusion_modes(d->source_image, 256);
+    return d->eem_colors;
+}
+
+glaxnimate::utils::trace::TraceWrapper::Preset
+    glaxnimate::utils::trace::TraceWrapper::preset_suggestion() const
+{
+
+        int w = d->source_image.width();
+        int h = d->source_image.height();
+        if ( w > 1024 || h > 1024 )
+            return Preset::ComplexPreset;
+
+        auto color_count = utils::quantize::color_frequencies(d->source_image).size();
+        if ( w < 128 && h < 128 && color_count < 128 )
+            return Preset::PixelPreset;
+
+        color_count = eem_colors().size();
+
+        if ( w < 1024 && h < 1024 && color_count < 32 )
+            return Preset::FlatPreset;
+        else
+            return Preset::ComplexPreset;
+}
+
+
+
+void glaxnimate::utils::trace::TraceWrapper::trace_preset(
+    Preset preset, int complex_posterization, std::vector<QRgb> &colors, std::vector<TraceResult>& result
+)
+{
+    d->options.set_min_area(16);
+    d->options.set_smoothness(0.75);
+    switch ( preset )
+    {
+        case utils::trace::TraceWrapper::ComplexPreset:
+            colors = utils::quantize::octree(d->source_image, complex_posterization);
+            trace_closest(colors, result);
+            break;
+        case utils::trace::TraceWrapper::FlatPreset:
+            colors = eem_colors();
+            trace_closest(colors, result);
+            break;
+        case utils::trace::TraceWrapper::PixelPreset:
+            trace_pixel(result);
+            break;
+    }
 }

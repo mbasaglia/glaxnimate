@@ -21,7 +21,15 @@ public:
         std::vector<QRectF> rects;
     };
 
+    enum Preset
+    {
+        ComplexPreset,
+        FlatPreset,
+        PixelPreset,
+    };
+
     explicit TraceWrapper(model::Image* image);
+    explicit TraceWrapper(model::Document* document, const QImage& image, const QString& name);
     ~TraceWrapper();
 
     void trace_mono(const QColor& color, bool inverted, int alpha_threshold, std::vector<TraceResult>& result);
@@ -35,6 +43,11 @@ public:
 
     TraceOptions& options();
     const QImage& image() const;
+
+    const std::vector<QRgb>& eem_colors() const;
+
+    Preset preset_suggestion() const;
+    void trace_preset(Preset preset, int complex_posterization, std::vector<QRgb> &colors, std::vector<TraceResult>& result);
 
 signals:
     void progress_max_changed(int max);

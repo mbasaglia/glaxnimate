@@ -18,6 +18,7 @@ app::cli::ParsedArguments glaxnimate::gui::parse_cli(const QStringList& args)
 
     parser.add_group(QApplication::tr("Options"));
     parser.add_argument({{"file"}, QApplication::tr("File to open")});
+    parser.add_argument({{"--trace"}, QApplication::tr("When opening image files, trace them instead of embedding")});
 
     parser.add_group(QApplication::tr("GUI Options"));
     parser.add_argument({{"--default-ui"}, QApplication::tr("If present, doesn't restore the main window state")});
@@ -202,8 +203,11 @@ bool glaxnimate::gui::cli_export(const app::cli::ParsedArguments& args)
 
     CliPluginExecutor script_executor(&document);
 
-    importer->open_settings();
-    if ( !importer->open(input_file, input_filename, &document, io_settings(importer->open_settings())) )
+
+    auto open_settings = io_settings(importer->open_settings());
+    open_settings["trace"] = args.value("trace");
+
+    if ( !importer->open(input_file, input_filename, &document, open_settings) )
     {
         app::cli::show_message(QApplication::tr("Error loading input file"), true);
         return false;
@@ -241,8 +245,10 @@ void glaxnimate::gui::cli_main(gui::GlaxnimateApp& app, app::cli::ParsedArgument
         for ( const auto& entry : table )
             app::cli::show_message(entry.first + QString(max_name_len - entry.first.size(), ' ') + " : " + entry.second, false);
         args.return_value = 0;
+        return;
     }
-    else if ( args.is_defined("export") )
+
+    if ( args.is_defined("export") )
     {
         app.initialize();
         if ( !cli_export(args) )
