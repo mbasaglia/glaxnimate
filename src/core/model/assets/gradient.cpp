@@ -103,7 +103,7 @@ static QVariant split_gradient(QGradientStops colors, int index, float factor, c
     int before = index;
     int after = index+1;
 
-    if ( index >= colors.size() )
+    if ( after >= colors.size() )
     {
         before = colors.size() - 2;
         after = colors.size() - 1;

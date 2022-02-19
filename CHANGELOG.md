@@ -4,6 +4,8 @@
     * New quantization algorithm available (Edge Exclusion Modes)
 * UI:
     * Simplified version of the trace dialog
+* Bug Fixes:
+    * Fixed crash on adding gradient stops
 
 ## 0.5.0
 
