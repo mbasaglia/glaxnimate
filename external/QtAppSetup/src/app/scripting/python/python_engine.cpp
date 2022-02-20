@@ -168,7 +168,8 @@ QString app::scripting::python::PythonContext::eval_to_string(const QString& cod
 void app::scripting::python::PythonContext::app_module ( const QString& name )
 {
     try {
-        const char* cname = name.toStdString().c_str();
+        auto sname = name.toStdString();
+        const char* cname = sname.c_str();
         d->my_modules.push_back(py::module::import(cname));
         d->globals[cname] = d->my_modules.back();
     } catch ( const py::error_already_set& pyexc ) {
