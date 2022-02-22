@@ -150,7 +150,6 @@ glaxnimate::model::Group* glaxnimate::utils::trace::TraceWrapper::apply(
     auto layer = std::make_unique<model::Group>(d->document);
     auto created = layer.get();
     layer->name.set(tr("Traced %1").arg(d->name));
-    layer->transform->copy(d->image->transform.get());
 
     if ( trace.size() == 1 )
     {
@@ -169,13 +168,18 @@ glaxnimate::model::Group* glaxnimate::utils::trace::TraceWrapper::apply(
     }
 
     if ( d->image )
+    {
+        layer->transform->copy(d->image->transform.get());
         d->document->push_command(new command::AddObject<model::ShapeElement>(
             d->image->owner(), std::move(layer), d->image->position()+1
         ));
+    }
     else
+    {
         d->document->push_command(new command::AddObject<model::ShapeElement>(
             &d->document->main()->shapes, std::move(layer)
         ));
+    }
 
 //     created->recursive_rename();
     return created;

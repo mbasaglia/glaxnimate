@@ -35,7 +35,7 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
         trace.trace_preset(preset, 16, colors, result);
         trace.apply(result, preset == utils::trace::TraceWrapper::PixelPreset ? 0 : 1);
 
-        return false;
+        return true;
     }
 
     auto bmp = document->assets()->images->values.insert(std::make_unique<model::Bitmap>(document));

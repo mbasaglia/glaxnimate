@@ -157,6 +157,15 @@ QVariantMap io_settings(std::unique_ptr<app::settings::SettingsGroup> group)
     return vals;
 }
 
+void log_message(const QString& message, app::log::Severity severity)
+{
+    app::cli::show_message(
+        QApplication::tr("%1: %2")
+        .arg(app::log::Logger::severity_name(severity))
+        .arg(message)
+    );
+}
+
 } // namespace
 
 bool glaxnimate::gui::cli_export(const app::cli::ParsedArguments& args)
@@ -166,7 +175,6 @@ bool glaxnimate::gui::cli_export(const app::cli::ParsedArguments& args)
         app::cli::show_message(QApplication::tr("You need to specify a file to export"), true);
         return false;
     }
-
 
     io::ImportExport* exporter = nullptr;
     QString format = args.value("export-format").toString();
@@ -203,10 +211,10 @@ bool glaxnimate::gui::cli_export(const app::cli::ParsedArguments& args)
 
     CliPluginExecutor script_executor(&document);
 
-
     auto open_settings = io_settings(importer->open_settings());
     open_settings["trace"] = args.value("trace");
 
+    QObject::connect(importer, &io::ImportExport::message, &log_message);
     if ( !importer->open(input_file, input_filename, &document, open_settings) )
     {
         app::cli::show_message(QApplication::tr("Error loading input file"), true);
@@ -221,6 +229,7 @@ bool glaxnimate::gui::cli_export(const app::cli::ParsedArguments& args)
         return false;
     }
 
+    QObject::connect(exporter, &io::ImportExport::message, &log_message);
     if ( !exporter->save(output_file, output_filename, &document, io_settings(exporter->save_settings(&document))) )
     {
         app::cli::show_message(QApplication::tr("Error converting to the output format"), true);
@@ -232,6 +241,8 @@ bool glaxnimate::gui::cli_export(const app::cli::ParsedArguments& args)
 
 void glaxnimate::gui::cli_main(gui::GlaxnimateApp& app, app::cli::ParsedArguments& args)
 {
+    app::log::Logger::instance().add_listener<app::log::ListenerStderr>();
+
     if ( args.has_flag("export-format-list") )
     {
         app.initialize();
