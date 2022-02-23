@@ -65,9 +65,15 @@ int main(int argc, char *argv[])
         app::cli::show_message(QString::number(window.winId(), 16), false);
 
     if ( args.is_defined("file") )
-        window.document_open(args.value("file").toString());
+    {
+        QVariantMap open_settings;
+        open_settings["trace"] = args.value("trace");
+        window.document_open_settings(args.value("file").toString(), open_settings);
+    }
     else
+    {
         window.show_startup_dialog();
+    }
 
     int ret = app.exec();
 

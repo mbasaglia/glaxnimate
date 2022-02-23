@@ -152,6 +152,11 @@ void GlaxnimateWindow::document_open(const QString& filename)
     d->document_open_from_filename(filename);
 }
 
+void GlaxnimateWindow::document_open_settings(const QString& filename, const QVariantMap& settings)
+{
+    d->document_open_from_filename(filename, settings);
+}
+
 void GlaxnimateWindow::document_reload()
 {
     d->document_reload();

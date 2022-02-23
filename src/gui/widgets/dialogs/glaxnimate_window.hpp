@@ -96,6 +96,7 @@ public:
     qreal current_zoom() const override;
 
     void document_open(const QString& filename);
+    void document_open_settings(const QString& filename, const QVariantMap& settings);
 
     void switch_tool(tools::Tool* tool) override;
 

@@ -139,8 +139,8 @@ public:
     bool close_document();
     bool save_document(bool force_dialog, bool export_opts);
     void document_open();
-    void document_open_from_filename(const QString& filename);
-    io::Options options_from_filename(const QString& filename);
+    void document_open_from_filename(const QString& filename, const QVariantMap& settings = {});
+    io::Options options_from_filename(const QString& filename, const QVariantMap& settings = {});
     void drop_document(const QString& filename, bool as_comp);
     void document_reload();
     void preview_lottie(const QString& renderer);

@@ -368,7 +368,7 @@ void GlaxnimateWindow::Private::document_open()
 }
 
 
-io::Options GlaxnimateWindow::Private::options_from_filename(const QString& filename)
+io::Options GlaxnimateWindow::Private::options_from_filename(const QString& filename, const QVariantMap& settings)
 {
     QFileInfo finfo(filename);
     if ( finfo.isFile() )
@@ -377,6 +377,7 @@ io::Options GlaxnimateWindow::Private::options_from_filename(const QString& file
         opts.format = io::IoRegistry::instance().from_filename(filename, io::ImportExport::Import);
         opts.path = finfo.dir();
         opts.filename = filename;
+        opts.settings = settings;
 
         if ( opts.format )
         {
@@ -400,13 +401,14 @@ io::Options GlaxnimateWindow::Private::options_from_filename(const QString& file
 }
 
 
-void GlaxnimateWindow::Private::document_open_from_filename(const QString& filename)
+void GlaxnimateWindow::Private::document_open_from_filename(const QString& filename, const QVariantMap& settings)
 {
-    io::Options opts = options_from_filename(filename);
+    io::Options opts = options_from_filename(filename, settings);
     if ( opts.format )
+    {
         setup_document_open(opts);
-
-    most_recent_file(filename);
+        most_recent_file(filename);
+    }
 }
 
 void GlaxnimateWindow::Private::drop_document(const QString& filename, bool as_comp)
