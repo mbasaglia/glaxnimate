@@ -200,22 +200,21 @@ const std::vector<QRgb>& glaxnimate::utils::trace::TraceWrapper::eem_colors() co
 glaxnimate::utils::trace::TraceWrapper::Preset
     glaxnimate::utils::trace::TraceWrapper::preset_suggestion() const
 {
+    int w = d->source_image.width();
+    int h = d->source_image.height();
+    if ( w > 1024 || h > 1024 )
+        return Preset::ComplexPreset;
 
-        int w = d->source_image.width();
-        int h = d->source_image.height();
-        if ( w > 1024 || h > 1024 )
-            return Preset::ComplexPreset;
+    auto color_count = utils::quantize::color_frequencies(d->source_image).size();
+    if ( w < 128 && h < 128 && color_count < 128 )
+        return Preset::PixelPreset;
 
-        auto color_count = utils::quantize::color_frequencies(d->source_image).size();
-        if ( w < 128 && h < 128 && color_count < 128 )
-            return Preset::PixelPreset;
+    color_count = eem_colors().size();
 
-        color_count = eem_colors().size();
-
-        if ( w < 1024 && h < 1024 && color_count < 32 )
-            return Preset::FlatPreset;
-        else
-            return Preset::ComplexPreset;
+    if ( w < 1024 && h < 1024 && color_count < 32 )
+        return Preset::FlatPreset;
+    else
+        return Preset::ComplexPreset;
 }
 
 

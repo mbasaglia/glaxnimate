@@ -1,5 +1,7 @@
 #include "quantize.hpp"
 
+#include <QHash>
+
 #include <unordered_map>
 #include <memory>
 
@@ -100,7 +102,6 @@ HistogramMap color_frequency_map(QImage image, int alpha_threshold)
 
     return count;
 }
-
 
 } // utils::quantize::detail
 
@@ -642,6 +643,73 @@ std::vector<QRgb> utils::quantize::octree(const QImage& image, int k)
     return colors;
 }
 
+static inline qint32 pixel_distance(QRgb p1, QRgb p2)
+{
+    int r1 = qRed(p1);
+    int g1 = qGreen(p1);
+    int b1 = qBlue(p1);
+    int a1 = qAlpha(p1);
+
+    int r2 = qRed(p2);
+    int g2 = qGreen(p2);
+    int b2 = qBlue(p2);
+    int a2 = qAlpha(p2);
+
+    qint32 dr = r1 - r2;
+    qint32 dg = g1 - g2;
+    qint32 db = b1 - b2;
+    qint32 da = a1 - a2;
+
+    return dr * dr + dg * dg + db * db + da * da;
+}
+
+static inline qint32 closest_match(QRgb pixel, const QVector<QRgb> &clut)
+{
+    if ( qAlpha(pixel) < 128 )
+        return clut.size() - 1;
+
+    int idx = 0;
+    qint32 current_distance = INT_MAX;
+    for ( int i = 0; i < clut.size(); ++i)
+    {
+        int dist = pixel_distance(pixel, clut[i]);
+        if (dist < current_distance)
+        {
+            current_distance = dist;
+            idx = i;
+        }
+    }
+    return idx;
+}
+
+static QImage convert_with_palette(const QImage &src, const QVector<QRgb> &clut)
+{
+    QImage dest(src.size(), QImage::Format_Indexed8);
+    dest.setColorTable(clut);
+    int h = src.height();
+    int w = src.width();
+
+    QHash<QRgb, int> cache;
+
+    for (int y=0; y<h; ++y)
+    {
+        const QRgb *src_pixels = (const QRgb *) src.scanLine(y);
+        uchar *dest_pixels = (uchar *) dest.scanLine(y);
+        for (int x = 0; x < w; ++x)
+        {
+            int src_pixel = src_pixels[x];
+            qint32 value = cache.value(src_pixel, -1);
+            if (value == -1)
+            {
+                value = closest_match(src_pixel, clut);
+                cache.insert(src_pixel, value);
+            }
+            dest_pixels[x] = (uchar) value;
+        }
+    }
+
+    return dest;
+}
 
 QImage utils::quantize::quantize(const QImage& source, const std::vector<QRgb>& colors)
 {
@@ -654,7 +722,8 @@ QImage utils::quantize::quantize(const QImage& source, const std::vector<QRgb>& 
         vcolors.push_back(color);
 #endif
     vcolors.push_back(qRgba(0, 0, 0, 0));
-    return source.convertToFormat(QImage::Format_Indexed8, vcolors, Qt::ThresholdDither);
+
+    return convert_with_palette(source.convertToFormat(QImage::Format_ARGB32), vcolors);
 }
 
 namespace glaxnimate::utils::quantize::detail::auto_colors {
