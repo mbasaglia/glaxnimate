@@ -35,3 +35,8 @@ target_link_libraries(test_trim_path PRIVATE ${LIB_NAME_CORE})
 
 test_case(test_trace)
 target_link_libraries(test_trace PRIVATE ${LIB_NAME_CORE})
+
+
+test_case(test_segmentation
+../src/core/trace/segmentation.cpp
+)

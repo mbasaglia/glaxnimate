@@ -7,14 +7,14 @@
 
 using namespace glaxnimate;
 
-namespace glaxnimate::utils::quantize::detail {
+namespace glaxnimate::trace::detail {
 
 static bool freq_sort_cmp(const ColorFrequency& a, const ColorFrequency& b) noexcept
 {
     return a.second > b.second;
 }
 
-std::vector<QRgb> color_frequencies_to_palette(std::vector<utils::quantize::ColorFrequency>& freq, int max)
+std::vector<QRgb> color_frequencies_to_palette(std::vector<trace::ColorFrequency>& freq, int max)
 {
     std::sort(freq.begin(), freq.end(), detail::freq_sort_cmp);
 
@@ -85,8 +85,6 @@ struct Color
     }
 };
 
-using HistogramMap = std::unordered_map<ColorFrequency::first_type, ColorFrequency::second_type>;
-
 HistogramMap color_frequency_map(QImage image, int alpha_threshold)
 {
     if ( image.format() != QImage::Format_RGBA8888 )
@@ -103,16 +101,16 @@ HistogramMap color_frequency_map(QImage image, int alpha_threshold)
     return count;
 }
 
-} // utils::quantize::detail
+} // trace::detail
 
-std::vector<utils::quantize::ColorFrequency> utils::quantize::color_frequencies(const QImage& image, int alpha_threshold)
+std::vector<trace::ColorFrequency> trace::color_frequencies(const QImage& image, int alpha_threshold)
 {
     auto count = detail::color_frequency_map(image, alpha_threshold);
     return std::vector<ColorFrequency>(count.begin(), count.end());
 }
 
 
-std::vector<QRgb> utils::quantize::k_modes(const QImage& image, int k)
+std::vector<QRgb> trace::k_modes(const QImage& image, int k)
 {
     auto freq = color_frequencies(image);
     return detail::color_frequencies_to_palette(freq, k);
@@ -120,7 +118,7 @@ std::vector<QRgb> utils::quantize::k_modes(const QImage& image, int k)
 
 
 
-namespace glaxnimate::utils::quantize::detail::k_means {
+namespace glaxnimate::trace::detail::k_means {
 
 struct Point
 {
@@ -166,9 +164,9 @@ struct Cluster
     }
 };
 
-} // utils::quantize::detail
+} // trace::detail
 
-std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int iterations, KMeansMatch match)
+std::vector<QRgb> trace::k_means(const QImage& image, int k, int iterations, KMeansMatch match)
 {
     auto freq = color_frequencies(image);
 
@@ -313,7 +311,7 @@ std::vector<QRgb> utils::quantize::k_means(const QImage& image, int k, int itera
  * \note Most of the code here is taken from Inkscape (with several changes)
  * \see https://gitlab.com/inkscape/inkscape/-/blob/master/src/trace/quantize.cpp for the original code
  */
-namespace glaxnimate::utils::quantize::detail::octree {
+namespace glaxnimate::trace::detail::octree {
 
 
 inline Color operator>>(Color rgb, int s)
@@ -618,12 +616,12 @@ std::unique_ptr<Node> add_pixels(Node* ref, ColorFrequency* data, int data_size)
     return {};
 }
 
-} // namespace glaxnimate::utils::quantize::detail::octree
+} // namespace glaxnimate::trace::detail::octree
 
 
-std::vector<QRgb> utils::quantize::octree(const QImage& image, int k)
+std::vector<QRgb> trace::octree(const QImage& image, int k)
 {
-    using namespace glaxnimate::utils::quantize::detail::octree;
+    using namespace glaxnimate::trace::detail::octree;
 
     auto freq = color_frequencies(image);
 
@@ -708,10 +706,13 @@ static QImage convert_with_palette(const QImage &src, const QVector<QRgb> &clut)
         }
     }
 
+    dest.save("/tmp/foobar.png");
+    dest = src.convertToFormat(QImage::Format_Indexed8, clut);
+    dest.save("/tmp/foobar-1.png");
     return dest;
 }
 
-QImage utils::quantize::quantize(const QImage& source, const std::vector<QRgb>& colors)
+QImage trace::quantize(const QImage& source, const std::vector<QRgb>& colors)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     QVector<QRgb> vcolors(colors.begin(), colors.end());
@@ -726,7 +727,7 @@ QImage utils::quantize::quantize(const QImage& source, const std::vector<QRgb>& 
     return convert_with_palette(source.convertToFormat(QImage::Format_ARGB32), vcolors);
 }
 
-namespace glaxnimate::utils::quantize::detail::auto_colors {
+namespace glaxnimate::trace::detail::auto_colors {
 
 void decrease(QRgb color, HistogramMap& map)
 {
@@ -735,10 +736,10 @@ void decrease(QRgb color, HistogramMap& map)
         it->second -= 1;
 }
 
-} // namespace glaxnimate::utils::quantize::detail::auto_colors
+} // namespace glaxnimate::trace::detail::auto_colors
 
 
-std::vector<QRgb> utils::quantize::edge_exclusion_modes(const QImage& image_in, int max_colors, qreal min_frequency)
+std::vector<QRgb> trace::edge_exclusion_modes(const QImage& image_in, int max_colors, qreal min_frequency)
 {
     int alpha_threshold = 128;
     QImage image = image_in;

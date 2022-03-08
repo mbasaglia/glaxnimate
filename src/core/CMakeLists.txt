@@ -86,9 +86,10 @@ plugin/action.cpp
 plugin/io.cpp
 
 utils/gzip.cpp
-utils/quantize.cpp
-utils/trace.cpp
-utils/trace_wrapper.cpp
+
+trace/quantize.cpp
+trace/trace.cpp
+trace/trace_wrapper.cpp
 )
 
 if ( NOT ANDROID )

@@ -1,13 +1,10 @@
 #pragma once
 
 
-#include <QImage>
-#include <vector>
+#include "segmentation.hpp"
 
-namespace glaxnimate::utils::quantize {
+namespace glaxnimate::trace {
 
-
-using ColorFrequency = std::pair<QRgb, int>;
 
 /**
  * \brief Returns the \p k colors that appear most frequently in \p image.
@@ -25,7 +22,7 @@ enum KMeansMatch
 /**
  * \brief k-means Algorithm
  */
-std::vector<QRgb> k_means(const QImage& image, int k, int iterations, KMeansMatch match);
+std::vector<QRgb> k_means(SegmentedImage& image, int k, int iterations, KMeansMatch match);
 
 
 /**
@@ -58,4 +55,4 @@ std::vector<ColorFrequency> color_frequencies(const QImage& image, int alpha_thr
  */
 QImage quantize(const QImage& source, const std::vector<QRgb>& colors);
 
-} // namespace glaxnimate::utils::quantize
+} // namespace glaxnimate::trace
