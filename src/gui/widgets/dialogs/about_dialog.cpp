@@ -9,7 +9,7 @@
 #include <QScrollBar>
 
 #include "glaxnimate_app.hpp"
-#include "utils/trace.hpp"
+#include "trace/trace.hpp"
 #include "utils/gzip.hpp"
 #include "utils/tar.hpp"
 #include "io/video/video_format.hpp"

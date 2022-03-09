@@ -28,7 +28,7 @@
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/rect.hpp"
-#include "utils/trace.hpp"
+#include "trace/trace.hpp"
 #include "utils/quantize.hpp"
 #include "utils/trace_wrapper.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -50,8 +50,8 @@ public:
         Pixel
     };
 
-    using TraceResult = glaxnimate::utils::trace::TraceWrapper::TraceResult;
-    using Preset = glaxnimate::utils::trace::TraceWrapper::Preset;
+    using TraceResult = glaxnimate::trace::TraceWrapper::TraceResult;
+    using Preset = glaxnimate::trace::TraceWrapper::Preset;
 
     utils::trace::TraceWrapper trace_wrapper;
     model::Group* created = nullptr;

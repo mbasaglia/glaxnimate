@@ -1,7 +1,5 @@
 #include "quantize.hpp"
 
-#include <QHash>
-
 #include <unordered_map>
 #include <memory>
 
@@ -85,32 +83,17 @@ struct Color
     }
 };
 
-HistogramMap color_frequency_map(QImage image, int alpha_threshold)
-{
-    if ( image.format() != QImage::Format_RGBA8888 )
-        image = image.convertToFormat(QImage::Format_RGBA8888);
-
-    HistogramMap count;
-    const uchar* data = image.constBits();
-
-    int n_pixels = image.width() * image.height();
-    for ( int i = 0; i < n_pixels; i++ )
-        if ( data[i*4+3] >= alpha_threshold )
-            ++count[qRgb(data[i*4], data[i*4+1], data[i*4+2])];
-
-    return count;
-}
 
 } // trace::detail
 
-std::vector<trace::ColorFrequency> trace::color_frequencies(const QImage& image, int alpha_threshold)
+std::vector<trace::ColorFrequency> trace::color_frequencies(const SegmentedImage& image)
 {
-    auto count = detail::color_frequency_map(image, alpha_threshold);
+    auto count = image.histogram();
     return std::vector<ColorFrequency>(count.begin(), count.end());
 }
 
 
-std::vector<QRgb> trace::k_modes(const QImage& image, int k)
+std::vector<QRgb> trace::k_modes(SegmentedImage& image, int k)
 {
     auto freq = color_frequencies(image);
     return detail::color_frequencies_to_palette(freq, k);
@@ -166,7 +149,7 @@ struct Cluster
 
 } // trace::detail
 
-std::vector<QRgb> trace::k_means(const QImage& image, int k, int iterations, KMeansMatch match)
+std::vector<QRgb> trace::k_means(SegmentedImage& image, int k, int iterations, KMeansMatch match)
 {
     auto freq = color_frequencies(image);
 
@@ -619,7 +602,7 @@ std::unique_ptr<Node> add_pixels(Node* ref, ColorFrequency* data, int data_size)
 } // namespace glaxnimate::trace::detail::octree
 
 
-std::vector<QRgb> trace::octree(const QImage& image, int k)
+std::vector<QRgb> trace::octree(SegmentedImage& image, int k)
 {
     using namespace glaxnimate::trace::detail::octree;
 
@@ -641,95 +624,9 @@ std::vector<QRgb> trace::octree(const QImage& image, int k)
     return colors;
 }
 
-static inline qint32 pixel_distance(QRgb p1, QRgb p2)
-{
-    int r1 = qRed(p1);
-    int g1 = qGreen(p1);
-    int b1 = qBlue(p1);
-    int a1 = qAlpha(p1);
-
-    int r2 = qRed(p2);
-    int g2 = qGreen(p2);
-    int b2 = qBlue(p2);
-    int a2 = qAlpha(p2);
-
-    qint32 dr = r1 - r2;
-    qint32 dg = g1 - g2;
-    qint32 db = b1 - b2;
-    qint32 da = a1 - a2;
-
-    return dr * dr + dg * dg + db * db + da * da;
-}
-
-static inline qint32 closest_match(QRgb pixel, const QVector<QRgb> &clut)
-{
-    if ( qAlpha(pixel) < 128 )
-        return clut.size() - 1;
-
-    int idx = 0;
-    qint32 current_distance = INT_MAX;
-    for ( int i = 0; i < clut.size(); ++i)
-    {
-        int dist = pixel_distance(pixel, clut[i]);
-        if (dist < current_distance)
-        {
-            current_distance = dist;
-            idx = i;
-        }
-    }
-    return idx;
-}
-
-static QImage convert_with_palette(const QImage &src, const QVector<QRgb> &clut)
-{
-    QImage dest(src.size(), QImage::Format_Indexed8);
-    dest.setColorTable(clut);
-    int h = src.height();
-    int w = src.width();
-
-    QHash<QRgb, int> cache;
-
-    for (int y=0; y<h; ++y)
-    {
-        const QRgb *src_pixels = (const QRgb *) src.scanLine(y);
-        uchar *dest_pixels = (uchar *) dest.scanLine(y);
-        for (int x = 0; x < w; ++x)
-        {
-            int src_pixel = src_pixels[x];
-            qint32 value = cache.value(src_pixel, -1);
-            if (value == -1)
-            {
-                value = closest_match(src_pixel, clut);
-                cache.insert(src_pixel, value);
-            }
-            dest_pixels[x] = (uchar) value;
-        }
-    }
-
-    dest.save("/tmp/foobar.png");
-    dest = src.convertToFormat(QImage::Format_Indexed8, clut);
-    dest.save("/tmp/foobar-1.png");
-    return dest;
-}
-
-QImage trace::quantize(const QImage& source, const std::vector<QRgb>& colors)
-{
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-    QVector<QRgb> vcolors(colors.begin(), colors.end());
-#else
-    QVector<QRgb> vcolors;
-    vcolors.reserve(colors.size()+1);
-    for ( auto color : colors )
-        vcolors.push_back(color);
-#endif
-    vcolors.push_back(qRgba(0, 0, 0, 0));
-
-    return convert_with_palette(source.convertToFormat(QImage::Format_ARGB32), vcolors);
-}
-
 namespace glaxnimate::trace::detail::auto_colors {
 
-void decrease(QRgb color, HistogramMap& map)
+void decrease(QRgb color, Histogram& map)
 {
     auto it = map.find(color | 0xff000000u);
     if ( it != map.end() )
@@ -739,55 +636,139 @@ void decrease(QRgb color, HistogramMap& map)
 } // namespace glaxnimate::trace::detail::auto_colors
 
 
-std::vector<QRgb> trace::edge_exclusion_modes(const QImage& image_in, int max_colors, qreal min_frequency)
+std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_colors, int min_area)
 {
-    int alpha_threshold = 128;
-    QImage image = image_in;
-    if ( image.format() != QImage::Format_RGBA8888 )
-        image = image.convertToFormat(QImage::Format_RGBA8888);
+    std::vector<int> used(image.clusters().size() + 1, 0);
 
-    detail::HistogramMap colors = detail::color_frequency_map(image, alpha_threshold);
-
-    if ( int(colors.size()) <= max_colors )
+    while ( true )
     {
-        auto freq = std::vector<ColorFrequency>(colors.begin(), colors.end());
-        return detail::color_frequencies_to_palette(freq, max_colors);
-    }
-
-    std::vector<QRgb> output;
-    int min_amount = min_frequency * image.width() * image.height();
-
-    while ( int(output.size()) < max_colors && !colors.empty() )
-    {
-        auto best = colors.begin();
-        for ( auto it = best; it != colors.end(); ++it )
+        int largest = 0;
+        Cluster::id_type largest_id = Cluster::null_id;
+        for ( const auto& cluster: image.clusters() )
         {
-            if ( it->second > best->second )
-                best = it;
-        }
-
-        if ( best->second <= min_amount )
-            break;
-
-        auto color = best->first;
-        output.push_back(color);
-        colors.erase(best);
-
-        for ( int y = 1; y < image.height() - 1; y++ )
-        {
-            for ( int x = 1; x < image.width() - 1; x++ )
+            if ( cluster.size > largest && !used[cluster.id] )
             {
-                auto pix = image.pixel(x, y);
-                if ( pix == color )
-                {
-                    detail::auto_colors::decrease(image.pixel(x, y-1), colors);
-                    detail::auto_colors::decrease(image.pixel(x, y+1), colors);
-                    detail::auto_colors::decrease(image.pixel(x-1, y), colors);
-                    detail::auto_colors::decrease(image.pixel(x+1, y), colors);
-                }
+                largest = cluster.size;
+                largest_id = cluster.id;
             }
         }
+
+        if ( largest <= min_area || largest_id == Cluster::null_id )
+            break;
+
+        image.dilate(largest_id, min_area);
+        used[largest_id] = 1;
     }
 
-    return output;
+    auto freq = color_frequencies(image);
+    freq.erase(
+        std::remove_if(freq.begin(), freq.end(),
+            [min_area](const ColorFrequency& f) { return f.second < min_area; }),
+        freq.end()
+    );
+
+    return detail::color_frequencies_to_palette(freq, max_colors);
+}
+
+namespace glaxnimate::trace::detail::cluster_merge {
+
+bool large_enough(Cluster* cluster, const SegmentedImage& image, int min_area)
+{
+    if ( cluster->size < min_area )
+        return false;
+
+    if ( cluster->size == image.perimeter(cluster->id) )
+        return false;
+
+    return true;
+}
+
+// int get_hole_depth(Cluster* cluster, SegmentedImage& image, std::vector<int>& hole_depth)
+// {
+//     auto holed = image.cluster(image.hole_parent(cluster->id));
+//
+//     if ( holed && hole_depth[holed->id] == -1 )
+//         return hole_depth[cluster->id] = get_hole_depth(holed, image, hole_depth);
+//     else
+//         return hole_depth[cluster->id] = 0;
+// }
+
+
+} // namespace glaxnimate::trace::detail::cluster_merge
+
+std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedImage& image, int max_colors, int min_area)
+{
+    using namespace glaxnimate::trace::detail::cluster_merge;
+
+    std::vector<Cluster*> clusters;
+    clusters.reserve(image.clusters().size());
+    for ( auto& cluster: image.clusters() )
+        clusters.push_back(&cluster);
+
+    std::sort(clusters.begin(), clusters.end(), [](Cluster* a, Cluster* b) {
+        return a->size < b->size;
+    });
+
+    std::vector<Cluster*> hole_of(clusters.size() + 1, nullptr);
+
+    for ( Cluster* cluster : clusters )
+    {
+        std::vector<std::pair<qint32, Cluster*>> neighbour_distances;
+        {
+            auto neighbours = image.neighbours(cluster->id);
+            neighbour_distances.reserve(neighbours.size());
+            if ( neighbours.empty() )
+                continue;
+
+            for ( auto neigh_id : neighbours )
+            {
+                auto neigh = image.cluster(neigh_id);
+                if ( neigh->size >= cluster->size && hole_of[cluster->id] != neigh )
+                    neighbour_distances.emplace_back(pixel_distance(cluster->color, neigh->color), neigh);
+            }
+        }
+        std::sort(neighbour_distances.begin(), neighbour_distances.end(), [](const auto& a, const auto& b){
+            return a.first < b.first || (a.first == b.first && a.second->size > b.second->size);
+        });
+
+        Cluster* similar_neighbour = neighbour_distances[0].second;
+
+        if ( large_enough(cluster, image, min_area) )
+        {
+//             // is hole
+//             if ( neighbour_distances.size() <= 1 )
+//                 image.add_hole(cluster->id, similar_neighbour->id);
+        }
+        else
+        {
+            image.merge(cluster, similar_neighbour);
+        }
+    }
+/*
+    std::vector<int> hole_depth(clusters.size() + 1, -1);
+    for ( auto cluster : clusters )
+        get_hole_depth(cluster, image, hole_depth);
+
+    image.sort_clusters([&hole_depth](const Cluster& a, const Cluster& b) {
+        return hole_depth[a.id] < hole_depth[b.id];
+    });*/
+
+    image.normalize();
+
+    auto freq = k_modes(image, std::numeric_limits<int>::max());
+    if ( int(freq.size()) > max_colors )
+    {
+        std::vector<QRgb> tail(freq.begin() + max_colors, freq.end());
+        freq.erase(freq.begin() + max_colors, freq.end());
+        std::unordered_map<QRgb, QRgb> replacements;
+        for ( auto col : tail )
+            replacements[col] = freq[closest_match(col, freq)];
+        for ( auto& col : freq )
+            replacements[col] = col;
+
+        for ( auto& cluster : image.clusters() )
+            cluster.color = replacements[cluster.color];
+    }
+
+    return freq;
 }

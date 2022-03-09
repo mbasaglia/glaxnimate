@@ -5,9 +5,9 @@
 #include "math/bezier/bezier.hpp"
 #include "model/shapes/image.hpp"
 #include "model/shapes/group.hpp"
-#include "utils/trace.hpp"
+#include "trace/trace.hpp"
 
-namespace glaxnimate::utils::trace {
+namespace glaxnimate::trace {
 
 class TraceWrapper : public QObject
 {
@@ -59,4 +59,4 @@ private:
 
 };
 
-} // namespace glaxnimate::utils::trace
+} // namespace glaxnimate::trace

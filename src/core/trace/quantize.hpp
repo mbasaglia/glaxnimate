@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "segmentation.hpp"
 
 namespace glaxnimate::trace {
@@ -9,7 +8,7 @@ namespace glaxnimate::trace {
 /**
  * \brief Returns the \p k colors that appear most frequently in \p image.
  */
-std::vector<QRgb> k_modes(const QImage& image, int k);
+std::vector<QRgb> k_modes(SegmentedImage& image, int k);
 
 
 enum KMeansMatch
@@ -28,7 +27,7 @@ std::vector<QRgb> k_means(SegmentedImage& image, int k, int iterations, KMeansMa
 /**
  * \brief Octree Algorithm
  */
-std::vector<QRgb> octree(const QImage& image, int k);
+std::vector<QRgb> octree(SegmentedImage& image, int k);
 
 
 /**
@@ -39,20 +38,18 @@ std::vector<QRgb> octree(const QImage& image, int k);
  *
  * \param image Image to get the colors for
  * \param max_colors Maximum number of colors
- * \param min_frequency A color must have at least min_frequency * image.width * image.height pixels to be selected
+ * \param min_area A cluster must have at least min_area pixels to be selected
  */
-std::vector<QRgb> edge_exclusion_modes(const QImage& image, int max_colors, qreal min_frequency = 0.0005);
+std::vector<QRgb> edge_exclusion_modes(SegmentedImage& image, int max_colors, int min_area = 4);
+
+
+std::vector<QRgb> cluster_merge(SegmentedImage& image, int max_colors, int min_area = 4);
 
 /**
  * \brief Counts pixel values and returns a list of [rgba, count] pairs
  * \param image             The image to analyze
  * \param alpha_threshold   Minimum alpha value [0-255] for a color to be included
  */
-std::vector<ColorFrequency> color_frequencies(const QImage& image, int alpha_threshold = 128);
-
-/**
- * \brief Returns a quantized image with the given colors
- */
-QImage quantize(const QImage& source, const std::vector<QRgb>& colors);
+std::vector<ColorFrequency> color_frequencies(const SegmentedImage& image);
 
 } // namespace glaxnimate::trace

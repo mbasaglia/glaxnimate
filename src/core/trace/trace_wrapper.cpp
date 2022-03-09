@@ -7,7 +7,7 @@
 #include "model/shapes/rect.hpp"
 #include "command/object_list_commands.hpp"
 
-class glaxnimate::utils::trace::TraceWrapper::Private
+class glaxnimate::trace::TraceWrapper::Private
 {
 public:
     QImage source_image;
@@ -57,14 +57,14 @@ public:
 
 };
 
-glaxnimate::utils::trace::TraceWrapper::TraceWrapper(model::Image* image)
+glaxnimate::trace::TraceWrapper::TraceWrapper(model::Image* image)
     : TraceWrapper(image->document(), image->image->pixmap().toImage(), image->object_name())
 {
     d->image = image;
 
 }
 
-glaxnimate::utils::trace::TraceWrapper::TraceWrapper(model::Document* document, const QImage& image, const QString& name)
+glaxnimate::trace::TraceWrapper::TraceWrapper(model::Document* document, const QImage& image, const QString& name)
     : d(std::make_unique<Private>())
 {
     d->document = document;
@@ -73,19 +73,19 @@ glaxnimate::utils::trace::TraceWrapper::TraceWrapper(model::Document* document, 
 }
 
 
-glaxnimate::utils::trace::TraceWrapper::~TraceWrapper() = default;
+glaxnimate::trace::TraceWrapper::~TraceWrapper() = default;
 
-QSize glaxnimate::utils::trace::TraceWrapper::size() const
+QSize glaxnimate::trace::TraceWrapper::size() const
 {
     return d->source_image.size();
 }
 
-glaxnimate::utils::trace::TraceOptions & glaxnimate::utils::trace::TraceWrapper::options()
+glaxnimate::trace::TraceOptions & glaxnimate::trace::TraceWrapper::options()
 {
     return d->options;
 }
 
-void glaxnimate::utils::trace::TraceWrapper::trace_mono(
+void glaxnimate::trace::TraceWrapper::trace_mono(
     const QColor& color, bool inverted, int alpha_threshold, std::vector<TraceResult>& result)
 {
     result.emplace_back();
@@ -98,7 +98,7 @@ void glaxnimate::utils::trace::TraceWrapper::trace_mono(
     tracer.trace(result.back().bezier);
 }
 
-void glaxnimate::utils::trace::TraceWrapper::trace_exact(
+void glaxnimate::trace::TraceWrapper::trace_exact(
     const std::vector<QRgb>& colors, int tolerance, std::vector<TraceResult>& result
 )
 {
@@ -117,7 +117,7 @@ void glaxnimate::utils::trace::TraceWrapper::trace_exact(
     }
 }
 
-void glaxnimate::utils::trace::TraceWrapper::trace_closest(
+void glaxnimate::trace::TraceWrapper::trace_closest(
     const std::vector<QRgb>& colors, std::vector<TraceResult>& result)
 {
     emit progress_max_changed(100 * colors.size());
@@ -135,7 +135,7 @@ void glaxnimate::utils::trace::TraceWrapper::trace_closest(
     }
 }
 
-void glaxnimate::utils::trace::TraceWrapper::trace_pixel(std::vector<TraceResult>& result)
+void glaxnimate::trace::TraceWrapper::trace_pixel(std::vector<TraceResult>& result)
 {
     auto pixdata = utils::trace::trace_pixels(d->source_image);
     result.reserve(pixdata.size());
@@ -143,7 +143,7 @@ void glaxnimate::utils::trace::TraceWrapper::trace_pixel(std::vector<TraceResult
         result.push_back({p.first, {}, p.second});
 }
 
-glaxnimate::model::Group* glaxnimate::utils::trace::TraceWrapper::apply(
+glaxnimate::model::Group* glaxnimate::trace::TraceWrapper::apply(
     std::vector<TraceResult>& trace, qreal stroke_width
 )
 {
@@ -185,20 +185,20 @@ glaxnimate::model::Group* glaxnimate::utils::trace::TraceWrapper::apply(
     return created;
 }
 
-const QImage & glaxnimate::utils::trace::TraceWrapper::image() const
+const QImage & glaxnimate::trace::TraceWrapper::image() const
 {
     return d->source_image;
 }
 
-const std::vector<QRgb>& glaxnimate::utils::trace::TraceWrapper::eem_colors() const
+const std::vector<QRgb>& glaxnimate::trace::TraceWrapper::eem_colors() const
 {
     if ( d->eem_colors.empty() )
         d->eem_colors = utils::quantize::edge_exclusion_modes(d->source_image, 256);
     return d->eem_colors;
 }
 
-glaxnimate::utils::trace::TraceWrapper::Preset
-    glaxnimate::utils::trace::TraceWrapper::preset_suggestion() const
+glaxnimate::trace::TraceWrapper::Preset
+    glaxnimate::trace::TraceWrapper::preset_suggestion() const
 {
     int w = d->source_image.width();
     int h = d->source_image.height();
@@ -219,7 +219,7 @@ glaxnimate::utils::trace::TraceWrapper::Preset
 
 
 
-void glaxnimate::utils::trace::TraceWrapper::trace_preset(
+void glaxnimate::trace::TraceWrapper::trace_preset(
     Preset preset, int complex_posterization, std::vector<QRgb> &colors, std::vector<TraceResult>& result
 )
 {
