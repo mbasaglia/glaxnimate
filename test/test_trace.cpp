@@ -1,9 +1,9 @@
 #include <QtTest/QtTest>
 #include <filesystem>
 
-#include "utils/quantize.hpp"
+#include "trace/quantize.hpp"
 
-using namespace glaxnimate::utils::quantize;
+using namespace glaxnimate::trace;
 
 
 class TestTrace: public QObject
@@ -18,10 +18,12 @@ private slots:
     {
         auto path = std::filesystem::path(__FILE__).parent_path().parent_path() / "data" / "trace" / "images" / "flat.png";
         QImage image(QString::fromStdString(path.u8string()));
+        auto segmented = segment(image);
 
         QBENCHMARK
         {
-            edge_exclusion_modes(image, 256);
+            auto seg = segmented;
+            edge_exclusion_modes(seg, 256);
         }
     }
 
@@ -29,10 +31,12 @@ private slots:
     {
         auto path = std::filesystem::path(__FILE__).parent_path().parent_path() / "data" / "trace" / "images" / "flat.png";
         QImage image(QString::fromStdString(path.u8string()));
+        auto segmented = segment(image);
 
         QBENCHMARK
         {
-            octree(image, 16);
+            auto seg = segmented;
+            octree(seg, 16);
         }
     }
 
@@ -40,10 +44,12 @@ private slots:
     {
         auto path = std::filesystem::path(__FILE__).parent_path().parent_path() / "data" / "trace" / "images" / "flat.png";
         QImage image(QString::fromStdString(path.u8string()));
+        auto segmented = segment(image);
 
         QBENCHMARK
         {
-            k_means(image, 16, 100, KMeansMatch::Closest);
+            auto seg = segmented;
+            k_means(seg, 16, 100, KMeansMatch::Closest);
         }
     }
 };
