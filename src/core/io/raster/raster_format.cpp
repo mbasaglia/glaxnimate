@@ -1,6 +1,6 @@
 #include "raster_format.hpp"
 #include "io/raster/raster_mime.hpp"
-#include "utils/trace_wrapper.hpp"
+#include "trace/trace_wrapper.hpp"
 
 glaxnimate::io::Autoreg<glaxnimate::io::raster::RasterMime> glaxnimate::io::raster::RasterMime::autoreg;
 glaxnimate::io::Autoreg<glaxnimate::io::raster::RasterFormat> glaxnimate::io::raster::RasterFormat::autoreg;
@@ -29,12 +29,12 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
         QString name = "";
         if ( auto file = qobject_cast<QFile*>(&dev) )
             name = file->fileName();
-        utils::trace::TraceWrapper trace(document, image, name);
+        trace::TraceWrapper trace(document, image, name);
         std::vector<QRgb> colors;
-        std::vector<utils::trace::TraceWrapper::TraceResult> result;
+        std::vector<trace::TraceWrapper::TraceResult> result;
         auto preset = trace.preset_suggestion();
         trace.trace_preset(preset, 16, colors, result);
-        trace.apply(result, preset == utils::trace::TraceWrapper::PixelPreset ? 0 : 1);
+        trace.apply(result, preset == trace::TraceWrapper::PixelPreset ? 0 : 1);
 
         return true;
     }

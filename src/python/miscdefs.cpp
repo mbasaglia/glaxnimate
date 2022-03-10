@@ -15,7 +15,7 @@
 #include "math/bezier/bezier.hpp"
 #include "app_info.hpp"
 #include "trace/trace.hpp"
-#include "utils/quantize.hpp"
+#include "trace/quantize.hpp"
 
 using namespace glaxnimate;
 
@@ -98,6 +98,7 @@ QuantizeWrapper<Args...> quantize_wrapper(std::vector<QRgb> (*func) (Args...))
 
 static void define_trace(py::module& m)
 {
+    /*
     using namespace glaxnimate::trace;
     py::module trace = m.def_submodule("trace", "Bitmap tracing functionality");
     py::class_<TraceOptions>(trace, "TraceOptions")
@@ -122,8 +123,8 @@ static void define_trace(py::module& m)
         for ( const QColor& qc : qcolors )
             colors.push_back(qc.rgba());
 
-        QImage converted = utils::quantize::quantize(source_image, colors);
-        utils::trace::Tracer tracer(converted, options);
+        QImage converted = trace::quantize(source_image, colors);
+        trace::Tracer tracer(converted, options);
 
         std::vector<std::vector<math::bezier::Bezier>> out;
         out.reserve(colors.size());
@@ -140,40 +141,40 @@ static void define_trace(py::module& m)
     });
 
     py::module quantize = m.def_submodule("quantize", "Bitmap color quantization");
-    py::enum_<utils::quantize::KMeansMatch>(quantize, "MatchType")
-        .value("Centroid", utils::quantize::KMeansMatch::None)
-        .value("Closest", utils::quantize::KMeansMatch::Closest)
-        .value("MostFrequent", utils::quantize::KMeansMatch::MostFrequent)
+    py::enum_<trace::KMeansMatch>(quantize, "MatchType")
+        .value("Centroid", trace::KMeansMatch::None)
+        .value("Closest", trace::KMeansMatch::Closest)
+        .value("MostFrequent", trace::KMeansMatch::MostFrequent)
     ;
     quantize.def(
-        "color_frequencies", &utils::quantize::color_frequencies,
+        "color_frequencies", &trace::color_frequencies,
         py::arg("image"), py::arg("alpha_threshold") = 128,
         "Counts pixel values and returns a list of (rgba, count) pairs."
     );
     quantize.def(
         "k_modes",
-        quantize_wrapper(&utils::quantize::k_modes),
+        quantize_wrapper(&trace::k_modes),
         py::arg("image"), py::arg("k"),
         "Returns the k colors that appear most frequently in image."
     );
     quantize.def(
         "k_means",
-        quantize_wrapper(&utils::quantize::k_means),
+        quantize_wrapper(&trace::k_means),
         py::arg("image"), py::arg("k"), py::arg("max_iterations") = 100, py::arg("match") = 1,
         "Returns the k colors that are at the center of clusters."
     );
     quantize.def(
         "octree",
-        quantize_wrapper(&utils::quantize::octree),
+        quantize_wrapper(&trace::octree),
         py::arg("image"), py::arg("k"),
         "Returns the k best colors."
     );
     quantize.def(
         "edge_exclusion_modes",
-        quantize_wrapper(&utils::quantize::edge_exclusion_modes),
+        quantize_wrapper(&trace::edge_exclusion_modes),
         py::arg("image"), py::arg("max_colors"), py::arg("min_frequency") = 0.0005,
         "Returns up to max_colors, has the best results for flat-colored images."
-    );
+    );*/
 }
 
 void define_utils(py::module& m)

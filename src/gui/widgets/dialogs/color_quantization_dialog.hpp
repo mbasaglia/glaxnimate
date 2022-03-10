@@ -4,6 +4,8 @@
 #include <memory>
 #include <QDialog>
 
+#include "trace/segmentation.hpp"
+
 namespace glaxnimate::gui {
 
 class ColorQuantizationDialog : public QDialog
@@ -14,9 +16,7 @@ public:
     ColorQuantizationDialog(QWidget* parent = nullptr);
     ~ColorQuantizationDialog();
 
-    std::vector<QRgb> quantize(const QImage& image, int k) const;
-
-
+    std::vector<QRgb> get_palette(trace::SegmentedImage image, int k) const;
 
     void init_settings();
     void save_settings();

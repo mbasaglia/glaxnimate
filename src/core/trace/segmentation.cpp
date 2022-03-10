@@ -1,5 +1,8 @@
 #include "segmentation.hpp"
+
 #include <unordered_set>
+
+#include "utils/color.hpp"
 
 #include <QDebug>
 
@@ -25,12 +28,12 @@ static void debug_cluster(const glaxnimate::trace::Cluster& cluster)
         db << "->" << cluster.merge_target;
 }
 
-static void debug_clusters(const std::vector<glaxnimate::trace::Cluster>& clusters_)
+static void debug_clusters(const glaxnimate::trace::SegmentedImage& clusters)
 {
     if ( debug_segmentation )
     {
         qDebug() << "[";
-        for ( const auto& cluster : clusters_ )
+        for ( const auto& cluster : clusters )
             debug_cluster(cluster);
         qDebug() << "]";
     }
@@ -105,85 +108,48 @@ void glaxnimate::trace::SegmentedImage::normalize()
     if ( debug_segmentation )
         qDebug() << "Normalize";
     debug_bitmap(*this);
-    debug_clusters(clusters_);
+    debug_clusters(*this);
 
     // create a "map" id -> merge_target->id
-    std::vector<int> mergers(clusters_.size() + 1, Cluster::null_id);
-    for ( std::size_t i = 0; i < clusters_.size(); i++ )
+    std::unordered_map<Cluster::id_type, Cluster::id_type> mergers;
+    for ( auto it = clusters_.begin(); it != clusters_.end(); )
     {
-        if ( clusters_[i].merge_target != Cluster::null_id )
+        if ( it->second.merge_target != Cluster::null_id )
         {
-            mergers[i + 1] = clusters_[i].merge_target;
-            cluster(clusters_[i].merge_target)->size += clusters_[i].size;
+            mergers[it->second.id] = it->second.merge_target;
+            cluster(it->second.merge_target)->size += it->second.size;
+            it = clusters_.erase(it);
         }
         else
         {
-            mergers[i + 1] = clusters_[i].id;
+            mergers[it->second.id] = it->second.id;
+            it->second.merge_sources.clear();
+            ++it;
         }
     }
 
-    // Update ids
-    update_cluster_ids(mergers, false);
+    for ( auto it = clusters_.begin(); it != clusters_.end(); )
+    {
+        if ( it->second.size == 0 )
+            it = clusters_.erase(it);
+        else
+            ++it;
+    }
 
+    for ( auto& pix : bitmap_ )
+        pix = mergers[pix];
 
     debug_bitmap(*this);
-    debug_clusters(clusters_);
-
-    // Remove merged clusters_ and map ID changes
-    // Similar as remove_if but we keep track of IDs to update
-    Cluster::id_type new_id = 0;
-    std::vector<Cluster::id_type> new_ids;
-    new_ids.reserve(clusters_.size()+1);
-    new_ids.push_back(Cluster::null_id);
-
-    auto iterator = clusters_.begin();
-    auto end_iterator = clusters_.end();
-    for ( ; iterator != end_iterator && iterator->is_valid(); ++iterator )
-    {
-        iterator->merge_sources.clear();
-        new_ids.push_back(++new_id);
-    }
-
-    if ( iterator != end_iterator )
-    {
-        auto result_iterator = iterator;
-        new_ids.push_back(Cluster::null_id);
-        for ( ++iterator; iterator != end_iterator; ++iterator)
-        {
-            if ( iterator->is_valid() )
-            {
-                iterator->merge_sources.clear();
-                *result_iterator = std::move(*iterator);
-                ++result_iterator;
-                new_ids.push_back(++new_id);
-            }
-            else
-            {
-                new_ids.push_back(Cluster::null_id);
-            }
-        }
-        debug_clusters(clusters_);
-
-        // Remove clusters_ merged into something else
-        clusters_.erase(result_iterator, clusters_.end());
-        debug_clusters(clusters_);
-
-        // Update Ids
-        update_cluster_ids(new_ids, true);
-
-        debug_clusters(clusters_);
-        debug_bitmap(*this);
-    }
+    debug_clusters(*this);
 
     if ( debug_segmentation )
         qDebug() << "===========";
 }
 
-glaxnimate::trace::Cluster::id_type glaxnimate::trace::SegmentedImage::add_cluster(QRgb color, int size)
+glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::add_cluster(QRgb color, int size)
 {
-    auto id = next_id();
-    clusters_.push_back(Cluster{id, color, size});
-    return id;
+    auto id = next_id++;
+    return &clusters_.emplace(id, Cluster{id, color, size}).first->second;
 }
 
 
@@ -201,23 +167,18 @@ glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::cluster(int x, in
 }
 
 
-glaxnimate::trace::Cluster::id_type glaxnimate::trace::SegmentedImage::next_id() const
-{
-    return clusters_.size() + 1;
-}
-
 glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::cluster(Cluster::id_type id)
 {
     if ( id == Cluster::null_id )
         return nullptr;
-    return &clusters_[id - 1];
+    return &clusters_[id];
 }
 
 const glaxnimate::trace::Cluster * glaxnimate::trace::SegmentedImage::cluster(Cluster::id_type id) const
 {
     if ( id == Cluster::null_id )
         return nullptr;
-    return &clusters_[id - 1];
+    return &clusters_.at(id);
 }
 
 
@@ -227,13 +188,26 @@ void glaxnimate::trace::SegmentedImage::unique_colors(bool flatten_alpha)
     for ( auto& cluster : clusters_ )
     {
         if ( flatten_alpha )
-            cluster.color |= 0xff000000u;
+            cluster.second.color |= 0xff000000u;
 
-        auto& parent = colors[cluster.color];
+        auto& parent = colors[cluster.second.color];
         if ( parent )
-            merge(&cluster, parent);
+        {
+            // keep the one with lowest ID
+            if ( parent->id < cluster.second.id )
+            {
+                merge(&cluster.second, parent);
+            }
+            else
+            {
+                merge(parent, &cluster.second);
+                parent = &cluster.second;
+            }
+        }
         else
-            parent = &cluster;
+        {
+            parent = &cluster.second;
+        }
     }
 
     normalize();
@@ -243,7 +217,7 @@ glaxnimate::trace::Histogram glaxnimate::trace::SegmentedImage::histogram() cons
 {
     glaxnimate::trace::Histogram hist;
     for ( const auto& cluster : clusters_ )
-        hist[cluster.color] += cluster.size;
+        hist[cluster.second.color] += cluster.second.size;
     return hist;
 }
 
@@ -261,44 +235,6 @@ QImage glaxnimate::trace::SegmentedImage::to_image() const
     return image;
 }
 
-void glaxnimate::trace::SegmentedImage::update_cluster_ids(const std::vector<Cluster::id_type>& new_ids, bool update_ids)
-{
-//     auto old_holes_back = holes_back;
-//     holes_back.clear();
-//     for ( auto p : old_holes_back )
-//     {
-//         std::unordered_set<Cluster::id_type> set;
-//         for ( auto& id : p.second )
-//             set.insert(new_ids[id]);
-//         holes_back.emplace(new_ids[p.first], set);
-//     }
-//
-//     auto old_hole_wrapper = hole_wrapper;
-//     hole_wrapper.clear();
-//     for ( auto p : old_hole_wrapper )
-//     {
-//         hole_wrapper.emplace(new_ids[p.first], new_ids[p.second]);
-//     }
-
-    if ( update_ids )
-    {
-        for ( auto& cluster : clusters_ )
-            cluster.id = new_ids[cluster.id];
-    }
-
-    for ( auto& pix : bitmap_ )
-        pix = new_ids[pix];
-}
-
-void glaxnimate::trace::SegmentedImage::fix_cluster_ids()
-{
-    std::vector<Cluster::id_type> new_ids(clusters_.size() + 1, Cluster::null_id);
-    for ( std::size_t i = 0; i < clusters_.size(); i++ )
-        new_ids[clusters_[i].id] = i + 1;
-
-    update_cluster_ids(new_ids, true);
-}
-
 void glaxnimate::trace::SegmentedImage::direct_merge(Cluster::id_type from, Cluster::id_type to)
 {
     for ( auto & pix : bitmap_ )
@@ -306,30 +242,8 @@ void glaxnimate::trace::SegmentedImage::direct_merge(Cluster::id_type from, Clus
             pix = to;
 
     cluster(to)->size += cluster(from)->size;
-    clusters_.erase(clusters_.begin() + from - 1);
-    fix_cluster_ids();
+    clusters_.erase(clusters_.find(from));
 }
-
-qint32 glaxnimate::trace::pixel_distance(QRgb p1, QRgb p2)
-{
-    int r1 = qRed(p1);
-    int g1 = qGreen(p1);
-    int b1 = qBlue(p1);
-    int a1 = qAlpha(p1);
-
-    int r2 = qRed(p2);
-    int g2 = qGreen(p2);
-    int b2 = qBlue(p2);
-    int a2 = qAlpha(p2);
-
-    qint32 dr = r1 - r2;
-    qint32 dg = g1 - g2;
-    qint32 db = b1 - b2;
-    qint32 da = a1 - a2;
-
-    return dr * dr + dg * dg + db * db + da * da;
-}
-
 
 qint32 glaxnimate::trace::closest_match(QRgb pixel, const std::vector<QRgb> &clut)
 {
@@ -337,7 +251,7 @@ qint32 glaxnimate::trace::closest_match(QRgb pixel, const std::vector<QRgb> &clu
     qint32 current_distance = 255 * 255 * 3;
     for ( std::size_t i = 0; i < clut.size(); ++i)
     {
-        int dist = glaxnimate::trace::pixel_distance(pixel, clut[i]);
+        int dist = utils::color::rgba_distance_squared(pixel, clut[i]);
         if ( dist < current_distance )
         {
             current_distance = dist;
@@ -356,8 +270,8 @@ struct Segmenter
 {
     using Color = QRgb;
 
-    Segmenter(SegmentedImage& segmented, const QImage& image, int alpha_threshold, bool diagonal_ajacency)
-    : segmented(segmented), alpha_threshold(alpha_threshold), diagonal_ajacency(diagonal_ajacency), image(image)
+    Segmenter(SegmentedImage& segmented, const QImage& image, bool diagonal_ajacency)
+    : segmented(segmented), diagonal_ajacency(diagonal_ajacency), image(image)
     {
         if ( this->image.format() != QImage::Format_ARGB32 )
             this->image.convertTo(QImage::Format_ARGB32);
@@ -390,11 +304,8 @@ struct Segmenter
                     && (diagonal_ajacency || color == left)
                 )
                 {
-                    segmented.merge(cluster_up, cluster_left);
+                    segmented.merge(cluster_left, cluster_up);
                 }
-
-                if ( qAlpha(color) < alpha_threshold )
-                    continue;
 
                 // Set to nullptr to avoid issues when a pixel adjacent to an edge is 0
                 if ( left != color )
@@ -416,7 +327,7 @@ struct Segmenter
                     // Create a new cluster
                     else
                     {
-                        segmented.bitmap()[x + segmented.width() * y] = segmented.add_cluster(color);
+                        segmented.bitmap()[x + segmented.width() * y] = segmented.add_cluster(color)->id;
                     }
                 }
                 // Neighbour to the left
@@ -433,34 +344,33 @@ struct Segmenter
                 }
             }
         }
-        debug_clusters(segmented.clusters());
+        debug_clusters(segmented);
         debug_bitmap(segmented);
         segmented.normalize();
     }
 
     SegmentedImage& segmented;
     const QRgb* pixels;
-    int alpha_threshold;
     bool diagonal_ajacency;
     QImage image;
 };
 
 } // namespace
 
-glaxnimate::trace::SegmentedImage glaxnimate::trace::segment(const QImage& image, int alpha_threshold, bool diagonal_ajacency)
+glaxnimate::trace::SegmentedImage glaxnimate::trace::segment(const QImage& image, bool diagonal_ajacency)
 {
     SegmentedImage segmented(image.width(), image.height());
-    Segmenter segmenter(segmented, image, alpha_threshold, diagonal_ajacency);
+    Segmenter segmenter(segmented, image, diagonal_ajacency);
     segmenter.process();
     return segmented;
 }
 
 void glaxnimate::trace::SegmentedImage::quantize(const std::vector<QRgb>& colors)
 {
-    auto min_id = next_id();
+    auto min_id = next_id;
 
     for ( auto & cluster : clusters_ )
-        cluster.merge_target = min_id + closest_match(cluster.color, colors);
+        cluster.second.merge_target = min_id + closest_match(cluster.second.color, colors);
 
     for ( auto color : colors )
         add_cluster(color, 0);
@@ -471,7 +381,7 @@ void glaxnimate::trace::SegmentedImage::quantize(const std::vector<QRgb>& colors
 void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_size)
 {
     auto source = cluster(id);
-    std::vector<int> subtract(clusters_.size() + 1, 0);
+    std::unordered_map<Cluster::id_type, int> subtract;
 
     debug_bitmap(*this);
 
@@ -499,7 +409,7 @@ void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_
                     }
                 }
 
-                debug_vector(subtract);
+//                 debug_vector(subtract);
                 debug_bitmap(*this);
             }
         }
@@ -509,17 +419,18 @@ void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_
         if ( pix < 0 )
             pix = id;
 
-    debug_clusters(clusters_);
-    debug_vector(subtract);
+    debug_clusters(*this);
+//     debug_vector(subtract);
     debug_bitmap(*this);
 
-    for ( std::size_t i = 0; i < clusters_.size(); i++ )
+    for ( auto& cluster : clusters_ )
     {
-        clusters_[i].size -= subtract[i+1];
-        source->size += subtract[i+1];
+        auto sub = subtract[cluster.second.id];
+        cluster.second.size -= sub;
+        source->size += sub;
     }
 
-    debug_clusters(clusters_);
+    debug_clusters(*this);
     if ( debug_segmentation )
         qDebug() << "======";
 }

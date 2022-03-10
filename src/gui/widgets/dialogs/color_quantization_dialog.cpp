@@ -3,7 +3,7 @@
 
 #include <QEvent>
 
-#include "utils/quantize.hpp"
+#include "trace/quantize.hpp"
 
 #include "app/settings/widget.hpp"
 
@@ -35,23 +35,23 @@ void ColorQuantizationDialog::changeEvent ( QEvent* e )
     }
 }
 
-std::vector<QRgb> ColorQuantizationDialog::quantize(const QImage& image, int k) const
+std::vector<QRgb> ColorQuantizationDialog::get_palette(trace::SegmentedImage image, int k) const
 {
     switch ( d->ui.combo_algo->currentIndex() )
     {
         case 0:
-            return utils::quantize::k_means(
+            return trace::k_means(
                 image,
                 k,
                 d->ui.spin_means_iterations->value(),
-                utils::quantize::KMeansMatch(d->ui.combo_means_match->currentIndex())
+                trace::KMeansMatch(d->ui.combo_means_match->currentIndex())
            );
         case 1:
-            return utils::quantize::k_modes(image, k);
+            return trace::k_modes(image, k);
         case 2:
-            return utils::quantize::octree(image, k);
+            return trace::octree(image, k);
         case 3:
-            return utils::quantize::edge_exclusion_modes(image, k, d->ui.spin_eem_min_frequency->value() / 100.);
+            return trace::edge_exclusion_modes(image, k, d->ui.spin_eem_min_frequency->value() / 100.);
     }
     return {};
 }

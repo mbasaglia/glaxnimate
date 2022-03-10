@@ -90,6 +90,7 @@ utils/gzip.cpp
 trace/quantize.cpp
 trace/trace.cpp
 trace/trace_wrapper.cpp
+trace/segmentation.cpp
 )
 
 if ( NOT ANDROID )

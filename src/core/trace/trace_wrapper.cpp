@@ -1,5 +1,5 @@
 #include "trace_wrapper.hpp"
-#include "utils/quantize.hpp"
+#include "trace/quantize.hpp"
 #include "model/document.hpp"
 #include "model/shapes/stroke.hpp"
 #include "model/shapes/fill.hpp"
@@ -11,7 +11,10 @@ class glaxnimate::trace::TraceWrapper::Private
 {
 public:
     QImage source_image;
-    utils::trace::TraceOptions options;
+    trace::TraceOptions options;
+    trace::SegmentedImage segmented{0, 0};
+    trace::SegmentedImage segmented_eem{0, 0};
+    trace::SegmentedImage segmented_quant{0, 0};
     std::vector<QRgb> eem_colors;
     model::Image* image = nullptr;
     model::Document* document;
@@ -19,10 +22,14 @@ public:
 
     void set_image(const QImage& image)
     {
-        if ( image.format() != QImage::Format_RGBA8888 )
-            source_image = image.convertToFormat(QImage::Format_RGBA8888);
+        if ( image.format() != QImage::Format_ARGB32 )
+            source_image = image.convertToFormat(QImage::Format_ARGB32);
         else
             source_image = image;
+
+        segmented = segment(source_image);
+        segmented_eem = {0, 0};
+        segmented_quant = {0, 0};
     }
 
     void result_to_shapes(model::ShapeListProperty& prop, const TraceResult& result, qreal stroke_width)
@@ -55,6 +62,12 @@ public:
         }
     }
 
+    trace::SegmentedImage& traceable()
+    {
+        if ( segmented_quant.size() != 0 )
+            return segmented_quant;
+        return segmented;
+    }
 };
 
 glaxnimate::trace::TraceWrapper::TraceWrapper(model::Image* image)
@@ -91,9 +104,15 @@ void glaxnimate::trace::TraceWrapper::trace_mono(
     result.emplace_back();
     emit progress_max_changed(100);
     result.back().color = color;
-    utils::trace::Tracer tracer(d->source_image, d->options);
-    tracer.set_target_alpha(alpha_threshold, inverted);
-    connect(&tracer, &utils::trace::Tracer::progress, this, &TraceWrapper::progress_changed);
+    auto mono = d->segmented;
+    auto cluster = mono.mono([inverted, alpha_threshold](const Cluster& cluster){
+        if ( inverted )
+            return qAlpha(cluster.color) < alpha_threshold;
+        return qAlpha(cluster.color) > alpha_threshold;
+    });
+    trace::Tracer tracer(d->segmented, d->options);
+    tracer.set_target_index(cluster->id);
+    connect(&tracer, &trace::Tracer::progress, this, &TraceWrapper::progress_changed);
     tracer.set_progress_range(0, 100);
     tracer.trace(result.back().bezier);
 }
@@ -109,7 +128,7 @@ void glaxnimate::trace::TraceWrapper::trace_exact(
     {
         result.emplace_back();
         result.back().color = color;
-        utils::trace::Tracer tracer(d->source_image, d->options);
+        trace::Tracer tracer(d->segmented, d->options);
         tracer.set_target_color(color, tolerance * tolerance);
         tracer.set_progress_range(100 * progress_index, 100 * (progress_index+1));
         tracer.trace(result.back().bezier);
@@ -120,24 +139,28 @@ void glaxnimate::trace::TraceWrapper::trace_exact(
 void glaxnimate::trace::TraceWrapper::trace_closest(
     const std::vector<QRgb>& colors, std::vector<TraceResult>& result)
 {
-    emit progress_max_changed(100 * colors.size());
-    QImage converted = utils::quantize::quantize(d->source_image, colors);
-    utils::trace::Tracer tracer(converted, d->options);
+    auto converted = d->traceable();
+    converted.erase_if([](const Cluster& cluster){ return qAlpha(cluster.color) == 0; });
+    converted.quantize(colors);
+    trace::Tracer tracer(converted, d->options);
     result.reserve(result.size() + colors.size());
+    emit progress_max_changed(100 * converted.size());
 
-    for ( int i = 0; i < int(colors.size()); i++ )
+    int i = 0;
+    for ( const auto& cluster: converted )
     {
-        tracer.set_target_index(i);
+        tracer.set_target_index(cluster.id);
         tracer.set_progress_range(100 * i, 100 * (i+1));
         result.emplace_back();
-        result.back().color = colors[i];
+        result.back().color = cluster.color;
         tracer.trace(result.back().bezier);
+        i++;
     }
 }
 
 void glaxnimate::trace::TraceWrapper::trace_pixel(std::vector<TraceResult>& result)
 {
-    auto pixdata = utils::trace::trace_pixels(d->source_image);
+    auto pixdata = trace::trace_pixels(d->segmented);
     result.reserve(pixdata.size());
     for ( const auto& p : pixdata )
         result.push_back({p.first, {}, p.second});
@@ -193,7 +216,10 @@ const QImage & glaxnimate::trace::TraceWrapper::image() const
 const std::vector<QRgb>& glaxnimate::trace::TraceWrapper::eem_colors() const
 {
     if ( d->eem_colors.empty() )
-        d->eem_colors = utils::quantize::edge_exclusion_modes(d->source_image, 256);
+    {
+        d->segmented_eem = d->segmented;
+        d->eem_colors = trace::edge_exclusion_modes(d->segmented_eem, 256);
+    }
     return d->eem_colors;
 }
 
@@ -205,7 +231,7 @@ glaxnimate::trace::TraceWrapper::Preset
     if ( w > 1024 || h > 1024 )
         return Preset::ComplexPreset;
 
-    auto color_count = utils::quantize::color_frequencies(d->source_image).size();
+    auto color_count = d->segmented.histogram().size();
     if ( w < 128 && h < 128 && color_count < 128 )
         return Preset::PixelPreset;
 
@@ -227,16 +253,25 @@ void glaxnimate::trace::TraceWrapper::trace_preset(
     d->options.set_smoothness(0.75);
     switch ( preset )
     {
-        case utils::trace::TraceWrapper::ComplexPreset:
-            colors = utils::quantize::octree(d->source_image, complex_posterization);
+        case trace::TraceWrapper::ComplexPreset:
+            d->segmented_quant = d->segmented;
+            colors = trace::octree(d->segmented_quant, complex_posterization);
             trace_closest(colors, result);
+            d->segmented_quant = {0, 0};
             break;
-        case utils::trace::TraceWrapper::FlatPreset:
+        case trace::TraceWrapper::FlatPreset:
             colors = eem_colors();
+            d->segmented_quant = d->segmented_eem;
             trace_closest(colors, result);
+            d->segmented_quant = {0, 0};
             break;
-        case utils::trace::TraceWrapper::PixelPreset:
+        case trace::TraceWrapper::PixelPreset:
             trace_pixel(result);
             break;
     }
+}
+
+const glaxnimate::trace::SegmentedImage & glaxnimate::trace::TraceWrapper::segmented_image() const
+{
+    return d->segmented;
 }

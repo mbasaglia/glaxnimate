@@ -13,4 +13,10 @@ inline constexpr qint32 rgba_distance_squared(QRgb c1, qint32 r, qint32 g, qint3
     return r*r + g*g + b*b + a*a;
 }
 
+
+inline constexpr qint32 rgba_distance_squared(QRgb p1, QRgb p2) noexcept
+{
+    return rgba_distance_squared(p1, qRed(p2), qGreen(p2), qBlue(p2), qAlpha(p2));
+}
+
 } // namespace glaxnimate::utils::color

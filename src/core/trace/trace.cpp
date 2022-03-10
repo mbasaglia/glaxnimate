@@ -7,55 +7,45 @@
 using namespace glaxnimate;
 
 
-class utils::trace::TraceOptions::Private
+class trace::TraceOptions::Private
 {
 public:
     potrace_param_s* params;
     static const constexpr qreal alphamax_max = 1.3334;
 };
 
-utils::trace::TraceOptions::TraceOptions()
+trace::TraceOptions::TraceOptions()
     : d(std::make_unique<Private>())
 {
     d->params = potrace_param_default();
 }
 
-utils::trace::TraceOptions::~TraceOptions()
+trace::TraceOptions::~TraceOptions()
 {
     potrace_param_free(d->params);
 }
 
-int utils::trace::TraceOptions::min_area() const
+int trace::TraceOptions::min_area() const
 {
     return d->params->turdsize;
 }
 
-void utils::trace::TraceOptions::set_min_area(int min_area)
+void trace::TraceOptions::set_min_area(int min_area)
 {
     d->params->turdsize = min_area;
 }
 
-qreal utils::trace::TraceOptions::smoothness() const
+qreal trace::TraceOptions::smoothness() const
 {
     return d->params->alphamax / Private::alphamax_max;
 }
 
-void utils::trace::TraceOptions::set_smoothness(qreal smoothness)
+void trace::TraceOptions::set_smoothness(qreal smoothness)
 {
     d->params->alphamax = smoothness * Private::alphamax_max;
 }
 
-static inline constexpr QRgb rgba888(const uchar* pixel) noexcept
-{
-    return qRgba(pixel[0], pixel[1], pixel[2], pixel[3]);
-}
-
-static inline constexpr uchar rgba888_alpha(const uchar* pixel) noexcept
-{
-    return pixel[3];
-}
-
-class utils::trace::Tracer::Private
+class trace::Tracer::Private
 {
 public:
     struct CurveWrapper
@@ -102,49 +92,42 @@ public:
         }
     };
 
+    Private(const SegmentedImage& img)
+    : image(img)
+    {}
+
     static void progress_callback(double progress, void* privdata)
     {
         reinterpret_cast<Tracer*>(privdata)->progress(progress);
     }
 
-    int get_bit_alpha(const uchar* pixel) const noexcept
+    int get_bit_color(Cluster::id_type pixel) const
     {
-        return rgba888_alpha(pixel) >= target_alpha;
+        return image.cluster(pixel)->color == target_color;
     }
 
-    int get_bit_alpha_neg(const uchar* pixel) const noexcept
+    int get_bit_color_tolerance(Cluster::id_type pixel) const
     {
-        return rgba888_alpha(pixel) < target_alpha;
+        return utils::color::rgba_distance_squared(target_color, image.cluster(pixel)->color) <= target_tolerance;
     }
 
-    int get_bit_color(const uchar* pixel) const noexcept
+    int get_bit_index(Cluster::id_type pixel) const
     {
-        return rgba888(pixel) == target_color;
+        return pixel == target_index;
     }
 
-    int get_bit_color_tolerance(const uchar* pixel) const noexcept
-    {
-        return utils::color::rgba_distance_squared(target_color, pixel[0], pixel[1], pixel[2], pixel[3]) <= target_tolerance;
-    }
-
-    int get_bit_index(const uchar* pixel) const noexcept
-    {
-        return *pixel == target_color;
-    }
-
-    using callback_type = int (Private::*)(const uchar*) const noexcept;
-    callback_type callback = &Private::get_bit_alpha;
-    int target_alpha = 128;
+    using callback_type = int (Private::*)(Cluster::id_type) const;
+    callback_type callback = &Private::get_bit_index;
+    Cluster::id_type target_index;
     QRgb target_color;
     qint32 target_tolerance = 0;
-    QImage image;
+    SegmentedImage image;
     potrace_param_s params;
 };
 
-utils::trace::Tracer::Tracer(const QImage& image, const TraceOptions& options)
-    : d(std::make_unique<Private>())
+trace::Tracer::Tracer(const SegmentedImage& image, const TraceOptions& options)
+    : d(std::make_unique<Private>(image))
 {
-    d->image = image;
     d->params = *options.d->params;
     d->params.progress = {
         &Private::progress_callback,
@@ -155,27 +138,21 @@ utils::trace::Tracer::Tracer(const QImage& image, const TraceOptions& options)
     };
 }
 
-utils::trace::Tracer::~Tracer() = default;
+trace::Tracer::~Tracer() = default;
 
-bool utils::trace::Tracer::trace(math::bezier::MultiBezier& mbez)
+bool trace::Tracer::trace(math::bezier::MultiBezier& mbez)
 {
-    QImage::Format target_format = d->callback == &Private::get_bit_index ? QImage::Format_Indexed8 : QImage::Format_RGBA8888;
-    if ( d->image.format() != target_format )
-        d->image = d->image.convertToFormat(target_format);
-
     int line_len = d->image.width() / sizeof(potrace_word);
     if ( d->image.width() % sizeof(potrace_word) )
         line_len += 1;
 
     static constexpr int N = sizeof(potrace_word) * CHAR_BIT;
-    const int x_off = d->callback == &Private::get_bit_index ? 1 : 4;
     std::vector<potrace_word> data(line_len * d->image.height(), 0);
-    for ( int y = 0, h = d->image.height(), w = d->image.width(); y < h; y++ )
+    for ( int y = 0; y < d->image.height(); y++ )
     {
-        auto line = d->image.constScanLine(y);
-        for ( int x = 0; x < w; x++ )
+        for ( int x = 0; x < d->image.width(); x++ )
         {
-            (data.data() + y*line_len)[x/N] |= (1ul << (N-1-x%N)) * (d.get()->*d->callback)(line+x*x_off);
+            (data.data() + y*line_len)[x/N] |= (1ul << (N-1-x%N)) * (d.get()->*d->callback)(d->image.cluster_id(x, y));
         }
     }
 
@@ -202,33 +179,27 @@ bool utils::trace::Tracer::trace(math::bezier::MultiBezier& mbez)
     return false;
 }
 
-QString utils::trace::Tracer::potrace_version()
+QString trace::Tracer::potrace_version()
 {
     return ::potrace_version();
 }
 
-void utils::trace::Tracer::set_progress_range(double min, double max)
+void trace::Tracer::set_progress_range(double min, double max)
 {
     d->params.progress.min = min;
     d->params.progress.max = max;
 }
 
-void utils::trace::Tracer::set_target_alpha(int threshold, bool invert)
-{
-    d->target_alpha = threshold;
-    d->callback = invert ? &Private::get_bit_alpha_neg : &Private::get_bit_alpha;
-}
-
-void utils::trace::Tracer::set_target_color(const QColor& color, qint32 tolerance)
+void trace::Tracer::set_target_color(const QColor& color, qint32 tolerance)
 {
     d->target_color = color.rgba();
     d->target_tolerance = tolerance;
     d->callback = tolerance > 0 ? &Private::get_bit_color_tolerance : &Private::get_bit_color;
 }
 
-void utils::trace::Tracer::set_target_index(uchar index)
+void trace::Tracer::set_target_index(Cluster::id_type index)
 {
-    d->target_color = index;
+    d->target_index = index;
     d->callback = &Private::get_bit_index;
 }
 
@@ -281,11 +252,8 @@ struct PixelTraceData
 };
 
 
-std::map<QRgb, std::vector<QRectF> > utils::trace::trace_pixels(QImage image)
+std::map<QRgb, std::vector<QRectF> > trace::trace_pixels(const SegmentedImage& image)
 {
-    if ( image.format() != QImage::Format_RGBA8888 )
-        image = image.convertToFormat(QImage::Format_RGBA8888);
-
     int w = image.width();
     int h = image.height();
 
@@ -297,17 +265,18 @@ std::map<QRgb, std::vector<QRectF> > utils::trace::trace_pixels(QImage image)
         QRgb last_color = 0;
         PixelRect* last_rect = nullptr;
 
-        auto line = image.constScanLine(y);
         for ( int x = 0; x < w; x++ )
         {
-            if ( rgba888_alpha(line+x*4) == 0 )
+
+            auto index = image.cluster_id(x, y);
+            if ( index == 0 )
             {
                 last_color = 0;
                 last_rect = nullptr;
                 continue;
             }
 
-            QRgb colort = rgba888(line+x*4);
+            QRgb colort = image.cluster(index)->color;
 
             auto yrect = data.get_rect(x);
 

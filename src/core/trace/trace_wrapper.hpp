@@ -43,6 +43,7 @@ public:
 
     TraceOptions& options();
     const QImage& image() const;
+    const SegmentedImage& segmented_image() const;
 
     const std::vector<QRgb>& eem_colors() const;
 

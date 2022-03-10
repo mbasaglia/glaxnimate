@@ -29,8 +29,8 @@
 #include "model/shapes/image.hpp"
 #include "model/shapes/rect.hpp"
 #include "trace/trace.hpp"
-#include "utils/quantize.hpp"
-#include "utils/trace_wrapper.hpp"
+#include "trace/quantize.hpp"
+#include "trace/trace_wrapper.hpp"
 #include "command/undo_macro_guard.hpp"
 #include "command/object_list_commands.hpp"
 #include "app/widgets/no_close_on_enter.hpp"
@@ -53,7 +53,7 @@ public:
     using TraceResult = glaxnimate::trace::TraceWrapper::TraceResult;
     using Preset = glaxnimate::trace::TraceWrapper::Preset;
 
-    utils::trace::TraceWrapper trace_wrapper;
+    trace::TraceWrapper trace_wrapper;
     model::Group* created = nullptr;
     Ui::TraceDialog ui;
     QGraphicsScene scene;
@@ -139,7 +139,7 @@ public:
     qreal outline()
     {
         if ( !ui.button_advanced->isChecked() )
-            return ui.list_presets->currentRow() != utils::trace::TraceWrapper::PixelPreset ? 1 : 0;
+            return ui.list_presets->currentRow() != trace::TraceWrapper::PixelPreset ? 1 : 0;
         if ( ui.combo_mode->currentIndex() == Mode::Closest || ui.combo_mode->currentIndex() == Mode::Exact )
             return ui.spin_outline->value();
         return 0;
@@ -238,7 +238,7 @@ public:
     {
         int n_colors = ui.spin_color_count->value();
         if ( n_colors )
-            set_colors(color_options.quantize(trace_wrapper.image(), n_colors));
+            set_colors(color_options.get_palette(trace_wrapper.segmented_image(), n_colors));
         else
             set_colors({});
     }
@@ -304,8 +304,8 @@ glaxnimate::gui::TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
 {
     d->ui.setupUi(this);
     d->init_scene();
-    connect(&d->trace_wrapper, &utils::trace::TraceWrapper::progress_max_changed, d->ui.progress_bar, &QProgressBar::setMaximum);
-    connect(&d->trace_wrapper, &utils::trace::TraceWrapper::progress_changed, d->ui.progress_bar, &QProgressBar::setValue);
+    connect(&d->trace_wrapper, &trace::TraceWrapper::progress_max_changed, d->ui.progress_bar, &QProgressBar::setMaximum);
+    connect(&d->trace_wrapper, &trace::TraceWrapper::progress_changed, d->ui.progress_bar, &QProgressBar::setValue);
 
     d->ui.preview->setScene(&d->scene);
     d->ui.spin_min_area->setValue(qMax(d->trace_wrapper.options().min_area(), d->image_size.width() / 32));
@@ -319,16 +319,16 @@ glaxnimate::gui::TraceDialog::TraceDialog(model::Image* image, QWidget* parent)
     d->ui.button_defaults->setVisible(false);
     d->init_settings();
 
-    d->ui.list_presets->item(utils::trace::TraceWrapper::ComplexPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/complex.jpg")));
-    d->ui.list_presets->item(utils::trace::TraceWrapper::FlatPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/flat.png")));
-    d->ui.list_presets->item(utils::trace::TraceWrapper::PixelPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/pixel.png")));
+    d->ui.list_presets->item(trace::TraceWrapper::ComplexPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/complex.jpg")));
+    d->ui.list_presets->item(trace::TraceWrapper::FlatPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/flat.png")));
+    d->ui.list_presets->item(trace::TraceWrapper::PixelPreset)->setIcon(QPixmap(GlaxnimateApp::instance()->data_file("images/trace/pixel.png")));
 
     if ( d->image_size.width() > 128 || d->image_size.height() > 128 )
     {
         auto item = static_cast<QStandardItemModel*>(d->ui.combo_mode->model())->item(Private::Pixel);
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 
-        auto preset_item = d->ui.list_presets->item(utils::trace::TraceWrapper::PixelPreset);
+        auto preset_item = d->ui.list_presets->item(trace::TraceWrapper::PixelPreset);
         preset_item->setFlags(preset_item->flags() & ~Qt::ItemIsEnabled);
     }
 

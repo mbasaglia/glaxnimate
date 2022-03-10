@@ -1,9 +1,9 @@
 #pragma once
 
-#include <QImage>
 #include <memory>
 
 #include "math/bezier/bezier.hpp"
+#include "segmentation.hpp"
 
 namespace glaxnimate::trace {
 
@@ -29,7 +29,7 @@ class Tracer : public QObject
 {
     Q_OBJECT
 public:
-    Tracer(const QImage& image, const TraceOptions& options);
+    Tracer(const SegmentedImage& image, const TraceOptions& options);
     ~Tracer();
 
     bool trace(math::bezier::MultiBezier& output);
@@ -38,9 +38,8 @@ public:
 
     void set_progress_range(double min, double max);
 
-    void set_target_alpha(int threshold, bool invert);
     void set_target_color(const QColor& color, qint32 tolerance);
-    void set_target_index(uchar index);
+    void set_target_index(Cluster::id_type index);
 
 signals:
     void progress(double value);
@@ -50,6 +49,6 @@ private:
     std::unique_ptr<Private> d;
 };
 
-std::map<QRgb, std::vector<QRectF>> trace_pixels(QImage image);
+std::map<QRgb, std::vector<QRectF>> trace_pixels(const SegmentedImage& image);
 
 } // namespace glaxnimate::trace

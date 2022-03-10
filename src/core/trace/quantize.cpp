@@ -1,5 +1,7 @@
 #include "quantize.hpp"
 
+#include "utils/color.hpp"
+
 #include <unordered_map>
 #include <memory>
 
@@ -638,15 +640,15 @@ void decrease(QRgb color, Histogram& map)
 
 std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_colors, int min_area)
 {
-    std::vector<int> used(image.clusters().size() + 1, 0);
+    std::unordered_set<Cluster::id_type> used;
 
     while ( true )
     {
         int largest = 0;
         Cluster::id_type largest_id = Cluster::null_id;
-        for ( const auto& cluster: image.clusters() )
+        for ( const auto& cluster: image )
         {
-            if ( cluster.size > largest && !used[cluster.id] )
+            if ( cluster.size > largest && !used.count(cluster.id) )
             {
                 largest = cluster.size;
                 largest_id = cluster.id;
@@ -657,7 +659,7 @@ std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_col
             break;
 
         image.dilate(largest_id, min_area);
-        used[largest_id] = 1;
+        used.insert(largest_id);
     }
 
     auto freq = color_frequencies(image);
@@ -701,15 +703,13 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
     using namespace glaxnimate::trace::detail::cluster_merge;
 
     std::vector<Cluster*> clusters;
-    clusters.reserve(image.clusters().size());
-    for ( auto& cluster: image.clusters() )
+    clusters.reserve(image.size());
+    for ( auto& cluster: image )
         clusters.push_back(&cluster);
 
     std::sort(clusters.begin(), clusters.end(), [](Cluster* a, Cluster* b) {
         return a->size < b->size;
     });
-
-    std::vector<Cluster*> hole_of(clusters.size() + 1, nullptr);
 
     for ( Cluster* cluster : clusters )
     {
@@ -723,8 +723,8 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
             for ( auto neigh_id : neighbours )
             {
                 auto neigh = image.cluster(neigh_id);
-                if ( neigh->size >= cluster->size && hole_of[cluster->id] != neigh )
-                    neighbour_distances.emplace_back(pixel_distance(cluster->color, neigh->color), neigh);
+                if ( neigh->size >= cluster->size /* && hole_of[cluster->id] != neigh */)
+                    neighbour_distances.emplace_back(utils::color::rgba_distance_squared(cluster->color, neigh->color), neigh);
             }
         }
         std::sort(neighbour_distances.begin(), neighbour_distances.end(), [](const auto& a, const auto& b){
@@ -766,7 +766,7 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
         for ( auto& col : freq )
             replacements[col] = col;
 
-        for ( auto& cluster : image.clusters() )
+        for ( auto& cluster : image )
             cluster.color = replacements[cluster.color];
     }
 
