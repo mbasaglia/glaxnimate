@@ -4,8 +4,6 @@
 
 #include "utils/color.hpp"
 
-#include <QDebug>
-
 static const std::array<std::pair<int, int>, 4> orthogonal = {{
             {-1, 0},
     {0, -1},        {0, 1},
@@ -17,69 +15,6 @@ static const std::array<std::pair<int, int>, 8> orthogonal_and_diagonal = {{
     {0, -1},            {0, 1},
     {1, -1}, {1, 0},    {1, 1},
 }};
-
-int debug_segmentation = 0;
-
-static void debug_cluster(const glaxnimate::trace::Cluster& cluster)
-{
-    auto db = qDebug();
-    db << cluster.id << QColor::fromRgba(cluster.color).name() << cluster.size;
-    if ( cluster.merge_target != glaxnimate::trace::Cluster::null_id )
-        db << "->" << cluster.merge_target;
-}
-
-static void debug_clusters(const glaxnimate::trace::SegmentedImage& clusters)
-{
-    if ( debug_segmentation )
-    {
-        qDebug() << "[";
-        for ( const auto& cluster : clusters )
-            debug_cluster(cluster);
-        qDebug() << "]";
-    }
-}
-
-template<class T>
-static void debug_vector(const std::vector<T>& v, int wrap = -1)
-{
-    if ( debug_segmentation )
-    {
-        int max = 0;
-        for ( auto i : v )
-            max = qMax(QString::number(i).size() + 1, max);
-
-        int col = 0;
-        QString row;
-        for ( auto i : v )
-        {
-            row += QString::number(i).rightJustified(max) + " ";
-            col += 1;
-            if ( col == wrap )
-            {
-                col = 0;
-                qDebug().noquote() << row;
-                row = "";
-            }
-        }
-
-        if ( !row.isEmpty() )
-            qDebug().noquote() << row;
-    }
-}
-
-static void debug_bitmap(const glaxnimate::trace::SegmentedImage& bitmap)
-{
-    debug_vector(bitmap.bitmap(), bitmap.width());
-
-    if ( debug_segmentation )
-        qDebug() << "-";
-}
-
-
-bool glaxnimate::trace::Cluster::is_valid() const
-{
-    return merge_target == null_id && size > 0;
-}
 
 void glaxnimate::trace::SegmentedImage::merge(Cluster* from, Cluster* to)
 {
@@ -105,11 +40,6 @@ void glaxnimate::trace::SegmentedImage::merge(Cluster* from, Cluster* to)
 
 void glaxnimate::trace::SegmentedImage::normalize()
 {
-    if ( debug_segmentation )
-        qDebug() << "Normalize";
-    debug_bitmap(*this);
-    debug_clusters(*this);
-
     // create a "map" id -> merge_target->id
     std::unordered_map<Cluster::id_type, Cluster::id_type> mergers;
     for ( auto it = clusters_.begin(); it != clusters_.end(); )
@@ -138,12 +68,6 @@ void glaxnimate::trace::SegmentedImage::normalize()
 
     for ( auto& pix : bitmap_ )
         pix = mergers[pix];
-
-    debug_bitmap(*this);
-    debug_clusters(*this);
-
-    if ( debug_segmentation )
-        qDebug() << "===========";
 }
 
 glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::add_cluster(QRgb color, int size)
@@ -344,8 +268,6 @@ struct Segmenter
                 }
             }
         }
-        debug_clusters(segmented);
-        debug_bitmap(segmented);
         segmented.normalize();
     }
 
@@ -383,17 +305,12 @@ void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_
     auto source = cluster(id);
     std::unordered_map<Cluster::id_type, int> subtract;
 
-    debug_bitmap(*this);
-
     for ( int y = 0; y < height_; y++ )
     {
         for ( int x = 0; x < width_; x++ )
         {
             if ( cluster_id(x, y) == id )
             {
-                if ( debug_segmentation )
-                    qDebug() << x << y << ":";
-
                 for ( auto d : orthogonal_and_diagonal )
                 {
                     int fy = y + d.first;
@@ -408,9 +325,6 @@ void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_
                         pix = -id;
                     }
                 }
-
-//                 debug_vector(subtract);
-                debug_bitmap(*this);
             }
         }
     }
@@ -419,20 +333,12 @@ void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_
         if ( pix < 0 )
             pix = id;
 
-    debug_clusters(*this);
-//     debug_vector(subtract);
-    debug_bitmap(*this);
-
     for ( auto& cluster : clusters_ )
     {
         auto sub = subtract[cluster.second.id];
         cluster.second.size -= sub;
         source->size += sub;
     }
-
-    debug_clusters(*this);
-    if ( debug_segmentation )
-        qDebug() << "======";
 }
 
 int glaxnimate::trace::SegmentedImage::perimeter(glaxnimate::trace::Cluster::id_type id) const

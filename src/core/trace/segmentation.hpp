@@ -24,8 +24,6 @@ struct Cluster
     using id_type = int;
     static const constexpr id_type null_id = 0;
 
-    bool is_valid() const;
-
     // Cluster ID
     id_type id = null_id;
     // Color associated with the cluster
