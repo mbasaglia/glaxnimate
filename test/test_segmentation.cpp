@@ -1,8 +1,9 @@
+#include <iostream>
+#include <filesystem>
+
 #include <QtTest/QtTest>
 
 #include "trace/segmentation.hpp"
-#include <QDebug>
-#include <iostream>
 
 extern int debug_segmentation;
 using namespace glaxnimate::trace;
@@ -717,8 +718,48 @@ private slots:
             Cluster{4, 0x04, 2, 0},
         );
     }
+
+    void test_perimeter()
+    {
+        SegmentedImage segmented(5, 5);
+        segmented.bitmap() = {
+            0, 1, 1, 1, 1,
+            0, 1, 2, 1, 1,
+            0, 2, 2, 1, 0,
+            0, 2, 1, 1, 1,
+            0, 0, 1, 1, 1,
+        };
+        segmented.add_cluster(0x01);
+        segmented.add_cluster(0x02);
+        QCOMPARE(segmented.perimeter(1), 12);
+        QCOMPARE(segmented.perimeter(2), 4);
+        QCOMPARE(segmented.perimeter(0), 7);
+    }
+
+    void benchmark_segment()
+    {
+        auto path = std::filesystem::path(__FILE__).parent_path().parent_path() / "data" / "trace" / "images" / "flat.png";
+        QImage image(QString::fromStdString(path.u8string()));
+
+        QBENCHMARK
+        {
+            segment(image);
+        }
+    }
+
+    void benchmark_unique_color()
+    {
+        auto path = std::filesystem::path(__FILE__).parent_path().parent_path() / "data" / "trace" / "images" / "flat.png";
+        QImage image(QString::fromStdString(path.u8string()));
+        auto segmented = segment(image);
+
+        QBENCHMARK
+        {
+            auto copy = segmented;
+            copy.unique_colors();
+        }
+    }
 };
 
 QTEST_GUILESS_MAIN(TestSegmentation)
 #include "test_segmentation.moc"
-

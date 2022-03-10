@@ -637,38 +637,45 @@ void decrease(QRgb color, Histogram& map)
 
 } // namespace glaxnimate::trace::detail::auto_colors
 
-
 std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_colors, int min_area)
 {
-    std::unordered_set<Cluster::id_type> used;
+    image.unique_colors();
 
-    while ( true )
+    std::vector<Cluster*> clusters;
+    clusters.reserve(image.size());
+    for ( auto& cluster: image )
+        clusters.push_back(&cluster);
+
+    std::sort(clusters.begin(), clusters.end(), [](Cluster* a, Cluster* b) {
+        return a->size > b->size;
+    });
+
+    std::size_t iter = 0;
+    for ( iter = 0; iter < clusters.size() && iter <= std::size_t(max_colors); ++iter )
     {
         int largest = 0;
-        Cluster::id_type largest_id = Cluster::null_id;
-        for ( const auto& cluster: image )
+        std::size_t largest_off = clusters.size();
+        for ( auto find_it = iter; find_it != clusters.size(); ++find_it )
         {
-            if ( cluster.size > largest && !used.count(cluster.id) )
+            if ( clusters[find_it]->size > largest )
             {
-                largest = cluster.size;
-                largest_id = cluster.id;
+                largest = clusters[find_it]->size;
+                largest_off = find_it;
             }
         }
 
-        if ( largest <= min_area || largest_id == Cluster::null_id )
+        if ( largest <= min_area || largest_off == clusters.size() )
+        {
             break;
+        }
 
-        image.dilate(largest_id, min_area);
-        used.insert(largest_id);
+        image.dilate(clusters[largest_off]->id, min_area);
+
+        if ( largest_off != iter )
+            std::swap(clusters[iter], clusters[largest_off]);
     }
 
     auto freq = color_frequencies(image);
-    freq.erase(
-        std::remove_if(freq.begin(), freq.end(),
-            [min_area](const ColorFrequency& f) { return f.second < min_area; }),
-        freq.end()
-    );
-
     return detail::color_frequencies_to_palette(freq, max_colors);
 }
 
@@ -717,8 +724,6 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
         {
             auto neighbours = image.neighbours(cluster->id);
             neighbour_distances.reserve(neighbours.size());
-            if ( neighbours.empty() )
-                continue;
 
             for ( auto neigh_id : neighbours )
             {
@@ -726,6 +731,9 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
                 if ( neigh->size >= cluster->size /* && hole_of[cluster->id] != neigh */)
                     neighbour_distances.emplace_back(utils::color::rgba_distance_squared(cluster->color, neigh->color), neigh);
             }
+
+            if ( neighbour_distances.empty() )
+                continue;
         }
         std::sort(neighbour_distances.begin(), neighbour_distances.end(), [](const auto& a, const auto& b){
             return a.first < b.first || (a.first == b.first && a.second->size > b.second->size);

@@ -303,7 +303,7 @@ void glaxnimate::trace::SegmentedImage::quantize(const std::vector<QRgb>& colors
 void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_size)
 {
     auto source = cluster(id);
-    std::unordered_map<Cluster::id_type, int> subtract;
+    std::map<Cluster::id_type, int> subtract;
 
     for ( int y = 0; y < height_; y++ )
     {
@@ -329,15 +329,15 @@ void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_
         }
     }
 
-    for ( auto & pix : bitmap_ )
+    for ( auto& pix : bitmap_ )
         if ( pix < 0 )
             pix = id;
 
-    for ( auto& cluster : clusters_ )
+    for ( const auto& sub : subtract )
     {
-        auto sub = subtract[cluster.second.id];
-        cluster.second.size -= sub;
-        source->size += sub;
+        auto sub_cluster = cluster(sub.first);
+        sub_cluster->size -= sub.second;
+        source->size += sub.second;
     }
 }
 
@@ -378,7 +378,7 @@ std::vector<Cluster::id_type> glaxnimate::trace::SegmentedImage::neighbours(Clus
                 for ( auto d : orthogonal )
                 {
                     auto neigh = cluster_id(x + d.second, y + d.first);
-                    if ( neigh != id )
+                    if ( neigh != id && neigh != Cluster::null_id )
                         neighbours.insert(neigh);
                 }
             }
