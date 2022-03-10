@@ -378,25 +378,26 @@ private slots:
         );
     }
 
-    void test_segment_alpha_threshold()
+    void test_erase_alpha_threshold()
     {
         QImage image = make_image({
             {0x10000000, 0x30000001, 0x50000002},
             {0x70000010, 0x90000011, 0xb0000012},
             {0xd0000020, 0xf0000021, 0xff000022}
         });
-        SegmentedImage segmented = segment(image, 128);
+        SegmentedImage segmented = segment(image);
+        segmented.erase_if([](const Cluster& c) { return qAlpha(c.color) < 128; });
         COMPARE_VECTOR(segmented.bitmap(),
             0, 0, 0,
-            0, 1, 2,
-            3, 4, 5
+            0, 5, 6,
+            7, 8, 9
         );
         COMPARE_VECTOR(segmented,
-            Cluster{1, 0x90000011, 1, 0},
-            Cluster{2, 0xb0000012, 1, 0},
-            Cluster{3, 0xd0000020, 1, 0},
-            Cluster{4, 0xf0000021, 1, 0},
-            Cluster{5, 0xff000022, 1, 0},
+            Cluster{5, 0x90000011, 1, 0},
+            Cluster{6, 0xb0000012, 1, 0},
+            Cluster{7, 0xd0000020, 1, 0},
+            Cluster{8, 0xf0000021, 1, 0},
+            Cluster{9, 0xff000022, 1, 0},
         );
     }
 
@@ -408,14 +409,15 @@ private slots:
             {0xff000001, 0xff000001, 0x0},
         });
         SegmentedImage segmented = segment(image);
+        segmented.erase_if([](const Cluster& c) { return c.color == 0; });
         COMPARE_VECTOR(segmented.bitmap(),
             1, 1, 1,
             0, 0, 0,
-            2, 2, 0
+            3, 3, 0
         );
         COMPARE_VECTOR(segmented,
             Cluster{1, 0xff000001, 3, 0},
-            Cluster{2, 0xff000001, 2, 0},
+            Cluster{3, 0xff000001, 2, 0},
         );
     }
 
@@ -427,14 +429,15 @@ private slots:
             {0xff000001, 0x0, 0x0},
         });
         SegmentedImage segmented = segment(image);
+        segmented.erase_if([](const Cluster& c) { return c.color == 0; });
         COMPARE_VECTOR(segmented.bitmap(),
-            1, 0, 2,
-            1, 0, 2,
+            1, 0, 3,
+            1, 0, 3,
             1, 0, 0
         );
         COMPARE_VECTOR(segmented,
             Cluster{1, 0xff000001, 3, 0},
-            Cluster{2, 0xff000001, 2, 0},
+            Cluster{3, 0xff000001, 2, 0},
         );
     }
 
@@ -446,13 +449,14 @@ private slots:
             {0xff000001, 0xff000001, 0x0},
         });
         SegmentedImage segmented = segment(image);
+        segmented.erase_if([](const Cluster& c) { return c.color == 0; });
         COMPARE_VECTOR(segmented.bitmap(),
-            0, 0, 1,
-            0, 1, 1,
-            1, 1, 0
+            0, 0, 2,
+            0, 2, 2,
+            2, 2, 0
         );
         COMPARE_VECTOR(segmented,
-            Cluster{1, 0xff000001, 5, 0},
+            Cluster{2, 0xff000001, 5, 0},
         );
     }
 
@@ -464,13 +468,14 @@ private slots:
             {0xff000001, 0x0,        0x0},
         });
         SegmentedImage segmented = segment(image);
+        segmented.erase_if([](const Cluster& c) { return c.color == 0; });
         COMPARE_VECTOR(segmented.bitmap(),
-            0, 0, 1,
-            0, 1, 0,
-            1, 0, 0
+            0, 0, 2,
+            0, 2, 0,
+            2, 0, 0
         );
         COMPARE_VECTOR(segmented,
-            Cluster{1, 0xff000001, 3, 0},
+            Cluster{2, 0xff000001, 3, 0},
         );
     }
 
@@ -482,6 +487,7 @@ private slots:
             {0x0,        0x0,        0xff000001},
         });
         SegmentedImage segmented = segment(image);
+        segmented.erase_if([](const Cluster& c) { return c.color == 0; });
         COMPARE_VECTOR(segmented.bitmap(),
             1, 0, 0,
             0, 1, 0,
