@@ -1,5 +1,4 @@
 #include <iostream>
-#include <filesystem>
 
 #include <QtTest/QtTest>
 
@@ -736,10 +735,26 @@ private slots:
         QCOMPARE(segmented.perimeter(0), 7);
     }
 
+    void benchmark_segment_data()
+    {
+        auto root = QFileInfo(__FILE__).dir();
+        root.cdUp();
+        QTest::addColumn<QString>("image_path");
+        QTest::newRow("flat") << root.filePath("data/images/trace/flat.png");
+        QTest::newRow("pixel") << root.filePath("data/images/trace/pixel.png");
+        QTest::newRow("small complex") << root.filePath("data/images/trace/complex.jpg");
+        QTest::newRow("main window") << root.filePath("docs/docs/img/screenshots/main_window/main_window.png");
+    }
+
     void benchmark_segment()
     {
-        auto path = std::filesystem::path(__FILE__).parent_path().parent_path() / "data" / "trace" / "images" / "flat.png";
-        QImage image(QString::fromStdString(path.u8string()));
+        QFETCH(QString, image_path);
+        QImage image(image_path);
+        if ( image.isNull() )
+        {
+            auto msg = ("Wrong path: " + image_path).toStdString();
+            QFAIL(msg.c_str());
+        }
 
         QBENCHMARK
         {
@@ -747,10 +762,16 @@ private slots:
         }
     }
 
-    void benchmark_unique_color()
+    void benchmark_unique_colors_data()
     {
-        auto path = std::filesystem::path(__FILE__).parent_path().parent_path() / "data" / "trace" / "images" / "flat.png";
-        QImage image(QString::fromStdString(path.u8string()));
+        benchmark_segment_data();
+    }
+
+    void benchmark_unique_colors()
+    {
+        QFETCH(QString, image_path);
+        QImage image(image_path);
+        QVERIFY(!image.isNull());
         auto segmented = segment(image);
 
         QBENCHMARK

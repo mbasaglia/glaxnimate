@@ -6,3 +6,4 @@ snap/
 docs/docs/contributing/json_reference.md
 docs/docs/contributing/scripting/python_reference.md
 *.pro.user
+callgrind.*

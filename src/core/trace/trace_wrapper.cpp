@@ -140,10 +140,8 @@ void glaxnimate::trace::TraceWrapper::trace_closest(
     const std::vector<QRgb>& colors, std::vector<TraceResult>& result)
 {
     auto converted = d->traceable();
-    converted.to_image().save("/tmp/debug-palette.png");
     converted.erase_if([](const Cluster& cluster){ return qAlpha(cluster.color) == 0; });
     converted.quantize(colors);
-    converted.to_image().save("/tmp/debug-quantized.png");
     trace::Tracer tracer(converted, d->options);
     result.reserve(result.size() + colors.size());
     emit progress_max_changed(100 * converted.size());
@@ -220,8 +218,8 @@ const std::vector<QRgb>& glaxnimate::trace::TraceWrapper::eem_colors() const
     if ( d->eem_colors.empty() )
     {
         d->segmented_eem = d->segmented;
-//         d->eem_colors = trace::edge_exclusion_modes(d->segmented_eem, 256);
-        d->eem_colors = trace::cluster_merge(d->segmented_eem, 256);
+        d->eem_colors = trace::edge_exclusion_modes(d->segmented_eem, 256);
+//         d->eem_colors = trace::cluster_merge(d->segmented_eem, 256);
     }
     return d->eem_colors;
 }
