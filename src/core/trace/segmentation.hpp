@@ -125,7 +125,7 @@ public:
 
     const iterator erase(iterator iter)
     {
-        *iter.iter = {};
+        iter.iter->reset();
         return ++iter;
     }
 
@@ -142,19 +142,33 @@ public:
     /**
      * \brief Returns a cluster from ID
      */
-    Cluster* cluster(Cluster::id_type id);
+    Cluster* cluster(Cluster::id_type id)
+    {
+        return clusters_[id].get();
+    }
 
-    const Cluster* cluster(Cluster::id_type id) const;
+    const Cluster* cluster(Cluster::id_type id) const
+    {
+        return clusters_[id].get();
+    }
 
     /**
      * \brief Returns a cluster from position within the image
      */
-    Cluster* cluster(int x, int y);
+    Cluster* cluster(int x, int y)
+    {
+        return cluster(cluster_id(x, y));
+    }
 
     /**
      * \brief Returns a cluster ID from position within the image
      */
-    Cluster::id_type cluster_id(int x, int y) const;
+    Cluster::id_type cluster_id(int x, int y) const
+    {
+        if ( x < 0 || y < 0 || x >= width_ || y >= height_ )
+            return Cluster::null_id;
+        return bitmap_[x + y * width_];
+    }
 
     /**
      * \brief Marks the two clusters for merging,
@@ -229,16 +243,14 @@ public:
     Cluster* mono(const Callback& callback)
     {
         auto final_cluster = add_cluster(0x0, 0);
-        for ( auto it = begin(); it != end(); )
+        for ( auto& it : clusters_ )
         {
-            if ( callback(*it) )
+            if ( it )
             {
-                merge(&*it, final_cluster);
-                ++it;
-            }
-            else
-            {
-                it = erase(it);
+                if ( callback(*it) )
+                    merge(it.get(), final_cluster);
+                else
+                    it.release();
             }
         }
 
@@ -251,16 +263,12 @@ public:
     {
         std::unordered_set<Cluster::id_type> deleted;
 
-        for ( auto it = begin(); it != end(); )
+        for ( auto& it : clusters_ )
         {
-            if ( callback(*it) )
+            if ( it && callback(*it) )
             {
                 deleted.insert(it->id);
-                it = erase(it);
-            }
-            else
-            {
-                ++it;
+                it.reset();
             }
         }
 
@@ -280,12 +288,25 @@ public:
     iterator end() { return iterator{clusters_.end(), clusters_.end()}; }
 
     /**
+     * \brief Initializes clusters based on pixel data
+     * \pre pixels points to at least width()*height() pixels, arranged by rows of width()
+     */
+    void segment(const QRgb* pixels, bool diagonal_ajacency);
+
+    /**
      * \brief Number of clusters
      */
     int size() const { return clusters_.size(); }
 //     Cluster::id_type hole_parent(Cluster::id_type cluster) const;
 
+    class Segmenter;
+
 private:
+    Cluster* cluster_by_offset(std::size_t offset)
+    {
+        return clusters_[bitmap_[offset]].get();
+    }
+
     int width_;
     int height_;
     std::vector<Cluster::id_type> bitmap_;

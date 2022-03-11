@@ -41,29 +41,31 @@ void glaxnimate::trace::SegmentedImage::merge(Cluster* from, Cluster* to)
 void glaxnimate::trace::SegmentedImage::normalize()
 {
     // create a "map" id -> merge_target->id
-    std::unordered_map<Cluster::id_type, Cluster::id_type> mergers;
-    for ( auto it = begin(); it != end(); )
+    std::vector<Cluster::id_type> mergers;
+    mergers.resize(clusters_.size());
+
+    for ( auto& it : clusters_ )
     {
+        if ( !it )
+            continue;
+
         if ( it->merge_target != Cluster::null_id )
         {
             mergers[it->id] = it->merge_target;
             cluster(it->merge_target)->size += it->size;
-            it = erase(it);
+            it.reset();
         }
         else
         {
             mergers[it->id] = it->id;
             it->merge_sources.clear();
-            ++it;
         }
     }
 
-    for ( auto it = begin(); it != end(); )
+    for ( auto& ptr : clusters_ )
     {
-        if ( it->size == 0 )
-            it = erase(it);
-        else
-            ++it;
+        if ( ptr && ptr->size == 0 )
+            ptr.reset();
     }
 
     for ( auto& pix : bitmap_ )
@@ -75,35 +77,6 @@ glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::add_cluster(QRgb 
     auto id = next_id++;
     clusters_.push_back(std::make_unique<Cluster>(Cluster{id, color, size}));
     return clusters_.back().get();
-}
-
-
-glaxnimate::trace::Cluster::id_type glaxnimate::trace::SegmentedImage::cluster_id(int x, int y) const
-{
-    if ( x < 0 || y < 0 || x >= width_ || y >= height_ )
-        return Cluster::null_id;
-    return bitmap_[x + y * width_];
-}
-
-
-glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::cluster(int x, int y)
-{
-    return cluster(cluster_id(x, y));
-}
-
-
-glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::cluster(Cluster::id_type id)
-{
-    if ( id == Cluster::null_id )
-        return nullptr;
-    return clusters_[id].get();
-}
-
-const glaxnimate::trace::Cluster * glaxnimate::trace::SegmentedImage::cluster(Cluster::id_type id) const
-{
-    if ( id == Cluster::null_id )
-        return nullptr;
-    return clusters_[id].get();
 }
 
 
@@ -167,7 +140,7 @@ void glaxnimate::trace::SegmentedImage::direct_merge(Cluster::id_type from, Clus
             pix = to;
 
     cluster(to)->size += cluster(from)->size;
-    clusters_[from] = {};
+    clusters_[from].reset();
 }
 
 qint32 glaxnimate::trace::closest_match(QRgb pixel, const std::vector<QRgb> &clut)
@@ -186,107 +159,85 @@ qint32 glaxnimate::trace::closest_match(QRgb pixel, const std::vector<QRgb> &clu
     return idx;
 }
 
-namespace {
 
-using namespace glaxnimate::trace;
-
-
-struct Segmenter
+// Hoshen–Kopelman algorithm but we also merge diagonals
+void glaxnimate::trace::SegmentedImage::segment(const QRgb* pixels, bool diagonal_ajacency)
 {
-    using Color = QRgb;
-
-    Segmenter(SegmentedImage& segmented, const QImage& image, bool diagonal_ajacency)
-    : segmented(segmented), diagonal_ajacency(diagonal_ajacency), image(image)
+    clusters_.reserve(bitmap_.size() / 4);
+    for ( int y = 0; y < height_; y++ )
     {
-        if ( this->image.format() != QImage::Format_ARGB32 )
-            this->image.convertTo(QImage::Format_ARGB32);
-        pixels = reinterpret_cast<const QRgb*>(this->image.constBits());
-    }
-
-    Color pixel(int x, int y) const
-    {
-        if ( x < 0 || y < 0 )
-            return 0;
-        return pixels[y * segmented.width() + x];
-    }
-
-    // Hoshen–Kopelman algorithm but we also merge diagonals
-    void process()
-    {
-        for ( int y = 0; y < segmented.height(); y++ )
+        Cluster* old_clust = nullptr;
+        for ( int x = 0; x < width_; x++ )
         {
-            for ( int x = 0; x < segmented.width(); x++ )
+            auto index = x + width_ * y;
+            QRgb color = pixels[index];
+
+            auto cluster_left = old_clust;
+            auto cluster_up = y > 0 ? cluster_by_offset(index - width_) : nullptr;
+
+            // Merge left and up clusters_ (they touch through a diagonal that isn't checked)
+            if ( cluster_left && cluster_up && cluster_left != cluster_up
+                && cluster_left->color == cluster_up->color
+                && (diagonal_ajacency || color == cluster_left->color)
+            )
             {
-                auto index = x + segmented.width() * y;
-                Color color = pixel(x, y);
-                auto left = pixel(x - 1, y);
-                auto up = pixel(x, y - 1);
+                merge(cluster_left, cluster_up);
+                cluster_left = nullptr;
+            }
 
-                auto cluster_left = segmented.cluster(x - 1, y);
-                auto cluster_up = segmented.cluster(x, y - 1);
+            // Set to nullptr to avoid issues when a pixel adjacent to an edge is 0
+            if ( cluster_left && cluster_left->color != color )
+                cluster_left = nullptr;
+            if ( cluster_up && cluster_up->color != color )
+                cluster_up = nullptr;
 
-                // Merge left and up clusters_ (they touch through a diagonal that isn't checked)
-                if ( left == up && cluster_left != cluster_up && cluster_left && cluster_up
-                    && (diagonal_ajacency || color == left)
-                )
+            // No orthogonal neighbour
+            if ( !cluster_left && !cluster_up )
+            {
+                // Check if the current pixel should be added to the top-left cluster
+                auto cluster_diagonal = y > 0 && x > 0 ? cluster_by_offset(index - width_ - 1) : nullptr;
+                if ( diagonal_ajacency && cluster_diagonal && cluster_diagonal->color == color )
                 {
-                    segmented.merge(cluster_left, cluster_up);
-                    cluster_left = nullptr;
+                    bitmap_[index] = cluster_diagonal->id;
+                    cluster_diagonal->size += 1;
+                    old_clust = cluster_diagonal;
                 }
-
-                // Set to nullptr to avoid issues when a pixel adjacent to an edge is 0
-                if ( left != color )
-                    cluster_left = nullptr;
-                if ( up != color )
-                    cluster_up = nullptr;
-
-                // No orthogonal neighbour
-                if ( !cluster_left && !cluster_up )
+                // Create a new cluster
+                else
                 {
-                    // Check if the current pixel should be added to the top-left cluster
-                    auto diagonal = pixel(x - 1, y - 1);
-                    auto cluster_diagonal = segmented.cluster(x - 1, y - 1);
-                    if ( diagonal_ajacency && diagonal == color && cluster_diagonal )
-                    {
-                        segmented.bitmap()[index] = cluster_diagonal->id;
-                        cluster_diagonal->size += 1;
-                    }
-                    // Create a new cluster
-                    else
-                    {
-                        segmented.bitmap()[index] = segmented.add_cluster(color)->id;
-                    }
-                }
-                // Neighbour to the left
-                else if ( cluster_left )
-                {
-                    segmented.bitmap()[index] = cluster_left->id;
-                    cluster_left->size += 1;
-                }
-                // Neighbour above
-                else if ( cluster_up )
-                {
-                    segmented.bitmap()[index] = cluster_up->id;
-                    cluster_up->size += 1;
+                    old_clust = add_cluster(color);
+                    bitmap_[index] = old_clust->id;
                 }
             }
+            // Neighbour to the left
+            else if ( cluster_left )
+            {
+                bitmap_[index] = cluster_left->id;
+                cluster_left->size += 1;
+            }
+            // Neighbour above
+            else if ( cluster_up )
+            {
+                bitmap_[index] = cluster_up->id;
+                cluster_up->size += 1;
+                old_clust = cluster_up;
+            }
         }
-        segmented.normalize();
     }
+    normalize();
+    clusters_.shrink_to_fit();
+}
 
-    SegmentedImage& segmented;
-    const QRgb* pixels;
-    bool diagonal_ajacency;
-    QImage image;
-};
-
-} // namespace
 
 glaxnimate::trace::SegmentedImage glaxnimate::trace::segment(const QImage& image, bool diagonal_ajacency)
 {
+    QImage conv_image = image;
+    if ( conv_image.format() != QImage::Format_ARGB32 )
+        conv_image.convertTo(QImage::Format_ARGB32);
+    auto pixels = reinterpret_cast<const QRgb*>(conv_image.constBits());
+
     SegmentedImage segmented(image.width(), image.height());
-    Segmenter segmenter(segmented, image, diagonal_ajacency);
-    segmenter.process();
+    segmented.segment(pixels, diagonal_ajacency);
     return segmented;
 }
 
@@ -369,7 +320,7 @@ int glaxnimate::trace::SegmentedImage::perimeter(glaxnimate::trace::Cluster::id_
     return perimeter;
 }
 
-std::vector<Cluster::id_type> glaxnimate::trace::SegmentedImage::neighbours(Cluster::id_type id) const
+std::vector<glaxnimate::trace::Cluster::id_type> glaxnimate::trace::SegmentedImage::neighbours(Cluster::id_type id) const
 {
     std::unordered_set<Cluster::id_type> neighbours;
     for ( int y = 0; y < height_; y++ )
