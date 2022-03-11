@@ -111,7 +111,7 @@ void glaxnimate::trace::TraceWrapper::trace_mono(
         return qAlpha(cluster.color) > alpha_threshold;
     });
     trace::Tracer tracer(d->segmented, d->options);
-    tracer.set_target_index(cluster->id);
+    tracer.set_target_cluster(cluster->id);
     connect(&tracer, &trace::Tracer::progress, this, &TraceWrapper::progress_changed);
     tracer.set_progress_range(0, 100);
     tracer.trace(result.back().bezier);
@@ -128,8 +128,18 @@ void glaxnimate::trace::TraceWrapper::trace_exact(
     {
         result.emplace_back();
         result.back().color = color;
+        auto seg = d->segmented;
+        Cluster* mono_cluster;
+        if ( tolerance == 0 )
+            mono_cluster = seg.mono([color=color.rgba()](const Cluster& c){
+                return c.color == color;
+            });
+        else
+            mono_cluster = seg.mono([tolerance, color=color.rgba()](const Cluster& c){
+                return rgba_distance_squared(c.color, color) <= tolerance;
+            });
         trace::Tracer tracer(d->segmented, d->options);
-        tracer.set_target_color(color, tolerance * tolerance);
+        tracer.set_target_cluster(mono_cluster->id);
         tracer.set_progress_range(100 * progress_index, 100 * (progress_index+1));
         tracer.trace(result.back().bezier);
         ++progress_index;
@@ -149,7 +159,7 @@ void glaxnimate::trace::TraceWrapper::trace_closest(
     int i = 0;
     for ( const auto& cluster: converted )
     {
-        tracer.set_target_index(cluster.id);
+        tracer.set_target_cluster(cluster.id);
         tracer.set_progress_range(100 * i, 100 * (i+1));
         result.emplace_back();
         result.back().color = cluster.color;

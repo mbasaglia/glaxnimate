@@ -117,7 +117,7 @@ private slots:
             auto seg = segmented;
             for ( const auto& cluster : segmented )
             {
-                tracer.set_target_index(cluster.id);
+                tracer.set_target_cluster(cluster.id);
                 glaxnimate::math::bezier::MultiBezier bez;
                 tracer.trace(bez);
             }

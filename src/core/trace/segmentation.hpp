@@ -15,6 +15,29 @@ using ColorFrequency = std::pair<QRgb, int>;
 using Histogram = std::unordered_map<ColorFrequency::first_type, ColorFrequency::second_type>;
 
 /**
+ * \brief Distance between two colors
+ */
+inline qint32 rgba_distance_squared(QRgb p1, QRgb p2)
+{
+    int r1 = qRed(p1);
+    int g1 = qGreen(p1);
+    int b1 = qBlue(p1);
+    int a1 = qAlpha(p1);
+
+    int r2 = qRed(p2);
+    int g2 = qGreen(p2);
+    int b2 = qBlue(p2);
+    int a2 = qAlpha(p2);
+
+    qint32 dr = r1 - r2;
+    qint32 dg = g1 - g2;
+    qint32 db = b1 - b2;
+    qint32 da = a1 - a2;
+
+    return dr * dr + dg * dg + db * db + da * da;
+}
+
+/**
  * \brief Returns the index in \p clut that is the closest to \p pixel
  */
 qint32 closest_match(QRgb pixel, const std::vector<QRgb> &clut);

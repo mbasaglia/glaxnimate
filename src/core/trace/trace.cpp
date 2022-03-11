@@ -2,8 +2,6 @@
 
 #include "potracelib.h"
 
-#include "utils/color.hpp"
-
 using namespace glaxnimate;
 
 
@@ -101,26 +99,7 @@ public:
         reinterpret_cast<Tracer*>(privdata)->progress(progress);
     }
 
-    int get_bit_color(Cluster::id_type pixel) const
-    {
-        return image.cluster(pixel)->color == target_color;
-    }
-
-    int get_bit_color_tolerance(Cluster::id_type pixel) const
-    {
-        return utils::color::rgba_distance_squared(target_color, image.cluster(pixel)->color) <= target_tolerance;
-    }
-
-    int get_bit_index(Cluster::id_type pixel) const
-    {
-        return pixel == target_index;
-    }
-
-    using callback_type = int (Private::*)(Cluster::id_type) const;
-    callback_type callback = &Private::get_bit_index;
-    Cluster::id_type target_index;
-    QRgb target_color;
-    qint32 target_tolerance = 0;
+    Cluster::id_type target_id;
     SegmentedImage image;
     potrace_param_s params;
 };
@@ -142,25 +121,31 @@ trace::Tracer::~Tracer() = default;
 
 bool trace::Tracer::trace(math::bezier::MultiBezier& mbez)
 {
-    int line_len = d->image.width() / sizeof(potrace_word);
-    if ( d->image.width() % sizeof(potrace_word) )
+    int width = d->image.width();
+    int height = d->image.height();
+
+    int line_len = width / sizeof(potrace_word);
+    if ( width % sizeof(potrace_word) )
         line_len += 1;
 
     static constexpr int N = sizeof(potrace_word) * CHAR_BIT;
-    std::vector<potrace_word> data(line_len * d->image.height(), 0);
-    for ( int y = 0; y < d->image.height(); y++ )
+    std::vector<potrace_word> data(line_len * height, 0);
+    potrace_word* c_data = data.data();
+    auto& raster = d->image.bitmap();
+    auto target = d->target_id;
+    for ( int y = 0; y < height; y++ )
     {
-        for ( int x = 0; x < d->image.width(); x++ )
+        for ( int x = 0; x < width; x++ )
         {
-            (data.data() + y*line_len)[x/N] |= (1ul << (N-1-x%N)) * (d.get()->*d->callback)(d->image.cluster_id(x, y));
+            (c_data + y*line_len)[x/N] |= (1ul << (N-1-x%N)) * int(raster[x + y * width] == target);
         }
     }
 
     potrace_bitmap_s bitmap{
-        d->image.width(),
-        d->image.height(),
+        width,
+        height,
         line_len,
-        data.data()
+        c_data
     };
 
     potrace_state_t *result = potrace_trace(&d->params, &bitmap);
@@ -190,19 +175,10 @@ void trace::Tracer::set_progress_range(double min, double max)
     d->params.progress.max = max;
 }
 
-void trace::Tracer::set_target_color(const QColor& color, qint32 tolerance)
+void trace::Tracer::set_target_cluster(Cluster::id_type cluster)
 {
-    d->target_color = color.rgba();
-    d->target_tolerance = tolerance;
-    d->callback = tolerance > 0 ? &Private::get_bit_color_tolerance : &Private::get_bit_color;
+    d->target_id = cluster;
 }
-
-void trace::Tracer::set_target_index(Cluster::id_type index)
-{
-    d->target_index = index;
-    d->callback = &Private::get_bit_index;
-}
-
 
 struct PixelRect
 {

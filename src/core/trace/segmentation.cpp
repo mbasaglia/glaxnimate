@@ -2,8 +2,6 @@
 
 #include <unordered_set>
 
-#include "utils/color.hpp"
-
 static const std::array<std::pair<int, int>, 4> orthogonal = {{
             {-1, 0},
     {0, -1},        {0, 1},
@@ -149,7 +147,7 @@ qint32 glaxnimate::trace::closest_match(QRgb pixel, const std::vector<QRgb> &clu
     qint32 current_distance = 255 * 255 * 3;
     for ( std::size_t i = 0; i < clut.size(); ++i)
     {
-        int dist = utils::color::rgba_distance_squared(pixel, clut[i]);
+        int dist = rgba_distance_squared(pixel, clut[i]);
         if ( dist < current_distance )
         {
             current_distance = dist;

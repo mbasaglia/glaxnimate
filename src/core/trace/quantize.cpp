@@ -1,7 +1,5 @@
 #include "quantize.hpp"
 
-#include "utils/color.hpp"
-
 #include <unordered_map>
 #include <memory>
 
@@ -729,7 +727,7 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
             {
                 auto neigh = image.cluster(neigh_id);
                 if ( neigh->size >= cluster->size /* && hole_of[cluster->id] != neigh */)
-                    neighbour_distances.emplace_back(utils::color::rgba_distance_squared(cluster->color, neigh->color), neigh);
+                    neighbour_distances.emplace_back(rgba_distance_squared(cluster->color, neigh->color), neigh);
             }
 
             if ( neighbour_distances.empty() )

@@ -38,8 +38,7 @@ public:
 
     void set_progress_range(double min, double max);
 
-    void set_target_color(const QColor& color, qint32 tolerance);
-    void set_target_index(Cluster::id_type index);
+    void set_target_cluster(Cluster::id_type cluster);
 
 signals:
     void progress(double value);
