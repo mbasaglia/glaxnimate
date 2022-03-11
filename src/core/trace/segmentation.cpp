@@ -217,6 +217,7 @@ struct Segmenter
         {
             for ( int x = 0; x < segmented.width(); x++ )
             {
+                auto index = x + segmented.width() * y;
                 Color color = pixel(x, y);
                 auto left = pixel(x - 1, y);
                 auto up = pixel(x, y - 1);
@@ -230,6 +231,7 @@ struct Segmenter
                 )
                 {
                     segmented.merge(cluster_left, cluster_up);
+                    cluster_left = nullptr;
                 }
 
                 // Set to nullptr to avoid issues when a pixel adjacent to an edge is 0
@@ -246,25 +248,25 @@ struct Segmenter
                     auto cluster_diagonal = segmented.cluster(x - 1, y - 1);
                     if ( diagonal_ajacency && diagonal == color && cluster_diagonal )
                     {
-                        segmented.bitmap()[x + segmented.width() * y] = cluster_diagonal->id;
+                        segmented.bitmap()[index] = cluster_diagonal->id;
                         cluster_diagonal->size += 1;
                     }
                     // Create a new cluster
                     else
                     {
-                        segmented.bitmap()[x + segmented.width() * y] = segmented.add_cluster(color)->id;
+                        segmented.bitmap()[index] = segmented.add_cluster(color)->id;
                     }
                 }
                 // Neighbour to the left
                 else if ( cluster_left )
                 {
-                    segmented.bitmap()[x + segmented.width() * y] = cluster_left->id;
+                    segmented.bitmap()[index] = cluster_left->id;
                     cluster_left->size += 1;
                 }
                 // Neighbour above
                 else if ( cluster_up )
                 {
-                    segmented.bitmap()[x + segmented.width() * y] = cluster_up->id;
+                    segmented.bitmap()[index] = cluster_up->id;
                     cluster_up->size += 1;
                 }
             }
