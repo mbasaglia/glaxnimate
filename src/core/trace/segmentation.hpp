@@ -314,7 +314,7 @@ public:
      * \brief Initializes clusters based on pixel data
      * \pre pixels points to at least width()*height() pixels, arranged by rows of width()
      */
-    void segment(const QRgb* pixels, bool diagonal_ajacency);
+    void segment(const quint32* pixels, bool diagonal_ajacency);
 
     /**
      * \brief Number of clusters

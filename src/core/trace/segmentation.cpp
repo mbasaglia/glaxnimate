@@ -89,16 +89,7 @@ void glaxnimate::trace::SegmentedImage::unique_colors(bool flatten_alpha)
         auto& parent = colors[cluster.color];
         if ( parent )
         {
-            // keep the one with lowest ID
-            if ( parent->id < cluster.id )
-            {
-                merge(&cluster, parent);
-            }
-            else
-            {
-                merge(parent, &cluster);
-                parent = &cluster;
-            }
+            merge(&cluster, parent);
         }
         else
         {
@@ -120,7 +111,7 @@ glaxnimate::trace::Histogram glaxnimate::trace::SegmentedImage::histogram() cons
 QImage glaxnimate::trace::SegmentedImage::to_image() const
 {
     QImage image(width_, height_, QImage::Format_ARGB32);
-    auto pixels = reinterpret_cast<QRgb*>(image.bits());
+    auto pixels = reinterpret_cast<quint32*>(image.bits());
     for ( std::size_t i = 0; i != bitmap_.size(); i++ )
     {
         if ( bitmap_[i] == Cluster::null_id )
@@ -159,7 +150,7 @@ qint32 glaxnimate::trace::closest_match(QRgb pixel, const std::vector<QRgb> &clu
 
 
 // Hoshen–Kopelman algorithm but we also merge diagonals
-void glaxnimate::trace::SegmentedImage::segment(const QRgb* pixels, bool diagonal_ajacency)
+void glaxnimate::trace::SegmentedImage::segment(const quint32* pixels, bool diagonal_ajacency)
 {
     clusters_.reserve(bitmap_.size() / 4);
     for ( int y = 0; y < height_; y++ )
@@ -232,7 +223,7 @@ glaxnimate::trace::SegmentedImage glaxnimate::trace::segment(const QImage& image
     QImage conv_image = image;
     if ( conv_image.format() != QImage::Format_ARGB32 )
         conv_image.convertTo(QImage::Format_ARGB32);
-    auto pixels = reinterpret_cast<const QRgb*>(conv_image.constBits());
+    auto pixels = reinterpret_cast<const quint32*>(conv_image.constBits());
 
     SegmentedImage segmented(image.width(), image.height());
     segmented.segment(pixels, diagonal_ajacency);

@@ -107,7 +107,7 @@ class TestSegmentation: public QObject
 private:
     QImage make_image(const std::vector<std::vector<QRgb>>& pixels)
     {
-        QImage image(pixels[0].size(), pixels.size(), QImage::Format_RGBA8888);
+        QImage image(pixels[0].size(), pixels.size(), QImage::Format_ARGB32);
         for ( int y = 0; y < image.height(); y++ )
             for ( int x = 0; x < image.width(); x++ )
                 image.setPixel(x, y, pixels[y][x]);
@@ -743,6 +743,24 @@ private slots:
         QCOMPARE(segmented.perimeter(3), 12);
     }
 
+    void test_to_image()
+    {
+        QImage image = make_image({
+            {0xff000001, 0xff000001, 0xff000003},
+            {0xff000002, 0xff000003, 0xff000004},
+            {0xff000004, 0x0, 0xff000001},
+        });
+        SegmentedImage segmented = segment(image);
+        segmented.erase_if([](const Cluster& c) { return c.color == 0; });
+
+        QImage output = segmented.to_image();
+        QCOMPARE(output.size(), image.size());
+        QCOMPARE(output.format(), QImage::Format_ARGB32);
+        QCOMPARE(image.format(), QImage::Format_ARGB32);
+        for ( int i = 0; i < output.width() * output.height() * 4; i++ )
+            QCOMPARE(output.constBits()[i], image.constBits()[i]);
+    }
+
     void benchmark_segment_data()
     {
         auto root = QFileInfo(__FILE__).dir();
@@ -779,7 +797,11 @@ private slots:
     {
         QFETCH(QString, image_path);
         QImage image(image_path);
-        QVERIFY(!image.isNull());
+        if ( image.isNull() )
+        {
+            auto msg = ("Wrong path: " + image_path).toStdString();
+            QFAIL(msg.c_str());
+        }
         auto segmented = segment(image);
 
         QBENCHMARK
@@ -787,6 +809,80 @@ private slots:
             auto copy = segmented;
             copy.unique_colors();
         }
+    }
+
+    void test_neighbours_none()
+    {
+        SegmentedImage segmented(5, 5);
+        segmented.bitmap() = {
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1,
+        };
+        segmented.add_cluster(0x1, 25);
+        QCOMPARE(segmented.neighbours(1).size(), 0);
+    }
+
+    void test_neighbours_none_void()
+    {
+        SegmentedImage segmented(5, 5);
+        segmented.bitmap() = {
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 1, 0, 1,
+            0, 0, 1, 0, 1,
+            0, 1, 1, 1, 1,
+        };
+        segmented.add_cluster(0x1, 20);
+        QCOMPARE(segmented.neighbours(1).size(), 0);
+    }
+
+    void test_neighbours()
+    {
+        SegmentedImage segmented(5, 5);
+        segmented.bitmap() = {
+            1, 3, 1, 1, 1,
+            3, 3, 1, 1, 1,
+            1, 3, 3, 2, 1,
+            2, 2, 1, 2, 1,
+            2, 1, 1, 1, 1,
+        };
+        segmented.add_cluster(0x1, 15);
+        segmented.add_cluster(0x2, 5);
+        segmented.add_cluster(0x2, 5);
+        COMPARE_VECTOR(segmented.neighbours(1), 2, 3);
+    }
+
+
+    void test_direct_merge()
+    {
+        QImage image = make_image({
+            {0xff000001, 0xff000001, 0xff000003},
+            {0xff000002, 0xff000003, 0xff000004},
+            {0xff000004, 0xff000005, 0xff000001},
+        });
+        SegmentedImage segmented = segment(image);
+        COMPARE_VECTOR(segmented.bitmap(),
+            1, 1, 2,
+            3, 2, 5,
+            6, 7, 8
+        );
+        segmented.direct_merge(1, 2);
+        COMPARE_VECTOR(segmented.bitmap(),
+            2, 2, 2,
+            3, 2, 5,
+            6, 7, 8
+        );
+        COMPARE_VECTOR(segmented,
+            Cluster{2, 0xff000003, 4, 0},
+            Cluster{3, 0xff000002, 1, 0},
+            Cluster{5, 0xff000004, 1, 0},
+            Cluster{6, 0xff000004, 1, 0},
+            Cluster{7, 0xff000005, 1, 0},
+            Cluster{8, 0xff000001, 1, 0},
+        );
     }
 };
 
