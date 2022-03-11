@@ -730,9 +730,17 @@ private slots:
         };
         segmented.add_cluster(0x01);
         segmented.add_cluster(0x02);
-        QCOMPARE(segmented.perimeter(1), 12);
+        QCOMPARE(segmented.perimeter(1), 13);
         QCOMPARE(segmented.perimeter(2), 4);
-        QCOMPARE(segmented.perimeter(0), 7);
+        segmented.bitmap() = {
+            0, 1, 1, 1, 1,
+            0, 3, 3, 3, 3,
+            0, 3, 3, 3, 3,
+            2, 3, 3, 3, 3,
+            2, 3, 3, 3, 3,
+        };
+        segmented.add_cluster(0x03);
+        QCOMPARE(segmented.perimeter(3), 12);
     }
 
     void benchmark_segment_data()
