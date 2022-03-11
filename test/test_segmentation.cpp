@@ -1,10 +1,12 @@
 #include <iostream>
 
 #include <QtTest/QtTest>
+#include <QPainter>
 
 #include "trace/segmentation.hpp"
+#include "trace/quantize.hpp"
 
-extern int debug_segmentation;
+
 using namespace glaxnimate::trace;
 
 bool operator==(const Cluster& a, const Cluster& b)
@@ -125,6 +127,24 @@ private slots:
             Cluster{1, 0xffff0000, 1, 0},
             Cluster{2, 0xff00ff00, 3, 0}
         );
+    }
+
+    void test_size()
+    {
+        SegmentedImage img(1, 1);
+        QCOMPARE(img.size(), 0);
+        img.add_cluster(0xffaa0000);
+        QCOMPARE(img.size(), 1);
+        img.add_cluster(0xff00bb00);
+        QCOMPARE(img.size(), 2);
+        img.add_cluster(0xff0000cc);
+        QCOMPARE(img.size(), 3);
+        img.erase(img.begin());
+        QCOMPARE(img.size(), 2);
+        img.erase(img.begin());
+        QCOMPARE(img.size(), 1);
+        img.erase(img.begin());
+        QCOMPARE(img.size(), 0);
     }
 
     void test_cluster_from_id()
@@ -883,6 +903,76 @@ private slots:
             Cluster{7, 0xff000005, 1, 0},
             Cluster{8, 0xff000001, 1, 0},
         );
+    }
+
+    void test_cluster_merge_simple()
+    {
+        QImage image = make_image({
+            {0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff},
+            {0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff, 0xff0000ff},
+            {0xff0000ff, 0xff0000ff, 0xff00ff00, 0xff00ff00, 0xff00ff00},
+            {0xff0000ff, 0xff00ffff, 0xff00ff00, 0xff00ff00, 0xff00ff00},
+            {0xff0000ff, 0xff00ffff, 0xff00ff00, 0xff00ff00, 0xff00ff00},
+        });
+        SegmentedImage segmented = segment(image);
+        COMPARE_VECTOR(segmented,
+            Cluster{1, 0xff0000ff, 14, 0},
+            Cluster{2, 0xff00ff00, 9, 0},
+            Cluster{3, 0xff00ffff, 2, 0},
+        );
+        COMPARE_VECTOR(segmented.bitmap(),
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 2, 2, 2,
+            1, 3, 2, 2, 2,
+            1, 3, 2, 2, 2,
+        );
+        auto colors = cluster_merge(segmented, 10);
+        COMPARE_VECTOR(colors, 0xff0000ff, 0xff00ff00);
+        COMPARE_VECTOR(segmented,
+            Cluster{1, 0xff0000ff, 16, 0},
+            Cluster{2, 0xff00ff00, 9, 0},
+        );
+        COMPARE_VECTOR(segmented.bitmap(),
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1,
+            1, 1, 2, 2, 2,
+            1, 1, 2, 2, 2,
+            1, 1, 2, 2, 2,
+        );
+    }
+
+    void test_cluster_merge_antialias()
+    {
+        QRgb color_back = 0xff3250b0;
+        QRgb color_ellipse = 0xffc4d9f5;
+        QImage image(256, 256, QImage::Format_ARGB32);
+        image.fill(color_back);
+        QPainter painter(&image);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setBrush(QColor::fromRgba(color_ellipse));
+        painter.setPen(Qt::NoPen);
+        painter.drawEllipse(QPointF(255, 255), 100, 100);
+        painter.end();
+
+        auto segmented = segment(image);
+        QVERIFY(segmented.size() > 2);
+        QCOMPARE(segmented.cluster(0, 0)->color, color_back);
+        QCOMPARE(segmented.cluster(255, 255)->color, color_ellipse);
+        int id_bg = 1;
+        int id_circle = segmented.cluster_id(255, 255);
+
+        auto colors = cluster_merge(segmented, 10);
+
+
+        COMPARE_VECTOR(colors, color_back, color_ellipse);
+        COMPARE_VECTOR(segmented,
+            Cluster{id_bg, color_back, segmented.cluster(id_bg)->size},
+            Cluster{id_circle, color_ellipse, segmented.cluster(id_circle)->size},
+        );
+        QCOMPARE(segmented.size(), 2);
+        QCOMPARE(segmented.cluster(id_bg)->color, color_back);
+        QCOMPARE(segmented.cluster(id_circle)->color, color_ellipse);
     }
 };
 

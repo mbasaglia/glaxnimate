@@ -703,6 +703,7 @@ bool large_enough(Cluster* cluster, const SegmentedImage& image, int min_area)
 
 } // namespace glaxnimate::trace::detail::cluster_merge
 
+
 std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedImage& image, int max_colors, int min_area)
 {
     using namespace glaxnimate::trace::detail::cluster_merge;
@@ -716,8 +717,10 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
         return a->size < b->size;
     });
 
+    // For each cluster, starting with the smallest size
     for ( Cluster* cluster : clusters )
     {
+        // Get a vector of (distance, cluster) neighbouring clusters
         std::vector<std::pair<qint32, Cluster*>> neighbour_distances;
         {
             auto neighbours = image.neighbours(cluster->id);
@@ -726,29 +729,33 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
             for ( auto neigh_id : neighbours )
             {
                 auto neigh = image.cluster(neigh_id);
-                if ( neigh->size >= cluster->size /* && hole_of[cluster->id] != neigh */)
+                if ( neigh->size >= cluster->size && neigh->merge_target != cluster->id /* && hole_of[cluster->id] != neigh */)
                     neighbour_distances.emplace_back(rgba_distance_squared(cluster->color, neigh->color), neigh);
             }
 
             if ( neighbour_distances.empty() )
                 continue;
         }
+        // Find the most similar neighbour
         std::sort(neighbour_distances.begin(), neighbour_distances.end(), [](const auto& a, const auto& b){
             return a.first < b.first || (a.first == b.first && a.second->size > b.second->size);
         });
 
         Cluster* similar_neighbour = neighbour_distances[0].second;
 
-        if ( large_enough(cluster, image, min_area) )
-        {
-//             // is hole
-//             if ( neighbour_distances.size() <= 1 )
-//                 image.add_hole(cluster->id, similar_neighbour->id);
-        }
-        else
+        // If the current cluster is not large enough, merge it to the similar neighbour
+        if ( cluster->color != 0xff3250b0 && cluster->color != 0xffc4d9f5 && large_enough(cluster, image, min_area) )
+            cluster->color = cluster->color;
+        if ( !large_enough(cluster, image, min_area) )
         {
             image.merge(cluster, similar_neighbour);
         }
+//         else
+//         {
+//             // is hole
+//             if ( neighbour_distances.size() <= 1 )
+//                 image.add_hole(cluster->id, similar_neighbour->id);
+//         }
     }
 /*
     std::vector<int> hole_depth(clusters.size() + 1, -1);
@@ -759,8 +766,10 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
         return hole_depth[a.id] < hole_depth[b.id];
     });*/
 
+    // apply merges
     image.normalize();
 
+    // Limit colors to max_colors
     auto freq = k_modes(image, std::numeric_limits<int>::max());
     if ( int(freq.size()) > max_colors )
     {

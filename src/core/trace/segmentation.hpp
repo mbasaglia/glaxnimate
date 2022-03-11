@@ -148,7 +148,7 @@ public:
 
     const iterator erase(iterator iter)
     {
-        iter.iter->reset();
+        do_erase(*iter.iter);
         return ++iter;
     }
 
@@ -291,7 +291,7 @@ public:
             if ( it && callback(*it) )
             {
                 deleted.insert(it->id);
-                it.reset();
+                do_erase(it);
             }
         }
 
@@ -319,7 +319,11 @@ public:
     /**
      * \brief Number of clusters
      */
-    int size() const { return clusters_.size(); }
+    int size() const
+    {
+        return size_;
+    }
+
 //     Cluster::id_type hole_parent(Cluster::id_type cluster) const;
 
     class Segmenter;
@@ -330,11 +334,18 @@ private:
         return clusters_[bitmap_[offset]].get();
     }
 
+    void do_erase(SparseVector::value_type& ptr)
+    {
+        ptr.reset();
+        size_--;
+    }
+
     int width_;
     int height_;
     std::vector<Cluster::id_type> bitmap_;
     SparseVector clusters_;
     Cluster::id_type next_id = 1;
+    int size_ = 0;
 };
 
 /**

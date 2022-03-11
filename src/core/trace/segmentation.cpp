@@ -51,7 +51,7 @@ void glaxnimate::trace::SegmentedImage::normalize()
         {
             mergers[it->id] = it->merge_target;
             cluster(it->merge_target)->size += it->size;
-            it.reset();
+            do_erase(it);
         }
         else
         {
@@ -63,7 +63,7 @@ void glaxnimate::trace::SegmentedImage::normalize()
     for ( auto& ptr : clusters_ )
     {
         if ( ptr && ptr->size == 0 )
-            ptr.reset();
+            do_erase(ptr);
     }
 
     for ( auto& pix : bitmap_ )
@@ -74,6 +74,7 @@ glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::add_cluster(QRgb 
 {
     auto id = next_id++;
     clusters_.push_back(std::make_unique<Cluster>(Cluster{id, color, size}));
+    size_++;
     return clusters_.back().get();
 }
 
@@ -129,7 +130,7 @@ void glaxnimate::trace::SegmentedImage::direct_merge(Cluster::id_type from, Clus
             pix = to;
 
     cluster(to)->size += cluster(from)->size;
-    clusters_[from].reset();
+    do_erase(clusters_[from]);
 }
 
 qint32 glaxnimate::trace::closest_match(QRgb pixel, const std::vector<QRgb> &clut)
