@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <memory>
 
 
 namespace glaxnimate::trace {
@@ -38,12 +39,8 @@ struct Cluster
 
 class SegmentedImage
 {
-public:
-    using value_type = Cluster;
-
-    SegmentedImage(int width, int height)
-        : width_(width), height_(height), bitmap_(width*height, Cluster::null_id)
-    {}
+private:
+    using SparseVector = std::vector<std::unique_ptr<Cluster>>;
 
     template<class Wrapped>
     class Iterator
@@ -62,23 +59,75 @@ public:
         using pointer           = c_value_type*;
         using reference         = c_value_type&;
 
-        reference operator*() const { return iter->second; }
-        pointer operator->() const { return &iter->second; }
+        reference operator*() const { return *iter->get(); }
+        pointer operator->() const { return iter->get(); }
 
-        Iterator& operator++() { ++iter; return *this; }
-        Iterator operator++(int) { Iterator tmp = *this; ++iter; return tmp; }
+        Iterator& operator++()
+        {
+            do
+                ++iter;
+            while ( iter != end && !*iter );
+            return *this;
+        }
+        Iterator operator++(int) { Iterator tmp = *this; ++*this; return tmp; }
 
         bool operator== (const Iterator& b) { return iter == b.iter; }
         bool operator!= (const Iterator& b) { return iter != b.iter; }
 
     private:
-        Iterator(Wrapped iter) : iter(std::move(iter)) {}
+        Iterator(Wrapped iter, Wrapped end)
+        : iter(std::move(iter)), end(std::move(end))
+        {
+            if ( iter != end && !*iter )
+                ++*this;
+        }
+
         Wrapped iter;
+        Wrapped end;
         friend SegmentedImage;
     };
 
-    using iterator = Iterator<std::unordered_map<Cluster::id_type, Cluster>::iterator>;
-    using const_iterator = Iterator<std::unordered_map<Cluster::id_type, Cluster>::const_iterator>;
+public:
+    using value_type = Cluster;
+
+    SegmentedImage(int width, int height)
+        : width_(width), height_(height), bitmap_(width*height, Cluster::null_id)
+    {
+        clusters_.emplace_back();
+    }
+
+    SegmentedImage(const SegmentedImage& o)
+        : width_(o.width_),
+          height_(o.height_),
+          bitmap_(o.bitmap_),
+          next_id(o.next_id)
+    {
+        clusters_.reserve(o.clusters_.size());
+        for ( const auto& c : o.clusters_ )
+            if ( c )
+                clusters_.emplace_back(std::make_unique<Cluster>(*c));
+            else
+                clusters_.emplace_back();
+
+    }
+    SegmentedImage(SegmentedImage&& o) = default;
+    SegmentedImage& operator=(const SegmentedImage& o)
+    {
+        auto copy = o;
+        *this = std::move(copy);
+        return *this;
+    }
+    SegmentedImage& operator=(SegmentedImage&& o) = default;
+
+    using iterator = Iterator<SparseVector::iterator>;
+    using const_iterator = Iterator<SparseVector::const_iterator>;
+
+
+    const iterator erase(iterator iter)
+    {
+        *iter.iter = {};
+        return ++iter;
+    }
 
     /**
      * \brief Fixes labels of clusters that need to be merged
@@ -180,16 +229,16 @@ public:
     Cluster* mono(const Callback& callback)
     {
         auto final_cluster = add_cluster(0x0, 0);
-        for ( auto it = clusters_.begin(); it != clusters_.end(); )
+        for ( auto it = begin(); it != end(); )
         {
-            if ( callback(it->second) )
+            if ( callback(*it) )
             {
-                merge(&it->second, final_cluster);
+                merge(&*it, final_cluster);
                 ++it;
             }
             else
             {
-                it = clusters_.erase(it);
+                it = erase(it);
             }
         }
 
@@ -202,12 +251,12 @@ public:
     {
         std::unordered_set<Cluster::id_type> deleted;
 
-        for ( auto it = clusters_.begin(); it != clusters_.end(); )
+        for ( auto it = begin(); it != end(); )
         {
-            if ( callback(it->second) )
+            if ( callback(*it) )
             {
-                deleted.insert(it->first);
-                it = clusters_.erase(it);
+                deleted.insert(it->id);
+                it = erase(it);
             }
             else
             {
@@ -223,12 +272,12 @@ public:
     std::vector<Cluster::id_type>& bitmap() { return bitmap_; }
     const std::vector<Cluster::id_type>& bitmap() const { return bitmap_; }
 
-    const_iterator begin() const { return const_iterator{clusters_.begin()}; }
-    const_iterator end() const { return const_iterator{clusters_.end()}; }
-    const_iterator cbegin() const { return const_iterator{clusters_.begin()}; }
-    const_iterator cend() const { return const_iterator{clusters_.end()}; }
-    iterator begin() { return iterator{clusters_.begin()}; }
-    iterator end() { return iterator{clusters_.end()}; }
+    const_iterator begin() const { return const_iterator{clusters_.begin(), clusters_.end()}; }
+    const_iterator end() const { return const_iterator{clusters_.end(), clusters_.end()}; }
+    const_iterator cbegin() const { return const_iterator{clusters_.begin(), clusters_.end()}; }
+    const_iterator cend() const { return const_iterator{clusters_.end(), clusters_.end()}; }
+    iterator begin() { return iterator{clusters_.begin(), clusters_.end()}; }
+    iterator end() { return iterator{clusters_.end(), clusters_.end()}; }
 
     /**
      * \brief Number of clusters
@@ -240,7 +289,7 @@ private:
     int width_;
     int height_;
     std::vector<Cluster::id_type> bitmap_;
-    std::unordered_map<Cluster::id_type, Cluster> clusters_;
+    SparseVector clusters_;
     Cluster::id_type next_id = 1;
 };
 

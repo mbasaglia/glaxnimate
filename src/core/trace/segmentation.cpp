@@ -42,26 +42,26 @@ void glaxnimate::trace::SegmentedImage::normalize()
 {
     // create a "map" id -> merge_target->id
     std::unordered_map<Cluster::id_type, Cluster::id_type> mergers;
-    for ( auto it = clusters_.begin(); it != clusters_.end(); )
+    for ( auto it = begin(); it != end(); )
     {
-        if ( it->second.merge_target != Cluster::null_id )
+        if ( it->merge_target != Cluster::null_id )
         {
-            mergers[it->second.id] = it->second.merge_target;
-            cluster(it->second.merge_target)->size += it->second.size;
-            it = clusters_.erase(it);
+            mergers[it->id] = it->merge_target;
+            cluster(it->merge_target)->size += it->size;
+            it = erase(it);
         }
         else
         {
-            mergers[it->second.id] = it->second.id;
-            it->second.merge_sources.clear();
+            mergers[it->id] = it->id;
+            it->merge_sources.clear();
             ++it;
         }
     }
 
-    for ( auto it = clusters_.begin(); it != clusters_.end(); )
+    for ( auto it = begin(); it != end(); )
     {
-        if ( it->second.size == 0 )
-            it = clusters_.erase(it);
+        if ( it->size == 0 )
+            it = erase(it);
         else
             ++it;
     }
@@ -73,7 +73,8 @@ void glaxnimate::trace::SegmentedImage::normalize()
 glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::add_cluster(QRgb color, int size)
 {
     auto id = next_id++;
-    return &clusters_.emplace(id, Cluster{id, color, size}).first->second;
+    clusters_.push_back(std::make_unique<Cluster>(Cluster{id, color, size}));
+    return clusters_.back().get();
 }
 
 
@@ -95,42 +96,42 @@ glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::cluster(Cluster::
 {
     if ( id == Cluster::null_id )
         return nullptr;
-    return &clusters_[id];
+    return clusters_[id].get();
 }
 
 const glaxnimate::trace::Cluster * glaxnimate::trace::SegmentedImage::cluster(Cluster::id_type id) const
 {
     if ( id == Cluster::null_id )
         return nullptr;
-    return &clusters_.at(id);
+    return clusters_[id].get();
 }
 
 
 void glaxnimate::trace::SegmentedImage::unique_colors(bool flatten_alpha)
 {
     std::unordered_map<QRgb, Cluster*> colors;
-    for ( auto& cluster : clusters_ )
+    for ( auto& cluster : *this )
     {
         if ( flatten_alpha )
-            cluster.second.color |= 0xff000000u;
+            cluster.color |= 0xff000000u;
 
-        auto& parent = colors[cluster.second.color];
+        auto& parent = colors[cluster.color];
         if ( parent )
         {
             // keep the one with lowest ID
-            if ( parent->id < cluster.second.id )
+            if ( parent->id < cluster.id )
             {
-                merge(&cluster.second, parent);
+                merge(&cluster, parent);
             }
             else
             {
-                merge(parent, &cluster.second);
-                parent = &cluster.second;
+                merge(parent, &cluster);
+                parent = &cluster;
             }
         }
         else
         {
-            parent = &cluster.second;
+            parent = &cluster;
         }
     }
 
@@ -140,8 +141,8 @@ void glaxnimate::trace::SegmentedImage::unique_colors(bool flatten_alpha)
 glaxnimate::trace::Histogram glaxnimate::trace::SegmentedImage::histogram() const
 {
     glaxnimate::trace::Histogram hist;
-    for ( const auto& cluster : clusters_ )
-        hist[cluster.second.color] += cluster.second.size;
+    for ( const auto& cluster : *this )
+        hist[cluster.color] += cluster.size;
     return hist;
 }
 
@@ -166,7 +167,7 @@ void glaxnimate::trace::SegmentedImage::direct_merge(Cluster::id_type from, Clus
             pix = to;
 
     cluster(to)->size += cluster(from)->size;
-    clusters_.erase(clusters_.find(from));
+    clusters_[from] = {};
 }
 
 qint32 glaxnimate::trace::closest_match(QRgb pixel, const std::vector<QRgb> &clut)
@@ -291,8 +292,8 @@ void glaxnimate::trace::SegmentedImage::quantize(const std::vector<QRgb>& colors
 {
     auto min_id = next_id;
 
-    for ( auto & cluster : clusters_ )
-        cluster.second.merge_target = min_id + closest_match(cluster.second.color, colors);
+    for ( auto & cluster : *this )
+        cluster.merge_target = min_id + closest_match(cluster.color, colors);
 
     for ( auto color : colors )
         add_cluster(color, 0);
