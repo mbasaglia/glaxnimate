@@ -704,57 +704,53 @@ bool large_enough(Cluster* cluster, const SegmentedImage& image, int min_area)
 } // namespace glaxnimate::trace::detail::cluster_merge
 
 
-std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedImage& image, int max_colors, int min_area)
+std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedImage& image,
+                                                   int max_colors, int min_area, int min_color_distance)
 {
     using namespace glaxnimate::trace::detail::cluster_merge;
 
-    std::vector<Cluster*> clusters;
-    clusters.reserve(image.size());
-    for ( auto& cluster: image )
-        clusters.push_back(&cluster);
-
-    std::sort(clusters.begin(), clusters.end(), [](Cluster* a, Cluster* b) {
-        return a->size < b->size;
-    });
-
     // For each cluster, starting with the smallest size
-    for ( Cluster* cluster : clusters )
+    for ( Cluster& cluster : image )
     {
-        // Get a vector of (distance, cluster) neighbouring clusters
-        std::vector<std::pair<qint32, Cluster*>> neighbour_distances;
+        // Find the most similar neighbour with area less than the current cluster
+        ColorDistance min_distance = std::numeric_limits<ColorDistance>::max();
+        int min_size = std::numeric_limits<int>::max();
+        Cluster* similar_neighbour = nullptr;
+        auto neighbours = image.neighbours(cluster.id);
+        for ( auto neigh_id : neighbours )
         {
-            auto neighbours = image.neighbours(cluster->id);
-            neighbour_distances.reserve(neighbours.size());
+            auto neigh = image.cluster(neigh_id);
 
-            for ( auto neigh_id : neighbours )
-            {
-                auto neigh = image.cluster(neigh_id);
-                if ( neigh->size >= cluster->size && neigh->merge_target != cluster->id /* && hole_of[cluster->id] != neigh */)
-                    neighbour_distances.emplace_back(rgba_distance_squared(cluster->color, neigh->color), neigh);
-            }
-
-            if ( neighbour_distances.empty() )
+            if ( neigh->merge_target == cluster.id )
                 continue;
-        }
-        // Find the most similar neighbour
-        std::sort(neighbour_distances.begin(), neighbour_distances.end(), [](const auto& a, const auto& b){
-            return a.first < b.first || (a.first == b.first && a.second->size > b.second->size);
-        });
 
-        Cluster* similar_neighbour = neighbour_distances[0].second;
+            if ( neigh->merge_target )
+                neigh = image.cluster(neigh->merge_target);
+
+            // if ( hole_of[cluster->id] != neigh )
+            auto distance = rgba_distance_squared(cluster.color, neigh->color);
+            if ( distance <= min_distance || (distance == min_distance && neigh->size < min_size) )
+            {
+                similar_neighbour = neigh;
+                min_distance = distance;
+                min_size = neigh->size;
+            }
+        }
+
+        if ( !similar_neighbour )
+            continue;
 
         // If the current cluster is not large enough, merge it to the similar neighbour
-        if ( cluster->color != 0xff3250b0 && cluster->color != 0xffc4d9f5 && large_enough(cluster, image, min_area) )
-            cluster->color = cluster->color;
-        if ( !large_enough(cluster, image, min_area) )
+        if ( (min_distance <= min_color_distance && min_size > cluster.size) ||
+                !large_enough(&cluster, image, min_area) )
         {
-            image.merge(cluster, similar_neighbour);
+            image.merge(&cluster, similar_neighbour);
         }
 //         else
 //         {
 //             // is hole
-//             if ( neighbour_distances.size() <= 1 )
-//                 image.add_hole(cluster->id, similar_neighbour->id);
+//             if ( neighbours.size() == 1 )
+//                 image.add_hole(cluster->id, similar_neighbour);
 //         }
     }
 /*
@@ -765,6 +761,8 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
     image.sort_clusters([&hole_depth](const Cluster& a, const Cluster& b) {
         return hole_depth[a.id] < hole_depth[b.id];
     });*/
+
+    /// \todo somehow keep track of gradients
 
     // apply merges
     image.normalize();

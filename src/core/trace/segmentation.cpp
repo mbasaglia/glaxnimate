@@ -14,6 +14,25 @@ static const std::array<std::pair<int, int>, 8> orthogonal_and_diagonal = {{
     {1, -1}, {1, 0},    {1, 1},
 }};
 
+
+QString glaxnimate::trace::Cluster::to_string() const
+{
+    return QString("Cluster { id = %1 color = %2 size = %3 merge_target = %4 }")
+        .arg(id)
+        .arg("0x" + QString::number(color, 16).rightJustified(8, '0'))
+        .arg(size)
+        .arg(merge_target)
+    ;
+}
+
+QDebug operator<< (QDebug db, const glaxnimate::trace::Cluster& cluster)
+{
+    QDebugStateSaver saver(db);
+    db.noquote() << cluster.to_string();
+    return db;
+}
+
+
 void glaxnimate::trace::SegmentedImage::merge(Cluster* from, Cluster* to)
 {
     if ( to->merge_target != Cluster::null_id )
@@ -180,7 +199,6 @@ void glaxnimate::trace::SegmentedImage::segment(const quint32* pixels, bool diag
                 cluster_left = nullptr;
             if ( cluster_up && cluster_up->color != color )
                 cluster_up = nullptr;
-
             // No orthogonal neighbour
             if ( !cluster_left && !cluster_up )
             {
@@ -191,6 +209,7 @@ void glaxnimate::trace::SegmentedImage::segment(const quint32* pixels, bool diag
                     bitmap_[index] = cluster_diagonal->id;
                     cluster_diagonal->size += 1;
                     old_clust = cluster_diagonal;
+
                 }
                 // Create a new cluster
                 else
@@ -204,6 +223,7 @@ void glaxnimate::trace::SegmentedImage::segment(const quint32* pixels, bool diag
             {
                 bitmap_[index] = cluster_left->id;
                 cluster_left->size += 1;
+
             }
             // Neighbour above
             else if ( cluster_up )

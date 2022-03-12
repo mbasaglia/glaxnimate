@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QImage>
+#include <QDebug>
+
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
@@ -14,10 +16,12 @@ using ColorFrequency = std::pair<QRgb, int>;
 
 using Histogram = std::unordered_map<ColorFrequency::first_type, ColorFrequency::second_type>;
 
+using ColorDistance = qint32;
+
 /**
  * \brief Distance between two colors
  */
-inline qint32 rgba_distance_squared(QRgb p1, QRgb p2)
+inline ColorDistance rgba_distance_squared(QRgb p1, QRgb p2)
 {
     int r1 = qRed(p1);
     int g1 = qGreen(p1);
@@ -58,6 +62,8 @@ struct Cluster
     id_type merge_target = null_id;
     // Clusters that are going to merged into this
     std::vector<id_type> merge_sources = {};
+
+    QString to_string() const;
 };
 
 class SegmentedImage
@@ -357,3 +363,5 @@ private:
 SegmentedImage segment(const QImage& image, bool diagonal_ajacency = true);
 
 } // namespace glaxnimate::trace
+
+QDebug operator<<(QDebug db, const glaxnimate::trace::Cluster& cluster);

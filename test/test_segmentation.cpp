@@ -21,12 +21,7 @@ QString to_qstring(int a)
 
 QString to_qstring(const Cluster& a)
 {
-    return QString("Cluster { id = %1 color = %2 size = %3 merge_target = %4 }")
-        .arg(a.id)
-        .arg("0x" + QString::number(a.color, 16).rightJustified(8, '0'))
-        .arg(a.size)
-        .arg(a.merge_target)
-    ;
+    return a.to_string();
 }
 
 
@@ -182,8 +177,7 @@ private slots:
         img.add_cluster(0xff00bb00);
         img.add_cluster(0xff0000cc);
         img.add_cluster(0xff000000);
-        img.cluster(1)->merge_target = 3;
-        img.cluster(3)->merge_sources = {1};
+        img.merge(img.cluster(1), img.cluster(3));
         img.merge(img.cluster(1), img.cluster(2));
         COMPARE_VECTOR(img,
             Cluster{1, 0xffaa0000, 1, 2},
@@ -200,8 +194,7 @@ private slots:
         img.add_cluster(0xff00bb00);
         img.add_cluster(0xff0000cc);
         img.add_cluster(0xff000000);
-        img.cluster(2)->merge_target = 3;
-        img.cluster(3)->merge_sources = {2};
+        img.merge(img.cluster(2), img.cluster(3));
         img.merge(img.cluster(1), img.cluster(2));
         COMPARE_VECTOR(img,
             Cluster{1, 0xffaa0000, 1, 3},
@@ -218,10 +211,8 @@ private slots:
         img.add_cluster(0xff00bb00);
         img.add_cluster(0xff0000cc);
         img.add_cluster(0xff000000);
-        img.cluster(1)->merge_target = 4;
-        img.cluster(4)->merge_sources = {1};
-        img.cluster(2)->merge_target = 3;
-        img.cluster(3)->merge_sources = {2};
+        img.merge(img.cluster(1), img.cluster(4));
+        img.merge(img.cluster(2), img.cluster(3));
         img.merge(img.cluster(1), img.cluster(2));
         COMPARE_VECTOR(img,
             Cluster{1, 0xffaa0000, 1, 3},
@@ -254,9 +245,25 @@ private slots:
         img.add_cluster(0xff00bb00);
         img.add_cluster(0xff0000cc);
         img.add_cluster(0xff000000);
-        img.cluster(1)->merge_target = 2;
-        img.cluster(2)->merge_sources = {1};
         img.merge(img.cluster(1), img.cluster(2));
+        img.merge(img.cluster(1), img.cluster(2));
+        COMPARE_VECTOR(img,
+            Cluster{1, 0xffaa0000, 1, 2},
+            Cluster{2, 0xff00bb00, 1, 0},
+            Cluster{3, 0xff0000cc, 1, 0},
+            Cluster{4, 0xff000000, 1, 0},
+        );
+    }
+
+    void test_merge_cycle()
+    {
+        SegmentedImage img(1, 1);
+        img.add_cluster(0xffaa0000);
+        img.add_cluster(0xff00bb00);
+        img.add_cluster(0xff0000cc);
+        img.add_cluster(0xff000000);
+        img.merge(img.cluster(1), img.cluster(2));
+        img.merge(img.cluster(2), img.cluster(1));
         COMPARE_VECTOR(img,
             Cluster{1, 0xffaa0000, 1, 2},
             Cluster{2, 0xff00bb00, 1, 0},
@@ -356,8 +363,8 @@ private slots:
         img.add_cluster(0x3, 2);
         img.add_cluster(0x4, 2);
         img.add_cluster(0x5, 0);
-        img.cluster(2)->merge_target = 4;
-        img.cluster(3)->merge_target = 1;
+        img.merge(img.cluster(2), img.cluster(4));
+        img.merge(img.cluster(3), img.cluster(1));
         img.normalize();
         COMPARE_VECTOR(img.bitmap(),
             1, 1, 1,
@@ -973,6 +980,95 @@ private slots:
         QCOMPARE(segmented.size(), 2);
         QCOMPARE(segmented.cluster(id_bg)->color, color_back);
         QCOMPARE(segmented.cluster(id_circle)->color, color_ellipse);
+    }
+
+    void test_cluster_merge_noise()
+    {
+        QRgb color_back = 0xff3250b0;
+        QRgb color_ellipse = 0xffc4d9f5;
+        QImage image(256, 256, QImage::Format_ARGB32);
+        image.fill(color_back);
+        QPainter painter(&image);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setBrush(QColor::fromRgba(color_ellipse));
+        painter.setPen(Qt::NoPen);
+        painter.drawEllipse(QPointF(255, 255), 100, 100);
+        for ( int i = 0; i < 20; i ++ )
+        {
+            painter.fillRect(i*10, 10, 2, 6, Qt::white);
+        }
+
+        painter.end();
+
+        auto segmented = segment(image);
+        QVERIFY(segmented.size() > 2);
+        QCOMPARE(segmented.cluster(0, 0)->color, color_back);
+        QCOMPARE(segmented.cluster(255, 255)->color, color_ellipse);
+        int id_bg = 1;
+        int id_circle = segmented.cluster_id(255, 255);
+
+        auto colors = cluster_merge(segmented, 10);
+
+        QCOMPARE(segmented.cluster_id(255, 255), id_circle);
+        QCOMPARE(segmented.cluster_id(0, 0), id_bg);
+
+        COMPARE_VECTOR(segmented,
+            Cluster{id_bg, color_back, segmented.cluster(id_bg)->size},
+            Cluster{id_circle, color_ellipse, segmented.cluster(id_circle)->size},
+        );
+        COMPARE_VECTOR(colors, color_back, color_ellipse);
+        QCOMPARE(segmented.size(), 2);
+        QCOMPARE(segmented.cluster(id_bg)->color, color_back);
+        QCOMPARE(segmented.cluster(id_circle)->color, color_ellipse);
+    }
+
+    void test_cluster_merge_gradient()
+    {
+        QImage image(256, 256, QImage::Format_ARGB32);
+
+        QPainter painter(&image);
+        painter.setRenderHint(QPainter::Antialiasing);
+
+        QLinearGradient gradient(0, 0, 0, 256);
+        gradient.setColorAt(0, 0xffff0000);
+        gradient.setColorAt(1, 0xff000000);
+        painter.setBrush(gradient);
+        painter.setPen(Qt::NoPen);
+        painter.drawRect(0, 0, 256, 256);
+        painter.end();
+
+        auto segmented = segment(image);
+        QCOMPARE(segmented.size(), 256);
+        QCOMPARE(segmented.histogram().size(), 256);
+        auto colors = cluster_merge(segmented, 1024);
+        QCOMPARE(colors.size(), 1);
+        QCOMPARE(segmented.size(), 1);
+    }
+
+    void test_cluster_merge_gradient_diagonal()
+    {
+        QImage image(256, 256, QImage::Format_ARGB32);
+
+        QPainter painter(&image);
+        painter.setRenderHint(QPainter::Antialiasing);
+
+        QLinearGradient gradient(0, 0, 256, 256);
+        gradient.setColorAt(0, 0xffff0000);
+        gradient.setColorAt(1, 0xff000000);
+        painter.setBrush(gradient);
+        painter.setPen(Qt::NoPen);
+        painter.drawRect(0, 0, 256, 256);
+        painter.end();
+
+        auto segmented = segment(image);
+        QVERIFY(segmented.size() > 2);
+        QVERIFY(segmented.histogram().size() > 2);
+
+        auto colors = cluster_merge(segmented, 1024);
+
+        // Ideally it should be 1 but 3 is good enough
+        QCOMPARE(colors.size(), 3);
+        QCOMPARE(segmented.size(), 3);
     }
 };
 
