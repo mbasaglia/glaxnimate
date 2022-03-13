@@ -27,6 +27,9 @@ struct Cluster
     id_type merge_target = null_id;
     // Clusters that are going to merged into this
     std::vector<id_type> merge_sources = {};
+    // Start/end indexes in the bitmap
+    std::size_t index_start = 0;
+    std::size_t index_end = 0;
 
     QString to_string() const;
 };
@@ -78,6 +81,20 @@ private:
 
         Wrapped iter;
         Wrapped end;
+        friend SegmentedImage;
+    };
+
+    class PixelRange
+    {
+    public:
+        using iterator = std::vector<Cluster::id_type>::iterator;
+        using value_type = std::vector<Cluster::id_type>::value_type;
+
+        const iterator& begin() const { return begin_; }
+        const iterator& end() const { return end_; }
+
+        iterator begin_;
+        iterator end_;
         friend SegmentedImage;
     };
 
@@ -298,7 +315,15 @@ public:
 
 //     Cluster::id_type hole_parent(Cluster::id_type cluster) const;
 
-    class Segmenter;
+    /**
+     * \brief Returns a range of pixels in bitmap() that cointain the cluster
+     *
+     * All pixels in \p cluster are in the range but some pixels in the range might not be in \p cluster
+     */
+    PixelRange pixel_range(Cluster* cluster)
+    {
+        return PixelRange{bitmap_.begin() + cluster->index_start, bitmap_.begin() + cluster->index_end + 1};
+    }
 
 private:
     Cluster* cluster_by_offset(std::size_t offset)
@@ -311,6 +336,8 @@ private:
         ptr.reset();
         size_--;
     }
+
+    void merge_attributes(Cluster* from, Cluster* to);
 
     int width_;
     int height_;

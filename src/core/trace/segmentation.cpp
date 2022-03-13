@@ -17,11 +17,13 @@ static const std::array<std::pair<int, int>, 8> orthogonal_and_diagonal = {{
 
 QString glaxnimate::trace::Cluster::to_string() const
 {
-    return QString("Cluster { id = %1 color = %2 size = %3 merge_target = %4 }")
+    return QString("Cluster { id = %1 color = %2 size = %3 merge_target = %4 index = (%5,%6)}")
         .arg(id)
         .arg("0x" + QString::number(color, 16).rightJustified(8, '0'))
         .arg(size)
         .arg(merge_target)
+        .arg(index_start)
+        .arg(index_end)
     ;
 }
 
@@ -69,7 +71,8 @@ void glaxnimate::trace::SegmentedImage::normalize()
         if ( it->merge_target != Cluster::null_id )
         {
             mergers[it->id] = it->merge_target;
-            cluster(it->merge_target)->size += it->size;
+            auto target = cluster(it->merge_target);
+            merge_attributes(&*it, target);
             do_erase(it);
         }
         else
@@ -88,6 +91,18 @@ void glaxnimate::trace::SegmentedImage::normalize()
     for ( auto& pix : bitmap_ )
         pix = mergers[pix];
 }
+
+void glaxnimate::trace::SegmentedImage::merge_attributes(glaxnimate::trace::Cluster* from, glaxnimate::trace::Cluster* to)
+{
+    to->size += from->size;
+
+    if ( from->index_start < to->index_start )
+        to->index_start = from->index_start;
+
+    if ( from->index_end > to->index_end )
+        to->index_end = from->index_end;
+}
+
 
 glaxnimate::trace::Cluster* glaxnimate::trace::SegmentedImage::add_cluster(QRgb color, int size)
 {
@@ -144,11 +159,14 @@ QImage glaxnimate::trace::SegmentedImage::to_image() const
 
 void glaxnimate::trace::SegmentedImage::direct_merge(Cluster::id_type from, Cluster::id_type to)
 {
-    for ( auto & pix : bitmap_ )
+    auto from_cluster = cluster(from);
+
+    for ( auto & pix : pixel_range(from_cluster) )
         if ( pix == from )
             pix = to;
 
-    cluster(to)->size += cluster(from)->size;
+    merge_attributes(cluster(from), cluster(to));
+
     do_erase(clusters_[from]);
 }
 
@@ -193,12 +211,14 @@ void glaxnimate::trace::SegmentedImage::segment(const quint32* pixels, bool diag
                     bitmap_[index] = cluster_diagonal->id;
                     cluster_diagonal->size += 1;
                     old_clust = cluster_diagonal;
+                    old_clust->index_end = index;
 
                 }
                 // Create a new cluster
                 else
                 {
                     old_clust = add_cluster(color);
+                    old_clust->index_start = old_clust->index_end = index;
                     bitmap_[index] = old_clust->id;
                 }
             }
@@ -207,6 +227,7 @@ void glaxnimate::trace::SegmentedImage::segment(const quint32* pixels, bool diag
             {
                 bitmap_[index] = cluster_left->id;
                 cluster_left->size += 1;
+                old_clust->index_end = index;
 
             }
             // Neighbour above
@@ -215,6 +236,7 @@ void glaxnimate::trace::SegmentedImage::segment(const quint32* pixels, bool diag
                 bitmap_[index] = cluster_up->id;
                 cluster_up->size += 1;
                 old_clust = cluster_up;
+                old_clust->index_end = index;
             }
         }
     }

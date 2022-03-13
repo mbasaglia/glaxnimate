@@ -1052,9 +1052,32 @@ private slots:
             out_gradient.emplace_back(stop.first, stop.second.rgba());
 
         COMPARE_VECTOR(out_gradient, gradient);
-
     }
 
+    void test_segment_start_end_index()
+    {
+        QImage image = make_image({
+            {0xff000000, 0xff000000, 0xff000001},
+            {0xff000002, 0xff000001, 0xff000001},
+            {0xff000002, 0xff000001, 0xff000003},
+        });
+        SegmentedImage segmented = segment(image);
+        COMPARE_VECTOR(segmented.bitmap(),
+            1, 1, 2,
+            3, 2, 2,
+            3, 2, 5
+        );
+        COMPARE_VECTOR(segmented,
+            Cluster{1, 0xff000000, 2, 0},
+            Cluster{2, 0xff000001, 4, 0},
+            Cluster{3, 0xff000002, 2, 0},
+            Cluster{5, 0xff000003, 1, 0},
+        );
+        QCOMPARE(segmented.cluster(1)->index_start, 0); QCOMPARE(segmented.cluster(1)->index_end, 1);
+        QCOMPARE(segmented.cluster(2)->index_start, 2); QCOMPARE(segmented.cluster(2)->index_end, 7);
+        QCOMPARE(segmented.cluster(3)->index_start, 3); QCOMPARE(segmented.cluster(3)->index_end, 6);
+        QCOMPARE(segmented.cluster(5)->index_start, 8); QCOMPARE(segmented.cluster(5)->index_end, 8);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestSegmentation)
