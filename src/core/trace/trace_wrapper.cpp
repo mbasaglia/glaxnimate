@@ -229,7 +229,7 @@ const std::vector<QRgb>& glaxnimate::trace::TraceWrapper::eem_colors() const
     {
         d->segmented_eem = d->segmented;
 //         d->eem_colors = trace::edge_exclusion_modes(d->segmented_eem, 256);
-        d->eem_colors = trace::cluster_merge(d->segmented_eem, 256);
+        d->eem_colors = trace::cluster_merge(d->segmented_eem, 256).colors;
     }
     return d->eem_colors;
 }

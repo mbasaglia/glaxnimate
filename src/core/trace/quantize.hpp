@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QLinearGradient>
 #include "segmentation.hpp"
 
 namespace glaxnimate::trace {
@@ -43,7 +44,13 @@ std::vector<QRgb> octree(SegmentedImage& image, int k);
 std::vector<QRgb> edge_exclusion_modes(SegmentedImage& image, int max_colors, int min_area = 4);
 
 
-std::vector<QRgb> cluster_merge(SegmentedImage& image, int max_colors, int min_area = 4, int min_color_distance = 16);
+struct BrushData
+{
+    std::vector<QRgb> colors;
+    std::unordered_map<Cluster::id_type, QLinearGradient> gradients;
+};
+
+BrushData cluster_merge(SegmentedImage& image, int max_colors, int min_area = 4, int min_color_distance = 16);
 
 /**
  * \brief Counts pixel values and returns a list of [rgba, count] pairs

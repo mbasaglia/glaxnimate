@@ -152,22 +152,6 @@ void glaxnimate::trace::SegmentedImage::direct_merge(Cluster::id_type from, Clus
     do_erase(clusters_[from]);
 }
 
-qint32 glaxnimate::trace::closest_match(QRgb pixel, const std::vector<QRgb> &clut)
-{
-    int idx = 0;
-    qint32 current_distance = 255 * 255 * 3;
-    for ( std::size_t i = 0; i < clut.size(); ++i)
-    {
-        int dist = rgba_distance_squared(pixel, clut[i]);
-        if ( dist < current_distance )
-        {
-            current_distance = dist;
-            idx = i;
-        }
-    }
-    return idx;
-}
-
 
 // Hoshen–Kopelman algorithm but we also merge diagonals
 void glaxnimate::trace::SegmentedImage::segment(const quint32* pixels, bool diagonal_ajacency)

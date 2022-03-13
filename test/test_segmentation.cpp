@@ -5,111 +5,32 @@
 
 #include "trace/segmentation.hpp"
 #include "trace/quantize.hpp"
-
-
-using namespace glaxnimate::trace;
-
-bool operator==(const Cluster& a, const Cluster& b)
-{
-    return a.id == b.id && a.color == b.color && a.size == b.size && a.merge_target == b.merge_target;
-}
-
-QString to_qstring(int a)
-{
-    return QString::number(a);
-}
-
-QString to_qstring(const Cluster& a)
-{
-    return a.to_string();
-}
-
-
-template<class T>
-QString to_string(const std::vector<T>& a)
-{
-    QString str = QString("vector[%1] = { ").arg(a.size());
-    for ( const auto & cluster : a )
-    {
-        str += to_qstring(cluster) += ", ";
-    }
-    str += "}";
-    return str;
-}
-
-namespace QTest {
-
-template <> char* toString(const Cluster& a)
-{
-    return QTest::toString(to_qstring(a));
-}
-
-} // namespace QTest
-
-template<class T>
-bool operator==(const std::vector<T>& a, const std::vector<T>& b)
-{
-    if ( a.size() != b.size() )
-        return false;
-
-    for ( int i = 0, e = a.size(); i != e; ++i )
-        if ( !(a[i] == b[i]) )
-            return false;
-
-    return true;
-}
-
-template<class T1, class T2>
-bool better_compare(const T1& val1, const T2& val2, const QString& name1, const QString& name2, const char* file, int line)
-{
-    using namespace QTest;
-
-    if ( val1 == val2 )
-        return true;
-
-    auto len = qMax(name1.size(), name2.size());
-    QTest::qFail("Compared values are not the same", file, line);
-
-    QString message = QString("   Actual   (%1): %2\n   Expected (%3): %4\n")
-        .arg(name1.leftJustified(len))
-        .arg(to_string(val1))
-        .arg(name2.leftJustified(len))
-        .arg(to_string(val2))
-    ;
-    // Using C++ streams because it's really hard to avoid QTest messing up the output
-    std::cerr << message.toStdString();
-
-    return false;
-}
-
-template<>
-bool better_compare(const SegmentedImage& val1, const std::vector<Cluster>& val2, const QString& name1, const QString& name2, const char* file, int line)
-{
-    std::vector<Cluster> v(val1.begin(), val1.end());
-    std::sort(v.begin(), v.end(), [](const Cluster& a, const Cluster& b) { return a.id < b.id; });
-    return better_compare(v, val2, name1, name2, file, line);
-}
-
-#define COMPARE_VECTOR(actual, ...) \
-    do {\
-        using v_type = std::vector<std::decay_t<decltype(actual)>::value_type>; \
-        if (!better_compare(actual, (v_type{{__VA_ARGS__}}), #actual, "", __FILE__, __LINE__))\
-            return;\
-    } while (false)
+#include "test_trace.hpp"
 
 class TestSegmentation: public QObject
 {
     Q_OBJECT
 
-private:
-    QImage make_image(const std::vector<std::vector<QRgb>>& pixels)
+
+    std::vector<StructuredColor> make_gradient_colors(
+        const std::vector<std::pair<float, StructuredColor>>& gradient,
+        int n_colors = 256
+    )
     {
-        QImage image(pixels[0].size(), pixels.size(), QImage::Format_ARGB32);
-        for ( int y = 0; y < image.height(); y++ )
-            for ( int x = 0; x < image.width(); x++ )
-                image.setPixel(x, y, pixels[y][x]);
-        return image;
+        std::vector<StructuredColor> colors;
+        int start = 0;
+        for ( int i = 0; i <= n_colors; i++ )
+        {
+            float factor = i / float(n_colors);
+            if ( factor > gradient[start+1].first )
+                start++;
+
+            float t = (factor - gradient[start].first) / (gradient[start+1].first - gradient[start].first);
+            colors.push_back(gradient[start].second.lerp(gradient[start+1].second, t));
+        }
+        return colors;
     }
+
 
 private slots:
     void test_add_cluster()
@@ -790,13 +711,7 @@ private slots:
 
     void benchmark_segment_data()
     {
-        auto root = QFileInfo(__FILE__).dir();
-        root.cdUp();
-        QTest::addColumn<QString>("image_path");
-        QTest::newRow("flat") << root.filePath("data/images/trace/flat.png");
-        QTest::newRow("pixel") << root.filePath("data/images/trace/pixel.png");
-        QTest::newRow("small complex") << root.filePath("data/images/trace/complex.jpg");
-        QTest::newRow("main window") << root.filePath("docs/docs/img/screenshots/main_window/main_window.png");
+        benchmark_data();
     }
 
     void benchmark_segment()
@@ -817,7 +732,7 @@ private slots:
 
     void benchmark_unique_colors_data()
     {
-        benchmark_segment_data();
+        benchmark_data();
     }
 
     void benchmark_unique_colors()
@@ -934,7 +849,7 @@ private slots:
             1, 3, 2, 2, 2,
             1, 3, 2, 2, 2,
         );
-        auto colors = cluster_merge(segmented, 10);
+        auto colors = cluster_merge(segmented, 10).colors;
         COMPARE_VECTOR(colors, 0xff0000ff, 0xff00ff00);
         COMPARE_VECTOR(segmented,
             Cluster{1, 0xff0000ff, 16, 0},
@@ -969,8 +884,7 @@ private slots:
         int id_bg = 1;
         int id_circle = segmented.cluster_id(255, 255);
 
-        auto colors = cluster_merge(segmented, 10);
-
+        auto colors = cluster_merge(segmented, 10).colors;
 
         COMPARE_VECTOR(colors, color_back, color_ellipse);
         COMPARE_VECTOR(segmented,
@@ -1007,7 +921,7 @@ private slots:
         int id_bg = 1;
         int id_circle = segmented.cluster_id(255, 255);
 
-        auto colors = cluster_merge(segmented, 10);
+        auto colors = cluster_merge(segmented, 10).colors;
 
         QCOMPARE(segmented.cluster_id(255, 255), id_circle);
         QCOMPARE(segmented.cluster_id(0, 0), id_bg);
@@ -1040,7 +954,7 @@ private slots:
         auto segmented = segment(image);
         QCOMPARE(segmented.size(), 256);
         QCOMPARE(segmented.histogram().size(), 256);
-        auto colors = cluster_merge(segmented, 1024);
+        auto colors = cluster_merge(segmented, 1024).colors;
         QCOMPARE(colors.size(), 1);
         QCOMPARE(segmented.size(), 1);
     }
@@ -1064,12 +978,83 @@ private slots:
         QVERIFY(segmented.size() > 2);
         QVERIFY(segmented.histogram().size() > 2);
 
-        auto colors = cluster_merge(segmented, 1024);
+        auto colors = cluster_merge(segmented, 1024).colors;
 
         // Ideally it should be 1 but 3 is good enough
         QCOMPARE(colors.size(), 3);
         QCOMPARE(segmented.size(), 3);
     }
+
+    void test_gradient_stops()
+    {
+        std::vector<std::pair<float, StructuredColor>> gradient{
+            {0.00, 0xffff0000},
+            {0.75, 0xffffff00},
+            {1.00, 0xff000000},
+        };
+        std::vector<StructuredColor> colors = make_gradient_colors(gradient);
+
+        auto stops = gradient_stops(colors);
+        std::vector<std::pair<float, StructuredColor>> out_gradient;
+        for ( const auto& stop : stops )
+            out_gradient.emplace_back(stop.first, stop.second.rgba());
+
+        COMPARE_VECTOR(out_gradient, gradient);
+
+    }
+
+    void test_gradient_stops_too_many_pixels()
+    {
+        std::vector<std::pair<float, StructuredColor>> gradient{
+            {0.00, 0xffff0000},
+            {0.75, 0xffffff00},
+            {1.00, 0xff000000},
+        };
+        std::vector<StructuredColor> colors = make_gradient_colors(gradient, 2048);
+
+        auto stops = gradient_stops(colors);
+        std::vector<std::pair<float, StructuredColor>> out_gradient;
+        for ( const auto& stop : stops )
+            out_gradient.emplace_back(stop.first, stop.second.rgba());
+
+        COMPARE_VECTOR(out_gradient, gradient);
+    }
+
+    void test_gradient_stops_not_enough_pixels()
+    {
+        std::vector<std::pair<float, StructuredColor>> gradient{
+            {0.00, 0xffff0000},
+            {0.75, 0xffffff00},
+            {1.00, 0xff000000},
+        };
+        std::vector<StructuredColor> colors = make_gradient_colors(gradient, 32);
+
+        auto stops = gradient_stops(colors);
+        std::vector<std::pair<float, StructuredColor>> out_gradient;
+        for ( const auto& stop : stops )
+            out_gradient.emplace_back(stop.first, stop.second.rgba());
+
+        COMPARE_VECTOR(out_gradient, gradient);
+    }
+
+    void test_gradient_stops_subtle()
+    {
+        std::vector<std::pair<float, StructuredColor>> gradient{
+            {0.00, 0xffff8800},
+            {0.75, 0xffcccc00},
+            {1.00, 0xff88ff00},
+        };
+        std::vector<StructuredColor> colors = make_gradient_colors(gradient);
+
+        auto stops = gradient_stops(colors);
+        std::vector<std::pair<float, StructuredColor>> out_gradient;
+        for ( const auto& stop : stops )
+            out_gradient.emplace_back(stop.first, stop.second.rgba());
+
+        COMPARE_VECTOR(out_gradient, gradient);
+
+    }
+
 };
 
 QTEST_GUILESS_MAIN(TestSegmentation)

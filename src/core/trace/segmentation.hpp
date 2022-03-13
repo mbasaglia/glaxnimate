@@ -3,48 +3,13 @@
 #include <QImage>
 #include <QDebug>
 
-#include <vector>
-#include <unordered_map>
 #include <unordered_set>
 #include <memory>
 
+#include "trace/color.hpp"
+
 
 namespace glaxnimate::trace {
-
-
-using ColorFrequency = std::pair<QRgb, int>;
-
-using Histogram = std::unordered_map<ColorFrequency::first_type, ColorFrequency::second_type>;
-
-using ColorDistance = qint32;
-
-/**
- * \brief Distance between two colors
- */
-inline ColorDistance rgba_distance_squared(QRgb p1, QRgb p2)
-{
-    int r1 = qRed(p1);
-    int g1 = qGreen(p1);
-    int b1 = qBlue(p1);
-    int a1 = qAlpha(p1);
-
-    int r2 = qRed(p2);
-    int g2 = qGreen(p2);
-    int b2 = qBlue(p2);
-    int a2 = qAlpha(p2);
-
-    qint32 dr = r1 - r2;
-    qint32 dg = g1 - g2;
-    qint32 db = b1 - b2;
-    qint32 da = a1 - a2;
-
-    return dr * dr + dg * dg + db * db + da * da;
-}
-
-/**
- * \brief Returns the index in \p clut that is the closest to \p pixel
- */
-qint32 closest_match(QRgb pixel, const std::vector<QRgb> &clut);
 
 
 struct Cluster
@@ -129,7 +94,8 @@ public:
         : width_(o.width_),
           height_(o.height_),
           bitmap_(o.bitmap_),
-          next_id(o.next_id)
+          next_id(o.next_id),
+          size_(o.size_)
     {
         clusters_.reserve(o.clusters_.size());
         for ( const auto& c : o.clusters_ )

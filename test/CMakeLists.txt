@@ -40,4 +40,5 @@ target_link_libraries(test_trace PRIVATE ${LIB_NAME_CORE})
 test_case(test_segmentation
 ../src/core/trace/segmentation.cpp
 ../src/core/trace/quantize.cpp
+../src/core/trace/color.cpp
 )

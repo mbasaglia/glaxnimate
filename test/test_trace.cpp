@@ -2,9 +2,7 @@
 
 #include "trace/quantize.hpp"
 #include "trace/trace.hpp"
-
-using namespace glaxnimate::trace;
-
+#include "test_trace.hpp"
 
 class TestTrace: public QObject
 {
@@ -15,13 +13,7 @@ private:
 private slots:
     void initTestCase_data()
     {
-        auto root = QFileInfo(__FILE__).dir();
-        root.cdUp();
-        QTest::addColumn<QString>("image_path");
-        QTest::newRow("flat") << root.filePath("data/images/trace/flat.png");
-        QTest::newRow("pixel") << root.filePath("data/images/trace/pixel.png");
-        QTest::newRow("small complex") << root.filePath("data/images/trace/complex.jpg");
-        QTest::newRow("main window") << root.filePath("docs/docs/img/screenshots/main_window/main_window.png");
+        benchmark_data();
     }
 
 

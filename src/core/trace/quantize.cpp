@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <memory>
 
+#include "math/math.hpp"
+
 using namespace glaxnimate;
 
 namespace glaxnimate::trace::detail {
@@ -26,64 +28,6 @@ std::vector<QRgb> color_frequencies_to_palette(std::vector<trace::ColorFrequency
     return out;
 }
 
-using Distance = quint32;
-
-struct Color
-{
-    qint32 r;
-    qint32 g;
-    qint32 b;
-
-    constexpr Color(QRgb rgb) noexcept
-    : r(qRed(rgb)), g(qGreen(rgb)), b(qBlue(rgb))
-    {}
-
-    constexpr Color() noexcept
-    : r(0), g(0), b(0)
-    {}
-
-    constexpr Color(qint32 r, qint32 g, qint32 b) noexcept
-    : r(r), g(g), b(b)
-    {}
-
-    constexpr Distance distance(const Color& oth) const noexcept
-    {
-        quint32 dr = r - oth.r;
-        quint32 dg = g - oth.g;
-        quint32 db = b - oth.b;
-
-        return dr * dr + dg * dg + db * db;
-    }
-
-    constexpr QRgb rgb() const noexcept
-    {
-        return qRgb(r, g, b);
-    }
-
-    constexpr void weighted_add(const Color& oth, int weight) noexcept
-    {
-        r += oth.r * weight;
-        g += oth.g * weight;
-        b += oth.b * weight;
-    }
-
-    constexpr Color& operator+=(const Color& oth) noexcept
-    {
-        weighted_add(oth, 1);
-        return *this;
-    }
-
-    Color mean(qreal total_weight) const noexcept
-    {
-        return {
-            qRound(r / total_weight),
-            qRound(g / total_weight),
-            qRound(b / total_weight)
-        };
-    }
-};
-
-
 } // trace::detail
 
 std::vector<trace::ColorFrequency> trace::color_frequencies(const SegmentedImage& image)
@@ -100,16 +44,15 @@ std::vector<QRgb> trace::k_modes(SegmentedImage& image, int k)
 }
 
 
-
 namespace glaxnimate::trace::detail::k_means {
 
 struct Point
 {
-    Color color;
+    StructuredColor color;
 
     quint32 weight;
 
-    Distance min_distance = std::numeric_limits<Distance>::max();
+    ColorDistance min_distance = std::numeric_limits<ColorDistance>::max();
 
     int cluster = -1;
 
@@ -122,11 +65,11 @@ struct Point
 
 struct Cluster
 {
-    Color centroid;
+    StructuredColor centroid;
     quint32 total_weight = 0;
-    Color sum = {};
+    StructuredColor sum = {};
 
-    constexpr Cluster(const Color& color) noexcept
+    constexpr Cluster(const StructuredColor& color) noexcept
         : centroid(color)
     {}
 
@@ -189,11 +132,11 @@ std::vector<QRgb> trace::k_means(SegmentedImage& image, int k, int iterations, K
     // ie: always select the centroid the farthest away from the other centroids
     while ( int(clusters.size()) < k )
     {
-        detail::Distance max_dist = 0;
+        ColorDistance max_dist = 0;
 
         for ( auto it = points.begin(); it != points.end(); ++it )
         {
-            detail::Distance p_max = 0;
+            ColorDistance p_max = 0;
             for ( const auto& cluster : clusters )
             {
                 auto dist = it->color.distance(cluster.centroid);
@@ -244,7 +187,7 @@ std::vector<QRgb> trace::k_means(SegmentedImage& image, int k, int iterations, K
         {
             clusters[p.cluster].total_weight += p.weight;
             clusters[p.cluster].sum.weighted_add(p.color, p.weight);
-            p.min_distance = std::numeric_limits<detail::Distance>::max();
+            p.min_distance = std::numeric_limits<ColorDistance>::max();
         }
 
         // Quit if nothing has changed
@@ -267,7 +210,7 @@ std::vector<QRgb> trace::k_means(SegmentedImage& image, int k, int iterations, K
         {
             auto& cluster = clusters[p.cluster];
             auto score = match == MostFrequent ? p.weight :
-                std::numeric_limits<quint32>::max() - p.color.distance(cluster.centroid);
+                std::numeric_limits<ColorDistance>::max() - p.color.distance(cluster.centroid);
 
             if ( score > cluster.total_weight )
             {
@@ -297,18 +240,14 @@ std::vector<QRgb> trace::k_means(SegmentedImage& image, int k, int iterations, K
 namespace glaxnimate::trace::detail::octree {
 
 
-inline Color operator>>(Color rgb, int s)
+inline StructuredColor operator>>(StructuredColor rgb, int s)
 {
-  Color res;
-  res.r = rgb.r >> s; res.g = rgb.g >> s; res.b = rgb.b >> s;
-  return res;
-}
-inline bool operator==(Color rgb1, Color rgb2)
-{
-  return (rgb1.r == rgb2.r && rgb1.g == rgb2.g && rgb1.b == rgb2.b);
+    StructuredColor res;
+    res.r = rgb.r >> s; res.g = rgb.g >> s; res.b = rgb.b >> s;
+    return res;
 }
 
-inline int childIndex(Color rgb)
+inline int childIndex(StructuredColor rgb)
 {
     return (((rgb.r)&1)<<2) | (((rgb.g)&1)<<1) | (((rgb.b)&1));
 }
@@ -323,11 +262,11 @@ struct Node
     // width level of this node
     int width = 0;
     // rgb's prefix of that node
-    Color rgb;
+    StructuredColor rgb;
     // number of pixels this node accounts for
     quint32 weight = 0;
     // sum of pixels colors this node accounts for
-    Color sum;
+    StructuredColor sum;
     // number of leaves under this node
     int nleaf = 0;
     // minimum impact
@@ -362,12 +301,12 @@ struct Node
 /**
  * builds a single <rgb> color leaf
  */
-static std::unique_ptr<Node> ocnodeLeaf(Color rgb, quint32 weight)
+static std::unique_ptr<Node> ocnodeLeaf(StructuredColor rgb, quint32 weight)
 {
     auto node = std::make_unique<Node>();
     node->width = 0;
     node->rgb = rgb;
-    node->sum = Color(rgb.r * weight, rgb.g * weight, rgb.b * weight);
+    node->sum = StructuredColor(rgb.r * weight, rgb.g * weight, rgb.b * weight);
     node->weight = weight;
     node->nleaf = 1;
     node->mi = 0;
@@ -467,8 +406,8 @@ static std::unique_ptr<Node> octreeMerge(Node *parent, Node *ref, std::unique_pt
             //use <newnode> as a fork node with children <node1> and <node2>
             int newwidth =
               node1->width > node2->width ? node1->width : node2->width;
-            Color rgb1 = node1->rgb >> (newwidth - node1->width);
-            Color rgb2 = node2->rgb >> (newwidth - node2->width);
+            StructuredColor rgb1 = node1->rgb >> (newwidth - node1->width);
+            StructuredColor rgb2 = node2->rgb >> (newwidth - node2->width);
             //according to the previous tests <rgb1> != <rgb2> before the loop
             while ( !(rgb1 == rgb2) )
             {
@@ -677,6 +616,19 @@ std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_col
     return detail::color_frequencies_to_palette(freq, max_colors);
 }
 
+namespace std {
+    template<>
+    struct hash<std::pair<int, int>>
+    {
+        std::size_t operator()(std::pair<int, int> const &p) const
+        {
+            std::size_t h1 = std::hash<int>{}(p.first);
+            std::size_t h2 = std::hash<int>{}(p.second);
+            return h1 ^ (h2 << 1);
+        }
+    };
+}
+
 namespace glaxnimate::trace::detail::cluster_merge {
 
 bool large_enough(Cluster* cluster, const SegmentedImage& image, int min_area)
@@ -699,12 +651,142 @@ bool large_enough(Cluster* cluster, const SegmentedImage& image, int min_area)
 //     else
 //         return hole_depth[cluster->id] = 0;
 // }
+void find_gradient(Cluster& cluster, SegmentedImage& image, BrushData& result, int min_color_distance, Cluster::id_type max_id)
+{
+    std::unordered_set<Cluster::id_type> matching(cluster.merge_sources.begin(), cluster.merge_sources.end());
+    matching.insert(cluster.id);
+    std::unordered_map<std::pair<int, int>, StructuredColor> points;
+    int min_x = 0;
+    int max_x = 0;
+    int min_y = 0;
+    int max_y = 0;
+
+    int largest_min_x = image.width();
+    int largest_min_y = image.height();
+    int largest_max_x = 0;
+    int largest_max_y = 0;
+
+    for ( int y = 0; y < image.height(); y++ )
+    {
+        for ( int x = 0; x < image.width(); x++ )
+        {
+            auto id = image.cluster_id(x, y);
+            if ( matching.count(id) )
+            {
+                if ( points.empty() )
+                {
+                    min_x = x;
+                    min_y = y;
+                }
+                max_x = x;
+                max_y = y;
+
+                if ( id == max_id )
+                {
+                    if ( x > largest_max_x )
+                        largest_max_x = x;
+                    if ( x < largest_min_x )
+                        largest_min_x = x;
+                    if ( y > largest_max_y )
+                        largest_max_y = x;
+                    if ( y < largest_min_y )
+                        largest_min_y = x;
+                }
+
+                points.insert({{x, y}, image.cluster(id)->color});
+            }
+        }
+    }
+
+    float center_x = (min_x + max_x) / 2.;
+    float center_y = (min_y + max_y) / 2.;
+    QGradientStops stops;
+    QPoint p1;
+    QPoint p2;
+
+    float angle = math::atan2(largest_max_y - largest_min_y, largest_max_x - largest_min_x) - math::pi / 2;
+
+    std::vector<std::pair<int, int>> line;
+    // TODO
+    // get line of pixels -- https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+    if ( line.size() < 3 )
+        return;
+
+    ColorDistance total_distance = 0;
+    int pixel_count = 0;
+    std::size_t previous_index = 0;
+    StructuredColor previous_color = 0;
+    std::vector<StructuredColor> colors;
+
+    for ( std::size_t i = 0; i < line.size(); i++ )
+    {
+        auto it = points.find(line[i]);
+        if ( it == points.end() )
+            continue;
+
+        auto color = it->second;
+        if ( !colors.empty() )
+            total_distance += previous_color.distance(color);
+        pixel_count++;
+        colors.push_back(color);
+        float delta = i - previous_index;
+        if ( delta > 1 )
+        {
+            for ( std::size_t j = 1; j < delta; j++ )
+                colors.push_back(previous_color.lerp(color, j / delta));
+        }
+        previous_color = color;
+        previous_index = i;
+
+    }
+
+    if ( pixel_count < 3 )
+        return;
+
+    float mean_distance = total_distance / float(previous_index);
+
+    if ( mean_distance > min_color_distance * 2 )
+    {
+        QLinearGradient gradient;
+        gradient.setStart(p1);
+        gradient.setFinalStop(p2);
+        gradient.setStops(gradient_stops(colors));
+        result.gradients.emplace(cluster.id, gradient);
+    }
+}
+
+void get_cluster_result(Cluster& cluster, SegmentedImage& image, BrushData& result, int min_color_distance)
+{
+    int total_size = cluster.size;
+    int max_size = cluster.size;
+    QRgb color = cluster.color;
+    Cluster::id_type max_id = cluster.id;
+    for ( auto merged_id : cluster.merge_sources )
+    {
+        auto merged = image.cluster(merged_id);
+        total_size += merged->size;
+        if ( merged->size > max_size )
+        {
+            max_id = merged_id;
+            max_size = merged->size;
+            color = merged->color;
+        }
+    }
+
+    cluster.color = color;
+
+    // Probably a gradient
+    // using total_size > 100 to have something like a 10x10 pixels minimum
+    // it might be better to base this on the image size rather than being fixed
+    if ( cluster.size < total_size / 2 && total_size > 100 && cluster.merge_sources.size() > 10 )
+        find_gradient(cluster, image, result, min_color_distance, max_id);
+}
 
 
 } // namespace glaxnimate::trace::detail::cluster_merge
 
 
-std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedImage& image,
+glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedImage& image,
                                                    int max_colors, int min_area, int min_color_distance)
 {
     using namespace glaxnimate::trace::detail::cluster_merge;
@@ -762,26 +844,32 @@ std::vector<QRgb> glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedI
         return hole_depth[a.id] < hole_depth[b.id];
     });*/
 
-    /// \todo somehow keep track of gradients
+    BrushData result;
+
+    for ( auto& cluster : image )
+    {
+        if ( !cluster.merge_sources.empty() )
+            get_cluster_result(cluster, image, result, min_color_distance);
+    }
 
     // apply merges
     image.normalize();
 
     // Limit colors to max_colors
-    auto freq = k_modes(image, std::numeric_limits<int>::max());
-    if ( int(freq.size()) > max_colors )
+    result.colors = k_modes(image, std::numeric_limits<int>::max());
+    if ( int(result.colors.size()) > max_colors )
     {
-        std::vector<QRgb> tail(freq.begin() + max_colors, freq.end());
-        freq.erase(freq.begin() + max_colors, freq.end());
+        std::vector<QRgb> tail(result.colors.begin() + max_colors, result.colors.end());
+        result.colors.erase(result.colors.begin() + max_colors, result.colors.end());
         std::unordered_map<QRgb, QRgb> replacements;
         for ( auto col : tail )
-            replacements[col] = freq[closest_match(col, freq)];
-        for ( auto& col : freq )
+            replacements[col] = result.colors[closest_match(col, result.colors)];
+        for ( auto& col : result.colors )
             replacements[col] = col;
 
         for ( auto& cluster : image )
             cluster.color = replacements[cluster.color];
     }
 
-    return freq;
+    return result;
 }
