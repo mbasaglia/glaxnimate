@@ -650,7 +650,7 @@ void find_gradient(
     std::unordered_set<Cluster::id_type> matching(cluster.merge_sources.begin(), cluster.merge_sources.end());
     matching.insert(cluster.id);
     std::unordered_map<ImageCoord, StructuredColor> points;
-    ImageRect bounds = {{0, 0}, {0, 0}};
+    ImageRect bounds = {{image.width(), image.height()}, {0, 0}};
     ImageRect largest_bounds = {{image.width(), image.height()}, {0, 0}};
 
     for ( auto i = index_start; i <= index_end; i++ )
@@ -659,13 +659,9 @@ void find_gradient(
         auto id = image.bitmap()[i];
         if ( matching.count(id) )
         {
-            if ( points.empty() )
-                bounds.top_left = p;
-            bounds.bottom_right = p;
-
             if ( id == largest_id )
                 largest_bounds.add_point(p);
-
+            bounds.add_point(p);
             points.emplace(p, image.cluster(id)->color);
         }
     }
@@ -762,8 +758,9 @@ void get_cluster_result(Cluster& cluster, SegmentedImage& image, BrushData& resu
 } // namespace glaxnimate::trace::detail::cluster_merge
 
 
-glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(glaxnimate::trace::SegmentedImage& image,
-                                                   int max_colors, int min_area, int min_color_distance)
+glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
+    glaxnimate::trace::SegmentedImage& image, int max_colors, int min_area, int min_color_distance
+)
 {
     using namespace glaxnimate::trace::detail::cluster_merge;
 
