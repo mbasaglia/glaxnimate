@@ -4,7 +4,6 @@
 #include <unordered_map>
 
 #include <QColor>
-#include <QGradient>
 
 #include "math/vector.hpp"
 
@@ -129,10 +128,5 @@ struct StructuredColor
                a == oth.a;
     }
 };
-
-/**
- * \brief Given a sequence of colors, it returns the gradient approximating the colors
- */
-QGradientStops gradient_stops(const std::vector<StructuredColor>& colors);
 
 } // namespace glaxnimate::trace

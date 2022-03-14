@@ -11,27 +11,6 @@ class TestSegmentation: public QObject
 {
     Q_OBJECT
 
-
-    std::vector<StructuredColor> make_gradient_colors(
-        const std::vector<std::pair<float, StructuredColor>>& gradient,
-        int n_colors = 256
-    )
-    {
-        std::vector<StructuredColor> colors;
-        int start = 0;
-        for ( int i = 0; i <= n_colors; i++ )
-        {
-            float factor = i / float(n_colors);
-            if ( factor > gradient[start+1].first )
-                start++;
-
-            float t = (factor - gradient[start].first) / (gradient[start+1].first - gradient[start].first);
-            colors.push_back(gradient[start].second.lerp(gradient[start+1].second, t));
-        }
-        return colors;
-    }
-
-
 private slots:
     void test_add_cluster()
     {
@@ -983,75 +962,6 @@ private slots:
         // Ideally it should be 1 but 3 is good enough
         QCOMPARE(colors.size(), 3);
         QCOMPARE(segmented.size(), 3);
-    }
-
-    void test_gradient_stops()
-    {
-        std::vector<std::pair<float, StructuredColor>> gradient{
-            {0.00, 0xffff0000},
-            {0.75, 0xffffff00},
-            {1.00, 0xff000000},
-        };
-        std::vector<StructuredColor> colors = make_gradient_colors(gradient);
-
-        auto stops = gradient_stops(colors);
-        std::vector<std::pair<float, StructuredColor>> out_gradient;
-        for ( const auto& stop : stops )
-            out_gradient.emplace_back(stop.first, stop.second.rgba());
-
-        COMPARE_VECTOR(out_gradient, gradient);
-
-    }
-
-    void test_gradient_stops_too_many_pixels()
-    {
-        std::vector<std::pair<float, StructuredColor>> gradient{
-            {0.00, 0xffff0000},
-            {0.75, 0xffffff00},
-            {1.00, 0xff000000},
-        };
-        std::vector<StructuredColor> colors = make_gradient_colors(gradient, 2048);
-
-        auto stops = gradient_stops(colors);
-        std::vector<std::pair<float, StructuredColor>> out_gradient;
-        for ( const auto& stop : stops )
-            out_gradient.emplace_back(stop.first, stop.second.rgba());
-
-        COMPARE_VECTOR(out_gradient, gradient);
-    }
-
-    void test_gradient_stops_not_enough_pixels()
-    {
-        std::vector<std::pair<float, StructuredColor>> gradient{
-            {0.00, 0xffff0000},
-            {0.75, 0xffffff00},
-            {1.00, 0xff000000},
-        };
-        std::vector<StructuredColor> colors = make_gradient_colors(gradient, 32);
-
-        auto stops = gradient_stops(colors);
-        std::vector<std::pair<float, StructuredColor>> out_gradient;
-        for ( const auto& stop : stops )
-            out_gradient.emplace_back(stop.first, stop.second.rgba());
-
-        COMPARE_VECTOR(out_gradient, gradient);
-    }
-
-    void test_gradient_stops_subtle()
-    {
-        std::vector<std::pair<float, StructuredColor>> gradient{
-            {0.00, 0xffff8800},
-            {0.75, 0xffcccc00},
-            {1.00, 0xff88ff00},
-        };
-        std::vector<StructuredColor> colors = make_gradient_colors(gradient);
-
-        auto stops = gradient_stops(colors);
-        std::vector<std::pair<float, StructuredColor>> out_gradient;
-        for ( const auto& stop : stops )
-            out_gradient.emplace_back(stop.first, stop.second.rgba());
-
-        COMPARE_VECTOR(out_gradient, gradient);
     }
 
     void test_segment_start_end_index()

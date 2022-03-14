@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "math/math.hpp"
+#include "trace/gradient.hpp"
 
 using namespace glaxnimate;
 
@@ -616,18 +617,6 @@ std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_col
     return detail::color_frequencies_to_palette(freq, max_colors);
 }
 
-namespace std {
-    template<>
-    struct hash<std::pair<int, int>>
-    {
-        std::size_t operator()(std::pair<int, int> const &p) const
-        {
-            std::size_t h1 = std::hash<int>{}(p.first);
-            std::size_t h2 = std::hash<int>{}(p.second);
-            return h1 ^ (h2 << 1);
-        }
-    };
-}
 
 namespace glaxnimate::trace::detail::cluster_merge {
 
@@ -651,68 +640,42 @@ bool large_enough(Cluster* cluster, const SegmentedImage& image, int min_area)
 //     else
 //         return hole_depth[cluster->id] = 0;
 // }
-void find_gradient(Cluster& cluster, SegmentedImage& image, BrushData& result, int min_color_distance, Cluster::id_type max_id)
+
+
+void find_gradient(
+    Cluster& cluster, SegmentedImage& image, BrushData& result,
+    int min_color_distance, Cluster::id_type largest_id, std::size_t index_start, std::size_t index_end
+)
 {
     std::unordered_set<Cluster::id_type> matching(cluster.merge_sources.begin(), cluster.merge_sources.end());
     matching.insert(cluster.id);
-    std::unordered_map<std::pair<int, int>, StructuredColor> points;
-    int min_x = 0;
-    int max_x = 0;
-    int min_y = 0;
-    int max_y = 0;
+    std::unordered_map<ImageCoord, StructuredColor> points;
+    ImageRect bounds = {{0, 0}, {0, 0}};
+    ImageRect largest_bounds = {{image.width(), image.height()}, {0, 0}};
 
-    int largest_min_x = image.width();
-    int largest_min_y = image.height();
-    int largest_max_x = 0;
-    int largest_max_y = 0;
-
-    for ( int y = 0; y < image.height(); y++ )
+    for ( auto i = index_start; i <= index_end; i++ )
     {
-        for ( int x = 0; x < image.width(); x++ )
+        ImageCoord p(i % image.width(), i / image.width());
+        auto id = image.bitmap()[i];
+        if ( matching.count(id) )
         {
-            auto id = image.cluster_id(x, y);
-            if ( matching.count(id) )
-            {
-                if ( points.empty() )
-                {
-                    min_x = x;
-                    min_y = y;
-                }
-                max_x = x;
-                max_y = y;
+            if ( points.empty() )
+                bounds.top_left = p;
+            bounds.bottom_right = p;
 
-                if ( id == max_id )
-                {
-                    if ( x > largest_max_x )
-                        largest_max_x = x;
-                    if ( x < largest_min_x )
-                        largest_min_x = x;
-                    if ( y > largest_max_y )
-                        largest_max_y = x;
-                    if ( y < largest_min_y )
-                        largest_min_y = x;
-                }
+            if ( id == largest_id )
+                largest_bounds.add_point(p);
 
-                points.insert({{x, y}, image.cluster(id)->color});
-            }
+            points.emplace(p, image.cluster(id)->color);
         }
     }
 
-    float center_x = (min_x + max_x) / 2.;
-    float center_y = (min_y + max_y) / 2.;
-    QGradientStops stops;
-    QPoint p1;
-    QPoint p2;
+    auto origin = bounds.center();
+    float angle = cluster_angle(image, largest_id, origin) - math::pi / 2;
 
-    float angle = math::atan2(largest_max_y - largest_min_y, largest_max_x - largest_min_x) - math::pi / 2;
+    auto segment = line_rect_intersection(origin, angle, bounds);
+    std::vector<ImageCoord> line = line_pixels(segment.first, segment.second);
 
-    std::vector<std::pair<int, int>> line;
-    // TODO
-    // get line of pixels -- https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-    if ( line.size() < 3 )
-        return;
-
-    ColorDistance total_distance = 0;
     int pixel_count = 0;
     std::size_t previous_index = 0;
     StructuredColor previous_color = 0;
@@ -725,8 +688,6 @@ void find_gradient(Cluster& cluster, SegmentedImage& image, BrushData& result, i
             continue;
 
         auto color = it->second;
-        if ( !colors.empty() )
-            total_distance += previous_color.distance(color);
         pixel_count++;
         colors.push_back(color);
         float delta = i - previous_index;
@@ -740,17 +701,25 @@ void find_gradient(Cluster& cluster, SegmentedImage& image, BrushData& result, i
 
     }
 
-    if ( pixel_count < 3 )
+    if ( pixel_count < 10 )
         return;
 
-    float mean_distance = total_distance / float(previous_index);
 
-    if ( mean_distance > min_color_distance * 2 )
+    GradientStops stops = gradient_stops(colors);
+    float total_distance = 0;
+    for ( std::size_t i = 1; i < stops.size(); i++ )
+        total_distance += stops[i-1].second.distance(stops[i].second);
+
+    if ( total_distance / stops.size() > min_color_distance )
     {
         QLinearGradient gradient;
-        gradient.setStart(p1);
-        gradient.setFinalStop(p2);
-        gradient.setStops(gradient_stops(colors));
+        gradient.setStart(segment.first.x, segment.first.y);
+        gradient.setFinalStop(segment.second.x, segment.second.y);
+        QGradientStops qstops;
+        qstops.reserve(stops.size());
+        for ( const auto& stop : stops )
+            qstops.push_back({stop.first, stop.second.qcolor()});
+        gradient.setStops(qstops);
         result.gradients.emplace(cluster.id, gradient);
     }
 }
@@ -761,10 +730,17 @@ void get_cluster_result(Cluster& cluster, SegmentedImage& image, BrushData& resu
     int max_size = cluster.size;
     QRgb color = cluster.color;
     Cluster::id_type max_id = cluster.id;
+    std::size_t index_start = cluster.index_start;
+    std::size_t index_end = cluster.index_end;
     for ( auto merged_id : cluster.merge_sources )
     {
         auto merged = image.cluster(merged_id);
+        if ( merged->index_start )
+            index_start = cluster.index_start;
+        if ( merged->index_end )
+            index_end = cluster.index_end;
         total_size += merged->size;
+
         if ( merged->size > max_size )
         {
             max_id = merged_id;
@@ -779,7 +755,7 @@ void get_cluster_result(Cluster& cluster, SegmentedImage& image, BrushData& resu
     // using total_size > 100 to have something like a 10x10 pixels minimum
     // it might be better to base this on the image size rather than being fixed
     if ( cluster.size < total_size / 2 && total_size > 100 && cluster.merge_sources.size() > 10 )
-        find_gradient(cluster, image, result, min_color_distance, max_id);
+        find_gradient(cluster, image, result, min_color_distance, max_id, index_start, index_end);
 }
 
 

@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
-#include "trace/segmentation.hpp"
+#include "trace/gradient.hpp"
 
 using namespace glaxnimate::trace;
+using namespace glaxnimate;
 
 bool operator==(const Cluster& a, const Cluster& b)
 {
@@ -32,6 +33,11 @@ QString to_qstring(const Cluster& a)
 QString to_qstring(const StructuredColor& a)
 {
     return "#" + QString::number(a.rgb(), 16).leftJustified(6, '0');
+}
+
+QString to_qstring(const ImageCoord& a)
+{
+    return QString("(%1, %2)").arg(a.x).arg(a.y);
 }
 
 template<class T1, class T2>
@@ -113,6 +119,13 @@ bool better_compare(const SegmentedImage& val1, const std::vector<Cluster>& val2
         if (!better_compare(actual, (v_type{{__VA_ARGS__}}), #actual, "", __FILE__, __LINE__))\
             return;\
     } while (false)
+
+#define BETTER_COMPARE(actual, ...) \
+    do {\
+        if (!better_compare(actual, (std::decay_t<decltype(actual)>{__VA_ARGS__}), #actual, "", __FILE__, __LINE__))\
+            return;\
+    } while (false)
+
 
 QImage make_image(const std::vector<std::vector<QRgb>>& pixels)
 {

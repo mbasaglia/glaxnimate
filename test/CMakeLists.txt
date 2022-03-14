@@ -41,4 +41,12 @@ test_case(test_segmentation
 ../src/core/trace/segmentation.cpp
 ../src/core/trace/quantize.cpp
 ../src/core/trace/color.cpp
+../src/core/trace/gradient.cpp
+)
+
+
+test_case(test_trace_gradient
+../src/core/trace/segmentation.cpp
+../src/core/trace/color.cpp
+../src/core/trace/gradient.cpp
 )

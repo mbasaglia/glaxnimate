@@ -92,6 +92,7 @@ trace/trace.cpp
 trace/trace_wrapper.cpp
 trace/segmentation.cpp
 trace/color.cpp
+trace/gradient.cpp
 )
 
 if ( NOT ANDROID )
