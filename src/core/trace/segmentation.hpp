@@ -149,7 +149,7 @@ public:
     /**
      * \brief Gets the histogram from the clusters
      */
-    Histogram histogram() const;
+    Histogram histogram(bool flatten_lapha = false) const;
 
     /**
      * \brief Returns a cluster from ID

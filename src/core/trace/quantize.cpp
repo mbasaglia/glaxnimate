@@ -29,11 +29,74 @@ std::vector<QRgb> color_frequencies_to_palette(std::vector<trace::ColorFrequency
     return out;
 }
 
+struct ClusterColor
+{
+    qint32 r;
+    qint32 g;
+    qint32 b;
+
+    constexpr ClusterColor(QRgb rgb) noexcept
+    : r(qRed(rgb)), g(qGreen(rgb)), b(qBlue(rgb))
+    {}
+
+    constexpr ClusterColor() noexcept
+    : r(0), g(0), b(0)
+    {}
+
+    constexpr ClusterColor(qint32 r, qint32 g, qint32 b) noexcept
+    : r(r), g(g), b(b)
+    {}
+
+    constexpr ColorDistance distance(const ClusterColor& oth) const noexcept
+    {
+        ColorDistance dr = r - oth.r;
+        ColorDistance dg = g - oth.g;
+        ColorDistance db = b - oth.b;
+
+        return dr * dr + dg * dg + db * db;
+    }
+
+    constexpr QRgb rgb() const noexcept
+    {
+        return qRgb(r, g, b);
+    }
+
+    constexpr void weighted_add(const ClusterColor& oth, int weight) noexcept
+    {
+        r += oth.r * weight;
+        g += oth.g * weight;
+        b += oth.b * weight;
+    }
+
+    constexpr ClusterColor& operator+=(const ClusterColor& oth) noexcept
+    {
+        weighted_add(oth, 1);
+        return *this;
+    }
+
+    constexpr ClusterColor mean(qreal total_weight) const noexcept
+    {
+        return {
+            qRound(r / total_weight),
+            qRound(g / total_weight),
+            qRound(b / total_weight)
+        };
+    }
+
+
+    constexpr bool operator==(const ClusterColor& oth) const noexcept
+    {
+        return r == oth.r &&
+               g == oth.g &&
+               b == oth.b;
+    }
+};
+
 } // trace::detail
 
 std::vector<trace::ColorFrequency> trace::color_frequencies(const SegmentedImage& image)
 {
-    auto count = image.histogram();
+    auto count = image.histogram(true);
     return std::vector<ColorFrequency>(count.begin(), count.end());
 }
 
@@ -49,7 +112,7 @@ namespace glaxnimate::trace::detail::k_means {
 
 struct Point
 {
-    StructuredColor color;
+    ClusterColor color;
 
     quint32 weight;
 
@@ -66,11 +129,11 @@ struct Point
 
 struct Cluster
 {
-    StructuredColor centroid;
+    ClusterColor centroid;
     quint32 total_weight = 0;
-    StructuredColor sum = {};
+    ClusterColor sum = {};
 
-    constexpr Cluster(const StructuredColor& color) noexcept
+    constexpr Cluster(const ClusterColor& color) noexcept
         : centroid(color)
     {}
 
@@ -241,14 +304,14 @@ std::vector<QRgb> trace::k_means(SegmentedImage& image, int k, int iterations, K
 namespace glaxnimate::trace::detail::octree {
 
 
-inline StructuredColor operator>>(StructuredColor rgb, int s)
+inline ClusterColor operator>>(ClusterColor rgb, int s)
 {
-    StructuredColor res;
+    ClusterColor res;
     res.r = rgb.r >> s; res.g = rgb.g >> s; res.b = rgb.b >> s;
     return res;
 }
 
-inline int childIndex(StructuredColor rgb)
+inline int childIndex(ClusterColor rgb)
 {
     return (((rgb.r)&1)<<2) | (((rgb.g)&1)<<1) | (((rgb.b)&1));
 }
@@ -263,11 +326,11 @@ struct Node
     // width level of this node
     int width = 0;
     // rgb's prefix of that node
-    StructuredColor rgb;
+    ClusterColor rgb;
     // number of pixels this node accounts for
     quint32 weight = 0;
     // sum of pixels colors this node accounts for
-    StructuredColor sum;
+    ClusterColor sum;
     // number of leaves under this node
     int nleaf = 0;
     // minimum impact
@@ -302,12 +365,12 @@ struct Node
 /**
  * builds a single <rgb> color leaf
  */
-static std::unique_ptr<Node> ocnodeLeaf(StructuredColor rgb, quint32 weight)
+static std::unique_ptr<Node> ocnodeLeaf(ClusterColor rgb, quint32 weight)
 {
     auto node = std::make_unique<Node>();
     node->width = 0;
     node->rgb = rgb;
-    node->sum = StructuredColor(rgb.r * weight, rgb.g * weight, rgb.b * weight);
+    node->sum = ClusterColor(rgb.r * weight, rgb.g * weight, rgb.b * weight);
     node->weight = weight;
     node->nleaf = 1;
     node->mi = 0;
@@ -407,8 +470,8 @@ static std::unique_ptr<Node> octreeMerge(Node *parent, Node *ref, std::unique_pt
             //use <newnode> as a fork node with children <node1> and <node2>
             int newwidth =
               node1->width > node2->width ? node1->width : node2->width;
-            StructuredColor rgb1 = node1->rgb >> (newwidth - node1->width);
-            StructuredColor rgb2 = node2->rgb >> (newwidth - node2->width);
+            ClusterColor rgb1 = node1->rgb >> (newwidth - node1->width);
+            ClusterColor rgb2 = node2->rgb >> (newwidth - node2->width);
             //according to the previous tests <rgb1> != <rgb2> before the loop
             while ( !(rgb1 == rgb2) )
             {
@@ -540,7 +603,6 @@ std::unique_ptr<Node> add_pixels(Node* ref, ColorFrequency* data, int data_size)
 }
 
 } // namespace glaxnimate::trace::detail::octree
-
 
 std::vector<QRgb> trace::octree(SegmentedImage& image, int k)
 {

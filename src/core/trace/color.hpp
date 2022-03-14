@@ -48,10 +48,10 @@ qint32 closest_match(QRgb pixel, const std::vector<QRgb> &palette);
 
 struct StructuredColor
 {
-    qint32 r;
-    qint32 g;
-    qint32 b;
-    qint32 a;
+    quint8 r;
+    quint8 g;
+    quint8 b;
+    quint8 a;
 
     constexpr StructuredColor(QRgb rgb) noexcept
     : r(qRed(rgb)), g(qGreen(rgb)), b(qBlue(rgb)), a(qAlpha(rgb))
@@ -61,7 +61,7 @@ struct StructuredColor
     : r(0), g(0), b(0), a(0)
     {}
 
-    constexpr StructuredColor(qint32 r, qint32 g, qint32 b, qint32 a = 255) noexcept
+    constexpr StructuredColor(quint8 r, quint8 g, quint8 b, quint8 a = 255) noexcept
     : r(r), g(g), b(b), a(a)
     {}
 
@@ -80,14 +80,6 @@ struct StructuredColor
         return qRgba(r, g, b, a);
     }
 
-    constexpr void weighted_add(const StructuredColor& oth, int weight) noexcept
-    {
-        r += oth.r * weight;
-        g += oth.g * weight;
-        b += oth.b * weight;
-        a += oth.a * weight;
-    }
-
     constexpr StructuredColor lerp(const StructuredColor& oth, float factor) const noexcept
     {
         return {
@@ -95,22 +87,6 @@ struct StructuredColor
             math::lerp(g, oth.g, factor),
             math::lerp(b, oth.b, factor),
             math::lerp(a, oth.a, factor),
-        };
-    }
-
-    constexpr StructuredColor& operator+=(const StructuredColor& oth) noexcept
-    {
-        weighted_add(oth, 1);
-        return *this;
-    }
-
-    constexpr StructuredColor mean(qreal total_weight) const noexcept
-    {
-        return {
-            qRound(r / total_weight),
-            qRound(g / total_weight),
-            qRound(b / total_weight),
-            qRound(a / total_weight)
         };
     }
 

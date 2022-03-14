@@ -135,11 +135,19 @@ void glaxnimate::trace::SegmentedImage::unique_colors(bool flatten_alpha)
     normalize();
 }
 
-glaxnimate::trace::Histogram glaxnimate::trace::SegmentedImage::histogram() const
+glaxnimate::trace::Histogram glaxnimate::trace::SegmentedImage::histogram(bool flatten_alpha) const
 {
     glaxnimate::trace::Histogram hist;
-    for ( const auto& cluster : *this )
-        hist[cluster.color] += cluster.size;
+    if ( flatten_alpha )
+    {
+        for ( const auto& cluster : *this )
+            hist[cluster.color] += cluster.size;
+    }
+    else
+    {
+        for ( const auto& cluster : *this )
+            hist[cluster.color|0xff000000u] += cluster.size;
+    }
     return hist;
 }
 
