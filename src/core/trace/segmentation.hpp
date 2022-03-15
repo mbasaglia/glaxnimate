@@ -218,15 +218,15 @@ public:
 
     /**
      * \brief Dilates a cluster by 1 pixel
-     * \param id ID of the cluster to dilate
+     * \param clhster Cluster to dilate
      * \param protect_size if a pixel is in a cluster with size grater than this, do not dilate
      */
-    void dilate(Cluster::id_type id, int protect_size = -1);
+    void dilate(Cluster* cluster, int protect_size = -1);
 
     /**
      * \brief Returns the number of pixels in the cluster that mark the boundary of the cluster
      */
-    int perimeter(Cluster::id_type id) const;
+    int perimeter(Cluster* cluster) const;
 
     /**
      * \brief Converts the segmented image to a QImage
@@ -236,7 +236,7 @@ public:
     /**
      * \brief Returns a list of IDs of clusters touching pixels of the given cluster
      */
-    std::vector<Cluster::id_type> neighbours(Cluster::id_type id) const;
+    std::vector<Cluster::id_type> neighbours(Cluster* cluster) const;
 
     /**
      * \brief Image width

@@ -626,17 +626,6 @@ std::vector<QRgb> trace::octree(SegmentedImage& image, int k)
     return colors;
 }
 
-namespace glaxnimate::trace::detail::auto_colors {
-
-void decrease(QRgb color, Histogram& map)
-{
-    auto it = map.find(color | 0xff000000u);
-    if ( it != map.end() )
-        it->second -= 1;
-}
-
-} // namespace glaxnimate::trace::detail::auto_colors
-
 std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_colors, int min_area)
 {
     image.unique_colors();
@@ -833,7 +822,7 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
         ColorDistance min_distance = std::numeric_limits<ColorDistance>::max();
         int min_size = std::numeric_limits<int>::max();
         Cluster* similar_neighbour = nullptr;
-        auto neighbours = image.neighbours(cluster.id);
+        auto neighbours = image.neighbours(&cluster);
         for ( auto neigh_id : neighbours )
         {
             auto neigh = image.cluster(neigh_id);

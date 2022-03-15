@@ -71,6 +71,24 @@ private slots:
         }
     }
 
+    void benchmark_cluster_merge()
+    {
+        QFETCH_GLOBAL(QString, image_path);
+        QImage image(image_path);
+        if ( image.isNull() )
+        {
+            auto msg = ("Wrong path: " + image_path).toStdString();
+            QFAIL(msg.c_str());
+        }
+        auto segmented = segment(image);
+
+        QBENCHMARK
+        {
+            auto seg = segmented;
+            cluster_merge(seg, 256);
+        }
+    }
+
     void benchmark_quantize()
     {
         QFETCH_GLOBAL(QString, image_path);

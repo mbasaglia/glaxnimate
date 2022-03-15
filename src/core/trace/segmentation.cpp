@@ -278,30 +278,28 @@ void glaxnimate::trace::SegmentedImage::quantize(const std::vector<QRgb>& colors
     normalize();
 }
 
-void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_size)
+void glaxnimate::trace::SegmentedImage::dilate(Cluster* source, int protect_size)
 {
-    auto source = cluster(id);
     std::map<Cluster::id_type, int> subtract;
 
-    for ( int y = 0; y < height_; y++ )
+    for ( std::size_t i = source->index_start; i <= source->index_end; i++ )
     {
-        for ( int x = 0; x < width_; x++ )
+        if ( bitmap_[i] == source->id )
         {
-            if ( cluster_id(x, y) == id )
+            int x = i % width_;
+            int y = i / width_;
+            for ( auto d : orthogonal_and_diagonal )
             {
-                for ( auto d : orthogonal_and_diagonal )
-                {
-                    int fy = y + d.first;
-                    int fx = x + d.second;
-                    if ( fx < 0 || fy < 0 || fx >= width_ || fy >= height_ )
-                        continue;
+                int fy = y + d.first;
+                int fx = x + d.second;
+                if ( fx < 0 || fy < 0 || fx >= width_ || fy >= height_ )
+                    continue;
 
-                    auto& pix = bitmap_[fx + fy * width_];
-                    if ( pix > 0 && pix != id && (protect_size < 0 || cluster(pix)->size < protect_size) )
-                    {
-                        subtract[pix] += 1;
-                        pix = -id;
-                    }
+                auto& pix = bitmap_[fx + fy * width_];
+                if ( pix > 0 && pix != source->id && (protect_size < 0 || cluster(pix)->size < protect_size) )
+                {
+                    subtract[pix] += 1;
+                    pix = -source->id;
                 }
             }
         }
@@ -309,7 +307,7 @@ void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_
 
     for ( auto& pix : bitmap_ )
         if ( pix < 0 )
-            pix = id;
+            pix = source->id;
 
     for ( const auto& sub : subtract )
     {
@@ -319,23 +317,22 @@ void glaxnimate::trace::SegmentedImage::dilate(Cluster::id_type id, int protect_
     }
 }
 
-int glaxnimate::trace::SegmentedImage::perimeter(glaxnimate::trace::Cluster::id_type id) const
+int glaxnimate::trace::SegmentedImage::perimeter(glaxnimate::trace::Cluster* source) const
 {
     int perimeter = 0;
 
-    for ( int y = 0; y < height_; y++ )
+    for ( std::size_t i = source->index_start; i <= source->index_end; i++ )
     {
-        for ( int x = 0; x < width_; x++ )
+        if ( bitmap_[i] == source->id )
         {
-            if ( cluster_id(x, y) == id )
+            int x = i % width_;
+            int y = i / width_;
+            for ( auto d : orthogonal )
             {
-                for ( auto d : orthogonal )
+                if ( cluster_id(x + d.second, y + d.first) != source->id )
                 {
-                    if ( cluster_id(x + d.second, y + d.first) != id )
-                    {
-                        perimeter += 1;
-                        break;
-                    }
+                    perimeter += 1;
+                    break;
                 }
             }
         }
@@ -344,26 +341,24 @@ int glaxnimate::trace::SegmentedImage::perimeter(glaxnimate::trace::Cluster::id_
     return perimeter;
 }
 
-std::vector<glaxnimate::trace::Cluster::id_type> glaxnimate::trace::SegmentedImage::neighbours(Cluster::id_type id) const
+std::vector<glaxnimate::trace::Cluster::id_type> glaxnimate::trace::SegmentedImage::neighbours(Cluster* cluster) const
 {
     std::unordered_set<Cluster::id_type> neighbours;
-    for ( int y = 0; y < height_; y++ )
+    for ( auto i = cluster->index_start; i <= cluster->index_end; i++ )
     {
-        for ( int x = 0; x < width_; x++ )
+        if ( bitmap_[i] == cluster->id )
         {
-            if ( cluster_id(x, y) == id )
+            int x = i % width_;
+            int y = i / width_;
+            for ( auto d : orthogonal )
             {
-                for ( auto d : orthogonal )
-                {
-                    auto neigh = cluster_id(x + d.second, y + d.first);
-                    if ( neigh != id && neigh != Cluster::null_id )
-                        neighbours.insert(neigh);
-                }
+                auto neigh = cluster_id(x + d.second, y + d.first);
+                if ( neigh != cluster->id && neigh != Cluster::null_id )
+                    neighbours.insert(neigh);
             }
         }
     }
 
-    neighbours.erase(id);
     return std::vector<Cluster::id_type>(neighbours.begin(), neighbours.end());
 }
 /*
