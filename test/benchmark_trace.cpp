@@ -211,6 +211,6 @@ private slots:
 };
 
 QTEST_GUILESS_MAIN(TestTrace)
-#include "test_trace.moc"
+#include "benchmark_trace.moc"
 
 

@@ -33,8 +33,8 @@ test_case(test_trim_path)
 target_link_libraries(test_trim_path PRIVATE ${LIB_NAME_CORE})
 
 
-test_case(test_trace)
-target_link_libraries(test_trace PRIVATE ${LIB_NAME_CORE})
+test_case(benchmark_trace)
+target_link_libraries(benchmark_trace PRIVATE ${LIB_NAME_CORE})
 
 
 test_case(test_segmentation
