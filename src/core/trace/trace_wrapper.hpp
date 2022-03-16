@@ -6,6 +6,7 @@
 #include "model/shapes/image.hpp"
 #include "model/shapes/group.hpp"
 #include "trace/trace.hpp"
+#include "trace/quantize.hpp"
 
 namespace glaxnimate::trace {
 
@@ -17,6 +18,7 @@ public:
     struct TraceResult
     {
         QColor color;
+        Gradient gradient;
         math::bezier::MultiBezier bezier;
         std::vector<QRectF> rects;
     };
@@ -34,7 +36,7 @@ public:
 
     void trace_mono(const QColor& color, bool inverted, int alpha_threshold, std::vector<TraceResult>& result);
     void trace_exact(const std::vector<QRgb>& colors, int tolerance, std::vector<TraceResult>& result);
-    void trace_closest(const std::vector<QRgb>& colors, std::vector<TraceResult>& result);
+    void trace_closest(const BrushData& colors, std::vector<TraceResult>& result);
     void trace_pixel(std::vector<TraceResult>& result);
 
     model::Group* apply(std::vector<TraceResult>& result, qreal stroke_width);
@@ -45,10 +47,10 @@ public:
     const QImage& image() const;
     const SegmentedImage& segmented_image() const;
 
-    const std::vector<QRgb>& eem_colors() const;
+    const BrushData& cluster_merge_colors() const;
 
     Preset preset_suggestion() const;
-    void trace_preset(Preset preset, int complex_posterization, std::vector<QRgb> &colors, std::vector<TraceResult>& result);
+    BrushData trace_preset(Preset preset, int complex_posterization, std::vector<TraceResult>& result);
 
 signals:
     void progress_max_changed(int max);

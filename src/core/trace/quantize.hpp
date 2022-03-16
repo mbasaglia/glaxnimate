@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QLinearGradient>
 #include "segmentation.hpp"
 
 namespace glaxnimate::trace {
@@ -46,8 +45,15 @@ std::vector<QRgb> edge_exclusion_modes(SegmentedImage& image, int max_colors, in
 
 struct BrushData
 {
-    std::vector<QRgb> colors;
-    std::unordered_map<Cluster::id_type, QLinearGradient> gradients;
+    std::vector<QRgb> colors = {};
+    std::unordered_map<Cluster::id_type, Gradient> gradients = {};
+    Gradient gradient(Cluster::id_type id) const
+    {
+        auto it = gradients.find(id);
+        if ( it == gradients.end() )
+            return {};
+        return it->second;
+    }
 };
 
 BrushData cluster_merge(SegmentedImage& image, int max_colors, int min_area = 4, int min_color_distance = 16);

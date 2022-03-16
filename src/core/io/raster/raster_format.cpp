@@ -33,7 +33,7 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
         std::vector<QRgb> colors;
         std::vector<trace::TraceWrapper::TraceResult> result;
         auto preset = trace.preset_suggestion();
-        trace.trace_preset(preset, 16, colors, result);
+        trace.trace_preset(preset, 16, result);
         trace.apply(result, preset == trace::TraceWrapper::PixelPreset ? 0 : 1);
 
         return true;

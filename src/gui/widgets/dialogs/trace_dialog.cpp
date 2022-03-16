@@ -95,7 +95,7 @@ public:
         if ( !ui.button_advanced->isChecked() )
         {
             std::vector<QRgb> colors;
-            trace_wrapper.trace_preset(Preset(ui.list_presets->currentRow()), ui.spin_posterize->value(), colors, result);
+            colors = trace_wrapper.trace_preset(Preset(ui.list_presets->currentRow()), ui.spin_posterize->value(), result).colors;
             if ( !colors.empty() )
                 set_colors(colors);
         }
@@ -116,7 +116,7 @@ public:
                     );
                     break;
                 case Mode::Closest:
-                    trace_wrapper.trace_closest(colors(), result);
+                    trace_wrapper.trace_closest({colors(), {}}, result);
                     break;
                 case Mode::Exact:
                     trace_wrapper.trace_exact(
@@ -212,7 +212,7 @@ public:
     {
         if ( image_size.width() < 1024 && image_size.height() < 1024 )
         {
-            auto colors = trace_wrapper.eem_colors();
+            auto colors = trace_wrapper.cluster_merge_colors().colors;
             for ( QRgb rgb : colors )
                 add_color(QColor(rgb));
             ui.spin_color_count->setValue(colors.size());

@@ -105,4 +105,63 @@ struct StructuredColor
     }
 };
 
+
+using GradientStops = std::vector<std::pair<qreal, StructuredColor>>;
+
+/**
+ * \brief Coordinates in an image
+ */
+struct ImageCoord
+{
+    int x;
+    int y;
+
+    constexpr ImageCoord(int x, int y) noexcept : x(x), y(y) {}
+    constexpr ImageCoord() noexcept : x(0), y(0) {}
+    constexpr bool operator==(const ImageCoord& o) const noexcept { return x == o.x && y == o.y; }
+};
+
+
+struct ImageRect
+{
+    ImageCoord top_left;
+    ImageCoord bottom_right;
+
+    constexpr ImageCoord center() const noexcept
+    {
+        return {(bottom_right.x + top_left.x) / 2, (bottom_right.y + top_left.y) / 2};
+    }
+
+    constexpr int width() const noexcept
+    {
+        return bottom_right.x - top_left.x;
+    }
+
+    constexpr int height() const noexcept
+    {
+        return bottom_right.y - top_left.y;
+    }
+
+    constexpr void add_point(const ImageCoord& p) noexcept
+    {
+        if ( p.x > bottom_right.x )
+            bottom_right.x = p.x;
+        if ( p.x < top_left.x )
+            top_left.x = p.x;
+        if ( p.y > bottom_right.y )
+            bottom_right.y = p.y;
+        if ( p.y < top_left.y )
+            top_left.y = p.y;
+    }
+};
+
+
+
+struct Gradient
+{
+    GradientStops stops;
+    ImageCoord p1;
+    ImageCoord p2;
+};
+
 } // namespace glaxnimate::trace

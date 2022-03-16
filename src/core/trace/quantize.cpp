@@ -759,15 +759,7 @@ void find_gradient(
 
     if ( total_distance / stops.size() > min_color_distance )
     {
-        QLinearGradient gradient;
-        gradient.setStart(segment.first.x, segment.first.y);
-        gradient.setFinalStop(segment.second.x, segment.second.y);
-        QGradientStops qstops;
-        qstops.reserve(stops.size());
-        for ( const auto& stop : stops )
-            qstops.push_back({stop.first, stop.second.qcolor()});
-        gradient.setStops(qstops);
-        result.gradients.emplace(cluster.id, gradient);
+        result.gradients.emplace(cluster.id, Gradient{stops, segment.first, segment.second});
     }
 }
 
