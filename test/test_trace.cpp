@@ -89,6 +89,81 @@ private slots:
         }
     }
 
+    void benchmark_segmentation_eem()
+    {
+        QFETCH_GLOBAL(QString, image_path);
+        QImage image(image_path);
+        if ( image.isNull() )
+        {
+            auto msg = ("Wrong path: " + image_path).toStdString();
+            QFAIL(msg.c_str());
+        }
+        auto segmented = segment(image);
+
+        QBENCHMARK
+        {
+            auto seg = segmented;
+            auto colors = edge_exclusion_modes(seg, 256);
+            seg.quantize(colors);
+        }
+    }
+
+    void benchmark_segmentation_octree()
+    {
+        QFETCH_GLOBAL(QString, image_path);
+        QImage image(image_path);
+        if ( image.isNull() )
+        {
+            auto msg = ("Wrong path: " + image_path).toStdString();
+            QFAIL(msg.c_str());
+        }
+        auto segmented = segment(image);
+
+        QBENCHMARK
+        {
+            auto seg = segmented;
+            auto colors = octree(seg, 16);
+            seg.quantize(colors);
+        }
+    }
+
+    void benchmark_segmentation_kmeans()
+    {
+        QFETCH_GLOBAL(QString, image_path);
+        QImage image(image_path);
+        if ( image.isNull() )
+        {
+            auto msg = ("Wrong path: " + image_path).toStdString();
+            QFAIL(msg.c_str());
+        }
+        auto segmented = segment(image);
+
+        QBENCHMARK
+        {
+            auto seg = segmented;
+            auto colors = k_means(seg, 16, 100, KMeansMatch::Closest);
+            seg.quantize(colors);
+        }
+    }
+
+    void benchmark_segmentation_cluster_merge()
+    {
+        QFETCH_GLOBAL(QString, image_path);
+        QImage image(image_path);
+        if ( image.isNull() )
+        {
+            auto msg = ("Wrong path: " + image_path).toStdString();
+            QFAIL(msg.c_str());
+        }
+        auto segmented = segment(image);
+
+        QBENCHMARK
+        {
+            auto seg = segmented;
+            cluster_merge(seg, 256);
+        }
+    }
+
     void benchmark_quantize()
     {
         QFETCH_GLOBAL(QString, image_path);

@@ -658,7 +658,7 @@ std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_col
             break;
         }
 
-        image.dilate(clusters[largest_off]->id, min_area);
+        image.dilate(clusters[largest_off], min_area);
 
         if ( largest_off != iter )
             std::swap(clusters[iter], clusters[largest_off]);
@@ -676,7 +676,7 @@ bool large_enough(Cluster* cluster, const SegmentedImage& image, int min_area)
     if ( cluster->size < min_area )
         return false;
 
-    if ( cluster->size == image.perimeter(cluster->id) )
+    if ( cluster->size == image.perimeter(cluster) )
         return false;
 
     return true;

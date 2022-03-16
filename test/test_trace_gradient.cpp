@@ -240,10 +240,20 @@ private slots:
         );
     }
 
-    void test_line_pixels_0()
+    void test_line_rect_negpi4()
     {
         ImageRect rect{{0, 0}, {6, 6}};
         auto o = rect.center();
+        BETTER_COMPARE(
+            line_rect_intersection(o, -math::pi/4, rect),
+            ImageCoord(0, 6),
+            ImageCoord(6, 0),
+        );
+    }
+
+    void test_line_pixels_0()
+    {
+        ImageRect rect{{0, 0}, {6, 6}};
         COMPARE_VECTOR(
             line_pixels({0,3}, {6,3}),
             ImageCoord(0, 3),
@@ -259,7 +269,6 @@ private slots:
     void test_line_pixels_pi2()
     {
         ImageRect rect{{0, 0}, {6, 6}};
-        auto o = rect.center();
         COMPARE_VECTOR(
             line_pixels({3,0}, {3,6}),
             ImageCoord(3, 0),
@@ -275,7 +284,6 @@ private slots:
     void test_line_pixels_pi4()
     {
         ImageRect rect{{0, 0}, {6, 6}};
-        auto o = rect.center();
         COMPARE_VECTOR(
             line_pixels({0,0}, {6,6}),
             ImageCoord(0, 0),
@@ -291,7 +299,6 @@ private slots:
     void test_line_pixels_3pi4()
     {
         ImageRect rect{{0, 0}, {6, 6}};
-        auto o = rect.center();
         COMPARE_VECTOR(
             line_pixels({0,6}, {6, 0}),
             ImageCoord(0, 6),
@@ -317,6 +324,19 @@ private slots:
             ImageCoord(5, 3),
             ImageCoord(6, 3),
         );
+    }
+
+    void test_image_rect()
+    {
+        ImageRect r{{1000, 1000}, {0, 0}};
+        for ( int y = 20; y <= 50; y++ )
+            for ( int x = 30; x <= 40; x++ )
+                r.add_point({x, y});
+
+        QCOMPARE(r.top_left.y, 20);
+        QCOMPARE(r.top_left.x, 30);
+        QCOMPARE(r.bottom_right.x, 40);
+        QCOMPARE(r.bottom_right.y, 50);
     }
 };
 

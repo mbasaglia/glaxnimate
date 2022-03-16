@@ -57,9 +57,9 @@ struct ImageRect
         if ( p.x < top_left.x )
             top_left.x = p.x;
         if ( p.y > bottom_right.y )
-            bottom_right.y = p.x;
+            bottom_right.y = p.y;
         if ( p.y < top_left.y )
-            top_left.y = p.x;
+            top_left.y = p.y;
     }
 };
 
