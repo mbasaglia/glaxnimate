@@ -167,6 +167,67 @@ private slots:
         QCOMPARE(colors.size(), 3);
         QCOMPARE(segmented.size(), 3);
     }
+
+    void test_cluster_merge_transparency()
+    {
+        QRgb color1 = 0x88ffff00;
+        QRgb color2 = 0x8800ffff;
+        QRgb color_mix = 0xc751ffae;
+        QImage image(300, 300, QImage::Format_ARGB32);
+        image.fill(0x0u);
+        QPainter painter(&image);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setBrush(QColor::fromRgba(color1));
+        painter.setPen(Qt::NoPen);
+        painter.drawEllipse(QRectF(QPointF(10, 10), QPointF(220, 220)));
+        painter.setBrush(QColor::fromRgba(color2));
+        painter.drawEllipse(QRectF(QPointF(90, 90), QPointF(290, 290)));
+        painter.end();
+
+        auto segmented = segment(image);
+        segmented.erase_if([](const Cluster& c){return c.color == 0x0;});
+        QVERIFY(segmented.size() > 2);
+        BETTER_COMPARE(segmented.cluster(50, 50)->color, color1);
+        BETTER_COMPARE(segmented.cluster(250, 250)->color, color2);
+        BETTER_COMPARE(segmented.cluster(150, 150)->color, color_mix);
+        auto colors = cluster_merge(segmented, 256).colors;
+        COMPARE_VECTOR(colors, color1, color2, color_mix);
+        BETTER_COMPARE(segmented.cluster(50, 50)->color, color1);
+        BETTER_COMPARE(segmented.cluster(250, 250)->color, color2);
+        BETTER_COMPARE(segmented.cluster(150, 150)->color, color_mix);
+        BETTER_COMPARE(segmented.size(), 3);
+    }
+
+
+    void test_cluster_merge_gradient_item()
+    {
+        QRgb color1 = 0xffff0000;
+        QRgb color2 = 0xff000000;
+        QRgb color3 = 0xffffffff;
+        QImage image(300, 300, QImage::Format_ARGB32);
+        image.fill(color3);
+        QPainter painter(&image);
+        painter.setRenderHint(QPainter::Antialiasing);
+        QLinearGradient gradient(10, 0, 266, 0);
+        gradient.setColorAt(0, color1);
+        gradient.setColorAt(1, color2);
+        painter.setBrush(gradient);
+        painter.setPen(Qt::NoPen);
+        painter.drawRoundedRect(QRectF(QPointF(10, 10), QPointF(266, 266)), 20, 20);
+        painter.end();
+
+        auto segmented = segment(image);
+        image.save("/tmp/foo0.png");
+        segmented.to_image().save("/tmp/foo1.png");
+        QVERIFY(segmented.size() > 2);
+        BETTER_COMPARE(segmented.cluster(0, 0)->color, color3);
+        auto brushes = cluster_merge(segmented, 256);
+        segmented.to_image().save("/tmp/foo2.png");
+        BETTER_COMPARE(segmented.cluster(0, 0)->color, color3);
+        BETTER_COMPARE(segmented.size(), 2);
+        BETTER_COMPARE(brushes.colors.size(), 2);
+        COMPARE_VECTOR(brushes.gradients.begin()->second.stops, {0, color1}, {1, color2});
+    }
 };
 
 QTEST_GUILESS_MAIN(TestClusterMerge)

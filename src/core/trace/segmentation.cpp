@@ -158,9 +158,65 @@ QImage glaxnimate::trace::SegmentedImage::to_image() const
     for ( std::size_t i = 0; i != bitmap_.size(); i++ )
     {
         if ( bitmap_[i] == Cluster::null_id )
+        {
             pixels[i] = 0;
+        }
         else
-            pixels[i] = cluster(bitmap_[i])->color;
+        {
+            auto cluster = this->cluster(bitmap_[i]);
+            if ( cluster->merge_target != Cluster::null_id )
+                cluster = this->cluster(cluster->merge_target);
+            pixels[i] = cluster->color;
+        }
+    }
+    return image;
+}
+
+static QRgb unique_color(int id)
+{
+    int hue = id * 67 % 360;
+    int saturation = 255;
+    int value = 255;
+    switch ( id / 360 % 4 )
+    {
+        case 0:
+            saturation = 255;
+            value = 255;
+            break;
+        case 1:
+            saturation = 128;
+            value = 255;
+            break;
+        case 2:
+            saturation = 128;
+            value = 128;
+            break;
+        case 3:
+            saturation = 255;
+            value = 128;
+            break;
+    }
+
+    return QColor::fromHsv(hue, saturation, value).rgba();
+}
+
+QImage glaxnimate::trace::SegmentedImage::to_debug_image() const
+{
+    QImage image(width_, height_, QImage::Format_ARGB32);
+    auto pixels = reinterpret_cast<quint32*>(image.bits());
+    for ( std::size_t i = 0; i != bitmap_.size(); i++ )
+    {
+        if ( bitmap_[i] == Cluster::null_id )
+        {
+            pixels[i] = 0;
+        }
+        else
+        {
+            auto cluster = this->cluster(bitmap_[i]);
+            if ( cluster->merge_target != Cluster::null_id )
+                cluster = this->cluster(cluster->merge_target);
+            pixels[i] = unique_color(cluster->id);
+        }
     }
     return image;
 }

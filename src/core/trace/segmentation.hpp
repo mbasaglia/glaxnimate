@@ -234,6 +234,11 @@ public:
     QImage to_image() const;
 
     /**
+     * \brief Converts the segmented image to a QImage, trying to assign different colors to different clusters
+     */
+    QImage to_debug_image() const;
+
+    /**
      * \brief Returns a list of IDs of clusters touching pixels of the given cluster
      */
     std::vector<Cluster::id_type> neighbours(Cluster* cluster) const;

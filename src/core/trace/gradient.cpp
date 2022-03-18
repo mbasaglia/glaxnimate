@@ -125,6 +125,8 @@ std::pair<glaxnimate::trace::ImageCoord, glaxnimate::trace::ImageCoord> glaxnima
     else
         p2 = {x_at_min_y, bounds.top_left.y};
 
+    qDebug() << p1.x << p1.y << p2.x << p2.y;
+
     return {p1, p2};
 }
 

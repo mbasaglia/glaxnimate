@@ -32,12 +32,17 @@ QString to_qstring(const Cluster& a)
 
 QString to_qstring(const StructuredColor& a)
 {
-    return "#" + QString::number(a.rgb(), 16).leftJustified(6, '0');
+    return "#" + QString::number(a.rgb(), 16).rightJustified(6, '0');
 }
 
 QString to_qstring(const ImageCoord& a)
 {
     return QString("(%1, %2)").arg(a.x).arg(a.y);
+}
+
+QString to_qstring(QRgb a)
+{
+    return "0x" + QString::number(a, 16).rightJustified(8, '0');
 }
 
 template<class T1, class T2>

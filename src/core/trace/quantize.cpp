@@ -671,27 +671,10 @@ std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_col
 
 namespace glaxnimate::trace::detail::cluster_merge {
 
-bool large_enough(Cluster* cluster, const SegmentedImage& image, int min_area)
+bool is_strand(Cluster* cluster, const SegmentedImage& image)
 {
-    if ( cluster->size < min_area )
-        return false;
-
-    if ( cluster->size == image.perimeter(cluster) )
-        return false;
-
-    return true;
+    return cluster->size == image.perimeter(cluster);
 }
-
-// int get_hole_depth(Cluster* cluster, SegmentedImage& image, std::vector<int>& hole_depth)
-// {
-//     auto holed = image.cluster(image.hole_parent(cluster->id));
-//
-//     if ( holed && hole_depth[holed->id] == -1 )
-//         return hole_depth[cluster->id] = get_hole_depth(holed, image, hole_depth);
-//     else
-//         return hole_depth[cluster->id] = 0;
-// }
-
 
 void find_gradient(
     Cluster& cluster, SegmentedImage& image, BrushData& result,
@@ -718,7 +701,9 @@ void find_gradient(
     }
 
     auto origin = bounds.center();
-    float angle = cluster_angle(image, largest_id, origin) - math::pi / 2;
+    // debug
+    {auto c = image.cluster(largest_id); c->merge_target = 0; auto r = c->color; c->color = 0xff00ffff; image.to_image().save("/tmp/gradient_0.png"); c->color = r; c->merge_target = cluster.id; }
+    float angle = cluster_angle(image, largest_id, largest_bounds.center()) - math::pi / 2;
 
     auto segment = line_rect_intersection(origin, angle, bounds);
     std::vector<ImageCoord> line = line_pixels(segment.first, segment.second);
@@ -728,6 +713,9 @@ void find_gradient(
     StructuredColor previous_color = 0;
     std::vector<StructuredColor> colors;
 
+    // debug
+    { QImage debug = image.to_image(); for ( auto p : line ) debug.setPixel(p.x, p.y, 0xff00ffff); debug.save("/tmp/gradient_1.png"); }
+
     for ( std::size_t i = 0; i < line.size(); i++ )
     {
         auto it = points.find(line[i]);
@@ -735,6 +723,14 @@ void find_gradient(
             continue;
 
         auto color = it->second;
+        {
+            auto p = it->first;
+            auto id = image.cluster_id(p.x, p.y);
+            auto c = image.cluster(id)->color;
+            qDebug() << p.x << p.y << id << QString::number(c, 16).rightJustified(8, '0') << StructuredColor(c).qcolor().name();
+
+        }
+//         qDebug() << color.qcolor().name();
         pixel_count++;
         colors.push_back(color);
         float delta = i - previous_index;
@@ -797,6 +793,36 @@ void get_cluster_result(Cluster& cluster, SegmentedImage& image, BrushData& resu
         find_gradient(cluster, image, result, min_color_distance, max_id, index_start, index_end);
 }
 
+std::pair<Cluster*, ColorDistance> merge_candidate(Cluster& cluster, SegmentedImage& image)
+{
+    // Find the most similar neighbour with area less than the current cluster
+    ColorDistance min_distance = std::numeric_limits<ColorDistance>::max();
+    int min_size = std::numeric_limits<int>::max();
+    Cluster* similar_neighbour = nullptr;
+    auto neighbours = image.neighbours(&cluster);
+    for ( auto neigh_id : neighbours )
+    {
+        auto neigh = image.cluster(neigh_id);
+
+        if ( neigh->merge_target == cluster.id )
+            continue;
+
+        if ( neigh->merge_target )
+            neigh = image.cluster(neigh->merge_target);
+
+        // if ( hole_of[cluster->id] != neigh )
+        auto distance = rgba_distance_squared(cluster.color, neigh->color);
+        if ( distance <= min_distance || (distance == min_distance && neigh->size < min_size) )
+        {
+            similar_neighbour = neigh;
+            min_distance = distance;
+            min_size = neigh->size;
+        }
+    }
+
+    return {similar_neighbour, min_distance};
+}
+
 
 } // namespace glaxnimate::trace::detail::cluster_merge
 
@@ -807,61 +833,66 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
 {
     using namespace glaxnimate::trace::detail::cluster_merge;
 
-    // For each cluster, starting with the smallest size
-    for ( Cluster& cluster : image )
+    std::vector<Cluster*> strand_clusters;
+    std::unordered_set<Cluster::id_type> strand_ids;
+
+    // First pass: merge antialias and artifacts
+    for ( auto& cluster : image  )
     {
-        // Find the most similar neighbour with area less than the current cluster
-        ColorDistance min_distance = std::numeric_limits<ColorDistance>::max();
-        int min_size = std::numeric_limits<int>::max();
-        Cluster* similar_neighbour = nullptr;
+        // If the current cluster is not large enough, merge it to the similar neighbour
+        if ( cluster.size < min_area )
+        {
+            auto candidate = merge_candidate(cluster, image);
+            if ( candidate.first )
+            {
+                image.merge(&cluster, candidate.first);
+            }
+        }
+        // "strands" are 1 or 2 pixel wide lines, they will be merged into gradients
+        else if ( is_strand(&cluster, image) )
+        {
+            strand_clusters.push_back(&cluster);
+            strand_ids.insert(cluster.id);
+        }
+        /// TODO else: check if is hole
+    }
+
+    image.to_image().save("/tmp/merge_0000.png"); int i = 1;
+
+    // Second pass: merge gradients
+
+    // This sort is only useful if you want to visualize the merges and avoid seizures :P
+    // std::sort(clusters.begin(), clusters.end(), [](Cluster* a, Cluster* b){ return a->size < b->size; });
+
+    for ( auto ptr : strand_clusters )
+    {
+        auto& cluster = *ptr;
+
         auto neighbours = image.neighbours(&cluster);
         for ( auto neigh_id : neighbours )
         {
             auto neigh = image.cluster(neigh_id);
 
-            if ( neigh->merge_target == cluster.id )
+            if ( neigh->merge_target == cluster.id || !strand_ids.count(neigh_id) )
                 continue;
 
-            if ( neigh->merge_target )
-                neigh = image.cluster(neigh->merge_target);
-
-            // if ( hole_of[cluster->id] != neigh )
             auto distance = rgba_distance_squared(cluster.color, neigh->color);
-            if ( distance <= min_distance || (distance == min_distance && neigh->size < min_size) )
-            {
-                similar_neighbour = neigh;
-                min_distance = distance;
-                min_size = neigh->size;
-            }
-        }
+            if ( distance < 512 )
+                image.merge(&cluster, neigh);
 
-        if ( !similar_neighbour )
-            continue;
+            strand_ids.erase(cluster.id);
 
-        // If the current cluster is not large enough, merge it to the similar neighbour
-        if ( (min_distance <= min_color_distance && min_size > cluster.size) ||
-                !large_enough(&cluster, image, min_area) )
-        {
-            image.merge(&cluster, similar_neighbour);
         }
-//         else
-//         {
-//             // is hole
-//             if ( neighbours.size() == 1 )
-//                 image.add_hole(cluster->id, similar_neighbour);
-//         }
+//         qDebug() << QString::number(i).rightJustified(4, '0')
+//             << cluster.id << QString::number(cluster.color, 16).rightJustified(8, '0')
+//             << candidate.first->id << QString::number(candidate.first->color, 16).rightJustified(8, '0')
+//             << candidate.second;
+        ;
+        image.to_image().save("/tmp/merge_" + QString::number(i++).rightJustified(4, '0') /*+ "_" + QString::number(cluster.id)*/ + ".png");
     }
-/*
-    std::vector<int> hole_depth(clusters.size() + 1, -1);
-    for ( auto cluster : clusters )
-        get_hole_depth(cluster, image, hole_depth);
 
-    image.sort_clusters([&hole_depth](const Cluster& a, const Cluster& b) {
-        return hole_depth[a.id] < hole_depth[b.id];
-    });*/
-
+    // Collect colors and gradients
     BrushData result;
-
     for ( auto& cluster : image )
     {
         if ( !cluster.merge_sources.empty() )
