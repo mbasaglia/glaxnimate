@@ -261,7 +261,7 @@ const QMap<QString, QVector<FieldInfo>> fields = {
     }},
     {"Styler", {
         FieldInfo{"o", "opacity", FloatMult(100)},
-        FieldInfo{"c", "color"},
+        FieldInfo{"c", Custom},
         FieldInfo{"fillEnabled", Custom},
     }},
     {"Fill", {
