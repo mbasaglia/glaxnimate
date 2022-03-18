@@ -457,17 +457,14 @@ public:
     {
         auto used = shape->use.get();
 
-        auto color_prop = &shape->color;
-
-        if ( auto color = qobject_cast<model::NamedColor*>(used) )
-        {
-            jsh["c"_l] = convert_animated(color_prop, {});
-            color_prop = &color->color;
-        }
-
         auto gradient = qobject_cast<model::Gradient*>(used);
         if ( !gradient || !gradient->colors.get() )
         {
+            auto color_prop = &shape->color;
+            if ( auto color = qobject_cast<model::NamedColor*>(used) )
+                color_prop = &color->color;
+            jsh["c"_l] = convert_animated(color_prop, {});
+
             auto join_func = [](const std::vector<QVariant>& args) -> QVariant {
                 return args[0].value<QColor>().alphaF() * args[1].toFloat() * 100;
             };
@@ -476,7 +473,6 @@ public:
             return;
         }
 
-        jsh.remove("c"_l);
         convert_object_basic(gradient, jsh);
 
         if ( shape->type_name() == "Fill" )

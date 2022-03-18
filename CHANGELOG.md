@@ -3,6 +3,8 @@
 * Editing:
     * New quantization algorithm available (Edge Exclusion Modes)
     * Space to toogle playback
+* I/O:
+    * Fixed lottie export with using global swatch colors
 * UI:
     * Simplified version of the trace dialog
 * Bug Fixes:
