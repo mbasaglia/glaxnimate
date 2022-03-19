@@ -1,7 +1,7 @@
 #ifndef GLAXNIMATE_ANDROID_FORMAT_SELECTION_DIALOG_HPP
 #define GLAXNIMATE_ANDROID_FORMAT_SELECTION_DIALOG_HPP
 
-#include "io/io_registry.hpp"
+#include "glaxnimate/core/io/io_registry.hpp"
 #include "base_dialog.hpp"
 
 namespace glaxnimate::android {

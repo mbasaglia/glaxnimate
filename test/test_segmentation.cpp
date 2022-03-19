@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 
-#include "trace/segmentation.hpp"
-#include "trace/quantize.hpp"
+#include "glaxnimate/trace/segmentation.hpp"
+#include "glaxnimate/trace/quantize.hpp"
 #include "test_trace.hpp"
 
 class TestSegmentation: public QObject

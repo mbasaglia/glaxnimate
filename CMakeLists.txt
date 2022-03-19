@@ -130,7 +130,9 @@ add_subdirectory(external/QtAppSetup)
 
 add_subdirectory(external/Qt-History-LineEdit)
 
-add_subdirectory(src bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+add_subdirectory(src)
 
 set(QTCOLORWIDGETS_DESIGNER_PLUGIN ON)
 add_subdirectory(external/Qt-Color-Widgets EXCLUDE_FROM_ALL)

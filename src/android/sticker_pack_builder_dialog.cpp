@@ -9,8 +9,8 @@
 #include <QStandardPaths>
 #include <QPointer>
 
-#include "io/lottie/tgs_format.hpp"
-#include "io/glaxnimate/glaxnimate_format.hpp"
+#include "glaxnimate/lottie/tgs_format.hpp"
+#include "glaxnimate/core/io/glaxnimate/glaxnimate_format.hpp"
 
 #include "emoji/emoji_set.hpp"
 #include "emoji/emoji_dialog.hpp"

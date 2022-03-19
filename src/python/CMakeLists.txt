@@ -7,7 +7,17 @@ add_library(${LIB_NAME_PYTHON} OBJECT ${SOURCES} embed.cpp)
         #${Python3_INCLUDE_DIRS}
         #${CMAKE_SOURCE_DIR}/external/QtAppSetup/external/pybind11/include
 #)
-target_link_libraries(${LIB_NAME_PYTHON} PUBLIC ${LIB_NAME_CORE} QtAppSetup)
+target_link_libraries(${LIB_NAME_PYTHON} PUBLIC
+    glaxnimate_core
+    glaxnimate_trace
+    glaxnimate_video
+    glaxnimate_lottie
+    glaxnimate_compress
+    glaxnimate_math
+    glaxnimate_raster
+    glaxnimate_svg
+    QtAppSetup
+)
 
 pybind11_add_module(glaxnimate_python EXCLUDE_FROM_ALL ${SOURCES} module.cpp)
 set_target_properties(
@@ -15,7 +25,17 @@ set_target_properties(
     OUTPUT_NAME ${PROJECT_SLUG}
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build/lib"
 )
-target_link_libraries(glaxnimate_python PUBLIC ${LIB_NAME_CORE} QtAppSetup)
+target_link_libraries(glaxnimate_python PUBLIC
+    glaxnimate_core
+    glaxnimate_trace
+    glaxnimate_video
+    glaxnimate_lottie
+    glaxnimate_compress
+    glaxnimate_math
+    glaxnimate_raster
+    glaxnimate_svg
+    QtAppSetup
+)
 add_custom_command(TARGET glaxnimate_python PRE_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/build/lib")
 
 

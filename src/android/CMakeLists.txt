@@ -27,8 +27,8 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras Svg REQUIRED)
 add_library(${PROJECT_SLUG}_android SHARED ${SOURCES})
 target_link_libraries(${PROJECT_SLUG}_android PUBLIC
     QtAppSetup
-    ${LIB_NAME_CORE}
-    ${LIB_NAME_GUI}
+    glaxnimate_core
+    glaxnimate_gui
     QtColorWidgets
     #QtHistoryLineEdit
     Qt${QT_VERSION_MAJOR}::Core

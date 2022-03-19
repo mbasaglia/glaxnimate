@@ -2,8 +2,8 @@
 #include <QPoint>
 #include <QMetaProperty>
 
-#include "model/property/object_list_property.hpp"
-#include "model/document.hpp"
+#include "glaxnimate/core/model/property/object_list_property.hpp"
+#include "glaxnimate/core/model/document.hpp"
 
 using namespace glaxnimate::model;
 using namespace glaxnimate;

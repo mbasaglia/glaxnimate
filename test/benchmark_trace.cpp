@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 
-#include "trace/quantize.hpp"
-#include "trace/trace.hpp"
+#include "glaxnimate/trace/quantize.hpp"
+#include "glaxnimate/trace/trace.hpp"
 #include "test_trace.hpp"
 
 class TestTrace: public QObject

@@ -6,7 +6,7 @@
 
 #include "main_window.hpp"
 #include "glaxnimate_app.hpp"
-#include "app_info.hpp"
+#include "glaxnimate/core/app_info.hpp"
 #include "android_style.hpp"
 #include "android_intent_handler.hpp"
 

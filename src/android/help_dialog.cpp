@@ -5,7 +5,7 @@
 #include <QGridLayout>
 #include <QFrame>
 
-#include "io/io_registry.hpp"
+#include "glaxnimate/core/io/io_registry.hpp"
 #include "style/scroll_area_event_filter.hpp"
 #include "glaxnimate_app.hpp"
 

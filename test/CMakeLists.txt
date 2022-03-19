@@ -22,37 +22,37 @@ endfunction(test_case)
 include_directories(${CMAKE_SOURCE_DIR}/src/core)
 
 test_case(test_property)
-target_link_libraries(test_property PRIVATE ${LIB_NAME_CORE})
+target_link_libraries(test_property PRIVATE glaxnimate_compress glaxnimate_math glaxnimate_core)
 
 test_case(test_bezier_solver)
 test_case(test_keyframe_transition
-../src/core/model/animation/keyframe_transition.cpp
+../src/glaxnimate/core/model/animation/keyframe_transition.cpp
 )
 
 test_case(test_trim_path)
-target_link_libraries(test_trim_path PRIVATE ${LIB_NAME_CORE})
+target_link_libraries(test_trim_path PRIVATE glaxnimate_compress glaxnimate_math glaxnimate_core)
 
 
 test_case(benchmark_trace)
-target_link_libraries(benchmark_trace PRIVATE ${LIB_NAME_CORE})
+target_link_libraries(benchmark_trace PRIVATE glaxnimate_compress glaxnimate_core glaxnimate_math glaxnimate_trace)
 
 
 test_case(test_segmentation
-../src/core/trace/segmentation.cpp
-../src/core/trace/color.cpp
+../src/glaxnimate/trace/segmentation.cpp
+../src/glaxnimate/trace/color.cpp
 )
 
 
 test_case(test_trace_gradient
-../src/core/trace/segmentation.cpp
-../src/core/trace/color.cpp
-../src/core/trace/gradient.cpp
+../src/glaxnimate/trace/segmentation.cpp
+../src/glaxnimate/trace/color.cpp
+../src/glaxnimate/trace/gradient.cpp
 )
 
 
 test_case(test_cluster_merge
-../src/core/trace/segmentation.cpp
-../src/core/trace/quantize.cpp
-../src/core/trace/color.cpp
-../src/core/trace/gradient.cpp
+../src/glaxnimate/trace/segmentation.cpp
+../src/glaxnimate/trace/quantize.cpp
+../src/glaxnimate/trace/color.cpp
+../src/glaxnimate/trace/gradient.cpp
 )

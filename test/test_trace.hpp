@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "trace/gradient.hpp"
+#include "glaxnimate/trace/gradient.hpp"
 
 using namespace glaxnimate::trace;
 using namespace glaxnimate;

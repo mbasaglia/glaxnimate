@@ -1,8 +1,8 @@
 #include <QtTest/QtTest>
 #include <QPainter>
 
-#include "trace/segmentation.hpp"
-#include "trace/quantize.hpp"
+#include "glaxnimate/trace/segmentation.hpp"
+#include "glaxnimate/trace/quantize.hpp"
 #include "test_trace.hpp"
 
 class TestClusterMerge: public QObject

@@ -4,7 +4,7 @@
 
 #include <QWidget>
 
-#include "model/document.hpp"
+#include "glaxnimate/core/model/document.hpp"
 
 namespace glaxnimate::android {
 

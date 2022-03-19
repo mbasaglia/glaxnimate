@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 
-#include "trace/gradient.hpp"
-#include "math/math.hpp"
+#include "glaxnimate/trace/gradient.hpp"
+#include "glaxnimate/math/math.hpp"
 
 #include "test_trace.hpp"
 
@@ -253,7 +253,6 @@ private slots:
 
     void test_line_pixels_0()
     {
-        ImageRect rect{{0, 0}, {6, 6}};
         COMPARE_VECTOR(
             line_pixels({0,3}, {6,3}),
             ImageCoord(0, 3),
@@ -268,7 +267,6 @@ private slots:
 
     void test_line_pixels_pi2()
     {
-        ImageRect rect{{0, 0}, {6, 6}};
         COMPARE_VECTOR(
             line_pixels({3,0}, {3,6}),
             ImageCoord(3, 0),
@@ -283,7 +281,6 @@ private slots:
 
     void test_line_pixels_pi4()
     {
-        ImageRect rect{{0, 0}, {6, 6}};
         COMPARE_VECTOR(
             line_pixels({0,0}, {6,6}),
             ImageCoord(0, 0),
@@ -298,7 +295,6 @@ private slots:
 
     void test_line_pixels_3pi4()
     {
-        ImageRect rect{{0, 0}, {6, 6}};
         COMPARE_VECTOR(
             line_pixels({0,6}, {6, 0}),
             ImageCoord(0, 6),
@@ -313,7 +309,6 @@ private slots:
 
     void test_line_pixels_m2()
     {
-        ImageRect rect{{0, 0}, {6, 6}};
         COMPARE_VECTOR(
             line_pixels({0, 1}, {6,3}),
             ImageCoord(0, 1),

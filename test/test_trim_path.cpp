@@ -1,7 +1,7 @@
 #include <QtTest/QtTest>
 
-#include "model/document.hpp"
-#include "model/shapes/trim.hpp"
+#include "glaxnimate/core/model/document.hpp"
+#include "glaxnimate/core/model/shapes/trim.hpp"
 
 
 #define COMPARE_MULTIBEZIER(actual, expected) \

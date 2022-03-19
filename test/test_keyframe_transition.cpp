@@ -1,6 +1,6 @@
 #include <QtTest/QtTest>
 
-#include "model/animation/keyframe_transition.hpp"
+#include "glaxnimate/core/model/animation/keyframe_transition.hpp"
 
 using namespace glaxnimate;
 
