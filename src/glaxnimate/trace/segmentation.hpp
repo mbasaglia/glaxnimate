@@ -230,13 +230,10 @@ public:
 
     /**
      * \brief Converts the segmented image to a QImage
+     * \param applied_merges if true, it will show the colors as if all merges were applied
+     * \param debug_colors whether to assign different colors to different clusters
      */
-    QImage to_image() const;
-
-    /**
-     * \brief Converts the segmented image to a QImage, trying to assign different colors to different clusters
-     */
-    QImage to_debug_image() const;
+    QImage to_image(bool applied_merges=true, bool debug_colors=false) const;
 
     /**
      * \brief Returns a list of IDs of clusters touching pixels of the given cluster

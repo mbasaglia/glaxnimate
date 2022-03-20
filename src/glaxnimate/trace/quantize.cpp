@@ -701,8 +701,6 @@ void find_gradient(
     }
 
     auto origin = bounds.center();
-    // debug
-    {auto c = image.cluster(largest_id); c->merge_target = 0; auto r = c->color; c->color = 0xff00ffff; image.to_image().save("/tmp/gradient_0.png"); c->color = r; c->merge_target = cluster.id; }
     float angle = cluster_angle(image, largest_id, largest_bounds.center()) - math::pi / 2;
 
     auto segment = line_rect_intersection(origin, angle, bounds);
@@ -713,9 +711,6 @@ void find_gradient(
     StructuredColor previous_color = 0;
     std::vector<StructuredColor> colors;
 
-    // debug
-    { QImage debug = image.to_image(); for ( auto p : line ) debug.setPixel(p.x, p.y, 0xff00ffff); debug.save("/tmp/gradient_1.png"); }
-
     for ( std::size_t i = 0; i < line.size(); i++ )
     {
         auto it = points.find(line[i]);
@@ -723,14 +718,6 @@ void find_gradient(
             continue;
 
         auto color = it->second;
-        {
-            auto p = it->first;
-            auto id = image.cluster_id(p.x, p.y);
-            auto c = image.cluster(id)->color;
-            qDebug() << p.x << p.y << id << QString::number(c, 16).rightJustified(8, '0') << StructuredColor(c).qcolor().name();
-
-        }
-//         qDebug() << color.qcolor().name();
         pixel_count++;
         colors.push_back(color);
         float delta = i - previous_index;
@@ -767,6 +754,7 @@ void get_cluster_result(Cluster& cluster, SegmentedImage& image, BrushData& resu
     Cluster::id_type max_id = cluster.id;
     std::size_t index_start = cluster.index_start;
     std::size_t index_end = cluster.index_end;
+
     for ( auto merged_id : cluster.merge_sources )
     {
         auto merged = image.cluster(merged_id);
@@ -784,13 +772,14 @@ void get_cluster_result(Cluster& cluster, SegmentedImage& image, BrushData& resu
         }
     }
 
-    cluster.color = color;
-
     // Probably a gradient
     // using total_size > 100 to have something like a 10x10 pixels minimum
     // it might be better to base this on the image size rather than being fixed
     if ( cluster.size < total_size / 2 && total_size > 100 && cluster.merge_sources.size() > 10 )
         find_gradient(cluster, image, result, min_color_distance, max_id, index_start, index_end);
+
+    // Apply the best color
+    cluster.color = color;
 }
 
 std::pair<Cluster*, ColorDistance> merge_candidate(Cluster& cluster, SegmentedImage& image)
@@ -810,7 +799,6 @@ std::pair<Cluster*, ColorDistance> merge_candidate(Cluster& cluster, SegmentedIm
         if ( neigh->merge_target )
             neigh = image.cluster(neigh->merge_target);
 
-        // if ( hole_of[cluster->id] != neigh )
         auto distance = rgba_distance_squared(cluster.color, neigh->color);
         if ( distance <= min_distance || (distance == min_distance && neigh->size < min_size) )
         {
@@ -857,8 +845,6 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
         /// TODO else: check if is hole
     }
 
-    image.to_image().save("/tmp/merge_0000.png"); int i = 1;
-
     // Second pass: merge gradients
 
     // This sort is only useful if you want to visualize the merges and avoid seizures :P
@@ -883,12 +869,6 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
             strand_ids.erase(cluster.id);
 
         }
-//         qDebug() << QString::number(i).rightJustified(4, '0')
-//             << cluster.id << QString::number(cluster.color, 16).rightJustified(8, '0')
-//             << candidate.first->id << QString::number(candidate.first->color, 16).rightJustified(8, '0')
-//             << candidate.second;
-        ;
-        image.to_image().save("/tmp/merge_" + QString::number(i++).rightJustified(4, '0') /*+ "_" + QString::number(cluster.id)*/ + ".png");
     }
 
     // Collect colors and gradients

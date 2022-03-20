@@ -217,12 +217,12 @@ private slots:
         painter.end();
 
         auto segmented = segment(image);
-        image.save("/tmp/foo0.png");
-        segmented.to_image().save("/tmp/foo1.png");
+        image.save("/tmp/foo_00_original.png");
+        segmented.to_image().save("/tmp/foo_01_segmented.png");
         QVERIFY(segmented.size() > 2);
         BETTER_COMPARE(segmented.cluster(0, 0)->color, color3);
         auto brushes = cluster_merge(segmented, 256);
-        segmented.to_image().save("/tmp/foo2.png");
+        segmented.to_image().save("/tmp/foo_10_output.png");
         BETTER_COMPARE(segmented.cluster(0, 0)->color, color3);
         BETTER_COMPARE(segmented.size(), 2);
         BETTER_COMPARE(brushes.colors.size(), 2);
