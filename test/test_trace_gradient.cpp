@@ -9,26 +9,6 @@ class TestTraceGradient: public QObject
 {
     Q_OBJECT
 
-private:
-    std::vector<StructuredColor> make_gradient_colors(
-        const GradientStops& gradient,
-        int n_colors = 256
-    )
-    {
-        std::vector<StructuredColor> colors;
-        int start = 0;
-        for ( int i = 0; i <= n_colors; i++ )
-        {
-            float factor = i / float(n_colors);
-            if ( factor > gradient[start+1].first )
-                start++;
-
-            float t = (factor - gradient[start].first) / (gradient[start+1].first - gradient[start].first);
-            colors.push_back(gradient[start].second.lerp(gradient[start+1].second, t));
-        }
-        return colors;
-    }
-
 private slots:
     void test_gradient_stops_2()
     {

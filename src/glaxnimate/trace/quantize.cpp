@@ -673,7 +673,7 @@ namespace glaxnimate::trace::detail::cluster_merge {
 
 bool is_strand(Cluster* cluster, const SegmentedImage& image)
 {
-    return cluster->size == image.perimeter(cluster);
+    return cluster->size <= image.perimeter(cluster) + 2;
 }
 
 void find_gradient(
@@ -828,12 +828,13 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
     for ( auto& cluster : image  )
     {
         // If the current cluster is not large enough, merge it to the similar neighbour
-        if ( cluster.size < min_area )
+        if ( cluster.size <= min_area )
         {
             auto candidate = merge_candidate(cluster, image);
             if ( candidate.first )
             {
                 image.merge(&cluster, candidate.first);
+                // strand_ids.insert(cluster.id);
             }
         }
         // "strands" are 1 or 2 pixel wide lines, they will be merged into gradients
@@ -846,9 +847,6 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
     }
 
     // Second pass: merge gradients
-
-    // This sort is only useful if you want to visualize the merges and avoid seizures :P
-    // std::sort(clusters.begin(), clusters.end(), [](Cluster* a, Cluster* b){ return a->size < b->size; });
 
     for ( auto ptr : strand_clusters )
     {
@@ -867,7 +865,6 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
                 image.merge(&cluster, neigh);
 
             strand_ids.erase(cluster.id);
-
         }
     }
 

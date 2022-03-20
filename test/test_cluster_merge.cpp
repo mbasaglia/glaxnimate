@@ -104,7 +104,7 @@ private slots:
         int id_bg = 1;
         int id_circle = segmented.cluster_id(255, 255);
 
-        auto colors = cluster_merge(segmented, 10).colors;
+        auto colors = cluster_merge(segmented, 10, 12).colors;
 
         QCOMPARE(segmented.cluster_id(255, 255), id_circle);
         QCOMPARE(segmented.cluster_id(0, 0), id_bg);
@@ -144,12 +144,9 @@ private slots:
 
     void test_cluster_merge_gradient_diagonal()
     {
-        QImage image(256, 256, QImage::Format_ARGB32);
-
+        QImage image(128, 128, QImage::Format_ARGB32);
         QPainter painter(&image);
-        painter.setRenderHint(QPainter::Antialiasing);
-
-        QLinearGradient gradient(0, 0, 256, 256);
+        QLinearGradient gradient(0, 0, 128, 128);
         gradient.setColorAt(0, 0xffff0000);
         gradient.setColorAt(1, 0xff000000);
         painter.setBrush(gradient);
@@ -163,9 +160,9 @@ private slots:
 
         auto colors = cluster_merge(segmented, 1024).colors;
 
-        // Ideally it should be 1 but 3 is good enough
-        QCOMPARE(colors.size(), 3);
-        QCOMPARE(segmented.size(), 3);
+        // Ideally it should be 1 but 2 is good enough
+        QCOMPARE(colors.size(), 2);
+        QCOMPARE(segmented.size(), 2);
     }
 
     void test_cluster_merge_transparency()
@@ -217,12 +214,9 @@ private slots:
         painter.end();
 
         auto segmented = segment(image);
-        image.save("/tmp/foo_00_original.png");
-        segmented.to_image().save("/tmp/foo_01_segmented.png");
         QVERIFY(segmented.size() > 2);
         BETTER_COMPARE(segmented.cluster(0, 0)->color, color3);
         auto brushes = cluster_merge(segmented, 256);
-        segmented.to_image().save("/tmp/foo_10_output.png");
         BETTER_COMPARE(segmented.cluster(0, 0)->color, color3);
         BETTER_COMPARE(segmented.size(), 2);
         BETTER_COMPARE(brushes.colors.size(), 2);

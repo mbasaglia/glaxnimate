@@ -153,3 +153,23 @@ void benchmark_data()
     QTest::newRow("small complex") << root.filePath("data/images/trace/complex.jpg");
     QTest::newRow("main window") << root.filePath("docs/docs/img/screenshots/main_window/main_window.png");
 }
+
+
+std::vector<StructuredColor> make_gradient_colors(
+    const GradientStops& gradient,
+    int n_colors = 256
+)
+{
+    std::vector<StructuredColor> colors;
+    int start = 0;
+    for ( int i = 0; i <= n_colors; i++ )
+    {
+        float factor = i / float(n_colors);
+        if ( factor > gradient[start+1].first )
+            start++;
+
+        float t = (factor - gradient[start].first) / (gradient[start+1].first - gradient[start].first);
+        colors.push_back(gradient[start].second.lerp(gradient[start+1].second, t));
+    }
+    return colors;
+}
