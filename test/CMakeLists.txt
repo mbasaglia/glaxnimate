@@ -34,7 +34,7 @@ target_link_libraries(test_trim_path PRIVATE glaxnimate_compress glaxnimate_math
 
 
 test_case(benchmark_trace)
-target_link_libraries(benchmark_trace PRIVATE glaxnimate_compress glaxnimate_core glaxnimate_math glaxnimate_trace)
+target_link_libraries(benchmark_trace PUBLIC glaxnimate_compress glaxnimate_core glaxnimate_math glaxnimate_trace)
 
 
 test_case(test_segmentation

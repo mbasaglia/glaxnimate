@@ -224,21 +224,26 @@ public:
     void dilate(Cluster* cluster, int protect_size = -1);
 
     /**
-     * \brief Returns the number of pixels in the cluster that mark the boundary of the cluster
-     */
-    int perimeter(Cluster* cluster) const;
-
-    /**
      * \brief Converts the segmented image to a QImage
      * \param applied_merges if true, it will show the colors as if all merges were applied
      * \param debug_colors whether to assign different colors to different clusters
      */
     QImage to_image(bool applied_merges=true, bool debug_colors=false) const;
 
+    struct ClusterBoundary
+    {
+        // Cluster this boundary is of
+        Cluster* cluster = nullptr;
+        // Number of pixels in the cluster that are on its boundary
+        int perimeter = 0;
+        // list of IDs of clusters touching pixels of the given cluster
+        std::vector<Cluster::id_type> neighbours;
+    };
+
     /**
-     * \brief Returns a list of IDs of clusters touching pixels of the given cluster
+     * \brief returns info on a cluster's boundary
      */
-    std::vector<Cluster::id_type> neighbours(Cluster* cluster) const;
+    ClusterBoundary boundary(Cluster* cluster) const;
 
     /**
      * \brief Image width

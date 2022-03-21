@@ -668,9 +668,9 @@ std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_col
 
 namespace glaxnimate::trace::detail::cluster_merge {
 
-bool is_strand(Cluster* cluster, const SegmentedImage& image)
+bool is_strand(const Cluster& cluster, const SegmentedImage::ClusterBoundary& boundary)
 {
-    return cluster->size <= image.perimeter(cluster) + 2;
+    return cluster.size <= boundary.perimeter + 2;
 }
 
 void find_gradient(
@@ -779,14 +779,13 @@ void get_cluster_result(Cluster& cluster, SegmentedImage& image, BrushData& resu
     cluster.color = color;
 }
 
-std::pair<Cluster*, ColorDistance> merge_candidate(Cluster& cluster, SegmentedImage& image)
+std::pair<Cluster*, ColorDistance> merge_candidate(Cluster& cluster, SegmentedImage& image, const SegmentedImage::ClusterBoundary& boundary)
 {
     // Find the most similar neighbour with area less than the current cluster
     ColorDistance min_distance = std::numeric_limits<ColorDistance>::max();
     int min_size = std::numeric_limits<int>::max();
     Cluster* similar_neighbour = nullptr;
-    auto neighbours = image.neighbours(&cluster);
-    for ( auto neigh_id : neighbours )
+    for ( auto neigh_id : boundary.neighbours )
     {
         auto neigh = image.cluster(neigh_id);
 
@@ -818,16 +817,16 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
 {
     using namespace glaxnimate::trace::detail::cluster_merge;
 
-    std::vector<Cluster*> strand_clusters;
-    std::unordered_set<Cluster::id_type> strand_ids;
+    std::unordered_map<Cluster::id_type, SegmentedImage::ClusterBoundary> strand_neighbours;
 
     // First pass: merge antialias and artifacts
     for ( auto& cluster : image  )
     {
+        auto boundary = image.boundary(&cluster);
         // If the current cluster is not large enough, merge it to the similar neighbour
         if ( cluster.size <= min_area )
         {
-            auto candidate = merge_candidate(cluster, image);
+            auto candidate = merge_candidate(cluster, image, boundary);
             if ( candidate.first )
             {
                 image.merge(&cluster, candidate.first);
@@ -835,33 +834,30 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
             }
         }
         // "strands" are 1 or 2 pixel wide lines, they will be merged into gradients
-        else if ( is_strand(&cluster, image) )
+        else if ( is_strand(cluster, boundary) )
         {
-            strand_clusters.push_back(&cluster);
-            strand_ids.insert(cluster.id);
+            strand_neighbours.emplace(cluster.id, boundary);
         }
         /// TODO else: check if is hole
     }
 
     // Second pass: merge gradients
 
-    for ( auto ptr : strand_clusters )
+    for ( auto it = strand_neighbours.begin(); it != strand_neighbours.end(); it = strand_neighbours.erase(it) )
     {
-        auto& cluster = *ptr;
+        auto& cluster = *it->second.cluster;
 
-        auto neighbours = image.neighbours(&cluster);
-        for ( auto neigh_id : neighbours )
+        for ( auto neigh_id : it->second.neighbours )
         {
             auto neigh = image.cluster(neigh_id);
 
-            if ( neigh->merge_target == cluster.id || !strand_ids.count(neigh_id) )
+            if ( neigh->merge_target == cluster.id || !strand_neighbours.count(neigh_id) )
                 continue;
 
             auto distance = rgba_distance_squared(cluster.color, neigh->color);
             if ( distance < 512 )
                 image.merge(&cluster, neigh);
 
-            strand_ids.erase(cluster.id);
         }
     }
 

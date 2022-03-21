@@ -661,8 +661,8 @@ private slots:
         auto cluster3 = segmented.add_cluster(0x03);
         cluster1->index_start = cluster2->index_start = cluster3->index_start = 0;
         cluster1->index_end = cluster2->index_end = cluster3->index_end = segmented.bitmap().size();
-        QCOMPARE(segmented.perimeter(cluster1), 13);
-        QCOMPARE(segmented.perimeter(cluster2), 4);
+        QCOMPARE(segmented.boundary(cluster1).perimeter, 13);
+        QCOMPARE(segmented.boundary(cluster2).perimeter, 4);
         segmented.bitmap() = {
             0, 1, 1, 1, 1,
             0, 3, 3, 3, 3,
@@ -670,7 +670,7 @@ private slots:
             2, 3, 3, 3, 3,
             2, 3, 3, 3, 3,
         };
-        QCOMPARE(segmented.perimeter(cluster3), 12);
+        QCOMPARE(segmented.boundary(cluster3).perimeter, 12);
     }
 
     void test_to_image()
@@ -748,7 +748,7 @@ private slots:
         auto cluster = segmented.add_cluster(0x1, 25);
         cluster->index_start = 0;
         cluster->index_end = 24;
-        QCOMPARE(segmented.neighbours(cluster).size(), 0);
+        QCOMPARE(segmented.boundary(cluster).neighbours.size(), 0);
     }
 
     void test_neighbours_none_void()
@@ -764,7 +764,7 @@ private slots:
         auto cluster = segmented.add_cluster(0x1, 20);
         cluster->index_start = 0;
         cluster->index_end = 24;
-        QCOMPARE(segmented.neighbours(cluster).size(), 0);
+        QCOMPARE(segmented.boundary(cluster).neighbours.size(), 0);
     }
 
     void test_neighbours()
@@ -782,7 +782,7 @@ private slots:
         cluster->index_end = 24;
         segmented.add_cluster(0x2, 5);
         segmented.add_cluster(0x2, 5);
-        COMPARE_VECTOR(segmented.neighbours(cluster), 2, 3);
+        COMPARE_VECTOR(segmented.boundary(cluster).neighbours, 2, 3);
     }
 
 

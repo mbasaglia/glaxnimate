@@ -352,32 +352,10 @@ void glaxnimate::trace::SegmentedImage::dilate(Cluster* source, int protect_size
     }
 }
 
-int glaxnimate::trace::SegmentedImage::perimeter(glaxnimate::trace::Cluster* source) const
+glaxnimate::trace::SegmentedImage::ClusterBoundary glaxnimate::trace::SegmentedImage::boundary(Cluster* cluster) const
 {
-    int perimeter = 0;
-
-    for ( std::size_t i = source->index_start; i <= source->index_end; i++ )
-    {
-        if ( bitmap_[i] == source->id )
-        {
-            int x = i % width_;
-            int y = i / width_;
-            for ( auto d : orthogonal )
-            {
-                if ( cluster_id(x + d.second, y + d.first) != source->id )
-                {
-                    perimeter += 1;
-                    break;
-                }
-            }
-        }
-    }
-
-    return perimeter;
-}
-
-std::vector<glaxnimate::trace::Cluster::id_type> glaxnimate::trace::SegmentedImage::neighbours(Cluster* cluster) const
-{
+    ClusterBoundary result;
+    result.cluster = cluster;
     std::unordered_set<Cluster::id_type> neighbours;
     for ( auto i = cluster->index_start; i <= cluster->index_end; i++ )
     {
@@ -385,16 +363,23 @@ std::vector<glaxnimate::trace::Cluster::id_type> glaxnimate::trace::SegmentedIma
         {
             int x = i % width_;
             int y = i / width_;
+            int perimeter = 0;
             for ( auto d : orthogonal )
             {
                 auto neigh = cluster_id(x + d.second, y + d.first);
-                if ( neigh != cluster->id && neigh != Cluster::null_id )
-                    neighbours.insert(neigh);
+                if ( neigh != cluster->id )
+                {
+                    perimeter = 1;
+                    if ( neigh != Cluster::null_id )
+                        neighbours.insert(neigh);
+                }
             }
+            result.perimeter += perimeter;
         }
     }
 
-    return std::vector<Cluster::id_type>(neighbours.begin(), neighbours.end());
+    result.neighbours = std::vector<Cluster::id_type>(neighbours.begin(), neighbours.end());
+    return result;
 }
 /*
 void glaxnimate::trace::SegmentedImage::add_hole(Cluster::id_type hole, Cluster::id_type container)
