@@ -4,11 +4,36 @@
 
 namespace glaxnimate::trace {
 
+/**
+ * \brief Color frequencies, sorted by count
+ */
+class ColorFrequencies
+{
+public:
+    using wrapped_type = std::vector<ColorFrequency>;
+    using size_type = wrapped_type::size_type;
+    using value_type = wrapped_type::value_type;
+    using reference = wrapped_type::const_reference;
+    using iterator = wrapped_type::const_iterator;
+
+    ColorFrequencies(const SegmentedImage& image);
+    ColorFrequencies(const Histogram& histogram);
+    std::vector<QRgb> colors(size_type max = 0) const;
+
+    size_type size() const { return freq.size(); }
+    iterator begin() const { return freq.begin(); }
+    iterator end() const { return freq.end(); }
+
+private:
+    wrapped_type freq;
+};
+
 
 /**
  * \brief Returns the \p k colors that appear most frequently in \p image.
+ * \pre \p frequencies sorted by count
  */
-std::vector<QRgb> k_modes(SegmentedImage& image, int k);
+std::vector<QRgb> k_modes(const ColorFrequencies& frequencies, int k);
 
 
 enum KMeansMatch
@@ -20,14 +45,16 @@ enum KMeansMatch
 
 /**
  * \brief k-means Algorithm
+ * \pre \p frequencies sorted by count
  */
-std::vector<QRgb> k_means(SegmentedImage& image, int k, int iterations, KMeansMatch match);
+std::vector<QRgb> k_means(const ColorFrequencies& frequencies, int k, int iterations, KMeansMatch match);
 
 
 /**
  * \brief Octree Algorithm
+ * \pre \p frequencies sorted by count
  */
-std::vector<QRgb> octree(SegmentedImage& image, int k);
+std::vector<QRgb> octree(const ColorFrequencies& frequencies, int k);
 
 
 /**
@@ -58,11 +85,5 @@ struct BrushData
 
 BrushData cluster_merge(SegmentedImage& image, int max_colors, int min_area = 4, int min_color_distance = 16);
 
-/**
- * \brief Counts pixel values and returns a list of [rgba, count] pairs
- * \param image             The image to analyze
- * \param alpha_threshold   Minimum alpha value [0-255] for a color to be included
- */
-std::vector<ColorFrequency> color_frequencies(const SegmentedImage& image);
 
 } // namespace glaxnimate::trace

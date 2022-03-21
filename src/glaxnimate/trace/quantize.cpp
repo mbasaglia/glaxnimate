@@ -15,20 +15,6 @@ static bool freq_sort_cmp(const ColorFrequency& a, const ColorFrequency& b) noex
     return a.second > b.second;
 }
 
-std::vector<QRgb> color_frequencies_to_palette(std::vector<trace::ColorFrequency>& freq, int max)
-{
-    std::sort(freq.begin(), freq.end(), detail::freq_sort_cmp);
-
-    int count = qMin<int>(max, freq.size());
-    std::vector<QRgb> out;
-    out.reserve(count);
-
-    for ( int i = 0; i < count; i++ )
-        out.push_back(freq[i].first);
-
-    return out;
-}
-
 struct ClusterColor
 {
     qint32 r;
@@ -94,17 +80,34 @@ struct ClusterColor
 
 } // trace::detail
 
-std::vector<trace::ColorFrequency> trace::color_frequencies(const SegmentedImage& image)
+glaxnimate::trace::ColorFrequencies::ColorFrequencies(const glaxnimate::trace::SegmentedImage& image)
+    : ColorFrequencies(image.histogram())
 {
-    auto count = image.histogram(true);
-    return std::vector<ColorFrequency>(count.begin(), count.end());
+}
+
+glaxnimate::trace::ColorFrequencies::ColorFrequencies(const glaxnimate::trace::Histogram& count)
+    : freq(count.begin(), count.end())
+{
+    std::sort(freq.begin(), freq.end(), detail::freq_sort_cmp);
+
+}
+
+std::vector<QRgb> glaxnimate::trace::ColorFrequencies::colors(glaxnimate::trace::ColorFrequencies::size_type max) const
+{
+    int count = max == 0 ? freq.size() : qMin<int>(max, freq.size());
+    std::vector<QRgb> out;
+    out.reserve(count);
+
+    for ( int i = 0; i < count; i++ )
+        out.push_back(freq[i].first);
+
+    return out;
 }
 
 
-std::vector<QRgb> trace::k_modes(SegmentedImage& image, int k)
+std::vector<QRgb> trace::k_modes(const ColorFrequencies& freq, int k)
 {
-    auto freq = color_frequencies(image);
-    return detail::color_frequencies_to_palette(freq, k);
+    return freq.colors(k);
 }
 
 
@@ -156,17 +159,14 @@ struct Cluster
 
 } // trace::detail
 
-std::vector<QRgb> trace::k_means(SegmentedImage& image, int k, int iterations, KMeansMatch match)
+std::vector<QRgb> trace::k_means(const ColorFrequencies& freq, int k, int iterations, KMeansMatch match)
 {
-    auto freq = color_frequencies(image);
-
     // Avoid processing if we don't need to
     if ( int(freq.size()) <= k )
-        return detail::color_frequencies_to_palette(freq, k);
+        return freq.colors(k);
 
     // Initialize points
     std::vector<detail::k_means::Point> points(freq.begin(), freq.end());
-    freq.clear();
 
     // Keep track of the clusters we already used
     std::vector<detail::k_means::Point> cluster_init;
@@ -586,7 +586,7 @@ static std::unique_ptr<Node> octreePrune(std::unique_ptr<Node> ref, int ncolor)
 }
 
 
-std::unique_ptr<Node> add_pixels(Node* ref, ColorFrequency* data, int data_size)
+std::unique_ptr<Node> add_pixels(Node* ref, const ColorFrequencies::iterator& data, int data_size)
 {
     if ( data_size == 1 )
     {
@@ -604,21 +604,19 @@ std::unique_ptr<Node> add_pixels(Node* ref, ColorFrequency* data, int data_size)
 
 } // namespace glaxnimate::trace::detail::octree
 
-std::vector<QRgb> trace::octree(SegmentedImage& image, int k)
+std::vector<QRgb> trace::octree(const ColorFrequencies& freq, int k)
 {
     using namespace glaxnimate::trace::detail::octree;
 
-    auto freq = color_frequencies(image);
-
     // Avoid processing if we don't need to
     if ( int(freq.size()) <= k || k <= 1)
-        return detail::color_frequencies_to_palette(freq, k);
+        return freq.colors(k);
 
     std::vector<QRgb> colors;
     colors.reserve(k);
 
 
-    std::unique_ptr<Node> tree = add_pixels(nullptr, freq.data(), freq.size());
+    std::unique_ptr<Node> tree = add_pixels(nullptr, freq.begin(), freq.size());
     tree = octreePrune(std::move(tree), k);
 
     tree->get_colors(colors);
@@ -664,8 +662,7 @@ std::vector<QRgb> trace::edge_exclusion_modes(SegmentedImage& image, int max_col
             std::swap(clusters[iter], clusters[largest_off]);
     }
 
-    auto freq = color_frequencies(image);
-    return detail::color_frequencies_to_palette(freq, max_colors);
+    return ColorFrequencies(image).colors(max_colors);
 }
 
 
@@ -880,7 +877,7 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
     image.normalize();
 
     // Limit colors to max_colors
-    result.colors = k_modes(image, std::numeric_limits<int>::max());
+    result.colors = ColorFrequencies(image).colors();
     if ( int(result.colors.size()) > max_colors )
     {
         std::vector<QRgb> tail(result.colors.begin() + max_colors, result.colors.end());

@@ -285,7 +285,7 @@ glaxnimate::trace::BrushData glaxnimate::trace::TraceWrapper::trace_preset(
     {
         case trace::TraceWrapper::ComplexPreset:
             d->segmented_quant = d->segmented;
-            data.colors = trace::octree(d->segmented_quant, complex_posterization);
+            data.colors = trace::octree(ColorFrequencies(d->segmented_quant), complex_posterization);
             d->segmented_quant.quantize(data.colors);
             trace_closest(data, result);
             d->segmented_quant = {0, 0};
