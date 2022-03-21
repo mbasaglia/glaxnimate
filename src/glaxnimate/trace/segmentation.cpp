@@ -141,12 +141,12 @@ glaxnimate::trace::Histogram glaxnimate::trace::SegmentedImage::histogram(bool f
     if ( flatten_alpha )
     {
         for ( const auto& cluster : *this )
-            hist[cluster.color] += cluster.size;
+            hist[cluster.color|0xff000000u] += cluster.size;
     }
     else
     {
         for ( const auto& cluster : *this )
-            hist[cluster.color|0xff000000u] += cluster.size;
+            hist[cluster.color] += cluster.size;
     }
     return hist;
 }

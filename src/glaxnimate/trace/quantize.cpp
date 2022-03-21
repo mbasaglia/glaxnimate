@@ -877,7 +877,7 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
     image.normalize();
 
     // Limit colors to max_colors
-    result.colors = ColorFrequencies(image).colors();
+    result.colors = ColorFrequencies(image.histogram(false)).colors();
     if ( int(result.colors.size()) > max_colors )
     {
         std::vector<QRgb> tail(result.colors.begin() + max_colors, result.colors.end());
