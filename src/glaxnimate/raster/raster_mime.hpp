@@ -6,6 +6,7 @@
 
 #include "glaxnimate/core/io/mime/mime_serializer.hpp"
 #include "glaxnimate/core/model/document.hpp"
+#include "glaxnimate/core/model/assets/assets.hpp"
 #include "glaxnimate/core/model/shapes/image.hpp"
 
 namespace glaxnimate::io::raster {

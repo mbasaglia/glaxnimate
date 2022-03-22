@@ -30,7 +30,6 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
         if ( auto file = qobject_cast<QFile*>(&dev) )
             name = file->fileName();
         trace::TraceWrapper trace(document, image, name);
-        std::vector<QRgb> colors;
         std::vector<trace::TraceWrapper::TraceResult> result;
         auto preset = trace.preset_suggestion();
         trace.trace_preset(preset, 16, result);
