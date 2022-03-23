@@ -180,6 +180,7 @@ target_link_libraries(
     glaxnimate_math
     glaxnimate_lottie
     glaxnimate_trace
+    glaxnimate_raster
     glaxnimate_video
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::UiTools
