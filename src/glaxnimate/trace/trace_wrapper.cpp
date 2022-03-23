@@ -309,3 +309,8 @@ const glaxnimate::trace::SegmentedImage & glaxnimate::trace::TraceWrapper::segme
 {
     return d->segmented;
 }
+
+glaxnimate::trace::SegmentedImage & glaxnimate::trace::TraceWrapper::segmented_image()
+{
+    return d->segmented;
+}

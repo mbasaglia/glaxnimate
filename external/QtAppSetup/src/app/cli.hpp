@@ -28,6 +28,7 @@ struct Argument
         Flag,
         String,
         Int,
+        Float,
         Size,
         ShowHelp,
         ShowVersion
@@ -40,6 +41,7 @@ struct Argument
     QString dest;
     int nargs = 0;
     QVariant default_value;
+    QStringList choices;
 
     Argument(
         const QStringList& names,
@@ -48,19 +50,21 @@ struct Argument
         const QVariant& default_value = {},
         const QString& arg_name = {},
         const QString& dest = {},
-        int nargs = 1
+        int nargs = 1,
+        const QStringList& choices = {}
     ) : names(names),
         description(description),
         type(type),
         arg_name(arg_name),
         dest(dest),
         nargs(nargs),
-        default_value(default_value)
+        default_value(default_value),
+        choices(choices)
     {
         if ( this->dest.isEmpty() )
             this->dest = get_slug(names);
         if ( this->arg_name.isEmpty() )
-            this->arg_name = this->dest;
+            this->arg_name = "value";
     }
 
     Argument(
@@ -115,6 +119,12 @@ struct ParsedArguments
     QVariant value(const QString& name) const
     {
         return values[name];
+    }
+
+    template<class T>
+    T get(const QString& name) const
+    {
+        return value(name).value<T>();
     }
 
     bool is_defined(const QString& name) const

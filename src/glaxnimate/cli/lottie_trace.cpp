@@ -19,16 +19,16 @@ struct File
         : name(name == "-" ? "/dev/stdout" : name)
     {}
 
-    bool open(File* parent = nullptr)
+    bool open(QIODevice::OpenModeFlag flag, File* parent = nullptr)
     {
-        if ( do_open(parent) )
+        if ( do_open(flag, parent) )
             return true;
 
         qCritical() << "Could not open " << name;
         return false;
     }
 
-    bool do_open(File* parent = nullptr)
+    bool do_open(QIODevice::OpenModeFlag flags, File* parent = nullptr)
     {
         if ( parent && parent->name == name )
         {
@@ -45,17 +45,23 @@ struct File
         if ( name == "/dev/stdout" )
         {
             std_stream = true;
-            return file->open(stdout, QIODevice::WriteOnly);
+            return file->open(stdout, flags);
         }
 
         if ( name == "/dev/stderr" )
         {
             std_stream = true;
-            return file->open(stderr, QIODevice::WriteOnly);
+            return file->open(stderr, flags);
+        }
+
+        if ( name == "/dev/stdin" )
+        {
+            std_stream = true;
+            return file->open(stdin, flags);
         }
 
         file->setFileName(name);
-        return file->open(QIODevice::WriteOnly);
+        return file->open(flags);
     }
 
     QString name;
@@ -70,11 +76,11 @@ int process(const app::cli::ParsedArguments& args)
 
     File output_json(args.value("output").toString());
 
-    if ( !output_json.open() )
+    if ( !output_json.open(QIODevice::WriteOnly) )
         return 1;
 
     File output_rendered(args.value("rendered").toString());
-    if ( !output_rendered.open(&output_json) )
+    if ( !output_rendered.open(QIODevice::WriteOnly, &output_json) )
         return 1;
 
     QString image_filename = args.value("image").toString();
@@ -85,14 +91,65 @@ int process(const app::cli::ParsedArguments& args)
         return 1;
     }
 
-
-    SegmentedImage segmented = segment(image);
     model::Document document(image_filename);
-    trace::TraceWrapper trace(&document, image, image_filename);
+    QString preset_arg = args.get<QString>("preset");
+    int posterization = args.get<int>("posterization");
     std::vector<trace::TraceWrapper::TraceResult> result;
-    auto preset = trace.preset_suggestion();
-    trace.trace_preset(preset, 256, result);
-    trace.apply(result, preset == trace::TraceWrapper::PixelPreset ? 0 : 1);
+    trace::TraceWrapper trace(&document, image, image_filename);
+    trace.options().set_min_area(args.get<int>("min-area"));
+    trace.options().set_smoothness(args.get<qreal>("smoothness"));
+    if ( preset_arg == "manual" )
+    {
+        auto algo = args.get<QString>("palette-algorithm");
+        BrushData brushes;
+
+        if ( algo == "cluster_merge" )
+        {
+            brushes = cluster_merge(trace.segmented_image(), posterization, args.get<int>("cluster-merge-min-area"), args.get<int>("cluster-merge-min-distance"));
+        }
+        else
+        {
+            if ( algo == "k-modes" )
+            {
+                brushes.colors = k_modes(trace.segmented_image().histogram(), posterization);
+            }
+            else if ( algo == "k-means" )
+            {
+                KMeansMatch match = KMeansMatch::None;
+                auto match_arg = args.get<QString>("k-means-match");
+                if ( match_arg == "None" )
+                    match = KMeansMatch::None;
+                else if ( match_arg == "Closest" )
+                    match = KMeansMatch::Closest;
+                else if ( match_arg == "MostFrequent" )
+                    match = KMeansMatch::MostFrequent;
+                brushes.colors = k_means(trace.segmented_image().histogram(), posterization, args.get<int>("k-means-iterations"), match);
+            }
+            else if ( algo == "eem" )
+            {
+                brushes.colors = edge_exclusion_modes(trace.segmented_image(), posterization, args.get<int>("eem-min-area"));
+            }
+
+            trace.segmented_image().quantize(brushes.colors);
+        }
+
+        trace.trace_closest(brushes, result);
+        trace.apply(result, args.get<qreal>("stroke"));
+    }
+    else
+    {
+        glaxnimate::trace::TraceWrapper::Preset preset;
+        if ( preset_arg == "auto" )
+            preset = trace.preset_suggestion();
+        else if ( preset_arg == "pixel" )
+            preset = glaxnimate::trace::TraceWrapper::PixelPreset;
+        else if ( preset_arg == "flat" )
+            preset = glaxnimate::trace::TraceWrapper::FlatPreset;
+        else
+            preset = glaxnimate::trace::TraceWrapper::ComplexPreset;
+        trace.trace_preset(preset, posterization, result);
+        trace.apply(result, preset == trace::TraceWrapper::PixelPreset ? 0 : 1);
+    }
 
     if ( output_json.file )
         output_json.file->write(io::lottie::LottieFormat().save(&document, {}, output_json.name));
@@ -125,12 +182,35 @@ int main(int argc, char *argv[])
     parser.add_argument({{"--help", "-h"}, QCoreApplication::tr("Show this help and exit"), app::cli::Argument::ShowHelp});
     parser.add_argument({{"--version", "-v"}, QCoreApplication::tr("Show version information and exit"), app::cli::Argument::String});
 
-    parser.add_group(QCoreApplication::tr("Options"));
+    parser.add_group(QCoreApplication::tr("File Options"));
     parser.add_argument({{"image"}, QCoreApplication::tr("Image file to trace")});
     parser.add_argument({{"--output", "-o"}, QCoreApplication::tr("Output JSON lottie file"), app::cli::Argument::String, "-"});
     parser.add_argument({{"--rendered", "-r"}, QCoreApplication::tr("Output rendered PNG file"), app::cli::Argument::String});
     parser.add_argument({{"--separator", "-s"}, QCoreApplication::tr("Separator to use when -o and -r have the same value"), app::cli::Argument::String, "==="});
 
-    return process(parser.parse(application.arguments()));
+    parser.add_group(QCoreApplication::tr("Trace Options"));
+    parser.add_argument({{"--preset"}, QCoreApplication::tr("Preset to use"),
+                        app::cli::Argument::String, "auto", {}, {}, 1, {"auto", "manual", "flat", "pixel", "complex"}});
+    parser.add_argument({{"--color-count"}, QCoreApplication::tr("Number of colors / posterization level"), app::cli::Argument::Int, 32});
+
+    parser.add_group(QCoreApplication::tr("Segmentation Options"));
+    parser.add_argument({{"--palette-algorithm"}, QCoreApplication::tr("Algorithm to find the palette"),
+                        app::cli::Argument::String, "cluster_merge", {}, {}, 1, {"k-modes", "k-means", "octree", "eem", "cluster-merge"}});
+
+    parser.add_argument({{"--k-means-match"}, "", app::cli::Argument::String, "MostFrequent", {}, {}, 1, {"None", "MostFrequent", "Closest"}});
+    parser.add_argument({{"--k-means-iterations"}, "", app::cli::Argument::Int, 100});
+    parser.add_argument({{"--eem-min-area"}, "", app::cli::Argument::Int, 4});
+    parser.add_argument({{"--cluster-merge-min-area"}, "", app::cli::Argument::Int, 4});
+    parser.add_argument({{"--cluster-merge-min-distance"}, "", app::cli::Argument::Int, 16});
+
+    parser.add_group(QCoreApplication::tr("Trace Output Options"));
+    parser.add_argument({{"--smoothness"}, "", app::cli::Argument::Float, 0.75});
+    parser.add_argument({{"--min-area"}, "", app::cli::Argument::Int, 4});
+    parser.add_argument({{"--stroke"}, "", app::cli::Argument::Float, 1});
+
+    auto args = parser.parse(application.arguments());
+    if ( args.return_value )
+        return *args.return_value;
+    return process(args);
 }
 

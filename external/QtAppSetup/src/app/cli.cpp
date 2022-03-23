@@ -30,6 +30,9 @@ QString app::cli::Argument::get_slug(const QStringList& names)
 
 QVariant app::cli::Argument::arg_to_value(const QString& v, bool* ok) const
 {
+    if ( !choices.isEmpty() && !choices.contains(v) )
+        return false;
+
     switch ( type )
     {
         case String:
@@ -37,6 +40,8 @@ QVariant app::cli::Argument::arg_to_value(const QString& v, bool* ok) const
             return v;
         case Int:
             return v.toInt(ok);
+        case Float:
+            return v.toDouble(ok);
         case Size:
         {
             if ( !v.contains('x') )
@@ -297,10 +302,15 @@ QString app::cli::Parser::help_text() const
         text += ":\n";
         for ( const auto& p : grp.args )
         {
+            const auto& arg = (p.first == Positional ? positional : options)[p.second];
+            QString description = arg.description;
+            if ( !arg.choices.empty() )
+                description += QObject::tr("\nSupported values: %1").arg(arg.choices.join(", "));
+
             text += wrap_text(
                 (p.first == Positional ? pos_names : opt_names)[p.second],
                 longest_name,
-                (p.first == Positional ? positional : options)[p.second].description
+                description
             );
             text += '\n';
         }

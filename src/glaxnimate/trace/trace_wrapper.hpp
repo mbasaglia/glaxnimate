@@ -46,6 +46,7 @@ public:
     TraceOptions& options();
     const QImage& image() const;
     const SegmentedImage& segmented_image() const;
+    SegmentedImage& segmented_image();
 
     const BrushData& cluster_merge_colors() const;
 
