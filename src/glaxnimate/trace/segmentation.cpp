@@ -302,6 +302,9 @@ glaxnimate::trace::SegmentedImage glaxnimate::trace::segment(const QImage& image
 
 void glaxnimate::trace::SegmentedImage::quantize(const std::vector<QRgb>& colors)
 {
+    if ( colors.empty() )
+        return;
+
     auto min_id = next_id;
 
     for ( auto & cluster : *this )

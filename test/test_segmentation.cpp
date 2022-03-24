@@ -575,6 +575,59 @@ private slots:
         );
     }
 
+    void test_quantize_nocolor()
+    {
+        QImage image = make_image({
+            {0xffff0000, 0xffff0000, 0xffffff00, 0xffffff00, 0xffffff00},
+            {0xffff0000, 0xffaaff00, 0xff00ff00, 0xff00ff00, 0xff00ff00},
+            {0xffaa0000, 0xffaaff00, 0xff00aa00, 0xff00aa00, 0xff00ff00},
+            {0xffaa0000, 0xffaaff00, 0xff0000ff, 0xff00aa00, 0xff00aa00},
+            {0xffff00aa, 0xffff00aa, 0xff0000ff, 0xff0000ff, 0xff0000ff},
+        });
+        SegmentedImage segmented = segment(image);
+
+        COMPARE_VECTOR(segmented,
+            Cluster{1, 0xffff0000, 3, 0},
+            Cluster{2, 0xffffff00, 3, 0},
+            Cluster{3, 0xffaaff00, 3, 0},
+            Cluster{4, 0xff00ff00, 4, 0},
+            Cluster{5, 0xffaa0000, 2, 0},
+            Cluster{6, 0xff00aa00, 4, 0},
+            Cluster{7, 0xff0000ff, 4, 0},
+            Cluster{8, 0xffff00aa, 2, 0},
+        );
+
+        COMPARE_VECTOR(segmented.bitmap(),
+            1, 1, 2, 2, 2,
+            1, 3, 4, 4, 4,
+            5, 3, 6, 6, 4,
+            5, 3, 7, 6, 6,
+            8, 8, 7, 7, 7,
+        );
+
+        auto quantized = segmented;
+        quantized.quantize({});
+
+        COMPARE_VECTOR(segmented,
+            Cluster{1, 0xffff0000, 3, 0},
+            Cluster{2, 0xffffff00, 3, 0},
+            Cluster{3, 0xffaaff00, 3, 0},
+            Cluster{4, 0xff00ff00, 4, 0},
+            Cluster{5, 0xffaa0000, 2, 0},
+            Cluster{6, 0xff00aa00, 4, 0},
+            Cluster{7, 0xff0000ff, 4, 0},
+            Cluster{8, 0xffff00aa, 2, 0},
+        );
+
+        COMPARE_VECTOR(segmented.bitmap(),
+            1, 1, 2, 2, 2,
+            1, 3, 4, 4, 4,
+            5, 3, 6, 6, 4,
+            5, 3, 7, 6, 6,
+            8, 8, 7, 7, 7,
+        );
+    }
+
     void test_dilate()
     {
         SegmentedImage segmented(7, 7);

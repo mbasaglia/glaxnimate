@@ -16,7 +16,7 @@
 struct File
 {
     File(const QString& name)
-        : name(name == "-" ? "/dev/stdout" : name)
+        : name(name)
     {}
 
     bool open(QIODevice::OpenModeFlag flag, File* parent = nullptr)
@@ -30,6 +30,9 @@ struct File
 
     bool do_open(QIODevice::OpenModeFlag flags, File* parent = nullptr)
     {
+        if ( name == "-" )
+            name = flags & QIODevice::WriteOnly ? "/dev/stdout" : "/dev/stdin";
+
         if ( parent && parent->name == name )
         {
             file = parent->file;
@@ -37,7 +40,7 @@ struct File
             return true;
         }
 
-        if ( name.isEmpty() )
+        if ( name.isEmpty() || name == "/dev/null" )
             return true;
 
         file = std::make_shared<QFile>();
@@ -87,13 +90,13 @@ int process(const app::cli::ParsedArguments& args)
     QImage image(image_filename);
     if ( image.isNull() )
     {
-        qCritical() << "Could not open input image";
+        app::cli::show_message("Could not open input image", true);
         return 1;
     }
 
     model::Document document(image_filename);
     QString preset_arg = args.get<QString>("preset");
-    int posterization = args.get<int>("posterization");
+    int posterization = args.get<int>("color-count");
     std::vector<trace::TraceWrapper::TraceResult> result;
     trace::TraceWrapper trace(&document, image, image_filename);
     trace.options().set_min_area(args.get<int>("min-area"));
@@ -103,7 +106,7 @@ int process(const app::cli::ParsedArguments& args)
         auto algo = args.get<QString>("palette-algorithm");
         BrushData brushes;
 
-        if ( algo == "cluster_merge" )
+        if ( algo == "cluster-merge" )
         {
             brushes = cluster_merge(trace.segmented_image(), posterization, args.get<int>("cluster-merge-min-area"), args.get<int>("cluster-merge-min-distance"));
         }
@@ -129,6 +132,11 @@ int process(const app::cli::ParsedArguments& args)
             {
                 brushes.colors = edge_exclusion_modes(trace.segmented_image(), posterization, args.get<int>("eem-min-area"));
             }
+            else
+            {
+                app::cli::show_message(QObject::tr("%1 is not a valid algorithm").arg(algo) , true);
+                return 1;
+            }
 
             trace.segmented_image().quantize(brushes.colors);
         }
@@ -145,8 +153,11 @@ int process(const app::cli::ParsedArguments& args)
             preset = glaxnimate::trace::TraceWrapper::PixelPreset;
         else if ( preset_arg == "flat" )
             preset = glaxnimate::trace::TraceWrapper::FlatPreset;
-        else
+        else if ( preset_arg == "complex" )
             preset = glaxnimate::trace::TraceWrapper::ComplexPreset;
+        else
+            app::cli::show_message(QObject::tr("%1 is not a valid preset").arg(preset_arg) , true);
+
         trace.trace_preset(preset, posterization, result);
         trace.apply(result, preset == trace::TraceWrapper::PixelPreset ? 0 : 1);
     }
@@ -154,7 +165,7 @@ int process(const app::cli::ParsedArguments& args)
     if ( output_json.file )
         output_json.file->write(io::lottie::LottieFormat().save(&document, {}, output_json.name));
 
-    QByteArray separator = ('\n' + args.value("separator").toString() + '\n').toUtf8();
+    QByteArray separator(1, 0);
 
     if ( output_rendered.file )
     {
@@ -186,7 +197,6 @@ int main(int argc, char *argv[])
     parser.add_argument({{"image"}, QCoreApplication::tr("Image file to trace")});
     parser.add_argument({{"--output", "-o"}, QCoreApplication::tr("Output JSON lottie file"), app::cli::Argument::String, "-"});
     parser.add_argument({{"--rendered", "-r"}, QCoreApplication::tr("Output rendered PNG file"), app::cli::Argument::String});
-    parser.add_argument({{"--separator", "-s"}, QCoreApplication::tr("Separator to use when -o and -r have the same value"), app::cli::Argument::String, "==="});
 
     parser.add_group(QCoreApplication::tr("Trace Options"));
     parser.add_argument({{"--preset"}, QCoreApplication::tr("Preset to use"),

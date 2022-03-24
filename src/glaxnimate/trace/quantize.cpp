@@ -888,5 +888,22 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
             cluster.color = replacements[cluster.color];
     }
 
+    // Merge clusters with the same color (and no gradient)
+    std::unordered_map<QRgb, Cluster*> colors;
+    for ( auto& cluster : image )
+    {
+        if ( result.gradients.find(cluster.id) != result.gradients.end() )
+            continue;
+
+        auto& parent = colors[cluster.color];
+        if ( parent )
+            image.merge(&cluster, parent);
+        else
+            parent = &cluster;
+    }
+
+    // apply color merges
+    image.normalize();
+
     return result;
 }
