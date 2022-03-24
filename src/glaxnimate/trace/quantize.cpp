@@ -725,7 +725,6 @@ void find_gradient(
         }
         previous_color = color;
         previous_index = i;
-
     }
 
     if ( pixel_count < 10 )

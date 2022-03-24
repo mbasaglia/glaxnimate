@@ -195,7 +195,6 @@ private slots:
         BETTER_COMPARE(segmented.size(), 3);
     }
 
-
     void test_cluster_merge_gradient_item()
     {
         QRgb color1 = 0xffff0000;
@@ -221,6 +220,42 @@ private slots:
         BETTER_COMPARE(segmented.size(), 2);
         BETTER_COMPARE(brushes.colors.size(), 2);
         COMPARE_VECTOR(brushes.gradients.begin()->second.stops, {0, color1}, {1, color2});
+    }
+
+    void test_cluster_merge_gradient_item_in_item()
+    {
+        QRgb color1 = 0xffff0000;
+        QRgb color2 = 0xff000000;
+        QRgb color_bg = 0xffffffff;
+        QRgb color_item = 0xffffff00;
+        QImage image(300, 300, QImage::Format_ARGB32);
+        image.fill(color_bg);
+        QPainter painter(&image);
+        painter.setRenderHint(QPainter::Antialiasing);
+        QLinearGradient gradient(10, 0, 266, 0);
+        gradient.setColorAt(0, color1);
+        gradient.setColorAt(1, color2);
+        painter.setBrush(gradient);
+        painter.setPen(Qt::NoPen);
+        painter.drawRoundedRect(QRectF(QPointF(20, 20), QSizeF(256, 265)), 20, 20);
+        painter.setBrush(QColor::fromRgba(color_item));
+        painter.drawRoundedRect(QRectF(QPointF(200, 200), QPointF(80, 80)), 20, 20);
+        painter.end();
+
+        auto segmented = segment(image);
+        QVERIFY(segmented.size() > 2);
+        BETTER_COMPARE(segmented.cluster(0, 0)->color, color_bg);
+        auto brushes = cluster_merge(segmented, 256);
+        BETTER_COMPARE(segmented.cluster(0, 0)->color, color_bg);
+        BETTER_COMPARE(segmented.cluster(130, 130)->color, color_item);
+        // Ideally it would be 3, but 4 is good enough for now
+        BETTER_COMPARE(segmented.size(), 4);
+        BETTER_COMPARE(brushes.colors.size(), 4);
+        auto id = segmented.cluster_id(150, 40);
+        BETTER_COMPARE(brushes.gradients.size(), 1);
+        BETTER_COMPARE(brushes.gradients.count(id), 1);
+        // This should be true but currently isn't
+        // COMPARE_VECTOR(brushes.gradients[id].stops, {0, color1}, {1, color2});
     }
 };
 
