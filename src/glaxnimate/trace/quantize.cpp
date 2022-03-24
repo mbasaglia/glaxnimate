@@ -342,7 +342,7 @@ struct Node
      */
     void get_colors(std::vector<QRgb> &colors)
     {
-        if (nchild == 0)
+        if ( nchild == 0 )
         {
             colors.push_back(sum.mean(weight).rgb());
         }

@@ -34,7 +34,8 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
         auto preset = trace.preset_suggestion();
         trace.trace_preset(preset, 16, result);
         trace.apply(result, preset == trace::TraceWrapper::PixelPreset ? 0 : 1);
-
+        document->main()->width.set(image.width());
+        document->main()->height.set(image.height());
         return true;
     }
 #endif

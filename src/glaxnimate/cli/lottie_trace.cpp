@@ -162,6 +162,9 @@ int process(const app::cli::ParsedArguments& args)
         trace.apply(result, preset == trace::TraceWrapper::PixelPreset ? 0 : 1);
     }
 
+    document.main()->width.set(image.width());
+    document.main()->height.set(image.height());
+
     if ( output_json.file )
         output_json.file->write(io::lottie::LottieFormat().save(&document, {}, output_json.name));
 
