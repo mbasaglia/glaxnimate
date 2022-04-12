@@ -17,6 +17,7 @@ QStringList glaxnimate::io::raster::RasterFormat::extensions() const
 
 bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString&, model::Document* document, const QVariantMap& settings)
 {
+#ifndef WITHOUT_POTRACE
     if ( settings.value("trace", {}).toBool() )
     {
         QImageReader reader;
@@ -37,6 +38,7 @@ bool glaxnimate::io::raster::RasterFormat::on_open(QIODevice& dev, const QString
 
         return true;
     }
+#endif
 
     auto bmp = document->assets()->images->values.insert(std::make_unique<model::Bitmap>(document));
     if ( auto file = qobject_cast<QFile*>(&dev) )
