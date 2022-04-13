@@ -6,7 +6,9 @@
 #include <QInputDialog>
 #include <QStyleFactory>
 
+#ifndef WITHOUT_QT_COLOR_WIDGETS
 #include <QtColorWidgets/ColorDelegate>
+#endif
 
 #include "app/settings/palette_settings.hpp"
 
@@ -50,8 +52,10 @@ public:
     {
         ui.palette_view->blockSignals(true);
         ui.palette_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+#ifndef WITHOUT_QT_COLOR_WIDGETS
         ui.palette_view->setItemDelegateForColumn(0, &delegate);
         ui.palette_view->setItemDelegateForColumn(1, &delegate);
+#endif
         int i = 0;
         for ( const auto& p : app::settings::PaletteSettings::roles() )
         {
@@ -100,7 +104,9 @@ public:
     app::settings::PaletteSettings* settings;
 
     Ui::WidgetPaletteEditor ui;
+#ifndef WITHOUT_QT_COLOR_WIDGETS
     color_widgets::ColorDelegate delegate;
+#endif
     QPalette edited;
     QStyle* style = nullptr;
 };
