@@ -154,7 +154,6 @@ QString glaxnimate::model::Bitmap::object_name() const
     return QFileInfo(filename.get()).fileName();
 }
 
-
 QFileInfo glaxnimate::model::Bitmap::file_info() const
 {
     return QFileInfo(document()->io_options().path, filename.get());

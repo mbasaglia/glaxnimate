@@ -192,6 +192,9 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 
     bool ok = promise.result();*/
     QFile file(options.filename);
+
+    current_document->set_io_options(options);
+
     bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
 
     do_setup_document();
@@ -207,7 +210,6 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     if ( !current_document->main()->shapes.empty() )
         ui.view_document_node->set_current_node(current_document->main()->shapes[0]);
 
-    current_document->set_io_options(options);
     auto first_frame = current_document->main()->animation->first_frame.get();
     ui.play_controls->set_range(first_frame, current_document->main()->animation->last_frame.get());
     current_document->set_current_time(first_frame);
