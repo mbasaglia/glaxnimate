@@ -1,5 +1,6 @@
 #include "gzip.hpp"
 
+#include <array>
 #include <cstring>
 
 #include <QFile>
