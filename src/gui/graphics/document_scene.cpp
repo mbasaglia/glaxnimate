@@ -460,9 +460,13 @@ void graphics::DocumentScene::node_locked(bool locked)
 
 void graphics::DocumentScene::drawBackground(QPainter* painter, const QRectF& rect)
 {
-    painter->fillRect(rect, palette().base());
-    if ( d->document )
-        painter->fillRect(rect.intersected(QRectF(QPointF(0, 0), d->document->size())), d->back);
+    QRectF rectf(rect);
+    emit drawing_background(painter, rectf);
+    if (rectf.isValid()) {
+        painter->fillRect(rect, palette().base());
+        if ( d->document )
+            painter->fillRect(rect.intersected(QRectF(QPointF(0, 0), d->document->size())), d->back);
+    }
 }
 
 void graphics::DocumentScene::drawForeground(QPainter* painter, const QRectF&)

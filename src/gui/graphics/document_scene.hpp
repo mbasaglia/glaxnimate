@@ -63,6 +63,7 @@ public:
 signals:
     void node_user_selected(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected);
     void document_changed(model::Document* new_doc, model::Document* old_doc);
+    void drawing_background(QPainter* painter, QRectF& rect);
 
 protected:
     void drawBackground(QPainter * painter, const QRectF & rect) override;

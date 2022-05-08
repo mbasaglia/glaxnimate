@@ -5,6 +5,7 @@
 
 #include <QMainWindow>
 #include <QUndoGroup>
+#include <QLocalSocket>
 
 #include "model/document.hpp"
 #include "model/shapes/shape.hpp"
@@ -32,6 +33,7 @@ class QItemSelection;
 
 namespace glaxnimate::gui {
 class PluginUiDialog;
+class Canvas;
 
 class GlaxnimateWindow : public QMainWindow, public glaxnimate::gui::SelectionManager
 {
@@ -139,6 +141,8 @@ public:
     void set_selection(const std::vector<model::VisualNode*>& selected) override;
     void update_selection(const std::vector<model::VisualNode*>& selected, const std::vector<model::VisualNode*>& deselected) override;
 
+    void ipc_connect(const QString& name);
+
 public slots:
     void document_save();
     void document_save_as();
@@ -186,6 +190,12 @@ private slots:
     void validate_tgs();
 
     void switch_composition(model::Composition* comp, int index);
+
+    void ipc_signal_connections(bool enable);
+    void ipc_error(QLocalSocket::LocalSocketError socketError);
+    void ipc_read();
+    void ipc_write_time(model::FrameTime t);
+    void ipc_draw_background(QPainter *painter, QRectF &rect);
 
 protected:
     void changeEvent(QEvent *e) override;

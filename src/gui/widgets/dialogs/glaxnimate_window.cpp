@@ -4,6 +4,9 @@
 #include <QDesktopServices>
 #include <QCloseEvent>
 #include <QDragEnterEvent>
+#include <QLocalSocket>
+#include <QDataStream>
+#include <QSharedMemory>
 
 #include "app/widgets/settings_dialog.hpp"
 #include "app_info.hpp"
@@ -427,6 +430,133 @@ void GlaxnimateWindow::switch_composition(model::Composition* comp, int index)
     d->switch_composition(comp, index);
 }
 
+void GlaxnimateWindow::ipc_connect(const QString &name)
+{
+    d->ipc_connect(name);
+}
+
+void GlaxnimateWindow::ipc_signal_connections(bool enable)
+{
+    if (enable) {
+        connect(d->current_document.get(), &model::Document::current_time_changed, this, &GlaxnimateWindow::ipc_write_time);
+        connect(d->ui.canvas, &Canvas::drawing_background, this, &GlaxnimateWindow::ipc_draw_background);
+    } else {
+        disconnect(d->current_document.get(), &model::Document::current_time_changed, this, &GlaxnimateWindow::ipc_write_time);
+        disconnect(d->ui.canvas, &Canvas::drawing_background, this, &GlaxnimateWindow::ipc_draw_background);
+    }
+}
+
+void GlaxnimateWindow::ipc_error(QLocalSocket::LocalSocketError socketError)
+{
+    auto name = d->ipc_socket? d->ipc_socket->serverName() : "???";
+    switch (socketError) {
+    case QLocalSocket::ServerNotFoundError:
+        qWarning() << "IPC server not found when trying to connect:" << name;
+        break;
+    case QLocalSocket::ConnectionRefusedError:
+        qWarning() << "IPC server not refused connection:" << name;
+        break;
+    case QLocalSocket::PeerClosedError:
+        qDebug() << "IPC server closed the connection:" << name;
+        d->ipc_socket.reset();
+        d->ipc_memory.reset();
+        break;
+    default:
+        qInfo() << "IPC server error:" << d->ipc_socket->errorString();
+    }
+}
+
+void GlaxnimateWindow::ipc_read()
+{
+    while (d->ipc_stream && !d->ipc_stream->atEnd()) {
+        QString message;
+        *d->ipc_stream >> message;
+        qDebug() << "IPC server said:" << message;
+
+        // Here is the receive/read side of the IPC protcol - a few commands:
+
+        if (message == "hello") {
+            // handshake
+            *d->ipc_stream << QString("version 1");
+            ipc_signal_connections(true);
+        } else if (message == "redraw") {
+            d->ui.canvas->viewport()->update();
+        } else if (message == "clear") {
+            // The server sends this when video should no longer be in the background.
+            ipc_signal_connections(false);
+        } else if (message.startsWith("open ")) {
+            // open a different document than command line option
+            document_open(message.mid(5));
+            ipc_signal_connections(true);
+            ipc_write_time(d->current_document->current_time());
+        } else if (message == "bye") {
+            d->ipc_socket->disconnectFromServer();
+        }
+    }
+}
+
+void GlaxnimateWindow::ipc_write_time(model::FrameTime t)
+{
+    // Here is the send/write side of the IPC protocol: binary time updates
+
+    if (d->ipc_stream && d->ipc_socket && d->ipc_socket->isOpen()) {
+        *d->ipc_stream << t;
+        d->ipc_socket->flush();
+    }
+}
+
+void GlaxnimateWindow::ipc_draw_background(QPainter *painter, QRectF &rect)
+{
+    // This is the shared memory portion of the IPC: a single QImage
+
+    if (d->ipc_memory && d->ipc_memory->attach(QSharedMemory::ReadOnly)) {
+        d->ipc_memory->lock();
+
+        uchar *from = (uchar *) d->ipc_memory->data();
+        // Get the width of the image and move the pointer forward
+        qint32 iwidth = *(qint32 *)from;
+        from += sizeof(iwidth);
+
+        // Get the height of the image and move the pointer forward
+        qint32 iheight = *(qint32 *)from;
+        from += sizeof(iheight);
+
+        // Get the image format of the image and move the pointer forward
+        qint32 imageFormat = *(qint32 *)from;
+        from += sizeof(imageFormat);
+
+        // Get the bytes per line of the image and move the pointer forward
+        qint32 bytesPerLine = *(qint32 *)from;
+        from += sizeof(bytesPerLine);
+
+        // Generate an image using the raw data and move the pointer forward
+        QImage image = QImage(from, iwidth, iheight, bytesPerLine, QImage::Format(imageFormat)).copy();
+
+        d->ipc_memory->unlock();
+        d->ipc_memory->detach();
+
+        qreal image_aspect = qreal(image.width()) / image.height();
+        qreal document_aspect = qreal(document()->size().width()) / document()->size().height();
+        qreal width, height;
+        QRectF draw_rect;
+        if (image_aspect >= document_aspect) {
+            height = document()->size().height();
+            width = image_aspect * height;
+            QRectF image_rect = {0.0, 0.0, width, height};
+            draw_rect = rect.intersected(image_rect);
+            draw_rect.translate((document()->size().width() - width) / 2.0, 0.0);
+        } else {
+            width = document()->size().width();
+            height = width / image_aspect;
+            QRectF image_rect = {0.0, 0.0, width, height};
+            draw_rect = rect.intersected(image_rect);
+            draw_rect.translate(0.0, (document()->size().height() - height) / 2.0);
+        }
+        painter->drawImage(draw_rect, image);
+        rect.setWidth(0.0);
+    }
+}
+
 std::vector<model::ShapeElement *> GlaxnimateWindow::convert_to_path(const std::vector<model::ShapeElement *>& shapes)
 {
     std::vector<model::ShapeElement *> out;
@@ -464,3 +594,4 @@ void GlaxnimateWindow::update_selection(const std::vector<model::VisualNode*>& s
 {
     return d->selection_changed(selected, deselected);
 }
+
