@@ -33,7 +33,6 @@ class QItemSelection;
 
 namespace glaxnimate::gui {
 class PluginUiDialog;
-class Canvas;
 
 class GlaxnimateWindow : public QMainWindow, public glaxnimate::gui::SelectionManager
 {

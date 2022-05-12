@@ -594,4 +594,3 @@ void GlaxnimateWindow::update_selection(const std::vector<model::VisualNode*>& s
 {
     return d->selection_changed(selected, deselected);
 }
-
