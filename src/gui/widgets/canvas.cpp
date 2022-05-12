@@ -55,7 +55,6 @@ public:
     QPainterPath clip;
     QPainterPath in_clip;
     qreal pinch_zoom = 1;
-    bool drawing_connected = false;
 
 
     QPointF map_to_scene(QPointF p)
@@ -376,11 +375,6 @@ void Canvas::flip_horizontal()
 
 void Canvas::paintEvent(QPaintEvent *event)
 {
-    if (d->scene() && !d->drawing_connected) {
-        d->drawing_connected = connect(d->scene(),
-            &graphics::DocumentScene::drawing_background, this, &Canvas::drawing_background);
-    }
-
     QGraphicsView::paintEvent(event);
 
     QPainter painter;

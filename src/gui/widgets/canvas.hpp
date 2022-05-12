@@ -117,8 +117,6 @@ signals:
 
     void mouse_moved(const QPointF& p);
 
-    void drawing_background(QPainter* painter, QRectF& rect);
-
 protected:
     void mousePressEvent(QMouseEvent * event) override;
     void mouseMoveEvent(QMouseEvent * event) override;

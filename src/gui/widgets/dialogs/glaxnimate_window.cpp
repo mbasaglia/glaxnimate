@@ -438,11 +438,11 @@ void GlaxnimateWindow::ipc_connect(const QString &name)
 void GlaxnimateWindow::ipc_signal_connections(bool enable)
 {
     if (enable) {
-        connect(d->current_document.get(), &model::Document::current_time_changed, this, &GlaxnimateWindow::ipc_write_time);
-        connect(d->ui.canvas, &Canvas::drawing_background, this, &GlaxnimateWindow::ipc_draw_background);
+        connect(document(), &model::Document::current_time_changed, this, &GlaxnimateWindow::ipc_write_time);
+        connect(&d->scene, &graphics::DocumentScene::drawing_background, this, &GlaxnimateWindow::ipc_draw_background);
     } else {
-        disconnect(d->current_document.get(), &model::Document::current_time_changed, this, &GlaxnimateWindow::ipc_write_time);
-        disconnect(d->ui.canvas, &Canvas::drawing_background, this, &GlaxnimateWindow::ipc_draw_background);
+        disconnect(document(), &model::Document::current_time_changed, this, &GlaxnimateWindow::ipc_write_time);
+        disconnect(&d->scene, &graphics::DocumentScene::drawing_background, this, &GlaxnimateWindow::ipc_draw_background);
     }
 }
 
@@ -451,18 +451,19 @@ void GlaxnimateWindow::ipc_error(QLocalSocket::LocalSocketError socketError)
     auto name = d->ipc_socket? d->ipc_socket->serverName() : "???";
     switch (socketError) {
     case QLocalSocket::ServerNotFoundError:
-        qWarning() << "IPC server not found when trying to connect:" << name;
+        app::log::Log("ipc").stream(app::log::Warning) << "IPC server not found:" << name;
         break;
     case QLocalSocket::ConnectionRefusedError:
-        qWarning() << "IPC server not refused connection:" << name;
+        app::log::Log("ipc").stream(app::log::Warning) << "IPC server refused connection:" << name;
         break;
     case QLocalSocket::PeerClosedError:
-        qDebug() << "IPC server closed the connection:" << name;
+        app::log::Log("ipc").stream(app::log::Info) << "IPC server closed the co"
+                                                       "nnection:" << name;
         d->ipc_socket.reset();
         d->ipc_memory.reset();
         break;
     default:
-        qInfo() << "IPC server error:" << d->ipc_socket->errorString();
+        app::log::Log("ipc").stream(app::log::Warning) << "IPC error:" << d->ipc_socket->errorString();
     }
 }
 
@@ -471,7 +472,6 @@ void GlaxnimateWindow::ipc_read()
     while (d->ipc_stream && !d->ipc_stream->atEnd()) {
         QString message;
         *d->ipc_stream >> message;
-        qDebug() << "IPC server said:" << message;
 
         // Here is the receive/read side of the IPC protcol - a few commands:
 
@@ -488,9 +488,11 @@ void GlaxnimateWindow::ipc_read()
             // open a different document than command line option
             document_open(message.mid(5));
             ipc_signal_connections(true);
-            ipc_write_time(d->current_document->current_time());
+            ipc_write_time(document()->current_time());
         } else if (message == "bye") {
             d->ipc_socket->disconnectFromServer();
+        } else {
+            app::log::Log("ipc").stream(app::log::Info) << "IPC server sent unknown command:" << message;
         }
     }
 }
@@ -505,32 +507,31 @@ void GlaxnimateWindow::ipc_write_time(model::FrameTime t)
     }
 }
 
-void GlaxnimateWindow::ipc_draw_background(QPainter *painter, QRectF &rect)
+void GlaxnimateWindow::ipc_draw_background(QPainter *painter, const QRectF &rect)
 {
     // This is the shared memory portion of the IPC: a single QImage
-
     if (d->ipc_memory && d->ipc_memory->attach(QSharedMemory::ReadOnly)) {
         d->ipc_memory->lock();
 
         uchar *from = (uchar *) d->ipc_memory->data();
         // Get the width of the image and move the pointer forward
-        qint32 iwidth = *(qint32 *)from;
-        from += sizeof(iwidth);
+        qint32 image_width = *(qint32 *)from;
+        from += sizeof(image_width);
 
         // Get the height of the image and move the pointer forward
-        qint32 iheight = *(qint32 *)from;
-        from += sizeof(iheight);
+        qint32 image_height = *(qint32 *)from;
+        from += sizeof(image_height);
 
         // Get the image format of the image and move the pointer forward
-        qint32 imageFormat = *(qint32 *)from;
-        from += sizeof(imageFormat);
+        qint32 image_format = *(qint32 *)from;
+        from += sizeof(image_format);
 
         // Get the bytes per line of the image and move the pointer forward
-        qint32 bytesPerLine = *(qint32 *)from;
-        from += sizeof(bytesPerLine);
+        qint32 bytes_per_line = *(qint32 *)from;
+        from += sizeof(bytes_per_line);
 
         // Generate an image using the raw data and move the pointer forward
-        QImage image = QImage(from, iwidth, iheight, bytesPerLine, QImage::Format(imageFormat)).copy();
+        QImage image = QImage(from, image_width, image_height, bytes_per_line, QImage::Format(image_format)).copy();
 
         d->ipc_memory->unlock();
         d->ipc_memory->detach();
@@ -542,18 +543,13 @@ void GlaxnimateWindow::ipc_draw_background(QPainter *painter, QRectF &rect)
         if (image_aspect >= document_aspect) {
             height = document()->size().height();
             width = image_aspect * height;
-            QRectF image_rect = {0.0, 0.0, width, height};
-            draw_rect = rect.intersected(image_rect);
-            draw_rect.translate((document()->size().width() - width) / 2.0, 0.0);
+            draw_rect = {(document()->size().width() - width) / 2.0, 0.0, width, height};
         } else {
             width = document()->size().width();
             height = width / image_aspect;
-            QRectF image_rect = {0.0, 0.0, width, height};
-            draw_rect = rect.intersected(image_rect);
-            draw_rect.translate(0.0, (document()->size().height() - height) / 2.0);
+            draw_rect = {0.0, (document()->size().height() - height) / 2.0, width, height};
         }
         painter->drawImage(draw_rect, image);
-        rect.setWidth(0.0);
     }
 }
 
