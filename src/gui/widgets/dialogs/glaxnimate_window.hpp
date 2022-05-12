@@ -194,7 +194,7 @@ private slots:
     void ipc_error(QLocalSocket::LocalSocketError socketError);
     void ipc_read();
     void ipc_write_time(model::FrameTime t);
-    void ipc_draw_background(QPainter *painter, const QRectF &rect);
+    void ipc_draw_background(QPainter *painter);
 
 protected:
     void changeEvent(QEvent *e) override;

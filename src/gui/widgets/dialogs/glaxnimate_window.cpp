@@ -507,7 +507,7 @@ void GlaxnimateWindow::ipc_write_time(model::FrameTime t)
     }
 }
 
-void GlaxnimateWindow::ipc_draw_background(QPainter *painter, const QRectF &rect)
+void GlaxnimateWindow::ipc_draw_background(QPainter *painter)
 {
     // This is the shared memory portion of the IPC: a single QImage
     if (d->ipc_memory && d->ipc_memory->attach(QSharedMemory::ReadOnly)) {
