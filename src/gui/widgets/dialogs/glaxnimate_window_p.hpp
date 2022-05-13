@@ -50,6 +50,10 @@ namespace glaxnimate::gui {
     class ShapeStylePreviewWidget;
 } // namespace glaxnimate::gui
 
+class QLocalSocket;
+class QDataStream;
+class QSharedMemory;
+
 class GlaxnimateWindow::Private
 {
 public:
@@ -129,6 +133,11 @@ public:
     app::log::LogModel log_model;
     color_widgets::ColorPaletteModel palette_model;
 
+    // Stuff for IPC with Shotcut
+    std::unique_ptr<QLocalSocket> ipc_socket;
+    std::unique_ptr<QDataStream> ipc_stream;
+    std::unique_ptr<QSharedMemory> ipc_memory;
+
     // document
     void setup_document(const QString& filename);
     void do_setup_document();
@@ -197,6 +206,9 @@ public:
     void init_tools(tools::Tool* to_activate);
     void init_restore_state();
     void init_template_menu();
+
+    // IPC
+    void ipc_connect(const QString& name);
 
     // Model
     model::Composition* current_composition();

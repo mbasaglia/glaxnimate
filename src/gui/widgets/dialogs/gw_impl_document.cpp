@@ -7,6 +7,9 @@
 #include <QDropEvent>
 #include <QtConcurrent>
 #include <QEventLoop>
+#include <QLocalSocket>
+#include <QDataStream>
+#include <QSharedMemory>
 
 
 #include "io/lottie/lottie_html_format.hpp"
@@ -763,6 +766,17 @@ void GlaxnimateWindow::Private::import_file(const QString& filename, const QVari
     opts.filename = filename;
     opts.path = finfo.dir();
     import_file(opts);
+}
+
+void GlaxnimateWindow::Private::ipc_connect(const QString &name)
+{
+    ipc_socket = std::make_unique<QLocalSocket>();
+    ipc_stream = std::make_unique<QDataStream>(ipc_socket.get());
+    ipc_stream->setVersion(QDataStream::Qt_5_15);
+    QObject::connect(ipc_socket.get(), &QLocalSocket::errorOccurred, parent, &GlaxnimateWindow::ipc_error);
+    QObject::connect(ipc_socket.get(), &QLocalSocket::readyRead, parent, &GlaxnimateWindow::ipc_read);
+    ipc_socket->connectToServer(name);
+    ipc_memory = std::make_unique<QSharedMemory>(name);
 }
 
 static void on_font_loader_finished(glaxnimate::gui::font::FontLoader* loader)
