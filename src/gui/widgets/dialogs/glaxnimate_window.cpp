@@ -457,8 +457,7 @@ void GlaxnimateWindow::ipc_error(QLocalSocket::LocalSocketError socketError)
         app::log::Log("ipc").stream(app::log::Warning) << "IPC server refused connection:" << name;
         break;
     case QLocalSocket::PeerClosedError:
-        app::log::Log("ipc").stream(app::log::Info) << "IPC server closed the co"
-                                                       "nnection:" << name;
+        app::log::Log("ipc").stream(app::log::Info) << "IPC server closed the connection:" << name;
         d->ipc_socket.reset();
         d->ipc_memory.reset();
         break;

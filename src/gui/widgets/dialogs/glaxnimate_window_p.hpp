@@ -54,6 +54,22 @@ class QLocalSocket;
 class QDataStream;
 class QSharedMemory;
 
+template <typename T>
+struct QObjectDeleteLater : public std::default_delete<T>
+{
+    void operator()(T *p)
+    {
+        p->deleteLater();
+    }
+};
+
+template <typename T, class... Args>
+std::unique_ptr<T, QObjectDeleteLater<T>> qobject_make_unique(Args&&... args)
+{
+    return std::unique_ptr<T, QObjectDeleteLater<T>>(
+        new T(std::forward<Args>(args)...), QObjectDeleteLater<T>());
+}
+
 class GlaxnimateWindow::Private
 {
 public:
@@ -134,7 +150,7 @@ public:
     color_widgets::ColorPaletteModel palette_model;
 
     // Stuff for IPC with Shotcut
-    std::unique_ptr<QLocalSocket> ipc_socket;
+    std::unique_ptr<QLocalSocket, QObjectDeleteLater<QLocalSocket>> ipc_socket;
     std::unique_ptr<QDataStream> ipc_stream;
     std::unique_ptr<QSharedMemory> ipc_memory;
 
