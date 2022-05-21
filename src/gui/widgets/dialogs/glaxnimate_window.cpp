@@ -502,7 +502,10 @@ void GlaxnimateWindow::ipc_write_time(model::FrameTime t)
 {
     // Here is the send/write side of the IPC protocol: binary time updates
 
-    if (d->ipc_stream && d->ipc_socket && d->ipc_socket->isOpen()) {
+    if (d->ipc_stream && d->ipc_socket && d->ipc_socket->isOpen() && d->ipc_stream->atEnd()) {
+        if (d->ipc_stream->status() != QDataStream::Ok) {
+            d->ipc_stream->resetStatus();
+        }
         *d->ipc_stream << t;
         d->ipc_socket->flush();
     }
