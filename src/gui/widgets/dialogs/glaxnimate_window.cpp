@@ -477,7 +477,9 @@ void GlaxnimateWindow::ipc_read()
         if (message == "hello") {
             // handshake
             *d->ipc_stream << QString("version 1");
+            d->ipc_socket->flush();
             ipc_signal_connections(true);
+            ipc_write_time(document()->current_time());
         } else if (message == "redraw") {
             d->ui.canvas->viewport()->update();
         } else if (message == "clear") {
