@@ -1,6 +1,8 @@
 #include "emoji_set_dialog.hpp"
 #include "ui_emoji_set_dialog.h"
 
+#include <array>
+
 #include <QEvent>
 #include <QUrl>
 #include <QJsonDocument>
