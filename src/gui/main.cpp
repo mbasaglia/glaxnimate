@@ -18,6 +18,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#ifdef Q_OS_WIN
+    // workaround crash bug #408 in Qt/Windows
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#endif
     gui::GlaxnimateApp app(argc, argv);
 
     AppInfo::instance().init_qapplication();
