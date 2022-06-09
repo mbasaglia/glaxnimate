@@ -457,8 +457,7 @@ void GlaxnimateWindow::ipc_error(QLocalSocket::LocalSocketError socketError)
         app::log::Log("ipc").stream(app::log::Warning) << "IPC server refused connection:" << name;
         break;
     case QLocalSocket::PeerClosedError:
-        app::log::Log("ipc").stream(app::log::Info) << "IPC server closed the co"
-                                                       "nnection:" << name;
+        app::log::Log("ipc").stream(app::log::Info) << "IPC server closed the connection:" << name;
         d->ipc_socket.reset();
         d->ipc_memory.reset();
         break;
@@ -478,7 +477,9 @@ void GlaxnimateWindow::ipc_read()
         if (message == "hello") {
             // handshake
             *d->ipc_stream << QString("version 1");
+            d->ipc_socket->flush();
             ipc_signal_connections(true);
+            ipc_write_time(document()->current_time());
         } else if (message == "redraw") {
             d->ui.canvas->viewport()->update();
         } else if (message == "clear") {
@@ -501,7 +502,10 @@ void GlaxnimateWindow::ipc_write_time(model::FrameTime t)
 {
     // Here is the send/write side of the IPC protocol: binary time updates
 
-    if (d->ipc_stream && d->ipc_socket && d->ipc_socket->isOpen()) {
+    if (d->ipc_stream && d->ipc_socket && d->ipc_socket->isOpen() && d->ipc_stream->atEnd()) {
+        if (d->ipc_stream->status() != QDataStream::Ok) {
+            d->ipc_stream->resetStatus();
+        }
         *d->ipc_stream << t;
         d->ipc_socket->flush();
     }

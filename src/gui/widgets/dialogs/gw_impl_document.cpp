@@ -770,7 +770,7 @@ void GlaxnimateWindow::Private::import_file(const QString& filename, const QVari
 
 void GlaxnimateWindow::Private::ipc_connect(const QString &name)
 {
-    ipc_socket = std::make_unique<QLocalSocket>();
+    ipc_socket = qobject_make_unique<QLocalSocket>();
     ipc_stream = std::make_unique<QDataStream>(ipc_socket.get());
     ipc_stream->setVersion(QDataStream::Qt_5_15);
     QObject::connect(ipc_socket.get(), &QLocalSocket::errorOccurred, parent, &GlaxnimateWindow::ipc_error);

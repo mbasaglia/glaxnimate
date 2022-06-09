@@ -61,8 +61,16 @@ QList<QDir> app::Application::data_roots() const
         search.push_back(QDir(str));
     // executable dir
     QDir binpath(QCoreApplication::applicationDirPath());
+#ifdef Q_OS_WIN
+    // some Windows apps do not use a bin subfolder
+    search.push_back(binpath.filePath(QString("share/%1/%2").arg(organizationName()).arg(applicationName())));
+#endif
     binpath.cdUp();
     search.push_back(binpath.filePath(QString("share/%1/%2").arg(organizationName()).arg(applicationName())));
+#ifdef Q_OS_MAC
+    // some macOS app bundles use a Resources subfolder
+    search.push_back(binpath.filePath(QString("Resources/%1/%2").arg(organizationName()).arg(applicationName())));
+#endif
 
     return search;
 }
