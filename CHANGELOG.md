@@ -2,6 +2,7 @@
 
 * Editing:
     * New quantization algorithm available (Edge Exclusion Modes)
+    * Space to toogle playback
 * UI:
     * Simplified version of the trace dialog
 * Bug Fixes:

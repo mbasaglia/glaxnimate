@@ -162,6 +162,7 @@ void GlaxnimateWindow::Private::init_actions()
     ui.action_frame_prev->setShortcut(QKeySequence("Left", QKeySequence::PortableText));
     ui.action_frame_next->setShortcut(QKeySequence("Right", QKeySequence::PortableText));
     ui.action_duplicate->setShortcut(QKeySequence("Ctrl+D", QKeySequence::PortableText));
+    ui.action_play->setShortcut(QKeySequence("Space", QKeySequence::PortableText));
 
     // Actions
     connect(ui.action_copy, &QAction::triggered, parent, &GlaxnimateWindow::copy);
