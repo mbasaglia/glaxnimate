@@ -43,6 +43,15 @@ int main(int argc, char *argv[])
         app::log::Log("Python").log("Setting PYTHONHOME to " + pyhome.get(), app::log::Info);
         app::Environment::Variable("PYTHONPATH").push_back(app.data_file("pythonhome/lib/python"));
     }
+#elif defined(Q_OS_MAC)
+    auto pyhome = app::Environment::Variable("PYTHONHOME");
+    if ( pyhome.empty() )
+    {
+        QDir binpath(QCoreApplication::applicationDirPath());
+        binpath.cdUp();
+        pyhome = binpath.absolutePath();
+        app::log::Log("Python").log("Setting PYTHONHOME to " + pyhome.get(), app::log::Info);
+    }
 #endif
 
     qRegisterMetaType<app::log::Severity>();
