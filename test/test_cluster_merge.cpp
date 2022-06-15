@@ -257,6 +257,79 @@ private slots:
         // This should be true but currently isn't
         // COMPARE_VECTOR(brushes.gradients[id].stops, {0, color1}, {1, color2});
     }
+
+    void test_cluster_merge_symmetric()
+    {
+        struct Quadrant{
+            int x, y;
+            SegmentedImage image{128, 128};
+            Cluster* cluster = nullptr;
+        };
+        std::array<Quadrant, 4> quadrants{{
+            {0, 0},
+            {1, 0},
+            {0, 1},
+            {1, 1}
+        }};
+
+        QRgb color_back = 0xff3250b0;
+        QRgb color_ellipse = 0xffc4d9f5;
+
+        // Baked quarter circle to ensure pixels are the same in every quadrant
+        QImage quarter_circle(128, 128, QImage::Format_ARGB32);
+        {
+            quarter_circle.fill(Qt::transparent);
+            QPainter painter(&quarter_circle);
+            painter.setRenderHint(QPainter::Antialiasing);
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(QColor::fromRgba(color_ellipse));
+            painter.drawEllipse(QPointF(128, 128), 100, 100);
+        }
+
+        // Create images with different quadrants of a circle
+        for ( auto& quadrant : quadrants )
+        {
+            QImage image(128, 128, QImage::Format_ARGB32);;
+            image.fill(color_back);
+            QPainter painter(&image);;
+            painter.drawImage(0, 0, quarter_circle.mirrored(quadrant.x, quadrant.y));
+            painter.end();
+            quadrant.image = segment(image);
+            quadrant.cluster = quadrant.image.cluster(127 * quadrant.x, 127 * quadrant.y);
+        }
+
+        // Check everything works before cluster merge
+        QVERIFY(quadrants[0].cluster != nullptr);
+        QVERIFY(quadrants[1].cluster != nullptr);
+        QVERIFY(quadrants[2].cluster != nullptr);
+        QVERIFY(quadrants[3].cluster != nullptr);
+
+        BETTER_COMPARE(quadrants[0].cluster->color, color_back);
+        BETTER_COMPARE(quadrants[1].cluster->color, color_back);
+        BETTER_COMPARE(quadrants[2].cluster->color, color_back);
+        BETTER_COMPARE(quadrants[3].cluster->color, color_back);
+
+        BETTER_COMPARE(quadrants[1].cluster->size, quadrants[0].cluster->size);
+        BETTER_COMPARE(quadrants[2].cluster->size, quadrants[0].cluster->size);
+        BETTER_COMPARE(quadrants[3].cluster->size, quadrants[0].cluster->size);
+
+        // Apply cluster merge
+        for ( auto& quadrant : quadrants )
+        {
+            cluster_merge(quadrant.image, 10);
+            quadrant.image.to_image().save(QString("/tmp/foo_%1%2.png").arg(quadrant.x).arg(quadrant.y));
+        }
+
+        std::vector<int> sizes = {
+            quadrants[0].cluster->size,
+            quadrants[1].cluster->size,
+            quadrants[2].cluster->size,
+            quadrants[3].cluster->size,
+        };
+        std::vector<int> sizes_check(4, quadrants[0].cluster->size);
+
+        BETTER_COMPARE(sizes, sizes_check);
+    }
 };
 
 QTEST_GUILESS_MAIN(TestClusterMerge)
