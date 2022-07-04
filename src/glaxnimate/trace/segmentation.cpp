@@ -48,12 +48,18 @@ void glaxnimate::trace::SegmentedImage::merge(Cluster* from, Cluster* to)
     if ( from->merge_target != Cluster::null_id )
         merge_parent = cluster(from->merge_target);
 
+    if ( from->merged_size < merge_parent->merged_size )
+        std::swap(from, merge_parent);
+
     merge_parent->merge_target = to->id;
     to->merge_sources.push_back(merge_parent->id);
     to->merge_sources.insert(to->merge_sources.end(), merge_parent->merge_sources.begin(), merge_parent->merge_sources.end());
     for ( auto id : merge_parent->merge_sources )
         cluster(id)->merge_target = to->id;
     merge_parent->merge_sources.clear();
+
+    merge_parent->merged_size += from->merged_size;
+    from->merged_size = 0;
 }
 
 
@@ -86,6 +92,8 @@ void glaxnimate::trace::SegmentedImage::normalize()
     {
         if ( ptr && ptr->size == 0 )
             do_erase(ptr);
+        else if ( ptr )
+            ptr->merged_size = ptr->size;
     }
 
     for ( auto& pix : bitmap_ )

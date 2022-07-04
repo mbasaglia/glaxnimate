@@ -778,12 +778,15 @@ void get_cluster_result(Cluster& cluster, SegmentedImage& image, BrushData& resu
     cluster.color = color;
 }
 
-std::pair<Cluster*, ColorDistance> merge_candidate(Cluster& cluster, SegmentedImage& image, const SegmentedImage::ClusterBoundary& boundary)
+std::pair<std::vector<Cluster*>, ColorDistance> merge_candidate(Cluster& cluster, SegmentedImage& image, const SegmentedImage::ClusterBoundary& boundary)
 {
     // Find the most similar neighbour with area less than the current cluster
     ColorDistance min_distance = std::numeric_limits<ColorDistance>::max();
-    int min_size = std::numeric_limits<int>::max();
-    Cluster* similar_neighbour = nullptr;
+//     int min_size = std::numeric_limits<int>::max();
+//     Cluster* similar_neighbour = nullptr;
+    std::vector<Cluster*> all;
+    all.reserve(4);
+
     for ( auto neigh_id : boundary.neighbours )
     {
         auto neigh = image.cluster(neigh_id);
@@ -791,19 +794,27 @@ std::pair<Cluster*, ColorDistance> merge_candidate(Cluster& cluster, SegmentedIm
         if ( neigh->merge_target == cluster.id )
             continue;
 
+        auto color = neigh->color;
+
         if ( neigh->merge_target )
             neigh = image.cluster(neigh->merge_target);
 
-        auto distance = rgba_distance_squared(cluster.color, neigh->color);
-        if ( distance <= min_distance || (distance == min_distance && neigh->size < min_size) )
+        auto distance = rgba_distance_squared(cluster.color, color);
+        if ( distance < min_distance )
         {
-            similar_neighbour = neigh;
+            all.clear();
+            all.push_back(neigh);
+//             similar_neighbour = neigh;
             min_distance = distance;
-            min_size = neigh->size;
+//             min_size = neigh->size;
+        }
+        else if ( distance == min_distance )
+        {
+            all.push_back(neigh);
         }
     }
 
-    return {similar_neighbour, min_distance};
+    return {all, min_distance};
 }
 
 
@@ -818,24 +829,48 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
 
     std::unordered_map<Cluster::id_type, SegmentedImage::ClusterBoundary> strand_neighbours;
 
+    static int img = 0;
+    img++;
+    int iter = 0;
+    image.to_image(true, true).save(QString("/tmp/image_%1_%2.png").arg(img).arg(iter++));
+
+    // Sort by size
+    std::vector<Cluster*> clusters;
+    clusters.reserve(image.size());
+    for ( auto& cluster : image )
+        clusters.push_back(&cluster);
+
+    std::sort(clusters.begin(), clusters.end(), [](Cluster* a, Cluster* b){
+        return a->size < b->size;
+    });
+
     // First pass: merge antialias and artifacts
-    for ( auto& cluster : image  )
+    for ( auto cluster : clusters  )
     {
-        auto boundary = image.boundary(&cluster);
+        auto boundary = image.boundary(cluster);
         // If the current cluster is not large enough, merge it to the similar neighbour
-        if ( cluster.size <= min_area )
+        if ( cluster->size <= min_area )
         {
-            auto candidate = merge_candidate(cluster, image, boundary);
-            if ( candidate.first )
+            auto candidate = merge_candidate(*cluster, image, boundary);
+            for ( const auto & merge_cluster : candidate.first )
             {
-                image.merge(&cluster, candidate.first);
+                qDebug() << "Merge"
+                    << cluster->id << cluster->size
+                    << "=>"
+                    << merge_cluster->id << merge_cluster->size
+                    << ":" << candidate.second
+                    << " - " << image.cluster(1)->merge_target
+                    ;
+                image.merge(cluster, merge_cluster);
+                image.to_image(true, true).save(QString("/tmp/image_%1_%2.png").arg(img).arg(iter++));
                 // strand_ids.insert(cluster.id);
+
             }
         }
         // "strands" are 1 or 2 pixel wide lines, they will be merged into gradients
-        else if ( is_strand(cluster, boundary) )
+        else if ( is_strand(*cluster, boundary) )
         {
-            strand_neighbours.emplace(cluster.id, boundary);
+            strand_neighbours.emplace(cluster->id, boundary);
         }
         /// TODO else: check if is hole
     }

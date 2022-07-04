@@ -23,6 +23,8 @@ struct Cluster
     QRgb color;
     // Number of pixels in the cluster
     int size = 0;
+    // Number of pixels in the cluster after merges
+    int merged_size = 0;
     // Cluster this needs to be merged into
     id_type merge_target = null_id;
     // Clusters that are going to merged into this

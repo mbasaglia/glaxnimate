@@ -260,6 +260,27 @@ private slots:
 
     void test_cluster_merge_symmetric()
     {
+        QImage image(32, 9, QImage::Format_ARGB32);
+        image.fill(0xff000000);
+        int half = image.height() / 2;
+        for ( int i = 0; i < 16; i++ )
+        {
+            QRgb color = 0xff000000 | (i * 0x110000);
+            image.setPixel(i, half, color);
+            image.setPixel(image.width() - 1 - i, half, color);
+            for ( int y = half + 1; y < image.height(); y++ )
+            {
+                image.setPixel(i, y, 0xffff0000);
+                image.setPixel(image.width() - 1 - i, y, 0xffff0000);
+            }
+        }
+        image.save("/tmp/line.png");
+        SegmentedImage segmented = segment(image);
+        cluster_merge(segmented, 10, 2);
+    }
+
+    void test_cluster_merge_symmetric_circle()
+    {
         struct Quadrant{
             int x, y;
             SegmentedImage image{128, 128};
@@ -278,22 +299,19 @@ private slots:
         // Baked quarter circle to ensure pixels are the same in every quadrant
         QImage quarter_circle(128, 128, QImage::Format_ARGB32);
         {
-            quarter_circle.fill(Qt::transparent);
+            quarter_circle.fill(color_back);
             QPainter painter(&quarter_circle);
             painter.setRenderHint(QPainter::Antialiasing);
             painter.setPen(Qt::NoPen);
             painter.setBrush(QColor::fromRgba(color_ellipse));
             painter.drawEllipse(QPointF(128, 128), 100, 100);
         }
+        quarter_circle.save("/tmp/foo.png");
 
         // Create images with different quadrants of a circle
         for ( auto& quadrant : quadrants )
         {
-            QImage image(128, 128, QImage::Format_ARGB32);;
-            image.fill(color_back);
-            QPainter painter(&image);;
-            painter.drawImage(0, 0, quarter_circle.mirrored(quadrant.x, quadrant.y));
-            painter.end();
+            QImage image = quarter_circle.mirrored(quadrant.x, quadrant.y);
             quadrant.image = segment(image);
             quadrant.cluster = quadrant.image.cluster(127 * quadrant.x, 127 * quadrant.y);
         }
