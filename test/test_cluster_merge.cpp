@@ -260,6 +260,28 @@ private slots:
 
     void test_cluster_merge_symmetric()
     {
+        QImage image(32, 9, QImage::Format_ARGB32);
+        image.fill(0xff000000);
+        int half = image.height() / 2;
+        for ( int i = 0; i < 16; i++ )
+        {
+            QRgb color = 0xff000000 | (i * 0x110000);
+            image.setPixel(i, half, color);
+            image.setPixel(image.width() - 1 - i, half, color);
+            for ( int y = half + 1; y < image.height(); y++ )
+            {
+                image.setPixel(i, y, 0xffff0000);
+                image.setPixel(image.width() - 1 - i, y, 0xffff0000);
+            }
+        }
+        image.save("/tmp/line.png");
+        SegmentedImage segmented = segment(image);
+        cluster_merge(segmented, 10, 2);
+        segmented.to_image(true, true).save("/tmp/line1.png");
+    }
+
+    void test_cluster_merge_symmetric_circle()
+    {
         struct Quadrant{
             int x, y;
             SegmentedImage image{128, 128};
