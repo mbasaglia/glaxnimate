@@ -778,12 +778,14 @@ void get_cluster_result(Cluster& cluster, SegmentedImage& image, BrushData& resu
     cluster.color = color;
 }
 
-std::pair<Cluster*, ColorDistance> merge_candidate(Cluster& cluster, SegmentedImage& image, const SegmentedImage::ClusterBoundary& boundary)
+Cluster* merge_candidate(Cluster& cluster, SegmentedImage& image, const SegmentedImage::ClusterBoundary& boundary, int min_area)
 {
     // Find the most similar neighbour with area less than the current cluster
     ColorDistance min_distance = std::numeric_limits<ColorDistance>::max();
-    int min_size = std::numeric_limits<int>::max();
     Cluster* similar_neighbour = nullptr;
+    int similar_size = min_area;
+    ColorDistance small_min_distance = std::numeric_limits<ColorDistance>::max();
+    Cluster* small_similar_neighbour = nullptr;
     for ( auto neigh_id : boundary.neighbours )
     {
         auto neigh = image.cluster(neigh_id);
@@ -795,15 +797,20 @@ std::pair<Cluster*, ColorDistance> merge_candidate(Cluster& cluster, SegmentedIm
             neigh = image.cluster(neigh->merge_target);
 
         auto distance = rgba_distance_squared(cluster.color, neigh->color);
-        if ( distance <= min_distance || (distance == min_distance && neigh->size < min_size) )
+        if ( neigh->size > min_area && (distance < min_distance || (distance == min_distance && neigh->size > similar_size)) )
         {
             similar_neighbour = neigh;
             min_distance = distance;
-            min_size = neigh->size;
+            similar_size = neigh->size;
+        }
+        if ( distance < small_min_distance )
+        {
+            small_similar_neighbour = neigh;
+            small_min_distance = distance;
         }
     }
 
-    return {similar_neighbour, min_distance};
+    return similar_neighbour ? similar_neighbour : small_similar_neighbour;
 }
 
 
@@ -825,11 +832,10 @@ glaxnimate::trace::BrushData glaxnimate::trace::cluster_merge(
         // If the current cluster is not large enough, merge it to the similar neighbour
         if ( cluster.size <= min_area )
         {
-            auto candidate = merge_candidate(cluster, image, boundary);
-            if ( candidate.first )
+            auto candidate = merge_candidate(cluster, image, boundary, min_area);
+            if ( candidate )
             {
-                image.merge(&cluster, candidate.first);
-                // strand_ids.insert(cluster.id);
+                image.merge(&cluster, candidate);
             }
         }
         // "strands" are 1 or 2 pixel wide lines, they will be merged into gradients

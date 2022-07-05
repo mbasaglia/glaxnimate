@@ -1,6 +1,8 @@
 #include <QtTest/QtTest>
 #include <QPainter>
 
+#include <sstream>
+
 #include "glaxnimate/trace/segmentation.hpp"
 #include "glaxnimate/trace/quantize.hpp"
 #include "test_trace.hpp"
@@ -160,9 +162,7 @@ private slots:
 
         auto colors = cluster_merge(segmented, 1024).colors;
 
-        // Ideally it should be 1 but 2 is good enough
-        QCOMPARE(colors.size(), 2);
-        QCOMPARE(segmented.size(), 2);
+        QCOMPARE(colors.size(), 1);
     }
 
     void test_cluster_merge_transparency()
@@ -263,7 +263,7 @@ private slots:
         QImage image(32, 9, QImage::Format_ARGB32);
         image.fill(0xff000000);
         int half = image.height() / 2;
-        for ( int i = 0; i < 16; i++ )
+        for ( int i = 0; i < image.width() / 2; i++ )
         {
             QRgb color = 0xff000000 | (i * 0x110000);
             image.setPixel(i, half, color);
@@ -274,10 +274,46 @@ private slots:
                 image.setPixel(image.width() - 1 - i, y, 0xffff0000);
             }
         }
-        image.save("/tmp/line.png");
+
         SegmentedImage segmented = segment(image);
         cluster_merge(segmented, 10, 2);
-        segmented.to_image(true, true).save("/tmp/line1.png");
+
+        auto cluster_top = segmented.cluster(0, 0);
+        auto cluster_bottom = segmented.cluster(0, 8);
+        int count_top_left = 0;
+        int count_bottom_left = 0;
+        int count_top_right = 0;
+        int count_bottom_right = 0;
+        QVERIFY(cluster_top != cluster_bottom);
+        QVERIFY(cluster_top);
+        QVERIFY(cluster_bottom);
+
+        for ( int i = 0; i < image.width(); i++ )
+        {
+            auto cluster = segmented.cluster(i, half);
+            QVERIFY(cluster);
+
+            if ( cluster == cluster_top )
+            {
+                (i < image.width() / 2 ? count_top_left : count_top_right) += 1;
+            }
+            else if ( cluster == cluster_bottom )
+            {
+                (i < image.width() / 2 ? count_bottom_left : count_bottom_right) += 1;
+            }
+            else
+            {
+                std::stringstream ss;
+                ss << "Cluster at " << i << " should be " << cluster_top->id
+                   << " or " << cluster_bottom->id << " instead of " << cluster->id;
+                QFAIL(ss.str().c_str());
+            }
+        }
+
+        QVERIFY(count_top_left != 0);
+        QVERIFY(count_bottom_left != 0);
+        QCOMPARE(count_top_left, count_top_right);
+        QCOMPARE(count_bottom_left, count_bottom_right);
     }
 
     void test_cluster_merge_symmetric_circle()
@@ -339,7 +375,6 @@ private slots:
         for ( auto& quadrant : quadrants )
         {
             cluster_merge(quadrant.image, 10);
-            quadrant.image.to_image().save(QString("/tmp/foo_%1%2.png").arg(quadrant.x).arg(quadrant.y));
         }
 
         std::vector<int> sizes = {
