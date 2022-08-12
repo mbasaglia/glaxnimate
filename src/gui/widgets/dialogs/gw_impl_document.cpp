@@ -182,7 +182,7 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     current_document = std::make_unique<model::Document>(options.filename);
 
     dialog_import_status->reset(options.format, options.filename);
-    auto promise = QtConcurrent::run(
+    /*auto promise = QtConcurrent::run(
         [options, current_document=current_document.get()]{
             QFile file(options.filename);
             return options.format->open(file, options.filename, current_document, options.settings);
@@ -190,7 +190,9 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
 
     process_events(promise);
 
-    bool ok = promise.result();
+    bool ok = promise.result();*/
+    QFile file(options.filename);
+    bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
 
     do_setup_document();
 
