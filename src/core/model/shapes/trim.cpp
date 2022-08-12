@@ -100,35 +100,67 @@ static void chunk_end(const glaxnimate::math::bezier::Bezier& in, glaxnimate::ma
     }
 }
 
-glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(glaxnimate::model::FrameTime t, const math::bezier::MultiBezier& mbez) const
+glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
+    glaxnimate::model::FrameTime t,
+    const math::bezier::MultiBezier& mbez
+) const
 {
     if ( mbez.empty() )
         return {};
 
     auto offset = this->offset.get_at(t);
-    auto start_value = this->start.get_at(t);
-    auto start = math::fmod(start_value + offset, 1.f);
-    auto end_value = this->end.get_at(t);
-    auto end = math::fmod(end_value + offset, 1.f);
-    if ( qFuzzyIsNull(end) && end_value > start_value )
-        end = 1;
+    auto start = this->start.get_at(t);
+    auto end = this->end.get_at(t);
 
-    if ( start == 0 && end == 1 )
-        return mbez;
+    // Normalize Inputs
+    offset = math::fmod(offset, 1.f);
+    start = math::bound(0.f, start, 1.f) + offset;
+    end = math::bound(0.f, end, 1.f) + offset;
+    if ( end < start )
+        std::swap(start, end);
 
-    // Same value
+    // Handle the degenerate cases
     if ( math::abs(start * 1000 - end * 1000) < 1 )
         return {};
 
-    const int length_steps = 5;
+    if ( qFuzzyIsNull(start) && qFuzzyCompare(end, 1.f) )
+        return mbez;
 
+    // Get the bezier chunk ratios
+    // Note that now 0 <= s < e <= 2
+    struct Chunk
+    {
+        float start;
+        float end;
+    };
+    std::vector<Chunk> chunks;
+    if ( end <= 1 )
+    {
+        // Simplest case, the segment is in [0, 1]
+        chunks.push_back({start, end});
+    }
+    else if ( start > 1 )
+    {
+        // The whole segment is outside [0, 1]
+        chunks.push_back({start - 1, end - 1});
+    }
+    else
+    {
+        // The segment goes over the end point, so we need two splits
+        chunks.push_back({start, 1});
+        chunks.push_back({0, end - 1});
+    }
+
+
+    const int length_steps = 5;
     math::bezier::MultiBezier out;
     auto length_data = mbez.length_data(length_steps);
-    auto start_data = length_data.at_ratio(start);
-    auto end_data = length_data.at_ratio(end);
 
-    if ( start < end )
+    for ( const auto& chunk : chunks )
     {
+        auto start_data = length_data.at_ratio(chunk.start);
+        auto end_data = length_data.at_ratio(chunk.end);
+
         /* Chunk of a single curve
          *
          * [ bez[0] ... bez[start==end] ... bez[n] ]
@@ -182,7 +214,7 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(glaxnimat
                 chunk_end(mbez.beziers()[start_data.index], b, single_end_data, end_min);
             }
             out.beziers().push_back(b);
-            return out;
+            continue;
         }
 
         /* Sequential chunk
@@ -213,60 +245,6 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(glaxnimat
         /* we get the "D" part and skip the "e" part
          * [ seg[0] ... seg[single_start] ... seg[m] ]
          *   DDDDDDDDDDDDDDDDDDDDDDD|eeeeeeeeeeeeeee
-         */
-        if ( end_data.ratio > 0 )
-        {
-            math::bezier::Bezier b;
-            auto single_end_data = end_data.child_split();
-            chunk_end(mbez.beziers()[end_data.index], b, single_end_data);
-            out.beziers().push_back(b);
-        }
-    }
-    else
-    {
-        /* Chunk split around the bezier origin
-         * [ bez[0] ... bez[end] ... bez[start] ... bez[n] ]
-         *   AAAAAAAAAA|BBBB|ccc|ddd|eee|FFFFFF|GGGGGGGGGG
-         *
-         * Nothe that in this case even if start == end, we don't need to do anything special
-         */
-
-        /* Special case to keep just 1 bezier for closed paths
-         * It simply combines the start/end chunks
-         */
-        if ( mbez.size() == 1 && mbez.beziers()[0].closed() )
-        {
-            math::bezier::Bezier b;
-            auto single_start_data = start_data.child_split();
-            auto single_end_data = end_data.child_split();
-            chunk_start(mbez.beziers()[start_data.index], b, single_start_data);
-            chunk_end(mbez.beziers()[end_data.index], b, single_end_data, 1);
-            out.beziers().push_back(b);
-            return out;
-        }
-
-        /* we skip the "e" part and get the "F" part
-         * [ seg[0] ... seg[single_start] ... seg[m] ]
-         *   eeeeeeeeeeeeee|FFFFFFFFFFFFFFFFFFFFFFFF
-         */
-        {
-            math::bezier::Bezier b;
-            auto single_start_data = start_data.child_split();
-            chunk_start(mbez.beziers()[start_data.index], b, single_start_data);
-            out.beziers().push_back(b);
-        }
-
-        // Get everything until the end ("G" part)
-        for ( int i = start_data.index + 1; i < mbez.size(); i++ )
-            out.beziers().push_back(mbez.beziers()[i]);
-
-        // Get everything until end_data ("A" part)
-        for ( int i = 0; i < end_data.index; i++ )
-            out.beziers().push_back(mbez.beziers()[i]);
-
-        /* we get the "B" part and skip the "c" part
-         * [ seg[0] ... seg[single_start] ... seg[m] ]
-         *   BBBBBBBBBBBBBBBBBBBBBBB|ccccccccccccccc
          */
         if ( end_data.ratio > 0 )
         {
