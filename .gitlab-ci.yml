@@ -424,12 +424,10 @@ linux:pypi_deploy:
     stage: deploy
     needs:
         - linux:pypi_3.8
-        - linux:pypi_3.9
-        #- linux:pypi_3.10
+        - linux:pypi_3.10
     dependencies:
         - linux:pypi_3.8
-        - linux:pypi_3.9
-        #- linux:pypi_3.10
+        - linux:pypi_3.10
     script:
         - python3 --version
         - mkdir -p build
@@ -451,11 +449,9 @@ linux:pypi_deploy_tag:
     stage: deploy
     needs:
         - linux:pypi_3.8
-        - linux:pypi_3.9
         - linux:pypi_3.10
     dependencies:
         - linux:pypi_3.8
-        - linux:pypi_3.9
         - linux:pypi_3.10
     script:
         - python3 --version
