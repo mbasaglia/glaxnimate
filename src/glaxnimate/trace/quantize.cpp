@@ -670,6 +670,29 @@ namespace glaxnimate::trace::detail::cluster_merge {
 
 bool is_strand(const Cluster& cluster, const SegmentedImage::ClusterBoundary& boundary)
 {
+    if ( cluster.size <= boundary.perimeter + 2 )
+        return true;
+
+    float perimeter = boundary.perimeter;
+    float area = cluster.size;
+
+    // Assume it's a rectangle, get its width/height using a quadratic derived from
+    // A = w * h; P = 2w + 2h - 4
+    if ( cluster.size > 4 )
+    {
+        float root = perimeter * perimeter + 16 + 8 * perimeter - 16 * area;
+        if ( root > 0 )
+        {
+            // The two roots are width/height of the rectangle
+            root = math::sqrt(root);
+            float s1 = (perimeter + 4 + root) / 4;
+            float s2 = (perimeter + 4 - root) / 4;
+            // If the rectangle sides have a ratio greater than 10, it's a strand
+            if ( s2 != 0 )
+                return s1 / s2 > 10;
+        }
+    }
+
     return cluster.size <= boundary.perimeter + 2;
 }
 
