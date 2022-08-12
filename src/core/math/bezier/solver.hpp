@@ -4,6 +4,8 @@
 
 #include "math/vector.hpp"
 
+#include <QPointF>
+
 namespace glaxnimate::math::bezier {
 
 template<class Vec>
@@ -13,41 +15,60 @@ public:
     using vector_type = Vec;
     using scalar = scalar_type<Vec>;
 
-    constexpr CubicBezierSolver(Vec p0, Vec p1, Vec p2, Vec p3) noexcept
-    : points_{p0, p1, p2, p3} {}
 
     constexpr CubicBezierSolver(const std::array<Vec, 4>& points) noexcept
-    : points_(points) {}
+    : points_(points)
+    {
+        for ( int component = 0; component < detail::VecSize<Vec>::value; component++ )
+        {
+            detail::get(a_, component) = a(
+                detail::get(points_[0], component),
+                detail::get(points_[1], component),
+                detail::get(points_[2], component),
+                detail::get(points_[3], component)
+            );
+            detail::get(b_, component) = b(
+                detail::get(points_[0], component),
+                detail::get(points_[1], component),
+                detail::get(points_[2], component)
+            );
+            detail::get(c_, component) = c(
+                detail::get(points_[0], component),
+                detail::get(points_[1], component)
+            );
+            detail::get(d_, component) = d(
+                detail::get(points_[0], component)
+            );
+        }
+    }
+
+    constexpr CubicBezierSolver(Vec p0, Vec p1, Vec p2, Vec p3) noexcept
+    : CubicBezierSolver{{p0, p1, p2, p3}} {}
 
     /**
      * \brief Finds the point along the bezier curve
-     * \param factor between 0 and 1
+     * \param t between 0 and 1
      */
-    constexpr Vec solve(scalar factor) const noexcept
+    constexpr Vec solve(scalar t) const noexcept
     {
-        Vec v;
-        for ( int i = 0; i < detail::VecSize<Vec>::value; i++ )
-            detail::get(v, i) = solve_component(factor, i);
-        return v;
+        return ((a_ * t + b_ ) * t +  c_ ) * t + d_;
     }
 
-    constexpr scalar solve_component(scalar factor, int component) const noexcept
+    constexpr scalar solve_component(scalar t, int component) const noexcept
     {
-        return fast_cubic(
-            factor,
-            detail::get(points_[0], component),
-            detail::get(points_[1], component),
-            detail::get(points_[2], component),
-            detail::get(points_[3], component)
-        );
+        scalar a = detail::get(a_, component);
+        scalar b = detail::get(b_, component);
+        scalar c = detail::get(c_, component);
+        scalar d = detail::get(d_, component);
+        return ((a * t + b ) * t +  c ) * t + d;
     }
 
     constexpr scalar derivative(scalar factor, int component) const noexcept
     {
-        return (
-            3 * a(detail::get(points_[0], component), detail::get(points_[1], component), detail::get(points_[2], component), detail::get(points_[3], component)) * factor +
-            2 * b(detail::get(points_[0], component), detail::get(points_[1], component), detail::get(points_[2], component))
-        ) * factor + c(detail::get(points_[0], component), detail::get(points_[1], component));
+        scalar a = detail::get(a_, component);
+        scalar b = detail::get(b_, component);
+        scalar c = detail::get(c_, component);
+        return (3 * a * factor + 2 * b) * factor + c;
     }
 
     /**
@@ -107,14 +128,7 @@ public:
         std::vector<scalar> solutions;
         for ( int i = 0; i < detail::VecSize<Vec>::value; i++ )
         {
-            scalar p0 = detail::get(points_[0], i);
-            scalar p1 = detail::get(points_[1], i);
-            scalar p2 = detail::get(points_[2], i);
-            scalar p3 = detail::get(points_[3], i);
-            scalar c_a = 3 * p3 - 9 * p2 + 9 * p1 - 3 * p0;
-            scalar c_b = 6 * p2 - 12 * p1 + 6 * p0;
-            scalar c_c = 3 * p1 - 3 * p0;
-            bounds_solve(c_a, c_b, c_c, solutions);
+            bounds_solve(3 * detail::get(a_, i), 2 * detail::get(b_, i), detail::get(c_, i), solutions);
         }
 
         std::vector<Vec> boundary_points;
@@ -163,10 +177,6 @@ private:
     {
         return k0;
     }
-    static constexpr scalar fast_cubic(scalar t, const scalar& k0, const scalar& k1, const scalar& k2, const scalar& k3) noexcept
-    {
-        return ((a(k0, k1, k2, k3) * t + b(k0, k1, k2) ) * t +  c(k0, k1) ) * t + d(k0);
-    }
 
     static void bounds_solve(scalar a, scalar b, scalar c, std::vector<scalar>& solutions)
     {
@@ -197,6 +207,8 @@ private:
     }
 
     std::array<Vec, 4> points_;
+    // Polynomial coefficients (a t^3 + b t^2 + c t + d = 0)
+    Vec a_, b_, c_, d_;
 };
 
 } // namespace glaxnimate::math::bezier
