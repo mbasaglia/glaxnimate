@@ -5,6 +5,7 @@
     * Space to toogle playback
 * I/O:
     * Fixed lottie export with using global swatch colors
+    * Fixed loading external assets by relative path
 * UI:
     * Simplified version of the trace dialog
 * Bug Fixes:

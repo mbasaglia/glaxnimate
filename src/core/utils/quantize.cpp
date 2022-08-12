@@ -589,7 +589,7 @@ static std::unique_ptr<Node> octreePrune(std::unique_ptr<Node> ref, int ncolor)
 {
     int n = ref->nleaf - ncolor;
     if ( n <= 0 )
-        return {};
+        return ref;
 
     //calling strip with global minimum impact of the tree
     while ( n > 0 && ref )
