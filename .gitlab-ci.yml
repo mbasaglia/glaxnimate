@@ -147,8 +147,7 @@ linux:appimage:
         - add-apt-repository ppa:ubuntu-toolchain-r/test -y
         - apt update -qq
         - apt-get install -y qt515base qt515tools qt515translations libgl1-mesa-dev g++-9 qt515svg
-        - pip3 install scikit-build
-        - pip3 install cmake
+        - pip3 install cmake==3.22.6
         - echo libav from source
         - apt-get install -y git build-essential nasm pkg-config
         - git clone https://github.com/FFmpeg/FFmpeg.git --branch release/4.4
@@ -320,8 +319,7 @@ linux:snap_tag:
         - apt-get update -qq
         - apt-get install -y python3-pip
         - apt remove cmake
-        - pip3 install scikit-build
-        - pip3 install cmake
+        - pip3 install cmake==3.22.6
     script:
         - test -n "$SNAPCRAFT_LOGIN_FILE"
         - test -f "$SNAPCRAFT_LOGIN_FILE"
@@ -350,8 +348,7 @@ linux:snap_beta:
         - apt-get update -qq
         - apt-get install -y python3-pip
         - apt remove cmake
-        - pip3 install scikit-build
-        - pip3 install cmake
+        - pip3 install cmake==3.22.6
     script:
         - test -n "$SNAPCRAFT_LOGIN_FILE"
         - test -f "$SNAPCRAFT_LOGIN_FILE"
