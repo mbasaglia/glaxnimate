@@ -10,6 +10,7 @@
 #include <QLocalSocket>
 #include <QDataStream>
 #include <QSharedMemory>
+#include <QtGlobal>
 
 
 #include "io/lottie/lottie_html_format.hpp"
@@ -776,7 +777,9 @@ void GlaxnimateWindow::Private::ipc_connect(const QString &name)
 {
     ipc_socket = qobject_make_unique<QLocalSocket>();
     ipc_stream = std::make_unique<QDataStream>(ipc_socket.get());
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     ipc_stream->setVersion(QDataStream::Qt_5_15);
+#endif
     QObject::connect(ipc_socket.get(), &QLocalSocket::errorOccurred, parent, &GlaxnimateWindow::ipc_error);
     QObject::connect(ipc_socket.get(), &QLocalSocket::readyRead, parent, &GlaxnimateWindow::ipc_read);
     ipc_socket->connectToServer(name);
