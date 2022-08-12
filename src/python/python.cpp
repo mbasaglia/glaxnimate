@@ -17,6 +17,7 @@
 #include "model/shapes/trim.hpp"
 #include "model/shapes/inflate_deflate.hpp"
 #include "model/shapes/round_corners.hpp"
+#include "model/shapes/offset_path.hpp"
 
 #include "model/assets/assets.hpp"
 #include "model/assets/named_color.hpp"
@@ -494,4 +495,5 @@ void register_py_module(py::module& glaxnimate_module)
     register_constructible<model::Trim, model::PathModifier>(shapes);
     register_constructible<model::InflateDeflate, model::PathModifier>(shapes);
     register_constructible<model::RoundCorners, model::PathModifier>(shapes);
+    register_constructible<model::OffsetPath, model::PathModifier>(shapes);
 }

@@ -1,5 +1,7 @@
 #include "geom.hpp"
 
+#include <QVector3D>
+
 using namespace glaxnimate;
 
 
@@ -35,4 +37,24 @@ QPointF math::circle_center(const QPointF& p1, const QPointF& p2, const QPointF&
         - B / A,
         - C / A
     };
+}
+
+
+
+std::optional<QPointF> math::line_intersection(const QPointF& start1, const QPointF& end1, const QPointF& start2, const QPointF& end2)
+{
+    QVector3D v1(start1.x(), start1.y(), 1);
+    QVector3D v2(end1.x(), end1.y(), 1);
+    QVector3D v3(start2.x(), start2.y(), 1);
+    QVector3D v4(end2.x(), end2.y(), 1);
+
+    QVector3D cp = QVector3D::crossProduct(
+        QVector3D::crossProduct(v1, v2),
+        QVector3D::crossProduct(v3, v4)
+    );
+
+    if ( qFuzzyIsNull(cp.z()) )
+        return {};
+
+    return QPointF(cp.x() / cp.z(), cp.y() / cp.z());
 }

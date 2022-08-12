@@ -6,9 +6,10 @@
 
 namespace glaxnimate::math {
 
-constexpr const qreal pi = M_PI;
-constexpr const qreal tau = M_PI*2;
+constexpr const qreal pi = 3.14159265358979323846;
+constexpr const qreal tau = pi*2;
 constexpr const qreal sqrt_2 = M_SQRT2;
+constexpr const qreal ellipse_bezier = 0.5519;
 
 using std::sqrt;
 using std::sin;

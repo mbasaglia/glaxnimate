@@ -111,6 +111,16 @@ constexpr scalar_type<VecT> length(const VecT& v)
     return std::sqrt(length_squared(v));
 }
 
+
+/**
+ * \brief 2-norm length of vector difference
+ */
+template<class VecT>
+constexpr scalar_type<VecT> distance(const VecT& a, const VecT& b)
+{
+    return length(a - b);
+}
+
 /**
  * \brief Angle to the x axis of a 2D cartesian vector
  */

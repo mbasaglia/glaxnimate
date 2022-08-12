@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QPointF>
+#include <optional>
 #include "vector.hpp"
 
 namespace glaxnimate::math {
@@ -18,5 +19,11 @@ QPointF line_closest_point(const QPointF& line_a, const QPointF& line_b, const Q
  * \brief Gets the center of the circle passing through 3 points
  */
 QPointF circle_center(const QPointF& p1, const QPointF& p2, const QPointF& p3);
+
+/**
+ * \brief Intersection point between two lines, each defined by two points
+ * \note the intersection might lay outside the segments provided
+ */
+std::optional<QPointF> line_intersection(const QPointF& start1, const QPointF& end1, const QPointF& start2, const QPointF& end2);
 
 } // namespace glaxnimate::math

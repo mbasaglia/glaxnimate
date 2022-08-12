@@ -217,6 +217,9 @@ public:
 
     BezierSegment segment(int index) const;
     void set_segment(int index, const BezierSegment& s);
+    BezierSegment inverted_segment(int index) const;
+
+    int segment_count() const;
 
     Bezier transformed(const QTransform& t) const;
     void transform(const QTransform& t);

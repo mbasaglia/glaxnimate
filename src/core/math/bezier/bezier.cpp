@@ -148,6 +148,16 @@ math::bezier::BezierSegment math::bezier::Bezier::segment(int index) const
     };
 }
 
+math::bezier::BezierSegment math::bezier::Bezier::inverted_segment(int index) const
+{
+    return {
+        points_[(index+1) % points_.size()].pos,
+        points_[(index+1) % points_.size()].tan_in,
+        points_[index].tan_out,
+        points_[index].pos,
+    };
+}
+
 void math::bezier::Bezier::set_segment(int index, const math::bezier::BezierSegment& s)
 {
     points_[index].pos = s[0];
@@ -168,6 +178,12 @@ void math::bezier::Bezier::transform(const QTransform& t)
     for ( auto& p : points_ )
         p.transform(t);
 }
+
+int glaxnimate::math::bezier::Bezier::segment_count() const
+{
+    return closed_ || points_.empty() ? points_.size() : points_.size() - 1;
+}
+
 
 math::bezier::LengthData::LengthData(const math::bezier::CubicBezierSolver<QPointF>& segment, int steps)
 {

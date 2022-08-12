@@ -10,6 +10,10 @@
 #include "model/property/property.hpp"
 #include "math/math.hpp"
 
+/*
+ * Arguments: type, name, default, emitter, flags
+ * For float: type, name, default, emitter, min, max, flags
+ */
 #define GLAXNIMATE_ANIMATABLE(type, name, ...)                                  \
 public:                                                                         \
     glaxnimate::model::AnimatedProperty<type> name{this, #name, __VA_ARGS__};   \

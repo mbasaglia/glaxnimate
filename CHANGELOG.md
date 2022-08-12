@@ -3,7 +3,8 @@
 * Editing:
     * New quantization algorithm available (Edge Exclusion Modes)
     * Space to toogle playback
-    * Improved trim path logic
+    * Improved Trim Path logic
+    * Added Offset Path modifier
 * I/O:
     * Fixed lottie export with using global swatch colors
     * Fixed loading external assets by relative path

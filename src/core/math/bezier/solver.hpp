@@ -14,6 +14,8 @@ class CubicBezierSolver
 public:
     using vector_type = Vec;
     using scalar = scalar_type<Vec>;
+    using argument_type = scalar;
+    using bounding_box_type = std::pair<Vec, Vec>;
 
 
     constexpr CubicBezierSolver(const std::array<Vec, 4>& points) noexcept
@@ -49,12 +51,12 @@ public:
      * \brief Finds the point along the bezier curve
      * \param t between 0 and 1
      */
-    constexpr Vec solve(scalar t) const noexcept
+    constexpr Vec solve(argument_type t) const noexcept
     {
         return ((a_ * t + b_ ) * t +  c_ ) * t + d_;
     }
 
-    constexpr scalar solve_component(scalar t, int component) const noexcept
+    constexpr scalar solve_component(argument_type t, int component) const noexcept
     {
         scalar a = detail::get(a_, component);
         scalar b = detail::get(b_, component);
@@ -63,7 +65,7 @@ public:
         return ((a * t + b ) * t +  c ) * t + d;
     }
 
-    constexpr scalar derivative(scalar factor, int component) const noexcept
+    constexpr scalar derivative(argument_type factor, int component) const noexcept
     {
         scalar a = detail::get(a_, component);
         scalar b = detail::get(b_, component);
@@ -76,7 +78,7 @@ public:
      * \param factor between 0 and 1
      * \return Angle in radians
      */
-    scalar tangent_angle(scalar factor) const
+    scalar tangent_angle(argument_type factor) const
     {
         return std::atan2(derivative(factor, 1), derivative(factor, 0));
     }
@@ -96,7 +98,7 @@ public:
      * \param factor value between 0 and 1 determining the split position
      * \return Two vectors for the two resulting cubic beziers
      */
-    std::pair<std::array<Vec, 4>, std::array<Vec, 4>> split(scalar factor) const
+    std::pair<std::array<Vec, 4>, std::array<Vec, 4>> split(argument_type factor) const
     {
         // linear
         if ( points_[0] == points_[1] && points_[2] == points_[3] )
@@ -123,7 +125,7 @@ public:
         };
     }
 
-    std::pair<Vec, Vec> bounds()
+    bounding_box_type bounds() const
     {
         std::vector<scalar> solutions;
         for ( int i = 0; i < detail::VecSize<Vec>::value; i++ )
@@ -158,7 +160,59 @@ public:
         return {min, max};
     }
 
+    /**
+     * \brief Return inflection points for a 2D bezier
+     */
+    std::vector<argument_type> inflection_points() const
+    {
+        auto denom = detail::get(a_, 1) * detail::get(b_, 0) - detail::get(a_, 0) * detail::get(b_, 1);
+        if ( qFuzzyIsNull(denom) )
+            return {};
+
+        auto t_cusp = -0.5 * (detail::get(a_, 1) * detail::get(c_, 0) - detail::get(a_, 0) * detail::get(c_, 1)) / denom;
+
+        auto square = t_cusp * t_cusp - 1./3. * (detail::get(b_, 1) * detail::get(c_, 0) - detail::get(b_, 0) * detail::get(c_, 1)) / denom;
+
+        if ( square < 0 )
+            return {};
+
+        auto root = std::sqrt(square);
+        if ( qFuzzyIsNull(root) )
+        {
+            if ( is_valid_inflection(t_cusp) )
+                return {t_cusp};
+            return {};
+        }
+
+        std::vector<argument_type> roots;
+        roots.reserve(2);
+
+        if ( is_valid_inflection(t_cusp - root) )
+            roots.push_back(t_cusp - root);
+
+
+        if ( is_valid_inflection(t_cusp + root) )
+            roots.push_back(t_cusp + root);
+
+        return roots;
+    }
+
+
+    std::vector<std::pair<argument_type, argument_type>> intersections(
+        const CubicBezierSolver& other, scalar tolerance = 2, int max_recursion = 10
+    ) const
+    {
+        std::vector<std::pair<argument_type, argument_type>> intersections;
+        intersects_impl(IntersectData(*this), IntersectData(other), tolerance, intersections, 0, max_recursion);
+        return intersections;
+    }
+
 private:
+    static constexpr bool is_valid_inflection(scalar root) noexcept
+    {
+        return root > 0 && root < 1;
+    }
+
     // You get these terms by expanding the Bezier definition and re-arranging them as a polynomial in t
     // B(t) = a t^3 + b t^2 + c t + d
     static constexpr scalar a(const scalar& k0, const scalar& k1, const scalar& k2, const scalar& k3) noexcept
@@ -204,6 +258,75 @@ private:
     {
         if ( solution >= 0 && solution <= 1 )
             solutions.push_back(solution);
+    }
+
+    struct IntersectData
+    {
+        IntersectData(
+            const CubicBezierSolver& solver,
+            const bounding_box_type& box,
+            argument_type t1,
+            argument_type t2
+        ) : bez(solver),
+            width(box.second.x() - box.first.x()),
+            height(box.second.y() - box.first.y()),
+            center((box.first + box.second) / 2),
+            t1(t1),
+            t2(t2),
+            t((t1 + t2) / 2)
+        {}
+
+        IntersectData(const CubicBezierSolver& solver)
+            : IntersectData(solver, solver.bounds(), 0, 1)
+        {}
+
+        std::pair<IntersectData, IntersectData> split() const
+        {
+            auto split = bez.split(0.5);
+            return {
+                IntersectData(split.first),
+                IntersectData(split.second)
+            };
+        }
+
+        bool intersects(const IntersectData& other) const
+        {
+            return std::abs(center.x() - other.center.x()) * 2 > width + other.width &&
+                   std::abs(center.y() - other.center.y()) * 2 > height + other.height;
+        }
+
+        CubicBezierSolver bez;
+        scalar width;
+        scalar height;
+        Vec center;
+        argument_type t1, t2, t;
+    };
+
+    static void intersects_impl(
+        const IntersectData& d1,
+        const IntersectData& d2,
+        scalar tolerance,
+        std::vector<std::pair<argument_type, argument_type>>& intersections,
+        int depth,
+        int max_recursion
+    )
+    {
+        if ( !d1.intersects(d2) )
+            return;
+
+        if ( depth >= max_recursion || (d1.width <= tolerance && d1.height <= tolerance && d2.width <= tolerance && d2.height <= tolerance) )
+        {
+            intersections.emplace_back(d1.t, d2.t);
+            return;
+        }
+
+        auto d1s = d1.split();
+        auto d2s = d2.split();
+
+        intersects_impl(d1s.first, d2s.first, tolerance, intersections, depth + 1, max_recursion);
+        intersects_impl(d1s.first, d2s.second, tolerance, intersections, depth + 1, max_recursion);
+        intersects_impl(d1s.second, d2s.first, tolerance, intersections, depth + 1, max_recursion);
+        intersects_impl(d1s.second, d2s.second, tolerance, intersections, depth + 1, max_recursion);
     }
 
     std::array<Vec, 4> points_;

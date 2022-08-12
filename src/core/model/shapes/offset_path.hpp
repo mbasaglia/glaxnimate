@@ -1,13 +1,16 @@
 #pragma once
 
 #include "path_modifier.hpp"
+#include "stroke.hpp"
 
 namespace glaxnimate::model {
 
-class InflateDeflate : public StaticOverrides<InflateDeflate, PathModifier>
+class OffsetPath : public StaticOverrides<OffsetPath, PathModifier>
 {
-    GLAXNIMATE_OBJECT(InflateDeflate)
-    GLAXNIMATE_ANIMATABLE(float, amount, 0, {}, -1, 1, false, PropertyTraits::Percent)
+    GLAXNIMATE_OBJECT(OffsetPath)
+    GLAXNIMATE_ANIMATABLE(float, amount, 0)
+    GLAXNIMATE_ANIMATABLE(float, miter_limit, 0, {}, 0)
+    GLAXNIMATE_PROPERTY(Stroke::Join, join, Stroke::RoundJoin, nullptr, nullptr, PropertyTraits::Visual)
 
 public:
     using Ctor::Ctor;

@@ -80,6 +80,7 @@ model/shapes/trim.cpp
 model/shapes/inflate_deflate.cpp
 model/shapes/path_modifier.cpp
 model/shapes/round_corners.cpp
+model/shapes/offset_path.cpp
 
 plugin/plugin.cpp
 plugin/action.cpp
