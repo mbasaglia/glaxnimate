@@ -79,7 +79,7 @@ QString glaxnimate::model::Image::type_name_human() const
     return tr("Image");
 }
 
-QPainterPath glaxnimate::model::Image::to_painter_path(FrameTime time) const
+QPainterPath glaxnimate::model::Image::to_painter_path_impl(FrameTime time) const
 {
     auto trans = transform.get()->transform_matrix(time);
     QPainterPath p;

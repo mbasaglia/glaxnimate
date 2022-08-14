@@ -12,6 +12,8 @@ public:
     ShapeListProperty* property = nullptr;
     int position = -1;
     glaxnimate::model::Composition* owner_composition = nullptr;
+    PathCache<QPainterPath> cached_path;
+
     void update_comp(glaxnimate::model::Composition* comp, ShapeElement* parent)
     {
         if ( comp != owner_composition )
@@ -116,6 +118,18 @@ QPainterPath glaxnimate::model::ShapeElement::to_clip(FrameTime t) const
     return to_painter_path(t);
 }
 
+QPainterPath glaxnimate::model::ShapeElement::to_painter_path(FrameTime t) const
+{
+    if ( d->cached_path.is_dirty(t) )
+        d->cached_path.set_path(t, to_painter_path_impl(t));
+    return d->cached_path.path();
+}
+
+void glaxnimate::model::ShapeElement::on_graphics_changed() const
+{
+    d->cached_path.mark_dirty();
+}
+
 std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::ShapeElement::to_path() const
 {
     return std::unique_ptr<glaxnimate::model::ShapeElement>(static_cast<glaxnimate::model::ShapeElement*>(clone().release()));
@@ -179,7 +193,7 @@ std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Shape::to_pa
     return path;
 }
 
-QPainterPath glaxnimate::model::Shape::to_painter_path(FrameTime) const
+QPainterPath glaxnimate::model::Shape::to_painter_path_impl(FrameTime) const
 {
     QPainterPath p;
 //     to_bezier(t).add_to_painter_path(p);
@@ -224,7 +238,9 @@ math::bezier::MultiBezier glaxnimate::model::ShapeOperator::collect_shapes_from(
 
 math::bezier::MultiBezier glaxnimate::model::ShapeOperator::collect_shapes(FrameTime t, const QTransform& transform) const
 {
-    return collect_shapes_from(affected_elements, t, transform);
+    if ( bezier_cache.is_dirty(t) )
+        bezier_cache.set_path(t, collect_shapes_from(affected_elements, t, transform));
+    return bezier_cache.path();
 }
 
 void glaxnimate::model::ShapeOperator::update_affected()
@@ -300,7 +316,7 @@ void glaxnimate::model::Modifier::do_collect_shapes(const std::vector<ShapeEleme
     }
 }
 
-QPainterPath glaxnimate::model::Modifier::to_painter_path(glaxnimate::model::FrameTime t) const
+QPainterPath glaxnimate::model::Modifier::to_painter_path_impl(glaxnimate::model::FrameTime t) const
 {
     math::bezier::MultiBezier bez;
     add_shapes(t, bez, {});

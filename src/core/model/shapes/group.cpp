@@ -49,7 +49,7 @@ QTransform glaxnimate::model::Group::local_transform_matrix(glaxnimate::model::F
     return transform.get()->transform_matrix(t);
 }
 
-QPainterPath glaxnimate::model::Group::to_painter_path(glaxnimate::model::FrameTime t) const
+QPainterPath glaxnimate::model::Group::to_painter_path_impl(glaxnimate::model::FrameTime t) const
 {
     QPainterPath path;
     for ( const auto& ch : utils::Range(shapes.begin(), shapes.past_first_modifier()) )
@@ -83,4 +83,16 @@ std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Group::to_pa
     }
 
     return clone;
+}
+
+void glaxnimate::model::Group::on_graphics_changed() const
+{
+    ShapeElement::on_graphics_changed();
+
+    for ( const auto& shape : shapes )
+    {
+        if ( shape->is_instance<glaxnimate::model::Modifier>() )
+            shape->on_graphics_changed();
+    }
+
 }

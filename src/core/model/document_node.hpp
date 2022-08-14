@@ -199,6 +199,8 @@ protected:
         Q_UNUSED(new_parent);
     }
 
+    virtual void on_graphics_changed() const {}
+
 private:
     template<class T=DocumentNode>
     void docnode_find_impl(const QString& type_name, std::vector<T*>& matches)

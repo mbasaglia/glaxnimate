@@ -442,7 +442,7 @@ void glaxnimate::model::TextShape::add_shapes(glaxnimate::model::FrameTime t, ma
     }
 }
 
-QPainterPath glaxnimate::model::TextShape::to_painter_path(glaxnimate::model::FrameTime) const
+QPainterPath glaxnimate::model::TextShape::to_painter_path_impl(glaxnimate::model::FrameTime) const
 {
     return {};
 }

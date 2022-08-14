@@ -159,13 +159,13 @@ QPainterPath glaxnimate::model::Layer::to_clip(glaxnimate::model::FrameTime time
     return Group::to_clip(time);
 }
 
-QPainterPath glaxnimate::model::Layer::to_painter_path(glaxnimate::model::FrameTime time) const
+QPainterPath glaxnimate::model::Layer::to_painter_path_impl(glaxnimate::model::FrameTime time) const
 {
     time = relative_time(time);
     if ( !animation->time_visible(time) || !render.get() )
         return {};
 
-    return Group::to_painter_path(time);
+    return Group::to_painter_path_impl(time);
 }
 
 

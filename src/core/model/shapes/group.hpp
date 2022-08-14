@@ -42,7 +42,6 @@ public:
     QTransform local_transform_matrix(model::FrameTime t) const override;
 
     QPainterPath to_clip(model::FrameTime t) const override;
-    QPainterPath to_painter_path(model::FrameTime t) const override;
 
     std::unique_ptr<ShapeElement> to_path() const override;
 
@@ -50,7 +49,9 @@ signals:
     void opacity_changed(float op);
 
 protected:
+    QPainterPath to_painter_path_impl(model::FrameTime t) const override;
     void on_paint(QPainter*, FrameTime, PaintMode, model::Modifier*) const override;
+    void on_graphics_changed() const override;
 
 private slots:
     void on_transform_matrix_changed();

@@ -102,7 +102,6 @@ public:
 
     QPainterPath shape_data(FrameTime t) const;
 
-    QPainterPath to_painter_path(FrameTime t) const override;
     QIcon tree_icon() const override;
     QRectF local_bounding_rect(FrameTime t) const override;
     QString type_name_human() const override;
@@ -114,6 +113,9 @@ public:
      * ie: where to add another TextShape to make them flow together
      */
     QPointF offset_to_next_character() const;
+
+protected:
+    QPainterPath to_painter_path_impl(FrameTime t) const override;
 
 private:
     void on_font_changed();

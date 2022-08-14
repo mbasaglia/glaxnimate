@@ -41,13 +41,13 @@ public:
     void add_shapes(model::FrameTime t, math::bezier::MultiBezier & bez, const QTransform& transform) const override;
 
     QPainterPath to_clip(model::FrameTime t) const override;
-    QPainterPath to_painter_path(model::FrameTime t) const override;
 
 signals:
     void opacity_changed(float op);
     void composition_changed();
 
 protected:
+    QPainterPath to_painter_path_impl(model::FrameTime t) const override;
     void on_paint(QPainter*, FrameTime, PaintMode, model::Modifier*) const override;
     void on_composition_changed(model::Composition* old_comp, model::Composition* new_comp) override;
 

@@ -9,6 +9,32 @@ namespace glaxnimate::model {
 using ShapeListProperty = ObjectListProperty<class ShapeElement>;
 class Composition;
 
+template<class T>
+class PathCache
+{
+public:
+    bool is_dirty(FrameTime time) const
+    {
+        return time != cached_time || dirty;
+    }
+
+    void mark_dirty() { dirty = true; }
+
+    const T& path() const { return cached_path; }
+
+    void set_path(FrameTime time, const T& path)
+    {
+        cached_time = time;
+        dirty = false;
+        cached_path = path;
+    }
+
+private:
+    bool dirty = true;
+    T cached_path = {};
+    FrameTime cached_time = 0;
+};
+
 /**
  * \brief Base class for all shape elements
  */
@@ -37,7 +63,7 @@ public:
     void clear_owner();
 
     virtual QPainterPath to_clip(FrameTime t) const;
-    virtual QPainterPath to_painter_path(FrameTime t) const = 0;
+    QPainterPath to_painter_path(FrameTime t) const;
     virtual std::unique_ptr<ShapeElement> to_path() const;
 
 signals:
@@ -54,12 +80,16 @@ protected:
         Q_UNUSED(new_comp);
     }
 
+    virtual QPainterPath to_painter_path_impl(FrameTime t) const = 0;
+    void on_graphics_changed() const override;
+
 private:
     void set_position(ShapeListProperty* property, int pos);
 
     class Private;
     std::unique_ptr<Private> d;
     friend ShapeListProperty;
+    friend class Group;
 };
 
 template<>
@@ -127,7 +157,9 @@ public:
     void add_shapes(FrameTime t, math::bezier::MultiBezier & bez, const QTransform& transform) const override;
 
     std::unique_ptr<ShapeElement> to_path() const override;
-    QPainterPath to_painter_path(FrameTime t) const override;
+
+protected:
+    QPainterPath to_painter_path_impl(FrameTime t) const override;
 };
 
 /**
@@ -159,6 +191,7 @@ signals:
 
 private:
     std::vector<ShapeElement*> affected_elements;
+    mutable PathCache<math::bezier::MultiBezier> bezier_cache;
 };
 
 /**
@@ -173,13 +206,14 @@ public:
 
     void add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const override;
 
-    QPainterPath to_painter_path(FrameTime t) const override;
 
     QRectF local_bounding_rect(FrameTime t) const override;
 
     virtual math::bezier::MultiBezier process(FrameTime t, const math::bezier::MultiBezier& mbez) const = 0;
 
 protected:
+    QPainterPath to_painter_path_impl(FrameTime t) const override;
+
     /**
      * \brief Whether to process on the whole thing (or individual objects)
      */

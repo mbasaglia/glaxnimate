@@ -100,7 +100,7 @@ void glaxnimate::model::PreCompLayer::on_composition_changed(model::Composition*
     }
 }
 
-QPainterPath glaxnimate::model::PreCompLayer::to_painter_path(glaxnimate::model::FrameTime time) const
+QPainterPath glaxnimate::model::PreCompLayer::to_painter_path_impl(glaxnimate::model::FrameTime time) const
 {
     QPainterPath p;
     if ( composition.get() )

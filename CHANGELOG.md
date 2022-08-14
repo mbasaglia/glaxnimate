@@ -5,6 +5,7 @@
     * Space to toogle playback
     * Improved Trim Path logic
     * Added Offset Path modifier
+    * Improved rendereing performance
 * I/O:
     * Fixed lottie export with using global swatch colors
     * Fixed loading external assets by relative path

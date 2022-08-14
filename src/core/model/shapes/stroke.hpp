@@ -65,9 +65,9 @@ public:
     void set_pen_style(const QPen& p);
     void set_pen_style_undoable(const QPen& p);
 
-    QPainterPath to_painter_path(FrameTime t) const override;
 
 protected:
+    QPainterPath to_painter_path_impl(FrameTime t) const override;
     void on_paint(QPainter* p, FrameTime t, PaintMode, model::Modifier* modifier) const override;
 };
 

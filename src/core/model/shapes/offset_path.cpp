@@ -72,10 +72,10 @@ static QPointF join_lines(
         auto offset = math::from_polar<QPointF>(100, angle_out + math::pi / 2);
         auto center = math::line_intersection(p0, p0 + offset, p1, p1 + offset);
         auto radius = center ? math::distance(*center, p0) : math::distance(p0, p1) / 2;
-        last_point.tan_out = last_point.pos +
-            math::from_polar<QPointF>(2 * radius * math::ellipse_bezier, angle_out);
+//         last_point.tan_out = last_point.pos +
+//             math::from_polar<QPointF>(2 * radius * math::ellipse_bezier, angle_out);
 
-        output_bezier.add_point(p1, math::from_polar<QPointF>(2 * radius * math::ellipse_bezier, angle_in));
+        output_bezier.add_point(p1/*, math::from_polar<QPointF>(2 * radius * math::ellipse_bezier, angle_in)*/);
 
         return p1;
     }
@@ -244,11 +244,11 @@ static MultiBezier offset_path(
                 if ( !point_fuzzy_compare(segment.points()[0], last_point) || output_bezier.empty() )
                     output_bezier.add_point(segment.points()[0]);
 
-                output_bezier.back().tan_out = segment.points()[1];
+//                 output_bezier.back().tan_out = segment.points()[1];
 
 
                 output_bezier.add_point(segment.points()[3]);
-                output_bezier.back().tan_in = segment.points()[2];
+//                 output_bezier.back().tan_in = segment.points()[2];
 
                 last_point = segment.points()[3];
             }

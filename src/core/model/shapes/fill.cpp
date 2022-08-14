@@ -20,7 +20,7 @@ void glaxnimate::model::Fill::on_paint(QPainter* p, glaxnimate::model::FrameTime
     p->drawPath(path);
 }
 
-QPainterPath glaxnimate::model::Fill::to_painter_path(glaxnimate::model::FrameTime t) const
+QPainterPath glaxnimate::model::Fill::to_painter_path_impl(glaxnimate::model::FrameTime t) const
 {
     return collect_shapes(t, {}).painter_path();
 }
