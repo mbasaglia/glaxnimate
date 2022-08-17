@@ -1,7 +1,5 @@
 #include "geom.hpp"
 
-#include <QVector3D>
-
 using namespace glaxnimate;
 
 
@@ -39,22 +37,31 @@ QPointF math::circle_center(const QPointF& p1, const QPointF& p2, const QPointF&
     };
 }
 
-
+// Custom implementation rather than using QVector3D to keep precision
+static std::array<qreal, 3> cross_product(const std::array<qreal, 3>& a, const std::array<qreal, 3>& b)
+{
+    return {
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0],
+    };
+}
 
 std::optional<QPointF> math::line_intersection(const QPointF& start1, const QPointF& end1, const QPointF& start2, const QPointF& end2)
 {
-    QVector3D v1(start1.x(), start1.y(), 1);
-    QVector3D v2(end1.x(), end1.y(), 1);
-    QVector3D v3(start2.x(), start2.y(), 1);
-    QVector3D v4(end2.x(), end2.y(), 1);
+    std::array<qreal, 3> v1{start1.x(), start1.y(), 1};
+    std::array<qreal, 3> v2{end1.x(), end1.y(), 1};
+    std::array<qreal, 3> v3{start2.x(), start2.y(), 1};
+    std::array<qreal, 3> v4{end2.x(), end2.y(), 1};
 
-    QVector3D cp = QVector3D::crossProduct(
-        QVector3D::crossProduct(v1, v2),
-        QVector3D::crossProduct(v3, v4)
+    std::array<qreal, 3> cp = cross_product(
+        cross_product(v1, v2),
+        cross_product(v3, v4)
     );
 
-    if ( qFuzzyIsNull(cp.z()) )
+    // More forgiving than qFuzzyIsNull
+    if ( qAbs(cp[2]) <= 0.00001 )
         return {};
 
-    return QPointF(cp.x() / cp.z(), cp.y() / cp.z());
+    return QPointF(cp[0] / cp[2], cp[1] / cp[2]);
 }

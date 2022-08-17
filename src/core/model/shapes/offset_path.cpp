@@ -18,7 +18,7 @@ static bool point_fuzzy_compare(const QPointF& a, const QPointF& b)
 static std::pair<QPointF, QPointF> linear_offset(const QPointF& p1, const QPointF& p2, float amount)
 {
     auto angle = math::atan2(p2.x() - p1.x(), p2.y() - p1.y());
-    auto offset = math::from_polar<QPointF>(amount, angle);
+    auto offset = math::from_polar<QPointF>(amount, -angle);
     return {
         p1 + offset,
         p2 + offset
@@ -55,9 +55,8 @@ static QPointF join_lines(
     QPointF p0 = seg1.points()[3];
     QPointF p1 = seg2.points()[0];
 
-    if ( line_join == glaxnimate::model::Stroke::BevelJoin )
+   if ( line_join == glaxnimate::model::Stroke::BevelJoin )
         return p0;
-
 
     // Connected, they don't need a joint
     if ( point_fuzzy_compare(p0, p1) )
@@ -72,10 +71,10 @@ static QPointF join_lines(
         auto offset = math::from_polar<QPointF>(100, angle_out + math::pi / 2);
         auto center = math::line_intersection(p0, p0 + offset, p1, p1 + offset);
         auto radius = center ? math::distance(*center, p0) : math::distance(p0, p1) / 2;
-//         last_point.tan_out = last_point.pos +
-//             math::from_polar<QPointF>(2 * radius * math::ellipse_bezier, angle_out);
+        last_point.tan_out = last_point.pos +
+            math::from_polar<QPointF>(2 * radius * math::ellipse_bezier, angle_out);
 
-        output_bezier.add_point(p1/*, math::from_polar<QPointF>(2 * radius * math::ellipse_bezier, angle_in)*/);
+        output_bezier.add_point(p1, math::from_polar<QPointF>(2 * radius * math::ellipse_bezier, angle_in));
 
         return p1;
     }
@@ -99,7 +98,7 @@ static std::optional<std::pair<float, float>> get_intersection(
     const CubicBezierSolver<QPointF>&a,
     const CubicBezierSolver<QPointF>& b)
 {
-    auto intersect = a.intersections(b);
+    auto intersect = a.intersections(b, 3, 7);
 
     std::size_t i = 0;
     if ( !intersect.empty() && qFuzzyCompare(intersect[0].first, 1) )
@@ -209,13 +208,12 @@ static MultiBezier offset_path(
 
     for ( const auto& input_bezier : collected_shapes.beziers() )
     {
+        int count = input_bezier.segment_count();
         Bezier output_bezier;
 
         output_bezier.set_closed(input_bezier.closed());
-        int count = input_bezier.segment_count();
 
         std::vector<std::vector<math::bezier::CubicBezierSolver<QPointF>>> multi_segments;
-
         for ( int i = 0; i < count; i++ )
             multi_segments.push_back(offset_segment_split(input_bezier.segment(i), amount));
 
@@ -226,7 +224,7 @@ static MultiBezier offset_path(
                 multi_segments.push_back(offset_segment_split(input_bezier.inverted_segment(i), amount));
         }
 
-        prune_intersections(multi_segments);
+//         prune_intersections(multi_segments);
 
         // Add bezier segments to the output and apply line joints
         QPointF last_point;
@@ -244,11 +242,11 @@ static MultiBezier offset_path(
                 if ( !point_fuzzy_compare(segment.points()[0], last_point) || output_bezier.empty() )
                     output_bezier.add_point(segment.points()[0]);
 
-//                 output_bezier.back().tan_out = segment.points()[1];
+                output_bezier.back().tan_out = segment.points()[1];
 
 
                 output_bezier.add_point(segment.points()[3]);
-//                 output_bezier.back().tan_in = segment.points()[2];
+                output_bezier.back().tan_in = segment.points()[2];
 
                 last_point = segment.points()[3];
             }

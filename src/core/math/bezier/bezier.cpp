@@ -138,24 +138,37 @@ void math::bezier::Bezier::reverse()
         std::swap(p.tan_in, p.tan_out);
 }
 
+static math::bezier::BezierSegment make_segment(const QPointF& s, const QPointF& t1, const QPointF& t2, const QPointF& e)
+{
+    if ( math::fuzzy_compare(s, t1) && math::fuzzy_compare(t2, e) )
+        return {
+            s,
+            math::lerp(s, e, 1/3.),
+            math::lerp(s, e, 2/3.),
+            e
+        };
+
+    return {s, t1, t2, e};
+}
+
 math::bezier::BezierSegment math::bezier::Bezier::segment(int index) const
 {
-    return {
+    return make_segment(
         points_[index].pos,
         points_[index].tan_out,
         points_[(index+1) % points_.size()].tan_in,
         points_[(index+1) % points_.size()].pos
-    };
+    );
 }
 
 math::bezier::BezierSegment math::bezier::Bezier::inverted_segment(int index) const
 {
-    return {
+    return make_segment(
         points_[(index+1) % points_.size()].pos,
         points_[(index+1) % points_.size()].tan_in,
         points_[index].tan_out,
-        points_[index].pos,
-    };
+        points_[index].pos
+    );
 }
 
 void math::bezier::Bezier::set_segment(int index, const math::bezier::BezierSegment& s)
