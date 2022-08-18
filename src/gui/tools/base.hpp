@@ -54,7 +54,11 @@ struct MouseEvent : Event
     /// Buttons being held during the event
     Qt::MouseButtons buttons() const { return event->buttons(); }
     /// Position of the event in view coordinates
+#if QT_VERSION_MAJOR < 6
     const QPointF& pos() const { return event->localPos(); }
+#else
+    QPointF pos() const { return event->position(); }
+#endif
     /// Tell the Qt event that it should not propagate
     void accept() const { event->accept(); }
 

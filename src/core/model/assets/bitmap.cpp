@@ -104,7 +104,7 @@ bool glaxnimate::model::Bitmap::from_file(const QString& file)
 
 bool glaxnimate::model::Bitmap::from_base64(const QString& data)
 {
-    auto chunks = data.splitRef(',');
+    auto chunks = data.split(',');
     if ( chunks.size() != 2 )
         return false;
     auto mime_settings = chunks[0].split(';');

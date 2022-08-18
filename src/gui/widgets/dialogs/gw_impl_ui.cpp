@@ -6,6 +6,7 @@
 #include <QInputDialog>
 #include <QLabel>
 #include <QPushButton>
+#include <QActionGroup>
 
 #include "app/settings/keyboard_shortcuts.hpp"
 
@@ -420,7 +421,7 @@ void GlaxnimateWindow::Private::init_status_bar()
     ui.status_bar->addPermanentWidget(widget_recording);
     QHBoxLayout* lay = new QHBoxLayout;
     widget_recording->setLayout(lay);
-    lay->setMargin(0);
+    lay->setContentsMargins(0, 0, 0, 0);
     widget_recording->setVisible(false);
 
     QLabel* label_recording_icon = new QLabel();

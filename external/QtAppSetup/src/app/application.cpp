@@ -17,7 +17,7 @@ void app::Application::initialize()
 
 QString app::Application::writable_data_path(const QString& name) const
 {
-    QString search = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    QString search = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 
     if ( !search.isEmpty() )
     {
@@ -57,7 +57,7 @@ QList<QDir> app::Application::data_roots() const
 {
     QList<QDir> search;
     // std paths
-    for ( const QString& str : QStandardPaths::standardLocations(QStandardPaths::DataLocation) )
+    for ( const QString& str : QStandardPaths::standardLocations(QStandardPaths::AppDataLocation) )
         search.push_back(QDir(str));
     // executable dir
     QDir binpath(QCoreApplication::applicationDirPath());

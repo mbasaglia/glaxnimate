@@ -2,6 +2,7 @@
 
 #include <QDesktopServices>
 #include <QInputDialog>
+#include <QActionGroup>
 
 #include "model/shapes/group.hpp"
 #include "model/shapes/image.hpp"

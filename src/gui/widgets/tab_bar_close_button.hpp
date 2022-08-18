@@ -18,7 +18,13 @@ public:
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override { return sizeHint(); }
-    void enterEvent(QEvent *event) override;
+
+protected:
+#if QT_VERSION_MAJOR < 6
+    void enterEvent(QEvent * event) override;
+#else
+    void enterEvent(QEnterEvent * event) override;
+#endif
     void leaveEvent(QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 };

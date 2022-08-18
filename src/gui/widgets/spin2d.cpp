@@ -65,7 +65,7 @@ int SmallerSpinBox::get_spin_size(const QAbstractSpinBox* box)
         QSize hint(w, box->height());
         option.subControls = QStyle::SC_SpinBoxEditField | QStyle::SC_SpinBoxFrame | QStyle::SC_SpinBoxUp | QStyle::SC_SpinBoxDown;
         option.frame = box->hasFrame();
-        spin_size = box->style()->sizeFromContents(QStyle::CT_SpinBox, &option, hint, box).expandedTo(QApplication::globalStrut()).width();
+        spin_size = box->style()->sizeFromContents(QStyle::CT_SpinBox, &option, hint, box).width();
     }
 
     return spin_size;

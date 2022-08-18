@@ -120,7 +120,7 @@ public:
         for ( int i = 0; i < path.elementCount(); i++ )
         {
             auto element = path.elementAt(i);
-            QPointF p = element * mult;
+            QPointF p = QPointF(element) * mult;
             switch ( element.type )
             {
                 case QPainterPath::MoveToElement:

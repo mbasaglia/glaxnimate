@@ -170,7 +170,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
         return {};
 
 
-    switch ( int(value.type()) )
+    switch ( value.userType() )
     {
         case QMetaType::Bool:
         case QMetaType::Int:
@@ -236,7 +236,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             auto v = value.value<QColor>();
             QString col = v.name();
             if ( v.alpha() != 255 )
-                col += QString::number(v.alpha()|0x100, 16).rightRef(2);
+                col += QStringView{QString::number(v.alpha()|0x100, 16)}.right(2);
             return col;
         }
     }

@@ -3,6 +3,7 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QCoreApplication>
+#include <QRegularExpression>
 
 #include "app/application.hpp"
 #include "app/log/log.hpp"
@@ -19,12 +20,13 @@ void app::TranslationService::initialize ( QString default_lang_code )
     QDir translations = Application::instance()->data_file("translations");
     QStringList translation_files = translations.entryList({"*.qm"});
 
-    QRegExp re("[^_]+_([^.]+)\\.qm");
+    QRegularExpression re("[^_]+_([^.]+)\\.qm");
     foreach ( QString file, translation_files )
     {
-        if ( re.exactMatch(file) )
+        auto match = re.match(file);
+        if ( match.hasMatch() )
         {
-            QString code = re.cap(1);
+            QString code = match.captured(1);
             QString name = language_name(code);
             if ( !name.isEmpty() )
                 register_translation(name,code,translations.absoluteFilePath(file));

@@ -15,7 +15,7 @@ public:
 
     QSize sizeHint() const override
     {
-        return QSize(32, width()).expandedTo(QApplication::globalStrut());
+        return QSize(32, width());
     }
 
 protected:

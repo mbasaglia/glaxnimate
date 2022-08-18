@@ -20,7 +20,7 @@
 
 namespace app::scripting::python {
 
-template<class T> const char* type_name() { return QMetaType::typeName(qMetaTypeId<T>()); }
+template<class T> const char* type_name() { return QMetaType(qMetaTypeId<T>()).name(); }
 template<int> struct meta_2_cpp_s;
 template<class> struct cpp_2_meta_s;
 
@@ -506,7 +506,7 @@ bool qvariant_type_caster_cast_impl(
     pybind11::handle& into, const QVariant& src,
     pybind11::return_value_policy policy, const pybind11::handle& parent)
 {
-    if ( src.type() == i )
+    if ( src.userType() == i )
     {
         into = pybind11::detail::make_caster<meta_2_cpp<i>>::cast(src.value<meta_2_cpp<i>>(), policy, parent);
         return true;

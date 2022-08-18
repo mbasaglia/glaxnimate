@@ -11,6 +11,8 @@
     * Simplified version of the trace dialog
 * Bug Fixes:
     * Fixed crash on adding gradient stops
+* Other:
+    * Ported to Qt6
 
 ## 0.5.0
 

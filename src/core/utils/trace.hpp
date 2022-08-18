@@ -1,7 +1,8 @@
 #pragma once
 
-#include <QImage>
 #include <memory>
+#include <QImage>
+#include <QObject>
 
 #include "math/bezier/bezier.hpp"
 

@@ -4,6 +4,7 @@
 
 #include <QMenu>
 #include <QPointer>
+#include <QActionGroup>
 
 #include <QtColorWidgets/ColorDialog>
 

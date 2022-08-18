@@ -285,10 +285,14 @@ namespace detail {
 template<class Type>
 std::optional<Type> variant_cast(const QVariant& val)
 {
-    if ( !val.canConvert(qMetaTypeId<Type>()) )
+    if ( !val.canConvert<Type>() )
         return {};
     QVariant converted = val;
+#if QT_VERSION_MAJOR < 6
     if ( !converted.convert(qMetaTypeId<Type>()) )
+#else
+    if ( !converted.convert(QMetaType::fromType<Type>()) )
+#endif
         return {};
     return converted.value<Type>();
 }

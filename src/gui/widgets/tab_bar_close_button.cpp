@@ -63,7 +63,11 @@ QSize TabBarCloseButton::sizeHint() const
     return QSize(width, height);
 }
 
-void TabBarCloseButton::enterEvent(QEvent *event)
+#if QT_VERSION_MAJOR < 6
+void TabBarCloseButton::enterEvent(QEvent * event)
+#else
+void TabBarCloseButton::enterEvent(QEnterEvent * event)
+#endif
 {
     if (isEnabled())
         update();

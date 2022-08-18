@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QFileDialog>
-#include <QDesktopWidget>
 #include <QDialogButtonBox>
 #include <QMessageBox>
 #include <QApplication>

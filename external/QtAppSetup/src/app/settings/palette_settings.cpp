@@ -164,7 +164,7 @@ QString app::settings::PaletteSettings::color_to_string(const QColor& c)
 {
     QString s = c.name();
     if ( c.alpha() < 255 )
-        s += QString::number(0x100|c.alpha(), 16).rightRef(2);
+        s += QStringView{QString::number(0x100|c.alpha(), 16)}.right(2);
     return s;
 }
 
@@ -172,7 +172,7 @@ QColor app::settings::PaletteSettings::string_to_color(const QString& s)
 {
     if ( s.startsWith('#') && s.length() == 9 )
     {
-        QColor c(s.leftRef(7));
+        QColor c(QStringView{s}.left(7));
         c.setAlpha(s.right(2).toInt(nullptr, 16));
         return c;
     }

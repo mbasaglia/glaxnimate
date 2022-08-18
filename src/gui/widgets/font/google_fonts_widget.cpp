@@ -110,7 +110,7 @@ public:
 
         current_font.setFamily(font->family);
         using io::svg::WeightConverter;
-        current_font.setWeight(WeightConverter::convert(current_weight, WeightConverter::css, WeightConverter::qt));
+        current_font.setWeight(QFont::Weight(WeightConverter::convert(current_weight, WeightConverter::css, WeightConverter::qt)));
         current_font.setItalic(current_italic);
 
         emit parent->font_changed(current_font);
