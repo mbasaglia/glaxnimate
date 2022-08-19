@@ -355,7 +355,7 @@ QString app::cli::Parser::wrap_text(const QString& names, int name_max, const QS
         if (breakAt != -1) {
             const int numChars = breakAt - lineStart;
             text += indentation + nextNameSection().leftJustified(name_max) + QLatin1Char(' ');
-            text += QStringView{description}.mid(lineStart, numChars);
+            text += utils::mid_ref(description, lineStart, numChars);
             text += '\n';
             x = 0;
             lastBreakable = -1;
