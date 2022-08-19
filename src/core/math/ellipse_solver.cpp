@@ -90,7 +90,7 @@ math::bezier::Bezier math::EllipseSolver::from_svg_arc(
     qreal y1 = start.y();
     qreal x2 = dest.x();
     qreal y2 = dest.y();
-    qreal phi = M_PI * xrot / 180;
+    qreal phi = pi * xrot / 180;
 
     QPointF p1 = _matrix_mul(phi, (start-dest)/2, -1);
     qreal x1p = p1.x();
@@ -115,12 +115,12 @@ math::bezier::Bezier math::EllipseSolver::from_svg_arc(
     qreal deltatheta = std::fmod(_angle(
         QPointF((x1p - cp.x()) / rx, (y1p - cp.y()) / ry),
         QPointF((-x1p - cp.x()) / rx, (-y1p - cp.y()) / ry)
-    ), 2*M_PI);
+    ), 2*pi);
 
     if ( !sweep && deltatheta > 0 )
-        deltatheta -= 2*M_PI;
+        deltatheta -= 2*pi;
     else if ( sweep && deltatheta < 0 )
-        deltatheta += 2*M_PI;
+        deltatheta += 2*pi;
 
     return EllipseSolver(c, QPointF(rx, ry), phi).to_bezier(theta1, deltatheta);
 }

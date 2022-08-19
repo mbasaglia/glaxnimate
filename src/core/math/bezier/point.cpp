@@ -10,11 +10,11 @@ void math::bezier::Point::adjust_handles_from_type()
         math::PolarVector<QPointF> p_in(tan_in - pos);
         math::PolarVector<QPointF> p_out(tan_out - pos);
 
-        qreal in_angle = (p_in.angle + p_out.angle + M_PI) / 2;
+        qreal in_angle = (p_in.angle + p_out.angle + pi) / 2;
         if ( p_in.angle < p_out.angle )
-            in_angle += M_PI;
+            in_angle += pi;
         p_in.angle = in_angle;
-        p_out.angle = in_angle + M_PI;
+        p_out.angle = in_angle + pi;
 
         if ( type == math::bezier::PointType::Symmetrical )
             p_in.length = p_out.length = (p_in.length + p_out.length) / 2;

@@ -3,6 +3,7 @@
 #include <QPointF>
 #include <QTransform>
 #include "math/vector.hpp"
+#include "math/math.hpp"
 
 namespace glaxnimate::math::bezier {
 
@@ -92,7 +93,7 @@ struct Point
         {
             return math::PolarVector<QPointF>{
                 math::length(other - pos),
-                M_PI + math::angle(dragged - pos)
+                pi + math::angle(dragged - pos)
             }.to_cartesian() + pos;
         }
 

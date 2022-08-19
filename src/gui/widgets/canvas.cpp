@@ -365,7 +365,7 @@ qreal Canvas::get_zoom_factor() const
 void Canvas::flip_horizontal()
 {
     auto anchor = mapToScene(width()/2, height()/2);
-    auto angle = d->rotation * 180 / M_PI;
+    auto angle = math::rad2deg(d->rotation);
     translate(anchor);
     rotate(-angle);
     scale(-1, 1);
@@ -431,9 +431,9 @@ void Canvas::do_rotate(qreal radians, const QPointF& scene_anchor)
     translate(-scene_anchor);
     d->expand_scene_rect(10);
     d->rotation += radians;
-    d->rotation = std::fmod(d->rotation, 2*M_PI);
+    d->rotation = std::fmod(d->rotation, math::tau);
     if ( d->rotation < 0 )
-        d->rotation += 2*M_PI;
+        d->rotation += math::tau;
 
 
     d->resize_fit = false;
