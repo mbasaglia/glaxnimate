@@ -6,6 +6,7 @@
 #include <QStyleFactory>
 
 #include "app/widgets/widget_palette_editor.hpp"
+#include "app/utils/string_view.hpp"
 
 app::settings::PaletteSettings::PaletteSettings()
     : default_palette(QGuiApplication::palette(), true)
@@ -164,7 +165,7 @@ QString app::settings::PaletteSettings::color_to_string(const QColor& c)
 {
     QString s = c.name();
     if ( c.alpha() < 255 )
-        s += QStringView{QString::number(0x100|c.alpha(), 16)}.right(2);
+        s += utils::right_ref(QString::number(0x100|c.alpha(), 16), 2);
     return s;
 }
 
@@ -172,7 +173,7 @@ QColor app::settings::PaletteSettings::string_to_color(const QString& s)
 {
     if ( s.startsWith('#') && s.length() == 9 )
     {
-        QColor c(QStringView{s}.left(7));
+        QColor c(utils::left_ref(s, 7));
         c.setAlpha(s.right(2).toInt(nullptr, 16));
         return c;
     }

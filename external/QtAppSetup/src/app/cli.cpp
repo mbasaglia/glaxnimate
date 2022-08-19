@@ -6,6 +6,7 @@
 #include <QSize>
 #include <QApplication>
 
+#include "utils/string_view.hpp"
 
 QString app::cli::Argument::get_slug(const QStringList& names)
 {
@@ -45,7 +46,7 @@ QVariant app::cli::Argument::arg_to_value(const QString& v, bool* ok) const
                 return {};
             }
 
-            auto vec = QStringView{v}.split('x');
+            auto vec = utils::split_ref(v, 'x');
             if ( vec.size() != 2 )
             {
                 *ok = false;
