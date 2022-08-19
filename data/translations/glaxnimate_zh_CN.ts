@@ -2,14 +2,243 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>AbstractWidgetList</name>
+    <message>
+        <source>Add New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move Up</source>
+        <translation type="unfinished">向上移动</translation>
+    </message>
+    <message>
+        <source>Move Down</source>
+        <translation type="unfinished">向下移动</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">删除</translation>
+    </message>
+</context>
+<context>
+    <name>ClearableKeysequenceEdit</name>
+    <message>
+        <source>Use Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished">清除</translation>
+    </message>
+</context>
+<context>
+    <name>ColorDialog</name>
+    <message>
+        <source>Select Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation type="unfinished">饱和度</translation>
+    </message>
+    <message>
+        <source>Hue</source>
+        <translation type="unfinished">Hue</translation>
+    </message>
+    <message>
+        <source>Hex</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">蓝色</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation type="unfinished">属性值</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">绿色</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">红色</translation>
+    </message>
+</context>
+<context>
+    <name>ColorQuantizationDialog</name>
+    <message>
+        <source>Configure color detection</source>
+        <translation type="unfinished">配置颜色检测</translation>
+    </message>
+    <message>
+        <source>Algorithm</source>
+        <translation type="unfinished">算法</translation>
+    </message>
+    <message>
+        <source>k-Means</source>
+        <translation type="unfinished">k - means</translation>
+    </message>
+    <message>
+        <source>k-Modes</source>
+        <translation type="unfinished">k-Modes</translation>
+    </message>
+    <message>
+        <source>Octree</source>
+        <translation type="unfinished">八叉树</translation>
+    </message>
+    <message>
+        <source>Edge Exclusion Modes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Match</source>
+        <translation type="unfinished">Match</translation>
+    </message>
+    <message>
+        <source>Max Iterations</source>
+        <translation type="unfinished">最大迭代次数</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished">无</translation>
+    </message>
+    <message>
+        <source>Most Frequent</source>
+        <translation type="unfinished">最频繁</translation>
+    </message>
+    <message>
+        <source>Closest</source>
+        <translation type="unfinished">最近的</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;k-Means divides the colors into clusters and refines the assignment at every iteration.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is the best option when tracing images with a lot of colors or shading.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For pictures with a lot of colors increasing the number of iterations will yield better results but it might be slower.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The &lt;span style=&quot; font-style:italic;&quot;&gt;Match&lt;/span&gt; option performs some post-processing:&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;None&lt;/span&gt;: Don&apos;t perform any post-processing and return the means (note this might result in colors not present in the original image)&lt;/li&gt;
+&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Closest&lt;/span&gt;: Find the color in the original image the is the closest to the mean&lt;/li&gt;
+&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Most Frequent&lt;/span&gt;: Find the color in the cluster that appears most often in the source image&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;k-Means divides the colors into clusters and refines the assignment at every iteration.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is the best option when tracing images with a lot of colors or shading.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For pictures with a lot of colors increasing the number of iterations will yield better results but it might be slower.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The &lt;span style=&quot; font-style:italic;&quot;&gt;Match&lt;/span&gt; option performs some post-processing:&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;None&lt;/span&gt;: Don&apos;t perform any post-processing and return the means (note this might result in colors not present in the original image)&lt;/li&gt;
+&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Closest&lt;/span&gt;: Find the color in the original image the is the closest to the mean&lt;/li&gt;
+&lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Most Frequent&lt;/span&gt;: Find the color in the cluster that appears most often in the source image&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>k-Modes gives you the colors that appear most often in the source image.
+
+It&apos;s very fast but it does not give accurate colors for complex images.
+
+This is the best option when tracing images with flat colors.</source>
+        <translation type="unfinished">k-Modes 为您提供源图像中最常出现的颜色
+
+它非常快，但不能为复杂图像提供准确的颜色
+
+这是在使用纯色跟踪图像时的最佳选择</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Octree algorithm merges similar colors from the bottom up.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It gives more accurate colors for complex images but it might result into colors that are not present in the source image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Octree algorithm merges similar colors from the bottom up.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It gives more accurate colors for complex images but it might result into colors that are not present in the source image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Min Frequency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Edge Exclusion Modes takes the most frequent color (mode) in the image, then excludes all pixels touching said area, then repeats the process until the appropriate number of colors has been found.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This approach removes anti-aliased edges but it might cause small details to not be detected.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Min Frequency&lt;/span&gt; refers to the minimum amount of pixels that a color must have to be considered (as a percentage of the total number of pixels in the image).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%</source>
+        <translation type="unfinished">%</translation>
+    </message>
+</context>
+<context>
     <name>CompoundTimelineWidget</name>
     <message>
         <source>Add Keyframe</source>
-        <translation>添加关键帧</translation>
+        <translation type="vanished">添加关键帧</translation>
     </message>
     <message>
         <source>&amp;Clear Animations</source>
-        <translation>&amp;清除动画</translation>
+        <translation type="vanished">&amp;清除动画</translation>
+    </message>
+</context>
+<context>
+    <name>DocumentMetadataDialog</name>
+    <message>
+        <source>Document Metadata</source>
+        <translation type="unfinished">文档元数据</translation>
+    </message>
+    <message>
+        <source>Common</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished">作者</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished">描述</translation>
+    </message>
+    <message>
+        <source>Keywords</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished">自定义</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">名称</translation>
+    </message>
+    <message>
+        <source>Value</source>
+        <translation type="unfinished">属性值</translation>
     </message>
 </context>
 <context>
@@ -55,39 +284,50 @@
     <name>GlaxnimateWindow</name>
     <message>
         <source>Cut</source>
-        <translation>剪切</translation>
+        <translation type="vanished">剪切</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation>复制</translation>
+        <translation type="vanished">复制</translation>
     </message>
     <message>
         <source>Paste</source>
-        <translation>粘贴</translation>
+        <translation type="vanished">粘贴</translation>
     </message>
     <message>
         <source>Group Shapes</source>
-        <translation>编组形状</translation>
+        <translation type="vanished">编组形状</translation>
     </message>
     <message>
         <source>Ungroup Shapes</source>
-        <translation>取消组形状</translation>
+        <translation type="vanished">取消组形状</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>删除</translation>
+        <translation type="vanished">删除</translation>
     </message>
     <message>
         <source>Move to...</source>
-        <translation>移动到...</translation>
+        <translation type="vanished">移动到...</translation>
     </message>
     <message>
         <source>Redo %1</source>
-        <translation>重做%1</translation>
+        <translation type="vanished">重做%1</translation>
     </message>
     <message>
         <source>Undo %1</source>
-        <translation>撤销%1</translation>
+        <translation type="vanished">撤销%1</translation>
+    </message>
+</context>
+<context>
+    <name>KeyboardSettingsWidget</name>
+    <message>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Filter</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -199,6 +439,42 @@
     <message>
         <source>File to open</source>
         <translation>文件打开</translation>
+    </message>
+    <message>
+        <source>When opening image files, trace them instead of embedding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specify the name of the local socket/named pipe to connect to a host application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1: %2</source>
+        <translation type="unfinished">%1: %2</translation>
+    </message>
+    <message>
+        <source>%2 is not a valid value for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not enough arguments for %1: needs %2, has %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown argument %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too many arguments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> [options]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Usage: %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -706,6 +982,14 @@ Do you want to save your changes?</source>
         <source>Could not copy dict: %1</source>
         <translation>不能复制dict: %1</translation>
     </message>
+    <message>
+        <source>Keyboard Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Widget Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Settings</name>
@@ -777,6 +1061,10 @@ Do you want to save your changes?</source>
         <source>How often to save a backup copy (in minutes)</source>
         <translation>保存备份副本的频率（以分钟为单位）</translation>
     </message>
+    <message>
+        <source>Glaxnimate Default</source>
+        <translation type="unfinished">Glaxnimate默认</translation>
+    </message>
 </context>
 <context>
     <name>StickerPackBuilderDialog</name>
@@ -841,10 +1129,256 @@ Do you want to save your changes?</source>
     </message>
 </context>
 <context>
+    <name>WidgetPaletteEditor</name>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished">属性</translation>
+    </message>
+    <message>
+        <source>System Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">删除</translation>
+    </message>
+    <message>
+        <source>Active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preview Enabled Widgets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Theme Preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>That</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A</source>
+        <translation type="unfinished">A</translation>
+    </message>
+    <message>
+        <source>B</source>
+        <translation type="unfinished">B</translation>
+    </message>
+    <message>
+        <source>C</source>
+        <translation type="unfinished">C</translation>
+    </message>
+    <message>
+        <source>Placeholder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished">自定义</translation>
+    </message>
+    <message>
+        <source>%1 %2</source>
+        <translation type="unfinished">%1 %2</translation>
+    </message>
+    <message>
+        <source>Add Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">名称</translation>
+    </message>
+</context>
+<context>
+    <name>app::SettingsDialog</name>
+    <message>
+        <source>Settings</source>
+        <translation type="unfinished">设置</translation>
+    </message>
+</context>
+<context>
+    <name>app::log::LogModel</name>
+    <message>
+        <source>Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>app::settings::KeyboardShortcutsModel</name>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">名称</translation>
+    </message>
+    <message>
+        <source>Shortcut</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>app::settings::Settings</name>
     <message>
         <source>Glaxnimate Default</source>
-        <translation>Glaxnimate默认</translation>
+        <translation type="vanished">Glaxnimate默认</translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::ColorDialog</name>
+    <message>
+        <source>Pick</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::ColorPalette</name>
+    <message>
+        <source>Unnamed</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::ColorPaletteModel</name>
+    <message>
+        <source>Unnamed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 (%2 colors)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::ColorPaletteWidget</name>
+    <message>
+        <source>Open a new palette from file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a new palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duplicate the current palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete the current palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Revert changes to the current palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save changes to the current palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add a color to the palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove the selected color from the palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">名称</translation>
+    </message>
+    <message>
+        <source>GIMP Palettes (*.gpl)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Palette Image (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to load the palette file
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::GradientEditor</name>
+    <message>
+        <source>Add Color</source>
+        <translation type="unfinished">添加颜色</translation>
+    </message>
+    <message>
+        <source>Remove Color</source>
+        <translation type="unfinished">删除颜色</translation>
+    </message>
+    <message>
+        <source>Edit Color...</source>
+        <translation type="unfinished">编辑颜色…...</translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::GradientListModel</name>
+    <message>
+        <source>%1 (%2 colors)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>color_widgets::Swatch</name>
+    <message>
+        <source>Clear Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 (%2)</source>
+        <translation type="unfinished">%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -1362,7 +1896,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Ouput Formats </source>
-        <translation>输出格式 </translation>
+        <translation type="vanished">输出格式 </translation>
     </message>
     <message>
         <source>Extensions</source>
@@ -1388,6 +1922,10 @@ p, li { white-space: pre-wrap; }
         <source>Data Directories:</source>
         <translation>数据目录:</translation>
     </message>
+    <message>
+        <source>Output Formats </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>glaxnimate::gui::ColorPickerWidget</name>
@@ -1404,15 +1942,15 @@ p, li { white-space: pre-wrap; }
     <name>glaxnimate::gui::ColorQuantizationDialog</name>
     <message>
         <source>None</source>
-        <translation>无</translation>
+        <translation type="vanished">无</translation>
     </message>
     <message>
         <source>Max Iterations</source>
-        <translation>最大迭代次数</translation>
+        <translation type="vanished">最大迭代次数</translation>
     </message>
     <message>
         <source>Match</source>
-        <translation>Match</translation>
+        <translation type="vanished">Match</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1421,7 +1959,7 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Octree algorithm merges similar colors from the bottom up.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It gives more accurate colors for complex images but it might result into colors that are not present in the source image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -1430,15 +1968,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Octree</source>
-        <translation>八叉树</translation>
+        <translation type="vanished">八叉树</translation>
     </message>
     <message>
         <source>Closest</source>
-        <translation>最近的</translation>
+        <translation type="vanished">最近的</translation>
     </message>
     <message>
         <source>Most Frequent</source>
-        <translation>最频繁</translation>
+        <translation type="vanished">最频繁</translation>
     </message>
     <message>
         <source>k-Modes gives you the colors that appear most often in the source image.
@@ -1446,7 +1984,7 @@ p, li { white-space: pre-wrap; }
 It&apos;s very fast but it does not give accurate colors for complex images.
 
 This is the best option when tracing images with flat colors.</source>
-        <translation>k-Modes 为您提供源图像中最常出现的颜色
+        <translation type="vanished">k-Modes 为您提供源图像中最常出现的颜色
 
 它非常快，但不能为复杂图像提供准确的颜色
 
@@ -1467,7 +2005,7 @@ p, li { white-space: pre-wrap; }
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;None&lt;/span&gt;: Don&apos;t perform any post-processing and return the means (note this might result in colors not present in the original image)&lt;/li&gt;
 &lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Closest&lt;/span&gt;: Find the color in the original image the is the closest to the mean&lt;/li&gt;
 &lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Most Frequent&lt;/span&gt;: Find the color in the cluster that appears most often in the source image&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -1484,19 +2022,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>k-Means</source>
-        <translation>k - means</translation>
+        <translation type="vanished">k - means</translation>
     </message>
     <message>
         <source>k-Modes</source>
-        <translation>k-Modes</translation>
+        <translation type="vanished">k-Modes</translation>
     </message>
     <message>
         <source>Algorithm</source>
-        <translation>算法</translation>
+        <translation type="vanished">算法</translation>
     </message>
     <message>
         <source>Configure color detection</source>
-        <translation>配置颜色检测</translation>
+        <translation type="vanished">配置颜色检测</translation>
     </message>
 </context>
 <context>
@@ -1571,7 +2109,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>CYMK</source>
-        <translation>CYMK</translation>
+        <translation type="vanished">CYMK</translation>
     </message>
     <message>
         <source>Blue</source>
@@ -1636,6 +2174,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Primary Color</source>
         <translation>原色</translation>
+    </message>
+    <message>
+        <source>CMYK</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1703,20 +2245,32 @@ p, li { white-space: pre-wrap; }
         <source>Clear Animations</source>
         <translation>清除动画</translation>
     </message>
+    <message>
+        <source>Add Keyframe</source>
+        <translation type="unfinished">添加关键帧</translation>
+    </message>
+    <message>
+        <source>&amp;Clear Animations</source>
+        <translation type="unfinished">&amp;清除动画</translation>
+    </message>
+    <message>
+        <source>Loop Animation</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>glaxnimate::gui::DocumentMetadataDialog</name>
     <message>
         <source>Name</source>
-        <translation>名称</translation>
+        <translation type="vanished">名称</translation>
     </message>
     <message>
         <source>Value</source>
-        <translation>属性值</translation>
+        <translation type="vanished">属性值</translation>
     </message>
     <message>
         <source>Document Metadata</source>
-        <translation>文档元数据</translation>
+        <translation type="vanished">文档元数据</translation>
     </message>
 </context>
 <context>
@@ -2889,6 +3443,42 @@ The %1</translation>
         <source>Outside Top</source>
         <translation>Outside Top</translation>
     </message>
+    <message>
+        <source>Undo %1</source>
+        <translation type="unfinished">撤销%1</translation>
+    </message>
+    <message>
+        <source>Redo %1</source>
+        <translation type="unfinished">重做%1</translation>
+    </message>
+    <message>
+        <source>Cut</source>
+        <translation type="unfinished">剪切</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation type="unfinished">复制</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation type="unfinished">粘贴</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished">删除</translation>
+    </message>
+    <message>
+        <source>Group Shapes</source>
+        <translation type="unfinished">编组形状</translation>
+    </message>
+    <message>
+        <source>Ungroup Shapes</source>
+        <translation type="unfinished">取消组形状</translation>
+    </message>
+    <message>
+        <source>Move to...</source>
+        <translation type="unfinished">移动到...</translation>
+    </message>
 </context>
 <context>
     <name>glaxnimate::gui::GradientListWidget</name>
@@ -3654,7 +4244,7 @@ The %1</translation>
     </message>
     <message>
         <source>Traced %1</source>
-        <translation>追踪%1</translation>
+        <translation type="vanished">追踪%1</translation>
     </message>
     <message>
         <source>Revert to Defaults</source>
@@ -3695,6 +4285,61 @@ The %1</translation>
     <message>
         <source>Configure Color Detection</source>
         <translation>配置颜色检测</translation>
+    </message>
+    <message>
+        <source>Detailed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pixel Art</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This option is best suited for photos, paintings and detailed illustrations.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The number of colors is reduced based on &lt;span style=&quot; font-weight:600;&quot;&gt;Posterization Level&lt;/span&gt; below.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note that there is a significant reduction in image quality when converting this kind of images to vector graphics.&lt;/p&gt;
+&lt;p style=&quot; margin-top:37px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(Image by &lt;a href=&quot;https://linktr.ee/FellFallow&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;FellFallow&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Posterization Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This option is best suited for flat-shaded digital images, stickers, and cartoons.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The number of colors will be reduced automatically, picking the most common colors in the source image.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Very small details might get lost in the process.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is suited for pixel art. The traced vector will retain all colors in the original image as well the pixelated edges.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is only suitable for fairly small images with a low number of colors.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4175,7 +4820,7 @@ The %1</translation>
     </message>
     <message>
         <source>Unknow object of type &apos;%1&apos;</source>
-        <translation>%1类型的未知对象</translation>
+        <translation type="vanished">%1类型的未知对象</translation>
     </message>
     <message>
         <source>Property %1 of %2 refers to unexisting object %3</source>
@@ -4236,6 +4881,10 @@ The %1</translation>
     <message>
         <source>Object %1 is invalid</source>
         <translation>对象%1是无效的</translation>
+    </message>
+    <message>
+        <source>Unknown object of type &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4341,6 +4990,10 @@ The %1</translation>
     <message>
         <source>Repeaters are not officially supported</source>
         <translation>中继器并非官方支持</translation>
+    </message>
+    <message>
+        <source>Inflate/Deflate is not supported</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4620,6 +5273,13 @@ The %1</translation>
     </message>
 </context>
 <context>
+    <name>glaxnimate::model::InflateDeflate</name>
+    <message>
+        <source>Inflate and Deflate</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>glaxnimate::model::Layer</name>
     <message>
         <source>Layer</source>
@@ -4658,7 +5318,11 @@ The %1</translation>
     <name>glaxnimate::model::Object</name>
     <message>
         <source>Uknown Object</source>
-        <translation>未知对象</translation>
+        <translation type="vanished">未知对象</translation>
+    </message>
+    <message>
+        <source>Unknown Object</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4711,6 +5375,13 @@ The %1</translation>
     </message>
 </context>
 <context>
+    <name>glaxnimate::model::RoundCorners</name>
+    <message>
+        <source>Round Corners</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>glaxnimate::model::StretchableTime</name>
     <message>
         <source>Timing</source>
@@ -4758,6 +5429,13 @@ The %1</translation>
     <message>
         <source>Split Segment</source>
         <translation>分离线段</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::utils::trace::TraceWrapper</name>
+    <message>
+        <source>Traced %1</source>
+        <translation type="unfinished">追踪%1</translation>
     </message>
 </context>
 </TS>
