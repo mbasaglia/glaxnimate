@@ -125,16 +125,24 @@ linux:aur_build:
     script:
         # Setup
         - useradd -m foo
+        - chmod 600 "$AUR_SSH_KEY"
         - mkdir -p build
         - cd build
         - cmake ..
+        # Settings
+        - PROJECT_VERSION="$(../deploy/get_version.sh CMakeCache.txt)"
+        - git config --global user.name "Glaxnimate CI"
+        - git config --global user.email "glaxnimate-ci@mattbas.org"
         # Build
         - PACK_NAME=glaxnimate-git
         - git clone https://aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
+        - sed ../../deploy/PKGBUILD -e "/^pkgname=/s/\".*\"/\"$PACK_NAME\"/" -e "/^pkgver=/s/=.*/=$PROJECT_VERSION/" > PKGBUILD
         - chown -R foo .
         - sudo -u foo makepkg -f
         - namcap PKGBUILD
+        - sudo -u foo makepkg --printsrcinfo > .SRCINFO
+        - if ! git diff-index --quiet HEAD -- ; then git commit -am "Update to version $PROJECT_VERSION" ; GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push ; fi
 
 
 linux:appimage:
