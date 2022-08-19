@@ -3,6 +3,7 @@
 _corpname=glaxnimate
 _pkgname='glaxnimate'
 pkgname="$_pkgname"
+_git_branch="release"
 pkgver=0.5.0
 pkgrel=1
 pkgdesc="Simple vector animation program."
@@ -14,7 +15,7 @@ depends=('python' 'zlib' 'hicolor-icon-theme' 'potrace' 'ffmpeg' 'libarchive' 'q
 provides=("$_pkgname")
 conflicts=("$_pkgname")
 source=(
-    "$_pkgname::git+https://gitlab.com/mattbas/$_pkgname/#branch=release"
+    "$_pkgname::git+https://gitlab.com/mattbas/$_pkgname/#branch=$_git_branch"
 )
 sha256sums=('SKIP')
 

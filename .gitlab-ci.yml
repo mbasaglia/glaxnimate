@@ -104,7 +104,7 @@ linux:deb:
         # Build
         - git clone https://aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
-        - sed ../../deploy/PKGBUILD -e "/^pkgname=/s/\".*\"/\"$PACK_NAME\"/" -e "/^pkgver=/s/=.*/=$PROJECT_VERSION/" > PKGBUILD
+        - sed ../../deploy/PKGBUILD -e "/^pkgname=/s/\".*\"/\"$PACK_NAME\"/" -e "/^pkgver=/s/=.*/=$PROJECT_VERSION/" -e "/^_git_branch=/s/=.*/=$CI_COMMIT_BRANCH/"> PKGBUILD
         - chown -R foo .
         - sudo -u foo makepkg -f
         - namcap PKGBUILD
@@ -123,6 +123,8 @@ linux:aur:
 linux:aur_build:
     extends: .aur_base
     stage: build
+    only:
+        - master
     variables:
         PACK_NAME: glaxnimate-git
 
