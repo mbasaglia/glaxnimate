@@ -246,6 +246,9 @@ public:
     const std::vector<Bezier>& beziers() const { return beziers_; }
     std::vector<Bezier>& beziers() { return beziers_; }
 
+    Bezier& back() { return beziers_.back(); }
+    const Bezier& back() const { return beziers_.back(); }
+
     MultiBezier& move_to(const QPointF& p)
     {
         beziers_.push_back(Bezier(p));

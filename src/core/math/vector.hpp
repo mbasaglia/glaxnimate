@@ -164,4 +164,13 @@ struct PolarVector
     }
 };
 
+template<class VecT>
+bool fuzzy_compare(const VecT& a, const VecT& b)
+{
+    for ( int i = 0; i < detail::VecSize<VecT>::value; i++ )
+        if ( !qFuzzyCompare(detail::get(a, i), detail::get(b, i)) )
+            return false;
+    return true;
+}
+
 } // namespace glaxnimate::math
