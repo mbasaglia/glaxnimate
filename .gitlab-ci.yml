@@ -118,13 +118,13 @@ linux:aur:
     only:
         - release
     variables:
-        PACK_NAME=glaxnimate
+        PACK_NAME: glaxnimate
 
 linux:aur_build:
     extends: .aur_base
     stage: build
     variables:
-        PACK_NAME=glaxnimate-git
+        PACK_NAME: glaxnimate-git
 
 
 linux:appimage:
