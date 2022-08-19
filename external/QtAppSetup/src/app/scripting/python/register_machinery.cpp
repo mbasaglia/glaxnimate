@@ -20,7 +20,14 @@
 
 namespace app::scripting::python {
 
-template<class T> const char* type_name() { return QMetaType(qMetaTypeId<T>()).name(); }
+template<class T> const char* type_name()
+{
+#if QT_VERSION_MAJOR >= 6
+    return QMetaType(qMetaTypeId<T>()).name();
+#else
+    return QMetaType::typeName(qMetaTypeId<T>());
+#endif
+}
 template<int> struct meta_2_cpp_s;
 template<class> struct cpp_2_meta_s;
 
