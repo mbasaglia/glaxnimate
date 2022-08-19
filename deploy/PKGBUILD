@@ -41,7 +41,7 @@ build() {
     # echo 'MAKEFLAGS="-j4"' >>/etc/makepkg.conf
     # (or ~/.makepkg.conf)
     make
-    make translations
+    make translations VERBOSE=1
 }
 
 package() {
