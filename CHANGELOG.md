@@ -4,6 +4,7 @@
     * New quantization algorithm available (Edge Exclusion Modes)
     * Space to toogle playback
     * Improved trim path logic
+    * Holding Ctrl snaps the draw tool to 45 degree lines
 * I/O:
     * Fixed lottie export with using global swatch colors
     * Fixed loading external assets by relative path
