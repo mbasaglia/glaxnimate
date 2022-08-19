@@ -77,6 +77,15 @@ private slots:
 
     }
 
+    void test_lerp_factor()
+    {
+        model::KeyframeTransition kft;
+
+        kft.set_before(QPointF(.46, .94));
+        kft.set_after(QPointF(.89, .34));
+        QCOMPARE(qRound(kft.lerp_factor(0.1)*100), 18);
+    }
+
     void test_lerp_factor_cache_flush()
     {
         model::KeyframeTransition kft;

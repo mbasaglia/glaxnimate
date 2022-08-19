@@ -27,6 +27,7 @@ target_link_libraries(test_property PRIVATE ${LIB_NAME_CORE})
 test_case(test_bezier_solver)
 test_case(test_keyframe_transition
 ../src/core/model/animation/keyframe_transition.cpp
+../src/core/math/polynomial.cpp
 )
 
 test_case(test_trim_path)

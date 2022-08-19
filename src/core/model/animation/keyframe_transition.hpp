@@ -8,10 +8,6 @@
 
 namespace glaxnimate::model {
 
-namespace detail {
-    using SampleCache = std::vector<double>;
-} // namespace detail
-
 /**
  * \brief Describes the easing between two keyframes
  */
@@ -75,7 +71,6 @@ public:
 private:
     math::bezier::CubicBezierSolver<QPointF> bezier_ { QPointF(0, 0), QPointF(0, 0), QPointF(1, 1), QPointF(1, 1) };
     bool hold_ = false;
-    mutable detail::SampleCache sample_cache_;
 };
 
 } // namespace glaxnimate::model

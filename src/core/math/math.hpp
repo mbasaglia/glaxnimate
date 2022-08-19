@@ -18,6 +18,7 @@ using std::acos;
 using std::asin;
 using std::atan;
 using std::atan2;
+using std::pow;
 
 inline qreal hypot(qreal x, qreal y)
 {
