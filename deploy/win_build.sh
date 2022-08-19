@@ -51,7 +51,7 @@ case "$ACTION" in
 
         # Setup package
         PACKDIR=glaxnimate
-        mingw32-make.exe translations
+        mingw32-make.exe translations VERBOSE=1
         mingw32-make.exe install DESTDIR=$PACKDIR >/dev/null
         windeployqt.exe $PACKDIR/bin/glaxnimate.exe
 
