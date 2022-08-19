@@ -13,7 +13,7 @@ case "$ACTION" in
         pacman --noconfirm -S \
             git zip base-devel \
             unzip               \
-            mingw-w64-x86_64-qt5 \
+            mingw-w64-x86_64-qt6 \
             mingw-w64-x86_64-zlib \
             mingw-w64-x86_64-cmake \
             mingw-w64-x86_64-python \
@@ -31,7 +31,7 @@ case "$ACTION" in
         cd "$BUILD_DIR"
 
         cmake.exe .. \
-            -DQt5_DIR=/mingw64/lib/cmake/Qt5 \
+            -DQt6_DIR=/mingw64/lib/cmake/Qt6 \
             -DZLIB_LIBRARY=/mingw64/lib/libz.a \
             -DCMAKE_PREFIX_PATH='/mingw64/lib/' \
             -DZLIB_INCLUDE_DIR=/mingw64/include \
