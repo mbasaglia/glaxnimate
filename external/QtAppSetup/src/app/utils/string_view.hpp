@@ -43,7 +43,7 @@ namespace utils {
 
 inline QStringRef left_ref(const QString& s, int n)
 {
-    return r.leftRef(n);
+    return s.leftRef(n);
 }
 
 inline QStringRef right_ref(const QString& s, int n)
