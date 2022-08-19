@@ -90,7 +90,7 @@ linux:deb:
         - pacman -S --noconfirm git base-devel fakeroot openssh namcap xorg-xauth cmake 'python' 'zlib' 'hicolor-icon-theme' 'potrace' 'ffmpeg' 'libarchive' 'qt6-tools' 'qt6-base' 'qt6-imageformats' 'qt6-svg'
     script:
         # Check
-        - [ -n "$PACK_NAME" -a -n "$AUR_SSH_KEY" ]
+        - test -n "$PACK_NAME" -a -n "$AUR_SSH_KEY"
         # Setup
         - useradd -m foo
         - chmod 600 "$AUR_SSH_KEY"
