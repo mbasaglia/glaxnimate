@@ -489,7 +489,7 @@ private slots:
         input.line_to(QPointF(100, 100));
         input.line_to(QPointF(0, 100));
         input.close();
-        math::bezier::MultiBezier output = process(0.625, 0.125, 0, input);
+        math::bezier::MultiBezier output = process(0, 0.5, 0.625, input);
         math::bezier::MultiBezier expected;
         expected.move_to(QPointF(50, 100));
         expected.line_to(QPointF(0, 100));
@@ -865,7 +865,7 @@ private slots:
         expected.move_to(QPointF(0, 0));
         expected.line_to(QPointF(25, 0));
 
-        math::bezier::MultiBezier output = process(3./16., 1./16., 0, input);
+        math::bezier::MultiBezier output = process(0, 14./16., 3./16., input);
         COMPARE_MULTIBEZIER(output, expected);
     }
 
@@ -1308,7 +1308,7 @@ private slots:
         expected.line_to(QPointF(100, 0));
         expected.line_to(QPointF(100, 100));
 
-        math::bezier::MultiBezier output = process(7./8., 1./8., 0, input);
+        math::bezier::MultiBezier output = process(0, 2./8., 7./8., input);
 
         COMPARE_MULTIBEZIER(output, expected);
     }

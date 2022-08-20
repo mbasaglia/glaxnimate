@@ -23,6 +23,7 @@
 #include "math/math.hpp"
 #include "font_weight.hpp"
 #include "css_parser.hpp"
+#include "app/utils/string_view.hpp"
 
 
 using namespace glaxnimate::io::svg::detail;
@@ -509,7 +510,7 @@ public:
         {
             for ( const auto& item : element.attribute("style").split(';') )
             {
-                auto split = item.splitRef(':');
+                auto split = ::utils::split_ref(item, ':');
                 if ( split.size() == 2 )
                 {
                     QString name = split[0].trimmed().toString();
@@ -726,15 +727,17 @@ public:
 
     std::vector<qreal> double_args(const QString& str)
     {
+        auto args_s = ::utils::split_ref(str, AnimateParser::separator,
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-        auto args_s = str.splitRef(AnimateParser::separator, Qt::SkipEmptyParts);
+            Qt::SkipEmptyParts
 #else
-        auto args_s = str.splitRef(AnimateParser::separator, QString::SkipEmptyParts);
+            QString::SkipEmptyParts
 #endif
+        );
         std::vector<qreal> args;
         args.reserve(args_s.size());
         std::transform(args_s.begin(), args_s.end(), std::back_inserter(args),
-                        [](const QStringRef& s){ return s.toDouble(); });
+                        [](const ::utils::StringView& s){ return s.toDouble(); });
         return args;
     }
 
@@ -757,7 +760,7 @@ public:
                 continue;
             }
 
-            QStringRef name = match.capturedRef(1);
+            QString name = match.captured(1);
 
             if ( name == "translate" )
             {
@@ -876,7 +879,7 @@ public:
         if ( paint_order == "normal" )
             paint_order = "fill stroke";
 
-        for ( const auto& sr : paint_order.splitRef(' ',
+        for ( const auto& sr : paint_order.split(' ',
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         Qt::SkipEmptyParts
 #else
@@ -939,7 +942,7 @@ public:
     double percent_1(const QString& s)
     {
         if ( s.contains('%') )
-            return s.midRef(0, s.size()-1).toDouble();
+            return ::utils::mid_ref(s, 0, s.size()-1).toDouble();
         return s.toDouble();
     }
 
@@ -1431,7 +1434,7 @@ public:
         font->size.set(unit_convert(style.size, "px", "pt"));
         QFont qfont;
         qfont.setFamily(style.family);
-        qfont.setWeight(WeightConverter::convert(style.weight, WeightConverter::css, WeightConverter::qt));
+        qfont.setWeight(QFont::Weight(WeightConverter::convert(style.weight, WeightConverter::css, WeightConverter::qt)));
         qfont.setStyle(style.style);
         QFontDatabase db;
         QString style_string = db.styleString(qfont);
@@ -1639,7 +1642,7 @@ void glaxnimate::io::svg::SvgParser::parse_to_document()
 
 static qreal hex(const QString& s, int start, int size)
 {
-    return s.midRef(start, size).toInt(nullptr, 16) / (size == 2 ? 255.0 : 15.0);
+    return utils::mid_ref(s, start, size).toInt(nullptr, 16) / (size == 2 ? 255.0 : 15.0);
 }
 
 QColor glaxnimate::io::svg::parse_color(const QString& string)

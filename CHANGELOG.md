@@ -6,6 +6,7 @@
     * Improved Trim Path logic
     * Added Offset Path modifier
     * Improved rendereing performance
+    * Holding Ctrl snaps the draw tool to 45 degree lines
 * I/O:
     * Fixed lottie export with using global swatch colors
     * Fixed loading external assets by relative path
@@ -13,6 +14,8 @@
     * Simplified version of the trace dialog
 * Bug Fixes:
     * Fixed crash on adding gradient stops
+* Other:
+    * Ported to Qt6
 
 ## 0.5.0
 

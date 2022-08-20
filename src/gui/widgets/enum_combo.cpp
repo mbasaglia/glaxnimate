@@ -137,7 +137,7 @@ bool EnumCombo::set_data_from_qvariant(const QVariant& data)
 
 bool EnumCombo::inspect_qvariant(const QVariant& data, QMetaEnum& meta_enum, int& value)
 {
-    const QMetaObject* mo = QMetaType::metaObjectForType(data.userType());
+    const QMetaObject* mo = QMetaType(data.userType()).metaObject();
     if ( !mo )
         return false;
 

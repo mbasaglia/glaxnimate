@@ -584,7 +584,11 @@ void TimelineWidget::leaveEvent(QEvent* event)
     d->keep_highlight = false;
 }
 
+#if QT_VERSION_MAJOR < 6
 void TimelineWidget::enterEvent(QEvent* event)
+#else
+void TimelineWidget::enterEvent(QEnterEvent* event)
+#endif
 {
     QGraphicsView::enterEvent(event);
     d->keep_highlight = false;

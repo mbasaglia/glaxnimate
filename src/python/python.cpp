@@ -48,7 +48,11 @@ template<class T, class Base=model::AnimatableBase>
 void register_animatable(py::module& m)
 {
     std::string name = "AnimatedProperty<";
+#if QT_VERSION_MAJOR < 6
     name += QMetaType::typeName(qMetaTypeId<T>());
+#else
+    name += QMetaType::fromType<T>().name();
+#endif
     name += ">";
     py::class_<model::AnimatedProperty<T>, Base>(m, name.c_str());
 }

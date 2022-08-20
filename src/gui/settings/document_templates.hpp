@@ -13,6 +13,14 @@ class DocumentTemplate
     Q_GADGET
 
 public:
+#if QT_VERSION_MAJOR >= 6
+    DocumentTemplate() { throw "Qt dumb"; }
+    DocumentTemplate(const DocumentTemplate&) { throw "Qt dumb"; }
+    DocumentTemplate& operator=(const DocumentTemplate&) { throw "Qt dumb"; }
+    DocumentTemplate(DocumentTemplate&&) = default;
+    DocumentTemplate& operator=(DocumentTemplate&&) = default;
+#endif
+
     DocumentTemplate(const QString& filename, bool* loaded);
 
     QSize size() const;

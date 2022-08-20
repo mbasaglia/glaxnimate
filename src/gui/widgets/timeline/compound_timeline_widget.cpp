@@ -6,6 +6,7 @@
 #include <QClipboard>
 #include <QMimeData>
 #include <QSignalBlocker>
+#include <QActionGroup>
 
 #include "model/shapes/precomp_layer.hpp"
 #include "command/animation_commands.hpp"

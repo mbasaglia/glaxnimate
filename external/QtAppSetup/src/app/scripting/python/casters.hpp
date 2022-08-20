@@ -253,7 +253,9 @@ public:
 };
 
 template <typename Type> struct type_caster<QList<Type>> : list_caster<QList<Type>, Type> {};
-template <typename Type> struct type_caster<QVector<Type>> : list_caster<QVector<Type>, Type> {};
+#if QT_VERSION_MAJOR < 6 // in qt 6 QVector is the same as QList
+    template <typename Type> struct type_caster<QVector<Type>> : list_caster<QVector<Type>, Type> {};
+#endif
 template <> struct type_caster<QStringList> : list_caster<QStringList, QString> {};
 
 
@@ -305,6 +307,7 @@ template <typename Key, typename Value> struct type_caster<QMap<Key, Value>>
 template <typename Key, typename Value> struct type_caster<QHash<Key, Value>>
   : qt_map_caster<QHash<Key, Value>, Key, Value> { };
 
+#if QT_VERSION_MAJOR < 6 // In Qt 6 same as std::pair, already defined by pybind
 template <typename V1, typename V2> struct type_caster<QPair<V1,V2>> {
     using cast1 = make_caster<V1>;
     using cast2 = make_caster<V2>;
@@ -338,7 +341,7 @@ template <typename V1, typename V2> struct type_caster<QPair<V1,V2>> {
         return t.release();
     }
 };
-
+#endif
 
 
 template <> struct type_caster<QImage>

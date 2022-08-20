@@ -179,7 +179,11 @@ bool app::settings::KeyboardShortcutsFilterModel::filterAcceptsRow(int source_ro
     if ( !source_parent.isValid() )
         return true;
 
-    QRegExp re = filterRegExp();
+#if QT_VERSION_MAJOR >= 6
+    auto re = filterRegularExpression();
+#else
+    auto re = filterRegExp();
+#endif
 
     QModelIndex i0 = sourceModel()->index(source_row, 0, source_parent);
     QModelIndex i1 = sourceModel()->index(source_row, 1, source_parent);

@@ -328,9 +328,13 @@ public:
 
         for ( int i = 0; i < meta.keyCount(); i++ )
         {
+            auto value = QGradient::Preset(meta.value(i));
+            if ( value == QGradient::NumPresets )
+                continue;
+
             QString name = meta.key(i);
             name.replace(nocamel, "\\1 \\2");
-            QGradient grad(QGradient::Preset(meta.value(i)));
+            QGradient grad(value);
             presets.setGradient(name, grad.stops());
         }
         presets.setEditMode(color_widgets::GradientListModel::EditName);

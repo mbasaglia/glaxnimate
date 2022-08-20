@@ -173,6 +173,7 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
         {
             auto single_start_data = start_data.child_split();
             auto single_end_data = end_data.child_split();
+
             math::bezier::Bezier b;
 
             /**
@@ -190,6 +191,7 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
                 // find the end ratio for the truncated segment and split it there
                 qreal ratio_end = (single_end_data.ratio - ratio_start) / (1-ratio_start);
                 auto result = math::bezier::CubicBezierSolver<QPointF>(truncated_segment).split(ratio_end).first;
+
                 // add to the bezier
                 b.push_back(math::bezier::Point(
                     result[0],
@@ -197,6 +199,7 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
                     result[1],
                     math::bezier::Corner
                 ));
+
                 b.push_back(math::bezier::Point(
                     result[3],
                     result[2],
@@ -212,8 +215,20 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
                 chunk_start(mbez.beziers()[start_data.index], b, single_start_data, start_max);
                 int end_min = qMax(start_max, single_start_data.index + 1);
                 chunk_end(mbez.beziers()[start_data.index], b, single_end_data, end_min);
+
             }
-            out.beziers().push_back(b);
+            if ( !b.empty() && !out.beziers().empty() && !out.back().empty() &&
+                out.back().back().pos == b[0].pos )
+            {
+                auto& out_bez = out.back();
+                out_bez.back().tan_out = b[0].tan_out;
+                out_bez.back().type = math::bezier::Corner;
+                out_bez.points().insert(out_bez.end(), b.begin() + 1, b.end());
+            }
+            else
+            {
+                out.beziers().push_back(b);
+            }
             continue;
         }
 
@@ -252,6 +267,16 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
             auto single_end_data = end_data.child_split();
             chunk_end(mbez.beziers()[end_data.index], b, single_end_data);
             out.beziers().push_back(b);
+        }
+    }
+
+    for ( auto& bez : out.beziers() )
+    {
+        if ( !bez.empty() && math::fuzzy_compare(bez[0].pos, bez.back().pos) )
+        {
+            bez[0].tan_in = bez.back().tan_in;
+            bez.points().pop_back();
+            bez.close();
         }
     }
 

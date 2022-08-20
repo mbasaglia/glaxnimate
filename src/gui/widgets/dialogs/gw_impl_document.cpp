@@ -779,8 +779,8 @@ void GlaxnimateWindow::Private::ipc_connect(const QString &name)
     ipc_stream = std::make_unique<QDataStream>(ipc_socket.get());
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     ipc_stream->setVersion(QDataStream::Qt_5_15);
-#endif
     QObject::connect(ipc_socket.get(), &QLocalSocket::errorOccurred, parent, &GlaxnimateWindow::ipc_error);
+#endif
     QObject::connect(ipc_socket.get(), &QLocalSocket::readyRead, parent, &GlaxnimateWindow::ipc_read);
     ipc_socket->connectToServer(name);
     ipc_memory = std::make_unique<QSharedMemory>(name);

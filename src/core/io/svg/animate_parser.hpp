@@ -9,6 +9,7 @@
 #include "model/animation/frame_time.hpp"
 #include "model/animation/join_animatables.hpp"
 #include "math/bezier/bezier.hpp"
+#include "app/utils/string_view.hpp"
 
 #include "path_parser.hpp"
 #include "detail.hpp"
@@ -246,7 +247,7 @@ public:
             return {};
         }
 
-        auto split = v.splitRef(separator,
+        auto split = ::utils::split_ref(v, separator,
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         Qt::SkipEmptyParts
 #else
@@ -275,13 +276,13 @@ public:
             {"h", hours}
         };
 
-        if ( !match.capturedRef("unit").isEmpty() )
-            return match.capturedRef("timecount").toDouble() * units.at(match.captured("unit")) * fps;
+        if ( !match.captured("unit").isEmpty() )
+            return match.captured("timecount").toDouble() * units.at(match.captured("unit")) * fps;
 
         return (
-            match.capturedRef("hours").toDouble() * hours +
-            match.capturedRef("minutes").toDouble() * minutes +
-            match.capturedRef("seconds").toDouble()
+            match.captured("hours").toDouble() * hours +
+            match.captured("minutes").toDouble() * minutes +
+            match.captured("seconds").toDouble()
         ) * fps;
     }
 

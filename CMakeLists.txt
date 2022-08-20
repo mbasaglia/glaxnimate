@@ -91,6 +91,7 @@ endif()
 set(QT_VERSION_MAJOR 5)
 find_package(QT NAMES Qt5 Qt6 COMPONENTS Core QUIET)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets Xml UiTools Concurrent Network Svg REQUIRED)
+message(STATUS "Using Qt ${QT_VERSION_MAJOR}")
 
 
 
@@ -140,8 +141,9 @@ find_sources(ALL_SOURCES *.cpp *.hpp)
 
 add_subdirectory(data ${DATA_INSTALL})
 
-find_package(Qt5Test QUIET)
-if(Qt5Test_FOUND)
+find_package(Qt${QT_VERSION_MAJOR}Test QUIET)
+if(${Qt${QT_VERSION_MAJOR}Test_FOUND})
+    message(STATUS "Tests enabled")
     add_subdirectory(test)
 endif()
 

@@ -24,9 +24,9 @@ get_target_property(pain2 glaxnimate_python OUTPUT_NAME)
 get_target_property(pain3 glaxnimate_python SUFFIX)
 set(MODULE_LIB_NAME "${pain1}${pain2}${pain3}")
 
-configure_file(README.md ${CMAKE_CURRENT_BINARY_DIR}/README.md COPYONLY)
-configure_file(setup.in.py ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
-configure_file(MANIFEST.in.in ${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/README.md ${CMAKE_CURRENT_BINARY_DIR}/README.md COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.in.py ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.in.in ${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in)
 
 
 if(PYTHON_PIP)

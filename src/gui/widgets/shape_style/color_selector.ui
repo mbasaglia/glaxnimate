@@ -1580,5 +1580,6 @@
   <slot>color_update_alpha(QColor)</slot>
   <slot>color_update_component(int)</slot>
   <slot>swatch_give_color()</slot>
+  <slot>color_swap()</slot>
  </slots>
 </ui>

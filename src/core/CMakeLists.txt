@@ -24,6 +24,7 @@ io/raster/spritesheet_format.cpp
 io/base.cpp
 
 math/geom.cpp
+math/polynomial.cpp
 math/ellipse_solver.cpp
 math/bezier/bezier.cpp
 math/bezier/point.cpp

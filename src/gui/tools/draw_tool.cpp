@@ -5,7 +5,8 @@
 #include "model/shapes/path.hpp"
 #include "app/settings/keyboard_shortcuts.hpp"
 #include "glaxnimate_app.hpp"
-
+#include "math/geom.hpp"
+#include "math/vector.hpp"
 
 class glaxnimate::gui::tools::DrawTool::Private
 {
@@ -112,6 +113,28 @@ public:
         }
     };
 
+    QPointF best_point(const glaxnimate::gui::tools::MouseEvent& event)
+    {
+        if ( bezier.size() < 2 || !(event.modifiers() & Qt::ControlModifier) )
+            return event.scene_pos;
+
+        const QPointF& ref = bezier.points()[bezier.size() - 2].pos;
+        QPointF best = math::line_closest_point(ref, ref + QPointF(10, 0), event.scene_pos);
+        auto best_dist = math::distance(best, event.scene_pos);
+        static const std::array<QPointF, 3> offsets{QPointF(0, 10), QPointF(10, 10), QPointF(10, -10)};
+        for ( const auto& off : offsets )
+        {
+            QPointF p = math::line_closest_point(ref, ref + off, event.scene_pos);
+            auto dist = math::distance(p, event.scene_pos);
+            if ( dist < best_dist )
+            {
+                best = p;
+                best_dist = dist;
+            }
+        }
+
+        return best;
+    }
 
     math::bezier::Bezier bezier;
     bool dragging = false;
@@ -345,7 +368,8 @@ void glaxnimate::gui::tools::DrawTool::mouse_press(const glaxnimate::gui::tools:
 #ifdef Q_OS_ANDROID
     else
     {
-        d->bezier.push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, d->point_type));
+        QPointF pos = d->best_point(event);
+        bezier.points().push_back(math::bezier::Point(pos, pos, pos, d->point_type));
         event.repaint();
     }
 #endif
@@ -374,7 +398,7 @@ void glaxnimate::gui::tools::DrawTool::mouse_move(const glaxnimate::gui::tools::
     {
         d->joining = false;
 #ifndef Q_OS_ANDROID
-        d->bezier.points().back().translate_to(event.scene_pos);
+        d->bezier.points().back().translate_to(d->best_point(event));
 #endif
     }
 }
@@ -398,7 +422,8 @@ void glaxnimate::gui::tools::DrawTool::mouse_release(const glaxnimate::gui::tool
         else
         {
             auto bezier = d->bezier;
-            bezier.points().push_back(math::bezier::Point(event.scene_pos, event.scene_pos, event.scene_pos, d->point_type));
+            QPointF pos = d->best_point(event);
+            bezier.points().push_back(math::bezier::Point(pos, pos, pos, d->point_type));
             d->push_command(tr("Add curve point"), event.window, std::move(bezier));
             event.repaint();
         }

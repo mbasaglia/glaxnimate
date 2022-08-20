@@ -3,7 +3,7 @@
 
 ROOT="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
 ACTION="${1:-build}"
-PY_VERSION=3.9
+PY_VERSION=3.10
 BUILD_DIR="$ROOT/build"
 
 set -ex
@@ -13,7 +13,7 @@ case "$ACTION" in
         pacman --noconfirm -S \
             git zip base-devel \
             unzip               \
-            mingw-w64-x86_64-qt5 \
+            mingw-w64-x86_64-qt6 \
             mingw-w64-x86_64-zlib \
             mingw-w64-x86_64-cmake \
             mingw-w64-x86_64-python \
@@ -31,7 +31,7 @@ case "$ACTION" in
         cd "$BUILD_DIR"
 
         cmake.exe .. \
-            -DQt5_DIR=/mingw64/lib/cmake/Qt5 \
+            -DQt6_DIR=/mingw64/lib/cmake/Qt6 \
             -DZLIB_LIBRARY=/mingw64/lib/libz.a \
             -DCMAKE_PREFIX_PATH='/mingw64/lib/' \
             -DZLIB_INCLUDE_DIR=/mingw64/include \
@@ -51,9 +51,9 @@ case "$ACTION" in
 
         # Setup package
         PACKDIR=glaxnimate
-        mingw32-make.exe translations
+        mingw32-make.exe translations VERBOSE=1
         mingw32-make.exe install DESTDIR=$PACKDIR >/dev/null
-        windeployqt.exe $PACKDIR/bin/glaxnimate.exe
+        windeployqt-qt6.exe $PACKDIR/bin/glaxnimate.exe
 
         # Copy dependencies, needs to run a couple times to pick everything up *shrugs*
 #         echo =====

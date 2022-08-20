@@ -48,7 +48,7 @@ public:
         // For some reason doing this makes it smaller than adding the grid directly o_O
         QVBoxLayout* l = new QVBoxLayout();
         l->setSpacing(0);
-        l->setMargin(0);
+        l->setContentsMargins(0, 0, 0, 0);
         group->setLayout(l);
         l->addLayout(grid);
 

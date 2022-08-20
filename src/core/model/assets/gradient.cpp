@@ -21,9 +21,9 @@ GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Gradient)
 template<>
 std::optional<QGradientStops> glaxnimate::model::detail::variant_cast<QGradientStops>(const QVariant& val)
 {
-    if ( !val.canConvert(qMetaTypeId<QGradientStops>()) )
+    if ( !val.canConvert<QGradientStops>() )
     {
-        if ( val.canConvert(QMetaType::QVariantList) )
+        if ( val.canConvert<QVariantList>() )
         {
             QGradientStops stops;
             for ( auto stop : val.toList() )
@@ -32,10 +32,10 @@ std::optional<QGradientStops> glaxnimate::model::detail::variant_cast<QGradientS
                 {
                     stops.push_back(stop.value<QGradientStop>());
                 }
-                else if ( stop.canConvert(QMetaType::QVariantList) )
+                else if ( stop.canConvert<QVariantList>() )
                 {
                     auto sl = stop.toList();
-                    if ( sl.size() == 2 && sl[0].canConvert(QMetaType::Double) && sl[1].canConvert(QMetaType::QColor) )
+                    if ( sl.size() == 2 && sl[0].canConvert<double>() && sl[1].canConvert<QColor>() )
                         stops.push_back({sl[0].toDouble(), sl[1].value<QColor>()});
                 }
             }
@@ -45,7 +45,11 @@ std::optional<QGradientStops> glaxnimate::model::detail::variant_cast<QGradientS
     }
 
     QVariant converted = val;
+#if QT_VERSION_MAJOR < 6
     if ( !converted.convert(qMetaTypeId<QGradientStops>()) )
+#else
+    if ( !converted.convert(QMetaType::fromType<QGradientStops>()) )
+#endif
         return {};
     return converted.value<QGradientStops>();
 }

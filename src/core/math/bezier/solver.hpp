@@ -3,6 +3,7 @@
 #include <array>
 
 #include "math/vector.hpp"
+#include "math/polynomial.hpp"
 
 #include <QPointF>
 
@@ -21,27 +22,7 @@ public:
     constexpr CubicBezierSolver(const std::array<Vec, 4>& points) noexcept
     : points_(points)
     {
-        for ( int component = 0; component < detail::VecSize<Vec>::value; component++ )
-        {
-            detail::get(a_, component) = a(
-                detail::get(points_[0], component),
-                detail::get(points_[1], component),
-                detail::get(points_[2], component),
-                detail::get(points_[3], component)
-            );
-            detail::get(b_, component) = b(
-                detail::get(points_[0], component),
-                detail::get(points_[1], component),
-                detail::get(points_[2], component)
-            );
-            detail::get(c_, component) = c(
-                detail::get(points_[0], component),
-                detail::get(points_[1], component)
-            );
-            detail::get(d_, component) = d(
-                detail::get(points_[0], component)
-            );
-        }
+        rebuild_coeff();
     }
 
     constexpr CubicBezierSolver(Vec p0, Vec p1, Vec p2, Vec p3) noexcept
@@ -88,9 +69,16 @@ public:
         return points_;
     }
 
-    constexpr std::array<Vec, 4>& points() noexcept
+//     constexpr std::array<Vec, 4>& points() noexcept
+//     {
+//         return points_;
+//     }
+
+    template<int i>
+    constexpr void set(const Vec& v) noexcept
     {
-        return points_;
+        points_[i] = v;
+        rebuild_coeff();
     }
 
     /**
@@ -205,6 +193,30 @@ public:
         std::vector<std::pair<argument_type, argument_type>> intersections;
         intersects_impl(IntersectData(*this), IntersectData(other), tolerance, intersections, 0, max_recursion);
         return intersections;
+    }
+
+    /**
+     * \brief Returns the t corresponding to the given value for a component.
+     * \returns `t` or -1 in case of no root has been found
+     */
+    scalar t_at_value(scalar value, int comp = 0) const
+    {
+        auto roots = math::cubic_roots(
+            detail::get(a_, comp),
+            detail::get(b_, comp),
+            detail::get(c_, comp),
+            detail::get(d_, comp) - value
+        );
+
+        for ( auto root : roots )
+        {
+            if ( root >= 0 && root <= 1 )
+                return root;
+            if ( qFuzzyIsNull(root) )
+                return 0;
+        }
+
+        return -1;
     }
 
 private:
@@ -327,6 +339,31 @@ private:
         intersects_impl(d1s.first, d2s.second, tolerance, intersections, depth + 1, max_recursion);
         intersects_impl(d1s.second, d2s.first, tolerance, intersections, depth + 1, max_recursion);
         intersects_impl(d1s.second, d2s.second, tolerance, intersections, depth + 1, max_recursion);
+    }
+
+    void rebuild_coeff()
+    {
+        for ( int component = 0; component < detail::VecSize<Vec>::value; component++ )
+        {
+            detail::get(a_, component) = a(
+                detail::get(points_[0], component),
+                detail::get(points_[1], component),
+                detail::get(points_[2], component),
+                detail::get(points_[3], component)
+            );
+            detail::get(b_, component) = b(
+                detail::get(points_[0], component),
+                detail::get(points_[1], component),
+                detail::get(points_[2], component)
+            );
+            detail::get(c_, component) = c(
+                detail::get(points_[0], component),
+                detail::get(points_[1], component)
+            );
+            detail::get(d_, component) = d(
+                detail::get(points_[0], component)
+            );
+        }
     }
 
     std::array<Vec, 4> points_;
