@@ -103,6 +103,7 @@ linux:deb:
         - PROJECT_VERSION="$(../deploy/get_version.sh CMakeCache.txt)"
         - git config --global user.name "Glaxnimate CI"
         - git config --global user.email "glaxnimate-ci@mattbas.org"
+        - git config --global --add safe.directory '*'
         # Build
         - git clone https://aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
@@ -111,6 +112,7 @@ linux:deb:
         - sudo -u foo makepkg -f
         - namcap PKGBUILD
         - sudo -u foo makepkg --printsrcinfo > .SRCINFO
+        - chown -R root .
         - if ! git diff-index --quiet HEAD -- ; then git commit -am "Update to version $PROJECT_VERSION" ; GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push ; fi
 
 linux:aur:
