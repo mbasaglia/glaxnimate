@@ -10,6 +10,7 @@
 #include "model/shapes/repeater.hpp"
 #include "model/shapes/inflate_deflate.hpp"
 #include "model/shapes/offset_path.hpp"
+#include "model/shapes/zig_zag.hpp"
 #include "validation.hpp"
 
 
@@ -65,6 +66,10 @@ private:
         else if ( qobject_cast<model::OffsetPath*>(node) )
         {
             show_error(node, TgsFormat::tr("Offset Path is not supported"), app::log::Warning);
+        }
+        else if ( qobject_cast<model::ZigZag*>(node) )
+        {
+            show_error(node, TgsFormat::tr("ZigZag is not supported"), app::log::Warning);
         }
     }
 };

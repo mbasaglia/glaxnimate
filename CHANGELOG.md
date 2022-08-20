@@ -7,6 +7,7 @@
     * Added Offset Path modifier
     * Improved rendereing performance
     * Holding Ctrl snaps the draw tool to 45 degree lines
+    * Added Zig Zag modifier
 * I/O:
     * Fixed lottie export with using global swatch colors
     * Fixed loading external assets by relative path

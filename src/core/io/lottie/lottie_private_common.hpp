@@ -330,6 +330,11 @@ const QMap<QString, QVector<FieldInfo>> fields = {
         FieldInfo{"lj", "join"},
         FieldInfo{"ml", "miter_limit"},
     }},
+    {"ZigZag", {
+        FieldInfo{"s", "amplitude"},
+        FieldInfo{"r", "frequency"},
+        FieldInfo{"pt", "style"},
+    }},
 };
 const QMap<QString, QString> shape_types = {
     {"Rect", "rc"},
@@ -348,6 +353,7 @@ const QMap<QString, QString> shape_types = {
     {"RoundCorners", "rd"},
     {"InflateDeflate", "pb"},
     {"OffsetPath", "op"},
+    {"ZigZag", "zz"},
 };
 
 const QMap<QString, QString> shape_types_repeat = {

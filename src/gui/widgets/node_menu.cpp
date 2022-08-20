@@ -15,6 +15,7 @@
 #include "model/shapes/inflate_deflate.hpp"
 #include "model/shapes/round_corners.hpp"
 #include "model/shapes/offset_path.hpp"
+#include "model/shapes/zig_zag.hpp"
 
 #include "model/assets/assets.hpp"
 
@@ -224,6 +225,7 @@ void actions_group(QMenu* menu, GlaxnimateWindow* window, model::Group* group)
     add_child_action<model::InflateDeflate>(menu_add, group);
     add_child_action<model::RoundCorners>(menu_add, group);
     add_child_action<model::OffsetPath>(menu_add, group);
+    add_child_action<model::ZigZag>(menu_add, group);
 
     menu->addSeparator();
 

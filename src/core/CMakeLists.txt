@@ -82,6 +82,7 @@ model/shapes/inflate_deflate.cpp
 model/shapes/path_modifier.cpp
 model/shapes/round_corners.cpp
 model/shapes/offset_path.cpp
+model/shapes/zig_zag.cpp
 
 plugin/plugin.cpp
 plugin/action.cpp
