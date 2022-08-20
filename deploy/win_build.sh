@@ -53,7 +53,7 @@ case "$ACTION" in
         PACKDIR=glaxnimate
         mingw32-make.exe translations VERBOSE=1
         mingw32-make.exe install DESTDIR=$PACKDIR >/dev/null
-        windeployqt.exe $PACKDIR/bin/glaxnimate.exe
+        windeployqt-qt6.exe $PACKDIR/bin/glaxnimate.exe
 
         # Copy dependencies, needs to run a couple times to pick everything up *shrugs*
 #         echo =====
