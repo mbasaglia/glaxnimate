@@ -52,6 +52,7 @@ std::unique_ptr<app::settings::SettingsGroup> glaxnimate::io::lottie::LottieForm
     return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
         app::settings::Setting("pretty", tr("Pretty"), tr("Pretty print the JSON"), false),
         app::settings::Setting("strip", tr("Strip"), tr("Strip unused properties"), false),
-        app::settings::Setting("auto_embed", tr("Embed Images"), tr("Automatically embed non-embedded images"), false)
+        app::settings::Setting("auto_embed", tr("Embed Images"), tr("Automatically embed non-embedded images"), false),
+        app::settings::Setting("old_kf", tr("Legacy Keyframes"), tr("Compatibility with lottie-web versions prior to 5.0.0"), false),
     });
 }

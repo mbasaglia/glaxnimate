@@ -26,7 +26,8 @@ public:
         document(document),
         strip(strip),
         strip_raster( strip_raster ),
-        auto_embed(settings["auto_embed"].toBool())
+        auto_embed(settings["auto_embed"].toBool()),
+        old_kf(settings["old_kf"].toBool())
     {}
 
     QCborMap to_json()
@@ -412,7 +413,8 @@ public:
                 QCborValue kf_value = keyframe_value_from_variant(v);
                 if ( i != 0 )
                 {
-                    jkf["e"_l] = kf_value;
+                    if ( old_kf )
+                        jkf["e"_l] = kf_value;
                     keyframes.push_back(jkf);
                 }
 
@@ -700,6 +702,7 @@ public:
     model::Layer* mask = 0;
     bool strip_raster;
     bool auto_embed;
+    bool old_kf;
 };
 
 

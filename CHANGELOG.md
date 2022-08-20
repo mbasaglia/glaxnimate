@@ -11,6 +11,8 @@
     * Fixed lottie export with using global swatch colors
     * Fixed loading external assets by relative path
     * Added option to automatically embed external images on lottie export
+    * Fixed parsing of SVG path data with multiple closed paths
+    * Added option to toggle old-style lottie keyframe
 * UI:
     * Simplified version of the trace dialog
 * Bug Fixes:
