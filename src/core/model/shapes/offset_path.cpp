@@ -25,20 +25,66 @@ static std::pair<QPointF, QPointF> linear_offset(const QPointF& p1, const QPoint
     };
 }
 
+static std::vector<QPointF> offset_polygon(std::vector<QPointF> points, float amount)
+{
+    if ( points.size() == 1 )
+        return points;
+
+    if ( point_fuzzy_compare(points[0], points[1]) )
+    {
+        points.erase(points.begin());
+        auto offset = offset_polygon(points, amount);
+        offset.insert(offset.begin(), offset[0]);
+        return offset;
+    }
+
+    if ( point_fuzzy_compare(*(points.end() - 2), points.back()) )
+    {
+        points.pop_back();
+        auto offset = offset_polygon(points, amount);
+        offset.push_back(offset.back());
+        return offset;
+    }
+
+    if ( points.size() == 4 && points[1] == points[2] )
+    {
+        points.erase(points.begin() + 2);
+
+        auto offset = offset_polygon(points, amount);
+        offset.insert(offset.begin() + 1, offset[1]);
+        return offset;
+    }
+
+
+    std::vector<std::pair<QPointF, QPointF>> off_lines;
+    off_lines.reserve(points.size() - 1);
+    for ( auto it = points.begin() + 1; it < points.end(); ++it )
+    {
+        off_lines.push_back(linear_offset(*(it-1), *it, amount));
+    }
+
+    std::vector<QPointF> intersections;
+    intersections.reserve(points.size());
+    intersections.push_back(off_lines[0].first);
+    for ( auto it = off_lines.begin() + 1; it < off_lines.end(); ++it )
+    {
+        intersections.push_back(
+            math::line_intersection(it[-1].first, it[-1].second, it->first, it->second).value_or(it->first)
+        );
+    }
+    intersections.push_back(off_lines.back().second);
+    return intersections;
+}
+
 /*
     Offset a bezier segment
     only works well if the segment is flat enough
 */
 static math::bezier::CubicBezierSolver<QPointF> offset_segment(const math::bezier::CubicBezierSolver<QPointF>& segment, float amount)
 {
-    QPointF p0, p1a, p1b, p2b, p2a, p3;
-    std::tie(p0, p1a) = linear_offset(segment.points()[0], segment.points()[1], amount);
-    std::tie(p1b, p2b) = linear_offset(segment.points()[1], segment.points()[2], amount);
-    std::tie(p2a, p3) = linear_offset(segment.points()[2], segment.points()[3], amount);
-    QPointF p1 = math::line_intersection(p0, p1a, p1b, p2b).value_or(p1a);
-    QPointF p2 = math::line_intersection(p2a, p3, p1b, p2b).value_or(p2a);
+    std::vector<QPointF> points = offset_polygon(std::vector<QPointF>(segment.points().begin(), segment.points().end()), amount);
+    return {points[0], points[1], points[2], points[3]};
 
-    return {p0, p1, p2, p3};
 }
 
 /*
