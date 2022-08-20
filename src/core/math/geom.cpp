@@ -1,4 +1,5 @@
 #include "geom.hpp"
+#include <array>
 
 using namespace glaxnimate;
 
