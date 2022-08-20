@@ -3,7 +3,7 @@
 
 ROOT="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
 ACTION="${1:-build}"
-PY_VERSION=3.9
+PY_VERSION=3.10
 BUILD_DIR="$ROOT/build"
 
 set -ex
