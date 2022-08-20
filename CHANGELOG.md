@@ -17,6 +17,7 @@
     * Simplified version of the trace dialog
 * Bug Fixes:
     * Fixed crash on adding gradient stops
+    * Fixed Trim Path handling of multiple shapes
 * Other:
     * Ported to Qt6
 
