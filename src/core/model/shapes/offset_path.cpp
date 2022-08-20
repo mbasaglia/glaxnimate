@@ -25,55 +25,24 @@ static std::pair<QPointF, QPointF> linear_offset(const QPointF& p1, const QPoint
     };
 }
 
-static std::vector<QPointF> offset_polygon(std::vector<QPointF> points, float amount)
+template<int size>
+static std::array<QPointF, size> offset_polygon(std::array<QPointF, size> points, float amount)
 {
-    if ( points.size() == 1 )
-        return points;
+    std::array<std::pair<QPointF, QPointF>, size - 1> off_lines;
 
-    if ( point_fuzzy_compare(points[0], points[1]) )
+    for ( int i = 1; i < size; i++ )
     {
-        points.erase(points.begin());
-        auto offset = offset_polygon(points, amount);
-        offset.insert(offset.begin(), offset[0]);
-        return offset;
+        off_lines[i-1] = linear_offset(points[i-1], points[i], amount);
     }
 
-    if ( point_fuzzy_compare(*(points.end() - 2), points.back()) )
+    std::array<QPointF, size> off_points;
+    off_points[0] = off_lines[0].first;
+    off_points[size - 1] = off_lines.back().second;
+    for ( int i = 1; i < size - 1; i++ )
     {
-        points.pop_back();
-        auto offset = offset_polygon(points, amount);
-        offset.push_back(offset.back());
-        return offset;
+        off_points[i] = math::line_intersection(off_lines[i-1].first, off_lines[i-1].second, off_lines[i].first, off_lines[i].second).value_or(off_lines[i].first);
     }
-
-    if ( points.size() == 4 && points[1] == points[2] )
-    {
-        points.erase(points.begin() + 2);
-
-        auto offset = offset_polygon(points, amount);
-        offset.insert(offset.begin() + 1, offset[1]);
-        return offset;
-    }
-
-
-    std::vector<std::pair<QPointF, QPointF>> off_lines;
-    off_lines.reserve(points.size() - 1);
-    for ( auto it = points.begin() + 1; it < points.end(); ++it )
-    {
-        off_lines.push_back(linear_offset(*(it-1), *it, amount));
-    }
-
-    std::vector<QPointF> intersections;
-    intersections.reserve(points.size());
-    intersections.push_back(off_lines[0].first);
-    for ( auto it = off_lines.begin() + 1; it < off_lines.end(); ++it )
-    {
-        intersections.push_back(
-            math::line_intersection(it[-1].first, it[-1].second, it->first, it->second).value_or(it->first)
-        );
-    }
-    intersections.push_back(off_lines.back().second);
-    return intersections;
+    return off_points;
 }
 
 /*
@@ -82,8 +51,25 @@ static std::vector<QPointF> offset_polygon(std::vector<QPointF> points, float am
 */
 static math::bezier::CubicBezierSolver<QPointF> offset_segment(const math::bezier::CubicBezierSolver<QPointF>& segment, float amount)
 {
-    std::vector<QPointF> points = offset_polygon(std::vector<QPointF>(segment.points().begin(), segment.points().end()), amount);
-    return {points[0], points[1], points[2], points[3]};
+    bool same01 = point_fuzzy_compare(segment.points()[0], segment.points()[1]);
+    bool same23 = point_fuzzy_compare(segment.points()[2], segment.points()[3]);
+    if ( same01 && same23 )
+    {
+        auto off = linear_offset(segment.points()[0], segment.points().back(), amount);
+        return {off.first, math::lerp(off.first, off.second, 1./3.), math::lerp(off.first, off.second, 2./3.), off.second};
+    }
+    else if ( same01 )
+    {
+        auto poly = offset_polygon<3>({segment.points()[0], segment.points()[2], segment.points()[3]}, amount);
+        return {poly[0], poly[0], poly[1], poly[2]};
+    }
+    else if ( same23 )
+    {
+        auto poly = offset_polygon<3>({segment.points()[0], segment.points()[1], segment.points()[3]}, amount);
+        return {poly[0], poly[1], poly[2], poly[2]};
+    }
+
+    return offset_polygon<4>(segment.points(), amount);
 
 }
 
