@@ -560,8 +560,8 @@ private:
             case 'Z':
             case 'z':
                 bez.close();
-                if ( !bez.empty() && !bez[0].empty() )
-                    p = bez[0][0].pos;
+                if ( !bez.empty() && !bez.back().empty() )
+                    p = bez.back()[0].pos;
                 break;
             default:
                 next_token();
