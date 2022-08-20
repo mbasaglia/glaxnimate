@@ -10,6 +10,7 @@
 * I/O:
     * Fixed lottie export with using global swatch colors
     * Fixed loading external assets by relative path
+    * Added option to automatically embed external images on lottie export
 * UI:
     * Simplified version of the trace dialog
 * Bug Fixes:

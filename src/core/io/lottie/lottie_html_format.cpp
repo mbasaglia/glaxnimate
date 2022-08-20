@@ -45,7 +45,7 @@ bool glaxnimate::io::lottie::LottieHtmlFormat::on_save(QIODevice& file, const QS
 
 <script>
     var lottie_json = )");
-    detail::LottieExporterState exp(this, document, false, false);
+    detail::LottieExporterState exp(this, document, false, false, {{"auto_embed", true}});
     file.write(cbor_write_json(exp.to_json(), false));
 
 file.write(QString(R"(

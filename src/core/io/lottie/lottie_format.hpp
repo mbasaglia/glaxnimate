@@ -17,14 +17,9 @@ public:
     QStringList extensions() const override { return {"json"}; }
     bool can_save() const override { return true; }
     bool can_open() const override { return true; }
-    std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document*) const override
-    {
-        return std::make_unique<app::settings::SettingsGroup>(app::settings::SettingList{
-            app::settings::Setting("pretty", tr("Pretty"), tr("Pretty print the JSON"), false)
-        });
-    }
+    std::unique_ptr<app::settings::SettingsGroup> save_settings(model::Document*) const override;
 
-    QCborMap to_json(model::Document* document, bool strip = false, bool strip_raster = false);
+    QCborMap to_json(model::Document* document, bool strip = false, bool strip_raster = false, const QVariantMap& settings = {});
     bool load_json(const QByteArray& data, model::Document* document);
 
 private:
