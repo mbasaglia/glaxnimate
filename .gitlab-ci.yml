@@ -87,7 +87,9 @@ linux:deb:
     needs: []
     before_script:
         - pacman -Syu --noconfirm
-        - pacman -S --noconfirm git base-devel fakeroot openssh namcap xorg-xauth cmake 'python' 'zlib' 'hicolor-icon-theme' 'potrace' 'ffmpeg' 'libarchive' 'qt6-tools' 'qt6-base' 'qt6-imageformats' 'qt6-svg'
+        - pacman -S --noconfirm git base-devel fakeroot openssh namcap xorg-xauth cmake # Base system stuff and dev tools
+        - pacman -S --noconfirm 'python' 'zlib' 'hicolor-icon-theme' 'potrace' 'ffmpeg' 'libarchive' 'qt6-tools' 'qt6-base' 'qt6-imageformats' 'qt6-svg' # Deps
+        - pacman -S --noconfirm clang qt6-declarative # lupdate deps (for some reason they don't get installed automativally)
     script:
         # Check
         - test -n "$PACK_NAME" -a -n "$AUR_SSH_KEY"
