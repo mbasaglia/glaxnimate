@@ -199,7 +199,7 @@ protected:
         Q_UNUSED(new_parent);
     }
 
-    virtual void on_graphics_changed() const {}
+    virtual void on_graphics_changed() {}
 
 private:
     template<class T=DocumentNode>

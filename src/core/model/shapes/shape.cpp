@@ -125,7 +125,7 @@ QPainterPath glaxnimate::model::ShapeElement::to_painter_path(FrameTime t) const
     return d->cached_path.path();
 }
 
-void glaxnimate::model::ShapeElement::on_graphics_changed() const
+void glaxnimate::model::ShapeElement::on_graphics_changed()
 {
     d->cached_path.mark_dirty();
 }
@@ -260,27 +260,16 @@ void glaxnimate::model::ShapeOperator::update_affected()
         if ( qobject_cast<Modifier*>(it->get()) )
             break;
     }
-    std::sort(curr_siblings.begin(), curr_siblings.end());
-
-    std::vector<ShapeElement*> to_disconnect;
-    std::set_difference(affected_elements.begin(), affected_elements.end(), curr_siblings.begin(), curr_siblings.end(), std::back_inserter(to_disconnect));
-    for ( ShapeElement* sib : to_disconnect )
-        disconnect(sib, &Object::property_changed, this, &ShapeOperator::sibling_prop_changed);
-
-    std::vector<ShapeElement*> to_connect;
-    std::set_difference(curr_siblings.begin(), curr_siblings.end(), affected_elements.begin(), affected_elements.end(), std::back_inserter(to_connect));
-    for ( ShapeElement* sib : to_connect )
-        connect(sib, &Object::property_changed, this, &ShapeOperator::sibling_prop_changed);
 
     affected_elements = curr_siblings;
 }
 
-void glaxnimate::model::ShapeOperator::sibling_prop_changed(const glaxnimate::model::BaseProperty* prop)
+void glaxnimate::model::ShapeOperator::on_graphics_changed()
 {
-    if ( prop->traits().flags & glaxnimate::model::PropertyTraits::Visual )
-        emit shape_changed();
+    ShapeElement::on_graphics_changed();
+    bezier_cache.mark_dirty();
+    emit shape_changed();
 }
-
 
 void glaxnimate::model::Modifier::add_shapes(FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const
 {

@@ -85,13 +85,13 @@ std::unique_ptr<glaxnimate::model::ShapeElement> glaxnimate::model::Group::to_pa
     return clone;
 }
 
-void glaxnimate::model::Group::on_graphics_changed() const
+void glaxnimate::model::Group::on_graphics_changed()
 {
     ShapeElement::on_graphics_changed();
 
     for ( const auto& shape : shapes )
     {
-        if ( shape->is_instance<glaxnimate::model::Modifier>() )
+        if ( shape->is_instance<glaxnimate::model::ShapeOperator>() )
             shape->on_graphics_changed();
     }
 

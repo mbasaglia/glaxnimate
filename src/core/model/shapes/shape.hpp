@@ -81,7 +81,7 @@ protected:
     }
 
     virtual QPainterPath to_painter_path_impl(FrameTime t) const = 0;
-    void on_graphics_changed() const override;
+    void on_graphics_changed() override;
 
 private:
     void set_position(ShapeListProperty* property, int pos);
@@ -180,11 +180,10 @@ public:
 protected:
     virtual void do_collect_shapes(const std::vector<ShapeElement*>& shapes, FrameTime t, math::bezier::MultiBezier& bez, const QTransform& transform) const;
     virtual bool skip_stylers() const { return true; }
+    void on_graphics_changed() override;
 
 private slots:
     void update_affected();
-
-    void sibling_prop_changed(const model::BaseProperty* prop);
 
 signals:
     void shape_changed();

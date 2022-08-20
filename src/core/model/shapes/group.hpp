@@ -51,7 +51,7 @@ signals:
 protected:
     QPainterPath to_painter_path_impl(model::FrameTime t) const override;
     void on_paint(QPainter*, FrameTime, PaintMode, model::Modifier*) const override;
-    void on_graphics_changed() const override;
+    void on_graphics_changed() override;
 
 private slots:
     void on_transform_matrix_changed();
