@@ -105,7 +105,7 @@ linux:deb:
         - git config --global user.email "glaxnimate-ci@mattbas.org"
         - git config --global --add safe.directory '*'
         # Build
-        - git clone ssh://aur@aur.archlinux.org/$PACK_NAME.git
+        - GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git clone ssh://aur@aur.archlinux.org/$PACK_NAME.git
         - cd $PACK_NAME
         - sed ../../deploy/PKGBUILD -e "/^pkgname=/s/\".*\"/\"$PACK_NAME\"/" -e "/^pkgver=/s/=.*/=$PROJECT_VERSION/" -e "/^_git_branch=/s/=.*/=$CI_COMMIT_BRANCH/"> PKGBUILD
         - chown -R foo .
