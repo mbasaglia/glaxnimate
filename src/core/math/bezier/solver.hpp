@@ -64,6 +64,16 @@ public:
         return std::atan2(derivative(factor, 1), derivative(factor, 0));
     }
 
+    /**
+     * \brief Finds the normal of the point on the bezier
+     * \param factor between 0 and 1
+     * \return Angle in radians
+     */
+    scalar normal_angle(argument_type factor) const
+    {
+        return std::atan2(derivative(factor, 0), derivative(factor, 1));
+    }
+
     constexpr const std::array<Vec, 4>& points() const noexcept
     {
         return points_;

@@ -1,5 +1,6 @@
 #include "geom.hpp"
 #include <array>
+#include "math.hpp"
 
 using namespace glaxnimate;
 
@@ -61,7 +62,7 @@ std::optional<QPointF> math::line_intersection(const QPointF& start1, const QPoi
     );
 
     // More forgiving than qFuzzyIsNull
-    if ( qAbs(cp[2]) <= 0.00001 )
+    if ( math::abs(cp[2]) <= 0.00001 )
         return {};
 
     return QPointF(cp[0] / cp[2], cp[1] / cp[2]);

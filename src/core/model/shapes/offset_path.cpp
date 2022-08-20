@@ -187,9 +187,8 @@ void prune_intersections(std::vector<std::vector<CubicBezierSolver<QPointF>>>& s
 
 }
 
-std::vector<math::bezier::CubicBezierSolver<QPointF>> offset_segment_split(
-    const math::bezier::CubicBezierSolver<QPointF>& segment,
-    float amount
+static std::vector<math::bezier::CubicBezierSolver<QPointF>> split_inflections(
+    const math::bezier::CubicBezierSolver<QPointF>& segment
 )
 {
     /*
@@ -203,15 +202,15 @@ std::vector<math::bezier::CubicBezierSolver<QPointF>> offset_segment_split(
 
     if ( flex.size() == 0 )
     {
-        return {offset_segment(segment, amount)};
+        return {segment};
     }
     else if ( flex.size() == 1 || flex[1] == 1 )
     {
         auto split = segment.split(flex[0]);
 
         return {
-            offset_segment(split.first, amount),
-            offset_segment(split.second, amount)
+            split.first,
+            split.second
         };
     }
     else
@@ -221,11 +220,45 @@ std::vector<math::bezier::CubicBezierSolver<QPointF>> offset_segment_split(
         auto split_2 = CubicBezierSolver(split_1.second).split(t);
 
         return {
-            offset_segment(split_1.first, amount),
-            offset_segment(split_2.first, amount),
-            offset_segment(split_2.second, amount)
+            split_1.first,
+            split_2.first,
+            split_2.second,
         };
     }
+}
+
+static bool needs_more_split(const math::bezier::CubicBezierSolver<QPointF>& segment)
+{
+    auto n1 = math::from_polar<QPointF>(1, segment.normal_angle(0));
+    auto n2 = math::from_polar<QPointF>(1, segment.normal_angle(1));
+
+    auto s = QPointF::dotProduct(n1, n2);
+    return math::abs(math::acos(s)) >= math::pi / 3;
+}
+
+static std::vector<math::bezier::CubicBezierSolver<QPointF>> offset_segment_split(
+    const math::bezier::CubicBezierSolver<QPointF>& segment,
+    float amount
+)
+{
+    std::vector<math::bezier::CubicBezierSolver<QPointF>> offset;
+    offset.reserve(6);
+
+    for ( const auto& chunk: split_inflections(segment) )
+    {
+        if ( needs_more_split(chunk) )
+        {
+            auto split = chunk.split(0.5);
+            offset.push_back(offset_segment(split.first, amount));
+            offset.push_back(offset_segment(split.second, amount));
+        }
+        else
+        {
+            offset.push_back(offset_segment(chunk, amount));
+        }
+    }
+
+    return offset;
 }
 
 static MultiBezier offset_path(
