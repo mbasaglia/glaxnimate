@@ -187,11 +187,11 @@ public:
 
 
     std::vector<std::pair<argument_type, argument_type>> intersections(
-        const CubicBezierSolver& other, scalar tolerance = 2, int max_recursion = 10
+        const CubicBezierSolver& other, int max_count = 1, scalar tolerance = 2, int max_recursion = 10
     ) const
     {
         std::vector<std::pair<argument_type, argument_type>> intersections;
-        intersects_impl(IntersectData(*this), IntersectData(other), tolerance, intersections, 0, max_recursion);
+        intersects_impl(IntersectData(*this), IntersectData(other), max_count, tolerance, intersections, 0, max_recursion);
         return intersections;
     }
 
@@ -303,8 +303,8 @@ private:
 
         bool intersects(const IntersectData& other) const
         {
-            return std::abs(center.x() - other.center.x()) * 2 > width + other.width &&
-                   std::abs(center.y() - other.center.y()) * 2 > height + other.height;
+            return std::abs(center.x() - other.center.x()) * 2 < width + other.width &&
+                   std::abs(center.y() - other.center.y()) * 2 < height + other.height;
         }
 
         CubicBezierSolver bez;
@@ -317,6 +317,7 @@ private:
     static void intersects_impl(
         const IntersectData& d1,
         const IntersectData& d2,
+        std::size_t max_count,
         scalar tolerance,
         std::vector<std::pair<argument_type, argument_type>>& intersections,
         int depth,
@@ -334,11 +335,19 @@ private:
 
         auto d1s = d1.split();
         auto d2s = d2.split();
+        std::array<std::pair<const IntersectData&, const IntersectData&>, 4> splits = {{
+            {d1s.first,  d2s.first },
+            {d1s.first,  d2s.second},
+            {d1s.second, d2s.first },
+            {d1s.second, d2s.second}
+        }};
 
-        intersects_impl(d1s.first, d2s.first, tolerance, intersections, depth + 1, max_recursion);
-        intersects_impl(d1s.first, d2s.second, tolerance, intersections, depth + 1, max_recursion);
-        intersects_impl(d1s.second, d2s.first, tolerance, intersections, depth + 1, max_recursion);
-        intersects_impl(d1s.second, d2s.second, tolerance, intersections, depth + 1, max_recursion);
+        for ( const auto& p : splits )
+        {
+            intersects_impl(p.first, p.second, max_count, tolerance, intersections, depth + 1, max_recursion);
+            if ( intersections.size() >= max_count )
+                return;
+        }
     }
 
     void rebuild_coeff()

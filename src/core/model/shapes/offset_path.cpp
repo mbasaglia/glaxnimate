@@ -98,7 +98,7 @@ static std::optional<std::pair<float, float>> get_intersection(
     const CubicBezierSolver<QPointF>&a,
     const CubicBezierSolver<QPointF>& b)
 {
-    auto intersect = a.intersections(b, 3, 7);
+    auto intersect = a.intersections(b, 2, 3, 7);
 
     std::size_t i = 0;
     if ( !intersect.empty() && qFuzzyCompare(intersect[0].first, 1) )
@@ -224,7 +224,7 @@ static MultiBezier offset_path(
                 multi_segments.push_back(offset_segment_split(input_bezier.inverted_segment(i), amount));
         }
 
-//         prune_intersections(multi_segments);
+        prune_intersections(multi_segments);
 
         // Add bezier segments to the output and apply line joints
         QPointF last_point;
