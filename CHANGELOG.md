@@ -2,10 +2,10 @@
 
 * Editing:
     * New quantization algorithm available (Edge Exclusion Modes)
-    * Space to toogle playback
+    * Space to toggle playback
     * Improved Trim Path logic
     * Added Offset Path modifier
-    * Improved rendereing performance
+    * Improved rendering performance
     * Holding Ctrl snaps the draw tool to 45 degree lines
 * I/O:
     * Fixed lottie export with using global swatch colors
