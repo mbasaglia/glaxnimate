@@ -103,8 +103,8 @@ public:
     bool has_category(const QModelIndex& index, GoogleFont::Category cat) const;
 
 signals:
-    void max_progress_changed(int progess);
-    void progress_changed(int progess);
+    void max_progress_changed(int progress);
+    void progress_changed(int progress);
     void error(const QString& message);
     void download_finished(int row);
     void refresh_finished();
