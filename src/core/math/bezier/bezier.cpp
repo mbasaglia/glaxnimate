@@ -224,12 +224,20 @@ math::bezier::LengthData::SplitInfo math::bezier::LengthData::at_length(qreal le
     if ( length >= length_ )
         return {int(children_.size() - 1), 1., &children_.back()};
 
+    qreal prev_t = 0;
+
     for ( int i = 0; i < int(children_.size()); i++ )
     {
+        qreal t = (i + 1.) / children_.size();
+
         if ( children_[i].length_ > length )
-            return {i, length / children_[i].length_, &children_[i]};
+        {
+            qreal f = qFuzzyIsNull(children_[i].length_) ? 0 : length / children_[i].length_;
+            return {i, math::lerp(prev_t, t, f), &children_[i]};
+        }
 
         length -= children_[i].length_;
+        prev_t = t;
     }
 
     return {int(children_.size() - 1), 1., &children_.back()};

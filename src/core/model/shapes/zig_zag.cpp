@@ -17,6 +17,8 @@ static double angle_mean(double a, double b)
     return (a + b) / 2;
 }
 
+#include <QDebug>
+
 static void zig_zag_corner(Bezier& output_bezier, const BezierSolver* segment_before, const BezierSolver* segment_after, float amplitude, int direction, float tangent_length)
 {
     QPointF point;
@@ -39,7 +41,7 @@ static void zig_zag_corner(Bezier& output_bezier, const BezierSolver* segment_be
     else
     {
         point = segment_after->points()[0];
-        angle = angle_mean(segment_after->normal_angle(0.01), segment_before->normal_angle(0.99));
+        angle = -angle_mean(segment_after->normal_angle(0.01), segment_before->normal_angle(0.99));
         tan_angle = angle_mean(segment_after->tangent_angle(0.01), segment_before->tangent_angle(0.99));
     }
 
@@ -49,8 +51,8 @@ static void zig_zag_corner(Bezier& output_bezier, const BezierSolver* segment_be
     // It's ok to float-compare as it's a value we set explicitly to 0
     if ( tangent_length != 0 )
     {
-        vertex.tan_in = vertex.pos + math::from_polar<QPointF>(tan_angle, -tangent_length);
-        vertex.tan_out = vertex.pos + math::from_polar<QPointF>(tan_angle, tangent_length);
+        vertex.tan_in = vertex.pos + math::from_polar<QPointF>(-tangent_length, tan_angle);
+        vertex.tan_out = vertex.pos + math::from_polar<QPointF>(tangent_length, tan_angle);
     }
 }
 
@@ -63,15 +65,15 @@ static int zig_zag_segment(Bezier& output_bezier,const BezierSolver& segment, co
         auto angle = segment.normal_angle(t);
         auto point = segment.solve(t);
 
-        output_bezier.add_point(point + math::from_polar<QPointF>(direction * amplitude, angle));
+        output_bezier.add_point(point + math::from_polar<QPointF>(direction * amplitude, -angle));
         auto& vertex = output_bezier.back();
 
         // It's ok to float-compare as it's a value we set explicitly to 0
         if ( tangent_length != 0 )
         {
             auto tan_angle = segment.tangent_angle(t);
-            vertex.tan_in = vertex.pos + math::from_polar<QPointF>(tan_angle, -tangent_length);
-            vertex.tan_out = vertex.pos + math::from_polar<QPointF>(tan_angle, tangent_length);
+            vertex.tan_in = vertex.pos + math::from_polar<QPointF>(-tangent_length, tan_angle);
+            vertex.tan_out = vertex.pos + math::from_polar<QPointF>(tangent_length, tan_angle);
         }
 
         direction = -direction;
@@ -97,7 +99,7 @@ static Bezier zig_zag_bezier(const Bezier& input_bezier, float amplitude, int fr
 
     auto tangent_length = style == model::ZigZag::Wave ? seg_len.length() / (frequency + 1.) / 2. : 0;
 
-    zig_zag_corner(output_bezier, input_bezier.closed() ? &segment : nullptr, &next_segment, amplitude, -1, tangent_length);
+    zig_zag_corner(output_bezier, input_bezier.closed() ? &segment : nullptr, &next_segment, amplitude, direction, tangent_length);
 
     for ( auto i = 0; i < count; i++ )
     {
