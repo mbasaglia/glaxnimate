@@ -84,7 +84,7 @@ Build with `cmake`, specifying the Qt installation path:
     cmake .. -DQt5_DIR="$(brew --prefix qt@5)/lib/cmake/Qt5" -DCMAKE_PREFIX_PATH="$(brew --prefix qt@5)/lib/cmake/Qt5Designer"
     make
 
-To simplify the build process, you can also use the provided scrips:
+To simplify the build process, you can also use the provided scripts:
 
     ./deploy/mac_build.sh deps
     ./deploy/mac_build.sh configure
@@ -131,7 +131,7 @@ Install [MSYS2](https://www.msys2.org/), select "Mingw-w64 64 bit" when asked, a
     cp ./external/Qt-Color-Widgets/libQtColorWidgets.dll bin
 
 
-To simplify the build process, you can also use the provided scrips:
+To simplify the build process, you can also use the provided scripts:
 
     ./deploy/win_build.sh deps
     ./deploy/win_build.sh configure

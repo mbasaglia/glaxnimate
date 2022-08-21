@@ -472,7 +472,7 @@ void GlaxnimateWindow::ipc_read()
         QString message;
         *d->ipc_stream >> message;
 
-        // Here is the receive/read side of the IPC protcol - a few commands:
+        // Here is the receive/read side of the IPC protocol - a few commands:
 
         if (message == "hello") {
             // handshake
