@@ -24,7 +24,7 @@ public:
     public:
         enum Type
         {
-            Vector, Bezier
+            Vector, Bezier, String
         };
 
         ValueVariant(std::vector<qreal> v = {})
@@ -32,6 +32,10 @@ public:
         {}
 
         ValueVariant(math::bezier::MultiBezier v )
+            : value_(std::move(v))
+        {}
+
+        ValueVariant(QString v )
             : value_(std::move(v))
         {}
 
@@ -45,6 +49,11 @@ public:
         const math::bezier::MultiBezier& bezier() const
         {
             return std::get<int(Type::Bezier)>(value_);
+        }
+
+        const QString& string() const
+        {
+            return std::get<int(Type::String)>(value_);
         }
 
         ValueVariant lerp(const ValueVariant& other, qreal t) const
@@ -64,6 +73,9 @@ public:
                         return mb;
                     }
                     return *this;
+                case Type::String:
+                    return t < 1 ? string() : other.string();
+
             }
 
             return {};
@@ -81,7 +93,7 @@ public:
         }
 
     private:
-        std::variant<std::vector<qreal>, math::bezier::MultiBezier> value_;
+        std::variant<std::vector<qreal>, math::bezier::MultiBezier, QString> value_;
     };
 
     struct PropertyKeyframe
@@ -129,7 +141,7 @@ public:
         std::map<QString, AnimatedProperty> properties;
         QDomElement element;
 
-        bool has(const QString& name)
+        bool has(const QString& name) const
         {
             return properties.count(name);
         }
@@ -294,6 +306,8 @@ public:
                 return split_values(str);
             case ValueVariant::Bezier:
                 return PathDParser(str).parse();
+            case ValueVariant::String:
+                return str;
         }
 
         return {};
@@ -305,6 +319,8 @@ public:
         ValueVariant::Type type = ValueVariant::Vector;
         if ( attr == "d" )
             type = ValueVariant::Bezier;
+        else if ( attr == "display" )
+            type = ValueVariant::String;
 
         std::vector<ValueVariant> values;
 

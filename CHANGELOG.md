@@ -14,6 +14,7 @@
     * Added option to automatically embed external images on lottie export
     * Fixed parsing of SVG path data with multiple closed paths
     * Added option to toggle old-style lottie keyframe
+    * Added support for SVG with animated `display` attribute
 * UI:
     * Simplified version of the trace dialog
 * Bug Fixes:

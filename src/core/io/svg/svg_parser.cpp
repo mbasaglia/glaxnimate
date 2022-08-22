@@ -894,6 +894,34 @@ public:
         }
     }
 
+    void display_to_opacity(model::VisualNode* node,
+                            const detail::AnimateParser::AnimatedProperties& anim,
+                            model::AnimatedProperty<float>& opacity,
+                            Style* style)
+    {
+        if ( !anim.has("display") )
+            return;
+
+        if ( opacity.keyframe_count() > 2 )
+        {
+            warning("Either animate `opacity` or `display`, not both");
+            return;
+        }
+
+        if ( style )
+            style->map.erase("display");
+
+        model::KeyframeTransition hold;
+        hold.set_hold(true);
+
+        for ( const auto& kf : add_keyframes(anim.single("display")) )
+        {
+            opacity.set_keyframe(kf.time, kf.values.string() == "none" ? 0 : 1)->set_transition(hold);
+        }
+
+        node->visible.set(true);
+    }
+
     void add_stroke(const ParseFuncArgs& args, model::ShapeListProperty* shapes, const Style& style)
     {
         QString stroke_color = style.get("stroke", "transparent");
@@ -934,6 +962,8 @@ public:
 
         for ( const auto& kf : add_keyframes(anim.single("stroke-width")) )
             stroke->width.set_keyframe(kf.time, kf.values.vector()[0])->set_transition(kf.transition);
+
+        display_to_opacity(stroke.get(), anim, stroke->opacity, nullptr);
 
         shapes->insert(std::move(stroke));
     }
@@ -991,6 +1021,8 @@ public:
 
         if ( fill_color == "none" )
             fill->visible.set(false);
+
+        display_to_opacity(fill.get(), anim, fill->opacity, nullptr);
 
         shapes->insert(std::move(fill));
     }
@@ -1104,7 +1136,8 @@ public:
         parse_g_common(
             {args.element, &layer->shapes, style, false},
             layer,
-            layer->transform.get()
+            layer->transform.get(),
+            style
         );
     }
 
@@ -1115,17 +1148,22 @@ public:
         parse_g_common(
             {args.element, &group->shapes, style, true},
             group.get(),
-            group->transform.get()
+            group->transform.get(),
+            style
         );
         args.shape_parent->insert(std::move(group));
     }
 
     void parse_g_common(
         const ParseFuncArgs& args,
-        model::VisualNode* g_node,
-        model::Transform* transform
+        model::Group* g_node,
+        model::Transform* transform,
+        Style& style
     )
     {
+        auto anim = parse_animated(args.element);
+        display_to_opacity(g_node, anim, g_node->opacity, &style);
+
         apply_common_style(g_node, args.element, args.parent_style);
         set_name(g_node, args.element);
         parse_children(args);
