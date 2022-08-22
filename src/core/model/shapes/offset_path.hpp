@@ -10,7 +10,7 @@ class OffsetPath : public StaticOverrides<OffsetPath, PathModifier>
     GLAXNIMATE_OBJECT(OffsetPath)
     GLAXNIMATE_ANIMATABLE(float, amount, 0)
     GLAXNIMATE_ANIMATABLE(float, miter_limit, 100, {}, 0)
-    GLAXNIMATE_PROPERTY(Stroke::Join, join, Stroke::RoundJoin, nullptr, nullptr, PropertyTraits::Visual)
+    GLAXNIMATE_PROPERTY(glaxnimate::model::Stroke::Join, join, Stroke::RoundJoin, nullptr, nullptr, PropertyTraits::Visual)
 
 public:
     using Ctor::Ctor;
