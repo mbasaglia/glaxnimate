@@ -124,7 +124,7 @@ linux:aur:
         - release
     variables:
         PACK_NAME: glaxnimate
-        IGNORE_PUSH_FAIL: false
+        IGNORE_PUSH_FAIL: "false"
 
 linux:aur_build:
     extends: .aur_base
@@ -133,7 +133,7 @@ linux:aur_build:
         - master
     variables:
         PACK_NAME: glaxnimate-git
-        IGNORE_PUSH_FAIL: true
+        IGNORE_PUSH_FAIL: "true"
 
 
 linux:appimage:
