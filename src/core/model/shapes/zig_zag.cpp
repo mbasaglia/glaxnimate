@@ -1,6 +1,7 @@
 #include "zig_zag.hpp"
 #include "math/geom.hpp"
 #include "math/vector.hpp"
+#include "math/bezier/bezier_length.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::ZigZag)
 
@@ -16,8 +17,6 @@ static double angle_mean(double a, double b)
 
     return (a + b) / 2;
 }
-
-#include <QDebug>
 
 static void zig_zag_corner(Bezier& output_bezier, const BezierSolver* segment_before, const BezierSolver* segment_after, float amplitude, int direction, float tangent_length)
 {

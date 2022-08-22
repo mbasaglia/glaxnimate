@@ -8,51 +8,7 @@
 
 namespace glaxnimate::math::bezier {
 
-class LengthData
-{
-public:
-    struct SplitInfo
-    {
-        int index = 0;
-        qreal ratio = 0;
-        const LengthData* child = nullptr;
-
-        SplitInfo child_split() const;
-    };
-
-    LengthData() = default;
-    explicit LengthData(qreal length) : length_(length) {}
-    explicit LengthData(const math::bezier::CubicBezierSolver<QPointF>& segment, int steps);
-
-    template<class... Args>
-    void add_child(Args&&... args)
-    {
-        children_.emplace_back(std::forward<Args>(args)...);
-        length_ += children_.back().length_;
-    }
-
-    const std::vector<LengthData>& children() const
-    {
-        return children_;
-    }
-
-    qreal length() const
-    {
-        return length_;
-    }
-
-    void reserve(int size)
-    {
-        children_.reserve(size);
-    }
-
-    SplitInfo at_ratio(qreal ratio) const;
-    SplitInfo at_length(qreal length) const;
-
-private:
-    qreal length_ = 0;
-    std::vector<LengthData> children_;
-};
+using Solver = math::bezier::CubicBezierSolver<QPointF>;
 
 class Bezier
 {
@@ -224,11 +180,6 @@ public:
     Bezier transformed(const QTransform& t) const;
     void transform(const QTransform& t);
 
-    /**
-     * \brief Pre-computation for length-related operations
-     */
-    LengthData length_data(int steps) const;
-
 private:
     /**
      * \brief Solver for the point \p p to the point \p p + 1
@@ -308,8 +259,6 @@ public:
     void transform(const QTransform& t);
 
     static MultiBezier from_painter_path(const QPainterPath& path);
-
-    LengthData length_data(int steps) const;
 
     int size() const { return beziers_.size(); }
     bool empty() const { return beziers_.empty(); }

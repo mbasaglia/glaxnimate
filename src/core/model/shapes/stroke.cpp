@@ -13,7 +13,7 @@ void glaxnimate::model::Stroke::on_paint(QPainter* p, glaxnimate::model::FrameTi
 
     math::bezier::MultiBezier bez;
     if ( modifier )
-        bez = modifier->collect_shapes_from(affected(), t, {});
+        bez = modifier->collect_shapes(t, {});
     else
         bez = collect_shapes(t, {});
 

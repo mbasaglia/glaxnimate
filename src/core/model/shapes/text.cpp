@@ -9,6 +9,7 @@
 #include "command/undo_macro_guard.hpp"
 #include "model/assets/assets.hpp"
 #include "model/custom_font.hpp"
+#include "math/bezier/bezier_length.hpp"
 
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::Font)
 GLAXNIMATE_OBJECT_IMPL(glaxnimate::model::TextShape)
@@ -389,7 +390,8 @@ const QPainterPath & glaxnimate::model::TextShape::untranslated_path(FrameTime t
             txt.replace('\n', ' ');
             auto bezier = path->shapes(t);
             const int length_steps = 5;
-            auto length_data = bezier.length_data(length_steps);
+
+            math::bezier::LengthData length_data(bezier, length_steps);
             for ( const auto& line : font->layout(txt) )
             {
                 for ( const auto& glyph : line.glyphs )
@@ -402,11 +404,11 @@ const QPainterPath & glaxnimate::model::TextShape::untranslated_path(FrameTime t
                     auto glyph_rect = glyph_shape.boundingRect();
 
                     auto start1 = length_data.at_length(x);
-                    auto start2 = start1.child_split();
+                    auto start2 = start1.descend();
                     auto start_p = bezier.beziers()[start1.index].split_segment_point(start2.index, start2.ratio);
 
                     auto end1 = length_data.at_length(x + glyph_rect.width());
-                    auto end2 = end1.child_split();
+                    auto end2 = end1.descend();
                     auto end_p = bezier.beziers()[end1.index].split_segment_point(end2.index, end2.ratio);
 
                     QTransform mat;

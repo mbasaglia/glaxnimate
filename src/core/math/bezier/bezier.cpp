@@ -184,81 +184,6 @@ int glaxnimate::math::bezier::Bezier::segment_count() const
     return closed_ || points_.empty() ? points_.size() : points_.size() - 1;
 }
 
-
-math::bezier::LengthData::LengthData(const math::bezier::CubicBezierSolver<QPointF>& segment, int steps)
-{
-    if ( steps == 0 )
-        return;
-
-    children_.reserve(steps);
-
-    QPointF p = segment.points()[0];
-
-    for ( int i = 1; i <= steps; i++ )
-    {
-        qreal t = qreal(i) / steps;
-        QPointF q = segment.solve(t);
-        auto l = math::length(p - q);
-        children_.emplace_back(l);
-        length_ += l;
-        p = q;
-    }
-}
-
-math::bezier::LengthData::SplitInfo math::bezier::LengthData::SplitInfo::child_split() const
-{
-    return child->at_ratio(ratio);
-}
-
-
-math::bezier::LengthData::SplitInfo math::bezier::LengthData::at_ratio(qreal ratio) const
-{
-    return at_length(ratio * length_);
-}
-
-math::bezier::LengthData::SplitInfo math::bezier::LengthData::at_length(qreal length) const
-{
-    if ( length <= 0 )
-        return {0, 0., &children_.front()};
-
-    if ( length >= length_ )
-        return {int(children_.size() - 1), 1., &children_.back()};
-
-    qreal prev_t = 0;
-
-    for ( int i = 0; i < int(children_.size()); i++ )
-    {
-        qreal t = (i + 1.) / children_.size();
-
-        if ( children_[i].length_ > length )
-        {
-            qreal f = qFuzzyIsNull(children_[i].length_) ? 0 : length / children_[i].length_;
-            return {i, math::lerp(prev_t, t, f), &children_[i]};
-        }
-
-        length -= children_[i].length_;
-        prev_t = t;
-    }
-
-    return {int(children_.size() - 1), 1., &children_.back()};
-}
-
-math::bezier::LengthData math::bezier::Bezier::length_data(int steps) const
-{
-    LengthData out;
-
-    if ( !points_.empty() )
-    {
-        int sz = closed_size() -1;
-        out.reserve(sz);
-        for ( int i = 0; i < sz; i++ )
-            out.add_child(solver_for_point(i), steps);
-    }
-
-    return out;
-}
-
-
 QRectF math::bezier::MultiBezier::bounding_box() const
 {
     if ( beziers_.empty() )
@@ -321,15 +246,4 @@ math::bezier::MultiBezier math::bezier::MultiBezier::from_painter_path(const QPa
     math::bezier::MultiBezier bez;
     bez.append(path);
     return bez;
-}
-
-
-math::bezier::LengthData math::bezier::MultiBezier::length_data(int steps) const
-{
-    math::bezier::LengthData data;
-    data.reserve(beziers_.size());
-    for ( const auto& bez : beziers_ )
-        data.add_child(bez.length_data(steps));
-
-    return data;
 }

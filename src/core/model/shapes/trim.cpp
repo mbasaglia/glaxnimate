@@ -1,5 +1,6 @@
 #include "trim.hpp"
 
+#include "math/bezier/bezier_length.hpp"
 #include "model/shapes/group.hpp"
 #include "model/shapes/path.hpp"
 
@@ -100,6 +101,7 @@ static void chunk_end(const glaxnimate::math::bezier::Bezier& in, glaxnimate::ma
     }
 }
 
+#include <QDebug>
 glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
     glaxnimate::model::FrameTime t,
     const math::bezier::MultiBezier& mbez
@@ -154,12 +156,17 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
 
     const int length_steps = 5;
     math::bezier::MultiBezier out;
-    auto length_data = mbez.length_data(length_steps);
+    math::bezier::LengthData length_data(mbez, length_steps);
+    qDebug() << "op";
 
     for ( const auto& chunk : chunks )
     {
+        qDebug() << "chunk" << chunk.start;
         auto start_data = length_data.at_ratio(chunk.start);
         auto end_data = length_data.at_ratio(chunk.end);
+
+        qDebug() << "multi start" << start_data.index << start_data.ratio;
+        qDebug() << "multi end" << end_data.index << end_data.ratio;
 
         /* Chunk of a single curve
          *
@@ -171,8 +178,12 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
          */
         if ( start_data.index == end_data.index )
         {
-            auto single_start_data = start_data.child_split();
-            auto single_end_data = end_data.child_split();
+            auto single_start_data = start_data.descend();
+            auto single_end_data = end_data.descend();
+
+            qDebug() << "single bez";
+            qDebug() << "bez start" << single_start_data.index << single_start_data.ratio;
+            qDebug() << "bez end" << single_end_data.index << single_end_data.ratio;
 
             math::bezier::Bezier b;
 
@@ -190,6 +201,9 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
                 auto truncated_segment = math::bezier::CubicBezierSolver<QPointF>(in.segment(index)).split(ratio_start).second;
                 // find the end ratio for the truncated segment and split it there
                 qreal ratio_end = (single_end_data.ratio - ratio_start) / (1-ratio_start);
+                qDebug() << "single cub";
+                qDebug() << "cub start" << ratio_start;
+                qDebug() << "cub end" << ratio_end;
                 auto result = math::bezier::CubicBezierSolver<QPointF>(truncated_segment).split(ratio_end).first;
 
                 // add to the bezier
@@ -212,6 +226,10 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
                 int start_max = single_end_data.index;
                 if ( single_end_data.index == single_start_data.index + 1 )
                     start_max += 1;
+
+                qDebug() << "2 cub";
+                qDebug() << "cub start" << single_start_data.ratio;
+                qDebug() << "cub end" << single_end_data.ratio;
                 chunk_start(mbez.beziers()[start_data.index], b, single_start_data, start_max);
                 int end_min = qMax(start_max, single_start_data.index + 1);
                 chunk_end(mbez.beziers()[start_data.index], b, single_end_data, end_min);
@@ -246,7 +264,7 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
          */
         {
             math::bezier::Bezier b;
-            auto single_start_data = start_data.child_split();
+            auto single_start_data = start_data.descend();
             chunk_start(mbez.beziers()[start_data.index], b, single_start_data);
             out.beziers().push_back(b);
         }
@@ -264,7 +282,7 @@ glaxnimate::math::bezier::MultiBezier glaxnimate::model::Trim::process(
         if ( end_data.ratio > 0 )
         {
             math::bezier::Bezier b;
-            auto single_end_data = end_data.child_split();
+            auto single_end_data = end_data.descend();
             chunk_end(mbez.beziers()[end_data.index], b, single_end_data);
             out.beziers().push_back(b);
         }
