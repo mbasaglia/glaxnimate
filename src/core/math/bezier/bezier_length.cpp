@@ -72,7 +72,7 @@ glaxnimate::math::bezier::LengthData::SplitInfo glaxnimate::math::bezier::Length
     {
         const auto& child = children_[i];
 
-        if ( child.cumulative_length_ >= length )
+        if ( child.cumulative_length_ > length )
         {
             qreal residual_length = length - prev_length;
             qreal ratio = qFuzzyIsNull(child.length_) ? 0 : residual_length / child.length_;
