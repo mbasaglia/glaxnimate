@@ -61,6 +61,8 @@ widgets/dialogs/color_quantization_dialog.cpp
 widgets/dialogs/color_quantization_dialog.ui
 widgets/dialogs/startup_dialog.cpp
 widgets/dialogs/startup_dialog.ui
+widgets/dialogs/lottiefiles_search_dialog.cpp
+widgets/dialogs/lottiefiles_search_dialog.ui
 
 widgets/timeline/keyframe_transition_widget.cpp
 widgets/timeline/keyframe_editor_widget.cpp
