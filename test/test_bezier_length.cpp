@@ -138,13 +138,13 @@ private slots:
         LengthData data(mbez, 16);
         QCOMPARE(data.length(), 400);
 
-        for ( int i = 0; i <= 200; i += 10 )
+        for ( int i = 0; i < 200; i += 10 )
         {
             auto split = data.at_length(i);
             QCOMPARE(split.index, 0);
             QCOMPARE(split.length, i);
             auto child_split = split.descend();
-            if ( i <= 50 )
+            if ( i < 50 )
                 QCOMPARE(child_split.index, 0);
             else
                 QCOMPARE(child_split.index, 1);
@@ -153,13 +153,13 @@ private slots:
             CLOSE_ENOUGH(seg.solve(child_split.descend().ratio).y(), 0, false);
         }
 
-        for ( int i = 210; i <= 400; i += 10 )
+        for ( int i = 200; i <= 400; i += 10 )
         {
             auto split = data.at_length(i);
             QCOMPARE(split.index, 1);
             QCOMPARE(split.length, i - 200);
             auto child_split = split.descend();
-            if ( i <= 250 )
+            if ( i < 250 )
                 QCOMPARE(child_split.index, 0);
             else
                 QCOMPARE(child_split.index, 1);
