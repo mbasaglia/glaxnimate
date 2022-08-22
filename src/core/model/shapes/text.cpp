@@ -98,7 +98,7 @@ public:
     {
         QFont font =  query;
 #ifndef Q_OS_ANDROID
-        font.setPointSizeF(font.pointSizeF() * 1000);
+        font.setPointSizeF(qMin(4000., font.pointSizeF() * 1000));
 #endif
         raw_scaled = QRawFont::fromFont(font);
     }

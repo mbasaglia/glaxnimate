@@ -19,6 +19,7 @@
 * Bug Fixes:
     * Fixed crash on adding gradient stops
     * Fixed Trim Path handling of multiple shapes
+    * Fixed rendering of text objects with large font size
 * Other:
     * Ported to Qt6
 
