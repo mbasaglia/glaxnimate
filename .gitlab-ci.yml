@@ -98,7 +98,7 @@ linux:deb:
         - chmod 600 "$AUR_SSH_KEY"
         - mkdir -p build
         - cd build
-        - cmake ..
+        - cmake .. -DVERSION_SUFFIX=
         # Settings
         - PROJECT_VERSION="$(../deploy/get_version.sh CMakeCache.txt)"
         - git config --global user.name "Glaxnimate CI"
@@ -113,7 +113,8 @@ linux:deb:
         - namcap PKGBUILD
         - sudo -u foo makepkg --printsrcinfo > .SRCINFO
         - chown -R root .
-        - if ! git diff-index --quiet HEAD -- ; then git commit -am "Update to version $PROJECT_VERSION" ; GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push ; fi
+        - git diff
+        - if ! git diff-index --quiet HEAD -- ; then git commit -am "Update to version $PROJECT_VERSION" ; GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i $AUR_SSH_KEY" git push || $IGNORE_PUSH_FAIL ; fi
 
 linux:aur:
     extends: .aur_base
@@ -123,6 +124,7 @@ linux:aur:
         - release
     variables:
         PACK_NAME: glaxnimate
+        IGNORE_PUSH_FAIL: false
 
 linux:aur_build:
     extends: .aur_base
@@ -131,6 +133,7 @@ linux:aur_build:
         - master
     variables:
         PACK_NAME: glaxnimate-git
+        IGNORE_PUSH_FAIL: true
 
 
 linux:appimage:
