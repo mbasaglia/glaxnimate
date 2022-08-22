@@ -61,7 +61,7 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>Lock Apect Ratio</string>
+        <string>Lock Aspect Ratio</string>
        </property>
        <property name="text">
         <string notr="true"/>
