@@ -979,10 +979,8 @@ void GlaxnimateWindow::Private::insert_emoji()
 void GlaxnimateWindow::Private::import_from_lottiefiles()
 {
     LottieFilesSearchDialog dialog;
-    if ( !dialog.exec() ) {
-        qDebug() << dialog.result();
+    if ( !dialog.exec() )
         return;
-    }qDebug() << dialog.result();
     io::Options options;
     options.format = io::IoRegistry::instance().from_slug("lottie");
     options.filename = dialog.selected_name() + ".json";

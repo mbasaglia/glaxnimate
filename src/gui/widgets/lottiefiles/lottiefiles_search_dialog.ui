@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Import From LottieFiles</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="lottiefiles"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
