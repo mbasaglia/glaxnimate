@@ -4,6 +4,7 @@
 #include <QToolButton>
 #include <QMessageBox>
 #include <QPointer>
+#include <QNetworkAccessManager>
 
 #include "QtColorWidgets/color_delegate.hpp"
 #include "QtColorWidgets/color_palette_model.hpp"
@@ -132,6 +133,8 @@ public:
     utils::PseudoMutex update_selection;
     model::DocumentNode* current_node = nullptr;
 
+    QNetworkAccessManager http;
+
     // "set and forget" kinda variables
     int autosave_timer = 0;
     int autosave_timer_mins = 0;
@@ -159,6 +162,7 @@ public:
     void do_setup_document();
     void setup_document_new(const QString& filename);
     bool setup_document_open(const io::Options& options);
+    bool setup_document_open(QIODevice* file, const io::Options& options, bool is_file);
     void setup_document_ptr(std::unique_ptr<model::Document> doc);
     void refresh_title();
     bool close_document();
@@ -186,7 +190,9 @@ public:
     void import_file();
     void import_file(const QString& name, const QVariantMap& settings);
     void import_file(const io::Options& options);
+    void import_file(QIODevice* file, const io::Options& options);
     void load_pending();
+    void load_remote_document(const QUrl& url, io::Options options, bool open);
 
     // ui
     void setupUi(bool restore_state, bool debug, GlaxnimateWindow* parent);
@@ -210,6 +216,7 @@ public:
     void drop_file(const QString& file);
     void insert_emoji();
     void style_change_event();
+    void import_from_lottiefiles();
 
     void init_actions();
     void init_plugins();

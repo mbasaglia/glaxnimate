@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>glaxnimate::gui::GlaxnimateWindow</class>
- <widget class="QMainWindow" name="GlaxnimateWindow">
+ <widget class="QMainWindow" name="glaxnimate::gui::GlaxnimateWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -73,6 +73,7 @@
     <addaction name="action_open"/>
     <addaction name="action_import_image"/>
     <addaction name="action_import"/>
+    <addaction name="action_open_lottiefiles"/>
     <addaction name="action_open_last"/>
     <addaction name="menu_open_recent"/>
     <addaction name="separator"/>
@@ -2145,10 +2146,19 @@
   </action>
   <action name="action_insert_emoji">
    <property name="icon">
-    <iconset theme="smiley-shape"/>
+    <iconset theme="smiley-shape">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Emo&amp;ji...</string>
+   </property>
+  </action>
+  <action name="action_open_lottiefiles">
+   <property name="icon">
+    <iconset theme="lottiefiles"/>
+   </property>
+   <property name="text">
+    <string>Import from LottieFiles...</string>
    </property>
   </action>
  </widget>
@@ -2258,7 +2268,7 @@
   <connection>
    <sender>action_save</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>document_save()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2274,7 +2284,7 @@
   <connection>
    <sender>action_new</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>document_new()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2290,7 +2300,7 @@
   <connection>
    <sender>action_save_as</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>document_save_as()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2306,7 +2316,7 @@
   <connection>
    <sender>btn_layer_add</sender>
    <signal>clicked()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>layer_new_menu()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2322,7 +2332,7 @@
   <connection>
    <sender>btn_layer_remove</sender>
    <signal>clicked()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>layer_delete()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2386,7 +2396,7 @@
   <connection>
    <sender>action_view_fit</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>view_fit()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2418,7 +2428,7 @@
   <connection>
    <sender>action_preferences</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>preferences()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2434,7 +2444,7 @@
   <connection>
    <sender>action_open</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>document_open_dialog()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2450,7 +2460,7 @@
   <connection>
    <sender>action_close</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>document_new()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2466,7 +2476,7 @@
   <connection>
    <sender>action_about</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>help_about()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2482,7 +2492,7 @@
   <connection>
    <sender>action_render_frame_raster</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>save_frame_bmp()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2498,7 +2508,7 @@
   <connection>
    <sender>action_render_frame_svg</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>save_frame_svg()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2514,7 +2524,7 @@
   <connection>
    <sender>action_online_manual</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>help_manual()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2530,7 +2540,7 @@
   <connection>
    <sender>action_report_issue</sender>
    <signal>triggered()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>help_issue()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2578,7 +2588,7 @@
   <connection>
    <sender>btn_layer_top</sender>
    <signal>clicked()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>layer_top()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2594,7 +2604,7 @@
   <connection>
    <sender>btn_layer_up</sender>
    <signal>clicked()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>layer_raise()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2610,7 +2620,7 @@
   <connection>
    <sender>btn_layer_down</sender>
    <signal>clicked()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>layer_lower()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2626,7 +2636,7 @@
   <connection>
    <sender>btn_layer_bottom</sender>
    <signal>clicked()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>layer_bottom()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2642,7 +2652,7 @@
   <connection>
    <sender>btn_layer_duplicate</sender>
    <signal>clicked()</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>layer_duplicate()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2674,7 +2684,7 @@
   <connection>
    <sender>widget</sender>
    <signal>warning(QString,QString)</signal>
-   <receiver>GlaxnimateWindow</receiver>
+   <receiver>glaxnimate::gui::GlaxnimateWindow</receiver>
    <slot>warning(QString,QString)</slot>
    <hints>
     <hint type="sourcelabel">

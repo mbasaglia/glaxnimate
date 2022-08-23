@@ -8,6 +8,7 @@
     * Improved rendering performance
     * Holding Ctrl snaps the draw tool to 45 degree lines
     * Added Zig Zag modifier
+    * Dialog to search and import animations from LottieFiles
 * I/O:
     * Fixed lottie export with using global swatch colors
     * Fixed loading external assets by relative path

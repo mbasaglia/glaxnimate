@@ -11,6 +11,7 @@
 #include <QDataStream>
 #include <QSharedMemory>
 #include <QtGlobal>
+#include <QNetworkReply>
 
 
 #include "io/lottie/lottie_html_format.hpp"
@@ -175,7 +176,7 @@ void GlaxnimateWindow::Private::setup_document_new(const QString& filename)
     ui.timeline_widget->reset_view();
 }
 
-bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
+bool GlaxnimateWindow::Private::setup_document_open(QIODevice* file, const io::Options& options, bool is_file)
 {
     if ( !close_document() )
         return false;
@@ -192,20 +193,22 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     process_events(promise);
 
     bool ok = promise.result();*/
-    QFile file(options.filename);
 
     current_document->set_io_options(options);
 
-    bool ok = options.format->open(file, options.filename, current_document.get(), options.settings);
+    bool ok = options.format->open(*file, options.filename, current_document.get(), options.settings);
 
     do_setup_document();
 
-    current_document_has_file = true;
+    if ( is_file )
+    {
+        current_document_has_file = true;
 
-    app::settings::set<QString>("open_save", "path", options.path.absolutePath());
+        app::settings::set<QString>("open_save", "path", options.path.absolutePath());
 
-    if ( ok && !autosave_load )
-        most_recent_file(options.filename);
+        if ( ok && !autosave_load )
+            most_recent_file(options.filename);
+    }
 
     view_fit();
     if ( !current_document->main()->shapes.empty() )
@@ -247,6 +250,12 @@ bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
     load_pending();
 
     return ok;
+}
+
+bool GlaxnimateWindow::Private::setup_document_open(const io::Options& options)
+{
+    QFile file(options.filename);
+    return setup_document_open(&file, options, true);
 }
 
 
@@ -743,11 +752,16 @@ void GlaxnimateWindow::Private::import_file()
 
 void GlaxnimateWindow::Private::import_file(const io::Options& options)
 {
+    QFile file(options.filename);
+    import_file(&file, options);
+}
+
+void GlaxnimateWindow::Private::import_file(QIODevice* file, const io::Options& options)
+{
     model::Document imported(options.filename);
 
-    QFile file(options.filename);
     dialog_export_status->reset(options.format, options.filename);
-    bool ok = options.format->open(file, options.filename, &imported, options.settings);
+    bool ok = options.format->open(*file, options.filename, &imported, options.settings);
     if ( !ok )
     {
         show_warning(tr("Import File"), tr("Could not import %1").arg(options.filename));
@@ -818,4 +832,33 @@ void glaxnimate::gui::GlaxnimateWindow::Private::load_pending()
         [font_loader]{on_font_loader_finished(font_loader);}
     );
     font_loader->load_queue();
+}
+
+void glaxnimate::gui::GlaxnimateWindow::Private::load_remote_document(const QUrl& url, io::Options options, bool open)
+{
+    auto reply = http.get(QNetworkRequest(url));
+    connect(reply, &QNetworkReply::finished, parent, [this, options, open, reply]() {
+        if ( reply->error() )
+        {
+            auto code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+            QString message;
+            if ( code.isValid() )
+            {
+                auto reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+                message = tr("HTTP Error %1 %2").arg(code.toInt()).arg(reason);
+            }
+            else
+            {
+                message = tr("Network Error");
+            }
+
+            show_warning(tr("Load URL"), tr("Could not load %1: %2").arg(reply->url().toString()).arg(message));
+            return;
+        }
+
+        if ( open )
+            setup_document_open(reply, options, false);
+        else
+            import_file(reply, options);
+    });
 }

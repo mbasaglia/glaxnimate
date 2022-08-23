@@ -19,6 +19,7 @@
 #include "model/shapes/round_corners.hpp"
 #include "model/shapes/offset_path.hpp"
 #include "model/shapes/zig_zag.hpp"
+#include "io/io_registry.hpp"
 
 #include "widgets/dialogs/io_status_dialog.hpp"
 #include "widgets/dialogs/about_dialog.hpp"
@@ -27,6 +28,7 @@
 #include "widgets/dialogs/document_metadata_dialog.hpp"
 #include "widgets/dialogs/trace_dialog.hpp"
 #include "widgets/dialogs/startup_dialog.hpp"
+#include "widgets/lottiefiles/lottiefiles_search_dialog.hpp"
 
 #include "widgets/view_transform_widget.hpp"
 #include "widgets/flow_layout.hpp"
@@ -259,6 +261,7 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_text_put_on_path, &QAction::triggered, parent, [this]{text_put_on_path();});
     connect(ui.action_text_remove_from_path, &QAction::triggered, parent, [this]{text_remove_from_path();});
     connect(ui.action_insert_emoji, &QAction::triggered, parent, [this]{insert_emoji();});
+    connect(ui.action_open_lottiefiles, &QAction::triggered, parent, [this]{import_from_lottiefiles();});
 
 
     // Undo Redo
@@ -970,4 +973,18 @@ void GlaxnimateWindow::Private::insert_emoji()
     if ( !dialog.exec() || dialog.selected_svg().isEmpty() )
         return;
     import_file(dialog.selected_svg(), {{"forced_size", current_document->size()}});
+}
+
+
+void GlaxnimateWindow::Private::import_from_lottiefiles()
+{
+    LottieFilesSearchDialog dialog;
+    if ( !dialog.exec() ) {
+        qDebug() << dialog.result();
+        return;
+    }qDebug() << dialog.result();
+    io::Options options;
+    options.format = io::IoRegistry::instance().from_slug("lottie");
+    options.filename = dialog.selected_name() + ".json";
+    load_remote_document(dialog.selected_url(), options, dialog.result() == LottieFilesSearchDialog::Open);
 }
