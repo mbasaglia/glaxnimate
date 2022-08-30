@@ -10,7 +10,7 @@ You can also preview how the animation looks on Lottie web from the *Document* m
 
 ## Telegram Animated Stickers
 
-TGS files can be opened and saved, since they are based lon [Lottie](#lottie).
+TGS files can be opened and saved, since they are based on [Lottie](#lottie).
 
 In the *Document* menu you can validate the [restrictions for this format](https://core.telegram.org/animated_stickers).
 The same validation is performed when saving, if there are some issues the file will be saved anyway but you'll see some warnings.
