@@ -1181,6 +1181,7 @@ public:
         {
             shape = push<model::Path>(shapes);
             shape->shape.set(bezier);
+            shape->closed.set(bezier.closed());
         }
         add_shapes(args, std::move(shapes));
         return shape;
