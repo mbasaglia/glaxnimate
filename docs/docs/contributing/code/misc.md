@@ -13,11 +13,20 @@ To click on the window to record and start recording straight away:
     # Convert
     ffmpeg -i /tmp/out.ogv /tmp/out.mp4
 
-## Test GitLab CI jobs
+
+## Docker
 
 Something along these lines:
 
     docker run --rm -it -v $PWD:/glaxnimate ubuntu:16.04 bash
+
+To have GUI stuff, remember thse options:
+
+    --net=host -e DISPLAY -v /tmp/.X11-unix
+
+You can use the script that adds all that
+
+    ./deploy/docker-run.sh image:tag
 
 
 ## Release Checklist
