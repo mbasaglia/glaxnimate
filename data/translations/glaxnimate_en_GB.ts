@@ -6,22 +6,22 @@
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/abstract_widget_list.cpp" line="67"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>Add New</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/abstract_widget_list.cpp" line="118"/>
         <source>Move Up</source>
-        <translation type="unfinished">Move Up</translation>
+        <translation>Move Up</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/abstract_widget_list.cpp" line="119"/>
         <source>Move Down</source>
-        <translation type="unfinished">Move Down</translation>
+        <translation>Move Down</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/abstract_widget_list.cpp" line="120"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Remove</translation>
     </message>
 </context>
 <context>
@@ -30,13 +30,13 @@
         <location filename="../../external/QtAppSetup/src/app/widgets/clearable_keysequence_edit.ui" line="38"/>
         <location filename="../../external/QtAppSetup/src/app/widgets/clearable_keysequence_edit.ui" line="41"/>
         <source>Use Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Use Default</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/clearable_keysequence_edit.ui" line="51"/>
         <location filename="../../external/QtAppSetup/src/app/widgets/clearable_keysequence_edit.ui" line="54"/>
         <source>Clear</source>
-        <translation type="unfinished">Clear</translation>
+        <translation>Clear</translation>
     </message>
 </context>
 <context>
@@ -44,47 +44,47 @@
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_dialog.ui" line="14"/>
         <source>Select Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Select Colour</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_dialog.ui" line="55"/>
         <source>Saturation</source>
-        <translation type="unfinished">Saturation</translation>
+        <translation>Saturation</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_dialog.ui" line="62"/>
         <source>Hue</source>
-        <translation type="unfinished">Hue</translation>
+        <translation>Hue</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_dialog.ui" line="79"/>
         <source>Hex</source>
-        <translation type="unfinished"></translation>
+        <translation>Hex</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_dialog.ui" line="86"/>
         <source>Blue</source>
-        <translation type="unfinished">Blue</translation>
+        <translation>Blue</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_dialog.ui" line="123"/>
         <source>Value</source>
-        <translation type="unfinished">Value</translation>
+        <translation>Value</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_dialog.ui" line="130"/>
         <source>Green</source>
-        <translation type="unfinished">Green</translation>
+        <translation>Green</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_dialog.ui" line="137"/>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_dialog.ui" line="144"/>
         <source>Red</source>
-        <translation type="unfinished">Red</translation>
+        <translation>Red</translation>
     </message>
 </context>
 <context>
@@ -92,57 +92,57 @@
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="14"/>
         <source>Configure color detection</source>
-        <translation type="unfinished">Configure colour detection</translation>
+        <translation>Configure colour detection</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="26"/>
         <source>Algorithm</source>
-        <translation type="unfinished">Algorithm</translation>
+        <translation>Algorithm</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="37"/>
         <source>k-Means</source>
-        <translation type="unfinished">k-Means</translation>
+        <translation>k-Means</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="42"/>
         <source>k-Modes</source>
-        <translation type="unfinished">k-Modes</translation>
+        <translation>k-Modes</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="47"/>
         <source>Octree</source>
-        <translation type="unfinished">Octree</translation>
+        <translation>Octree</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="52"/>
         <source>Edge Exclusion Modes</source>
-        <translation type="unfinished"></translation>
+        <translation>Edge Exclusion Modes</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="69"/>
         <source>Match</source>
-        <translation type="unfinished">Match</translation>
+        <translation>Match</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="76"/>
         <source>Max Iterations</source>
-        <translation type="unfinished">Max Iterations</translation>
+        <translation>Max Iterations</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="100"/>
         <source>None</source>
-        <translation type="unfinished">None</translation>
+        <translation>None</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="105"/>
         <source>Most Frequent</source>
-        <translation type="unfinished">Most Frequent</translation>
+        <translation>Most Frequent</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="110"/>
         <source>Closest</source>
-        <translation type="unfinished">Closest</translation>
+        <translation>Closest</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="121"/>
@@ -160,7 +160,7 @@ p, li { white-space: pre-wrap; }
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;None&lt;/span&gt;: Don&apos;t perform any post-processing and return the means (note this might result in colors not present in the original image)&lt;/li&gt;
 &lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Closest&lt;/span&gt;: Find the color in the original image the is the closest to the mean&lt;/li&gt;
 &lt;li style=&quot;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Most Frequent&lt;/span&gt;: Find the color in the cluster that appears most often in the source image&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -182,7 +182,7 @@ p, li { white-space: pre-wrap; }
 It&apos;s very fast but it does not give accurate colors for complex images.
 
 This is the best option when tracing images with flat colors.</source>
-        <translation type="unfinished">k-Modes gives you the colours that appear most often in the source image.
+        <translation>k-Modes gives you the colours that appear most often in the source image.
 
 It&apos;s very fast but it does not give accurate colours for complex images.
 
@@ -196,7 +196,7 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Octree algorithm merges similar colors from the bottom up.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It gives more accurate colors for complex images but it might result into colors that are not present in the source image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -206,7 +206,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="182"/>
         <source>Min Frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>Min Frequency</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="192"/>
@@ -217,12 +217,18 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Edge Exclusion Modes takes the most frequent color (mode) in the image, then excludes all pixels touching said area, then repeats the process until the appropriate number of colors has been found.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This approach removes anti-aliased edges but it might cause small details to not be detected.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Min Frequency&lt;/span&gt; refers to the minimum amount of pixels that a color must have to be considered (as a percentage of the total number of pixels in the image).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Edge Exclusion Modes takes the most frequent color (mode) in the image, then excludes all pixels touching said area, then repeats the process until the appropriate number of colors has been found.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This approach removes anti-aliased edges but it might cause small details to not be detected.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Min Frequency&lt;/span&gt; refers to the minimum amount of pixels that a color must have to be considered (as a percentage of the total number of pixels in the image).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/color_quantization_dialog.ui" line="205"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -241,47 +247,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/document_metadata_dialog.ui" line="14"/>
         <source>Document Metadata</source>
-        <translation type="unfinished">Document Metadata</translation>
+        <translation>Document Metadata</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/document_metadata_dialog.ui" line="31"/>
         <source>Common</source>
-        <translation type="unfinished"></translation>
+        <translation>Common</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/document_metadata_dialog.ui" line="37"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Title</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/document_metadata_dialog.ui" line="59"/>
         <source>Author</source>
-        <translation type="unfinished">Author</translation>
+        <translation>Author</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/document_metadata_dialog.ui" line="69"/>
         <source>Description</source>
-        <translation type="unfinished">Description</translation>
+        <translation>Description</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/document_metadata_dialog.ui" line="79"/>
         <source>Keywords</source>
-        <translation type="unfinished"></translation>
+        <translation>Keywords</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/document_metadata_dialog.ui" line="90"/>
         <source>Custom</source>
-        <translation type="unfinished">Custom</translation>
+        <translation>Custom</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/document_metadata_dialog.ui" line="115"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/document_metadata_dialog.ui" line="120"/>
         <source>Value</source>
-        <translation type="unfinished">Value</translation>
+        <translation>Value</translation>
     </message>
 </context>
 <context>
@@ -376,13 +382,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/keyboard_settings_widget.ui" line="19"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filter</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/keyboard_settings_widget.ui" line="26"/>
         <location filename="../../external/QtAppSetup/src/app/widgets/keyboard_settings_widget.ui" line="29"/>
         <source>Clear Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear Filter</translation>
     </message>
 </context>
 <context>
@@ -390,42 +396,42 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="14"/>
         <source>Import From LottieFiles</source>
-        <translation type="unfinished"></translation>
+        <translation>Import From LottieFiles</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="28"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Search</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="90"/>
         <source>Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Page</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="100"/>
         <source>of</source>
-        <translation type="unfinished"></translation>
+        <translation>of</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="127"/>
         <source>Next Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Next Page</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="142"/>
         <source>Open</source>
-        <translation type="unfinished">Open</translation>
+        <translation>Open</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="153"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Import</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="177"/>
         <source>Close</source>
-        <translation type="unfinished">Close</translation>
+        <translation>Close</translation>
     </message>
 </context>
 <context>
@@ -474,7 +480,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/cli.cpp" line="21"/>
         <source>When opening image files, trace them instead of embedding</source>
-        <translation type="unfinished"></translation>
+        <translation>When opening image files, trace them instead of embedding</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="23"/>
@@ -489,7 +495,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/cli.cpp" line="27"/>
         <source>Specify the name of the local socket/named pipe to connect to a host application.</source>
-        <translation type="unfinished"></translation>
+        <translation>Specify the name of the local socket/named pipe to connect to a host application.</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="34"/>
@@ -539,7 +545,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/cli.cpp" line="170"/>
         <source>%1: %2</source>
-        <translation type="unfinished">%1: %2</translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/cli.cpp" line="182"/>
@@ -584,32 +590,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../external/QtAppSetup/src/app/cli.cpp" line="84"/>
         <source>%2 is not a valid value for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%2 is not a valid value for %1</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/cli.cpp" line="98"/>
         <source>Not enough arguments for %1: needs %2, has %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Not enough arguments for %1: needs %2, has %3</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/cli.cpp" line="222"/>
         <source>Unknown argument %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Unknown argument %1</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/cli.cpp" line="229"/>
         <source>Too many arguments</source>
-        <translation type="unfinished"></translation>
+        <translation>Too many arguments</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/cli.cpp" line="263"/>
         <source> [options]</source>
-        <translation type="unfinished"></translation>
+        <translation> [options]</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/cli.cpp" line="288"/>
         <source>Usage: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Usage: %1</translation>
     </message>
 </context>
 <context>
@@ -1263,12 +1269,12 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/QtAppSetup/src/app/settings/keyboard_shortcuts.hpp" line="37"/>
         <source>Keyboard Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Keyboard Shortcuts</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/settings/palette_settings.cpp" line="29"/>
         <source>Widget Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Widget Theme</translation>
     </message>
 </context>
 <context>
@@ -1276,7 +1282,7 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../src/gui/glaxnimate_app.cpp" line="66"/>
         <source>Glaxnimate Default</source>
-        <translation type="unfinished">Glaxnimate Default</translation>
+        <translation>Glaxnimate Default</translation>
     </message>
     <message>
         <location filename="../../src/gui/glaxnimate_app.cpp" line="164"/>
@@ -1445,110 +1451,110 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="21"/>
         <source>Style</source>
-        <translation type="unfinished">Style</translation>
+        <translation>Style</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="49"/>
         <source>System Default</source>
-        <translation type="unfinished"></translation>
+        <translation>System Default</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="63"/>
         <source>Add...</source>
-        <translation type="unfinished"></translation>
+        <translation>Add...</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="74"/>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Remove</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="94"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Active</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="99"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Disabled</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="107"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Apply</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="129"/>
         <source>Preview Enabled Widgets</source>
-        <translation type="unfinished"></translation>
+        <translation>Preview Enabled Widgets</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="139"/>
         <source>Theme Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Theme Preview</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="148"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Check</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="155"/>
         <source>That</source>
-        <translation type="unfinished"></translation>
+        <translation>That</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="166"/>
         <source>A</source>
-        <translation type="unfinished">A</translation>
+        <translation>A</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="171"/>
         <source>B</source>
-        <translation type="unfinished">B</translation>
+        <translation>B</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="176"/>
         <source>C</source>
-        <translation type="unfinished">C</translation>
+        <translation>C</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="194"/>
         <source>Placeholder</source>
-        <translation type="unfinished"></translation>
+        <translation>Placeholder</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="201"/>
         <source>This</source>
-        <translation type="unfinished"></translation>
+        <translation>This</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="212"/>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.ui" line="217"/>
         <source>Items</source>
-        <translation type="unfinished"></translation>
+        <translation>Items</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.cpp" line="76"/>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.cpp" line="199"/>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.cpp" line="206"/>
         <source>Custom</source>
-        <translation type="unfinished">Custom</translation>
+        <translation>Custom</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.cpp" line="80"/>
         <source>%1 %2</source>
-        <translation type="unfinished">%1 %2</translation>
+        <translation>%1 %2</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.cpp" line="203"/>
         <source>Add Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Add Theme</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/widget_palette_editor.cpp" line="204"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
 </context>
 <context>
@@ -1556,7 +1562,7 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/QtAppSetup/src/app/widgets/settings_dialog.ui" line="14"/>
         <source>Settings</source>
-        <translation type="unfinished">Settings</translation>
+        <translation>Settings</translation>
     </message>
 </context>
 <context>
@@ -1564,22 +1570,22 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/QtAppSetup/src/app/log/log_model.cpp" line="39"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Time</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/log/log_model.cpp" line="41"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Source</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/log/log_model.cpp" line="43"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Details</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/log/log_model.cpp" line="45"/>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Message</translation>
     </message>
 </context>
 <context>
@@ -1587,12 +1593,12 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/QtAppSetup/src/app/settings/keyboard_shortcuts_model.cpp" line="30"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../external/QtAppSetup/src/app/settings/keyboard_shortcuts_model.cpp" line="30"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Shortcut</translation>
     </message>
 </context>
 <context>
@@ -1607,7 +1613,7 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_dialog.cpp" line="79"/>
         <source>Pick</source>
-        <translation type="unfinished"></translation>
+        <translation>Pick</translation>
     </message>
 </context>
 <context>
@@ -1615,7 +1621,7 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette.cpp" line="428"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Unnamed</translation>
     </message>
 </context>
 <context>
@@ -1623,12 +1629,12 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_model.cpp" line="70"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Unnamed</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_model.cpp" line="144"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 colours)</translation>
     </message>
 </context>
 <context>
@@ -1636,81 +1642,82 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.ui" line="59"/>
         <source>Open a new palette from file</source>
-        <translation type="unfinished"></translation>
+        <translation>Open a new palette from file</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.ui" line="71"/>
         <source>Create a new palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Create a new palette</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.ui" line="83"/>
         <source>Duplicate the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicate the current palette</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.ui" line="121"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Delete the current palette</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.ui" line="133"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Revert changes to the current palette</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.ui" line="145"/>
         <source>Save changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Save changes to the current palette</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.ui" line="170"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Add a color to the palette</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.ui" line="182"/>
         <source>Remove the selected color from the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove the selected colour from the palette</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.cpp" line="186"/>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.cpp" line="201"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>New Palette</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.cpp" line="187"/>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.cpp" line="202"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.cpp" line="228"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIMP Palettes (*.gpl)</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.cpp" line="229"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Palette Image (%1)</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.cpp" line="230"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>All Files (*)</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.cpp" line="231"/>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.cpp" line="244"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Open Palette</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/color_palette_widget.cpp" line="245"/>
         <source>Failed to load the palette file
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Failed to load the palette file
+%1</translation>
     </message>
 </context>
 <context>
@@ -1718,17 +1725,17 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/gradient_editor.cpp" line="336"/>
         <source>Add Color</source>
-        <translation type="unfinished">Add Colour</translation>
+        <translation>Add Colour</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/gradient_editor.cpp" line="345"/>
         <source>Remove Color</source>
-        <translation type="unfinished">Remove Colour</translation>
+        <translation>Remove Colour</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/gradient_editor.cpp" line="353"/>
         <source>Edit Color...</source>
-        <translation type="unfinished">Edit Colour...</translation>
+        <translation>Edit Colour...</translation>
     </message>
 </context>
 <context>
@@ -1736,7 +1743,7 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/gradient_list_model.cpp" line="231"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 colours)</translation>
     </message>
 </context>
 <context>
@@ -1744,12 +1751,12 @@ Do you want to save your changes?</translation>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/swatch.cpp" line="846"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Clear Colour</translation>
     </message>
     <message>
         <location filename="../../external/Qt-Color-Widgets/src/QtColorWidgets/swatch.cpp" line="855"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -2418,7 +2425,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/about_dialog.ui" line="527"/>
         <source>Output Formats </source>
-        <translation type="unfinished"></translation>
+        <translation>Output Formats </translation>
     </message>
     <message>
         <source>Ouput Formats </source>
@@ -2566,7 +2573,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/shape_style/color_selector.ui" line="42"/>
         <source>CMYK</source>
-        <translation type="unfinished"></translation>
+        <translation>CMYK</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/color_selector.ui" line="47"/>
@@ -2825,17 +2832,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.cpp" line="203"/>
         <source>Loop Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Loop Animation</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.ui" line="189"/>
         <source>Add Keyframe</source>
-        <translation type="unfinished">Add Keyframe</translation>
+        <translation>Add Keyframe</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/timeline/compound_timeline_widget.ui" line="194"/>
         <source>&amp;Clear Animations</source>
-        <translation type="unfinished">&amp;Clear Animations</translation>
+        <translation>&amp;Clear Animations</translation>
     </message>
 </context>
 <context>
@@ -4018,7 +4025,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2161"/>
         <source>Import from LottieFiles...</source>
-        <translation type="unfinished"></translation>
+        <translation>Import from LottieFiles...</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="409"/>
@@ -4340,22 +4347,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="848"/>
         <source>HTTP Error %1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>HTTP Error %1 %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="852"/>
         <source>Network Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Network Error</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="855"/>
         <source>Load URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Load URL</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="855"/>
         <source>Could not load %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Could not load %1: %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.cpp" line="20"/>
@@ -4395,47 +4402,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/tools/select_tool.cpp" line="392"/>
         <source>Undo %1</source>
-        <translation type="unfinished">Undo %1</translation>
+        <translation>Undo %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/tools/select_tool.cpp" line="397"/>
         <source>Redo %1</source>
-        <translation type="unfinished">Redo %1</translation>
+        <translation>Redo %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/tools/select_tool.cpp" line="402"/>
         <source>Cut</source>
-        <translation type="unfinished">Cut</translation>
+        <translation>Cut</translation>
     </message>
     <message>
         <location filename="../../src/gui/tools/select_tool.cpp" line="404"/>
         <source>Copy</source>
-        <translation type="unfinished">Copy</translation>
+        <translation>Copy</translation>
     </message>
     <message>
         <location filename="../../src/gui/tools/select_tool.cpp" line="406"/>
         <source>Paste</source>
-        <translation type="unfinished">Paste</translation>
+        <translation>Paste</translation>
     </message>
     <message>
         <location filename="../../src/gui/tools/select_tool.cpp" line="410"/>
         <source>Delete</source>
-        <translation type="unfinished">Delete</translation>
+        <translation>Delete</translation>
     </message>
     <message>
         <location filename="../../src/gui/tools/select_tool.cpp" line="415"/>
         <source>Group Shapes</source>
-        <translation type="unfinished">Group Shapes</translation>
+        <translation>Group Shapes</translation>
     </message>
     <message>
         <location filename="../../src/gui/tools/select_tool.cpp" line="418"/>
         <source>Ungroup Shapes</source>
-        <translation type="unfinished">Ungroup Shapes</translation>
+        <translation>Ungroup Shapes</translation>
     </message>
     <message>
         <location filename="../../src/gui/tools/select_tool.cpp" line="422"/>
         <source>Move to...</source>
-        <translation type="unfinished">Move to...</translation>
+        <translation>Move to...</translation>
     </message>
 </context>
 <context>
@@ -4587,22 +4594,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/search_result.cpp" line="26"/>
         <source>by %1</source>
-        <translation type="unfinished"></translation>
+        <translation>by %1</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/search_result.cpp" line="42"/>
         <source>Likes</source>
-        <translation type="unfinished"></translation>
+        <translation>Likes</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/search_result.cpp" line="51"/>
         <source>Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>Comments</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/search_result.cpp" line="57"/>
         <source>View on LottieFiles...</source>
-        <translation type="unfinished"></translation>
+        <translation>View on LottieFiles...</translation>
     </message>
 </context>
 <context>
@@ -4610,12 +4617,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.cpp" line="110"/>
         <source>HTTP Error %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>HTTP Error %1: %2</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.cpp" line="116"/>
         <source>Network Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Network Error</translation>
     </message>
 </context>
 <context>
@@ -4914,7 +4921,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/resize_dialog.ui" line="64"/>
         <source>Lock Aspect Ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Lock Aspect Ratio</translation>
     </message>
     <message>
         <source>Lock Apect Ratio</source>
@@ -5363,17 +5370,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="82"/>
         <source>Detailed</source>
-        <translation type="unfinished"></translation>
+        <translation>Detailed</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="87"/>
         <source>Flat</source>
-        <translation type="unfinished"></translation>
+        <translation>Flat</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="92"/>
         <source>Pixel Art</source>
-        <translation type="unfinished"></translation>
+        <translation>Pixel Art</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="135"/>
@@ -5387,12 +5394,21 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note that there is a significant reduction in image quality when converting this kind of images to vector graphics.&lt;/p&gt;
 &lt;p style=&quot; margin-top:37px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(Image by &lt;a href=&quot;https://linktr.ee/FellFallow&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;FellFallow&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This option is best suited for photos, paintings and detailed illustrations.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The number of colors is reduced based on &lt;span style=&quot; font-weight:600;&quot;&gt;Posterization Level&lt;/span&gt; below.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note that there is a significant reduction in image quality when converting this kind of images to vector graphics.&lt;/p&gt;
+&lt;p style=&quot; margin-top:37px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;(Image by &lt;a href=&quot;https://linktr.ee/FellFallow&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;FellFallow&lt;/span&gt;&lt;/a&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="157"/>
         <source>Posterization Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Posterization Level</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="183"/>
@@ -5405,7 +5421,15 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The number of colors will be reduced automatically, picking the most common colors in the source image.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Very small details might get lost in the process.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This option is best suited for flat-shaded digital images, stickers, and cartoons.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The number of colors will be reduced automatically, picking the most common colors in the source image.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Very small details might get lost in the process.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="220"/>
@@ -5416,7 +5440,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is suited for pixel art. The traced vector will retain all colors in the original image as well the pixelated edges.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is only suitable for fairly small images with a low number of colors.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is suited for pixel art. The traced vector will retain all colors in the original image as well the pixelated edges.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This is only suitable for fairly small images with a low number of colors.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="247"/>
@@ -5562,7 +5592,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/trace_dialog.ui" line="685"/>
         <source>Advanced</source>
-        <translation type="unfinished"></translation>
+        <translation>Advanced</translation>
     </message>
     <message>
         <source>Traced %1</source>
@@ -6202,7 +6232,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/glaxnimate/import_state.hpp" line="527"/>
         <source>Unknown object of type &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Unknown object of type &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Unknow object of type &apos;%1&apos;</source>
@@ -6272,32 +6302,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/lottie/lottie_format.cpp" line="54"/>
         <source>Strip</source>
-        <translation type="unfinished"></translation>
+        <translation>Strip</translation>
     </message>
     <message>
         <location filename="../../src/core/io/lottie/lottie_format.cpp" line="54"/>
         <source>Strip unused properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Strip unused properties</translation>
     </message>
     <message>
         <location filename="../../src/core/io/lottie/lottie_format.cpp" line="55"/>
         <source>Embed Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Embed Images</translation>
     </message>
     <message>
         <location filename="../../src/core/io/lottie/lottie_format.cpp" line="55"/>
         <source>Automatically embed non-embedded images</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatically embed non-embedded images</translation>
     </message>
     <message>
         <location filename="../../src/core/io/lottie/lottie_format.cpp" line="56"/>
         <source>Legacy Keyframes</source>
-        <translation type="unfinished"></translation>
+        <translation>Legacy Keyframes</translation>
     </message>
     <message>
         <location filename="../../src/core/io/lottie/lottie_format.cpp" line="56"/>
         <source>Compatibility with lottie-web versions prior to 5.0.0</source>
-        <translation type="unfinished"></translation>
+        <translation>Compatibility with lottie-web versions prior to 5.0.0</translation>
     </message>
     <message>
         <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="520"/>
@@ -6393,17 +6423,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/io/lottie/tgs_format.cpp" line="64"/>
         <source>Inflate/Deflate is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>Inflate/Deflate is not supported</translation>
     </message>
     <message>
         <location filename="../../src/core/io/lottie/tgs_format.cpp" line="68"/>
         <source>Offset Path is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>Offset Path is not supported</translation>
     </message>
     <message>
         <location filename="../../src/core/io/lottie/tgs_format.cpp" line="72"/>
         <source>ZigZag is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>ZigZag is not supported</translation>
     </message>
     <message>
         <location filename="../../src/core/io/lottie/tgs_format.cpp" line="101"/>
@@ -6747,7 +6777,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/model/shapes/inflate_deflate.cpp" line="12"/>
         <source>Inflate and Deflate</source>
-        <translation type="unfinished"></translation>
+        <translation>Inflate and Deflate</translation>
     </message>
 </context>
 <context>
@@ -6799,7 +6829,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/model/object.hpp" line="83"/>
         <source>Unknown Object</source>
-        <translation type="unfinished"></translation>
+        <translation>Unknown Object</translation>
     </message>
 </context>
 <context>
@@ -6807,7 +6837,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/model/shapes/offset_path.cpp" line="336"/>
         <source>Offset Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Offset Path</translation>
     </message>
 </context>
 <context>
@@ -6871,7 +6901,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/model/shapes/round_corners.cpp" line="12"/>
         <source>Round Corners</source>
-        <translation type="unfinished"></translation>
+        <translation>Round Corners</translation>
     </message>
 </context>
 <context>
@@ -6919,7 +6949,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/model/shapes/zig_zag.cpp" line="133"/>
         <source>Zig Zag</source>
-        <translation type="unfinished"></translation>
+        <translation>Zig Zag</translation>
     </message>
 </context>
 <context>
@@ -6945,7 +6975,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/utils/trace_wrapper.cpp" line="152"/>
         <source>Traced %1</source>
-        <translation type="unfinished">Traced %1</translation>
+        <translation>Traced %1</translation>
     </message>
 </context>
 </TS>
