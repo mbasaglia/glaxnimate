@@ -22,6 +22,7 @@
     * Fixed crash on adding gradient stops
     * Fixed Trim Path handling of multiple shapes
     * Fixed rendering of text objects with large font size
+    * Removed spurious warnings when loading a lottie with gradients
 * Other:
     * Ported to Qt6
 
