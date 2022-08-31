@@ -12,10 +12,19 @@
 #include "app/log/log.hpp"
 #include "search_result.hpp"
 
+
 class glaxnimate::gui::LottieFilesSearchDialog::Private
 {
 public:
     void search(const QString& query, int page)
+    {
+        if ( query.isEmpty() )
+            featured(page);
+        else
+            search_query(query, page);
+    }
+
+    void search_query(const QString& query, int page)
     {
         static QString graphql_query = R"(
             query Search($withAep: Boolean, $pageSize: Float, $page: Float, $query: String!)
@@ -42,17 +51,60 @@ public:
                     }
                 }
             })";
-        QJsonObject graphql_dict;
-        graphql_dict["query"] = graphql_query;
         QJsonObject vars;
         vars["withAep"] = false;
         vars["pageSize"] = layout_rows * layout_columns;
         vars["page"] = page;
         vars["query"] = query;
-        graphql_dict["variables"] = vars;
 
         current_query = query;
         current_page = page;
+
+        graphql_request(graphql_query, vars);
+    }
+
+    void featured(int page)
+    {
+        static QString query = R"(
+            query Search($page: Float)
+            {
+                featured(page: $page)
+                {
+                    query,
+                    currentPage,
+                    totalPages,
+                    results
+                    {
+                        bgColor,
+                        id,
+                        imageFrame,
+                        imageUrl,
+                        lottieUrl,
+                        name,
+                        url,
+                        likesCount,
+                        commentsCount,
+                        createdBy {
+                            username
+                        }
+                    }
+                }
+            })";
+        QJsonObject vars;
+        vars["page"] = page;
+
+        current_query = "";
+        current_page = page;
+
+        graphql_request(query, vars);
+    }
+
+    void graphql_request(const QString& query, const QJsonObject& vars)
+    {
+        QJsonObject graphql_dict;
+        graphql_dict["query"] = query;
+        graphql_dict["variables"] = vars;
+
 
         QNetworkRequest req(graphql_url);
         req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -99,7 +151,7 @@ public:
 
         auto d = response["data"].toObject();
 
-        if ( !response["data"].isObject() || !d["search"].isObject() )
+        if ( !response["data"].isObject() || (!d["search"].isObject() && !d["featured"].isObject()) )
         {
             if ( reply->error() )
             {
@@ -123,7 +175,12 @@ public:
             return;
         }
 
-        auto data = d["search"].toObject();
+        QJsonObject data;
+        if ( d["featured"].isObject() )
+            data = d["featured"].toObject();
+        else
+            data = d["search"].toObject();
+
         current_query = data["query"].toString();
         current_page = data["currentPage"].toInt();
         max_pages = data["totalPages"].toInt();
@@ -239,6 +296,7 @@ glaxnimate::gui::LottieFilesSearchDialog::LottieFilesSearchDialog(QWidget* paren
     d->ui.progress_bar->setVisible(false);
     d->clear_results();
     d->ui.result_area->setMinimumWidth(d->preview_size.width() * d->layout_columns + 128);
+    d->featured(1);
 }
 
 glaxnimate::gui::LottieFilesSearchDialog::~LottieFilesSearchDialog() = default;
@@ -269,7 +327,6 @@ void glaxnimate::gui::LottieFilesSearchDialog::clicked_search()
     if ( d->current_query != d->ui.input_query->text() && d->ui.input_query->text().size() > 2 )
         d->search(d->ui.input_query->text(), 1);
 }
-
 
 void glaxnimate::gui::LottieFilesSearchDialog::clicked_next()
 {
