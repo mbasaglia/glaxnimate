@@ -386,6 +386,49 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>LottieFilesSearchDialog</name>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="14"/>
+        <source>Import From LottieFiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="28"/>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="90"/>
+        <source>Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="100"/>
+        <source>of</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="127"/>
+        <source>Next Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="142"/>
+        <source>Open</source>
+        <translation type="unfinished">Open</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="153"/>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.ui" line="177"/>
+        <source>Close</source>
+        <translation type="unfinished">Close</translation>
+    </message>
+</context>
+<context>
     <name>QApplication</name>
     <message>
         <location filename="../../src/core/plugin/snippet.hpp" line="87"/>
@@ -813,13 +856,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/android/main_window.cpp" line="654"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="271"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="280"/>
         <source>Closing Animation</source>
         <translation>Closing Animation</translation>
     </message>
     <message>
         <location filename="../../src/android/main_window.cpp" line="655"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="272"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="281"/>
         <source>The animation has unsaved changes.
 Do you want to save your changes?</source>
         <translation>The animation has unsaved changes.
@@ -1208,7 +1251,7 @@ Do you want to save your changes?</translation>
         <translation>Stretch Time</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="796"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="810"/>
         <source>Download fonts</source>
         <translation>Download fonts</translation>
     </message>
@@ -3135,935 +3178,940 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="64"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="657"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="664"/>
         <source>New from Template</source>
         <translation>New from Template</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="93"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="94"/>
         <source>&amp;Tools</source>
         <translation>&amp;Tools</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="98"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="99"/>
         <source>&amp;Layers</source>
         <translation>&amp;Layers</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="102"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1032"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="103"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1033"/>
         <source>&amp;New</source>
         <translation>&amp;New</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="110"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="111"/>
         <source>&amp;Composition</source>
         <translation>&amp;Composition</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="132"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="133"/>
         <source>&amp;Path</source>
         <translation>&amp;Path</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="161"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1107"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="162"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1108"/>
         <source>&amp;Edit</source>
         <translation>&amp;Edit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="179"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="180"/>
         <source>&amp;View</source>
         <translation>&amp;View</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="183"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="184"/>
         <source>&amp;Views</source>
         <translation>&amp;Views</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="189"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="190"/>
         <source>Tool&amp;bars</source>
         <translation>Tool&amp;bars</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="204"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="205"/>
         <source>&amp;Help</source>
         <translation>&amp;Help</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="213"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="214"/>
         <source>Plu&amp;gins</source>
         <translation>Plu&amp;gins</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="218"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="219"/>
         <source>&amp;Document</source>
         <translation>&amp;Document</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="222"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="223"/>
         <source>Render Single &amp;Frame</source>
         <translation>Render Single &amp;Frame</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="233"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="234"/>
         <source>&amp;Web Preview</source>
         <translation>&amp;Web Preview</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="256"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="257"/>
         <source>&amp;Playback</source>
         <translation>&amp;Playback</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="269"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="270"/>
         <source>&amp;Object</source>
         <translation>&amp;Object</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="273"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="274"/>
         <source>&amp;Align and Distribute</source>
         <translation>&amp;Align and Distribute</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="309"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="310"/>
         <source>&amp;Text</source>
         <translation>&amp;Text</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="330"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="331"/>
         <source>Main Toolbar</source>
         <translation>Main Toolbar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="366"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="667"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="367"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="676"/>
         <source>Fill</source>
         <translation>Fill</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="400"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="980"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="401"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="981"/>
         <source>Tools</source>
         <translation>Tools</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="415"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="416"/>
         <source>Tool Options</source>
         <translation>Tool Options</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="500"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="501"/>
         <source>Layers</source>
         <translation>Layers</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="540"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="543"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="541"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="544"/>
         <source>Add</source>
         <translation>Add</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="554"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="557"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1926"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="555"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="558"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1927"/>
         <source>Duplicate</source>
         <translation>Duplicate</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="568"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="571"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="569"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="572"/>
         <source>Remove</source>
         <translation>Remove</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="595"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="598"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="596"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="599"/>
         <source>Move To Top</source>
         <translation>Move To Top</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="609"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="612"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="610"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="613"/>
         <source>Move Up</source>
         <translation>Move Up</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="623"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="626"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="624"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="627"/>
         <source>Move Down</source>
         <translation>Move Down</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="637"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="640"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="638"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="641"/>
         <source>Move To Bottom</source>
         <translation>Move To Bottom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="665"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="666"/>
         <source>Properties</source>
         <translation>Properties</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="706"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="707"/>
         <source>Timeline</source>
         <translation>Timeline</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="745"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="746"/>
         <source>Script Console</source>
         <translation>Script Console</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="764"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="765"/>
         <source>Logs</source>
         <translation>Logs</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="796"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="672"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="797"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="681"/>
         <source>Stroke</source>
         <translation>Stroke</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="830"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="831"/>
         <source>Undo History</source>
         <translation>Undo History</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="854"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="855"/>
         <source>Swatch</source>
         <translation>Swatch</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="869"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="870"/>
         <source>Node Editing</source>
         <translation>Node Editing</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="894"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="895"/>
         <source>Gradients</source>
         <translation>Gradients</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="925"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="926"/>
         <source>Align</source>
         <translation>Align</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="940"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="941"/>
         <source>Assets</source>
         <translation>Assets</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1001"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1002"/>
         <source>Snippets</source>
         <translation>Snippets</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1041"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1042"/>
         <source>&amp;Open...</source>
         <translation>&amp;Open...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1050"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1051"/>
         <source>&amp;Save</source>
         <translation>&amp;Save</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1059"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1060"/>
         <source>Save &amp;As...</source>
         <translation>Save &amp;As...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1068"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1069"/>
         <source>&amp;Close</source>
         <translation>&amp;Close</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1077"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1078"/>
         <source>&amp;Quit</source>
         <translation>&amp;Quit</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1092"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1093"/>
         <source>&amp;Select</source>
         <translation>&amp;Select</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1095"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1096"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1110"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1111"/>
         <source>F2</source>
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1122"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1123"/>
         <source>&amp;Draw Bezier</source>
         <translation>&amp;Draw Bezier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1125"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1126"/>
         <source>F3</source>
         <translation>F3</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1137"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1138"/>
         <source>Draw &amp;Freehand</source>
         <translation>Draw &amp;Freehand</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1140"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1141"/>
         <source>F6</source>
         <translation>F6</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1152"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1153"/>
         <source>&amp;Rectangle</source>
         <translation>&amp;Rectangle</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1155"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1156"/>
         <source>F4</source>
         <translation>F4</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1167"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1168"/>
         <source>&amp;Ellipse</source>
         <translation>&amp;Ellipse</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1170"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1171"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1182"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1183"/>
         <source>S&amp;tar</source>
         <translation>S&amp;tar</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1185"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1186"/>
         <source>*</source>
         <translation>*</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1194"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1195"/>
         <source>&amp;Empty Layer</source>
         <translation>&amp;Empty Layer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1203"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1635"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1204"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1636"/>
         <source>&amp;Group</source>
         <translation>&amp;Group</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1215"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1216"/>
         <source>&amp;Precomposition Layer</source>
         <translation>&amp;Precomposition Layer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1224"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1225"/>
         <source>&amp;Precompose Selection</source>
         <translation>&amp;Precompose Selection</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1233"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1234"/>
         <source>New &amp;Composition</source>
         <translation>New &amp;Composition</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1245"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1246"/>
         <source>&amp;Union</source>
         <translation>&amp;Union</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1257"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1258"/>
         <source>&amp;Difference</source>
         <translation>&amp;Difference</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1269"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1270"/>
         <source>&amp;Intersect</source>
         <translation>&amp;Intersect</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1281"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1282"/>
         <source>E&amp;xclusion</source>
         <translation>E&amp;xclusion</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1293"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1294"/>
         <source>Re&amp;verse</source>
         <translation>Re&amp;verse</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1302"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1303"/>
         <source>Object to &amp;Path</source>
         <translation>Object to &amp;Path</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1314"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1315"/>
         <source>Add &amp;Node...</source>
         <translation>Add &amp;Node...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1326"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1327"/>
         <source>&amp;Delete Nodes</source>
         <translation>&amp;Delete Nodes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1329"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1330"/>
         <source>Delete Nodes</source>
         <translation>Delete Nodes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1341"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1342"/>
         <source>&amp;Join Nodes</source>
         <translation>&amp;Join Nodes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1353"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1354"/>
         <source>S&amp;plit Nodes</source>
         <translation>S&amp;plit Nodes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1365"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1366"/>
         <source>&amp;Cusp</source>
         <translation>&amp;Cusp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1377"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1378"/>
         <source>&amp;Smooth</source>
         <translation>&amp;Smooth</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1389"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1390"/>
         <source>Sy&amp;mmetric</source>
         <translation>Sy&amp;mmetric</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1398"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1399"/>
         <source>&amp;Copy</source>
         <translation>&amp;Copy</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1407"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1408"/>
         <source>Cu&amp;t</source>
         <translation>Cu&amp;t</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1416"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1417"/>
         <source>&amp;Paste</source>
         <translation>&amp;Paste</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1428"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1429"/>
         <source>&amp;Select All</source>
         <translation>&amp;Select All</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1437"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1438"/>
         <source>Raise to &amp;Top</source>
         <translation>Raise to &amp;Top</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1440"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1441"/>
         <source>Home</source>
         <translation>Home</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1449"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1450"/>
         <source>&amp;Raise</source>
         <translation>&amp;Raise</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1452"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1453"/>
         <source>PgUp</source>
         <translation>PgUp</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1461"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1462"/>
         <source>&amp;Lower</source>
         <translation>&amp;Lower</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1464"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1465"/>
         <source>PgDown</source>
         <translation>PgDown</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1473"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1474"/>
         <source>Lower to &amp;Bottom</source>
         <translation>Lower to &amp;Bottom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1476"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1477"/>
         <source>End</source>
         <translation>End</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1485"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1486"/>
         <source>Re&amp;load</source>
         <translation>Re&amp;load</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1497"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1498"/>
         <source>&amp;Undo %1</source>
         <translation>&amp;Undo %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1509"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1510"/>
         <source>&amp;Redo %1</source>
         <translation>&amp;Redo %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1518"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1519"/>
         <source>&amp;Fit Animation</source>
         <translation>&amp;Fit Animation</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1527"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1528"/>
         <source>Re&amp;set View</source>
         <translation>Re&amp;set View</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1536"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1537"/>
         <source>&amp;Reset Rotation</source>
         <translation>&amp;Reset Rotation</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1545"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1546"/>
         <source>Zoom &amp;In</source>
         <translation>Zoom &amp;In</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1554"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1555"/>
         <source>Zoom &amp;Out</source>
         <translation>Zoom &amp;Out</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1563"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1564"/>
         <source>Reset &amp;Zoom</source>
         <translation>Reset &amp;Zoom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1572"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1573"/>
         <source>Pr&amp;eferences...</source>
         <translation>Pr&amp;eferences...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1581"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1582"/>
         <source>About...</source>
         <translation>About...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1590"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1591"/>
         <source>Solid &amp;Color Layer</source>
         <translation>Solid &amp;Color Layer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1599"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1600"/>
         <source>&amp;Raster...</source>
         <translation>&amp;Raster...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1608"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1609"/>
         <source>S&amp;VG...</source>
         <translation>S&amp;VG...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1617"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1618"/>
         <source>Online &amp;Manual...</source>
         <translation>Online &amp;Manual...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1626"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1627"/>
         <source>Report &amp;Issue...</source>
         <translation>Report &amp;Issue...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1644"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1645"/>
         <source>&amp;Ungroup</source>
         <translation>&amp;Ungroup</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1653"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1654"/>
         <source>&amp;Move to...</source>
         <translation>&amp;Move to...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1662"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1663"/>
         <source>Validate &amp;Telegram Sticker</source>
         <translation>Validate &amp;Telegram Sticker</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1671"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1672"/>
         <source>Re&amp;size...</source>
         <translation>Re&amp;size...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1680"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1681"/>
         <source>Donate...</source>
         <translation>Donate...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1689"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1690"/>
         <source>&amp;Fill</source>
         <translation>&amp;Fill</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1698"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1699"/>
         <source>&amp;Stroke</source>
         <translation>&amp;Stroke</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1707"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1708"/>
         <source>&amp;Layer</source>
         <translation>&amp;Layer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1719"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1720"/>
         <source>Open Most Recent</source>
         <translation>Open Most Recent</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1728"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1729"/>
         <source>Add &amp;Image...</source>
         <translation>Add &amp;Image...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1737"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1738"/>
         <source>&amp;Delete</source>
         <translation>&amp;Delete</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1749"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1750"/>
         <source>Make segments straight</source>
         <translation>Make segments straight</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1761"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1762"/>
         <source>Make segments curved</source>
         <translation>Make segments curved</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1770"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1771"/>
         <source>&amp;Export...</source>
         <translation>&amp;Export...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1779"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1780"/>
         <source>E&amp;xport As...</source>
         <translation>E&amp;xport As...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1791"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1792"/>
         <source>Dissolve Nodes</source>
         <translation>Dissolve Nodes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1800"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1801"/>
         <source>Cleanup</source>
         <translation>Cleanup</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1803"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1804"/>
         <source>Remove unused assets</source>
         <translation>Remove unused assets</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1812"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1813"/>
         <source>Timing...</source>
         <translation>Timing...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1821"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1822"/>
         <source>&amp;Play</source>
         <translation>&amp;Play</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1836"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1837"/>
         <source>&amp;Loop</source>
         <translation>&amp;Loop</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1848"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1849"/>
         <source>&amp;Record Keyframes</source>
         <translation>&amp;Record Keyframes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1857"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1858"/>
         <source>Jump to &amp;Start</source>
         <translation>Jump to &amp;Start</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1866"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1867"/>
         <source>Jump to &amp;End</source>
         <translation>Jump to &amp;End</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1875"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1876"/>
         <source>&amp;Next Frame</source>
         <translation>&amp;Next Frame</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1884"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1885"/>
         <source>Pre&amp;vious Frame</source>
         <translation>Pre&amp;vious Frame</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1893"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1894"/>
         <source>Metadata...</source>
         <translation>Metadata...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1902"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1903"/>
         <source>Trace Bitmap...</source>
         <translation>Trace Bitmap...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1907"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1908"/>
         <source>&amp;Lottie (SVG)</source>
         <translation>&amp;Lottie (SVG)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1912"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1913"/>
         <source>&amp;SVG (SMIL)</source>
         <translation>&amp;SVG (SMIL)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1917"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1918"/>
         <source>Lottie (canvas)</source>
         <translation>Lottie (canvas)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1941"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1942"/>
         <source>Selection</source>
         <translation>Selection</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1953"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1954"/>
         <source>Canvas</source>
         <translation>Canvas</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1962"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1963"/>
         <source>Left</source>
         <translation>Left</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1971"/>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1998"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1972"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1999"/>
         <source>Center</source>
         <translation>Center</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1980"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1981"/>
         <source>Right</source>
         <translation>Right</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1989"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1990"/>
         <source>Top</source>
         <translation>Top</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2007"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2008"/>
         <source>Bottom</source>
         <translation>Bottom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2019"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2020"/>
         <source>Canvas (as Group)</source>
         <translation>Canvas (as Group)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2024"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2025"/>
         <source>Relative To</source>
         <translation>Relative To</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2029"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2030"/>
         <source>Horizontal</source>
         <translation>Horizontal</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2034"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2035"/>
         <source>Vertical</source>
         <translation>Vertical</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2043"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2044"/>
         <source>Outside Left</source>
         <translation>Outside Left</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2052"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2053"/>
         <source>Outside Right</source>
         <translation>Outside Right</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2061"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2062"/>
         <source>Outside Top</source>
         <translation>Outside Top</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2070"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2071"/>
         <source>Outside Bottom</source>
         <translation>Outside Bottom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2079"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2080"/>
         <source>&amp;Import...</source>
         <translation>&amp;Import...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2088"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2089"/>
         <source>Paste as Composition</source>
         <translation>Paste as Composition</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2097"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2098"/>
         <source>F&amp;lip View</source>
         <translation>F&amp;lip View</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2102"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2103"/>
         <source>l</source>
         <translation>l</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2107"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2108"/>
         <source>;</source>
         <translation>;</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2116"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="665"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="671"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2117"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="672"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="678"/>
         <source>Save as Template</source>
         <translation>Save as Template</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2125"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2126"/>
         <source>&amp;Put on Path</source>
         <translation>&amp;Put on Path</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2134"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2135"/>
         <source>&amp;Remove from Path</source>
         <translation>&amp;Remove from Path</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2143"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="557"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2144"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="566"/>
         <source>Validate Discord Sticker</source>
         <translation>Validate Discord Sticker</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2151"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2153"/>
         <source>Emo&amp;ji...</source>
         <translation>Emo&amp;ji...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="400"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="405"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="93"/>
+        <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="2161"/>
+        <source>Import from LottieFiles...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="409"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="414"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="97"/>
         <source>Open File</source>
         <translation>Open File</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="94"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="98"/>
         <source>Save File</source>
         <translation>Save File</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="213"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="219"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="217"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="223"/>
         <source>Play</source>
         <translation>Play</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="432"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="707"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="439"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="714"/>
         <source>Recording Keyframes</source>
         <translation>Recording Keyframes</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="657"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="664"/>
         <source>Could not load template</source>
         <translation>Could not load template</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="665"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="672"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="671"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="678"/>
         <source>Could not save template</source>
         <translation>Could not save template</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="844"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="853"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="851"/>
         <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="860"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="867"/>
         <source>Trace Bitmap</source>
         <translation>Trace Bitmap</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="844"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="851"/>
         <source>Only select one image</source>
         <translation>Only select one image</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="853"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="860"/>
         <source>You need to select an image to trace</source>
         <translation>You need to select an image to trace</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="860"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="867"/>
         <source>You selected an image with no data</source>
         <translation>You selected an image with no data</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="904"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="911"/>
         <source>X: %1 Y: %2</source>
         <translation>X: %1 Y: %2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="923"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="930"/>
         <source>Drop File</source>
         <translation>Drop File</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="934"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="941"/>
         <source>Add to current file?</source>
         <translation>Add to current file?</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="940"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="947"/>
         <source>Add as Object</source>
         <translation>Add as Object</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="946"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="953"/>
         <source>Add as Composition</source>
         <translation>Add as Composition</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="952"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_ui.cpp" line="959"/>
         <source>Open</source>
         <translation>Open</translation>
     </message>
@@ -4135,154 +4183,174 @@ p, li { white-space: pre-wrap; }
         <translation>Remove text from path</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="138"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="139"/>
         <source>Export...</source>
         <translation>Export...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="221"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="224"/>
         <source>Looks like this file is being edited by another Glaxnimate instance or it was being edited when Glaxnimate crashed.</source>
         <translation>Looks like this file is being edited by another Glaxnimate instance or it was being edited when Glaxnimate crashed.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="227"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="230"/>
         <source>Close Document</source>
         <translation>Close Document</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="234"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="237"/>
         <source>Load Backup</source>
         <translation>Load Backup</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="354"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="363"/>
         <source>Export to %1</source>
         <translation>Export to %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="400"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="409"/>
         <source>No importer found for %1</source>
         <translation>No importer found for %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="405"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="414"/>
         <source>The file might have been moved or deleted
 %1</source>
         <translation>The file might have been moved or deleted
 %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="433"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="437"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="753"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="758"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="770"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="442"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="446"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="767"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="772"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="784"/>
         <source>Import File</source>
         <translation>Import File</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="433"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="753"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="770"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="442"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="767"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="784"/>
         <source>Could not import %1</source>
         <translation>Could not import %1</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="444"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="453"/>
         <source>No file to reload from</source>
         <translation>No file to reload from</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="455"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="477"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="483"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="464"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="486"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="492"/>
         <source>Web Preview</source>
         <translation>Web Preview</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="477"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="486"/>
         <source>Could not create file</source>
         <translation>Could not create file</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="483"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="492"/>
         <source>Could not open browser</source>
         <translation>Could not open browser</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="502"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="528"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="511"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="537"/>
         <source>Save Frame Image</source>
         <translation>Save Frame Image</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="505"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="514"/>
         <source>Frame%1.png</source>
         <translation>Frame%1.png</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="512"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="521"/>
         <source>Image files (%1)</source>
         <translation>Image files (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="521"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="544"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="530"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="553"/>
         <source>Render Frame</source>
         <translation>Render Frame</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="521"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="544"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="530"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="553"/>
         <source>Could not save image</source>
         <translation>Could not save image</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="531"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="540"/>
         <source>Frame%1.svg</source>
         <translation>Frame%1.svg</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="534"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="543"/>
         <source>Scalable Vector Graphics (*.svg)</source>
         <translation>Scalable Vector Graphics (*.svg)</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="559"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="569"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="568"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="578"/>
         <source>No issues found</source>
         <translation>No issues found</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="559"/>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="569"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="568"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="578"/>
         <source>Some issues detected</source>
         <translation>Some issues detected</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="567"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="576"/>
         <source>Validate Telegram Sticker</source>
         <translation>Validate Telegram Sticker</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="619"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="628"/>
         <source>Backup</source>
         <translation>Backup</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="619"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="628"/>
         <source>Cannot load backup of a closed file</source>
         <translation>Cannot load backup of a closed file</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="681"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="690"/>
         <source>Unlink %1 Color</source>
         <translation>Unlink %1 Color</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="691"/>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="700"/>
         <source>Link %1 Color</source>
         <translation>Link %1 Color</translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="848"/>
+        <source>HTTP Error %1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="852"/>
+        <source>Network Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="855"/>
+        <source>Load URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/dialogs/gw_impl_document.cpp" line="855"/>
+        <source>Could not load %1: %2</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.cpp" line="20"/>
@@ -4515,186 +4583,222 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>glaxnimate::gui::LottieFilesResultItem</name>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/search_result.cpp" line="26"/>
+        <source>by %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/search_result.cpp" line="42"/>
+        <source>Likes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/search_result.cpp" line="51"/>
+        <source>Comments</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/search_result.cpp" line="57"/>
+        <source>View on LottieFiles...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::gui::LottieFilesSearchDialog</name>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.cpp" line="110"/>
+        <source>HTTP Error %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/gui/widgets/lottiefiles/lottiefiles_search_dialog.cpp" line="116"/>
+        <source>Network Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>glaxnimate::gui::NodeMenu</name>
     <message>
         <source>ResetTransform</source>
         <translation type="vanished">ResetTransform</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="67"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="69"/>
         <source>None</source>
         <translation>None</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="91"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="93"/>
         <source>Move to Top</source>
         <translation>Move to Top</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="95"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="97"/>
         <source>Raise</source>
         <translation>Raise</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="99"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="101"/>
         <source>Lower</source>
         <translation>Lower</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="103"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="105"/>
         <source>Move to Bottom</source>
         <translation>Move to Bottom</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="176"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="178"/>
         <source>Convert %1 to %2</source>
         <translation>Convert %1 to %2</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="215"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="217"/>
         <source>Add</source>
         <translation>Add</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="39"/>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="228"/>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="316"/>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="333"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="41"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="232"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="320"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="337"/>
         <source>Reset Transform</source>
         <translation>Reset Transform</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="236"/>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="237"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="240"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="241"/>
         <source>Span All Frames</source>
         <translation>Span All Frames</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="247"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="251"/>
         <source>Parent</source>
         <translation>Parent</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="248"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="252"/>
         <source>Convert to Group</source>
         <translation>Convert to Group</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="249"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="253"/>
         <source>Precompose</source>
         <translation>Precompose</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="255"/>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="274"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="259"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="278"/>
         <source>Convert to Mask</source>
         <translation>Convert to Mask</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="261"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="265"/>
         <source>Remove Mask</source>
         <translation>Remove Mask</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="270"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="274"/>
         <source>Convert to Layer</source>
         <translation>Convert to Layer</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="279"/>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="449"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="283"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="453"/>
         <source>Convert to Path</source>
         <translation>Convert to Path</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="284"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="288"/>
         <source>Embed</source>
         <translation>Embed</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="288"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="292"/>
         <source>Open with External Application</source>
         <translation>Open with External Application</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="290"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="294"/>
         <source>Could not find suitable application, check your system settings.</source>
         <translation>Could not find suitable application, check your system settings.</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="294"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="298"/>
         <source>From File...</source>
         <translation>From File...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="295"/>
         <location filename="../../src/gui/widgets/node_menu.cpp" line="299"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="303"/>
         <source>Update Image</source>
         <translation>Update Image</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="322"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="326"/>
         <source>Image</source>
         <translation>Image</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="326"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="330"/>
         <source>Trace Bitmap...</source>
         <translation>Trace Bitmap...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="337"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="341"/>
         <source>Rename from Composition</source>
         <translation>Rename from Composition</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="341"/>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="342"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="345"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="346"/>
         <source>Decompose</source>
         <translation>Decompose</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="366"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="370"/>
         <source>Remove from Path</source>
         <translation>Remove from Path</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="398"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="402"/>
         <source>Visible</source>
         <translation>Visible</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="399"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="403"/>
         <source>Locked</source>
         <translation>Locked</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="404"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="408"/>
         <source>Delete</source>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="408"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="412"/>
         <source>Duplicate</source>
         <translation>Duplicate</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="421"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="425"/>
         <source>Move to...</source>
         <translation>Move to...</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="380"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="384"/>
         <source>Stretch time</source>
         <translation>Stretch time</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="381"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="385"/>
         <source>Speed Multiplier</source>
         <translation>Speed Multiplier</translation>
     </message>
     <message>
-        <location filename="../../src/gui/widgets/node_menu.cpp" line="466"/>
+        <location filename="../../src/gui/widgets/node_menu.cpp" line="470"/>
         <source>Change speed</source>
         <translation>Change speed</translation>
     </message>
@@ -4813,8 +4917,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/resize_dialog.ui" line="64"/>
+        <source>Lock Aspect Ratio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Lock Apect Ratio</source>
-        <translation>Lock Apect Ratio</translation>
+        <translation type="vanished">Lock Apect Ratio</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/resize_dialog.ui" line="86"/>
@@ -6160,27 +6268,57 @@ p, li { white-space: pre-wrap; }
         <translation>Lottie Animation</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_format.hpp" line="23"/>
+        <location filename="../../src/core/io/lottie/lottie_format.cpp" line="53"/>
         <source>Pretty</source>
         <translation>Pretty</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_format.hpp" line="23"/>
+        <location filename="../../src/core/io/lottie/lottie_format.cpp" line="53"/>
         <source>Pretty print the JSON</source>
         <translation>Pretty print the JSON</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="513"/>
+        <location filename="../../src/core/io/lottie/lottie_format.cpp" line="54"/>
+        <source>Strip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/lottie/lottie_format.cpp" line="54"/>
+        <source>Strip unused properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/lottie/lottie_format.cpp" line="55"/>
+        <source>Embed Images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/lottie/lottie_format.cpp" line="55"/>
+        <source>Automatically embed non-embedded images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/lottie/lottie_format.cpp" line="56"/>
+        <source>Legacy Keyframes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/lottie/lottie_format.cpp" line="56"/>
+        <source>Compatibility with lottie-web versions prior to 5.0.0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="520"/>
         <source>Lottie only supports layers in the top level</source>
         <translation>Lottie only supports layers in the top level</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="562"/>
+        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="569"/>
         <source>Images cannot be grouped with other shapes, they must be inside a layer</source>
         <translation>Images cannot be grouped with other shapes, they must be inside a layer</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="564"/>
+        <location filename="../../src/core/io/lottie/lottie_exporter.hpp" line="571"/>
         <source>Composition layers cannot be grouped with other shapes, they must be inside a layer</source>
         <translation>Composition layers cannot be grouped with other shapes, they must be inside a layer</translation>
     </message>
@@ -6236,37 +6374,47 @@ p, li { white-space: pre-wrap; }
         <translation>Telegram Animated Sticker</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="40"/>
+        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="42"/>
         <source>Star Shapes are not officially supported</source>
         <translation>Star Shapes are not officially supported</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="44"/>
+        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="46"/>
         <source>Images are not supported</source>
         <translation>Images are not supported</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="49"/>
+        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="51"/>
         <source>Gradient strokes are not officially supported</source>
         <translation>Gradient strokes are not officially supported</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="54"/>
+        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="56"/>
         <source>Masks are not supported</source>
         <translation>Masks are not supported</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="58"/>
+        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="60"/>
         <source>Repeaters are not officially supported</source>
         <translation>Repeaters are not officially supported</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="91"/>
+        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="68"/>
+        <source>Offset Path is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="72"/>
+        <source>ZigZag is not supported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="101"/>
         <source>File too large: %1k, should be under 64k</source>
         <translation>File too large: %1k, should be under 64k</translation>
     </message>
     <message>
-        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="62"/>
+        <location filename="../../src/core/io/lottie/tgs_format.cpp" line="64"/>
         <source>Inflate/Deflate is not supported</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6516,12 +6664,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::model::Font</name>
     <message>
-        <location filename="../../src/core/model/shapes/text.cpp" line="225"/>
+        <location filename="../../src/core/model/shapes/text.cpp" line="226"/>
         <source>Font</source>
         <translation>Font</translation>
     </message>
     <message>
-        <location filename="../../src/core/model/shapes/text.cpp" line="242"/>
+        <location filename="../../src/core/model/shapes/text.cpp" line="243"/>
         <source>Change Font</source>
         <translation>Change Font</translation>
     </message>
@@ -6663,6 +6811,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>glaxnimate::model::OffsetPath</name>
+    <message>
+        <location filename="../../src/core/model/shapes/offset_path.cpp" line="336"/>
+        <source>Offset Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>glaxnimate::model::Path</name>
     <message>
         <location filename="../../src/core/model/shapes/path.hpp" line="32"/>
@@ -6737,7 +6893,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::model::Stroke</name>
     <message>
-        <location filename="../../src/core/model/shapes/stroke.hpp" line="63"/>
+        <location filename="../../src/core/model/shapes/stroke.hpp" line="62"/>
         <source>Stroke</source>
         <translation>Stroke</translation>
     </message>
@@ -6745,7 +6901,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::model::TextShape</name>
     <message>
-        <location filename="../../src/core/model/shapes/text.cpp" line="471"/>
+        <location filename="../../src/core/model/shapes/text.cpp" line="473"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
@@ -6761,9 +6917,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>glaxnimate::model::Trim</name>
     <message>
-        <location filename="../../src/core/model/shapes/trim.cpp" line="17"/>
+        <location filename="../../src/core/model/shapes/trim.cpp" line="18"/>
         <source>Trim Path</source>
         <translation>Trim Path</translation>
+    </message>
+</context>
+<context>
+    <name>glaxnimate::model::ZigZag</name>
+    <message>
+        <location filename="../../src/core/model/shapes/zig_zag.cpp" line="133"/>
+        <source>Zig Zag</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
