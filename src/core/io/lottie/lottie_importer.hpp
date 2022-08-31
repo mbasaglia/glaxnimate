@@ -533,8 +533,10 @@ private:
             auto jcolors = json_obj["g"].toObject();
             load_animated(&colors->colors, jcolors["k"], GradientLoad{jcolors["p"].toInt()});
         }
-
-        load_animated(&styler->color, json_obj["c"], {});
+        else
+        {
+            load_animated(&styler->color, json_obj["c"], {});
+        }
 
         if ( styler->name.get().isEmpty() )
             document->set_best_name(styler);
