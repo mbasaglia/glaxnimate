@@ -89,7 +89,7 @@ public:
                     vlist[i*4+1].toDouble(),
                     vlist[i*4+2].toDouble(),
                     vlist[i*4+3].toDouble(),
-                    alpha ? vlist[count*4+i+1].toDouble() : 1
+                    alpha ? vlist[count*4+2*i+1].toDouble() : 1
                 )
             });
         }

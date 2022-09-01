@@ -24,6 +24,7 @@
     * Fixed rendering of text objects with large font size
     * Removed spurious warnings when loading a lottie with gradients
     * Fixed paths loaded from SVG having an inconsistent closed state
+    * Fixed import of transparent gradients from lottie
 * Other:
     * Ported to Qt6
 
