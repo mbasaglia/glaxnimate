@@ -36,6 +36,7 @@ create_qt_linguist_translations(
     TRANSLATIONS
     translations/glaxnimate_en_US.ts
     translations/glaxnimate_en_GB.ts
+    translations/glaxnimate_es.ts
     translations/glaxnimate_it.ts
     translations/glaxnimate_de.ts
     translations/glaxnimate_fr.ts
