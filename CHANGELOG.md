@@ -18,6 +18,7 @@
     * Added support for SVG with animated `display` attribute
 * UI:
     * Simplified version of the trace dialog
+    * Added Spanish translation
 * Bug Fixes:
     * Fixed crash on adding gradient stops
     * Fixed Trim Path handling of multiple shapes
