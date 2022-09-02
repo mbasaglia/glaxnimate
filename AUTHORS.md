@@ -33,6 +33,11 @@ Simplified Chinese
 
 * 金馆长
 
+Spanish
+------------------
+
+* Franco Pérez
+
 
 External Code / Library Credits
 ===============================
