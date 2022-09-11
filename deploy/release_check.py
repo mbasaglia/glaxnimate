@@ -10,16 +10,6 @@ from urllib.parse import urljoin, urlparse
 from xml.etree import ElementTree
 
 
-class GitlabApi:
-    def __init__(self, project_id="19921167"):
-        self.api_url = "https://gitlab.com/api/v4/projects/%s/repository" % project_id
-
-    def get(self, *url, **kwargs):
-        url = "/".join((self.api_url,) + url)
-        res = requests.request("get", url, **kwargs)
-        return (res.json(), res.status_code)
-
-
 def download(indent, url):
     res = requests.get(url)
     if res.status_code != 200:
@@ -199,7 +189,7 @@ class ReleaseTable:
 
 #def check_tag():
     #log(0, "Checking tag")
-    #response, status = api.get("tags", ns.version)
+    #response, status = api.project_request("GET", ["repository", "tags"], ns.version)
     #if status != 200:
         #error(1, "No tag")
         #return
@@ -222,7 +212,7 @@ parser.add_argument("--package", default=None, nargs="+")
 
 ns = parser.parse_args()
 
-api = GitlabApi()
+#api = GitlabApi()
 #log(0, "Checking %s" % ns.version)
 #check_tag()
 if retcode == 0:

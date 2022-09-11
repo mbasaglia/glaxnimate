@@ -22,7 +22,7 @@ if ns.fake_env:
     GitlabApi.fake_env()
 
 
-api = GitlabApi()
+api = GitlabApi.from_env()
 commit_tag = environ("CI_COMMIT_TAG", "You must run this on a tag build")
 download_tag = ns.download_tag or commit_tag
 changelog_tag = ns.changelog_tag or commit_tag
@@ -90,7 +90,7 @@ See the [Documentation](https://glaxnimate.mattbas.org/manual/) page.
     version=commit_tag,
     chlog=chlog,
     project_url=api.project_url,
-    artifacts_url=api.project_url+"/-/jobs/artifacts/" + download_tag + "/raw",
+    artifacts_url=api.artifacts_url(download_tag),
     install_notes_url="https://glaxnimate.mattbas.org/download/",
     extra_artifacts="https://github.com/mbasaglia/glaxnimate/releases/download/%s/" % download_tag,
     extra_tail="?viasf=1",

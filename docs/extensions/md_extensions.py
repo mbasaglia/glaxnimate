@@ -1,13 +1,23 @@
 import re
+import os
+import sys
+from pathlib import Path
+
+import xml.etree.ElementTree as etree
+from xml.etree.ElementTree import parse as parse_xml
+
 from markdown.inlinepatterns import InlineProcessor
 from markdown.blockprocessors import BlockProcessor
 from markdown.extensions import Extension
-import os
-from pathlib import Path
-import xml.etree.ElementTree as etree
-from xml.etree.ElementTree import parse as parse_xml
 from babel import Locale
 
+project_root = Path(__file__).parent.parent.parent
+
+sys.path.append(str(project_root / "deploy"))
+
+from gitlab_api import GitlabApi
+
+gitlab = GitlabApi()
 
 def etree_fontawesome(icon, group="fas"):
     el = etree.Element("i")
@@ -102,7 +112,7 @@ class DownloadTable(InlineProcessor):
         self.git = git
 
     class Row:
-        def __init__(self, name, icon_group, icon, filename, job, notes=None, parent="/build"):
+        def __init__(self, name, icon_group, icon, filename, job, notes=None, parent="build/"):
             self.name = name
             self.icon_group = icon_group
             self.icon = icon
@@ -126,9 +136,7 @@ class DownloadTable(InlineProcessor):
                 url = "https://github.com/mbasaglia/glaxnimate/releases/download/{0}/{{0}}".format(branch)
                 checksum_filename = "checksum%s.txt" % self.job_path
             else:
-                url = "https://gitlab.com/mattbas/glaxnimate/-/jobs/artifacts/{0}/raw{2}/{{0}}?job={1}".format(
-                    branch, self.job_path.replace(":", "%3A"), self.parent
-                )
+                url = gitlab.artifact_url(branch, self.job_path, self.parent + "{0}")
 
             etree.SubElement(pack, "a", {"href": url.format(self.filename)}).text = self.name
 
@@ -182,7 +190,7 @@ class TranslationTable(InlineProcessor):
     def fetch_data(self):
         self.data = []
 
-        source = Path(__file__).parent.parent.parent / "data" / "translations"
+        source = project_root / "data" / "translations"
 
         for file in source.glob("*.ts"):
             locale_name = file.stem.split("_", 1)[1]

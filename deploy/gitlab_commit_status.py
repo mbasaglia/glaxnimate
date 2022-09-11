@@ -35,7 +35,7 @@ if ref.startswith("refs/"):
 
 
 GitlabApi.fake_env()
-api = GitlabApi()
+api = GitlabApi.from_env()
 
 status = ns.state
 # Convert GitHub => GitLab
