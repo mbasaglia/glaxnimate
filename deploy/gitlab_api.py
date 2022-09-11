@@ -73,13 +73,13 @@ class GitlabApi:
         return self.artifacts_url(ref) + "/%s?job=%s" % (file, job.replace(":", "%3A"))
 
     def artifacts_url(self, ref):
-        return self.api_url + "/jobs/artifacts/%s/raw" % ref
+        return self.api_url + "/jobs/artifacts/%s/raw" % ref.replace(".", "%2E")
 
     @classmethod
     def from_env(cls):
         project_url = environ("CI_PROJECT_URL")
         project_id = environ("CI_PROJECT_ID")
-        api_key = environ("GITLAB_ACCESS_TOKEN", "You must specify an access token. See https://gitlab.com/profile/personal_access_tokens")
+        api_key = environ("GITLAB_ACCESS_TOKEN", "You must specify an access token. See https://gitlab.com/-/profile/personal_access_tokens")
         return cls(project_url, project_id, api_key)
 
     @classmethod
