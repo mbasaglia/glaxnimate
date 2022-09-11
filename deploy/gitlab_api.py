@@ -49,7 +49,7 @@ class GitlabApi:
         return self.request(method, "/".join([self.api_url] + url), **kwargs)
 
     def debug_curl(self, method, url, **kwargs):
-        command = "curl -i -X %s %s" % (method, shlex.quote(url))
+        command = "curl -i -X %s %s" % (method.upper(), shlex.quote(url))
 
         if "data" in kwargs:
             command += " -d " + shlex.quote(kwargs.pop("data"))
