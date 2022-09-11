@@ -1353,7 +1353,7 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../../src/gui/widgets/dialogs/timing_dialog.ui" line="107"/>
         <source>Scale Timing</source>
-        <translation>Escalar Tiempo</translation>
+        <translation>Redimensionar Tiempo</translation>
     </message>
 </context>
 <context>
@@ -2646,7 +2646,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.ui" line="38"/>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.ui" line="41"/>
         <source>Swatch</source>
-        <translation>Muestra</translation>
+        <translation>Muestra de Color</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.ui" line="65"/>
@@ -2672,7 +2672,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.ui" line="99"/>
         <source>Generate Swatch from the open Document</source>
-        <translation>Generar Muestra desde el Documento abierto</translation>
+        <translation>Generar Muestra de Color desde el Documento abierto</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.ui" line="108"/>
@@ -2688,7 +2688,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="43"/>
         <source>Gather Document Swatch</source>
-        <translation>Recolectar Muestra del Documento</translation>
+        <translation>Recolectar Muestra de Color del Documento</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="115"/>
@@ -2713,7 +2713,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="325"/>
         <source>Swatch from Palette</source>
-        <translation>Muestra desde Paleta</translation>
+        <translation>Muestra de Color desde Paleta</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/shape_style/document_swatch_widget.cpp" line="334"/>
@@ -3009,7 +3009,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="183"/>
         <source>&amp;Views</source>
-        <translation>&amp;Vista</translation>
+        <translation>&amp;Vistas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="189"/>
@@ -3165,7 +3165,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="854"/>
         <source>Swatch</source>
-        <translation>Muestra</translation>
+        <translation>Muestra de Color</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="869"/>
@@ -3291,7 +3291,8 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1203"/>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1635"/>
         <source>&amp;Group</source>
-        <translation>&amp;Grupo</translation>
+        <translatorcomment>In the &apos;Layers&apos;&gt;New&apos; menu, &apos;Group&apos; should be translated as &apos;Grupo&apos; (a noun), but in &apos;Objects&apos; menu it should be translated as &apos;Agrupar&apos; (a verb). Currently I am not able to do that because it appears it is the same source text.</translatorcomment>
+        <translation>A&amp;grupar</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1215"/>
@@ -3456,7 +3457,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1518"/>
         <source>&amp;Fit Animation</source>
-        <translation>A&amp;justar Animación</translation>
+        <translation>A&amp;justar a Animación</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/glaxnimate_window.ui" line="1527"/>
@@ -4645,7 +4646,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/gui/widgets/dialogs/resize_dialog.ui" line="86"/>
         <source>Scale Layers</source>
-        <translation>Escalar Capas</translation>
+        <translation>Redimensionar Capas</translation>
     </message>
     <message>
         <location filename="../../src/gui/widgets/dialogs/resize_dialog.ui" line="96"/>
@@ -6516,7 +6517,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/model/assets/named_color.cpp" line="11"/>
         <source>Unnamed Color</source>
-        <translation>COlor Sin Nombrar</translation>
+        <translation>Color Sin Nombrar</translation>
     </message>
 </context>
 <context>
@@ -6524,7 +6525,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/model/assets/assets.hpp" line="91"/>
         <source>Swatch</source>
-        <translation>Muestra</translation>
+        <translation>Muestra de Color</translation>
     </message>
 </context>
 <context>
