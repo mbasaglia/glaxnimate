@@ -383,13 +383,7 @@ public:
         auto bez = insert_item->bezier();
         bez.set_segment(insert_params.index, cubic_segment_from_struts(mold_original, struts_interp));
 
-        insert_item->target_object()->push_command(
-            new command::SetMultipleAnimated(
-                insert_item->target_property(),
-                QVariant::fromValue(bez),
-                commit
-            )
-        );
+        insert_item->set_bezier(bez, commit);
     }
 
     void delete_nodes_bezier(graphics::BezierItem* item, bool dissolve)
@@ -397,24 +391,26 @@ public:
         if ( item->selected_indices().empty() )
             return;
 
-        auto prop = item->target_property();
-        int sz1 = item->selected_indices().size() + 1;
-        if ( sz1 >= item->bezier().size() && std::all_of(prop->begin(), prop->end(), [sz1](const auto& kf){ return sz1 > kf.get().size(); }) )
+        if ( auto bez_prop = item->target_bezier_property() )
         {
-            // At the moment it always is a Path, but it might change in the future (ie: masks)
-            if ( auto path = item->target_object()->cast<model::Path>() )
+            int sz1 = item->selected_indices().size() + 1;
+            if ( sz1 >= item->bezier().size() && std::all_of(bez_prop->begin(), bez_prop->end(), [sz1](const auto& kf){ return sz1 > kf.get().size(); }) )
             {
-                item->target_object()->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
-                return;
+                // At the moment it always is a Path, but it might change in the future (ie: masks)
+                if ( auto path = item->target_object()->cast<model::Path>() )
+                {
+                    item->target_object()->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
+                    return;
+                }
             }
+            bez_prop->remove_points(item->selected_indices());
         }
 
         auto bez = item->bezier();
-        prop->remove_points(item->selected_indices());
 
         if ( dissolve && item->selected_indices().size() == 1 )
         {
-            math::bezier::Bezier new_bez = prop->get();
+            math::bezier::Bezier new_bez = item->bezier();
 
             int index = *item->selected_indices().begin();
             if ( bez.closed() || (index > 0 && index < bez.size() - 1) )
@@ -438,7 +434,7 @@ public:
 
                 new_bez.set_segment(index-1, approx);
             }
-            prop->set_undoable(QVariant::fromValue(new_bez));
+            item->set_bezier(new_bez);
         }
 
         item->clear_selected_indices();
@@ -685,7 +681,7 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
             case Private::VertexAdd:
                 if ( d->insert_item )
                 {
-                    d->insert_item->target_property()->split_segment(d->insert_params.index, d->insert_params.factor);
+                    d->insert_item->split_segment(d->insert_params.index, d->insert_params.factor);
                     exit_add_point_mode();
                 }
                 break;
@@ -815,7 +811,7 @@ void tools::EditTool::selection_set_vertex_type(math::bezier::PointType t)
         auto bez = p.first->bezier();
         for ( int index : p.first->selected_indices() )
             bez[index].set_point_type(t);
-        p.first->target_property()->set_undoable(QVariant::fromValue(bez));
+        p.first->set_bezier(bez);
     }
 }
 
@@ -873,7 +869,7 @@ void tools::EditTool::selection_straighten()
         {
             if ( !macro.started() )
                 macro.start();
-            p.first->target_property()->set_undoable(QVariant::fromValue(bez));
+            p.first->set_bezier(bez);
         }
     }
 }
@@ -923,7 +919,7 @@ void tools::EditTool::selection_curve()
         {
             if ( !macro.started() )
                 macro.start();
-            p.first->target_property()->set_undoable(QVariant::fromValue(bez));
+            p.first->set_bezier(bez);
         }
     }
 }

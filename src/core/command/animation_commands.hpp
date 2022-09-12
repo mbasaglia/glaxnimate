@@ -228,4 +228,26 @@ private:
 };
 
 
+/**
+ * \brief Command that sets the path of an animated position
+ */
+class SetPositionBezier : public MergeableCommand<Id::SetMultipleAnimated, SetPositionBezier>
+{
+public:
+    SetPositionBezier(model::AnimatedProperty<QPointF>* prop, math::bezier::Bezier after, bool commit, const QString& name = "");
+    SetPositionBezier(model::AnimatedProperty<QPointF>* prop, math::bezier::Bezier before, math::bezier::Bezier after, bool commit, const QString& name = "");
+
+    void undo() override;
+
+    void redo() override;
+
+    bool merge_with(const SetPositionBezier& other);
+
+private:
+    model::AnimatedProperty<QPointF>* property;
+    math::bezier::Bezier before;
+    math::bezier::Bezier after;
+};
+
+
 } // namespace glaxnimate::command

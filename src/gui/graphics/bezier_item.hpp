@@ -16,7 +16,7 @@ class PointItem : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    PointItem(int index, const math::bezier::Point& point, QGraphicsItem* parent, model::AnimatedProperty<math::bezier::Bezier>* property);
+    PointItem(int index, const math::bezier::Point& point, QGraphicsItem* parent, model::AnimatableBase* property);
 
     QRectF boundingRect() const override;
 
@@ -84,6 +84,7 @@ class BezierItem : public TypedItem<Types::BezierItem>
 
 public:
     BezierItem(model::AnimatedProperty<math::bezier::Bezier>* property, QGraphicsItem* parent=nullptr);
+    BezierItem(model::AnimatedProperty<QPointF>* property, QGraphicsItem* parent=nullptr);
 
     QRectF boundingRect() const override;
 
@@ -91,7 +92,9 @@ public:
 
     void set_type(int index, math::bezier::PointType type);
 
-    model::AnimatedProperty<math::bezier::Bezier>* target_property() const;
+    model::AnimatableBase* target_property() const;
+    model::AnimatedProperty<math::bezier::Bezier>* target_bezier_property() const;
+    model::AnimatedProperty<QPointF>* target_position_property() const;
     model::VisualNode* target_object() const;
 
     const std::set<int>& selected_indices();
@@ -102,8 +105,18 @@ public:
 
     const math::bezier::Bezier& bezier() const;
 
+    void split_segment(int index, qreal factor);
+
 public slots:
-    void set_bezier(const math::bezier::Bezier& bez);
+    /**
+     * \brief Updates the bezier without updating the property
+     */
+    void update_bezier(const math::bezier::Bezier& bez);
+
+    /**
+     * \brief Updates the bezier and updates the property
+     */
+    void set_bezier(const math::bezier::Bezier& bez, bool commit = true);
 
     void remove_point(int index);
 
@@ -116,7 +129,8 @@ private:
 
     math::bezier::Bezier bezier_;
     std::vector<std::unique_ptr<PointItem>> items;
-    model::AnimatedProperty<math::bezier::Bezier>* property;
+    model::AnimatedProperty<math::bezier::Bezier>* property_bezier;
+    model::AnimatedProperty<QPointF>* property_pos;
     utils::PseudoMutex updating;
     std::set<int> selected_indices_;
 };

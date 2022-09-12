@@ -368,3 +368,43 @@ void glaxnimate::command::RemoveAllKeyframes::undo()
 }
 
 
+glaxnimate::command::SetPositionBezier::SetPositionBezier(
+    model::AnimatedProperty<QPointF>* prop,
+    math::bezier::Bezier after,
+    bool commit,
+    const QString& name
+)
+    : SetPositionBezier(prop, prop->bezier(), std::move(after), commit, name)
+{
+}
+
+glaxnimate::command::SetPositionBezier::SetPositionBezier(
+    model::AnimatedProperty<QPointF>* prop,
+    math::bezier::Bezier before,
+    math::bezier::Bezier after,
+    bool commit,
+    const QString& name
+) : Parent(name.isEmpty() ? QObject::tr("Update animation path") : name, commit),
+    property(prop),
+    before(std::move(before)),
+    after(std::move(after))
+{
+}
+
+bool glaxnimate::command::SetPositionBezier::merge_with(const glaxnimate::command::SetPositionBezier& other)
+{
+    return property == other.property;
+}
+
+void glaxnimate::command::SetPositionBezier::undo()
+{
+    property->set_bezier(before);
+}
+
+void glaxnimate::command::SetPositionBezier::redo()
+{
+    property->set_bezier(after);
+}
+
+
+

@@ -10,6 +10,7 @@ enum class Id {
     SetMultipleProperties,
     SetKeyframe,
     SetMultipleAnimated,
+    SetPositionBezier,
 
     // For additional commands, use values increadising from here
     CustomCommand,

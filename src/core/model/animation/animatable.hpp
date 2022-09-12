@@ -372,6 +372,16 @@ public:
         return solver.solve(len.at_ratio(factor).ratio);
     }
 
+    void set_point(const math::bezier::Point& point)
+    {
+        point_ = point;
+    }
+
+    const math::bezier::Point& point() const
+    {
+        return point_;
+    }
+
 private:
     math::bezier::Point point_;
     bool linear = true;
@@ -882,5 +892,90 @@ private:
     bool cycle_;
 };
 
+template<>
+class AnimatedProperty<QPointF> : public detail::AnimatedProperty<QPointF>
+{
+public:
+    AnimatedProperty(
+        Object* object,
+        const QString& name,
+        reference default_value,
+        PropertyCallback<void, QPointF> emitter = {},
+        int flags = 0
+    ) : detail::AnimatedProperty<QPointF>(object, name, default_value, std::move(emitter), flags)
+    {
+    }
+
+public:
+    bool set_bezier(math::bezier::Bezier bezier)
+    {
+        if ( bezier.closed() && !bezier.empty() && !math::fuzzy_compare(bezier[0].pos, bezier.back().pos) )
+            bezier.push_back(bezier[0]);
+
+        // TODO if sizes don't match, re-arrange keyframes based on
+        // how far keyframes are in the bezier
+        // eg: a point at 50% of the length will result in a keyframe
+        // at time (keyframes[0].time + keyframes[-1].time) / 2
+        if ( bezier.size() != int(keyframes_.size()) )
+            return false;
+
+        for ( int i = 0; i < bezier.size(); i++ )
+        {
+            keyframes_[i]->set_point(bezier[i]);
+            on_keyframe_updated(keyframes_[i]->time(), i-1, i+1);
+        }
+
+        value_ = get_at_impl(time()).second;
+        emitter(this->object(), value_);
+        return true;
+    }
+
+    math::bezier::Bezier bezier() const
+    {
+        math::bezier::Bezier bez;
+        for ( const auto& kf : keyframes_ )
+            bez.push_back(kf->point());
+
+        return bez;
+    }
+
+    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr) override
+    {
+        if ( auto v = detail::variant_cast<QPointF>(val) )
+            return detail::AnimatedProperty<QPointF>::set_keyframe(time, *v, info);
+
+        // We accept a bezier here so it can be used with SetMultipleAnimated
+        if ( auto v = detail::variant_cast<math::bezier::Bezier>(val) )
+        {
+            set_bezier(*v);
+            return nullptr;
+        }
+
+        return nullptr;
+    }
+
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
+    {
+        return detail::AnimatedProperty<QPointF>::set_keyframe(time, value, info);
+    }
+
+    bool set_value(const QVariant& val) override
+    {
+        if ( auto v = detail::variant_cast<QPointF>(val) )
+            return detail::AnimatedProperty<QPointF>::set(*v);
+
+        if ( auto v = detail::variant_cast<math::bezier::Bezier>(val) )
+            return set_bezier(*v);
+
+        return false;
+    }
+
+    bool valid_value(const QVariant& val) const override
+    {
+        if ( detail::variant_cast<QPointF>(val) || detail::variant_cast<math::bezier::Bezier>(val) )
+            return true;
+        return false;
+    }
+};
 
 } // namespace glaxnimate::model
