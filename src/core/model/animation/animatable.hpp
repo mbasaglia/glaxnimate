@@ -9,6 +9,9 @@
 #include "model/animation/keyframe_transition.hpp"
 #include "model/property/property.hpp"
 #include "math/math.hpp"
+#include "math/bezier/point.hpp"
+#include "math/bezier/solver.hpp"
+#include "math/bezier/bezier_length.hpp"
 
 /*
  * Arguments: type, name, default, emitter, flags
@@ -296,11 +299,6 @@ public:
         return value_;
     }
 
-    Type& get_reference()
-    {
-        return value_;
-    }
-
     QVariant value() const override
     {
         return QVariant::fromValue(value_);
@@ -316,15 +314,68 @@ public:
         return false;
     }
 
-    value_type lerp(reference other, double t) const
+    value_type lerp(const Keyframe& other, double t) const
     {
-        return math::lerp(value_, other, this->transition().lerp_factor(t));
+        return math::lerp(value_, other.get(), this->transition().lerp_factor(t));
     }
 
 private:
     Type value_;
 };
 
+
+template<>
+class Keyframe<QPointF> : public KeyframeBase
+{
+public:
+    using value_type = QPointF;
+    using reference = const QPointF&;
+
+    Keyframe(FrameTime time, const QPointF& value)
+        : KeyframeBase(time), point_(value) {}
+
+    void set(reference value)
+    {
+        point_.translate_to(value);
+    }
+
+    reference get() const
+    {
+        return point_.pos;
+    }
+
+    QVariant value() const override
+    {
+        return QVariant::fromValue(get());
+    }
+
+    bool set_value(const QVariant& val) override
+    {
+        if ( auto v = detail::variant_cast<QPointF>(val) )
+        {
+            set(*v);
+            return true;
+        }
+        return false;
+    }
+
+    value_type lerp(const Keyframe& other, double t) const
+    {
+        auto factor = transition().lerp_factor(t);
+        if ( linear && other.linear )
+            return math::lerp(get(), other.get(), factor);
+
+        math::bezier::CubicBezierSolver<QPointF> solver(
+            point_.pos, point_.tan_out, other.point_.tan_in, other.point_.pos
+        );
+        math::bezier::LengthData len(solver, 20);
+        return solver.solve(len.at_ratio(factor).ratio);
+    }
+
+private:
+    math::bezier::Point point_;
+    bool linear = true;
+};
 
 template<class Type>
 class AnimatedProperty;
@@ -752,14 +803,14 @@ protected:
         const keyframe_type* second = keyframe(index+1);
         double scaled_time = (time - first->time()) / (second->time() - first->time());
         double lerp_factor = first->transition().lerp_factor(scaled_time);
-        return {nullptr, first->lerp(second->get(), lerp_factor)};
+        return {nullptr, first->lerp(*second, lerp_factor)};
     }
 
     QVariant do_mid_transition_value(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio) const override
     {
         return QVariant::fromValue(
             static_cast<const keyframe_type*>(kf_before)->lerp(
-                static_cast<const keyframe_type*>(kf_after)->get(),
+                *static_cast<const keyframe_type*>(kf_after),
                 ratio
             )
         );
