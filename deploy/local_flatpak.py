@@ -12,10 +12,10 @@ with open(original) as f:
 
 
 
-data["modules"][0]["sources"] = {
+data["modules"][0]["sources"] = [{
     "type": "dir",
     "path": str(root),
-    "skip": ["build"]
-}
+    "skip": ["build/flatpak_out"]
+}]
 
 yaml.dump(data, sys.stdout)

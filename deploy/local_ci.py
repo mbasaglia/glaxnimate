@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
+import os
 import yaml
-import pathlib
 import shlex
+import pathlib
 import argparse
 import subprocess
 from collections import namedtuple
@@ -39,7 +40,9 @@ def run_job(data: CiData):
     job_filename = data.args.job.replace(":", "_").replace("/", "_")
     work_dir = parent_dir / job_filename
 
-    if not work_dir.exists():
+    if data.args.local_files:
+        work_dir = data.args.clone_url
+    elif not work_dir.exists():
         parent_dir.mkdir(parents=True, exist_ok=True)
         git_args = [data.args.clone_url, job_filename, "-b", data.args.branch]
         if git_recursive:
@@ -68,6 +71,9 @@ def run_job(data: CiData):
         docker_vars.append("-e")
         docker_vars.append("%s=%s" % item)
 
+    if data.args.privileged:
+        docker_vars.append("--privileged")
+
     exec_cmd([
         "docker",
         "run", "-it",
@@ -94,6 +100,8 @@ def main():
     sub_run = sub.add_parser("run")
     sub_run.set_defaults(action=run_job)
     sub_run.add_argument("job")
+    sub_run.add_argument("--local-files", action="store_true", help="Use the directory from --clone-url as is instead of cloning from git")
+    sub_run.add_argument("--privileged", action="store_true")
     sub_run.add_argument("--clone-url", default=str(root)) # default="https://gitlab.com/mattbas/glaxnimate.git")
     sub_run.add_argument("--work-path", default=pathlib.Path("/tmp/glaxnimate_ci"), type=pathlib.Path)
     sub_run.add_argument("--branch", "-b", default="master")
