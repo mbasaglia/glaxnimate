@@ -498,6 +498,5 @@ linux:flatpak:
         - flatpak install -y org.kde.Sdk/x86_64/6.3
     script:
         - mkdir -p build/flatpak_out
-        - deploy/local_flatpak.py >org.mattbas.Glaxnimate.yml
-        - cat org.mattbas.Glaxnimate.yml
+        - deploy/local_flatpak.py | tee org.mattbas.Glaxnimate.yml
         - flatpak-builder build/flatpak_out org.mattbas.Glaxnimate.yml
