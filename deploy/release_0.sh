@@ -35,4 +35,16 @@ else
     echo "Git tag OK"
 fi
 
+
+METAINFO_FILE="$HERE/org.mattbas.Glaxnimate.metainfo.xml"
+metainfo_release_tag="version=\"$TAG_NAME\" date=\"`date +%Y-%m-%d`\""
+if ! grep -q -F "$metainfo_release_tag" "$METAINFO_FILE"
+then
+    sed -r "$METAINFO_FILE" -e "s/(<release )[^>]*(>.*)/\1$metainfo_release_tag\2/"
+    git add "$METAINFO_FILE"
+    git commit -m "Update metainfo"
+
+fi
+
+
 "$HERE/tag-branch.sh"

@@ -35,5 +35,8 @@
         <mediatype>application/vnd.glaxnimate.rawr+json</mediatype>
     </provides>
     <content_rating type="oars-1.1" />
+    <releases>
+        <release version="0.5.1" date="2022-09-24"></release>
+    </releases>
 </component>
 
