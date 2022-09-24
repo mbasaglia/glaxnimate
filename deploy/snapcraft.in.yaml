@@ -19,7 +19,7 @@ passthrough:
 apps:
     ${PROJECT_SLUG}:
         command: bin/${PROJECT_SLUG}
-        desktop: share/${PROJECT_SLUG}/${PROJECT_SLUG}/${PROJECT_SLUG}.desktop
+        desktop: share/applications/${PROJECT_ID}.desktop
         plugs:
             - desktop
             - desktop-legacy

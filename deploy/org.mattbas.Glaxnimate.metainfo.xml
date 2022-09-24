@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- https://www.freedesktop.org/software/appstream/docs/chap-Metadata.html#spec-component-filespec -->
+<component type="desktop">
+    <id>org.mattbas.Glaxnimate</id>
+    <metadata_license>CC-BY-SA-4.0</metadata_license>
+    <project_license>GPL-3.0+</project_license>
+    <name>Glaxnimate</name>
+    <summary>Vector Animation Editor</summary>
+    <description>
+        <p>Glaxnimate is a vector animation program.</p>
+        <ul>
+            <li>Lottie</li>
+            <li>Animated SVG</li>
+            <li>Animated WebP</li>
+            <li>Scripting Support</li>
+        </ul>
+    </description>
+    <categories>
+        <category>Graphics</category>
+    </categories>
+    <url type="homepage">https://glaxnimate.mattbas.org/</url>
+    <url type="bugtracker">https://gitlab.com/mattbas/glaxnimate/-/issues</url>
+    <url type="help">https://glaxnimate.mattbas.org/manual/</url>
+    <url type="donation">https://glaxnimate.mattbas.org/donate/</url>
+<!--     <url type="contribute">https://glaxnimate.mattbas.org/contributing/</url> -->
+    <screenshots>
+        <screenshot type="default">
+            <caption>Glaxnimate main window</caption>
+            <image>https://glaxnimate.mattbas.org/img/screenshots/main_window/main_window.png</image>
+        </screenshot>
+    </screenshots>
+    <provides>
+        <binary>glaxnimate</binary>
+        <mediatype>image/svg+xml</mediatype>
+        <mediatype>application/vnd.glaxnimate.rawr+json</mediatype>
+    </provides>
+    <content_rating type="oars-1.1" />
+</component>
+

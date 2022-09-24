@@ -10,6 +10,7 @@ set(LIB_NAME_GUI "${PROJECT_SLUG}_gui")
 set(LIB_NAME_PYTHON "${PROJECT_SLUG}_python_lib")
 set(LIB_NAME_DESKTOP "${PROJECT_SLUG}_desktop")
 set(DATA_INSTALL "share/${PROJECT_SLUG}/${PROJECT_SLUG}")
+set(PROJECT_ID "org.mattbas.Glaxnimate")
 
 set(PROJECT_HOMEPAGE_URL "https://glaxnimate.mattbas.org/")
 set(URL_DOCS "https://glaxnimate.mattbas.org/")
@@ -102,7 +103,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Potrace
-if ( ANDROID )
+option(GLAXNIMATE_SYSTEM_POTRACE "Use the system potrace libarary" ON)
+if ( ANDROID OR NOT GLAXNIMATE_SYSTEM_POTRACE )
+    message(STATUS "Using bundled potrace")
     set(CMAKE_C_COMPILE_OBJECT ${CMAKE_CXX_COMPILE_OBJECT})
     add_subdirectory(external/potrace/)
     set(Potrace_LIBRARIES potrace)
@@ -172,6 +175,9 @@ add_custom_target(
     release_check
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/deploy/release_check.py ${VERSION_NAKED}
 )
+
+# Misc files
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/deploy/org.mattbas.Glaxnimate.metainfo.xml DESTINATION share/metainfo)
 
 # Packaging
 # -- see https://gitlab.kitware.com/cmake/community/-/wikis/doc/cpack/PackageGenerators
