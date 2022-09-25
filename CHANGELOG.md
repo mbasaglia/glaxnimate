@@ -1,3 +1,10 @@
+## 0.5.2
+
+* Other:
+    * Added Flatpack
+    * Fixed Freedesktop file naming
+    * Added Freedesktop metainfo
+
 ## 0.5.1
 
 * Editing:

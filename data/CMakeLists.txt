@@ -52,13 +52,14 @@ install(FILES ${LINGUIST_OUTPUT_FILES} DESTINATION ${DATA_INSTALL}/translations/
 # Desktop
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/glaxnimate.in.desktop ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop DESTINATION ${DATA_INSTALL})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop DESTINATION share/applications)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/glaxnimate.desktop DESTINATION share/applications RENAME ${PROJECT_ID}.desktop)
 
 # Icon
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/file-icon.svg ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}-file.svg COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/logo/logo.svg ${CMAKE_CURRENT_SOURCE_DIR}/images/logo.svg COPYONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/scalable/apps/ )
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/scalable/apps/ RENAME ${PROJECT_ID}.svg )
 
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
@@ -70,6 +71,7 @@ add_custom_target(
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png
 )
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/${PROJECT_SLUG}.png DESTINATION share/icons/hicolor/512x512/apps )
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/images/${PROJECT_SLUG}.svg DESTINATION share/icons/hicolor/512x512/apps/ RENAME ${PROJECT_ID}.png )
 
 # Plugins
 install(DIRECTORY plugins DESTINATION ${DATA_INSTALL})

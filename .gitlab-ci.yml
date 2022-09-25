@@ -484,3 +484,19 @@ linux:pypi_deploy_tag:
             #- build/glaxnimate-x86_64.zip
             #- build/checksum.txt
     #timeout: 3 hours
+
+
+linux:flatpak:
+    image: ubuntu:latest
+    stage: build
+    before_script:
+        - apt-get update -qq
+        - apt install -y flatpak-builder python3 python3-pip
+        - pip install pyyaml
+        - flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+        - flatpak install -y org.kde.Platform/x86_64/6.3
+        - flatpak install -y org.kde.Sdk/x86_64/6.3
+    script:
+        - mkdir -p build/flatpak_out
+        - deploy/local_flatpak.py | tee org.mattbas.Glaxnimate.yml
+        - flatpak-builder build/flatpak_out org.mattbas.Glaxnimate.yml
