@@ -104,3 +104,10 @@ You can use the script that adds all that
 
     # Append the path to the iso file
     qemu-system-x86_64 -m 4G -boot d -enable-kvm -smp 3 -net nic -net user -cdrom
+
+## Various Repositories
+
+* [FlatHub](https://github.com/flathub/org.mattbas.Glaxnimate)
+* Aur [Stable](https://aur.archlinux.org/packages/glaxnimate) [Dev](https://aur.archlinux.org/packages/glaxnimate-git)
+* [PyPI](https://pypi.org/project/glaxnimate/)
+* [Snapcraft](https://snapcraft.io/glaxnimate)
