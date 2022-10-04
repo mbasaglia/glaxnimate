@@ -30,6 +30,10 @@ If you enjoy using Glaxnimate consider [donating](donate.md).
 <td><i class="fab fa-freebsd"></i> <a href="https://www.freshports.org/graphics/glaxnimate/">FreeBSD</a></td>
 <td><a href="#freebsd">Notes</a></td>
 </tr>
+<tr>
+<td><img src="/img/misc/Flatpak_Logo.svg" style="height:1.2rem;" /> <a href="https://flathub.org/apps/details/org.mattbas.Glaxnimate">FlatPak</a></td>
+<td><a href="#flatpak">Notes</a></td>
+</tr>
 </table>
 
 
@@ -149,3 +153,7 @@ This package is for the [python module](contributing/scripting/index.md) only, n
 ## FreeBSD
 
     pkg install glaxnimate
+
+## FlatPak
+
+    flatpak install flathub org.mattbas.Glaxnimate
