@@ -441,7 +441,8 @@ void register_py_module(py::module& glaxnimate_module)
     register_constructible<model::MainComposition, model::Composition>(model);
 
     define_animatable(model);
-    register_animatable<QPointF>(detail);
+    register_from_meta<model::detail::AnimatedPropertyPosition, model::AnimatableBase>(detail);
+    register_animatable<QPointF, model::detail::AnimatedPropertyPosition>(detail);
     register_animatable<QSizeF>(detail);
     register_animatable<QVector2D>(detail);
     register_animatable<QColor>(detail);

@@ -265,6 +265,7 @@ graphics::BezierItem::BezierItem(model::AnimatedProperty<math::bezier::Bezier>* 
 glaxnimate::gui::graphics::BezierItem::BezierItem(model::AnimatedProperty<QPointF>* property, QGraphicsItem* parent)
 : Ctor(parent), property_pos(property)
 {
+    update_bezier(property->bezier());
 }
 
 
@@ -360,12 +361,21 @@ void graphics::BezierItem::do_update(bool commit, const QString& name)
 {
     auto lock = updating.get_lock();
 
-    target_property()->object()->push_command(new command::SetMultipleAnimated(
-        name,
-        commit,
-        {target_property()},
-        QVariant::fromValue(bezier_)
-    ));
+    if ( property_bezier )
+    {
+        property_bezier->object()->push_command(new command::SetMultipleAnimated(
+            name,
+            commit,
+            {property_bezier},
+            QVariant::fromValue(bezier_)
+        ));
+    }
+    else
+    {
+        property_pos->object()->push_command(new command::SetPositionBezier(
+            property_pos, bezier_, commit, name
+        ));
+    }
 
     prepareGeometryChange();
 }
@@ -400,8 +410,6 @@ model::AnimatedProperty<QPointF> * glaxnimate::gui::graphics::BezierItem::target
 {
     return property_pos;
 }
-
-
 
 model::VisualNode* graphics::BezierItem::target_object() const
 {
@@ -457,7 +465,5 @@ void glaxnimate::gui::graphics::BezierItem::split_segment(int index, qreal facto
     if ( property_bezier )
         property_bezier->split_segment(index, factor);
     else
-    {
-        /// \todo position bezier split segment
-    }
+        property_pos->split_segment(index, factor);
 }

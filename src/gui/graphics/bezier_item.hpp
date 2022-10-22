@@ -129,8 +129,8 @@ private:
 
     math::bezier::Bezier bezier_;
     std::vector<std::unique_ptr<PointItem>> items;
-    model::AnimatedProperty<math::bezier::Bezier>* property_bezier;
-    model::AnimatedProperty<QPointF>* property_pos;
+    model::AnimatedProperty<math::bezier::Bezier>* property_bezier = nullptr;
+    model::AnimatedProperty<QPointF>* property_pos = nullptr;
     utils::PseudoMutex updating;
     std::set<int> selected_indices_;
 };

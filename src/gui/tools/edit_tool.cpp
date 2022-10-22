@@ -14,6 +14,9 @@
 #include "math/bezier/cubic_struts.hpp"
 #include "model/shapes/shape.hpp"
 #include "model/shapes/text.hpp"
+#include "model/shapes/rect.hpp"
+#include "model/shapes/ellipse.hpp"
+#include "model/shapes/polystar.hpp"
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -204,11 +207,17 @@ public:
         {
             scene->show_editors(node);
 
-            if ( meta->inherits(&model::Path::staticMetaObject) )
+            if (
+                meta->inherits(&model::Path::staticMetaObject) ||
+                meta->inherits(&model::Rect::staticMetaObject) ||
+                meta->inherits(&model::Ellipse::staticMetaObject) ||
+                meta->inherits(&model::PolyStar::staticMetaObject)
+            )
                 extract_editor(scene, node);
         }
         else if ( meta->inherits(&model::Group::staticMetaObject) )
         {
+            extract_editor(scene, node);
             for ( const auto& sub : static_cast<model::Group*>(node)->shapes )
                 impl_extract_selection_recursive_item(scene, sub.get());
         }

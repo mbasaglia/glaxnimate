@@ -369,7 +369,7 @@ void glaxnimate::command::RemoveAllKeyframes::undo()
 
 
 glaxnimate::command::SetPositionBezier::SetPositionBezier(
-    model::AnimatedProperty<QPointF>* prop,
+    model::detail::AnimatedPropertyPosition* prop,
     math::bezier::Bezier after,
     bool commit,
     const QString& name
@@ -379,7 +379,7 @@ glaxnimate::command::SetPositionBezier::SetPositionBezier(
 }
 
 glaxnimate::command::SetPositionBezier::SetPositionBezier(
-    model::AnimatedProperty<QPointF>* prop,
+    model::detail::AnimatedPropertyPosition* prop,
     math::bezier::Bezier before,
     math::bezier::Bezier after,
     bool commit,
@@ -405,6 +405,3 @@ void glaxnimate::command::SetPositionBezier::redo()
 {
     property->set_bezier(after);
 }
-
-
-
