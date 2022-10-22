@@ -507,6 +507,8 @@ private:
 
     void load_styler(model::Styler* styler, const QJsonObject& json_obj)
     {
+        load_visibility(styler, json_obj);
+
         std::set<QString> props = load_basic_setup(json_obj);
         for ( const QMetaObject* mo = styler->metaObject(); mo; mo = mo->superClass() )
             load_properties(
