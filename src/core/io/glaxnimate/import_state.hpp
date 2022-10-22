@@ -370,7 +370,9 @@ private:
                         auto pkf = static_cast<model::Keyframe<QPointF>*>(kf);
                         QPointF tan_in = pkf->get();
                         QPointF tan_out = pkf->get();
-                        if ( load_2d(kfobj["tan_in"], "x", "y", tan_in) || load_2d(kfobj["tan_out"], "x", "y", tan_out) )
+                        bool load_ti = load_2d(kfobj["tan_in"], "x", "y", tan_in);
+                        bool load_to = load_2d(kfobj["tan_out"], "x", "y", tan_out);
+                        if ( load_ti || load_to )
                         {
                             auto type = math::bezier::PointType(kfobj["point_type"].toInt());
                             pkf->set_point({pkf->get(), tan_in, tan_out, type});

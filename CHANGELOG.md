@@ -1,5 +1,7 @@
 ## 0.5.2
 
+* Editing:
+    * Added support for animation following a path
 * Other:
     * Added Flatpack
     * Fixed Freedesktop file naming
