@@ -140,6 +140,8 @@ bool glaxnimate::model::detail::AnimatedPropertyPosition::set_bezier(math::bezie
 
     value_ = get_at_impl(time()).second;
     emitter(this->object(), value_);
+    emit bezier_set(bezier);
+
     return true;
 }
 

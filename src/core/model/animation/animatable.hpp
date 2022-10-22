@@ -867,6 +867,10 @@ public:
     bool set_value(const QVariant& val) override;
 
     bool valid_value(const QVariant& val) const override;
+
+signals:
+    /// Invoked on set_bezier()
+    void  bezier_set(const math::bezier::Bezier& bezier);
 };
 
 

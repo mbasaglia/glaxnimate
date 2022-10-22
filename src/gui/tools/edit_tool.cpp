@@ -77,6 +77,8 @@ public:
                 math::bezier::Bezier bezier = item->bezier();
                 before.push_back(QVariant::fromValue(bezier));
 
+                auto p1 = bezier[0].pos;
+
                 QPointF pos = transform.map(scene_pos);
                 QPointF delta = pos - start_point;
                 for ( int i : item->selected_indices() )
