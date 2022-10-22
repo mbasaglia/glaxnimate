@@ -122,6 +122,7 @@ public slots:
 
 private slots:
     void on_dragged(int index, const math::bezier::Point& point, bool commit, const QString& name);
+    void refresh_from_position_property();
 
 private:
     void do_update(bool commit, const QString& name);

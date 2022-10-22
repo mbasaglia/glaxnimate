@@ -266,6 +266,9 @@ glaxnimate::gui::graphics::BezierItem::BezierItem(model::AnimatedProperty<QPoint
 : Ctor(parent), property_pos(property)
 {
     update_bezier(property->bezier());
+    connect(property, &model::AnimatableBase::keyframe_added, this, &BezierItem::refresh_from_position_property);
+    connect(property, &model::AnimatableBase::keyframe_removed, this, &BezierItem::refresh_from_position_property);
+    connect(property, &model::AnimatableBase::keyframe_updated, this, &BezierItem::refresh_from_position_property);
 }
 
 
@@ -466,4 +469,9 @@ void glaxnimate::gui::graphics::BezierItem::split_segment(int index, qreal facto
         property_bezier->split_segment(index, factor);
     else
         property_pos->split_segment(index, factor);
+}
+
+void glaxnimate::gui::graphics::BezierItem::refresh_from_position_property()
+{
+    update_bezier(property_pos->bezier());
 }
