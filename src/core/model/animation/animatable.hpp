@@ -807,9 +807,12 @@ protected:
         // We have at least 2 keyframes and time is after the first keyframe
         int index = this->keyframe_index(time);
         first = keyframe(index);
+
+        // Only one keyframe needed to get the value
         if ( index == count - 1 || first->time() == time )
             return {first, first->get()};
 
+        // Interpolate between two keyframes
         const keyframe_type* second = keyframe(index+1);
         double scaled_time = (time - first->time()) / (second->time() - first->time());
         double lerp_factor = first->transition().lerp_factor(scaled_time);
