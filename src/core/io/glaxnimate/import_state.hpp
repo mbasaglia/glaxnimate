@@ -329,6 +329,8 @@ private:
             else
             {
                 model::AnimatableBase* anim = static_cast<model::AnimatableBase*>(target);
+                bool position = anim->traits().type == model::PropertyTraits::Point;
+
                 for ( auto v : jso["keyframes"].toArray() )
                 {
                     QJsonObject kfobj = v.toObject();
@@ -361,6 +363,18 @@ private:
                     else
                     {
                         kf->set_transition({{0, 0}, {1, 1}, true});
+                    }
+
+                    if ( position )
+                    {
+                        auto pkf = static_cast<model::Keyframe<QPointF>*>(kf);
+                        QPointF tan_in = pkf->get();
+                        QPointF tan_out = pkf->get();
+                        if ( load_2d(kfobj["tan_in"], "x", "y", tan_in) || load_2d(kfobj["tan_out"], "x", "y", tan_out) )
+                        {
+                            auto type = math::bezier::PointType(kfobj["point_type"].toInt());
+                            pkf->set_point({pkf->get(), tan_in, tan_out, type});
+                        }
                     }
                 }
 

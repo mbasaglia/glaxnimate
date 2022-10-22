@@ -57,9 +57,9 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         &make_graphics_item_shape,
         [](model::Rect* rect){
             auto v = std::make_unique<GraphicsEditor>(rect);
-            v->add_child<graphics::PositionItem>(&rect->position);
             if ( rect->position.keyframe_count() >= 2 )
                 v->add_child<graphics::BezierItem>(&rect->position);
+            v->add_child<graphics::PositionItem>(&rect->position);
             v->add_child<graphics::RectRounder>(rect);
             v->add_child<graphics::SizePosItem>(&rect->size, &rect->position);
             return v;
@@ -69,9 +69,9 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         &make_graphics_item_shape,
         [](model::Ellipse* rect){
             auto v = std::make_unique<GraphicsEditor>(rect);
-            v->add_child<graphics::PositionItem>(&rect->position);
             if ( rect->position.keyframe_count() >= 2 )
                 v->add_child<graphics::BezierItem>(&rect->position);
+            v->add_child<graphics::PositionItem>(&rect->position);
             v->add_child<graphics::SizePosItem>(&rect->size, &rect->position);
             return v;
         }
@@ -122,9 +122,9 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         },
         [](model::Group* layer){
             auto v = std::make_unique<GraphicsEditor>(layer);
-            v->add_child<graphics::TransformGraphicsItem>(layer->transform.get(), layer, nullptr);
             if ( layer->transform.get()->position.keyframe_count() >= 2 )
                 v->add_child<graphics::BezierItem>(&layer->transform.get()->position);
+            v->add_child<graphics::TransformGraphicsItem>(layer->transform.get(), layer, nullptr);
             return v;
         }
     );
