@@ -128,14 +128,15 @@ public:
 
     /**
      * \brief Sets a value at a keyframe
-     * \param time  Time to set the value at
-     * \param value Value to set
-     * \param info  If not nullptr, it will be written to with information about what has been node
+     * \param time          Time to set the value at
+     * \param value         Value to set
+     * \param info          If not nullptr, it will be written to with information about what has been node
+     * \param force_insert  If \b true, it will always add a new keyframe
      * \post value(time) == \p value && animate() == true
      * \return The keyframe or nullptr if it couldn't be added.
      * If there is already a keyframe at \p time the returned value might be an existing keyframe
      */
-    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value, SetKeyframeInfo* info = nullptr) = 0;
+    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value, SetKeyframeInfo* info = nullptr, bool force_insert = false) = 0;
 
     /**
      * \brief Removes the keyframe at index \p i
@@ -537,10 +538,10 @@ public:
         return QVariant::fromValue(get_at(time));
     }
 
-    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr) override
+    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr, bool force_insert = false) override
     {
         if ( auto v = detail::variant_cast<Type>(val) )
-            return static_cast<model::AnimatedProperty<Type>*>(this)->set_keyframe(time, *v, info);
+            return static_cast<model::AnimatedProperty<Type>*>(this)->set_keyframe(time, *v, info, force_insert);
         return nullptr;
     }
 
@@ -601,7 +602,7 @@ public:
         return true;
     }
 
-    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr, bool force_insert = false)
     {
         // First keyframe
         if ( keyframes_.empty() )
@@ -629,7 +630,7 @@ public:
         auto kf = keyframe(index);
 
         // Time matches, update
-        if ( kf->time() == time )
+        if ( kf->time() == time && !force_insert )
         {
             kf->set(value);
             emit this->keyframe_updated(index, kf);
@@ -860,9 +861,9 @@ public:
 
     Q_INVOKABLE math::bezier::Bezier bezier() const;
 
-    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr) override;
+    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr, bool force_insert = false) override;
 
-    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr);
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr, bool force_insert = false);
 
     bool set_value(const QVariant& val) override;
 
@@ -915,9 +916,9 @@ public:
 
     using AnimatableBase::set_keyframe;
 
-    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr, bool force_insert = false)
     {
-        return detail::AnimatedProperty<float>::set_keyframe(time, bound(value), info);
+        return detail::AnimatedProperty<float>::set_keyframe(time, bound(value), info, force_insert);
     }
 
 private:

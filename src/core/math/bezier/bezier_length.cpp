@@ -95,3 +95,33 @@ qreal glaxnimate::math::bezier::LengthData::length() const noexcept
 glaxnimate::math::bezier::LengthData::LengthData(qreal t, qreal length, qreal cumulative_length)
     : t_(t), length_(length), cumulative_length_(cumulative_length), leaf_(true)
 {}
+
+qreal glaxnimate::math::bezier::LengthData::from_ratio(qreal ratio) const
+{
+    if ( ratio <= 0 )
+        return 0;
+
+    if ( ratio >= 1 )
+        return length_;
+
+    for ( int i = 0; i < int(children_.size()); i++ )
+    {
+        if ( qFuzzyCompare(children_[i].t_, ratio) )
+            return children_[i].cumulative_length_;
+
+        if ( children_[i].t_ >= ratio )
+        {
+            if ( i == 0 )
+            {
+                qreal factor = ratio * children_[i].t_;
+                return factor * children_[i].cumulative_length_;
+            }
+
+            qreal factor = (ratio - children_[i-1].t_) * (children_[i].t_ - children_[i-1].t_);
+            return math::lerp(children_[i-1].cumulative_length_, children_[i].cumulative_length_, factor);
+        }
+    }
+
+    return length_;
+}
+

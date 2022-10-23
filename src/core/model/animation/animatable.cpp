@@ -111,13 +111,54 @@ glaxnimate::model::AnimatableBase::MidTransition glaxnimate::model::AnimatableBa
 
 void glaxnimate::model::detail::AnimatedPropertyPosition::split_segment(int index, qreal factor)
 {
+    if ( keyframes_.size() < 2 )
+        return;
+
     auto before = bezier();
     auto after = before;
-
     after.split_segment(index, factor);
-    object()->push_command(new command::SetPositionBezier(
-        this, before, after, true, tr("Split Segment")
-    ));
+
+    auto parent = std::make_unique<command::ReorderedUndoCommand>(tr("Split Segment"));
+
+
+    FrameTime time = 0;
+    QVariant value;
+
+    if ( index <= 0 && factor <= 0 )
+    {
+        time = keyframes_[0]->time();
+        value = keyframes_[0]->value();
+    }
+    else if ( index >= int(keyframes_.size()) - 1 && factor >= 1 )
+    {
+        time = keyframes_.back()->time();
+        value = keyframes_.back()->value();
+    }
+    else
+    {
+        auto kf_before = keyframes_[index].get();
+        auto kf_after = keyframes_[index + 1].get();
+
+        value = kf_before->lerp(*kf_after, factor);
+
+        // Reverse length.at_ratio() to get the correct time at which the transition is equal to `value`
+        math::bezier::Solver segment(kf_before->get(), kf_before->point().tan_out, kf_after->point().tan_in, kf_after->get());
+        math::bezier::LengthData length(segment, 20);
+        qreal time_factor = qFuzzyIsNull(length.length()) ? 0 : length.from_ratio(factor) / length.length();
+        time = qRound(math::lerp(kf_before->time(), kf_after->time(), time_factor));
+    }
+
+    parent->add_command(
+        std::make_unique<command::SetKeyframe>(this, time, value, true, true),
+        0, 0
+    );
+
+    parent->add_command(
+        std::make_unique<command::SetPositionBezier>(this, before, after, true),
+        1, 1
+    );
+
+    object()->push_command(parent.release());
 }
 
 bool glaxnimate::model::detail::AnimatedPropertyPosition::set_bezier(math::bezier::Bezier bezier)
@@ -156,11 +197,11 @@ glaxnimate::math::bezier::Bezier glaxnimate::model::detail::AnimatedPropertyPosi
 
 glaxnimate::model::detail::AnimatedPropertyPosition::keyframe_type*
     glaxnimate::model::detail::AnimatedPropertyPosition::set_keyframe(
-        FrameTime time, const QVariant& val, SetKeyframeInfo* info
+        FrameTime time, const QVariant& val, SetKeyframeInfo* info, bool force_insert
 )
 {
     if ( auto v = detail::variant_cast<QPointF>(val) )
-        return detail::AnimatedProperty<QPointF>::set_keyframe(time, *v, info);
+        return detail::AnimatedProperty<QPointF>::set_keyframe(time, *v, info, force_insert);
 
     // We accept a bezier here so it can be used with SetMultipleAnimated
     if ( auto v = detail::variant_cast<math::bezier::Bezier>(val) )
@@ -174,10 +215,10 @@ glaxnimate::model::detail::AnimatedPropertyPosition::keyframe_type*
 
 glaxnimate::model::detail::AnimatedPropertyPosition::keyframe_type*
     glaxnimate::model::detail::AnimatedPropertyPosition::set_keyframe(
-        FrameTime time, reference value, SetKeyframeInfo* info
+        FrameTime time, reference value, SetKeyframeInfo* info, bool force_insert
 )
 {
-    return detail::AnimatedProperty<QPointF>::set_keyframe(time, value, info);
+    return detail::AnimatedProperty<QPointF>::set_keyframe(time, value, info, force_insert);
 }
 
 bool glaxnimate::model::detail::AnimatedPropertyPosition::set_value(const QVariant& val)

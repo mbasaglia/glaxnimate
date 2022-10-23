@@ -6,13 +6,15 @@ glaxnimate::command::SetKeyframe::SetKeyframe(
     model::AnimatableBase* prop,
     model::FrameTime time,
     const QVariant& value,
-    bool commit
+    bool commit,
+    bool force_insert
 ) : Parent(QObject::tr("Update %1 keyframe at %2").arg(prop->name()).arg(time), commit),
     prop(prop),
     time(time),
     before(prop->value(time)),
     after(value),
-    had_before(prop->has_keyframe(time))
+    had_before(prop->has_keyframe(time) && !force_insert),
+    force_insert(force_insert)
 {}
 
 void glaxnimate::command::SetKeyframe::undo()
@@ -32,7 +34,7 @@ void glaxnimate::command::SetKeyframe::redo()
     {
         auto mid = prop->mid_transition(time);
         model::AnimatableBase::SetKeyframeInfo info;
-        auto kf = prop->set_keyframe(time, after, &info);
+        auto kf = prop->set_keyframe(time, after, &info, force_insert);
         if ( kf && info.insertion && info.index > 0 && info.index + 1 < prop->keyframe_count() )
         {
             if ( mid.type != model::AnimatableBase::MidTransition::Middle )
@@ -53,7 +55,7 @@ void glaxnimate::command::SetKeyframe::redo()
     }
     else
     {
-        prop->set_keyframe(time, after, nullptr);
+        prop->set_keyframe(time, after, nullptr, force_insert);
     }
 
     if ( insert_index > 0 )
