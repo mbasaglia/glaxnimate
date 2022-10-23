@@ -120,7 +120,6 @@ void glaxnimate::model::detail::AnimatedPropertyPosition::split_segment(int inde
 
     auto parent = std::make_unique<command::ReorderedUndoCommand>(tr("Split Segment"));
 
-
     FrameTime time = 0;
     QVariant value;
 
@@ -184,6 +183,27 @@ bool glaxnimate::model::detail::AnimatedPropertyPosition::set_bezier(math::bezie
     emit bezier_set(bezier);
 
     return true;
+}
+
+
+void glaxnimate::model::detail::AnimatedPropertyPosition::remove_points(const std::set<int>& indices)
+{
+    auto parent = std::make_unique<command::ReorderedUndoCommand>(tr("Remove Nodes"));
+
+    auto before = bezier();
+    auto after = before.removed_points(indices);
+
+    int order = 0;
+    for ( int index : indices )
+    {
+        parent->add_command(std::make_unique<command::RemoveKeyframeIndex>(this, index), -order, order);
+        ++order;
+    }
+
+    parent->add_command(std::make_unique<command::SetPositionBezier>(this, before, after, true), order, order);
+
+
+    object()->push_command(parent.release());
 }
 
 glaxnimate::math::bezier::Bezier glaxnimate::model::detail::AnimatedPropertyPosition::bezier() const

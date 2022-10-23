@@ -106,6 +106,37 @@ void glaxnimate::command::RemoveKeyframeTime::redo()
     prop->remove_keyframe(index);
 }
 
+glaxnimate::command::RemoveKeyframeIndex::RemoveKeyframeIndex(
+    model::AnimatableBase* prop,
+    int index
+) : QUndoCommand(QObject::tr("Remove %1 keyframe %2").arg(prop->name()).arg(index)),
+    prop(prop),
+    index(index),
+    time(prop->keyframe(index)->time()),
+    before(prop->keyframe(index)->value())
+{
+    if ( index > 0 )
+    {
+        prev_transition_after = prev_transition_before = prop->keyframe(index-1)->transition();
+        if ( !prev_transition_after.hold() )
+            prev_transition_after.set_after(prop->keyframe(index)->transition().after());
+    }
+}
+
+void glaxnimate::command::RemoveKeyframeIndex::undo()
+{
+    prop->set_keyframe(time, before, nullptr, true);
+    if ( index > 0 )
+        prop->keyframe(index-1)->set_transition(prev_transition_before);
+
+}
+
+void glaxnimate::command::RemoveKeyframeIndex::redo()
+{
+    if ( index > 0 )
+        prop->keyframe(index-1)->set_transition(prev_transition_after);
+    prop->remove_keyframe(index);
+}
 
 glaxnimate::command::SetMultipleAnimated::SetMultipleAnimated(model::AnimatableBase* prop, QVariant after, bool commit)
     : SetMultipleAnimated(

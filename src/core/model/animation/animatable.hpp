@@ -861,6 +861,8 @@ public:
 
     Q_INVOKABLE math::bezier::Bezier bezier() const;
 
+    void remove_points(const std::set<int>& indices);
+
     keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr, bool force_insert = false) override;
 
     keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr, bool force_insert = false);

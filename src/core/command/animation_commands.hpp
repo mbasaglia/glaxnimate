@@ -62,6 +62,29 @@ private:
 };
 
 
+class RemoveKeyframeIndex: public QUndoCommand
+{
+public:
+    RemoveKeyframeIndex(
+        model::AnimatableBase* prop,
+        int index
+    );
+
+    void undo() override;
+
+    void redo() override;
+
+private:
+    model::AnimatableBase* prop;
+    int index;
+    model::FrameTime time;
+    QVariant before;
+    model::KeyframeTransition prev_transition_before;
+    model::KeyframeTransition prev_transition_after;
+};
+
+
+
 class RemoveAllKeyframes : public QUndoCommand
 {
 public:

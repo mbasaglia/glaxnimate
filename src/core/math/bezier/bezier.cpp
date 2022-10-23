@@ -122,7 +122,6 @@ math::bezier::Bezier math::bezier::Bezier::lerp(const math::bezier::Bezier& othe
     return lerped;
 }
 
-
 void math::bezier::Bezier::reverse()
 {
     std::reverse(points_.begin(), points_.end());
@@ -183,6 +182,19 @@ int glaxnimate::math::bezier::Bezier::segment_count() const
 {
     return closed_ || points_.empty() ? points_.size() : points_.size() - 1;
 }
+
+math::bezier::Bezier math::bezier::Bezier::removed_points(const std::set<int>& indices) const
+{
+    math::bezier::Bezier new_bez;
+    new_bez.set_closed(closed_);
+
+    for ( int i = 0; i < size(); i++ )
+        if ( !indices.count(i) )
+            new_bez.push_back(points_[i]);
+
+    return new_bez;
+}
+
 
 QRectF math::bezier::MultiBezier::bounding_box() const
 {
