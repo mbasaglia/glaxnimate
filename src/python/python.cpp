@@ -173,6 +173,7 @@ void define_animatable(py::module& m)
                 new command::RemoveKeyframeTime(&a, time)
             );
         }, py::arg("time"))
+        .def("clear_keyframes", &model::AnimatableBase::clear_keyframes_undoable, py::arg("value") = py::none())
     ;
 }
 

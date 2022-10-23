@@ -109,6 +109,14 @@ glaxnimate::model::AnimatableBase::MidTransition glaxnimate::model::AnimatableBa
     return mt;
 }
 
+void glaxnimate::model::AnimatableBase::clear_keyframes_undoable(QVariant value)
+{
+    if ( !value.isValid() || value.isNull() )
+        value = this->value();
+
+    object()->push_command(new command::RemoveAllKeyframes(this, std::move(value)));
+}
+
 void glaxnimate::model::detail::AnimatedPropertyPosition::split_segment(int index, qreal factor)
 {
     if ( keyframes_.size() < 2 )
@@ -257,4 +265,20 @@ bool glaxnimate::model::detail::AnimatedPropertyPosition::valid_value(const QVar
     if ( detail::variant_cast<QPointF>(val) || detail::variant_cast<math::bezier::Bezier>(val) )
         return true;
     return false;
+}
+
+void glaxnimate::model::detail::AnimatedPropertyPosition::clear_keyframes_undoable(QVariant value)
+{
+    auto command = std::make_unique<command::ReorderedUndoCommand>(tr("Clear Keyframes"));
+
+    auto curr_val = this->value();
+    command->add_command(std::make_unique<command::RemoveAllKeyframes>(this, curr_val), 0, 0);
+    command->add_command(std::make_unique<command::SetPositionBezier>(this, math::bezier::Bezier(), true), 1, 1);
+
+    if ( !value.isValid() || value.isNull() )
+        command->add_command(std::unique_ptr<command::SetMultipleAnimated>(
+                new command::SetMultipleAnimated("", {this}, {curr_val}, {value}, true)
+            ), 2, -1);
+
+    object()->push_command(new command::RemoveAllKeyframes(this, std::move(value)));
 }

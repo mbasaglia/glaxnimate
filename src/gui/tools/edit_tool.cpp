@@ -420,20 +420,16 @@ public:
             if ( sz1 >= item->bezier().size() )
             {
                 auto command = std::make_unique<command::ReorderedUndoCommand>(tr("Split Segment"));
+                QVariant value;
                 for ( int i = 0; i < pos_prop->keyframe_count(); i++ )
                 {
                     if ( !item->selected_indices().count(i) )
                     {
-                        command->add_command(std::unique_ptr<command::SetMultipleAnimated>(
-                            new command::SetMultipleAnimated("", {pos_prop}, {pos_prop->value()}, {pos_prop->keyframe(i)->value()}, true)
-                        ), 2, -1);
+                        value = pos_prop->keyframe(i)->value();
                         break;
                     }
                 }
-                command->add_command(std::make_unique<command::RemoveAllKeyframes>(pos_prop), 0, 0);
-                command->add_command(std::make_unique<command::SetPositionBezier>(pos_prop, math::bezier::Bezier(), true), 1, 1);
-
-                item->target_object()->push_command(command.release());
+                pos_prop->clear_keyframes_undoable(value);
                 return;
             }
             pos_prop->remove_points(item->selected_indices());

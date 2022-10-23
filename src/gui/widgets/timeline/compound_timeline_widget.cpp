@@ -555,9 +555,7 @@ void CompoundTimelineWidget::remove_all_keyframes()
     if ( !d->menu_anim )
         return;
 
-    d->menu_anim->object()->document()->undo_stack().push(
-        new command::RemoveAllKeyframes(d->menu_anim)
-    );
+    d->menu_anim->clear_keyframes_undoable();
 }
 
 void CompoundTimelineWidget::load_state(const QByteArray& state)
@@ -585,8 +583,15 @@ void CompoundTimelineWidget::copy_keyframe()
     QByteArray encoded;
     QDataStream stream(&encoded, QIODevice::WriteOnly);
     stream << int(d->menu_anim->traits().type);
-    stream << d->menu_kf_exit->value();
-    /// \todo tangents for position keyframes
+    if ( d->menu_anim->traits().type == model::PropertyTraits::Point )
+    {
+        auto point = static_cast<model::Keyframe<QPointF>*>(d->menu_kf_exit)->point();
+        stream << point.pos << point.tan_in << point.tan_out << short(point.type);
+    }
+    else
+    {
+        stream << d->menu_kf_exit->value();
+    }
     data->setData("application/x.glaxnimate-keyframe", encoded);
     QGuiApplication::clipboard()->setMimeData(data);
 }
@@ -607,13 +612,35 @@ void CompoundTimelineWidget::paste_keyframe()
     if ( type != d->menu_anim->traits().type )
         return;
 
-    QVariant value;
-    stream >> value;
-    /// \todo tangents for position keyframes
+    if ( d->menu_anim->traits().type == model::PropertyTraits::Point )
+    {
+        short type;
+        math::bezier::Point point;
+        stream >> point.pos >> point.tan_in >> point.tan_out >> type;
+        point.type = math::bezier::PointType(type);
 
-    d->menu_anim->object()->push_command(
-        new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), value, true)
-    );
+        auto cmd = std::make_unique<command::ReorderedUndoCommand>(tr("Paste Keyframe"));
+        auto prop = static_cast<model::AnimatedProperty<QPointF>*>(d->menu_anim);
+        auto bez = prop->bezier();
+        auto time = d->ui.timeline->highlighted_time();
+        cmd->add_command(std::make_unique<command::SetKeyframe>(d->menu_anim, time, QVariant::fromValue(point.pos), true), 0, 0);
+        int index = prop->keyframe_index(time);
+        if ( !prop->animated() || prop->keyframe(index)->time() != time)
+        {
+            bez.insert_point(index, point);
+            cmd->add_command(std::make_unique<command::SetPositionBezier>(prop, bez, true), 1, 1);
+        }
+        d->menu_anim->object()->push_command(cmd.release());
+    }
+    else
+    {
+        QVariant value;
+        stream >> value;
+
+        d->menu_anim->object()->push_command(
+            new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), value, true)
+        );
+    }
 }
 
 void CompoundTimelineWidget::collapse_index(const QModelIndex& index)

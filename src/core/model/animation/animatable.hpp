@@ -266,6 +266,12 @@ public:
 
     MidTransition mid_transition(FrameTime time) const;
 
+    /**
+     * \brief Clears all keyframes and creates an associated undo action
+     * \param value Value to be set after clearing
+     */
+    virtual void clear_keyframes_undoable(QVariant value = {});
+
 signals:
     void keyframe_added(int index, KeyframeBase* keyframe);
     void keyframe_removed(int index);
@@ -870,6 +876,8 @@ public:
     bool set_value(const QVariant& val) override;
 
     bool valid_value(const QVariant& val) const override;
+
+    void clear_keyframes_undoable(QVariant value) override;
 
 signals:
     /// Invoked on set_bezier()

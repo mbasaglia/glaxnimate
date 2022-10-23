@@ -1000,9 +1000,7 @@ public:
                     connect(btn_rm_kf, &QToolButton::clicked, node, [anim]{
                         if ( anim->animated() )
                         {
-                            anim->object()->push_command(
-                                new command::RemoveAllKeyframes(anim)
-                            );
+                            anim->clear_keyframes_undoable();
                         }
                     });
                     btn_rm_kf_all->setIconSize(QSize(80, 80));

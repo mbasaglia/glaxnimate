@@ -88,7 +88,7 @@ private:
 class RemoveAllKeyframes : public QUndoCommand
 {
 public:
-    RemoveAllKeyframes(model::AnimatableBase* prop);
+    RemoveAllKeyframes(model::AnimatableBase* prop, QVariant value);
 
     void undo() override;
 

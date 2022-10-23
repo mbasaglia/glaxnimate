@@ -66,9 +66,7 @@ inline void add_property_menu_actions(QObject* thus, QMenu* menu, QGraphicsItem*
                 QMenu::tr("Clear Animations"),
                 thus,
                 [prop]{
-                    prop->object()->push_command(
-                        new command::RemoveAllKeyframes(prop)
-                    );
+                    prop->clear_keyframes_undoable();
                 }
             );
         }
