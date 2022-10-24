@@ -353,14 +353,19 @@ public:
 
     QVariant value() const override
     {
-        return QVariant::fromValue(get());
+        return QVariant::fromValue(point_);
     }
 
     bool set_value(const QVariant& val) override
     {
-        if ( auto v = detail::variant_cast<QPointF>(val) )
+        if ( val.userType() == QMetaType::QPointF )
         {
-            set(*v);
+            set(val.value<QPointF>());
+            return true;
+        }
+        else if ( auto v = detail::variant_cast<math::bezier::Point>(val) )
+        {
+            set_point(*v);
             return true;
         }
         return false;
@@ -876,8 +881,6 @@ public:
     bool set_value(const QVariant& val) override;
 
     bool valid_value(const QVariant& val) const override;
-
-    void clear_keyframes_undoable(QVariant value) override;
 
 signals:
     /// Invoked on set_bezier()

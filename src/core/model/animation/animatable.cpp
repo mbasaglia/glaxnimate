@@ -208,9 +208,6 @@ void glaxnimate::model::detail::AnimatedPropertyPosition::remove_points(const st
         ++order;
     }
 
-    parent->add_command(std::make_unique<command::SetPositionBezier>(this, before, after, true), order, order);
-
-
     object()->push_command(parent.release());
 }
 
@@ -228,8 +225,16 @@ glaxnimate::model::detail::AnimatedPropertyPosition::keyframe_type*
         FrameTime time, const QVariant& val, SetKeyframeInfo* info, bool force_insert
 )
 {
-    if ( auto v = detail::variant_cast<QPointF>(val) )
-        return detail::AnimatedProperty<QPointF>::set_keyframe(time, *v, info, force_insert);
+    if ( val.userType() == QMetaType::QPointF )
+        return detail::AnimatedProperty<QPointF>::set_keyframe(time, val.value<QPointF>(), info, force_insert);
+
+    if ( auto v = detail::variant_cast<math::bezier::Point>(val) )
+    {
+        auto kf = detail::AnimatedProperty<QPointF>::set_keyframe(time, v->pos, info, force_insert);
+        kf->set_point(*v);
+        emit bezier_set(bezier());
+        return kf;
+    }
 
     // We accept a bezier here so it can be used with SetMultipleAnimated
     if ( auto v = detail::variant_cast<math::bezier::Bezier>(val) )
@@ -265,20 +270,4 @@ bool glaxnimate::model::detail::AnimatedPropertyPosition::valid_value(const QVar
     if ( detail::variant_cast<QPointF>(val) || detail::variant_cast<math::bezier::Bezier>(val) )
         return true;
     return false;
-}
-
-void glaxnimate::model::detail::AnimatedPropertyPosition::clear_keyframes_undoable(QVariant value)
-{
-    auto command = std::make_unique<command::ReorderedUndoCommand>(tr("Clear Keyframes"));
-
-    auto curr_val = this->value();
-    command->add_command(std::make_unique<command::RemoveAllKeyframes>(this, curr_val), 0, 0);
-    command->add_command(std::make_unique<command::SetPositionBezier>(this, math::bezier::Bezier(), true), 1, 1);
-
-    if ( !value.isValid() || value.isNull() )
-        command->add_command(std::unique_ptr<command::SetMultipleAnimated>(
-                new command::SetMultipleAnimated("", {this}, {curr_val}, {value}, true)
-            ), 2, -1);
-
-    object()->push_command(new command::RemoveAllKeyframes(this, std::move(value)));
 }

@@ -81,7 +81,7 @@ glaxnimate::command::RemoveKeyframeTime::RemoveKeyframeTime(
     prop(prop),
     time(time),
     index(prop->keyframe_index(time)),
-    before(prop->value(time))
+    before(prop->keyframe(index)->value())
 {
     if ( index > 0 )
     {
@@ -96,7 +96,6 @@ void glaxnimate::command::RemoveKeyframeTime::undo()
     prop->set_keyframe(time, before);
     if ( index > 0 )
         prop->keyframe(index-1)->set_transition(prev_transition_before);
-
 }
 
 void glaxnimate::command::RemoveKeyframeTime::redo()

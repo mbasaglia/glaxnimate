@@ -8,6 +8,7 @@
 #include <QSignalBlocker>
 #include <QActionGroup>
 
+#include "math/bezier/meta.hpp"
 #include "model/shapes/precomp_layer.hpp"
 #include "command/animation_commands.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -583,15 +584,7 @@ void CompoundTimelineWidget::copy_keyframe()
     QByteArray encoded;
     QDataStream stream(&encoded, QIODevice::WriteOnly);
     stream << int(d->menu_anim->traits().type);
-    if ( d->menu_anim->traits().type == model::PropertyTraits::Point )
-    {
-        auto point = static_cast<model::Keyframe<QPointF>*>(d->menu_kf_exit)->point();
-        stream << point.pos << point.tan_in << point.tan_out << short(point.type);
-    }
-    else
-    {
-        stream << d->menu_kf_exit->value();
-    }
+    stream << d->menu_kf_exit->value();
     data->setData("application/x.glaxnimate-keyframe", encoded);
     QGuiApplication::clipboard()->setMimeData(data);
 }
@@ -612,35 +605,12 @@ void CompoundTimelineWidget::paste_keyframe()
     if ( type != d->menu_anim->traits().type )
         return;
 
-    if ( d->menu_anim->traits().type == model::PropertyTraits::Point )
-    {
-        short type;
-        math::bezier::Point point;
-        stream >> point.pos >> point.tan_in >> point.tan_out >> type;
-        point.type = math::bezier::PointType(type);
+    QVariant value;
+    stream >> value;
 
-        auto cmd = std::make_unique<command::ReorderedUndoCommand>(tr("Paste Keyframe"));
-        auto prop = static_cast<model::AnimatedProperty<QPointF>*>(d->menu_anim);
-        auto bez = prop->bezier();
-        auto time = d->ui.timeline->highlighted_time();
-        cmd->add_command(std::make_unique<command::SetKeyframe>(d->menu_anim, time, QVariant::fromValue(point.pos), true), 0, 0);
-        int index = prop->keyframe_index(time);
-        if ( !prop->animated() || prop->keyframe(index)->time() != time)
-        {
-            bez.insert_point(index, point);
-            cmd->add_command(std::make_unique<command::SetPositionBezier>(prop, bez, true), 1, 1);
-        }
-        d->menu_anim->object()->push_command(cmd.release());
-    }
-    else
-    {
-        QVariant value;
-        stream >> value;
-
-        d->menu_anim->object()->push_command(
-            new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), value, true)
-        );
-    }
+    d->menu_anim->object()->push_command(
+        new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), value, true)
+    );
 }
 
 void CompoundTimelineWidget::collapse_index(const QModelIndex& index)

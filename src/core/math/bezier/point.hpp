@@ -114,6 +114,10 @@ struct Point
 
     void transform(const QTransform& t);
 
+    QPointF position() const { return pos; }
 };
 
+
 } // namespace glaxnimate::math::bezier
+
+Q_DECLARE_METATYPE(glaxnimate::math::bezier::Point)

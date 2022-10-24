@@ -48,6 +48,8 @@ void math::bezier::register_meta()
     qRegisterMetaTypeStreamOperators<Bezier>("glaxnimate::math::bezier::Bezier");
     qRegisterMetaTypeStreamOperators<Point>("glaxnimate::math::bezier::Point");
 #endif
+    QMetaType::registerConverter<Point, QPointF>(&Point::position);
+    QMetaType::registerConverter<QPointF, Point>([](const QPointF& p) { return Point{p, p, p}; });
 }
 
 

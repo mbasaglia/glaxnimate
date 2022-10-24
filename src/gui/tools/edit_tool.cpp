@@ -419,7 +419,6 @@ public:
             int sz1 = item->selected_indices().size() + 1;
             if ( sz1 >= item->bezier().size() )
             {
-                auto command = std::make_unique<command::ReorderedUndoCommand>(tr("Split Segment"));
                 QVariant value;
                 for ( int i = 0; i < pos_prop->keyframe_count(); i++ )
                 {
