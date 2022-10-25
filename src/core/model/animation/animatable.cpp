@@ -117,6 +117,13 @@ void glaxnimate::model::AnimatableBase::clear_keyframes_undoable(QVariant value)
     object()->push_command(new command::RemoveAllKeyframes(this, std::move(value)));
 }
 
+void glaxnimate::model::AnimatableBase::add_smooth_keyframe_undoable(FrameTime time, const QVariant& val)
+{
+    object()->push_command(
+        new command::SetKeyframe(this, time, val.isNull() ? value() : val, true)
+    );
+}
+
 void glaxnimate::model::detail::AnimatedPropertyPosition::split_segment(int index, qreal factor)
 {
     if ( keyframes_.size() < 2 )
@@ -270,4 +277,45 @@ bool glaxnimate::model::detail::AnimatedPropertyPosition::valid_value(const QVar
     if ( detail::variant_cast<QPointF>(val) || detail::variant_cast<math::bezier::Bezier>(val) )
         return true;
     return false;
+}
+
+void glaxnimate::model::detail::AnimatedPropertyPosition::add_smooth_keyframe_undoable(FrameTime time, const QVariant& val)
+{
+    auto parent = std::make_unique<command::ReorderedUndoCommand>(tr("Add Keyframe"));
+
+    auto value = val.isNull() ? QVariant(value_) : val;
+
+    parent->add_command(std::make_unique<command::SetKeyframe>(this, time, value, true), 0, 0);
+
+    int count = keyframes_.size();
+
+    if ( value.userType() == QMetaType::QPointF && count >= 2 && keyframes_[0]->time() < time && keyframes_.back()->time() > time )
+    {
+        int index = keyframe_index(time);
+        auto first = keyframe(index);
+        const keyframe_type* second = keyframe(index+1);
+
+        if ( !first->is_linear() || second->is_linear() )
+        {
+            double scaled_time = (time - first->time()) / (second->time() - first->time());
+
+            auto factor = first->transition().lerp_factor(scaled_time);
+            auto solver = first->bezier_solver(*second);
+            math::bezier::LengthData len(solver, 20);
+            auto t = len.at_ratio(factor).ratio;
+            auto split = solver.split(t);
+
+            auto before = bezier();
+            auto after = before;
+            after[index].tan_out = split.first[1];
+            after[index+1].tan_in = split.second[2];
+            math::bezier::Point p(split.first[3], split.first[2], split.second[1]);
+            p.translate_to(value.value<QPointF>());
+            after.insert_point(index+1, p);
+
+            parent->add_command(std::make_unique<command::SetPositionBezier>(this, before, after, true), 1, 1);
+        }
+    }
+
+    object()->document()->push_command(parent.release());
 }

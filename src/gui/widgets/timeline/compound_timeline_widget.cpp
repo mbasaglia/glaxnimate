@@ -520,8 +520,8 @@ void CompoundTimelineWidget::add_keyframe()
     if ( !d->menu_anim )
         return;
 
-    d->menu_anim->object()->push_command(
-        new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), d->menu_anim->value(), true)
+    d->menu_anim->add_smooth_keyframe_undoable(
+        d->ui.timeline->highlighted_time(), d->menu_anim->value()
     );
 }
 

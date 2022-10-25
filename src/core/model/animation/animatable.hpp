@@ -272,6 +272,11 @@ public:
      */
     virtual void clear_keyframes_undoable(QVariant value = {});
 
+    /**
+     * \brief Adds a keyframe at the given time
+     */
+    virtual void add_smooth_keyframe_undoable(FrameTime time, const QVariant& value);
+
 signals:
     void keyframe_added(int index, KeyframeBase* keyframe);
     void keyframe_removed(int index);
@@ -377,9 +382,7 @@ public:
         if ( linear && other.linear )
             return math::lerp(get(), other.get(), factor);
 
-        math::bezier::CubicBezierSolver<QPointF> solver(
-            point_.pos, point_.tan_out, other.point_.tan_in, other.point_.pos
-        );
+        auto solver = bezier_solver(other);
         math::bezier::LengthData len(solver, 20);
         return solver.solve(len.at_ratio(factor).ratio);
     }
@@ -393,6 +396,18 @@ public:
     const math::bezier::Point& point() const
     {
         return point_;
+    }
+
+    math::bezier::CubicBezierSolver<QPointF> bezier_solver(const Keyframe& other) const
+    {
+        return math::bezier::CubicBezierSolver<QPointF>(
+            point_.pos, point_.tan_out, other.point_.tan_in, other.point_.pos
+        );
+    }
+
+    bool is_linear() const
+    {
+        return linear;
     }
 
 private:
@@ -881,6 +896,8 @@ public:
     bool set_value(const QVariant& val) override;
 
     bool valid_value(const QVariant& val) const override;
+
+    void add_smooth_keyframe_undoable(FrameTime time, const QVariant& value) override;
 
 signals:
     /// Invoked on set_bezier()

@@ -209,7 +209,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
         case QVariant::Invalid:
             return {};
 
-        case QVariant::Size:
+        case QMetaType::QSize:
         {
             auto v = value.toSize();
             QJsonObject o;
@@ -217,7 +217,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             o["height"] = v.height();
             return o;
         }
-        case QVariant::SizeF:
+        case QMetaType::QSizeF:
         {
             auto v = value.toSizeF();
             QJsonObject o;
@@ -225,7 +225,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             o["height"] = v.height();
             return o;
         }
-        case QVariant::Point:
+        case QMetaType::QPoint:
         {
             auto v = value.toPoint();
             QJsonObject o;
@@ -252,6 +252,9 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             return col;
         }
     }
+
+    if ( value.canConvert<QPointF>() )
+        return point_to_json(value.toPointF());
 
     return {};
 }
