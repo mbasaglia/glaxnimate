@@ -257,13 +257,13 @@ void graphics::PointItem::set_has_tan_out(bool show)
 }
 
 graphics::BezierItem::BezierItem(model::AnimatedProperty<math::bezier::Bezier>* property, QGraphicsItem* parent)
-: Ctor(parent), property_bezier(property)
+: Ctor(parent), property_bezier(property), target_object_(property->object()->cast<model::VisualNode>())
 {
     update_bezier(property->get());
 }
 
-glaxnimate::gui::graphics::BezierItem::BezierItem(model::AnimatedProperty<QPointF>* property, QGraphicsItem* parent)
-: Ctor(parent), property_pos(property)
+glaxnimate::gui::graphics::BezierItem::BezierItem(model::AnimatedProperty<QPointF>* property, model::VisualNode* target_object, QGraphicsItem* parent)
+: Ctor(parent), property_pos(property), target_object_(target_object ? target_object : property->object()->cast<model::VisualNode>())
 {
     update_bezier(property->bezier());
     connect(property, &model::AnimatableBase::keyframe_added, this, &BezierItem::refresh_from_position_property);
@@ -416,7 +416,7 @@ model::AnimatedProperty<QPointF> * glaxnimate::gui::graphics::BezierItem::target
 
 model::VisualNode* graphics::BezierItem::target_object() const
 {
-    return target_property()->object()->cast<model::VisualNode>();
+    return target_object_;
 }
 
 const std::set<int> & graphics::BezierItem::selected_indices()

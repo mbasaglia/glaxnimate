@@ -122,8 +122,6 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         },
         [](model::Group* layer){
             auto v = std::make_unique<GraphicsEditor>(layer);
-            if ( layer->transform.get()->position.keyframe_count() >= 2 )
-                v->add_child<graphics::BezierItem>(&layer->transform.get()->position);
             v->add_child<graphics::TransformGraphicsItem>(layer->transform.get(), layer, nullptr);
             return v;
         }

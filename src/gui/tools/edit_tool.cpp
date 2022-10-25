@@ -17,6 +17,8 @@
 #include "model/shapes/rect.hpp"
 #include "model/shapes/ellipse.hpp"
 #include "model/shapes/polystar.hpp"
+#include "model/shapes/precomp_layer.hpp"
+#include "model/shapes/image.hpp"
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -178,6 +180,18 @@ public:
         {}
     };
 
+    void add_bezier_editor(graphics::BezierItem* editor)
+    {
+        active[editor] = PathCache(editor);
+
+        connect(editor, &QObject::destroyed, editor, [this, editor]{
+            active.erase(editor);
+        });
+        connect(editor->target_object(), &model::VisualNode::transform_matrix_changed, editor, [this, editor]{
+            active[editor] = PathCache(editor);
+        });
+    }
+
     void extract_editor(graphics::DocumentScene * scene, model::VisualNode* node)
     {
         auto editor_parent = scene->get_editor(node);
@@ -187,16 +201,28 @@ public:
         for ( auto editor_child : editor_parent->childItems() )
         {
             if ( auto editor = qgraphicsitem_cast<graphics::BezierItem*>(editor_child) )
-            {
-                active[editor] = PathCache(editor);
+                add_bezier_editor(editor);
+        }
+    }
 
-                connect(editor, &QObject::destroyed, editor, [this, editor]{
-                    active.erase(editor);
-                });
-                connect(editor->target_object(), &model::VisualNode::transform_matrix_changed, editor, [this, editor]{
-                    active[editor] = PathCache(editor);
-                });
-            }
+    void show_position_editor(graphics::DocumentScene * scene, model::VisualNode* node, model::Transform* transform)
+    {
+        if ( transform->position.keyframe_count() >= 2 )
+        {
+            auto editor = std::make_unique<graphics::BezierItem>(&transform->position, node);
+            auto bezit = editor.get();
+
+            QObject::connect(
+                node, &model::VisualNode::transform_matrix_changed,
+                bezit, [bezit, node](const QTransform& t){
+                    bezit->setTransform(node->local_transform_matrix(node->time()).inverted() * t);
+                }
+            );
+            bezit->setTransform(node->local_transform_matrix(node->time()).inverted() * node->transform_matrix(node->time()));
+
+            scene->show_custom_editor(node, std::move(editor));
+
+            add_bezier_editor(bezit);
         }
     }
 
@@ -217,9 +243,17 @@ public:
         }
         else if ( meta->inherits(&model::Group::staticMetaObject) )
         {
-            extract_editor(scene, node);
+            show_position_editor(scene, node, static_cast<model::Group*>(node)->transform.get());
             for ( const auto& sub : static_cast<model::Group*>(node)->shapes )
                 impl_extract_selection_recursive_item(scene, sub.get());
+        }
+        else if ( meta->inherits(&model::PreCompLayer::staticMetaObject) )
+        {
+            show_position_editor(scene, node, static_cast<model::PreCompLayer*>(node)->transform.get());
+        }
+        else if ( meta->inherits(&model::Image::staticMetaObject) )
+        {
+            show_position_editor(scene, node, static_cast<model::Image*>(node)->transform.get());
         }
     }
 
