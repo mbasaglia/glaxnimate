@@ -31,6 +31,12 @@ public:
 
     SplitInfo at_length(qreal length) const;
 
+    /**
+     * \brief Returns the length such that
+     *        `at_length(length).ratio == ratio`
+     */
+    qreal from_ratio(qreal ratio) const;
+
     qreal length() const noexcept;
 
 private:

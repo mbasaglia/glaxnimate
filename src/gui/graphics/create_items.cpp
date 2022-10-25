@@ -57,6 +57,8 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         &make_graphics_item_shape,
         [](model::Rect* rect){
             auto v = std::make_unique<GraphicsEditor>(rect);
+            if ( rect->position.keyframe_count() >= 2 )
+                v->add_child<graphics::BezierItem>(&rect->position);
             v->add_child<graphics::PositionItem>(&rect->position);
             v->add_child<graphics::RectRounder>(rect);
             v->add_child<graphics::SizePosItem>(&rect->size, &rect->position);
@@ -67,6 +69,8 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         &make_graphics_item_shape,
         [](model::Ellipse* rect){
             auto v = std::make_unique<GraphicsEditor>(rect);
+            if ( rect->position.keyframe_count() >= 2 )
+                v->add_child<graphics::BezierItem>(&rect->position);
             v->add_child<graphics::PositionItem>(&rect->position);
             v->add_child<graphics::SizePosItem>(&rect->size, &rect->position);
             return v;
@@ -76,6 +80,8 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         &make_graphics_item_shape,
         [](model::PolyStar* star){
             auto v = std::make_unique<GraphicsEditor>(star);
+            if ( star->position.keyframe_count() >= 2 )
+                v->add_child<graphics::BezierItem>(&star->position);
             v->add_child<graphics::PositionItem>(&star->position);
             v->add_child<graphics::StarRadiusItem>(star);
             return v;
@@ -86,7 +92,7 @@ graphics::GraphicsItemFactory::GraphicsItemFactory()
         [](model::Path* shape){
             auto v = std::make_unique<GraphicsEditor>(shape);
             auto editor = v->add_child<graphics::BezierItem>(&shape->shape);
-            QObject::connect(shape, &model::Path::shape_changed, editor, &graphics::BezierItem::set_bezier);
+            QObject::connect(shape, &model::Path::shape_changed, editor, &graphics::BezierItem::update_bezier);
             return v;
         }
     );

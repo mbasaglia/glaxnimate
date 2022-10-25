@@ -12,7 +12,7 @@ using namespace glaxnimate;
 
 io::Autoreg<io::glaxnimate::GlaxnimateFormat> io::glaxnimate::GlaxnimateFormat::autoreg;
 
-const int glaxnimate::io::glaxnimate::GlaxnimateFormat::format_version = 6;
+const int glaxnimate::io::glaxnimate::GlaxnimateFormat::format_version = 7;
 
 
 
@@ -60,6 +60,19 @@ QJsonObject io::glaxnimate::GlaxnimateFormat::to_json ( model::Object* object )
     return obj;
 }
 
+namespace  {
+
+QJsonValue point_to_json(const QPointF& v)
+{
+    QJsonObject o;
+    o["x"] = v.x();
+    o["y"] = v.y();
+    return o;
+}
+
+} // namespace
+
+
 QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* property )
 {
     if ( property->traits().flags & model::PropertyTraits::List )
@@ -74,6 +87,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
     else if ( property->traits().flags & model::PropertyTraits::Animated )
     {
         model::AnimatableBase* anim = static_cast<model::AnimatableBase*>(property);
+        bool position = anim->traits().type == model::PropertyTraits::Point;
         QJsonObject jso;
         if ( !anim->animated() )
         {
@@ -93,6 +107,15 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
                     jkf["before"] = to_json(kf->transition().before());
                     jkf["after"] = to_json(kf->transition().after());
                 }
+
+                if ( position )
+                {
+                    auto pkf = static_cast<model::Keyframe<QPointF>*>(kf);
+                    jkf["tan_in"] = point_to_json(pkf->point().tan_in);
+                    jkf["tan_out"] = point_to_json(pkf->point().tan_out);
+                    jkf["point_type"] = pkf->point().type;
+                }
+
                 keyframes.push_back(jkf);
             }
             jso["keyframes"] = keyframes;
@@ -102,18 +125,6 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( model::BaseProperty* prop
 
     return to_json(property->value(), property->traits());
 }
-
-namespace  {
-
-QJsonValue point_to_json(const QPointF& v)
-{
-    QJsonObject o;
-    o["x"] = v.x();
-    o["y"] = v.y();
-    return o;
-}
-
-} // namespace
 
 QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value, model::PropertyTraits traits )
 {
@@ -198,7 +209,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
         case QVariant::Invalid:
             return {};
 
-        case QVariant::Size:
+        case QMetaType::QSize:
         {
             auto v = value.toSize();
             QJsonObject o;
@@ -206,7 +217,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             o["height"] = v.height();
             return o;
         }
-        case QVariant::SizeF:
+        case QMetaType::QSizeF:
         {
             auto v = value.toSizeF();
             QJsonObject o;
@@ -214,7 +225,7 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             o["height"] = v.height();
             return o;
         }
-        case QVariant::Point:
+        case QMetaType::QPoint:
         {
             auto v = value.toPoint();
             QJsonObject o;
@@ -241,6 +252,9 @@ QJsonValue io::glaxnimate::GlaxnimateFormat::to_json ( const QVariant& value )
             return col;
         }
     }
+
+    if ( value.canConvert<QPointF>() )
+        return point_to_json(value.toPointF());
 
     return {};
 }

@@ -7,7 +7,7 @@
 using namespace glaxnimate;
 using namespace glaxnimate::gui;
 
-graphics::PointItem::PointItem(int index, const math::bezier::Point& point, QGraphicsItem* parent, model::AnimatedProperty<math::bezier::Bezier>* property)
+graphics::PointItem::PointItem(int index, const math::bezier::Point& point, QGraphicsItem* parent, model::AnimatableBase* property)
 : QGraphicsObject(parent), index_(index), point_(point)
 {
     connect(&tan_in, &MoveHandle::dragged, this, &PointItem::tan_in_dragged);
@@ -257,9 +257,19 @@ void graphics::PointItem::set_has_tan_out(bool show)
 }
 
 graphics::BezierItem::BezierItem(model::AnimatedProperty<math::bezier::Bezier>* property, QGraphicsItem* parent)
-: Ctor(parent), property(property)
+: Ctor(parent), property_bezier(property), target_object_(property->object()->cast<model::VisualNode>())
 {
-    set_bezier(property->get());
+    update_bezier(property->get());
+}
+
+glaxnimate::gui::graphics::BezierItem::BezierItem(model::AnimatedProperty<QPointF>* property, model::VisualNode* target_object, QGraphicsItem* parent)
+: Ctor(parent), property_pos(property), target_object_(target_object ? target_object : property->object()->cast<model::VisualNode>())
+{
+    update_bezier(property->bezier());
+    connect(property, &model::AnimatableBase::keyframe_added, this, &BezierItem::refresh_from_position_property);
+    connect(property, &model::AnimatableBase::keyframe_removed, this, &BezierItem::refresh_from_position_property);
+    connect(property, &model::AnimatableBase::keyframe_updated, this, &BezierItem::refresh_from_position_property);
+    connect(property, &model::AnimatedProperty<QPointF>::bezier_set, this, &BezierItem::update_bezier);
 }
 
 QRectF graphics::BezierItem::boundingRect() const
@@ -282,7 +292,7 @@ void graphics::BezierItem::set_type(int index, math::bezier::PointType type)
     items[index]->set_point_type(type);
 }
 
-void graphics::BezierItem::set_bezier(const math::bezier::Bezier& bez)
+void graphics::BezierItem::update_bezier(const math::bezier::Bezier& bez)
 {
     if ( updating )
         return;
@@ -327,6 +337,13 @@ void graphics::BezierItem::set_bezier(const math::bezier::Bezier& bez)
     prepareGeometryChange();
 }
 
+void glaxnimate::gui::graphics::BezierItem::set_bezier(const math::bezier::Bezier& bez, bool commit)
+{
+    update_bezier(bez);
+    do_update(commit, tr("Update path"));
+}
+
+
 void graphics::BezierItem::remove_point(int index)
 {
     bezier_.points().erase(bezier_.begin() + index);
@@ -347,12 +364,21 @@ void graphics::BezierItem::do_update(bool commit, const QString& name)
 {
     auto lock = updating.get_lock();
 
-    property->object()->push_command(new command::SetMultipleAnimated(
-        name,
-        commit,
-        {property},
-        QVariant::fromValue(bezier_)
-    ));
+    if ( property_bezier )
+    {
+        property_bezier->object()->push_command(new command::SetMultipleAnimated(
+            name,
+            commit,
+            {property_bezier},
+            QVariant::fromValue(bezier_)
+        ));
+    }
+    else
+    {
+        property_pos->object()->push_command(new command::SetPositionBezier(
+            property_pos, bezier_, commit, name
+        ));
+    }
 
     prepareGeometryChange();
 }
@@ -371,14 +397,26 @@ void graphics::BezierItem::do_add_point(int index)
         items[index-1]->set_has_tan_out(true);
 }
 
-model::AnimatedProperty<math::bezier::Bezier> * graphics::BezierItem::target_property() const
+model::AnimatableBase * graphics::BezierItem::target_property() const
 {
-    return property;
+    if ( property_bezier )
+        return property_bezier;
+    return property_pos;
+}
+
+model::AnimatedProperty<math::bezier::Bezier> * glaxnimate::gui::graphics::BezierItem::target_bezier_property() const
+{
+    return property_bezier;
+}
+
+model::AnimatedProperty<QPointF> * glaxnimate::gui::graphics::BezierItem::target_position_property() const
+{
+    return property_pos;
 }
 
 model::VisualNode* graphics::BezierItem::target_object() const
 {
-    return property->object()->cast<model::VisualNode>();
+    return target_object_;
 }
 
 const std::set<int> & graphics::BezierItem::selected_indices()
@@ -423,4 +461,18 @@ void graphics::BezierItem::toggle_index(int i)
 const math::bezier::Bezier & graphics::BezierItem::bezier() const
 {
     return bezier_;
+}
+
+void glaxnimate::gui::graphics::BezierItem::split_segment(int index, qreal factor)
+{
+    if ( property_bezier )
+        property_bezier->split_segment(index, factor);
+    else
+        property_pos->split_segment(index, factor);
+}
+
+void glaxnimate::gui::graphics::BezierItem::refresh_from_position_property()
+{
+    if ( !updating )
+        update_bezier(property_pos->bezier());
 }

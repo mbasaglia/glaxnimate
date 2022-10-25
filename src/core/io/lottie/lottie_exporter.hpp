@@ -399,7 +399,8 @@ public:
         const TransformFunc& transform_values
     )
     {
-        /// @todo for position fields also add spatial bezier handles
+        bool position = prop->traits().type == model::PropertyTraits::Point;
+
         QCborMap jobj;
         if ( prop->keyframe_count() > 1 )
         {
@@ -415,6 +416,13 @@ public:
                 {
                     if ( old_kf )
                         jkf["e"_l] = kf_value;
+
+                    if ( position )
+                    {
+                        auto pkf = static_cast<model::Keyframe<QPointF>*>(kf);
+                        jkf["ti"_l] = point_to_lottie(pkf->point().tan_in - pkf->get());
+                    }
+
                     keyframes.push_back(jkf);
                 }
 
@@ -435,7 +443,15 @@ public:
                         jkf["i"_l] = keyframe_bezier_handle(kf->transition().after());
                     }
                 }
+
+                if ( position )
+                {
+                    auto pkf = static_cast<model::Keyframe<QPointF>*>(kf);
+                    jkf["to"_l] = point_to_lottie(pkf->point().tan_out - pkf->get());
+                }
             }
+            if ( position )
+                jkf.remove("to"_l);
             keyframes.push_back(jkf);
             jobj["k"_l] = keyframes;
         }

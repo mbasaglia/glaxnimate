@@ -507,6 +507,8 @@ private:
 
     void load_styler(model::Styler* styler, const QJsonObject& json_obj)
     {
+        load_visibility(styler, json_obj);
+
         std::set<QString> props = load_basic_setup(json_obj);
         for ( const QMetaObject* mo = styler->metaObject(); mo; mo = mo->superClass() )
             load_properties(
@@ -814,7 +816,8 @@ private:
                 return;
             }
 
-            /// @todo for position fields also add spatial bezier handles
+            bool position = prop->traits().type == model::PropertyTraits::Point;
+
             auto karr = obj["k"].toArray();
             for ( int i = 0; i < karr.size(); i++ )
             {
@@ -838,6 +841,21 @@ private:
                         keyframe_bezier_handle(jkf["i"]),
                         bool(jkf["h"].toInt())
                     });
+
+                    if ( position )
+                    {
+                        auto pkf = static_cast<model::Keyframe<QPointF>*>(kf);
+                        QPointF tan_out;
+                        compound_value_2d_raw(jkf["to"], tan_out);
+                        tan_out += pkf->get();
+
+                        QPointF tan_in;
+                        if ( i > 0 )
+                            compound_value_2d_raw(karr[i-1].toObject()["ti"], tan_in);
+                        tan_in += pkf->get();
+
+                        pkf->set_point({pkf->get(), tan_in, tan_out});
+                    }
                 }
                 else
                 {

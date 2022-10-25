@@ -8,6 +8,7 @@
 #include <QSignalBlocker>
 #include <QActionGroup>
 
+#include "math/bezier/meta.hpp"
 #include "model/shapes/precomp_layer.hpp"
 #include "command/animation_commands.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -519,8 +520,8 @@ void CompoundTimelineWidget::add_keyframe()
     if ( !d->menu_anim )
         return;
 
-    d->menu_anim->object()->push_command(
-        new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), d->menu_anim->value(), true)
+    d->menu_anim->add_smooth_keyframe_undoable(
+        d->ui.timeline->highlighted_time(), d->menu_anim->value()
     );
 }
 
@@ -555,9 +556,7 @@ void CompoundTimelineWidget::remove_all_keyframes()
     if ( !d->menu_anim )
         return;
 
-    d->menu_anim->object()->document()->undo_stack().push(
-        new command::RemoveAllKeyframes(d->menu_anim)
-    );
+    d->menu_anim->clear_keyframes_undoable();
 }
 
 void CompoundTimelineWidget::load_state(const QByteArray& state)
@@ -586,7 +585,6 @@ void CompoundTimelineWidget::copy_keyframe()
     QDataStream stream(&encoded, QIODevice::WriteOnly);
     stream << int(d->menu_anim->traits().type);
     stream << d->menu_kf_exit->value();
-    /// \todo tangents for position keyframes
     data->setData("application/x.glaxnimate-keyframe", encoded);
     QGuiApplication::clipboard()->setMimeData(data);
 }
@@ -609,7 +607,6 @@ void CompoundTimelineWidget::paste_keyframe()
 
     QVariant value;
     stream >> value;
-    /// \todo tangents for position keyframes
 
     d->menu_anim->object()->push_command(
         new command::SetKeyframe(d->menu_anim, d->ui.timeline->highlighted_time(), value, true)

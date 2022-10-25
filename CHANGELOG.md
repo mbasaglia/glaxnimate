@@ -1,5 +1,9 @@
 ## 0.5.2
 
+* Editing:
+    * Added support for animation following a path
+* Bug fixes:
+    * Fixes loading lottie with hidden stylers
 * Other:
     * Added Flatpack
     * Fixed Freedesktop file naming

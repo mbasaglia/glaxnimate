@@ -51,13 +51,10 @@ inline void add_property_menu_actions(QObject* thus, QMenu* menu, QGraphicsItem*
                 QMenu::tr("Add Keyframe"),
                 thus,
                 [prop]{
-                    prop->object()->push_command(
-                        new command::SetKeyframe(prop, prop->time(), prop->value(), true)
-                    );
+                    prop->add_smooth_keyframe_undoable(prop->time(), prop->value());
                 }
             );
         }
-
 
         if ( prop->animated() )
         {
@@ -66,9 +63,7 @@ inline void add_property_menu_actions(QObject* thus, QMenu* menu, QGraphicsItem*
                 QMenu::tr("Clear Animations"),
                 thus,
                 [prop]{
-                    prop->object()->push_command(
-                        new command::RemoveAllKeyframes(prop)
-                    );
+                    prop->clear_keyframes_undoable();
                 }
             );
         }

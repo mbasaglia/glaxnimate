@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <QPointF>
 #include <QPainterPath>
 #include "math/bezier/solver.hpp"
@@ -179,6 +180,11 @@ public:
 
     Bezier transformed(const QTransform& t) const;
     void transform(const QTransform& t);
+
+    /**
+     * \brief Returns a new bezier with the given points removed
+     */
+    math::bezier::Bezier removed_points(const std::set<int>& indices) const;
 
 private:
     /**

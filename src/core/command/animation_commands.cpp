@@ -6,13 +6,15 @@ glaxnimate::command::SetKeyframe::SetKeyframe(
     model::AnimatableBase* prop,
     model::FrameTime time,
     const QVariant& value,
-    bool commit
+    bool commit,
+    bool force_insert
 ) : Parent(QObject::tr("Update %1 keyframe at %2").arg(prop->name()).arg(time), commit),
     prop(prop),
     time(time),
     before(prop->value(time)),
     after(value),
-    had_before(prop->has_keyframe(time))
+    had_before(prop->has_keyframe(time) && !force_insert),
+    force_insert(force_insert)
 {}
 
 void glaxnimate::command::SetKeyframe::undo()
@@ -32,7 +34,7 @@ void glaxnimate::command::SetKeyframe::redo()
     {
         auto mid = prop->mid_transition(time);
         model::AnimatableBase::SetKeyframeInfo info;
-        auto kf = prop->set_keyframe(time, after, &info);
+        auto kf = prop->set_keyframe(time, after, &info, force_insert);
         if ( kf && info.insertion && info.index > 0 && info.index + 1 < prop->keyframe_count() )
         {
             if ( mid.type != model::AnimatableBase::MidTransition::Middle )
@@ -53,7 +55,7 @@ void glaxnimate::command::SetKeyframe::redo()
     }
     else
     {
-        prop->set_keyframe(time, after, nullptr);
+        prop->set_keyframe(time, after, nullptr, force_insert);
     }
 
     if ( insert_index > 0 )
@@ -79,7 +81,7 @@ glaxnimate::command::RemoveKeyframeTime::RemoveKeyframeTime(
     prop(prop),
     time(time),
     index(prop->keyframe_index(time)),
-    before(prop->value(time))
+    before(prop->keyframe(index)->value())
 {
     if ( index > 0 )
     {
@@ -94,7 +96,6 @@ void glaxnimate::command::RemoveKeyframeTime::undo()
     prop->set_keyframe(time, before);
     if ( index > 0 )
         prop->keyframe(index-1)->set_transition(prev_transition_before);
-
 }
 
 void glaxnimate::command::RemoveKeyframeTime::redo()
@@ -104,6 +105,37 @@ void glaxnimate::command::RemoveKeyframeTime::redo()
     prop->remove_keyframe(index);
 }
 
+glaxnimate::command::RemoveKeyframeIndex::RemoveKeyframeIndex(
+    model::AnimatableBase* prop,
+    int index
+) : QUndoCommand(QObject::tr("Remove %1 keyframe %2").arg(prop->name()).arg(index)),
+    prop(prop),
+    index(index),
+    time(prop->keyframe(index)->time()),
+    before(prop->keyframe(index)->value())
+{
+    if ( index > 0 )
+    {
+        prev_transition_after = prev_transition_before = prop->keyframe(index-1)->transition();
+        if ( !prev_transition_after.hold() )
+            prev_transition_after.set_after(prop->keyframe(index)->transition().after());
+    }
+}
+
+void glaxnimate::command::RemoveKeyframeIndex::undo()
+{
+    prop->set_keyframe(time, before, nullptr, true);
+    if ( index > 0 )
+        prop->keyframe(index-1)->set_transition(prev_transition_before);
+
+}
+
+void glaxnimate::command::RemoveKeyframeIndex::redo()
+{
+    if ( index > 0 )
+        prop->keyframe(index-1)->set_transition(prev_transition_after);
+    prop->remove_keyframe(index);
+}
 
 glaxnimate::command::SetMultipleAnimated::SetMultipleAnimated(model::AnimatableBase* prop, QVariant after, bool commit)
     : SetMultipleAnimated(
@@ -334,10 +366,10 @@ int glaxnimate::command::MoveKeyframe::redo_index() const
     return keyframe_index_after;
 }
 
-glaxnimate::command::RemoveAllKeyframes::RemoveAllKeyframes(model::AnimatableBase* prop)
+glaxnimate::command::RemoveAllKeyframes::RemoveAllKeyframes(model::AnimatableBase* prop, QVariant value)
     : QUndoCommand(QObject::tr("Remove animations from %1").arg(prop->name())),
       prop(prop),
-      value(prop->value())
+      value(std::move(value))
 {
     int count = prop->keyframe_count();
     keyframes.reserve(count);
@@ -362,9 +394,46 @@ void glaxnimate::command::RemoveAllKeyframes::undo()
 {
     for ( const auto& kf : keyframes )
     {
-        prop->set_keyframe(kf.time, kf.value)->set_transition(kf.transition);
+        prop->set_keyframe(kf.time, kf.value, nullptr, true)->set_transition(kf.transition);
     }
     prop->set_time(prop->time());
 }
 
 
+glaxnimate::command::SetPositionBezier::SetPositionBezier(
+    model::detail::AnimatedPropertyPosition* prop,
+    math::bezier::Bezier after,
+    bool commit,
+    const QString& name
+)
+    : SetPositionBezier(prop, prop->bezier(), std::move(after), commit, name)
+{
+}
+
+glaxnimate::command::SetPositionBezier::SetPositionBezier(
+    model::detail::AnimatedPropertyPosition* prop,
+    math::bezier::Bezier before,
+    math::bezier::Bezier after,
+    bool commit,
+    const QString& name
+) : Parent(name.isEmpty() ? QObject::tr("Update animation path") : name, commit),
+    property(prop),
+    before(std::move(before)),
+    after(std::move(after))
+{
+}
+
+bool glaxnimate::command::SetPositionBezier::merge_with(const glaxnimate::command::SetPositionBezier& other)
+{
+    return property == other.property;
+}
+
+void glaxnimate::command::SetPositionBezier::undo()
+{
+    property->set_bezier(before);
+}
+
+void glaxnimate::command::SetPositionBezier::redo()
+{
+    property->set_bezier(after);
+}

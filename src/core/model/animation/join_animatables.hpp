@@ -298,7 +298,7 @@ public:
     bool set_undoable(const QVariant&, bool) override { return false; }
     int move_keyframe(int, FrameTime) override { return -1; }
     bool value_mismatch() const override { return false; }
-    KeyframeBase* set_keyframe(FrameTime , const QVariant& , SetKeyframeInfo* ) override { return nullptr; }
+    KeyframeBase* set_keyframe(FrameTime , const QVariant& , SetKeyframeInfo*, bool ) override { return nullptr; }
     void remove_keyframe(int) override {};
     void clear_keyframes() override {};
     bool remove_keyframe_at_time(FrameTime) override { return false; }

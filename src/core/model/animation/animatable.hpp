@@ -9,6 +9,9 @@
 #include "model/animation/keyframe_transition.hpp"
 #include "model/property/property.hpp"
 #include "math/math.hpp"
+#include "math/bezier/point.hpp"
+#include "math/bezier/solver.hpp"
+#include "math/bezier/bezier_length.hpp"
 
 /*
  * Arguments: type, name, default, emitter, flags
@@ -125,14 +128,15 @@ public:
 
     /**
      * \brief Sets a value at a keyframe
-     * \param time  Time to set the value at
-     * \param value Value to set
-     * \param info  If not nullptr, it will be written to with information about what has been node
+     * \param time          Time to set the value at
+     * \param value         Value to set
+     * \param info          If not nullptr, it will be written to with information about what has been node
+     * \param force_insert  If \b true, it will always add a new keyframe
      * \post value(time) == \p value && animate() == true
      * \return The keyframe or nullptr if it couldn't be added.
      * If there is already a keyframe at \p time the returned value might be an existing keyframe
      */
-    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value, SetKeyframeInfo* info = nullptr) = 0;
+    virtual KeyframeBase* set_keyframe(FrameTime time, const QVariant& value, SetKeyframeInfo* info = nullptr, bool force_insert = false) = 0;
 
     /**
      * \brief Removes the keyframe at index \p i
@@ -262,6 +266,17 @@ public:
 
     MidTransition mid_transition(FrameTime time) const;
 
+    /**
+     * \brief Clears all keyframes and creates an associated undo action
+     * \param value Value to be set after clearing
+     */
+    virtual void clear_keyframes_undoable(QVariant value = {});
+
+    /**
+     * \brief Adds a keyframe at the given time
+     */
+    virtual void add_smooth_keyframe_undoable(FrameTime time, const QVariant& value);
+
 signals:
     void keyframe_added(int index, KeyframeBase* keyframe);
     void keyframe_removed(int index);
@@ -296,11 +311,6 @@ public:
         return value_;
     }
 
-    Type& get_reference()
-    {
-        return value_;
-    }
-
     QVariant value() const override
     {
         return QVariant::fromValue(value_);
@@ -316,15 +326,94 @@ public:
         return false;
     }
 
-    value_type lerp(reference other, double t) const
+    value_type lerp(const Keyframe& other, double t) const
     {
-        return math::lerp(value_, other, this->transition().lerp_factor(t));
+        return math::lerp(value_, other.get(), this->transition().lerp_factor(t));
     }
 
 private:
     Type value_;
 };
 
+
+template<>
+class Keyframe<QPointF> : public KeyframeBase
+{
+public:
+    using value_type = QPointF;
+    using reference = const QPointF&;
+
+    Keyframe(FrameTime time, const QPointF& value)
+        : KeyframeBase(time), point_(value) {}
+
+    void set(reference value)
+    {
+        point_.translate_to(value);
+    }
+
+    reference get() const
+    {
+        return point_.pos;
+    }
+
+    QVariant value() const override
+    {
+        return QVariant::fromValue(point_);
+    }
+
+    bool set_value(const QVariant& val) override
+    {
+        if ( val.userType() == QMetaType::QPointF )
+        {
+            set(val.value<QPointF>());
+            return true;
+        }
+        else if ( auto v = detail::variant_cast<math::bezier::Point>(val) )
+        {
+            set_point(*v);
+            return true;
+        }
+        return false;
+    }
+
+    value_type lerp(const Keyframe& other, double t) const
+    {
+        auto factor = transition().lerp_factor(t);
+        if ( linear && other.linear )
+            return math::lerp(get(), other.get(), factor);
+
+        auto solver = bezier_solver(other);
+        math::bezier::LengthData len(solver, 20);
+        return solver.solve(len.at_ratio(factor).ratio);
+    }
+
+    void set_point(const math::bezier::Point& point)
+    {
+        point_ = point;
+        linear = point_.tan_in == point.pos && point.tan_out == point.pos;
+    }
+
+    const math::bezier::Point& point() const
+    {
+        return point_;
+    }
+
+    math::bezier::CubicBezierSolver<QPointF> bezier_solver(const Keyframe& other) const
+    {
+        return math::bezier::CubicBezierSolver<QPointF>(
+            point_.pos, point_.tan_out, other.point_.tan_in, other.point_.pos
+        );
+    }
+
+    bool is_linear() const
+    {
+        return linear;
+    }
+
+private:
+    math::bezier::Point point_;
+    bool linear = true;
+};
 
 template<class Type>
 class AnimatedProperty;
@@ -475,10 +564,10 @@ public:
         return QVariant::fromValue(get_at(time));
     }
 
-    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr) override
+    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr, bool force_insert = false) override
     {
         if ( auto v = detail::variant_cast<Type>(val) )
-            return static_cast<model::AnimatedProperty<Type>*>(this)->set_keyframe(time, *v, info);
+            return static_cast<model::AnimatedProperty<Type>*>(this)->set_keyframe(time, *v, info, force_insert);
         return nullptr;
     }
 
@@ -539,7 +628,7 @@ public:
         return true;
     }
 
-    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr, bool force_insert = false)
     {
         // First keyframe
         if ( keyframes_.empty() )
@@ -567,7 +656,7 @@ public:
         auto kf = keyframe(index);
 
         // Time matches, update
-        if ( kf->time() == time )
+        if ( kf->time() == time && !force_insert )
         {
             kf->set(value);
             emit this->keyframe_updated(index, kf);
@@ -746,20 +835,23 @@ protected:
         // We have at least 2 keyframes and time is after the first keyframe
         int index = this->keyframe_index(time);
         first = keyframe(index);
+
+        // Only one keyframe needed to get the value
         if ( index == count - 1 || first->time() == time )
             return {first, first->get()};
 
+        // Interpolate between two keyframes
         const keyframe_type* second = keyframe(index+1);
         double scaled_time = (time - first->time()) / (second->time() - first->time());
         double lerp_factor = first->transition().lerp_factor(scaled_time);
-        return {nullptr, first->lerp(second->get(), lerp_factor)};
+        return {nullptr, first->lerp(*second, lerp_factor)};
     }
 
     QVariant do_mid_transition_value(const KeyframeBase* kf_before, const KeyframeBase* kf_after, qreal ratio) const override
     {
         return QVariant::fromValue(
             static_cast<const keyframe_type*>(kf_before)->lerp(
-                static_cast<const keyframe_type*>(kf_after)->get(),
+                *static_cast<const keyframe_type*>(kf_after),
                 ratio
             )
         );
@@ -770,6 +862,48 @@ protected:
     bool mismatched_ = false;
     PropertyCallback<void, Type> emitter;
 };
+
+// Intermediare non-templated class so Q_OBJECT works
+class AnimatedPropertyPosition: public detail::AnimatedProperty<QPointF>
+{
+    Q_OBJECT
+public:
+    AnimatedPropertyPosition(
+        Object* object,
+        const QString& name,
+        reference default_value,
+        PropertyCallback<void, QPointF> emitter = {},
+        int flags = 0
+    ) : detail::AnimatedProperty<QPointF>(object, name, default_value, std::move(emitter), flags)
+    {
+    }
+
+
+    void set_closed(bool closed);
+
+    Q_INVOKABLE void split_segment(int index, qreal factor);
+
+    Q_INVOKABLE bool set_bezier(math::bezier::Bezier bezier);
+
+    Q_INVOKABLE math::bezier::Bezier bezier() const;
+
+    void remove_points(const std::set<int>& indices);
+
+    keyframe_type* set_keyframe(FrameTime time, const QVariant& val, SetKeyframeInfo* info = nullptr, bool force_insert = false) override;
+
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr, bool force_insert = false);
+
+    bool set_value(const QVariant& val) override;
+
+    bool valid_value(const QVariant& val) const override;
+
+    void add_smooth_keyframe_undoable(FrameTime time, const QVariant& value) override;
+
+signals:
+    /// Invoked on set_bezier()
+    void  bezier_set(const math::bezier::Bezier& bezier);
+};
+
 
 } // namespace detail
 
@@ -812,9 +946,9 @@ public:
 
     using AnimatableBase::set_keyframe;
 
-    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr)
+    keyframe_type* set_keyframe(FrameTime time, reference value, SetKeyframeInfo* info = nullptr, bool force_insert = false)
     {
-        return detail::AnimatedProperty<float>::set_keyframe(time, bound(value), info);
+        return detail::AnimatedProperty<float>::set_keyframe(time, bound(value), info, force_insert);
     }
 
 private:
@@ -831,5 +965,12 @@ private:
     bool cycle_;
 };
 
+
+template<>
+class AnimatedProperty<QPointF> : public detail::AnimatedPropertyPosition
+{
+public:
+    using detail::AnimatedPropertyPosition::AnimatedPropertyPosition;
+};
 
 } // namespace glaxnimate::model

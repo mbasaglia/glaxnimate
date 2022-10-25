@@ -16,7 +16,8 @@ public:
         model::AnimatableBase* prop,
         model::FrameTime time,
         const QVariant& value,
-        bool commit
+        bool commit,
+        bool force_insert = false
     );
 
     void undo() override;
@@ -36,6 +37,7 @@ private:
     model::KeyframeTransition trans_before;
     model::KeyframeTransition left;
     model::KeyframeTransition right;
+    bool force_insert = false;
 };
 
 class RemoveKeyframeTime : public QUndoCommand
@@ -60,10 +62,33 @@ private:
 };
 
 
+class RemoveKeyframeIndex: public QUndoCommand
+{
+public:
+    RemoveKeyframeIndex(
+        model::AnimatableBase* prop,
+        int index
+    );
+
+    void undo() override;
+
+    void redo() override;
+
+private:
+    model::AnimatableBase* prop;
+    int index;
+    model::FrameTime time;
+    QVariant before;
+    model::KeyframeTransition prev_transition_before;
+    model::KeyframeTransition prev_transition_after;
+};
+
+
+
 class RemoveAllKeyframes : public QUndoCommand
 {
 public:
-    RemoveAllKeyframes(model::AnimatableBase* prop);
+    RemoveAllKeyframes(model::AnimatableBase* prop, QVariant value);
 
     void undo() override;
 
@@ -227,5 +252,58 @@ private:
     qreal multiplier;
 };
 
+
+/**
+ * \brief Command that sets the path of an animated position
+ */
+class SetPositionBezier : public MergeableCommand<Id::SetMultipleAnimated, SetPositionBezier>
+{
+public:
+    SetPositionBezier(model::detail::AnimatedPropertyPosition* prop, math::bezier::Bezier after, bool commit, const QString& name = "");
+    SetPositionBezier(model::detail::AnimatedPropertyPosition* prop, math::bezier::Bezier before, math::bezier::Bezier after, bool commit, const QString& name = "");
+
+    void undo() override;
+
+    void redo() override;
+
+    bool merge_with(const SetPositionBezier& other);
+
+private:
+    model::detail::AnimatedPropertyPosition* property;
+    math::bezier::Bezier before;
+    math::bezier::Bezier after;
+};
+
+
+/**
+ * \brief Undo command whose children are done and undone in custom order
+ */
+class ReorderedUndoCommand : public QUndoCommand
+{
+public:
+    using QUndoCommand::QUndoCommand;
+
+    void add_command(std::unique_ptr<QUndoCommand> cmd, int order_redo, int order_undo)
+    {
+        undo_map[order_undo] = cmd.get();
+        redo_map[order_redo] = std::move(cmd);
+    }
+
+    void undo() override
+    {
+        for ( const auto& p : undo_map )
+            p.second->undo();
+    }
+
+    void redo() override
+    {
+        for ( const auto& p : redo_map )
+            p.second->redo();
+    }
+
+private:
+    std::map<int, std::unique_ptr<QUndoCommand>> redo_map;
+    std::map<int, QUndoCommand*> undo_map;
+};
 
 } // namespace glaxnimate::command

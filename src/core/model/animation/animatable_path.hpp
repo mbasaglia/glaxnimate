@@ -43,9 +43,9 @@ public:
         return false;
     }
 
-    value_type lerp(reference other, double t) const
+    value_type lerp(const Keyframe<math::bezier::Bezier>& other, double t) const
     {
-        return value_.lerp(other, this->transition().lerp_factor(t));
+        return value_.lerp(other.get(), this->transition().lerp_factor(t));
     }
 
 private:

@@ -45,18 +45,6 @@ void glaxnimate::model::detail::AnimatedPropertyBezier::remove_point(int index)
     remove_points({index});
 }
 
-static math::bezier::Bezier remove_points(const math::bezier::Bezier& bez, const std::set<int>& indices)
-{
-    math::bezier::Bezier new_bez;
-    new_bez.set_closed(bez.closed());
-
-    for ( int i = 0; i < bez.size(); i++ )
-        if ( !indices.count(i) )
-            new_bez.push_back(bez[i]);
-
-    return new_bez;
-}
-
 void glaxnimate::model::detail::AnimatedPropertyBezier::remove_points(const std::set<int>& indices)
 {
     command::UndoMacroGuard guard(tr("Remove Nodes"), object()->document());
@@ -67,7 +55,7 @@ void glaxnimate::model::detail::AnimatedPropertyBezier::remove_points(const std:
     bool set = true;
     for ( const auto& kf : keyframes_ )
     {
-        auto bez = ::remove_points(kf->value_, indices);
+        auto bez = kf->value_.removed_points(indices);
         if ( !mismatched_ && kf->time() == time() )
             set = false;
         object()->push_command(new command::SetKeyframe(this, kf->time(), QVariant::fromValue(bez), true));
@@ -75,7 +63,7 @@ void glaxnimate::model::detail::AnimatedPropertyBezier::remove_points(const std:
 
     if ( set )
     {
-        bez = ::remove_points(bez, indices);
+        bez = bez.removed_points(indices);
         object()->push_command(new command::SetMultipleAnimated(this, QVariant::fromValue(bez), true));
     }
 }

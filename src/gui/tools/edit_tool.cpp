@@ -14,6 +14,11 @@
 #include "math/bezier/cubic_struts.hpp"
 #include "model/shapes/shape.hpp"
 #include "model/shapes/text.hpp"
+#include "model/shapes/rect.hpp"
+#include "model/shapes/ellipse.hpp"
+#include "model/shapes/polystar.hpp"
+#include "model/shapes/precomp_layer.hpp"
+#include "model/shapes/image.hpp"
 #include "command/animation_commands.hpp"
 #include "command/object_list_commands.hpp"
 #include "command/undo_macro_guard.hpp"
@@ -175,6 +180,18 @@ public:
         {}
     };
 
+    void add_bezier_editor(graphics::BezierItem* editor)
+    {
+        active[editor] = PathCache(editor);
+
+        connect(editor, &QObject::destroyed, editor, [this, editor]{
+            active.erase(editor);
+        });
+        connect(editor->target_object(), &model::VisualNode::transform_matrix_changed, editor, [this, editor]{
+            active[editor] = PathCache(editor);
+        });
+    }
+
     void extract_editor(graphics::DocumentScene * scene, model::VisualNode* node)
     {
         auto editor_parent = scene->get_editor(node);
@@ -184,16 +201,28 @@ public:
         for ( auto editor_child : editor_parent->childItems() )
         {
             if ( auto editor = qgraphicsitem_cast<graphics::BezierItem*>(editor_child) )
-            {
-                active[editor] = PathCache(editor);
+                add_bezier_editor(editor);
+        }
+    }
 
-                connect(editor, &QObject::destroyed, editor, [this, editor]{
-                    active.erase(editor);
-                });
-                connect(editor->target_object(), &model::VisualNode::transform_matrix_changed, editor, [this, editor]{
-                    active[editor] = PathCache(editor);
-                });
-            }
+    void show_position_editor(graphics::DocumentScene * scene, model::VisualNode* node, model::Transform* transform)
+    {
+        if ( transform->position.keyframe_count() >= 2 )
+        {
+            auto editor = std::make_unique<graphics::BezierItem>(&transform->position, node);
+            auto bezit = editor.get();
+
+            QObject::connect(
+                node, &model::VisualNode::transform_matrix_changed,
+                bezit, [bezit, node](const QTransform& t){
+                    bezit->setTransform(node->local_transform_matrix(node->time()).inverted() * t);
+                }
+            );
+            bezit->setTransform(node->local_transform_matrix(node->time()).inverted() * node->transform_matrix(node->time()));
+
+            scene->show_custom_editor(node, std::move(editor));
+
+            add_bezier_editor(bezit);
         }
     }
 
@@ -204,13 +233,27 @@ public:
         {
             scene->show_editors(node);
 
-            if ( meta->inherits(&model::Path::staticMetaObject) )
+            if (
+                meta->inherits(&model::Path::staticMetaObject) ||
+                meta->inherits(&model::Rect::staticMetaObject) ||
+                meta->inherits(&model::Ellipse::staticMetaObject) ||
+                meta->inherits(&model::PolyStar::staticMetaObject)
+            )
                 extract_editor(scene, node);
         }
         else if ( meta->inherits(&model::Group::staticMetaObject) )
         {
+            show_position_editor(scene, node, static_cast<model::Group*>(node)->transform.get());
             for ( const auto& sub : static_cast<model::Group*>(node)->shapes )
                 impl_extract_selection_recursive_item(scene, sub.get());
+        }
+        else if ( meta->inherits(&model::PreCompLayer::staticMetaObject) )
+        {
+            show_position_editor(scene, node, static_cast<model::PreCompLayer*>(node)->transform.get());
+        }
+        else if ( meta->inherits(&model::Image::staticMetaObject) )
+        {
+            show_position_editor(scene, node, static_cast<model::Image*>(node)->transform.get());
         }
     }
 
@@ -383,13 +426,7 @@ public:
         auto bez = insert_item->bezier();
         bez.set_segment(insert_params.index, cubic_segment_from_struts(mold_original, struts_interp));
 
-        insert_item->target_object()->push_command(
-            new command::SetMultipleAnimated(
-                insert_item->target_property(),
-                QVariant::fromValue(bez),
-                commit
-            )
-        );
+        insert_item->set_bezier(bez, commit);
     }
 
     void delete_nodes_bezier(graphics::BezierItem* item, bool dissolve)
@@ -397,24 +434,45 @@ public:
         if ( item->selected_indices().empty() )
             return;
 
-        auto prop = item->target_property();
-        int sz1 = item->selected_indices().size() + 1;
-        if ( sz1 >= item->bezier().size() && std::all_of(prop->begin(), prop->end(), [sz1](const auto& kf){ return sz1 > kf.get().size(); }) )
+        if ( auto bez_prop = item->target_bezier_property() )
         {
-            // At the moment it always is a Path, but it might change in the future (ie: masks)
-            if ( auto path = item->target_object()->cast<model::Path>() )
+            int sz1 = item->selected_indices().size() + 1;
+            if ( sz1 >= item->bezier().size() && std::all_of(bez_prop->begin(), bez_prop->end(), [sz1](const auto& kf){ return sz1 > kf.get().size(); }) )
             {
-                item->target_object()->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
+                // At the moment it always is a Path, but it might change in the future (ie: masks)
+                if ( auto path = item->target_object()->cast<model::Path>() )
+                {
+                    item->target_object()->push_command(new command::RemoveObject<model::ShapeElement>(path, path->owner()));
+                    return;
+                }
+            }
+            bez_prop->remove_points(item->selected_indices());
+        }
+        else if ( auto pos_prop = item->target_position_property() )
+        {
+            int sz1 = item->selected_indices().size() + 1;
+            if ( sz1 >= item->bezier().size() )
+            {
+                QVariant value;
+                for ( int i = 0; i < pos_prop->keyframe_count(); i++ )
+                {
+                    if ( !item->selected_indices().count(i) )
+                    {
+                        value = pos_prop->keyframe(i)->value();
+                        break;
+                    }
+                }
+                pos_prop->clear_keyframes_undoable(value);
                 return;
             }
+            pos_prop->remove_points(item->selected_indices());
         }
 
         auto bez = item->bezier();
-        prop->remove_points(item->selected_indices());
 
         if ( dissolve && item->selected_indices().size() == 1 )
         {
-            math::bezier::Bezier new_bez = prop->get();
+            math::bezier::Bezier new_bez = item->bezier();
 
             int index = *item->selected_indices().begin();
             if ( bez.closed() || (index > 0 && index < bez.size() - 1) )
@@ -438,7 +496,7 @@ public:
 
                 new_bez.set_segment(index-1, approx);
             }
-            prop->set_undoable(QVariant::fromValue(new_bez));
+            item->set_bezier(new_bez);
         }
 
         item->clear_selected_indices();
@@ -685,7 +743,7 @@ void tools::EditTool::mouse_release(const MouseEvent& event)
             case Private::VertexAdd:
                 if ( d->insert_item )
                 {
-                    d->insert_item->target_property()->split_segment(d->insert_params.index, d->insert_params.factor);
+                    d->insert_item->split_segment(d->insert_params.index, d->insert_params.factor);
                     exit_add_point_mode();
                 }
                 break;
@@ -815,7 +873,7 @@ void tools::EditTool::selection_set_vertex_type(math::bezier::PointType t)
         auto bez = p.first->bezier();
         for ( int index : p.first->selected_indices() )
             bez[index].set_point_type(t);
-        p.first->target_property()->set_undoable(QVariant::fromValue(bez));
+        p.first->set_bezier(bez);
     }
 }
 
@@ -873,7 +931,7 @@ void tools::EditTool::selection_straighten()
         {
             if ( !macro.started() )
                 macro.start();
-            p.first->target_property()->set_undoable(QVariant::fromValue(bez));
+            p.first->set_bezier(bez);
         }
     }
 }
@@ -923,7 +981,7 @@ void tools::EditTool::selection_curve()
         {
             if ( !macro.started() )
                 macro.start();
-            p.first->target_property()->set_undoable(QVariant::fromValue(bez));
+            p.first->set_bezier(bez);
         }
     }
 }

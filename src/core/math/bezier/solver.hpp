@@ -132,7 +132,8 @@ public:
         }
 
         std::vector<Vec> boundary_points;
-        boundary_points.push_back(points_[0]); //Add Begin and end point not the control points!
+        //Add Begin and end point not the control points!
+        boundary_points.push_back(points_[0]);
         boundary_points.push_back(points_[3]);
 
         for ( scalar e : solutions )
