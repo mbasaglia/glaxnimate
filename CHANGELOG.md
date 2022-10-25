@@ -2,6 +2,10 @@
 
 * Editing:
     * Added support for animation following a path
+* UI:
+    * Added menu action to export as an image sequence
+* Scripting:
+    * Added function to render a node at a specific frame
 * Bug fixes:
     * Fixes loading lottie with hidden stylers
 * Other:

@@ -11,6 +11,7 @@
 #include "app/widgets/settings_dialog.hpp"
 #include "app_info.hpp"
 #include "settings/clipboard_settings.hpp"
+#include "export_image_sequence_dialog.hpp"
 
 
 GlaxnimateWindow::GlaxnimateWindow(bool restore_state, bool debug, QWidget *parent, Qt::WindowFlags flags)
@@ -72,6 +73,11 @@ void GlaxnimateWindow::document_export_as()
         d->status_message(tr("File exported"));
     else
         d->status_message(tr("Could not export file"), 0);
+}
+
+void GlaxnimateWindow::document_export_sequence()
+{
+    ExportImageSequenceDialog(d->current_document.get(), d->export_options.path, this).exec();
 }
 
 void GlaxnimateWindow::document_open_dialog()

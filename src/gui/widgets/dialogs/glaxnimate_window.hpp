@@ -147,6 +147,7 @@ public slots:
     void document_save_as();
     void document_export();
     void document_export_as();
+    void document_export_sequence();
     void view_fit();
     /**
      * \brief Copies the current selection to the clipboard

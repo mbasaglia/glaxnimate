@@ -5,8 +5,10 @@
 #include <QPainter>
 
 #include "io/mime/mime_serializer.hpp"
+#include "io/io_registry.hpp"
 #include "model/document.hpp"
 #include "model/shapes/image.hpp"
+#include "model/assets/assets.hpp"
 
 namespace glaxnimate::io::raster {
 
@@ -46,6 +48,19 @@ public:
             if ( auto visual = node->cast<model::VisualNode>() )
                 visual->paint(&painter, node->time(), model::VisualNode::Render);
         }
+        return image;
+    }
+
+    static QImage frame_to_image(const model::VisualNode* node, model::FrameTime time)
+    {
+        if ( !node )
+            return {};
+
+        QImage image(node->document()->size(), QImage::Format_ARGB32);
+        image.fill(Qt::transparent);
+        QPainter painter(&image);
+        painter.setRenderHint(QPainter::Antialiasing);
+        node->paint(&painter, time, model::VisualNode::Render);
         return image;
     }
 

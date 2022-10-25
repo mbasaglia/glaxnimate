@@ -91,6 +91,9 @@ void define_io(py::module& m)
     py::class_<io::raster::RasterMime, io::mime::MimeSerializer>(io, "RasterMime")
         .def_static("render_frame", &io::raster::RasterMime::to_image, to_image_docstring)
         .def_static("render_frame", &doc_to_image, to_image_docstring)
+        .def_static("render_frame", &io::raster::RasterMime::frame_to_image,
+                    "Renders the given frame to image",
+                    py::arg("node"), py::arg("frame"))
     ;
 
     using Fac = io::IoRegistry;

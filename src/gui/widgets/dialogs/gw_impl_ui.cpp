@@ -210,6 +210,7 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_delete, &QAction::triggered, parent, &GlaxnimateWindow::delete_selected);
     connect(ui.action_export, &QAction::triggered, parent, &GlaxnimateWindow::document_export);
     connect(ui.action_export_as, &QAction::triggered, parent, &GlaxnimateWindow::document_export_as);
+    connect(ui.action_export_sequence, &QAction::triggered, parent, &GlaxnimateWindow::document_export_sequence);
     connect(ui.action_document_cleanup, &QAction::triggered, parent, [this]{cleanup_document();});
     connect(ui.action_timing, &QAction::triggered, parent, [this]{
         TimingDialog(current_document.get(), this->parent).exec();
