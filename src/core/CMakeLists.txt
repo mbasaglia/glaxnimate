@@ -22,6 +22,9 @@ io/mime/mime_serializer.cpp
 io/raster/raster_format.cpp
 io/raster/spritesheet_format.cpp
 io/base.cpp
+io/rive/rive_format.cpp
+io/rive/rive_stream.cpp
+io/rive/type_def.cpp
 
 math/geom.cpp
 math/polynomial.cpp
