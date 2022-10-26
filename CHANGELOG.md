@@ -4,6 +4,7 @@
     * Added support for animation following a path
 * UI:
     * Added menu action to export as an image sequence
+    * New layout presets, to work better on smaller screens
 * Scripting:
     * Added function to render a node at a specific frame
 * Bug fixes:

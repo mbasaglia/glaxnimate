@@ -44,6 +44,9 @@ signals:
     void play_started();
     void play_stopped();
     void loop_changed(bool b);
+    void min_changed(int min);
+    void max_changed(int max);
+    void fps_changed(qreal fps);
 
 private slots:
     void play_toggled(bool play);

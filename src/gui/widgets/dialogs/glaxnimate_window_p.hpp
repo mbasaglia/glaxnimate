@@ -99,6 +99,15 @@ public:
         Vertical   = 0x20,
     };
 
+    enum class LayoutPreset
+    {
+        Unknown,
+        Custom,
+        Auto,
+        Wide,
+        Compact
+    };
+
     Ui::GlaxnimateWindow ui;
 
     std::unique_ptr<model::Document> current_document;
@@ -229,6 +238,12 @@ public:
     void init_tools(tools::Tool* to_activate);
     void init_restore_state();
     void init_template_menu();
+
+    void layout_auto();
+    void layout_wide();
+    void layout_compact();
+    void layout_custom();
+    void layout_update();
 
     // IPC
     void ipc_connect(const QString& name);

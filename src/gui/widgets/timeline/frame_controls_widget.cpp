@@ -48,22 +48,27 @@ void FrameControlsWidget::play_toggled(bool checked)
 void FrameControlsWidget::set_min(int min)
 {
     d->spin_frame->setMinimum(min);
+    emit min_changed(min);
 }
 
 void FrameControlsWidget::set_max(int max)
 {
     d->spin_frame->setMaximum(max);
+    emit max_changed(max);
 }
 
 void FrameControlsWidget::set_range(int min, int max)
 {
     d->spin_frame->setRange(min, max);
     d->spin_frame->setValue(min);
+    emit min_changed(min);
+    emit max_changed(max);
 }
 
 void FrameControlsWidget::set_fps(qreal fps)
 {
     this->fps = fps;
+    emit fps_changed(fps);
 }
 
 void FrameControlsWidget::timerEvent(QTimerEvent*)

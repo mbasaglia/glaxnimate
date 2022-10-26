@@ -123,13 +123,16 @@ void GlaxnimateWindow::Private::do_setup_document()
 
     // Playback
     ui.play_controls->set_record_enabled(false);
+    ui.play_controls_2->set_record_enabled(false);
     QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::first_frame_changed, ui.play_controls, &FrameControlsWidget::set_min);
     QObject::connect(current_document->main()->animation.get(), &model::AnimationContainer::last_frame_changed, ui.play_controls, &FrameControlsWidget::set_max);;
     QObject::connect(current_document->main(), &model::MainComposition::fps_changed, ui.play_controls, &FrameControlsWidget::set_fps);
     QObject::connect(ui.play_controls, &FrameControlsWidget::frame_selected, current_document.get(), &model::Document::set_current_time);
     QObject::connect(current_document.get(), &model::Document::current_time_changed, ui.play_controls, &FrameControlsWidget::set_frame);
     QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls, &FrameControlsWidget::set_record_enabled);
+    QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, ui.play_controls_2, &FrameControlsWidget::set_record_enabled);
     QObject::connect(ui.play_controls, &FrameControlsWidget::record_toggled, current_document.get(), &model::Document::set_record_to_keyframe);
+    QObject::connect(ui.play_controls_2, &FrameControlsWidget::record_toggled, current_document.get(), &model::Document::set_record_to_keyframe);
 
     widget_recording->setVisible(false);
     QObject::connect(current_document.get(), &model::Document::record_to_keyframe_changed, widget_recording, &QWidget::setVisible);

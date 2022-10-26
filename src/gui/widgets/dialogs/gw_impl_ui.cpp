@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QActionGroup>
+#include <QScreen>
 
 #include "app/settings/keyboard_shortcuts.hpp"
 
@@ -215,6 +216,7 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_timing, &QAction::triggered, parent, [this]{
         TimingDialog(current_document.get(), this->parent).exec();
     });
+
     connect(ui.action_play, &QAction::triggered, ui.play_controls, &FrameControlsWidget::toggle_play);
     connect(ui.play_controls, &FrameControlsWidget::play_started, parent, [this]{
         ui.action_play->setText(tr("Pause"));
@@ -232,6 +234,23 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_frame_last, &QAction::triggered, ui.play_controls, &FrameControlsWidget::go_last);
     connect(ui.play_controls, &FrameControlsWidget::loop_changed, ui.action_play_loop, &QAction::setChecked);
     connect(ui.action_play_loop, &QAction::triggered, ui.play_controls, &FrameControlsWidget::set_loop);
+
+    connect(ui.play_controls,   &FrameControlsWidget::min_changed,    ui.play_controls_2, &FrameControlsWidget::set_min);
+    connect(ui.play_controls,   &FrameControlsWidget::max_changed,    ui.play_controls_2, &FrameControlsWidget::set_max);
+    connect(ui.play_controls,   &FrameControlsWidget::fps_changed,    ui.play_controls_2, &FrameControlsWidget::set_fps);
+    connect(ui.play_controls,   &FrameControlsWidget::play_started,   ui.play_controls_2, &FrameControlsWidget::play);
+    connect(ui.play_controls,   &FrameControlsWidget::play_stopped,   ui.play_controls_2, &FrameControlsWidget::pause);
+    connect(ui.play_controls,   &FrameControlsWidget::loop_changed,   ui.play_controls_2, &FrameControlsWidget::set_loop);
+    connect(ui.play_controls,   &FrameControlsWidget::frame_selected, ui.play_controls_2, &FrameControlsWidget::set_frame);
+    connect(ui.play_controls_2, &FrameControlsWidget::play_started,   ui.play_controls,   &FrameControlsWidget::play);
+    connect(ui.play_controls_2, &FrameControlsWidget::play_stopped,   ui.play_controls,   &FrameControlsWidget::pause);
+    connect(ui.play_controls_2, &FrameControlsWidget::loop_changed,   ui.play_controls,   &FrameControlsWidget::set_loop);
+    connect(ui.play_controls_2, &FrameControlsWidget::frame_selected, ui.play_controls,   &FrameControlsWidget::set_frame);
+    connect(ui.play_controls, &FrameControlsWidget::min_changed, ui.scroll_time, &QSlider::setMinimum);
+    connect(ui.play_controls, &FrameControlsWidget::max_changed, ui.scroll_time, &QSlider::setMaximum);
+    connect(ui.play_controls, &FrameControlsWidget::frame_selected, ui.scroll_time, &QSlider::setValue);
+    connect(ui.scroll_time, &QSlider::valueChanged, ui.play_controls_2, &FrameControlsWidget::frame_selected);
+
     connect(ui.action_metadata, &QAction::triggered, parent, [this]{
         DocumentMetadataDialog(current_document.get(), this->parent).exec();
     });
@@ -569,28 +588,99 @@ void GlaxnimateWindow::Private::init_docks()
     ui.dock_align_grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding),        row, 0);
     ui.dock_align->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    // Arrange docks
+    // Layout
+    QActionGroup *layout_actions = new QActionGroup(parent);
+    layout_actions->setExclusive(true);
+    for ( const auto& action : ui.menu_layout->actions() )
+    {
+        action->setActionGroup(layout_actions);
+        connect(action, &QAction::triggered, parent, [this]{layout_update();});
+    }
+
+    auto preset = LayoutPreset(app::settings::get<int>("ui", "layout"));
+
+    switch ( preset )
+    {
+        case LayoutPreset::Unknown:
+        case LayoutPreset::Auto:
+            layout_auto();
+            break;
+        case LayoutPreset::Wide:
+            layout_wide();
+            break;
+        case LayoutPreset::Compact:
+            layout_compact();
+            break;
+        case LayoutPreset::Custom:
+            layout_auto();
+            app::settings::set("ui", "layout", int(LayoutPreset::Custom));
+            ui.action_layout_custom->setChecked(true);
+            break;
+    }
+}
+
+void GlaxnimateWindow::Private::layout_update()
+{
+    if ( ui.action_layout_wide->isChecked() )
+        layout_wide();
+    else if ( ui.action_layout_compact->isChecked() )
+        layout_compact();
+    else if ( ui.action_layout_custom->isChecked() )
+        layout_custom();
+    else
+        layout_auto();
+}
+
+void GlaxnimateWindow::Private::layout_wide()
+{
+    // Bottom
+    parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_timeline);
+    parent->tabifyDockWidget(ui.dock_timeline, ui.dock_properties);
+    parent->tabifyDockWidget(ui.dock_properties, ui.dock_script_console);
+    parent->tabifyDockWidget(ui.dock_script_console, ui.dock_logs);
+    parent->tabifyDockWidget(ui.dock_logs, ui.dock_time_slider);
+    ui.dock_timeline->raise();
+    ui.dock_time_slider->setVisible(false);
+    ui.dock_timeline->setVisible(true);
+    ui.dock_properties->setVisible(true);
+
+
+    parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_snippets);
+
+
+    // Bottom Right
     parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_layers);
     parent->tabifyDockWidget(ui.dock_layers, ui.dock_gradients);
     parent->tabifyDockWidget(ui.dock_gradients, ui.dock_swatches);
     parent->tabifyDockWidget(ui.dock_swatches, ui.dock_assets);
     ui.dock_gradients->raise();
+    ui.dock_gradients->setVisible(true);
     ui.dock_assets->setVisible(false);
     ui.dock_swatches->setVisible(false);
+    ui.dock_layers->setVisible(true);
 
-    parent->tabifyDockWidget(ui.dock_timeline, ui.dock_properties);
-    parent->tabifyDockWidget(ui.dock_properties, ui.dock_script_console);
-    parent->tabifyDockWidget(ui.dock_script_console, ui.dock_logs);
-    ui.dock_timeline->raise();
 
+    // Right
+    parent->addDockWidget(Qt::RightDockWidgetArea, ui.dock_colors);
     parent->tabifyDockWidget(ui.dock_colors, ui.dock_stroke);
     parent->tabifyDockWidget(ui.dock_stroke, ui.dock_undo);
     ui.dock_colors->raise();
+    ui.dock_colors->setVisible(true);
+    ui.dock_stroke->setVisible(true);
+    ui.dock_undo->setVisible(true);
+
+    parent->addDockWidget(Qt::RightDockWidgetArea, ui.dock_undo);
 
 
-    parent->tabifyDockWidget(ui.dock_tool_options, ui.dock_align);
-    ui.dock_tool_options->raise();
+    // Left
+    parent->addDockWidget(Qt::LeftDockWidgetArea, ui.dock_tools);
 
+    parent->addDockWidget(Qt::LeftDockWidgetArea, ui.dock_tool_options);
+    parent->addDockWidget(Qt::LeftDockWidgetArea, ui.dock_align);
+    ui.dock_tool_options->setVisible(true);
+    ui.dock_align->setVisible(true);
+
+    // Resize
     parent->resizeDocks({ui.dock_snippets}, {1}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_layers}, {1}, Qt::Horizontal);
     parent->resizeDocks({ui.dock_tools}, {200}, Qt::Horizontal);
@@ -603,6 +693,85 @@ void GlaxnimateWindow::Private::init_docks()
 
     // Resize parent to have a reasonable default size
     parent->resize(1920, 1080);
+
+    app::settings::set("ui", "layout", int(LayoutPreset::Wide));
+    ui.action_layout_wide->setChecked(true);
+}
+
+void GlaxnimateWindow::Private::layout_compact()
+{
+    // Bottom
+    parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_time_slider);
+    parent->tabifyDockWidget(ui.dock_time_slider, ui.dock_timeline);
+    parent->tabifyDockWidget(ui.dock_timeline, ui.dock_script_console);
+    parent->tabifyDockWidget(ui.dock_script_console, ui.dock_logs);
+    ui.dock_time_slider->raise();
+    ui.dock_time_slider->setVisible(true);
+    ui.dock_timeline->setVisible(false);
+    ui.dock_logs->setVisible(false);
+
+    parent->addDockWidget(Qt::BottomDockWidgetArea, ui.dock_snippets);
+
+    // Right
+    parent->addDockWidget(Qt::RightDockWidgetArea, ui.dock_colors);
+    parent->tabifyDockWidget(ui.dock_colors, ui.dock_stroke);
+    parent->tabifyDockWidget(ui.dock_stroke, ui.dock_layers);
+    parent->tabifyDockWidget(ui.dock_layers, ui.dock_properties);
+    parent->tabifyDockWidget(ui.dock_properties, ui.dock_undo);
+    parent->tabifyDockWidget(ui.dock_undo, ui.dock_gradients);
+    parent->tabifyDockWidget(ui.dock_gradients, ui.dock_swatches);
+    parent->tabifyDockWidget(ui.dock_swatches, ui.dock_assets);
+    ui.dock_colors->raise();
+    ui.dock_colors->setVisible(true);
+    ui.dock_stroke->setVisible(true);
+    ui.dock_gradients->setVisible(false);
+    ui.dock_assets->setVisible(false);
+    ui.dock_swatches->setVisible(false);
+    ui.dock_undo->setVisible(false);
+    ui.dock_properties->setVisible(true);
+    ui.dock_layers->setVisible(true);
+
+    // Left
+    parent->addDockWidget(Qt::LeftDockWidgetArea, ui.dock_tools);
+
+    parent->addDockWidget(Qt::LeftDockWidgetArea, ui.dock_tool_options);
+    parent->tabifyDockWidget(ui.dock_tool_options, ui.dock_align);
+    ui.dock_tool_options->raise();
+    ui.dock_tool_options->setVisible(true);
+    ui.dock_align->setVisible(true);
+
+    // Resize
+    parent->resizeDocks({ui.dock_tool_options, ui.dock_align, ui.dock_tools}, {1, 1, 4000}, Qt::Vertical);
+    parent->resizeDocks({ui.dock_time_slider}, {64}, Qt::Vertical);
+    ui.dock_script_console->setVisible(false);
+    ui.dock_logs->setVisible(false);
+    ui.dock_tools->setVisible(false);
+    ui.dock_snippets->setVisible(false);
+
+    // Resize parent to have a reasonable default size
+    parent->resize(1366, 768);
+
+    app::settings::set("ui", "layout", int(LayoutPreset::Compact));
+    ui.action_layout_compact->setChecked(true);
+}
+
+void GlaxnimateWindow::Private::layout_auto()
+{
+    auto real_estate = qApp->primaryScreen()->availableSize();
+    if ( real_estate.width() >= 1920 && real_estate.height() >= 1080 )
+        layout_wide();
+    else
+        layout_compact();
+
+    app::settings::set("ui", "layout", int(LayoutPreset::Auto));
+    ui.action_layout_automatic->setChecked(true);
+}
+
+void GlaxnimateWindow::Private::layout_custom()
+{
+    init_restore_state();
+    app::settings::set("ui", "layout", int(LayoutPreset::Custom));
+    ui.action_layout_custom->setChecked(true);
 }
 
 void GlaxnimateWindow::Private::init_template_menu()

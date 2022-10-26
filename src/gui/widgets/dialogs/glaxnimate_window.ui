@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1349</width>
+    <width>1446</width>
     <height>933</height>
    </rect>
   </property>
@@ -41,7 +41,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1349</width>
+     <width>1446</width>
      <height>30</height>
     </rect>
    </property>
@@ -191,8 +191,18 @@
       <string>Tool&amp;bars</string>
      </property>
     </widget>
+    <widget class="QMenu" name="menu_layout">
+     <property name="title">
+      <string>&amp;Layout</string>
+     </property>
+     <addaction name="action_layout_custom"/>
+     <addaction name="action_layout_automatic"/>
+     <addaction name="action_layout_wide"/>
+     <addaction name="action_layout_compact"/>
+    </widget>
     <addaction name="separator"/>
     <addaction name="menu_views"/>
+    <addaction name="menu_layout"/>
     <addaction name="menu_toolbars"/>
     <addaction name="action_view_zoom_in"/>
     <addaction name="action_view_zoom_out"/>
@@ -1021,6 +1031,38 @@
      </property>
      <item>
       <widget class="glaxnimate::gui::SnippetListWidget" name="widget" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_time_slider">
+   <property name="windowIcon">
+    <iconset theme="player-time"/>
+   </property>
+   <property name="windowTitle">
+    <string>Compact Timelime</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_15">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1000">
+     <item>
+      <widget class="glaxnimate::gui::FrameControlsWidget" name="play_controls_2" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="scroll_time">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -2165,10 +2207,55 @@
   </action>
   <action name="action_export_sequence">
    <property name="icon">
-    <iconset theme="folder-images"/>
+    <iconset theme="folder-images">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Export as Image Sequence...</string>
+   </property>
+  </action>
+  <action name="action_layout_custom">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Custom</string>
+   </property>
+   <property name="toolTip">
+    <string>Customized Layout</string>
+   </property>
+  </action>
+  <action name="action_layout_automatic">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Automatic</string>
+   </property>
+   <property name="toolTip">
+    <string>Determines the best layout based on screen size</string>
+   </property>
+  </action>
+  <action name="action_layout_wide">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Wide</string>
+   </property>
+   <property name="toolTip">
+    <string>Layout best suited for larger screens</string>
+   </property>
+  </action>
+  <action name="action_layout_compact">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Compact</string>
+   </property>
+   <property name="toolTip">
+    <string>Layout best suited for smaller screens</string>
    </property>
   </action>
  </widget>
