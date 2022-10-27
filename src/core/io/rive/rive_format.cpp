@@ -60,9 +60,12 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
     if ( stream.has_error() || vmaj != 7 )
         return {};
 
+    QJsonArray summary;
+
     QJsonArray objects;
     for ( const auto& rive_obj : RiveLoader(stream, this).load_object_list() )
     {
+        QJsonObject summary_obj;
         QJsonObject obj;
 
         QJsonArray types;
@@ -82,17 +85,35 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
             prop["id"] = int(p.first);
             prop["name"] = p.second.name;
             prop["type"] = int(p.second.type);
-            auto value = rive_obj.properties.value(p.second.name);
-            if ( value.userType() == QMetaType::QColor )
-                prop["value"] = value.value<QColor>().name();
-            else
-                prop["value"] = QJsonValue::fromVariant(value);
+            auto iter = rive_obj.properties.find(p.second.name);
+            QJsonValue val;
+
+            if ( iter != rive_obj.properties.end() )
+            {
+                if ( iter->userType() == QMetaType::QColor )
+                    val = iter->value<QColor>().name();
+                else if ( iter->userType() == QMetaType::ULongLong || iter->userType() == QMetaType::ULong )
+                    val = iter->toInt();
+                else
+                    val = QJsonValue::fromVariant(*iter);
+
+                summary_obj[iter.key()] = val;
+            }
+            prop["value"] = val;
+
             props.push_back(prop);
         }
         obj["properties"] = props;
 
         objects.push_back(obj);
+        QJsonObject summary_obj_parent;
+        summary_obj_parent[rive_obj.definitions[0]->name] = summary_obj;
+        summary.push_back(summary_obj_parent);
     }
 
-    return QJsonDocument(objects);
+    QJsonObject root;
+    root["brief"] = summary;
+    root["detail"] = objects;
+
+    return QJsonDocument(root);
 }

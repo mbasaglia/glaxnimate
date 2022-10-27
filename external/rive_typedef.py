@@ -14,15 +14,27 @@ type_map = {
     "Color":    "Color"
 }
 
-def load_dir(path, data, types, relpath = pathlib.Path()):
+def load_dir(path, data, types, props, relpath = pathlib.Path()):
     for item in path.iterdir():
         if item.is_dir():
-            load_dir(item, data, types, relpath / item.name)
+            load_dir(item, data, types, props, relpath / item.name)
         elif item.suffix == ".json":
-            load_file(item, data, types, relpath / item.name)
+            load_file(item, data, types, props, relpath / item.name)
 
 
-def load_file(path, data, types, relpath):
+def load_prop(name, pdef, props):
+    id = pdef["key"]["int"]
+    if props.get(id, name) != name:
+        raise Exception("Mismatching prop %s %s %s" % (id, name, props[name]))
+
+    props[id] = name
+    return {
+        "id": id,
+        "name": name,
+        "type": type_map[pdef["type"]]
+    }
+
+def load_file(path, data, types, props, relpath):
     with open(path) as f:
         definition = json.load(f)
 
@@ -32,11 +44,7 @@ def load_file(path, data, types, relpath):
         "extends": definition.get("extends"),
         "name": definition["name"],
         "properties": [
-            {
-                "id": pdef["key"]["int"],
-                "name": name,
-                "type": type_map[pdef["type"]]
-            }
+            load_prop(name, pdef, props)
             for name, pdef in definition.get("properties", {}).items()
             if pdef.get("runtime", True)
         ]
@@ -77,8 +85,9 @@ args = parser.parse_args()
 
 data = []
 types = {}
+props = {}
 rive_def_root = args.defs
-load_dir(rive_def_root, data, types)
+load_dir(rive_def_root, data, types, props)
 data = sorted(data, key=lambda o: o["id"])
 
 if args.type == "source":
@@ -107,4 +116,8 @@ elif args.type == "ids":
     print("    NoType = 0,")
     for obj in data:
         print("    %(name)s = %(id)d," % obj)
+    #print("};\n")
+    #print("enum class PropId {")
+    #for id, name in sorted(props.items()):
+        #print("    %(name)s = %(id)d," % {"id": id, "name": name})
     print("};\n} // namespace glaxnimate::io::rive")

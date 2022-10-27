@@ -77,6 +77,14 @@ struct Object
             return default_value;
         return iter->value<T>();
     }
+
+    QString property_name(Identifier id) const
+    {
+        auto it = property_definitions.find(id);
+        if ( it == property_definitions.end() )
+            return {};
+        return it->second.name;
+    }
 };
 
 extern std::unordered_map<TypeId, ObjectDefinition> defined_objects;

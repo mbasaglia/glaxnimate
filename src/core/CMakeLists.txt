@@ -25,6 +25,7 @@ io/base.cpp
 io/rive/rive_format.cpp
 io/rive/rive_stream.cpp
 io/rive/type_def.cpp
+io/rive/rive_loader.cpp
 
 math/geom.cpp
 math/polynomial.cpp

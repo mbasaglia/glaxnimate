@@ -1,6 +1,8 @@
 #pragma once
 /**
  * NOTE: This file is generated automatically, do not edit manually
+ * To generate this file run
+ *       ./external/rive_typedef.py -t ids >src/core/io/rive/type_ids.hpp
  */
 
 namespace glaxnimate::io::rive {
