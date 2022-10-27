@@ -76,6 +76,11 @@ void load_property(Object* rive, PropT& property, const detail::AnimatedProperti
         property.set_keyframe(kf.time, load_property_get_keyframe<T>(kf, 0))->set_transition(kf.transition);
 }
 
+QPointF make_point(Float x, Float y)
+{
+    return QPointF(x, y);
+}
+
 
 struct LoadCotext
 {
@@ -252,9 +257,7 @@ struct LoadCotext
 
     void load_transform(Object* rive, model::Transform* transform, const detail::AnimatedProperties& animations)
     {
-        load_property<Float, Float>(rive, transform->position, animations, {"x", "y"}, 0, 0, [](Float x, Float y){
-            return QPointF(x, y);
-        });
+        load_property<Float, Float>(rive, transform->position, animations, {"x", "y"}, 0, 0, &make_point);
         load_property<Float>(rive, transform->rotation, animations, "rotation");
         load_property<Float, Float>(rive, transform->scale, animations, {"scaleX", "scaleX"}, 1, 1, [](Float x, Float y){
             return QVector2D(x, y);
@@ -291,7 +294,8 @@ struct LoadCotext
                 return load_polygon(shape, animations, model::PolyStar::Star);
             case TypeId::Triangle:
                 return load_triangle(shape, animations);
-            case TypeId::Path:
+            case TypeId::PointsPath:
+                return load_path(shape, animations);
             case TypeId::TrimPath:
             case TypeId::Bone:
             case TypeId::RootBone:
@@ -362,19 +366,52 @@ struct LoadCotext
         return shape;
     }
 
-    void load_styler(Object* object, model::Styler* shape, const detail::AnimatedProperties&)
+    void load_styler(Object* object, model::Styler* shape, const detail::AnimatedProperties& animations)
     {
         shape->name.set(object->get<String>("name"));
         shape->visible.set(object->get<bool>("isVisible", true));
+        load_property<Float>(object, shape->opacity, animations, "opacity", 1);
 
         for ( const auto& child : object->children )
         {
             if ( child->type_id == TypeId::SolidColor )
-            {
                 load_property<QColor>(child, shape->color, load_animations(child), "colorValue", QColor("#747474"));
-                break;
+            else if ( child->type_id == TypeId::LinearGradient )
+                shape->use.set(load_gradient(child, model::Gradient::Linear));
+            else if ( child->type_id == TypeId::RadialGradient )
+                shape->use.set(load_gradient(child, model::Gradient::Radial));
+        }
+    }
+
+    model::Gradient* load_gradient(Object* object, model::Gradient::GradientType type)
+    {
+        auto colors = document->assets()->add_gradient_colors();
+        colors->name.set(object->get<String>("name"));
+
+        auto gradient = document->assets()->add_gradient();
+        gradient->name.set(object->get<String>("name"));
+        gradient->colors.set(colors);
+        gradient->type.set(type);
+
+        auto animations = load_animations(object);
+        load_property<Float, Float>(object, gradient->start_point, animations, {"startX", "startY"}, 0, 0, &make_point);
+        load_property<Float, Float>(object, gradient->end_point, animations, {"endX", "endY"}, 0, 0, &make_point);
+
+        /// \todo color animations
+        QGradientStops stops;
+        for ( const auto& child : object->children )
+        {
+            if ( child->type_id == TypeId::GradientStop )
+            {
+                stops.push_back({
+                    child->get<Float>("position"),
+                    child->get<QColor>("colorValue"),
+                });
             }
         }
+        colors->colors.set(stops);
+
+        return gradient;
     }
 
     detail::AnimatedProperties load_animations(Object* object)
@@ -447,6 +484,74 @@ struct LoadCotext
         group->shapes.insert(std::move(shape));
         load_shape_group(object, group.get(), animations);
         return group;
+    }
+
+    std::unique_ptr<model::Path> load_path(Object* object, const detail::AnimatedProperties& animations)
+    {
+        auto shape = std::make_unique<model::Path>(document);
+        shape->name.set(object->get<String>("name"));
+        bool closed = object->get<bool>("isClosed");
+        shape->closed.set(closed);
+
+        math::bezier::Bezier bez;
+        for ( const auto& child : object->children )
+        {
+            math::bezier::Point p;
+            p.pos = QPointF(child->get<Float>("x", 0), child->get<Float>("y", 0));
+            if ( child->type_id == TypeId::CubicMirroredVertex )
+            {
+                p.type = math::bezier::Symmetrical;
+                auto tangent = math::from_polar<QPointF>(
+                    child->get<Float>("distance"),
+                    child->get<Float>("rotation")
+                );
+                p.tan_in = p.pos - tangent;
+                p.tan_out = p.pos + tangent;
+            }
+            else if ( child->type_id == TypeId::CubicAsymmetricVertex )
+            {
+                p.type = math::bezier::Smooth;
+                p.tan_in = p.pos - math::from_polar<QPointF>(
+                    child->get<Float>("inDistance"),
+                    child->get<Float>("rotation")
+                );
+                p.tan_out = p.pos + math::from_polar<QPointF>(
+                    child->get<Float>("outDistance"),
+                    child->get<Float>("rotation")
+                );
+            }
+            else if ( child->type_id == TypeId::CubicDetachedVertex )
+            {
+                p.type = math::bezier::Corner;
+                p.tan_in = p.pos + math::from_polar<QPointF>(
+                    child->get<Float>("inDistance"),
+                    child->get<Float>("inRotation")
+                );
+                p.tan_out = p.pos + math::from_polar<QPointF>(
+                    child->get<Float>("outDistance"),
+                    child->get<Float>("outRotation")
+                );
+            }
+            else if ( child->type_id == TypeId::StraightVertex )
+            {
+                p.type = math::bezier::Corner;
+                p.tan_in = p.tan_out = p.pos;
+            }
+            else
+            {
+                continue;
+            }
+
+            bez.push_back(p);
+        }
+
+        bez.set_closed(closed);
+
+        /// \todo animation
+        Q_UNUSED(animations);
+        shape->shape.set(bez);
+
+        return shape;
     }
 
     model::Document* document = nullptr;

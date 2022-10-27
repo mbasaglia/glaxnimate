@@ -63,8 +63,16 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
     QJsonArray summary;
 
     QJsonArray objects;
+    int id = 0;
+    bool has_artboard = false;
     for ( const auto& rive_obj : RiveLoader(stream, this).load_object_list() )
     {
+        if ( rive_obj.type_id == TypeId::Artboard )
+        {
+            has_artboard = true;
+            id = 0;
+        }
+
         QJsonObject summary_obj;
         QJsonObject obj;
 
@@ -105,9 +113,17 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
         }
         obj["properties"] = props;
 
-        objects.push_back(obj);
         QJsonObject summary_obj_parent;
         summary_obj_parent[rive_obj.definitions[0]->name] = summary_obj;
+
+        if ( has_artboard )
+        {
+            summary_obj_parent["-id"] = id;
+            obj["object_id"] = id;
+            id++;
+        }
+
+        objects.push_back(obj);
         summary.push_back(summary_obj_parent);
     }
 
