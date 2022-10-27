@@ -1,587 +1,19 @@
 /**
  * NOTE: This file is generated automatically, do not edit manually
+ * To generate this file run
+ *       ./external/rive_typedef.py -t source >src/core/io/rive/type_def.cpp
  */
+
 
 #include "type_def.hpp"
 
 using namespace glaxnimate::io::rive;
 
-std::unordered_map<Identifier, ObjectDefinition> glaxnimate::io::rive::defined_objects = {
-    {
-        93, {
-            "NestedAnimation",
-            11, {
-                {198, {"animationId", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        10, {
-            "Component",
-            0, {
-                {4, {"name", PropertyType::String}},
-                {5, {"parentId", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        102, {
-            "Folder",
-            99, {
-            }
-        }
-    },
-    {
-        104, {
-            "DrawableAsset",
-            103, {
-                {207, {"height", PropertyType::Float}},
-                {208, {"width", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        103, {
-            "FileAsset",
-            99, {
-                {204, {"assetId", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        105, {
-            "ImageAsset",
-            104, {
-            }
-        }
-    },
-    {
-        120, {
-            "LayerImageAsset",
-            105, {
-                {233, {"layer", PropertyType::VarUint}},
-                {234, {"x", PropertyType::Float}},
-                {235, {"y", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        119, {
-            "LayeredAsset",
-            104, {
-            }
-        }
-    },
-    {
-        99, {
-            "Asset",
-            0, {
-                {203, {"name", PropertyType::String}},
-            }
-        }
-    },
-    {
-        106, {
-            "FileAssetContents",
-            0, {
-                {212, {"bytes", PropertyType::Bytes}},
-            }
-        }
-    },
-    {
-        23, {
-            "Backboard",
-            0, {
-            }
-        }
-    },
-    {
-        46, {
-            "CubicWeight",
-            45, {
-                {110, {"inValues", PropertyType::VarUint}},
-                {111, {"inIndices", PropertyType::VarUint}},
-                {112, {"outValues", PropertyType::VarUint}},
-                {113, {"outIndices", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        45, {
-            "Weight",
-            10, {
-                {102, {"values", PropertyType::VarUint}},
-                {103, {"indices", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        43, {
-            "Skin",
-            11, {
-                {104, {"xx", PropertyType::Float}},
-                {105, {"yx", PropertyType::Float}},
-                {106, {"xy", PropertyType::Float}},
-                {107, {"yy", PropertyType::Float}},
-                {108, {"tx", PropertyType::Float}},
-                {109, {"ty", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        44, {
-            "Tendon",
-            10, {
-                {95, {"boneId", PropertyType::VarUint}},
-                {96, {"xx", PropertyType::Float}},
-                {97, {"yx", PropertyType::Float}},
-                {98, {"xy", PropertyType::Float}},
-                {99, {"yy", PropertyType::Float}},
-                {100, {"tx", PropertyType::Float}},
-                {101, {"ty", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        41, {
-            "RootBone",
-            40, {
-                {90, {"x", PropertyType::Float}},
-                {91, {"y", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        39, {
-            "SkeletalComponent",
-            38, {
-            }
-        }
-    },
-    {
-        40, {
-            "Bone",
-            39, {
-                {89, {"length", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        49, {
-            "DrawRules",
-            11, {
-                {121, {"drawTargetId", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        13, {
-            "Drawable",
-            2, {
-                {23, {"blendModeValue", PropertyType::VarUint}},
-                {129, {"drawableFlags", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        48, {
-            "DrawTarget",
-            10, {
-                {119, {"drawableId", PropertyType::VarUint}},
-                {120, {"placementValue", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        87, {
-            "TranslationConstraint",
-            86, {
-            }
-        }
-    },
-    {
-        88, {
-            "ScaleConstraint",
-            86, {
-            }
-        }
-    },
-    {
-        90, {
-            "TransformSpaceConstraint",
-            80, {
-                {179, {"sourceSpaceValue", PropertyType::VarUint}},
-                {180, {"destSpaceValue", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        80, {
-            "TargetedConstraint",
-            79, {
-                {173, {"targetId", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        85, {
-            "TransformComponentConstraint",
-            90, {
-                {195, {"minMaxSpaceValue", PropertyType::VarUint}},
-                {182, {"copyFactor", PropertyType::Float}},
-                {183, {"minValue", PropertyType::Float}},
-                {184, {"maxValue", PropertyType::Float}},
-                {188, {"offset", PropertyType::Bool}},
-                {189, {"doesCopy", PropertyType::Bool}},
-                {190, {"min", PropertyType::Bool}},
-                {191, {"max", PropertyType::Bool}},
-            }
-        }
-    },
-    {
-        79, {
-            "Constraint",
-            10, {
-                {172, {"strength", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        82, {
-            "DistanceConstraint",
-            80, {
-                {177, {"distance", PropertyType::Float}},
-                {178, {"modeValue", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        89, {
-            "RotationConstraint",
-            85, {
-            }
-        }
-    },
-    {
-        86, {
-            "TransformComponentConstraintY",
-            85, {
-                {185, {"copyFactorY", PropertyType::Float}},
-                {186, {"minValueY", PropertyType::Float}},
-                {187, {"maxValueY", PropertyType::Float}},
-                {192, {"doesCopyY", PropertyType::Bool}},
-                {193, {"minY", PropertyType::Bool}},
-                {194, {"maxY", PropertyType::Bool}},
-            }
-        }
-    },
-    {
-        81, {
-            "IKConstraint",
-            80, {
-                {174, {"invertDirection", PropertyType::Bool}},
-                {175, {"parentBoneCount", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        83, {
-            "TransformConstraint",
-            90, {
-            }
-        }
-    },
-    {
-        34, {
-            "CubicAsymmetricVertex",
-            36, {
-                {79, {"rotation", PropertyType::Float}},
-                {80, {"inDistance", PropertyType::Float}},
-                {81, {"outDistance", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        111, {
-            "ContourMeshVertex",
-            108, {
-            }
-        }
-    },
-    {
-        6, {
-            "CubicDetachedVertex",
-            36, {
-                {84, {"inRotation", PropertyType::Float}},
-                {85, {"inDistance", PropertyType::Float}},
-                {86, {"outRotation", PropertyType::Float}},
-                {87, {"outDistance", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        20, {
-            "Fill",
-            21, {
-                {40, {"fillRule", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        21, {
-            "ShapePaint",
-            11, {
-                {41, {"isVisible", PropertyType::Bool}},
-            }
-        }
-    },
-    {
-        24, {
-            "Stroke",
-            21, {
-                {47, {"thickness", PropertyType::Float}},
-                {48, {"cap", PropertyType::VarUint}},
-                {49, {"join", PropertyType::VarUint}},
-                {50, {"transformAffectsStroke", PropertyType::Bool}},
-            }
-        }
-    },
-    {
-        22, {
-            "LinearGradient",
-            11, {
-                {42, {"startX", PropertyType::Float}},
-                {33, {"startY", PropertyType::Float}},
-                {34, {"endX", PropertyType::Float}},
-                {35, {"endY", PropertyType::Float}},
-                {46, {"opacity", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        47, {
-            "TrimPath",
-            10, {
-                {114, {"start", PropertyType::Float}},
-                {115, {"end", PropertyType::Float}},
-                {116, {"offset", PropertyType::Float}},
-                {117, {"modeValue", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        17, {
-            "RadialGradient",
-            22, {
-            }
-        }
-    },
-    {
-        19, {
-            "GradientStop",
-            10, {
-                {38, {"colorValue", PropertyType::Color}},
-                {39, {"position", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        18, {
-            "SolidColor",
-            10, {
-                {37, {"colorValue", PropertyType::Color}},
-            }
-        }
-    },
-    {
-        110, {
-            "Text",
-            2, {
-                {218, {"value", PropertyType::String}},
-            }
-        }
-    },
-    {
-        16, {
-            "PointsPath",
-            12, {
-                {32, {"isClosed", PropertyType::Bool}},
-            }
-        }
-    },
-    {
-        3, {
-            "Shape",
-            13, {
-            }
-        }
-    },
-    {
-        35, {
-            "CubicMirroredVertex",
-            36, {
-                {82, {"rotation", PropertyType::Float}},
-                {83, {"distance", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        100, {
-            "Image",
-            13, {
-                {206, {"assetId", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        52, {
-            "Star",
-            51, {
-                {127, {"innerRadius", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        107, {
-            "Vertex",
-            11, {
-                {24, {"x", PropertyType::Float}},
-                {25, {"y", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        14, {
-            "PathVertex",
-            107, {
-            }
-        }
-    },
-    {
-        4, {
-            "Ellipse",
-            15, {
-            }
-        }
-    },
-    {
-        5, {
-            "StraightVertex",
-            14, {
-                {26, {"radius", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        36, {
-            "CubicVertex",
-            14, {
-            }
-        }
-    },
-    {
-        108, {
-            "MeshVertex",
-            107, {
-                {215, {"u", PropertyType::Float}},
-                {216, {"v", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        15, {
-            "ParametricPath",
-            12, {
-                {20, {"width", PropertyType::Float}},
-                {21, {"height", PropertyType::Float}},
-                {123, {"originX", PropertyType::Float}},
-                {124, {"originY", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        112, {
-            "ForcedEdge",
-            10, {
-                {219, {"fromId", PropertyType::VarUint}},
-                {220, {"toId", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        8, {
-            "Triangle",
-            15, {
-            }
-        }
-    },
-    {
-        42, {
-            "ClippingShape",
-            10, {
-                {92, {"sourceId", PropertyType::VarUint}},
-                {93, {"fillRule", PropertyType::VarUint}},
-                {94, {"isVisible", PropertyType::Bool}},
-            }
-        }
-    },
-    {
-        12, {
-            "Path",
-            2, {
-                {128, {"pathFlags", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        109, {
-            "Mesh",
-            11, {
-                {223, {"triangleIndexBytes", PropertyType::Bytes}},
-            }
-        }
-    },
-    {
-        7, {
-            "Rectangle",
-            15, {
-                {164, {"linkCornerRadius", PropertyType::Bool}},
-                {31, {"cornerRadiusTL", PropertyType::Float}},
-                {161, {"cornerRadiusTR", PropertyType::Float}},
-                {162, {"cornerRadiusBL", PropertyType::Float}},
-                {163, {"cornerRadiusBR", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        113, {
-            "TextRun",
-            13, {
-                {221, {"pointSize", PropertyType::Float}},
-                {222, {"textLength", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        51, {
-            "Polygon",
-            15, {
-                {125, {"points", PropertyType::VarUint}},
-                {126, {"cornerRadius", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        11, {
-            "ContainerComponent",
-            10, {
-            }
-        }
-    },
-    {
-        1, {
-            "Artboard",
-            91, {
+std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objects = {
+    {
+        TypeId::Artboard, {
+            "Artboard", TypeId::Artboard,
+            TypeId::WorldTransformComponent, {
                 {196, {"clip", PropertyType::Bool}},
                 {7, {"width", PropertyType::Float}},
                 {8, {"height", PropertyType::Float}},
@@ -594,41 +26,252 @@ std::unordered_map<Identifier, ObjectDefinition> glaxnimate::io::rive::defined_o
         }
     },
     {
-        92, {
-            "NestedArtboard",
-            13, {
-                {197, {"artboardId", PropertyType::VarUint}},
+        TypeId::Node, {
+            "Node", TypeId::Node,
+            TypeId::TransformComponent, {
+                {13, {"x", PropertyType::Float}},
+                {14, {"y", PropertyType::Float}},
             }
         }
     },
     {
-        56, {
-            "StateMachineNumber",
-            55, {
-                {140, {"value", PropertyType::Float}},
+        TypeId::Shape, {
+            "Shape", TypeId::Shape,
+            TypeId::Drawable, {
             }
         }
     },
     {
-        118, {
-            "ListenerNumberChange",
-            116, {
-                {229, {"value", PropertyType::Float}},
+        TypeId::Ellipse, {
+            "Ellipse", TypeId::Ellipse,
+            TypeId::ParametricPath, {
             }
         }
     },
     {
-        70, {
-            "TransitionNumberCondition",
-            69, {
-                {157, {"value", PropertyType::Float}},
+        TypeId::StraightVertex, {
+            "StraightVertex", TypeId::StraightVertex,
+            TypeId::PathVertex, {
+                {26, {"radius", PropertyType::Float}},
             }
         }
     },
     {
-        31, {
-            "LinearAnimation",
-            27, {
+        TypeId::CubicDetachedVertex, {
+            "CubicDetachedVertex", TypeId::CubicDetachedVertex,
+            TypeId::CubicVertex, {
+                {84, {"inRotation", PropertyType::Float}},
+                {85, {"inDistance", PropertyType::Float}},
+                {86, {"outRotation", PropertyType::Float}},
+                {87, {"outDistance", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::Rectangle, {
+            "Rectangle", TypeId::Rectangle,
+            TypeId::ParametricPath, {
+                {164, {"linkCornerRadius", PropertyType::Bool}},
+                {31, {"cornerRadiusTL", PropertyType::Float}},
+                {161, {"cornerRadiusTR", PropertyType::Float}},
+                {162, {"cornerRadiusBL", PropertyType::Float}},
+                {163, {"cornerRadiusBR", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::Triangle, {
+            "Triangle", TypeId::Triangle,
+            TypeId::ParametricPath, {
+            }
+        }
+    },
+    {
+        TypeId::Component, {
+            "Component", TypeId::Component,
+            TypeId::NoType, {
+                {4, {"name", PropertyType::String}},
+                {5, {"parentId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::ContainerComponent, {
+            "ContainerComponent", TypeId::ContainerComponent,
+            TypeId::Component, {
+            }
+        }
+    },
+    {
+        TypeId::Path, {
+            "Path", TypeId::Path,
+            TypeId::Node, {
+                {128, {"pathFlags", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::Drawable, {
+            "Drawable", TypeId::Drawable,
+            TypeId::Node, {
+                {23, {"blendModeValue", PropertyType::VarUint}},
+                {129, {"drawableFlags", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::PathVertex, {
+            "PathVertex", TypeId::PathVertex,
+            TypeId::Vertex, {
+            }
+        }
+    },
+    {
+        TypeId::ParametricPath, {
+            "ParametricPath", TypeId::ParametricPath,
+            TypeId::Path, {
+                {20, {"width", PropertyType::Float}},
+                {21, {"height", PropertyType::Float}},
+                {123, {"originX", PropertyType::Float}},
+                {124, {"originY", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::PointsPath, {
+            "PointsPath", TypeId::PointsPath,
+            TypeId::Path, {
+                {32, {"isClosed", PropertyType::Bool}},
+            }
+        }
+    },
+    {
+        TypeId::RadialGradient, {
+            "RadialGradient", TypeId::RadialGradient,
+            TypeId::LinearGradient, {
+            }
+        }
+    },
+    {
+        TypeId::SolidColor, {
+            "SolidColor", TypeId::SolidColor,
+            TypeId::Component, {
+                {37, {"colorValue", PropertyType::Color}},
+            }
+        }
+    },
+    {
+        TypeId::GradientStop, {
+            "GradientStop", TypeId::GradientStop,
+            TypeId::Component, {
+                {38, {"colorValue", PropertyType::Color}},
+                {39, {"position", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::Fill, {
+            "Fill", TypeId::Fill,
+            TypeId::ShapePaint, {
+                {40, {"fillRule", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::ShapePaint, {
+            "ShapePaint", TypeId::ShapePaint,
+            TypeId::ContainerComponent, {
+                {41, {"isVisible", PropertyType::Bool}},
+            }
+        }
+    },
+    {
+        TypeId::LinearGradient, {
+            "LinearGradient", TypeId::LinearGradient,
+            TypeId::ContainerComponent, {
+                {42, {"startX", PropertyType::Float}},
+                {33, {"startY", PropertyType::Float}},
+                {34, {"endX", PropertyType::Float}},
+                {35, {"endY", PropertyType::Float}},
+                {46, {"opacity", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::Backboard, {
+            "Backboard", TypeId::Backboard,
+            TypeId::NoType, {
+            }
+        }
+    },
+    {
+        TypeId::Stroke, {
+            "Stroke", TypeId::Stroke,
+            TypeId::ShapePaint, {
+                {47, {"thickness", PropertyType::Float}},
+                {48, {"cap", PropertyType::VarUint}},
+                {49, {"join", PropertyType::VarUint}},
+                {50, {"transformAffectsStroke", PropertyType::Bool}},
+            }
+        }
+    },
+    {
+        TypeId::KeyedObject, {
+            "KeyedObject", TypeId::KeyedObject,
+            TypeId::NoType, {
+                {51, {"objectId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::KeyedProperty, {
+            "KeyedProperty", TypeId::KeyedProperty,
+            TypeId::NoType, {
+                {53, {"propertyKey", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::Animation, {
+            "Animation", TypeId::Animation,
+            TypeId::NoType, {
+                {55, {"name", PropertyType::String}},
+            }
+        }
+    },
+    {
+        TypeId::CubicInterpolator, {
+            "CubicInterpolator", TypeId::CubicInterpolator,
+            TypeId::NoType, {
+                {63, {"x1", PropertyType::Float}},
+                {64, {"y1", PropertyType::Float}},
+                {65, {"x2", PropertyType::Float}},
+                {66, {"y2", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::KeyFrame, {
+            "KeyFrame", TypeId::KeyFrame,
+            TypeId::NoType, {
+                {67, {"frame", PropertyType::VarUint}},
+                {68, {"interpolationType", PropertyType::VarUint}},
+                {69, {"interpolatorId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::KeyFrameDouble, {
+            "KeyFrameDouble", TypeId::KeyFrameDouble,
+            TypeId::KeyFrame, {
+                {70, {"value", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::LinearAnimation, {
+            "LinearAnimation", TypeId::LinearAnimation,
+            TypeId::Animation, {
                 {56, {"fps", PropertyType::VarUint}},
                 {57, {"duration", PropertyType::VarUint}},
                 {58, {"speed", PropertyType::Float}},
@@ -640,84 +283,275 @@ std::unordered_map<Identifier, ObjectDefinition> glaxnimate::io::rive::defined_o
         }
     },
     {
-        78, {
-            "BlendStateTransition",
-            65, {
-                {171, {"exitBlendAnimationId", PropertyType::VarUint}},
+        TypeId::CubicAsymmetricVertex, {
+            "CubicAsymmetricVertex", TypeId::CubicAsymmetricVertex,
+            TypeId::CubicVertex, {
+                {79, {"rotation", PropertyType::Float}},
+                {80, {"inDistance", PropertyType::Float}},
+                {81, {"outDistance", PropertyType::Float}},
             }
         }
     },
     {
-        124, {
-            "NestedNumber",
-            121, {
-                {239, {"nestedValue", PropertyType::Float}},
+        TypeId::CubicMirroredVertex, {
+            "CubicMirroredVertex", TypeId::CubicMirroredVertex,
+            TypeId::CubicVertex, {
+                {82, {"rotation", PropertyType::Float}},
+                {83, {"distance", PropertyType::Float}},
             }
         }
     },
     {
-        116, {
-            "ListenerInputChange",
-            125, {
-                {227, {"inputId", PropertyType::VarUint}},
+        TypeId::CubicVertex, {
+            "CubicVertex", TypeId::CubicVertex,
+            TypeId::PathVertex, {
             }
         }
     },
     {
-        37, {
-            "KeyFrameColor",
-            29, {
+        TypeId::KeyFrameColor, {
+            "KeyFrameColor", TypeId::KeyFrameColor,
+            TypeId::KeyFrame, {
                 {88, {"value", PropertyType::Color}},
             }
         }
     },
     {
-        28, {
-            "CubicInterpolator",
-            0, {
-                {63, {"x1", PropertyType::Float}},
-                {64, {"y1", PropertyType::Float}},
-                {65, {"x2", PropertyType::Float}},
-                {66, {"y2", PropertyType::Float}},
+        TypeId::TransformComponent, {
+            "TransformComponent", TypeId::TransformComponent,
+            TypeId::WorldTransformComponent, {
+                {15, {"rotation", PropertyType::Float}},
+                {16, {"scaleX", PropertyType::Float}},
+                {17, {"scaleY", PropertyType::Float}},
             }
         }
     },
     {
-        30, {
-            "KeyFrameDouble",
-            29, {
-                {70, {"value", PropertyType::Float}},
+        TypeId::SkeletalComponent, {
+            "SkeletalComponent", TypeId::SkeletalComponent,
+            TypeId::TransformComponent, {
             }
         }
     },
     {
-        121, {
-            "NestedInput",
-            10, {
-                {237, {"inputId", PropertyType::VarUint}},
+        TypeId::Bone, {
+            "Bone", TypeId::Bone,
+            TypeId::SkeletalComponent, {
+                {89, {"length", PropertyType::Float}},
             }
         }
     },
     {
-        67, {
-            "TransitionCondition",
-            0, {
-                {155, {"inputId", PropertyType::VarUint}},
+        TypeId::RootBone, {
+            "RootBone", TypeId::RootBone,
+            TypeId::Bone, {
+                {90, {"x", PropertyType::Float}},
+                {91, {"y", PropertyType::Float}},
             }
         }
     },
     {
-        59, {
-            "StateMachineBool",
-            55, {
+        TypeId::ClippingShape, {
+            "ClippingShape", TypeId::ClippingShape,
+            TypeId::Component, {
+                {92, {"sourceId", PropertyType::VarUint}},
+                {93, {"fillRule", PropertyType::VarUint}},
+                {94, {"isVisible", PropertyType::Bool}},
+            }
+        }
+    },
+    {
+        TypeId::Skin, {
+            "Skin", TypeId::Skin,
+            TypeId::ContainerComponent, {
+                {104, {"xx", PropertyType::Float}},
+                {105, {"yx", PropertyType::Float}},
+                {106, {"xy", PropertyType::Float}},
+                {107, {"yy", PropertyType::Float}},
+                {108, {"tx", PropertyType::Float}},
+                {109, {"ty", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::Tendon, {
+            "Tendon", TypeId::Tendon,
+            TypeId::Component, {
+                {95, {"boneId", PropertyType::VarUint}},
+                {96, {"xx", PropertyType::Float}},
+                {97, {"yx", PropertyType::Float}},
+                {98, {"xy", PropertyType::Float}},
+                {99, {"yy", PropertyType::Float}},
+                {100, {"tx", PropertyType::Float}},
+                {101, {"ty", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::Weight, {
+            "Weight", TypeId::Weight,
+            TypeId::Component, {
+                {102, {"values", PropertyType::VarUint}},
+                {103, {"indices", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::CubicWeight, {
+            "CubicWeight", TypeId::CubicWeight,
+            TypeId::Weight, {
+                {110, {"inValues", PropertyType::VarUint}},
+                {111, {"inIndices", PropertyType::VarUint}},
+                {112, {"outValues", PropertyType::VarUint}},
+                {113, {"outIndices", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::TrimPath, {
+            "TrimPath", TypeId::TrimPath,
+            TypeId::Component, {
+                {114, {"start", PropertyType::Float}},
+                {115, {"end", PropertyType::Float}},
+                {116, {"offset", PropertyType::Float}},
+                {117, {"modeValue", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::DrawTarget, {
+            "DrawTarget", TypeId::DrawTarget,
+            TypeId::Component, {
+                {119, {"drawableId", PropertyType::VarUint}},
+                {120, {"placementValue", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::DrawRules, {
+            "DrawRules", TypeId::DrawRules,
+            TypeId::ContainerComponent, {
+                {121, {"drawTargetId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::KeyFrameId, {
+            "KeyFrameId", TypeId::KeyFrameId,
+            TypeId::KeyFrame, {
+                {122, {"value", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::Polygon, {
+            "Polygon", TypeId::Polygon,
+            TypeId::ParametricPath, {
+                {125, {"points", PropertyType::VarUint}},
+                {126, {"cornerRadius", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::Star, {
+            "Star", TypeId::Star,
+            TypeId::Polygon, {
+                {127, {"innerRadius", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::StateMachine, {
+            "StateMachine", TypeId::StateMachine,
+            TypeId::Animation, {
+            }
+        }
+    },
+    {
+        TypeId::StateMachineComponent, {
+            "StateMachineComponent", TypeId::StateMachineComponent,
+            TypeId::NoType, {
+                {138, {"name", PropertyType::String}},
+            }
+        }
+    },
+    {
+        TypeId::StateMachineInput, {
+            "StateMachineInput", TypeId::StateMachineInput,
+            TypeId::StateMachineComponent, {
+            }
+        }
+    },
+    {
+        TypeId::StateMachineNumber, {
+            "StateMachineNumber", TypeId::StateMachineNumber,
+            TypeId::StateMachineInput, {
+                {140, {"value", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::StateMachineLayer, {
+            "StateMachineLayer", TypeId::StateMachineLayer,
+            TypeId::StateMachineComponent, {
+            }
+        }
+    },
+    {
+        TypeId::StateMachineTrigger, {
+            "StateMachineTrigger", TypeId::StateMachineTrigger,
+            TypeId::StateMachineInput, {
+            }
+        }
+    },
+    {
+        TypeId::StateMachineBool, {
+            "StateMachineBool", TypeId::StateMachineBool,
+            TypeId::StateMachineInput, {
                 {141, {"value", PropertyType::Bool}},
             }
         }
     },
     {
-        65, {
-            "StateTransition",
-            66, {
+        TypeId::LayerState, {
+            "LayerState", TypeId::LayerState,
+            TypeId::StateMachineLayerComponent, {
+            }
+        }
+    },
+    {
+        TypeId::AnimationState, {
+            "AnimationState", TypeId::AnimationState,
+            TypeId::LayerState, {
+                {149, {"animationId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::AnyState, {
+            "AnyState", TypeId::AnyState,
+            TypeId::LayerState, {
+            }
+        }
+    },
+    {
+        TypeId::EntryState, {
+            "EntryState", TypeId::EntryState,
+            TypeId::LayerState, {
+            }
+        }
+    },
+    {
+        TypeId::ExitState, {
+            "ExitState", TypeId::ExitState,
+            TypeId::LayerState, {
+            }
+        }
+    },
+    {
+        TypeId::StateTransition, {
+            "StateTransition", TypeId::StateTransition,
+            TypeId::StateMachineLayerComponent, {
                 {151, {"stateToId", PropertyType::VarUint}},
                 {152, {"flags", PropertyType::VarUint}},
                 {158, {"duration", PropertyType::VarUint}},
@@ -726,312 +560,481 @@ std::unordered_map<Identifier, ObjectDefinition> glaxnimate::io::rive::defined_o
         }
     },
     {
-        115, {
-            "ListenerTriggerChange",
-            116, {
+        TypeId::StateMachineLayerComponent, {
+            "StateMachineLayerComponent", TypeId::StateMachineLayerComponent,
+            TypeId::NoType, {
             }
         }
     },
     {
-        57, {
-            "StateMachineLayer",
-            54, {
+        TypeId::TransitionCondition, {
+            "TransitionCondition", TypeId::TransitionCondition,
+            TypeId::NoType, {
+                {155, {"inputId", PropertyType::VarUint}},
             }
         }
     },
     {
-        98, {
-            "NestedRemapAnimation",
-            97, {
-                {202, {"time", PropertyType::Float}},
+        TypeId::TransitionTriggerCondition, {
+            "TransitionTriggerCondition", TypeId::TransitionTriggerCondition,
+            TypeId::TransitionCondition, {
             }
         }
     },
     {
-        54, {
-            "StateMachineComponent",
-            0, {
-                {138, {"name", PropertyType::String}},
+        TypeId::TransitionValueCondition, {
+            "TransitionValueCondition", TypeId::TransitionValueCondition,
+            TypeId::TransitionCondition, {
+                {156, {"opValue", PropertyType::VarUint}},
             }
         }
     },
     {
-        123, {
-            "NestedBool",
-            121, {
-                {238, {"nestedValue", PropertyType::Bool}},
+        TypeId::TransitionNumberCondition, {
+            "TransitionNumberCondition", TypeId::TransitionNumberCondition,
+            TypeId::TransitionValueCondition, {
+                {157, {"value", PropertyType::Float}},
             }
         }
     },
     {
-        95, {
-            "NestedStateMachine",
-            93, {
+        TypeId::TransitionBoolCondition, {
+            "TransitionBoolCondition", TypeId::TransitionBoolCondition,
+            TypeId::TransitionValueCondition, {
             }
         }
     },
     {
-        61, {
-            "AnimationState",
-            60, {
-                {149, {"animationId", PropertyType::VarUint}},
+        TypeId::BlendState, {
+            "BlendState", TypeId::BlendState,
+            TypeId::LayerState, {
             }
         }
     },
     {
-        71, {
-            "TransitionBoolCondition",
-            69, {
+        TypeId::BlendStateDirect, {
+            "BlendStateDirect", TypeId::BlendStateDirect,
+            TypeId::BlendState, {
             }
         }
     },
     {
-        63, {
-            "EntryState",
-            60, {
+        TypeId::BlendAnimation, {
+            "BlendAnimation", TypeId::BlendAnimation,
+            TypeId::NoType, {
+                {165, {"animationId", PropertyType::VarUint}},
             }
         }
     },
     {
-        73, {
-            "BlendStateDirect",
-            72, {
+        TypeId::BlendAnimation1D, {
+            "BlendAnimation1D", TypeId::BlendAnimation1D,
+            TypeId::BlendAnimation, {
+                {166, {"value", PropertyType::Float}},
             }
         }
     },
     {
-        125, {
-            "ListenerAction",
-            0, {
+        TypeId::BlendState1D, {
+            "BlendState1D", TypeId::BlendState1D,
+            TypeId::BlendState, {
+                {167, {"inputId", PropertyType::VarUint}},
             }
         }
     },
     {
-        62, {
-            "AnyState",
-            60, {
+        TypeId::BlendAnimationDirect, {
+            "BlendAnimationDirect", TypeId::BlendAnimationDirect,
+            TypeId::BlendAnimation, {
+                {168, {"inputId", PropertyType::VarUint}},
             }
         }
     },
     {
-        114, {
-            "StateMachineListener",
-            54, {
-                {224, {"targetId", PropertyType::VarUint}},
-                {225, {"listenerTypeValue", PropertyType::VarUint}},
+        TypeId::BlendStateTransition, {
+            "BlendStateTransition", TypeId::BlendStateTransition,
+            TypeId::StateTransition, {
+                {171, {"exitBlendAnimationId", PropertyType::VarUint}},
             }
         }
     },
     {
-        29, {
-            "KeyFrame",
-            0, {
-                {67, {"frame", PropertyType::VarUint}},
-                {68, {"interpolationType", PropertyType::VarUint}},
-                {69, {"interpolatorId", PropertyType::VarUint}},
+        TypeId::Constraint, {
+            "Constraint", TypeId::Constraint,
+            TypeId::Component, {
+                {172, {"strength", PropertyType::Float}},
             }
         }
     },
     {
-        96, {
-            "NestedSimpleAnimation",
-            97, {
+        TypeId::TargetedConstraint, {
+            "TargetedConstraint", TypeId::TargetedConstraint,
+            TypeId::Constraint, {
+                {173, {"targetId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::IKConstraint, {
+            "IKConstraint", TypeId::IKConstraint,
+            TypeId::TargetedConstraint, {
+                {174, {"invertDirection", PropertyType::Bool}},
+                {175, {"parentBoneCount", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::DistanceConstraint, {
+            "DistanceConstraint", TypeId::DistanceConstraint,
+            TypeId::TargetedConstraint, {
+                {177, {"distance", PropertyType::Float}},
+                {178, {"modeValue", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::TransformConstraint, {
+            "TransformConstraint", TypeId::TransformConstraint,
+            TypeId::TransformSpaceConstraint, {
+            }
+        }
+    },
+    {
+        TypeId::KeyFrameBool, {
+            "KeyFrameBool", TypeId::KeyFrameBool,
+            TypeId::KeyFrame, {
+                {181, {"value", PropertyType::Bool}},
+            }
+        }
+    },
+    {
+        TypeId::TransformComponentConstraint, {
+            "TransformComponentConstraint", TypeId::TransformComponentConstraint,
+            TypeId::TransformSpaceConstraint, {
+                {195, {"minMaxSpaceValue", PropertyType::VarUint}},
+                {182, {"copyFactor", PropertyType::Float}},
+                {183, {"minValue", PropertyType::Float}},
+                {184, {"maxValue", PropertyType::Float}},
+                {188, {"offset", PropertyType::Bool}},
+                {189, {"doesCopy", PropertyType::Bool}},
+                {190, {"min", PropertyType::Bool}},
+                {191, {"max", PropertyType::Bool}},
+            }
+        }
+    },
+    {
+        TypeId::TransformComponentConstraintY, {
+            "TransformComponentConstraintY", TypeId::TransformComponentConstraintY,
+            TypeId::TransformComponentConstraint, {
+                {185, {"copyFactorY", PropertyType::Float}},
+                {186, {"minValueY", PropertyType::Float}},
+                {187, {"maxValueY", PropertyType::Float}},
+                {192, {"doesCopyY", PropertyType::Bool}},
+                {193, {"minY", PropertyType::Bool}},
+                {194, {"maxY", PropertyType::Bool}},
+            }
+        }
+    },
+    {
+        TypeId::TranslationConstraint, {
+            "TranslationConstraint", TypeId::TranslationConstraint,
+            TypeId::TransformComponentConstraintY, {
+            }
+        }
+    },
+    {
+        TypeId::ScaleConstraint, {
+            "ScaleConstraint", TypeId::ScaleConstraint,
+            TypeId::TransformComponentConstraintY, {
+            }
+        }
+    },
+    {
+        TypeId::RotationConstraint, {
+            "RotationConstraint", TypeId::RotationConstraint,
+            TypeId::TransformComponentConstraint, {
+            }
+        }
+    },
+    {
+        TypeId::TransformSpaceConstraint, {
+            "TransformSpaceConstraint", TypeId::TransformSpaceConstraint,
+            TypeId::TargetedConstraint, {
+                {179, {"sourceSpaceValue", PropertyType::VarUint}},
+                {180, {"destSpaceValue", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::WorldTransformComponent, {
+            "WorldTransformComponent", TypeId::WorldTransformComponent,
+            TypeId::ContainerComponent, {
+                {18, {"opacity", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::NestedArtboard, {
+            "NestedArtboard", TypeId::NestedArtboard,
+            TypeId::Drawable, {
+                {197, {"artboardId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::NestedAnimation, {
+            "NestedAnimation", TypeId::NestedAnimation,
+            TypeId::ContainerComponent, {
+                {198, {"animationId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::NestedStateMachine, {
+            "NestedStateMachine", TypeId::NestedStateMachine,
+            TypeId::NestedAnimation, {
+            }
+        }
+    },
+    {
+        TypeId::NestedSimpleAnimation, {
+            "NestedSimpleAnimation", TypeId::NestedSimpleAnimation,
+            TypeId::NestedLinearAnimation, {
                 {199, {"speed", PropertyType::Float}},
                 {201, {"isPlaying", PropertyType::Bool}},
             }
         }
     },
     {
-        122, {
-            "NestedTrigger",
-            121, {
-            }
-        }
-    },
-    {
-        50, {
-            "KeyFrameId",
-            29, {
-                {122, {"value", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        75, {
-            "BlendAnimation1D",
-            74, {
-                {166, {"value", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        97, {
-            "NestedLinearAnimation",
-            93, {
+        TypeId::NestedLinearAnimation, {
+            "NestedLinearAnimation", TypeId::NestedLinearAnimation,
+            TypeId::NestedAnimation, {
                 {200, {"mix", PropertyType::Float}},
             }
         }
     },
     {
-        77, {
-            "BlendAnimationDirect",
-            74, {
-                {168, {"inputId", PropertyType::VarUint}},
+        TypeId::NestedRemapAnimation, {
+            "NestedRemapAnimation", TypeId::NestedRemapAnimation,
+            TypeId::NestedLinearAnimation, {
+                {202, {"time", PropertyType::Float}},
             }
         }
     },
     {
-        74, {
-            "BlendAnimation",
-            0, {
-                {165, {"animationId", PropertyType::VarUint}},
+        TypeId::Asset, {
+            "Asset", TypeId::Asset,
+            TypeId::NoType, {
+                {203, {"name", PropertyType::String}},
             }
         }
     },
     {
-        55, {
-            "StateMachineInput",
-            54, {
+        TypeId::Image, {
+            "Image", TypeId::Image,
+            TypeId::Drawable, {
+                {206, {"assetId", PropertyType::VarUint}},
             }
         }
     },
     {
-        76, {
-            "BlendState1D",
-            72, {
-                {167, {"inputId", PropertyType::VarUint}},
+        TypeId::Folder, {
+            "Folder", TypeId::Folder,
+            TypeId::Asset, {
             }
         }
     },
     {
-        53, {
-            "StateMachine",
-            27, {
+        TypeId::FileAsset, {
+            "FileAsset", TypeId::FileAsset,
+            TypeId::Asset, {
+                {204, {"assetId", PropertyType::VarUint}},
             }
         }
     },
     {
-        64, {
-            "ExitState",
-            60, {
+        TypeId::DrawableAsset, {
+            "DrawableAsset", TypeId::DrawableAsset,
+            TypeId::FileAsset, {
+                {207, {"height", PropertyType::Float}},
+                {208, {"width", PropertyType::Float}},
             }
         }
     },
     {
-        84, {
-            "KeyFrameBool",
-            29, {
-                {181, {"value", PropertyType::Bool}},
+        TypeId::ImageAsset, {
+            "ImageAsset", TypeId::ImageAsset,
+            TypeId::DrawableAsset, {
             }
         }
     },
     {
-        25, {
-            "KeyedObject",
-            0, {
-                {51, {"objectId", PropertyType::VarUint}},
+        TypeId::FileAssetContents, {
+            "FileAssetContents", TypeId::FileAssetContents,
+            TypeId::NoType, {
+                {212, {"bytes", PropertyType::Bytes}},
             }
         }
     },
     {
-        58, {
-            "StateMachineTrigger",
-            55, {
+        TypeId::Vertex, {
+            "Vertex", TypeId::Vertex,
+            TypeId::ContainerComponent, {
+                {24, {"x", PropertyType::Float}},
+                {25, {"y", PropertyType::Float}},
             }
         }
     },
     {
-        68, {
-            "TransitionTriggerCondition",
-            67, {
+        TypeId::MeshVertex, {
+            "MeshVertex", TypeId::MeshVertex,
+            TypeId::Vertex, {
+                {215, {"u", PropertyType::Float}},
+                {216, {"v", PropertyType::Float}},
             }
         }
     },
     {
-        26, {
-            "KeyedProperty",
-            0, {
-                {53, {"propertyKey", PropertyType::VarUint}},
+        TypeId::Mesh, {
+            "Mesh", TypeId::Mesh,
+            TypeId::ContainerComponent, {
+                {223, {"triangleIndexBytes", PropertyType::Bytes}},
             }
         }
     },
     {
-        27, {
-            "Animation",
-            0, {
-                {55, {"name", PropertyType::String}},
+        TypeId::Text, {
+            "Text", TypeId::Text,
+            TypeId::Node, {
+                {218, {"value", PropertyType::String}},
             }
         }
     },
     {
-        117, {
-            "ListenerBoolChange",
-            116, {
+        TypeId::ContourMeshVertex, {
+            "ContourMeshVertex", TypeId::ContourMeshVertex,
+            TypeId::MeshVertex, {
+            }
+        }
+    },
+    {
+        TypeId::ForcedEdge, {
+            "ForcedEdge", TypeId::ForcedEdge,
+            TypeId::Component, {
+                {219, {"fromId", PropertyType::VarUint}},
+                {220, {"toId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::TextRun, {
+            "TextRun", TypeId::TextRun,
+            TypeId::Drawable, {
+                {221, {"pointSize", PropertyType::Float}},
+                {222, {"textLength", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::StateMachineListener, {
+            "StateMachineListener", TypeId::StateMachineListener,
+            TypeId::StateMachineComponent, {
+                {224, {"targetId", PropertyType::VarUint}},
+                {225, {"listenerTypeValue", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::ListenerTriggerChange, {
+            "ListenerTriggerChange", TypeId::ListenerTriggerChange,
+            TypeId::ListenerInputChange, {
+            }
+        }
+    },
+    {
+        TypeId::ListenerInputChange, {
+            "ListenerInputChange", TypeId::ListenerInputChange,
+            TypeId::ListenerAction, {
+                {227, {"inputId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::ListenerBoolChange, {
+            "ListenerBoolChange", TypeId::ListenerBoolChange,
+            TypeId::ListenerInputChange, {
                 {228, {"value", PropertyType::VarUint}},
             }
         }
     },
     {
-        66, {
-            "StateMachineLayerComponent",
-            0, {
+        TypeId::ListenerNumberChange, {
+            "ListenerNumberChange", TypeId::ListenerNumberChange,
+            TypeId::ListenerInputChange, {
+                {229, {"value", PropertyType::Float}},
             }
         }
     },
     {
-        60, {
-            "LayerState",
-            66, {
+        TypeId::LayeredAsset, {
+            "LayeredAsset", TypeId::LayeredAsset,
+            TypeId::DrawableAsset, {
             }
         }
     },
     {
-        72, {
-            "BlendState",
-            60, {
+        TypeId::LayerImageAsset, {
+            "LayerImageAsset", TypeId::LayerImageAsset,
+            TypeId::ImageAsset, {
+                {233, {"layer", PropertyType::VarUint}},
+                {234, {"x", PropertyType::Float}},
+                {235, {"y", PropertyType::Float}},
             }
         }
     },
     {
-        126, {
-            "ListenerAlignTarget",
-            125, {
+        TypeId::NestedInput, {
+            "NestedInput", TypeId::NestedInput,
+            TypeId::Component, {
+                {237, {"inputId", PropertyType::VarUint}},
+            }
+        }
+    },
+    {
+        TypeId::NestedTrigger, {
+            "NestedTrigger", TypeId::NestedTrigger,
+            TypeId::NestedInput, {
+            }
+        }
+    },
+    {
+        TypeId::NestedBool, {
+            "NestedBool", TypeId::NestedBool,
+            TypeId::NestedInput, {
+                {238, {"nestedValue", PropertyType::Bool}},
+            }
+        }
+    },
+    {
+        TypeId::NestedNumber, {
+            "NestedNumber", TypeId::NestedNumber,
+            TypeId::NestedInput, {
+                {239, {"nestedValue", PropertyType::Float}},
+            }
+        }
+    },
+    {
+        TypeId::ListenerAction, {
+            "ListenerAction", TypeId::ListenerAction,
+            TypeId::NoType, {
+            }
+        }
+    },
+    {
+        TypeId::ListenerAlignTarget, {
+            "ListenerAlignTarget", TypeId::ListenerAlignTarget,
+            TypeId::ListenerAction, {
                 {240, {"targetId", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        69, {
-            "TransitionValueCondition",
-            67, {
-                {156, {"opValue", PropertyType::VarUint}},
-            }
-        }
-    },
-    {
-        2, {
-            "Node",
-            38, {
-                {13, {"x", PropertyType::Float}},
-                {14, {"y", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        91, {
-            "WorldTransformComponent",
-            11, {
-                {18, {"opacity", PropertyType::Float}},
-            }
-        }
-    },
-    {
-        38, {
-            "TransformComponent",
-            91, {
-                {15, {"rotation", PropertyType::Float}},
-                {16, {"scaleX", PropertyType::Float}},
-                {17, {"scaleY", PropertyType::Float}},
             }
         }
     },

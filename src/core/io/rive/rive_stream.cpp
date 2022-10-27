@@ -9,9 +9,14 @@ static void to_system_endian(QByteArray& data)
 }
 
 glaxnimate::io::rive::RiveStream::RiveStream(QIODevice* file):
-    data(file->readAll()),
-    data_start(data.data()),
-    data_end(data_start + data.size())
+    RiveStream(file->readAll())
+{
+}
+
+glaxnimate::io::rive::RiveStream::RiveStream(QByteArray data):
+    data(std::move(data)),
+    data_start(this->data.data()),
+    data_end(data_start + this->data.size())
 {
 }
 
@@ -24,7 +29,6 @@ bool glaxnimate::io::rive::RiveStream::eof() const
 {
     return data_start >= data_end;
 }
-
 
 bool glaxnimate::io::rive::RiveStream::has_error() const
 {
@@ -147,26 +151,36 @@ glaxnimate::io::rive::PropertyTable glaxnimate::io::rive::RiveStream::read_prope
             bit = 0;
         }
 
-        table[id] = UnknownPropertyType((current_int >> bit) & 3);
+        int type = (current_int >> bit) & 3;
+        if ( type == 0 )
+            table[id] = PropertyType::VarUint;
+        else if ( type == 1 )
+            table[id] = PropertyType::String;
+        else if ( type == 2 )
+            table[id] = PropertyType::Float;
+        else if ( type == 3 )
+            table[id] = PropertyType::Color;
     }
 
     return table;
 }
 
-void glaxnimate::io::rive::RiveStream::skip_value(glaxnimate::io::rive::UnknownPropertyType type)
+void glaxnimate::io::rive::RiveStream::skip_value(glaxnimate::io::rive::PropertyType type)
 {
     switch ( type )
     {
-        case UnknownPropertyType::Uint:
+        case PropertyType::Bool:
+        case PropertyType::VarUint:
             read_varuint();
             break;
-        case UnknownPropertyType::String:
+        case PropertyType::Bytes:
+        case PropertyType::String:
             read_string();
             break;
-        case UnknownPropertyType::Float:
+        case PropertyType::Float:
             read_float();
             break;
-        case UnknownPropertyType::Color:
+        case PropertyType::Color:
             read_uint();
             break;
     }

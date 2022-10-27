@@ -5,6 +5,8 @@
 * UI:
     * Added menu action to export as an image sequence
     * New layout presets, to work better on smaller screens
+* I/O:
+    * Added support for loading Rive animations
 * Scripting:
     * Added function to render a node at a specific frame
 * Bug fixes:

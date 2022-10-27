@@ -6,36 +6,31 @@
 #include <QIODevice>
 #include <QColor>
 #include <QVariant>
+#include "type_def.hpp"
 
 namespace glaxnimate::io::rive {
 
-enum class UnknownPropertyType
-{
-    Uint = 0,
-    String = 1,
-    Float = 2,
-    Color = 3
-};
 
 using VarUint = std::uint64_t;
 using Uint = std::uint32_t;
 using Float = float;
 using RawString = QByteArray;
 using String = QString;
-using PropertyTable = std::unordered_map<VarUint, UnknownPropertyType>;
+using PropertyTable = std::unordered_map<VarUint, PropertyType>;
 
 class RiveStream
 {
 public:
 
     explicit RiveStream(QIODevice* file);
+    explicit RiveStream(QByteArray data);
 
     Uint read_uint();
     Float read_float();
     VarUint read_varuint();
     RawString read_raw_string();
     String read_string();
-    void skip_value(UnknownPropertyType type);
+    void skip_value(PropertyType type);
 
     bool eof() const;
     bool has_error() const;

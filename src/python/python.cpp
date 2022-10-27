@@ -33,6 +33,7 @@
 #include "io/raster/raster_mime.hpp"
 #include "io/svg/svg_format.hpp"
 #include "io/svg/svg_renderer.hpp"
+#include "io/rive/rive_format.hpp"
 
 
 #include "plugin/io.hpp"
@@ -130,6 +131,13 @@ void define_io(py::module& m)
     ;
 
     register_from_meta<plugin::IoFormat, io::ImportExport>(io);
+
+
+    register_from_meta<io::rive::RiveFormat, io::ImportExport>(io)
+        .def("to_json_data", [](io::rive::RiveFormat& self, const QByteArray& data){
+            return self.to_json(data).toJson();
+        }, py::arg("binary_data"))
+    ;
 }
 
 

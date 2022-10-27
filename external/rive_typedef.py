@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-import pathlib
 import json
+import pathlib
+import argparse
 
 
 type_map = {
@@ -40,14 +41,14 @@ def load_file(path, data, types, relpath):
             if pdef.get("runtime", True)
         ]
     })
-    types[str(relpath)] = id
+    types[str(relpath)] = definition["name"]
 
 def fix_extends(data, types):
     for item in data:
         if item["extends"] is not None:
             item["extends"] = types[item["extends"]]
         else:
-            item["extends"] = 0
+            item["extends"] = "NoType"
 
 
 def format_props(props):
@@ -60,29 +61,50 @@ def format_props(props):
         for prop in props
     )
 
+def disclaimer(cmd):
+    print("""/**
+ * NOTE: This file is generated automatically, do not edit manually
+ * To generate this file run
+ *       %s
+ */
+""" % cmd)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--defs", type=pathlib.Path, default=pathlib.Path.home() / "src/rive-cpp/dev/defs/")
+parser.add_argument("--type", "-t", choices=["source", "ids"], default="source")
+args = parser.parse_args()
+
+
 data = []
 types = {}
-rive_def_root = pathlib.Path.home() / "src/rive-cpp/dev/defs/"
+rive_def_root = args.defs
 load_dir(rive_def_root, data, types)
-fix_extends(data, types)
+data = sorted(data, key=lambda o: o["id"])
 
-print("""/**
- * NOTE: This file is generated automatically, do not edit manually
- */
-
+if args.type == "source":
+    fix_extends(data, types)
+    disclaimer("./external/rive_typedef.py -t source >src/core/io/rive/type_def.cpp")
+    print("""
 #include "type_def.hpp"
 
 using namespace glaxnimate::io::rive;
 
-std::unordered_map<Identifier, ObjectDefinition> glaxnimate::io::rive::defined_objects = {""")
-for obj in data:
-    print(("""    {
-        %(id)d, {
-            %(name)r,
-            %(extends)s, {%(property_str)s
+std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objects = {""")
+    for obj in data:
+        print(("""    {
+        TypeId::%(name)s, {
+            %(name)r, TypeId::%(name)s,
+            TypeId::%(extends)s, {%(property_str)s
             }
         }
     },""" % dict(property_str=format_props(obj["properties"]), **obj)
-    ).replace("'", '"'))
-
-print("};")
+        ).replace("'", '"'))
+    print("};")
+elif args.type == "ids":
+    print("#pragma once")
+    disclaimer("./external/rive_typedef.py -t ids >src/core/io/rive/type_ids.hpp")
+    print("namespace glaxnimate::io::rive {\nenum class TypeId {")
+    print("    NoType = 0,")
+    for obj in data:
+        print("    %(name)s = %(id)d," % obj)
+    print("};\n} // namespace glaxnimate::io::rive")

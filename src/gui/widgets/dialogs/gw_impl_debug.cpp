@@ -11,6 +11,7 @@
 
 #include "io/base.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
+#include "io/rive/rive_format.hpp"
 #include "utils/gzip.hpp"
 #include "model/custom_font.hpp"
 
@@ -33,13 +34,18 @@ void screenshot_widget(const QString& path, QWidget* widget)
     pic.save(name);
 }
 
-QString pretty_json(const QByteArray& input)
+QString pretty_json(const QJsonDocument& input)
 {
     QTemporaryFile tempf(GlaxnimateApp::temp_path() + "/XXXXXX.json");
     tempf.setAutoRemove(false);
     tempf.open();
-    tempf.write(QJsonDocument::fromJson(input).toJson(QJsonDocument::Indented));
+    tempf.write(input.toJson(QJsonDocument::Indented));
     return tempf.fileName();
+}
+
+QString pretty_json(const QByteArray& input)
+{
+    return pretty_json(QJsonDocument::fromJson(input));
 }
 
 QString pretty_xml(const QByteArray& xml)
@@ -51,6 +57,11 @@ QString pretty_xml(const QByteArray& xml)
     doc.setContent(xml, false);
     tempf.write(doc.toByteArray(4));
     return tempf.fileName();
+}
+
+QString pretty_rive(const QByteArray& input)
+{
+    return pretty_json(glaxnimate::io::rive::RiveFormat().to_json(input));
 }
 
 } // namespace
@@ -195,6 +206,10 @@ void GlaxnimateWindow::Private::init_debug()
             }
 
             app::desktop::open_file(pretty_xml(data));
+        }
+        else if ( fmt->slug() == "rive" )
+        {
+            app::desktop::open_file(pretty_rive(data));
         }
         else
         {

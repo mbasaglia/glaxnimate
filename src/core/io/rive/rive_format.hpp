@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QByteArray>
 #include "io/base.hpp"
 #include "io/io_registry.hpp"
 
@@ -23,6 +21,8 @@ public:
     bool can_open() const override { return true; }
 
     static RiveFormat* instance() { return autoreg.registered; }
+
+    QJsonDocument to_json(const QByteArray& binary_data);
 
 protected:
     bool on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
