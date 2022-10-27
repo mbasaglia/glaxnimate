@@ -4,6 +4,9 @@
 #include "model/assets/assets.hpp"
 #include "model/shapes/precomp_layer.hpp"
 #include "model/shapes/rect.hpp"
+#include "model/shapes/ellipse.hpp"
+#include "model/shapes/polystar.hpp"
+#include "model/shapes/path.hpp"
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
 
@@ -34,6 +37,10 @@ struct Artboard
 
 template<class T> T load_property_get_keyframe(const detail::JoinedPropertyKeyframe& kf, std::size_t index);
 template<> Float load_property_get_keyframe<Float>(const detail::JoinedPropertyKeyframe& kf, std::size_t index)
+{
+    return kf.values[index].vector()[0];
+}
+template<> VarUint load_property_get_keyframe<VarUint>(const detail::JoinedPropertyKeyframe& kf, std::size_t index)
 {
     return kf.values[index].vector()[0];
 }
@@ -272,10 +279,28 @@ struct LoadCotext
                 return load_shape_layer(shape, animations);
             case TypeId::Rectangle:
                 return load_rectangle(shape, animations);
+            case TypeId::Ellipse:
+                return load_ellipse(shape, animations);
             case TypeId::Fill:
                 return load_fill(shape, animations);
             case TypeId::Stroke:
                 return load_stroke(shape, animations);
+            case TypeId::Polygon:
+                return load_polygon(shape, animations, model::PolyStar::Polygon);
+            case TypeId::Star:
+                return load_polygon(shape, animations, model::PolyStar::Star);
+            case TypeId::Triangle:
+                return load_triangle(shape, animations);
+            case TypeId::Path:
+            case TypeId::TrimPath:
+            case TypeId::Bone:
+            case TypeId::RootBone:
+            case TypeId::RadialGradient:
+            case TypeId::ClippingShape:
+            case TypeId::NestedArtboard:
+            case TypeId::Image:
+            case TypeId::Text:
+                /// \todo
             default:
                 return {};
         }
@@ -295,7 +320,23 @@ struct LoadCotext
             }
         );
 
-        load_property<Float, Float>(object, shape->size, animations, {"width", "height"}, 1, 1, [](Float x, Float y){
+        load_property<Float, Float>(object, shape->size, animations, {"width", "height"}, 0, 0, [](Float x, Float y){
+            return QSizeF(x, y);
+        });
+
+        group->shapes.insert(std::move(shape));
+        load_shape_group(object, group.get(), animations);
+        return group;
+    }
+
+    std::unique_ptr<model::Group> load_ellipse(Object* object, const detail::AnimatedProperties& animations)
+    {
+        auto group = std::make_unique<model::Group>(document);
+        auto shape = std::make_unique<model::Ellipse>(document);
+        shape->name.set(object->get<String>("name"));
+
+
+        load_property<Float, Float>(object, shape->size, animations, {"width", "height"}, 0, 0, [](Float x, Float y){
             return QSizeF(x, y);
         });
 
@@ -330,7 +371,7 @@ struct LoadCotext
         {
             if ( child->type_id == TypeId::SolidColor )
             {
-                load_property<QColor>(child, shape->color, load_animations(child), "colorValue");
+                load_property<QColor>(child, shape->color, load_animations(child), "colorValue", QColor("#747474"));
                 break;
             }
         }
@@ -355,6 +396,57 @@ struct LoadCotext
             }
         }
         return props;
+    }
+
+    std::unique_ptr<model::Group> load_polygon(Object* object, const detail::AnimatedProperties& animations, model::PolyStar::StarType type)
+    {
+        auto group = std::make_unique<model::Group>(document);
+        load_shape_group(object, group.get(), animations);
+
+        auto shape = std::make_unique<model::PolyStar>(document);
+        shape->name.set(object->get<String>("name"));
+        shape->type.set(type);
+        /// \todo cornerRadius / width / height
+        load_property<VarUint>(object, shape->points, animations, "points", 5);
+        shape->outer_radius.set(100);
+
+        load_property<Float>(object, shape->inner_radius, animations, {"innerRadius"}, 0.5, [](Float pc){
+            return pc * 100;
+        });
+
+        load_property<Float>(object, shape->points, animations, "points", 5);
+
+
+        load_property<Float, Float, Float, Float>(object, group->transform->scale, animations,
+            {"scaleX", "scaleY", "width", "height"},
+            1, 1, 0, 0, [](Float sx, Float sy, Float w, Float h){
+            return QVector2D(w / 200 * sx, h / 200 * sy);
+        });
+
+        group->shapes.insert(std::move(shape));
+        return group;
+    }
+
+
+    std::unique_ptr<model::Group> load_triangle(Object* object, const detail::AnimatedProperties& animations)
+    {
+        auto group = std::make_unique<model::Group>(document);
+        auto shape = std::make_unique<model::Path>(document);
+        shape->name.set(object->get<String>("name"));
+
+
+        load_property<Float, Float>(object, shape->shape, animations, {"width", "height"}, 0, 0, [](Float w, Float h){
+            math::bezier::Bezier path;
+            path.add_point({-w/2, h/2});
+            path.add_point({0, -h/2});
+            path.add_point({w/2, h/2});
+            path.close();
+            return path;
+        });
+
+        group->shapes.insert(std::move(shape));
+        load_shape_group(object, group.get(), animations);
+        return group;
     }
 
     model::Document* document = nullptr;
