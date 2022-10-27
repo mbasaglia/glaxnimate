@@ -9,6 +9,7 @@
 #include "model/shapes/path.hpp"
 #include "model/shapes/fill.hpp"
 #include "model/shapes/stroke.hpp"
+#include "model/shapes/image.hpp"
 
 using namespace glaxnimate;
 using namespace glaxnimate::io;
@@ -23,7 +24,7 @@ struct Artboard
     Artboard(Object* first, Object* last)
         : object(first),
             children(object),
-            child_count(last - first - 1)
+            child_count(last - first + 1)
     {}
 
     Object* operator->() const { return object; }
@@ -33,6 +34,8 @@ struct Artboard
     Identifier child_count = 0;
     VarUint timeline_duration = 0;
     VarUint keyframe_timeline_duration = 0;
+    model::Precomposition* comp = nullptr;
+    QSizeF size;
 };
 
 template<class T> T load_property_get_keyframe(const detail::JoinedPropertyKeyframe& kf, std::size_t index);
@@ -81,15 +84,25 @@ QPointF make_point(Float x, Float y)
     return QPointF(x, y);
 }
 
+struct Asset
+{
+    Object* object = nullptr;
+    model::Asset* asset = nullptr;
+};
 
 struct LoadCotext
 {
-    void new_artboard(Object* iterator)
+    void new_artboard(Object* object)
     {
-        artboards[iterator] = Artboard(iterator, &objects.back());
-        artboard = &artboards[iterator];
+        artboards[object] = Artboard(object, &objects.back());
+        artboard = &artboards[object];
+        artboards_id.push_back(artboard);
+        artboard->comp = document->assets()->precompositions->values.insert(std::make_unique<model::Precomposition>(document));
+        artboard->size = QSizeF(
+            object->get<Float>("width"),
+            object->get<Float>("height")
+        );
     }
-
 
     Object* artboard_child(Identifier id) const
     {
@@ -103,21 +116,20 @@ struct LoadCotext
     {
     }
 
-
-    void preprocess_object(Object* iterator)
+    void preprocess_object(Object* object)
     {
-        if ( iterator->type_id == TypeId::Artboard )
+        if ( object->type_id == TypeId::Artboard )
         {
-            new_artboard(iterator);
+            new_artboard(object);
         }
-        else if ( iterator->type_id == TypeId::KeyedObject )
+        else if ( object->type_id == TypeId::KeyedObject )
         {
             if ( !artboard )
             {
                 format->warning(QObject::tr("Unexpected Keyed Object"));
                 return;
             }
-            auto id = iterator->get<Identifier>("objectId", artboard->child_count);
+            auto id = object->get<Identifier>("objectId", artboard->child_count);
             keyed_object = artboard_child(id);
             keyed_property = nullptr;
             if ( !keyed_object )
@@ -126,7 +138,7 @@ struct LoadCotext
                 return;
             }
         }
-        else if ( iterator->type_id == TypeId::KeyedProperty )
+        else if ( object->type_id == TypeId::KeyedProperty )
         {
             if ( !keyed_object )
             {
@@ -134,7 +146,7 @@ struct LoadCotext
                 return;
             }
 
-            auto id = iterator->get<Identifier>("propertyKey");
+            auto id = object->get<Identifier>("propertyKey");
 
             if ( !keyed_object->property_definitions.count(id) )
             {
@@ -145,7 +157,7 @@ struct LoadCotext
             keyed_object->animations.push_back({id, {}});
             keyed_property = &keyed_object->animations.back();
         }
-        else if ( iterator->type_id == TypeId::LinearAnimation )
+        else if ( object->type_id == TypeId::LinearAnimation )
         {
             if ( !artboard )
             {
@@ -153,11 +165,37 @@ struct LoadCotext
                 return;
             }
 
-            auto duration = iterator->get<VarUint>("duration");
+            auto duration = object->get<VarUint>("duration");
             if ( duration > artboard->timeline_duration )
                 artboard->timeline_duration = duration;
         }
-        else if ( iterator->has_type(TypeId::KeyFrame) )
+        else if ( object->type_id == TypeId::ImageAsset )
+        {
+            assets.push_back({object, load_image_asset(object)});
+        }
+        else if ( object->type_id == TypeId::FileAssetContents )
+        {
+            if ( assets.empty() )
+            {
+                format->warning(QObject::tr("Unexpected Asset Contents"));
+                return;
+            }
+
+            auto data = object->get<QByteArray>("bytes");
+            if ( data.isEmpty() )
+                return;
+
+            if ( auto img = qobject_cast<model::Bitmap*>(assets.back().asset) )
+            {
+                if ( !img->from_raw_data(data) )
+                    format->warning(QObject::tr("Invalid Image Data"));
+            }
+        }
+        else if ( object->has_type(TypeId::Asset) )
+        {
+            assets.push_back({object, nullptr});
+        }
+        else if ( object->has_type(TypeId::KeyFrame) )
         {
             if ( !keyed_property )
             {
@@ -165,50 +203,46 @@ struct LoadCotext
                 return;
             }
 
-            auto frame = iterator->get<VarUint>("duration");
+            auto frame = object->get<VarUint>("duration");
             if ( frame > artboard->keyframe_timeline_duration )
                 artboard->keyframe_timeline_duration = frame;
 
-            keyed_property->keyframes.push_back(iterator);
+            keyed_property->keyframes.push_back(object);
         }
-        else if ( iterator->has_value("parentId") )
+        else if ( object->has_value("parentId") )
         {
-            auto parent_id = iterator->get<Identifier>("parentId");
+            auto parent_id = object->get<Identifier>("parentId");
             auto parent = artboard_child(parent_id);
             if ( !parent )
-                format->warning(QObject::tr("Could not find parent with id %s").arg(parent_id));
+                format->warning(QObject::tr("Could not find parent with id %1").arg(parent_id));
             else
-                parent->children.push_back(iterator);
+                parent->children.push_back(object);
         }
     }
 
-    void process_object(Object* iterator)
+    void process_object(Object* object)
     {
-        if ( iterator->type_id == TypeId::Artboard )
+        if ( object->type_id == TypeId::Artboard )
         {
-            process_artboard(iterator);
+            process_artboard(object);
         }
     }
 
-    void process_artboard(Object* iterator)
+    void process_artboard(Object* object)
     {
-        auto comp = document->assets()->precompositions->values.insert(std::make_unique<model::Precomposition>(document));
+        const auto& artboard = artboards.at(object);
 
-        comp->name.set(iterator->get<QString>("name"));
-        add_shapes(iterator, comp->shapes);
+        artboard.comp->name.set(object->get<QString>("name"));
+        add_shapes(object, artboard.comp->shapes);
 
         auto precomp_layer = std::make_unique<model::PreCompLayer>(document);
-        precomp_layer->name.set(comp->name.get());
-        precomp_layer->size.set(QSize(
-            iterator->get<Float>("width"),
-            iterator->get<Float>("height")
-        ));
-        detail::AnimatedProperties animations = load_animations(iterator);
-        load_transform(iterator, precomp_layer->transform.get(), animations);
-        precomp_layer->opacity.set(iterator->get<Float>("opacity", 1));
-        precomp_layer->composition.set(comp);
+        precomp_layer->name.set(artboard.comp->name.get());
+        precomp_layer->size.set(artboard.size.toSize());
+        detail::AnimatedProperties animations = load_animations(object);
+        load_transform(object, precomp_layer->transform.get(), animations);
+        precomp_layer->opacity.set(object->get<Float>("opacity", 1));
+        precomp_layer->composition.set(artboard.comp);
 
-        const auto& artboard = artboards.at(iterator);
         float last_frame = artboard.timeline_duration == 0 ? artboard.keyframe_timeline_duration : artboard.timeline_duration;
         document->main()->animation->last_frame.set(qMax(document->main()->animation->last_frame.get(), last_frame));
 
@@ -272,37 +306,39 @@ struct LoadCotext
         add_shapes(shape, group->shapes);
     }
 
-    std::unique_ptr<model::ShapeElement> load_shape(Object* shape)
+    std::unique_ptr<model::ShapeElement> load_shape(Object* object)
     {
-        detail::AnimatedProperties animations = load_animations(shape);
+        detail::AnimatedProperties animations = load_animations(object);
 
-        switch ( shape->type_id )
+        switch ( object->type_id )
         {
             case TypeId::Shape:
-                return load_shape_layer(shape, animations);
+            case TypeId::Node:
+                return load_shape_layer(object, animations);
             case TypeId::Rectangle:
-                return load_rectangle(shape, animations);
+                return load_rectangle(object, animations);
             case TypeId::Ellipse:
-                return load_ellipse(shape, animations);
+                return load_ellipse(object, animations);
             case TypeId::Fill:
-                return load_fill(shape, animations);
+                return load_fill(object, animations);
             case TypeId::Stroke:
-                return load_stroke(shape, animations);
+                return load_stroke(object, animations);
             case TypeId::Polygon:
-                return load_polygon(shape, animations, model::PolyStar::Polygon);
+                return load_polygon(object, animations, model::PolyStar::Polygon);
             case TypeId::Star:
-                return load_polygon(shape, animations, model::PolyStar::Star);
+                return load_polygon(object, animations, model::PolyStar::Star);
             case TypeId::Triangle:
-                return load_triangle(shape, animations);
+                return load_triangle(object, animations);
             case TypeId::PointsPath:
-                return load_path(shape, animations);
+                return load_path(object, animations);
+            case TypeId::NestedArtboard:
+                return load_precomp(object, animations);
+            case TypeId::Image:
+                return load_image(object, animations);
             case TypeId::TrimPath:
             case TypeId::Bone:
             case TypeId::RootBone:
-            case TypeId::RadialGradient:
             case TypeId::ClippingShape:
-            case TypeId::NestedArtboard:
-            case TypeId::Image:
             case TypeId::Text:
                 /// \todo
             default:
@@ -464,7 +500,6 @@ struct LoadCotext
         return group;
     }
 
-
     std::unique_ptr<model::Group> load_triangle(Object* object, const detail::AnimatedProperties& animations)
     {
         auto group = std::make_unique<model::Group>(document);
@@ -554,6 +589,55 @@ struct LoadCotext
         return shape;
     }
 
+    std::unique_ptr<model::PreCompLayer> load_precomp(Object* object, const detail::AnimatedProperties& animations)
+    {
+        auto shape = std::make_unique<model::PreCompLayer>(document);
+        shape->name.set(object->get<String>("name"));
+        load_property<Float>(object, shape->opacity, animations, "opacity", 1);
+        load_transform(object, shape->transform.get(), animations);
+
+        // Rive export as the first Arboard, one that is not referenced
+        // by any other NestedArtboard, so index 0 is not valid
+        // even if artboard 0 exists
+        auto id = object->get<VarUint>("artboardId");
+        if ( id != 0 )
+        {
+            shape->size.set(artboards_id[id]->size);
+            shape->composition.set(artboards_id[id]->comp);
+        }
+
+        return shape;
+    }
+
+    model::Bitmap* load_image_asset(Object* object)
+    {
+        auto image = std::make_unique<glaxnimate::model::Bitmap>(document);
+        image->filename.set(object->get<String>("name"));
+        image->width.set(object->get<Float>("width"));
+        image->height.set(object->get<Float>("height"));
+        auto ptr = image.get();
+        document->assets()->images->values.insert(std::move(image));
+        return ptr;
+    }
+
+    std::unique_ptr<model::Image> load_image(Object* object, const detail::AnimatedProperties& animations)
+    {
+        auto shape = std::make_unique<model::Image>(document);
+        shape->name.set(object->get<String>("name"));
+        load_transform(object, shape->transform.get(), animations);
+        auto id = object->get<VarUint>("assetId");
+        if ( auto bmp = qobject_cast<model::Bitmap*>(assets[id].asset) )
+        {
+            shape->transform->anchor_point.set(QPointF(
+                bmp->width.get() / 2.,
+                bmp->height.get() / 2.
+            ));
+            shape->image.set(bmp);
+        }
+
+        return shape;
+    }
+
     model::Document* document = nullptr;
     std::map<Object*, Artboard> artboards;
     std::vector<Object> objects;
@@ -561,6 +645,8 @@ struct LoadCotext
     Object* keyed_object = nullptr;
     PropertyAnimation* keyed_property = nullptr;
     RiveFormat* format = nullptr;
+    std::vector<Artboard*> artboards_id;
+    std::vector<Asset> assets;
 };
 
 

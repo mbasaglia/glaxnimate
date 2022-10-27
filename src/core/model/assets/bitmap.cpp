@@ -121,6 +121,21 @@ bool glaxnimate::model::Bitmap::from_base64(const QString& data)
     return !image.isNull();
 }
 
+
+bool glaxnimate::model::Bitmap::from_raw_data(const QByteArray& data)
+{
+    QBuffer buf(const_cast<QByteArray*>(&data));
+    buf.open(QBuffer::ReadOnly);
+    auto format = QImageReader::imageFormat(&buf);
+    if ( format.isEmpty() )
+        return false;
+
+    this->format.set(format);
+    this->data.set(data);
+    return !image.isNull();
+
+}
+
 QUrl glaxnimate::model::Bitmap::to_url() const
 {
     if ( !embedded() )

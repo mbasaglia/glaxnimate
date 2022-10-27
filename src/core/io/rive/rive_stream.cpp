@@ -160,6 +160,8 @@ glaxnimate::io::rive::PropertyTable glaxnimate::io::rive::RiveStream::read_prope
             table[id] = PropertyType::Float;
         else if ( type == 3 )
             table[id] = PropertyType::Color;
+
+        bit += 2;
     }
 
     return table;

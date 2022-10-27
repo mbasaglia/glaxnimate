@@ -37,6 +37,7 @@ public:
     bool from_url(const QUrl& url);
     bool from_file(const QString& file);
     bool from_base64(const QString& data);
+    bool from_raw_data(const QByteArray& data);
 
     QUrl to_url() const;
 

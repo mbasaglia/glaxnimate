@@ -102,6 +102,8 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
                     val = iter->value<QColor>().name();
                 else if ( iter->userType() == QMetaType::ULongLong || iter->userType() == QMetaType::ULong )
                     val = iter->toInt();
+                else if ( iter->userType() == QMetaType::QByteArray )
+                    val = QString::fromLatin1(iter->toByteArray().toBase64());
                 else
                     val = QJsonValue::fromVariant(*iter);
 
@@ -114,7 +116,7 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
         obj["properties"] = props;
 
         QJsonObject summary_obj_parent;
-        summary_obj_parent[rive_obj.definitions[0]->name] = summary_obj;
+        summary_obj_parent[rive_obj.definitions.empty() ? "?" : rive_obj.definitions[0]->name] = summary_obj;
 
         if ( has_artboard )
         {
