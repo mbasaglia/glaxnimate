@@ -1,12 +1,6 @@
 #include "binary_stream.hpp"
 
-static constexpr const bool is_big_endian = QSysInfo::ByteOrder == QSysInfo::BigEndian;
-
-static void to_system_endian(QByteArray& data)
-{
-    if ( is_big_endian )
-        std::reverse(data.begin(), data.end());
-}
+#include <QtEndian>
 
 glaxnimate::io::BinaryInputStream::BinaryInputStream(QIODevice* file):
     BinaryInputStream(file->readAll())
@@ -61,11 +55,11 @@ quint8 glaxnimate::io::BinaryInputStream::next()
 
 quint32 glaxnimate::io::BinaryInputStream::read_uint32_le()
 {
+    static_assert(sizeof(quint32) == 4);
     auto data = read(4);
     if ( data.size() == 4 )
     {
-        auto bytes = reinterpret_cast<quint8*>(data.data());
-        return (bytes[3] << 24ull) | (bytes[2] << 16ull) | (bytes[1] << 8ull) | bytes[0];
+        return qFromLittleEndian<quint32>(data.data());
     }
     else
     {
@@ -73,14 +67,13 @@ quint32 glaxnimate::io::BinaryInputStream::read_uint32_le()
     }
 }
 
-glaxnimate::io::Float32 glaxnimate::io::BinaryInputStream::read_float32()
+glaxnimate::io::Float32 glaxnimate::io::BinaryInputStream::read_float32_le()
 {
     static_assert(sizeof(Float32) == 4);
     auto data = read(4);
-    if ( data.size() == sizeof(Float32) )
+    if ( data.size() == 4 )
     {
-        to_system_endian(data);
-        return *reinterpret_cast<Float32*>(data.data());
+        return qFromLittleEndian<Float32>(data.data());
     }
     else
     {
@@ -105,5 +98,51 @@ glaxnimate::io::VarUint glaxnimate::io::BinaryInputStream::read_uint_leb128()
             return result;
 
         shift += 7;
+    }
+}
+
+glaxnimate::io::BinaryOutputStream::BinaryOutputStream(QIODevice* file)
+    : file(file)
+{
+}
+
+void glaxnimate::io::BinaryOutputStream::write(const QByteArray& data)
+{
+    file->write(data);
+}
+
+void glaxnimate::io::BinaryOutputStream::write_byte(quint8 v)
+{
+    file->putChar(v);
+}
+
+void glaxnimate::io::BinaryOutputStream::write_float32_le(glaxnimate::io::Float32 v)
+{
+    static_assert(sizeof(Float32) == 4);
+    std::array<quint8, 4> data;
+    qToLittleEndian(v, data.data());
+    file->write((const char*)data.data(), 4);
+}
+
+void glaxnimate::io::BinaryOutputStream::write_uint32_le(quint32 v)
+{
+    static_assert(sizeof(quint32) == 4);
+    std::array<quint8, 4> data;
+    qToLittleEndian(v, data.data());
+    file->write((const char*)data.data(), 4);
+}
+
+void glaxnimate::io::BinaryOutputStream::write_uint_leb128(glaxnimate::io::VarUint v)
+{
+    while ( true )
+    {
+        quint8 byte = v & 0x7f;
+        v >>= 7;
+        if ( v == 0 )
+        {
+            write_byte(byte);
+            break;
+        }
+        write_byte(byte | 0x80);
     }
 }

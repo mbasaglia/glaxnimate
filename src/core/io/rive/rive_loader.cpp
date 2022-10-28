@@ -650,8 +650,7 @@ struct LoadCotext
     std::vector<Asset> assets;
 };
 
-
-bool gather_definitions(TypeId type_id, Object& object, RiveFormat* format)
+bool gather_definitions(TypeId type_id, ObjectType& object, RiveFormat* format)
 {
     auto it = defined_objects.find(type_id);
     if ( it == defined_objects.end() )
@@ -670,6 +669,8 @@ bool gather_definitions(TypeId type_id, Object& object, RiveFormat* format)
             return false;
     }
 
+    for ( const auto& prop : def.properties )
+        object.property_names[prop.second.name] = prop.first;
     object.property_definitions.insert(def.properties.begin(), def.properties.end());
     return true;
 }
@@ -793,7 +794,7 @@ QVariant RiveLoader::read_property_value(PropertyType type)
         case PropertyType::VarUint:
             return QVariant::fromValue(stream.read_uint_leb128());
         case PropertyType::Float:
-            return stream.read_float32();
+            return stream.read_float32_le();
         case PropertyType::Color:
             return QColor::fromRgba(stream.read_uint32_le());
     }
@@ -802,7 +803,7 @@ QVariant RiveLoader::read_property_value(PropertyType type)
 }
 
 
-RiveLoader::PropertyTable RiveLoader::read_property_table()
+PropertyTable RiveLoader::read_property_table()
 {
     std::vector<VarUint> props;
     while ( true )
@@ -861,7 +862,7 @@ void RiveLoader::skip_value(glaxnimate::io::rive::PropertyType type)
             read_raw_string();
             break;
         case PropertyType::Float:
-            stream.read_float32();
+            stream.read_float32_le();
             break;
         case PropertyType::Color:
             stream.read_uint32_le();
@@ -869,7 +870,7 @@ void RiveLoader::skip_value(glaxnimate::io::rive::PropertyType type)
     }
 }
 
-const RiveLoader::PropertyTable& RiveLoader::extra_properties() const
+const PropertyTable& RiveLoader::extra_properties() const
 {
     return extra_props;
 }

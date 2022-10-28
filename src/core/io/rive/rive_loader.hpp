@@ -10,8 +10,6 @@ namespace glaxnimate::io::rive {
 class RiveLoader
 {
 public:
-    using PropertyTable = std::unordered_map<VarUint, PropertyType>;
-
     RiveLoader(BinaryInputStream& stream, RiveFormat* format);
 
     std::vector<Object> load_object_list();
@@ -38,5 +36,3 @@ private:
 };
 
 } // namespace glaxnimate::io::rive
-
-

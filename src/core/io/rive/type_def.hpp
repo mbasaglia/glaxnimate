@@ -6,10 +6,11 @@
 #include <QVariant>
 
 #include "type_ids.hpp"
+#include "io/binary_types.hpp"
 
 namespace glaxnimate::io::rive {
 
-using Identifier = quint64;
+using Identifier = VarUint;
 
 enum class PropertyType
 {
@@ -20,6 +21,9 @@ enum class PropertyType
     Float   = 4, // Float32
     Color   = 5, // Uint32
 };
+
+using PropertyTable = std::unordered_map<VarUint, PropertyType>;
+
 
 struct Property
 {
@@ -43,12 +47,17 @@ struct PropertyAnimation
     std::vector<Object*> keyframes = {};
 };
 
-struct Object
+struct ObjectType
+{
+    std::vector<const ObjectDefinition*> definitions;
+    std::unordered_map<Identifier, Property> property_definitions;
+    std::unordered_map<QString, Identifier> property_names;
+};
+
+struct Object : ObjectType
 {
     TypeId type_id = TypeId::NoType;
-    std::vector<const ObjectDefinition*> definitions;
     QVariantMap properties;
-    std::unordered_map<Identifier, Property> property_definitions;
     std::vector<Object*> children;
     std::vector<PropertyAnimation> animations;
 
