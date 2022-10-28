@@ -55,13 +55,18 @@ public:
         return image.toImage();
     }
 
+    /**
+     * \brief If `embedded()` returns `data`, otherwise tries to load the data based on filename
+     */
+    QByteArray image_data() const;
+
 public slots:
     void refresh(bool rebuild_embedded);
 
     void embed(bool embedded);
 
 private:
-    QByteArray build_embedded(const QImage& img);
+    QByteArray build_embedded(const QImage& img) const;
 
 private slots:
     void on_refresh();

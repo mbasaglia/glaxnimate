@@ -251,6 +251,7 @@
      <addaction name="action_lottie_preview"/>
      <addaction name="action_lottie_canvas_preview"/>
      <addaction name="action_svg_preview"/>
+     <addaction name="action_rive_preview"/>
     </widget>
     <addaction name="menu_render_single_frame"/>
     <addaction name="menu_web_preview"/>
@@ -1037,7 +1038,8 @@
   </widget>
   <widget class="QDockWidget" name="dock_time_slider">
    <property name="windowIcon">
-    <iconset theme="player-time"/>
+    <iconset theme="player-time">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="windowTitle">
     <string>Compact Timelime</string>
@@ -2256,6 +2258,11 @@
    </property>
    <property name="toolTip">
     <string>Layout best suited for smaller screens</string>
+   </property>
+  </action>
+  <action name="action_rive_preview">
+   <property name="text">
+    <string>RIVE (canvas)</string>
    </property>
   </action>
  </widget>

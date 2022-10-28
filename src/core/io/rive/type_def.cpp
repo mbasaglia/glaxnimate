@@ -14,14 +14,14 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Artboard, {
             "Artboard", TypeId::Artboard,
             TypeId::WorldTransformComponent, {
-                {196, {"clip", PropertyType::Bool}},
-                {7, {"width", PropertyType::Float}},
-                {8, {"height", PropertyType::Float}},
-                {9, {"x", PropertyType::Float}},
-                {10, {"y", PropertyType::Float}},
-                {11, {"originX", PropertyType::Float}},
-                {12, {"originY", PropertyType::Float}},
-                {236, {"defaultStateMachineId", PropertyType::VarUint}},
+                {"clip", 196, PropertyType::Bool},
+                {"width", 7, PropertyType::Float},
+                {"height", 8, PropertyType::Float},
+                {"x", 9, PropertyType::Float},
+                {"y", 10, PropertyType::Float},
+                {"originX", 11, PropertyType::Float},
+                {"originY", 12, PropertyType::Float},
+                {"defaultStateMachineId", 236, PropertyType::VarUint},
             }
         }
     },
@@ -29,8 +29,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Node, {
             "Node", TypeId::Node,
             TypeId::TransformComponent, {
-                {13, {"x", PropertyType::Float}},
-                {14, {"y", PropertyType::Float}},
+                {"x", 13, PropertyType::Float},
+                {"y", 14, PropertyType::Float},
             }
         }
     },
@@ -52,7 +52,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::StraightVertex, {
             "StraightVertex", TypeId::StraightVertex,
             TypeId::PathVertex, {
-                {26, {"radius", PropertyType::Float}},
+                {"radius", 26, PropertyType::Float},
             }
         }
     },
@@ -60,10 +60,10 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::CubicDetachedVertex, {
             "CubicDetachedVertex", TypeId::CubicDetachedVertex,
             TypeId::CubicVertex, {
-                {84, {"inRotation", PropertyType::Float}},
-                {85, {"inDistance", PropertyType::Float}},
-                {86, {"outRotation", PropertyType::Float}},
-                {87, {"outDistance", PropertyType::Float}},
+                {"inRotation", 84, PropertyType::Float},
+                {"inDistance", 85, PropertyType::Float},
+                {"outRotation", 86, PropertyType::Float},
+                {"outDistance", 87, PropertyType::Float},
             }
         }
     },
@@ -71,11 +71,11 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Rectangle, {
             "Rectangle", TypeId::Rectangle,
             TypeId::ParametricPath, {
-                {164, {"linkCornerRadius", PropertyType::Bool}},
-                {31, {"cornerRadiusTL", PropertyType::Float}},
-                {161, {"cornerRadiusTR", PropertyType::Float}},
-                {162, {"cornerRadiusBL", PropertyType::Float}},
-                {163, {"cornerRadiusBR", PropertyType::Float}},
+                {"linkCornerRadius", 164, PropertyType::Bool},
+                {"cornerRadiusTL", 31, PropertyType::Float},
+                {"cornerRadiusTR", 161, PropertyType::Float},
+                {"cornerRadiusBL", 162, PropertyType::Float},
+                {"cornerRadiusBR", 163, PropertyType::Float},
             }
         }
     },
@@ -90,8 +90,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Component, {
             "Component", TypeId::Component,
             TypeId::NoType, {
-                {4, {"name", PropertyType::String}},
-                {5, {"parentId", PropertyType::VarUint}},
+                {"name", 4, PropertyType::String},
+                {"parentId", 5, PropertyType::VarUint},
             }
         }
     },
@@ -106,7 +106,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Path, {
             "Path", TypeId::Path,
             TypeId::Node, {
-                {128, {"pathFlags", PropertyType::VarUint}},
+                {"pathFlags", 128, PropertyType::VarUint},
             }
         }
     },
@@ -114,8 +114,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Drawable, {
             "Drawable", TypeId::Drawable,
             TypeId::Node, {
-                {23, {"blendModeValue", PropertyType::VarUint}},
-                {129, {"drawableFlags", PropertyType::VarUint}},
+                {"blendModeValue", 23, PropertyType::VarUint},
+                {"drawableFlags", 129, PropertyType::VarUint},
             }
         }
     },
@@ -130,10 +130,10 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::ParametricPath, {
             "ParametricPath", TypeId::ParametricPath,
             TypeId::Path, {
-                {20, {"width", PropertyType::Float}},
-                {21, {"height", PropertyType::Float}},
-                {123, {"originX", PropertyType::Float}},
-                {124, {"originY", PropertyType::Float}},
+                {"width", 20, PropertyType::Float},
+                {"height", 21, PropertyType::Float},
+                {"originX", 123, PropertyType::Float},
+                {"originY", 124, PropertyType::Float},
             }
         }
     },
@@ -141,7 +141,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::PointsPath, {
             "PointsPath", TypeId::PointsPath,
             TypeId::Path, {
-                {32, {"isClosed", PropertyType::Bool}},
+                {"isClosed", 32, PropertyType::Bool},
             }
         }
     },
@@ -156,7 +156,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::SolidColor, {
             "SolidColor", TypeId::SolidColor,
             TypeId::Component, {
-                {37, {"colorValue", PropertyType::Color}},
+                {"colorValue", 37, PropertyType::Color},
             }
         }
     },
@@ -164,8 +164,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::GradientStop, {
             "GradientStop", TypeId::GradientStop,
             TypeId::Component, {
-                {38, {"colorValue", PropertyType::Color}},
-                {39, {"position", PropertyType::Float}},
+                {"colorValue", 38, PropertyType::Color},
+                {"position", 39, PropertyType::Float},
             }
         }
     },
@@ -173,7 +173,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Fill, {
             "Fill", TypeId::Fill,
             TypeId::ShapePaint, {
-                {40, {"fillRule", PropertyType::VarUint}},
+                {"fillRule", 40, PropertyType::VarUint},
             }
         }
     },
@@ -181,7 +181,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::ShapePaint, {
             "ShapePaint", TypeId::ShapePaint,
             TypeId::ContainerComponent, {
-                {41, {"isVisible", PropertyType::Bool}},
+                {"isVisible", 41, PropertyType::Bool},
             }
         }
     },
@@ -189,11 +189,11 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::LinearGradient, {
             "LinearGradient", TypeId::LinearGradient,
             TypeId::ContainerComponent, {
-                {42, {"startX", PropertyType::Float}},
-                {33, {"startY", PropertyType::Float}},
-                {34, {"endX", PropertyType::Float}},
-                {35, {"endY", PropertyType::Float}},
-                {46, {"opacity", PropertyType::Float}},
+                {"startX", 42, PropertyType::Float},
+                {"startY", 33, PropertyType::Float},
+                {"endX", 34, PropertyType::Float},
+                {"endY", 35, PropertyType::Float},
+                {"opacity", 46, PropertyType::Float},
             }
         }
     },
@@ -208,10 +208,10 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Stroke, {
             "Stroke", TypeId::Stroke,
             TypeId::ShapePaint, {
-                {47, {"thickness", PropertyType::Float}},
-                {48, {"cap", PropertyType::VarUint}},
-                {49, {"join", PropertyType::VarUint}},
-                {50, {"transformAffectsStroke", PropertyType::Bool}},
+                {"thickness", 47, PropertyType::Float},
+                {"cap", 48, PropertyType::VarUint},
+                {"join", 49, PropertyType::VarUint},
+                {"transformAffectsStroke", 50, PropertyType::Bool},
             }
         }
     },
@@ -219,7 +219,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::KeyedObject, {
             "KeyedObject", TypeId::KeyedObject,
             TypeId::NoType, {
-                {51, {"objectId", PropertyType::VarUint}},
+                {"objectId", 51, PropertyType::VarUint},
             }
         }
     },
@@ -227,7 +227,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::KeyedProperty, {
             "KeyedProperty", TypeId::KeyedProperty,
             TypeId::NoType, {
-                {53, {"propertyKey", PropertyType::VarUint}},
+                {"propertyKey", 53, PropertyType::VarUint},
             }
         }
     },
@@ -235,7 +235,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Animation, {
             "Animation", TypeId::Animation,
             TypeId::NoType, {
-                {55, {"name", PropertyType::String}},
+                {"name", 55, PropertyType::String},
             }
         }
     },
@@ -243,10 +243,10 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::CubicInterpolator, {
             "CubicInterpolator", TypeId::CubicInterpolator,
             TypeId::NoType, {
-                {63, {"x1", PropertyType::Float}},
-                {64, {"y1", PropertyType::Float}},
-                {65, {"x2", PropertyType::Float}},
-                {66, {"y2", PropertyType::Float}},
+                {"x1", 63, PropertyType::Float},
+                {"y1", 64, PropertyType::Float},
+                {"x2", 65, PropertyType::Float},
+                {"y2", 66, PropertyType::Float},
             }
         }
     },
@@ -254,9 +254,9 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::KeyFrame, {
             "KeyFrame", TypeId::KeyFrame,
             TypeId::NoType, {
-                {67, {"frame", PropertyType::VarUint}},
-                {68, {"interpolationType", PropertyType::VarUint}},
-                {69, {"interpolatorId", PropertyType::VarUint}},
+                {"frame", 67, PropertyType::VarUint},
+                {"interpolationType", 68, PropertyType::VarUint},
+                {"interpolatorId", 69, PropertyType::VarUint},
             }
         }
     },
@@ -264,7 +264,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::KeyFrameDouble, {
             "KeyFrameDouble", TypeId::KeyFrameDouble,
             TypeId::KeyFrame, {
-                {70, {"value", PropertyType::Float}},
+                {"value", 70, PropertyType::Float},
             }
         }
     },
@@ -272,13 +272,13 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::LinearAnimation, {
             "LinearAnimation", TypeId::LinearAnimation,
             TypeId::Animation, {
-                {56, {"fps", PropertyType::VarUint}},
-                {57, {"duration", PropertyType::VarUint}},
-                {58, {"speed", PropertyType::Float}},
-                {59, {"loopValue", PropertyType::VarUint}},
-                {60, {"workStart", PropertyType::VarUint}},
-                {61, {"workEnd", PropertyType::VarUint}},
-                {62, {"enableWorkArea", PropertyType::Bool}},
+                {"fps", 56, PropertyType::VarUint},
+                {"duration", 57, PropertyType::VarUint},
+                {"speed", 58, PropertyType::Float},
+                {"loopValue", 59, PropertyType::VarUint},
+                {"workStart", 60, PropertyType::VarUint},
+                {"workEnd", 61, PropertyType::VarUint},
+                {"enableWorkArea", 62, PropertyType::Bool},
             }
         }
     },
@@ -286,9 +286,9 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::CubicAsymmetricVertex, {
             "CubicAsymmetricVertex", TypeId::CubicAsymmetricVertex,
             TypeId::CubicVertex, {
-                {79, {"rotation", PropertyType::Float}},
-                {80, {"inDistance", PropertyType::Float}},
-                {81, {"outDistance", PropertyType::Float}},
+                {"rotation", 79, PropertyType::Float},
+                {"inDistance", 80, PropertyType::Float},
+                {"outDistance", 81, PropertyType::Float},
             }
         }
     },
@@ -296,8 +296,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::CubicMirroredVertex, {
             "CubicMirroredVertex", TypeId::CubicMirroredVertex,
             TypeId::CubicVertex, {
-                {82, {"rotation", PropertyType::Float}},
-                {83, {"distance", PropertyType::Float}},
+                {"rotation", 82, PropertyType::Float},
+                {"distance", 83, PropertyType::Float},
             }
         }
     },
@@ -312,7 +312,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::KeyFrameColor, {
             "KeyFrameColor", TypeId::KeyFrameColor,
             TypeId::KeyFrame, {
-                {88, {"value", PropertyType::Color}},
+                {"value", 88, PropertyType::Color},
             }
         }
     },
@@ -320,9 +320,9 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TransformComponent, {
             "TransformComponent", TypeId::TransformComponent,
             TypeId::WorldTransformComponent, {
-                {15, {"rotation", PropertyType::Float}},
-                {16, {"scaleX", PropertyType::Float}},
-                {17, {"scaleY", PropertyType::Float}},
+                {"rotation", 15, PropertyType::Float},
+                {"scaleX", 16, PropertyType::Float},
+                {"scaleY", 17, PropertyType::Float},
             }
         }
     },
@@ -337,7 +337,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Bone, {
             "Bone", TypeId::Bone,
             TypeId::SkeletalComponent, {
-                {89, {"length", PropertyType::Float}},
+                {"length", 89, PropertyType::Float},
             }
         }
     },
@@ -345,8 +345,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::RootBone, {
             "RootBone", TypeId::RootBone,
             TypeId::Bone, {
-                {90, {"x", PropertyType::Float}},
-                {91, {"y", PropertyType::Float}},
+                {"x", 90, PropertyType::Float},
+                {"y", 91, PropertyType::Float},
             }
         }
     },
@@ -354,9 +354,9 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::ClippingShape, {
             "ClippingShape", TypeId::ClippingShape,
             TypeId::Component, {
-                {92, {"sourceId", PropertyType::VarUint}},
-                {93, {"fillRule", PropertyType::VarUint}},
-                {94, {"isVisible", PropertyType::Bool}},
+                {"sourceId", 92, PropertyType::VarUint},
+                {"fillRule", 93, PropertyType::VarUint},
+                {"isVisible", 94, PropertyType::Bool},
             }
         }
     },
@@ -364,12 +364,12 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Skin, {
             "Skin", TypeId::Skin,
             TypeId::ContainerComponent, {
-                {104, {"xx", PropertyType::Float}},
-                {105, {"yx", PropertyType::Float}},
-                {106, {"xy", PropertyType::Float}},
-                {107, {"yy", PropertyType::Float}},
-                {108, {"tx", PropertyType::Float}},
-                {109, {"ty", PropertyType::Float}},
+                {"xx", 104, PropertyType::Float},
+                {"yx", 105, PropertyType::Float},
+                {"xy", 106, PropertyType::Float},
+                {"yy", 107, PropertyType::Float},
+                {"tx", 108, PropertyType::Float},
+                {"ty", 109, PropertyType::Float},
             }
         }
     },
@@ -377,13 +377,13 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Tendon, {
             "Tendon", TypeId::Tendon,
             TypeId::Component, {
-                {95, {"boneId", PropertyType::VarUint}},
-                {96, {"xx", PropertyType::Float}},
-                {97, {"yx", PropertyType::Float}},
-                {98, {"xy", PropertyType::Float}},
-                {99, {"yy", PropertyType::Float}},
-                {100, {"tx", PropertyType::Float}},
-                {101, {"ty", PropertyType::Float}},
+                {"boneId", 95, PropertyType::VarUint},
+                {"xx", 96, PropertyType::Float},
+                {"yx", 97, PropertyType::Float},
+                {"xy", 98, PropertyType::Float},
+                {"yy", 99, PropertyType::Float},
+                {"tx", 100, PropertyType::Float},
+                {"ty", 101, PropertyType::Float},
             }
         }
     },
@@ -391,8 +391,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Weight, {
             "Weight", TypeId::Weight,
             TypeId::Component, {
-                {102, {"values", PropertyType::VarUint}},
-                {103, {"indices", PropertyType::VarUint}},
+                {"values", 102, PropertyType::VarUint},
+                {"indices", 103, PropertyType::VarUint},
             }
         }
     },
@@ -400,10 +400,10 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::CubicWeight, {
             "CubicWeight", TypeId::CubicWeight,
             TypeId::Weight, {
-                {110, {"inValues", PropertyType::VarUint}},
-                {111, {"inIndices", PropertyType::VarUint}},
-                {112, {"outValues", PropertyType::VarUint}},
-                {113, {"outIndices", PropertyType::VarUint}},
+                {"inValues", 110, PropertyType::VarUint},
+                {"inIndices", 111, PropertyType::VarUint},
+                {"outValues", 112, PropertyType::VarUint},
+                {"outIndices", 113, PropertyType::VarUint},
             }
         }
     },
@@ -411,10 +411,10 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TrimPath, {
             "TrimPath", TypeId::TrimPath,
             TypeId::Component, {
-                {114, {"start", PropertyType::Float}},
-                {115, {"end", PropertyType::Float}},
-                {116, {"offset", PropertyType::Float}},
-                {117, {"modeValue", PropertyType::VarUint}},
+                {"start", 114, PropertyType::Float},
+                {"end", 115, PropertyType::Float},
+                {"offset", 116, PropertyType::Float},
+                {"modeValue", 117, PropertyType::VarUint},
             }
         }
     },
@@ -422,8 +422,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::DrawTarget, {
             "DrawTarget", TypeId::DrawTarget,
             TypeId::Component, {
-                {119, {"drawableId", PropertyType::VarUint}},
-                {120, {"placementValue", PropertyType::VarUint}},
+                {"drawableId", 119, PropertyType::VarUint},
+                {"placementValue", 120, PropertyType::VarUint},
             }
         }
     },
@@ -431,7 +431,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::DrawRules, {
             "DrawRules", TypeId::DrawRules,
             TypeId::ContainerComponent, {
-                {121, {"drawTargetId", PropertyType::VarUint}},
+                {"drawTargetId", 121, PropertyType::VarUint},
             }
         }
     },
@@ -439,7 +439,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::KeyFrameId, {
             "KeyFrameId", TypeId::KeyFrameId,
             TypeId::KeyFrame, {
-                {122, {"value", PropertyType::VarUint}},
+                {"value", 122, PropertyType::VarUint},
             }
         }
     },
@@ -447,8 +447,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Polygon, {
             "Polygon", TypeId::Polygon,
             TypeId::ParametricPath, {
-                {125, {"points", PropertyType::VarUint}},
-                {126, {"cornerRadius", PropertyType::Float}},
+                {"points", 125, PropertyType::VarUint},
+                {"cornerRadius", 126, PropertyType::Float},
             }
         }
     },
@@ -456,7 +456,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Star, {
             "Star", TypeId::Star,
             TypeId::Polygon, {
-                {127, {"innerRadius", PropertyType::Float}},
+                {"innerRadius", 127, PropertyType::Float},
             }
         }
     },
@@ -471,7 +471,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::StateMachineComponent, {
             "StateMachineComponent", TypeId::StateMachineComponent,
             TypeId::NoType, {
-                {138, {"name", PropertyType::String}},
+                {"name", 138, PropertyType::String},
             }
         }
     },
@@ -486,7 +486,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::StateMachineNumber, {
             "StateMachineNumber", TypeId::StateMachineNumber,
             TypeId::StateMachineInput, {
-                {140, {"value", PropertyType::Float}},
+                {"value", 140, PropertyType::Float},
             }
         }
     },
@@ -508,7 +508,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::StateMachineBool, {
             "StateMachineBool", TypeId::StateMachineBool,
             TypeId::StateMachineInput, {
-                {141, {"value", PropertyType::Bool}},
+                {"value", 141, PropertyType::Bool},
             }
         }
     },
@@ -523,7 +523,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::AnimationState, {
             "AnimationState", TypeId::AnimationState,
             TypeId::LayerState, {
-                {149, {"animationId", PropertyType::VarUint}},
+                {"animationId", 149, PropertyType::VarUint},
             }
         }
     },
@@ -552,10 +552,10 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::StateTransition, {
             "StateTransition", TypeId::StateTransition,
             TypeId::StateMachineLayerComponent, {
-                {151, {"stateToId", PropertyType::VarUint}},
-                {152, {"flags", PropertyType::VarUint}},
-                {158, {"duration", PropertyType::VarUint}},
-                {160, {"exitTime", PropertyType::VarUint}},
+                {"stateToId", 151, PropertyType::VarUint},
+                {"flags", 152, PropertyType::VarUint},
+                {"duration", 158, PropertyType::VarUint},
+                {"exitTime", 160, PropertyType::VarUint},
             }
         }
     },
@@ -570,7 +570,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TransitionCondition, {
             "TransitionCondition", TypeId::TransitionCondition,
             TypeId::NoType, {
-                {155, {"inputId", PropertyType::VarUint}},
+                {"inputId", 155, PropertyType::VarUint},
             }
         }
     },
@@ -585,7 +585,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TransitionValueCondition, {
             "TransitionValueCondition", TypeId::TransitionValueCondition,
             TypeId::TransitionCondition, {
-                {156, {"opValue", PropertyType::VarUint}},
+                {"opValue", 156, PropertyType::VarUint},
             }
         }
     },
@@ -593,7 +593,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TransitionNumberCondition, {
             "TransitionNumberCondition", TypeId::TransitionNumberCondition,
             TypeId::TransitionValueCondition, {
-                {157, {"value", PropertyType::Float}},
+                {"value", 157, PropertyType::Float},
             }
         }
     },
@@ -622,7 +622,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::BlendAnimation, {
             "BlendAnimation", TypeId::BlendAnimation,
             TypeId::NoType, {
-                {165, {"animationId", PropertyType::VarUint}},
+                {"animationId", 165, PropertyType::VarUint},
             }
         }
     },
@@ -630,7 +630,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::BlendAnimation1D, {
             "BlendAnimation1D", TypeId::BlendAnimation1D,
             TypeId::BlendAnimation, {
-                {166, {"value", PropertyType::Float}},
+                {"value", 166, PropertyType::Float},
             }
         }
     },
@@ -638,7 +638,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::BlendState1D, {
             "BlendState1D", TypeId::BlendState1D,
             TypeId::BlendState, {
-                {167, {"inputId", PropertyType::VarUint}},
+                {"inputId", 167, PropertyType::VarUint},
             }
         }
     },
@@ -646,7 +646,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::BlendAnimationDirect, {
             "BlendAnimationDirect", TypeId::BlendAnimationDirect,
             TypeId::BlendAnimation, {
-                {168, {"inputId", PropertyType::VarUint}},
+                {"inputId", 168, PropertyType::VarUint},
             }
         }
     },
@@ -654,7 +654,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::BlendStateTransition, {
             "BlendStateTransition", TypeId::BlendStateTransition,
             TypeId::StateTransition, {
-                {171, {"exitBlendAnimationId", PropertyType::VarUint}},
+                {"exitBlendAnimationId", 171, PropertyType::VarUint},
             }
         }
     },
@@ -662,7 +662,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Constraint, {
             "Constraint", TypeId::Constraint,
             TypeId::Component, {
-                {172, {"strength", PropertyType::Float}},
+                {"strength", 172, PropertyType::Float},
             }
         }
     },
@@ -670,7 +670,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TargetedConstraint, {
             "TargetedConstraint", TypeId::TargetedConstraint,
             TypeId::Constraint, {
-                {173, {"targetId", PropertyType::VarUint}},
+                {"targetId", 173, PropertyType::VarUint},
             }
         }
     },
@@ -678,8 +678,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::IKConstraint, {
             "IKConstraint", TypeId::IKConstraint,
             TypeId::TargetedConstraint, {
-                {174, {"invertDirection", PropertyType::Bool}},
-                {175, {"parentBoneCount", PropertyType::VarUint}},
+                {"invertDirection", 174, PropertyType::Bool},
+                {"parentBoneCount", 175, PropertyType::VarUint},
             }
         }
     },
@@ -687,8 +687,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::DistanceConstraint, {
             "DistanceConstraint", TypeId::DistanceConstraint,
             TypeId::TargetedConstraint, {
-                {177, {"distance", PropertyType::Float}},
-                {178, {"modeValue", PropertyType::VarUint}},
+                {"distance", 177, PropertyType::Float},
+                {"modeValue", 178, PropertyType::VarUint},
             }
         }
     },
@@ -703,7 +703,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::KeyFrameBool, {
             "KeyFrameBool", TypeId::KeyFrameBool,
             TypeId::KeyFrame, {
-                {181, {"value", PropertyType::Bool}},
+                {"value", 181, PropertyType::Bool},
             }
         }
     },
@@ -711,14 +711,14 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TransformComponentConstraint, {
             "TransformComponentConstraint", TypeId::TransformComponentConstraint,
             TypeId::TransformSpaceConstraint, {
-                {195, {"minMaxSpaceValue", PropertyType::VarUint}},
-                {182, {"copyFactor", PropertyType::Float}},
-                {183, {"minValue", PropertyType::Float}},
-                {184, {"maxValue", PropertyType::Float}},
-                {188, {"offset", PropertyType::Bool}},
-                {189, {"doesCopy", PropertyType::Bool}},
-                {190, {"min", PropertyType::Bool}},
-                {191, {"max", PropertyType::Bool}},
+                {"minMaxSpaceValue", 195, PropertyType::VarUint},
+                {"copyFactor", 182, PropertyType::Float},
+                {"minValue", 183, PropertyType::Float},
+                {"maxValue", 184, PropertyType::Float},
+                {"offset", 188, PropertyType::Bool},
+                {"doesCopy", 189, PropertyType::Bool},
+                {"min", 190, PropertyType::Bool},
+                {"max", 191, PropertyType::Bool},
             }
         }
     },
@@ -726,12 +726,12 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TransformComponentConstraintY, {
             "TransformComponentConstraintY", TypeId::TransformComponentConstraintY,
             TypeId::TransformComponentConstraint, {
-                {185, {"copyFactorY", PropertyType::Float}},
-                {186, {"minValueY", PropertyType::Float}},
-                {187, {"maxValueY", PropertyType::Float}},
-                {192, {"doesCopyY", PropertyType::Bool}},
-                {193, {"minY", PropertyType::Bool}},
-                {194, {"maxY", PropertyType::Bool}},
+                {"copyFactorY", 185, PropertyType::Float},
+                {"minValueY", 186, PropertyType::Float},
+                {"maxValueY", 187, PropertyType::Float},
+                {"doesCopyY", 192, PropertyType::Bool},
+                {"minY", 193, PropertyType::Bool},
+                {"maxY", 194, PropertyType::Bool},
             }
         }
     },
@@ -760,8 +760,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TransformSpaceConstraint, {
             "TransformSpaceConstraint", TypeId::TransformSpaceConstraint,
             TypeId::TargetedConstraint, {
-                {179, {"sourceSpaceValue", PropertyType::VarUint}},
-                {180, {"destSpaceValue", PropertyType::VarUint}},
+                {"sourceSpaceValue", 179, PropertyType::VarUint},
+                {"destSpaceValue", 180, PropertyType::VarUint},
             }
         }
     },
@@ -769,7 +769,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::WorldTransformComponent, {
             "WorldTransformComponent", TypeId::WorldTransformComponent,
             TypeId::ContainerComponent, {
-                {18, {"opacity", PropertyType::Float}},
+                {"opacity", 18, PropertyType::Float},
             }
         }
     },
@@ -777,7 +777,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::NestedArtboard, {
             "NestedArtboard", TypeId::NestedArtboard,
             TypeId::Drawable, {
-                {197, {"artboardId", PropertyType::VarUint}},
+                {"artboardId", 197, PropertyType::VarUint},
             }
         }
     },
@@ -785,7 +785,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::NestedAnimation, {
             "NestedAnimation", TypeId::NestedAnimation,
             TypeId::ContainerComponent, {
-                {198, {"animationId", PropertyType::VarUint}},
+                {"animationId", 198, PropertyType::VarUint},
             }
         }
     },
@@ -800,8 +800,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::NestedSimpleAnimation, {
             "NestedSimpleAnimation", TypeId::NestedSimpleAnimation,
             TypeId::NestedLinearAnimation, {
-                {199, {"speed", PropertyType::Float}},
-                {201, {"isPlaying", PropertyType::Bool}},
+                {"speed", 199, PropertyType::Float},
+                {"isPlaying", 201, PropertyType::Bool},
             }
         }
     },
@@ -809,7 +809,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::NestedLinearAnimation, {
             "NestedLinearAnimation", TypeId::NestedLinearAnimation,
             TypeId::NestedAnimation, {
-                {200, {"mix", PropertyType::Float}},
+                {"mix", 200, PropertyType::Float},
             }
         }
     },
@@ -817,7 +817,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::NestedRemapAnimation, {
             "NestedRemapAnimation", TypeId::NestedRemapAnimation,
             TypeId::NestedLinearAnimation, {
-                {202, {"time", PropertyType::Float}},
+                {"time", 202, PropertyType::Float},
             }
         }
     },
@@ -825,7 +825,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Asset, {
             "Asset", TypeId::Asset,
             TypeId::NoType, {
-                {203, {"name", PropertyType::String}},
+                {"name", 203, PropertyType::String},
             }
         }
     },
@@ -833,7 +833,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Image, {
             "Image", TypeId::Image,
             TypeId::Drawable, {
-                {206, {"assetId", PropertyType::VarUint}},
+                {"assetId", 206, PropertyType::VarUint},
             }
         }
     },
@@ -848,7 +848,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::FileAsset, {
             "FileAsset", TypeId::FileAsset,
             TypeId::Asset, {
-                {204, {"assetId", PropertyType::VarUint}},
+                {"assetId", 204, PropertyType::VarUint},
             }
         }
     },
@@ -856,8 +856,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::DrawableAsset, {
             "DrawableAsset", TypeId::DrawableAsset,
             TypeId::FileAsset, {
-                {207, {"height", PropertyType::Float}},
-                {208, {"width", PropertyType::Float}},
+                {"height", 207, PropertyType::Float},
+                {"width", 208, PropertyType::Float},
             }
         }
     },
@@ -872,7 +872,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::FileAssetContents, {
             "FileAssetContents", TypeId::FileAssetContents,
             TypeId::NoType, {
-                {212, {"bytes", PropertyType::Bytes}},
+                {"bytes", 212, PropertyType::Bytes},
             }
         }
     },
@@ -880,8 +880,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Vertex, {
             "Vertex", TypeId::Vertex,
             TypeId::ContainerComponent, {
-                {24, {"x", PropertyType::Float}},
-                {25, {"y", PropertyType::Float}},
+                {"x", 24, PropertyType::Float},
+                {"y", 25, PropertyType::Float},
             }
         }
     },
@@ -889,8 +889,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::MeshVertex, {
             "MeshVertex", TypeId::MeshVertex,
             TypeId::Vertex, {
-                {215, {"u", PropertyType::Float}},
-                {216, {"v", PropertyType::Float}},
+                {"u", 215, PropertyType::Float},
+                {"v", 216, PropertyType::Float},
             }
         }
     },
@@ -898,7 +898,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Mesh, {
             "Mesh", TypeId::Mesh,
             TypeId::ContainerComponent, {
-                {223, {"triangleIndexBytes", PropertyType::Bytes}},
+                {"triangleIndexBytes", 223, PropertyType::Bytes},
             }
         }
     },
@@ -906,7 +906,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Text, {
             "Text", TypeId::Text,
             TypeId::Node, {
-                {218, {"value", PropertyType::String}},
+                {"value", 218, PropertyType::String},
             }
         }
     },
@@ -921,8 +921,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::ForcedEdge, {
             "ForcedEdge", TypeId::ForcedEdge,
             TypeId::Component, {
-                {219, {"fromId", PropertyType::VarUint}},
-                {220, {"toId", PropertyType::VarUint}},
+                {"fromId", 219, PropertyType::VarUint},
+                {"toId", 220, PropertyType::VarUint},
             }
         }
     },
@@ -930,8 +930,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TextRun, {
             "TextRun", TypeId::TextRun,
             TypeId::Drawable, {
-                {221, {"pointSize", PropertyType::Float}},
-                {222, {"textLength", PropertyType::VarUint}},
+                {"pointSize", 221, PropertyType::Float},
+                {"textLength", 222, PropertyType::VarUint},
             }
         }
     },
@@ -939,8 +939,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::StateMachineListener, {
             "StateMachineListener", TypeId::StateMachineListener,
             TypeId::StateMachineComponent, {
-                {224, {"targetId", PropertyType::VarUint}},
-                {225, {"listenerTypeValue", PropertyType::VarUint}},
+                {"targetId", 224, PropertyType::VarUint},
+                {"listenerTypeValue", 225, PropertyType::VarUint},
             }
         }
     },
@@ -955,7 +955,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::ListenerInputChange, {
             "ListenerInputChange", TypeId::ListenerInputChange,
             TypeId::ListenerAction, {
-                {227, {"inputId", PropertyType::VarUint}},
+                {"inputId", 227, PropertyType::VarUint},
             }
         }
     },
@@ -963,7 +963,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::ListenerBoolChange, {
             "ListenerBoolChange", TypeId::ListenerBoolChange,
             TypeId::ListenerInputChange, {
-                {228, {"value", PropertyType::VarUint}},
+                {"value", 228, PropertyType::VarUint},
             }
         }
     },
@@ -971,7 +971,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::ListenerNumberChange, {
             "ListenerNumberChange", TypeId::ListenerNumberChange,
             TypeId::ListenerInputChange, {
-                {229, {"value", PropertyType::Float}},
+                {"value", 229, PropertyType::Float},
             }
         }
     },
@@ -986,9 +986,9 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::LayerImageAsset, {
             "LayerImageAsset", TypeId::LayerImageAsset,
             TypeId::ImageAsset, {
-                {233, {"layer", PropertyType::VarUint}},
-                {234, {"x", PropertyType::Float}},
-                {235, {"y", PropertyType::Float}},
+                {"layer", 233, PropertyType::VarUint},
+                {"x", 234, PropertyType::Float},
+                {"y", 235, PropertyType::Float},
             }
         }
     },
@@ -996,7 +996,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::NestedInput, {
             "NestedInput", TypeId::NestedInput,
             TypeId::Component, {
-                {237, {"inputId", PropertyType::VarUint}},
+                {"inputId", 237, PropertyType::VarUint},
             }
         }
     },
@@ -1011,7 +1011,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::NestedBool, {
             "NestedBool", TypeId::NestedBool,
             TypeId::NestedInput, {
-                {238, {"nestedValue", PropertyType::Bool}},
+                {"nestedValue", 238, PropertyType::Bool},
             }
         }
     },
@@ -1019,7 +1019,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::NestedNumber, {
             "NestedNumber", TypeId::NestedNumber,
             TypeId::NestedInput, {
-                {239, {"nestedValue", PropertyType::Float}},
+                {"nestedValue", 239, PropertyType::Float},
             }
         }
     },
@@ -1034,7 +1034,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::ListenerAlignTarget, {
             "ListenerAlignTarget", TypeId::ListenerAlignTarget,
             TypeId::ListenerAction, {
-                {240, {"targetId", PropertyType::VarUint}},
+                {"targetId", 240, PropertyType::VarUint},
             }
         }
     },

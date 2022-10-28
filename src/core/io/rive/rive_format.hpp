@@ -17,7 +17,7 @@ public:
     QString slug() const override { return "rive"; }
     QString name() const override { return tr("Rive Animation"); }
     QStringList extensions() const override { return {"riv"}; }
-    bool can_save() const override { return false; }
+    bool can_save() const override { return true; }
     bool can_open() const override { return true; }
 
     static RiveFormat* instance() { return autoreg.registered; }

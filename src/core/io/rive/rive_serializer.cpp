@@ -1,6 +1,11 @@
 #include "rive_serializer.hpp"
 #include <QColor>
 
+glaxnimate::io::rive::RiveSerializer::RiveSerializer(QIODevice* file)
+    : stream(file)
+{
+}
+
 void glaxnimate::io::rive::RiveSerializer::write_header(int vmaj, int vmin, glaxnimate::io::rive::Identifier file_id)
 {
     stream.write("RIVE");
@@ -51,19 +56,17 @@ void glaxnimate::io::rive::RiveSerializer::write_property_table(const glaxnimate
     }
     if ( bit != 0 )
         stream.write_uint32_le(current_int);
-
-    Q_UNUSED(properties);
 }
 
-void glaxnimate::io::rive::RiveSerializer::write_object(const glaxnimate::io::rive::OutputObject& output)
+void glaxnimate::io::rive::RiveSerializer::write_object(const glaxnimate::io::rive::Object& output)
 {
-    stream.write_uint_leb128(VarUint(output.type_id));
-    for ( const auto& p : output.properties )
+    stream.write_uint_leb128(VarUint(output.type().id));
+    for ( const auto& p : output.properties() )
     {
-        if ( !p.second.second.isValid() )
+        if ( !p.second.isValid() )
             continue;
-        stream.write_uint_leb128(p.first);
-        write_property_value(p.second.first, p.second.second);
+        stream.write_uint_leb128(p.first->id);
+        write_property_value(p.first->type, p.second);
     }
 }
 

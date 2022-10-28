@@ -118,11 +118,11 @@ struct LoadCotext
 
     void preprocess_object(Object* object)
     {
-        if ( object->type_id == TypeId::Artboard )
+        if ( object->type().id == TypeId::Artboard )
         {
             new_artboard(object);
         }
-        else if ( object->type_id == TypeId::KeyedObject )
+        else if ( object->type().id == TypeId::KeyedObject )
         {
             if ( !artboard )
             {
@@ -138,7 +138,7 @@ struct LoadCotext
                 return;
             }
         }
-        else if ( object->type_id == TypeId::KeyedProperty )
+        else if ( object->type().id == TypeId::KeyedProperty )
         {
             if ( !keyed_object )
             {
@@ -147,17 +147,18 @@ struct LoadCotext
             }
 
             auto id = object->get<Identifier>("propertyKey");
+            auto prop = keyed_object->type().property(id);
 
-            if ( !keyed_object->property_definitions.count(id) )
+            if ( !prop )
             {
                 format->warning(QObject::tr("Unknown Keyed Property id %1").arg(id));
                 return;
             }
 
-            keyed_object->animations.push_back({id, {}});
-            keyed_property = &keyed_object->animations.back();
+            keyed_object->animations().push_back({prop, {}});
+            keyed_property = &keyed_object->animations().back();
         }
-        else if ( object->type_id == TypeId::LinearAnimation )
+        else if ( object->type().id == TypeId::LinearAnimation )
         {
             if ( !artboard )
             {
@@ -169,11 +170,11 @@ struct LoadCotext
             if ( duration > artboard->timeline_duration )
                 artboard->timeline_duration = duration;
         }
-        else if ( object->type_id == TypeId::ImageAsset )
+        else if ( object->type().id == TypeId::ImageAsset )
         {
             assets.push_back({object, load_image_asset(object)});
         }
-        else if ( object->type_id == TypeId::FileAssetContents )
+        else if ( object->type().id == TypeId::FileAssetContents )
         {
             if ( assets.empty() )
             {
@@ -209,20 +210,20 @@ struct LoadCotext
 
             keyed_property->keyframes.push_back(object);
         }
-        else if ( object->has_value("parentId") )
+        else if ( object->has("parentId") )
         {
             auto parent_id = object->get<Identifier>("parentId");
             auto parent = artboard_child(parent_id);
             if ( !parent )
                 format->warning(QObject::tr("Could not find parent with id %1").arg(parent_id));
             else
-                parent->children.push_back(object);
+                parent->children().push_back(object);
         }
     }
 
     void process_object(Object* object)
     {
-        if ( object->type_id == TypeId::Artboard )
+        if ( object->type().id == TypeId::Artboard )
         {
             process_artboard(object);
         }
@@ -260,7 +261,7 @@ struct LoadCotext
 
         std::vector<std::unique_ptr<model::ShapeElement>> shapes;
 
-        for ( Object* child : parent->children )
+        for ( Object* child : parent->children() )
         {
             if ( child == parent )
             {
@@ -310,7 +311,7 @@ struct LoadCotext
     {
         detail::AnimatedProperties animations = load_animations(object);
 
-        switch ( object->type_id )
+        switch ( object->type().id )
         {
             case TypeId::Shape:
             case TypeId::Node:
@@ -408,13 +409,13 @@ struct LoadCotext
         shape->visible.set(object->get<bool>("isVisible", true));
         load_property<Float32>(object, shape->opacity, animations, "opacity", 1);
 
-        for ( const auto& child : object->children )
+        for ( const auto& child : object->children() )
         {
-            if ( child->type_id == TypeId::SolidColor )
+            if ( child->type().id == TypeId::SolidColor )
                 load_property<QColor>(child, shape->color, load_animations(child), "colorValue", QColor("#747474"));
-            else if ( child->type_id == TypeId::LinearGradient )
+            else if ( child->type().id == TypeId::LinearGradient )
                 shape->use.set(load_gradient(child, model::Gradient::Linear));
-            else if ( child->type_id == TypeId::RadialGradient )
+            else if ( child->type().id == TypeId::RadialGradient )
                 shape->use.set(load_gradient(child, model::Gradient::Radial));
         }
     }
@@ -437,9 +438,9 @@ struct LoadCotext
 
         /// \todo color animations
         QGradientStops stops;
-        for ( const auto& child : object->children )
+        for ( const auto& child : object->children() )
         {
-            if ( child->type_id == TypeId::GradientStop )
+            if ( child->type().id == TypeId::GradientStop )
             {
                 stops.push_back({
                     child->get<Float32>("position"),
@@ -459,15 +460,15 @@ struct LoadCotext
         using namespace glaxnimate::io::detail;
 
         AnimatedProperties props;
-        for ( const auto& anim : object->animations )
+        for ( const auto& anim : object->animations() )
         {
-            AnimatedProperty& prop = props.properties[object->property_name(anim.property_id)];
+            AnimatedProperty& prop = props.properties[anim.property->name];
             for ( auto kf : anim.keyframes )
             {
                 model::KeyframeTransition transition; /// \todo
                 prop.keyframes.push_back({
                     kf->get<Float32>("frame", 0),
-                    ValueVariant(kf->properties.value("value")),
+                    ValueVariant(kf->get_variant("value")),
                     transition
                 });
             }
@@ -533,11 +534,11 @@ struct LoadCotext
         shape->closed.set(closed);
 
         math::bezier::Bezier bez;
-        for ( const auto& child : object->children )
+        for ( const auto& child : object->children() )
         {
             math::bezier::Point p;
             p.pos = QPointF(child->get<Float32>("x", 0), child->get<Float32>("y", 0));
-            if ( child->type_id == TypeId::CubicMirroredVertex )
+            if ( child->type().id == TypeId::CubicMirroredVertex )
             {
                 p.type = math::bezier::Symmetrical;
                 auto tangent = math::from_polar<QPointF>(
@@ -547,7 +548,7 @@ struct LoadCotext
                 p.tan_in = p.pos - tangent;
                 p.tan_out = p.pos + tangent;
             }
-            else if ( child->type_id == TypeId::CubicAsymmetricVertex )
+            else if ( child->type().id == TypeId::CubicAsymmetricVertex )
             {
                 p.type = math::bezier::Smooth;
                 p.tan_in = p.pos - math::from_polar<QPointF>(
@@ -559,7 +560,7 @@ struct LoadCotext
                     child->get<Float32>("rotation")
                 );
             }
-            else if ( child->type_id == TypeId::CubicDetachedVertex )
+            else if ( child->type().id == TypeId::CubicDetachedVertex )
             {
                 p.type = math::bezier::Corner;
                 p.tan_in = p.pos + math::from_polar<QPointF>(
@@ -571,7 +572,7 @@ struct LoadCotext
                     child->get<Float32>("outRotation")
                 );
             }
-            else if ( child->type_id == TypeId::StraightVertex )
+            else if ( child->type().id == TypeId::StraightVertex )
             {
                 p.type = math::bezier::Corner;
                 p.tan_in = p.tan_out = p.pos;
@@ -600,7 +601,7 @@ struct LoadCotext
         load_property<Float32>(object, shape->opacity, animations, "opacity", 1);
         load_transform(object, shape->transform.get(), animations);
 
-        if ( object->has_value("artboardId") )
+        if ( object->has("artboardId") )
         {
             auto id = object->get<VarUint>("artboardId");
             shape->size.set(artboards_id[id]->size);
@@ -650,32 +651,6 @@ struct LoadCotext
     std::vector<Asset> assets;
 };
 
-bool gather_definitions(TypeId type_id, ObjectType& object, RiveFormat* format)
-{
-    auto it = defined_objects.find(type_id);
-    if ( it == defined_objects.end() )
-    {
-        format->error(QObject::tr("Unknown object of type %1").arg(int(type_id)));
-        return false;
-    }
-
-    const auto& def = it->second;
-
-    object.definitions.push_back(&def);
-
-    if ( def.extends != TypeId::NoType )
-    {
-        if ( !gather_definitions(def.extends, object, format) )
-            return false;
-    }
-
-    for ( const auto& prop : def.properties )
-        object.property_names[prop.second.name] = prop.first;
-    object.property_definitions.insert(def.properties.begin(), def.properties.end());
-    return true;
-}
-
-
 } // namespace
 
 RiveLoader::RiveLoader(BinaryInputStream& stream, RiveFormat* format)
@@ -684,6 +659,9 @@ RiveLoader::RiveLoader(BinaryInputStream& stream, RiveFormat* format)
     format(format)
 {
     extra_props = read_property_table();
+    QObject::connect(&types, &TypeSystem::type_not_found, [format](int type){
+        format->error(QObject::tr("Unknown object of type %1").arg(int(type)));
+    });
 
     if ( stream.has_error() )
         format->error(QObject::tr("Could not read property table"));
@@ -709,7 +687,8 @@ bool RiveLoader::load_document(model::Document* document)
     LoadCotext context(format, document);
 
     while ( !stream.has_error() && !stream.eof() )
-        context.objects.emplace_back(read_object());
+        if ( auto obj = read_object() )
+            context.objects.emplace_back(std::move(obj));
 
     for ( auto& object : context.objects )
         context.preprocess_object(&object);
@@ -730,10 +709,9 @@ Object RiveLoader::read_object()
         return {};
     }
 
-    Object obj;
-    obj.type_id = type_id;
+    Object obj = types.object(type_id);
 
-    if ( !gather_definitions(type_id, obj, format) )
+    if ( !obj )
         return {};
 
     while ( true )
@@ -742,36 +720,36 @@ Object RiveLoader::read_object()
         if ( stream.has_error() )
         {
             format->error(QObject::tr("Could not load property ID in %1 (%2)")
-                .arg(int(type_id)).arg(obj.definitions[0]->name));
+                .arg(int(type_id)).arg(obj.definition()->name));
             return {};
         }
 
         if ( prop_id == 0 )
             break;
 
-        auto prop_def = obj.property_definitions.find(prop_id);
-        if ( prop_def == obj.property_definitions.end() )
+        auto prop_def = obj.type().property(prop_id);
+        if ( !prop_def )
         {
             auto unknown_it = extra_props.find(prop_id);
             if ( unknown_it == extra_props.end() )
             {
                 format->error(QObject::tr("Unknown property %1 of %2 (%3)")
-                    .arg(prop_id).arg(int(type_id)).arg(obj.definitions[0]->name));
+                    .arg(prop_id).arg(int(type_id)).arg(obj.definition()->name));
                 return {};
             }
             else
             {
                 format->warning(QObject::tr("Skipping unknown property %1 of %2 (%3)")
-                        .arg(prop_id).arg(int(type_id)).arg(obj.definitions[0]->name));
+                        .arg(prop_id).arg(int(type_id)).arg(obj.definition()->name));
             }
         }
         else
         {
-            obj.properties[prop_def->second.name] = read_property_value(prop_def->second.type);
+            obj.set(prop_def, read_property_value(prop_def->type));
             if ( stream.has_error() )
             {
                 format->error(QObject::tr("Error loading property %1 (%2) of %3 (%4)")
-                    .arg(prop_id).arg(prop_def->second.name).arg(int(type_id)).arg(obj.definitions[0]->name));
+                    .arg(prop_id).arg(prop_def->name).arg(int(type_id)).arg(obj.definition()->name));
                 return {};
             }
         }

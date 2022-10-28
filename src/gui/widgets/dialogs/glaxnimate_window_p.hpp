@@ -183,6 +183,7 @@ public:
     void document_reload();
     void preview_lottie(const QString& renderer);
     void preview_svg();
+    void preview_rive();
     void preview(io::ImportExport& exporter, const QVariantMap& options);
     void save_frame_bmp();
     void save_frame_svg();

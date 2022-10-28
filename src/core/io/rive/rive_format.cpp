@@ -1,9 +1,11 @@
 #include "rive_format.hpp"
 
-#include "rive_loader.hpp"
-
 #include <QJsonArray>
 #include <QJsonObject>
+
+
+#include "rive_loader.hpp"
+#include "rive_exporter.hpp"
 
 glaxnimate::io::Autoreg<glaxnimate::io::rive::RiveFormat> glaxnimate::io::rive::RiveFormat::autoreg;
 
@@ -42,9 +44,11 @@ bool glaxnimate::io::rive::RiveFormat::on_open(QIODevice& file, const QString&, 
     return RiveLoader(stream, this).load_document(document);
 }
 
-bool glaxnimate::io::rive::RiveFormat::on_save(QIODevice&, const QString&, model::Document*, const QVariantMap&)
+bool glaxnimate::io::rive::RiveFormat::on_save(QIODevice& device, const QString&, model::Document* document, const QVariantMap&)
 {
-    return false;
+    RiveExporter exporter(&device, this);
+    exporter.write_document(document);
+    return true;
 }
 
 static QString property_type_to_string(glaxnimate::io::rive::PropertyType type)
@@ -89,7 +93,7 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
     bool has_artboard = false;
     for ( const auto& rive_obj : loader.load_object_list() )
     {
-        if ( rive_obj.type_id == TypeId::Artboard )
+        if ( rive_obj.type().id == TypeId::Artboard )
         {
             has_artboard = true;
             id = 0;
@@ -99,7 +103,7 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
         QJsonObject obj;
 
         QJsonArray types;
-        for ( const auto& def : rive_obj.definitions )
+        for ( const auto& def : rive_obj.type().definitions )
         {
             QJsonObject jdef;
             jdef["id"] = int(def->type_id);
@@ -109,27 +113,27 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
         obj["class"] = types;
 
         QJsonArray props;
-        for ( const auto& p : rive_obj.property_definitions )
+        for ( const auto& p : rive_obj.type().properties )
         {
             QJsonObject prop;
-            prop["id"] = int(p.first);
-            prop["name"] = p.second.name;
-            prop["type"] = property_type_to_string(p.second.type);
-            auto iter = rive_obj.properties.find(p.second.name);
+            prop["id"] = int(p->id);
+            prop["name"] = p->name;
+            prop["type"] = property_type_to_string(p->type);
+            auto iter = rive_obj.properties().find(p);
             QJsonValue val;
 
-            if ( iter != rive_obj.properties.end() && iter->isValid() )
+            if ( iter != rive_obj.properties().end() && iter->second.isValid() )
             {
-                if ( iter->userType() == QMetaType::QColor )
-                    val = iter->value<QColor>().name();
-                else if ( iter->userType() == QMetaType::ULongLong || iter->userType() == QMetaType::ULong )
-                    val = iter->toInt();
-                else if ( iter->userType() == QMetaType::QByteArray )
-                    val = QString::fromLatin1(iter->toByteArray().toBase64());
+                if ( iter->second.userType() == QMetaType::QColor )
+                    val = iter->second.value<QColor>().name();
+                else if ( iter->second.userType() == QMetaType::ULongLong || iter->second.userType() == QMetaType::ULong )
+                    val = iter->second.toInt();
+                else if ( iter->second.userType() == QMetaType::QByteArray )
+                    val = QString::fromLatin1(iter->second.toByteArray().toBase64());
                 else
-                    val = QJsonValue::fromVariant(*iter);
+                    val = QJsonValue::fromVariant(iter->second);
 
-                summary_obj[iter.key()] = val;
+                summary_obj[iter->first->name] = val;
             }
             prop["value"] = val;
 
@@ -138,7 +142,7 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
         obj["properties"] = props;
 
         QJsonObject summary_obj_parent;
-        summary_obj_parent[rive_obj.definitions.empty() ? "?" : rive_obj.definitions[0]->name] = summary_obj;
+        summary_obj_parent[!rive_obj ? "?" : rive_obj.definition()->name] = summary_obj;
 
         if ( has_artboard )
         {

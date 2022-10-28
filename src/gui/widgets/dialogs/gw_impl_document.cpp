@@ -21,6 +21,7 @@
 #include "io/raster/raster_mime.hpp"
 #include "io/lottie/tgs_format.hpp"
 #include "io/lottie/validation.hpp"
+#include "io/rive/rive_html_format.hpp"
 
 #include "model/visitor.hpp"
 #include "widgets/font/font_loader.hpp"
@@ -75,7 +76,6 @@ void GlaxnimateWindow::Private::setup_document_ptr(std::unique_ptr<model::Docume
 
     ui.timeline_widget->reset_view();
     ui.play_controls->set_range(current_document->main()->animation->first_frame.get(), current_document->main()->animation->last_frame.get());
-
 }
 
 void GlaxnimateWindow::Private::do_setup_document()
@@ -505,6 +505,12 @@ void GlaxnimateWindow::Private::preview_lottie(const QString& renderer)
 void GlaxnimateWindow::Private::preview_svg()
 {
     io::svg::SvgHtmlFormat fmt;
+    preview(fmt, {});
+}
+
+void GlaxnimateWindow::Private::preview_rive()
+{
+    io::rive::RiveHtmlFormat fmt;
     preview(fmt, {});
 }
 

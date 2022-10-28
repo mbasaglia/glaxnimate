@@ -1,11 +1,12 @@
 #pragma once
 
 #include "io/binary_stream.hpp"
-#include "type_def.hpp"
 
+#include "type_system.hpp"
 #include "rive_format.hpp"
 
 namespace glaxnimate::io::rive {
+
 
 class RiveLoader
 {
@@ -33,6 +34,7 @@ private:
     BinaryInputStream& stream;
     RiveFormat* format;
     PropertyTable extra_props;
+    TypeSystem types;
 };
 
 } // namespace glaxnimate::io::rive

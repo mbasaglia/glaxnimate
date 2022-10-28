@@ -261,6 +261,7 @@ void GlaxnimateWindow::Private::init_actions()
     connect(ui.action_lottie_preview, &QAction::triggered, parent, [this]{preview_lottie("svg");});
     connect(ui.action_lottie_canvas_preview, &QAction::triggered, parent, [this]{preview_lottie("canvas");});
     connect(ui.action_svg_preview, &QAction::triggered, parent, [this]{preview_svg();});
+    connect(ui.action_rive_preview, &QAction::triggered, parent, [this]{preview_rive();});
     connect(ui.action_new_precomp, &QAction::triggered, parent, [this]{add_composition();});
     connect(ui.action_new_precomp_selection, &QAction::triggered, parent, [this]{
         objects_to_new_composition(comp, cleaned_selection(), &comp->shapes, -1);

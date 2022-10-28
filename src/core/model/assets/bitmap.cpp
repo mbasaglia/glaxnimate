@@ -49,7 +49,7 @@ void glaxnimate::model::Bitmap::refresh(bool rebuild_embedded)
     emit loaded();
 }
 
-QByteArray glaxnimate::model::Bitmap::build_embedded(const QImage& img)
+QByteArray glaxnimate::model::Bitmap::build_embedded(const QImage& img) const
 {
     QByteArray new_data;
     QBuffer buf(&new_data);
@@ -193,4 +193,15 @@ void glaxnimate::model::Bitmap::set_pixmap(const QImage& pix, const QString& for
 {
     this->format.set(format);
     data.set(build_embedded(pix));
+}
+
+QByteArray glaxnimate::model::Bitmap::image_data() const
+{
+    if ( !data.get().isEmpty() )
+        return data.get();
+
+    if ( image.isNull() )
+        return {};
+
+    return build_embedded(image.toImage());
 }

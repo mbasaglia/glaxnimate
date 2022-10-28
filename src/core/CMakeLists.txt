@@ -20,8 +20,11 @@ io/mime/mime_serializer.cpp
 io/raster/raster_format.cpp
 io/raster/spritesheet_format.cpp
 io/rive/rive_format.cpp
+io/rive/rive_html_format.cpp
 io/rive/rive_loader.cpp
+io/rive/rive_serializer.cpp
 io/rive/type_def.cpp
+io/rive/type_system.cpp
 io/svg/detail.cpp
 io/svg/svg_format.cpp
 io/svg/svg_parser.cpp

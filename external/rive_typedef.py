@@ -62,7 +62,7 @@ def fix_extends(data, types):
 def format_props(props):
     indent = " " * 16
     return "".join(
-        "\n%(indent)s{%(id)d, {%(name)r, PropertyType::%(type)s}}," % dict(
+        "\n%(indent)s{%(name)r, %(id)d, PropertyType::%(type)s}," % dict(
             indent=indent,
             **prop
         )
