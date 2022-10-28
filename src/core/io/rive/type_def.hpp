@@ -13,12 +13,12 @@ using Identifier = quint64;
 
 enum class PropertyType
 {
-    VarUint = 0,
+    VarUint = 0, // LEB128 Uint
     Bool    = 1, // Byte
-    String  = 2,
-    Bytes   = 3, // Raw String
-    Float   = 4,
-    Color   = 5, // Uint
+    String  = 2, // length(LEB128 Uint) + Utf8
+    Bytes   = 3, // length(LEB128 Uint) + Data
+    Float   = 4, // Float32
+    Color   = 5, // Uint32
 };
 
 struct Property

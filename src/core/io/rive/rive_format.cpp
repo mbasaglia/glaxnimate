@@ -10,16 +10,16 @@ glaxnimate::io::Autoreg<glaxnimate::io::rive::RiveFormat> glaxnimate::io::rive::
 
 bool glaxnimate::io::rive::RiveFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
 {
-    RiveStream stream(&file);
+    BinaryInputStream stream(&file);
     if ( stream.read(4) != "RIVE" )
     {
         error(tr("Unsupported format"));
         return false;
     }
 
-    auto vmaj = stream.read_varuint();
-    auto vmin = stream.read_varuint();
-    stream.read_varuint(); // file id
+    auto vmaj = stream.read_uint_leb128();
+    auto vmin = stream.read_uint_leb128();
+    stream.read_uint_leb128(); // file id
 
     if ( stream.has_error() )
     {
@@ -47,25 +47,47 @@ bool glaxnimate::io::rive::RiveFormat::on_save(QIODevice&, const QString&, model
     return false;
 }
 
+static QString property_type_to_string(glaxnimate::io::rive::PropertyType type)
+{
+    switch ( type )
+    {
+        case glaxnimate::io::rive::PropertyType::VarUint:
+            return "VarUint";
+        case glaxnimate::io::rive::PropertyType::Bool:
+            return "bool";
+        case glaxnimate::io::rive::PropertyType::String:
+            return "string";
+        case glaxnimate::io::rive::PropertyType::Bytes:
+            return "bytes";
+        case glaxnimate::io::rive::PropertyType::Float:
+            return "float";
+        case glaxnimate::io::rive::PropertyType::Color:
+            return "color";
+    }
+    return "?";
+}
+
 QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary_data)
 {
-    RiveStream stream(binary_data);
+    BinaryInputStream stream(binary_data);
     if ( stream.read(4) != "RIVE" )
         return {};
 
-    auto vmaj = stream.read_varuint();
-    stream.read_varuint(); // version min
-    stream.read_varuint(); // file id
+    auto vmaj = stream.read_uint_leb128();
+    auto vmin = stream.read_uint_leb128();
+    auto file_id = stream.read_uint_leb128();
 
     if ( stream.has_error() || vmaj != 7 )
         return {};
+
+    RiveLoader loader(stream, this);
 
     QJsonArray summary;
 
     QJsonArray objects;
     int id = 0;
     bool has_artboard = false;
-    for ( const auto& rive_obj : RiveLoader(stream, this).load_object_list() )
+    for ( const auto& rive_obj : loader.load_object_list() )
     {
         if ( rive_obj.type_id == TypeId::Artboard )
         {
@@ -92,7 +114,7 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
             QJsonObject prop;
             prop["id"] = int(p.first);
             prop["name"] = p.second.name;
-            prop["type"] = int(p.second.type);
+            prop["type"] = property_type_to_string(p.second.type);
             auto iter = rive_obj.properties.find(p.second.name);
             QJsonValue val;
 
@@ -129,9 +151,25 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
         summary.push_back(summary_obj_parent);
     }
 
+    QJsonObject header;
+    QJsonArray version;
+    version.push_back(int(vmaj));
+    version.push_back(int(vmin));
+    header["version"] = version;
+    header["file_id"] = int(file_id);
+    QJsonArray extra_props;
+    for ( const auto& p : loader.extra_properties() )
+    {
+        QJsonObject prop;
+        prop["id"] = int(p.first);
+        prop["type"] = property_type_to_string(p.second);
+    }
+    header["toc"] = extra_props;
+
     QJsonObject root;
     root["brief"] = summary;
     root["detail"] = objects;
+    root["header"] = header;
 
     return QJsonDocument(root);
 }

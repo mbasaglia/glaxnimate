@@ -39,7 +39,7 @@ struct Artboard
 };
 
 template<class T> T load_property_get_keyframe(const detail::JoinedPropertyKeyframe& kf, std::size_t index);
-template<> Float load_property_get_keyframe<Float>(const detail::JoinedPropertyKeyframe& kf, std::size_t index)
+template<> Float32 load_property_get_keyframe<Float32>(const detail::JoinedPropertyKeyframe& kf, std::size_t index)
 {
     return kf.values[index].vector()[0];
 }
@@ -79,7 +79,7 @@ void load_property(Object* rive, PropT& property, const detail::AnimatedProperti
         property.set_keyframe(kf.time, load_property_get_keyframe<T>(kf, 0))->set_transition(kf.transition);
 }
 
-QPointF make_point(Float x, Float y)
+QPointF make_point(Float32 x, Float32 y)
 {
     return QPointF(x, y);
 }
@@ -99,8 +99,8 @@ struct LoadCotext
         artboards_id.push_back(artboard);
         artboard->comp = document->assets()->precompositions->values.insert(std::make_unique<model::Precomposition>(document));
         artboard->size = QSizeF(
-            object->get<Float>("width"),
-            object->get<Float>("height")
+            object->get<Float32>("width"),
+            object->get<Float32>("height")
         );
     }
 
@@ -240,7 +240,7 @@ struct LoadCotext
         precomp_layer->size.set(artboard.size.toSize());
         detail::AnimatedProperties animations = load_animations(object);
         load_transform(object, precomp_layer->transform.get(), animations);
-        precomp_layer->opacity.set(object->get<Float>("opacity", 1));
+        precomp_layer->opacity.set(object->get<Float32>("opacity", 1));
         precomp_layer->composition.set(artboard.comp);
 
         float last_frame = artboard.timeline_duration == 0 ? artboard.keyframe_timeline_duration : artboard.timeline_duration;
@@ -291,18 +291,18 @@ struct LoadCotext
 
     void load_transform(Object* rive, model::Transform* transform, const detail::AnimatedProperties& animations)
     {
-        load_property<Float, Float>(rive, transform->position, animations, {"x", "y"}, 0, 0, &make_point);
-        load_property<Float>(rive, transform->rotation, animations, "rotation");
-        load_property<Float, Float>(rive, transform->scale, animations, {"scaleX", "scaleX"}, 1, 1, [](Float x, Float y){
+        load_property<Float32, Float32>(rive, transform->position, animations, {"x", "y"}, 0, 0, &make_point);
+        load_property<Float32>(rive, transform->rotation, animations, "rotation");
+        load_property<Float32, Float32>(rive, transform->scale, animations, {"scaleX", "scaleX"}, 1, 1, [](Float32 x, Float32 y){
             return QVector2D(x, y);
         });
     }
 
     void load_shape_group(Object* shape, model::Group* group, const detail::AnimatedProperties& animations)
     {
-        load_property<Float>(shape, group->opacity, animations, "opacity", 1);
+        load_property<Float32>(shape, group->opacity, animations, "opacity", 1);
         load_transform(shape, group->transform.get(), animations);
-        group->name.set(shape->get<String>("name"));
+        group->name.set(shape->get<QString>("name"));
         add_shapes(shape, group->shapes);
     }
 
@@ -350,17 +350,17 @@ struct LoadCotext
     {
         auto group = std::make_unique<model::Group>(document);
         auto shape = std::make_unique<model::Rect>(document);
-        shape->name.set(object->get<String>("name"));
+        shape->name.set(object->get<QString>("name"));
 
-        load_property<Float, Float, Float, Float>(object, shape->rounded, animations,
+        load_property<Float32, Float32, Float32, Float32>(object, shape->rounded, animations,
             {"cornerRadiusTL", "cornerRadiusBL", "cornerRadiusBR", "cornerRadiusTR"},
             0, 0, 0, 0,
-            [](Float tl, Float bl, Float br, Float tr){
+            [](Float32 tl, Float32 bl, Float32 br, Float32 tr){
                 return (tl + bl + br + tr) / 4;
             }
         );
 
-        load_property<Float, Float>(object, shape->size, animations, {"width", "height"}, 0, 0, [](Float x, Float y){
+        load_property<Float32, Float32>(object, shape->size, animations, {"width", "height"}, 0, 0, [](Float32 x, Float32 y){
             return QSizeF(x, y);
         });
 
@@ -373,10 +373,10 @@ struct LoadCotext
     {
         auto group = std::make_unique<model::Group>(document);
         auto shape = std::make_unique<model::Ellipse>(document);
-        shape->name.set(object->get<String>("name"));
+        shape->name.set(object->get<QString>("name"));
 
 
-        load_property<Float, Float>(object, shape->size, animations, {"width", "height"}, 0, 0, [](Float x, Float y){
+        load_property<Float32, Float32>(object, shape->size, animations, {"width", "height"}, 0, 0, [](Float32 x, Float32 y){
             return QSizeF(x, y);
         });
 
@@ -397,16 +397,16 @@ struct LoadCotext
     {
         auto shape = std::make_unique<model::Stroke>(document);
         load_styler(object, shape.get(), animations);
-        load_property<Float>(object, shape->width, animations, "thickness");
+        load_property<Float32>(object, shape->width, animations, "thickness");
         /// \todo cap + join
         return shape;
     }
 
     void load_styler(Object* object, model::Styler* shape, const detail::AnimatedProperties& animations)
     {
-        shape->name.set(object->get<String>("name"));
+        shape->name.set(object->get<QString>("name"));
         shape->visible.set(object->get<bool>("isVisible", true));
-        load_property<Float>(object, shape->opacity, animations, "opacity", 1);
+        load_property<Float32>(object, shape->opacity, animations, "opacity", 1);
 
         for ( const auto& child : object->children )
         {
@@ -422,16 +422,16 @@ struct LoadCotext
     model::Gradient* load_gradient(Object* object, model::Gradient::GradientType type)
     {
         auto colors = document->assets()->add_gradient_colors();
-        colors->name.set(object->get<String>("name"));
+        colors->name.set(object->get<QString>("name"));
 
         auto gradient = document->assets()->add_gradient();
-        gradient->name.set(object->get<String>("name"));
+        gradient->name.set(object->get<QString>("name"));
         gradient->colors.set(colors);
         gradient->type.set(type);
 
         auto animations = load_animations(object);
-        load_property<Float, Float>(object, gradient->start_point, animations, {"startX", "startY"}, 0, 0, &make_point);
-        load_property<Float, Float>(object, gradient->end_point, animations, {"endX", "endY"}, 0, 0, &make_point);
+        load_property<Float32, Float32>(object, gradient->start_point, animations, {"startX", "startY"}, 0, 0, &make_point);
+        load_property<Float32, Float32>(object, gradient->end_point, animations, {"endX", "endY"}, 0, 0, &make_point);
 
         /// \todo color animations
         QGradientStops stops;
@@ -440,7 +440,7 @@ struct LoadCotext
             if ( child->type_id == TypeId::GradientStop )
             {
                 stops.push_back({
-                    child->get<Float>("position"),
+                    child->get<Float32>("position"),
                     child->get<QColor>("colorValue"),
                 });
             }
@@ -462,7 +462,7 @@ struct LoadCotext
             {
                 model::KeyframeTransition transition; /// \todo
                 prop.keyframes.push_back({
-                    kf->get<Float>("frame", 0),
+                    kf->get<Float32>("frame", 0),
                     ValueVariant(kf->properties.value("value")),
                     transition
                 });
@@ -477,22 +477,22 @@ struct LoadCotext
         load_shape_group(object, group.get(), animations);
 
         auto shape = std::make_unique<model::PolyStar>(document);
-        shape->name.set(object->get<String>("name"));
+        shape->name.set(object->get<QString>("name"));
         shape->type.set(type);
         /// \todo cornerRadius / width / height
         load_property<VarUint>(object, shape->points, animations, "points", 5);
         shape->outer_radius.set(100);
 
-        load_property<Float>(object, shape->inner_radius, animations, {"innerRadius"}, 0.5, [](Float pc){
+        load_property<Float32>(object, shape->inner_radius, animations, {"innerRadius"}, 0.5, [](Float32 pc){
             return pc * 100;
         });
 
-        load_property<Float>(object, shape->points, animations, "points", 5);
+        load_property<Float32>(object, shape->points, animations, "points", 5);
 
 
-        load_property<Float, Float, Float, Float>(object, group->transform->scale, animations,
+        load_property<Float32, Float32, Float32, Float32>(object, group->transform->scale, animations,
             {"scaleX", "scaleY", "width", "height"},
-            1, 1, 0, 0, [](Float sx, Float sy, Float w, Float h){
+            1, 1, 0, 0, [](Float32 sx, Float32 sy, Float32 w, Float32 h){
             return QVector2D(w / 200 * sx, h / 200 * sy);
         });
 
@@ -504,10 +504,10 @@ struct LoadCotext
     {
         auto group = std::make_unique<model::Group>(document);
         auto shape = std::make_unique<model::Path>(document);
-        shape->name.set(object->get<String>("name"));
+        shape->name.set(object->get<QString>("name"));
 
 
-        load_property<Float, Float>(object, shape->shape, animations, {"width", "height"}, 0, 0, [](Float w, Float h){
+        load_property<Float32, Float32>(object, shape->shape, animations, {"width", "height"}, 0, 0, [](Float32 w, Float32 h){
             math::bezier::Bezier path;
             path.add_point({-w/2, h/2});
             path.add_point({0, -h/2});
@@ -524,7 +524,7 @@ struct LoadCotext
     std::unique_ptr<model::Path> load_path(Object* object, const detail::AnimatedProperties& animations)
     {
         auto shape = std::make_unique<model::Path>(document);
-        shape->name.set(object->get<String>("name"));
+        shape->name.set(object->get<QString>("name"));
         bool closed = object->get<bool>("isClosed");
         shape->closed.set(closed);
 
@@ -532,13 +532,13 @@ struct LoadCotext
         for ( const auto& child : object->children )
         {
             math::bezier::Point p;
-            p.pos = QPointF(child->get<Float>("x", 0), child->get<Float>("y", 0));
+            p.pos = QPointF(child->get<Float32>("x", 0), child->get<Float32>("y", 0));
             if ( child->type_id == TypeId::CubicMirroredVertex )
             {
                 p.type = math::bezier::Symmetrical;
                 auto tangent = math::from_polar<QPointF>(
-                    child->get<Float>("distance"),
-                    child->get<Float>("rotation")
+                    child->get<Float32>("distance"),
+                    child->get<Float32>("rotation")
                 );
                 p.tan_in = p.pos - tangent;
                 p.tan_out = p.pos + tangent;
@@ -547,24 +547,24 @@ struct LoadCotext
             {
                 p.type = math::bezier::Smooth;
                 p.tan_in = p.pos - math::from_polar<QPointF>(
-                    child->get<Float>("inDistance"),
-                    child->get<Float>("rotation")
+                    child->get<Float32>("inDistance"),
+                    child->get<Float32>("rotation")
                 );
                 p.tan_out = p.pos + math::from_polar<QPointF>(
-                    child->get<Float>("outDistance"),
-                    child->get<Float>("rotation")
+                    child->get<Float32>("outDistance"),
+                    child->get<Float32>("rotation")
                 );
             }
             else if ( child->type_id == TypeId::CubicDetachedVertex )
             {
                 p.type = math::bezier::Corner;
                 p.tan_in = p.pos + math::from_polar<QPointF>(
-                    child->get<Float>("inDistance"),
-                    child->get<Float>("inRotation")
+                    child->get<Float32>("inDistance"),
+                    child->get<Float32>("inRotation")
                 );
                 p.tan_out = p.pos + math::from_polar<QPointF>(
-                    child->get<Float>("outDistance"),
-                    child->get<Float>("outRotation")
+                    child->get<Float32>("outDistance"),
+                    child->get<Float32>("outRotation")
                 );
             }
             else if ( child->type_id == TypeId::StraightVertex )
@@ -592,8 +592,8 @@ struct LoadCotext
     std::unique_ptr<model::PreCompLayer> load_precomp(Object* object, const detail::AnimatedProperties& animations)
     {
         auto shape = std::make_unique<model::PreCompLayer>(document);
-        shape->name.set(object->get<String>("name"));
-        load_property<Float>(object, shape->opacity, animations, "opacity", 1);
+        shape->name.set(object->get<QString>("name"));
+        load_property<Float32>(object, shape->opacity, animations, "opacity", 1);
         load_transform(object, shape->transform.get(), animations);
 
         // Rive export as the first Arboard, one that is not referenced
@@ -612,9 +612,9 @@ struct LoadCotext
     model::Bitmap* load_image_asset(Object* object)
     {
         auto image = std::make_unique<glaxnimate::model::Bitmap>(document);
-        image->filename.set(object->get<String>("name"));
-        image->width.set(object->get<Float>("width"));
-        image->height.set(object->get<Float>("height"));
+        image->filename.set(object->get<QString>("name"));
+        image->width.set(object->get<Float32>("width"));
+        image->height.set(object->get<Float32>("height"));
         auto ptr = image.get();
         document->assets()->images->values.insert(std::move(image));
         return ptr;
@@ -623,7 +623,7 @@ struct LoadCotext
     std::unique_ptr<model::Image> load_image(Object* object, const detail::AnimatedProperties& animations)
     {
         auto shape = std::make_unique<model::Image>(document);
-        shape->name.set(object->get<String>("name"));
+        shape->name.set(object->get<QString>("name"));
         load_transform(object, shape->transform.get(), animations);
         auto id = object->get<VarUint>("assetId");
         if ( auto bmp = qobject_cast<model::Bitmap*>(assets[id].asset) )
@@ -676,16 +676,20 @@ bool gather_definitions(TypeId type_id, Object& object, RiveFormat* format)
 
 } // namespace
 
-RiveLoader::RiveLoader(RiveStream& stream, RiveFormat* format)
+RiveLoader::RiveLoader(BinaryInputStream& stream, RiveFormat* format)
     : document(nullptr),
     stream(stream),
     format(format)
 {
+    extra_props = read_property_table();
+
+    if ( stream.has_error() )
+        format->error(QObject::tr("Could not read property table"));
+
 }
 
 std::vector<Object> RiveLoader::load_object_list()
 {
-    extra_props = stream.read_property_table();
     if ( stream.has_error() )
         return {};
 
@@ -697,13 +701,8 @@ std::vector<Object> RiveLoader::load_object_list()
 
 bool RiveLoader::load_document(model::Document* document)
 {
-    extra_props = stream.read_property_table();
-
     if ( stream.has_error() )
-    {
-        format->error(QObject::tr("Could not read property table"));
         return false;
-    }
 
     LoadCotext context(format, document);
 
@@ -722,7 +721,7 @@ bool RiveLoader::load_document(model::Document* document)
 
 Object RiveLoader::read_object()
 {
-    auto type_id = TypeId(stream.read_varuint());
+    auto type_id = TypeId(stream.read_uint_leb128());
     if ( stream.has_error() )
     {
         format->error(QObject::tr("Could not load object type ID"));
@@ -737,7 +736,7 @@ Object RiveLoader::read_object()
 
     while ( true )
     {
-        Identifier prop_id = stream.read_varuint();
+        Identifier prop_id = stream.read_uint_leb128();
         if ( stream.has_error() )
         {
             format->error(QObject::tr("Could not load property ID in %1 (%2)")
@@ -787,16 +786,103 @@ QVariant RiveLoader::read_property_value(PropertyType type)
         case PropertyType::Bool:
             return bool(stream.next());
         case PropertyType::Bytes:
-            return stream.read_raw_string();
+            return read_raw_string();
         case PropertyType::String:
-            return stream.read_string();
+            return read_string_utf8();
         case PropertyType::VarUint:
-            return QVariant::fromValue(stream.read_varuint());
+            return QVariant::fromValue(stream.read_uint_leb128());
         case PropertyType::Float:
-            return stream.read_float();
+            return stream.read_float32();
         case PropertyType::Color:
-            return QColor::fromRgba(stream.read_uint());
+            return QColor::fromRgba(stream.read_uint32_le());
     }
 
     return {};
+}
+
+
+RiveLoader::PropertyTable RiveLoader::read_property_table()
+{
+    std::vector<VarUint> props;
+    while ( true )
+    {
+        VarUint id = stream.read_uint_leb128();
+        if ( stream.has_error() )
+            return {};
+
+        if ( id == 0 )
+            break;
+
+        props.push_back(id);
+    }
+
+    quint32 current_int = 0;
+    quint32 bit = 8;
+
+    PropertyTable table;
+
+    for ( auto id : props )
+    {
+        if ( bit == 8 )
+        {
+            current_int = stream.read_uint32_le();
+            if ( stream.has_error() )
+                return {};
+            bit = 0;
+        }
+
+        int type = (current_int >> bit) & 3;
+        if ( type == 0 )
+            table[id] = PropertyType::VarUint;
+        else if ( type == 1 )
+            table[id] = PropertyType::String;
+        else if ( type == 2 )
+            table[id] = PropertyType::Float;
+        else if ( type == 3 )
+            table[id] = PropertyType::Color;
+
+        bit += 2;
+    }
+
+    return table;
+}
+
+void RiveLoader::skip_value(glaxnimate::io::rive::PropertyType type)
+{
+    switch ( type )
+    {
+        case PropertyType::Bool:
+        case PropertyType::VarUint:
+            stream.read_uint_leb128();
+            break;
+        case PropertyType::Bytes:
+        case PropertyType::String:
+            read_raw_string();
+            break;
+        case PropertyType::Float:
+            stream.read_float32();
+            break;
+        case PropertyType::Color:
+            stream.read_uint32_le();
+            break;
+    }
+}
+
+const RiveLoader::PropertyTable& RiveLoader::extra_properties() const
+{
+    return extra_props;
+}
+
+QByteArray RiveLoader::read_raw_string()
+{
+    auto size = stream.read_uint_leb128();
+    if ( stream.has_error() )
+        return {};
+
+    return stream.read(size);
+}
+
+QString RiveLoader::read_string_utf8()
+{
+    return QString::fromUtf8(read_raw_string());
 }
