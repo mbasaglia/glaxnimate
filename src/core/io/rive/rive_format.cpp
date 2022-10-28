@@ -118,7 +118,7 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
             auto iter = rive_obj.properties.find(p.second.name);
             QJsonValue val;
 
-            if ( iter != rive_obj.properties.end() )
+            if ( iter != rive_obj.properties.end() && iter->isValid() )
             {
                 if ( iter->userType() == QMetaType::QColor )
                     val = iter->value<QColor>().name();

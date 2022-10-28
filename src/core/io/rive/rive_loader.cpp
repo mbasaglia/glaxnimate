@@ -271,15 +271,15 @@ struct LoadCotext
             auto shape = load_shape(child);
             if ( shape )
             {
-                if ( child->has_type(TypeId::Path) )
+                if ( child->has_type(TypeId::Node) )
                     shapes.emplace_back(std::move(shape));
                 else
                     prop.insert(std::move(shape));
             }
         }
 
-        for ( auto& shape : shapes )
-            prop.insert(std::move(shape));
+        for ( auto it = shapes.rbegin(); it != shapes.rend(); ++it )
+            prop.insert(std::move(*it));
     }
 
     std::unique_ptr<model::Layer> load_shape_layer(Object* shape, const detail::AnimatedProperties& animations)
@@ -421,12 +421,14 @@ struct LoadCotext
 
     model::Gradient* load_gradient(Object* object, model::Gradient::GradientType type)
     {
-        auto colors = document->assets()->add_gradient_colors();
+        auto colors = std::make_unique<glaxnimate::model::GradientColors>(document);
         colors->name.set(object->get<QString>("name"));
+        auto colors_ptr = colors.get();
+        document->assets()->gradient_colors->values.insert(std::move(colors));
 
-        auto gradient = document->assets()->add_gradient();
+        auto gradient = std::make_unique<glaxnimate::model::Gradient>(document);
         gradient->name.set(object->get<QString>("name"));
-        gradient->colors.set(colors);
+        gradient->colors.set(colors_ptr);
         gradient->type.set(type);
 
         auto animations = load_animations(object);
@@ -445,9 +447,11 @@ struct LoadCotext
                 });
             }
         }
-        colors->colors.set(stops);
+        colors_ptr->colors.set(stops);
 
-        return gradient;
+        auto ptr = gradient.get();
+        document->assets()->gradients->values.insert(std::move(gradient));
+        return ptr;
     }
 
     detail::AnimatedProperties load_animations(Object* object)
@@ -596,12 +600,9 @@ struct LoadCotext
         load_property<Float32>(object, shape->opacity, animations, "opacity", 1);
         load_transform(object, shape->transform.get(), animations);
 
-        // Rive export as the first Arboard, one that is not referenced
-        // by any other NestedArtboard, so index 0 is not valid
-        // even if artboard 0 exists
-        auto id = object->get<VarUint>("artboardId");
-        if ( id != 0 )
+        if ( object->has_value("artboardId") )
         {
+            auto id = object->get<VarUint>("artboardId");
             shape->size.set(artboards_id[id]->size);
             shape->composition.set(artboards_id[id]->comp);
         }
