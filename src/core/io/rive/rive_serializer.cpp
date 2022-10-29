@@ -44,7 +44,7 @@ void glaxnimate::io::rive::RiveSerializer::write_property_table(const glaxnimate
                 break;
         }
 
-        current_int << 2;
+        current_int <<= 2;
         current_int |= type;
         bit += 2;
         if ( bit == 8 )
@@ -63,7 +63,7 @@ void glaxnimate::io::rive::RiveSerializer::write_object(const glaxnimate::io::ri
     stream.write_uint_leb128(VarUint(output.type().id));
     for ( const auto& p : output.properties() )
     {
-        if ( !p.second.isValid() )
+        if ( !p.second.isValid() || (p.second.userType() == QMetaType::QString && p.second.toString().isEmpty()) )
             continue;
         stream.write_uint_leb128(p.first->id);
         write_property_value(p.first->type, p.second);

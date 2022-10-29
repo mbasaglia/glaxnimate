@@ -4,9 +4,23 @@
 
 #include "model/document.hpp"
 #include "model/assets/assets.hpp"
+#include "model/shapes/precomp_layer.hpp"
+#include "model/shapes/rect.hpp"
+#include "model/shapes/ellipse.hpp"
+#include "model/shapes/polystar.hpp"
+#include "model/shapes/path.hpp"
+#include "model/shapes/fill.hpp"
+#include "model/shapes/stroke.hpp"
+#include "model/shapes/image.hpp"
 #include "rive_format.hpp"
 
 namespace glaxnimate::io::rive {
+
+namespace detail {
+
+inline const QVariant& noop(const QVariant& v) { return v; }
+
+} // namespace name
 
 class RiveExporter
 {
@@ -101,8 +115,12 @@ private:
             write_shape(shape.get(), 0);
 
         write_object(TypeId::LinearAnimation, {{"loopValue", 1}});
-        for ( const auto& obj : animations )
-            serializer.write_object(obj);
+        for ( const auto& anim : animations )
+        {
+            write_object(TypeId::KeyedObject, {{"objectId", QVariant::fromValue(anim.first)}});
+            for ( const auto& obj : anim.second )
+                serializer.write_object(obj);
+        }
         write_object(TypeId::StateMachine, {});
         write_object(TypeId::StateMachineLayer, {});
         write_object(TypeId::AnimationState, {{"animationId", 0}});
@@ -112,20 +130,196 @@ private:
         write_object(TypeId::ExitState, {});
     }
 
-    void write_shape(model::ShapeElement* shape, Identifier parent_id)
+    void write_shape(model::ShapeElement* element, Identifier parent_id)
     {
         auto id = next_artboard_child++;
-        object_ids[shape] = id;
+        object_ids[element] = id;
 
-        /*if ( auto layer = shape->cast<model::Layer>() )
+
+        if ( auto layer = element->cast<model::Layer>() )
         {
+            auto object = shape_object(TypeId::Node, element, parent_id);
+            write_group(object, layer, id);
         }
-        else*/
+        else if ( auto group = element->cast<model::Group>() )
         {
-            write_object(TypeId::Shape, {
-                {"name", shape->name.get()},
-                {"parentId", QVariant::fromValue(parent_id)},
-            });
+            auto object = shape_object(TypeId::Shape, element, parent_id);
+            write_group(object, group, id);
+        }
+        else if ( auto shape = element->cast<model::Rect>() )
+        {
+            auto object = types.object(TypeId::Rectangle);
+            write_position(object, shape->position, id);
+            write_property(object, "width", shape->size, id,
+                [](const QVariant& v) { return QVariant::fromValue(v.toSizeF().width()); }
+            );
+            write_property(object, "height", shape->size, id,
+                [](const QVariant& v) { return QVariant::fromValue(v.toSizeF().height()); }
+            );
+            write_property(object, "cornerRadiusTL", shape->rounded, id, &detail::noop);
+            write_property(object, "cornerRadiusTR", shape->rounded, id, &detail::noop);
+            write_property(object, "cornerRadiusBL", shape->rounded, id, &detail::noop);
+            write_property(object, "cornerRadiusBR", shape->rounded, id, &detail::noop);
+            serializer.write_object(object);
+        }
+        else if ( auto shape = element->cast<model::Ellipse>() )
+        {
+            auto object = shape_object(TypeId::Rectangle, element, parent_id);
+            write_position(object, shape->position, id);
+            write_property(object, "width", shape->size, id,
+                [](const QVariant& v) { return QVariant::fromValue(v.toSizeF().width()); }
+            );
+            write_property(object, "height", shape->size, id,
+                [](const QVariant& v) { return QVariant::fromValue(v.toSizeF().height()); }
+            );
+            serializer.write_object(object);
+        }
+        else if ( auto shape = element->cast<model::Fill>() )
+        {
+            auto object = types.object(TypeId::Fill);
+            /// \todo fillRule
+            serializer.write_object(object);
+            write_styler(shape, id);
+        }
+        else if ( auto shape = element->cast<model::Stroke>() )
+        {
+            auto object = types.object(TypeId::Stroke);
+            write_property(object, "thickness", shape->width, id, &detail::noop);
+            /// \todo cap + join
+            serializer.write_object(object);
+            write_styler(shape, id);
+        }
+        /// \todo polystar path image precomplayer
+        else
+        {
+            serializer.write_object(shape_object(TypeId::Shape, element, parent_id));
+        }
+    }
+
+    Object shape_object(TypeId type_id, model::DocumentNode* shape, Identifier parent_id)
+    {
+        auto object = types.object(type_id);
+        object.set("name", shape->name.get());
+        object.set("parentId", parent_id);
+        return object;
+    }
+
+    void write_group(Object& object, model::Group* group, Identifier id)
+    {
+        write_property(object, "opacity", group->opacity, id, &detail::noop);
+        write_transform(object, group->transform.get(), id);
+        serializer.write_object(object);
+
+        for ( const auto& shape : group->shapes )
+            write_shape(shape.get(), id);
+    }
+
+    template<class T, class FuncT>
+    void write_property(Object& object, const QString& name, const model::AnimatedProperty<T>& prop, Identifier object_id, const FuncT& transform)
+    {
+        auto rive_prop = object.type().property(name);
+        if ( !rive_prop )
+        {
+            format->warning(QObject::tr("Unknown property %1 of %2").arg(name).arg(prop.object()->type_name_human()));
+            return;
+        }
+
+        object.set(rive_prop, transform(prop.value()));
+
+        if ( !prop.animated() )
+            return;
+
+        const ObjectType* kf_type = nullptr;
+        switch ( rive_prop->type )
+        {
+            case PropertyType::Float:
+                kf_type = types.get_type(TypeId::KeyFrameDouble, true);
+                break;
+            case PropertyType::Color:
+                kf_type = types.get_type(TypeId::KeyFrameColor, true);
+                break;
+            default:
+                break;
+
+        }
+
+        if ( !kf_type )
+        {
+            format->warning(QObject::tr("Unknown keyframe type for property %1 of %2").arg(name).arg(prop.object()->type_name_human()));
+            return;
+        }
+
+        auto& keyed_object = animations[object_id];
+
+        auto keyed_prop = types.object(TypeId::KeyedProperty);
+        keyed_prop.set("propertyKey", rive_prop->id);
+        keyed_object.emplace_back(std::move(keyed_prop));
+
+        for ( const auto& kf : prop )
+        {
+            Object rive_kf(kf_type);
+            /// \todo interpolations
+            rive_kf.set("interpolationType", 1);
+            rive_kf.set("value", kf.value());
+            rive_kf.set("frame", kf.time());
+            keyed_object.emplace_back(std::move(rive_kf));
+        }
+    }
+
+    void write_position(Object& object, const model::AnimatedProperty<QPointF>& prop, Identifier object_id)
+    {
+        write_property(object, "x", prop, object_id,
+            [](const QVariant& v) { return QVariant::fromValue(v.toPointF().x()); }
+        );
+        write_property(object, "y", prop, object_id,
+            [](const QVariant& v) { return QVariant::fromValue(v.toPointF().x()); }
+        );
+    }
+
+    void write_transform(Object& object, model::Transform* trans, Identifier object_id)
+    {
+        write_position(object, trans->position, object_id);
+        write_property(object, "y", trans->position, object_id,
+            [](const QVariant& v) { return QVariant::fromValue(v.toPointF().x()); }
+        );
+
+        write_property(object, "rotation", trans->rotation, object_id, &detail::noop);
+
+        write_property(object, "scaleX", trans->scale, object_id,
+            [](const QVariant& v) { return QVariant::fromValue(v.value<QVector2D>().x()); }
+        );
+        write_property(object, "scaleY", trans->scale, object_id,
+            [](const QVariant& v) { return QVariant::fromValue(v.value<QVector2D>().x()); }
+        );
+    }
+
+    void write_styler(model::Styler* shape, Identifier object_id)
+    {
+        auto use = shape->use.get();
+        auto id = next_artboard_child++;
+
+        if ( auto grad = use->cast<model::Gradient>() )
+        {
+            auto object = shape_object(
+                grad->type.get() == model::Gradient::Radial ? TypeId::RadialGradient : TypeId::LinearGradient,
+                grad, object_id
+            );
+            write_property(object, "opacity", shape->color, id, &detail::noop);
+
+            serializer.write_object(object);
+            /// \todo finish
+        }
+        else if ( auto col = use->cast<model::NamedColor>() )
+        {
+            auto object = shape_object(TypeId::SolidColor, col, object_id);
+            write_property(object, "colorValue", col->color, id, &detail::noop);
+            serializer.write_object(object);
+        }
+        else
+        {
+            auto object = shape_object(TypeId::SolidColor, shape, object_id);
+            write_property(object, "colorValue", shape->color, id, &detail::noop);
+            serializer.write_object(object);
         }
     }
 
@@ -135,7 +329,7 @@ private:
     std::unordered_map<model::DocumentNode*, Identifier> object_ids;
     RiveSerializer serializer;
     ImportExport* format;
-    std::vector<Object> animations;
+    std::unordered_map<Identifier, std::vector<Object>> animations;
     TypeSystem types;
 };
 
