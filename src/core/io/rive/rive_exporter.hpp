@@ -148,7 +148,7 @@ private:
         }
         else if ( auto shape = element->cast<model::Rect>() )
         {
-            auto object = types.object(TypeId::Rectangle);
+            auto object = shape_object(TypeId::Rectangle, element, parent_id);
             write_position(object, shape->position, id);
             write_property(object, "width", shape->size, id,
                 [](const QVariant& v) { return QVariant::fromValue(v.toSizeF().width()); }
@@ -164,7 +164,7 @@ private:
         }
         else if ( auto shape = element->cast<model::Ellipse>() )
         {
-            auto object = shape_object(TypeId::Rectangle, element, parent_id);
+            auto object = shape_object(TypeId::Ellipse, element, parent_id);
             write_position(object, shape->position, id);
             write_property(object, "width", shape->size, id,
                 [](const QVariant& v) { return QVariant::fromValue(v.toSizeF().width()); }
@@ -176,14 +176,14 @@ private:
         }
         else if ( auto shape = element->cast<model::Fill>() )
         {
-            auto object = types.object(TypeId::Fill);
+            auto object = shape_object(TypeId::Fill, element, parent_id);
             /// \todo fillRule
             serializer.write_object(object);
             write_styler(shape, id);
         }
         else if ( auto shape = element->cast<model::Stroke>() )
         {
-            auto object = types.object(TypeId::Stroke);
+            auto object = shape_object(TypeId::Stroke, element, parent_id);
             write_property(object, "thickness", shape->width, id, &detail::noop);
             /// \todo cap + join
             serializer.write_object(object);

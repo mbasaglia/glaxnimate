@@ -68,6 +68,7 @@ void glaxnimate::io::rive::RiveSerializer::write_object(const glaxnimate::io::ri
         stream.write_uint_leb128(p.first->id);
         write_property_value(p.first->type, p.second);
     }
+    stream.write_byte(0);
 }
 
 void glaxnimate::io::rive::RiveSerializer::write_property_value(glaxnimate::io::rive::PropertyType id, const QVariant& value)
@@ -86,14 +87,14 @@ void glaxnimate::io::rive::RiveSerializer::write_property_value(glaxnimate::io::
         case PropertyType::Bytes:
         {
             auto data = value.toByteArray();
-            stream.write_uint32_le(data.size());
+            stream.write_uint_leb128(data.size());
             stream.write(data);
             return;
         }
         case PropertyType::String:
         {
             auto data = value.toString().toUtf8();
-            stream.write_uint32_le(data.size());
+            stream.write_uint_leb128(data.size());
             stream.write(data);
             return;
         }

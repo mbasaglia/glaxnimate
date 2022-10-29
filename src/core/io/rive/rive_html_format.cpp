@@ -3,22 +3,27 @@
 #include "io/lottie/lottie_html_format.hpp"
 
 
-bool glaxnimate::io::rive::RiveHtmlFormat::on_save(QIODevice& file, const QString&,
-                                           model::Document* document, const QVariantMap& settings)
+bool glaxnimate::io::rive::RiveHtmlFormat::on_save(
+    QIODevice& file, const QString&, model::Document* document, const QVariantMap&
+)
 {
     file.write(lottie::LottieHtmlFormat::html_head(this, document,
         "<script src='https://unpkg.com/@rive-app/canvas@1.0.79'></script>"
     ));
     QBuffer buffer;
+    buffer.open(QIODevice::WriteOnly);
     RiveExporter exp(&buffer, this);
     exp.write_document(document);
-    file.write(R"(
+    file.write(QString(R"(
 <body>
-<div id="animation"></div>
 <canvas id="animation" width="%1" height="%2"></canvas>
 
 <script>
-    var rive_data = new UInt8Array([)");
+    var rive_data = new Uint8Array([)")
+        .arg(document->main()->width.get())
+        .arg(document->main()->height.get())
+        .toUtf8()
+    );
 
     for ( auto c : buffer.buffer() )
     {
@@ -26,20 +31,16 @@ bool glaxnimate::io::rive::RiveHtmlFormat::on_save(QIODevice& file, const QStrin
         file.write(",");
     }
 
-file.write(QString(R"(]);
-    ;
+    file.write(R"(]);
 
     var anim = new rive.Rive({
-        buffer: rive_daya,
+        buffer: rive_data,
         canvas: document.getElementById("animation"),
         autoplay: true
     });
 </script>
 </body></html>
-)")
-        .arg(settings["renderer"].toString())
-        .toUtf8()
-    );
+)");
 
     return true;
 }

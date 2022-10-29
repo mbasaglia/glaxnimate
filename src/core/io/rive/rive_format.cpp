@@ -93,6 +93,13 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
     bool has_artboard = false;
     for ( const auto& rive_obj : loader.load_object_list() )
     {
+        if ( !rive_obj )
+        {
+            summary.push_back("Invalid");
+            objects.push_back("Invalid");
+            continue;
+        }
+
         if ( rive_obj.type().id == TypeId::Artboard )
         {
             has_artboard = true;
