@@ -155,56 +155,22 @@ class TypeSystem : public QObject
     Q_OBJECT
 
 public:
-    const ObjectType* get_type(TypeId type_id, bool null_on_error)
-    {
-        auto it = types.find(type_id);
-        if ( it != types.end() )
-            return &it->second;
+    const ObjectDefinition* get_definition(TypeId type_id);
 
-        ObjectType type(type_id);
-        if ( !gather_definitions(type, type_id) && null_on_error )
-            return nullptr;
-
-        return &types.emplace(type_id, std::move(type)).first->second;
-    }
+    const ObjectType* get_type(TypeId type_id);
 
     Object object(TypeId type_id)
     {
-        return Object(get_type(type_id, true));
+        return Object(get_type(type_id));
     }
+
+    QString type_name(TypeId type_id);
 
 signals:
     void type_not_found(int type_id);
 
 private:
-    bool gather_definitions(ObjectType& type, TypeId type_id)
-    {
-        auto it = defined_objects.find(type_id);
-        if ( it == defined_objects.end() )
-        {
-            emit type_not_found(int(type_id));
-            return false;
-        }
-
-        const auto& def = it->second;
-
-        type.definitions.push_back(&def);
-
-        if ( def.extends != TypeId::NoType )
-        {
-            if ( !gather_definitions(type, def.extends) )
-                return false;
-        }
-
-        for ( const auto& prop : def.properties )
-        {
-            type.property_from_name[prop.name] = &prop;
-            type.property_from_id[prop.id] = &prop;
-            type.properties.push_back(&prop);
-        }
-
-        return true;
-    }
+    bool gather_definitions(ObjectType& type, TypeId type_id);
 
     std::unordered_map<TypeId, ObjectType> types;
 };

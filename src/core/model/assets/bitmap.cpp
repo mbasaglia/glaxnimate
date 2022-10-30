@@ -205,3 +205,8 @@ QByteArray glaxnimate::model::Bitmap::image_data() const
 
     return build_embedded(image.toImage());
 }
+
+QSize glaxnimate::model::Bitmap::size() const
+{
+    return {width.get(), height.get()};
+}

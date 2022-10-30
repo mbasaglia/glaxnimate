@@ -60,6 +60,8 @@ public:
      */
     QByteArray image_data() const;
 
+    QSize size() const;
+
 public slots:
     void refresh(bool rebuild_embedded);
 

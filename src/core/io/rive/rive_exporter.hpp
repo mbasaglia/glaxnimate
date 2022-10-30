@@ -177,6 +177,7 @@ private:
         else if ( auto shape = element->cast<model::Fill>() )
         {
             auto object = shape_object(TypeId::Fill, element, parent_id);
+            object.set("isVisible", shape->visible.get());
             /// \todo fillRule
             serializer.write_object(object);
             write_styler(shape, id);
@@ -185,6 +186,7 @@ private:
         {
             auto object = shape_object(TypeId::Stroke, element, parent_id);
             write_property(object, "thickness", shape->width, id, &detail::noop);
+            object.set("isVisible", shape->visible.get());
             /// \todo cap + join
             serializer.write_object(object);
             write_styler(shape, id);
@@ -207,7 +209,7 @@ private:
     void write_group(Object& object, model::Group* group, Identifier id)
     {
         write_property(object, "opacity", group->opacity, id, &detail::noop);
-        write_transform(object, group->transform.get(), id);
+        write_transform(object, group->transform.get(), id, group->local_bounding_rect(0));
         serializer.write_object(object);
 
         for ( const auto& shape : group->shapes )
@@ -220,7 +222,12 @@ private:
         auto rive_prop = object.type().property(name);
         if ( !rive_prop )
         {
-            format->warning(QObject::tr("Unknown property %1 of %2").arg(name).arg(prop.object()->type_name_human()));
+            format->warning(QObject::tr("Unknown property %1 of %2 (%3, %4)")
+                .arg(name)
+                .arg(int(object.type().id))
+                .arg(types.type_name(object.type().id))
+                .arg(prop.object()->type_name_human())
+            );
             return;
         }
 
@@ -233,10 +240,10 @@ private:
         switch ( rive_prop->type )
         {
             case PropertyType::Float:
-                kf_type = types.get_type(TypeId::KeyFrameDouble, true);
+                kf_type = types.get_type(TypeId::KeyFrameDouble);
                 break;
             case PropertyType::Color:
-                kf_type = types.get_type(TypeId::KeyFrameColor, true);
+                kf_type = types.get_type(TypeId::KeyFrameColor);
                 break;
             default:
                 break;
@@ -245,7 +252,12 @@ private:
 
         if ( !kf_type )
         {
-            format->warning(QObject::tr("Unknown keyframe type for property %1 of %2").arg(name).arg(prop.object()->type_name_human()));
+            format->warning(QObject::tr("Unknown keyframe type for property %1 of %2 (%3, %4)")
+                .arg(name)
+                .arg(int(object.type().id))
+                .arg(types.type_name(object.type().id))
+                .arg(prop.object()->type_name_human())
+            );
             return;
         }
 
@@ -272,16 +284,49 @@ private:
             [](const QVariant& v) { return QVariant::fromValue(v.toPointF().x()); }
         );
         write_property(object, "y", prop, object_id,
-            [](const QVariant& v) { return QVariant::fromValue(v.toPointF().x()); }
+            [](const QVariant& v) { return QVariant::fromValue(v.toPointF().y()); }
         );
     }
 
-    void write_transform(Object& object, model::Transform* trans, Identifier object_id)
+    void write_transform(Object& object, model::Transform* trans, Identifier object_id, const QRectF& box)
     {
-        write_position(object, trans->position, object_id);
-        write_property(object, "y", trans->position, object_id,
-            [](const QVariant& v) { return QVariant::fromValue(v.toPointF().x()); }
-        );
+        if ( object.type().property("originX") )
+        {
+            write_position(object, trans->position, object_id);
+
+            if ( box.width() > 0 )
+            {
+                write_property(object, "originX", trans->anchor_point, object_id,
+                    [&box](const QVariant& v) {
+                        return QVariant::fromValue(
+                            (v.toPointF().x() - box.left()) / box.width()
+                        );
+                    }
+                );
+            }
+
+            if ( box.height() > 0 )
+            {
+                write_property(object, "originY", trans->anchor_point, object_id,
+                    [&box](const QVariant& v) {
+                        return QVariant::fromValue(
+                            (v.toPointF().y() - box.top()) / box.height()
+                        );
+                    }
+                );
+            }
+        }
+        else
+        {
+            /// \todo Handle animated anchor point
+            auto anchor = trans->anchor_point.get();
+            write_property(object, "x", trans->position, object_id,
+                [anchor](const QVariant& v) { return QVariant::fromValue(v.toPointF().x() - anchor.x()); }
+            );
+            write_property(object, "y", trans->position, object_id,
+                [anchor](const QVariant& v) { return QVariant::fromValue(v.toPointF().y() - anchor.y()); }
+            );
+        }
 
         write_property(object, "rotation", trans->rotation, object_id, &detail::noop);
 

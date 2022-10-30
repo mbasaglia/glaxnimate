@@ -101,7 +101,7 @@ public:
         target(target),
         handles{
             Handle{
-                new MoveHandle(parent, MoveHandle::Any, MoveHandle::Saltire, 12, true),
+                new MoveHandle(parent, MoveHandle::Any, MoveHandle::Saltire, 16, true),
                 &TransformGraphicsItem::Private::get_a,
                 &TransformGraphicsItem::drag_a,
                 {&transform->anchor_point, &transform->position}

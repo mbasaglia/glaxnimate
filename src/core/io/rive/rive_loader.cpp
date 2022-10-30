@@ -70,6 +70,49 @@ void load_property(Object* rive, PropT& property, const detail::AnimatedProperti
     load_property_impl<T...>(rive, property, animations, names, defvals..., value_func, std::index_sequence_for<T...>{});
 }
 
+template<std::size_t RetInd, class... T, class PropT, class Func, std::size_t... Ind, std::size_t N>
+void load_property_vector_impl(Object* rive, PropT& property, const detail::AnimatedProperties& animations,
+                    const std::array<const char*, N>& names, T... defvals, const Func& value_func, std::index_sequence<Ind...>)
+{
+    property.set(
+        std::get<RetInd>(
+            value_func(rive->get<T>(names[Ind], defvals)...)
+        )
+    );
+
+    for ( const auto& kf : animations.joined(std::vector<QString>(names.begin(), names.end())) )
+        property.set_keyframe(kf.time,
+            std::get<RetInd>(value_func(load_property_get_keyframe<T>(kf, Ind)...))
+        )->set_transition(kf.transition);
+
+}
+
+
+template<class T>
+void expand(T...) {}
+
+template<class... T, class... PropT, class Func, std::size_t... Ind, std::size_t... PropInd, std::size_t N>
+void load_properties_impl(Object* rive, const std::tuple<PropT...>& properties, const detail::AnimatedProperties& animations,
+                    const std::array<const char*, N>& names, T... defvals, const Func& value_func,
+                    std::index_sequence<Ind...> ind, std::index_sequence<PropInd...>)
+{
+    expand(
+        (load_property_vector_impl<PropInd, T...>(
+            rive, *std::get<PropInd>(properties), animations, names, defvals..., value_func, ind
+        ), 0) ...
+    );
+}
+
+template<class... T, class... PropT, class Func>
+void load_properties(
+    Object* rive, std::tuple<PropT...> properties, const detail::AnimatedProperties& animations,
+    const std::array<const char*, sizeof...(T)>& names, T... defvals, const Func& value_func)
+{
+    load_properties_impl<T...>(
+        rive, properties, animations, names, defvals..., value_func,
+        std::index_sequence_for<T...>{}, std::index_sequence_for<PropT...>{});
+}
+
 template<class T, class PropT>
 void load_property(Object* rive, PropT& property, const detail::AnimatedProperties& animations, const char* name, T defval = {})
 {
@@ -240,7 +283,7 @@ struct LoadCotext
         precomp_layer->name.set(artboard.comp->name.get());
         precomp_layer->size.set(artboard.size.toSize());
         detail::AnimatedProperties animations = load_animations(object);
-        load_transform(object, precomp_layer->transform.get(), animations);
+        load_transform(object, precomp_layer->transform.get(), animations, QRectF(QPointF(0, 0), artboard.size));
         precomp_layer->opacity.set(object->get<Float32>("opacity", 1));
         precomp_layer->composition.set(artboard.comp);
 
@@ -290,9 +333,36 @@ struct LoadCotext
         return layer;
     }
 
-    void load_transform(Object* rive, model::Transform* transform, const detail::AnimatedProperties& animations)
+    void load_transform(Object* rive, model::Transform* transform, const detail::AnimatedProperties& animations, const QRectF& bbox)
     {
         load_property<Float32, Float32>(rive, transform->position, animations, {"x", "y"}, 0, 0, &make_point);
+
+        if ( rive->type().property("originX") )
+        {
+            load_property<Float32, Float32>(rive, transform->anchor_point, animations, {"originX", "originY"}, 0.5, 0.5,
+                [&bbox](Float32 ox, Float32 oy){
+                    return QPointF(
+                        math::lerp(bbox.left(), bbox.right(), ox),
+                        math::lerp(bbox.top(), bbox.bottom(), oy)
+                    );
+                }
+            );
+        }
+
+        /*load_properties<Float32, Float32, Float32, Float32>(
+            rive,
+            std::make_tuple(&transform->position, &transform->anchor_point),
+            animations,
+            {"x", "y", "originX", "originY"},
+            0, 0, 0.5, 0.5,
+            [&bbox] ( Float32 x, Float32 y, Float32 ox, Float32 oy ) {
+                QPointF anchor(
+                    math::lerp(bbox.left(), bbox.right(), ox),
+                    math::lerp(bbox.top(), bbox.bottom(), oy)
+                );
+                return std::make_tuple(QPointF(x, y) - anchor, anchor);
+            }
+        );*/
         load_property<Float32>(rive, transform->rotation, animations, "rotation");
         load_property<Float32, Float32>(rive, transform->scale, animations, {"scaleX", "scaleX"}, 1, 1, [](Float32 x, Float32 y){
             return QVector2D(x, y);
@@ -302,9 +372,10 @@ struct LoadCotext
     void load_shape_group(Object* shape, model::Group* group, const detail::AnimatedProperties& animations)
     {
         load_property<Float32>(shape, group->opacity, animations, "opacity", 1);
-        load_transform(shape, group->transform.get(), animations);
         group->name.set(shape->get<QString>("name"));
         add_shapes(shape, group->shapes);
+        auto box = group->local_bounding_rect(0);
+        load_transform(shape, group->transform.get(), animations, box);
     }
 
     std::unique_ptr<model::ShapeElement> load_shape(Object* object)
@@ -599,15 +670,18 @@ struct LoadCotext
         auto shape = std::make_unique<model::PreCompLayer>(document);
         shape->name.set(object->get<QString>("name"));
         load_property<Float32>(object, shape->opacity, animations, "opacity", 1);
-        load_transform(object, shape->transform.get(), animations);
+
+        QRectF box;
 
         if ( object->has("artboardId") )
         {
             auto id = object->get<VarUint>("artboardId");
             shape->size.set(artboards_id[id]->size);
             shape->composition.set(artboards_id[id]->comp);
+            box.setSize(artboards_id[id]->size);
         }
 
+        load_transform(object, shape->transform.get(), animations, box);
         return shape;
     }
 
@@ -626,16 +700,18 @@ struct LoadCotext
     {
         auto shape = std::make_unique<model::Image>(document);
         shape->name.set(object->get<QString>("name"));
-        load_transform(object, shape->transform.get(), animations);
         auto id = object->get<VarUint>("assetId");
+        QSizeF size;
         if ( auto bmp = qobject_cast<model::Bitmap*>(assets[id].asset) )
         {
+            size = bmp->size();
             shape->transform->anchor_point.set(QPointF(
                 bmp->width.get() / 2.,
                 bmp->height.get() / 2.
             ));
             shape->image.set(bmp);
         }
+        load_transform(object, shape->transform.get(), animations, {QPointF(0, 0), size});
 
         return shape;
     }
