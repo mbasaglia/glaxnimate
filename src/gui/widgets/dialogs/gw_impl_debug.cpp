@@ -12,6 +12,7 @@
 #include "io/base.hpp"
 #include "io/glaxnimate/glaxnimate_format.hpp"
 #include "io/rive/rive_format.hpp"
+#include "io/lottie/lottie_format.hpp"
 #include "utils/gzip.hpp"
 #include "model/custom_font.hpp"
 
@@ -21,7 +22,6 @@
 #include "glaxnimate_app.hpp"
 
 namespace  {
-
 
 void screenshot_widget(const QString& path, QWidget* widget)
 {
@@ -62,6 +62,16 @@ QString pretty_xml(const QByteArray& xml)
 QString pretty_rive(const QByteArray& input)
 {
     return pretty_json(glaxnimate::io::rive::RiveFormat().to_json(input));
+}
+
+void json_to_pretty_temp(const QJsonDocument& doc)
+{
+    QTemporaryFile tempf(GlaxnimateApp::temp_path() + "/XXXXXX.json");
+    tempf.setAutoRemove(false);
+    tempf.open();
+    tempf.write(doc.toJson(QJsonDocument::Indented));
+    tempf.close();
+    app::desktop::open_file(tempf.fileName());
 }
 
 } // namespace
@@ -216,15 +226,19 @@ void GlaxnimateWindow::Private::init_debug()
             app::desktop::open_file(filename);
         }
     });
-    menu_source->addAction("Current", [this]{
-
-        QTemporaryFile tempf(GlaxnimateApp::temp_path() + "/XXXXXX.json");
-        tempf.setAutoRemove(false);
-        tempf.open();
-        QJsonDocument json = io::glaxnimate::GlaxnimateFormat().to_json(current_document.get());
-        tempf.write(json.toJson(QJsonDocument::Indented));
-        tempf.close();
-        app::desktop::open_file(tempf.fileName());
+    menu_source->addAction("Current (Rawr)", [this]{
+        json_to_pretty_temp(io::glaxnimate::GlaxnimateFormat().to_json(current_document.get()));
+    });
+    menu_source->addAction("Current (Lottie)", [this]{
+        json_to_pretty_temp(
+            QJsonDocument(io::lottie::LottieFormat().to_json(current_document.get()).toJsonObject())
+        );
+    });
+    menu_source->addAction("Current (RIVE)", [this]{
+        QBuffer buffer;
+        buffer.open(QIODevice::WriteOnly);
+        io::rive::RiveFormat().save(buffer, "", current_document.get(), {});
+        json_to_pretty_temp(io::rive::RiveFormat().to_json(buffer.data()));
     });
 
     // Misc

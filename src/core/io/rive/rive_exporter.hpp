@@ -217,7 +217,9 @@ private:
     }
 
     template<class T, class FuncT>
-    void write_property(Object& object, const QString& name, const model::AnimatedProperty<T>& prop, Identifier object_id, const FuncT& transform)
+    void write_property(
+        Object& object, const QString& name, const model::AnimatedProperty<T>& prop,
+        Identifier object_id, const FuncT& transform)
     {
         auto rive_prop = object.type().property(name);
         if ( !rive_prop )
@@ -237,12 +239,15 @@ private:
             return;
 
         const ObjectType* kf_type = nullptr;
+        QString attr;
         switch ( rive_prop->type )
         {
             case PropertyType::Float:
+                attr = "value";
                 kf_type = types.get_type(TypeId::KeyFrameDouble);
                 break;
             case PropertyType::Color:
+                attr = "colorValue";
                 kf_type = types.get_type(TypeId::KeyFrameColor);
                 break;
             default:
@@ -272,7 +277,7 @@ private:
             Object rive_kf(kf_type);
             /// \todo interpolations
             rive_kf.set("interpolationType", 1);
-            rive_kf.set("value", kf.value());
+            rive_kf.set(attr, transform(kf.value()));
             rive_kf.set("frame", kf.time());
             keyed_object.emplace_back(std::move(rive_kf));
         }

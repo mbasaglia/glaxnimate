@@ -12,7 +12,7 @@ class RiveFormat : public ImportExport
     Q_OBJECT
 
 public:
-    static const int format_version;
+    static constexpr const int format_version = 7;
 
     QString slug() const override { return "rive"; }
     QString name() const override { return tr("Rive Animation"); }
