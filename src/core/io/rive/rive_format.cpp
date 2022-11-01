@@ -9,7 +9,6 @@
 
 glaxnimate::io::Autoreg<glaxnimate::io::rive::RiveFormat> glaxnimate::io::rive::RiveFormat::autoreg;
 
-
 bool glaxnimate::io::rive::RiveFormat::on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&)
 {
     BinaryInputStream stream(&file);
@@ -29,10 +28,13 @@ bool glaxnimate::io::rive::RiveFormat::on_open(QIODevice& file, const QString&, 
         return false;
     }
 
-    if ( vmaj != 7 )
+    if ( vmaj != version_maj )
     {
-        error(tr("Loading unsupported rive file version %1.%2, the only supported version is %3").arg(vmaj).arg(vmin).arg(7));
-        return false;
+        error(
+            tr("Loading unsupported rive file version %1.%2, the only supported version is %3")
+            .arg(vmaj).arg(vmin).arg(version_maj)
+        );
+        //return false;
     }
 
     if ( stream.has_error() )
@@ -41,12 +43,12 @@ bool glaxnimate::io::rive::RiveFormat::on_open(QIODevice& file, const QString&, 
         return false;
     }
 
-    return RiveLoader(stream, this).load_document(document);
+    return RiveLoader(vmaj, stream, this).load_document(document);
 }
 
 bool glaxnimate::io::rive::RiveFormat::on_save(QIODevice& device, const QString&, model::Document* document, const QVariantMap&)
 {
-    RiveExporter exporter(&device, this);
+    RiveExporter exporter(&device, this, version_maj, version_min);
     exporter.write_document(document);
     return true;
 }
@@ -81,10 +83,10 @@ QJsonDocument glaxnimate::io::rive::RiveFormat::to_json(const QByteArray& binary
     auto vmin = stream.read_uint_leb128();
     auto file_id = stream.read_uint_leb128();
 
-    if ( stream.has_error() || vmaj != 7 )
+    if ( stream.has_error() || vmaj != version_maj )
         return {};
 
-    RiveLoader loader(stream, this);
+    RiveLoader loader(vmaj, stream, this);
 
     QJsonArray summary;
 

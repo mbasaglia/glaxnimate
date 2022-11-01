@@ -1,6 +1,7 @@
 #include "rive_html_format.hpp"
 #include "rive_exporter.hpp"
 #include "io/lottie/lottie_html_format.hpp"
+#include "rive_format.hpp"
 
 
 bool glaxnimate::io::rive::RiveHtmlFormat::on_save(
@@ -12,7 +13,7 @@ bool glaxnimate::io::rive::RiveHtmlFormat::on_save(
     ));
     QBuffer buffer;
     buffer.open(QIODevice::WriteOnly);
-    RiveExporter exp(&buffer, this);
+    RiveExporter exp(&buffer, this, RiveFormat::version_maj, RiveFormat::version_min);
     exp.write_document(document);
     file.write(QString(R"(
 <body>

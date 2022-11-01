@@ -41,7 +41,8 @@ struct ObjectDefinition
 };
 
 
-extern std::unordered_map<TypeId, ObjectDefinition> defined_objects;
+extern std::unordered_map<TypeId, ObjectDefinition> defined_objects6;
+extern std::unordered_map<TypeId, ObjectDefinition> defined_objects7;
 
 
 } // namespace glaxnimate::io::rive

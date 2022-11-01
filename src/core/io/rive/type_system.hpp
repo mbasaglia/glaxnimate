@@ -155,6 +155,8 @@ class TypeSystem : public QObject
     Q_OBJECT
 
 public:
+    explicit TypeSystem(int version);
+
     const ObjectDefinition* get_definition(TypeId type_id);
 
     const ObjectType* get_type(TypeId type_id);
@@ -173,6 +175,7 @@ private:
     bool gather_definitions(ObjectType& type, TypeId type_id);
 
     std::unordered_map<TypeId, ObjectType> types;
+    std::unordered_map<TypeId, ObjectDefinition>* definitions;
 };
 
 

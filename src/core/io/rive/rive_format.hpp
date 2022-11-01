@@ -24,6 +24,9 @@ public:
 
     QJsonDocument to_json(const QByteArray& binary_data);
 
+    static constexpr const int version_maj = 7;
+    static constexpr const int version_min = 0;
+
 protected:
     bool on_save(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;
     bool on_open(QIODevice& file, const QString&, model::Document* document, const QVariantMap&) override;

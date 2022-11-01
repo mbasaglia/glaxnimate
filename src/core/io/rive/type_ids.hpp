@@ -129,5 +129,9 @@ enum class TypeId {
     NestedNumber = 124,
     ListenerAction = 125,
     ListenerAlignTarget = 126,
+    // v6
+    PathComposer = 9,
+    StateMachineDouble = 56,
+    TransitionDoubleCondition = 70,
 };
 } // namespace glaxnimate::io::rive

@@ -11,7 +11,7 @@ namespace glaxnimate::io::rive {
 class RiveLoader
 {
 public:
-    RiveLoader(BinaryInputStream& stream, RiveFormat* format);
+    RiveLoader(int version, BinaryInputStream& stream, RiveFormat* format);
 
     std::vector<Object> load_object_list();
 

@@ -80,6 +80,7 @@ def disclaimer(cmd):
 parser = argparse.ArgumentParser()
 parser.add_argument("--defs", type=pathlib.Path, default=pathlib.Path.home() / "src/rive-cpp/dev/defs/")
 parser.add_argument("--type", "-t", choices=["source", "ids"], default="source")
+parser.add_argument("--rive-version", "-v", type=int, default=7)
 args = parser.parse_args()
 
 
@@ -92,13 +93,13 @@ data = sorted(data, key=lambda o: o["id"])
 
 if args.type == "source":
     fix_extends(data, types)
-    disclaimer("./external/rive_typedef.py -t source >src/core/io/rive/type_def.cpp")
+    disclaimer("./external/rive_typedef.py -t source >src/core/io/rive/type_def%s.cpp" % args.rive_version)
     print("""
 #include "type_def.hpp"
 
 using namespace glaxnimate::io::rive;
 
-std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objects = {""")
+std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objects%d = {""" % args.rive_version)
     for obj in data:
         print(("""    {
         TypeId::%(name)s, {
@@ -116,6 +117,10 @@ elif args.type == "ids":
     print("    NoType = 0,")
     for obj in data:
         print("    %(name)s = %(id)d," % obj)
+    print("    // v6")
+    print("    PathComposer = 9,")
+    print("    StateMachineDouble = 56,")
+    print("    TransitionDoubleCondition = 70,")
     #print("};\n")
     #print("enum class PropId {")
     #for id, name in sorted(props.items()):

@@ -1,10 +1,15 @@
 #include "type_system.hpp"
 
+glaxnimate::io::rive::TypeSystem::TypeSystem(int version)
+    : definitions(version == 6 ? &defined_objects6 : &defined_objects7)
+{
+}
+
 
 const glaxnimate::io::rive::ObjectDefinition * glaxnimate::io::rive::TypeSystem::get_definition(glaxnimate::io::rive::TypeId type_id)
 {
-    auto it = defined_objects.find(type_id);
-    if ( it == defined_objects.end() )
+    auto it = definitions->find(type_id);
+    if ( it == definitions->end() )
     {
         emit type_not_found(int(type_id));
         return nullptr;

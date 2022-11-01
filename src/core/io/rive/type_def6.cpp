@@ -1,7 +1,7 @@
 /**
  * NOTE: This file is generated automatically, do not edit manually
  * To generate this file run
- *       ./external/rive_typedef.py -t source >src/core/io/rive/type_def.cpp -v7
+ *       ./external/rive_typedef.py -t source -v6 >src/core/io/rive/type_def6.cpp
  */
 
 
@@ -9,19 +9,17 @@
 
 using namespace glaxnimate::io::rive;
 
-std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objects7 = {
+std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objects6 = {
     {
         TypeId::Artboard, {
             "Artboard", TypeId::Artboard,
-            TypeId::WorldTransformComponent, {
-                {"clip", 196, PropertyType::Bool},
+            TypeId::ContainerComponent, {
                 {"width", 7, PropertyType::Float},
                 {"height", 8, PropertyType::Float},
                 {"x", 9, PropertyType::Float},
                 {"y", 10, PropertyType::Float},
                 {"originX", 11, PropertyType::Float},
                 {"originY", 12, PropertyType::Float},
-                {"defaultStateMachineId", 236, PropertyType::VarUint},
             }
         }
     },
@@ -71,11 +69,7 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Rectangle, {
             "Rectangle", TypeId::Rectangle,
             TypeId::ParametricPath, {
-                {"linkCornerRadius", 164, PropertyType::Bool},
-                {"cornerRadiusTL", 31, PropertyType::Float},
-                {"cornerRadiusTR", 161, PropertyType::Float},
-                {"cornerRadiusBL", 162, PropertyType::Float},
-                {"cornerRadiusBR", 163, PropertyType::Float},
+                {"cornerRadius", 31, PropertyType::Float},
             }
         }
     },
@@ -83,6 +77,13 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::Triangle, {
             "Triangle", TypeId::Triangle,
             TypeId::ParametricPath, {
+            }
+        }
+    },
+    {
+        TypeId::PathComposer, {
+            "PathComposer", TypeId::PathComposer,
+            TypeId::Component, {
             }
         }
     },
@@ -122,7 +123,9 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
     {
         TypeId::PathVertex, {
             "PathVertex", TypeId::PathVertex,
-            TypeId::Vertex, {
+            TypeId::ContainerComponent, {
+                {"x", 24, PropertyType::Float},
+                {"y", 25, PropertyType::Float},
             }
         }
     },
@@ -319,10 +322,11 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
     {
         TypeId::TransformComponent, {
             "TransformComponent", TypeId::TransformComponent,
-            TypeId::WorldTransformComponent, {
+            TypeId::ContainerComponent, {
                 {"rotation", 15, PropertyType::Float},
                 {"scaleX", 16, PropertyType::Float},
                 {"scaleY", 17, PropertyType::Float},
+                {"opacity", 18, PropertyType::Float},
             }
         }
     },
@@ -483,8 +487,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         }
     },
     {
-        TypeId::StateMachineNumber, {
-            "StateMachineNumber", TypeId::StateMachineNumber,
+        TypeId::StateMachineDouble, {
+            "StateMachineDouble", TypeId::StateMachineDouble,
             TypeId::StateMachineInput, {
                 {"value", 140, PropertyType::Float},
             }
@@ -555,7 +559,6 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
                 {"stateToId", 151, PropertyType::VarUint},
                 {"flags", 152, PropertyType::VarUint},
                 {"duration", 158, PropertyType::VarUint},
-                {"exitTime", 160, PropertyType::VarUint},
             }
         }
     },
@@ -590,8 +593,8 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         }
     },
     {
-        TypeId::TransitionNumberCondition, {
-            "TransitionNumberCondition", TypeId::TransitionNumberCondition,
+        TypeId::TransitionDoubleCondition, {
+            "TransitionDoubleCondition", TypeId::TransitionDoubleCondition,
             TypeId::TransitionValueCondition, {
                 {"value", 157, PropertyType::Float},
             }
@@ -601,440 +604,6 @@ std::unordered_map<TypeId, ObjectDefinition> glaxnimate::io::rive::defined_objec
         TypeId::TransitionBoolCondition, {
             "TransitionBoolCondition", TypeId::TransitionBoolCondition,
             TypeId::TransitionValueCondition, {
-            }
-        }
-    },
-    {
-        TypeId::BlendState, {
-            "BlendState", TypeId::BlendState,
-            TypeId::LayerState, {
-            }
-        }
-    },
-    {
-        TypeId::BlendStateDirect, {
-            "BlendStateDirect", TypeId::BlendStateDirect,
-            TypeId::BlendState, {
-            }
-        }
-    },
-    {
-        TypeId::BlendAnimation, {
-            "BlendAnimation", TypeId::BlendAnimation,
-            TypeId::NoType, {
-                {"animationId", 165, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::BlendAnimation1D, {
-            "BlendAnimation1D", TypeId::BlendAnimation1D,
-            TypeId::BlendAnimation, {
-                {"value", 166, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::BlendState1D, {
-            "BlendState1D", TypeId::BlendState1D,
-            TypeId::BlendState, {
-                {"inputId", 167, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::BlendAnimationDirect, {
-            "BlendAnimationDirect", TypeId::BlendAnimationDirect,
-            TypeId::BlendAnimation, {
-                {"inputId", 168, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::BlendStateTransition, {
-            "BlendStateTransition", TypeId::BlendStateTransition,
-            TypeId::StateTransition, {
-                {"exitBlendAnimationId", 171, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::Constraint, {
-            "Constraint", TypeId::Constraint,
-            TypeId::Component, {
-                {"strength", 172, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::TargetedConstraint, {
-            "TargetedConstraint", TypeId::TargetedConstraint,
-            TypeId::Constraint, {
-                {"targetId", 173, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::IKConstraint, {
-            "IKConstraint", TypeId::IKConstraint,
-            TypeId::TargetedConstraint, {
-                {"invertDirection", 174, PropertyType::Bool},
-                {"parentBoneCount", 175, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::DistanceConstraint, {
-            "DistanceConstraint", TypeId::DistanceConstraint,
-            TypeId::TargetedConstraint, {
-                {"distance", 177, PropertyType::Float},
-                {"modeValue", 178, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::TransformConstraint, {
-            "TransformConstraint", TypeId::TransformConstraint,
-            TypeId::TransformSpaceConstraint, {
-            }
-        }
-    },
-    {
-        TypeId::KeyFrameBool, {
-            "KeyFrameBool", TypeId::KeyFrameBool,
-            TypeId::KeyFrame, {
-                {"value", 181, PropertyType::Bool},
-            }
-        }
-    },
-    {
-        TypeId::TransformComponentConstraint, {
-            "TransformComponentConstraint", TypeId::TransformComponentConstraint,
-            TypeId::TransformSpaceConstraint, {
-                {"minMaxSpaceValue", 195, PropertyType::VarUint},
-                {"copyFactor", 182, PropertyType::Float},
-                {"minValue", 183, PropertyType::Float},
-                {"maxValue", 184, PropertyType::Float},
-                {"offset", 188, PropertyType::Bool},
-                {"doesCopy", 189, PropertyType::Bool},
-                {"min", 190, PropertyType::Bool},
-                {"max", 191, PropertyType::Bool},
-            }
-        }
-    },
-    {
-        TypeId::TransformComponentConstraintY, {
-            "TransformComponentConstraintY", TypeId::TransformComponentConstraintY,
-            TypeId::TransformComponentConstraint, {
-                {"copyFactorY", 185, PropertyType::Float},
-                {"minValueY", 186, PropertyType::Float},
-                {"maxValueY", 187, PropertyType::Float},
-                {"doesCopyY", 192, PropertyType::Bool},
-                {"minY", 193, PropertyType::Bool},
-                {"maxY", 194, PropertyType::Bool},
-            }
-        }
-    },
-    {
-        TypeId::TranslationConstraint, {
-            "TranslationConstraint", TypeId::TranslationConstraint,
-            TypeId::TransformComponentConstraintY, {
-            }
-        }
-    },
-    {
-        TypeId::ScaleConstraint, {
-            "ScaleConstraint", TypeId::ScaleConstraint,
-            TypeId::TransformComponentConstraintY, {
-            }
-        }
-    },
-    {
-        TypeId::RotationConstraint, {
-            "RotationConstraint", TypeId::RotationConstraint,
-            TypeId::TransformComponentConstraint, {
-            }
-        }
-    },
-    {
-        TypeId::TransformSpaceConstraint, {
-            "TransformSpaceConstraint", TypeId::TransformSpaceConstraint,
-            TypeId::TargetedConstraint, {
-                {"sourceSpaceValue", 179, PropertyType::VarUint},
-                {"destSpaceValue", 180, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::WorldTransformComponent, {
-            "WorldTransformComponent", TypeId::WorldTransformComponent,
-            TypeId::ContainerComponent, {
-                {"opacity", 18, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::NestedArtboard, {
-            "NestedArtboard", TypeId::NestedArtboard,
-            TypeId::Drawable, {
-                {"artboardId", 197, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::NestedAnimation, {
-            "NestedAnimation", TypeId::NestedAnimation,
-            TypeId::ContainerComponent, {
-                {"animationId", 198, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::NestedStateMachine, {
-            "NestedStateMachine", TypeId::NestedStateMachine,
-            TypeId::NestedAnimation, {
-            }
-        }
-    },
-    {
-        TypeId::NestedSimpleAnimation, {
-            "NestedSimpleAnimation", TypeId::NestedSimpleAnimation,
-            TypeId::NestedLinearAnimation, {
-                {"speed", 199, PropertyType::Float},
-                {"isPlaying", 201, PropertyType::Bool},
-            }
-        }
-    },
-    {
-        TypeId::NestedLinearAnimation, {
-            "NestedLinearAnimation", TypeId::NestedLinearAnimation,
-            TypeId::NestedAnimation, {
-                {"mix", 200, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::NestedRemapAnimation, {
-            "NestedRemapAnimation", TypeId::NestedRemapAnimation,
-            TypeId::NestedLinearAnimation, {
-                {"time", 202, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::Asset, {
-            "Asset", TypeId::Asset,
-            TypeId::NoType, {
-                {"name", 203, PropertyType::String},
-            }
-        }
-    },
-    {
-        TypeId::Image, {
-            "Image", TypeId::Image,
-            TypeId::Drawable, {
-                {"assetId", 206, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::Folder, {
-            "Folder", TypeId::Folder,
-            TypeId::Asset, {
-            }
-        }
-    },
-    {
-        TypeId::FileAsset, {
-            "FileAsset", TypeId::FileAsset,
-            TypeId::Asset, {
-                {"assetId", 204, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::DrawableAsset, {
-            "DrawableAsset", TypeId::DrawableAsset,
-            TypeId::FileAsset, {
-                {"height", 207, PropertyType::Float},
-                {"width", 208, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::ImageAsset, {
-            "ImageAsset", TypeId::ImageAsset,
-            TypeId::DrawableAsset, {
-            }
-        }
-    },
-    {
-        TypeId::FileAssetContents, {
-            "FileAssetContents", TypeId::FileAssetContents,
-            TypeId::NoType, {
-                {"bytes", 212, PropertyType::Bytes},
-            }
-        }
-    },
-    {
-        TypeId::Vertex, {
-            "Vertex", TypeId::Vertex,
-            TypeId::ContainerComponent, {
-                {"x", 24, PropertyType::Float},
-                {"y", 25, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::MeshVertex, {
-            "MeshVertex", TypeId::MeshVertex,
-            TypeId::Vertex, {
-                {"u", 215, PropertyType::Float},
-                {"v", 216, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::Mesh, {
-            "Mesh", TypeId::Mesh,
-            TypeId::ContainerComponent, {
-                {"triangleIndexBytes", 223, PropertyType::Bytes},
-            }
-        }
-    },
-    {
-        TypeId::Text, {
-            "Text", TypeId::Text,
-            TypeId::Node, {
-                {"value", 218, PropertyType::String},
-            }
-        }
-    },
-    {
-        TypeId::ContourMeshVertex, {
-            "ContourMeshVertex", TypeId::ContourMeshVertex,
-            TypeId::MeshVertex, {
-            }
-        }
-    },
-    {
-        TypeId::ForcedEdge, {
-            "ForcedEdge", TypeId::ForcedEdge,
-            TypeId::Component, {
-                {"fromId", 219, PropertyType::VarUint},
-                {"toId", 220, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::TextRun, {
-            "TextRun", TypeId::TextRun,
-            TypeId::Drawable, {
-                {"pointSize", 221, PropertyType::Float},
-                {"textLength", 222, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::StateMachineListener, {
-            "StateMachineListener", TypeId::StateMachineListener,
-            TypeId::StateMachineComponent, {
-                {"targetId", 224, PropertyType::VarUint},
-                {"listenerTypeValue", 225, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::ListenerTriggerChange, {
-            "ListenerTriggerChange", TypeId::ListenerTriggerChange,
-            TypeId::ListenerInputChange, {
-            }
-        }
-    },
-    {
-        TypeId::ListenerInputChange, {
-            "ListenerInputChange", TypeId::ListenerInputChange,
-            TypeId::ListenerAction, {
-                {"inputId", 227, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::ListenerBoolChange, {
-            "ListenerBoolChange", TypeId::ListenerBoolChange,
-            TypeId::ListenerInputChange, {
-                {"value", 228, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::ListenerNumberChange, {
-            "ListenerNumberChange", TypeId::ListenerNumberChange,
-            TypeId::ListenerInputChange, {
-                {"value", 229, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::LayeredAsset, {
-            "LayeredAsset", TypeId::LayeredAsset,
-            TypeId::DrawableAsset, {
-            }
-        }
-    },
-    {
-        TypeId::LayerImageAsset, {
-            "LayerImageAsset", TypeId::LayerImageAsset,
-            TypeId::ImageAsset, {
-                {"layer", 233, PropertyType::VarUint},
-                {"x", 234, PropertyType::Float},
-                {"y", 235, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::NestedInput, {
-            "NestedInput", TypeId::NestedInput,
-            TypeId::Component, {
-                {"inputId", 237, PropertyType::VarUint},
-            }
-        }
-    },
-    {
-        TypeId::NestedTrigger, {
-            "NestedTrigger", TypeId::NestedTrigger,
-            TypeId::NestedInput, {
-            }
-        }
-    },
-    {
-        TypeId::NestedBool, {
-            "NestedBool", TypeId::NestedBool,
-            TypeId::NestedInput, {
-                {"nestedValue", 238, PropertyType::Bool},
-            }
-        }
-    },
-    {
-        TypeId::NestedNumber, {
-            "NestedNumber", TypeId::NestedNumber,
-            TypeId::NestedInput, {
-                {"nestedValue", 239, PropertyType::Float},
-            }
-        }
-    },
-    {
-        TypeId::ListenerAction, {
-            "ListenerAction", TypeId::ListenerAction,
-            TypeId::NoType, {
-            }
-        }
-    },
-    {
-        TypeId::ListenerAlignTarget, {
-            "ListenerAlignTarget", TypeId::ListenerAlignTarget,
-            TypeId::ListenerAction, {
-                {"targetId", 240, PropertyType::VarUint},
             }
         }
     },

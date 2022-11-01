@@ -729,10 +729,11 @@ struct LoadCotext
 
 } // namespace
 
-RiveLoader::RiveLoader(BinaryInputStream& stream, RiveFormat* format)
+RiveLoader::RiveLoader(int version, BinaryInputStream& stream, RiveFormat* format)
     : document(nullptr),
     stream(stream),
-    format(format)
+    format(format),
+    types(version)
 {
     extra_props = read_property_table();
     QObject::connect(&types, &TypeSystem::type_not_found, [format](int type){

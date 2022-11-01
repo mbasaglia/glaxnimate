@@ -26,10 +26,10 @@ class RiveExporter
 {
 
 public:
-    explicit RiveExporter(QIODevice* file, ImportExport* format)
-        : serializer(file), format(format)
+    explicit RiveExporter(QIODevice* file, ImportExport* format, int vmaj, int vmin)
+        : serializer(file), format(format), types(7)
     {
-        serializer.write_header(7, 0, 0);
+        serializer.write_header(vmaj, vmin, 0);
         serializer.write_property_table({});
         write_object(TypeId::Backboard);
     }
@@ -252,11 +252,12 @@ private:
 
         if ( !kf_type )
         {
-            format->warning(QObject::tr("Unknown keyframe type for property %1 of %2 (%3, %4)")
+            format->warning(QObject::tr("Unknown keyframe type %5 for property %1 of %2 (%3, %4)")
                 .arg(name)
                 .arg(int(object.type().id))
                 .arg(types.type_name(object.type().id))
                 .arg(prop.object()->type_name_human())
+                .arg(int(rive_prop->type))
             );
             return;
         }
@@ -278,12 +279,13 @@ private:
         }
     }
 
-    void write_position(Object& object, const model::AnimatedProperty<QPointF>& prop, Identifier object_id)
+    void write_position(Object& object, const model::AnimatedProperty<QPointF>& prop, Identifier object_id,
+                        const char* x = "x", const char* y = "y")
     {
-        write_property(object, "x", prop, object_id,
+        write_property(object, x, prop, object_id,
             [](const QVariant& v) { return QVariant::fromValue(v.toPointF().x()); }
         );
-        write_property(object, "y", prop, object_id,
+        write_property(object, y, prop, object_id,
             [](const QVariant& v) { return QVariant::fromValue(v.toPointF().y()); }
         );
     }
@@ -350,9 +352,20 @@ private:
                 grad, object_id
             );
             write_property(object, "opacity", shape->color, id, &detail::noop);
+            write_position(object, grad->start_point, id, "startX", "startY");
+            write_position(object, grad->end_point, id, "endX", "endY");
 
             serializer.write_object(object);
-            /// \todo finish
+
+            if ( auto colors = grad->colors.get() )
+            {
+                /// \todo color animations
+                for ( const auto& stop: colors->colors.get() )
+                {
+                    next_artboard_child++;
+                    write_object(TypeId::GradientStop, {{"position", stop.first}, {"colorValue", stop.second}});
+                }
+            }
         }
         else if ( auto col = use->cast<model::NamedColor>() )
         {

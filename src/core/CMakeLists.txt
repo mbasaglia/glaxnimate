@@ -24,6 +24,7 @@ io/rive/rive_html_format.cpp
 io/rive/rive_loader.cpp
 io/rive/rive_serializer.cpp
 io/rive/type_def.cpp
+io/rive/type_def6.cpp
 io/rive/type_system.cpp
 io/svg/detail.cpp
 io/svg/svg_format.cpp
