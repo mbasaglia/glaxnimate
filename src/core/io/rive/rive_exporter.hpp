@@ -385,7 +385,6 @@ private:
                 }
             }
         }
-
     }
 
     Object shape_object(TypeId type_id, model::DocumentNode* shape, Identifier parent_id)
