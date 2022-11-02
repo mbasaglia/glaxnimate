@@ -1,5 +1,6 @@
 #include "binary_stream.hpp"
 
+#include <array>
 #include <QtEndian>
 
 glaxnimate::io::BinaryInputStream::BinaryInputStream(QIODevice* file):

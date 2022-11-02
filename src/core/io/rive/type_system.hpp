@@ -1,5 +1,6 @@
 #pragma once
 #include "type_def.hpp"
+#include "app/utils/qstring_hash.hpp"
 
 namespace glaxnimate::io::rive {
 

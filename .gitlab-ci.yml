@@ -157,6 +157,10 @@ linux:appimage:
         - cd ..
     script:
         - mkdir build
+        - cd external/QtAppSetup/external/pybind11/
+        - git fetch origin v2.9
+        - git checkout v2.9
+        - cd ../../../..
         - cd build
         - cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_PREFIX_PATH=/opt/qt515/lib/cmake/Qt5LinguistTools/ -DVERSION_SUFFIX="appimage-$CI_COMMIT_SHORT_SHA"
         - make
